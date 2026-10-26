@@ -11,10 +11,13 @@
    [32,20,35,.52],[27,19,43,.54]];
  const DAY=[[213,229,163,.045],[150,206,205,.05],[221,219,184,.045],
    [215,157,120,.05],[166,146,196,.05]];
- // PixiJS color parsing rejects tiny RGB floats in scientific notation near nightfall.
- // Use integer CSS RGB channels while retaining the original 0..1 alpha precision.
+ // PixiJS FillGradient requires decimal CSS rgba(), including for minuscule alphas.
+ // Centralize formatting so no light/grade/vignette can emit exponent notation.
  const rgba=(rgb,a)=>'rgba('+rgb.slice(0,3).map(c=>Math.round(clamp(c,0,255))).join(',')+
-   ','+Number(clamp(a,0,1).toFixed(6))+')';
+   ','+clamp(a,0,1).toFixed(6).replace(/0+$/,'').replace(/\.$/,'')+')';
+ // Round subpixel light intensities to stable, reusable visual states.
+ const lampOpacity=a=>Math.round(clamp(a,0,1)*1024)/1024;
+ const MAX_CACHED_LAMP_GRADIENTS=96;
  function atmosphereLayers({region=0,darkness=0,peaceBlend=0,
                             optimized=false,warmth=0,phase='day'}={}) {
    const i=Math.max(0,Math.min(4,Math.trunc(region)||0));
@@ -237,49 +240,48 @@
      }
      return {actors:actors.size,removed:discarded};
    }
-   function glowGradient(lamp) {
-     const signature=lamp.rgb.join(',')+':'+lamp.alpha;
-     if(!gradients.has(signature)) {
-       const [r,g,b]=lamp.rgb;
-       gradients.set(signature,new PIXI.FillGradient({
+   function glowGradient(lamp,opacity,key) {
+     if(!gradients.has(key)) {
+       gradients.set(key,new PIXI.FillGradient({
          type:'radial',center:{x:.5,y:.5},innerRadius:0,
          outerCenter:{x:.5,y:.5},outerRadius:.5,
          colorStops:[
-           {offset:0,color:'rgba('+r+','+g+','+b+','+clamp(lamp.alpha,0,1)+')'},
-           {offset:.35,color:'rgba('+r+','+g+','+b+','+clamp(lamp.alpha*.48,0,1)+')'},
-           {offset:1,color:'rgba('+r+','+g+','+b+',0)'}
+           {offset:0,color:rgba(lamp.rgb,opacity)},
+           {offset:.35,color:rgba(lamp.rgb,opacity*.48)},
+           {offset:1,color:rgba(lamp.rgb,0)}
          ]
        }));
      }
-     return gradients.get(signature);
+     return gradients.get(key);
    }
    function syncLamps(list) {
      assert(Array.isArray(list),'Azeroth light source array required');
      for(const lamp of list)assert(lamp &&
-       [lamp.x,lamp.y,lamp.radius,lamp.alpha].every(Number.isFinite) &&
-       lamp.radius>0 && lamp.alpha>=0 && lamp.alpha<=1 &&
+       [lamp.x,lamp.y,lamp.radius,lamp.alpha].every(Number.isFinite)&&
+       lamp.radius>0&&lamp.alpha>=0&&lamp.alpha<=1&&
        Array.isArray(lamp.rgb)&&lamp.rgb.length===3&&
        lamp.rgb.every(c=>Number.isFinite(c)&&c>=0&&c<=255),
        'Invalid native light');
      const ids=new Set();
-     for(let i=0;i<list.length;i++){
-       const lamp=list[i];
-       assert(lamp && [lamp.x,lamp.y,lamp.radius,lamp.alpha].every(Number.isFinite) &&
-         lamp.radius>0 && lamp.alpha>=0 && lamp.alpha<=1 &&
-         Array.isArray(lamp.rgb) && lamp.rgb.length===3,'Invalid native light');
-       const id=String(i),signature=lamp.rgb.join(',')+':'+lamp.alpha+':'+lamp.radius;
+     for(let i=0;i<list.length;i++) {
+       const lamp=list[i],opacity=lampOpacity(lamp.alpha);
+       // Daylight-adjacent near-zero glows must not generate GPU gradients.
+       if(opacity===0)continue;
+       const id=String(i),key=lamp.rgb.join(',')+':'+opacity,
+         signature=key+':'+lamp.radius;
        ids.add(id);
        let state=glowObjects.get(id);
        if(!state) {
-         state={graphic:new PIXI.Graphics(),signature:null};
+         state={graphic:new PIXI.Graphics(),signature:null,gradientKey:null};
          state.graphic.blendMode='screen';
          glowObjects.set(id,state);
          effectsStage.addChild(state.graphic);
        }
        if(state.signature!==signature) {
          state.graphic.clear();
-         state.graphic.circle(0,0,lamp.radius).fill(glowGradient(lamp));
+         state.graphic.circle(0,0,lamp.radius).fill(glowGradient(lamp,opacity,key));
          state.signature=signature;
+         state.gradientKey=key;
        }
        state.graphic.position.set(lamp.x,lamp.y);
      }
@@ -288,7 +290,17 @@
        state.graphic.destroy();
        glowObjects.delete(id);
      }
-     // The original vignette is drawn AFTER the visible night lamps.
+     // Only release superseded gradients: active Graphics retain their fill.
+     if(gradients.size>MAX_CACHED_LAMP_GRADIENTS){
+       const inUse=new Set([...glowObjects.values()].map(state=>state.gradientKey));
+       for(const [key,fill] of gradients){
+         if(gradients.size<=MAX_CACHED_LAMP_GRADIENTS)break;
+         if(inUse.has(key))continue;
+         fill.destroy?.();
+         gradients.delete(key);
+       }
+     }
+     // Original order: atmosphere grade, lights, motes, vignette.
      if(vignette)effectsStage.addChild(vignette);
    }
    function setAtmosphere(spec) {
@@ -390,7 +402,7 @@
    function metrics(){return{
      actors:actors.size,lights:glowObjects.size,vignetteActive:!!vignette,
      atmosphereMotes:moteCount,
-     textureSources:resources.size,
+     textureSources:resources.size,lampGradients:gradients.size,
      spriteUpdates:spritesUpdated,discarded
    };}
    function destroy(){

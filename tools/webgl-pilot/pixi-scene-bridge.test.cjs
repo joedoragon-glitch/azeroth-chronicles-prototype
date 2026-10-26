@@ -236,6 +236,60 @@ test('scene accepts repeated day-night gradient rebuilds without triggering Pixi
   scene.destroy();
 });
 
+test('tiny twilight hero light is never passed as exponent-form rgba to Pixi',()=>{
+  const {PIXI,app}=pixiFixture();
+  const Original=PIXI.FillGradient;
+  PIXI.FillGradient=class extends Original {
+    constructor(options){
+      super(options);
+      for(const stop of options.colorStops||[])assertPixiRgba(stop.color);
+    }
+  };
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  const light=alpha=>({x:160,y:210,radius:145,rgb:[235,221,184],alpha});
+  for(const tiny of [2.1597119819343913e-8,7.778520935683986e-7,0]){
+    scene.syncLamps([light(tiny)]);
+    assert.equal(scene.metrics().lights,0,
+      'subvisible twilight glow must not allocate an invalid gradient');
+  }
+  for(const alpha of [.00098,.0043,.18]){
+    scene.syncLamps([light(alpha)]);
+    assert.equal(scene.metrics().lights,1);
+  }
+  scene.syncLamps([light(0)]);
+  assert.equal(scene.metrics().lights,0,'daylight removes the glow');
+  scene.destroy();
+});
+test('thousands of sunset and sunrise frames keep Pixi lamp gradients bounded',()=>{
+  const {PIXI,app}=pixiFixture();
+  const Fill=PIXI.FillGradient;
+  let released=0;
+  PIXI.FillGradient=class extends Fill{
+    constructor(options){
+      super(options);
+      for(const stop of options.colorStops||[])assertPixiRgba(stop.color);
+    }
+    destroy(){released++;}
+  };
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  for(let i=0;i<3000;i++){
+    const darkness=Math.abs(1500-i)/1500;
+    scene.setAtmosphere({region:0,darkness,optimized:false,
+      warmth:darkness*.12,phase:i<1500?'sunrise':'sunset'});
+    scene.syncLamps([
+      {x:150+i%5,y:180,radius:145,rgb:[235,221,184],alpha:.18*darkness},
+      {x:255,y:240,radius:85,rgb:[255,207,132],alpha:.25*darkness}
+    ]);
+    scene.draw();
+    assert.ok(scene.metrics().lampGradients<=96,
+      'transition must not accumulate unbounded GPU gradient resources');
+  }
+  assert.ok(released>0,'unused twilight gradients are actually destroyed');
+  scene.syncLamps([]);
+  assert.equal(scene.metrics().lights,0);
+  scene.destroy();
+});
+
 test('high-DPI Pixi backdrop retains the same logical geometry as Canvas',()=>{
   const {PIXI,app}=pixiFixture();
   const scene=Bridge.create({PIXI,app,width:912,height:420});
