@@ -285,7 +285,9 @@ test('Canvas-matched hero shadows and ground markers sit below sprite and track 
   assert.equal(ground.strokes[0].color,0xf5d992);
   assert.equal(ground.strokes[0].alpha,0xbb/255);
   assert.equal(ground.fills.at(-1).alpha,0x66/255);
-  scene.syncActors([{...hero,x:88,ground:{...hero.ground,x:160,y:199}}]);
+  scene.syncActors([{...hero,x:88,ground:{...hero.ground,x:160,y:199,scale:1.5}}]);
+  assert.deepEqual(ground.ellipses.at(-1),[1.5,16.5,27,8.25],
+    'GPU shadow scales with 150% camera zoom and retains Canvas feet offset');
   const moved=app.stage.children[0].children[0].children;
   assert.equal(moved[0],ground,'reuse ground artwork without allocating per frame');
   assert.equal(moved[1],sprite,'same approved actor sprite remains');
