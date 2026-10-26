@@ -84,7 +84,14 @@ for (const form of ['normal','true']) for (const level of [1,2,3]) {
     const normal=baseline.g.bossOwnedSummons(baseline.e);
     const enhanced=critical.g.bossOwnedSummons(critical.e);
     assert(normal.length>0,'summon action admitted actual responders');
-    assert.equal(t.count(),1);
+    assert.equal(t.count(),1, 'Ministry admission audit: ' + JSON.stringify({
+      form, level, original: normal.length, enhanced: enhanced.length,
+      plan: { kind: critical.e.telegraph?.kind, index: critical.e.telegraph?.index,
+        family: critical.e.telegraph?.family, mechanic: critical.e.telegraph?.cinderMechanic,
+        receipt: !!critical.e.telegraph?.criticalExecution },
+      native: critical.g._criticalWorldNative?.enabled,
+      bossType: critical.e.type, bossFamily: critical.e.family,
+    }));
     assert.equal(normal.length,enhanced.length);
     assert(enhanced.every((u,i)=>u.maxHp>normal[i].maxHp));
     assert.equal(critical.e.summonCd,baseline.e.summonCd);
