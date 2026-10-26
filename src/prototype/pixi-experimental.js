@@ -457,6 +457,13 @@
       const records = [];
       let detachedForEviction = false;
       for (const { entity, visual, point, key } of visible) {
+        // The approved Canvas feet treatment is independent of sprite art.
+        // Pixi draws it below each body at the same depth in world space.
+        const ground = {
+          x: point.x, y: point.y,
+          scale: zoom,
+          ...canvasRenderer.groundPresentation(visual),
+        };
         // Canvas repaints these identities as their actual in-world objects.
         const painted = paintedVisual(visual);
         const chosen = adapter.commandFor(
@@ -478,6 +485,7 @@
             height: c.height * zoom,
             opacity: c.opacity,
             flipX: c.flipX,
+            ground,
             depth: entity.x + entity.y,
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
@@ -504,6 +512,7 @@
             height: b.logicalHeight * zoom,
             opacity: 1,
             flipX: false,
+            ground,
             depth: entity.x + entity.y,
           });
         } else throw Error('Missing original game artwork: ' + key);
@@ -586,6 +595,18 @@
         warmth: phase.warmth || 0,
         phase: phase.phase || 'day',
       });
+      // Canvas's atmospheric motes use logical world-viewport dimensions,
+      // then get enlarged by the current camera zoom on the final surface.
+      // They continue drifting even when the player/camera is stationary.
+      const zoomedWidth = viewport.width / zoom,
+        zoomedHeight = viewport.height / zoom;
+      const motes = root.PrototypeVisuals.atmosphereMotes({
+        width: zoomedWidth, height: zoomedHeight, region, darkness,
+        dungeon: !!current.isDungeon(), room: !!current.supplyRoom(),
+        optimized: !!options.getOptimizationMode(),
+        time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
+      });
+      scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
     }
     async function prepare() {
