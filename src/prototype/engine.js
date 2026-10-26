@@ -2969,7 +2969,12 @@
         this.s.discovered[side.region + ':side-lore:' + side.id] = true;
         if (side.lore) {
           this.say(side.lore);
-          this.notice(side.lore, 8, '', 'narration', { scope: 'region', region: side.region });
+          // Retain the full earned story in Announcements; don't repeat
+          // the in-world inspectable narrative in an oversized toast.
+          this.notice(side.lore, 8, '', 'narration', {
+            scope: 'region', region: side.region,
+            silentWhenInspectable: !!R.narrativeSceneInspections?.[side.id]?.length,
+          });
         }
         this.event('sideInteriorDiscovery', { id: side.id, region: side.region });
       }
