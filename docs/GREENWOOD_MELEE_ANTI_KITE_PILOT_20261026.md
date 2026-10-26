@@ -21,7 +21,7 @@ Creatures can learn tactics from the region's leaders rather than receive stereo
 
 ## Implementation
 
-`src/prototype/engine.js`: engine-local `valeMeleeCounter` tuning table, deliberately kept out of global rules and sprite-census fingerprints.
+`src/prototype/rules.js`: single authoritative Greenwood `valeMeleeCounter` tuning table, with an updated source fingerprint in the sprite scope evidence (no artwork changes).
 
 `src/prototype/engine.js`: regional eligibility, short gap observation, fixed predicted warning, mobile cast and one bounded post-arrival hit; integration into actual `updateEnemies` and existing warning/motion owners. No separate AI loop or per-frame global enemy scan.
 
