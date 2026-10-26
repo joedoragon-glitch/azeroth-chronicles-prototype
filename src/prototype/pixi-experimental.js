@@ -176,7 +176,8 @@
       proceduralCacheEvictions = 0,
       warmupBakes = 0,
       coldFrameBakes = 0,
-      warmupSkippedBudget = 0;
+      warmupSkippedBudget = 0,
+      warmupErrors = 0;
     function noteFailure(type, stage, error) {
       const message = String(error?.message || error).slice(0, 240);
       lastError = message;
@@ -366,7 +367,6 @@
     // The same identity/revision contract as the actual frame is essential:
     // prepared textures must be reusable when the player walks toward them.
     function lookaheadCandidates(current) {
-      const zoom = platform.cameraZoom || 1;
       return candidates(current, project, viewport.width, viewport.height,
         canvasRenderer.presentEntity, WARM_MARGIN)
         .filter(({entity,point}) => {
@@ -432,8 +432,18 @@
         lookaheadOrigin={x:current.hero.x,y:current.hero.y};
       }
       let warmed=0;
-      for(let i=0;i<limit&&lookaheadQueue.length;i++)
-        if(warmOne(current,lookaheadQueue))warmed++;
+      for(let i=0;i<limit&&lookaheadQueue.length;i++){
+        try{
+          if(warmOne(current,lookaheadQueue))warmed++;
+        }catch(_){
+          // Speculative prerendering must not take down a playable GPU scene.
+          // If the actual visible draw encounters the same fault, the normal
+          // typed failure and reliable Canvas fallback still apply.
+          warmupErrors++;
+          resetLookahead();
+          break;
+        }
+      }
       return warmed;
     }
     function actorFrame() {
@@ -832,7 +842,7 @@
         proceduralTextures: baked.size,
         proceduralEvictions,
         proceduralCacheEvictions,
-        warmupBakes,coldFrameBakes,warmupSkippedBudget,
+        warmupBakes,coldFrameBakes,warmupSkippedBudget,warmupErrors,
         lookaheadPending:lookaheadQueue.length,
         proceduralBudget,
         proceduralTrimAt: trimAt,
