@@ -219,16 +219,18 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
   game.zoneId='highlands';
   gpu.draw();
-  assert.equal(gpu.status().proceduralTextures,1,'procedural body must be generated in new region');
+  assert(gpu.status().proceduralTextures>=2,'recent original-zone artwork remains cached');
   assert(gpu.status().proceduralBytes>0);
-  const proceduralBefore=resources.size;
+  const initialBakes=gpu.status().proceduralBakes;
   for(const zone of ['vale','highlands','vale','highlands']){
     game.zoneId=zone;
     gpu.draw();
-    assert.equal(gpu.status().proceduralTextures,1,'old zone body must be evicted');
-    assert.equal(resources.size,proceduralBefore,'old registered textures must not accumulate');
+    assert(gpu.status().proceduralBytes<=gpu.status().proceduralBudget,
+      'cross-zone texture retention stays within its hard memory ceiling');
   }
-  assert(gpu.status().proceduralEvictions>=4,'region changes should release procedural rasters');
+  assert(gpu.status().proceduralBakes<=initialBakes+1,
+    'returning to a room must reuse its earlier procedural artwork');
+  assert(gpu.status().proceduralCacheHits>0,'revisited region uses cached art');
   assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
   // 160 pixel-bytes per miniature procedural texture is sufficient for the
@@ -276,8 +278,8 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   // A zone change must still clear retained old-zone assets.
   game.zoneId='highlands';
   tinyGpu.draw();
-  assert.equal(tinyGpu.status().proceduralTextures,2,
-    'zone switching must preserve only the freshly visible scene');
+  assert(tinyGpu.status().proceduralBytes<=tinyGpu.status().proceduralBudget,
+    'zone switching must preserve bounded art while reusing recent scenes');
   tinyGpu.release();
   // If iOS backgrounds the PWA during the short two-per-frame warmup,
   // the removed GPU scene may never be rebuilt by a stale async callback.
