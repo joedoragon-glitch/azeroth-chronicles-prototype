@@ -16,7 +16,7 @@ function recording(){
     get(obj,k){
       if(k in obj)return obj[k];
       return (...args)=>{
-        if(['stroke','fill','moveTo','lineTo','quadraticCurveTo','arc','ellipse'].includes(k))
+        if(['stroke','fill','moveTo','lineTo','quadraticCurveTo','arc','ellipse','translate','rotate'].includes(k))
           actions.push({op:k,args,stroke:obj.strokeStyle,fill:obj.fillStyle});
       };
     },
@@ -38,6 +38,9 @@ const slingers=[
 ];
 for(const [name,acts] of slingers){
   assert(stroke(acts,'#c0a175'),name+' requires visible two-cord sling');
+  const leatherCurves=acts.filter(op=>op.op==='quadraticCurveTo'&&op.stroke==='#c0a175');
+  assert.equal(leatherCurves.length,2,
+    name+' must use two soft cords attached to one cradle, not long rigid sticks');
   assert(fill(acts,'#65503c'),name+' requires spare-stone satchel');
   assert(fill(acts,'#8e9487'),name+' must have a stone in the sling cup');
   assert(!stroke(acts,'#ba9562'),name+' must not carry an archer bow');
@@ -68,6 +71,8 @@ for(const kind of ['auto','skill']){
     assert.deepEqual(a,b,kind+n+' shaft cannot follow a moving caster');
     assert.deepEqual(b,reduced,kind+n+' rigid arrow does not use animated motion');
     assert(!a.some(v=>v.op==='quadraticCurveTo'),kind+n+' no curved arrow');
+    assert(a.some(v=>v.op==='translate'&&v.args[0]===arrow.x&&v.args[1]===arrow.y),
+      kind+n+' shaft must sit at its real world-projected projectile position');
     assert(a.some(v=>v.op==='fill'&&v.fill==='#c3c5b2'),
       kind+n+' has a recognizable filled physical tip');
     assert(a.some(v=>v.op==='stroke'&&v.stroke==='#57462f'),
