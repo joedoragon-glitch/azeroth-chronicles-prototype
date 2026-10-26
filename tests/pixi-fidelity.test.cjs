@@ -131,7 +131,8 @@ const gpuOptions={
   worldCanvas:canvasSurface,viewport:view,platform,getGame:()=>game,
   canvasRenderer:{
     screen:e=>({x:456+(e.x-game.hero.x)*1.5,y:210+(e.y-game.hero.y)*1.5}),
-    presentEntity:painter.presentEntity
+    presentEntity:painter.presentEntity,
+    groundPresentation:painter.groundPresentation
   },
   getRendererOptions:()=>({}),getOptimizationMode:()=>false,onFailure:()=>{}
 };
@@ -144,6 +145,10 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(draws[0].ratio,1.5,'background painting must be retina');
   assert.equal(gpu.status().backdropWidth,2028);
   assert.equal(frames[0][0].width,180,'camera zoom applies without double DPI scaling');
+  assert.equal(frames[0][0].ground.rx,18,'Pixi uses the same hero shadow footprint as Canvas');
+  assert.equal(frames[0][0].ground.marker.color,'#f5d992bb',
+    'hero ground ring must have the original approved Canvas color');
+  assert.equal(frames[0][0].ground.x,456,'shadow tracks camera projection, not sprite crop');
   gpu.activate();
   gpu.draw();
   canvasSurface.width=912;canvasSurface.height=420;
