@@ -4369,6 +4369,7 @@
         }
       this.resolveCompanionCareRequests();
       this.resolveRecruitmentRequest();
+      if (this.s.mode === 'arena') this.arenaContainActors();
     }
 
     captainProfile(e) {
