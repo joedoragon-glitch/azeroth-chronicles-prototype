@@ -218,6 +218,9 @@
             slow: this.petCriticalConsequence(criticalReceipt, def.slow || 0, 'slowDuration'),
             petSkillSlot: slot,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
+            // A delayed impact must keep the true shot origin after pet movement.
+            launchX: u.x,
+            launchY: u.y,
           });
           this.event('projectileLaunch', {
             actor: 'companion',
@@ -265,7 +268,9 @@
         if (!projectile) this.petSkillContact(u, target, slot, hits, criticalReceipt);
         return true;
       }
-      petSkillContact(u, target, slot, hits = 1, criticalReceipt = null) {
+      // The fifth argument is the frozen critical receipt; the sixth belongs
+      // to #464's actual projectile launch point for cosmetic contact cues.
+      petSkillContact(u, target, slot, hits = 1, criticalReceipt = null, launchPoint = null) {
         const def = this.petSkillDefinition(u, slot);
         if (!def || u.hp <= 0 || u.active === false) return false;
         if (u.hp > 0 && def.heal) {
@@ -312,7 +317,7 @@
             u.wardReduction = def.ward;
           }
         }
-        this.petSkillEvent(u, target, slot, hits, 'impact');
+        this.petSkillEvent(u, target, slot, hits, 'impact', launchPoint);
         this.event('spell', {
           actor: 'companion',
           role: 'pet',
@@ -323,7 +328,7 @@
         });
         return true;
       }
-      petSkillEvent(u, target, slot, hits, stage) {
+      petSkillEvent(u, target, slot, hits, stage, launchPoint = null) {
         const def = this.petSkillDefinition(u, slot);
         const pet = this.petDefinition(u);
         this.event('petSkill', {
@@ -333,8 +338,10 @@
           skill: def.name,
           x: target.x,
           y: target.y,
-          fromX: u.x,
-          fromY: u.y,
+          fromX: launchPoint?.x ?? u.x,
+          fromY: launchPoint?.y ?? u.y,
+          // Physical ranged skill shots already painted their own flight.
+          physicalProjectile: !!launchPoint,
           color: pet.color,
           shape: def.shape,
           radius: def.radius || 0,

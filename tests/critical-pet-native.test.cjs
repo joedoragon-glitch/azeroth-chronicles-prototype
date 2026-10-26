@@ -105,6 +105,10 @@ for (const family of families) {
       if (b.g.s.projectiles.length) {
         const shot = b.g.s.projectiles[0], base = a.g.s.projectiles[0];
         assert.equal(shot.criticalExecution?.key, key, key + ' source-tagged projectile');
+        if (slot !== 'basic') {
+          assert.equal(shot.launchX, b.unit.x, key + ' retains physical shot origin X');
+          assert.equal(shot.launchY, b.unit.y, key + ' retains physical shot origin Y');
+        }
         assert.equal(shot.criticalExecution?.intensity, level);
         assert(Object.isFrozen(shot.criticalExecution), key + ' immutable release decision');
         close(shot.damage, base.damage * (lever === 'damage' ?
@@ -115,6 +119,14 @@ for (const family of families) {
       assert.equal(counter.count(), 1, key + ' projectile contact does not re-roll');
       inspect(a, b, lever, level, key);
       if (slot !== 'basic') {
+        const impact = b.g.effects.find(
+          (e) => e.type === 'petSkill' && e.stage === 'impact' && e.source === b.unit.id,
+        );
+        if (b.g.petDefinition(b.unit).role === 'ranged' &&
+            b.g.petSkillDefinition(b.unit, Number(slot)).shape === 'target') {
+          assert(impact, key + ' physical skill has a real contact cue');
+          assert.equal(impact.physicalProjectile, true, key + ' avoids duplicate beam');
+        }
         const def = b.g.petSkillDefinition(b.unit, Number(slot));
         if (def.shape !== 'target') {
           if (lever === 'damage')

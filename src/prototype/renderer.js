@@ -1493,7 +1493,7 @@
         ctx.save();
         ctx.globalAlpha = a;
         if (f.type === 'petSkill') {
-          if (f.stage !== 'release') drawPetSkillGeometry(f);
+          if (f.stage !== 'release' && !f.physicalProjectile) drawPetSkillGeometry(f);
           PrototypeEnemyVfxArt?.petSkill?.(ctx, screen, f, { reduced: reducedMotion(), optimized });
         } else if (f.type === 'ability') {
           PrototypeCombatVisuals.ability(ctx, screen, f);
