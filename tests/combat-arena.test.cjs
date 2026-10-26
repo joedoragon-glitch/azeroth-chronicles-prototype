@@ -196,7 +196,7 @@ for (const classId of ['paladin', 'mage', 'ranger']) {
   assert.ok(moving.hero.x < combatEdge - 200,
     classId + ' can disengage from the arena wall during an active fight');
   moving.arenaSelectStage('hub');
-  const upper = moving.zoneSize() - 40 - moving.actorRadius(moving.hero);
+  const upper = moving.zoneSize() - 40 - Math.max(15, moving.actorRadius(moving.hero));
   moving.hero.x = upper;
   moving.hero.y = 900;
   moving.tick(0.04, { x: 1, y: 0 });
