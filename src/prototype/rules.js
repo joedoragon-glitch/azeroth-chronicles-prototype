@@ -6806,9 +6806,10 @@
     mountedMovementMultiplier: 1.3,
     enemySpecialReachMultiplier: 1.2,
     enemyTargetingMultiplier: 1.1,
-    // One coherent melee basic reach for ordinary, guardian and elite foes,
-    // plus Soldiers and melee pets. Ranged basics and authored skills are separate.
-    meleeBasicRange: 90,
+    // Ordinary melee outside Greenwood and Soldier sword basics keep 65.
+    // Ringleader/captain/boss melee basics get the separate 90-unit floor.
+    // Greenwood ordinary pure melee is governed by valeMeleeCounter below.
+    meleeBasicRange: 65,
     eliteMeleeBasicRange: 90,
     enemyAcquisitionRange: 260,
     fortifications: {
@@ -7716,13 +7717,13 @@
     // No authored boss/captain/ringleader attacks or other regions are changed.
     valeMeleeCounter: Object.freeze({
       enabled: true,
-      // Vale ordinary melee uses the same 90-unit basic reach as other melee.
-      meleeBasicRange: 90,
+      // Native Greenwood pure melee/guardians match Paladin autoattack reach.
+      meleeBasicRange: 120,
       buildupSeconds: 0.35,
       cooldownSeconds: 4.5,
-      // Counter a Paladin stalling between the new 90-unit melee reach
-      // and their unchanged 120-unit automatic-basic reach.
-      minDistance: 100,
+      // Intercept is for spacing outside the native 120-unit basic hit,
+      // rather than replacing ordinary melee inside Paladin reach.
+      minDistance: 155,
       // Wider than a Ranger charged shot, but still encounter/leash bound.
       maxDistance: 610,
       warningSeconds: 0.65,
