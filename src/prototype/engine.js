@@ -35,28 +35,8 @@
   const enemyLeaderHealRecovery = new WeakMap();
   // Per-enemy chase observations are transient: no save migration, RNG or idle scans.
   const valeMeleeChase = new WeakMap();
-  // Greenwood-only combat trial. Keep this out of global rules/artwork hashes
-  // until the director accepts and generalizes the mechanic.
-  const valeMeleeCounter = Object.freeze({
-    enabled: true,
-    buildupSeconds: 0.35,
-    cooldownSeconds: 4.5,
-    minDistance: 155,
-    maxDistance: 480,
-    warningSeconds: 0.65,
-    predictionSeconds: 1.15,
-    maxLeadDistance: 285,
-    travelSpeed: 1100,
-    travelSeconds: 0.75,
-    arrivalTolerance: 48,
-    impactRadius: 94,
-    damageMultiplier: 0.8,
-    slowSeconds: 0.8,
-  });
-
-  // A healing captain can restore its own HP every ten recovered seconds
-  // independently of its seven-second support spell. Never serialized.
-  const captainSelfHealRecovery = new WeakMap();
+  // Regionally gated pilot balance is authored once in canonical rules.
+  const valeMeleeCounter = R.valeMeleeCounter;
   const archiveRepairSites = [
     { x: 1130, y: 560 },
     { x: 790, y: 430 },
