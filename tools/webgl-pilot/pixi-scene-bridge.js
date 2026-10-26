@@ -139,21 +139,22 @@
    // each sprite; a 2D overlay would incorrectly draw them over actors.
    function groundGraphic(graphic,ground) {
      const {rx,ry,marker}=ground;
+     const zoom=ground.scale||1;
      graphic.clear();
      if(marker) {
        const important=!!marker.important;
        const hex=marker.color;
        const color=Number.parseInt(hex.slice(1,7),16);
        const alpha=Number.parseInt(hex.slice(7,9),16)/255;
-       graphic.ellipse(0,9,important?28:21,important?11:8)
-         .stroke({color,alpha,width:important?2:1});
+       graphic.ellipse(0,9*zoom,(important?28:21)*zoom,(important?11:8)*zoom)
+         .stroke({color,alpha,width:(important?2:1)*zoom});
        if(important)
-         graphic.ellipse(0,9,34,14)
-           .stroke({color:0xf3e2bb,alpha:0x44/255,width:important?2:1});
+         graphic.ellipse(0,9*zoom,34*zoom,14*zoom)
+           .stroke({color:0xf3e2bb,alpha:0x44/255,width:(important?2:1)*zoom});
      }
-     graphic.ellipse(4,13,rx*1.18,ry*1.35)
+     graphic.ellipse(4*zoom,13*zoom,rx*1.18*zoom,ry*1.35*zoom)
        .fill({color:0x05100c,alpha:0x38/255});
-     graphic.ellipse(1,11,rx,ry)
+     graphic.ellipse(1*zoom,11*zoom,rx*zoom,ry*zoom)
        .fill({color:0x020906,alpha:0x66/255});
    }
    // Each actor moves/animates as a GPU sprite. Canvas never paints a frame.
@@ -170,7 +171,8 @@
          item.width>0&&item.height>0,'Invalid actor geometry');
        if(item.ground) {
          const g=item.ground;
-         assert([g.x,g.y,g.rx,g.ry].every(Number.isFinite)&&g.rx>0&&g.ry>0,
+         assert([g.x,g.y,g.rx,g.ry,g.scale||1].every(Number.isFinite)&&
+           g.rx>0&&g.ry>0&&(g.scale===undefined||g.scale>0),
            'Canvas-matched GPU contact shadow geometry required');
          if(g.marker)assert(/^#[0-9a-f]{8}$/i.test(g.marker.color),
            'Canvas marker RGBA color required');
@@ -215,7 +217,8 @@
        if(item.ground) {
          if(!state.ground)state.ground=new PIXI.Graphics();
          const signature=JSON.stringify({
-           rx:item.ground.rx,ry:item.ground.ry,marker:item.ground.marker
+           rx:item.ground.rx,ry:item.ground.ry,
+           scale:item.ground.scale,marker:item.ground.marker
          });
          if(state.groundSignature!==signature) {
            groundGraphic(state.ground,item.ground);
