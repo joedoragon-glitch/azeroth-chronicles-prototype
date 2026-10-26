@@ -39,9 +39,6 @@
   const valeMeleeChase = new WeakMap();
   // Regionally gated pilot balance is authored once in canonical rules.
   const valeMeleeCounter = R.valeMeleeCounter;
-  // Preserve the existing captain self-healing timer; it is separate from
-  // the Vale pilot's chase observations and must survive this integration.
-  const captainSelfHealRecovery = new WeakMap();
   const archiveRepairSites = [
     { x: 1130, y: 560 },
     { x: 790, y: 430 },
