@@ -7180,6 +7180,15 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !firingLine)) {
+          // Older saves may carry the former seven-second pursuit readiness.
+          // Shorten that existing timer in place; do not add a second timer.
+          if (
+            target === this.hero &&
+            this.valePursuitBurstEligible(e) &&
+            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+          )
+            e.pursuitBurstReadyAt =
+              this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds;
           if (
             target === this.hero &&
             visible &&
