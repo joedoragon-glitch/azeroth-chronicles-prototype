@@ -1896,7 +1896,8 @@
         // visible, idle and outside nearby danger.
         canRecover: () => {
           if (!started || paused || menu || !focused || document.hidden ||
-              frameSkip.emergency || joy.x || joy.y ||
+              frameSkip.emergency || joy.x || joy.y || game.hero.order ||
+              game.hero.path?.length || game.s.projectiles?.length ||
               keys.left || keys.right || keys.up || keys.down) return false;
           return (game.zone()?.enemies || []).every((enemy) =>
             enemy.hp <= 0 || Math.hypot(enemy.x - game.hero.x, enemy.y - game.hero.y) > 420
