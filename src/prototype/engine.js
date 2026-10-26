@@ -33,6 +33,8 @@
   // Per-caster leader-heal cadence is independent of buffed ordinary casts.
   // Runtime-only WeakMap: no additional fields on saved enemy actors.
   const enemyLeaderHealRecovery = new WeakMap();
+  // The independent captain self-heal cooldown must survive this pilot.
+  const captainSelfHealRecovery = new WeakMap();
   // Per-enemy chase observations are transient: no save migration, RNG or idle scans.
   const valeMeleeChase = new WeakMap();
   // Regionally gated pilot balance is authored once in canonical rules.
