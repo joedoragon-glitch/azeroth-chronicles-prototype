@@ -557,8 +557,7 @@
       if (current.s.mode === 'arena') {
         scene.syncLamps([]);
         scene.syncMotes([], zoom);
-        scene.setAtmosphere({ region, darkness: 0, optimized: true, warmth: 0, phase: 'day' });
-        scene.setVignette({ darkness: 0, optimized: true });
+        scene.clearAtmosphere();
         return;
       }
       const phase = current.daylightPhase?.() || {};
@@ -719,7 +718,12 @@
             if (typeof child === 'object')
               Array.isArray(child) ? child.forEach(collect) : collect(child);
         }
-        collect(manifest.sprites);
+        if (game().s.mode === 'arena') {
+          // GPU arena is opt-in; even there, never preload the scenery collection.
+          // Enemy, hero, party, pet and specialist artwork stays available.
+          for (const [key, entry] of Object.entries(manifest.sprites))
+            if (!/^(?:prop|building|structure|terrain):/.test(key)) collect(entry);
+        } else collect(manifest.sprites);
         requireValue(urls.size > 0, 'Approved sprite manifest is empty');
         requireValue(urls.size <= 128, 'Unexpected sprite resource count');
         stage = 'sprite-preload';

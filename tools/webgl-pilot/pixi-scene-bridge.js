@@ -337,6 +337,17 @@
    // Screen-space pollen, fog motes and sparks share their presentation
    // recipe with the original Canvas atmosphere. One reusable GPU geometry
    // handles at most 18 deterministic circles, not an animated emitter.
+   function clearAtmosphere() {
+     // Arena has no environmental presentation: destroy/release retained
+     // gradients, grade geometry and vignette, while keeping combat effects.
+     if(grade){effectsStage.removeChild(grade);grade.destroy({children:true});grade=null;}
+     for(const fill of gradeGradients)fill.destroy?.();
+     gradeGradients=[];
+     atmosphereSignature=null;
+     if(vignette){effectsStage.removeChild(vignette);vignette.destroy();vignette=null;}
+     if(vignetteGradient){vignetteGradient.destroy?.();vignetteGradient=null;}
+     vignetteSignature=null;
+   }
    function syncMotes(list,zoom=1) {
      assert(Array.isArray(list)&&list.length<=18&&Number.isFinite(zoom)&&zoom>0,
        'Bounded Canvas atmosphere motes and camera zoom required');
@@ -431,7 +442,7 @@
    }
    return Object.freeze({
      setBackground,setSolidBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
-     syncActors,syncLamps,setAtmosphere,syncMotes,setVignette,
+     syncActors,syncLamps,setAtmosphere,clearAtmosphere,syncMotes,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }
