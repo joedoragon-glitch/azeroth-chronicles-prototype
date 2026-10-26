@@ -2658,25 +2658,29 @@
           );
       });
     }
-    // Compact hand sling: short twin leather cords converge at one wrist.
-    // A single stone seats in the small cradle, not in a big eyeball-shaped cup.
+    // Soft hand sling: the twin cords curve up to ONE loaded leather cup.
+    // Small waist shot pouch stays subsidiary to the character silhouette.
     function goblinSlingerEquipment(hide) {
-      // Small hip pouch, with spare stones just peeking beneath its flap.
-      line([[-11, -13], [-18, -11]], '#b3996d', 1.5);
-      softPoly([[-24, -10], [-16, -11], [-13, -6], [-15, 3],
-        [-21, 5], [-25, 1]], '#68513b', 1.5);
-      softPoly([[-23, -10], [-16, -11], [-15, -7],
-        [-24, -6]], '#ab8759', 0.85);
-      oval(-20, -8.5, 1.9, 1.4, '#aaa79b');
-      oval(-17, -8.7, 1.5, 1.25, '#8e9389');
-      line([[-22, -4], [-18, -3]], '#91704c', 0.9);
-      // Flexible strings, one pouch, no oversized fork or third dangling rod.
-      line([[15, -4], [22, -19]], '#bda174', 1.7);
-      line([[15, -4], [33, -18]], '#bda174', 1.7);
-      softPoly([[22, -19], [26, -16], [30, -16],
-        [33, -18], [31, -12], [25, -12]], '#74543c', 1.2);
-      oval(27.5, -16.1, 3, 2.3, '#9b9b8d');
-      line([[26, -17], [28, -17.5]], '#c8c3ae', 0.9);
+      line([[-10, -13], [-17, -8]], '#a58c66', 1.25);
+      softPoly([[-20, -7], [-14, -8], [-13, 0],
+        [-15, 2], [-20, 1]], '#65503c', 1.3);
+      softPoly([[-20, -7], [-14, -8], [-14, -5],
+        [-20, -4]], '#99815b', 0.7);
+      // One muted spare stone partly hidden beneath the leather flap.
+      oval(-18, -5.7, 1.2, 0.9, '#888c82');
+      // Curved leather cords: no three-stick/Y-frame or bow silhouette.
+      ctx.strokeStyle = '#c0a175';
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(15, -4);
+      ctx.quadraticCurveTo(17, -15, 22, -21);
+      ctx.moveTo(15, -4);
+      ctx.quadraticCurveTo(30, -10, 31, -20);
+      ctx.stroke();
+      softPoly([[21, -21], [24, -23], [28, -23],
+        [32, -21], [30, -17], [24, -18]], '#74543c', 1.1);
+      oval(26.6, -20.7, 2.6, 2, '#8e9487');
       grip(15, -4, hide);
     }
     function goblinBody(crown = false, ranged = !!e.ranged, friendly = false) {
