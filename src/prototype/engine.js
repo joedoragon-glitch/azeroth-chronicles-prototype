@@ -6777,16 +6777,23 @@
           !(e.tauntUntil > this.s.time)
         ) {
           const alert = this.enemyUnderFireAlert(e);
-          const attacker =
-            alert?.source === 'hero'
-              ? this.hero
-              : this.s.party.find((unit) => unit.id === alert?.source && unit.hp > 0);
-          if (
-            attacker?.hp > 0 &&
-            this.tacticalRogueLeashAllows(e, attacker, territory) &&
-            this.enemyRangedLine(e, attacker)
-          )
-            target = attacker;
+          if (alert?.source) {
+            const attacker =
+              alert.source === 'hero'
+                ? this.hero
+                : this.s.party.find((unit) => unit.id === alert.source && unit.hp > 0);
+            if (
+              attacker?.hp > 0 &&
+              this.tacticalRogueLeashAllows(e, attacker, territory) &&
+              this.enemyRangedLine(e, attacker) &&
+              (this.isDungeon() ||
+                dist(attacker, {
+                  x: D.towns[this.regionIndex()][0],
+                  y: D.towns[this.regionIndex()][1],
+                }) >= 160)
+            )
+              target = attacker;
+          }
         }
         if (
           !this.tacticalRogueLeashAllows(e, target, territory) ||
