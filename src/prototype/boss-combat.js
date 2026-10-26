@@ -5,7 +5,9 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const originalRogueMove = Campaign.prototype.tacticalResolveRogueMove;
     const mobility = new WeakMap(),
-      returns = new WeakMap();
+      returns = new WeakMap(),
+      // Hybrid ranged defense never changes saved actor fields or Rogue cadence.
+      hybridSpacing = new WeakMap();
     class BossCombat {
       fieldBossOpenDirections(point) {
         const cfg = R.fieldBossMobility;
@@ -1116,6 +1118,64 @@
         if (dist(before, e) > 0.1) {
           this._hawkBackpedalAt ||= new WeakMap();
           this._hawkBackpedalAt.set(e, this.s.time);
+        }
+        return true;
+      }
+      // A hybrid keeps ranged defensive footwork AND a genuine melee stance.
+      // Backstep briefly during melee basic recovery; never cancel a ready
+      // strike, a committed aim/cast, or a Rogue regroup. A bounded, native
+      // move preserves terrain collisions and the ordinary encounter leash.
+      enemyHybridBackstep(e, target, dt, territory) {
+        if (
+          !e?.hybrid || !this.enemyRanged(e) || !e.aggro ||
+          e.hp <= 0 || e.neutral || e.returning || this.peace ||
+          !target || target.hp <= 0 ||
+          e.telegraph || e.motion || e.rangedAim ||
+          this.tacticalRogueRegroup(e) || this.hawkRetreatLocked(e, 'backpedal')
+        ) return false;
+        const key = target === this.hero ? 'hero' : target.id,
+          now = this.s.time,
+          gap = dist(e, target),
+          switchRange = e.form === 'ringleader'
+            ? R.rangedEnemyCombat.ringleaderHybridMeleeRange : 65;
+        let state = hybridSpacing.get(e);
+        if (state?.targetId !== key) state = null;
+        if (!(state?.remaining > 0)) {
+          // Only during recovery and close pressure. A hybrid whose melee
+          // basic is ready should commit, not perpetually refuse engagement.
+          if (e.cd <= 0 || gap > switchRange ||
+              (state?.readyAt || 0) > now) return false;
+          state = {
+            targetId: key,
+            remaining: R.rangedEnemyCombat.hybridBackstepSeconds,
+            readyAt: now + R.rangedEnemyCombat.hybridBackstepCooldown,
+          };
+          hybridSpacing.set(e, state);
+        }
+        const away = {
+          x: e.x + ((e.x - target.x) / Math.max(1, gap)) * 75,
+          y: e.y + ((e.y - target.y) / Math.max(1, gap)) * 75,
+        };
+        if (dist(away, e.home || e) >= territory - 24 ||
+            !this.clearSegment(e, away, 12)) {
+          state.remaining = 0;
+          return false;
+        }
+        const before = { x: e.x, y: e.y },
+          moved = this.move(
+            e, away,
+            R.rangedEnemyCombat.retreatSpeed *
+              this.mountedMovementFactor(e) *
+              (e.form === 'ringleader'
+                ? R.rangedEnemyCombat.ringleaderRetreatMultiplier : 1) *
+              (e.slow > 0 ? 0.5 : 1) *
+              this.nightTempo(),
+            dt,
+          );
+        state.remaining = Math.max(0, state.remaining - dt);
+        if (!moved || dist(before, e) <= 0.1) {
+          state.remaining = 0;
+          return false;
         }
         return true;
       }
