@@ -26,9 +26,9 @@ promise updates will preserve incompatible future save-format changes.
    Paladin, Mage or Ranger; subsequent visits resume the separate diagnostic
    save. The usual New Game and Save menus do not reveal this option on the
    ordinary URL.
-2. Arrive in a safe, enemy-free, 2000×2000 flat arena with the ordinary
+2. Arrive in a safe, enemy-free, 2400×2400 flat arena with the ordinary
    class-specific starting Basic Attack (skill 1); skills 2–8 remain locked.
-   Every appropriate instructor is present at the hub and teaches their original
+   A dashed, corner-marked border identifies the actual walkable limit in Canvas and Pixi.\n   The entry, Arena Guide, one-level Trainer, and recovery form an open approach;\n   specialists occupy clearly spaced service rows. Every appropriate instructor is present at the hub and teaches their original
    skills and ranks for FREE, using normal training menus and progression rules.
    There is no automatic full skill unlock and no custom skill progression path.
    The hub's Level Trainer NPC grants exactly one level per interaction using
@@ -36,7 +36,7 @@ promise updates will preserve incompatible future save-format changes.
    selection or multi-level boosting menu exists.
 3. Speak to the Arena Guide (or use the Combat Arena adventure menu) to select
    any region and enemy group. Ordinary packs lead to guardian/captain stages and native on-demand night encounters
-   and a separate arena for each existing boss. The final Dark Lord stage has
+   and a separate arena for each existing boss. Monster starts and scripted\n   displacements remain within the marked arena perimeter. The final Dark Lord stage has
    only its boss. Teleport to the hub without stage unlocking.
 4. Free recovery and the one-level Trainer NPC are near the spawn.
    The menu can create up to four completed,
