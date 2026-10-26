@@ -7246,6 +7246,10 @@
           opportunity = this.enemyBackpedal(e, target, dt, territory);
           if (opportunity) this.enemyWithdrawalAction(e, target, scriptedBossTarget);
         }
+        // Hybrids inherit ranged spacing during melee recovery while keeping
+        // their melee pursuit, healing, ranged attacks and Rogue decisions.
+        if (!opportunity && e.hybrid && visible)
+          opportunity = this.enemyHybridBackstep(e, target, dt, territory);
         if (!opportunity && d <= range && e.cd <= 0 && firingLine) {
           this.enemyStartBasic(e, target, ranged);
           opportunity = true;
