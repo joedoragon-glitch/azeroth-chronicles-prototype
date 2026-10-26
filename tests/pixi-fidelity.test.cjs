@@ -38,6 +38,7 @@ const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
 const inits=[],draws=[],resizes=[],frames=[],resources=new Set(), approvedTextures=new Map();
+let holdWarmFrames=false, deferredWarmFrame=null;
 let currentActorTextures = new Set(), destroyedProcedural = 0,
   lastApplicationCanvas = null, rejectWebGLContext = false, failSceneDraw = false;
 function canvas() {
@@ -131,6 +132,10 @@ const manifest={sprites:{hero:{src:'./assets/sprites/test.png'}}};
 const pixiSource=fs.readFileSync(path.join(__dirname,'../src/prototype/pixi-experimental.js'),'utf8');
 vm.runInNewContext(pixiSource,{
   window:runtime,document:mockDocument,
+  requestAnimationFrame:(done)=>{
+    if(holdWarmFrames)deferredWarmFrame=done;
+    else done();
+  },
   fetch:async()=>({ok:true,json:async()=>manifest})
 }, {filename:'pixi-experimental.js'});
 const canvasSurface={width:1368,height:630,parentNode:{insertBefore(){}}};
@@ -142,9 +147,22 @@ const gpuOptions={
   },
   getRendererOptions:()=>({}),getOptimizationMode:()=>false,onFailure:()=>{}
 };
+// One offscreen procedural actor represents the first unseen scenery while
+// stepping west from Millhaven. It must be cached before the Pixi trial opens.
+game.props=[{
+  id:'cold-west-fringe',x:game.hero.x-580,y:game.hero.y,
+  structure:'lumber-pile'
+}];
 const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
 (async()=>{
   assert.equal(await gpu.prepare(),true,'retina Pixi scene must prepare');
+  assert.equal(gpu.status().neighborhoodPrepared,1,
+    'near-west fringe is prepared while simulation remains frozen');
+  assert.equal(gpu.status().proceduralTextures,1,
+    'offscreen procedural image is cached without drawing it in the live scene');
+  assert(gpu.status().neighborhoodWarmupMs>=0);
+  assert.equal(frames[0].length,1,'prewarming must not add offscreen actors to the world');
+  game.props=[];
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
   assert.equal(draws[0].width,1352,'CSS-space terrain dimensions stay unchanged');
   assert.equal(draws[0].height,860);
@@ -240,6 +258,27 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(tinyGpu.status().proceduralTextures,2,
     'zone switching must preserve only the freshly visible scene');
   tinyGpu.release();
+  // If iOS backgrounds the PWA during the short two-per-frame warmup,
+  // the removed GPU scene may never be rebuilt by a stale async callback.
+  resources.clear();currentActorTextures.clear();
+  game.zoneId='vale';
+  game.props=[
+    {id:'fringe-a',x:game.hero.x-580,y:game.hero.y,structure:'lumber-pile'},
+    {id:'fringe-b',x:game.hero.x-600,y:game.hero.y,structure:'lumber-pile'},
+  ];
+  holdWarmFrames=true;
+  const interruptedGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  const pendingWarm=interruptedGpu.prepare();
+  for(let j=0;j<30 && !deferredWarmFrame;j++)await Promise.resolve();
+  assert.equal(typeof deferredWarmFrame,'function',
+    'two nearby procedural bakes yield before a trial can be revealed');
+  interruptedGpu.release();
+  const resumeFrame=deferredWarmFrame;
+  holdWarmFrames=false;deferredWarmFrame=null;
+  resumeFrame();
+  assert.equal(await pendingWarm,false,'released GPU rejects stale neighborhood preparation');
+  assert.equal(interruptedGpu.status().active,false);
+  game.props=[];
   const failures=[];
   const failedDrawGpu=runtime.PrototypePixiExperimental.create({
     ...gpuOptions,onFailure:(detail)=>failures.push(detail)
