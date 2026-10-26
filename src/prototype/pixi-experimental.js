@@ -347,6 +347,7 @@
         // Pixi draws it below each body at the same depth in world space.
         const ground = {
           x: point.x, y: point.y,
+          scale: zoom,
           ...canvasRenderer.groundPresentation(visual),
         };
         // Canvas repaints these identities as their actual in-world objects.
