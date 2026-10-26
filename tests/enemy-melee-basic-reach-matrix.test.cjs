@@ -22,10 +22,19 @@ function arena(attrs, gap, zone = 'frontier') {
   g.enter(zone);
   const z = g.zone();
   for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) z[key] = [];
-  const start = { x: 1400, y: 1500 };
+  // Use real world collision, but never assume one fixed wilderness tile
+  // is clear after map or scenery changes. Admit a 150-unit corridor first.
+  let start = null;
+  for (let y = 600; y <= 2600 && !start; y += 170) {
+    for (let x = 600; x <= 2600 && !start; x += 170) {
+      const a = { x, y }, b = { x: x + 150, y };
+      if (!g.blocked(a.x, a.y) && !g.blocked(b.x, b.y) &&
+          g.line(a, b) && g.clearSegment(a, b, 15))
+        start = a;
+    }
+  }
+  assert(start, 'fixture requires a clear native world corridor');
   const target = { x: start.x + gap, y: start.y };
-  assert(!g.blocked(start.x, start.y) && !g.blocked(target.x, target.y) &&
-    g.clearSegment(start, target), 'fixture requires a clear native world corridor');
   const e = g.makeEnemy({
     species: 'goblin', name: 'Melee reach audit', level: 5,
     hp: 20000, damage: 30, gold: 0, xp: 0,
