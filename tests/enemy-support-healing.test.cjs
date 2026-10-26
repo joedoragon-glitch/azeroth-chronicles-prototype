@@ -127,7 +127,10 @@ for (const species of [
     assert(hybrid.hp > selfStart, kind + ' simultaneous effects restore health');
     g.advanceHybridSelfHeal(hybrid, 2);
     g.advanceEnemySupportHeal(hybrid, 2);
-    near(hybrid.hp, max, kind + ' combined effects never exceed max HP');
+    // The live campaign may normalize maxHp after the healer joins the
+    // encounter. Compare against the actual recipient cap, not its stale
+    // pre-support snapshot.
+    near(hybrid.hp, hybrid.maxHp, kind + ' combined effects reach but never exceed current max HP');
     assert(!hybrid.hybridSelfHeal && !hybrid.supportHeal, kind + ' both completed effects cleanly expire');
     assert(hybrid.hybridSelfHealCd > 0, kind + ' self-heal reuse remains enforced');
   }
