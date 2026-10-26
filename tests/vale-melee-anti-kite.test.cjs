@@ -5,15 +5,16 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const cfg = Campaign.valeMeleeCounter;
 assert.equal(cfg.cooldownSeconds, 4.5);
-assert.equal(cfg.meleeBasicRange, 90, 'Greenwood ordinary melee basic remains below Paladin autoattack');
+assert.equal(cfg.meleeBasicRange, 120, 'Greenwood ordinary melee matches Paladin autoattack');
 assert(cfg.enabled && cfg.warningSeconds > 0 && cfg.travelSpeed > 175);
-assert.equal(cfg.meleeBasicRange, 90, 'native Greenwood regular melee has the 90-unit basic floor');
-assert.equal(Campaign.rules.balance.meleeBasicRange, 90,
-  'ordinary, guardian, elite, Soldier and melee pet basics share the floor');
+assert.equal(cfg.meleeBasicRange, 120, 'native Greenwood regular melee has 120-unit basic reach');
+assert.equal(Campaign.rules.balance.meleeBasicRange, 65, 'other ordinary basic melee remains 65');
+assert.equal(Campaign.rules.balance.eliteMeleeBasicRange, 90,
+  'bosses, captains and ringleaders receive the 90-unit floor');
 assert.equal(Campaign.rules.rangedEnemyCombat.ringleaderHybridMeleeRange, 120,
   'ringleader hybrid close-range transition matches Paladin basic reach');
-assert(cfg.minDistance > 90 && cfg.minDistance <= 110,
-  'interception can challenge a Paladin spacing at 100–120 units');
+assert(cfg.minDistance > 120 && cfg.minDistance <= 175,
+  'interception targets kiting beyond the native 120-unit hit range');
 assert(cfg.maxDistance >= 600 && cfg.maxLeadDistance >= 325,
   'ranged heroes cannot exploit the prior 480-unit interception ceiling');
 
@@ -67,9 +68,8 @@ for (const [species, guard] of [
 ]) {
   const { c, e } = scene('vale', species, guard);
   assert(c.valeMeleeCounterEligible(e), species + ' melee guard=' + guard);
-  assert.equal(c.enemyMeleeBasicRange(e), 90,
-    'ordinary and guardian melee share the 90-unit basic reach');
-  assert.equal(c.enemyMeleeBasicRange(e), 90, 'native melee and guardians share the new basic reach');
+  assert.equal(c.enemyMeleeBasicRange(e), 120,
+    'ordinary Greenwood melee and guardians share Paladin basic reach');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'one tick cannot instantly intercept');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'buildup is real');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'not yet at threshold');
@@ -114,8 +114,10 @@ for (const [species, guard] of [
     const original = { ...e };
     Object.assign(e, changes);
     assert(!c.valeMeleeCounterEligible(e), JSON.stringify(changes));
-    assert.equal(c.enemyMeleeBasicRange(e), 90,
-      'all tiers share the 90-unit basic reach without broadening pilot abilities');
+    const elite = e.type === 'boss' || e.captain || e.roomCaptain ||
+      e.fieldCaptain || e.form === 'ringleader';
+    assert.equal(c.enemyMeleeBasicRange(e), elite ? 90 : 65,
+      'excluded elites get 90; other excluded roles keep their native 65');
     // A temporarily introduced exclusion flag must not leak into later cases.
     for (const key of Object.keys(changes)) if (!(key in original)) delete e[key];
     Object.assign(e, original);
@@ -126,30 +128,30 @@ for (const [species, guard] of [
     'native Greenwood dungeon melee guardians share the regional pilot');
   const { c: elsewhere, e: outsider } = scene('march', 'mireling');
   assert(!elsewhere.valeMeleeCounterEligible(outsider), 'no other region');
-  assert.equal(elsewhere.enemyMeleeBasicRange(outsider), 90, 'global 90-unit basic reach applies in other regions too');
+  assert.equal(elsewhere.enemyMeleeBasicRange(outsider), 65, 'ordinary melee in other regions remains 65');
   c.s.phase = 'peace';
   assert(!c.valeMeleeCounterEligible(e), 'peace disables hostility');
 }
 
 {
-  // A Goblin can actually attack from Greenwood's new 90-unit basic
+  // A Goblin can actually attack from Greenwood's new 120-unit basic
   // footprint in the native combat tick, not merely report the tuning.
   const { c, e } = scene('vale', 'goblin');
   const baseline = { ...e };
   const distance = Math.hypot(c.hero.x - e.x, c.hero.y - e.y);
-  c.hero.x = e.x + (c.hero.x - e.x) / distance * 85;
-  c.hero.y = e.y + (c.hero.y - e.y) / distance * 85;
-  assert(c.line(e, c.hero), 'test corridor remains unobstructed at 85 units');
+  c.hero.x = e.x + (c.hero.x - e.x) / distance * 110;
+  c.hero.y = e.y + (c.hero.y - e.y) / distance * 110;
+  assert(c.line(e, c.hero), 'test corridor remains unobstructed at 110 units');
   e.cd = 0;
   c.updateEnemies(0.1);
-  assert(e.cd > 0, 'ordinary Goblin begins actual native melee basic within 90 range');
-  assert.equal(c.enemyMeleeBasicRange(e), 90);
+  assert(e.cd > 0, 'ordinary Goblin begins actual native melee basic within 120 range');
+  assert.equal(c.enemyMeleeBasicRange(e), 120);
   // Immediately out of basic reach, an uncommitted actor must pursue instead
-  // of landing an undocumented 105-unit sword strike.
+  // of landing an undocumented 135-unit sword strike.
   Object.assign(e, baseline);
-  c.hero.x = e.x + (c.hero.x - e.x) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 105;
-  c.hero.y = e.y + (c.hero.y - e.y) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 105;
-  assert.equal(c.enemyMeleeBasicRange(e), 90);
+  c.hero.x = e.x + (c.hero.x - e.x) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
+  c.hero.y = e.y + (c.hero.y - e.y) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
+  assert.equal(c.enemyMeleeBasicRange(e), 120);
 }
 
 {
@@ -202,26 +204,26 @@ for (const [species, guard] of [
   assert(!c.enemyBackpedal(e, c.hero, 0.1, 500),
     'inside 120 the hybrid keeps its melee commitment instead of fleeing');
   e.form = 'normal';
-  assert.equal(c.enemyHybridMeleeRange(e), 90,
-    'ordinary hybrid melee switch now matches the shared melee reach');
-  assert(c.valeMeleeCounterEligible(e),
-    'ordinary Greenwood hybrid gains melee interception while retaining ranged AI');
+  assert.equal(c.enemyHybridMeleeRange(e), 65,
+    'ordinary hybrid keeps its original close-range switch');
+  assert(!c.valeMeleeCounterEligible(e),
+    'ordinary hybrid retains both disciplines without the new pure-melee Vale ability');
   Object.assign(c.hero, startHero);
   c.move = baseMove; c.line = baseLine; c.clearSegment = baseSegment;
 }
 
 {
-  // A hybrid inherits both ranged defensive behavior and Greenwood's melee
-  // interception, but pure ranged actors cannot use the melee-special pilot.
+  // All hybrid roles retain ranged support and physical melee commitment,
+  // but the new warned Vale move remains restricted to ordinary pure melee.
   const { c, e } = scene();
   e.ranged = true;
   e.hybrid = true;
-  assert(c.valeMeleeCounterEligible(e), 'ordinary Vale hybrid inherits melee tactics');
+  assert(!c.valeMeleeCounterEligible(e), 'Vale hybrid is outside first pure-melee pilot');
   assert(c.enemyRanged(e), 'hybrid retains its ranged profile');
-  assert.equal(c.enemyHybridMeleeRange(e), 90);
-  assert(c.enemyBackpedalThreshold(e) > 90, 'hybrid ranged spacing survives');
-  for (let i = 0; i < 5 && !e.telegraph; i++) c.startValeMeleeCounter(e, c.hero, 0.1);
-  assert(e.telegraph?.valeMeleeCounter, 'hybrid can perform warned interception');
+  assert.equal(c.enemyHybridMeleeRange(e), 65);
+  assert(c.enemyBackpedalThreshold(e) > 65, 'hybrid ranged spacing survives');
+  for (let i = 0; i < 5; i++) assert(!c.startValeMeleeCounter(e, c.hero, 0.1));
+  assert(!e.telegraph?.valeMeleeCounter, 'hybrid cannot launch the Vale-only new ability');
   e.hybrid = false;
   assert(!c.valeMeleeCounterEligible(e), 'pure ranged actor cannot intercept');
 }
@@ -232,8 +234,9 @@ for (const [species, guard] of [
   c.hero.class = 'paladin';
   assert.equal(c.heroSkillRange(1, false), 120, 'Paladin basic retains its 120-unit reach');
   const soldier = c.unit('soldier', 250, 250);
-  assert.equal(c.companionCombatReach(soldier), 90, 'Soldier sword basic reaches 90');
-  assert.equal(c.companionCombatReach({ type: 'pet' }), 90, 'melee pet basic reaches 90');
+  assert.equal(c.companionCombatReach(soldier), 65, 'Soldier basic remains 65');
+  assert.equal(c.companionCombatReach({ type: 'pet' }), 65,
+    'generic pet descriptor uses 65 without a ranged-role definition');
 }
 
 {
