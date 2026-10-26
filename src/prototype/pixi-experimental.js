@@ -166,6 +166,7 @@
       baseGame = null,
       bakeZone = null,
       actorFrameNumber = 0,
+      contextEpoch = 0,
       proceduralEvictions = 0,
       proceduralCacheEvictions = 0;
     function noteFailure(type, stage, error) {
@@ -526,6 +527,10 @@
     }
     async function prepare() {
       if (disposed) throw Error('Experimental renderer disposed');
+      // A previous WebGL context can dispatch an asynchronous contextlost
+      // event after its Canvas fallback. Once a new attempt begins, signals
+      // from the old context must not take down the new confirmed session.
+      const thisEpoch = ++contextEpoch;
       // A second opt-in trial must release the previous GPU context and scene.
       if (app) disposeResources();
       let stage = 'library-load';
@@ -559,6 +564,7 @@
         worldCanvas.parentNode.insertBefore(app.canvas, worldCanvas);
         app.canvas.addEventListener('webglcontextlost', (event) => {
           event.preventDefault();
+          if (thisEpoch !== contextEpoch) return;
           active = false;
           options.onFailure(noteFailure('context-loss', 'webglcontextlost', 'WebGL context lost'));
         });
