@@ -90,7 +90,7 @@
   function candidateKeys(e, region = 0, rescued = false) {
     if (
       !e ||
-      ['workstation', 'mobile-captive', 'mobile-forge', 'scout-tracks'].includes(e.presentation) ||
+      ['workstation', 'mobile-captive', 'mobile-forge', 'scout-tracks', 'critical-codex'].includes(e.presentation) ||
       e.kind === 'patrol-report' ||
       e.sceneRole
     )
