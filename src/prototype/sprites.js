@@ -91,6 +91,7 @@
     if (
       !e ||
       ['workstation', 'mobile-captive', 'mobile-forge', 'scout-tracks', 'critical-codex'].includes(e.presentation) ||
+      e.kind === 'critical-codex' ||
       e.kind === 'patrol-report' ||
       e.sceneRole
     )
