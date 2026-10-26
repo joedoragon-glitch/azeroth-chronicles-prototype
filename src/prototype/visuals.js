@@ -2658,25 +2658,29 @@
           );
       });
     }
-    // Shared hostile equipment: a leather two-cord sling and spare stones.
+    // Soft hand sling: the twin cords curve up to ONE loaded leather cup.
+    // Small waist shot pouch stays subsidiary to the character silhouette.
     function goblinSlingerEquipment(hide) {
-      line([[-7, -18], [-19, -8]], '#c4ac7c', 2.1);
-      softPoly([[-24, -14], [-15, -14], [-13, -8], [-14, 2],
-        [-19, 5], [-25, 1]], '#735036', 2.2);
-      softPoly([[-24, -14], [-15, -14], [-14, -8], [-24, -8]], '#b08a5b', 1.1);
-      for (const [x, y] of [[-22, -11], [-18, -11], [-20, -7]])
-        oval(x, y, 1.75, 1.5, '#bdbaa9');
-      // Distinct diagonal cords and a stone-filled leather cradle: no bow/string.
-      line([[15, -4], [29, -29]], '#b99a67', 2.3);
-      line([[15, -4], [40, -22]], '#b99a67', 2.3);
-      shaped('#755438', () => {
-        ctx.moveTo(29, -29);
-        ctx.quadraticCurveTo(35, -33, 40, -22);
-        ctx.quadraticCurveTo(35, -19, 29, -29);
-      });
-      oval(35, -26, 4.2, 3.7, '#b4b1a1');
-      oval(33.5, -27.6, 1.5, 1, '#ddd6bb');
-      line([[15, -4], [10, 6]], '#806144', 1.5);
+      line([[-10, -13], [-17, -8]], '#a58c66', 1.25);
+      softPoly([[-20, -7], [-14, -8], [-13, 0],
+        [-15, 2], [-20, 1]], '#65503c', 1.3);
+      softPoly([[-20, -7], [-14, -8], [-14, -5],
+        [-20, -4]], '#99815b', 0.7);
+      // One muted spare stone partly hidden beneath the leather flap.
+      oval(-18, -5.7, 1.2, 0.9, '#888c82');
+      // Curved leather cords: no three-stick/Y-frame or bow silhouette.
+      ctx.strokeStyle = '#c0a175';
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(15, -4);
+      ctx.quadraticCurveTo(17, -15, 22, -21);
+      ctx.moveTo(15, -4);
+      ctx.quadraticCurveTo(30, -10, 31, -20);
+      ctx.stroke();
+      softPoly([[21, -21], [24, -23], [28, -23],
+        [32, -21], [30, -17], [24, -18]], '#74543c', 1.1);
+      oval(26.6, -20.7, 2.6, 2, '#8e9487');
       grip(15, -4, hide);
     }
     function goblinBody(crown = false, ranged = !!e.ranged, friendly = false) {

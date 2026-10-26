@@ -78,7 +78,7 @@
       "selectedRepresentation": "raster"
     },
     "enemy:goblin": {
-      "traits": "Retain accepted melee Goblin playful asymmetrical half-smile, small tooth and organic ears. Hostile ranged Slingers (including Ringleaders/Crown variants) retain the sly/plotting expression but carry a visible two-cord sling with a loaded stone plus a hip satchel of spare stones, never bow/quiver. Friendly companion Archer keeps bow/quiver; melee Goblins keep swords. Do not share the slinger equipment with those other roles.",
+      "traits": "Retain accepted melee Goblin playful asymmetrical half-smile, small tooth and organic ears. Hostile ranged Slingers (including Ringleaders/Crown variants) retain the sly/plotting expression and use a compact two-cord leather hand sling with a small dark stone cradle plus a muted hip satchel of spare stones. Avoid oversized diagonal sticks, face-like bright stones and large square bags; never bows or quivers. Friendly companion Archer keeps bow/quiver; melee Goblins keep swords. Do not share the slinger equipment with those other roles.",
       "decisionDocuments": ["docs/PROCEDURAL_CHARACTER_QUICKFIX_20261020.md", "docs/GOBLIN_SLINGER_ARROW_GEOMETRY_DEV194.md"],
       "handoffs": ["tools/sprites/design-handoffs/approved-art-raster-enemy-goblin.json", "tools/sprites/design-handoffs/approved-art-enemy-goblin.json"],
       "selectedRepresentation": "raster"

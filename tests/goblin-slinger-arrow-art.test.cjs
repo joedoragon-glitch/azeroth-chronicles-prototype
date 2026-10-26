@@ -8,7 +8,7 @@ const HeroArt=require('../src/prototype/hero-presentation.js');
 function recording(){
   const actions=[];
   const ctx=new Proxy({
-    canvas:{width:192,height:192},
+    canvas:{width:192,height:192},globalAlpha:1,
     measureText:t=>({width:String(t).length*6}),
     createLinearGradient:()=>({addColorStop(){}}),
     createRadialGradient:()=>({addColorStop(){}})
@@ -16,7 +16,7 @@ function recording(){
     get(obj,k){
       if(k in obj)return obj[k];
       return (...args)=>{
-        if(['stroke','fill','moveTo','lineTo','quadraticCurveTo','arc','ellipse'].includes(k))
+        if(['stroke','fill','moveTo','lineTo','quadraticCurveTo','arc','ellipse','translate','rotate'].includes(k))
           actions.push({op:k,args,stroke:obj.strokeStyle,fill:obj.fillStyle});
       };
     },
@@ -37,29 +37,63 @@ const slingers=[
   ['Crown',draw({renderKind:'enemy',type:'mob',species:'goblin',ranged:true,crownTroop:true})]
 ];
 for(const [name,acts] of slingers){
-  assert(stroke(acts,'#b99a67'),name+' requires visible two-cord sling');
-  assert(fill(acts,'#735036'),name+' requires spare-stone satchel');
-  assert(fill(acts,'#b4b1a1'),name+' must have a stone in the sling cup');
+  assert(stroke(acts,'#c0a175'),name+' requires visible two-cord sling');
+  const leatherCurves=acts.filter(op=>op.op==='quadraticCurveTo'&&op.stroke==='#c0a175');
+  assert.equal(leatherCurves.length,2,
+    name+' must use two soft cords attached to one cradle, not long rigid sticks');
+  assert(fill(acts,'#65503c'),name+' requires spare-stone satchel');
+  assert(fill(acts,'#8e9487'),name+' must have a stone in the sling cup');
   assert(!stroke(acts,'#ba9562'),name+' must not carry an archer bow');
 }
 const archer=draw({renderKind:'ally',type:'archer'});
 assert(stroke(archer,'#ba9562'),'friendly Archer keeps his bow');
-assert(!stroke(archer,'#b99a67'),'friendly Archer does not inherit hostile sling');
+assert(!stroke(archer,'#c0a175'),'friendly Archer does not inherit hostile sling');
 const melee=draw({renderKind:'enemy',type:'mob',species:'goblin',ranged:false});
-assert(!stroke(melee,'#b99a67'),'melee Goblin remains sword-equipped');
-assert(!fill(melee,'#735036'),'melee Goblin has no stone satchel');
+assert(!stroke(melee,'#c0a175'),'melee Goblin remains sword-equipped');
+assert(!fill(melee,'#65503c'),'melee Goblin has no stone satchel');
 
-// Once launched, Ranger Skill 1 should draw the SAME independent straight
-// shaft irrespective of where the caster moves later.
-const arrow={source:'hero',style:'arrow',x:230,y:180,dx:1,dy:0,
-  slot:1,charged:false,combo:2,delay:0};
+// Auto-attacks (all combo stages) and all three staggered normal Skill 1
+// shots must share one rigid projectile silhouette independent of caster.
 const screen=p=>({x:p.x,y:p.y});
-const a=recording(),b=recording();
-assert(HeroArt.projectile(a.ctx,screen,arrow,'ranger',false,{x:180,y:170,hp:10}));
-assert(HeroArt.projectile(b.ctx,screen,arrow,'ranger',false,{x:320,y:320,hp:10}));
-assert.deepEqual(a.actions,b.actions,'Skill 1 arrows do not chase a moving caster');
-assert(!a.actions.some(v=>v.op==='quadraticCurveTo'),
-  'Ranger Skill 1 shaft must not bend');
+function paintArrow(arrow,hero,reduced=false,cls='ranger'){
+  const {ctx,actions}=recording();
+  assert(HeroArt.projectile(ctx,screen,arrow,cls,reduced,hero));
+  return actions;
+}
+for(const kind of ['auto','skill']){
+  for(const n of [1,2,3]){
+    const arrow={source:'hero',style:'arrow',x:230,y:180,dx:0.8,dy:0.6,
+      slot:1,charged:false,combo:kind==='auto'?n:0,
+      rapid:kind==='skill',automaticBasic:kind==='auto',delay:0};
+    const a=paintArrow(arrow,{x:180,y:170,hp:10});
+    const b=paintArrow(arrow,{x:330,y:340,hp:10});
+    const reduced=paintArrow(arrow,{x:330,y:340,hp:10},true);
+    assert.deepEqual(a,b,kind+n+' shaft cannot follow a moving caster');
+    assert.deepEqual(b,reduced,kind+n+' rigid arrow does not use animated motion');
+    assert(!a.some(v=>v.op==='quadraticCurveTo'),kind+n+' no curved arrow');
+    assert(a.some(v=>v.op==='translate'&&v.args[0]===arrow.x&&v.args[1]===arrow.y),
+      kind+n+' shaft must sit at its real world-projected projectile position');
+    assert(a.some(v=>v.op==='fill'&&v.fill==='#c3c5b2'),
+      kind+n+' has a recognizable filled physical tip');
+    assert(a.some(v=>v.op==='stroke'&&v.stroke==='#57462f'),
+      kind+n+' has a single rigid contrasting shaft');
+  }
+}
+const delayed={source:'hero',style:'arrow',x:230,y:180,
+  dx:1,dy:0,slot:1,delay:0,rangerDelayedLaunch:true};
+assert.deepEqual(paintArrow(delayed,{x:180,y:170,hp:10}),[],
+  'scheduled arrow must not appear before its real subrelease');
+const charged={source:'hero',style:'arrow',x:230,y:180,
+  dx:1,dy:0,slot:1,delay:0,charged:true};
+assert(!paintArrow(charged,{x:330,y:340,hp:10}).some(a=>a.op==='quadraticCurveTo'),
+  'charged Ranger arrows also have rigid shafts');
+// The Mage's spell is deliberately exceptional and remains caster tethered.
+const mage={source:'hero',style:'beam',x:230,y:180,dx:1,dy:0,slot:1,
+  originX:160,originY:170,mageSkill1Homing:true,trailPoints:[{x:160,y:170}],
+  traveled:70,beamWidthScale:2,delay:0};
+const mageA=paintArrow(mage,{x:180,y:170,hp:10},false,'mage');
+const mageB=paintArrow(mage,{x:310,y:300,hp:10},false,'mage');
+assert.notDeepEqual(mageA,mageB,'Mage retains intentional caster tether');
 
 // Shared Canvas projectile owner draws companion basic and combo shafts.
 // Inspect only that arrow branch; other materials legitimately draw curves.

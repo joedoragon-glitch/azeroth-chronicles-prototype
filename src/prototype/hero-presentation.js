@@ -863,6 +863,54 @@
     ctx.restore();
     return true;
   }
+  // Physical Ranger arrows are rigid world-locked objects, not ribbons.
+  // Auto-attack combos and each delayed normal Skill 1 shaft share this art.
+  function rangerFlightArrow(ctx, q, angle, piercing = false, charged = false) {
+    ctx.save();
+    ctx.translate(q.x, q.y);
+    ctx.rotate(angle);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#57462f';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-21, 0);
+    ctx.lineTo(2, 0);
+    ctx.stroke();
+    ctx.strokeStyle = piercing ? '#e6edbe' : '#dacb9f';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(-21, -0.35);
+    ctx.lineTo(2, -0.35);
+    ctx.stroke();
+    ctx.fillStyle = piercing ? '#f2f4ce' : '#c3c5b2';
+    ctx.beginPath();
+    ctx.moveTo(9, 0);
+    ctx.lineTo(0, -3.3);
+    ctx.lineTo(1, 0);
+    ctx.lineTo(0, 3.3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = '#b4b8a4';
+    for (const side of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(-20, 0);
+      ctx.lineTo(-27, side * 3.1);
+      ctx.lineTo(-23, side * 0.55);
+      ctx.closePath();
+      ctx.fill();
+    }
+    if (charged) {
+      ctx.strokeStyle = '#c4dda4';
+      ctx.globalAlpha *= 0.55;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(3, -5);
+      ctx.lineTo(5, -3);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
   function projectile(ctx, screen, p, heroClass, reduced = false, caster = null) {
     if (p.source !== 'hero') return false;
     // Crossing the delay threshold does not release a staggered arrow until
@@ -877,24 +925,12 @@
     ctx.strokeStyle = def.colors[0];
     ctx.fillStyle = def.colors[1];
     ctx.lineWidth = p.charged ? 2.2 : 1.5;
-    if (heroClass === 'ranger') {
-      if ((p.charged || p.piercing || p.combo === 3) && !reduced) {
-        ctx.globalAlpha = 0.3;
-        line(
-          ctx,
-          {
-            x: q.x - Math.cos(angle) * (p.piercing ? 48 : 30),
-            y: q.y - Math.sin(angle) * (p.piercing ? 48 : 30),
-          },
-          q,
-        );
-        ctx.globalAlpha = 1;
-      }
+    if (heroClass === 'ranger' && p.style === 'arrow') {
+      // This is the actual renderer for ALL physical Ranger arrows; the
+      // generic renderer fallback never sees these basic/Skill 1 projectiles.
+      rangerFlightArrow(ctx, q, angle, !!p.piercing, !!p.charged);
+    } else if (heroClass === 'ranger') {
       arrow(ctx, tail, q, p.piercing ? 2.4 : 1.7);
-      if (p.charged) {
-        ctx.strokeStyle = '#b8d59d';
-        glyph(ctx, tail.x, tail.y, 'arrow', 3);
-      }
     } else if (p.style === 'beam') {
       const start = {
           x: p.originX ?? p.x,
