@@ -1031,6 +1031,21 @@
     Arrows: 'Flechas',
     Cooldown: 'Recuperación',
     'Codices of the Unforeseen': 'Códices de lo Imprevisto',
+    'Hero critical chance: ': 'Probabilidad crítica del héroe: ',
+    '. Codices studied: ': '. Códices estudiados: ',
+    ' Base Party and World chances: 10% each, independently sampled.':
+      ' Las probabilidades básicas del grupo y del mundo son del 10 % cada una y se calculan independientemente.',
+    ' Each volume adds ': ' Cada volumen aporta ',
+    ' to the hero, up to ': ' al héroe, hasta ',
+    ' total. Companions inherit a fraction through Shared Training.':
+      ' en total. Los compañeros heredan una parte mediante Entrenamiento compartido.',
+    '\\nLearned volumes: ': '\\nVolúmenes aprendidos: ',
+    'none yet': 'ninguno todavía',
+    'The Art of Misdirection': 'El arte del engaño',
+    'The Waterline Gambit': 'La táctica de la línea de agua',
+    'The Measured Blow': 'El golpe medido',
+    'The Feigned Opening': 'La apertura fingida',
+    'The Final Adjustment': 'El último ajuste',
     'Five practical books are hidden in occupied side interiors. Each book you actually study permanently improves your own critical chance by one percentage point. A critical execution enhances an authentic attack or effect; it never creates a hit that missed. The world has its own separate critical rules.':
       'Cinco libros prácticos se encuentran ocultos en interiores secundarios habitados. Cada libro estudiado aumenta de forma permanente en un punto porcentual tu probabilidad de crítico. Una ejecución crítica mejora un ataque o efecto real, pero nunca convierte en impacto un ataque fallido. El mundo aplica sus propias reglas independientes.',
     'Battle and protection': 'Combate y protección',
