@@ -187,6 +187,14 @@ for (const classId of ['paladin', 'mage', 'ranger']) {
       if (enemy.hp > 0) assert.equal(moving.blocked(enemy.x, enemy.y, 'arena', moving.actorRadius(enemy)), false,
         stage + ' enemy must remain inside the room');
   }
+  moving.arenaSelectStage('vale-ordinary');
+  for (let frame = 0; frame < 140; frame++) moving.tick(0.05, { x: 1, y: 0 });
+  const combatEdge = moving.hero.x;
+  assert.ok(combatEdge <= moving.zoneSize() - 40 - moving.actorRadius(moving.hero),
+    classId + ' stays inside the arena during a sustained active fight');
+  for (let frame = 0; frame < 25; frame++) moving.tick(0.05, { x: -1, y: 0 });
+  assert.ok(moving.hero.x < combatEdge - 200,
+    classId + ' can disengage from the arena wall during an active fight');
   moving.arenaSelectStage('hub');
   const upper = moving.zoneSize() - 40 - moving.actorRadius(moving.hero);
   moving.hero.x = upper;
