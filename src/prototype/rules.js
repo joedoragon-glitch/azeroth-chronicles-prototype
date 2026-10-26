@@ -1,6 +1,27 @@
 /* Explicit authored mechanics. Names and prose never determine gameplay behavior. */
 (function (root) {
   'use strict';
+  // MELEE BASIC REACH BALANCING — edit ONLY this table (or use the CLI).
+  // 'shared' changes all melee basics; null means a role inherits 'shared'.
+  // Explicit overrides let you balance a single role without shifting others.
+  // Does NOT affect hero basics, Archer/ranged-pet shots or authored skills.
+  const meleeReachTuning = Object.freeze({
+    shared: 90,
+    enemy: null,   // ordinary enemies and melee guardians
+    elite: null,   // Ringleaders, captains and bosses
+    soldier: null, // Soldier companion sword basics
+    pet: null,     // melee pets (all families)
+    ringleaderStanceBonus: 30, // hybrid switch stays 30 beyond elite hit reach
+  });
+  const meleeReach = Object.freeze({
+    enemy: meleeReachTuning.enemy ?? meleeReachTuning.shared,
+    elite: meleeReachTuning.elite ?? meleeReachTuning.shared,
+    soldier: meleeReachTuning.soldier ?? meleeReachTuning.shared,
+    pet: meleeReachTuning.pet ?? meleeReachTuning.shared,
+    ringleaderHybridStance:
+      (meleeReachTuning.elite ?? meleeReachTuning.shared) +
+      meleeReachTuning.ringleaderStanceBonus,
+  });
   const combatGeometry = {
     canisterHalfWidth: 6,
     chargeHalfWidth: 55,
@@ -6313,7 +6334,7 @@
     retreatFraction: 0.5,
     retreatSpeed: 165,
     ringleaderRetreatMultiplier: 1.2,
-    ringleaderHybridMeleeRange: 120,
+    ringleaderHybridMeleeRange: meleeReach.ringleaderHybridStance,
     // Hybrid defensive spacing only during melee recovery, never a permanent
     // ranged-only kite mode. Both values are seconds.
     hybridBackstepSeconds: 0.42,
@@ -6806,11 +6827,9 @@
     mountedMovementMultiplier: 1.3,
     enemySpecialReachMultiplier: 1.2,
     enemyTargetingMultiplier: 1.1,
-    // Ordinary melee monsters now have a 90-unit basic hit radius worldwide;
-    // elites retain a separately tunable 90-unit floor. Soldier basic melee
-    // remains 65 and melee pets remain 70, independent of hostile balancing.
-    meleeBasicRange: 90,
-    eliteMeleeBasicRange: 90,
+    // All ordinary and elite basic reach comes from meleeReachTuning.
+    meleeBasicRange: meleeReach.enemy,
+    eliteMeleeBasicRange: meleeReach.elite,
     enemyAcquisitionRange: 260,
     fortifications: {
       incomingMultiplier: 0.6,
@@ -6912,7 +6931,15 @@
       costs: [0, 0, 15, 10, 25, 40, 20, 45, 60],
       cooldowns: [0, 0.85, 3, 8, 14, 9, 4, 15, 24],
     },
-    pursuit: { burstSeconds: 1.2, burstMultiplier: 1.5, mercyStartRadius: 300 },
+    pursuit: {
+      burstSeconds: 1.2,
+      burstMultiplier: 1.5,
+      mercyStartRadius: 300,
+      // Greenwood ordinary melee reuses its EXISTING burst after a brief
+      // normal-speed interval (1.2s active + 0.5s recovery). No separate
+      // dash, warning, impact damage, Slow, or new cooldown ownership.
+      valeRecoverySeconds: 0.5,
+    },
     growth: { xpPerLevel: 120, hpPerLevel: 25 },
     barracks: { buildCost: 20, fullUpgradeCost: 100 },
     equipment: {
@@ -6928,6 +6955,9 @@
       petFirstCooldown: 8,
       petSecondCooldown: 12,
       petBasicInterval: 0.85,
+      // Basic attacks only; melee pets and Soldier can be overridden separately.
+      soldierMeleeBasicRange: meleeReach.soldier,
+      petMeleeBasicRange: meleeReach.pet,
       petFormation: {
         side: 130,
         sidePerRow: 35,
@@ -7542,6 +7572,8 @@
     ]),
   );
   const R = {
+    meleeReachTuning,
+    meleeReach,
     resourceMode,
     cooldownBalance,
     ashFeeding,
@@ -7710,35 +7742,6 @@
         restoreFraction: 0.4,
       },
     },
-    // Greenwood pilot: regular melee enemies and native guardians share a
-    // repeatable interception drill. Its martial foundation is Marshal Veyra's
-    // Crown academy (disciplined advance, target reading and committed strike);
-    // Thornfang, Lifebinder and the Vale captain also inform local tactics.
-    // No authored boss/captain/ringleader attacks or other regions are changed.
-    valeMeleeCounter: Object.freeze({
-      enabled: true,
-      // Greenwood ordinary melee uses 90 basic reach and a repeatable
-      // intercept to contest the Paladin's remaining 30-unit advantage.
-      meleeBasicRange: 90,
-      buildupSeconds: 0.35,
-      cooldownSeconds: 4.5,
-      // Intercept triggers outside the ordinary 90-unit melee basic hit
-      // and catches repeatable 100–120-unit Paladin spacing.
-      minDistance: 100,
-      // Wider than a Ranger charged shot, but still encounter/leash bound.
-      maxDistance: 610,
-      warningSeconds: 0.65,
-      // Predict roughly through warning plus travel; a straight retreat
-      // should be threatened, a lateral dodge should still defeat the mark.
-      predictionSeconds: 1.25,
-      maxLeadDistance: 350,
-      travelSpeed: 1400,
-      travelSeconds: 0.9,
-      arrivalTolerance: 48,
-      impactRadius: 100,
-      damageMultiplier: 0.8,
-      slowSeconds: 0.8,
-    }),
     fieldOnboarding: { spawnLevel: 2, withdrawClearance: 700 },
     thornPatrol: {
       // Start toward the southern crossing, away from the opening woodland.

@@ -35,10 +35,6 @@
   const enemyLeaderHealRecovery = new WeakMap();
   // The independent captain self-heal cooldown must survive this pilot.
   const captainSelfHealRecovery = new WeakMap();
-  // Per-enemy chase observations are transient: no save migration, RNG or idle scans.
-  const valeMeleeChase = new WeakMap();
-  // Regionally gated pilot balance is authored once in canonical rules.
-  const valeMeleeCounter = R.valeMeleeCounter;
   const archiveRepairSites = [
     { x: 1130, y: 560 },
     { x: 790, y: 430 },
@@ -6496,11 +6492,11 @@
       e.noProgress = 0;
       return true;
     }
-    // Regional pilot only: ordinary melee and melee guardians, including Vale
-    // interiors. No ringleaders, boss/captain actors, ranged roles or summons.
-    valeMeleeCounterEligible(e) {
+    // The Greenwood anti-kiting pilot now reuses native Pursuit Burst only:
+    // ordinary Goblin/Skeleton melee and hybrid guardians recover the same
+    // 1.5x/1.2s burst sooner; elites, ranged-only and other regions are unchanged.
+    valePursuitBurstEligible(e) {
       return (
-        valeMeleeCounter.enabled &&
         this.regionIndex() === 0 &&
         !this.peace &&
         !!e?.aggro &&
@@ -6512,25 +6508,20 @@
         !e.roomCaptain &&
         !e.fieldCaptain &&
         e.form !== 'ringleader' &&
-        // Native Vale ordinary species only; night invaders keep their own
-        // authored combat, even while physically inside Greenwood.
         ['goblin', 'skeleton'].includes(e.species) &&
         !e.nightOnly &&
-        // Ranged-only enemies stay out of the melee interception pilot.
-        // Ordinary true hybrids retain ranged AI and inherit melee counterplay.
         (!this.enemyRanged(e) || e.hybrid) &&
         !e.summon &&
         !e.rogueEmergencyReinforcement
       );
     }
 
-    // Universal 90-unit melee basics preserve longer native actor reach.
+    // Tuned ordinary/elite melee basics preserve longer native actor reach.
     // Hybrid switch threshold is a distinct stance decision.
     enemyMeleeBasicRange(e) {
-      const baseline = this.valeMeleeCounterEligible(e)
-        ? valeMeleeCounter.meleeBasicRange
-        : e?.type === 'boss' || e?.captain || e?.roomCaptain ||
-          e?.fieldCaptain || e?.form === 'ringleader'
+      const baseline =
+        e?.type === 'boss' || e?.captain || e?.roomCaptain ||
+        e?.fieldCaptain || e?.form === 'ringleader'
           ? R.balance.eliteMeleeBasicRange
           : R.balance.meleeBasicRange;
       return Math.max(baseline, e?.meleeBasicRange || 0);
@@ -6550,143 +6541,6 @@
       // A hybrid's ranged posture has a small defensible buffer outside its
       // melee switch, avoiding immediate melee/ranged oscillation.
       return e.hybrid ? Math.max(band, this.enemyHybridMeleeRange(e) + 40) : band;
-    }
-
-    // Distance pressure, not a fragile class-specific "kiting" classifier:
-    // stationary ranged attackers also deserve a counter from an engaged
-    // melee enemy. One ordinary chase interval is enough to teach the move.
-    startValeMeleeCounter(e, target, dt) {
-      if (!this.valeMeleeCounterEligible(e) || !target || target.hp <= 0) return false;
-      const cfg = valeMeleeCounter,
-        gap = dist(e, target),
-        targetId = target === this.hero ? 'hero' : target.id,
-        validGap = gap >= cfg.minDistance && gap <= cfg.maxDistance;
-      let observation = valeMeleeChase.get(e);
-      if (!observation || observation.targetId !== targetId) {
-        observation = { targetId, x: target.x, y: target.y, seconds: 0, vx: 0, vy: 0 };
-        valeMeleeChase.set(e, observation);
-      } else {
-        observation.vx = (target.x - observation.x) / Math.max(0.01, dt);
-        observation.vy = (target.y - observation.y) / Math.max(0.01, dt);
-        observation.x = target.x;
-        observation.y = target.y;
-      }
-      observation.seconds = validGap
-        ? Math.min(cfg.buildupSeconds, observation.seconds + dt)
-        : 0;
-      if (
-        !validGap ||
-        observation.seconds < cfg.buildupSeconds ||
-        e.specialCd > 0 ||
-        e.telegraph ||
-        e.motion ||
-        e.rangedAim ||
-        this.mageSilenceActive(e) ||
-        this.tacticalRogueRegroup(e) ||
-        !this.line(e, target)
-      )
-        return false;
-
-      // A warned, committed intercept: the destination never tracks the
-      // player after warning starts. A turn, obstruction or cover can defeat it.
-      const vx = observation.vx,
-        vy = observation.vy,
-        speed = Math.hypot(vx, vy),
-        away = (target.x - e.x) * vx + (target.y - e.y) * vy,
-        lead = speed > 25 && away > 0
-          ? Math.min(cfg.maxLeadDistance, speed * cfg.predictionSeconds)
-          : 0,
-        raw = {
-          x: target.x + (speed ? (vx / speed) * lead : 0),
-          y: target.y + (speed ? (vy / speed) * lead : 0),
-        },
-        // Keep the native ordinary-enemy home leash. This is not a hidden
-        // license to drag enemies into towns or across the entire region.
-        fromHome = dist(raw, e.home),
-        homeReach = 465,
-        landing = fromHome > homeReach
-          ? {
-              x: e.home.x + ((raw.x - e.home.x) * homeReach) / fromHome,
-              y: e.home.y + ((raw.y - e.home.y) * homeReach) / fromHome,
-            }
-          : raw;
-      if (dist(landing, e) < cfg.minDistance / 2) return false;
-      e.specialCd = cfg.cooldownSeconds;
-      e.telegraph = {
-        valeMeleeCounter: true,
-        kind: 'circle',
-        name: 'Vale Interception',
-        timer: cfg.warningSeconds,
-        recovery: 0.65,
-        x: landing.x,
-        y: landing.y,
-        radius: cfg.impactRadius,
-        targetId,
-      };
-      observation.seconds = 0;
-      e.noProgress = 0;
-      this.event('warning', { actor: e.id, species: e.species, technique: 'vale-interception' });
-      return true;
-    }
-
-    resolveValeMeleeCounter(e, warning) {
-      if (!this.valeMeleeCounterEligible(e)) return;
-      // The warning commits to a ground position, never the target's live
-      // position. Native move() owns obstacle avoidance and collision.
-      e.motion = {
-        valeMeleeCounter: true,
-        target: { x: warning.x, y: warning.y },
-        targetId: warning.targetId,
-        life: valeMeleeCounter.travelSeconds,
-      };
-    }
-
-    advanceValeMeleeCounter(e, dt) {
-      const motion = e.motion,
-        cfg = valeMeleeCounter;
-      if (!motion?.valeMeleeCounter) return;
-      if (!this.valeMeleeCounterEligible(e)) {
-        e.motion = null;
-        return;
-      }
-      motion.life -= dt;
-      const moved = this.move(e, motion.target, cfg.travelSpeed * (e.slow > 0 ? 0.5 : 1), dt),
-        arrived = dist(e, motion.target) <= cfg.arrivalTolerance;
-      e.noProgress = 0;
-      if (moved && !arrived && motion.life > 0) return;
-      e.motion = null;
-      e.cd = Math.max(e.cd, 0.65);
-      // No reward for a blocked, interrupted or mistimed leap. The follow-up
-      // is a single bounded strike, not free area damage or a second charge.
-      if (!arrived) return;
-      const victim = motion.targetId === 'hero'
-        ? this.hero
-        : this.combatTargets().find((u) => u.id === motion.targetId);
-      if (
-        !victim ||
-        victim.hp <= 0 ||
-        dist(victim, motion.target) > cfg.impactRadius ||
-        dist(victim, e) > cfg.impactRadius ||
-        !this.line(e, victim)
-      )
-        return;
-      const hero = this.hero,
-        zone = this.zoneId,
-        deaths = this.s.statistics.deaths,
-        landed = this.hitParty(
-          victim, this.weakenedEnemyDamage(e) * cfg.damageMultiplier, 0, e.id,
-        );
-      if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
-        return;
-      if (landed) {
-        const equipment = R.enemyMeleeEquipment(e);
-        this.event('melee', {
-          actor: 'enemy', source: e.id, species: e.species,
-          ...equipment, x: victim.x, y: victim.y,
-          target: victim === this.hero ? 'hero' : victim.id,
-        });
-        if (victim.hp > 0) this.applySlow(victim, cfg.slowSeconds);
-      }
     }
 
     updateEnemies(dt) {
@@ -6711,6 +6565,10 @@
           (u) => u.hp > 0 && u.hp < u.maxHp && !u.neutral && !u.returning,
         );
       for (const e of [...z.enemies]) {
+        // Safely retire in-flight Vale Interception from older v4 saves;
+        // never re-interpret its warning/motion as a boss attack or dash.
+        if (e.telegraph?.valeMeleeCounter) e.telegraph = null;
+        if (e.motion?.valeMeleeCounter) e.motion = null;
         const recovery = this.cooldownRecoveryElapsed(e, dt, true);
         // Read remaining Slow before consuming it, including the final partial
         // frame. Apply readiness debt once even on scripted/early-continue paths.
@@ -7129,10 +6987,7 @@
           this.startBossRecovery(e)
         )
           continue;
-        // An actual ranged-gap problem takes precedence over optional Rogue
-        // reconsideration. The two independent recovery clocks never replace
-        // each other; an active regroup still retains its own authority.
-        if (this.startValeMeleeCounter(e, target, dt)) continue;
+        // Native pursuit and existing Rogue tactics retain their own cadence.
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
           regroup = this.tacticalRogueRegroup(e),
@@ -7217,8 +7072,7 @@
             const hero = this.hero,
               zone = this.zoneId,
               deaths = this.s.statistics.deaths;
-            if (a.valeMeleeCounter) this.resolveValeMeleeCounter(e, a);
-            else this.resolveAttack(e);
+            this.resolveAttack(e);
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
             e.telegraph = e.motion ? null : this.advanceQueuedAttack(e);
@@ -7304,8 +7158,7 @@
           continue;
         }
         if (e.motion) {
-          if (e.motion.valeMeleeCounter) this.advanceValeMeleeCounter(e, dt);
-          else this.advanceMotion(e, dt);
+          this.advanceMotion(e, dt);
           e.noProgress = 0;
           continue;
         }
@@ -7364,18 +7217,32 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !firingLine)) {
+          // Older saves may carry the former seven-second pursuit readiness.
+          // Shorten that existing timer in place; do not add a second timer.
+          if (
+            target === this.hero &&
+            this.valePursuitBurstEligible(e) &&
+            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+          )
+            e.pursuitBurstReadyAt =
+              this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds;
           if (
             target === this.hero &&
             visible &&
             d > range &&
-            this.s.time >= (e.pursuitBurstReadyAt || 0)
+            this.s.time >= (e.pursuitBurstReadyAt || 0) &&
+            !(e.pursuitBurst > 0)
           ) {
-            // A persistent kiter should not exhaust the monster's only
-            // pursuit answer for the entire encounter. Use bounded timed
-            // renewals instead of permanent super-speed or larger leashes.
+            // This is the EXISTING Pursuit Burst, not another anti-kite skill.
+            // Greenwood ordinary melee can reuse it shortly after it ends;
+            // its multiplier, duration, collision and leash remain unchanged.
             e.pursuitBurst = pursuitBurstSeconds;
             e.pursuitBurstUsed = true;
-            e.pursuitBurstReadyAt = this.s.time + (e.type === 'boss' ? 5.5 : 7);
+            e.pursuitBurstReadyAt = this.s.time + (
+              this.valePursuitBurstEligible(e)
+                ? pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+                : e.type === 'boss' ? 5.5 : 7
+            );
           }
           this.follow(
             e,
@@ -7421,7 +7288,6 @@
           this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
         this.tacticalClearThreat(e);
         this.clearEnemyUnderFire(e);
-        valeMeleeChase.delete(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
         if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
@@ -8212,7 +8078,6 @@
       : require('./enemy-vfx-events.js');
   EnemyVfxEvents.install(Campaign);
   Campaign.rules = R;
-  Campaign.valeMeleeCounter = valeMeleeCounter;
   Campaign.data = D;
   Campaign.classes = classes;
   Campaign.talentProfiles = talentProfiles;

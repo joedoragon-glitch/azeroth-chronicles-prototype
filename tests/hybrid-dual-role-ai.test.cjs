@@ -4,8 +4,8 @@
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const R = Campaign.rules;
-assert.equal(R.balance.eliteMeleeBasicRange, 90);
-assert.equal(R.rangedEnemyCombat.ringleaderHybridMeleeRange, 120);
+assert.equal(R.balance.eliteMeleeBasicRange, R.meleeReach.elite);
+assert.equal(R.rangedEnemyCombat.ringleaderHybridMeleeRange, R.meleeReach.ringleaderHybridStance);
 assert.equal(R.rangedEnemyCombat.hybridBackstepCooldown, 5.5);
 assert(R.rangedEnemyCombat.hybridBackstepSeconds > 0);
 
@@ -20,7 +20,7 @@ function scene() {
     [1500, 2450], [2650, 2450], [1750, 2700],
   ]) {
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-      const a = { x, y }, b = { x: x + dx * 100, y: y + dy * 100 };
+      const a = { x, y }, b = { x: x + dx * Math.min(100, Math.max(20, R.meleeReach.ringleaderHybridStance - 5)), y: y + dy * Math.min(100, Math.max(20, R.meleeReach.ringleaderHybridStance - 5)) };
       const retreat = { x: x - dx * 125, y: y - dy * 125 };
       if (c.blocked(a.x, a.y, 'vale', 15) ||
           c.blocked(b.x, b.y, 'vale', 15) ||
@@ -58,9 +58,9 @@ function scene() {
   const { c, e } = scene();
   assert.equal(c.enemyHealProfile(e), 'Bonebind',
     'a melee-capable hybrid retains its native ranged team-healing role');
-  assert.equal(c.enemyMeleeBasicRange(e), 90,
-    'hybrid ringleaders retain the elite 90-unit melee basic reach');
-  assert(!c.valeMeleeCounterEligible(e),
+  assert.equal(c.enemyMeleeBasicRange(e), R.meleeReach.elite,
+    'hybrid ringleaders inherit the tuned elite melee basic reach');
+  assert(!c.valePursuitBurstEligible(e),
     'hybrid ringleaders must not inherit ordinary Greenwood interception');
   e.cd = 0;
   const x = e.x, y = e.y;
@@ -94,13 +94,13 @@ function toFinite(n) { return Number.isFinite(n) ? n : 0; }
 
 {
   // The same hybrid can re-engage at melee distance and can still shoot from
-  // beyond its 120-unit stance switch; the backstep is not a new permanent role.
+  // beyond its tuned stance switch; the backstep is not a new permanent role.
   const { c, e } = scene();
   const near = { x: c.hero.x, y: c.hero.y };
   e.cd = 0;
   e.specialCd = 100;
   c.updateEnemies(0.1);
-  assert(!e.rangedAim, 'inside 120 units, hybrid should choose close combat');
+  assert(!e.rangedAim, 'inside tuned melee stance, hybrid should choose close combat');
   c.hero.x = e.x + (near.x - e.x) * 3;
   c.hero.y = e.y + (near.y - e.y) * 3;
   e.cd = 0;
