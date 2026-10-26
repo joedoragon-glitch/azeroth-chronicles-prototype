@@ -46,6 +46,9 @@ for (const distance of [85, 95]) {
   assert.equal(enemy.hp < hp, distance <= 90, 'Soldier contact damage at ' + distance);
   const normal = scene('soldier', distance);
   const before = normal.enemy.hp;
+  // Directly exercise the normal owner with the transient tactical map that
+  // updateParty initializes before invoking companionFight in production.
+  normal.g._tacticalPartyTargets = new Map();
   normal.g.companionFight(normal.u, normal.enemy, [normal.u], 0);
   assert.equal(normal.enemy.hp < before, distance <= 90,
     'Soldier ordinary sword basic at ' + distance);
