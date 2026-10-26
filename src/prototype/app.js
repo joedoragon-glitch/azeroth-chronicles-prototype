@@ -2039,11 +2039,12 @@
     },
   };
   function resize() {
-    // Zoom only changes the live scene projection. Keep the validated GPU
-    // surface; its terrain refreshes when cameraZoom changes. Only a genuine
-    // viewport resize needs the conservative separate-Canvas fallback.
+    // Keep the 15-second *unconfirmed* trial conservative: resizing during
+    // the trial still safely reverts. A confirmed selection instead rebuilds
+    // viewport-sized Pixi scene layers on the next draw. This allows a
+    // backgrounded iPhone PWA to resume after normal viewport changes.
     if (
-      graphicsController?.status().mode === 'webgl2' &&
+      graphicsController?.status().phase === 'trial' &&
       (viewport.width !== innerWidth || viewport.height !== innerHeight)
     ) {
       const gpu = pixiGame.status();
