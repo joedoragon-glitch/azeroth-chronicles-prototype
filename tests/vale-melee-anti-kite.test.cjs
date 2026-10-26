@@ -9,7 +9,7 @@ assert.equal(cfg.meleeBasicRange, 90, 'Greenwood ordinary melee basic remains be
 assert(cfg.enabled && cfg.warningSeconds > 0 && cfg.travelSpeed > 175);
 assert.equal(cfg.meleeBasicRange, 90, 'native Greenwood regular melee has the 90-unit basic floor');
 assert.equal(Campaign.rules.balance.meleeBasicRange, 90,
-  'ordinary, guardian, elite, Soldier and melee pet basics share the floor');
+  'ordinary and elite hostile melee use the 90-unit floor; companions are independent');
 assert.equal(Campaign.rules.rangedEnemyCombat.ringleaderHybridMeleeRange, 120,
   'ringleader hybrid close-range transition matches Paladin basic reach');
 assert(cfg.minDistance > 90 && cfg.minDistance <= 110,
@@ -232,8 +232,8 @@ for (const [species, guard] of [
   c.hero.class = 'paladin';
   assert.equal(c.heroSkillRange(1, false), 120, 'Paladin basic retains its 120-unit reach');
   const soldier = c.unit('soldier', 250, 250);
-  assert.equal(c.companionCombatReach(soldier), 90, 'Soldier sword basic reaches 90');
-  assert.equal(c.companionCombatReach({ type: 'pet' }), 90, 'melee pet basic reaches 90');
+  assert.equal(c.companionCombatReach(soldier), 65, 'Soldier sword basic retains its 65-unit reach');
+  assert.equal(c.companionCombatReach({ type: 'pet' }), 70, 'melee pet basic retains its 70-unit reach');
 }
 
 {
