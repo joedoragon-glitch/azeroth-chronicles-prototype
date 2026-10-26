@@ -220,7 +220,9 @@
         }
         phase='confirmed';
         restoringConfirmed=false;recoveryPending=false;recoveryPaused=false;
-        recoveryAttempts=0;remove(storage,RECOVERY_HOLD_KEY);
+        // Keep the recovery count across brief successful restores: otherwise
+        // a flaky GPU can oscillate between Canvas and WebGL indefinitely.
+        remove(storage,RECOVERY_HOLD_KEY);
         announce('confirmed-webgl-restored');
         return true;
       }catch(error){
@@ -263,7 +265,10 @@
     // combat. A failed recovery receives at most one additional backoff.
     async function maybeRecover(){
       if(closed||hidden||!recoveryPending||recoveryPaused||phase!=='canvas'||
-         now()<recoveryDue||!canRecover())return false;
+         now()<recoveryDue)return false;
+      let safe=false;
+      try{safe=canRecover()===true;}catch(_){return false;}
+      if(!safe)return false;
       recoveryPending=false;
       recoveryAttempts++;
       announce('webgl-recovery-attempt');
