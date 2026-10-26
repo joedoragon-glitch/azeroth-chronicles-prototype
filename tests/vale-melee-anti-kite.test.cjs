@@ -8,6 +8,10 @@ assert.equal(cfg.cooldownSeconds, 4.5);
 assert.equal(cfg.meleeBasicRange, 120, 'Greenwood ordinary melee basic equals Paladin autoattack');
 assert(cfg.enabled && cfg.warningSeconds > 0 && cfg.travelSpeed > 175);
 assert.equal(cfg.meleeBasicRange, 120, 'native Greenwood regular melee reaches Paladin parity');
+assert.equal(Campaign.rules.balance.eliteMeleeBasicRange, 90,
+  'boss/captain/ringleader basic contact range has the requested floor');
+assert.equal(Campaign.rules.rangedEnemyCombat.ringleaderHybridMeleeRange, 120,
+  'ringleader hybrid close-range transition matches Paladin basic reach');
 assert(cfg.maxDistance >= 600 && cfg.maxLeadDistance >= 325,
   'ranged heroes cannot exploit the prior 480-unit interception ceiling');
 
@@ -61,9 +65,9 @@ for (const [species, guard] of [
 ]) {
   const { c, e } = scene('vale', species, guard);
   assert(c.valeMeleeCounterEligible(e), species + ' melee guard=' + guard);
-  assert.equal(c.valeMeleeBasicRange(e), 120,
+  assert.equal(c.enemyMeleeBasicRange(e), 120,
     'the same ordinary and guardian melee roles receive the improved basic reach');
-  assert.equal(c.valeMeleeBasicRange(e), 120, 'native melee and guardians share the new basic reach');
+  assert.equal(c.enemyMeleeBasicRange(e), 120, 'native melee and guardians share the new basic reach');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'one tick cannot instantly intercept');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'buildup is real');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'not yet at threshold');
@@ -108,9 +112,10 @@ for (const [species, guard] of [
     const original = { ...e };
     Object.assign(e, changes);
     assert(!c.valeMeleeCounterEligible(e), JSON.stringify(changes));
-    assert.equal(c.valeMeleeBasicRange(e), 65,
-      'excluded roles retain the original basic contact radius');
-    assert.equal(c.valeMeleeBasicRange(e), 65, 'excluded tiers keep their unchanged melee reach');
+    const elite = e.type === 'boss' || e.captain || e.roomCaptain ||
+      e.fieldCaptain || e.form === 'ringleader';
+    assert.equal(c.enemyMeleeBasicRange(e), elite ? 90 : 65,
+      'only elite melee basics receive the campaign-wide 90-unit floor');
     // A temporarily introduced exclusion flag must not leak into later cases.
     for (const key of Object.keys(changes)) if (!(key in original)) delete e[key];
     Object.assign(e, original);
@@ -121,7 +126,7 @@ for (const [species, guard] of [
     'native Greenwood dungeon melee guardians share the regional pilot');
   const { c: elsewhere, e: outsider } = scene('march', 'mireling');
   assert(!elsewhere.valeMeleeCounterEligible(outsider), 'no other region');
-  assert.equal(elsewhere.valeMeleeBasicRange(outsider), 65, 'regional scope protects other melee ranges');
+  assert.equal(elsewhere.enemyMeleeBasicRange(outsider), 65, 'regional scope protects other melee ranges');
   c.s.phase = 'peace';
   assert(!c.valeMeleeCounterEligible(e), 'peace disables hostility');
 }
@@ -138,13 +143,13 @@ for (const [species, guard] of [
   e.cd = 0;
   c.updateEnemies(0.1);
   assert(e.cd > 0, 'ordinary Goblin begins actual native melee basic within 120 range');
-  assert.equal(c.valeMeleeBasicRange(e), 120);
+  assert.equal(c.enemyMeleeBasicRange(e), 120);
   // Immediately out of basic reach, an uncommitted actor must pursue instead
   // of landing an undocumented 135-unit sword strike.
   Object.assign(e, baseline);
   c.hero.x = e.x + (c.hero.x - e.x) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
   c.hero.y = e.y + (c.hero.y - e.y) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
-  assert.equal(c.valeMeleeBasicRange(e), 120);
+  assert.equal(c.enemyMeleeBasicRange(e), 120);
 }
 
 {
