@@ -1137,7 +1137,7 @@
           now = this.s.time,
           gap = dist(e, target),
           switchRange = e.form === 'ringleader'
-            ? R.rangedEnemyCombat.ringleaderHybridMeleeRange : 65;
+            ? R.rangedEnemyCombat.ringleaderHybridMeleeRange : R.balance.meleeBasicRange;
         let state = hybridSpacing.get(e);
         if (state?.targetId !== key) state = null;
         if (!(state?.remaining > 0)) {

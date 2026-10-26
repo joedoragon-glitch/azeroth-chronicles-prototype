@@ -6809,7 +6809,7 @@
     // Ordinary melee outside Greenwood and Soldier sword basics keep 65.
     // Ringleader/captain/boss melee basics get the separate 90-unit floor.
     // Greenwood ordinary pure melee is governed by valeMeleeCounter below.
-    meleeBasicRange: 65,
+    meleeBasicRange: 90,
     eliteMeleeBasicRange: 90,
     enemyAcquisitionRange: 260,
     fortifications: {
@@ -7718,12 +7718,12 @@
     valeMeleeCounter: Object.freeze({
       enabled: true,
       // Native Greenwood pure melee/guardians match Paladin autoattack reach.
-      meleeBasicRange: 120,
+      meleeBasicRange: 90,
       buildupSeconds: 0.35,
       cooldownSeconds: 4.5,
       // Intercept is for spacing outside the native 120-unit basic hit,
       // rather than replacing ordinary melee inside Paladin reach.
-      minDistance: 155,
+      minDistance: 100,
       // Wider than a Ranger charged shot, but still encounter/leash bound.
       maxDistance: 610,
       warningSeconds: 0.65,

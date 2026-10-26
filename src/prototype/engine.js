@@ -6487,10 +6487,8 @@
       );
     }
 
-    // Native Greenwood pure melee mobs and guardians reach 120, matching
-    // Paladin basics. Bosses, captains and ringleaders get a 90-unit floor;
-    // all other ordinary melee roles keep their previous 65-unit basics.
-    // Individually authored longer contact ranges are never reduced.
+    // Universal 90-unit melee basics preserve longer native actor reach.
+    // Hybrid switch threshold is a distinct stance decision.
     enemyMeleeBasicRange(e) {
       const baseline = this.valeMeleeCounterEligible(e)
         ? valeMeleeCounter.meleeBasicRange
