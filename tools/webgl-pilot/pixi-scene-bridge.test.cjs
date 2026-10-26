@@ -22,12 +22,14 @@ function pixiFixture(){
   class Graphics {
     constructor(){
       this.position={x:0,y:0,set:(x,y)=>{this.position.x=x;this.position.y=y}};
-      this.blendMode='normal';this.circles=[];this.rects=[];
+      this.blendMode='normal';this.circles=[];this.rects=[];this.ellipses=[];this.strokes=[];this.fills=[];
     }
-    clear(){this.circles=[];this.rects=[];return this;}
+    clear(){this.circles=[];this.rects=[];this.ellipses=[];this.strokes=[];this.fills=[];return this;}
     circle(...args){this.circles.push(args);return this;}
     rect(...args){this.rects.push(args);return this;}
-    fill(g){this.fillStyle=g;calls.glows++;return this;}
+    ellipse(...args){this.ellipses.push(args);return this;}
+    stroke(g){this.strokes.push(g);return this;}
+    fill(g){this.fillStyle=g;this.fills.push(g);calls.glows++;return this;}
     destroy(){}
   }
   class FillGradient {
@@ -261,5 +263,51 @@ test('discarded procedural artwork unregisters after old scene actors are releas
   assert.equal(scene.hasTexture('procedural:vale'),false);
   assert.equal(scene.metrics().textureSources,0,'old GPU resources must not persist');
   assert.equal(scene.unregisterTexture('procedural:vale'),false,'double release is safe');
+  scene.destroy();
+});
+
+test('Canvas-matched hero shadows and ground markers sit below sprite and track movement',()=>{
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  scene.registerTexture('hero.png',picture());
+  const hero={...actor(),ground:{x:112,y:174,rx:18,ry:5.5,
+    marker:{color:'#f5d992bb',important:true}}};
+  scene.syncActors([hero]);
+  const nodes=app.stage.children[0].children[0].children;
+  assert.equal(nodes.length,2,'one reusable ground graphic and one sprite');
+  const [ground,sprite]=nodes;
+  assert.equal(sprite.texture.source.width,576);
+  assert.equal(ground.position.x,112);
+  assert.deepEqual(ground.ellipses[0],[0,9,28,11],
+    'first ground shape is the Canvas hero selection ring');
+  assert.deepEqual(ground.ellipses.at(-1),[1,11,18,5.5],
+    'dark contact ellipse uses original Canvas radii');
+  assert.equal(ground.strokes[0].color,0xf5d992);
+  assert.equal(ground.strokes[0].alpha,0xbb/255);
+  assert.equal(ground.fills.at(-1).alpha,0x66/255);
+  scene.syncActors([{...hero,x:88,ground:{...hero.ground,x:160,y:199}}]);
+  const moved=app.stage.children[0].children[0].children;
+  assert.equal(moved[0],ground,'reuse ground artwork without allocating per frame');
+  assert.equal(moved[1],sprite,'same approved actor sprite remains');
+  assert.equal(ground.position.x,160);
+  assert.equal(ground.position.y,199);
+  scene.syncActors([]);
+  assert.equal(app.stage.children[0].children[0].children.length,0);
+  scene.destroy();
+});
+test('shadows use Canvas prop sizes and share depth ordering with their actor',()=>{
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:912,height:420});
+  scene.registerTexture('hero.png',picture());
+  const prop={...actor('house',170,5),ground:{x:170,y:180,rx:31,ry:8,marker:null}};
+  const sheep={...actor('sheep',35,2),ground:{x:35,y:155,rx:18,ry:5.5,marker:null}};
+  scene.syncActors([prop,sheep]);
+  const nodes=app.stage.children[0].children[0].children;
+  assert.equal(nodes.length,4);
+  assert.deepEqual(nodes[0].ellipses.at(-1),[1,11,18,5.5]);
+  assert.deepEqual(nodes[2].ellipses.at(-1),[1,11,31,8]);
+  assert.equal(nodes[1].position.x,35);
+  assert.equal(nodes[3].position.x,170);
+  assert.equal(nodes[0].strokes.length,0,'props without rings get only contact shadows');
   scene.destroy();
 });
