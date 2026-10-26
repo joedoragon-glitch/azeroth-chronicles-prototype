@@ -8,7 +8,7 @@ const melee = Campaign.rules.meleeReach;
 
 assert.equal(pursuit.burstMultiplier, 1.5, 'the native speed formula must not change');
 assert.equal(pursuit.burstSeconds, 1.2, 'the native burst duration must not change');
-assert.equal(pursuit.valeRecoverySeconds, 0.5, 'brief native pursuit recovery');
+assert.equal(pursuit.valeRecoverySeconds, 2, '2s at normal pursuit speed between boosts');
 assert.equal(Campaign.rules.balance.meleeBasicRange, melee.enemy);
 assert.equal(Campaign.rules.rangedEnemyCombat.ringleaderHybridMeleeRange, melee.ringleaderHybridStance);
 assert.equal(typeof Campaign.prototype.startValeMeleeCounter, 'undefined',
@@ -81,8 +81,8 @@ for (const [species, guard] of [
   assert(e.pursuitBurstUsed);
   assert(Math.abs(Math.hypot(e.x - first.x, e.y - first.y) - 26.25) < 0.1,
     'native 175 units/s x 1.5 speed, no 1400-unit/s leap');
-  assert.equal(e.pursuitBurstReadyAt, c.s.time + 1.7,
-    '1.2-second burst plus 0.5-second recovery, not seven seconds');
+  assert(Math.abs(e.pursuitBurstReadyAt - (c.s.time + 3.2)) < 1e-7,
+    '1.2-second burst and 2-second recovery give 3.2s start-to-start cadence');
   assert(!e.telegraph, 'no ground target or warned interception');
   assert(!e.motion, 'no separate rush motion');
   assert.equal(c.hero.slow, 0, 'pursuit cannot apply Slow');
@@ -91,14 +91,18 @@ for (const [species, guard] of [
   // Sustain out-of-reach pressure in a bounded native corridor. Reposition
   // actors between ticks to isolate pursuit cadence; every tick still moves
   // the native enemy through Campaign.move() and the real collision system.
-  let normalSteps = 0, burstStarts = 1, lastBurst = e.pursuitBurst;
-  for (let i = 0; i < 32; i++) {
+  let normalSteps = 0, burstStarts = [c.s.time], lastBurst = e.pursuitBurst;
+  for (let i = 0; i < 85; i++) {
     Object.assign(e, { x: first.x, y: first.y });
     Object.assign(c.hero, { x: last.x, y: last.y });
     tick(c);
     if (e.pursuitBurst === pursuit.burstSeconds && lastBurst <= 0)
-      burstStarts++;
-    if (e.pursuitBurst <= 0) normalSteps++;
+      burstStarts.push(c.s.time);
+    if (e.pursuitBurst <= 0) {
+      normalSteps++;
+      assert(Math.abs(Math.hypot(e.x - first.x, e.y - first.y) - 17.5) < 0.1,
+        'ordinary recovery frames move at native 175 units/s, not burst speed');
+    }
     lastBurst = e.pursuitBurst;
     assert(!e.telegraph);
     assert(!e.motion);
@@ -107,10 +111,15 @@ for (const [species, guard] of [
     assert(Math.hypot(e.x - first.x, e.y - first.y) <= 26.25 + 0.1,
       'one tick is bounded by the native pursuit formula');
   }
-  assert(burstStarts >= 2, 'repeated kiting causes repeat burst within the same engagement');
-  assert(normalSteps >= 1, 'the brief ordinary-speed recovery is genuine');
-  assert(e.pursuitBurstReadyAt - c.s.time < 1.71,
-    'no old seven-second recharge can prevent repeat anti-kiting');
+  assert(burstStarts.length >= 3, 'sustained kiting renews the same native burst');
+  for (let i = 1; i < burstStarts.length; i++) {
+    const interval = burstStarts[i] - burstStarts[i - 1];
+    assert(interval >= 3.2 - 1e-6 && interval <= 3.301,
+      'boosts have a full 3.2-second cadence (allowing one frame of quantization)');
+  }
+  assert(normalSteps >= 30, 'long ordinary-speed recovery is visible and sustained');
+  assert(e.pursuitBurstReadyAt - c.s.time <= 3.21,
+    'no original seven-second renewal delay for eligible Greenwood melee');
 }
 
 {
@@ -159,14 +168,25 @@ for (const [species, guard] of [
 }
 
 {
+  // Ringleaders keep existing native seven-second cadence, not the pilot.
+  const { c, e } = scene();
+  e.form = 'ringleader';
+  tick(c);
+  assert(!c.valePursuitBurstEligible(e));
+  assert(e.pursuitBurstUsed, 'Ringleaders retain the ordinary native burst');
+  assert(Math.abs(e.pursuitBurstReadyAt - (c.s.time + 7)) < 1e-7,
+    'Ringleader recovery is unchanged by Greenwood pilot');
+}
+
+{
   // Live engagements loaded from the old seven-second scheduling contract
   // must promptly adopt the corrected cadence, not keep an obsolete delay.
   const { c, e } = scene();
   e.pursuitBurst = 0;
   e.pursuitBurstReadyAt = c.s.time + 7;
   tick(c);
-  assert(e.pursuitBurstReadyAt <= c.s.time + 1.7 + 1e-7,
-    'old-save long readiness is clamped to the native Vale pursuit cadence');
+  assert(e.pursuitBurstReadyAt <= c.s.time + 3.2 + 1e-7,
+    'old-save seven-second readiness is clamped to the updated Vale 3.2s cadence');
 }
 
 {
@@ -204,4 +224,4 @@ for (const [species, guard] of [
   assert.equal(c.companionCombatReach({ type: 'pet' }), melee.pet);
 }
 
-console.log('PASS native Greenwood anti-kiting: cadence, speed, no Slow/extra hit, exclusions, saves, and melee basics');
+console.log('PASS Greenwood anti-kiting: 2-second normal-speed recovery, 3.2-second repeat cycle, retained speed/duration, exclusions, save safety');
