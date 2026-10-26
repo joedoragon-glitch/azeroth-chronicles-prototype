@@ -6422,22 +6422,19 @@
         // authored combat, even while physically inside Greenwood.
         ['goblin', 'skeleton'].includes(e.species) &&
         !e.nightOnly &&
-        !this.enemyRanged(e) &&
-        !e.hybrid &&
+        // Genuine hybrids retain their ranged repertoire but can also
+        // execute the warned melee interception. Pure ranged stay excluded.
+        (!this.enemyRanged(e) || e.hybrid) &&
         !e.summon &&
         !e.rogueEmergencyReinforcement
       );
     }
 
-    // All three elite tiers get at least 90 basic melee reach. Greenwood
-    // ordinary melee and native guardians instead get 120 for this pilot.
-    // Ranged role switches, specials and other ordinary regions are unchanged.
+    // Every melee basic has the same 90-unit floor across all tiers.
+    // Do not reduce individual actors with a greater authored basic reach.
+    // Hybrid mode switching is independent of this attack footprint.
     enemyMeleeBasicRange(e) {
-      if (this.valeMeleeCounterEligible(e)) return valeMeleeCounter.meleeBasicRange;
-      return e.type === 'boss' ||
-        e.captain || e.roomCaptain || e.fieldCaptain || e.form === 'ringleader'
-        ? R.balance.eliteMeleeBasicRange
-        : 65;
+      return Math.max(R.balance.meleeBasicRange, e?.meleeBasicRange || 0);
     }
 
     // Hybrid actors retain both disciplines: native ranged healing/aim and
@@ -6447,7 +6444,7 @@
     enemyHybridMeleeRange(e) {
       return e.form === 'ringleader'
         ? R.rangedEnemyCombat.ringleaderHybridMeleeRange
-        : 65;
+        : R.balance.meleeBasicRange;
     }
     enemyBackpedalThreshold(e) {
       const band = this.enemyRangedRange(e) * R.rangedEnemyCombat.retreatFraction;
