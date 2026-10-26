@@ -4,12 +4,13 @@
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const pursuit = Campaign.rules.balance.pursuit;
+const melee = Campaign.rules.meleeReach;
 
 assert.equal(pursuit.burstMultiplier, 1.5, 'the native speed formula must not change');
 assert.equal(pursuit.burstSeconds, 1.2, 'the native burst duration must not change');
 assert.equal(pursuit.valeRecoverySeconds, 0.5, 'brief native pursuit recovery');
-assert.equal(Campaign.rules.balance.meleeBasicRange, 90);
-assert.equal(Campaign.rules.rangedEnemyCombat.ringleaderHybridMeleeRange, 120);
+assert.equal(Campaign.rules.balance.meleeBasicRange, melee.enemy);
+assert.equal(Campaign.rules.rangedEnemyCombat.ringleaderHybridMeleeRange, melee.ringleaderHybridStance);
 assert.equal(typeof Campaign.prototype.startValeMeleeCounter, 'undefined',
   'the old separate anti-kite cast was retired');
 assert.equal(typeof Campaign.prototype.advanceValeMeleeCounter, 'undefined');
@@ -73,7 +74,7 @@ for (const [species, guard] of [
 ]) {
   const { c, e, first, last } = scene('vale', species, guard);
   assert(c.valePursuitBurstEligible(e), 'native Greenwood melee/guardian is eligible');
-  assert.equal(c.enemyMeleeBasicRange(e), 90);
+  assert.equal(c.enemyMeleeBasicRange(e), melee.enemy);
   const hp = c.hero.hp;
   tick(c);
   assert.equal(e.pursuitBurst, 1.2, 'real combat tick activates the native burst');
@@ -146,7 +147,7 @@ for (const [species, guard] of [
   e.ranged = true;
   e.hybrid = true;
   assert(c.valePursuitBurstEligible(e), 'true melee/ranged hybrids share the pilot');
-  assert.equal(c.enemyHybridMeleeRange(e), 90, 'hybrid stance remains unchanged');
+  assert.equal(c.enemyHybridMeleeRange(e), melee.enemy, 'hybrid stance remains unchanged');
   e.form = 'ringleader';
   assert(!c.valePursuitBurstEligible(e), 'hybrid Ringleader is excluded');
   const { c: crypt, e: cryptGuardian } = scene('crypt', 'skeleton', true);
@@ -190,17 +191,17 @@ for (const [species, guard] of [
   // Ordinary melee contact is still the only native melee-damage path.
   const { c, e } = scene();
   const d = Math.hypot(c.hero.x-e.x, c.hero.y-e.y);
-  c.hero.x = e.x + (c.hero.x-e.x) / d * 85;
-  c.hero.y = e.y + (c.hero.y-e.y) / d * 85;
+  c.hero.x = e.x + (c.hero.x-e.x) / d * (melee.enemy - 5);
+  c.hero.y = e.y + (c.hero.y-e.y) / d * (melee.enemy - 5);
   assert(c.line(e, c.hero));
   e.cd = 0;
   tick(c);
-  assert(e.cd > 0, 'native melee basic executes inside 90-unit reach');
-  assert.equal(c.enemyMeleeBasicRange(e), 90);
+  assert(e.cd > 0, 'native melee basic executes inside tuned reach');
+  assert.equal(c.enemyMeleeBasicRange(e), melee.enemy);
   c.hero.class = 'paladin';
   assert.equal(c.heroSkillRange(1, false), 120);
-  assert.equal(c.companionCombatReach(c.unit('soldier', 250, 250)), 65);
-  assert.equal(c.companionCombatReach({ type: 'pet' }), 70);
+  assert.equal(c.companionCombatReach(c.unit('soldier', 250, 250)), melee.soldier);
+  assert.equal(c.companionCombatReach({ type: 'pet' }), melee.pet);
 }
 
 console.log('PASS native Greenwood anti-kiting: cadence, speed, no Slow/extra hit, exclusions, saves, and melee basics');
