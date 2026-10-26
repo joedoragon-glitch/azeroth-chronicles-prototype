@@ -228,7 +228,7 @@
       return R.sideDungeons?.find((r) => r.id === id);
     }
     zoneSize(id = this.s.zone) {
-      if (this.s.mode === 'arena' && id === 'arena') return 2000;
+      if (this.s.mode === 'arena' && id === 'arena') return 2400;
       const room = this.supplyRoom(id),
         side = this.sideDungeon(id);
       return room
@@ -4309,6 +4309,9 @@
       this.updateParty(dt);
       performanceMark?.('partyEnd');
       this.updateEnemies(dt);
+      // Scripted charges, pulls and teleports can bypass ordinary path collision.
+      // Keep every arena combatant inside the same marked, walkable perimeter.
+      if (this.s.mode === 'arena') this.arenaContainActors();
       performanceMark?.('enemyEnd');
       if (
         h !== this.hero ||
@@ -4320,6 +4323,7 @@
       this.separateActors(dt);
       this.advanceHeroSkillEffects(dt);
       this.updateProjectiles(dt);
+      if (this.s.mode === 'arena') this.arenaContainActors();
       if (
         h !== this.hero ||
         z !== this.zone() ||
