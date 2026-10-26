@@ -931,6 +931,9 @@
         (n) =>
           !n.internalSite &&
           !this.bundleCollected(n) &&
+          // Codices are one-time world pickups; previously earned volumes
+          // remain in the historical zone data without reappearing as loot.
+          (n.kind !== 'critical-codex' || !this.s.criticalCodices?.[n.sideCodex]) &&
           (n.kind !== 'keeper' || this.keeperAvailable()) &&
           (n.id !== 'cage-archive' || !this.s.rescued.archive) &&
           (n.id !== 'archive-restorer' || this.archiveRestorerAvailable()) &&
