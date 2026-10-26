@@ -1,10 +1,12 @@
 # Greenwood Vale — ordinary melee anti-kiting pilot (26 October 2026)
 
-Status: isolated experiment; no merge or deployment authorized. This is **the first stage only**. Broader ringleader, boss and captain designs remain proposals for later trials.
+Status: isolated release candidate; owner authorized audit, merge, and live testing on 26 October 2026. Merge is contingent on passing focused validation and production build. This is **the first stage only**. Broader ringleader, boss and captain designs remain proposals for later trials.
 
 ## Design intent
 
 Players can kite Thornfang and other melee enemies using repeated ranged damage without investing in talents or equipment. Their existing 1.2-second pursuit bursts do not themselves create a dodgable, dangerous positional decision. Their Rogue withdrawals and reinforcement behavior are distinct systems and must remain intact. This experiment gives the ordinary melee monsters of Greenwood Vale an actually repeatable opportunity to intercept a retreating hero or companion.
+
+**Crown doctrine and leadership:** Marshal Veyra, the Ash Sentinel, is the Crown's martial authority; the Citadel of Ashes serves as her academy. Her Sentinel Advance, Ash Lanes, and Guard Pivot establish disciplined advance, prediction of movement and control of retreat lanes. Ordinary fighters can inherit that *principle* without copying her high-level powers. Thornfang's Dynamic Entry and Tripwire contribute pursuit and positional threat; Lifebinder's fixed danger geometry contributes space control; the Vale captain contributes disruptive battlefield technique. This is a shared fighting discipline, not a species-locked spell or proof that each individual monster was personally trained by Veyra.
 
 Creatures can learn tactics from the region's leaders rather than receive stereotypes based entirely on species. The pilot combines a field-scout interception resembling Thornfang's Dynamic Entry with a restrained melee follow-up reminiscent of the Vale's boss/captain threat patterns. The move is named **Vale Interception** for this pilot. Its identity is shared by Goblins and Skeletons, including melee guardian variants in the Forest Crypt or other Greenwood instances. No new equipment, projectiles, boss summons, animations or healing systems are necessary.
 
@@ -34,4 +36,4 @@ Creatures can learn tactics from the region's leaders rather than receive stereo
 3. Human-playtest a low-equipment Ranger or Mage in Greenwood, with level-matched normal Goblins and Skeletons and their melee guardians. Record response frequency per minute, hit rate, dodges, enemy resets and hero survival. Compare against current production.
 4. Only after this pilot's acceptance consider a separate melee/ranged Ringleader stage, then a Greenwood captain and Thornfang/Lifebinder stage. Those must build on their authored rotations, not replace or randomly duplicate them.
 
-This branch must remain unmerged/unpublished pending review.
+Owner authorized integration for live testing, but any merge/publication still requires green CI and the focused Pages publication workflow. Live Ranger/Mage acceptance remains a separate observation, not something the automated checks can certify.
