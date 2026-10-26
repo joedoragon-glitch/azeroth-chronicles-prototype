@@ -142,9 +142,28 @@ const gpuOptions={
   },
   getRendererOptions:()=>({}),getOptimizationMode:()=>false,onFailure:()=>{}
 };
+// The westward Millhaven route reveals previously unseen procedural props.
+// Warm one just outside the current viewport before the player can run there.
+const upcoming={id:'western-approach',x:game.hero.x-650,y:game.hero.y,
+  structure:'lumber-pile'};
+game.props=[upcoming];
 const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
 (async()=>{
   assert.equal(await gpu.prepare(),true,'retina Pixi scene must prepare');
+  assert.equal(gpu.status().warmupBakes,1,
+    'switch preparation should bake the immediately adjacent western approach');
+  assert.equal(gpu.status().coldFrameBakes,0,
+    'initial hero/canonical sprite should not need procedural baking');
+  assert(gpu.status().proceduralBytes>0 &&
+    gpu.status().proceduralBytes<gpu.status().proceduralTrimAt,
+    'nearby art is retained strictly below the original soft watermark');
+  upcoming.x=game.hero.x-40;
+  gpu.activate();
+  gpu.draw();
+  assert.equal(gpu.status().coldFrameBakes,0,
+    'moving the same cold prop into view must reuse its prewarmed texture');
+  // Remove the test-only western prop before the existing independent checks.
+  game.props=[];
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
   assert.equal(draws[0].width,1352,'CSS-space terrain dimensions stay unchanged');
   assert.equal(draws[0].height,860);
