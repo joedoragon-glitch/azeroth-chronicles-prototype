@@ -19357,6 +19357,38 @@
     }
     ctx.restore();
   }
+  // One presentation contract for Canvas and the optional Pixi world.
+  // Screen-space positions deliberately follow the original Canvas artist's
+  // deterministic motion; there is no random emitter or save-game state.
+  function atmosphereMotes({
+    width, height, region = 0, darkness = 0,
+    dungeon = false, room = false, optimized = false, time = 0,
+  } = {}) {
+    if (optimized) return [];
+    const dayMotes = ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
+      nightMotes = ['#dcefa8', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
+      count = dungeon || room ? 8 : region === 3 || region === 4 ? 18 : 14,
+      fade = Math.max(0, Math.min(1, darkness)),
+      day = dayMotes[region] || dayMotes[0],
+      night = nightMotes[region] || nightMotes[0],
+      rgb = [1, 3, 5].map((i) =>
+        Math.round(parseInt(day.slice(i, i + 2), 16) * (1 - fade) +
+          parseInt(night.slice(i, i + 2), 16) * fade),
+      ),
+      alpha = 0.18 + 0.06 * fade;
+    return Array.from({ length: count }, (_, j) => {
+      const seed = (j + 1) * 91 + region * 137;
+      return {
+        x: ((seed * 37 + time * (region >= 3 ? 10 : 5)) % (width + 80)) - 40,
+        y: ((seed * 53 + Math.sin(time * 0.7 + j) * 22 +
+          time * (region === 3 ? 5 : 1.5)) % (height + 70)) - 35,
+        r: region >= 3 ? (j % 3 === 0 ? 1.8 : 1)
+          : region === 1 ? (j % 4 === 0 ? 2.5 : 1.2) : 1.15,
+        rgb, alpha,
+      };
+    });
+  }
+
   function atmosphere(ctx, canvas, region = 0, opts = {}) {
     const night = !!opts.night,
       peace = !!opts.peace,
@@ -19521,30 +19553,20 @@
       ctx.restore();
       return;
     }
-    // Atmospheric motes are screen-space and intentionally sparse: pollen, marsh mist, alpine dust, ash and Crown sparks.
-    const dayMotes = ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
-      nightMotes = ['#dcefa8', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
-      count = dungeon || room ? 8 : region === 3 || region === 4 ? 18 : 14;
-    const blend = (a, b) =>
-      [1, 3, 5].map((i) =>
-        Math.round(
-          parseInt(a.slice(i, i + 2), 16) * (1 - darkness) +
-            parseInt(b.slice(i, i + 2), 16) * darkness,
-        ),
-      );
-    ctx.globalAlpha = 0.18 + 0.06 * darkness;
-    ctx.fillStyle = `rgb(${blend(dayMotes[region] || dayMotes[0], nightMotes[region] || nightMotes[0]).join(',')})`;
-    for (let j = 0; j < count; j++) {
-      const seed = (j + 1) * 91 + region * 137,
-        x = ((seed * 37 + time * (region >= 3 ? 10 : 5)) % (canvas.width + 80)) - 40,
-        y =
-          ((seed * 53 + Math.sin(time * 0.7 + j) * 22 + time * (region === 3 ? 5 : 1.5)) %
-            (canvas.height + 70)) -
-          35,
-        r = region >= 3 ? (j % 3 === 0 ? 1.8 : 1) : region === 1 ? (j % 4 === 0 ? 2.5 : 1.2) : 1.15;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
+    // Atmospheric motes are shared with Pixi, so both art paths retain
+    // identical day/night palettes, movement, sizes, and region counts.
+    const motes = atmosphereMotes({
+      width: canvas.width, height: canvas.height, region, darkness,
+      dungeon, room, optimized: !!opts.optimized, time,
+    });
+    if (motes.length) {
+      ctx.globalAlpha = motes[0].alpha;
+      ctx.fillStyle = `rgb(${motes[0].rgb.join(',')})`;
+      for (const {x, y, r} of motes) {
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
     ctx.globalAlpha = 1;
     // Soft vignette gives the miniature scene depth and focuses attention toward play space.
@@ -19585,6 +19607,7 @@
     terrain,
     bridges,
     atmosphere,
+    atmosphereMotes,
     allyBodyKind,
     enemyBodyKind,
     barracksVisualState,
