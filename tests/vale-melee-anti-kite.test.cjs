@@ -101,6 +101,8 @@ for (const [species, guard] of [
     const original = { ...e };
     Object.assign(e, changes);
     assert(!c.valeMeleeCounterEligible(e), JSON.stringify(changes));
+    // A temporarily introduced exclusion flag must not leak into later cases.
+    for (const key of Object.keys(changes)) if (!(key in original)) delete e[key];
     Object.assign(e, original);
   }
   const { c: crypt, e: cryptGuardian } = scene('crypt', 'skeleton', true);
@@ -127,6 +129,24 @@ for (const [species, guard] of [
   }
   assert(observed, 'native engaged melee actor initiates a warned anti-kite cast');
   assert(e.specialCd > 0, 'native enemy tick starts the separate recovery clock');
+}
+
+{
+  // A victim who stays inside a reachable, marked landing must face actual
+  // health loss, so this cannot silently devolve into a cosmetic dash.
+  const { c, e } = scene();
+  e.damage = 100;
+  const delta = { x: c.hero.x - e.x, y: c.hero.y - e.y };
+  const magnitude = Math.hypot(delta.x, delta.y);
+  const marked = { x: e.x + delta.x / magnitude * 125,
+    y: e.y + delta.y / magnitude * 125 };
+  assert(c.clearSegment(e, marked, 15), 'positive-hit test uses unobstructed terrain');
+  Object.assign(c.hero, marked);
+  const before = c.hero.hp;
+  c.resolveValeMeleeCounter(e, { ...marked, targetId: 'hero', valeMeleeCounter: true });
+  for (let i = 0; i < 12 && e.motion; i++) c.advanceValeMeleeCounter(e, 0.075);
+  assert(!e.motion, 'committed leap terminates after reaching a reachable mark');
+  assert(c.hero.hp < before, 'an undodged, reachable interception must actually hit');
 }
 
 {
