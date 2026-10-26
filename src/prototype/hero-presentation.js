@@ -382,8 +382,9 @@
       amplitude = wide ? Math.max(3, Math.min(18, width * 0.55))
         : Math.max(2, Math.min(6, width * 0.65)),
       turns = Math.max(1, Math.min(3.25, total / (wide ? 145 : 125))),
-      samples = reduced ? 0 : optimized ? 10 : 18,
-      diamonds = reduced ? 0 : optimized ? (wide ? 2 : 1) : (wide ? 4 : 3);
+      // Preserve the recognized double helix and runes in Optimization Mode.
+      samples = reduced ? 0 : 18,
+      diamonds = reduced ? 0 : (wide ? 4 : 3);
     // Samples move monotonically along the REAL rendered path. This retains
     // the ordinary homing bend and the charged beam's wall-clipped head.
     let segment = 1;
@@ -451,7 +452,7 @@
     ctx.beginPath();
     ctx.arc(origin.x, origin.y, wide ? 12 : 8, 0, Math.PI * 2);
     ctx.stroke();
-    if (!optimized && !reduced) {
+    if (!reduced) {
       ctx.globalAlpha = 0.4;
       ctx.beginPath();
       ctx.arc(origin.x, origin.y, wide ? 17 : 12, -0.75, Math.PI + 0.75);
