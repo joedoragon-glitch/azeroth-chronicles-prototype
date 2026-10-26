@@ -17,8 +17,10 @@ for (const language of ['en', 'es']) {
     assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 45);
   e.get('menu-button').click();
   assert.equal(e.get('modal-actions').children.length, 6);
+  assert(e.get('modal-actions').children.some((b) =>
+    b.textContent.startsWith(t('Codices of the Unforeseen', 'Códices de lo Imprevisto'))),
+    'Codices entry remains visible in the selected language');
   for (const label of [
-    t('Codices of the Unforeseen', 'Códices de lo Imprevisto'),
     t('Character', 'Personaje'),
     t('Quest journal', 'Diario de misiones'),
     t('Game and settings', 'Juego y ajustes'),
