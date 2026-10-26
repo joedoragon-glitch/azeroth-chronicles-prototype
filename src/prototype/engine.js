@@ -7299,6 +7299,7 @@
           this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
         this.tacticalClearThreat(e);
         this.clearEnemyUnderFire(e);
+        valeMeleeChase.delete(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
         if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
