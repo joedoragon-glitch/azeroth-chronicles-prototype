@@ -91,6 +91,49 @@ for (const species of [
   near(ally.hp, before + budget, species + ' full heal');
   assert(!ally.supportHeal, species + ' effect completes');
 }
+
+{
+  const cfg = R.enemySupportHealing.hybridSelf;
+  assert.deepEqual(
+    [cfg.fraction, cfg.duration, cfg.cooldown],
+    [0.1, 3, 5],
+    'all hybrid variants recover 10% max HP over 3s with 5s reuse',
+  );
+  for (const kind of ['ordinary', 'guardian', 'ringleader']) {
+    const { g, mob } = fixture();
+    const healer = mob('goblin', { ranged: true, hp: 1000 });
+    const hybrid = mob('goblin', {
+      ranged: true,
+      hybrid: true,
+      guard: kind === 'guardian',
+      form: kind === 'ringleader' ? 'ringleader' : 'normal',
+      hp: 500,
+    });
+    const max = hybrid.maxHp;
+    assert(g.enemyHybridSelfHeal(hybrid), kind + ' can initiate its own heal');
+    assert.equal(hybrid.hybridSelfHealCd, 5, kind + ' independent self cooldown');
+    near(hybrid.hybridSelfHeal.remaining, max * 0.1, kind + ' 10% max-HP budget');
+    near(hybrid.hybridSelfHeal.seconds, 3, kind + ' 3s restoration duration');
+    assert(!hybrid.supportHeal, kind + ' self healing does not occupy allied heal slot');
+    const selfStart = hybrid.hp;
+    assert(g.enemySupportHeal(healer), kind + ' remains eligible for ranged allied healing while self-healing');
+    assert(hybrid.supportHeal, kind + ' receives an independent allied heal effect');
+    assert(hybrid.hybridSelfHeal, kind + ' does not lose the original self-heal effect');
+    near(hybrid.hybridSelfHealCd, 5, kind + ' incoming heal does not spend self-heal cooldown');
+    near(healer.supportHealCd, 7, kind + ' allied healer uses its own cooldown');
+    // Both effects advance through the existing combat resolver and cap at max HP.
+    g.advanceHybridSelfHeal(hybrid, 1);
+    g.advanceEnemySupportHeal(hybrid, 1);
+    assert(hybrid.hp > selfStart, kind + ' simultaneous effects restore health');
+    g.advanceHybridSelfHeal(hybrid, 2);
+    g.advanceEnemySupportHeal(hybrid, 2);
+    near(hybrid.hp, max, kind + ' combined effects never exceed max HP');
+    assert(!hybrid.hybridSelfHeal && !hybrid.supportHeal, kind + ' both completed effects cleanly expire');
+    assert(hybrid.hybridSelfHealCd > 0, kind + ' self-heal reuse remains enforced');
+  }
+}
+console.log('PASS hybrid ordinary/guardian/ringleader 10% self healing at 5s and independent incoming ranged healing');
+
 console.log('PASS twelve ranged species independently restore missing ordinary HP in three seconds');
 
 // Enemy support must ignore injured player actors even when they are closer
