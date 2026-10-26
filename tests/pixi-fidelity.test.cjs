@@ -146,6 +146,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().backdropWidth,2028);
   assert.equal(frames[0][0].width,180,'camera zoom applies without double DPI scaling');
   assert.equal(frames[0][0].ground.rx,18,'Pixi uses the same hero shadow footprint as Canvas');
+  assert.equal(frames[0][0].ground.scale,1.5,'contact shadow scales with physical camera zoom');
   assert.equal(frames[0][0].ground.marker.color,'#f5d992bb',
     'hero ground ring must have the original approved Canvas color');
   assert.equal(frames[0][0].ground.x,456,'shadow tracks camera projection, not sprite crop');
