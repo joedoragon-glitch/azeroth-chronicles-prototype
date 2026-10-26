@@ -102,10 +102,30 @@ for (const [species, guard] of [
     assert(!c.valeMeleeCounterEligible(e), JSON.stringify(changes));
     Object.assign(e, original);
   }
+  const { c: crypt, e: cryptGuardian } = scene('crypt', 'skeleton', true);
+  assert.equal(crypt.regionIndex(), 0, 'the Vale dungeon belongs to Greenwood');
+  assert(crypt.valeMeleeCounterEligible(cryptGuardian),
+    'native Greenwood dungeon melee guardians share the regional pilot');
   const { c: elsewhere, e: outsider } = scene('march', 'mireling');
   assert(!elsewhere.valeMeleeCounterEligible(outsider), 'no other region');
   c.s.phase = 'peace';
   assert(!c.valeMeleeCounterEligible(e), 'peace disables hostility');
+}
+
+{
+  // Verify real updateEnemies dispatch, beyond isolated helper calls.
+  const { c, e } = scene();
+  let observed = false;
+  for (let i = 0; i < 12; i++) {
+    c.s.time += 0.1;
+    c.updateEnemies(0.1);
+    if (e.telegraph?.valeMeleeCounter || e.motion?.valeMeleeCounter) {
+      observed = true;
+      break;
+    }
+  }
+  assert(observed, 'native engaged melee actor initiates a warned anti-kite cast');
+  assert(e.specialCd > 0, 'native enemy tick starts the separate recovery clock');
 }
 
 {
