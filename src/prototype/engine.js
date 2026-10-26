@@ -6479,10 +6479,9 @@
         // authored combat, even while physically inside Greenwood.
         ['goblin', 'skeleton'].includes(e.species) &&
         !e.nightOnly &&
-        // First pilot remains native pure-melee actors; hybrids retain both
-        // existing ranged and melee systems but not this new ordinary move.
-        !this.enemyRanged(e) &&
-        !e.hybrid &&
+        // Ranged-only enemies stay out of the melee interception pilot.
+        // Ordinary true hybrids retain ranged AI and inherit melee counterplay.
+        (!this.enemyRanged(e) || e.hybrid) &&
         !e.summon &&
         !e.rogueEmergencyReinforcement
       );
