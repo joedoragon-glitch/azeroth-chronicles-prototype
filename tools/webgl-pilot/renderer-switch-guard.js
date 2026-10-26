@@ -144,6 +144,8 @@
           remove(storage,PENDING_KEY);
           if(recoveryAttempts>=RECOVERY_BACKOFF_MS.length){
             recoveryPending=false;recoveryPaused=true;
+            // A subsequent reload must not start another automatic boot loop.
+            write(storage,RECOVERY_HOLD_KEY,'repeated-failures');
           }else{
             recoveryPending=true;recoveryPaused=false;
             recoveryDue=now()+RECOVERY_BACKOFF_MS[recoveryAttempts];
