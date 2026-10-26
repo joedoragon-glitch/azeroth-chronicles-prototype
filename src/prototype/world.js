@@ -2157,7 +2157,10 @@
           actors = [this.hero, ...this.s.party, ...this.zone().enemies];
         for (const actor of actors) {
           if (!Number.isFinite(actor.x) || !Number.isFinite(actor.y)) continue;
-          const radius = this.actorRadius(actor),
+          // Navigation.move() samples with a minimum 15px segment radius.
+          // Clamping a 14px hero only by actorRadius would leave its center
+          // one pixel outside that segment and trap *both* movement directions.
+          const radius = Math.max(15, this.actorRadius(actor)),
             low = 40 + radius, high = size - 40 - radius;
           actor.x = Math.max(low, Math.min(high, actor.x));
           actor.y = Math.max(low, Math.min(high, actor.y));
