@@ -2028,9 +2028,11 @@
         return stages;
       }
       arenaZone() {
-        const stage = this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
         const old = this.s.zones.arena;
-        if (old?.arenaStage === stage.id) return old;
+        // Extremely hot: zone() is used by every combat and draw step. Do not
+        // rebuild the catalog of stage objects when the actor roster is unchanged.
+        if (old?.arenaStage === this.s.arenaStage) return old;
+        const stage = this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
         const z = {
           id: 'arena', arenaStage: stage.id, enemies: [], props: [], npcs: [],
           buildings: [], nodes: [], packTimers: {}, clock: 0,
@@ -2125,6 +2127,7 @@
       arenaSelectStage(id) {
         if (this.s.mode !== 'arena' || !this.arenaStages().some((s) => s.id === id)) return false;
         this.s.arenaStage = id;
+        this.s.arenaRegion = this.arenaStages().find((s) => s.id === id).region;
         this.s.pending = {};
         this.s.projectiles = [];
         this.s.hazards = [];

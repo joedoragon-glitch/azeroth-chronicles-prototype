@@ -184,6 +184,7 @@
       this.s.party = [this.unit('soldier', 260, 390), this.unit('archer', 350, 380)];
       if (mode === 'arena') {
         this.s.arenaStage = 'hub';
+        this.s.arenaRegion = 0;
         this.s.rescued = Object.fromEntries(D.bosses.map((boss) => [boss.id, true]));
         this.s.expeditionRank = 4;
         this.hero.skills = Array(8).fill(1);
@@ -208,7 +209,7 @@
     }
     regionIndex(id = this.s.zone) {
       if (this.s.mode === 'arena' && id === 'arena')
-        return this.arenaStages().find((stage) => stage.id === this.s.arenaStage)?.region ?? 0;
+        return this.s.arenaRegion ?? 0;
       const boss = D.bosses.find((b) => b.id === id),
         room = R.supplyRooms.find((r) => r.id === id),
         side = R.sideDungeons?.find((r) => r.id === id);
