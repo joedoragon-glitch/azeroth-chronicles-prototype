@@ -6493,13 +6493,7 @@
     // ordinary enemies elsewhere retain their historical 65-unit reach.
     // Preserve any individually authored reach above those floors.
     enemyMeleeBasicRange(e) {
-      const basic = this.valeMeleeCounterEligible(e)
-        ? valeMeleeCounter.meleeBasicRange
-        : (e?.type === 'boss' || e?.captain || e?.roomCaptain ||
-            e?.fieldCaptain || e?.form === 'ringleader')
-          ? R.balance.eliteMeleeBasicRange
-          : 65;
-      return Math.max(basic, e?.meleeBasicRange || 0);
+      return Math.max(R.balance.meleeBasicRange, e?.meleeBasicRange || 0);
     }
 
     // Hybrid actors retain both disciplines: native ranged healing/aim and
@@ -6509,7 +6503,7 @@
     enemyHybridMeleeRange(e) {
       return e.form === 'ringleader'
         ? R.rangedEnemyCombat.ringleaderHybridMeleeRange
-        : 65;
+        : R.balance.meleeBasicRange;
     }
     enemyBackpedalThreshold(e) {
       const band = this.enemyRangedRange(e) * R.rangedEnemyCombat.retreatFraction;
