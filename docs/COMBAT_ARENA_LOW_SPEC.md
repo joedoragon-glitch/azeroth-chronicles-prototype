@@ -1,12 +1,31 @@
-# Combat Arena — low-spec combat playtest (draft)
+# Combat Diagnostics — unlisted low-spec combat playtest
 
-A fourth **New game** run choice starts an independent **Combat Arena** save. This is
-not a campaign map, difficulty setting or global graphics toggle. It exists to
-test the real game on low-end phones with almost no environment rendering.
+Combat Diagnostics uses the existing internal `arena` mode and independent v4
+save, but it is **not shown to ordinary players**. It is available through an
+unlisted link to the *same* live game: `?combatDiagnostics=1` (append to the
+regular game URL; keep the existing path, including any `/repo/` prefix).
+This query flag is a convenience gate, **not authentication**: anyone given
+or finding the link may use it. There is no server-side identity check.
+
+The URL must be bookmarked or reopened to access the mode. The existing PWA
+manifest still launches the ordinary game without the query, rather than
+activating diagnostics for every installed user. The diagnostic run stays
+in `azeroth-v4-arena`; ordinary save/profile modes remain unchanged.
+
+The link always uses the current deployed code, assets, engine, combat changes
+and service worker of the normal GitHub Pages/PWA application; it is not a
+separate standalone build. When a new version is published, the normal update
+notification/install-reload behavior applies on the playtest URL too.
+The tested hero level, learned skills, party and stage persist across updates
+subject to normal v4 save compatibility and explicit future migrations. Never
+promise updates will preserve incompatible future save-format changes.
 
 ## Player flow
 
-1. New game → Combat Arena → choose language and Paladin, Mage or Ranger.
+1. Open the unlisted `?combatDiagnostics=1` link → choose language and
+   Paladin, Mage or Ranger; subsequent visits resume the separate diagnostic
+   save. The usual New Game and Save menus do not reveal this option on the
+   ordinary URL.
 2. Arrive in a safe, enemy-free, 2000×2000 flat arena with the ordinary
    class-specific starting Basic Attack (skill 1); skills 2–8 remain locked.
    Every appropriate instructor is present at the hub and teaches their original
@@ -52,25 +71,19 @@ test the real game on low-end phones with almost no environment rendering.
 
 ## Future game releases / PWA compatibility
 
-Combat Arena is a first-class mode **inside the same GitHub Pages PWA**, not a
-standalone bundle or separate install. Every subsequent release uses the current
-shared Campaign AI, combat rules, hero skill definitions, sprite/audio manifests,
-regional species, named captains and boss definitions. The arena deliberately
-keeps no duplicate combat engine or independent version-pinned mechanics.
-Its ordinary/guardian/boss destinations are derived from the current content
-tables on each game launch; existing new-game and continue screens retain the
-mode and its own save slot.
+The arena uses the same GitHub Pages/PWA package as the main game, not a
+standalone bundle. Every future release runs current shared Campaign AI, combat
+rules, skills, sprite/audio assets, species and boss definitions. New encounters
+are discovered from the current data tables at launch; there is no version-locked
+second combat engine.
 
-The existing PWA build stamps a **release-commit-specific service worker cache**
-and the in-game Update available button installs a published release safely.
-The player must accept an available update/reload while online (or after the
-release has been downloaded); open offline sessions cannot automatically receive
-new code. The arena saves via the existing version-4 persistence path and uses
-all shared future save migrations. If an encounter ID is retired by an update,
-only the arena location is reset to the hub; hero level, taught skills and party
-remain. The selected stage region is re-derived from the current content tables.
-Future schema migrations must include arena in the common save validator and
-be covered by the arena update-compatibility regression.
+The normal service worker prepares a release-specific cache and offers
+**Update available**. The player must accept the update/reload while connected;
+offline sessions cannot obtain unpublished or undownloaded code. A retired
+encounter identifier safely resets the diagnostic location to the hub while
+preserving the character, instructor-learned skills, talents and party; current
+save migrations still apply. Future v4 schema changes must retain arena support
+and receive regression coverage.
 
 ## Verification and release gate
 
@@ -78,12 +91,14 @@ Run: node tests/combat-arena.test.cjs — mode isolation, one-level-per-interact
 training, instructor skill unlocking, save/restore, native summoned-vs-fixture
 identities, ranged enemies and regional stats, optimized Canvas/Pixi exclusions,
 teleport, replay, free spending and survival. The normal PR
-checks remain focused. Before publishing, inspect the exact draft on a
-low-spec phone in both Canvas and PixiJS, with and without an enemy group:
+checks remain focused. After publishing to allow tester access, inspect the live version on the
+low-spec phone in Canvas first, with and without an enemy group (PixiJS is
+experimental and optional):
 check frame-profile render/draw times, memory and player input responsiveness.
 Review stage menus, specialist progression, reset/respawn, physical boss
 telegraphs, bilingual copy, storage and reload.
 
-**Status:** candidate under regression. Merge only after focused and relevant
-integration checks pass, followed by physical low-end-device FPS measurements.
+**Status:** requires focused integration validation before approved merge;
+physical low-end-device FPS measurements take place after the owner-authorized
+publication. Source, PWA and diagnostic mode are versioned together.
 Measured performance improvements remain unverified until device testing.

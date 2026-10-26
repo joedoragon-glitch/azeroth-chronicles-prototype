@@ -160,7 +160,7 @@
           return {
             ...defaults,
             nightmareUnlocked: p.nightmareUnlocked === true,
-            activeMode: ['normal', 'nightmare', 'arena'].includes(p.activeMode) ? p.activeMode : 'normal',
+            activeMode: ['normal', 'nightmare'].includes(p.activeMode) ? p.activeMode : 'normal',
             audio: p.audio || defaults.audio,
           };
       } catch (_) {}
@@ -179,7 +179,7 @@
     function save(game, profile) {
       try {
         writeSnapshot(game);
-        if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
+        if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
         if (game.peace && !['developer', 'arena'].includes(game.s.mode)) profile.nightmareUnlocked = true;
         if (!saveProfile(profile)) return false;
         status(

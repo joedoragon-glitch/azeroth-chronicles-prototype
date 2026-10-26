@@ -6,7 +6,11 @@
     ctx = canvas.getContext('2d'),
     D = Campaign.data,
     manaEnabled = PrototypeRules.resourceMode.manaEnabled,
-    developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || '');
+    developerEnabled = /(?:^|[?&])developer=1(?:&|$)/.test(window.location?.search || ''),
+    // Unlisted low-spec test route. A query link is not authentication.
+    combatDiagnosticsEnabled = /(?:^|[?&])combatDiagnostics=1(?:&|$)/.test(
+      window.location?.search || '',
+    );
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -182,8 +186,8 @@
     'New game in Nightmare Mode': 'Nueva partida en modo Nightmare',
     'Load other mode run': 'Cargar partida de otro modo',
     'New Developer Mode run': 'Nueva partida de desarrollo',
-    'New Combat Arena run': 'Nueva partida de Arena de combate',
-    'Load Combat Arena run': 'Cargar partida de Arena de combate',
+    'New Combat Diagnostics run': 'Nueva partida de Diagnóstico de combate',
+    'Load Combat Diagnostics run': 'Cargar partida de Diagnóstico de combate',
     'Combat Arena': 'Arena de combate',
     'Combat Arena · destinations': 'Arena de combate · destinos',
     'Arena Guide': 'Guía de la arena',
@@ -1655,15 +1659,19 @@
     return candidate;
   }
   function load(mode) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return false;
     const restored = persistence.load(mode);
     if (!restored) return false;
     game = activateLiveCritical(restored);
     return true;
   }
   let recoveredOnStartup = false;
-  let loaded = (developerEnabled && load('developer')) || load(profile.activeMode);
+  let loaded = combatDiagnosticsEnabled
+    ? load('arena')
+    : (developerEnabled && load('developer')) || load(profile.activeMode);
   if (!loaded) {
     game =
+      combatDiagnosticsEnabled ||
       persistence.loadFailed(profile.activeMode) ||
       persistence.exists('normal') ||
       persistence.exists('nightmare')
@@ -2161,6 +2169,12 @@
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
   resize();
+  if (game.s.mode === 'arena') {
+    // A resumed diagnostic save needs the same low-cost Canvas setup as new runs.
+    graphicsController.revert();
+    setOptimizationActive(true);
+    resize();
+  }
   addEventListener('resize', () => {
     releaseJoystick();
     resize();
@@ -3070,6 +3084,7 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   function start(mode, heroClass, succession, heroName = null) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'nightmare' && !profile.nightmareUnlocked) return;
     const candidate = activateLiveCritical(
@@ -3092,13 +3107,14 @@
     started = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
-    if (mode !== 'developer') profile.activeMode = mode;
+    if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     save();
     restartGuard.arm(game);
     closeMenu();
     updateHUD();
   }
   function chooseLanguage(mode) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     openMenu(
       'Choose your language',
       'English / Español',
@@ -3250,6 +3266,7 @@
     );
   }
   function chooseClass(mode, succession) {
+    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'developer' || mode === 'arena') succession = false;
     if (succession === undefined) {
@@ -3265,10 +3282,10 @@
     }
     openMenu(
       'New ' +
-        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : mode === 'arena' ? 'Combat Arena' : 'Normal') +
+        (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : mode === 'arena' ? 'Combat Diagnostics' : 'Normal') +
         ' adventure',
       mode === 'arena'
-        ? 'Combat testing without campaign progression. Start with Basic Attack; visit hub instructors to learn other skills for free, and select encounters through the Arena Guide.'
+        ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
         : 'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
@@ -3467,19 +3484,25 @@
           ),
         ),
         action('New game', newGameMenu),
-        action(
-          'Load Combat Arena run',
-          () => {
-            if (load('arena')) {
-              profile.activeMode = 'arena';
-              save();
-              closeMenu();
-              updateHUD();
-            }
-          },
-          'Continue a separate combat-testing save.',
-          !persistence.exists('arena'),
-        ),
+        ...(combatDiagnosticsEnabled
+          ? [
+              action(
+                'Load Combat Diagnostics run',
+                () => {
+                  if (load('arena')) {
+                    graphicsController.revert();
+                    setOptimizationActive(true);
+                    resize();
+                    save();
+                    closeMenu();
+                    updateHUD();
+                  }
+                },
+                'Continue your separate low-spec combat-testing save.',
+                !persistence.exists('arena'),
+              ),
+            ]
+          : []),
         action('Load other mode run', () => {
           const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
           if (load(mode)) {
@@ -3510,7 +3533,15 @@
       'Choose a mode. Export a backup to keep your current run.',
       [
         action('New Normal game', () => chooseLanguage('normal')),
-        action('New Combat Arena run', () => chooseLanguage('arena'), 'Black battlefield · free specialists · authentic combat'),
+        ...(combatDiagnosticsEnabled
+          ? [
+              action(
+                'New Combat Diagnostics run',
+                () => chooseLanguage('arena'),
+                'Unlisted low-spec playtest · black battlefield · authentic combat',
+              ),
+            ]
+          : []),
         ...(developerEnabled
           ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
           : []),
@@ -3969,6 +4000,8 @@
         candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
+      if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
+        throw Error('Combat Diagnostics import requires the playtest link');
       persistence.writeCandidate(candidate);
       resumeSavedRun(candidate);
       status('Imported successfully.');
@@ -3978,6 +4011,7 @@
     e.target.value = '';
   };
   function resumeSavedRun(candidate) {
+    if (candidate?.s?.mode === 'arena' && !combatDiagnosticsEnabled) return;
     restartGuard.clean();
     game = activateLiveCritical(candidate);
     if (game.s.mode === 'arena') {
@@ -3986,7 +4020,7 @@
       resize();
     } else setOptimizationActive(optimizationPreference === 'on');
     loaded = started = true;
-    if (game.s.mode !== 'developer') profile.activeMode = game.s.mode;
+    if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
     if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
     persistProfile();
@@ -7025,8 +7059,9 @@
   });
   updateHUD();
   if (!loaded) {
-    if (persistence.loadFailed(profile.activeMode)) savedRunRecoveryMenu();
-    else chooseLanguage(developerEnabled ? 'developer' : 'normal');
+    if (persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode))
+      savedRunRecoveryMenu();
+    else chooseLanguage(combatDiagnosticsEnabled ? 'arena' : developerEnabled ? 'developer' : 'normal');
   } else setLanguage(language);
   if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
@@ -7045,11 +7080,13 @@
         // Ownership may arrive after a previous window's final save. Read fresh
         // bytes before allowing input, recovery or any automatic write.
         profile = persistence.loadProfile(profile);
-        let refreshed =
-          (developerEnabled && persistence.load('developer')) ||
-          persistence.load(profile.activeMode);
+        let refreshed = combatDiagnosticsEnabled
+          ? persistence.load('arena')
+          : (developerEnabled && persistence.load('developer')) ||
+            persistence.load(profile.activeMode);
         if (
           !refreshed &&
+          !combatDiagnosticsEnabled &&
           !persistence.loadFailed(profile.activeMode) &&
           !persistence.exists('normal') &&
           !persistence.exists('nightmare')
@@ -7062,6 +7099,11 @@
         }
         if (refreshed) {
           game = activateLiveCritical(refreshed);
+          if (game.s.mode === 'arena') {
+            graphicsController.revert();
+            setOptimizationActive(true);
+            resize();
+          }
           loaded = started = true;
           recoverLoadedSession();
           if (
@@ -7070,13 +7112,13 @@
             menu?.title === 'Choose your language'
           )
             closeMenu();
-        } else if (persistence.loadFailed(profile.activeMode)) {
+        } else if (persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode)) {
           loaded = started = false;
           savedRunRecoveryMenu();
         } else {
           loaded = started = false;
           game = activateLiveCritical(new Campaign());
-          chooseLanguage(developerEnabled ? 'developer' : 'normal');
+          chooseLanguage(combatDiagnosticsEnabled ? 'arena' : developerEnabled ? 'developer' : 'normal');
         }
         updateHUD();
       })
