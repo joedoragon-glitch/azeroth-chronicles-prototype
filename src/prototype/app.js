@@ -1458,6 +1458,24 @@
   const audio = new PrototypeAudio(profile.audio);
   audio.setOptimizationMode(optimizationMode);
   audio.enableProduction();
+  // Browsers require a user gesture before audible playback. Unlock on that
+  // gesture itself, not on the first movement, attack or skill receipt.
+  // Existing menu/button unlocks remain the click/tap fallback for WebKit.
+  function unlockSoundtrackOnGesture(event) {
+    if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
+    if (audio.ctx?.state === 'running') {
+      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+      return;
+    }
+    void audio.unlock().then((ready) => {
+      if (!ready) return;
+      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+    });
+  }
+  addEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+  addEventListener('keydown', unlockSoundtrackOnGesture, true);
   if (typeof PrototypeMaterials !== 'undefined')
     PrototypeMaterials.setOptimizationMode(optimizationMode);
   const platform = PrototypePlatform.init(window);
@@ -3345,6 +3363,9 @@
                 },
                 frameProfile: frameProfile.report(),
                 crowdDiagnostics: game.crowdDiagnosticsReport(),
+                ...(developerEnabled && game.s.mode === 'developer'
+                  ? { effectDiagnostics: renderer.effectDiagnosticsReport() }
+                  : {}),
                 frameRatePreference: fps.preference,
                 frameRateTarget: fps.target,
                 frameSkip: frameSkip.status(),
@@ -3419,6 +3440,7 @@
   // Menu audit Step 2: one window for every display, renderer and frame option.
   // This is a presentation-only reorganization; each setter is the existing one.
   let performanceDetailsExpanded = false;
+  let effectRecording = false;
   function platformMenu(back = systemMenu) {
     const resolutions = [
       ['auto', 'Automatic sharpness'],
@@ -3587,6 +3609,29 @@
           },
           'Capture crowded gameplay only, then export a playtest report.',
         ),
+        ...(developerEnabled && game.s.mode === 'developer'
+          ? [
+              menuControls.section('Developer effect diagnostics'),
+              action(
+                effectRecording ? 'Stop effect recording' : 'Start effect recording',
+                () => {
+                  effectRecording = renderer.setEffectDiagnostics(!effectRecording);
+                  platformMenu(back);
+                },
+                'Bounded, in-memory recording. Export with the existing playtest report.',
+              ),
+              action('Clear effect recording', () => {
+                renderer.resetEffectDiagnostics();
+                effectRecording = false;
+                platformMenu(back);
+              }),
+              menuControls.section(
+                'Effect recording · ' +
+                  (effectRecording ? 'ON' : 'OFF') +
+                  ' · painter calls, not pixel verification',
+              ),
+            ]
+          : []),
         action('Reset performance sample', () => {
           runtime.reset();
           frameProfile.reset();
@@ -6658,6 +6703,10 @@
     }
     const eventAt = stageTimes ? performance.now() : 0;
     const events = game.effects.splice(0);
+    if (effectRecording && game.s.mode !== 'developer') {
+      effectRecording = false;
+      renderer.setEffectDiagnostics(false);
+    }
     renderer.queue(events);
     renderer.update(simulating ? dt : 0);
     for (const e of events) {
@@ -6717,6 +6766,7 @@
       const eligibleDraw = fps.shouldDraw(now);
       const adaptiveSkipped = eligibleDraw && frameSkip.shouldSkip(now, fps.target);
       const draw = eligibleDraw && !adaptiveSkipped;
+      if (effectRecording) renderer.noteEffectDrawDecision(eligibleDraw, adaptiveSkipped);
       if (draw) {
         let drawTiming;
         const sample = runtime.record(now, frameStart, () => {
@@ -6737,6 +6787,19 @@
       }
       fps.observe(now, performance.now() - frameStart, draw, adaptiveSkipped);
       const frameWorkMs = performance.now() - frameStart;
+      if (effectRecording)
+        renderer.noteEffectFrame({
+          gameTime: game.s.time,
+          intervalMs,
+          frameWorkMs,
+          simulationMs: stageTimes.simulationMs,
+          renderMs: stageTimes.renderMs,
+          drawn: draw,
+          simulating,
+          recovering,
+          fpsLimited: !eligibleDraw,
+          adaptiveSkipped,
+        });
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
       const optimizationDecision = autoOptimization.observe(now, {
         activePlay: simulating || recovering,

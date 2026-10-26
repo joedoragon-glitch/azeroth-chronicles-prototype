@@ -1,0 +1,42 @@
+name: Stage 3 combat audio acceptance
+
+# Limited to the Stage 3 audio-audit PR; no deployment or browser matrix.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tests/audio-stage3-action-audit.test.cjs'
+      - '.github/workflows/audio-stage3-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audio-stage3-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  combat-audio:
+    if: github.event.pull_request.head.ref == 'audit/audio-stage3-real-action-coverage-20261025'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked tools
+        run: npm ci --ignore-scripts
+      - name: Real combat audio action matrix
+        run: node tests/audio-stage3-action-audit.test.cjs
+      - name: Existing hero action and timing checks
+        run: node tests/hero-skills-consolidation.test.cjs
+      - name: Existing companion and pet activation checks
+        run: node tests/roster-skill-update.test.cjs
+      - name: Enemy identity and stage audio catalog integrity
+        run: node scripts/enemy-audio-coverage.cjs
+      - name: Live projectile and captain sound-stage bridge
+        run: node tests/pt312-audio-integration.test.cjs
+      - name: Recorded WAV decoding and fallback checks
+        run: node tests/audio-recordings.test.cjs

@@ -1536,6 +1536,7 @@
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 520,
             delay: j * 0.08,
+            ...(j > 0 ? { companionDelayedLaunch: true } : {}),
             style: 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
@@ -1550,7 +1551,9 @@
           role: 'archer',
           source: u.id,
           style: 'arrow',
-          count: 3,
+          count: 3, // Retain existing three-shot audio contract.
+          releasedCount: 1,
+          pendingCount: 2,
           special: 'triple-shot',
           x: u.x,
           y: u.y,
@@ -1709,14 +1712,16 @@
           range: def.range || 0,
           halfAngle: def.halfAngle || 0,
           halfWidth: def.halfWidth || 0,
-          hits,
+          hits: u.type === 'archer' ? 0 : hits,
+          ...(u.type === 'archer' ? { arrows: hits } : {}),
         });
         this.event('companionSkill', {
           source: u.id,
           unitType: u.type,
           skill: u.type === 'soldier' ? 'holy-cleave' : 'piercing-volley',
           targetId: target.id,
-          hits,
+          hits: u.type === 'archer' ? 0 : hits,
+          ...(u.type === 'archer' ? { arrows: hits } : {}),
         });
         return true;
       }

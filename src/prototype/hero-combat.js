@@ -174,9 +174,12 @@
           speed: 650,
           delay,
           charged,
+          ...(delay > 0 ? { rangerDelayedLaunch: true } : {}),
           ...(receipt ? { encountersAtStart: receipt } : {}),
         });
-        this.event('projectileLaunch', {
+        // A queued delayed Hunt arrow has not left the Ranger yet.
+        // Record its launch only when updateProjectiles releases its collider.
+        if (delay <= 0) this.event('projectileLaunch', {
           actor: 'hero',
           class: 'ranger',
           source: 'hero',
@@ -459,8 +462,10 @@
             ...(style === 'beam' ? { originX: hero.x, originY: hero.y } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
             ...extra,
+            ...(style === 'arrow' && extra.delay > 0 ? { rangerDelayedLaunch: true } : {}),
           });
-          this.event('projectileLaunch', {
+          // Do not report a delayed arrow as launched at burst admission.
+          if (!(style === 'arrow' && extra.delay > 0)) this.event('projectileLaunch', {
             actor: 'hero',
             class: hero.class,
             source: 'hero',
@@ -1406,8 +1411,9 @@
               target: target.id,
               damage,
               source: 'hero',
-              // A full-range shot is roughly 0.625s; nearer targets remain responsive.
-              speed: 1.2 * Math.max(170, Math.min(535, d / 0.75)),
+              // Normal Mage Skill 1 travels 10% faster than the prior 1.2x tuning.
+              // A full-range shot is roughly 0.57s; nearer targets remain responsive.
+              speed: 1.32 * Math.max(170, Math.min(535, d / 0.75)),
               life: 1.5,
               travelBudget: 540,
               traveled: 0,
@@ -1446,6 +1452,7 @@
                 source: 'hero',
                 speed: 620,
                 delay: j * 0.08,
+                ...(j > 0 ? { rangerDelayedLaunch: true } : {}),
                 style: 'arrow',
                 slot,
                 charged: false,
@@ -1461,7 +1468,9 @@
               style: 'arrow',
               slot,
               charged: false,
-              count: 3,
+              count: 3, // Legacy three-shot sound/presentation identity.
+              releasedCount: 1,
+              pendingCount: 2,
               rapid: true,
               x: this.hero.x,
               y: this.hero.y,
@@ -2175,6 +2184,9 @@
                 source: 'hero',
                 speed: 550,
                 delay: j * 0.12,
+                ...(this.hero.class === 'ranger' && j > 0
+                  ? { rangerDelayedLaunch: true }
+                  : {}),
                 style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
                 slot,
                 ...(this.hero.class === 'ranger' && slot === 7 ? { piercing: true } : {}),
@@ -2220,6 +2232,9 @@
               style: this.hero.class === 'ranger' ? 'arrow' : 'magic',
               slot,
               count,
+              ...(this.hero.class === 'ranger' && count > 1
+                ? { releasedCount: 1, pendingCount: count - 1 }
+                : {}),
               combo,
               x: this.hero.x,
               y: this.hero.y,

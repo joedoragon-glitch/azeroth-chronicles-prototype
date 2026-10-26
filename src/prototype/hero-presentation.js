@@ -203,7 +203,11 @@
       else if (e.chain) emit('chain', 0.38 + e.chain.length * 0.04);
       else if (e.type === 'chargedArea' || e.type === 'spell') {
         if (e.effect === 'shield-lowered') emit('cancel', 0.18);
-        else emit(e.radius || e.shape ? 'area' : 'impact', e.slot === 8 ? 0.65 : 0.45);
+        else if (e.projectileVolley && e.class === 'ranger') {
+          // Only the physical arrow objects may travel and announce contact.
+          // Never display pre-hit or detached full-corridor decorative arrows.
+          emit('cast', 0.16);
+        } else emit(e.radius || e.shape ? 'area' : 'impact', e.slot === 8 ? 0.65 : 0.45);
       }
     }
   }
@@ -672,7 +676,12 @@
       const physical = f.class === 'ranger';
       glyph(ctx, p.x, p.y - 15, physical ? 'repel' : f.motif, f.charged ? 8 : 5);
     } else if (f.stage === 'cast') {
-      if (f.class === 'paladin' && [1, 2, 6].includes(f.slot) && !(f.charged && f.slot === 1)) {
+      if (f.projectileVolley && f.class === 'ranger') {
+        // A bow-release glint only. Real shafts are drawn by the projectile
+        // renderer using the same coordinates as their collision segments.
+        ctx.globalAlpha = fade * 0.55;
+        glyph(ctx, p.x, p.y - 16, 'arrow', 8);
+      } else if (f.class === 'paladin' && [1, 2, 6].includes(f.slot) && !(f.charged && f.slot === 1)) {
         const target = screen({ x: f.targetX ?? f.x + 50, y: f.targetY ?? f.y }),
           a = Math.atan2(target.y - p.y, target.x - p.x),
           swing = reduced ? 0 : (t - 0.5) * 1.6;
@@ -855,7 +864,9 @@
   }
   function projectile(ctx, screen, p, heroClass, reduced = false, caster = null) {
     if (p.source !== 'hero') return false;
-    if (p.delay > 0) return true;
+    // Crossing the delay threshold does not release a staggered arrow until
+    // simulation places its actual collider at the moving Ranger's bow.
+    if (p.delay > 0 || p.rangerDelayedLaunch) return true;
     const def = profile({ class: heroClass, slot: p.slot || 1, charged: p.charged });
     if (!def) return false;
     const q = screen(p),
@@ -1023,25 +1034,51 @@
     ctx.restore();
   }
   function statuses(ctx, screen, game, width, height) {
-    // Actual status lifetimes only; no guessed invulnerability or control windows.
+    // Preserve the existing budgets: at most three markers per enemy and 24
+    // enemies per draw. Reserve those slots for consequential active statuses
+    // and the selected target / bosses rather than raw world-array order.
     const now = game.s.time;
-    const enemies = game.zone().enemies;
-    let shown = 0;
-    ctx.save();
-    ctx.lineWidth = 1.6;
-    for (const e of enemies) {
+    // The held Target button is tracked separately from the squad focus.
+    // Read its current-zone id without calling selectedHeroTarget(), which
+    // can mutate stale selection and must not run as a rendering side effect.
+    const selectedId =
+      (game.manualHeroTargetZone === game.zoneId && game.manualHeroTargetId) ||
+      game.s.heroTarget || game.hero.order?.id || null;
+    const chosen = [];
+    const limit = 24;
+    for (const e of game.zone().enemies) {
       if (e.hp <= 0 || e.returning) continue;
+      const priority = e.id === selectedId ? 4 :
+        e.type === 'boss' ? 3 : e.captain || e.roomCaptain ? 2 : 0;
+      // Once the budget is full, normal enemies cannot replace another
+      // normal enemy. Keep scanning cheaply for a late boss or hero target.
+      if (chosen.length >= limit && !priority) continue;
       const p = screen(e);
       if (p.x < -35 || p.x > width + 35 || p.y < -70 || p.y > height + 35) continue;
-      const statuses = [];
-      if ((e.weakenUntil || 0) > now) statuses.push(['sunder', palettes.holy[0]]);
-      if ((e.fractureUntil || 0) > now) statuses.push(['fracture', palettes.arcane[0]]);
-      if ((e.tauntUntil || 0) > now) statuses.push(['judgment', palettes.holy[0]]);
-      if (e.slow > 0) statuses.push(['ice', palettes.frost[0]]);
-      if (game.mageSilenceActive(e)) statuses.push(['silence', palettes.arcane[0]]);
-      if (!statuses.length) continue;
-      for (let i = 0; i < Math.min(3, statuses.length); i++) {
-        const [motif, color] = statuses[i],
+      const marks = [];
+      // Control effects must not be hidden behind older debuff glyphs.
+      if (game.mageSilenceActive(e)) marks.push(['silence', palettes.arcane[0]]);
+      if ((e.tauntUntil || 0) > now) marks.push(['judgment', palettes.holy[0]]);
+      if (e.slow > 0) marks.push(['ice', palettes.frost[0]]);
+      if ((e.fractureUntil || 0) > now) marks.push(['fracture', palettes.arcane[0]]);
+      if ((e.weakenUntil || 0) > now) marks.push(['sunder', palettes.holy[0]]);
+      if (!marks.length) continue;
+      const item = { p, marks, priority };
+      if (chosen.length < limit) {
+        chosen.push(item);
+      } else {
+        let lowest = 0;
+        for (let i = 1; i < chosen.length; i++)
+          if (chosen[i].priority < chosen[lowest].priority) lowest = i;
+        if (priority > chosen[lowest].priority) chosen[lowest] = item;
+      }
+    }
+    ctx.save();
+    ctx.lineWidth = 1.6;
+    for (const { p, marks } of chosen) {
+      const visible = marks.length > 3 ? 2 : marks.length;
+      for (let i = 0; i < visible; i++) {
+        const [motif, color] = marks[i],
           x = p.x + 25,
           y = p.y - 17 + i * 13;
         ctx.strokeStyle = '#17242b';
@@ -1051,7 +1088,18 @@
         ctx.lineWidth = 1.5;
         glyph(ctx, x, y, motif, 4);
       }
-      if (++shown >= 24) break;
+      if (marks.length > 3) {
+        // One overflow marker replaces the third full-size glyph. No extra
+        // icon slot, screen-wide aura or additional per-enemy drawing pass.
+        const x = p.x + 25, y = p.y + 9;
+        ctx.fillStyle = '#17242be8';
+        ctx.fillRect(x - 8, y - 7, 16, 12);
+        ctx.fillStyle = '#f4f6e5';
+        ctx.font = 'bold 9px system-ui';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('+' + (marks.length - 2), x, y - 1);
+      }
     }
     for (const ally of [game.hero, ...game.activeLivingParty()]) {
       const p = screen(ally);

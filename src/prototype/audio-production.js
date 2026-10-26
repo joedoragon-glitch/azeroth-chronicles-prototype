@@ -17,6 +17,7 @@
       enableProduction(enabled = true) {
         this.production = !!enabled;
         this.productionKey = null;
+        this.productionRetry = null;
         this.productionIntensity = null;
         if (this.compressor) {
           this.compressor.threshold.value = enabled ? -14 : -10;
@@ -137,16 +138,54 @@
         ]);
         if (selectionKey !== this.productionKey) {
           this.productionKey = selectionKey;
+          this.productionRetry = { attempts: 0, nextAt: now, pending: false };
           this.productionIntensity = null;
           this.stepDistance = 0;
-          const wanted = selectionKey;
-          if (this.recordedScore?.selectionKey !== selectionKey)
-            void this.setRecordedScore(spec).then((ok) => {
-              if (ok && this.productionKey === wanted) {
+        }
+        const retry = this.productionRetry;
+        // The first selection starts immediately. Transient failures get at most two
+        // audio-clock retries (after 1s and 4s); persistent failures stay procedural.
+        if (
+          retry &&
+          this.recordedScore?.selectionKey !== selectionKey &&
+          !retry.pending &&
+          retry.attempts < 3 &&
+          now >= retry.nextAt
+        ) {
+          retry.pending = true;
+          retry.attempts++;
+          const ctx = this.ctx,
+            epoch = this.recordingEpoch || 0;
+          this.productionPending = this.setRecordedScore(spec).then(
+            (ok) => {
+              if (
+                ctx !== this.ctx ||
+                epoch !== (this.recordingEpoch || 0) ||
+                this.productionKey !== selectionKey ||
+                this.productionRetry !== retry
+              )
+                return false;
+              retry.pending = false;
+              if (ok && this.recordedScore?.id === spec.id) {
                 this.recordedScore.selectionKey = selectionKey;
                 this.productionIntensity = null;
+              } else retry.nextAt = ctx.currentTime + (retry.attempts === 1 ? 1 : 4);
+              return ok;
+            },
+            (error) => {
+              if (
+                ctx === this.ctx &&
+                epoch === (this.recordingEpoch || 0) &&
+                this.productionKey === selectionKey &&
+                this.productionRetry === retry
+              ) {
+                retry.pending = false;
+                retry.nextAt = ctx.currentTime + (retry.attempts === 1 ? 1 : 4);
+                this.recordingError = error.message;
               }
-            });
+              return false;
+            },
+          );
         }
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;

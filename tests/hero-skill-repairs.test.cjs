@@ -1,9 +1,13 @@
 'use strict';
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 
 function arena(cls = 'paladin') {
   const game = new Campaign('normal', cls, () => 0.9);
+  // The actual Vale opening has required a native first kill since dev.161.
+  // Exercise later skills past that protected opening, not against waiting mobs.
+  completeFieldOpening(game);
   game.zone().props = [];
   game.zone().enemies = [];
   game.s.party = [];
@@ -87,11 +91,15 @@ console.log('PASS Paladin Skill 6 dash hit, trail and wall safety');
   const protectedFromDirect = side;
   protectedFromDirect.rogueDustCoverUntil = game.s.time + 5;
   assert(game.cast(5), 'Ranger Skill 5 launches radial volley');
-  assert.equal(game.s.projectiles.length, 0, 'approved normal volley resolves instant area damage');
+  assert.equal(game.s.projectiles.length, 2, 'Volley fires real arrows at both eligible foes');
   const area = game.effects.find(e => e.type === 'spell' && e.slot === 5);
-  assert.equal(area.contacts.length, 2, 'only successful real-area contacts receive cosmetic shafts');
-  assert(near.hp < near.maxHp, 'First arrow hits');
-  assert(side.hp < side.maxHp, 'Area arrow can strike dust-covered target');
+  assert.equal(area.projectileVolley, true, 'cosmetic shafts are owned by real arrow flights');
+  assert.equal(area.contacts.length, 0, 'no contact exists before arrows arrive');
+  assert.equal(near.hp, near.maxHp, 'first target waits for the physical arrow');
+  assert.equal(side.hp, side.maxHp, 'second target also waits for contact');
+  for (let step = 0; step < 20; step++) game.updateProjectiles(0.04);
+  assert(near.hp < near.maxHp, 'first arrow hits after traveling');
+  assert(side.hp < side.maxHp, 'area-tagged arrow still strikes dust-covered target');
   assert.equal(far.hp, far.maxHp, 'Volley does not damage outside its footprint');
 }
 console.log('PASS Ranger Skill 5 arrow volley, AoE and range');

@@ -106,8 +106,8 @@ function advance(g, seconds, step = 0.05) {
   const p = g.s.projectiles.find(p => p.style === 'beam');
   assert(p?.mageSkill1Homing, 'only ordinary Skill 1 has homing');
   assert.equal(p.beamWidthScale, 2, 'regular beam is 20% thinner than previous 2.5x width');
-  assert.equal(p.speed, 1.2 * Math.max(170, Math.min(535, 280 / 0.75)),
-    'regular Mage beam flies 20% faster than its original speed');
+  assert.equal(p.speed, 1.32 * Math.max(170, Math.min(535, 280 / 0.75)),
+    'normal Mage Skill 1 travels 10% faster than the prior 1.2x speed');
   assert(p.speed < 1000, 'slower than former laser');
   assert.equal(p.travelBudget, 540, 'homing flight remains finite');
   g.hero.x = 470;

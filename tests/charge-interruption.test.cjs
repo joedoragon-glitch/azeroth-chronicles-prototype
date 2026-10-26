@@ -85,7 +85,14 @@ for (const type of ['soldier', 'archer']) {
   assert.equal(e.hp, before, type + ' is still charging before 0.65s');
   assert.equal(u.skill2Cd, 0);
   advanceCast(game, 0.35);
-  assert(e.hp < before, type + ' releases only at 0.65s');
+  if (type === 'archer') {
+    assert.equal(e.hp, before, 'Archer finishes its 0.65s aim without phantom impact');
+    const arrows = game.s.projectiles.filter(p => p.source === u.id);
+    assert(arrows.length > 0, 'charged Archer releases actual arrows at 0.65s');
+    for (let i = 0; i < 20 && arrows.some(p => game.s.projectiles.includes(p)); i++)
+      game.updateProjectiles(0.05);
+    assert(e.hp < before, 'Archer charged arrow damages only after physical arrival');
+  } else assert(e.hp < before, 'Soldier sword cleave hits when the hold releases');
   assert.equal(u.skill2Cd, R.companionSkills.second.cooldown);
   assert(!game._companionCharges.has(u.id));
   assert(!game.partyChargeState(u));

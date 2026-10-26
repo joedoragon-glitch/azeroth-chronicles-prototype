@@ -401,6 +401,10 @@ function concurrentBirths(enabled, family, form = 'true', captain = false, range
   if (captain) Object.assign(e, { captain: true, captainProfile: family, ranged });
   Object.assign(e, { aggro: true, hp: e.maxHp * 0.4, cd: 100, summonCd: 100, fightStart: 0 });
   c.zone().enemies = [e];
+  // An already-engaged Vale fixture must have a lawful first hero attack.
+  // Otherwise opening protection correctly disengages it and retires its
+  // unrelated active telegraph during the reinforcement update.
+  c.admitOpeningHeroAttack(e);
   c.s.time = 30;
   if (captain) c.startCaptainAttack(e, c.hero);
   else c.startAttack(e, c.hero, 0);

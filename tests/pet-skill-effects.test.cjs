@@ -26,9 +26,10 @@ for (const boss of C.data.bosses)
       hits: 1,
     };
     const queued = Fx.queue([event], g, []).find((f) => f.type === 'petSkill');
+    const expected = def.shape === 'line' ? 0.3 : slot === 2 ? 0.85 : 0.65;
     assert(
-      queued && queued.max >= 0.65 && queued.priority >= 4,
-      'real pet metadata becomes a readable, prioritized cue',
+      queued && queued.max === expected && queued.priority >= 4,
+      'pet contact remains visible without long-lived full-line afterimages',
     );
     for (const stage of ['release', 'impact', 'windup'])
       for (const options of [{}, { reduced: true, optimized: true }]) {
