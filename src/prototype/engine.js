@@ -6419,6 +6419,10 @@
         !e.roomCaptain &&
         !e.fieldCaptain &&
         e.form !== 'ringleader' &&
+        // Native Vale ordinary species only; night invaders keep their own
+        // authored combat, even while physically inside Greenwood.
+        ['goblin', 'skeleton'].includes(e.species) &&
+        !e.nightOnly &&
         !this.enemyRanged(e) &&
         !e.hybrid &&
         !e.summon &&
