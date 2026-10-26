@@ -3,7 +3,7 @@
 // ringleader, captain, boss, ranged, or cross-region balance adjustment.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
-const cfg = Campaign.rules.valeMeleeCounter;
+const cfg = Campaign.valeMeleeCounter;
 assert.equal(cfg.cooldownSeconds, 4.5);
 assert(cfg.enabled && cfg.warningSeconds > 0 && cfg.travelSpeed > 175);
 
