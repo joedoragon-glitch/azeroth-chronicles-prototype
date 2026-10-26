@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const cfg = Campaign.valeMeleeCounter;
 assert.equal(cfg.cooldownSeconds, 4.5);
+assert.equal(cfg.meleeBasicRange, 120, 'Greenwood ordinary melee basic equals Paladin autoattack');
 assert(cfg.enabled && cfg.warningSeconds > 0 && cfg.travelSpeed > 175);
 
 function scene(region = 'vale', species = 'goblin', guard = false) {
@@ -57,6 +58,7 @@ for (const [species, guard] of [
 ]) {
   const { c, e } = scene('vale', species, guard);
   assert(c.valeMeleeCounterEligible(e), species + ' melee guard=' + guard);
+  assert.equal(c.valeMeleeBasicRange(e), 120, 'native melee and guardians share the new basic reach');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'one tick cannot instantly intercept');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'buildup is real');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'not yet at threshold');
@@ -101,6 +103,7 @@ for (const [species, guard] of [
     const original = { ...e };
     Object.assign(e, changes);
     assert(!c.valeMeleeCounterEligible(e), JSON.stringify(changes));
+    assert.equal(c.valeMeleeBasicRange(e), 65, 'excluded tiers keep their unchanged melee reach');
     // A temporarily introduced exclusion flag must not leak into later cases.
     for (const key of Object.keys(changes)) if (!(key in original)) delete e[key];
     Object.assign(e, original);
@@ -111,8 +114,30 @@ for (const [species, guard] of [
     'native Greenwood dungeon melee guardians share the regional pilot');
   const { c: elsewhere, e: outsider } = scene('march', 'mireling');
   assert(!elsewhere.valeMeleeCounterEligible(outsider), 'no other region');
+  assert.equal(elsewhere.valeMeleeBasicRange(outsider), 65, 'regional scope protects other melee ranges');
   c.s.phase = 'peace';
   assert(!c.valeMeleeCounterEligible(e), 'peace disables hostility');
+}
+
+{
+  // A Goblin can actually attack from Greenwood's new 120-unit basic
+  // footprint in the native combat tick, not merely report the tuning.
+  const { c, e } = scene('vale', 'goblin');
+  const baseline = { ...e };
+  const distance = Math.hypot(c.hero.x - e.x, c.hero.y - e.y);
+  c.hero.x = e.x + (c.hero.x - e.x) / distance * 110;
+  c.hero.y = e.y + (c.hero.y - e.y) / distance * 110;
+  assert(c.line(e, c.hero), 'test corridor remains unobstructed at 110 units');
+  e.cd = 0;
+  c.updateEnemies(0.1);
+  assert(e.cd > 0, 'ordinary Goblin begins actual native melee basic within 120 range');
+  assert.equal(c.valeMeleeBasicRange(e), 120);
+  // Immediately out of basic reach, an uncommitted actor must pursue instead
+  // of landing an undocumented 135-unit sword strike.
+  Object.assign(e, baseline);
+  c.hero.x = e.x + (c.hero.x - e.x) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
+  c.hero.y = e.y + (c.hero.y - e.y) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
+  assert.equal(c.valeMeleeBasicRange(e), 120);
 }
 
 {
