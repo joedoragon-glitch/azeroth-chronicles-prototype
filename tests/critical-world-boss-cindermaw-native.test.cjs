@@ -79,6 +79,15 @@ for (const form of ['normal','true']) for (const level of [1,2,3]) {
   // produces units, with the same count and cooldown across both runs.
   {
     const baseline=scene(form),critical=scene(form),t=attach(critical.g,level);
+    const existingBaseline=baseline.g.bossOwnedSummons(baseline.e);
+    const existingCritical=critical.g.bossOwnedSummons(critical.e);
+    assert.equal(existingBaseline.length,existingCritical.length,
+      'each form starts with the same authored live responder population');
+    // TRUE Cindermaw is already staffed on engagement. Defeat the original
+    // responders first: the next authentic Summon action may now admit replacements.
+    for (const u of [...existingBaseline,...existingCritical]) u.hp=0;
+    assert.equal(baseline.g.bossOwnedSummons(baseline.e).length,0);
+    assert.equal(critical.g.bossOwnedSummons(critical.e).length,0);
     cast(baseline.g,baseline.e,6);
     cast(critical.g,critical.e,6);
     const normal=baseline.g.bossOwnedSummons(baseline.e);
@@ -96,6 +105,16 @@ for (const form of ['normal','true']) for (const level of [1,2,3]) {
     assert(enhanced.every((u,i)=>u.maxHp>normal[i].maxHp));
     assert.equal(critical.e.summonCd,baseline.e.summonCd);
   }
+}
+{
+  const {g,e}=scene('true'),t=attach(g);
+  const staffed=g.bossOwnedSummons(e).length;
+  assert(staffed>0,'TRUE Cindermaw begins with its real protector population');
+  cast(g,e,6);
+  assert.equal(g.bossOwnedSummons(e).length,staffed,
+    'full-cap TRUE summon does not add a hidden replacement');
+  assert.equal(t.count(),0,
+    'a fully staffed TRUE summon cannot roll without admitted responders');
 }
 {
   const {g,e}=scene(),t=attach(g);
