@@ -111,7 +111,7 @@ for (const species of [
     });
     const max = hybrid.maxHp;
     assert(g.enemyHybridSelfHeal(hybrid), kind + ' can initiate its own heal');
-    assert.equal(hybrid.hybridSelfHealCd, 5, kind + ' independent self cooldown');
+    assert.equal(hybrid.hybridSelfHealCd, 7, kind + ' independent self cooldown');
     near(hybrid.hybridSelfHeal.remaining, max * 0.1, kind + ' 10% max-HP budget');
     near(hybrid.hybridSelfHeal.seconds, 3, kind + ' 3s restoration duration');
     assert(!hybrid.supportHeal, kind + ' self healing does not occupy allied heal slot');
@@ -119,7 +119,7 @@ for (const species of [
     assert(g.enemySupportHeal(healer), kind + ' remains eligible for ranged allied healing while self-healing');
     assert(hybrid.supportHeal, kind + ' receives an independent allied heal effect');
     assert(hybrid.hybridSelfHeal, kind + ' does not lose the original self-heal effect');
-    near(hybrid.hybridSelfHealCd, 5, kind + ' incoming heal does not spend self-heal cooldown');
+    near(hybrid.hybridSelfHealCd, 7, kind + ' incoming heal does not spend self-heal cooldown');
     near(healer.supportHealCd, 7, kind + ' allied healer uses its own cooldown');
     // Both effects advance through the existing combat resolver and cap at max HP.
     g.advanceHybridSelfHeal(hybrid, 1);
@@ -135,7 +135,7 @@ for (const species of [
     assert(hybrid.hybridSelfHealCd > 0, kind + ' self-heal reuse remains enforced');
   }
 }
-console.log('PASS hybrid ordinary/guardian/ringleader 10% self healing at 5s and independent incoming ranged healing');
+console.log('PASS hybrid ordinary/guardian/ringleader 10% self healing at 7s and independent incoming ranged healing');
 
 console.log('PASS twelve ranged species independently restore missing ordinary HP in three seconds');
 
@@ -580,7 +580,7 @@ console.log('PASS boss skill independence, support priority, and old v4 save com
         const hpBefore = hybrid.hp;
         const self = () => {
           assert(g.enemyHybridSelfHeal(hybrid), 'hybrid self heal starts while wounded');
-          assert.equal(hybrid.hybridSelfHealCd, 5, 'self-cooldown is independent');
+          assert.equal(hybrid.hybridSelfHealCd, 7, 'self-cooldown is independent');
           near(hybrid.hybridSelfHeal.remaining, hybrid.maxHp * 0.1, '10% maximum HP budget');
           near(hybrid.hybridSelfHeal.seconds, 3, 'three-second self recovery');
         };
