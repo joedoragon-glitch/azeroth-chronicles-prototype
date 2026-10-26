@@ -41,7 +41,11 @@ for (const variant of variants) {
   assert.deepEqual(workbench.parseTable(updated), values, 'serialized knobs preserve exact overrides');
   assert.equal(workbench.replaceTable(updated, values), updated, 'same change is idempotent');
   const module = { exports: {} };
-  vm.runInNewContext(updated, { module }, { timeout: 3000 });
+  // rules.js legitimately imports sibling modules when loaded in Node.
+  // Provide the same relative resolver in the isolated variation check.
+  const siblingRequire = (id) => id.startsWith('./')
+    ? require(path.join(root, 'src/prototype', id)) : require(id);
+  vm.runInNewContext(updated, { module, require: siblingRequire }, { timeout: 3000 });
   const R = module.exports, tuned = workbench.resolve(values);
   for (const key of ['enemy', 'elite', 'soldier', 'pet', 'ringleaderHybridStance'])
     assert.equal(R.meleeReach[key], tuned[key], key + ' resolves variant');
