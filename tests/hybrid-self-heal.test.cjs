@@ -173,4 +173,4 @@ for (const change of [
   step(0.1);
   assert(!e.hybridSelfHeal, 'native encounter return interrupts hybrid treatment');
 }
-console.log('PASS hybrid heal: five species, guard/ringleader, 10%-over-3s, 5s clock, allied support, statuses and resets');
+console.log('PASS hybrid heal: five species, guard/ringleader, 10%-over-3s, 7s clock, allied support, statuses and resets');
