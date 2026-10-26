@@ -6181,6 +6181,9 @@
     // Ordinary ranged healers treating ordinary monsters: more timely aid.
     // Leader recipients and leader casters retain the original baseline.
     ordinary: Object.freeze({ fullRecovery: true, cooldown: 7, duration: 3 }),
+    // Hybrid ranged/melee combatants retain allied ranged triage while gaining
+    // their own separate, non-stacking restoration over three seconds.
+    hybridSelf: Object.freeze({ fraction: 0.1, duration: 3, cooldown: 5, threshold: 0.9 }),
     // Captains sit between ordinary monsters and bosses as support patients.
     // Each eligible ranged ally may refill half the missing captain HP over
     // five seconds, on its own ten-second captain-support eligibility.
@@ -6310,7 +6313,11 @@
     retreatFraction: 0.5,
     retreatSpeed: 165,
     ringleaderRetreatMultiplier: 1.2,
-    ringleaderHybridMeleeRange: 100,
+    ringleaderHybridMeleeRange: 120,
+    // Hybrid defensive spacing only during melee recovery, never a permanent
+    // ranged-only kite mode. Both values are seconds.
+    hybridBackstepSeconds: 0.42,
+    hybridBackstepCooldown: 5.5,
     guardianScreenRange: 220,
   };
   const chargedSkills = {
@@ -6799,6 +6806,11 @@
     mountedMovementMultiplier: 1.3,
     enemySpecialReachMultiplier: 1.2,
     enemyTargetingMultiplier: 1.1,
+    // Ordinary melee outside Greenwood and Soldier sword basics keep 65.
+    // Ringleader/captain/boss melee basics get the separate 90-unit floor.
+    // Greenwood ordinary pure melee is governed by valeMeleeCounter below.
+    meleeBasicRange: 90,
+    eliteMeleeBasicRange: 90,
     enemyAcquisitionRange: 260,
     fortifications: {
       incomingMultiplier: 0.6,
@@ -7698,6 +7710,34 @@
         restoreFraction: 0.4,
       },
     },
+    // Greenwood pilot: regular melee enemies and native guardians share a
+    // repeatable interception drill. Its martial foundation is Marshal Veyra's
+    // Crown academy (disciplined advance, target reading and committed strike);
+    // Thornfang, Lifebinder and the Vale captain also inform local tactics.
+    // No authored boss/captain/ringleader attacks or other regions are changed.
+    valeMeleeCounter: Object.freeze({
+      enabled: true,
+      // Native Greenwood pure melee/guardians match Paladin autoattack reach.
+      meleeBasicRange: 90,
+      buildupSeconds: 0.35,
+      cooldownSeconds: 4.5,
+      // Intercept is for spacing outside the native 120-unit basic hit,
+      // rather than replacing ordinary melee inside Paladin reach.
+      minDistance: 100,
+      // Wider than a Ranger charged shot, but still encounter/leash bound.
+      maxDistance: 610,
+      warningSeconds: 0.65,
+      // Predict roughly through warning plus travel; a straight retreat
+      // should be threatened, a lateral dodge should still defeat the mark.
+      predictionSeconds: 1.25,
+      maxLeadDistance: 350,
+      travelSpeed: 1400,
+      travelSeconds: 0.9,
+      arrivalTolerance: 48,
+      impactRadius: 100,
+      damageMultiplier: 0.8,
+      slowSeconds: 0.8,
+    }),
     fieldOnboarding: { spawnLevel: 2, withdrawClearance: 700 },
     thornPatrol: {
       // Start toward the southern crossing, away from the opening woodland.

@@ -1062,10 +1062,10 @@
         return u.type === 'pet'
           ? this.petDefinition(u)?.role === 'ranged'
             ? R.balance.companions.petBasicRange
-            : 70
+            : R.balance.meleeBasicRange
           : u.type === 'archer'
             ? 185
-            : 65;
+            : R.balance.meleeBasicRange;
       }
       companionEnemyWeight(e) {
         const cfg = R.companionJudgment;
@@ -1331,7 +1331,7 @@
         const e = this.zone().enemies.find(
             (e) => e.id === receipt.id && e.hp > 0 && !e.neutral && !e.returning,
           ),
-          reach = u.type === 'archer' ? 185 : 65;
+          reach = this.companionCombatReach(u);
         if (!e || dist(e, u) > reach || !this.line(u, e) || !this.tacticalDirectTargetable(e))
           return;
         u.cd = 0.85 / this.companionRallyAttackSpeed(u);
@@ -3031,7 +3031,7 @@
         }
         if (u.type !== 'soldier') return;
         if (this.line(u, e) && dist(u, e) <= 185 && this.companionTrySkill(u, e)) return;
-        if (dist(u, e) > 65 || !this.line(u, e))
+        if (dist(u, e) > R.balance.meleeBasicRange || !this.line(u, e))
           this.follow(
             u,
             e,
@@ -3347,10 +3347,10 @@
               const reach = pet
                 ? pet.role === 'ranged'
                   ? R.balance.companions.petBasicRange
-                  : 70
+                  : R.balance.meleeBasicRange
                 : u.type === 'archer'
                   ? 185
-                  : 65;
+                  : R.balance.meleeBasicRange;
               const pursuer = z.enemies
                 .filter(
                   (e) =>

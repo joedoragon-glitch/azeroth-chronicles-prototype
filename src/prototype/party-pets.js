@@ -397,7 +397,7 @@
           return false;
         const ranged = def.role === 'ranged';
         const distance = dist(u, target);
-        if (distance > (ranged ? R.balance.companions.petBasicRange : 70) || !this.line(u, target))
+        if (distance > (ranged ? R.balance.companions.petBasicRange : R.balance.meleeBasicRange) || !this.line(u, target))
           return false;
         const criticalReceipt = this.petCriticalRelease(u, 'basic');
         u.cd = R.balance.companions.petBasicInterval / this.companionRallyAttackSpeed(u);
@@ -489,7 +489,7 @@
             cfg.petFollowStop,
           );
         } else if (
-          d > (ranged ? Math.min(cfg.petBasicRange, def.first.range, def.second.range) : 70) ||
+          d > (ranged ? Math.min(cfg.petBasicRange, def.first.range, def.second.range) : R.balance.meleeBasicRange) ||
           !visible
         ) {
           // Pet-specific destination; shared navigation still owns collision and movement.
@@ -510,7 +510,7 @@
         }
         // A shorter second skill must not suppress an otherwise usable first/basic.
         const attackDistance = dist(u, target);
-        if (attackDistance > (ranged ? cfg.petBasicRange : 70) || !this.line(u, target)) return;
+        if (attackDistance > (ranged ? cfg.petBasicRange : R.balance.meleeBasicRange) || !this.line(u, target)) return;
         if (this.companionTrySkill(u, target)) return;
         if (u.cd > 0) return;
         const criticalReceipt = this.petCriticalRelease(u, 'basic');

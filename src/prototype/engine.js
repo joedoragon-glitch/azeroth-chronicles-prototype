@@ -33,9 +33,12 @@
   // Per-caster leader-heal cadence is independent of buffed ordinary casts.
   // Runtime-only WeakMap: no additional fields on saved enemy actors.
   const enemyLeaderHealRecovery = new WeakMap();
-  // A healing captain can restore its own HP every ten recovered seconds
-  // independently of its seven-second support spell. Never serialized.
+  // The independent captain self-heal cooldown must survive this pilot.
   const captainSelfHealRecovery = new WeakMap();
+  // Per-enemy chase observations are transient: no save migration, RNG or idle scans.
+  const valeMeleeChase = new WeakMap();
+  // Regionally gated pilot balance is authored once in canonical rules.
+  const valeMeleeCounter = R.valeMeleeCounter;
   const archiveRepairSites = [
     { x: 1130, y: 560 },
     { x: 790, y: 430 },
@@ -465,7 +468,7 @@
           (e.type === 'boss' && !establishedBossRecovery) ||
           e.captain ||
           e.roomCaptain ||
-          e.form === 'ringleader',
+          (e.form === 'ringleader' && !e.hybrid),
         self =
           selfReady && selfAllowed && inReach(e) && e.hp / e.maxHp <= cfg.threshold ? e : null,
         targets = self ? [...injured, self] : injured;
@@ -557,6 +560,63 @@
       if (e.type === 'boss' || e.captain || e.roomCaptain || e.form === 'ringleader')
         this.say(e.name + ' uses ' + skill + ' in an area.');
       return true;
+    }
+    // Hybrid self-recovery is independent of incoming ranged ally healing.
+    // Both may coexist; each pulse independently observes the same HP cap.
+    // This state and its cooldown must not consume the ally-support slot.
+    enemyHybridSelfHeal(e) {
+      const cfg = R.enemySupportHealing.hybridSelf;
+      if (
+        !cfg ||
+        !e?.hybrid ||
+        !this.enemyHealingActor(e) ||
+        e.type === 'boss' ||
+        e.captain || e.roomCaptain || e.fieldCaptain ||
+        this.peace ||
+        e.returning ||
+        this.mageSilenceActive(e) ||
+        e.motion || e.telegraph || e.rangedAim ||
+        e.hybridSelfHeal ||
+        (e.hybridSelfHealCd || 0) > 0 ||
+        !(e.maxHp > 0) ||
+        e.hp / e.maxHp > cfg.threshold
+      ) return false;
+      const amount = Math.min(e.maxHp - e.hp, e.maxHp * cfg.fraction);
+      if (!(amount > 0)) return false;
+      e.hybridSelfHeal = {
+        source: e.id,
+        skill: 'Hybrid Recovery',
+        remaining: amount,
+        seconds: cfg.duration,
+        allowIdle: true,
+      };
+      e.hybridSelfHealCd = cfg.cooldown;
+      this.event('heal', {
+        x: e.x, y: e.y, actor: 'enemy', resource: 'health',
+        source: e.id, target: e.id, amount,
+        skill: 'Hybrid Recovery', species: e.species, form: e.form,
+      });
+      return true;
+    }
+    advanceHybridSelfHeal(e, dt) {
+      const h = e.hybridSelfHeal;
+      if (!h) return;
+      if (
+        this.peace || !this.enemyHealingActor(e) ||
+        e.returning || !Number.isFinite(h.seconds) ||
+        h.seconds <= 0 || !Number.isFinite(h.remaining) ||
+        h.remaining <= 0 || !Number.isFinite(e.hp) || e.hp <= 0
+      ) {
+        delete e.hybridSelfHeal;
+        return;
+      }
+      const step = Math.min(dt, h.seconds),
+        amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
+      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
+      h.seconds = Math.max(0, h.seconds - step);
+      if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp)
+        delete e.hybridSelfHeal;
     }
     enemySupportApproach(e, dt) {
       const cfg = R.enemySupportHealing;
@@ -6399,6 +6459,199 @@
       e.noProgress = 0;
       return true;
     }
+    // Regional pilot only: ordinary melee and melee guardians, including Vale
+    // interiors. No ringleaders, boss/captain actors, ranged roles or summons.
+    valeMeleeCounterEligible(e) {
+      return (
+        valeMeleeCounter.enabled &&
+        this.regionIndex() === 0 &&
+        !this.peace &&
+        !!e?.aggro &&
+        e.hp > 0 &&
+        !e.neutral &&
+        !e.returning &&
+        e.type !== 'boss' &&
+        !e.captain &&
+        !e.roomCaptain &&
+        !e.fieldCaptain &&
+        e.form !== 'ringleader' &&
+        // Native Vale ordinary species only; night invaders keep their own
+        // authored combat, even while physically inside Greenwood.
+        ['goblin', 'skeleton'].includes(e.species) &&
+        !e.nightOnly &&
+        // Ranged-only enemies stay out of the melee interception pilot.
+        // Ordinary true hybrids retain ranged AI and inherit melee counterplay.
+        (!this.enemyRanged(e) || e.hybrid) &&
+        !e.summon &&
+        !e.rogueEmergencyReinforcement
+      );
+    }
+
+    // Universal 90-unit melee basics preserve longer native actor reach.
+    // Hybrid switch threshold is a distinct stance decision.
+    enemyMeleeBasicRange(e) {
+      const baseline = this.valeMeleeCounterEligible(e)
+        ? valeMeleeCounter.meleeBasicRange
+        : e?.type === 'boss' || e?.captain || e?.roomCaptain ||
+          e?.fieldCaptain || e?.form === 'ringleader'
+          ? R.balance.eliteMeleeBasicRange
+          : R.balance.meleeBasicRange;
+      return Math.max(baseline, e?.meleeBasicRange || 0);
+    }
+
+    // Hybrid actors retain both disciplines: native ranged healing/aim and
+    // standoff spacing beyond this close-range threshold, ordinary melee
+    // attack/pursuit inside it. These decisions use the same shared boundary
+    // as the withdrawal covering attack path.
+    enemyHybridMeleeRange(e) {
+      return e.form === 'ringleader'
+        ? R.rangedEnemyCombat.ringleaderHybridMeleeRange
+        : R.balance.meleeBasicRange;
+    }
+    enemyBackpedalThreshold(e) {
+      const band = this.enemyRangedRange(e) * R.rangedEnemyCombat.retreatFraction;
+      // A hybrid's ranged posture has a small defensible buffer outside its
+      // melee switch, avoiding immediate melee/ranged oscillation.
+      return e.hybrid ? Math.max(band, this.enemyHybridMeleeRange(e) + 40) : band;
+    }
+
+    // Distance pressure, not a fragile class-specific "kiting" classifier:
+    // stationary ranged attackers also deserve a counter from an engaged
+    // melee enemy. One ordinary chase interval is enough to teach the move.
+    startValeMeleeCounter(e, target, dt) {
+      if (!this.valeMeleeCounterEligible(e) || !target || target.hp <= 0) return false;
+      const cfg = valeMeleeCounter,
+        gap = dist(e, target),
+        targetId = target === this.hero ? 'hero' : target.id,
+        validGap = gap >= cfg.minDistance && gap <= cfg.maxDistance;
+      let observation = valeMeleeChase.get(e);
+      if (!observation || observation.targetId !== targetId) {
+        observation = { targetId, x: target.x, y: target.y, seconds: 0, vx: 0, vy: 0 };
+        valeMeleeChase.set(e, observation);
+      } else {
+        observation.vx = (target.x - observation.x) / Math.max(0.01, dt);
+        observation.vy = (target.y - observation.y) / Math.max(0.01, dt);
+        observation.x = target.x;
+        observation.y = target.y;
+      }
+      observation.seconds = validGap
+        ? Math.min(cfg.buildupSeconds, observation.seconds + dt)
+        : 0;
+      if (
+        !validGap ||
+        observation.seconds < cfg.buildupSeconds ||
+        e.specialCd > 0 ||
+        e.telegraph ||
+        e.motion ||
+        e.rangedAim ||
+        this.mageSilenceActive(e) ||
+        this.tacticalRogueRegroup(e) ||
+        !this.line(e, target)
+      )
+        return false;
+
+      // A warned, committed intercept: the destination never tracks the
+      // player after warning starts. A turn, obstruction or cover can defeat it.
+      const vx = observation.vx,
+        vy = observation.vy,
+        speed = Math.hypot(vx, vy),
+        away = (target.x - e.x) * vx + (target.y - e.y) * vy,
+        lead = speed > 25 && away > 0
+          ? Math.min(cfg.maxLeadDistance, speed * cfg.predictionSeconds)
+          : 0,
+        raw = {
+          x: target.x + (speed ? (vx / speed) * lead : 0),
+          y: target.y + (speed ? (vy / speed) * lead : 0),
+        },
+        // Keep the native ordinary-enemy home leash. This is not a hidden
+        // license to drag enemies into towns or across the entire region.
+        fromHome = dist(raw, e.home),
+        homeReach = 465,
+        landing = fromHome > homeReach
+          ? {
+              x: e.home.x + ((raw.x - e.home.x) * homeReach) / fromHome,
+              y: e.home.y + ((raw.y - e.home.y) * homeReach) / fromHome,
+            }
+          : raw;
+      if (dist(landing, e) < cfg.minDistance / 2) return false;
+      e.specialCd = cfg.cooldownSeconds;
+      e.telegraph = {
+        valeMeleeCounter: true,
+        kind: 'circle',
+        name: 'Vale Interception',
+        timer: cfg.warningSeconds,
+        recovery: 0.65,
+        x: landing.x,
+        y: landing.y,
+        radius: cfg.impactRadius,
+        targetId,
+      };
+      observation.seconds = 0;
+      e.noProgress = 0;
+      this.event('warning', { actor: e.id, species: e.species, technique: 'vale-interception' });
+      return true;
+    }
+
+    resolveValeMeleeCounter(e, warning) {
+      if (!this.valeMeleeCounterEligible(e)) return;
+      // The warning commits to a ground position, never the target's live
+      // position. Native move() owns obstacle avoidance and collision.
+      e.motion = {
+        valeMeleeCounter: true,
+        target: { x: warning.x, y: warning.y },
+        targetId: warning.targetId,
+        life: valeMeleeCounter.travelSeconds,
+      };
+    }
+
+    advanceValeMeleeCounter(e, dt) {
+      const motion = e.motion,
+        cfg = valeMeleeCounter;
+      if (!motion?.valeMeleeCounter) return;
+      if (!this.valeMeleeCounterEligible(e)) {
+        e.motion = null;
+        return;
+      }
+      motion.life -= dt;
+      const moved = this.move(e, motion.target, cfg.travelSpeed * (e.slow > 0 ? 0.5 : 1), dt),
+        arrived = dist(e, motion.target) <= cfg.arrivalTolerance;
+      e.noProgress = 0;
+      if (moved && !arrived && motion.life > 0) return;
+      e.motion = null;
+      e.cd = Math.max(e.cd, 0.65);
+      // No reward for a blocked, interrupted or mistimed leap. The follow-up
+      // is a single bounded strike, not free area damage or a second charge.
+      if (!arrived) return;
+      const victim = motion.targetId === 'hero'
+        ? this.hero
+        : this.combatTargets().find((u) => u.id === motion.targetId);
+      if (
+        !victim ||
+        victim.hp <= 0 ||
+        dist(victim, motion.target) > cfg.impactRadius ||
+        dist(victim, e) > cfg.impactRadius ||
+        !this.line(e, victim)
+      )
+        return;
+      const hero = this.hero,
+        zone = this.zoneId,
+        deaths = this.s.statistics.deaths,
+        landed = this.hitParty(
+          victim, this.weakenedEnemyDamage(e) * cfg.damageMultiplier, 0, e.id,
+        );
+      if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
+        return;
+      if (landed) {
+        const equipment = R.enemyMeleeEquipment(e);
+        this.event('melee', {
+          actor: 'enemy', source: e.id, species: e.species,
+          ...equipment, x: victim.x, y: victim.y,
+          target: victim === this.hero ? 'hero' : victim.id,
+        });
+        if (victim.hp > 0) this.applySlow(victim, cfg.slowSeconds);
+      }
+    }
+
     updateEnemies(dt) {
       // Called guards are not persistent dungeon slots. Reap dead bodies
       // after combat (not inside kill), without a per-frame roster scan.
@@ -6447,6 +6700,8 @@
           // deterministic non-healer simulation: don't create idle cooldown
           // fields for every monster during each ordinary combat tick.
           if ((e.supportHealCd || 0) > 0) e.supportHealCd = Math.max(0, e.supportHealCd - recovery);
+          if ((e.hybridSelfHealCd || 0) > 0)
+            e.hybridSelfHealCd = Math.max(0, e.hybridSelfHealCd - recovery);
           const leaderHealCd = enemyLeaderHealRecovery.get(e) || 0;
           if (leaderHealCd > 0) {
             const left = Math.max(0, leaderHealCd - recovery);
@@ -6460,7 +6715,11 @@
             else captainSelfHealRecovery.delete(e);
           }
           if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
-        } else if (e.supportHeal) delete e.supportHeal;
+          if (e.hybridSelfHeal) this.advanceHybridSelfHeal(e, dt);
+        } else {
+          if (e.supportHeal) delete e.supportHeal;
+          if (e.hybridSelfHeal) delete e.hybridSelfHeal;
+        }
         if (e.hp <= 0) {
           if (e.respawn > 0 && !this.peace) {
             e.respawn -= dt;
@@ -6697,6 +6956,9 @@
                 dist(e, this.hero) < 700
               ? this.hero
               : candidates.sort((a, b) => dist(e, a) - dist(b, e))[0]);
+        // Hybrid restoration is a self-action, independent of allied support
+        // and available in both active encounters and a wounded idle phase.
+        if (!e.aggro && this.enemyHybridSelfHeal(e)) continue;
         // An arriving wounded ally does not have to drag the healer into combat first.
         if (
           !e.aggro &&
@@ -6813,6 +7075,7 @@
           this.disengage(e, dt, mobilityReset);
           continue;
         }
+        if (this.enemyHybridSelfHeal(e)) continue;
         if (this.enemySupportHeal(e)) continue;
         if (this.enemySupportApproach(e, dt)) continue;
         // Healing wins the next free decision, including a fresh Rogue window.
@@ -6829,6 +7092,10 @@
           this.startBossRecovery(e)
         )
           continue;
+        // An actual ranged-gap problem takes precedence over optional Rogue
+        // reconsideration. The two independent recovery clocks never replace
+        // each other; an active regroup still retains its own authority.
+        if (this.startValeMeleeCounter(e, target, dt)) continue;
         if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
           regroup = this.tacticalRogueRegroup(e),
@@ -6913,7 +7180,8 @@
             const hero = this.hero,
               zone = this.zoneId,
               deaths = this.s.statistics.deaths;
-            this.resolveAttack(e);
+            if (a.valeMeleeCounter) this.resolveValeMeleeCounter(e, a);
+            else this.resolveAttack(e);
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
             e.telegraph = e.motion ? null : this.advanceQueuedAttack(e);
@@ -6999,18 +7267,18 @@
           continue;
         }
         if (e.motion) {
-          this.advanceMotion(e, dt);
+          if (e.motion.valeMeleeCounter) this.advanceValeMeleeCounter(e, dt);
+          else this.advanceMotion(e, dt);
           e.noProgress = 0;
           continue;
         }
         const d = dist(e, target),
-          hybridMeleeRange =
-            e.form === 'ringleader' ? R.rangedEnemyCombat.ringleaderHybridMeleeRange : 65,
+          hybridMeleeRange = this.enemyHybridMeleeRange(e),
           ranged =
             (e.ranged ?? ['archer', 'crownguard'].includes(e.species)) &&
             !(e.hybrid && d <= hybridMeleeRange),
-          range = ranged ? this.enemyRangedRange(e) : 65,
-          retreatRange = ranged && !e.hybrid ? range * R.rangedEnemyCombat.retreatFraction : 0,
+          range = ranged ? this.enemyRangedRange(e) : this.enemyMeleeBasicRange(e),
+          retreatRange = ranged ? this.enemyBackpedalThreshold(e) : 0,
           before = { x: e.x, y: e.y },
           visible = this.line(e, target),
           firingLine = ranged ? this.enemyRangedLine(e, target) : visible;
@@ -7050,6 +7318,10 @@
           opportunity = this.enemyBackpedal(e, target, dt, territory);
           if (opportunity) this.enemyWithdrawalAction(e, target, scriptedBossTarget);
         }
+        // Hybrids inherit ranged spacing during melee recovery while keeping
+        // their melee pursuit, healing, ranged attacks and Rogue decisions.
+        if (!opportunity && e.hybrid && visible)
+          opportunity = this.enemyHybridBackstep(e, target, dt, territory);
         if (!opportunity && d <= range && e.cd <= 0 && firingLine) {
           this.enemyStartBasic(e, target, ranged);
           opportunity = true;
@@ -7112,6 +7384,7 @@
           this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
         this.tacticalClearThreat(e);
         this.clearEnemyUnderFire(e);
+        valeMeleeChase.delete(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
         if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
@@ -7199,6 +7472,8 @@
       e.hp = e.baseHp;
       e.maxHp = e.baseHp;
       delete e.supportHeal;
+      delete e.hybridSelfHeal;
+      e.hybridSelfHealCd = 0;
       e.supportHealCd = 0;
       e.damage = e.baseDamage;
       e.returning = 0;
@@ -7899,6 +8174,7 @@
       : require('./enemy-vfx-events.js');
   EnemyVfxEvents.install(Campaign);
   Campaign.rules = R;
+  Campaign.valeMeleeCounter = valeMeleeCounter;
   Campaign.data = D;
   Campaign.classes = classes;
   Campaign.talentProfiles = talentProfiles;
