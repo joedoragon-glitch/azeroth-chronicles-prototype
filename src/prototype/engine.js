@@ -3141,7 +3141,11 @@
           const learned = this.criticalCodexCount();
           this.say('Learned ' + def.name + ' · ' + learned + '/5 Codices of the Unforeseen.');
           this.say(def.description);
-          this.notice(def.name + ' · critical mastery learned', 5.5);
+          this.notice(
+            def.name + ' · +1 percentage point critical chance (' +
+              (this.criticalPartyChance('hero') * 100).toFixed(0) + '%)',
+            4.5,
+          );
           this.event('criticalCodex', { id: side.id, count: learned, name: def.name });
           return true;
         }
