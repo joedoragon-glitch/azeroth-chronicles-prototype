@@ -6429,6 +6429,13 @@
       );
     }
 
+    // Do not expand boss, captain, Ringleader, ranged or other-region melee
+    // reach: Greenwood ordinary melee gets the same 120-unit basic reach as
+    // the Paladin's autoattack. This method also owns withdrawal basics.
+    valeMeleeBasicRange(e) {
+      return this.valeMeleeCounterEligible(e) ? valeMeleeCounter.meleeBasicRange : 65;
+    }
+
     // Distance pressure, not a fragile class-specific "kiting" classifier:
     // stationary ranged attackers also deserve a counter from an engaged
     // melee enemy. One ordinary chase interval is enough to teach the move.
@@ -7182,7 +7189,7 @@
           ranged =
             (e.ranged ?? ['archer', 'crownguard'].includes(e.species)) &&
             !(e.hybrid && d <= hybridMeleeRange),
-          range = ranged ? this.enemyRangedRange(e) : 65,
+          range = ranged ? this.enemyRangedRange(e) : this.valeMeleeBasicRange(e),
           retreatRange = ranged && !e.hybrid ? range * R.rangedEnemyCombat.retreatFraction : 0,
           before = { x: e.x, y: e.y },
           visible = this.line(e, target),
