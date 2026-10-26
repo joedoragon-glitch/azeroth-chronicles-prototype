@@ -1729,7 +1729,13 @@
           ctx.strokeStyle = color;
           ctx.fillStyle = color + '28';
           ctx.lineWidth = 3;
-          if (f.shape === 'circle') {
+          if (f.projectileVolley) {
+            // Actual Archer shafts travel independently; show only a bow-release arc.
+            ctx.globalAlpha = a * 0.55;
+            ctx.beginPath();
+            ctx.arc(from.x, from.y - 15, 10, -0.9, 1.1);
+            ctx.stroke();
+          } else if (f.shape === 'circle') {
             PrototypeCombatVisuals.circlePath(ctx, screen, f, f.radius);
             ctx.fill();
             ctx.stroke();

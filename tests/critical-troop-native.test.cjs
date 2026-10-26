@@ -120,6 +120,28 @@ for (const type of ['soldier', 'archer']) {
   assert.equal(charge.count(), 1, type + ' actual post-hold release rolls once');
   assert.equal(baseArea.unit.skill2Cd, critArea.unit.skill2Cd);
   assert(baseArea.unit.skill2Cd > 0, 'charged cooldown starts only after release');
+  if (type === 'archer') {
+    assert.deepEqual(baseArea.enemies.map(e => e.hp), hpA,
+      'Archer Piercing Volley cannot deal phantom release-time damage');
+    assert.deepEqual(critArea.enemies.map(e => e.hp), hpB,
+      'critical Archer Piercing Volley cannot deal phantom release-time damage');
+    const baseline = baseArea.g.s.projectiles, arrows = critArea.g.s.projectiles;
+    assert.equal(arrows.length, baseline.length, 'critical adds no arrows');
+    assert(arrows.length > 0, 'Piercing Volley admitted real physical shafts');
+    const receipt = arrows[0].criticalExecution;
+    assert.equal(receipt.key, 'troop/archer/second');
+    assert(Object.isFrozen(receipt));
+    arrows.forEach((shot, i) => {
+      assert.strictEqual(shot.criticalExecution, receipt, 'one cast receipt for all arrows');
+      assert(Math.abs(shot.damage - baseline[i].damage * damageMultiplier) < 1e-7);
+      assert.equal(shot.companionSkill, 'piercing-volley');
+    });
+    for (let i = 0; i < 20 && (baseline.length || arrows.length); i++) {
+      baseArea.g.updateProjectiles(0.1);
+      critArea.g.updateProjectiles(0.1);
+    }
+    assert.equal(charge.count(), 1, 'Archer physical impacts do not reroll');
+  }
   const baseLosses = baseArea.enemies.map((e, i) => hpA[i] - e.hp);
   const criticalLosses = critArea.enemies.map((e, i) => hpB[i] - e.hp);
   assert(baseLosses.some(v => v > 0), 'native second skill must hit a legal target');

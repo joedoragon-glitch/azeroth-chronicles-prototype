@@ -1636,7 +1636,32 @@
           damage = this.troopCriticalDamage(criticalReceipt, base * def.multiplier),
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
-        for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+        if (u.type === 'archer') {
+          // #464: the original selected targets receive real physical arrows.
+          // A single committed critical receipt is shared across all shafts;
+          // no damage/status occurs until the native projectile contact.
+          for (const e of targets) {
+            const distance = Math.max(1, dist(u, e));
+            this.s.projectiles.push({
+              id: 'projectile-' + this.s.nextId++,
+              x: u.x,
+              y: u.y,
+              dx: (e.x - u.x) / distance,
+              dy: (e.y - u.y) / distance,
+              target: e.id,
+              damage,
+              source: u.id,
+              speed: 650,
+              style: 'arrow',
+              area: true,
+              companionSkill: 'piercing-volley',
+              ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
+            });
+            hits++;
+          }
+        } else {
+          for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+        }
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
@@ -1674,6 +1699,7 @@
           targetId: target.id,
           effect: def.effect,
           shape: def.shape,
+          ...(u.type === 'archer' ? { projectileVolley: true } : {}),
           x: target.x,
           y: target.y,
           fromX: u.x,
