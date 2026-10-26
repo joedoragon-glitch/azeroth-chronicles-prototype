@@ -186,11 +186,11 @@
         // Skills are earned through the real instructors in the arena hub.
         // The normal class-specific starting basic attack remains learned.
         this.hero.gold = 50000000;
-        this.hero.x = 620;
-        this.hero.y = 800;
+        this.hero.x = 650;
+        this.hero.y = 1070;
         this.s.party.forEach((unit, i) => {
-          unit.x = 565 + i * 80;
-          unit.y = 880;
+          unit.x = 600 + i * 110;
+          unit.y = 1170;
         });
       }
       this.zone();
