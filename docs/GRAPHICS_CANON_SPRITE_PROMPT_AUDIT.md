@@ -59,7 +59,7 @@ The hostile Raider Archer remains human('archer'), a simpler human ranged enemy,
 
 Mireling Spitter, Ogre Stone Thrower, Orc Axe Thrower and Ash-beast Cinder Spitter now have persistent static procedural distinctions in addition to their runtime projectile behavior. Their ranged variants use different palettes, clothing/harnesses and role equipment. Most importantly, the Orc Axe Thrower no longer carries the melee Orc sword; it visibly carries throwing axes.
 
-Reed-beast Spitter, Goblin Slinger and Skeleton Bow already had static ranged cues and remain unchanged in principle.
+Reed-beast Spitter and Skeleton Bow retain their static ranged cues. The Goblin Slinger was using the friendly Archer's bow/quiver despite firing stones. Dev.194 corrects hostile ranged Goblins (including Ringleaders) to a true two-cord sling and stone satchel; the friendly Goblin Archer keeps bow/quiver. See `GOBLIN_SLINGER_ARROW_GEOMETRY_DEV194.md`.
 
 ### Dreadmaw
 

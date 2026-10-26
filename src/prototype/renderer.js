@@ -1275,17 +1275,14 @@
         ctx.stroke();
       } else if (style === 'arrow') {
         if (combo === 2) {
+          // Projectiles fly independently after release. A curved tail looked
+          // like a bent arrow chasing the moving Ranger/Archer's hand.
           ctx.strokeStyle = '#eef0c4';
-          ctx.globalAlpha = 0.45;
-          ctx.lineWidth = 2.5;
+          ctx.globalAlpha = 0.32;
+          ctx.lineWidth = 1.7;
           ctx.beginPath();
-          ctx.moveTo(q.x - ux * 28 + px * 7, q.y - uy * 28 + py * 7);
-          ctx.quadraticCurveTo(
-            q.x - ux * 12 - px * 3,
-            q.y - uy * 12 - py * 3,
-            q.x - ux * 2,
-            q.y - uy * 2,
-          );
+          ctx.moveTo(q.x - ux * 30 + px * 4, q.y - uy * 30 + py * 4);
+          ctx.lineTo(q.x - ux * 9 + px * 4, q.y - uy * 9 + py * 4);
           ctx.stroke();
         } else if (combo === 3) {
           ctx.strokeStyle = '#f5e6b2';
