@@ -6479,7 +6479,7 @@
       );
     }
 
-    // Universal 90-unit melee basics preserve longer native actor reach.
+    // Tuned ordinary/elite melee basics preserve longer native actor reach.
     // Hybrid switch threshold is a distinct stance decision.
     enemyMeleeBasicRange(e) {
       const baseline =
