@@ -6311,6 +6311,10 @@
     retreatSpeed: 165,
     ringleaderRetreatMultiplier: 1.2,
     ringleaderHybridMeleeRange: 120,
+    // Hybrid defensive spacing only during melee recovery, never a permanent
+    // ranged-only kite mode. Both values are seconds.
+    hybridBackstepSeconds: 0.42,
+    hybridBackstepCooldown: 5.5,
     guardianScreenRange: 220,
   };
   const chargedSkills = {
