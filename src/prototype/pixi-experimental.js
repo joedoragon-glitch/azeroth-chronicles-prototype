@@ -501,7 +501,7 @@
         width: zoomedWidth, height: zoomedHeight, region, darkness,
         dungeon: !!current.isDungeon(), room: !!current.supplyRoom(),
         optimized: !!options.getOptimizationMode(),
-        time: performance.now() / 1000,
+        time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
       });
       scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
