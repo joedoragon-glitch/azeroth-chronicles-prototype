@@ -7,6 +7,9 @@ const cfg = Campaign.valeMeleeCounter;
 assert.equal(cfg.cooldownSeconds, 4.5);
 assert.equal(cfg.meleeBasicRange, 120, 'Greenwood ordinary melee basic equals Paladin autoattack');
 assert(cfg.enabled && cfg.warningSeconds > 0 && cfg.travelSpeed > 175);
+assert.equal(cfg.meleeBasicRange, 120, 'native Greenwood regular melee reaches Paladin parity');
+assert(cfg.maxDistance >= 600 && cfg.maxLeadDistance >= 325,
+  'ranged heroes cannot exploit the prior 480-unit interception ceiling');
 
 function scene(region = 'vale', species = 'goblin', guard = false) {
   const c = new Campaign('normal', 'ranger', () => 0.9);
@@ -58,6 +61,8 @@ for (const [species, guard] of [
 ]) {
   const { c, e } = scene('vale', species, guard);
   assert(c.valeMeleeCounterEligible(e), species + ' melee guard=' + guard);
+  assert.equal(c.valeMeleeBasicRange(e), 120,
+    'the same ordinary and guardian melee roles receive the improved basic reach');
   assert.equal(c.valeMeleeBasicRange(e), 120, 'native melee and guardians share the new basic reach');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'one tick cannot instantly intercept');
   assert(!c.startValeMeleeCounter(e, c.hero, 0.1), 'buildup is real');
@@ -103,6 +108,8 @@ for (const [species, guard] of [
     const original = { ...e };
     Object.assign(e, changes);
     assert(!c.valeMeleeCounterEligible(e), JSON.stringify(changes));
+    assert.equal(c.valeMeleeBasicRange(e), 65,
+      'excluded roles retain the original basic contact radius');
     assert.equal(c.valeMeleeBasicRange(e), 65, 'excluded tiers keep their unchanged melee reach');
     // A temporarily introduced exclusion flag must not leak into later cases.
     for (const key of Object.keys(changes)) if (!(key in original)) delete e[key];
@@ -138,6 +145,24 @@ for (const [species, guard] of [
   c.hero.x = e.x + (c.hero.x - e.x) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
   c.hero.y = e.y + (c.hero.y - e.y) / Math.max(1, Math.hypot(c.hero.x - e.x, c.hero.y - e.y)) * 135;
   assert.equal(c.valeMeleeBasicRange(e), 120);
+}
+
+{
+  // Explicitly test the previously exploitable 480–610 distance band. Native
+  // collision and LOS are tested elsewhere: stub sight for this reach boundary
+  // unit test to isolate the gate from arbitrary Greenwood scenery.
+  const { c, e } = scene();
+  const dx = c.hero.x - e.x, dy = c.hero.y - e.y,
+    len = Math.hypot(dx, dy);
+  c.hero.x = e.x + dx / len * 550;
+  c.hero.y = e.y + dy / len * 550;
+  const originalLine = c.line;
+  c.line = () => true;
+  for (let i = 0; i < 5 && !e.telegraph; i++)
+    c.startValeMeleeCounter(e, c.hero, 0.1);
+  assert(e.telegraph?.valeMeleeCounter,
+    'eligible melee enemy can threaten a ranged target at 550 units');
+  c.line = originalLine;
 }
 
 {
