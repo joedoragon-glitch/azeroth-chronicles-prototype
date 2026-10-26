@@ -492,6 +492,18 @@
         warmth: phase.warmth || 0,
         phase: phase.phase || 'day',
       });
+      // Canvas's atmospheric motes use logical world-viewport dimensions,
+      // then get enlarged by the current camera zoom on the final surface.
+      // They continue drifting even when the player/camera is stationary.
+      const zoomedWidth = viewport.width / zoom,
+        zoomedHeight = viewport.height / zoom;
+      const motes = root.PrototypeVisuals.atmosphereMotes({
+        width: zoomedWidth, height: zoomedHeight, region, darkness,
+        dungeon: !!current.isDungeon(), room: !!current.supplyRoom(),
+        optimized: !!options.getOptimizationMode(),
+        time: performance.now() / 1000,
+      });
+      scene.syncMotes(motes, zoom);
       scene.setVignette({ darkness, optimized: !!options.getOptimizationMode() });
     }
     async function prepare() {
