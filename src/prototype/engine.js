@@ -6765,6 +6765,36 @@
                 : e.summon
                   ? 900
                   : 500;
+        // A real recent damaging actor takes priority over a merely closer
+        // bystander, provided they are visible and inside the ORIGINAL leash.
+        // Boss/captain scripting, taunts and unrelated pack acquisition retain
+        // their existing targeting rules.
+        if (
+          e.aggro &&
+          e.type !== 'boss' &&
+          !e.captain &&
+          !e.roomCaptain &&
+          !(e.tauntUntil > this.s.time)
+        ) {
+          const alert = this.enemyUnderFireAlert(e);
+          if (alert?.source) {
+            const attacker =
+              alert.source === 'hero'
+                ? this.hero
+                : this.activeLivingParty().find((unit) => unit.id === alert.source);
+            if (
+              attacker?.hp > 0 &&
+              this.tacticalRogueLeashAllows(e, attacker, territory) &&
+              this.enemyRangedLine(e, attacker) &&
+              (this.isDungeon() ||
+                dist(attacker, {
+                  x: D.towns[this.regionIndex()][0],
+                  y: D.towns[this.regionIndex()][1],
+                }) >= 160)
+            )
+              target = attacker;
+          }
+        }
         if (
           !this.tacticalRogueLeashAllows(e, target, territory) ||
           (!this.isDungeon() &&
@@ -7058,6 +7088,18 @@
         const progress = dist(before, e) > Math.max(0.1, dt * 10);
         if (opportunity || progress) e.noProgress = 0;
         else e.noProgress += dt;
+        // A blocked pursuit after a genuine hit must not look like an inert
+        // target dummy. Only sidestep when movement was needed and impossible;
+        // do not interrupt normal ranged cooldowns or committed Rogue actions.
+        if (
+          !opportunity &&
+          !progress &&
+          (d > range || !firingLine) &&
+          e.noProgress >= 0.6 &&
+          !this.tacticalRogueRegroup(e) &&
+          this.enemyUnderFireSidestep(e, dt, territory)
+        )
+          e.noProgress = 0;
         if (e.noProgress >= 12) this.disengage(e, dt);
       }
       this.updateThornCaptive(dt);
@@ -7069,6 +7111,7 @@
         if (e.family === 'mine' && e.type === 'boss')
           this.zone().props = this.zone().props.filter((p) => !p.garunTemporary && !p.garunPreview);
         this.tacticalClearThreat(e);
+        this.clearEnemyUnderFire(e);
         this.tacticalClearBurst(e);
         this.tacticalClearRogueRegroup(e);
         if (e.form === 'ringleader') this.tacticalRetireEmergencyGuards(e);
@@ -7140,6 +7183,7 @@
     // Shared post-return combat reset: ordinary leashes and emergency rescue
     // must retire identical cooldowns, boss phases and summon flags.
     finishDisengage(e) {
+      this.clearEnemyUnderFire(e);
       enemyLeaderHealRecovery.delete(e);
       captainSelfHealRecovery.delete(e);
       e.aggro = false;

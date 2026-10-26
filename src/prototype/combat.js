@@ -46,6 +46,9 @@
       const entry = (-b - Math.sqrt(discriminant)) / (2 * a);
       return entry >= 0 && entry <= 1 ? entry : Infinity;
     }
+    // A hit conveys short-lived awareness, not permanent omniscience or saved AI state.
+    // Weak keys also keep dead/despawned monsters from accumulating alert records.
+    const underFireAlerts = new WeakMap();
     class Combat {
       combatTargets() {
         const z = this.s.zones[this.s.zone];
@@ -269,6 +272,72 @@
         if (hits.length > 128) hits.splice(0, hits.length - 128);
         ledger.set(actor, hits);
         this._tacticalThreat.set(e.id, ledger);
+      }
+
+      noteEnemyUnderFire(e, source, origin, actualDamage) {
+        if (!(actualDamage > 0) || e.hp <= 0) return;
+        const previous = underFireAlerts.get(e);
+        const realAttacker =
+          source === 'hero' ||
+          this.s.party.some((unit) => unit.id === source && unit.hp > 0);
+        underFireAlerts.set(e, {
+          zone: this.zoneId,
+          source: realAttacker ? source : null,
+          // Impact direction is remembered briefly; it is not live tracking
+          // through walls or an expansion of passive detection.
+          x: origin.x,
+          y: origin.y,
+          expires: this.s.time + 4,
+          nextSidestep: previous?.zone === this.zoneId ? previous.nextSidestep : 0,
+        });
+      }
+
+      enemyUnderFireAlert(e) {
+        const alert = underFireAlerts.get(e);
+        if (!alert) return null;
+        if (
+          e.hp <= 0 ||
+          !e.aggro ||
+          e.returning ||
+          alert.zone !== this.zoneId ||
+          alert.expires < this.s.time
+        ) {
+          underFireAlerts.delete(e);
+          return null;
+        }
+        return alert;
+      }
+
+      clearEnemyUnderFire(e) {
+        underFireAlerts.delete(e);
+      }
+
+      // When a real ranged hit has engaged a monster but pursuit cannot find
+      // a route, try a bounded local step. This is a defensive response, not
+      // a teleport, wall bypass, remote attack or new aggro range.
+      enemyUnderFireSidestep(e, dt, territory) {
+        const alert = this.enemyUnderFireAlert(e);
+        if (
+          !alert ||
+          !e.home ||
+          !(dt > 0) ||
+          e.telegraph ||
+          e.motion ||
+          e.rangedAim ||
+          this.s.time < alert.nextSidestep
+        )
+          return false;
+        alert.nextSidestep = this.s.time + 1.25;
+        const away = Math.atan2(e.y - alert.y, e.x - alert.x);
+        for (const offset of [Math.PI / 2, -Math.PI / 2, 0, Math.PI / 4, -Math.PI / 4]) {
+          const angle = away + offset;
+          const point = { x: e.x + Math.cos(angle) * 48, y: e.y + Math.sin(angle) * 48 };
+          if (dist(point, e.home) > territory || !this.clearSegment(e, point)) continue;
+          const before = { x: e.x, y: e.y };
+          this.move(e, point, 125, dt);
+          if (dist(before, e) > 0.1) return true;
+        }
+        return false;
       }
 
       tacticalActiveTargetCount(e) {
@@ -788,9 +857,14 @@
         this.recordMarchesDamage(e, actualDamage);
         this.snapshotPassiveRecordHit(e, actualDamage, source);
         this.tacticalRecordHit(e, source, actualDamage);
+        if (actualDamage > 0 && e.hp > 0)
+          this.noteEnemyUnderFire(e, source, origin, actualDamage);
         if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
-        if (e.hp === 0) this.kill(e);
+        if (e.hp === 0) {
+          this.clearEnemyUnderFire(e);
+          this.kill(e);
+        }
         if (reflected > 0 && origin.hp > 0) this.hitParty(origin, reflected, 0, null, true);
         return true;
       }
