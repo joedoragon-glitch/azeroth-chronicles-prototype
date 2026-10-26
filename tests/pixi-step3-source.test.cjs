@@ -56,8 +56,9 @@ assert(app.includes("addEventListener('pagehide'"),
   'Interrupted PWA trials must be cancelled on pagehide');
 assert(pixi.includes('scene.unregisterTexture(body.id)'),
   'Area transitions must free obsolete Pixi textures');
-assert(pixi.includes('bakeZone !== current.zoneId'),
-  'Zone changes must invalidate outdated procedural artwork');
+assert(pixi.includes('current.zoneId +') && pixi.includes('if (bakedZoom !== zoom)') &&
+  pixi.includes('imageBytes > trimAt'),
+  'Each zone must have a unique art identity and a bounded, zoom-safe reuse policy');
 // Performance instrumentation is presentation-only, not a new FPS policy.
 const runtimeSource = read('src/prototype/runtime.js');
 assert(app.includes('pixiAttempted: false'), 'Pixi draw samples must be explicitly identified');
