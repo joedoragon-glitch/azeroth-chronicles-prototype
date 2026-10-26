@@ -6799,6 +6799,8 @@
     mountedMovementMultiplier: 1.3,
     enemySpecialReachMultiplier: 1.2,
     enemyTargetingMultiplier: 1.1,
+    // Global basic melee floor for ringleaders, captains and bosses only.
+    eliteMeleeBasicRange: 90,
     enemyAcquisitionRange: 260,
     fortifications: {
       incomingMultiplier: 0.6,
