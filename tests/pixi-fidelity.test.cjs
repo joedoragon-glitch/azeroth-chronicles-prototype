@@ -162,6 +162,13 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'offscreen procedural image is cached without drawing it in the live scene');
   assert(gpu.status().neighborhoodWarmupMs>=0);
   assert.equal(frames[0].length,1,'prewarming must not add offscreen actors to the world');
+  const heroStartX=game.hero.x;
+  game.hero.x-=470;
+  gpu.activate();
+  gpu.draw();
+  assert.equal(gpu.status().proceduralTextures,1,
+    'westward first visit must reuse the prewarmed identity instead of baking again');
+  game.hero.x=heroStartX;
   game.props=[];
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
   assert.equal(draws[0].width,1352,'CSS-space terrain dimensions stay unchanged');
