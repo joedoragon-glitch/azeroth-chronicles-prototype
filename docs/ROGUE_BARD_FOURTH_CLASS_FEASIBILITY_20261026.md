@@ -6,6 +6,12 @@
 
 **Supplemental review-ready proposal (26 October 2026):** [full gameplay and critical/balance candidate](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md), [static regular + crowned art design](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md), and [source-by-source housekeeping / implementation matrix](ROGUE_BARD_IMPLEMENTATION_HOUSEKEEPING_20261026.md). The earlier open Succession-ownership question is now resolved by the owner: all charmed allies persist through class changes; only Rogue can recruit new charmed monsters. These later source-based findings supersede tentative statements below where inconsistent.
 
+## 0a. Corrected source-first starting balance baseline (latest owner direction)
+
+Current real `src/prototype/rules.js` class bases: Paladin **120 HP / 18 Power / 8 Armor / 300 Speed**; Mage **90 / 22 / 3 / 300**; Ranger **105 / 20 / 5 / 320**. **Mage's +9 Power is a *Discipline training increment*, not base power.** Rogue's initial proposed bases are now **90 HP / 18 Power / 3 Armor / 300 Speed**, i.e. established minima only; dormant MP candidate **60** follows Paladin minimum. Standard XP/HP gain and purchases remain normal; **only innate hero passive growth is +1 percentage point personal crit chance per level** and the owner's 2-second 1HP Endure. No innate HP/Power/Armor/speed increases. Treat static-derived minima as a policy choice, **not a simulation balance certification**.
+
+**Important opposing risk:** Rogue has no starting Soldier or Archer while all other current classes begin with both. A 12% Charm roll per legitimate surviving primary hit with a short low-damage AoE **might fail to supply her first ally** before early enemy HP and incoming damage exhaust her. Require L1 solo opening tests and approved Charm safeguards as needed; do not compensate by secretly boosting conventional stats.
+
 ## 1. Executive feasibility verdict
 
 A music-themed female Rogue who manipulates combat, auto-charms eligible ordinary enemies into **permanent company members**, fields one extra active companion, relies on boss pets, and never hires Soldiers/Archers is **architecturally possible** in Azeroth Chronicles. Most of the desired behavior is expressible using the existing combat clocks, statuses, persistent party roster, companion navigation, formations, Barracks care, and procedural/spatial VFX.
