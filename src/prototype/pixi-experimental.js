@@ -22,6 +22,26 @@
     element.height = height;
     return element;
   }
+  // Explicit proof-bounded reuse: only fixed authored decorative shapes that
+  // never read entity identity, world coordinates, animation or game state.
+  // Variable carts, wildlife, poppies, enemies, heroes and living props retain
+  // their original per-entity keys. Unknown appearance fields opt OUT.
+  const shareableDecorations = new Set([
+    'crate', 'barrel', 'woodpile', 'stacked-lumber', 'scroll-stack',
+  ]);
+  const inertDecorationFields = new Set([
+    'id', 'name', 'x', 'y', 'r', 'renderKind', 'structure', 'decorative',
+    'spriteIdentity', 'visualScale', 'group', 'sceneRole', 'roadTrace',
+    'frontierDistrict', 'crownDistrict',
+  ]);
+  function sharedDecorationKey(visual) {
+    if (visual.renderKind !== 'prop' || visual.decorative !== true ||
+        !shareableDecorations.has(visual.structure) ||
+        Object.keys(visual).some((field) => !inertDecorationFields.has(field))) return null;
+    const scale = visual.visualScale == null ? 1 : visual.visualScale;
+    if (!Number.isFinite(scale) || scale <= 0) return null;
+    return visual.structure + ':' + scale;
+  }
   let libraryRequest;
   let prepareExtensionLibrary = null;
   function loadPixi() {
@@ -173,6 +193,7 @@
       proceduralCacheEvictions = 0,
       proceduralBakes = 0,
       proceduralCacheHits = 0,
+      sharedProceduralHits = 0,
       backgroundRepaints = 0,
       neighborhoodPrepared = 0,
       neighborhoodWarmupMs = 0,
@@ -332,6 +353,10 @@
       if (!keepLoaded) loaded.clear();
     }
     function revisionFor(entity, visual, key, current, zoom) {
+      const shared = sharedDecorationKey(visual);
+      if (shared !== null) return (
+        backingRatio + ':' + zoom + ':shared-decor:' + shared + ':' + current.zoneId
+      );
       return (
         backingRatio + ':' + zoom + ':' + key + ':' + current.zoneId + ':' +
         !!current.s.rescued[entity.family] + ':' + (entity.form || '') + ':' +
@@ -430,6 +455,7 @@
                               protectedRevisions = null, detach = null) {
       if (baked.has(revision)) {
         proceduralCacheHits++;
+        if (revision.includes(':shared-decor:')) sharedProceduralHits++;
         return baked.get(revision);
       }
       const started = measureNow();
@@ -930,6 +956,7 @@
         proceduralCacheEvictions,
         proceduralBakes,
         proceduralCacheHits,
+        sharedProceduralHits,
         backgroundRepaints,
         neighborhoodPrepared,
         neighborhoodWarmupMs,
