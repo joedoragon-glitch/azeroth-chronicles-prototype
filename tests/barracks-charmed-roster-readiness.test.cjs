@@ -122,6 +122,14 @@ function fixture(withCharmed = true, full = false) {
   assert.equal(f.g.expeditionPartyCap(), 7);
   for (const u of f.g.s.party.slice(0, 6)) u.active = true;
   f.company();
+  assert(!f.opened().actions.some((a) => /Recruit companions|Recruitment —/.test(a.label)),
+    'Rogue cannot open conventional hiring at Full Barracks');
+  f.menu.partyMenu();
+  assert(!f.opened().actions.some((a) => /Recruit (?:Soldier|Ranger)|Recruitment —/.test(a.label)),
+    'Captain offers care, not hiring, to Rogue');
+  assert(f.opened().actions.some((a) => /Recover fallen companion/.test(a.label)),
+    'Captain care remains available');
+  f.company();
   f.click(/^Charmed monsters$/);
   f.click(/^Goblin Slinger/);
   assert.match(f.opened().description, /Local group cap 7/);
