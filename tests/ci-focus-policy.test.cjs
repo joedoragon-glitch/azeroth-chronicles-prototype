@@ -127,6 +127,19 @@ for (const expected of ['class-passives', 'cooldown-only', 'hero-skill1-stage1']
   assert(classCoverage.tests.includes('tests/' + expected + '.test.cjs'));
 assert(selectTests(['src/prototype/rules.js'], exists).tests.includes('tests/archive-reference.test.cjs'));
 assert(selectTests(['src/prototype/renderer.js'], exists).tests.includes('tests/sprite-scope.test.cjs'));
+for (const file of ['progression', 'boss-combat'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes('tests/class-passives.test.cjs'),
+    'original class regression must follow source-only ' + file + ' changes');
+for (const file of ['engine', 'hero-combat', 'combat', 'rules'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes(
+    'tests/ranger-max-range-goblin-response.test.cjs'),
+    'native Ranger/Goblin regression must survive source-only edits in ' + file);
+for (const file of ['world', 'visuals', 'data', 'sprites'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes(
+    'tests/sprite-scope.test.cjs'),
+    'source-hash graphics evidence must follow ' + file);
+assert(selectTests(['scripts/sprite-scope-audit.cjs'], exists).tests.includes(
+  'tests/sprite-scope.test.cjs'), 'scope audit script edits must verify original scope check');
 for (const [source, expected] of [
   ['runtime', ['frame-skip', 'auto-fps-adaptive-coupling', 'render-resolution']],
   [
