@@ -328,7 +328,8 @@ function run(
   const startedAt = new Date().toISOString();
   const { tests, uncovered, missing, manualBrowser } = selectTests(paths);
   const sourceGaps = uncovered.filter((file) => file.startsWith('src/') ||
-    file.startsWith('scripts/') || file.startsWith('tools/'));
+    file.startsWith('scripts/') || file.startsWith('tools/') ||
+    file.startsWith('tests/helpers/'));
   let testedSha = process.env.GITHUB_SHA || null;
   try {
     testedSha = cp.execFileSync('git', ['rev-parse', 'HEAD'],

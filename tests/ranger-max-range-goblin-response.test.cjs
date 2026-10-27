@@ -4,6 +4,7 @@
 // Separate sight/terrain and safe-town effects; no AI methods are stubbed.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const { assertNativeClearLane, nativeBasicProjectileHit } = require('./helpers/native-fixture-contracts.cjs');
 const dist = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
 function prep(g,e,p) {
@@ -12,7 +13,11 @@ function prep(g,e,p) {
   g.s.party=[];
   g.s.time=30;
   g.s.mercyTime=0;
-  g.s.valeFieldAwakened=true;
+  // Earn the opening admission through the real first-kill boundary rather
+  // than fabricating a level/aggro flag (historical dev.175 failure source).
+  completeFieldOpening(g);
+  assert.equal(g.s.valeFieldAwakened, true,
+    'fixture must complete native first-kill admission');
   g.s.thornHeroInitiated=true;
   Object.assign(g.hero,{...p, hp:100000,maxHp:100000,level:4,
     basicCd:0,order:null,immune:0});

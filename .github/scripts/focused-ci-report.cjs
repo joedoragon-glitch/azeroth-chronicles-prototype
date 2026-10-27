@@ -25,7 +25,8 @@ function makeReport({ testedSha, baseSha, paths, selected, uncovered, missing, m
       classification: 'unexplained',
     })),
     result: failed.length || missing.length || uncovered.some((p) =>
-      p.startsWith('src/') || p.startsWith('scripts/') || p.startsWith('tools/'))
+      p.startsWith('src/') || p.startsWith('scripts/') || p.startsWith('tools/') ||
+      p.startsWith('tests/helpers/'))
       ? 'failure' : 'success',
   };
 }

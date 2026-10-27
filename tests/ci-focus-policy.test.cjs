@@ -118,6 +118,10 @@ const unclassified = selectTests(
 assert.deepEqual(unclassified.uncovered, ['src/prototype/new-future-system.js']);
 assert.deepEqual(unclassified.tests, ['tests/architecture.test.cjs']);
 assert.deepEqual(unclassified.manualBrowser, []);
+const unmappedHelper = selectTests(['tests/helpers/unknown-native-setup.cjs'],
+  (file) => file === 'tests/architecture.test.cjs');
+assert.deepEqual(unmappedHelper.uncovered, ['tests/helpers/unknown-native-setup.cjs'],
+  'shared fixture changes cannot silently claim behavioral coverage');
 const deferredBrowser = selectTests(['tests/audio-browser.test.cjs'], exists);
 assert.deepEqual(deferredBrowser.manualBrowser, ['tests/audio-browser.test.cjs'],
   'changed browser suites must remain visibly deferred, never disguised as architecture');

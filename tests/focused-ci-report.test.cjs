@@ -40,6 +40,8 @@ assert.match(renderSummary(failing), /Comparison base/);
 assert.match(renderSummary(failing), /Failed checks/);
 const uncovered = makeReport({ ...base, uncovered: ['src/prototype/future.js'], checks: [] });
 assert.equal(uncovered.result, 'failure', 'architecture fallback is not gameplay coverage');
+const unknownHelper = makeReport({ ...base, uncovered: ['tests/helpers/new-setup.cjs'], checks: [] });
+assert.equal(unknownHelper.result, 'failure', 'unmapped fixture helpers cannot evade review');
 const absent = makeReport({ ...base, missing: ['tests/save-writer.test.cjs'], checks: [] });
 assert.equal(absent.result, 'failure', 'missing mapped tests cannot be waived');
 const browser = makeReport({ ...base, paths: ['tests/audio-browser.test.cjs'],
