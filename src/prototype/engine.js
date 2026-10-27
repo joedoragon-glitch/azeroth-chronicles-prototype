@@ -5613,6 +5613,13 @@
               ? this.activeLivingParty().find((u) => u.id === underFire.source)
               : null;
         if (
+          e.type === 'mob' &&
+          e.form === 'normal' &&
+          !e.summon &&
+          !e.rogueEmergencyReinforcement &&
+          !e.captain &&
+          !e.roomCaptain &&
+          !e.fieldCaptain &&
           !this.tacticalDefenderTerritory(e) &&
           source?.hp > 0 &&
           target === source &&
