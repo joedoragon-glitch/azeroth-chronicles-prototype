@@ -38,6 +38,8 @@ const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
 const inits=[],draws=[],resizes=[],frames=[],moteFrames=[],resources=new Set(), approvedTextures=new Map();
+const gpuUploadBatches=[];
+let prepareRegistrations=0, holdGpuUpload=false, resolveGpuUpload=null;
 let holdWarmFrames=false, deferredWarmFrame=null;
 let currentActorTextures = new Set(), destroyedProcedural = 0,
   lastApplicationCanvas = null, rejectWebGLContext = false, failSceneDraw = false;
@@ -64,6 +66,13 @@ class Application {
     lastApplicationCanvas=this.canvas;
     this.canvas.getContext=type=>type==='webgl2'&&!rejectWebGLContext?{}:null;
     this.renderer={
+      prepare:{upload:(textures)=>{
+        assert(prepareRegistrations>0,'GPU preparation must be installed before renderer init');
+        gpuUploadBatches.push(textures);
+        return holdGpuUpload
+          ? new Promise(resolve=>{resolveGpuUpload=resolve})
+          : Promise.resolve();
+      }},
       resize:(w,h,ratio)=>{
         resizes.push(ratio);
         this.screen={width:w,height:h};
@@ -81,7 +90,9 @@ const textureFrom=image=>({source:{width:image.width,height:image.height,update(
 const runtime={
   Campaign:{rules:{terrain:[]}},
   PIXI:{
-    Application,Texture:{from:textureFrom},
+    Application,PrepareSystem:class PrepareSystem{},
+    extensions:{add(){prepareRegistrations++;}},
+    Texture:{from:textureFrom},
     Assets:{
       load:async(src)=>{
         const texture={source:{width:816,height:816}};
@@ -159,6 +170,15 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await gpu.prepare(),true,'retina Pixi scene must prepare');
   assert.equal(gpu.status().neighborhoodPrepared,1,
     'near-west fringe is prepared while simulation remains frozen');
+  assert.equal(prepareRegistrations,1,'register the optional Pixi prepare system exactly once');
+  assert.equal(gpu.status().approvedGpuPrepared,1,
+    'approved sprite must be uploaded before the Pixi reveal');
+  assert.equal(gpu.status().proceduralGpuPrepared,1,
+    'the nearby raster must also be uploaded before the Pixi reveal');
+  assert.equal(gpu.status().gpuPreparationBatches,2,
+    'approved and procedural GPU preparation must be measured separately');
+  assert.equal(gpuUploadBatches[0].length,1);
+  assert.equal(gpuUploadBatches[1].length,1);
   assert.equal(gpu.status().proceduralTextures,1,
     'offscreen procedural image is cached without drawing it in the live scene');
   assert(gpu.status().neighborhoodWarmupMs>=0);
@@ -246,6 +266,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert(gpu.status().proceduralCacheHits>0,'revisited region uses cached art');
   assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
+  assert.equal(prepareRegistrations,1,'repeated Pixi preparations reuse the registered plugin');
   // 160 pixel-bytes per miniature procedural texture is sufficient for the
   // deterministic mock. This intentionally tiny *test-only* budget forces
   // the same LRU path that real towns would take under sustained roaming.
@@ -388,6 +409,19 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   replayGpu.draw();
   assert.equal(replayGpu.status().active,true);
   replayGpu.release();
+  // The Pixi prepare system may still be waiting for ticker-driven GPU uploads
+  // when the PWA is backgrounded. Release must unblock the guarded transition.
+  holdGpuUpload=true;
+  const interruptedUploadGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  const pendingGpuPrepare=interruptedUploadGpu.prepare();
+  for(let j=0;j<40&&!resolveGpuUpload;j++)await Promise.resolve();
+  assert.equal(typeof resolveGpuUpload,'function',
+    'preparation waits for a real GPU upload promise before enabling Pixi');
+  interruptedUploadGpu.release();
+  assert.equal(await pendingGpuPrepare,false,
+    'a discarded context must cancel unfinished GPU preparation');
+  holdGpuUpload=false;
+  resolveGpuUpload();resolveGpuUpload=null;
   rejectWebGLContext=true;
   const startupGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await startupGpu.prepare(),false);
