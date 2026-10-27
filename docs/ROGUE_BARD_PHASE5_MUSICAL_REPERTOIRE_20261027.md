@@ -1,4 +1,4 @@
-> **Live checkpoint:** See [Phase 5 / Phase 6 restart checkpoint](ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md). All seven additional song families are staged, not final-accepted. Full native critical wiring and playtesting remain pending.
+> **Later Phase 6 update:** The remaining fourteen manual Rogue critical releases are staged and a developer-only intensity group defaults to Level 2; there is **no player-facing slider or profile preference**. [Phase 6 continuation](ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md) supersedes earlier pending-Phase-6 statements below; Phase 5 naming and station tuning remain owner-provisional.\n\n> **Live checkpoint:** See [Phase 5 / Phase 6 restart checkpoint](ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md). All seven additional song families are staged, not final-accepted. Full native critical wiring and playtesting remain pending.
 
 # Rogue Bard — Phase 5 musical repertoire implementation checkpoint
 
