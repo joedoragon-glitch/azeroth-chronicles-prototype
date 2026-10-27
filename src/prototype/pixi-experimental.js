@@ -642,18 +642,25 @@
     // Millhaven toward its goblins doesn't require every first bake in combat.
     // Yield between batches while the full game simulation is held still by
     // the renderer preparation guard; never run this as an unbounded emitter.
-    async function warmNeighborhood(epoch) {
+    async function warmNeighborhood(epoch, arrival = false) {
       const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
       const current = game(), zoom = platform.cameraZoom || 1;
       const width = viewport.width, height = viewport.height;
       const fringe = candidates(current, project, width, height,
-        canvasRenderer.presentEntity, 650)
+        canvasRenderer.presentEntity, arrival ? 1300 : 650)
         .filter(({entity,point}) =>
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
-          (point.x < -270 || point.x > width + 270 ||
+          (arrival || point.x < -270 || point.x > width + 270 ||
             point.y < -270 || point.y > height + 270))
         .sort((a,b) => {
+          if (arrival) {
+            const priority = (item) => item.kind === 'enemy' && item.entity.hp > 0 ? 0 :
+              item.kind === 'hero' || item.kind === 'ally' ? 1 : 2;
+            const dist = (item) => Math.hypot(
+              item.entity.x-current.hero.x,item.entity.y-current.hero.y);
+            return priority(a)-priority(b) || dist(a)-dist(b);
+          }
           const distance = (p) => Math.hypot(
             Math.max(0,-p.x,p.x-width),Math.max(0,-p.y,p.y-height));
           return distance(a.point)-distance(b.point);
@@ -661,9 +668,10 @@
       let prepared = 0,steps=0;
       for(const {entity,visual,point,key} of fringe) {
         if(epoch!==contextEpoch || !scene || !app || game()!==current ||
-           platform.cameraZoom!==zoom) return false;
+           platform.cameraZoom!==zoom || root.document?.hidden) return false;
         const elapsed=(typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
-        if(prepared>=18 || elapsed>600 || imageBytes>=trimAt) break;
+        if(prepared >= (arrival ? 42 : 30) || elapsed > (arrival ? 1100 : 800) ||
+           imageBytes>=trimAt) break;
         const painted=paintedVisual(visual);
         const chosen=adapter.commandFor(painted,
           {x:point.x/zoom,y:point.y/zoom},
@@ -676,13 +684,30 @@
         const cached=ensureProcedural(painted,revision,current,zoom);
         if(!cached)continue;
         prepared++;
-        if(++steps%2===0 && typeof requestAnimationFrame==='function')
+        if(++steps%3===0 && typeof requestAnimationFrame==='function')
           await new Promise(resolve=>requestAnimationFrame(resolve));
       }
       neighborhoodPrepared += prepared;
       neighborhoodWarmupMs +=
         (typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
       return epoch===contextEpoch;
+    }
+    async function warmArrival() {
+      if (!active || !scene || !app || root.document?.hidden) return false;
+      const epoch = contextEpoch, current = game();
+      const before = new Set(baked.keys());
+      try {
+        if (!await warmNeighborhood(epoch, true)) return false;
+        if (epoch !== contextEpoch || current !== game() || !active) return false;
+        // CPU procedural bakes alone do not make near-enemy WebGL frames ready.
+        // Upload only the fresh textures; existing GPU sources remain reusable.
+        const fresh = [...baked].filter(([key]) => !before.has(key))
+          .map(([, body]) => body.texture);
+        return await prepareGpuTextures(epoch, fresh, 'procedural');
+      } catch (error) {
+        noteFailure('arrival-preparation-failed', 'nearby-enemies', error);
+        return false;
+      }
     }
     function actorFrame() {
       const current = game(),
@@ -1093,6 +1118,7 @@
     }
     return Object.freeze({
       prepare,
+      warmArrival,
       draw,
       activate,
       deactivate,

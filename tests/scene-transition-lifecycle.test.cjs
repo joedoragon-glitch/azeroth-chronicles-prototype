@@ -29,11 +29,24 @@ function openForwardTravel(app) {
     const destination = Campaign.data.regions[game.regionIndex() + 1].id;
     let resolveWarm;
     const warmed = [];
+    const nativeTravel = game.travel.bind(game);
+    game.travel = (...args) => {
+      const success = nativeTravel(...args);
+      if (success) {
+        const zone = game.s.zones[destination];
+        const old = zone.enemies.find((e) => e.hp > 0) || { hp: 20, type: 'mob' };
+        zone.enemies.unshift({ ...old, id: 'first-encounter',
+          hp: 20, x: game.hero.x + 45, y: game.hero.y + 55 });
+      }
+      return success;
+    };
     app.scope.PrototypeSprites = {
-      definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'tested-hero' } : null,
-      warm: (keys) => {
-        warmed.push([...keys]);
-        return new Promise((resolve) => { resolveWarm = resolve; });
+      definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'tested-hero' } :
+        actor.renderKind === 'enemy' ? { key: 'threat-' + actor.id } : null,
+      warm: (keys, options = {}) => {
+        warmed.push({ keys: [...keys], options });
+        if (warmed.length === 1) return new Promise((resolve) => { resolveWarm = resolve; });
+        return Promise.resolve();
       },
       advance() {},
       beginFrame() {},
@@ -53,7 +66,8 @@ function openForwardTravel(app) {
     assert.equal(app.scope.Prototype.sceneLoading, true,
       'keyboard Escape cannot close a preparing transition');
     await flush();
-    assert.deepEqual(warmed, [['tested-hero']], 'bounded sprite keys come from current appearance');
+    assert.deepEqual(warmed[0].keys, ['tested-hero'],
+      'unentered-region preflight cannot manufacture destination enemies');
     assert.equal(JSON.stringify(game.snapshot()), snapshot, 'preflight never mutates authoritative campaign');
     assert.equal(Object.keys(game.s.zones).sort().join(','), knownZones,
       'no speculative authoritative region exists before travel commit');
@@ -61,6 +75,11 @@ function openForwardTravel(app) {
     resolveWarm();
     await flush();
     assert.equal(game.zoneId, destination, 'native travel is committed after preflight');
+    assert(warmed.length >= 2, 'committed region prepares real enemies near arrival');
+    assert.equal(warmed[1].keys[0], 'threat-first-encounter',
+      'imminent enemy art takes priority before hero and scenery');
+    assert.equal(warmed[1].options.variants, true);
+    assert.equal(warmed[1].options.clips, true);
     assert.equal(app.scope.Prototype.sceneLoading, true, 'scene stays obscured until draw');
     assert.equal(app.elements.get('modal').hidden, true);
     app.frame(500);
@@ -68,6 +87,34 @@ function openForwardTravel(app) {
     assert.equal(app.elements.get('scene-loading').hidden, true);
     assert.equal(app.scope.Prototype.started, true);
     assert(game.s.zones[destination], 'only native travel generated the destination');
+  }
+
+  // Hostile Continue prepares the saved fight before any simulation resumes.
+  {
+    const app = shell('en', 'ranger', { stayOnTitle: true });
+    const game = app.scope.Prototype.game;
+    const enemy = game.zone().enemies.find((e) => e.hp > 0);
+    assert(enemy);
+    Object.assign(enemy, { x: game.hero.x + 60, y: game.hero.y + 45 });
+    const seen = [];
+    app.scope.PrototypeSprites = {
+      definitionFor: (actor) => actor.renderKind === 'enemy'
+        ? { key: 'enemy-' + actor.id }
+        : actor.renderKind === 'hero' ? { key: 'hero' } : null,
+      warm: (keys, options) => {
+        seen.push({ keys, options });
+        return Promise.resolve();
+      },
+    };
+    app.elements.get('title-continue').click();
+    assert.equal(app.scope.Prototype.started, false);
+    await flush();
+    assert(seen.some((batch) =>
+      batch.keys.includes('enemy-' + enemy.id) &&
+      batch.options.variants && batch.options.clips),
+    'hostile Continue warms the exact nearby enemy and combat frames');
+    app.frame(450);
+    assert.equal(app.scope.Prototype.started, true);
   }
 
   // A page hidden during pending preflight cancels the COMMIT, even if images finish later.
@@ -153,7 +200,9 @@ function openForwardTravel(app) {
     let warmedAfterAdmission = 0;
     app.scope.PrototypeSprites = {
       definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero-entry' } : null,
-      warm: (_keys) => {
+      warm: (_keys, opts) => {
+        assert.equal(opts.variants, true, 'dungeon arrival warms enemy variants');
+        assert.equal(opts.clips, true, 'dungeon arrival warms enemy attack clips');
         assert.equal(game.zoneId, entrance.family,
           'combat dungeon sprite warming happens only after native admission');
         warmedAfterAdmission++;

@@ -3197,7 +3197,7 @@
   // Stage 5: destination preparation observes only an ALREADY CONSTRUCTED zone
   // in the saved campaign. Never call zone(), enter(), tick() or gameplay RNG
   // to predict an unvisited destination. Decoded art is optional, bounded work.
-  function readOnlySceneKeys(destination) {
+  function readOnlySceneKeys(destination, combatFirst = false) {
     const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
     if (!sprites?.definitionFor || !game?.s?.zones) return [];
     const known = game.s.zones[destination] || null;
@@ -3211,18 +3211,27 @@
     const companions = typeof game.activeParty === 'function'
       ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
       : [];
-    const neighbors = known
-      ? [...(known.enemies || []).map((e) => ({ ...e, renderKind: 'enemy' })),
-        ...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
+    const distance = (e) => Math.hypot(e.x - hero.x, e.y - hero.y);
+    const enemies = known && destination === game.zoneId
+      ? (known.enemies || []).filter((e) => e.hp > 0 &&
+          Number.isFinite(e.x) && Number.isFinite(e.y))
+          .sort((a, b) => distance(a) - distance(b))
+          .map((e) => ({ ...e, renderKind: 'enemy' }))
+      : [];
+    // Only a native admission/resumed save makes near-spawn enemy placement
+    // authoritative. Prior to entry we cannot inspect an ungenerated zone.
+    const imminent = combatFirst ? enemies.filter((e) => distance(e) <= 850) : [];
+    const fringe = combatFirst ? enemies.filter((e) => distance(e) <= 1300) : enemies;
+    const neighbors = known && destination === game.zoneId
+      ? [...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
         ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' }))]
-          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
-          .sort((a, b) =>
-            Math.hypot(a.x - hero.x, a.y - hero.y) -
-            Math.hypot(b.x - hero.x, b.y - hero.y))
-          .slice(0, 160)
+          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y) &&
+            (!combatFirst || distance(e) <= 600))
+          .sort((a, b) => distance(a) - distance(b)).slice(0, 100)
       : [];
     const keys = new Set();
-    for (const actor of [{ ...hero, renderKind: 'hero' }, ...companions, ...neighbors]) {
+    for (const actor of [...imminent, { ...hero, renderKind: 'hero' },
+      ...companions, ...fringe, ...neighbors]) {
       // Appearance lookup never calls Campaign.zone()/enter() or consumes RNG.
       const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
       if (match?.key) keys.add(match.key);
@@ -3239,16 +3248,26 @@
       !!game.sideDungeon?.(destination) ||
       !!game.supplyRoom?.(destination);
   }
-  function warmScene(destination, milliseconds = 750) {
+  function warmScene(destination, milliseconds = 750, combatFirst = false) {
     const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
     if (!sprites?.warm || document.hidden) return null;
-    const keys = readOnlySceneKeys(destination);
+    const keys = readOnlySceneKeys(destination, combatFirst);
     if (!keys.length) return null;
     // The queue may outlive the deadline, but only presentation-cache bytes
     // are touched; no delayed callback can commit travel or change the campaign.
     return Promise.race([
-      Promise.resolve().then(() => sprites.warm(keys)).catch(() => null),
+      Promise.resolve().then(() => sprites.warm(keys,
+        combatFirst ? { variants: true, clips: true } : {})).catch(() => null),
       new Promise((resolve) => setTimeout(resolve, milliseconds)),
+    ]);
+  }
+  function prepareGpuForArrival() {
+    if (graphicsController.status().mode !== 'webgl2' ||
+        typeof pixiGame.warmArrival !== 'function') return null;
+    // Stall, GPU memory failure, or context loss falls back to reliable Canvas.
+    return Promise.race([
+      Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false),
+      new Promise((resolve) => setTimeout(() => resolve(false), 1800)),
     ]);
   }
   function drawReadyScene() {
@@ -3294,7 +3313,22 @@
       cancelSceneTransition();
       return;
     }
-    if (!drawReadyScene()) {
+    if (!ticket.painted && drawReadyScene()) {
+      ticket.painted = true;
+      const gpuWarmup = prepareGpuForArrival();
+      if (gpuWarmup) {
+        ticket.gpuPreparing = true;
+        void gpuWarmup.then((ready) => {
+          if (sceneTransition?.token !== token) return;
+          if (!ready) graphicsController.revert();
+          ticket.gpuPreparing = false;
+          requestAnimationFrame(() => revealSceneTransition(token));
+        });
+        return;
+      }
+    }
+    if (ticket.gpuPreparing) return;
+    if (!ticket.painted || !drawReadyScene()) {
       // Preserve committed progress. Leave a clear retryable interruption state
       // rather than showing a partially rendered world.
       transitionLoadingText('', 'paint');
@@ -3354,9 +3388,8 @@
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
       // Never spend an unbounded period trying to complete optional atlas art.
-      const encounterWarmup = combatCriticalArrival(destination)
-        ? warmScene(destination, 900)
-        : null;
+      const encounterWarmup = warmScene(destination,
+        combatCriticalArrival(destination) ? 1400 : 1200, true);
       const reveal = () => {
         if (sceneTransition?.token !== token) return;
         requestAnimationFrame(() => revealSceneTransition(token));
@@ -3434,7 +3467,7 @@
     document.body.classList.add('title-active');
     // Prepare only the *loaded* arrival view, never an unentered zone.
     titleWarmup = loaded
-      ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 900 : 750)
+      ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 1000 : 900, true)
       : null;
     refreshTitleScreen();
     const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
@@ -3463,13 +3496,7 @@
       if (menu) closeMenu();
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
-      if (!drawReadyScene()) {
-        titleLoading = false;
-        status('Unable to prepare the game scene. Canvas backup is available.');
-        refreshTitleScreen();
-        return;
-      }
-      requestAnimationFrame(() => {
+      const finish = () => {
         if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
           titleLoading = false;
           refreshTitleScreen();
@@ -3489,7 +3516,31 @@
         updateHUD();
         audio.setPaused(false);
         $('menu-button').focus?.({ preventScroll: true });
-      });
+      };
+      const paint = () => {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+          titleLoading = false;
+          refreshTitleScreen();
+          return;
+        }
+        if (!drawReadyScene()) {
+          titleLoading = false;
+          status('Unable to prepare the game scene. Canvas backup is available.');
+          refreshTitleScreen();
+          return;
+        }
+        const gpuWarmup = prepareGpuForArrival();
+        if (gpuWarmup) void gpuWarmup.then((ready) => {
+          if (epoch !== titleEpoch) return;
+          if (!ready) graphicsController.revert();
+          requestAnimationFrame(finish);
+        });
+        else requestAnimationFrame(finish);
+      };
+      // Recovering an unclean save can change the spawn after title warmup.
+      const actual = warmScene(game.zoneId, 1400, true);
+      if (actual) void actual.then(paint, paint);
+      else paint();
     };
     const pending = titleWarmup;
     if (pending) void pending.then(reveal, reveal);
