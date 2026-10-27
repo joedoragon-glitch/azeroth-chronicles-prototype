@@ -23,6 +23,23 @@
       "originalOct19Inventory": "Retained verbatim in docs/DOCUMENTATION_INDEX.md; prior verifiedPrStates and original basis are historical.",
       "shaCorrectionsToPriorRows": 8,
       "directLinkFlagUpdatesToPriorRows": 79
+    },
+    "phase4Coverage": {
+      "auditedMainSha": "5c6197e871f8f4393d26d9b7a261b9324ef85d12",
+      "revisionHeadShaBeforeRegistry": "4c14ef63963f15471e01be99cfbe18a4d8a7d4ea",
+      "mainBuild": "0.9.1+snapshot.dev.205",
+      "markdownPaths": 388,
+      "directDocsMarkdown": 369,
+      "updatedBlobReceipts": [
+        "docs/ARCHITECTURE.md",
+        "docs/AUDIO_PLAYBACK.md",
+        "docs/CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md",
+        "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
+        "docs/DOCUMENTATION_INDEX.md",
+        "docs/PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md"
+      ],
+      "sourceReadMethod": "Pinned-main inspection of live app/engine/rules, native critical attachment, progression, save and persistence, Canvas/ground cache, optional Pixi, world/navigation, audio modules, manifests, packaging and focused CI; bounded semantic scope, no browser/device certification",
+      "originalPhase3EvidencePreserved": true
     }
   },
   "semantics": {
@@ -30,7 +47,7 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Exact Git blob SHA of the Phase 3 candidate file at the recorded currentCoverage.documentBranchShaBeforeRegistry; pre-existing rows whose bytes changed also retain historicalPinnedGitBlobSha as the October 25 pinned receipt.",
+    "gitBlobSha": "Exact file blob SHA at the newest Phase 4 audit commit recorded in basis.phase4Coverage.revisionHeadShaBeforeRegistry; a changed preexisting row preserves its prior snapshot receipt in historicalPinnedGitBlobSha and/or previousPhase3GitBlobSha. Historical snapshots in basis retain their original meaning.",
     "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
     "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
     "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks."
@@ -387,14 +404,15 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "21f635ebfc6efdc3e181099e605fc932ddf4c610",
+      "gitBlobSha": "1c27bc597514b009c078e8b6aff5551b3dfd4304",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "frozen_census_membership",
+      "previousPhase3GitBlobSha": "21f635ebfc6efdc3e181099e605fc932ddf4c610"
     },
     {
       "path": "docs/ARCHIVE_FLOOR_SEAM_DEV124.md",
@@ -551,14 +569,15 @@
     },
     {
       "path": "docs/AUDIO_PLAYBACK.md",
-      "gitBlobSha": "973d0d96eb3512cdd37b69f159f88045144e4af3",
+      "gitBlobSha": "e67d715fa631f75caea6d28e5c55bd1ea1fab298",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "audio",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "frozen_census_membership",
+      "previousPhase3GitBlobSha": "973d0d96eb3512cdd37b69f159f88045144e4af3"
     },
     {
       "path": "docs/AUDIO_SOUND_PASS.md",
@@ -1234,7 +1253,7 @@
     },
     {
       "path": "docs/CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md",
-      "gitBlobSha": "b0da4928a450b564891549592f02e3531aa70f32",
+      "gitBlobSha": "7f9bc8ce43b4cf08447a2b82d838ab400972ee34",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1248,7 +1267,8 @@
         "integratedByPr": 426,
         "disposition": "merged_directly",
         "caution": "Published dev.169 performance reference after #426 merge; later dev.185 remains current release; synthetic collision numbers do not establish hardware FPS gain."
-      }
+      },
+      "previousPhase3GitBlobSha": "b0da4928a450b564891549592f02e3531aa70f32"
     },
     {
       "path": "docs/DARK_CROWN_REGIME_LAYOUT.md",
@@ -1374,7 +1394,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "6103bbc3b15d8f8f193cf16a8527d34a82f58e6d",
+      "gitBlobSha": "ef7fc1bf6ace75be52d3c60576886d8ec0930d59",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1382,11 +1402,12 @@
       "role": "coverage_explanation",
       "authority": "verify_with_current_source",
       "reviewDepth": "current_entrypoint_checked",
-      "historicalPinnedGitBlobSha": "cf20ce12a5ea56a17c18efb767a3bee19e106ab1"
+      "historicalPinnedGitBlobSha": "cf20ce12a5ea56a17c18efb767a3bee19e106ab1",
+      "previousPhase3GitBlobSha": "6103bbc3b15d8f8f193cf16a8527d34a82f58e6d"
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "8ec8ea1181840de17c2ba24da6c22edfab9ffe39",
+      "gitBlobSha": "88b7473134655c82ed2a79f443053dd8f9add5c2",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1394,7 +1415,8 @@
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
       "reviewDepth": "current_entrypoint_checked",
-      "historicalPinnedGitBlobSha": "6777828d513cae4708017e98b5404acb9bbdaa9e"
+      "historicalPinnedGitBlobSha": "6777828d513cae4708017e98b5404acb9bbdaa9e",
+      "previousPhase3GitBlobSha": "8ec8ea1181840de17c2ba24da6c22edfab9ffe39"
     },
     {
       "path": "docs/DUNGEON_CAMPS_DEV131.md",
@@ -4939,14 +4961,15 @@
     },
     {
       "path": "docs/PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md",
-      "gitBlobSha": "fea30731d0822f7e89c994d9cf928ab803414d79",
+      "gitBlobSha": "1924c728deb9d4e66ec820f27347d9313edb6a8f",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "subject_workflow_or_contract",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "previousPhase3GitBlobSha": "fea30731d0822f7e89c994d9cf928ab803414d79"
     },
     {
       "path": "docs/REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md",
