@@ -11,7 +11,9 @@ const activeCaps = Campaign.rules.balance.companions.activeCaps;
 
 assert.deepEqual(Object.keys(classes), ['paladin', 'mage', 'ranger']);
 assert.deepEqual(activeCaps, [0, 2, 3, 3, 4, 5, 6]);
-assert.equal(Campaign.rules.balance.companions.activeSlotBonuses.rogue, 1);
+assert.equal(Campaign.activeSlotBonuses.rogue, 1);
+assert.equal(Campaign.expeditionPartyCapFor('paladin', 6), 6);
+assert.equal(Campaign.expeditionPartyCapFor('rogue', 6), 7);
 
 for (const heroClass of Object.keys(classes)) {
   const c = new Campaign('normal', heroClass, () => 0.9);
@@ -53,6 +55,45 @@ for (const [heroClass, type, firstSix] of [
   const offsets = living.map((u) => c.partyFormationOffset(u, living));
   assert.deepEqual(offsets.slice(0, 6), firstSix, heroClass + '/' + type + ' original slots unchanged');
   assert.equal(new Set(offsets.map((o) => o.join(','))).size, 7, heroClass + '/' + type + ' has seven unique slots');
+}
+
+// Ordinary Expedition text is byte-for-byte unchanged; a future Rogue's
+// display is derived from the same class cap, never from the old six-slot copy.
+{
+  const c = new Campaign('normal', 'mage', () => 0.9);
+  assert.deepEqual([2, 3, 4, 5, 6].map((rank) => c.expeditionUnlock(rank)), [
+    'Recruitment + resources · active group 3',
+    'Manual squad doctrine',
+    'Full Barracks upgrade · active group 4',
+    'Active group 5',
+    'Active group 6',
+  ]);
+  c.hero.class = 'rogue';
+  assert.deepEqual([2, 3, 4, 5, 6].map((rank) => c.expeditionUnlock(rank)), [
+    'Resources · active group 4',
+    'Manual squad doctrine',
+    'Full Barracks upgrade · active group 5',
+    'Active group 6',
+    'Active group 7',
+  ]);
+}
+
+// The extra Rogue slot cannot corrupt a later six-slot successor's save:
+// keep every owned ID, rest only deterministic overflow, never delete pets.
+{
+  const c = new Campaign('normal', 'paladin', () => 0.9, { succession: true });
+  c.s.expeditionRank = 6;
+  while (c.s.party.length < 7) c.s.party.push(c.unit('archer', 300, 350));
+  const ids = c.s.party.map((u) => u.id),
+    last = c.s.party.at(-1);
+  c.s.challenge.fallen = ['paladin'];
+  c.s.challenge.pending = true;
+  c.hero.hp = 0;
+  assert(c.successor('mage'));
+  assert.deepEqual(c.s.party.map((u) => u.id), ids, 'all inherited identities survive');
+  assert.equal(c.activeParty().length, 6);
+  assert.equal(last.active, false, 'last active member rests, not deleted');
+  assert.doesNotThrow(() => Campaign.validate(c.snapshot()));
 }
 
 // Succession validator should track the actual playable class registry, not 3.
