@@ -34,6 +34,7 @@ function menu(code, language, heroClass = 'paladin', prepare = () => {}) {
     inventory() {},
     skillBook() {},
     talents() {},
+    appendNameField() {},
     combatDiagnosticsEnabled: false,
     developerEnabled: false,
   });
@@ -47,9 +48,9 @@ assert.equal(startPaladin.title, 'Character');
 assert.match(startPaladin.description, /Max HP 125 · Power 18 · Armor 8/);
 assert.match(startPaladin.description, /Speed 300 · Cooldown reduction 0%/);
 assert.match(startPaladin.description, /Damage blocked\/Armor 0\.36/);
-assert.match(startPaladin.description, /Fortitude: \+5 max HP and \+0\.01/);
+assert.match(startPaladin.description, /Fortitude: \+5 HP\/level; \+0\.01/);
 assert.equal(startPaladin.actions.length, 4, 'only the existing Character actions');
-assert.deepEqual(startPaladin.actions.map((a) => a.label), [
+assert.deepEqual(Array.from(startPaladin.actions, (a) => a.label), [
   'Name your hero',
   'Inventory and support',
   'Skill journal',
@@ -62,7 +63,7 @@ const highRanger = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) =>
   g.hero.talents[3] = 3;
 });
 assert.match(highRanger.description, /Speed 488 · Cooldown reduction 35%/);
-assert.match(highRanger.description, /Agility: \+3 movement speed and \+1%/);
+assert.match(highRanger.description, /Agility: \+3 speed and \+1%/);
 
 const highMage = menu(character + '\ncharacterMenu();', 'en', 'mage', (g) => {
   while (g.hero.level < 15) g.xp(g.xpRequired());
@@ -70,7 +71,7 @@ const highMage = menu(character + '\ncharacterMenu();', 'en', 'mage', (g) => {
   g.hero.talents[0] = 5;
 });
 assert.match(highMage.description, /Power 167/);
-assert.match(highMage.description, /Arcane Power: \+2 Power per level/);
+assert.match(highMage.description, /Arcane Power: \+2 Power\/level/);
 
 const cappedRanger = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) => {
   g.hero.level = 100;
@@ -79,9 +80,9 @@ const cappedRanger = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) 
 assert.match(cappedRanger.description, /Cooldown reduction 60%/, 'show effective capped CDR');
 
 for (const [cls, localized] of [
-  ['paladin', /Fortaleza: \+5 PV máximos/],
-  ['ranger', /Agilidad: \+3 de velocidad/],
-  ['mage', /Poder arcano: \+2 de poder/],
+  ['paladin', /Fortaleza: \+5 PV\/nivel/],
+  ['ranger', /Agilidad: \+3 velocidad/],
+  ['mage', /Poder arcano: \+2 Poder\/nivel/],
 ]) {
   const view = menu(character + '\ncharacterMenu();', 'es', cls);
   assert.match(view.description, localized);
