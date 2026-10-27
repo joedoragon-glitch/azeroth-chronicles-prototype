@@ -969,6 +969,11 @@
     'Two thumbs': 'Dos pulgares',
     'Left hand': 'Mano izquierda',
     'Movement joystick': 'Joystick de movimiento',
+    'HUD style': 'Estilo de interfaz',
+    Classic: 'Clásico',
+    Adaptive: 'Adaptativo',
+    'Adaptive quietly reduces idle control backgrounds; all learned actions stay available.':
+      'Adaptativo atenúa los controles inactivos; todas las habilidades aprendidas siguen disponibles.',
     Fixed: 'Fijo',
     Floating: 'Flotante',
     'Floating: touch the lower-left movement area; menus keep the fixed stick.':
@@ -1450,6 +1455,7 @@
     last = performance.now(),
     saveTimer = 0,
     hudTimer = 0,
+    adaptiveHudState = null,
     focused = true,
     paused = false,
     charge = null,
@@ -1500,6 +1506,7 @@
   let bindingCapture = null;
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
   document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
+  document.body.setAttribute('data-hud-style', input.preferences.hudStyle);
   let appRegistration = null,
     appUpdateReady = false,
     appReloadRequested = false,
@@ -2414,6 +2421,8 @@
       input.select(name, value);
       document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
       document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
+      document.body.setAttribute('data-hud-style', input.preferences.hudStyle);
+      adaptiveHudState = null;
       clearInput();
       syncJoystickPresentation();
       runtime.reset();
@@ -2434,6 +2443,16 @@
           ],
           (value) => select('phoneLayout', value),
           'Two thumbs: movement left, skills right. Left hand: skills above the joystick.',
+        ),
+        menuControls.select(
+          'HUD style',
+          p.hudStyle,
+          [
+            { value: 'classic', label: 'Classic' },
+            { value: 'adaptive', label: 'Adaptive' },
+          ],
+          (value) => select('hudStyle', value),
+          'Adaptive quietly reduces idle control backgrounds; all learned actions stay available.',
         ),
         menuControls.select(
           'Movement joystick',
@@ -6337,6 +6356,8 @@
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
       mp = manaEnabled ? Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100)) : 0;
+    const adaptive = platform.mode === 'phone' && input.preferences.hudStyle === 'adaptive';
+    const lowHP = adaptive && PrototypeInput.adaptiveHudLowHealth(h.hp, h.maxHp, adaptiveHudState?.lowHP);
     const talentButton = $('talent-button'),
       talentCount = $('talent-count');
     talentCount.textContent = h.talentPoints;
@@ -6363,7 +6384,13 @@
       h.maxHp +
       '</span><i style="--fill:' +
       hp +
-      '%"></i></div>' +
+      '%"></i>' +
+      (lowHP
+        ? '<small class="hud-low-health" aria-label="' +
+          (language === 'es' ? 'Salud baja' : 'Low health') +
+          '">! ' + (language === 'es' ? 'VIDA BAJA' : 'LOW HP') + '</small>'
+        : '') +
+      '</div>' +
       (manaEnabled
         ? '<div class="resource-line mana"><span>MP ' +
           Math.floor(h.mp) +
@@ -6732,7 +6759,37 @@
       : 'Tap to cycle visible enemies · hold for ' + (targetHoldMs / 1000).toFixed(2) + 's to lock';
     if (targetButton.querySelector('small'))
       targetButton.querySelector('small').textContent = input.key('target');
-    cancelNavigationButton.hidden = !visibleNavigationRoute();
+    const navigating = visibleNavigationRoute();
+    cancelNavigationButton.hidden = !navigating;
+    if (adaptive) {
+      // One bounded snapshot during the existing 150ms HUD update, never per render.
+      const nearby = (entity, distance) =>
+        entity && Number.isFinite(entity.x) && Number.isFinite(entity.y) &&
+        Math.abs(entity.x - h.x) < distance && Math.abs(entity.y - h.y) < distance;
+      const zone = game.zone();
+      const threat = zone.enemies.some((enemy) =>
+        enemy.hp > 0 && !enemy.neutral &&
+        (enemy.aggro || enemy.telegraph || enemy.rangedAim) && nearby(enemy, 850));
+      const projectile = game.s.projectiles.some((p) => p.source === 'enemy' && nearby(p, 850));
+      const hazard = game.s.hazards.some((a) => a.source === 'enemy' && nearby(a, 650));
+      adaptiveHudState = PrototypeInput.adaptiveHudPresentation({
+        hp: h.hp, maxHp: h.maxHp, threat, projectile, hazard,
+        target: !!selected, targetLocked: !!selected && !!game.manualHeroTargetLocked,
+        charging: !!charge, queued: queuedCharges.size > 0, targetPress: !!targetPress,
+        tutorialRecall: practicingRecall, interactable: !!n, navigation: navigating,
+        moving: !!(joy.x || joy.y || keys.up || keys.down || keys.left || keys.right),
+        menu: !!menu || paused || !activePlay(),
+      }, adaptiveHudState, performance.now());
+      const attrs = {
+        hudContext: adaptiveHudState.context,
+        hudPressure: adaptiveHudState.pressure ? 'high' : 'quiet',
+        hudLowHp: adaptiveHudState.lowHP ? 'true' : 'false',
+        hudTarget: adaptiveHudState.target ? 'active' : 'quiet',
+        hudRecall: adaptiveHudState.recall ? 'active' : 'quiet',
+      };
+      for (const [name, value] of Object.entries(attrs))
+        if (document.body.dataset[name] !== value) document.body.dataset[name] = value;
+    } else adaptiveHudState = null;
     cancelNavigationButton.textContent = tr('Cancel navigation');
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();
