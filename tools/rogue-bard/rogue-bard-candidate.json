@@ -128,14 +128,16 @@
       "separateSavedRandomStream": true,
       "doNotModifyCriticalStreams": true,
       "forbidSummonsAndScriptedTemporary": true,
-      "speciesQuota": "rogue effective expedition active cap counts active+resting+fallen",
-      "speciesVariantKey": "canonical species and authored combat subtype",
-      "proposedTotalPermanentCharmedRosterCap": 12,
-      "fullActivePartyPolicy": "join reserve if total roster budget permits",
+      "speciesQuota": "one authored individual monster-type quota = current Rogue Expedition active cap (ranks 1-6: 3/4/4/5/6/7), counting active+resting+fallen+away owned creatures once each",
+      "speciesVariantKey": "stable vetted individual authored monster combat type (Goblin Slinger distinct from other goblins); not translated name or generic broad species family",
+      "fullActivePartyPolicy": "if type quota not full, a legal successful Charm may join resting reserve rather than exceed field Expedition cap, even with no Barracks",
       "capturedHpPolicy": "normalized companion maximum HP retaining wounded health fraction",
       "sourceStatsPolicy": "retain species profile, bounded friendly normalization; actual multipliers TBD",
       "successionOverflowPolicy": "keep owned, deterministically rest minimal active overflow",
-      "inheritedConventionalTroopsUsableByRogue": true
+      "inheritedConventionalTroopsUsableByRogue": true,
+      "globalCharmedMonsterCap": "none as a gameplay rule; supersedes historical proposed 12-owned cap; existing legacy 200-total-company safety guard requires separate source/performance audit",
+      "barracksRequiredToCharmOrOwn": false,
+      "successionOwnershipPolicy": "all owned remain even across class changes; non-Rogue cannot newly Charm; active overflow goes to reserve, never delete to meet successor slot cap"
     },
     "capacity": {
       "ordinaryRank1To6": [
@@ -156,11 +158,11 @@
       ],
       "rogueBasicBarracksRank1To6": [
         3,
-        4,
-        4,
-        4,
-        4,
-        4
+        3,
+        3,
+        3,
+        3,
+        3
       ],
       "rogueFullBarracksRank1To6": [
         3,
@@ -169,7 +171,18 @@
         5,
         6,
         7
-      ]
+      ],
+      "basicBarracksMeaning": "completed Basic Barracks local Add-to-group cap min(3, effective active cap); not physical reserve storage limit",
+      "fullBarracksMeaning": "completed Full Barracks local Add-to-group cap = effective Expedition active cap",
+      "charmTypeOwnershipRank1To6": [
+        3,
+        4,
+        4,
+        5,
+        6,
+        7
+      ],
+      "charmedOwnershipIndependentOfBarracks": true
     },
     "traps": {
       "rogueSkillFive": "FAVORED CANDIDATE: two-polarity musical fields, not yet approved as final replacement for original physical traps",
@@ -600,7 +613,9 @@
     "16 skill names owner-approved; all numerical mechanics remain a proposed design",
     "Do not force an arbitrary four-song simultaneous buff limit; allow up to eight distinct family boons with type-specific caps and same-family no duplication",
     "Skill Five station: buffs only present allies and debuffs only present hostile actors; no infinite field ticks, no per-tick crit rerolls, max two stationary objects",
-    "Do not implement blanket interruption immunity; prevent only real qualifying charge cancellation/new Silence for currently legal casts, damage and death remain"
+    "Do not implement blanket interruption immunity; prevent only real qualifying charge cancellation/new Silence for currently legal casts, damage and death remain",
+    "Owner-settled: per authored individual monster-type charmed ownership limit is Rogue current Expedition active cap, counting active/resting/fallen/away; historical 12 total limit rejected",
+    "Basic Barracks caps Add-to-group at three (all Rogue ranks), Full Barracks uses rank active cap; neither limits Charm or reserve ownership; UI must paginate/group charmed roster"
   ],
   "sourceBaselineComparison": {
     "source": "src/prototype/rules.js R.balance.classes + R.balance.disciplines.profiles; audited main e44ea0ec4b9ed164a85431e972664efda2190da6",
