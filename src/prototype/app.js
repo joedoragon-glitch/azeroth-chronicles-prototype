@@ -968,6 +968,11 @@
     'Mouse click-to-move': 'Clic para moverse',
     'Two thumbs': 'Dos pulgares',
     'Left hand': 'Mano izquierda',
+    'Movement joystick': 'Joystick de movimiento',
+    Fixed: 'Fijo',
+    Floating: 'Flotante',
+    'Floating: touch the lower-left movement area; menus keep the fixed stick.':
+      'Flotante: toca la zona inferior izquierda para moverte; el menú conserva el joystick fijo.',
   });
   Object.assign(spanishText, {
     'iPhone / iPad: Safari → Share → Add to Home Screen → Add.\nAndroid / Chrome: browser menu → Install app or Add to Home screen.':
@@ -1494,6 +1499,7 @@
   const input = PrototypeInput.create(localStorage, status);
   let bindingCapture = null;
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
+  document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
   let appRegistration = null,
     appUpdateReady = false,
     appReloadRequested = false,
@@ -2407,7 +2413,9 @@
     const select = (name, value) => {
       input.select(name, value);
       document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
+      document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
       clearInput();
+      syncJoystickPresentation();
       runtime.reset();
       frameProfile.reset();
       updateHUD();
@@ -2426,6 +2434,16 @@
           ],
           (value) => select('phoneLayout', value),
           'Two thumbs: movement left, skills right. Left hand: skills above the joystick.',
+        ),
+        menuControls.select(
+          'Movement joystick',
+          p.joystickMode,
+          [
+            { value: 'fixed', label: 'Fixed' },
+            { value: 'floating', label: 'Floating' },
+          ],
+          (value) => select('joystickMode', value),
+          'Floating: touch the lower-left movement area; menus keep the fixed stick.',
         ),
         menuControls.toggle(
           'Touch tap-to-move',
@@ -2464,6 +2482,13 @@
     joystickStart = null;
     joy = { x: 0, y: 0 };
     $('stick').style.transform = '';
+    document.body.classList.remove('floating-joystick-active');
+  }
+  function syncJoystickPresentation() {
+    const invisible = platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
+    const control = $('joystick');
+    control.tabIndex = invisible ? -1 : 0;
+    control.setAttribute('aria-hidden', invisible ? 'true' : 'false');
   }
   function clearInput(preserveNavigation = true) {
     syncPartyChargeClock();
@@ -2640,6 +2665,7 @@
     audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
+    syncJoystickPresentation();
     $('modal').hidden = false;
     $('modal-title').textContent = translateMenu(title);
     const descriptionHost = $('modal-description');
@@ -2889,6 +2915,7 @@
     $('modal').hidden = true;
     document.body.classList.remove('menu-open');
     clearInput(true);
+    syncJoystickPresentation();
     if (menuReturnFocus?.focus) menuReturnFocus.focus({ preventScroll: true });
     menuReturnFocus = null;
   }
@@ -5788,16 +5815,64 @@
     if (actionId?.startsWith('skill')) releaseCharge(Number(actionId.slice(5)), 'keyboard');
   });
   const joystick = $('joystick');
+  syncJoystickPresentation();
   let menuJoyTime = 0;
+  const floatingGameplay = () =>
+    platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
   function joyUpdate(e) {
-    const r = joystick.getBoundingClientRect(),
-      dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
-      dy = (e.clientY - r.top - r.height / 2) / (r.height * 0.4),
-      n = Math.max(1, Math.hypot(dx, dy));
-    joy = { x: dx / n, y: dy / n };
+    if (floatingGameplay() && joystickStart) {
+      const r = joystick.getBoundingClientRect();
+      const wasStill = joy.x === 0 && joy.y === 0;
+      joy = PrototypeInput.floatingJoystickVector(
+        joystickStart, { x: e.clientX, y: e.clientY }, r.width * 0.4,
+      );
+      // Merely placing a stationary thumb does not cancel a guided journey.
+      if (wasStill && (joy.x || joy.y)) cancelTravel();
+    } else {
+      const r = joystick.getBoundingClientRect(),
+        dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
+        dy = (e.clientY - r.top - r.height / 2) / (r.height * 0.4),
+        n = Math.max(1, Math.hypot(dx, dy));
+      joy = { x: dx / n, y: dy / n };
+    }
     $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
   }
+  function beginFloatingJoystick(e) {
+    if (!floatingGameplay() || !activePlay() || e.pointerType !== 'touch' ||
+        pointer !== null || worldPointer !== null) return false;
+    const obstacles = [
+      '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
+      '#skills', '#quick-items', '#developer-summon', '#cancel-navigation-button',
+      '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
+    ].flatMap((selector) => {
+      const el = document.querySelector(selector);
+      if (!el || el.hidden || getComputedStyle(el).display === 'none' ||
+          getComputedStyle(el).visibility === 'hidden') return [];
+      const rect = el.getBoundingClientRect();
+      return [{ x: rect.left, y: rect.top, width: rect.width, height: rect.height }];
+    });
+    if (!PrototypeInput.floatingJoystickZone(
+      { x: e.clientX, y: e.clientY },
+      { width: window.innerWidth, height: window.innerHeight }, obstacles,
+    )) return false;
+    e.preventDefault();
+    audio.unlock();
+    pointer = e.pointerId;
+    joystickTouchId = null;
+    joystickStart = { x: e.clientX, y: e.clientY };
+    joy = { x: 0, y: 0 };
+    $('stick').style.transform = '';
+    const rect = joystick.getBoundingClientRect();
+    const left = Math.max(0, Math.min(window.innerWidth - rect.width, e.clientX - rect.width / 2));
+    const top = Math.max(0, Math.min(window.innerHeight - rect.height, e.clientY - rect.height / 2));
+    joystick.style.setProperty('--floating-joystick-left', Math.round(left) + 'px');
+    joystick.style.setProperty('--floating-joystick-top', Math.round(top) + 'px');
+    document.body.classList.add('floating-joystick-active');
+    canvas.setPointerCapture?.(pointer);
+    return true;
+  }
   joystick.onpointerdown = (e) => {
+    if (floatingGameplay()) return;
     if (e.pointerType === 'mouse') return;
     if (pointer !== null) {
       // A new primary contact or missing old capture proves the old touch ended.
@@ -5828,18 +5903,15 @@
     document.addEventListener(type, finishJoystickPointer, true);
   // iOS/WebKit may omit the pointer ending but still send the touch ending.
   // Match Touch.identifier explicitly: it need not equal PointerEvent.pointerId.
-  joystick.addEventListener(
-    'touchstart',
-    (e) => {
-      if (pointer === null || joystickTouchId !== null || !joystickStart) return;
-      const contact = Array.from(e.changedTouches).find(
-        (touch) =>
-          Math.hypot(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y) < 25,
-      );
-      if (contact) joystickTouchId = contact.identifier;
-    },
-    { passive: true },
-  );
+  const rememberJoystickTouch = (e) => {
+    if (pointer === null || joystickTouchId !== null || !joystickStart) return;
+    const contact = Array.from(e.changedTouches).find(
+      (touch) => Math.hypot(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y) < 25,
+    );
+    if (contact) joystickTouchId = contact.identifier;
+  };
+  for (const target of [joystick, canvas])
+    target.addEventListener('touchstart', rememberJoystickTouch, { passive: true });
   for (const type of ['touchend', 'touchcancel'])
     document.addEventListener(
       type,
@@ -5862,6 +5934,7 @@
       }
       return;
     }
+    if (beginFloatingJoystick(e)) return;
     audio.unlock();
     if (e.pointerType === 'mouse' && !input.preferences.mouseMove) {
       e.preventDefault();
@@ -5881,6 +5954,10 @@
     canvas.setPointerCapture?.(e.pointerId);
   };
   canvas.onpointermove = (e) => {
+    if (floatingGameplay() && e.pointerId === pointer) {
+      joyUpdate(e);
+      return;
+    }
     if (
       worldPointer?.id === e.pointerId &&
       Math.hypot(e.clientX - worldPointer.x, e.clientY - worldPointer.y) > 12
@@ -5907,6 +5984,7 @@
     if (!PrototypeInput.requestMove(game, tap.target)) status('Path blocked.');
   };
   canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
+    if (floatingGameplay() && e.pointerId === pointer) releaseJoystick();
     if (worldPointer?.id === e.pointerId) worldPointer = null;
   };
   addEventListener('contextmenu', (e) => {
