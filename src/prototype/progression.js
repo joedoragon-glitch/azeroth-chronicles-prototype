@@ -345,10 +345,18 @@
           delete this.hero.potionEffect;
           this.hero.talentPoints++;
           this.event('level', { level: this.hero.level });
+          // The existing level message names the innate growth; Character holds the numbers.
+          const growthName = {
+            paladin: 'Fortitude',
+            ranger: 'Agility',
+            mage: 'Arcane Power',
+          }[this.hero.class];
           this.say(
             'Level ' +
               this.hero.level +
-              '! Training point available — press C or use Discipline Training.',
+              '! ' +
+              growthName +
+              ' improved. Training point available — press C or use Discipline Training.',
           );
           this.notice(
             'LEVEL ' + this.hero.level + ' · Training point available',

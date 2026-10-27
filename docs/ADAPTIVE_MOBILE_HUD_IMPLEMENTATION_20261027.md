@@ -86,7 +86,7 @@ The 26 October read-only design specification is the working UX contract.
 
 - `tests/adaptive-mobile-hud-integration-browser.test.cjs` — scoped Chromium/WebKit real DOM acceptance and reload coverage.
 - `tests/floating-joystick-browser.test.cjs` — Chromium real-pointer movement checks.
-- `.github/workflows/adaptive-hud-phase4.yml` — PR #519-only targeted browser checks; no Pages write permissions or deployment. Screenshot artifacts accompany the run for visual review.
+- PR #519's temporary `.github/workflows/adaptive-hud-phase4.yml` completed its targeted browser checks and is omitted from the eventual merged tree to avoid a stale PR-number-specific workflow.
 
 Run focused commands (browser tests require Playwright Chromium/WebKit binaries):
 
@@ -99,4 +99,4 @@ node tests/notification-refinement.test.cjs
 node tests/adaptive-mobile-hud-integration-browser.test.cjs
 ```
 
-All three implementation phases and their scoped Phase 4 browser validation live on the same draft PR. Automated acceptance has passed; physical-device, active PixiJS and historical migration certification are explicitly **not complete**. No merge or publication is authorized.
+All three implementation phases and their Phase 4 browser validation live in the same PR. Focused browser acceptance passed before reconciling with newer `main`; exact combined-tree focused CI still requires confirmation. Physical-device, active PixiJS and historical migration certification are explicitly **not complete**.

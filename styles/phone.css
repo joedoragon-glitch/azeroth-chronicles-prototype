@@ -747,6 +747,38 @@ body[data-experience='phone'] #message .notice-card.notice-narration {
   padding: 5px 7px;
 }
 
+/* Match class-learning clarity on compact touch screens without shrinking text. */
+@media (min-height: 600px) {
+  body[data-experience='phone'] #modal[data-view='character'] {
+    max-height: min(90dvh, 780px);
+  }
+}
+body[data-experience='phone'] #modal[data-view='class-select'],
+body[data-experience='phone'] #modal[data-view='character'] {
+  width: min(370px, calc(100vw - 24px));
+}
+body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions button {
+  min-height: 58px;
+  padding: 9px 11px;
+  font-size: 14px;
+}
+body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-role,
+body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-growth {
+  font-size: 12px;
+  line-height: 1.4;
+}
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference {
+  font-size: 12px;
+}
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference section {
+  padding: 9px 11px;
+}
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference dt,
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference dd {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 /* Optional floating joystick: unchanged fixed layout is the default and is
    always restored for menu navigation. Phone fit scaling remains on transform. */
 body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #movement {
