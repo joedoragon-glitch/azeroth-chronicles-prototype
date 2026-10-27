@@ -1,5 +1,5 @@
 'use strict';
-// Greenwood anti-kiting correction: one native Pursuit Burst, reused sooner.
+// Native melee anti-kiting: original Greenwood safety plus all-region rollout.
 // No Vale-specific dash, warning, strike, Slow, or new movement timer.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
@@ -8,7 +8,7 @@ const melee = Campaign.rules.meleeReach;
 
 assert.equal(pursuit.burstMultiplier, 1.5, 'the native speed formula must not change');
 assert.equal(pursuit.burstSeconds, 1.2, 'the native burst duration must not change');
-assert.equal(pursuit.valeRecoverySeconds, 2, '2s at normal pursuit speed between boosts');
+assert.equal(pursuit.meleeRecoverySeconds, 2, '2s at normal pursuit speed between boosts');
 assert.equal(Campaign.rules.balance.meleeBasicRange, melee.enemy);
 assert.equal(Campaign.rules.rangedEnemyCombat.ringleaderHybridMeleeRange, melee.ringleaderHybridStance);
 assert.equal(typeof Campaign.prototype.startValeMeleeCounter, 'undefined',
@@ -73,7 +73,7 @@ for (const [species, guard] of [
   ['goblin', true], ['skeleton', true],
 ]) {
   const { c, e, first, last } = scene('vale', species, guard);
-  assert(c.valePursuitBurstEligible(e), 'native Greenwood melee/guardian is eligible');
+  assert(c.meleePursuitBurstEligible(e), 'native Greenwood melee/guardian is eligible');
   assert.equal(c.enemyMeleeBasicRange(e), melee.enemy);
   const hp = c.hero.hp;
   tick(c);
@@ -124,7 +124,7 @@ for (const [species, guard] of [
 
 {
   const { c, e } = scene('vale', 'skeleton', true);
-  assert(c.valePursuitBurstEligible(e), 'eligible before save');
+  assert(c.meleePursuitBurstEligible(e), 'eligible before save');
   const snapshot = c.snapshot();
   const restored = Campaign.restore(snapshot);
   const resumed = restored.zone().enemies.find(u => u.id === e.id);
@@ -132,7 +132,7 @@ for (const [species, guard] of [
   // Saved combat engagement may be reset by the normal restoration policy.
   // Re-engage the surviving actor before testing conditional chase eligibility.
   if (!resumed.aggro) restored.engage(resumed);
-  assert(restored.valePursuitBurstEligible(resumed),
+  assert(restored.meleePursuitBurstEligible(resumed),
     'native pursuit stays available in a restored/re-engaged campaign: ' +
     JSON.stringify({ region: restored.regionIndex(), aggro: resumed.aggro,
       ranged: resumed.ranged, species: resumed.species, returning: resumed.returning }));
@@ -141,41 +141,42 @@ for (const [species, guard] of [
 {
   const { c, e } = scene();
   for (const changes of [
-    { ranged: true, hybrid: false }, { form: 'ringleader' },
-    { captain: true }, { roomCaptain: true }, { type: 'boss' },
+    { ranged: true, hybrid: false }, { captain: true },
+    { roomCaptain: true }, { fieldCaptain: true }, { type: 'boss' },
     { summon: true }, { rogueEmergencyReinforcement: true },
-    { aggro: false }, { hp: 0 }, { nightOnly: true },
-    { species: 'wraith' },
+    { developerSummon: true }, { aggro: false }, { hp: 0 },
   ]) {
     const old = { ...e };
     Object.assign(e, changes);
-    assert(!c.valePursuitBurstEligible(e), JSON.stringify(changes));
+    assert(!c.meleePursuitBurstEligible(e), JSON.stringify(changes));
     Object.keys(changes).forEach(k => { if (!(k in old)) delete e[k]; });
     Object.assign(e, old);
   }
   e.ranged = true;
   e.hybrid = true;
-  assert(c.valePursuitBurstEligible(e), 'true melee/ranged hybrids share the pilot');
+  assert(c.meleePursuitBurstEligible(e), 'true melee/ranged hybrids share the pilot');
   assert.equal(c.enemyHybridMeleeRange(e), melee.enemy, 'hybrid stance remains unchanged');
   e.form = 'ringleader';
-  assert(!c.valePursuitBurstEligible(e), 'hybrid Ringleader is excluded');
+  assert(c.meleePursuitBurstEligible(e), 'hybrid Ringleader is included');
   const { c: crypt, e: cryptGuardian } = scene('crypt', 'skeleton', true);
-  assert(crypt.valePursuitBurstEligible(cryptGuardian), 'Vale dungeon guardians included');
+  assert(crypt.meleePursuitBurstEligible(cryptGuardian), 'Vale dungeon guardians included');
   const { c: march, e: outsider } = scene('march', 'mireling');
-  assert(!march.valePursuitBurstEligible(outsider), 'other regions unchanged');
+  assert(march.meleePursuitBurstEligible(outsider), 'all-region melee is included');
   c.s.phase = 'peace';
-  assert(!c.valePursuitBurstEligible(e), 'no burst anti-kiting after peace');
+  assert(!c.meleePursuitBurstEligible(e), 'no burst anti-kiting after peace');
 }
 
 {
-  // Ringleaders keep existing native seven-second cadence, not the pilot.
-  const { c, e } = scene();
+  // Ringleaders retain their native 1.2x speed and share the 2s gap.
+  const { c, e, first } = scene();
   e.form = 'ringleader';
+  assert(c.meleePursuitBurstEligible(e), 'melee Ringleader included');
   tick(c);
-  assert(!c.valePursuitBurstEligible(e));
-  assert(e.pursuitBurstUsed, 'Ringleaders retain the ordinary native burst');
-  assert(Math.abs(e.pursuitBurstReadyAt - (c.s.time + 7)) < 1e-7,
-    'Ringleader recovery is unchanged by Greenwood pilot');
+  assert(e.pursuitBurstUsed);
+  assert(Math.abs(e.pursuitBurstReadyAt - (c.s.time + 3.2)) < 1e-7,
+    'same 2s recovery as ordinary melee');
+  assert(Math.abs(Math.hypot(e.x - first.x, e.y - first.y) - 31.5) < 0.1,
+    'native Ringleader 175 x 1.2 x 1.5 = 315 units/s');
 }
 
 {
@@ -224,4 +225,4 @@ for (const [species, guard] of [
   assert.equal(c.companionCombatReach({ type: 'pet' }), melee.pet);
 }
 
-console.log('PASS Greenwood anti-kiting: 2-second normal-speed recovery, 3.2-second repeat cycle, retained speed/duration, exclusions, save safety');
+console.log('PASS melee anti-kiting: Greenwood cadence, Ringleader speed/recovery, role exclusions and save safety');

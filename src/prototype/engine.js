@@ -6497,28 +6497,34 @@
       e.noProgress = 0;
       return true;
     }
-    // The Greenwood anti-kiting pilot now reuses native Pursuit Burst only:
-    // ordinary Goblin/Skeleton melee and hybrid guardians recover the same
-    // 1.5x/1.2s burst sooner; elites, ranged-only and other regions are unchanged.
-    valePursuitBurstEligible(e) {
-      return (
-        this.regionIndex() === 0 &&
-        !this.peace &&
-        !!e?.aggro &&
-        e.hp > 0 &&
-        !e.neutral &&
-        !e.returning &&
-        e.type !== 'boss' &&
-        !e.captain &&
-        !e.roomCaptain &&
-        !e.fieldCaptain &&
-        e.form !== 'ringleader' &&
-        ['goblin', 'skeleton'].includes(e.species) &&
-        !e.nightOnly &&
-        (!this.enemyRanged(e) || e.hybrid) &&
-        !e.summon &&
-        !e.rogueEmergencyReinforcement
-      );
+    // The ONE native Pursuit Burst can recover sooner for melee in any
+    // region, including Ringleaders. Summon ancestry must resolve entirely
+    // through non-boss, non-captain owners; unknown chains fail closed.
+    meleePursuitBurstEligible(e) {
+      if (
+        this.peace || !e || !e.aggro || !(e.hp > 0) ||
+        e.neutral || e.returning || e.type !== 'mob' ||
+        e.captain || e.roomCaptain || e.fieldCaptain ||
+        e.developerSummon ||
+        (!e.summon && e.rogueEmergencyReinforcement) ||
+        (this.enemyRanged(e) && !e.hybrid)
+      ) return false;
+      if (!e.summon) return true;
+      const actors = this.zone().enemies;
+      const seen = new Set([e.id]);
+      let member = e;
+      while (member.summon) {
+        if (!member.owner || seen.has(member.owner)) return false;
+        seen.add(member.owner);
+        const owner = actors.find(u => u.id === member.owner);
+        if (
+          !owner || owner.type !== 'mob' ||
+          owner.captain || owner.roomCaptain || owner.fieldCaptain ||
+          owner.developerSummon
+        ) return false;
+        member = owner;
+      }
+      return true;
     }
 
     // Tuned ordinary/elite melee basics preserve longer native actor reach.
@@ -7222,15 +7228,16 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !firingLine)) {
-          // Older saves may carry the former seven-second pursuit readiness.
-          // Shorten that existing timer in place; do not add a second timer.
+          // Saved long readiness migrates through the existing deadline.
+          // Neither the active burst nor the targeting/collision rules change.
+          const enhancedMeleePursuit =
+            target === this.hero && this.meleePursuitBurstEligible(e);
           if (
-            target === this.hero &&
-            this.valePursuitBurstEligible(e) &&
-            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+            enhancedMeleePursuit &&
+            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds
           )
             e.pursuitBurstReadyAt =
-              this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds;
+              this.s.time + pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds;
           if (
             target === this.hero &&
             visible &&
@@ -7238,14 +7245,13 @@
             this.s.time >= (e.pursuitBurstReadyAt || 0) &&
             !(e.pursuitBurst > 0)
           ) {
-            // This is the EXISTING Pursuit Burst, not another anti-kite skill.
-            // Greenwood ordinary melee can reuse it shortly after it ends;
-            // its multiplier, duration, collision and leash remain unchanged.
+            // Native speed/duration, follow collision and leash are shared.
+            // Bosses/captains, their summons and pure ranged keep old cadence.
             e.pursuitBurst = pursuitBurstSeconds;
             e.pursuitBurstUsed = true;
             e.pursuitBurstReadyAt = this.s.time + (
-              this.valePursuitBurstEligible(e)
-                ? pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+              enhancedMeleePursuit
+                ? pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds
                 : e.type === 'boss' ? 5.5 : 7
             );
           }
