@@ -38,7 +38,9 @@
     "critChanceIncreaseUnderReview": "2 percentage points per hero level (includes level 1) proposed by owner, not yet final",
     "previousProposedCritPercentagePointsPerLevel": 1,
     "currentEvaluatedCritPercentagePointsPerLevel": 2,
-    "critChanceDecisionState": "owner proposed stronger chance, pending final numerical approval"
+    "critChanceDecisionState": "owner proposed stronger chance, pending final numerical approval",
+    "mirroredEnemyAllyEffectIntent": "Negative AoE effect on enemies, conceptually inverse friendly effect to nearby companions; source owner specifically proposed Slow↔movement/CDR, interruption↔cast protection, antiheal/DOT↔HoT/healing received, debt↔CDR, push/weaken↔power, blast/silence↔power/crit",
+    "skillFiveReconsidered": "Use stationary dual-polarity enchanted musical source (fantasy portable speaker) rather than a conventional trap; musical names stay approved"
   },
   "proposal": {
     "classStarting": {
@@ -169,10 +171,17 @@
       ]
     },
     "traps": {
+      "rogueSkillFive": "two-polarity enchanted music stations instead of conventional physical traps (latest owner direction)",
       "maxSimultaneouslyPlaced": 2,
-      "tentativeLifetimeSeconds": 10,
-      "target": "hostile enemies only",
-      "disarmExistingTrapDuration": "decision pending"
+      "tapFieldLifetimeSeconds": 8,
+      "chargedFieldLifetimeSeconds": 10,
+      "contactScanPeriodSeconds": 0.5,
+      "maxPulsesPerEnemyPerSecond": 1,
+      "allyBoon": "applies only while physically inside deployed station field",
+      "combatOnly": true,
+      "expireOnCombatEnd": true,
+      "disarmExistingTrapDuration": "still unresolved separate Rogue expertise",
+      "physicalTrapsEarlierProposal": "superseded as Skill 5; optional general trap-disarm concept remains"
     },
     "summon": {
       "firstCandidate": "deferred, no persistent summon AI or extra actors",
@@ -181,30 +190,31 @@
     "skillNamesOnlyNoMechanicalChange": true,
     "manualSkillCombatOnly": true,
     "skillArea": {
-      "center": "legal enemy/cast point within 260 units of Rogue, charged 300; Skill 5 trap cast point",
+      "center": "reachable engaged enemy/performance focus within 260 units of Rogue, charged 300; Skill5 deployed music station at lawful point",
       "tapRadiusWorldUnitsRange": [
-        120,
-        155
+        135,
+        165
       ],
       "chargedRadiusWorldUnitsRange": [
-        160,
-        200
+        175,
+        205
       ],
-      "allyRecipients": "active living companion roster members (charmed/standard/pet) inside same bounded footprint at cast; Rogue herself not buffed by default",
+      "allyRecipients": "active living companions (Soldier/Archer/charmed/pet) inside SAME area as enemy negative performance; caster not buffed by default",
       "enemyAoECapMax": 6,
       "requiresActiveHostileCombat": true,
-      "exception": "Skill 5 applies ally buff at trap placement, negative effect on later enemy trigger; one critical receipt at placement"
+      "skillFiveSpecialCase": "station affects enemies and allies by presence while active, not one-time boon at placement"
     },
     "supportStacking": {
       "differentFamiliesOverlap": true,
-      "sameFamily": "strongest potency; expiry maximum of lawful cast, capped duration; no additive duplication",
-      "rangerRallySharedStats": "highest effective movement and basic attack speed wins, no multiplication",
-      "maximumDifferentSimultaneousBoonFamiliesPerCompanion": {
-        "candidate": 4,
-        "notApproved": true
-      },
-      "woundedRecovery": "only living active recipients and lawful capped heal budget",
-      "auraActors": "none; snapshot recipients once per cast, bounded timers"
+      "sameFamily": "one family instance, strongest potency + latest legal expiry only; no additive duplicate/carryover healing budget",
+      "movementVersusRangerRally": "highest movement channel wins, do not multiply",
+      "skill2AndSkill6Cooldown": "additive stack for SPECIAL cooldowns only, combined maximum +25% Rogue-sourced acceleration, one native recovery application",
+      "rogueSongOutgoingDamageTotalCapPercent": 18,
+      "healing": "native heal-received modifier excludes own Mending Refrain, no heal beyond missing HP; never revive",
+      "maxDistinctBoonFamiliesPerCompanion": 8,
+      "fields": "at most two world-space stations, no animated or summoned actors, bounded .5s membership checks",
+      "temporaryStates": "clear on death/zone/reload and save snapshot; validate no stacking abuse",
+      "outsideCombat": false
     }
   },
   "skillCandidate": [
@@ -216,27 +226,27 @@
         "damage",
         "damage"
       ],
-      "note": "AoE guitar damage harms up to 2/4 enemies; boon gives nearby active companions modest basic damage, never the Rogue; native crit increases direct damage only",
+      "note": "AoE sound damage against enemies; nearby living companions get short basic-hit damage boost, capped with other song bonuses; attack crit enhances only direct enemy damage",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
         "tap": 2,
         "charged": 4
       },
-      "friendBoonFamily": "encoreEdge",
+      "friendBoonFamily": "sharpRefrain",
       "allyBuff": {
         "tap": {
           "basicDamagePercent": 5,
-          "durationSeconds": 4.5
+          "durationSeconds": 4
         },
         "charged": {
           "basicDamagePercent": 7,
-          "durationSeconds": 6
+          "durationSeconds": 5
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions inside same single bounded cast footprint",
       "critOneLeverPerReleasedAction": true
     },
     {
@@ -247,7 +257,7 @@
         "slowDuration",
         "hasteDuration"
       ],
-      "note": "AoE Slow enemies and Quickstep eligible nearby companions; critical tap prolongs enemy Slow, charged extends ally Quickstep",
+      "note": "Hostiles Slowed in area; allies speed up and recover cooldowns moderately; Skill6 special acceleration may add under 25% aggregate Rogue-sourced cap; tap crit extends enemy Slow, charged crit extends ally boon duration",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
@@ -258,16 +268,18 @@
       "allyBuff": {
         "tap": {
           "movementPercent": 8,
+          "cooldownRecoveryPercent": 5,
           "durationSeconds": 4.5
         },
         "charged": {
           "movementPercent": 12,
+          "cooldownRecoveryPercent": 8,
           "durationSeconds": 6
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions inside same single bounded cast footprint",
       "critOneLeverPerReleasedAction": true
     },
     {
@@ -278,27 +290,29 @@
         "cooldownDebt",
         "silenceDuration"
       ],
-      "note": "AoE interrupt/debt on legal casting foes and improved ally basic attack cadence, not extra attacks. Charged can briefly Silence; critical lever only debuff duration",
+      "note": "Hostile interrupt/debt/Silence; ally charged casting protected from qualifying actual damage-threshold interrupts/new Silence during legal cast, NOT immune to damage/death/Recall/invalid target or retroactive ready spells",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
         "tap": 2,
         "charged": 3
       },
-      "friendBoonFamily": "steadyBackbeat",
+      "friendBoonFamily": "steadyCadence",
       "allyBuff": {
         "tap": {
-          "basicAttackSpeedPercent": 6,
-          "durationSeconds": 4.5
+          "preventDamageChargeInterrupt": true,
+          "protectNewSilenceCancel": true,
+          "durationSeconds": 3
         },
         "charged": {
-          "basicAttackSpeedPercent": 8,
-          "durationSeconds": 6
+          "preventDamageChargeInterrupt": true,
+          "protectNewSilenceCancel": true,
+          "durationSeconds": 4
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions inside same single bounded cast footprint",
       "critOneLeverPerReleasedAction": true
     },
     {
@@ -309,7 +323,7 @@
         "healAmount",
         "healAmount"
       ],
-      "note": "AoE DoT/partial hostile anti-heal, plus one bounded healing budget for each nearby ally; critical enlarges healing budget once before ticking, not DOT/HoT on every pulse",
+      "note": "Enemy DoT and healing reduction mirrored as allied finite HoT and improved healing received from independent legal sources; no self-multiplication, revive, duplicate healing-budget stacking or per-tick critical rolls",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
@@ -319,17 +333,21 @@
       "friendBoonFamily": "mendingRefrain",
       "allyBuff": {
         "tap": {
-          "healFractionMaxHp": 0.04,
-          "healOverSeconds": 4
+          "healFractionMaxHp": 0.03,
+          "healOverSeconds": 4,
+          "incomingHealingReceivedPercent": 8,
+          "durationSeconds": 4
         },
         "charged": {
-          "healFractionMaxHp": 0.06,
-          "healOverSeconds": 5
+          "healFractionMaxHp": 0.05,
+          "healOverSeconds": 5,
+          "incomingHealingReceivedPercent": 12,
+          "durationSeconds": 5
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions inside same single bounded cast footprint",
       "critOneLeverPerReleasedAction": true
     },
     {
@@ -338,29 +356,32 @@
       "charged": "Thornstep Tarantella",
       "crit": [
         "slowDuration",
-        "wardDuration"
+        "wardStrength"
       ],
-      "note": "Enemy-only trap effect delayed; boon cast once at legal placement to nearby active allies, crit tap modifies enemy triggered Slow, charged lengthens boon ward; no second RNG on trigger",
+      "note": "Physical trap REPLACED by stationary dual-polarity magical speaker/sigil: bounded enemy Slow (charged periodic low damage), allied anti-Slow and charged ward while INSIDE ONLY; max two stations, sample 0.5s, at most one enemy pulse/s, stop on combat end or exit; crit applies one placement receipt; charged uses native wardStrength lever",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
         "tap": 3,
         "charged": 4
       },
-      "friendBoonFamily": "shelteringStep",
+      "friendBoonFamily": "enchantedStation",
       "allyBuff": {
         "tap": {
-          "incomingDamageReductionPercent": 6,
-          "durationSeconds": 4.5
+          "insideOnly": true,
+          "slowStrengthReductionPercent": 25,
+          "fieldDurationSeconds": 8
         },
         "charged": {
-          "incomingDamageReductionPercent": 9,
-          "durationSeconds": 6
+          "insideOnly": true,
+          "slowStrengthReductionPercent": 40,
+          "incomingDamageReductionPercent": 6,
+          "fieldDurationSeconds": 10
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions physically inside stationary station radius, not just at placement",
       "critOneLeverPerReleasedAction": true
     },
     {
@@ -371,27 +392,27 @@
         "cooldownDebt",
         "hasteDuration"
       ],
-      "note": "AoE adds lawful capped cooldown debt only to enemies with non-ready skill timers; allied specials temporarily recover faster; tap crit extends enemy debt, charged crit extends allied tempo duration",
+      "note": "Enemy skill debt versus allied SPECIAL cooldown recovery; legally stacks additively with Quickstep generic cooldown recovery but combined Rogue-sourced acceleration capped +25%, no double countdown",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
         "tap": 2,
         "charged": 4
       },
-      "friendBoonFamily": "borrowedTempo",
+      "friendBoonFamily": "borrowedTime",
       "allyBuff": {
         "tap": {
-          "specialSkillCooldownRecoveryFasterPercent": 12,
+          "specialCooldownRecoveryPercent": 12,
           "durationSeconds": 4.5
         },
         "charged": {
-          "specialSkillCooldownRecoveryFasterPercent": 18,
+          "specialCooldownRecoveryPercent": 18,
           "durationSeconds": 6
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions inside same single bounded cast footprint",
       "critOneLeverPerReleasedAction": true
     },
     {
@@ -402,27 +423,29 @@
         "pushDistance",
         "weakenDuration"
       ],
-      "note": "AoE push/Weaken on enemies; nearby companions (including charmed/pets) gain bounded temporary personal crit chance, not intensity; no direct Rogue bonus or extra party RNG roll",
+      "note": "Hostile pushback/Weaken mirrored as allied increased offense and actual knockback stability if supported, not invulnerability, stun immunity or unverified movement behavior",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
         "tap": 2,
         "charged": 4
       },
-      "friendBoonFamily": "fortunesStep",
+      "friendBoonFamily": "firmFooting",
       "allyBuff": {
         "tap": {
-          "companionCritChanceBonusPercentagePoints": 2,
-          "durationSeconds": 4.5
+          "outgoingLawfulDamagePercent": 5,
+          "durationSeconds": 4,
+          "knockbackProtection": "only if native companion displacement exists and is verified"
         },
         "charged": {
-          "companionCritChanceBonusPercentagePoints": 3,
-          "durationSeconds": 6
+          "outgoingLawfulDamagePercent": 8,
+          "durationSeconds": 5.5,
+          "knockbackProtection": "only if native companion displacement exists and is verified"
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions inside same single bounded cast footprint",
       "critOneLeverPerReleasedAction": true
     },
     {
@@ -433,27 +456,29 @@
         "damage",
         "silenceDuration"
       ],
-      "note": "Capped AoE damage/control harms foes; temporary companions' special skill damage raised without altering basic damage or healing. Charged crit extends only original Silence, not more targets",
+      "note": "Enemy area damage/disruption/Silence mirrored as allied special damage plus bounded personal companion crit-chance boost; companions KEEP independent Companion intensity and Party RNG; no change to Rogue own crit or Charm rate",
       "nameApproval": "owner-approved",
       "mechanicsApproval": "proposed-not-owner-approved",
       "enemyTargetCap": {
         "tap": 4,
         "charged": 6
       },
-      "friendBoonFamily": "encoreStrike",
+      "friendBoonFamily": "finaleInspiration",
       "allyBuff": {
         "tap": {
-          "specialSkillDamagePercent": 8,
-          "durationSeconds": 5
+          "companionCritChanceBonusPercentagePoints": 4,
+          "specialSkillDamagePercent": 4,
+          "durationSeconds": 4.5
         },
         "charged": {
-          "specialSkillDamagePercent": 12,
-          "durationSeconds": 7
+          "companionCritChanceBonusPercentagePoints": 6,
+          "specialSkillDamagePercent": 6,
+          "durationSeconds": 6
         }
       },
       "criticalIntensityGroup": "rogue",
       "allFormsAoE": true,
-      "boonRecipients": "active living companions inside exact cast footprint",
+      "boonRecipients": "active living companions inside same single bounded cast footprint",
       "critOneLeverPerReleasedAction": true
     }
   ],
@@ -548,6 +573,11 @@
       0.2,
       0.5,
       1
+    ],
+    "wardStrengthPercentagePointBonuses": [
+      1.5,
+      3.5,
+      6
     ]
   },
   "guardrails": [
@@ -563,7 +593,10 @@
     "Rogue critical intensity is a fourth independent Level 1-3 group; native critical RNG stays Party stream; no extra RNG draws or automatically altered companions",
     "Seventeen explicit Rogue critical action keys, one native crit lever each; crit chance increase is proposed +2 percentage points per level",
     "Distinct short boons may overlap; same boon family refreshes/replaces without duplicate stacking",
-    "16 skill names owner-approved; all numerical mechanics remain a proposed design"
+    "16 skill names owner-approved; all numerical mechanics remain a proposed design",
+    "Do not force an arbitrary four-song simultaneous buff limit; allow up to eight distinct family boons with type-specific caps and same-family no duplication",
+    "Skill Five station: buffs only present allies and debuffs only present hostile actors; no infinite field ticks, no per-tick crit rerolls, max two stationary objects",
+    "Do not implement blanket interruption immunity; prevent only real qualifying charge cancellation/new Silence for currently legal casts, damage and death remain"
   ],
   "sourceBaselineComparison": {
     "source": "src/prototype/rules.js R.balance.classes + R.balance.disciplines.profiles; audited main e44ea0ec4b9ed164a85431e972664efda2190da6",
