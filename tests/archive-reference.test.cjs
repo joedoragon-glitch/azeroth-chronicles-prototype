@@ -115,7 +115,12 @@ const c = new C(),
   hp = c.hero.hp,
   armor = c.armor();
 c.hitParty(c.hero, incoming);
-assert.equal(hp - c.hero.hp, Math.max(3, incoming - armor * 0.35));
+// Armor effectiveness is a live class/campaign modifier; avoid stale 0.35.
+assert(
+  Math.abs(hp - c.hero.hp -
+    Math.max(3, incoming - armor * c.armorEffectivenessFor(c.hero))) < 1e-8,
+  'Archive armor description agrees with current hitParty mitigation',
+);
 c.hero.immune = 1;
 const immuneHp = c.hero.hp;
 c.hitParty(c.hero, 1000);

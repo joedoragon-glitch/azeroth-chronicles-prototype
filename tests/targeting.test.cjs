@@ -371,6 +371,26 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
 }
 
 
+// Select a real clear lane within the authored map; props-only clearing is
+// insufficient when native terrain can still block line of sight.
+function rangedBasicClearLane(game, length, behind = 0) {
+  for (let x = 850; x <= 2450; x += 160) {
+    for (let y = 450; y <= 2450; y += 160) {
+      const from = { x, y },
+        end = { x: x + length, y },
+        rear = { x: x - behind, y };
+      if (
+        !game.blocked(from.x, from.y) &&
+        !game.blocked(end.x, end.y) &&
+        !game.blocked(rear.x, rear.y) &&
+        game.line(from, end)
+      )
+        return from;
+    }
+  }
+  assert.fail('must find a native, unobstructed ranged basic test lane');
+}
+
 // Ranged hero automatic target scans use each class's real basic reach,
 // not enemy aggro distance or the wider manual target-selection radius.
 for (const [heroClass, reach] of [['mage', 400], ['ranger', 450]]) {
@@ -382,7 +402,8 @@ for (const [heroClass, reach] of [['mage', 400], ['ranger', 450]]) {
     game.s.mercyTime = 0;
     game.s.valeFieldAwakened = true;
     game.s.thornHeroInitiated = true;
-    Object.assign(game.hero, { x: 1100, y: 1100, basicCd: 0, order: null });
+    const lane = rangedBasicClearLane(game, reach + 1);
+    Object.assign(game.hero, { ...lane, basicCd: 0, order: null });
     game.hero.skills[0] = 1;
     const foe = game.makeEnemy(
       { species: 'goblin', name: 'Basic reach probe', level: 1, hp: 10000, damage: 0,
@@ -429,8 +450,9 @@ for (const kind of ['archer', 'pet']) {
     game.s.thornHeroInitiated = true;
     game.s.mercyTime = 0;
     game.s.expeditionRank = 6;
-    Object.assign(game.hero, { x: 900, y: 1200, order: null });
-    const ally = game.unit(kind, 1410, 1200, kind === 'pet' ? petFamily : undefined);
+    const lane = rangedBasicClearLane(game, 285, 510);
+    Object.assign(game.hero, { x: lane.x - 510, y: lane.y, order: null });
+    const ally = game.unit(kind, lane.x, lane.y, kind === 'pet' ? petFamily : undefined);
     ally.cd = 0;
     ally.skill1Cd = ally.skill2Cd = ally.skillGlobalCd = 100;
     game.s.party = [ally];
