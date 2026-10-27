@@ -3265,6 +3265,31 @@
       back,
     );
   }
+  // One short growth sentence is shared by class selection and Character.
+  // Read the live balance definitions; no duplicated display-only stat formula.
+  function classGrowthLine(heroClass) {
+    const p = Campaign.rules.balance.classPassives;
+    const es = language === 'es';
+    if (heroClass === 'paladin')
+      return es
+        ? 'Fortaleza: +' + p.paladin.hpPerLevel + ' PV máximos y +' +
+            p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
+            ' de daño bloqueado por punto de armadura por nivel.'
+        : 'Fortitude: +' + p.paladin.hpPerLevel + ' max HP and +' +
+            p.paladin.armorEffectivenessPerLevel.toFixed(2) +
+            ' damage blocked per Armor point each level.';
+    if (heroClass === 'ranger')
+      return es
+        ? 'Agilidad: +' + p.ranger.speedPerLevel + ' de velocidad y +' +
+            Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+            '% de reducción de recuperación por nivel.'
+        : 'Agility: +' + p.ranger.speedPerLevel + ' movement speed and +' +
+            Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+            '% cooldown reduction per level.';
+    return es
+      ? 'Poder arcano: +' + p.mage.powerPerLevel + ' de poder por nivel.'
+      : 'Arcane Power: +' + p.mage.powerPerLevel + ' Power per level.';
+  }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
@@ -3315,11 +3340,19 @@
               return;
             start(mode, id, succession, heroName);
           },
-          id === 'paladin'
-            ? 'Melee, healing and brief immunity'
-            : id === 'mage'
-              ? 'Ranged magic, frost control and protective barriers'
-              : 'Ranged bow, healing and mobility',
+          (language === 'es'
+            ? {
+                paladin: 'Combate cercano, curación e inmunidad breve',
+                mage: 'Magia a distancia, hielo y barreras protectoras',
+                ranger: 'Arco a distancia, curación y movilidad',
+              }[id]
+            : {
+                paladin: 'Melee, healing and brief immunity',
+                mage: 'Ranged magic, frost control and protective barriers',
+                ranger: 'Ranged bow, healing and mobility',
+              }[id]) +
+            '\n' +
+            classGrowthLine(id),
         ),
       ),
       () => chooseClass(mode),
@@ -3378,19 +3411,41 @@
     );
   }
   function characterMenu() {
-    const h = game.hero;
+    const h = game.hero,
+      es = language === 'es',
+      stats =
+        (es ? 'PV máximos ' : 'Max HP ') +
+        h.maxHp +
+        (es ? ' · Poder ' : ' · Power ') +
+        game.power() +
+        (es ? ' · Armadura ' : ' · Armor ') +
+        game.armor() +
+        '\n' +
+        (es ? 'Velocidad ' : 'Speed ') +
+        game.heroMoveSpeed() +
+        (es ? ' · Reducción de recuperación ' : ' · Cooldown reduction ') +
+        Math.round(game.heroCooldownReduction() * 100) +
+        '%' +
+        (h.class === 'paladin'
+          ? (es ? ' · Daño bloqueado/armadura ' : ' · Damage blocked/Armor ') +
+            game.armorEffectivenessFor(h).toFixed(2).replace('.', es ? ',' : '.')
+          : '');
     openMenu(
       'Character',
       (h.customName || h.regnalName ? game.heroDisplayName() + ' · ' : '') +
         h.class +
-        ' · Level ' +
+        (es ? ' · Nivel ' : ' · Level ') +
         h.level +
         '\nXP ' +
         Math.floor(h.xp) +
         ' / ' +
         game.xpRequired(h.level) +
-        (language === 'es' ? '\nProbabilidad crítica: ' : '\nCritical chance: ') +
-        (game.criticalPartyChance('hero') * 100).toFixed(0) + '%',
+        (es ? ' · Probabilidad crítica: ' : ' · Critical chance: ') +
+        (game.criticalPartyChance('hero') * 100).toFixed(0) +
+        '%\n' +
+        stats +
+        '\n' +
+        classGrowthLine(h.class),
       [
         ...(!h.customName
           ? [action('Name your hero', () => nameHeroMenu(false), 'Optional · choose once')]
