@@ -12,7 +12,8 @@ const idleDeadline = { timeRemaining: () => 20 };
     const { scope, elements, storage, frame } =
       shell(language, 'ranger', { stayOnTitle: true, idleCallbacks: queued });
     const save = storage.get('azeroth-v4-normal'),
-      game = scope.Prototype.game;
+      game = scope.Prototype.game,
+      initialState = JSON.stringify(game.snapshot());
     let calls = 0;
     scope.Prototype.renderer.prepareCurrentGround = () => {
       calls++;
@@ -24,7 +25,7 @@ const idleDeadline = { timeRemaining: () => 20 };
     assert.equal(elements.get('title-screen').hidden, false);
     queued.shift()(idleDeadline);
     assert.equal(calls, 1, 'Canvas floor preparation executes only while idle on title');
-    assert.equal(JSON.stringify(game.snapshot()), save,
+    assert.equal(JSON.stringify(game.snapshot()), initialState,
       'inactive title preparation cannot change campaign');
     assert.equal(storage.get('azeroth-v4-normal'), save, 'preparation does not write saves');
     assert.equal(scope.Prototype.started, false, 'preparation never resumes simulation');
