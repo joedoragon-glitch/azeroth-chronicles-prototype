@@ -1544,41 +1544,64 @@
         back,
       );
     }
-    function barracksGroupMenu(b, back) {
-      const active = getGame().activeParty().length,
-        cap = getGame().barracksFieldCap(b),
-        actions = getGame().s.party.map((u) => {
-          const reason =
-            u.active !== false
-              ? getGame().companionRestReason(u.id)
-              : getGame().companionActivationReason(u.id, b.id);
-          return u.active !== false
-            ? action(
-                'Rest ' + rosterLabel(u),
-                () => {
-                  getGame().restCompanion(u.id);
-                  barracksGroupMenu(b, back);
-                },
-                reason ||
-                  (u.hp > 0
-                    ? 'With you · ' +
-                      Math.ceil(u.hp) +
-                      '/' +
-                      u.maxHp +
-                      ' HP · Rest to free a group slot.'
-                    : 'With you · FALLEN · Rest to free a group slot.'),
-                !!reason,
-              )
-            : action(
-                'Add ' + rosterLabel(u) + ' to group',
-                () => {
-                  getGame().activateCompanion(u.id, b.id);
-                  barracksGroupMenu(b, back);
-                },
-                reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
-                !!reason,
-              );
-        });
+    // Barracks company navigation remains cheap even when a future class owns
+    // many resting monsters. This reads roster snapshots only on menu opening.
+    const BARRACKS_ROSTER_PAGE_SIZE = 8;
+    function barracksPagedActions(rows, page, makeAction, reopen) {
+      const pages = Math.max(1, Math.ceil(rows.length / BARRACKS_ROSTER_PAGE_SIZE)),
+        current = Number.isInteger(page) ? Math.max(0, Math.min(pages - 1, page)) : 0,
+        from = current * BARRACKS_ROSTER_PAGE_SIZE,
+        result = rows.slice(from, from + BARRACKS_ROSTER_PAGE_SIZE).map(makeAction);
+      if (pages > 1) {
+        if (current > 0)
+          result.push(action('Previous page', () => reopen(current - 1)));
+        result.push(action('Page', () => {}, (current + 1) + '/' + pages, true));
+        if (current < pages - 1)
+          result.push(action('Next page', () => reopen(current + 1)));
+      }
+      return result;
+    }
+    function barracksCompanionAction(b, u, refresh) {
+      // Stable member ID, not array index: an action is revalidated by the
+      // authoritative companion operation before changing membership.
+      const reason =
+        u.active !== false
+          ? getGame().companionRestReason(u.id)
+          : getGame().companionActivationReason(u.id, b.id);
+      return u.active !== false
+        ? action(
+            'Rest ' + rosterLabel(u),
+            () => {
+              getGame().restCompanion(u.id);
+              refresh();
+            },
+            reason ||
+              (u.hp > 0
+                ? 'With you · ' +
+                  Math.ceil(u.hp) +
+                  '/' +
+                  u.maxHp +
+                  ' HP · Rest to free a group slot.'
+                : 'With you · FALLEN · Rest to free a group slot.'),
+            !!reason,
+          )
+        : action(
+            'Add ' + rosterLabel(u) + ' to group',
+            () => {
+              getGame().activateCompanion(u.id, b.id);
+              refresh();
+            },
+            reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
+            !!reason,
+          );
+    }
+    function barracksGroupMenu(b, back, page = 0) {
+      const game = getGame(),
+        active = game.activeParty().length,
+        cap = game.barracksFieldCap(b),
+        roster = game.s.party,
+        refresh = (next = page) => barracksGroupMenu(b, back, next),
+        actions = barracksPagedActions(roster, page, (u) => barracksCompanionAction(b, u, () => refresh()), refresh);
       openMenu(
         'Manage group',
         'With you ' +
@@ -1586,11 +1609,80 @@
           '/' +
           cap +
           ' · Employed ' +
-          getGame().rosterCount() +
+          game.rosterCount() +
           ' · Rest a companion to free a slot. ' +
-          (!b.full && (getGame().s.expeditionRank || 1) >= 4
+          (!b.full && (game.s.expeditionRank || 1) >= 4
             ? 'Basic cap: 3. Upgrade for larger groups.'
             : ''),
+        actions.length ? actions : [action('No companions employed', () => {}, '', true)],
+        back,
+      );
+    }
+    // This type-first path is dormant until authenticated Charm provenance exists.
+    // The stable typeId is a future capture/save contract; unknown provenance
+    // must NOT cause unrelated subtypes to be grouped together.
+    function charmedTypeId(u) {
+      if (!u?.charmOrigin || typeof u.charmOrigin !== 'object') return '';
+      return typeof u.charmOrigin.typeId === 'string' && u.charmOrigin.typeId
+        ? u.charmOrigin.typeId
+        : 'unclassified:' + u.id;
+    }
+    function charmedTypeName(u) {
+      const data = u.charmOrigin,
+        name = data?.typeName || data?.displayName || data?.typeId || '';
+      return typeof name === 'string' && name.trim()
+        ? name.trim()
+        : 'Charmed creature';
+    }
+    function barracksCharmedTypeMenu(b, typeId, back, page = 0) {
+      const game = getGame(),
+        roster = game.s.party.filter((u) => charmedTypeId(u) === typeId),
+        label = roster.length ? charmedTypeName(roster[0]) : 'Charmed creature',
+        refresh = (next = page) => barracksCharmedTypeMenu(b, typeId, back, next),
+        actions = barracksPagedActions(roster, page, (u) => barracksCompanionAction(b, u, () => refresh()), refresh);
+      openMenu(
+        'Charmed monsters',
+        label +
+          ' · ' +
+          roster.length +
+          ' owned · With you ' +
+          roster.filter((u) => u.active !== false).length +
+          ' · Resting ' +
+          roster.filter((u) => u.active === false).length +
+          ' · Local group cap ' +
+          game.barracksFieldCap(b),
+        actions.length ? actions : [action('No companions employed', () => {}, '', true)],
+        back,
+      );
+    }
+    function barracksCharmedMenu(b, back, page = 0) {
+      const game = getGame(),
+        grouped = new Map();
+      for (const u of game.s.party) {
+        const key = charmedTypeId(u);
+        if (!key) continue;
+        if (!grouped.has(key)) grouped.set(key, []);
+        grouped.get(key).push(u);
+      }
+      const groups = Array.from(grouped.entries()).sort(([a], [b]) => a.localeCompare(b)),
+        refresh = (next = page) => barracksCharmedMenu(b, back, next),
+        actions = barracksPagedActions(groups, page, ([key, units]) => {
+          const active = units.filter((u) => u.active !== false).length,
+            fallen = units.filter((u) => u.hp <= 0).length,
+            owned = units.length,
+            limit = game.hero.class === 'rogue' ? game.expeditionPartyCap() : null;
+          return action(
+            charmedTypeName(units[0]) + ' · ' + owned + (limit ? '/' + limit : '') + ' owned',
+            () => barracksCharmedTypeMenu(b, key, () => barracksCharmedMenu(b, back, page)),
+            'With you ' + active + ' · Resting ' + (owned - active) + ' · Fallen ' + fallen,
+          );
+        }, refresh);
+      openMenu(
+        'Charmed monsters',
+        groups.length +
+          ' types · ' +
+          game.s.party.filter((u) => !!charmedTypeId(u)).length +
+          ' owned · Basic Barracks manages up to 3 active members; Full Barracks uses Expedition capacity. Owned reserves are not Barracks storage slots.',
         actions.length ? actions : [action('No companions employed', () => {}, '', true)],
         back,
       );
@@ -1608,22 +1700,25 @@
         onDone: back,
       });
     }
-    function barracksNamesMenu(b, back) {
-      const returnHere = () => barracksNamesMenu(b, back);
+    function barracksNamesMenu(b, back, page = 0) {
+      const game = getGame(),
+        returnHere = (next = page) => barracksNamesMenu(b, back, next),
+        actions = barracksPagedActions(game.s.party, page, (u) =>
+          action(
+            rosterLabel(u),
+            () => nameCompanion(u.id, () => returnHere()),
+            (u.charmOrigin
+              ? charmedTypeName(u)
+              : u.type === 'pet'
+                ? game.petDefinition(u)?.name || 'Boss pet'
+                : unitLabel(u.type)) +
+              (u.customName ? ' · Permanent name chosen' : ' · Name available'),
+            !!u.customName,
+          ), returnHere);
       openMenu(
         'Name companions',
         'Choose a name once. You can skip and return later.',
-        getGame().s.party.length
-          ? getGame().s.party.map((u) =>
-              action(
-                rosterLabel(u),
-                () => nameCompanion(u.id, returnHere),
-                (u.type === 'pet' ? getGame().petDefinition(u).name : unitLabel(u.type)) +
-                  (u.customName ? ' · Permanent name chosen' : ' · Name available'),
-                !!u.customName,
-              ),
-            )
-          : [action('No companions employed', () => {}, '', true)],
+        actions.length ? actions : [action('No companions employed', () => {}, '', true)],
         back,
       );
     }
@@ -1646,6 +1741,15 @@
             () => barracksGroupMenu(b, returnHere),
             'With you ' + active + '/' + cap + ' · employed ' + getGame().rosterCount(),
           ),
+          ...(getGame().s.party.some((u) => !!charmedTypeId(u))
+            ? [
+                action(
+                  'Charmed monsters',
+                  () => barracksCharmedMenu(b, returnHere),
+                  'Browse owned monster types and change their active status.',
+                ),
+              ]
+            : []),
           action(
             'Name companions',
             () => barracksNamesMenu(b, returnHere),
