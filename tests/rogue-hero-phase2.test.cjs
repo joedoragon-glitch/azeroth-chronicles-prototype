@@ -67,14 +67,16 @@ try {
   assert.equal(g.s.party.length, 0, 'no premature Charm conversion');
   assert.equal(g.s.projectiles.length, 0, 'no projectile actor');
   const realHit = g.effects.find(e => e.type === 'hit');
-  assert(enemies[0].hp < originalHP[0], JSON.stringify({
+  // Engagement legitimately scales the opponent to its fighting max HP.
+  // A real hit must reduce that MAX; pre-engagement HP is not comparable.
+  assert(enemies[0].hp < enemies[0].maxHp, JSON.stringify({
     reason: 'primary took real damage', before: originalHP[0], after: enemies[0].hp,
     landed: g.effects.find(e => e.type === 'rogueBellBasic')?.landed,
     hit: realHit, hero: { x: g.hero.x, y: g.hero.y, hp: g.hero.hp },
     enemy: { id: enemies[0].id, x: enemies[0].x, y: enemies[0].y,
       home: enemies[0].home, aggro: enemies[0].aggro, returning: enemies[0].returning },
   }));
-  assert.equal(enemies.slice(1).filter((e, i) => e.hp < originalHP[i + 1]).length, 2,
+  assert.equal(enemies.slice(1).filter((e) => e.hp < e.maxHp).length, 2,
     'normal release contacts exactly two legal secondaries');
   const firstCue = g.effects.find(e => e.type === 'rogueBellBasic');
   assert.equal(firstCue.instrument, 'suspended-jingle-bell');

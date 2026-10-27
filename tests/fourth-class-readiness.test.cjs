@@ -39,8 +39,8 @@ for (const heroClass of Object.keys(classes)) {
   const c = new Campaign('normal', 'mage', () => 0.9);
   c.hero.class = 'rogue'; // Dormant only, no playable class registered.
   assert.equal(c.heroBasicAttackApproachRange(), 260);
-  assert.equal(c.heroSkillRange(1), 0);
-  assert.equal(c.heroSkillRange(1, true), 0);
+  assert.equal(c.heroSkillRange(1), 260);
+  assert.equal(c.heroSkillRange(1, true), 300);
   const snapshot = c.snapshot();
   assert.equal(c.cast(1), false, 'unknown skill dispatch cannot become a Mage/Ranger cast');
   assert.deepEqual(c.snapshot(), snapshot, 'unsupported cast is inert');
