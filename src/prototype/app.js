@@ -1469,6 +1469,9 @@
     titleScreen = null,
     titleLoading = false,
     titleEpoch = 0,
+    titleWarmup = null,
+    sceneTransition = null,
+    sceneTransitionEpoch = 0,
     started = false,
     menu = null,
     menuIndex = 0,
@@ -2107,6 +2110,7 @@
     chooseNewRun: (mode) => chooseLanguage(mode),
     status,
     requestName,
+    sceneTransitionTo,
     openCharacter: characterMenu,
   });
 
@@ -2116,6 +2120,9 @@
     },
     get started() {
       return started;
+    },
+    get sceneLoading() {
+      return !!sceneTransition;
     },
     audio,
     renderer,
@@ -3186,6 +3193,149 @@
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+
+  // Stage 5: destination preparation observes only an ALREADY CONSTRUCTED zone
+  // in the saved campaign. Never call zone(), enter(), tick() or gameplay RNG
+  // to predict an unvisited destination. Decoded art is optional, bounded work.
+  function readOnlySceneKeys(destination) {
+    const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
+    if (!sprites?.definitionFor || !game?.s?.zones) return [];
+    const known = game.s.zones[destination] || null;
+    const region = game.regionIndex(destination);
+    const candidates = [
+      { ...game.hero, renderKind: 'hero' },
+      ...(known ? [...(known.npcs || []), ...(known.props || []), ...(known.enemies || [])]
+        .slice(0, 45) : []),
+    ];
+    const keys = new Set();
+    for (const actor of candidates) {
+      // These are read-only appearance lookups, with no actor/zone creation.
+      const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
+      if (match?.key) keys.add(match.key);
+      if (keys.size >= 12) break;
+    }
+    return [...keys];
+  }
+  function warmScene(destination, milliseconds = 300) {
+    const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
+    if (!sprites?.warm || document.hidden) return null;
+    const keys = readOnlySceneKeys(destination);
+    if (!keys.length) return null;
+    // The queue may outlive the deadline, but only presentation-cache bytes
+    // are touched; no delayed callback can commit travel or change the campaign.
+    return Promise.race([
+      Promise.resolve().then(() => sprites.warm(keys)).catch(() => null),
+      new Promise((resolve) => setTimeout(resolve, milliseconds)),
+    ]);
+  }
+  function drawReadyScene() {
+    try {
+      drawWorld();
+      return true;
+    } catch (_) {
+      // A first-use WebGL exception must not strand the player behind loading.
+      try {
+        graphicsController.revert();
+        renderer.setRenderLayer('full');
+        renderer.draw();
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+  }
+  function transitionLoadingText(label, step) {
+    const host = $('scene-loading-text');
+    const es = language === 'es';
+    host.textContent = step === 'paint'
+      ? (es ? 'Preparando la vista de llegada…' : 'Drawing arrival scene…')
+      : (es ? 'Preparando viaje · ' : 'Preparing travel · ') + label;
+  }
+  function cancelSceneTransition() {
+    const previous = sceneTransition;
+    if (!previous) return;
+    ++sceneTransitionEpoch;
+    sceneTransition = null;
+    $('scene-loading').hidden = true;
+    $('scene-loading-retry').hidden = true;
+    // If the gameplay commit occurred, do not roll back or replay it.
+    // A hidden page is safely saved by the existing visibility/pagehide owner.
+    last = performance.now();
+    audio.setPaused(!started || !focused || document.hidden || paused);
+  }
+  function revealSceneTransition(token) {
+    const ticket = sceneTransition;
+    if (!ticket || ticket.token !== token || !ticket.committed) return;
+    if (document.hidden || !focused || !writerGuard.canWrite()) return;
+    if (game !== ticket.campaign || game.zoneId !== ticket.destination) {
+      cancelSceneTransition();
+      return;
+    }
+    if (!drawReadyScene()) {
+      // Preserve committed progress. Leave a clear retryable interruption state
+      // rather than showing a partially rendered world.
+      transitionLoadingText('', 'paint');
+      $('scene-loading-text').textContent = language === 'es'
+        ? 'No se pudo dibujar la llegada. Intenta de nuevo con Canvas.'
+        : 'Arrival could not be drawn. Retry with Canvas.';
+      $('scene-loading-retry').textContent = language === 'es'
+        ? 'Reintentar con Canvas' : 'Retry with Canvas';
+      $('scene-loading-retry').hidden = false;
+      $('scene-loading-retry').focus?.({ preventScroll: true });
+      return;
+    }
+    cancelSceneTransition();
+    clearInput();
+    last = performance.now();
+    frameSkip.suspend();
+    runtime.reset();
+    fps.suspend();
+    updateHUD();
+    $('menu-button').focus?.({ preventScroll: true });
+  }
+  function sceneTransitionTo(destination, label, commit) {
+    if (!started || sceneTransition || document.hidden || !focused ||
+        !writerGuard.canWrite() || persistence.conflicted(game.s.mode))
+      return false;
+    const token = ++sceneTransitionEpoch;
+    const campaign = game;
+    sceneTransition = { token, campaign, destination, committed: false };
+    $('scene-loading').hidden = false;
+    $('scene-loading-retry').hidden = true;
+    transitionLoadingText(label || destination, 'warm');
+    clearInput();
+    audio.setPaused(true);
+    const proceed = () => {
+      if (sceneTransition?.token !== token || document.hidden || !focused ||
+          !writerGuard.canWrite() || game !== campaign) {
+        if (sceneTransition?.token === token) cancelSceneTransition();
+        return;
+      }
+      let accepted = false;
+      try {
+        accepted = !!commit();
+      } catch (_) {
+        accepted = false;
+      }
+      if (!accepted || game.zoneId !== destination) {
+        cancelSceneTransition();
+        return;
+      }
+      sceneTransition.committed = true;
+      // Only the existing domain action may spend fare, reset encounters,
+      // create the entered zone or update quest/discovery state.
+      if (menu) closeMenu();
+      transitionLoadingText(label || destination, 'paint');
+      if (!save()) status('Saving failed. Export your run before closing.');
+      // The world remains behind the opaque interlude until a real draw.
+      requestAnimationFrame(() => revealSceneTransition(token));
+    };
+    const pending = warmScene(destination);
+    if (pending) void pending.then(proceed, proceed);
+    else proceed();
+    return true;
+  }
+
   // Presentation-only title surface: never tick or autosave a loaded campaign.
   function refreshTitleScreen() {
     if (!titleScreen) return;
@@ -3229,6 +3379,7 @@
   function showTitleScreen() {
     ++titleEpoch;
     titleLoading = false;
+    cancelSceneTransition();
     started = false;
     paused = false;
     clearInput();
@@ -3242,6 +3393,8 @@
     }
     titleScreen.hidden = false;
     document.body.classList.add('title-active');
+    // Prepare only the *loaded* arrival view, never an unentered zone.
+    titleWarmup = loaded ? warmScene(game.zoneId, 300) : null;
     refreshTitleScreen();
     const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
     primary.focus?.({ preventScroll: true });
@@ -3256,44 +3409,50 @@
       ? 'Preparando la primera escena…' : 'Preparing first scene…';
     refreshTitleScreen();
     clearInput();
-    // Only the Continue gesture authorizes abnormal-session recovery.
-    recoverLoadedSession();
-    if (menu) closeMenu();
-    try {
-      // Draw behind the opaque title; Canvas remains the safe default if Pixi
-      // has not completed its optional renderer preparation.
-      drawWorld();
-    } catch (error) {
-      titleLoading = false;
-      graphicsController.webglFailed?.({
-        type: 'initial-frame-failed', stage: 'continue',
-        message: String(error?.message || error),
-      });
-      status('Unable to prepare the game scene. Canvas backup is available.');
-      refreshTitleScreen();
-      return;
-    }
-    requestAnimationFrame(() => {
-      if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+    const campaign = game;
+    const reveal = () => {
+      if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
+          campaign !== game) {
         titleLoading = false;
         refreshTitleScreen();
         return;
       }
-      titleLoading = false;
-      started = true;
-      titleScreen.hidden = true;
-      document.body.classList.remove('title-active');
-      paused = false;
-      last = performance.now();
-      saveTimer = 0;
-      frameSkip.suspend();
-      runtime.reset();
-      fps.suspend();
-      restartGuard.arm(game);
-      updateHUD();
-      audio.setPaused(false);
-      $('menu-button').focus?.({ preventScroll: true });
-    });
+      // Only Continue authorizes abnormal-session recovery.
+      recoverLoadedSession();
+      if (menu) closeMenu();
+      $('title-loading').textContent = language === 'es'
+        ? 'Preparando la primera escena…' : 'Drawing first scene…';
+      if (!drawReadyScene()) {
+        titleLoading = false;
+        status('Unable to prepare the game scene. Canvas backup is available.');
+        refreshTitleScreen();
+        return;
+      }
+      requestAnimationFrame(() => {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+          titleLoading = false;
+          refreshTitleScreen();
+          return;
+        }
+        titleLoading = false;
+        started = true;
+        titleScreen.hidden = true;
+        document.body.classList.remove('title-active');
+        paused = false;
+        last = performance.now();
+        saveTimer = 0;
+        frameSkip.suspend();
+        runtime.reset();
+        fps.suspend();
+        restartGuard.arm(game);
+        updateHUD();
+        audio.setPaused(false);
+        $('menu-button').focus?.({ preventScroll: true });
+      });
+    };
+    const pending = titleWarmup;
+    if (pending) void pending.then(reveal, reveal);
+    else reveal();
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
@@ -4498,6 +4657,12 @@
       dungeonEntranceMenu(n);
       return;
     }
+    if (n.kind === 'exit' || (n.kind === 'dungeon' && n.sideDungeon)) {
+      const destination = n.kind === 'dungeon' ? n.family :
+        game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
+      sceneTransitionTo(destination, n.name || destination, () => game.interact(n));
+      return;
+    }
     if (
       [
         'rest',
@@ -4574,7 +4739,7 @@
             action(
               'Travel to ' + target.name,
               () => {
-                if (game.travelHub(target.id)) closeMenu();
+                sceneTransitionTo(target.id, target.name, () => game.travelHub(target.id));
               },
               target.town,
             ),
@@ -6331,6 +6496,10 @@
   addEventListener('focus', () => {
     focused = true;
     last = performance.now();
+    if (sceneTransition?.committed) {
+      const token = sceneTransition.token;
+      requestAnimationFrame(() => revealSceneTransition(token));
+    }
     if (started && !paused && !document.hidden) restartGuard.arm(game);
     checkAppUpdate().catch(() => {});
   });
@@ -6339,17 +6508,23 @@
     clearInput();
     last = performance.now();
     if (document.hidden) {
+      if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
       game.observeCrowdFrame(0, false);
       renderResolution.suspend();
       if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
     } else {
+      if (sceneTransition?.committed) {
+        const token = sceneTransition.token;
+        requestAnimationFrame(() => revealSceneTransition(token));
+      }
       if (started && !paused && focused) restartGuard.arm(game);
       checkAppUpdate().catch(() => {});
     }
   });
   addEventListener('pagehide', () => {
     clearInput();
+    if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
     if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
     writerGuard.release();
@@ -7178,7 +7353,7 @@
     }
   }
   function frame(now) {
-    if (!started) {
+    if (!started || sceneTransition) {
       last = now;
       clearEmergencyEscalation();
       frameSkip.suspend();
@@ -7525,6 +7700,13 @@
   $('title-saves').onclick = titleSaveMenu;
   $('title-settings').onclick = systemMenu;
   $('title-help').onclick = titleHelpMenu;
+  $('scene-loading-retry').onclick = () => {
+    if (!sceneTransition?.committed) return;
+    graphicsController.revert();
+    const token = sceneTransition.token;
+    $('scene-loading-retry').hidden = true;
+    requestAnimationFrame(() => revealSceneTransition(token));
+  };
   updateHUD();
   setLanguage(language);
   showTitleScreen();

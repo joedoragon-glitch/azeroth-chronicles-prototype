@@ -12,6 +12,7 @@
     showMap,
     finaleMenu,
     storyNavigate = () => {},
+    sceneTransitionTo = (destination, label, commit) => { if (commit()) closeMenu(); },
     chooseNewRun = () => {},
     status = () => {},
     requestName = () => {},
@@ -73,7 +74,7 @@
         reason = game.dungeonCampReason(entrance),
         cost = camp ? 0 : game.barracksBuildCost();
       if (camp && (camp.progress >= 4 || camp.dungeonEntrance === entrance.family)) {
-        if (game.interact(entrance)) closeMenu();
+        sceneTransitionTo(entrance.family, entrance.name, () => getGame().interact(entrance));
         return;
       }
       openMenu(
@@ -84,7 +85,7 @@
         [
           action('Enter dungeon', () => {
             const current = getGame().dungeonEntrance(entrance);
-            if (current && getGame().interact(current)) closeMenu();
+            if (current) sceneTransitionTo(current.family, current.name, () => getGame().interact(current));
           }),
           action(
             camp?.progress >= 4
@@ -131,7 +132,7 @@
         action(
           'Travel to ' + target.name,
           () => {
-            if (getGame().travel(n.direction)) closeMenu();
+            sceneTransitionTo(target.id, target.name, () => getGame().travel(n.direction));
           },
           departureReason || cost + ' crowns',
           !!departureReason || game.hero.gold < cost,
@@ -142,7 +143,7 @@
           action(
             'Work for passage · pay ' + work.payment + ' crowns',
             () => {
-              if (getGame().travel(n.direction, { workPassage: true })) closeMenu();
+              sceneTransitionTo(target.id, target.name, () => getGame().travel(n.direction, { workPassage: true }));
             },
             departureReason ||
               'Help the crew cover the missing ' +

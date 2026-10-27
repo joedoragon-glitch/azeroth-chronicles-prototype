@@ -8,6 +8,13 @@
 <div id="movement"><div id="joystick" role="button" tabindex="0" aria-label="Move hero"><div id="stick"></div></div><button id="touch-interact-button" aria-label="Interact">F<br><small>Interact</small></button><button id="order-button">Confirm<br><small>F</small></button></div>
 <section id="modal" hidden aria-modal="true" role="dialog" aria-labelledby="modal-title"><h2 id="modal-title"></h2><div id="modal-content"><div id="modal-description"></div><div id="modal-actions"></div></div><button id="close-button">Back <small>F / Esc</small></button></section>
 <input id="import-file" type="file" accept="application/json,.json" hidden>
+<section id="scene-loading" aria-labelledby="scene-loading-heading" aria-live="polite" aria-busy="true" hidden>
+  <div class="scene-loading-panel">
+    <h2 id="scene-loading-heading">So I Became the Dark Lord's Problem</h2>
+    <p id="scene-loading-text" role="status">Preparing arrival scene…</p>
+    <button id="scene-loading-retry" type="button" hidden>Retry with Canvas</button>
+  </div>
+</section>
 <section id="title-screen" aria-labelledby="title-heading" hidden>
   <div class="title-panel">
     <p id="title-tagline"></p>

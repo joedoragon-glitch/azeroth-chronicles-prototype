@@ -1251,3 +1251,36 @@ body.title-active #stamina-status,
 body.title-active #sprint-button,
 body.title-active #cancel-navigation-button { visibility: hidden !important; }
 body.title-active #modal { z-index: 11; }
+
+/* Stage 5: opaque interlude while a committed arrival is rendered.
+   Underlying HUD/menu and the previous scene remain inaccessible. */
+#scene-loading[hidden] { display: none !important; }
+#scene-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: max(16px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
+  background: radial-gradient(ellipse at 50% 30%, #263f34 0%, #0d2019 65%, #07130e 100%);
+  color: #f3e6c8;
+  text-align: center;
+}
+.scene-loading-panel {
+  width: min(100%, 430px);
+  border: 1px solid #bba27080;
+  border-radius: 14px;
+  padding: 30px 24px;
+  background: #16281fdc;
+  box-shadow: 0 16px 46px #0009;
+}
+#scene-loading-heading { color: #f0ddb0; font: 600 clamp(20px, 4vw, 28px)/1.25 Georgia, serif; }
+#scene-loading-text { margin: 14px 0 0; line-height: 1.5; }
+
+#scene-loading-retry[hidden] { display: none !important; }
+#scene-loading-retry {
+  margin-top: 18px; padding: 12px 20px; border-radius: 8px;
+  min-height: 48px; background: #385c4b; border: 1px solid #dfc78f;
+  color: #fff0d1; cursor: pointer;
+}
+#scene-loading-retry:focus-visible { outline: 3px solid #f8dfa5; outline-offset: 3px; }

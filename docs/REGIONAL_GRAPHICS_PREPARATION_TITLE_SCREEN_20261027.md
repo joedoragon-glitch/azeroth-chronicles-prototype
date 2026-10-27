@@ -71,7 +71,7 @@ A measured-decision candidate is now present on this draft branch, **without swi
 - Respect writer ownership, corrupted saves and checkpoints; Continue should be unavailable for missing/invalid saves with a recovery path. New Game keeps existing confirmation/backup safeguards.
 - Return to Main Menu saves safely and stops active gameplay; diagnostic/developer/arena paths remain gated as today.
 
-### Stage 5 — ready-first-frame loading and transitions
+### Stage 5 — ready-first-frame loading and transitions (source candidate; device/browser acceptance open)
 
 - While on title screen, prewarm the current save's arrival view under memory/time budgets. Continue reveals the world only after its first complete playable frame is available. If already ready, do not add an artificial delay.
 - Shared art and currently relevant terrain are prepared first; later optional region areas can prepare incrementally. A loading display should show genuine stages, not an invented percentage.
@@ -100,3 +100,5 @@ Measure first playable frame, input responsiveness, preparation time, p95/p99 st
 - **Stages 4–7 remain planned, not implemented.** Stages 0–3 are implemented at the stated narrow scope, but not yet complete against every device/visual acceptance gate.
 
 - **27 October 2026, Stage 4 candidate:** Reconciled main with this draft, retaining Pixi stages 0–3. A separate inactive public-brand title surface, safe Continue draw-before-start, title save management and in-game return are implemented for focused review. Broad browser/physical device acceptance remains open; Stages 5–7 are not complete.
+
+- **27 October 2026, Stage 5 bounded arrival pass (draft):** Added bilingual opaque transitions for existing regional, Crown hub, dungeon entrance and interior exit actions; a read-only sprite preflight of at most 12 approved keys and 300 ms waiting, drawing after native travel succeeds and before gameplay resumes, with Canvas retry, cancellation and writer protection. Neither preflight nor the title's optional current-scene warming calls `Campaign.zone` for unentered destinations. The actual domain travel/interaction remains authoritative. Pending focused CI and real browser/device acceptance; this is neither a GPU upload benchmark nor authorization for merge/publication.
