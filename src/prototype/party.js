@@ -2935,7 +2935,7 @@
         return true;
       }
       partyFormationOffset(u, living = this.activeLivingParty()) {
-        const rangedHero = this.hero.class === 'mage' || this.hero.class === 'ranger';
+        const rangedHero = ['mage', 'ranger', 'rogue'].includes(this.hero.class);
         if (u.type === 'pet') {
           // Keep distinct mixed-pet lanes: melee pets screen a ranged hero and
           // flank behind a Paladin; ranged pets remain behind either hero role.
@@ -3052,7 +3052,8 @@
       }
       archerCombatPoint(u, e, living) {
         const anchor = this.partyFollowPoint(u, living),
-          preferred = 250,
+          // Do not let short-ranged species choose a preferred point outside reach.
+          preferred = Math.min(250, Math.max(110, this.companionCombatReach(u) - 35)),
           anchorRange = dist(anchor, e);
         if (anchorRange <= this.companionCombatReach(u) && this.line(anchor, e)) return anchor;
         const dx = anchor.x - e.x,
