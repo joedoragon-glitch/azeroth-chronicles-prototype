@@ -1,6 +1,8 @@
 # Rogue Bard — exact integration, housekeeping, risks and validation handoff
 **26 October 2026 | PR #511 | deep source audit at main e44ea0ec4b9ed164a85431e972664efda2190da6 | documentation only**
 
+**CURRENT AUTHORITY 27 OCT:** [Canonical reconciled owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md) is the review entry point; [mirrored 16-form AoE and critical-tier spec](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md) controls contemporary skill effects. Treat any old 'two enemy-only player traps', original single-target Rogue skills, or 'Skill 4 just DoT' examples elsewhere in this audit as superseded **historical alternatives**. Implement the favored Skill 5 two-polarity musical stations *only after the owner resolves whether they replace physical traps*; environmental trap disarm is separate. **Mage silence predicate caveat:** `hero-combat.js::mageSilenceActive` is the current hero Mage field, **not established enemy-applied companion Silence**. Protect the actual `combat.js::recordPartyChargeDamage` interruption first and verify any hostile Silence-specific protection before implementation. The fourth Rogue intensity group requires actual slider UI/config, not just the session-native tuning API.
+
 Companion docs: [owner record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md), [recommended gameplay/balance candidate](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md), [regular + crowned static art](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md). **This is an implementable review plan rather than a claim of working class source or tested balance.**
 
 ## 1. Integration strategy: low risk, no unnecessary architecture
