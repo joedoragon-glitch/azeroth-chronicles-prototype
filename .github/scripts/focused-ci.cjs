@@ -18,6 +18,8 @@ const groups = [
     tests: [TEST + 'archive-reference.test.cjs'] },
   { match: /^src\/prototype\/(?:engine|hero-combat|combat|rules)\.js$/,
     tests: [TEST + 'ranger-max-range-goblin-response.test.cjs'] },
+  { match: /^src\/prototype\/(?:engine|combat)\.js$/,
+    tests: [TEST + 'rogue-anchor-under-fire-integrity.test.cjs'] },
   { match: /^src\/prototype\/(?:renderer|rules|visuals|world|data|sprites)\.js$|^scripts\/sprite-scope-audit\.cjs$/,
     tests: [TEST + 'sprite-scope.test.cjs'] },
   {

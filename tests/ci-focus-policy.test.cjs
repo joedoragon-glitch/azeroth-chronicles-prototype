@@ -142,6 +142,10 @@ for (const file of ['world', 'visuals', 'data', 'sprites'])
   assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes(
     'tests/sprite-scope.test.cjs'),
     'source-hash graphics evidence must follow ' + file);
+for (const file of ['engine', 'combat'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes(
+    'tests/rogue-anchor-under-fire-integrity.test.cjs'),
+    'merged #521 native tactical contract must survive later source-only edits');
 assert(selectTests(['scripts/sprite-scope-audit.cjs'], exists).tests.includes(
   'tests/sprite-scope.test.cjs'), 'scope audit script edits must verify original scope check');
 for (const [source, expected] of [
