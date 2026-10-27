@@ -17,6 +17,7 @@ const names = [
   'mini-dungeons',
   'dungeon-pressure',
 ];
+const failures = [];
 for (const name of names) {
   const file = 'tests/' + name + '.test.cjs';
   const r = spawnSync(process.execPath, [file], {
@@ -28,10 +29,14 @@ for (const name of names) {
     if (r.error) console.error(r.error.message);
     if (r.stdout) console.error(r.stdout.slice(-6000));
     if (r.stderr) console.error(r.stderr.slice(-6000));
-    assert.fail(name + ' native focused test failed, code=' + r.status);
+    failures.push(name + ' (exit=' + r.status + ')');
+    continue;
   }
   console.log('AUDIT MATRIX PASS ' + name + ': ' +
     (r.stdout || '').trim().split('\n').slice(-1)[0]);
 }
-console.log('PASS issue #510 focused reset matrix: ' + names.length +
+if (failures.length) {
+  console.error('AUDIT MATRIX BASELINE FAILURES (do not silently repair historical tests): ' + failures.join(', '));
+  process.exitCode = 1;
+} else console.log('PASS issue #510 focused reset matrix: ' + names.length +
   ' existing native test files plus separate direct-damage reproducer');
