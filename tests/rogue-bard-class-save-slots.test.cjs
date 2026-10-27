@@ -164,6 +164,53 @@ try {
       'a new real Rogue campaign does not replace the legacy Paladin save');
   }
 
+  // Succession must never reroute the same campaign to its successor's
+  // independent class slot. The founding class identifies the SAVE, while
+  // hero.class identifies the current playable successor inside that save.
+  {
+    const rows = new Map();
+    const io = {
+      getItem: (key) => rows.get(key) ?? null,
+      setItem: (key, value) => rows.set(key, String(value)),
+    };
+    const saveSlots = P.createClassSlots({ storage: io, Campaign });
+    const other = new Campaign('normal', 'mage', () => 0.9);
+    other.hero.gold = 818;
+    saveSlots.writeCandidate(other);
+    const mageKey = saveSlots.saveKey('normal', 'mage');
+    const unrelated = rows.get(mageKey);
+    const campaign = new Campaign('normal', 'rogue', () => 0.9,
+      { succession: true });
+    saveSlots.writeCandidate(campaign);
+    assert.equal(saveSlots.slotClass(campaign), 'rogue');
+    campaign.s.challenge.fallen.push('rogue');
+    campaign.s.challenge.pending = true;
+    campaign.hero.hp = 0;
+    assert.equal(campaign.successor('mage'), true);
+    assert.equal(campaign.hero.class, 'mage');
+    assert.equal(saveSlots.slotClass(campaign), 'rogue',
+      'owner does not become the new hero class');
+    assert.equal(saveSlots.save(campaign, { activeClass: 'rogue' }), true);
+    const rogueKey = saveSlots.saveKey('normal', 'rogue');
+    assert.equal(JSON.parse(rows.get(rogueKey)).hero.class, 'mage');
+    assert.equal(rows.get(mageKey), unrelated,
+      'other Mage run has not been overwritten by Rogue Succession');
+    const restored = P.createClassSlots({ storage: io, Campaign });
+    const resumed = restored.load('normal', 'rogue');
+    assert.equal(resumed.hero.class, 'mage');
+    assert.equal(restored.slotClass(resumed), 'rogue');
+    resumed.hero.gold += 1;
+    assert(restored.save(resumed, { activeClass: 'rogue' }));
+    assert.equal(rows.get(mageKey), unrelated);
+    assert.equal(JSON.parse(rows.get(rogueKey)).hero.gold, resumed.hero.gold);
+    const guard = P.createRestartGuard({
+      storage: io, Campaign, classSlots: true,
+      slotClass: (game) => restored.slotClass(game),
+    });
+    assert(guard.arm(resumed), 'restart marker reads founding class slot');
+    assert.equal(guard.read().heroClass, 'mage');
+  }
+
   // The older public adapter and save key must remain unchanged.
   const standard = P.create({ storage, Campaign });
   assert.equal(standard.load('normal').hero.gold, 333);
