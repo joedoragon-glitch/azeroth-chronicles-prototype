@@ -1,4 +1,4 @@
-# Rogue Bard — authoritative Phase 5 / early Phase 6 checkpoint (27 October 2026)
+> **Later owner clarification (27 October 2026), superseding the earlier Phase 6 UI step below:** Rogue critical intensity is a **developer-only authoring value** (default Level 2), NOT an adjustable in-game player option. No Rogue slider, profile preference, persistence or migration is required. The remaining fourteen forms were subsequently wired with native critical receipts; consult [Phase 6 continuation](ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md) for code, tests and verification. Keep this original restart record as historical state.\n\n# Rogue Bard — authoritative Phase 5 / early Phase 6 checkpoint (27 October 2026)
 
 **Repository:** `joedoragon-glitch/azeroth-chronicles-prototype` · **PR:** [#511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) · **branch:** `design/rogue-bard-feasibility-20261026` · **main base inspected:** `5c6197e871f8f4393d26d9b7a261b9324ef85d12`.
 
