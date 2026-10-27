@@ -74,6 +74,12 @@ These should be individually decided before coding, not answered by developer as
 4. **Correction from deeper source audit:** `save.js` retains hardcoded three-class bounds for Succession saved-state validation, and `party.js` has six positional offsets for ordinary troopers. They require small four-class / seventh-party-slot adaptations, **not a redesign**.
 5. **Art and crown:** the later request explicitly calls for normal **and Dark Lord/crowned** Rogue appearances. Both must be documented and implemented as existing-style **static** art, not poses or animations. See [static art design candidate](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md).
 
+## C3. Latest owner clarification — musical titles that signal their effects (27 October 2026)
+
+**Owner preference (naming principle, not final individual titles):** Rogue's **normal and charged attacks** should have names that could be **actual dance moves, musical movements, songs or composition titles**. A name should also suggest **what its attack does to the enemy**. Prefer expressive, clever performance nomenclature (*Broken Cadence* interrupting casts, *Dragging Waltz* slowing foes, *Stolen Tempo* delaying readiness, *The Silencing Coda* causing brief Silence) over generic “Bard Attack,” “Dance Attack,” “Rogue Strike,” or unrelated flavor names. A charged title should feel like the larger or darker movement of the corresponding normal composition, **not a separate skill family**.
+
+The latest [gameplay candidate](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md) and [owner review](ROGUE_BARD_OWNER_REVIEW_20261026.md) present **eight new normal/charged title pairs** plus auto and third-hit finisher. These exact names remain **assistant suggestions, not owner-approved canonical strings**. The earlier Cutting Chord/Off-Key Waltz/etc. list remains in section B as preserved historical brainstorming only. The user did not request different mechanics, more effects, singing audio, animated dance cycles, or name-dependent combat bonuses; do not change any of those under a naming-only revision.
+
 ## D. Guardrails for all further work
 
 - The fourth class is **opt-in new content**, not a retrofit or rebalance of Paladin/Mage/Ranger.
