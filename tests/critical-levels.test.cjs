@@ -7,7 +7,7 @@ const Levels = require('../src/prototype/critical-levels.js');
 const tuning = Levels.createTuning();
 assert.deepEqual(tuning.criticalLevels, undefined);
 assert.deepEqual(tuning.snapshot(), {
-  hero: 1, companion: 1, world: 1,
+  hero: 1, rogue: 2, companion: 1, world: 1,
   modes: { nightmare: {}, developer: {} },
 });
 assert(Object.isFrozen(Levels.DEFAULT_LEVELS));
@@ -15,7 +15,8 @@ assert(Object.isFrozen(Levels.ACTIONS));
 assert.equal(Crit.chanceFor('party'), 0.1);
 assert.equal(Crit.chanceFor('world'), 0.1);
 for (const group of Levels.GROUPS) {
-  for (const mode of Levels.MODES) assert.equal(tuning.getLevel(group, mode), 1);
+  for (const mode of Levels.MODES)
+    assert.equal(tuning.getLevel(group, mode), group === 'rogue' ? 2 : 1);
   assert.equal(tuning.setLevel(group, 3), 3);
   assert.equal(tuning.getLevel(group), 3);
   assert.equal(tuning.setLevel(group, 1), 1);
@@ -48,8 +49,8 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 51 + 33 + 9 + 82, '93 party actions + 82 native World keys');
-assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 51);
+assert.equal(ids.length, 68 + 33 + 9 + 82, '110 party actions + 82 native World keys');
+assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 68);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
 assert.equal(ids.filter(k=>k.startsWith('world/')).length, 82);
@@ -86,7 +87,7 @@ for (const [family, levers] of Object.entries(authoredBossLevers))
     assert.equal(Levels.ACTIONS['world/boss/' + family + '/' + index].lever, levers[index]);
 for (const [index, lever] of ['damage','damage','wardDuration','damage','damage','damage','summonVitality'].entries())
   assert.equal(Levels.ACTIONS['world/boss/cindermaw/' + index].lever, lever);
-for (const cls of ['paladin', 'mage', 'ranger']) {
+for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
   assert(Levels.ACTIONS['hero/' + cls + '/auto']);
   for (let slot=1;slot<=8;slot++)
     for (const form of ['tap','charged'])
@@ -100,6 +101,20 @@ assert.equal(tuning.effectFor('boss/thorn/0', 'world'), null, 'world authoring i
 assert.throws(() => tuning.effectFor('hero/paladin/1-tap','companion'), /mismatch/);
 
 assert.equal(tuning.effectFor('hero/paladin/1-charged','hero').level, 2);
+assert.equal(Levels.ACTIONS['hero/rogue/auto'].group, 'rogue');
+assert.equal(Levels.ACTIONS['hero/rogue/4-charged'].lever, 'healAmount');
+assert.equal(Levels.ACTIONS['hero/rogue/5-charged'].lever, 'wardStrength');
+assert.equal(Levels.ACTIONS['hero/rogue/8-charged'].lever, 'silenceDuration');
+assert.equal(Levels.createTuning().getLevel('rogue','normal'), 2);
+assert.equal(Levels.createTuning().getLevel('rogue','nightmare'), 2);
+assert.equal(Levels.createTuning().getLevel('rogue','developer'), 2);
+assert.equal(Levels.createTuning().getLevel('hero'), 1);
+assert.equal(Levels.createTuning().getLevel('companion'), 1);
+assert.equal(Levels.createTuning().getLevel('world'), 1);
+assert.equal(tuning.setLevel('rogue', 3, 'nightmare'), 3);
+assert.equal(tuning.getLevel('hero','nightmare'), 2);
+assert.equal(tuning.getLevel('rogue','nightmare'), 3);
+assert.throws(()=>tuning.setLevel('rogue',4), /Level 1/);
 assert.equal(tuning.effectFor('pet/crypt/1','companion').lever,'healAmount');
 assert.equal(tuning.effectFor('hero/ranger/1-charged','hero').lever,'damage');
 assert.equal(tuning.effectFor('hero/paladin/3-tap','hero').lever,'wardDuration');
@@ -132,4 +147,4 @@ assert.equal(effect.level, 2, 'released effect snapshots current level');
 assert.equal(tuning.effectFor('hero/paladin/1-charged','hero').level, 1);
 assert.equal(Crit.chanceFor('party'), .1, 'effect intensity never alters probability');
 
-console.log('Three-level hero / companions / world critical effect policy passed.');
+console.log('Four independent three-level critical groups; Rogue starts at Level 2.');
