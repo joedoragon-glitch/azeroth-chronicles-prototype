@@ -174,7 +174,21 @@
       proceduralCacheHits = 0,
       backgroundRepaints = 0,
       neighborhoodPrepared = 0,
-      neighborhoodWarmupMs = 0;
+      neighborhoodWarmupMs = 0,
+      // Synchronous preparation costs only; not GPU completion/presented frames.
+      syncProceduralBakeMs = 0,
+      maxProceduralBakeMs = 0,
+      syncBackgroundPaintMs = 0,
+      maxBackgroundPaintMs = 0,
+      startupSpritePreloadMs = 0,
+      startupFirstSceneMs = 0;
+    const measureNow = () =>
+      typeof performance !== 'undefined' ? performance.now() : Date.now();
+    function recordBackgroundPaint(started) {
+      const elapsed = Math.max(0, measureNow() - started);
+      syncBackgroundPaintMs += elapsed;
+      maxBackgroundPaintMs = Math.max(maxBackgroundPaintMs, elapsed);
+    }
     function noteFailure(type, stage, error) {
       const message = String(error?.message || error).slice(0, 240);
       lastError = message;
@@ -311,6 +325,7 @@
       return freed;
     }
     function drawBackground() {
+      const started = measureNow();
       backgroundRepaints++;
       const current = game(),
         zoom = platform.cameraZoom || 1;
@@ -322,6 +337,7 @@
         baseZoom = zoom;
         baseOptimization = true;
         scene.setSolidBackground(0x000000, viewport.width, viewport.height);
+        recordBackgroundPaint(started);
         return;
       }
       if (!backgroundRenderer || !backdrop || !scene)
@@ -343,6 +359,7 @@
         scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
           viewport.height + BG_MARGIN * 2);
       }
+      recordBackgroundPaint(started);
     }
     function syncBackground() {
       const current = game(),
@@ -381,6 +398,7 @@
         proceduralCacheHits++;
         return baked.get(revision);
       }
+      const started = measureNow();
       const body = bake(painted, current, backingRatio * zoom);
       if (!body) return null;
       const bytes = body.image.width * body.image.height * 4;
@@ -399,6 +417,9 @@
       imageBytes += bytes;
       baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
       proceduralBakes++;
+      const elapsed = Math.max(0, measureNow() - started);
+      syncProceduralBakeMs += elapsed;
+      maxProceduralBakeMs = Math.max(maxProceduralBakeMs, elapsed);
       return baked.get(revision);
     }
     // On switching to Pixi, the existing live view is loaded first. Then,
@@ -727,6 +748,7 @@
         requireValue(urls.size > 0, 'Approved sprite manifest is empty');
         requireValue(urls.size <= 128, 'Unexpected sprite resource count');
         stage = 'sprite-preload';
+        const preloadStarted = measureNow();
         await Promise.all(
           [...urls].map(async (src) => {
             const texture = await PIXI.Assets.load(src);
@@ -736,11 +758,14 @@
             loaded.add(src);
           }),
         );
+        startupSpritePreloadMs = Math.max(0, measureNow() - preloadStarted);
         stage = 'first-scene';
+        const firstSceneStarted = measureNow();
         drawBackground();
         actorFrame();
         syncAtmosphere();
         scene.draw();
+        startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
         stage = 'nearby-art-preparation';
         if(!await warmNeighborhood(thisEpoch))return false;
         if(thisEpoch!==contextEpoch)return false;
@@ -854,6 +879,12 @@
         backgroundRepaints,
         neighborhoodPrepared,
         neighborhoodWarmupMs,
+        syncProceduralBakeMs,
+        maxProceduralBakeMs,
+        syncBackgroundPaintMs,
+        maxBackgroundPaintMs,
+        startupSpritePreloadMs,
+        startupFirstSceneMs,
         proceduralBudget,
         proceduralTrimAt: trimAt,
         pixelRatio: backingRatio,
