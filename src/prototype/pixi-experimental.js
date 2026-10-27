@@ -7,6 +7,10 @@
 
   const PIXI_SCRIPT = './assets/vendor/pixi-8.22.0.min.js';
   const BG_MARGIN = 220;
+  const BG_SHIFT = BG_MARGIN * 0.6;
+  const BG_PREFETCH_TRIGGER = BG_MARGIN * 0.33;
+  // Two CPU windows, one GPU source. Never provision a second regional GPU atlas.
+  const BG_TWO_WINDOW_BUDGET = 32 * 1024 * 1024;
   const iso = (point) => ({
     x: (point.x - point.y) * 0.76,
     y: (point.x + point.y) * 0.27,
@@ -163,6 +167,12 @@
       adapter = null,
       backgroundRenderer = null,
       backdrop = null,
+      aheadRenderer = null,
+      aheadCanvas = null,
+      aheadTarget = null,
+      aheadReady = null,
+      aheadIdle = null,
+      aheadEpoch = 0,
       backing = null,
       basePosition = null,
       baseZone = null,
@@ -195,6 +205,11 @@
       proceduralCacheHits = 0,
       sharedProceduralHits = 0,
       backgroundRepaints = 0,
+      backgroundLookaheadPaints = 0,
+      backgroundLookaheadPromotions = 0,
+      backgroundLookaheadMisses = 0,
+      backgroundLookaheadFailures = 0,
+      backgroundLookaheadPaintMs = 0,
       neighborhoodPrepared = 0,
       neighborhoodWarmupMs = 0,
       // Synchronous preparation costs only; not GPU completion/presented frames.
@@ -265,7 +280,20 @@
       // Use the same device-specific backing-pixel density as Canvas.
       return worldCanvas.width / Math.max(1, viewport.width);
     }
+    function dropBackgroundLookahead(release = false) {
+      ++aheadEpoch;
+      if (aheadIdle != null) root.cancelIdleCallback?.(aheadIdle);
+      aheadIdle = null;
+      aheadReady = null;
+      aheadTarget = null;
+      if (release) {
+        if (aheadCanvas) aheadCanvas.width = aheadCanvas.height = 0;
+        aheadCanvas = null;
+        aheadRenderer = null;
+      }
+    }
     function createBackgroundPainter() {
+      dropBackgroundLookahead(true);
       const width = viewport.width + BG_MARGIN * 2,
         height = viewport.height + BG_MARGIN * 2;
       backdrop = makeCanvas(Math.round(width * backingRatio), Math.round(height * backingRatio));
@@ -384,6 +412,7 @@
       return freed;
     }
     function drawBackground() {
+      dropBackgroundLookahead();
       const started = measureNow();
       backgroundRepaints++;
       const current = game(),
@@ -420,6 +449,114 @@
       }
       recordBackgroundPaint(started);
     }
+    // This optional presentation-only painter looks ahead in the SAME zone
+    // without moving the campaign hero, advancing the world or touching RNG.
+    // An idle callback runs one complete original terrain painter invocation;
+    // it is intentionally not claimed to be incremental or frame-free.
+    function buildLookaheadPainter() {
+      if (aheadRenderer) return true;
+      if (!backdrop || !root.requestIdleCallback || !root.cancelIdleCallback) return false;
+      const windowBytes = backdrop.width * backdrop.height * 4;
+      if (windowBytes * 2 > BG_TWO_WINDOW_BUDGET) return false;
+      const width = viewport.width + BG_MARGIN * 2,
+        height = viewport.height + BG_MARGIN * 2;
+      aheadCanvas = makeCanvas(backdrop.width, backdrop.height);
+      const ctx = aheadCanvas.getContext('2d');
+      if (!ctx) {
+        dropBackgroundLookahead(true);
+        return false;
+      }
+      ctx.setTransform(backingRatio, 0, 0, backingRatio, 0, 0);
+      const platformAhead = {
+        get cameraZoom() { return platform.cameraZoom; },
+        cameraAnchor() {
+          const anchor = platform.cameraAnchor(viewport.width, viewport.height),
+            heroIso = iso(game().hero), targetIso = iso(aheadTarget || game().hero),
+            zoom = platform.cameraZoom || 1;
+          return {
+            x: anchor.x + BG_MARGIN + (heroIso.x - targetIso.x) * zoom,
+            y: anchor.y + BG_MARGIN + (heroIso.y - targetIso.y) * zoom,
+          };
+        },
+      };
+      aheadRenderer = root.PrototypeRenderer.create({
+        ...getRendererOptions(),
+        canvas: { width, height }, ctx, platform: platformAhead,
+        renderLayer: 'background',
+      });
+      // A second full-sized 64 MiB ground cache would defeat the memory bound.
+      aheadRenderer.setGroundReuse?.(false);
+      return true;
+    }
+    function canPrepareLookahead(current) {
+      if (!active || !scene || !backing || !backdrop ||
+          current.s.mode === 'arena' || current.isDungeon() || current.supplyRoom?.() ||
+          current.sideDungeon?.(current.zoneId) || current.s.projectiles?.length)
+        return false;
+      return (current.zone()?.enemies || []).every((enemy) =>
+        enemy.hp <= 0 || Math.hypot(enemy.x - current.hero.x,
+          enemy.y - current.hero.y) > 420);
+    }
+    function queueBackgroundLookahead(current, dx, dy) {
+      if (aheadReady || aheadIdle != null ||
+          Math.max(Math.abs(dx), Math.abs(dy)) < BG_PREFETCH_TRIGGER ||
+          !root.requestIdleCallback || !root.cancelIdleCallback ||
+          !canPrepareLookahead(current)) return;
+      const epoch = aheadEpoch, zone = current.zoneId, zoom = platform.cameraZoom || 1,
+        optimization = !!options.getOptimizationMode(), ratio = backingRatio;
+      aheadIdle = root.requestIdleCallback(() => {
+        aheadIdle = null;
+        if (epoch !== aheadEpoch || game() !== current || current.zoneId !== zone ||
+            (platform.cameraZoom || 1) !== zoom ||
+            !!options.getOptimizationMode() !== optimization || backingRatio !== ratio ||
+            !canPrepareLookahead(current)) return;
+        const started = measureNow();
+        try {
+          if (!buildLookaheadPainter()) return;
+          aheadTarget = { x: current.hero.x, y: current.hero.y };
+          aheadRenderer.setOptimizationMode(optimization);
+          aheadRenderer.draw();
+          if (epoch !== aheadEpoch) return;
+          aheadReady = { point: aheadTarget, zone, zoom, optimization, ratio, game: current };
+          backgroundLookaheadPaints++;
+          backgroundLookaheadPaintMs += Math.max(0, measureNow() - started);
+        } catch (_) {
+          // Lookahead must never break active gameplay or Canvas recovery.
+          backgroundLookaheadFailures++;
+          dropBackgroundLookahead(true);
+        }
+      });
+    }
+    function promoteBackgroundLookahead(current, zoom) {
+      const candidate = aheadReady,
+        displacement = candidate && iso({
+          x: current.hero.x - candidate.point.x, y: current.hero.y - candidate.point.y,
+        });
+      if (!candidate || candidate.game !== current ||
+          candidate.zone !== current.zoneId || candidate.zoom !== zoom ||
+          candidate.ratio !== backingRatio ||
+          candidate.optimization !== !!options.getOptimizationMode() ||
+          Math.max(Math.abs(displacement.x * zoom), Math.abs(displacement.y * zoom)) > BG_SHIFT)
+        return false;
+      const ctx = backdrop?.getContext('2d');
+      if (!ctx?.save || !ctx.restore || !ctx.setTransform || !ctx.drawImage ||
+          !ctx.clearRect || !aheadCanvas) return false;
+      ctx.save();
+      try {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, backdrop.width, backdrop.height);
+        ctx.drawImage(aheadCanvas, 0, 0);
+      } finally { ctx.restore(); }
+      // Retain the SAME source and GPU allocation; only its pixel content changes.
+      backing.source.update?.();
+      basePosition = { ...candidate.point };
+      baseZone = candidate.zone;
+      baseZoom = candidate.zoom;
+      baseOptimization = candidate.optimization;
+      aheadReady = null;
+      backgroundLookaheadPromotions++;
+      return true;
+    }
     function syncBackground() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
@@ -433,12 +570,20 @@
       const d = iso({ x: current.hero.x - basePosition.x, y: current.hero.y - basePosition.y });
       let dx = -d.x * zoom,
         dy = -d.y * zoom;
-      if (Math.abs(dx) > BG_MARGIN * 0.6 || Math.abs(dy) > BG_MARGIN * 0.6) {
-        drawBackground();
-        dx = 0;
-        dy = 0;
+      if (Math.abs(dx) > BG_SHIFT || Math.abs(dy) > BG_SHIFT) {
+        if (!promoteBackgroundLookahead(current, zoom)) {
+          backgroundLookaheadMisses++;
+          drawBackground();
+        }
+        const movement = iso({
+          x: current.hero.x - basePosition.x,
+          y: current.hero.y - basePosition.y,
+        });
+        dx = -movement.x * zoom;
+        dy = -movement.y * zoom;
       }
       scene.moveBackground(-BG_MARGIN + dx, -BG_MARGIN + dy);
+      queueBackgroundLookahead(current, dx, dy);
     }
     function paintedVisual(visual) {
       return visual.kind === 'archive-record'
@@ -904,6 +1049,7 @@
       if (app?.canvas) app.canvas.style.display = 'none';
     }
     function disposeResources() {
+      dropBackgroundLookahead(true);
       ++contextEpoch; // Cancel any asynchronous neighborhood preparation.
       cancelGpuPreparation?.();
       cancelGpuPreparation = null;
@@ -958,6 +1104,12 @@
         proceduralCacheHits,
         sharedProceduralHits,
         backgroundRepaints,
+        backgroundLookaheadPaints,
+        backgroundLookaheadPromotions,
+        backgroundLookaheadMisses,
+        backgroundLookaheadFailures,
+        backgroundLookaheadPaintMs,
+        backgroundLookaheadBytes: aheadCanvas ? aheadCanvas.width * aheadCanvas.height * 4 : 0,
         neighborhoodPrepared,
         neighborhoodWarmupMs,
         syncProceduralBakeMs,
