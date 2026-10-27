@@ -322,193 +322,6 @@
       },
     };
   }
-  // Parallel class x mode save slots. The original v4 per-mode primary and
-  // checkpoints remain completely untouched. A legacy save can be read under
-  // its own class, then is copied on the next successful class-specific save.
-  // Opt-in while Rogue is in preview; existing production create() is unchanged.
-  function createClassSlots(options) {
-    const { storage, Campaign } = options;
-    const legacy = create(options);
-    const modes = ['normal', 'nightmare', 'developer', 'arena'];
-    const adapters = new Map(),
-      recoveryOwners = new Map(),
-      slotOwners = new WeakMap();
-    // A Succession run remains in its founding class slot even when the live
-    // hero changes class. This runtime binding is recreated when loading by
-    // selected slot, not stored as a new v4 campaign field.
-    const slotClass = (game) => slotOwners.get(game) || game.hero.class;
-    const bindSlot = (game, owner) => {
-      if (game) slotOwners.set(game, owner);
-      return game;
-    };
-    const owns = (snapshot, owner) =>
-      snapshot?.hero?.class === owner ||
-      (snapshot?.challenge?.succession === true &&
-       Array.isArray(snapshot.challenge.fallen) &&
-       snapshot.challenge.fallen.includes(owner));
-    const known = (heroClass) => typeof heroClass === 'string' &&
-      Object.hasOwn(Campaign.classes, heroClass);
-    const primaryKey = (mode, heroClass) => saveKey(mode) + '-' + heroClass;
-    const mappedStorage = (heroClass) => {
-      const remap = (key) => {
-        const match = /^azeroth-v4-(normal|nightmare|developer|arena)(-checkpoints-v1|-unreadable-backup|-latest-unreadable-backup)?$/.exec(key);
-        return match ? primaryKey(match[1], heroClass) + (match[2] || '') : key;
-      };
-      return {
-        getItem(key) { return storage.getItem(remap(key)); },
-        setItem(key, value) { return storage.setItem(remap(key), value); },
-        removeItem(key) { return storage.removeItem?.(remap(key)); },
-      };
-    };
-    function adapter(heroClass) {
-      if (!known(heroClass)) throw Error('Unknown save class');
-      if (!adapters.has(heroClass)) {
-        // A class-named slot must contain exactly that class; otherwise a
-        // corrupt/misfiled primary could be copied into a different run.
-        const scopedCampaign = {
-          restore(data) {
-            const game = Campaign.restore(data);
-            if (!owns(game.s, heroClass)) throw Error('Mismatched save class');
-            return game;
-          },
-          migrate(data) {
-            const game = Campaign.migrate(data);
-            if (!owns(game.s, heroClass)) throw Error('Mismatched migrated class');
-            return game;
-          },
-          validate(data) {
-            if (!owns(data, heroClass)) throw Error('Mismatched saved class');
-            return Campaign.validate(data);
-          },
-        };
-        adapters.set(heroClass, create({
-          ...options, Campaign: scopedCampaign, storage: mappedStorage(heroClass),
-        }));
-      }
-      return adapters.get(heroClass);
-    }
-    function legacyClass(mode) {
-      try {
-        const value = JSON.parse(storage.getItem(saveKey(mode)) || 'null');
-        return value?.mode === mode && known(value.hero?.class)
-          ? value.hero.class : null;
-      } catch (_) { return null; }
-    }
-    function hasClassSlot(mode, heroClass) {
-      if (!modes.includes(mode) || !known(heroClass)) return false;
-      try { return !!storage.getItem(primaryKey(mode, heroClass)); }
-      catch (_) { return false; }
-    }
-    function via(mode, heroClass) {
-      if (!modes.includes(mode) || !known(heroClass)) throw Error('Unknown save slot');
-      return hasClassSlot(mode, heroClass) || legacyClass(mode) !== heroClass
-        ? adapter(heroClass) : legacy;
-    }
-    function listSaves(modeSet = modes) {
-      const found = [];
-      for (const mode of modeSet) {
-        if (!modes.includes(mode)) continue;
-        for (const heroClass of Object.keys(Campaign.classes))
-          if (hasClassSlot(mode, heroClass) ||
-              (!hasClassSlot(mode, heroClass) && legacyClass(mode) === heroClass))
-            found.push({ mode, heroClass,
-              source: hasClassSlot(mode, heroClass) ? 'class' : 'legacy' });
-      }
-      return found;
-    }
-    function load(mode, heroClass) {
-      if (!heroClass) return legacy.load(mode);
-      const candidate = via(mode, heroClass).load(mode);
-      // Never let forged/wrong-class bytes masquerade as another class slot.
-      return candidate && owns(candidate.s, heroClass)
-        ? bindSlot(candidate, heroClass) : null;
-    }
-    function loadPreferred(mode, heroClass) {
-      if (heroClass && listSaves([mode]).some((x) => x.heroClass === heroClass)) {
-        const selected = load(mode, heroClass);
-        if (selected) return selected;
-        return null; // A broken preferred primary must not silently switch runs.
-      }
-      for (const entry of listSaves([mode])) {
-        const candidate = load(mode, entry.heroClass);
-        if (candidate) return candidate;
-      }
-      return null;
-    }
-    return {
-      load, loadPreferred, listSaves,
-      slotClass,
-      bindSlot(game, owner) {
-        if (!known(owner) || !owns(game?.s, owner))
-          throw Error('Invalid saved campaign slot owner');
-        return bindSlot(game, owner);
-      },
-      save(game, profile) {
-        return adapter(slotClass(game)).save(game, profile);
-      },
-      writeCandidate(game) {
-        const owner = slotClass(game);
-        const written = adapter(owner).writeCandidate(game);
-        if (written) bindSlot(game, owner);
-        return written;
-      },
-      exists(mode, heroClass) {
-        return heroClass
-          ? hasClassSlot(mode, heroClass) || legacyClass(mode) === heroClass
-          : listSaves([mode]).length > 0 || legacy.exists(mode);
-      },
-      loadFailed(mode, heroClass) {
-        if (!heroClass) return legacy.loadFailed(mode);
-        return hasClassSlot(mode, heroClass)
-          ? adapter(heroClass).loadFailed(mode) : legacy.loadFailed(mode);
-      },
-      conflicted(mode, heroClass) {
-        return heroClass ? via(mode, heroClass).conflicted(mode) : legacy.conflicted(mode);
-      },
-      original(mode, heroClass) {
-        if (!heroClass) return legacy.original(mode);
-        return hasClassSlot(mode, heroClass)
-          ? adapter(heroClass).original(mode) : legacy.original(mode);
-      },
-      recoveryOptions(mode, heroClass) {
-        recoveryOwners.clear();
-        if (!heroClass) return legacy.recoveryOptions(mode);
-        if (!known(heroClass) || !modes.includes(mode)) return [];
-        // Never mix a class-specific recovery history with another class.
-        // If this class has no primary, its original mode-only predecessor
-        // may still be corrupt but have valid checkpoints under the old key.
-        const selected = hasClassSlot(mode, heroClass) ? adapter(heroClass) : legacy;
-        const options = selected.recoveryOptions(mode)
-          .filter((item) => item.heroClass === heroClass);
-        for (const item of options) recoveryOwners.set(item.id, { selected, mode, heroClass });
-        return options;
-      },
-      recover(mode, id, heroClass) {
-        if (!heroClass) return legacy.recover(mode, id);
-        const owner = recoveryOwners.get(id);
-        if (!owner || owner.mode !== mode || owner.heroClass !== heroClass)
-          throw Error('Recovery option expired');
-        const candidate = owner.selected.recover(mode, id);
-        if (!owns(candidate.s, heroClass)) throw Error('Mismatched recovery class');
-        bindSlot(candidate, heroClass);
-        recoveryOwners.clear();
-        // Explicit legacy recovery repairs only the old mode primary with its
-        // selected class; subsequent playtest saves are class-specific.
-        return candidate;
-      },
-      loadProfile(defaults) {
-        const profile = legacy.loadProfile(defaults);
-        try {
-          const raw = JSON.parse(storage.getItem(profileKey) || 'null');
-          if (known(raw?.activeClass)) profile.activeClass = raw.activeClass;
-        } catch (_) {}
-        return profile;
-      },
-      saveProfile: legacy.saveProfile,
-      migrateLegacy: legacy.migrateLegacy,
-      saveKey: primaryKey,
-    };
-  }
   // One modern browser/PWA window owns campaign writes for the whole origin.
   // An unfulfilled request is non-writing; closing/crashing releases the lock.
   // File-based test/development adapters retain optimistic byte checks above.
@@ -563,9 +376,7 @@
   // device-local in-progress marker so the NEXT launch can relocate a valid
   // campaign save safely. The marker never contains a save or replaces one.
   const recoveryMarkerKey = 'azeroth-active-play-recovery-v1';
-  function createRestartGuard({ storage, Campaign, canWrite = () => true,
-    classSlots = false, slotClass = (game) => game.hero.class,
-    bindRestored = (candidate) => candidate }) {
+  function createRestartGuard({ storage, Campaign, canWrite = () => true }) {
     function read() {
       try {
         const value = JSON.parse(storage?.getItem(recoveryMarkerKey) || 'null');
@@ -582,10 +393,7 @@
         // The live campaign can advance between five-second autosaves.
         // Anchor recovery to the checkpoint actually written to storage,
         // not newer game time/IDs which the next launch cannot restore.
-        const classRaw = classSlots
-          ? storage?.getItem(saveKey(game.s.mode) + '-' + slotClass(game))
-          : null;
-        const raw = classRaw || storage?.getItem(saveKey(game.s.mode));
+        const raw = storage?.getItem(saveKey(game.s.mode));
         if (!raw) return false;
         const saved = JSON.parse(raw);
         if (
@@ -606,7 +414,6 @@
             active: true,
             mode: game.s.mode,
             heroClass: game.hero.class,
-            ...(classSlots ? { slotOwner: slotClass(game) } : {}),
             // Refuse a different/older run without rejecting legitimate
             // unsaved play after the last durable checkpoint.
             nextId: saved.nextId,
@@ -638,7 +445,6 @@
         game.s.mode === 'arena' ||
         marker.mode !== game.s.mode ||
         marker.heroClass !== game.hero.class ||
-        (classSlots && marker.slotOwner !== slotClass(game)) ||
         (Number.isFinite(marker.nextId) && game.s.nextId < marker.nextId) ||
         (Number.isFinite(marker.gameTime) && game.s.time + 1e-6 < marker.gameTime) ||
         game.s.challenge?.pending ||
@@ -670,7 +476,7 @@
           if (!candidate.enter(refuge.zone)) return null;
           candidate.arriveRefuge(refuge);
         }
-        return bindRestored(candidate, game);
+        return candidate;
       } catch (_) {
         return null;
       }
@@ -679,7 +485,6 @@
   }
   const api = {
     create,
-    createClassSlots,
     createWriterGuard,
     createRestartGuard,
     profileKey,
