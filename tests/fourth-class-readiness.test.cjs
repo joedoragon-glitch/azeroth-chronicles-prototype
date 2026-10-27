@@ -137,6 +137,52 @@ for (const [heroClass, type, firstSix] of [
   assert.deepEqual(g.snapshot(), before, 'no crowns, queues or recruits changed');
 }
 
+// Succession changes the hero, not ownership of the company's people.
+// Rogue may inherit and command previously recruited soldiers/rangers but
+// may neither receive free conventional starters nor hire replacements.
+{
+  const g = new Campaign('normal', 'mage', () => 0.9, { succession: true });
+  g.s.expeditionRank = 4;
+  const inheritedSoldier = g.s.party[0],
+    inheritedArcher = g.s.party[1],
+    anotherArcher = g.unit('archer', 390, 390);
+  anotherArcher.active = false;
+  g.s.party.push(anotherArcher);
+  const originalIds = g.s.party.map((u) => u.id);
+  const oldClasses = Object.keys(classes);
+  try {
+    classes.rogue = { ...classes.ranger };
+    Campaign.talentProfiles.rogue = { ...Campaign.talentProfiles.ranger };
+    g.s.challenge.fallen = ['mage'];
+    g.s.challenge.pending = true;
+    g.hero.hp = 0;
+    assert(g.successor('rogue'));
+    assert.equal(g.hero.class, 'rogue');
+    assert.deepEqual(g.s.party.map((u) => u.id), originalIds);
+    assert.equal(inheritedSoldier.active, true);
+    assert.equal(inheritedArcher.active, true);
+    assert.equal(anotherArcher.active, false);
+    assert.equal(g.activeParty().length, 2, 'Rogue inherits existing deployed allies');
+    const barracks = {
+      id: 'inherited-company', kind: 'barracks', progress: 4,
+      full: true, x: g.hero.x + 80, y: g.hero.y, queue: 0,
+    };
+    g.zone().buildings.push(barracks);
+    g.zone().enemies = [];
+    assert.equal(g.companionActivationReason(anotherArcher.id, barracks.id), '');
+    assert.equal(g.activateCompanion(anotherArcher.id, barracks.id), true);
+    assert.equal(g.activeParty().length, 3);
+    assert.deepEqual(g.s.party.map((u) => u.id), originalIds);
+    assert.match(g.companionRecruitmentReason('soldier'), /cannot hire/);
+    assert.match(g.companionRecruitmentReason('archer', barracks.id), /cannot hire/);
+    assert.doesNotThrow(() => Campaign.validate(copy(g.snapshot())));
+  } finally {
+    delete classes.rogue;
+    delete Campaign.talentProfiles.rogue;
+    assert.deepEqual(Object.keys(classes), oldClasses);
+  }
+}
+
 // Charm provenance is UI-only preparation today; imported records may not
 // impersonate future captured creatures until the authenticated save schema
 // and species allowlist are implemented.
