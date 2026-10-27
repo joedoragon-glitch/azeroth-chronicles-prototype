@@ -2692,7 +2692,7 @@
       this.zone().buildings.push(b);
       builder.order = { type: 'build', id: b.id };
       this.say(
-        (builder.type === 'archer' ? 'Ranger' : 'Soldier') +
+        this.companionDisplayName(builder) +
           ' assigned to build the basic barracks.',
       );
       return true;
@@ -2707,7 +2707,7 @@
       this.s.recallActive = false;
       builder.order = { type: 'build', id: b.id };
       this.say(
-        (builder.type === 'archer' ? 'Ranger' : 'Soldier') + ' assigned to resume construction.',
+        this.companionDisplayName(builder) + ' assigned to resume construction.',
       );
       return true;
     }
@@ -2726,7 +2726,7 @@
       this.s.recallActive = false;
       builder.order = { type: 'upgrade', id: b.id };
       this.say(
-        (builder.type === 'archer' ? 'Ranger' : 'Soldier') + ' assigned to upgrade the barracks.',
+        this.companionDisplayName(builder) + ' assigned to upgrade the barracks.',
       );
       return true;
     }

@@ -890,7 +890,7 @@
           u === this.hero
             ? this.armor()
             : ['soldier', 'archer', 'pet'].includes(u.type)
-              ? this.companionArmor(u.type)
+              ? this.companionArmor(u)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
         let mitigated = alreadyMitigated

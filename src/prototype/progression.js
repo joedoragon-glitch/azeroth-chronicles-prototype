@@ -156,8 +156,17 @@
       companionVitalityFraction() {
         return this.companionVitalityRank() * R.balance.companions.vitalityPerRank;
       }
+      charmedCompanionProfile(unit) {
+        if (!unit?.charmOrigin) return null;
+        return (
+          R.balance.companions.charmed[unit.charmOrigin.species]?.[
+            unit.charmOrigin.role === 'archer' ? 'ranged' : 'melee'
+          ] || null
+        );
+      }
       companionMaxHp(type, level = this.hero.level) {
-        const base = R.balance.companions.hp[type];
+        const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
+        const base = profile?.hp ?? R.balance.companions.hp[typeof type === 'object' ? type.type : type];
         if (!base) throw Error('Unknown companion type');
         const raw =
           base +
@@ -166,15 +175,18 @@
         return Math.round(raw * (1 + this.companionVitalityFraction()));
       }
       companionArmor(type) {
-        const base = R.balance.companions.armor[type];
+        const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
+        const base = profile?.armor ?? R.balance.companions.armor[typeof type === 'object' ? type.type : type];
         if (base === undefined) throw Error('Unknown companion type');
         return base + this.companionInheritedArmorBonus();
       }
       syncCompanionLevelStats() {
         for (const u of this.s.party) {
           if (!['soldier', 'archer', 'pet'].includes(u.type)) continue;
-          const next = this.companionMaxHp(u.type),
+          const profile = this.charmedCompanionProfile(u),
+            next = this.companionMaxHp(u),
             gain = next - u.maxHp;
+          if (profile) u.damage = profile.damage;
           u.maxHp = next;
           if (u.hp > 0 && gain !== 0) u.hp = clamp(u.hp + gain, 1, next);
         }

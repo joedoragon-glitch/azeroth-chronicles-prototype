@@ -1279,6 +1279,10 @@
         u.name = profile.typeName;
         u.customName = this.nextRogueCharmNickname();
         u.charmOrigin = { ...profile };
+        const friendly = this.charmedCompanionProfile(u);
+        u.damage = friendly.damage;
+        u.maxHp = this.companionMaxHp(u);
+        u.hp = u.maxHp;
         u.active = this.activeParty().length < this.expeditionPartyCap();
         // No kill() call: no XP, loot, quests, streaks or death rewards.
         // Retire every active target pointer/order before detaching the foe.

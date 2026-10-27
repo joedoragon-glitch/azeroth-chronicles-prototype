@@ -6982,6 +6982,49 @@
       reforgeBonus: { weapon: 5, armor: 3 },
     },
     companions: {
+      // Native friendly creature baselines, keyed by actual authored subtype.
+      // These values do not inherit hostile region/night/elite scaling.
+      charmed: {
+        goblin: {
+          melee: { hp: 100, damage: 10, armor: 3, speed: 1.14, interval: 0.78, reach: 65 },
+          ranged: { hp: 88, damage: 11, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 240 },
+        },
+        skeleton: {
+          melee: { hp: 114, damage: 12, armor: 5, speed: 0.98, interval: 0.88, reach: 70 },
+          ranged: { hp: 102, damage: 12, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 280 },
+        },
+        mireling: {
+          melee: { hp: 122, damage: 12, armor: 6, speed: 0.95, interval: 0.96, reach: 72 },
+          ranged: { hp: 110, damage: 12, armor: 4, speed: 0.97, interval: 1.08, reach: 230, retreat: 105, style: 'spit', shotSpeed: 230 },
+        },
+        reedbeast: {
+          melee: { hp: 138, damage: 13, armor: 7, speed: 0.93, interval: 1.04, reach: 74 },
+          ranged: { hp: 118, damage: 13, armor: 5, speed: 0.96, interval: 1.1, reach: 250, retreat: 125, style: 'spit', shotSpeed: 220 },
+        },
+        wolf: {
+          melee: { hp: 112, damage: 15, armor: 4, speed: 1.2, interval: 0.73, reach: 68 },
+        },
+        ogre: {
+          melee: { hp: 176, damage: 19, armor: 10, speed: 0.8, interval: 1.26, reach: 86 },
+          ranged: { hp: 152, damage: 17, armor: 8, speed: 0.83, interval: 1.23, reach: 260, retreat: 115, style: 'stone', shotSpeed: 220 },
+        },
+        orc: {
+          melee: { hp: 138, damage: 15, armor: 7, speed: 1.02, interval: 0.91, reach: 78 },
+          ranged: { hp: 122, damage: 15, armor: 5, speed: 1.04, interval: 1.06, reach: 260, retreat: 125, style: 'axe', shotSpeed: 250 },
+        },
+        archer: {
+          melee: { hp: 110, damage: 12, armor: 4, speed: 1.06, interval: 0.9, reach: 72 },
+          ranged: { hp: 104, damage: 14, armor: 3, speed: 1.08, interval: 0.94, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+        },
+        ashbeast: {
+          melee: { hp: 154, damage: 17, armor: 8, speed: 1.08, interval: 0.94, reach: 78 },
+          ranged: { hp: 134, damage: 16, armor: 6, speed: 1.04, interval: 1.16, reach: 270, retreat: 130, style: 'cinder', shotSpeed: 240 },
+        },
+        crownguard: {
+          melee: { hp: 148, damage: 16, armor: 9, speed: 0.99, interval: 0.88, reach: 78 },
+          ranged: { hp: 130, damage: 15, armor: 7, speed: 1, interval: 0.98, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+        },
+      },
       hp: { soldier: 120, archer: 105, pet: 112 },
       armor: { soldier: 8, archer: 5, pet: 6 },
       petDamage: 13,

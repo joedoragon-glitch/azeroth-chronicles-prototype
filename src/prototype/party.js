@@ -57,7 +57,7 @@
     class Party {
       // Stage 2: only six Soldier/Archer combat moves; feature gate is absent in production.
       troopCriticalRelease(u, move) {
-        if (!this._criticalPartyNative || !['soldier', 'archer'].includes(u?.type)) return null;
+        if (!this._criticalPartyNative || u?.charmOrigin || !['soldier', 'archer'].includes(u?.type)) return null;
         return this._criticalPartyNative.release(this, 'troop/' + u.type + '/' + move, u.id);
       }
       troopCriticalDamage(receipt, amount) {
@@ -805,6 +805,7 @@
         );
       }
       companionContributionRange(u, slot = 0) {
+        if (u.charmOrigin && slot) return 0;
         if (!slot) return this.companionCombatReach(u);
         if (u.type === 'pet') return this.petSkillDefinition(u, slot)?.range || 0;
         if (slot === 2) return R.companionSkills.second[u.type]?.range || 0;
@@ -1059,6 +1060,8 @@
         return this.follow(u, point, speed, dt, point === this.hero ? 35 : 15);
       }
       companionCombatReach(u) {
+        const monster = this.charmedCompanionProfile(u);
+        if (monster) return monster.reach;
         return u.type === 'pet'
           ? this.petDefinition(u)?.role === 'ranged'
             ? R.balance.companions.petBasicRange
@@ -1094,7 +1097,7 @@
         )
           return false;
         if (u.type === 'pet') return this.petDefensiveCounter(u, e);
-        u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
         const criticalReceipt = this.troopCriticalRelease(u, 'basic');
         if (u.type === 'archer') {
           const d = Math.max(1, dist(u, e));
@@ -1108,8 +1111,8 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: 450,
-            style: 'arrow',
+            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
           return true;
         }
@@ -1121,7 +1124,7 @@
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: e.x,
             y: e.y,
             target: e.id,
@@ -1336,7 +1339,7 @@
           reach = this.companionCombatReach(u);
         if (!e || dist(e, u) > reach || !this.line(u, e) || !this.tacticalDirectTargetable(e))
           return;
-        u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
         const criticalReceipt = this.troopCriticalRelease(u, 'basic');
         if (u.type === 'archer') {
           const d = Math.max(1, dist(u, e));
@@ -1350,8 +1353,8 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: 450,
-            style: 'arrow',
+            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
         } else if (this.damage(e, this.troopCriticalDamage(
           criticalReceipt, this.companionBasicAttackDamage(u),
@@ -1360,7 +1363,7 @@
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: e.x,
             y: e.y,
             target: e.id,
@@ -1446,6 +1449,7 @@
       companionRallyMoveSpeed(u, base) {
         return (
           this.companionMoveSpeed(base) *
+          (this.charmedCompanionProfile(u)?.speed || 1) *
           (this.rangerRallyActive(u) ? 1 + Math.min(0.25, u.rangerRallyMovement || 0) : 1)
         );
       }
@@ -1453,7 +1457,10 @@
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
       }
       companionAttackDamage(u) {
-        return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
+        return (
+          (this.charmedCompanionProfile(u)?.damage ?? u.damage) +
+          this.hero.level * 2 + this.companionInheritedDamageBonus()
+        );
       }
       // Skill 1's short allied refrain affects ordinary companion basics only.
       // Existing troop special skills retain their unmodified source damage.
@@ -1461,6 +1468,9 @@
         const base = this.companionAttackDamage(u);
         return base * (1 + ((u.rogueSharpRefrainUntil || 0) > this.s.time
           ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0));
+      }
+      companionBasicInterval(u) {
+        return this.charmedCompanionProfile(u)?.interval || 0.85;
       }
       companionSecondSkillUnlocked() {
         return (this.s.companionCombatTraining || 1) >= 2 || (this.hero.skills[1] || 0) > 0;
@@ -1499,6 +1509,7 @@
           .sort((a, b) => this.idOrder(a, b));
       }
       companionUseFirstSkill(u, target) {
+        if (u.charmOrigin) return false;
         if (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, 1))
           return false;
         if (u.type === 'pet') return this.usePetSkill(u, target, 1);
@@ -1528,7 +1539,7 @@
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: target.x,
             y: target.y,
             target: target.id,
@@ -1538,7 +1549,7 @@
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: u.x,
             y: u.y,
             targetX: target.x,
@@ -1574,7 +1585,7 @@
             speed: 520,
             delay: j * 0.08,
             ...(j > 0 ? { companionDelayedLaunch: true } : {}),
-            style: 'arrow',
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
             ...(j === 0 &&
@@ -1587,7 +1598,7 @@
           actor: 'companion',
           role: 'archer',
           source: u.id,
-          style: 'arrow',
+          style: this.charmedCompanionProfile(u)?.style || 'arrow',
           count: 3, // Retain existing three-shot audio contract.
           releasedCount: 1,
           pendingCount: 2,
@@ -1624,6 +1635,7 @@
       // The second companion skill is charged, not an instantaneous AoE.
       // The actor keeps the aim for 0.65s and releases only after surviving damage.
       companionUseSecondSkill(u, target, targets = this.companionSecondSkillTargets(u, target)) {
+        if (u.charmOrigin) return false;
         if (
           (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, 2)) ||
           !this.companionSecondSkillUnlocked() ||
@@ -1692,7 +1704,7 @@
               damage,
               source: u.id,
               speed: 650,
-              style: 'arrow',
+              style: this.charmedCompanionProfile(u)?.style || 'arrow',
               area: true,
               companionSkill: 'piercing-volley',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
@@ -1713,7 +1725,7 @@
                 actor: 'companion',
                 role: 'soldier',
                 source: u.id,
-                weapon: 'sword',
+                weapon: u.charmOrigin ? 'claw' : 'sword',
                 x: target.x,
                 y: target.y,
                 target: target.id,
@@ -1852,6 +1864,8 @@
         return true;
       }
       companionTrySkill(u, target) {
+        // An authored species must not inherit Soldier/Ranger special skills.
+        if (u.charmOrigin) return false;
         if (
           !target ||
           (u.skillGlobalCd || 0) > 0 ||
@@ -2070,7 +2084,7 @@
       availableRangers(type) {
         const key = type === 'health' ? 'healCd' : 'manaCd';
         return this.activeLivingParty().filter(
-          (u) => u.type === 'archer' && !u.keeperHeld && (u[key] || 0) <= 0,
+          (u) => u.type === 'archer' && !u.charmOrigin && !u.keeperHeld && (u[key] || 0) <= 0,
         );
       }
       supportEffectActive(type) {
@@ -2091,7 +2105,7 @@
       queuedRangerHeal() {
         const request = rangerHealRequests.get(this);
         if (!request) return null;
-        const active = this.activeLivingParty().filter((u) => u.type === 'archer');
+        const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
         if (
           request.hero !== this.hero ||
           request.zone !== this.zoneId ||
@@ -2162,7 +2176,7 @@
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
-            const active = this.activeLivingParty().filter((u) => u.type === 'archer');
+            const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
             if (!active.length)
               this.say(
                 'No active Ranger is available to use ' +
@@ -2592,6 +2606,10 @@
           u.charmOrigin = charmOrigin;
           u.name = charmOrigin.typeName;
           u.icon = dead.icon;
+          u.damage = this.charmedCompanionProfile(u).damage;
+          u.maxHp = this.companionMaxHp(u);
+          u.hp = u.maxHp;
+          u.customName = dead.customName;
         }
         this.clearPartyCharge(dead);
         this.clearCompanionJudgment(dead);
@@ -2628,9 +2646,20 @@
         );
         return true;
       }
+      isCharmedCompanion(u) {
+        const origin = u?.charmOrigin,
+          receipt = this.s.charmCaptures?.[u?.id];
+        return !!origin && !!receipt &&
+          Object.keys(origin).length === 6 &&
+          Object.keys(receipt).length === 6 &&
+          Object.keys(origin).every((key) => receipt[key] === origin[key]) &&
+          origin.role === u.type &&
+          !!this.charmedCompanionProfile(u);
+      }
       canGatherTribute(u) {
         return (
           !!u &&
+          (!u.charmOrigin || this.isCharmedCompanion(u)) &&
           (['soldier', 'archer'].includes(u.type) ||
             (u.type === 'pet' && u.petFamily === R.gatheringTravel.petWorkerFamily))
         );
@@ -2640,7 +2669,8 @@
       }
       availableLabor() {
         return this.activeLivingParty().filter(
-          (u) => ['soldier', 'archer'].includes(u.type) && !u.order,
+          (u) => ['soldier', 'archer'].includes(u.type) &&
+            (!u.charmOrigin || this.isCharmedCompanion(u)) && !u.order,
         );
       }
       companionRestReason(id) {
@@ -3015,6 +3045,7 @@
       }
       companionFight(u, e, living, dt) {
         this._tacticalPartyTargets.set(u.id, e.id);
+        const monster = this.charmedCompanionProfile(u);
         if (u.type === 'pet') {
           this.updatePetCombat(u, e, living, dt);
           return;
@@ -3023,7 +3054,7 @@
           const d = dist(u, e),
             visible = this.line(u, e),
             anchor = this.partyFollowPoint(u, living);
-          if (d < 150) {
+          if (d < (monster?.retreat ?? 150)) {
             // Veteran Rangers can cover a retreat with their existing Triple Shot.
             // Still move this frame; never trade the fallback for standing fire.
             this.companionCoveringShot(u, e);
@@ -3071,7 +3102,7 @@
           }
           if (this.companionTrySkill(u, e)) return;
           if (u.cd <= 0) {
-            u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+            u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
             const criticalReceipt = this.troopCriticalRelease(u, 'basic');
             const shot = Math.max(1, d);
             this.s.projectiles.push({
@@ -3084,14 +3115,14 @@
               damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
               source: u.id,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-              speed: 450,
-              style: 'arrow',
+              speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+              style: this.charmedCompanionProfile(u)?.style || 'arrow',
             });
             this.event('projectileLaunch', {
               actor: 'companion',
               role: 'archer',
               source: u.id,
-              style: 'arrow',
+              style: this.charmedCompanionProfile(u)?.style || 'arrow',
               x: u.x,
               y: u.y,
               target: e.id,
@@ -3113,7 +3144,7 @@
             this.line(u, e) ? 55 : 0,
           );
         else if (u.cd <= 0) {
-          u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+          u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
           const criticalReceipt = this.troopCriticalRelease(u, 'basic');
           if (this.damage(e, this.troopCriticalDamage(
             criticalReceipt, this.companionBasicAttackDamage(u),
@@ -3122,7 +3153,7 @@
               actor: 'companion',
               role: 'soldier',
               source: u.id,
-              weapon: 'sword',
+              weapon: u.charmOrigin ? 'claw' : 'sword',
               x: e.x,
               y: e.y,
               target: e.id,
@@ -3159,7 +3190,7 @@
         for (const u of living)
           if (
             context.engaged &&
-            u.type === 'soldier' &&
+            u.type === 'soldier' && !u.charmOrigin &&
             u.hp <= u.maxHp * 0.5 &&
             !this.mageSilenceActive(u) &&
             (u.survivalCd || 0) <= 0
@@ -3432,7 +3463,7 @@
                   this.petDefensiveCounter(u, pursuer);
                   continue;
                 }
-                u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+                u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
                 const criticalReceipt = this.troopCriticalRelease(u, 'basic');
                 if (u.type === 'archer') {
                   const d = Math.max(1, dist(u, pursuer));
@@ -3446,8 +3477,8 @@
                     damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
                     source: u.id,
                     ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-                    speed: 450,
-                    style: 'arrow',
+                    speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+                    style: this.charmedCompanionProfile(u)?.style || 'arrow',
                   });
                 } else if (this.damage(pursuer, this.troopCriticalDamage(
                   criticalReceipt, this.companionBasicAttackDamage(u),
@@ -3456,7 +3487,7 @@
                     actor: 'companion',
                     role: 'soldier',
                     source: u.id,
-                    weapon: 'sword',
+                    weapon: u.charmOrigin ? 'claw' : 'sword',
                     x: pursuer.x,
                     y: pursuer.y,
                     target: pursuer.id,

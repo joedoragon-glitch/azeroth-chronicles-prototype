@@ -257,6 +257,9 @@
     ctx.restore();
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
+    // A Charmed ally always keeps its canonical species silhouette, abroad too.
+    if (e?.renderKind === 'ally' && e.charmOrigin)
+      e = { ...e, species: e.charmOrigin.species, ranged: e.charmOrigin.role === 'archer' };
     if (e.renderKind === 'prop' && e.miningFacility) {
       Highlands.drawMining(ctx, e, p);
       return;
@@ -17195,7 +17198,7 @@
     } else if (type === 'hero') {
       if (e.crowned) crownedHero(e.class || 'paladin');
       else hero(e.class || 'paladin');
-    } else if (type === 'ally') {
+    } else if (type === 'ally' && !e.charmOrigin) {
       const role = allyBodyKind(e);
       if (e.type === 'pet') bossPet(e.petFamily);
       else if (role === 'goblin-archer') goblinArcher();
