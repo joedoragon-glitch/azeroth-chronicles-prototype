@@ -211,6 +211,8 @@
       backgroundLookaheadPromotions = 0,
       backgroundLookaheadMisses = 0,
       backgroundLookaheadFailures = 0,
+      backgroundLookaheadSkips = { idleUnavailable: 0, memoryBudget: 0,
+        combat: 0, excluded: 0, hidden: 0, invalidated: 0 },
       backgroundLookaheadPaintMs = 0,
       backgroundLookaheadPromoteMs = 0,
       maxBackgroundLookaheadPromoteMs = 0,
@@ -508,19 +510,43 @@
       return !nearActiveFight(current);
     }
     function queueBackgroundLookahead(current, dx, dy) {
+      // Only count blockers after the camera actually asks for lookahead.
       if (aheadReady || aheadIdle != null || !backdrop ||
-          backdrop.width * backdrop.height * 8 > BG_TWO_WINDOW_BUDGET ||
-          Math.max(Math.abs(dx), Math.abs(dy)) < BG_PREFETCH_TRIGGER ||
-          !root.requestIdleCallback || !root.cancelIdleCallback ||
-          !canPrepareLookahead(current)) return;
+          Math.max(Math.abs(dx), Math.abs(dy)) < BG_PREFETCH_TRIGGER) return;
+      if (backdrop.width * backdrop.height * 8 > BG_TWO_WINDOW_BUDGET) {
+        backgroundLookaheadSkips.memoryBudget++;
+        return;
+      }
+      if (!root.requestIdleCallback || !root.cancelIdleCallback) {
+        backgroundLookaheadSkips.idleUnavailable++;
+        return;
+      }
+      if (root.document?.hidden) {
+        backgroundLookaheadSkips.hidden++;
+        return;
+      }
+      if (nearActiveFight(current)) {
+        backgroundLookaheadSkips.combat++;
+        return;
+      }
+      if (!canPrepareLookahead(current)) {
+        backgroundLookaheadSkips.excluded++;
+        return;
+      }
       const epoch = aheadEpoch, zone = current.zoneId, zoom = platform.cameraZoom || 1,
         optimization = !!options.getOptimizationMode(), ratio = backingRatio;
       aheadIdle = root.requestIdleCallback(() => {
         aheadIdle = null;
         if (epoch !== aheadEpoch || game() !== current || current.zoneId !== zone ||
             (platform.cameraZoom || 1) !== zoom ||
-            !!options.getOptimizationMode() !== optimization || backingRatio !== ratio ||
-            !canPrepareLookahead(current)) return;
+            !!options.getOptimizationMode() !== optimization || backingRatio !== ratio) {
+          backgroundLookaheadSkips.invalidated++;
+          return;
+        }
+        if (!canPrepareLookahead(current)) {
+          backgroundLookaheadSkips[nearActiveFight(current) ? 'combat' : 'excluded']++;
+          return;
+        }
         const started = measureNow();
         try {
           if (!buildLookaheadPainter()) return;
@@ -1150,6 +1176,7 @@
         backgroundLookaheadPromotions,
         backgroundLookaheadMisses,
         backgroundLookaheadFailures,
+        backgroundLookaheadSkips: { ...backgroundLookaheadSkips },
         backgroundLookaheadPaintMs,
         backgroundLookaheadPromoteMs,
         maxBackgroundLookaheadPromoteMs,
