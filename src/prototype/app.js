@@ -1259,6 +1259,15 @@
         return 'Aprendido ' + book.nameEs + ' · ' +
           piece.slice(prefix.length).replace('Codices of the Unforeseen', 'Códices de lo Imprevisto');
     }
+    // Level-up learning cues are dynamic; translate their current numeric value,
+    // without changing the Campaign's authored event or milestone mechanics.
+    const levelGrowth = /^Level (\\d+)! (Fortitude|Agility|Arcane Power) improved\\. Training point available — press C or use Discipline Training\\.$/.exec(piece);
+    if (levelGrowth)
+      return '¡Nivel ' + levelGrowth[1] + '! ' +
+        { Fortitude: 'Fortaleza', Agility: 'Agilidad', 'Arcane Power': 'Poder arcano' }[levelGrowth[2]] +
+        ' mejorado. Punto de entrenamiento disponible: pulsa C o entra en Entrenamiento de disciplinas.';
+    if (/^LEVEL \\d+$/.test(piece)) return piece.replace('LEVEL ', 'NIVEL ');
+    if (piece === 'Training point available') return 'Punto de entrenamiento disponible';
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
     if (/^(Learn|Train) /.test(piece) && !spanishText[piece])
       return piece
