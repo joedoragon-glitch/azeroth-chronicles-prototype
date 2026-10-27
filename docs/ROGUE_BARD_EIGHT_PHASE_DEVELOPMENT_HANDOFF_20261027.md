@@ -96,6 +96,12 @@ Successful conversion creates one ordinary friendly roster actor with exact sour
 
 Begin Phase 4 **only after Phase 3's final integrated focused CI passes** and the PR records the exact verified head. Retain the lawful capture and save-record ownership contract unchanged. Phase 4 then owns the per-species ally combat presentation and AI, Barracks recovery and orders, eligibility of **every** authentic Charmed creature for existing build/upgrade/gather actions (with ordinary prerequisites), active/reserve/fallen/away command and Succession preservation. First-run tutorial sequencing and full art/audio remain Phase 7. Do not unfreeze Rogue class selection, merge, deploy or run comprehensive QA as part of this handoff.
 
+## Owner-approved Phase 3/4 presentation and probability decisions — 27 October 2026
+
+- **Charm chance is fixed at 12%** per surviving, eligible, HP-reducing automatic Rogue basic primary hit. Do not change this without a subsequent owner decision. Excluded hits and subtype-quota refusals never consume a Charm roll.
+- **Minor HP rounding is accepted.** Preserve the post-hit HP fraction by ordinary rounding against friendly maximum HP, minimum 1; a trivially scratched foe may legitimately appear full after conversion. Do not introduce fractional HP, forced 1-point injuries or an anti-rounding patch. Acceptance should use meaningfully wounded monsters.
+- **One restrained visual allegiance marker:** retain the authentic monster's original look and give active Charmed companions a thin turquoise ring below their feet. Do not reskin, add a large aura, or treat the ring as a class unlock. Match behavior in Canvas2D and optional WebGL after Phase 4 ally integration / Phase 7 presentation; hide for resting, fallen and away actors. If the same species appears as a hostile, only the friendly unit gets the marker. Existing target/selection effects and render ordering must remain legible. This is owner direction, not a claim that either renderer already implements the ring.
+
 ## Owner clarification — captured health, companion growth and recovery (27 October 2026)
 
 These are **design requirements**, not a claim that all native mechanics have passed acceptance.

@@ -167,7 +167,7 @@ try {
   assert.equal(survival.hero.rogueEndureUntil, undefined);
 
   // Phase 3: exercise the real damage-and-conversion path.
-  function capture(g, species = 'goblin', ranged = false) {
+  function capture(g, species = 'goblin', ranged = false, hpFraction = 1) {
     const e = g.makeEnemy(
       { species, name: species, level: 1, hp: 10000,
         damage: 0, gold: 47, xp: 53 },
@@ -175,6 +175,9 @@ try {
     );
     e.ranged = ranged;
     e.aggro = true;
+    // A real significant wound is needed: tiny losses may round to full
+    // friendly HP, which is valid and does not justify a healing exception.
+    e.hp = Math.max(1, Math.round(e.maxHp * hpFraction));
     g.zone().enemies = [e];
     g.hero.basicCd = 0;
     g.s.rogueCharmRng = 12345; // reproducible successful LCG result
@@ -304,7 +307,7 @@ try {
   // Phase 3 closing lifecycle cases. Verify actual combat and save receipts,
   // not an invented direct-call success or a speculative species stat table.
   const wounded = fresh().g;
-  const woundSource = capture(wounded);
+  const woundSource = capture(wounded, 'goblin', false, 0.25);
   const woundedAlly = wounded.s.party[0];
   const postHitFraction = woundSource.hp / woundSource.maxHp;
   assert(postHitFraction > 0 && postHitFraction < 1, 'capture source survived wounded');
