@@ -242,6 +242,12 @@ const groups = [
     tests: [TEST + 'pwa-release-id.test.cjs', TEST + 'service-worker.test.cjs'],
   },
 ];
+  {
+    // Phase 4 must be retested when any source owning capture, creature growth,
+    // work orders, company operations, save or shared species artwork changes.
+    match: /^src\/prototype\/(?:party|progression|hero-combat|save|engine|rules|combat|menus|visuals|sprites)\.js$/,
+    tests: [TEST + 'rogue-bard-phase4-companions.test.cjs'],
+  },
 const eligible = (file) =>
   /\.(?:js|cjs|mjs|json|css|html|webp|png|svg|mp3|ogg|yml|yaml)$/.test(file);
 const relevant = (file) =>
