@@ -134,6 +134,14 @@ function shell(language, heroClass = 'paladin', options = {}) {
   vm.createContext(scope);
   vm.runInContext(fs.readFileSync(require.resolve('../../src/prototype/app'), 'utf8'), scope);
   scope.Prototype.renderer.draw = () => {};
+  // Existing presentation fixtures explicitly enter gameplay; the title
+  // lifecycle tests opt out to check a true inactive cold launch.
+  if (options.stayOnTitle !== true && options.seedSave !== false) {
+    const gameFrame = nextFrame;
+    elements.get('title-continue')?.click();
+    nextFrame?.(0);
+    nextFrame = gameFrame;
+  }
   return { scope, elements, storage, events, documentEvents, frame: (now) => nextFrame(now) };
 }
 

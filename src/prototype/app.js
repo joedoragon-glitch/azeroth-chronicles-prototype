@@ -1245,6 +1245,12 @@
   const narrativeTranslations = new Map(
     Object.values(approvedNarrative || {}).map((pair) => [pair.en, pair.es]),
   );
+  Object.assign(spanishText, {
+    'Return to Main Menu': 'Volver al menú principal',
+    'Saved Games & Backups': 'Partidas y copias de seguridad',
+    'Help & Credits': 'Ayuda y créditos',
+    'Try recovery': 'Intentar recuperar',
+  });
   function translateSegment(piece) {
     if (chronicleTranslations.has(piece)) return chronicleTranslations.get(piece);
     // Announcement index titles use a 64-character preview of the original card.
@@ -1436,6 +1442,7 @@
     $('target-button').firstChild.textContent = language === 'es' ? 'Objetivo ' : 'Target ';
     $('skills').setAttribute('aria-label', language === 'es' ? 'Habilidades' : 'Skills');
     updateHUD();
+    if (titleScreen && !started) refreshTitleScreen();
   }
 
   const writerGuard = PrototypePersistence.createWriterGuard({
@@ -1459,6 +1466,12 @@
       audio: { ...PrototypeAudio.defaults },
     },
     game,
+    titleScreen = null,
+    titleLoading = false,
+    titleEpoch = 0,
+    titleWarmup = null,
+    sceneTransition = null,
+    sceneTransitionEpoch = 0,
     started = false,
     menu = null,
     menuIndex = 0,
@@ -1717,36 +1730,42 @@
     if (game) {
       game = activateLiveCritical(game);
       loaded = true;
-      started = true;
-      save();
+      persistence.writeCandidate(game);
     } else game = activateLiveCritical(new Campaign());
   }
   // An unclean active-session marker indicates the previous browser stopped
   // before its normal shutdown. Keep validated campaign progress, but never
   // restart inside the potentially frozen encounter.
-  started = loaded;
+  // Validated campaigns begin loaded but inactive until Continue.
+  started = false;
+  function reconcileProfileEntitlements() {
+    // A completed saved campaign unlocks Nightmare even while the title is
+    // inactive. This is a profile entitlement, not a gameplay tick or autosave.
+    if (!loaded || !writerGuard.canWrite()) return;
+    if (game?.peace && game.s.mode !== 'arena' && game.s.finalRestCompleted &&
+        !profile.nightmareUnlocked) {
+      profile.nightmareUnlocked = true;
+      persistProfile();
+    }
+  }
   function recoverLoadedSession() {
     if (!loaded || !writerGuard.canWrite()) return;
     const recovered = restartGuard.recover(game);
     if (recovered) {
       recoveredOnStartup = true;
       game = activateLiveCritical(recovered);
-      save();
+      persistence.save(game, profile);
       status(
         recovered.selectedBarracksRespawn()
           ? 'Previous session stopped unexpectedly. Returned to your barracks safely.'
           : 'Previous session stopped unexpectedly. Returned to your refuge safely.',
       );
     }
-    restartGuard.arm(game);
-    // Reconcile entitlement after ownership and the fresh campaign load.
-    // A pending window cannot persist this during its initial preview load.
-    if (game.peace && game.s.mode !== 'arena' && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
-      profile.nightmareUnlocked = true;
-      persistProfile();
-    }
+    // Arm crash recovery only after Continue activates gameplay.
+    reconcileProfileEntitlements();
   }
-  recoverLoadedSession();
+  // Recovery is deferred until an explicit Continue gesture.
+  reconcileProfileEntitlements();
   // Navigation is runtime-only and survives manual takeover as a visible guide.
   let navigationGuide = null,
     questGuide = null,
@@ -2091,12 +2110,19 @@
     chooseNewRun: (mode) => chooseLanguage(mode),
     status,
     requestName,
+    sceneTransitionTo,
     openCharacter: characterMenu,
   });
 
   window.Prototype = {
     get game() {
       return game;
+    },
+    get started() {
+      return started;
+    },
+    get sceneLoading() {
+      return !!sceneTransition;
     },
     audio,
     renderer,
@@ -2958,7 +2984,7 @@
     if (moveFocus) selected?.scrollIntoView({ block: 'nearest' });
   }
   function closeMenu() {
-    if (!writerGuard.canWrite() || persistence.conflicted(game.s.mode)) {
+    if (started && (!writerGuard.canWrite() || persistence.conflicted(game.s.mode))) {
       savedRunConflictMenu();
       return;
     }
@@ -3075,7 +3101,7 @@
   // a HUD control beneath it. Intro, successor and game-over choices are mandatory.
   let outsidePointerId = null;
   function dismissOutside() {
-    if (!menu || !started || game.s.challenge.pending || game.s.challenge.gameOver) return;
+    if (!menu || (started && (game.s.challenge.pending || game.s.challenge.gameOver))) return;
     if (game.peace && game.s.finalRestCompleted && !game.s.endingAck) {
       game.s.endingAck = true;
       save();
@@ -3148,7 +3174,7 @@
   );
   $('close-button').onclick = () => {
     audio.unlock().then(() => audio.interfaceSound('back'));
-    if (!game.s.endingAck && game.peace && game.s.finalRestCompleted) {
+    if (started && !game.s.endingAck && game.peace && game.s.finalRestCompleted) {
       game.s.endingAck = true;
       save();
     }
@@ -3165,6 +3191,436 @@
     a.download = name;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+
+  // Stage 5: destination preparation observes only an ALREADY CONSTRUCTED zone
+  // in the saved campaign. Never call zone(), enter(), tick() or gameplay RNG
+  // to predict an unvisited destination. Decoded art is optional, bounded work.
+  function readOnlySceneKeys(destination, combatFirst = false) {
+    const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
+    if (!sprites?.definitionFor || !game?.s?.zones) return [];
+    const known = game.s.zones[destination] || null;
+    const region = game.regionIndex(destination);
+    // The first encounter matters more than distant decorations. Once native
+    // travel has constructed the destination, prioritize nearby combat actors,
+    // including companions, instead of starving typical 4+ GB devices with a
+    // tiny arbitrary key count. The existing 256 MiB decoded cache remains
+    // the actual global memory owner and can evict cold resources.
+    const hero = game.hero;
+    const companions = typeof game.activeParty === 'function'
+      ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
+      : [];
+    const distance = (e) => Math.hypot(e.x - hero.x, e.y - hero.y);
+    const enemies = known && destination === game.zoneId
+      ? (known.enemies || []).filter((e) => e.hp > 0 &&
+          Number.isFinite(e.x) && Number.isFinite(e.y))
+          .sort((a, b) => distance(a) - distance(b))
+          .map((e) => ({ ...e, renderKind: 'enemy' }))
+      : [];
+    // Only a native admission/resumed save makes near-spawn enemy placement
+    // authoritative. Prior to entry we cannot inspect an ungenerated zone.
+    const imminent = combatFirst ? enemies.filter((e) => distance(e) <= 850) : [];
+    const fringe = combatFirst ? enemies.filter((e) => distance(e) <= 1300) : enemies;
+    const neighbors = known && destination === game.zoneId
+      ? [...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
+        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' }))]
+          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y) &&
+            (!combatFirst || distance(e) <= 600))
+          .sort((a, b) => distance(a) - distance(b)).slice(0, 100)
+      : [];
+    const keys = new Set();
+    for (const actor of [...imminent, { ...hero, renderKind: 'hero' },
+      ...companions, ...fringe, ...neighbors]) {
+      // Appearance lookup never calls Campaign.zone()/enter() or consumes RNG.
+      const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
+      if (match?.key) keys.add(match.key);
+      if (keys.size >= 64) break;
+    }
+    return [...keys];
+  }
+  function combatCriticalArrival(destination) {
+    // Main dungeons, side interiors and supply rooms can place hostile actors
+    // within engagement range of spawn. Their first *visible* encounter frame
+    // takes priority over all optional asset warming, even on a revisited zone.
+    // All three definitions are read-only catalog lookups, not zone creation.
+    return Campaign.dungeonIds.includes(destination) ||
+      !!game.sideDungeon?.(destination) ||
+      !!game.supplyRoom?.(destination);
+  }
+  function warmScene(destination, milliseconds = 750, combatFirst = false) {
+    const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
+    if (!sprites?.warm || document.hidden) return null;
+    const keys = readOnlySceneKeys(destination, combatFirst);
+    if (!keys.length) return null;
+    // The queue may outlive the deadline, but only presentation-cache bytes
+    // are touched; no delayed callback can commit travel or change the campaign.
+    return Promise.race([
+      Promise.resolve().then(() => sprites.warm(keys,
+        combatFirst ? { variants: true, clips: true } : {})).catch(() => null),
+      new Promise((resolve) => setTimeout(resolve, milliseconds)),
+    ]);
+  }
+  function prepareGpuForArrival() {
+    if (graphicsController.status().mode !== 'webgl2' ||
+        typeof pixiGame.warmArrival !== 'function') return null;
+    // Stall, GPU memory failure, or context loss falls back to reliable Canvas.
+    return Promise.race([
+      Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false),
+      new Promise((resolve) => setTimeout(() => resolve(false), 1800)),
+    ]);
+  }
+  function drawReadyScene() {
+    try {
+      drawWorld();
+      return true;
+    } catch (_) {
+      // A first-use WebGL exception must not strand the player behind loading.
+      try {
+        graphicsController.revert();
+        renderer.setRenderLayer('full');
+        renderer.draw();
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+  }
+  function transitionLoadingText(label, step) {
+    const host = $('scene-loading-text');
+    const es = language === 'es';
+    host.textContent = step === 'paint'
+      ? (es ? 'Preparando la vista de llegada…' : 'Drawing arrival scene…')
+      : (es ? 'Preparando viaje · ' : 'Preparing travel · ') + label;
+  }
+  function cancelSceneTransition() {
+    const previous = sceneTransition;
+    if (!previous) return;
+    ++sceneTransitionEpoch;
+    sceneTransition = null;
+    $('scene-loading').hidden = true;
+    $('scene-loading-retry').hidden = true;
+    // If the gameplay commit occurred, do not roll back or replay it.
+    // A hidden page is safely saved by the existing visibility/pagehide owner.
+    last = performance.now();
+    audio.setPaused(!started || !focused || document.hidden || paused);
+  }
+  function revealSceneTransition(token) {
+    const ticket = sceneTransition;
+    if (!ticket || ticket.token !== token || !ticket.committed) return;
+    if (document.hidden || !focused || !writerGuard.canWrite()) return;
+    if (game !== ticket.campaign || game.zoneId !== ticket.destination) {
+      cancelSceneTransition();
+      return;
+    }
+    if (!ticket.painted && drawReadyScene()) {
+      ticket.painted = true;
+      const gpuWarmup = prepareGpuForArrival();
+      if (gpuWarmup) {
+        ticket.gpuPreparing = true;
+        void gpuWarmup.then((ready) => {
+          if (sceneTransition?.token !== token) return;
+          if (!ready) graphicsController.revert();
+          ticket.gpuPreparing = false;
+          requestAnimationFrame(() => revealSceneTransition(token));
+        });
+        return;
+      }
+    }
+    if (ticket.gpuPreparing) return;
+    if (!ticket.painted || !drawReadyScene()) {
+      // Preserve committed progress. Leave a clear retryable interruption state
+      // rather than showing a partially rendered world.
+      transitionLoadingText('', 'paint');
+      $('scene-loading-text').textContent = language === 'es'
+        ? 'No se pudo dibujar la llegada. Intenta de nuevo con Canvas.'
+        : 'Arrival could not be drawn. Retry with Canvas.';
+      $('scene-loading-retry').textContent = language === 'es'
+        ? 'Reintentar con Canvas' : 'Retry with Canvas';
+      $('scene-loading-retry').hidden = false;
+      $('scene-loading-retry').focus?.({ preventScroll: true });
+      return;
+    }
+    cancelSceneTransition();
+    clearInput();
+    last = performance.now();
+    frameSkip.suspend();
+    runtime.reset();
+    fps.suspend();
+    updateHUD();
+    $('menu-button').focus?.({ preventScroll: true });
+  }
+  function sceneTransitionTo(destination, label, commit) {
+    if (!started || sceneTransition || document.hidden || !focused ||
+        !writerGuard.canWrite() || persistence.conflicted(game.s.mode))
+      return false;
+    const token = ++sceneTransitionEpoch;
+    const campaign = game;
+    sceneTransition = { token, campaign, destination, committed: false };
+    $('scene-loading').hidden = false;
+    $('scene-loading-retry').hidden = true;
+    transitionLoadingText(label || destination, 'warm');
+    clearInput();
+    audio.setPaused(true);
+    const proceed = () => {
+      if (sceneTransition?.token !== token || document.hidden || !focused ||
+          !writerGuard.canWrite() || game !== campaign) {
+        if (sceneTransition?.token === token) cancelSceneTransition();
+        return;
+      }
+      let accepted = false;
+      try {
+        accepted = !!commit();
+      } catch (_) {
+        accepted = false;
+      }
+      if (!accepted || game.zoneId !== destination) {
+        cancelSceneTransition();
+        return;
+      }
+      sceneTransition.committed = true;
+      // Only the existing domain action may spend fare, reset encounters,
+      // create the entered zone or update quest/discovery state.
+      if (menu) closeMenu();
+      transitionLoadingText(label || destination, 'paint');
+      if (!save()) status('Saving failed. Export your run before closing.');
+      // Native enter() has now built the real dungeon and placed the hero and
+      // nearby enemies. Warm the close-range encounter artwork *after* that
+      // authoritative step while the clock is stopped and the screen covered.
+      // Never spend an unbounded period trying to complete optional atlas art.
+      const encounterWarmup = warmScene(destination,
+        combatCriticalArrival(destination) ? 1400 : 1200, true);
+      const reveal = () => {
+        if (sceneTransition?.token !== token) return;
+        requestAnimationFrame(() => revealSceneTransition(token));
+      };
+      if (encounterWarmup) void encounterWarmup.then(reveal, reveal);
+      else reveal();
+    };
+    // Dungeon entries are combat-critical: do not wait on an optional atlas,
+    // decoration, or procedural upload before performing native admission.
+    // Simulation remains held until the committed first frame is drawn and
+    // the opaque interlude is removed. No artificial combat grace period.
+    const critical = combatCriticalArrival(destination);
+    const pending = critical ? null : warmScene(destination, 750);
+    if (pending) void pending.then(proceed, proceed);
+    else proceed();
+    return true;
+  }
+
+  // Presentation-only title surface: never tick or autosave a loaded campaign.
+  function refreshTitleScreen() {
+    if (!titleScreen) return;
+    const es = language === 'es';
+    const t = (en, spanish) => es ? spanish : en;
+    $('title-heading').textContent = "So I Became the Dark Lord's Problem";
+    titleScreen.querySelector?.('nav')?.setAttribute?.(
+      'aria-label', es ? 'Menú principal' : 'Main menu',
+    );
+    $('title-tagline').textContent = t(
+      "He conquered the world. He wasn't expecting you.",
+      "Conquistó el mundo. No contaba contigo.",
+    );
+    const valid = loaded && !!game?.s && !persistence.loadFailed(game.s.mode);
+    const place = valid
+      ? D.regions.find((region) => region.id === game.zoneId)?.name ||
+        D.bosses.find((boss) => boss.id === game.zoneId)?.place || game.zoneId
+      : '';
+    $('title-preview').textContent = valid
+      ? t('Saved adventure', 'Aventura guardada') + ' · ' +
+        (game.hero.name || game.hero.class) + ' · ' +
+        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place
+      : persistence.loadFailed(profile.activeMode)
+        ? t('Saved adventure needs recovery', 'La partida requiere recuperación')
+        : t('Your adventure awaits', 'Tu aventura te espera');
+    $('title-continue').textContent = t('Continue Adventure', 'Continuar aventura');
+    $('title-new').textContent = t('New Game', 'Nueva partida');
+    $('title-saves').textContent = t('Saved Games & Backups', 'Partidas y copias de seguridad');
+    $('title-settings').textContent = t('Settings', 'Ajustes');
+    $('title-help').textContent = t('Help & Credits', 'Ayuda y créditos');
+    $('title-continue').disabled = titleLoading || !valid ||
+      !writerGuard.canWrite() || persistence.conflicted(game.s.mode) ||
+      !!game.s.challenge?.gameOver;
+    for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
+      $(id).disabled = titleLoading;
+    if (!titleLoading) {
+      $('title-loading').hidden = true;
+      $('title-loading').textContent = '';
+    }
+  }
+  function showTitleScreen() {
+    ++titleEpoch;
+    titleLoading = false;
+    cancelSceneTransition();
+    started = false;
+    paused = false;
+    clearInput();
+    audio.setPaused(true);
+    last = performance.now();
+    if (menu) {
+      menu = null;
+      menuHistory.length = 0;
+      $('modal').hidden = true;
+      document.body.classList.remove('menu-open');
+    }
+    titleScreen.hidden = false;
+    document.body.classList.add('title-active');
+    // Prepare only the *loaded* arrival view, never an unentered zone.
+    titleWarmup = loaded
+      ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 1000 : 900, true)
+      : null;
+    refreshTitleScreen();
+    const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
+    primary.focus?.({ preventScroll: true });
+  }
+  function enterPreparedScene() {
+    if (titleLoading || started || !loaded || !writerGuard.canWrite()) return;
+    if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
+    titleLoading = true;
+    const epoch = ++titleEpoch;
+    $('title-loading').hidden = false;
+    $('title-loading').textContent = language === 'es'
+      ? 'Preparando la primera escena…' : 'Preparing first scene…';
+    refreshTitleScreen();
+    clearInput();
+    const campaign = game;
+    const reveal = () => {
+      if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
+          campaign !== game) {
+        titleLoading = false;
+        refreshTitleScreen();
+        return;
+      }
+      // Only Continue authorizes abnormal-session recovery.
+      recoverLoadedSession();
+      if (menu) closeMenu();
+      $('title-loading').textContent = language === 'es'
+        ? 'Preparando la primera escena…' : 'Drawing first scene…';
+      const finish = () => {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+          titleLoading = false;
+          refreshTitleScreen();
+          return;
+        }
+        titleLoading = false;
+        started = true;
+        titleScreen.hidden = true;
+        document.body.classList.remove('title-active');
+        paused = false;
+        last = performance.now();
+        saveTimer = 0;
+        frameSkip.suspend();
+        runtime.reset();
+        fps.suspend();
+        restartGuard.arm(game);
+        updateHUD();
+        audio.setPaused(false);
+        $('menu-button').focus?.({ preventScroll: true });
+      };
+      const paint = () => {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+          titleLoading = false;
+          refreshTitleScreen();
+          return;
+        }
+        if (!drawReadyScene()) {
+          titleLoading = false;
+          status('Unable to prepare the game scene. Canvas backup is available.');
+          refreshTitleScreen();
+          return;
+        }
+        const gpuWarmup = prepareGpuForArrival();
+        if (gpuWarmup) void gpuWarmup.then((ready) => {
+          if (epoch !== titleEpoch) return;
+          if (!ready) graphicsController.revert();
+          requestAnimationFrame(finish);
+        });
+        else requestAnimationFrame(finish);
+      };
+      // Recovering an unclean save can change the spawn after title warmup.
+      const actual = warmScene(game.zoneId, 1400, true);
+      if (actual) void actual.then(paint, paint);
+      else paint();
+    };
+    const pending = titleWarmup;
+    if (pending) void pending.then(reveal, reveal);
+    else reveal();
+  }
+  function returnToTitleScreen() {
+    if (!started || !writerGuard.canWrite() || !save()) {
+      status('Saving failed. Export your run before closing.');
+      return;
+    }
+    if (!crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
+    showTitleScreen();
+  }
+  function selectSavedMode(mode) {
+    if (!writerGuard.canWrite()) return savedRunConflictMenu();
+    const candidate = persistence.load(mode);
+    if (!candidate) {
+      profile.activeMode = mode;
+      return savedRunRecoveryMenu();
+    }
+    game = activateLiveCritical(candidate);
+    loaded = true;
+    if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
+    persistProfile();
+    showTitleScreen();
+  }
+  function titleSaveMenu() {
+    const modes = ['normal', 'nightmare',
+      ...(developerEnabled ? ['developer'] : []),
+      ...(combatDiagnosticsEnabled ? ['arena'] : [])];
+    openMenu(
+      'Saved Games & Backups',
+      language === 'es'
+        ? 'Elige una partida, recupera una copia o exporta tus datos antes de reemplazarlos.'
+        : 'Choose a campaign, recover a checkpoint, or export a backup.',
+      [
+        ...modes.map((mode) => {
+          const candidate = persistence.load(mode);
+          return action(
+            mode === 'normal' ? 'Normal' : mode === 'nightmare' ? 'Nightmare' :
+              mode === 'developer' ? 'Developer' : 'Combat Diagnostics',
+            () => selectSavedMode(mode),
+            candidate ? (candidate.hero.name || candidate.hero.class) +
+              ' · ' + candidate.hero.level : (language === 'es' ? 'Sin partida válida' : 'No valid save'),
+            !candidate,
+          );
+        }),
+        action('Try recovery', () => {
+          if (loaded) profile.activeMode = game.s.mode;
+          savedRunRecoveryMenu();
+        }),
+        ...modes.filter((mode) => persistence.loadFailed(mode)).map((mode) =>
+          action(
+            (language === 'es' ? 'Recuperar ' : 'Recover ') + mode,
+            () => {
+              profile.activeMode = mode;
+              savedRunRecoveryMenu();
+            },
+          ),
+        ),
+        ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
+          label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
+          action: () => {
+            const raw = localStorage.getItem(PrototypePersistence.saveKey(mode));
+            if (raw) exportSaveText(raw, 'Azeroth_Original_' + mode + '.json');
+          },
+        })),
+        { label: tr('Import save'), action: () => $('import-file').click() },
+      ],
+      showTitleScreen,
+      { view: 'title-saves' },
+    );
+  }
+  function titleHelpMenu() {
+    openMenu('Help & Credits',
+      language === 'es'
+        ? "So I Became the Dark Lord's Problem. Una aventura de fantasía original. Consulta Controles para aprender a jugar."
+        : "So I Became the Dark Lord's Problem. An original fantasy adventure. Open Controls to review movement, skills and input options.",
+      [action('Controls', () => help(titleHelpMenu))],
+      showTitleScreen);
   }
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
@@ -3187,14 +3643,13 @@
       setOptimizationActive(true);
       resize();
     } else setOptimizationActive(optimizationPreference === 'on');
-    started = true;
+    loaded = true;
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
-    save();
-    restartGuard.arm(game);
-    closeMenu();
-    updateHUD();
+    persistProfile();
+    showTitleScreen();
+    enterPreparedScene();
   }
   function chooseLanguage(mode) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
@@ -3211,7 +3666,7 @@
           chooseClass(mode);
         }),
       ],
-      () => (started ? openMain() : chooseClass(mode)),
+      () => (started ? openMain() : newGameMenu()),
     );
   }
   function savedRunRecoveryMenu() {
@@ -3235,7 +3690,7 @@
         action('Import save', () => $('import-file').click()),
         action('Start a new Normal run', () => chooseLanguage('normal')),
       ],
-      savedRunRecoveryMenu,
+      started ? savedRunRecoveryMenu : showTitleScreen,
       { view: 'save-recovery' },
     );
   }
@@ -3440,7 +3895,7 @@
             classGrowthLine(id),
         ),
       ),
-      () => chooseClass(mode),
+      () => started ? chooseClass(mode) : newGameMenu(),
       { view: 'class-select' },
     );
     appendNameField();
@@ -3701,7 +4156,7 @@
           !profile.nightmareUnlocked,
         ),
       ],
-      saveMenu,
+      started ? saveMenu : showTitleScreen,
     );
   }
   // Menu audit Step 2: one window for every display, renderer and frame option.
@@ -3950,7 +4405,7 @@
           languageMenu(systemMenu),
         ),
       ],
-      openMain,
+      started ? openMain : showTitleScreen,
     );
   }
   function arenaTravel(id) {
@@ -4009,6 +4464,7 @@
         action('Character', characterMenu),
         action('Skill journal', () => skillBook(openMain)),
         action('Game and settings', systemMenu),
+        action('Return to Main Menu', returnToTitleScreen),
       ]);
       return;
     }
@@ -4053,11 +4509,12 @@
           ]
         : []),
       action('Game and settings', systemMenu),
+      action('Return to Main Menu', returnToTitleScreen),
     ]);
   }
   $('menu-button').onclick = (e) => {
     audio.unlock();
-    if (!started) chooseLanguage('normal');
+    if (!started) showTitleScreen();
     else if (game.s.challenge.pending) successionMenu();
     else if (game.s.challenge.gameOver) gameOver();
     else openMain();
@@ -4168,14 +4625,13 @@
       setOptimizationActive(true);
       resize();
     } else setOptimizationActive(optimizationPreference === 'on');
-    loaded = started = true;
+    loaded = true;
+    started = false;
     if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
     if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
     persistProfile();
-    restartGuard.arm(game);
-    closeMenu();
-    updateHUD();
+    showTitleScreen();
   }
   function nearestNPC() {
     return [
@@ -4293,6 +4749,12 @@
       dungeonEntranceMenu(n);
       return;
     }
+    if (n.kind === 'exit' || (n.kind === 'dungeon' && n.sideDungeon)) {
+      const destination = n.kind === 'dungeon' ? n.family :
+        game.sideDungeon()?.region || game.supplyRoom()?.region || game.definition().id;
+      sceneTransitionTo(destination, n.name || destination, () => game.interact(n));
+      return;
+    }
     if (
       [
         'rest',
@@ -4369,7 +4831,7 @@
             action(
               'Travel to ' + target.name,
               () => {
-                if (game.travelHub(target.id)) closeMenu();
+                sceneTransitionTo(target.id, target.name, () => game.travelHub(target.id));
               },
               target.town,
             ),
@@ -5798,6 +6260,12 @@
         !(menu && ['Tab', 'Escape'].includes(e.code)))
     )
       return;
+    // A loading interlude owns keyboard focus; hidden menus cannot commit a
+    // second travel or close the overlay while arrival is being prepared.
+    if (sceneTransition) {
+      e.preventDefault?.();
+      return;
+    }
     audio.unlock();
     const code = e.code;
     if (bindingCapture) {
@@ -5851,7 +6319,7 @@
       if (menu) {
         audio.interfaceSound('back');
         menu.back();
-      } else if (!started) chooseLanguage('normal');
+      } else if (!started) showTitleScreen();
       else if (game.s.challenge.pending) successionMenu();
       else if (game.s.challenge.gameOver) gameOver();
       else openMain();
@@ -5902,6 +6370,7 @@
         else buttons[menuIndex]?.click();
       return;
     }
+    if (!started) return;
     if ((paused || !focused || document.hidden) && !['pause', 'help'].includes(actionId)) return;
     if (!actionId) return;
     if (['up', 'down', 'left', 'right'].includes(actionId)) cancelTravel();
@@ -6125,6 +6594,10 @@
   addEventListener('focus', () => {
     focused = true;
     last = performance.now();
+    if (sceneTransition?.committed) {
+      const token = sceneTransition.token;
+      requestAnimationFrame(() => revealSceneTransition(token));
+    }
     if (started && !paused && !document.hidden) restartGuard.arm(game);
     checkAppUpdate().catch(() => {});
   });
@@ -6133,23 +6606,32 @@
     clearInput();
     last = performance.now();
     if (document.hidden) {
+      if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
       game.observeCrowdFrame(0, false);
       renderResolution.suspend();
       if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
     } else {
+      if (sceneTransition?.committed) {
+        const token = sceneTransition.token;
+        requestAnimationFrame(() => revealSceneTransition(token));
+      }
       if (started && !paused && focused) restartGuard.arm(game);
       checkAppUpdate().catch(() => {});
     }
   });
   addEventListener('pagehide', () => {
     clearInput();
+    if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
     if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
     writerGuard.release();
   });
   addEventListener('pageshow', (event) => {
+    // A BFCache restore retains this same live JS session.
     if (event.persisted) {
+      // A page restored from BFCache has already released its writer lock.
+      // Reload to acquire ownership again; ordinary app minimize uses no reload.
       location.reload();
       return;
     }
@@ -6969,6 +7451,13 @@
     }
   }
   function frame(now) {
+    if (!started || sceneTransition) {
+      last = now;
+      clearEmergencyEscalation();
+      frameSkip.suspend();
+      requestAnimationFrame(frame);
+      return;
+    }
     if (persistence.conflicted(game.s.mode) && menu?.view !== 'save-conflict')
       savedRunConflictMenu();
     if (document.hidden) {
@@ -7303,12 +7792,22 @@
     frameProfile.reset();
     fps.suspend();
   });
+  titleScreen = $('title-screen');
+  $('title-continue').onclick = enterPreparedScene;
+  $('title-new').onclick = newGameMenu;
+  $('title-saves').onclick = titleSaveMenu;
+  $('title-settings').onclick = systemMenu;
+  $('title-help').onclick = titleHelpMenu;
+  $('scene-loading-retry').onclick = () => {
+    if (!sceneTransition?.committed) return;
+    graphicsController.revert();
+    const token = sceneTransition.token;
+    $('scene-loading-retry').hidden = true;
+    requestAnimationFrame(() => revealSceneTransition(token));
+  };
   updateHUD();
-  if (!loaded) {
-    if (persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode))
-      savedRunRecoveryMenu();
-    else chooseLanguage(combatDiagnosticsEnabled ? 'arena' : developerEnabled ? 'developer' : 'normal');
-  } else setLanguage(language);
+  setLanguage(language);
+  showTitleScreen();
   if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
       performanceBaselineUpgraded
@@ -7350,8 +7849,9 @@
             setOptimizationActive(true);
             resize();
           }
-          loaded = started = true;
-          recoverLoadedSession();
+          loaded = true;
+          started = false;
+          reconcileProfileEntitlements();
           if (
             menu?.view === 'save-conflict' ||
             menu?.view === 'save-recovery' ||
@@ -7360,13 +7860,14 @@
             closeMenu();
         } else if (persistence.loadFailed(combatDiagnosticsEnabled ? 'arena' : profile.activeMode)) {
           loaded = started = false;
-          savedRunRecoveryMenu();
+          showTitleScreen();
         } else {
           loaded = started = false;
           game = activateLiveCritical(new Campaign());
-          chooseLanguage(combatDiagnosticsEnabled ? 'arena' : developerEnabled ? 'developer' : 'normal');
+          showTitleScreen();
         }
         updateHUD();
+        refreshTitleScreen();
       })
       .catch(() => {
         writerGuard.release();

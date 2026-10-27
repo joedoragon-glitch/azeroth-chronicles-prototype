@@ -14,6 +14,10 @@ function memory() {
 for (const original of ['{broken', JSON.stringify({ ...new C().snapshot(), version: 999 })]) {
   const storage = new Map([[P.saveKey('normal'), original]]);
   const app = shell('en', 'paladin', { storage });
+  assert.equal(app.scope.Prototype.started, false);
+  assert.equal(app.elements.get('title-continue').disabled, true);
+  app.elements.get('title-saves').click();
+  app.elements.get('modal-actions').children.find((x) => x.textContent === 'Try recovery').click();
   assert.equal(app.elements.get('modal-title').textContent, 'Saved run could not be opened');
   app.scope.Prototype.save();
   for (const fn of app.events.blur || []) fn();
@@ -89,6 +93,8 @@ console.log(
     exported = blob;
     return '';
   };
+  app.elements.get('title-saves').click();
+  click('Try recovery');
   click('Export original save');
   assert.equal(await exported.text(), original, 'Export retains the exact unreadable bytes');
   click('Start a new Normal run');
