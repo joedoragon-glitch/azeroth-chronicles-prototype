@@ -6939,7 +6939,9 @@
           !e.aggro &&
           // Reject distant targets before tracing through every intervening
           // obstacle. The same range and visibility rules still gate aggro.
-          dist(e, target) < this.enemyAcquisitionRange(e) &&
+          (this.enemyRanged(e)
+            ? dist(e, target) <= this.enemyAcquisitionRange(e)
+            : dist(e, target) < this.enemyAcquisitionRange(e)) &&
           this.enemyRangedLine(e, target) &&
           (!this.isDungeon() &&
           dist(target, { x: D.towns[this.regionIndex()][0], y: D.towns[this.regionIndex()][1] }) <

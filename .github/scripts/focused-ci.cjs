@@ -196,6 +196,11 @@ const groups = [
     tests: [TEST + 'projectile-order.test.cjs'],
   },
   {
+    // Native garrison wall-lane audit belongs to focused combat geometry checks.
+    match: /^tools\/native-fort-audit-dev145\/positive-lanes\.cjs$/,
+    tests: [TEST + 'fortifications.test.cjs', TEST + 'treasury-fortifications.test.cjs'],
+  },
+  {
     match: /^tests\/helpers\/production-shell\.cjs$/,
     tests: [
       TEST + 'persistence-safety.test.cjs',
