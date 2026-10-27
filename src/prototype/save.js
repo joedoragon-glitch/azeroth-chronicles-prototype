@@ -499,7 +499,9 @@
         if (
           !Array.isArray(s.party) ||
           s.party.length > 200 ||
-          s.party.filter((u) => u.active !== false).length > [0, 2, 3, 3, 4, 5, 6][s.expeditionRank]
+          s.party.filter((u) => u.active !== false).length >
+            R.balance.companions.activeCaps[s.expeditionRank] +
+              (R.balance.companions.activeSlotBonuses?.[s.hero.class] || 0)
         )
           throw Error('Invalid party');
         const ids = new Set(D.bosses.map((b) => b.id));
@@ -689,12 +691,13 @@
         if (!s.challenge)
           s.challenge = { succession: false, fallen: [], pending: false, gameOver: false };
         const ch = s.challenge;
+        const classCount = Object.keys(classes).length;
         if (
           typeof ch.succession !== 'boolean' ||
           typeof ch.pending !== 'boolean' ||
           typeof ch.gameOver !== 'boolean' ||
           !Array.isArray(ch.fallen) ||
-          ch.fallen.length > 3 ||
+          ch.fallen.length > classCount ||
           new Set(ch.fallen).size !== ch.fallen.length ||
           ch.fallen.some((id) => !classes[id])
         )
@@ -703,7 +706,7 @@
           (!ch.succession && (ch.fallen.length || ch.pending || ch.gameOver)) ||
           (ch.pending &&
             (!ch.fallen.includes(s.hero.class) || ch.fallen.length !== 1 || s.hero.hp !== 0)) ||
-          (ch.gameOver && (ch.fallen.length !== 3 || ch.pending || s.hero.hp !== 0)) ||
+          (ch.gameOver && (ch.fallen.length !== classCount || ch.pending || s.hero.hp !== 0)) ||
           (ch.succession && !ch.pending && !ch.gameOver && ch.fallen.includes(s.hero.class))
         )
           throw Error('Invalid succession state');
