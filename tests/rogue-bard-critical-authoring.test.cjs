@@ -59,8 +59,8 @@ const loaded = profile.loadProfile(defaults);
 assert.equal(Object.hasOwn(loaded, 'rogueCriticalLevels'), false,
   'a brief mistaken internal profile field must be ignored');
 const game = new Campaign('normal', 'paladin', () => 0.9);
-const baseline = JSON.stringify(game.snapshot());
 Native.attachCampaign(game, Critical, Levels, World, { enabled: true });
+const baseline = JSON.stringify(game.snapshot());
 assert.equal(game._criticalPartyNative.criticalLevels().rogue, 2,
   'live session defaults to authored Level 2 rather than profile storage');
 assert.equal(JSON.stringify(game.snapshot()).includes('rogueCriticalLevels'), false);
