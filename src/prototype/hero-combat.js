@@ -1210,9 +1210,97 @@
         });
         return true;
       }
-      // Dormant Rogue automatic basic. Its weapon is deliberately NOT a guitar.
-      // This is a legal primary hit plus bounded splash; Charm is reserved for
-      // Phase 3 and will only be offered the primary's actual damage receipt.
+
+      // The exact individual monster subtype is an authored species plus its
+      // native melee/ranged variant. Player names and translations cannot own it.
+      rogueCharmProfile(e) {
+        if (
+          this.hero.class !== 'rogue' ||
+          !e || e.type !== 'mob' || e.form !== 'normal' || e.hp <= 0 ||
+          e.neutral || e.returning || e.guard || e.roomGuard ||
+          e.awakenedGuard || e.captain || e.roomCaptain || e.fieldCaptain ||
+          e.summon || e.owner || e.reinforcement || e.nightOnly ||
+          e.crownTroop || e.mountedCrownRider || e.veraEscort || e.family ||
+          this.s.mode === 'arena' || this.s.mode === 'developer'
+        ) return null;
+        const authored = Campaign.data.species.flat().find((row) => row[0] === e.species);
+        if (!authored) return null;
+        const ranged = e.ranged === true,
+          role = ranged ? 'archer' : 'soldier',
+          variant = ranged ? R.rangedProfiles[e.species]?.variant : null;
+        return {
+          typeId: 'enemy:' + e.species + ':' + (ranged ? 'ranged' : 'melee'),
+          species: e.species,
+          role,
+          typeName: authored[1] + (variant ? ' ' + variant : ''),
+          sourceEnemyId: e.id,
+          sourceZone: this.zoneId,
+        };
+      }
+      rogueCharmAttempt(primary, beforeHp, attackZone) {
+        if (
+          this.hero.class !== 'rogue' || this.hero.hp <= 0 || this.peace ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.zoneId !== attackZone || !primary ||
+          !(beforeHp > primary.hp) || primary.hp <= 0 ||
+          this.attackResetProtected(primary) || !this.tacticalDirectTargetable(primary)
+        ) return false;
+        const zone = this.zone(),
+          index = zone.enemies.findIndex((e) => e === primary),
+          profile = this.rogueCharmProfile(primary);
+        if (
+          index < 0 || !profile || this.s.party.length >= 200 ||
+          this.s.party.some((u) => u.charmOrigin?.sourceEnemyId === primary.id) ||
+          Object.values(this.s.charmCaptures || {}).some(
+            (entry) => entry.sourceEnemyId === primary.id,
+          ) ||
+          Object.values(this.s.pending).some((p) => p.base?.id === primary.id) ||
+          new Set(this.s.party.filter(
+            (u) => u.charmOrigin?.typeId === profile.typeId,
+          ).map((u) => u.id)).size >= this.expeditionPartyCap()
+        ) return false;
+        // A saved, independent stream: invalid attempts draw nothing, and Charm
+        // never disturbs the existing combat/World/Party critical RNG streams.
+        const state = Number.isInteger(this.s.rogueCharmRng)
+          ? this.s.rogueCharmRng
+          : (Math.imul(this.s.nextId, 747796405) + 2891336453) >>> 0;
+        const next = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        this.s.rogueCharmRng = next;
+        // 12% is a playtest candidate, not an owner-locked balance decision.
+        if (next / 4294967296 >= 0.12) return false;
+        const u = this.unit(profile.role, primary.x, primary.y);
+        u.hp = Math.max(1, Math.round(u.maxHp * (primary.hp / primary.maxHp)));
+        u.icon = primary.icon;
+        u.name = profile.typeName;
+        u.charmOrigin = { ...profile };
+        u.active = this.activeParty().length < this.expeditionPartyCap();
+        // No kill() call: no XP, loot, quests, streaks or death rewards.
+        this.cancelEncounter(primary);
+        this.clearEnemyUnderFire(primary);
+        this.tacticalClearThreat(primary);
+        this.tacticalClearBurst(primary);
+        this.tacticalClearRogueRegroup(primary);
+        this.s.projectiles = this.s.projectiles.filter(
+          (p) => p.source !== primary.id && p.target !== primary.id && p.owner !== primary.id,
+        );
+        this.s.hazards = this.s.hazards.filter(
+          (h) => h.source !== primary.id && h.owner !== primary.id,
+        );
+        zone.enemies.splice(index, 1);
+        this.s.party.push(u);
+        this.s.charmCaptures ??= {};
+        this.s.charmCaptures[u.id] = { ...profile };
+        if (this.s.heroTarget === primary.id) this.s.heroTarget = null;
+        this.resetBasicCombo();
+        this.event('rogueCharm', {
+          actor: 'hero', companionId: u.id, sourceEnemyId: primary.id,
+          typeId: profile.typeId, active: u.active, x: u.x, y: u.y,
+        });
+        this.say(profile.typeName + ' Charmed. ' +
+          (u.active ? 'Joined the group.' : 'Group full; resting in reserve.'));
+        return true;
+      }
+      // Rogue automatic basic: only the surviving primary may try Charm.
       castRogueBasic(targetId = null) {
         const cfg = R.rogueHeroFoundation.basic;
         if (
@@ -1244,7 +1332,9 @@
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
             (1 + 0.15 * (rank - 1)) * combo.multiplier;
         this.hero.basicCd = this.basicSkillCooldown();
-        const landed = this.damage(primary, baseDamage, 'hero', { automaticBasic: true });
+        const beforePrimaryHp = primary.hp,
+          attackZone = this.zoneId,
+          landed = this.damage(primary, baseDamage, 'hero', { automaticBasic: true });
         let splashHits = 0;
         if (landed) {
           const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap,
@@ -1264,8 +1354,8 @@
             if (this.damage(e, baseDamage * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
               splashHits++;
         }
-        // Event metadata is ready for future bell-jingle audio and static VFX;
-        // no guitar, projectile actor, Charm RNG or sound playback is created.
+        if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);
+        // Bell-jingle sound intent remains distinct from actual audio playback.
         this.event('rogueBellBasic', {
           actor: 'hero', class: 'rogue', slot: 1, automaticBasic: true,
           instrument: R.rogueHeroFoundation.weapon.instrument,

@@ -777,14 +777,47 @@
           finite(e.remaining, 0, 1000);
           finite(e.seconds, 0, 5);
         }
+
+        // A standalone imported charmOrigin is never an entitlement. The
+        // source and exact authored subtype must match a capture ledger.
+        // Client-side structural checks cannot cryptographically sign saves.
+        if (s.rogueCharmRng !== undefined &&
+          (!Number.isInteger(s.rogueCharmRng) ||
+            s.rogueCharmRng < 0 || s.rogueCharmRng > 4294967295))
+          throw Error('Invalid Charm RNG state');
+        const captures = s.charmCaptures ?? {};
+        if (!captures || typeof captures !== 'object' || Array.isArray(captures) ||
+          Object.keys(captures).length > 200)
+          throw Error('Invalid charm provenance');
+        const capturedSources = new Set(),
+          capturedIds = new Set(),
+          speciesNames = new Map(D.species.flat().map((row) => [row[0], row[1]]));
+        const validateCapture = (u) => {
+          const a = u.charmOrigin, record = captures[u.id];
+          if (!a || !record || typeof a !== 'object' || Array.isArray(a) ||
+            typeof record !== 'object' || Array.isArray(record) ||
+            !['soldier', 'archer'].includes(u.type) ||
+            Object.keys(a).length !== 6 || Object.keys(record).length !== 6)
+            throw Error('Invalid charm provenance');
+          const speciesName = speciesNames.get(a.species),
+            subtype = 'enemy:' + a.species + ':' +
+              (u.type === 'archer' ? 'ranged' : 'melee'),
+            variant = u.type === 'archer' ? R.rangedProfiles[a.species]?.variant : null,
+            canonicalName = speciesName + (variant ? ' ' + variant : '');
+          if (!speciesName || a.role !== u.type || a.typeId !== subtype ||
+            a.typeName !== canonicalName ||
+            !/^enemy-[1-9]\\d*$/.test(a.sourceEnemyId) ||
+            !Object.hasOwn(s.zones, a.sourceZone) ||
+            capturedSources.has(a.sourceEnemyId) ||
+            s.zones[a.sourceZone].enemies.some((e) => e.id === a.sourceEnemyId) ||
+            Object.keys(a).some((key) => record[key] !== a[key]))
+            throw Error('Invalid charm provenance');
+          capturedIds.add(u.id);
+          capturedSources.add(a.sourceEnemyId);
+        };
         const petFamilies = new Set();
         for (const u of s.party) {
-          // There is no authenticated Charm-origin save contract yet.
-          // Never mistake arbitrary imported metadata for a legitimately
-          // captured creature merely because the dormant roster UI knows
-          // how to display it. Replace this with allowlisted validation
-          // when the fourth class and conversion transaction actually ship.
-          if (u.charmOrigin !== undefined) throw Error('Invalid charm provenance');
+          if (u.charmOrigin !== undefined) validateCapture(u);
           u.order = gatheringOrder(u, s) || recoveryCampOrder(u, s);
           validateName(u.customName);
           if (u.type === 'pet') {
@@ -846,6 +879,8 @@
             finite(e.seconds, 0, 5);
           }
         }
+        if (Object.keys(captures).some((id) => !capturedIds.has(id)))
+          throw Error('Invalid charm provenance');
         for (const [id, v] of Object.entries(s.earlyRoll || {}))
           if (!dungeonIds.includes(id) || typeof v !== 'boolean' || !s.normal[id])
             throw Error('Invalid TRUE roll');

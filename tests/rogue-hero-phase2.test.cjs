@@ -25,6 +25,7 @@ try {
   function fresh(count = 1) {
     const g = new Campaign('normal', 'rogue', () => 0.9);
     g.s.mercyTime = 0;
+    g.s.rogueCharmRng = 1; // preserve the original Phase-2 hit witness
     g.s.valeFieldAwakened = true;
     g.s.party = [];
     Object.assign(g.hero, { x: 500, y: 500, order: null });
@@ -164,9 +165,84 @@ try {
   assert.equal(survival.s.statistics.deaths, deathsBefore + 1, 'no endless retrigger');
   assert.equal(survival.hero.rogueEndureUsed, false, 'standard recovery starts a new life');
   assert.equal(survival.hero.rogueEndureUntil, undefined);
+
+  // Phase 3: exercise the real damage-and-conversion path.
+  function capture(g, species = 'goblin', ranged = false) {
+    const e = g.makeEnemy(
+      { species, name: species, level: 1, hp: 10000,
+        damage: 0, gold: 47, xp: 53 },
+      { x: 585, y: 500 },
+    );
+    e.ranged = ranged;
+    e.aggro = true;
+    g.zone().enemies = [e];
+    g.hero.basicCd = 0;
+    g.s.rogueCharmRng = 12345; // reproducible successful LCG result
+    const kills = g.s.statistics.kills, gold = g.hero.gold,
+      quests = structuredClone(g.s.quests);
+    assert.equal(g.cast(1, e.id, false, null, true), true);
+    assert.equal(g.s.statistics.kills, kills);
+    assert.equal(g.hero.gold, gold);
+    assert.deepEqual(g.s.quests, quests);
+    return e;
+  }
+  const legal = fresh(1).g;
+  const source = capture(legal);
+  assert(!legal.zone().enemies.includes(source), 'hostile removed once');
+  assert.equal(legal.s.party.length, 1);
+  const capturedAlly = legal.s.party[0];
+  assert.equal(capturedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
+  assert.equal(capturedAlly.charmOrigin.sourceEnemyId, source.id);
+  assert(capturedAlly.hp > 0 && capturedAlly.hp <= capturedAlly.maxHp);
+  assert.equal(legal.s.charmCaptures[capturedAlly.id].typeId, 'enemy:goblin:melee');
+  assert.equal(legal.effects.filter((e) => e.type === 'rogueCharm').length, 1);
+  const savedCapture = legal.snapshot();
+  assert.doesNotThrow(() => Campaign.validate(savedCapture));
+  const restoredCapture = Campaign.restore(savedCapture, () => 0.9);
+  assert.deepEqual(restoredCapture.s.party[0].charmOrigin, capturedAlly.charmOrigin);
+  const tampered = structuredClone(savedCapture);
+  tampered.party[0].charmOrigin.typeId = 'enemy:goblin:ranged';
+  assert.throws(() => Campaign.validate(tampered), /Invalid charm provenance/);
+  const bareClaim = structuredClone(savedCapture);
+  delete bareClaim.charmCaptures;
+  assert.throws(() => Campaign.validate(bareClaim), /Invalid charm provenance/);
+
+  const excluded = fresh(1).g, elite = excluded.zone().enemies[0];
+  elite.captain = true;
+  excluded.s.rogueCharmRng = 12345;
+  assert(excluded.cast(1, elite.id, false, null, true));
+  assert.equal(excluded.s.rogueCharmRng, 12345, 'captain exclusion spends no roll');
+  assert.equal(excluded.s.party.length, 0);
+  elite.captain = false;
+  elite.hp = 1;
+  excluded.hero.basicCd = 0;
+  assert(excluded.cast(1, elite.id, false, null, true));
+  assert.equal(excluded.s.party.length, 0, 'lethal primary cannot Charm');
+  assert.equal(excluded.s.rogueCharmRng, 12345);
+
+  for (const [rankIndex, cap] of [3, 4, 4, 5, 6, 7].entries()) {
+    const g = fresh(1).g;
+    g.s.expeditionRank = rankIndex + 1;
+    for (let i = 0; i < cap; i++) capture(g);
+    assert.equal(g.s.party.length, cap);
+    const refused = capture(g);
+    assert(g.zone().enemies.includes(refused), 'quota refusal leaves enemy alive');
+    assert.equal(g.s.party.length, cap);
+    assert.equal(g.s.rogueCharmRng, 12345, 'quota refusal spends no roll');
+    capture(g, 'goblin', true);
+    assert.equal(g.s.party.at(-1).charmOrigin.typeId, 'enemy:goblin:ranged');
+    assert.equal(g.s.party.length, cap + 1);
+  }
+  const reserveGame = fresh(1).g;
+  reserveGame.s.party = Array.from({ length: 3 }, () =>
+    reserveGame.unit('soldier', 500, 500));
+  capture(reserveGame);
+  assert.equal(reserveGame.s.party.at(-1).active, false,
+    'full field admits captured ally into reserve');
+  assert.doesNotThrow(() => Campaign.validate(reserveGame.snapshot()));
 } finally {
   delete Campaign.classes.rogue;
   delete Campaign.talentProfiles.rogue;
 }
 assert.deepEqual(Object.keys(Campaign.classes), ['paladin', 'mage', 'ranger']);
-console.log('PASS staged Rogue three-form Skill 1, basic combo, boon, Endure, save and three-class isolation');
+console.log('PASS Rogue Skill 1, Endure, Charm, subtype caps, save and three-class isolation');
