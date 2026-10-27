@@ -140,6 +140,17 @@ try {
   gameOverFour.challenge.fallen.push('rogue');
   assert.doesNotThrow(() => Campaign.validate(gameOverFour));
 
+  const secondDeathPending = copy(gameOverThree);
+  secondDeathPending.challenge = {
+    succession: true, fallen: ['mage', 'paladin'], pending: true, gameOver: false,
+  };
+  assert.doesNotThrow(() => Campaign.validate(copy(secondDeathPending)),
+    'with four classes, second death still offers two successor choices');
+  const prematureThirdPending = copy(secondDeathPending);
+  prematureThirdPending.challenge.fallen.push('ranger');
+  assert.throws(() => Campaign.validate(prematureThirdPending), /Invalid succession state/,
+    'one class remaining must auto-succeed, never remain pending');
+
   const withSeven = new Campaign('normal', 'paladin', () => 0.9);
   withSeven.s.expeditionRank = 6;
   while (withSeven.s.party.length < 7) {
