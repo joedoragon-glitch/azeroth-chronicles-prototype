@@ -1,5 +1,8 @@
 # PR #518 — targeted WebGL2 acceptance protocol (Stage 7)
 
+> **Current status — 27 October 2026:** [#518](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518) **merged and published**. The Stage 7 acceptance protocol **remains applicable and uncompleted**: physical Chromebook/phone Pixi-versus-Canvas parity, first frames, context loss, memory and actual frame pacing are **not** certified by the successful integration. Earlier text below about testing an *unmerged draft* and conditionally permitting *this specific PR's merge* is historical context; future fixes require a fresh issue/branch/owner release decision. Consult [current development state](DEVELOPMENT_STATE.md) before beginning a real-device run. This docs-only reconciliation does not approve broad browser or physical-device matrices.
+
+
 **State:** manual plan for testing, **not** evidence of success. Game’s public branding is **So I Became the Dark Lord's Problem**. The codebase is a multi-file GitHub Pages/PWA, with an optional experimental PixiJS/WebGL2 renderer and retained Canvas 2D fallback.
 
 ## Devices and permission boundary

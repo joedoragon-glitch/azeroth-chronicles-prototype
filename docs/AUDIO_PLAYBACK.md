@@ -1,5 +1,8 @@
 # Recorded playback, mixing and audition · v0.8.89
 
+> **27 October 2026 source reconciliation:** The v0.8.89/v0.8.90 recording and playback narrative below is **historical engineering context**, not the current `dev.205` release gate. The integrated multi-file game loads audio through [`audio.js`](../src/prototype/audio.js), with distinct [runtime](../src/prototype/audio-runtime.js), [score](../src/prototype/audio-score.js), [effects](../src/prototype/audio-effects.js), recordings and environment owners. First-gesture recovery [#470](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/470) and ranged-pet impacts [#472](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/472) are merged. Current build/CI/Pages/installed-device and audio listening evidence are **separate** in [Development state](DEVELOPMENT_STATE.md); physical listening is not newly certified here. Preserve the original pre-integration tests and authoring decisions below.
+
+
 > **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
 
 **The production score and game menu sound are activated in v0.8.90. See [AUDIO_SOUND_PASS.md](AUDIO_SOUND_PASS.md). The implementation contracts below remain current; statements about an empty registry and unchanged menu behavior describe the preceding engineering phase.**
