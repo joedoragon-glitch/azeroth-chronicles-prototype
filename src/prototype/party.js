@@ -2557,8 +2557,14 @@
         if (!this.spend(this.companionRecoveryCost())) return false;
         const id = dead.id,
           active = dead.active !== false,
+          charmOrigin = dead.charmOrigin ? { ...dead.charmOrigin } : null,
           p = this.safe(this.hero.x + 40, this.hero.y),
           u = this.unit(dead.type, p.x, p.y, dead.petFamily);
+        if (charmOrigin) {
+          u.charmOrigin = charmOrigin;
+          u.name = charmOrigin.typeName;
+          u.icon = dead.icon;
+        }
         this.clearPartyCharge(dead);
         this.clearCompanionJudgment(dead);
         this._partyChargeRecovery?.delete(dead);
@@ -2684,7 +2690,9 @@
           this.say('Boss pets stay in your collection. Rest them or recover them at a Barracks.');
           return false;
         }
-        this.s.party.splice(i, 1);
+        const dismissed = this.s.party.splice(i, 1)[0];
+        if (dismissed.charmOrigin && this.s.charmCaptures)
+          delete this.s.charmCaptures[dismissed.id];
         return true;
       }
       squadDefaultDoctrine() {

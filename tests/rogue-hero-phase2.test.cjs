@@ -200,6 +200,19 @@ try {
   assert.doesNotThrow(() => Campaign.validate(savedCapture));
   const restoredCapture = Campaign.restore(savedCapture, () => 0.9);
   assert.deepEqual(restoredCapture.s.party[0].charmOrigin, capturedAlly.charmOrigin);
+  // Identity survives ordinary native recovery, including fallen reserve status.
+  capturedAlly.hp = 0;
+  capturedAlly.active = false;
+  const fallSnapshot = legal.snapshot();
+  assert.equal(fallSnapshot.party[0].charmOrigin.typeId, 'enemy:goblin:melee');
+  // The Captain provides ordinary care: Phase 4 will extend species combat AI,
+  // not discard the source identity during standard healing/recovery.
+  capturedAlly.active = true;
+  capturedAlly.hp = Math.max(1, capturedAlly.maxHp);
+  capturedAlly.active = false;
+  assert(legal.dismissCompanion(capturedAlly.id), 'resting capture dismisses normally');
+  assert.equal(legal.s.charmCaptures[capturedAlly.id], undefined);
+  assert.doesNotThrow(() => Campaign.validate(legal.snapshot()));
   const tampered = structuredClone(savedCapture);
   tampered.party[0].charmOrigin.typeId = 'enemy:goblin:ranged';
   assert.throws(() => Campaign.validate(tampered), /Invalid charm provenance/);

@@ -806,7 +806,7 @@
             canonicalName = speciesName + (variant ? ' ' + variant : '');
           if (!speciesName || a.role !== u.type || a.typeId !== subtype ||
             a.typeName !== canonicalName ||
-            !/^enemy-[1-9]\\d*$/.test(a.sourceEnemyId) ||
+            !/^enemy-[1-9]\d*$/.test(a.sourceEnemyId) ||
             !Object.hasOwn(s.zones, a.sourceZone) ||
             capturedSources.has(a.sourceEnemyId) ||
             s.zones[a.sourceZone].enemies.some((e) => e.id === a.sourceEnemyId) ||
