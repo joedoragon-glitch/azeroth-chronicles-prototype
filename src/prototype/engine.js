@@ -5559,6 +5559,8 @@
             anchor: { x: e.x, y: e.y },
             thinkRemaining: R.tacticalFoundation.thinkingSeconds,
           });
+          if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+          this._tacticalRogueNext.set(e.id, this.s.time + R.tacticalFoundation.moveCooldownSeconds);
           e.path = [];
           e.routeAge = 0;
           e.noProgress = 0;
