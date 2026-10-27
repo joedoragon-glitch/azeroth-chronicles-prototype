@@ -47,7 +47,8 @@ The 26 October read-only design specification is the working UX contract.
 - [x] Opaque, distinct notice palettes for routine, urgent, milestone, warning, story and feedback—including secondary text. All ten declared foreground/background combinations exceed 7:1 luminance contrast on their solid backgrounds.
 - [x] Preserve reduced-motion behavior, important alert roles, Menu access and no-touch-overlap for clickable milestone cards.
 - [x] New dedicated `tests/notification-refinement.test.cjs` checks contrast ratios, precedence, EN/ES production shell, and source safeguards.
-- [ ] Focused CI completion, visual layout inspection on actual iPhone/Android, and Phase 4 integrated browser acceptance.
+- [x] Focused CI passed 31 relevant tests, including notification contrast, bilingual shell and priority behavior; reproducible site build and syntax passed ([run #40467597851](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40467597851)).
+- [ ] Visual layout inspection on actual iPhone/Android and Phase 4 integrated browser acceptance.
 
 ## Phase 4 — Integrated acceptance (not started)
 
