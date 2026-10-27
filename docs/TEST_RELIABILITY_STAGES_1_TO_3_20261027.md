@@ -87,10 +87,67 @@ Record results as **passed / failed / not run / needs further verification** wit
 
 Open this PR and read this document; recheck `main`, PR branch head and CI. Then inspect changed `focused-ci.cjs`, policy tests, selected fixture helpers and original tests. Continue on **this PR**, not a parallel test map. Read audit notes at document end or PR comments for exact remaining work. Do not interpret this document as approval to merge, deploy, alter gameplay or run the manual full suite. Never use a previous task approval for a future stage.
 
-## Audit results / status
+## Stage 1–3 implementation and independent post-implementation audit
 
-- Stage 1: pending implementation.
-- Stage 2: pending implementation.
-- Stage 3: pending implementation.
-- Final review: pending; exact results and residual risks to be written here after implementation.
-- Stage 4 / 5: deferred until owner reassessment.
+**Review date:** 27 October 2026. **Implementation branch:** `test/reliability-stages-1-3-20261027`. The stage-1-to-3 implementation was reviewed separately from writing its code, including failure logs, selected original suites, modified-source inventory, CI policy and deployment behavior. No gameplay/runtime production module, balance file, v4 save field, art asset, asset manifest, PWA release file or player-facing interface was authored by this PR.
+
+### Stage 1 — implemented; reporting gates passed
+
+- `.github/scripts/focused-ci-report.cjs` adds a compact report containing exact tested checkout SHA, comparison base, changed paths, selected suites, uncovered changes, deferred browser acceptance, Node/platform, timing, per-check exit/signal, and the first useful failure message. The original full stdout/stderr is still replayed to the Actions log. Unknown root causes remain `unexplained`, never automatically "outdated."
+- `.github/scripts/focused-ci.cjs` now reports each failing suite explicitly and fails if any check fails; the existing Node/syntax and focused test paths remain the execution owners.
+- `.github/workflows/focused-deploy.yml` archives `azeroth-focused-ci-report.json` as a 30-day Actions artifact even after failing checks; CI job summaries remain readable without a file download. The publisher still runs **only on successful main pushes**, never on this draft PR.
+- `tests/focused-ci-report.test.cjs` checks passing/failing records, exact provenance, real failure-text extraction, missing regressions, uncovered source/fixture rejection, and deferred browser status. The deliberately failing coverage probe is caught within the test; no real gameplay test is waived.
+
+**Caveat:** automatic classification is deliberately not attempted. Capturing test output with synchronous child pipes can delay display until that individual test ends and imposes a bounded 32 MiB per-stream buffer. Original traces remain available; this is not a zero-cost stream-telemetry framework.
+
+### Stage 2 — implemented; native fixture gates passed
+
+- New `tests/helpers/native-fixture-contracts.cjs` enforces legal Expedition support maxima, finite/unblocked native LOS geometry and active-actor membership/level before basic projectile testing. Its arrow helper compares enemy HP **after engagement at projectile release**, preventing pre-engagement HP scaling from posing as damage.
+- The original `class-passives.test.cjs` uses legal current Expedition maxima rather than inventing rank 5.
+- The original `ranger-max-range-goblin-response.test.cjs` exercises native level-4 arrows, legal Vale 350/400/440/449/450-unit lanes, and the real first-kill field admission helper. Its anchored-hit scenario was revised only after checking the newly merged design in [PR #521](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/521): **fresh damage while already anchored** opens tactical thinking with the existing cooldown and does not force an immediate chase. Pre-arrival damage, unhit holds, summons, captains and ringleaders remain protected, including the original and newly authored negative controls.
+- `tests/native-fixture-contracts.test.cjs` proves explicit failures on illegal Expedition names, invalid coordinates, fake targets and incorrect Ranger level, plus a real 450-unit arrow hit.
+
+**Limitation:** the selected fixture work is representative and contract-based, not a claim that every historical game-state fixture in this large repository is now native.
+
+### Stage 3 — implemented; selector gates passed
+
+- The existing `focused-ci.cjs` source-to-original-test mapping now protects class-passive and cooldown regressions when `hero-combat`, `combat`, `engine`, `rules`, `save`, `progression` or `boss-combat` change. These paths were reconciled with actual [PR #509](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/509) file inventory.
+- Native Ranger range and newly merged Rogue-under-fire integrity cases are selected on their real combat/engine dependencies. Critically, a later source-only change cannot drop the `rogue-anchor-under-fire-integrity.test.cjs` original merely because that suite was added in a different PR.
+- Sprite-scope evidence follows its actual SHA-input files (`visuals`, `world`, `rules`, `data`, `sprites`, `renderer`) and its owning audit script. `archive-reference.test.cjs` follows corresponding rule/reference changes.
+- Previously uncovered relevant source or shared fixture-helper changes are **hard coverage errors**; an architecture fallback is not behavioral coverage. A changed unapproved `*-browser.test.cjs` is explicitly listed as **manual acceptance deferred**, never claimed as having run.
+- `tests/ci-focus-policy.test.cjs` verifies those paths, unavailable mapped files, opt-in full suites and current focused workflow.
+
+**Limitation:** dependency mapping is still manually curated. CSS/visual, all audio/environment integrations and other future code may require additional mappings when their owning changes are authorized. No general-purpose static dependency graph was introduced.
+
+### Actual focused evidence and failure forensics
+
+| Run | Exact evidence | Disposition |
+| --- | --- | --- |
+| [40463668569](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40463668569) | Branch `634c7bf0`; synthetic tested tree `113ced91`; 6 selected suite files and reproducible build | **Pass** (early narrower candidate) |
+| [40463982437](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40463982437) | Branch `e9faff7f`; tested tree `6e2179a5`; selected Ranger suite failed `real long-range hit breaks inert anchor` | **Failed honestly**; obsolete anchor ordering, not waived |
+| [40464635599](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40464635599) | Branch `76c721d9`; synthetic tree `21440f0d`; 27 selected suite files and reproducible build | **Pass** after #521 contract reconciliation |
+| [40465015714](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40465015714) | Branch `8dde4c63`; synthetic tree `92cc92ba`; 27 selected suite files and reproducible build | **Pass**, includes native first-kill admission and fixture-helper coverage hard gate |
+
+An important concurrent development event: [merged PR #521](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/521), merge commit `7f15b347b9f5b576e006d00264663835c15dbea1`, corrected #516's unconditional Ranger-hit anchor cancellation. The early Ranger test recorded damage *before* inventing the anchor and still expected immediate pursuit. GitHub ran it against the accepted merged behavior and it failed as it should. We examined the specific source diff and reviewed new original `rogue-anchor-under-fire-integrity` regression before changing the older fixture. Its **positive and negative behavioral contracts were strengthened**, not deleted. This is exactly the kind of drift the project aims to prevent.
+
+**Final integration step:** merge the accepted `main` commit `7f15b347` **into this draft feature branch only**, preserving all #521 native source/test files; this is *not* a merge of this PR into production. Reverify the post-integration feature checkout with focused CI. Record the exact resulting final-run ID and pass/fail in the PR Conversation so a later chat can recover it without reproducing all checks.
+
+### Code-review safety findings
+
+- **No author-created production gameplay changes:** PR's own patch comprises CI/test helpers, selector, workflow artifact step, test modifications and this document. Check the GitHub PR changed-file list, not a transient merge tree that also contains upstream accepted gameplay.
+- **No suppressed guards:** missing files and unmapped relevant sources fail closed; deliberately incorrect fixture setup fails; original cooldown and sprite contracts retain their independent assertions; new Rogue negative checks remain in `main`.
+- **No full-suite violation:** automatic focused workflow only. The comprehensive manual game/Chromium/WebKit workflow was neither changed nor dispatched. Browser/device/Pixi certification has **not** been performed.
+- **No production release:** draft PR CI publisher skipped; successful focused build is not a Pages release. The final branch can be reviewed and tested without changing `main`.
+
+### Remaining risks and deferrals
+
+1. Changes to `main` after the tested merge SHA require fresh applicability review. A green synthetic PR check covers its *exact checkout only*.
+2. The test selector is not a complete semantic dependency system. New modules or fixtures require reviewed mappings; some historical tests still use artificial state outside the bounded cases repaired here.
+3. Visual-browser lifecycle faults (Pixi #460), device acceptance, and earlier source-fingerprint evidence reviews remain independent feature issues; this work improves diagnostics but does not resolve them.
+4. No dedicated whole-repository formatter run, full regression run, browser matrix or physical-device test was claimed. Relevant syntax and selected regression checks plus offline-ready reproducible build were checked by the referenced Actions runs.
+5. **Stages 4 and 5 have not been implemented.** Reassess their necessity and specific acceptance conditions with the owner **after** the Stage 1–3 audit and final exact-head evidence.
+
+### Independent audit decision
+
+**Implementation scope and preservation: PASS on reviewed changes. Original-incident regression and native fixture gates: PASS on the latest pre-integration Actions run. Exact final integration head: subject to the subsequent focused run linked in PR #522.** Leave the PR draft; do not merge or deploy before an explicit owner decision.
+
