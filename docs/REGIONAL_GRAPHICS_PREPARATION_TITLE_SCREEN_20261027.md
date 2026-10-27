@@ -48,6 +48,20 @@ Neither `PIXI.Assets.load()` nor `PIXI.Texture.from()` proves a texture was uplo
 - If justified, prototype small **static-only** spatial chunks and budgeted nearby precomputation. Keep roads/terrain visual parity; animate water/atmosphere separately; leave projectiles/telegraphs and all mutable gameplay off cached surfaces.
 - Compare with the existing one-window approach on phone and low-end Chromebook. **Chunked terrain is conditional, not an unconditional prerequisite.** A measured decision to retain the current background is a valid stage outcome.
 
+#### Stage 3 implemented prototype — 27 October 2026
+
+A measured-decision candidate is now present on this draft branch, **without switching to region-wide tiles or a second GPU atlas**:
+
+- The existing 220-CSS-unit Pixi background canvas, its GPU texture source, authored terrain/roads/architecture painter and 132-CSS-unit camera rebase threshold remain authoritative.
+- With `requestIdleCallback` available and the player safely outdoors away from nearby living enemies/projectiles, camera travel past about 73 CSS pixels requests **one optional look-ahead render**. An independent painter reads the **already-live zone** using a presentation-only camera-anchor offset; it never moves the hero, creates another zone, consumes gameplay RNG or changes persistent state.
+- An opt-in second **CPU canvas only** holds that adjacent background. Two CPU background windows combined must fit **32 MiB estimated RGBA**; otherwise the feature does nothing. Its painter explicitly disables a second outdoor ground cache. No additional Pixi/GPU background texture is retained.
+- When the existing camera crosses its rebase threshold, a validated matching staged canvas is copied into the **original** backdrop and its existing GPU texture source is marked updated. Stale/missing staged windows use the original `drawBackground()` immediately, protecting continuity, hero motion, quality/zoom changes and scene correctness.
+- Cancels pending idle callbacks and releases extra CPU canvas memory on renderer teardown/viewport/density rebuild. Checks campaign identity, zone, renderer density, camera zoom, optimization state and pixel coverage before promotion. Hidden PWA surfaces, arenas, dungeon/supply/side-dungeon interiors and nearby combat skip optional work.
+- Added diagnostics `backgroundLookaheadPaints`, `backgroundLookaheadPromotions`, `backgroundLookaheadMisses`, `backgroundLookaheadFailures`, `backgroundLookaheadBytes`, `backgroundLookaheadPaintMs`, `backgroundLookaheadPromoteMs`, `maxBackgroundLookaheadPromoteMs`. These are **CPU synchrony/estimated CPU bitmap counters**, not GPU presentation or VRAM measurements.
+- Focused `tests/pixi-fidelity.test.cjs` covers advance scheduling, retaining the active backdrop until crossing, staging budget, disabling the duplicate ground cache, copy/update of the existing GPU source, fallback when no staged window exists, combat deferral and release. The full **focused validation and offline PWA build passed** at [GitHub Actions #40471830540](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40471830540). This was not the broad live-browser matrix.
+
+**Open acceptance question:** idle terrain painting still runs synchronously on the browser main thread, even when scheduled during an idle callback, so it can *move* a hitch rather than remove it. A second CPU window can also increase memory pressure. Collect matched p95/p99 frame costs, stutter locations, peak actual device memory, and exact screenshot parity on iPhone and Chromebook (different zoom/DPR, combat, town→wilderness, region return, dungeon entries, day/night/water) before calling it faster or replacing the moving-window strategy. If the tradeoff is poor, keep the original renderer or investigate smaller/static spatial chunks and a resumable terrain work queue; do not ship unmeasured performance claims.
+
 ### Stage 4 — main title screen and save management
 
 - Fresh PWA open/page reload shows a genuine bilingual title screen: Continue, New Game, Saved Games & Backups, Settings, Help & Credits. Reuse existing management and recovery pathways.
