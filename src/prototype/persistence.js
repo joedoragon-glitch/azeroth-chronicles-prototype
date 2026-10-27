@@ -322,6 +322,126 @@
       },
     };
   }
+  // Parallel class x mode save slots. The original v4 per-mode primary and
+  // checkpoints remain completely untouched. A legacy save can be read under
+  // its own class, then is copied on the next successful class-specific save.
+  // Opt-in while Rogue is in preview; existing production create() is unchanged.
+  function createClassSlots(options) {
+    const { storage, Campaign } = options;
+    const legacy = create(options);
+    const modes = ['normal', 'nightmare', 'developer', 'arena'];
+    const adapters = new Map();
+    const known = (heroClass) => typeof heroClass === 'string' &&
+      Object.hasOwn(Campaign.classes, heroClass);
+    const primaryKey = (mode, heroClass) => saveKey(mode) + '-' + heroClass;
+    const mappedStorage = (heroClass) => {
+      const remap = (key) => {
+        const match = /^azeroth-v4-(normal|nightmare|developer|arena)(-checkpoints-v1|-unreadable-backup|-latest-unreadable-backup)?$/.exec(key);
+        return match ? primaryKey(match[1], heroClass) + (match[2] || '') : key;
+      };
+      return {
+        getItem(key) { return storage.getItem(remap(key)); },
+        setItem(key, value) { return storage.setItem(remap(key), value); },
+        removeItem(key) { return storage.removeItem?.(remap(key)); },
+      };
+    };
+    function adapter(heroClass) {
+      if (!known(heroClass)) throw Error('Unknown save class');
+      if (!adapters.has(heroClass))
+        adapters.set(heroClass, create({ ...options, storage: mappedStorage(heroClass) }));
+      return adapters.get(heroClass);
+    }
+    function legacyClass(mode) {
+      try {
+        const value = JSON.parse(storage.getItem(saveKey(mode)) || 'null');
+        return value?.mode === mode && known(value.hero?.class)
+          ? value.hero.class : null;
+      } catch (_) { return null; }
+    }
+    function hasClassSlot(mode, heroClass) {
+      if (!modes.includes(mode) || !known(heroClass)) return false;
+      try { return !!storage.getItem(primaryKey(mode, heroClass)); }
+      catch (_) { return false; }
+    }
+    function via(mode, heroClass) {
+      if (!modes.includes(mode) || !known(heroClass)) throw Error('Unknown save slot');
+      return hasClassSlot(mode, heroClass) || legacyClass(mode) !== heroClass
+        ? adapter(heroClass) : legacy;
+    }
+    function listSaves(modeSet = modes) {
+      const found = [];
+      for (const mode of modeSet) {
+        if (!modes.includes(mode)) continue;
+        for (const heroClass of Object.keys(Campaign.classes))
+          if (hasClassSlot(mode, heroClass) ||
+              (!hasClassSlot(mode, heroClass) && legacyClass(mode) === heroClass))
+            found.push({ mode, heroClass,
+              source: hasClassSlot(mode, heroClass) ? 'class' : 'legacy' });
+      }
+      return found;
+    }
+    function load(mode, heroClass) {
+      if (!heroClass) return legacy.load(mode);
+      const candidate = via(mode, heroClass).load(mode);
+      // Never let forged/wrong-class bytes masquerade as another class slot.
+      return candidate?.hero.class === heroClass ? candidate : null;
+    }
+    function loadPreferred(mode, heroClass) {
+      if (heroClass && listSaves([mode]).some((x) => x.heroClass === heroClass)) {
+        const selected = load(mode, heroClass);
+        if (selected) return selected;
+        return null; // A broken preferred primary must not silently switch runs.
+      }
+      for (const entry of listSaves([mode])) {
+        const candidate = load(mode, entry.heroClass);
+        if (candidate) return candidate;
+      }
+      return null;
+    }
+    return {
+      load, loadPreferred, listSaves,
+      save(game, profile) { return adapter(game.hero.class).save(game, profile); },
+      writeCandidate(game) { return adapter(game.hero.class).writeCandidate(game); },
+      exists(mode, heroClass) {
+        return heroClass
+          ? hasClassSlot(mode, heroClass) || legacyClass(mode) === heroClass
+          : listSaves([mode]).length > 0 || legacy.exists(mode);
+      },
+      loadFailed(mode, heroClass) {
+        return heroClass ? via(mode, heroClass).loadFailed(mode) : legacy.loadFailed(mode);
+      },
+      conflicted(mode, heroClass) {
+        return heroClass ? via(mode, heroClass).conflicted(mode) : legacy.conflicted(mode);
+      },
+      original(mode, heroClass) {
+        return heroClass ? via(mode, heroClass).original(mode) : legacy.original(mode);
+      },
+      recoveryOptions(mode, heroClass) {
+        return heroClass ? via(mode, heroClass).recoveryOptions(mode)
+          .filter((item) => item.heroClass === heroClass)
+          : legacy.recoveryOptions(mode);
+      },
+      recover(mode, id, heroClass) {
+        if (!heroClass) return legacy.recover(mode, id);
+        const selected = via(mode, heroClass);
+        const candidate = selected.recover(mode, id);
+        if (candidate.hero.class !== heroClass) throw Error('Mismatched recovery class');
+        // Legacy recovery writes its original v4 slot, not the new class slot.
+        return candidate;
+      },
+      loadProfile(defaults) {
+        const profile = legacy.loadProfile(defaults);
+        try {
+          const raw = JSON.parse(storage.getItem(profileKey) || 'null');
+          if (known(raw?.activeClass)) profile.activeClass = raw.activeClass;
+        } catch (_) {}
+        return profile;
+      },
+      saveProfile: legacy.saveProfile,
+      migrateLegacy: legacy.migrateLegacy,
+      saveKey: primaryKey,
+    };
+  }
   // One modern browser/PWA window owns campaign writes for the whole origin.
   // An unfulfilled request is non-writing; closing/crashing releases the lock.
   // File-based test/development adapters retain optimistic byte checks above.
@@ -376,7 +496,8 @@
   // device-local in-progress marker so the NEXT launch can relocate a valid
   // campaign save safely. The marker never contains a save or replaces one.
   const recoveryMarkerKey = 'azeroth-active-play-recovery-v1';
-  function createRestartGuard({ storage, Campaign, canWrite = () => true }) {
+  function createRestartGuard({ storage, Campaign, canWrite = () => true,
+    classSlots = false }) {
     function read() {
       try {
         const value = JSON.parse(storage?.getItem(recoveryMarkerKey) || 'null');
@@ -393,7 +514,8 @@
         // The live campaign can advance between five-second autosaves.
         // Anchor recovery to the checkpoint actually written to storage,
         // not newer game time/IDs which the next launch cannot restore.
-        const raw = storage?.getItem(saveKey(game.s.mode));
+        const raw = storage?.getItem(saveKey(game.s.mode) +
+          (classSlots ? '-' + game.hero.class : ''));
         if (!raw) return false;
         const saved = JSON.parse(raw);
         if (
@@ -485,6 +607,7 @@
   }
   const api = {
     create,
+    createClassSlots,
     createWriterGuard,
     createRestartGuard,
     profileKey,
