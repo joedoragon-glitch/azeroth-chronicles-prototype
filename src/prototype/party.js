@@ -1460,7 +1460,7 @@
         return entry && entry.until > this.s.time ? entry : null;
       }
       applyRogueSongBoon(u, family, form) {
-        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending'].includes(family) ||
+        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
           this.hero.class !== 'rogue' || !this.activeLivingParty().includes(u))
           return false;
         let state = roguePerformanceBoons.get(u);
@@ -1484,6 +1484,10 @@
             Math.min(0.12, form.incomingHealing || 0)),
           remainingHeal: Math.max(previous?.remainingHeal || 0,
             Math.min(u.maxHp * 0.05, u.maxHp * (form.healFraction || 0))),
+          criticalChance: Math.max(previous?.criticalChance || 0,
+            Math.min(0.06, form.criticalChance || 0)),
+          specialDamage: Math.max(previous?.specialDamage || 0,
+            Math.min(0.06, form.specialDamage || 0)),
         };
         return true;
       }
@@ -1508,6 +1512,9 @@
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+      }
+      rogueCompanionSpecialDamage(u, amount) {
+        return amount * (1 + (this.rogueSongBoon(u, 'finale')?.specialDamage || 0));
       }
       companionAttackDamage(u) {
         return (
@@ -1575,7 +1582,8 @@
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
           if (!this.damage(
-            target, this.troopCriticalDamage(criticalReceipt, base * cfg.multiplier), u.id,
+            target, this.troopCriticalDamage(criticalReceipt,
+              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)), u.id,
           )) return false;
           const veteran = R.companionSkills.veteran;
           if (
@@ -1632,7 +1640,8 @@
             dx: (target.x - u.x) / shot,
             dy: (target.y - u.y) / shot,
             target: target.id,
-            damage: this.troopCriticalDamage(criticalReceipt, base),
+            damage: this.troopCriticalDamage(criticalReceipt,
+              this.rogueCompanionSpecialDamage(u, base)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 520,
@@ -1738,7 +1747,8 @@
           return false;
         const criticalReceipt = this.troopCriticalRelease(u, 'second');
         const base = this.companionAttackDamage(u),
-          damage = this.troopCriticalDamage(criticalReceipt, base * def.multiplier),
+          damage = this.troopCriticalDamage(criticalReceipt,
+            this.rogueCompanionSpecialDamage(u, base * def.multiplier)),
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
         if (u.type === 'archer') {

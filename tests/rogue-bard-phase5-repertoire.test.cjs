@@ -37,6 +37,7 @@ try {
   g.hero.skills[6] = 1;
   g.hero.skills[2] = 1;
   g.hero.skills[3] = 1;
+  g.hero.skills[7] = 1;
   const card2 = Reference.describe(g,2);
   assert(card2 && card2.tap.metrics.some((m)=>m.key==='slow'));
   assert(Reference.describe(g,3)?.tap.metrics.some((m)=>m.key==='interruptDebt'));
@@ -124,6 +125,19 @@ try {
   g.advanceRogueMending(0.5);
   assert(unit.hp > beforeMend);
   assert(!JSON.stringify(g.snapshot()).includes('remainingHeal'));
+  // Skill 8: actual AoE blast and bounded per-companion Finale; the bonus
+  // applies to the native critical chance source without changing the Rogue's.
+  g.hero.cd[7] = 0;
+  const chanceBefore = g.criticalPartyChance(unit.id), heroChance = g.criticalPartyChance('hero');
+  const hitBefore = foe.hp;
+  assert.equal(g.cast(8,foe.id),true);
+  assert(foe.hp < hitBefore);
+  assert.equal(g.criticalPartyChance(unit.id)-chanceBefore,0.04);
+  assert.equal(g.criticalPartyChance('hero'),heroChance);
+  assert(g.rogueCompanionSpecialDamage(unit,100) > 100);
+  g.hero.cd[7] = 0;
+  assert.equal(g.cast(8,foe.id,true),true);
+  assert(g.rogueSongBoon(unit,'finale')?.criticalChance <= 0.06);
   // Empty legal hostile range never yields a free party boon or consumes CD.
   g.zone().enemies = [];
   g.hero.cd[1]=0;

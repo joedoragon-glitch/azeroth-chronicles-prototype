@@ -1274,6 +1274,18 @@
         this.s.heroTarget = primary.id;
         for (const e of enemies) {
           if (slot === 2) this.applySlow(e, form.slow);
+          if (slot === 8) {
+            const scale = 1 + 0.15 * (rank - 1);
+            this.damage(e, (this.power() + 12) * form.damage * scale, 'hero',
+              { area: true });
+            if (form.silence && e.hp > 0 && e.type !== 'boss' &&
+                !e.captain && !e.roomCaptain && !(e.immune > 0)) {
+              const old = rogueEnemySilences.get(e);
+              rogueEnemySilences.set(e, { zone: this.zoneId,
+                until: Math.max(old?.zone === this.zoneId ? old.until : 0,
+                  this.s.time + form.silence) });
+            }
+          }
           if (slot === 4) {
             const prev = rogueEnemyWithers.get(e);
             const still = prev?.zone === this.zoneId && prev.until > this.s.time;
@@ -1325,7 +1337,7 @@
         }
         for (const u of allies)
           this.applyRogueSongBoon(u,
-            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : 'borrowedTime', form);
+            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', form);
         this.event('rogueBellPerformance', {
           actor: 'hero', class: 'rogue', slot,
           form: charged ? 'charged' : 'tap',

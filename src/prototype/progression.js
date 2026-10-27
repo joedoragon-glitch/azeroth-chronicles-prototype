@@ -117,7 +117,11 @@
         if (source === 'hero') return earned;
         if (!this.s.party.some((u) => u.id === source &&
             ['soldier', 'archer', 'pet'].includes(u.type))) return 0;
-        return earned * this.expeditionSupportFraction('sharedTraining');
+        const shared = earned * this.expeditionSupportFraction('sharedTraining');
+        const unit = this.s.party.find((u) => u.id === source);
+        // An in-range Rogue Finale can boost each actor's own future
+        // critical probability, never the unrelated hero/world streams.
+        return shared + (this.rogueSongBoon?.(unit, 'finale')?.criticalChance || 0);
       }
       criticalPartyChance(source = 'hero') {
         return Math.max(0, Math.min(1, 0.10 + this.criticalPartyBonus(source)));

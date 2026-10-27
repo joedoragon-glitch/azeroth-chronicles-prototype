@@ -178,6 +178,10 @@
         'Slow nearby hostiles and quicken companions in the same area',
         'Can\'t Dance: wider Slow and stronger allied movement/recovery',
         'Phase 5 prototype name; subject to owner review.'],
+      8: ['Bad Bell Day', 'Enemy blast / allied Finale',
+        'Blast nearby foes while boosting allied critical opportunity and specials',
+        'Last Laugh: bigger blast and a brief non-boss hush; stronger allied Finale',
+        'One later Phase 6 Rogue critical receipt per committed performance.'],
       4: ['Sour Note', 'Enemy wither / allied Mending',
         'Afflict nearby foes with timed damage and reduced incoming healing; mend allies',
         'Rotten Chorus: stronger wither, small healing budget and heal-received boon',
@@ -224,6 +228,12 @@
           { key: 'move', label: 'Companion movement', value: x.move * 100, unit: '%' },
           { key: 'recovery', label: 'Companion cooldown recovery',
             value: x.recovery * 100, unit: '%' },
+        );
+        if (slot === 8) metrics.push(
+          { key: 'damage', label: 'Enemy damage coefficient', value: x.damage, unit: 'x' },
+          { key: 'criticalChance', label: 'Companion critical chance', value: x.criticalChance * 100, unit: 'pp' },
+          { key: 'specialDamage', label: 'Companion special damage', value: x.specialDamage * 100, unit: '%' },
+          { key: 'silence', label: 'Eligible non-boss hush', value: x.silence || 0, unit: 's' },
         );
         if (slot === 4) metrics.push(
           { key: 'dot', label: 'Enemy wither budget', value: x.dotFraction * 100, unit: '% HP, capped' },
