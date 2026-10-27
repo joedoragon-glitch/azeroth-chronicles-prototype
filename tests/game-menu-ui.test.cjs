@@ -503,6 +503,9 @@ console.log(
     assert(button && !button.disabled, 'Diagnostics selection available: ' + label);
     button.click();
   };
+  assert.equal(playtest.elements.get('title-screen').hidden, false);
+  playtest.elements.get('title-new').click();
+  click('New Combat Diagnostics run');
   assert.equal(playtest.elements.get('modal-title').textContent, 'Choose your language');
   click('English');
   assert.equal(playtest.elements.get('modal-title').textContent,

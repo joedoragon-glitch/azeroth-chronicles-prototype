@@ -279,6 +279,8 @@ for (const language of ['en', 'es']) {
     assert(button && !button.disabled, label + ' missing from ' + title());
     button.click();
   };
+  assert.equal(app.elements.get('title-continue').disabled, true);
+  app.elements.get('title-saves').click();
   click(language === 'es' ? 'Intentar recuperar' : 'Try recovery');
   click(language === 'es' ? 'Punto de recuperación' : 'Checkpoint');
   assert.equal(title(), language === 'es' ? 'Revisar recuperación' : 'Review recovery');
@@ -295,13 +297,18 @@ for (const language of ['en', 'es']) {
   assert.equal(app.scope.Prototype.game.hero.class, 'mage');
   assert(app.elements.get('modal').hidden, 'Accepted recovery resumes the real game shell');
   assert.equal(f.values.get(P.saveKey('normal') + '-unreadable-backup'), '{broken');
-  assert(app.scope.Prototype.save());
+  assert.equal(app.scope.Prototype.save(), false, 'title remains inactive after recovery');
+  app.elements.get('title-continue').click();
+  app.frame(0);
+  assert(app.scope.Prototype.save(), 'Continue allows guarded saving after recovery');
 }
 // A genuinely missing primary has a recovery entry point and no empty original export.
 {
   const f = fixture();
   f.values.delete(P.saveKey('normal'));
   const app = shell('en', 'mage', { storage: f.values, seedSave: false });
+  app.elements.get('title-saves').click();
+  app.elements.get('modal-actions').children.find((b) => b.textContent === 'Try recovery').click();
   assert.equal(app.elements.get('modal-title').textContent, 'Saved run could not be opened');
   assert(
     app.elements.get('modal-actions').children.find((b) => b.textContent === 'Export original save')
