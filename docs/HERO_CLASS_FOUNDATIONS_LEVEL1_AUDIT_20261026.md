@@ -1,38 +1,42 @@
 # Hero class foundations: historical audit and level-1 design gate
 **Date:** 26 October 2026  
 **Status:** DRAFT / owner-specified initial passive concepts and level-up rates for all three classes; design documented, gameplay not implemented, still subject to integration and balance tests  
-**Owner decision (updated):** Preserve the original starting stat table and legacy mechanics. Use **one automatic, innate, level-scaling passive per class**: Paladin durability; Ranger speed + cooldown; Mage Power. **All passives grant zero at level 1 and begin on the level-1-to-2 transition.** Protect existing hero skills, their values, training and progression.
+**Owner decision (latest):** Preserve existing base stats, gear, and skill/training systems. Add one class-bound passive per hero, **active immediately from level 1**, with another equal increment for each subsequent level. Paladin gains HP and Armor effectiveness; Ranger gains movement speed and cooldown reduction; Mage gains Power alone. Earlier level-2-start guidance is superseded.
 
-## Finalized starting convention and three passive concepts — owner clarification, October 26
+## Owner-approved starting convention for passive DESIGN — active at level 1
 
-**Definitive rule across all three hero classes:** **Level 1 has NO passive bonuses.** Each passive begins granting incremental bonuses only when the hero advances **from level 1 to level 2**. There are **`max(0, level - 1)`** earned increments at any hero level. This overrides all earlier speculation about Mage receiving Power at level 1 or a possible immediately active Paladin/Ranger effect.
+**LATEST CLARIFICATION: All three class passives apply an initial bonus from the very start, at level 1.** Every subsequent level adds another increment. Hero level itself counts the number of passive increments; natural +25 HP growth still counts actual level-ups using `level - 1`. This supersedes an earlier discussion proposing zero passive bonus until level 2.
 
-| Class | Owner-selected passive increments **per actual level-up** | At L1 | At L15 (14 level-ups) |
+| Class | Bonus per level, **including level 1** | Level 1 total passive | Level 15 total passive |
 | --- | --- | --- | --- |
-| Paladin — Fortitude | +5 max HP; +0.01 Paladin-specific Armor-effectiveness coefficient | +0 HP; coefficient **0.35** | +70 HP; coefficient **0.49** |
-| Ranger — Agility | +3 movement speed; +1 percentage point cooldown reduction | +0 speed; +0% innate CDR | +42 speed; +14 percentage points innate CDR |
-| Mage — Arcane Power | **+2 Power only**; no CDR, HP or speed | +0 Power; retains **22 starting Power** | **+28 Power**, i.e., base + passive = **50 Power** before gear/training |
+| Paladin — Fortitude | +5 maximum HP; +0.01 Armor effectiveness per Armor point | **+5 HP**, 0.36 coefficient (0.35 default + 0.01) | **+75 HP**, 0.50 coefficient |
+| Ranger — Agility | +3 movement speed; +1 percentage point cooldown reduction | **+3 speed**, **1% passive CDR** | **+45 speed**, **15% passive CDR** |
+| Mage — Arcane Power | +2 Power; **no** cooldown/HP/speed bonus | **+2 Power**, resulting base+passive Power 24 | **+30 Power**, resulting base+passive Power 52 |
 
-**Corrected Mage convention:** the owner initially estimated +30 Mage Power by level 15, but explicitly clarified that no class receives any passive bonus at level 1. Thus `2 * (15 - 1) = 28`; +30 is first reached at **level 16**. Do **not** add an L1 bonus to force the old estimate. Equivalently, at L2 Mage receives +2; L5 +8; L10 +18; L15 +28; L18 +34.
-
-**Source-of-truth conceptual calculation** (design, not implementation):
+**One consistent derived-value model, not yet implemented:**
 
 ```js
-const levelUps = Math.max(0, hero.level - 1);
-const paladinPassiveHp = hero.class === 'paladin' ? 5 * levelUps : 0;
-const paladinArmorEffectiveness =
-  0.35 + (hero.class === 'paladin' ? 0.01 * levelUps : 0);
-const rangerPassiveSpeed = hero.class === 'ranger' ? 3 * levelUps : 0;
-const rangerPassiveCooldownReduction =
-  hero.class === 'ranger' ? 0.01 * levelUps : 0;
-const magePassivePower = hero.class === 'mage' ? 2 * levelUps : 0;
+const ticks = hero.level; // valid hero levels start at 1
+const hpPassive = hero.class === 'paladin' ? 5 * ticks : 0;
+const armorEffectiveness =
+  0.35 + (hero.class === 'paladin' ? 0.01 * ticks : 0);
+const speedPassive = hero.class === 'ranger' ? 3 * ticks : 0;
+const cooldownPassive = hero.class === 'ranger' ? 0.01 * ticks : 0;
+const powerPassive = hero.class === 'mage' ? 2 * ticks : 0;
 ```
 
-All figures augment existing shared systems, without adding a skill rank, changing any item-tier numbers, or altering base class stats. Armor damage must keep **one shared formula** that reads a target-specific effective Armor coefficient. The Mage Power passive must feed the **existing Power calculation**; no Mage cooldown reduction is authorized. Ranger cooldown stacking/category/cap, save migration and inheritance remain verification tasks; these do **not** reopen the owner-decided level-1 rule.
+| Hero level | Paladin bonus HP / coefficient | Ranger speed bonus / CDR | Mage Power bonus |
+| --- | --- | --- | --- |
+| 1 | +5 / 0.36 | +3 / 1% | +2 |
+| 2 | +10 / 0.37 | +6 / 2% | +4 |
+| 5 | +25 / 0.40 | +15 / 5% | +10 |
+| 10 | +50 / 0.45 | +30 / 10% | +20 |
+| 15 | +75 / 0.50 | +45 / 15% | +30 |
+| 18 | +90 / 0.53 | +54 / 18% | +36 |
 
-**Stage 1 design definition is complete.** This PR still contains only documentation. Do not implement, merge or deploy until integration details are resolved and a gameplay patch is specifically authorized.
+The user's original **Mage +30 Power at level 15** and **Paladin Armor coefficient 0.50 at level 15** now align with this clarified convention. Neither Mage/Ranger nor companions receive Paladin's Armor coefficient. Existing class bases, equipment, talent and skill values stay unchanged. **This PR is documentation-only** and is not gameplay approval or deployment; Ranger cooldown stacking/coverage/cap and save/companion integration remain to be resolved.
 
-## Direction update — October 26, 2026: one innate passive for each class (proposed, not yet specified)
+## Direction update — October 26, 2026: innate-passive architecture (historical pivot)
 
 The owner proposed a **simpler alternative** after the initial historical audit: instead of rewriting starting attributes, item progression or natural growth, retain those existing systems and add **one identity-defining passive to each hero class**. Each passive should be present because of the hero's class and should **grow automatically with hero level**. This is the **current preferred investigation path**, superseding the earlier plan to begin by editing the base-stat table.
 
@@ -40,7 +44,7 @@ The owner proposed a **simpler alternative** after the initial historical audit:
 - Exactly **one class-identity passive per hero class**; no new player-facing skill slot, action, rank, trainer, unlock, resource, keybinding, or progression currency.
 - A class passive is a **separate innate modifier**, *not* a new active/charged skill or a change to the existing skill system.
 - Keep the current `R.balance.classes` starting numbers **unchanged as the historical foundation**, at least for the first candidate. The class passive contributes a distinct derived bonus on top.
-- Every passive starts at **zero bonus at level 1**. The first earned bonus is at **level 2**. Owner-specified initial amounts: Paladin +5 max HP and +0.01 Armor coefficient per level-up; Ranger +3 speed and +1 percentage point cooldown reduction per level-up; Mage +2 Power per level-up. All use **levelUps = max(0, hero.level - 1)**. The numbers are documented design intentions, not tested gameplay.
+- **All passives start at level 1**, granting one increment at creation and another each level thereafter. Owner design values: Paladin +5 maximum HP / +0.01 Armor effectiveness per hero level; Ranger +3 speed / +1 percentage point cooldown reduction per hero level; Mage +2 Power per hero level. Use hero `level` as the passive-increment count, not `level-1`.
 - Leave the shared natural +25 HP per level, all tier prices/bonuses, reforges, Discipline Training, MP resource mode, class skill definitions and combat rules unchanged. **Do not alter skill files to deliver the passives** if a safe isolated integration exists.
 - No new dodge, evasion, crit, extra-projectile, independent attack-speed or attack-range system as the default. These are potential complexity traps and **not currently authorized**. Ranger passive cooldown reduction is now explicitly eligible for design, but its magnitude, scope (which cooldowns) and stacking/cap policy remain unapproved.
 - Prefer a **single, deterministic, centralized, class-and-level-based calculation** over serialized passive state, ticking buffs, ad-hoc level-up mutations, or scattered conditionals. This is a proposed architecture to validate against the actual code, *not* an implementation commitment.
@@ -50,8 +54,8 @@ The owner proposed a **simpler alternative** after the initial historical audit:
 | Class | Concept | Lowest-disruption effect family to assess | Avoid by default |
 | --- | --- | --- | --- |
 | Paladin | Fortitude / Endurance | Derived max HP **or** Armor bonus scaling with level; choose after save/damage audit | New shield skill, stacking damage immunities, combat-triggered heal |
-| Mage | Arcane Power / Attunement | **+2 Power per level-up**, beginning at level 2 (L1 +0, L15 +28) | Any new cooldown, movement, HP, or skill coefficient changes |
-| Ranger | Agility / Fleetfoot | **+3 movement speed and +1 percentage point cooldown reduction per level-up** (L1 zero), independent of talent points | Dodge engine, projectile rewrites, range/skill coefficient changes; unbounded cooldown stacking |
+| Mage | Arcane Power / Attunement | **+2 Power per level, including level 1** (L1 +2; L15 +30) | Any cooldown, movement, HP, or skill coefficient changes |
+| Ranger | Agility / Fleetfoot | **+3 movement speed and +1 percentage point CDR per level**, including level 1; independent of talents | Dodge engine, projectile rewrites, range/skill coefficient changes; unbounded cooldown stacking |
 
 The examples intentionally use already-existing character properties first. **Nothing in this table is an approved new ability or stat number.** If Ranger movement alone proves insufficient for a noticeable agility identity, discuss *why* before considering a broader mechanic.
 
@@ -65,53 +69,30 @@ The examples intentionally use already-existing character properties first. **No
 
 **Change control:** This direction replaces the *proposed means* (retuning base attributes) but retains the *goal* and all skill-system exclusions. The historical findings and baseline tables below remain true. Sections describing a stat-table-first roadmap are retained only as history and are explicitly superseded by the revised pickup steps below.
 
-### Ranger Agility passive — owner candidate: +3 movement speed and +1 percentage-point cooldown reduction per level-up
+### Ranger Agility passive — active at level 1; +3 movement speed and +1 percentage point CDR per hero level
 
-**Status:** tentative owner-selected effects for design/review. **No gameplay values have been changed.** The Paladin's proposed two-part Fortitude is considered sufficient in principle for now; focus moves to the Ranger, then Mage. Do not reopen old equipment or skill progression as a result.
+**Latest rule:** at level 1 gain +3 movement speed and 1% innate cooldown reduction; each subsequent hero level adds +3 speed and +1 percentage point CDR. No extra talent rank, skill, or resource. Existing Ranger movement Discipline Training still gives **+41 speed per rank**, maximum **3 ranks** (+123). Existing cooldown training still gives **4% per rank**, maximum **5 ranks** (+20%). Base movement speed remains **320**.
 
-**User reasoning:**
-- Ranger's current movement Discipline Training gives **+41 movement speed per rank**, capped at **three ranks**. One hypothetical additional rank would be +41; the owner rounded that reference to 42, then `42 / 15 = 2.8`, rounded to **+3 movement speed for each level-up** as an *innate*, rank-independent passive. This does **not** increase movement training's three-rank cap.
-- The cooldown training gives **4% reduction per rank**, capped at **five ranks** (20% maximum training reduction). Instead of assigning extra talent ranks, the Ranger gets **+1 percentage point of innate cooldown reduction per hero level-up**. This does **not** increase the cooldown talent's five-rank cap.
-- Arithmetic correction: current starting speed 320 plus 3 training ranks × 41 = **443**, not 483. At level 15, +3 speed × 14 level-ups = +42, making 320 + 123 + 42 = **485** with full movement training. Note the numerical similarity to the owner's 483 target is coincidental; do not retroactively alter +41 ranks.
-
-**Proposed central derived values (descriptive pseudocode, not approved implementation):**
+The owner arrived at +3 from the rounded notional fourth movement talent rank (~42 / 15 ≈ 2.8). Ranger's original maximum speed from starting speed plus three talent ranks is **443**, not 483. Its level-15 passive plus three talents gives **488**.
 
 ```js
-const levelUps = Math.max(0, hero.level - 1);
-const rangerPassiveSpeedBonus =
-  hero.class === 'ranger' ? 3 * levelUps : 0;
-const rangerPassiveCooldownReduction =
-  hero.class === 'ranger' ? 0.01 * levelUps : 0; // +1 percentage point/level-up
-// Speed uses existing base speed + Discipline Training speed + passive speed
-// Effective CDR: existing talent reduction and passive need one shared stacking rule
+const rangerSpeedBonus = hero.class === 'ranger' ? 3 * hero.level : 0;
+const rangerCdrBonus = hero.class === 'ranger' ? 0.01 * hero.level : 0;
 ```
 
-**Illustrative unmodified checkpoints** (speed excludes haste/slows/terrain/input modifiers; maximum-trained column assumes all 3 movement training ranks; cooldown columns use percentage points and assume currently disabled mana mode):
+| Level | Passive speed | Base + passive speed | With 3 speed talent ranks | Innate CDR | With 5 CDR ranks (20%) if additive |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1 | +3 | 323 | 446 | 1% | 21% |
+| 2 | +6 | 326 | 449 | 2% | 22% |
+| 5 | +15 | 335 | 458 | 5% | 25% |
+| 10 | +30 | 350 | 473 | 10% | 30% |
+| 15 | +45 | 365 | 488 | 15% | 35% |
+| 18 | +54 | 374 | 497 | 18% | 38% |
+| 20 | +60 | 380 | 503 | 20% | 40% |
 
-| Level | Level-ups | Ranger passive speed | Base + passive speed | Speed with 3 movement ranks | Innate passive CDR | Hypothetical combined CDR with 5 cooldown ranks (20%), if additive |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | 0 | +0 | 320 | 443 | 0% | 20% |
-| 5 | 4 | +12 | 332 | 455 | 4% | 24% |
-| 10 | 9 | +27 | 347 | 470 | 9% | 29% |
-| 15 | 14 | +42 | 362 | 485 | 14% | 34% |
-| 18 | 17 | +51 | 371 | 494 | 17% | 37% |
-| 20 | 19 | +57 | 377 | 500 | 19% | 39% |
+**CDR stacking remains an explicit design decision:** additive is only the table's example. At level 15, 35% combined would reduce a 0.85-second automatic basic interval to **0.5525 seconds** *if* basics are in scope, versus **0.68 seconds** at five talent ranks alone. Determine whether the passive includes normal skills, charged cooldowns and automatic basics, and what cap/floor is safe at higher levels; do not invent one. Keep Skill 1–8 rules, damage, ranks, costs, trainer gates and base cooldown constants untouched.
 
-**Owner-confirmed precision:** The first bonus occurs **only when leveling from 1 to 2**. Ranger passive CDR is +0% at level 1, +1% at level 2, and +14% at level 15. `0.01 * level` is **not** the approved starting convention.
-
-**Mandatory integration and guardrails:**
-1. **No two skill systems or talent changes.** Do not modify existing Skill 1–8 base coefficients, damage/ranges, costs, trainer limits, rank effects or the four talent rank ceilings. Ranger passive is a class-specific modifier feeding the **existing effective cooldown calculation**.
-2. `hero-combat.js::skillCooldown()` currently handles both normal/charged skill durations, and `basicSkillCooldown()` handles the automatic basic interval. The current talent factor is `1 - min(5, trainingRank) * 0.04`. If the owner chooses additive CDR, proposed general expression is `1 - effectiveTotalReduction`, where the total can include training and a Ranger-only passive; **same shared calculation logic** for participating cooldown types, not a duplicate Ranger-specific cooldown system.
-3. At level 15 with all five cooldown-training ranks and additive stacking, total reduction would be **34%**. The baseline 0.85-second automatic basic interval would compute `0.85*(1-0.34)=0.561s` if the passive covers basics, versus 0.68s with five training ranks and no passive. These are **calculated durations**, not observed combat throughput.
-4. **Scope open:** confirm whether passive reduction should affect ordinary skill cooldowns, charged skill cooldowns and automatic basic attacks, or only some. The existing training reaches all three; no hidden coverage change is approved.
-5. **Safety/cap open:** permanent 1 percentage point per level-up grows beyond the owner's convenient level-15 window and, if simply summed with 20% talent CDR without a cap, reaches dangerous/zero cooldowns at sufficiently high levels. Define a **combined minimum cooldown and/or maximum CDR** after examining the maximum reachable hero level and combat rotation. **Do not silently invent a 40%/50% cap.**
-6. **Movement integration:** `src/prototype/engine.js` uses `h.speed + heroTalentSpeedBonus()` in **at least three** movement paths (around lines 4192, 4227 and 4256). The passive must be included in all relevant hero movement modes, preferably via one effective hero speed accessor. Movement-specific temporary factors remain intact.
-7. **No unintended companion inheritance:** `heroTalentSpeedBonus()` contributes to companion Shared Training inheritance. The new innate Ranger speed should remain a **hero class passive**, not a talent bonus. If any portion is to inherit, obtain separate explicit approval.
-8. **Saved heroes and Succession:** deriving the passive from class/level avoids accumulating a serialized stack and must produce the same numbers after save/load, leveling, resets or class succession; existing talents remain untouched.
-9. **Test plan:** Ranger L1/L5/L10/L15/L18 with 0/3 movement ranks and 0/5 cooldown ranks, normal/charged/basic duration comparisons, all movement pathways, same-level Mage/Paladin invariance, slow/haste interactions, saved cooldowns, and high-level cap edge cases.
-10. **Paladin status:** its +5 HP and +0.01 Armor effectiveness per level-up remain separately recorded and are not modified by the Ranger design work.
-
-**Next decisions:** Ranger passive **starts after the first level-up (decided)**. Confirm additive vs another documented cooldown-stacking rule; choose affected cooldown categories; choose combined safety bounds. Until then this is a design candidate, not implemented gameplay.
+Use the same existing effective hero cooldown calculations in `hero-combat.js::skillCooldown()` and `::basicSkillCooldown()`; do not build a parallel skill system. Hero speed is currently calculated from `h.speed + heroTalentSpeedBonus()` in multiple movement branches in `engine.js`; route innate speed consistently through a derived effective-speed accessor. Do **not** accidentally grant Ranger passive speed to companions via existing Shared Training talent inheritance. Test starting stats, L2/L5/L15 scaling, other-class invariance, kiting, pathing, save/load, Succession and high-level CDR extremes.
 
 ### Ranger Discipline Training audit — verified baseline before designing the new passive
 
@@ -141,11 +122,11 @@ Current `main` values:
 const DEFAULT_ARMOR_EFFECTIVENESS = 0.35;
 
 function armorEffectivenessFor(target) {
-  const paladinLevelUps =
+  const paladinPassiveIncrements =
     target === hero && target.class === 'paladin'
-      ? Math.max(0, target.level - 1)
+      ? target.level
       : 0;
-  return DEFAULT_ARMOR_EFFECTIVENESS + 0.01 * paladinLevelUps;
+  return DEFAULT_ARMOR_EFFECTIVENESS + 0.01 * paladinPassiveIncrements;
 }
 
 // ONE existing normal-hit mitigation formula, all classes and party units:
@@ -161,55 +142,35 @@ This is **one parameterized mitigation rule**, not separate Paladin and non-Pala
 
 **Other guarantees:** Do not alter Armor point values or equipment progress; keep the `Math.max(3,...)` ordinary-hit floor, existing ward/Shield Stance ordering, and non-Paladin values intact. Favor tests that assert `0.35` for Mage/Ranger/companions at all levels; Paladin's proposed level-derived value; both ordinary and one-time boss premitigation; no double application; no shared mutable leakage; and accurate results after save load/Succession. This architectural clarification is approved as the design direction; **the numeric passive candidate still awaits explicit gameplay-change approval**.
 
-### Paladin passive candidate — owner proposal: +5 HP/level-up and +0.01 per-level Armor effectiveness (October 26, 2026)
+### Paladin Fortitude passive — +5 HP / +0.01 per-point Armor effectiveness from level 1
 
-**Candidate status:** proposed/tentative values for owner review, not authorized for gameplay implementation yet. This design builds on the verified Paladin talent/equipment audit below; it **does not** replace or retune that established progression.
+**Latest rule:** immediately at level 1, gain **+5 max HP** and **+0.01 Armor effectiveness**. Each further hero level adds the same amounts. The owner derived +5 HP from two hypothetical +33-HP talent ranks (66 / 15 ≈ 4.4, rounded to 5). This is separate from the unchanged +25 natural HP per **actual level-up**, and the unchanged +33 HP per trained talent rank.
 
-**Owner rationale:** Paladin's maximum HP talent gives +33 HP per talent rank, so the notional equivalent of two extra talent ranks is +66 HP. Dividing by a convenient 15-level window gives 66/15 = **4.4**, rounded to **+5 maximum HP each level-up**. The extra HP is innate and automatic, independent of talent spending. In the actual level-1-based model, reaching level 15 includes **14** level-ups, so the proposed extra HP totals **+70**, not +75.
-
-**Formula A — natural HP excluding talents, tonic and other bonuses:**
+The one common Armor-mitigation formula reads the target's effective Armor coefficient, default **0.35**. Paladin's class-specific value is **0.35 + 0.01 × hero level** (0.36 at level 1, 0.50 at level 15). It is not extra Armor, a percentage ward, or an alternate Paladin damage formula.
 
 ```js
-const levelUps = Math.max(0, hero.level - 1);
-const bonusHp = hero.class === 'paladin' ? 5 * levelUps : 0;
-const naturalMaxHp = classBaseHp + 25 * levelUps + bonusHp;
-// At level 15 for Paladin: 120 + 25*14 + 5*14 = 540 HP.
-// Current baseline at level 15: 120 + 25*14 = 470 HP.
+const levelUps = Math.max(0, hero.level - 1); // natural shared HP growth
+const hpPassive = hero.class === 'paladin' ? 5 * hero.level : 0;
+const naturalMaxHp = classBaseHp + 25 * levelUps + hpPassive;
+const effectiveArmorCoefficient =
+  0.35 + (hero.class === 'paladin' ? 0.01 * hero.level : 0);
+// One damage formula: Math.max(3, rawDamage - armor * effectivenessFor(target))
 ```
 
-**Formula B — ordinary incoming-hit Armor effectiveness:** retain existing actual Armor points from starting attributes, equipment and reforge. Make the **one existing damage formula** read the named `armorEffectivenessFor(target)` value shown above. Its default is 0.35 for all targets; the Paladin passive alone adds the tentative level-based modifier. There must be **no special Paladin mitigation formula** or independent multiplier.
-This does **not** add Armor points, nor create a separate percentage-damage-resistance status. The coefficient is **flat hit points prevented per 1 Armor**; it is not a percentage. For Mage, Ranger and all companions/enemies the existing 0.35 coefficient remains unchanged.
+| Level | Original natural Paladin HP | Passive HP | Natural HP including passive | Effective Armor coefficient |
+| --- | ---: | ---: | ---: | ---: |
+| 1 | 120 | +5 | 125 | 0.36 |
+| 2 | 145 | +10 | 155 | 0.37 |
+| 5 | 220 | +25 | 245 | 0.40 |
+| 10 | 345 | +50 | 395 | 0.45 |
+| 15 | 470 | +75 | 545 | 0.50 |
+| 16 | 495 | +80 | 575 | 0.51 |
+| 18 | 545 | +90 | 635 | 0.53 |
+| 20 | 595 | +100 | 695 | 0.55 |
 
-**Level checkpoints, with no talents/tonic/etc.:**
+At tier-4 armor with its reforge Paladin has 39 Armor; on an illustrative 30-damage normal hit, current 0.35 coefficient yields **16.35** damage received, while proposed level-15 0.50 yields **10.50**. Minimum normal-hit damage remains 3. This illustrates why we need a focused difficulty check and not unlimited stacking by accident.
 
-| Hero level | Level-ups since 1 | Current Paladin natural max HP | Extra passive HP | Candidate Paladin max HP | Armor coefficient (per Armor point) |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 1 | 0 | 120 | +0 | 120 | 0.35 |
-| 5 | 4 | 220 | +20 | 240 | 0.39 |
-| 10 | 9 | 345 | +45 | 390 | 0.44 |
-| 15 | 14 | 470 | +70 | 540 | 0.49 |
-| 16 | 15 | 495 | +75 | 570 | 0.50 |
-| 18 | 17 | 545 | +85 | 630 | 0.52 |
-| 20 | 19 | 595 | +95 | 690 | 0.54 |
-
-**Level-15 precision question:** the user's stated intended target is 0.50 at level 15. With precisely +0.01 **per level-up**, 0.50 is reached at level **16**. Options to approve, **not** mix accidentally:
-
-1. **Prefer preserving level-1 baseline:** `0.35 + 0.01*(level-1)` → L1 **0.35**, L15 **0.49**, L16 **0.50**.
-2. **If 0.50 at L15 is essential:** `0.35 + 0.01*level` → L1 **0.36**, L15 **0.50** (one initial passive increment at start).
-3. **If exact 0.35 at L1 and 0.50 at L15 are both essential:** `0.35 + 0.15*(level-1)/14` → L15 **0.50**, but increment is ~0.010714 per level-up, rather than exactly 0.01.
-
-**Magnitude and integration risks identified in current source (must test):**
-
-- Armor scales the coefficient multiplicatively. At tier-4 + reforge, Paladin has **39 Armor**; on a hypothetical ordinary **30 raw damage** hit, current reduction `39*0.35=13.65` yields **16.35 HP lost**. Proposed L15 coefficient `0.49` reduces `39*0.49=19.11`, leaving **10.89 HP lost** (~33.4% less HP lost than the same tier/current coefficient). There is also a **minimum of 3 damage** per ordinary hit. This is substantial despite only +0.01 per level-up; validate difficulty at top-tier armor.
-- `src/prototype/combat.js::hitParty()` centrally uses `armor*0.35` for normal hits, with a special `alreadyMitigated` bypass. **Preserve** that bypass; do not apply Armor twice.
-- `src/prototype/boss-combat.js` precomputes a single Armor-mitigated amount for Vortex Shedding/Death Roll using `0.35` before later split hits. The Paladin-specific modifier must be applied **once at the precomputation point**, not again to three follow-up impacts. **Reuse the same target-specific Armor-effectiveness value** for this premitigation, without calculating Armor twice. Do not create two formula variants.
-- `src/prototype/progression.js::heroNaturalMaxHp()` and `heroOtherHpBonus()` feed the existing **Shared Strength companion inheritance**. If adding passive HP to `hero.maxHp`, make the new Paladin innate HP count as **natural HP**, not an unrelated transferable bonus, unless owner explicitly approves companion inheritance. Avoid altering skill ranks or the existing support-skill behavior.
-- `xp()` updates saved `hero.maxHp` directly, refills HP, and synchronizes companion stats; old campaign saves, Succession, hero HP talent resets, tonics and import/migration must be checked for double application or missing past-level passive HP.
-- Existing temporary Shield Stance and wards use the **stronger**, nonmultiplicatively stacking defensive factor *after* Armor. This passive is an **Armor coefficient** before that factor, not a third ward/status or an independent additive shield. No skill value is modified.
-- The user estimated play around levels 15–18; the proposed formula currently **continues increasing beyond level 15**. Whether to impose a level cap is undecided. Do not silently cap or extrapolate as an approved balance decision.
-- New game creation, save load, existing level-15 Paladin saves, talent reset, Succession, companions, regular hits, boss premitigation, already-mitigated hits and tooltip display all need focused tests. Avoid schema changes if possible, but **do not claim save compatibility without validating an explicit migration/derivation strategy**.
-
-**Approval gates still open:** (a) **settled:** defense remains 0.35 at level 1 and first grows at level 2, yielding 0.49 at level 15; earlier 0.50-at-L15 estimate is superseded by the uniform level-up rule; (b) whether coefficient/HP continue after level 15 or cap; (c) whether existing Paladin saves receive retroactive bonuses; (d) passive HP non-inheritance to companions; (e) exact boss/pre-mitigation and UI behavior. No production file was edited.
+**Integration and compatibility:** `combat.js::hitParty()` and the `boss-combat.js` premultiplied Vortex/Death Roll calculation must use the **same** target-specific Armor effectiveness parameter. Boss ticks already mitigated must never be reduced again. `heroNaturalMaxHp()` must recognize innate Paladin HP, preventing accidental classification as Shared Strength companion-inheritable `heroOtherHpBonus()`. Verify L1 creation, saved max/current HP, rest, tonic, training resets, Succession, old-save handling, and companions. No skill/value changes or unrelated combat rewrites are authorized.
 
 ### Paladin Discipline Training and non-skill defensive audit — verified current baseline
 
@@ -337,7 +298,7 @@ These are **deferred diagnostics**, not permission to adjust progression in the 
 
 1. Use the existing starting-attribute table as the **unchanged baseline**, documenting the role each attribute already plays.
 2. Design **one class-bound automatic passive for Paladin, Mage and Ranger**, each scaling with hero level without participating in skill ranks or skill training.
-3. Choose one simple, testable effect family for each passive and explicitly document when it starts, how it grows, and whether any cap is justified. **No effect or number is approved yet.**
+3. Preserve the owner-specified class effects and their **level-1 starting increments**; document growth, remaining implementation details and any needed caps. The values are set for design review, not yet implemented.
 4. Show a candidate comparison at level 1 and representative higher levels, including indirect effects through the already-existing formulas.
 5. After explicit owner approval, implement the smallest isolated derived-modifier layer and focused regressions; do not alter legacy class bases or rewrite the existing skill system.
 
@@ -371,7 +332,7 @@ E. **Compatibility:** Decide whether base-stat revisions apply **only to new lev
 
 - [x] **Stage 0 — Historical audit and baseline.** Paladin-first design, three-class introduction, shared gear and level growth documented.
 - [x] **Stage 0 — New owner direction captured.** Favor a one-per-class, level-scaling passive layer rather than rewriting preexisting base stats or tier systems.
-- [x] **Stage 1A — Specify three class passives and level-1 convention.** Paladin +5 HP/+0.01 Armor effectiveness per level-up; Mage +2 Power per level-up (no other benefit); Ranger +3 speed/+1 percentage point CDR per level-up. Zero bonuses at L1, all begin at L2.
+- [x] **Stage 1A — Three innate class passives with level-1 bonuses specified.** Paladin +5 HP/+0.01 Armor effectiveness per level; Mage +2 Power per level (no other benefit); Ranger +3 speed/+1 percentage point CDR per level. All begin at level 1; the previously discussed L2-only start was withdrawn.
 - [ ] **Stage 1B — Design and compare candidate scaling.** Explicit starting strength, bonus per level or growth function, representative L1/L5/L10 checkpoints, edge cases, and effective impact (not merely stat-sheet numbers).
 - [ ] **Stage 1C — Owner approves the *exact* passive effects and values.** This is the first gameplay-change authorization gate.
 - [ ] **Stage 1D — Implement in a small, isolated passive-calculation layer.** Existing base class stats, natural growth, gear/reforge prices and bonuses, all active/charged skill mechanics and skill progression remain unchanged. Prefer no save-schema change.
@@ -385,9 +346,9 @@ This file is the entire initial branch change. No gameplay file was edited; no b
 
 ## 8. Next-session pickup (updated)
 
-**Next task:** initial passives for **all three classes are now specified** and universally start at the first level-up (L1 to L2). Audit the bounded integration, confirm Ranger CDR stacking and cap, evaluate skill-output and tank-durability side effects without editing skills, and validate save/load and companion inheritance before implementing. No base-stat/equipment/skill-system changes.
+**Next task:** all three passives are specified and **start at level 1**. Audit bounded integration, confirm Ranger CDR coverage/stacking/cap, evaluate Mage damage and Paladin survival without editing skills, and validate save/load and companion inheritance before implementation. No base-stat/equipment/skill-system changes.
 
-Use today's **unchanged level-1 baseline:** Paladin **120 HP / 8 Armor / 18 Power / 300 speed**; Mage **90 / 3 / 22 / 300**; Ranger **105 / 5 / 20 / 320**. First passive increases arrive **at level 2**, with no exceptions.
+Raw level-1 class baselines stay Paladin **120 HP / 8 Armor / 18 Power / 300 speed**, Mage **90 HP / 3 Armor / 22 Power / 300 speed**, Ranger **105 HP / 5 Armor / 20 Power / 320 speed**. **Effective figures with passive from the outset:** Paladin **125 HP and 0.36 Armor coefficient**, Mage **24 Power**, Ranger **323 speed and 1% innate CDR**, before other modifications.
 
 **Do not start implementation yet.** In particular, do not silently edit skill coefficients or adjust attack speed/ranges under the guise of an agility passive. An automatic passive can be an independent modifier without integrating with existing skills/training.
 
