@@ -253,5 +253,5 @@ body[data-experience='desktop'] #modal[data-view='class-select'] {
 }
 body[data-experience='desktop'] #modal[data-view='character'] {
   width: min(410px, calc(100vw - 32px));
-  max-height: min(82dvh, 700px);
+  max-height: min(92dvh, 760px);
 }
