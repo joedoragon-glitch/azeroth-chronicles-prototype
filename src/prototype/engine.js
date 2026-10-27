@@ -3472,6 +3472,8 @@
       if (e.aggro || e.neutral || e.returning || e.thornReturn || e.cinderReturn) return false;
       if ((this.s.mercyTime || 0) > 0 && !forced && !e.mercyProvoked) return false;
       this.capturePatrolResume(e);
+      if (this.trueFieldBossCircuit(e))
+        e.trueCircuitCombatAnchor = { x: e.x, y: e.y };
       if (this.roamingBoss(e)) {
         e.path = [];
         e.routeAge = 0;
@@ -4415,6 +4417,66 @@
       if (e?.ranged) return R.idleWander.ranged;
       return R.idleWander.ordinary;
     }
+    // TRUE bosses appearing in an outdoor region are hunters. Existing
+    // Thornfang/Mira and Cindermaw/Vera roaming patrols remain separate.
+    trueFieldBossCircuit(e) {
+      return e?.type === 'boss' && e.form === 'true' && !this.isDungeon() &&
+        !this.roamingBoss(e) && this.boss(e.family)?.kind === 'field';
+    }
+    trueFieldBossCircuitStops(e) {
+      if (!this.trueFieldBossCircuit(e)) return [];
+      const npcs = this.zone().npcs,
+        side = npcs.find((n) => n.kind === 'dungeon' && n.sideDungeon),
+        treasury = npcs.find((n) =>
+          n.kind === 'dungeon' && n.treasury && n.treasuryBoss === e.family),
+        main = npcs.find((n) => n.kind === 'dungeon' && !n.sideDungeon && !n.treasury),
+        origin = e.trueCircuitOrigin || e.home;
+      // Use actual existing outdoor entrances; some regions have no Treasury.
+      return [
+        side && { key: 'side', x: side.x, y: side.y },
+        treasury && { key: 'treasury', x: treasury.x, y: treasury.y },
+        main && { key: 'dungeon', x: main.x, y: main.y },
+        origin && { key: 'origin', x: origin.x, y: origin.y },
+      ].filter(Boolean);
+    }
+    updateTrueFieldBossCircuit(e, dt) {
+      if (!this.trueFieldBossCircuit(e) || e.aggro || e.returning ||
+          e.neutral || this.peace || e.hp <= 0) return false;
+      // Legacy TRUE field actors still have their first appearance in home;
+      // never substitute the normal-form field boss's compound.
+      if (!e.trueCircuitOrigin && e.home) e.trueCircuitOrigin = { ...e.home };
+      const stops = this.trueFieldBossCircuitStops(e);
+      if (stops.length < 2) return false;
+      // Do not advance the tour while the hero is visibly within hunting range.
+      if (this.hero.hp > 0 && dist(e, this.hero) < 850 &&
+          dist(this.hero, { x: D.towns[this.regionIndex()][0],
+            y: D.towns[this.regionIndex()][1] }) >= 170 &&
+          this.enemyRangedLine(e, this.hero)) return true;
+      const leg = Math.max(0, Math.floor(e.trueCircuitLeg || 0)) % stops.length,
+        goal = stops[leg];
+      e.trueCircuitPause = Math.max(0, (e.trueCircuitPause || 0) - dt);
+      if (e.trueCircuitPause > 0) return true;
+      if (dist(e, goal) <= 110) {
+        e.trueCircuitLeg = (leg + 1) % stops.length;
+        e.trueCircuitPause = 1.5;
+        e.trueCircuitStuck = 0;
+        e.path = [];
+        return true;
+      }
+      const before = { x: e.x, y: e.y };
+      this.follow(e, goal, 105 * this.mountedMovementFactor(e) *
+        (e.slow > 0 ? 0.5 : 1) * this.nightTempo(), dt, 105);
+      e.trueCircuitStuck = dist(before, e) > Math.max(0.1, dt * 6)
+        ? 0 : (e.trueCircuitStuck || 0) + dt;
+      if (e.trueCircuitStuck > 3) {
+        // Bypass an inaccessible landmark without leaving the regional map.
+        e.trueCircuitLeg = (leg + 1) % stops.length;
+        e.trueCircuitStuck = 0;
+        e.trueCircuitPause = 1;
+        e.path = [];
+      }
+      return true;
+    }
     updateIdleWander(e, dt) {
       if (!e || e.aggro || e.returning || e.neutral || e.hp <= 0 || e.fieldCaptain) return false;
       if (e.family === 'mine' && e.type === 'boss' && this.s.zone === 'mine') {
@@ -5110,7 +5172,7 @@
         ? e.thornFightAnchor || e
         : this.cinderPatroller(e)
           ? e.cinderFightAnchor || e
-          : e.home;
+          : e.trueCircuitCombatAnchor || e.home;
       const shift = this._tacticalRepositions?.get(e?.id);
       if (
         shift &&
@@ -6911,6 +6973,7 @@
         else if (
           !e.aggro &&
           !e.veraEscort &&
+          !this.updateTrueFieldBossCircuit(e, dt) &&
           !this.updateThornPatrol(e, dt) &&
           !this.updateCinderInspection(e, dt) &&
           !this.updateVeraEscort(e, dt)
@@ -6935,6 +6998,14 @@
           if (screenFor && dist(this.hero, screenFor) < R.rangedEnemyCombat.guardianScreenRange)
             target = this.hero;
         }
+        // Regional TRUE hunters interrupt their patrol for a visible hero.
+        // Engagement itself retains native mercy, protection and attack rules.
+        if (!e.aggro && this.trueFieldBossCircuit(e) && !e.returning &&
+            this.hero.hp > 0 && dist(e, this.hero) < 850 &&
+            dist(this.hero, { x: D.towns[this.regionIndex()][0],
+              y: D.towns[this.regionIndex()][1] }) >= 170 &&
+            this.enemyRangedLine(e, this.hero))
+          this.engage(e, false);
         if (
           !e.aggro &&
           // Reject distant targets before tracing through every intervening
@@ -7399,7 +7470,7 @@
           !mobilityReturn &&
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
         )
-          Object.assign(e, e.home);
+          Object.assign(e, e.trueCircuitCombatAnchor || e.home);
         this.finishDisengage(e);
       }
     }
@@ -7470,6 +7541,7 @@
       }
       delete e.quotaTarget;
       delete e.idleWanderTarget;
+      delete e.trueCircuitCombatAnchor;
       e.idleWanderWait = 1.5;
       e.specialCd = e.captain || e.roomCaptain ? 1.25 : e.nightOnly ? 1.5 : 0;
       e.summonCd = 0;
@@ -7650,6 +7722,8 @@
             e.maxHp = e.hp = e.baseHp * bonus.hp;
             e.damage = e.baseDamage * bonus.damage;
           }
+          if (p.kind === 'field' && !['thorn', 'cindermaw'].includes(key))
+            e.trueCircuitOrigin = { x: point.x, y: point.y };
           if (key === 'thorn' && p.kind === 'field') e.home = { ...this.fieldCenter(0) };
           if (key === 'cindermaw' && p.kind === 'field') e.home = { ...this.fieldCenter(4) };
           this.zone().enemies.push(e);
