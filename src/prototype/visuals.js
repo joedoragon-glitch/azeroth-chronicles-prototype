@@ -17409,7 +17409,9 @@
             break;
           case 'wolf':
             if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
-            else wolf(region === 2 ? ['#7b5b43', '#b69a6d', '#a46543'][variant % 3] : undefined);
+            else wolf(!e.charmOrigin && region === 2
+              ? ['#7b5b43', '#b69a6d', '#a46543'][variant % 3]
+              : undefined);
             break;
           case 'mireling':
             if (e.ranged) {
@@ -17502,7 +17504,7 @@
             ogreBody(!!e.ranged);
             break;
           case 'archer':
-            if (region === 3) frontierRaider();
+            if (e.charmOrigin || region === 3) frontierRaider();
             else human('archer');
             break;
           case 'orc':
