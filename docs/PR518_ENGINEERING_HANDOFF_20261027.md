@@ -1,11 +1,13 @@
 # PR #518 — Engineering handoff, verified scope and next-phase entry
 
+**Current disposition — 27 October 2026:** [#518](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518) **merged/published** with Stages 0–6, public-branded bilingual main screen, Continue and guarded loading/first-frame lifecycle plus bounded optional Pixi graphics preparation. [Stage 7 real-device/browser visual, first-frame, memory and measured performance acceptance](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) remains unverified; PixiJS is **experimental/optional** and Canvas default/fallback. All older draft/non-merge instructions below are **historical pre-integration checkpoints**, not current authority to merge or rework the closed PR.
+
 **Project:** Azeroth Chronicles (multi-file GitHub Pages/PWA)  
 **Repository:** `joedoragon-glitch/azeroth-chronicles-prototype`  
-**Draft pull request:** [#518 — Regional graphics preparation and main menu](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518)  
-**Head branch:** `perf/region-graphics-preparation-title-screen-20261027`  
+**Merged implementation pull request:** [#518 — Regional graphics preparation and main menu](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518)  
+**Historical implementation head branch:** `perf/region-graphics-preparation-title-screen-20261027`  
 **Design and detailed acceptance contract:** [REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md)  
-**Initially prepared:** 27 October 2026 after Stages 0–3. Some sections preserve explicitly dated historical checkpoints. **Current:** Stages 0–5 are implemented in this draft, Stage 6 combat-sensitive cache policy is in focused verification, and Stage 7 device/browser acceptance remains open. Refer to the [current device acceptance runbook](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md).
+**Initially prepared:** 27 October 2026 after Stages 0–3; the following development handoff records historical work, not a pending draft. **Current:** Stages 0–6 are integrated; Stage 7 remains open as described above.
 
 > **Historical Stage 3 decision (superseded):** This PR was **ready for the next development workstream** (main screen and Continue/loading lifecycle), but is **NOT production-accepted, merge-ready, performance-certified or approved to deploy**. All three housekeeping areas have an initial code-and-focused-test implementation. They have *not* passed the complete browser/physical-device/visual-performance acceptance gates. Keep this distinction in every future status report.
 
@@ -72,7 +74,7 @@ The final link validates the consolidated source/tests/documentation as of the t
 
 ## 5. Historical Stage 3 next workstream — main screen and Continue (now implemented)
 
-The next chat should **continue on draft PR #518**, not invent a new initiative. Recommended order:
+**Historical pre-integration sequence, implemented by merged #518.** The original steps below are retained as evidence, not as an open draft work order. Current follow-up is Stage 7 device acceptance or separately scoped new defects. Original recommended order:
 
 1. **Reconcile with current `main` and inventory startup routes.** Inspect `src/prototype/app.js` (`load`, `start`, pending writer ownership, `frame`, `visibilitychange`, `pageshow`, menus, renderer guard); `src/prototype/persistence.js`; existing English/Spanish copy and class-selection UI from merged #520. Establish an explicit UI/game lifecycle state contract separate from save availability.
 2. **Implement accessible, bilingual title screen without premature gameplay.** Continue enabled only for validated available saves; direct New Game, Saved Games & Backups, Settings, Help & Credits actions use existing implementation/guards. Existing developer and arena gates remain hidden or protected. On a fresh tab launch/reload, show title; on still-live background/foreground switch, preserve current surface. Preserve recovery of corrupted saves, multiple campaigns, writer-conflict controls and historical migrations.
@@ -97,9 +99,9 @@ The next chat should **continue on draft PR #518**, not invent a new initiative.
 
 ## 6. Merge/release rules and next-chat restart instructions
 
-**Draft PR stays open, unmerged and undeployed.** Do not mark ready for review or merge just because stages 0–3 source checks pass. **Historical checkpoint (superseded):** at the Stage 3 handoff the title/menu was not implemented and Stages 5–7 were planned. Current status is at the top and bottom of this file. Distinguish what has been committed from what is proposed in all future updates.
+**Historical Stage 3 merge hold (superseded):** the PR was not eligible for release solely on those early checks; #518 has since merged and published. **Historical checkpoint (superseded):** at the Stage 3 handoff the title/menu was not implemented and Stages 5–7 were planned. Current status is at the top and bottom of this file. Distinguish what has been committed from what is proposed in all future updates.
 
-For a new conversation: start by reading **this file**, the [detailed design/acceptance contract](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md), and the **current PR #518 patch/head/CI**. Check the newest `main` and linked issues before writing. Work on the same draft branch; make incremental commits, run narrow affected tests and the reproducible build, and keep these docs plus the PR description in sync. Report unverified device and visual claims explicitly. Do not take saved-chat context as a substitute for repository source.
+**For future follow-up:** consult current `main`, [renderer graduation #478](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/478), [original graphics design](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md) and [Stage 7 runbook](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md). New bugs require newly scoped review work, not reopening the merged #518 branch. Record measured device evidence separately; do not interpret historical draft gates as current status.
 
 **Historical owner-facing status after Stage 3 (superseded):** “The three graphics limitations have bounded implementations and passing focused regressions in draft PR #518; real-device performance/visual acceptance remains open; the next task is a safe bilingual main menu and Continue/ready-first-frame lifecycle.”
 

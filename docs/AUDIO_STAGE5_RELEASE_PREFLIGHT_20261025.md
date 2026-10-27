@@ -1,8 +1,10 @@
 # Azeroth Chronicles — Audio Stage 5 Release Preflight
 
+**Current disposition — 27 October 2026:** first-gesture audio recovery [#470](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/470), ranged-pet audio impact routing [#472](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/472), and audio preparation [#473](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/473) **merged**. This 25 October Stage 5 **standalone pre-integration** report was release-blocked **at its checkpoint**. Its draft and no-merge instructions are not present status; nor does integration independently certify physical speakers/headphones, installed/offline PWA listening, or measured audio performance. Check current source and [Development state](DEVELOPMENT_STATE.md) for any new work.
+
 **Checkpoint:** 2026-10-25. **Branch:** audit/audio-stage5-release-preflight-20261025, independent of all prior audio PRs and based on main e3c78266b28f3325d2afdcb76ae849fcff306deb. Re-fetch all live heads before further work.
 
-**Disposition: RELEASE BLOCKED.** This is Stage 5 preparation, not an integrated candidate, merge approval, browser certification or deployment. Keep the canonical multi-file GitHub Pages/PWA architecture. No production runtime, audio assets, gameplay, existing PR branch, save format, build version, published cache, mixer, or graphics preferences have been changed by this preflight.
+**Historical 25 October preflight disposition: RELEASE BLOCKED for this independent candidate.** This is Stage 5 preparation, not an integrated candidate, merge approval, browser certification or deployment. Keep the canonical multi-file GitHub Pages/PWA architecture. No production runtime, audio assets, gameplay, existing PR branch, save format, build version, published cache, mixer, or graphics preferences have been changed by this preflight.
 
 ## 1. Prior stages and exact-head evidence
 
