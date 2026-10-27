@@ -1,5 +1,16 @@
 # Rogue Bard — canonical design checkpoint and owner handoff
+
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
 **27 October 2026 · PR #511 · design plus limited fourth-class preparation · no playable Rogue or release authorization**
+
+## Verified Phases 1–2 and work remaining (updated 27 October 2026)
+
+**Foundation completed:** source-aware merge `bd1cbe83` incorporated `main` through `1eeff159`/PR #517, preserving Paladin/Mage/Ranger, saves and dormant class scaffolding. Main has since advanced **two further commits**; reconciling them is the **first technical step before Phase 3**.
+
+**Staged hero basics completed:** exact PR checkpoint `b915bc06` passed [focused CI + reproducible/offline build](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40484652535). Rogue-only candidate stats/talents, a 260-range bell basic with up to two secondary contacts and third-hit finisher, **normal and charged Skill 1 from level one** with dual-sided enemy AoE / nearby active companion basic-damage benefit, 2-second 1-HP Endure and guarded saves/tooltips are coded and regression-tested. **Rogue is NOT registered/selectable**; no authentic Charm, crit-intensity dial, 14 other manual song forms, actual recorded bell audio or static sprites. The previous "no skills implemented" checkpoint is historical.
+
+**Owner naming revision:** all sixteen previously approved song titles—including provisional Skill 1 labels *Staccato Sting* and *Fortissimo Crescendo*—are open to grounded, character/lore/bell-staff renaming. Preserve mechanic separation; don't invent or freeze new names without owner discussion. The discussion record supplies initial first-play design canon; later owner corrections supersede earlier ideas. Phase-specific progress belongs in the [eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md). **Focused green does not mean full release QA or merge authorization.**
 
 ## Owner directive: build the documented Rogue first, tune by playing afterward
 

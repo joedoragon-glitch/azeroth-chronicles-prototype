@@ -1,7 +1,12 @@
 # Rogue Bard — dual-sided combat performances and independent critical intensity
+
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
 **27 October 2026 | PR #511 design revision | documentation-only | status: owner-directed principles, numerical/effect details proposed**
 
 **Reconciliation index:** [27 October canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md). This is the detailed numeric/mechanics matrix, *not* evidence of code implementation or owner approval of coefficients.
+
+**27 October owner naming reconsideration:** the 16 songs were accepted as *prototype* titles, then **reopened** once the weapon changed from guitar to suspended jingle-bell staff. All currently listed ballet/concert phrases are **candidates, not fixed canonical names**. Maintain the owner-directed mirrored negative-to-enemies/positive-to-companions concept. **Phase 2 already implements the first pair's Tap and Charged mechanics** and short companion basic-damage boon, behind the unselectable Rogue gate; Skills 2–8 and Rogue's independent fourth crit control are still future phases. The detailed matrix below remains a *candidate specification*, not a live-game or final-naming claim.
 
 ## Decisions and separation of approval
 

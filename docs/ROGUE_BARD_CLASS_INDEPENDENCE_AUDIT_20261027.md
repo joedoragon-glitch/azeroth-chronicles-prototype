@@ -1,5 +1,8 @@
 # Fourth-class integration audit — character creation, combat, progression, companions, UI and saves
 
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
+
 **27 October 2026 · Same draft PR #511 · branch `design/rogue-bard-feasibility-20261026` · no playable Rogue, merge or release approval**
 
 This is a **source-checked second pass after the initial fourth-class and Barracks housekeeping**. It distinguishes committed, inert infrastructure from gameplay changes that still require implementation or explicit decisions. Use together with the [canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md), the [per-type Charm/Barracks contract](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md), and the [16-performance proposal](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md). No fourth class has been registered in `R.balance.classes`.

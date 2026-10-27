@@ -1,5 +1,8 @@
 # Rogue Bard — Phase 2 staged hero foundation (27 October 2026)
 
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
+
 ## Scope and explicit owner decisions
 
 **Design authority update:** [The original owner discussion record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md) is the working canon for **initial implementation until playable release and the owner's first-hand testing**; later owner corrections (bell-staff, Charm-first tutorial, labor/Succession rules) prevail. The documented [regular and crowned appearance direction](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md) should be implemented as the first-play look, rather than reopening concept invention. Do not treat any single outfit or balance candidate as irrevocable after the owner starts playtesting.
@@ -25,3 +28,7 @@ Require native suite for staged Rogue basics and Endure, normal class combat/pas
 ## Focused verification checkpoint
 
 The first Phase 2 run (commit de5e7c7) failed two tests: the Rogue native primary-damage assertion and the source-derived sprite-scope fingerprint after the new dormant rules export. This amendment adds explicit diagnostics to the damage assertion and reconciles the sprite-scope fingerprint using the actual CI-observed rules SHA256. Do not claim this implementation ready for deployment until the combined subsequent check passes. Rogue remains absent from public class choice and mainline.
+
+## Final Phase 2 verification — supersedes earlier failed runs
+
+**PASS:** latest PR #511 staged Phase 2 head `b915bc06dde2793365725cae129c93f058bbf20b`, [GitHub focused CI run 40484652535](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40484652535), including native three-form Rogue Skill 1, combo, transient basic boon, Endure, save validation, original-class compatibility, sprite-scope, and reproducible/offline-ready build steps. The prior Rogue damage-test false alarm came from native encounter-start HP scaling; the stale Fourth-Class test was updated for actual Skill 1 range; skill-reference tests now respect native Mage/Ranger delayed attacks. The initially failing sprite fingerprint was also updated and passed. These are **resolved historical errors**. Current `main` drift, cross-device/browser and Canvas/Pixi gameplay acceptance remain distinct **future** gates. Keep PR draft, not playable. See [eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md).

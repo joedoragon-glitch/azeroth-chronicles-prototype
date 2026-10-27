@@ -1,5 +1,8 @@
 # Rogue Bard — Expedition ownership caps and low-friction Barracks company management
 
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
+
 **27 October 2026 · Owner-directed clarification · Draft PR #511 · No playable Rogue or Charm implementation**
 
 This is the controlling clarification for the **Rogue's charmed-creature ownership quota** and the **future Basic/Full Barracks interface**. Read with [canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md) and [fourth-class runtime housekeeping](ROGUE_BARD_FOURTH_CLASS_HOUSEKEEPING_20261027.md). In any conflict with an earlier “12 total charmed” suggestion, **this document supersedes that global limit**. The owner has not finalized Charm probability; do not substitute an arbitrary lower capture rate for an implemented ownership rule.

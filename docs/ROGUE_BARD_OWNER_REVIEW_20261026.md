@@ -1,7 +1,12 @@
 # Rogue Bard — one-page owner review
+
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
 **PR #511 · Design candidate, not game code · October 26, 2026**
 
 **Start here for the reconciled, current design:** [Canonical Rogue Bard owner handoff — 27 October](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md). This October 26-style one-page review is an abbreviated overview; the linked canonical handoff and 27 October dual-sided skill spec control any apparently contradictory older text.
+
+**Current review policy:** the guitar and the old fixed music/dance name policy are retired; the owner's weapon is an oversized suspended jingle-bell staff. Her documented skin, hair, sari-inspired fantasy attire, personality, and normal/crowned relationship remain the first-play appearance baseline. **Skill 1 automatic/Tap/Charged and Endure are now coded and focused-tested**, not speculative documents. The sixteen earlier names are being reconsidered by the owner. Follow the [current eight-phase gate](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md); the October 26 summary and its “docs only” footer are historical.
 
 ## Decision in one minute
 

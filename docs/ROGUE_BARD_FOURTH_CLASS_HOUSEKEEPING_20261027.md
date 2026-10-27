@@ -1,5 +1,8 @@
 # Fourth-class readiness housekeeping — draft PR #511
 
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
+
 **27 October 2026 | Limited runtime preparation + focused regression source | Draft, unmerged, not deployed**
 
 This follow-up was requested **within the existing Rogue Bard PR #511**, not a separate PR. The latest owner-approved Rogue Bard names, mirrored combat-only performances, proposed class mechanics and unresolved balance decisions remain in [canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md) and [the sixteen-form matrix](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md).

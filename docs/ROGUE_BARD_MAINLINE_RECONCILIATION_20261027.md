@@ -1,6 +1,13 @@
 # Mainline integration checkpoint for fourth-class preparation — PR #511
 
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+
+
 **27 October 2026 · Mainline reconciled into draft PR #511 at `3c6da60` · No merge to `main`, no release approval**
+
+## Phase 1 most recent reconciliation and subsequent drift
+
+The follow-up **Phase 1** merge `bd1cbe83` integrated mainline commit `1eeff159` (PR #517 ranged detection and Archer attack updates) into PR #511. The staged Phase 2 then passed focused CI on `b915bc06` ([run 40484652535](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40484652535)). **Latest `main` is now 2 commits ahead** of that synchronized baseline. This next reconciliation must occur **before Phase 3 code work** and must preserve the current original-class behavior plus staged Rogue kit. Source integration statements below refer to earlier merges, not to the current moving `main` head.
 
 ## Resolution status — current code is integrated
 
