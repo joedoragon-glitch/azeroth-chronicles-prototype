@@ -115,6 +115,18 @@ for (const [heroClass, type, firstSix] of [
   assert.doesNotThrow(() => Campaign.validate(c.snapshot()));
 }
 
+// Charm provenance is UI-only preparation today; imported records may not
+// impersonate future captured creatures until the authenticated save schema
+// and species allowlist are implemented.
+{
+  const g = new Campaign('normal', 'mage', () => 0.9);
+  const baseline = g.snapshot();
+  assert.doesNotThrow(() => Campaign.validate(copy(baseline)));
+  const forged = copy(baseline);
+  forged.party[0].charmOrigin = { typeId: 'enemy:goblin:ranged', typeName: 'Goblin Slinger' };
+  assert.throws(() => Campaign.validate(forged), /Invalid charm provenance/);
+}
+
 // Succession validator should track the actual playable class registry, not 3.
 const c = new Campaign('normal', 'paladin', () => 0.9);
 const gameOverThree = c.snapshot();
