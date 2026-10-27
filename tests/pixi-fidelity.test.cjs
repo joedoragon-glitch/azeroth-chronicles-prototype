@@ -408,6 +408,28 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   tinyGpu.activate();
   const baseline=tinyGpu.status();
   assert(baseline.proceduralBytes>0 && baseline.proceduralBytes<=800);
+  // Stage 6: retain repeat-use art during combat up to the hard budget,
+  // then resume normal soft LRU cleanup when the fight ends.
+  const combatEvictions=tinyGpu.status().proceduralCacheEvictions;
+  game.s.projectiles=[{id:'active-attack'}];
+  game.props=[1,2,3].map(i=>({
+    id:'fight-'+i,x:game.hero.x+8+i*12,y:game.hero.y+6,
+    structure:'lumber-pile'
+  }));
+  tinyGpu.draw();
+  const fightCache=tinyGpu.status();
+  assert(fightCache.proceduralBytes>fightCache.proceduralBudget*0.75,
+    'combat holds nearby repeat-use art above the soft trim mark');
+  assert(fightCache.proceduralBytes<=800,
+    'combat never raises the strict image budget');
+  assert.equal(fightCache.proceduralCacheEvictions,combatEvictions,
+    'near-fight soft eviction cannot churn cached attack frames');
+  game.s.projectiles=[];
+  game.props=[{id:'fight-3',x:game.hero.x+44,y:game.hero.y+6,
+    structure:'lumber-pile'}];
+  tinyGpu.draw();
+  assert(tinyGpu.status().proceduralBytes<fightCache.proceduralBytes,
+    'non-combat frames resume ordinary LRU reclamation');
   const previousSceneTextures=destroyedProcedural;
   const seen=[];
   for(let i=1;i<=65;i++){

@@ -493,14 +493,19 @@
       aheadRenderer.setGroundReuse?.(false);
       return true;
     }
+    // Read-only current-zone threat check: never generate a destination.
+    // Optional work can wait; mandatory drawing and hard resource limits cannot.
+    function nearActiveFight(current) {
+      return !!current.s.projectiles?.length ||
+        (current.zone()?.enemies || []).some((enemy) =>
+          enemy.hp > 0 && Math.hypot(enemy.x - current.hero.x,
+            enemy.y - current.hero.y) <= 420);
+    }
     function canPrepareLookahead(current) {
       if (!active || !scene || !backing || !backdrop || root.document?.hidden ||
           current.s.mode === 'arena' || current.isDungeon() || current.supplyRoom?.() ||
-          current.sideDungeon?.(current.zoneId) || current.s.projectiles?.length)
-        return false;
-      return (current.zone()?.enemies || []).every((enemy) =>
-        enemy.hp <= 0 || Math.hypot(enemy.x - current.hero.x,
-          enemy.y - current.hero.y) > 420);
+          current.sideDungeon?.(current.zoneId)) return false;
+      return !nearActiveFight(current);
     }
     function queueBackgroundLookahead(current, dx, dy) {
       if (aheadReady || aheadIdle != null || !backdrop ||
@@ -804,10 +809,11 @@
         } else throw Error('Missing original game artwork: ' + key);
       }
       scene.syncActors(records);
-      // At this point all offscreen sprites have been removed; trim their
-      // original GPU sources only when above the soft watermark. This keeps
-      // a short return path warm, but bounds long walks through large towns.
-      if (imageBytes > trimAt)
+      // Stage 6: defer optional soft LRU sweeps during close-range combat.
+      // Repeated attack frames can reuse art; the separate hard-budget path
+      // still reclaims cold textures when absolutely necessary and never
+      // removes currently visible identities.
+      if (imageBytes > trimAt && !nearActiveFight(current))
         evictUnused(protectedRevisions, imageBytes - trimTo);
     }
     function syncAtmosphere() {
