@@ -16,7 +16,7 @@ for (const language of ['en', 'es']) {
   const short = () =>
     assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 45);
   e.get('menu-button').click();
-  assert.equal(e.get('modal-actions').children.length, 5);
+  assert.equal(e.get('modal-actions').children.length, 6);
   assert(!e.get('modal-actions').children.some((b) =>
     b.textContent.startsWith(t('Codices of the Unforeseen', 'Códices de lo Imprevisto'))),
     'critical Codices are discovered in-world, not managed in the main menu');

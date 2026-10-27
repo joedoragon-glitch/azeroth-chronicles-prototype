@@ -1209,3 +1209,45 @@ body.menu-open #cancel-navigation-button {
   font-weight: 600;
   white-space: nowrap;
 }
+
+/* A separate opaque, responsive main-screen surface; menu dialogs overlay it. */
+#title-screen[hidden], #title-loading[hidden] { display: none !important; }
+#title-screen {
+  position: fixed; inset: 0; z-index: 8;
+  background: radial-gradient(ellipse at 50% 25%, #274337 0%, #14291f 52%, #07130f 100%);
+  display: grid; place-items: center; overflow-y: auto;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
+  overscroll-behavior: contain;
+}
+.title-panel {
+  width: min(100%, 480px); border: 1px solid #b69a6380;
+  border-radius: 18px; padding: clamp(22px, 5vw, 40px);
+  background: #14251edc; box-shadow: 0 12px 50px #0008; text-align: center;
+}
+#title-heading { color: #f0ddb0; font-family: Georgia, serif;
+  font-size: clamp(24px, 5.2vw, 38px); line-height: 1.15; margin: 8px 0 18px; }
+#title-tagline { color: #c3ad80; font-size: 12px; letter-spacing: .03em; margin: 0; }
+#title-preview { min-height: 34px; color: #c7d8cb; font-size: 13px; }
+#title-screen nav { display: grid; gap: 10px; margin-top: 16px; }
+#title-screen nav button {
+  min-height: 48px; padding: 12px 16px; border: 1px solid #9bb39b60;
+  border-radius: 9px; background: #253e34; color: #f4e9ce;
+  font-size: 15px; cursor: pointer;
+}
+#title-screen nav button:first-child:not(:disabled) { border-color: #d4b479; background: #375245; }
+#title-screen nav button:hover:not(:disabled), #title-screen nav button:focus-visible {
+  border-color: #f1d9a0; background: #416452;
+  outline: 2px solid #d4b479; outline-offset: 2px;
+}
+#title-screen nav button:disabled { opacity: .45; cursor: not-allowed; }
+#title-loading { color: #d3bc89; font-size: 13px; margin: 16px 0 0; }
+body.title-active #world,
+body.title-active #hud,
+body.title-active #skills,
+body.title-active #movement,
+body.title-active #desktop-hints,
+body.title-active #message,
+body.title-active #stamina-status,
+body.title-active #sprint-button,
+body.title-active #cancel-navigation-button { visibility: hidden !important; }
+body.title-active #modal { z-index: 11; }
