@@ -5600,6 +5600,41 @@
         if (committed) return true;
       }
       if (state.phase === 'anchored') {
+        // An outmatched fighter may hold an allied post, but that must not
+        // become twelve seconds of free Ranger attacks outside Rogue reach.
+        // Only a fresh, visible HP-damage source can break this temporary
+        // ordinary-monster hold. The native AI resumes its existing leash,
+        // movement speeds, shot ranges and obstacle handling below.
+        const underFire = this.enemyUnderFireAlert(e);
+        const source =
+          underFire?.source === 'hero'
+            ? this.hero
+            : underFire?.source
+              ? this.activeLivingParty().find((u) => u.id === underFire.source)
+              : null;
+        if (
+          e.type === 'mob' &&
+          e.form === 'normal' &&
+          !e.summon &&
+          !e.rogueEmergencyReinforcement &&
+          !e.captain &&
+          !e.roomCaptain &&
+          !e.fieldCaptain &&
+          !this.tacticalDefenderTerritory(e) &&
+          source?.hp > 0 &&
+          target === source &&
+          dist(e, source) > 280 &&
+          this.enemyRangedLine(e, source) &&
+          this.tacticalRogueLeashAllows(e, source, 500) &&
+          (this.isDungeon() ||
+            dist(source, {
+              x: D.towns[this.regionIndex()][0],
+              y: D.towns[this.regionIndex()][1],
+            }) >= 160)
+        ) {
+          this.tacticalStopRogueRegroup(e);
+          return false;
+        }
         // The temporary combat anchor follows a real continued encounter,
         // never changing the original respawn home.
         if (dist(e, state.anchor) > 340) {
