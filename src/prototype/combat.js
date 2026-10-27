@@ -276,6 +276,13 @@
 
       noteEnemyUnderFire(e, source, origin, actualDamage) {
         if (!(actualDamage > 0) || e.hp <= 0) return;
+        // PR #516 must never reinterpret an earlier hit as an attack on a
+        // refuge the monster reached later. Only real damage taken WHILE
+        // anchored and outside the close Rogue response radius requests a
+        // fresh tactical assessment. This state remains unsaved/transient.
+        const regroup = this.tacticalRogueRegroup(e);
+        if (regroup?.phase === 'anchored' && dist(origin, e) > 280)
+          regroup.hitWhileAnchored = true;
         const previous = underFireAlerts.get(e);
         const realAttacker =
           source === 'hero' ||
