@@ -19,7 +19,6 @@
     "rangedHealerRole": "archer friendly AI and trained companion healing",
     "endureSeconds": 2,
     "endureFloorHp": 1,
-    "passiveCritPercentagePointsPerLevel": 1,
     "passiveCritIncludesLevel1": true,
     "passiveAddsOtherStats": false,
     "staticArtOnly": true,
@@ -36,7 +35,10 @@
     "allNormalAndChargedSkillsDualSidedAoE": true,
     "companionSongBenefitsMayOverlap": true,
     "previousCritPointsPerLevel": 1,
-    "critChanceIncreaseUnderReview": "2 percentage points per hero level (includes level 1) proposed by owner, not yet final"
+    "critChanceIncreaseUnderReview": "2 percentage points per hero level (includes level 1) proposed by owner, not yet final",
+    "previousProposedCritPercentagePointsPerLevel": 1,
+    "currentEvaluatedCritPercentagePointsPerLevel": 2,
+    "critChanceDecisionState": "owner proposed stronger chance, pending final numerical approval"
   },
   "proposal": {
     "classStarting": {
@@ -101,8 +103,8 @@
         "primaryPreMitigation": 24,
         "splashEachPreMitigation": 6,
         "threeTargetTotalPreMitigation": 36,
-        "intensity1CritExpectedPrimary": 24.2112,
-        "notes": "Arithmetic from 90HP/18Power/3Armor/300speed base and personal 11% critical at L1; not combat simulation; one primary + max two splashes"
+        "intensity1CritExpectedPrimary": 24.2304,
+        "notes": "Arithmetic from base 90HP/18Power/3Armor/300speed and proposed personal 12% critical at L1; not combat simulation; 1 primary + max 2 splashes"
       },
       "nameApproval": "proposed"
     },
