@@ -27,7 +27,9 @@
     "charmedMonstersInheritedBySuccessors": true,
     "nonRogueSuccessorsCannotCharm": true,
     "statBaselineRule": "Use lowest existing class HP, Power and movement Speed; Rogue does not gain extra conventional statistics from class passive",
-    "skillNamingStyle": "Normal and charged move titles should sound like dance steps or original musical movements/compositions and suggest their mechanical effects; exact names have not been approved."
+    "skillNamingStyle": "Normal and charged skill names evoke dance/musical movements and foreshadow effects; owner explicitly approved displayed 8 tap + 8 charged titles on 2026-10-27.",
+    "approvedSkillNames": true,
+    "approvedSkillNamesDate": "2026-10-27"
   },
   "proposal": {
     "classStarting": {
@@ -77,7 +79,8 @@
         "threeTargetTotalPreMitigation": 36,
         "intensity1CritExpectedPrimary": 24.2112,
         "notes": "Arithmetic from 90HP/18Power/3Armor/300speed base and personal 11% critical at L1; not combat simulation; one primary + max two splashes"
-      }
+      },
+      "nameApproval": "proposed"
     },
     "comboFinisher": {
       "name": "Rattling Crescendo",
@@ -88,7 +91,8 @@
       "totalTargetCap": 5,
       "newSecondaryDamageFraction": 0.2,
       "secondarySlowSeconds": 0.75,
-      "charmOnAdditionalTargets": false
+      "charmOnAdditionalTargets": false,
+      "nameApproval": "proposed"
     },
     "charm": {
       "initialChancePerEligibleHit": 0.12,
@@ -159,7 +163,9 @@
         "damage",
         "damage"
       ],
-      "note": "auto basic Rude Riff remains distinct; no area Charm"
+      "note": "auto basic Rude Riff remains distinct; no area Charm",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     },
     {
       "slot": 2,
@@ -169,7 +175,9 @@
         "slowDuration",
         "slowDuration"
       ],
-      "note": "bounded Slow"
+      "note": "bounded Slow",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     },
     {
       "slot": 3,
@@ -179,7 +187,9 @@
         "cooldownDebt",
         "silenceDuration"
       ],
-      "note": "frequent precise interruption with boss restrictions"
+      "note": "frequent precise interruption with boss restrictions",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     },
     {
       "slot": 4,
@@ -189,7 +199,9 @@
         "damage",
         "damage"
       ],
-      "note": "modest damage over time and capped healing reduction; critical enhances initial hit only"
+      "note": "modest damage over time and capped healing reduction; critical enhances initial hit only",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     },
     {
       "slot": 5,
@@ -199,7 +211,9 @@
         "slowDuration",
         "damage"
       ],
-      "note": "two bounded trap types; roll on placement"
+      "note": "two bounded trap types; roll on placement",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     },
     {
       "slot": 6,
@@ -209,7 +223,9 @@
         "cooldownDebt",
         "cooldownDebt"
       ],
-      "note": "not-ready skill cooldown debt"
+      "note": "not-ready skill cooldown debt",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     },
     {
       "slot": 7,
@@ -219,7 +235,9 @@
         "pushDistance",
         "pushDistance"
       ],
-      "note": "collision-safe push/Weaken; summon separate unresolved"
+      "note": "collision-safe push/Weaken; summon separate unresolved",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     },
     {
       "slot": 8,
@@ -229,7 +247,9 @@
         "damage",
         "silenceDuration"
       ],
-      "note": "bounded limited targets, not boss lock"
+      "note": "bounded limited targets, not boss lock",
+      "nameApproval": "owner-approved",
+      "mechanicsApproval": "proposed-not-yet-reviewed"
     }
   ],
   "visual": {
