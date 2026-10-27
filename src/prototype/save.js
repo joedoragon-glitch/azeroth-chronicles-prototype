@@ -704,7 +704,10 @@
         if (
           (!ch.succession && (ch.fallen.length || ch.pending || ch.gameOver)) ||
           (ch.pending &&
-            (!ch.fallen.includes(s.hero.class) || ch.fallen.length !== 1 || s.hero.hp !== 0)) ||
+            (!ch.fallen.includes(s.hero.class) ||
+              ch.fallen.length < 1 ||
+              ch.fallen.length >= classCount - 1 ||
+              s.hero.hp !== 0)) ||
           (ch.gameOver && (ch.fallen.length !== classCount || ch.pending || s.hero.hp !== 0)) ||
           (ch.succession && !ch.pending && !ch.gameOver && ch.fallen.includes(s.hero.class))
         )
