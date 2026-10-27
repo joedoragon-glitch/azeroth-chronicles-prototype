@@ -1460,7 +1460,7 @@
         return entry && entry.until > this.s.time ? entry : null;
       }
       applyRogueSongBoon(u, family, form) {
-        if (!['quickstep', 'borrowedTime', 'firmFooting'].includes(family) ||
+        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting'].includes(family) ||
           this.hero.class !== 'rogue' || !this.activeLivingParty().includes(u))
           return false;
         let state = roguePerformanceBoons.get(u);
@@ -1479,6 +1479,7 @@
             Math.min(0.18, form.specialRecovery || 0)),
           outgoing: Math.max(previous?.outgoing || 0,
             Math.min(0.08, form.outgoing || 0)),
+          protection: !!(previous?.protection || form.protection),
         };
         return true;
       }

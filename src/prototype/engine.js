@@ -7291,6 +7291,7 @@
         } else if (
           e.nightOnly &&
           !this.mageSilenceActive(e) &&
+          !this.rogueEnemySilenced(e) &&
           e.specialCd <= 0 &&
           visible &&
           d <

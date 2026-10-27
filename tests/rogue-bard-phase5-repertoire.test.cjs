@@ -35,9 +35,10 @@ try {
   g.hero.skills[1] = 1;
   g.hero.skills[5] = 1;
   g.hero.skills[6] = 1;
+  g.hero.skills[2] = 1;
   const card2 = Reference.describe(g,2);
   assert(card2 && card2.tap.metrics.some((m)=>m.key==='slow'));
-  assert(Reference.describe(g,3)===null, 'other Phase 5 forms are still locked');
+  assert(Reference.describe(g,3)?.tap.metrics.some((m)=>m.key==='interruptDebt'));
   assert(Reference.describe(g,7)?.tap.metrics.some((m)=>m.key==='push'));
   assert(Reference.describe(g,6)?.charge.metrics.some((m)=>m.key==='specialRecovery'));
   const initialSpeed = g.companionRallyMoveSpeed(unit, 230);
@@ -97,6 +98,18 @@ try {
   g.hero.cd[6] = 0;
   assert.equal(g.cast(7,foe.id,true),true);
   assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing <= 0.08);
+  // Skill 3 interrupts only a real warned enemy action; Steady Beat
+  // protects a lawful living companion charge, never grants invulnerability.
+  foe.rangedAim = { warning: true };
+  g.hero.cd[2] = 0;
+  assert.equal(g.cast(3,foe.id),true);
+  assert.equal(foe.rangedAim,null);
+  assert(g.rogueSongBoon(unit,'steadyBeat')?.protection);
+  g.hero.cd[2] = 0;
+  assert.equal(g.cast(3,foe.id,true),true);
+  assert(g.rogueEnemySilenced(foe),'eligible enemy special hush is active');
+  const protectedSnapshot = g.snapshot();
+  assert(!JSON.stringify(protectedSnapshot).includes('steadyBeat'));
   // Empty legal hostile range never yields a free party boon or consumes CD.
   g.zone().enemies = [];
   g.hero.cd[1]=0;

@@ -3,6 +3,8 @@
   'use strict';
   function install(Campaign, { R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    // Enemy-only charged hush is transient; never saved or inherited.
+    const rogueEnemySilences = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     // Adding a hero to the class registry must not silently use Ranger shots,
@@ -1149,6 +1151,11 @@
         });
       }
       // These are owner-tunable first-play numbers, not permanent skill names.
+      rogueEnemySilenced(e) {
+        const state = rogueEnemySilences.get(e);
+        return this.hero.class === 'rogue' && e?.hp > 0 &&
+          state?.zone === this.zoneId && state.until > this.s.time;
+      }
       rogueSkill1Config(charged = false) {
         return charged
           ? { range: 300, radius: 190, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
@@ -1249,6 +1256,25 @@
         this.s.heroTarget = primary.id;
         for (const e of enemies) {
           if (slot === 2) this.applySlow(e, form.slow);
+          if (slot === 3) {
+            // Interrupt only an actual native warning/aim, never invent a cast.
+            const warning = e.telegraph || e.rangedAim;
+            if (warning && this.interruptEnemyAction(e, warning)) {
+              e.cd = Math.max(e.cd || 0, form.debt);
+              e.specialCd = Math.max(e.specialCd || 0, form.debt);
+            }
+            // Hush blocks new eligible non-boss specials only; it never
+            // erases protected boss phases or ordinary basic attacks.
+            if (form.silence && e.hp > 0 && e.type !== 'boss' &&
+                !e.captain && !e.roomCaptain && !(e.immune > 0)) {
+              const prev = rogueEnemySilences.get(e);
+              rogueEnemySilences.set(e, {
+                zone: this.zoneId,
+                until: Math.max(prev?.zone === this.zoneId ? prev.until : 0,
+                  this.s.time + form.silence),
+              });
+            }
+          }
           if (slot === 7) {
             // Existing collision/legal-arena push; already executing a
             // scripted charge is never overridden.
@@ -1270,7 +1296,7 @@
         }
         for (const u of allies)
           this.applyRogueSongBoon(u,
-            slot === 2 ? 'quickstep' : slot === 7 ? 'firmFooting' : 'borrowedTime', form);
+            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 7 ? 'firmFooting' : 'borrowedTime', form);
         this.event('rogueBellPerformance', {
           actor: 'hero', class: 'rogue', slot,
           form: charged ? 'charged' : 'tap',

@@ -6576,6 +6576,16 @@
         seconds: 6, move: 0.12, recovery: 0.08,
       }),
     }),
+    3: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 2, debt: 0.6,
+        seconds: 3, protection: true,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 185, cap: 3, debt: 0.85,
+        silence: 1.2, seconds: 4, protection: true,
+      }),
+    }),
     7: Object.freeze({
       tap: Object.freeze({
         range: 260, radius: 145, cap: 2, push: 25, weaken: 3,

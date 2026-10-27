@@ -24,7 +24,7 @@ Enemy Skill 6 debt affects only known, non-ready cooldown fields.
 
 **Next staged slice:** Skill 7 Wrong Foot / Panic Party has native collision-safe push/Weaken and a same-area Firm Footing ally outgoing-damage boon, with nonstacking expiry and no persistent stat mutation. The corresponding numerical effects are still provisional.
 
-**Not yet implemented:** Skill 3 anti-interrupt, Skill 4 HoT/anti-heal,
+**Next staged slice:** Skill 3 Beat Breaker / Shut the Band Up interrupts an actual warned/aiming native enemy action, and grants Steady Beat protection against damage-threshold cancellation of a live companion charge. Charged hush is transient and limited to ordinary eligible non-boss special starts. Death, target legality, scripted phases and other cancellation paths are unchanged.\n\n**Not yet implemented:** Skill 4 HoT/anti-heal,
 Skill 5 dual-polarity station (design still partly provisional), Skills
 8 damage/crit group boons, final name acceptance, and all Phase 6 Rogue critical
 mechanics. No new art/audio, tutorial, public class registration or release.

@@ -162,6 +162,10 @@
           if (unit.hp <= 0) this.clearPartyCharge(unit);
           return false;
         }
+        // Only eligible living companions preparing an actual native charge
+        // resist damage-threshold interruption. Death still breaks the cast.
+        if (unit !== this.hero && unit.hp > 0 &&
+            this.rogueSongBoon?.(unit, 'steadyBeat')?.protection) return false;
         cast.lostHp += actualLostHp;
         const rule = R.chargedSkills.interrupt,
           threshold = Math.max(rule.minimumHp, (unit.maxHp || 1) * rule.hpFraction);
