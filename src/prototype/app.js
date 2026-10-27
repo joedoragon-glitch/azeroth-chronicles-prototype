@@ -1638,15 +1638,26 @@
       installInstructions();
     }
   }
+  // Technical receipts are quieter than warnings, while save failures and
+  // emergency combat pauses must remain legible and screen-reader immediate.
+  function statusTier(text) {
+    if (
+      /critical slowdown|saving failed|storage unavailable|saved run unavailable|recovery failed|returned to (your )?(refuge|recovery point)|emergency reset/i.test(text)
+    ) return 'critical';
+    if (/legacy save|invalid import|imported successfully|recovery checkpoint/i.test(text))
+      return 'important';
+    return 'routine';
+  }
   function status(text) {
     if (text === 'Saved locally · export for a backup') return;
-    $('status').textContent = tr(text);
-    const important =
-      /storage unavailable|Saving failed|Saved run unavailable|Legacy save|Invalid import|Imported successfully|Recovery failed|recovery checkpoint/i.test(
-        text,
-      );
-    statusUntil = performance.now() + (important ? 6000 : 2800);
-    statusContext = important ? null : { game, zone: game?.zoneId, visit: game?.noticeVisit };
+    const tier = statusTier(text), host = $('status');
+    host.dataset.noticeTier = tier;
+    host.setAttribute('role', tier === 'critical' ? 'alert' : 'status');
+    host.textContent = tr(text);
+    statusUntil = performance.now() + (tier === 'critical' || tier === 'important'
+      ? 6000 : text === 'Performance recovered: combat resumed.' ? 1750 : 2600);
+    statusContext = tier === 'routine'
+      ? { game, zone: game?.zoneId, visit: game?.noticeVisit } : null;
   }
   function manaStatus(text) {
     // Dormant MP remains recoverable: the restoration flag brings this back.
@@ -6212,7 +6223,7 @@
             : width - Math.max(12, safeRight),
         left = shortPhone && width - hud.right > 250 ? hud.right + edge : edge,
         available = Math.max(160, right - left),
-        noticeWidth = Math.min(platform.mode === 'phone' ? 600 : 480, available);
+        noticeWidth = Math.min(platform.mode === 'phone' ? (shortPhone ? 320 : 310) : 480, available);
       host.style.width = noticeWidth + 'px';
       host.style.left = left + available / 2 + 'px';
       host.style.top =
@@ -6290,12 +6301,20 @@
         (n) => n.kind === 'narration' || n.text.length + (n.detail?.length || 0) > 90,
       ),
     );
-    // The separate short-lived phone status must stay below the amber stack.
-    if (platform.mode === 'phone')
-      $('status').style.top = state.active.length
+    // Routine receipts never stack beneath an important amber announcement;
+    // urgent status remains legible even when both channels are active.
+    const shortStatus = $('status');
+    if (platform.mode === 'phone') {
+      const urgent = ['critical', 'important'].includes(shortStatus.dataset.noticeTier);
+      const deferRoutine = state.active.length > 0 && !urgent;
+      shortStatus.classList.toggle('notice-deferred', deferRoutine);
+      shortStatus.style.top = state.active.length && urgent
         ? Math.ceil(host.getBoundingClientRect().bottom + 8) + 'px'
         : '';
-    else $('status').style.top = '';
+    } else {
+      shortStatus.classList.remove('notice-deferred');
+      shortStatus.style.top = '';
+    }
   }
   const developerSummonButton = document.createElement('button');
   developerSummonButton.id = 'developer-summon';
