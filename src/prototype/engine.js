@@ -6497,34 +6497,21 @@
       e.noProgress = 0;
       return true;
     }
-    // The ONE native Pursuit Burst can recover sooner for melee in any
-    // region, including Ringleaders. Summon ancestry must resolve entirely
-    // through non-boss, non-captain owners; unknown chains fail closed.
+    // Only ordinary, nonsummoned melee and melee Ringleaders receive the
+    // validated short native recovery. Captain Overtime already grants
+    // workers its own four-second burst and is deliberately excluded.
+    // Leave summons, ranged/hybrid actors, bosses, captains and reset logic
+    // on their existing behavior pending the separate territory audit #510.
     meleePursuitBurstEligible(e) {
-      if (
-        this.peace || !e || !e.aggro || !(e.hp > 0) ||
-        e.neutral || e.returning || e.type !== 'mob' ||
-        e.captain || e.roomCaptain || e.fieldCaptain ||
-        e.developerSummon ||
-        (!e.summon && e.rogueEmergencyReinforcement) ||
-        (this.enemyRanged(e) && !e.hybrid)
-      ) return false;
-      if (!e.summon) return true;
-      const actors = this.zone().enemies;
-      const seen = new Set([e.id]);
-      let member = e;
-      while (member.summon) {
-        if (!member.owner || seen.has(member.owner)) return false;
-        seen.add(member.owner);
-        const owner = actors.find(u => u.id === member.owner);
-        if (
-          !owner || owner.type !== 'mob' ||
-          owner.captain || owner.roomCaptain || owner.fieldCaptain ||
-          owner.developerSummon
-        ) return false;
-        member = owner;
-      }
-      return true;
+      return !!(
+        !this.peace && e && e.aggro && e.hp > 0 &&
+        !e.neutral && !e.returning && e.type === 'mob' &&
+        !e.captain && !e.roomCaptain && !e.fieldCaptain &&
+        !e.summon && !e.developerSummon &&
+        !e.rogueEmergencyReinforcement &&
+        !(e.quotaOvertime > 0) &&
+        !this.enemyRanged(e)
+      );
     }
 
     // Tuned ordinary/elite melee basics preserve longer native actor reach.

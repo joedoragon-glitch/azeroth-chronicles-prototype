@@ -154,10 +154,10 @@ for (const [species, guard] of [
   }
   e.ranged = true;
   e.hybrid = true;
-  assert(c.meleePursuitBurstEligible(e), 'true melee/ranged hybrids share the pilot');
+  assert(!c.meleePursuitBurstEligible(e), 'dual-role hybrids are outside the strict melee expansion');
   assert.equal(c.enemyHybridMeleeRange(e), melee.enemy, 'hybrid stance remains unchanged');
   e.form = 'ringleader';
-  assert(c.meleePursuitBurstEligible(e), 'hybrid Ringleader is included');
+  assert(!c.meleePursuitBurstEligible(e), 'hybrid Ringleader outside the strict melee expansion');
   const { c: crypt, e: cryptGuardian } = scene('crypt', 'skeleton', true);
   assert(crypt.meleePursuitBurstEligible(cryptGuardian), 'Vale dungeon guardians included');
   const { c: march, e: outsider } = scene('march', 'mireling');

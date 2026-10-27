@@ -1,5 +1,5 @@
 'use strict';
-// Focused all-region melee Pursuit Burst eligibility and summons-provenance audit.
+// Strict staged melee pursuit: only ordinary unsummoned melee and melee Ringleaders.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const cfg = Campaign.rules.balance.pursuit;
@@ -38,7 +38,7 @@ for (const [region, species] of [
   assert(c.meleePursuitBurstEligible(e), region + ' melee Ringleader');
   e.ranged = true;
   e.hybrid = true;
-  assert(c.meleePursuitBurstEligible(e), region + ' melee-capable hybrid');
+  assert(!c.meleePursuitBurstEligible(e), region + ' hybrid ranged actor excluded');
   e.hybrid = false;
   assert(!c.meleePursuitBurstEligible(e), region + ' pure ranged excluded');
 }
@@ -60,50 +60,35 @@ for (const [region, species] of [
 {
   const { c, e } = scene('vale', 'goblin');
   const owner = c.makeEnemy({
-    species: 'goblin', name: 'Ringleader owner', form: 'ringleader',
+    species: 'goblin', name: 'Ringleader summoner', form: 'ringleader',
     level: 3, hp: 5000, damage: 5, gold: 0, xp: 0,
   }, { x: 1300, y: 1600 });
-  owner.form = 'ringleader';
   c.zone().enemies.push(owner);
-  Object.assign(e, { summon: true, owner: owner.id, guard: true,
-    rogueEmergencyReinforcement: true, ranged: false });
-  assert(c.meleePursuitBurstEligible(e),
-    'real Ringleader-owned melee reinforcements qualify');
-  e.ranged = true;
-  assert(!c.meleePursuitBurstEligible(e), 'ranged reinforcement excluded');
-  e.ranged = false;
-  for (const change of [
-    { type: 'boss' }, { captain: true }, { roomCaptain: true },
-    { fieldCaptain: true },
+  for (const changes of [
+    { summon: true, owner: owner.id },
+    { summon: true, owner: owner.id, rogueEmergencyReinforcement: true },
+    { summon: true, owner: 'missing-owner' },
+    { summon: true, owner: e.id },
+    { rogueEmergencyReinforcement: true },
   ]) {
-    const old = { ...owner };
-    Object.assign(owner, change);
-    assert(!c.meleePursuitBurstEligible(e), 'owner ' + JSON.stringify(change));
-    Object.keys(change).forEach(k => { if (!(k in old)) delete owner[k]; });
-    Object.assign(owner, old);
+    const old = { ...e };
+    Object.assign(e, changes);
+    assert(!c.meleePursuitBurstEligible(e),
+      'no summons or called reinforcements: ' + JSON.stringify(changes));
+    Object.keys(changes).forEach(k => { if (!(k in old)) delete e[k]; });
+    Object.assign(e, old);
   }
-  owner.hp = 0;
-  assert(c.meleePursuitBurstEligible(e), 'dead Ringleader owner retains origin');
-  owner.hp = 5000;
-  e.owner = 'unknown-owner';
-  assert(!c.meleePursuitBurstEligible(e), 'missing owner fails closed');
-  e.owner = e.id;
-  assert(!c.meleePursuitBurstEligible(e), 'owner cycle fails closed');
-  e.owner = owner.id;
-  const ancestor = c.makeEnemy({
-    species: 'orc', name: 'ancestor', level: 3, hp: 5000,
-    damage: 5, gold: 0, xp: 0,
-  }, { x: 1250, y: 1600 });
-  ancestor.type = 'boss';
-  owner.summon = true;
-  owner.owner = ancestor.id;
-  c.zone().enemies.push(ancestor);
-  assert(!c.meleePursuitBurstEligible(e), 'indirect boss-owned summon excluded');
-  ancestor.type = 'mob';
-  ancestor.captain = true;
-  assert(!c.meleePursuitBurstEligible(e), 'indirect captain-owned summon excluded');
-  ancestor.captain = false;
-  assert(c.meleePursuitBurstEligible(e), 'verified non-captain ancestry eligible');
+}
+{
+  const { c, e } = scene('frontier', 'orc');
+  e.quotaOvertime = 9;
+  e.pursuitBurst = 4;
+  assert(!c.meleePursuitBurstEligible(e),
+    'captain Overtime worker is excluded from short native recovery');
+  assert.equal(e.pursuitBurst, 4, 'existing four-second Overtime burst untouched');
+  e.quotaOvertime = 0;
+  assert(c.meleePursuitBurstEligible(e),
+    'ordinary unsummoned melee may qualify again after Overtime');
 }
 {
   const { c, e } = scene('vale', 'skeleton');
@@ -115,4 +100,4 @@ for (const [region, species] of [
   c.s.phase = 'peace';
   assert(!c.meleePursuitBurstEligible(e), 'peace disables added pressure');
 }
-console.log('PASS shared melee pursuit: five regions, interiors, Ringleaders, hybrids, boss/captain summon ancestry and orphan safety');
+console.log('PASS strictly ordinary melee and melee Ringleader pursuit: regions, all summon and Overtime exclusions, ranged roles');
