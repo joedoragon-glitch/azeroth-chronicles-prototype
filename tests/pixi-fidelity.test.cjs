@@ -412,7 +412,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   // then resume normal soft LRU cleanup when the fight ends.
   const combatEvictions=tinyGpu.status().proceduralCacheEvictions;
   game.s.projectiles=[{id:'active-attack'}];
-  game.props=[1,2,3].map(i=>({
+  game.props=[1,2,3,4].map(i=>({
     id:'fight-'+i,x:game.hero.x+8+i*12,y:game.hero.y+6,
     structure:'lumber-pile'
   }));
