@@ -13,7 +13,7 @@ The owner proposed a **simpler alternative** after the initial historical audit:
 - Keep the current `R.balance.classes` starting numbers **unchanged as the historical foundation**, at least for the first candidate. The class passive contributes a distinct derived bonus on top.
 - The passive **applies automatically at/with leveling**; final starting magnitude, growth rate, cap (if any), and rounding are **not decided**. We should explicitly decide whether it is already meaningful at level 1. No approved numerical values.
 - Leave the shared natural +25 HP per level, all tier prices/bonuses, reforges, Discipline Training, MP resource mode, class skill definitions and combat rules unchanged. **Do not alter skill files to deliver the passives** if a safe isolated integration exists.
-- No new dodge, evasion, crit, extra-projectile, attack-speed or attack-range system as the default. These are potential complexity traps and **not currently authorized**.
+- No new dodge, evasion, crit, extra-projectile, independent attack-speed or attack-range system as the default. These are potential complexity traps and **not currently authorized**. Ranger passive cooldown reduction is now explicitly eligible for design, but its magnitude, scope (which cooldowns) and stacking/cap policy remain unapproved.
 - Prefer a **single, deterministic, centralized, class-and-level-based calculation** over serialized passive state, ticking buffs, ad-hoc level-up mutations, or scattered conditionals. This is a proposed architecture to validate against the actual code, *not* an implementation commitment.
 - A passive may indirectly change downstream damage or survivability when it modifies a stat. In particular, **Mage bonus Power changes effective damage for existing Power-based skills even if no skill value or formula changes**. That indirect effect must be measured and presented for approval; do not pretend it is fully isolated from gameplay.
 
@@ -22,7 +22,7 @@ The owner proposed a **simpler alternative** after the initial historical audit:
 | --- | --- | --- | --- |
 | Paladin | Fortitude / Endurance | Derived max HP **or** Armor bonus scaling with level; choose after save/damage audit | New shield skill, stacking damage immunities, combat-triggered heal |
 | Mage | Arcane Power / Attunement | Derived Power bonus scaling with level, checked against existing skill output | Editing skill damage multipliers, skill ranks, mana reactivation |
-| Ranger | Agility / Fleetfoot | Derived **movement speed** bonus scaling with level | New dodge engine, altered basic cooldown/range, projectile rewrites |
+| Ranger | Agility / Fleetfoot | Derived **movement speed plus cooldown reduction** that grows with level, independently of spending talent points | Dodge engine, projectile rewrites, range/skill coefficient changes; unbounded cooldown stacking |
 
 The examples intentionally use already-existing character properties first. **Nothing in this table is an approved new ability or stat number.** If Ranger movement alone proves insufficient for a noticeable agility identity, discuss *why* before considering a broader mechanic.
 
@@ -36,13 +36,31 @@ The examples intentionally use already-existing character properties first. **No
 
 **Change control:** This direction replaces the *proposed means* (retuning base attributes) but retains the *goal* and all skill-system exclusions. The historical findings and baseline tables below remain true. Sections describing a stat-table-first roadmap are retained only as history and are explicitly superseded by the revised pickup steps below.
 
+### Ranger Discipline Training audit — verified baseline before designing the new passive
+
+The user clarified that **Ranger agility should mean not only movement speed, but also more frequent actions through class-intrinsic cooldown reduction beyond the existing talent investment**. This updates the earlier movement-only suggestion and should be treated as a focused exception to the earlier total cooldown-freeze wording.
+
+Current `main` values:
+- `R.balance.classes.ranger.speed = 320`, compared with Paladin/Mage `300`.
+- `R.balance.disciplines.profiles.ranger.speed = 41` speed points **per rank** in the existing movement training slot (index 3).
+- `R.balance.disciplines.maxRanks = [5,5,5,3]`: movement training **max rank 3**, so Ranger movement from base plus this training, without other effects, is rank 0 = **320**, rank 1 = **361**, rank 2 = **402**, rank 3 = **443** (+123; +38.4375% from Ranger base).
+- Paladin's equivalent movement training is **+38 per rank**, Mage's **+41 per rank**, each max rank **3**. Thus Ranger currently does **not** receive a uniquely higher movement *per talent rank* than Mage.
+- Talent slot index 1 (currently mana/cooldown training) has **max rank 5** for *all classes*. With mana disabled, `R.cooldownBalance.reductionPerTalentRank = 0.04`, giving **4% per rank, 20% at five ranks**; calculated by `hero-combat.js::skillCooldown` and `::basicSkillCooldown`. Ranger has no separate class-based cooldown-reduction growth in those calculations.
+- Normal automatic basic interval is `0.85s` before training; five cooldown ranks yield `0.85 * (1 - 5*0.04) = 0.68s`. These are the baseline formula durations, not guaranteed attack throughput or observed combat cadence.
+
+**Explicit new design requirement:** allow the Ranger's proposed level-scaling innate passive to provide cooldown reduction **without spending additional talent points and without increasing the existing talent's max rank**. The passive should also support stronger mobility. We must decide whether the passive cooldown discount covers **ordinary cooldowns, automatic basic attacks, charged cooldowns, or some subset**: the current shared talent reduces all three, but that does not automatically establish the intended Ranger passive scope.
+
+**Stacking/cap is undecided and material.** Compare additive vs multiplicative combination with the existing talent and identify an explicit maximum and minimum cooldown floor, if needed; quantify combined effect at zero/full training and L1/L5/L10. Avoid introducing faster cooldown recovery timers, double reductions on load, action-loop problems, or cooldown bypasses. Do not change any existing cooldown constants, skill rank values, training cap, or instructor progression. A narrow integration point in the existing effective-cooldown calculation **may** be necessary; if so, it is permitted only after explicit owner approval and with focused tests, **not** a license to refactor the skill system.
+
+**Source:** `src/prototype/rules.js` class/discipline/cooldown configuration, `src/prototype/progression.js` `heroTalentSpeedBonus()` and `talent()`, `src/prototype/engine.js` movement computation, `src/prototype/hero-combat.js` `skillCooldown()` and `basicSkillCooldown()`.
+
 ## 1. Design intent and problem statement
 
 The target identities are deliberately simple:
 
 - **Paladin — tough**: should feel reliably sturdier and capable of enduring direct combat from the very beginning.
 - **Mage — powerful**: should have a clearly recognizable advantage in magical/offensive power, balanced by vulnerability.
-- **Ranger — agile/dexterous**: should feel meaningfully quicker and better at positioning, without automatically becoming stronger than the Mage or tougher than the Paladin.
+- **Ranger — agile/dexterous**: should feel meaningfully quicker and better at positioning, **and gain an additional source of cooldown reduction through its level-scaling innate passive**, without automatically becoming stronger than the Mage or tougher than the Paladin.
 
 This is not an invitation to replace the existing combat system. The user identified a likely original-design inheritance issue: the game began with a Paladin; Mage and Ranger were subsequently added to largely shared stats, equipment and progression mechanics. The repository history below confirms substantial portions of that explanation.
 
@@ -146,10 +164,10 @@ These are **deferred diagnostics**, not permission to adjust progression in the 
 
 ### STRICTLY OUT OF SCOPE
 
-- **No changes to skills:** names, effects, damage coefficients, target counts, areas/ranges, projectile mechanics, combo logic, tap/charge, cooldowns, costs, statuses, talents within the skill system, class ultimates, or any skill-specific balance.
+- **No redesign of existing skills:** names, effects, damage coefficients, target counts, areas/ranges, projectile mechanics, combo logic, tap/charge, base cooldown constants, costs, statuses, class ultimates, trainer gates, or skill-specific rank balance. **Expressly permitted to investigate:** a separate Ranger passive modifier that changes *effective cooldown durations*; that outcome must be disclosed, bounded, and approved before implementation. Do not present this as 'cooldowns unchanged' in practical play.
 - **No changes to skill progression:** trainers, instructor gates, rank ceilings, unlocks, prices or skill rank effects.
 - No change to natural per-level HP growth, XP curve, Discipline Training values/caps, base basic cadence, attack reach, enemy/boss stats, item prices, equipment bonuses/reforge values, pet/companion stats, or support inheritance **during Stage 1**.
-- No new dodge/evasion/crit mechanic; use the existing movement-speed property as the first Ranger passive candidate and seek a separate owner decision before expanding mechanics.
+- No new dodge/evasion/crit mechanic. Ranger passive movement speed **and** class-bound cooldown reduction are both proposed; no extra attack-cadence, skill-rank, critical, or dodge system is authorized. Its scope and stacking must be explicitly agreed before code changes.
 - No unrelated performance, rendering, asset, UI, combat, or economy refactor.
 - No modification of save schema/version without an independently demonstrated need and explicit approval.
 - No merge, deployment, or broad balance change without explicit owner sign-off.
@@ -174,7 +192,7 @@ E. **Compatibility:** Decide whether base-stat revisions apply **only to new lev
 
 - [x] **Stage 0 — Historical audit and baseline.** Paladin-first design, three-class introduction, shared gear and level growth documented.
 - [x] **Stage 0 — New owner direction captured.** Favor a one-per-class, level-scaling passive layer rather than rewriting preexisting base stats or tier systems.
-- [ ] **Stage 1A — Specify what each passive actually does.** Paladin durability; Mage power; Ranger agility. Prefer HP/Armor, Power, movement-speed respectively, but select effects and names with the owner.
+- [ ] **Stage 1A — Specify what each passive actually does.** Paladin durability; Mage power; Ranger agility **including movement speed and additional cooldown reduction**; select the remaining effects and names with the owner.
 - [ ] **Stage 1B — Design and compare candidate scaling.** Explicit starting strength, bonus per level or growth function, representative L1/L5/L10 checkpoints, edge cases, and effective impact (not merely stat-sheet numbers).
 - [ ] **Stage 1C — Owner approves the *exact* passive effects and values.** This is the first gameplay-change authorization gate.
 - [ ] **Stage 1D — Implement in a small, isolated passive-calculation layer.** Existing base class stats, natural growth, gear/reforge prices and bonuses, all active/charged skill mechanics and skill progression remain unchanged. Prefer no save-schema change.
@@ -188,7 +206,7 @@ This file is the entire initial branch change. No gameplay file was edited; no b
 
 ## 8. Next-session pickup (updated)
 
-**First question:** For each class, what is the **single simplest innate, level-scaling effect** that delivers its intended identity without changing any existing skill, skill progression, base class stat, item tier or natural leveling formula?
+**First question:** For each class, what is the **smallest class-bound innate passive** that delivers its intended identity without rewriting existing skills, skill ranks, base class stats, item tiers or natural leveling? Ranger's desired passive now has **two related bonuses, movement speed and cooldown reduction**. Decide their scaling and interactions with the existing cooldown talent before approving implementation.
 
 Use today's unchanged baseline: Paladin **120 HP / 8 Armor / 18 Power / 300 speed**; Mage **90 / 3 / 22 / 300**; Ranger **105 / 5 / 20 / 320**. Discuss the passive's identity, proposed effect, when it first applies, progression curve and measurable limits before choosing numbers.
 
