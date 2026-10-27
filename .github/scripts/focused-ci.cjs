@@ -5,9 +5,49 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
+const {
+  makeReport,
+  renderSummary,
+  publishReport,
+  extractFailureDetail,
+  requiresBehaviorCoverage,
+} = require('./focused-ci-report.cjs');
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  { match: /^\.github\//, tests: [TEST + 'focused-ci-report.test.cjs'] },
+  {
+    match: /^tests\/helpers\/native-fixture-contracts\.cjs$/,
+    tests: [
+      TEST + 'native-fixture-contracts.test.cjs',
+      TEST + 'ranger-max-range-goblin-response.test.cjs',
+      TEST + 'class-passives.test.cjs',
+    ],
+  },
+  {
+    match: /^src\/prototype\/(?:hero-combat|rules|engine|combat|save|progression|boss-combat)\.js$/,
+    tests: [
+      TEST + 'class-passives.test.cjs',
+      TEST + 'cooldown-only.test.cjs',
+      TEST + 'hero-skill1-stage1.test.cjs',
+    ],
+  },
+  {
+    match: /^src\/prototype\/(?:rules|archive|skill-reference)\.js$/,
+    tests: [TEST + 'archive-reference.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:engine|hero-combat|combat|rules)\.js$/,
+    tests: [TEST + 'ranger-max-range-goblin-response.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:engine|combat)\.js$/,
+    tests: [TEST + 'rogue-anchor-under-fire-integrity.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/(?:renderer|rules|visuals|world|data|sprites)\.js$|^scripts\/sprite-scope-audit\.cjs$/,
+    tests: [TEST + 'sprite-scope.test.cjs'],
+  },
   {
     match: /^src\/prototype\/hero-combat\.js$/,
     tests: [
@@ -156,8 +196,7 @@ const groups = [
     tests: [TEST + 'projectile-order.test.cjs'],
   },
   {
-    // Native garrison wall-lane audit reports depend on effective firing reach.
-    // Own-wall/projectile geometry and ordinary/fort range tests own this tool.
+    // Native garrison wall-lane audit belongs to focused combat geometry checks.
     match: /^tools\/native-fort-audit-dev145\/positive-lanes\.cjs$/,
     tests: [TEST + 'fortifications.test.cjs', TEST + 'treasury-fortifications.test.cjs'],
   },
@@ -224,18 +263,25 @@ const relevant = (file) =>
 function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, file))) {
   const chosen = new Set(),
     uncovered = [],
-    missing = new Set();
+    missing = new Set(),
+    manualBrowser = [];
   for (const file of changed) {
     if (!relevant(file) || !eligible(file)) continue;
     let covered = false;
     // One explicitly changed Pixi acceptance test may run as a focused
     // browser smoke. Never select an entire browser matrix by subsystem.
-    if (file === TEST + 'pixi-renderer-browser.test.cjs' ||
-        file === TEST + 'frame-rate-browser.test.cjs' ||
-        file === TEST + 'effect-diagnostics-stage5-browser.test.cjs') {
+    if (
+      file === TEST + 'pixi-renderer-browser.test.cjs' ||
+      file === TEST + 'frame-rate-browser.test.cjs' ||
+      file === TEST + 'effect-diagnostics-stage5-browser.test.cjs'
+    ) {
       // Two explicit narrow Chromium acceptance files; never a browser matrix.
       if (exists(file)) chosen.add(file);
       covered = true;
+    }
+    if (file.startsWith('tests/') && file.endsWith('-browser.test.cjs') && !covered) {
+      manualBrowser.push(file);
+      covered = true; // Deferred to owner-approved browser acceptance, not architecture coverage.
     }
     if (file.startsWith('tests/') && file.endsWith('.test.cjs') && !file.includes('-browser')) {
       if (exists(file)) chosen.add(file);
@@ -264,7 +310,7 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
   // The fallback remains a single lightweight architecture contract, never a suite.
   if (uncovered.length && exists(TEST + 'architecture.test.cjs'))
     chosen.add(TEST + 'architecture.test.cjs');
-  return { tests: [...chosen].sort(), uncovered, missing: [...missing].sort() };
+  return { tests: [...chosen].sort(), uncovered, missing: [...missing].sort(), manualBrowser };
 }
 function diffPaths(base, head = 'HEAD') {
   if (!/^[0-9a-f]{40}$/.test(base || '') || /^0+$/.test(base))
@@ -288,43 +334,145 @@ function run(
   paths,
   invoke = (file) => {
     const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs';
-    const narrowBrowser = pixiBrowser || file === TEST + 'frame-rate-browser.test.cjs' ||
+    const narrowBrowser =
+      pixiBrowser ||
+      file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
       cwd: root,
-      stdio: 'inherit',
-      // A single tested Chromium renderer journey, not the global browser suite.
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      maxBuffer: 32 * 1024 * 1024,
+      // Explicit narrow Chromium smoke only; never expand to a full matrix.
       env: narrowBrowser
-        ? { ...process.env, BROWSER_ENGINE: 'chromium',
-            ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}) }
+        ? {
+            ...process.env,
+            BROWSER_ENGINE: 'chromium',
+            ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
+          }
         : process.env,
       timeout: narrowBrowser ? 240000 : undefined,
     });
-    return result.status === 0;
+    // Replay the full original stdout/stderr in CI; also retain a short
+    // actionable first error for the structured report.
+    if (result.stdout) process.stdout.write(result.stdout);
+    if (result.stderr) process.stderr.write(result.stderr);
+    const ok = result.status === 0 && !result.error;
+    return {
+      ok,
+      status: result.status,
+      signal: result.signal,
+      error:
+        result.error?.message || (!ok ? extractFailureDetail(result.stderr, result.stdout) : null),
+    };
   },
 ) {
-  const { tests, uncovered, missing } = selectTests(paths);
-  if (missing.length) throw Error('Mapped regression tests are missing: ' + missing.join(', '));
+  const startedAt = new Date().toISOString();
+  const { tests, uncovered, missing, manualBrowser } = selectTests(paths);
+  const sourceGaps = uncovered.filter(requiresBehaviorCoverage);
+  let testedSha = process.env.GITHUB_SHA || null;
+  try {
+    testedSha = cp
+      .execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' })
+      .trim();
+  } catch {
+    // Preserve environment ref or state explicitly unknown.
+  }
+  console.log(
+    'Focused candidate: ' +
+      (testedSha || 'unknown') +
+      '; base: ' +
+      (process.env.CI_BASE_SHA || 'unknown'),
+  );
   console.log('Changed files: ' + paths.length + '; focused tests: ' + tests.length);
+  if (missing.length)
+    console.error('::error::Mapped regression tests are missing: ' + missing.join(', '));
   if (uncovered.length)
-    console.warn('::warning::No dedicated test mapping for: ' + uncovered.join(', '));
-  let failures = 0;
+    console.warn(
+      '::warning::No dedicated test mapping for: ' +
+        uncovered.join(', ') +
+        '; architecture fallback is not behavioral validation',
+    );
+  if (sourceGaps.length)
+    console.error(
+      '::error::Uncovered changed source requires focused test ownership: ' +
+        sourceGaps.join(', '),
+    );
+  for (const file of manualBrowser)
+    console.warn('::warning::Manual browser acceptance not run under ordinary CI: ' + file);
+  const checks = [];
   for (const file of paths)
     if (/\.(?:js|cjs|mjs)$/.test(file) && fs.existsSync(path.join(root, file))) {
+      const began = Date.now();
       const result = cp.spawnSync(process.execPath, ['--check', path.join(root, file)], {
         stdio: 'inherit',
       });
-      if (result.status !== 0) failures++;
+      const ok = result.status === 0 && !result.error;
+      checks.push({
+        file,
+        kind: 'syntax',
+        ok,
+        status: result.status,
+        signal: result.signal,
+        error: result.error?.message || null,
+        durationMs: Date.now() - began,
+      });
+      if (!ok) console.error('::error::Syntax/launch failure: ' + file);
     }
   for (const file of tests) {
     console.log('Focused: ' + file);
-    if (!invoke(file)) failures++;
+    const began = Date.now();
+    let outcome;
+    try {
+      outcome = invoke(file);
+    } catch (error) {
+      outcome = { ok: false, status: null, error: error?.message || String(error) };
+    }
+    const detail = typeof outcome === 'boolean' ? { ok: outcome, status: outcome ? 0 : 1 } : outcome;
+    const ok = !!detail?.ok;
+    checks.push({
+      file,
+      kind: 'test',
+      ok,
+      status: detail?.status ?? null,
+      signal: detail?.signal || null,
+      error: detail?.error || null,
+      durationMs: Date.now() - began,
+    });
+    if (!ok)
+      console.error(
+        '::error::Focused test failed: ' + file + ' (exit ' + (detail?.status ?? 'unknown') + ')',
+      );
   }
-  if (failures) throw Error(failures + ' focused/syntax checks failed');
+  const report = makeReport({
+    testedSha,
+    baseSha: process.env.CI_BASE_SHA || null,
+    paths,
+    selected: tests,
+    uncovered,
+    missing,
+    manualBrowser,
+    checks,
+    startedAt,
+    finishedAt: new Date().toISOString(),
+    nodeVersion: process.version,
+    platform: process.platform,
+  });
+  publishReport(report);
+  console.log(renderSummary(report));
+  if (report.result === 'failure')
+    throw Error(
+      checks.filter((check) => !check.ok).length +
+        ' focused/syntax checks failed' +
+        (sourceGaps.length ? '; ' + sourceGaps.length + ' uncovered source paths' : '') +
+        (missing.length ? '; ' + missing.length + ' missing mapped tests' : ''),
+    );
   console.log(
-    'PASS focused validation (' + tests.length + ' relevant test files); no full-game CI',
+    'PASS focused validation (' +
+      tests.length +
+      ' relevant test files); no full-game CI; manual browser suites separately gated',
   );
-  return { tests, uncovered };
+  return { tests, uncovered, manualBrowser, report };
 }
 if (require.main === module) {
   try {

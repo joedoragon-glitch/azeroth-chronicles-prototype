@@ -26,6 +26,10 @@ assert.match(
   'releases still verify the deployable package',
 );
 assert.match(auto, /needs: focused/, 'the publisher must depend on focused verification');
+assert.match(auto, /name: Preserve focused-test diagnostics[\s\S]*?if: always\(\)[\s\S]*?actions\/upload-artifact@v4/,
+  'failed or successful focused checks must retain evidence without rerunning suites');
+assert.match(auto, /name: focused-ci-evidence[\s\S]*?azeroth-focused-ci-report\.json/,
+  'structured focused evidence is independently reviewable after CI');
 assert.doesNotMatch(
   auto,
   /npm test|\.github\/actions\/check-game|playwright install|full browser matrix/i,
@@ -101,6 +105,8 @@ assert(
 assert(gameplay.tests.includes('tests/game.test.cjs'));
 assert(!gameplay.tests.includes('tests/pixi-fidelity.test.cjs'));
 const ci = selectTests(['.github/workflows/pages.yml'], exists);
+assert(ci.tests.includes('tests/focused-ci-report.test.cjs'),
+  'CI runner edits keep failure-report verification selected');
 assert(ci.tests.includes('tests/ci-focus-policy.test.cjs'));
 assert(!ci.tests.includes('tests/game.test.cjs'));
 assert.deepEqual(selectTests(['README.md'], exists).tests, []);
@@ -111,6 +117,41 @@ const unclassified = selectTests(
 );
 assert.deepEqual(unclassified.uncovered, ['src/prototype/new-future-system.js']);
 assert.deepEqual(unclassified.tests, ['tests/architecture.test.cjs']);
+assert.deepEqual(unclassified.manualBrowser, []);
+const unmappedHelper = selectTests(['tests/helpers/unknown-native-setup.cjs'],
+  (file) => file === 'tests/architecture.test.cjs');
+assert.deepEqual(unmappedHelper.uncovered, ['tests/helpers/unknown-native-setup.cjs'],
+  'shared fixture changes cannot silently claim behavioral coverage');
+const deferredBrowser = selectTests(['tests/audio-browser.test.cjs'], exists);
+assert.deepEqual(deferredBrowser.manualBrowser, ['tests/audio-browser.test.cjs'],
+  'changed browser suites must remain visibly deferred, never disguised as architecture');
+assert(!deferredBrowser.tests.includes('tests/audio-browser.test.cjs'),
+  'a browser matrix is never triggered automatically');
+const helperCoverage = selectTests(['tests/helpers/native-fixture-contracts.cjs'], exists);
+for (const expected of ['native-fixture-contracts', 'ranger-max-range-goblin-response', 'class-passives'])
+  assert(helperCoverage.tests.includes('tests/' + expected + '.test.cjs'));
+const classCoverage = selectTests(['src/prototype/hero-combat.js'], exists);
+for (const expected of ['class-passives', 'cooldown-only', 'hero-skill1-stage1'])
+  assert(classCoverage.tests.includes('tests/' + expected + '.test.cjs'));
+assert(selectTests(['src/prototype/rules.js'], exists).tests.includes('tests/archive-reference.test.cjs'));
+assert(selectTests(['src/prototype/renderer.js'], exists).tests.includes('tests/sprite-scope.test.cjs'));
+for (const file of ['progression', 'boss-combat'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes('tests/class-passives.test.cjs'),
+    'original class regression must follow source-only ' + file + ' changes');
+for (const file of ['engine', 'hero-combat', 'combat', 'rules'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes(
+    'tests/ranger-max-range-goblin-response.test.cjs'),
+    'native Ranger/Goblin regression must survive source-only edits in ' + file);
+for (const file of ['world', 'visuals', 'data', 'sprites'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes(
+    'tests/sprite-scope.test.cjs'),
+    'source-hash graphics evidence must follow ' + file);
+for (const file of ['engine', 'combat'])
+  assert(selectTests(['src/prototype/' + file + '.js'], exists).tests.includes(
+    'tests/rogue-anchor-under-fire-integrity.test.cjs'),
+    'merged #521 native tactical contract must survive later source-only edits');
+assert(selectTests(['scripts/sprite-scope-audit.cjs'], exists).tests.includes(
+  'tests/sprite-scope.test.cjs'), 'scope audit script edits must verify original scope check');
 for (const [source, expected] of [
   ['runtime', ['frame-skip', 'auto-fps-adaptive-coupling', 'render-resolution']],
   [

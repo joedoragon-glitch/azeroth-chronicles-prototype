@@ -3,6 +3,7 @@
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const R = require('../src/prototype/rules.js');
+const { setLegalExpeditionMaxRanks } = require('./helpers/native-fixture-contracts.cjs');
 const near = (value, expected, detail) =>
   assert(Math.abs(value - expected) < 1e-8, detail + ': ' + value + ' vs ' + expected);
 const fresh = (cls) => new Campaign('normal', cls, () => 0.9);
@@ -29,8 +30,7 @@ assert.equal(mage.heroCooldownReduction(), 0);
 
 // No passive gets misidentified as a companion-inheritable training/gear bonus.
 for (const game of [paladin, ranger, mage]) {
-  game.s.expeditionSkills.sharedTraining = R.expeditionSupportSkills.sharedTraining.maxRank;
-  game.s.expeditionSkills.sharedStrength = R.expeditionSupportSkills.sharedStrength.maxRank;
+  setLegalExpeditionMaxRanks(game, ['sharedTraining', 'sharedStrength']);
 }
 assert.equal(paladin.heroOtherHpBonus(), 0);
 assert.equal(paladin.companionInheritedHpBonus(), 0);

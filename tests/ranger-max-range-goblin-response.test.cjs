@@ -4,6 +4,8 @@
 // Separate sight/terrain and safe-town effects; no AI methods are stubbed.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const { completeFieldOpening } = require('./helpers/field-opening.cjs');
+const { assertNativeClearLane, nativeBasicProjectileHit } = require('./helpers/native-fixture-contracts.cjs');
 const dist = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
 function prep(g,e,p) {
   const z=g.zone();
@@ -11,7 +13,11 @@ function prep(g,e,p) {
   g.s.party=[];
   g.s.time=30;
   g.s.mercyTime=0;
-  g.s.valeFieldAwakened=true;
+  // Earn the opening admission through the real first-kill boundary rather
+  // than fabricating a level/aggro flag (historical dev.175 failure source).
+  completeFieldOpening(g);
+  assert.equal(g.s.valeFieldAwakened, true,
+    'fixture must complete native first-kill admission');
   g.s.thornHeroInitiated=true;
   Object.assign(g.hero,{...p, hp:100000,maxHp:100000,level:4,
     basicCd:0,order:null,immune:0});
@@ -22,16 +28,7 @@ function prep(g,e,p) {
 }
 function probe(g,e,range,context) {
   const start={x:e.x,y:e.y,hp:e.hp,homeDistance:dist(g.hero,e.home)};
-  const cast=g.cast(1,e.id,false,null,true);
-  // Casting engages and may scale the monster's maximum HP before the arrow
-  // arrives. Compare to that post-engagement HP, not its pre-aggro HP.
-  const hpAtLaunch=e.hp;
-  let hit=false;
-  for(let i=0;i<25&&!hit;i++){
-    g.s.time+=0.05;
-    g.updateProjectiles(0.05);
-    hit=e.hp<hpAtLaunch;
-  }
+  const { cast, hit } = nativeBasicProjectileHit(g, e, { expectedHeroLevel: 4 });
   const aggroAfterHit=!!e.aggro;
   const alert=!!g.enemyUnderFireAlert(e);
   const insideLeash=g.tacticalRogueLeashAllows(e,g.hero,500);
@@ -80,6 +77,7 @@ for(const range of [350,400,440,449,450]){
     picked={p,shooter};break;
   }
   assert(picked,'authored Vale must contain a clear 15-unit lane at '+range);
+  assertNativeClearLane(g, picked.shooter, picked.p);
   const e=g.makeEnemy({species:'goblin',name:'range edge goblin',level:3,
     hp:1000,damage:1,gold:0,xp:0},{...picked.p});
   g.configureEnemy(e,0);
@@ -124,11 +122,10 @@ for(const range of [350,400,440,449,450]){
  }
  console.log('RANGER_EDGE_NATIVE '+JSON.stringify({goblins:goblins.length,tested}));
 }
-// Regression: a level-four Ranger can wound a level-one goblin from
-// the legal 450-unit basic-arrow limit. If a tactical retreat has left the
-// ordinary goblin holding an anchor beyond its 280-unit response threshold,
-// a *fresh actual arrow hit* must return it to native pursuit. No extra dash,
-// teleport, target detection radius, boss behavior or chase multiplier.
+// Regression for merged PRs #516 and #521: the native level-four Ranger arrow
+// can hit at 450 units, but a fresh hit WHILE the level-one Goblin is at its
+// ally anchor must request tactical reassessment, not a compulsory chase.
+// A pre-arrival hit does not count; no extra dash or aggression is invented.
 for (const mode of ['normal', 'nightmare']) {
   const g=new Campaign(mode,'ranger',()=>0.91);
   g.enter('vale');
@@ -144,27 +141,28 @@ for (const mode of ['normal', 'nightmare']) {
   e.ranged=false;
   e.hybrid=false;
   prep(g,e,hero);
-  assert(g.cast(1,e.id,false,null,true),'level-four Ranger fires native automatic basic');
-  const atLaunch=e.hp;
-  for(let i=0;i<25 && e.hp===atLaunch;i++){
-    g.s.time+=0.05;
-    g.updateProjectiles(0.05);
-  }
-  assert(e.hp<atLaunch && !!g.enemyUnderFireAlert(e),
-    'native arrow actually reduces HP and records short-lived awareness');
+  assertNativeClearLane(g, hero, target);
+  // Establish native tactical state BEFORE the hit. Earlier damage can no
+  // longer invalidate an anchor reached afterward (merged #521).
   g._tacticalRegroups=new Map([[e.id,{
     phase:'anchored',anchor:{x:e.x,y:e.y},holdRemaining:12,
     moveUsed:true,recruited:false,
   }]]);
-  // The previous algorithm returned early for up to twelve seconds when
-  // its target was more than 280 units away even if it was being shot.
+  const arrow = nativeBasicProjectileHit(g, e, { expectedHeroLevel: 4 });
+  assert(arrow.cast, 'level-four Ranger fires native automatic basic');
+  assert(arrow.hit && !!g.enemyUnderFireAlert(e),
+    'native arrow actually reduces post-engagement HP while anchored');
+  assert.equal(g.tacticalRogueRegroup(e)?.hitWhileAnchored,true,
+    mode+': actual anchored HP hit is distinguished from prior damage');
   const before={x:e.x,y:e.y};
   g.s.time+=0.1;
   g.updateEnemies(0.1);
-  assert(!g.tacticalRogueRegroup(e),mode+': real long-range hit breaks inert anchor');
+  assert.equal(g.tacticalRogueRegroup(e)?.phase,'thinking',
+    mode+': new long-range anchored hit requests native tactical reassessment');
   const step=dist(before,e);
-  assert(step>0.1,mode+': wounded goblin moves through existing pursuit immediately');
-  assert(step<=26.26,mode+': no faster-than-native chase, dash or teleport');
+  assert.equal(step,0,mode+': genuine hit must not force an instant aggressive chase');
+  assert((g._tacticalRogueNext?.get(e.id)||0)>=g.s.time+1.99,
+    mode+': original two-second Rogue decision cooldown is preserved');
   assert(g.tacticalRogueLeashAllows(e,g.hero,500),
     'the response retains its existing 500-unit home leash');
   console.log('RANGER_EDGE_ANCHORED '+JSON.stringify({mode,step,level:g.hero.level,enemy:e.level}));
