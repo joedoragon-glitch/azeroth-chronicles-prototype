@@ -2,6 +2,8 @@
 
 ## Scope and explicit owner decisions
 
+**Design authority update:** [The original owner discussion record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md) is the working canon for **initial implementation until playable release and the owner's first-hand testing**; later owner corrections (bell-staff, Charm-first tutorial, labor/Succession rules) prevail. The documented [regular and crowned appearance direction](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md) should be implemented as the first-play look, rather than reopening concept invention. Do not treat any single outfit or balance candidate as irrevocable after the owner starts playtesting.
+
 Phase 1 reconciled PR #511 with main at bd1cbe83 and passed focused CI. Phase 2 implements a dormant Rogue class profile, automatic basic-attack mechanics and 2-second Endure. The existing playable registry still contains only Paladin, Mage and Ranger; Rogue selection, manual/charged skill performances, Charm conversion, labor, new tutorial, sounds, sprites, and deployment remain blocked for later phases.
 
 **Weapon change superseding all earlier guitar prose:** a staff with a single oversized spherical **jingle bell hanging from it**, not the reference character's ordinary bell. Reference character clothing, other accessories and body design are *not* approved. A per-hit **bell-jingle** event is the authored sound intent; this phase does not ship audio assets or live playback. Do not accidentally bind Mage/Ranger audio. Original character presentation is pending.
