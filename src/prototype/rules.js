@@ -6562,6 +6562,31 @@
     en: Object.freeze(["Pipsqueak","Stinkums","Mittens","Nibbles","Pickles","Wiggles","Snookums","Crumpet","Dumpling","Sir Flops","Bubbles","Tater Tot","Pudding","Fluffbucket","Squiggles","Cupcake","Wobblekins","Fuzzbutt","Butterbean","Cheesepuff","Noodle","Snickerdoodle","Pebbles","Marshmallow","Biscuit","Tickletoes","Sprinkles","Doodles","Tootsie","Chublet","Puddlefoot","Babyfang","Mr. Wiggles","Lady Nibbles","Soggyboots","Muffinface","Rumpus","Boopnose","Dingleberry","Flapjack","Gumdrop","Cuddlebug","Waffles","Noodlehead","Squishums","Pookums","Jellybean","Squeaky","Nutterbutter","Bumblebum","Tippytoes","Pompom","Wigglebottom","Scampers","Tinseltoes","Fluffy Doom","Stinky Pete","Honeybun","Snuffles","Puddlewhisker","Tootle","Crinkle","Sweetpea","Lumpy","Eggnog","Oopsie","Doodlebug","Cabbage","Pumpernickel","Booples"]),
     es: Object.freeze(["Pulguillas","Mocoso","Pelusín","Ñoñito","Chiquitín","Cabezón","Patitas","Bizcochito","Bomboncito","Cucharita","Babosín","Don Calcetín","Doña Croqueta","Tripita","Pompitas","Soplido","Piojito","Churretín","Naricitas","Barriguitas","Papanatas","Patatín","Quesito","Chicharrón","Burbujitas","Puchero","Chupetín","Calabacín","Morcillita","Fideo","Don Babero","Doña Pestañitas","Mojadito","Ñoñerías","Saltarín","Carraspera","Galletita","Mimosín","Pajarito","Pancito","Tontolín","Rabanito","Albondiguita","Puerquito","Cebollín","Lagartijita","Don Patán","Trastito","Guindilla","Pepinillo","Ñiquiñaque","Chiflito","Chisporrote","Cacahuete","Cachetitos","Doña Babita","Peluchín","Pedorretas","Pastelito","Bigotitos","Trompitas","Corazoncito","Chismocito","Panzón","Chancletita","Lagrimitas","Don Ronquiditos","Tiquismiquis","Chirimbolo","Ñoñorrón"]),
   });
+  // Phase 5 first vertical slices: a mirrored area pulse and one short-lived
+  // session-only boon per family. Names remain provisional and are deliberately
+  // separate from these owner-tunable combat parameters.
+  const roguePerformances = Object.freeze({
+    2: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 3, slow: 1.5,
+        seconds: 4.5, move: 0.08, recovery: 0.05,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 185, cap: 4, slow: 2.2,
+        seconds: 6, move: 0.12, recovery: 0.08,
+      }),
+    }),
+    6: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 2, debt: 0.6,
+        seconds: 4.5, specialRecovery: 0.12,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 190, cap: 4, debt: 1,
+        seconds: 6, specialRecovery: 0.18,
+      }),
+    }),
+  });
   const rogueHeroFoundation = Object.freeze({
     classId: 'rogue',
     weapon: Object.freeze({ kind: 'staff', instrument: 'suspended-jingle-bell', basicCue: 'bell-jingle' }),
@@ -7652,6 +7677,7 @@
     meleeReach,
     resourceMode,
     cooldownBalance,
+    roguePerformances,
     ashFeeding,
     vitalitySiphon,
     bossRecovery,

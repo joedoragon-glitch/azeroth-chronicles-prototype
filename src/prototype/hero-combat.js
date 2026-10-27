@@ -774,7 +774,8 @@
       }
       heroSkillRange(slot, charged = false) {
         if (this.hero.class === 'rogue')
-          return slot === 1 ? this.rogueSkill1Config(charged).range : 0;
+          return slot === 1 ? this.rogueSkill1Config(charged).range :
+            (R.roguePerformances[slot]?.[charged ? 'charged' : 'tap']?.range || 0);
         if (!implementedHeroCombatClasses.has(this.hero.class)) return 0;
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           steps = this.tacticMilestones(this.hero.skills[slot - 1]);
@@ -1211,6 +1212,67 @@
         return true;
       }
 
+      // Phase 5: mirrored combat-only area songs. A single legal primary
+      // anchors the performance; enemies and living allies are resolved in
+      // the identical circle without coupling the two outcomes. No Charm.
+      castRoguePerformance(slot, targetId = null, charged = false) {
+        const h = this.hero, rank = h.skills[slot - 1],
+          form = R.roguePerformances[slot]?.[charged ? 'charged' : 'tap'],
+          selected = this.selectedHeroTarget(),
+          id = targetId ?? selected?.id ?? this.s.heroTarget;
+        if (!form || h.class !== 'rogue' || h.hp <= 0 || !rank || this.peace ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
+          (charged && this.partyChargeRecovery(h) > 0) ||
+          this.mageSilenceActive(h) || !this.skillReady(slot, charged))
+          return false;
+        const candidates = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+          dist(e, h) <= form.range && this.line(h, e));
+        const locked = !!selected || targetId !== null && targetId !== undefined,
+          primary = candidates.find((e) => e.id === id) ||
+            (locked ? null : candidates.sort((a, b) =>
+              dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
+        if (!primary) return false;
+        const enemies = candidates.filter((e) =>
+          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)))
+          .sort((a, b) => a === primary ? -1 : b === primary ? 1 :
+            dist(a, primary) - dist(b, primary) || this.idOrder(a, b))
+          .slice(0, form.cap);
+        const allies = this.activeLivingParty().filter((u) =>
+          dist(u, primary) <= form.radius && this.line(primary, u));
+        this.releaseRecallForCombat();
+        this.engage(primary);
+        h.cd[slot - 1] = this.skillCooldown(slot, false);
+        if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
+        this.s.heroTarget = primary.id;
+        for (const e of enemies) {
+          if (slot === 2) this.applySlow(e, form.slow);
+          if (slot === 6) {
+            // Only real, not-ready enemy cooldowns receive finite debt. No
+            // fabricated timers or globally delayed boss phase transitions.
+            for (const key of ['cd', 'specialCd', 'summonCd',
+              'healCd', 'supportHealCd']) {
+              if (Number.isFinite(e[key]) && e[key] > 0)
+                e[key] = Math.min(1e6, e[key] + form.debt);
+            }
+          }
+        }
+        for (const u of allies)
+          this.applyRogueSongBoon(u,
+            slot === 2 ? 'quickstep' : 'borrowedTime', form);
+        this.event('rogueBellPerformance', {
+          actor: 'hero', class: 'rogue', slot,
+          form: charged ? 'charged' : 'tap',
+          audioCue: 'bell-jingle',
+          instrument: R.rogueHeroFoundation.weapon.instrument,
+          x: primary.x, y: primary.y, radius: form.radius,
+          target: primary.id, enemies: enemies.length, allies: allies.length,
+        });
+        return true;
+      }
+
       // The exact individual monster subtype is an authored species plus its
       // native melee/ranged variant. Player names and translations cannot own it.
       rogueCharmProfile(e) {
@@ -1387,13 +1449,14 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
-        // Rogue starts with Skill 1 Automatic, Tap and Charged; Skills 2–8
-        // remain explicitly locked. Current prototype names can be revised.
+        // The unlocked Rogue songs are staged under the same unregistered
+        // class gate. Later performance families remain unavailable.
         if (this.hero.class === 'rogue') {
-          if (slot !== 1) return false;
-          return automatic && !charged ? this.castRogueBasic(targetId)
-            : !automatic ? this.castRogueSkill1(targetId, !!charged, encountersAtStart)
-            : false;
+          if (slot === 1)
+            return automatic && !charged ? this.castRogueBasic(targetId)
+              : !automatic ? this.castRogueSkill1(targetId, !!charged, encountersAtStart)
+              : false;
+          return !automatic ? this.castRoguePerformance(slot, targetId, !!charged) : false;
         }
         if (!implementedHeroCombatClasses.has(this.hero.class)) return false;
         if (this.s.mode === 'developer' && slot === 1 && automatic) return false;

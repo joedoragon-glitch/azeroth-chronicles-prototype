@@ -544,10 +544,9 @@
       // Slow stack strength is one scalar per actor. Each extra hit suppresses
       // recovery with diminishing returns, without timers or work per stack.
       // Split the final frame at Slow expiry to keep recovery frame-rate stable.
-      cooldownRecoveryElapsed(unit, dt, enemy = false) {
+      cooldownRecoveryElapsed(unit, dt, enemy = false, special = false) {
         if (!Number.isFinite(dt) || dt <= 0) return 0;
         const slow = Number.isFinite(unit?.slow) ? Math.max(0, unit.slow) : 0;
-        if (!slow) return dt;
         const base = enemy
           ? R.cooldownBalance.enemySlowRecoveryMultiplier
           : R.cooldownBalance.slowRecoveryMultiplier;
@@ -561,7 +560,14 @@
           ? recordedStacks
           : Math.min(R.cooldownBalance.partySlowMaxStacks, recordedStacks);
         const recovery = base / (1 + (stacks - 1) * perStack);
-        return dt - Math.min(dt, slow) * (1 - recovery);
+        const elapsed = dt - Math.min(dt, slow) * (1 - recovery);
+        // One native elapsed-time owner: movement song helps all party clocks;
+        // borrowed-time helps special clocks only. Both sum, capped at +25%.
+        const quick = enemy ? null : this.rogueSongBoon?.(unit, 'quickstep');
+        const borrowed = special && !enemy
+          ? this.rogueSongBoon?.(unit, 'borrowedTime') : null;
+        return elapsed * (1 + Math.min(0.25,
+          (quick?.recovery || 0) + (borrowed?.specialRecovery || 0)));
       }
 
       // Absolute encounter-clock readiness deadlines need the same recovery

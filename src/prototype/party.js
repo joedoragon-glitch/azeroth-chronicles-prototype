@@ -19,6 +19,9 @@
     const companionJudgments = new WeakMap();
     const heroGuidance = new WeakMap();
     const rangerHealRequests = new WeakMap();
+    // Game-time song boons are transient, bounded, and never saved. Actors
+    // are weak keys; a zone or class change automatically invalidates them.
+    const roguePerformanceBoons = new WeakMap();
     // A charge fizzle earns the pet's ready first special one brief turn.
     // Kept outside unit/save state; never shared across pets or campaigns.
     const petFirstAfterFailedCharge = new WeakMap();
@@ -1446,12 +1449,44 @@
           (u.rangerRallyUntil || 0) > this.s.time
         );
       }
+      rogueSongBoon(u, family) {
+        if (
+          this.hero.class !== 'rogue' ||
+          !u || u.hp <= 0 || u.active === false ||
+          !this.s.party.includes(u)
+        ) return null;
+        const saved = roguePerformanceBoons.get(u);
+        const entry = saved?.zone === this.zoneId ? saved[family] : null;
+        return entry && entry.until > this.s.time ? entry : null;
+      }
+      applyRogueSongBoon(u, family, form) {
+        if (!['quickstep', 'borrowedTime'].includes(family) ||
+          this.hero.class !== 'rogue' || !this.activeLivingParty().includes(u))
+          return false;
+        let state = roguePerformanceBoons.get(u);
+        if (!state || state.zone !== this.zoneId) {
+          state = { zone: this.zoneId };
+          roguePerformanceBoons.set(u, state);
+        }
+        const previous = state[family]?.until > this.s.time ? state[family] : null;
+        const until = this.s.time + Math.min(8, Math.max(0, form.seconds || 0));
+        // One strongest instance per family, never additive or permanent.
+        state[family] = {
+          until: Math.max(previous?.until || 0, until),
+          move: Math.max(previous?.move || 0, Math.min(0.12, form.move || 0)),
+          recovery: Math.max(previous?.recovery || 0, Math.min(0.08, form.recovery || 0)),
+          specialRecovery: Math.max(previous?.specialRecovery || 0,
+            Math.min(0.18, form.specialRecovery || 0)),
+        };
+        return true;
+      }
       companionRallyMoveSpeed(u, base) {
-        return (
-          this.companionMoveSpeed(base) *
+        const rally = this.rangerRallyActive(u)
+          ? Math.min(0.25, u.rangerRallyMovement || 0) : 0;
+        const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
+        return this.companionMoveSpeed(base) *
           (this.charmedCompanionProfile(u)?.speed || 1) *
-          (this.rangerRallyActive(u) ? 1 + Math.min(0.25, u.rangerRallyMovement || 0) : 1)
-        );
+          (1 + Math.max(rally, quickstep));
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
@@ -3255,6 +3290,7 @@
             )[0] || null;
         for (const u of living) {
           const recovery = this.cooldownRecoveryElapsed(u, dt);
+          const specialRecovery = this.cooldownRecoveryElapsed(u, dt, false, true);
           u.slow = Math.max(0, (u.slow || 0) - dt);
           if (!u.slow) delete u.slowStacks;
           if (u.rogueSlow > 0) {
@@ -3262,11 +3298,11 @@
             if (!u.rogueSlow) delete u.rogueSlow;
           }
           u.cd = Math.max(0, u.cd - recovery);
-          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - recovery);
-          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - recovery);
-          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - recovery);
+          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - specialRecovery);
+          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - specialRecovery);
+          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
-            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - recovery);
+            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
