@@ -898,6 +898,13 @@
     'Lower graphics load.': 'Menor carga gráfica.',
     'Smoother motion.': 'Movimiento más fluido.',
     'Reset performance sample': 'Reiniciar muestra de rendimiento',
+    'Start renderer profiling': 'Iniciar registro del renderizador',
+    'Stop renderer profiling': 'Detener registro del renderizador',
+    'Clear renderer profiling': 'Borrar registro del renderizador',
+    'Record bounded frame spikes and PR #518 cache activity while playing.':
+      'Registra picos de fotogramas y actividad de caché mientras juegas, con límites.',
+    'Download a local JSON report to share yourself.':
+      'Descarga un informe JSON local para compartirlo tú mismo.',
     'Master volume': 'Volumen general',
     'Music volume': 'Volumen de música',
     'Ambience volume': 'Volumen ambiental',
@@ -3341,6 +3348,7 @@
       $('scene-loading-retry').focus?.({ preventScroll: true });
       return;
     }
+    rendererEvent('arrival-revealed', ticket.destination);
     cancelSceneTransition();
     clearInput();
     last = performance.now();
@@ -3356,6 +3364,7 @@
       return false;
     const token = ++sceneTransitionEpoch;
     const campaign = game;
+    rendererEvent('arrival-start', destination);
     sceneTransition = { token, campaign, destination, committed: false };
     $('scene-loading').hidden = false;
     $('scene-loading-retry').hidden = true;
@@ -3449,6 +3458,7 @@
     }
   }
   function showTitleScreen() {
+    stopRendererRecording();
     ++titleEpoch;
     titleLoading = false;
     cancelSceneTransition();
@@ -4019,18 +4029,98 @@
       { view: 'character' },
     );
   }
-  function saveMenu() {
-    openMenu(
-      'Save and game management',
-      'Save, back up, or choose another run.',
-      [
-        action('Save run', () => {
-          save();
-          closeMenu();
-        }),
-        action('Save backups', saveBackupMenu),
-        action('Export playtest report', () =>
-          exportJSON(
+  // Opt-in, device-local, bounded samples. Never writes into campaign saves.
+  let rendererRecording = null;
+  let lastRendererRecording = null;
+  const rendererDiagnosticCounters = [
+    'proceduralBakes', 'proceduralCacheHits', 'sharedProceduralHits',
+    'proceduralEvictions', 'proceduralCacheEvictions', 'backgroundRepaints',
+    'backgroundLookaheadPaints', 'backgroundLookaheadPromotions',
+    'backgroundLookaheadMisses', 'backgroundLookaheadFailures',
+    'backgroundLookaheadPaintMs', 'backgroundLookaheadPromoteMs',
+    'neighborhoodPrepared', 'neighborhoodWarmupMs', 'syncProceduralBakeMs',
+    'syncBackgroundPaintMs', 'approvedGpuPrepared', 'proceduralGpuPrepared',
+    'gpuPreparationMs', 'gpuPreparationBatches',
+  ];
+  function rendererDiagnosticSnapshot() {
+    const pixi = pixiGame.status();
+    const counters = Object.fromEntries(rendererDiagnosticCounters.map((key) =>
+      [key, Number.isFinite(pixi[key]) ? pixi[key] : 0]));
+    for (const [key, value] of Object.entries(pixi.backgroundLookaheadSkips || {}))
+      counters['lookaheadSkip_' + key] = value;
+    return { counters, renderer: graphicsController.status().mode,
+      zone: game.zoneId, proceduralBytes: pixi.proceduralBytes || 0 };
+  }
+  function beginRendererRecording() {
+    rendererRecording = {
+      version: 1, startedAt: new Date().toISOString(),
+      startedClockMs: performance.now(), baseline: rendererDiagnosticSnapshot(),
+      frames: 0, draws: 0, slowFrames: 0, worstFrames: [], events: [],
+    };
+    lastRendererRecording = null;
+  }
+  function rendererEvent(type, destination) {
+    if (rendererRecording && rendererRecording.events.length < 16)
+      rendererRecording.events.push({ type, destination, elapsedMs: Math.round(
+        performance.now() - rendererRecording.startedClockMs) });
+  }
+  function noteRendererRecordingFrame(workMs, intervalMs, renderMs, drawn, recovering) {
+    const capture = rendererRecording;
+    if (!capture) return;
+    capture.frames++;
+    if (drawn) capture.draws++;
+    if (workMs < 34 && intervalMs < 50) return;
+    capture.slowFrames++;
+    const point = { elapsedMs: Math.round(performance.now() - capture.startedClockMs),
+      workMs: Math.round(workMs * 10) / 10,
+      intervalMs: Math.round(intervalMs * 10) / 10,
+      renderMs: Math.round(renderMs * 10) / 10,
+      drawn: !!drawn, recovering: !!recovering,
+      zone: game.zoneId, renderer: graphicsController.status().mode };
+    // Keep only the 32 highest-severity incidents, not an unbounded frame log.
+    const severity = (p) => Math.max(p.workMs, p.intervalMs);
+    if (capture.worstFrames.length < 32) capture.worstFrames.push(point);
+    else {
+      let smallest = 0;
+      for (let i = 1; i < capture.worstFrames.length; i++)
+        if (severity(capture.worstFrames[i]) < severity(capture.worstFrames[smallest]))
+          smallest = i;
+      if (severity(point) > severity(capture.worstFrames[smallest]))
+        capture.worstFrames[smallest] = point;
+    }
+  }
+  function rendererRecordingReport(capture = rendererRecording || lastRendererRecording) {
+    if (!capture) return { state: 'not-recorded', note: 'Optional recording is off.' };
+    const finish = capture.finished || rendererDiagnosticSnapshot();
+    const keys = new Set([...Object.keys(capture.baseline.counters),
+      ...Object.keys(finish.counters)]);
+    return {
+      state: capture === rendererRecording ? 'recording' : 'stopped',
+      startedAt: capture.startedAt,
+      durationMs: Math.max(0, Math.round((capture.finishedClockMs ||
+        performance.now()) - capture.startedClockMs)),
+      initialRenderer: capture.baseline.renderer, finalRenderer: finish.renderer,
+      initialZone: capture.baseline.zone, finalZone: finish.zone,
+      frames: capture.frames, draws: capture.draws, slowFrames: capture.slowFrames,
+      slowThresholds: { workMs: 34, intervalMs: 50 },
+      worstFrames: [...capture.worstFrames].sort((a, b) => a.elapsedMs - b.elapsedMs),
+      events: capture.events,
+      counterDeltas: Object.fromEntries([...keys].map((key) =>
+        [key, (finish.counters[key] || 0) - (capture.baseline.counters[key] || 0)])),
+      initialProceduralBytes: capture.baseline.proceduralBytes,
+      finalProceduralBytes: finish.proceduralBytes,
+      note: 'Bounded synchronous CPU samples, not GPU completion or displayed frames.',
+    };
+  }
+  function stopRendererRecording() {
+    if (!rendererRecording) return;
+    rendererRecording.finished = rendererDiagnosticSnapshot();
+    rendererRecording.finishedClockMs = performance.now();
+    lastRendererRecording = rendererRecording;
+    rendererRecording = null;
+  }
+  function exportPlaytestReport() {
+    exportJSON(
             {
               version: PrototypeBuild.version,
               performance: {
@@ -4056,6 +4146,7 @@
                   ...pixiGame.status(),
                 },
                 frameProfile: frameProfile.report(),
+                rendererDiagnostics: rendererRecordingReport(),
                 crowdDiagnostics: game.crowdDiagnosticsReport(),
                 ...(developerEnabled && game.s.mode === 'developer'
                   ? { effectDiagnostics: renderer.effectDiagnosticsReport() }
@@ -4085,8 +4176,18 @@
               statistics: game.s.statistics,
             },
             'Azeroth_Playtest_Report.json',
-          ),
-        ),
+          )
+  }
+  function saveMenu() {
+    openMenu(
+      'Save and game management',
+      'Save, back up, or choose another run.',
+      [
+        action('Save run', () => {
+          save();
+          closeMenu();
+        }),
+        action('Save backups', saveBackupMenu),
         action('New game', newGameMenu),
         ...(combatDiagnosticsEnabled
           ? [
@@ -4308,6 +4409,8 @@
           })]
         : []),
       menuControls.section('Diagnostics'),
+      action('Export playtest report', exportPlaytestReport,
+        'Download a local JSON report to share yourself.'),
       action(
         performanceDetailsExpanded ? 'Hide performance details' : 'Show performance details',
         () => {
@@ -4319,6 +4422,17 @@
     ];
     if (performanceDetailsExpanded) {
       items.push(
+        action(rendererRecording ? 'Stop renderer profiling' : 'Start renderer profiling', () => {
+          if (rendererRecording) stopRendererRecording();
+          else beginRendererRecording();
+          platformMenu(back);
+        }, 'Record bounded frame spikes and PR #518 cache activity while playing.'),
+        ...(lastRendererRecording && !rendererRecording ? [
+          action('Clear renderer profiling', () => {
+            lastRendererRecording = null;
+            platformMenu(back);
+          }),
+        ] : []),
         menuControls.section(
           'Performance details',
           runtime.describe({
@@ -7761,6 +7875,9 @@
         drawn: draw,
         adaptiveSkipped,
       });
+      if (simulating || recovering)
+        noteRendererRecordingFrame(frameWorkMs, intervalMs, stageTimes.renderMs,
+          draw, recovering);
     } else {
       frameSkip.suspend();
       autoOptimization.reset();
