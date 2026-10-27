@@ -40,7 +40,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: class-growth-visual-${{ github.run_id }}
-          path: test-results/class-*.png
+          path: |
+            test-results/class-choices-*.png
+            test-results/character-*.png
           if-no-files-found: ignore
       - name: Preserve failure screenshot
         if: failure()
