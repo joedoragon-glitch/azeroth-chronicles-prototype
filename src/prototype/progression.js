@@ -132,10 +132,7 @@
         }
       }
       expeditionPartyCap(rank = this.s.expeditionRank || 1) {
-        return (
-          R.balance.companions.activeCaps[clamp(rank, 1, 6)] +
-          (R.balance.companions.activeSlotBonuses?.[this.hero.class] || 0)
-        );
+        return Campaign.expeditionPartyCapFor(this.hero.class, rank);
       }
       expeditionInstructorCap(family) {
         return expeditionCeilings[family] || 0;
@@ -144,15 +141,21 @@
         return Object.keys(expeditionCeilings).find((id) => expeditionCeilings[id] > rank) || null;
       }
       expeditionUnlock(rank) {
-        return (
-          {
-            2: 'Recruitment + resources · active group 3',
-            3: 'Manual squad doctrine',
-            4: 'Full Barracks upgrade · active group 4',
-            5: 'Active group 5',
-            6: 'Active group 6',
-          }[rank] || ''
-        );
+        if (rank === 3) return 'Manual squad doctrine';
+        if (rank < 2 || rank > 6) return '';
+        // The conventional three classes retain exactly their existing copy.
+        // New class-specific active capacity is derived from the same rule used
+        // for save validation, not from a stale "active group 6" string.
+        const detail =
+          rank === 2
+            ? this.hero.class === 'rogue'
+              ? 'Resources'
+              : 'Recruitment + resources'
+            : rank === 4
+              ? 'Full Barracks upgrade'
+              : '';
+        const capacity = 'active group ' + this.expeditionPartyCap(rank);
+        return detail ? detail + ' · ' + capacity : capacity[0].toUpperCase() + capacity.slice(1);
       }
       expeditionTrainer() {
         return (
@@ -650,6 +653,13 @@
         return true;
       }
     }
+    // One class-aware capacity source for active party, Barracks and v4 saves.
+    // Rogue is deliberately not registered as playable yet.
+    const activeSlotBonuses = Object.freeze({ rogue: 1 });
+    Campaign.activeSlotBonuses = activeSlotBonuses;
+    Campaign.expeditionPartyCapFor = (heroClass, rank) =>
+      R.balance.companions.activeCaps[clamp(rank, 1, 6)] +
+      (activeSlotBonuses[heroClass] || 0);
     for (const name of Object.getOwnPropertyNames(Progression.prototype))
       if (name !== 'constructor')
         Object.defineProperty(
