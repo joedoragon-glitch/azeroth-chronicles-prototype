@@ -2807,7 +2807,7 @@
                       : ['soldier', 'archer', 'pet'].includes(u.type)
                         ? this.companionArmor(u.type)
                         : 5 + this.hero.level * 0.5) *
-                      0.35,
+                      this.armorEffectivenessFor(u),
                 ), 'damage'),
                 life: 1.5,
                 elapsed: 0,

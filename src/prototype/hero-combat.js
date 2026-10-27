@@ -664,20 +664,10 @@
             : !R.resourceMode.manaEnabled && charged
               ? R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot]
               : cooldowns[slot];
-        return (
-          base *
-          (1 -
-            Math.min(5, this.hero.talents[1] || 0) *
-              (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank))
-        );
+        return base * (1 - this.heroCooldownReduction());
       }
       basicSkillCooldown() {
-        return (
-          R.chargedSkills.first.basicSeconds *
-          (1 -
-            Math.min(5, this.hero.talents[1] || 0) *
-              (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank))
-        );
+        return R.chargedSkills.first.basicSeconds * (1 - this.heroCooldownReduction());
       }
       skillReady(slot, charged = false) {
         const i = slot - 1;

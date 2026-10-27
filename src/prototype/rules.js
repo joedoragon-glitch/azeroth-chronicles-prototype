@@ -6912,6 +6912,15 @@
       mage: { icon: '🧙‍♀️', hp: 90, mp: 100, power: 22, armor: 3, speed: 300 },
       ranger: { icon: '🏹', hp: 105, mp: 70, power: 20, armor: 5, speed: 320 },
     },
+    // Innate class identity is automatic from level 1. Existing class bases and talents stay intact.
+    classPassives: {
+      defaultArmorEffectiveness: 0.35,
+      paladin: { hpPerLevel: 5, armorEffectivenessPerLevel: 0.01 },
+      mage: { powerPerLevel: 2 },
+      ranger: { speedPerLevel: 3, cooldownReductionPerLevel: 0.01 },
+      // Avoid zero/negative recovery from high-level Ranger plus cooldown training.
+      maxTotalCooldownReduction: 0.6,
+    },
     disciplines: {
       maxRanks: [5, 5, 5, 3],
       profiles: {
