@@ -47,6 +47,13 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(capture.frames > 0, 'only active gameplay frames are counted');
     assert(capture.slowFrames > 0, 'long callback intervals are captured');
     assert(capture.worstFrames.length <= 32, 'slow-frame capture stays bounded');
+    assert.equal(capture.histograms.frameWork.reduce((a, b) => a + b, 0),
+      capture.frames, 'all captured work frames contribute to bounded percentiles');
+    assert.equal(capture.histograms.callbackInterval.reduce((a, b) => a + b, 0),
+      capture.frames, 'all captured callback intervals contribute to bounded percentiles');
+    assert(capture.approximatePercentiles.frameWork.p95UpperMs !== undefined);
+    assert(capture.approximatePercentiles.callbackInterval.p99UpperMs !== undefined);
+    assert(Array.isArray(capture.counterResetKeys));
     assert(capture.counterDeltas && typeof capture.counterDeltas === 'object');
     assert(!Object.prototype.hasOwnProperty.call(capture, 'campaign'),
       'diagnostic data never embeds game state');
