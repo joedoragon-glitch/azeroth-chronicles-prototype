@@ -12,6 +12,12 @@ This follow-up was requested **within the existing Rogue Bard PR #511**, not a s
 4. **Class-count-dependent user-facing messages.** `app.js` now constructs the number of classes for Succession introductory copy and final Game Over copy from `Campaign.classes`. When there are three classes, the original full English translation lookup string remains byte-for-byte the same at runtime. Explicit fourth-class English/Spanish paragraphs are provided, with an optional `Rogue Bard` ending title, but no fourth character-creation button until the class actually exists.
 5. **Focused regression fixture.** `tests/fourth-class-readiness.test.cjs` checks existing starter troops/caps, future +1 rank limits, original six and distinct seventh formation positions, and three-class/four-class Game Over validation. The four-class save tests **temporarily augment the in-process registry inside the isolated test**; they do not expose Rogue in actual gameplay.
 
+## Owner clarification added 27 October — Charm roster and Barracks
+
+[Expedition ownership and Barracks navigation contract](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md) is now authoritative: Rogue's **owned copies per individual charmable monster type** are limited to **3/4/4/5/6/7 by Expedition rank**, counting all owned active, resting, fallen and away specimens. **No aggregate 12-charmed-monster cap**. Barracks existence and upgrade never cap capture/ownership. Current Basic Barracks local active management remains **3** at every rank; Full Barracks uses Rogue's rank cap. The existing one-page flat Manage group / Name companions lists need bounded navigation and a charmed type-first collection without disrupting the current Soldier/Ranger/Boss Pet paths.
+
+The existing general 200-company guard is a separate technical safety condition; do not elevate it into a new Charm balance rule without examining the eligible creature catalog. Exact individual-type IDs, Succession inheritance, fallen/recovery and save authenticity remain implementation dependencies.
+
 ## Intentional non-implementation / remaining blockers
 
 This housekeeping **does not make Rogue Bard playable**. Do not interpret it as approving or implementing her proposed stats, basic, Charm, 16 performances, 2-second Endure, extra critical probability, critical intensities, art or music. None of those is tested or balanced.
