@@ -125,3 +125,8 @@ Verify first-frame correctness and input readiness before spending optional idle
 **Canonical timing and memory from current source:** maximum **64** unique approved sprite keys; optional non-critical preflight waits up to **750 ms**, post-admission nearby art up to **1400 ms** for combat-critical interiors and **1200 ms** for other arrivals; Continue can warm the restored scene for up to **1400 ms** after recovery. Confirmed Pixi’s optional procedural GPU arrival warm has an **1800 ms** deadline before Canvas fallback; the inner prewarm also has its own bound. CPU two-window terrain estimate **64 MiB combined**, 256 MiB procedural hard image-data cap, and optional 75% → 62.5% LRU trim. These are not total RAM or GPU memory measurements. Some loading stages occur sequentially and the overall transition can exceed any one limit.
 
 The [target-device acceptance runbook](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) governs Stage 7. No reviewer should infer a measured FPS improvement, full browser acceptance, or release permission from green Node/source tests.
+
+
+### Stage 7 ownership and conditional merge approval
+
+The owner will test the integrated game on their own ChromeOS device and follow up with real-browser results. They have authorized **merging PR #518 after clean exact-head technical CI and absence of source blockers**, rather than delaying integration until live-device testing can be run by the assistant. Merge exposes the *optional* Pixi trial while keeping Canvas reliable; it does not graduate WebGL2 from experimental, establish minimum hardware specs or prove performance improvement. Record failing real-world behaviors during Stage 7 and fix them in follow-up changes.

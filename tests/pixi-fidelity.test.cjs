@@ -393,7 +393,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   game.hero.x=oldX;
   delete runtime.requestIdleCallback;
   delete runtime.cancelIdleCallback;
-  // 160 pixel-bytes per miniature procedural texture is sufficient for the
+  // Approximately 100 pixel-bytes per miniature procedural texture suffice for the
   // deterministic mock. This intentionally tiny *test-only* budget forces
   // the same LRU path that real towns would take under sustained roaming.
   resources.clear();
@@ -412,7 +412,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   // then resume normal soft LRU cleanup when the fight ends.
   const combatEvictions=tinyGpu.status().proceduralCacheEvictions;
   game.s.projectiles=[{id:'active-attack'}];
-  game.props=[1,2,3,4].map(i=>({
+  game.props=[1,2,3,4,5,6,7].map(i=>({
     id:'fight-'+i,x:game.hero.x+8+i*12,y:game.hero.y+6,
     structure:'lumber-pile'
   }));
@@ -425,7 +425,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(fightCache.proceduralCacheEvictions,combatEvictions,
     'near-fight soft eviction cannot churn cached attack frames');
   game.s.projectiles=[];
-  game.props=[{id:'fight-3',x:game.hero.x+44,y:game.hero.y+6,
+  game.props=[{id:'fight-7',x:game.hero.x+92,y:game.hero.y+6,
     structure:'lumber-pile'}];
   tinyGpu.draw();
   assert(tinyGpu.status().proceduralBytes<fightCache.proceduralBytes,
