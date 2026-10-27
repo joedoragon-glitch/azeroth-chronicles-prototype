@@ -26,6 +26,10 @@ assert.match(
   'releases still verify the deployable package',
 );
 assert.match(auto, /needs: focused/, 'the publisher must depend on focused verification');
+assert.match(auto, /name: Preserve focused-test diagnostics[\s\S]*?if: always\(\)[\s\S]*?actions\/upload-artifact@v4/,
+  'failed or successful focused checks must retain evidence without rerunning suites');
+assert.match(auto, /name: focused-ci-evidence[\s\S]*?azeroth-focused-ci-report\.json/,
+  'structured focused evidence is independently reviewable after CI');
 assert.doesNotMatch(
   auto,
   /npm test|\.github\/actions\/check-game|playwright install|full browser matrix/i,
