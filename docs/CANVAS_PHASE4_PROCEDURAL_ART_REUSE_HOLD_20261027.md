@@ -12,6 +12,25 @@ Phase 4 examined **one** candidate, the existing `prop` / `decorative` / `struct
 
 The source-only A/B is `tests/canvas-procedural-art-phase4-benchmark.test.cjs`. It uses the **actual** `PrototypeVisuals.draw()` art twice, either directly in a visible Node Canvas or drawn once into a hypothetical tile and subsequently composed with `drawImage()`. It records offscreen bake cost, warmed 90-draw calls, pixel differences, and logical tile-byte estimates. **Measurement cannot be treated as game FPS, browser compositor timing or a target-device win.**
 
+## First measured CI sample and visual no-go
+
+The research test was executed in the draft PR's focused workflow [run #40511442513](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40511442513) (Node v22 / Linux, `@napi-rs/canvas`, matched native body vs one pre-baked tile). The exact observational log reports **15 combinations**, of which **14 have nonzero RGBA pixel differences**. Only the DPR 1, zoom 1, integer-anchor case was pixel-exact. The visible wildflower art was produced in each run; no game state changed.
+
+| Environment / anchor | Changed pixels, native vs baked | Warm native 90 draws | Warm tile 90 draws |
+| --- | ---: | ---: | ---: |
+| DPR 1, zoom 1, integer (103,80) | 0 | 20.489 ms | 0.830 ms |
+| DPR 1, zoom 1, fractional (103.25,80.375) | 431 | 17.615 ms | 0.706 ms |
+| DPR 1.5, zoom 1, integer (103,80) | 625 | 16.894 ms | 0.322 ms |
+| DPR 2, zoom 1, integer (103,80) | 56 | 16.347 ms | 0.633 ms |
+| DPR 2, zoom .85, fractional (103.25,80.375) | 846 | 14.868 ms | 0.341 ms |
+| DPR 1.5, zoom 1.25, fractional (103.25,80.375) | 973 | 14.415 ms | 0.340 ms |
+
+The other nine cases are retained in the structured `CANVAS_PHASE4_PROCEDURAL_RESEARCH_JSON` log. Each tile's logical RGBA estimate was **36,864–147,456 bytes**, ignoring canvas overhead and possible duplicated/composited surfaces. The first cold tile paint (DPR 1) measured 8.638 ms, while later paints in this one sample were 0.223–0.358 ms; first-use initialization/JIT contamination makes those **not dependable deployment bake estimates**.
+
+**Interpretation:** `drawImage()` clearly avoids repeated curve/oval work in the test, but it also changes antialiasing/transparency/composition for practically every tested rendering configuration. This is not an acceptable canon-equivalent implementation. Timings are 90 isolated draw operations, not full simulation, mixed actor/terrain scenes, frame p95/p99, input latency, or evidence of a sufficient number of matching wildflower instances to amortize a real resident cache. No default-on optimization can be approved from this sample.
+
+CI on that test commit passed **17 focused Node suites**, JavaScript syntax and the reproducible offline-ready PWA build. Pages publishing was skipped; full browser/physical-device tests were not run. The Phase 4 documentation commits require their own exact-head workflow check before they can be considered current CI coverage.
+
 ## Candidate inventory and suitability
 
 | Candidate | Repeated work | Immutable conditions / exclusion | Decision |
