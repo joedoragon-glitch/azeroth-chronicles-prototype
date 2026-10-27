@@ -4,6 +4,14 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const R = Campaign.rules;
 const close = (a, b) => assert(Math.abs(a - b) < 1e-7, a + ' differs from ' + b);
+// Accepted level-1 contract: only Ranger has an innate 1% cooldown reduction.
+// This oracle must never call the production cooldown helper to predict itself.
+const levelOneReduction = { paladin: 0, mage: 0, ranger: 0.01 };
+function checkLevelOneReduction(game, cls) {
+  const expected = levelOneReduction[cls];
+  close(game.heroCooldownReduction(), expected);
+  return expected;
+}
 
 function arena(cls = 'paladin', count = 1) {
   const g = new Campaign('normal', cls, () => 0.9);
@@ -31,14 +39,15 @@ function arena(cls = 'paladin', count = 1) {
 
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const { g, enemies: [e] } = arena(cls);
+  const reduction = checkLevelOneReduction(g, cls);
   assert(g.cast(1, e.id, true), cls + ' charged Skill 1');
-  close(g.hero.cd[0], 3 * (1 - g.heroCooldownReduction()));
-  close(g.hero.chargedCd[0], { paladin: 8, mage: 7, ranger: 8 }[cls] * (1 - g.heroCooldownReduction()));
+  close(g.hero.cd[0], 3 * (1 - reduction));
+  close(g.hero.chargedCd[0], { paladin: 8, mage: 7, ranger: 8 }[cls] * (1 - reduction));
   assert(!g.cast(1, e.id, true), 'cannot charge again while either timer is busy');
   g.hero.cd[0] = 0;
   const oldLock = g.hero.chargedCd[0];
   assert(g.cast(1, e.id, false), 'promoted Tap returns during longer charged cooldown');
-  close(g.hero.cd[0], 3 * (1 - g.heroCooldownReduction()));
+  close(g.hero.cd[0], 3 * (1 - reduction));
   close(g.hero.chargedCd[0], oldLock);
   // A separate automatic combo must never change either activated timer.
   g.hero.basicCd = 0;
@@ -48,6 +57,19 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   close(g.hero.cd[0], oldNormal);
   close(g.hero.chargedCd[0], oldLock);
   assert(g.hero.skills.length === 8, 'no additional learned slot');
+}
+
+{
+  // A wrong production formula must be rejected by the original independent
+  // oracle, rather than becoming the expected value for the cooldown timers.
+  const { g } = arena('ranger');
+  const actual = g.heroCooldownReduction.bind(g);
+  g.heroCooldownReduction = () => actual() + 0.02;
+  assert.throws(
+    () => checkLevelOneReduction(g, 'ranger'),
+    /differs from 0\.01/,
+    'Ranger cooldown oracle rejects a deliberately incorrect production reduction',
+  );
 }
 
 {
