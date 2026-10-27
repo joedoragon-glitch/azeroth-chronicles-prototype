@@ -67,15 +67,6 @@
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
-    'Critical intensity · Rogue Bard': 'Intensidad crítica · Pícara Bardo',
-    'Rogue critical intensity': 'Intensidad crítica de la pícara',
-    'Rogue · Normal': 'Pícara · Normal',
-    'Rogue · Nightmare': 'Pícara · Pesadilla',
-    'Rogue · Developer': 'Pícara · Desarrollador',
-    'Level of Rogue critical effects, not their probability. Other critical groups are unchanged.':
-      'Potencia de los efectos críticos de la pícara, no su probabilidad. Los demás grupos no cambian.',
-    'Each mode remembers its own Rogue Level 1–3. Existing saves start at Level 2.':
-      'Cada modo recuerda su propio nivel 1–3 de la pícara. Las partidas anteriores empiezan en el nivel 2.',
     'Try recovery': 'Intentar recuperar',
     'Recovery options': 'Opciones de recuperación',
     'Choose a recoverable run to review. Nothing is replaced until you confirm.':
@@ -1500,7 +1491,6 @@
       nightmareUnlocked: false,
       activeMode: 'normal',
       audio: { ...PrototypeAudio.defaults },
-      rogueCriticalLevels: { normal: 2, nightmare: 2, developer: 2 },
     },
     game,
     titleScreen = null,
@@ -1740,17 +1730,12 @@
     // Cosmetic capture nicknames follow the current interface language.
     // Existing names never change when the language changes.
     candidate.rogueNicknameLanguage = language;
-    if (!candidate._criticalPartyNative?.enabled || !candidate._criticalWorldNative?.enabled)
-      PrototypeCriticalPartyNative.attachCampaign(
-        candidate, PrototypeCriticalExecutions, PrototypeCriticalLevels,
-        PrototypeCriticalWorldNative, { enabled: true },
-      );
-    // Profile-controlled levels are reapplied on every newly restored, newly
-    // created, or reentered campaign. Frozen in-flight receipts retain the
-    // prior level; neither save snapshots nor RNG streams store the preference.
-    for (const mode of ['normal', 'nightmare', 'developer'])
-      candidate._criticalPartyNative.setCriticalLevel(
-        'rogue', profile.rogueCriticalLevels?.[mode] ?? 2, mode);
+    if (candidate._criticalPartyNative?.enabled && candidate._criticalWorldNative?.enabled)
+      return candidate;
+    PrototypeCriticalPartyNative.attachCampaign(
+      candidate, PrototypeCriticalExecutions, PrototypeCriticalLevels,
+      PrototypeCriticalWorldNative, { enabled: true },
+    );
     return candidate;
   }
   function load(mode) {
@@ -4607,33 +4592,6 @@
       back,
     );
   }
-  function rogueCriticalMenu() {
-    openMenu(
-      'Critical intensity · Rogue Bard',
-      'Level of Rogue critical effects, not their probability. Other critical groups are unchanged.',
-      [
-        menuControls.section('Rogue critical intensity',
-          'Each mode remembers its own Rogue Level 1–3. Existing saves start at Level 2.'),
-        ...[
-          ['normal', 'Rogue · Normal'],
-          ['nightmare', 'Rogue · Nightmare'],
-          ['developer', 'Rogue · Developer'],
-        ].map(([mode, label]) => menuControls.slider(
-          label,
-          profile.rogueCriticalLevels[mode], 1, 3, 1,
-          (level) => {
-            if (!Number.isInteger(level) || level < 1 || level > 3) return;
-            profile.rogueCriticalLevels[mode] = level;
-            if (game?._criticalPartyNative?.enabled)
-              game._criticalPartyNative.setCriticalLevel('rogue', level, mode);
-            persistProfile();
-          },
-          'Level 1–3', '', false,
-        )),
-      ],
-      systemMenu,
-    );
-  }
   function systemMenu() {
     openMenu(
       'Game and settings',
@@ -4653,7 +4611,6 @@
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
-        action('Critical intensity · Rogue Bard', rogueCriticalMenu),
         action('Save and game management', saveMenu),
         action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
           languageMenu(systemMenu),
