@@ -200,7 +200,11 @@ testTerritory('quota overtime ordinary', { quotaOvertime: 4 }, 1300, true);
     rogueEmergencyReinforcement: true, ranged: false });
   assert(g.meleePursuitBurstEligible(e),
     'PR #508 includes real Ringleader-owned melee reinforcement');
-  put(g, e, path.near, path.farHero);
+  // Beginning of an actual chase: 180 units from enemy to hero, clear LOS.
+  // The later hit is checked at a separate genuine 60-unit contact distance.
+  Object.assign(e, path.near);
+  Object.assign(g.hero, path.farHero);
+  assert(g.line(g.hero, e), 'clear LOS for native chase');
   assert(dist(g.hero, e) > g.enemyMeleeBasicRange(e));
   const before = g.s.time;
   g.s.time += 0.1;
