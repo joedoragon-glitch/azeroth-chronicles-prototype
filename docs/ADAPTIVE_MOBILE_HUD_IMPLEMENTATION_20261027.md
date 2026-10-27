@@ -25,11 +25,16 @@ The 26 October read-only design specification is the working UX contract.
 - [ ] Execute focused tests on the exact branch and inspect their results.
 - [ ] Real iPhone/Android thumb testing (not certifiable by desktop-browser emulation).
 
-## Phase 2 — Adaptive control visibility (not started)
+## Phase 2 — Adaptive control visibility (implemented; device acceptance pending)
 
-- [ ] Introduce separate Classic (default)/Adaptive presentation preference and bounded UI context.
-- [ ] Use subtle visual emphasis without relocating or disabling valid commands.
-- [ ] Preserve low-health prominence, charge/queue, interact, tutorial, party, target and navigation states.
+- [x] Independent `Classic` (default) / `Adaptive` preference under Touch and mouse options, bilingual and preserved in `azeroth-input-v1`.
+- [x] Pure context classifier for concurrent low HP, combat pressure, selected target, charging/queue, tutorial recall, nearby interaction, route guidance and menus; a 2-second combat cooldown and 30%/35% HP hysteresis prevent flicker.
+- [x] Apply only changed DOM context attributes during the existing 150ms HUD update on opted-in phones, with bounded proximity checks; no game engine, renderer or pathfinding changes.
+- [x] Quiet safe-state backgrounds for idle learned actions, Recall, Target and eligible Squad doctrine without hiding buttons or changing touch geometry; charging, queued skills, active target locks, tutorial and healing remain prominent.
+- [x] Display explicit bilingual low-HP label and accented HP bar even near friendly NPCs.
+- [x] Preserve classic styling on older devices; independently combine HUD style with Fixed/Floating and both handedness modes.
+- [x] Focused input, bilingual menu and dedicated adaptive context/production-shell tests authored.
+- [ ] Phase 2 focused CI result and physical-device visual review.
 - [ ] Verify both handedness layouts and portrait/landscape.
 
 ## Phase 3 — Notification refinement (not started)
@@ -52,12 +57,20 @@ The 26 October read-only design specification is the working UX contract.
 - `styles/phone.css` — opacity and anchor treatment without moving other controls.
 - `tests/input.test.cjs`, `tests/game-menu-ui.test.cjs`, `tests/floating-joystick-browser.test.cjs` — focused regressions.
 
+## Phase 2 files
+
+- `src/prototype/input.js` — independent Classic/Adaptive preference and pure context/hysteresis helpers.
+- `src/prototype/app.js` — bounded presentation snapshot, low-HP readout, bilingual settings.
+- `styles/phone.css` — opt-in contrast changes without hitbox movement.
+- `tests/adaptive-hud.test.cjs`, `tests/input.test.cjs`, `tests/game-menu-ui.test.cjs` — context and compatibility regressions.
+
 Run targeted checks when CI or a repository checkout is available:
 
 ```sh
 node tests/input.test.cjs
 node tests/game-menu-ui.test.cjs
 node tests/floating-joystick-browser.test.cjs
+node tests/adaptive-hud.test.cjs
 ```
 
 No Phase 2–4 gameplay or presentation changes are included in the Phase 1 commits.
