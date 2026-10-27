@@ -1,0 +1,53 @@
+name: Class growth visual acceptance
+
+# Focused class-selection/Character smoke only; not the manually gated full-game suite.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/prototype/app.js'
+      - 'styles/prototype.css'
+      - 'styles/phone.css'
+      - 'tests/class-growth-browser.test.cjs'
+      - '.github/workflows/class-growth-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: class-growth-visual-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    if: github.event.pull_request.head.ref == 'ui/hero-class-growth-discovery-20261027'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked tools
+        run: npm ci --ignore-scripts
+      - name: Install Chromium for isolated visual acceptance
+        run: npx playwright install chromium
+      - name: Verify English and Spanish class learning on desktop and phone
+        run: node tests/class-growth-browser.test.cjs
+      - name: Preserve class choice and Character screenshots for visual audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: class-growth-visual-${{ github.run_id }}
+          path: |
+            test-results/class-choices-*.png
+            test-results/character-*.png
+          if-no-files-found: ignore
+      - name: Preserve failure screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: class-growth-failure-${{ github.run_id }}
+          path: test-results/failure-*.png
+          if-no-files-found: ignore

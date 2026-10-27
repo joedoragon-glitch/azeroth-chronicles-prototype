@@ -219,6 +219,10 @@
       'Los Wraiths nocturnos ocupan Lantern Shore. Derrótalos para partir o espera a que amanezca.',
     Training: 'Entrenamiento',
     Character: 'Personaje',
+    'Optional · choose once': 'Opcional · se elige una vez',
+    'Equipment, Ranger support and Preparation Tonics.':
+      'Equipo, apoyo del Ranger y tónicos de preparación.',
+    'A separate permanent name for your reign': 'Otro nombre permanente para tu reinado',
     Company: 'Compañía',
     Recruitment: 'Reclutamiento',
     'Local objectives': 'Objetivos locales',
@@ -968,6 +972,16 @@
     'Mouse click-to-move': 'Clic para moverse',
     'Two thumbs': 'Dos pulgares',
     'Left hand': 'Mano izquierda',
+    'Movement joystick': 'Joystick de movimiento',
+    'HUD style': 'Estilo de interfaz',
+    Classic: 'Clásico',
+    Adaptive: 'Adaptativo',
+    'Adaptive quietly reduces idle control backgrounds; all learned actions stay available.':
+      'Adaptativo atenúa los controles inactivos; todas las habilidades aprendidas siguen disponibles.',
+    Fixed: 'Fijo',
+    Floating: 'Flotante',
+    'Floating: touch the lower-left movement area; menus keep the fixed stick.':
+      'Flotante: toca la zona inferior izquierda para moverte; el menú conserva el joystick fijo.',
   });
   Object.assign(spanishText, {
     'iPhone / iPad: Safari → Share → Add to Home Screen → Add.\nAndroid / Chrome: browser menu → Install app or Add to Home screen.':
@@ -1259,6 +1273,15 @@
         return 'Aprendido ' + book.nameEs + ' · ' +
           piece.slice(prefix.length).replace('Codices of the Unforeseen', 'Códices de lo Imprevisto');
     }
+    // Level-up learning cues are dynamic; translate their current numeric value,
+    // without changing the Campaign's authored event or milestone mechanics.
+    const levelGrowth = /^Level (\d+)! (Fortitude|Agility|Arcane Power) improved\. Training point available — press C or use Discipline Training\.$/.exec(piece);
+    if (levelGrowth)
+      return '¡Nivel ' + levelGrowth[1] + '! ' +
+        { Fortitude: 'Fortaleza', Agility: 'Agilidad', 'Arcane Power': 'Poder arcano' }[levelGrowth[2]] +
+        ' mejorado. Punto de entrenamiento disponible: pulsa C o entra en Entrenamiento de disciplinas.';
+    if (/^LEVEL \d+$/.test(piece)) return piece.replace('LEVEL ', 'NIVEL ');
+    if (piece === 'Training point available') return 'Punto de entrenamiento disponible';
     if (/^Search /.test(piece)) return piece.replace('Search ', 'Investigar ');
     if (/^(Learn|Train) /.test(piece) && !spanishText[piece])
       return piece
@@ -1445,6 +1468,7 @@
     last = performance.now(),
     saveTimer = 0,
     hudTimer = 0,
+    adaptiveHudState = null,
     focused = true,
     paused = false,
     charge = null,
@@ -1494,6 +1518,8 @@
   const input = PrototypeInput.create(localStorage, status);
   let bindingCapture = null;
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
+  document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
+  document.body.setAttribute('data-hud-style', input.preferences.hudStyle);
   let appRegistration = null,
     appUpdateReady = false,
     appReloadRequested = false,
@@ -1625,15 +1651,26 @@
       installInstructions();
     }
   }
+  // Technical receipts are quieter than warnings, while save failures and
+  // emergency combat pauses must remain legible and screen-reader immediate.
+  function statusTier(text) {
+    if (
+      /critical slowdown|saving failed|storage unavailable|saved run unavailable|recovery failed|returned to (your )?(refuge|recovery point)|emergency reset/i.test(text)
+    ) return 'critical';
+    if (/legacy save|invalid import|imported successfully|recovery checkpoint/i.test(text))
+      return 'important';
+    return 'routine';
+  }
   function status(text) {
     if (text === 'Saved locally · export for a backup') return;
-    $('status').textContent = tr(text);
-    const important =
-      /storage unavailable|Saving failed|Saved run unavailable|Legacy save|Invalid import|Imported successfully|Recovery failed|recovery checkpoint/i.test(
-        text,
-      );
-    statusUntil = performance.now() + (important ? 6000 : 2800);
-    statusContext = important ? null : { game, zone: game?.zoneId, visit: game?.noticeVisit };
+    const tier = statusTier(text), host = $('status');
+    host.dataset.noticeTier = tier;
+    host.setAttribute('role', tier === 'critical' ? 'alert' : 'status');
+    host.textContent = tr(text);
+    statusUntil = performance.now() + (tier === 'critical' || tier === 'important'
+      ? 6000 : text === 'Performance recovered: combat resumed.' ? 1750 : 2600);
+    statusContext = tier === 'routine'
+      ? { game, zone: game?.zoneId, visit: game?.noticeVisit } : null;
   }
   function manaStatus(text) {
     // Dormant MP remains recoverable: the restoration flag brings this back.
@@ -2407,7 +2444,11 @@
     const select = (name, value) => {
       input.select(name, value);
       document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
+      document.body.setAttribute('data-joystick-mode', input.preferences.joystickMode);
+      document.body.setAttribute('data-hud-style', input.preferences.hudStyle);
+      adaptiveHudState = null;
       clearInput();
+      syncJoystickPresentation();
       runtime.reset();
       frameProfile.reset();
       updateHUD();
@@ -2426,6 +2467,26 @@
           ],
           (value) => select('phoneLayout', value),
           'Two thumbs: movement left, skills right. Left hand: skills above the joystick.',
+        ),
+        menuControls.select(
+          'HUD style',
+          p.hudStyle,
+          [
+            { value: 'classic', label: 'Classic' },
+            { value: 'adaptive', label: 'Adaptive' },
+          ],
+          (value) => select('hudStyle', value),
+          'Adaptive quietly reduces idle control backgrounds; all learned actions stay available.',
+        ),
+        menuControls.select(
+          'Movement joystick',
+          p.joystickMode,
+          [
+            { value: 'fixed', label: 'Fixed' },
+            { value: 'floating', label: 'Floating' },
+          ],
+          (value) => select('joystickMode', value),
+          'Floating: touch the lower-left movement area; menus keep the fixed stick.',
         ),
         menuControls.toggle(
           'Touch tap-to-move',
@@ -2464,6 +2525,13 @@
     joystickStart = null;
     joy = { x: 0, y: 0 };
     $('stick').style.transform = '';
+    document.body.classList.remove('floating-joystick-active');
+  }
+  function syncJoystickPresentation() {
+    const invisible = platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
+    const control = $('joystick');
+    control.tabIndex = invisible ? -1 : 0;
+    control.setAttribute('aria-hidden', invisible ? 'true' : 'false');
   }
   function clearInput(preserveNavigation = true) {
     syncPartyChargeClock();
@@ -2640,6 +2708,7 @@
     audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
+    syncJoystickPresentation();
     $('modal').hidden = false;
     $('modal-title').textContent = translateMenu(title);
     const descriptionHost = $('modal-description');
@@ -2751,6 +2820,19 @@
     };
     const details = (hostElement, entry) => {
       if (!entry.detail) return;
+      if (menu.view === 'class-select' && entry.detail.includes('\n')) {
+        const [role, growth] = entry.detail.split('\n');
+        for (const [text, className] of [
+          [role, 'class-role'],
+          [growth, 'class-growth'],
+        ]) {
+          const span = document.createElement('span');
+          span.className = 'detail ' + className;
+          span.textContent = translateMenu(text);
+          hostElement.append(span);
+        }
+        return;
+      }
       const span = document.createElement('span');
       span.className = 'detail';
       span.textContent = translateMenu(entry.detail);
@@ -2889,6 +2971,7 @@
     $('modal').hidden = true;
     document.body.classList.remove('menu-open');
     clearInput(true);
+    syncJoystickPresentation();
     if (menuReturnFocus?.focus) menuReturnFocus.focus({ preventScroll: true });
     menuReturnFocus = null;
   }
@@ -2896,13 +2979,13 @@
     const label = document.createElement('label'),
       field = document.createElement('input');
     label.className = 'character-name-field';
-    label.textContent = 'Optional name · up to 24 characters';
+    label.textContent = language === 'es' ? 'Nombre opcional · hasta 24 caracteres' : 'Optional name · up to 24 characters';
     field.id = 'character-name';
     field.type = 'text';
     field.maxLength = 24;
     field.autocomplete = 'off';
     field.value = initialValue;
-    field.placeholder = 'Leave blank to decide later';
+    field.placeholder = language === 'es' ? 'Déjalo vacío para decidir después' : 'Leave blank to decide later';
     label.append(field);
     $('modal-actions').prepend(label);
     return field;
@@ -3265,6 +3348,31 @@
       back,
     );
   }
+  // Concise copy for choosing a class and for inspecting its live growth.
+  // The values stay tied to the established combat rules.
+  function classGrowthLine(heroClass) {
+    const p = Campaign.rules.balance.classPassives;
+    const es = language === 'es';
+    if (heroClass === 'paladin')
+      return es
+        ? 'Fortaleza · Cada nivel: +' + p.paladin.hpPerLevel +
+            ' PV máximos y +' + p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
+            ' de daño bloqueado por punto de armadura.'
+        : 'Fortitude · Each level: +' + p.paladin.hpPerLevel +
+            ' max HP and +' + p.paladin.armorEffectivenessPerLevel.toFixed(2) +
+            ' damage blocked per Armor point.';
+    if (heroClass === 'ranger')
+      return es
+        ? 'Agilidad · Cada nivel: +' + p.ranger.speedPerLevel +
+            ' de velocidad y +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+            '% de reducción de recuperación.'
+        : 'Agility · Each level: +' + p.ranger.speedPerLevel +
+            ' speed and +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+            '% cooldown reduction.';
+    return es
+      ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
+      : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
+  }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
@@ -3286,14 +3394,16 @@
         ' adventure',
       mode === 'arena'
         ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
-        : 'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
+        : language === 'es'
+          ? 'Elige quién liderará la resistencia. Cada clase recibe su ventaja innata desde el nivel 1. Rescata especialistas para aprender más habilidades y conseguir equipo.'
+          : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
           c.icon +
             ' ' +
             (language === 'es'
               ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[id] || id
-              : id),
+              : id.charAt(0).toUpperCase() + id.slice(1)),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
@@ -3315,14 +3425,23 @@
               return;
             start(mode, id, succession, heroName);
           },
-          id === 'paladin'
-            ? 'Melee, healing and brief immunity'
-            : id === 'mage'
-              ? 'Ranged magic, frost control and protective barriers'
-              : 'Ranged bow, healing and mobility',
+          (language === 'es'
+            ? {
+                paladin: 'Combate cercano, curación e inmunidad breve',
+                mage: 'Magia a distancia, hielo y barreras protectoras',
+                ranger: 'Arco a distancia, curación y movilidad',
+              }[id]
+            : {
+                paladin: 'Melee, healing and brief immunity',
+                mage: 'Ranged magic, frost control and protective barriers',
+                ranger: 'Ranged bow, healing and mobility',
+              }[id]) +
+            '\n' +
+            classGrowthLine(id),
         ),
       ),
       () => chooseClass(mode),
+      { view: 'class-select' },
     );
     appendNameField();
   }
@@ -3378,19 +3497,48 @@
     );
   }
   function characterMenu() {
-    const h = game.hero;
+    const h = game.hero,
+      es = language === 'es',
+      className = es
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[h.class]
+        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[h.class],
+      stats = [
+        { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
+        { label: es ? 'Poder' : 'Power', value: String(game.power()) },
+        { label: es ? 'Armadura' : 'Armor', value: String(game.armor()) },
+        { label: es ? 'Velocidad' : 'Speed', value: String(game.heroMoveSpeed()) },
+        {
+          label: es ? 'Reducción de recuperación' : 'Cooldown reduction',
+          value: Math.round(game.heroCooldownReduction() * 100) + '%',
+        },
+        {
+          label: es ? 'Probabilidad crítica' : 'Critical chance',
+          value: (game.criticalPartyChance('hero') * 100).toFixed(0) + '%',
+        },
+      ];
+    if (h.class === 'paladin')
+      stats.push({
+        label: es ? 'Bloqueo por punto de armadura' : 'Blocked per Armor point',
+        value: game.armorEffectivenessFor(h).toFixed(2).replace('.', es ? ',' : '.') +
+          (es ? ' daño' : ' damage'),
+      });
     openMenu(
       'Character',
-      (h.customName || h.regnalName ? game.heroDisplayName() + ' · ' : '') +
-        h.class +
-        ' · Level ' +
-        h.level +
-        '\nXP ' +
-        Math.floor(h.xp) +
-        ' / ' +
-        game.xpRequired(h.level) +
-        (language === 'es' ? '\nProbabilidad crítica: ' : '\nCritical chance: ') +
-        (game.criticalPartyChance('hero') * 100).toFixed(0) + '%',
+      {
+        summary:
+          (h.customName || h.regnalName ? game.heroDisplayName() + ' · ' : '') +
+          className +
+          (es ? ' · Nivel ' : ' · Level ') +
+          h.level +
+          '\nXP ' + Math.floor(h.xp) + ' / ' + game.xpRequired(h.level),
+        sections: [
+          {
+            title: es ? 'Crecimiento de clase' : 'Class growth',
+            text: classGrowthLine(h.class),
+          },
+          { title: es ? 'Atributos actuales' : 'Current stats', rows: stats },
+        ],
+      },
       [
         ...(!h.customName
           ? [action('Name your hero', () => nameHeroMenu(false), 'Optional · choose once')]
@@ -3413,6 +3561,7 @@
         action('Talents', () => talents(characterMenu)),
       ],
       openMain,
+      { view: 'character' },
     );
   }
   function saveMenu() {
@@ -5788,16 +5937,64 @@
     if (actionId?.startsWith('skill')) releaseCharge(Number(actionId.slice(5)), 'keyboard');
   });
   const joystick = $('joystick');
+  syncJoystickPresentation();
   let menuJoyTime = 0;
+  const floatingGameplay = () =>
+    platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
   function joyUpdate(e) {
-    const r = joystick.getBoundingClientRect(),
-      dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
-      dy = (e.clientY - r.top - r.height / 2) / (r.height * 0.4),
-      n = Math.max(1, Math.hypot(dx, dy));
-    joy = { x: dx / n, y: dy / n };
+    if (floatingGameplay() && joystickStart) {
+      const r = joystick.getBoundingClientRect();
+      const wasStill = joy.x === 0 && joy.y === 0;
+      joy = PrototypeInput.floatingJoystickVector(
+        joystickStart, { x: e.clientX, y: e.clientY }, r.width * 0.4,
+      );
+      // Merely placing a stationary thumb does not cancel a guided journey.
+      if (wasStill && (joy.x || joy.y)) cancelTravel();
+    } else {
+      const r = joystick.getBoundingClientRect(),
+        dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
+        dy = (e.clientY - r.top - r.height / 2) / (r.height * 0.4),
+        n = Math.max(1, Math.hypot(dx, dy));
+      joy = { x: dx / n, y: dy / n };
+    }
     $('stick').style.transform = 'translate(' + joy.x * 24 + 'px,' + joy.y * 24 + 'px)';
   }
+  function beginFloatingJoystick(e) {
+    if (!floatingGameplay() || !activePlay() || e.pointerType !== 'touch' ||
+        pointer !== null || worldPointer !== null) return false;
+    const obstacles = [
+      '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
+      '#skills', '#quick-items', '#developer-summon', '#cancel-navigation-button',
+      '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
+    ].flatMap((selector) => {
+      const el = document.querySelector(selector);
+      if (!el || el.hidden || getComputedStyle(el).display === 'none' ||
+          getComputedStyle(el).visibility === 'hidden') return [];
+      const rect = el.getBoundingClientRect();
+      return [{ x: rect.left, y: rect.top, width: rect.width, height: rect.height }];
+    });
+    if (!PrototypeInput.floatingJoystickZone(
+      { x: e.clientX, y: e.clientY },
+      { width: window.innerWidth, height: window.innerHeight }, obstacles,
+    )) return false;
+    e.preventDefault();
+    audio.unlock();
+    pointer = e.pointerId;
+    joystickTouchId = null;
+    joystickStart = { x: e.clientX, y: e.clientY };
+    joy = { x: 0, y: 0 };
+    $('stick').style.transform = '';
+    const rect = joystick.getBoundingClientRect();
+    const left = Math.max(0, Math.min(window.innerWidth - rect.width, e.clientX - rect.width / 2));
+    const top = Math.max(0, Math.min(window.innerHeight - rect.height, e.clientY - rect.height / 2));
+    joystick.style.setProperty('--floating-joystick-left', Math.round(left) + 'px');
+    joystick.style.setProperty('--floating-joystick-top', Math.round(top) + 'px');
+    document.body.classList.add('floating-joystick-active');
+    canvas.setPointerCapture?.(pointer);
+    return true;
+  }
   joystick.onpointerdown = (e) => {
+    if (floatingGameplay()) return;
     if (e.pointerType === 'mouse') return;
     if (pointer !== null) {
       // A new primary contact or missing old capture proves the old touch ended.
@@ -5828,18 +6025,15 @@
     document.addEventListener(type, finishJoystickPointer, true);
   // iOS/WebKit may omit the pointer ending but still send the touch ending.
   // Match Touch.identifier explicitly: it need not equal PointerEvent.pointerId.
-  joystick.addEventListener(
-    'touchstart',
-    (e) => {
-      if (pointer === null || joystickTouchId !== null || !joystickStart) return;
-      const contact = Array.from(e.changedTouches).find(
-        (touch) =>
-          Math.hypot(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y) < 25,
-      );
-      if (contact) joystickTouchId = contact.identifier;
-    },
-    { passive: true },
-  );
+  const rememberJoystickTouch = (e) => {
+    if (pointer === null || joystickTouchId !== null || !joystickStart) return;
+    const contact = Array.from(e.changedTouches).find(
+      (touch) => Math.hypot(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y) < 25,
+    );
+    if (contact) joystickTouchId = contact.identifier;
+  };
+  for (const target of [joystick, canvas])
+    target.addEventListener('touchstart', rememberJoystickTouch, { passive: true });
   for (const type of ['touchend', 'touchcancel'])
     document.addEventListener(
       type,
@@ -5862,6 +6056,7 @@
       }
       return;
     }
+    if (beginFloatingJoystick(e)) return;
     audio.unlock();
     if (e.pointerType === 'mouse' && !input.preferences.mouseMove) {
       e.preventDefault();
@@ -5881,6 +6076,10 @@
     canvas.setPointerCapture?.(e.pointerId);
   };
   canvas.onpointermove = (e) => {
+    if (floatingGameplay() && e.pointerId === pointer) {
+      joyUpdate(e);
+      return;
+    }
     if (
       worldPointer?.id === e.pointerId &&
       Math.hypot(e.clientX - worldPointer.x, e.clientY - worldPointer.y) > 12
@@ -5907,6 +6106,7 @@
     if (!PrototypeInput.requestMove(game, tap.target)) status('Path blocked.');
   };
   canvas.onpointercancel = canvas.onlostpointercapture = (e) => {
+    if (floatingGameplay() && e.pointerId === pointer) releaseJoystick();
     if (worldPointer?.id === e.pointerId) worldPointer = null;
   };
   addEventListener('contextmenu', (e) => {
@@ -6115,7 +6315,7 @@
             : width - Math.max(12, safeRight),
         left = shortPhone && width - hud.right > 250 ? hud.right + edge : edge,
         available = Math.max(160, right - left),
-        noticeWidth = Math.min(platform.mode === 'phone' ? 600 : 480, available);
+        noticeWidth = Math.min(platform.mode === 'phone' ? (shortPhone ? 320 : 310) : 480, available);
       host.style.width = noticeWidth + 'px';
       host.style.left = left + available / 2 + 'px';
       host.style.top =
@@ -6193,12 +6393,20 @@
         (n) => n.kind === 'narration' || n.text.length + (n.detail?.length || 0) > 90,
       ),
     );
-    // The separate short-lived phone status must stay below the amber stack.
-    if (platform.mode === 'phone')
-      $('status').style.top = state.active.length
+    // Routine receipts never stack beneath an important amber announcement;
+    // urgent status remains legible even when both channels are active.
+    const shortStatus = $('status');
+    if (platform.mode === 'phone') {
+      const urgent = ['critical', 'important'].includes(shortStatus.dataset.noticeTier);
+      const deferRoutine = state.active.length > 0 && !urgent;
+      shortStatus.classList.toggle('notice-deferred', deferRoutine);
+      shortStatus.style.top = state.active.length && urgent
         ? Math.ceil(host.getBoundingClientRect().bottom + 8) + 'px'
         : '';
-    else $('status').style.top = '';
+    } else {
+      shortStatus.classList.remove('notice-deferred');
+      shortStatus.style.top = '';
+    }
   }
   const developerSummonButton = document.createElement('button');
   developerSummonButton.id = 'developer-summon';
@@ -6259,6 +6467,8 @@
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
       mp = manaEnabled ? Math.max(0, Math.min(100, (h.mp / h.maxMp) * 100)) : 0;
+    const adaptive = platform.mode === 'phone' && input.preferences.hudStyle === 'adaptive';
+    const lowHP = adaptive && PrototypeInput.adaptiveHudLowHealth(h.hp, h.maxHp, adaptiveHudState?.lowHP);
     const talentButton = $('talent-button'),
       talentCount = $('talent-count');
     talentCount.textContent = h.talentPoints;
@@ -6285,7 +6495,13 @@
       h.maxHp +
       '</span><i style="--fill:' +
       hp +
-      '%"></i></div>' +
+      '%"></i>' +
+      (lowHP
+        ? '<small class="hud-low-health" aria-label="' +
+          (language === 'es' ? 'Salud baja' : 'Low health') +
+          '">! ' + (language === 'es' ? 'VIDA BAJA' : 'LOW HP') + '</small>'
+        : '') +
+      '</div>' +
       (manaEnabled
         ? '<div class="resource-line mana"><span>MP ' +
           Math.floor(h.mp) +
@@ -6654,7 +6870,37 @@
       : 'Tap to cycle visible enemies · hold for ' + (targetHoldMs / 1000).toFixed(2) + 's to lock';
     if (targetButton.querySelector('small'))
       targetButton.querySelector('small').textContent = input.key('target');
-    cancelNavigationButton.hidden = !visibleNavigationRoute();
+    const navigating = visibleNavigationRoute();
+    cancelNavigationButton.hidden = !navigating;
+    if (adaptive) {
+      // One bounded snapshot during the existing 150ms HUD update, never per render.
+      const nearby = (entity, distance) =>
+        entity && Number.isFinite(entity.x) && Number.isFinite(entity.y) &&
+        Math.abs(entity.x - h.x) < distance && Math.abs(entity.y - h.y) < distance;
+      const zone = game.zone();
+      const threat = zone.enemies.some((enemy) =>
+        enemy.hp > 0 && !enemy.neutral &&
+        (enemy.aggro || enemy.telegraph || enemy.rangedAim) && nearby(enemy, 850));
+      const projectile = game.s.projectiles.some((p) => p.source === 'enemy' && nearby(p, 850));
+      const hazard = game.s.hazards.some((a) => a.source === 'enemy' && nearby(a, 650));
+      adaptiveHudState = PrototypeInput.adaptiveHudPresentation({
+        hp: h.hp, maxHp: h.maxHp, threat, projectile, hazard,
+        target: !!selected, targetLocked: !!selected && !!game.manualHeroTargetLocked,
+        charging: !!charge, queued: queuedCharges.size > 0, targetPress: !!targetPress,
+        tutorialRecall: practicingRecall, interactable: !!n, navigation: navigating,
+        moving: !!(joy.x || joy.y || keys.up || keys.down || keys.left || keys.right),
+        menu: !!menu || paused || !activePlay(),
+      }, adaptiveHudState, performance.now());
+      const attrs = {
+        hudContext: adaptiveHudState.context,
+        hudPressure: adaptiveHudState.pressure ? 'high' : 'quiet',
+        hudLowHp: adaptiveHudState.lowHP ? 'true' : 'false',
+        hudTarget: adaptiveHudState.target ? 'active' : 'quiet',
+        hudRecall: adaptiveHudState.recall ? 'active' : 'quiet',
+      };
+      for (const [name, value] of Object.entries(attrs))
+        if (document.body.dataset[name] !== value) document.body.dataset[name] = value;
+    } else adaptiveHudState = null;
     cancelNavigationButton.textContent = tr('Cancel navigation');
     cancelNavigationButton.setAttribute('aria-label', tr('Cancel navigation'));
     updateCriticalNotice();

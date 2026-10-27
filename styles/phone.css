@@ -746,3 +746,231 @@ body[data-experience='phone'] #message .notice-card.notice-narration {
   line-height: 1.22;
   padding: 5px 7px;
 }
+
+/* Match class-learning clarity on compact touch screens without shrinking text. */
+@media (min-height: 600px) {
+  body[data-experience='phone'] #modal[data-view='character'] {
+    max-height: min(90dvh, 780px);
+  }
+}
+body[data-experience='phone'] #modal[data-view='class-select'],
+body[data-experience='phone'] #modal[data-view='character'] {
+  width: min(370px, calc(100vw - 24px));
+}
+body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions button {
+  min-height: 58px;
+  padding: 9px 11px;
+  font-size: 14px;
+}
+body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-role,
+body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-growth {
+  font-size: 12px;
+  line-height: 1.4;
+}
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference {
+  font-size: 12px;
+}
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference section {
+  padding: 9px 11px;
+}
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference dt,
+body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference dd {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* Optional floating joystick: unchanged fixed layout is the default and is
+   always restored for menu navigation. Phone fit scaling remains on transform. */
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #movement {
+  pointer-events: none;
+}
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #touch-interact-button,
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #order-button {
+  pointer-events: auto;
+}
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #joystick {
+  position: fixed;
+  left: var(--floating-joystick-left, -999px);
+  top: var(--floating-joystick-top, -999px);
+  bottom: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: top left;
+  transition: opacity 150ms ease;
+}
+body[data-experience='phone'][data-joystick-mode='floating'].floating-joystick-active:not(.menu-open) #joystick {
+  opacity: 0.88;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #joystick {
+    transition: none;
+  }
+}
+
+/* Phase 2 adaptive HUD — presentation only. Controls retain their full
+   touch targets, positions, charges, queues, keyboard focus and click owners.
+   Classic is the default and remains byte-for-byte unaffected by this gate. */
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-pressure='quiet']
+  #skills > button:not(.charging):not(.skill-queued):not(.tutorial-highlight):not(:focus-visible) {
+  background: linear-gradient(155deg, #314b55ae, #1c303bb5);
+  border-color: #8ca4a48c;
+  box-shadow: inset 0 1px #dde6d51a, 0 2px 5px #07120d70;
+}
+/* Proactive support remains legible; low-HP healing must never look inactive. */
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-low-hp='true']
+  #health-potion:not([hidden]):not(:disabled) {
+  border-color: #e2d6a2;
+  background: linear-gradient(155deg, #466a64, #284c49);
+  box-shadow: 0 0 0 1px #d5c88870;
+}
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-recall='quiet']
+  #recall-button:not(.tutorial-highlight):not(:focus-visible),
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-target='quiet']
+  #target-button:not(.has-target):not(.target-locked):not(.target-pressing):not(:focus-visible),
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-pressure='quiet']
+  #squad-button:not(.tutorial-highlight):not(:focus-visible) {
+  background: linear-gradient(155deg, #2c434caa, #1b2d38b5);
+  border-color: #91a59a83;
+  box-shadow: 0 2px 5px #07120d6e;
+  color: #ebdfbe;
+}
+body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true'] #hud {
+  border-color: #d4a277;
+  box-shadow: inset 0 0 0 1px #d8a57c55, 0 3px 10px #07120d55;
+}
+body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true']
+  #hero-stats .resource-line.health {
+  position: relative;
+}
+body[data-experience='phone'][data-hud-style='adaptive'] #hero-stats .hud-low-health {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-block;
+  font-size: 9px;
+  line-height: 1.3;
+  font-weight: 800;
+  color: #ffd3a4;
+  pointer-events: none;
+}
+body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true']
+  #hero-stats .resource-line.health i {
+  background: linear-gradient(to right, #ec9c70 var(--fill), #493a38 var(--fill));
+  border-color: #e3b0919e;
+}
+body[data-experience='phone'][data-hud-style='adaptive']
+  #skills > button,
+body[data-experience='phone'][data-hud-style='adaptive']
+  #recall-button,
+body[data-experience='phone'][data-hud-style='adaptive']
+  #target-button,
+body[data-experience='phone'][data-hud-style='adaptive']
+  #squad-button {
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-experience='phone'][data-hud-style='adaptive'] #skills > button,
+  body[data-experience='phone'][data-hud-style='adaptive'] #recall-button,
+  body[data-experience='phone'][data-hud-style='adaptive'] #target-button,
+  body[data-experience='phone'][data-hud-style='adaptive'] #squad-button {
+    transition: none;
+  }
+}
+
+/* Phase 3: high-contrast notification rail for BOTH Classic and Adaptive.
+   Opaque surfaces prevent world art from washing out the text. All foreground/
+   background pairs (including detail text) exceed WCAG AA 4.5:1 in isolation.
+   Amber is reserved for important milestones and actionable warnings. */
+body[data-experience='phone'] #status {
+  z-index: 19;
+  top: calc(max(8px, env(safe-area-inset-top)) + 62px);
+  width: max-content;
+  max-width: min(280px, calc(100vw - 24px));
+  padding: 6px 9px;
+  font-size: 12px;
+  line-height: 1.4;
+  font-weight: 650;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  color: #f2f4e8;
+  background: #102a34;
+  border: 1px solid #b6d6dc;
+  border-radius: 7px;
+  box-shadow: 0 2px 8px #07120dcc;
+  text-shadow: none;
+}
+body[data-experience='phone'] #status[data-notice-tier='critical'],
+body[data-experience='phone'] #status[data-notice-tier='important'] {
+  color: #fff1d4;
+  background: #45291e;
+  border-color: #ffc777;
+  box-shadow: 0 0 0 1px #ffc77755, 0 3px 12px #07120de0;
+  font-weight: 750;
+}
+body[data-experience='phone'] #status.notice-deferred {
+  visibility: hidden;
+}
+@media (orientation: landscape) and (min-width: 650px) {
+  /* The top rail between the existing left HP dock and right Menu button
+     keeps a routine receipt away from the player and NPCs at mid-screen. */
+  body[data-experience='phone'] #status:not([data-notice-tier='critical']):not([data-notice-tier='important']) {
+    top: max(8px, env(safe-area-inset-top));
+    max-width: min(280px, calc(100vw - 410px));
+  }
+}
+body[data-experience='phone'] #message .notice-card {
+  color: #211908;
+  background: #edcb7e;
+  border-color: #f8e1b0;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
+  text-shadow: none;
+  box-shadow: 0 3px 12px #07120dd9;
+}
+body[data-experience='phone'] #message .notice-card .notice-detail {
+  color: #4c3422;
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+body[data-experience='phone'] #message .notice-card.notice-warning {
+  color: #30180c;
+  background: #ffe0a7;
+  border-color: #ffbe83;
+  box-shadow: 0 0 0 1px #b66e4b, 0 3px 12px #07120dd9;
+}
+body[data-experience='phone'] #message .notice-card.notice-warning .notice-detail {
+  color: #3b2312;
+}
+body[data-experience='phone'] #message .notice-card.notice-narration {
+  color: #f8efd9;
+  background: #162a30;
+  border-color: #9dbeb5;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+}
+body[data-experience='phone'] #message .notice-card.notice-narration::before {
+  color: #f5d397;
+}
+body[data-experience='phone'] #message .notice-card.notice-narration .notice-detail {
+  color: #e4ddca;
+}
+body[data-experience='phone'] #message .notice-card.notice-feedback {
+  color: #f7f2e5;
+  background: #122b36;
+  border-color: #a3c3c8;
+  font-size: 13px;
+  font-weight: 650;
+}
+body[data-experience='phone'] #message .notice-card.notice-feedback .notice-detail {
+  color: #e4e7e0;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-experience='phone'] #message {
+    transition: none;
+  }
+}

@@ -34,6 +34,88 @@ function fixture() {
   Object.assign(g.hero, { x: 3340, y: 950, hp: 10000, maxHp: 10000, immune: 0 });
   return { g, e };
 }
+// All ranged archetypes/legacy shot metadata now share the owner's final
+// 320 basic/detection distance or 416 in a native fortified footprint.
+{
+  const { g, e } = fixture();
+  const profiles = [
+    ['mireling', 230], ['goblin', 240], ['reedbeast', 250],
+    ['ogre', 260], ['orc', 260], ['ashbeast', 270],
+    ['archer', 280], ['crownguard', 280], ['wraith', 280],
+    ['skeleton', 290], ['other', null],
+  ];
+  assert.equal(C.rules.balance.enemyRangedBasicRange, 320);
+  assert.equal(C.rules.balance.enemyRangedBasicRangeMultiplier, undefined,
+    'obsolete ranged 10% bonus is removed');
+  assert.equal(C.rules.balance.fortifications.rangeMultiplier, 1.3);
+  for (const [species, legacyShotRange] of profiles) {
+    Object.assign(e, { species, ranged: true, x: 3250 });
+    if (legacyShotRange === null) delete e.shotRange;
+    else e.shotRange = legacyShotRange;
+    assert.equal(g.enemyFort(e), null, species + ': outside native fort');
+    assert.equal(g.enemyRangedRange(e), 320, species + ': outdoor basic');
+    assert.equal(g.enemyAcquisitionRange(e), 320, species + ': outdoor detection');
+    e.x = 3000;
+    assert(g.enemyFort(e), species + ': inside native fort');
+    assert.equal(g.enemyRangedRange(e), 416, species + ': garrison basic');
+    assert.equal(g.enemyAcquisitionRange(e), 416, species + ': garrison detection');
+  }
+  Object.assign(e, { species: 'goblin', ranged: true, hybrid: true, shotRange: 750, x: 3250 });
+  assert.equal(g.enemyRangedRange(e), 320, 'hybrid old shotRange cannot alter basics');
+  assert.equal(g.enemyAcquisitionRange(e), 320, 'hybrid actual detection equals basic');
+  Object.assign(e, { ranged: false, shotRange: 900, species: 'skeleton' });
+  assert.equal(g.enemyAcquisitionRange(e), 286, 'explicit melee keeps existing awareness');
+}
+// One authored ranged basic range controls both shot and detection; melee
+// awareness may still be adjusted independently, but not the ranged value.
+{
+  const { g, e } = fixture();
+  const balance = C.rules.balance;
+  const oldRange = balance.enemyRangedBasicRange,
+    oldMeleeDetection = balance.enemyAcquisitionRangeMultiplier;
+  try {
+    assert.equal(g.enemyRangedRange(e), 416);
+    assert.equal(g.enemyAcquisitionRange(e), 416);
+    balance.enemyRangedBasicRange = 340;
+    assert.equal(g.enemyRangedRange(e), 442, 'fortified basic follows configured distance');
+    assert.equal(g.enemyAcquisitionRange(e), 442, 'fortified detection follows basic distance');
+    e.x = 3250;
+    assert.equal(g.enemyRangedRange(e), 340);
+    assert.equal(g.enemyAcquisitionRange(e), 340);
+    balance.enemyRangedBasicRange = 280;
+    assert.equal(g.enemyRangedRange(e), 280);
+    assert.equal(g.enemyAcquisitionRange(e), 280, 'no hidden 10% awareness floor');
+    e.x = 3000;
+    assert.equal(g.enemyRangedRange(e), 364);
+    assert.equal(g.enemyAcquisitionRange(e), 364);
+    balance.enemyAcquisitionRangeMultiplier = 1.5;
+    assert.equal(g.enemyAcquisitionRange(e), 364,
+      'melee perception multiplier never changes ranged detection');
+    e.ranged = false;
+    assert.equal(g.enemyAcquisitionRange(e), 390, 'melee perception stays independent');
+  } finally {
+    balance.enemyRangedBasicRange = oldRange;
+    balance.enemyAcquisitionRangeMultiplier = oldMeleeDetection;
+  }
+}
+// The real fortified AI must see a valid target and prepare basic fire.
+{
+  const { g, e } = fixture();
+  e.aggro = false;
+  assert(g.enemyFort(e));
+  assert(g.enemyRangedLine(e, g.hero));
+  g.updateEnemies(0.01);
+  assert(e.aggro, 'native fort AI automatically spots visible target in 416 reach');
+}
+// Native wall-line and passive aggro must agree with fortified basic reach.
+{
+  const { g, e } = fixture();
+  e.aggro = false;
+  assert(g.enemyFort(e));
+  assert(g.enemyRangedLine(e, g.hero));
+  g.updateEnemies(0.01);
+  assert(e.aggro, 'idle fortified ranged actor auto-detects inside basic shot range');
+}
 // One catalog covers every regional hold, every field compound, fortified
 // interiors and Crown command/final courtyard, and survives save restoration.
 for (const id of [
@@ -64,7 +146,7 @@ for (const id of [
 {
   const { g, e } = fixture();
   assert.equal(g.enemyFort(e).id, 'raider-drill-redoubt');
-  assert(Math.abs(g.enemyRangedRange(e) - 400.4) < 1e-8);
+  assert(Math.abs(g.enemyRangedRange(e) - 416) < 1e-8);
   assert(!g.line(e, g.hero), 'ordinary sight blocked by stockade');
   assert(g.enemyRangedLine(e, g.hero));
   assert(!g.clearSegment(e, g.hero), 'movement still blocked');
@@ -82,7 +164,7 @@ for (const id of [
   // Position derived fresh on every use: no stale fort bonus when walking out.
   e.x = 3250;
   assert.equal(g.enemyFort(e), null);
-  assert(Math.abs(g.enemyRangedRange(e) - 308) < 1e-8);
+  assert(Math.abs(g.enemyRangedRange(e) - 320) < 1e-8);
 }
 {
   const { g, e } = fixture();
