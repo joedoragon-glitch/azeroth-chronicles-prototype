@@ -30,6 +30,12 @@ The same rule applies to every registered class and mode. Checkpoint and unreada
 - Only **one active campaign per exact class+mode pair** is supported. A second Paladin Normal still prompts for overwrite; multiple named characters of the same class/mode are a separate future design requiring a stable slot ID and new UI.
 - All data remains **browser-local**. Clearing site data, switching devices/origins or opening a different host does not transfer saves. Export backups before testing.
 
+## Succession: immutable slot owner, mutable active hero
+
+**Critical follow-up safeguard:** Succession is a continuation of the original campaign. A Rogue-founded run remains stored in `azeroth-v4-<mode>-rogue` when Rogue dies and Mage, Ranger or Paladin takes over; the successor's **active** `hero.class` must not redirect the save into a different class's independent slot. `createClassSlots` binds each loaded/created Campaign to its **founding slot class** with an in-memory WeakMap, persists the ordinary v4 campaign bytes unchanged, and reconstructs that binding by the class selected from the save menu on load. The class-named slot accepts a different current hero only when a valid Succession snapshot's `challenge.fallen` includes that slot owner. No new v4 field, global migration, or player setting is needed. Profile `activeClass`, conflicts and restart-marker keys refer to **slot ownership**, not a successor's current class. The stored restart marker separately records the actual current hero for stale-run validation. The alternate successor's independent same-mode save must remain byte-identical before and after the takeover.
+
+This also clarifies the one-slot-per-class rule: class is the **starting class of the campaign**, not necessarily the current class under Succession. Historical v4 saves had no owner metadata; a legacy mode-only save is initially associated with its *current* recorded hero class when first copied to a modern class slot. That compatibility choice cannot reconstruct an undocumented older founding class.
+
 ## Acceptance and open risks
 
 `tests/rogue-bard-class-save-slots.test.cjs` exercises four-class, four-mode separation, legacy preservation, startup fallback, validation, corruption and recovery boundaries, conflict-free reads of other classes, and the preview shell. Re-run existing `save-writer`, `save-recovery-checkpoints`, `persistence-safety`, `save-import`, Succession, Rogue class and focused UI tests on the new exact head. These are **necessary but not sufficient** for actual browser/PWA tests.
