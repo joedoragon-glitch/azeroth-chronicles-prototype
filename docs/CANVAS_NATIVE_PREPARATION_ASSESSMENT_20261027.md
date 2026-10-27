@@ -92,11 +92,21 @@ Capture startup/arrival latency, per-phase and whole-frame p95/p99, actual skipp
 
 Keep each phase focused. Run cheap deterministic source tests when behavior changes; run browser screenshot parity where raster behavior actually changes; reserve broad integration and physical devices for acceptance. Compare against the **same main baseline** and disclose trace provenance, viewport, device and sample count. Do not fabricate percent improvements. No build artifact, portable HTML restriction or speculative network fetch should drive the architecture: this is a multi-file GitHub Pages/PWA game.
 
+
+## Phase 1 implementation evidence (27 October 2026)
+
+The branch now records cumulative successful static-ground raster build time, largest and latest build time, allocation/paint failures, and invalid-transform/budget bypass counts in the existing groundCache.status() object already exposed by renderer.metrics(). It does **not** change the drawing algorithm, 64 MiB cap, cache key, saved-game schema, first scene timing or memory allocation policy. Rebuild timing samples occur only for actual new cached rasters, never hits. Explicit clearing releases bytes without erasing diagnostic history.
+
+- Exact Phase 1 code/test commit: da27643e8affa5cd3e2689cee163ad979873647d.
+- [Focused Actions run #40499965106](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40499965106) **passed**: relevant ground-cache Node suite plus another impacted test, reproducible offline/PWA build and JavaScript syntax. Pages publishing was **skipped** because this is a pull request.
+- The test covers hit/rebuild distinction, deterministic timing, invalid transform and over-budget refusals, error paths, explicit clear, and nonfinite time sanitization.
+- **Not run:** full browser visual comparison, real device profiling, memory residency, full game suite or measured first-scene optimization. Do not count CI as a renderer speedup.
+
 ## Current progress ledger
 
 - [x] Read-only architecture assessment against merged PR #518, Canvas floor cache, renderer, sprite manager and existing checks.
 - [x] Dedicated Canvas follow-up branch created.
-- [ ] Phase 1 implementation and focused test validation.
+- [x] Phase 1 ground-cache metrics implementation and focused Node validation (commit da27643e; CI #40499965106).
 - [ ] Phase 2 first-scene Canvas readiness prototype / measured no-op decision.
 - [ ] Phase 3 floor lookahead A/B decision.
 - [ ] Phase 4 proven Canvas procedural reuse.
