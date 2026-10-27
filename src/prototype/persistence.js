@@ -347,8 +347,29 @@
     };
     function adapter(heroClass) {
       if (!known(heroClass)) throw Error('Unknown save class');
-      if (!adapters.has(heroClass))
-        adapters.set(heroClass, create({ ...options, storage: mappedStorage(heroClass) }));
+      if (!adapters.has(heroClass)) {
+        // A class-named slot must contain exactly that class; otherwise a
+        // corrupt/misfiled primary could be copied into a different run.
+        const scopedCampaign = {
+          restore(data) {
+            const game = Campaign.restore(data);
+            if (game.hero.class !== heroClass) throw Error('Mismatched save class');
+            return game;
+          },
+          migrate(data) {
+            const game = Campaign.migrate(data);
+            if (game.hero.class !== heroClass) throw Error('Mismatched migrated class');
+            return game;
+          },
+          validate(data) {
+            if (data?.hero?.class !== heroClass) throw Error('Mismatched saved class');
+            return Campaign.validate(data);
+          },
+        };
+        adapters.set(heroClass, create({
+          ...options, Campaign: scopedCampaign, storage: mappedStorage(heroClass),
+        }));
+      }
       return adapters.get(heroClass);
     }
     function legacyClass(mode) {
