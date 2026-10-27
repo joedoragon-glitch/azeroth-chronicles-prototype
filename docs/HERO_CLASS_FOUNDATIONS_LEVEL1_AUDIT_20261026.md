@@ -36,6 +36,54 @@ The examples intentionally use already-existing character properties first. **No
 
 **Change control:** This direction replaces the *proposed means* (retuning base attributes) but retains the *goal* and all skill-system exclusions. The historical findings and baseline tables below remain true. Sections describing a stat-table-first roadmap are retained only as history and are explicitly superseded by the revised pickup steps below.
 
+### Ranger Agility passive — owner candidate: +3 movement speed and +1 percentage-point cooldown reduction per level-up
+
+**Status:** tentative owner-selected effects for design/review. **No gameplay values have been changed.** The Paladin's proposed two-part Fortitude is considered sufficient in principle for now; focus moves to the Ranger, then Mage. Do not reopen old equipment or skill progression as a result.
+
+**User reasoning:**
+- Ranger's current movement Discipline Training gives **+41 movement speed per rank**, capped at **three ranks**. One hypothetical additional rank would be +41; the owner rounded that reference to 42, then `42 / 15 = 2.8`, rounded to **+3 movement speed for each level-up** as an *innate*, rank-independent passive. This does **not** increase movement training's three-rank cap.
+- The cooldown training gives **4% reduction per rank**, capped at **five ranks** (20% maximum training reduction). Instead of assigning extra talent ranks, the Ranger gets **+1 percentage point of innate cooldown reduction per hero level-up**. This does **not** increase the cooldown talent's five-rank cap.
+- Arithmetic correction: current starting speed 320 plus 3 training ranks × 41 = **443**, not 483. At level 15, +3 speed × 14 level-ups = +42, making 320 + 123 + 42 = **485** with full movement training. Note the numerical similarity to the owner's 483 target is coincidental; do not retroactively alter +41 ranks.
+
+**Proposed central derived values (descriptive pseudocode, not approved implementation):**
+
+```js
+const levelUps = Math.max(0, hero.level - 1);
+const rangerPassiveSpeedBonus =
+  hero.class === 'ranger' ? 3 * levelUps : 0;
+const rangerPassiveCooldownReduction =
+  hero.class === 'ranger' ? 0.01 * levelUps : 0; // +1 percentage point/level-up
+// Speed uses existing base speed + Discipline Training speed + passive speed
+// Effective CDR: existing talent reduction and passive need one shared stacking rule
+```
+
+**Illustrative unmodified checkpoints** (speed excludes haste/slows/terrain/input modifiers; maximum-trained column assumes all 3 movement training ranks; cooldown columns use percentage points and assume currently disabled mana mode):
+
+| Level | Level-ups | Ranger passive speed | Base + passive speed | Speed with 3 movement ranks | Innate passive CDR | Hypothetical combined CDR with 5 cooldown ranks (20%), if additive |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 0 | +0 | 320 | 443 | 0% | 20% |
+| 5 | 4 | +12 | 332 | 455 | 4% | 24% |
+| 10 | 9 | +27 | 347 | 470 | 9% | 29% |
+| 15 | 14 | +42 | 362 | 485 | 14% | 34% |
+| 18 | 17 | +51 | 371 | 494 | 17% | 37% |
+| 20 | 19 | +57 | 377 | 500 | 19% | 39% |
+
+**Important precision:** The owner said "per level" for cooldown reduction after saying "per level-up" for speed. This candidate uses *level-ups after level 1*, consistently with the Paladin design, to retain a zero bonus at level 1. If the owner instead wants **+1% CDR already at level 1**, use `0.01 * level`, producing **15% at level 15** rather than 14%. This distinction must be settled before implementation.
+
+**Mandatory integration and guardrails:**
+1. **No two skill systems or talent changes.** Do not modify existing Skill 1–8 base coefficients, damage/ranges, costs, trainer limits, rank effects or the four talent rank ceilings. Ranger passive is a class-specific modifier feeding the **existing effective cooldown calculation**.
+2. `hero-combat.js::skillCooldown()` currently handles both normal/charged skill durations, and `basicSkillCooldown()` handles the automatic basic interval. The current talent factor is `1 - min(5, trainingRank) * 0.04`. If the owner chooses additive CDR, proposed general expression is `1 - effectiveTotalReduction`, where the total can include training and a Ranger-only passive; **same shared calculation logic** for participating cooldown types, not a duplicate Ranger-specific cooldown system.
+3. At level 15 with all five cooldown-training ranks and additive stacking, total reduction would be **34%**. The baseline 0.85-second automatic basic interval would compute `0.85*(1-0.34)=0.561s` if the passive covers basics, versus 0.68s with five training ranks and no passive. These are **calculated durations**, not observed combat throughput.
+4. **Scope open:** confirm whether passive reduction should affect ordinary skill cooldowns, charged skill cooldowns and automatic basic attacks, or only some. The existing training reaches all three; no hidden coverage change is approved.
+5. **Safety/cap open:** permanent 1 percentage point per level-up grows beyond the owner's convenient level-15 window and, if simply summed with 20% talent CDR without a cap, reaches dangerous/zero cooldowns at sufficiently high levels. Define a **combined minimum cooldown and/or maximum CDR** after examining the maximum reachable hero level and combat rotation. **Do not silently invent a 40%/50% cap.**
+6. **Movement integration:** `src/prototype/engine.js` uses `h.speed + heroTalentSpeedBonus()` in **at least three** movement paths (around lines 4192, 4227 and 4256). The passive must be included in all relevant hero movement modes, preferably via one effective hero speed accessor. Movement-specific temporary factors remain intact.
+7. **No unintended companion inheritance:** `heroTalentSpeedBonus()` contributes to companion Shared Training inheritance. The new innate Ranger speed should remain a **hero class passive**, not a talent bonus. If any portion is to inherit, obtain separate explicit approval.
+8. **Saved heroes and Succession:** deriving the passive from class/level avoids accumulating a serialized stack and must produce the same numbers after save/load, leveling, resets or class succession; existing talents remain untouched.
+9. **Test plan:** Ranger L1/L5/L10/L15/L18 with 0/3 movement ranks and 0/5 cooldown ranks, normal/charged/basic duration comparisons, all movement pathways, same-level Mage/Paladin invariance, slow/haste interactions, saved cooldowns, and high-level cap edge cases.
+10. **Paladin status:** its +5 HP and +0.01 Armor effectiveness per level-up remain separately recorded and are not modified by the Ranger design work.
+
+**Next decisions:** approve whether the Ranger CDR starts at level 1 or after the first level-up; choose additive vs another documented stacking rule; choose affected cooldown categories; choose combined safety bounds. Until then this is a design candidate, not implemented gameplay.
+
 ### Ranger Discipline Training audit — verified baseline before designing the new passive
 
 The user clarified that **Ranger agility should mean not only movement speed, but also more frequent actions through class-intrinsic cooldown reduction beyond the existing talent investment**. This updates the earlier movement-only suggestion and should be treated as a focused exception to the earlier total cooldown-freeze wording.
