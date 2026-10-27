@@ -8,6 +8,10 @@ The current `main` commit `286e8c0d` was integrated **into the draft PR #511 bra
 
 **Reconciliation is complete against that exact upstream commit**, not proof of a clean test run: syntax checks passed for the five merged modules before the merge; focused GitHub CI, browser/device and save migration acceptance still determine readiness. If `main` moves in the meantime, compare the exact current branch head with `main` before any later release action.
 
+### Later same-day mainline follow-up
+
+After the source merge at `3c6da60`, **main** received PR #519, the adaptive mobile HUD and PWA snapshot `0.9.1+snapshot.dev.198` at commit `3acf0f72`. It was also incorporated into this **same draft PR #511 branch**, via second merge commit **`7680c4ef`**. The only overlapping code file was `src/prototype/app.js`; its class-selection/level-one passive presentation and the adaptive phone/joystick/notices implementation were combined. Other mainline files—including `src/prototype/input.js`, mobile CSS, service worker, build version, and their tests—were carried forward unchanged. The combined app parses as JavaScript. This second merge does **not** release or enable Rogue, and latest-head validation remains the release gate.
+
 ## Confirmed upstream divergence
 
 The PR head has diverged from `main`. On this comparison, `main` is **four commits ahead of the PR branch**; PR #511 carries its own preparatory commits. This is not a cosmetic documentation conflict. Both sides modify:
