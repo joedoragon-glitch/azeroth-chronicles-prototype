@@ -2270,7 +2270,7 @@
       if (getGame().hero.class === 'rogue') {
         openMenu(
           getGame().definition().town + ' Captain',
-          'Rogue Bards do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain still provides companion recovery and treatment.',
+          'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain still provides companion recovery and treatment.',
           [
             ...otherRecruitmentCancellation(null, reopen),
             careChoice('recovery', null, reopen),
