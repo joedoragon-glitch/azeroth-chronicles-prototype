@@ -5,6 +5,10 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
+    // Adding a hero to the class registry must not silently use Ranger shots,
+    // area geometry, critical keys or cooldowns before that class is authored.
+    // The fourth class intentionally remains blocked until its combat ships.
+    const implementedHeroCombatClasses = new Set(['paladin', 'mage', 'ranger']);
     class HeroCombat {
       tacticMilestones(rank) {
         return Math.floor(Math.max(1, rank || 1) / 2);
@@ -776,6 +780,7 @@
         return target;
       }
       heroSkillRange(slot, charged = false) {
+        if (!implementedHeroCombatClasses.has(this.hero.class)) return 0;
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           steps = this.tacticMilestones(this.hero.skills[slot - 1]);
         if (slot === 1 && charged) {
@@ -1154,6 +1159,7 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
+        if (!implementedHeroCombatClasses.has(this.hero.class)) return false;
         if (this.s.mode === 'developer' && slot === 1 && automatic) return false;
         const i = slot - 1,
           rank = this.hero.skills[i],
