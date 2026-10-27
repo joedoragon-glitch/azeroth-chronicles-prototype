@@ -282,6 +282,7 @@ for (const language of ['en', 'es']) {
   assert.equal(app.elements.get('title-continue').disabled, true);
   app.elements.get('title-saves').click();
   click(language === 'es' ? 'Intentar recuperar' : 'Try recovery');
+  click(language === 'es' ? 'Intentar recuperar' : 'Try recovery');
   click(language === 'es' ? 'Punto de recuperación' : 'Checkpoint');
   assert.equal(title(), language === 'es' ? 'Revisar recuperación' : 'Review recovery');
   assert(

@@ -1735,6 +1735,16 @@
   // restart inside the potentially frozen encounter.
   // Validated campaigns begin loaded but inactive until Continue.
   started = false;
+  function reconcileProfileEntitlements() {
+    // A completed saved campaign unlocks Nightmare even while the title is
+    // inactive. This is a profile entitlement, not a gameplay tick or autosave.
+    if (!loaded || !writerGuard.canWrite()) return;
+    if (game?.peace && game.s.mode !== 'arena' && game.s.finalRestCompleted &&
+        !profile.nightmareUnlocked) {
+      profile.nightmareUnlocked = true;
+      persistProfile();
+    }
+  }
   function recoverLoadedSession() {
     if (!loaded || !writerGuard.canWrite()) return;
     const recovered = restartGuard.recover(game);
@@ -1749,14 +1759,10 @@
       );
     }
     // Arm crash recovery only after Continue activates gameplay.
-    // Reconcile entitlement after ownership and the fresh campaign load.
-    // A pending window cannot persist this during its initial preview load.
-    if (game.peace && game.s.mode !== 'arena' && game.s.finalRestCompleted && !profile.nightmareUnlocked) {
-      profile.nightmareUnlocked = true;
-      persistProfile();
-    }
+    reconcileProfileEntitlements();
   }
   // Recovery is deferred until an explicit Continue gesture.
+  reconcileProfileEntitlements();
   // Navigation is runtime-only and survives manual takeover as a visible guide.
   let navigationGuide = null,
     questGuide = null,
@@ -7553,6 +7559,7 @@
           }
           loaded = true;
           started = false;
+          reconcileProfileEntitlements();
           if (
             menu?.view === 'save-conflict' ||
             menu?.view === 'save-recovery' ||
