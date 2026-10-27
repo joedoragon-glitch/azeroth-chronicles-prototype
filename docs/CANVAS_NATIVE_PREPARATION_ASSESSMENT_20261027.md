@@ -2,7 +2,7 @@
 
 Date: 27 October 2026  
 Baseline inspected: main at 24afe03a25c520ef2669b2978a5d3b76e4e6a5b5 (after merged PR #518)  
-Status: Phase 0 source assessment; Phase 1 instrumentation candidate. **No measured Canvas speedup, physical-device certification, or approval to merge/deploy.**
+Status: Phases 0–2 source candidates implemented; Phase 3 source A/B evaluated with a **HOLD** decision for runtime lookahead. **No target-device performance certification or approval to merge/deploy.**
 
 ## Executive decision
 
@@ -114,7 +114,17 @@ The branch now records cumulative successful static-ground raster build time, la
 - **Safety/performance qualifications:** `requestIdleCallback` merely schedules synchronous work; it cannot interrupt a long ground-raster build. The 8 ms available-idle check is admission criteria, **not** a guarantee that paint completes inside 8 ms. Actual measured Chrome/iOS title responsiveness, memory usage, first-frame speedup, browser screenshot parity and PWA lifecycle acceptance are still required before claiming a performance improvement.
 - This phase does **not** pre-render dungeons, prepare unvisited zones, duplicate PixiJS GPU uploads, change the asset manifest, or extend the regional cache memory budget. Its valid fallback is an ordinary uncached first draw, exactly as before.
 
-**Next gate:** check exact-head focused CI and existing Canvas/Pixi render regressions; then collect matched baseline/prepared runs and browser visual parity before labeling Phase 2 performance-accepted. Do not begin Phase 3's extra regional raster allocation on assumption alone.
+**Phase 2 acceptance remains open:** collect actual browser/device baseline and screenshot parity for the title-prepared first scene. Phase 3 has independently assessed regional lookahead and explicitly declined additional runtime raster allocations without stronger evidence.
+
+## Phase 3 regional lookahead checkpoint — 27 October 2026
+
+The branch was reconciled with current `main@5c6197e` by merge commit `4b44956f`, preserving the newer `app.js` performance diagnostics and Pixi changes. GitHub's focused integration CI passed.
+
+A dedicated benchmark using the actual Vale floor painter and production `GroundCache` compared 96-frame straight, reversing and zigzag camera routes with a hypothetical single-raster idle recentering approach. The sample ran in GitHub-hosted Node/@napi-rs/canvas (800×500 CSS, DPR 1.5), **not on the owner's Chromebook or a mobile browser**.
+
+[Full measured table, provenance, interpretation and acceptance runbook](CANVAS_PHASE3_LOOKAHEAD_EVIDENCE_20261027.md). [Benchmark CI run #40504488471](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40504488471) passed selected focused tests and build checks. Results showed fewer visible-frame raster rebuilds under the simulated recentering strategy, **but additional total builds and greater accumulated painting cost** on straight and reversing paths, with remaining large visible p99 delays. Idle painting also remains synchronous and non-preemptible.
+
+**Disposition: keep the existing production ground-cache behavior unchanged.** The new benchmark is an evidence-gathering test, not a production optimization. Only reopen the lookahead gate after actual device playtest reports demonstrate material ground-cache-miss stalls and a guarded on-device A/B candidate shows a reliable net improvement without input/memory/art regressions. Phase 4, if pursued separately, must not imply Phase 3 passed performance acceptance.
 
 ## Current progress ledger
 
@@ -122,7 +132,8 @@ The branch now records cumulative successful static-ground raster build time, la
 - [x] Dedicated Canvas follow-up branch created.
 - [x] Phase 1 ground-cache metrics implementation and focused Node validation (commit da27643e; CI #40499965106).
 - [x] Phase 2 source candidate: guarded idle first-scene ground preparation using the existing cache (focused regressions added; browser/device acceptance outstanding).
-- [ ] Phase 3 floor lookahead A/B decision.
+- [x] Phase 3 source-only lookahead A/B study and HOLD decision — no runtime lookahead enabled ([evidence and device gate](CANVAS_PHASE3_LOOKAHEAD_EVIDENCE_20261027.md)).
+- [ ] Phase 3 real-browser / owner-device acceptance before any runtime lookahead implementation.
 - [ ] Phase 4 proven Canvas procedural reuse.
 - [ ] Phase 5 combat/transition integration.
 - [ ] Phase 6 owner device evidence and merge decision.
