@@ -89,6 +89,54 @@ try {
   assert.equal(bytes.get(rogueKey), paladinBefore);
   assert.equal(forged.load('normal', 'paladin').hero.gold, 404);
 
+  // A broken pre-class primary is still recoverable using its original,
+  // intact mode-only checkpoints; no inferred class is written on inspection.
+  {
+    const old = new Map([
+      [P.saveKey('normal'), '{damaged legacy'],
+      [P.checkpointKey('normal'), JSON.stringify({
+        version: 1,
+        entries: [{ savedAt: 1700000000000,
+          bytes: JSON.stringify(new Campaign('normal', 'rogue').snapshot()) }],
+      })],
+    ]);
+    const historic = P.createClassSlots({ storage: {
+      getItem: key => old.get(key) ?? null,
+      setItem: (key, value) => old.set(key, String(value)),
+    }, Campaign });
+    const recoverable = historic.recoveryOptions('normal', 'rogue');
+    assert.equal(recoverable.length, 1);
+    assert.equal(old.get(P.saveKey('normal')), '{damaged legacy');
+    assert.equal(historic.recover('normal', recoverable[0].id, 'rogue').hero.class,
+      'rogue');
+    assert.equal(old.get(P.saveKey('normal') + '-unreadable-backup'),
+      '{damaged legacy');
+    assert.equal(JSON.parse(old.get(P.saveKey('normal'))).hero.class, 'rogue');
+  }
+
+  // Real title menu exposes independently selectable saved classes.
+  {
+    const browserStorage = new Map([
+      [P.saveKey('normal'), original],
+      [slots.saveKey('normal', 'mage'), bytes.get(slots.saveKey('normal', 'mage'))],
+    ]);
+    const browser = shell('en', 'paladin', {
+      storage: browserStorage, stayOnTitle: true,
+      location: { protocol: 'file:', hostname: '', search: '?roguePlaytest=1' },
+    });
+    browser.elements.get('title-saves').click();
+    const options = browser.elements.get('modal-actions').children;
+    const mageButton = options.find(button =>
+      button.textContent.startsWith('Normal · Mage'));
+    const paladinButton = options.find(button =>
+      button.textContent.startsWith('Normal · Paladin'));
+    assert(mageButton && paladinButton,
+      'independently listed legacy Paladin and modern Mage in real UI');
+    mageButton.click();
+    assert.equal(browser.scope.Prototype.game.hero.class, 'mage');
+    assert.equal(browserStorage.get(P.saveKey('normal')), original);
+  }
+
   // The older public adapter and save key must remain unchanged.
   const standard = P.create({ storage, Campaign });
   assert.equal(standard.load('normal').hero.gold, 333);
