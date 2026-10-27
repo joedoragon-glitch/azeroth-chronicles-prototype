@@ -4043,6 +4043,26 @@
     'syncBackgroundPaintMs', 'approvedGpuPrepared', 'proceduralGpuPrepared',
     'gpuPreparationMs', 'gpuPreparationBatches',
   ];
+  // Constant-memory distributions cover the entire opt-in capture, unlike the
+  // short rolling frame profiler. Quantiles are bucket ceilings, not exact FPS.
+  const rendererHistogramBoundsMs = [4, 8, 12, 16, 20, 24, 33, 50, 75, 100, 150, 250, 500, 1000];
+  function rendererHistogramAdd(histogram, value) {
+    let bucket = 0;
+    while (bucket < rendererHistogramBoundsMs.length && value > rendererHistogramBoundsMs[bucket])
+      bucket++;
+    histogram[bucket]++;
+  }
+  function rendererHistogramQuantile(histogram, q) {
+    const total = histogram.reduce((sum, count) => sum + count, 0);
+    if (!total) return null;
+    const target = Math.ceil(total * q);
+    let observed = 0;
+    for (let i = 0; i < histogram.length; i++) {
+      observed += histogram[i];
+      if (observed >= target) return rendererHistogramBoundsMs[i] ?? null;
+    }
+    return null;
+  }
   function rendererDiagnosticSnapshot() {
     const pixi = pixiGame.status();
     const counters = Object.fromEntries(rendererDiagnosticCounters.map((key) =>
@@ -4057,6 +4077,8 @@
       version: 1, startedAt: new Date().toISOString(),
       startedClockMs: performance.now(), baseline: rendererDiagnosticSnapshot(),
       frames: 0, draws: 0, slowFrames: 0, worstFrames: [], events: [],
+      frameWorkHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
+      callbackIntervalHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
     };
     lastRendererRecording = null;
   }
@@ -4070,6 +4092,8 @@
     if (!capture) return;
     capture.frames++;
     if (drawn) capture.draws++;
+    rendererHistogramAdd(capture.frameWorkHistogram, workMs);
+    rendererHistogramAdd(capture.callbackIntervalHistogram, intervalMs);
     if (workMs < 34 && intervalMs < 50) return;
     capture.slowFrames++;
     const point = { elapsedMs: Math.round(performance.now() - capture.startedClockMs),
@@ -4099,6 +4123,14 @@
     const finish = capture.finished || rendererDiagnosticSnapshot();
     const keys = new Set([...Object.keys(capture.baseline.counters),
       ...Object.keys(finish.counters)]);
+    const counterResetKeys = [...keys].filter((key) =>
+      (finish.counters[key] || 0) < (capture.baseline.counters[key] || 0));
+    const counterResetSet = new Set(counterResetKeys);
+    const percentile = (histogram) => ({
+      p50UpperMs: rendererHistogramQuantile(histogram, 0.5),
+      p95UpperMs: rendererHistogramQuantile(histogram, 0.95),
+      p99UpperMs: rendererHistogramQuantile(histogram, 0.99),
+    });
     return {
       state: capture === rendererRecording ? 'recording' : 'stopped',
       startedAt: capture.startedAt,
@@ -4108,10 +4140,22 @@
       initialZone: capture.baseline.zone, finalZone: finish.zone,
       frames: capture.frames, draws: capture.draws, slowFrames: capture.slowFrames,
       slowThresholds: { workMs: 34, intervalMs: 50 },
+      histograms: {
+        boundsMs: rendererHistogramBoundsMs,
+        frameWork: capture.frameWorkHistogram,
+        callbackInterval: capture.callbackIntervalHistogram,
+        overflow: 'Values above 1000 ms are unbounded; percentile ceiling is null.',
+      },
+      approximatePercentiles: {
+        frameWork: percentile(capture.frameWorkHistogram),
+        callbackInterval: percentile(capture.callbackIntervalHistogram),
+      },
       worstFrames: [...capture.worstFrames].sort((a, b) => a.elapsedMs - b.elapsedMs),
       events: capture.events,
       counterDeltas: Object.fromEntries([...keys].map((key) =>
-        [key, (finish.counters[key] || 0) - (capture.baseline.counters[key] || 0)])),
+        [key, counterResetSet.has(key) ? null :
+          (finish.counters[key] || 0) - (capture.baseline.counters[key] || 0)])),
+      counterResetKeys,
       initialProceduralBytes: capture.baseline.proceduralBytes,
       finalProceduralBytes: finish.proceduralBytes,
       note: 'Bounded synchronous CPU samples, not GPU completion or displayed frames.',
