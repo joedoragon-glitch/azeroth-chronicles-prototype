@@ -25,20 +25,21 @@
     "staticArtOnly": true,
     "heroSuccessionFourClassExistingFlow": true,
     "charmedMonstersInheritedBySuccessors": true,
-    "nonRogueSuccessorsCannotCharm": true
+    "nonRogueSuccessorsCannotCharm": true,
+    "statBaselineRule": "Use lowest existing class HP, Power and movement Speed; Rogue does not gain extra conventional statistics from class passive"
   },
   "proposal": {
     "classStarting": {
-      "hp": 100,
-      "mp": 70,
-      "power": 19,
-      "armor": 4,
+      "hp": 90,
+      "mp": 60,
+      "power": 18,
+      "armor": 3,
       "speed": 300
     },
     "disciplinePerRank": {
       "power": 7,
       "mana": 2,
-      "hp": 28,
+      "hp": 27,
       "speed": 38
     },
     "personalCrit": {
@@ -67,7 +68,15 @@
       "criticalLever": "damage",
       "oneReceiptPerAction": true,
       "charmEligibleTarget": "only surviving actual-hit primary",
-      "splashNeverCharms": true
+      "splashNeverCharms": true,
+      "paperDamageAtLevel1": {
+        "preComboBaseFromPowerPlus12": 30,
+        "primaryPreMitigation": 24,
+        "splashEachPreMitigation": 6,
+        "threeTargetTotalPreMitigation": 36,
+        "intensity1CritExpectedPrimary": 24.2112,
+        "notes": "Arithmetic from 90HP/18Power/3Armor/300speed base and personal 11% critical at L1; not combat simulation; one primary + max two splashes"
+      }
     },
     "comboFinisher": {
       "name": "Full Chorus",
@@ -278,6 +287,36 @@
     "7th party formation must not overlap",
     "save 3-class Succession checks to derive class count",
     "owner approves parameters before implementation",
-    "no merger/deployment authorized"
-  ]
+    "no merger/deployment authorized",
+    "Starting stats must match lowest existing class attributes (not improvised middling ones) and verify zero-companion L1 Charm onboarding"
+  ],
+  "sourceBaselineComparison": {
+    "source": "src/prototype/rules.js R.balance.classes + R.balance.disciplines.profiles; audited main e44ea0ec4b9ed164a85431e972664efda2190da6",
+    "paladin": {
+      "hp": 120,
+      "power": 18,
+      "armor": 8,
+      "speed": 300,
+      "mp": 60,
+      "disciplinePowerPerPurchasedRank": 7
+    },
+    "mage": {
+      "hp": 90,
+      "power": 22,
+      "armor": 3,
+      "speed": 300,
+      "mp": 100,
+      "disciplinePowerPerPurchasedRank": 9
+    },
+    "ranger": {
+      "hp": 105,
+      "power": 20,
+      "armor": 5,
+      "speed": 320,
+      "mp": 70,
+      "disciplinePowerPerPurchasedRank": 8
+    },
+    "policy": "Owner wants Rogue starting attributes at existing minima: HP90/Power18/Speed300. Armor3 and dormant MP60 are source-minimum recommendations. No exceptional passive HP/Power/Armor/Speed.",
+    "earlyBalanceWarning": "Rogue starts alone with 0 soldiers/archers, while existing three start with 2. First surviving eligible basic-hit opportunities and early capture survivability must be benchmarked before Charm probability is final."
+  }
 }
