@@ -347,7 +347,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   const idle=idleCallback;idleCallback=null;idle();
   assert.equal(terrainGpu.status().backgroundLookaheadPaints,1);
   assert(terrainGpu.status().backgroundLookaheadBytes>0);
-  assert(terrainGpu.status().backgroundLookaheadBytes*2<=32*1024*1024,
+  assert(terrainGpu.status().backgroundLookaheadBytes*2<=64*1024*1024,
     'combined CPU terrain raster windows remain within the budget');
   assert(stagingGroundReuseDisabled>0,'idle painter cannot retain a second ground cache');
   game.hero.x+=40;

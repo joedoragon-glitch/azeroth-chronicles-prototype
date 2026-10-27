@@ -3202,21 +3202,44 @@
     if (!sprites?.definitionFor || !game?.s?.zones) return [];
     const known = game.s.zones[destination] || null;
     const region = game.regionIndex(destination);
-    const candidates = [
-      { ...game.hero, renderKind: 'hero' },
-      ...(known ? [...(known.npcs || []), ...(known.props || []), ...(known.enemies || [])]
-        .slice(0, 45) : []),
-    ];
+    // The first encounter matters more than distant decorations. Once native
+    // travel has constructed the destination, prioritize nearby combat actors,
+    // including companions, instead of starving typical 4+ GB devices with a
+    // tiny arbitrary key count. The existing 256 MiB decoded cache remains
+    // the actual global memory owner and can evict cold resources.
+    const hero = game.hero;
+    const companions = typeof game.activeParty === 'function'
+      ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
+      : [];
+    const neighbors = known
+      ? [...(known.enemies || []).map((e) => ({ ...e, renderKind: 'enemy' })),
+        ...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
+        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' }))]
+          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
+          .sort((a, b) =>
+            Math.hypot(a.x - hero.x, a.y - hero.y) -
+            Math.hypot(b.x - hero.x, b.y - hero.y))
+          .slice(0, 160)
+      : [];
     const keys = new Set();
-    for (const actor of candidates) {
-      // These are read-only appearance lookups, with no actor/zone creation.
+    for (const actor of [{ ...hero, renderKind: 'hero' }, ...companions, ...neighbors]) {
+      // Appearance lookup never calls Campaign.zone()/enter() or consumes RNG.
       const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
       if (match?.key) keys.add(match.key);
-      if (keys.size >= 12) break;
+      if (keys.size >= 64) break;
     }
     return [...keys];
   }
-  function warmScene(destination, milliseconds = 300) {
+  function combatCriticalArrival(destination) {
+    // Main dungeons, side interiors and supply rooms can place hostile actors
+    // within engagement range of spawn. Their first *visible* encounter frame
+    // takes priority over all optional asset warming, even on a revisited zone.
+    // All three definitions are read-only catalog lookups, not zone creation.
+    return Campaign.dungeonIds.includes(destination) ||
+      !!game.sideDungeon?.(destination) ||
+      !!game.supplyRoom?.(destination);
+  }
+  function warmScene(destination, milliseconds = 750) {
     const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
     if (!sprites?.warm || document.hidden) return null;
     const keys = readOnlySceneKeys(destination);
@@ -3327,10 +3350,26 @@
       if (menu) closeMenu();
       transitionLoadingText(label || destination, 'paint');
       if (!save()) status('Saving failed. Export your run before closing.');
-      // The world remains behind the opaque interlude until a real draw.
-      requestAnimationFrame(() => revealSceneTransition(token));
+      // Native enter() has now built the real dungeon and placed the hero and
+      // nearby enemies. Warm the close-range encounter artwork *after* that
+      // authoritative step while the clock is stopped and the screen covered.
+      // Never spend an unbounded period trying to complete optional atlas art.
+      const encounterWarmup = combatCriticalArrival(destination)
+        ? warmScene(destination, 900)
+        : null;
+      const reveal = () => {
+        if (sceneTransition?.token !== token) return;
+        requestAnimationFrame(() => revealSceneTransition(token));
+      };
+      if (encounterWarmup) void encounterWarmup.then(reveal, reveal);
+      else reveal();
     };
-    const pending = warmScene(destination);
+    // Dungeon entries are combat-critical: do not wait on an optional atlas,
+    // decoration, or procedural upload before performing native admission.
+    // Simulation remains held until the committed first frame is drawn and
+    // the opaque interlude is removed. No artificial combat grace period.
+    const critical = combatCriticalArrival(destination);
+    const pending = critical ? null : warmScene(destination, 750);
     if (pending) void pending.then(proceed, proceed);
     else proceed();
     return true;
@@ -3394,7 +3433,9 @@
     titleScreen.hidden = false;
     document.body.classList.add('title-active');
     // Prepare only the *loaded* arrival view, never an unentered zone.
-    titleWarmup = loaded ? warmScene(game.zoneId, 300) : null;
+    titleWarmup = loaded
+      ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 900 : 750)
+      : null;
     refreshTitleScreen();
     const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
     primary.focus?.({ preventScroll: true });

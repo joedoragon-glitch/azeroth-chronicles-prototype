@@ -137,6 +137,114 @@ function openForwardTravel(app) {
     assert.equal(game.zoneId, 'vale');
   }
 
+
+  // Both dungeon types are hot entries: the native zone is admitted first,
+  // nearby encounter art can prepare only after real construction, and the
+  // combat/world clock stays unchanged until that first view is actually drawn.
+  for (const kind of ['main', 'side']) {
+    const app = shell('en');
+    const game = app.scope.Prototype.game;
+    const entrance = game.zone().npcs.find((npc) =>
+      npc.kind === 'dungeon' && !!npc.sideDungeon === (kind === 'side'));
+    assert(entrance, kind + ' dungeon entrance exists in the authored start region');
+    const oldZone = game.zoneId;
+    const oldTime = game.s.time;
+    let resolveEncounter;
+    let warmedAfterAdmission = 0;
+    app.scope.PrototypeSprites = {
+      definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero-entry' } : null,
+      warm: (_keys) => {
+        assert.equal(game.zoneId, entrance.family,
+          'combat dungeon sprite warming happens only after native admission');
+        warmedAfterAdmission++;
+        return new Promise((resolve) => { resolveEncounter = resolve; });
+      },
+      advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
+    };
+    Object.assign(game.hero, { x: entrance.x, y: entrance.y });
+    for (const fn of app.events.keydown || [])
+      fn({ code: 'KeyF', preventDefault() {}, target: null, repeat: false });
+    if (kind === 'main') {
+      const actions = app.elements.get('modal-actions')?.children || [];
+      const enter = actions.find((action) => action.textContent.startsWith('Enter dungeon'));
+      assert(enter && !enter.disabled, 'main dungeon action remains explicit');
+      enter.click();
+    }
+    assert.equal(game.zoneId, entrance.family, 'native ' + kind + ' admission committed');
+    assert.notEqual(game.zoneId, oldZone);
+    assert.equal(app.scope.Prototype.sceneLoading, true, 'arrival remains covered');
+    assert.equal(app.elements.get('scene-loading').hidden, false);
+    assert(game.zone().enemies.length > 0, 'real hostile dungeon actors exist before reveal');
+    await flush();
+    assert.equal(warmedAfterAdmission, 1, 'nearby sprites get bounded one-time warming');
+    app.frame(200);
+    app.frame(400);
+    assert.equal(game.s.time, oldTime, 'combat cannot begin while arrival is obscured');
+    assert.equal(app.scope.Prototype.sceneLoading, true);
+    resolveEncounter();
+    await flush();
+    app.frame(600);
+    assert.equal(app.scope.Prototype.sceneLoading, false);
+    assert.equal(app.elements.get('scene-loading').hidden, true);
+    assert.equal(game.s.time, oldTime, 'painting/reveal do not advance combat');
+  }
+
+  // A first-draw failure never exposes the previous scene or ticks combat.
+  // The dedicated retry becomes keyboard-accessible and reveals Canvas only
+  // after an actual successful paint of the already committed destination.
+  {
+    const app = shell('en');
+    const game = app.scope.Prototype.game;
+    const travel = openForwardTravel(app);
+    let broken = true;
+    app.scope.Prototype.renderer.draw = () => {
+      if (broken) throw Error('simulated Canvas drawing failure');
+    };
+    travel.click();
+    const arrival = game.zoneId;
+    assert.notEqual(arrival, 'vale');
+    app.frame(100);
+    assert.equal(app.scope.Prototype.sceneLoading, true);
+    assert.equal(app.elements.get('scene-loading-retry').hidden, false);
+    const saved = JSON.stringify(game.snapshot());
+    broken = false;
+    app.elements.get('scene-loading-retry').click();
+    app.frame(200);
+    assert.equal(app.scope.Prototype.sceneLoading, false);
+    assert.equal(game.zoneId, arrival, 'retry may never replay travel');
+    assert.equal(JSON.stringify(game.snapshot()), saved,
+      'retry only redraws presentation without modifying campaign progress');
+  }
+
+  // Title idle can warm only the selected, previously loaded save's artwork.
+  {
+    const app = shell('en', 'paladin', { stayOnTitle: true });
+    let warmCalls = 0;
+    app.scope.PrototypeSprites = {
+      definitionFor: (entity) => entity.renderKind === 'hero' ? { key: 'current-save-hero' } : null,
+      warm: async (keys) => {
+        warmCalls++;
+        assert.deepEqual(keys, ['current-save-hero']);
+      },
+      status: () => ({}),
+    };
+    app.elements.get('title-saves').click();
+    const option = app.elements.get('modal-actions').children
+      .find((button) => button.textContent.startsWith('Normal'));
+    assert(option && !option.disabled);
+    option.click();
+    const saved = app.storage.get('azeroth-v4-normal');
+    await flush();
+    assert(warmCalls > 0, 'selecting a validated save prepares only its own visual resources');
+    assert.equal(app.scope.Prototype.started, false);
+    assert.equal(app.storage.get('azeroth-v4-normal'), saved,
+      'title-only warming cannot rewrite campaign data');
+    app.elements.get('title-continue').click();
+    await flush();
+    app.frame(600);
+    assert.equal(app.scope.Prototype.started, true, 'Continue eventually reveals prepared view');
+  }
+
   console.log('PASS Stage 5 native travel, guarded preflight, loading barrier, cancellation, dungeon admission');
 })().catch((error) => {
   console.error(error);

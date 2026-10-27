@@ -10,7 +10,7 @@
   const BG_SHIFT = BG_MARGIN * 0.6;
   const BG_PREFETCH_TRIGGER = BG_MARGIN * 0.33;
   // Two CPU windows, one GPU source. Never provision a second regional GPU atlas.
-  const BG_TWO_WINDOW_BUDGET = 32 * 1024 * 1024;
+  const BG_TWO_WINDOW_BUDGET = 64 * 1024 * 1024;
   const iso = (point) => ({
     x: (point.x - point.y) * 0.76,
     y: (point.x + point.y) * 0.27,
@@ -191,8 +191,10 @@
     const proceduralBudget = Number.isSafeInteger(options.proceduralTextureBudgetBytes)
       ? Math.max(1, options.proceduralTextureBudgetBytes)
       : 256 * 1024 * 1024;
-    const trimAt = Math.floor(proceduralBudget * 0.625);
-    const trimTo = Math.floor(proceduralBudget * 0.5);
+    // Mainstream-device working set: retain nearby art through crossings while
+    // trimming stale textures before the unchanged 256 MiB hard ceiling.
+    const trimAt = Math.floor(proceduralBudget * 0.75);
+    const trimTo = Math.floor(proceduralBudget * 0.625);
     let imageBytes = 0,
       disposed = false,
       baseGame = null,
@@ -486,7 +488,8 @@
         canvas: { width, height }, ctx, platform: platformAhead,
         renderLayer: 'background',
       });
-      // A second full-sized 64 MiB ground cache would defeat the memory bound.
+      // Keep the native ground cache only; the second CPU canvas fits in a
+      // combined 64 MiB two-window cap without another ground cache.
       aheadRenderer.setGroundReuse?.(false);
       return true;
     }
