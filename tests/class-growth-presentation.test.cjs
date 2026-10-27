@@ -1,17 +1,17 @@
 'use strict';
-// Read-only class education through the existing class choice and Character menus.
+// Class discovery and live, read-only stats: test native menu functions and shell markup.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const Campaign = require('../src/prototype/engine');
+const { shell } = require('./helpers/production-shell.cjs');
 
 const source = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'utf8');
 function section(begin, end) {
   const from = source.indexOf('  function ' + begin + '(');
-  assert(from >= 0, 'Missing ' + begin);
   const to = source.indexOf('  function ' + end + '(', from + 1);
-  assert(to > from, 'Missing boundary ' + end);
+  assert(from >= 0 && to > from, 'Missing function boundary: ' + begin);
   return source.slice(from, to);
 }
 const growth = section('classGrowthLine', 'chooseClass');
@@ -25,10 +25,10 @@ function menu(code, language, heroClass = 'paladin', prepare = () => {}) {
   const before = game.snapshot();
   let shown;
   vm.runInNewContext(growth + code, {
-    Campaign,
-    language,
-    game,
-    openMenu: (title, description, actions) => { shown = { title, description, actions }; },
+    Campaign, language, game,
+    openMenu: (title, description, actions, back, options) => {
+      shown = { title, description, actions, options };
+    },
     action,
     openMain() {},
     inventory() {},
@@ -39,71 +39,99 @@ function menu(code, language, heroClass = 'paladin', prepare = () => {}) {
     developerEnabled: false,
   });
   assert(shown, 'Expected native menu to open');
-  assert.deepEqual(game.snapshot(), before, 'looking at class growth must not mutate the campaign');
+  assert.deepEqual(game.snapshot(), before, 'reading class growth must not mutate the campaign');
   return shown;
 }
+const rowsOf = (view) => Object.fromEntries(
+  Array.from(view.description.sections[1].rows, (row) => [row.label, row.value])
+);
+const first = menu(character + '\ncharacterMenu();', 'en');
+assert.equal(first.options.view, 'character');
+assert.match(first.description.summary, /Paladin · Level 1\nXP 0 \/ 120/);
+assert.equal(first.description.sections.length, 2, 'growth and numbers share one page');
+assert.equal(first.description.sections[0].title, 'Class growth');
+assert.match(first.description.sections[0].text, /Fortitude · Each level: \+5 max HP and \+0\.01/);
+assert.equal(first.description.sections[1].title, 'Current stats');
+assert.deepEqual(rowsOf(first), {
+  'Max HP': '125', 'Power': '18', 'Armor': '8', 'Speed': '300',
+  'Cooldown reduction': '0%', 'Critical chance': '10%', 'Blocked per Armor point': '0.36 damage',
+});
+assert.deepEqual(Array.from(first.actions, (a) => a.label), [
+  'Name your hero', 'Inventory and support', 'Skill journal', 'Talents',
+], 'existing actions only');
 
-const startPaladin = menu(character + '\ncharacterMenu();', 'en');
-assert.equal(startPaladin.title, 'Character');
-assert.match(startPaladin.description, /Max HP 125 · Power 18 · Armor 8/);
-assert.match(startPaladin.description, /Speed 300 · Cooldown reduction 0%/);
-assert.match(startPaladin.description, /Damage blocked\/Armor 0\.36/);
-assert.match(startPaladin.description, /Fortitude: \+5 HP\/level; \+0\.01/);
-assert.equal(startPaladin.actions.length, 4, 'only the existing Character actions');
-assert.deepEqual(Array.from(startPaladin.actions, (a) => a.label), [
-  'Name your hero',
-  'Inventory and support',
-  'Skill journal',
-  'Talents',
-]);
-
-const highRanger = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) => {
+const ranger = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) => {
   while (g.hero.level < 15) g.xp(g.xpRequired());
   g.hero.talents[1] = 5;
   g.hero.talents[3] = 3;
 });
-assert.match(highRanger.description, /Speed 488 · Cooldown reduction 35%/);
-assert.match(highRanger.description, /Agility: \+3 speed and \+1%/);
-
-const highMage = menu(character + '\ncharacterMenu();', 'en', 'mage', (g) => {
+assert.equal(rowsOf(ranger).Speed, '488');
+assert.equal(rowsOf(ranger)['Cooldown reduction'], '35%');
+assert.match(ranger.description.sections[0].text, /Agility · Each level: \+3 speed/);
+const mage = menu(character + '\ncharacterMenu();', 'en', 'mage', (g) => {
   while (g.hero.level < 15) g.xp(g.xpRequired());
   g.hero.weapon = 4;
   g.hero.talents[0] = 5;
 });
-assert.match(highMage.description, /Power 167/);
-assert.match(highMage.description, /Arcane Power: \+2 Power\/level/);
-
-const cappedRanger = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) => {
+assert.equal(rowsOf(mage).Power, '167', 'effective Power includes gear and training');
+assert.match(mage.description.sections[0].text, /Arcane Power · Each level: \+2 Power/);
+const capped = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) => {
   g.hero.level = 100;
   g.hero.talents[1] = 5;
 });
-assert.match(cappedRanger.description, /Cooldown reduction 60%/, 'show effective capped CDR');
-
-for (const [cls, localized] of [
-  ['paladin', /Fortaleza: \+5 PV\/nivel/],
-  ['ranger', /Agilidad: \+3 velocidad/],
-  ['mage', /Poder arcano: \+2 Poder\/nivel/],
+assert.equal(rowsOf(capped)['Cooldown reduction'], '60%', 'display capped total, not raw sum');
+for (const [cls, expected] of [
+  ['paladin', /Fortaleza · Cada nivel: \+5 PV máximos/],
+  ['ranger', /Agilidad · Cada nivel: \+3 de velocidad/],
+  ['mage', /Poder arcano · Cada nivel: \+2 de poder/],
 ]) {
   const view = menu(character + '\ncharacterMenu();', 'es', cls);
-  assert.match(view.description, localized);
-  assert.match(view.description, /PV máximos .* · Poder .* · Armadura /);
-  assert.match(view.description, /Velocidad .* · Reducción de recuperación /);
+  assert.match(view.description.sections[0].text, expected);
+  assert.equal(view.description.sections[0].title, 'Crecimiento de clase');
+  const numbers = rowsOf(view);
+  assert(numbers['PV máximos'] && numbers.Poder && numbers.Armadura);
+  assert(numbers.Velocidad && numbers['Reducción de recuperación']);
 }
 for (const lang of ['en', 'es']) {
   const view = menu(choices + "\nchooseClass('normal', false);", lang);
+  assert.equal(view.options.view, 'class-select');
   assert.equal(view.actions.length, 3);
+  assert.match(view.description, lang === 'en' ? /level 1/ : /nivel 1/);
   for (const [index, name] of (lang === 'en'
     ? [[0, 'Fortitude'], [1, 'Arcane Power'], [2, 'Agility']]
-    : [[0, 'Fortaleza'], [1, 'Poder arcano'], [2, 'Agilidad']]))
-    assert(view.actions[index].detail.includes(name), lang + ' ' + name + ' discoverable at selection');
+    : [[0, 'Fortaleza'], [1, 'Poder arcano'], [2, 'Agilidad']])) {
+    const [role, growth] = view.actions[index].detail.split('\n');
+    assert(role.length > 8 && growth.includes(name), 'two-line ' + lang + ' choice: ' + name);
+  }
 }
-for (const [cls, name] of [
-  ['paladin', 'Fortitude'],
-  ['ranger', 'Agility'],
-  ['mage', 'Arcane Power'],
-]) {
+for (const [cls, name] of [['paladin', 'Fortitude'], ['ranger', 'Agility'], ['mage', 'Arcane Power']]) {
   const g = new Campaign('normal', cls, () => 0.9);
   g.xp(g.xpRequired());
-  assert(g.messages.some((m) => m.includes(name + ' improved.')), name + ' mentioned on level-up');
+  assert(g.messages.some((m) => m.includes(name + ' improved.')), 'level-up cue: ' + name);
 }
-console.log('PASS class selection growth, live Character stats, bilingual UI and level-up cue');
+
+// Verify the production menu renderer creates semantic sections and preserves click actions.
+for (const lang of ['en', 'es']) {
+  const { elements: e } = shell(lang);
+  e.get('menu-button').click();
+  const pick = (label) => e.get('modal-actions').children.find((item) => item.textContent === label);
+  pick(lang === 'en' ? 'Character' : 'Personaje').click();
+  const host = e.get('modal-description');
+  assert.equal(e.get('modal').getAttribute('data-view'), 'character');
+  assert(host.classList.contains('skill-reference'), 'reuse semantic description renderer');
+  assert.equal(host.children.length, 2, 'growth and current stats have separate sections');
+  assert.equal(host.children[0].children[0].textContent,
+    lang === 'en' ? 'Class growth' : 'Crecimiento de clase');
+  assert.equal(host.children[1].children[0].textContent,
+    lang === 'en' ? 'Current stats' : 'Atributos actuales');
+  assert.equal(host.children[1].children[1].children.length, 14, 'seven stat label/value pairs');
+  assert(pick(lang === 'en' ? 'Skill journal' : 'Diario de habilidades'),
+    'original Character actions remain available');
+}
+const css = fs.readFileSync(path.join(__dirname, '../styles/prototype.css'), 'utf8');
+const phoneCss = fs.readFileSync(path.join(__dirname, '../styles/phone.css'), 'utf8');
+assert(css.includes("#modal[data-view='class-select'] #modal-actions .class-growth"));
+assert(css.includes("#modal[data-view='character'] #modal-description.skill-reference dl"));
+assert(phoneCss.includes("body[data-experience='phone'] #modal[data-view='class-select']"));
+assert(phoneCss.includes("body[data-experience='phone'] #modal[data-view='character']"));
+console.log('PASS class growth discovery, live bilingual stats, compact semantic menus, actions and style contracts');
