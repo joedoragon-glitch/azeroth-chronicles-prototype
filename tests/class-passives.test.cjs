@@ -29,8 +29,8 @@ assert.equal(mage.heroCooldownReduction(), 0);
 
 // No passive gets misidentified as a companion-inheritable training/gear bonus.
 for (const game of [paladin, ranger, mage]) {
-  game.s.expeditionSkills.sharedTraining = 5;
-  game.s.expeditionSkills.sharedStrength = 5;
+  game.s.expeditionSkills.sharedTraining = R.expeditionSupportSkills.sharedTraining.maxRank;
+  game.s.expeditionSkills.sharedStrength = R.expeditionSupportSkills.sharedStrength.maxRank;
 }
 assert.equal(paladin.heroOtherHpBonus(), 0);
 assert.equal(paladin.companionInheritedHpBonus(), 0);
