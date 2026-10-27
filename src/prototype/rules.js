@@ -6557,6 +6557,11 @@
   // registry intentionally stays at three until Charm and its tutorial ship.
   // The weapon is a STAFF WITH AN OVERSIZED SUSPENDED JINGLE BELL; reference
   // clothing and accessories are not canonical. Audio is a future asset task.
+  // Identity-only pools. Cycle each language independently; never use combat RNG.
+  const rogueCharmNicknames = Object.freeze({
+    en: Object.freeze(["Pipsqueak","Stinkums","Mittens","Nibbles","Pickles","Wiggles","Snookums","Crumpet","Dumpling","Sir Flops","Bubbles","Tater Tot","Pudding","Fluffbucket","Squiggles","Cupcake","Wobblekins","Fuzzbutt","Butterbean","Cheesepuff","Noodle","Snickerdoodle","Pebbles","Marshmallow","Biscuit","Tickletoes","Sprinkles","Doodles","Tootsie","Chublet","Puddlefoot","Babyfang","Mr. Wiggles","Lady Nibbles","Soggyboots","Muffinface","Rumpus","Boopnose","Dingleberry","Flapjack","Gumdrop","Cuddlebug","Waffles","Noodlehead","Squishums","Pookums","Jellybean","Squeaky","Nutterbutter","Bumblebum","Tippytoes","Pompom","Wigglebottom","Scampers","Tinseltoes","Fluffy Doom","Stinky Pete","Honeybun","Snuffles","Puddlewhisker","Tootle","Crinkle","Sweetpea","Lumpy","Eggnog","Oopsie","Doodlebug","Cabbage","Pumpernickel","Booples"]),
+    es: Object.freeze(["Pulguillas","Mocoso","Pelusín","Ñoñito","Chiquitín","Cabezón","Patitas","Bizcochito","Bomboncito","Cucharita","Babosín","Don Calcetín","Doña Croqueta","Tripita","Pompitas","Soplido","Piojito","Churretín","Naricitas","Barriguitas","Papanatas","Patatín","Quesito","Chicharrón","Burbujitas","Puchero","Chupetín","Calabacín","Morcillita","Fideo","Don Babero","Doña Pestañitas","Mojadito","Ñoñerías","Saltarín","Carraspera","Galletita","Mimosín","Pajarito","Pancito","Tontolín","Rabanito","Albondiguita","Puerquito","Cebollín","Lagartijita","Don Patán","Trastito","Guindilla","Pepinillo","Ñiquiñaque","Chiflito","Chisporrote","Cacahuete","Cachetitos","Doña Babita","Peluchín","Pedorretas","Pastelito","Bigotitos","Trompitas","Corazoncito","Chismocito","Panzón","Chancletita","Lagrimitas","Don Ronquiditos","Tiquismiquis","Chirimbolo","Ñoñorrón"]),
+  });
   const rogueHeroFoundation = Object.freeze({
     classId: 'rogue',
     weapon: Object.freeze({ kind: 'staff', instrument: 'suspended-jingle-bell', basicCue: 'bell-jingle' }),
@@ -7654,6 +7659,7 @@
     classUltimates,
     basicAttackCombo,
     rogueHeroFoundation,
+    rogueCharmNicknames,
     companionSkills,
     petCompanions,
     ordinaryMeleeScaling,
