@@ -40,7 +40,8 @@
     "currentEvaluatedCritPercentagePointsPerLevel": 2,
     "critChanceDecisionState": "owner proposed stronger chance, pending final numerical approval",
     "mirroredEnemyAllyEffectIntent": "Negative AoE effect on enemies, conceptually inverse friendly effect to nearby companions; source owner specifically proposed Slow↔movement/CDR, interruption↔cast protection, antiheal/DOT↔HoT/healing received, debt↔CDR, push/weaken↔power, blast/silence↔power/crit",
-    "skillFiveReconsidered": "Use stationary dual-polarity enchanted musical source (fantasy portable speaker) rather than a conventional trap; musical names stay approved"
+    "skillFiveReconsidered": "Owner suggested dual-polarity stationary music sources as an alternative to placed physical traps; favored candidate, replacement not explicitly approved; trap disarm remains independent concept.",
+    "antiInterruptIntent": "Friendly mirror of interrupt/Silence makes legal allied casts difficult to cancel; actual code has damage-threshold charge cancellation but no proven hostile Silence-to-companion path."
   },
   "proposal": {
     "classStarting": {
@@ -171,7 +172,7 @@
       ]
     },
     "traps": {
-      "rogueSkillFive": "two-polarity enchanted music stations instead of conventional physical traps (latest owner direction)",
+      "rogueSkillFive": "FAVORED CANDIDATE: two-polarity musical fields, not yet approved as final replacement for original physical traps",
       "maxSimultaneouslyPlaced": 2,
       "tapFieldLifetimeSeconds": 8,
       "chargedFieldLifetimeSeconds": 10,
@@ -180,8 +181,9 @@
       "allyBoon": "applies only while physically inside deployed station field",
       "combatOnly": true,
       "expireOnCombatEnd": true,
-      "disarmExistingTrapDuration": "still unresolved separate Rogue expertise",
-      "physicalTrapsEarlierProposal": "superseded as Skill 5; optional general trap-disarm concept remains"
+      "disarmExistingTrapDuration": "OPEN independent Rogue disarm existing environmental trap skill",
+      "physicalTrapsEarlierProposal": "superseded as Skill 5; optional general trap-disarm concept remains",
+      "stationReplacesPhysicalTrapApproval": "OPEN owner choice: whether two musical stations replace or complement earlier physical-trap concept"
     },
     "summon": {
       "firstCandidate": "deferred, no persistent summon AI or extra actors",
@@ -214,7 +216,9 @@
       "maxDistinctBoonFamiliesPerCompanion": 8,
       "fields": "at most two world-space stations, no animated or summoned actors, bounded .5s membership checks",
       "temporaryStates": "clear on death/zone/reload and save snapshot; validate no stacking abuse",
-      "outsideCombat": false
+      "outsideCombat": false,
+      "cooldownSourceProof": "combat.js cooldownRecoveryElapsed handles Slow; one hook must add bounded Skill2+6 recovery, never a second recovery pass",
+      "antiInterruptSourceProof": "combat.js recordPartyChargeDamage interrupts legal companion charges; hero-combat.js mageSilenceActive is current Mage hero field only, hostile Silence-to-companion gate not yet proven"
     }
   },
   "skillCandidate": [
@@ -629,6 +633,8 @@
   },
   "docs": {
     "dualSidedAndCriticalSpec": "docs/ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md",
-    "review": "docs/ROGUE_BARD_OWNER_REVIEW_20261026.md"
+    "review": "docs/ROGUE_BARD_OWNER_REVIEW_20261026.md",
+    "canonicalOwnerHandoff": "docs/ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md",
+    "authoritativeSkillAndCriticalSpec": "docs/ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md"
   }
 }
