@@ -1327,34 +1327,60 @@
         h.cd[slot - 1] = this.skillCooldown(slot, false);
         if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
         this.s.heroTarget = primary.id;
+        // Exactly one frozen Party-stream receipt for this legal manual cast.
+        // Only the authored lever changes; allied and hostile sides never
+        // roll separately, and timed effects inherit the committed numbers.
+        const criticalReceipt = this.rogueCriticalRelease(
+          slot + (charged ? '-charged' : '-tap'));
+        let effectForm = form;
+        if (criticalReceipt?.critical) {
+          const field = ({
+            2: charged ? 'seconds' : 'slow',
+            3: charged ? 'silence' : 'debt',
+            4: 'healFraction',
+            5: charged ? 'ward' : 'slow',
+            6: charged ? 'seconds' : 'debt',
+            7: charged ? 'weaken' : 'push',
+            8: charged ? 'silence' : 'damage',
+          })[slot];
+          if (!field || !Object.prototype.hasOwnProperty.call(form, field))
+            throw Error('Missing authored Rogue critical consequence');
+          effectForm = {
+            ...form,
+            [field]: this.criticalHeroValue(
+              criticalReceipt, form[field], criticalReceipt.effect.lever,
+              field === 'ward' ? { max: 0.12 } : {}),
+            ...(slot === 4 ? { criticalMending: true } : {}),
+          };
+        }
         if (slot === 5) {
           const current = (rogueMusicStations.get(this) || []).filter((f) =>
             f.zone === this.zoneId && f.until > this.s.time);
           current.push({
             zone: this.zoneId, x: primary.x, y: primary.y,
-            radius: form.radius, cap: form.cap, slow: form.slow,
-            resistance: form.slowResistance, ward: form.ward,
-            pulseDamage: form.pulseDamage, until: this.s.time + form.seconds,
+            radius: effectForm.radius, cap: effectForm.cap, slow: effectForm.slow,
+            resistance: effectForm.slowResistance, ward: effectForm.ward,
+            pulseDamage: effectForm.pulseDamage, until: this.s.time + effectForm.seconds,
             nextPulse: this.s.time,
           });
           rogueMusicStations.set(this, current.slice(-2));
         }
         for (const e of enemies) {
-          if (slot === 2) this.applySlow(e, form.slow);
+          if (slot === 2) this.applySlow(e, effectForm.slow);
           if (slot === 5) {
             // Station pulses are scheduled from its single placement owner;
             // never duplicate a pulse as a separate instant AoE result.
           }
           if (slot === 8) {
             const scale = 1 + 0.15 * (rank - 1);
-            this.damage(e, (this.power() + 12) * form.damage * scale, 'hero',
+            this.damage(e, (this.power() + 12) * effectForm.damage * scale, 'hero',
               { area: true });
-            if (form.silence && e.hp > 0 && e.type !== 'boss' &&
+            if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
                 !e.captain && !e.roomCaptain && !(e.immune > 0)) {
               const old = rogueEnemySilences.get(e);
               rogueEnemySilences.set(e, { zone: this.zoneId,
                 until: Math.max(old?.zone === this.zoneId ? old.until : 0,
-                  this.s.time + form.silence) });
+                  this.s.time + effectForm.silence) });
             }
           }
           if (slot === 4) {
@@ -1362,39 +1388,39 @@
             const still = prev?.zone === this.zoneId && prev.until > this.s.time;
             rogueEnemyWithers.set(e, {
               zone: this.zoneId,
-              until: Math.max(still ? prev.until : 0, this.s.time + form.seconds),
+              until: Math.max(still ? prev.until : 0, this.s.time + effectForm.seconds),
               remaining: Math.max(still ? prev.remaining : 0,
-                Math.min(80, Math.max(3, e.maxHp * form.dotFraction))),
-              antiHeal: Math.max(still ? prev.antiHeal : 0, form.antiHeal),
+                Math.min(80, Math.max(3, e.maxHp * effectForm.dotFraction))),
+              antiHeal: Math.max(still ? prev.antiHeal : 0, effectForm.antiHeal),
             });
           }
           if (slot === 3) {
             // Interrupt only an actual native warning/aim, never invent a cast.
             const warning = e.telegraph || e.rangedAim;
             if (warning && this.interruptEnemyAction(e, warning)) {
-              e.cd = Math.max(e.cd || 0, form.debt);
-              e.specialCd = Math.max(e.specialCd || 0, form.debt);
+              e.cd = Math.max(e.cd || 0, effectForm.debt);
+              e.specialCd = Math.max(e.specialCd || 0, effectForm.debt);
             }
             // Hush blocks new eligible non-boss specials only; it never
             // erases protected boss phases or ordinary basic attacks.
-            if (form.silence && e.hp > 0 && e.type !== 'boss' &&
+            if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
                 !e.captain && !e.roomCaptain && !(e.immune > 0)) {
               const prev = rogueEnemySilences.get(e);
               rogueEnemySilences.set(e, {
                 zone: this.zoneId,
                 until: Math.max(prev?.zone === this.zoneId ? prev.until : 0,
-                  this.s.time + form.silence),
+                  this.s.time + effectForm.silence),
               });
             }
           }
           if (slot === 7) {
             // Existing collision/legal-arena push; already executing a
             // scripted charge is never overridden.
-            if (e.hp > 0) this.shieldPush(e, form.push);
+            if (e.hp > 0) this.shieldPush(e, effectForm.push);
             const active = (e.weakenUntil || 0) > this.s.time;
-            e.weakenUntil = Math.max(active ? e.weakenUntil : 0, this.s.time + form.weaken);
+            e.weakenUntil = Math.max(active ? e.weakenUntil : 0, this.s.time + effectForm.weaken);
             e.weakenFraction = Math.max(active ? e.weakenFraction || 0 : 0,
-              form.weakenFraction);
+              effectForm.weakenFraction);
           }
           if (slot === 6) {
             // Only real, not-ready enemy cooldowns receive finite debt. No
@@ -1402,13 +1428,13 @@
             for (const key of ['cd', 'specialCd', 'summonCd',
               'healCd', 'supportHealCd']) {
               if (Number.isFinite(e[key]) && e[key] > 0)
-                e[key] = Math.min(1e6, e[key] + form.debt);
+                e[key] = Math.min(1e6, e[key] + effectForm.debt);
             }
           }
         }
         for (const u of (slot === 5 ? [] : allies))
           this.applyRogueSongBoon(u,
-            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', form);
+            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', effectForm);
         this.event('rogueBellPerformance', {
           actor: 'hero', class: 'rogue', slot,
           form: charged ? 'charged' : 'tap',
