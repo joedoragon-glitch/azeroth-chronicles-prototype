@@ -1752,22 +1752,26 @@
             () => barracksNamesMenu(b, returnHere),
             'Optional · chosen once.',
           ),
-          rank >= 2
-            ? action(
-                'Recruit companions',
-                () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier ' +
-                  getGame().barracksRecruitPrice('soldier') +
-                  ' crowns · Ranger ' +
-                  getGame().barracksRecruitPrice('archer') +
-                  ' crowns',
-              )
-            : action(
-                'Recruitment — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
+          ...(getGame().hero.class === 'rogue'
+            ? []
+            : [
+                rank >= 2
+                  ? action(
+                      'Recruit companions',
+                      () => barracksRecruitmentMenu(b, returnHere),
+                      'Soldier ' +
+                        getGame().barracksRecruitPrice('soldier') +
+                        ' crowns · Ranger ' +
+                        getGame().barracksRecruitPrice('archer') +
+                        ' crowns',
+                    )
+                  : action(
+                      'Recruitment — Expedition 2',
+                      () => {},
+                      'Rescue Mira and train Expedition to Rank 2',
+                      true,
+                    ),
+              ]),
         ],
         back,
       );
@@ -2229,6 +2233,19 @@
     }
     function townRecruitmentMenu(back) {
       const reopen = () => townRecruitmentMenu(back);
+      if (getGame().hero.class === 'rogue') {
+        openMenu(
+          getGame().definition().town + ' Captain',
+          'Rogue Bards do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain still provides companion recovery and treatment.',
+          [
+            ...otherRecruitmentCancellation(null, reopen),
+            careChoice('recovery', null, reopen),
+            careChoice('treatment', null, reopen),
+          ],
+          back,
+        );
+        return;
+      }
       const recruitmentLocked =
         (getGame().s.expeditionRank || 1) < 2 || getGame().rosterCount() >= 3;
       const actions = [
@@ -2273,7 +2290,12 @@
     function partyMenu(back = closeMenu) {
       const g = getGame(),
         tutorial = g.s.quests['quest-barracks'];
-      if (tutorial && !tutorial.paid && !tutorial.captainBriefed && (g.s.expeditionRank || 1) === 1)
+      if (g.hero.class === 'rogue') {
+        // The conventional starter-Soldier tutorial is false for a hero
+        // whose company begins empty; Charm onboarding is authored later.
+        g.briefCompanions();
+        townRecruitmentMenu(back);
+      } else if (tutorial && !tutorial.paid && !tutorial.captainBriefed && (g.s.expeditionRank || 1) === 1)
         companionBasics(back);
       else {
         g.briefCompanions();
