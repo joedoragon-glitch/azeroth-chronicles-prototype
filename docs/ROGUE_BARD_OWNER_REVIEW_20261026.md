@@ -1,6 +1,8 @@
 # Rogue Bard — one-page owner review
 **PR #511 · Design candidate, not game code · October 26, 2026**
 
+**Start here for the reconciled, current design:** [Canonical Rogue Bard owner handoff — 27 October](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md). This October 26-style one-page review is an abbreviated overview; the linked canonical handoff and 27 October dual-sided skill spec control any apparently contradictory older text.
+
 ## Decision in one minute
 
 The fourth playable hero is a **female, guitar-playing Rogue Bard** who beats opponents through disruption, short-range musical AoE, proposed deployable musical stations, and automatic basic-hit Charm. She starts with **zero** companions, can never **newly hire** Soldier/Archer troops, and has **+1 active companion capacity from the beginning**. Eligible ordinary monsters permanently become friendly melee/ranged/healer companions with normal friendly role AI, persistent identity, level benefits, recovery and Barracks rules. Boss pets remain available. Bosses, captains, Ringleaders are not charmable. Hybrids and actual summons can defer. Her Endure keeps her at **1 HP for 2s**. The owner is now considering **two percentage points of personal critical chance per level** from Level 1 (+2pp/level, not yet final balance approval); no passive ordinary-stat boosts. The owner wants all eight regular/charged skills **combat-only and dual-sided AoE**: enemy harm and companion benefit in the same effect footprint, with bounded different-benefit stacking. A **fourth Rogue-only critical intensity group and adjustable Level 1–3 slider** is mandatory, independent of ordinary Hero, Companions and World.
