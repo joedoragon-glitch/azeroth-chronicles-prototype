@@ -82,6 +82,76 @@ const idleDeadline = { timeRemaining: () => 20 };
     await flush();
     assert.equal(jobs.length, 0, 'no campaign, no speculative zone preparation');
   }
+  // Exercise the production renderer's REAL preparation function and one
+  // injectable GroundCache, not just a mocked idle callback. The synthetic
+  // painter is intentionally cheap; browser pixel equivalence is a separate gate.
+  {
+    const GroundCache = require('../src/prototype/ground-cache.js');
+    const buffers = [];
+    let floors = 0, visibleBlits = 0, saved = 0, scale = 1;
+    const stack = [];
+    const context = {
+      setTransform(a) { scale = a; },
+      getTransform() { return { a: scale, d: scale, b: 0, c: 0, e: 0, f: 0 }; },
+      save() { saved++; stack.push(scale); },
+      restore() { saved--; scale = stack.pop(); },
+      scale(a) { scale *= a; },
+      drawImage() { visibleBlits++; },
+    };
+    class TestGroundCache extends GroundCache {
+      constructor() {
+        super({
+          createCanvas(width, height) {
+            const canvas = {
+              width, height,
+              getContext: () => ({ setTransform() {}, fillRect() {} }),
+            };
+            buffers.push(canvas);
+            return canvas;
+          },
+        });
+      }
+    }
+    const jobs = [];
+    const app = shell('en', 'paladin', {
+      stayOnTitle: true,
+      idleCallbacks: jobs,
+      canvasContext: context,
+      groundCacheClass: TestGroundCache,
+      visuals: { floor() { floors++; }, draw() {}, roads() {}, height: () => 40 },
+    });
+    const game = app.scope.Prototype.game;
+    const initial = JSON.stringify(game.snapshot());
+    const persisted = app.storage.get('azeroth-v4-normal');
+    const renderer = app.scope.Prototype.renderer;
+    await flush();
+    assert.equal(jobs.length, 1);
+    jobs[0](idleDeadline);
+    assert(floors > 0, 'real idle prep rasterizes the exact existing outdoor floor');
+    assert.equal(visibleBlits, 0, 'real prep never blits to the visible world canvas');
+    assert.equal(renderer.metrics().groundCache.builds, 1);
+    assert(renderer.metrics().groundCache.bytes > 0);
+    assert(renderer.metrics().groundCache.bytes <= 64 * 1024 * 1024);
+    assert.equal(renderer.prepareCurrentGround(), true, 'same camera cache is reusable');
+    assert.equal(renderer.metrics().groundCache.builds, 1, 'stationary prep does not allocate');
+    assert.equal(saved, 0, 'world context transform/save stack is restored');
+    assert.equal(JSON.stringify(game.snapshot()), initial, 'real prep preserves campaign state');
+    assert.equal(app.storage.get('azeroth-v4-normal'), persisted, 'real prep never saves');
+
+    context.setTransform(1.5);
+    assert.equal(renderer.prepareCurrentGround(), true, 'DPR change regenerates floor safely');
+    assert.equal(renderer.metrics().groundCache.builds, 2);
+    assert.equal(buffers[0].width, 0, 'old raster released before different-DPR allocation');
+    renderer.setRenderLayer('overlay');
+    assert.equal(renderer.prepareCurrentGround(), false, 'Pixi overlay cannot prepaint floor');
+    assert.equal(renderer.metrics().groundCache.builds, 2);
+    renderer.setRenderLayer('full');
+    renderer.setGroundReuse(false);
+    assert.equal(renderer.prepareCurrentGround(), false, 'cache-off mode is respected');
+    assert.equal(renderer.metrics().groundCache.bytes, 0);
+    assert.equal(visibleBlits, 0);
+    assert.equal(saved, 0);
+  }
   console.log('PASS Canvas title-only idle ground preparation, guard cancellation and saves');
 })().catch((error) => {
   console.error(error);
