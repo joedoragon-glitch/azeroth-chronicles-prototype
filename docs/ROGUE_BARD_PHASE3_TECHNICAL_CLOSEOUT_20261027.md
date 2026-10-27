@@ -4,6 +4,9 @@
 
 ## Result
 
+> **Phase 1–3 consolidated status (27 October 2026):** **Foundation, Hero Basics, and Authentic Charm are COMPLETE AS STAGED / FOCUSED-VALIDATED; Phase 4 is READY BUT NOT IMPLEMENTED.** The binding native Charm rule is **12% on lawful surviving auto-primary hit**; every successful capture is **automatically given a permanent silly English/Spanish name (70 per language)** and **100% friendly max HP**, even in reserve. No naming popup/toggle/tutorial or naming-based heal. The distinct fresh Charm-first → worker → Barracks tutorial is Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024) at `f24f16ef`; [documentation head likewise passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428) at `922a9cc2`. Main `5c6197e8` integrated with 0 commits behind at closeout. PR #511 is OPEN/DRAFT, unmerged/undeployed, Rogue unregistered. Read [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md). **Superseded statements further below are historical notes, not live requirements.**
+
+
 **Phase 3 Authentic Charm — COMPLETE AS STAGED / FOCUSED VALIDATED. Ready to begin Phase 4 Companion Integration. Not ready to merge, deploy or enable Rogue in the character menu.** The technical closeout is specific to this code/tree and owner-approved Phase 3 contract; it is not full class/playtest acceptance.
 
 ## Approved Phase 3 mechanics now implemented

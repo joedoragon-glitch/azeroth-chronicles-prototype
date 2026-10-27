@@ -1,11 +1,11 @@
 # Mainline integration checkpoint for fourth-class preparation — PR #511
 
-> **Current phase/status (27 October 2026):** **Phase 3 verified engineering closeout (27 October 2026):** Native lawful Charm, v4 saves, quotas, automatic 70-name English/Spanish pools, full-HP active/reserve capture, and original-class isolation **passed 48 focused test suites** plus a reproducible offline-ready build at code commit `f24f16ef934ca340bc1a4413f1ee404868493e53` ([focused GitHub Actions run 40503909024](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024)). Current upstream `main` commit `5c6197e871f8f4393d26d9b7a261b9324ef85d12` was merged into the draft at `dac13bcf`; compare reports **0 behind**. The first focused run found only a renderer source-fingerprint mismatch, corrected after reviewing the presentation-only nameplate diff; the green run includes the corrected evidence. **Phase 3 COMPLETE AS STAGED; ready to begin Phase 4, not release ready.** Phase 4 species stats/AI/working orders and Phase 7 tutorial remain untouched. PR #511 stays draft, unmerged, undeployed, Rogue unregistered. This supersedes historical engineering-status claims below; original owner character and quest canon remains in force.
+> **Phase 1–3 consolidated status (27 October 2026):** **Foundation, Hero Basics, and Authentic Charm are COMPLETE AS STAGED / FOCUSED-VALIDATED; Phase 4 is READY BUT NOT IMPLEMENTED.** The binding native Charm rule is **12% on lawful surviving auto-primary hit**; every successful capture is **automatically given a permanent silly English/Spanish name (70 per language)** and **100% friendly max HP**, even in reserve. No naming popup/toggle/tutorial or naming-based heal. The distinct fresh Charm-first → worker → Barracks tutorial is Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024) at `f24f16ef`; [documentation head likewise passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428) at `922a9cc2`. Main `5c6197e8` integrated with 0 commits behind at closeout. PR #511 is OPEN/DRAFT, unmerged/undeployed, Rogue unregistered. Read [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md). **Superseded statements further below are historical notes, not live requirements.**
 
 
 **27 October 2026 · Mainline reconciled into draft PR #511 at `3c6da60` · No merge to `main`, no release approval**
 
-## Phase 1 most recent reconciliation and subsequent drift
+## Historical Phase 1 reconciliation and then-observed drift (resolved at newer merge)
 
 The follow-up **Phase 1** merge `bd1cbe83` integrated mainline commit `1eeff159` (PR #517 ranged detection and Archer attack updates) into PR #511. The staged Phase 2 then passed focused CI on `b915bc06` ([run 40484652535](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40484652535)). **Latest `main` is now 2 commits ahead** of that synchronized baseline. This next reconciliation must occur **before Phase 3 code work** and must preserve the current original-class behavior plus staged Rogue kit. Source integration statements below refer to earlier merges, not to the current moving `main` head.
 
@@ -19,7 +19,7 @@ The current `main` commit `286e8c0d` was integrated **into the draft PR #511 bra
 
 After the source merge at `3c6da60`, **main** received PR #519, the adaptive mobile HUD and PWA snapshot `0.9.1+snapshot.dev.198` at commit `3acf0f72`. It was also incorporated into this **same draft PR #511 branch**, via second merge commit **`7680c4ef`**. The only overlapping code file was `src/prototype/app.js`; its class-selection/level-one passive presentation and the adaptive phone/joystick/notices implementation were combined. Other mainline files—including `src/prototype/input.js`, mobile CSS, service worker, build version, and their tests—were carried forward unchanged. The combined app parses as JavaScript. This second merge does **not** release or enable Rogue, and latest-head validation remains the release gate.
 
-## Confirmed upstream divergence
+## Historical upstream divergence (resolved through main `5c6197e8`)
 
 The PR head has diverged from `main`. On this comparison, `main` is **four commits ahead of the PR branch**; PR #511 carries its own preparatory commits. This is not a cosmetic documentation conflict. Both sides modify:
 
@@ -42,7 +42,7 @@ These are **live three-class gameplay mechanics now**, not speculative Rogue buf
 
 A focused branch CI failure previously showed `hero-skill1-area2.test.cjs` expecting literal three seconds even where the live cooldown calculation yields 2.97. The draft now tests against `g.skillCooldown(1, charged)` instead of hardcoding raw cooldowns, but this assertion is **not proof** that the other stale-source errors or current-head CI pass.
 
-## Safe reconciliation sequence, **within this same PR**
+## Historical reconciliation plan — executed through `dac13bcf`
 
 1. Integrate current `main` into the **existing PR #511 branch**, conflict-resolving shared source lines. No separate PR, force-push, or deployment; preserve the existing feature's authored decisions and the new mainline class passives.
 2. Re-run the target source-evidence checks (`melee-reach-balancing`, `sprite-scope`) against the resolved exact `rules.js` and evidence; do not disguise a hash mismatch by weakening a test.

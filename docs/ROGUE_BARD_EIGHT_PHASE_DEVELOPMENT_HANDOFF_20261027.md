@@ -1,6 +1,8 @@
 # Rogue Bard — eight-phase development handoff and current source of truth
 **27 October 2026 · Draft PR #511 · branch `design/rogue-bard-feasibility-20261026`**
 
+> **Phase 1–3 consolidated status (27 October 2026):** **Foundation, Hero Basics, and Authentic Charm are COMPLETE AS STAGED / FOCUSED-VALIDATED; Phase 4 is READY BUT NOT IMPLEMENTED.** The binding native Charm rule is **12% on lawful surviving auto-primary hit**; every successful capture is **automatically given a permanent silly English/Spanish name (70 per language)** and **100% friendly max HP**, even in reserve. No naming popup/toggle/tutorial or naming-based heal. The distinct fresh Charm-first → worker → Barracks tutorial is Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024) at `f24f16ef`; [documentation head likewise passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428) at `922a9cc2`. Main `5c6197e8` integrated with 0 commits behind at closeout. PR #511 is OPEN/DRAFT, unmerged/undeployed, Rogue unregistered. Read [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md). **Superseded statements further below are historical notes, not live requirements.**
+
 > **READ THIS FIRST IN EVERY NEW CHAT.** This document is the **current implementation status and sequential phase gate** for the one new **Rogue Bard** class in the multi-file GitHub Pages/PWA game Azeroth Chronicles. It supersedes **dated status claims** in older Rogue Bard documents but **does not erase** their design evidence. The owner handles character direction; technical implementation must follow documented canon, ask the owner when a major assistant-originated recommendation is ambiguous, and prioritize playable iteration over endless new concept work.
 
 ## Phase 3 owner-authorized closeout — technical gate passed
@@ -37,7 +39,7 @@ See [Phase 3 technical closure receipt](ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_202
 - `src/prototype/rules.js` exports dormant `rogueHeroFoundation`: **HP 90 / Power 18 / Armor 3 / Speed 300 / dormant MP 60**, first-pass talent growth. Values are **working, playtestable candidates**, not permanent owner-locked numbers.
 - `src/prototype/hero-combat.js`: **bell-staff** automatic attack at 260 world-unit reach, one legal primary and up to two splash enemies on ordinary strikes, up to five contacts on the third-hit finisher; 0.85s base rhythm. Separate **normal/tap** and **charged** Skill 1 have capped enemy AoE and the mirrored short **Sharp Refrain** buff to in-area **living active companions' ordinary basic damage only** (+5% for 4s / +7% for 5s, first-pass figures). No manual Skill 1 Charm rolls; future Charm **may trigger only from surviving lawful auto-basic primary damage**, never splash or manual performances. Combat emits `rogueBellBasic` / `rogueBellSkill1` **sound-intent events**, not actual played recordings.
 - `src/prototype/combat.js`, `src/prototype/save.js` and companion methods: **Endure** leaves Rogue at 1 HP on the first lethal hit in a life, protects against further HP hits for 2 simulated seconds; its used flag persists per life but the live invulnerability clock and companion song buffs do **not** persist across save. No approved 90s retrigger policy is asserted. Existing original-class combat paths are intentionally unchanged.
-- `src/prototype/skill-reference.js` exposes Skill 1's three forms for staged Rogue testing. **Skills 2–8 are not live; Charm, separate critical control, sprites, recorded sounds and in-game class selection are not shipped.**
+- `src/prototype/skill-reference.js` exposes Skill 1's three forms for staged Rogue testing. **Authentic Charm is implemented and focused-validated on the draft branch but not available to players; Skills 2–8, separate Rogue critical control, finished art/audio and class registration remain deferred.**
 
 ## Binding character and game design, in priority order
 
@@ -73,6 +75,9 @@ See [Phase 3 technical closure receipt](ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_202
 
 ## Documentation map and historical provenance
 
+- [Consolidated Phase 1–3 baseline and Phase 4 entry](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md)
+- [Archived former PR #511 description (historical only)](ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md)
+
 - [Original discussion — character canon and owner statements](ROGUE_BARD_DISCUSSION_RECORD_20261026.md)
 - [Canonical owner rules and historical arbitration](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md)
 - [Phase 2 executed contract and CI chronology](ROGUE_BARD_PHASE2_HERO_FOUNDATION_20261027.md)
@@ -98,7 +103,7 @@ Successful conversion creates one ordinary friendly roster actor with exact sour
 
 **Focused save-security regression extension:** rank-one subtype overflow is now tested using *resting* forged entries. This deliberately bypasses the earlier active-party limit so the distinct total-owned Charm quota is exercised. Source simulation passes for legal capture/save/restore and for the old three classes. The current commit still requires fresh repository CI; no comprehensive tests, merge or deployment have been authorized.
 
-## Conditional Phase 4 engineering handoff — NOT ACTIVATED
+## Phase 4 handoff — ready for owner-directed implementation, not started
 
 Begin Phase 4 **only after Phase 3's final integrated focused CI passes** and the PR records the exact verified head. Retain the lawful capture and save-record ownership contract unchanged. Phase 4 then owns the per-species ally combat presentation and AI, Barracks recovery and orders, eligibility of **every** authentic Charmed creature for existing build/upgrade/gather actions (with ordinary prerequisites), active/reserve/fallen/away command and Succession preservation. First-run tutorial sequencing and full art/audio remain Phase 7. Do not unfreeze Rogue class selection, merge, deploy or run comprehensive QA as part of this handoff.
 
@@ -106,7 +111,7 @@ Begin Phase 4 **only after Phase 3's final integrated focused CI passes** and th
 
 At candidate head `fac98cea0caa547c9d1bbe9180f2f7660688fbe5`, the complete **Phase 3 portion** of `tests/rogue-hero-phase2.test.cjs` (252 source lines plus the native fixture), including authentic combat capture, 12% failed roll, eligible subtype and exclusions, splash secondary non-Charm, exact ownership quotas at all six ranks, reserve admission, forge rejection, major HP wounds and restore, basic native hero-level growth, death gate, one-time naming and cross-class Succession ownership, **passed in an in-memory V8 harness** loading the actual branch source for 19 key game modules. The test run used an explicit strict-assertion compatibility shim and stubbed narration/non-participating optional module entry points; this is **not an unmodified Node test run**, **not full engine CI** and **not browser acceptance**. The optional module substitutions constrain the evidence to touched Phase 3 mechanics, not all saved run mechanics.
 
-**Outstanding to mark Phase 3 complete:** run `node tests/rogue-hero-phase2.test.cjs` and the focused original targeting, save, class and Succession suites in real Node at the *final* integrated head; verify build and the focused CI receipt, reconcile upstream `main` title/loading, menu and rendering overlap without overwriting either side. Existing Actions run `40489088644` predates Phase 3 and cannot certify this candidate. Rogue stays unregistered, PR #511 stays DRAFT, and Phase 4 work may begin **after** the Phase 3 native gate, not before.
+**Historical pre-closeout action list (resolved by integrated focused CI and mainline merge):** run `node tests/rogue-hero-phase2.test.cjs` and the focused original targeting, save, class and Succession suites in real Node at the *final* integrated head; verify build and the focused CI receipt, reconcile upstream `main` title/loading, menu and rendering overlap without overwriting either side. Existing Actions run `40489088644` predates Phase 3 and cannot certify this candidate. Rogue stays unregistered, PR #511 stays DRAFT, and Phase 4 work may begin **after** the Phase 3 native gate, not before.
 
 ## Owner-approved Phase 3/4 presentation and probability decisions — 27 October 2026
 
@@ -158,7 +163,7 @@ A Charmed monster can receive an optional personal name at the Barracks through 
 In both Canvas2D and optional Pixi nameplate presentation, Charmed monsters gain a small **♫** identity cue without requiring a new sprite, species recolor, or region restriction. **All personally named companions**—Soldiers, Rangers, pets, and Charmed monsters—receive a more readable **bold, slightly larger, contrasted nameplate** and priority over ordinary unnamed ally labels where crowded. Unnamed creatures keep the original low-key label. The display label is presentation-only: it must not alter species AI, source metadata, save records, Charm probability, target selection, or companion growth. This is a staged code candidate, not browser/device visual certification.
 
 
-## Latest owner decision — immediate Charm naming, one-time HP restoration, and optional auto-naming (27 October 2026)
+## Archived rejected naming-popup/toggle/heal-on-name proposal (not for implementation)
 
 **This section supersedes prior guidance stating “no free healing on naming,” “capture never pauses for naming,” or that Charmed companions may only be named later at Barracks. It is a new owner-approved design contract, NOT implemented or tested in the current Phase 3 candidate.** The older *capture transaction itself* still inherits the injured enemy's post-primary-hit HP **fraction** at conversion; only a subsequently accepted **first permanent personal name** heals the owned creature to its proper current friendly maximum HP. No periodic regeneration or second naming-based heal. The existing once-only `nameCompanion` identity should be the authority, with `charmOrigin` and original subtype metadata untouched. Skipping naming retains wounded HP. If a skipped capture is first permanently named at Barracks later, its one-time naming heal should still apply. Fallen units require ordinary recovery before naming can heal them; naming never resurrects.
 
@@ -180,7 +185,7 @@ In both Canvas2D and optional Pixi nameplate presentation, Charmed monsters gain
 
 **Focused acceptance for implementation:** first active capture pauses and teaches exactly once; later manual popups are compact; auto-on produces no pause; disable/re-enable from both existing contextual entry points; accept name restores exactly friendly max HP once, skip preserves wounded fraction, unrelated companions' naming does not heal; once-only name and species identity survive v4 save/reload/Succession; cannot re-heal by renaming or switching settings; no naming prompts for active-full reserve admissions; full 70-name cycle avoids duplicates then rotates; already-owned names are skipped; co-op contract remains dormant; existing three playable classes, safety locks and target/kill ownership unaffected. **Implementation, Phase 3 focused CI, mainline reconciliation, Phase 4, merge and deployment remain separately gated.**
 
-## FINAL LATEST OWNER RULE — automatic bilingual Charm names and immediate full HP (27 October 2026)
+## Binding implemented owner rule — automatic bilingual Charm names and immediate full HP
 
 **This section replaces and supersedes every prior contradictory Charm-wound, manually naming, first-capture naming tutorial, auto-name toggle, and Barracks naming-heal proposal in this document and the earlier PR conversation.** There is **no Charm naming popup**, **no auto-naming preference**, **no name-related tutorial/quest**, and **no naming-related UI change**. The existing **Rogue-specific Charm/Barracks quest tutorial planned for Phase 7 is still needed**; it simply teaches lawful Charm and companion labor, not names.
 
