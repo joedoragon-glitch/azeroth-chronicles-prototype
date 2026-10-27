@@ -74,3 +74,21 @@ The fort columns show **conditional** native ranges if a species enters an autho
 **Important:** Detection distance alone does not bypass line of sight, fort shooting permissions, town safety, opening-field aggro restrictions or territorial disengagement. Player-side hero and companion/pet ranges, damage and skills are outside this fix. The earlier documentation's original parity-only draft state and original first-run fingerprint reconciliation remain as provenance, not a statement that the final draft makes no balance change.
 
 **Validation:** `tests/fortifications.test.cjs` exercises every known ranged shot profile and fortified/unfortified state, fallbacks and tuning; `tests/enemy-distant-damage-response.test.cjs` exercises actual outdoor automatic aggro and aim inside newly covered range, refusal beyond it and melee awareness stability. Focused CI and reproducible PWA build results must correspond to the new exact branch head; no owner approval has been given for full-suite, merge or deployment.
+
+## Allied ranged basic acquisition reconciliation — follow-up within draft #517
+
+**Ranger hero:** automatic Skill 1/covering-fire targeting and basic firing both use `heroSkillRange(1) = 450`. **Mage hero:** the same shared selection/firing rule uses `400`. Both already cover their entire basic firing reach; the wider manual selection/locked-target band is deliberate UI targeting, not basic fire or passive awareness. No hero radius, damage, skill, pursuit, save or onboarding changes.
+
+**Ranged pets:** native ranged basic firing remains `balance.companions.petBasicRange = 280`. **Archer companions:** native normal `companionFight` firing remains `280`, but `companionCombatReach` previously returned only `185` for covering/defensive/Recall basics. This follow-up aligns all Archer **basic** fire paths to `280`; the separately authored *first skill* still has its existing shorter reach and all specialist skill distances stay independent.
+
+**Shared squad awareness:** before, `squadThreats` only considered already-engaged monsters within `540` units of the hero (or `720` for boss/summon), regardless of an allied ranged actor's own position. An Archer/ranged pet could therefore have a legal 280-unit basic shot while its opponent was excluded from squad threat selection when farther from the hero. After the fix, active available Archers/ranged pets can additionally recognize **already-aggroed, directly visible** enemies within their own actual `companionCombatReach`; the existing hero-centered band remains. This does **not** trigger combat against idle enemies or waive line of sight, Recall's no-pursuit/close-threat constraints, survival behavior, active roster requirements, working companions' orders, town safety or leashes.
+
+| Allied role/path | Basic firing before → after | Target acquisition before → after |
+| --- | ---: | --- |
+| Mage hero automatic basic | 400 → 400 | Same firing-radius scan 400 → 400 |
+| Ranger hero automatic basic | 450 → 450 | Same firing-radius scan 450 → 450 |
+| Ranged pet ordinary/defensive basic | 280 → 280 | Hero-centered engaged-threat screen 540/720 only → that **or** 280 from an available ranged pet |
+| Archer normal basic | 280 → 280 | Hero-centered engaged-threat screen 540/720 only → that **or** 280 from an available Archer |
+| Archer covering/defensive/Recall basic | 185 → **280** | Same per-actor range now used for local basic checks; Recall remains counterattack-only |
+
+The `540/720` are **hero-centered encounter envelopes**, not the ally's own firing radius, and should not be misconstrued as unlimited 540/720-unit shots. The separately authored manual hero-selection band is wider than automatic firing, intentionally. Verification uses focused `tests/targeting.test.cjs` for exact hero firing boundaries, real allied recognition/shot/refusals outside the hero-centered envelope, and `tests/companion-melee-basic-reach.test.cjs` for defensive versus ordinary Archer basic parity with the unchanged ranged-pet boundary. No complete game suite, merger, or deployment authorized.

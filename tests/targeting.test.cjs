@@ -355,6 +355,96 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
   // assert in-range attacking and normal deliberate skill-approach behavior.
 }
 
+
+// Ranged hero automatic target scans use each class's real basic reach,
+// not enemy aggro distance or the wider manual target-selection radius.
+for (const [heroClass, reach] of [['mage', 400], ['ranger', 450]]) {
+  for (const distance of [reach, reach + 1]) {
+    const game = new Campaign('normal', heroClass, () => 0.9);
+    const zone = game.zone();
+    for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) zone[key] = [];
+    game.s.party = [];
+    game.s.mercyTime = 0;
+    game.s.valeFieldAwakened = true;
+    game.s.thornHeroInitiated = true;
+    Object.assign(game.hero, { x: 1100, y: 1100, basicCd: 0, order: null });
+    game.hero.skills[0] = 1;
+    const foe = game.makeEnemy(
+      { species: 'goblin', name: 'Basic reach probe', level: 1, hp: 10000, damage: 0,
+        gold: 0, xp: 0 },
+      { x: game.hero.x + distance, y: game.hero.y },
+    );
+    zone.enemies = [foe];
+    assert(game.line(game.hero, foe), heroClass + ' unobstructed sight');
+    assert.equal(game.heroSkillRange(1), reach, heroClass + ' basic reach');
+    const projectiles = game.s.projectiles.length;
+    assert.equal(
+      game.castMovementBasic(),
+      distance <= reach,
+      heroClass + ' auto acquisition at ' + distance,
+    );
+    assert.equal(
+      game.s.projectiles.length > projectiles,
+      distance <= reach,
+      heroClass + ' real basic projectile at ' + distance,
+    );
+    assert.equal(game.hero.order, null, 'automatic basic never starts pursuit');
+  }
+}
+
+// An active Archer or ranged pet can spot an ALREADY-ENGAGED enemy within its
+// own shot radius even when that enemy lies past the 540-unit hero squad band.
+// Idle monsters, line-of-sight blocks, benched units and Recall remain safe.
+for (const kind of ['archer', 'pet']) {
+  const petFamily = Object.keys(Campaign.rules.petCompanions).find(
+    (id) => Campaign.rules.petCompanions[id].role === 'ranged',
+  );
+  assert(petFamily, 'an authored ranged pet family is available');
+  for (const [distance, engaged, blocked, recalled, expectedShot] of [
+    [275, true, false, false, true],
+    [285, true, false, false, false],
+    [275, false, false, false, false],
+    [275, true, true, false, false],
+    [275, true, false, true, false],
+  ]) {
+    const game = new Campaign('normal', 'mage', () => 0.9);
+    const zone = game.zone();
+    for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) zone[key] = [];
+    game.s.valeFieldAwakened = true;
+    game.s.thornHeroInitiated = true;
+    game.s.mercyTime = 0;
+    game.s.expeditionRank = 6;
+    Object.assign(game.hero, { x: 900, y: 1200, order: null });
+    const ally = game.unit(kind, 1410, 1200, kind === 'pet' ? petFamily : undefined);
+    ally.cd = 0;
+    ally.skill1Cd = ally.skill2Cd = ally.skillGlobalCd = 100;
+    game.s.party = [ally];
+    const foe = game.makeEnemy(
+      { species: 'goblin', name: 'Ranged ally awareness probe', level: 1,
+        hp: 10000, damage: 0, gold: 0, xp: 0 },
+      { x: ally.x + distance, y: ally.y },
+    );
+    zone.enemies = [foe];
+    if (engaged) game.engage(foe);
+    assert(Math.hypot(foe.x - game.hero.x, foe.y - game.hero.y) > 540);
+    if (blocked) game.line = () => false;
+    if (recalled) game.recallParty();
+    const isThreat = game.squadThreats().includes(foe);
+    assert.equal(
+      isThreat,
+      engaged && !blocked && distance <= 280,
+      kind + ' own-shot threat recognition at ' + distance,
+    );
+    const before = game.s.projectiles.length;
+    game.updateParty(0);
+    assert.equal(
+      game.s.projectiles.length > before,
+      expectedShot,
+      kind + ' target acquisition and basic release at ' + distance,
+    );
+  }
+}
+
 console.log(
   'PASS visible target cycling, manual attack priority, queued approach, fallback and boss/summon lock, disengagement and zone cleanup',
 );

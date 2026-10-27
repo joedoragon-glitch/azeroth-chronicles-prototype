@@ -1064,7 +1064,9 @@
             ? R.balance.companions.petBasicRange
             : R.balance.companions.petMeleeBasicRange
           : u.type === 'archer'
-            ? 185
+            // The Archer's ordinary 280-unit shot is also its defensive and
+            // Recall basic reach; separate first skills keep their own 185.
+            ? 280
             : R.balance.companions.soldierMeleeBasicRange;
       }
       companionEnemyWeight(e) {
@@ -2678,6 +2680,16 @@
         return this.hero.class === 'paladin' ? 'focus' : 'guard';
       }
       squadThreats() {
+        // The existing hero-centered encounter radius stays intact, but an
+        // active ranged ally can recognize an already-engaged visible foe
+        // throughout its *own* basic firing reach even beyond that radius.
+        // Never enlist idle monsters, benched units or gathering assignments.
+        const rangedAllies = this.activeLivingParty().filter(
+          (u) =>
+            !u.order &&
+            (u.type === 'archer' ||
+              (u.type === 'pet' && this.petDefinition(u)?.role === 'ranged')),
+        );
         return this.zone().enemies.filter(
           (e) =>
             e.hp > 0 &&
@@ -2685,7 +2697,10 @@
             !e.returning &&
             this.tacticalDirectTargetable(e) &&
             e.aggro &&
-            dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540),
+            (dist(e, this.hero) < (e.type === 'boss' || e.summon ? 720 : 540) ||
+              rangedAllies.some(
+                (u) => dist(e, u) <= this.companionCombatReach(u) && this.line(u, e),
+              )),
         );
       }
       squadContext() {
@@ -2922,7 +2937,7 @@
         const anchor = this.partyFollowPoint(u, living),
           preferred = 250,
           anchorRange = dist(anchor, e);
-        if (anchorRange <= 280 && this.line(anchor, e)) return anchor;
+        if (anchorRange <= this.companionCombatReach(u) && this.line(anchor, e)) return anchor;
         const dx = anchor.x - e.x,
           dy = anchor.y - e.y,
           n = Math.hypot(dx, dy) || 1,
@@ -2973,7 +2988,7 @@
             );
             return;
           }
-          if (d > 280 || !visible) {
+          if (d > this.companionCombatReach(u) || !visible) {
             this.follow(
               u,
               this.archerCombatPoint(u, e, living),
@@ -2986,7 +3001,11 @@
             );
             return;
           }
-          if (dist(u, anchor) > 70 && dist(anchor, e) <= 280 && this.line(anchor, e)) {
+          if (
+            dist(u, anchor) > 70 &&
+            dist(anchor, e) <= this.companionCombatReach(u) &&
+            this.line(anchor, e)
+          ) {
             this.follow(
               u,
               anchor,
