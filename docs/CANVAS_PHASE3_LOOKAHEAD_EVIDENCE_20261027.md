@@ -15,27 +15,27 @@ A controlled, source-grounded benchmark now exists in `tests/canvas-ground-looka
 - **Baseline**: the unchanged production one-window Canvas ground-cache behavior; foreground rebuild on coverage miss.
 - **Hypothetical idle recenter**: on camera travel near the cache margin, call the already-existing `GroundCache.prepare()` to shift the ONE existing backing raster ahead. This occurs in a **simulated idle slot** between presented draws, not actual `requestIdleCallback` or real browser time. It does not allocate a second cache or change gameplay/production code.
 
-The benchmark calculates cache rebuild totals, visible-frame p95/p99/max timing, optional CPU raster time, and estimated retained image bytes. It asserts the same memory budget and basic accounting; it **deliberately does not assert a performance win**.
+The benchmark calculates cache rebuild totals, foreground `GroundCache.draw()` call p95/p99/max timing (not entire gameplay frames), optional CPU raster time, and estimated retained image bytes. It asserts the same memory budget and basic accounting; it **deliberately does not assert a performance win**.
 
-## First CI sample — exact measured results
+## First CI sample — measured cache-call observations (not full-frame FPS)
 
 GitHub-hosted Node runner, one observational paired sample per scenario. Timings are **not** measured Chromebook/iPhone web-app FPS, input latency, GPU usage, real idle scheduling, or validated process memory.
 
-| 96-frame path | Baseline visible builds → candidate visible builds | Baseline total builds → candidate total builds | Baseline visible-frame p99 → candidate p99 | Total raster rebuild cost |
+| 96-frame path | Baseline visible builds → candidate visible builds | Baseline total builds → candidate total builds | Baseline cache-draw p99 → candidate p99 | Total raster rebuild cost |
 | --- | ---: | ---: | ---: | ---: |
 | Straight traversal | 4 → 1 | 4 → 5 | 73.761 → 73.524 ms | 91.709 → 105.374 ms |
 | Reverse direction | 6 → 1 | 6 → 7 | 153.433 → 136.899 ms | 129.728 → 150.689 ms |
 | Zigzag traversal | 5 → 1 | 5 → 5 | 177.830 → 149.242 ms | 102.658 → 102.508 ms |
 
-**Optional synchronous idle-slot CPU painting:** 83.420 ms (straight), 130.518 ms (reversal), 79.221 ms (zigzag), aggregated across each 96-frame run. All scenarios retained a peak logical raster allocation of **11,949,696 bytes** for this viewport. That is **not a complete browser heap/process memory measurement** and does not validate high-DPR phone behavior.
+**Simulated idle-slot GroundCache.prepare() call time (including cache-hit checks):** 83.420 ms (straight), 130.518 ms (reversal), 79.221 ms (zigzag), aggregated across each 96-frame run. All scenarios retained a peak logical raster allocation of **11,949,696 bytes** for this viewport. That is **not a complete browser heap/process memory measurement** and does not validate high-DPR phone behavior.
 
 ### Interpretation
 
 1. The candidate did move most raster rebuilds out of visible frame draws on these controlled paths. This verifies the mechanical premise, **not** user-visible smoothness.
 2. The candidate increased total raster builds in straight and reversing motion (4→5 and 6→7). Accumulated rebuild time rose approximately 15% and 16%, respectively, within this one noisy CI sample.
-3. Worst-tail visible frame time was largely unchanged in straight travel and remained high in all paths. Copying the cached raster, independent renderer work, initial conditions and noisy runner scheduling can still dominate.
+3. Worst-tail foreground cache-draw call time was largely unchanged in straight travel and remained high in all paths. Copying the cached raster, independent renderer work, initial conditions and noisy runner scheduling can still dominate.
 4. A `requestIdleCallback` budget check is only an admission decision: once begun, synchronous painting is non-preemptible. Even if scheduled outside foreground draws, those additional raster operations can delay touch, keyboard and other JS tasks.
-5. This was **Vale floor region 0 without external material overlays**. It does not measure road/terrain/actors, actual movement simulation, combat, saved campaign GPU presentation, browser render compositing, iOS recovery, or long-session memory.
+5. The values in the table are **one noisy CI sample of GroundCache.draw() call durations**. They must not be cited as full game-frame, browser-present or animation-frame p99 values. This was **Vale floor region 0 without external material overlays**. It does not measure road/terrain/actors, actual movement simulation, combat, saved campaign GPU presentation, browser render compositing, iOS recovery, or long-session memory.
 
 Given this evidence, **do not ship a second-region raster, cache recentering scheduler, extra memory budget, or default-on Canvas lookahead in Phase 3**. The existing Phase 2 title-screen preparation and original cache remain authoritative.
 
