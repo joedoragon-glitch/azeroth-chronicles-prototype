@@ -38,11 +38,16 @@ The 26 October read-only design specification is the working UX contract.
 - [ ] Physical iPhone/Android inspection of Adaptive/Classic in portrait and landscape, and standalone browser touch smoke; final acceptance is Phase 4.
 - [ ] Verify both handedness layouts and portrait/landscape.
 
-## Phase 3 — Notification refinement (not started)
+## Phase 3 — Notification refinement (implemented; device acceptance pending)
 
-- [ ] Classify routine feedback separately from critical performance interruptions and narrative notices.
-- [ ] Keep dangerous warnings, progression and announcements protected.
-- [ ] Avoid NPC/nameplate occlusion, support EN/ES and reduced-motion preferences.
+- [x] Classify brief status receipts into routine, important and critical; critical performance pauses and storage/write failures get urgent contrast and screen-reader alert semantics, while the normal recovery receipt becomes 1.75 seconds.
+- [x] Do not create a second notification system. Preserve the existing ordered warning/milestone/narration/feedback queue, live combat interruption rules, full announcement text and EN/ES translations.
+- [x] On phones, routine status yields visually to an active amber announcement instead of stacking farther into the world. Urgent status stays visible beneath important active cards.
+- [x] Place routine status in the top rail between HP and Menu on normal landscape widths, with a compact below-dock fallback in portrait; bound banner widths to 320px landscape / 310px portrait.
+- [x] Opaque, distinct notice palettes for routine, urgent, milestone, warning, story and feedback—including secondary text. All ten declared foreground/background combinations exceed 7:1 luminance contrast on their solid backgrounds.
+- [x] Preserve reduced-motion behavior, important alert roles, Menu access and no-touch-overlap for clickable milestone cards.
+- [x] New dedicated `tests/notification-refinement.test.cjs` checks contrast ratios, precedence, EN/ES production shell, and source safeguards.
+- [ ] Focused CI completion, visual layout inspection on actual iPhone/Android, and Phase 4 integrated browser acceptance.
 
 ## Phase 4 — Integrated acceptance (not started)
 
@@ -65,6 +70,12 @@ The 26 October read-only design specification is the working UX contract.
 - `styles/phone.css` — opt-in contrast changes without hitbox movement.
 - `tests/adaptive-hud.test.cjs`, `tests/input.test.cjs`, `tests/game-menu-ui.test.cjs` — context and compatibility regressions.
 
+## Phase 3 files
+
+- `src/prototype/app.js` — status severity, display lifetime, banner width and priority/coexistence.
+- `styles/phone.css` — accessible solid notice palettes and top-rail layout across Classic/Adaptive.
+- `tests/notification-refinement.test.cjs` — color contrast and notification-priority regression.
+
 Run targeted checks when CI or a repository checkout is available:
 
 ```sh
@@ -72,6 +83,7 @@ node tests/input.test.cjs
 node tests/game-menu-ui.test.cjs
 node tests/floating-joystick-browser.test.cjs
 node tests/adaptive-hud.test.cjs
+node tests/notification-refinement.test.cjs
 ```
 
-No Phase 2–4 gameplay or presentation changes are included in the Phase 1 commits.
+All three completed phases are on the same draft branch, in separate commits. Phase 4 integration and physical-device acceptance have not started; no merge or publication is authorized.
