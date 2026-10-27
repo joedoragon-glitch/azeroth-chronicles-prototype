@@ -69,6 +69,36 @@ cache.clear();
 assert.equal(cache.status().bytes, 0);
 assert.equal(cache.status().rebuildMs, 17.5, 'clearing releases bytes, not historical metrics');
 assert.equal(stores.at(-1).height, 0);
+// Preparing uses the same one cache allocation, without a visible-canvas blit.
+let preparedDraws = 0,
+  preparedPaints = 0;
+const prepared = new GroundCache({
+  now: (() => { let n = 0; return () => n++; })(),
+  createCanvas: (width, height) => ({
+    width, height,
+    getContext: () => ({ setTransform() {}, fillRect() {} }),
+  }),
+});
+const separateArgs = {
+  ...args,
+  origin: { x: 12, y: -5 },
+  paint: () => preparedPaints++,
+};
+assert(prepared.prepare({ ...separateArgs, transform: { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 } }));
+assert.equal(preparedPaints, 1);
+assert.equal(prepared.status().builds, 1);
+assert.equal(preparedDraws, 0, 'preparation never blits to the world canvas');
+const visibleCtx = {
+  getTransform: () => ({ a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 }),
+  drawImage: () => preparedDraws++,
+};
+assert(prepared.draw(visibleCtx, separateArgs));
+assert.equal(preparedPaints, 1, 'first visible draw reuses prepared raster');
+assert.equal(prepared.status().builds, 1);
+assert.equal(preparedDraws, 1);
+prepared.clear();
+assert.equal(prepared.status().bytes, 0);
+assert.equal(prepared.status().builds, 1);
 const failed = new GroundCache({
   createCanvas: () => {
     throw Error('unavailable');
