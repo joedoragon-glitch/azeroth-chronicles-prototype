@@ -1162,7 +1162,7 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "4f0b1b8428c237f54a68cf432b7577eeef31fc611d2e85da3cc88ae5ba4b08bd",
+    "src/prototype/visuals.js": "2749290ca8b3ab69fffc62a71b62f9bdaebee9cd5cc9099cec77ea2aeafec6a3",
     "src/prototype/world.js": "8b033e4b53fb586d7c00398d7925a95c509967c637b386f8e9e0953dba7c3071",
     "src/prototype/rules.js": "db5713cc3a6f3c863f350c2caf9ee061880b3bbfa3f8eac3ffb0ae5d890279ab",
     "src/prototype/data.js": "010daccf3b0a7a1f93527b0f900e56a2ce482429bfccfc178ddc3b29a208fee0",
