@@ -72,6 +72,8 @@ Use a single action-level operation anchored at legal Rogue **primary automatic-
 
 ## 3. Risk priority — what must not be underestimated
 
+**Owner balance correction:** never derive Rogue starting stats from an invented mid-tier compromise. The existing minima from `R.balance.classes` are HP **90** (Mage), Power **18** (Paladin), Armor **3** (Mage), Speed **300** (Paladin/Mage); Rogue is deliberately mediocre in conventional attributes and earns identity elsewhere. Initial Mana **60** is dormant/compatibility only. Against the existing ordinary basic `Power+12` formula, proposed Rogue short cone hits **24** primary and at most **two 6-damage splash targets** before mitigation. Her initial **zero companions vs existing two** is a high-risk early survival/recruitment delta to test, not a balance advantage. The proposed personal crit probability at L1 is only **11%**, so it does not compensate for losing starter allies.
+
 | Priority | Finding | Symptom without fix | Narrow design resolution |
 |---|---|---|---|
 | **BLOCKER** | Hostile actor allegiance/reward/quest/respawn cleanup | Duplicate enemies/allies, free victory, broken packs, lost counters | One controlled transfer; positive species allowlist, transaction tests |
@@ -109,7 +111,7 @@ Use native tests in **existing domain-oriented suites**, not build a giant new h
 
 Owner needs to approve a small finite set **before gameplay coding**:
 
-1. Rogue base **100 HP / 70 dormant MP / 19 Power / 4 Armor / 300 Speed** and ordinary talent profile.
+1. Rogue **owner-directed existing-baseline minimums: 90 HP / 18 Power / 3 Armor / 300 Speed**, with **60 dormant MP** (P) and existing-minimum purchased training increments **+7 Power/+2 Mana/+27 HP/+38 Speed** (P). All are class **base/training** values, not a new passive. Mage **9** Power is her *per-rank training bonus*, not starting power (22). Prove Rogue can survive/recruit her first companion despite starting without Soldier/Archer.
 2. Short **260** reach/three-target auto, target-only Charm, five-target capped third-hit chorus, 0.85s interval.
 3. Personal +1pp crit per hero level including L1; Endure exactly 2s at 1HP; **90s cooldown and expiration death-if-not-healed are proposals**.
 4. Baseline Charm 12%, species/variant eligibility, source stat normalization and candidate reserve total 12; role Soldier/Archer tagging vs explicit new type.
