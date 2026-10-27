@@ -1,6 +1,8 @@
 # Fourth class — Rogue Bard feasibility and implementation boundaries
 **Date:** 26 October 2026  
 **Source audited:** main at e44ea0ec4b9ed164a85431e972664efda2190da6  
+
+**CURRENT DESIGN OVERRIDE — 27 October:** This is an **earlier feasibility/source analysis**, not current instruction to implement literal Skill 5 physical traps or single-target manual skills. The canonical owner handoff is [here](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md); its [mirrored dual-sided/critical-tier catalogue](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md) supersedes older one-sided skill/trap planning. Skill 5 now **proposes** two stationary friendly/hostile music fields, **not yet a final repeal** of originally requested two trap types. Existing environmental trap **disarm** remains a separate idea. All sixteen manual skills are bounded combat-only AoE, and a fourth Rogue intensity dial is required independently of existing Hero/Companion/World. Original source-ownership risks and background tests here remain relevant; treat physical-trap sections as *historical alternative* only.
 **Outcome:** Feasible as an isolated future expansion, but **not** a trivial fourth class and **not** cleared for implementation. Source-only read audit. No game code, tests, benchmarks, CI, art assets, or deployments changed/run by this design PR.  
 **Design source:** [discussion record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md). Decisions attributed to the owner versus assistant examples are separate there.
 
