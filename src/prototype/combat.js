@@ -877,6 +877,9 @@
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
+        // Real two-second Endure window, class-only and never granted to pets.
+        if (u === this.hero && u.class === 'rogue' && (u.rogueEndureUntil || 0) > this.s.time)
+          return false;
         // Real source IDs also cover melee now. Passive bonuses never apply to
         // environment hazards, reflected damage, or unrelated named species.
         const attacker = rangedSourceId
@@ -915,6 +918,17 @@
           defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
         mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
+        if (
+          u === this.hero && u.class === 'rogue' && u.hp === 0 &&
+          u.rogueEndureUsed !== true && oldHp > 0
+        ) {
+          // Once per life is the conservative Phase-2 recovery policy; no
+          // unapproved 90s retrigger or automatic death is invented.
+          u.hp = R.rogueHeroFoundation.endure.floorHp;
+          u.rogueEndureUsed = true;
+          u.rogueEndureUntil = this.s.time + R.rogueHeroFoundation.endure.duration;
+          this.event('rogueEndure', { actor: 'hero', class: 'rogue', duration: 2, hp: u.hp });
+        }
         if (oldHp > u.hp && attacker) this.noteGatheringAttack(u, attacker);
         this.recordPartyChargeDamage(u, oldHp - u.hp);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);

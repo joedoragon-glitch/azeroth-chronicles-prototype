@@ -1142,6 +1142,68 @@
           return alive;
         });
       }
+      // Dormant Rogue automatic basic. Its weapon is deliberately NOT a guitar.
+      // This is a legal primary hit plus bounded splash; Charm is reserved for
+      // Phase 3 and will only be offered the primary's actual damage receipt.
+      castRogueBasic(targetId = null) {
+        const cfg = R.rogueHeroFoundation.basic;
+        if (
+          this.hero.class !== 'rogue' || this.s.mode === 'developer' ||
+          this.peace || this.hero.hp <= 0 || !this.hero.skills[0] ||
+          (this.hero.basicCd || 0) > 0 ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(this.hero) ||
+          this.hero.deathRollHeld || this.hero.keeperHeld ||
+          this.hero.order?.type === 'skill-approach'
+        ) return false;
+        const selected = this.selectedHeroTarget(),
+          preferred = targetId ?? selected?.id ?? this.basicComboTargetId ?? this.s.heroTarget,
+          eligible = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, this.hero) <= cfg.range && this.line(this.hero, e),
+          ),
+          locked = !!selected || (targetId !== null && targetId !== undefined),
+          primary = eligible.find((e) => e.id === preferred) ||
+            (locked ? null : eligible.sort((a, b) =>
+              dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
+        if (!primary) return false;
+        this.releaseRecallForCombat();
+        this.engage(primary);
+        const combo = this.nextBasicCombo(primary.id),
+          rank = this.hero.skills[0],
+          baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
+            (1 + 0.15 * (rank - 1)) * combo.multiplier;
+        this.hero.basicCd = this.basicSkillCooldown();
+        const landed = this.damage(primary, baseDamage, 'hero', { automaticBasic: true });
+        let splashHits = 0;
+        if (landed) {
+          const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap;
+          const secondary = this.zone().enemies.filter((e) =>
+            e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
+            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, primary) <= cfg.splashRadius &&
+            dist(e, this.hero) <= cfg.range + cfg.splashRadius &&
+            this.line(this.hero, e),
+          ).sort((a, b) => dist(a, primary) - dist(b, primary) || this.idOrder(a, b));
+          for (const e of secondary.slice(0, max))
+            if (this.damage(e, baseDamage * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
+              splashHits++;
+        }
+        // Event metadata is ready for future bell-jingle audio and static VFX;
+        // no guitar, projectile actor, Charm RNG or sound playback is created.
+        this.event('rogueBellBasic', {
+          actor: 'hero', class: 'rogue', slot: 1, automaticBasic: true,
+          instrument: R.rogueHeroFoundation.weapon.instrument,
+          audioCue: R.rogueHeroFoundation.weapon.basicCue,
+          x: this.hero.x, y: this.hero.y,
+          target: primary.id, targetX: primary.x, targetY: primary.y,
+          combo: combo.step, landed: !!landed, splashHits,
+        });
+        return true;
+      }
       castMovementBasic() {
         // A released skill owns its approach. Passive covering fire must not
         // replace the queued charged/ordinary command with Skill 1.
@@ -1149,6 +1211,10 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
+        // Rogue has ONLY its automatic basic in Phase 2. Manual performances
+        // and charged releases remain gated until their own authored phase.
+        if (this.hero.class === 'rogue')
+          return slot === 1 && automatic && !charged ? this.castRogueBasic(targetId) : false;
         if (!implementedHeroCombatClasses.has(this.hero.class)) return false;
         if (this.s.mode === 'developer' && slot === 1 && automatic) return false;
         const i = slot - 1,

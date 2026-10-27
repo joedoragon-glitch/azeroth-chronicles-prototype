@@ -21,7 +21,10 @@
         return true;
       }
       talentProfile() {
-        return talentProfiles[this.hero.class];
+        // Dormant authoring: no Rogue registry admission until Charm exists.
+        return this.hero.class === 'rogue'
+          ? R.rogueHeroFoundation.talents
+          : talentProfiles[this.hero.class];
       }
       talentMaxRank(i) {
         return Number.isInteger(i) && i >= 0 && i < talentMaxRanks.length ? talentMaxRanks[i] : 0;

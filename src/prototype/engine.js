@@ -22,7 +22,7 @@
     paladin: 105,
     mage: 350,
     ranger: 350,
-    rogue: 260, // Dormant proposed Rogue short-range basic; no combat dispatch yet.
+    rogue: R.rogueHeroFoundation.basic.range, // Dormant until class admission is authorized.
   });
 
   const talentMaxRanks = R.balance.disciplines.maxRanks;
@@ -3542,6 +3542,11 @@
     }
 
     die(cause = null) {
+      // Endure is per life; a genuine defeat starts a new one, never an infinite loop.
+      if (this.hero.class === 'rogue') {
+        this.hero.rogueEndureUsed = false;
+        delete this.hero.rogueEndureUntil;
+      }
       if (this.s.mode === 'arena') {
         this.s.statistics.deaths++;
         this.arenaSelectStage('hub');

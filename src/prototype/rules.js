@@ -6553,6 +6553,21 @@
       ranger: { ...classUltimates.ranger.charged },
     },
   });
+  // Phase 2: authored but dormant Rogue Bard foundation. The playable class
+  // registry intentionally stays at three until Charm and its tutorial ship.
+  // The weapon is a STAFF WITH AN OVERSIZED SUSPENDED JINGLE BELL; reference
+  // clothing and accessories are not canonical. Audio is a future asset task.
+  const rogueHeroFoundation = Object.freeze({
+    classId: 'rogue',
+    weapon: Object.freeze({ kind: 'staff', instrument: 'suspended-jingle-bell', basicCue: 'bell-jingle' }),
+    stats: Object.freeze({ hp: 90, mp: 60, power: 18, armor: 3, speed: 300 }),
+    talents: Object.freeze({ power: 7, mana: 2, hp: 27, speed: 38 }),
+    basic: Object.freeze({
+      range: 260, primaryMultiplier: 0.8, splashMultiplier: 0.25,
+      splashRadius: 100, secondaryCap: 2, finisherSecondaryCap: 4,
+    }),
+    endure: Object.freeze({ duration: 2, floorHp: 1 }),
+  });
   const basicAttackCombo = {
     steps: 3,
     resetSeconds: 4,
@@ -7638,6 +7653,7 @@
     heroAreaTargetCaps,
     classUltimates,
     basicAttackCombo,
+    rogueHeroFoundation,
     companionSkills,
     petCompanions,
     ordinaryMeleeScaling,

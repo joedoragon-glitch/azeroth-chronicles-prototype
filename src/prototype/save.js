@@ -109,6 +109,9 @@
         delete out.hero.shieldStance;
         delete out.hero.shieldRank;
         delete out.hero.silenceField;
+        // Never serialize an invulnerability window tied to a live encounter
+        // clock. The per-life spent flag remains to prevent reload retriggers.
+        delete out.hero.rogueEndureUntil;
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
@@ -407,6 +410,10 @@
           s.hero.skills[0] < 1
         )
           throw Error('Invalid hero');
+        if (s.hero.rogueEndureUsed !== undefined && typeof s.hero.rogueEndureUsed !== 'boolean')
+          throw Error('Invalid Rogue Endure state');
+        if (s.hero.rogueEndureUntil !== undefined)
+          throw Error('Invalid Rogue Endure timer');
         // Older rosters may retain the core-only flag after learning hero Skill 2.
         // Repair the shared unlock without replacing units or resetting their cooldowns.
         if (s.hero.skills[1] > 0) s.companionCombatTraining = 2;
