@@ -2751,6 +2751,19 @@
     };
     const details = (hostElement, entry) => {
       if (!entry.detail) return;
+      if (menu.view === 'class-select' && entry.detail.includes('\n')) {
+        const [role, growth] = entry.detail.split('\n');
+        for (const [text, className] of [
+          [role, 'class-role'],
+          [growth, 'class-growth'],
+        ]) {
+          const span = document.createElement('span');
+          span.className = 'detail ' + className;
+          span.textContent = translateMenu(text);
+          hostElement.append(span);
+        }
+        return;
+      }
       const span = document.createElement('span');
       span.className = 'detail';
       span.textContent = translateMenu(entry.detail);
@@ -3265,30 +3278,30 @@
       back,
     );
   }
-  // One short growth sentence is shared by class selection and Character.
-  // Read the live balance definitions; no duplicated display-only stat formula.
+  // Concise copy for choosing a class and for inspecting its live growth.
+  // The values stay tied to the established combat rules.
   function classGrowthLine(heroClass) {
     const p = Campaign.rules.balance.classPassives;
     const es = language === 'es';
     if (heroClass === 'paladin')
       return es
-        ? 'Fortaleza: +' + p.paladin.hpPerLevel + ' PV/nivel; +' +
-            p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
-            ' daño bloqueado por armadura/nivel.'
-        : 'Fortitude: +' + p.paladin.hpPerLevel + ' HP/level; +' +
-            p.paladin.armorEffectivenessPerLevel.toFixed(2) +
-            ' damage blocked per Armor/level.';
+        ? 'Fortaleza · Cada nivel: +' + p.paladin.hpPerLevel +
+            ' PV máximos y +' + p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
+            ' de daño bloqueado por punto de armadura.'
+        : 'Fortitude · Each level: +' + p.paladin.hpPerLevel +
+            ' max HP and +' + p.paladin.armorEffectivenessPerLevel.toFixed(2) +
+            ' damage blocked per Armor point.';
     if (heroClass === 'ranger')
       return es
-        ? 'Agilidad: +' + p.ranger.speedPerLevel + ' velocidad y +' +
-            Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% reducción de recuperación/nivel.'
-        : 'Agility: +' + p.ranger.speedPerLevel + ' speed and +' +
-            Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% cooldown reduction/level.';
+        ? 'Agilidad · Cada nivel: +' + p.ranger.speedPerLevel +
+            ' de velocidad y +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+            '% de reducción de recuperación.'
+        : 'Agility · Each level: +' + p.ranger.speedPerLevel +
+            ' speed and +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
+            '% cooldown reduction.';
     return es
-      ? 'Poder arcano: +' + p.mage.powerPerLevel + ' Poder/nivel.'
-      : 'Arcane Power: +' + p.mage.powerPerLevel + ' Power/level.';
+      ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
+      : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
   }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
@@ -3311,7 +3324,9 @@
         ' adventure',
       mode === 'arena'
         ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
-        : 'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.',
+        : language === 'es'
+          ? 'Elige quién liderará la resistencia. Cada clase recibe su ventaja innata desde el nivel 1. Rescata especialistas para aprender más habilidades y conseguir equipo.'
+          : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
           c.icon +
@@ -3356,6 +3371,7 @@
         ),
       ),
       () => chooseClass(mode),
+      { view: 'class-select' },
     );
     appendNameField();
   }
@@ -3413,39 +3429,46 @@
   function characterMenu() {
     const h = game.hero,
       es = language === 'es',
-      stats =
-        (es ? 'PV máximos ' : 'Max HP ') +
-        h.maxHp +
-        (es ? ' · Poder ' : ' · Power ') +
-        game.power() +
-        (es ? ' · Armadura ' : ' · Armor ') +
-        game.armor() +
-        '\n' +
-        (es ? 'Velocidad ' : 'Speed ') +
-        game.heroMoveSpeed() +
-        (es ? ' · Reducción de recuperación ' : ' · Cooldown reduction ') +
-        Math.round(game.heroCooldownReduction() * 100) +
-        '%' +
-        (h.class === 'paladin'
-          ? (es ? ' · Daño bloqueado/armadura ' : ' · Damage blocked/Armor ') +
-            game.armorEffectivenessFor(h).toFixed(2).replace('.', es ? ',' : '.')
-          : '');
+      className = es
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[h.class]
+        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[h.class],
+      stats = [
+        { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
+        { label: es ? 'Poder' : 'Power', value: String(game.power()) },
+        { label: es ? 'Armadura' : 'Armor', value: String(game.armor()) },
+        { label: es ? 'Velocidad' : 'Speed', value: String(game.heroMoveSpeed()) },
+        {
+          label: es ? 'Reducción de recuperación' : 'Cooldown reduction',
+          value: Math.round(game.heroCooldownReduction() * 100) + '%',
+        },
+        {
+          label: es ? 'Probabilidad crítica' : 'Critical chance',
+          value: (game.criticalPartyChance('hero') * 100).toFixed(0) + '%',
+        },
+      ];
+    if (h.class === 'paladin')
+      stats.push({
+        label: es ? 'Bloqueo por punto de armadura' : 'Blocked per Armor point',
+        value: game.armorEffectivenessFor(h).toFixed(2).replace('.', es ? ',' : '.') +
+          (es ? ' daño' : ' damage'),
+      });
     openMenu(
       'Character',
-      (h.customName || h.regnalName ? game.heroDisplayName() + ' · ' : '') +
-        h.class +
-        (es ? ' · Nivel ' : ' · Level ') +
-        h.level +
-        '\nXP ' +
-        Math.floor(h.xp) +
-        ' / ' +
-        game.xpRequired(h.level) +
-        (es ? ' · Probabilidad crítica: ' : ' · Critical chance: ') +
-        (game.criticalPartyChance('hero') * 100).toFixed(0) +
-        '%\n' +
-        stats +
-        '\n' +
-        classGrowthLine(h.class),
+      {
+        summary:
+          (h.customName || h.regnalName ? game.heroDisplayName() + ' · ' : '') +
+          className +
+          (es ? ' · Nivel ' : ' · Level ') +
+          h.level +
+          '\nXP ' + Math.floor(h.xp) + ' / ' + game.xpRequired(h.level),
+        sections: [
+          {
+            title: es ? 'Crecimiento de clase' : 'Class growth',
+            text: classGrowthLine(h.class),
+          },
+          { title: es ? 'Atributos actuales' : 'Current stats', rows: stats },
+        ],
+      },
       [
         ...(!h.customName
           ? [action('Name your hero', () => nameHeroMenu(false), 'Optional · choose once')]
@@ -3468,6 +3491,7 @@
         action('Talents', () => talents(characterMenu)),
       ],
       openMain,
+      { view: 'character' },
     );
   }
   function saveMenu() {
