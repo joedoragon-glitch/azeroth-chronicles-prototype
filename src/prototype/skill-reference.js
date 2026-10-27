@@ -109,6 +109,13 @@
         'No healing or immunity. Fracture is nonstacking.',
       ],
     ],
+    // Working prototype names until the owner revisits bell-staff lore.
+    rogue: [
+      ['Staccato Sting', 'Bell burst / companion basic-damage refrain',
+       'A compact jingle-bell shock damages nearby foes and helps allies strike',
+       'Fortissimo Crescendo: a wider bell shock, stronger nearby allied basic strikes',
+       'Both prototype names are under owner revision; mechanics stay separate from labels.'],
+    ],
     ranger: [
       [
         'Rapid Arrows',
@@ -180,6 +187,7 @@
       steps = game.tacticMilestones(rank),
       tactics = R.heroTactics[cls],
       advanced = R.advancedCharges[slot]?.[cls];
+    if (cls === 'rogue' && slot !== 1) return null;
     const tap = { title: 'Tap', effect: c.tap, metrics: [] },
       charge = { title: 'Charged', effect: c.charge, metrics: [] };
     function add(form, key, label, value, unit = '') {
@@ -220,7 +228,30 @@
     ])
       add(f, 'cooldown', 'Cooldown', game.skillCooldown(slot, charged), 's');
     let auto = null;
-    if (slot === 1) {
+    if (slot === 1 && cls === 'rogue') {
+      const cfg = R.rogueHeroFoundation.basic,
+        base = (power + 12) * scale * cfg.primaryMultiplier,
+        tapCfg = game.rogueSkill1Config(false),
+        chargeCfg = game.rogueSkill1Config(true);
+      auto = {
+        title: 'Automatic basics',
+        effect: 'Jingle-bell fan: primary plus two nearby foes, with a five-contact third-hit combo finisher. Charm will affect surviving primary only.',
+        metrics: [],
+      };
+      add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
+      add(auto, 'comboDamage', 'Primary combo damage',
+        R.basicAttackCombo.multipliers.map((v) => base * v));
+      add(auto, 'splashDamage', 'Secondary damage', base * cfg.splashMultiplier);
+      add(auto, 'reach', 'Reach', cfg.range);
+      for (const [form, x] of [[tap, tapCfg], [charge, chargeCfg]]) {
+        add(form, 'damage', 'Damage per enemy', (power + 12) * scale * x.damage);
+        add(form, 'reach', 'Reach', x.range);
+        add(form, 'radius', 'Area radius', x.radius);
+        add(form, 'targets', 'Maximum enemy hits', x.cap);
+        add(form, 'allyBuff', 'Companion basic-hit bonus', x.allyDamage * 100, '%');
+        add(form, 'allyDuration', 'Companion boon duration', x.seconds, 's');
+      }
+    } else if (slot === 1) {
       const base = (power + 12) * scale,
         first = R.chargedSkills.first;
       auto = {

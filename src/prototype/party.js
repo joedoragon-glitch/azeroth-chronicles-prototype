@@ -1105,7 +1105,7 @@
             dx: (e.x - u.x) / d,
             dy: (e.y - u.y) / d,
             target: e.id,
-            damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+            damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 450,
@@ -1114,7 +1114,7 @@
           return true;
         }
         const hit = this.damage(
-          e, this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)), u.id,
+          e, this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)), u.id,
         );
         if (hit)
           this.event('melee', {
@@ -1347,14 +1347,14 @@
             dx: (e.x - u.x) / d,
             dy: (e.y - u.y) / d,
             target: e.id,
-            damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+            damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 450,
             style: 'arrow',
           });
         } else if (this.damage(e, this.troopCriticalDamage(
-          criticalReceipt, this.companionAttackDamage(u),
+          criticalReceipt, this.companionBasicAttackDamage(u),
         ), u.id))
           this.event('melee', {
             actor: 'companion',
@@ -1426,6 +1426,13 @@
       }
       companionAttackDamage(u) {
         return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
+      }
+      // Skill 1's short allied refrain affects ordinary companion basics only.
+      // Existing troop special skills retain their unmodified source damage.
+      companionBasicAttackDamage(u) {
+        const base = this.companionAttackDamage(u);
+        return base * (1 + ((u.rogueSharpRefrainUntil || 0) > this.s.time
+          ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0));
       }
       companionSecondSkillUnlocked() {
         return (this.s.companionCombatTraining || 1) >= 2 || (this.hero.skills[1] || 0) > 0;
@@ -3038,7 +3045,7 @@
               dx: (e.x - u.x) / shot,
               dy: (e.y - u.y) / shot,
               target: e.id,
-              damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+              damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
               source: u.id,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               speed: 450,
@@ -3073,7 +3080,7 @@
           u.cd = 0.85 / this.companionRallyAttackSpeed(u);
           const criticalReceipt = this.troopCriticalRelease(u, 'basic');
           if (this.damage(e, this.troopCriticalDamage(
-            criticalReceipt, this.companionAttackDamage(u),
+            criticalReceipt, this.companionBasicAttackDamage(u),
           ), u.id))
             this.event('melee', {
               actor: 'companion',
@@ -3400,14 +3407,14 @@
                     dx: (pursuer.x - u.x) / d,
                     dy: (pursuer.y - u.y) / d,
                     target: pursuer.id,
-                    damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+                    damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
                     source: u.id,
                     ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
                     speed: 450,
                     style: 'arrow',
                   });
                 } else if (this.damage(pursuer, this.troopCriticalDamage(
-                  criticalReceipt, this.companionAttackDamage(u),
+                  criticalReceipt, this.companionBasicAttackDamage(u),
                 ), u.id))
                   this.event('melee', {
                     actor: 'companion',

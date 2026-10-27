@@ -53,9 +53,8 @@ try {
   assert.equal(g.hero.mp, 60);
   assert.equal(g.talentProfile().power, 7);
   assert.equal(g.heroBasicAttackApproachRange(), 260);
-  assert.equal(g.heroSkillRange(1), 0, 'manual skill range not authorized');
-  assert.equal(g.cast(1, enemies[0].id), false, 'tap remains unavailable');
-  assert.equal(g.cast(1, enemies[0].id, true), false, 'charged form remains unavailable');
+  assert.equal(g.heroSkillRange(1), 260, 'first tap available at level 1');
+  assert.equal(g.heroSkillRange(1, true), 300, 'first charge available at level 1');
   assert.equal(g.cast(2, enemies[0].id), false);
   assert.equal(g.effects.filter((e) => e.type === 'rogueBellBasic').length, 0);
 
@@ -67,7 +66,14 @@ try {
   assert.equal(g.hero.gold, originalGold, 'no purchase or Charm outcome');
   assert.equal(g.s.party.length, 0, 'no premature Charm conversion');
   assert.equal(g.s.projectiles.length, 0, 'no projectile actor');
-  assert(enemies[0].hp < originalHP[0], 'primary took real damage');
+  const realHit = g.effects.find(e => e.type === 'hit');
+  assert(enemies[0].hp < originalHP[0], JSON.stringify({
+    reason: 'primary took real damage', before: originalHP[0], after: enemies[0].hp,
+    landed: g.effects.find(e => e.type === 'rogueBellBasic')?.landed,
+    hit: realHit, hero: { x: g.hero.x, y: g.hero.y, hp: g.hero.hp },
+    enemy: { id: enemies[0].id, x: enemies[0].x, y: enemies[0].y,
+      home: enemies[0].home, aggro: enemies[0].aggro, returning: enemies[0].returning },
+  }));
   assert.equal(enemies.slice(1).filter((e, i) => e.hp < originalHP[i + 1]).length, 2,
     'normal release contacts exactly two legal secondaries');
   const firstCue = g.effects.find(e => e.type === 'rogueBellBasic');
@@ -96,6 +102,44 @@ try {
   assert.equal(noTarget.g.castMovementBasic(), false);
   assert.deepEqual(noTarget.g.snapshot(), before);
 
+  // Both starting manual forms must deal real spatial combat damage
+  // without spawning fake Charm companions or duplicating the auto cooldown.
+  const manual = fresh(6), m = manual.g, foes = manual.enemies;
+  const ally = m.unit('soldier', foes[0].x + 12, foes[0].y + 12);
+  m.s.party.push(ally);
+  const baseline = m.companionBasicAttackDamage(ally),
+    originalSpecial = m.companionAttackDamage(ally);
+  assert(m.cast(1, foes[0].id), 'normal Skill 1 available from level one');
+  assert.equal(m.hero.cd[0], m.skillCooldown(1));
+  assert.equal(m.hero.chargedCd[0], 0);
+  assert.equal(m.hero.basicCd, 0);
+  assert(m.companionBasicAttackDamage(ally) > baseline, 'friendly mirror actually changes basics');
+  assert.equal(m.companionAttackDamage(ally), originalSpecial, 'special attacks not buffed');
+  assert.equal(m.cast(1, foes[0].id), false, 'tap respects cooldown');
+  m.hero.cd[0] = 0;
+  assert(m.cast(1, foes[0].id, true), 'charged Skill 1 available at level one');
+  assert(m.hero.chargedCd[0] > m.hero.cd[0], 'charged recovery distinct');
+  assert.equal(m.cast(1, foes[0].id, true), false, 'charge respects longer cooldown');
+  assert.equal(m.cast(2, foes[0].id), false, 'later performances remain inaccessible');
+  const cues = m.effects.filter(e => e.type === 'rogueBellSkill1');
+  assert.deepEqual(cues.map(e => e.form), ['tap', 'charged']);
+  assert(cues[1].hits >= cues[0].hits, 'charged area capacity not smaller');
+  assert.equal(cues[0].audioCue, 'bell-jingle');
+  assert.equal(cues[1].allyCount, 1);
+  assert.equal(m.companionBasicAttackDamage(ally), baseline * 1.07);
+  const skillCard = require('../src/prototype/skill-reference.js').describe(m, 1);
+  assert(skillCard?.tap && skillCard?.charge && skillCard?.auto,
+    'the starting three forms must have gameplay-facing descriptions');
+  const saveBoon = m.snapshot();
+  assert.equal(saveBoon.party[0].rogueSharpRefrainBonus, undefined);
+  assert.equal(saveBoon.party[0].rogueSharpRefrainUntil, undefined);
+  assert.doesNotThrow(() => Campaign.validate(saveBoon));
+  const forgedBoon = structuredClone(saveBoon);
+  forgedBoon.party[0].rogueSharpRefrainBonus = 100;
+  assert.throws(() => Campaign.validate(forgedBoon), /Invalid saved temporary Rogue boon/);
+  m.s.time += 5.1;
+  assert.equal(m.companionBasicAttackDamage(ally), baseline, 'benefit expires');
+
   const survival = fresh().g;
   survival.hero.hp = 8;
   assert(survival.hitParty(survival.hero, 1000), 'first lethal hit lands');
@@ -123,4 +167,4 @@ try {
   delete Campaign.talentProfiles.rogue;
 }
 assert.deepEqual(Object.keys(Campaign.classes), ['paladin', 'mage', 'ranger']);
-console.log('PASS staged Rogue Bell basic, Endure, no Charm, three-class isolation');
+console.log('PASS staged Rogue three-form Skill 1, basic combo, boon, Endure, save and three-class isolation');

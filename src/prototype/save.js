@@ -112,6 +112,11 @@
         // Never serialize an invulnerability window tied to a live encounter
         // clock. The per-life spent flag remains to prevent reload retriggers.
         delete out.hero.rogueEndureUntil;
+        // Companion song benefits never survive a save/restart boundary.
+        for (const unit of out.party) {
+          delete unit.rogueSharpRefrainUntil;
+          delete unit.rogueSharpRefrainBonus;
+        }
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
@@ -414,6 +419,11 @@
           throw Error('Invalid Rogue Endure state');
         if (s.hero.rogueEndureUntil !== undefined)
           throw Error('Invalid Rogue Endure timer');
+        if (
+          Array.isArray(s.party) && s.party.some((u) =>
+            u && (u.rogueSharpRefrainUntil !== undefined ||
+              u.rogueSharpRefrainBonus !== undefined))
+        ) throw Error('Invalid saved temporary Rogue boon');
         // Older rosters may retain the core-only flag after learning hero Skill 2.
         // Repair the shared unlock without replacing units or resetting their cooldowns.
         if (s.hero.skills[1] > 0) s.companionCombatTraining = 2;

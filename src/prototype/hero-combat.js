@@ -659,6 +659,9 @@
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
       }
       skillCooldown(slot, charged = false) {
+        // The Rogue's first charged performance has its own cooldown budget.
+        if (slot === 1 && charged && this.hero.class === 'rogue')
+          return 8 * (1 - this.heroCooldownReduction());
         const first = R.chargedSkills.first;
         const base =
           slot === 1
@@ -770,6 +773,8 @@
         return target;
       }
       heroSkillRange(slot, charged = false) {
+        if (this.hero.class === 'rogue')
+          return slot === 1 ? this.rogueSkill1Config(charged).range : 0;
         if (!implementedHeroCombatClasses.has(this.hero.class)) return 0;
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           steps = this.tacticMilestones(this.hero.skills[slot - 1]);
@@ -1142,6 +1147,69 @@
           return alive;
         });
       }
+      // These are owner-tunable first-play numbers, not permanent skill names.
+      rogueSkill1Config(charged = false) {
+        return charged
+          ? { range: 300, radius: 190, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
+          : { range: 260, radius: 145, cap: 2, damage: 1.3, allyDamage: 0.05, seconds: 4 };
+      }
+      // Starting manual song: small / widened hostile pulse mirrored to
+      // living active allies in the same lawful area. Charms never come from
+      // manual attacks. The names are revisable independently of these rules.
+      castRogueSkill1(targetId = null, charged = false, encountersAtStart = null) {
+        const h = this.hero, form = this.rogueSkill1Config(charged),
+          rank = h.skills[0], selected = this.selectedHeroTarget(),
+          id = targetId ?? selected?.id ?? this.s.heroTarget;
+        if (h.class !== 'rogue' || this.peace || h.hp <= 0 || !rank ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
+          (charged && this.partyChargeRecovery(h) > 0) ||
+          this.mageSilenceActive(h) || !this.skillReady(1, charged)) return false;
+        const eligible = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+          dist(e, h) <= form.range && this.line(h, e),
+        ),
+          locked = !!selected || targetId !== null && targetId !== undefined,
+          primary = eligible.find((e) => e.id === id) ||
+            (locked ? null : eligible.sort((a, b) =>
+              dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
+        if (!primary) return false; // no hostile, no free buff or cooldown
+        const enemies = eligible.filter((e) =>
+          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)),
+        ).sort((a, b) => a === primary ? -1 : b === primary ? 1 :
+          dist(a, primary) - dist(b, primary) || this.idOrder(a, b)).slice(0, form.cap);
+        const allies = this.activeLivingParty().filter((u) =>
+          u.hp > 0 && u.active !== false &&
+          dist(u, primary) <= form.radius && this.line(primary, u));
+        this.releaseRecallForCombat();
+        this.engage(primary);
+        h.cd[0] = this.skillCooldown(1, false);
+        if (charged) h.chargedCd[0] = this.skillCooldown(1, true);
+        this.s.heroTarget = primary.id;
+        const amount = (this.power() + 12) * form.damage * (1 + 0.15 * (rank - 1));
+        let hits = 0;
+        for (const e of enemies) {
+          if (this.damage(e, amount, 'hero', {
+            area: true, ...(charged && encountersAtStart ? { encountersAtStart } : {}),
+          })) hits++;
+        }
+        // Stronger same-family application replaces the bonus; no stacking.
+        // Other families will use separate bounded effect records in Phase 5.
+        for (const u of allies) {
+          if ((u.rogueSharpRefrainUntil || 0) <= this.s.time) u.rogueSharpRefrainBonus = 0;
+          u.rogueSharpRefrainBonus = Math.max(u.rogueSharpRefrainBonus || 0, form.allyDamage);
+          u.rogueSharpRefrainUntil = Math.max(u.rogueSharpRefrainUntil || 0, this.s.time + form.seconds);
+        }
+        this.event('rogueBellSkill1', {
+          actor: 'hero', class: 'rogue', slot: 1,
+          form: charged ? 'charged' : 'tap', audioCue: 'bell-jingle',
+          instrument: R.rogueHeroFoundation.weapon.instrument,
+          x: primary.x, y: primary.y, radius: form.radius,
+          target: primary.id, hits, allyCount: allies.length,
+        });
+        return true;
+      }
       // Dormant Rogue automatic basic. Its weapon is deliberately NOT a guitar.
       // This is a legal primary hit plus bounded splash; Charm is reserved for
       // Phase 3 and will only be offered the primary's actual damage receipt.
@@ -1179,13 +1247,17 @@
         const landed = this.damage(primary, baseDamage, 'hero', { automaticBasic: true });
         let splashHits = 0;
         if (landed) {
-          const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap;
+          const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap,
+            axis = Math.atan2(primary.y - this.hero.y, primary.x - this.hero.x),
+            angleGap = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))),
+            halfAngle = combo.step === 3 ? 0.75 : 0.5;
           const secondary = this.zone().enemies.filter((e) =>
             e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
             !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
             dist(e, primary) <= cfg.splashRadius &&
             dist(e, this.hero) <= cfg.range + cfg.splashRadius &&
+            angleGap(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), axis) <= halfAngle &&
             this.line(this.hero, e),
           ).sort((a, b) => dist(a, primary) - dist(b, primary) || this.idOrder(a, b));
           for (const e of secondary.slice(0, max))
@@ -1211,10 +1283,14 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
-        // Rogue has ONLY its automatic basic in Phase 2. Manual performances
-        // and charged releases remain gated until their own authored phase.
-        if (this.hero.class === 'rogue')
-          return slot === 1 && automatic && !charged ? this.castRogueBasic(targetId) : false;
+        // Rogue starts with Skill 1 Automatic, Tap and Charged; Skills 2–8
+        // remain explicitly locked. Current prototype names can be revised.
+        if (this.hero.class === 'rogue') {
+          if (slot !== 1) return false;
+          return automatic && !charged ? this.castRogueBasic(targetId)
+            : !automatic ? this.castRogueSkill1(targetId, !!charged, encountersAtStart)
+            : false;
+        }
         if (!implementedHeroCombatClasses.has(this.hero.class)) return false;
         if (this.s.mode === 'developer' && slot === 1 && automatic) return false;
         const i = slot - 1,
