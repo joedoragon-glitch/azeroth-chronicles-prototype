@@ -1,6 +1,6 @@
 # Rogue Bard — review-ready gameplay and balance candidate
 
-> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` through `990fc79d` (new branding and lightweight pre-CI policy) is incorporated on the Phase 3 preparation branch; focused validation of this new integration head is separate from the passing Phase 2 run.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+> **Phase 1–3 consolidated status (27 October 2026):** **Phases 1, 2 and 3 are COMPLETE AS STAGED and focused-validated; Phase 4 is READY BUT NOT STARTED.** Charm is owner-approved at **12%** on an eligible surviving automatic primary hit; every capture gets **automatic permanent nickname** from **70 EN/70 ES** options plus **100% friendly max HP** (active or reserve), without popup/toggle/naming tutorial. The legitimate Charm-first → worker → Barracks tutorial remains Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024), with [docs-head check green](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428). Main through `5c6197e8` integrated, 0 behind at closeout. PR #511 is open/draft, unmerged/undeployed, class unregistered. Consult [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md); all earlier contradictory phase status, guitar, wounded-capture and optional/manual-naming descriptions are retained as historical proposals, not implementation instructions.
 
 **26 October 2026 | design candidate v1 | documentation only | source: main e44ea0ec4b9ed164a85431e972664efda2190da6**
 
@@ -58,7 +58,9 @@ No cap is chosen beyond current global [0,1] probability safety. Actual hero-lev
 
 **Implementation gate:** hook lethal damage exactly once through shared hero HP-loss routes (ordinary hits, projectiles, hazards, poison/periodic and premitigated boss impacts), reset/serialize a minimal timer or reconcile pause/load, and prove automatic potion/Succession/death penalty do not double-fire. No substitute generic invulnerability flag.
 
-## 2. Weapon and ordinary automatic attack (P)
+## 2. Historical guitar weapon/auto proposal — replaced by the bell-staff implementation
+
+**Archive caution:** The guitar and possible Skill 1 direct Charm rule below are not current design. Live Charm is limited to lawful surviving auto-primary hits at owner-fixed 12%.
 
 The guitar **is** her weapon. She does not need a second dagger or an animated melee stance to justify it: an aggressive, short-range acoustic attack is thematically clear, and the same static guitar silhouette can be held for every frame. She can visually *thump* with it at point-blank proximity without a separate melee mode; mechanically **one midrange attack type**, not a hybrid stance-switching engine.
 
@@ -85,7 +87,7 @@ This lets the Rogue feel distinctive at the keyboard without high DPS by default
 
 At **real-source-minimum L1 Power 18**, `Power+12=30` (current basic formula). Candidate Rogue auto: **24 primary** (0.80 × 30), **6 per splash** (0.25 × 24), **36** across three fully legal targets before combo, armor and context; against **one** target it deals only **24**. For reference, the existing plain L1 no-gear attack's pre-combo raw `Power+12` values at base are **Paladin 30 / Mage 34 / Ranger 32** (their hit geometry and projectile timing differ). Rogue's one-target **24** is clearly inferior even to lowest-Power Paladin's **30**; crowd-total **36** can exceed a single hit but is capped by nearby targets/LOS and is **not** 36 damage to one enemy. At 12% L1 crit and native Rogue intensity-1 **+8% damage on a critical action**, expected Rogue primary damage is **24 × (1+0.12×0.08)=24.2304** before mitigation/other effects—not a 2× critical. These values are arithmetic, **not** observed DPS/encounter balance. With **zero companions at creation** while all three existing classes currently start with Soldier+Archer, low stats create a genuine early-game survival/charm-acquisition risk, even though Rogue later fields +1. Never declare L1 balance solved by simply copying stat minima.
 
-## 3. Charm acquisition and company economy (P tuning, owner direction intact)
+## 3. Historical Charm rate candidate — owner-fixed 12% now implemented
 
 **P opening point estimate:** **12% chance per legitimate surviving primary auto-basic hit** if there is at least one legal company slot; **one** attempt per attack. This is deliberately not tied to critical chance, books, level, enemy rank, or other skill effects initially. Independent draw from ordinary attack randomness is needed to avoid perturbing world RNG; select a compatible isolated stream after the native RNG architecture review.
 
@@ -159,6 +161,6 @@ On a Rogue → Paladin/Mage/Ranger transition, **every existing charmed monster 
 
 **This is a strong design default for owner review, not acceptance evidence.** Approval later should fix the limited open knobs (stats, range/AoE, charm chance and roster-total cap, Endure outcome/CD, skill kit, summon disposition and appearance). Implement only after that checkpoint.
 
-## Superseding owner decision — wounds and growth (27 October 2026)
+## Historical wounded-capture decision (superseded by immediate full-HP capture); Phase 4 growth remains
 
 The owner's clarified policy supersedes the unresolved *principle* in the earlier proposed companion-stat paragraph: keep **real species-specific, balanced friendly base profiles** rather than only replacing every monster with generic Soldier/Ranger base stats, then apply **the existing hero-level growth, Companion Vitality, training and inherited permanent bonuses**. Numeric subtype coefficients and exact stat tables remain **engineering proposals subject to comparison/playtests**, not approved constants. Convert the native enemy's HP fraction **after the legal surviving Charm hit** to the new level-scaled companion maximum; no free full healing on capture. Preserve injuries through save/travel/reserve. Fallen creatures are recoverable through existing care with their exact source and name. Normal ally-level growth does not erase a wound: the existing progression implementation preserves absolute missing HP as maxima change, while a dead ally remains at zero. See the [current authoritative Phase 3/4 handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md).

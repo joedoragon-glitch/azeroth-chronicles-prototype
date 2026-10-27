@@ -1,6 +1,6 @@
 # Rogue Bard — exact integration, housekeeping, risks and validation handoff
 
-> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` through `990fc79d` (new branding and lightweight pre-CI policy) is incorporated on the Phase 3 preparation branch; focused validation of this new integration head is separate from the passing Phase 2 run.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+> **Phase 1–3 consolidated status (27 October 2026):** **Phases 1, 2 and 3 are COMPLETE AS STAGED and focused-validated; Phase 4 is READY BUT NOT STARTED.** Charm is owner-approved at **12%** on an eligible surviving automatic primary hit; every capture gets **automatic permanent nickname** from **70 EN/70 ES** options plus **100% friendly max HP** (active or reserve), without popup/toggle/naming tutorial. The legitimate Charm-first → worker → Barracks tutorial remains Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024), with [docs-head check green](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428). Main through `5c6197e8` integrated, 0 behind at closeout. PR #511 is open/draft, unmerged/undeployed, class unregistered. Consult [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md); all earlier contradictory phase status, guitar, wounded-capture and optional/manual-naming descriptions are retained as historical proposals, not implementation instructions.
 
 **26 October 2026 | PR #511 | deep source audit at main e44ea0ec4b9ed164a85431e972664efda2190da6 | documentation only**
 
@@ -49,7 +49,7 @@ Use a single action-level operation anchored at legal Rogue **primary automatic-
 
 **Monster quest/respawn policy requires focused review** beyond source read. A mob can be named in authored objectives, pack control, flee/move, boss threat or ranger healer AI. Do not silently “capture” a mandatory boss add or shrine guard. Positive whitelist of ordinary species/roles is safer than a blacklist of dozens of special flags.
 
-## 2. Specific source change map (future implementation only)
+## 2. Historical source change map — Phases 1–3 code now implemented
 
 **Class / progress:**
 - \`src/prototype/rules.js\`: \`R.balance.classes.rogue\`, matching \`disciplines.profiles.rogue\`; class-specific Skill 1 charge seconds/forms/coefficients, Rogue effect rules/limits, explicit basic AoE config/finisher, bounded Charm/Endure/trap/status numbers. Existing three entries must not move or change values.

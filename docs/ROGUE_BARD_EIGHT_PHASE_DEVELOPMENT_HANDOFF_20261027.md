@@ -23,7 +23,7 @@ See [Phase 3 technical closure receipt](ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_202
 
 | Phase | Engineering deliverable | Gate and status |
 | --- | --- | --- |
-| **1. Foundation** | Reconcile PR #511 against `main`, preserve the original classes, focused regression and save/Succession checks. | **DONE** for gameplay through `1eeff159` at `bd1cbe83`, plus documentation-only `main` through `990fc79d` in the Phase 3 preparation merge. New-head CI remains a distinct gate. |
+| **1. Foundation** | Reconcile PR #511 against `main`, preserve original classes, focused regression and save/Succession checks. | **DONE as staged.** All newer `main` commits through `5c6197e8` integrated in `dac13bcf`, 0 behind at closeout; 48-suite build gate green at `f24f16ef`. |
 | **2. Hero basics** | Candidate low starting stats, solo starter policy, weapon-driven automatic basic and its full third-hit combo finisher, **normal and charged Skill 1 from level one**, innate Endure, native integration and tests. | **DONE as staged**, tested at `b915bc06`, not playable/publicly registered. |
 | **3. Charm** | Lawful surviving-primary auto-hit 12% capture, eligible ordinary species/subtype provenance, native per-subtype Expedition quotas, active/reserve admission with automatic EN/ES nicknames and full friendly HP, no duplicate rewards, v4 saves and Succession. | **DONE as staged**: 48 focused suites + reproducible offline-ready build **green** at `f24f16ef` ([run 40503909024](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024)); `main` integrated through `5c6197e8`, 0 behind at closeout. No class registration/release. |
 | **4. Companion integration** | Actual Charmed creature movement/combat role, recovery, all legitimate monster types' **existing worker eligibility** (build/upgrade Barracks and gathering), active/reserve/fallen/away management, migrations and saved orders, proper Succession and inherited ordinary troops. | **NOT STARTED.** |
@@ -68,9 +68,9 @@ See [Phase 3 technical closure receipt](ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_202
 
 ## Entry instructions for the next development chat
 
-1. Open [draft PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) and **read this handoff first**. Verify exact head and focused CI of the Phase 3 preparation merge. `main` through `990fc79d` has already been reconciled; compare only genuinely newer drift. Preserve passing test evidence for unchanged inputs.
+1. Open [draft PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) and the [consolidated Phase 1–3 baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md). Check exact current head/CI and new drift after already reconciled `main` `5c6197e8`. Preserve passing Phase 3 code evidence for unchanged inputs.
 2. Read the [owner canon record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md), [canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md), [Charm/Barracks contract](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md), [dual-sided effects/crit matrix](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md), [phase-2 source contract](ROGUE_BARD_PHASE2_HERO_FOUNDATION_20261027.md), and [class-independence audit](ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md). Dated sections labeled “no implementation” are **historical** after the above gate.
-3. **Complete Phase 3 verification and focused corrections only**. Confirm native Charm/provenance/quota tests on the current head while preserving completed Phase 2 and the original classes. Discuss impactful unexplained creative choices with the owner; keep current Skill 1 names provisional and avoid expanding into Phase 4 labor or Phase 5 repertoire without another phase-specific request.
+3. **Phase 3 is complete as staged.** Next owner-authorized work is **Phase 4** genuine species-specific companion stats/AI/labor and roster lifecycle; do not silently reopen fixed Charm/naming/HP rules, start the Phase 7 tutorial, or expand to later musical and critical mechanics.
 4. Update **this handoff, the canonical owner handoff, affected specification documents, and the PR top-level summary** after verified changes. Mark the exact head/CI/status. Keep the draft unmerged/undeployed without explicit authorization.
 
 ## Documentation map and historical provenance
@@ -105,7 +105,7 @@ Successful conversion creates one ordinary friendly roster actor with exact sour
 
 ## Phase 4 handoff — ready for owner-directed implementation, not started
 
-Begin Phase 4 **only after Phase 3's final integrated focused CI passes** and the PR records the exact verified head. Retain the lawful capture and save-record ownership contract unchanged. Phase 4 then owns the per-species ally combat presentation and AI, Barracks recovery and orders, eligibility of **every** authentic Charmed creature for existing build/upgrade/gather actions (with ordinary prerequisites), active/reserve/fallen/away command and Succession preservation. First-run tutorial sequencing and full art/audio remain Phase 7. Do not unfreeze Rogue class selection, merge, deploy or run comprehensive QA as part of this handoff.
+The Phase 3 integrated focused CI and recorded PR handoff **passed** at `f24f16ef` and `922a9cc2`. Begin Phase 4 when the owner directs; preserve the verified source and save contract. Retain the lawful capture and save-record ownership contract unchanged. Phase 4 then owns the per-species ally combat presentation and AI, Barracks recovery and orders, eligibility of **every** authentic Charmed creature for existing build/upgrade/gather actions (with ordinary prerequisites), active/reserve/fallen/away command and Succession preservation. First-run tutorial sequencing and full art/audio remain Phase 7. Do not unfreeze Rogue class selection, merge, deploy or run comprehensive QA as part of this handoff.
 
 ## Phase 3 isolated source execution receipt — 27 October 2026
 
@@ -113,13 +113,13 @@ At candidate head `fac98cea0caa547c9d1bbe9180f2f7660688fbe5`, the complete **Pha
 
 **Historical pre-closeout action list (resolved by integrated focused CI and mainline merge):** run `node tests/rogue-hero-phase2.test.cjs` and the focused original targeting, save, class and Succession suites in real Node at the *final* integrated head; verify build and the focused CI receipt, reconcile upstream `main` title/loading, menu and rendering overlap without overwriting either side. Existing Actions run `40489088644` predates Phase 3 and cannot certify this candidate. Rogue stays unregistered, PR #511 stays DRAFT, and Phase 4 work may begin **after** the Phase 3 native gate, not before.
 
-## Owner-approved Phase 3/4 presentation and probability decisions — 27 October 2026
+## Historical intermediate presentation and captured-HP decisions (superseded where conflicting)
 
 - **Charm chance is fixed at 12%** per surviving, eligible, HP-reducing automatic Rogue basic primary hit. Do not change this without a subsequent owner decision. Excluded hits and subtype-quota refusals never consume a Charm roll.
 - **Minor HP rounding is accepted.** Preserve the post-hit HP fraction by ordinary rounding against friendly maximum HP, minimum 1; a trivially scratched foe may legitimately appear full after conversion. Do not introduce fractional HP, forced 1-point injuries or an anti-rounding patch. Acceptance should use meaningfully wounded monsters.
 - **One restrained visual allegiance marker:** retain the authentic monster's original look and give active Charmed companions a thin turquoise ring below their feet. Do not reskin, add a large aura, or treat the ring as a class unlock. Match behavior in Canvas2D and optional WebGL after Phase 4 ally integration / Phase 7 presentation; hide for resting, fallen and away actors. If the same species appears as a hostile, only the friendly unit gets the marker. Existing target/selection effects and render ordering must remain legible. This is owner direction, not a claim that either renderer already implements the ring.
 
-## Owner clarification — captured health, companion growth and recovery (27 October 2026)
+## Historical captured-wound proposal (superseded at Charm); future growth/recovery contract remains Phase 4
 
 These are **design requirements**, not a claim that all native mechanics have passed acceptance.
 
@@ -133,7 +133,7 @@ These are **design requirements**, not a claim that all native mechanics have pa
 
 
 
-## Owner clarification — capture wounds, monster growth and ordinary care (27 October 2026)
+## Historical capture-wound rationale (superseded at Charm by immediate full HP)
 
 **Binding decisions for Phases 3 → 4, with later balance values still subject to testing:**
 
@@ -146,7 +146,7 @@ These are **design requirements**, not a claim that all native mechanics have pa
 
 **Focused Phase 4 acceptance cases:** Charm the *same subtype* at low vs high hero levels; prove the normalized baseline changes predictably only by documented hero level and permanent ally progression; compare two legitimately different monster subtypes; capture a wounded survivor and verify exact ratio then save/reload, rest/activate, zone change, legitimate heal and full recovery; level a wounded companion and check existing missing-HP policy; kill and recover the ally and prove exact identity; check living/fallen/away count toward quota, and check a non-Rogue successor retains its captured company without granting new Charm. Include one native melee, ranged and allowed healer archetype and protect all original-class Soldier/Archer/pet numbers.
 
-## Latest owner-confirmed Charm and Phase 4 rules — 27 October 2026
+## Historical intermediate Charm and Phase 4 contract (later owner changes prevail)
 
 - **Chance:** 12% on each eligible surviving automatic Rogue Bard primary hit is confirmed by the owner. Do not silently rebalance this probability while completing Phase 3; feasibility measurements may inform a later explicit discussion.
 - **Wounds on capture:** the converted companion retains the hostile's *remaining HP fraction* normalized to its allied maximum; ordinary integer rounding may make an almost-uninjured creature appear at full companion HP, and that is acceptable. No deliberate full heal on capture or region crossing. Companions may use established care and fallen recovery; future Rogue healing skills can also heal them when those skills are implemented.
@@ -156,7 +156,7 @@ These are **design requirements**, not a claim that all native mechanics have pa
 
 Focused actual-travel/save tests are part of Phase 3 ownership/lifecycle regression; tests for Reed Beast sprite parity, genuine species scaling and labor/orders are Phase 4 acceptance work. **Do not mark Phase 3 CI green or Phase 4 implemented without execution evidence.** PR #511 stays draft/unmerged/undeployed.
 
-## Owner-confirmed companion naming and restrained visual identification — 27 October 2026
+## Historical naming and identity proposal (later automatic-naming rule prevails)
 
 A Charmed monster can receive an optional personal name at the Barracks through the existing **Company → Name companions** flow. Capture and recruitment never pause for naming; ordinary original subtype identity and provenance remain intact whether named or unnamed, and the name persists through saved company state. Keep existing one-time naming rules for all ordinary companions and boss pets.
 
