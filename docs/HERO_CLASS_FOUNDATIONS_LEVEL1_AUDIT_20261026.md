@@ -112,6 +112,34 @@ Current `main` values:
 
 **Source:** `src/prototype/rules.js` class/discipline/cooldown configuration, `src/prototype/progression.js` `heroTalentSpeedBonus()` and `talent()`, `src/prototype/engine.js` movement computation, `src/prototype/hero-combat.js` `skillCooldown()` and `basicSkillCooldown()`.
 
+### Mage Arcane Power passive — +2 Power per level, including level 1; no other effects
+
+The owner evaluated the existing Mage Discipline Training gain of **+9 Power per training rank**, up to five ranks (+45 Power). Two imagined extra ranks yield +18 Power; dividing by 15 produces a fractional 1.2. Rather than add decimals to the progression, the owner selected a generous **+2 effective Power for each hero level, including level 1**. **No cooldown reduction, HP bonus, movement bonus, or additional mechanic is permitted for Mage.**
+
+The latest clarification makes the intended **+30 Power at level 15** exact: there are 15 passive increments counting the immediate level-1 bonus.
+
+```js
+const magePassivePower = hero.class === 'mage' ? 2 * hero.level : 0;
+const effectiveMagePower = existingPowerFromBaseEquipmentAndTalents + magePassivePower;
+// No changes to the individual damage formulas, skills or talent ranks.
+```
+
+| Mage level | Base Power before equipment/talents | New passive Power | Base + passive Power |
+| --- | ---: | ---: | ---: |
+| 1 | 22 | +2 | 24 |
+| 2 | 22 | +4 | 26 |
+| 5 | 22 | +10 | 32 |
+| 10 | 22 | +20 | 42 |
+| 15 | 22 | +30 | 52 |
+| 18 | 22 | +36 | 58 |
+| 20 | 22 | +40 | 62 |
+
+**Balance reality check:** at level 15 with full Power training (**+45**), tier-4 weapon (**+70**) and no reforge, effective Mage Power would be **22 + 45 + 70 + 30 = 167**, versus **137** on the current system. A simple normal Skill-1 base `Power + 12` would be **179 versus 149**, before combo multipliers, crits and defense. Skills remain unchanged but their Power-dependent output rises, so validate offensive power creep across the full existing skill suite before merging.
+
+**One source of truth:** add the passive to the existing `progression.js::power()` accessor for Mage only; do not create a special Mage damage formula, edit the talent values, or alter cooldown logic. `heroOtherDamageBonus()` currently computes the residual from `power()` and is used by Shared Strength companion inheritance; the owner has not authorized buffs to companions as a side effect of a Mage hero passive. Exclude derived passive Power from inheritance unless separately agreed, without breaking legitimate existing equipment inheritance. Cover legacy weapon selection, talent resets, save/load, Succession and UI display.
+
+**No implementation yet.** All class-passive numerical ideas are now specified; future work is an isolated integration plus focused regression checks, subject to sign-off.
+
 ### Architectural decision — one Armor formula, configurable effectiveness (owner clarification, October 26)
 
 **Explicit direction:** Do **not** implement a special Paladin damage-received formula alongside the ordinary formula. Replace the hard-coded literal `0.35` with a **named, configurable, default Armor-effectiveness value**, and have **every relevant Armor-mitigation calculation read the current value for its target**. The Paladin's innate passive contributes to **that value**, not to a second mitigation branch.
@@ -204,7 +232,7 @@ The target identities are deliberately simple:
 
 This is not an invitation to replace the existing combat system. The user identified a likely original-design inheritance issue: the game began with a Paladin; Mage and Ranger were subsequently added to largely shared stats, equipment and progression mechanics. The repository history below confirms substantial portions of that explanation.
 
-**Working diagnosis, not a measured balance verdict:** initial class identities exist, but flat shared improvements dilute their relative differences during progression. Ranger's starting agility is less distinct than Paladin's durability and Mage's Power. No specific new numbers have yet been approved.
+**Historical baseline diagnosis (made before the passive-design decisions above):** initial class identities exist, but flat shared improvements dilute their relative differences during progression. Ranger's starting agility is less distinct than Paladin's durability and Mage's Power. The owner subsequently specified the three new passive increments above, but none has been implemented or playtested.
 
 ## 2. Historical evidence: original Paladin → three classes → shared equipment progression
 
