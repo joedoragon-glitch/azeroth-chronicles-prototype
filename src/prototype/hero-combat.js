@@ -1272,9 +1272,12 @@
         // Owner-approved fixed 12% per eligible, surviving primary hit.
         if (next / 4294967296 >= 0.12) return false;
         const u = this.unit(profile.role, primary.x, primary.y);
-        u.hp = Math.max(1, Math.round(u.maxHp * (primary.hp / primary.maxHp)));
+        // Every legitimate Charm is a fully healed, immediately named ally.
+        // Naming is automatic in both active-group and reserve admissions.
+        u.hp = u.maxHp;
         u.icon = primary.icon;
         u.name = profile.typeName;
+        u.customName = this.nextRogueCharmNickname();
         u.charmOrigin = { ...profile };
         u.active = this.activeParty().length < this.expeditionPartyCap();
         // No kill() call: no XP, loot, quests, streaks or death rewards.
@@ -1302,7 +1305,7 @@
           actor: 'hero', companionId: u.id, sourceEnemyId: primary.id,
           typeId: profile.typeId, active: u.active, x: u.x, y: u.y,
         });
-        this.say(profile.typeName + ' Charmed. ' +
+        this.say(u.customName + ' (' + profile.typeName + ') Charmed. ' +
           (u.active ? 'Joined the group.' : 'Group full; resting in reserve.'));
         return true;
       }
