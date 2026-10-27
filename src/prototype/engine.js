@@ -5600,12 +5600,12 @@
         if (committed) return true;
       }
       if (state.phase === 'anchored') {
-        // An outmatched fighter may hold an allied post, but that must not
-        // become twelve seconds of free Ranger attacks outside Rogue reach.
-        // Only a fresh, visible HP-damage source can break this temporary
-        // ordinary-monster hold. The native AI resumes its existing leash,
-        // movement speeds, shot ranges and obstacle handling below.
-        const underFire = this.enemyUnderFireAlert(e);
+        // A completed retreat is a real tactical decision, not an inert
+        // target lock. An HP hit BEFORE arrival must not undo the refuge.
+        // A fresh distant hit AT the post can request another Rogue decision
+        // (support, defend or escape), but never forcibly converts it into
+        // immediate pursuit. Preserve the existing two-second decision floor.
+        const underFire = state.hitWhileAnchored ? this.enemyUnderFireAlert(e) : null;
         const source =
           underFire?.source === 'hero'
             ? this.hero
@@ -5613,6 +5613,7 @@
               ? this.activeLivingParty().find((u) => u.id === underFire.source)
               : null;
         if (
+          state.hitWhileAnchored &&
           e.type === 'mob' &&
           e.form === 'normal' &&
           !e.summon &&
@@ -5620,7 +5621,7 @@
           !e.captain &&
           !e.roomCaptain &&
           !e.fieldCaptain &&
-          !this.tacticalDefenderTerritory(e) &&
+          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
           source?.hp > 0 &&
           target === source &&
           dist(e, source) > 280 &&
@@ -5632,8 +5633,15 @@
               y: D.towns[this.regionIndex()][1],
             }) >= 160)
         ) {
-          this.tacticalStopRogueRegroup(e);
-          return false;
+          this._tacticalRegroups.set(e.id, {
+            phase: 'thinking',
+            anchor: { x: e.x, y: e.y },
+            thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+          });
+          e.path = [];
+          e.routeAge = 0;
+          e.noProgress = 0;
+          return true;
         }
         // The temporary combat anchor follows a real continued encounter,
         // never changing the original respawn home.
