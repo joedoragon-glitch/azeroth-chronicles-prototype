@@ -28,6 +28,12 @@ This is a **source-checked second pass after the initial fourth-class and Barrac
 5. **Enemy monster artwork must not be faked by enemy allegiance.** The current ally default in `visuals.js` chooses `goblin-archer` for an Archer-role unit. When Charm exists, map authorized species+subtype art into a real friendly presentation path while leaving AI allegiance and reward ownership friendly.
 6. **Large roster menus do not themselves enforce quotas.** The provisional `charmOrigin.typeId` in the dormant UI is not yet a signed-off save field. The actual capture transaction must compute its unique type key and admit/refuse before consuming Charm RNG; a forged `charmOrigin` record cannot prove a legal capture.
 
+## 2a. Additional zero-regression preparation in the same PR
+
+- **Unauthorized Charm imports refused:** `save.js` now rejects any `charmOrigin` metadata from version-4 imports until the future exact-type allowlist, conversion authentication and migration exist. This keeps the dormant paginated roster UI from accidentally accepting a self-declared captured monster as valid saved gameplay. Test fixture deliberately uses in-memory sample companions only.
+- **Ordinary hiring gated by class capability at the source:** `party.js::companionRecruitmentReason` denies the hypothetical Rogue Soldier/Ranger recruitment; both `recruit`, `train`, queued recruitment and direct UI requests route through that same owner. `menus.js` removes Rogue hiring actions from both Captain and Barracks while keeping recovery/treatment available. The Rogue's unrelated zero-party Captain/first-Barracks quest requires its own authored onboarding and builder decision; hiding the false Soldier tutorial does not complete that design.
+- **Regression source:** `fourth-class-readiness.test.cjs` checks no-hire APIs preserve crowns, queues and roster; `barracks-charmed-roster-readiness.test.cjs` checks both recruitment paths are absent and Captain care remains reachable. The Skill 1 copy test now checks the native normal/charged cooldown after existing class-based reduction, instead of assuming unreduced constants.
+
 ## 3. Validation status and CI triage
 
 This branch remains **draft, unmerged, not deployed as new gameplay**. JavaScript parse checks on touched files are *syntax-only*. One earlier focused workflow at `fa6cb2b` failed **three** checks:
