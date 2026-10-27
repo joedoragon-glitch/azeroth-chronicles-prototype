@@ -185,9 +185,9 @@ function lockManager() {
   repairedStorage.set(P.saveKey('normal'), JSON.stringify(new C().snapshot()));
   await settle();
   assert.equal(
-    repaired.elements.get('modal').hidden,
-    true,
-    'A fresh successful load dismisses the obsolete unreadable-save prompt',
+    repaired.elements.get('title-screen').hidden,
+    false,
+    'A fresh successful load returns to the title with the recovered save',
   );
   enterFromTitle(repaired);
   assert(repaired.scope.Prototype.save());

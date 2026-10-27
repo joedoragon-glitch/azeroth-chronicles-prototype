@@ -3192,6 +3192,9 @@
     const es = language === 'es';
     const t = (en, spanish) => es ? spanish : en;
     $('title-heading').textContent = "So I Became the Dark Lord's Problem";
+    titleScreen.querySelector?.('nav')?.setAttribute?.(
+      'aria-label', es ? 'Menú principal' : 'Main menu',
+    );
     $('title-tagline').textContent = t(
       "He conquered the world. He wasn't expecting you.",
       "Conquistó el mundo. No contaba contigo.",
@@ -3338,6 +3341,15 @@
           if (loaded) profile.activeMode = game.s.mode;
           savedRunRecoveryMenu();
         }),
+        ...modes.filter((mode) => persistence.loadFailed(mode)).map((mode) =>
+          action(
+            (language === 'es' ? 'Recuperar ' : 'Recover ') + mode,
+            () => {
+              profile.activeMode = mode;
+              savedRunRecoveryMenu();
+            },
+          ),
+        ),
         ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
           label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
           action: () => {
@@ -3427,7 +3439,7 @@
         action('Import save', () => $('import-file').click()),
         action('Start a new Normal run', () => chooseLanguage('normal')),
       ],
-      savedRunRecoveryMenu,
+      started ? savedRunRecoveryMenu : showTitleScreen,
       { view: 'save-recovery' },
     );
   }
