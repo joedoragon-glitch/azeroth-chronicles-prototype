@@ -1275,6 +1275,9 @@
         u.charmOrigin = { ...profile };
         u.active = this.activeParty().length < this.expeditionPartyCap();
         // No kill() call: no XP, loot, quests, streaks or death rewards.
+        // Retire every active target pointer/order before detaching the foe.
+        // The existing dust-cover helper already centralizes this cleanup.
+        this.tacticalDropDustTarget(primary);
         this.cancelEncounter(primary);
         this.clearEnemyUnderFire(primary);
         this.tacticalClearThreat(primary);
