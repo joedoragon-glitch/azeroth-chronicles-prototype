@@ -59,6 +59,8 @@ for(const mode of ['normal','nightmare']){
     mode+': legal distant damage opens tactical reassessment, not forced chase');
   assert.equal(d(first,e),0,'no instant move toward superior Ranger');
   assert.equal(g.tacticalRogueRegroup(e).anchor.x,first.x,'defended post context retained');
+  assert(g._tacticalRogueNext?.get(e.id) >= g.s.time + 1.99,
+    'reassessment spends the original two-second Rogue decision readiness');
   for(let i=0;i<4;i++)tick(g);
   assert(['defend','escape','travel','extended','anchored'].includes(
     g.tacticalRogueRegroup(e)?.phase),
