@@ -23,11 +23,14 @@ function prep(g,e,p) {
 function probe(g,e,range,context) {
   const start={x:e.x,y:e.y,hp:e.hp,homeDistance:dist(g.hero,e.home)};
   const cast=g.cast(1,e.id,false,null,true);
+  // Casting engages and may scale the monster's maximum HP before the arrow
+  // arrives. Compare to that post-engagement HP, not its pre-aggro HP.
+  const hpAtLaunch=e.hp;
   let hit=false;
   for(let i=0;i<25&&!hit;i++){
     g.s.time+=0.05;
     g.updateProjectiles(0.05);
-    hit=e.hp<start.hp;
+    hit=e.hp<hpAtLaunch;
   }
   const aggroAfterHit=!!e.aggro;
   const alert=!!g.enemyUnderFireAlert(e);
@@ -35,16 +38,22 @@ function probe(g,e,range,context) {
   const nearTown=dist(g.hero,{x:300,y:350});
   const xy={x:e.x,y:e.y};
   let firstMoveAt=null;
+  let maxFrameStep=0, firstBurstAt=null;
   let reset=false;
   for(let i=0;i<25;i++){
     g.s.time+=0.1;
+    const frameStart={x:e.x,y:e.y};
     g.updateEnemies(0.1);
+    const frameStep=dist(frameStart,e);
+    maxFrameStep=Math.max(maxFrameStep,frameStep);
+    if(firstBurstAt===null && e.pursuitBurst>0)firstBurstAt=(i+1)*0.1;
     if(firstMoveAt===null && dist(xy,e)>0.1)firstMoveAt=(i+1)*0.1;
     if(e.returning)reset=true;
   }
   const result={context,range,cast,hit,aggroAfterHit,alert,
     homeDistance:Math.round(start.homeDistance),nearTown:Math.round(nearTown),
-    insideLeash,firstMoveAt,step:Math.round(dist(xy,e)),reset,
+    insideLeash,firstMoveAt,firstBurstAt,
+    maxFrameStep:+maxFrameStep.toFixed(2),step:Math.round(dist(xy,e)),reset,
     after:{aggro:!!e.aggro,returning:!!e.returning,noProgress:+(e.noProgress||0).toFixed(2),
       rogue:g.tacticalRogueRegroup(e)?.phase||null,health:Math.round(e.hp)}};
   console.log('RANGER_EDGE_PROBE '+JSON.stringify(result));
