@@ -3448,6 +3448,28 @@
       $('title-loading').textContent = '';
     }
   }
+  // Canvas 2D Phase 2: use idle time on the inactive title to build the
+  // existing single outdoor floor cache. This never draws to the world canvas.
+  function scheduleCanvasTitleGround(epoch, campaign, zone, warmup) {
+    if (typeof requestIdleCallback !== 'function' || !campaign?.s?.zones?.[zone]) return;
+    void Promise.resolve(warmup).catch(() => null).then(() => {
+      // Never schedule raster painting in the middle of a Continue operation.
+      if (epoch !== titleEpoch || titleLoading || started || document.hidden ||
+          campaign !== game || game.zoneId !== zone || titleScreen?.hidden ||
+          !writerGuard.canWrite() || graphicsController.status().mode === 'webgl2') return;
+      requestIdleCallback((deadline) => {
+        if (epoch !== titleEpoch || titleLoading || started || document.hidden ||
+            campaign !== game || game.zoneId !== zone || titleScreen?.hidden ||
+            !writerGuard.canWrite() || graphicsController.status().mode === 'webgl2' ||
+            !deadline?.timeRemaining || deadline.timeRemaining() < 8) return;
+        // Failure or a cache miss is harmless: the existing Continue draw
+        // remains authoritative and can build the floor synchronously.
+        try {
+          renderer.prepareCurrentGround?.();
+        } catch (_) {}
+      });
+    });
+  }
   function showTitleScreen() {
     ++titleEpoch;
     titleLoading = false;
@@ -3469,6 +3491,7 @@
     titleWarmup = loaded
       ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 1000 : 900, true)
       : null;
+    if (loaded) scheduleCanvasTitleGround(titleEpoch, game, game.zoneId, titleWarmup);
     refreshTitleScreen();
     const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
     primary.focus?.({ preventScroll: true });
