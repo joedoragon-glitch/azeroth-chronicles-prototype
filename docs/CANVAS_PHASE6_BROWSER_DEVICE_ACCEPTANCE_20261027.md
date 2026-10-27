@@ -63,8 +63,30 @@ For physical memory, use trustworthy browser/OS process measurements where avail
 ### Results / receipt register
 
 - **Known source-only baseline through Phase 5:** [CI #40513954357](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40513954357) passed 18 focused Node files and reproducible build at `9856d7e89b8000c290170d3f4140bfe8a38163e4`; this is not a browser or physical-device result.
-- **Phase 6 actual-browser run:** [CI #40516601405](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40516601405), code at `d09c716ea0cde4730bbf6b1990c7d78a259594c7` — **pending final run/results review at authoring**. Update the PR acceptance state from the actual job conclusions and artifacts, not from this ledger's existence.
+- **Initial browser harness defect:** [CI #40516601405](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40516601405) failed because the test skipped mandatory New Game menu choices and remained on title. Inspecting the uploaded screenshot confirmed a **harness setup failure**, not a renderer exception. The harness now follows the real mode, language, challenge and class selections (commit `5c7409fd`). This failed run is retained, not presented as accepted evidence.
+- **Corrected Chromium evidence:** [CI #40517505991](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40517505991) Chromium job passed both Phase 6 real-browser profiles **and** the existing extensive 5-region, zoom, interior, camera, material-reload and 64 MiB ground-cache browser checks. Raw per-profile JSON and PNG screenshots are in its `canvas-phase6-chromium` Actions artifact. The WebKit job from that intermediate run was canceled when new documentation commits arrived.
+- **Exact-doc-head WebKit evidence:** [CI #40517832879](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40517832879), on `06b279026643d0da58e330c771115555ca75a00c`: WebKit desktop and phone-emulation browser test jobs passed, with uploaded JSON/screenshots. Its independent Chromium rerun was still in progress during this evidence update; do not claim that *entire* run succeeded until GitHub reports it.
+- **Source/build regression:** focused validation for `06b279026643d0da58e330c771115555ca75a00c` passed [CI #40517832660](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40517832660); focused Node/syntax/build success is independent of Playwright browser acceptance.
 - **Physical Chromebook / phone / desktop trials:** **NOT RUN**.
 - **Owner release approval:** **NOT GIVEN**.
+
+
+
+### Measured browser observations (exploratory, single-pair per profile)
+
+The following numbers are copied from **actual uploaded runner artifacts**, not anticipated results. Durations are `performance.now()` browser UI-click-to-started or isolated first `renderer.draw()` timings. Browser tooling and emulator scheduling are uncontrolled; these **are not device FPS, whole-game latency percentiles, proof of speedup, or paired repeated hardware samples**.
+
+| Browser runner | Cold Continue to visible | Prepared Continue to visible | First draw cold → prepared | Ground builds during Continue cold → prepared | Mean RGBA channel difference |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Chromium desktop 1280×800 / DPR1 | 403.1 ms | 424.5 ms | 71.9 → 51.8 ms | 1 → 0 | 0.00449 |
+| Chromium emulated phone 393×852 / DPR2 | 355.5 ms | 344.0 ms | 57.5 → 52.0 ms | 1 → 0 | 0.01032 |
+| WebKit desktop 1280×800 / DPR1 | 465 ms | 160 ms | 19 → 12 ms | 1 → 0 | 0.00756 |
+| WebKit emulated phone 393×852 / DPR2 | 290 ms | 168 ms | 19 → 10 ms | 1 → 0 | 0.00546 |
+
+This provides positive **mechanical evidence** that the existing 64 MiB-limited prepaint is reused on Continue and stays close to direct raster rendering. It does **not** prove user-perceptible performance gains: Chromium desktop was slower in end-to-end prepared Continue, headless software raster and asset warm state vary, and there is only **one fixed-order cold/warm pair** per profile. WebKit emulation is not native iOS PWA. `groundCache.bytes` on these browsers was well below 64 MiB, but does not estimate full process memory.
+
+### Remaining acceptance verdict
+
+**Automated browser checks are a useful, nonrelease source/visual gate; Phase 6 final device acceptance is still BLOCKED.** No Chromebook, actual phone/iOS PWA or 8 GiB+ desktop capture; no counterbalanced five-repeat whole-frame/gameplay p95/p99, memory or long-task data; no true-hostile-frame device screenshot; no full offline/recovery plus Pixi Keep/Revert device matrix; no owner sign-off. Phases 3–4 stay HOLD, and no automatic optimization or release/default change is justified.
 
 **Decision:** Phase 6 has a reproducible real-browser acceptance mechanism, but final release/physical-device acceptance remains **OPEN**. No incremental feature or new runtime cache is proposed without device-backed benefit and visual equivalence.
