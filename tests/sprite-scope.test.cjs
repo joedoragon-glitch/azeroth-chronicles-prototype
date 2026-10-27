@@ -9,6 +9,28 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const source = read('src/prototype/visuals.js');
 const coverage = read('docs/GRAPHICS_CANON_SPRITE_COVERAGE.md');
 const current = audit();
+// Keep strict source fingerprint protection, but distinguish a reviewed-canon
+// delta from a source-only SHA change that needs a targeted code/art review.
+function assertReviewedSpriteEvidence(actual, reviewed) {
+  const { sources: actualSources, ...actualScope } = actual;
+  const { sources: reviewedSources, ...reviewedScope } = reviewed;
+  assert.deepEqual(
+    actualScope,
+    reviewedScope,
+    'Sprite-canon evidence differs: review families, palettes, loadouts and decisions before updating current evidence',
+  );
+  const changedSources = [
+    ...new Set([...Object.keys(actualSources), ...Object.keys(reviewedSources)]),
+  ].filter((file) => actualSources[file] !== reviewedSources[file]);
+  assert.equal(
+    changedSources.length,
+    0,
+    'Source-only sprite evidence fingerprint drift: ' +
+      changedSources.join(', ') +
+      '. Enumerated scope still matches. Review the exact code/art diff before refreshing ' +
+      'only the current scope evidence; preserve approved sprite canon and historical receipts.',
+  );
+}
 const terrain = require('../tools/sprites/terrain-specifications.json');
 const march = terrain.candidates.find((entry) => entry.resourceKey === 'terrain:ground:march');
 const floorSection = source.match(/const floorPalettes = \[([\s\S]*?)\n  \];/);
@@ -33,10 +55,37 @@ assert(
   Object.values(oldOre.history[oreKey]).some((record) => record.review?.status === 'approved'),
   'ore-bay original and prior creative approval must remain available for re-review',
 );
-assert.deepEqual(
+assertReviewedSpriteEvidence(
   current,
   JSON.parse(read('docs/evidence/SPRITE_SCOPE_RECONCILIATION.json')),
-  'checked-in scope evidence must match the current source; reconcile new map states deliberately',
+);
+// Source-only changes, including incidental renderer/rules edits, still
+// require provenance review; a new sprite family cannot escape canon review.
+for (const file of ['src/prototype/renderer.js', 'src/prototype/rules.js']) {
+  const sourceOnly = {
+    ...current,
+    sources: { ...current.sources, [file]: 'deliberately-invalid-source-hash' },
+  };
+  assert.throws(
+    () => assertReviewedSpriteEvidence(sourceOnly, current),
+    /Source-only sprite evidence fingerprint drift/,
+    file + ' source-only changes need an actionable review disposition',
+  );
+}
+assert.throws(
+  () =>
+    assertReviewedSpriteEvidence(
+      {
+        ...current,
+        families: {
+          ...current.families,
+          decoration: [...current.families.decoration, 'unreviewed-family'],
+        },
+      },
+      current,
+    ),
+  /Sprite-canon evidence differs/,
+  'unreviewed sprite-canon changes must remain failures',
 );
 assert.throws(
   () =>
