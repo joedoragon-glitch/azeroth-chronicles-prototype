@@ -4,7 +4,7 @@ Date: 27 October 2026
 Baseline inspected: main at 24afe03a25c520ef2669b2978a5d3b76e4e6a5b5 (after merged PR #518)  
 Status: Phases 0–2 source candidates implemented; Phase 3 source A/B evaluated with a **HOLD** decision for runtime lookahead. **No target-device performance certification or approval to merge/deploy.**
 
-**Phase 0–3 consolidation and Phase 4 entrypoint:** [consolidated professional handoff](CANVAS_PHASE0_3_CONSOLIDATION_HANDOFF_20261027.md). This is the current status and acceptance-debt index; use the detailed sections below for source rationale and historical evidence.
+**Phase 0–3 consolidation and Phase 4–5 continuation:** [consolidated professional handoff](CANVAS_PHASE0_3_CONSOLIDATION_HANDOFF_20261027.md), [Phase 4 HOLD](CANVAS_PHASE4_PROCEDURAL_ART_REUSE_HOLD_20261027.md), and [Phase 5 integration decision](CANVAS_PHASE5_TRANSITION_COMBAT_PREPARATION_EVIDENCE_20261027.md). This is the current status and acceptance-debt index; use the detailed sections below for source rationale and historical evidence.
 
 ## Executive decision
 
@@ -140,8 +140,13 @@ The separate [consolidation handoff](CANVAS_PHASE0_3_CONSOLIDATION_HANDOFF_20261
 - [x] Phase 2 source candidate: guarded idle first-scene ground preparation using the existing cache (focused regressions added; browser/device acceptance outstanding).
 - [x] Phase 3 source-only lookahead A/B study and HOLD decision — no runtime lookahead enabled ([evidence and device gate](CANVAS_PHASE3_LOOKAHEAD_EVIDENCE_20261027.md)).
 - [ ] Phase 3 real-browser / owner-device acceptance before any runtime lookahead implementation.
-- [ ] Phase 4 proven Canvas procedural reuse.
-- [ ] Phase 5 combat/transition integration.
+- [x] Phase 4 one-family evaluation completed with **HOLD** (no production procedural-art cache; 14/15 pixel mismatches in observational CPU raster trial).
+- [x] Phase 5 shared transition/hostile-frame source integration reviewed with new production-shell regression and **no extra live synchronous Canvas prepaint** ([evidence](CANVAS_PHASE5_TRANSITION_COMBAT_PREPARATION_EVIDENCE_20261027.md)).
+- [ ] Phase 5 physical-browser visual, memory and real-device combat/transition acceptance (not certified).
 - [ ] Phase 6 owner device evidence and merge decision.
 
 **Hard boundary:** no claim of faster Canvas rendering, no automatic PR merge, and no Pixi renderer graduation until there is real device evidence.
+
+## Phase 5 integration checkpoint — 27 October 2026
+
+The shared native travel/dungeon/Continue flow already prepares read-only approved sprites around the committed destination and draws the first scene under an opaque interlude; dynamic hazards, combat cues and shadows remain live. The only accepted optional Canvas raster preparation remains title-only and uses the existing 64 MiB ground backing store. There is no justified additional Cache prepaint during active combat or dungeon admissions while Phase 3 regional lookahead and Phase 4 bitmap reuse are both held. `tests/canvas-phase5-transition-safety.test.cjs` adds focused bilingual actual-native-travel, hidden committed-arrival, retry and stale-title-paint guards, documented in [the Phase 5 evidence ledger](CANVAS_PHASE5_TRANSITION_COMBAT_PREPARATION_EVIDENCE_20261027.md). No renderer/game/save/Pixi/PWA code was modified in Phase 5. Browser screenshot and owner-device acceptance are **still outstanding**, so this checkpoint does not mark the whole Phase 5 performance acceptance as passed.
