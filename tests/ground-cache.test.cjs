@@ -3,10 +3,12 @@ const assert = require('node:assert/strict'),
   GroundCache = require('../src/prototype/ground-cache');
 const stores = [];
 let painted = 0,
-  blits = 0;
+  blits = 0,
+  benchmarkClock = 0;
 const t = { a: 1.5, d: 1.5, b: 0, c: 0, e: 0, f: 0 };
 const ctx = { getTransform: () => ({ ...t }), drawImage: () => blits++ };
 const cache = new GroundCache({
+  now: () => benchmarkClock,
   createCanvas: (width, height) => {
     const c = { width, height, getContext: () => ({ setTransform() {}, fillRect() {} }) };
     stores.push(c);
@@ -20,14 +22,22 @@ const scene = {},
     origin: { x: 0, y: 0 },
     scene,
     revision: '1:ready',
-    paint: () => painted++,
+    paint: () => {
+      painted++;
+      benchmarkClock += 2.5;
+    },
   };
 assert(cache.draw(ctx, args));
 assert.equal(painted, 1);
 assert(cache.status().bytes <= cache.budget);
+assert.equal(cache.status().rebuildMs, 2.5);
+assert.equal(cache.status().lastRebuildMs, 2.5);
+assert.equal(cache.status().maxRebuildMs, 2.5);
+assert.equal(cache.status().failedBuilds, 0);
 assert(cache.draw(ctx, { ...args, origin: { x: 110, y: -100 } }));
 assert.equal(painted, 1);
 assert.equal(blits, 2);
+assert.equal(cache.status().rebuildMs, 2.5, 'cache hit incurs no raster build timing');
 assert(cache.draw(ctx, { ...args, origin: { x: cache.margin + 1, y: 0 } }));
 assert.equal(painted, 2);
 assert.equal(stores[0].width, 0);
@@ -41,17 +51,23 @@ assert.equal(painted, 5);
 t.a = 2;
 assert(cache.draw(ctx, args));
 assert.equal(painted, 6);
+assert.equal(cache.status().builds, 6);
+assert.equal(cache.status().rebuildMs, 15);
+assert.equal(cache.status().maxRebuildMs, 2.5);
 t.a = 64;
 assert.equal(cache.draw(ctx, args), false);
 assert.equal(cache.status().bytes, 0);
+assert.equal(cache.status().budgetSkips, 1);
 assert.equal(stores.at(-1).width, 0);
 t.a = 1;
 t.b = 0.1;
 assert.equal(cache.draw(ctx, args), false);
+assert.equal(cache.status().transformSkips, 1);
 t.b = 0;
 assert(cache.draw(ctx, args));
 cache.clear();
 assert.equal(cache.status().bytes, 0);
+assert.equal(cache.status().rebuildMs, 17.5, 'clearing releases bytes, not historical metrics');
 assert.equal(stores.at(-1).height, 0);
 const failed = new GroundCache({
   createCanvas: () => {
@@ -60,8 +76,18 @@ const failed = new GroundCache({
 });
 assert.equal(failed.draw(ctx, args), false);
 assert.equal(failed.status().bytes, 0);
+assert.equal(failed.status().failedBuilds, 1);
+assert.equal(failed.status().rebuildMs, 0);
 const noCanvas = new GroundCache({ createCanvas: () => null });
 assert.equal(noCanvas.draw(ctx, args), false);
+assert.equal(noCanvas.status().failedBuilds, 1);
+assert.equal(noCanvas.status().rebuildMs, 0);
+const badClock = new GroundCache({
+  now: () => NaN,
+  createCanvas: () => ({ getContext: () => ({ setTransform() {}, fillRect() {} }) }),
+});
+assert(badClock.draw(ctx, args));
+assert.equal(badClock.status().rebuildMs, 0, 'invalid timing cannot escape metrics');
 console.log(
   'PASS ground cache camera coverage, scene/revision/scale invalidation, bounded replacement and fallback',
 );
