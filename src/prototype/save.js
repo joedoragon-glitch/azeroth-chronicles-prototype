@@ -785,6 +785,19 @@
           (!Number.isInteger(s.rogueCharmRng) ||
             s.rogueCharmRng < 0 || s.rogueCharmRng > 4294967295))
           throw Error('Invalid Charm RNG state');
+        // Legacy v4 campaigns have no nickname rotation yet.
+        s.rogueNicknameCursor ??= { en: 0, es: 0 };
+        if (!s.rogueNicknameCursor ||
+          typeof s.rogueNicknameCursor !== 'object' ||
+          Array.isArray(s.rogueNicknameCursor) ||
+          Object.keys(s.rogueNicknameCursor).length !== 2 ||
+          Object.keys(s.rogueNicknameCursor).some((key) =>
+            !Object.hasOwn(R.rogueCharmNicknames, key)) ||
+          Object.entries(R.rogueCharmNicknames).some(([key, pool]) =>
+            !Number.isInteger(s.rogueNicknameCursor[key]) ||
+            s.rogueNicknameCursor[key] < 0 ||
+            s.rogueNicknameCursor[key] >= pool.length))
+          throw Error('Invalid Charm nickname rotation');
         const captures = s.charmCaptures ?? {};
         if (!captures || typeof captures !== 'object' || Array.isArray(captures) ||
           Object.keys(captures).length > 200)
