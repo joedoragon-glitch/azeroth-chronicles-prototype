@@ -45,11 +45,11 @@ jobs:
       - name: Verify Chromium and WebKit integrated HUD
         timeout-minutes: 4
         run: node tests/adaptive-mobile-hud-integration-browser.test.cjs
-      - name: Keep screenshots for inspection on failure
-        if: failure()
+      - name: Preserve phone HUD screenshots for visual review
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: adaptive-hud-phase4-failure
+          name: adaptive-hud-phase4-screenshots
           path: test-results/adaptive-hud-phase4/
           if-no-files-found: ignore
           retention-days: 3

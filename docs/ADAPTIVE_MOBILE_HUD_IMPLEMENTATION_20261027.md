@@ -22,7 +22,7 @@ The 26 October read-only design specification is the working UX contract.
 - [x] No route cancellation until directional input crosses the dead zone in floating mode.
 - [x] Fixed menu joystick and confirmation controls; hidden, noninteractive ring during ordinary floating play.
 - [x] Focused unit and production-shell menu tests added; Chromium touch smoke added.
-- [x] Existing mapped Phase 1 checks passed in focused CI; the separate Chromium floating-gesture browser smoke remains unexecuted.
+- [x] Existing mapped Phase 1 checks passed in focused CI; the standalone Chromium floating-gesture smoke passed in three viewports ([focused Phase 4 browser run](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40469096032)).
 - [ ] Real iPhone/Android thumb testing (not certifiable by desktop-browser emulation).
 
 ## Phase 2 — Adaptive control visibility (implemented; device acceptance pending)
@@ -35,8 +35,8 @@ The 26 October read-only design specification is the working UX contract.
 - [x] Preserve classic styling on older devices; independently combine HUD style with Fixed/Floating and both handedness modes.
 - [x] Focused input, bilingual menu and dedicated adaptive context/production-shell tests authored.
 - [x] Focused GitHub Actions on the combined Phase 1–2 branch: 30 relevant test files passed, including dedicated Adaptive HUD, bilingual menu and input checks; reproducible site build passed ([run #40466501357](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40466501357)).
-- [ ] Physical iPhone/Android inspection of Adaptive/Classic in portrait and landscape, and standalone browser touch smoke; final acceptance is Phase 4.
-- [ ] Verify both handedness layouts and portrait/landscape.
+- [ ] Physical iPhone/Android inspection of Adaptive/Classic in portrait and landscape; the standalone browser touch smoke has passed.
+- [x] Focused automated coverage includes two-thumb landscape and left-hand portrait with WebKit, plus Chromium joystick portrait/landscape and landscape left-hand. Physical geometry still requires owner review.
 
 ## Phase 3 — Notification refinement (implemented; device acceptance pending)
 
@@ -48,14 +48,19 @@ The 26 October read-only design specification is the working UX contract.
 - [x] Preserve reduced-motion behavior, important alert roles, Menu access and no-touch-overlap for clickable milestone cards.
 - [x] New dedicated `tests/notification-refinement.test.cjs` checks contrast ratios, precedence, EN/ES production shell, and source safeguards.
 - [x] Focused CI passed 31 relevant tests, including notification contrast, bilingual shell and priority behavior; reproducible site build and syntax passed ([run #40467597851](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40467597851)).
-- [ ] Visual layout inspection on actual iPhone/Android and Phase 4 integrated browser acceptance.
+- [x] Phase 4 integrated Chromium and WebKit browser smoke passed ([run #40469096032](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40469096032)).
+- [ ] Visual layout/contrast inspection on actual iPhone/Android still needed.
 
-## Phase 4 — Integrated acceptance (not started)
+## Phase 4 — Integrated acceptance (focused automation passed; owner device gate remains)
 
-- [ ] Focused regression suites and browser touch tests, both renderers and PWA lifecycle.
-- [ ] Validate old v4 campaigns and existing input preferences.
-- [ ] Compare real-device portrait/landscape thumb ergonomics.
-- [ ] Obtain explicit owner approval before merge/deployment.
+- [x] Phase 3 exact candidate: 31 focused CI files and reproducible site build passed ([run #40467597851](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40467597851)); also included input persistence, bilingual menus, low-HP contexts, and notification accessibility checks.
+- [x] Real Chromium floating touch, movement, release and fixed-menu fallback passed at 800×375, 375×800, 844×390.
+- [x] Focused integration passed Chromium 800×375 two-thumb and WebKit 393×852 left-hand: control rectangle invariants, proactive ATK/Target/Recall/Menu, low-HP cue, computed live warning palette, floating pointer cancellation, multi-touch ownership, menu override, and preference/save continuity across browser reload ([run #40469096032](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40469096032)).
+- [x] English/Spanish menu and high-contrast source/production-shell fixtures, old preference sanitization, and v4 save persistence covered by focused tests.
+- [x] Site remains a multi-file PWA; optional HUD styling/controls are DOM/CSS and independent of Canvas versus PixiJS engine simulation. The production renderer default is unchanged.
+- [ ] Active PixiJS WebGL2 trial parity, context loss/recovery and a historical v4 campaign fixture were **not** exercised by this narrow Phase 4 browser smoke. Do not claim GPU-specific or old-build migration certification; reserve for an explicitly approved renderer/PWA regression.
+- [ ] Physical Android Chrome and iPhone Safari/PWA acceptance: both orientations and handedness choices; verify safe insets, device scale, Interact/Recall/Target/skills during simultaneous joystick touch, dialog Confirm, app background/return, and readability over actors/labels with reduced motion on/off.
+- [ ] Owner approval before merge or GitHub Pages deployment. Keep draft state until these gates are resolved.
 
 ## Files in Phase 1
 
@@ -77,7 +82,13 @@ The 26 October read-only design specification is the working UX contract.
 - `styles/phone.css` — accessible solid notice palettes and top-rail layout across Classic/Adaptive.
 - `tests/notification-refinement.test.cjs` — color contrast and notification-priority regression.
 
-Run targeted checks when CI or a repository checkout is available:
+## Phase 4 acceptance assets
+
+- `tests/adaptive-mobile-hud-integration-browser.test.cjs` — scoped Chromium/WebKit real DOM acceptance and reload coverage.
+- `tests/floating-joystick-browser.test.cjs` — Chromium real-pointer movement checks.
+- `.github/workflows/adaptive-hud-phase4.yml` — PR #519-only targeted browser checks; no Pages write permissions or deployment. Screenshot artifacts accompany the run for visual review.
+
+Run focused commands (browser tests require Playwright Chromium/WebKit binaries):
 
 ```sh
 node tests/input.test.cjs
@@ -85,6 +96,7 @@ node tests/game-menu-ui.test.cjs
 node tests/floating-joystick-browser.test.cjs
 node tests/adaptive-hud.test.cjs
 node tests/notification-refinement.test.cjs
+node tests/adaptive-mobile-hud-integration-browser.test.cjs
 ```
 
-All three completed phases are on the same draft branch, in separate commits. Phase 4 integration and physical-device acceptance have not started; no merge or publication is authorized.
+All three implementation phases and their scoped Phase 4 browser validation live on the same draft PR. Automated acceptance has passed; physical-device, active PixiJS and historical migration certification are explicitly **not complete**. No merge or publication is authorized.
