@@ -13,7 +13,7 @@ function prep(g,e,p) {
   g.s.mercyTime=0;
   g.s.valeFieldAwakened=true;
   g.s.thornHeroInitiated=true;
-  Object.assign(g.hero,{...p, hp:100000,maxHp:100000,level:Math.max(3,e.level),
+  Object.assign(g.hero,{...p, hp:100000,maxHp:100000,level:4,
     basicCd:0,order:null,immune:0});
   g.hero.skills[0]=1;
   g.s.projectiles=[];
