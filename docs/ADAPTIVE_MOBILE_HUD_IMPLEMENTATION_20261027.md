@@ -22,7 +22,7 @@ The 26 October read-only design specification is the working UX contract.
 - [x] No route cancellation until directional input crosses the dead zone in floating mode.
 - [x] Fixed menu joystick and confirmation controls; hidden, noninteractive ring during ordinary floating play.
 - [x] Focused unit and production-shell menu tests added; Chromium touch smoke added.
-- [ ] Execute focused tests on the exact branch and inspect their results.
+- [x] Existing mapped Phase 1 checks passed in focused CI; the separate Chromium floating-gesture browser smoke remains unexecuted.
 - [ ] Real iPhone/Android thumb testing (not certifiable by desktop-browser emulation).
 
 ## Phase 2 — Adaptive control visibility (implemented; device acceptance pending)
@@ -34,7 +34,8 @@ The 26 October read-only design specification is the working UX contract.
 - [x] Display explicit bilingual low-HP label and accented HP bar even near friendly NPCs.
 - [x] Preserve classic styling on older devices; independently combine HUD style with Fixed/Floating and both handedness modes.
 - [x] Focused input, bilingual menu and dedicated adaptive context/production-shell tests authored.
-- [ ] Phase 2 focused CI result and physical-device visual review.
+- [x] Focused GitHub Actions on the combined Phase 1–2 branch: 30 relevant test files passed, including dedicated Adaptive HUD, bilingual menu and input checks; reproducible site build passed ([run #40466501357](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40466501357)).
+- [ ] Physical iPhone/Android inspection of Adaptive/Classic in portrait and landscape, and standalone browser touch smoke; final acceptance is Phase 4.
 - [ ] Verify both handedness layouts and portrait/landscape.
 
 ## Phase 3 — Notification refinement (not started)
