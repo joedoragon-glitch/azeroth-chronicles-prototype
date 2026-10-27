@@ -107,12 +107,20 @@ The latest [gameplay candidate](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.m
 
 **Latest design authority** is [Rogue mirrored performance / critical tier proposal](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md), with forthcoming concise reconciliation index. Older +1pp candidate, strictly single-target tap skills, arbitrary ally buffs and physical trap-only Skill 5 sketches are **historical entries**, not equal current alternatives.
 
+## C6. Owner clarification — low-friction monster collection and per-type Expedition quotas (27 October 2026)
+
+**This is newer than the unresolved aggregate-Barracks question in section A.9.** The Rogue's current Expedition rank, including her class-only +1 field slot, sets the total number of copies she can own of **each individual eligible monster type**: **3/4/4/5/6/7** for ranks 1–6. Count active, reserve, fallen and away companions together. Goblin Slingers are a separate precise authored type from other Goblins. **Do not impose the earlier proposed twelve-creature aggregate cap.** Different monster types have independent quotas; the owner wishes to revisit actual **Charm probability** only after evidence of excessive conversions, not preemptively suppress ownership by a guessed overall threshold.
+
+**Barracks clarify access, not ownership:** the existing Basic Barracks remains a useful limited field-service facility and manages a maximum of **three active members locally**. The upgraded Full Barracks allows the full effective Expedition cap (seven at Rogue rank six). The Rogue can Charm and retain eligible units even when no Barracks has been built and even if her active party is full (overflow to roster reserve, subject to type quota). A Barracks does **not** have a separate physical storage capacity that deletes or disallows charmed members. Existing boss pets remain their own collection.
+
+**Navigation priority:** the high-volume management UI should show **type groups first** and short, paginated individual lists with clear active/resting/fallen status and fast Rest/Add, stable Back/page context, and light-touch naming. Basic Barracks needs only conservative housekeeping; Full Barracks must be comfortable when many types are represented. See the [source-reviewed owner contract](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md) and [same-PR preparatory interface work](ROGUE_BARD_FOURTH_CLASS_HOUSEKEEPING_20261027.md).
+
 ## D. Guardrails for all further work
 
 - The fourth class is **opt-in new content**, not a retrofit or rebalance of Paladin/Mage/Ranger.
-- **No runtime code, assets, save format, animations, AI or renderer has been changed by this documentation PR.**
+- **Historical original status:** this began as a documentation PR. By the later 27 October owner instruction, the **same draft PR #511** also holds narrow inert runtime housekeeping and Barracks menu paging; it is **not** playable Rogue implementation. The historical discussion remains a provenance record rather than a claim of current no-code status.
 - Preserve the active static sprite + procedural fallback pipeline; no new movement/attack/dance cycles, bones, skeleton rigs, frame atlases or 8-direction sheets.
 - Reuse existing companion AI/formation/recovery/skill/safe-position systems where semantically safe; add a **small explicit conversion adapter** to protect allegiance and species identity.
 - Honor existing mainline progression, quest logic, boss mechanics, traps, recovery, support healing, offline PWA, two renderers, English/Spanish and compatibility of version-4 historical saves.
 - Performance is an **acceptance criterion**, not an assertion. Avoid per-frame charm rolls, unbounded actor creation, all-monster status scans, uncapped audio/visual effects and duplicate AI loops.
-- Treat these documents as a recovery checkpoint for a later design session. **Do not start implementation, CI, merge or deployment on their authority.**
+- Treat these documents as a recovery checkpoint for ongoing same-PR review. Do not activate Rogue, merge or deploy without separate owner authorization and appropriate tested evidence; read the newer housekeeping status before assuming no code was changed.
