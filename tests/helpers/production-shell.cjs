@@ -131,6 +131,11 @@ function shell(language, heroClass = 'paladin', options = {}) {
   }
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;
+  if (options.idleCallbacks)
+    scope.requestIdleCallback = (callback) => {
+      options.idleCallbacks.push(callback);
+      return options.idleCallbacks.length;
+    };
   vm.createContext(scope);
   vm.runInContext(fs.readFileSync(require.resolve('../../src/prototype/app'), 'utf8'), scope);
   scope.Prototype.renderer.draw = () => {};
