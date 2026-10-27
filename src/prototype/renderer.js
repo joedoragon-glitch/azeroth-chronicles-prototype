@@ -609,6 +609,67 @@
         y2: Math.min(size - 1, Math.floor(Math.max(...corners.map((p) => p.y)) / 80) * 80),
       };
     }
+    // Shared by the normal live draw and Canvas-only title preparation.
+    // Keep the exact tile painter, material revision, scene and camera keys.
+    function paintOutdoorFloor(target, o, width, height, size, region, record = true) {
+      const b = tileBounds(size, width, height, o);
+      for (let x = b.x1; x <= b.x2; x += 80)
+        for (let y = b.y1; y <= b.y2; y += 80) {
+          const p = iso(x, y);
+          p.x += o.x;
+          p.y += o.y;
+          if (p.x < -160 || p.x > width + 160 || p.y < -100 || p.y > height + 100) continue;
+          PrototypeVisuals.floor(
+            target,
+            p,
+            x,
+            y,
+            region,
+            false,
+            '',
+            false,
+            optimized ? null : PrototypeMaterials,
+          );
+          if (record) stats.floorTilesPainted++;
+        }
+    }
+    function outdoorGroundOptions(zone, region, size, record = true) {
+      const key = 'terrain:ground:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
+      return {
+        width: canvas.width,
+        height: canvas.height,
+        origin: offset(),
+        scene: zone,
+        revision: optimized
+          ? 'optimization-procedural-v1'
+          : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
+        paint: (target, o, width, height) =>
+          paintOutdoorFloor(target, o, width, height, size, region, record),
+      };
+    }
+    function prepareCurrentGround() {
+      if (!cacheGround || !groundCache?.prepare || renderLayer !== 'full') return false;
+      const current = getGame();
+      // Never call zone()/enter() while preparing an inactive restored run.
+      const zone = current?.s?.zones?.[current.zoneId];
+      if (!zone || current.s.mode === 'arena' ||
+          current.isDungeon() || current.supplyRoom()) return false;
+      const region = current.regionIndex();
+      if (region < 0 || region > 4 || current.zoneId !==
+          ['vale', 'march', 'highlands', 'frontier', 'crown'][region]) return false;
+      ctx.save();
+      try {
+        // Match exactly the transform used by draw(), including DPR and zoom,
+        // but do not touch the visible world bitmap or render live effects.
+        ctx.scale(zoom(), zoom());
+        return groundCache.prepare({
+          ...outdoorGroundOptions(zone, region, current.zoneSize(), false),
+          transform: ctx.getTransform?.(),
+        });
+      } finally {
+        ctx.restore();
+      }
+    }
     function draw() {
       game = getGame();
       if (effectRecorder && renderLayer !== 'background') effectRecorder.draw(game);
@@ -2523,41 +2584,9 @@
         ctx.clip();
       }
       const bounds = tileBounds(size);
-      const paintFloor = (target, o, width, height) => {
-        const b = tileBounds(size, width, height, o);
-        for (let x = b.x1; x <= b.x2; x += 80)
-          for (let y = b.y1; y <= b.y2; y += 80) {
-            const p = iso(x, y);
-            p.x += o.x;
-            p.y += o.y;
-            if (p.x < -160 || p.x > width + 160 || p.y < -100 || p.y > height + 100) continue;
-            PrototypeVisuals.floor(
-              target,
-              p,
-              x,
-              y,
-              i,
-              false,
-              '',
-              false,
-              optimized ? null : PrototypeMaterials,
-            );
-            stats.floorTilesPainted++;
-          }
-      };
       let reused = false;
       if (cacheGround && !dungeon && !room && groundCache) {
-        const key = 'terrain:ground:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][i];
-        reused = groundCache.draw(ctx, {
-          width: canvas.width,
-          height: canvas.height,
-          origin,
-          scene: z,
-          revision: optimized
-            ? 'optimization-procedural-v1'
-            : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
-          paint: paintFloor,
-        });
+        reused = groundCache.draw(ctx, outdoorGroundOptions(z, i, size));
       } else groundCache?.clear();
       for (let x = bounds.x1; x <= bounds.x2; x += 80)
         for (let y = bounds.y1; y <= bounds.y2; y += 80) {
@@ -3171,6 +3200,8 @@
       },
       presentEntity,
       groundPresentation,
+      // Optional, read-only CPU raster preparation for the inactive title.
+      prepareCurrentGround,
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
         if (layer !== 'full' && layer !== 'overlay' && layer !== 'background')
