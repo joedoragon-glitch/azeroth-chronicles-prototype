@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const { shell } = require('./helpers/production-shell.cjs');
 const Campaign = require('../src/prototype/engine');
 const Menus = require('../src/prototype/menus.js');
-const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
+const flush = async () => { for (let i = 0; i < 40; i++) await Promise.resolve(); };
 
 function openForwardTravel(app) {
   const game = app.scope.Prototype.game;

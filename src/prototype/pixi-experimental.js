@@ -684,7 +684,7 @@
         const cached=ensureProcedural(painted,revision,current,zoom);
         if(!cached)continue;
         prepared++;
-        if(++steps%3===0 && typeof requestAnimationFrame==='function')
+        if(++steps%2===0 && typeof requestAnimationFrame==='function')
           await new Promise(resolve=>requestAnimationFrame(resolve));
       }
       neighborhoodPrepared += prepared;
