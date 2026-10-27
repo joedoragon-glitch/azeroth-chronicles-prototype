@@ -226,6 +226,22 @@ try {
   malformedType.charmCaptures[malformedType.party[0].id].role = 'archer';
   assert.throws(() => Campaign.validate(malformedType), /Invalid charm provenance/);
 
+  // Fake reserve units cannot evade the total-owned per-subtype rank quota.
+  // Keep only the legitimate capture active so the active-field cap does not
+  // reject the fixture before the more specific quota invariant runs.
+  const forgedOverflow = structuredClone(savedCapture);
+  for (let i = 0; i < 3; i++) {
+    const extra = structuredClone(forgedOverflow.party[0]);
+    extra.id = 'ally-' + (900 + i);
+    extra.active = false;
+    extra.charmOrigin.sourceEnemyId = 'enemy-' + (900 + i);
+    forgedOverflow.party.push(extra);
+    forgedOverflow.charmCaptures[extra.id] = { ...extra.charmOrigin };
+  }
+  forgedOverflow.nextId = Math.max(forgedOverflow.nextId, 904);
+  assert.throws(() => Campaign.validate(forgedOverflow), /Invalid charm subtype quota/);
+
+
   const excluded = fresh(1).g, elite = excluded.zone().enemies[0];
   elite.captain = true;
   excluded.s.rogueCharmRng = 12345;
