@@ -1037,17 +1037,14 @@
       return type === 'archer' ? 'Ranger' : 'Soldier';
     }
     function rosterLabel(u) {
-      const i = getGame().s.party.indexOf(u) + 1;
-      if (u.expeditionId)
-        return (
-          (u.customName ||
-            (u.type === 'pet' ? getGame().petDefinition(u).name : unitLabel(u.type) + ' #' + i)) +
-          ' · On expedition'
-        );
-      if (u.customName) return u.customName;
-      return u.type === 'pet'
-        ? getGame().petDefinition(u)?.name || 'Boss pet'
-        : unitLabel(u.type) + ' #' + i;
+      const i = getGame().s.party.indexOf(u) + 1,
+        label = u.customName ||
+          (u.charmOrigin
+            ? charmedTypeName(u) + ' #' + i
+            : u.type === 'pet'
+              ? getGame().petDefinition(u)?.name || 'Boss pet'
+              : unitLabel(u.type) + ' #' + i);
+      return label + (u.expeditionId ? ' · On expedition' : '');
     }
     function regionalSpecialistProgress() {
       const region = getGame().definition().id,
