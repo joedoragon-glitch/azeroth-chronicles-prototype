@@ -48,9 +48,12 @@ assert.match(startPaladin.description, /Max HP 125 · Power 18 · Armor 8/);
 assert.match(startPaladin.description, /Speed 300 · Cooldown reduction 0%/);
 assert.match(startPaladin.description, /Damage blocked\/Armor 0\.36/);
 assert.match(startPaladin.description, /Fortitude: \+5 max HP and \+0\.01/);
-assert.equal(startPaladin.actions.length, 3, 'no extra action or submenu');
-assert.deepEqual(startPaladin.actions.map(a => a.label), [
-  'Inventory and support', 'Skill journal', 'Talents',
+assert.equal(startPaladin.actions.length, 4, 'only the existing Character actions');
+assert.deepEqual(startPaladin.actions.map((a) => a.label), [
+  'Name your hero',
+  'Inventory and support',
+  'Skill journal',
+  'Talents',
 ]);
 
 const highRanger = menu(character + '\ncharacterMenu();', 'en', 'ranger', (g) => {
