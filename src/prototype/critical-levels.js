@@ -281,7 +281,7 @@
     }
     function snapshot() {
       return Object.freeze({
-        hero: base.hero, companion: base.companion, world: base.world,
+        hero: base.hero, rogue: base.rogue, companion: base.companion, world: base.world,
         modes: Object.freeze({
           nightmare: Object.freeze({ ...modes.nightmare }),
           developer: Object.freeze({ ...modes.developer }),

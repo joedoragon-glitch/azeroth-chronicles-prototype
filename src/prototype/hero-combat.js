@@ -1154,6 +1154,14 @@
           return alive;
         });
       }
+      // Independently authored releases: automatic combo, manual Skill 1
+      // tap, and charged Skill 1 never share a critical action or Charm roll.
+      // This is strictly opt-in until the native Rogue controller is released.
+      rogueCriticalRelease(action) {
+        return this.hero.class === 'rogue' && this._criticalPartyNative?.enabled
+          ? this._criticalPartyNative.release(this, 'hero/rogue/' + action, 'hero')
+          : null;
+      }
       // These are owner-tunable first-play numbers, not permanent skill names.
       rogueStationProtection(unit) {
         if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
@@ -1258,7 +1266,9 @@
         h.cd[0] = this.skillCooldown(1, false);
         if (charged) h.chargedCd[0] = this.skillCooldown(1, true);
         this.s.heroTarget = primary.id;
-        const amount = (this.power() + 12) * form.damage * (1 + 0.15 * (rank - 1));
+        const criticalReceipt = this.rogueCriticalRelease(charged ? '1-charged' : '1-tap'),
+          amount = this.criticalHeroValue(criticalReceipt,
+            (this.power() + 12) * form.damage * (1 + 0.15 * (rank - 1)), 'damage');
         let hits = 0;
         for (const e of enemies) {
           if (this.damage(e, amount, 'hero', {
@@ -1545,9 +1555,11 @@
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
             (1 + 0.15 * (rank - 1)) * combo.multiplier;
         this.hero.basicCd = this.basicSkillCooldown();
+        const criticalReceipt = this.rogueCriticalRelease('auto'),
+          enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
         const beforePrimaryHp = primary.hp,
           attackZone = this.zoneId,
-          landed = this.damage(primary, baseDamage, 'hero', { automaticBasic: true });
+          landed = this.damage(primary, enhancedBasic, 'hero', { automaticBasic: true });
         let splashHits = 0;
         if (landed) {
           const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap,
@@ -1564,7 +1576,7 @@
             this.line(this.hero, e),
           ).sort((a, b) => dist(a, primary) - dist(b, primary) || this.idOrder(a, b));
           for (const e of secondary.slice(0, max))
-            if (this.damage(e, baseDamage * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
+            if (this.damage(e, enhancedBasic * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
               splashHits++;
         }
         if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);

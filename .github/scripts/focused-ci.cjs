@@ -251,7 +251,8 @@ const groups = [
     // New song code, timing owners and card metadata must preserve mirrored
     // effects, old-class isolation and short-lived nonstacking party boons.
     match: /^src\/prototype\/(?:hero-combat|combat|party|rules|save|skill-reference)\.js$/,
-    tests: [TEST + 'rogue-bard-phase5-repertoire.test.cjs'],
+    tests: [TEST + 'rogue-bard-phase5-repertoire.test.cjs',
+      TEST + 'rogue-bard-critical-skill1.test.cjs'],
   },
 ];
 const eligible = (file) =>
