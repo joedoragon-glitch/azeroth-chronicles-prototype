@@ -54,6 +54,36 @@ Current `main` values:
 
 **Source:** `src/prototype/rules.js` class/discipline/cooldown configuration, `src/prototype/progression.js` `heroTalentSpeedBonus()` and `talent()`, `src/prototype/engine.js` movement computation, `src/prototype/hero-combat.js` `skillCooldown()` and `basicSkillCooldown()`.
 
+### Architectural decision — one Armor formula, configurable effectiveness (owner clarification, October 26)
+
+**Explicit direction:** Do **not** implement a special Paladin damage-received formula alongside the ordinary formula. Replace the hard-coded literal `0.35` with a **named, configurable, default Armor-effectiveness value**, and have **every relevant Armor-mitigation calculation read the current value for its target**. The Paladin's innate passive contributes to **that value**, not to a second mitigation branch.
+
+**Conceptual API (not executable production code and not a final choice of constant ownership):**
+
+```js
+const DEFAULT_ARMOR_EFFECTIVENESS = 0.35;
+
+function armorEffectivenessFor(target) {
+  const paladinLevelUps =
+    target === hero && target.class === 'paladin'
+      ? Math.max(0, target.level - 1)
+      : 0;
+  return DEFAULT_ARMOR_EFFECTIVENESS + 0.01 * paladinLevelUps;
+}
+
+// ONE existing normal-hit mitigation formula, all classes and party units:
+const damageAfterArmor = Math.max(
+  3,
+  incomingDamage - armorPoints * armorEffectivenessFor(target),
+);
+```
+
+This is **one parameterized mitigation rule**, not separate Paladin and non-Paladin damage formulas. The `0.01` level modifier is the current *tentative* design; `0.35` remains the shared default until an authorized implementation introduces the configured parameter. The passive can be expressed as a read-only, per-character *effective value* derived from class/level, without incrementing a shared global or persisting a mutable total every level-up. Treating the value as one process-wide mutable setting would erroneously buff Mage, Ranger or companions after a Paladin levels.
+
+**One source of truth:** Current ordinary hits in `src/prototype/combat.js::hitParty()` subtract `armor*0.35`. A boss `src/prototype/boss-combat.js` special premitigates a **single** source hit with `0.35` before splitting it into three already-mitigated ticks. Both paths must read the **same target-specific effectiveness value**, respecting when Armor applies, and avoiding double application on already-mitigated hits. This is not authorization to rewrite boss skills or alter any raw damage coefficients.
+
+**Other guarantees:** Do not alter Armor point values or equipment progress; keep the `Math.max(3,...)` ordinary-hit floor, existing ward/Shield Stance ordering, and non-Paladin values intact. Favor tests that assert `0.35` for Mage/Ranger/companions at all levels; Paladin's proposed level-derived value; both ordinary and one-time boss premitigation; no double application; no shared mutable leakage; and accurate results after save load/Succession. This architectural clarification is approved as the design direction; **the numeric passive candidate still awaits explicit gameplay-change approval**.
+
 ### Paladin passive candidate — owner proposal: +5 HP/level-up and +0.01 per-level Armor effectiveness (October 26, 2026)
 
 **Candidate status:** proposed/tentative values for owner review, not authorized for gameplay implementation yet. This design builds on the verified Paladin talent/equipment audit below; it **does not** replace or retune that established progression.
@@ -70,15 +100,7 @@ const naturalMaxHp = classBaseHp + 25 * levelUps + bonusHp;
 // Current baseline at level 15: 120 + 25*14 = 470 HP.
 ```
 
-**Formula B — ordinary incoming-hit Armor effectiveness:** retain existing actual Armor points from starting attributes, equipment and reforge. Change only **how effectively Paladin Armor reduces an ordinary hit**:
-
-```js
-const levelUps = Math.max(0, hero.level - 1);
-const armorEffectiveness =
-  0.35 + (target === hero && hero.class === 'paladin' ? 0.01 * levelUps : 0);
-const afterArmor = Math.max(3, incomingDamage - armorPoints * armorEffectiveness);
-```
-
+**Formula B — ordinary incoming-hit Armor effectiveness:** retain existing actual Armor points from starting attributes, equipment and reforge. Make the **one existing damage formula** read the named `armorEffectivenessFor(target)` value shown above. Its default is 0.35 for all targets; the Paladin passive alone adds the tentative level-based modifier. There must be **no special Paladin mitigation formula** or independent multiplier.
 This does **not** add Armor points, nor create a separate percentage-damage-resistance status. The coefficient is **flat hit points prevented per 1 Armor**; it is not a percentage. For Mage, Ranger and all companions/enemies the existing 0.35 coefficient remains unchanged.
 
 **Level checkpoints, with no talents/tonic/etc.:**
@@ -103,7 +125,7 @@ This does **not** add Armor points, nor create a separate percentage-damage-resi
 
 - Armor scales the coefficient multiplicatively. At tier-4 + reforge, Paladin has **39 Armor**; on a hypothetical ordinary **30 raw damage** hit, current reduction `39*0.35=13.65` yields **16.35 HP lost**. Proposed L15 coefficient `0.49` reduces `39*0.49=19.11`, leaving **10.89 HP lost** (~33.4% less HP lost than the same tier/current coefficient). There is also a **minimum of 3 damage** per ordinary hit. This is substantial despite only +0.01 per level-up; validate difficulty at top-tier armor.
 - `src/prototype/combat.js::hitParty()` centrally uses `armor*0.35` for normal hits, with a special `alreadyMitigated` bypass. **Preserve** that bypass; do not apply Armor twice.
-- `src/prototype/boss-combat.js` precomputes a single Armor-mitigated amount for Vortex Shedding/Death Roll using `0.35` before later split hits. The Paladin-specific modifier must be applied **once at the precomputation point**, not again to three follow-up impacts. Prefer sharing a focused helper to avoid contradictory formulas.
+- `src/prototype/boss-combat.js` precomputes a single Armor-mitigated amount for Vortex Shedding/Death Roll using `0.35` before later split hits. The Paladin-specific modifier must be applied **once at the precomputation point**, not again to three follow-up impacts. **Reuse the same target-specific Armor-effectiveness value** for this premitigation, without calculating Armor twice. Do not create two formula variants.
 - `src/prototype/progression.js::heroNaturalMaxHp()` and `heroOtherHpBonus()` feed the existing **Shared Strength companion inheritance**. If adding passive HP to `hero.maxHp`, make the new Paladin innate HP count as **natural HP**, not an unrelated transferable bonus, unless owner explicitly approves companion inheritance. Avoid altering skill ranks or the existing support-skill behavior.
 - `xp()` updates saved `hero.maxHp` directly, refills HP, and synchronizes companion stats; old campaign saves, Succession, hero HP talent resets, tonics and import/migration must be checked for double application or missing past-level passive HP.
 - Existing temporary Shield Stance and wards use the **stronger**, nonmultiplicatively stacking defensive factor *after* Armor. This passive is an **Armor coefficient** before that factor, not a third ward/status or an independent additive shield. No skill value is modified.
