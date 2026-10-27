@@ -1,0 +1,122 @@
+# Rogue Bard — exact integration, housekeeping, risks and validation handoff
+**26 October 2026 | PR #511 | deep source audit at main e44ea0ec4b9ed164a85431e972664efda2190da6 | documentation only**
+
+Companion docs: [owner record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md), [recommended gameplay/balance candidate](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md), [regular + crowned static art](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md). **This is an implementable review plan rather than a claim of working class source or tested balance.**
+
+## 1. Integration strategy: low risk, no unnecessary architecture
+
+Prefer the existing modern Prototype's class registry plus **a minimal “charmed provenance” extension of the existing Soldier/Archer party unit records**. A second generic monster-as-companion runtime is a larger risk than necessary because the owner explicitly requested existing Soldier/Archer AI and friendly Archer healing. **Proposed initial representation**:
+
+\`\`\`js
+// DRAFT DATA SHAPE — NOT PROGRAM CODE OR APPROVED SAVE SCHEMA
+{
+  type: 'soldier' | 'archer',        // existing friendly AI + critical ownership
+  charmOrigin: {                    // optional on those two types ONLY
+    speciesId: '<canonical source id>',
+    variantId: '<canonical authored variant>',
+    role: 'melee' | 'ranged' | 'healer',
+    sourceLevel: 1,                 // bounded, only if needed to derive species stats
+    statsProfileId: '<vetted table key>'
+  },
+  id: 'ally-...',                   // ordinary persistent companion id
+  active: true, hp: 1, maxHp: 1, ... // all existing unit lifecycle fields
+}
+\`\`\`
+
+**Why this may be better than creating a new unit type:** \`party.js\` already routes valid \`soldier\`/\`archer\` through tactical behavior, friendly healing, troop skills/critical releases, formation, recovery and consumer menus. The owner asked to reuse exactly those AI behaviors. A tagged record avoids adding another skill/cast dispatcher and more movement loops. However, **role-level extra metadata is non-negotiable** to show the correct species art/name/stats and enforce charm-origin restrictions. The tradeoff is that the captured monster may acquire normal Soldier/Archer specials/training and generic work eligibility; these must be explicitly reviewed and either intentionally supported or narrowly gated. The alternative of an explicit \`type:'charmed'\` + role adapter remains valid if tagging produces unsafe leakage. Choose based on the smallest audited implementation, **do not simultaneously ship both identity models**.
+
+**Recommendation:** until specifically approved, **charmed companions fight/heal only, do not gather, work, carry tribute, go on resource expeditions or receive troop-specific labor assignments**; this is a minimal safety restriction even with the Soldier/Archer type. Keep their normal friendly combat skills if applying inherited troop skills is owner-approved (they will use troop crit actions, no new species-specific combat abilities). This is a design choice, not original owner's explicit decision. Existing boss pets keep unique unchanged \`type:'pet'\` and entitlements.
+
+**Every companion-consumer discriminator matters**: \`availableRangers()\` and \`autoRangerSupport()\` test \`u.type==='archer'\`, which naturally admits tagged ranged healer companions, but generic Soldier guard, Power Strike, Archer triple/volley, rally, healing label, critical troop dispatch, party diagnostics, formation, gather, names, companion HP/armor, save restore and render selection also test these types. No hidden extra monster AI and no need to invent a “pet” family for each ordinary monster.
+
+### Conversion transaction, exactly once
+
+Use a single action-level operation anchored at legal Rogue **primary automatic-basic hit**, not a per-frame actor scan. In short:
+1. On lawful original hit receipt, identify the **surviving** target by stable ID in the current zone, and check actual damage applied (LOS/reset/ward/neutral gates passed). Rogue-only new Charm privilege. Do not create chance on splash, finisher, critical VFX, DOT or trap.
+2. Check source flags: ordinary/nonleader, not captain/boss/Ringleader/hybrid/summon/quest/neutral/ambiguous, matching vetted species subtype. Check alive, original zone, membership, available aggregate/species reserve/active capacity and progression. Failed eligibility costs no RNG draw and causes no mutation.
+3. Sample one **independent saved Charm RNG stream**. Do not borrow \`Campaign.random()\` or mutate the already-two-field \`s.criticalStreams\` contract; add a separate small optional field with v4 migration/validation and deterministic initialization if authorized.
+4. On success: clear pending hostile telegraphs/projectiles/actions and encounter ownership, detach hostile actor exactly once, invalidate its target/aggro/home/pack/respawn/kill flags. Do **not** issue ordinary kill credit, drops, quest completion, boss victory, Codex, XP or gold. Ensure pack leaders/hostile healers do not continue to reference it. A captured unit does not respawn as the same hostile entity.
+5. Normalize/validate species profile into **new friendly instance** preserving unique species+variant/role, same health fraction unless otherwise approved, and friendly companion progress/inheritance. Use \`this.unit('soldier'|'archer', ...)\` plus safe vetted metadata, no cloned enemy object and no hostile AI methods. If active capacity is unavailable but reserve is allowed, create resting instead of exceeding active; report clearly. Assign a stable allied ID.
+6. Clear stale manual target/combo/skill order/selected-target pointers and pending charged hits referencing the old enemy. Do not move projectiles, damage, or rewards to an unrelated target. One charm success message/effect; no per-frame looping hearts.
+7. Guarantee save + restore + transition + recovery + Succession round trip preserves the new record, cap history and health fraction.
+
+**Monster quest/respawn policy requires focused review** beyond source read. A mob can be named in authored objectives, pack control, flee/move, boss threat or ranger healer AI. Do not silently “capture” a mandatory boss add or shrine guard. Positive whitelist of ordinary species/roles is safer than a blacklist of dozens of special flags.
+
+## 2. Specific source change map (future implementation only)
+
+**Class / progress:**
+- \`src/prototype/rules.js\`: \`R.balance.classes.rogue\`, matching \`disciplines.profiles.rogue\`; class-specific Skill 1 charge seconds/forms/coefficients, Rogue effect rules/limits, explicit basic AoE config/finisher, bounded Charm/Endure/trap/status numbers. Existing three entries must not move or change values.
+- \`src/prototype/engine.js\`: Rogue empty starting \`s.party\`, no free Soldier/Archer in Arena; class-resolved 260-unit automatic attack approach vs current Paladin **105** / other **350** \`h.order.type==='attack'\` stop; special target/quest/entry/encounter cleanup and controlled charmed unit creation. Keep current class-derived Succession choice algorithm, do not invent new class life cycle.
+- \`src/prototype/progression.js\`: class derived **+1pp personal crit per hero level including L1**, separate Codex contribution; class-resolved party effective cap and species-aware HP/armor/damage growth; include charmed profiles in \`syncCompanionLevelStats\`; maintain natural +25 HP and other proposed PR #509 derived passives separately.
+- \`src/prototype/hero-combat.js\`: explicitly resolve Rogue automatic basic, single immediate 260-unit cone, ≤3 hit targets, 3rd-hit finisher ≤5, primary-only Charm once per landed hit, normal/charged skill-1 behavior, explicit eight skill forms. The current class fallback in \`heroSkillRange\` and charged Skill-1 branch otherwise assumes \`ranger\` for a class other than Paladin or Mage: **do not allow Rogue to become a Hawk shot by default**. Integrate one critical receipt per release, not per fan target.
+- \`src/prototype/combat.js\`: lawful postdamage capture timing, anti-heal/DoT source integration if selected, and **one** lethal Endure intercept that all hero damage routes respect; do not repurpose immunity or double-process death.
+- Optional **small domain owners** \`src/prototype/rogue-combat.js\` and \`src/prototype/charmed-companions.js\` if keeping \`hero-combat.js\` and \`party.js\` readable would otherwise create huge class-specific conditionals; multi-file PWA is supported. New files require explicit engine install and full entry/worker asset manifest updates; this is a convenience, not an excuse for an extra simulation loop.
+- \`src/prototype/critical-executions.js\`, \`critical-party-native.js\`, \`critical-levels.js\`: **reuse** active critical Party RNG/resolver and supported levers. Add \`hero/rogue/auto\` + 16 new tap/charged keys with explicit lever/type verification, not generic fallbacks. Personal Rogue level chance lives in the existing \`criticalPartyBonus('hero')\` class-derived function; the bonus must **not** affect troop/pet/world crit. No new critical RNG roll for charm or AoE targets. The existing crit stream schema remains exactly party/world.
+- \`src/prototype/party.js\`: class+rank max active roster and Barracks gating, friendly soldier/archer tagged metadata, charmed name, labor exclusions, role targeting/LOS/formations, care. **CRITICAL:** \`partyFormationOffset()\` presently has SIX Soldier/Archer slots and \`slots[index % slots.length]\` — seventh Rogue active troop would overlap slot one; add stable seventh placement (or dynamic bounded row) without changing the other six established positions. \`followRecalledCompanion()\` already has additional row logic after six, but needs verification with 7.
+- \`src/prototype/party.js\` \`recover()\`: rebuild dead charmed member with same species/variant/stats/role/ID; current \`this.unit(dead.type, ..., dead.petFamily)\` would discard provenance on a new entity unless explicitly passed/reapplied. Rest/activate/dismiss quota must not forget fallen or resting. \`companionDisplayName()\` currently emits generic “Ranger”/“Soldier” for these types; display actual species/variant, e.g. Goblin Slinger, while preserving naming rights.
+- \`src/prototype/party-pets.js\`: ideally **no mechanics change**; confirm shared caps/formation/healing/recovery work for pets with 7th Rogue member. Boss pets are not affected by Charm. Do not repurpose pet identity for ordinary monsters.
+- \`src/prototype/save.js\`: v4 validator can remain v4 if optional vetted fields + strict identity checks are compatible; enforce class-aware active cap (current raw \`[0,2,3,3,4,5,6]\` check fails Rogue), charmed provenance and aggregate/species admission proof, Endure clock integrity, independent Charm RNG and any bounded trap states. Reject forged boss/captain charm, role/species mismatch, negative/NaN stat, repeated IDs, out-of-budget actor list. Recover old v4 saves without new fields. **Do not** over-validate inherited charmed species counts against the successor's smaller active cap.
+- \`src/prototype/engine.js\` \`successor()\` + \`save.js\` challenge checks: existing options computed from \`Object.keys(classes)\`, so four-class selection is almost automatic. **But save.js L697 hardcodes \`ch.fallen.length > 3\`, and L706 hardcodes \`ch.fallen.length !== 3\` on game over.** Replace only those facts with current class count (or explicitly 4 if safe; dynamic count preferred), and adjust the single pending-replacement invariant only if new class actually changes pending flow. Do **not** redesign Succession or grant Charm to other classes. Transfer all existing charmed units without removal; if active exceeds new cap, deterministically rest excess and keep owned. Existing class-specific recruitment rights apply to *new recruits*, not inherited possessions. Current \`app.js\` “All three classes have fallen” is a copy fix, not a new mode.
+- \`src/prototype/engine.js\` \`traps()\` / \`updateTraps()\`: environmental authoring currently only damages hero/companions, hostile monsters immune. Rogue “disarm” needs a bounded layout/mini keyed disabled status. Rogue's own two active traps need **different ownership** and enemy target mask; keep existing hostile immunity to environmental traps unchanged, prevent collision with walls and inaccessible placement, ensure trap TTL and serialized state are audited.
+- \`src/prototype/engine.js\`, \`boss-combat.js\`, \`dreadmaw-combat.js\`, \`cindermaw-combat.js\`, enemy-healing owners: anti-heal from Rotten Serenade must reach all relevant ordinary/captain/boss self/healer recovery paths **without breaking boss-authored exceptions**. Prefer narrow central healing-received adjustment rather than altering ten heal formulas. Disallow 100% healing shutdown by stacking, cap boss effect, and prevent periodic status from giving phantom kill events; confirm actual owners before implementation.
+- \`src/prototype/world.js\`, \`navigation.js\`, \`boss-combat.js\`: primarily **regression/audit**, not automatic rewrite. Verify 7th actor spacing, boss target switching, pack ownership, area effects, projectile collision, creature summons, territory/reset and dungeon doorway geometry; only change when tests demonstrate need.
+
+**UI, canon art, audio, diagnostics:**
+- \`src/prototype/app.js\`: Rogue class selection English/Spanish, icons/description, no free Soldier/Archer on first load, accurate Tutorial/Company/Barracks route for no starting party, dynamic “four classes” Succession/game-over copy, hero and company crit-chance HUD/Archive readouts, endings \`crownedClass\` mapping, no additional input key or modal burden.
+- \`src/prototype/menus.js\`: Captain and Barracks train/refuse explanation, captured species quota/capacity, reserve and fallen recovery, charmed naming, auto-combat learning, status/tooltips, purchased skill teachers, “Hero Skills”, Keeper Archive, translated naming. Keep existing menus short and readable on phone.
+- \`src/prototype/hero-presentation.js\`, \`combat-visuals.js\`, \`renderer.js\`, \`sprites.js\`, \`visuals.js\`: static ordinary/crowned Rogue, allied enemy identity, 17 existing-style critical/action cues, short pulses/notes/traps with truthfulness at actual contact; Canvas/Pixi same source and no animation logic. \`partyFormationOffset\` treats only Mage/Ranger as ranged heroes; Rogue 260-unit midrange should be categorized appropriately for escort formation or explicitly given a separate existing lane offset.
+- \`src/prototype/audio-hero.js\`, \`audio-effects.js\`, \`audio.js\`: sparse original guitar motifs on legal events, not per target; existing mute/volume/offline/reduced motion semantics. No full music tracks/loops.
+- \`src/prototype/sprites.js\` currently resolves ally image as \`ally:<type/class>\`. Charmed variants require vetted species source for **static** enemy-art reuse in ally presentation; must never draw default human Soldier/Archer for a monster or assign enemy allegiance to fool renderer.
+- Audit \`src/prototype/app.js\` Arena/Developer toggles, \`src/prototype/archive.js\` Keeper, \`src/prototype/data.js\` source species IDs, \`scripts/site-assets.cjs\`, \`templates/game.html\`, \`index.html\`, \`phone.html\`, \`prototype.html\`, \`sw.js\` and \`build-info.js\` whenever a new source module/static art/audio is added; respect normal **multi-file GitHub Pages/PWA**. No portability/single-HTML rule. Package/version/cache outputs must be regenerated by the **authorized existing** build process, not hand-edited inconsistently.
+- Keep health/status/live critical readouts, companion diagnostics, quest tutorials, rest/recall/crown/TRUE/postgame text and naming parity in both English and Spanish. Update the developer/help and style source contracts only where a new fourth class makes a true statement outdated.
+
+## 3. Risk priority — what must not be underestimated
+
+| Priority | Finding | Symptom without fix | Narrow design resolution |
+|---|---|---|---|
+| **BLOCKER** | Hostile actor allegiance/reward/quest/respawn cleanup | Duplicate enemies/allies, free victory, broken packs, lost counters | One controlled transfer; positive species allowlist, transaction tests |
+| **BLOCKER** | Active cap + seventh formation slot | Rogue seven active rejected on reload / two actors stack at same position | Central effective cap + seventh formation in six-slot arrays |
+| **BLOCKER** | Save Succession hardcoded 3 | Four fallen classes fail validation; last-game-over save invalid | Use \`Object.keys(classes).length\` and test all 4 deaths |
+| **BLOCKER** | Tagged allied species lost on recover | Goblin restored as nameless normal Soldier | Identity-aware same-ID recovery + source validation |
+| **BLOCKER** | Class dispatch assumes “else Ranger” in charged Skill 1 | Rogue fires Hawk, wrong range/art/crit key | Explicit Rogue branch + no unknown fallback |
+| **HIGH** | Bounded AoE/crit/charm release | Extra Charm per splash, multiple crits, bypass opening threat | One action receipt, one primary attempt, max 3/5 targets |
+| **HIGH** | Class-conditioned combat range vs attack order | Rogue stops at 350 but Riff only reaches 260; stalls auto attack | Same single authored reach controls chase and skill selection |
+| **HIGH** | Succession inherited monster company | Successor loses allies or save breaks at lower cap | Keep all creatures, rest minimal excess, no new Charm |
+| **HIGH** | Species-specific friendly growth/art | Captured elite keeps huge hostile stats; goblin looks human | Vetted species profile + allied art adapter |
+| **HIGH** | Enemy healing/DoT anti-heal | Status either inert or suppresses scripted boss recovery incorrectly | Route through carefully audited healing entry points, limits |
+| **HIGH** | Monster trap ownership | Existing environment traps suddenly hurt all enemies, perf spike | Separate bounded player-owned trap set with hostile-only mask |
+| **MEDIUM** | One more active collision/AI unit | Higher tick/pathfinding and visual effort | Profile 3/6/7 active, no reserve AI; no extra summon actor |
+| **MEDIUM** | Early solo RNG and progression | First few fights unwinnable, no way to capture | Measured opening balance before hardcoding chance |
+| **MEDIUM** | Empty-party tutorial assumes Soldier/Archer | Quest or onboarding softlock | Rogue-aware tutorial wording/companion milestone |
+| **MEDIUM** | Crowned art and game-over copy | Hero visually falls back to Paladin or generic late ending | One static Rogue and one static crowned variant + class mapping |
+| **MEDIUM** | PR #509 passive integration | Duplicate crit on load or bonus to successor | Derived class+level bonus; no saved passive counter |
+
+## 4. Representative regression coverage for a later authorized implementation
+
+Use native tests in **existing domain-oriented suites**, not build a giant new harness. Minimum targeted suites/additions:
+
+**Combat / critical:** extend \`tests/critical-executions.test.cjs\`, \`critical-campaign-rng-native.test.cjs\`, \`critical-hero-2to8-native.test.cjs\`, \`critical-indicator-lifetime.test.cjs\`, \`targeting.test.cjs\`, \`cooldown-only.test.cjs\`, \`rogue-integration.test.cjs\` (existing enemy Rogue — do not conflate), plus small new \`tests/rogue-bard-autobasic.test.cjs\` / \`rogue-bard-charm.test.cjs\`. Assert one effect on release, critical action key dispatch, 260-unit vs 350/400/450 reach, AoE target cap/walls, 12% saved deterministic RNG, no multi-Charm or reward duplication, pet/troop critical invariance, Skill 1 tap/charged input and all eight forms.
+
+**Companions / healing / history:** extend \`tests/community-pets.test.cjs\`, \`barracks-roster-feedback.test.cjs\`, \`enemy-support-healing.test.cjs\`, \`personalization.test.cjs\`, \`roster-skill-update.test.cjs\` and added chamed-species lifecycle matrix. Test all three charmed roles, distinct species, pet coexistence, training, healing amount and silence, charmed worker exclusion, max 12 total / per-species including dead, same-ID recovery, party7 formation and reserve no AI.
+
+**Save / Succession / quests:** \`tests/beta-campaign.test.cjs\`, \`beta-historical.test.cjs\`, \`beta-campaign-browser.test.cjs\`, \`prototype.test.cjs\`, \`barracks-roster-feedback.test.cjs\`, \`snapshot-sixth-companion-reveal.test.cjs\`. Four successive class deaths and live Game Over restore; Rogue→nonRogue inherited 7 monster actors with overflow reserve; preexisting v4 saves; corruption/forgery; capture and quest reward isolation; trained/collected pet preservation; change class without Charm entitlement leak.
+
+**Traps / Endure / rendering / performance:** reuse existing \`traps()\` and source owner fixtures, combat DoT and player-death tests, \`tests/game-menu-ui.test.cjs\`, \`tests/sprites.test.cjs\`, browser phone class-choice/HUD, \`scripts/ground-performance.cjs\`, \`scripts/material-performance.cjs\` and existing PWA packaging checks. Require actual static ordinary/crowned appearance and converted species visibility at native sizes in Canvas and Pixi; no animated assets; effect counts and frame timing bounded; no work while reserve.
+
+**Balance experimental comparisons (not tests done now):** match seed, gear, level, skills, companion composition and zone across old classes and Rogue; both same-sized party and Rogue +1. Record 0/1/3/6/7 active, 1/3/6/12 enemies, opening survival and charm time, boss interruptions/damage, ally-healer throughput, Endure deaths, critical probabilities 11/25/30 and different intensity effects. Current constraints and old class behavior must remain unchanged until approved. Do not interpret paper expected damage as observed frame performance.
+
+## 5. Review packet / stop lines
+
+Owner needs to approve a small finite set **before gameplay coding**:
+
+1. Rogue base **100 HP / 70 dormant MP / 19 Power / 4 Armor / 300 Speed** and ordinary talent profile.
+2. Short **260** reach/three-target auto, target-only Charm, five-target capped third-hit chorus, 0.85s interval.
+3. Personal +1pp crit per hero level including L1; Endure exactly 2s at 1HP; **90s cooldown and expiration death-if-not-healed are proposals**.
+4. Baseline Charm 12%, species/variant eligibility, source stat normalization and candidate reserve total 12; role Soldier/Archer tagging vs explicit new type.
+5. Eight normal/charged skill candidates and critical lever matrix; “summon” deferred rather than extra AI; anti-heal/status/trap lifetime boundaries.
+6. Static normal and Dark Lord appearance.
+7. **Owner-decided** inherited charmed allies on any Succession, with the **proposed** minimally rest-overflow policy and permission for Rogue to use inherited ordinary troops.
+
+Once these are selected, treat approved docs plus a small reviewed executable design fixture as the future implementation contract. Open a separate, bounded feature integration PR or explicitly turn this draft into an implementation PR only with owner authorization; do not silently merge a pure-spec PR as working Rogue functionality. End-to-end tests and exact-head owner release authorization are separate gates.
+
+**Work performed on PR #511:** source reads and documents only; no syntax tests, gameplay tests, performance runs, images, source modifications, new production assets or changes to CI/Pages. Treat all “should” as later work.
