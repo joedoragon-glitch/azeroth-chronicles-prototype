@@ -206,9 +206,18 @@ try {
     const guard = P.createRestartGuard({
       storage: io, Campaign, classSlots: true,
       slotClass: (game) => restored.slotClass(game),
+      bindRestored: (candidate, originalRun) =>
+        restored.bindSlot(candidate, restored.slotClass(originalRun)),
     });
     assert(guard.arm(resumed), 'restart marker reads founding class slot');
     assert.equal(guard.read().heroClass, 'mage');
+    const afterCrash = guard.recover(resumed);
+    assert(afterCrash && afterCrash !== resumed,
+      'crash recovery may create a fresh Campaign instance');
+    assert.equal(restored.slotClass(afterCrash), 'rogue',
+      'recovered successor stays bound to original Rogue save slot');
+    assert(restored.save(afterCrash, { activeClass: 'rogue' }));
+    assert.equal(rows.get(mageKey), unrelated);
   }
 
   // The older public adapter and save key must remain unchanged.
