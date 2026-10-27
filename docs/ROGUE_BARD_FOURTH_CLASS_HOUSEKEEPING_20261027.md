@@ -1,0 +1,33 @@
+# Fourth-class readiness housekeeping — draft PR #511
+
+**27 October 2026 | Limited runtime preparation + focused regression source | Draft, unmerged, not deployed**
+
+This follow-up was requested **within the existing Rogue Bard PR #511**, not a separate PR. The latest owner-approved Rogue Bard names, mirrored combat-only performances, proposed class mechanics and unresolved balance decisions remain in [canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md) and [the sixteen-form matrix](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md).
+
+## Implemented in this branch (inert for all three existing classes)
+
+1. **Single Expedition active-cap source with class bonus.** `R.balance.companions.activeCaps` remains `[0,2,3,3,4,5,6]`. `R.balance.companions.activeSlotBonuses.rogue = 1` is a dormant future-class configuration; there is **no** `balance.classes.rogue` entry and no currently selectable Rogue. `progression.js::expeditionPartyCap` and the version-4 save validator now use the same rank table plus optional class bonus. All current classes retain 2/3/3/4/5/6 active companions.
+2. **Succession checks derive the class count.** `save.js` validates maximum fallen classes and Game Over identity using `Object.keys(classes).length`, instead of two hardcoded `3` values. With the current three-class registry, accepted and rejected historical saves should behave exactly as before. The existing Succession mechanics are not replaced.
+3. **Seventh same-type formation location.** `party.js::partyFormationOffset` now defines a seventh location in each of the four existing Soldier/Archer × melee/ranged-hero arrays, while retaining the exact first six offsets. This prevents the obvious wraparound collision when seven allies share one troop type. **This is not yet proof that all mixed companion/pet compositions are collision-safe**; the seven-actor browser and boss combat matrices remain necessary.
+4. **Class-count-dependent user-facing messages.** `app.js` now constructs the number of classes for Succession introductory copy and final Game Over copy from `Campaign.classes`. When there are three classes, the original full English translation lookup string remains byte-for-byte the same at runtime. Explicit fourth-class English/Spanish paragraphs are provided, with an optional `Rogue Bard` ending title, but no fourth character-creation button until the class actually exists.
+5. **Focused regression fixture.** `tests/fourth-class-readiness.test.cjs` checks existing starter troops/caps, future +1 rank limits, original six and distinct seventh formation positions, and three-class/four-class Game Over validation. The four-class save tests **temporarily augment the in-process registry inside the isolated test**; they do not expose Rogue in actual gameplay.
+
+## Intentional non-implementation / remaining blockers
+
+This housekeeping **does not make Rogue Bard playable**. Do not interpret it as approving or implementing her proposed stats, basic, Charm, 16 performances, 2-second Endure, extra critical probability, critical intensities, art or music. None of those is tested or balanced.
+
+Before actual class registration, the implementation must still explicitly handle:
+
+- **Hero creation and no starting troops:** replace unconditional Soldier/Archer creation for Rogue only; Arena/Developer start, empty-party onboarding, recruitment restrictions and reserve prompts must remain safe for old classes.
+- **Combat dispatch:** class-specific auto targeting/reach, Skill 1 tap/charge, all eight songs, original AoE support recipients, third-combo targets; eliminate all implicit “not Paladin/Mage = Ranger” fallthroughs before registering the class.
+- **Critical systems:** one native party-domain crit receipt per Rogue release and +2pp/level personal chance if later approved; fourth independently adjustable, bilingual, persistent Rogue Level 1–3 **UI** selector; no third critical RNG stream. Coordinate with merged #440 and draft passives #509.
+- **Charmed species identity:** one positive ordinary-hostile allowlist, exact conversion/reward/quest/respawn transaction, independent deterministic Charm RNG, friendly role/AI, same-species display/art, death/recovery, quota, save validation and Succession ownership across all classes. Do not simply make an enemy allegiance-friendly.
+- **Capacity beyond the number seven:** mixed pets/Soldiers/Archers, formation collision avoidance and successor overflow to reserve. Seven-same-type uniqueness is only one preparatory guard.
+- **Skills/status/other shared systems:** native casting cancellation, positive HoT/incoming healing, Slow and cooldown clocks, station fields and target ownership, hazard disarm decision, temporary status stripping on saves/travel, innate Endure's lethal interception, immune bosses, talent/trainer/Archive translations and UI, class art and crowned ending, sound, render/critical indicators and both Canvas/Pixi rendering.
+- **Offline artifact and device regression:** ensure any eventual *new* JS/assets join the GitHub Pages/PWA asset graph. This game is **multi-file** by design. No portable one-HTML limitation must be reintroduced.
+
+## Verification and release gates
+
+Source changes were committed directly on PR #511. **Full runtime regression, browser/phone playthrough, performance profiling and release build have not been performed as part of this housekeeping edit.** The new test must pass under Node, followed by existing focused save/migration, Succession, party and bilingual UI suites. The draft must remain unmerged until the owner reviews the combined design and readiness work and authorizes a release path.
+
+Next safe step is targeted test/CI inspection, followed by a code-review pass looking for class fallthroughs; do **not** add an incomplete Rogue registry entry to make a superficial test pass.
