@@ -13,7 +13,7 @@ function prep(g,e,p) {
   g.s.mercyTime=0;
   g.s.valeFieldAwakened=true;
   g.s.thornHeroInitiated=true;
-  Object.assign(g.hero,{...p, hp:100000,maxHp:100000,level:e.level,
+  Object.assign(g.hero,{...p, hp:100000,maxHp:100000,level:Math.max(3,e.level),
     basicCd:0,order:null,immune:0});
   g.hero.skills[0]=1;
   g.s.projectiles=[];
@@ -38,7 +38,7 @@ function probe(g,e,range,context) {
   const nearTown=dist(g.hero,{x:300,y:350});
   const xy={x:e.x,y:e.y};
   let firstMoveAt=null;
-  let maxFrameStep=0, firstBurstAt=null;
+  let maxFrameStep=0, firstBurstAt=null, rogueSeen=false, maxFramesWithoutMotion=0, noMotionFrames=0;
   let reset=false;
   for(let i=0;i<25;i++){
     g.s.time+=0.1;
@@ -47,13 +47,17 @@ function probe(g,e,range,context) {
     const frameStep=dist(frameStart,e);
     maxFrameStep=Math.max(maxFrameStep,frameStep);
     if(firstBurstAt===null && e.pursuitBurst>0)firstBurstAt=(i+1)*0.1;
+    if(g.tacticalRogueRegroup(e)||e.telegraph?.rogueMove)rogueSeen=true;
+    noMotionFrames=frameStep<0.1 ? noMotionFrames+1 : 0;
+    maxFramesWithoutMotion=Math.max(maxFramesWithoutMotion,noMotionFrames);
     if(firstMoveAt===null && dist(xy,e)>0.1)firstMoveAt=(i+1)*0.1;
     if(e.returning)reset=true;
   }
   const result={context,range,cast,hit,aggroAfterHit,alert,
     homeDistance:Math.round(start.homeDistance),nearTown:Math.round(nearTown),
     insideLeash,firstMoveAt,firstBurstAt,
-    maxFrameStep:+maxFrameStep.toFixed(2),step:Math.round(dist(xy,e)),reset,
+    maxFrameStep:+maxFrameStep.toFixed(2),step:Math.round(dist(xy,e)),
+    rogueSeen,maxFramesWithoutMotion,reset,
     after:{aggro:!!e.aggro,returning:!!e.returning,noProgress:+(e.noProgress||0).toFixed(2),
       rogue:g.tacticalRogueRegroup(e)?.phase||null,health:Math.round(e.hp)}};
   console.log('RANGER_EDGE_PROBE '+JSON.stringify(result));
