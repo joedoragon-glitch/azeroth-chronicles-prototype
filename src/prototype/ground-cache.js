@@ -32,8 +32,10 @@
       if (this.item) this.item.canvas.width = this.item.canvas.height = 0;
       this.item = null;
     }
-    draw(ctx, { width, height, origin, scene, revision, paint }) {
-      const t = ctx.getTransform?.();
+    // Prepare the ONE existing offscreen backing raster, without drawing onto
+    // the visible world canvas. The live draw path calls this same method.
+    prepare({ width, height, origin, scene, revision, paint, transform }) {
+      const t = transform;
       if (!t || t.b || t.c || t.e || t.f || t.a <= 0 || t.d <= 0) {
         this.transformSkips++;
         this.clear();
@@ -109,12 +111,19 @@
         };
         this.builds++;
       } else this.hits++;
+      return true;
+    }
+    draw(ctx, args) {
+      const transform = ctx.getTransform?.();
+      if (!this.prepare({ ...args, transform })) return false;
+      const item = this.item;
+      // Blit dimensions and position are identical to the pre-refactor path.
       ctx.drawImage(
         item.canvas,
-        origin.x - item.origin.x - margin,
-        origin.y - item.origin.y - margin,
-        pixelsX / t.a,
-        pixelsY / t.d,
+        args.origin.x - item.origin.x - item.margin,
+        args.origin.y - item.origin.y - item.margin,
+        item.canvas.width / transform.a,
+        item.canvas.height / transform.d,
       );
       return true;
     }
