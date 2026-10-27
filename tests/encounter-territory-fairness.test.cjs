@@ -73,6 +73,8 @@ receipt('quota overtime',{quotaOvertime:4},1300);
 const choices=[
   ['ordinary',{},500],
   ['summon',{summon:true},900],
+  ['boss-owned summon',{summon:true,owner:'boss-owned-fixture'},900],
+  ['captain-owned summon',{summon:true,owner:'captain-owned-fixture'},900],
   ['field captain',{fieldCaptain:true},900],
   ['overtime',{quotaOvertime:3},1300],
   ['captain',{captain:true},500],
@@ -117,6 +119,18 @@ for(const flags of [{summon:true},{fieldCaptain:true},{quotaOvertime:2}]) {
   position(g,e,path.near,path.nearHero);
   assert(g.damage(e,13,'hero'),'ordinary opening hit within 500 remains valid');
 }
+// Real companion sources must obey the same allowed native combat space.
+{
+  const {g,e,path}=fixture();
+  e.summon=true;
+  position(g,e,path.far,path.farHero);
+  const ally=g.unit('archer',path.farHero.x,path.farHero.y);
+  assert(ally?.id,'native companion');
+  g.s.party=[ally];
+  const hp=e.hp;
+  assert(g.damage(e,13,ally.id),'companion may hit within active summon territory');
+  assert.equal(e.hp,hp-13,'native companion damage actually lowers HP');
+}
 // Returning/reset invulnerability cannot be bypassed by the new shared radius.
 for(const flags of [{summon:true},{fieldCaptain:true},{quotaOvertime:3}]) {
   const {g,e,path}=fixture();
@@ -158,4 +172,4 @@ for(const flags of [{summon:true},{fieldCaptain:true},{quotaOvertime:3}]) {
   g.s.phase='peace';
   assert(!g.damage(e,13,'hero'),'peace still prevents combat');
 }
-console.log('PASS issue #510 bounded territorial fairness: real LOS, 9 actor classes, 13 radii, unchanged idle/reset/LOS/peace safeguards');
+console.log('PASS issue #510 bounded territorial fairness: real LOS, 11 actor categories, companion source, 13 radii, unchanged idle/reset/LOS/peace safeguards');

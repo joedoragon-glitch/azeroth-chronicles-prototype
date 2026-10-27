@@ -679,11 +679,16 @@
       // ordinary actors. Read-only and constant-time; no chase tuning.
       nativeEncounterTerritory(e) {
         return e.type === 'boss'
-          ? this.isDungeon() ? 1800 : 700
-          : e.fieldCaptain ? 900
-          : e.quotaOvertime > 0 ? 1300
-          : e.summon ? 900
-          : 500;
+          ? this.isDungeon()
+            ? 1800
+            : 700
+          : e.fieldCaptain
+            ? 900
+            : e.quotaOvertime > 0
+              ? 1300
+              : e.summon
+                ? 900
+                : 500;
       }
 
       damage(e, amount, source = 'hero', options = null) {
@@ -708,7 +713,11 @@
         // retreat corridor/anchor, LoS, and returning/reset protections.
         const incomingTerritory = e.aggro
           ? this.nativeEncounterTerritory(e)
-          : e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500;
+          : e.type === 'boss'
+            ? this.isDungeon()
+              ? 1800
+              : 700
+            : 500;
         const inCombatArea = this.tacticalRogueLeashAllows(e, origin, incomingTerritory);
         if (!this.line(origin, e) || !inCombatArea) return false;
         if (this.awaitsHeroAttack(e)) {
