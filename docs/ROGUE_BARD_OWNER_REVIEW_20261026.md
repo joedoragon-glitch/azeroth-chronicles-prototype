@@ -7,12 +7,18 @@ The fourth playable hero is a **female, guitar-playing Rogue Bard** who beats op
 
 **Owner's settled Succession rule:** old Rogue-charmed monsters survive **all** subsequent class changes, remaining owned and recoverable. Any non-Rogue successor cannot charm new ones. The existing Succession automatically presents all four registered classes; only small saved-class-count/roster-size validations and UI copy need updating.
 
+## Baseline-first correction — latest owner direction
+
+**Source-derived actual original level-1 classes** from `src/prototype/rules.js`: Paladin **HP 120 / Power 18 / Armor 8 / Speed 300**, Mage **90 / 22 / 3 / 300**, Ranger **105 / 20 / 5 / 320**. The Mage's **9** refers to **+9 Power per purchased Discipline rank**, not a 9 starting Power. The Rogue now adopts the **minimum existing base HP (90), Power (18), Armor (3) and Speed (300)** instead of invented intermediate values. 60 dormant MP is a proposal that also equals the minimum existing class MP. **No passive combat stats beyond the proposed hero-only crit progression.**
+
+**Important:** three legacy heroes currently start with **Soldier and Archer**, while the Rogue starts with **zero** companions. Matching the minimum base stats does **not itself prove** level-1 balance; the first Charm's probability/time and survival are top-priority acceptance tests. Do not inflate Rogue stats to fix a bad opening—consider explicit, owner-approved Charm onboarding instead.
+
 ## Recommended default configuration — approve or adjust
 
 | Knob | Proposed default, not already approved |
 |---|---|
-| Starting HP / Power / Armor / Speed / dormant MP | **100 / 19 / 4 / 300 / 70** |
-| Talent per purchased rank: Power / Mana / HP / Speed | **+7 / +2 / +28 / +38** |
+| Starting HP / Power / Armor / Speed / dormant MP | **90 / 18 / 3 / 300 / 60** (MP/Armor implementation detail P) |
+| Talent per purchased rank: Power / Mana / HP / Speed | **+7 / +2 / +27 / +38** (P, minimum existing discipline coefficients) |
 | Crit (base 10% + Rogue hero level) | **11% L1, 25% L15**; with 5 books **16% / 30%** |
 | Ordinary guitar auto basic | **260 range**; 1 targeted primary at **0.8×(Power+12)**; up to **2** splash enemies at **25% primary damage**, once per **0.85s** before training |
 | 3rd-basic finisher | One extra wider capped **Full Chorus**, max **5** combined targets, minor secondary Slow, no extra Charm |
