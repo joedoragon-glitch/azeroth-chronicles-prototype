@@ -102,12 +102,26 @@ The branch now records cumulative successful static-ground raster build time, la
 - The test covers hit/rebuild distinction, deterministic timing, invalid transform and over-budget refusals, error paths, explicit clear, and nonfinite time sanitization.
 - **Not run:** full browser visual comparison, real device profiling, memory residency, full game suite or measured first-scene optimization. Do not count CI as a renderer speedup.
 
+## Phase 2 implementation checkpoint — 27 October 2026
+
+**Candidate implemented on draft PR #527; no merge or deploy.**
+
+- `ground-cache.js` now exposes `prepare({ ..., transform })`, refactoring the existing ground-cache construction so it can warm the **same single** static-floor raster without blitting into the visible gameplay canvas. Ordinary `draw()` calls the same preparation path then blits; its cache keys, 64 MiB budget, replacement behavior, and visible layer stay intact.
+- `renderer.js` uses a **single shared outdoor-floor painter** for both live frames and the new `prepareCurrentGround()` API. The latter validates the already-restored current zone, rejects interiors/arena/unsupported zones/layer modes, accounts for the current camera/zoom/DPR and material revision, and draws only onto the existing cached raster. No secondary terrain surface, sprite atlas, offscreen live scene, game clock or save mutation is introduced. It does not render combat warnings or actors.
+- `app.js` schedules that optional Canvas-only warmup **after shared sprite warmup** and only through `requestIdleCallback` while the title is inactive. It checks the exact title epoch, campaign identity, zone, writer ownership, visibility, renderer mode and idle-time allowance both before scheduling and before executing. Changing saves, selecting Continue, starting gameplay, hiding the app or switching to PixiJS invalidates the job. Browsers without idle callbacks simply use PR #518's ordinary ready-first-frame draw.
+- Focused tests: `tests/ground-cache.test.cjs` verifies zero visible blits during preparation and reuse by the first normal paint; `tests/canvas-title-preparation.test.cjs` covers bilingual title inactivity, save integrity, Continue cancellation, hidden-state cancellation, inadequate idle budget and no-save behavior. `tests/helpers/production-shell.cjs` exposes an opt-in idle test hook.
+- Provenance review: the source-only sprite-scope guard flagged the refactored renderer text; source comparison found no changed sprite families, palettes, artwork decisions or new asset registrations. The unchanged main-branch renderer hash was verified against `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` and only the active renderer SHA-256 was refreshed (old `f8662ba5...`, reviewed candidate `15426db9...`). Historical art receipts remain untouched.
+- **Safety/performance qualifications:** `requestIdleCallback` merely schedules synchronous work; it cannot interrupt a long ground-raster build. The 8 ms available-idle check is admission criteria, **not** a guarantee that paint completes inside 8 ms. Actual measured Chrome/iOS title responsiveness, memory usage, first-frame speedup, browser screenshot parity and PWA lifecycle acceptance are still required before claiming a performance improvement.
+- This phase does **not** pre-render dungeons, prepare unvisited zones, duplicate PixiJS GPU uploads, change the asset manifest, or extend the regional cache memory budget. Its valid fallback is an ordinary uncached first draw, exactly as before.
+
+**Next gate:** check exact-head focused CI and existing Canvas/Pixi render regressions; then collect matched baseline/prepared runs and browser visual parity before labeling Phase 2 performance-accepted. Do not begin Phase 3's extra regional raster allocation on assumption alone.
+
 ## Current progress ledger
 
 - [x] Read-only architecture assessment against merged PR #518, Canvas floor cache, renderer, sprite manager and existing checks.
 - [x] Dedicated Canvas follow-up branch created.
 - [x] Phase 1 ground-cache metrics implementation and focused Node validation (commit da27643e; CI #40499965106).
-- [ ] Phase 2 first-scene Canvas readiness prototype / measured no-op decision.
+- [x] Phase 2 source candidate: guarded idle first-scene ground preparation using the existing cache (focused regressions added; browser/device acceptance outstanding).
 - [ ] Phase 3 floor lookahead A/B decision.
 - [ ] Phase 4 proven Canvas procedural reuse.
 - [ ] Phase 5 combat/transition integration.
