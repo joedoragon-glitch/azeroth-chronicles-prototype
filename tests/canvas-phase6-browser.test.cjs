@@ -79,10 +79,18 @@ function chromiumBinary() {
         await page.goto(base + profile.file);
         await page.waitForFunction(() => !!window.Prototype?.renderer);
         await require('./helpers/language-browser.cjs').selectEnglish(page);
-        // Native user-facing New Game path (not direct Campaign.enter()/save editing).
-        await page.keyboard.press('f');
-        await page.keyboard.press('f');
-        await page.waitForFunction(() => Prototype.started && document.querySelector('#modal').hidden);
+        // Follow each visible menu action explicitly. Pressing F twice is
+        // not sufficient: the current title requires mode, language,
+        // challenge condition and class selection before starting play.
+        await page.locator('#title-new').click();
+        await page.getByRole('button', { name: 'New Normal game', exact: true }).click();
+        await require('./helpers/language-browser.cjs').selectEnglish(page);
+        await page.getByRole('button', {
+          name: 'Standard death and refuge recovery', exact: true,
+        }).click();
+        await page.getByRole('button', { name: /Paladin/ }).click();
+        await page.waitForFunction(() => Prototype.started &&
+          document.querySelector('#modal').hidden);
         assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
         await page.evaluate(() => {
           Prototype.game.tick = () => {}; // freeze simulation for read-only raster comparisons
