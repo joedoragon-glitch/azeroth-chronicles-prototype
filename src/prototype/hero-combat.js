@@ -1279,6 +1279,7 @@
         u.name = profile.typeName;
         u.customName = this.nextRogueCharmNickname();
         u.charmOrigin = { ...profile };
+        u.charmSupportCd = 0;
         const friendly = this.charmedCompanionProfile(u);
         u.damage = friendly.damage;
         u.maxHp = this.companionMaxHp(u);

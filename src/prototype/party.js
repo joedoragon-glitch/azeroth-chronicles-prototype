@@ -1863,6 +1863,41 @@
         }
         return true;
       }
+      // The native ranged-species support repertoire already exists for enemy
+      // healers. Friendly captured ranged actors reuse its bounded recovery
+      // scale/cadence without inheriting Ranger spells or hero mana actions.
+      charmedRangedSupport(u, living) {
+        if (
+          !this.isCharmedCompanion(u) ||
+          u.type !== 'archer' ||
+          (u.charmSupportCd || 0) > 0 ||
+          u.order ||
+          this.peace ||
+          this.s.recallActive
+        )
+          return false;
+        const range = R.enemySupportHealing.range;
+        const patients = [this.hero, ...living]
+          .filter((ally) =>
+            ally.hp > 0 &&
+            ally.hp < ally.maxHp * R.enemySupportHealing.threshold &&
+            dist(u, ally) <= range &&
+            this.line(u, ally))
+          .sort((a, b) =>
+            a.hp / a.maxHp - b.hp / b.maxHp ||
+            dist(u, a) - dist(u, b));
+        const target = patients[0];
+        if (!target) return false;
+        const amount = Math.max(1, Math.ceil(
+          target.maxHp * R.enemySupportHealing.fraction,
+        ));
+        target.hp = Math.min(target.maxHp, target.hp + amount);
+        u.charmSupportCd = R.enemySupportHealing.ordinary.cooldown;
+        this.event('heal', {
+          x: target.x, y: target.y, target: target.id, resource: 'health',
+        });
+        return true;
+      }
       companionTrySkill(u, target) {
         // An authored species must not inherit Soldier/Ranger special skills.
         if (u.charmOrigin) return false;
@@ -2607,6 +2642,7 @@
           u.name = charmOrigin.typeName;
           u.icon = dead.icon;
           u.damage = this.charmedCompanionProfile(u).damage;
+          u.charmSupportCd = 0;
           u.maxHp = this.companionMaxHp(u);
           u.hp = u.maxHp;
           u.customName = dead.customName;
@@ -3228,6 +3264,8 @@
           u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - recovery);
           u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - recovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - recovery);
+          if (u.charmOrigin)
+            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - recovery);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
@@ -3437,6 +3475,7 @@
             continue;
           }
           if (u.order) u.order = null;
+          if (context.engaged && this.charmedRangedSupport(u, living)) continue;
           if (this.peace || this.s.recallActive) {
             // Recall is a defensive escort posture: no target acquisition,
             // pursuit or active skills. A nearby attacking enemy may be

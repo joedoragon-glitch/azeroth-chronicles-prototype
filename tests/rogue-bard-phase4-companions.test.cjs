@@ -110,6 +110,18 @@ try {
       assert.equal(creature.companionCombatReach(ally), spec.reach);
       assert.equal(creature.companionBasicInterval(ally), spec.interval);
       assert.equal(creature.canGatherTribute(ally), true);
+      if (role === 'ranged') {
+        const woundedHero = creature.hero;
+        woundedHero.hp = Math.max(1, Math.floor(woundedHero.maxHp * 0.5));
+        creature.s.squadEngagement = 'fight';
+        const beforeHeal = woundedHero.hp;
+        assert.equal(creature.charmedRangedSupport(ally, [ally]), true);
+        assert(woundedHero.hp > beforeHeal, 'authored ranged support heals wounded hero');
+        assert(creature.s.party[0].charmSupportCd > 0);
+        assert.equal(creature.charmedRangedSupport(ally, [ally]), false,
+          'ranged support respects cooldown');
+        woundedHero.hp = woundedHero.maxHp;
+      }
       const startingHp = ally.maxHp;
       creature.hero.level += 2;
       creature.syncCompanionLevelStats();

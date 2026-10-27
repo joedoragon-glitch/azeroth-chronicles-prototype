@@ -854,6 +854,10 @@
             ];
             if (!profile) throw Error('Invalid charmed companion profile');
             u.damage = profile.damage;
+            if (u.charmSupportCd === undefined) u.charmSupportCd = 0;
+            finite(u.charmSupportCd, 0, 1000);
+          } else if (u.charmSupportCd !== undefined) {
+            throw Error('Invalid Charmed recovery cooldown');
           }
           u.order = gatheringOrder(u, s) || barracksWorkOrder(u, s);
           validateName(u.customName);
