@@ -696,6 +696,13 @@
     'Name companions': 'Nombrar compañeros',
     'Recruit companions': 'Reclutar compañeros',
     'Boss pet collection': 'Colección de mascotas de jefes',
+    'Charmed monsters': 'Monstruos encantados',
+    'Charmed creature': 'Criatura encantada',
+    'Previous page': 'Página anterior',
+    'Next page': 'Página siguiente',
+    Page: 'Página',
+    'Browse owned monster types and change their active status.':
+      'Consulta los tipos de monstruos que posees y cambia quién viaja contigo.',
     'Pet skills': 'Habilidades de mascota',
     'Rescued specialists': 'Especialistas rescatados',
     'Resources & labor': 'Recursos y trabajo',
@@ -1298,6 +1305,12 @@
     if (/^Local death loss: /.test(piece))
       return piece.replace('Local death loss: ', 'Pérdida local al caer: ');
     if (/^With you /.test(piece)) return piece.replace('With you ', 'Contigo ');
+    if (/^Resting /.test(piece)) return piece.replace('Resting ', 'En reserva ');
+    if (/^Fallen /.test(piece)) return piece.replace('Fallen ', 'Caídos ');
+    if (/^Local group cap /.test(piece))
+      return piece.replace('Local group cap ', 'Límite local del grupo ');
+    if (/^[0-9]+([/][0-9]+)? owned$/.test(piece)) return piece.replace('owned', 'poseídos');
+    if (/^[0-9]+ types$/.test(piece)) return piece.replace('types', 'tipos');
     if (/^[Ee]mployed /.test(piece)) return piece.replace(/^[Ee]mployed /, 'Contratados ');
     if (/^Rest /.test(piece))
       return piece.replace('Rest ', 'Descansar ').replace('Soldier', 'Soldado');
