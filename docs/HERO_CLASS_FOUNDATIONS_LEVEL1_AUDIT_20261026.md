@@ -54,6 +54,28 @@ Current `main` values:
 
 **Source:** `src/prototype/rules.js` class/discipline/cooldown configuration, `src/prototype/progression.js` `heroTalentSpeedBonus()` and `talent()`, `src/prototype/engine.js` movement computation, `src/prototype/hero-combat.js` `skillCooldown()` and `basicSkillCooldown()`.
 
+### Paladin Discipline Training and non-skill defensive audit — verified current baseline
+
+**Paladin HP via Discipline Training:** `R.balance.disciplines.profiles.paladin.hp = 33`, `maxRanks[2] = 5`. One invested HP rank gives **+33 maximum HP and +33 current HP**. At maximum five ranks this totals **+165 max HP**. Against a purely hypothetical level-1 baseline (not an attainable five-rank level-1 training claim), 120 starting HP becomes 153 / 186 / 219 / 252 / 285 at ranks 1–5. Leveling also gives a *separate*, class-neutral **+25 maximum HP per hero level**.
+
+**Paladin Armor does not increase through Discipline Training:** the four talents are Power, dormant MP/cooldown, HP, and movement. The base Paladin armor value is **8**. Native armor equipment tiers add **0 / 5 / 12 / 20 / 28** Armor at tiers 0–4; reforging the *currently owned* armor tier adds **+3 Armor**. Assuming no other modifiers:
+
+| Armor tier | Total armor without reforge | Total armor with reforge | Flat mitigation before minimum-hit floor |
+| --- | ---: | ---: | --- |
+| 0 (starter) | 8 | n/a | 8 × 0.35 = **2.80** |
+| 1 | 13 | 16 | **4.55** / **5.60** |
+| 2 | 20 | 23 | **7.00** / **8.05** |
+| 3 | 28 | 31 | **9.80** / **10.85** |
+| 4 | 36 | 39 | **12.60** / **13.65** |
+
+**Actual incoming-hit rule:** for ordinary unmitigated hits, `Math.max(3, incomingDamage - this.armor() * 0.35)`, followed by applicable *temporary* defensive factors. Therefore each additional 1 Armor prevents **0.35 hit points of ordinary raw damage**, until the minimum 3 damage is reached. Armor is **not itself a fixed percentage reduction**. Example for a 20-damage hit with no statuses: starting Armor 8 → **17.20 HP lost**; tier-4 Armor 36 → **7.40 HP lost**; tier-4+reforge Armor 39 → **6.35 HP lost**. Actual encounters can have other source damage adjustments, already-mitigated damage, wards, immunity and other effects.
+
+**Other defensive modifiers — distinguish carefully:** No **innate, permanent Paladin-specific percentage defense modifier** was identified in the hero's base class stats, HP talent, `armor()`, or normal `hitParty()` damage path. Temporary shielding/warding is handled in the existing combat status path, but the Paladin's own Shield Stance and Skill-8 party ward are **his skills and are explicitly excluded from this passive design baseline**. The companion Soldier's veteran self-ward is applied to that Soldier, **not automatically to the hero**; companion Recall protection applies to retreating companions. The purchasable **Preparation Tonic** grants **+10% of the then-current maximum HP (rounded up) until rest/defeat**, but is temporary bonus HP, **not Armor or percentage damage mitigation**, and must not be confused with a passive.
+
+**Design implication, not an approved change:** A Paladin passive can be investigated as **small automatically scaling max HP plus a separate modest percentage incoming-damage mitigation**, independent of skills and armor. However, the current damage path picks the *stronger* of active ward and Shield Stance factors rather than multiplying them. Any added permanent mitigation must have a clearly approved interaction with that rule; avoid accidental stacking into overwhelming tank durability. Decide its level-1 value, level growth, cap, inclusion/exclusion of already-mitigated hits, and save compatibility before implementation.
+
+**Sources:** `src/prototype/rules.js` class/Discipline/equipment numbers and growth; `src/prototype/progression.js` `heroTalentHpBonus()`, `talent()`, `armor()`; `src/prototype/combat.js` `hitParty()`; `src/prototype/engine.js` `activatePreparationTonic()`; `src/prototype/party.js` `companionUseFirstSkill()`.
+
 ## 1. Design intent and problem statement
 
 The target identities are deliberately simple:
