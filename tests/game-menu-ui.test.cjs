@@ -357,6 +357,22 @@ for (const language of ['en', 'es']) {
   assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).phoneLayout, 'left-hand');
   phoneSelect.value = initialPhoneLayout;
   phoneSelect.onchange();
+  const hudRow = controls.find(
+    (node) => node.className === 'menu-setting' &&
+      node.children.some((child) => child.textContent === t('HUD style', 'Estilo de interfaz')),
+  );
+  assert(hudRow, 'independent Classic/Adaptive preference appears in both languages');
+  const hudSelect = hudRow.children.find((child) => child.className === 'menu-setting-input');
+  assert.equal(hudSelect.value, 'classic', 'old saves preserve Classic by default');
+  hudSelect.value = 'adaptive';
+  hudSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.hudStyle, 'adaptive');
+  assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).hudStyle, 'adaptive');
+  assert.equal(e.get('modal').hidden, false, 'HUD setting does not dismiss settings');
+  hudSelect.value = 'classic';
+  hudSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.hudStyle, 'classic');
+  assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).hudStyle, 'classic');
   const joystickRow = controls.find(
     (node) => node.className === 'menu-setting' &&
       node.children.some((child) => child.textContent === t('Movement joystick', 'Joystick de movimiento')),
