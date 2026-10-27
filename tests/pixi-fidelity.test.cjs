@@ -162,6 +162,13 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().proceduralTextures,1,
     'offscreen procedural image is cached without drawing it in the live scene');
   assert(gpu.status().neighborhoodWarmupMs>=0);
+  // Preparation timings are cumulative synchronous measurements, not GPU upload receipts.
+  for(const metric of [
+    'syncProceduralBakeMs','maxProceduralBakeMs',
+    'syncBackgroundPaintMs','maxBackgroundPaintMs',
+    'startupSpritePreloadMs','startupFirstSceneMs'
+  ])assert(Number.isFinite(gpu.status()[metric])&&gpu.status()[metric]>=0,
+    'Pixi preparation metric must be a finite nonnegative sample: '+metric);
   assert.equal(frames[0].length,1,'prewarming must not add offscreen actors to the world');
   const heroStartX=game.hero.x;
   game.hero.x-=470;
