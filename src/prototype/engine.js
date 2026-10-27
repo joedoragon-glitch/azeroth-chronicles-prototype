@@ -10,6 +10,21 @@
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   const classes = R.balance.classes;
+  // Fail closed when future classes are registered without an authored
+  // starting party or chase profile. Nothing here makes Rogue playable.
+  const classStartingCompanions = Object.freeze({
+    paladin: Object.freeze(['soldier', 'archer']),
+    mage: Object.freeze(['soldier', 'archer']),
+    ranger: Object.freeze(['soldier', 'archer']),
+    rogue: Object.freeze([]),
+  });
+  const basicAttackApproachRanges = Object.freeze({
+    paladin: 105,
+    mage: 350,
+    ranger: 350,
+    rogue: 260, // Dormant proposed Rogue short-range basic; no combat dispatch yet.
+  });
+
   const talentMaxRanks = R.balance.disciplines.maxRanks;
   // Rounded from the level-1 class stat ratios: talent growth reinforces each class's natural strengths while keeping the old average power budget.
   const talentProfiles = R.balance.disciplines.profiles;
@@ -177,7 +192,11 @@
         gameOver: false,
       };
       if (mode !== 'arena') this.initializeQuests();
-      this.s.party = [this.unit('soldier', 260, 390), this.unit('archer', 350, 380)];
+      const starterTypes = classStartingCompanions[heroClass];
+      if (!starterTypes) throw Error('Missing starting company for hero class');
+      this.s.party = starterTypes.map((type, i) =>
+        this.unit(type, i === 0 ? 260 : 350, i === 0 ? 390 : 380),
+      );
       if (mode === 'arena') {
         this.s.arenaStage = 'hub';
         this.s.arenaRegion = 0;
@@ -3631,6 +3650,27 @@
         'warning',
       );
     }
+    heroBasicAttackApproachRange() {
+      const reach = basicAttackApproachRanges[this.hero.class];
+      if (!Number.isFinite(reach)) throw Error('Missing basic attack approach range');
+      return reach;
+    }
+    // Called only when class changes: preserve every owned companion, but
+    // never permit an inherited larger army to violate the successor's save.
+    normalizeSuccessorCompany() {
+      const active = this.s.party.filter((u) => u.active !== false),
+        overflow = active.length - this.expeditionPartyCap();
+      if (overflow <= 0) return 0;
+      for (const u of active.slice(-overflow)) {
+        this.clearPartyCharge(u);
+        this.clearCompanionJudgment(u);
+        u.active = false;
+        u.order = null;
+        u.path = [];
+      }
+      this.say(overflow + ' inherited companion' + (overflow === 1 ? '' : 's') + ' moved to reserve.');
+      return overflow;
+    }
     successor(heroClass) {
       if (
         !this.s.challenge.succession ||
@@ -3656,6 +3696,7 @@
         if (old[key] !== undefined) fresh[key] = clone(old[key]);
       this.s.hero = fresh;
       this.resetBasicCombo();
+      this.normalizeSuccessorCompany();
       this.syncCompanionLevelStats();
       this.s.challenge.pending = false;
       this.s.refuge = 'vale';
@@ -4248,7 +4289,7 @@
           ) {
             if (
               dist(h, target) >
-              (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
+              (h.order.type === 'attack' ? this.heroBasicAttackApproachRange() : 25)
             )
               this.follow(
                 h,
