@@ -84,30 +84,30 @@ At a proposed ~46–51% late-game **hero** critical probability, endgame is a fr
 
 ## Explicit per-action critical level catalogue — all 16 approved names
 
-**Each row's Level 1/2/3 is the *bonus to exactly one existing consequence on a successful critical*, not a new secondary attack.** Native values from merged `critical-levels.js`: `damage` ×1.08/1.20/1.40; `healAmount` ×1.10/1.25/1.45; `slowDuration` +0.20/0.50/1.00s; `cooldownDebt` +0.20/0.50/0.90s; `silenceDuration` +0.15/0.35/0.65s; `hasteDuration` or `wardDuration` +0.30/0.75/1.40s; `pushDistance` ×1.08/1.18/1.30; `weakenDuration` +0.20/0.50/1.00s. The lever is keyed by cast action, not rolled per target. Group for **all these entries is `rogue`**, not `hero`.
+**Merged PR #440 is the authority for the three intensity levels.** A critical event enhances **exactly ONE actually existing, lawful negative OR positive consequence**. The 16 rows are one tap + one charged effect per skill. When a skill critically strengthens enemies' negative outcome, companions still get their normal baseline positive boon; when the critical strengthens the friendly positive outcome, enemies still receive their normal hostile effect. It does **not** independently roll for both halves or promote every consequence to Level 3. The Rogue uses proposed **`rogue` intensity group**, default **Level 1**, separate from base Hero/Companion/World.
 
-| Slot/form — approved name | Enhances which existing consequence? (native lever) | L1 | L2 | L3 |
+| Skill / approved move | Consequence strengthened on a CRIT | Level 1 | Level 2 | Level 3 |
 |---|---|---|---|---|
-| 1 tap — **Staccato Sting** | Enemy direct-hit damage (`damage`), one primary receipt across valid area | ×1.08 | ×1.20 | ×1.40 |
-| 1 charged — **Fortissimo Crescendo** | Enemy direct-hit damage (`damage`) | ×1.08 | ×1.20 | ×1.40 |
-| 2 tap — **Dragging Waltz** | Enemy Slow duration (`slowDuration`) | +0.20s | +0.50s | +1.00s |
-| 2 charged — **Largo in Chains** | **Ally Quickstep duration** (`hasteDuration`); enemy Slow stays baseline | +0.30s | +0.75s | +1.40s |
-| 3 tap — **Broken Cadence** | Hostile existing skill cooldown debt (`cooldownDebt`) | +0.20s | +0.50s | +0.90s |
-| 3 charged — **Fugue of Discord** | Hostile Silence duration (`silenceDuration`), respecting boss/control caps | +0.15s | +0.35s | +0.65s |
-| 4 tap — **Withering Lament** | Ally initial **Mending Refrain total healing budget** (`healAmount`), no per-tick crit | ×1.10 | ×1.25 | ×1.45 |
-| 4 charged — **Requiem of Rot** | Ally Mending Refrain total healing budget (`healAmount`) | ×1.10 | ×1.25 | ×1.45 |
-| 5 tap — **Snaring Tango** | Original bounded station Slow-on-contact duration (`slowDuration`), receipt frozen at lawful station placement | +0.20s | +0.50s | +1.00s |
-| 5 charged — **Thornstep Tarantella** | **Ally Sheltering Step duration** (`wardDuration`); trap damage remains baseline | +0.30s | +0.75s | +1.40s |
-| 6 tap — **Stolen Tempo** | Hostile already nonready skill cooldown debt (`cooldownDebt`) | +0.20s | +0.50s | +0.90s |
-| 6 charged — **Rondo of Lost Time** | **Ally Borrowed Tempo duration** (`hasteDuration`); hostile debt baseline | +0.30s | +0.75s | +1.40s |
-| 7 tap — **Reeling Rondo** | Original legal hostile push distance (`pushDistance`), never pushes through walls | ×1.08 | ×1.18 | ×1.30 |
-| 7 charged — **Panic Polka** | Hostile original Weaken duration (`weakenDuration`); allied critical-chance increase remains +3pp | +0.20s | +0.50s | +1.00s |
-| 8 tap — **Rhapsody of Ruin** | Original actual direct area damage (`damage`) | ×1.08 | ×1.20 | ×1.40 |
-| 8 charged — **The Silencing Coda** | Original hostile short Silence duration (`silenceDuration`), capped against protected targets | +0.15s | +0.35s | +0.65s |
+| 1 **Staccato Sting** | Enemy legal direct impact damage (`damage`) | ×1.08 | ×1.20 | ×1.40 |
+| 1 charged **Fortissimo Crescendo** | Enemy legal direct impact damage (`damage`) | ×1.08 | ×1.20 | ×1.40 |
+| 2 **Dragging Waltz** | Enemy Slow duration (`slowDuration`) | +0.20s | +0.50s | +1.00s |
+| 2 charged **Largo in Chains** | Ally Quickstep duration, covering both speed and limited cooldown boost (`hasteDuration`) | +0.30s | +0.75s | +1.40s |
+| 3 **Broken Cadence** | Enemy already-active interrupted attack's lawful cooldown debt (`cooldownDebt`) | +0.20s | +0.50s | +0.90s |
+| 3 charged **Fugue of Discord** | Enemy originally valid Silence duration (`silenceDuration`), control-immune bosses unaffected | +0.15s | +0.35s | +0.65s |
+| 4 **Withering Lament** | One legal recipient's original Mending Refrain **total HoT budget** (`healAmount`), independently applied from the same cast to each lawful allied recipient | ×1.10 | ×1.25 | ×1.45 |
+| 4 charged **Requiem of Rot** | Original allied HoT budget (`healAmount`); incoming-heal multiplier remains unchanged | ×1.10 | ×1.25 | ×1.45 |
+| 5 **Snaring Tango** | Enemy original station-applied Slow duration (`slowDuration`), inherited from single placement receipt | +0.20s | +0.50s | +1.00s |
+| 5 charged **Thornstep Tarantella** | Inside-allies original **6% damage-reduction ward** strength (`wardStrength`), in *percentage points* | +1.5pp | +3.5pp | +6.0pp |
+| 6 **Stolen Tempo** | Enemy already-not-ready special cooldown debt (`cooldownDebt`) | +0.20s | +0.50s | +0.90s |
+| 6 charged **Rondo of Lost Time** | Ally Borrowed Time duration for special recharge (`hasteDuration`) | +0.30s | +0.75s | +1.40s |
+| 7 **Reeling Rondo** | Original collision-legal hostile push distance (`pushDistance`) | ×1.08 | ×1.18 | ×1.30 |
+| 7 charged **Panic Polka** | Original hostile Weaken duration (`weakenDuration`), Firm Footing stays baseline | +0.20s | +0.50s | +1.00s |
+| 8 **Rhapsody of Ruin** | Original real area impact damage (`damage`) | ×1.08 | ×1.20 | ×1.40 |
+| 8 charged **The Silencing Coda** | Original capped enemy Silence duration (`silenceDuration`), Finale Inspiration remains baseline | +0.15s | +0.35s | +0.65s |
 
-**Illustrative noticeable endgame:** Rogue at hero L18 with five Codices crits on ~51% of her *legal committed actions*, independent of slider. With Rogue dial Level 3, a **critical Requiem of Rot** improves the original **6% max-HP ally heal budget to 8.7% over five seconds**, not to a new burst, and enemies still receive normal DoT/anti-heal. At slider Level 1 that same critical boosts healing to **6.6%** (6%×1.10). A **critical Largo in Chains** at Level 3 extends its **6-second Quickstep to 7.4s**, while its enemy Slow keeps normal duration; at Level 1 Quickstep runs **6.3s**. A Level 3 critical **Fugue of Discord** adds **0.65s** to its already legitimate Silence only on legal recipients; it neither silences an immune boss nor interrupts spells after release. These are meaningful but bounded versions, not a second set of actions or different cooldowns.
+**Illustrative endgame without a new critical mechanic:** Hero-level 18 Rogue with five Codices has proposed **51%** personal critical chance (the Rogue's extra crit frequency applies to her own legal 17 action keys, *not* to allied casts). If Level 3 is selected on the **Rogue slider only**, *Requiem of Rot* critically raises the proposed **5% max-HP HoT budget to 7.25%**, delivered over the same 5 seconds, and still grants allies **+12% incoming heal received** from other lawful sources (not itself). At default Level 1, the crit HoT budget is **5.5%**. A Level 3 critical *Largo in Chains* stretches its proposed 6s Quickstep window to **7.4s** without lengthening the enemy Slow; at Level 1 it lasts **6.3s**. A Level 3 *Thornstep Tarantella* critical changes the allied stationed damage reduction **6% → 12%** only while inside the field, without extending its lifespan or granting another station. Native `wardStrength` is already authored in merged #440 and therefore needs no new critical lever. A Level 3 *Fugue of Discord* adds **+0.65s** only to lawful Silence duration, not a new interrupt or extra target. These remain candidate gameplay values, not measured balance.
 
-**Auto is the seventeenth explicit Rogue critical action**: `hero/rogue/auto` (`damage` ×1.08/1.20/1.40), only one critical receipt per short AoE auto, **one** primary-target Charm attempt on legal living contact and **no critical boost to Charm chance**. Candidate automatic basic name *Barbed Riff* and 3rd-hit finisher *Rattling Crescendo* still need naming confirmation; unlike the sixteen manual-skill names, they were not separately approved. **Auto is not a manual combat-only skill**; leave its existing combat targeting semantics unchanged.
+**Seventeenth hero critical key:** `hero/rogue/auto` uses registered `damage` ×1.08/1.20/1.40 once per legal basic release; the one **primary-only Charm** attempt stays independent of the outcome and never spreads to AoE secondaries, placed fields, pets or allies. The guitar basic is **not** a manual combat-only song and gains no short ally aura on every 0.85s swing.
 
 ## Performance and acceptance gates
 
