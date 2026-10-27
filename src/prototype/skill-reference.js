@@ -111,9 +111,9 @@
     ],
     // Working prototype names until the owner revisits bell-staff lore.
     rogue: [
-      ['Staccato Sting', 'Bell burst / companion basic-damage refrain',
+      ['Ding and Sting', 'Bell burst / companion basic-damage refrain',
        'A compact jingle-bell shock damages nearby foes and helps allies strike',
-       'Fortissimo Crescendo: a wider bell shock, stronger nearby allied basic strikes',
+       'Raise a Racket: a wider bell shock, stronger nearby allied basic strikes',
        'Both prototype names are under owner revision; mechanics stay separate from labels.'],
     ],
     ranger: [
@@ -174,13 +174,13 @@
   function card(game, slot) {
     // Repertoire labels are working descriptions, not owner-final names.
     const experimental = {
-      2: ['Dragging Waltz', 'Slow / Quickstep',
+      2: ['Lead Feet', 'Slow / Quickstep',
         'Slow nearby hostiles and quicken companions in the same area',
-        'Largo in Chains: wider Slow and stronger allied movement/recovery',
+        'Can't Dance: wider Slow and stronger allied movement/recovery',
         'Phase 5 prototype name; subject to owner review.'],
-      6: ['Stolen Tempo', 'Cooldown debt / Borrowed Time',
+      6: ['Stolen Beat', 'Cooldown debt / Borrowed Time',
         'Delay eligible enemy skills and accelerate allied special recovery',
-        'Rondo of Lost Time: larger debt pulse and stronger allied recharge',
+        'Time Out: larger debt pulse and stronger allied recharge',
         'Phase 5 prototype name; subject to owner review.'],
     };
     const row = game.hero.class === 'rogue' && slot !== 1

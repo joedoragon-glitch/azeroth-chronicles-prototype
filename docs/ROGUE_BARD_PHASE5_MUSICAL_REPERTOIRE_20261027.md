@@ -6,8 +6,7 @@ The authoritative [eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDO
 defines Phase 5 as **seven remaining tap/charged pairs (Skills 2–8, 14 total
 forms)**, all requiring combat-only legal hostile AoE with independently
 applied, conceptually inverse beneficial AoE to living, active, in-range
-companions. Prototype names for all 16 forms remain open to the owner's later
-bell-staff/lore naming review. Skill 1 from Phase 2 is preserved.
+companions. All 16 performance titles received a short, cheeky bell-staff naming pass; these are working names for owner playtesting, not settled lore. Skill 1 from Phase 2 is preserved.
 
 The first implemented vertical slice comprises **Skill 2** (native enemy
 Slow / allied Quickstep movement + cooldown recovery) and **Skill 6**
@@ -25,7 +24,7 @@ Enemy Skill 6 debt affects only known, non-ready cooldown fields.
 
 **Not yet implemented:** Skill 3 anti-interrupt, Skill 4 HoT/anti-heal,
 Skill 5 dual-polarity station (design still partly provisional), Skills
-7–8 damage/crit group boons, final naming, and all Phase 6 Rogue critical
+7–8 damage/crit group boons, final name acceptance, and all Phase 6 Rogue critical
 mechanics. No new art/audio, tutorial, public class registration or release.
 The numeric configurations here are first-pass candidates, not final balance.
 
