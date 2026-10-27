@@ -1646,8 +1646,7 @@
           barracksCharmedTypeMenu(b, typeId, back, next, nextView),
         actions = barracksPagedActions(roster, page, (u) => {
           const result = barracksCompanionAction(b, u, () => refresh());
-          result.detail = charmedStatus(u) + ' · ' + result.detail;
-          return result;
+          return { ...result, detail: charmedStatus(u) + ' · ' + result.detail };
         }, refresh),
         views = ['All', 'Active', 'Resting', 'Fallen', 'Away'];
       actions.push(action(

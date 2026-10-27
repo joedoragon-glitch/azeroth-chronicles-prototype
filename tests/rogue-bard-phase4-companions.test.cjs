@@ -49,6 +49,17 @@ try {
   assert.equal(g.isCharmedCompanion(goblin), true);
   assert.equal(g.availableLabor()[0], goblin);
   assert.equal(g.availableGatherers()[0], goblin);
+  const node = g.zone().nodes.find((n) => n.amount > 0 && !n.tribute && !n.mini);
+  if (node) {
+    assert.equal(g.gather(node.id), false, 'Expedition 1 gathering stays locked');
+    g.s.expeditionRank = 2;
+    assert.equal(g.gather(node.id), true, 'Charmed worker receives native gather order');
+    assert.equal(goblin.order.type, 'gather');
+    assert.equal(Campaign.validate(g.snapshot()).party[0].order.type, 'gather');
+    goblin.order = null;
+    g.s.gatheringTarget = null;
+    g.s.expeditionRank = 1;
+  }
   assert.equal(g.charmedCompanionProfile(goblin).hp, 100);
   assert.equal(goblin.maxHp, g.companionMaxHp(goblin));
   assert.equal(goblin.hp, goblin.maxHp, 'captured at proper full friendly HP');
@@ -58,8 +69,11 @@ try {
     'no inherited Soldier skill');
   const forged = g.unit('soldier', 510, 500);
   forged.charmOrigin = { ...goblin.charmOrigin };
+  forged.active = true;
+  g.s.party.push(forged);
   assert.equal(g.isCharmedCompanion(forged), false);
   assert(!g.availableLabor().includes(forged));
+  g.s.party.pop();
 
   // Use the game's real build/construction/upgrade lifecycle. Only terrain
   // plot selection is isolated from unrelated roadway/scenery evolution.
