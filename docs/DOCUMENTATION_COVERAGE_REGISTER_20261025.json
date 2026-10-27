@@ -1,19 +1,39 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-25",
+  "asOf": "2026-10-27",
   "basis": {
     "publishedMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
     "documentBranchShaBeforeRegistry": "84249365a69dee658b7427356d6b8af18732989b",
     "oldFrozenCensus": "docs/DOCUMENTATION_INDEX.md October 19 table preserved verbatim",
-    "method": "Git tree paths, October 19 table membership, conventional index links, 74 bounded header inspections, verified selected GitHub PR metadata"
+    "method": "Git tree paths, October 19 table membership, conventional index links, 74 bounded header inspections, verified selected GitHub PR metadata",
+    "phase3Coverage": {
+      "auditedMainSha": "5c6197e871f8f4393d26d9b7a261b9324ef85d12",
+      "currentDraftPr": 528,
+      "documentBranchShaBeforeRegistry": "e395ab30b09fe5e0ba206b7b6212d36d1d20c944",
+      "previousCoverageAsOf": "2026-10-25",
+      "previousDocumentCount": 332,
+      "newDocumentCount": 56,
+      "completeMarkdownTreeCount": 388,
+      "markdownDocs": 369,
+      "markdownRoot": 4,
+      "markdownAssets": 1,
+      "markdownTools": 14,
+      "treeEnumeration": "Full recursive git-tree scan per tracked top-level directory at the named draft head, truncated=false for every subtree; includes root blobs.",
+      "linkedDocsBasenames": 369,
+      "originalOct19Inventory": "Retained verbatim in docs/DOCUMENTATION_INDEX.md; prior verifiedPrStates and original basis are historical.",
+      "shaCorrectionsToPriorRows": 8,
+      "directLinkFlagUpdatesToPriorRows": 79
+    }
   },
   "semantics": {
     "role": "Routing-only classification, not correctness or renewed authorization",
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Git blob SHA of the exact candidate document bytes",
-    "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null."
+    "gitBlobSha": "Exact Git blob SHA of the Phase 3 candidate file at the recorded currentCoverage.documentBranchShaBeforeRegistry; pre-existing rows whose bytes changed also retain historicalPinnedGitBlobSha as the October 25 pinned receipt.",
+    "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
+    "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
+    "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks."
   },
   "verifiedPrStates": [
     {
@@ -191,14 +211,15 @@
     },
     {
       "path": "AGENTS.md",
-      "gitBlobSha": "98e6d2311ac78561972ddf55564c6546b6d27cc3",
+      "gitBlobSha": "b70be63b4aeb030724c024e1bd6f58d534595abb",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
-      "reviewDepth": "current_entrypoint_checked"
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "98e6d2311ac78561972ddf55564c6546b6d27cc3"
     },
     {
       "path": "assets/sprites/README.md",
@@ -213,21 +234,22 @@
     },
     {
       "path": "CONTROLES.md",
-      "gitBlobSha": "842082d7523eb7143e688e27451d223fcd7189c1",
+      "gitBlobSha": "d987f1aa5b1513f32a8591d53009ea87dae040b2",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
-      "reviewDepth": "current_entrypoint_checked"
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "842082d7523eb7143e688e27451d223fcd7189c1"
     },
     {
       "path": "docs/A2_A3_ARCHIVE_BOOKSHELF_READING_20261024.md",
       "gitBlobSha": "0e63fe843a26e15a4e01427de3ddf977bdf38e4b",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -238,14 +260,15 @@
         "integratedByPr": 434,
         "disposition": "merged_via_integration",
         "caution": "Archive bookshelf/reader candidate based on N1/N1a; #432 closed unmerged; A2–A3 included in merged #434."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/A4_A5_ARCHIVE_BILINGUAL_VALIDATION_20261024.md",
       "gitBlobSha": "7278bb42025514921233075a5103773f05248e0a",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -256,7 +279,8 @@
         "integratedByPr": 434,
         "disposition": "merged_via_integration",
         "caution": "Bilingual reference and focused browser tests on draft #433; closed unmerged but reconciled as part of merged #434; historical main-versus-stack blocker is not a present release gate."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ABYSS_AIR_SUPERIORITY_CANON.md",
@@ -303,7 +327,7 @@
       "gitBlobSha": "fb9e1732b135c5fe77973b4feaa5e98b4be336ad",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -314,7 +338,8 @@
         "integratedByPr": 426,
         "disposition": "merged_via_integration",
         "caution": "Initial #422 closed without merging separately; selected default-On/two-skip emergency logic reconciled into merged #426. Later emergency Off policy further changed through #443."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ADAPTIVE_RESOLUTION_20261020.md",
@@ -387,7 +412,7 @@
       "gitBlobSha": "56d51b70add996f00e0fe9b034c56e7274a4fd2d",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -398,14 +423,15 @@
         "integratedByPr": 434,
         "disposition": "merged_via_integration",
         "caution": "Archive reading format/726 EN/ES view and narrow browser evidence on original #433, closed unmerged; combined stack merged/published via #434. Prior premerge gates are historical; real hardware/WebKit remain distinct."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ARCHIVE_INTEGRATION_REVIEW_20261024.md",
       "gitBlobSha": "38e7ce32a26dfd9f21ce86d6d6678a2f13150286",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -416,14 +442,15 @@
         "integratedByPr": 434,
         "disposition": "merged_directly",
         "caution": "Integrated dev.173 Archive/approved-narrative candidate; #434 merged and published; premerge authorization checklist is historical."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ART_CHECK_DEV177_REPAIR_20261025.md",
       "gitBlobSha": "d012c25c7d8cd641b8e0ade02904dffb1c489ebd",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -434,7 +461,8 @@
         "integratedByPr": 444,
         "disposition": "merged_directly",
         "caution": "Dev.179 inherited sprite-canon/source-evidence/material VM fixes merged via #444, despite this doc's premerge candidate caveats. Current #445 is a separate unmerged tools-only repair candidate with overlapping intentions; verify exact source/tree before any future merge, do not replay or overwrite owner-approved art."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ASHEN_FRONTIER_OCCUPATION_LAYOUT.md",
@@ -474,7 +502,7 @@
       "gitBlobSha": "47ef28364323008de71102c4cb2947a6dda46210",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -485,7 +513,8 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Owner-approved Skills 1–8 two-clock rule implemented and published via merged #439. Normal Tap never extends charged lock and Charged requires both; hero basicCd is independent. Old draft validation requests are provenance, not a new active implementation order; v4 save preservation still required."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/AUDIO_AUTHORING.md",
@@ -558,7 +587,7 @@
       "gitBlobSha": "d11bf42422b6b41e807e377512b3305baa4f8418",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -569,14 +598,15 @@
         "integratedByPr": 438,
         "disposition": "merged_directly",
         "caution": "Earlier save writer, Web Locks, projectile ordering and dev.175 integration fixture repairs merged via #438; old 'PR/merge pending' prose is historical. Its inherited art checker failures later changed through merged #444; still-open #445 is a separate art pipeline repair, not proof #438 broke art."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/AUTO_OPTIMIZATION_EMERGENCY_OVERRIDE_20261024.md",
       "gitBlobSha": "c9d8a7fd0cc64962e7e2ba1c3e95d0b056287107",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -587,14 +617,15 @@
         "integratedByPr": 443,
         "disposition": "merged_directly",
         "caution": "Auto Optimization Off/Auto/On and emergency override shipped through #443; former draft/CI/release gate is not standing permission or proof of hardware gains."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/AUTO_RESOLUTION_20FPS_DEV174.md",
       "gitBlobSha": "7fda2638d3ee8cd92e6c4a8685700f922d6ba450",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -605,7 +636,8 @@
         "integratedByPr": 437,
         "disposition": "merged_directly",
         "caution": "20-FPS Auto resolution and unchanged-ceiling adapted-density preservation released through #437 at dev.174. Source/fixture success is not a physical-device FPS performance certificate."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/BACKLOG_HOUSEKEEPING_20261010.md",
@@ -623,11 +655,12 @@
       "gitBlobSha": "6602ccf0d2ce700245e5a4fb47cfaa9989695170",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/BARRACKS_ROSTER_FEEDBACK_DEV127.md",
@@ -645,22 +678,24 @@
       "gitBlobSha": "4ee13898e1484f54bac820248714919dbe66aa8e",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/BASIC_BARRACKS_MENUS_DEV156.md",
       "gitBlobSha": "e213e84a03624deb2c25324be3bcb92a8320279d",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/BETA_READINESS_20261010.md",
@@ -711,11 +746,12 @@
       "gitBlobSha": "c0d87e4306d09af67cec3a917d46cc4891c03736",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/CAMERA_SPRITE_TARGETS.md",
@@ -733,7 +769,7 @@
       "gitBlobSha": "019c52788866ca5aa958828be62899a80cec0adc",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -747,7 +783,8 @@
           455
         ],
         "caution": "Complete captain/Treasury historical development log: #454 closed unmerged, approved selected work integrated through merged #459 together with #455 Rogue. Later Phase 5 director approval supersedes earlier 50%-missing / 5s / 90%-threshold provisional wording. V8 source probes do not establish whole-game or physical-device acceptance."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/CHARGE_SLOW_CONSOLIDATION_20261015.md",
@@ -1025,11 +1062,12 @@
       "gitBlobSha": "1cb2c4170b80cc149ec3c27921aa4aa3275929a9",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/COMPANION_RETREAT_PASSAGE_DEV140.md",
@@ -1102,7 +1140,7 @@
       "gitBlobSha": "0e3fd15317117deed5421ae581f8b89d37c7b45c",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1113,7 +1151,8 @@
         "integratedByPr": 425,
         "disposition": "merged_directly",
         "caution": "Nonlethal critical freeze/restart rescue PR #425 merged and was incorporated into larger dev.169 #426; historical unmerged statement is not current. Browser crash recovery remains best effort."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/CRITICAL_SAFE_CONTRIBUTIONS_DEV143.md",
@@ -1131,7 +1170,7 @@
       "gitBlobSha": "890e59e48e122407923d5e5e457303a21ff1d764",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1142,7 +1181,8 @@
         "integratedByPr": 426,
         "disposition": "merged_via_integration",
         "caution": "Original #424 closed unmerged; collision fast-reject integrated via merged #426. Local synthetic Math.hypot savings, not a measured player-FPS increase."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/CROWD_ESCAPE_20261020.md",
@@ -1167,7 +1207,7 @@
       "gitBlobSha": "97419882b081ec86bf3a594f7bbbe565cd3df0c8",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1178,7 +1218,8 @@
         "integratedByPr": 426,
         "disposition": "merged_via_integration",
         "caution": "Original diagnostics #423 closed unmerged; source-level bounded 120-tick crowd profiler integrated via merged #426. Synthetic reports are not user-device FPS."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/CROWN_COMPANIONS_20261020.md",
@@ -1288,14 +1329,15 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "e7643a28c75eb33e0b2a481f65f2f458fc27884d",
+      "gitBlobSha": "257c7d7ce0b17a4c674096ff1ba70f0371b6207b",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
-      "reviewDepth": "current_entrypoint_checked"
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "e7643a28c75eb33e0b2a481f65f2f458fc27884d"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -1332,25 +1374,27 @@
     },
     {
       "path": "docs/DOCUMENTATION_COVERAGE_NOTES_20261025.md",
-      "gitBlobSha": "cf20ce12a5ea56a17c18efb767a3bee19e106ab1",
+      "gitBlobSha": "6103bbc3b15d8f8f193cf16a8527d34a82f58e6d",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "coverage_explanation",
       "authority": "verify_with_current_source",
-      "reviewDepth": "current_entrypoint_checked"
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "cf20ce12a5ea56a17c18efb767a3bee19e106ab1"
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "6777828d513cae4708017e98b5404acb9bbdaa9e",
+      "gitBlobSha": "8ec8ea1181840de17c2ba24da6c22edfab9ffe39",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
-      "reviewDepth": "current_entrypoint_checked"
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "6777828d513cae4708017e98b5404acb9bbdaa9e"
     },
     {
       "path": "docs/DUNGEON_CAMPS_DEV131.md",
@@ -1434,7 +1478,7 @@
       "gitBlobSha": "9cd1cb971e06d6184ddbf041681b8a07d7fb136f",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1445,7 +1489,8 @@
         "integratedByPr": 448,
         "disposition": "merged_directly",
         "caution": "Ordinary cross-species healing implementation record originating on dev.180/181 candidate; PR #448 subsequently merged for dev.182; detailed rates are snapshot-specific and must be checked against present engine."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ENEMY_SKILL_VFX_AUDIT.md",
@@ -1518,11 +1563,12 @@
       "gitBlobSha": "c271f17799dc9e13c6148e57ec0162ed12f379c5",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "world_and_regions",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/FIELD_DUNGEONS_V074.md",
@@ -1551,11 +1597,12 @@
       "gitBlobSha": "a10fc2ef9a5a6dcf918f7737d4fb71343ceefece",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/FORTS_RANGER_PASSAGE_20261020.md",
@@ -1657,7 +1704,7 @@
       "gitBlobSha": "d4a765dd6ea5cc5f41b6027c1f88a0ee9cf5c64f",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "menus_and_ux",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1668,7 +1715,8 @@
         "integratedByPr": 396,
         "disposition": "merged_directly",
         "caution": "Dev.157 five-root concise menu integration merged/published by #396; its 'next instructor menus' sentence is dated and later work exists. Does not establish present seven-step menu state or route correctness."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/GATHERING_ESCORT_DEV130.md",
@@ -1716,14 +1764,15 @@
     },
     {
       "path": "docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md",
-      "gitBlobSha": "966326213033ff833b2872655a4e1797e6308059",
+      "gitBlobSha": "838c8c5034fc753cbb8a808b24aa60ecf0920ef2",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "frozen_census_membership",
+      "historicalPinnedGitBlobSha": "966326213033ff833b2872655a4e1797e6308059"
     },
     {
       "path": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
@@ -1862,7 +1911,7 @@
       "gitBlobSha": "a6df0586457fcfbd9e97d25c747dc12940097e47",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1873,14 +1922,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Area 1's original preliminary single-request replacement behavior was explicitly superseded by owner-approved FIFO in Area 3 and merged #439. Stationary basics originated in separately closed-unmerged #436, absorbed into #439. Its old 3-class initial beam was later modified by merged #452/#466/#467; no runtime reimplementation authorized."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_AREA2_IMPLEMENTATION_20261024.md",
       "gitBlobSha": "0f1a1c3adf8d8a13c62fb470e62c820f51b1e918",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1891,14 +1941,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Area 2 audio scheduler and skill reference CI failures are dated interim receipts; Area 3 and #439 final review record repairs, and #439 eventually merged. Do not rerun earlier draft blockers or conflate hero sound with unmerged audio Stage 1–4 work."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md",
       "gitBlobSha": "4c3487234cbe63df6d0893493e52330256573b0b",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1909,14 +1960,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Area 3 FIFO (16 pending entries, duplicate forms, native 0.65s charged prep, English/Spanish feedback) implemented in merged #439; read release source before modifying queues. Distinguish later independently unmerged effects/projectile and Criticals branches."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md",
       "gitBlobSha": "c7c30105f216c71e551a10db8dc85d1435f18b70",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1927,14 +1979,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "An owner-authorized normative FIFO contract, already implemented by merged #439 despite historical embedded 'not yet implemented' paragraphs. Preserve precise same-slot non-overtaking and independent other-slot behavior; no consent for fresh queue changes."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md",
       "gitBlobSha": "0471c943ad1ad5d61448ace3b04a83ecf6be3ce5",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1945,14 +1998,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Final dev.178 draft review and 38-file intermediate focused run precede exact-head #439 passing 43-file run 40160551845 and subsequent merge. Native/DOM/synthetic evidence does not certify physical touch, visual comfort or devices; inherited art-tool claims are dated."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_AV_AND_IN_GAME_GUIDANCE_SCOPE_20261024.md",
       "gitBlobSha": "55d30a501b9d95e66048d4a1b32484423f4a2e42",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1963,14 +2017,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Owner-approved class-specific graphics/audio/player-guidance design for #439; later source implementation and merge fulfilled code-scope, while real-device visual/listening acceptance remains separate and other audio/VFX drafts unmerged. Original stage checklist is historical, not active authorization."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md",
       "gitBlobSha": "127ab622fbed2e7dec99700d1ae999a9c483b501",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1981,14 +2036,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Original source trace based on dev.175 main: u.skill1Cd refers to companion first special, unlike hero.skills[0]; the separation is preserved through merged #439. Baseline's original 'hero.cd[0] still owns basic' became obsolete once hero.basicCd split. Current unmerged #440/#464 could affect party and need separate integration."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md",
       "gitBlobSha": "94494fa7e2d585188dbc7c32afbaeea39e3f04c6",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -1999,14 +2055,15 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Approved first-pass Skill 1 three-form values and independent 1–8 cooldown model implemented via #439; do not reset or retune as if never shipped. Charged Mage traveling presentation/timing and normal beam changed in merged #452/#466/#467; old instantaneous beam appearance and visual numbers are not necessarily present current timing."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md",
       "gitBlobSha": "767af9306909dfa43fe3fece3e0519bd3e3d924a",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2017,7 +2074,8 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "Owner's accepted initial Paladin cross, wide Mage line and Ranger bounded hawk concepts originated before runtime; #439 merged their original forms. Its unchecked implementation boxes and 'no code yet' wording are dated. Subsequent #452/#466/#467 refined Mage motion/design; protected encounter returns stay excluded."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HERO_SKILLS_CONSOLIDATION_20261015.md",
@@ -2079,22 +2137,24 @@
       "gitBlobSha": "5f8789c06632885562666ada97ad61be5ccbec0e",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "world_and_regions",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HIGHLANDS_TREASURY_DEV138.md",
       "gitBlobSha": "07653995b862785a47b3a12fee2962ba59c7f3c9",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "world_and_regions",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/HOUSEKEEPING_AUDIT.md",
@@ -2189,7 +2249,7 @@
       "gitBlobSha": "9d7494761bf93c0253a2b7f30d67788b6be04681",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2200,7 +2260,8 @@
         "integratedByPr": 434,
         "disposition": "merged_via_integration",
         "caution": "Dev.170 rule/reference audit on stacked #433; its reconciled numerical/Archive changes traveled through #434; exact figures remain date-bound, not independently verified against current dev.185 rules."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/KEEPER_REFERENCE_WRITING.md",
@@ -2262,7 +2323,7 @@
       "gitBlobSha": "640a94aaf046e826ddad2680ed486ab9b44437e2",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2277,29 +2338,32 @@
           467
         ],
         "caution": "Mage Skill 1 released through #452. #466 superseded original 0.75s charged traversal with 0.625s, normal speed +20%, and original 2.5x visual thickness with 2.0x; #467 added procedural Arcane Lance Helix. Earlier draft/phone-blocker checkpoints do not mean the feature remains unmerged or Pixi phone is fully accepted."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/MAGE_HAIR_QUICKFIX_20261020.md",
       "gitBlobSha": "28a930e40b26935d1483b1a5987d29d6f89b1968",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/MAP_WAYFINDING_FOLLOWUP.md",
       "gitBlobSha": "adc9fedbaedf8837bbd4866f3b0329fadec4979b",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "navigation_and_map",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/MATERIAL_RENDERING_PERFORMANCE.md",
@@ -2314,14 +2378,15 @@
     },
     {
       "path": "docs/MECHANIC_DEVELOPMENT.md",
-      "gitBlobSha": "ca17f8257babab5425862789e05ea255d156021d",
+      "gitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "subject_workflow_or_contract",
       "authority": "verify_with_current_source",
-      "reviewDepth": "current_entrypoint_checked"
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "ca17f8257babab5425862789e05ea255d156021d"
     },
     {
       "path": "docs/MECHANICS_AUDIT_V081.md",
@@ -2339,7 +2404,7 @@
       "gitBlobSha": "ef017189d425793fc5c1e5fa4d133f9cd2a2e9ab",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "menus_and_ux",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2350,14 +2415,15 @@
         "integratedByPr": 413,
         "disposition": "merged_directly",
         "caution": "Foundational menu descriptors, focus, selection and scroll preservation merged via #413 despite original review-candidate label; unchanged current gameplay/rules and no hardware screen-reader acceptance."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/MENU_OVERHAUL_STEPS3_7.md",
       "gitBlobSha": "c8bc0fc2c1eb162be6ffec1c00f0b9bf4eff76b7",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "menus_and_ux",
       "role": "other_reference",
       "authority": "verify_with_current_source",
@@ -2368,14 +2434,15 @@
         "integratedByPr": 415,
         "disposition": "merged_directly",
         "caution": "The five remaining menu milestones shipped via merged #415 after #413/#414; step-by-step draft merge gates in document are history, not permission to rerun. Map Step 7 only reorganizes destinations and never claimed native route solver repair."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/MENU_SCREEN_PERFORMANCE_STEP2_20261023.md",
       "gitBlobSha": "0172db66b62fe4c30ecafe10196e845c817ab660",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2386,14 +2453,15 @@
         "integratedByPr": 414,
         "disposition": "merged_directly",
         "caution": "Step 2 unified Screen & Performance merged via #414; historical default Adaptive Frame Skip Off is superseded by later merged #426/#443 rules. Pixi Keep/Revert and Canvas fallback remain actual renderer owners; no measured FPS gains from UI."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/MENU_STEP7_AUDIT_20261023.md",
       "gitBlobSha": "cb3bd3f8a987c0698cec73099b10b9143170de52",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "menus_and_ux",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2404,7 +2472,8 @@
         "integratedByPr": 415,
         "disposition": "merged_directly",
         "caution": "Step 7 map and quest grouping included in merged #415; a source-only/production-shell review, not all navigation correctness or physical touch/canvas hit-target certification. Preserve separate MAP_WAYFINDING_FOLLOWUP audit, no automatic gameplay code change."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/MILLHAVEN_ONBOARDING_DEV160.md",
@@ -2455,7 +2524,7 @@
       "gitBlobSha": "46cea87c53b716a17626584c59a9b19e31548eaa",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "narrative_and_archive",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2466,14 +2535,15 @@
         "integratedByPr": 434,
         "disposition": "merged_via_integration",
         "caution": "Author-approved bilingual text and draft N1 delivery tests; source PR #428 closed unmerged, combined work published through #434; implementation proof comes from merged integration, not standalone draft CI."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/N1A_SCENE_RECONCILIATION_20261024.md",
       "gitBlobSha": "35500f1bdb21dd74fa75dcb399b1768f1e267e93",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2484,25 +2554,27 @@
         "integratedByPr": 434,
         "disposition": "merged_via_integration",
         "caution": "Original N1a #430 closed unmerged but its five world/scene obligations and author-final N1 copy included through merged #434. Do not rerun draft on main, modify protected manuscript, or infer mobile certification from its 19 focused suites."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/NATIVE_RANGE_FORT_AUDIT_DEV145.md",
       "gitBlobSha": "48c1f5d32992bae554d38425ffb2f15699cd325b",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/NAVIGATION_STAGE2_20261023.md",
       "gitBlobSha": "868bfe9657ce339c62e1c86bf48edb55fe44eb04",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2513,14 +2585,15 @@
         "integratedByPr": 421,
         "disposition": "merged_directly",
         "caution": "Dated Stage 2 navigation ownership/cancel checkpoint; stages 2–5 merged together in #421; Stage 2 TODOs are not currently pending."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/NAVIGATION_STAGE3_20261023.md",
       "gitBlobSha": "7d76260c85c9b317a30885112f6bc0350b64e763",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2531,14 +2604,15 @@
         "integratedByPr": 421,
         "disposition": "merged_directly",
         "caution": "Dated ferry-frontage and representative route probe; merged via #421; 44/44 synthetic route checks do not prove all-device route usability."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/NAVIGATION_STAGE4_20261023.md",
       "gitBlobSha": "3728363015b268b72a71f899aaf6be690e31cd11",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2549,14 +2623,15 @@
         "integratedByPr": 421,
         "disposition": "merged_directly",
         "caution": "Stage 4 solver/source test checkpoint was part of later cumulative merged navigation PR #421. Stage 5 and original stop-before-merge notices in this dated report are historical; verify current navigation source and real-device behavior separately."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/NAVIGATION_STAGE5_20261023.md",
       "gitBlobSha": "ea23f9465ed416a851d0132716e9e8687d328c69",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "navigation_and_map",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2567,7 +2642,8 @@
         "integratedByPr": 421,
         "disposition": "merged_directly",
         "caution": "Dated Stage 5 marker/touch/navigation evidence; merged via #421; historical unchecked final-audit and merge items should not be resurrected."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/NERI_PROJECTILE_PET_20261020.md",
@@ -2618,11 +2694,12 @@
       "gitBlobSha": "8e7f540404044f2a63ba63bdb7007e14a9ad8dff",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/OLDER_GAMEPLAY_FIXES_AUDIT_20261009.md",
@@ -2640,7 +2717,7 @@
       "gitBlobSha": "c2c68a157304efe8eb8674578509ca086068f463",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2651,18 +2728,20 @@
         "integratedByPr": 346,
         "disposition": "merged_directly",
         "caution": "Earlier dev.112 cache/slow-frame fixes merged #346. Its original settings/defaults/one-scene benchmark values predate #426/#431/#437/#443 and cannot be assumed current."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ORCHARD_WITNESS_DEV147.md",
       "gitBlobSha": "ee9516a8de80f6e6e04d72a9f2dcf7666aeb9bf8",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "world_and_regions",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/OUTDOOR_ROAD_INFRASTRUCTURE_AUDIT.md",
@@ -2680,7 +2759,7 @@
       "gitBlobSha": "398f599d8279867f163ac0f690fe33d5ecdeaaef",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2691,7 +2770,8 @@
         "integratedByPr": 450,
         "disposition": "merged_directly",
         "caution": "Dev.181 diagnostics in exported playtest reports merged #450, bounded transient samples in WeakMap and no save change. Original owner's future reproduction suggestion is not a fresh test mandate or proof the later #451 cap solved device FPS."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PERF_WS2_BROWSER_CANVAS_CONTROLS.md",
@@ -2869,7 +2949,7 @@
       "gitBlobSha": "22ecc56bb31108a482eae7b9f3a2f03bb8374d0a",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2880,7 +2960,8 @@
         "integratedByPr": 446,
         "disposition": "merged_directly",
         "caution": "Pet first-skill scheduling priority fixed through merged #446. Existing 11-family priority and charged/first timings are historical protected rules; does not authorize changing unmerged #440 critical pets or #464 pet impact receipts."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PET_VISUAL_IDENTITY_20261020.md",
@@ -2898,7 +2979,7 @@
       "gitBlobSha": "d19ee6463d323123ec88c7af77d92f4f3e297b32",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2909,14 +2990,15 @@
         "integratedByPr": 407,
         "disposition": "merged_directly",
         "caution": "Early CDN-only, unbuilt, Step 2 branch state was superseded by merged experimental Pixi PR #407. This is not proof of complete WebGL2 art parity, phone acceptance or present CDN usage."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PIXIJS_PLAYTEST_STEP3_AUDIT_20261022.md",
       "gitBlobSha": "9b3980b861d223fe2322b39bbaca6d3fc85dd802",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2927,14 +3009,15 @@
         "integratedByPr": 407,
         "disposition": "merged_directly",
         "caution": "Step 3 technical loader/controller/asset corrections preceded merged optional renderer #407; its static-only NO-GO status is historical and does not settle generic current Pixi issue #460."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PIXIJS_PRE_STEP4_HANDOFF_20261022.md",
       "gitBlobSha": "61f48c99fea17210a7f52094ad1e1aff0a825990",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -2945,7 +3028,8 @@
         "integratedByPr": 407,
         "disposition": "merged_directly",
         "caution": "Pre-Step-4 and subsequent #407 browser/CI audit recorded date-bound failures and targeted passes. #407 subsequently merged; do not re-open prior Step 5 automatically or infer full-hardware Pixi success."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PLAYTEST_AUDIT.md",
@@ -3051,7 +3135,7 @@
       "gitBlobSha": "5e277e2b70239493e03343d684f7ebb2dbd445de",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3062,7 +3146,8 @@
         "integratedByPr": 439,
         "disposition": "merged_directly",
         "caution": "The original draft continuation record explicitly says dev.178 unpublished; historical only now that #439 merged and later main reached dev.185. Its completed Area 1–4 evidence and native/DOM/browser acceptance boundaries remain useful. Never revive closed-unmerged #436 as a second merge."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md",
@@ -3091,22 +3176,24 @@
       "gitBlobSha": "834b2a2a42cb719deabbecad3629a0f03366bcf7",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PROCEDURAL_COTTAGE_20261020.md",
       "gitBlobSha": "3669c2252e7d0eba64717273e0d2e608bdb0955d",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/PROCEDURAL_SELECTIONS_20261020.md",
@@ -3179,11 +3266,12 @@
       "gitBlobSha": "780bd5162d692b9b6f739f42e55456d6e0550732",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/RANGED_PET_ROLES_20261020.md",
@@ -3212,22 +3300,24 @@
       "gitBlobSha": "9bfc7442b77c78680717ac49a023234e9855fe46",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/RECALL_TUTORIAL_DEV152.md",
       "gitBlobSha": "9eb1ef33b14fd3c09df67602eef7e51298967794",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/REGIONAL_ENVIRONMENT_SPRITE_SCOPE.md",
@@ -3267,7 +3357,7 @@
       "gitBlobSha": "6e9b60c9d5b018bbfef575724f30ea1fbf281895",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3278,7 +3368,8 @@
         "integratedByPr": 459,
         "disposition": "merged_directly",
         "caution": "Premerge integration plan for #454/#455; their selected changes reached main through merged #459, despite source PRs being closed unmerged. Unchecked historical release gates are not present authorization."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/RESOURCE_DISCOVERY_DEV132.md",
@@ -3351,7 +3442,7 @@
       "gitBlobSha": "1a07bcf99de7df0888adff95c59be2ca099ea43c",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3363,14 +3454,15 @@
         "disposition": "merged_directly",
         "priorIntegratedByPr": 459,
         "caution": "Phase 2 historic audit began at dev.184; subsequent director-approved #462 merged to main. Recent actual HP hit <=2.2s may enter selection up to existing Rogue initiation reach (ordinary 408, captain 528, boss 600); not a 520 universal buff. Historic #452-draft and #462-not-released language is superseded."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/ROGUE_TERRITORIAL_ESCALATION_20261025.md",
       "gitBlobSha": "82f3e7ef62edc5657f520ef46eca7364d3bf53af",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3381,14 +3473,15 @@
         "integratedByPr": 453,
         "disposition": "merged_directly",
         "caution": "Original 750 local/1800 regional/3,000-route regroup, 2–3 guards and initial 3s cast floor merged #453; its later director 2s/retreat-first follow-up came from closed-unmerged #455 through merged #459, not #453 alone. TRUE patrol work #458 remains open unmerged."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/RUNTIME_WORKLOAD_DEV177_AUDIT.md",
       "gitBlobSha": "fb7cc01289424ca38baff9265b7ec2994ea7e638",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3399,14 +3492,15 @@
         "integratedByPr": 442,
         "disposition": "merged_directly",
         "caution": "Independent premerge native fixture/provenance audit of #442, now merged; inherited unrelated art/test failures require separate evidence, not a new unrelated work order."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/RUNTIME_WORKLOAD_DEV177.md",
       "gitBlobSha": "c9838eaf60af0e83c3981889f612de27f0e0caa7",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3417,14 +3511,15 @@
         "integratedByPr": 442,
         "disposition": "merged_directly",
         "caution": "World/collision/guard-reference preservation repairs in dev.177 PR #442 merged. Historical local Node gains and premerge checklists not present-tense benchmark or approval."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/SAVE_RECOVERY_CHECKPOINTS_DEV176.md",
       "gitBlobSha": "6d10dfcf650bd67a46b2947a77c246c553c44224",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "saves_and_recovery",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3435,7 +3530,8 @@
         "integratedByPr": 441,
         "disposition": "merged_directly",
         "caution": "Dev.176 protected bounded 3-per-mode/500,000-char recovery checkpoints and bilingual Try Recovery path merged via #441. Original 'candidate not published' status is dated; physical multi-window/device acceptance remains a different evidence level."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/SCENERY_NOTIFICATIONS_BATCH_354.md",
@@ -3486,7 +3582,7 @@
       "gitBlobSha": "af08563ab9eef5db9f435ab4bff8badf59757204",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -3497,7 +3593,8 @@
         "integratedByPr": 451,
         "disposition": "merged_directly",
         "caution": "Four-stack cap on party Slow strength/debt merged through #451, without limiting hostile Slow. Reported real-device goblin stalls were not causally proven or physically cleared by this focused change; #450 monitoring is independent."
-      }
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/SLOW_COOLDOWN_INTERACTION_20261015.md",
@@ -3878,11 +3975,12 @@
       "gitBlobSha": "a277bb93fbee73f2c8244b0fb58580003564b952",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/TIDAL_FERRY_DEV136.md",
@@ -3977,22 +4075,24 @@
       "gitBlobSha": "5fc9e55e21188d4b06926d8f1f11479bab6e84c9",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/UPDATE_NOTICE_20261020.md",
       "gitBlobSha": "7476174b29bfc8e968861a8fab7f50efaa00c628",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/V09_RELEASE_NOTES.md",
@@ -4032,11 +4132,12 @@
       "gitBlobSha": "de73a192140824fe781a63b00e8c88e6e0ae2d19",
       "location": "docs",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "performance_or_rendering",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/WORK_MODE_PR313_HANDOFF_VERIFICATION_20261016.md",
@@ -4095,36 +4196,39 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "4e0ca0dbf470e2f8d98a6ae05f89c8801e6b55c0",
+      "gitBlobSha": "21d69c2f95ee9aec75237e83870f313958e90223",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
-      "reviewDepth": "current_entrypoint_checked"
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "4e0ca0dbf470e2f8d98a6ae05f89c8801e6b55c0"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",
       "gitBlobSha": "664f9f104fcf6be3626f506053e7c1fad849a02a",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "tools/visual-review/fortifications-dev109/README.md",
       "gitBlobSha": "cedf91998294cc1b23afe7c0fd3afb3f51d76241",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "tools/visual-review/frontier-bastion-audit-20261020/README.md",
@@ -4164,22 +4268,24 @@
       "gitBlobSha": "cb0bf7ab500ca8c8eeea8817352429e1c37d9981",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "tools/visual-review/veyra-ivory-correction-20261020/README.md",
       "gitBlobSha": "5b322b6b35d9ee65a1630482e2cea5852bf1762d",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "tools/visual-review/veyra-options-20261020/README.md",
@@ -4230,11 +4336,12 @@
       "gitBlobSha": "19ff3fac4cc6599a0af4fe7b98b3f55e431e01f4",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "tools/webgl-pilot/REAL_WORLD_GPU_README.md",
@@ -4257,6 +4364,622 @@
       "role": "other_reference",
       "authority": "verify_with_current_source",
       "reviewDepth": "path_only"
+    },
+    {
+      "path": "docs/ADAPTIVE_MOBILE_HUD_IMPLEMENTATION_20261027.md",
+      "gitBlobSha": "180971d3be37f63b0a146ac4c0736043587432a1",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "menus_and_ux",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/AUDIO_STAGE1_COVERAGE_20261025.md",
+      "gitBlobSha": "8ea52d1c9a6206f6553bcbf999c0ffb522371057",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "audio",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/AUDIO_STAGE2_RECOVERY_20261025.md",
+      "gitBlobSha": "167fb5ac10096bbe95bfafa86235d3023d752872",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "audio",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/AUDIO_STAGE3_HANDOFF_20261025.md",
+      "gitBlobSha": "65e1b2e090faf60410573d790c2d5912e8d79a06",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "audio",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/AUDIO_STAGE3_REAL_ACTION_AUDIT_20261025.md",
+      "gitBlobSha": "cd7fa637cb73c8fee00098c347f4d53476290ecb",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "audio",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/AUDIO_STAGE4_MIX_AUDIT_20261025.md",
+      "gitBlobSha": "0bfa460e8fe265c8932a28a169408d28b99abbd7",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "audio",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/AUDIO_STAGE5_RELEASE_PREFLIGHT_20261025.md",
+      "gitBlobSha": "2cb22f6dc5382442e709335e811c2374a54e3527",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "audio",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/COMBAT_ARENA_LOW_SPEC.md",
+      "gitBlobSha": "88aab43b2066599cdf970824bc1e60e1cba10d91",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/CRITICAL_EXECUTIONS_AND_UNFORESEEN_CODICES_DESIGN_20261024.md",
+      "gitBlobSha": "541e00f000c9d7c5a8c68d9effa92f821638f021",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/CRITICAL_EXECUTIONS_FEASIBILITY_PERFORMANCE_IMPLEMENTATION_AUDIT_20261024.md",
+      "gitBlobSha": "2ccccb34ef91563b1b663487d01af21a5710ef0a",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/CRITICAL_EXECUTIONS_STAGE0_ACTION_CATALOG_PR439_20261025.md",
+      "gitBlobSha": "a1cb7e023958cc9acf1199018db75573287addef",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/CRITICAL_EXECUTIONS_STAGE1_DORMANT_CORE_20261024.md",
+      "gitBlobSha": "978320021e9dfa855e1d78688f117b492611d190",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/CRITICAL_EXECUTIONS_STAGE2_PARTY_RECEIPT_CHECKPOINT_20261024.md",
+      "gitBlobSha": "c644074e86136eddfdf359281e429cd3f743b3c1",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/CRITICAL_EXECUTIONS_THREE_LEVEL_STRENGTH_POLICY_20261024.md",
+      "gitBlobSha": "cccf67d5914708d9607154caac61d9f14c0fe3d5",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/DOCUMENTATION_GOVERNANCE_AUDIT_HANDOFF_20261025.md",
+      "gitBlobSha": "23986e54b374d5a9a5392df5b91e3e58d44023f9",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/DOCUMENTATION_GOVERNANCE_DEEP_AUDIT_20261025.md",
+      "gitBlobSha": "d8b5db1e0aaf9facc0115f263348d4f44ea936bc",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
+      "gitBlobSha": "7faf78f6a410bc077656648ff6b3271022783e00",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "coverage_explanation",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/EFFECTS_PR471_VERIFICATION_20261025.md",
+      "gitBlobSha": "a69ec51b261f1b2799cc83224d7d7141e8e48c66",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "art_and_sprites",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/EFFECTS_STAGE5_GITHUB_HANDOFF_20261025.md",
+      "gitBlobSha": "5c9fe782c77e0af0ad3f5a5fa95caee94a8d2ecb",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "art_and_sprites",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ENEMY_RANGE_TUNING_SPLIT_20261027.md",
+      "gitBlobSha": "07aee3103c8d040b625256f9cd7f7ba080d2b79e",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/FOUNDING_EXPLORERS_EXECUTION_RECORD.md",
+      "gitBlobSha": "e44d66290e57c3a00c0ff48c6d37437ad40dd051",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "general_or_unresolved",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/FOUNDING_EXPLORERS_IMPLEMENTATION_HANDOFF.md",
+      "gitBlobSha": "dc894ff575dfec24ed44a926b632e50096a1cfd4",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "general_or_unresolved",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/FOUNDING_EXPLORERS_LAUNCH_PREP_KIT_20261025.md",
+      "gitBlobSha": "04e67c0c8b429c616851efb784b40a5117b944fa",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "general_or_unresolved",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/GOBLIN_SLINGER_ARROW_GEOMETRY_DEV194.md",
+      "gitBlobSha": "cd9ab94e8f871616a9f880c95c3d0657e01a5d98",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "art_and_sprites",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/GREENWOOD_MELEE_ANTI_KITE_PILOT_20261026.md",
+      "gitBlobSha": "6adf684716bb654eb19c5518cbb883db0facf30a",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/GREENWOOD_NATIVE_PURSUIT_20261026.md",
+      "gitBlobSha": "53a1567dd34f07b12035a9204588cadb4490f7a6",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/HERO_CLASS_FOUNDATIONS_LEVEL1_AUDIT_20261026.md",
+      "gitBlobSha": "0d754f119c55f4017af7768e8e98a0d3aabff2af",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "general_or_unresolved",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/HUD_OPTION_B_PC_PHONE_20261025.md",
+      "gitBlobSha": "4add1e4c61f449690801b0cd4c88db0af212e2f7",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "menus_and_ux",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ISSUE463_DEV186_INTEGRATION_20261025.md",
+      "gitBlobSha": "e99b7b0eb4439b6de89ffe4ec20e35c644164302",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ISSUE463_HERO_COMPANION_PROJECTILE_AUDIT_20261025.md",
+      "gitBlobSha": "e13aa893a3ad3968a689c5fad2be7e844b8b762d",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ISSUE463_PET_FAMILY_RELEASE_IMPACT_AUDIT_20261025.md",
+      "gitBlobSha": "6e52029df895e38b17b084cc190ee9bee7aaea23",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ISSUE463_POSTCAST_INTEGRATION_READINESS_20261025.md",
+      "gitBlobSha": "9672d2cc9eb6efca1ac48ff7c9fa7a0c33e5330c",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ISSUE463_PR464_INDEPENDENT_CONTINUATION_HANDOFF_20261025.md",
+      "gitBlobSha": "c8b742cc365f4bc2c1315a9df94d892efdcfd753",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ISSUE463_UNMERGED_WORK_COMPATIBILITY_AUDIT_20261025.md",
+      "gitBlobSha": "bcc3bf8bfd97d00ce45f593515e92a943a64270f",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/MELEE_BASIC_RANGE_REGRESSION_AUDIT_20261026.md",
+      "gitBlobSha": "0f4040a5a5158fa37e9a7144d04a34366e5d28ee",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/MELEE_PURSUIT_EXPANSION_20261026.md",
+      "gitBlobSha": "93a4751f490943b2231ab58339009e7d5293b255",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/MELEE_REACH_BALANCING_WORKBENCH.md",
+      "gitBlobSha": "d10603460658e5b204169a699b0e5948ffc60780",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/MELEE_REACH_MERGE_READINESS_20261026.md",
+      "gitBlobSha": "b08ef8040831bf62f7aeb82ecf9f6761cf6601ae",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PIXI_TWILIGHT_GLOW_FAILURE_20261026.md",
+      "gitBlobSha": "0d9e432e0f76070ec84e4c5cd3e36a2aaa33d883",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.md",
+      "gitBlobSha": "23471b4b644f68c36a775a157429323eeb76e4f9",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_DEV191_REVIEWED_SPRITE_SCOPE_DELTA_20261025.md",
+      "gitBlobSha": "02bc7b47239b28c697a49cdbdb071c9568b9ea76",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_DEV192_PIXI_MAIN_RECONCILIATION_20261026.md",
+      "gitBlobSha": "f1ad27aa517127513e3289382b6e18a01a118baa",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_INDEPENDENT_WORK_HANDOFF_20261024.md",
+      "gitBlobSha": "213d1c442111a727fa245bf75a0eb90274303c54",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_INTEGRATED_CANDIDATE_AUDIT_HANDOFF_20261025.md",
+      "gitBlobSha": "2db63545f52012ee0d2354f8896729624020cf40",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE_GATES_AND_REGRESSION_MATRIX_20261024.md",
+      "gitBlobSha": "76e4f92f8f00413314b6acdc1d88adaa03353787",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md",
+      "gitBlobSha": "8a93462a7122b25f58f3456e1047018e75b9c354",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE2_PETS_NATIVE_CHECKPOINT_20261025.md",
+      "gitBlobSha": "26cafe5ee09cf102aa6eaf00f864fae4d8e5afa0",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE3_BOSS_GROUPED_IMPLEMENTATION_20261025.md",
+      "gitBlobSha": "c855fccbf0025eb471a658c8765464a2c5e60b48",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE3_CAPTAINS_VERIFIED_BOSS_ENTRY_HANDOFF_20261025.md",
+      "gitBlobSha": "0b6f79aa66da85886daa2319fb92dde37e0701ec",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE3_CROSS_PR_COMPATIBILITY_AUDIT_20261025.md",
+      "gitBlobSha": "c5044a5bacf3f4b52b1e80cfb59aa3b170e9b7ce",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE3_SPECIAL_ACTIONS_NATIVE_CHECKPOINT_20261025.md",
+      "gitBlobSha": "f3968a6fea696e6909267b98127dc408c82741e1",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR518_ENGINEERING_HANDOFF_20261027.md",
+      "gitBlobSha": "f15367b5f38162895040650822bc34c5447a7057",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md",
+      "gitBlobSha": "fea30731d0822f7e89c994d9cf928ab803414d79",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md",
+      "gitBlobSha": "8e36b19edbb2e286f3e75ec997b05b36e658aed2",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/SLINGER_ARROW_ART_REVIEW_DEV195.md",
+      "gitBlobSha": "1aa2c617714c4bdd9124175efd2df0ab7cc660e5",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "art_and_sprites",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/TEST_RELIABILITY_STAGES_1_TO_3_20261027.md",
+      "gitBlobSha": "777bc82654e6a50ca8f0560da5a6c0ccd2f0a823",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
     }
   ]
 }
