@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
-const { makeReport, renderSummary, publishReport, extractFailureDetail } = require('./focused-ci-report.cjs');
+const { makeReport, renderSummary, publishReport, extractFailureDetail, requiresBehaviorCoverage } = require('./focused-ci-report.cjs');
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
@@ -327,9 +327,7 @@ function run(
 ) {
   const startedAt = new Date().toISOString();
   const { tests, uncovered, missing, manualBrowser } = selectTests(paths);
-  const sourceGaps = uncovered.filter((file) => file.startsWith('src/') ||
-    file.startsWith('scripts/') || file.startsWith('tools/') ||
-    file.startsWith('tests/helpers/'));
+  const sourceGaps = uncovered.filter(requiresBehaviorCoverage);
   let testedSha = process.env.GITHUB_SHA || null;
   try {
     testedSha = cp.execFileSync('git', ['rev-parse', 'HEAD'],

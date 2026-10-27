@@ -132,6 +132,12 @@ An important concurrent development event: [merged PR #521](https://github.com/j
 
 **Final integration step:** merge the accepted `main` commit `7f15b347` **into this draft feature branch only**, preserving all #521 native source/test files; this is *not* a merge of this PR into production. Reverify the post-integration feature checkout with focused CI. Record the exact resulting final-run ID and pass/fail in the PR Conversation so a later chat can recover it without reproducing all checks.
 
+### Independent merge-readiness audit addendum — 27 October 2026
+
+A later independent review of PR #522 identified a preventive correction: the first draft used the entire `tools/` directory as a hard-error classification when no dedicated test selected. The current repository contains thousands of historical images, JSON reviews and reference artifacts under `tools/`; treating every unclassified data edit as an executable-source coverage violation would introduce avoidable development blockers. The focused runner now centralizes coverage classification in `requiresBehaviorCoverage`: **all changed `src/` paths and JavaScript/CJS/MJS under `scripts/`, `tools/` or `tests/helpers/` require coverage**, while unclassified tool JSON/art/reference changes remain explicitly warned and recorded, not automatically failed. Existing mappings still select actual sprite-pipeline verification for sprite assets. Dedicated reporter unit cases prove both error and warning behavior. This does not certify individual unclassified data changes; it avoids a false claim that every historical artifact requires a behavioral test.
+
+This adjustment is part of the approved Stage 1–3 review, not Stage 4 or 5. The exact post-correction branch head and focused CI evidence must be recorded in the PR after the checks finish.
+
 ### Code-review safety findings
 
 - **No author-created production gameplay changes:** PR's own patch comprises CI/test helpers, selector, workflow artifact step, test modifications and this document. Check the GitHub PR changed-file list, not a transient merge tree that also contains upstream accepted gameplay.

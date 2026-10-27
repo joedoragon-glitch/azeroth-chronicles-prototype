@@ -4,8 +4,17 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+// Strict coverage applies to live game source, executable tooling and test
+// setup helpers. Unmapped data/reference/art in tools/ still produces a
+// visible warning, but should not block development without a behavior claim.
+function requiresBehaviorCoverage(file) {
+  if (file.startsWith('src/')) return true;
+  return (file.startsWith('scripts/') || file.startsWith('tools/') ||
+    file.startsWith('tests/helpers/')) && /\.(?:js|cjs|mjs)$/.test(file);
+}
 function makeReport({ testedSha, baseSha, paths, selected, uncovered, missing, manualBrowser, checks, startedAt, finishedAt, nodeVersion, platform }) {
   const failed = checks.filter((check) => !check.ok);
+  const coverageFailures = uncovered.filter(requiresBehaviorCoverage);
   return {
     schema: 1,
     testedSha: testedSha || null,
@@ -17,6 +26,7 @@ function makeReport({ testedSha, baseSha, paths, selected, uncovered, missing, m
     changedPaths: paths,
     selectedTests: selected,
     uncoveredPaths: uncovered,
+    coverageFailures,
     missingMappedTests: missing,
     manualBrowserAcceptance: manualBrowser,
     checks,
@@ -24,9 +34,7 @@ function makeReport({ testedSha, baseSha, paths, selected, uncovered, missing, m
       file, kind, status: status ?? null, signal: signal || null, error: error || null,
       classification: 'unexplained',
     })),
-    result: failed.length || missing.length || uncovered.some((p) =>
-      p.startsWith('src/') || p.startsWith('scripts/') || p.startsWith('tools/') ||
-      p.startsWith('tests/helpers/'))
+    result: failed.length || missing.length || coverageFailures.length
       ? 'failure' : 'success',
   };
 }
@@ -84,4 +92,4 @@ function publishReport(report, env = process.env) {
     }
   }
 }
-module.exports = { makeReport, renderSummary, publishReport, extractFailureDetail };
+module.exports = { makeReport, renderSummary, publishReport, extractFailureDetail, requiresBehaviorCoverage };

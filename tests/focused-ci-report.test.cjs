@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { makeReport, renderSummary, publishReport, extractFailureDetail } =
+const { makeReport, renderSummary, publishReport, extractFailureDetail, requiresBehaviorCoverage } =
   require('../.github/scripts/focused-ci-report.cjs');
 const { run } = require('../.github/scripts/focused-ci.cjs');
 const base = {
@@ -42,6 +42,22 @@ const uncovered = makeReport({ ...base, uncovered: ['src/prototype/future.js'], 
 assert.equal(uncovered.result, 'failure', 'architecture fallback is not gameplay coverage');
 const unknownHelper = makeReport({ ...base, uncovered: ['tests/helpers/new-setup.cjs'], checks: [] });
 assert.equal(unknownHelper.result, 'failure', 'unmapped fixture helpers cannot evade review');
+// Unmapped game/tool executables must block CI; changes to data/reference
+// records should be visible without being misrepresented as behavior-tested.
+assert.equal(requiresBehaviorCoverage('tools/audio/audition.js'), true);
+assert.equal(requiresBehaviorCoverage('tools/audio/score-book.json'), false);
+assert.equal(requiresBehaviorCoverage('tools/sprites/batches/example/review.json'), false);
+const unknownToolCode = makeReport({ ...base,
+  uncovered: ['tools/audio/audition.js'], checks: [] });
+assert.equal(unknownToolCode.result, 'failure',
+  'unmapped executable tool must retain strict coverage');
+const toolData = makeReport({ ...base,
+  uncovered: ['tools/audio/score-book.json'], checks: [] });
+assert.equal(toolData.result, 'success',
+  'unmapped nonexecutable reference data is visible but should not block CI');
+assert.deepEqual(toolData.uncoveredPaths, ['tools/audio/score-book.json']);
+assert.deepEqual(toolData.coverageFailures, []);
+assert.match(renderSummary(toolData), /Uncovered changes/);
 const absent = makeReport({ ...base, missing: ['tests/save-writer.test.cjs'], checks: [] });
 assert.equal(absent.result, 'failure', 'missing mapped tests cannot be waived');
 const browser = makeReport({ ...base, paths: ['tests/audio-browser.test.cjs'],
