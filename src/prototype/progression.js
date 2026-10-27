@@ -378,6 +378,7 @@
             paladin: 'Fortitude',
             ranger: 'Agility',
             mage: 'Arcane Power',
+            rogue: 'Mischief',
           }[this.hero.class];
           this.say(
             'Level ' +
