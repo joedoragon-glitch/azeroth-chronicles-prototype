@@ -8178,6 +8178,20 @@
       ? PrototypeEnemyVfxEvents
       : require('./enemy-vfx-events.js');
   EnemyVfxEvents.install(Campaign);
+  // Explicit live playtest admission only: the public class roster stays at
+  // three until the owner approves the fourth class for release. The browser
+  // opts in via ?roguePlaytest=1; test fixtures may opt in directly.
+  // Registry/talent/moving-basic switches are installed together so a selected
+  // Rogue can progress and fight; a save never stores this preview entitlement.
+  Campaign.enableRoguePlaytest = () => {
+    if (classes.rogue) return false;
+    classes.rogue = Object.freeze({
+      icon: '🔔', ...R.rogueHeroFoundation.stats,
+    });
+    talentProfiles.rogue = Object.freeze({ ...R.rogueHeroFoundation.talents });
+    R.movementBasicClasses.rogue = true;
+    return true;
+  };
   Campaign.rules = R;
   Campaign.data = D;
   Campaign.classes = classes;
