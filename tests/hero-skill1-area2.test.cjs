@@ -24,10 +24,11 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     near(basic.value, g.basicSkillCooldown());
     const normal = info.tap.metrics.find((m) => m.key === 'cooldown');
     const charged = info.charge.metrics.find((m) => m.key === 'cooldown');
-    // Skill reference must report the actual post-training native cooldown.
-    // The old fixed 3/7/8 expectations ignored live 1% cooldown reduction.
-    near(normal.value, g.skillCooldown(1, false));
-    near(charged.value, g.skillCooldown(1, true));
+    // Rank-independent base seconds are modified by earned class passives.
+    // Keep the authored 3/8/7-second bases, but compare the actual cooldown.
+    const reduction = g.heroCooldownReduction();
+    near(normal.value, 3 * (1 - reduction));
+    near(charged.value, { paladin: 8, mage: 7, ranger: 8 }[cls] * (1 - reduction));
     const mult = 1 + 0.15 * (rank - 1),
       base = (g.power() + 12) * mult,
       k = Math.floor(rank / 2);

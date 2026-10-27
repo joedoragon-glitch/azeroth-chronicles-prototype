@@ -7,6 +7,10 @@
 
   const PIXI_SCRIPT = './assets/vendor/pixi-8.22.0.min.js';
   const BG_MARGIN = 220;
+  const BG_SHIFT = BG_MARGIN * 0.6;
+  const BG_PREFETCH_TRIGGER = BG_MARGIN * 0.33;
+  // Two CPU windows, one GPU source. Never provision a second regional GPU atlas.
+  const BG_TWO_WINDOW_BUDGET = 64 * 1024 * 1024;
   const iso = (point) => ({
     x: (point.x - point.y) * 0.76,
     y: (point.x + point.y) * 0.27,
@@ -22,7 +26,28 @@
     element.height = height;
     return element;
   }
+  // Explicit proof-bounded reuse: only fixed authored decorative shapes that
+  // never read entity identity, world coordinates, animation or game state.
+  // Variable carts, wildlife, poppies, enemies, heroes and living props retain
+  // their original per-entity keys. Unknown appearance fields opt OUT.
+  const shareableDecorations = new Set([
+    'crate', 'barrel', 'woodpile', 'stacked-lumber', 'scroll-stack',
+  ]);
+  const inertDecorationFields = new Set([
+    'id', 'name', 'x', 'y', 'r', 'renderKind', 'structure', 'decorative',
+    'spriteIdentity', 'visualScale', 'group', 'sceneRole', 'roadTrace',
+    'frontierDistrict', 'crownDistrict',
+  ]);
+  function sharedDecorationKey(visual) {
+    if (visual.renderKind !== 'prop' || visual.decorative !== true ||
+        !shareableDecorations.has(visual.structure) ||
+        Object.keys(visual).some((field) => !inertDecorationFields.has(field))) return null;
+    const scale = visual.visualScale == null ? 1 : visual.visualScale;
+    if (!Number.isFinite(scale) || scale <= 0) return null;
+    return visual.structure + ':' + scale;
+  }
   let libraryRequest;
+  let prepareExtensionLibrary = null;
   function loadPixi() {
     if (root.PIXI?.Application) return Promise.resolve(root.PIXI);
     if (!libraryRequest) {
@@ -142,6 +167,12 @@
       adapter = null,
       backgroundRenderer = null,
       backdrop = null,
+      aheadRenderer = null,
+      aheadCanvas = null,
+      aheadTarget = null,
+      aheadReady = null,
+      aheadIdle = null,
+      aheadEpoch = 0,
       backing = null,
       basePosition = null,
       baseZone = null,
@@ -160,8 +191,10 @@
     const proceduralBudget = Number.isSafeInteger(options.proceduralTextureBudgetBytes)
       ? Math.max(1, options.proceduralTextureBudgetBytes)
       : 256 * 1024 * 1024;
-    const trimAt = Math.floor(proceduralBudget * 0.625);
-    const trimTo = Math.floor(proceduralBudget * 0.5);
+    // Mainstream-device working set: retain nearby art through crossings while
+    // trimming stale textures before the unchanged 256 MiB hard ceiling.
+    const trimAt = Math.floor(proceduralBudget * 0.75);
+    const trimTo = Math.floor(proceduralBudget * 0.625);
     let imageBytes = 0,
       disposed = false,
       baseGame = null,
@@ -172,9 +205,66 @@
       proceduralCacheEvictions = 0,
       proceduralBakes = 0,
       proceduralCacheHits = 0,
+      sharedProceduralHits = 0,
       backgroundRepaints = 0,
+      backgroundLookaheadPaints = 0,
+      backgroundLookaheadPromotions = 0,
+      backgroundLookaheadMisses = 0,
+      backgroundLookaheadFailures = 0,
+      backgroundLookaheadSkips = { idleUnavailable: 0, memoryBudget: 0,
+        combat: 0, excluded: 0, hidden: 0, invalidated: 0 },
+      backgroundLookaheadPaintMs = 0,
+      backgroundLookaheadPromoteMs = 0,
+      maxBackgroundLookaheadPromoteMs = 0,
       neighborhoodPrepared = 0,
-      neighborhoodWarmupMs = 0;
+      neighborhoodWarmupMs = 0,
+      // Synchronous preparation costs only; not GPU completion/presented frames.
+      syncProceduralBakeMs = 0,
+      maxProceduralBakeMs = 0,
+      syncBackgroundPaintMs = 0,
+      maxBackgroundPaintMs = 0,
+      startupSpritePreloadMs = 0,
+      startupFirstSceneMs = 0,
+      approvedGpuPrepared = 0,
+      proceduralGpuPrepared = 0,
+      gpuPreparationMs = 0,
+      gpuPreparationBatches = 0;
+    let cancelGpuPreparation = null;
+    const measureNow = () =>
+      typeof performance !== 'undefined' ? performance.now() : Date.now();
+    function recordBackgroundPaint(started) {
+      const elapsed = Math.max(0, measureNow() - started);
+      syncBackgroundPaintMs += elapsed;
+      maxBackgroundPaintMs = Math.max(maxBackgroundPaintMs, elapsed);
+    }
+    // Pixi 8.22 PrepareSystem uploads TextureSources to the active renderer,
+    // unlike Assets.load (CPU decode) and Texture.from (source registration).
+    // A context can be released while the system ticker is still processing:
+    // race its completion with local cancellation so the renderer guard does
+    // not remain stuck in its 'preparing' phase on background/context loss.
+    async function prepareGpuTextures(epoch, textures, group) {
+      if (!textures.length) return epoch === contextEpoch;
+      if (epoch !== contextEpoch || !app?.renderer?.prepare?.upload) return false;
+      const started = measureNow();
+      let cancel;
+      const cancelled = new Promise((resolve) => {
+        cancel = () => resolve(false);
+      });
+      cancelGpuPreparation = cancel;
+      try {
+        const upload = app.renderer.prepare.upload(textures);
+        const completed = await Promise.race([Promise.resolve(upload).then(() => true), cancelled]);
+        if (!completed || epoch !== contextEpoch || !scene || !app) return false;
+        const elapsed = Math.max(0, measureNow() - started);
+        gpuPreparationMs += elapsed;
+        gpuPreparationBatches++;
+        if (group === 'approved') approvedGpuPrepared += textures.length;
+        else proceduralGpuPrepared += textures.length;
+        return true;
+      } finally {
+        if (cancelGpuPreparation === cancel) cancelGpuPreparation = null;
+      }
+    }
     function noteFailure(type, stage, error) {
       const message = String(error?.message || error).slice(0, 240);
       lastError = message;
@@ -196,7 +286,20 @@
       // Use the same device-specific backing-pixel density as Canvas.
       return worldCanvas.width / Math.max(1, viewport.width);
     }
+    function dropBackgroundLookahead(release = false) {
+      ++aheadEpoch;
+      if (aheadIdle != null) root.cancelIdleCallback?.(aheadIdle);
+      aheadIdle = null;
+      aheadReady = null;
+      aheadTarget = null;
+      if (release) {
+        if (aheadCanvas) aheadCanvas.width = aheadCanvas.height = 0;
+        aheadCanvas = null;
+        aheadRenderer = null;
+      }
+    }
     function createBackgroundPainter() {
+      dropBackgroundLookahead(true);
       const width = viewport.width + BG_MARGIN * 2,
         height = viewport.height + BG_MARGIN * 2;
       backdrop = makeCanvas(Math.round(width * backingRatio), Math.round(height * backingRatio));
@@ -284,6 +387,10 @@
       if (!keepLoaded) loaded.clear();
     }
     function revisionFor(entity, visual, key, current, zoom) {
+      const shared = sharedDecorationKey(visual);
+      if (shared !== null) return (
+        backingRatio + ':' + zoom + ':shared-decor:' + shared + ':' + current.zoneId
+      );
       return (
         backingRatio + ':' + zoom + ':' + key + ':' + current.zoneId + ':' +
         !!current.s.rescued[entity.family] + ':' + (entity.form || '') + ':' +
@@ -311,6 +418,8 @@
       return freed;
     }
     function drawBackground() {
+      dropBackgroundLookahead();
+      const started = measureNow();
       backgroundRepaints++;
       const current = game(),
         zoom = platform.cameraZoom || 1;
@@ -322,6 +431,7 @@
         baseZoom = zoom;
         baseOptimization = true;
         scene.setSolidBackground(0x000000, viewport.width, viewport.height);
+        recordBackgroundPaint(started);
         return;
       }
       if (!backgroundRenderer || !backdrop || !scene)
@@ -343,6 +453,150 @@
         scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
           viewport.height + BG_MARGIN * 2);
       }
+      recordBackgroundPaint(started);
+    }
+    // This optional presentation-only painter looks ahead in the SAME zone
+    // without moving the campaign hero, advancing the world or touching RNG.
+    // An idle callback runs one complete original terrain painter invocation;
+    // it is intentionally not claimed to be incremental or frame-free.
+    function buildLookaheadPainter() {
+      if (aheadRenderer) return true;
+      if (!backdrop || !root.requestIdleCallback || !root.cancelIdleCallback) return false;
+      const windowBytes = backdrop.width * backdrop.height * 4;
+      if (windowBytes * 2 > BG_TWO_WINDOW_BUDGET) return false;
+      const width = viewport.width + BG_MARGIN * 2,
+        height = viewport.height + BG_MARGIN * 2;
+      aheadCanvas = makeCanvas(backdrop.width, backdrop.height);
+      const ctx = aheadCanvas.getContext('2d');
+      if (!ctx) {
+        dropBackgroundLookahead(true);
+        return false;
+      }
+      ctx.setTransform(backingRatio, 0, 0, backingRatio, 0, 0);
+      const platformAhead = {
+        get cameraZoom() { return platform.cameraZoom; },
+        cameraAnchor() {
+          const anchor = platform.cameraAnchor(viewport.width, viewport.height),
+            heroIso = iso(game().hero), targetIso = iso(aheadTarget || game().hero),
+            zoom = platform.cameraZoom || 1;
+          return {
+            x: anchor.x + BG_MARGIN + (heroIso.x - targetIso.x) * zoom,
+            y: anchor.y + BG_MARGIN + (heroIso.y - targetIso.y) * zoom,
+          };
+        },
+      };
+      aheadRenderer = root.PrototypeRenderer.create({
+        ...getRendererOptions(),
+        canvas: { width, height }, ctx, platform: platformAhead,
+        renderLayer: 'background',
+      });
+      // Keep the native ground cache only; the second CPU canvas fits in a
+      // combined 64 MiB two-window cap without another ground cache.
+      aheadRenderer.setGroundReuse?.(false);
+      return true;
+    }
+    // Read-only current-zone threat check: never generate a destination.
+    // Optional work can wait; mandatory drawing and hard resource limits cannot.
+    function nearActiveFight(current) {
+      return !!current.s.projectiles?.length ||
+        (current.zone()?.enemies || []).some((enemy) =>
+          enemy.hp > 0 && Math.hypot(enemy.x - current.hero.x,
+            enemy.y - current.hero.y) <= 420);
+    }
+    function canPrepareLookahead(current) {
+      if (!active || !scene || !backing || !backdrop || root.document?.hidden ||
+          current.s.mode === 'arena' || current.isDungeon() || current.supplyRoom?.() ||
+          current.sideDungeon?.(current.zoneId)) return false;
+      return !nearActiveFight(current);
+    }
+    function queueBackgroundLookahead(current, dx, dy) {
+      // Only count blockers after the camera actually asks for lookahead.
+      if (aheadReady || aheadIdle != null || !backdrop ||
+          Math.max(Math.abs(dx), Math.abs(dy)) < BG_PREFETCH_TRIGGER) return;
+      if (backdrop.width * backdrop.height * 8 > BG_TWO_WINDOW_BUDGET) {
+        backgroundLookaheadSkips.memoryBudget++;
+        return;
+      }
+      if (!root.requestIdleCallback || !root.cancelIdleCallback) {
+        backgroundLookaheadSkips.idleUnavailable++;
+        return;
+      }
+      if (root.document?.hidden) {
+        backgroundLookaheadSkips.hidden++;
+        return;
+      }
+      if (nearActiveFight(current)) {
+        backgroundLookaheadSkips.combat++;
+        return;
+      }
+      if (!canPrepareLookahead(current)) {
+        backgroundLookaheadSkips.excluded++;
+        return;
+      }
+      const epoch = aheadEpoch, zone = current.zoneId, zoom = platform.cameraZoom || 1,
+        optimization = !!options.getOptimizationMode(), ratio = backingRatio;
+      aheadIdle = root.requestIdleCallback(() => {
+        aheadIdle = null;
+        if (epoch !== aheadEpoch || game() !== current || current.zoneId !== zone ||
+            (platform.cameraZoom || 1) !== zoom ||
+            !!options.getOptimizationMode() !== optimization || backingRatio !== ratio) {
+          backgroundLookaheadSkips.invalidated++;
+          return;
+        }
+        if (!canPrepareLookahead(current)) {
+          backgroundLookaheadSkips[nearActiveFight(current) ? 'combat' : 'excluded']++;
+          return;
+        }
+        const started = measureNow();
+        try {
+          if (!buildLookaheadPainter()) return;
+          aheadTarget = { x: current.hero.x, y: current.hero.y };
+          aheadRenderer.setOptimizationMode(optimization);
+          aheadRenderer.draw();
+          if (epoch !== aheadEpoch) return;
+          aheadReady = { point: aheadTarget, zone, zoom, optimization, ratio, game: current };
+          backgroundLookaheadPaints++;
+          backgroundLookaheadPaintMs += Math.max(0, measureNow() - started);
+        } catch (_) {
+          // Lookahead must never break active gameplay or Canvas recovery.
+          backgroundLookaheadFailures++;
+          dropBackgroundLookahead(true);
+        }
+      });
+    }
+    function promoteBackgroundLookahead(current, zoom) {
+      const candidate = aheadReady,
+        displacement = candidate && iso({
+          x: current.hero.x - candidate.point.x, y: current.hero.y - candidate.point.y,
+        });
+      if (!candidate || candidate.game !== current ||
+          candidate.zone !== current.zoneId || candidate.zoom !== zoom ||
+          candidate.ratio !== backingRatio ||
+          candidate.optimization !== !!options.getOptimizationMode() ||
+          Math.max(Math.abs(displacement.x * zoom), Math.abs(displacement.y * zoom)) > BG_SHIFT)
+        return false;
+      const ctx = backdrop?.getContext('2d');
+      if (!ctx?.save || !ctx.restore || !ctx.setTransform || !ctx.drawImage ||
+          !ctx.clearRect || !aheadCanvas) return false;
+      const started = measureNow();
+      ctx.save();
+      try {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, backdrop.width, backdrop.height);
+        ctx.drawImage(aheadCanvas, 0, 0);
+      } finally { ctx.restore(); }
+      // Retain the SAME source and GPU allocation; only its pixel content changes.
+      backing.source.update?.();
+      basePosition = { ...candidate.point };
+      baseZone = candidate.zone;
+      baseZoom = candidate.zoom;
+      baseOptimization = candidate.optimization;
+      aheadReady = null;
+      backgroundLookaheadPromotions++;
+      const promotionMs = Math.max(0, measureNow() - started);
+      backgroundLookaheadPromoteMs += promotionMs;
+      maxBackgroundLookaheadPromoteMs = Math.max(maxBackgroundLookaheadPromoteMs, promotionMs);
+      return true;
     }
     function syncBackground() {
       const current = game(),
@@ -357,12 +611,20 @@
       const d = iso({ x: current.hero.x - basePosition.x, y: current.hero.y - basePosition.y });
       let dx = -d.x * zoom,
         dy = -d.y * zoom;
-      if (Math.abs(dx) > BG_MARGIN * 0.6 || Math.abs(dy) > BG_MARGIN * 0.6) {
-        drawBackground();
-        dx = 0;
-        dy = 0;
+      if (Math.abs(dx) > BG_SHIFT || Math.abs(dy) > BG_SHIFT) {
+        if (!promoteBackgroundLookahead(current, zoom)) {
+          backgroundLookaheadMisses++;
+          drawBackground();
+        }
+        const movement = iso({
+          x: current.hero.x - basePosition.x,
+          y: current.hero.y - basePosition.y,
+        });
+        dx = -movement.x * zoom;
+        dy = -movement.y * zoom;
       }
       scene.moveBackground(-BG_MARGIN + dx, -BG_MARGIN + dy);
+      queueBackgroundLookahead(current, dx, dy);
     }
     function paintedVisual(visual) {
       return visual.kind === 'archive-record'
@@ -379,8 +641,10 @@
                               protectedRevisions = null, detach = null) {
       if (baked.has(revision)) {
         proceduralCacheHits++;
+        if (revision.includes(':shared-decor:')) sharedProceduralHits++;
         return baked.get(revision);
       }
+      const started = measureNow();
       const body = bake(painted, current, backingRatio * zoom);
       if (!body) return null;
       const bytes = body.image.width * body.image.height * 4;
@@ -399,6 +663,9 @@
       imageBytes += bytes;
       baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
       proceduralBakes++;
+      const elapsed = Math.max(0, measureNow() - started);
+      syncProceduralBakeMs += elapsed;
+      maxProceduralBakeMs = Math.max(maxProceduralBakeMs, elapsed);
       return baked.get(revision);
     }
     // On switching to Pixi, the existing live view is loaded first. Then,
@@ -406,18 +673,25 @@
     // Millhaven toward its goblins doesn't require every first bake in combat.
     // Yield between batches while the full game simulation is held still by
     // the renderer preparation guard; never run this as an unbounded emitter.
-    async function warmNeighborhood(epoch) {
+    async function warmNeighborhood(epoch, arrival = false) {
       const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
       const current = game(), zoom = platform.cameraZoom || 1;
       const width = viewport.width, height = viewport.height;
       const fringe = candidates(current, project, width, height,
-        canvasRenderer.presentEntity, 650)
+        canvasRenderer.presentEntity, arrival ? 1300 : 650)
         .filter(({entity,point}) =>
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
-          (point.x < -270 || point.x > width + 270 ||
+          (arrival || point.x < -270 || point.x > width + 270 ||
             point.y < -270 || point.y > height + 270))
         .sort((a,b) => {
+          if (arrival) {
+            const priority = (item) => item.kind === 'enemy' && item.entity.hp > 0 ? 0 :
+              item.kind === 'hero' || item.kind === 'ally' ? 1 : 2;
+            const dist = (item) => Math.hypot(
+              item.entity.x-current.hero.x,item.entity.y-current.hero.y);
+            return priority(a)-priority(b) || dist(a)-dist(b);
+          }
           const distance = (p) => Math.hypot(
             Math.max(0,-p.x,p.x-width),Math.max(0,-p.y,p.y-height));
           return distance(a.point)-distance(b.point);
@@ -425,9 +699,10 @@
       let prepared = 0,steps=0;
       for(const {entity,visual,point,key} of fringe) {
         if(epoch!==contextEpoch || !scene || !app || game()!==current ||
-           platform.cameraZoom!==zoom) return false;
+           platform.cameraZoom!==zoom || root.document?.hidden) return false;
         const elapsed=(typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
-        if(prepared>=18 || elapsed>600 || imageBytes>=trimAt) break;
+        if(prepared >= (arrival ? 42 : 30) || elapsed > (arrival ? 1100 : 800) ||
+           imageBytes>=trimAt) break;
         const painted=paintedVisual(visual);
         const chosen=adapter.commandFor(painted,
           {x:point.x/zoom,y:point.y/zoom},
@@ -447,6 +722,23 @@
       neighborhoodWarmupMs +=
         (typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
       return epoch===contextEpoch;
+    }
+    async function warmArrival() {
+      if (!active || !scene || !app || root.document?.hidden) return false;
+      const epoch = contextEpoch, current = game();
+      const before = new Set(baked.keys());
+      try {
+        if (!await warmNeighborhood(epoch, true)) return false;
+        if (epoch !== contextEpoch || current !== game() || !active) return false;
+        // CPU procedural bakes alone do not make near-enemy WebGL frames ready.
+        // Upload only the fresh textures; existing GPU sources remain reusable.
+        const fresh = [...baked].filter(([key]) => !before.has(key))
+          .map(([, body]) => body.texture);
+        return await prepareGpuTextures(epoch, fresh, 'procedural');
+      } catch (error) {
+        noteFailure('arrival-preparation-failed', 'nearby-enemies', error);
+        return false;
+      }
     }
     function actorFrame() {
       const current = game(),
@@ -543,10 +835,11 @@
         } else throw Error('Missing original game artwork: ' + key);
       }
       scene.syncActors(records);
-      // At this point all offscreen sprites have been removed; trim their
-      // original GPU sources only when above the soft watermark. This keeps
-      // a short return path warm, but bounds long walks through large towns.
-      if (imageBytes > trimAt)
+      // Stage 6: defer optional soft LRU sweeps during close-range combat.
+      // Repeated attack frames can reuse art; the separate hard-budget path
+      // still reclaims cold textures when absolutely necessary and never
+      // removes currently visible identities.
+      if (imageBytes > trimAt && !nearActiveFight(current))
         evictUnused(protectedRevisions, imageBytes - trimTo);
     }
     function syncAtmosphere() {
@@ -651,6 +944,15 @@
       let stage = 'library-load';
       try {
         const PIXI = await loadPixi();
+        stage = 'prepare-plugin';
+        requireValue(PIXI.PrepareSystem && PIXI.extensions?.add,
+          'PixiJS GPU preparation extension unavailable');
+        // The pinned non-module Pixi bundle exports PrepareSystem, but unlike
+        // `import pixi.js/prepare` it does not install the optional system.
+        if (prepareExtensionLibrary !== PIXI) {
+          PIXI.extensions.add(PIXI.PrepareSystem);
+          prepareExtensionLibrary = PIXI;
+        }
         stage = 'application-init';
         requireValue(
           root.AzerothPixiSceneBridge &&
@@ -672,6 +974,8 @@
         });
         stage = 'webgl2-context';
         requireValue(app.canvas.getContext('webgl2'), 'WebGL2 context not available');
+        requireValue(typeof app.renderer.prepare?.upload === 'function',
+          'PixiJS GPU preparation system not installed');
         app.canvas.id = 'world-pixi-experimental';
         app.canvas.setAttribute('aria-hidden', 'true');
         app.canvas.style.cssText =
@@ -727,6 +1031,8 @@
         requireValue(urls.size > 0, 'Approved sprite manifest is empty');
         requireValue(urls.size <= 128, 'Unexpected sprite resource count');
         stage = 'sprite-preload';
+        const approvedTextures = [];
+        const preloadStarted = measureNow();
         await Promise.all(
           [...urls].map(async (src) => {
             const texture = await PIXI.Assets.load(src);
@@ -734,15 +1040,24 @@
             texture.source.scaleMode = 'nearest';
             scene.registerTexture(src, texture);
             loaded.add(src);
+            approvedTextures.push(texture);
           }),
         );
+        startupSpritePreloadMs = Math.max(0, measureNow() - preloadStarted);
+        stage = 'gpu-approved-upload';
+        if (!await prepareGpuTextures(thisEpoch, approvedTextures, 'approved')) return false;
         stage = 'first-scene';
+        const firstSceneStarted = measureNow();
         drawBackground();
         actorFrame();
         syncAtmosphere();
         scene.draw();
+        startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
         stage = 'nearby-art-preparation';
         if(!await warmNeighborhood(thisEpoch))return false;
+        stage = 'gpu-procedural-upload';
+        if (!await prepareGpuTextures(thisEpoch, [...baked.values()].map((body) => body.texture),
+          'procedural')) return false;
         if(thisEpoch!==contextEpoch)return false;
         return true;
       } catch (error) {
@@ -801,7 +1116,10 @@
       if (app?.canvas) app.canvas.style.display = 'none';
     }
     function disposeResources() {
+      dropBackgroundLookahead(true);
       ++contextEpoch; // Cancel any asynchronous neighborhood preparation.
+      cancelGpuPreparation?.();
+      cancelGpuPreparation = null;
       deactivate();
       scene?.destroy?.();
       scene = null;
@@ -832,6 +1150,7 @@
     }
     return Object.freeze({
       prepare,
+      warmArrival,
       draw,
       activate,
       deactivate,
@@ -851,9 +1170,29 @@
         proceduralCacheEvictions,
         proceduralBakes,
         proceduralCacheHits,
+        sharedProceduralHits,
         backgroundRepaints,
+        backgroundLookaheadPaints,
+        backgroundLookaheadPromotions,
+        backgroundLookaheadMisses,
+        backgroundLookaheadFailures,
+        backgroundLookaheadSkips: { ...backgroundLookaheadSkips },
+        backgroundLookaheadPaintMs,
+        backgroundLookaheadPromoteMs,
+        maxBackgroundLookaheadPromoteMs,
+        backgroundLookaheadBytes: aheadCanvas ? aheadCanvas.width * aheadCanvas.height * 4 : 0,
         neighborhoodPrepared,
         neighborhoodWarmupMs,
+        syncProceduralBakeMs,
+        maxProceduralBakeMs,
+        syncBackgroundPaintMs,
+        maxBackgroundPaintMs,
+        startupSpritePreloadMs,
+        startupFirstSceneMs,
+        approvedGpuPrepared,
+        proceduralGpuPrepared,
+        gpuPreparationMs,
+        gpuPreparationBatches,
         proceduralBudget,
         proceduralTrimAt: trimAt,
         pixelRatio: backingRatio,

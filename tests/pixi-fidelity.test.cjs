@@ -38,6 +38,9 @@ const oldImage=painter.presentEntity({structure:'vale-cottage'},'prop');
 assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarged');
 
 const inits=[],draws=[],resizes=[],frames=[],moteFrames=[],resources=new Set(), approvedTextures=new Map();
+const gpuUploadBatches=[];
+let idleCallback=null, backgroundCopies=0, textureUpdates=0, stagingGroundReuseDisabled=0;
+let prepareRegistrations=0, holdGpuUpload=false, resolveGpuUpload=null;
 let holdWarmFrames=false, deferredWarmFrame=null;
 let currentActorTextures = new Set(), destroyedProcedural = 0,
   lastApplicationCanvas = null, rejectWebGLContext = false, failSceneDraw = false;
@@ -46,7 +49,8 @@ function canvas() {
     width:0,height:0,style:{},
     getContext(type) {
       if(type!=='2d')return null;
-      return {setTransform(ratio){this.ratio=ratio},drawImage(){},
+      return {setTransform(ratio){this.ratio=ratio},save(){},restore(){},clearRect(){},
+        drawImage(...args){if(args.length===3)backgroundCopies++}, 
         getImageData(){const data=new Uint8ClampedArray(surface.width*surface.height*4);
           const x=Math.floor(surface.width/2),y=Math.floor(surface.height*.8);
           data[(y*surface.width+x)*4+3]=255;return {data}}
@@ -64,6 +68,13 @@ class Application {
     lastApplicationCanvas=this.canvas;
     this.canvas.getContext=type=>type==='webgl2'&&!rejectWebGLContext?{}:null;
     this.renderer={
+      prepare:{upload:(textures)=>{
+        assert(prepareRegistrations>0,'GPU preparation must be installed before renderer init');
+        gpuUploadBatches.push(textures);
+        return holdGpuUpload
+          ? new Promise(resolve=>{resolveGpuUpload=resolve})
+          : Promise.resolve();
+      }},
       resize:(w,h,ratio)=>{
         resizes.push(ratio);
         this.screen={width:w,height:h};
@@ -75,13 +86,15 @@ class Application {
   async init(options){inits.push(options);this.renderer.resize(options.width,options.height,options.resolution);}
   destroy(){}
 }
-const textureFrom=image=>({source:{width:image.width,height:image.height,update(){}},
+const textureFrom=image=>({source:{width:image.width,height:image.height,update(){textureUpdates++}}, 
   destroy(releaseSource){if(releaseSource)destroyedProcedural++}
 });
 const runtime={
   Campaign:{rules:{terrain:[]}},
   PIXI:{
-    Application,Texture:{from:textureFrom},
+    Application,PrepareSystem:class PrepareSystem{},
+    extensions:{add(){prepareRegistrations++;}},
+    Texture:{from:textureFrom},
     Assets:{
       load:async(src)=>{
         const texture={source:{width:816,height:816}};
@@ -92,7 +105,8 @@ const runtime={
     }
   },
   PrototypeRenderer:{
-    create:({canvas,ctx})=>({setOptimizationMode(){},draw(){
+    create:({canvas,ctx})=>({setOptimizationMode(){},
+      setGroundReuse(value){if(value===false)stagingGroundReuseDisabled++},draw(){
       draws.push({width:canvas.width,height:canvas.height,ratio:ctx.ratio});
     }}),
     nightLightKind:()=>null
@@ -159,9 +173,25 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await gpu.prepare(),true,'retina Pixi scene must prepare');
   assert.equal(gpu.status().neighborhoodPrepared,1,
     'near-west fringe is prepared while simulation remains frozen');
+  assert.equal(prepareRegistrations,1,'register the optional Pixi prepare system exactly once');
+  assert.equal(gpu.status().approvedGpuPrepared,1,
+    'approved sprite must be uploaded before the Pixi reveal');
+  assert.equal(gpu.status().proceduralGpuPrepared,1,
+    'the nearby raster must also be uploaded before the Pixi reveal');
+  assert.equal(gpu.status().gpuPreparationBatches,2,
+    'approved and procedural GPU preparation must be measured separately');
+  assert.equal(gpuUploadBatches[0].length,1);
+  assert.equal(gpuUploadBatches[1].length,1);
   assert.equal(gpu.status().proceduralTextures,1,
     'offscreen procedural image is cached without drawing it in the live scene');
   assert(gpu.status().neighborhoodWarmupMs>=0);
+  // Preparation timings are cumulative synchronous measurements, not GPU upload receipts.
+  for(const metric of [
+    'syncProceduralBakeMs','maxProceduralBakeMs',
+    'syncBackgroundPaintMs','maxBackgroundPaintMs',
+    'startupSpritePreloadMs','startupFirstSceneMs'
+  ])assert(Number.isFinite(gpu.status()[metric])&&gpu.status()[metric]>=0,
+    'Pixi preparation metric must be a finite nonnegative sample: '+metric);
   assert.equal(frames[0].length,1,'prewarming must not add offscreen actors to the world');
   const heroStartX=game.hero.x;
   game.hero.x-=470;
@@ -170,6 +200,23 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().proceduralTextures,1,
     'westward first visit must reuse the prewarmed identity instead of baking again');
   game.hero.x=heroStartX;
+  game.props=[];
+  // New Stage 5 hostile-entry GPU path: cold nearby procedural art must
+  // receive an actual Pixi PrepareSystem upload while the game remains still.
+  game.props=[{
+    id:'arrival-near-combat',x:game.hero.x+600,y:game.hero.y,
+    structure:'lumber-pile'
+  }];
+  const priorArrivalBakes=gpu.status().proceduralTextures;
+  const priorArrivalGpuUploads=gpu.status().proceduralGpuPrepared;
+  const priorArrivalFrames=frames.length;
+  assert.equal(await gpu.warmArrival(),true,'confirmed WebGL can stage imminent nearby art');
+  assert.equal(gpu.status().proceduralTextures,priorArrivalBakes+1,
+    'near-arrival art was actually baked beyond the normal camera fringe');
+  assert.equal(gpu.status().proceduralGpuPrepared,priorArrivalGpuUploads+1,
+    'newly baked encounter-adjacent art was uploaded, not just CPU decoded');
+  assert.equal(frames.length,priorArrivalFrames,
+    'warming must not inject actors or advance a gameplay frame');
   game.props=[];
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
   assert.equal(draws[0].width,1352,'CSS-space terrain dimensions stay unchanged');
@@ -239,7 +286,116 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert(gpu.status().proceduralCacheHits>0,'revisited region uses cached art');
   assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
-  // 160 pixel-bytes per miniature procedural texture is sufficient for the
+  assert.equal(prepareRegistrations,1,'repeated Pixi preparations reuse the registered plugin');
+  // Confirm *authored draw instructions*, not just common structure labels,
+  // remain identical for the tiny explicit shared-decoration allowlist.
+  function visualCommands(entity,region) {
+    const operations=[],ctx=new Proxy({},{
+      get(_object,property) {
+        if (property==='createLinearGradient'||property==='createRadialGradient')
+          return (...args)=> {
+            operations.push([String(property),...args]);
+            return {addColorStop(...stops){operations.push(['addColorStop',...stops])}};
+          };
+        return (...args)=>operations.push([String(property),...args]);
+      },
+      set(_object,property,value) {
+        operations.push(['set',String(property),value]);
+        return true;
+      }
+    });
+    Visuals.draw(ctx,entity,{x:288,y:460},region,false);
+    return JSON.stringify(operations);
+  }
+  for(const structure of ['crate','barrel','woodpile','stacked-lumber','scroll-stack']) {
+    const first={id:'one',x:50,y:100,renderKind:'prop',decorative:true,structure};
+    const second={...first,id:'two',x:800,y:900,name:'Different label',sceneRole:'sorting'};
+    for(const region of [0,3])
+      assert.equal(visualCommands(first,region),visualCommands(second,region),
+        structure+' must have byte-equivalent authored drawing commands across identities');
+  }
+  resources.clear();currentActorTextures.clear();
+  game.zoneId='vale';
+  game.props=[
+    {id:'shared-crate-a',x:game.hero.x+5,y:game.hero.y+4,decorative:true,structure:'crate'},
+    {id:'shared-crate-b',x:game.hero.x+28,y:game.hero.y+14,decorative:true,structure:'crate'},
+    {id:'unique-crate',x:game.hero.x+51,y:game.hero.y+8,decorative:true,
+      structure:'crate',form:'true'},
+    {id:'unique-cart-a',x:game.hero.x+70,y:game.hero.y+8,decorative:true,structure:'cart'},
+    {id:'unique-cart-b',x:game.hero.x+92,y:game.hero.y+8,decorative:true,structure:'cart'}
+  ];
+  const sharedGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await sharedGpu.prepare(),true);
+  const shareFrame=frames.at(-1);
+  const byKey=(id)=>shareFrame.find(x=>x.key==='prop:'+id);
+  assert(byKey('shared-crate-a')&&byKey('shared-crate-b'));
+  assert.equal(byKey('shared-crate-a').textureId,byKey('shared-crate-b').textureId,
+    'fixed decorative props share one GPU image but remain separate world actors');
+  assert.notEqual(byKey('shared-crate-a').textureId,byKey('unique-crate').textureId,
+    'special form bypasses the safe shared cache');
+  assert.notEqual(byKey('unique-cart-a').textureId,byKey('unique-cart-b').textureId,
+    'identity-variant carts must never share raster textures');
+  assert.equal(sharedGpu.status().proceduralTextures,4,
+    'five visible actors need only four unique procedural texture sources');
+  assert(sharedGpu.status().sharedProceduralHits>=1,
+    'an identical decorative actor must reuse a previously baked texture');
+  assert.equal(sharedGpu.status().proceduralBakes,4,
+    'a shared decoration avoids one first-encounter Canvas bake');
+  sharedGpu.activate();
+  sharedGpu.draw();
+  assert.equal(sharedGpu.status().proceduralBakes,4,
+    'warm frames preserve sharing without rebaking the two actors');
+  sharedGpu.release();
+  game.props=[];
+  // Prepaint one idle CPU window without changing gameplay state.
+  game.zoneId='vale';
+  runtime.requestIdleCallback=(cb)=>{idleCallback=cb;return 7};
+  runtime.cancelIdleCallback=()=>{idleCallback=null};
+  const terrainGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await terrainGpu.prepare(),true);
+  terrainGpu.activate();
+  const terrainBase=terrainGpu.status().backgroundRepaints;
+  const oldX=game.hero.x, copies=backgroundCopies, updates=textureUpdates;
+  game.hero.x+=100;
+  terrainGpu.draw();
+  assert.equal(typeof idleCallback,'function','outdoor travel schedules idle terrain lookahead');
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
+    'active terrain remains intact before the actual crossing');
+  const idle=idleCallback;idleCallback=null;idle();
+  assert.equal(terrainGpu.status().backgroundLookaheadPaints,1);
+  assert(terrainGpu.status().backgroundLookaheadBytes>0);
+  assert(terrainGpu.status().backgroundLookaheadBytes*2<=64*1024*1024,
+    'combined CPU terrain raster windows remain within the budget');
+  assert(stagingGroundReuseDisabled>0,'idle painter cannot retain a second ground cache');
+  game.hero.x+=40;
+  terrainGpu.draw();
+  assert.equal(terrainGpu.status().backgroundLookaheadPromotions,1,
+    'arrival reuses the terrain window prepared during idle time');
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
+    'camera crossing avoids an immediate full terrain rebuild');
+  assert.equal(backgroundCopies,copies+1,'prepaint is copied into existing terrain canvas');
+  assert.equal(textureUpdates,updates+1,'existing GPU source is updated in place');
+  game.hero.x+=160;
+  terrainGpu.draw();
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase+1,
+    'without an idle-ready window movement falls back to the complete original painter');
+  assert(terrainGpu.status().backgroundLookaheadMisses>0,
+    'fallback is recorded, not silently reported as a successful promotion');
+  game.s.projectiles=[{id:'danger-cue'}];
+  game.hero.x+=100;
+  idleCallback=null;
+  terrainGpu.draw();
+  assert.equal(idleCallback,null,
+    'active combat prevents scheduling optional terrain work');
+  assert(terrainGpu.status().backgroundLookaheadSkips.combat > 0,
+    'reports the combat reason rather than only a lookahead miss');
+  game.s.projectiles=[];
+  terrainGpu.release();
+  assert.equal(terrainGpu.status().backgroundLookaheadBytes,0);
+  game.hero.x=oldX;
+  delete runtime.requestIdleCallback;
+  delete runtime.cancelIdleCallback;
+  // Approximately 100 pixel-bytes per miniature procedural texture suffice for the
   // deterministic mock. This intentionally tiny *test-only* budget forces
   // the same LRU path that real towns would take under sustained roaming.
   resources.clear();
@@ -254,6 +410,28 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   tinyGpu.activate();
   const baseline=tinyGpu.status();
   assert(baseline.proceduralBytes>0 && baseline.proceduralBytes<=800);
+  // Stage 6: retain repeat-use art during combat up to the hard budget,
+  // then resume normal soft LRU cleanup when the fight ends.
+  const combatEvictions=tinyGpu.status().proceduralCacheEvictions;
+  game.s.projectiles=[{id:'active-attack'}];
+  game.props=[1,2,3,4,5,6,7].map(i=>({
+    id:'fight-'+i,x:game.hero.x+8+i*12,y:game.hero.y+6,
+    structure:'lumber-pile'
+  }));
+  tinyGpu.draw();
+  const fightCache=tinyGpu.status();
+  assert(fightCache.proceduralBytes>fightCache.proceduralBudget*0.75,
+    'combat holds nearby repeat-use art above the soft trim mark');
+  assert(fightCache.proceduralBytes<=800,
+    'combat never raises the strict image budget');
+  assert.equal(fightCache.proceduralCacheEvictions,combatEvictions,
+    'near-fight soft eviction cannot churn cached attack frames');
+  game.s.projectiles=[];
+  game.props=[{id:'fight-7',x:game.hero.x+92,y:game.hero.y+6,
+    structure:'lumber-pile'}];
+  tinyGpu.draw();
+  assert(tinyGpu.status().proceduralBytes<fightCache.proceduralBytes,
+    'non-combat frames resume ordinary LRU reclamation');
   const previousSceneTextures=destroyedProcedural;
   const seen=[];
   for(let i=1;i<=65;i++){
@@ -381,6 +559,19 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   replayGpu.draw();
   assert.equal(replayGpu.status().active,true);
   replayGpu.release();
+  // The Pixi prepare system may still be waiting for ticker-driven GPU uploads
+  // when the PWA is backgrounded. Release must unblock the guarded transition.
+  holdGpuUpload=true;
+  const interruptedUploadGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  const pendingGpuPrepare=interruptedUploadGpu.prepare();
+  for(let j=0;j<40&&!resolveGpuUpload;j++)await Promise.resolve();
+  assert.equal(typeof resolveGpuUpload,'function',
+    'preparation waits for a real GPU upload promise before enabling Pixi');
+  interruptedUploadGpu.release();
+  assert.equal(await pendingGpuPrepare,false,
+    'a discarded context must cancel unfinished GPU preparation');
+  holdGpuUpload=false;
+  resolveGpuUpload();resolveGpuUpload=null;
   rejectWebGLContext=true;
   const startupGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await startupGpu.prepare(),false);

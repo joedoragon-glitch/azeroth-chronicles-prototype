@@ -16,7 +16,7 @@ for (const language of ['en', 'es']) {
   const short = () =>
     assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 45);
   e.get('menu-button').click();
-  assert.equal(e.get('modal-actions').children.length, 5);
+  assert.equal(e.get('modal-actions').children.length, 6);
   assert(!e.get('modal-actions').children.some((b) =>
     b.textContent.startsWith(t('Codices of the Unforeseen', 'Códices de lo Imprevisto'))),
     'critical Codices are discovered in-world, not managed in the main menu');
@@ -101,6 +101,9 @@ for (const language of ['en', 'es']) {
   section('Frame rate', 'Fotogramas por segundo');
   section('Graphics renderer', 'Motor gráfico');
   section('Diagnostics', 'Diagnósticos');
+  assert(rows().some((node) => node.textContent.startsWith(
+    t('Export playtest report', 'Exportar informe de prueba'))),
+    'playtest report export belongs in Performance settings');
   assert.equal(rows().filter((r) => r.className === 'menu-setting').length, 6);
   const canvas = setting('Graphics renderer', 'Motor gráfico');
   assert(canvas.children.some((o) => o.value === 'canvas2d'));
@@ -147,6 +150,13 @@ for (const language of ['en', 'es']) {
   click(t('Show performance details', 'Mostrar detalles de rendimiento'));
   title('Screen and performance', 'Pantalla y rendimiento');
   assert(rows().some((node) => node.textContent === t('Performance details', 'Detalles de rendimiento')));
+  click(t('Start renderer profiling', 'Iniciar registro del renderizador'));
+  assert(rows().some((node) => node.textContent.startsWith(
+    t('Stop renderer profiling', 'Detener registro del renderizador'))),
+    'opt-in renderer recording stays inside expanded Performance details');
+  click(t('Stop renderer profiling', 'Detener registro del renderizador'));
+  assert(rows().some((node) => node.textContent.startsWith(
+    t('Clear renderer profiling', 'Borrar registro del renderizador'))));
   click(t('Reset performance sample', 'Reiniciar muestra de rendimiento'));
   title('Screen and performance', 'Pantalla y rendimiento');
   click(t('Hide performance details', 'Ocultar detalles de rendimiento'));
@@ -416,7 +426,10 @@ for (const language of ['en', 'es']) {
   title('Game and settings', 'Juego y ajustes');
   click(t('Save and game management', 'Partidas guardadas'));
   short();
-  assert.equal(e.get('modal-actions').children.length, 5);
+  assert.equal(e.get('modal-actions').children.length, 4);
+  assert(!e.get('modal-actions').children.some((node) =>
+    node.textContent.startsWith(t('Export playtest report', 'Exportar informe de prueba'))),
+    'save management no longer mixes in performance reports');
   assert(
     !e.get('modal-actions').children.some((node) => /Combat (Arena|Diagnostics)/i.test(node.textContent)),
     'Normal visitors must not see the unlisted combat test save',
@@ -503,6 +516,9 @@ console.log(
     assert(button && !button.disabled, 'Diagnostics selection available: ' + label);
     button.click();
   };
+  assert.equal(playtest.elements.get('title-screen').hidden, false);
+  playtest.elements.get('title-new').click();
+  click('New Combat Diagnostics run');
   assert.equal(playtest.elements.get('modal-title').textContent, 'Choose your language');
   click('English');
   assert.equal(playtest.elements.get('modal-title').textContent,

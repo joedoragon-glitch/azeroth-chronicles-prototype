@@ -61,10 +61,17 @@ function lockManager() {
     'Unsupported live browsers fail closed',
   );
 
+  const enterFromTitle = (shellInstance) => {
+    assert(!shellInstance.elements.get('title-continue').disabled, 'writer owns the selected run');
+    shellInstance.elements.get('title-continue').click();
+    shellInstance.frame(0);
+    assert.equal(shellInstance.scope.Prototype.started, true);
+  };
   const storage = new Map([[P.saveKey('normal'), JSON.stringify(new C().snapshot())]]);
   const liveLocks = lockManager();
   const app = shell('en', 'paladin', { storage, navigator: { locks: liveLocks } });
   await settle();
+  enterFromTitle(app);
   app.scope.Prototype.game.hero.gold = 432;
   assert(app.scope.Prototype.save());
   const saved = storage.get(P.saveKey('normal'));
@@ -97,6 +104,7 @@ function lockManager() {
   const reopened = shell('en', 'paladin', { storage, navigator: { locks: liveLocks } });
   await settle();
   assert.equal(reopened.scope.Prototype.game.hero.gold, 432);
+  enterFromTitle(reopened);
   assert(reopened.scope.Prototype.save(), 'After owner close, a fresh window can save');
   // A stale page restored from the back/forward cache reloads instead of writing.
   let reloads = 0;
@@ -177,10 +185,11 @@ function lockManager() {
   repairedStorage.set(P.saveKey('normal'), JSON.stringify(new C().snapshot()));
   await settle();
   assert.equal(
-    repaired.elements.get('modal').hidden,
-    true,
-    'A fresh successful load dismisses the obsolete unreadable-save prompt',
+    repaired.elements.get('title-screen').hidden,
+    false,
+    'A fresh successful load returns to the title with the recovered save',
   );
+  enterFromTitle(repaired);
   assert(repaired.scope.Prototype.save());
   for (const listener of repaired.events.pagehide || []) listener();
 
@@ -200,6 +209,7 @@ function lockManager() {
     },
   });
   await settle();
+  enterFromTitle(workerApp);
   const workerSaved = workerApp.storage.get(P.saveKey('normal'));
   workerApp.scope.Prototype.game.hero.cd[0] = Infinity;
   workerEvents.controllerchange();
