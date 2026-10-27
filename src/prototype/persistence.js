@@ -330,7 +330,8 @@
     const { storage, Campaign } = options;
     const legacy = create(options);
     const modes = ['normal', 'nightmare', 'developer', 'arena'];
-    const adapters = new Map();
+    const adapters = new Map(),
+      recoveryOwners = new Map();
     const known = (heroClass) => typeof heroClass === 'string' &&
       Object.hasOwn(Campaign.classes, heroClass);
     const primaryKey = (mode, heroClass) => saveKey(mode) + '-' + heroClass;
@@ -429,25 +430,41 @@
           : listSaves([mode]).length > 0 || legacy.exists(mode);
       },
       loadFailed(mode, heroClass) {
-        return heroClass ? via(mode, heroClass).loadFailed(mode) : legacy.loadFailed(mode);
+        if (!heroClass) return legacy.loadFailed(mode);
+        return hasClassSlot(mode, heroClass)
+          ? adapter(heroClass).loadFailed(mode) : legacy.loadFailed(mode);
       },
       conflicted(mode, heroClass) {
         return heroClass ? via(mode, heroClass).conflicted(mode) : legacy.conflicted(mode);
       },
       original(mode, heroClass) {
-        return heroClass ? via(mode, heroClass).original(mode) : legacy.original(mode);
+        if (!heroClass) return legacy.original(mode);
+        return hasClassSlot(mode, heroClass)
+          ? adapter(heroClass).original(mode) : legacy.original(mode);
       },
       recoveryOptions(mode, heroClass) {
-        return heroClass ? via(mode, heroClass).recoveryOptions(mode)
-          .filter((item) => item.heroClass === heroClass)
-          : legacy.recoveryOptions(mode);
+        recoveryOwners.clear();
+        if (!heroClass) return legacy.recoveryOptions(mode);
+        if (!known(heroClass) || !modes.includes(mode)) return [];
+        // Never mix a class-specific recovery history with another class.
+        // If this class has no primary, its original mode-only predecessor
+        // may still be corrupt but have valid checkpoints under the old key.
+        const selected = hasClassSlot(mode, heroClass) ? adapter(heroClass) : legacy;
+        const options = selected.recoveryOptions(mode)
+          .filter((item) => item.heroClass === heroClass);
+        for (const item of options) recoveryOwners.set(item.id, { selected, mode, heroClass });
+        return options;
       },
       recover(mode, id, heroClass) {
         if (!heroClass) return legacy.recover(mode, id);
-        const selected = via(mode, heroClass);
-        const candidate = selected.recover(mode, id);
+        const owner = recoveryOwners.get(id);
+        if (!owner || owner.mode !== mode || owner.heroClass !== heroClass)
+          throw Error('Recovery option expired');
+        const candidate = owner.selected.recover(mode, id);
         if (candidate.hero.class !== heroClass) throw Error('Mismatched recovery class');
-        // Legacy recovery writes its original v4 slot, not the new class slot.
+        recoveryOwners.clear();
+        // Explicit legacy recovery repairs only the old mode primary with its
+        // selected class; subsequent playtest saves are class-specific.
         return candidate;
       },
       loadProfile(defaults) {
@@ -535,8 +552,10 @@
         // The live campaign can advance between five-second autosaves.
         // Anchor recovery to the checkpoint actually written to storage,
         // not newer game time/IDs which the next launch cannot restore.
-        const raw = storage?.getItem(saveKey(game.s.mode) +
-          (classSlots ? '-' + game.hero.class : ''));
+        const classRaw = classSlots
+          ? storage?.getItem(saveKey(game.s.mode) + '-' + game.hero.class)
+          : null;
+        const raw = classRaw || storage?.getItem(saveKey(game.s.mode));
         if (!raw) return false;
         const saved = JSON.parse(raw);
         if (
