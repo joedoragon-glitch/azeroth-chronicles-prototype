@@ -6977,9 +6977,6 @@
       recoveryCost: 40,
       treatmentCost: 30,
       activeCaps: [0, 2, 3, 3, 4, 5, 6],
-      // A future class may alter active slots without changing Expedition ranks.
-      // Rogue is not in the playable class registry until its implementation is approved.
-      activeSlotBonuses: { rogue: 1 },
     },
   };
 
