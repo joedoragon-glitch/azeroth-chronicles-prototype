@@ -1,6 +1,7 @@
 # Azeroth Chronicles — regional graphics preparation and main-screen lifecycle
 
-Status: **draft development workstream, not approved for merging or publication**  
+Status: **Stages 0–3 initial source implementation and focused checks completed; device/browser acceptance still open; Stages 4–7 not implemented; draft only, not approved for merge or publication.**  
+**Resumption document:** [PR #518 engineering handoff, tested scope and next-phase checklist](PR518_ENGINEERING_HANDOFF_20261027.md). Read it first when restarting in another chat.  
 Baseline: `main` at `740c4549cabb87455e0d9af8369e52a88cd06ad1` (27 October 2026).  
 Related: renderer graduation #478; GPU-resource/cache #417; crowd cold-art #481; alternate open draft #487; merged batch #490.
 
@@ -24,25 +25,25 @@ Neither `PIXI.Assets.load()` nor `PIXI.Texture.from()` proves a texture was uplo
 
 ## Engineering order and acceptance gates
 
-### Stage 0 — evidence and cache-contract housekeeping (this first commit series)
+### Stage 0 — evidence and cache-contract housekeeping (instrumentation implemented; device traces outstanding)
 
 - Add Pixi diagnostics separating synchronous procedural baking, synchronous background updates and initial sprite-preload work. These **do not measure GPU completion, allocation or presentation latency**.
 - Record cold vs warm runs on the same real device and setting; capture existing `proceduralBakes`, cache hits/evictions, `backgroundRepaints`, warmup counts, memory estimates, renderer-specific synchronous timing, and p95/p99 frame-time behavior. Separate active displayed draws from skipped draws.
 - Inventory allocations, invalidation (zoom, DPR, region, PWA update), and context recreation. Use focused tests only; no automatic full browser/game certification.
 
-### Stage 1 — genuine GPU readiness
+### Stage 1 — genuine GPU readiness (upload barrier implemented; live WebGL validation outstanding)
 
 - Verify the exact PixiJS 8.22 renderer texture upload/preparation API before coding it; actually schedule uploads into the active WebGL2 context, and validate readiness with a real-browser instrumentation test, not an `Assets.load` promise alone.
 - Bound work and cancellation; protect already-visible resources and avoid CPU/GPU bursts. A failed preparation returns safely to Canvas. Capture uploaded counts and elapsed stage timings.
 - Distinguish preparing shared sprites from preparing per-region graphics and never prevent Continue indefinitely waiting for optional art.
 
-### Stage 2 — eliminate avoidable procedural bake duplication
+### Stage 2 — eliminate avoidable procedural bake duplication (five fixed decorative families proven; character deduplication outstanding)
 
 - Establish visual identity equivalence tests (family/variant/form/rescue/unique pose, shade, effects, zoom, DPR, actor appearance).
 - Share immutable raster outputs only where visual equivalence has been demonstrated. Actor placement, health bars, contact shadows, depth, and combat cues must remain independent.
 - Verify no invalid reuse or lifetime leaks across region changes and device resizes. Preserve hard and soft texture budgets.
 
-### Stage 3 — terrain-background decision, based on measurements
+### Stage 3 — terrain-background decision (bounded lookahead prototype in branch; device A/B decision outstanding)
 
 - Profile cold and warm `drawBackground`, raster blits, upload/update behavior, memory peaks and traversal hitches before replacing the current moving window.
 - If justified, prototype small **static-only** spatial chunks and budgeted nearby precomputation. Keep roads/terrain visual parity; animate water/atmosphere separately; leave projectiles/telegraphs and all mutable gameplay off cached surfaces.
@@ -93,5 +94,7 @@ Measure first playable frame, input responsiveness, preparation time, p95/p99 st
 - **27 Oct 2026:** Development branch opened from `main` at `740c4549`. Added Stage 0 **presentation-only synchronous Pixi preparation timings** to `pixi-experimental.js` (procedural bakes, background paints, initial sprite preload and first scene) and focused finite/nonnegative assertions to `tests/pixi-fidelity.test.cjs`. These counters are not GPU upload or actual frame-completion measurements; measured runtime performance has not yet been established.
 - **27 Oct 2026, next commit series:** Installed the optional `PIXI.PrepareSystem` extension explicitly for the pinned non-module PixiJS 8.22 bundle **before** `app.init`, then awaited `renderer.prepare.upload` of loaded approved sprite textures and of nearby/visible procedural textures before revealing WebGL. Uses Pixi's own four-item-per-tick bounded upload queue and epoch-safe cancellation (including when a context/phone session is interrupted). Exports preparation batch, elapsed and completed-input counts as diagnostics; counts are accepted input textures, not driver-measured fresh texture allocations. This path requires actual real-browser WebGL acceptance before being considered production-proven. Focused PR check [40465777929](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40465777929) passed, including `tests/pixi-fidelity.test.cjs`, Pixi source contracts and reproducible PWA build; **no real device speedup is yet claimed**.
 - **27 Oct 2026, procedural-art pass:** Added an explicit opt-in cache identity for five authored, fixed decorative shapes: `crate`, `barrel`, `woodpile`, `stacked-lumber`, and `scroll-stack`. These share immutable procedural raster sources when they have a safe field schema, same scene/zone, zoom, backing density and visual scale; separate actor keys retain individual placement, depth and contact shadows. Unrecognized fields, animated/ID-varied art, enemies, pets, companions, hero art, poppy patches, carts and evolving forms keep per-entity identities. Reuse counts now include `sharedProceduralHits` in exported renderer diagnostics. The focused regression additionally compares the **actual authored Canvas draw instruction streams** across different IDs and positions, checks safe sharing, special-form isolation, distinct cart textures and warm-frame non-rebaking. Focused validation [40467933690](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40467933690) **passed** on the code commit, including `tests/pixi-fidelity.test.cjs` and the reproducible offline PWA build. This is not a physical GPU or gameplay-FPS benchmark.
-- **Next:** collect cold/warm real-browser and target-device evidence before expanding sharing to more families. General procedural **character** deduplication requires separate visual-equivalence proofs, especially for body variants, equipment, facing, form, ranged/charged state and rescue status. Terrain replacement is conditional on profiling. **No main title screen or terrain chunking is implemented yet.**
-- All later stages remain **planned, not implemented** and require their own acceptance checks.
+- **27 Oct 2026, terrain-lookahead prototype:** Implemented one optional idle-prepared CPU terrain/road raster for safe outdoor travel, a combined two-window **32 MiB** bitmap cap, guarded promotion into the existing Pixi GPU texture source, immediate original-painter fallback, and preparation/promotion/miss/error counters. Preparation is not run when page is hidden, in arenas/dungeons, with projectiles, or near living enemies. The new `tests/pixi-fidelity.test.cjs` cases cover successful promotion, a fallback redraw, combat suppression and memory lifecycle. [CI #40471830540](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40471830540) passed the affected source tests and reproducible build. The then-current consolidated draft head `ac1bc1af` also passed [CI #40472347209](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40472347209). **This is a candidate for device profiling, not an accepted faster terrain renderer.**
+- **27 Oct 2026, handoff reconciliation:** Consolidated exactly what is implemented, source-tested and still unverified in [PR #518 engineering handoff](PR518_ENGINEERING_HANDOFF_20261027.md). No formal FPS win, physical-device acceptance, full browser matrix or released feature is claimed. At audit time `main` had advanced beyond the draft baseline (through merged #520 and #522); reconcile with current main before modifying startup or merging.
+- **Next:** Implement Stage 4 main screen/Continue lifecycle using the handoff acceptance checklist and current startup/save architecture. Independently collect cold/warm live-browser and target-device traces before accepting the performance work, expanding sharing, or deciding on terrain chunks. General procedural **character** deduplication requires separate equivalence proofs for body variants, equipment, facing, form, ranged/charged state and rescue status.
+- **Stages 4–7 remain planned, not implemented.** Stages 0–3 are implemented at the stated narrow scope, but not yet complete against every device/visual acceptance gate.
