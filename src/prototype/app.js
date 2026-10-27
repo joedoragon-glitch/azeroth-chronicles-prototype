@@ -3180,10 +3180,7 @@
       D.regions.find((region) => region.id === option.zone)?.name ||
       D.bosses.find((boss) => boss.id === option.zone)?.place ||
       option.zone;
-    const heroClass =
-      language === 'es'
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[option.heroClass]
-        : option.heroClass;
+    const heroClass = heroClassLabel(option.heroClass);
     return tr('Level') + ' ' + option.level + ' · ' + heroClass + ' · ' + place;
   }
   function savedRunRecoveryOptions() {
@@ -3284,6 +3281,32 @@
       back,
     );
   }
+  // Read-only class selection copy. Registry membership alone governs
+  // which buttons exist; a future class gets its own description, never Ranger's.
+  const heroClassPresentation = Object.freeze({
+    paladin: {
+      en: 'paladin', es: 'Paladín',
+      detail: 'Melee, healing and brief immunity',
+    },
+    mage: {
+      en: 'mage', es: 'Mago',
+      detail: 'Ranged magic, frost control and protective barriers',
+    },
+    ranger: {
+      en: 'ranger', es: 'Explorador',
+      detail: 'Ranged bow, healing and mobility',
+    },
+    rogue: {
+      en: 'Rogue Bard', es: 'Pícara Bardo',
+      detail: 'Charmed companions, musical disruption and survival tricks',
+    },
+  });
+  function heroClassLabel(id, localized = language === 'es') {
+    return (heroClassPresentation[id] || {})[localized ? 'es' : 'en'] || id;
+  }
+  function heroClassDetail(id) {
+    return heroClassPresentation[id]?.detail || 'Class skills require authored rules';
+  }
   function playableClassCountWord() {
     const count = Object.keys(Campaign.classes).length;
     return { 3: 'three', 4: 'four' }[count] || String(count);
@@ -3316,9 +3339,7 @@
         action(
           c.icon +
             ' ' +
-            (language === 'es'
-              ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[id] || id
-              : id),
+            heroClassLabel(id),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
@@ -3340,11 +3361,7 @@
               return;
             start(mode, id, succession, heroName);
           },
-          id === 'paladin'
-            ? 'Melee, healing and brief immunity'
-            : id === 'mage'
-              ? 'Ranged magic, frost control and protective barriers'
-              : 'Ranged bow, healing and mobility',
+          heroClassDetail(id),
         ),
       ),
       () => chooseClass(mode),
@@ -3990,7 +4007,7 @@
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
-          action(c.icon + ' ' + id + ' successor', () => {
+          action(c.icon + ' ' + heroClassLabel(id, false) + ' successor', () => {
             game.successor(id);
             save();
             closeMenu();
