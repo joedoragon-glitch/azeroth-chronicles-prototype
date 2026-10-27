@@ -33,6 +33,12 @@ The first Rogue Barracks is still an **authored gameplay design blocker**: she h
 
 The earlier focused CI run at `fa6cb2b` recorded failures in Skill 1 description/cooldown and stale `rules.js` fingerprint evidence. The dormant slot bonus is now in `progression.js` so `rules.js` source was restored; rerun at the **latest** branch head before claiming a clean pass. Some legacy tests may still be independently out-of-date. The class remains unavailable, and this is not feature-complete or release-approved.
 
+## Additional save guard and current-mainline reconciliation
+
+The provisional Charmed monsters UI is **not a capture/save permission**: current `save.js` now rejects any imported companion with `charmOrigin` until an authenticated eligible-type contract, companion conversion and migration have been implemented. `tests/fourth-class-readiness.test.cjs` checks that a forged provisional record is refused. A separate correction in `tests/hero-skill1-area2.test.cjs` compares displayed cooldowns with the actual normal/charged native reduction rather than obsolete unmodified 3/7/8-second literals.
+
+**Required mainline integration:** [exact conflict and next-step record](ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md). The PR branch trails current mainline changes which have implemented Paladin/Mage/Ranger level-1 class passives and melee pursuit. `engine.js`, `progression.js`, `hero-combat.js` and `save.js` have edits on **both** sides. The current draft must reconcile these source changes and their evidence/tests **before** a clean CI result or merge is claimed. This is not license to replace newer mainline functionality with old branch files.
+
 ## Intentional non-implementation / remaining blockers
 
 This housekeeping **does not make Rogue Bard playable**. Do not interpret it as approving or implementing her proposed stats, basic, Charm, 16 performances, 2-second Endure, extra critical probability, critical intensities, art or music. None of those is tested or balanced.
