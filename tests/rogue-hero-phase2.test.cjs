@@ -275,6 +275,111 @@ try {
   assert.equal(reserveGame.s.party.at(-1).active, false,
     'full field admits captured ally into reserve');
   assert.doesNotThrow(() => Campaign.validate(reserveGame.snapshot()));
+
+  // Phase 3 closing lifecycle cases. Verify actual combat and save receipts,
+  // not an invented direct-call success or a speculative species stat table.
+  const wounded = fresh().g;
+  const woundSource = capture(wounded);
+  const woundedAlly = wounded.s.party[0];
+  const postHitFraction = woundSource.hp / woundSource.maxHp;
+  assert(postHitFraction > 0 && postHitFraction < 1, 'capture source survived wounded');
+  assert.equal(woundedAlly.hp,
+    Math.max(1, Math.round(woundedAlly.maxHp * postHitFraction)),
+    'new ally retains the post-hit injury fraction; no free Charm healing');
+  assert(woundedAlly.hp < woundedAlly.maxHp);
+  const woundedSave = wounded.snapshot();
+  assert.doesNotThrow(() => Campaign.validate(woundedSave));
+  const woundedReloaded = Campaign.restore(woundedSave, () => 0.9);
+  assert.equal(woundedReloaded.s.party[0].hp, woundedAlly.hp,
+    'save/restore cannot silently heal a capture');
+  assert.equal(woundedReloaded.s.party[0].maxHp, woundedAlly.maxHp);
+  assert.deepEqual(woundedReloaded.s.party[0].charmOrigin, woundedAlly.charmOrigin);
+
+  // Level growth uses the native companion pathway and preserves the wound
+  // debt rather than resetting the member to full health.
+  const initialDamage = wounded.companionAttackDamage(woundedAlly),
+    initialHp = woundedAlly.hp, initialMax = woundedAlly.maxHp;
+  wounded.hero.level = 5;
+  wounded.syncCompanionLevelStats();
+  assert(woundedAlly.maxHp > initialMax, 'owned Charm ally gains max HP with hero level');
+  assert.equal(woundedAlly.hp,
+    initialHp + woundedAlly.maxHp - initialMax,
+    'native level-up adjustment, not full-heal or stale level-one health');
+  assert(wounded.companionAttackDamage(woundedAlly) > initialDamage,
+    'native companion damage scales with hero level');
+  assert.equal(woundedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
+  assert.doesNotThrow(() => Campaign.validate(wounded.snapshot()));
+
+  // One seeded miss consumes exactly one separate Charm draw while keeping
+  // the lawful enemy and every companion intact.
+  const missed = fresh().g, missedFoe = missed.zone().enemies[0];
+  missed.s.rogueCharmRng = 0;
+  assert(missed.cast(1, missedFoe.id, false, null, true));
+  assert.equal(missed.s.rogueCharmRng, 1013904223, 'one failed 12% roll');
+  assert(missed.zone().enemies.includes(missedFoe), 'roll miss leaves hostile alive');
+  assert.equal(missed.s.party.length, 0);
+
+  // Legal splash damage is never a second, hidden capture opportunity.
+  const splash = fresh(3).g;
+  splash.s.rogueCharmRng = 12345;
+  const splashFoes = [...splash.zone().enemies];
+  assert(splash.cast(1, splashFoes[0].id, false, null, true));
+  assert.equal(splash.s.party.length, 1, 'one primary admits at most one ally');
+  assert.equal(splash.effects.filter((e) => e.type === 'rogueCharm').length, 1);
+  assert.equal(splashFoes.slice(1).filter((e) => e.hp < e.maxHp).length, 2,
+    'real splash damages other targets but never charms them');
+  assert(splash.zone().enemies.includes(splashFoes[1]));
+  assert(splash.zone().enemies.includes(splashFoes[2]));
+
+  // Excluded families must never consume Charm RNG, even when the ordinary
+  // basic combat release is allowed to damage the target.
+  for (const flag of [
+    'captain', 'roomCaptain', 'fieldCaptain', 'guard', 'roomGuard',
+    'summon', 'reinforcement', 'nightOnly', 'owner', 'crownTroop',
+    'mountedCrownRider', 'veraEscort', 'family',
+  ]) {
+    const excludedCase = fresh().g, foe = excludedCase.zone().enemies[0];
+    foe[flag] = true;
+    excludedCase.s.rogueCharmRng = 12345;
+    excludedCase.cast(1, foe.id, false, null, true);
+    assert.equal(excludedCase.s.rogueCharmRng, 12345,
+      flag + ' may never spend a Charm roll');
+    assert.equal(excludedCase.s.party.length, 0,
+      flag + ' may never join the company');
+  }
+  // An ordinary authored melee subtype cannot be forged by toggling a lone
+  // unapproved ranged flag on an unrelated species.
+  const invalidSubtype = fresh().g, illegal = invalidSubtype.zone().enemies[0];
+  illegal.species = 'wraith';
+  illegal.ranged = true;
+  invalidSubtype.s.rogueCharmRng = 12345;
+  invalidSubtype.cast(1, illegal.id, false, null, true);
+  assert.equal(invalidSubtype.s.party.length, 0);
+  assert.equal(invalidSubtype.s.rogueCharmRng, 12345);
+
+  // Cancellation at a native hero-death boundary spends no RNG or member.
+  const noHero = fresh().g, noHeroFoe = noHero.zone().enemies[0];
+  noHero.hero.hp = 0;
+  noHero.s.rogueCharmRng = 12345;
+  assert.equal(noHero.cast(1, noHeroFoe.id, false, null, true), false);
+  assert.equal(noHero.s.rogueCharmRng, 12345);
+  assert.equal(noHero.s.party.length, 0);
+
+  // A legitimate non-Rogue successor retains ownership, wounds, and exact
+  // subtype, while their original-class active capacity still applies.
+  const inheritance = fresh().g;
+  capture(inheritance);
+  const capturedId = inheritance.s.party[0].id,
+    originalOrigin = structuredClone(inheritance.s.party[0].charmOrigin);
+  inheritance.s.challenge.succession = true;
+  inheritance.s.challenge.fallen = ['rogue'];
+  inheritance.s.challenge.pending = true;
+  inheritance.hero.hp = 0;
+  assert(inheritance.successor('mage'), 'Mage may inherit a former Rogue company');
+  assert.equal(inheritance.s.party[0].id, capturedId);
+  assert.deepEqual(inheritance.s.party[0].charmOrigin, originalOrigin);
+  assert.equal(inheritance.s.charmCaptures[capturedId].typeId, originalOrigin.typeId);
+  assert.doesNotThrow(() => Campaign.validate(inheritance.snapshot()));
 } finally {
   delete Campaign.classes.rogue;
   delete Campaign.talentProfiles.rogue;
