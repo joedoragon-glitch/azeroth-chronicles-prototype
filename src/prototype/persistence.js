@@ -154,6 +154,10 @@
       return true;
     }
     function loadProfile(defaults) {
+      // Critical intensity is a device profile preference, never a v4
+      // campaign field. Older/malformed profiles migrate to Rogue Level 2
+      // independently for all three modes; other groups remain untouched.
+      const rogueDefaults = { normal: 2, nightmare: 2, developer: 2 };
       try {
         const p = JSON.parse(storage.getItem(profileKey) || 'null');
         if (p)
@@ -162,9 +166,16 @@
             nightmareUnlocked: p.nightmareUnlocked === true,
             activeMode: ['normal', 'nightmare'].includes(p.activeMode) ? p.activeMode : 'normal',
             audio: p.audio || defaults.audio,
+            rogueCriticalLevels: Object.fromEntries(
+              Object.entries(rogueDefaults).map(([mode, fallback]) => {
+                const value = p.rogueCriticalLevels?.[mode];
+                return [mode, Number.isInteger(value) && value >= 1 && value <= 3
+                  ? value : fallback];
+              }),
+            ),
           };
       } catch (_) {}
-      return defaults;
+      return { ...defaults, rogueCriticalLevels: { ...rogueDefaults } };
     }
     function saveProfile(profile) {
       try {
