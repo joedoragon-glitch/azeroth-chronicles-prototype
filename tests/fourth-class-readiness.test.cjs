@@ -115,6 +115,28 @@ for (const [heroClass, type, firstSix] of [
   assert.doesNotThrow(() => Campaign.validate(c.snapshot()));
 }
 
+// The Rogue cannot newly hire conventional troops, even if an internal
+// service API is called directly. Existing companions can still be inherited.
+{
+  const g = new Campaign('normal', 'mage', () => 0.9);
+  g.s.expeditionRank = 2;
+  g.hero.gold = 1000;
+  g.hero.class = 'rogue'; // Capability probe only, not a playable class.
+  const b = {
+    id: 'no-hire-cap', kind: 'barracks', x: g.hero.x, y: g.hero.y,
+    progress: 4, full: false, queue: 0, queueType: null,
+  };
+  g.zone().buildings.push(b);
+  const before = g.snapshot();
+  assert.match(g.companionRecruitmentReason('soldier'), /cannot hire/);
+  assert.match(g.companionRecruitmentReason('archer', b.id), /cannot hire/);
+  assert.equal(g.recruit('soldier'), false);
+  assert.equal(g.train(b.id, 'archer'), false);
+  assert.equal(g.requestCompanionRecruitment('soldier'), false);
+  assert.equal(g.requestCompanionRecruitment('archer', b.id), false);
+  assert.deepEqual(g.snapshot(), before, 'no crowns, queues or recruits changed');
+}
+
 // Charm provenance is UI-only preparation today; imported records may not
 // impersonate future captured creatures until the authenticated save schema
 // and species allowlist are implemented.
