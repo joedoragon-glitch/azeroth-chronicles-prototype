@@ -1483,8 +1483,7 @@
     locks: navigator.locks,
     required: location.protocol === 'https:',
   });
-  const persistence = (roguePlaytestEnabled
-    ? PrototypePersistence.createClassSlots : PrototypePersistence.create)({
+  const persistence = PrototypePersistence.create({
     storage: localStorage,
     Campaign,
     status,
@@ -1494,17 +1493,10 @@
     storage: localStorage,
     Campaign,
     canWrite: writerGuard.canWrite,
-    classSlots: roguePlaytestEnabled,
-    slotClass: (candidate) => roguePlaytestEnabled
-      ? persistence.slotClass(candidate) : candidate.hero.class,
-    bindRestored: (candidate, previous) => roguePlaytestEnabled
-      ? persistence.bindSlot(candidate, persistence.slotClass(previous))
-      : candidate,
   });
   let profile = {
       nightmareUnlocked: false,
       activeMode: 'normal',
-      ...(roguePlaytestEnabled ? { activeClass: 'paladin' } : {}),
       audio: { ...PrototypeAudio.defaults },
     },
     game,
@@ -1735,8 +1727,6 @@
     return persistence.saveProfile(profile);
   }
   function save() {
-    if (roguePlaytestEnabled && game)
-      profile.activeClass = persistence.slotClass(game);
     return started && persistence.save(game, profile);
   }
   // Live game shell only. Standalone Campaign fixtures remain independent.
@@ -1755,15 +1745,11 @@
     );
     return candidate;
   }
-  function load(mode, heroClass = null) {
+  function load(mode) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return false;
-    const restored = roguePlaytestEnabled
-      ? heroClass ? persistence.load(mode, heroClass)
-        : persistence.loadPreferred(mode, profile.activeClass)
-      : persistence.load(mode);
+    const restored = persistence.load(mode);
     if (!restored) return false;
     game = activateLiveCritical(restored);
-    if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(restored);
     return true;
   }
   let recoveredOnStartup = false;
@@ -3475,9 +3461,7 @@
       "He conquered the world. He wasn't expecting you.",
       "Conquistó el mundo. No contaba contigo.",
     );
-    const valid = loaded && !!game?.s &&
-      !persistence.loadFailed(game.s.mode,
-        roguePlaytestEnabled ? persistence.slotClass(game) : undefined);
+    const valid = loaded && !!game?.s && !persistence.loadFailed(game.s.mode);
     const place = valid
       ? D.regions.find((region) => region.id === game.zoneId)?.name ||
         D.bosses.find((boss) => boss.id === game.zoneId)?.place || game.zoneId
@@ -3495,8 +3479,7 @@
     $('title-settings').textContent = t('Settings', 'Ajustes');
     $('title-help').textContent = t('Help & Credits', 'Ayuda y créditos');
     $('title-continue').disabled = titleLoading || !valid ||
-      !writerGuard.canWrite() || persistence.conflicted(game.s.mode,
-        roguePlaytestEnabled ? persistence.slotClass(game) : undefined) ||
+      !writerGuard.canWrite() || persistence.conflicted(game.s.mode) ||
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
       $(id).disabled = titleLoading;
@@ -3533,9 +3516,7 @@
   }
   function enterPreparedScene() {
     if (titleLoading || started || !loaded || !writerGuard.canWrite()) return;
-    if (persistence.conflicted(game.s.mode,
-      roguePlaytestEnabled ? persistence.slotClass(game) : undefined))
-      return savedRunConflictMenu();
+    if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
     titleLoading = true;
     const epoch = ++titleEpoch;
     $('title-loading').hidden = false;
@@ -3614,18 +3595,15 @@
     if (!crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     showTitleScreen();
   }
-  function selectSavedMode(mode, heroClass = null) {
+  function selectSavedMode(mode) {
     if (!writerGuard.canWrite()) return savedRunConflictMenu();
-    const candidate = roguePlaytestEnabled && heroClass
-      ? persistence.load(mode, heroClass) : persistence.load(mode);
+    const candidate = persistence.load(mode);
     if (!candidate) {
       profile.activeMode = mode;
-      if (roguePlaytestEnabled && heroClass) profile.activeClass = heroClass;
       return savedRunRecoveryMenu();
     }
     game = activateLiveCritical(candidate);
     loaded = true;
-    if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(candidate);
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     persistProfile();
     showTitleScreen();
@@ -3634,58 +3612,41 @@
     const modes = ['normal', 'nightmare',
       ...(developerEnabled ? ['developer'] : []),
       ...(combatDiagnosticsEnabled ? ['arena'] : [])];
-    const modeLabel = (mode) => mode === 'normal' ? 'Normal' :
-      mode === 'nightmare' ? 'Nightmare' :
-      mode === 'developer' ? 'Developer' : 'Combat Diagnostics';
-    const slots = roguePlaytestEnabled ? persistence.listSaves(modes)
-      : modes.map((mode) => ({ mode, heroClass: null, source: 'legacy' }));
     openMenu(
       'Saved Games & Backups',
       language === 'es'
         ? 'Elige una partida, recupera una copia o exporta tus datos antes de reemplazarlos.'
         : 'Choose a campaign, recover a checkpoint, or export a backup.',
       [
-        ...slots.map(({ mode, heroClass }) => {
-          const candidate = roguePlaytestEnabled
-            ? persistence.load(mode, heroClass) : persistence.load(mode);
+        ...modes.map((mode) => {
+          const candidate = persistence.load(mode);
           return action(
-            modeLabel(mode) + (heroClass ? ' · ' + heroClassLabel(heroClass) : ''),
-            () => selectSavedMode(mode, heroClass),
-            candidate ? (candidate.hero.name || heroClassLabel(candidate.hero.class)) +
-              ' · ' + candidate.hero.level
-              : (language === 'es' ? 'Sin partida válida' : 'No valid save'),
+            mode === 'normal' ? 'Normal' : mode === 'nightmare' ? 'Nightmare' :
+              mode === 'developer' ? 'Developer' : 'Combat Diagnostics',
+            () => selectSavedMode(mode),
+            candidate ? (candidate.hero.name || candidate.hero.class) +
+              ' · ' + candidate.hero.level : (language === 'es' ? 'Sin partida válida' : 'No valid save'),
             !candidate,
           );
         }),
         action('Try recovery', () => {
-          if (loaded) {
-            profile.activeMode = game.s.mode;
-            if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(game);
-          }
+          if (loaded) profile.activeMode = game.s.mode;
           savedRunRecoveryMenu();
         }),
-        ...slots.filter(({ mode, heroClass }) =>
-          persistence.loadFailed(mode, heroClass)).map(({ mode, heroClass }) =>
+        ...modes.filter((mode) => persistence.loadFailed(mode)).map((mode) =>
           action(
-            (language === 'es' ? 'Recuperar ' : 'Recover ') +
-              modeLabel(mode) + (heroClass ? ' · ' + heroClassLabel(heroClass) : ''),
+            (language === 'es' ? 'Recuperar ' : 'Recover ') + mode,
             () => {
               profile.activeMode = mode;
-              if (roguePlaytestEnabled && heroClass) profile.activeClass = heroClass;
               savedRunRecoveryMenu();
             },
           ),
         ),
-        ...slots.map(({ mode, heroClass, source }) => ({
-          label: (language === 'es' ? 'Exportar ' : 'Export ') +
-            modeLabel(mode) + (heroClass ? ' · ' + heroClassLabel(heroClass) : ''),
+        ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
+          label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
           action: () => {
-            const key = roguePlaytestEnabled && source === 'class'
-              ? persistence.saveKey(mode, heroClass)
-              : PrototypePersistence.saveKey(mode);
-            const raw = localStorage.getItem(key);
-            if (raw) exportSaveText(raw,
-              'Azeroth_Original_' + mode + (heroClass ? '_' + heroClass : '') + '.json');
+            const raw = localStorage.getItem(PrototypePersistence.saveKey(mode));
+            if (raw) exportSaveText(raw, 'Azeroth_Original_' + mode + '.json');
           },
         })),
         { label: tr('Import save'), action: () => $('import-file').click() },
@@ -3727,7 +3688,6 @@
     if (typeof Sprint !== 'undefined') Sprint.reset();
     paused = false;
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
-    if (roguePlaytestEnabled) profile.activeClass = heroClass;
     persistProfile();
     showTitleScreen();
     enterPreparedScene();
@@ -3753,7 +3713,7 @@
   function savedRunRecoveryMenu() {
     openMenu(
       'Saved run could not be opened',
-      persistence.original(profile.activeMode, profile.activeClass)
+      persistence.original(profile.activeMode)
         ? 'Your original save is protected. Import a backup or export the original before starting a new run.'
         : 'The main save is missing. Try a recovery checkpoint or import a backup.',
       [
@@ -3762,11 +3722,11 @@
           'Export original save',
           () =>
             exportSaveText(
-              persistence.original(profile.activeMode, profile.activeClass),
+              persistence.original(profile.activeMode),
               'Azeroth_Original_' + profile.activeMode + '.json',
             ),
           '',
-          !persistence.original(profile.activeMode, profile.activeClass),
+          !persistence.original(profile.activeMode),
         ),
         action('Import save', () => $('import-file').click()),
         action('Start a new Normal run', () => chooseLanguage('normal')),
@@ -3786,7 +3746,7 @@
   function savedRunRecoveryOptions() {
     let options;
     try {
-      options = persistence.recoveryOptions(profile.activeMode, profile.activeClass);
+      options = persistence.recoveryOptions(profile.activeMode);
     } catch (_) {
       status('Recovery failed. Your original save was kept. Export it before closing.');
       return;
@@ -3835,8 +3795,7 @@
       [
         action('Recover this run', () => {
           try {
-            const candidate = persistence.recover(profile.activeMode, option.id,
-              profile.activeClass);
+            const candidate = persistence.recover(profile.activeMode, option.id);
             resumeSavedRun(candidate);
             status('Run recovered successfully.');
           } catch (_) {
@@ -3980,8 +3939,7 @@
               );
               return;
             }
-            const exists = persistence.exists(mode,
-              roguePlaytestEnabled ? id : undefined);
+            const exists = persistence.exists(mode);
             if (
               exists &&
               !confirm(
@@ -4342,8 +4300,7 @@
               action(
                 'Load Combat Diagnostics run',
                 () => {
-                  if (load('arena', roguePlaytestEnabled
-            ? persistence.slotClass(game) : null)) {
+                  if (load('arena')) {
                     graphicsController.revert();
                     setOptimizationActive(true);
                     resize();
@@ -4353,15 +4310,13 @@
                   }
                 },
                 'Continue your separate low-spec combat-testing save.',
-                !persistence.exists('arena',
-                  roguePlaytestEnabled ? persistence.slotClass(game) : undefined),
+                !persistence.exists('arena'),
               ),
             ]
           : []),
         action('Load other mode run', () => {
           const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
-          if (load(mode, roguePlaytestEnabled
-            ? persistence.slotClass(game) : null)) {
+          if (load(mode)) {
             save();
             closeMenu();
           } else game.say('No saved ' + mode + ' run yet.');
@@ -4894,7 +4849,6 @@
     } else setOptimizationActive(optimizationPreference === 'on');
     loaded = true;
     started = false;
-    if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(game);
     if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
     if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
@@ -8107,14 +8061,9 @@
         // bytes before allowing input, recovery or any automatic write.
         profile = persistence.loadProfile(profile);
         let refreshed = combatDiagnosticsEnabled
-          ? (roguePlaytestEnabled ? persistence.loadPreferred('arena', profile.activeClass)
-              : persistence.load('arena'))
-          : (developerEnabled && (roguePlaytestEnabled
-              ? persistence.loadPreferred('developer', profile.activeClass)
-              : persistence.load('developer'))) ||
-            (roguePlaytestEnabled
-              ? persistence.loadPreferred(profile.activeMode, profile.activeClass)
-              : persistence.load(profile.activeMode));
+          ? persistence.load('arena')
+          : (developerEnabled && persistence.load('developer')) ||
+            persistence.load(profile.activeMode);
         if (
           !refreshed &&
           !combatDiagnosticsEnabled &&
@@ -8130,8 +8079,6 @@
         }
         if (refreshed) {
           game = activateLiveCritical(refreshed);
-          if (roguePlaytestEnabled)
-            profile.activeClass = persistence.slotClass(refreshed);
           if (game.s.mode === 'arena') {
             graphicsController.revert();
             setOptimizationActive(true);
