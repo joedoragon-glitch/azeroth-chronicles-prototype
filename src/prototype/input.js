@@ -93,6 +93,7 @@
       preset: 'right',
       phoneLayout: 'two-thumb',
       joystickMode: 'fixed',
+      hudStyle: 'classic',
       touchMove: true,
       mouseMove: false,
     };
@@ -136,6 +137,7 @@
         }
         preferences.phoneLayout = saved.phoneLayout === 'left-hand' ? 'left-hand' : 'two-thumb';
         preferences.joystickMode = saved.joystickMode === 'floating' ? 'floating' : 'fixed';
+        preferences.hudStyle = saved.hudStyle === 'adaptive' ? 'adaptive' : 'classic';
         preferences.touchMove = saved.touchMove !== false;
         preferences.mouseMove = saved.mouseMove === true;
       }
@@ -195,6 +197,8 @@
           preferences.phoneLayout = value === 'left-hand' ? value : 'two-thumb';
         else if (name === 'joystickMode')
           preferences.joystickMode = value === 'floating' ? 'floating' : 'fixed';
+        else if (name === 'hudStyle')
+          preferences.hudStyle = value === 'adaptive' ? 'adaptive' : 'classic';
         else if (name === 'touchMove' || name === 'mouseMove') preferences[name] = value === true;
         persist();
       },
@@ -237,6 +241,37 @@
     return !obstacles.some((rect) =>
       point.x >= rect.x - 10 && point.x <= rect.x + rect.width + 10 &&
       point.y >= rect.y - 10 && point.y <= rect.y + rect.height + 10);
+  }
+  // HUD presentation is a separate, pure classifier. It never changes action
+  // validity, movement or combat state. The previous snapshot implements
+  // hysteresis so quick HP changes and aggro dropouts do not make the HUD flicker.
+  function adaptiveHudLowHealth(hp, maxHp, previouslyLow = false) {
+    if (!Number.isFinite(hp) || !Number.isFinite(maxHp) || maxHp <= 0) return false;
+    const ratio = Math.max(0, hp) / maxHp;
+    return previouslyLow ? ratio <= 0.35 : ratio <= 0.30;
+  }
+  function adaptiveHudPresentation(signals, previous = null, now = 0) {
+    const lowHP = adaptiveHudLowHealth(signals.hp, signals.maxHp, previous?.lowHP);
+    const immediatePressure = !!(
+      signals.threat || signals.projectile || signals.hazard ||
+      signals.target || signals.targetLocked || signals.charging ||
+      signals.queued || signals.targetPress
+    );
+    const pressureUntil = immediatePressure
+      ? now + 2000 : Math.max(0, previous?.pressureUntil || 0);
+    const pressure = immediatePressure || now < pressureUntil;
+    const inputActive = !!(signals.charging || signals.queued || signals.targetPress);
+    return {
+      lowHP,
+      pressure,
+      pressureUntil,
+      context: signals.menu ? 'menu' : pressure ? 'combat' :
+        signals.navigation ? 'travel' : signals.interactable ? 'interact' : 'explore',
+      target: pressure || !!signals.target || !!signals.targetLocked || !!signals.targetPress,
+      recall: pressure || !!signals.tutorialRecall,
+      moving: !!signals.moving,
+      inputActive,
+    };
   }
   // Transient intent only. Gameplay, cooldowns and target legality stay in Campaign.
   function createSkillQueue(capacity = 16) {
@@ -290,7 +325,7 @@
     };
   }
   const api = { create, createSkillQueue, actions, defaults, presets, preferenceKey, requestMove,
-    floatingJoystickVector, floatingJoystickZone };
+    floatingJoystickVector, floatingJoystickZone, adaptiveHudLowHealth, adaptiveHudPresentation };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeInput = api;
 })(typeof window !== 'undefined' ? window : globalThis);
