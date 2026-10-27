@@ -36,6 +36,7 @@ try {
   g.hero.skills[5] = 1;
   g.hero.skills[6] = 1;
   g.hero.skills[2] = 1;
+  g.hero.skills[3] = 1;
   const card2 = Reference.describe(g,2);
   assert(card2 && card2.tap.metrics.some((m)=>m.key==='slow'));
   assert(Reference.describe(g,3)?.tap.metrics.some((m)=>m.key==='interruptDebt'));
@@ -110,6 +111,19 @@ try {
   assert(g.rogueEnemySilenced(foe),'eligible enemy special hush is active');
   const protectedSnapshot = g.snapshot();
   assert(!JSON.stringify(protectedSnapshot).includes('steadyBeat'));
+  // Skill 4 uses a finite nonstacking wither/mend budget; only outside healing
+  // receives the capped boost. No friend/enemy status enters a campaign save.
+  g.hero.cd[3] = 0;
+  unit.hp = Math.max(1, unit.hp - 25);
+  const beforeMend = unit.hp, beforeWither = foe.hp;
+  assert.equal(g.cast(4,foe.id),true);
+  assert(g.rogueSongBoon(unit,'mending')?.remainingHeal > 0);
+  assert(g.rogueEnemyHealingFactor(foe) < 1);
+  assert.equal(g.tickRogueEnemyDot(foe,0.5),true);
+  assert(foe.hp < beforeWither);
+  g.advanceRogueMending(0.5);
+  assert(unit.hp > beforeMend);
+  assert(!JSON.stringify(g.snapshot()).includes('remainingHeal'));
   // Empty legal hostile range never yields a free party boon or consumes CD.
   g.zone().enemies = [];
   g.hero.cd[1]=0;

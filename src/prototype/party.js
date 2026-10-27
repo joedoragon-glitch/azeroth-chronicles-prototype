@@ -1460,7 +1460,7 @@
         return entry && entry.until > this.s.time ? entry : null;
       }
       applyRogueSongBoon(u, family, form) {
-        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting'].includes(family) ||
+        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending'].includes(family) ||
           this.hero.class !== 'rogue' || !this.activeLivingParty().includes(u))
           return false;
         let state = roguePerformanceBoons.get(u);
@@ -1480,8 +1480,23 @@
           outgoing: Math.max(previous?.outgoing || 0,
             Math.min(0.08, form.outgoing || 0)),
           protection: !!(previous?.protection || form.protection),
+          incomingHealing: Math.max(previous?.incomingHealing || 0,
+            Math.min(0.12, form.incomingHealing || 0)),
+          remainingHeal: Math.max(previous?.remainingHeal || 0,
+            Math.min(u.maxHp * 0.05, u.maxHp * (form.healFraction || 0))),
         };
         return true;
+      }
+      advanceRogueMending(dt) {
+        if (this.hero.class !== 'rogue' || !Number.isFinite(dt) || dt <= 0) return;
+        for (const u of this.activeLivingParty()) {
+          const effect = this.rogueSongBoon(u, 'mending');
+          if (!effect || !(effect.remainingHeal > 0)) continue;
+          const live = Math.max(0.01, effect.until - (this.s.time - dt)),
+            paid = Math.min(effect.remainingHeal, effect.remainingHeal * Math.min(dt, live) / live);
+          u.hp = Math.min(u.maxHp, u.hp + paid);
+          effect.remainingHeal = Math.max(0, effect.remainingHeal - paid);
+        }
       }
       companionRallyMoveSpeed(u, base) {
         const rally = this.rangerRallyActive(u)
@@ -2361,13 +2376,15 @@
             if (u[field] >= u[max]) continue;
             const step = Math.min(dt, e.seconds),
               amount = (e.remaining * step) / e.seconds;
-            u[field] = Math.min(u[max], u[field] + amount);
+            u[field] = Math.min(u[max], u[field] + amount *
+              (field === 'hp' ? 1 + (this.rogueSongBoon(u, 'mending')?.incomingHealing || 0) : 1));
             e.remaining = Math.max(0, e.remaining - amount);
             e.seconds = Math.max(0, e.seconds - step);
             if (e.seconds > 0 && e.remaining > 0 && u[field] < u[max]) next.push(e);
           }
           u.supportEffects = next;
         }
+        this.advanceRogueMending(dt);
       }
       autoRangerSupport() {
         // Explicit queued hero care gets the first eligible Ranger before triage.

@@ -178,6 +178,10 @@
         'Slow nearby hostiles and quicken companions in the same area',
         'Can\'t Dance: wider Slow and stronger allied movement/recovery',
         'Phase 5 prototype name; subject to owner review.'],
+      4: ['Sour Note', 'Enemy wither / allied Mending',
+        'Afflict nearby foes with timed damage and reduced incoming healing; mend allies',
+        'Rotten Chorus: stronger wither, small healing budget and heal-received boon',
+        'One finite damage and healing budget; no revival or recursively boosted healing.'],
       3: ['Beat Breaker', 'Native cast interrupt / Steady Beat',
         'Break a lawful enemy warning and protect nearby allied charges from damage',
         'Shut the Band Up: wider interrupt, brief non-boss hush and longer protection',
@@ -220,6 +224,12 @@
           { key: 'move', label: 'Companion movement', value: x.move * 100, unit: '%' },
           { key: 'recovery', label: 'Companion cooldown recovery',
             value: x.recovery * 100, unit: '%' },
+        );
+        if (slot === 4) metrics.push(
+          { key: 'dot', label: 'Enemy wither budget', value: x.dotFraction * 100, unit: '% HP, capped' },
+          { key: 'antiHeal', label: 'Enemy healing reduced', value: x.antiHeal * 100, unit: '%' },
+          { key: 'heal', label: 'Companion heal budget', value: x.healFraction * 100, unit: '% max HP' },
+          { key: 'incomingHealing', label: 'Other incoming heals increased', value: x.incomingHealing * 100, unit: '%' },
         );
         if (slot === 3) metrics.push(
           { key: 'interruptDebt', label: 'Interrupted enemy cooldown', value: x.debt, unit: 's' },

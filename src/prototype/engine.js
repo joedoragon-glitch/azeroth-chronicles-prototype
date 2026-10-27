@@ -654,7 +654,8 @@
       }
       const step = Math.min(dt, h.seconds),
         amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
-      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      if (amount > 0) e.hp = Math.min(e.maxHp,
+        e.hp + amount * this.rogueEnemyHealingFactor(e));
       h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
       h.seconds = Math.max(0, h.seconds - step);
       if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp)
@@ -723,7 +724,8 @@
       }
       const step = Math.min(dt, h.seconds),
         amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
-      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      if (amount > 0) e.hp = Math.min(e.maxHp,
+        e.hp + amount * this.rogueEnemyHealingFactor(e));
       h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
       h.seconds = Math.max(0, h.seconds - step);
       if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp) delete e.supportHeal;
@@ -6703,7 +6705,8 @@
             if (left > 0) captainSelfHealRecovery.set(e, left);
             else captainSelfHealRecovery.delete(e);
           }
-          if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
+          if (e.hp > 0) this.tickRogueEnemyDot(e, dt);
+          if (e.hp > 0 && e.supportHeal) this.advanceEnemySupportHeal(e, dt);
           if (e.hybridSelfHeal) this.advanceHybridSelfHeal(e, dt);
         } else {
           if (e.supportHeal) delete e.supportHeal;

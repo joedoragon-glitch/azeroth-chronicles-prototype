@@ -5,6 +5,7 @@
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     // Enemy-only charged hush is transient; never saved or inherited.
     const rogueEnemySilences = new WeakMap();
+    const rogueEnemyWithers = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     // Adding a hero to the class registry must not silently use Ranger shots,
@@ -1151,6 +1152,23 @@
         });
       }
       // These are owner-tunable first-play numbers, not permanent skill names.
+      rogueEnemyHealingFactor(e) {
+        const state = rogueEnemyWithers.get(e);
+        return this.hero.class === 'rogue' && state?.zone === this.zoneId &&
+          state.until > this.s.time && e?.hp > 0 ? 1 - Math.min(0.4, state.antiHeal) : 1;
+      }
+      tickRogueEnemyDot(e, dt) {
+        const state = rogueEnemyWithers.get(e);
+        if (this.hero.class !== 'rogue' || this.peace || e?.hp <= 0 ||
+            !state || state.zone !== this.zoneId || state.until <= this.s.time - dt ||
+            !(state.remaining > 0)) return false;
+        const live = Math.max(0.01, state.until - (this.s.time - dt)),
+          amount = Math.min(state.remaining,
+            state.remaining * Math.min(dt, live) / live);
+        if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true })) return false;
+        state.remaining -= amount;
+        return true;
+      }
       rogueEnemySilenced(e) {
         const state = rogueEnemySilences.get(e);
         return this.hero.class === 'rogue' && e?.hp > 0 &&
@@ -1256,6 +1274,17 @@
         this.s.heroTarget = primary.id;
         for (const e of enemies) {
           if (slot === 2) this.applySlow(e, form.slow);
+          if (slot === 4) {
+            const prev = rogueEnemyWithers.get(e);
+            const still = prev?.zone === this.zoneId && prev.until > this.s.time;
+            rogueEnemyWithers.set(e, {
+              zone: this.zoneId,
+              until: Math.max(still ? prev.until : 0, this.s.time + form.seconds),
+              remaining: Math.max(still ? prev.remaining : 0,
+                Math.min(80, Math.max(3, e.maxHp * form.dotFraction))),
+              antiHeal: Math.max(still ? prev.antiHeal : 0, form.antiHeal),
+            });
+          }
           if (slot === 3) {
             // Interrupt only an actual native warning/aim, never invent a cast.
             const warning = e.telegraph || e.rangedAim;
@@ -1296,7 +1325,7 @@
         }
         for (const u of allies)
           this.applyRogueSongBoon(u,
-            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 7 ? 'firmFooting' : 'borrowedTime', form);
+            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : 'borrowedTime', form);
         this.event('rogueBellPerformance', {
           actor: 'hero', class: 'rogue', slot,
           form: charged ? 'charged' : 'tap',
