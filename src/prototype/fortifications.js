@@ -139,25 +139,19 @@
         return e.ranged ?? ['archer', 'crownguard'].includes(e.species);
       }
       enemyRangedRange(e) {
+        // One absolute hostile ranged basic distance for every ranged role,
+        // including restored actors whose older shotRange metadata differs.
         return (
-          (e.shotRange || 280) *
-          R.balance.enemyRangedBasicRangeMultiplier *
+          R.balance.enemyRangedBasicRange *
           (this.enemyFort(e) ? R.balance.fortifications.rangeMultiplier : 1)
         );
       }
       enemyAcquisitionRange(e) {
-        const detection = R.balance.enemyAcquisitionRangeMultiplier,
-          passive = R.balance.enemyAcquisitionRange * detection;
-        // Ordinary melee awareness keeps its independent global distance.
-        if (!this.enemyRanged(e)) return passive;
-        // A ranged enemy must notice visible targets throughout its actual
-        // basic firing reach, including position-derived fortified reach.
-        // Independent fortified detection may remain longer than its shot.
-        const fort = this.enemyFort(e),
-          fortifiedDetection = fort
-            ? (e.shotRange || 280) * detection * R.balance.fortifications.rangeMultiplier
-            : 0;
-        return Math.max(passive, fortifiedDetection, this.enemyRangedRange(e));
+        // Eligible ranged detection exactly matches its effective firing range,
+        // including a position-derived 30% fortified bonus; NO 10% scalar.
+        if (this.enemyRanged(e)) return this.enemyRangedRange(e);
+        // Preserve the unrelated melee-enemy awareness baseline.
+        return R.balance.enemyAcquisitionRange * R.balance.enemyAcquisitionRangeMultiplier;
       }
       enemyRangedLine(e, target) {
         return this.enemyRanged(e)

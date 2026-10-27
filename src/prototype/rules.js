@@ -6826,9 +6826,11 @@
   const balance = {
     mountedMovementMultiplier: 1.3,
     enemySpecialReachMultiplier: 1.2,
-    // Split dev.101's shared 10% knob; keep both original effective defaults.
+    // Approved hostile ranged BASIC reach is an absolute final distance, not
+    // another 10% bonus on a legacy species-specific shotRange.
+    enemyRangedBasicRange: 320,
+    // Melee/ordinary enemy awareness keeps its separate historical tuning.
     enemyAcquisitionRangeMultiplier: 1.1,
-    enemyRangedBasicRangeMultiplier: 1.1,
     // All ordinary and elite basic reach comes from meleeReachTuning.
     meleeBasicRange: meleeReach.enemy,
     eliteMeleeBasicRange: meleeReach.elite,

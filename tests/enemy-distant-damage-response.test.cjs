@@ -39,12 +39,14 @@ assert.equal(acquisition, 286, 'original passive detection contract remains unch
 // The real automatic AI (not just range formulas) must notice any visible
 // ranged-band target on ordinary outdoor ground, and refuse one beyond reach.
 for (const [shotRange, distance, shouldAcquire] of [
-  [270, 290, true],
-  [270, 304, false],
-  [280, 300, true],
-  [280, 315, false],
-  [290, 310, true],
-  [290, 325, false],
+  [230, 319, true],
+  [230, 320, true],
+  [230, 320.01, false],
+  [280, 319, true],
+  [280, 320, true],
+  [280, 321, false],
+  [290, 320, true],
+  [290, 321, false],
 ]) {
   const { g, e } = scene('normal');
   Object.assign(e, { ranged: true, shotRange, cd: 0, specialCd: 100 });

@@ -1,5 +1,28 @@
 # Enemy detection versus ranged basic range — split tuning (27 October 2026)
 
+## CURRENT OWNER-APPROVED RANGE SETTINGS (supersedes old 10% ranged tuning)
+
+Every eligible hostile ranged basic attack has the **absolute 320-unit firing range** and **exactly 320-unit automatic detection** on ordinary ground; neither receives the historical 10% targeting increase. In a native fortification, the established **30% garrison range bonus** gives **416 firing and 416 detection**. These are final effective ranges, **not species-specific base values** to which another 10% is added. This also applies to ranged hybrids, guards, and saved/restored actors with historic `shotRange` values. The legacy `shotRange` remains historical species/projectile metadata rather than the current basic firing distance. Ordinary melee enemy awareness is not part of this change and retains `260 × 1.1 = 286`.
+
+**One setting, one answer:** `balance.enemyRangedBasicRange: 320` is the only absolute hostile ranged basic tuning knob. `balance.enemyRangedBasicRangeMultiplier` (formerly `1.1`) has been removed. Effective `enemyRangedRange(e)` is `balance.enemyRangedBasicRange × (enemyFort(e) ? 1.3 : 1)`. For every ranged enemy, `enemyAcquisitionRange(e)` returns that **exact same effective distance**, with no separate 10% bonus or global melee detection floor. The original independent `enemyAcquisitionRangeMultiplier: 1.1` is deliberately preserved **for non-ranged enemy awareness only**, not applied to eligible ranged enemies.
+
+| Hostile ranged archetype | Earlier ordinary fire / detection | **New ordinary fire / detection** | Earlier fortified fire / detection | **New fortified fire / detection** |
+| --- | --- | --- | --- | --- |
+| Mireling Spitter | 253 / 286 | **320 / 320** | 328.9 / 328.9 | **416 / 416** |
+| Goblin Slinger | 264 / 286 | **320 / 320** | 343.2 / 343.2 | **416 / 416** |
+| Reedbeast Spitter | 275 / 286 | **320 / 320** | 357.5 / 357.5 | **416 / 416** |
+| Ogre Stone Thrower | 286 / 286 | **320 / 320** | 371.8 / 371.8 | **416 / 416** |
+| Orc Axe Thrower | 286 / 286 | **320 / 320** | 371.8 / 371.8 | **416 / 416** |
+| Ashbeast Cinder Spitter | 297 / 297 | **320 / 320** | 386.1 / 386.1 | **416 / 416** |
+| Archer, Crown Guard, Wraith, default/forced ranged | 308 / 308 | **320 / 320** | 400.4 / 400.4 | **416 / 416** |
+| Skeleton Bow Guard | 319 / 319 | **320 / 320** | 414.7 / 414.7 | **416 / 416** |
+
+Before figures are from the preceding draft fix, not raw October 19 values. The table's fortification values are conditional on the actor actually being inside a native fort. The game's Ranger hero still fires at 450 units, the Mage at 400, Archer companions and ranged pets at 280; 416 outranges the Mage but not the Ranger. No enemy basic damage, projectile speed, special range, player-side range, melee acquisition or existing sight/terrain/fortifications rights are modified. At exactly 320 or 416, native ranged passive acquisition permits the visible target, as does basic firing eligibility; both remain subject to independent combat safety, visibility and territory checks.
+
+**Validation owner:** `tests/fortifications.test.cjs` (full known species/fallback/hybrid matrix and live 320/416 geometry), `tests/enemy-distant-damage-response.test.cjs` (320 boundary, no false 321 acquisition), `tests/treasury-fortifications.test.cjs` (native interior garrisons), and `tools/native-fort-audit-dev145/positive-lanes.cjs` (authored wall lanes). Historical earlier 10%-based tables below are archived for provenance and **do not describe the effective game values after this change**. Tests and PR CI on the actual new commit are necessary before claiming validated implementation.
+
+## Earlier draft analyses (historical / superseded ranged values)
+
 ## Why these are two controls
 
 [PR #335](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/335), the accepted 20 October dev.101 balance change, added `enemyTargetingMultiplier: 1.1` for **both** ordinary passive acquisition and ordinary ranged-basic eligibility. The owner had asked for slightly greater targeting distance to counter superior Mage (400) and Ranger (450) basic reaches. The 10% scalar applied to *both* unrelated mechanics. [PR #343](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/343), dev.109 later that day, added an independent 30% position-derived fortified ranged bonus and used fortified firing reach as fortified passive detection.
