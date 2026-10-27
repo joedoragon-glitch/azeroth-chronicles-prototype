@@ -38,6 +38,7 @@ try {
   g.hero.skills[2] = 1;
   g.hero.skills[3] = 1;
   g.hero.skills[7] = 1;
+  g.hero.skills[4] = 1;
   const card2 = Reference.describe(g,2);
   assert(card2 && card2.tap.metrics.some((m)=>m.key==='slow'));
   assert(Reference.describe(g,3)?.tap.metrics.some((m)=>m.key==='interruptDebt'));
@@ -132,12 +133,27 @@ try {
   const hitBefore = foe.hp;
   assert.equal(g.cast(8,foe.id),true);
   assert(foe.hp < hitBefore);
-  assert.equal(g.criticalPartyChance(unit.id)-chanceBefore,0.04);
+  assert(Math.abs(g.criticalPartyChance(unit.id)-chanceBefore-0.04) < 1e-8);
   assert.equal(g.criticalPartyChance('hero'),heroChance);
   assert(g.rogueCompanionSpecialDamage(unit,100) > 100);
   g.hero.cd[7] = 0;
   assert.equal(g.cast(8,foe.id,true),true);
   assert(g.rogueSongBoon(unit,'finale')?.criticalChance <= 0.06);
+  // Skill 5: ephemeral two-station ceiling, no benefit outside footprints,
+  // and direct native slow pulses rather than a new permanent actor.
+  g.hero.cd[4] = 0;
+  assert.equal(g.cast(5,foe.id),true);
+  assert(g.rogueStationProtection(unit)?.resistance === 0.25);
+  g.tickRogueStations();
+  assert(foe.slow > 0);
+  g.hero.cd[4] = 0;
+  assert.equal(g.cast(5,foe.id,true),true);
+  assert(g.rogueStationProtection(unit)?.resistance >= 0.40);
+  const savedStation = g.snapshot();
+  assert(!JSON.stringify(savedStation).includes('pulseDamage'));
+  unit.x += 400;
+  assert.equal(g.rogueStationProtection(unit),null);
+  unit.x -= 400;
   // Empty legal hostile range never yields a free party boon or consumes CD.
   g.zone().enemies = [];
   g.hero.cd[1]=0;

@@ -178,6 +178,10 @@
         'Slow nearby hostiles and quicken companions in the same area',
         'Can\'t Dance: wider Slow and stronger allied movement/recovery',
         'Phase 5 prototype name; subject to owner review.'],
+      5: ['Sticky Shuffle', 'Stationary music / allied inside-circle protection',
+        'Place a brief bell station that Slows enemies and steadies allies inside',
+        'Briar Boogie: a larger field with finite damaging pulses and a small allied ward',
+        'Provisional station concept, not a physical trap. Maximum two fields.'],
       8: ['Bad Bell Day', 'Enemy blast / allied Finale',
         'Blast nearby foes while boosting allied critical opportunity and specials',
         'Last Laugh: bigger blast and a brief non-boss hush; stronger allied Finale',
@@ -228,6 +232,12 @@
           { key: 'move', label: 'Companion movement', value: x.move * 100, unit: '%' },
           { key: 'recovery', label: 'Companion cooldown recovery',
             value: x.recovery * 100, unit: '%' },
+        );
+        if (slot === 5) metrics.push(
+          { key: 'slow', label: 'Enemy station pulse Slow', value: x.slow, unit: 's' },
+          { key: 'resistance', label: 'Inside Slow penalty resistance', value: x.slowResistance * 100, unit: '%' },
+          { key: 'ward', label: 'Inside received damage reduction', value: x.ward * 100, unit: '%' },
+          { key: 'stations', label: 'Maximum active stations', value: 2, unit: '' },
         );
         if (slot === 8) metrics.push(
           { key: 'damage', label: 'Enemy damage coefficient', value: x.damage, unit: 'x' },

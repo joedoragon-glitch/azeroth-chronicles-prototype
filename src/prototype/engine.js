@@ -4362,6 +4362,7 @@
       this.updateParty(dt);
       performanceMark?.('partyEnd');
       this.updateEnemies(dt);
+      this.tickRogueStations();
       // Scripted charges, pulls and teleports can bypass ordinary path collision.
       // Keep every arena combatant inside the same marked, walkable perimeter.
       if (this.s.mode === 'arena') this.arenaContainActors();

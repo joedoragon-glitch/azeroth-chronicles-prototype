@@ -6,6 +6,9 @@
     // Enemy-only charged hush is transient; never saved or inherited.
     const rogueEnemySilences = new WeakMap();
     const rogueEnemyWithers = new WeakMap();
+    // At most two finite stationary performance circles per campaign.
+    // Weakly owned, unsaved and automatically scoped to the active region.
+    const rogueMusicStations = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     // Adding a hero to the class registry must not silently use Ranger shots,
@@ -1152,6 +1155,48 @@
         });
       }
       // These are owner-tunable first-play numbers, not permanent skill names.
+      rogueStationProtection(unit) {
+        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
+            unit.active === false || !this.s.party.includes(unit)) return null;
+        let selected = null;
+        for (const field of rogueMusicStations.get(this) || []) {
+          if (field.zone !== this.zoneId || field.until <= this.s.time ||
+              dist(unit, field) > field.radius || !this.line(field, unit)) continue;
+          selected = {
+            resistance: Math.max(selected?.resistance || 0, field.resistance),
+            ward: Math.max(selected?.ward || 0, field.ward),
+          };
+        }
+        return selected;
+      }
+      tickRogueStations() {
+        const fields = rogueMusicStations.get(this);
+        if (!fields?.length) return;
+        if (this.hero.class !== 'rogue' || this.hero.hp <= 0 || this.peace) {
+          rogueMusicStations.delete(this);
+          return;
+        }
+        const live = fields.filter((field) =>
+          field.zone === this.zoneId && field.until > this.s.time);
+        if (!live.length) { rogueMusicStations.delete(this); return; }
+        rogueMusicStations.set(this, live);
+        for (const field of live) {
+          if (field.nextPulse > this.s.time) continue;
+          field.nextPulse = this.s.time + 0.65;
+          const contacts = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, field) <= field.radius && this.line(field, e))
+            .sort((a,b) => dist(a,field)-dist(b,field) || this.idOrder(a,b))
+            .slice(0,field.cap);
+          for (const e of contacts) {
+            this.applySlow(e, field.slow);
+            if (field.pulseDamage > 0)
+              this.damage(e, (this.power() + 8) * field.pulseDamage, 'hero', { area: true });
+          }
+        }
+      }
       rogueEnemyHealingFactor(e) {
         const state = rogueEnemyWithers.get(e);
         return this.hero.class === 'rogue' && state?.zone === this.zoneId &&
@@ -1272,8 +1317,24 @@
         h.cd[slot - 1] = this.skillCooldown(slot, false);
         if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
         this.s.heroTarget = primary.id;
+        if (slot === 5) {
+          const current = (rogueMusicStations.get(this) || []).filter((f) =>
+            f.zone === this.zoneId && f.until > this.s.time);
+          current.push({
+            zone: this.zoneId, x: primary.x, y: primary.y,
+            radius: form.radius, cap: form.cap, slow: form.slow,
+            resistance: form.slowResistance, ward: form.ward,
+            pulseDamage: form.pulseDamage, until: this.s.time + form.seconds,
+            nextPulse: this.s.time,
+          });
+          rogueMusicStations.set(this, current.slice(-2));
+        }
         for (const e of enemies) {
           if (slot === 2) this.applySlow(e, form.slow);
+          if (slot === 5) {
+            // Station pulses are scheduled from its single placement owner;
+            // never duplicate a pulse as a separate instant AoE result.
+          }
           if (slot === 8) {
             const scale = 1 + 0.15 * (rank - 1);
             this.damage(e, (this.power() + 12) * form.damage * scale, 'hero',
@@ -1335,7 +1396,7 @@
             }
           }
         }
-        for (const u of allies)
+        for (const u of (slot === 5 ? [] : allies))
           this.applyRogueSongBoon(u,
             slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', form);
         this.event('rogueBellPerformance', {

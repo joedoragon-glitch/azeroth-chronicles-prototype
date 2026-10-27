@@ -563,7 +563,13 @@
         const stacks = enemy
           ? recordedStacks
           : Math.min(R.cooldownBalance.partySlowMaxStacks, recordedStacks);
-        const recovery = base / (1 + (stacks - 1) * perStack);
+        const rawRecovery = base / (1 + (stacks - 1) * perStack);
+        // A stationed bell rhythm softens only the Slow penalty while an
+        // eligible companion is physically inside the field.
+        const station = !enemy && slow > 0
+          ? this.rogueStationProtection?.(unit) : null;
+        const recovery = rawRecovery + (1 - rawRecovery) *
+          (station?.resistance || 0);
         const elapsed = dt - Math.min(dt, slow) * (1 - recovery);
         // One native elapsed-time owner: movement song helps all party clocks;
         // borrowed-time helps special clocks only. Both sum, capped at +25%.
@@ -654,7 +660,9 @@
 
       slowMovementFactor(unit) {
         if (!(unit?.slow > 0)) return 1;
-        return unit.rogueSlow > 0 ? R.tacticalFoundation.rogueSlowMovementFactor : 0.65;
+        const base = unit.rogueSlow > 0 ? R.tacticalFoundation.rogueSlowMovementFactor : 0.65,
+          resisted = this.rogueStationProtection?.(unit)?.resistance || 0;
+        return base + (1 - base) * resisted;
       }
 
       ashMovementFactor(unit) {
@@ -930,6 +938,9 @@
         }
         if ((u.wardUntil || 0) > this.s.time)
           defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
+        // The stronger native/placed ward wins; never multiply wards.
+        defensiveFactor = Math.min(defensiveFactor,
+          1 - (this.rogueStationProtection?.(u)?.ward || 0));
         mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
         if (
