@@ -21,7 +21,7 @@ The fourth playable hero is a **female, guitar-playing Rogue Bard** who beats op
 | Talent per purchased rank: Power / Mana / HP / Speed | **+7 / +2 / +27 / +38** (P, minimum existing discipline coefficients) |
 | Crit (base 10% + Rogue hero level) | **11% L1, 25% L15**; with 5 books **16% / 30%** |
 | Ordinary guitar auto basic | **260 range**; 1 targeted primary at **0.8×(Power+12)**; up to **2** splash enemies at **25% primary damage**, once per **0.85s** before training |
-| 3rd-basic finisher | One extra wider capped **Full Chorus**, max **5** combined targets, minor secondary Slow, no extra Charm |
+| 3rd-basic finisher | One extra wider capped **Rattling Crescendo**, max **5** combined targets, minor secondary Slow, no extra Charm |
 | Charm starting chance | **12%** per legitimate *surviving primary auto hit*, independent of critical; never splash/multi-proc |
 | Captured company | Current rank's active cap **+1**; species/subtype quota includes active + reserve + fallen; **12** total permanently charmed across roster proposed |
 | Endure | Owner's **2s / 1HP**; **90s cooldown and expire-to-death unless healed** are suggestions |
@@ -30,7 +30,7 @@ The fourth playable hero is a **female, guitar-playing Rogue Bard** who beats op
 
 **Current class ordinary party caps:** Expedition 1–6 = **2,3,3,4,5,6**. Rogue proposed = **3,4,4,5,6,7**; full roster code and first six formation slots need a seventh valid position. Basic Barracks cap would be the ordinary Basic cap **+1** for Rogue.
 
-**Tentative eight-slot palette:** 1 Cutting Chord (direct/wider guitar strike); 2 Off-Key Waltz (Slow); 3 Heckler’s Note (interrupt, cooldown debt and short charged Silence); 4 Rotten Serenade (DoT / healing reduction); 5 Tripwire Tango (two placement types); 6 Sabotage Verse (cooldown debt); 7 Stage Fright (push/Weaken in place of expensive extra summon actor); 8 Grand Finale (capped AoE offense and disruption). Each tap/charged form maps to one **existing critical lever** (damage, Slow duration, cooldown debt, Silence duration, push distance), one crit roll per legal action and **never** a multiplier of Charm chance.
+**Naming direction approved by owner:** attacks are titled like **dance movements and original musical pieces**, with names hinting at their actual harm. Each tap/charged pair has a musically related but distinct performance title; effects remain unchanged. **Tentative paired names (tap → charged):** 1 **Staccato Sting → Fortissimo Crescendo** (focused/wide musical damage); 2 **Dragging Waltz → Largo in Chains** (Slow); 3 **Broken Cadence → Fugue of Discord** (cast interrupt / limited Silence); 4 **Withering Lament → Requiem of Rot** (DoT / healing reduction); 5 **Snaring Tango → Thornstep Tarantella** (slow/damage traps); 6 **Stolen Tempo → Rondo of Lost Time** (cooldown debt); 7 **Reeling Rondo → Panic Polka** (push/Weaken; extra summon actor deferred); 8 **Rhapsody of Ruin → The Silencing Coda** (capped AoE / short Silence). Candidate **auto: Barbed Riff**; third-hit **finisher: Rattling Crescendo**. All **specific titles** remain open to owner wording review. Critical levers, rates, power, safety caps and no-animation policy are unchanged.
 
 ## Three implementation risks worth watching
 
