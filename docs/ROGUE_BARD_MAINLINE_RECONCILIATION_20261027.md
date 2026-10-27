@@ -1,6 +1,6 @@
 # Mainline integration checkpoint for fourth-class preparation — PR #511
 
-> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` is now two commits ahead of its last integration and must be reconciled before Phase 3.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
+> **Current phase/status (27 October 2026):** [Eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md) supersedes dated implementation claims on this page. **Phase 1 and staged Phase 2 passed focused CI at `b915bc06`; Phase 3 Charm is pending. Rogue remains unselectable, PR #511 draft/unmerged/undeployed; `main` through `990fc79d` (new branding and lightweight pre-CI policy) is incorporated on the Phase 3 preparation branch; focused validation of this new integration head is separate from the passing Phase 2 run.** Historic “docs only”, “no skills”, “implementation not authorized”, guitar, and permanently fixed sixteen-name statements below are **archived source context**, not current instructions. New owner canon: **suspended oversized jingle-bell staff**; **all sixteen names may be revised**; Charm-first tutorial and every real Charmed monster's ordinary labor rights. See the handoff for exact phase gates and source precedence.
 
 
 **27 October 2026 · Mainline reconciled into draft PR #511 at `3c6da60` · No merge to `main`, no release approval**
@@ -59,3 +59,8 @@ A focused branch CI failure previously showed `hero-skill1-area2.test.cjs` expec
 - Seven-member **mixed** composition/formation and performance regression, not merely seven Soldiers or seven Archers.
 
 **Current status:** Source reconciliation was implemented in PR #511 at `3c6da60`. This document retains the pre-merge risk analysis for review history. PR #511 remains draft, unmerged to `main`, not playable, and requires latest-head test verification before release.
+
+
+## 27 October Phase 3 preparation integration — current addendum
+
+Phase 2 was validated at `b915bc06` ([focused CI run 40484652535](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40484652535)). Since that test, `main` advanced to `990fc79d` with documentation-only changes: the official public-title policy (#524) in `AGENTS.md` and Stage 5 lightweight pre-CI guidance (#523) in `docs/MECHANIC_DEVELOPMENT.md`. Both are reconciled into **this same draft PR #511 branch**, without changing Phase 2 gameplay. The new integration head needs its own focused check before Phase 3 gameplay; the earlier green result is not falsely assigned to the merge. For the current Charm contract and acceptance matrix see [the eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md).
