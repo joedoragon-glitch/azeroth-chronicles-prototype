@@ -137,6 +137,33 @@ try {
     assert.equal(browserStorage.get(P.saveKey('normal')), original);
   }
 
+  // Follow the real title -> mode -> language -> challenge -> Rogue Bard
+  // class-selection UI, not only an injected headless constructor.
+  {
+    const uiStorage = new Map([[P.saveKey('normal'), original]]);
+    const ui = shell('en', 'paladin', {
+      storage: uiStorage, stayOnTitle: true,
+      location: { protocol: 'file:', hostname: '', search: '?roguePlaytest=1' },
+    });
+    const click = (prefix) => {
+      const actions = ui.elements.get('modal-actions').children;
+      const button = actions.find((item) => item.textContent.startsWith(prefix));
+      assert(button && !button.disabled, 'missing action ' + prefix);
+      button.click();
+    };
+    ui.elements.get('title-new').click();
+    click('New Normal game');
+    click('English');
+    click('Standard death and refuge recovery');
+    assert(ui.elements.get('modal-actions').children.some((b) =>
+      b.textContent.includes('Rogue Bard')), 'Rogue Bard appears in live class selection');
+    click('🔔 Rogue Bard');
+    assert.equal(ui.scope.Prototype.game.hero.class, 'rogue');
+    assert.equal(JSON.parse(uiStorage.get(slots.saveKey('normal', 'rogue'))).hero.class, 'rogue');
+    assert.equal(uiStorage.get(P.saveKey('normal')), original,
+      'a new real Rogue campaign does not replace the legacy Paladin save');
+  }
+
   // The older public adapter and save key must remain unchanged.
   const standard = P.create({ storage, Campaign });
   assert.equal(standard.load('normal').hero.gold, 333);
