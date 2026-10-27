@@ -25,6 +25,22 @@ for (const heroClass of Object.keys(classes)) {
   assert.equal(c.expeditionPartyCap(6), 7);
 }
 
+// Inert fourth-class contract: independent type quota = Rogue Expedition cap.
+{
+  const candidate = require('../tools/rogue-bard/rogue-bard-candidate.json');
+  const caps = candidate.proposal.capacity;
+  assert.deepEqual(caps.charmTypeOwnershipRank1To6, [3, 4, 4, 5, 6, 7]);
+  assert.deepEqual(caps.rogueBasicBarracksRank1To6, [3, 3, 3, 3, 3, 3]);
+  assert(!Object.hasOwn(candidate.proposal.charm, 'proposedTotalPermanentCharmedRosterCap'));
+  const game = new Campaign('normal', 'mage', () => 0.9);
+  game.hero.class = 'rogue';
+  for (let rank = 1; rank <= 6; rank++) {
+    game.s.expeditionRank = rank;
+    assert.equal(game.expeditionPartyCap(), caps.charmTypeOwnershipRank1To6[rank - 1]);
+    assert.equal(game.barracksFieldCap({ full: false }), 3);
+    assert.equal(game.barracksFieldCap({ full: true }), caps.rogueFullBarracksRank1To6[rank - 1]);
+  }
+}
 for (const [heroClass, type, firstSix] of [
   ['mage', 'archer', [[-34, -24], [34, -24], [0, -52], [-62, -45], [62, -45], [0, -78]]],
   ['mage', 'soldier', [[0, 95], [-90, 45], [90, 45], [-110, -25], [110, -25], [0, -105]]],
