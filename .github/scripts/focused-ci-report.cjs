@@ -58,6 +58,15 @@ function renderSummary(report) {
   lines.push('', 'Failure classifications require inspection of the exact base/candidate; green focused checks do not certify a manual browser matrix.', '');
   return lines.join('\n');
 }
+function extractFailureDetail(stderr = '', stdout = '') {
+  // Only executed for a failing child process; do not misinterpret diagnostic
+  // text that a passing test deliberately prints for its negative cases.
+  const lines = (stderr + '\n' + stdout).split(/\r?\n/).map((line) => line.trim());
+  const first = lines.find((line) =>
+    /(?:AssertionError|TypeError|ReferenceError|SyntaxError|TimeoutError|\bError:|not ok \d+|timed out|timeout \d+ms)/i.test(line));
+  const fallback = lines.filter(Boolean).slice(-1)[0] || null;
+  return (first || fallback)?.slice(0, 300) || null;
+}
 function publishReport(report, env = process.env) {
   // Reporting is evidence, not a second gate: inability to write a summary
   // must not turn a real passing/failing test into a different result.
@@ -74,4 +83,4 @@ function publishReport(report, env = process.env) {
     }
   }
 }
-module.exports = { makeReport, renderSummary, publishReport };
+module.exports = { makeReport, renderSummary, publishReport, extractFailureDetail };

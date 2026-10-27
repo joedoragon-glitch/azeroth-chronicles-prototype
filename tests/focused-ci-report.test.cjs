@@ -3,7 +3,9 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { makeReport, renderSummary, publishReport } = require('../.github/scripts/focused-ci-report.cjs');
+const { makeReport, renderSummary, publishReport, extractFailureDetail } =
+  require('../.github/scripts/focused-ci-report.cjs');
+const { run } = require('../.github/scripts/focused-ci.cjs');
 const base = {
   testedSha: 'a'.repeat(40),
   baseSha: 'b'.repeat(40),
@@ -17,6 +19,11 @@ const base = {
   nodeVersion: 'v22',
   platform: 'linux',
 };
+assert.match(extractFailureDetail('AssertionError [ERR_ASSERTION]: expected 3, observed 2.97\n    at foo:10:2'),
+  /expected 3, observed 2.97/);
+assert.match(extractFailureDetail('page.waitForFunction: Timeout 15000ms exceeded.'),
+  /Timeout 15000ms/);
+assert.equal(extractFailureDetail(''), null);
 const passing = makeReport({ ...base, checks: [
   { file: 'tests/cooldown-only.test.cjs', kind: 'test', ok: true, status: 0, durationMs: 12 },
 ] });
@@ -49,4 +56,28 @@ try {
   assert.match(fs.readFileSync(summaryPath, 'utf8'), /Failed checks/);
   assert.equal(fs.existsSync(reportPath), false, 'no unrelated files created');
 } finally { fs.rmSync(tmp, { recursive: true, force: true }); }
-console.log('PASS focused CI reports retain exact provenance, unclassified failures and manual-browser status');
+// Exercise the real runner's fail-closed coverage gate without spawning broad
+// tests or writing a synthetic failure to the GitHub Actions job summary.
+const savedSummary = process.env.GITHUB_STEP_SUMMARY;
+const savedTemp = process.env.RUNNER_TEMP;
+const captured = [];
+const originalLog = console.log, originalWarn = console.warn, originalError = console.error;
+try {
+  delete process.env.GITHUB_STEP_SUMMARY;
+  delete process.env.RUNNER_TEMP;
+  console.log = (...args) => captured.push(args.join(' '));
+  console.warn = (...args) => captured.push(args.join(' '));
+  console.error = (...args) => captured.push(args.join(' '));
+  assert.throws(() => run(['src/prototype/unmapped-future.js'], () => true),
+    /uncovered source paths/, 'the runner must not accept an architecture fallback as behavior coverage');
+} finally {
+  console.log = originalLog;
+  console.warn = originalWarn;
+  console.error = originalError;
+  if (savedSummary === undefined) delete process.env.GITHUB_STEP_SUMMARY;
+  else process.env.GITHUB_STEP_SUMMARY = savedSummary;
+  if (savedTemp === undefined) delete process.env.RUNNER_TEMP;
+  else process.env.RUNNER_TEMP = savedTemp;
+}
+assert(captured.some((line) => line.includes('Uncovered changed source requires focused test ownership')));
+console.log('PASS focused CI reports retain failure text, exact refs, fail-closed unmapped source and gated browser acceptance');

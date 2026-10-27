@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const cp = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
-const { makeReport, renderSummary, publishReport } = require('./focused-ci-report.cjs');
+const { makeReport, renderSummary, publishReport, extractFailureDetail } = require('./focused-ci-report.cjs');
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
@@ -301,7 +301,9 @@ function run(
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
       cwd: root,
-      stdio: 'inherit',
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      maxBuffer: 32 * 1024 * 1024,
       // Explicit narrow Chromium smoke only; never expand to a full matrix.
       env: narrowBrowser
         ? { ...process.env, BROWSER_ENGINE: 'chromium',
@@ -309,9 +311,14 @@ function run(
         : process.env,
       timeout: narrowBrowser ? 240000 : undefined,
     });
-    return { ok: result.status === 0 && !result.error,
-      status: result.status, signal: result.signal,
-      error: result.error?.message || null };
+    // Replay the full original stdout/stderr in CI; also retain a short
+    // actionable first error for the structured report.
+    if (result.stdout) process.stdout.write(result.stdout);
+    if (result.stderr) process.stderr.write(result.stderr);
+    const ok = result.status === 0 && !result.error;
+    return { ok, status: result.status, signal: result.signal,
+      error: result.error?.message || (!ok
+        ? extractFailureDetail(result.stderr, result.stdout) : null) };
   },
 ) {
   const startedAt = new Date().toISOString();
