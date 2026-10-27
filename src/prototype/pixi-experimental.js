@@ -210,6 +210,8 @@
       backgroundLookaheadMisses = 0,
       backgroundLookaheadFailures = 0,
       backgroundLookaheadPaintMs = 0,
+      backgroundLookaheadPromoteMs = 0,
+      maxBackgroundLookaheadPromoteMs = 0,
       neighborhoodPrepared = 0,
       neighborhoodWarmupMs = 0,
       // Synchronous preparation costs only; not GPU completion/presented frames.
@@ -489,7 +491,7 @@
       return true;
     }
     function canPrepareLookahead(current) {
-      if (!active || !scene || !backing || !backdrop ||
+      if (!active || !scene || !backing || !backdrop || root.document?.hidden ||
           current.s.mode === 'arena' || current.isDungeon() || current.supplyRoom?.() ||
           current.sideDungeon?.(current.zoneId) || current.s.projectiles?.length)
         return false;
@@ -498,7 +500,8 @@
           enemy.y - current.hero.y) > 420);
     }
     function queueBackgroundLookahead(current, dx, dy) {
-      if (aheadReady || aheadIdle != null ||
+      if (aheadReady || aheadIdle != null || !backdrop ||
+          backdrop.width * backdrop.height * 8 > BG_TWO_WINDOW_BUDGET ||
           Math.max(Math.abs(dx), Math.abs(dy)) < BG_PREFETCH_TRIGGER ||
           !root.requestIdleCallback || !root.cancelIdleCallback ||
           !canPrepareLookahead(current)) return;
@@ -541,6 +544,7 @@
       const ctx = backdrop?.getContext('2d');
       if (!ctx?.save || !ctx.restore || !ctx.setTransform || !ctx.drawImage ||
           !ctx.clearRect || !aheadCanvas) return false;
+      const started = measureNow();
       ctx.save();
       try {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -555,6 +559,9 @@
       baseOptimization = candidate.optimization;
       aheadReady = null;
       backgroundLookaheadPromotions++;
+      const promotionMs = Math.max(0, measureNow() - started);
+      backgroundLookaheadPromoteMs += promotionMs;
+      maxBackgroundLookaheadPromoteMs = Math.max(maxBackgroundLookaheadPromoteMs, promotionMs);
       return true;
     }
     function syncBackground() {
@@ -1109,6 +1116,8 @@
         backgroundLookaheadMisses,
         backgroundLookaheadFailures,
         backgroundLookaheadPaintMs,
+        backgroundLookaheadPromoteMs,
+        maxBackgroundLookaheadPromoteMs,
         backgroundLookaheadBytes: aheadCanvas ? aheadCanvas.width * aheadCanvas.height * 4 : 0,
         neighborhoodPrepared,
         neighborhoodWarmupMs,
