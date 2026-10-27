@@ -3388,6 +3388,7 @@
         return;
       }
       sceneTransition.committed = true;
+      rendererEvent('arrival-committed', destination);
       // Only the existing domain action may spend fare, reset encounters,
       // create the entered zone or update quest/discovery state.
       if (menu) closeMenu();
@@ -4064,7 +4065,7 @@
       rendererRecording.events.push({ type, destination, elapsedMs: Math.round(
         performance.now() - rendererRecording.startedClockMs) });
   }
-  function noteRendererRecordingFrame(workMs, intervalMs, renderMs, drawn, recovering) {
+  function noteRendererRecordingFrame(stages, workMs, intervalMs, drawn, recovering, skipped) {
     const capture = rendererRecording;
     if (!capture) return;
     capture.frames++;
@@ -4074,8 +4075,12 @@
     const point = { elapsedMs: Math.round(performance.now() - capture.startedClockMs),
       workMs: Math.round(workMs * 10) / 10,
       intervalMs: Math.round(intervalMs * 10) / 10,
-      renderMs: Math.round(renderMs * 10) / 10,
-      drawn: !!drawn, recovering: !!recovering,
+      renderMs: Math.round(stages.renderMs * 10) / 10,
+      simulationMs: Math.round(stages.simulationMs * 10) / 10,
+      pixiMs: Math.round(stages.pixiMs * 10) / 10,
+      canvasOverlayMs: Math.round(stages.canvasOverlayMs * 10) / 10,
+      canvasWorldMs: Math.round(stages.canvasWorldMs * 10) / 10,
+      drawn: !!drawn, recovering: !!recovering, adaptiveSkipped: !!skipped,
       zone: game.zoneId, renderer: graphicsController.status().mode };
     // Keep only the 32 highest-severity incidents, not an unbounded frame log.
     const severity = (p) => Math.max(p.workMs, p.intervalMs);
@@ -7876,8 +7881,8 @@
         adaptiveSkipped,
       });
       if (simulating || recovering)
-        noteRendererRecordingFrame(frameWorkMs, intervalMs, stageTimes.renderMs,
-          draw, recovering);
+        noteRendererRecordingFrame(stageTimes, frameWorkMs, intervalMs,
+          draw, recovering, adaptiveSkipped);
     } else {
       frameSkip.suspend();
       autoOptimization.reset();
