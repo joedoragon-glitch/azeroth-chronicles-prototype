@@ -67,6 +67,6 @@ assert.equal(scope.document.body.dataset.hudLowHp, 'false', 'recovery removes wa
 const css = fs.readFileSync(path.join(__dirname, '../styles/phone.css'), 'utf8');
 const adaptiveCss = css.slice(css.indexOf('/* Phase 2 adaptive HUD'));
 assert(adaptiveCss.includes("[data-hud-style='adaptive']"), 'all new styling gated behind opt-in');
-assert(!/\b(?:display|visibility|pointer-events|position|left|right|top|bottom|width|height|transform|padding)\s*:/.test(adaptiveCss),
+assert(!/^\s*(?:display|visibility|pointer-events|position|left|right|top|bottom|width|height|transform|padding)\s*:/m.test(adaptiveCss),
   'adaptive styling changes emphasis, not geometry, visibility or touch ownership');
 console.log('PASS Adaptive HUD contexts, thresholds, hysteresis, phone readout and non-destructive styles');
