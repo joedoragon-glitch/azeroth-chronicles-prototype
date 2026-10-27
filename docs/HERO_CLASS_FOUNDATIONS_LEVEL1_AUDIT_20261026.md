@@ -1,7 +1,19 @@
 # Hero class foundations: historical audit and level-1 design gate
 **Date:** 26 October 2026  
-**Status:** DRAFT / owner-specified initial passive concepts and level-up rates for all three classes; design documented, gameplay not implemented, still subject to integration and balance tests  
+**Status:** IMPLEMENTATION PR / owner-specified level-1 class passives implemented in the PR branch; focused checks, audit and review required before merge  
 **Owner decision (latest):** Preserve existing base stats, gear, and skill/training systems. Add one class-bound passive per hero, **active immediately from level 1**, with another equal increment for each subsequent level. Paladin gains HP and Armor effectiveness; Ranger gains movement speed and cooldown reduction; Mage gains Power alone. Earlier level-2-start guidance is superseded.
+
+## Implementation status and verification gate — 27 October 2026
+
+This document began as a **documentation-only historical design audit**. That original status is now superseded: PR #509 includes code in `src/prototype/{rules,engine,progression,hero-combat,combat,boss-combat,save}.js`, new focused passive regressions, revisions to cooldown/skill tests to reflect the new class effects, and refreshed sprite-source evidence.
+
+**Implemented in the PR branch:** all passives begin at level 1. Paladin's HP is applied at creation/level-up and recognized as natural rather than companion-inherited HP. Mage's passive is included once through the existing `power()` accessor and excluded from Shared Strength; Ranger's innate speed is added through the one hero movement accessor, outside talent inheritance. Ranger cooldown reduction is combined additively with existing talents in the shared normal, charged, and automatic-basic cooldown calculations; **60% maximum total reduction** prevents nonpositive cooldowns at extreme levels.
+
+**Combat invariant:** one shared Armor-mitigation formula reads a target-specific effective Armor coefficient (default 0.35; level-1 Paladin 0.36). The same coefficient is used when the boss Vortex/Death Roll hit is pre-mitigated, without reapplying Armor to the already-mitigated ticks.
+
+**Save policy:** existing v4 saves receive Paladin's missing class-innate max HP exactly once through an optional `heroPassiveVersion` migration marker, preserving current HP deficit; v2 legacy imports get the same bonus. Save format remains version 4. Mage/Ranger modifiers derive from class and level, without storing or stacking extra stat values.
+
+**Release gate:** automated focused tests, code/style review, source evidence checks, and reproducible build must pass. Historical sections below describe the state at audit creation; descriptions such as "documentation-only" in those original notes are historical, not the status of the present implementation PR. Do not merge on failing checks.
 
 ## Owner-approved starting convention for passive DESIGN — active at level 1
 
