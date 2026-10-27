@@ -4,6 +4,7 @@
 // Separate sight/terrain and safe-town effects; no AI methods are stubbed.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const { assertNativeClearLane, nativeBasicProjectileHit } = require('./helpers/native-fixture-contracts.cjs');
 const dist = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
 function prep(g,e,p) {
   const z=g.zone();
@@ -22,16 +23,7 @@ function prep(g,e,p) {
 }
 function probe(g,e,range,context) {
   const start={x:e.x,y:e.y,hp:e.hp,homeDistance:dist(g.hero,e.home)};
-  const cast=g.cast(1,e.id,false,null,true);
-  // Casting engages and may scale the monster's maximum HP before the arrow
-  // arrives. Compare to that post-engagement HP, not its pre-aggro HP.
-  const hpAtLaunch=e.hp;
-  let hit=false;
-  for(let i=0;i<25&&!hit;i++){
-    g.s.time+=0.05;
-    g.updateProjectiles(0.05);
-    hit=e.hp<hpAtLaunch;
-  }
+  const { cast, hit } = nativeBasicProjectileHit(g, e, { expectedHeroLevel: 4 });
   const aggroAfterHit=!!e.aggro;
   const alert=!!g.enemyUnderFireAlert(e);
   const insideLeash=g.tacticalRogueLeashAllows(e,g.hero,500);
@@ -80,6 +72,7 @@ for(const range of [350,400,440,449,450]){
     picked={p,shooter};break;
   }
   assert(picked,'authored Vale must contain a clear 15-unit lane at '+range);
+  assertNativeClearLane(g, picked.shooter, picked.p);
   const e=g.makeEnemy({species:'goblin',name:'range edge goblin',level:3,
     hp:1000,damage:1,gold:0,xp:0},{...picked.p});
   g.configureEnemy(e,0);
@@ -144,13 +137,10 @@ for (const mode of ['normal', 'nightmare']) {
   e.ranged=false;
   e.hybrid=false;
   prep(g,e,hero);
-  assert(g.cast(1,e.id,false,null,true),'level-four Ranger fires native automatic basic');
-  const atLaunch=e.hp;
-  for(let i=0;i<25 && e.hp===atLaunch;i++){
-    g.s.time+=0.05;
-    g.updateProjectiles(0.05);
-  }
-  assert(e.hp<atLaunch && !!g.enemyUnderFireAlert(e),
+  assertNativeClearLane(g, hero, target);
+  const arrow = nativeBasicProjectileHit(g, e, { expectedHeroLevel: 4 });
+  assert(arrow.cast, 'level-four Ranger fires native automatic basic');
+  assert(arrow.hit && !!g.enemyUnderFireAlert(e),
     'native arrow actually reduces HP and records short-lived awareness');
   g._tacticalRegroups=new Map([[e.id,{
     phase:'anchored',anchor:{x:e.x,y:e.y},holdRemaining:12,

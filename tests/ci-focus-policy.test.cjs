@@ -101,6 +101,8 @@ assert(
 assert(gameplay.tests.includes('tests/game.test.cjs'));
 assert(!gameplay.tests.includes('tests/pixi-fidelity.test.cjs'));
 const ci = selectTests(['.github/workflows/pages.yml'], exists);
+assert(ci.tests.includes('tests/focused-ci-report.test.cjs'),
+  'CI runner edits keep failure-report verification selected');
 assert(ci.tests.includes('tests/ci-focus-policy.test.cjs'));
 assert(!ci.tests.includes('tests/game.test.cjs'));
 assert.deepEqual(selectTests(['README.md'], exists).tests, []);
@@ -111,6 +113,20 @@ const unclassified = selectTests(
 );
 assert.deepEqual(unclassified.uncovered, ['src/prototype/new-future-system.js']);
 assert.deepEqual(unclassified.tests, ['tests/architecture.test.cjs']);
+assert.deepEqual(unclassified.manualBrowser, []);
+const deferredBrowser = selectTests(['tests/audio-browser.test.cjs'], exists);
+assert.deepEqual(deferredBrowser.manualBrowser, ['tests/audio-browser.test.cjs'],
+  'changed browser suites must remain visibly deferred, never disguised as architecture');
+assert(!deferredBrowser.tests.includes('tests/audio-browser.test.cjs'),
+  'a browser matrix is never triggered automatically');
+const helperCoverage = selectTests(['tests/helpers/native-fixture-contracts.cjs'], exists);
+for (const expected of ['native-fixture-contracts', 'ranger-max-range-goblin-response', 'class-passives'])
+  assert(helperCoverage.tests.includes('tests/' + expected + '.test.cjs'));
+const classCoverage = selectTests(['src/prototype/hero-combat.js'], exists);
+for (const expected of ['class-passives', 'cooldown-only', 'hero-skill1-stage1'])
+  assert(classCoverage.tests.includes('tests/' + expected + '.test.cjs'));
+assert(selectTests(['src/prototype/rules.js'], exists).tests.includes('tests/archive-reference.test.cjs'));
+assert(selectTests(['src/prototype/renderer.js'], exists).tests.includes('tests/sprite-scope.test.cjs'));
 for (const [source, expected] of [
   ['runtime', ['frame-skip', 'auto-fps-adaptive-coupling', 'render-resolution']],
   [
