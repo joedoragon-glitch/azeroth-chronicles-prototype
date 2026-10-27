@@ -1,6 +1,6 @@
 # Fourth playable class — Rogue Bard: discussion record (26 October 2026)
 
-**Status: tentative concept record only. Not canon, not an approved skill specification, and not implementation authorization.**
+**Status: concept record with later owner-approved normal/charged skill names; mechanics and implementation not approved.**
 **Source:** the owner's exploratory spoken brainstorming on 26 October 2026 and the assistant's immediate response in the same conversation. This file explicitly separates the two. The companion feasibility report in this PR is the technical assessment.
 
 ## Why preserve this discussion
@@ -76,9 +76,9 @@ These should be individually decided before coding, not answered by developer as
 
 ## C3. Latest owner clarification — musical titles that signal their effects (27 October 2026)
 
-**Owner preference (naming principle, not final individual titles):** Rogue's **normal and charged attacks** should have names that could be **actual dance moves, musical movements, songs or composition titles**. A name should also suggest **what its attack does to the enemy**. Prefer expressive, clever performance nomenclature (*Broken Cadence* interrupting casts, *Dragging Waltz* slowing foes, *Stolen Tempo* delaying readiness, *The Silencing Coda* causing brief Silence) over generic “Bard Attack,” “Dance Attack,” “Rogue Strike,” or unrelated flavor names. A charged title should feel like the larger or darker movement of the corresponding normal composition, **not a separate skill family**.
+**Owner-approved naming principle, followed by explicit approval of the 16 displayed titles:** Rogue's **normal and charged attacks** should have names that could be **actual dance moves, musical movements, songs or composition titles**. A name should also suggest **what its attack does to the enemy**. Prefer expressive, clever performance nomenclature (*Broken Cadence* interrupting casts, *Dragging Waltz* slowing foes, *Stolen Tempo* delaying readiness, *The Silencing Coda* causing brief Silence) over generic “Bard Attack,” “Dance Attack,” “Rogue Strike,” or unrelated flavor names. A charged title should feel like the larger or darker movement of the corresponding normal composition, **not a separate skill family**.
 
-The latest [gameplay candidate](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md) and [owner review](ROGUE_BARD_OWNER_REVIEW_20261026.md) present **eight new normal/charged title pairs** plus auto and third-hit finisher. These exact names remain **assistant suggestions, not owner-approved canonical strings**. The earlier Cutting Chord/Off-Key Waltz/etc. list remains in section B as preserved historical brainstorming only. The user did not request different mechanics, more effects, singing audio, animated dance cycles, or name-dependent combat bonuses; do not change any of those under a naming-only revision.
+The latest [gameplay candidate](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md) and [owner review](ROGUE_BARD_OWNER_REVIEW_20261026.md) present **eight new normal/charged title pairs** plus auto and third-hit finisher. **Latest decision (27 October 2026):** the owner explicitly responded “Yeah, I like the names. Those are good” to the displayed table of eight normal and eight charged titles. Treat the **16 individual titles in that table as approved naming**, not merely examples. Exact skill effects, values, critical levers and implementation remain unapproved design candidates. The automatic basic and third-hit finisher names were outside that displayed table and stay proposals. The earlier Cutting Chord/Off-Key Waltz/etc. list remains in section B as preserved historical brainstorming only. The user did not request different mechanics, more effects, singing audio, animated dance cycles, or name-dependent combat bonuses; do not change any of those under a naming-only revision.
 
 ## D. Guardrails for all further work
 
