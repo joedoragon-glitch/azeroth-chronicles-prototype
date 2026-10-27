@@ -76,5 +76,6 @@ Measure first playable frame, input responsiveness, preparation time, p95/p99 st
 
 ## Status log
 
-- **27 Oct 2026:** Development branch opened. The immediate implementation starts with **Stage 0 diagnostics** so later terrain and procedural-cache changes can be judged against evidence.
-- All other stages are **planned, not implemented**. A title screen and proven GPU preupload remain outstanding until their own tests pass.
+- **27 Oct 2026:** Development branch opened from `main` at `740c4549`. Added Stage 0 **presentation-only synchronous Pixi preparation timings** to `pixi-experimental.js` (procedural bakes, background paints, initial sprite preload and first scene) and focused finite/nonnegative assertions to `tests/pixi-fidelity.test.cjs`. These counters are not GPU upload or actual frame-completion measurements; measured runtime performance has not yet been established.
+- **Next:** validate the focused test and compare cold/warm traces; then implement genuine GPU upload warmup and carefully proven procedural reuse. Terrain replacement depends on its profile. **No title screen, GPU preupload guarantee or terrain chunking is implemented in this initial commit series.**
+- All later stages remain **planned, not implemented** and require their own acceptance checks.
