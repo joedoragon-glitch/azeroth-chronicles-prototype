@@ -123,6 +123,17 @@ async function dimensions(page) {
         assert(charLayout.horizontalOverflow <= 1, label + ' Character horizontal overflow');
         assert(charLayout.bodyScroll <= 1, label + ' Character body overflow');
         assert(charLayout.font >= 12, label + ' current stats font');
+        // The existing Character actions should not require a hidden scroll on
+        // ordinary desktop or portrait phone viewports.
+        const finalAction = await page.locator('#modal-actions button').last().boundingBox();
+        assert(finalAction.y + finalAction.height <=
+          charLayout.panel.y + charLayout.panel.height + 2,
+          label + ' all Character actions must be discoverable without scrolling');
+        if (language === 'es') {
+          const actionsText = await page.locator('#modal-actions').textContent();
+          assert(actionsText.includes('Opcional · se elige una vez'));
+          assert(actionsText.includes('Equipo, apoyo del Ranger'));
+        }
         const terms = await stats.nth(1).locator('dl dt').allTextContents();
         assert(terms.includes(language === 'en' ? 'Cooldown reduction' : 'Reducción de recuperación'));
         const values = await stats.nth(1).locator('dl dd').allTextContents();
