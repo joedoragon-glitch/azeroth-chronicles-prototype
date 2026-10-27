@@ -34,9 +34,11 @@ try {
   assert.equal(g.cast(2, foe.id), false, 'unlearned song barred');
   g.hero.skills[1] = 1;
   g.hero.skills[5] = 1;
+  g.hero.skills[6] = 1;
   const card2 = Reference.describe(g,2);
   assert(card2 && card2.tap.metrics.some((m)=>m.key==='slow'));
-  assert(Reference.describe(g,3)===null, 'later Phase 5 forms are still locked');
+  assert(Reference.describe(g,3)===null, 'other Phase 5 forms are still locked');
+  assert(Reference.describe(g,7)?.tap.metrics.some((m)=>m.key==='push'));
   assert(Reference.describe(g,6)?.charge.metrics.some((m)=>m.key==='specialRecovery'));
   const initialSpeed = g.companionRallyMoveSpeed(unit, 230);
   const originalCharmStream = g.s.rogueCharmRng;
@@ -82,6 +84,19 @@ try {
   assert.equal(g.rogueSongBoon(unit,'borrowedTime'),null);
   assert.equal(g.cooldownRecoveryElapsed(unit,1),1);
   assert.equal(g.cooldownRecoveryElapsed(unit,1,false,true),1);
+  // Skill 7 shares native collision-safe push and Weaken. Its timed ally
+  // damage advantage never mutates companion base power.
+  g.hero.cd[6] = 0;
+  const priorEnemyAttack = foe.damage, previousUnitDamage = unit.damage;
+  assert.equal(g.cast(7,foe.id),true);
+  assert(foe.weakenUntil > g.s.time && foe.weakenFraction > 0);
+  assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing === 0.05);
+  assert.equal(unit.damage,previousUnitDamage,'no permanent stat modification');
+  assert.equal(foe.damage,priorEnemyAttack,'hostile native attack untouched');
+  assert(Reference.describe(g,7)?.charge.metrics.some((m)=>m.key==='outgoing'));
+  g.hero.cd[6] = 0;
+  assert.equal(g.cast(7,foe.id,true),true);
+  assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing <= 0.08);
   // Empty legal hostile range never yields a free party boon or consumes CD.
   g.zone().enemies = [];
   g.hero.cd[1]=0;

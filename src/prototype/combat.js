@@ -862,6 +862,10 @@
         // actual damage from both the hero and companions, once per hit.
         if (source === 'hero' && this.hero.class === 'paladin' && (this.hero.shieldStance || 0) > 0)
           amount *= R.heroTactics.paladin.shield.outgoing;
+        // Phase 5: only a genuine active companion attack within a timed
+        // Rogue boon can be enhanced. Never mutate base stats or hero damage.
+        if (source !== 'hero' && origin !== this.hero)
+          amount *= 1 + (this.rogueSongBoon?.(origin, 'firmFooting')?.outgoing || 0);
         if ((e.fractureUntil || 0) > this.s.time) amount *= 1 + (e.fractureFraction || 0);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         const reflected =

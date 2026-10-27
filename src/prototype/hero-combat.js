@@ -1249,6 +1249,15 @@
         this.s.heroTarget = primary.id;
         for (const e of enemies) {
           if (slot === 2) this.applySlow(e, form.slow);
+          if (slot === 7) {
+            // Existing collision/legal-arena push; already executing a
+            // scripted charge is never overridden.
+            if (e.hp > 0) this.shieldPush(e, form.push);
+            const active = (e.weakenUntil || 0) > this.s.time;
+            e.weakenUntil = Math.max(active ? e.weakenUntil : 0, this.s.time + form.weaken);
+            e.weakenFraction = Math.max(active ? e.weakenFraction || 0 : 0,
+              form.weakenFraction);
+          }
           if (slot === 6) {
             // Only real, not-ready enemy cooldowns receive finite debt. No
             // fabricated timers or globally delayed boss phase transitions.
@@ -1261,7 +1270,7 @@
         }
         for (const u of allies)
           this.applyRogueSongBoon(u,
-            slot === 2 ? 'quickstep' : 'borrowedTime', form);
+            slot === 2 ? 'quickstep' : slot === 7 ? 'firmFooting' : 'borrowedTime', form);
         this.event('rogueBellPerformance', {
           actor: 'hero', class: 'rogue', slot,
           form: charged ? 'charged' : 'tap',

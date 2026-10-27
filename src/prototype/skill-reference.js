@@ -176,8 +176,12 @@
     const experimental = {
       2: ['Lead Feet', 'Slow / Quickstep',
         'Slow nearby hostiles and quicken companions in the same area',
-        'Can't Dance: wider Slow and stronger allied movement/recovery',
+        'Can\'t Dance: wider Slow and stronger allied movement/recovery',
         'Phase 5 prototype name; subject to owner review.'],
+      7: ['Wrong Foot', 'Push + Weaken / Firm Footing',
+        'Displace nearby enemies and weaken their attacks; bolster allied strikes',
+        'Panic Party: wider shove/Weaken and stronger allied damage',
+        'First-play working title; gameplay values are provisional.'],
       6: ['Stolen Beat', 'Cooldown debt / Borrowed Time',
         'Delay eligible enemy skills and accelerate allied special recovery',
         'Time Out: larger debt pulse and stronger allied recharge',
@@ -212,6 +216,11 @@
           { key: 'move', label: 'Companion movement', value: x.move * 100, unit: '%' },
           { key: 'recovery', label: 'Companion cooldown recovery',
             value: x.recovery * 100, unit: '%' },
+        );
+        if (slot === 7) metrics.push(
+          { key: 'push', label: 'Enemy push', value: x.push, unit: '' },
+          { key: 'weaken', label: 'Enemy Weaken', value: x.weaken, unit: 's' },
+          { key: 'outgoing', label: 'Companion outgoing damage', value: x.outgoing * 100, unit: '%' },
         );
         if (slot === 6) metrics.push(
           { key: 'debt', label: 'Enemy cooldown debt', value: x.debt, unit: 's' },

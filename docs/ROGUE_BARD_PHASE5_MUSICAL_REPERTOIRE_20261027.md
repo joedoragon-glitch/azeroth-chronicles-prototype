@@ -8,7 +8,7 @@ forms)**, all requiring combat-only legal hostile AoE with independently
 applied, conceptually inverse beneficial AoE to living, active, in-range
 companions. All 16 performance titles received a short, cheeky bell-staff naming pass; these are working names for owner playtesting, not settled lore. Skill 1 from Phase 2 is preserved.
 
-The first implemented vertical slice comprises **Skill 2** (native enemy
+The first implementation slices comprise **Skill 2** (native enemy
 Slow / allied Quickstep movement + cooldown recovery) and **Skill 6**
 (enemy not-ready cooldown debt / allied Borrowed Time special recovery).
 Both have normal and charged forms, legal-target LOS/range gates, fixed
@@ -22,9 +22,11 @@ clock applies Quickstep to party cooldown recovery; it adds Borrowed Time
 only for legal special cooldowns, with combined acceleration capped at +25%.
 Enemy Skill 6 debt affects only known, non-ready cooldown fields.
 
+**Next staged slice:** Skill 7 Wrong Foot / Panic Party has native collision-safe push/Weaken and a same-area Firm Footing ally outgoing-damage boon, with nonstacking expiry and no persistent stat mutation. The corresponding numerical effects are still provisional.
+
 **Not yet implemented:** Skill 3 anti-interrupt, Skill 4 HoT/anti-heal,
 Skill 5 dual-polarity station (design still partly provisional), Skills
-7–8 damage/crit group boons, final name acceptance, and all Phase 6 Rogue critical
+8 damage/crit group boons, final name acceptance, and all Phase 6 Rogue critical
 mechanics. No new art/audio, tutorial, public class registration or release.
 The numeric configurations here are first-pass candidates, not final balance.
 
