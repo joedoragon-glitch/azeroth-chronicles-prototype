@@ -438,6 +438,11 @@
     return {
       load, loadPreferred, listSaves,
       slotClass,
+      bindSlot(game, owner) {
+        if (!known(owner) || !owns(game?.s, owner))
+          throw Error('Invalid saved campaign slot owner');
+        return bindSlot(game, owner);
+      },
       save(game, profile) {
         return adapter(slotClass(game)).save(game, profile);
       },
@@ -559,7 +564,8 @@
   // campaign save safely. The marker never contains a save or replaces one.
   const recoveryMarkerKey = 'azeroth-active-play-recovery-v1';
   function createRestartGuard({ storage, Campaign, canWrite = () => true,
-    classSlots = false, slotClass = (game) => game.hero.class }) {
+    classSlots = false, slotClass = (game) => game.hero.class,
+    bindRestored = (candidate) => candidate }) {
     function read() {
       try {
         const value = JSON.parse(storage?.getItem(recoveryMarkerKey) || 'null');
@@ -662,7 +668,7 @@
           if (!candidate.enter(refuge.zone)) return null;
           candidate.arriveRefuge(refuge);
         }
-        return candidate;
+        return bindRestored(candidate, game);
       } catch (_) {
         return null;
       }
