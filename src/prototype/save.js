@@ -743,6 +743,12 @@
         }
         const petFamilies = new Set();
         for (const u of s.party) {
+          // There is no authenticated Charm-origin save contract yet.
+          // Never mistake arbitrary imported metadata for a legitimately
+          // captured creature merely because the dormant roster UI knows
+          // how to display it. Replace this with allowlisted validation
+          // when the fourth class and conversion transaction actually ship.
+          if (u.charmOrigin !== undefined) throw Error('Invalid charm provenance');
           u.order = gatheringOrder(u, s) || recoveryCampOrder(u, s);
           validateName(u.customName);
           if (u.type === 'pet') {
