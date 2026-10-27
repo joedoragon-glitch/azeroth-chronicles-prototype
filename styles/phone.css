@@ -775,3 +775,73 @@ body[data-experience='phone'][data-joystick-mode='floating'].floating-joystick-a
     transition: none;
   }
 }
+
+/* Phase 2 adaptive HUD — presentation only. Controls retain their full
+   touch targets, positions, charges, queues, keyboard focus and click owners.
+   Classic is the default and remains byte-for-byte unaffected by this gate. */
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-pressure='quiet']
+  #skills > button:not(.charging):not(.skill-queued):not(.tutorial-highlight):not(:focus-visible) {
+  background: linear-gradient(155deg, #314b55ae, #1c303bb5);
+  border-color: #8ca4a48c;
+  box-shadow: inset 0 1px #dde6d51a, 0 2px 5px #07120d70;
+}
+/* Proactive support remains legible; low-HP healing must never look inactive. */
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-low-hp='true']
+  #health-potion:not([hidden]):not(:disabled) {
+  border-color: #e2d6a2;
+  background: linear-gradient(155deg, #466a64, #284c49);
+  box-shadow: 0 0 0 1px #d5c88870;
+}
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-recall='quiet']
+  #recall-button:not(.tutorial-highlight):not(:focus-visible),
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-target='quiet']
+  #target-button:not(.has-target):not(.target-locked):not(.target-pressing):not(:focus-visible),
+body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-pressure='quiet']
+  #squad-button:not(.tutorial-highlight):not(:focus-visible) {
+  background: linear-gradient(155deg, #2c434caa, #1b2d38b5);
+  border-color: #91a59a83;
+  box-shadow: 0 2px 5px #07120d6e;
+  color: #ebdfbe;
+}
+body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true'] #hud {
+  border-color: #d4a277;
+  box-shadow: inset 0 0 0 1px #d8a57c55, 0 3px 10px #07120d55;
+}
+body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true']
+  #hero-stats .resource-line.health {
+  position: relative;
+}
+body[data-experience='phone'][data-hud-style='adaptive'] #hero-stats .hud-low-health {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-block;
+  font-size: 9px;
+  line-height: 1.3;
+  font-weight: 800;
+  color: #ffd3a4;
+  pointer-events: none;
+}
+body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true']
+  #hero-stats .resource-line.health i {
+  background: linear-gradient(to right, #ec9c70 var(--fill), #493a38 var(--fill));
+  border-color: #e3b0919e;
+}
+body[data-experience='phone'][data-hud-style='adaptive']
+  #skills > button,
+body[data-experience='phone'][data-hud-style='adaptive']
+  #recall-button,
+body[data-experience='phone'][data-hud-style='adaptive']
+  #target-button,
+body[data-experience='phone'][data-hud-style='adaptive']
+  #squad-button {
+  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-experience='phone'][data-hud-style='adaptive'] #skills > button,
+  body[data-experience='phone'][data-hud-style='adaptive'] #recall-button,
+  body[data-experience='phone'][data-hud-style='adaptive'] #target-button,
+  body[data-experience='phone'][data-hud-style='adaptive'] #squad-button {
+    transition: none;
+  }
+}
