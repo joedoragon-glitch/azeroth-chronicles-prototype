@@ -86,9 +86,13 @@ for (const mode of ['normal', 'nightmare'])
       C.rules.resourceMode = { manaEnabled: false };
       c.skillCooldown = (slot, charged) => (charged ? 11 : 4);
       sections = Archive.sections(c, { D: C.data, R: C.rules });
-      const skill = sections.find((s) => s.title === 'Your skills').topics[0][2];
-      assert(skill.includes('recovery 4 seconds') && skill.includes('Charged recovery: 11'));
-      assert(!skill.includes('MP'));
+      const skills = sections.find((s) => s.title === 'Your skills').topics;
+      // Skill 1 has its own charge contract; Archive only appends the older
+      // "Charged recovery" label for Skill 2–8. Probe both real owners.
+      assert(skills[0][2].includes('base recovery 4 seconds'));
+      assert(!skills[0][2].includes('Charged recovery:'), 'Skill 1 is a distinct charged basic');
+      assert(skills[1][2].includes('Charged recovery: 11 seconds'));
+      assert(!skills[0][2].includes('MP'));
       assert(
         !sections
           .find((s) => s.title === 'Companions and field bases')

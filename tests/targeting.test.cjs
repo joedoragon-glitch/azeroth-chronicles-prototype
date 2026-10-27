@@ -39,7 +39,12 @@ function encounter() {
   assert.equal(game.hero.cd[0], 0, 'approach consumes no cooldown');
   assert.equal(game.cycleHeroTarget().id, a.id, 'Q wraps to the first target');
   assert.equal(game.cast(1), true);
-  assert(a.hp < before, 'manual selection directs basic attacks');
+  assert(
+    game.s.projectiles.some((p) => p.source === 'hero' && p.target === a.id),
+    'manual selection launches the physical Skill 1 projectile at the chosen enemy',
+  );
+  for (let i = 0; i < 12 && a.hp >= before; i++) game.updateProjectiles(0.05);
+  assert(a.hp < before, 'manual selection directs the actual projectile contact');
   assert.equal(game.s.heroTarget, a.id, 'squad focus also sees the selected enemy');
   game.zone().enemies = [b];
   assert.equal(game.selectedHeroTarget(), null, 'defeated or departed foes clear selection');
