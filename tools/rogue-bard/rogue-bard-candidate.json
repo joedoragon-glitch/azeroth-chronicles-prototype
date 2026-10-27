@@ -26,7 +26,8 @@
     "heroSuccessionFourClassExistingFlow": true,
     "charmedMonstersInheritedBySuccessors": true,
     "nonRogueSuccessorsCannotCharm": true,
-    "statBaselineRule": "Use lowest existing class HP, Power and movement Speed; Rogue does not gain extra conventional statistics from class passive"
+    "statBaselineRule": "Use lowest existing class HP, Power and movement Speed; Rogue does not gain extra conventional statistics from class passive",
+    "skillNamingStyle": "Normal and charged move titles should sound like dance steps or original musical movements/compositions and suggest their mechanical effects; exact names have not been approved."
   },
   "proposal": {
     "classStarting": {
@@ -55,7 +56,7 @@
       "pendingApproval": true
     },
     "automaticBasic": {
-      "name": "Rude Riff",
+      "name": "Barbed Riff",
       "shape": "short targeted instant cone",
       "range": 260,
       "halfAngleRadians": 0.5,
@@ -79,7 +80,7 @@
       }
     },
     "comboFinisher": {
-      "name": "Full Chorus",
+      "name": "Rattling Crescendo",
       "everyValidPrimaryHit": 3,
       "resetSeconds": 4,
       "range": 300,
@@ -146,13 +147,14 @@
     "summon": {
       "firstCandidate": "deferred, no persistent summon AI or extra actors",
       "ownerIdeaPreserved": true
-    }
+    },
+    "skillNamesOnlyNoMechanicalChange": true
   },
   "skillCandidate": [
     {
       "slot": 1,
-      "tap": "Cutting Chord",
-      "charged": "Clashing Chorus",
+      "tap": "Staccato Sting",
+      "charged": "Fortissimo Crescendo",
       "crit": [
         "damage",
         "damage"
@@ -161,8 +163,8 @@
     },
     {
       "slot": 2,
-      "tap": "Off-Key Waltz",
-      "charged": "Waltz Chorus",
+      "tap": "Dragging Waltz",
+      "charged": "Largo in Chains",
       "crit": [
         "slowDuration",
         "slowDuration"
@@ -171,8 +173,8 @@
     },
     {
       "slot": 3,
-      "tap": "Heckler's Note",
-      "charged": "Dissonant Heckle",
+      "tap": "Broken Cadence",
+      "charged": "Fugue of Discord",
       "crit": [
         "cooldownDebt",
         "silenceDuration"
@@ -181,8 +183,8 @@
     },
     {
       "slot": 4,
-      "tap": "Rotten Serenade",
-      "charged": "Rotten Choir",
+      "tap": "Withering Lament",
+      "charged": "Requiem of Rot",
       "crit": [
         "damage",
         "damage"
@@ -191,8 +193,8 @@
     },
     {
       "slot": 5,
-      "tap": "Tripwire Tango",
-      "charged": "Tripwire Crescendo",
+      "tap": "Snaring Tango",
+      "charged": "Thornstep Tarantella",
       "crit": [
         "slowDuration",
         "damage"
@@ -201,8 +203,8 @@
     },
     {
       "slot": 6,
-      "tap": "Sabotage Verse",
-      "charged": "Sabotage Chorus",
+      "tap": "Stolen Tempo",
+      "charged": "Rondo of Lost Time",
       "crit": [
         "cooldownDebt",
         "cooldownDebt"
@@ -211,8 +213,8 @@
     },
     {
       "slot": 7,
-      "tap": "Stage Fright",
-      "charged": "Stage Panic",
+      "tap": "Reeling Rondo",
+      "charged": "Panic Polka",
       "crit": [
         "pushDistance",
         "pushDistance"
@@ -221,8 +223,8 @@
     },
     {
       "slot": 8,
-      "tap": "Grand Finale",
-      "charged": "Catastrophic Encore",
+      "tap": "Rhapsody of Ruin",
+      "charged": "The Silencing Coda",
       "crit": [
         "damage",
         "silenceDuration"
@@ -288,7 +290,8 @@
     "save 3-class Succession checks to derive class count",
     "owner approves parameters before implementation",
     "no merger/deployment authorized",
-    "Starting stats must match lowest existing class attributes (not improvised middling ones) and verify zero-companion L1 Charm onboarding"
+    "Starting stats must match lowest existing class attributes (not improvised middling ones) and verify zero-companion L1 Charm onboarding",
+    "Music/dance performance naming changes no skill mechanics, crit keys, Charm chances or static art behavior"
   ],
   "sourceBaselineComparison": {
     "source": "src/prototype/rules.js R.balance.classes + R.balance.disciplines.profiles; audited main e44ea0ec4b9ed164a85431e972664efda2190da6",
