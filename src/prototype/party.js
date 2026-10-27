@@ -1389,6 +1389,33 @@
         this.hero[key] = name;
         return true;
       }
+      nextRogueCharmNickname() {
+        const locale = this.rogueNicknameLanguage === 'es' ? 'es' : 'en',
+          pool = R.rogueCharmNicknames[locale],
+          cursor = this.s.rogueNicknameCursor ??= { en: 0, es: 0 },
+          original = cursor[locale] || 0,
+          used = new Set(this.s.party.map((u) => u.customName)
+            .filter(Boolean).map((name) => name.toLocaleLowerCase()));
+        for (let offset = 0; offset < pool.length; offset++) {
+          const index = (original + offset) % pool.length,
+            name = pool[index];
+          if (used.has(name.toLocaleLowerCase())) continue;
+          cursor[locale] = (index + 1) % pool.length;
+          return name;
+        }
+        // Extremely large inherited rosters can occupy all 70 suggestions.
+        // Stay within the existing 24-character, one-time naming contract.
+        const base = pool[original],
+          limit = 24;
+        for (let suffix = 2; suffix <= 200; suffix++) {
+          const end = ' ' + suffix,
+            name = Array.from(base).slice(0, limit - end.length).join('') + end;
+          if (used.has(name.toLocaleLowerCase())) continue;
+          cursor[locale] = (original + 1) % pool.length;
+          return name;
+        }
+        throw Error('Charmed nickname pool exhausted');
+      }
       nameCompanion(id, value) {
         const unit = this.s.party.find((u) => u.id === id),
           name = normalizeCharacterName(value);
