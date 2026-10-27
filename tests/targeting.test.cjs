@@ -91,7 +91,12 @@ function encounter() {
   a.y = b.y;
   game.hero.cd[0] = 0; // A new target cannot bypass the normal skill cooldown.
   assert.equal(game.cast(1), true, 'auto-targeting resumes once the locked foe dies');
-  assert(a.hp < a.maxHp);
+  assert(
+    game.s.projectiles.some((p) => p.source === 'hero' && p.target === a.id),
+    'the restored target receives the correct physical Skill 1 projectile',
+  );
+  for (let i = 0; i < 12 && a.hp >= a.maxHp; i++) game.updateProjectiles(0.05);
+  assert(a.hp < a.maxHp, 'automatic fallback eventually lands its projectile');
 }
 {
   const { game, a, b } = encounter();
@@ -192,7 +197,12 @@ function encounter() {
   game.hero.cd[0] = 0;
   const bossHp = boss.hp;
   assert(game.cast(1), 'returning to range attacks the locked boss');
-  assert(boss.hp < bossHp, 'the boss is hit when reacquired');
+  assert(
+    game.s.projectiles.some((p) => p.source === 'hero' && p.target === boss.id),
+    'the retained boss target receives the actual basic projectile',
+  );
+  for (let i = 0; i < 12 && boss.hp >= bossHp; i++) game.updateProjectiles(0.05);
+  assert(boss.hp < bossHp, 'the boss is hit when the projectile reaches it');
   assert.equal(pup.hp, previousHp, 'the distracting pup remains unharmed');
   assert.equal(game.manualHeroTargetLocked, true);
   pup.x = 555;

@@ -76,7 +76,12 @@ for (const mode of ['normal', 'nightmare'])
     try {
       C.rules.balance.skills.cooldowns[2] = 9.125;
       sections = Archive.sections(c, { D: C.data, R: C.rules });
-      assert(sections.find((s) => s.title === 'Your skills').topics[1][2].includes('9.13 seconds'));
+      const actual = Math.round(c.skillCooldown(2) * 100) / 100;
+      assert(
+        sections.find((s) => s.title === 'Your skills').topics[1][2]
+          .includes('base recovery ' + actual + ' seconds'),
+        'Archive reflects the native Skill 2 cooldown, including class reductions',
+      );
     } finally {
       C.rules.balance.skills.cooldowns[2] = original;
     }
