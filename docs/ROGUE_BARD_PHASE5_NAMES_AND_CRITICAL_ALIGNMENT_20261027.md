@@ -1,4 +1,4 @@
-> **Current handoff:** [Phase 5 / early Phase 6 restart checkpoint](ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md). Working names are not final approval.
+> **Later owner clarification:** The `rogue` critical-intensity tuning group remains independent and defaults to Level 2, but the separately mentioned "slider" was a design misunderstanding. Critical levels are **developer-authored**, never available to players in Game Settings. See [Phase 6 continuation](ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md).\n\n> **Current handoff:** [Phase 5 / early Phase 6 restart checkpoint](ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md). Working names are not final approval.
 
 # Rogue Bard — playful bell-staff naming and documented critical contract
 **27 October 2026 · draft PR #511 · owner-directed naming revision.**
