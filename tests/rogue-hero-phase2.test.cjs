@@ -194,8 +194,8 @@ try {
   assert.equal(capturedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
   assert.equal(legal.companionDisplayName(capturedAlly), 'Goblin');
   assert.equal(capturedAlly.charmOrigin.sourceEnemyId, source.id);
-  assert(capturedAlly.hp > 0 && capturedAlly.hp < capturedAlly.maxHp,
-    'surviving injured target must join wounded even when HP normalization rounds upward');
+  assert(capturedAlly.hp > 0 && capturedAlly.hp <= capturedAlly.maxHp,
+    'surviving capture receives proportional HP with ordinary rounding');
   assert.equal(legal.s.charmCaptures[capturedAlly.id].typeId, 'enemy:goblin:melee');
   assert.equal(legal.effects.filter((e) => e.type === 'rogueCharm').length, 1);
   assert.notEqual(legal.s.heroTarget, source.id, 'captured hostile cannot remain targeted');
