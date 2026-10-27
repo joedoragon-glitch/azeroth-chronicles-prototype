@@ -172,13 +172,57 @@
   };
 
   function card(game, slot) {
-    const row = skillCards[game.hero.class]?.[slot - 1];
+    // Repertoire labels are working descriptions, not owner-final names.
+    const experimental = {
+      2: ['Dragging Waltz', 'Slow / Quickstep',
+        'Slow nearby hostiles and quicken companions in the same area',
+        'Largo in Chains: wider Slow and stronger allied movement/recovery',
+        'Phase 5 prototype name; subject to owner review.'],
+      6: ['Stolen Tempo', 'Cooldown debt / Borrowed Time',
+        'Delay eligible enemy skills and accelerate allied special recovery',
+        'Rondo of Lost Time: larger debt pulse and stronger allied recharge',
+        'Phase 5 prototype name; subject to owner review.'],
+    };
+    const row = game.hero.class === 'rogue' && slot !== 1
+      ? (game.constructor.rules.roguePerformances[slot] ? experimental[slot] : null)
+      : skillCards[game.hero.class]?.[slot - 1];
     return row
       ? { name: row[0], role: row[1], tap: row[2], charge: row[3], note: row[4] || '' }
       : null;
   }
   function describe(game, slot, rank = game.hero.skills[slot - 1]) {
     const c = card(game, slot);
+    if (game.hero.class === 'rogue' && slot !== 1) {
+      if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
+      const R = game.constructor.rules,
+        entries = R.roguePerformances[slot];
+      const show = (charged) => {
+        const x = entries[charged ? 'charged' : 'tap'],
+          metrics = [
+            { key: 'reach', label: 'Reach', value: x.range, unit: '' },
+            { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
+            { key: 'targets', label: 'Maximum hostile targets', value: x.cap, unit: '' },
+            { key: 'duration', label: 'Companion boon', value: x.seconds, unit: 's' },
+            { key: 'cooldown', label: 'Cooldown',
+              value: game.skillCooldown(slot, charged), unit: 's' },
+          ];
+        if (slot === 2) metrics.push(
+          { key: 'slow', label: 'Enemy Slow',
+            value: x.slow + R.cooldownBalance.slowDurationBonusSeconds, unit: 's' },
+          { key: 'move', label: 'Companion movement', value: x.move * 100, unit: '%' },
+          { key: 'recovery', label: 'Companion cooldown recovery',
+            value: x.recovery * 100, unit: '%' },
+        );
+        if (slot === 6) metrics.push(
+          { key: 'debt', label: 'Enemy cooldown debt', value: x.debt, unit: 's' },
+          { key: 'specialRecovery', label: 'Companion special recovery',
+            value: x.specialRecovery * 100, unit: '%' },
+        );
+        return { title: charged ? 'Charged' : 'Tap',
+          effect: charged ? c.charge : c.tap, metrics };
+      };
+      return { ...c, rank, auto: null, tap: show(false), charge: show(true) };
+    }
     if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
     const R = game.constructor.rules,
       cls = game.hero.class,
