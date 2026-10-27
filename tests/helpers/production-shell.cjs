@@ -8,7 +8,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     documentEvents = {},
     storage = options.storage || new Map();
   let nextFrame;
-  const ctx = new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
+  const ctx = options.canvasContext || new Proxy({}, { get: (o, k) => o[k] || (() => {}) });
   function el() {
     const classes = new Set(),
       attributes = new Map();
@@ -129,8 +129,23 @@ function shell(language, heroClass = 'paladin', options = {}) {
     const runtime = scope.PrototypeRuntime;
     scope.PrototypeRuntime = { ...runtime, create: () => runtime.create(options.now) };
   }
-  scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
+  if (options.groundCacheClass) {
+    const original = scope.PrototypeRenderer;
+    scope.PrototypeRenderer = {
+      ...original,
+      create: (settings) => original.create({
+        ...settings,
+        PrototypeGroundCache: options.groundCacheClass,
+      }),
+    };
+  }
+  scope.PrototypeVisuals = options.visuals || { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;
+  if (options.idleCallbacks)
+    scope.requestIdleCallback = (callback) => {
+      options.idleCallbacks.push(callback);
+      return options.idleCallbacks.length;
+    };
   vm.createContext(scope);
   vm.runInContext(fs.readFileSync(require.resolve('../../src/prototype/app'), 'utf8'), scope);
   scope.Prototype.renderer.draw = () => {};

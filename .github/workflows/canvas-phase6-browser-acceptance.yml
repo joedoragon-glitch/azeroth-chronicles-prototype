@@ -1,0 +1,62 @@
+name: Canvas Phase 6 focused browser acceptance
+
+# Explicit Canvas Phase 6 experimental-branch evidence only.
+# Not the owner's full-game/browser matrix, not physical-device certification.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tests/canvas-phase6-browser.test.cjs'
+      - 'tests/ground-cache-browser.test.cjs'
+      - '.github/workflows/canvas-phase6-browser-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canvas-phase6-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    name: Canvas Phase 6 / ${{ matrix.engine }}
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.ref == 'perf/canvas-native-preparation-20261027'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned project dependencies
+        run: npm ci --ignore-scripts
+      - name: Install focused browser engine
+        run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Verify built asset references without publishing
+        run: node scripts/build.cjs --check
+      - name: Capture controlled Phase 6 real-browser evidence
+        env:
+          BROWSER_ENGINE: ${{ matrix.engine }}
+        run: node tests/canvas-phase6-browser.test.cjs
+      - name: Recheck established ground-cache region/zoom/pixel parity
+        if: matrix.engine == 'chromium'
+        env:
+          MATERIAL_BROWSER_ENGINE: chromium
+        run: node tests/ground-cache-browser.test.cjs
+      - name: Preserve screenshots, measurement and failure evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canvas-phase6-${{ matrix.engine }}-${{ github.run_id }}
+          path: |
+            test-results/canvas-phase6-${{ matrix.engine }}-*.json
+            test-results/canvas-phase6-${{ matrix.engine }}-*.png
+            test-results/ground-cache-${{ matrix.engine }}-*.json
+          if-no-files-found: ignore
+          retention-days: 30
