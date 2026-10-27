@@ -60,8 +60,8 @@ function scene() {
     'a melee-capable hybrid retains its native ranged team-healing role');
   assert.equal(c.enemyMeleeBasicRange(e), R.meleeReach.elite,
     'hybrid ringleaders inherit the tuned elite melee basic reach');
-  assert(!c.valePursuitBurstEligible(e),
-    'hybrid ringleaders must not inherit ordinary Greenwood interception');
+  assert(!c.meleePursuitBurstEligible(e),
+    'ranged-capable hybrid Ringleaders keep original renewal in this strict melee rollout');
   e.cd = 0;
   const x = e.x, y = e.y;
   assert(!c.enemyHybridBackstep(e, c.hero, 0.1, 500),

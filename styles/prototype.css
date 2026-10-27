@@ -1119,3 +1119,93 @@ body.menu-open #cancel-navigation-button {
   outline: 2px solid #efd299;
   outline-offset: 3px;
 }
+
+/* Class learning uses the existing modal actions and semantic description sections. */
+#modal[data-view='class-select'] {
+  width: min(430px, calc(100vw - 32px));
+}
+#modal[data-view='class-select'] #modal-description {
+  color: #d3e0e5;
+  line-height: 1.5;
+}
+#modal[data-view='class-select'] #modal-actions {
+  gap: 9px;
+}
+#modal[data-view='class-select'] #modal-actions button {
+  padding: 11px 13px;
+  border: 1px solid #65828c;
+  border-left: 4px solid #bba069;
+  border-radius: 9px;
+  background: linear-gradient(130deg, #243b48, #192c37);
+  color: #f3e5c4;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.35;
+}
+#modal[data-view='class-select'] #modal-actions button:is(:hover, .selected, :focus-visible) {
+  border-color: #e4c17c;
+  background: linear-gradient(130deg, #304b57, #233642);
+}
+#modal[data-view='class-select'] #modal-actions .class-role {
+  color: #d3e0e5;
+  font-size: 12px;
+  line-height: 1.45;
+}
+#modal[data-view='class-select'] #modal-actions .class-growth {
+  color: #efcf91;
+  border-top: 1px solid #8da4a43d;
+  padding-top: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+#modal[data-view='character'] {
+  width: min(400px, calc(100vw - 32px));
+}
+#modal[data-view='character'] #modal-description.skill-reference {
+  color: #dce7e9;
+  font-size: 13px;
+  line-height: 1.5;
+}
+#modal[data-view='character'] #modal-description.skill-reference section {
+  padding: 11px 13px;
+  margin-top: 9px;
+  background: #172b368f;
+  border-color: #66859085;
+}
+#modal[data-view='character'] #modal-description.skill-reference section:first-child {
+  background: linear-gradient(125deg, #33433385, #192f39c9);
+  border-color: #baa06e98;
+}
+#modal[data-view='character'] #modal-description.skill-reference h3 {
+  color: #f1d7a3;
+  font-size: 12px;
+  letter-spacing: 0.025em;
+  margin-bottom: 6px;
+}
+#modal[data-view='character'] #modal-description.skill-reference p {
+  margin: 0;
+  color: #e0e9e6;
+  line-height: 1.5;
+}
+#modal[data-view='character'] #modal-description.skill-reference dl {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 14px;
+  margin-top: 0;
+}
+#modal[data-view='character'] #modal-description.skill-reference dt,
+#modal[data-view='character'] #modal-description.skill-reference dd {
+  border-bottom: 1px solid #91a9ae2b;
+  padding: 5px 0;
+  font-size: 12px;
+  line-height: 1.4;
+}
+#modal[data-view='character'] #modal-description.skill-reference dt:last-of-type,
+#modal[data-view='character'] #modal-description.skill-reference dd:last-of-type {
+  border-bottom: 0;
+}
+#modal[data-view='character'] #modal-description.skill-reference dd {
+  color: #f4e4bb;
+  font-weight: 600;
+  white-space: nowrap;
+}

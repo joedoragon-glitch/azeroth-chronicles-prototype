@@ -276,6 +276,13 @@
 
       noteEnemyUnderFire(e, source, origin, actualDamage) {
         if (!(actualDamage > 0) || e.hp <= 0) return;
+        // PR #516 must never reinterpret an earlier hit as an attack on a
+        // refuge the monster reached later. Only real damage taken WHILE
+        // anchored and outside the close Rogue response radius requests a
+        // fresh tactical assessment. This state remains unsaved/transient.
+        const regroup = this.tacticalRogueRegroup(e);
+        if (regroup?.phase === 'anchored' && dist(origin, e) > 280)
+          regroup.hitWhileAnchored = true;
         const previous = underFireAlerts.get(e);
         const realAttacker =
           source === 'hero' ||
@@ -883,7 +890,9 @@
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
-        let mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        let mitigated = alreadyMitigated
+          ? Math.max(0, amount)
+          : Math.max(3, amount - armor * this.armorEffectivenessFor(u));
         // Hero Shield Stance and the party ward share a mitigation layer:
         // apply the STRONGER one, not both multiplicatively. Last Bastion
         // still protects companions, while a tank cannot stack two defenses

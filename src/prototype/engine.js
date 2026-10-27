@@ -95,6 +95,7 @@
         nextId: 1,
         manaBalanceVersion: 1,
         talentBalanceVersion: 1,
+        heroPassiveVersion: 1,
         normal: {},
         true: {},
         fieldBossKills: {},
@@ -151,12 +152,14 @@
         },
       };
       const c = classes[heroClass];
+      const innateHp =
+        heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0;
       this.s.hero = {
         class: heroClass,
         x: 300,
         y: 350,
-        hp: c.hp,
-        maxHp: c.hp,
+        hp: c.hp + innateHp,
+        maxHp: c.hp + innateHp,
         mp: c.mp,
         maxMp: c.mp,
         level: 1,
@@ -4230,7 +4233,7 @@
         h.order = null;
         const n = Math.hypot(input.x, input.y),
           speed =
-            (h.speed + this.heroTalentSpeedBonus()) *
+            this.heroMoveSpeed() *
             (h.haste > 0 ? 1.25 : 1) *
             this.slowMovementFactor(h) *
             this.mireBogMovementFactor(h) *
@@ -4265,7 +4268,7 @@
             } else {
               const before = { x: h.x, y: h.y },
                 speed =
-                  (h.speed + this.heroTalentSpeedBonus()) *
+                  this.heroMoveSpeed() *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
@@ -4294,7 +4297,7 @@
               this.follow(
                 h,
                 target,
-                (h.speed + this.heroTalentSpeedBonus()) *
+                this.heroMoveSpeed() *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
@@ -5638,6 +5641,51 @@
         if (committed) return true;
       }
       if (state.phase === 'anchored') {
+        // A completed retreat is a real tactical decision, not an inert
+        // target lock. An HP hit BEFORE arrival must not undo the refuge.
+        // A fresh distant hit AT the post can request another Rogue decision
+        // (support, defend or escape), but never forcibly converts it into
+        // immediate pursuit. Preserve the existing two-second decision floor.
+        const underFire = state.hitWhileAnchored ? this.enemyUnderFireAlert(e) : null;
+        const source =
+          underFire?.source === 'hero'
+            ? this.hero
+            : underFire?.source
+              ? this.activeLivingParty().find((u) => u.id === underFire.source)
+              : null;
+        if (
+          state.hitWhileAnchored &&
+          e.type === 'mob' &&
+          e.form === 'normal' &&
+          !e.summon &&
+          !e.rogueEmergencyReinforcement &&
+          !e.captain &&
+          !e.roomCaptain &&
+          !e.fieldCaptain &&
+          (this._tacticalRogueNext?.get(e.id) || 0) <= this.s.time &&
+          source?.hp > 0 &&
+          target === source &&
+          dist(e, source) > 280 &&
+          this.enemyRangedLine(e, source) &&
+          this.tacticalRogueLeashAllows(e, source, 500) &&
+          (this.isDungeon() ||
+            dist(source, {
+              x: D.towns[this.regionIndex()][0],
+              y: D.towns[this.regionIndex()][1],
+            }) >= 160)
+        ) {
+          this._tacticalRegroups.set(e.id, {
+            phase: 'thinking',
+            anchor: { x: e.x, y: e.y },
+            thinkRemaining: R.tacticalFoundation.thinkingSeconds,
+          });
+          if (!this._tacticalRogueNext) this._tacticalRogueNext = new Map();
+          this._tacticalRogueNext.set(e.id, this.s.time + R.tacticalFoundation.moveCooldownSeconds);
+          e.path = [];
+          e.routeAge = 0;
+          e.noProgress = 0;
+          return true;
+        }
         // The temporary combat anchor follows a real continued encounter,
         // never changing the original respawn home.
         if (dist(e, state.anchor) > 340) {
@@ -6538,27 +6586,20 @@
       e.noProgress = 0;
       return true;
     }
-    // The Greenwood anti-kiting pilot now reuses native Pursuit Burst only:
-    // ordinary Goblin/Skeleton melee and hybrid guardians recover the same
-    // 1.5x/1.2s burst sooner; elites, ranged-only and other regions are unchanged.
-    valePursuitBurstEligible(e) {
-      return (
-        this.regionIndex() === 0 &&
-        !this.peace &&
-        !!e?.aggro &&
-        e.hp > 0 &&
-        !e.neutral &&
-        !e.returning &&
-        e.type !== 'boss' &&
-        !e.captain &&
-        !e.roomCaptain &&
-        !e.fieldCaptain &&
-        e.form !== 'ringleader' &&
-        ['goblin', 'skeleton'].includes(e.species) &&
-        !e.nightOnly &&
-        (!this.enemyRanged(e) || e.hybrid) &&
-        !e.summon &&
-        !e.rogueEmergencyReinforcement
+    // Only ordinary, nonsummoned melee and melee Ringleaders receive the
+    // validated short native recovery. Captain Overtime already grants
+    // workers its own four-second burst and is deliberately excluded.
+    // Leave summons, ranged/hybrid actors, bosses, captains and reset logic
+    // on their existing behavior pending the separate territory audit #510.
+    meleePursuitBurstEligible(e) {
+      return !!(
+        !this.peace && e && e.aggro && e.hp > 0 &&
+        !e.neutral && !e.returning && e.type === 'mob' &&
+        !e.captain && !e.roomCaptain && !e.fieldCaptain &&
+        !e.summon && !e.developerSummon &&
+        !e.rogueEmergencyReinforcement &&
+        !(e.quotaOvertime > 0) &&
+        !this.enemyRanged(e)
       );
     }
 
@@ -7263,15 +7304,16 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !firingLine)) {
-          // Older saves may carry the former seven-second pursuit readiness.
-          // Shorten that existing timer in place; do not add a second timer.
+          // Saved long readiness migrates through the existing deadline.
+          // Neither the active burst nor the targeting/collision rules change.
+          const enhancedMeleePursuit =
+            target === this.hero && this.meleePursuitBurstEligible(e);
           if (
-            target === this.hero &&
-            this.valePursuitBurstEligible(e) &&
-            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+            enhancedMeleePursuit &&
+            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds
           )
             e.pursuitBurstReadyAt =
-              this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds;
+              this.s.time + pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds;
           if (
             target === this.hero &&
             visible &&
@@ -7279,14 +7321,13 @@
             this.s.time >= (e.pursuitBurstReadyAt || 0) &&
             !(e.pursuitBurst > 0)
           ) {
-            // This is the EXISTING Pursuit Burst, not another anti-kite skill.
-            // Greenwood ordinary melee can reuse it shortly after it ends;
-            // its multiplier, duration, collision and leash remain unchanged.
+            // Native speed/duration, follow collision and leash are shared.
+            // Bosses/captains, their summons and pure ranged keep old cadence.
             e.pursuitBurst = pursuitBurstSeconds;
             e.pursuitBurstUsed = true;
             e.pursuitBurstReadyAt = this.s.time + (
-              this.valePursuitBurstEligible(e)
-                ? pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+              enhancedMeleePursuit
+                ? pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds
                 : e.type === 'boss' ? 5.5 : 7
             );
           }

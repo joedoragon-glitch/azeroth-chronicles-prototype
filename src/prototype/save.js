@@ -230,6 +230,25 @@
           s.talentBalanceVersion = 1;
         }
         if (s.talentBalanceVersion !== 1) throw Error('Invalid talent balance version');
+        // Existing v4 campaigns predate innate passives. Apply Paladin HP once,
+        // preserving the amount already missing; other class bonuses are derived.
+        if (s.heroPassiveVersion === undefined) {
+          if (
+            s.hero.class === 'paladin' &&
+            Number.isInteger(s.hero.level) &&
+            s.hero.level >= 1 &&
+            Number.isFinite(s.hero.maxHp) &&
+            Number.isFinite(s.hero.hp)
+          ) {
+            const bonus = R.balance.classPassives.paladin.hpPerLevel * s.hero.level;
+            const missing = Math.max(0, s.hero.maxHp - s.hero.hp);
+            const alive = s.hero.hp > 0;
+            s.hero.maxHp += bonus;
+            s.hero.hp = alive ? Math.max(1, s.hero.maxHp - missing) : 0;
+          }
+          s.heroPassiveVersion = 1;
+        }
+        if (s.heroPassiveVersion !== 1) throw Error('Invalid hero passive version');
         if (s.hero.freeTalentResets === undefined) s.hero.freeTalentResets = 2;
         if (Array.isArray(s.party))
           for (const u of s.party) if (u.active === undefined) u.active = true;
@@ -1377,6 +1396,13 @@
             h.maxHp = Math.max(1, h.maxHp + delta);
             h.hp = alive ? Math.max(1, h.maxHp - missing) : 0;
           }
+        }
+        // Legacy v2 imports also predate passives; their copied HP is pre-bonus.
+        if (h.class === 'paladin') {
+          const missing = Math.max(0, h.maxHp - h.hp);
+          const alive = h.hp > 0;
+          h.maxHp += R.balance.classPassives.paladin.hpPerLevel * h.level;
+          h.hp = alive ? Math.max(1, h.maxHp - missing) : 0;
         }
         c.s.legacyRescueAuditVersion = 1;
         for (const id of ['crypt', 'mine', 'abyss', 'citadel'])

@@ -32,13 +32,13 @@ function arena(cls = 'paladin', count = 1) {
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const { g, enemies: [e] } = arena(cls);
   assert(g.cast(1, e.id, true), cls + ' charged Skill 1');
-  close(g.hero.cd[0], 3);
-  close(g.hero.chargedCd[0], { paladin: 8, mage: 7, ranger: 8 }[cls]);
+  close(g.hero.cd[0], 3 * (1 - g.heroCooldownReduction()));
+  close(g.hero.chargedCd[0], { paladin: 8, mage: 7, ranger: 8 }[cls] * (1 - g.heroCooldownReduction()));
   assert(!g.cast(1, e.id, true), 'cannot charge again while either timer is busy');
   g.hero.cd[0] = 0;
   const oldLock = g.hero.chargedCd[0];
   assert(g.cast(1, e.id, false), 'promoted Tap returns during longer charged cooldown');
-  close(g.hero.cd[0], 3);
+  close(g.hero.cd[0], 3 * (1 - g.heroCooldownReduction()));
   close(g.hero.chargedCd[0], oldLock);
   // A separate automatic combo must never change either activated timer.
   g.hero.basicCd = 0;

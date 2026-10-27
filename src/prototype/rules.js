@@ -6912,6 +6912,15 @@
       mage: { icon: '🧙‍♀️', hp: 90, mp: 100, power: 22, armor: 3, speed: 300 },
       ranger: { icon: '🏹', hp: 105, mp: 70, power: 20, armor: 5, speed: 320 },
     },
+    // Innate class identity is automatic from level 1. Existing class bases and talents stay intact.
+    classPassives: {
+      defaultArmorEffectiveness: 0.35,
+      paladin: { hpPerLevel: 5, armorEffectivenessPerLevel: 0.01 },
+      mage: { powerPerLevel: 2 },
+      ranger: { speedPerLevel: 3, cooldownReductionPerLevel: 0.01 },
+      // Avoid zero/negative recovery from high-level Ranger plus cooldown training.
+      maxTotalCooldownReduction: 0.6,
+    },
     disciplines: {
       maxRanks: [5, 5, 5, 3],
       profiles: {
@@ -6935,10 +6944,10 @@
       burstSeconds: 1.2,
       burstMultiplier: 1.5,
       mercyStartRadius: 300,
-      // Greenwood ordinary melee reuses its EXISTING burst after a brief
-      // normal-speed interval (1.2s active + 2s recovery). No separate
-      // dash, warning, impact damage, Slow, or new cooldown ownership.
-      valeRecoverySeconds: 2,
+      // Ordinary/guardian/melee Ringleader actors share the one native burst:
+      // 1.2s boosted + 2s ordinary speed, all regions; summons of bosses
+      // and captains are ineligible. No new ability, attack or Slow.
+      meleeRecoverySeconds: 2,
     },
     growth: { xpPerLevel: 120, hpPerLevel: 25 },
     barracks: { buildCost: 20, fullUpgradeCost: 100 },

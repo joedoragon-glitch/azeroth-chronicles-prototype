@@ -42,7 +42,7 @@ for (const cls of classes) {
   assert.equal(fresh.skillManaCost(8), 0, cls + ' final special has no cost');
   assert.equal(fresh.skillManaCost(3, 1, true), 0, cls + ' charged heals have no cost');
   for (const talentRank of [0, 1, 2, 3, 4, 5]) {
-    const ratio = 1 - 0.04 * talentRank;
+    const ratio = 1 - 0.04 * talentRank - (cls === 'ranger' ? 0.01 : 0);
     for (const [slot, charged] of [
       ...Array.from({ length: 8 }, (_, i) => [i + 1, false]),
       ...Array.from({ length: 8 }, (_, i) => [i + 1, true]),
@@ -109,7 +109,8 @@ for (const cls of classes) {
     'dormant capacity still grows for future MP reactivation',
   );
   assert.equal(next.hero.mp, mpBefore, 'level-up does not refill dormant MP');
-  assert.equal(next.skillCooldown(8), 24 * 0.8);
+  const expectedReduction = 0.2 + (cls === 'ranger' ? 0.02 : 0);
+  assert(Math.abs(next.skillCooldown(8) - 24 * (1 - expectedReduction)) < 1e-9);
   next.hero.gold = 500;
   next.s.rescued.archive = true;
   const gold = next.hero.gold;

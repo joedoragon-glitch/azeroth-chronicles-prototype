@@ -26,8 +26,50 @@
       talentMaxRank(i) {
         return Number.isInteger(i) && i >= 0 && i < talentMaxRanks.length ? talentMaxRanks[i] : 0;
       }
+      heroPassiveHpBonus() {
+        return this.hero.class === 'paladin'
+          ? R.balance.classPassives.paladin.hpPerLevel * this.hero.level
+          : 0;
+      }
+      heroPassivePowerBonus() {
+        return this.hero.class === 'mage'
+          ? R.balance.classPassives.mage.powerPerLevel * this.hero.level
+          : 0;
+      }
+      heroPassiveSpeedBonus() {
+        return this.hero.class === 'ranger'
+          ? R.balance.classPassives.ranger.speedPerLevel * this.hero.level
+          : 0;
+      }
+      heroPassiveCooldownReduction() {
+        return this.hero.class === 'ranger'
+          ? R.balance.classPassives.ranger.cooldownReductionPerLevel * this.hero.level
+          : 0;
+      }
+      heroMoveSpeed() {
+        return this.hero.speed + this.heroTalentSpeedBonus() + this.heroPassiveSpeedBonus();
+      }
+      heroCooldownReduction() {
+        const training =
+          Math.min(5, this.hero.talents[1] || 0) *
+          (R.resourceMode.manaEnabled ? 0 : R.cooldownBalance.reductionPerTalentRank);
+        return Math.min(
+          R.balance.classPassives.maxTotalCooldownReduction,
+          training + this.heroPassiveCooldownReduction(),
+        );
+      }
+      armorEffectivenessFor(target) {
+        const base = R.balance.classPassives.defaultArmorEffectiveness;
+        return target === this.hero && target.class === 'paladin'
+          ? base + R.balance.classPassives.paladin.armorEffectivenessPerLevel * target.level
+          : base;
+      }
       heroNaturalMaxHp() {
-        return classes[this.hero.class].hp + R.balance.growth.hpPerLevel * (this.hero.level - 1);
+        return (
+          classes[this.hero.class].hp +
+          R.balance.growth.hpPerLevel * (this.hero.level - 1) +
+          this.heroPassiveHpBonus()
+        );
       }
       heroTalentHpBonus() {
         return (this.hero.talents?.[2] || 0) * this.talentProfile().hp;
@@ -49,7 +91,10 @@
       heroOtherDamageBonus() {
         return Math.max(
           0,
-          this.power() - classes[this.hero.class].power - this.heroTalentDamageBonus(),
+          this.power() -
+            classes[this.hero.class].power -
+            this.heroTalentDamageBonus() -
+            this.heroPassivePowerBonus(),
         );
       }
       heroEquipmentArmorBonus() {
@@ -295,7 +340,9 @@
         while (this.hero.xp >= this.xpRequired()) {
           this.hero.xp -= this.xpRequired();
           this.hero.level++;
-          this.hero.maxHp += R.balance.growth.hpPerLevel;
+          this.hero.maxHp +=
+            R.balance.growth.hpPerLevel +
+            (this.hero.class === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0);
           // Keep dormant MP capacity age-correct for a future reactivation.
           this.hero.maxMp += R.manaBalance.perLevel;
           this.hero.hp = this.hero.maxHp;
@@ -304,10 +351,18 @@
           delete this.hero.potionEffect;
           this.hero.talentPoints++;
           this.event('level', { level: this.hero.level });
+          // The existing level message names the innate growth; Character holds the numbers.
+          const growthName = {
+            paladin: 'Fortitude',
+            ranger: 'Agility',
+            mage: 'Arcane Power',
+          }[this.hero.class];
           this.say(
             'Level ' +
               this.hero.level +
-              '! Training point available — press C or use Discipline Training.',
+              '! ' +
+              growthName +
+              ' improved. Training point available — press C or use Discipline Training.',
           );
           this.notice(
             'LEVEL ' + this.hero.level + ' · Training point available',
@@ -590,7 +645,10 @@
       power() {
         if (this.hero.legacyEquipped)
           return (
-            this.hero.power + (this.hero.legacyWeaponPower || 0) + this.heroTalentDamageBonus()
+            this.hero.power +
+            (this.hero.legacyWeaponPower || 0) +
+            this.heroTalentDamageBonus() +
+            this.heroPassivePowerBonus()
           );
         return (
           this.hero.power +
@@ -599,7 +657,8 @@
           (this.hero.reforges['weapon:' + this.hero.weapon]
             ? R.balance.equipment.reforgeBonus.weapon
             : 0) +
-          this.heroTalentDamageBonus()
+          this.heroTalentDamageBonus() +
+          this.heroPassivePowerBonus()
         );
       }
       armor() {
