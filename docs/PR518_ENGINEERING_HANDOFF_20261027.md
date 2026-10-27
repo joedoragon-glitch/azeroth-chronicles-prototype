@@ -62,7 +62,7 @@ The final link validates the consolidated source/tests/documentation as of the t
 ## 4. Current architectural and integration risks
 
 1. **Browser texture readiness:** `PIXI.PrepareSystem` is explicitly registered and mocked in source tests, but the pinned browser bundle and actual upload timing still need live WebGL2 verification. Canvas recovery/Keep-Revert must work on failure and interrupted uploads.
-2. **CPU terrain prepaint:** `requestIdleCallback` does not make the complete original painter incremental. A hidden main-thread stall, canvas-to-canvas blit, time-varying water/terrain, or GPU source upload on promotion may outweigh the avoided redraw. `32 MiB` only bounds two estimated CPU raster windows; other existing caches remain resident.
+2. **CPU terrain prepaint:** `requestIdleCallback` does not make the complete original painter incremental. A hidden main-thread stall, canvas-to-canvas blit, time-varying water/terrain, or GPU source upload on promotion may outweigh the avoided redraw. The current `64 MiB` allowance only bounds two estimated CPU raster windows (32 MiB at the original Stage 3 checkpoint); other existing caches remain resident.
 3. **Visual identities:** the fixed-decoration allowlist is deliberately narrow. Existing procedural wolves and Frontier carts use identity-derived variants, and other entities depend on state, facing, pose, equipment, form, zoom and DPR. Do not broaden sharing by species, name or family without corresponding authored-art tests.
 4. **Unrelated upstream changes:** the PR branched from `main` commit `740c4549`. At this handoff audit `main` had advanced to `286e8c0d` through other PRs (including class onboarding #520 and CI/test reliability #522). Before editing lifecycle files or merging, inspect the newest `main` and reconcile relevant changes. Do **not** overwrite those commits by copying an old `app.js`, `styles` or test harness wholesale.
 5. **Overlapping performance PRs:** historical draft #487 includes other procedural preparation ideas, while #490 already merged bounded fringe warmup. Only cherry-pick unique, freshly reconciled value; do not blindly merge another stale approach.
@@ -70,7 +70,7 @@ The final link validates the consolidated source/tests/documentation as of the t
 7. **Minimize and BFCache:** `visibilitychange` and `pageshow` already exist; `pageshow(event.persisted)` currently triggers reload. Reconcile with the new user contract so true in-memory background resume stays in gameplay where supported, while genuine cold/reloaded launches show the title.
 8. **Game state safety:** `Campaign.zone()` lazily constructs stateful areas. No preload code may call `zone()` for an unentered destination just to build graphics. Destination preflight must use read-only presentation data and can be deferred until a safe boundary.
 
-## 5. Exact next implementation workstream — main screen and Continue
+## 5. Historical Stage 3 next workstream — main screen and Continue (now implemented)
 
 The next chat should **continue on draft PR #518**, not invent a new initiative. Recommended order:
 
@@ -101,7 +101,7 @@ The next chat should **continue on draft PR #518**, not invent a new initiative.
 
 For a new conversation: start by reading **this file**, the [detailed design/acceptance contract](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md), and the **current PR #518 patch/head/CI**. Check the newest `main` and linked issues before writing. Work on the same draft branch; make incremental commits, run narrow affected tests and the reproducible build, and keep these docs plus the PR description in sync. Report unverified device and visual claims explicitly. Do not take saved-chat context as a substitute for repository source.
 
-**Owner-facing one-sentence status:** “The three graphics limitations have bounded implementations and passing focused regressions in draft PR #518; real-device performance/visual acceptance remains open; the next task is a safe bilingual main menu and Continue/ready-first-frame lifecycle.”
+**Historical owner-facing status after Stage 3 (superseded):** “The three graphics limitations have bounded implementations and passing focused regressions in draft PR #518; real-device performance/visual acceptance remains open; the next task is a safe bilingual main menu and Continue/ready-first-frame lifecycle.”
 
 ## Stage 4 source checkpoint — 27 October 2026 (review pending)
 
