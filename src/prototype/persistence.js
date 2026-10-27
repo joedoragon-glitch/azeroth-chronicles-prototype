@@ -606,6 +606,7 @@
             active: true,
             mode: game.s.mode,
             heroClass: game.hero.class,
+            ...(classSlots ? { slotOwner: slotClass(game) } : {}),
             // Refuse a different/older run without rejecting legitimate
             // unsaved play after the last durable checkpoint.
             nextId: saved.nextId,
@@ -637,6 +638,7 @@
         game.s.mode === 'arena' ||
         marker.mode !== game.s.mode ||
         marker.heroClass !== game.hero.class ||
+        (classSlots && marker.slotOwner !== slotClass(game)) ||
         (Number.isFinite(marker.nextId) && game.s.nextId < marker.nextId) ||
         (Number.isFinite(marker.gameTime) && game.s.time + 1e-6 < marker.gameTime) ||
         game.s.challenge?.pending ||
