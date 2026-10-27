@@ -1,7 +1,7 @@
 # Rogue Bard — review-ready gameplay and balance candidate
 **26 October 2026 | design candidate v1 | documentation only | source: main e44ea0ec4b9ed164a85431e972664efda2190da6**
 
-**Read this first when resuming PR #511.** This is a **concrete recommended default**, not a claim that every number/name is owner-approved. The **owner-established** facts and later Succession clarification are recorded separately in the [discussion record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md). [Integration audit](ROGUE_BARD_IMPLEMENTATION_HOUSEKEEPING_20261026.md) maps this candidate to actual code and acceptance. [Visual contract](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md) covers both ordinary and crowned/Dark Lord Rogue.
+**When resuming PR #511, begin with the [27 October canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md); this document is the quantitative companion with historical October 26 context.** This is a **concrete recommended default**, not a claim that every number/name is owner-approved. The **owner-established** facts and later Succession clarification are recorded separately in the [discussion record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md). [Integration audit](ROGUE_BARD_IMPLEMENTATION_HOUSEKEEPING_20261026.md) maps this candidate to actual code and acceptance. [Visual contract](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md) covers both ordinary and crowned/Dark Lord Rogue.
 
 ## 0. What is decided, and what is proposed?
 
