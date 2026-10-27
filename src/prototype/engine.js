@@ -115,6 +115,8 @@
         // Earned optional manuals are permanent campaign knowledge, not items.
         // Crit chance stays OFF without an explicit native Party session.
         criticalCodices: {},
+        // Independent, save-safe nickname rotation for automated Rogue captures.
+        rogueNicknameCursor: { en: 0, es: 0 },
         gathered: {},
         tributeRemainder: 0,
         gatheringTarget: null,
