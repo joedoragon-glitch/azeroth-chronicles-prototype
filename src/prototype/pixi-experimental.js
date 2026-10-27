@@ -23,6 +23,7 @@
     return element;
   }
   let libraryRequest;
+  let prepareExtensionLibrary = null;
   function loadPixi() {
     if (root.PIXI?.Application) return Promise.resolve(root.PIXI);
     if (!libraryRequest) {
@@ -181,13 +182,46 @@
       syncBackgroundPaintMs = 0,
       maxBackgroundPaintMs = 0,
       startupSpritePreloadMs = 0,
-      startupFirstSceneMs = 0;
+      startupFirstSceneMs = 0,
+      approvedGpuPrepared = 0,
+      proceduralGpuPrepared = 0,
+      gpuPreparationMs = 0,
+      gpuPreparationBatches = 0;
+    let cancelGpuPreparation = null;
     const measureNow = () =>
       typeof performance !== 'undefined' ? performance.now() : Date.now();
     function recordBackgroundPaint(started) {
       const elapsed = Math.max(0, measureNow() - started);
       syncBackgroundPaintMs += elapsed;
       maxBackgroundPaintMs = Math.max(maxBackgroundPaintMs, elapsed);
+    }
+    // Pixi 8.22 PrepareSystem uploads TextureSources to the active renderer,
+    // unlike Assets.load (CPU decode) and Texture.from (source registration).
+    // A context can be released while the system ticker is still processing:
+    // race its completion with local cancellation so the renderer guard does
+    // not remain stuck in its 'preparing' phase on background/context loss.
+    async function prepareGpuTextures(epoch, textures, group) {
+      if (!textures.length) return epoch === contextEpoch;
+      if (epoch !== contextEpoch || !app?.renderer?.prepare?.upload) return false;
+      const started = measureNow();
+      let cancel;
+      const cancelled = new Promise((resolve) => {
+        cancel = () => resolve(false);
+      });
+      cancelGpuPreparation = cancel;
+      try {
+        const upload = app.renderer.prepare.upload(textures);
+        const completed = await Promise.race([Promise.resolve(upload).then(() => true), cancelled]);
+        if (!completed || epoch !== contextEpoch || !scene || !app) return false;
+        const elapsed = Math.max(0, measureNow() - started);
+        gpuPreparationMs += elapsed;
+        gpuPreparationBatches++;
+        if (group === 'approved') approvedGpuPrepared += textures.length;
+        else proceduralGpuPrepared += textures.length;
+        return true;
+      } finally {
+        if (cancelGpuPreparation === cancel) cancelGpuPreparation = null;
+      }
     }
     function noteFailure(type, stage, error) {
       const message = String(error?.message || error).slice(0, 240);
@@ -672,6 +706,15 @@
       let stage = 'library-load';
       try {
         const PIXI = await loadPixi();
+        stage = 'prepare-plugin';
+        requireValue(PIXI.PrepareSystem && PIXI.extensions?.add,
+          'PixiJS GPU preparation extension unavailable');
+        // The pinned non-module Pixi bundle exports PrepareSystem, but unlike
+        // `import pixi.js/prepare` it does not install the optional system.
+        if (prepareExtensionLibrary !== PIXI) {
+          PIXI.extensions.add(PIXI.PrepareSystem);
+          prepareExtensionLibrary = PIXI;
+        }
         stage = 'application-init';
         requireValue(
           root.AzerothPixiSceneBridge &&
@@ -693,6 +736,8 @@
         });
         stage = 'webgl2-context';
         requireValue(app.canvas.getContext('webgl2'), 'WebGL2 context not available');
+        requireValue(typeof app.renderer.prepare?.upload === 'function',
+          'PixiJS GPU preparation system not installed');
         app.canvas.id = 'world-pixi-experimental';
         app.canvas.setAttribute('aria-hidden', 'true');
         app.canvas.style.cssText =
@@ -748,6 +793,7 @@
         requireValue(urls.size > 0, 'Approved sprite manifest is empty');
         requireValue(urls.size <= 128, 'Unexpected sprite resource count');
         stage = 'sprite-preload';
+        const approvedTextures = [];
         const preloadStarted = measureNow();
         await Promise.all(
           [...urls].map(async (src) => {
@@ -756,9 +802,12 @@
             texture.source.scaleMode = 'nearest';
             scene.registerTexture(src, texture);
             loaded.add(src);
+            approvedTextures.push(texture);
           }),
         );
         startupSpritePreloadMs = Math.max(0, measureNow() - preloadStarted);
+        stage = 'gpu-approved-upload';
+        if (!await prepareGpuTextures(thisEpoch, approvedTextures, 'approved')) return false;
         stage = 'first-scene';
         const firstSceneStarted = measureNow();
         drawBackground();
@@ -768,6 +817,9 @@
         startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
         stage = 'nearby-art-preparation';
         if(!await warmNeighborhood(thisEpoch))return false;
+        stage = 'gpu-procedural-upload';
+        if (!await prepareGpuTextures(thisEpoch, [...baked.values()].map((body) => body.texture),
+          'procedural')) return false;
         if(thisEpoch!==contextEpoch)return false;
         return true;
       } catch (error) {
@@ -827,6 +879,8 @@
     }
     function disposeResources() {
       ++contextEpoch; // Cancel any asynchronous neighborhood preparation.
+      cancelGpuPreparation?.();
+      cancelGpuPreparation = null;
       deactivate();
       scene?.destroy?.();
       scene = null;
@@ -885,6 +939,10 @@
         maxBackgroundPaintMs,
         startupSpritePreloadMs,
         startupFirstSceneMs,
+        approvedGpuPrepared,
+        proceduralGpuPrepared,
+        gpuPreparationMs,
+        gpuPreparationBatches,
         proceduralBudget,
         proceduralTrimAt: trimAt,
         pixelRatio: backingRatio,
