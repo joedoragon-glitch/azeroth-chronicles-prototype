@@ -1495,6 +1495,8 @@
     Campaign,
     canWrite: writerGuard.canWrite,
     classSlots: roguePlaytestEnabled,
+    slotClass: (candidate) => roguePlaytestEnabled
+      ? persistence.slotClass(candidate) : candidate.hero.class,
   });
   let profile = {
       nightmareUnlocked: false,
@@ -1730,7 +1732,8 @@
     return persistence.saveProfile(profile);
   }
   function save() {
-    if (roguePlaytestEnabled && game) profile.activeClass = game.hero.class;
+    if (roguePlaytestEnabled && game)
+      profile.activeClass = persistence.slotClass(game);
     return started && persistence.save(game, profile);
   }
   // Live game shell only. Standalone Campaign fixtures remain independent.
@@ -1757,7 +1760,7 @@
       : persistence.load(mode);
     if (!restored) return false;
     game = activateLiveCritical(restored);
-    if (roguePlaytestEnabled) profile.activeClass = restored.hero.class;
+    if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(restored);
     return true;
   }
   let recoveredOnStartup = false;
@@ -3471,7 +3474,7 @@
     );
     const valid = loaded && !!game?.s &&
       !persistence.loadFailed(game.s.mode,
-        roguePlaytestEnabled ? game.hero.class : undefined);
+        roguePlaytestEnabled ? persistence.slotClass(game) : undefined);
     const place = valid
       ? D.regions.find((region) => region.id === game.zoneId)?.name ||
         D.bosses.find((boss) => boss.id === game.zoneId)?.place || game.zoneId
@@ -3490,7 +3493,7 @@
     $('title-help').textContent = t('Help & Credits', 'Ayuda y créditos');
     $('title-continue').disabled = titleLoading || !valid ||
       !writerGuard.canWrite() || persistence.conflicted(game.s.mode,
-        roguePlaytestEnabled ? game.hero.class : undefined) ||
+        roguePlaytestEnabled ? persistence.slotClass(game) : undefined) ||
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
       $(id).disabled = titleLoading;
@@ -3528,7 +3531,8 @@
   function enterPreparedScene() {
     if (titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode,
-      roguePlaytestEnabled ? game.hero.class : undefined)) return savedRunConflictMenu();
+      roguePlaytestEnabled ? persistence.slotClass(game) : undefined))
+      return savedRunConflictMenu();
     titleLoading = true;
     const epoch = ++titleEpoch;
     $('title-loading').hidden = false;
@@ -3618,7 +3622,7 @@
     }
     game = activateLiveCritical(candidate);
     loaded = true;
-    if (roguePlaytestEnabled) profile.activeClass = candidate.hero.class;
+    if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(candidate);
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     persistProfile();
     showTitleScreen();
@@ -3653,7 +3657,7 @@
         action('Try recovery', () => {
           if (loaded) {
             profile.activeMode = game.s.mode;
-            if (roguePlaytestEnabled) profile.activeClass = game.hero.class;
+            if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(game);
           }
           savedRunRecoveryMenu();
         }),
@@ -4335,7 +4339,8 @@
               action(
                 'Load Combat Diagnostics run',
                 () => {
-                  if (load('arena', roguePlaytestEnabled ? game.hero.class : null)) {
+                  if (load('arena', roguePlaytestEnabled
+            ? persistence.slotClass(game) : null)) {
                     graphicsController.revert();
                     setOptimizationActive(true);
                     resize();
@@ -4346,13 +4351,14 @@
                 },
                 'Continue your separate low-spec combat-testing save.',
                 !persistence.exists('arena',
-                  roguePlaytestEnabled ? game.hero.class : undefined),
+                  roguePlaytestEnabled ? persistence.slotClass(game) : undefined),
               ),
             ]
           : []),
         action('Load other mode run', () => {
           const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
-          if (load(mode, roguePlaytestEnabled ? game.hero.class : null)) {
+          if (load(mode, roguePlaytestEnabled
+            ? persistence.slotClass(game) : null)) {
             save();
             closeMenu();
           } else game.say('No saved ' + mode + ' run yet.');
@@ -4885,7 +4891,7 @@
     } else setOptimizationActive(optimizationPreference === 'on');
     loaded = true;
     started = false;
-    if (roguePlaytestEnabled) profile.activeClass = game.hero.class;
+    if (roguePlaytestEnabled) profile.activeClass = persistence.slotClass(game);
     if (!['developer', 'arena'].includes(game.s.mode)) profile.activeMode = game.s.mode;
     if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
@@ -8121,7 +8127,8 @@
         }
         if (refreshed) {
           game = activateLiveCritical(refreshed);
-          if (roguePlaytestEnabled) profile.activeClass = refreshed.hero.class;
+          if (roguePlaytestEnabled)
+            profile.activeClass = persistence.slotClass(refreshed);
           if (game.s.mode === 'arena') {
             graphicsController.revert();
             setOptimizationActive(true);
