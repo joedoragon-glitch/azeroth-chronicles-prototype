@@ -219,6 +219,10 @@
       'Los Wraiths nocturnos ocupan Lantern Shore. Derrótalos para partir o espera a que amanezca.',
     Training: 'Entrenamiento',
     Character: 'Personaje',
+    'Optional · choose once': 'Opcional · se elige una vez',
+    'Equipment, Ranger support and Preparation Tonics.':
+      'Equipo, apoyo del Ranger y tónicos de preparación.',
+    'A separate permanent name for your reign': 'Otro nombre permanente para tu reinado',
     Company: 'Compañía',
     Recruitment: 'Reclutamiento',
     'Local objectives': 'Objetivos locales',
