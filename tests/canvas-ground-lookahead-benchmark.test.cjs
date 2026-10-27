@@ -51,7 +51,7 @@ const percentile = (values, p) => {
 function route(type) {
   const points = [];
   if (type === 'straight')
-    for (let i = 0; i < 96; i++) points.push([1400 + i * 24, 1500]);
+    for (let i = 0; i < 96; i++) points.push([1400 + i * 14, 1500]);
   if (type === 'reversal')
     for (let i = 0; i < 96; i++)
       points.push([1400 + (i <= 48 ? i : 96 - i) * 25, 1500]);
@@ -143,7 +143,7 @@ for (const s of ['straight', 'reversal', 'zigzag']) {
 console.log('CANVAS_PHASE3_BENCHMARK_JSON=' + JSON.stringify({
   environment: {
     kind: 'GitHub CI Node / @napi-rs/canvas (not real target-device browser)',
-    painter: 'PrototypeVisuals.floor, five-region outdoor floor equivalent',
+    painter: 'PrototypeVisuals.floor, Vale outdoor static floor; region=0 and no material overlay',
     viewportCss: [WIDTH, HEIGHT], deviceScaleFactor: SCALE,
     groundBudgetBytes: LIMIT, cacheCount: 1,
   },
