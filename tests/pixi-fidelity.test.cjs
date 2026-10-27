@@ -201,6 +201,23 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'westward first visit must reuse the prewarmed identity instead of baking again');
   game.hero.x=heroStartX;
   game.props=[];
+  // New Stage 5 hostile-entry GPU path: cold nearby procedural art must
+  // receive an actual Pixi PrepareSystem upload while the game remains still.
+  game.props=[{
+    id:'arrival-near-combat',x:game.hero.x+600,y:game.hero.y,
+    structure:'lumber-pile'
+  }];
+  const priorArrivalBakes=gpu.status().proceduralTextures;
+  const priorArrivalGpuUploads=gpu.status().proceduralGpuPrepared;
+  const priorArrivalFrames=frames.length;
+  assert.equal(await gpu.warmArrival(),true,'confirmed WebGL can stage imminent nearby art');
+  assert.equal(gpu.status().proceduralTextures,priorArrivalBakes+1,
+    'near-arrival art was actually baked beyond the normal camera fringe');
+  assert.equal(gpu.status().proceduralGpuPrepared,priorArrivalGpuUploads+1,
+    'newly baked encounter-adjacent art was uploaded, not just CPU decoded');
+  assert.equal(frames.length,priorArrivalFrames,
+    'warming must not inject actors or advance a gameplay frame');
+  game.props=[];
   assert.equal(inits[0].resolution,1.5,'Pixi must use Canvas output ratio');
   assert.equal(draws[0].width,1352,'CSS-space terrain dimensions stay unchanged');
   assert.equal(draws[0].height,860);
