@@ -75,6 +75,12 @@ async function dimensions(page) {
         await page.waitForFunction(() => document.querySelector('#modal').getAttribute('data-view') === 'class-select');
         const cards = page.locator('#modal-actions button');
         assert.equal(await cards.count(), 3, 'three original class actions');
+        const chosenClassTitle = await cards.first().textContent();
+        assert(chosenClassTitle.includes(language === 'en' ? 'Paladin' : 'Paladín'),
+          label + ' class title uses proper casing');
+        const nameField = await page.locator('.character-name-field').textContent();
+        assert(nameField.includes(language === 'en' ? 'Optional name' : 'Nombre opcional'),
+          label + ' naming field localized');
         assert.equal(await page.locator('#modal-actions .class-role').count(), 3);
         assert.equal(await page.locator('#modal-actions .class-growth').count(), 3);
         for (const name of (language === 'en'
@@ -85,6 +91,11 @@ async function dimensions(page) {
         assert(layout.horizontalOverflow <= 1, label + ' class selection horizontal overflow');
         assert(layout.bodyScroll <= 1, label + ' body overflow');
         assert(layout.font >= 11, label + ' class instruction text too small');
+        if (!phone) {
+          const last = await cards.last().boundingBox();
+          assert(last.y + last.height <= layout.panel.y + layout.panel.height + 2,
+            label + ' all three class cards must be immediately visible');
+        }
         const cardMetrics = await cards.evaluateAll((elements) =>
           elements.map((el) => ({
             height: el.getBoundingClientRect().height,
