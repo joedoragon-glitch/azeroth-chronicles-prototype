@@ -883,7 +883,7 @@
               ? this.companionArmor(u.type)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
-        let mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * 0.35);
+        let mitigated = alreadyMitigated ? Math.max(0, amount) : Math.max(3, amount - armor * this.armorEffectivenessFor(u));
         // Hero Shield Stance and the party ward share a mitigation layer:
         // apply the STRONGER one, not both multiplicatively. Last Bastion
         // still protects companions, while a tank cannot stack two defenses

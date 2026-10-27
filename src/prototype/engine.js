@@ -80,6 +80,7 @@
         nextId: 1,
         manaBalanceVersion: 1,
         talentBalanceVersion: 1,
+        heroPassiveVersion: 1,
         normal: {},
         true: {},
         fieldBossKills: {},
@@ -140,8 +141,8 @@
         class: heroClass,
         x: 300,
         y: 350,
-        hp: c.hp,
-        maxHp: c.hp,
+        hp: c.hp + (heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0),
+        maxHp: c.hp + (heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0),
         mp: c.mp,
         maxMp: c.mp,
         level: 1,
@@ -4189,7 +4190,7 @@
         h.order = null;
         const n = Math.hypot(input.x, input.y),
           speed =
-            (h.speed + this.heroTalentSpeedBonus()) *
+            (this.heroMoveSpeed()) *
             (h.haste > 0 ? 1.25 : 1) *
             this.slowMovementFactor(h) *
             this.mireBogMovementFactor(h) *
@@ -4224,7 +4225,7 @@
             } else {
               const before = { x: h.x, y: h.y },
                 speed =
-                  (h.speed + this.heroTalentSpeedBonus()) *
+                  (this.heroMoveSpeed()) *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
@@ -4253,7 +4254,7 @@
               this.follow(
                 h,
                 target,
-                (h.speed + this.heroTalentSpeedBonus()) *
+                (this.heroMoveSpeed()) *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
