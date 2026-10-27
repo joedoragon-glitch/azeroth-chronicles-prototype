@@ -746,3 +746,32 @@ body[data-experience='phone'] #message .notice-card.notice-narration {
   line-height: 1.22;
   padding: 5px 7px;
 }
+
+/* Optional floating joystick: unchanged fixed layout is the default and is
+   always restored for menu navigation. Phone fit scaling remains on transform. */
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #movement {
+  pointer-events: none;
+}
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #touch-interact-button,
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #order-button {
+  pointer-events: auto;
+}
+body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #joystick {
+  position: fixed;
+  left: var(--floating-joystick-left, -999px);
+  top: var(--floating-joystick-top, -999px);
+  bottom: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: top left;
+  transition: opacity 150ms ease;
+}
+body[data-experience='phone'][data-joystick-mode='floating'].floating-joystick-active:not(.menu-open) #joystick {
+  opacity: 0.88;
+}
+@media (prefers-reduced-motion: reduce) {
+  body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #joystick {
+    transition: none;
+  }
+}
