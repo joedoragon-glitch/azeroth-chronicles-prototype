@@ -267,6 +267,66 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
   assert.equal(prepareRegistrations,1,'repeated Pixi preparations reuse the registered plugin');
+  // Confirm *authored draw instructions*, not just common structure labels,
+  // remain identical for the tiny explicit shared-decoration allowlist.
+  function visualCommands(entity,region) {
+    const operations=[],ctx=new Proxy({},{
+      get(_object,property) {
+        if (property==='createLinearGradient'||property==='createRadialGradient')
+          return (...args)=> {
+            operations.push([String(property),...args]);
+            return {addColorStop(...stops){operations.push(['addColorStop',...stops])}};
+          };
+        return (...args)=>operations.push([String(property),...args]);
+      },
+      set(_object,property,value) {
+        operations.push(['set',String(property),value]);
+        return true;
+      }
+    });
+    Visuals.draw(ctx,entity,{x:288,y:460},region,false);
+    return JSON.stringify(operations);
+  }
+  for(const structure of ['crate','barrel','woodpile','stacked-lumber','scroll-stack']) {
+    const first={id:'one',x:50,y:100,renderKind:'prop',decorative:true,structure};
+    const second={...first,id:'two',x:800,y:900,name:'Different label',sceneRole:'sorting'};
+    for(const region of [0,3])
+      assert.equal(visualCommands(first,region),visualCommands(second,region),
+        structure+' must have byte-equivalent authored drawing commands across identities');
+  }
+  resources.clear();currentActorTextures.clear();
+  game.zoneId='vale';
+  game.props=[
+    {id:'shared-crate-a',x:game.hero.x+5,y:game.hero.y+4,decorative:true,structure:'crate'},
+    {id:'shared-crate-b',x:game.hero.x+28,y:game.hero.y+14,decorative:true,structure:'crate'},
+    {id:'unique-crate',x:game.hero.x+51,y:game.hero.y+8,decorative:true,
+      structure:'crate',form:'true'},
+    {id:'unique-cart-a',x:game.hero.x+70,y:game.hero.y+8,decorative:true,structure:'cart'},
+    {id:'unique-cart-b',x:game.hero.x+92,y:game.hero.y+8,decorative:true,structure:'cart'}
+  ];
+  const sharedGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await sharedGpu.prepare(),true);
+  const shareFrame=frames.at(-1);
+  const byKey=(id)=>shareFrame.find(x=>x.key==='prop:'+id);
+  assert(byKey('shared-crate-a')&&byKey('shared-crate-b'));
+  assert.equal(byKey('shared-crate-a').textureId,byKey('shared-crate-b').textureId,
+    'fixed decorative props share one GPU image but remain separate world actors');
+  assert.notEqual(byKey('shared-crate-a').textureId,byKey('unique-crate').textureId,
+    'special form bypasses the safe shared cache');
+  assert.notEqual(byKey('unique-cart-a').textureId,byKey('unique-cart-b').textureId,
+    'identity-variant carts must never share raster textures');
+  assert.equal(sharedGpu.status().proceduralTextures,4,
+    'five visible actors need only four unique procedural texture sources');
+  assert(sharedGpu.status().sharedProceduralHits>=1,
+    'an identical decorative actor must reuse a previously baked texture');
+  assert.equal(sharedGpu.status().proceduralBakes,4,
+    'a shared decoration avoids one first-encounter Canvas bake');
+  sharedGpu.activate();
+  sharedGpu.draw();
+  assert.equal(sharedGpu.status().proceduralBakes,4,
+    'warm frames preserve sharing without rebaking the two actors');
+  sharedGpu.release();
+  game.props=[];
   // 160 pixel-bytes per miniature procedural texture is sufficient for the
   // deterministic mock. This intentionally tiny *test-only* budget forces
   // the same LRU path that real towns would take under sustained roaming.
