@@ -6915,18 +6915,9 @@
           if (e.veraEscort) this.updateVeraEscort(e, dt);
           continue;
         }
-        const territory =
-          e.type === 'boss'
-            ? this.isDungeon()
-              ? 1800
-              : 700
-            : e.fieldCaptain
-              ? 900
-              : e.quotaOvertime > 0
-                ? 1300
-                : e.summon
-                  ? 900
-                  : 500;
+        // Radius selection is shared with active incoming-damage eligibility.
+        // This preserves EXACTLY the previous native chase/leash values.
+        const territory = this.nativeEncounterTerritory(e);
         // A real recent damaging actor takes priority over a merely closer
         // bystander, provided they are visible and inside the ORIGINAL leash.
         // Boss/captain scripting, taunts and unrelated pack acquisition retain

@@ -674,6 +674,18 @@
         return amount;
       }
 
+      // Single source of truth for the native pursuit leash. Keep the
+      // original precedence: bosses, field captains, overtime, summons,
+      // ordinary actors. Read-only and constant-time; no chase tuning.
+      nativeEncounterTerritory(e) {
+        return e.type === 'boss'
+          ? this.isDungeon() ? 1800 : 700
+          : e.fieldCaptain ? 900
+          : e.quotaOvertime > 0 ? 1300
+          : e.summon ? 900
+          : 500;
+      }
+
       damage(e, amount, source = 'hero', options = null) {
         if (
           !e ||
@@ -688,11 +700,16 @@
           return false;
         const origin =
           source === 'hero' ? this.hero : this.s.party.find((u) => u.id === source) || this.hero;
-        const normalDamageTerritory = e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500;
-        // A valid tactical retreat moves the active encounter, not the permanent
-        // spawn. Allow damage near the retreat corridor/anchor; otherwise a
-        // regrouper beyond its original home leash would become invulnerable.
-        const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
+        // Do not allow long-distance pre-aggro sniping merely because a
+        // particular enemy can pursue farther once combat begins.
+        // During an ACTUAL engagement, however, the defender cannot attack
+        // inside its native leash while refusing valid incoming damage there.
+        // Preserve the original boss pre-engagement territory and all Rogue
+        // retreat corridor/anchor, LoS, and returning/reset protections.
+        const incomingTerritory = e.aggro
+          ? this.nativeEncounterTerritory(e)
+          : e.type === 'boss' ? (this.isDungeon() ? 1800 : 700) : 500;
+        const inCombatArea = this.tacticalRogueLeashAllows(e, origin, incomingTerritory);
         if (!this.line(origin, e) || !inCombatArea) return false;
         if (this.awaitsHeroAttack(e)) {
           if (source !== 'hero') {
