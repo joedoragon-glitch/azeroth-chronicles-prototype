@@ -387,6 +387,8 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   terrainGpu.draw();
   assert.equal(idleCallback,null,
     'active combat prevents scheduling optional terrain work');
+  assert(terrainGpu.status().backgroundLookaheadSkips.combat > 0,
+    'reports the combat reason rather than only a lookahead miss');
   game.s.projectiles=[];
   terrainGpu.release();
   assert.equal(terrainGpu.status().backgroundLookaheadBytes,0);
