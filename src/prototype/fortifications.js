@@ -139,17 +139,19 @@
         return e.ranged ?? ['archer', 'crownguard'].includes(e.species);
       }
       enemyRangedRange(e) {
+        // One absolute hostile ranged basic distance for every ranged role,
+        // including restored actors whose older shotRange metadata differs.
         return (
-          (e.shotRange || 280) *
-          R.balance.enemyTargetingMultiplier *
+          R.balance.enemyRangedBasicRange *
           (this.enemyFort(e) ? R.balance.fortifications.rangeMultiplier : 1)
         );
       }
       enemyAcquisitionRange(e) {
-        return Math.max(
-          R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
-          this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
-        );
+        // Eligible ranged detection exactly matches its effective firing range,
+        // including a position-derived 30% fortified bonus; NO 10% scalar.
+        if (this.enemyRanged(e)) return this.enemyRangedRange(e);
+        // Preserve the unrelated melee-enemy awareness baseline.
+        return R.balance.enemyAcquisitionRange * R.balance.enemyAcquisitionRangeMultiplier;
       }
       enemyRangedLine(e, target) {
         return this.enemyRanged(e)

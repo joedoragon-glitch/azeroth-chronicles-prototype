@@ -79,10 +79,41 @@ for (const family of meleeFamilies) {
   }
 }
 
-// Ranged roles retain their original reach; no extra projectile launch at 285.
-{
-  const { g, u } = scene('archer', 185);
-  assert.equal(g.companionCombatReach(u), 185, 'Archer basic unchanged');
+// Archer defensive and ordinary basics now share the native 280 reach;
+// its separately authored covering skill retains its original 185 reach.
+for (const distance of [275, 285]) {
+  const { g, u, enemy } = scene('archer', distance);
+  assert.equal(g.companionCombatReach(u), 280, 'Archer unified basic reach');
+  const shots = g.s.projectiles.length;
+  assert.equal(
+    g.companionCoverAttack(u, enemy, true),
+    distance <= 280,
+    'Archer defensive basic at ' + distance,
+  );
+  assert.equal(
+    g.s.projectiles.length - shots,
+    distance <= 280 ? 1 : 0,
+    'Archer defensive projectile count at ' + distance,
+  );
+  const regular = scene('archer', distance);
+  // Move the real hero/formation anchor away so the Archer does not first
+  // reposition within its legal firing band (a separate movement decision).
+  Object.assign(regular.g.hero, { x: 250, y: 200 });
+  assert(
+    Math.hypot(
+      regular.g.partyFollowPoint(regular.u, [regular.u]).x - regular.enemy.x,
+      regular.g.partyFollowPoint(regular.u, [regular.u]).y - regular.enemy.y,
+    ) > 280,
+    'ordinary Archer fixture avoids a legitimate formation reposition',
+  );
+  regular.g._tacticalPartyTargets = new Map();
+  const first = regular.g.s.projectiles.length;
+  regular.g.companionFight(regular.u, regular.enemy, [regular.u], 0);
+  assert.equal(
+    regular.g.s.projectiles.length - first,
+    distance <= 280 ? 1 : 0,
+    'Archer normal basic at ' + distance,
+  );
 }
 for (const family of rangedFamilies) {
   for (const distance of [270, 285]) {
@@ -96,4 +127,4 @@ for (const family of rangedFamilies) {
   }
 }
 console.log('PASS Soldier and ' + meleeFamilies.length +
-  ' melee pet families at configured boundaries, ranged pet basics at 270/285, Archer unchanged');
+  ' melee pet families at configured boundaries, ranged pet basics at 270/285, Archer basic paths unified');

@@ -70,13 +70,20 @@ for (const mode of ['normal', 'nightmare'])
         (s) => s.title === 'The orders among the shelves',
       ),
     );
-    const original = C.rules.balance.skills.cooldowns[1];
+    // Skill 1 has a dedicated normal/charged cooldown; the ordinary
+    // cooldown table now controls Skill 2 onward. Test its actual live owner.
+    const original = C.rules.balance.skills.cooldowns[2];
     try {
-      C.rules.balance.skills.cooldowns[1] = 9.125;
+      C.rules.balance.skills.cooldowns[2] = 9.125;
       sections = Archive.sections(c, { D: C.data, R: C.rules });
-      assert(sections.find((s) => s.title === 'Your skills').topics[0][2].includes('9.13 seconds'));
+      const actual = Math.round(c.skillCooldown(2) * 100) / 100;
+      assert(
+        sections.find((s) => s.title === 'Your skills').topics[1][2]
+          .includes('base recovery ' + actual + ' seconds'),
+        'Archive reflects the native Skill 2 cooldown, including class reductions',
+      );
     } finally {
-      C.rules.balance.skills.cooldowns[1] = original;
+      C.rules.balance.skills.cooldowns[2] = original;
     }
     // Future/restored mode reads the shared guard and effective cooldown method.
     const oldMode = C.rules.resourceMode;
@@ -84,9 +91,13 @@ for (const mode of ['normal', 'nightmare'])
       C.rules.resourceMode = { manaEnabled: false };
       c.skillCooldown = (slot, charged) => (charged ? 11 : 4);
       sections = Archive.sections(c, { D: C.data, R: C.rules });
-      const skill = sections.find((s) => s.title === 'Your skills').topics[0][2];
-      assert(skill.includes('recovery 4 seconds') && skill.includes('Charged recovery: 11'));
-      assert(!skill.includes('MP'));
+      const skills = sections.find((s) => s.title === 'Your skills').topics;
+      // Skill 1 has its own charge contract; Archive only appends the older
+      // "Charged recovery" label for Skill 2–8. Probe both real owners.
+      assert(skills[0][2].includes('base recovery 4 seconds'));
+      assert(!skills[0][2].includes('Charged recovery:'), 'Skill 1 is a distinct charged basic');
+      assert(skills[1][2].includes('Charged recovery: 11 seconds'));
+      assert(!skills[0][2].includes('MP'));
       assert(
         !sections
           .find((s) => s.title === 'Companions and field bases')
@@ -104,7 +115,12 @@ const c = new C(),
   hp = c.hero.hp,
   armor = c.armor();
 c.hitParty(c.hero, incoming);
-assert.equal(hp - c.hero.hp, Math.max(3, incoming - armor * 0.35));
+// Armor effectiveness is a live class/campaign modifier; avoid stale 0.35.
+assert(
+  Math.abs(hp - c.hero.hp -
+    Math.max(3, incoming - armor * c.armorEffectivenessFor(c.hero))) < 1e-8,
+  'Archive armor description agrees with current hitParty mitigation',
+);
 c.hero.immune = 1;
 const immuneHp = c.hero.hp;
 c.hitParty(c.hero, 1000);

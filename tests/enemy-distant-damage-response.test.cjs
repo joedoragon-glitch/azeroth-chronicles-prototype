@@ -33,8 +33,32 @@ function tick(g, count, dt = 0.1) {
   }
 }
 const acquisition = Campaign.rules.balance.enemyAcquisitionRange *
-  Campaign.rules.balance.enemyTargetingMultiplier;
+  Campaign.rules.balance.enemyAcquisitionRangeMultiplier;
 assert.equal(acquisition, 286, 'original passive detection contract remains unchanged');
+
+// The real automatic AI (not just range formulas) must notice any visible
+// ranged-band target on ordinary outdoor ground, and refuse one beyond reach.
+for (const [shotRange, distance, shouldAcquire] of [
+  [230, 319, true],
+  [230, 320, true],
+  [230, 320.01, false],
+  [280, 319, true],
+  [280, 320, true],
+  [280, 321, false],
+  [290, 320, true],
+  [290, 321, false],
+]) {
+  const { g, e } = scene('normal');
+  Object.assign(e, { ranged: true, shotRange, cd: 0, specialCd: 100 });
+  Object.assign(g.hero, { x: e.x + distance, y: e.y });
+  assert.equal(g.enemyFort(e), null, 'outdoor range fixture is not fortified');
+  assert(g.line(e, g.hero), 'outdoor range fixture has visible hero');
+  g._tacticalRogueNext = new Map([[e.id, 1000]]);
+  tick(g, 1, 0.01);
+  assert.equal(e.aggro, shouldAcquire, 'outdoor native detection ' + shotRange + '/' + distance);
+  if (shouldAcquire)
+    assert(e.rangedAim, 'newly detected ranged enemy can start a basic aim');
+}
 
 // A real attacker outside passive acquisition must override an unrelated closer
 // party bystander, without changing combat range or making all enemies alert.
@@ -54,7 +78,7 @@ for (const mode of ['normal', 'nightmare']) {
   tick(g, 1);
   assert(e.x > oldX, mode + ': enemy moves toward actual distant attacker, not closer soldier');
   assert.equal(Campaign.rules.balance.enemyAcquisitionRange *
-    Campaign.rules.balance.enemyTargetingMultiplier, acquisition,
+    Campaign.rules.balance.enemyAcquisitionRangeMultiplier, acquisition,
     'no globally enlarged acquisition range');
   const saved = g.snapshot();
   assert(!JSON.stringify(saved).includes('nextSidestep'),
