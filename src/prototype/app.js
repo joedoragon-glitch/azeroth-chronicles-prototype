@@ -4152,6 +4152,15 @@
                 },
                 frameProfile: frameProfile.report(),
                 rendererDiagnostics: rendererRecordingReport(),
+                environment: {
+                  userAgent: String(navigator.userAgent || '').slice(0, 300),
+                  hardwareConcurrency: Number.isFinite(navigator.hardwareConcurrency)
+                    ? navigator.hardwareConcurrency : null,
+                  deviceMemoryGiB: Number.isFinite(navigator.deviceMemory)
+                    ? navigator.deviceMemory : null,
+                  viewportWidth: viewport.width,
+                  viewportHeight: viewport.height,
+                },
                 crowdDiagnostics: game.crowdDiagnosticsReport(),
                 ...(developerEnabled && game.s.mode === 'developer'
                   ? { effectDiagnostics: renderer.effectDiagnosticsReport() }
