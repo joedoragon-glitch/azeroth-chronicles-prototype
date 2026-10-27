@@ -3272,23 +3272,23 @@
     const es = language === 'es';
     if (heroClass === 'paladin')
       return es
-        ? 'Fortaleza: +' + p.paladin.hpPerLevel + ' PV máximos y +' +
+        ? 'Fortaleza: +' + p.paladin.hpPerLevel + ' PV/nivel; +' +
             p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
-            ' de daño bloqueado por punto de armadura por nivel.'
-        : 'Fortitude: +' + p.paladin.hpPerLevel + ' max HP and +' +
+            ' daño bloqueado por armadura/nivel.'
+        : 'Fortitude: +' + p.paladin.hpPerLevel + ' HP/level; +' +
             p.paladin.armorEffectivenessPerLevel.toFixed(2) +
-            ' damage blocked per Armor point each level.';
+            ' damage blocked per Armor/level.';
     if (heroClass === 'ranger')
       return es
-        ? 'Agilidad: +' + p.ranger.speedPerLevel + ' de velocidad y +' +
+        ? 'Agilidad: +' + p.ranger.speedPerLevel + ' velocidad y +' +
             Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% de reducción de recuperación por nivel.'
-        : 'Agility: +' + p.ranger.speedPerLevel + ' movement speed and +' +
+            '% reducción de recuperación/nivel.'
+        : 'Agility: +' + p.ranger.speedPerLevel + ' speed and +' +
             Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% cooldown reduction per level.';
+            '% cooldown reduction/level.';
     return es
-      ? 'Poder arcano: +' + p.mage.powerPerLevel + ' de poder por nivel.'
-      : 'Arcane Power: +' + p.mage.powerPerLevel + ' Power per level.';
+      ? 'Poder arcano: +' + p.mage.powerPerLevel + ' Poder/nivel.'
+      : 'Arcane Power: +' + p.mage.powerPerLevel + ' Power/level.';
   }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
