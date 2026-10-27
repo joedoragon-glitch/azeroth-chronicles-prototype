@@ -245,3 +245,13 @@ body[data-experience='desktop'] #cancel-navigation-button {
 body[data-experience='desktop'] #modal[data-view='archive-reading'][data-dialog-size] {
   width: min(590px, calc(100vw - 32px));
 }
+
+/* Keep all three starting classes visible before the player scrolls on desktop. */
+body[data-experience='desktop'] #modal[data-view='class-select'] {
+  width: min(440px, calc(100vw - 32px));
+  max-height: min(86dvh, 720px);
+}
+body[data-experience='desktop'] #modal[data-view='character'] {
+  width: min(410px, calc(100vw - 32px));
+  max-height: min(92dvh, 760px);
+}
