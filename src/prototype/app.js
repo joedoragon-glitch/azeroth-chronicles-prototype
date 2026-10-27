@@ -2909,13 +2909,13 @@
     const label = document.createElement('label'),
       field = document.createElement('input');
     label.className = 'character-name-field';
-    label.textContent = 'Optional name · up to 24 characters';
+    label.textContent = language === 'es' ? 'Nombre opcional · hasta 24 caracteres' : 'Optional name · up to 24 characters';
     field.id = 'character-name';
     field.type = 'text';
     field.maxLength = 24;
     field.autocomplete = 'off';
     field.value = initialValue;
-    field.placeholder = 'Leave blank to decide later';
+    field.placeholder = language === 'es' ? 'Déjalo vacío para decidir después' : 'Leave blank to decide later';
     label.append(field);
     $('modal-actions').prepend(label);
     return field;
@@ -3333,7 +3333,7 @@
             ' ' +
             (language === 'es'
               ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[id] || id
-              : id),
+              : id.charAt(0).toUpperCase() + id.slice(1)),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
