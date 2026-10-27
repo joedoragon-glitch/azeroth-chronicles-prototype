@@ -49,3 +49,7 @@ The Archer and ranged pet have **no independent enemy-style 260/286 detector**: 
 - Package, lock, build version and PWA cache are advanced together to dev.198. This is **an unmerged draft**, not a deployment authorization; focused GitHub CI/build results must be assessed on its exact head. No full game/browser/device testing has been authorized.
 
 Keep the historical PR #335/343 records unchanged for provenance.
+
+## Source-evidence reconciliation
+
+Focused CI on the first PR head passed the native combat-range tests but reported a sprite-scope source fingerprint mismatch, solely because the accepted `src/prototype/rules.js` text changed. The active `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` fingerprint for that file alone is updated from `9a2f51894794332c348c9e0814d20b8558209b673e427e923f9b93b6d263975e` to `3630f14f02fc15950d8f75571ddf4f3bd61fe3b7831bf4b91d8e7c358010fdea`, as measured by the focused run. No species mapping, artwork classification, curated asset decision, other source hash or historical original has been regenerated. The exact-head sprite-scope test must pass on this updated draft.
