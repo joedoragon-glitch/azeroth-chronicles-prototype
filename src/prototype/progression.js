@@ -132,7 +132,10 @@
         }
       }
       expeditionPartyCap(rank = this.s.expeditionRank || 1) {
-        return R.balance.companions.activeCaps[clamp(rank, 1, 6)];
+        return (
+          R.balance.companions.activeCaps[clamp(rank, 1, 6)] +
+          (R.balance.companions.activeSlotBonuses?.[this.hero.class] || 0)
+        );
       }
       expeditionInstructorCap(family) {
         return expeditionCeilings[family] || 0;
