@@ -1482,8 +1482,12 @@
           protection: !!(previous?.protection || form.protection),
           incomingHealing: Math.max(previous?.incomingHealing || 0,
             Math.min(0.12, form.incomingHealing || 0)),
+          // Only a frozen critical Skill 4 release may increase the
+          // original 5%-of-max-HP HoT budget (up to Level-3 7.25%).
+          // Delivery ticks merely spend this finite budget; no extra rolls.
           remainingHeal: Math.max(previous?.remainingHeal || 0,
-            Math.min(u.maxHp * 0.05, u.maxHp * (form.healFraction || 0))),
+            Math.min(u.maxHp * (form.criticalMending === true ? 0.075 : 0.05),
+              u.maxHp * (form.healFraction || 0))),
           criticalChance: Math.max(previous?.criticalChance || 0,
             Math.min(0.06, form.criticalChance || 0)),
           specialDamage: Math.max(previous?.specialDamage || 0,
