@@ -358,6 +358,19 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'camera crossing avoids an immediate full terrain rebuild');
   assert.equal(backgroundCopies,copies+1,'prepaint is copied into existing terrain canvas');
   assert.equal(textureUpdates,updates+1,'existing GPU source is updated in place');
+  game.hero.x+=160;
+  terrainGpu.draw();
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase+1,
+    'without an idle-ready window movement falls back to the complete original painter');
+  assert(terrainGpu.status().backgroundLookaheadMisses>0,
+    'fallback is recorded, not silently reported as a successful promotion');
+  game.s.projectiles=[{id:'danger-cue'}];
+  game.hero.x+=100;
+  idleCallback=null;
+  terrainGpu.draw();
+  assert.equal(idleCallback,null,
+    'active combat prevents scheduling optional terrain work');
+  game.s.projectiles=[];
   terrainGpu.release();
   assert.equal(terrainGpu.status().backgroundLookaheadBytes,0);
   game.hero.x=oldX;
