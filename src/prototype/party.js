@@ -2294,6 +2294,10 @@
       }
       companionRecruitmentReason(type, barracksId = null, options = {}) {
         if (!['soldier', 'archer'].includes(type)) return 'Choose a Soldier or Ranger to recruit.';
+        // Capability gate, not a menu-only restriction: covers Captain,
+        // Barracks, paid requests, queued completions and direct API calls.
+        if (this.hero.class === 'rogue')
+          return 'Rogue Bards cannot hire Soldiers or Rangers. Charm eligible monsters in battle.';
         if ((this.s.expeditionRank || 1) < 2)
           return 'Recruitment unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.';
         const request =
