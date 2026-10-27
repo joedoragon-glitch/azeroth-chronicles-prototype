@@ -351,6 +351,12 @@
       'Usa de 1 a 24 letras, números, espacios, apóstrofos, puntos o guiones.',
     'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.':
       'El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las tres, la partida termina.',
+    'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after four class deaths the run ends.':
+      'El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las cuatro, la partida termina.',
+    'All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.':
+      'Las tres clases han caído. Esta partida terminó. Puedes exportar su progreso, pero no continuarla.',
+    'All four classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.':
+      'Las cuatro clases han caído. Esta partida terminó. Puedes exportar su progreso, pero no continuarla.',
     'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.':
       'Elige al héroe que iniciará la resistencia. Comienzas con una habilidad; rescatar especialistas desbloquea el entrenamiento y equipo necesarios para enfrentar al Dark Lord.',
   };
@@ -3265,6 +3271,10 @@
       back,
     );
   }
+  function playableClassCountWord() {
+    const count = Object.keys(Campaign.classes).length;
+    return { 3: 'three', 4: 'four' }[count] || String(count);
+  }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
@@ -3272,7 +3282,9 @@
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
-        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.',
+        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after ' +
+          playableClassCountWord() +
+          ' class deaths the run ends.',
         [
           action('Standard death and refuge recovery', () => chooseClass(mode, false)),
           action('Succession challenge', () => chooseClass(mode, true)),
@@ -3922,7 +3934,7 @@
     profile.nightmareUnlocked = true;
     persistProfile();
     const crownedClass =
-      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue Bard' }[game.hero.class] || 'Hero';
     const credits =
       'THE CROWN\n\n' +
       (game.hero.regnalName || game.hero.customName
@@ -3976,7 +3988,9 @@
   function gameOver() {
     openMenu(
       'The last successor has fallen',
-      'All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
+      'All ' +
+        playableClassCountWord() +
+        ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
         action('Export final run', () =>
           exportJSON(game.snapshot(), 'Azeroth_Succession_Game_Over.json'),
