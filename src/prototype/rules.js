@@ -6935,10 +6935,10 @@
       burstSeconds: 1.2,
       burstMultiplier: 1.5,
       mercyStartRadius: 300,
-      // Greenwood ordinary melee reuses its EXISTING burst after a brief
-      // normal-speed interval (1.2s active + 2s recovery). No separate
-      // dash, warning, impact damage, Slow, or new cooldown ownership.
-      valeRecoverySeconds: 2,
+      // Ordinary/guardian/melee Ringleader actors share the one native burst:
+      // 1.2s boosted + 2s ordinary speed, all regions; summons of bosses
+      // and captains are ineligible. No new ability, attack or Slow.
+      meleeRecoverySeconds: 2,
     },
     growth: { xpPerLevel: 120, hpPerLevel: 25 },
     barracks: { buildCost: 20, fullUpgradeCost: 100 },

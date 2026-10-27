@@ -25,7 +25,8 @@ assert.equal(live.balance.meleeBasicRange, resolved.enemy);
 assert.equal(live.balance.eliteMeleeBasicRange, resolved.elite);
 assert.equal(live.balance.companions.soldierMeleeBasicRange, resolved.soldier);
 assert.equal(live.balance.companions.petMeleeBasicRange, resolved.pet);
-assert.equal(live.balance.pursuit.valeRecoverySeconds, 0.5, 'native Greenwood pursuit remains intact');
+assert.equal(live.balance.pursuit.meleeRecoverySeconds, 2,
+  'owner-tested 2s recovery shared by all eligible melee');
 assert.equal(live.rangedEnemyCombat.ringleaderHybridMeleeRange, resolved.ringleaderHybridStance);
 
 const variants = [
@@ -51,7 +52,7 @@ for (const variant of variants) {
     assert.equal(R.meleeReach[key], tuned[key], key + ' resolves variant');
   assert.equal(R.balance.meleeBasicRange, tuned.enemy);
   assert.equal(R.balance.eliteMeleeBasicRange, tuned.elite);
-  assert.equal(R.balance.pursuit.valeRecoverySeconds, live.balance.pursuit.valeRecoverySeconds);
+  assert.equal(R.balance.pursuit.meleeRecoverySeconds, live.balance.pursuit.meleeRecoverySeconds);
   assert.equal(R.rangedEnemyCombat.ringleaderHybridMeleeRange, tuned.ringleaderHybridStance);
   assert.equal(R.balance.companions.soldierMeleeBasicRange, tuned.soldier);
   assert.equal(R.balance.companions.petMeleeBasicRange, tuned.pet);

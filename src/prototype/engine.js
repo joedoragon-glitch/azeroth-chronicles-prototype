@@ -6497,27 +6497,20 @@
       e.noProgress = 0;
       return true;
     }
-    // The Greenwood anti-kiting pilot now reuses native Pursuit Burst only:
-    // ordinary Goblin/Skeleton melee and hybrid guardians recover the same
-    // 1.5x/1.2s burst sooner; elites, ranged-only and other regions are unchanged.
-    valePursuitBurstEligible(e) {
-      return (
-        this.regionIndex() === 0 &&
-        !this.peace &&
-        !!e?.aggro &&
-        e.hp > 0 &&
-        !e.neutral &&
-        !e.returning &&
-        e.type !== 'boss' &&
-        !e.captain &&
-        !e.roomCaptain &&
-        !e.fieldCaptain &&
-        e.form !== 'ringleader' &&
-        ['goblin', 'skeleton'].includes(e.species) &&
-        !e.nightOnly &&
-        (!this.enemyRanged(e) || e.hybrid) &&
-        !e.summon &&
-        !e.rogueEmergencyReinforcement
+    // Only ordinary, nonsummoned melee and melee Ringleaders receive the
+    // validated short native recovery. Captain Overtime already grants
+    // workers its own four-second burst and is deliberately excluded.
+    // Leave summons, ranged/hybrid actors, bosses, captains and reset logic
+    // on their existing behavior pending the separate territory audit #510.
+    meleePursuitBurstEligible(e) {
+      return !!(
+        !this.peace && e && e.aggro && e.hp > 0 &&
+        !e.neutral && !e.returning && e.type === 'mob' &&
+        !e.captain && !e.roomCaptain && !e.fieldCaptain &&
+        !e.summon && !e.developerSummon &&
+        !e.rogueEmergencyReinforcement &&
+        !(e.quotaOvertime > 0) &&
+        !this.enemyRanged(e)
       );
     }
 
@@ -7222,15 +7215,16 @@
           opportunity = true;
         }
         if (!opportunity && (d > range || !firingLine)) {
-          // Older saves may carry the former seven-second pursuit readiness.
-          // Shorten that existing timer in place; do not add a second timer.
+          // Saved long readiness migrates through the existing deadline.
+          // Neither the active burst nor the targeting/collision rules change.
+          const enhancedMeleePursuit =
+            target === this.hero && this.meleePursuitBurstEligible(e);
           if (
-            target === this.hero &&
-            this.valePursuitBurstEligible(e) &&
-            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+            enhancedMeleePursuit &&
+            e.pursuitBurstReadyAt > this.s.time + pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds
           )
             e.pursuitBurstReadyAt =
-              this.s.time + pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds;
+              this.s.time + pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds;
           if (
             target === this.hero &&
             visible &&
@@ -7238,14 +7232,13 @@
             this.s.time >= (e.pursuitBurstReadyAt || 0) &&
             !(e.pursuitBurst > 0)
           ) {
-            // This is the EXISTING Pursuit Burst, not another anti-kite skill.
-            // Greenwood ordinary melee can reuse it shortly after it ends;
-            // its multiplier, duration, collision and leash remain unchanged.
+            // Native speed/duration, follow collision and leash are shared.
+            // Bosses/captains, their summons and pure ranged keep old cadence.
             e.pursuitBurst = pursuitBurstSeconds;
             e.pursuitBurstUsed = true;
             e.pursuitBurstReadyAt = this.s.time + (
-              this.valePursuitBurstEligible(e)
-                ? pursuitBurstSeconds + R.balance.pursuit.valeRecoverySeconds
+              enhancedMeleePursuit
+                ? pursuitBurstSeconds + R.balance.pursuit.meleeRecoverySeconds
                 : e.type === 'boss' ? 5.5 : 7
             );
           }
