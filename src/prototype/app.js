@@ -6168,6 +6168,12 @@
         !(menu && ['Tab', 'Escape'].includes(e.code)))
     )
       return;
+    // A loading interlude owns keyboard focus; hidden menus cannot commit a
+    // second travel or close the overlay while arrival is being prepared.
+    if (sceneTransition) {
+      e.preventDefault?.();
+      return;
+    }
     audio.unlock();
     const code = e.code;
     if (bindingCapture) {

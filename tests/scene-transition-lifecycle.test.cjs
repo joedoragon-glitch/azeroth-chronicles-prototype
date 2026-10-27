@@ -48,6 +48,10 @@ function openForwardTravel(app) {
     assert.equal(app.scope.Prototype.sceneLoading, true);
     assert.equal(app.elements.get('scene-loading').hidden, false);
     assert.equal(game.zoneId, departure, 'preflight does not enter destination');
+    for (const listener of app.events.keydown || [])
+      listener({ code: 'Escape', preventDefault() {}, target: null, repeat: false });
+    assert.equal(app.scope.Prototype.sceneLoading, true,
+      'keyboard Escape cannot close a preparing transition');
     await flush();
     assert.deepEqual(warmed, [['tested-hero']], 'bounded sprite keys come from current appearance');
     assert.equal(JSON.stringify(game.snapshot()), snapshot, 'preflight never mutates authoritative campaign');
