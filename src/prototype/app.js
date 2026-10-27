@@ -1443,6 +1443,7 @@
   }
   function setLanguage(value) {
     language = value === 'es' ? 'es' : 'en';
+    if (game) game.rogueNicknameLanguage = language;
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
     try {
       localStorage.setItem(languageKey, language);
@@ -1706,6 +1707,9 @@
   // Both isolated RNG streams resume from the same v4 save state.
   function activateLiveCritical(candidate) {
     if (!candidate) return candidate;
+    // Cosmetic capture nicknames follow the current interface language.
+    // Existing names never change when the language changes.
+    candidate.rogueNicknameLanguage = language;
     if (candidate._criticalPartyNative?.enabled && candidate._criticalWorldNative?.enabled)
       return candidate;
     PrototypeCriticalPartyNative.attachCampaign(
