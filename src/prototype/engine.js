@@ -137,12 +137,14 @@
         },
       };
       const c = classes[heroClass];
+      const innateHp =
+        heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0;
       this.s.hero = {
         class: heroClass,
         x: 300,
         y: 350,
-        hp: c.hp + (heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0),
-        maxHp: c.hp + (heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0),
+        hp: c.hp + innateHp,
+        maxHp: c.hp + innateHp,
         mp: c.mp,
         maxMp: c.mp,
         level: 1,
@@ -4190,7 +4192,7 @@
         h.order = null;
         const n = Math.hypot(input.x, input.y),
           speed =
-            (this.heroMoveSpeed()) *
+            this.heroMoveSpeed() *
             (h.haste > 0 ? 1.25 : 1) *
             this.slowMovementFactor(h) *
             this.mireBogMovementFactor(h) *
@@ -4225,7 +4227,7 @@
             } else {
               const before = { x: h.x, y: h.y },
                 speed =
-                  (this.heroMoveSpeed()) *
+                  this.heroMoveSpeed() *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
@@ -4254,7 +4256,7 @@
               this.follow(
                 h,
                 target,
-                (this.heroMoveSpeed()) *
+                this.heroMoveSpeed() *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
