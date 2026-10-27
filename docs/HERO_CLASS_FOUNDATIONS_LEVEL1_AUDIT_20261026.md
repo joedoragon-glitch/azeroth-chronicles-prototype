@@ -54,6 +54,64 @@ Current `main` values:
 
 **Source:** `src/prototype/rules.js` class/discipline/cooldown configuration, `src/prototype/progression.js` `heroTalentSpeedBonus()` and `talent()`, `src/prototype/engine.js` movement computation, `src/prototype/hero-combat.js` `skillCooldown()` and `basicSkillCooldown()`.
 
+### Paladin passive candidate — owner proposal: +5 HP/level-up and +0.01 per-level Armor effectiveness (October 26, 2026)
+
+**Candidate status:** proposed/tentative values for owner review, not authorized for gameplay implementation yet. This design builds on the verified Paladin talent/equipment audit below; it **does not** replace or retune that established progression.
+
+**Owner rationale:** Paladin's maximum HP talent gives +33 HP per talent rank, so the notional equivalent of two extra talent ranks is +66 HP. Dividing by a convenient 15-level window gives 66/15 = **4.4**, rounded to **+5 maximum HP each level-up**. The extra HP is innate and automatic, independent of talent spending. In the actual level-1-based model, reaching level 15 includes **14** level-ups, so the proposed extra HP totals **+70**, not +75.
+
+**Formula A — natural HP excluding talents, tonic and other bonuses:**
+
+```js
+const levelUps = Math.max(0, hero.level - 1);
+const bonusHp = hero.class === 'paladin' ? 5 * levelUps : 0;
+const naturalMaxHp = classBaseHp + 25 * levelUps + bonusHp;
+// At level 15 for Paladin: 120 + 25*14 + 5*14 = 540 HP.
+// Current baseline at level 15: 120 + 25*14 = 470 HP.
+```
+
+**Formula B — ordinary incoming-hit Armor effectiveness:** retain existing actual Armor points from starting attributes, equipment and reforge. Change only **how effectively Paladin Armor reduces an ordinary hit**:
+
+```js
+const levelUps = Math.max(0, hero.level - 1);
+const armorEffectiveness =
+  0.35 + (target === hero && hero.class === 'paladin' ? 0.01 * levelUps : 0);
+const afterArmor = Math.max(3, incomingDamage - armorPoints * armorEffectiveness);
+```
+
+This does **not** add Armor points, nor create a separate percentage-damage-resistance status. The coefficient is **flat hit points prevented per 1 Armor**; it is not a percentage. For Mage, Ranger and all companions/enemies the existing 0.35 coefficient remains unchanged.
+
+**Level checkpoints, with no talents/tonic/etc.:**
+
+| Hero level | Level-ups since 1 | Current Paladin natural max HP | Extra passive HP | Candidate Paladin max HP | Armor coefficient (per Armor point) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1 | 0 | 120 | +0 | 120 | 0.35 |
+| 5 | 4 | 220 | +20 | 240 | 0.39 |
+| 10 | 9 | 345 | +45 | 390 | 0.44 |
+| 15 | 14 | 470 | +70 | 540 | 0.49 |
+| 16 | 15 | 495 | +75 | 570 | 0.50 |
+| 18 | 17 | 545 | +85 | 630 | 0.52 |
+| 20 | 19 | 595 | +95 | 690 | 0.54 |
+
+**Level-15 precision question:** the user's stated intended target is 0.50 at level 15. With precisely +0.01 **per level-up**, 0.50 is reached at level **16**. Options to approve, **not** mix accidentally:
+
+1. **Prefer preserving level-1 baseline:** `0.35 + 0.01*(level-1)` → L1 **0.35**, L15 **0.49**, L16 **0.50**.
+2. **If 0.50 at L15 is essential:** `0.35 + 0.01*level` → L1 **0.36**, L15 **0.50** (one initial passive increment at start).
+3. **If exact 0.35 at L1 and 0.50 at L15 are both essential:** `0.35 + 0.15*(level-1)/14` → L15 **0.50**, but increment is ~0.010714 per level-up, rather than exactly 0.01.
+
+**Magnitude and integration risks identified in current source (must test):**
+
+- Armor scales the coefficient multiplicatively. At tier-4 + reforge, Paladin has **39 Armor**; on a hypothetical ordinary **30 raw damage** hit, current reduction `39*0.35=13.65` yields **16.35 HP lost**. Proposed L15 coefficient `0.49` reduces `39*0.49=19.11`, leaving **10.89 HP lost** (~33.4% less HP lost than the same tier/current coefficient). There is also a **minimum of 3 damage** per ordinary hit. This is substantial despite only +0.01 per level-up; validate difficulty at top-tier armor.
+- `src/prototype/combat.js::hitParty()` centrally uses `armor*0.35` for normal hits, with a special `alreadyMitigated` bypass. **Preserve** that bypass; do not apply Armor twice.
+- `src/prototype/boss-combat.js` precomputes a single Armor-mitigated amount for Vortex Shedding/Death Roll using `0.35` before later split hits. The Paladin-specific modifier must be applied **once at the precomputation point**, not again to three follow-up impacts. Prefer sharing a focused helper to avoid contradictory formulas.
+- `src/prototype/progression.js::heroNaturalMaxHp()` and `heroOtherHpBonus()` feed the existing **Shared Strength companion inheritance**. If adding passive HP to `hero.maxHp`, make the new Paladin innate HP count as **natural HP**, not an unrelated transferable bonus, unless owner explicitly approves companion inheritance. Avoid altering skill ranks or the existing support-skill behavior.
+- `xp()` updates saved `hero.maxHp` directly, refills HP, and synchronizes companion stats; old campaign saves, Succession, hero HP talent resets, tonics and import/migration must be checked for double application or missing past-level passive HP.
+- Existing temporary Shield Stance and wards use the **stronger**, nonmultiplicatively stacking defensive factor *after* Armor. This passive is an **Armor coefficient** before that factor, not a third ward/status or an independent additive shield. No skill value is modified.
+- The user estimated play around levels 15–18; the proposed formula currently **continues increasing beyond level 15**. Whether to impose a level cap is undecided. Do not silently cap or extrapolate as an approved balance decision.
+- New game creation, save load, existing level-15 Paladin saves, talent reset, Succession, companions, regular hits, boss premitigation, already-mitigated hits and tooltip display all need focused tests. Avoid schema changes if possible, but **do not claim save compatibility without validating an explicit migration/derivation strategy**.
+
+**Approval gates still open:** (a) whether defense should start at 0.35 at level 1 or 0.36; (b) whether 0.50 at level 15 is mandatory; (c) whether coefficient/HP continue after level 15 or cap; (d) whether existing Paladin saves receive retroactive bonuses; (e) passive HP non-inheritance to companions; (f) exact boss/pre-mitigation and UI behavior. No production file was edited.
+
 ### Paladin Discipline Training and non-skill defensive audit — verified current baseline
 
 **Paladin HP via Discipline Training:** `R.balance.disciplines.profiles.paladin.hp = 33`, `maxRanks[2] = 5`. One invested HP rank gives **+33 maximum HP and +33 current HP**. At maximum five ranks this totals **+165 max HP**. Against a purely hypothetical level-1 baseline (not an attainable five-rank level-1 training claim), 120 starting HP becomes 153 / 186 / 219 / 252 / 285 at ranks 1–5. Leveling also gives a *separate*, class-neutral **+25 maximum HP per hero level**.
