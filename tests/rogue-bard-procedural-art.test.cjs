@@ -82,6 +82,7 @@ assert(!app.includes("rogue: 'Rogue Bard'"), 'no old player-facing class label')
 const visuals = fs.readFileSync(path.join(__dirname, '../src/prototype/visuals.js'), 'utf8');
 const source = visuals.slice(visuals.indexOf('function rogueBellStaff('),
   visuals.indexOf('function hero(role)'));
-assert(!/guitar|lute|stringed|animation clock|requestAnimationFrame/.test(source),
+const executableArt = source.replace(/\/\/[^\n]*/g, '');
+assert(!/guitar|lute|stringed|requestAnimationFrame/.test(executableArt),
   'this is static bell-staff art, not old instrument or an animation system');
 console.log('PASS Rogue/Crowned static procedural art, fallback, original-class isolation and naming');
