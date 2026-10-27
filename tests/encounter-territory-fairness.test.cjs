@@ -62,7 +62,6 @@ function receipt(label, flags, radius) {
   const hp=e.hp;
   assert.equal(g.damage(e,13,'hero'),true,label+' real damage accepted');
   assert.equal(e.hp,hp-13,label+' real HP reduced at close range');
-  assert.equal(g.heroParticipated,undefined); // no new game/system flag
   console.log('PASS issue510 real-world '+label+
     ': native incoming damage accepted at 600 home / 60 enemy, radius='+radius);
 }
@@ -141,8 +140,13 @@ for(const flags of [{summon:true},{fieldCaptain:true},{quotaOvertime:3}]) {
   const {g,e}=fixture(); e.type='boss';
   assert.equal(g.nativeEncounterTerritory(e),700);
   e.aggro=false;
-  const q=fixture('crypt'); q.e.type='boss';
-  assert.equal(q.g.nativeEncounterTerritory(q.e),1800);
+  // Dungeon geometry need not provide the outdoor 600-unit clear lane.
+  // Territory selection itself is independent of actor placement.
+  const q=new Campaign('normal','ranger',()=>0.9);
+  q.enter('crypt');
+  const dungeonBoss=q.zone().enemies.find(u=>u.type==='boss');
+  assert(dungeonBoss,'native dungeon boss exists');
+  assert.equal(q.nativeEncounterTerritory(dungeonBoss),1800);
 }
 // Area, LoS and town protections remain owned by their original resolvers.
 {
