@@ -4,6 +4,8 @@ Date: 27 October 2026
 Baseline inspected: main at 24afe03a25c520ef2669b2978a5d3b76e4e6a5b5 (after merged PR #518)  
 Status: Phases 0–2 source candidates implemented; Phase 3 source A/B evaluated with a **HOLD** decision for runtime lookahead. **No target-device performance certification or approval to merge/deploy.**
 
+**Phase 0–3 consolidation and Phase 4 entrypoint:** [consolidated professional handoff](CANVAS_PHASE0_3_CONSOLIDATION_HANDOFF_20261027.md). This is the current status and acceptance-debt index; use the detailed sections below for source rationale and historical evidence.
+
 ## Executive decision
 
 Keep **Canvas 2D as a first-class supported rendering implementation**, with its own bounded CPU-oriented graphics preparation, while PixiJS/WebGL2 remains optional and experimental. The main menu, Continue, save ownership, loading screens, travel authorization, first playable frame and simulation lifecycle remain **shared game infrastructure**, not duplicated or forked by renderer. Canvas's renderer-specific work must reuse the existing sprite decoder and terrain ground cache instead of copying Pixi's GPU upload and texture-cache algorithms.
@@ -125,6 +127,10 @@ A dedicated benchmark using the actual Vale floor painter and production `Ground
 [Full measured table, provenance, interpretation and acceptance runbook](CANVAS_PHASE3_LOOKAHEAD_EVIDENCE_20261027.md). [Benchmark CI run #40504488471](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40504488471) passed selected focused tests and build checks. Results showed fewer visible-frame raster rebuilds under the simulated recentering strategy, **but additional total builds and greater accumulated painting cost** on straight and reversing paths, with remaining large visible p99 delays. Idle painting also remains synchronous and non-preemptible.
 
 **Disposition: keep the existing production ground-cache behavior unchanged.** The new benchmark is an evidence-gathering test, not a production optimization. Only reopen the lookahead gate after actual device playtest reports demonstrate material ground-cache-miss stalls and a guarded on-device A/B candidate shows a reliable net improvement without input/memory/art regressions. Phase 4, if pursued separately, must not imply Phase 3 passed performance acceptance.
+
+## Phase 0–3 consolidation state
+
+The separate [consolidation handoff](CANVAS_PHASE0_3_CONSOLIDATION_HANDOFF_20261027.md) inventories all code changes, preserves CI provenance and distinguishes source completeness from still-unrun browser/device acceptance. The Phase 3 benchmark's p95/p99 values are **ground-cache call durations** rather than complete game frames. The regional lookahead HOLD decision remains binding. Proceed to Phase 4 only as a measured, isolated procedural-art investigation, not as permission to release or merge unaccepted performance changes.
 
 ## Current progress ledger
 
