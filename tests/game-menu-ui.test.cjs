@@ -357,6 +357,38 @@ for (const language of ['en', 'es']) {
   assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).phoneLayout, 'left-hand');
   phoneSelect.value = initialPhoneLayout;
   phoneSelect.onchange();
+  const hudRow = controls.find(
+    (node) => node.className === 'menu-setting' &&
+      node.children.some((child) => child.textContent === t('HUD style', 'Estilo de interfaz')),
+  );
+  assert(hudRow, 'independent Classic/Adaptive preference appears in both languages');
+  const hudSelect = hudRow.children.find((child) => child.className === 'menu-setting-input');
+  assert.equal(hudSelect.value, 'classic', 'old saves preserve Classic by default');
+  hudSelect.value = 'adaptive';
+  hudSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.hudStyle, 'adaptive');
+  assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).hudStyle, 'adaptive');
+  assert.equal(e.get('modal').hidden, false, 'HUD setting does not dismiss settings');
+  hudSelect.value = 'classic';
+  hudSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.hudStyle, 'classic');
+  assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).hudStyle, 'classic');
+  const joystickRow = controls.find(
+    (node) => node.className === 'menu-setting' &&
+      node.children.some((child) => child.textContent === t('Movement joystick', 'Joystick de movimiento')),
+  );
+  assert(joystickRow, 'separate movement joystick setting exists in both languages');
+  const joystickSelect = joystickRow.children.find((child) => child.className === 'menu-setting-input');
+  assert.equal(joystickSelect.value, 'fixed', 'fixed mode is the compatible default');
+  joystickSelect.value = 'floating';
+  joystickSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.joystickMode, 'floating');
+  assert.equal(e.get('modal').hidden, false, 'switching input mode does not close the menu');
+  assert.equal(JSON.parse(storage.get(s.PrototypeInput.preferenceKey)).joystickMode, 'floating');
+  assert.equal(e.get('joystick').getAttribute('aria-hidden'), 'false', 'menu always keeps fixed accessible joystick');
+  joystickSelect.value = 'fixed';
+  joystickSelect.onchange();
+  assert.equal(s.Prototype.input.preferences.joystickMode, 'fixed');
 
   const toggle = (en, es) => {
     const node = e.get('modal-actions').children.find(

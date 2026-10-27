@@ -92,6 +92,8 @@
       bindings: { ...defaults },
       preset: 'right',
       phoneLayout: 'two-thumb',
+      joystickMode: 'fixed',
+      hudStyle: 'classic',
       touchMove: true,
       mouseMove: false,
     };
@@ -134,6 +136,8 @@
           preferences.preset = detectPreset(preferences.bindings);
         }
         preferences.phoneLayout = saved.phoneLayout === 'left-hand' ? 'left-hand' : 'two-thumb';
+        preferences.joystickMode = saved.joystickMode === 'floating' ? 'floating' : 'fixed';
+        preferences.hudStyle = saved.hudStyle === 'adaptive' ? 'adaptive' : 'classic';
         preferences.touchMove = saved.touchMove !== false;
         preferences.mouseMove = saved.mouseMove === true;
       }
@@ -191,6 +195,10 @@
       select(name, value) {
         if (name === 'phoneLayout')
           preferences.phoneLayout = value === 'left-hand' ? value : 'two-thumb';
+        else if (name === 'joystickMode')
+          preferences.joystickMode = value === 'floating' ? 'floating' : 'fixed';
+        else if (name === 'hudStyle')
+          preferences.hudStyle = value === 'adaptive' ? 'adaptive' : 'classic';
         else if (name === 'touchMove' || name === 'mouseMove') preferences[name] = value === true;
         persist();
       },
@@ -213,6 +221,57 @@
     game.hero.path = path;
     game.hero.routeAge = 1.3;
     return true;
+  }
+
+  // Presentation-only floating touch geometry. The existing game tick still
+  // receives the same x/y vector; no movement, pathfinding or speed rules change.
+  function floatingJoystickVector(start, point, radius, deadZone = 10) {
+    const dx = point.x - start.x, dy = point.y - start.y;
+    const distance = Math.hypot(dx, dy);
+    if (!Number.isFinite(distance) || distance <= deadZone) return { x: 0, y: 0 };
+    const factor = Math.max(1, distance / Math.max(1, radius));
+    return { x: dx / radius / factor, y: dy / radius / factor };
+  }
+  function floatingJoystickZone(point, viewport, obstacles = []) {
+    const width = Math.min(200, viewport.width * 0.43);
+    const height = Math.min(160, Math.max(116, viewport.height * 0.26));
+    if (!(point.x >= 0 && point.x <= width && point.y >= viewport.height - height &&
+          point.y <= viewport.height)) return false;
+    // Use actual onscreen button rectangles for both handedness layouts.
+    return !obstacles.some((rect) =>
+      point.x >= rect.x - 10 && point.x <= rect.x + rect.width + 10 &&
+      point.y >= rect.y - 10 && point.y <= rect.y + rect.height + 10);
+  }
+  // HUD presentation is a separate, pure classifier. It never changes action
+  // validity, movement or combat state. The previous snapshot implements
+  // hysteresis so quick HP changes and aggro dropouts do not make the HUD flicker.
+  function adaptiveHudLowHealth(hp, maxHp, previouslyLow = false) {
+    if (!Number.isFinite(hp) || !Number.isFinite(maxHp) || maxHp <= 0) return false;
+    const ratio = Math.max(0, hp) / maxHp;
+    return previouslyLow ? ratio <= 0.35 : ratio <= 0.30;
+  }
+  function adaptiveHudPresentation(signals, previous = null, now = 0) {
+    const lowHP = adaptiveHudLowHealth(signals.hp, signals.maxHp, previous?.lowHP);
+    const immediatePressure = !!(
+      signals.threat || signals.projectile || signals.hazard ||
+      signals.target || signals.targetLocked || signals.charging ||
+      signals.queued || signals.targetPress
+    );
+    const pressureUntil = immediatePressure
+      ? now + 2000 : Math.max(0, previous?.pressureUntil || 0);
+    const pressure = immediatePressure || now < pressureUntil;
+    const inputActive = !!(signals.charging || signals.queued || signals.targetPress);
+    return {
+      lowHP,
+      pressure,
+      pressureUntil,
+      context: signals.menu ? 'menu' : pressure ? 'combat' :
+        signals.navigation ? 'travel' : signals.interactable ? 'interact' : 'explore',
+      target: pressure || !!signals.target || !!signals.targetLocked || !!signals.targetPress,
+      recall: pressure || !!signals.tutorialRecall,
+      moving: !!signals.moving,
+      inputActive,
+    };
   }
   // Transient intent only. Gameplay, cooldowns and target legality stay in Campaign.
   function createSkillQueue(capacity = 16) {
@@ -265,7 +324,8 @@
       },
     };
   }
-  const api = { create, createSkillQueue, actions, defaults, presets, preferenceKey, requestMove };
+  const api = { create, createSkillQueue, actions, defaults, presets, preferenceKey, requestMove,
+    floatingJoystickVector, floatingJoystickZone, adaptiveHudLowHealth, adaptiveHudPresentation };
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeInput = api;
 })(typeof window !== 'undefined' ? window : globalThis);
