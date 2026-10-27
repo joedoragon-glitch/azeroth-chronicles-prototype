@@ -12,7 +12,6 @@ Al abrir el juego desde cero, aparece la pantalla principal: **Continuar aventur
 
 **Gráficos y actualizaciones:** Canvas 2D sigue siendo la opción predeterminada. **PixiJS WebGL2** es experimental y opcional, con una prueba de 15 segundos para conservarlo o regresar a Canvas; no está certificado como sustituto. En **Juego y ajustes** puedes usar **Buscar actualización** o **Instalar actualización** cuando aparezca; una publicación nueva no demuestra que el navegador o la PWA instalada ya la estén usando. Comprueba `version` en el informe. Para saber qué compilación se publicó y cuáles son las pruebas pendientes, consulta el [estado vigente de desarrollo y aceptación](docs/DEVELOPMENT_STATE.md). La traducción al español del juego es parcial; los nombres de algunas clases y opciones se conservan en inglés.
 
-
 | Acción | Teclado por defecto |
 | --- | --- |
 | Mover | W/A/S/D |
