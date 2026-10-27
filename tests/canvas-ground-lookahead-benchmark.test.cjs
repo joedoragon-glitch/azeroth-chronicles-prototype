@@ -1,5 +1,5 @@
 'use strict';
-// Phase 3 observational A/B: ACTUAL approved Canvas floor painter and the
+// Phase 3 observational A/B: actual Canvas floor painter and the
 // production GroundCache under a reproducible virtual-camera traversal.
 // This benchmark does not install, enable, or certify any runtime optimization.
 const assert = require('node:assert/strict');
@@ -115,12 +115,12 @@ function run(mode, type) {
   return {
     scenario: type, mode, frames: samples.length,
     visibleBuilds, idleBuilds, totalBuilds: st.builds,
-    visibleFrameP95Ms: percentile(samples, .95),
-    visibleFrameP99Ms: percentile(samples, .99),
-    visibleFrameMaxMs: +Math.max(...samples).toFixed(3),
-    visibleRebuildP95Ms: percentile(visibleMissMs, .95),
+    foregroundCacheDrawP95Ms: percentile(samples, .95),
+    foregroundCacheDrawP99Ms: percentile(samples, .99),
+    foregroundCacheDrawMaxMs: +Math.max(...samples).toFixed(3),
+    foregroundRebuildCallP95Ms: percentile(visibleMissMs, .95),
     totalRebuildMs: +st.rebuildMs.toFixed(3),
-    optionalIdlePaintMs: +idleMs.reduce((a,b)=>a+b,0).toFixed(3),
+    simulatedIdlePrepareCallMs: +idleMs.reduce((a,b)=>a+b,0).toFixed(3),
     peakLogicalBytes: maxBytes,
   };
 }
@@ -138,7 +138,8 @@ for (const s of ['straight', 'reversal', 'zigzag']) {
   assert(a.visibleBuilds >= 1 && b.visibleBuilds >= 1);
   assert.equal(b.peakLogicalBytes <= LIMIT, true);
 }
-// No speedup assertion: CI runners differ from the owner's browser/device,
+// No speedup assertion: these are cache method timings, not whole-frame times;
+// CI runners differ from the owner's browser/device,
 // and moving synchronous work off draw() can increase total painting cost.
 console.log('CANVAS_PHASE3_BENCHMARK_JSON=' + JSON.stringify({
   environment: {
