@@ -10,7 +10,14 @@
     // Unlisted low-spec test route. A query link is not authentication.
     combatDiagnosticsEnabled = /(?:^|[?&])combatDiagnostics=1(?:&|$)/.test(
       window.location?.search || '',
+    ),
+    roguePlaytestEnabled = /(?:^|[?&])roguePlaytest=1(?:&|$)/.test(
+      window.location?.search || '',
     );
+  // Opt-in playable class on the draft/preview build only. A query link is not
+  // authentication; keep the real public branch unchanged until release approval.
+  // Must precede profile/load/validation, class selection, and Succession lists.
+  if (roguePlaytestEnabled) Campaign.enableRoguePlaytest();
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -3839,7 +3846,9 @@
   function classGrowthLine(heroClass) {
     const p = Campaign.rules.balance.classPassives;
     const es = language === 'es';
-    if (heroClass === 'rogue') return '';
+    if (heroClass === 'rogue') return es
+      ? 'Travesura · Cada nivel: +2 puntos porcentuales de probabilidad crítica de la Pícara.'
+      : 'Mischief · Each level: +2 percentage points Rogue critical chance.';
     if (heroClass === 'paladin')
       return es
         ? 'Fortaleza · Cada nivel: +' + p.paladin.hpPerLevel +
@@ -4005,8 +4014,8 @@
     const h = game.hero,
       es = language === 'es',
       className = es
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[h.class]
-        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[h.class],
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara Bardo' }[h.class]
+        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue Bard' }[h.class],
       stats = [
         { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
         { label: es ? 'Poder' : 'Power', value: String(game.power()) },
@@ -5717,6 +5726,16 @@
         6: 'Repelling Shot / Volley',
         7: 'Piercing Arrow',
         8: 'Hunters Salvo / Grand Hunt',
+      },
+      rogue: {
+        1: 'Ding and Sting / Raise a Racket',
+        2: "Lead Feet / Can't Dance",
+        3: 'Beat Breaker / Shut the Band Up',
+        4: 'Sour Note / Rotten Chorus',
+        5: 'Sticky Shuffle / Briar Boogie',
+        6: 'Stolen Beat / Time Out',
+        7: 'Wrong Foot / Panic Party',
+        8: 'Bad Bell Day / Last Laugh',
       },
     };
     return tr(labels[game.hero.class]?.[slot] || skillNames[slot - 1]);
