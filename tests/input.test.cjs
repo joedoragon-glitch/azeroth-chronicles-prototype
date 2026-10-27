@@ -7,6 +7,7 @@ const storage = { getItem: k => items.get(k), setItem: (k,v) => items.set(k,v) }
 let controls = Input.create(storage);
 assert.equal(controls.preferences.phoneLayout, 'two-thumb');
 assert.equal(controls.preferences.joystickMode, 'fixed', 'legacy/default remains fixed');
+assert.equal(controls.preferences.hudStyle, 'classic', 'Classic HUD remains the default');
 assert.equal(controls.preferences.touchMove, true);
 assert.equal(controls.preferences.mouseMove, false);
 assert.equal(controls.preferences.preset,'right','new devices default to two-handed WASD + right-hand skills');
@@ -41,12 +42,14 @@ assert.equal(controls.rebind('skill1','KeyR'),null);
 assert.equal(controls.actionFor('KeyR'),'skill1','retired menu keys are rebindable');
 controls.select('phoneLayout','left-hand');controls.select('touchMove',false);controls.select('mouseMove',true);
 controls.select('joystickMode','floating');
+controls.select('hudStyle','adaptive');
 controls=Input.create(storage);
 assert.equal(controls.actionFor('ArrowUp'),'up');
 assert.equal(controls.actionFor('KeyR'),'skill1');
 assert.equal(controls.preferences.preset,'custom','custom key settings persist');
 assert.equal(controls.preferences.phoneLayout,'left-hand');
 assert.equal(controls.preferences.joystickMode,'floating','independent preference survives reload');
+assert.equal(controls.preferences.hudStyle,'adaptive','HUD style persists independently');
 assert.equal(controls.preferences.touchMove,false);
 assert.equal(controls.preferences.mouseMove,true);
 assert.equal(controls.applyPreset('invalid'),false);
@@ -91,6 +94,7 @@ assert(!zone({x:60,y:170},{width:800,height:375}),'upper-left world taps remain 
 assert(!zone({x:60,y:340},{width:800,height:375},[{x:40,y:310,width:50,height:50}]),'interact hitbox owns gesture');
 assert(zone({x:55,y:740},{width:375,height:800}),'portrait lower-left remains eligible');
 controls.select('joystickMode','invalid');assert.equal(controls.preferences.joystickMode,'fixed','invalid selection falls back safely');
+controls.select('hudStyle','invalid');assert.equal(controls.preferences.hudStyle,'classic','invalid HUD style falls back safely');
 controls.select('joystickMode','floating');assert.equal(controls.preferences.joystickMode,'floating');
 // Previous device preferences preserve the former numeric bindings and custom layouts.
 items.set(Input.preferenceKey,JSON.stringify({bindings:{up:'KeyS'}}));
@@ -102,6 +106,7 @@ assert.equal(migrated.actionFor('KeyE'),'target','old default Q targeting migrat
 assert.equal(migrated.actionFor('Digit1'),'skill1','existing numeric preferences remain numeric');
 assert.equal(migrated.preferences.preset,'classic','old classic preferences are identified');
 assert.equal(migrated.preferences.joystickMode,'fixed','old preferences require no migration');
+assert.equal(migrated.preferences.hudStyle,'classic','legacy profile never opts into Adaptive HUD');
 assert.equal(migrated.actionFor('KeyQ'),'recall','freed Q becomes a recall shortcut');
 assert.equal(migrated.actionFor('KeyI'),null,'legacy inventory binding is retired');
 assert.equal(migrated.actionFor('KeyJ'),null,'legacy quest binding is retired');
@@ -118,8 +123,9 @@ assert.equal(controls.actionFor('KeyQ'),null,'secondary Q recall alias follows t
 assert.equal(controls.actionFor('KeyL'),'recall');
 assert.equal(controls.rebind('skill1','KeyQ'),null,'Q can be explicitly rebound');
 assert.equal(controls.actionFor('KeyQ'),'skill1');
-items.set(Input.preferenceKey,JSON.stringify({joystickMode:'broken'}));
+items.set(Input.preferenceKey,JSON.stringify({joystickMode:'broken',hudStyle:'broken'}));
 assert.equal(Input.create(storage).preferences.joystickMode,'fixed','invalid saved mode is sanitized');
+assert.equal(Input.create(storage).preferences.hudStyle,'classic','invalid stored HUD preference sanitized');
 items.set(Input.preferenceKey,'broken JSON');
 assert.equal(Input.create(storage).actionFor('KeyJ'),'skill1');
 let warning='';
