@@ -4,7 +4,7 @@
 
 [PR #335](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/335), the accepted 20 October dev.101 balance change, added `enemyTargetingMultiplier: 1.1` for **both** ordinary passive acquisition and ordinary ranged-basic eligibility. The owner had asked for slightly greater targeting distance to counter superior Mage (400) and Ranger (450) basic reaches. The 10% scalar applied to *both* unrelated mechanics. [PR #343](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/343), dev.109 later that day, added an independent 30% position-derived fortified ranged bonus and used fortified firing reach as fortified passive detection.
 
-The present change separates the two multipliers without changing today's defaults, encounter range, skills, damage, projectiles, cooldowns, fort bonus, save schema or player-side rules.
+The initial draft separated two independently authored multipliers. The owner then authorized the first concrete balance fix: **each ranged enemy's automatic detection must cover at least its actual basic firing reach, inside and outside forts**. Firing values, melee detection, special skills, damage, projectiles, cooldowns, fort bonuses, save format and player-side rules remain unchanged.
 
 ## Tune these independently in `src/prototype/rules.js`
 
@@ -13,9 +13,9 @@ The present change separates the two multipliers without changing today's defaul
 | `balance.enemyAcquisitionRangeMultiplier` | `1.1` | Passive enemy detection, including the longer fortified acquisition band |
 | `balance.enemyRangedBasicRangeMultiplier` | `1.1` | Enemy ordinary ranged basic attack eligibility, including fortified firing |
 
-Unfortified detection: `260 × enemyAcquisitionRangeMultiplier`. Fortified ranged detection: `max(260, (shotRange || 280) × 1.3) × enemyAcquisitionRangeMultiplier`. Basic ranged fire: `(shotRange || 280) × enemyRangedBasicRangeMultiplier × (inFort ? 1.3 : 1)`.
+The common melee awareness band remains `260 × enemyAcquisitionRangeMultiplier`. Enemy basic firing is still `(shotRange || 280) × enemyRangedBasicRangeMultiplier × (fortified ? 1.3 : 1)`.
 
-**Deliberate independence in forts:** Before the refactor, acquisition indirectly called `enemyRangedRange(e)`. That path has been removed, so retuning *only* ranged firing distance no longer retunes detection, and vice versa, even for fortified enemies. The existing 30% fort bonus is separate and unchanged.
+**New effective ranged awareness invariant:** `max(common awareness, actual enemyRangedRange(e), fortified legacy awareness)`, where the old fortified awareness term is `(shotRange || 280) × enemyAcquisitionRangeMultiplier × 1.3` only inside a fort. This keeps the independently adjustable detection modifier, but changing firing reach now automatically increases detection when necessary. Reducing firing reach does not reduce the native detection band. In forts, the 30% garrison bonus is position-derived for **both** ranges. Ranged detection is at least ranged firing, with equality at the current fort defaults. The older PR's exact independence of *effective* reach is superseded by this owner-approved minimum-detection relationship.
 
 ## Range audit (world units)
 
@@ -35,7 +35,7 @@ Unfortified detection: `260 × enemyAcquisitionRangeMultiplier`. Fortified range
 | Archer, Crown Guard, wraith, forced-role/default ranged | 280 | 308 |
 | Skeleton bow guard | 290 | 319 |
 
-All unfortified enemies share ordinary passive acquisition **260 → 286**, regardless of species. In forts, ranged enemies use the larger of ordinary acquisition and the fortified species band; e.g., default 280-shot: **364 → 400.4**. Base figure is the pre-dev.101 10% targeting increase, not the pre-dev.109 fortified upgrade.
+Before this correction, all **unfortified** ordinary enemies shared 286 passive awareness regardless of shot range. The melee band stays at 286, while ranged enemies now automatically detect out to their real basic firing reach if that is greater. Ranged fort detection already normally equaled its fortified basic firing reach and will continue to meet or exceed it even when either authored multiplier changes. Base figure means before dev.101's 10% increase, not before dev.109's fort bonus.
 
 The Archer and ranged pet have **no independent enemy-style 260/286 detector**: `party.js:squadThreats` enlists already-aggroed enemies within **540 of the hero** (or **720** for bosses/summons), then companion doctrine and target selection handle combat. Those are encounter selection thresholds, not automatic attack reach or personal visual sight. Hero auto fire similarly checks in-range eligible targets; it does not use the hostile passive detector.
 
@@ -53,3 +53,24 @@ Keep the historical PR #335/343 records unchanged for provenance.
 ## Source-evidence reconciliation
 
 Focused CI on the first PR head passed the native combat-range tests but reported a sprite-scope source fingerprint mismatch, solely because the accepted `src/prototype/rules.js` text changed. The active `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` fingerprint for that file alone is updated from `9a2f51894794332c348c9e0814d20b8558209b673e427e923f9b93b6d263975e` to `3630f14f02fc15950d8f75571ddf4f3bd61fe3b7831bf4b91d8e7c358010fdea`, as measured by the focused run. No species mapping, artwork classification, curated asset decision, other source hash or historical original has been regenerated. The exact-head sprite-scope test must pass on this updated draft.
+
+## First balance fix: hostile ranged detection matches or exceeds basic firing (27 October)
+
+The effective values below are **world units** at the existing 1.1 firing, 1.1 awareness and 1.3 fort multipliers. Basic firing reach never changes in this fix. Outside forts only the longer-ranged profiles require more detection. Fortified values were already numerically aligned and are now kept aligned by an explicit runtime floor even if firing is retuned later.
+
+| Hostile ranged archetype | Ordinary basic firing | Ordinary detection before → after | Fortified basic firing | Fortified detection before → after |
+| --- | ---: | ---: | ---: | ---: |
+| Mireling Spitter | 253 | 286 → 286 | 328.9 | 328.9 → 328.9 |
+| Goblin Slinger | 264 | 286 → 286 | 343.2 | 343.2 → 343.2 |
+| Reedbeast Spitter | 275 | 286 → 286 | 357.5 | 357.5 → 357.5 |
+| Ogre Stone Thrower | 286 | 286 → 286 | 371.8 | 371.8 → 371.8 |
+| Orc Axe Thrower | 286 | 286 → 286 | 371.8 | 371.8 → 371.8 |
+| Ashbeast Cinder Spitter | 297 | 286 → **297** | 386.1 | 386.1 → 386.1 |
+| Archer / Crown Guard / Wraith / default ranged | 308 | 286 → **308** | 400.4 | 400.4 → 400.4 |
+| Skeleton Bow Guard | 319 | 286 → **319** | 414.7 | 414.7 → 414.7 |
+
+The fort columns show **conditional** native ranges if a species enters an authored fort; they do not claim every species naturally lives in every fort. Mixed-role hybrids are included whenever their actual actor flag is ranged, including saved ranged monsters, summoned units and forced-ranged variants. An explicitly forced-melee actor is unaffected. The common 286 passive radius and the original two configuration knobs remain independent for melee behavior.
+
+**Important:** Detection distance alone does not bypass line of sight, fort shooting permissions, town safety, opening-field aggro restrictions or territorial disengagement. Player-side hero and companion/pet ranges, damage and skills are outside this fix. The earlier documentation's original parity-only draft state and original first-run fingerprint reconciliation remain as provenance, not a statement that the final draft makes no balance change.
+
+**Validation:** `tests/fortifications.test.cjs` exercises every known ranged shot profile and fortified/unfortified state, fallbacks and tuning; `tests/enemy-distant-damage-response.test.cjs` exercises actual outdoor automatic aggro and aim inside newly covered range, refusal beyond it and melee awareness stability. Focused CI and reproducible PWA build results must correspond to the new exact branch head; no owner approval has been given for full-suite, merge or deployment.

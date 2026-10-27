@@ -34,8 +34,46 @@ function fixture() {
   Object.assign(g.hero, { x: 3340, y: 950, hp: 10000, maxHp: 10000, immune: 0 });
   return { g, e };
 }
-// Both dev.101 bonuses stay 10% by default, but are independently tunable
-// even when fort acquisition extends beyond ordinary passive detection.
+// Native species matrix: actual firing must fit within passive detection,
+// both outdoors and inside an authored fort, at the original 10%/30% defaults.
+{
+  const { g, e } = fixture();
+  const near = (actual, expected, label) =>
+    assert(Math.abs(actual - expected) < 1e-8, label + ': ' + actual + ' vs ' + expected);
+  const profiles = [
+    // Species, authored basic reach, new outside detection, fortified basic/detection.
+    ['mireling', 230, 286, 328.9],
+    ['goblin', 240, 286, 343.2],
+    ['reedbeast', 250, 286, 357.5],
+    ['ogre', 260, 286, 371.8],
+    ['orc', 260, 286, 371.8],
+    ['ashbeast', 270, 297, 386.1],
+    ['archer', 280, 308, 400.4],
+    ['crownguard', 280, 308, 400.4],
+    ['wraith', 280, 308, 400.4],
+    ['skeleton', 290, 319, 414.7],
+  ];
+  for (const [species, shotRange, outsideDetection, fortifiedRange] of profiles) {
+    Object.assign(e, { species, ranged: true, shotRange, x: 3000 });
+    assert(g.enemyFort(e), species + ': inside native fort');
+    near(g.enemyRangedRange(e), fortifiedRange, species + ': fortified firing');
+    near(g.enemyAcquisitionRange(e), fortifiedRange, species + ': fortified detection');
+    e.x = 3250;
+    assert.equal(g.enemyFort(e), null, species + ': left fort');
+    near(g.enemyRangedRange(e), shotRange * 1.1, species + ': ordinary firing');
+    near(g.enemyAcquisitionRange(e), outsideDetection, species + ': ordinary detection');
+  }
+  // Forced ranged or saved unfamiliar species use the native 280 fallback.
+  Object.assign(e, { species: 'other', ranged: true });
+  delete e.shotRange;
+  near(g.enemyRangedRange(e), 308, 'fallback ordinary firing');
+  near(g.enemyAcquisitionRange(e), 308, 'fallback ordinary detection');
+  // Explicit melee flag always wins over a species or stray saved shotRange.
+  Object.assign(e, { species: 'skeleton', ranged: false, shotRange: 900 });
+  near(g.enemyAcquisitionRange(e), 286, 'melee retains its 286-unit awareness');
+}
+// The tuning scalars remain independently authored, but effective ranged
+// detection automatically covers any greater range allowed by basic firing.
 {
   const { g, e } = fixture();
   const balance = C.rules.balance;
@@ -49,20 +87,38 @@ function fixture() {
     near(g.enemyAcquisitionRange(e), 400.4, 'fort detection baseline');
     near(g.enemyRangedRange(e), 400.4, 'fort firing baseline');
     balance.enemyRangedBasicRangeMultiplier = 0.9;
-    near(g.enemyAcquisitionRange(e), 400.4, 'firing tuning cannot change detection');
-    near(g.enemyRangedRange(e), 327.6, 'firing tuning changes basic reach');
+    near(g.enemyAcquisitionRange(e), 400.4, 'shorter fort shots do not shrink detection');
+    near(g.enemyRangedRange(e), 327.6, 'shortened fort firing');
+    balance.enemyRangedBasicRangeMultiplier = 1.35;
+    near(g.enemyAcquisitionRange(e), 491.4, 'longer fort shots expand minimum detection');
+    near(g.enemyRangedRange(e), 491.4, 'longer fort firing');
     balance.enemyRangedBasicRangeMultiplier = oldFiring;
     balance.enemyAcquisitionRangeMultiplier = 1.2;
-    near(g.enemyAcquisitionRange(e), 436.8, 'detection tuning changes fort acquisition');
-    near(g.enemyRangedRange(e), 400.4, 'detection tuning cannot change firing');
+    near(g.enemyAcquisitionRange(e), 436.8, 'independent fort detection may exceed firing');
+    near(g.enemyRangedRange(e), 400.4, 'fort firing unaffected by detection tuning');
     e.x = 3250;
     assert.equal(g.enemyFort(e), null);
-    near(g.enemyAcquisitionRange(e), 312, 'unfortified detection');
-    near(g.enemyRangedRange(e), 308, 'unfortified firing unchanged');
+    near(g.enemyAcquisitionRange(e), 312, 'detection-only tuning outside fort');
+    near(g.enemyRangedRange(e), 308, 'outside firing unchanged');
+    balance.enemyAcquisitionRangeMultiplier = 0.8;
+    near(g.enemyAcquisitionRange(e), 308, 'outside firing protects detection floor');
+    e.x = 3000;
+    near(g.enemyAcquisitionRange(e), 400.4, 'fort firing protects detection floor');
+    e.ranged = false;
+    near(g.enemyAcquisitionRange(e), 208, 'melee detection still independent');
   } finally {
     balance.enemyAcquisitionRangeMultiplier = oldDetection;
     balance.enemyRangedBasicRangeMultiplier = oldFiring;
   }
+}
+// Native wall-line and passive aggro must agree with fortified basic reach.
+{
+  const { g, e } = fixture();
+  e.aggro = false;
+  assert(g.enemyFort(e));
+  assert(g.enemyRangedLine(e, g.hero));
+  g.updateEnemies(0.01);
+  assert(e.aggro, 'idle fortified ranged actor auto-detects inside basic shot range');
 }
 // One catalog covers every regional hold, every field compound, fortified
 // interiors and Crown command/final courtyard, and survives save restoration.

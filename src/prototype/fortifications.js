@@ -146,15 +146,18 @@
         );
       }
       enemyAcquisitionRange(e) {
-        // Forts preserve their extended acquisition band without coupling
-        // detection to the independently configurable firing multiplier.
-        const detection = R.balance.enemyAcquisitionRangeMultiplier;
-        return Math.max(
-          R.balance.enemyAcquisitionRange * detection,
-          this.enemyRanged(e) && this.enemyFort(e)
+        const detection = R.balance.enemyAcquisitionRangeMultiplier,
+          passive = R.balance.enemyAcquisitionRange * detection;
+        // Ordinary melee awareness keeps its independent global distance.
+        if (!this.enemyRanged(e)) return passive;
+        // A ranged enemy must notice visible targets throughout its actual
+        // basic firing reach, including position-derived fortified reach.
+        // Independent fortified detection may remain longer than its shot.
+        const fort = this.enemyFort(e),
+          fortifiedDetection = fort
             ? (e.shotRange || 280) * detection * R.balance.fortifications.rangeMultiplier
-            : 0,
-        );
+            : 0;
+        return Math.max(passive, fortifiedDetection, this.enemyRangedRange(e));
       }
       enemyRangedLine(e, target) {
         return this.enemyRanged(e)
