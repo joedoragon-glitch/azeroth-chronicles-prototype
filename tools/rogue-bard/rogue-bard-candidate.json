@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "status": "inert-design-candidate-not-imported-by-runtime",
+  "sourceMainSha": "e44ea0ec4b9ed164a85431e972664efda2190da6",
+  "date": "2026-10-26",
+  "ownerEstablished": {
+    "heroClass": "rogue",
+    "presentation": "female guitar-playing bard, deliberately shameless/disruptive",
+    "startingCompanions": 0,
+    "cannotNewlyHire": [
+      "soldier",
+      "archer"
+    ],
+    "activePartyBonus": 1,
+    "charmFrom": "automatic basic-hit chance",
+    "ownedCapturedMonstersPersist": true,
+    "bossCaptainRingleaderCharm": false,
+    "meleeRole": "soldier friendly AI",
+    "rangedHealerRole": "archer friendly AI and trained companion healing",
+    "endureSeconds": 2,
+    "endureFloorHp": 1,
+    "passiveCritPercentagePointsPerLevel": 1,
+    "passiveCritIncludesLevel1": true,
+    "passiveAddsOtherStats": false,
+    "staticArtOnly": true,
+    "heroSuccessionFourClassExistingFlow": true,
+    "charmedMonstersInheritedBySuccessors": true,
+    "nonRogueSuccessorsCannotCharm": true
+  },
+  "proposal": {
+    "classStarting": {
+      "hp": 100,
+      "mp": 70,
+      "power": 19,
+      "armor": 4,
+      "speed": 300
+    },
+    "disciplinePerRank": {
+      "power": 7,
+      "mana": 2,
+      "hp": 28,
+      "speed": 38
+    },
+    "personalCrit": {
+      "baseChance": 0.1,
+      "perLevel": 0.01,
+      "maxBooksBonus": 0.05,
+      "source": "hero-only",
+      "noCharmMultiplier": true
+    },
+    "endure": {
+      "cooldownSeconds": 90,
+      "expiry": "normal death if no legal healing above 1 HP",
+      "pendingApproval": true
+    },
+    "automaticBasic": {
+      "name": "Rude Riff",
+      "shape": "short targeted instant cone",
+      "range": 260,
+      "halfAngleRadians": 0.5,
+      "baseDamageFormula": "0.80*(power+12)",
+      "primaryTargetCount": 1,
+      "splashTargetCap": 2,
+      "splashDamageFractionOfPrimary": 0.25,
+      "cooldownSeconds": 0.85,
+      "criticalAction": "hero/rogue/auto",
+      "criticalLever": "damage",
+      "oneReceiptPerAction": true,
+      "charmEligibleTarget": "only surviving actual-hit primary",
+      "splashNeverCharms": true
+    },
+    "comboFinisher": {
+      "name": "Full Chorus",
+      "everyValidPrimaryHit": 3,
+      "resetSeconds": 4,
+      "range": 300,
+      "halfAngleRadians": 0.75,
+      "totalTargetCap": 5,
+      "newSecondaryDamageFraction": 0.2,
+      "secondarySlowSeconds": 0.75,
+      "charmOnAdditionalTargets": false
+    },
+    "charm": {
+      "initialChancePerEligibleHit": 0.12,
+      "separateSavedRandomStream": true,
+      "doNotModifyCriticalStreams": true,
+      "forbidSummonsAndScriptedTemporary": true,
+      "speciesQuota": "rogue effective expedition active cap counts active+resting+fallen",
+      "speciesVariantKey": "canonical species and authored combat subtype",
+      "proposedTotalPermanentCharmedRosterCap": 12,
+      "fullActivePartyPolicy": "join reserve if total roster budget permits",
+      "capturedHpPolicy": "normalized companion maximum HP retaining wounded health fraction",
+      "sourceStatsPolicy": "retain species profile, bounded friendly normalization; actual multipliers TBD",
+      "successionOverflowPolicy": "keep owned, deterministically rest minimal active overflow",
+      "inheritedConventionalTroopsUsableByRogue": true
+    },
+    "capacity": {
+      "ordinaryRank1To6": [
+        2,
+        3,
+        3,
+        4,
+        5,
+        6
+      ],
+      "rogueRank1To6": [
+        3,
+        4,
+        4,
+        5,
+        6,
+        7
+      ],
+      "rogueBasicBarracksRank1To6": [
+        3,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "rogueFullBarracksRank1To6": [
+        3,
+        4,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    "traps": {
+      "maxSimultaneouslyPlaced": 2,
+      "tentativeLifetimeSeconds": 10,
+      "target": "hostile enemies only",
+      "disarmExistingTrapDuration": "decision pending"
+    },
+    "summon": {
+      "firstCandidate": "deferred, no persistent summon AI or extra actors",
+      "ownerIdeaPreserved": true
+    }
+  },
+  "skillCandidate": [
+    {
+      "slot": 1,
+      "tap": "Cutting Chord",
+      "charged": "Clashing Chorus",
+      "crit": [
+        "damage",
+        "damage"
+      ],
+      "note": "auto basic Rude Riff remains distinct; no area Charm"
+    },
+    {
+      "slot": 2,
+      "tap": "Off-Key Waltz",
+      "charged": "Waltz Chorus",
+      "crit": [
+        "slowDuration",
+        "slowDuration"
+      ],
+      "note": "bounded Slow"
+    },
+    {
+      "slot": 3,
+      "tap": "Heckler's Note",
+      "charged": "Dissonant Heckle",
+      "crit": [
+        "cooldownDebt",
+        "silenceDuration"
+      ],
+      "note": "frequent precise interruption with boss restrictions"
+    },
+    {
+      "slot": 4,
+      "tap": "Rotten Serenade",
+      "charged": "Rotten Choir",
+      "crit": [
+        "damage",
+        "damage"
+      ],
+      "note": "modest damage over time and capped healing reduction; critical enhances initial hit only"
+    },
+    {
+      "slot": 5,
+      "tap": "Tripwire Tango",
+      "charged": "Tripwire Crescendo",
+      "crit": [
+        "slowDuration",
+        "damage"
+      ],
+      "note": "two bounded trap types; roll on placement"
+    },
+    {
+      "slot": 6,
+      "tap": "Sabotage Verse",
+      "charged": "Sabotage Chorus",
+      "crit": [
+        "cooldownDebt",
+        "cooldownDebt"
+      ],
+      "note": "not-ready skill cooldown debt"
+    },
+    {
+      "slot": 7,
+      "tap": "Stage Fright",
+      "charged": "Stage Panic",
+      "crit": [
+        "pushDistance",
+        "pushDistance"
+      ],
+      "note": "collision-safe push/Weaken; summon separate unresolved"
+    },
+    {
+      "slot": 8,
+      "tap": "Grand Finale",
+      "charged": "Catastrophic Encore",
+      "crit": [
+        "damage",
+        "silenceDuration"
+      ],
+      "note": "bounded limited targets, not boss lock"
+    }
+  ],
+  "visual": {
+    "normal": {
+      "style": "static procedural/raster",
+      "character": "warm dark-brown skin, long dark hair, violet/copper asymmetrical sari-inspired fantasy costume",
+      "weapon": "visible amber wood six-string guitar/lute hybrid across front",
+      "palette": {
+        "skin": "#986548",
+        "hair": "#1b1723",
+        "violet": "#614163",
+        "copper": "#ba6e42",
+        "guitar": "#a96537",
+        "gold": "#d6b16b"
+      }
+    },
+    "crowned": {
+      "style": "existing static crowned-hero pipeline",
+      "identity": "same face, complexion, hair and guitar",
+      "crown": "asymmetric obsidian/gold circlet",
+      "robe": "black-violet royal mantle with burgundy interior and gold trim",
+      "instrument": "same guitar with black lacquer, gilded strings and violet gem"
+    },
+    "noAnimations": true
+  },
+  "criticalIntensity": {
+    "damage": [
+      1.08,
+      1.2,
+      1.4
+    ],
+    "slowSeconds": [
+      0.2,
+      0.5,
+      1
+    ],
+    "cooldownDebtSeconds": [
+      0.2,
+      0.5,
+      0.9
+    ],
+    "silenceSeconds": [
+      0.15,
+      0.35,
+      0.65
+    ],
+    "pushMultiplier": [
+      1.08,
+      1.18,
+      1.3
+    ],
+    "oneLeverPerAction": true
+  },
+  "guardrails": [
+    "documentation fixture only, no production import",
+    "preserve v4 saves and old classes",
+    "7th party formation must not overlap",
+    "save 3-class Succession checks to derive class count",
+    "owner approves parameters before implementation",
+    "no merger/deployment authorized"
+  ]
+}
