@@ -143,10 +143,15 @@ The separate [consolidation handoff](CANVAS_PHASE0_3_CONSOLIDATION_HANDOFF_20261
 - [x] Phase 4 one-family evaluation completed with **HOLD** (no production procedural-art cache; 14/15 pixel mismatches in observational CPU raster trial).
 - [x] Phase 5 shared transition/hostile-frame source integration reviewed with new production-shell regression and **no extra live synchronous Canvas prepaint** ([evidence](CANVAS_PHASE5_TRANSITION_COMBAT_PREPARATION_EVIDENCE_20261027.md)).
 - [ ] Phase 5 physical-browser visual, memory and real-device combat/transition acceptance (not certified).
-- [ ] Phase 6 owner device evidence and merge decision.
+- [x] Phase 6 scoped Chromium/WebKit browser acceptance harness and measurement ledger added ([Phase 6 browser/device gate](CANVAS_PHASE6_BROWSER_DEVICE_ACCEPTANCE_20261027.md)); independently verify completed CI outcomes.
+- [ ] Phase 6 actual physical Chromebook / phone / desktop acceptance and explicit owner merge decision.
 
 **Hard boundary:** no claim of faster Canvas rendering, no automatic PR merge, and no Pixi renderer graduation until there is real device evidence.
 
 ## Phase 5 integration checkpoint — 27 October 2026
 
 The shared native travel/dungeon/Continue flow already prepares read-only approved sprites around the committed destination and draws the first scene under an opaque interlude; dynamic hazards, combat cues and shadows remain live. The only accepted optional Canvas raster preparation remains title-only and uses the existing 64 MiB ground backing store. There is no justified additional Cache prepaint during active combat or dungeon admissions while Phase 3 regional lookahead and Phase 4 bitmap reuse are both held. `tests/canvas-phase5-transition-safety.test.cjs` adds focused bilingual actual-native-travel, hidden committed-arrival, retry and stale-title-paint guards, documented in [the Phase 5 evidence ledger](CANVAS_PHASE5_TRANSITION_COMBAT_PREPARATION_EVIDENCE_20261027.md). No renderer/game/save/Pixi/PWA code was modified in Phase 5. Browser screenshot and owner-device acceptance are **still outstanding**, so this checkpoint does not mark the whole Phase 5 performance acceptance as passed.
+
+## Phase 6 browser and hardware acceptance checkpoint — 27 October 2026
+
+[Phase 6 acceptance ledger](CANVAS_PHASE6_BROWSER_DEVICE_ACCEPTANCE_20261027.md) now defines the exact UI-driven cold/warm title-Continue measurement, browser Canvas frame/raster comparisons, artifact retention, focused Chromium/WebKit acceptance workflow and outstanding device matrix. A headless viewport is **not** an actual phone or Chromebook, isolated \`renderer.draw()\` timing is **not** game-wide p95/p99, and no CI success can waive screenshots, actual combat/hardware memory, PWA offline or owner approval. Production source and held Phase 3–4 runtime candidates remain unchanged.
