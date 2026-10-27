@@ -58,7 +58,7 @@ for (const room of C.rules.supplyRooms) {
     assert(
       Math.abs(
         g.enemyRangedRange(e) -
-          (e.shotRange || 280) * C.rules.balance.enemyTargetingMultiplier * 1.3,
+          (e.shotRange || 280) * C.rules.balance.enemyRangedBasicRangeMultiplier * 1.3,
       ) < 1e-8,
     );
     const p = {

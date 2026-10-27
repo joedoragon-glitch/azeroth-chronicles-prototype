@@ -6826,7 +6826,9 @@
   const balance = {
     mountedMovementMultiplier: 1.3,
     enemySpecialReachMultiplier: 1.2,
-    enemyTargetingMultiplier: 1.1,
+    // Split dev.101's shared 10% knob; keep both original effective defaults.
+    enemyAcquisitionRangeMultiplier: 1.1,
+    enemyRangedBasicRangeMultiplier: 1.1,
     // All ordinary and elite basic reach comes from meleeReachTuning.
     meleeBasicRange: meleeReach.enemy,
     eliteMeleeBasicRange: meleeReach.elite,

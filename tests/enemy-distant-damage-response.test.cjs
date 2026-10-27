@@ -33,7 +33,7 @@ function tick(g, count, dt = 0.1) {
   }
 }
 const acquisition = Campaign.rules.balance.enemyAcquisitionRange *
-  Campaign.rules.balance.enemyTargetingMultiplier;
+  Campaign.rules.balance.enemyAcquisitionRangeMultiplier;
 assert.equal(acquisition, 286, 'original passive detection contract remains unchanged');
 
 // A real attacker outside passive acquisition must override an unrelated closer
@@ -54,7 +54,7 @@ for (const mode of ['normal', 'nightmare']) {
   tick(g, 1);
   assert(e.x > oldX, mode + ': enemy moves toward actual distant attacker, not closer soldier');
   assert.equal(Campaign.rules.balance.enemyAcquisitionRange *
-    Campaign.rules.balance.enemyTargetingMultiplier, acquisition,
+    Campaign.rules.balance.enemyAcquisitionRangeMultiplier, acquisition,
     'no globally enlarged acquisition range');
   const saved = g.snapshot();
   assert(!JSON.stringify(saved).includes('nextSidestep'),

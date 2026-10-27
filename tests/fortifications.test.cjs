@@ -34,6 +34,36 @@ function fixture() {
   Object.assign(g.hero, { x: 3340, y: 950, hp: 10000, maxHp: 10000, immune: 0 });
   return { g, e };
 }
+// Both dev.101 bonuses stay 10% by default, but are independently tunable
+// even when fort acquisition extends beyond ordinary passive detection.
+{
+  const { g, e } = fixture();
+  const balance = C.rules.balance;
+  const oldDetection = balance.enemyAcquisitionRangeMultiplier;
+  const oldFiring = balance.enemyRangedBasicRangeMultiplier;
+  const near = (actual, expected, label) =>
+    assert(Math.abs(actual - expected) < 1e-8, label + ': ' + actual + ' vs ' + expected);
+  try {
+    assert.equal(oldDetection, 1.1);
+    assert.equal(oldFiring, 1.1);
+    near(g.enemyAcquisitionRange(e), 400.4, 'fort detection baseline');
+    near(g.enemyRangedRange(e), 400.4, 'fort firing baseline');
+    balance.enemyRangedBasicRangeMultiplier = 0.9;
+    near(g.enemyAcquisitionRange(e), 400.4, 'firing tuning cannot change detection');
+    near(g.enemyRangedRange(e), 327.6, 'firing tuning changes basic reach');
+    balance.enemyRangedBasicRangeMultiplier = oldFiring;
+    balance.enemyAcquisitionRangeMultiplier = 1.2;
+    near(g.enemyAcquisitionRange(e), 436.8, 'detection tuning changes fort acquisition');
+    near(g.enemyRangedRange(e), 400.4, 'detection tuning cannot change firing');
+    e.x = 3250;
+    assert.equal(g.enemyFort(e), null);
+    near(g.enemyAcquisitionRange(e), 312, 'unfortified detection');
+    near(g.enemyRangedRange(e), 308, 'unfortified firing unchanged');
+  } finally {
+    balance.enemyAcquisitionRangeMultiplier = oldDetection;
+    balance.enemyRangedBasicRangeMultiplier = oldFiring;
+  }
+}
 // One catalog covers every regional hold, every field compound, fortified
 // interiors and Crown command/final courtyard, and survives save restoration.
 for (const id of [

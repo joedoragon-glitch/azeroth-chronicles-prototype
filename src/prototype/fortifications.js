@@ -141,14 +141,19 @@
       enemyRangedRange(e) {
         return (
           (e.shotRange || 280) *
-          R.balance.enemyTargetingMultiplier *
+          R.balance.enemyRangedBasicRangeMultiplier *
           (this.enemyFort(e) ? R.balance.fortifications.rangeMultiplier : 1)
         );
       }
       enemyAcquisitionRange(e) {
+        // Forts preserve their extended acquisition band without coupling
+        // detection to the independently configurable firing multiplier.
+        const detection = R.balance.enemyAcquisitionRangeMultiplier;
         return Math.max(
-          R.balance.enemyAcquisitionRange * R.balance.enemyTargetingMultiplier,
-          this.enemyRanged(e) && this.enemyFort(e) ? this.enemyRangedRange(e) : 0,
+          R.balance.enemyAcquisitionRange * detection,
+          this.enemyRanged(e) && this.enemyFort(e)
+            ? (e.shotRange || 280) * detection * R.balance.fortifications.rangeMultiplier
+            : 0,
         );
       }
       enemyRangedLine(e, target) {

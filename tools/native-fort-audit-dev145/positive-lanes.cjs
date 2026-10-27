@@ -81,7 +81,7 @@ for (const zone of [
     species: e.species,
     fort: choice.fort,
     distance: choice.distance,
-    baseRange: (e.shotRange || 280) * C.rules.balance.enemyTargetingMultiplier,
+    baseRange: (e.shotRange || 280) * C.rules.balance.enemyRangedBasicRangeMultiplier,
     ownWallBypassed: true,
     friendlyLineBlocked: !c.line(p, e),
     foreignWall: foreignWall?.id || null,
