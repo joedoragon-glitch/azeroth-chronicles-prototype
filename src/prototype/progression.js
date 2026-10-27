@@ -91,7 +91,10 @@
       heroOtherDamageBonus() {
         return Math.max(
           0,
-          this.power() - classes[this.hero.class].power - this.heroTalentDamageBonus() - this.heroPassivePowerBonus(),
+          this.power() -
+            classes[this.hero.class].power -
+            this.heroTalentDamageBonus() -
+            this.heroPassivePowerBonus(),
         );
       }
       heroEquipmentArmorBonus() {
@@ -331,7 +334,9 @@
         while (this.hero.xp >= this.xpRequired()) {
           this.hero.xp -= this.xpRequired();
           this.hero.level++;
-          this.hero.maxHp += R.balance.growth.hpPerLevel + (this.hero.class === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0);
+          this.hero.maxHp +=
+            R.balance.growth.hpPerLevel +
+            (this.hero.class === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0);
           // Keep dormant MP capacity age-correct for a future reactivation.
           this.hero.maxMp += R.manaBalance.perLevel;
           this.hero.hp = this.hero.maxHp;
@@ -626,7 +631,10 @@
       power() {
         if (this.hero.legacyEquipped)
           return (
-            this.hero.power + (this.hero.legacyWeaponPower || 0) + this.heroTalentDamageBonus() + this.heroPassivePowerBonus()
+            this.hero.power +
+            (this.hero.legacyWeaponPower || 0) +
+            this.heroTalentDamageBonus() +
+            this.heroPassivePowerBonus()
           );
         return (
           this.hero.power +
