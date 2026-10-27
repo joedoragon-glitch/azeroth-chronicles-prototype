@@ -1269,10 +1269,14 @@
           : (Math.imul(this.s.nextId, 747796405) + 2891336453) >>> 0;
         const next = (Math.imul(state, 1664525) + 1013904223) >>> 0;
         this.s.rogueCharmRng = next;
-        // 12% is a playtest candidate, not an owner-locked balance decision.
+        // Owner-approved fixed 12% per eligible, surviving primary hit.
         if (next / 4294967296 >= 0.12) return false;
         const u = this.unit(profile.role, primary.x, primary.y);
-        u.hp = Math.max(1, Math.round(u.maxHp * (primary.hp / primary.maxHp)));
+        // A hurt enemy stays hurt; fractional rounding cannot create a full-health ally.
+        u.hp = Math.max(
+          1,
+          Math.min(u.maxHp - 1, Math.round(u.maxHp * (primary.hp / primary.maxHp))),
+        );
         u.icon = primary.icon;
         u.name = profile.typeName;
         u.charmOrigin = { ...profile };

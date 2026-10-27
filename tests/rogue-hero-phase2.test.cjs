@@ -194,7 +194,8 @@ try {
   assert.equal(capturedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
   assert.equal(legal.companionDisplayName(capturedAlly), 'Goblin');
   assert.equal(capturedAlly.charmOrigin.sourceEnemyId, source.id);
-  assert(capturedAlly.hp > 0 && capturedAlly.hp <= capturedAlly.maxHp);
+  assert(capturedAlly.hp > 0 && capturedAlly.hp < capturedAlly.maxHp,
+    'surviving injured target must join wounded even when HP normalization rounds upward');
   assert.equal(legal.s.charmCaptures[capturedAlly.id].typeId, 'enemy:goblin:melee');
   assert.equal(legal.effects.filter((e) => e.type === 'rogueCharm').length, 1);
   assert.notEqual(legal.s.heroTarget, source.id, 'captured hostile cannot remain targeted');
@@ -275,6 +276,30 @@ try {
   assert.equal(reserveGame.s.party.at(-1).active, false,
     'full field admits captured ally into reserve');
   assert.doesNotThrow(() => Campaign.validate(reserveGame.snapshot()));
+
+  // Native zone admission follows the permanent owned company, not a species'
+  // home-region spawn table. Travel must neither heal nor recreate a captured mob.
+  const traveler = fresh(1).g;
+  capture(traveler);
+  const transported = traveler.s.party[0],
+    transportedId = transported.id,
+    sourceOrigin = structuredClone(transported.charmOrigin),
+    travelHp = transported.hp;
+  assert.equal(sourceOrigin.sourceZone, 'vale');
+  assert(traveler.enter('march'), 'native region transition succeeds');
+  assert.equal(traveler.s.party.find((u) => u.id === transportedId), transported);
+  assert.equal(transported.hp, travelHp, 'wound survives the first journey');
+  assert(traveler.enter('highlands'), 'Goblin legitimately accompanies a hero into the Highlands');
+  assert.deepEqual(transported.charmOrigin, sourceOrigin, 'species and source do not change with region');
+  assert.equal(transported.hp, travelHp, 'regional crossing is not a free heal');
+  assert(Math.hypot(transported.x - traveler.hero.x, transported.y - traveler.hero.y) < 150,
+    'active Charmed companion appears beside the hero in the destination');
+  const transportedSave = traveler.snapshot();
+  assert.doesNotThrow(() => Campaign.validate(transportedSave));
+  const transportedReload = Campaign.restore(transportedSave, () => 0.9);
+  assert.deepEqual(transportedReload.s.party[0].charmOrigin, sourceOrigin);
+  assert.equal(transportedReload.s.party[0].hp, travelHp);
+  assert.equal(transportedReload.zoneId, 'highlands');
 
   // Phase 3 closing lifecycle cases. Verify actual combat and save receipts,
   // not an invented direct-call success or a speculative species stat table.
