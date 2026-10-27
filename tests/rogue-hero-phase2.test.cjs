@@ -195,17 +195,16 @@ try {
   assert.equal(legal.s.party.length, 1);
   const capturedAlly = legal.s.party[0];
   assert.equal(capturedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
-  assert.equal(legal.companionDisplayName(capturedAlly), 'Goblin');
-  assert(legal.nameCompanion(capturedAlly.id, 'Mosswhistle'),
-    'Barracks naming uses the same native owner-name pathway as other companions');
-  assert.equal(legal.companionDisplayName(capturedAlly), 'Mosswhistle');
+  assert.equal(legal.companionDisplayName(capturedAlly), 'Pipsqueak',
+    'English game auto-names a legal capture without any naming dialog');
+  assert.equal(capturedAlly.customName, 'Pipsqueak');
   assert.equal(legal.nameCompanion(capturedAlly.id, 'Another'), false,
-    'the established one-time naming contract still applies');
+    'existing permanent-name contract blocks later renaming');
   assert.equal(capturedAlly.charmOrigin.typeName, 'Goblin',
     'personal names cannot overwrite the original monster subtype');
   assert.equal(capturedAlly.charmOrigin.sourceEnemyId, source.id);
-  assert(capturedAlly.hp > 0 && capturedAlly.hp <= capturedAlly.maxHp,
-    'surviving capture receives proportional HP with ordinary rounding');
+  assert.equal(capturedAlly.hp, capturedAlly.maxHp,
+    'auto-named capture always begins fully healed');
   assert.equal(legal.s.charmCaptures[capturedAlly.id].typeId, 'enemy:goblin:melee');
   assert.equal(legal.effects.filter((e) => e.type === 'rogueCharm').length, 1);
   assert.notEqual(legal.s.heroTarget, source.id, 'captured hostile cannot remain targeted');
@@ -213,8 +212,17 @@ try {
   assert.doesNotThrow(() => Campaign.validate(savedCapture));
   const restoredCapture = Campaign.restore(savedCapture, () => 0.9);
   assert.deepEqual(restoredCapture.s.party[0].charmOrigin, capturedAlly.charmOrigin);
-  assert.equal(restoredCapture.s.party[0].customName, 'Mosswhistle',
-    'a Charmed companion name survives save/restore without changing capture identity');
+  assert.equal(restoredCapture.s.party[0].customName, 'Pipsqueak',
+    'a Charmed nickname survives save/restore without changing capture identity');
+  assert.deepEqual(restoredCapture.s.rogueNicknameCursor, { en: 1, es: 0 });
+  const oldNicknameSave = structuredClone(savedCapture);
+  delete oldNicknameSave.rogueNicknameCursor;
+  assert.deepEqual(Campaign.validate(oldNicknameSave).rogueNicknameCursor,
+    { en: 0, es: 0 }, 'old v4 saves acquire safe rotation defaults');
+  const badNicknameSave = structuredClone(savedCapture);
+  badNicknameSave.rogueNicknameCursor.es = 70;
+  assert.throws(() => Campaign.validate(badNicknameSave),
+    /Invalid Charm nickname rotation/);
   // Identity survives ordinary native recovery, including fallen reserve status.
   capturedAlly.hp = 0;
   capturedAlly.active = false;
@@ -287,6 +295,10 @@ try {
   capture(reserveGame);
   assert.equal(reserveGame.s.party.at(-1).active, false,
     'full field admits captured ally into reserve');
+  assert.equal(reserveGame.s.party.at(-1).customName, 'Pipsqueak',
+    'reserve capture receives the exact same automatic nickname');
+  assert.equal(reserveGame.s.party.at(-1).hp, reserveGame.s.party.at(-1).maxHp,
+    'reserve capture also arrives at full health');
   assert.doesNotThrow(() => Campaign.validate(reserveGame.snapshot()));
 
   // Native zone admission follows the permanent owned company, not a species'
@@ -320,20 +332,20 @@ try {
   const woundedAlly = wounded.s.party[0];
   const postHitFraction = woundSource.hp / woundSource.maxHp;
   assert(postHitFraction > 0 && postHitFraction < 1, 'capture source survived wounded');
-  assert.equal(woundedAlly.hp,
-    Math.max(1, Math.round(woundedAlly.maxHp * postHitFraction)),
-    'new ally retains the post-hit injury fraction; no free Charm healing');
-  assert(woundedAlly.hp < woundedAlly.maxHp);
+  assert.equal(woundedAlly.hp, woundedAlly.maxHp,
+    'even a deeply wounded surviving monster is fully healed by Charm');
+  assert.equal(woundedAlly.customName, 'Pipsqueak');
   const woundedSave = wounded.snapshot();
   assert.doesNotThrow(() => Campaign.validate(woundedSave));
   const woundedReloaded = Campaign.restore(woundedSave, () => 0.9);
   assert.equal(woundedReloaded.s.party[0].hp, woundedAlly.hp,
-    'save/restore cannot silently heal a capture');
+    'save/restore preserves the fully healed capture');
   assert.equal(woundedReloaded.s.party[0].maxHp, woundedAlly.maxHp);
   assert.deepEqual(woundedReloaded.s.party[0].charmOrigin, woundedAlly.charmOrigin);
 
-  // Level growth uses the native companion pathway and preserves the wound
-  // debt rather than resetting the member to full health.
+  // Later ordinary wounds still follow native companion level-up semantics:
+  // retain absolute missing HP; no repeat Charm-healing effect.
+  woundedAlly.hp -= 8;
   const initialDamage = wounded.companionAttackDamage(woundedAlly),
     initialHp = woundedAlly.hp, initialMax = woundedAlly.maxHp;
   wounded.hero.level = 5;
@@ -346,6 +358,45 @@ try {
     'native companion damage scales with hero level');
   assert.equal(woundedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
   assert.doesNotThrow(() => Campaign.validate(wounded.snapshot()));
+
+  // Language is presentation preference, not a gameplay RNG stream.
+  const bilingual = fresh().g;
+  bilingual.rogueNicknameLanguage = 'es';
+  capture(bilingual);
+  assert.equal(bilingual.s.party[0].customName, 'Pulguillas');
+  assert.deepEqual(bilingual.s.rogueNicknameCursor, { en: 0, es: 1 });
+  bilingual.rogueNicknameLanguage = 'en';
+  capture(bilingual);
+  assert.equal(bilingual.s.party[0].customName, 'Pulguillas',
+    'existing Spanish nickname does not change with interface language');
+  assert.equal(bilingual.s.party[1].customName, 'Pipsqueak');
+  assert.deepEqual(bilingual.s.rogueNicknameCursor, { en: 1, es: 1 });
+  const bilingualReload = Campaign.restore(bilingual.snapshot(), () => 0.9);
+  assert.deepEqual(bilingualReload.s.rogueNicknameCursor, { en: 1, es: 1 });
+  assert.deepEqual(bilingualReload.s.party.map(u => u.customName),
+    ['Pulguillas', 'Pipsqueak']);
+
+  // Every pool contains seventy distinct valid names. No Charm/combat RNG is
+  // consumed when selecting the next suggestion, even at wraparound.
+  const rotation = fresh().g, charmRngBeforeNames = rotation.s.rogueCharmRng;
+  for (const locale of ['en', 'es']) {
+    rotation.rogueNicknameLanguage = locale;
+    const collected = Array.from({ length: 70 },
+      () => rotation.nextRogueCharmNickname());
+    assert.deepEqual(collected, R.rogueCharmNicknames[locale]);
+    assert.equal(new Set(collected).size, 70);
+    assert(collected.every((name) => Campaign.normalizeCharacterName(name) === name));
+    assert.equal(rotation.nextRogueCharmNickname(), collected[0],
+      'after all seventy have been used the pool starts again');
+  }
+  assert.equal(rotation.s.rogueCharmRng, charmRngBeforeNames,
+    'nickname selection must not alter the independent Charm probability');
+  const usedName = fresh().g;
+  capture(usedName);
+  usedName.s.rogueNicknameCursor.en = 0;
+  capture(usedName);
+  assert.deepEqual(usedName.s.party.map(u => u.customName),
+    ['Pipsqueak', 'Stinkums'], 'active/reserve names in use are skipped');
 
   // One seeded miss consumes exactly one separate Charm draw while keeping
   // the lawful enemy and every companion intact.
