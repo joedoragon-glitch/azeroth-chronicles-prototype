@@ -1632,24 +1632,45 @@
         ? name.trim()
         : 'Charmed creature';
     }
-    function barracksCharmedTypeMenu(b, typeId, back, page = 0) {
+    function charmedStatus(u) {
+      if (u.expeditionId) return 'Away';
+      if (u.hp <= 0) return 'Fallen';
+      return u.active === false ? 'Resting' : 'Active';
+    }
+    function barracksCharmedTypeMenu(b, typeId, back, page = 0, view = 'All') {
       const game = getGame(),
-        roster = game.s.party.filter((u) => charmedTypeId(u) === typeId),
-        label = roster.length ? charmedTypeName(roster[0]) : 'Charmed creature',
-        refresh = (next = page) => barracksCharmedTypeMenu(b, typeId, back, next),
-        actions = barracksPagedActions(roster, page, (u) => barracksCompanionAction(b, u, () => refresh()), refresh);
+        owned = game.s.party.filter((u) => charmedTypeId(u) === typeId),
+        roster = owned.filter((u) => view === 'All' || charmedStatus(u) === view),
+        label = owned.length ? charmedTypeName(owned[0]) : 'Charmed creature',
+        refresh = (next = page, nextView = view) =>
+          barracksCharmedTypeMenu(b, typeId, back, next, nextView),
+        actions = barracksPagedActions(roster, page, (u) => {
+          const result = barracksCompanionAction(b, u, () => refresh());
+          result.detail = charmedStatus(u) + ' · ' + result.detail;
+          return result;
+        }, refresh),
+        views = ['All', 'Active', 'Resting', 'Fallen', 'Away'];
+      actions.push(action(
+        'Filter: ' + view,
+        () => refresh(0, views[(views.indexOf(view) + 1) % views.length]),
+        'Cycle All, Active, Resting, Fallen and Away.',
+      ));
       openMenu(
         'Charmed monsters',
         label +
           ' · ' +
-          roster.length +
+          owned.length +
           ' owned · With you ' +
-          roster.filter((u) => u.active !== false).length +
+          owned.filter((u) => u.active !== false).length +
           ' · Resting ' +
-          roster.filter((u) => u.active === false).length +
+          owned.filter((u) => charmedStatus(u) === 'Resting').length +
+          ' · Fallen ' +
+          owned.filter((u) => charmedStatus(u) === 'Fallen').length +
+          ' · Away ' +
+          owned.filter((u) => charmedStatus(u) === 'Away').length +
           ' · Local group cap ' +
           game.barracksFieldCap(b),
-        actions.length ? actions : [action('No companions employed', () => {}, '', true)],
+        actions,
         back,
       );
     }
@@ -1672,7 +1693,10 @@
           return action(
             charmedTypeName(units[0]) + ' · ' + owned + (limit ? '/' + limit : '') + ' owned',
             () => barracksCharmedTypeMenu(b, key, () => barracksCharmedMenu(b, back, page)),
-            'With you ' + active + ' · Resting ' + (owned - active) + ' · Fallen ' + fallen,
+            'With you ' + active + ' · Resting ' +
+              units.filter((u) => charmedStatus(u) === 'Resting').length +
+              ' · Fallen ' + fallen +
+              ' · Away ' + units.filter((u) => charmedStatus(u) === 'Away').length,
           );
         }, refresh);
       openMenu(
@@ -1722,12 +1746,22 @@
     }
     function barracksCompanyMenu(b, back) {
       const returnHere = () => barracksCompanyMenu(b, back),
-        rank = getGame().s.expeditionRank || 1,
-        active = getGame().activeParty().length,
-        cap = getGame().barracksFieldCap(b);
+        game = getGame(),
+        rank = game.s.expeditionRank || 1,
+        active = game.activeParty().length,
+        cap = game.barracksFieldCap(b),
+        company = game.s.party,
+        charmed = company.filter((u) => !!charmedTypeId(u));
       openMenu(
         'Company',
-        'Choose who travels with you.',
+        'With you ' + active + '/' + cap +
+          ' · Resting ' + company.filter((u) => charmedStatus(u) === 'Resting').length +
+          ' · Fallen ' + company.filter((u) => charmedStatus(u) === 'Fallen').length +
+          ' · Away ' + company.filter((u) => charmedStatus(u) === 'Away').length +
+          (charmed.length
+            ? ' · Charmed ' + new Set(charmed.map(charmedTypeId)).size +
+              ' types / ' + charmed.length + ' owned'
+            : '') + '. Choose who travels with you.',
         [
           action(
             'Boss pet collection',

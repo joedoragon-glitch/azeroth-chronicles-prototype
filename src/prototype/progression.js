@@ -166,7 +166,8 @@
       }
       companionMaxHp(type, level = this.hero.level) {
         const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
-        const base = profile?.hp ?? R.balance.companions.hp[typeof type === 'object' ? type.type : type];
+        const base =
+          profile?.hp ?? R.balance.companions.hp[typeof type === 'object' ? type.type : type];
         if (!base) throw Error('Unknown companion type');
         const raw =
           base +
@@ -176,7 +177,8 @@
       }
       companionArmor(type) {
         const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
-        const base = profile?.armor ?? R.balance.companions.armor[typeof type === 'object' ? type.type : type];
+        const base =
+          profile?.armor ?? R.balance.companions.armor[typeof type === 'object' ? type.type : type];
         if (base === undefined) throw Error('Unknown companion type');
         return base + this.companionInheritedArmorBonus();
       }

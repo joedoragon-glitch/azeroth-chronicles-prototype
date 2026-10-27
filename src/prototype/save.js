@@ -8,23 +8,38 @@
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-    const recoveryCampOrder = (u, s) => {
+    // Persist only native work orders with an actual local target and a
+    // matching authenticated capture ledger. Existing Soldier/Archer recovery
+    // camp behavior is unchanged. Upgrade payment is never recharged on load.
+    const barracksWorkOrder = (u, s) => {
       if (
         s.recallActive ||
         u.active === false ||
         u.hp <= 0 ||
         !['soldier', 'archer'].includes(u.type) ||
-        u.order?.type !== 'build'
+        !['build', 'upgrade'].includes(u.order?.type)
       )
         return null;
+      const origin = u.charmOrigin;
+      const receipt = s.charmCaptures?.[u.id];
+      const charmed =
+        !!origin &&
+        !!receipt &&
+        Object.keys(origin).length === 6 &&
+        Object.keys(receipt).length === 6 &&
+        Object.keys(origin).every((key) => receipt[key] === origin[key]);
+      if (origin && !charmed) return null;
       const camp = s.zones?.[s.zone]?.buildings?.find(
-        (b) =>
-          b.id === u.order.id &&
-          b.kind === 'barracks' &&
-          b.progress < 4 &&
-          b.recoveryOnComplete === true,
+        (b) => b.id === u.order.id && b.kind === 'barracks',
       );
-      return camp ? { type: 'build', id: camp.id } : null;
+      if (!camp) return null;
+      if (u.order.type === 'build' && camp.progress < 4 &&
+        (charmed || camp.recoveryOnComplete === true))
+        return { type: 'build', id: camp.id };
+      if (u.order.type === 'upgrade' && charmed && camp.progress >= 4 &&
+        !camp.full && camp.upgradePaid === true)
+        return { type: 'upgrade', id: camp.id };
+      return null;
     };
     const gatheringOrder = (u, s) => {
       if (
@@ -120,7 +135,7 @@
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
-          u.order = gatheringOrder(u, out) || recoveryCampOrder(u, out);
+          u.order = gatheringOrder(u, out) || barracksWorkOrder(u, out);
         });
         for (const z of Object.values(out.zones)) {
           z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -832,8 +847,15 @@
         };
         const petFamilies = new Set();
         for (const u of s.party) {
-          if (u.charmOrigin !== undefined) validateCapture(u);
-          u.order = gatheringOrder(u, s) || recoveryCampOrder(u, s);
+          if (u.charmOrigin !== undefined) {
+            validateCapture(u);
+            const profile = R.balance.companions.charmed[u.charmOrigin.species]?.[
+              u.type === 'archer' ? 'ranged' : 'melee'
+            ];
+            if (!profile) throw Error('Invalid charmed companion profile');
+            u.damage = profile.damage;
+          }
+          u.order = gatheringOrder(u, s) || barracksWorkOrder(u, s);
           validateName(u.customName);
           if (u.type === 'pet') {
             if (
