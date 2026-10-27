@@ -190,5 +190,31 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(g.tacticalRogueRegroup(e)?.phase,'anchored',
     'an unhit ordinary goblin retains deliberate tactical anchoring');
 }
+// Preserve stronger tactical role contracts: an authored leader, summoned
+// creature, or captain is not reclassified into a normal chasing goblin.
+for(const [name, flags] of [
+  ['ringleader',{form:'ringleader'}],
+  ['summon',{summon:true}],
+  ['captain',{captain:true}],
+]){
+  const g=new Campaign('normal','ranger',()=>0.91);
+  g.enter('vale');
+  const e=g.makeEnemy({species:'goblin',name:name+' control',level:1,
+    hp:4000,damage:2,gold:0,xp:0},{x:1800,y:1800});
+  prep(g,e,{x:2250,y:1800});
+  Object.assign(e,flags);
+  assert(g.damage(e,25,'hero'),name+': a genuine hit applies');
+  assert(g.enemyUnderFireAlert(e),name+': alert really exists');
+  g._tacticalRegroups=new Map([[e.id,{
+    phase:'anchored',anchor:{x:e.x,y:e.y},holdRemaining:12,
+    moveUsed:true,recruited:false,
+  }]]);
+  const before={x:e.x,y:e.y};
+  g.s.time+=0.1;
+  g.updateEnemies(0.1);
+  assert.equal(dist(e,before),0,name+': leader/summon tactical hold is not overridden');
+  assert.equal(g.tacticalRogueRegroup(e)?.phase,'anchored',
+    name+': existing tactical lifecycle remains authoritative');
+}
 assert(coverage===5&&normalReactions>0,'characterization must probe legal basic shot and native reactions');
 console.log('PASS ranger edge characterization');
