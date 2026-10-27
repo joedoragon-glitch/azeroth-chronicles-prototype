@@ -2,6 +2,17 @@
 
 Esta guía corresponde al **mismo juego que sigue publicado y recibiendo actualizaciones** en [navegador](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) y [teléfono/PWA](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html). El Community Snapshot de octubre de 2026 (incluida la antigua versión `0.9.1+snapshot.dev.79`) fue un hito histórico, **no un juego separado ni retirado**. Las versiones posteriores siguen siendo jugables desde esas mismas direcciones; consulta el [estado de desarrollo y publicación vigente](docs/DEVELOPMENT_STATE.md) para conocer la última compilación verificada. La versión instalada o guardada en caché en cada dispositivo puede tardar en actualizarse. Esta guía no autoriza modificar el juego, ejecutar pruebas generales ni publicar nuevas versiones.
 
+## Menú principal y estado de la versión actual
+
+Al abrir el juego desde cero, aparece la pantalla principal: **Continuar aventura**, **Nueva partida**, **Partidas y copias de seguridad**, **Ajustes** y **Ayuda y créditos**. **Continuar aventura** solo está disponible cuando existe una partida válida y se puede reanudar con seguridad; la preparación de la primera escena precede al juego activo. Al minimizar una partida en marcha y volver a ella, no se trata de un nuevo inicio. Para regresar al título desde el juego, usa **Volver al menú principal**, que respeta las comprobaciones de guardado. Las partidas Normal y Nightmare son independientes; las clases disponibles siguen siendo Paladín, Mago y Ranger. Rogue Bard aún no es una cuarta clase jugable.
+
+**Guardados:** **Juego y ajustes → Partidas guardadas → Copias de seguridad → Exportar partida / Importar partida** (también se puede entrar a las copias desde **Partidas y copias de seguridad** en la pantalla principal). Guarda una copia antes de cambiar de dispositivo o borrar datos: no existe sincronización de partidas en la nube.
+
+**Informe y versión instalada:** **Juego y ajustes → Pantalla y rendimiento → Exportar informe de prueba** descarga un archivo JSON local con la versión `version` realmente ejecutada y métricas orientativas. Este informe **no** es una copia de la partida, ni se envía automáticamente. La ruta inglesa equivalente es **Game and settings → Screen and performance → Export playtest report**.
+
+**Gráficos y actualizaciones:** Canvas 2D sigue siendo la opción predeterminada. **PixiJS WebGL2** es experimental y opcional, con una prueba de 15 segundos para conservarlo o regresar a Canvas; no está certificado como sustituto. En **Juego y ajustes** puedes usar **Buscar actualización** o **Instalar actualización** cuando aparezca; una publicación nueva no demuestra que el navegador o la PWA instalada ya la estén usando. Comprueba `version` en el informe. Para saber qué compilación se publicó y cuáles son las pruebas pendientes, consulta el [estado vigente de desarrollo y aceptación](docs/DEVELOPMENT_STATE.md). La traducción al español del juego es parcial; los nombres de algunas clases y opciones se conservan en inglés.
+
+
 | Acción | Teclado por defecto |
 | --- | --- |
 | Mover | W/A/S/D |
