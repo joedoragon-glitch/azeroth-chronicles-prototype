@@ -1497,6 +1497,9 @@
     classSlots: roguePlaytestEnabled,
     slotClass: (candidate) => roguePlaytestEnabled
       ? persistence.slotClass(candidate) : candidate.hero.class,
+    bindRestored: (candidate, previous) => roguePlaytestEnabled
+      ? persistence.bindSlot(candidate, persistence.slotClass(previous))
+      : candidate,
   });
   let profile = {
       nightmareUnlocked: false,
