@@ -32,7 +32,7 @@ jobs:
       - name: Install locked tools
         run: npm ci --ignore-scripts
       - name: Install Chromium for isolated visual acceptance
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
       - name: Verify English and Spanish class learning on desktop and phone
         run: node tests/class-growth-browser.test.cjs
       - name: Preserve class choice and Character screenshots for visual audit
