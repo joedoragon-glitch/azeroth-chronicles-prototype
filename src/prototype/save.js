@@ -500,8 +500,7 @@
           !Array.isArray(s.party) ||
           s.party.length > 200 ||
           s.party.filter((u) => u.active !== false).length >
-            R.balance.companions.activeCaps[s.expeditionRank] +
-              (R.balance.companions.activeSlotBonuses?.[s.hero.class] || 0)
+            Campaign.expeditionPartyCapFor(s.hero.class, s.expeditionRank)
         )
           throw Error('Invalid party');
         const ids = new Set(D.bosses.map((b) => b.id));
