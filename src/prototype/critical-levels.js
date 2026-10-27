@@ -1,5 +1,7 @@
-/* Critical effect INTENSITY, not critical hit probability. Optional authoring layer.
-   No auto-installation and no mutation of Campaign, renderers, or saves. */
+/* Critical effect INTENSITY, not critical hit probability.
+   DEVELOPER-ONLY authoring/tuning layer. Levels 1–3 and mode overrides are
+   authored in code/native test sessions, never offered as player settings.
+   No auto-installation and no mutation of Campaign, renderers, profiles or saves. */
 (function (root) {
   'use strict';
 
