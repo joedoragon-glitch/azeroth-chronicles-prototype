@@ -173,3 +173,28 @@ In both Canvas2D and optional Pixi nameplate presentation, Charmed monsters gain
 - 61–70: Tootle · Crinkle · Sweetpea · Lumpy · Eggnog · Oopsie · Doodlebug · Cabbage · Pumpernickel · Booples
 
 **Focused acceptance for implementation:** first active capture pauses and teaches exactly once; later manual popups are compact; auto-on produces no pause; disable/re-enable from both existing contextual entry points; accept name restores exactly friendly max HP once, skip preserves wounded fraction, unrelated companions' naming does not heal; once-only name and species identity survive v4 save/reload/Succession; cannot re-heal by renaming or switching settings; no naming prompts for active-full reserve admissions; full 70-name cycle avoids duplicates then rotates; already-owned names are skipped; co-op contract remains dormant; existing three playable classes, safety locks and target/kill ownership unaffected. **Implementation, Phase 3 focused CI, mainline reconciliation, Phase 4, merge and deployment remain separately gated.**
+
+## FINAL LATEST OWNER RULE — automatic bilingual Charm names and immediate full HP (27 October 2026)
+
+**This section replaces and supersedes every prior contradictory Charm-wound, manually naming, first-capture naming tutorial, auto-name toggle, and Barracks naming-heal proposal in this document and the earlier PR conversation.** There is **no Charm naming popup**, **no auto-naming preference**, **no name-related tutorial/quest**, and **no naming-related UI change**. The existing **Rogue-specific Charm/Barracks quest tutorial planned for Phase 7 is still needed**; it simply teaches lawful Charm and companion labor, not names.
+
+On *every* successful 12% lawful surviving Rogue automatic primary-hit Charm:
+1. Convert the enemy exactly once to a permanent authenticated owned companion, preserving subtype provenance and native quota checks.
+2. Automatically assign the next available silly personal name from the current **interface language's** fixed pool: **70 English** names or **70 Spanish** names, maintained in `src/prototype/rules.js::rogueCharmNicknames`.
+3. Instantly set the newly created friendly companion to **100% of its proper friendly max HP** regardless of its enemy HP on the capture hit. The healing is at **capture**, never repeated, and unrelated to the existing optional one-time name feature for other companions. Regular subsequent damage, treatment and recovery rules still apply.
+4. Immediately place the captured ally in a free active slot, or, if the field party is full, directly in the global reserve at **full HP and already named**; never require a Barracks prerequisite or pause the game.
+
+Both pools are **70**, derived from **10 eligible ordinary base monster species × 7**, independent of exact melee/ranged subtype quota counts. Offer each nickname once per locale rotation before cycling; avoid collisions with currently owned nicknames (across active/reserve/fallen/away); use a short numerical suffix only if necessary. Persist the English and Spanish cursor counters in compatible **version-4 saves**, with defaults for older imports and strict numeric validation. Nickname selection must consume **no Charm, World, Party, or critical randomness**. The live UI locale controls *new* assigned names; names already granted never translate or change when the UI language changes. Do not expose unmerged multiplayer code; automatic/no-popup behavior is already co-op compatible.
+
+**Spanish nickname pool — 70 unique valid character names:**
+
+- 01–10: Pulguillas · Mocoso · Pelusín · Ñoñito · Chiquitín · Cabezón · Patitas · Bizcochito · Bomboncito · Cucharita
+- 11–20: Babosín · Don Calcetín · Doña Croqueta · Tripita · Pompitas · Soplido · Piojito · Churretín · Naricitas · Barriguitas
+- 21–30: Papanatas · Patatín · Quesito · Chicharrón · Burbujitas · Puchero · Chupetín · Calabacín · Morcillita · Fideo
+- 31–40: Don Babero · Doña Pestañitas · Mojadito · Ñoñerías · Saltarín · Carraspera · Galletita · Mimosín · Pajarito · Pancito
+- 41–50: Tontolín · Rabanito · Albondiguita · Puerquito · Cebollín · Lagartijita · Don Patán · Trastito · Guindilla · Pepinillo
+- 51–60: Ñiquiñaque · Chiflito · Chisporrote · Cacahuete · Cachetitos · Doña Babita · Peluchín · Pedorretas · Pastelito · Bigotitos
+- 61–70: Trompitas · Corazoncito · Chismocito · Panzón · Chancletita · Lagrimitas · Don Ronquiditos · Tiquismiquis · Chirimbolo · Ñoñorrón
+
+**Implementation checkpoint:** Runtime auto-naming, full-HP capture, per-language rules and v4 cursor validation have been staged in this same draft PR #511; targeted native tests were updated, but full latest-head focused Actions evidence and up-to-date mainline reconciliation are not yet complete. Phase 4 species-specific AI/labor remains separate. **No merge or deployment.**
+
