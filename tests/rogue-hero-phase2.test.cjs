@@ -196,6 +196,13 @@ try {
   const capturedAlly = legal.s.party[0];
   assert.equal(capturedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
   assert.equal(legal.companionDisplayName(capturedAlly), 'Goblin');
+  assert(legal.nameCompanion(capturedAlly.id, 'Mosswhistle'),
+    'Barracks naming uses the same native owner-name pathway as other companions');
+  assert.equal(legal.companionDisplayName(capturedAlly), 'Mosswhistle');
+  assert.equal(legal.nameCompanion(capturedAlly.id, 'Another'), false,
+    'the established one-time naming contract still applies');
+  assert.equal(capturedAlly.charmOrigin.typeName, 'Goblin',
+    'personal names cannot overwrite the original monster subtype');
   assert.equal(capturedAlly.charmOrigin.sourceEnemyId, source.id);
   assert(capturedAlly.hp > 0 && capturedAlly.hp <= capturedAlly.maxHp,
     'surviving capture receives proportional HP with ordinary rounding');
@@ -206,6 +213,8 @@ try {
   assert.doesNotThrow(() => Campaign.validate(savedCapture));
   const restoredCapture = Campaign.restore(savedCapture, () => 0.9);
   assert.deepEqual(restoredCapture.s.party[0].charmOrigin, capturedAlly.charmOrigin);
+  assert.equal(restoredCapture.s.party[0].customName, 'Mosswhistle',
+    'a Charmed companion name survives save/restore without changing capture identity');
   // Identity survives ordinary native recovery, including fallen reserve status.
   capturedAlly.hp = 0;
   capturedAlly.active = false;
