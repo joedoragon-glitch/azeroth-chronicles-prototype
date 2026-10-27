@@ -39,6 +39,7 @@ assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarge
 
 const inits=[],draws=[],resizes=[],frames=[],moteFrames=[],resources=new Set(), approvedTextures=new Map();
 const gpuUploadBatches=[];
+let idleCallback=null, backgroundCopies=0, textureUpdates=0, stagingGroundReuseDisabled=0;
 let prepareRegistrations=0, holdGpuUpload=false, resolveGpuUpload=null;
 let holdWarmFrames=false, deferredWarmFrame=null;
 let currentActorTextures = new Set(), destroyedProcedural = 0,
@@ -48,7 +49,8 @@ function canvas() {
     width:0,height:0,style:{},
     getContext(type) {
       if(type!=='2d')return null;
-      return {setTransform(ratio){this.ratio=ratio},drawImage(){},
+      return {setTransform(ratio){this.ratio=ratio},save(){},restore(){},clearRect(){},
+        drawImage(...args){if(args.length===3)backgroundCopies++}, 
         getImageData(){const data=new Uint8ClampedArray(surface.width*surface.height*4);
           const x=Math.floor(surface.width/2),y=Math.floor(surface.height*.8);
           data[(y*surface.width+x)*4+3]=255;return {data}}
@@ -84,7 +86,7 @@ class Application {
   async init(options){inits.push(options);this.renderer.resize(options.width,options.height,options.resolution);}
   destroy(){}
 }
-const textureFrom=image=>({source:{width:image.width,height:image.height,update(){}},
+const textureFrom=image=>({source:{width:image.width,height:image.height,update(){textureUpdates++}}, 
   destroy(releaseSource){if(releaseSource)destroyedProcedural++}
 });
 const runtime={
@@ -103,7 +105,8 @@ const runtime={
     }
   },
   PrototypeRenderer:{
-    create:({canvas,ctx})=>({setOptimizationMode(){},draw(){
+    create:({canvas,ctx})=>({setOptimizationMode(){},
+      setGroundReuse(value){if(value===false)stagingGroundReuseDisabled++},draw(){
       draws.push({width:canvas.width,height:canvas.height,ratio:ctx.ratio});
     }}),
     nightLightKind:()=>null
@@ -327,6 +330,39 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'warm frames preserve sharing without rebaking the two actors');
   sharedGpu.release();
   game.props=[];
+  // Prepaint one idle CPU window without changing gameplay state.
+  game.zoneId='vale';
+  runtime.requestIdleCallback=(cb)=>{idleCallback=cb;return 7};
+  runtime.cancelIdleCallback=()=>{idleCallback=null};
+  const terrainGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await terrainGpu.prepare(),true);
+  terrainGpu.activate();
+  const terrainBase=terrainGpu.status().backgroundRepaints;
+  const oldX=game.hero.x, copies=backgroundCopies, updates=textureUpdates;
+  game.hero.x+=100;
+  terrainGpu.draw();
+  assert.equal(typeof idleCallback,'function','outdoor travel schedules idle terrain lookahead');
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
+    'active terrain remains intact before the actual crossing');
+  const idle=idleCallback;idleCallback=null;idle();
+  assert.equal(terrainGpu.status().backgroundLookaheadPaints,1);
+  assert(terrainGpu.status().backgroundLookaheadBytes>0);
+  assert(terrainGpu.status().backgroundLookaheadBytes*2<=32*1024*1024,
+    'combined CPU terrain raster windows remain within the budget');
+  assert(stagingGroundReuseDisabled>0,'idle painter cannot retain a second ground cache');
+  game.hero.x+=40;
+  terrainGpu.draw();
+  assert.equal(terrainGpu.status().backgroundLookaheadPromotions,1,
+    'arrival reuses the terrain window prepared during idle time');
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
+    'camera crossing avoids an immediate full terrain rebuild');
+  assert.equal(backgroundCopies,copies+1,'prepaint is copied into existing terrain canvas');
+  assert.equal(textureUpdates,updates+1,'existing GPU source is updated in place');
+  terrainGpu.release();
+  assert.equal(terrainGpu.status().backgroundLookaheadBytes,0);
+  game.hero.x=oldX;
+  delete runtime.requestIdleCallback;
+  delete runtime.cancelIdleCallback;
   // 160 pixel-bytes per miniature procedural texture is sufficient for the
   // deterministic mock. This intentionally tiny *test-only* budget forces
   // the same LRU path that real towns would take under sustained roaming.
