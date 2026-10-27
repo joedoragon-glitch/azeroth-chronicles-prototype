@@ -211,6 +211,9 @@ try {
     });
     assert(guard.arm(resumed), 'restart marker reads founding class slot');
     assert.equal(guard.read().heroClass, 'mage');
+    assert.equal(guard.read().slotOwner, 'rogue');
+    assert.equal(guard.recover(restored.load('normal', 'mage')), null,
+      'same current hero in a different founding slot cannot reuse crash marker');
     const afterCrash = guard.recover(resumed);
     assert(afterCrash && afterCrash !== resumed,
       'crash recovery may create a fresh Campaign instance');
