@@ -1,3 +1,5 @@
+> **CURRENT DEVELOPMENT STATUS (27 October 2026):** This document retains historical phase rows and planning notes. For authoritative current engineering status, remaining work and owner changes, read [the Phase 5 / early Phase 6 restart checkpoint](ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md). Phase 4 and all seven additional Phase 5 families are now **staged**, not release-accepted. Rogue-specific critical action registry exists with separate **Level-2 default**; native execution presently connected for auto attack, manual Skill 1 and charged Skill 1 only. The old NOT STARTED labels below are **superseded historical records**.
+
 # Rogue Bard — eight-phase development handoff and current source of truth
 **27 October 2026 · Draft PR #511 · branch `design/rogue-bard-feasibility-20261026`**
 
