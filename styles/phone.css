@@ -748,6 +748,11 @@ body[data-experience='phone'] #message .notice-card.notice-narration {
 }
 
 /* Match class-learning clarity on compact touch screens without shrinking text. */
+@media (min-height: 600px) {
+  body[data-experience='phone'] #modal[data-view='character'] {
+    max-height: min(90dvh, 780px);
+  }
+}
 body[data-experience='phone'] #modal[data-view='class-select'],
 body[data-experience='phone'] #modal[data-view='character'] {
   width: min(370px, calc(100vw - 24px));
