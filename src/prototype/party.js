@@ -1398,6 +1398,7 @@
       }
       companionDisplayName(unit) {
         if (unit.customName) return unit.customName;
+        if (unit.charmOrigin) return unit.charmOrigin.typeName;
         if (!['soldier', 'archer', 'pet'].includes(unit.type))
           return unit.name || unit.type || 'Companion';
         return unit.type === 'pet'

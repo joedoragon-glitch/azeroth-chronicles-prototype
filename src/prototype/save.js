@@ -805,6 +805,8 @@
             variant = u.type === 'archer' ? R.rangedProfiles[a.species]?.variant : null,
             canonicalName = speciesName + (variant ? ' ' + variant : '');
           if (!speciesName || a.role !== u.type || a.typeId !== subtype ||
+            (u.type === 'archer' && !R.rangedProfiles[a.species] &&
+              !['archer', 'crownguard'].includes(a.species)) ||
             a.typeName !== canonicalName ||
             !/^enemy-[1-9]\d*$/.test(a.sourceEnemyId) ||
             !Object.hasOwn(s.zones, a.sourceZone) ||
@@ -881,6 +883,14 @@
         }
         if (Object.keys(captures).some((id) => !capturedIds.has(id)))
           throw Error('Invalid charm provenance');
+        const typeCounts = new Map();
+        for (const u of s.party) if (u.charmOrigin) {
+          const key = u.charmOrigin.typeId;
+          typeCounts.set(key, (typeCounts.get(key) || 0) + 1);
+        }
+        const captureQuota = Campaign.expeditionPartyCapFor('rogue', s.expeditionRank);
+        if ([...typeCounts.values()].some((count) => count > captureQuota))
+          throw Error('Invalid charm subtype quota');
         for (const [id, v] of Object.entries(s.earlyRoll || {}))
           if (!dungeonIds.includes(id) || typeof v !== 'boolean' || !s.normal[id])
             throw Error('Invalid TRUE roll');

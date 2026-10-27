@@ -1225,8 +1225,11 @@
         ) return null;
         const authored = Campaign.data.species.flat().find((row) => row[0] === e.species);
         if (!authored) return null;
-        const ranged = e.ranged === true,
-          role = ranged ? 'archer' : 'soldier',
+        const ranged = e.ranged === true;
+        // A runtime flag alone cannot invent an authored monster subtype.
+        if (ranged && !R.rangedProfiles[e.species] &&
+          !['archer', 'crownguard'].includes(e.species)) return null;
+        const role = ranged ? 'archer' : 'soldier',
           variant = ranged ? R.rangedProfiles[e.species]?.variant : null;
         return {
           typeId: 'enemy:' + e.species + ':' + (ranged ? 'ranged' : 'melee'),

@@ -192,6 +192,7 @@ try {
   assert.equal(legal.s.party.length, 1);
   const capturedAlly = legal.s.party[0];
   assert.equal(capturedAlly.charmOrigin.typeId, 'enemy:goblin:melee');
+  assert.equal(legal.companionDisplayName(capturedAlly), 'Goblin');
   assert.equal(capturedAlly.charmOrigin.sourceEnemyId, source.id);
   assert(capturedAlly.hp > 0 && capturedAlly.hp <= capturedAlly.maxHp);
   assert.equal(legal.s.charmCaptures[capturedAlly.id].typeId, 'enemy:goblin:melee');
@@ -220,6 +221,10 @@ try {
   const bareClaim = structuredClone(savedCapture);
   delete bareClaim.charmCaptures;
   assert.throws(() => Campaign.validate(bareClaim), /Invalid charm provenance/);
+  const malformedType = structuredClone(savedCapture);
+  malformedType.party[0].charmOrigin.role = 'archer';
+  malformedType.charmCaptures[malformedType.party[0].id].role = 'archer';
+  assert.throws(() => Campaign.validate(malformedType), /Invalid charm provenance/);
 
   const excluded = fresh(1).g, elite = excluded.zone().enemies[0];
   elite.captain = true;
