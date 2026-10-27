@@ -37,7 +37,13 @@ The earlier focused CI run at `fa6cb2b` recorded failures in Skill 1 description
 
 The provisional Charmed monsters UI is **not a capture/save permission**: current `save.js` now rejects any imported companion with `charmOrigin` until an authenticated eligible-type contract, companion conversion and migration have been implemented. `tests/fourth-class-readiness.test.cjs` checks that a forged provisional record is refused. A separate correction in `tests/hero-skill1-area2.test.cjs` compares displayed cooldowns with the actual normal/charged native reduction rather than obsolete unmodified 3/7/8-second literals.
 
-**Required mainline integration:** [exact conflict and next-step record](ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md). The PR branch trails current mainline changes which have implemented Paladin/Mage/Ranger level-1 class passives and melee pursuit. `engine.js`, `progression.js`, `hero-combat.js` and `save.js` have edits on **both** sides. The current draft must reconcile these source changes and their evidence/tests **before** a clean CI result or merge is claimed. This is not license to replace newer mainline functionality with old branch files.
+**Mainline source conflict reconciled:** [exact merge and verification record](ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md). The PR branch incorporated the updated `main` code at `3c6da60`, retaining Paladin/Mage/Ranger level-1 passives, melee pursuit, v4 save migration, new class-growth copy and the Rogue compatibility work in their common files. The combined JavaScript parsed successfully, but this is **not** proof that focused CI/full regression passed or permission to deploy.
+
+## Succession company and four independent intensity categories — owner confirmed
+
+The current critical kernel has **Hero/Companion/World** Level 1–3 intensity groups. The planned **fourth Rogue group** will be independently selectable for her own hero actions only, separate from the existing Party/World RNG domains; it is still **not** a shipped user settings slider. Crit probability is a separate statistic.
+
+A fresh Rogue has zero conventional starters and cannot recruit Soldiers or Archers/Rangers at any Captain or Barracks, while a Rogue chosen **through Succession inherits and can fully command** the existing conventional members from the prior class. Their membership/IDs remain, active members within the current cap remain active, and resting or fallen inherited members remain accessible in the completed Barracks with ordinary Rest/Add/care. No new hiring is authorized; pets and later charmed creatures may join the same mixed group. The conditional Succession inheritance test now covers this. Barracks never gates the right to Charm.
 
 ## Intentional non-implementation / remaining blockers
 

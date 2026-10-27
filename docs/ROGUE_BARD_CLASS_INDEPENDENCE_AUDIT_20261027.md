@@ -44,6 +44,12 @@ This branch remains **draft, unmerged, not deployed as new gameplay**. JavaScrip
 
 These are **the last observed failure messages, not proof of latest-head success/failure**. Later workflow attempts must be checked at the current exact branch head. CI, visual checks and actual gameplay are not certified by this audit. Do not merge or deploy while a required check is failing.
 
+## 3a. 27 October merge and settled owner clarification
+
+At merge commit `3c6da60`, the latest `main` code was integrated **into this draft branch**, including the current class-passive, class-growth, save migration, pursuit and CI changes. All five shared source files passed JavaScript syntax parsing after their changes were combined. This supersedes the *unresolved conflict* status described in the historical CI triage above; completion of full focused/browser suites must still be established from the exact current head.
+
+Succession **does not revoke the Rogue's inherited Soldier and Archer command**. Starting as Rogue produces zero ordinary troops; neither Captain nor Barracks can newly recruit them. Becoming Rogue in Succession preserves, shows, commands, rests, treats and redeploys inherited ordinary troops, and can combine them with pets and future charmed monsters. The existing global roster is authoritative and inherited companion IDs survive. The new focused test probes that distinction with in-memory temporary registry registration and denies new hiring. Four **separate** critical-intensity groups are required in the final feature: Hero, Rogue, Companion and World; the fourth is not yet a live control.
+
 ## 4. Next implementation ordering — same PR
 
 **Safe infrastructure first:** validate/fix focused CI; make source-tested class registry and UI metadata complete; cover repeated Succession deaths, active overflow and seven-member formations; retain old three-class behavior byte-for-byte where appropriate; finish menu accessibility and bilingual pagination. Then explicitly review the **Rogue starter-to-first-Charm-to-first-Barracks** loop as a single acceptance journey.

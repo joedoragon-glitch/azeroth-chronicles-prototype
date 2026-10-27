@@ -1,6 +1,12 @@
 # Mainline integration checkpoint for fourth-class preparation — PR #511
 
-**27 October 2026 · Audit of draft PR #511 against current `main` · No merge, no deploy**
+**27 October 2026 · Mainline reconciled into draft PR #511 at `3c6da60` · No merge to `main`, no release approval**
+
+## Resolution status — current code is integrated
+
+The current `main` commit `286e8c0d` was integrated **into the draft PR #511 branch** with merge commit `3c6da60` (parents: pre-merge PR head and current `main`). All newer mainline files were retained. The five common edited files — `app.js`, `engine.js`, `hero-combat.js`, `progression.js`, and `save.js` — were merged with source-aware preservation of both sets of changes, not overwritten wholesale. The bilingual class-growth presentation was combined with the PR's class labels; the mainline native Paladin/Mage/Ranger level-one passives, old-save migration and pursuit protections were retained alongside the class-aware Expedition cap, Succession handling and fail-closed unimplemented Rogue skill entry.
+
+**Reconciliation is complete against that exact upstream commit**, not proof of a clean test run: syntax checks passed for the five merged modules before the merge; focused GitHub CI, browser/device and save migration acceptance still determine readiness. If `main` moves in the meantime, compare the exact current branch head with `main` before any later release action.
 
 ## Confirmed upstream divergence
 
@@ -41,4 +47,4 @@ A focused branch CI failure previously showed `hero-skill1-area2.test.cjs` expec
 - All eight Rogue tap/charged music effects, the normal/charged basic attack and finisher, fourth independent critical-intensity control, innate Endure, static original art, audio and localized HUD/skill journal.
 - Seven-member **mixed** composition/formation and performance regression, not merely seven Soldiers or seven Archers.
 
-**Current status:** This document is reconciliation instructions and explicit risk accounting. PR #511 remains draft; the above conflicts have **not** been merged or resolved by writing this file.
+**Current status:** Source reconciliation was implemented in PR #511 at `3c6da60`. This document retains the pre-merge risk analysis for review history. PR #511 remains draft, unmerged to `main`, not playable, and requires latest-head test verification before release.
