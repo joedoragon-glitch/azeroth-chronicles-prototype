@@ -24,7 +24,7 @@ function encounter() {
 
 {
   const { game, a, b } = encounter();
-  assert.equal(game.heroSkillRange(1, true), 120);
+  assert.equal(game.heroSkillRange(1, true), 190, 'current charged Paladin reach');
   assert.equal(game.cycleHeroTarget().id, a.id, 'first Q selects the nearest available foe');
   assert.equal(game.cycleHeroTarget().id, b.id, 'second Q selects the next');
   assert.equal(game.selectedHeroTarget().id, b.id);

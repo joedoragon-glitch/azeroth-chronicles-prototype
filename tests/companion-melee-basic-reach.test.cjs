@@ -96,6 +96,16 @@ for (const distance of [275, 285]) {
     'Archer defensive projectile count at ' + distance,
   );
   const regular = scene('archer', distance);
+  // Move the real hero/formation anchor away so the Archer does not first
+  // reposition within its legal firing band (a separate movement decision).
+  Object.assign(regular.g.hero, { x: 250, y: 200 });
+  assert(
+    Math.hypot(
+      regular.g.partyFollowPoint(regular.u, [regular.u]).x - regular.enemy.x,
+      regular.g.partyFollowPoint(regular.u, [regular.u]).y - regular.enemy.y,
+    ) > 280,
+    'ordinary Archer fixture avoids a legitimate formation reposition',
+  );
   regular.g._tacticalPartyTargets = new Map();
   const first = regular.g.s.projectiles.length;
   regular.g.companionFight(regular.u, regular.enemy, [regular.u], 0);

@@ -70,13 +70,15 @@ for (const mode of ['normal', 'nightmare'])
         (s) => s.title === 'The orders among the shelves',
       ),
     );
-    const original = C.rules.balance.skills.cooldowns[1];
+    // Skill 1 has a dedicated normal/charged cooldown; the ordinary
+    // cooldown table now controls Skill 2 onward. Test its actual live owner.
+    const original = C.rules.balance.skills.cooldowns[2];
     try {
-      C.rules.balance.skills.cooldowns[1] = 9.125;
+      C.rules.balance.skills.cooldowns[2] = 9.125;
       sections = Archive.sections(c, { D: C.data, R: C.rules });
-      assert(sections.find((s) => s.title === 'Your skills').topics[0][2].includes('9.13 seconds'));
+      assert(sections.find((s) => s.title === 'Your skills').topics[1][2].includes('9.13 seconds'));
     } finally {
-      C.rules.balance.skills.cooldowns[1] = original;
+      C.rules.balance.skills.cooldowns[2] = original;
     }
     // Future/restored mode reads the shared guard and effective cooldown method.
     const oldMode = C.rules.resourceMode;
