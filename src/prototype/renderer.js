@@ -1535,7 +1535,6 @@
       if (f.type !== 'heroSkill') return false;
       if (f.stage === 'cast')
         return f.charged ||
-          f.class === 'rogue' ||
           (f.class === 'paladin' && [1, 2, 6].includes(f.slot)) ||
           (['mage', 'ranger'].includes(f.class) && [3, 4].includes(f.slot));
       return ['area', 'impact', 'chain', 'cancel', 'displace', 'skill1-cross'].includes(f.stage);
