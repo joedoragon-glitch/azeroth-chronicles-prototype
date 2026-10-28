@@ -4374,7 +4374,6 @@
         this.s.challenge.gameOver
       )
         return;
-      this.separateActors(dt);
       this.advanceHeroSkillEffects(dt);
       this.updateProjectiles(dt);
       if (this.s.mode === 'arena') this.arenaContainActors();
