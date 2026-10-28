@@ -76,6 +76,8 @@ assert(!p.describe().includes('Canvas (drawn only)'));
 p.reset();
 assert.equal(p.report().stages.pixiMs.samples, 0);
 // A browser callback gap is not automatically expensive synchronous JS.
+// Establish the immediately preceding *normal* callback after the sample reset.
+p.record({ frameWorkMs: 19, intervalMs: 17 });
 p.record({ frameWorkMs: 5, intervalMs: 205, simulationMs: 3,
   companionAIMs: 2, companionGuidanceMs: 0.4, companionSetupMs: 0.5,
   companionUnitsMs: 1, location: { zone: 'vale', heroX: 700, heroY: 450,
