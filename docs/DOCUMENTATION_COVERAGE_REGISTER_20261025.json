@@ -5258,7 +5258,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md",
-      "gitBlobSha": "cbda18403efe80c5d16321f7788f5348e8354d47",
+      "gitBlobSha": "eadeea97154d5ccdb3858e6bcf36d7bc8ca45e1a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5267,10 +5267,11 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "historical only",
       "previousPhaseAuthorityBlobSha": "93b22cbf1aff616ebf691ab76851c3ede7414d86",
-      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
+      "reconciliationReviewEvidence": "28 Oct: reviewed full Phase 4 record and dated the remaining draft/registration and validation work orders against merged PR #511; source behavior and later acceptance are not certified by this review.",
+      "previousPhase4BodyBlobSha": "cbda18403efe80c5d16321f7788f5348e8354d47"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_MUSICAL_REPERTOIRE_20261027.md",

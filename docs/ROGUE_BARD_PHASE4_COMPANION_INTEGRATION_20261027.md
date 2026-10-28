@@ -8,7 +8,7 @@
 
 Phase 1 (foundation), Phase 2 (Rogue hero basics) and Phase 3 (lawful Charm)
 were already staged and focused-validated at the Phase 4 entry. Their mechanics
-are not redesigned. The authoritative baseline remains
+were not redesigned at this stage. The then-authoritative baseline was
 [the consolidated Phase 1–3 record](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md),
 [canonical eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md)
 and [Charmed roster/Barracks contract](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md).
@@ -33,7 +33,7 @@ At entry, PR #511 was draft, open, unmerged, 0 commits behind main, head
   allied triage action using the existing authored enemy-support healing
   fraction, threshold, range and cooldown. They do not inherit Soldier Guard,
   Holy Cleave, Ranger Triple Shot or ordinary Ranger support/cast actions.
-  Rogue musical repertoire and critical mechanics remain unimplemented.
+  Rogue musical repertoire and critical mechanics were unimplemented at this checkpoint.
 - **Identity and visuals:** Every newly Charmed actor keeps its Phase 3
   automatic current-language permanent name, full HP, sourceZone audit
   metadata, unique hostile source receipt and actual species/subtype.
@@ -70,18 +70,8 @@ At entry, PR #511 was draft, open, unmerged, 0 commits behind main, head
 3. `355e78f7f7ed25bbc631e94c1f928ecb54a1444b` — native Phase 4 regression test including the no-worker/no-Barracks starting gate.
 4. `d4da3f3cd6abdcab06ecf877b3c75c271d70a9e6` — authored ranged support AI, bounded support cooldown persistence, regression coverage.
 
-This document is a **source implementation record**, not an assertion that
-the latest code head has passed CI, complete browser playthrough or real-device
-acceptance. Confirm the Actions run associated with the final implementation
-commit before upgrading its state to focused-validated. The focused suite must
-include the new `tests/rogue-bard-phase4-companions.test.cjs`, ordinary
-class/companion/save regressions, and `npm run build` reproducibility.
+This **source implementation record** did not assert that the then-latest code head had passed CI, complete browser playthrough or real-device acceptance. At that checkpoint the planned focused suite included `tests/rogue-bard-phase4-companions.test.cjs`, ordinary class/companion/save regressions and a reproducible build. See the later [focused run 40518428677](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40518428677) for its actual scope and outcome; that result does not establish device acceptance.
 
-## Safety and future-phase exclusions
+## Historical safety and later-phase exclusions
 
-The Rogue Bard remains **unregistered** in public class selection.
-This branch stays the single draft PR #511, unmerged and undeployed.
-No musical skills (Phase 5), critical mechanism/controller (Phase 6),
-new sprite/audio/presentation or authored onboarding (Phase 7), or full
-browser/phone/PWA acceptance and release (Phase 8) are claimed.
-Completed class behavior and Phase 1–3 Charm/naming/heal design remain locked.
+At this checkpoint Rogue was unregistered and PR #511 remained a draft. The record did not claim musical skills, critical mechanics, subsequent art/audio/onboarding, or full browser/phone/PWA acceptance. PR #511 later merged and Rogue became playable; use [Development state](DEVELOPMENT_STATE.md) and current source to distinguish implemented later phases from outstanding acceptance.
