@@ -171,13 +171,13 @@
         return (
           'Navigation diagnostics · ' + r.sampledSimulationTicks + ' ticks' +
           (r.recording ? ' (recording)' : '') +
-          '\\nMove ms mean/p95 ' + m.moveMs.mean + '/' + m.moveMs.p95 +
+          '\nMove ms mean/p95 ' + m.moveMs.mean + '/' + m.moveMs.p95 +
           ' · terrain segment ' + m.segmentMs.mean + '/' + m.segmentMs.p95 +
           ' · route ' + m.routeMs.mean + '/' + m.routeMs.p95 +
-          '\\nCompanion follow ms mean/p95 ' + m.companionFollowMs.mean + '/' +
+          '\nCompanion follow ms mean/p95 ' + m.companionFollowMs.mean + '/' +
           m.companionFollowMs.p95 + ' · companion A* ' +
           m.companionRouteMs.mean + '/' + m.companionRouteMs.p95 +
-          '\\nCalls/tick mean: move ' + m.moveCalls.mean +
+          '\nCalls/tick mean: move ' + m.moveCalls.mean +
           ', blocked terrain checks ' + m.blockedCalls.mean +
           ', segment points ' + m.segmentPoints.mean +
           '. Timings overlap; opt-in sampling has overhead.'
