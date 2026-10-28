@@ -2497,6 +2497,18 @@
       }
       ctx.restore();
     }
+    // Shared, paint-only pause cue; renderer mode never owns pause state.
+    function drawPausePresentation() {
+      if (!isPaused()) return;
+      ctx.save();
+      ctx.fillStyle = '#0006';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.font = 'bold 25px system-ui';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.fillText('Paused', canvas.width * 0.65, canvas.height * 0.45);
+      ctx.restore();
+    }
     function render() {
       // Bounded by this one permitted draw. Never cache mutable attack shapes
       // between simulation steps or change warning/damage geometry.
@@ -2534,6 +2546,7 @@
         drawCriticalCues();
         targetGuidance();
         drawNavigationRoute();
+        drawPausePresentation();
         finishPhase('effects');
         return;
       }
@@ -3202,14 +3215,7 @@
       drawCriticalCues();
       targetGuidance();
       drawNavigationRoute();
-      if (isPaused()) {
-        ctx.fillStyle = '#0006';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bold 25px system-ui';
-        ctx.fillStyle = '#fff';
-        ctx.textAlign = 'center';
-        ctx.fillText('Paused', canvas.width * 0.65, canvas.height * 0.45);
-      }
+      drawPausePresentation();
       finishPhase('effects');
     }
     return {
@@ -3236,6 +3242,10 @@
         effectRecorder?.callback(row, visualFx.length);
       },
       presentEntity,
+      facingFor: (visual) => {
+        game = getGame();
+        return paintedFacing(visual);
+      },
       groundPresentation,
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
