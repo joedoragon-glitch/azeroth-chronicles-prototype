@@ -5041,7 +5041,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md",
-      "gitBlobSha": "7e05ee6ac2d58fdd4f85315d8015d4f6fa8a2bbe",
+      "gitBlobSha": "6bd419e8cbdf208b2bd47f686bea95b57a590e5e",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5051,7 +5051,9 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousCharmReconciliationBlobSha": "7e05ee6ac2d58fdd4f85315d8015d4f6fa8a2bbe",
+      "reconciliationReviewEvidence": "28 Oct: compared Charm capture and per-subtype quota with src/prototype/hero-combat.js at main ebfd6c9 and corrected obsolete probability, phase and naming-popup directions. Historical design and Barracks UI details remain unresolved pending wider source and decision review."
     },
     {
       "path": "docs/ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md",
