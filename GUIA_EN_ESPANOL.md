@@ -74,7 +74,7 @@ Si necesitas ayuda mientras juegas, abre el menú de **Controles** o **Ayuda y c
 - **Actualizaciones:** entra a **Juego y ajustes** y elige **Buscar actualización** o **Instalar actualización** cuando esté disponible. Una actualización publicada no siempre llega inmediatamente a una aplicación ya instalada.
 - **Ver qué versión estás jugando:** **Juego y ajustes → Pantalla y rendimiento → Exportar informe de prueba**. Ese archivo muestra el campo `version` y datos de diagnóstico; **no es una copia de tu partida**.
 
-**Versión pública verificada el 28 de octubre de 2026:** `0.9.1+snapshot.dev.208`. La Pícara ya es jugable; siguen pendientes pruebas finales de algunos sonidos, gráficos, rendimiento y situaciones de combate. Para comprobar si se publicó una versión más reciente, consulta el [estado de desarrollo](docs/DEVELOPMENT_STATE.md).
+**Versión publicada y verificada en GitHub el 28 de octubre de 2026:** `0.9.1+snapshot.dev.209` ([publicación](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40741421490)). La versión instalada en tu dispositivo puede ser anterior. La Pícara ya es jugable; siguen pendientes pruebas finales de algunos sonidos, gráficos, rendimiento y situaciones de combate. Para comprobar si se publicó una versión más reciente, consulta el [estado de desarrollo](docs/DEVELOPMENT_STATE.md).
 
 Los gráficos usan **Canvas 2D** de forma predeterminada. La opción **PixiJS WebGL2** es experimental, no una mejora garantizada: puedes probarla y volver al modo anterior.
 

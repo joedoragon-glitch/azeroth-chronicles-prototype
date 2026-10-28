@@ -1,6 +1,6 @@
 # Development state — what is live and what is next
 
-**So I Became the Dark Lord's Problem** · Verified **28 October 2026** · Current public game: **`0.9.1+snapshot.dev.208`**
+**So I Became the Dark Lord's Problem** · Verified **28 October 2026** · Published playable build: **`0.9.1+snapshot.dev.209`** (verified checkpoint; recheck later main revisions)
 
 This is the **current status page**, not a task list or a release diary. It records what is published, what has actually been tested, and what remains unfinished. For how to play, start with the [README](../README.md). For earlier release-by-release details, open the [historical development-state archive](DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md).
 
@@ -10,10 +10,10 @@ This is the **current status page**, not a task list or a release diary. It reco
 
 | Question | Verified answer |
 | --- | --- |
-| Which source is on `main`? | [Commit `3765ed3`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/3765ed3bbbf67385561ba47b46887eda6ccf3e7c), after [merged README PR #562](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/562). |
-| Which game version? | **`0.9.1+snapshot.dev.208`**, consistent across `package.json`, `package-lock.json` and `sw.js`. The latest source changes here are documentation-only; they did not create a new gameplay build. |
-| Did automated checks pass? | **Yes.** [Focused GitHub Actions run #40731474055](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40731474055) completed successfully for this exact `main` commit, including the reproducible offline-ready build. |
-| Was the site published? | **Yes.** The same run's **Publish focused update** job succeeded. |
+| Which source is on `main`? | [Commit `5addd94`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/5addd94a0401738e385d834db965694128b76e4b) at this checkpoint; the `dev.209` gameplay release entered at [2a03b3a](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/2a03b3ad6ed693c24bb50471f85325c9d51cca53) before later documentation-only main commits. |
+| Which game version? | **`0.9.1+snapshot.dev.209`**, verified in published main package/build/cache identifiers. Draft #563 carries its own overlapping version candidate; that does not imply its listening-room changes are shipped. |
+| Did automated checks pass? | **Yes.** [Main release run #40741421490](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40741421490) passed focused checks/build for `dev.209`; later [docs-only main run #40742177116](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40742177116) passed at `5addd94`. These are separate tested commits. |
+| Was the site published? | **Yes.** Both mainline runs [#40741421490](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40741421490) and [#40742177116](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40742177116) published successfully; neither deployed draft #563. |
 | Did each phone/Chromebook receive and accept this update? | **Unknown.** A successful site publication does not prove an existing browser or installed PWA has refreshed its cache or passed physical-device testing. |
 | Did the full-game / browser matrix pass at this commit? | **Not claimed.** The normal workflow uses focused checks. The comprehensive workflow is separately owner-authorized. |
 
@@ -49,7 +49,7 @@ This is a **short decision-oriented view**, not an exhaustive issue tracker. Che
 ## Known risks and acceptance
 
 - **Rendering:** **Canvas 2D remains the default and fallback.** PixiJS WebGL2 is optional and **experimental**, with a 15-second Keep/Revert trial. [Graduation #478](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/478), [phone cache/performance #481](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/481), [contact shadows #484](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/484), [ambience #486](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/486) and [recovery #460](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/460) remain open. Do not call Pixi supported or faster on real hardware without evidence.
-- **Performance work is not the immediate completion goal:** [Canvas optimization draft #527](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/527), [Canvas resize draft #553](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/553) and [Pixi parity draft #554](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/554) are **unmerged**. The narrower [diagnostics PR #552](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/552) **merged**, but that does not ship the rest of #527 or prove an FPS improvement.
+- **Performance work is not the immediate completion goal:** [Canvas optimization draft #527](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/527), [merged and published Canvas resize #553](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/553) and [merged and published Pixi parity #554](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/554) are part of `dev.209`; separate optimization #527 remains draft. The narrower [diagnostics PR #552](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/552) **merged**, but that does not ship the rest of #527 or prove an FPS improvement.
 - **Lighting:** Owner-reported sunrise white flashes remain under [issue #357](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/357); possible sunset flashes are not independently confirmed.
 - **Saves:** Campaigns are local to the browser/device. The v4 save schema is maintained, but cloud sync and playable co-op are not part of the current game. Preserve backups before clearing browser data or moving devices.
 - **Art/audio:** Original procedural presentation and contextual sound are integrated, but complete real-device visual/audio acceptance remains open. The approved bell-staff, not the rejected guitar, is [Rogue's current art contract](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md).
@@ -58,6 +58,7 @@ This is a **short decision-oriented view**, not an exhaustive issue tracker. Che
 
 ## Where to work next
 
+- **Draft documentation/audio audition #563:** Its rewritten listening room, sound guides and candidate cache files are **unmerged and unpublished**. Its `dev.209` candidate now overlaps the separately released `dev.209` on `main`; reconcile version/cache and newer main changes before any authorized integration. [PR #563](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/563).
 - **Playing / player help:** [README](../README.md), [Guía en español](../GUIA_EN_ESPANOL.md).
 - **Finding current source ownership:** [Architecture](ARCHITECTURE.md) and the actual code.
 - **Accepted mechanics and current developer rules:** [Design decisions](DECISIONS.md), [AGENTS.md](../AGENTS.md), [mechanic workflow](MECHANIC_DEVELOPMENT.md).

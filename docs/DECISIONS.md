@@ -1,5 +1,11 @@
 # Implementation decisions
 
+**Current-use guide (28 October 2026):** This is a detailed **decision history**, not a live to-do list or authorization to publish. The owner's current scope and [agent policy](../AGENTS.md) govern work; [development state](DEVELOPMENT_STATE.md) confirms released status; [architecture](ARCHITECTURE.md) identifies code owners; [engineering workflow](MECHANIC_DEVELOPMENT.md) explains verification. Find topics by searching this page for *crowns / Treasury / death*, *Expedition / Barracks / companions*, *charged / cooldown / target*, *Nightmare / night / ringleader*, *Keeper / regions*, *sprites / camera* or *audio*. Keep precise approved figures and historical rationale intact.
+
+**Supersession warning:** The 20 October TRUE-night/ringleader decision overrides the 9 October ringleader curve (now 0.145/0.240 rather than 0.250/0.375). Older Community Snapshot test/merge waivers and sprite-production permissions were specific to those dated tasks; they are not today's standing approval. Historical v0.8.79 sprite counts and sound assertions are not the current manifest. If an earlier rule disagrees with a later approved decision or live behavior, investigate rather than silently implementing an old proposal.
+
+---
+
 **21 October — approved Treasury recovery:** Death penalties now transfer the actual removed crowns into a regional recoverable balance. Defeating the designated captain announces the amount; collecting the separate marked cache returns the whole balance once and resets it. Native defenders can return for later attempts. Frontier uses its existing roaming Cinder Warlord, who drops the marked cache at the actual kill location (owner-selected and clarified); other regions use their existing Treasuries. Earlier unregionalized losses cannot be reconstructed. This changes the recoverability of the old loss, not penalty rates or hiring prices. See `TREASURY_DEATH_RECOVERY_DEV128.md`. Crypt/Archive/Mine fort protection remains undecided and is not automatically authorized by its absence in an audit.
 
 Design documents 01–08 define the world, economy, combat, ending and Nightmare rules. Documents 09–10 add execution and audio. Document 11 adds Succession; document 12 records verification. Later specific decisions supersede earlier assumptions.

@@ -4,7 +4,7 @@ An original, offline-capable fantasy RPG about becoming a serious inconvenience 
 
 **[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía completa del juego en español](GUIA_EN_ESPANOL.md)**
 
-The playable Community Snapshot is still receiving updates. **Last verified game build: `0.9.1+snapshot.dev.208` (28 October 2026).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
+The playable Community Snapshot is still receiving updates. **Last verified published game build: `0.9.1+snapshot.dev.209` (28 October 2026, [successful mainline Pages run #40741421490](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40741421490)).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
 
 **Jump to:** [Play](#play) · [The game](#the-game) · [Controls](#controls) · [Saves and updates](#saves-updates-and-diagnostics) · [Graphics and audio](#graphics-and-audio) · [Development](#development) · [Documentation](#project-documentation)
 
