@@ -2112,6 +2112,28 @@
       "previousFiles": {
         "docs/PR313_RESUME_20261016.md": "1f265ca66e503a4246c14c782bae8c56b7e7a853075ec4b5732e6e1e79be3749"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 historical receipt maintenance; historical recovery commands bounded, SOURCE ONLY, NOT TESTED by full certification.",
+      "reason": "Clarify historical headings and quote the obsolete finish plan; preserve prior receipts and gameplay.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "06d2bca1789b4f4d569aacf5f862dcdbd3a47aea3a418133b9c4a4c1e9a49473"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "2fd3bb4b325604d46656caffc67f766e7ca62e251f03f9edaeae8b82cb0e8a9a"
+      }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 historical receipt maintenance; published documentation checkpoint refresh, SOURCE ONLY, NOT TESTED by full certification.",
+      "reason": "Advance maintained release checkpoint while retaining prior exact receipts; no runtime changes.",
+      "files": {
+        "docs/DEVELOPMENT_STATE.md": "68eceb61ca83bbf4bb5756aaff177388b25a345d9c6c5bfe447ba5b65d701e83"
+      },
+      "previousFiles": {
+        "docs/DEVELOPMENT_STATE.md": "fe72e5d9fe18529048e312981adc58e33aa22c737b547ecb258fc8e8c1b8f502"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {

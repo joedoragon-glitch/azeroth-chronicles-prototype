@@ -500,7 +500,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
+      "gitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -513,7 +513,9 @@
       "previousPhase5GitBlobSha": "1719512012e3202eb19405d201c48654aff1d302",
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousBatchAuthorityBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
+      "reconciliationReviewEvidence": "28 Oct: dated audit heading and table label clarified; complete source/decision verification remains pending."
     },
     {
       "path": "docs/ARCHIVE_FLOOR_SEAM_DEV124.md",
@@ -1870,7 +1872,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
+      "gitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1884,7 +1886,9 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
-      "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd"
+      "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
+      "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
+      "reconciliationReviewEvidence": "28 Oct: release checkpoint refreshed to ebfd6c9 after focused validation and Pages publication (run 40717039180); other dated workstream dispositions remain to be rechecked."
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -4394,7 +4398,7 @@
     },
     {
       "path": "docs/PR313_RESUME_20261016.md",
-      "gitBlobSha": "99525a6ef675e454f2ea8e22a4475c950c5927f8",
+      "gitBlobSha": "4e4519541bfb9c71ad36a439d5f5f0beb0776482",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -4406,7 +4410,8 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousHistoricalCorrectionGitBlobSha": "83d3f1420837b61ec9bb18bc4688e01e9a71bc36",
-      "reconciliationReviewEvidence": "28 Oct: top-level current-direction claim corrected using merged PR #313 and #319 metadata; preserved body may contain further historical work orders and remains unresolved pending full review."
+      "reconciliationReviewEvidence": "28 Oct: historical headings and old finish/merge plan bounded following merged #313 and #319; remaining preserved instructions require further review.",
+      "previousBatchAuthorityBlobSha": "99525a6ef675e454f2ea8e22a4475c950c5927f8"
     },
     {
       "path": "docs/PR313_THRONE_GATE_20261016.md",
@@ -5021,7 +5026,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md",
-      "gitBlobSha": "a34e21c615d7764e0c35265cb4e19279117e646f",
+      "gitBlobSha": "6b63578ac2067af1061feecea1d01d13d97b422b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5032,11 +5037,13 @@
       "previousPhase5GitBlobSha": "874f8505253a2a7d50dcb4611b8a2287caffea8d",
       "reconciliationRole": "active design",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousBatchAuthorityBlobSha": "a34e21c615d7764e0c35265cb4e19279117e646f",
+      "reconciliationReviewEvidence": "28 Oct: retired start-here claim and phase-banner direction dated; active gameplay claims still require source and decision verification."
     },
     {
       "path": "docs/ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md",
-      "gitBlobSha": "7e05ee6ac2d58fdd4f85315d8015d4f6fa8a2bbe",
+      "gitBlobSha": "6bd419e8cbdf208b2bd47f686bea95b57a590e5e",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5046,11 +5053,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousCharmReconciliationBlobSha": "7e05ee6ac2d58fdd4f85315d8015d4f6fa8a2bbe",
+      "reconciliationReviewEvidence": "28 Oct: compared Charm capture and per-subtype quota with src/prototype/hero-combat.js at main ebfd6c9 and corrected obsolete probability, phase and naming-popup directions. Historical design and Barracks UI details remain unresolved pending wider source and decision review."
     },
     {
       "path": "docs/ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md",
-      "gitBlobSha": "66ddf17aada75498c2dae3cf783dd9799d35283b",
+      "gitBlobSha": "4530cf03869ac4d2646ec2fda3ec7d45d3d25b1e",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5060,7 +5069,9 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "66ddf17aada75498c2dae3cf783dd9799d35283b",
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
     },
     {
       "path": "docs/ROGUE_BARD_DISCUSSION_RECORD_20261026.md",
@@ -5078,7 +5089,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md",
-      "gitBlobSha": "7d96fcfa1b1226011bc53e719bcdd29797939a65",
+      "gitBlobSha": "a6a8838b50c807f5df93a4d8b8d5bf2abd8312ac",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5088,7 +5099,9 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "7d96fcfa1b1226011bc53e719bcdd29797939a65",
+      "reconciliationReviewEvidence": "28 Oct: bounded prominent pre-release status or superseded instruction after checking merged PR #511 and current source; substantive design and body claims remain unresolved."
     },
     {
       "path": "docs/ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md",
@@ -5121,7 +5134,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_FOURTH_CLASS_HOUSEKEEPING_20261027.md",
-      "gitBlobSha": "33e98d313cf0f6a0d55e1352cc9b4fbcc8346eb2",
+      "gitBlobSha": "1bbdae734a71b593656264bacbb3ed1041101241",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5131,11 +5144,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "33e98d313cf0f6a0d55e1352cc9b4fbcc8346eb2",
+      "reconciliationReviewEvidence": "28 Oct: bounded prominent pre-release status or superseded instruction after checking merged PR #511 and current source; substantive design and body claims remain unresolved."
     },
     {
       "path": "docs/ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md",
-      "gitBlobSha": "9fdfd23d063fbd046c2df7dc1e3354613008cafe",
+      "gitBlobSha": "a13f878dfc543c139da07bc005207bb88bee7916",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5145,7 +5160,9 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "9fdfd23d063fbd046c2df7dc1e3354613008cafe",
+      "reconciliationReviewEvidence": "28 Oct: bounded prominent pre-release status or superseded instruction after checking merged PR #511 and current source; substantive design and body claims remain unresolved."
     },
     {
       "path": "docs/ROGUE_BARD_IMPLEMENTATION_HOUSEKEEPING_20261026.md",
@@ -5177,7 +5194,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md",
-      "gitBlobSha": "9a8e61e61d17538d447c3ff81e7ee27903293a1a",
+      "gitBlobSha": "1f836534d5e93f28f8789d0554bc5085abc328d7",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5187,7 +5204,9 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "9a8e61e61d17538d447c3ff81e7ee27903293a1a",
+      "reconciliationReviewEvidence": "28 Oct: bounded prominent pre-release status or superseded instruction after checking merged PR #511 and current source; substantive design and body claims remain unresolved."
     },
     {
       "path": "docs/ROGUE_BARD_OWNER_REVIEW_20261026.md",
@@ -5219,7 +5238,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_20261027.md",
-      "gitBlobSha": "144eace9e1431640a65a9586af58d9fa09897f02",
+      "gitBlobSha": "ebcc94bb0e152693e753ca8d9af4a0842352def3",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5229,11 +5248,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "144eace9e1431640a65a9586af58d9fa09897f02",
+      "reconciliationReviewEvidence": "28 Oct: bounded prominent pre-release status or superseded instruction after checking merged PR #511 and current source; substantive design and body claims remain unresolved."
     },
     {
       "path": "docs/ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md",
-      "gitBlobSha": "93b22cbf1aff616ebf691ab76851c3ede7414d86",
+      "gitBlobSha": "cbda18403efe80c5d16321f7788f5348e8354d47",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5243,11 +5264,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "93b22cbf1aff616ebf691ab76851c3ede7414d86",
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_MUSICAL_REPERTOIRE_20261027.md",
-      "gitBlobSha": "682494bb6a66d0115cc3aa780c665990c3013a6b",
+      "gitBlobSha": "7f2fe692b69245557620d62d319aa948b82e507e",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5257,11 +5280,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "682494bb6a66d0115cc3aa780c665990c3013a6b",
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_NAMES_AND_CRITICAL_ALIGNMENT_20261027.md",
-      "gitBlobSha": "455f4e73457ff9e32406213ac2c43c9568a96ce2",
+      "gitBlobSha": "f483ffc639960aa21efd6b2a09f17b991fc6d9f0",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5271,11 +5296,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "455f4e73457ff9e32406213ac2c43c9568a96ce2",
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md",
-      "gitBlobSha": "ba76ba9bff6c4795dd2233a4bdfd5561a61fb3c5",
+      "gitBlobSha": "8d9426f6fb16a1c9ea42f50723fa2cb1827db4d5",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5285,11 +5312,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "ba76ba9bff6c4795dd2233a4bdfd5561a61fb3c5",
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
     },
     {
       "path": "docs/ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md",
-      "gitBlobSha": "836c1f8a1c380eaf77fe4633c8b9db128e6c31d6",
+      "gitBlobSha": "9a7410dd6fbf5fb85f406f3f92acf6433655aab3",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5299,11 +5328,13 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "836c1f8a1c380eaf77fe4633c8b9db128e6c31d6",
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
     },
     {
       "path": "docs/ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md",
-      "gitBlobSha": "f71f52b3b542fd90ce5c269fac83328dbb04cc3b",
+      "gitBlobSha": "2a263f0232dc5b283bd1a7a7ab566717e9fa9775",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5314,7 +5345,9 @@
       "previousPhase5GitBlobSha": "009a3ee1165cfa8674aa2fa53137e47c11d10094",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousPhaseAuthorityBlobSha": "f71f52b3b542fd90ce5c269fac83328dbb04cc3b",
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
     },
     {
       "path": "docs/ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md",

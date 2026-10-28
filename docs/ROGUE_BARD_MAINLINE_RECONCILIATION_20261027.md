@@ -1,3 +1,5 @@
+> **28 October status:** [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) has merged and Rogue is playable. Draft, unregistered and unfinished-phase statements below are dated historical context, not directions to restart the work. See [Development state](DEVELOPMENT_STATE.md) and current source; design proposals and test receipts remain bounded to their original checkpoints.
+
 # Mainline integration checkpoint for fourth-class preparation — PR #511
 
 > **Phase 1–3 consolidated status (27 October 2026):** **Foundation, Hero Basics, and Authentic Charm are COMPLETE AS STAGED / FOCUSED-VALIDATED; Phase 4 is READY BUT NOT IMPLEMENTED.** The binding native Charm rule is **12% on lawful surviving auto-primary hit**; every successful capture is **automatically given a permanent silly English/Spanish name (70 per language)** and **100% friendly max HP**, even in reserve. No naming popup/toggle/tutorial or naming-based heal. The distinct fresh Charm-first → worker → Barracks tutorial is Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024) at `f24f16ef`; [documentation head likewise passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428) at `922a9cc2`. Main `5c6197e8` integrated with 0 commits behind at closeout. PR #511 is OPEN/DRAFT, unmerged/undeployed, Rogue unregistered. Read [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md). **Superseded statements further below are historical notes, not live requirements.**
@@ -58,7 +60,7 @@ A focused branch CI failure previously showed `hero-skill1-area2.test.cjs` expec
 - All eight Rogue tap/charged music effects, the normal/charged basic attack and finisher, fourth independent critical-intensity control, innate Endure, static original art, audio and localized HUD/skill journal.
 - Seven-member **mixed** composition/formation and performance regression, not merely seven Soldiers or seven Archers.
 
-**Current status:** Source reconciliation was implemented in PR #511 at `3c6da60`. This document retains the pre-merge risk analysis for review history. PR #511 remains draft, unmerged to `main`, not playable, and requires latest-head test verification before release.
+**Historical checkpoint:** Source reconciliation was implemented in PR #511 at `3c6da60`. At that time the PR was draft, unmerged and not playable; the pre-merge risk analysis is preserved for review history.
 
 
 ## 27 October Phase 3 preparation integration — current addendum
