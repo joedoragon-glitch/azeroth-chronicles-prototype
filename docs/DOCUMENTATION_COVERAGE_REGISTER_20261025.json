@@ -55,6 +55,18 @@
       "updatedPriorFileReceipts": 10,
       "preservedHistoricalSnapshots": true,
       "method": "Full nontruncated recursive Git tree and exact file blob SHA comparison, path-level classification of 28 merged Rogue documents, direct index-basename references; not full-body correctness certification"
+    },
+    "rogueCanonReconciliation": {
+      "date": "2026-10-28",
+      "baseMainSha": "6721c61ede70b4ff64246ea22e269629c2308552",
+      "candidateShaBeforeRegistry": "f0425f7d7a3b39ed2efbfbdc8357a818b5b678bf",
+      "modifiedMarkdownBlobReceipts": 26,
+      "addedDocuments": [
+        "docs/ROGUE_CURRENT_CANON.md"
+      ],
+      "historicalRogueStageRecordsMarked": 24,
+      "executableCandidateJSONMarkedArchival": "tools/rogue-bard/rogue-bard-candidate.json",
+      "method": "Source-and-owner-canon reconciliation; dated records retain historic text with current authority notices; current development state remains publication authority; no runtime changes or full-device acceptance."
     }
   },
   "semantics": {
@@ -62,7 +74,7 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Exact Git blob SHA at the integrated 28 October candidate tree basis.phase5FinalReconciliation.stagedCandidateShaBeforeRegistry; older file blob receipts remain in their historicalPinnedGitBlobSha, previousPhase3GitBlobSha and/or previousPhase4GitBlobSha fields. The registry JSON does not register itself.",
+    "gitBlobSha": "Exact Git blob SHA at latest Rogue-canon documentation candidate tree basis.rogueCanonReconciliation.candidateShaBeforeRegistry for touched rows; historical Phase 5 receipts preserved via previousRogueCanonGitBlobSha. The registry JSON does not register itself; unchanged rows retain earlier verified receipts.",
     "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
     "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
     "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks.",
@@ -232,6 +244,20 @@
   ],
   "documents": [
     {
+      "path": "AGENTS.md",
+      "gitBlobSha": "458c9525bfd980e39e2505dc217d0e040fe455d7",
+      "location": "elsewhere",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "current_entrypoint",
+      "authority": "current_entrypoint",
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "98e6d2311ac78561972ddf55564c6546b6d27cc3",
+      "previousPhase4GitBlobSha": "b70be63b4aeb030724c024e1bd6f58d534595abb",
+      "previousRogueCanonGitBlobSha": "e627a5f15646a79702a03974da9efd1d71488d0e"
+    },
+    {
       "path": "AGENTS_HISTORY_20261025.md",
       "gitBlobSha": "7b63c83362be4ab3c5e40f4d86e47b846b89e4e0",
       "location": "elsewhere",
@@ -241,30 +267,6 @@
       "role": "archived_operational_ledger",
       "authority": "verify_with_current_source",
       "reviewDepth": "current_entrypoint_checked"
-    },
-    {
-      "path": "AGENTS.md",
-      "gitBlobSha": "e627a5f15646a79702a03974da9efd1d71488d0e",
-      "location": "elsewhere",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "governance_or_reference",
-      "role": "current_entrypoint",
-      "authority": "current_entrypoint",
-      "reviewDepth": "current_entrypoint_checked",
-      "historicalPinnedGitBlobSha": "98e6d2311ac78561972ddf55564c6546b6d27cc3",
-      "previousPhase4GitBlobSha": "b70be63b4aeb030724c024e1bd6f58d534595abb"
-    },
-    {
-      "path": "assets/sprites/README.md",
-      "gitBlobSha": "1986e72d4348e1631cadfc77a26097cdda58eacf",
-      "location": "elsewhere",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "governance_or_reference",
-      "role": "other_reference",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
     },
     {
       "path": "CONTROLES.md",
@@ -278,6 +280,30 @@
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "842082d7523eb7143e688e27451d223fcd7189c1",
       "previousPhase4GitBlobSha": "d987f1aa5b1513f32a8591d53009ea87dae040b2"
+    },
+    {
+      "path": "README.md",
+      "gitBlobSha": "744a7ab54a6bacec1acc541090f955610499f45e",
+      "location": "elsewhere",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "current_entrypoint",
+      "authority": "current_entrypoint",
+      "reviewDepth": "current_entrypoint_checked",
+      "historicalPinnedGitBlobSha": "4e0ca0dbf470e2f8d98a6ae05f89c8801e6b55c0",
+      "previousPhase4GitBlobSha": "21d69c2f95ee9aec75237e83870f313958e90223"
+    },
+    {
+      "path": "assets/sprites/README.md",
+      "gitBlobSha": "1986e72d4348e1631cadfc77a26097cdda58eacf",
+      "location": "elsewhere",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
     },
     {
       "path": "docs/A2_A3_ARCHIVE_BOOKSHELF_READING_20261024.md",
@@ -1605,7 +1631,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "0d9570f5c5345b33cc03fa4783e800ddcaec7fde",
+      "gitBlobSha": "a46b11989e57313d3d8b31edb3fd766a5520489a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1615,7 +1641,8 @@
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "6777828d513cae4708017e98b5404acb9bbdaa9e",
       "previousPhase3GitBlobSha": "8ec8ea1181840de17c2ba24da6c22edfab9ffe39",
-      "previousPhase4GitBlobSha": "88b7473134655c82ed2a79f443053dd8f9add5c2"
+      "previousPhase4GitBlobSha": "88b7473134655c82ed2a79f443053dd8f9add5c2",
+      "previousRogueCanonGitBlobSha": "0d9570f5c5345b33cc03fa4783e800ddcaec7fde"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -1858,6 +1885,17 @@
       "reviewDepth": "path_only"
     },
     {
+      "path": "docs/FORTS_RANGER_PASSAGE_20261020.md",
+      "gitBlobSha": "78d9c21e148a8976ce92ce5b630309a3f0421643",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "path_only"
+    },
+    {
       "path": "docs/FORT_REPAIRS_DEV151.md",
       "gitBlobSha": "a10fc2ef9a5a6dcf918f7737d4fb71343ceefece",
       "location": "docs",
@@ -1868,17 +1906,6 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "header_screened",
       "historicalPinnedDirectlyLinkedFromIndex": false
-    },
-    {
-      "path": "docs/FORTS_RANGER_PASSAGE_20261020.md",
-      "gitBlobSha": "78d9c21e148a8976ce92ce5b630309a3f0421643",
-      "location": "docs",
-      "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": true,
-      "topic": "combat_and_survival",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
     },
     {
       "path": "docs/FOUNDING_EXPLORERS_EXECUTION_RECORD.md",
@@ -2072,6 +2099,17 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
+      "path": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
+      "gitBlobSha": "a5b7aec07477a5cfa147f20bcdd9575d7d645b75",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "art_and_sprites",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
       "path": "docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md",
       "gitBlobSha": "838c8c5034fc753cbb8a808b24aa60ecf0920ef2",
       "location": "docs",
@@ -2082,17 +2120,6 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership",
       "historicalPinnedGitBlobSha": "966326213033ff833b2872655a4e1797e6308059"
-    },
-    {
-      "path": "docs/GRAPHICS_CANON_SPRITE_PROMPTS.md",
-      "gitBlobSha": "a5b7aec07477a5cfa147f20bcdd9575d7d645b75",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "art_and_sprites",
-      "role": "other_reference",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
     },
     {
       "path": "docs/GRAPHICS_CANON_SPRITE_ROSTER.md",
@@ -2203,50 +2230,6 @@
       "role": "dated_record",
       "authority": "verify_with_current_source",
       "reviewDepth": "path_only"
-    },
-    {
-      "path": "docs/HERO_SKILL_AV_COMBINED_VERIFICATION_20261015.md",
-      "gitBlobSha": "730a6d79d18f7424933e413ae9fec9b67340b0e5",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "combat_and_survival",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/HERO_SKILL_AV_DEVELOPMENT_LEDGER_20261015.md",
-      "gitBlobSha": "18bf597bc74549d467ee017dc8029dd313806a49",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "combat_and_survival",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/HERO_SKILL_AV_IMPLEMENTATION_20261015.md",
-      "gitBlobSha": "893fed8121232295f8bbb69da861cce8f026ca84",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "combat_and_survival",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/HERO_SKILL_PLAYER_GUIDANCE_AUDIT_20261015.md",
-      "gitBlobSha": "58c65d6ec9b0b96f3335a0d44ec4efb4c9d277b9",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "combat_and_survival",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
     },
     {
       "path": "docs/HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md",
@@ -2464,6 +2447,50 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
+      "path": "docs/HERO_SKILL_AV_COMBINED_VERIFICATION_20261015.md",
+      "gitBlobSha": "730a6d79d18f7424933e413ae9fec9b67340b0e5",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/HERO_SKILL_AV_DEVELOPMENT_LEDGER_20261015.md",
+      "gitBlobSha": "18bf597bc74549d467ee017dc8029dd313806a49",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/HERO_SKILL_AV_IMPLEMENTATION_20261015.md",
+      "gitBlobSha": "893fed8121232295f8bbb69da861cce8f026ca84",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/HERO_SKILL_PLAYER_GUIDANCE_AUDIT_20261015.md",
+      "gitBlobSha": "58c65d6ec9b0b96f3335a0d44ec4efb4c9d277b9",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
       "path": "docs/HIGHLANDS_APPALACHIAN_DEV138.md",
       "gitBlobSha": "80d518984e3647499831be8f46a8040153f8013a",
       "location": "docs",
@@ -2565,17 +2592,6 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
-      "path": "docs/ISSUE_312_CONSOLIDATED_IMPLEMENTATION_LEDGER_20261016.md",
-      "gitBlobSha": "93b3b8492efe045cfa1ae5efe91e6fad5aa5ad6d",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "general_or_unresolved",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
       "path": "docs/ISSUE463_DEV186_INTEGRATION_20261025.md",
       "gitBlobSha": "e99b7b0eb4439b6de89ffe4ec20e35c644164302",
       "location": "docs",
@@ -2640,6 +2656,17 @@
       "role": "dated_record",
       "authority": "verify_with_current_source",
       "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/ISSUE_312_CONSOLIDATED_IMPLEMENTATION_LEDGER_20261016.md",
+      "gitBlobSha": "93b3b8492efe045cfa1ae5efe91e6fad5aa5ad6d",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "general_or_unresolved",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
     },
     {
       "path": "docs/ITEM_EQUIPMENT_INTEGRITY_20261010.md",
@@ -2796,6 +2823,17 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
+      "path": "docs/MECHANICS_AUDIT_V081.md",
+      "gitBlobSha": "708271b6ae5864c825db01900a057186e8a9e6a0",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "general_or_unresolved",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
       "path": "docs/MECHANIC_DEVELOPMENT.md",
       "gitBlobSha": "939de2e45f9ec06f9e2c4822e92d8a6935da6099",
       "location": "docs",
@@ -2807,17 +2845,6 @@
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "ca17f8257babab5425862789e05ea255d156021d",
       "previousPhase4GitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352"
-    },
-    {
-      "path": "docs/MECHANICS_AUDIT_V081.md",
-      "gitBlobSha": "708271b6ae5864c825db01900a057186e8a9e6a0",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "general_or_unresolved",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
     },
     {
       "path": "docs/MELEE_BASIC_RANGE_REGRESSION_AUDIT_20261026.md",
@@ -2984,25 +3011,6 @@
       "reviewDepth": "path_only"
     },
     {
-      "path": "docs/N1_BILINGUAL_NARRATIVE_INTEGRATION_20261024.md",
-      "gitBlobSha": "46cea87c53b716a17626584c59a9b19e31548eaa",
-      "location": "docs",
-      "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": true,
-      "topic": "narrative_and_archive",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "full_body_pr_disposition_checked",
-      "verifiedPrRouting": {
-        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
-        "sourcePr": 428,
-        "integratedByPr": 434,
-        "disposition": "merged_via_integration",
-        "caution": "Author-approved bilingual text and draft N1 delivery tests; source PR #428 closed unmerged, combined work published through #434; implementation proof comes from merged integration, not standalone draft CI."
-      },
-      "historicalPinnedDirectlyLinkedFromIndex": false
-    },
-    {
       "path": "docs/N1A_SCENE_RECONCILIATION_20261024.md",
       "gitBlobSha": "35500f1bdb21dd74fa75dcb399b1768f1e267e93",
       "location": "docs",
@@ -3018,6 +3026,25 @@
         "integratedByPr": 434,
         "disposition": "merged_via_integration",
         "caution": "Original N1a #430 closed unmerged but its five world/scene obligations and author-final N1 copy included through merged #434. Do not rerun draft on main, modify protected manuscript, or infer mobile certification from its 19 focused suites."
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
+    },
+    {
+      "path": "docs/N1_BILINGUAL_NARRATIVE_INTEGRATION_20261024.md",
+      "gitBlobSha": "46cea87c53b716a17626584c59a9b19e31548eaa",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "narrative_and_archive",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 428,
+        "integratedByPr": 434,
+        "disposition": "merged_via_integration",
+        "caution": "Author-approved bilingual text and draft N1 delivery tests; source PR #428 closed unmerged, combined work published through #434; implementation proof comes from merged integration, not standalone draft CI."
       },
       "historicalPinnedDirectlyLinkedFromIndex": false
     },
@@ -3132,6 +3159,18 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
+      "path": "docs/NIGHTMARE_SPECIALIST_UPKEEP_DEV145.md",
+      "gitBlobSha": "8e7f540404044f2a63ba63bdb7007e14a9ad8dff",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "historicalPinnedDirectlyLinkedFromIndex": false
+    },
+    {
       "path": "docs/NIGHT_RINGLEADER_ROGUE_20261020.md",
       "gitBlobSha": "f13789ea8919d44d92fffcbaf371c15cb0e6fec2",
       "location": "docs",
@@ -3152,18 +3191,6 @@
       "role": "dated_record",
       "authority": "verify_with_current_source",
       "reviewDepth": "path_only"
-    },
-    {
-      "path": "docs/NIGHTMARE_SPECIALIST_UPKEEP_DEV145.md",
-      "gitBlobSha": "8e7f540404044f2a63ba63bdb7007e14a9ad8dff",
-      "location": "docs",
-      "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": true,
-      "topic": "combat_and_survival",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened",
-      "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
       "path": "docs/OLDER_GAMEPLAY_FIXES_AUDIT_20261009.md",
@@ -3237,72 +3264,6 @@
       },
       "historicalPinnedDirectlyLinkedFromIndex": false,
       "previousPhase4GitBlobSha": "398f599d8279867f163ac0f690fe33d5ecdeaaef"
-    },
-    {
-      "path": "docs/PERF_WS2_BROWSER_CANVAS_CONTROLS.md",
-      "gitBlobSha": "4079b911c1ba35a7a25df6d8cbc166278c9d07ee",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "other_reference",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/PERF_WS2_FULL_RENDER_DIAGNOSTICS.md",
-      "gitBlobSha": "ecfebb02cac22cf5faaf24060c54f38c714ba02e",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "other_reference",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/PERF_WS2_VISUALS_V09.md",
-      "gitBlobSha": "052959ed723bb5c41756313597c58ae99f83a7d8",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/PERF_WS4_INFRASTRUCTURE_20261010.md",
-      "gitBlobSha": "02be8ccdca23e71c041534b6030b3fc2084734c4",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/perf-ws1-terrain-road-rendering.md",
-      "gitBlobSha": "e8bcafee81298a101e025ecf1bd5f58e84f57af5",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "other_reference",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/perf-ws3-interface-audio-20261010.md",
-      "gitBlobSha": "2664e4a3469cb24f8fd465a48268bc30b6c41370",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "other_reference",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
     },
     {
       "path": "docs/PERFORMANCE_BASELINE_DEV170_20261024.md",
@@ -3399,6 +3360,50 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
+      "path": "docs/PERF_WS2_BROWSER_CANVAS_CONTROLS.md",
+      "gitBlobSha": "4079b911c1ba35a7a25df6d8cbc166278c9d07ee",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/PERF_WS2_FULL_RENDER_DIAGNOSTICS.md",
+      "gitBlobSha": "ecfebb02cac22cf5faaf24060c54f38c714ba02e",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/PERF_WS2_VISUALS_V09.md",
+      "gitBlobSha": "052959ed723bb5c41756313597c58ae99f83a7d8",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/PERF_WS4_INFRASTRUCTURE_20261010.md",
+      "gitBlobSha": "02be8ccdca23e71c041534b6030b3fc2084734c4",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
       "path": "docs/PET_PARITY_AUDIT_20261020.md",
       "gitBlobSha": "9d6a1020e06338d4895032c12781282541ecdab8",
       "location": "docs",
@@ -3438,17 +3443,6 @@
       "role": "dated_record",
       "authority": "verify_with_current_source",
       "reviewDepth": "path_only"
-    },
-    {
-      "path": "docs/PIXI_TWILIGHT_GLOW_FAILURE_20261026.md",
-      "gitBlobSha": "0d9e432e0f76070ec84e4c5cd3e36a2aaa33d883",
-      "location": "docs",
-      "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
     },
     {
       "path": "docs/PIXIJS_PLAYTEST_STEP2_20261022.md",
@@ -3506,6 +3500,17 @@
         "caution": "Pre-Step-4 and subsequent #407 browser/CI audit recorded date-bound failures and targeted passes. #407 subsequently merged; do not re-open prior Step 5 automatically or infer full-hardware Pixi success."
       },
       "historicalPinnedDirectlyLinkedFromIndex": false
+    },
+    {
+      "path": "docs/PIXI_TWILIGHT_GLOW_FAILURE_20261026.md",
+      "gitBlobSha": "0d9e432e0f76070ec84e4c5cd3e36a2aaa33d883",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
     },
     {
       "path": "docs/PLAYTEST_AUDIT.md",
@@ -3681,17 +3686,6 @@
       "reviewDepth": "header_screened"
     },
     {
-      "path": "docs/PR440_STAGE_GATES_AND_REGRESSION_MATRIX_20261024.md",
-      "gitBlobSha": "76e4f92f8f00413314b6acdc1d88adaa03353787",
-      "location": "docs",
-      "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": true,
-      "topic": "combat_and_survival",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "header_screened"
-    },
-    {
       "path": "docs/PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md",
       "gitBlobSha": "8a93462a7122b25f58f3456e1047018e75b9c354",
       "location": "docs",
@@ -3749,6 +3743,17 @@
     {
       "path": "docs/PR440_STAGE3_SPECIAL_ACTIONS_NATIVE_CHECKPOINT_20261025.md",
       "gitBlobSha": "f3968a6fea696e6909267b98127dc408c82741e1",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened"
+    },
+    {
+      "path": "docs/PR440_STAGE_GATES_AND_REGRESSION_MATRIX_20261024.md",
+      "gitBlobSha": "76e4f92f8f00413314b6acdc1d88adaa03353787",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -4059,256 +4064,279 @@
     },
     {
       "path": "docs/ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md",
-      "gitBlobSha": "874f8505253a2a7d50dcb4611b8a2287caffea8d",
+      "gitBlobSha": "59844657b2fa722a63088a8578e5fa185aaa7ef3",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "874f8505253a2a7d50dcb4611b8a2287caffea8d"
     },
     {
       "path": "docs/ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md",
-      "gitBlobSha": "7e05ee6ac2d58fdd4f85315d8015d4f6fa8a2bbe",
+      "gitBlobSha": "b77a1205d4868c10f53900e2eae28ce0e17efcf6",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "7e05ee6ac2d58fdd4f85315d8015d4f6fa8a2bbe"
     },
     {
       "path": "docs/ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md",
-      "gitBlobSha": "66ddf17aada75498c2dae3cf783dd9799d35283b",
+      "gitBlobSha": "77dbd267a8bb6f12cb39724d55159c20d74998b2",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "66ddf17aada75498c2dae3cf783dd9799d35283b"
     },
     {
       "path": "docs/ROGUE_BARD_DISCUSSION_RECORD_20261026.md",
-      "gitBlobSha": "7d9bd43bb5b3724f6e1490c798d147cf2f7addc5",
+      "gitBlobSha": "ca8478b871a16b171a635cc5236f58e3de74ccc3",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "7d9bd43bb5b3724f6e1490c798d147cf2f7addc5"
     },
     {
       "path": "docs/ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md",
-      "gitBlobSha": "7d96fcfa1b1226011bc53e719bcdd29797939a65",
+      "gitBlobSha": "5167241346dd1c46a59b8b6ff226b14223f0654a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "7d96fcfa1b1226011bc53e719bcdd29797939a65"
     },
     {
       "path": "docs/ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md",
-      "gitBlobSha": "21bf8aaeb293fab380208039d871208083aac121",
+      "gitBlobSha": "7257b874fd4eae23ed9b95043cf9da9c5bb8e5b4",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "21bf8aaeb293fab380208039d871208083aac121"
     },
     {
       "path": "docs/ROGUE_BARD_FOURTH_CLASS_FEASIBILITY_20261026.md",
-      "gitBlobSha": "5191514ad4c0c276947e108390486f412f9661d7",
+      "gitBlobSha": "3b85e7d8b50c7e32b64194472c56e689465131a1",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "5191514ad4c0c276947e108390486f412f9661d7"
     },
     {
       "path": "docs/ROGUE_BARD_FOURTH_CLASS_HOUSEKEEPING_20261027.md",
-      "gitBlobSha": "33e98d313cf0f6a0d55e1352cc9b4fbcc8346eb2",
+      "gitBlobSha": "a6368e5477e612b04af22b9fd66346adb71a72f3",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "33e98d313cf0f6a0d55e1352cc9b4fbcc8346eb2"
     },
     {
       "path": "docs/ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md",
-      "gitBlobSha": "9fdfd23d063fbd046c2df7dc1e3354613008cafe",
+      "gitBlobSha": "8a3b1913957495dd2edbf6a9abea78882f365ecc",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "9fdfd23d063fbd046c2df7dc1e3354613008cafe"
     },
     {
       "path": "docs/ROGUE_BARD_IMPLEMENTATION_HOUSEKEEPING_20261026.md",
-      "gitBlobSha": "5a560a0f0f58c4b514ab2704c0fbd96176f2cb76",
+      "gitBlobSha": "540cadb14025aa769f024a1b15f7284d175fda27",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "5a560a0f0f58c4b514ab2704c0fbd96176f2cb76"
     },
     {
       "path": "docs/ROGUE_BARD_LIVE_PLAYTEST_GATE_20261027.md",
-      "gitBlobSha": "e7c2fd0463e60a4cb1807426e5c94df0a6c297e8",
+      "gitBlobSha": "7cb754b98cd9a30b9901880a792c70432b6e08bf",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "e7c2fd0463e60a4cb1807426e5c94df0a6c297e8"
     },
     {
       "path": "docs/ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md",
-      "gitBlobSha": "9a8e61e61d17538d447c3ff81e7ee27903293a1a",
+      "gitBlobSha": "548cae5c3c10327934ffb700cee83fd1a614aee0",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "9a8e61e61d17538d447c3ff81e7ee27903293a1a"
     },
     {
       "path": "docs/ROGUE_BARD_OWNER_REVIEW_20261026.md",
-      "gitBlobSha": "cd24ef36f060db65ccd18ecf5cc9ad41cdd72bcc",
+      "gitBlobSha": "1a0e2a3e449b21349e4f6458e67b408001e461c8",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "cd24ef36f060db65ccd18ecf5cc9ad41cdd72bcc"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE2_HERO_FOUNDATION_20261027.md",
-      "gitBlobSha": "0c126bdd00a6bc8033286f5fb170af3162504dd7",
+      "gitBlobSha": "b2157db3d6674f68ba7e357f4a4cf3ee8037c66c",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "0c126bdd00a6bc8033286f5fb170af3162504dd7"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_20261027.md",
-      "gitBlobSha": "144eace9e1431640a65a9586af58d9fa09897f02",
+      "gitBlobSha": "04e17ba1eb4037fa2d1be71c572e73354052d22c",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "144eace9e1431640a65a9586af58d9fa09897f02"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md",
-      "gitBlobSha": "93b22cbf1aff616ebf691ab76851c3ede7414d86",
+      "gitBlobSha": "c94ac4b80ee514f7dfe0a66e424c3d8d1eb618e5",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "companions_and_services",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "93b22cbf1aff616ebf691ab76851c3ede7414d86"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_MUSICAL_REPERTOIRE_20261027.md",
-      "gitBlobSha": "682494bb6a66d0115cc3aa780c665990c3013a6b",
+      "gitBlobSha": "2b31a25b2d1a524a1486bbc6753b1fb5b4b551b1",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "682494bb6a66d0115cc3aa780c665990c3013a6b"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_NAMES_AND_CRITICAL_ALIGNMENT_20261027.md",
-      "gitBlobSha": "455f4e73457ff9e32406213ac2c43c9568a96ce2",
+      "gitBlobSha": "c4377719047394162bb77a32da828a217c5c02c8",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "455f4e73457ff9e32406213ac2c43c9568a96ce2"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md",
-      "gitBlobSha": "ba76ba9bff6c4795dd2233a4bdfd5561a61fb3c5",
+      "gitBlobSha": "5f8fcd965fb31c62ffc4bc1fc90eb48e9345ad9b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "ba76ba9bff6c4795dd2233a4bdfd5561a61fb3c5"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md",
-      "gitBlobSha": "836c1f8a1c380eaf77fe4633c8b9db128e6c31d6",
+      "gitBlobSha": "22aeccd65b7429961bb385b01eff815ca7dfee31",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "836c1f8a1c380eaf77fe4633c8b9db128e6c31d6"
     },
     {
       "path": "docs/ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md",
-      "gitBlobSha": "009a3ee1165cfa8674aa2fa53137e47c11d10094",
+      "gitBlobSha": "f63a7089fe2bf7523158e5871fb4ebd8a6216bd9",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "009a3ee1165cfa8674aa2fa53137e47c11d10094"
     },
     {
       "path": "docs/ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md",
-      "gitBlobSha": "a13cb853d47b43b613cadcc1e3c152c027e9696d",
+      "gitBlobSha": "103547bc8ba249cc13c7baacfe40f30eb06b5221",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "a13cb853d47b43b613cadcc1e3c152c027e9696d"
     },
     {
       "path": "docs/ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md",
-      "gitBlobSha": "9344515465d7cf48bec2b091eb52d6dae3b73528",
+      "gitBlobSha": "76228dfed8704861d0d30ddc63986746d2f2a9d1",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "9344515465d7cf48bec2b091eb52d6dae3b73528"
     },
     {
       "path": "docs/ROGUE_CHARM_NAMEPLATE_POLISH_20261028.md",
@@ -4320,6 +4348,17 @@
       "role": "dated_record",
       "authority": "verify_with_current_source",
       "reviewDepth": "path_only"
+    },
+    {
+      "path": "docs/ROGUE_CURRENT_CANON.md",
+      "gitBlobSha": "14e4beb3cdf8702471df74948255cfb2eb143fa7",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "feature_or_gameplay",
+      "role": "current_entrypoint",
+      "authority": "current_entrypoint",
+      "reviewDepth": "current_entrypoint_checked"
     },
     {
       "path": "docs/ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md",
@@ -4356,14 +4395,15 @@
     },
     {
       "path": "docs/ROGUE_PHASE7_PROCEDURAL_ART_20261027.md",
-      "gitBlobSha": "4022d6ddf1751b8004088dbb7adb8706de2e8895",
+      "gitBlobSha": "eb1603579f9a2e61dfd9b3abcc3ee2a37897ebb1",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "4022d6ddf1751b8004088dbb7adb8706de2e8895"
     },
     {
       "path": "docs/ROGUE_PR146_INTEGRATION_AUDIT.md",
@@ -4427,25 +4467,6 @@
       "historicalPinnedDirectlyLinkedFromIndex": false
     },
     {
-      "path": "docs/RUNTIME_WORKLOAD_DEV177_AUDIT.md",
-      "gitBlobSha": "fb7cc01289424ca38baff9265b7ec2994ea7e638",
-      "location": "docs",
-      "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": true,
-      "topic": "performance_or_rendering",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "full_body_pr_disposition_checked",
-      "verifiedPrRouting": {
-        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
-        "sourcePr": 442,
-        "integratedByPr": 442,
-        "disposition": "merged_directly",
-        "caution": "Independent premerge native fixture/provenance audit of #442, now merged; inherited unrelated art/test failures require separate evidence, not a new unrelated work order."
-      },
-      "historicalPinnedDirectlyLinkedFromIndex": false
-    },
-    {
       "path": "docs/RUNTIME_WORKLOAD_DEV177.md",
       "gitBlobSha": "c9838eaf60af0e83c3981889f612de27f0e0caa7",
       "location": "docs",
@@ -4461,6 +4482,25 @@
         "integratedByPr": 442,
         "disposition": "merged_directly",
         "caution": "World/collision/guard-reference preservation repairs in dev.177 PR #442 merged. Historical local Node gains and premerge checklists not present-tense benchmark or approval."
+      },
+      "historicalPinnedDirectlyLinkedFromIndex": false
+    },
+    {
+      "path": "docs/RUNTIME_WORKLOAD_DEV177_AUDIT.md",
+      "gitBlobSha": "fb7cc01289424ca38baff9265b7ec2994ea7e638",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "verifiedPrRouting": {
+        "checkedAtMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
+        "sourcePr": 442,
+        "integratedByPr": 442,
+        "disposition": "merged_directly",
+        "caution": "Independent premerge native fixture/provenance audit of #442, now merged; inherited unrelated art/test failures require separate evidence, not a new unrelated work order."
       },
       "historicalPinnedDirectlyLinkedFromIndex": false
     },
@@ -4745,6 +4785,17 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
+      "path": "docs/SPRITE_PREPARATION.md",
+      "gitBlobSha": "fd9b640e982e5034e986d689072b503f1a450b21",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "art_and_sprites",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
       "path": "docs/SPRITE_PREPARATION_AUDIT.md",
       "gitBlobSha": "8fc44c8de94ec9b6ac89281637476a53e5dc8c60",
       "location": "docs",
@@ -4758,17 +4809,6 @@
     {
       "path": "docs/SPRITE_PREPARATION_PROGRESS.md",
       "gitBlobSha": "24caf6b604031c262d18410d8882b771ac0229f4",
-      "location": "docs",
-      "censusSource": "oct19_frozen",
-      "directlyLinkedFromIndex": true,
-      "topic": "art_and_sprites",
-      "role": "other_reference",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
-    },
-    {
-      "path": "docs/SPRITE_PREPARATION.md",
-      "gitBlobSha": "fd9b640e982e5034e986d689072b503f1a450b21",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -5167,17 +5207,37 @@
       "reviewDepth": "frozen_census_membership"
     },
     {
-      "path": "README.md",
-      "gitBlobSha": "744a7ab54a6bacec1acc541090f955610499f45e",
-      "location": "elsewhere",
+      "path": "docs/perf-ws1-terrain-road-rendering.md",
+      "gitBlobSha": "e8bcafee81298a101e025ecf1bd5f58e84f57af5",
+      "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/perf-ws3-interface-audio-20261010.md",
+      "gitBlobSha": "2664e4a3469cb24f8fd465a48268bc30b6c41370",
+      "location": "docs",
+      "censusSource": "oct19_frozen",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "other_reference",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "tools/visual-review/README_APPROVED_ART_PASS.md",
+      "gitBlobSha": "65753456391cfb1173396319a32c876eaa1a1c29",
+      "location": "elsewhere",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": false,
       "topic": "governance_or_reference",
-      "role": "current_entrypoint",
-      "authority": "current_entrypoint",
-      "reviewDepth": "current_entrypoint_checked",
-      "historicalPinnedGitBlobSha": "4e0ca0dbf470e2f8d98a6ae05f89c8801e6b55c0",
-      "previousPhase4GitBlobSha": "21d69c2f95ee9aec75237e83870f313958e90223"
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "path_only"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",
@@ -5220,17 +5280,6 @@
       "location": "elsewhere",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
-      "topic": "governance_or_reference",
-      "role": "dated_record",
-      "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
-    },
-    {
-      "path": "tools/visual-review/README_APPROVED_ART_PASS.md",
-      "gitBlobSha": "65753456391cfb1173396319a32c876eaa1a1c29",
-      "location": "elsewhere",
-      "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
