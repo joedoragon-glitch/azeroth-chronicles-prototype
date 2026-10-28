@@ -774,7 +774,7 @@
     },
     {
       "path": "docs/AUDIO_PLAYBACK.md",
-      "gitBlobSha": "6cbd34d7f111c009d16a7d0f114598924337b55b",
+      "gitBlobSha": "4b33e20eeb4e8b57dd902bd4ffe760b52133dcde",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -787,8 +787,9 @@
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
       "previousAudioGuideGitBlobSha": "e67d715fa631f75caea6d28e5c55bd1ea1fab298",
-      "reconciliationReviewEvidence": "28 October 2026: fully read old v0.8.89 playback guide; compared published dev.208 audio.js/app.js enableProduction, 127-asset manifest (83 music,14 ambience,30 effect), 19 location and 11 boss routing, audio-production/runtime/recordings/mixer/assets, AUDIO_SOUND_PASS/AUDIO_AUTHORING/AUDIO_ENVIRONMENT, and merged #470/#472/#473. Current production guide rewritten; remaining real-device listening and full browser certification explicitly unverified. No audio/runtime changes. 28 October PR #563 continuation: current audio guide now routes creative intent to living soundtrack/sound-identity page; runtime claims unchanged.",
-      "previousSoundIdentityGuideGitBlobSha": "42a0fb606092104194138af8b2a391694090ee0e"
+      "reconciliationReviewEvidence": "28 October 2026: fully read old v0.8.89 playback guide; compared published dev.208 audio.js/app.js enableProduction, 127-asset manifest (83 music,14 ambience,30 effect), 19 location and 11 boss routing, audio-production/runtime/recordings/mixer/assets, AUDIO_SOUND_PASS/AUDIO_AUTHORING/AUDIO_ENVIRONMENT, and merged #470/#472/#473. Current production guide rewritten; remaining real-device listening and full browser certification explicitly unverified. No audio/runtime changes. 28 October PR #563 continuation: current audio guide now routes creative intent to living soundtrack/sound-identity page; runtime claims unchanged. 28 Oct PR #563 continuation: practical usage of redesigned complete audition room documented, including current draft vs published boundary and separate browser/device acceptance.",
+      "previousSoundIdentityGuideGitBlobSha": "42a0fb606092104194138af8b2a391694090ee0e",
+      "previousAuditionGuideGitBlobSha": "6cbd34d7f111c009d16a7d0f114598924337b55b"
     },
     {
       "path": "docs/AUDIO_SOUND_PASS.md",
@@ -2074,7 +2075,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "ad4badea24601c00b46b5f689fcacfa046196ac6",
+      "gitBlobSha": "188c21056246fce77eb7b0572dfa491750df2e24",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2092,13 +2093,14 @@
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
       "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
       "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
-      "reconciliationReviewEvidence": "28 October 2026: current documentation routing checked for Spanish guide, concise development status and new current audio-production guide. Audio row points to AUDIO_PLAYBACK/AUDIO_AUTHORING/AUDIO_ENVIRONMENT; original frozen historical census rows remain archival. 28 October PR #563 continuation: soundtrack creative-reference routing corrected; frozen historical index receipts untouched.",
+      "reconciliationReviewEvidence": "28 October 2026: current documentation routing checked for Spanish guide, concise development status and new current audio-production guide. Audio row points to AUDIO_PLAYBACK/AUDIO_AUTHORING/AUDIO_ENVIRONMENT; original frozen historical census rows remain archival. 28 October PR #563 continuation: soundtrack creative-reference routing corrected; frozen historical index receipts untouched. 28 Oct PR #563 continuation: current audition room and practical guide linked from top navigation, not from frozen historical rows.",
       "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
       "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
       "previousSpanishGuideNavigationGitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e",
       "previousSpanishGuideCountGitBlobSha": "925323765c021a28b4c03265587732c57143ebb2",
       "previousAudioGuideGitBlobSha": "90a776517cea4dd404fca9e8390968bc01d52824",
-      "previousSoundIdentityGuideGitBlobSha": "7170fcf925b014be88340018b3e610ae84c54b29"
+      "previousSoundIdentityGuideGitBlobSha": "7170fcf925b014be88340018b3e610ae84c54b29",
+      "previousAuditionGuideGitBlobSha": "ad4badea24601c00b46b5f689fcacfa046196ac6"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -6574,7 +6576,7 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "169d42bbaaa5752b6638a89c854da7c3a607566a",
+      "gitBlobSha": "7eb50e24a422a1bedb37c37e69a2047d9e965761",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -6589,10 +6591,11 @@
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
       "previousReadmeNavigationGitBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
-      "reconciliationReviewEvidence": "28 October 2026: verified previous README front door and Spanish guide remain intact; current audio hyperlink now points to refreshed AUDIO_PLAYBACK, with older AUDIO_SOUND_PASS labeled historical. No source gameplay or player-control changes. 28 October PR #563 continuation: soundtrack link now identifies current design reference rather than a dated-only sound pass.",
+      "reconciliationReviewEvidence": "28 October 2026: verified previous README front door and Spanish guide remain intact; current audio hyperlink now points to refreshed AUDIO_PLAYBACK, with older AUDIO_SOUND_PASS labeled historical. No source gameplay or player-control changes. 28 October PR #563 continuation: soundtrack link now identifies current design reference rather than a dated-only sound pass. 28 Oct PR #563 continuation: standalone listening room explains recorded scenes, all 127 registered assets and optional diagnostics; game remains dev.208 publicly until authorized release.",
       "previousSpanishGuideNavigationGitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
       "previousAudioGuideGitBlobSha": "9bdd0ef9ab52212e10ad15a4fc66ca5d714cfebd",
-      "previousSoundIdentityGuideGitBlobSha": "94c50ea9a8ceff3747eeb3f0e7cd82b38b903813"
+      "previousSoundIdentityGuideGitBlobSha": "94c50ea9a8ceff3747eeb3f0e7cd82b38b903813",
+      "previousAuditionGuideGitBlobSha": "169d42bbaaa5752b6638a89c854da7c3a607566a"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",
