@@ -121,6 +121,23 @@
       "candidateMarkdownCount": 419,
       "evidence": "app.js actual language settings and launch flow, input.js default keys, official game name, current published dev.208 receipts; original controls guide preserved in history",
       "languageScope": "Spanish presentation available with incomplete localization; never imply all story/world text translated."
+    },
+    "audioProductionGuide": {
+      "reviewedMainSha": "3765ed3bbbf67385561ba47b46887eda6ccf3e7c",
+      "currentGameVersion": "0.9.1+snapshot.dev.208",
+      "audioManifestAssets": {
+        "music": 83,
+        "ambience": 14,
+        "effect": 30,
+        "total": 127
+      },
+      "musicPlaces": 19,
+      "bossFamilies": 11,
+      "currentGuide": "docs/AUDIO_PLAYBACK.md",
+      "historicalSoundPass": "docs/AUDIO_SOUND_PASS.md",
+      "source": "assets/audio/manifest.json; src/prototype/audio-production.js, audio-runtime.js, audio-recordings.js, audio-mixer.js, audio-environment.js; app.js; docs/AUDIO_AUTHORING.md",
+      "method": "Source-level current production and catalog check; all historical v0.8.89 content remains retrievable by original exact Git SHA; no full browser/device listening certification.",
+      "newRuntimeOrAudioChanges": false
     }
   },
   "semantics": {
@@ -757,7 +774,7 @@
     },
     {
       "path": "docs/AUDIO_PLAYBACK.md",
-      "gitBlobSha": "e67d715fa631f75caea6d28e5c55bd1ea1fab298",
+      "gitBlobSha": "42a0fb606092104194138af8b2a391694090ee0e",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -766,13 +783,15 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership",
       "previousPhase3GitBlobSha": "973d0d96eb3512cdd37b69f159f88045144e4af3",
-      "reconciliationRole": "reference material",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRole": "current authority",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "previousAudioGuideGitBlobSha": "e67d715fa631f75caea6d28e5c55bd1ea1fab298",
+      "reconciliationReviewEvidence": "28 October 2026: fully read old v0.8.89 playback guide; compared published dev.208 audio.js/app.js enableProduction, 127-asset manifest (83 music,14 ambience,30 effect), 19 location and 11 boss routing, audio-production/runtime/recordings/mixer/assets, AUDIO_SOUND_PASS/AUDIO_AUTHORING/AUDIO_ENVIRONMENT, and merged #470/#472/#473. Current production guide rewritten; remaining real-device listening and full browser certification explicitly unverified. No audio/runtime changes."
     },
     {
       "path": "docs/AUDIO_SOUND_PASS.md",
-      "gitBlobSha": "57996f2f4ef2750beef9abc903a22c90eb75bc7f",
+      "gitBlobSha": "615af69d0a4f0dba0a4965a031175acaf635da86",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -780,9 +799,11 @@
       "role": "other_reference",
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership",
-      "reconciliationRole": "reference material",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRole": "historical record",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "previousAudioGuideGitBlobSha": "57996f2f4ef2750beef9abc903a22c90eb75bc7f",
+      "reconciliationReviewEvidence": "28 October 2026: preserved original v0.8.90 sound-pass body, added historical boundary and link to current AUDIO_PLAYBACK. This verifies historical role/routing only, not refreshed per-track listening or original test receipts."
     },
     {
       "path": "docs/AUDIO_STAGE1_COVERAGE_20261025.md",
@@ -2051,7 +2072,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "90a776517cea4dd404fca9e8390968bc01d52824",
+      "gitBlobSha": "7170fcf925b014be88340018b3e610ae84c54b29",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2069,11 +2090,12 @@
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
       "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
       "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
-      "reconciliationReviewEvidence": "28 Oct 2026: previous verified current routing retained; added prominent Spanish complete-guide route, reclassified CONTROLES.md as compatibility entry in active index prose and linked the current guide in the player table. Historical index census rows remain dated receipts.",
+      "reconciliationReviewEvidence": "28 October 2026: current documentation routing checked for Spanish guide, concise development status and new current audio-production guide. Audio row points to AUDIO_PLAYBACK/AUDIO_AUTHORING/AUDIO_ENVIRONMENT; original frozen historical census rows remain archival.",
       "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
       "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
       "previousSpanishGuideNavigationGitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e",
-      "previousSpanishGuideCountGitBlobSha": "925323765c021a28b4c03265587732c57143ebb2"
+      "previousSpanishGuideCountGitBlobSha": "925323765c021a28b4c03265587732c57143ebb2",
+      "previousAudioGuideGitBlobSha": "90a776517cea4dd404fca9e8390968bc01d52824"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -6549,7 +6571,7 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "9bdd0ef9ab52212e10ad15a4fc66ca5d714cfebd",
+      "gitBlobSha": "94c50ea9a8ceff3747eeb3f0e7cd82b38b903813",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -6564,8 +6586,9 @@
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
       "previousReadmeNavigationGitBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
-      "reconciliationReviewEvidence": "28 Oct 2026: previous full README front-door review retained; Spanish entry link updated from CONTROLES.md to GUIA_EN_ESPANOL.md, verified in same staged tree. No changes to existing play, build or gameplay guidance.",
-      "previousSpanishGuideNavigationGitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728"
+      "reconciliationReviewEvidence": "28 October 2026: verified previous README front door and Spanish guide remain intact; current audio hyperlink now points to refreshed AUDIO_PLAYBACK, with older AUDIO_SOUND_PASS labeled historical. No source gameplay or player-control changes.",
+      "previousSpanishGuideNavigationGitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
+      "previousAudioGuideGitBlobSha": "9bdd0ef9ab52212e10ad15a4fc66ca5d714cfebd"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",

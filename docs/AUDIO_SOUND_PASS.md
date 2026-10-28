@@ -1,5 +1,8 @@
 # Contextual soundtrack and sound pass · v0.8.90
 
+> **Historical creative checkpoint.** For the playable `dev.208` audio inventory, current playback and production workflow, merged fixes and unfinished listening acceptance, read [Current sound design and audio production](AUDIO_PLAYBACK.md). The dated v0.8.90 narrative below is preserved as history, not current release evidence or new production instructions.
+
+
 > **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
 
 The game activates an original warm-fantasy score and extends the playback foundation. The 83 local MP3 cues total approximately 20 MiB. They use original deterministic virtual instruments: plucked strings, flute, piano, cello, horn, bells, bowed layers and restrained percussion. No third-party sample or composition is included. Source composition and rendering live in `tools/audio/score-book.json` and `render-score.py`; author/license credits and content hashes accompany every runtime asset.
