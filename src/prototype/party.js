@@ -47,9 +47,11 @@
       if (!session) {
         session = {
           samples: [], slowApplications: [], emergencyTransitions: [],
-          recoveryActions: [], nextSampleAt: -Infinity, simulationTicks: 0,
+          recoveryActions: [], performanceIncidents: [], nextSampleAt: -Infinity,
+          nextPerformanceIncidentAt: -Infinity, simulationTicks: 0,
           emergencyActive: false, droppedSamples: 0, droppedSlowApplications: 0,
           droppedEmergencyTransitions: 0, droppedRecoveryActions: 0,
+          droppedPerformanceIncidents: 0,
         };
         partyDiagnosticSessions.set(game, session);
       }
@@ -202,6 +204,78 @@
           12, session, 'droppedRecoveryActions',
         );
       }
+      // Only abnormal real callbacks get a correlated timing + scene snapshot.
+      // This is an on-device, save-independent diagnostic; no per-tick tracing,
+      // per-companion CPU timers, extra pathfinding, or upload/network work.
+      partyDiagnosticsObservePerformance(row) {
+        if (!row || !Number.isFinite(row.intervalMs) ||
+          !Number.isFinite(row.frameWorkMs) ||
+          row.intervalMs < 0 || row.frameWorkMs < 0) return false;
+        const callbackGap = row.intervalMs >= 140,
+          workSpike = row.frameWorkMs >= 45,
+          companionSpike = Number.isFinite(row.companionAIMs) &&
+            row.companionAIMs >= 20;
+        if (!callbackGap && !workSpike && !companionSpike) return false;
+        const session = partyDiagnosticSession(this),
+          at = Number.isFinite(row.callbackTimeMs) ? row.callbackTimeMs : null;
+        // In a long slow period, retain diverse incident snapshots instead of
+        // copying the whole roster into the report on every animation callback.
+        // Always capture hard callback gaps and very expensive synchronous work.
+        if (at !== null && at < session.nextPerformanceIncidentAt &&
+          row.intervalMs < 180 && row.frameWorkMs < 90) return false;
+        if (at !== null) session.nextPerformanceIncidentAt = at + 500;
+        const ms = (value) => partyDiagnosticRound(
+          Number.isFinite(value) ? Math.max(0, value) : 0,
+        );
+        const enemies = this.zone()?.enemies || [];
+        let livingHostiles = 0, engagedHostiles = 0;
+        for (const e of enemies) {
+          if (!(e.hp > 0) || e.neutral) continue;
+          livingHostiles++;
+          if (e.aggro || e.telegraph || e.rangedAim || e.motion) engagedHostiles++;
+        }
+        partyDiagnosticBounded(
+          session.performanceIncidents,
+          {
+            gameSeconds: partyDiagnosticRound(this.s.time),
+            zone: this.zoneId,
+            reasons: [
+              ...(callbackGap ? ['callback-gap'] : []),
+              ...(workSpike ? ['synchronous-work'] : []),
+              ...(companionSpike ? ['companion-update'] : []),
+            ],
+            callbackIntervalMs: ms(row.intervalMs),
+            frameWorkMs: ms(row.frameWorkMs),
+            stagesMs: {
+              simulation: ms(row.simulationMs),
+              companionAI: ms(row.companionAIMs),
+              enemyAI: ms(row.enemyAIMs),
+              otherSimulation: ms(row.otherSimulationMs),
+              render: ms(row.renderMs),
+              audioUpdate: ms(row.audioUpdateMs),
+              eventDispatch: ms(row.eventDispatchMs),
+              hud: ms(row.hudMs),
+              otherJs: ms(row.otherJsMs),
+            },
+            frame: {
+              simulating: !!row.simulating,
+              emergencyHeld: !!row.recovering,
+              drawn: !!row.drawn,
+              adaptiveSkipped: !!row.adaptiveSkipped,
+              renderer: row.rendererMode === 'webgl2' ? 'webgl2' : 'canvas2d',
+              optimization: !!row.optimizationMode,
+            },
+            scene: {
+              livingHostiles, engagedHostiles,
+              projectileCount: this.s.projectiles?.length || 0,
+              hazardCount: this.s.hazards?.length || 0,
+            },
+            party: this.partyDiagnosticsCurrent(),
+          },
+          16, session, 'droppedPerformanceIncidents',
+        );
+        return true;
+      }
       partyDiagnosticsReport() {
         const session = partyDiagnosticSessions.get(this);
         return {
@@ -214,13 +288,15 @@
           slowApplications: session?.slowApplications.slice() || [],
           emergencyTransitions: session?.emergencyTransitions.slice() || [],
           recoveryActions: session?.recoveryActions.slice() || [],
+          performanceIncidents: session?.performanceIncidents.slice() || [],
           dropped: {
             samples: session?.droppedSamples || 0,
             slowApplications: session?.droppedSlowApplications || 0,
             emergencyTransitions: session?.droppedEmergencyTransitions || 0,
             recoveryActions: session?.droppedRecoveryActions || 0,
+            performanceIncidents: session?.droppedPerformanceIncidents || 0,
           },
-          note: 'Session-local observations only, not saved-game data. History is bounded (up to 60 game seconds at 0.5-second sampling), includes active companions and pets, and only advances on completed gameplay ticks. Emergency markers can be captured while simulation is paused. Slow sources are identified only when the caller supplies them. CompanionAIMs measures the entire party update, not CPU time for individual allies. No per-unit CPU attribution is claimed.',
+          note: 'Session-local observations only; not saved-game data. Up to 16 abnormal callbacks preserve same-frame interval, work, simulation/companion/enemy/render/audio stages, scene counts and party context. Callback gaps may arise outside synchronous game work, so stage costs do not establish causation. CompanionAIMs is the entire party update, not per-unit CPU. Routine party samples still cover up to 60 game seconds; emergency transitions are independently retained.',
         };
       }
     // Exceptional recovery is not a death. Preserve health, crowns, quest

@@ -25,7 +25,7 @@ try {
   assert.deepEqual(Object.keys(Campaign.classes), ['paladin', 'mage', 'ranger', 'rogue']);
   assert.deepEqual(Campaign.talentProfiles.rogue, R.rogueHeroFoundation.talents);
   assert.equal(R.movementBasicClasses.rogue, true);
-  assert.equal(Campaign.classes.rogue.icon, '🔔');
+  assert.equal(Campaign.classes.rogue.icon, 'jingle-bell-staff');
   for (const cls of ['paladin', 'mage', 'ranger'])
     assert.equal(JSON.stringify(Campaign.classes[cls]), defaults[cls],
       'existing class definition preserved');
