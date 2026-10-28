@@ -92,7 +92,8 @@
         "docs/DOCUMENTATION_INDEX.md"
       ],
       "method": "Pinned GitHub source and scripts, merged PR dispositions, exact-commit focused+Pages jobs; scoped current-entrypoint cross-check only, not all 417 bodies or device acceptance",
-      "all417MarkdownPathsAccountedFor": true
+      "all417MarkdownPathsAccountedFor": true,
+      "proofreadCorrection": "Documented six individually verified entrypoints instead of implying all 417 unresolved; pinned pre-PR release ledger remains a dated published checkpoint after any merge."
     }
   },
   "semantics": {
@@ -1895,7 +1896,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03",
+      "gitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1912,7 +1913,8 @@
       "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
       "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
       "reconciliationReviewEvidence": "28 Oct: source, package.json and sw.js agree on dev.208 at main@29be451; Actions 40720965138 focused validation and Pages jobs successful; PR #560 confirmed merged. Current top status/evidence gates checked, device adoption unverified. Not a recertification of every historical workstream row.",
-      "previousStep1GitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7"
+      "previousStep1GitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
+      "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -2003,7 +2005,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
+      "gitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2021,7 +2023,8 @@
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
       "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
       "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
-      "reconciliationReviewEvidence": "28 Oct, main@29be451: checked current authority hierarchy, Rogue soft release/companion/bell-staff paths, and links to agent policy, development state, architecture, brand and workflow. No claim of full-body review of historical index entries or all 417 document contents."
+      "reconciliationReviewEvidence": "28 Oct, main@29be451: checked current authority hierarchy, Rogue soft release/companion/bell-staff paths, and links to agent policy, development state, architecture, brand and workflow. No claim of full-body review of historical index entries or all 417 document contents.",
+      "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
