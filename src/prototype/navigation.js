@@ -424,7 +424,8 @@
               yy = y + dy,
               next = yy * n + xx;
             if (xx < 0 || yy < 0 || xx >= n || yy >= n || !free(next)) continue;
-            const g = current.g + step * Math.hypot(dx, dy);
+            // Unit cardinal/diagonal edge lengths are fixed; avoid repeated hypot in A*'s hot loop.
+            const g = current.g + step * (dx && dy ? Math.SQRT2 : 1);
             if (g >= (cost.get(next) ?? Infinity) || !clear(from, point(next))) continue;
             cost.set(next, g);
             parents.set(next, id);
