@@ -1,6 +1,6 @@
 # PT-007 — Target-centered boss ground AoE (28 October 2026)
 
-**Status:** PR candidate for *So I Became the Dark Lord's Problem*. Keep separate from the deployed PT-002 actor-body collision rollback (PR #567). No merge or deployment is implied by the creation of this branch.
+**Release contract:** Implemented in PR #571 for version `0.9.1+snapshot.dev.212`, separate from the PT-002 actor-body collision rollback (PR #567). Consult [current release state](DEVELOPMENT_STATE.md) and GitHub Actions for evidence of merge and publication; these do not establish device verification.
 
 ## Owner decision
 
@@ -19,4 +19,4 @@ When a boss chooses an area-of-effect (AoE) attack, its target is the hero or a 
 
 The dedicated `tests/pt007-ground-aoe.test.cjs` verifies zero terrain fitting during ground-AoE preparation, frozen warning geometry, real damage despite obstructed caster sight, and physical directed-attack obstruction checks. The PT-007 portion of `pt312-combat-integration.test.cjs` now asserts unchanged full-radius target-centered geometry rather than the revoked requirement to fit onto reachable floor. The Citadel checkerboard and other conventional boss test contracts remain authoritative.
 
-**Publication:** Wait for focused CI and review. Device verification and measured performance improvements require a separate playtest.
+**Publication acceptance:** A successful exact-commit focused CI run and GitHub Pages job establish repository-side publication, not device uptake. The next owner Chromebook/Windows playtest must verify the actual build and measure whether blocked-terrain spikes or render stalls persist.
