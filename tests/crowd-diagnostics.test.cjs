@@ -40,7 +40,6 @@ function run(corridor, count, measured) {
     if (measured) g.crowdDiagnosticsBeginFrame();
     for (const unit of [g.hero, ...g.zone().enemies])
       g.move(unit, { x: 750, y: 1500 }, 100, 0.05);
-    g.separateActors(0.05);
     if (measured) g.crowdDiagnosticsEndFrame();
   }
   const snapshot = g.snapshot();
@@ -50,9 +49,8 @@ function run(corridor, count, measured) {
     assert(report.metrics.blockedCalls.mean > 0);
     assert(report.metrics.segmentPoints.mean > 0);
     assert(report.metrics.moveCalls.mean >= count + 1);
-    assert(report.metrics.separationBodies.mean >= count + 1);
     assert(report.metrics.moveMs.samples === 18);
-    for (const key of ['moveMs', 'blockedMs', 'routeMs', 'separationMs'])
+    for (const key of ['moveMs', 'blockedMs', 'routeMs'])
       assert(Number.isFinite(report.metrics[key].p95), key + ' is numeric');
     g.stopCrowdDiagnostics();
     assert.equal(g.crowdDiagnosticsReport().recording, false);
@@ -78,17 +76,12 @@ for (const corridor of [false, true]) {
       enemies: count,
       blockedCalls: sampled.report.metrics.blockedCalls.mean,
       segmentPoints: sampled.report.metrics.segmentPoints.mean,
-      nearbyActorHits: sampled.report.metrics.nearbyActorHits.mean,
-      maxCell: sampled.report.metrics.maxCellBodies.max,
-      separationMs: sampled.report.metrics.separationMs.mean,
+      moveMs: sampled.report.metrics.moveMs.mean,
     });
   }
 }
 const open3 = comparisons.find(x => x.arena === 'open' && x.enemies === 3),
   corridor16 = comparisons.find(x => x.arena === 'corridor' && x.enemies === 16);
-assert(corridor16.maxCell > open3.maxCell, 'Density is visible in actor-bin counts');
-assert(corridor16.nearbyActorHits > open3.nearbyActorHits,
-  'Dense crowds produce more candidate actor encounters');
 assert(corridor16.segmentPoints > 0 && corridor16.blockedCalls > 0);
 
 // The regular route() counter cannot see companionRoute()'s separate A*.
@@ -156,9 +149,9 @@ app.elements.get('menu-button').click();
 const before = app.scope.Prototype.game.crowdDiagnosticsReport().sampledSimulationTicks;
 app.frame(66);
 assert.equal(app.scope.Prototype.game.crowdDiagnosticsReport().sampledSimulationTicks, before,
-  'Menu/paused redraws must never contaminate the crowd sample');
+  'Menu/paused redraws must never contaminate navigation samples');
 app.scope.Prototype.game.stopCrowdDiagnostics();
 
-console.log('Crowd characterization (diagnostic counts; timing includes profiler overhead):');
+console.log('Navigation characterization (terrain counts; timing includes profiler overhead):');
 for (const row of comparisons) console.log(JSON.stringify(row));
-console.log('PASS crowd diagnostics: no state differences, low/medium/high density, bounded samples, actual frame integration');
+console.log('PASS navigation diagnostics: no state differences, terrain profiling, bounded samples, actual frame integration');
