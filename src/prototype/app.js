@@ -833,9 +833,9 @@
     Diagnostics: 'Diagnósticos',
     'Show performance details': 'Mostrar detalles de rendimiento',
     'Hide performance details': 'Ocultar detalles de rendimiento',
-    'Start crowd profiling': 'Iniciar medición de multitudes',
-    'Stop crowd profiling': 'Detener medición de multitudes',
-    'Capture crowded gameplay only, then export a playtest report.':
+    'Start navigation profiling': 'Iniciar medición de multitudes',
+    'Stop navigation profiling': 'Detener medición de multitudes',
+    'Capture navigation and terrain work, then export a playtest report.':
       'Mide el juego con multitudes y luego exporta un informe de prueba.',
     'Adjust everything here without leaving this screen.':
       'Ajusta todo aquí sin salir de esta pantalla.',
@@ -4598,14 +4598,14 @@
         ),
         action(
           game.crowdDiagnosticsReport().recording
-            ? 'Stop crowd profiling'
-            : 'Start crowd profiling',
+            ? 'Stop navigation profiling'
+            : 'Start navigation profiling',
           () => {
             if (game.crowdDiagnosticsReport().recording) game.stopCrowdDiagnostics();
             else game.startCrowdDiagnostics();
             platformMenu(back);
           },
-          'Capture crowded gameplay only, then export a playtest report.',
+          'Capture navigation and terrain work, then export a playtest report.',
         ),
         ...(developerEnabled && game.s.mode === 'developer'
           ? [
@@ -6884,7 +6884,6 @@
     last = performance.now();
     if (document.hidden) {
       if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
-      game.observeCrowdFrame(0, false);
       renderResolution.suspend();
       if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
@@ -7838,7 +7837,6 @@
     }
     // Keep the combat charge clock paused together with the simulation.
     syncPartyChargeClock();
-    game.observeCrowdFrame(intervalMs, simulating);
     if (typeof PrototypeSprites !== 'undefined') PrototypeSprites.advance(dt * 1000, !simulating);
     if (simulating) progressTargetPress();
     if (menu) {

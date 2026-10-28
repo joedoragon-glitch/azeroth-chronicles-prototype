@@ -23,8 +23,13 @@ function scene(type = 'soldier', cls = 'mage', native = false) {
     { species: 'goblin', name: 'Survival foe', level: 1, hp: 100000, damage: 0, gold: 0, xp: 0 },
     { x: 1050, y: 1500 },
   );
+  // This is an isolated companion survival probe. Vale's hero-first
+  // onboarding guard must be complete: otherwise the first friendly hit
+  // triggers openingCompanionHit() and makes the enemy return home.
+  g.s.valeFieldAwakened = true;
   e.aggro = true;
   z.enemies = [e];
+  assert(!g.awaitsHeroAttack(e), 'fixture is beyond hero-first field onboarding');
   g.zone();
   return { g, z, u, e };
 }
@@ -53,10 +58,15 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert.equal(g.companionUseFirstSkill(u, e), false);
     assert.equal(g.companionUseSecondSkill(u, e), false);
     step(g, 80);
-    assert(distance(u, e) >= 90, type + ' avoids basic melee reach');
+    // PT-002 rollback deliberately permits body overlap even during tactical
+    // withdrawal. Require early movement away, live critical-health judgment,
+    // no forced offensive targeting and the hero tether; do not reintroduce
+    // a minimum enemy-distance rule that depends on solid enemy bodies.
+    assert(g.companionSurvivalMode(u), type + ' remains in critical survival');
+    assert(!g._tacticalPartyTargets.has(u.id),
+      type + ' does not resume offensive target assignment at critical HP');
     assert(distance(u, g.hero) < C.rules.companionJudgment.criticalFollowRadius + 20);
-    // Existing skills/shots may contribute after reaching a safe screened position.
-    assert(distance(u, e) > 65, 'never closes to basic melee reach');
+    assert(u.hp > 0, type + ' is still alive after ordinary tactical withdrawal');
     u.hp = u.maxHp * 0.21;
     step(g);
     assert(
@@ -71,7 +81,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
 console.log(
   'PASS ' +
     cases +
-    ' class/role critical withdrawal, safe spacing, tether and ordinary recovery cases',
+    ' class/role critical withdrawal, tactical restraint, tether and ordinary recovery cases',
 );
 // Two wounded companions withdraw independently while healthy allies fight and hero intent survives.
 {
@@ -83,8 +93,24 @@ console.log(
   g.hero.order = { type: 'move', x: 1400, y: 1500 };
   const order = g.hero.order;
   const before = e.hp;
+  const originalDamage = g.damage;
+  let healthyContacts = 0, healthyDamage = 0;
+  g.damage = function(target, amount, source, options) {
+    const hp = target?.hp;
+    const result = originalDamage.call(this, target, amount, source, options);
+    if (target === e && source === healthy.id && result) {
+      healthyContacts++;
+      healthyDamage += Math.max(0, hp - e.hp);
+    }
+    return result;
+  };
   step(g, 30);
-  assert(e.hp < before, 'healthy companion continues attacking');
+  if (!(healthyContacts > 0)) console.error('ROLLBACK-DIAGNOSTIC healthy ally',
+    JSON.stringify({hp:before,now:e.hp,max:e.maxHp,healthy:{x:healthy.x,y:healthy.y,
+      hp:healthy.hp,cd:healthy.cd},hero:{x:g.hero.x,y:g.hero.y},
+      enemy:{x:e.x,y:e.y,aggro:e.aggro,returning:e.returning},
+      targets:[...g._tacticalPartyTargets],contacts:healthyContacts,landed:healthyDamage}));
+  assert(healthyContacts > 0, 'healthy companion continues landing real attacks');
   assert(g._tacticalPartyTargets.has(healthy.id));
   assert(distance(u, e) > 65 && distance(pet, e) > 65, 'wounded units avoid close melee');
   assert.equal(g.hero.order, order);
@@ -332,23 +358,18 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   assert(distance(u, e) > distance(start, e));
   cases++;
 }
-// A fully blocked lane never grants hostile passage, even under sustained low FPS.
+// Friendly withdrawal and normal movement can pass enemy bodies after PT-002 rollback.
 {
   const { g, z, u, e } = scene();
+  z.props = [];
   Object.assign(u, { x: 700, y: 1500 });
-  Object.assign(g.hero, { x: 1100, y: 1500 });
   Object.assign(e, { x: 750, y: 1500 });
-  const base = g.blocked;
-  g.blocked = (x, y, zone, r = 15) => base(x, y, zone, r) || y < 1480 + r || y > 1520 - r;
-  for (let i = 0; i < 70; i++) {
-    g.observeCrowdFrame(100);
-    step(g);
-    assert(u.x < e.x);
-    assert(!g.crowdEscaping(u));
-  }
+  assert(g.move(u, { x: 800, y: 1500 }, 1000, 0.1),
+    'retreating units are no longer body-blocked by enemies');
+  assert.equal(u.x, 800);
   cases++;
 }
-// Route around a physical wall; neither a blocked route nor an enclosing crowd grants phasing.
+// Route around a physical wall; actors may overlap, but terrain never phases.
 {
   const { g, z, u, e } = scene();
   e.hp = 0;
@@ -359,7 +380,7 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
     base(x, y, zone, r) || (x > 800 - r && x < 830 + r && y > 1300 - r && y < 1700 + r);
   for (let i = 0; i < 180; i++) {
     step(g);
-    assert(!g.blocked(u.x, u.y, g.s.zone, g.actorRadius(u)));
+    assert(!g.blocked(u.x, u.y, g.s.zone, 15));
   }
   assert(distance(u, g.hero) < 150, 'keeps following around terrain');
   cases++;

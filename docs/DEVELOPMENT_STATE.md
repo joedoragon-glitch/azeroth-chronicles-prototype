@@ -1,7 +1,7 @@
 # Current development state
 
-<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.210 -->
-**Current code/build version:** `0.9.1+snapshot.dev.210` (merged on `main@7d4d8fa2`; GitHub Pages publication [run #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733) succeeded; installed-device adoption is independent). Any future version bump must update this line and the marker in the implementation PR.
+<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.211 -->
+**Current code/build version:** `0.9.1+snapshot.dev.211` (owner-authorized actor-body collision rollback candidate in [PR #567](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/567); merge, Pages publication, and device adoption are separate verification gates). The last verified public build remains `0.9.1+snapshot.dev.210` until the new publication succeeds.
 
 **Maintained release and acceptance authority · refreshed 28 October 2026 (the 27 October baseline remains in the historical Phase 0 receipt).** This is the project's single current-status ledger for source, validated build, repository-side publication, installed-player adoption, and unresolved acceptance. Dated feature audits and earlier snapshot milestones retain their own evidence, but cannot supersede this checkpoint. The canonical player-facing name is **So I Became the Dark Lord's Problem**; `Azeroth Chronicles` remains the internal repository name. **No later `main` commit is implicitly covered**: refresh each field from its named evidence when the repository advances.
 
@@ -12,7 +12,7 @@
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
 | Source | **Published `main@7d4d8fa2` — dev.210** | [Exact main commit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/7d4d8fa2d01b312abc90cbc7132f603504326c23) integrates #563 listening room and documentation, #564 documentation gate, and the earlier #553/#554 graphics fixes |
-| Build/cache version | **`0.9.1+snapshot.dev.210`** | Package, lockfile, generated build-info and service-worker cache identifier agree in the published source; local installation adoption remains separate |
+| Build/cache version | **`0.9.1+snapshot.dev.211`** | Source candidate: package, lock, generated build-info and service-worker cache identifier updated together; last verified public build `0.9.1+snapshot.dev.210` |
 | Focused automation | **Passed** for `main@7d4d8fa2` | [Focused validation #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733) including documentation gate, impacted tests and reproducible offline build; no full-game certification claimed |
 | GitHub Pages publication | **Passed** for `main@7d4d8fa2` | [Actions #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733) finished Publish focused update successfully for dev.210; cache uptake on devices unverified |
 | An individual's open browser / installed PWA | **Unverified** for dev.210 | Confirm installation/update on each device, then inspect the exported diagnostic report's exact `version`. Publication alone does not prove refresh |
