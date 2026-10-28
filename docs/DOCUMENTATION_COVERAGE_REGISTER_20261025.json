@@ -2697,7 +2697,7 @@
     },
     {
       "path": "docs/HERO_CLASS_FOUNDATIONS_LEVEL1_AUDIT_20261026.md",
-      "gitBlobSha": "60ab609de807c1d740624c97d3127cb58982f1af",
+      "gitBlobSha": "1d11d7e77a932aad47b53bd5dbdf19428ad8c5e7",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2709,7 +2709,7 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousClassAuthorityBlobSha": "0d754f119c55f4017af7768e8e98a0d3aabff2af",
-      "reconciliationReviewEvidence": "28 Oct: removed stale not-implemented claim after verifying PR #509 merge and progression source; full document review remains unresolved."
+      "reconciliationReviewEvidence": "28 Oct: corrected obsolete not-implemented and next-session work orders against merged #509 and progression source. Remaining historical baseline and gameplay claims need full source/decision review."
     },
     {
       "path": "docs/HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md",

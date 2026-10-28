@@ -288,7 +288,7 @@ Many intervening PRs substantially redesigned Skills 1–8, charged actions, pro
 
 [PR #12](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/12) introduced Paladin movement-triggered basics; [PR #13](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/13) added Mage/Ranger movement-triggered basics. These are background history, not scope expansion.
 
-## 3. Current authoritative level-1 baseline (source audit)
+## 3. Historical level-1 baseline at the source audit
 
 The authoritative source is `R.balance.classes` in [`src/prototype/rules.js`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/main/src/prototype/rules.js), copied to the hero state at new-campaign construction in `engine.js`. The numbers are the same as in the October 4 original class table.
 
@@ -332,65 +332,69 @@ These are **deferred diagnostics**, not permission to adjust progression in the 
 - Soldier and Archer companion baseline HP/armor were intentionally matched to hero archetypes (Soldier 120/8; Archer 105/5). Any change to hero starting attributes must explicitly examine whether to preserve or revise those **separate companion** definitions; **do not silently change them**.
 - A base-stat update must preserve existing v4 saves, inherited equipment, Succession replacement, class selection, HP accounting on restore, companion inheritance, and Normal/Nightmare play.
 
-## 5. Explicit scope contract: what is and is not authorized
+## Historical design scope and next-session plan
 
-### IN SCOPE — Stage 1 only (revised to innate-passive approach)
+The following is the original pre-implementation scope and checklist. PR #509 later implemented the class-passive work; the old unchecked stages, proposed values and next-session directions are not current work orders or new authorization. Verify any future changes against current source and owner direction.
 
-1. Use the existing starting-attribute table as the **unchanged baseline**, documenting the role each attribute already plays.
-2. Design **one class-bound automatic passive for Paladin, Mage and Ranger**, each scaling with hero level without participating in skill ranks or skill training.
-3. Preserve the owner-specified class effects and their **level-1 starting increments**; document growth, remaining implementation details and any needed caps. The values are set for design review, not yet implemented.
-4. Show a candidate comparison at level 1 and representative higher levels, including indirect effects through the already-existing formulas.
-5. After explicit owner approval, implement the smallest isolated derived-modifier layer and focused regressions; do not alter legacy class bases or rewrite the existing skill system.
-
-### STRICTLY OUT OF SCOPE
-
-- **No redesign of existing skills:** names, effects, damage coefficients, target counts, areas/ranges, projectile mechanics, combo logic, tap/charge, base cooldown constants, costs, statuses, class ultimates, trainer gates, or skill-specific rank balance. **Expressly permitted to investigate:** a separate Ranger passive modifier that changes *effective cooldown durations*; that outcome must be disclosed, bounded, and approved before implementation. Do not present this as 'cooldowns unchanged' in practical play.
-- **No changes to skill progression:** trainers, instructor gates, rank ceilings, unlocks, prices or skill rank effects.
-- No change to natural per-level HP growth, XP curve, Discipline Training values/caps, base basic cadence, attack reach, enemy/boss stats, item prices, equipment bonuses/reforge values, pet/companion stats, or support inheritance **during Stage 1**.
-- No new dodge/evasion/crit mechanic. Ranger passive movement speed **and** class-bound cooldown reduction are both proposed; no extra attack-cadence, skill-rank, critical, or dodge system is authorized. Its scope and stacking must be explicitly agreed before code changes.
-- No unrelated performance, rendering, asset, UI, combat, or economy refactor.
-- No modification of save schema/version without an independently demonstrated need and explicit approval.
-- No merge, deployment, or broad balance change without explicit owner sign-off.
-
-**Conflict rule:** if a proposed passive requires changing any protected skill, skill progression, or unrelated mechanic, stop and redesign the passive within this scope. Do not broaden scope by default.
-
-## 6. Design questions — Stage 1 decision gate (open, not implemented)
-
-A. **Paladin toughness:** Is 120 HP / 8 Armor already sufficiently distinctive in representative level-1 fights, accounting for melee exposure, or should the *starting* HP and/or Armor shift modestly? Avoid changing offensive skills.
-
-B. **Mage power:** Is 22 starting Power sufficiently noticeable compared with Ranger's 20? If not, evaluate a small starting-Power adjustment; preserve every skill's formula, coefficient, and unlock. Check the derived change in basic/skill damage as a consequence rather than tuning skills directly.
-
-C. **Ranger agility:** Is 320 vs 300 movement speed enough for practical repositioning? If not, assess a **bounded base movement-speed** change first. Faster attack intervals or an evasion subsystem would violate current Stage-1 scope; neither is presumed necessary.
-
-D. **Tradeoffs:** Preserve coherent ordering (Paladin top survivability, Mage top Power, Ranger top speed) without requiring all three to have equal damage/survivability/kill times. Test both with and without their initial companions so assistance does not conceal differences.
-
-E. **Compatibility:** Decide whether base-stat revisions apply **only to new level-1/successor starts** or need a deliberate, separately approved existing-save migration. Never silently overwrite existing saved HP/Power/Armor/speed fields.
-
-**No candidate values are approved as of this document. Current numbers are the baseline, not a proposed patch.**
-
-## 7. Revised sequencing and acceptance gates for the next session
-
-- [x] **Stage 0 — Historical audit and baseline.** Paladin-first design, three-class introduction, shared gear and level growth documented.
-- [x] **Stage 0 — New owner direction captured.** Favor a one-per-class, level-scaling passive layer rather than rewriting preexisting base stats or tier systems.
-- [x] **Stage 1A — Three innate class passives with level-1 bonuses specified.** Paladin +5 HP/+0.01 Armor effectiveness per level; Mage +2 Power per level (no other benefit); Ranger +3 speed/+1 percentage point CDR per level. All begin at level 1; the previously discussed L2-only start was withdrawn.
-- [ ] **Stage 1B — Design and compare candidate scaling.** Explicit starting strength, bonus per level or growth function, representative L1/L5/L10 checkpoints, edge cases, and effective impact (not merely stat-sheet numbers).
-- [ ] **Stage 1C — Owner approves the *exact* passive effects and values.** This is the first gameplay-change authorization gate.
-- [ ] **Stage 1D — Implement in a small, isolated passive-calculation layer.** Existing base class stats, natural growth, gear/reforge prices and bonuses, all active/charged skill mechanics and skill progression remain unchanged. Prefer no save-schema change.
-- [ ] **Stage 1E — Focused deterministic regressions.** New Paladin/Mage/Ranger and returning saves; level scaling without duplication; Succession; derived hero stats and current HP integrity; companion invariance; basic/skill damage consequences (verify skill definitions unchanged); Ranger kiting/pathing; Normal/Nightmare parity.
-- [ ] **Stage 1F — Owner playtest/approval.** Keep, revise, or revert passives; no merger/deployment without explicit sign-off.
-- [ ] **Stage 2 — Only if independently requested.** Revisit natural growth/equipment/other systems after testing the passive strategy. This PR is not permission to expand.
-
-### Documentation-only verification at creation
-
-This file is the entire initial branch change. No gameplay file was edited; no benchmarks or focused simulation regressions were executed. The history was checked against GitHub commit snapshots and the current production source. A later implementation must include its own tests and review evidence.
-
-## 8. Next-session pickup (updated)
-
-**Next task:** all three passives are specified and **start at level 1**. Audit bounded integration, confirm Ranger CDR coverage/stacking/cap, evaluate Mage damage and Paladin survival without editing skills, and validate save/load and companion inheritance before implementation. No base-stat/equipment/skill-system changes.
-
-Raw level-1 class baselines stay Paladin **120 HP / 8 Armor / 18 Power / 300 speed**, Mage **90 HP / 3 Armor / 22 Power / 300 speed**, Ranger **105 HP / 5 Armor / 20 Power / 320 speed**. **Effective figures with passive from the outset:** Paladin **125 HP and 0.36 Armor coefficient**, Mage **24 Power**, Ranger **323 speed and 1% innate CDR**, before other modifications.
-
-**Do not start implementation yet.** In particular, do not silently edit skill coefficients or adjust attack speed/ranges under the guise of an agility passive. An automatic passive can be an independent modifier without integrating with existing skills/training.
+> ## 5. Explicit scope contract: what is and is not authorized
+>
+> ### IN SCOPE — Stage 1 only (revised to innate-passive approach)
+>
+> 1. Use the existing starting-attribute table as the **unchanged baseline**, documenting the role each attribute already plays.
+> 2. Design **one class-bound automatic passive for Paladin, Mage and Ranger**, each scaling with hero level without participating in skill ranks or skill training.
+> 3. Preserve the owner-specified class effects and their **level-1 starting increments**; document growth, remaining implementation details and any needed caps. The values are set for design review, not yet implemented.
+> 4. Show a candidate comparison at level 1 and representative higher levels, including indirect effects through the already-existing formulas.
+> 5. After explicit owner approval, implement the smallest isolated derived-modifier layer and focused regressions; do not alter legacy class bases or rewrite the existing skill system.
+>
+> ### STRICTLY OUT OF SCOPE
+>
+> - **No redesign of existing skills:** names, effects, damage coefficients, target counts, areas/ranges, projectile mechanics, combo logic, tap/charge, base cooldown constants, costs, statuses, class ultimates, trainer gates, or skill-specific rank balance. **Expressly permitted to investigate:** a separate Ranger passive modifier that changes *effective cooldown durations*; that outcome must be disclosed, bounded, and approved before implementation. Do not present this as 'cooldowns unchanged' in practical play.
+> - **No changes to skill progression:** trainers, instructor gates, rank ceilings, unlocks, prices or skill rank effects.
+> - No change to natural per-level HP growth, XP curve, Discipline Training values/caps, base basic cadence, attack reach, enemy/boss stats, item prices, equipment bonuses/reforge values, pet/companion stats, or support inheritance **during Stage 1**.
+> - No new dodge/evasion/crit mechanic. Ranger passive movement speed **and** class-bound cooldown reduction are both proposed; no extra attack-cadence, skill-rank, critical, or dodge system is authorized. Its scope and stacking must be explicitly agreed before code changes.
+> - No unrelated performance, rendering, asset, UI, combat, or economy refactor.
+> - No modification of save schema/version without an independently demonstrated need and explicit approval.
+> - No merge, deployment, or broad balance change without explicit owner sign-off.
+>
+> **Conflict rule:** if a proposed passive requires changing any protected skill, skill progression, or unrelated mechanic, stop and redesign the passive within this scope. Do not broaden scope by default.
+>
+> ## 6. Design questions — Stage 1 decision gate (open, not implemented)
+>
+> A. **Paladin toughness:** Is 120 HP / 8 Armor already sufficiently distinctive in representative level-1 fights, accounting for melee exposure, or should the *starting* HP and/or Armor shift modestly? Avoid changing offensive skills.
+>
+> B. **Mage power:** Is 22 starting Power sufficiently noticeable compared with Ranger's 20? If not, evaluate a small starting-Power adjustment; preserve every skill's formula, coefficient, and unlock. Check the derived change in basic/skill damage as a consequence rather than tuning skills directly.
+>
+> C. **Ranger agility:** Is 320 vs 300 movement speed enough for practical repositioning? If not, assess a **bounded base movement-speed** change first. Faster attack intervals or an evasion subsystem would violate current Stage-1 scope; neither is presumed necessary.
+>
+> D. **Tradeoffs:** Preserve coherent ordering (Paladin top survivability, Mage top Power, Ranger top speed) without requiring all three to have equal damage/survivability/kill times. Test both with and without their initial companions so assistance does not conceal differences.
+>
+> E. **Compatibility:** Decide whether base-stat revisions apply **only to new level-1/successor starts** or need a deliberate, separately approved existing-save migration. Never silently overwrite existing saved HP/Power/Armor/speed fields.
+>
+> **No candidate values are approved as of this document. Current numbers are the baseline, not a proposed patch.**
+>
+> ## 7. Revised sequencing and acceptance gates for the next session
+>
+> - [x] **Stage 0 — Historical audit and baseline.** Paladin-first design, three-class introduction, shared gear and level growth documented.
+> - [x] **Stage 0 — New owner direction captured.** Favor a one-per-class, level-scaling passive layer rather than rewriting preexisting base stats or tier systems.
+> - [x] **Stage 1A — Three innate class passives with level-1 bonuses specified.** Paladin +5 HP/+0.01 Armor effectiveness per level; Mage +2 Power per level (no other benefit); Ranger +3 speed/+1 percentage point CDR per level. All begin at level 1; the previously discussed L2-only start was withdrawn.
+> - [ ] **Stage 1B — Design and compare candidate scaling.** Explicit starting strength, bonus per level or growth function, representative L1/L5/L10 checkpoints, edge cases, and effective impact (not merely stat-sheet numbers).
+> - [ ] **Stage 1C — Owner approves the *exact* passive effects and values.** This is the first gameplay-change authorization gate.
+> - [ ] **Stage 1D — Implement in a small, isolated passive-calculation layer.** Existing base class stats, natural growth, gear/reforge prices and bonuses, all active/charged skill mechanics and skill progression remain unchanged. Prefer no save-schema change.
+> - [ ] **Stage 1E — Focused deterministic regressions.** New Paladin/Mage/Ranger and returning saves; level scaling without duplication; Succession; derived hero stats and current HP integrity; companion invariance; basic/skill damage consequences (verify skill definitions unchanged); Ranger kiting/pathing; Normal/Nightmare parity.
+> - [ ] **Stage 1F — Owner playtest/approval.** Keep, revise, or revert passives; no merger/deployment without explicit sign-off.
+> - [ ] **Stage 2 — Only if independently requested.** Revisit natural growth/equipment/other systems after testing the passive strategy. This PR is not permission to expand.
+>
+> ### Documentation-only verification at creation
+>
+> This file is the entire initial branch change. No gameplay file was edited; no benchmarks or focused simulation regressions were executed. The history was checked against GitHub commit snapshots and the current production source. A later implementation must include its own tests and review evidence.
+>
+> ## 8. Next-session pickup (updated)
+>
+> **Next task:** all three passives are specified and **start at level 1**. Audit bounded integration, confirm Ranger CDR coverage/stacking/cap, evaluate Mage damage and Paladin survival without editing skills, and validate save/load and companion inheritance before implementation. No base-stat/equipment/skill-system changes.
+>
+> Raw level-1 class baselines stay Paladin **120 HP / 8 Armor / 18 Power / 300 speed**, Mage **90 HP / 3 Armor / 22 Power / 300 speed**, Ranger **105 HP / 5 Armor / 20 Power / 320 speed**. **Effective figures with passive from the outset:** Paladin **125 HP and 0.36 Armor coefficient**, Mage **24 Power**, Ranger **323 speed and 1% innate CDR**, before other modifications.
+>
+> **Do not start implementation yet.** In particular, do not silently edit skill coefficients or adjust attack speed/ranges under the guise of an agility passive. An automatic passive can be an independent modifier without integrating with existing skills/training.
 
 ### Audited source references
 
