@@ -8154,7 +8154,7 @@
   titleCanvasContinue.type = 'button';
   titleCanvasContinue.hidden = true;
   titleCanvasContinue.style.cssText =
-    'display:block;margin:14px auto 0;min-height:44px;padding:10px 18px;' +
+    'margin:14px auto 0;min-height:44px;padding:10px 18px;' +
     'border:1px solid #dfc78f;border-radius:8px;background:#385c4b;' +
     'color:#fff4d8;font:600 14px sans-serif;cursor:pointer';
   titleScreen.append(titleCanvasContinue);
