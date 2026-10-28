@@ -71,7 +71,8 @@
       "parentCandidateSha": "cf0aaf25b02b578c3bf1110dc35d5ff2eee0df19",
       "markdownPaths": 417,
       "initialMethod": "All rows assigned provisional roles from existing routing classification with a few known overrides; all review results unresolved. No body-wide or source verification claimed.",
-      "dependency": "Stacked on draft PR #556; retarget to main after that PR is separately approved and merged."
+      "dependency": "Originally stacked on PR #556; PR #556 merged as 3b9bd5c9d59da165bd94cb45e6ab5d4da8303883 and inventory PR retargeted to main. Recheck tree when main advances.",
+      "indexLabelCorrectionParentSha": "b64a6cfa7aaed34f42234f22406ca71e721638cf"
     }
   },
   "semantics": {
@@ -79,7 +80,7 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Exact Git blob SHA at basis.inventoryReconciliation.parentCandidateSha, except docs/DOCUMENTATION_INDEX.md updated in the same commit. Prior receipts are preserved. The register JSON is not Markdown and does not register itself; recheck when documents change.",
+    "gitBlobSha": "Exact Git blob SHA at basis.inventoryReconciliation.parentCandidateSha, except docs/DOCUMENTATION_INDEX.md updated during inventory reconciliation. Prior receipts are preserved. The register JSON is not Markdown and does not register itself; recheck when documents change.",
     "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
     "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
     "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks.",
@@ -1973,7 +1974,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
+      "gitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1988,7 +1989,8 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
-      "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5"
+      "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
+      "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
