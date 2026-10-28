@@ -91,6 +91,12 @@ for (const form of ['normal', 'true']) {
   assert(g.bossAttackWeights(e, g.hero, true)[3] > 0, 'refill remains eligible after cooldown');
   e.telegraph = g.buildBossAttack(e, 3, g.hero).first;
   g.resolveAttack(e);
+  if(g.bossOwnedSummons(e).length !== g.bossSummonCap(e))
+    console.error('ROLLBACK-DIAGNOSTIC summon refill', JSON.stringify({
+      form, summoners:g.bossOwnedSummons(e).length,cap:g.bossSummonCap(e),
+      summonCd:e.summonCd, attack:g.bossAttackWeights(e,g.hero,true),
+      hero:{x:g.hero.x,y:g.hero.y},boss:{x:e.x,y:e.y},eHP:e.hp,
+      eAggro:e.aggro}));
   assert.equal(g.bossOwnedSummons(e).length, g.bossSummonCap(e));
 }
 // PT-001 automatic Developer path after a killed pack: no forced attack index or resolver.
