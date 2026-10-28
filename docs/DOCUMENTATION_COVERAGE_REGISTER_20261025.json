@@ -1872,7 +1872,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
+      "gitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1886,7 +1886,9 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
-      "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd"
+      "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
+      "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
+      "reconciliationReviewEvidence": "28 Oct: release checkpoint refreshed to ebfd6c9 after focused validation and Pages publication (run 40717039180); other dated workstream dispositions remain to be rechecked."
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
