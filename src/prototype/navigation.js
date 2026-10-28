@@ -3,10 +3,9 @@
   'use strict';
   function install(Campaign, D, R, dungeonIds) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-    // Runtime-only broad phase and congestion clocks. Never persist crowd state.
-    const crowds = new WeakMap();
-    // Opt-in and unsaved. Install wrappers on this campaign instance only so
-    // disabled diagnostics add zero overhead to production collision methods.
+    // Runtime collision applies to terrain and scenery only, not other actors.
+    // Opt-in and unsaved. Navigation/terrain diagnostics no longer inspect actors.
+    // Disabled diagnostics add zero runtime instrumentation overhead.
     const diagnosticSessions = new WeakMap();
     const diagnosticMetrics = [
       'moveCalls',
@@ -17,13 +16,6 @@
       'segmentPoints',
       'blockedCalls',
       'blockedMs',
-      'actorStepCalls',
-      'actorStepMs',
-      'nearbyActorHits',
-      'separationCalls',
-      'separationMs',
-      'separationBodies',
-      'separationSegments',
       'routeCalls',
       'routeMs',
       'companionRouteCalls',
@@ -32,8 +24,6 @@
       'companionFollowMs',
       'companionTravelClearCalls',
       'companionTravelClearMs',
-      'actors',
-      'maxCellBodies',
     ];
     const diagnosticNow = () => performance.now();
     function diagnosticSummary(values) {
@@ -51,8 +41,6 @@
       ['move', 'moveCalls', 'moveMs'],
       ['clearSegment', 'segmentCalls', 'segmentMs'],
       ['blocked', 'blockedCalls', 'blockedMs'],
-      ['actorStepAllowed', 'actorStepCalls', 'actorStepMs'],
-      ['separateActors', 'separationCalls', 'separationMs'],
       ['route', 'routeCalls', 'routeMs'],
       // Follow includes path planning and segment checks; these are nested
       // timings, never additive. In particular, the companion A* search does
@@ -60,11 +48,9 @@
       ['companionRoute', 'companionRouteCalls', 'companionRouteMs'],
       ['followCompanion', 'companionFollowCalls', 'companionFollowMs'],
       ['companionTravelClear', 'companionTravelClearCalls', 'companionTravelClearMs'],
-      ['nearbyActors', null, null],
-      ['actorCrowd', null, null],
     ];
-    const crowdPressure = new WeakMap(),
-      terrainTrips = new WeakMap();
+    const terrainTrips = new WeakMap(),
+      movementPlanFrames = new WeakMap();
     const patrolResumes = new WeakMap();
     const sceneryReady = new WeakSet();
     // This shortlist exists only during one synchronous line/segment query.
@@ -136,17 +122,6 @@
               if (elapsed) row[elapsed] += diagnosticNow() - started;
               if (name === 'move') row.moveSegmentCalls += row.segmentCalls - beforeSegments;
               if (name === 'clearSegment') row.segmentPoints += row.blockedCalls - beforeBlocked;
-              if (name === 'separateActors')
-                row.separationSegments += row.segmentCalls - beforeSegments;
-            }
-            if (name === 'nearbyActors') row.nearbyActorHits += result.length;
-            if (name === 'actorCrowd') {
-              row.actors = Math.max(row.actors, result.bodies.length);
-              for (const bin of result.bins.values())
-                row.maxCellBodies = Math.max(row.maxCellBodies, bin.size);
-              // The number of collision bodies the separation phase evaluates.
-              // Only count the refresh that starts passive separation.
-              if (args[0] === true) row.separationBodies += result.bodies.length;
             }
             return result;
           };
@@ -186,87 +161,37 @@
           sampledSimulationTicks: rows.length,
           sampleLimit: 120,
           metrics,
-          note: 'Opt-in, device-local only. Timed movement, blocked, route and separation calls are nested and include observation overhead; do not add these timings or treat them as physical FPS. Only active gameplay ticks are sampled.',
+          note: 'Opt-in, device-local only. Terrain and route timings are nested and include observation overhead; do not add timings or treat them as FPS. No actor-to-actor collision instrumentation remains.',
         };
       }
       crowdDiagnosticsDescribe() {
-        const r = this.crowdDiagnosticsReport(),
-          m = r.metrics;
+        const r = this.crowdDiagnosticsReport(), m = r.metrics;
         if (!r.sampledSimulationTicks)
-          return 'Crowd diagnostics: no active gameplay ticks recorded. Start sampling, return to the game, and approach a crowded fight.';
+          return 'Navigation diagnostics: no active gameplay ticks recorded. Start sampling, return to the game, and test movement or combat.';
         return (
-          'Crowd diagnostics · ' +
-          r.sampledSimulationTicks +
-          ' ticks' +
+          'Navigation diagnostics · ' + r.sampledSimulationTicks + ' ticks' +
           (r.recording ? ' (recording)' : '') +
-          '\\nMove ms mean/p95 ' +
-          m.moveMs.mean +
-          '/' +
-          m.moveMs.p95 +
-          ' · separation ' +
-          m.separationMs.mean +
-          '/' +
-          m.separationMs.p95 +
-          ' · route ' +
-          m.routeMs.mean +
-          '/' +
-          m.routeMs.p95 +
-          '\\nCompanion follow ms mean/p95 ' +
-          m.companionFollowMs.mean +
-          '/' +
-          m.companionFollowMs.p95 +
-          ' · companion A* ' +
-          m.companionRouteMs.mean +
-          '/' +
-          m.companionRouteMs.p95 +
-          ' · route attempts/tick ' +
-          m.companionRouteCalls.mean +
-          '\\nCalls/tick mean: move ' +
-          m.moveCalls.mean +
-          ', blocked ' +
-          m.blockedCalls.mean +
-          ', segment samples ' +
-          m.segmentPoints.mean +
-          ', nearby actors ' +
-          m.nearbyActorHits.mean +
-          '; max actors in one grid cell ' +
-          m.maxCellBodies.max +
+          '\\nMove ms mean/p95 ' + m.moveMs.mean + '/' + m.moveMs.p95 +
+          ' · terrain segment ' + m.segmentMs.mean + '/' + m.segmentMs.p95 +
+          ' · route ' + m.routeMs.mean + '/' + m.routeMs.p95 +
+          '\\nCompanion follow ms mean/p95 ' + m.companionFollowMs.mean + '/' +
+          m.companionFollowMs.p95 + ' · companion A* ' +
+          m.companionRouteMs.mean + '/' + m.companionRouteMs.p95 +
+          '\\nCalls/tick mean: move ' + m.moveCalls.mean +
+          ', blocked terrain checks ' + m.blockedCalls.mean +
+          ', segment points ' + m.segmentPoints.mean +
           '. Timings overlap; opt-in sampling has overhead.'
         );
       }
-      observeCrowdFrame(intervalMs, active = true) {
-        const zone = this.s.zones[this.zoneId],
-          cfg = R.actorSpacing;
-        // Ignore background/resume gaps and intentional pauses. Cadence is only
-        // an urgency signal: low FPS alone never disables body collision.
-        if (!active || !Number.isFinite(intervalMs) || intervalMs <= 0 || intervalMs > 1000) {
-          crowdPressure.delete(this);
-          return;
-        }
-        let pressure = crowdPressure.get(this);
-        if (pressure?.zone !== zone) pressure = { zone, slow: 0, until: 0 };
-        pressure.slow =
-          intervalMs >= cfg.slowFrameMs
-            ? pressure.slow + Math.min(intervalMs / 1000, 0.1)
-            : Math.max(0, pressure.slow - intervalMs / 1000);
-        if (pressure.slow >= cfg.slowFrameSeconds) {
-          pressure.slow = cfg.slowFrameSeconds;
-          pressure.until = this.s.time + cfg.escapeSeconds;
-        }
-        crowdPressure.set(this, pressure);
-      }
-      crowdUnderPressure() {
-        const pressure = crowdPressure.get(this);
-        return pressure?.zone === this.s.zones[this.zoneId] && pressure.until > this.s.time;
-      }
-      crowdEscaping(unit, frame = this.actorCrowd()) {
-        return (frame.congestion.get(unit)?.until || 0) > this.s.time;
-      }
       reserveMovementPlan(unit) {
-        const frame = this.actorCrowd(),
-          limit = R.actorSpacing.movementPlansPerTick;
-        // Leave one slot for the player's approach order. Deferred actors keep
-        // following a valid cached route, or wait until the next simulation tick.
+        // Keep general route-search limits without retaining actor grid state.
+        const zone = this.s.zones[this.zoneId], at = this.s.time,
+          limit = R.navigationPlanning.movementPlansPerTick;
+        let frame = movementPlanFrames.get(this);
+        if (!frame || frame.zone !== zone || frame.at !== at) {
+          frame = { zone, at, plans: 0, otherPlans: 0 };
+          movementPlanFrames.set(this, frame);
+        }
         if (frame.plans >= limit || (unit !== this.hero && frame.otherPlans >= limit - 1))
           return false;
         frame.plans++;
@@ -679,185 +604,6 @@
         }
         return null;
       }
-      actorRadius(unit) {
-        const cfg = R.actorSpacing;
-        return unit === this.hero
-          ? cfg.heroRadius
-          : unit.type === 'boss'
-            ? cfg.bossRadius
-            : unit.mountedCrownRider
-              ? cfg.mountedRadius
-              : unit.captain || unit.roomCaptain || unit.species === 'ogre'
-                ? cfg.largeRadius
-                : cfg.radius;
-      }
-      actorCrowd(refresh = false) {
-        const zone = this.s.zones[this.zoneId];
-        let frame = crowds.get(this);
-        if (
-          !refresh &&
-          frame?.zone === zone &&
-          frame.at === this.s.time &&
-          frame.enemyList === zone?.enemies &&
-          frame.enemyCount === zone?.enemies.length &&
-          frame.partyList === this.s.party &&
-          frame.partyCount === this.s.party.length &&
-          frame.hero === this.hero
-        )
-          return frame;
-        const enemies = (zone?.enemies || []).filter((u) => u.hp > 0 && !u.neutral),
-          allies = [this.hero, ...this.activeLivingParty()].filter((u) => u.hp > 0),
-          bodies = [...allies, ...enemies],
-          previousBodies = frame?.bodies || [];
-        frame = {
-          zone,
-          hero: this.hero,
-          enemyList: zone?.enemies,
-          enemyCount: zone?.enemies.length,
-          partyList: this.s.party,
-          partyCount: this.s.party.length,
-          at: this.s.time,
-          combatActive: this.manaCombatActive(),
-          bodies,
-          hostile: new Set(enemies),
-          members: new Set(bodies),
-          bins: new Map(),
-          cells: new Map(),
-          congestion: frame?.zone === zone ? frame.congestion : new WeakMap(),
-          plans: frame?.zone === zone && frame.at === this.s.time ? frame.plans : 0,
-          otherPlans: frame?.zone === zone && frame.at === this.s.time ? frame.otherPlans : 0,
-        };
-        crowds.set(this, frame);
-        for (const unit of previousBodies)
-          if (!frame.members.has(unit)) frame.congestion.delete(unit);
-        for (const unit of bodies) this.indexActor(unit, frame);
-        return frame;
-      }
-      indexActor(unit, frame = this.actorCrowd()) {
-        if (!frame.members.has(unit)) return;
-        const size = R.actorSpacing.cellSize,
-          key = Math.floor(unit.x / size) + ':' + Math.floor(unit.y / size),
-          old = frame.cells.get(unit);
-        if (old === key) return;
-        if (old) frame.bins.get(old)?.delete(unit);
-        if (!frame.bins.has(key)) frame.bins.set(key, new Set());
-        frame.bins.get(key).add(unit);
-        frame.cells.set(unit, key);
-      }
-      nearbyActors(point, frame = this.actorCrowd()) {
-        const size = R.actorSpacing.cellSize,
-          x = Math.floor(point.x / size),
-          y = Math.floor(point.y / size),
-          out = [];
-        for (let dx = -1; dx <= 1; dx++)
-          for (let dy = -1; dy <= 1; dy++)
-            for (const unit of frame.bins.get(x + dx + ':' + (y + dy)) || [])
-              if (unit.hp > 0) out.push(unit);
-        return out;
-      }
-      actorStepAllowed(unit, point, relaxFriendly = false, frame = this.actorCrowd()) {
-        if (!frame.members.has(unit)) return true;
-        const retreating = this.companionRetreatMode(unit),
-          escaping = this.crowdEscaping(unit, frame);
-        const candidates = new Set(),
-          steps = Math.max(1, Math.ceil(dist(unit, point) / R.actorSpacing.cellSize));
-        for (let j = 0; j <= steps; j++)
-          for (const other of this.nearbyActors(
-            {
-              x: unit.x + ((point.x - unit.x) * j) / steps,
-              y: unit.y + ((point.y - unit.y) * j) / steps,
-            },
-            frame,
-          ))
-            candidates.add(other);
-        for (const other of candidates) {
-          if (other === unit || other.hp <= 0) continue;
-          const friendly = frame.hostile.has(unit) === frame.hostile.has(other),
-            otherRetreating = this.companionRetreatMode(other);
-          // Friends make room for a withdrawal. Ordinary travel also lets the
-          // hero pass allies; other combat pairs keep their usual body blocking.
-          if (
-            friendly &&
-            (retreating ||
-              otherRetreating ||
-              relaxFriendly ||
-              (!frame.combatActive && (unit === this.hero || other === this.hero)))
-          )
-            continue;
-          // Withdrawing party members receive friendly passage, never hostile
-          // passage. Even an existing mixed-crowd escape cannot bypass this pair.
-          if (!retreating && !otherRetreating && (escaping || this.crowdEscaping(other, frame)))
-            continue;
-          const gap = this.actorRadius(unit) + this.actorRadius(other),
-            before = dist(unit, other),
-            after = dist(point, other);
-          // An already overlapped actor can leave, never deepen the stack.
-          if (after < gap && after < Math.min(gap, before) - 0.01) return false;
-          if (before >= gap && this.distanceToSegment(other, unit, point) < gap - 0.01)
-            return false;
-        }
-        return true;
-      }
-      separateActors(dt) {
-        // Scripted charges/repositions use their own authoritative movement owner.
-        // Refresh their broad-phase positions before passive overlap recovery.
-        const frame = this.actorCrowd(true),
-          cfg = R.actorSpacing;
-        for (const unit of frame.bodies) {
-          const retreating = this.companionRetreatMode(unit);
-          // Fixed warning origins, held victims and scripted motion remain authoritative.
-          if (
-            unit === this.hero ||
-            unit.hp <= 0 ||
-            unit.telegraph ||
-            unit.motion ||
-            unit.keeperHeld ||
-            unit.deathRollHeld ||
-            (this.crowdEscaping(unit, frame) && !retreating) ||
-            this.partyChargeState(unit)
-          )
-            continue;
-          let dx = 0,
-            dy = 0;
-          for (const other of this.nearbyActors(unit, frame)) {
-            if (other === unit || other.hp <= 0) continue;
-            const otherRetreating = this.companionRetreatMode(other),
-              friendly = frame.hostile.has(unit) === frame.hostile.has(other);
-            if (friendly && (retreating || otherRetreating)) continue;
-            if (this.crowdEscaping(other, frame) && !retreating && !otherRetreating) continue;
-            if (other === this.hero && !frame.combatActive && !frame.hostile.has(unit)) continue;
-            const gap = this.actorRadius(unit) + this.actorRadius(other),
-              distance = dist(unit, other),
-              overlap = gap - distance;
-            if (overlap <= cfg.tolerance) continue;
-            // Stable opposite directions also separate exact coincident spawns.
-            const sign = String(unit.id).localeCompare(String(other.id || 'hero')) < 0 ? -1 : 1,
-              ux = distance > 0.01 ? (unit.x - other.x) / distance : sign,
-              uy = distance > 0.01 ? (unit.y - other.y) / distance : sign * 0.5,
-              weight = unit.type === 'boss' && other.type !== 'boss' ? 0.25 : 1;
-            dx += ux * overlap * weight;
-            dy += uy * overlap * weight;
-          }
-          const length = Math.hypot(dx, dy);
-          if (!length) continue;
-          const amount = Math.min(length, cfg.separationSpeed * dt),
-            point = { x: unit.x + (dx / length) * amount, y: unit.y + (dy / length) * amount };
-          const angle = Math.atan2(dy, dx);
-          for (const p of [
-            point,
-            ...[0.7, -0.7, 1.35, -1.35].map((offset) => ({
-              x: unit.x + Math.cos(angle + offset) * amount,
-              y: unit.y + Math.sin(angle + offset) * amount,
-            })),
-          ]) {
-            if (!this.clearSegment(unit, p) || !this.actorStepAllowed(unit, p, false, frame))
-              continue;
-            Object.assign(unit, p);
-            this.indexActor(unit, frame);
-            break;
-          }
-        }
-      }
       setSceneryTraversal(z, ready = true) {
         if (ready) sceneryReady.add(z);
         else sceneryReady.delete(z);
@@ -1189,76 +935,26 @@
         const primary = search([starts[0]], [ends[0]]);
         return primary.length ? primary : search(starts, ends);
       }
-      move(entity, target, speed, dt, stop = 0, forced = false) {
+      move(entity, target, speed, dt, stop = 0) {
         const d = dist(entity, target);
         if (d <= stop) return true;
         const step = Math.min(d - stop, speed * dt),
           nx = entity.x + ((target.x - entity.x) / d) * step,
           ny = entity.y + ((target.y - entity.y) / d) * step;
-        const frame = this.actorCrowd(),
-          cfg = R.actorSpacing,
-          congestion = frame.congestion.get(entity) || { blocked: 0, until: 0 };
-        // A retreat cannot acquire or retain enemy-phasing from a previous jam.
-        const retreating = this.companionRetreatMode(entity);
-        if (retreating) congestion.until = 0;
-        if (this.s.time - (congestion.at ?? this.s.time) > 0.25) congestion.blocked = 0;
-        const elapsed = congestion.at === this.s.time ? 0 : Math.min(dt, 0.1),
-          relaxed = (congestion.friendlyUntil || 0) > this.s.time;
-        congestion.at = this.s.time;
-        let crowdBlocked = false;
-        const legal = (p) => {
-          if (!this.clearSegment(entity, p)) return false;
-          if (forced || entity.motion) return true;
-          if (this.actorStepAllowed(entity, p, relaxed, frame)) return true;
-          crowdBlocked = true;
-          return false;
-        };
-        if (legal({ x: nx, y: ny })) {
+        if (this.clearSegment(entity, { x: nx, y: ny })) {
           entity.x = nx;
           entity.y = ny;
-          congestion.blocked = 0;
-          frame.congestion.set(entity, congestion);
-          this.indexActor(entity, frame);
           return true;
         }
         let moved = false;
-        if (legal({ x: nx, y: entity.y })) {
+        if (this.clearSegment(entity, { x: nx, y: entity.y })) {
           entity.x = nx;
           moved = true;
         }
-        if (legal({ x: entity.x, y: ny })) {
+        if (this.clearSegment(entity, { x: entity.x, y: ny })) {
           entity.y = ny;
           moved = true;
         }
-        if (!moved && frame.members.has(entity)) {
-          const angle = Math.atan2(target.y - entity.y, target.x - entity.x);
-          // Local side steps form distinct approach slots without replanning terrain routes.
-          for (const offset of [0.55, -0.55, 1.05, -1.05]) {
-            const p = {
-              x: entity.x + Math.cos(angle + offset) * step,
-              y: entity.y + Math.sin(angle + offset) * step,
-            };
-            if (!legal(p)) continue;
-            Object.assign(entity, p);
-            moved = true;
-            break;
-          }
-        }
-        const advanced = d - dist(entity, target) > Math.min(0.5, step * 0.2);
-        congestion.blocked = !advanced && crowdBlocked ? congestion.blocked + elapsed : 0;
-        if (congestion.blocked >= cfg.congestionSeconds)
-          congestion.friendlyUntil = this.s.time + cfg.relaxSeconds;
-        const escapeAfter = this.crowdUnderPressure()
-          ? cfg.pressureBlockedSeconds
-          : cfg.escapeBlockedSeconds;
-        if (congestion.blocked >= escapeAfter && !retreating) {
-          // Terrain was clear but bodies prevented progress. Permit temporary
-          // overlap, including opposing bodies/bosses; never teleport or replan.
-          congestion.until = this.s.time + cfg.escapeSeconds;
-          congestion.blocked = 0;
-        }
-        frame.congestion.set(entity, congestion);
-        this.indexActor(entity, frame);
         return moved;
       }
       thornPatroller(e) {
@@ -1463,7 +1159,7 @@
           if (!trip || trip.zone !== zone || dist(trip.target, target) > 80) entity.path = [];
           if (this.reserveMovementPlan(entity)) {
             entity.path = this.route(entity, target);
-            entity.routeAge = R.actorSpacing.routeRetrySeconds;
+            entity.routeAge = R.navigationPlanning.routeRetrySeconds;
             terrainTrips.set(entity, { zone, target: { x: target.x, y: target.y } });
           }
         }
@@ -1471,8 +1167,7 @@
         if (!entity.path?.length) return false;
         const moved = this.move(entity, entity.path[0], speed, dt);
         if (dist(entity, entity.path[0]) < 1) entity.path.shift();
-        // A body-blocked step cannot be repaired by rebuilding a terrain-only
-        // route. Retain the retry clock even for an empty/unreachable route.
+        // Retain the retry clock even for an empty/unreachable terrain route.
         return moved;
       }
     }
