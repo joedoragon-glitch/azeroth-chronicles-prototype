@@ -568,7 +568,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "265a0d9cfca496fcfddfdf82b0e09085edadf68d",
+      "gitBlobSha": "6cb25732fc5f45485aa56f5c3da7f5789c45fb98",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -583,7 +583,7 @@
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
       "previousBatchAuthorityBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
-      "reconciliationReviewEvidence": "28 Oct, source main@29be451: cross-checked app.js Rogue registration, hero-combat Rogue dispatch (older triad guard belongs to legacy branch), party.js Charm companions, save/persistence owners, visuals.js bell staff, script graph, package/sw and focused/manual workflows. New current quick route verified; retained dev.205 audit remains historical, not re-certified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes.",
+      "reconciliationReviewEvidence": "28 Oct, source main@29be451: cross-checked app.js Rogue registration, hero-combat Rogue dispatch (older triad guard belongs to legacy branch), party.js Charm companions, save/persistence owners, visuals.js bell staff, script graph, package/sw and focused/manual workflows. New current quick route verified; retained dev.205 audit remains historical, not re-certified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing.",
       "previousStep1GitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371"
     },
     {
@@ -1864,7 +1864,7 @@
     },
     {
       "path": "docs/DECISIONS.md",
-      "gitBlobSha": "1dc62a6abde024c8c791c12ed186f8a61c6e192f",
+      "gitBlobSha": "62538ef98553b313723a1689533adee3f0c32197",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1876,7 +1876,7 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "verified",
-      "reconciliationReviewEvidence": " 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted."
+      "reconciliationReviewEvidence": " 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing."
     },
     {
       "path": "docs/DEFENDER_SPACE_DEV129.md",
@@ -2076,7 +2076,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "bece568a79458b0ce801ecfccc5cb4203150f29e",
+      "gitBlobSha": "c6647e9eb89f08cce1159a9b4065823a0304d46a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2094,7 +2094,7 @@
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
       "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
       "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
-      "reconciliationReviewEvidence": "28 October 2026: current documentation routing checked for Spanish guide, concise development status and new current audio-production guide. Audio row points to AUDIO_PLAYBACK/AUDIO_AUTHORING/AUDIO_ENVIRONMENT; original frozen historical census rows remain archival. 28 October PR #563 continuation: soundtrack creative-reference routing corrected; frozen historical index receipts untouched. 28 Oct PR #563 continuation: current audition room and practical guide linked from top navigation, not from frozen historical rows. 28 Oct PR #563 continuation: current-entrypoint route to mechanic development broadened to approved game/system changes, not dated Rogue-only procedures; frozen historic receipts unchanged. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes.",
+      "reconciliationReviewEvidence": "28 October 2026: current documentation routing checked for Spanish guide, concise development status and new current audio-production guide. Audio row points to AUDIO_PLAYBACK/AUDIO_AUTHORING/AUDIO_ENVIRONMENT; original frozen historical census rows remain archival. 28 October PR #563 continuation: soundtrack creative-reference routing corrected; frozen historical index receipts untouched. 28 Oct PR #563 continuation: current audition room and practical guide linked from top navigation, not from frozen historical rows. 28 Oct PR #563 continuation: current-entrypoint route to mechanic development broadened to approved game/system changes, not dated Rogue-only procedures; frozen historic receipts unchanged. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing.",
       "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
       "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
       "previousSpanishGuideNavigationGitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e",
