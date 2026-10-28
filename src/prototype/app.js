@@ -4866,20 +4866,23 @@
     persistProfile();
     showTitleScreen();
   }
-  // Keep the exact historical 115-unit reach and nearest-first ownership
-  // shared by the button, its cue, and the actual interaction. No target cycling
-  // or collision/camera changes are required for this first-play clarity fix.
-  function nearbyInteractionTargets() {
-    return [
-      ...game.visibleNPCs(),
-      ...game.visibleResourceNodes(),
-      ...game.zone().buildings.map((b) => ({ ...b, kind: 'barracks', name: b.name || 'Barracks' })),
-    ]
-      .filter((n) => game.interactionDistance(n) < 115)
-      .sort((a, b) => game.interactionDistance(a) - game.interactionDistance(b));
-  }
+  // Keep the historical 115-unit reach and stable nearest-first ownership
+  // shared by the button, cue and actual action. A single bounded nearest scan
+  // avoids allocating/sorting a list on each permitted world draw.
   function nearestNPC() {
-    return nearbyInteractionTargets()[0] || null;
+    let nearest = null, nearestDistance = 115;
+    const consider = (n) => {
+      const distance = game.interactionDistance(n);
+      if (distance < nearestDistance) {
+        nearest = n;
+        nearestDistance = distance;
+      }
+    };
+    for (const n of game.visibleNPCs()) consider(n);
+    for (const n of game.visibleResourceNodes()) consider(n);
+    for (const b of game.zone().buildings)
+      consider({ ...b, kind: 'barracks', name: b.name || 'Barracks' });
+    return nearest;
   }
   // Only small standalone interactables get an outline. A refuge, transport,
   // dungeon entrance, monument, fountain or Barracks stays unhighlighted.
