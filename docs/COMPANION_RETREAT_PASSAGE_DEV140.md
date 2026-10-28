@@ -1,5 +1,7 @@
 # Companion retreat passage — dev.140
 
+> **Superseded runtime behavior — owner-directed rollback candidate, 28 October 2026.** This historical dev.140 friendly-only retreat passage exception is redundant and removed in candidate draft PR #567, because every actor pair can pass throughout combat and travel. Companion retreat/survival behavior is retained. This is **unmerged/unpublished** until the owner accepts it. Preserve the historical design and evidence below. See [rollback contract](ACTOR_BODY_COLLISION_ROLLBACK_20261028.md).
+
 Joel requested friends make room for a withdrawing companion: pass through the hero and other friendly companions, while enemies and terrain remain physical obstacles. Applies to automatic tactical regrouping and active Recall return, across Soldier, Archer and all eleven companion pets for all three hero classes.
 
 `party.js` exposes the existing automatic regroup mode independently of its movement-only defensive predicate. `navigation.js` uses that mode for symmetric friendly movement and passive separation. Friendly bodies neither block nor shove the withdrawing unit. Hostile bodies, including bosses and mounts, retain collision in both directions, even when either actor already has the generic crowd-escape allowance. A withdrawing companion cannot arm that mixed-side allowance. Terrain clearance and scripted/forced motion retain their existing rules.
