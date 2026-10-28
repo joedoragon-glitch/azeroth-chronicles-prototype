@@ -2051,7 +2051,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "925323765c021a28b4c03265587732c57143ebb2",
+      "gitBlobSha": "90a776517cea4dd404fca9e8390968bc01d52824",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2072,7 +2072,8 @@
       "reconciliationReviewEvidence": "28 Oct 2026: previous verified current routing retained; added prominent Spanish complete-guide route, reclassified CONTROLES.md as compatibility entry in active index prose and linked the current guide in the player table. Historical index census rows remain dated receipts.",
       "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
       "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
-      "previousSpanishGuideNavigationGitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e"
+      "previousSpanishGuideNavigationGitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e",
+      "previousSpanishGuideCountGitBlobSha": "925323765c021a28b4c03265587732c57143ebb2"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
