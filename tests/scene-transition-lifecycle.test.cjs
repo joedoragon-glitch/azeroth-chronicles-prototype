@@ -117,6 +117,58 @@ function openForwardTravel(app) {
     assert.equal(app.scope.Prototype.started, true);
   }
 
+  // A confirmed Pixi preference stays on the title screen and prepares the
+  // saved arrival in ONE visible loading sequence, not a separate boot panel.
+  {
+    let restored = 0, resolveRenderer;
+    const state = { mode: 'canvas2d', phase: 'canvas', preferredRenderer: 'webgl2' };
+    const guard = {
+      startupChoice: () => ({ renderer: 'webgl2' }),
+      create: () => ({
+        status: () => state,
+        resumeConfirmedWebGL: () => {
+          restored++;
+          state.phase = 'preparing';
+          return new Promise((resolve) => {
+            resolveRenderer = () => {
+              state.phase = 'confirmed';
+              state.mode = 'webgl2';
+              resolve(true);
+            };
+          });
+        },
+        requestWebGL: async () => false,
+        maybeRecover: async () => false,
+        confirm: () => true,
+        revert: () => { state.phase = 'canvas'; state.mode = 'canvas2d'; },
+        webglFailed() {},
+        visibilityChanged() {},
+      }),
+    };
+    const app = shell('en', 'ranger',
+      { stayOnTitle: true, graphicsGuard: guard });
+    const title = app.elements.get('title-screen');
+    assert.equal(restored, 0,
+      'confirmed Pixi is not initialized in a separate boot presentation');
+    assert.equal(title.hidden, false);
+    const startZone = app.scope.Prototype.game.zoneId;
+    app.elements.get('title-continue').click();
+    await flush();
+    assert.equal(restored, 1,
+      'confirmed Pixi initializes while the saved arrival is still hidden');
+    assert.equal(title.hidden, false,
+      'one title-screen loading surface remains visible throughout Pixi init');
+    assert.equal(app.elements.get('title-loading').hidden, false);
+    assert.equal(app.scope.Prototype.started, false);
+    resolveRenderer();
+    await flush();
+    app.frame(450);
+    assert.equal(app.scope.Prototype.started, true);
+    assert.equal(title.hidden, true);
+    assert.equal(app.scope.Prototype.game.zoneId, startZone,
+      'preparation does not move the saved hero to another location');
+  }
+
   // A slow or stalled resource must not be treated as an expired stopwatch.
   // The player can explicitly select Canvas instead of waiting indefinitely.
   {
