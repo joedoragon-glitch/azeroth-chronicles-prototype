@@ -10,7 +10,7 @@
   const BG_SHIFT = BG_MARGIN * 0.6;
   const BG_PREFETCH_TRIGGER = BG_MARGIN * 0.33;
   // Two CPU windows, one GPU source. Never provision a second regional GPU atlas.
-  const BG_TWO_WINDOW_BUDGET = 64 * 1024 * 1024;
+  const BG_TWO_WINDOW_BUDGET = 256 * 1024 * 1024;
   const iso = (point) => ({
     x: (point.x - point.y) * 0.76,
     y: (point.x + point.y) * 0.27,
@@ -185,16 +185,13 @@
       lastFailure = null;
     const baked = new Map(),
       loaded = new Set();
-    // The old 64 MiB image budget preceded the procedural art expansion.
-    // Use 256 MiB as a strict image-data ceiling, with earlier LRU trimming
-    // to leave memory headroom for the original sprite, ground and audio caches.
+    // Prefer retained graphics over repeated CPU bakes during play.
+    // This is an emergency allocation guard, not an eager eviction target.
     const proceduralBudget = Number.isSafeInteger(options.proceduralTextureBudgetBytes)
       ? Math.max(1, options.proceduralTextureBudgetBytes)
-      : 256 * 1024 * 1024;
-    // Mainstream-device working set: retain nearby art through crossings while
-    // trimming stale textures before the unchanged 256 MiB hard ceiling.
-    const trimAt = Math.floor(proceduralBudget * 0.75);
-    const trimTo = Math.floor(proceduralBudget * 0.625);
+      : 1024 * 1024 * 1024;
+    const trimAt = proceduralBudget;
+    const trimTo = Math.floor(proceduralBudget * 0.9);
     let imageBytes = 0,
       disposed = false,
       baseGame = null,
@@ -687,14 +684,14 @@
     // On switching to Pixi, the existing live view is loaded first. Then,
     // prepare a limited fringe just beyond the camera so a quick step from
     // Millhaven toward its goblins doesn't require every first bake in combat.
-    // Yield between batches while the full game simulation is held still by
-    // the renderer preparation guard; never run this as an unbounded emitter.
+    // Yield between batches while simulation is held. Finish the selected
+    // neighborhood rather than abandoning bakes after a time/count quota.
     async function warmNeighborhood(epoch, arrival = false) {
       const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
       const current = game(), zoom = platform.cameraZoom || 1;
       const width = viewport.width, height = viewport.height;
       const fringe = candidates(current, project, width, height,
-        canvasRenderer.presentEntity, arrival ? 1300 : 650)
+        canvasRenderer.presentEntity, arrival ? 2000 : 900)
         .filter(({entity,point}) =>
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
@@ -716,9 +713,9 @@
       for(const {entity,visual,point,key} of fringe) {
         if(epoch!==contextEpoch || !scene || !app || game()!==current ||
            platform.cameraZoom!==zoom || root.document?.hidden) return false;
-        const elapsed=(typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
-        if(prepared >= (arrival ? 42 : 30) || elapsed > (arrival ? 1100 : 800) ||
-           imageBytes>=trimAt) break;
+        // Actual loss of the GPU context cancels above; there is no deadline.
+        // The emergency byte guard still prevents a failed allocation loop.
+        if(imageBytes>=trimAt) break;
         const painted=paintedVisual(visual);
         const chosen=adapter.commandFor(painted,
           {x:point.x/zoom,y:point.y/zoom},
@@ -899,12 +896,9 @@
       }
       appendCrownLoot(records, current, zoom);
       scene.syncActors(records);
-      // Stage 6: defer optional soft LRU sweeps during close-range combat.
-      // Repeated attack frames can reuse art; the separate hard-budget path
-      // still reclaims cold textures when absolutely necessary and never
-      // removes currently visible identities.
-      if (imageBytes > trimAt && !nearActiveFight(current))
-        evictUnused(protectedRevisions, imageBytes - trimTo);
+      // Keep offscreen and previously visited artwork resident for reuse.
+      // Only a real emergency hard-budget allocation needs LRU retirement;
+      // that path protects all currently visible texture identities.
     }
     function syncAtmosphere() {
       const current = game(),
