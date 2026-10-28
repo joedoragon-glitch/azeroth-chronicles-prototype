@@ -20,6 +20,12 @@ Use a **local checkout or specifically authorized preview of the exact draft bra
 3. Confirm Pixi remains opt-in, Keep/Revert works, hardware WebGL2 is actually available (not software fallback), and a failed attempt produces Canvas without losing the save or replaying a paid native action.
 4. Use the same save, quality/profile, version, zoom/DPR, viewport, language and cold/warm state for an **A/B comparison** against original Canvas 2D; keep separate results for software-GPU browsers.
 
+## Essential Pixi presentation candidate — 28 October 2026
+
+A separate draft fix against current main addresses three still-missing Pixi features: live Crown drops via one reusable GPU texture made by the existing Canvas coin painter, the exact Canvas attack/movement/idle facing for registered and procedural actors mirrored at the foot anchor, and the existing pause dimming/text in the Pixi cue overlay. The Crown texture is invalidated on resolution and viewport changes and on fallback; the artwork, loot economy, save keys, world mechanics and Canvas default remain unchanged. These are **draft implementation changes**, not yet merged, deployed, visually certified or device accepted.
+
+Focused regression assertions cover coin sharing, current-zone drops, pickup disappearance, density and viewport recreation, actor flip and foot-anchor alignment, and presence of the shared pause cue in the Pixi overlay. Real-WebGL screenshots and physical iPhone/Chromebook checks remain separate. On devices compare actual earned Crown loot in daylight and nighttime; directional combat and idle motion for hero, companion and enemy; paused appearance; rotation, quality changes, Keep/Revert and fallback with a visible drop. Do not infer hardware success from source tests alone.
+
 ## Real-device scenarios
 
 | Trial | What must be observed and recorded |

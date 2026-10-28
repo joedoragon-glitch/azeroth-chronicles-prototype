@@ -230,6 +230,10 @@
       gpuPreparationMs = 0,
       gpuPreparationBatches = 0;
     let cancelGpuPreparation = null;
+    // One portrait-stamped Crown coin texture, reused for every visible drop.
+    const crownLootTextureId = 'pixi-world-crown-loot';
+    let crownLootTexture = null,
+      crownLootDensity = 0;
     const measureNow = () =>
       typeof performance !== 'undefined' ? performance.now() : Date.now();
     function recordBackgroundPaint(started) {
@@ -281,6 +285,17 @@
     }
     function project(entity) {
       return canvasRenderer.screen(entity);
+    }
+    function releaseCrownLootTexture() {
+      if (!crownLootTexture) return;
+      // Detach actors before destroying a texture that could still be in use.
+      if (scene) {
+        scene.syncActors([]);
+        scene.unregisterTexture(crownLootTextureId);
+      }
+      crownLootTexture.destroy?.(true);
+      crownLootTexture = null;
+      crownLootDensity = 0;
     }
     function effectiveRatio() {
       // Use the same device-specific backing-pixel density as Canvas.
@@ -354,6 +369,7 @@
       });
       // Retired procedural textures must never remain referenced by sprites.
       clearBakes(true);
+      releaseCrownLootTexture();
       scene.destroy();
       scene = null;
       const previous = backing;
@@ -740,6 +756,47 @@
         return false;
       }
     }
+    function ensureCrownLootTexture(zoom) {
+      const density = Math.max(1, backingRatio * zoom);
+      if (crownLootTexture && crownLootDensity === density &&
+          scene.hasTexture(crownLootTextureId)) return crownLootTextureId;
+      releaseCrownLootTexture();
+      const painter = requireValue(root.PrototypeRenderer?.drawCrownLoot,
+        'Original Crown coin painter unavailable');
+      const stamp = makeCanvas(Math.round(40 * density), Math.round(40 * density));
+      const ctx = requireValue(stamp.getContext('2d'), 'Crown coin canvas unavailable');
+      ctx.setTransform(density, 0, 0, density, 0, 0);
+      painter(ctx, { x: 20, y: 20 });
+      const texture = root.PIXI.Texture.from(stamp);
+      texture.source.scaleMode = 'nearest';
+      scene.registerTexture(crownLootTextureId, texture);
+      crownLootTexture = texture;
+      crownLootDensity = density;
+      return crownLootTextureId;
+    }
+    function appendCrownLoot(records, current, zoom) {
+      let ordinal = 0;
+      for (const loot of current.s.loot || []) {
+        ordinal++;
+        if (loot.zone !== current.zoneId ||
+            !Number.isFinite(loot.x) || !Number.isFinite(loot.y)) continue;
+        const point = project(loot);
+        if (point.x < -40 * zoom || point.x > viewport.width + 40 * zoom ||
+            point.y < -40 * zoom || point.y > viewport.height + 40 * zoom) continue;
+        records.push({
+          key: 'crown-loot:' + (loot.id == null ? ordinal : loot.id),
+          textureId: ensureCrownLootTexture(zoom),
+          x: point.x - 20 * zoom,
+          y: point.y - 20 * zoom,
+          width: 40 * zoom,
+          height: 40 * zoom,
+          opacity: 1,
+          flipX: false,
+          // Same layering as Canvas: above actors and below world lighting.
+          depth: Number.MAX_SAFE_INTEGER,
+        });
+      }
+    }
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
@@ -783,10 +840,13 @@
               };
         // Canvas repaints these identities as their actual in-world objects.
         const painted = paintedVisual(visual);
+        // Share the original Canvas attack/motion/idle facing decision.
+        const facing = canvasRenderer.facingFor?.(painted) ?? 1;
         const chosen = adapter.commandFor(
           painted,
           { x: point.x / zoom, y: point.y / zoom },
-          { region: current.regionIndex(), rescued: !!current.s.rescued[entity.family] },
+          { region: current.regionIndex(),
+            rescued: !!current.s.rescued[entity.family], facing },
         );
         if (chosen.supported) {
           if (!scene.hasTexture(chosen.texture.src))
@@ -823,17 +883,21 @@
           records.push({
             key,
             textureId: b.id,
-            x: point.x + b.dx * zoom,
+            // Reflect procedural bodies about the foot anchor, not crop center.
+            x: facing < 0
+              ? point.x - (b.dx + b.logicalWidth) * zoom
+              : point.x + b.dx * zoom,
             y: point.y + b.dy * zoom,
             width: b.logicalWidth * zoom,
             height: b.logicalHeight * zoom,
             opacity: 1,
-            flipX: false,
+            flipX: facing < 0,
             ground,
             depth: entity.x + entity.y,
           });
         } else throw Error('Missing original game artwork: ' + key);
       }
+      appendCrownLoot(records, current, zoom);
       scene.syncActors(records);
       // Stage 6: defer optional soft LRU sweeps during close-range combat.
       // Repeated attack frames can reuse art; the separate hard-budget path
@@ -1121,6 +1185,7 @@
       cancelGpuPreparation?.();
       cancelGpuPreparation = null;
       deactivate();
+      releaseCrownLootTexture();
       scene?.destroy?.();
       scene = null;
       clearBakes();
