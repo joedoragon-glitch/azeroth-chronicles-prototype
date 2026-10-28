@@ -4394,7 +4394,7 @@
     },
     {
       "path": "docs/PR313_RESUME_20261016.md",
-      "gitBlobSha": "83d3f1420837b61ec9bb18bc4688e01e9a71bc36",
+      "gitBlobSha": "99525a6ef675e454f2ea8e22a4475c950c5927f8",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -4404,7 +4404,9 @@
       "reviewDepth": "frozen_census_membership",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousHistoricalCorrectionGitBlobSha": "83d3f1420837b61ec9bb18bc4688e01e9a71bc36",
+      "reconciliationReviewEvidence": "28 Oct: top-level current-direction claim corrected using merged PR #313 and #319 metadata; preserved body may contain further historical work orders and remains unresolved pending full review."
     },
     {
       "path": "docs/PR313_THRONE_GATE_20261016.md",

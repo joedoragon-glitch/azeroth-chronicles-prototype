@@ -2101,6 +2101,17 @@
         "docs/DEVELOPMENT_STATE.md": "b10e30305676624510dbc08b895000e2fdc83949c73e6f8c25015742b845a628"
       },
       "baselineDiscrepancy": "Earlier documentation changes updated the maintained page after the last PR #313 receipt; preserve both the last expected and observed incoming hashes."
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 historical receipt maintenance; historical recovery heading clarification, SOURCE ONLY, NOT TESTED by full certification.",
+      "reason": "Preserve the October recovery evidence while identifying its obsolete instructions as historical; no runtime changes.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "2fd3bb4b325604d46656caffc67f766e7ca62e251f03f9edaeae8b82cb0e8a9a"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "1f265ca66e503a4246c14c782bae8c56b7e7a853075ec4b5732e6e1e79be3749"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
