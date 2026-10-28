@@ -1,5 +1,7 @@
 # So I Became the Dark Lord's Problem
 
+**Game identity:** This is an independent original fantasy RPG. **Azeroth Chronicles** is only the historical development name retained in this repository's technical address and earlier records; it is not another current game title or a description of the present setting. For how to read or update older documents, see [brand and documentation naming](docs/BRAND_IDENTITY.md).
+
 **28 October 2026 update:** Rogue (**Pícara**) is now a fourth playable class in the normally published game; the audited live build is `0.9.1+snapshot.dev.208`. Initial owner field testing verified Rogue and Charm, but final phone performance, sounds, visuals, boss/region coverage and balance still need acceptance. For later publication facts and installed-PWA limits see the [maintained development ledger](docs/DEVELOPMENT_STATE.md).
 
 **Current game version, publication and pending acceptance:** see the maintained [Development state](docs/DEVELOPMENT_STATE.md) for the exact published-main SHA, build/cache number, focused checks, installed-device verification limits, open issues and draft-vs-merged workstreams. The [Phase 0 audit receipt](docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md) is a dated 27 October baseline, not a continually updated release version. This README describes player-facing navigation; it does not independently certify a cached PWA update or hardware performance.
