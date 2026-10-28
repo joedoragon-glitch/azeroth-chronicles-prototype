@@ -16,43 +16,21 @@ function add(g, point, species = 'goblin') {
   g.zone().enemies.push(e);
   return e;
 }
-// PT-002: exact overlaps, body blocking, timed friendly congestion and terrain integrity.
+// PT-002 rollback: overlap and passage are once again legal for all actors.
 {
-  const g = room(), captain = g.zone().enemies.find((e) => e.roomCaptain),
-    p = g.safe(captain.x, captain.y);
-  g.zone().enemies = [];
-  Object.assign(g.hero, g.safe(200, 220));
-  const units = Array.from({ length: 3 }, () => add(g, p));
-  for (let i = 0; i < 80; i++) {
-    g.s.time += 0.05;
-    g.separateActors(0.05);
-  }
-  for (const [i, e] of units.entries()) {
-    assert(!g.blocked(e.x, e.y), 'de-stacking never enters a wall');
-    for (const other of units.slice(i + 1))
-      assert(distance(e, other) >= 26, 'three coincident actors separate');
-  }
-  const e = units[0], start = { ...g.hero };
-  Object.assign(g.hero, g.safe(e.x - 65, e.y));
-  g.s.time += 0.05;
-  g.move(g.hero, { x: e.x + 65, y: e.y }, 1000, 0.1);
-  assert(distance(g.hero, e) >= g.actorRadius(g.hero) + g.actorRadius(e) - 0.1,
-    'hero cannot tunnel through an opposing body');
-  Object.assign(g.hero, start);
-  const before = { x: e.x, y: e.y };
-  g.move(e, { x: -500, y: -500 }, 10000, 0.5);
-  assert(!g.blocked(e.x, e.y), 'long scripted steps still obey terrain');
-  assert(Number.isFinite(distance(e, before)));
-}
-// Long steps inspect the swept crowd cells, including actors far from the endpoint.
-{
-  const g = room(); g.zone().enemies = [];
-  const lane = [{ x: 150, y: 180 }, { x: 500, y: 180 }];
-  if (g.clearSegment(...lane)) {
-    Object.assign(g.hero, lane[0]);
-    const e = add(g, { x: 280, y: 180 });
-    assert(!g.actorStepAllowed(g.hero, lane[1]), 'no endpoint-only hostile tunnelling');
-  }
+  const g = new C('developer', 'paladin', () => 0.73), z = g.zone();
+  z.enemies = []; z.props = []; z.buildings = [];
+  Object.assign(g.hero, { x: 1000, y: 1500 });
+  const enemy = add(g, { x: 1020, y: 1500 });
+  assert.equal(typeof g.actorStepAllowed, 'undefined', 'actor-body collision predicate removed');
+  assert.equal(typeof g.separateActors, 'undefined', 'passive separation removed');
+  assert.equal(typeof g.actorCrowd, 'undefined', 'spatial crowd index removed');
+  assert(g.move(g.hero, { x: 1040, y: 1500 }, 500, 0.08));
+  assert.equal(g.hero.x, 1040, 'hero crosses hostile body');
+  assert.equal(enemy.x, 1020, 'enemy is not shoved');
+  z.props.push({ id: 'solid-test', x: 1100, y: 1500, r: 35 });
+  assert(!g.clearSegment(g.hero, { x: 1150, y: 1500 }),
+    'real scenery remains impassable');
 }
 // PT-007: full-radius marks stay on connected floor and remain frozen after warning.
 for (const id of Object.keys(C.rules.treasuryArchitecture)) {
