@@ -1,5 +1,7 @@
 # Crowd escape and bounded movement planning — dev.107
 
+> **Superseded runtime behavior — owner-directed rollback candidate, 28 October 2026.** This historical dev.107 actor jam/passage algorithm is superseded in candidate draft PR #567: no actor bodies or congestion timers remain. Independent terrain-route planning limits/retry clocks are retained to prevent CPU search amplification. This is **unmerged/unpublished** until the owner accepts it. Preserve the historical design and evidence below. See [rollback contract](ACTOR_BODY_COLLISION_ROLLBACK_20261028.md).
+
 Joel reported severe FPS drops when player, companions and enemies become trapped together, and authorized temporary stacking to let the group escape. Preserve ordinary combat body blocking outside actual congestion, terrain/river/wall collision, accepted artwork, gathering safety, Recall and encounter rules.
 
 ## Finding and implementation
