@@ -80,7 +80,7 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Exact Git blob SHA at basis.inventoryReconciliation.parentCandidateSha, except docs/DOCUMENTATION_INDEX.md updated during inventory reconciliation. Prior receipts are preserved. The register JSON is not Markdown and does not register itself; recheck when documents change.",
+    "gitBlobSha": "Exact Git blob SHA at basis.inventoryReconciliation.parentCandidateSha, except documents subsequently updated in their respective reconciliation changes. Prior receipts are preserved. The register JSON is not Markdown and does not register itself; recheck when documents change.",
     "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
     "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
     "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks.",
@@ -1870,7 +1870,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
+      "gitBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1883,7 +1883,8 @@
       "previousPhase5GitBlobSha": "0e1f554778c6d07f2892ba69defa5f9918620a51",
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
