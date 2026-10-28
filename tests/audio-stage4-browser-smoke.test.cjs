@@ -17,7 +17,7 @@ const prefix = '/azeroth-chronicles-prototype/';
       res.end();
       return;
     }
-    const types = { '.js': 'text/javascript', '.html': 'text/html', '.wav': 'audio/wav', '.mp3': 'audio/mpeg', '.json': 'application/json' };
+    const types = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.wav': 'audio/wav', '.mp3': 'audio/mpeg', '.json': 'application/json' };
     res.setHeader('Content-Type', types[path.extname(file)] || 'application/octet-stream');
     fs.createReadStream(file).pipe(res);
   });
@@ -50,6 +50,7 @@ const prefix = '/azeroth-chronicles-prototype/';
       }
       assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
       assert.equal(await page.locator('#boss option').count(), 12);
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Responsive CSS must fit the phone viewport');
       assert.equal(await page.locator('#recording option').count(), 83);
       await page.locator('#advanced').evaluate((el) => { el.open = true; });
       await page.locator('#source').selectOption('diagnostic');
