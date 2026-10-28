@@ -332,23 +332,18 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
   assert(distance(u, e) > distance(start, e));
   cases++;
 }
-// A fully blocked lane never grants hostile passage, even under sustained low FPS.
+// Friendly withdrawal and normal movement can pass enemy bodies after PT-002 rollback.
 {
   const { g, z, u, e } = scene();
+  z.props = [];
   Object.assign(u, { x: 700, y: 1500 });
-  Object.assign(g.hero, { x: 1100, y: 1500 });
   Object.assign(e, { x: 750, y: 1500 });
-  const base = g.blocked;
-  g.blocked = (x, y, zone, r = 15) => base(x, y, zone, r) || y < 1480 + r || y > 1520 - r;
-  for (let i = 0; i < 70; i++) {
-    g.observeCrowdFrame(100);
-    step(g);
-    assert(u.x < e.x);
-    assert(!g.crowdEscaping(u));
-  }
+  assert(g.move(u, { x: 800, y: 1500 }, 1000, 0.1),
+    'retreating units are no longer body-blocked by enemies');
+  assert.equal(u.x, 800);
   cases++;
 }
-// Route around a physical wall; neither a blocked route nor an enclosing crowd grants phasing.
+// Route around a physical wall; actors may overlap, but terrain never phases.
 {
   const { g, z, u, e } = scene();
   e.hp = 0;
@@ -359,7 +354,7 @@ for (const work of ['build', 'upgrade', 'gather', 'deposit']) {
     base(x, y, zone, r) || (x > 800 - r && x < 830 + r && y > 1300 - r && y < 1700 + r);
   for (let i = 0; i < 180; i++) {
     step(g);
-    assert(!g.blocked(u.x, u.y, g.s.zone, g.actorRadius(u)));
+    assert(!g.blocked(u.x, u.y, g.s.zone, 15));
   }
   assert(distance(u, g.hero) < 150, 'keeps following around terrain');
   cases++;
