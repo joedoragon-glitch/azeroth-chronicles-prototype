@@ -111,6 +111,16 @@
       "candidateMarkdownCount": 418,
       "archivedSourceSection": "docs/DEVELOPMENT_STATE.md starting at ## Historical release-status ledger",
       "method": "Full original file reviewed; historical body preserved verbatim as one indexed archive. Current page re-pinned to exact main source and GitHub Actions. No game, test, workflow or save changes; no device certification."
+    },
+    "spanishGuideIntroduction": {
+      "auditedMainSha": "3765ed3bbbf67385561ba47b46887eda6ccf3e7c",
+      "prBranch": "docs/development-state-clear-status-20261028",
+      "primaryGuide": "GUIA_EN_ESPANOL.md",
+      "compatibilityPath": "CONTROLES.md",
+      "previousMarkdownCount": 418,
+      "candidateMarkdownCount": 419,
+      "evidence": "app.js actual language settings and launch flow, input.js default keys, official game name, current published dev.208 receipts; original controls guide preserved in history",
+      "languageScope": "Spanish presentation available with incomplete localization; never imply all story/world text translated."
     }
   },
   "semantics": {
@@ -338,7 +348,7 @@
     },
     {
       "path": "CONTROLES.md",
-      "gitBlobSha": "76b757d5951c8f4c9a969958bf05f8dfbe7d3b83",
+      "gitBlobSha": "c3409b1ec8cdb4f0f046cb99d7b8daa9ec9a262c",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -348,9 +358,11 @@
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "842082d7523eb7143e688e27451d223fcd7189c1",
       "previousPhase4GitBlobSha": "d987f1aa5b1513f32a8591d53009ea87dae040b2",
-      "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "previousSpanishGuideNavigationGitBlobSha": "76b757d5951c8f4c9a969958bf05f8dfbe7d3b83",
+      "reconciliationReviewEvidence": "28 Oct 2026: Former controls-only page now a short maintained compatibility link to GUIA_EN_ESPANOL.md; original full text preserved in git history. Verified destination exists; legacy links remain usable. No independent current gameplay guidance maintained here."
     },
     {
       "path": "docs/A2_A3_ARCHIVE_BOOKSHELF_READING_20261024.md",
@@ -1928,7 +1940,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "8377265de1d98324668fcaff9a750816a709f372",
+      "gitBlobSha": "c46c2934821d9014d9e9ca9ed145a06846e21f13",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1944,10 +1956,11 @@
       "reconciliationReview": "verified",
       "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
       "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
-      "reconciliationReviewEvidence": "28 Oct 2026: fully reviewed previous 377-line status source and all historical section routing; checked latest main@3765ed3, package/lock/sw dev.208, successful focused + Pages Actions 40731474055, Rogue #511 and main game, open #510/#478/#481/#484/#486/#460/#357 and draft work #527/#531/#533/#538/#544/#553/#554. New current section is a scoped source/status review, not full historical feature verification or device certification.",
+      "reconciliationReviewEvidence": "28 Oct 2026: prior source/checkpoint review retained for main@3765ed3 and successful focused + Pages Actions 40731474055. Spanish player guide links updated to the new path without changing the release-status facts; device tests remain unverified.",
       "previousStep1GitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
       "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03",
-      "previousReadableStatusGitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8"
+      "previousReadableStatusGitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
+      "previousSpanishGuideNavigationGitBlobSha": "8377265de1d98324668fcaff9a750816a709f372"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -2038,7 +2051,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e",
+      "gitBlobSha": "925323765c021a28b4c03265587732c57143ebb2",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2056,9 +2069,10 @@
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
       "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
       "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
-      "reconciliationReviewEvidence": "28 Oct, main@29be451: checked current authority hierarchy, Rogue soft release/companion/bell-staff paths, and links to agent policy, development state, architecture, brand and workflow. No claim of full-body review of historical index entries or all 417 document contents.",
+      "reconciliationReviewEvidence": "28 Oct 2026: previous verified current routing retained; added prominent Spanish complete-guide route, reclassified CONTROLES.md as compatibility entry in active index prose and linked the current guide in the player table. Historical index census rows remain dated receipts.",
       "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
-      "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594"
+      "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
+      "previousSpanishGuideNavigationGitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -6518,8 +6532,23 @@
       "reconciliationReview": "unresolved"
     },
     {
+      "path": "GUIA_EN_ESPANOL.md",
+      "gitBlobSha": "b7d23b019621b908febfca350cb957c72e179ad4",
+      "location": "elsewhere",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "spanish_player_and_project_introduction",
+      "role": "current_entrypoint",
+      "authority": "current_entrypoint",
+      "reviewDepth": "current_entrypoint_checked",
+      "reconciliationRole": "current authority",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "reconciliationReviewEvidence": "28 Oct 2026: audited app.js New Game→chooseLanguage('normal')→Español→class selection and title Settings/systemMenu→Language / in-run Menu→Game and settings→Language; localStorage persistence key and es-419. Verified current Spanish labels, input.js defaults, README game identity and dev.208 release gates. Partial localization clearly disclosed. All internal links checked; no claim every text in game is translated or physical-device tested."
+    },
+    {
       "path": "README.md",
-      "gitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
+      "gitBlobSha": "9bdd0ef9ab52212e10ad15a4fc66ca5d714cfebd",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -6534,7 +6563,8 @@
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
       "previousReadmeNavigationGitBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
-      "reconciliationReviewEvidence": "28 Oct 2026 at main@6b625348: full README reviewed and rewritten as playable-game entrypoint. Verified dev.208 package/sw, publication run 40729904600, four-class/Rogue path, input.js defaults, current menu labels, local saves, CI owner gates, and linked documentation routing. Removed stale three-class instructions and historical audit walls. This review verifies README guidance only, not every linked document, full-game gameplay or device acceptance."
+      "reconciliationReviewEvidence": "28 Oct 2026: previous full README front-door review retained; Spanish entry link updated from CONTROLES.md to GUIA_EN_ESPANOL.md, verified in same staged tree. No changes to existing play, build or gameplay guidance.",
+      "previousSpanishGuideNavigationGitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",

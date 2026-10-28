@@ -2,7 +2,7 @@
 
 An original, offline-capable fantasy RPG about becoming a serious inconvenience to the Dark Lord. Explore five regions, rescue specialists, build a companion expedition, and make your way through ten settlements and five main dungeons.
 
-**[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía de controles en español](CONTROLES.md)**
+**[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía completa del juego en español](GUIA_EN_ESPANOL.md)**
 
 The playable Community Snapshot is still receiving updates. **Last verified game build: `0.9.1+snapshot.dev.208` (28 October 2026).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
 
@@ -48,7 +48,7 @@ These are **default** desktop bindings. Keyboard presets and individual keys can
 
 Tap **Target** to cycle eligible enemies; hold it for roughly **0.55 seconds** to lock the current target for the encounter. Menu selection follows the movement keys; F, Enter or Space confirms. Skills can be queued while cooling down. The Classic number-key preset and a mirrored left-hand preset are available in Controls.
 
-On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. The controls and settings are described in more detail in **[Controles (Español)](CONTROLES.md)** and the in-game Help / Controls menus.
+On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. The controls and settings are described in more detail in **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** and the in-game Help / Controls menus.
 
 ## Saves, updates and diagnostics
 
@@ -95,7 +95,7 @@ Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml);
 | Development rules and release authorization | [Agent operating policy](AGENTS.md) |
 | Find a feature guide or a historical handoff | [Documentation index](docs/DOCUMENTATION_INDEX.md) |
 | Official game identity and legacy-name rules | [Brand identity](docs/BRAND_IDENTITY.md) |
-| Spanish player guide | [Controles (Español)](CONTROLES.md) |
+| Spanish player guide | [Guía del juego (Español)](GUIA_EN_ESPANOL.md) |
 
 **About the repository name:** `azeroth-chronicles-prototype` is a historical technical identifier, **not** the game's current name or setting. The official title is **So I Became the Dark Lord's Problem**, an independent fantasy RPG. The [documentation index](docs/DOCUMENTATION_INDEX.md) preserves earlier releases, audits, source receipts and superseded plans without treating them as new implementation instructions.
 

@@ -17,7 +17,7 @@ This is the **current status page**, not a task list or a release diary. It reco
 | Did each phone/Chromebook receive and accept this update? | **Unknown.** A successful site publication does not prove an existing browser or installed PWA has refreshed its cache or passed physical-device testing. |
 | Did the full-game / browser matrix pass at this commit? | **Not claimed.** The normal workflow uses focused checks. The comprehensive workflow is separately owner-authorized. |
 
-**Player links:** [Browser / Chromebook](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) · [Phone / PWA](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html) · [Spanish controls](../CONTROLES.md).
+**Player links:** [Browser / Chromebook](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/) · [Phone / PWA](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html) · [Spanish game guide](../GUIA_EN_ESPANOL.md).
 
 This is one continuing playable Community Snapshot, not a separate successor game. **Merged** means incorporated into Git; **tested** means specific checks passed; **published** means the site job passed; **device-verified** requires observed results on that device. None automatically proves the next.
 
@@ -58,7 +58,7 @@ This is a **short decision-oriented view**, not an exhaustive issue tracker. Che
 
 ## Where to work next
 
-- **Playing / player help:** [README](../README.md), [Controles (Español)](../CONTROLES.md).
+- **Playing / player help:** [README](../README.md), [Guía en español](../GUIA_EN_ESPANOL.md).
 - **Finding current source ownership:** [Architecture](ARCHITECTURE.md) and the actual code.
 - **Accepted mechanics and current developer rules:** [Design decisions](DECISIONS.md), [AGENTS.md](../AGENTS.md), [mechanic workflow](MECHANIC_DEVELOPMENT.md).
 - **Specific pending work:** The matching [issue or PR](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues), plus [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297). Avoid resuming an old handoff solely because it says "current" or "next."
