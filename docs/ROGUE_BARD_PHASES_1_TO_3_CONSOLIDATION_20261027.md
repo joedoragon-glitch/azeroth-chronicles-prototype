@@ -1,8 +1,10 @@
+> **HISTORICAL PHASE RECORD — 28 October 2026 correction:** [Rogue PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) is **merged and published** and Rogue/Pícara is playable in `0.9.1+snapshot.dev.208`. The “Current decision,” “Phase 4 READY TO START,” draft/unmerged, and unplayable language below describes **27 October only**. It is preserved as exact staging evidence, **not a current work order**. Use [Development state](DEVELOPMENT_STATE.md) and [Rogue soft-launch record](ROGUE_SOFT_RELEASE_20261028.md) for present implementation and remaining independent acceptance.
+
 # Rogue Bard — phases 1–3 consolidated baseline and Phase 4 entry
 
 **27 October 2026 · Draft [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) · Documentation consolidation, no gameplay changes**
 
-## Current decision
+## Historical decision at the 27 October checkpoint
 
 **Phases 1 Foundation, 2 Hero Basics and 3 Authentic Charm: COMPLETE AS STAGED / FOCUSED VALIDATED. Phase 4 Companion Integration: READY TO START, NOT IMPLEMENTED.** Rogue is not registered/playable. PR #511 remains draft, unmerged, undeployed; no release or broad test authorization.
 
