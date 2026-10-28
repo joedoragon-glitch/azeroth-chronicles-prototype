@@ -1979,7 +1979,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
+      "gitBlobSha": "17dda0f608bbbd33008971d7649f1e0bb9d8ffc4",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1995,7 +1995,9 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
-      "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4"
+      "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
+      "previousExceptionRoutingBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
+      "reconciliationReviewEvidence": "28 Oct: added routing warning for protected historical PR #308 ledger; complete index review and link/anchor verification remain pending."
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
