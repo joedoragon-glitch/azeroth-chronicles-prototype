@@ -94,4 +94,9 @@ const appSource = fs.readFileSync(
 );
 assert(appSource.includes('partyDiagnostics: game.partyDiagnosticsReport()'),
   'Playtest JSON export must contain the companion/pet report');
+const stageMarks = [];
+game.updateParty(0.01, stage => stageMarks.push(stage));
+assert.deepEqual(stageMarks,
+  ['partyGuidanceEnd', 'partySetupEnd', 'partyUnitsEnd', 'partyBookkeepingEnd'],
+  'optional real engine timing callback separates guidance, setup, unit work and bookkeeping');
 console.log('PASS bounded companion/pet playtest diagnostics, source attribution, emergency markers and paused frame exclusion');

@@ -75,6 +75,29 @@ assert(mixed.note.includes('separate p95 values cannot be added'));
 assert(!p.describe().includes('Canvas (drawn only)'));
 p.reset();
 assert.equal(p.report().stages.pixiMs.samples, 0);
+// A browser callback gap is not automatically expensive synchronous JS.
+p.record({ frameWorkMs: 5, intervalMs: 205, simulationMs: 3,
+  companionAIMs: 2, companionGuidanceMs: 0.4, companionSetupMs: 0.5,
+  companionUnitsMs: 1, location: { zone: 'vale', heroX: 700, heroY: 450,
+    gridSize: 256, gridX: 2, gridY: 1, nearbyEnemyCount: 4 } });
+let slow = p.report().slowdownIncidents;
+assert.equal(slow.records.length, 1);
+assert.equal(slow.records[0].kind, 'callback-gap');
+assert.equal(slow.records[0].location.gridX, 2);
+assert.equal(slow.records[0].previous.frameWorkMs, 19);
+assert.equal(slow.records[0].current.companionUnitsMs, 1);
+p.reset(); // auto graphics tuning must not silently discard prior incidents.
+assert.equal(p.report().slowdownIncidents.records.length, 1);
+for (let i = 0; i < 24; i++) p.record({
+  frameWorkMs: 65, intervalMs: 65, emergencyEntered: i === 0,
+});
+slow = p.report().slowdownIncidents;
+assert.equal(slow.records.length, 16);
+assert(slow.dropped >= 9, 'older exceptional callbacks are bounded');
+assert(!JSON.stringify(slow).includes('undefined'));
+p.clearSlowdowns();
+assert.equal(p.report().slowdownIncidents.records.length, 0);
+assert.equal(p.report().slowdownIncidents.dropped, 0);
 const diagnostics = Runtime.create(()=>100);
 assert(diagnostics.describe({measuredLayer:'canvas-combat-overlay'})
   .includes('Canvas combat overlay only'));
