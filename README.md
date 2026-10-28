@@ -64,7 +64,7 @@ For the distinction between implemented, tested, merged, published and *device-v
 
 **Canvas 2D is the default renderer.** **PixiJS WebGL2** is an experimental, optional world-rendering path with a **15-second Keep/Revert trial** and Canvas fallback; it has not passed final device acceptance. Settings also provide rendering resolution, optimization and frame-skip options. Performance-report counters are diagnostic measurements, **not proof of visible frames per second on a Chromebook or phone**.
 
-The soundtrack changes with travel, settlements, night and combat. You can [visit the audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) without opening or changing a campaign. The [current sound design and audio production guide](docs/AUDIO_PLAYBACK.md) covers the live catalog, mix and creative workflow; the [original sound pass](docs/AUDIO_SOUND_PASS.md) is a dated creative reference.
+The soundtrack changes with travel, settlements, night and combat. You can [visit the audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) without opening or changing a campaign. The [current sound design and audio production guide](docs/AUDIO_PLAYBACK.md) covers the live catalog, mix and creative workflow; the [soundtrack and sound-identity guide](docs/AUDIO_SOUND_PASS.md) preserves the creative intentions behind all current cue families, with the original v0.8.90 version retained in Git history.
 
 ## Development
 
