@@ -93,10 +93,10 @@ Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml);
 | Source modules and system ownership | [Architecture](docs/ARCHITECTURE.md) |
 | Design decisions and approved behavior | [Gameplay decisions](docs/DECISIONS.md) |
 | Development rules and release authorization | [Agent operating policy](AGENTS.md) |
-| Find a feature guide or a historical handoff | [Documentation index](docs/DOCUMENTATION_INDEX.md) |
+| Find the right guide or historical record, with a one-line explanation of each | [Annotated documentation directory](docs/DOCUMENTATION_INDEX.md) |
 | Official game identity and legacy-name rules | [Brand identity](docs/BRAND_IDENTITY.md) |
 | Spanish player guide | [Guía del juego (Español)](GUIA_EN_ESPANOL.md) |
 
-**About the repository name:** `azeroth-chronicles-prototype` is a historical technical identifier, **not** the game's current name or setting. The official title is **So I Became the Dark Lord's Problem**, an independent fantasy RPG. The [documentation index](docs/DOCUMENTATION_INDEX.md) preserves earlier releases, audits, source receipts and superseded plans without treating them as new implementation instructions.
+**About the repository name:** `azeroth-chronicles-prototype` is a historical technical identifier, **not** the game's current name or setting. The official title is **So I Became the Dark Lord's Problem**, an independent fantasy RPG. The [annotated documentation directory](docs/DOCUMENTATION_INDEX.md) describes every tracked Markdown document by subject, points to dated audits and superseded plans without reviving them, and links to the original historical inventory for exact source receipts.
 
 **Known limits:** Some art and localized text are unfinished; Pixi/device performance and complete human playthrough acceptance are not certified. For the current, evidence-backed limits, use [Development state](docs/DEVELOPMENT_STATE.md), not an old release snapshot.
