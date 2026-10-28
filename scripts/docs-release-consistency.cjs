@@ -60,7 +60,10 @@ function inspect(b, ctx = {}) {
   if (Array.isArray(ctx.changedPaths) && ctx.changedPaths.length) {
     const runtime = ctx.changedPaths.filter(p =>
       /^src\/prototype\/.*\.(?:js|json)$|^styles\/.*\.css$|^assets\/(?:audio|sprites)\/|^tools\/(?:audio|sprites)\/.*\.(?:js|css|html|json)$|^(?:index|phone)\.html$/.test(p));
-    const documented = ctx.changedPaths.some(p =>
+    // On CI, only an edited EXISTING document counts; merely adding a
+    // new report or touching the release ledger/index must not bypass this.
+    const eligibleDocs = Array.isArray(ctx.modifiedPaths) ? ctx.modifiedPaths : ctx.changedPaths;
+    const documented = eligibleDocs.some(p =>
       (/^docs\/.*\.md$/.test(p) &&
        !/^docs\/(?:DEVELOPMENT_STATE|DOCUMENTATION_INDEX)\.md$/.test(p)) ||
       /^(?:README|CONTROLES|GUIA_EN_ESPANOL)\.md$/.test(p));
@@ -91,6 +94,9 @@ function run() {
   const base = process.env.CI_BASE_SHA;
   if (base && !/^0{40}$/.test(base)) {
     ctx.changedPaths = cp.execFileSync('git', ['diff', '--name-only', base, 'HEAD'], {
+      cwd: root, encoding: 'utf8',
+    }).trim().split('\n').filter(Boolean);
+    ctx.modifiedPaths = cp.execFileSync('git', ['diff', '--name-only', '--diff-filter=M', base, 'HEAD'], {
       cwd: root, encoding: 'utf8',
     }).trim().split('\n').filter(Boolean);
     ctx.previousVersion = JSON.parse(cp.execFileSync('git', ['show', base + ':package.json'], {
