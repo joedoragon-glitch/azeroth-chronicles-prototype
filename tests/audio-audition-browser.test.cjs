@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, '..'),
   engine = process.env.AUDIO_BROWSER_ENGINE || 'chromium',
   prefix = '/azeroth-chronicles-prototype/';
 (async () => {
+  assert(fs.existsSync(path.join(root, 'assets/vendor/pixi-8.22.0.min.js')), 'Prepare pinned local PixiJS with node scripts/vendor-pixi.cjs --ensure before offline audition acceptance');
   let outage = false,
     outageRequests = 0;
   const server = http.createServer((req, res) => {
