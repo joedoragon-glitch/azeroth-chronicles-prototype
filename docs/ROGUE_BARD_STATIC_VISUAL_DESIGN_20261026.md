@@ -12,6 +12,10 @@
 
 **Mandatory:** Azeroth Chronicles presently paints **static, canon-sized procedural character depictions and optional static sprites** at moving actor positions. A "dancer" here is a character concept, **not a request for animation**. NO dance frames, poses, attack stances, sprite sheets, skeleton rigs, particle emitter systems, directional sprite sets, fabric simulations or dedicated animation clock. Design must remain recognizable in the same native field size as Paladin/Mage/Ranger and retain Canvas/Pixi fallback behavior. Consult [visuals.js hero() and crownedHero()](../src/prototype/visuals.js#L6529-L6630), [actor dispatcher](../src/prototype/visuals.js#L17195-L17202), [sprites.js static entries and crowned fallback](../src/prototype/sprites.js#L107-L112), and [renderer.js](../src/prototype/renderer.js).
 
+## Archived 26 October guitarist artwork proposal — REJECTED, NOT AN IMPLEMENTATION CONTRACT
+
+**Everything in the original visual-specification sections below is preserved only for provenance.** In particular, all guitar colors, strings, body shapes, strumming, playing poses, guitar sound design, guitar-related silhouette tests, and claims that Rogue artwork does not yet exist are obsolete. **Implementations and future reviews MUST use [current Rogue canon](ROGUE_CURRENT_CANON.md), the accepted procedural `rogueBellStaff()` and `rogueHero()` art, and today's source code instead.** Original clothing, hair, complexion and crown decisions that remain applicable are restated in the current canon independently of this archived section.
+
 ## 1. Core character silhouette — regular Rogue (P design)
 
 **Concept:** attractive, mischievous South Asian–inspired traveling guitarist, a self-assured woman with a roguish stage presence. Dark warm-brown complexion; long wavy black hair partly gathered back with an engraved gold band; visible expressive eyes, mischievous half-smile; no hat that hides her face and no veil. **This is an original fantasy musician**, not a realistic portrait or a direct copy of any real-world religious ceremonial outfit. Cultural influences may be refined in owner review.
