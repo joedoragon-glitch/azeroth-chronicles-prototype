@@ -30,9 +30,9 @@ The owner wandered freely through Greenwood Vale from Millhaven without entering
 | Built Barracks | Recovery, recruitment/company services | Existing menu; name only |
 
 ## Authorial decision queue — no invented context
-`rules.sites[0]` includes **Mill bridge, Southern footbridge, Abandoned orchard, Old Orchard Cellars, Mill pond, Woodland supply cache, Goblin roadside camp**. The engine already supplies some exact quest/tribute references and the authored Goblin-camp narration; for less-described sites it can fall back to a mechanically truthful "outdoor patrol site / no separate dungeon interior". The following are **questions rather than presumed missing gameplay**:
+`rules.sites[0]` includes **Mill bridge, Southern footbridge, Abandoned orchard, Old Orchard Cellars, Mill pond, Woodland supply cache, Goblin roadside camp**. The engine already supplies some quest/tribute references and authored Goblin-camp narration. **Old Orchard Cellars is specifically NOT a lore gap:** `rules.sideDungeons` defines `side-vale-cellars` with its own entrance, Goblin residents, furnishings, and established story about winter-estate/Crypt displacement and bought preserves. This interior was outside the owner's field-only test and remains untouched. For some other outdoor sites, engine inspection can fall back to "outdoor patrol site / no separate dungeon interior". The following are **questions rather than presumed missing gameplay**:
 - What story or historic use belongs to the Mill pond and Southern footbridge, beyond being a physical landmark/crossing?
-- Do Old Orchard Cellars and the Abandoned orchard convey clues, history, a specific quest context, or simply exploration atmosphere?
+- For the Abandoned orchard outdoors, should inspection add more than existing resource/quest facts, or should it stay an atmospheric exploration site? (The Cellars' separate authored story is protected.)
 - What has the Woodland supply cache's contents and ownership become in the current story?
 
 Ask the author before adding lore, interactions, dungeon interiors, special rewards, or teaching copy beyond existing systems.
