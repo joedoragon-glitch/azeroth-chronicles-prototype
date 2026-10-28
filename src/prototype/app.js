@@ -1972,7 +1972,10 @@
   function updateGpuTrial(snapshot) {
     const trial = snapshot.phase === 'trial';
     const preparing = snapshot.phase === 'preparing';
-    gpuTrialPanel.hidden = !trial && !preparing;
+    // A launch remains one visible title-screen preparation, including
+    // Pixi initialization and the actual saved arrival's GPU uploads.
+    // Manual renderer changes outside startup retain the Keep/Revert panel.
+    gpuTrialPanel.hidden = (!trial && !preparing) || (preparing && titleLoading);
     gpuTrialActions.style.display = trial ? 'grid' : 'none';
     if (preparing) {
       gpuTrialMessage.textContent = tr('Preparing PixiJS graphics…');
@@ -2055,15 +2058,10 @@
     graphicsController.visibilityChanged(document.hidden),
   );
   addEventListener('pagehide', () => graphicsController.visibilityChanged(true));
-  // Canvas always boots first. A previously confirmed GPU preference may
-  // reappear only after its first complete frame and recovery marker clear.
-  if (previousRendererChoice.renderer === 'webgl2') {
-    requestAnimationFrame(() => {
-      graphicsController.resumeConfirmedWebGL().then((ready) => {
-        if (!ready) status('Previous WebGL2 choice unavailable; Canvas is active.');
-      });
-    });
-  }
+  // Keep the fresh-launch title visible. Do not initialize previously confirmed
+  // Pixi in a separate, player-visible pass before Continue/New Game. The first
+  // playable scene will coordinate sprite, renderer and arrival GPU preparation
+  // under one title-screen loading state, using the saved spawn when available.
   function drawWorld() {
     // These measure synchronous draw calls, not completed GPU/presented frames.
     const timing = {
@@ -3612,20 +3610,37 @@
           refreshTitleScreen();
           return;
         }
-        if (!drawReadyScene()) {
-          titleLoading = false;
-          status('Unable to prepare the game scene. Canvas backup is available.');
-          refreshTitleScreen();
-          return;
-        }
-        const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
-        if (gpuWarmup) void Promise.race([gpuWarmup, skipPromise.then(() => false)])
-          .then((ready) => {
-          if (epoch !== titleEpoch) return;
-          if (!ready) graphicsController.revert();
-          requestAnimationFrame(finish);
-        });
-        else requestAnimationFrame(finish);
+        const showReadyFrame = () => {
+          if (epoch !== titleEpoch || document.hidden ||
+              campaign !== game || !writerGuard.canWrite()) return;
+          if (!drawReadyScene()) {
+            titleLoading = false;
+            status('Unable to prepare the game scene. Canvas backup is available.');
+            refreshTitleScreen();
+            return;
+          }
+          const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
+          if (gpuWarmup) void Promise.race([gpuWarmup, skipPromise.then(() => false)])
+            .then((ready) => {
+              if (epoch !== titleEpoch) return;
+              if (!ready) graphicsController.revert();
+              requestAnimationFrame(finish);
+            });
+          else requestAnimationFrame(finish);
+        };
+        // The save supplies the actual zone/hero/party. Only after recovery
+        // and that scene's sprite warmup do we initialize confirmed Pixi,
+        // all behind the SAME title loading surface. New Game shares this path.
+        const shouldRestorePixi = !titleSkipGraphics?.skipped &&
+          previousRendererChoice.renderer === 'webgl2' &&
+          graphicsController.status().phase === 'canvas' &&
+          graphicsController.status().preferredRenderer === 'webgl2';
+        if (!shouldRestorePixi) return showReadyFrame();
+        $('title-loading').textContent = language === 'es'
+          ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
+        const restoration = graphicsController.resumeConfirmedWebGL();
+        void Promise.race([restoration, skipPromise]).then(
+          showReadyFrame, showReadyFrame);
       };
       // Recovering an unclean save can change the spawn after title warmup.
       const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
