@@ -2094,6 +2094,9 @@
     const overlay = graphicsController.status().mode === 'webgl2';
     const canvasStartedAt = performance.now();
     renderer.draw();
+    // Screen-space, single-target cue shares the full Canvas and Pixi overlay.
+    // The renderer's protected sprite/canon drawing remains untouched.
+    drawInteractionCue();
     const canvasMs = Math.max(0, performance.now() - canvasStartedAt);
     if (overlay) {
       timing.canvasOverlayMs = canvasMs;
@@ -4863,14 +4866,60 @@
     persistProfile();
     showTitleScreen();
   }
+  // Keep the historical 115-unit reach and stable nearest-first ownership
+  // shared by the button, cue and actual action. A single bounded nearest scan
+  // avoids allocating/sorting a list on each permitted world draw.
   function nearestNPC() {
-    return [
-      ...game.visibleNPCs(),
-      ...game.visibleResourceNodes(),
-      ...game.zone().buildings.map((b) => ({ ...b, kind: 'barracks', name: b.name || 'Barracks' })),
-    ]
-      .filter((n) => game.interactionDistance(n) < 115)
-      .sort((a, b) => game.interactionDistance(a) - game.interactionDistance(b))[0];
+    let nearest = null, nearestDistance = 115;
+    const consider = (n) => {
+      const distance = game.interactionDistance(n);
+      if (distance < nearestDistance) {
+        nearest = n;
+        nearestDistance = distance;
+      }
+    };
+    for (const n of game.visibleNPCs()) consider(n);
+    for (const n of game.visibleResourceNodes()) consider(n);
+    for (const b of game.zone().buildings)
+      consider({ ...b, kind: 'barracks', name: b.name || 'Barracks' });
+    return nearest;
+  }
+  // Only small standalone interactables get an outline. A refuge, transport,
+  // dungeon entrance, monument, fountain or Barracks stays unhighlighted.
+  const smallInteractionKinds = new Set([
+    'recruiter', 'supplier', 'quests', 'teacher', 'smith', 'alchemist',
+    'keeper', 'cage', 'bundle', 'resource', 'mini', 'archive-record',
+    'critical-codex', 'scene-detail', 'patrol-report', 'appointment',
+    'dungeon-master',
+  ]);
+  function drawInteractionCue() {
+    if (!started || !activePlay() || game.zoneId !== 'vale') return;
+    const n = nearestNPC();
+    if (!n || !smallInteractionKinds.has(n.kind) || n.interactionOnly) return;
+    const p = renderer.screen(n);
+    if (p.x < 20 || p.x > canvas.width - 20 ||
+        p.y < 55 || p.y > canvas.height - 28) return;
+    ctx.save();
+    try {
+      ctx.strokeStyle = '#ead3a0';
+      ctx.globalAlpha = 0.6;
+      ctx.lineWidth = 1.5;
+      ctx.shadowColor = '#d3a662';
+      ctx.shadowBlur = 4;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y + 3, 21, 7, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      // Quiet pointer, not an all-building outline or a combat target marker.
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y - 46);
+      ctx.lineTo(p.x + 4, p.y - 40);
+      ctx.lineTo(p.x, p.y - 34);
+      ctx.lineTo(p.x - 4, p.y - 40);
+      ctx.closePath();
+      ctx.stroke();
+    } finally {
+      ctx.restore();
+    }
   }
   function appointmentMenu(n, group = null) {
     if (
@@ -5003,6 +5052,7 @@
       ].includes(n.kind)
     ) {
       const success = game.interact(n);
+      const response = game.messages.at(-1);
       if (!success) {
         if (n.kind === 'cage' && !game.s.keys[n.family])
           status('Defeat ' + game.boss(n.family).name + ' before freeing ' + n.name + '.');
@@ -5021,6 +5071,19 @@
               ? 'Expedition Rank 2 needed.'
               : 'An idle companion is needed.',
           );
+        else status((n.name || n.kind) + ': no available interaction right now.');
+      } else if (n.kind === 'landmark' || n.kind === 'mini') {
+        // These are inspections, not unbuilt entrances or invisible pickups.
+        // Engine say() only updates history; display the authored explanation.
+        openMenu(n.name || 'Inspect site', response ||
+          'This site can be inspected but is not a separate dungeon.',
+          [action('Continue exploring', closeMenu)]);
+      } else if (n.kind === 'fountain') {
+        status('Preparation fountain restored your party.');
+      } else if (n.kind === 'resource' || n.kind === 'rest' ||
+                 n.kind === 'bundle' || n.kind === 'cage' ||
+                 n.kind === 'dungeon-master' || n.kind === 'patrol-report') {
+        status(response || (n.name || n.kind) + ': interaction complete.');
       }
       save();
       updateHUD();
@@ -7534,8 +7597,26 @@
     }
     const n = nearestNPC();
     $('touch-interact-button').hidden = !n || !activePlay();
+    const interactButton = $('touch-interact-button');
     setMarkup('touch-interact-button', tr('Interact'));
-    $('touch-interact-button').title = n ? n.name : '';
+    interactButton.title = n ? n.name : '';
+    interactButton.setAttribute('aria-label', n
+      ? tr('Interact') + ' · ' + (n.name || n.kind) : tr('Interact'));
+    if (n) {
+      const targetCaption = document.createElement('small');
+      // A short noun fits the established 58px mobile control. The full
+      // identity remains available to assistive tech and desktop tooltips.
+      const shortKind = {
+        rest: 'Refuge', transport: 'Travel', dungeon: 'Entrance',
+        barracks: 'Barracks', recruiter: 'Captain', supplier: 'Supplies',
+        quests: 'Quest board',
+      };
+      targetCaption.textContent = shortKind[n.kind] ||
+        String(n.name || n.kind).slice(0, 15);
+      targetCaption.style.cssText =
+        'display:block;font-size:9px;line-height:1.1;opacity:.85;overflow-wrap:anywhere';
+      interactButton.append(targetCaption);
+    }
     $('order-button').textContent = tr('Confirm');
     $('desktop-hints').textContent =
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +
