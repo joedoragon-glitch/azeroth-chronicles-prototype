@@ -81,6 +81,7 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
       assert(g.cast(slot, e.id, charged), cls + ' ' + slot + ' ' + charged + ' can release');
       for (let i = 0; i < 70; i++) {
         g.s.time += 0.05;
+        g.advanceHeroSkillEffects(0.05); // Charged Mage beam advances in this phase.
         g.updateProjectiles(0.05);
       }
       if (!(e.hp < hp)) console.error('ROLLBACK-DIAGNOSTIC ally miss',

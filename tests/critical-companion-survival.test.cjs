@@ -26,6 +26,8 @@ function scene(type = 'soldier', cls = 'mage', native = false) {
   e.aggro = true;
   z.enemies = [e];
   g.zone();
+  e.returning = 0;
+  g.engage(e, true, false); // Exercise the live threat; returning foes aren't legal targets.
   return { g, z, u, e };
 }
 function step(g, n = 1) {

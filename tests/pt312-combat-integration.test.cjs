@@ -106,6 +106,10 @@ for (const form of ['normal', 'true']) {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 4294967296;
   });
+  // An enclosed Treasury provides a stable authentic combat arena.
+  // Outside in Vale, Thornfang's ordinary patrol can legitimately return
+  // home before a deliberately passive test hero ever attacks.
+  g.enter('supply-vale');
   Object.assign(g.hero, g.safe(850, 1450), { immune: 9999 });
   const e = g.developerSummon('boss:thorn:' + form);
   g.zone().enemies = [e];
