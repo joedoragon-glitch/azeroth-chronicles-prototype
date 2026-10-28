@@ -6,7 +6,6 @@
   const audio = new PrototypeAudio();
   const baseUrl = new URL('../../', location.href).href;
   const diagnostic = AudioDiagnosticFixtures.create();
-  const kinds = ['music', 'ambience', 'effect'];
   const kindNames = { music: 'Music', ambience: 'Environment', effect: 'Effect' };
   let registry = null;
   let source = null;
@@ -36,9 +35,13 @@
   }
   function run(fn) {
     return () => {
-      Promise.resolve().then(fn).catch((error) => {
+      try {
+        Promise.resolve(fn()).catch((error) => {
+          message('Could not play audio: ' + (error?.message || String(error)));
+        });
+      } catch (error) {
         message('Could not play audio: ' + (error?.message || String(error)));
-      });
+      }
     };
   }
   function option(text, value) {
@@ -55,6 +58,9 @@
     return String(text).replace(/[._-]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   }
   function soundTitle(id, entry) {
+    // A legacy catalog display label survives for this asset; the score-book
+    // and the playable game's official title are the source of current naming.
+    if (id === 'title') return "So I Became the Dark Lord's Problem";
     return entry?.title || human(id);
   }
   function catalogCounts(manifest) {
@@ -222,7 +228,8 @@
     }
     const pair = pairFor(id);
     $('record-play').disabled = !entry;
-    $('stem-play').disabled = !pair && !(source === 'diagnostic' && id);
+    $('stem-play').disabled = !pair &&
+      !(source === 'diagnostic' && ['diagnostic-a', 'diagnostic-b'].includes(id));
     $('intensity').disabled = $('stem-play').disabled;
     $('pair-help').textContent = pair
       ? 'Pair available: ' + soundTitle(pair.base, audio.recordingManifest.assets[pair.base]) +
@@ -379,13 +386,18 @@
     if (item) draw(item);
   }
   async function playScene() {
-    if ($('source').value !== 'production' || source !== 'production')
-      await selectSource('production');
-    const token = ++action;
+    let token = ++action;
     const useRecorded = $('new-score').checked;
     audio.enableProduction(useRecorded);
+    // Call unlock within the actual click before any async catalog fetch: mobile
+    // browsers may otherwise reject playback because user activation expired.
     await gesture();
     if (token !== action) return;
+    if ($('source').value !== 'production' || source !== 'production') {
+      await selectSource('production');
+      token = action;
+      if (source !== 'production') return;
+    }
     const scene = sceneFromCampaign();
     audio.context = scene;
     stopIsolatedVoices();
@@ -434,15 +446,19 @@
     playing(label + ' · ' + situation, 'Listening to the recorded game scene. Use Stop audio when finished.');
   }
   async function playRecording() {
+    let token = ++action;
     const requested = $('source').value;
-    if (source !== requested) await selectSource(requested);
-    const token = ++action;
-    const id = $('recording').value;
-    const entry = audio.recordingManifest?.assets?.[id];
-    if (!entry) throw Error('Choose a recording from the library first.');
     audio.enableProduction(false);
     await gesture();
     if (token !== action) return;
+    if (source !== requested) {
+      await selectSource(requested);
+      token = action;
+      if (source !== requested) return;
+    }
+    const id = $('recording').value;
+    const entry = audio.recordingManifest?.assets?.[id];
+    if (!entry) throw Error('Choose a recording from the library first.');
     audio.stopEnvironment(0);
     audio.stopRecordedScore(0);
     stopIsolatedVoices();
@@ -518,7 +534,10 @@
 
   populatePlaces();
   volumeControls();
-  $('place').addEventListener('change', syncScene);
+  $('place').addEventListener('change', () => {
+    $('boss').value = '';
+    syncScene();
+  });
   $('scene-mode').addEventListener('change', syncScene);
   $('boss').addEventListener('change', () => {
     const boss = PrototypeData.bosses.find((b) => b.id === $('boss').value);
