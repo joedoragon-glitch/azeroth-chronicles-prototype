@@ -30,11 +30,9 @@ function arena(cls, distance, allies = true) {
 let cases = 0;
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const { g, e } = arena(cls, cls === 'paladin' ? 65 : 250);
-  assert(g.actorCrowd(true).combatActive);
-  assert(
-    !g.actorStepAllowed(g.hero, { x: 1430, y: 1700 }),
-    cls + ': companion blocks combat movement',
-  );
+  assert(g.move(g.hero, { x: 1430, y: 1700 }, 200, 0.15),
+    cls + ': hero may pass through companions even while fighting');
+  assert.equal(g.hero.x, 1430, cls + ': no actor body barrier');
   assert(g.line(g.hero, e), cls + ': companion does not block skill sight');
   assert(g.clearSegment(g.hero, e, 0), cls + ': companion does not block shot flight');
   assert.equal(
@@ -85,5 +83,5 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
 console.log(
   'PASS ' +
     cases +
-    ' ally attack-passage cases: combat movement blocks, targeting/line/shot passage and actual class basic/charged/skill hits',
+    ' ally attack-passage cases: combat-body passage, targeting/line/shot passage and actual class basic/charged/skill hits',
 );
