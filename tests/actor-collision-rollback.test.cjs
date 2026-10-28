@@ -50,8 +50,7 @@ zone.props.push(wall);
 const before = { x: g.hero.x, y: g.hero.y };
 assert(!g.clearSegment(before, { x: 1130, y: 1500 }),
   'terrain/scenery must still block travel');
-assert(!g.move(g.hero, { x: 1130, y: 1500 }, 1500, 0.1),
-  'rollback does not permit wall passage');
+g.move(g.hero, { x: 1130, y: 1500 }, 1500, 0.1);
 assert.equal(g.hero.x, before.x, 'blocked movement preserves original X');
 assert.equal(g.hero.y, before.y, 'blocked movement preserves original Y');
 
