@@ -138,6 +138,30 @@
       "source": "assets/audio/manifest.json; src/prototype/audio-production.js, audio-runtime.js, audio-recordings.js, audio-mixer.js, audio-environment.js; app.js; docs/AUDIO_AUTHORING.md",
       "method": "Source-level current production and catalog check; all historical v0.8.89 content remains retrievable by original exact Git SHA; no full browser/device listening certification.",
       "newRuntimeOrAudioChanges": false
+    },
+    "releaseConsistencyGatePR564": {
+      "source": "draft PR #564",
+      "scope": "Four edited current-document entrypoint blob receipts reconciled; no full-body re-audit claimed",
+      "files": [
+        "AGENTS.md",
+        "README.md",
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ]
+    },
+    "audioListeningRoomIntegration": {
+      "source": "PR #563 reconciled with merged #564",
+      "candidateBuild": "0.9.1+snapshot.dev.210",
+      "notes": "Updated maintained document blob receipts and preserved the historic archive; current entrypoints distinguish source candidate from verified Pages dev.209. Browser/device evidence retained separately.",
+      "updatedPaths": [
+        "AGENTS.md",
+        "GUIA_EN_ESPANOL.md",
+        "README.md",
+        "docs/ARCHITECTURE.md",
+        "docs/AUDIO_PLAYBACK.md",
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ]
     }
   },
   "semantics": {
@@ -333,7 +357,7 @@
     },
     {
       "path": "AGENTS.md",
-      "gitBlobSha": "85c7050fe93fe973611f3fd97a0256af8a100a15",
+      "gitBlobSha": "9923af42c629692336c57d2287f41f613f54e237",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -568,7 +592,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "6cb25732fc5f45485aa56f5c3da7f5789c45fb98",
+      "gitBlobSha": "d1729196147e291dc754893e17b9ed0614f61d39",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -774,7 +798,7 @@
     },
     {
       "path": "docs/AUDIO_PLAYBACK.md",
-      "gitBlobSha": "4b33e20eeb4e8b57dd902bd4ffe760b52133dcde",
+      "gitBlobSha": "92964f4a6f1736e7fc473025cc4f78df59877fe9",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1965,7 +1989,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "b2fbf686e78af1f2e0529156e6da8566ceaeda5c",
+      "gitBlobSha": "54a77e2a20a1338d18b56e691131fc7fd6f0a6c6",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2077,7 +2101,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "bafbcfb61c38241f70b348c259424ad432bce876",
+      "gitBlobSha": "b5075a5937c344a3c8ba7d9e1555e13d5a84f7cc",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -6565,7 +6589,7 @@
     },
     {
       "path": "GUIA_EN_ESPANOL.md",
-      "gitBlobSha": "e47e5717321d2f4a8bdbd99e519db5512719ec57",
+      "gitBlobSha": "36e95cc39717dc61cd7aa788d4c5b9ba184ca730",
       "location": "elsewhere",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -6580,7 +6604,7 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "9ab32fbba5c9ee7c9858849dffc455219d307706",
+      "gitBlobSha": "44c6c3a65c42f3119de7b58bf5b57e66c7f0b19a",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
