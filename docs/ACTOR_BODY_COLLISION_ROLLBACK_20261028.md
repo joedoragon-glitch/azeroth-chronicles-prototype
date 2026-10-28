@@ -5,8 +5,8 @@
 ## Current replacement contract
 
 - Hero, companions, pets, mobile enemies and bosses can pass through one another during **both combat and travel**, including exact overlap. They no longer obstruct, shove or separate one another because of a body collision.
-- All actor spatial bins, actor radii, collision predicates, passive separation, timed friendly passage, mixed-side crowd escape, frame-pressure collision feedback and their call sites are removed. No retired actor state is saved or migrated.
-- Terrain/scenery collision and relevant line-of-sight and world geometry are unchanged. Scripted charges/teleports continue to follow their existing independent rules.
+- All actor spatial bins, actor-body movement radii/configuration, collision predicates, passive separation, timed friendly passage, mixed-side crowd escape, frame-pressure collision feedback and their call sites are removed. No retired actor state is saved or migrated.
+- Terrain/scenery collision and relevant line-of-sight and world geometry are unchanged. The original actor size values are retained only as **combat hitboxes and terrain-safe placement radii** through `actorRadius()`, now backed by `actorContactRadii` rather than the removed movement collision configuration. This preserves existing reach and spawn geometry. Scripted charges/teleports continue to follow their existing independent rules.
 - Companion retreat, Recall, targeting, healing, gathering safety and attacks are **not deleted**; only their redundant actor-passability plumbing is retired.
 - The four-route-per-simulation-tick CPU cap and retry clocks introduced during later performance work are kept as an **independent terrain-route guard** (`navigationPlanning`), no longer backed by the actor spatial bins. This is intentional to avoid resurrecting redundant searches while testing movement collision costs.
 - The existing exported playtest `crowdDiagnostics` key and `startCrowdDiagnostics` API remain for report compatibility, but now record **navigation and terrain** only; the screen labels them Navigation profiling. No actor-bin/separation counters are reported. Historical exports remain unchanged.
