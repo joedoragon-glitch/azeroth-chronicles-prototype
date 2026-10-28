@@ -574,6 +574,10 @@
     'rogueRegroup',
     'rogueMove',
     'rogueSupport',
+    // Real Rogue release events are owned by the hero foley controller.
+    'rogueBellBasic',
+    'rogueBellSkill1',
+    'rogueBellPerformance',
   ]);
   const api = { themes, colors, scale, pitch, defaults, eventNotes, contextualEffectTypes };
   if (typeof module !== 'undefined') module.exports = api;

@@ -16,6 +16,33 @@
           !this.mixLevel('effects')
         )
           return true;
+        if (e.class === 'rogue' &&
+          ['rogueBellBasic', 'rogueBellSkill1', 'rogueBellPerformance'].includes(e.type)) {
+          // Actual release receipts only: bounded bell phrases, not per-contact
+          // voices or ongoing station audio that could increase phone load.
+          const now = this.ctx.currentTime;
+          if (!this.allowSfx('rogue:' + e.type + ':' + (e.form || 'auto'), now, 0.075) ||
+            this.voices.size > 38) return true;
+          const basic = e.type === 'rogueBellBasic',
+            charged = e.form === 'charged',
+            quiet = now - this.lastWarning < 0.4 ? 0.4 : 1,
+            weight = (charged ? 1.14 : 0.88) * quiet,
+            base = basic ? 82 : e.type === 'rogueBellSkill1'
+              ? 74 : 70 + Math.min(8, Math.max(2, e.slot || 2)),
+            prior = this.sourcePriority;
+          this.sourcePriority = 1;
+          try {
+            this.tone(base, now, 0.11, 0.032 * weight, 'triangle', 'effects', 0.003);
+            this.tone(base + (basic ? 7 : 5), now + 0.034,
+              0.13, 0.023 * weight, 'sine', 'effects', 0.004);
+            if (charged || (basic && e.combo === 3))
+              this.tone(base + 12, now + 0.079,
+                0.16, 0.02 * weight, 'triangle', 'effects', 0.005);
+          } finally {
+            this.sourcePriority = prior;
+          }
+          return true;
+        }
         // New Skill 1 gameplay receipts sound only at their actual mechanical
         // stages. Bounded single-voice accents prevent crowd hit multiplication.
         if (e.slot === 1 && ['heroSkillArea', 'heroHawk'].includes(e.type)) {
