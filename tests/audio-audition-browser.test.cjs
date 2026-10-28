@@ -173,6 +173,7 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#guide-event').selectOption('');
 
         if (!phone) {
+          console.log('Audition browser: decoding all 127 production recordings');
           const decoded = await page.evaluate(async () => {
             const a = AudioAudition.audio,
               output = [];
@@ -195,6 +196,7 @@ const root = path.resolve(__dirname, '..'),
             }
             return output;
           });
+          console.log('Audition browser: complete catalog decoded');
           assert.equal(
             decoded.length,
             Object.keys(require('../assets/audio/manifest.json').assets).length,
@@ -266,14 +268,19 @@ const root = path.resolve(__dirname, '..'),
         assert(output.peak < 1);
         assert(output.rms > 0.0001);
         assert.equal(await page.evaluate(() => JSON.stringify(localStorage)), saved);
+        console.log('Audition browser: verifying offline service-worker installation');
         await page.evaluate(async () => {
-          await navigator.serviceWorker.ready;
+          await Promise.race([
+            navigator.serviceWorker.ready,
+            new Promise((_, reject) => setTimeout(() => reject(Error('Offline service worker did not become ready within 90 seconds')), 90000)),
+          ]);
         });
         await page.waitForFunction(() => !!navigator.serviceWorker.controller);
         outage = true;
         // WebKit's setOffline + service-worker reload can raise an internal browser error.
         // A server outage still proves every entry/script comes from cache: zero network reads.
         if (engine === 'chromium') await context.setOffline(true);
+        console.log('Audition browser: offline reload on ' + (phone ? 'phone' : 'desktop'));
         await page.reload();
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Soundtrack listening room");
