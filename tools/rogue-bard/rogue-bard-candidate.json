@@ -684,5 +684,6 @@
     "merged": false,
     "deployed": false,
     "caution": "This JSON is NOT imported by the runtime; do not infer all proposed values are implemented."
-  }
+  },
+  "archivalNotice": "HISTORICAL INERT DESIGN CANDIDATE (27 October 2026), NOT THE PLAYABLE ROGUE SPECIFICATION. PR #511 merged and Rogue/Pícara is published by 28 October in dev.208. Guitar/strumming and older candidate names, status, sliders, values and unimplemented phases inside this JSON are not instructions. The live normal/crowned Rogue wields a staff with one oversized suspended spherical jingle bell; developer-only critical intensity defaults to Level 2. Read docs/ROGUE_CURRENT_CANON.md, docs/DEVELOPMENT_STATE.md and actual current source before development. This artifact is not imported by runtime."
 }

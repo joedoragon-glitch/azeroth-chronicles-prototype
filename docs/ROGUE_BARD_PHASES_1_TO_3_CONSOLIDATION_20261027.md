@@ -1,3 +1,5 @@
+> **Current Rogue canon / archival notice — 28 October 2026:** This is a dated PR #511 stage report, **not a current implementation order or release status**. Rogue/Pícara is now **merged, published and normally playable** (dev.208). Weapon for both normal and crowned art = **staff with one oversized suspended spherical jingle bell**, never guitar, lute or strings. Critical intensity is **developer-authored** (Rogue Level 2 default), not a player slider. Older pre-release, guitar, naming and candidate mechanics below are historical only. Follow [current Rogue canon](ROGUE_CURRENT_CANON.md), current source, and [development state](DEVELOPMENT_STATE.md) for present-day work.
+
 # Rogue Bard — phases 1–3 consolidated baseline and Phase 4 entry
 
 **27 October 2026 · Draft [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) · Documentation consolidation, no gameplay changes**

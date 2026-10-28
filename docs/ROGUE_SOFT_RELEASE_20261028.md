@@ -1,3 +1,5 @@
+> **Release-status clarification — 28 October 2026:** PR #511 **has merged and published**, and Rogue/Pícara is normally playable. The initial **“No marketing”** instruction below applied to the *quiet launch operation at that historical checkpoint*; it is **not** a permanent prohibition on drafting a later announcement when the owner explicitly requests one. Drafting does not authorize posting. For current class appearance/mechanics, see [Rogue current canon](ROGUE_CURRENT_CANON.md); for exact publication and hardware acceptance, see [Development state](DEVELOPMENT_STATE.md). Rogue wields a staff with one oversized suspended spherical jingle bell, not a guitar.
+
 # Rogue quiet-release checkpoint — 28 October 2026
 
 **Owner-approved intent:** make Rogue/Pícara a normally selectable fourth class in **So I Became the Dark Lord's Problem** without announcing it. This is a functional **soft launch**, not polished art, final balance or completed player acceptance.
