@@ -286,6 +286,7 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Soundtrack listening room");
         assert.equal(outageRequests, 0);
+        await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('production');
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
