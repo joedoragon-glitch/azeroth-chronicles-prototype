@@ -64,7 +64,7 @@ The released code includes the [first-gesture/recovery repair #470](https://gith
 
 ## Soundtrack listening room — practical guide
 
-The [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is a **separate, read-only player**. Its revised production-first interface is in the `dev.210` release candidate; consult [Development state](DEVELOPMENT_STATE.md) for exact publication status and verify the installed cache separately on each device.
+The [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is a **separate, read-only player**. Its revised production-first interface is published in `dev.210` ([Pages run #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733)); consult [Development state](DEVELOPMENT_STATE.md) for current publication status and verify the installed cache separately on each device.
 
 In the revised interface:
 

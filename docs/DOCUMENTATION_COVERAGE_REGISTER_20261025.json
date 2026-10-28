@@ -162,6 +162,17 @@
         "docs/DEVELOPMENT_STATE.md",
         "docs/DOCUMENTATION_INDEX.md"
       ]
+    },
+    "dev210PublicationCloseout": {
+      "releaseCommit": "7d4d8fa2d01b312abc90cbc7132f603504326c23",
+      "focusedAndPagesRun": 40769070733,
+      "scope": "Documentation-only post-publication status reconciliation: current source/build, verified Pages, archive and device acceptance separated.",
+      "reconciledDocuments": [
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/ARCHITECTURE.md",
+        "docs/AUDIO_PLAYBACK.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ]
     }
   },
   "semantics": {
@@ -592,7 +603,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "d1729196147e291dc754893e17b9ed0614f61d39",
+      "gitBlobSha": "58ffe46722bec1b979854873211ca6756be175a7",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -798,7 +809,7 @@
     },
     {
       "path": "docs/AUDIO_PLAYBACK.md",
-      "gitBlobSha": "92964f4a6f1736e7fc473025cc4f78df59877fe9",
+      "gitBlobSha": "5ba43e0847c775272fbd8d62853d525416204d86",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1989,7 +2000,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "54a77e2a20a1338d18b56e691131fc7fd6f0a6c6",
+      "gitBlobSha": "5c440bb47c785072f85f6cfec13acad572b9da1a",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2101,7 +2112,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "b5075a5937c344a3c8ba7d9e1555e13d5a84f7cc",
+      "gitBlobSha": "acf82572a0ef73292fb15ee741607088cab2dad6",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,

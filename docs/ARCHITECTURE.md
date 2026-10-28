@@ -1,6 +1,6 @@
 # Runtime architecture — current system map
 
-**So I Became the Dark Lord's Problem** · Checked against published `main@5addd94` on **28 October 2026** · Playable `0.9.1+snapshot.dev.209`.
+**So I Became the Dark Lord's Problem** · Current source and publication checked at `main@7d4d8fa2` on **28 October 2026** · Playable `0.9.1+snapshot.dev.210`.
 
 **Purpose:** Help an owner, contributor or AI agent find the *actual owning code*, understand how systems interact, and make an approved change without creating a second game state, bypassing save compatibility or modifying gameplay from a rendering module. This document describes current source boundaries; it is **not** an authorization to implement or merge anything.
 
@@ -129,7 +129,7 @@ The optional `pixi-experimental.js` WebGL2 world path leaves the native Canvas c
 
 At the published main source checkpoint, [the audio manifest](../assets/audio/manifest.json) registers **127 sounds: 83 music tracks, 14 environmental beds, and 30 recorded effects**. Music composition source lives in [score-book.json](../tools/audio/score-book.json), and sound recipes in their corresponding environment/effect books. For artistic decisions use [Soundtrack identity](AUDIO_SOUND_PASS.md); for implementation use [Audio production](AUDIO_PLAYBACK.md) and [authoring](AUDIO_AUTHORING.md).
 
-The standalone listening room is **separate from campaign saves**. The redesigned controls and catalog in [PR #563](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/563) belong to the `dev.210` source candidate; exact-head Chromium desktop/phone and offline acceptance was reported in [run #40761403220](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40761403220). Real phone/Chromebook hardware listening remains unverified. No documentation revision changes a recording.
+The standalone listening room is **separate from campaign saves**. The redesigned controls and catalog in [merged PR #563](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/563) are published as `dev.210` by [Pages run #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733); Chromium desktop/phone and offline acceptance passed in [run #40761403220](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40761403220). Real phone/Chromebook hardware listening remains unverified. No documentation revision changes a recording.
 
 ## Build, offline installation, checks and release authority
 
@@ -137,7 +137,7 @@ The standalone listening room is **separate from campaign saves**. The redesigne
 
 **Normal PR/main:** [focused-deploy.yml](../.github/workflows/focused-deploy.yml) uses the [focused test selector](../.github/scripts/focused-ci.cjs) and reproducible build check. **Successful main pushes can publish Pages.** [pages.yml](../.github/workflows/pages.yml) is owner-opt-in for comprehensive campaign/Chromium/WebKit tests. A green PR does not mean merged or published; Pages success does not certify installed phone/Chromebook refresh or gameplay quality. Follow [current owner policy](../AGENTS.md) and [engineering change workflow](MECHANIC_DEVELOPMENT.md).
 
-**Integration resolution, 28 October:** Published `dev.209` from #553/#554 is preserved as the last verified Pages receipt. [PR #563](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/563) uses a distinct `dev.210` source/cache version and integrates the merged [#564](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/564) documentation gate. The final merge/publishing run and device installation are separate evidence, recorded in [Development state](DEVELOPMENT_STATE.md).
+**Integration resolution, 28 October:** Published `dev.209` from #553/#554 is preserved as the previous verified Pages receipt. [PR #563](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/563) is merged and published as a distinct `dev.210` source/cache version, and integrates the merged [#564](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/564) documentation gate. The final merge/publishing run and device installation are separate evidence, recorded in [Development state](DEVELOPMENT_STATE.md).
 
 ## Known coupling and change checklist
 
