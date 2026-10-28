@@ -66,7 +66,16 @@
       ],
       "historicalRogueStageRecordsMarked": 24,
       "executableCandidateJSONMarkedArchival": "tools/rogue-bard/rogue-bard-candidate.json",
-      "method": "Source-and-owner-canon reconciliation; dated records retain historic text with current authority notices; current development state remains publication authority; no runtime changes or full-device acceptance."
+      "method": "Source-and-owner-canon reconciliation; dated records retain historic text with current authority notices; current development state remains publication authority; no runtime changes or full-device acceptance.",
+      "finalEditorialRevisionHeadBeforeRegistry": "0d58bde19cbee15cf58e62c7862eebaf9fc7d36d",
+      "finalRegistryReconciledPaths": [
+        "docs/ARCHITECTURE.md",
+        "docs/BRAND_IDENTITY.md",
+        "docs/COMMUNICATION_STYLE.md",
+        "docs/MECHANIC_DEVELOPMENT.md",
+        "docs/PROJECT_HISTORY.md",
+        "docs/ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md"
+      ]
     }
   },
   "semantics": {
@@ -74,7 +83,7 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Exact Git blob SHA at latest Rogue-canon documentation candidate tree basis.rogueCanonReconciliation.candidateShaBeforeRegistry for touched rows; historical Phase 5 receipts preserved via previousRogueCanonGitBlobSha. The registry JSON does not register itself; unchanged rows retain earlier verified receipts.",
+    "gitBlobSha": "All 399 direct docs/*.md SHA receipts are checked against the exact final Rogue-canon branch tree at basis.rogueCanonReconciliation.finalEditorialRevisionHeadBeforeRegistry; historical pinned receipts are preserved. The register JSON does not register itself. Root and nested Markdown paths retain the Phase 5 baseline unless independently refreshed.",
     "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
     "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
     "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks.",
@@ -459,7 +468,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "1719512012e3202eb19405d201c48654aff1d302",
+      "gitBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -468,7 +477,8 @@
       "authority": "current_entrypoint",
       "reviewDepth": "frozen_census_membership",
       "previousPhase3GitBlobSha": "21f635ebfc6efdc3e181099e605fc932ddf4c610",
-      "previousPhase4GitBlobSha": "1c27bc597514b009c078e8b6aff5551b3dfd4304"
+      "previousPhase4GitBlobSha": "1c27bc597514b009c078e8b6aff5551b3dfd4304",
+      "previousRogueCanonGitBlobSha": "1719512012e3202eb19405d201c48654aff1d302"
     },
     {
       "path": "docs/ARCHIVE_FLOOR_SEAM_DEV124.md",
@@ -873,14 +883,15 @@
     },
     {
       "path": "docs/BRAND_IDENTITY.md",
-      "gitBlobSha": "7f91d0d9892f73746b0699ac6a4b14da068c7b6d",
+      "gitBlobSha": "c075f803a20b82b2beeb2797928d2afb41573034",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "frozen_census_membership",
+      "previousRogueCanonGitBlobSha": "7f91d0d9892f73746b0699ac6a4b14da068c7b6d"
     },
     {
       "path": "docs/BRIEF_COMPANY_DEV150.md",
@@ -1021,6 +1032,17 @@
       "role": "dated_record",
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/COMMUNICATION_STYLE.md",
+      "gitBlobSha": "c31bf12b62681e9f39f7425be97f285a112fac7b",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "current_entrypoint",
+      "authority": "current_entrypoint",
+      "reviewDepth": "current_entrypoint_checked"
     },
     {
       "path": "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md",
@@ -2835,7 +2857,7 @@
     },
     {
       "path": "docs/MECHANIC_DEVELOPMENT.md",
-      "gitBlobSha": "939de2e45f9ec06f9e2c4822e92d8a6935da6099",
+      "gitBlobSha": "0111438ad2627c1fb408c1b0ba8750f054e714be",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2844,7 +2866,8 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "ca17f8257babab5425862789e05ea255d156021d",
-      "previousPhase4GitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352"
+      "previousPhase4GitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352",
+      "previousRogueCanonGitBlobSha": "939de2e45f9ec06f9e2c4822e92d8a6935da6099"
     },
     {
       "path": "docs/MELEE_BASIC_RANGE_REGRESSION_AUDIT_20261026.md",
@@ -3844,14 +3867,15 @@
     },
     {
       "path": "docs/PROJECT_HISTORY.md",
-      "gitBlobSha": "d4740b21a3ef0a0b7f99804bca1b0a117e876852",
+      "gitBlobSha": "4ed19aa8859a43b37efe48ca28b6dd6da3863342",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "frozen_census_membership",
+      "previousRogueCanonGitBlobSha": "d4740b21a3ef0a0b7f99804bca1b0a117e876852"
     },
     {
       "path": "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md",
@@ -4328,7 +4352,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md",
-      "gitBlobSha": "76228dfed8704861d0d30ddc63986746d2f2a9d1",
+      "gitBlobSha": "5fdc6742f098142b11e0068652679c693edb3ffe",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
