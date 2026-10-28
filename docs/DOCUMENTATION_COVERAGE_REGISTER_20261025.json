@@ -3014,8 +3014,9 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership",
       "reconciliationRole": "historical record",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "correction required",
+      "reconciliationReviewEvidence": "28 Oct: full body inspection found an active-sounding single-PR/full-suite work order and unmerged status despite merged PR #308. Historical ledger is pinned by authorizedHeroSkillsConsolidationRevision.ledgerSha256 in tests/fixtures/perf-v09-protected.json; preserve its exact evidence until an appropriate source-linked receipt strategy is verified. Do not execute the old directions."
     },
     {
       "path": "docs/HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md",
