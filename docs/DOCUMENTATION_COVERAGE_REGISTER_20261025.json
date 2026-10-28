@@ -500,7 +500,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
+      "gitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -513,7 +513,9 @@
       "previousPhase5GitBlobSha": "1719512012e3202eb19405d201c48654aff1d302",
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousBatchAuthorityBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
+      "reconciliationReviewEvidence": "28 Oct: dated audit heading and table label clarified; complete source/decision verification remains pending."
     },
     {
       "path": "docs/ARCHIVE_FLOOR_SEAM_DEV124.md",
@@ -4394,7 +4396,7 @@
     },
     {
       "path": "docs/PR313_RESUME_20261016.md",
-      "gitBlobSha": "99525a6ef675e454f2ea8e22a4475c950c5927f8",
+      "gitBlobSha": "4e4519541bfb9c71ad36a439d5f5f0beb0776482",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -4406,7 +4408,8 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousHistoricalCorrectionGitBlobSha": "83d3f1420837b61ec9bb18bc4688e01e9a71bc36",
-      "reconciliationReviewEvidence": "28 Oct: top-level current-direction claim corrected using merged PR #313 and #319 metadata; preserved body may contain further historical work orders and remains unresolved pending full review."
+      "reconciliationReviewEvidence": "28 Oct: historical headings and old finish/merge plan bounded following merged #313 and #319; remaining preserved instructions require further review.",
+      "previousBatchAuthorityBlobSha": "99525a6ef675e454f2ea8e22a4475c950c5927f8"
     },
     {
       "path": "docs/PR313_THRONE_GATE_20261016.md",
@@ -5021,7 +5024,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md",
-      "gitBlobSha": "a34e21c615d7764e0c35265cb4e19279117e646f",
+      "gitBlobSha": "6b63578ac2067af1061feecea1d01d13d97b422b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5032,7 +5035,9 @@
       "previousPhase5GitBlobSha": "874f8505253a2a7d50dcb4611b8a2287caffea8d",
       "reconciliationRole": "active design",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousBatchAuthorityBlobSha": "a34e21c615d7764e0c35265cb4e19279117e646f",
+      "reconciliationReviewEvidence": "28 Oct: retired start-here claim and phase-banner direction dated; active gameplay claims still require source and decision verification."
     },
     {
       "path": "docs/ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md",

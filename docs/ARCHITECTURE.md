@@ -2,13 +2,13 @@
 
 This document describes the runtime of **So I Became the Dark Lord's Problem**, an independent fantasy RPG. Older project labels in technical file paths, stored keys and dated references are historical identifiers, not a current game title; see [brand identity and documentation naming](BRAND_IDENTITY.md). The GitHub repository address remains unchanged.
 
-## Verified current source integration — 27 October 2026 (Phase 4; dated baseline)
+## Historical source integration audit — 27 October 2026 (Phase 4)
 
 > **Later 28 October integration note:** [Merged PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) now makes Rogue/Pícara a fourth playable class, with jingle-bell presentation and diagnostic additions through `dev.208`. [Merged PR #541](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/541) makes ongoing feature-document consistency an engineering responsibility. The `dev.205` table below is **historical source evidence**, not a claim that it covers the 234 newer development commits; see [current development state](DEVELOPMENT_STATE.md) and Rogue's dated [soft-release scope](ROGUE_SOFT_RELEASE_20261028.md).
 
 **Source audit:** [`main@5c6197e871f8f4393d26d9b7a261b9324ef85d12`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/5c6197e871f8f4393d26d9b7a261b9324ef85d12), `0.9.1+snapshot.dev.205`. The ownership table and architecture below were reconciled with actual runtime, packaging and selected technical records. This is a **source-to-document semantic check**, not exhaustive full-campaign/phone acceptance, proof of a hardware speedup, or authorization to implement older design proposals. For changing feature/release states, use [current development state](DEVELOPMENT_STATE.md), not this fixed audit date.
 
-| System / source owners | Verified current contract and evidence boundary |
+| System / source owners | Contract and evidence boundary at the audited checkpoint |
 | --- | --- |
 | Packaging and engine | [`scripts/site-assets.cjs`](../scripts/site-assets.cjs) specifies the ordered **multi-file** campaign script graph, includes native critical modules, graphics helpers and original audio modules; [`scripts/build.cjs`](../scripts/build.cjs) packages it. `engine.js` and installed domain modules own the shared `Campaign`, not the browser shell. No standalone single-HTML requirement or alternate campaign store. |
 | Class growth and shared combat | [`progression.js`](../src/prototype/progression.js) derives **level-1 Paladin HP/Armor**, **Ranger movement/cooldown**, and **Mage Power** without an independent gameplay store; `hero-combat.js`, `combat.js`, `boss-combat.js`, `party.js` and `rules.js` own actual action, damage and tuning paths. [Merged class foundation #509](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/509) and [melee #508](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/508) are released; the separate [chase-versus-damage issue #510](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/510) is not repaired by that release. |
