@@ -246,8 +246,10 @@
     $('guide-text').value = key
       ? manifest?.director?.eventGuides?.[key] || 'No creative brief registered.'
       : entry?.generationGuide || 'This diagnostic fixture has no production creative brief.';
-    $('guide-recipe').textContent = key
-      ? 'Exact event implementation: src/prototype/audio-effects.js, audio-production.js and audio-catalog.js.'
+    $('guide-recipe').textContent = !key && $('recording').value === 'title'
+      ? "The recording's old descriptive text still uses the former development name. The official game and music title is So I Became the Dark Lord's Problem; do not reuse the old name in new creative work."
+      : key
+        ? 'Exact event implementation: src/prototype/audio-effects.js, audio-production.js and audio-catalog.js.'
       : entry?.managedBy === 'score-book'
         ? 'Original music recipe: tools/audio/score-book.json; renderer: render-score.py.'
         : entry?.managedBy === 'environment-book'
@@ -283,6 +285,7 @@
       ...(data.fetch ? { fetch: data.fetch } : {}),
     });
     if (requested === 'production') registry = data.manifest;
+    if (source && source !== requested) stopped('Switched audio libraries. Choose a recording or scene to begin.');
     source = requested;
     $('source').value = requested;
     fillGuides();
@@ -478,8 +481,15 @@
     if (token !== action) return;
     if (!ok) throw Error(audio.recordingError || 'The recording could not play.');
     inspect(id);
-    playing(soundTitle(id, entry), 'Playing ' + id + ' alone. ' +
-      (entry.kind === 'effect' ? 'Short effects finish automatically.' : 'Press Stop audio to end the loop.'));
+    if (entry.kind === 'effect') {
+      hasPlayback = false;
+      $('now-playing').textContent = 'Last heard: ' + soundTitle(id, entry);
+      $('pause').disabled = true;
+      $('stop').disabled = true;
+      message('Played ' + id + '. Short effects finish on their own; press Play again to repeat.');
+    } else {
+      playing(soundTitle(id, entry), 'Playing ' + id + ' alone. Press Stop audio to end the loop.');
+    }
   }
   async function playPaired() {
     const token = ++action;
