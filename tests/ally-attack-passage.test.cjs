@@ -18,6 +18,9 @@ function arena(cls, distance, allies = true) {
   );
   z.enemies = [e];
   g.engage(e);
+  // Start at true maximum HP: this scenario tests outgoing hits, not passive
+  // regeneration from a fixture-created 100,000/124,910 HP deficit.
+  e.hp = e.maxHp;
   g.s.party = allies
     ? [
         g.unit('soldier', 1432, 1700),
