@@ -41,9 +41,21 @@ const prefix = '/azeroth-chronicles-prototype/';
       const click = async (id) => phone ? page.locator(id).tap() : page.locator(id).click();
       await page.addInitScript(() => localStorage.setItem('stage4-audio-save-sentinel', '{"preserved":true}'));
       await page.goto('http://127.0.0.1:' + server.address().port + prefix + 'tools/audio/index.html');
-      await page.waitForFunction(() => !!window.AudioAudition?.audio?.recordingManifest, null, { timeout: 15000 });
+      try {
+        await page.waitForFunction(() => !!window.AudioAudition?.audio?.recordingManifest, null, { timeout: 15000 });
+      } catch (error) {
+        console.error('Audition startup errors:', pageErrors);
+        console.error('Startup status:', await page.locator('#message').textContent().catch(() => 'no message'));
+        throw error;
+      }
       assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
       assert.equal(await page.locator('#boss option').count(), 12);
+      assert.equal(await page.locator('#recording option').count(), 83);
+      await page.locator('#advanced').evaluate((el) => { el.open = true; });
+      await page.locator('#source').selectOption('diagnostic');
+      await page.waitForFunction(() =>
+        Object.keys(AudioAudition.audio.recordingManifest?.assets || {}).length === 3,
+        null, { timeout: 15000 });
       await click('#stem-play');
       await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2, null, { timeout: 15000 });
       const diagnostic = await page.evaluate(() => {
