@@ -29,7 +29,11 @@ function scene(type = 'soldier', cls = 'mage', native = false) {
   // e.aggro directly (which skips frozen/fightStart and can auto-return).
   e.aggro = false;
   e.returning = 0;
+  // Vale's opening rules require the hero to authorize the first fight.
+  // Without this, a healthy companion must *not* attack the protected foe.
+  g.admitOpeningHeroAttack(e);
   g.engage(e, true, false);
+  assert(e.aggro, 'companion survival fixture has a live hero-initiated fight');
   return { g, z, u, e };
 }
 function step(g, n = 1) {
