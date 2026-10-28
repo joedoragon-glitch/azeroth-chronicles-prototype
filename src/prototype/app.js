@@ -2684,7 +2684,7 @@
     menuHistory.push(previous);
     return null;
   }
-  function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
+  function action(label, fn, detail = '', disabled = false, tutorialHighlight = false, classId = null) {
     return {
       label,
       action: (...args) => {
@@ -2697,6 +2697,7 @@
       detail,
       disabled,
       tutorialHighlight,
+      classId,
     };
   }
   function translateMenu(value) {
@@ -2972,6 +2973,13 @@
       } else {
         b = document.createElement('button');
         b.textContent = translateMenu(a.label);
+        if (a.classId === 'rogue') {
+          const symbol = document.createElement('span');
+          symbol.setAttribute('aria-hidden', 'true');
+          symbol.style.cssText = 'display:inline-flex;vertical-align:middle;margin-right:0.4em';
+          symbol.innerHTML = rogueJingleIconSvg;
+          b.prepend(symbol);
+        }
         b.disabled = a.disabled === true;
         b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
         details(b, a);
@@ -3865,6 +3873,9 @@
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
   }
+  // Simple spherical jingle-bell mark, never a handbell or a staff composite.
+  // Shared by New Game, Succession and HUD without a new asset workflow.
+  const rogueJingleIconSvg = '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-0.2em;flex:none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12.5" r="8" fill="#dcb968" stroke="#765126" stroke-width="1.3"/><path d="M7 11.5Q12 15 17 11.5M12 5v12.6M8.8 16.5Q12 19 15.2 16.5" stroke="#69432b" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="17.8" r="1.7" fill="#684229"/><circle cx="9.5" cy="8.2" r="1.3" fill="#fff0b8"/></svg>';
   // Read-only class selection copy. Registry membership alone governs
   // which buttons exist; a future class gets its own description, never Ranger's.
   const heroClassPresentation = Object.freeze({
@@ -3923,9 +3934,7 @@
           : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
-          c.icon +
-            ' ' +
-            heroClassLabel(id),
+          (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
@@ -3948,6 +3957,7 @@
             start(mode, id, succession, heroName);
           },
           heroClassDetail(id) + (classGrowthLine(id) ? '\n' + classGrowthLine(id) : ''),
+          false, false, id,
         ),
       ),
       () => started ? chooseClass(mode) : newGameMenu(),
@@ -4586,6 +4596,7 @@
         action('Reset performance sample', () => {
           runtime.reset();
           frameProfile.reset();
+          frameProfile.clearSlowdowns();
           platformMenu(back);
         }),
       );
@@ -4787,11 +4798,12 @@
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
-          action(c.icon + ' ' + heroClassLabel(id, false) + ' successor', () => {
+          action((id === 'rogue' ? '' : c.icon + ' ') +
+            heroClassLabel(id, false) + ' successor', () => {
             game.successor(id);
             save();
             closeMenu();
-          }),
+          }, '', false, false, id),
         ),
     );
   }
@@ -7193,7 +7205,7 @@
         : 'Talents · press ' + input.key('training');
     let heroMarkup =
       '<div class="hero-title"><span>' +
-      Campaign.classes[h.class].icon +
+      (h.class === 'rogue' ? rogueJingleIconSvg : Campaign.classes[h.class].icon) +
       ' ' +
       game.heroDisplayName() +
       '</span><small>' +
@@ -7678,6 +7690,48 @@
       clearEmergencyEscalation();
     }
   }
+  // Sample only exceptional callbacks. No GPS, map lookups, canvas readback,
+  // saved-run mutation, per-frame world scan or new player interaction.
+  function slowdownLocation(events) {
+    const h = game.hero, z = game.zone(),
+      x = Math.round(h.x), y = Math.round(h.y), r2 = 420 * 420,
+      nearby = (units) => (units || []).filter((u) =>
+        Number.isFinite(u.x) && Number.isFinite(u.y) &&
+        (u.x - x) ** 2 + (u.y - y) ** 2 <= r2);
+    const enemies = nearby(z?.enemies).filter(e => e.hp > 0),
+      activeAllies = (game.s.party || []).filter(u => u.active !== false && u.hp > 0),
+      enemyTypes = {};
+    for (const e of enemies) {
+      const kind = String(e.species || e.type || 'unknown').slice(0, 32);
+      if (Object.keys(enemyTypes).length < 8 || Object.hasOwn(enemyTypes, kind))
+        enemyTypes[kind] = (enemyTypes[kind] || 0) + 1;
+    }
+    const eventTypes = {};
+    for (const e of events || []) {
+      const kind = String(e.type || 'unknown').slice(0, 32);
+      if (Object.keys(eventTypes).length < 8 || Object.hasOwn(eventTypes, kind))
+        eventTypes[kind] = (eventTypes[kind] || 0) + 1;
+    }
+    return {
+      zone: game.zoneId, gameSeconds: Math.round(game.s.time * 10) / 10,
+      heroX: x, heroY: y, gridSize: 256,
+      gridX: Math.floor(x / 256), gridY: Math.floor(y / 256),
+      heroClass: h.class, heroMoving: !!(h.order || joy.x || joy.y ||
+        keys.left || keys.right || keys.up || keys.down),
+      engaged: !!game.s.squadEngagement, activeAllies: activeAllies.length,
+      charmedAllies: activeAllies.filter(u => !!u.charmOrigin).length,
+      activeEnemyCount: (z?.enemies || []).filter(e => e.hp > 0).length,
+      nearbyRadius: 420, nearbyEnemyCount: enemies.length,
+      nearbyEngagedEnemies: enemies.filter(e => !!e.aggro).length,
+      nearbyEnemyKinds: enemyTypes,
+      nearbyProps: nearby(z?.props).length,
+      nearbyBuildings: nearby(z?.buildings).length,
+      nearbyNpcs: nearby(z?.npcs).length,
+      nearbyHazards: nearby(game.s.hazards).length,
+      nearbyProjectiles: nearby(game.s.projectiles).length,
+      eventKinds: eventTypes,
+    };
+  }
   function frame(now) {
     if (!started || sceneTransition) {
       last = now;
@@ -7736,6 +7790,7 @@
     }
     const simulating = !frozen && !recovering;
     emergencyRecoveryDecision(now, recovering, simulating);
+    const emergencyEntered = recovering && !emergencyShown;
     if (recovering !== emergencyShown) {
       emergencyShown = recovering;
       status(
@@ -7761,6 +7816,10 @@
       ? {
           simulationMs: 0,
           companionAIMs: 0,
+          companionGuidanceMs: 0,
+          companionSetupMs: 0,
+          companionUnitsMs: 0,
+          companionBookkeepingMs: 0,
           enemyAIMs: 0,
           hudMs: 0,
           audioUpdateMs: 0,
@@ -7816,6 +7875,14 @@
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
         stageTimes.companionAIMs = Math.max(0, marks.partyEnd - marks.partyStart);
+      if (marks.partyStart !== undefined && marks.partyGuidanceEnd !== undefined)
+        stageTimes.companionGuidanceMs = Math.max(0, marks.partyGuidanceEnd - marks.partyStart);
+      if (marks.partyGuidanceEnd !== undefined && marks.partySetupEnd !== undefined)
+        stageTimes.companionSetupMs = Math.max(0, marks.partySetupEnd - marks.partyGuidanceEnd);
+      if (marks.partySetupEnd !== undefined && marks.partyUnitsEnd !== undefined)
+        stageTimes.companionUnitsMs = Math.max(0, marks.partyUnitsEnd - marks.partySetupEnd);
+      if (marks.partyUnitsEnd !== undefined && marks.partyBookkeepingEnd !== undefined)
+        stageTimes.companionBookkeepingMs = Math.max(0, marks.partyBookkeepingEnd - marks.partyUnitsEnd);
       if (marks.partyEnd !== undefined && marks.enemyEnd !== undefined)
         stageTimes.enemyAIMs = Math.max(0, marks.enemyEnd - marks.partyEnd);
       if (marks.enemyExtraStart !== undefined && marks.enemyExtraEnd !== undefined)
@@ -7982,6 +8049,14 @@
           stageTimes.renderMs;
       frameProfile.record({
         ...stageTimes,
+        emergencyEntered,
+        location: frameWorkMs >= 50 || intervalMs >= 120 || emergencyEntered
+          ? slowdownLocation(events) : null,
+        // Only event categories, never object payloads or character names.
+        // Retain the preceding callback's activity to help explain a later gap.
+        recentEventKinds: events.length
+          ? events.slice(0, 12).map(e => String(e.type || 'unknown').slice(0, 32))
+          : null,
         otherSimulationMs,
         frameWorkMs,
         intervalMs,

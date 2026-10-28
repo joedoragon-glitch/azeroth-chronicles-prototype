@@ -530,14 +530,32 @@
   }
   // Bounded diagnostic timings; AI is nested within the total simulation cost.
   function createFrameProfile() {
-    const keys = ['frameWorkMs', 'intervalMs', 'simulationMs', 'companionAIMs', 'enemyAIMs',
+    const keys = ['frameWorkMs', 'intervalMs', 'simulationMs', 'companionAIMs', 'companionGuidanceMs',
+      'companionSetupMs', 'companionUnitsMs', 'companionBookkeepingMs', 'enemyAIMs',
       'otherSimulationMs', 'hudMs', 'audioUpdateMs', 'eventDispatchMs', 'renderMs', 'otherJsMs'];
     const rendererStages = [
       ['pixiMs', 'pixiAttempted'],
       ['canvasOverlayMs', 'canvasOverlayDrawn'],
       ['canvasWorldMs', 'canvasWorldDrawn'],
     ];
-    let samples = [];
+    // Preserve a tiny incident ledger even when Auto graphics resets its short
+    // statistical sample. No complete actor snapshots, saving or background trace.
+    const slowdownWorkThresholdMs = 50, slowdownIntervalThresholdMs = 120,
+      slowdownLimit = 16;
+    let samples = [], slowdowns = [], droppedSlowdowns = 0;
+    const round = n => Math.round(n * 100) / 100;
+    const brief = row => !row ? null : ({
+      frameWorkMs: round(row.frameWorkMs), intervalMs: round(row.intervalMs),
+      simulationMs: round(row.simulationMs), companionAIMs: round(row.companionAIMs),
+      companionGuidanceMs: round(row.companionGuidanceMs),
+      companionSetupMs: round(row.companionSetupMs),
+      companionUnitsMs: round(row.companionUnitsMs),
+      companionBookkeepingMs: round(row.companionBookkeepingMs),
+      enemyAIMs: round(row.enemyAIMs), renderMs: round(row.renderMs),
+      audioUpdateMs: round(row.audioUpdateMs), eventDispatchMs: round(row.eventDispatchMs),
+      otherJsMs: round(row.otherJsMs), drawn: row.drawn,
+      eventKinds: row.recentEventKinds || [],
+    });
     function summary(values) {
       if (!values.length) return { samples: 0, meanMs: 0, p95Ms: 0 };
       const sorted = values.slice().sort((a, b) => a - b),
@@ -566,6 +584,12 @@
         callbackFps: rate(Math.max(0, activeFrames - 1)),
         displayedFps: rate(actualDraws),
         stages,
+        slowdownIncidents: {
+          thresholdsMs: { work: slowdownWorkThresholdMs, callbackInterval: slowdownIntervalThresholdMs },
+          retainedLimit: slowdownLimit, dropped: droppedSlowdowns,
+          records: slowdowns.slice(),
+          note: 'Automatic bounded exceptional-callback snapshots, not continuous tracing. Callback intervals include browser scheduling or suspension and do not prove prior-frame CPU work. Party substages are subsets of companionAIMs; per-unit cost is not measured. Coordinates/nearby counts are from the reported region at observation time.',
+        },
         note: 'Callback FPS counts game-update opportunities; displayed FPS counts issued world draws, not monitor-presented frames. RenderMs is the combined synchronous world draw call. Pixi/Canvas stages measure synchronous CPU call time only (not GPU completion); their sample counts are per active surface, and separate p95 values cannot be added. AI is included in simulation.'
       };
     }
@@ -579,10 +603,30 @@
           sample[key] = sample[flag] && Number.isFinite(row[key])
             ? Math.max(0, row[key]) : 0;
         }
+        sample.recentEventKinds = Array.isArray(row.recentEventKinds)
+          ? row.recentEventKinds.slice(0, 12) : [];
+        const prior = samples.length ? samples[samples.length - 1] : null;
+        const longWork = sample.frameWorkMs >= slowdownWorkThresholdMs,
+          callbackGap = sample.intervalMs >= slowdownIntervalThresholdMs;
+        if (longWork || callbackGap || row.emergencyEntered === true) {
+          slowdowns.push({
+            kind: longWork && callbackGap ? 'work-and-callback-gap'
+              : longWork ? 'long-synchronous-work' : 'callback-gap',
+            emergencyEntered: row.emergencyEntered === true,
+            current: brief(sample), previous: brief(prior),
+            location: row.location && typeof row.location === 'object'
+              ? row.location : null,
+          });
+          if (slowdowns.length > slowdownLimit) {
+            slowdowns.shift();
+            droppedSlowdowns++;
+          }
+        }
         samples.push(sample);
         if (samples.length > 180) samples.shift();
       },
       reset() { samples = []; },
+      clearSlowdowns() { slowdowns = []; droppedSlowdowns = 0; },
       report,
       describe() {
         const r = report();
@@ -598,6 +642,9 @@
           '/s · adaptive skips ' + r.adaptiveSkippedDraws + '\n' +
           'Frame stages · mean / p95 (' + r.activeFrames + ' active, ' + r.drawnFrames + ' drawn)\n' +
           [print('Simulation total', 'simulationMs'), print('  Companion AI', 'companionAIMs'),
+            print('    Guidance', 'companionGuidanceMs'), print('    Setup', 'companionSetupMs'),
+            print('    Active units', 'companionUnitsMs'),
+            print('    Bookkeeping', 'companionBookkeepingMs'),
             print('  Enemy AI', 'enemyAIMs'), print('  Other simulation', 'otherSimulationMs'),
             print('Audio update', 'audioUpdateMs'), print('Event dispatch + audio effects', 'eventDispatchMs'),
             print('HUD', 'hudMs'), print('Combined world draw', 'renderMs'),

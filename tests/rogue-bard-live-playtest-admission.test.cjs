@@ -25,7 +25,9 @@ try {
   assert.deepEqual(Object.keys(Campaign.classes), ['paladin', 'mage', 'ranger', 'rogue']);
   assert.deepEqual(Campaign.talentProfiles.rogue, R.rogueHeroFoundation.talents);
   assert.equal(R.movementBasicClasses.rogue, true);
-  assert.equal(Campaign.classes.rogue.icon, '🔔');
+  assert.equal(Campaign.classes.rogue.icon, 'jingle-bell');
+  // The original emoji was a non-spherical handbell. Prevent a canon slip
+  // in the registry even when the hero sprite itself remains correct.
   for (const cls of ['paladin', 'mage', 'ranger'])
     assert.equal(JSON.stringify(Campaign.classes[cls]), defaults[cls],
       'existing class definition preserved');
@@ -64,6 +66,10 @@ try {
     'New Game should explain Charm-first labor before play');
   assert(app.indexOf('Campaign.enableRoguePlaytest()') < app.indexOf('let loaded ='),
     'preview registry must be ready before loading a Rogue save');
+  assert(app.includes('rogueJingleIconSvg') &&
+    app.includes("a.classId === 'rogue'") &&
+    app.includes("h.class === 'rogue' ? rogueJingleIconSvg"),
+    'one simple jingle-ball icon must cover class select, Succession and HUD');
   assert(app.includes('Sticky Shuffle / Briar Boogie'),
     'Skill 5 placed music station must appear in real skill controls');
   assert(!/rogueCriticalMenu|rogueCriticalLevels/.test(app),

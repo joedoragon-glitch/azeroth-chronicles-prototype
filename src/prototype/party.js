@@ -3266,8 +3266,9 @@
             });
         }
       }
-      updateParty(dt) {
+      updateParty(dt, performanceMark = null) {
         this.updateCompanionHeroGuidance();
+        performanceMark?.('partyGuidanceEnd');
         const z = this.zone(),
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
@@ -3322,6 +3323,7 @@
                 dist(a, this.hero) - dist(b, this.hero) ||
                 dist(a, u) - dist(b, u),
             )[0] || null;
+        performanceMark?.('partySetupEnd');
         for (const u of living) {
           const recovery = this.cooldownRecoveryElapsed(u, dt);
           const specialRecovery = this.cooldownRecoveryElapsed(u, dt, false, true);
@@ -3669,6 +3671,7 @@
           claimed.add(e.id);
           this.companionFight(u, e, living, dt);
         }
+        performanceMark?.('partyUnitsEnd');
         const finishRecruit = (b) => {
           if (b.queue > 0) {
             b.queue = Math.max(0, b.queue - dt);
@@ -3683,6 +3686,7 @@
           }
         };
         for (const b of z.buildings) finishRecruit(b);
+        performanceMark?.('partyBookkeepingEnd');
       }
     }
     for (const name of Object.getOwnPropertyNames(Party.prototype))

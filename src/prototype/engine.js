@@ -4359,7 +4359,7 @@
       const performanceMark =
         typeof input.performanceMark === 'function' ? input.performanceMark : null;
       performanceMark?.('partyStart');
-      this.updateParty(dt);
+      this.updateParty(dt, performanceMark);
       performanceMark?.('partyEnd');
       this.updateEnemies(dt);
       this.tickRogueStations();
@@ -8185,7 +8185,7 @@
   Campaign.enableRoguePlaytest = () => {
     if (classes.rogue) return false;
     classes.rogue = Object.freeze({
-      icon: '🔔', ...R.rogueHeroFoundation.stats,
+      icon: 'jingle-bell', ...R.rogueHeroFoundation.stats,
     });
     talentProfiles.rogue = Object.freeze({ ...R.rogueHeroFoundation.talents });
     R.movementBasicClasses.rogue = true;

@@ -21,3 +21,7 @@ After receiving the dev.181 game update, open an existing run, approach the Gree
 
 ## Validation scope
 Focused regression test: `node tests/party-playtest-diagnostics.test.cjs`. It verifies Soldier/pet attribution, cumulative Slow, unchanged campaign snapshot, bounded history, emergency transitions, browser frame integration and paused/menu suppression. Existing Slow/cooldown and emergency tests remain relevant; full-game and browser matrices are explicitly outside this narrow change unless authorized.
+
+## 28 October 2026 focused follow-up (candidate dev.208)
+
+The existing first-party **Export playtest report** adds `performance.frameProfile.slowdownIncidents`: up to 16 automatic exceptional callbacks with current/prior timing and event categories, plus the player's **in-game world** X/Y, 256-unit region grid cell, region ID, nearby actors/props and activity. Its companion-AI timing is split into guidance, setup, active-unit work and bookkeeping, each nested inside total `companionAIMs`. The ordinary 180-callback statistical buffer can reset on Auto graphics tuning, but retained exceptional incidents do not silently vanish. **Reset performance sample** explicitly clears the incident history. No new recording setting and no GPS. Context describes surroundings, not proven CPU blame. Full details and the jingle-bell handoff failure are in [the focused report](ROGUE_JINGLE_CANON_AND_SLOWDOWN_DEV208_20261028.md). This candidate is draft/unpublished pending release authorization.
