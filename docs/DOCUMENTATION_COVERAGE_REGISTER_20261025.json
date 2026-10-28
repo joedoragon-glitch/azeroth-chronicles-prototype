@@ -101,6 +101,16 @@
       "priorReadmeBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
       "newReadmeBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
       "method": "Full original README read; compared current source, release evidence, local links and register receipts. Historical receipts remain in git and linked existing documents. Documentation-only, not physical-device certification."
+    },
+    "readableDevelopmentState": {
+      "auditedMainSha": "3765ed3bbbf67385561ba47b46887eda6ccf3e7c",
+      "currentMainBuild": "0.9.1+snapshot.dev.208",
+      "publicationRun": 40731474055,
+      "archiveFile": "docs/DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md",
+      "originalMarkdownCount": 417,
+      "candidateMarkdownCount": 418,
+      "archivedSourceSection": "docs/DEVELOPMENT_STATE.md starting at ## Historical release-status ledger",
+      "method": "Full original file reviewed; historical body preserved verbatim as one indexed archive. Current page re-pinned to exact main source and GitHub Actions. No game, test, workflow or save changes; no device certification."
     }
   },
   "semantics": {
@@ -1902,8 +1912,23 @@
       "reconciliationReview": "unresolved"
     },
     {
+      "path": "docs/DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md",
+      "gitBlobSha": "2d6d389e29d3683a8a0cc8c36a46f3e23b70ed2c",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "historical_development_and_release_evidence",
+      "role": "historical_snapshot",
+      "authority": "historical_evidence",
+      "reviewDepth": "path_only",
+      "reconciliationRole": "historical record",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "unresolved",
+      "reconciliationReviewEvidence": "28 Oct: moved prior DEVELOPMENT_STATE.md historical section verbatim from main@3765ed3 into this explicitly non-operative archive. Every older claim retains original date and context; individual historical receipts are not freshly revalidated."
+    },
+    {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
+      "gitBlobSha": "8377265de1d98324668fcaff9a750816a709f372",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1919,9 +1944,10 @@
       "reconciliationReview": "verified",
       "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
       "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
-      "reconciliationReviewEvidence": "28 Oct: source, package.json and sw.js agree on dev.208 at main@29be451; Actions 40720965138 focused validation and Pages jobs successful; PR #560 confirmed merged. Current top status/evidence gates checked, device adoption unverified. Not a recertification of every historical workstream row.",
+      "reconciliationReviewEvidence": "28 Oct 2026: fully reviewed previous 377-line status source and all historical section routing; checked latest main@3765ed3, package/lock/sw dev.208, successful focused + Pages Actions 40731474055, Rogue #511 and main game, open #510/#478/#481/#484/#486/#460/#357 and draft work #527/#531/#533/#538/#544/#553/#554. New current section is a scoped source/status review, not full historical feature verification or device certification.",
       "previousStep1GitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
-      "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03"
+      "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03",
+      "previousReadableStatusGitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -2012,7 +2038,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
+      "gitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2031,7 +2057,8 @@
       "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
       "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
       "reconciliationReviewEvidence": "28 Oct, main@29be451: checked current authority hierarchy, Rogue soft release/companion/bell-staff paths, and links to agent policy, development state, architecture, brand and workflow. No claim of full-body review of historical index entries or all 417 document contents.",
-      "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe"
+      "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
+      "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
