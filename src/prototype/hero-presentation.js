@@ -11,6 +11,8 @@
     force: ['#86d5db', '#ccf3f0'],
     arrow: ['#d5c29a', '#f0e4c8'],
     nature: ['#a9ce96', '#daebbd'],
+    jingle: ['#d5a15d', '#fff0bd'],
+    song: ['#a987c7', '#e7caee'],
   };
   // One row per slot, tap/charged pairs: name, silhouette, material.
   const catalog = {
@@ -82,6 +84,16 @@
         ['Arcane Cataclysm', 'cataclysm', 'arcane'],
       ],
     ],
+    rogue: [
+      [['Ding and Sting', 'jingle', 'jingle'], ['Raise a Racket', 'jingle', 'song']],
+      [['Lead Feet', 'jingle', 'jingle'], ["Can't Dance", 'jingle', 'song']],
+      [['Beat Breaker', 'jingle', 'jingle'], ['Shut the Band Up', 'jingle', 'song']],
+      [['Sour Note', 'jingle', 'jingle'], ['Rotten Chorus', 'jingle', 'song']],
+      [['Sticky Shuffle', 'jingle', 'jingle'], ['Briar Boogie', 'jingle', 'song']],
+      [['Stolen Beat', 'jingle', 'jingle'], ['Time Out', 'jingle', 'song']],
+      [['Wrong Foot', 'jingle', 'jingle'], ['Panic Party', 'jingle', 'song']],
+      [['Bad Bell Day', 'jingle', 'jingle'], ['Last Laugh', 'jingle', 'song']],
+    ],
     ranger: [
       [
         ['Rapid Arrows', 'arrow', 'arrow'],
@@ -125,6 +137,7 @@
         paladin: ['Sword Combo', 'slash', 'steel'],
         mage: ['Arcane Combo', 'orb', 'arcane'],
         ranger: ['Bow Combo', 'arrow', 'arrow'],
+        rogue: ['Jingle Bell Combo', 'jingle', 'jingle'],
       };
       const row = basics[e.class];
       if (row) return { name: row[0], motif: row[1], material: row[2], colors: palettes[row[2]] };
@@ -161,6 +174,8 @@
         'hawkRetreatInterrupted',
         'skill1Tap',
       ].includes(e.type) ||
+      (e.class === 'rogue' &&
+        ['rogueBellBasic', 'rogueBellSkill1', 'rogueBellPerformance'].includes(e.type)) ||
       (isHero(e) && legacyTypes.has(e.type))
     );
   }
@@ -173,13 +188,23 @@
             original.charged ||
             (original.slot === 1 && ['heroSkillArea', 'heroHawk'].includes(original.type)) ||
             original.type === 'chargedArea' ||
-            original.type === 'heroCharge',
+            original.type === 'heroCharge' ||
+            (original.class === 'rogue' && original.form === 'charged'),
         },
         p = profile(e);
       if (!p) continue;
       const emit = (stage, life, extra = {}) =>
         push({ ...e, ...extra, stage, ...p }, 'heroSkill', life, 4);
-      if (e.type === 'heroSkillArea' && e.slot === 1) {
+      if (e.class === 'rogue' && e.type === 'rogueBellBasic') {
+        // Instant attack: real cast and landed primary contact only.
+        emit('cast', 0.24);
+        if (e.landed && Number.isFinite(e.targetX) && Number.isFinite(e.targetY))
+          emit('impact', 0.3, { x: e.targetX, y: e.targetY, charged: e.combo === 3 });
+      } else if (e.class === 'rogue' &&
+        ['rogueBellSkill1', 'rogueBellPerformance'].includes(e.type)) {
+        // One bounded circle per lawful release; no per-contact effects.
+        emit('area', e.charged ? 0.54 : 0.38);
+      } else if (e.type === 'heroSkillArea' && e.slot === 1) {
         // Completion documents real impacts but must not restart the visual.
         if (e.phase !== 'complete')
           emit(
@@ -226,6 +251,19 @@
       ctx.lineTo(x, y + size * 0.8);
       ctx.lineTo(x - size * 0.6, y);
       ctx.closePath();
+    } else if (motif === 'jingle') {
+      // Round, slotted handheld jingle bell with its suspension eye and
+      // internal rattle. Not a hanging/conical church or handbell silhouette.
+      ctx.moveTo(x + size * 0.2, y - size * 0.7);
+      ctx.arc(x, y - size * 0.7, size * 0.2, 0, Math.PI * 2);
+      ctx.moveTo(x + size * 0.78, y + size * 0.12);
+      ctx.arc(x, y + size * 0.12, size * 0.78, 0, Math.PI * 2);
+      ctx.moveTo(x - size * 0.53, y - size * 0.02);
+      ctx.quadraticCurveTo(x, y + size * 0.28, x + size * 0.53, y - size * 0.02);
+      ctx.moveTo(x, y - size * 0.48);
+      ctx.lineTo(x, y + size * 0.6);
+      ctx.moveTo(x + size * 0.13, y + size * 0.57);
+      ctx.arc(x, y + size * 0.57, size * 0.13, 0, Math.PI * 2);
     } else if (motif === 'holy-cross') {
       ctx.moveTo(x - size, y);
       ctx.lineTo(x + size, y);
@@ -682,6 +720,15 @@
         // renderer using the same coordinates as their collision segments.
         ctx.globalAlpha = fade * 0.55;
         glyph(ctx, p.x, p.y - 16, 'arrow', 8);
+      } else if (f.class === 'rogue') {
+        glyph(ctx, p.x, p.y - 24, 'jingle', 9);
+        ctx.globalAlpha = fade * 0.55;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y - 17, 16 + 9 * t, -1.15, 0.25);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y - 17, 16 + 9 * t, Math.PI - 0.25, Math.PI + 1.15);
+        ctx.stroke();
       } else if (f.class === 'paladin' && [1, 2, 6].includes(f.slot) && !(f.charged && f.slot === 1)) {
         const target = screen({ x: f.targetX ?? f.x + 50, y: f.targetY ?? f.y }),
           a = Math.atan2(target.y - p.y, target.x - p.x),
