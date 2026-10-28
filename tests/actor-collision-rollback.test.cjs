@@ -20,7 +20,9 @@ assert.equal(typeof g.actorStepAllowed, 'undefined', 'no actor-body movement pre
 assert.equal(typeof g.separateActors, 'undefined', 'no passive separation');
 assert.equal(typeof g.crowdEscaping, 'undefined', 'no crowd-phasing state');
 assert.equal(typeof g.observeCrowdFrame, 'undefined', 'no frame pressure collision feedback');
-assert.equal(Campaign.rules.actorSpacing, undefined, 'retired collision configuration removed');
+assert.equal(Campaign.rules.actorSpacing, undefined, 'retired movement collision configuration removed');
+assert.equal(g.actorRadius(g.hero), 14, 'independent attack/terrain contact geometry retained');
+assert.equal(Campaign.rules.actorContactRadii.boss, 26, 'boss combat contact geometry remains');
 
 const enemy = g.makeEnemy(
   { species: 'goblin', name: 'Passage test', level: 1, hp: 100000,
