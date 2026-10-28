@@ -1151,6 +1151,17 @@ body.menu-open #cancel-navigation-button {
   font-size: 12px;
   line-height: 1.45;
 }
+/* Rogue's icon is the canon staff with one oversized suspended spherical
+   jingle bell, shared by class selector and character HUD. No emoji stand-in. */
+.class-jingle-staff::before {
+  content: '';
+  display: inline-block;
+  width: 1.55em;
+  height: 1.55em;
+  vertical-align: -0.37em;
+  margin-right: 0.24em;
+  background: center / contain no-repeat url('../assets/ui/rogue-jingle-staff.svg');
+}
 #modal[data-view='class-select'] #modal-actions .class-growth {
   color: #efcf91;
   border-top: 1px solid #8da4a43d;

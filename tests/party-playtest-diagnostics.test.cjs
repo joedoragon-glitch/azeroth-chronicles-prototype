@@ -76,6 +76,50 @@ assert.equal(report.emergencyTransitions.length, 2, 'Emergency markers outlive r
 assert.equal(JSON.stringify(game.snapshot()).includes('partyDiagnostics'), false,
   'Transient diagnostics never enter a persisted campaign');
 
+// Same-frame incident context is sampled only when a callback is unusually
+// late or its measured work (especially the party stage) is expensive.
+const quiet = {
+  callbackTimeMs: 10, intervalMs: 16, frameWorkMs: 5,
+  simulationMs: 3, companionAIMs: 1, enemyAIMs: 1, renderMs: 1,
+};
+const beforeIncidents = JSON.stringify(game.snapshot());
+assert.equal(game.partyDiagnosticsObservePerformance(quiet), false);
+assert.equal(game.partyDiagnosticsReport().performanceIncidents.length, 0);
+assert(game.partyDiagnosticsObservePerformance({
+  ...quiet, callbackTimeMs: 500, intervalMs: 227, frameWorkMs: 10,
+  simulating: false, recovering: true, drawn: false,
+  rendererMode: 'canvas2d', optimizationMode: true,
+}));
+let incident = game.partyDiagnosticsReport().performanceIncidents[0];
+assert.deepEqual(incident.reasons, ['callback-gap']);
+assert.equal(incident.frameWorkMs, 10);
+assert.equal(incident.stagesMs.companionAI, 1);
+assert.equal(incident.frame.emergencyHeld, true);
+assert.equal(incident.party.activeCount, 2);
+assert.equal(incident.scene.livingHostiles >= 0, true);
+assert.equal(game.partyDiagnosticsObservePerformance({
+  ...quiet, callbackTimeMs: 520, intervalMs: 60, frameWorkMs: 55,
+}), false, 'normal-cost anomalies are throttled between nearby events');
+assert(game.partyDiagnosticsObservePerformance({
+  ...quiet, callbackTimeMs: 540, intervalMs: 180, frameWorkMs: 97,
+  simulationMs: 87, companionAIMs: 68, enemyAIMs: 7,
+  simulating: true, recovering: false, drawn: true,
+}));
+incident = game.partyDiagnosticsReport().performanceIncidents[1];
+assert(incident.reasons.includes('companion-update'));
+assert(incident.reasons.includes('synchronous-work'));
+assert.equal(incident.stagesMs.companionAI, 68);
+assert.equal(incident.stagesMs.simulation, 87);
+for (let i = 0; i < 22; i++)
+  game.partyDiagnosticsObservePerformance({
+    ...quiet, callbackTimeMs: 1200 + i * 650, frameWorkMs: 52,
+  });
+report = game.partyDiagnosticsReport();
+assert.equal(report.performanceIncidents.length, 16);
+assert(report.dropped.performanceIncidents > 0);
+assert.equal(JSON.stringify(game.snapshot()), beforeIncidents,
+  'recording incident context must never alter the campaign or v4 save');
+
 const { shell } = require('./helpers/production-shell.cjs');
 const app = shell('en');
 app.frame(0);
@@ -94,4 +138,8 @@ const appSource = fs.readFileSync(
 );
 assert(appSource.includes('partyDiagnostics: game.partyDiagnosticsReport()'),
   'Playtest JSON export must contain the companion/pet report');
+assert(appSource.includes('game.partyDiagnosticsObservePerformance({'),
+  'real abnormal animation callbacks must feed the exported incident timeline');
+assert(appSource.includes('intervalMs >= 140 || frameWorkMs >= 45 || stageTimes.companionAIMs >= 20'),
+  'normal callbacks must avoid expensive incident gathering');
 console.log('PASS bounded companion/pet playtest diagnostics, source attribution, emergency markers and paused frame exclusion');

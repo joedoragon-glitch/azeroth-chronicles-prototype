@@ -2972,6 +2972,10 @@
       } else {
         b = document.createElement('button');
         b.textContent = translateMenu(a.label);
+        // The class label remains accessible text; the jingle-staff silhouette
+        // comes from the canonical static SVG, not a generic bell emoji.
+        if (menu.view === 'class-select' && a.classIcon === 'jingle-bell-staff')
+          b.classList.add('class-jingle-staff');
         b.disabled = a.disabled === true;
         b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
         details(b, a);
@@ -3921,11 +3925,9 @@
         : language === 'es'
           ? 'Elige quién liderará la resistencia. Cada clase recibe su ventaja innata desde el nivel 1. Rescata especialistas para aprender más habilidades y conseguir equipo.'
           : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
-      Object.entries(Campaign.classes).map(([id, c]) =>
-        action(
-          c.icon +
-            ' ' +
-            heroClassLabel(id),
+      Object.entries(Campaign.classes).map(([id, c]) => ({
+        ...action(
+          (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
@@ -3949,7 +3951,8 @@
           },
           heroClassDetail(id) + (classGrowthLine(id) ? '\n' + classGrowthLine(id) : ''),
         ),
-      ),
+        classIcon: id === 'rogue' ? c.icon : null,
+      })),
       () => started ? chooseClass(mode) : newGameMenu(),
       { view: 'class-select' },
     );
@@ -7191,9 +7194,12 @@
           ' · press ' +
           input.key('training')
         : 'Talents · press ' + input.key('training');
+    const heroIconMarkup = h.class === 'rogue'
+      ? '<span class="class-jingle-staff" aria-hidden="true"></span>'
+      : Campaign.classes[h.class].icon;
     let heroMarkup =
       '<div class="hero-title"><span>' +
-      Campaign.classes[h.class].icon +
+      heroIconMarkup +
       ' ' +
       game.heroDisplayName() +
       '</span><small>' +
@@ -7989,6 +7995,24 @@
         drawn: draw,
         adaptiveSkipped,
       });
+      // Existing one-click playtest report: capture the SAME callback's
+      // measured work and party/scene context only for genuine anomalies.
+      // No continuous tracing or extra companion-AI work on normal frames.
+      if ((simulating || recovering) &&
+        (intervalMs >= 140 || frameWorkMs >= 45 || stageTimes.companionAIMs >= 20))
+        game.partyDiagnosticsObservePerformance({
+          callbackTimeMs: now, intervalMs, frameWorkMs,
+          simulationMs: stageTimes.simulationMs,
+          companionAIMs: stageTimes.companionAIMs,
+          enemyAIMs: stageTimes.enemyAIMs,
+          otherSimulationMs, renderMs: stageTimes.renderMs,
+          audioUpdateMs: stageTimes.audioUpdateMs,
+          eventDispatchMs: stageTimes.eventDispatchMs,
+          hudMs: stageTimes.hudMs,
+          otherJsMs: Math.max(0, frameWorkMs - accounted),
+          simulating, recovering, drawn: draw, adaptiveSkipped,
+          rendererMode: graphicsController.status().mode, optimizationMode,
+        });
       if (simulating || recovering)
         noteRendererRecordingFrame(stageTimes, frameWorkMs, intervalMs,
           draw, recovering, adaptiveSkipped);

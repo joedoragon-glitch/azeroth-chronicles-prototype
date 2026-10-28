@@ -83,6 +83,8 @@ const core = [
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',
+  // Canonical Rogue class selector / HUD symbol, required offline.
+  'assets/ui/rogue-jingle-staff.svg',
   'assets/vendor/pixi-8.22.0.min.js',
   'assets/sprites/manifest.json',
   'assets/vfx/manifest.json',

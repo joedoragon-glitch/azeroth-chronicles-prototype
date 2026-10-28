@@ -8185,7 +8185,9 @@
   Campaign.enableRoguePlaytest = () => {
     if (classes.rogue) return false;
     classes.rogue = Object.freeze({
-      icon: '🔔', ...R.rogueHeroFoundation.stats,
+      // Semantic key, not the generic ringing-bell emoji. Shell owns the
+      // actual staff + suspended spherical jingle-bell icon at every surface.
+      icon: 'jingle-bell-staff', ...R.rogueHeroFoundation.stats,
     });
     talentProfiles.rogue = Object.freeze({ ...R.rogueHeroFoundation.talents });
     R.movementBasicClasses.rogue = true;
