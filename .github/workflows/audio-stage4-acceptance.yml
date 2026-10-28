@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   music-mix:
-    if: github.event.pull_request.head.ref == 'audit/audio-stage4-music-mix-20261025'
+    if: github.event.pull_request.head.ref == 'audit/audio-stage4-music-mix-20261025' || github.event.pull_request.head.ref == 'docs/development-state-clear-status-20261028'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -44,7 +44,7 @@ jobs:
         run: node tests/audio-scheduler.test.cjs
 
   recorded-audition-browser:
-    if: github.event.pull_request.head.ref == 'audit/audio-stage4-music-mix-20261025'
+    if: github.event.pull_request.head.ref == 'audit/audio-stage4-music-mix-20261025' || github.event.pull_request.head.ref == 'docs/development-state-clear-status-20261028'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -67,6 +67,9 @@ jobs:
           fi
       - name: Verify real decoded PCM and authored MP3 mix on desktop and phone-sized Chromium
         run: node tests/audio-stage4-browser-smoke.test.cjs
+      - name: Release-candidate audition room desktop and phone Chromium acceptance
+        if: github.event.pull_request.head.ref == 'docs/development-state-clear-status-20261028'
+        run: node tests/audio-audition-browser.test.cjs
       - name: Upload audio audition failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
