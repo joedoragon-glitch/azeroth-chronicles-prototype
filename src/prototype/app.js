@@ -3873,9 +3873,19 @@
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
   }
-  // Simple spherical jingle-bell mark, never a handbell or a staff composite.
-  // Shared by New Game, Succession and HUD without a new asset workflow.
-  const rogueJingleIconSvg = '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-0.2em;flex:none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12.5" r="8" fill="#dcb968" stroke="#765126" stroke-width="1.3"/><path d="M7 11.5Q12 15 17 11.5M12 5v12.6M8.8 16.5Q12 19 15.2 16.5" stroke="#69432b" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="17.8" r="1.7" fill="#684229"/><circle cx="9.5" cy="8.2" r="1.3" fill="#fff0b8"/></svg>';
+  // Owner-approved Option A: pale-gold spherical jingle bell, taken from
+  // the simple line-art reference. Horizontal equator seam and ONE bottom
+  // keyhole slit replace the previously unreadable crossed cutouts.
+  // Shared unchanged across New Game, Succession and the HUD.
+  const rogueJingleIconSvg =
+    '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-0.2em;flex:none" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M9.75 5.1V4.2a2.25 2.25 0 0 1 4.5 0v.9" fill="none" stroke="#18140f" stroke-width="2.2" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="13.1" r="8.8" fill="#f1d77e" stroke="#18140f" stroke-width="1.9"/>' +
+    '<path d="M6.1 8.9Q7.5 6.8 10.9 6.6" stroke="#18140f" stroke-width="1.9" fill="none" stroke-linecap="round"/>' +
+    '<path d="M3 12.6H21" stroke="#18140f" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<path d="M12 17.9V21.65" stroke="#18140f" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="17.2" r="1.65" fill="#18140f"/>' +
+    '</svg>';
   // Read-only class selection copy. Registry membership alone governs
   // which buttons exist; a future class gets its own description, never Ranger's.
   const heroClassPresentation = Object.freeze({
