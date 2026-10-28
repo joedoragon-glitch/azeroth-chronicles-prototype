@@ -477,10 +477,20 @@
     };
   }
 
+  // Only modest NPCs and pickups receive a cue, never entire structures.
+  const smallInteractionKinds = new Set([
+    'supplier', 'recruiter', 'quests', 'teacher', 'smith', 'alchemist',
+    'keeper', 'archive-record', 'bundle', 'resource', 'cage',
+    'critical-codex', 'appointment', 'dungeon-master', 'patrol-report',
+  ]);
+  function smallInteractionTarget(target) {
+    return !!target && !target.interactionOnly && smallInteractionKinds.has(target.kind);
+  }
   function create({
     canvas: viewport,
     ctx,
     getGame,
+    getInteractionTarget = () => null,
     platform,
     chargePresentation,
     queuedChargePresentation = () => [],
@@ -2210,6 +2220,37 @@
       ctx.restore();
     }
 
+    // Muted corner cue shared by Canvas world and the experimental Pixi overlay.
+    // Reads the existing HUD target; never rescans entities on every frame.
+    function drawInteractionCue() {
+      const target = getInteractionTarget();
+      if (!smallInteractionTarget(target) || isPaused() ||
+          game.interactionDistance(target) >= 115) return;
+      const p = screen(target);
+      if (p.x < -48 || p.x > canvas.width + 48 || p.y < -60 || p.y > canvas.height + 48)
+        return;
+      const small = target.kind === 'resource' || target.kind === 'bundle';
+      const half = small ? 15 : 21;
+      const top = p.y - (small ? 26 : 40);
+      ctx.save();
+      ctx.strokeStyle = '#ead9ad';
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.68;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      for (const side of [-1, 1]) {
+        const x = p.x + side * half;
+        ctx.moveTo(x, top + 8);
+        ctx.lineTo(x, top);
+        ctx.lineTo(x - side * 7, top);
+        ctx.moveTo(x, p.y - 8);
+        ctx.lineTo(x, p.y);
+        ctx.lineTo(x - side * 7, p.y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+
     // A few ink-like brackets, not ground circles. Charge hints appear only
     // while the player is holding an aimed skill; simulation owns the ranges.
     function targetGuidance() {
@@ -2533,6 +2574,7 @@
         PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
         drawCriticalCues();
         targetGuidance();
+        drawInteractionCue();
         drawNavigationRoute();
         finishPhase('effects');
         return;
@@ -3201,6 +3243,7 @@
       PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
       drawCriticalCues();
       targetGuidance();
+      drawInteractionCue();
       drawNavigationRoute();
       if (isPaused()) {
         ctx.fillStyle = '#0006';
@@ -3299,6 +3342,7 @@
     drawAbyssFlightCues,
     drawCrownLoot,
     drawTrueAura,
+    smallInteractionTarget,
     majorOccluder,
     occlusionPairs,
     optimizationClutter,

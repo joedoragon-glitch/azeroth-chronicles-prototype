@@ -367,6 +367,16 @@ button:disabled {
   color: #d7d6a0;
   margin: 3px 0;
 }
+#interaction-target-label {
+  color: #e6d5aa;
+  font-size: 11px;
+  line-height: 1.3;
+  padding: 4px 6px;
+  border-left: 2px solid #bc9d62;
+  background: #18291ec7;
+  overflow-wrap: anywhere;
+}
+#interaction-target-label[hidden] { display: none; }
 #location {
   border-top: 1px solid #a7b69740;
   padding-top: 7px;
