@@ -241,6 +241,19 @@ const groups = [
     match: /^(?:package(?:-lock)?\.json|sw\.js|src\/prototype\/build-info\.js)$/,
     tests: [TEST + 'pwa-release-id.test.cjs', TEST + 'service-worker.test.cjs'],
   },
+  {
+    // Phase 4 must be retested when any source owning capture, creature growth,
+    // work orders, company operations, save or shared species artwork changes.
+    match: /^src\/prototype\/(?:party|progression|hero-combat|save|engine|rules|combat|menus|visuals|sprites)\.js$/,
+    tests: [TEST + 'rogue-bard-phase4-companions.test.cjs'],
+  },
+  {
+    // New song code, timing owners and card metadata must preserve mirrored
+    // effects, old-class isolation and short-lived nonstacking party boons.
+    match: /^src\/prototype\/(?:hero-combat|combat|party|rules|save|skill-reference)\.js$/,
+    tests: [TEST + 'rogue-bard-phase5-repertoire.test.cjs',
+      TEST + 'rogue-bard-critical-skill1.test.cjs'],
+  },
 ];
 const eligible = (file) =>
   /\.(?:js|cjs|mjs|json|css|html|webp|png|svg|mp3|ogg|yml|yaml)$/.test(file);

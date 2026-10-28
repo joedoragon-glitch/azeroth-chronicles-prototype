@@ -11,6 +11,9 @@
     combatDiagnosticsEnabled = /(?:^|[?&])combatDiagnostics=1(?:&|$)/.test(
       window.location?.search || '',
     );
+  // Quiet fourth-class release. Register before profile/load/save validation,
+  // New Game and Succession; v4 storage keys and original classes stay intact.
+  Campaign.enableRoguePlaytest();
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -355,6 +358,12 @@
       'Usa de 1 a 24 letras, números, espacios, apóstrofos, puntos o guiones.',
     'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.':
       'El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las tres, la partida termina.',
+    'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after four class deaths the run ends.':
+      'El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las cuatro, la partida termina.',
+    'All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.':
+      'Las tres clases han caído. Esta partida terminó. Puedes exportar su progreso, pero no continuarla.',
+    'All four classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.':
+      'Las cuatro clases han caído. Esta partida terminó. Puedes exportar su progreso, pero no continuarla.',
     'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.':
       'Elige al héroe que iniciará la resistencia. Comienzas con una habilidad; rescatar especialistas desbloquea el entrenamiento y equipo necesarios para enfrentar al Dark Lord.',
   };
@@ -694,6 +703,13 @@
     'Name companions': 'Nombrar compañeros',
     'Recruit companions': 'Reclutar compañeros',
     'Boss pet collection': 'Colección de mascotas de jefes',
+    'Charmed monsters': 'Monstruos encantados',
+    'Charmed creature': 'Criatura encantada',
+    'Previous page': 'Página anterior',
+    'Next page': 'Página siguiente',
+    Page: 'Página',
+    'Browse owned monster types and change their active status.':
+      'Consulta los tipos de monstruos que posees y cambia quién viaja contigo.',
     'Pet skills': 'Habilidades de mascota',
     'Rescued specialists': 'Especialistas rescatados',
     'Resources & labor': 'Recursos y trabajo',
@@ -1328,6 +1344,12 @@
     if (/^Local death loss: /.test(piece))
       return piece.replace('Local death loss: ', 'Pérdida local al caer: ');
     if (/^With you /.test(piece)) return piece.replace('With you ', 'Contigo ');
+    if (/^Resting /.test(piece)) return piece.replace('Resting ', 'En reserva ');
+    if (/^Fallen /.test(piece)) return piece.replace('Fallen ', 'Caídos ');
+    if (/^Local group cap /.test(piece))
+      return piece.replace('Local group cap ', 'Límite local del grupo ');
+    if (/^[0-9]+([/][0-9]+)? owned$/.test(piece)) return piece.replace('owned', 'poseídos');
+    if (/^[0-9]+ types$/.test(piece)) return piece.replace('types', 'tipos');
     if (/^[Ee]mployed /.test(piece)) return piece.replace(/^[Ee]mployed /, 'Contratados ');
     if (/^Rest /.test(piece))
       return piece.replace('Rest ', 'Descansar ').replace('Soldier', 'Soldado');
@@ -1437,6 +1459,7 @@
   }
   function setLanguage(value) {
     language = value === 'es' ? 'es' : 'en';
+    if (game) game.rogueNicknameLanguage = language;
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
     try {
       localStorage.setItem(languageKey, language);
@@ -1707,6 +1730,9 @@
   // Both isolated RNG streams resume from the same v4 save state.
   function activateLiveCritical(candidate) {
     if (!candidate) return candidate;
+    // Cosmetic capture nicknames follow the current interface language.
+    // Existing names never change when the language changes.
+    candidate.rogueNicknameLanguage = language;
     if (candidate._criticalPartyNative?.enabled && candidate._criticalWorldNative?.enabled)
       return candidate;
     PrototypeCriticalPartyNative.attachCampaign(
@@ -2658,7 +2684,7 @@
     menuHistory.push(previous);
     return null;
   }
-  function action(label, fn, detail = '', disabled = false, tutorialHighlight = false) {
+  function action(label, fn, detail = '', disabled = false, tutorialHighlight = false, classId = null) {
     return {
       label,
       action: (...args) => {
@@ -2671,6 +2697,7 @@
       detail,
       disabled,
       tutorialHighlight,
+      classId,
     };
   }
   function translateMenu(value) {
@@ -2946,6 +2973,13 @@
       } else {
         b = document.createElement('button');
         b.textContent = translateMenu(a.label);
+        if (a.classId === 'rogue') {
+          const symbol = document.createElement('span');
+          symbol.setAttribute('aria-hidden', 'true');
+          symbol.style.cssText = 'display:inline-flex;vertical-align:middle;margin-right:0.4em';
+          symbol.innerHTML = rogueJingleIconSvg;
+          b.prepend(symbol);
+        }
         b.disabled = a.disabled === true;
         b.classList.toggle('tutorial-highlight', !!a.tutorialHighlight);
         details(b, a);
@@ -3710,10 +3744,7 @@
       D.regions.find((region) => region.id === option.zone)?.name ||
       D.bosses.find((boss) => boss.id === option.zone)?.place ||
       option.zone;
-    const heroClass =
-      language === 'es'
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[option.heroClass]
-        : option.heroClass;
+    const heroClass = heroClassLabel(option.heroClass);
     return tr('Level') + ' ' + option.level + ' · ' + heroClass + ' · ' + place;
   }
   function savedRunRecoveryOptions() {
@@ -3819,6 +3850,9 @@
   function classGrowthLine(heroClass) {
     const p = Campaign.rules.balance.classPassives;
     const es = language === 'es';
+    if (heroClass === 'rogue') return es
+      ? 'Travesura · Cada nivel: +2 puntos porcentuales de probabilidad crítica de la Pícara.'
+      : 'Mischief · Each level: +2 percentage points Rogue critical chance.';
     if (heroClass === 'paladin')
       return es
         ? 'Fortaleza · Cada nivel: +' + p.paladin.hpPerLevel +
@@ -3839,6 +3873,49 @@
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
   }
+  // Owner-approved Option A: pale-gold spherical jingle bell, taken from
+  // the simple line-art reference. Horizontal equator seam and ONE bottom
+  // keyhole slit replace the previously unreadable crossed cutouts.
+  // Shared unchanged across New Game, Succession and the HUD.
+  const rogueJingleIconSvg =
+    '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-0.2em;flex:none" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M9.75 5.1V4.2a2.25 2.25 0 0 1 4.5 0v.9" fill="none" stroke="#18140f" stroke-width="2.2" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="13.1" r="8.8" fill="#f1d77e" stroke="#18140f" stroke-width="1.9"/>' +
+    '<path d="M6.1 8.9Q7.5 6.8 10.9 6.6" stroke="#18140f" stroke-width="1.9" fill="none" stroke-linecap="round"/>' +
+    '<path d="M3 12.6H21" stroke="#18140f" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<path d="M12 17.9V21.65" stroke="#18140f" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="17.2" r="1.65" fill="#18140f"/>' +
+    '</svg>';
+  // Read-only class selection copy. Registry membership alone governs
+  // which buttons exist; a future class gets its own description, never Ranger's.
+  const heroClassPresentation = Object.freeze({
+    paladin: {
+      en: 'Paladin', es: 'Paladín',
+      detail: 'Melee, healing and brief immunity', detailEs: 'Combate cercano, curación e inmunidad breve',
+    },
+    mage: {
+      en: 'Mage', es: 'Mago',
+      detail: 'Ranged magic, frost control and protective barriers', detailEs: 'Magia a distancia, hielo y barreras protectoras',
+    },
+    ranger: {
+      en: 'Ranger', es: 'Explorador',
+      detail: 'Ranged bow, healing and mobility', detailEs: 'Arco a distancia, curación y movilidad',
+    },
+    rogue: {
+      en: 'Rogue', es: 'Pícara',
+      detail: 'Charmed companions, musical disruption and survival tricks. Start alone; automatic basic hits may Charm surviving eligible monsters, who can then build Barracks.', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia. Empiezas sola; los ataques básicos automáticos pueden encantar a monstruos aptos que sobreviven, y luego ellos pueden construir cuarteles.',
+    },
+  });
+  function heroClassLabel(id, localized = language === 'es') {
+    return (heroClassPresentation[id] || {})[localized ? 'es' : 'en'] || id;
+  }
+  function heroClassDetail(id) {
+    return heroClassPresentation[id]?.[language === 'es' ? 'detailEs' : 'detail'] || 'Class skills require authored rules';
+  }
+  function playableClassCountWord() {
+    const count = Object.keys(Campaign.classes).length;
+    return { 3: 'three', 4: 'four' }[count] || String(count);
+  }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
@@ -3846,7 +3923,9 @@
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
-        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.',
+        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after ' +
+          playableClassCountWord() +
+          ' class deaths the run ends.',
         [
           action('Standard death and refuge recovery', () => chooseClass(mode, false)),
           action('Succession challenge', () => chooseClass(mode, true)),
@@ -3865,11 +3944,7 @@
           : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
-          c.icon +
-            ' ' +
-            (language === 'es'
-              ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[id] || id
-              : id.charAt(0).toUpperCase() + id.slice(1)),
+          (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
@@ -3891,19 +3966,8 @@
               return;
             start(mode, id, succession, heroName);
           },
-          (language === 'es'
-            ? {
-                paladin: 'Combate cercano, curación e inmunidad breve',
-                mage: 'Magia a distancia, hielo y barreras protectoras',
-                ranger: 'Arco a distancia, curación y movilidad',
-              }[id]
-            : {
-                paladin: 'Melee, healing and brief immunity',
-                mage: 'Ranged magic, frost control and protective barriers',
-                ranger: 'Ranged bow, healing and mobility',
-              }[id]) +
-            '\n' +
-            classGrowthLine(id),
+          heroClassDetail(id) + (classGrowthLine(id) ? '\n' + classGrowthLine(id) : ''),
+          false, false, id,
         ),
       ),
       () => started ? chooseClass(mode) : newGameMenu(),
@@ -3966,8 +4030,8 @@
     const h = game.hero,
       es = language === 'es',
       className = es
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[h.class]
-        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[h.class],
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara' }[h.class]
+        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[h.class],
       stats = [
         { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
         { label: es ? 'Poder' : 'Power', value: String(game.power()) },
@@ -4542,6 +4606,7 @@
         action('Reset performance sample', () => {
           runtime.reset();
           frameProfile.reset();
+          frameProfile.clearSlowdowns();
           platformMenu(back);
         }),
       );
@@ -4700,7 +4765,7 @@
     profile.nightmareUnlocked = true;
     persistProfile();
     const crownedClass =
-      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[game.hero.class] || 'Hero';
     const credits =
       'THE CROWN\n\n' +
       (game.hero.regnalName || game.hero.customName
@@ -4743,18 +4808,21 @@
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
-          action(c.icon + ' ' + id + ' successor', () => {
+          action((id === 'rogue' ? '' : c.icon + ' ') +
+            heroClassLabel(id, false) + ' successor', () => {
             game.successor(id);
             save();
             closeMenu();
-          }),
+          }, '', false, false, id),
         ),
     );
   }
   function gameOver() {
     openMenu(
       'The last successor has fallen',
-      'All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
+      'All ' +
+        playableClassCountWord() +
+        ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
         action('Export final run', () =>
           exportJSON(game.snapshot(), 'Azeroth_Succession_Game_Over.json'),
@@ -5676,6 +5744,16 @@
         6: 'Repelling Shot / Volley',
         7: 'Piercing Arrow',
         8: 'Hunters Salvo / Grand Hunt',
+      },
+      rogue: {
+        1: 'Ding and Sting / Raise a Racket',
+        2: "Lead Feet / Can't Dance",
+        3: 'Beat Breaker / Shut the Band Up',
+        4: 'Sour Note / Rotten Chorus',
+        5: 'Sticky Shuffle / Briar Boogie',
+        6: 'Stolen Beat / Time Out',
+        7: 'Wrong Foot / Panic Party',
+        8: 'Bad Bell Day / Last Laugh',
       },
     };
     return tr(labels[game.hero.class]?.[slot] || skillNames[slot - 1]);
@@ -7137,7 +7215,7 @@
         : 'Talents · press ' + input.key('training');
     let heroMarkup =
       '<div class="hero-title"><span>' +
-      Campaign.classes[h.class].icon +
+      (h.class === 'rogue' ? rogueJingleIconSvg : Campaign.classes[h.class].icon) +
       ' ' +
       game.heroDisplayName() +
       '</span><small>' +
@@ -7622,6 +7700,48 @@
       clearEmergencyEscalation();
     }
   }
+  // Sample only exceptional callbacks. No GPS, map lookups, canvas readback,
+  // saved-run mutation, per-frame world scan or new player interaction.
+  function slowdownLocation(events) {
+    const h = game.hero, z = game.zone(),
+      x = Math.round(h.x), y = Math.round(h.y), r2 = 420 * 420,
+      nearby = (units) => (units || []).filter((u) =>
+        Number.isFinite(u.x) && Number.isFinite(u.y) &&
+        (u.x - x) ** 2 + (u.y - y) ** 2 <= r2);
+    const enemies = nearby(z?.enemies).filter(e => e.hp > 0),
+      activeAllies = (game.s.party || []).filter(u => u.active !== false && u.hp > 0),
+      enemyTypes = {};
+    for (const e of enemies) {
+      const kind = String(e.species || e.type || 'unknown').slice(0, 32);
+      if (Object.keys(enemyTypes).length < 8 || Object.hasOwn(enemyTypes, kind))
+        enemyTypes[kind] = (enemyTypes[kind] || 0) + 1;
+    }
+    const eventTypes = {};
+    for (const e of events || []) {
+      const kind = String(e.type || 'unknown').slice(0, 32);
+      if (Object.keys(eventTypes).length < 8 || Object.hasOwn(eventTypes, kind))
+        eventTypes[kind] = (eventTypes[kind] || 0) + 1;
+    }
+    return {
+      zone: game.zoneId, gameSeconds: Math.round(game.s.time * 10) / 10,
+      heroX: x, heroY: y, gridSize: 256,
+      gridX: Math.floor(x / 256), gridY: Math.floor(y / 256),
+      heroClass: h.class, heroMoving: !!(h.order || joy.x || joy.y ||
+        keys.left || keys.right || keys.up || keys.down),
+      engaged: !!game.s.squadEngagement, activeAllies: activeAllies.length,
+      charmedAllies: activeAllies.filter(u => !!u.charmOrigin).length,
+      activeEnemyCount: (z?.enemies || []).filter(e => e.hp > 0).length,
+      nearbyRadius: 420, nearbyEnemyCount: enemies.length,
+      nearbyEngagedEnemies: enemies.filter(e => !!e.aggro).length,
+      nearbyEnemyKinds: enemyTypes,
+      nearbyProps: nearby(z?.props).length,
+      nearbyBuildings: nearby(z?.buildings).length,
+      nearbyNpcs: nearby(z?.npcs).length,
+      nearbyHazards: nearby(game.s.hazards).length,
+      nearbyProjectiles: nearby(game.s.projectiles).length,
+      eventKinds: eventTypes,
+    };
+  }
   function frame(now) {
     if (!started || sceneTransition) {
       last = now;
@@ -7680,6 +7800,7 @@
     }
     const simulating = !frozen && !recovering;
     emergencyRecoveryDecision(now, recovering, simulating);
+    const emergencyEntered = recovering && !emergencyShown;
     if (recovering !== emergencyShown) {
       emergencyShown = recovering;
       status(
@@ -7705,6 +7826,10 @@
       ? {
           simulationMs: 0,
           companionAIMs: 0,
+          companionGuidanceMs: 0,
+          companionSetupMs: 0,
+          companionUnitsMs: 0,
+          companionBookkeepingMs: 0,
           enemyAIMs: 0,
           hudMs: 0,
           audioUpdateMs: 0,
@@ -7760,6 +7885,14 @@
       stageTimes.simulationMs = performance.now() - simulationAt;
       if (marks.partyStart !== undefined && marks.partyEnd !== undefined)
         stageTimes.companionAIMs = Math.max(0, marks.partyEnd - marks.partyStart);
+      if (marks.partyStart !== undefined && marks.partyGuidanceEnd !== undefined)
+        stageTimes.companionGuidanceMs = Math.max(0, marks.partyGuidanceEnd - marks.partyStart);
+      if (marks.partyGuidanceEnd !== undefined && marks.partySetupEnd !== undefined)
+        stageTimes.companionSetupMs = Math.max(0, marks.partySetupEnd - marks.partyGuidanceEnd);
+      if (marks.partySetupEnd !== undefined && marks.partyUnitsEnd !== undefined)
+        stageTimes.companionUnitsMs = Math.max(0, marks.partyUnitsEnd - marks.partySetupEnd);
+      if (marks.partyUnitsEnd !== undefined && marks.partyBookkeepingEnd !== undefined)
+        stageTimes.companionBookkeepingMs = Math.max(0, marks.partyBookkeepingEnd - marks.partyUnitsEnd);
       if (marks.partyEnd !== undefined && marks.enemyEnd !== undefined)
         stageTimes.enemyAIMs = Math.max(0, marks.enemyEnd - marks.partyEnd);
       if (marks.enemyExtraStart !== undefined && marks.enemyExtraEnd !== undefined)
@@ -7926,6 +8059,14 @@
           stageTimes.renderMs;
       frameProfile.record({
         ...stageTimes,
+        emergencyEntered,
+        location: frameWorkMs >= 50 || intervalMs >= 120 || emergencyEntered
+          ? slowdownLocation(events) : null,
+        // Only event categories, never object payloads or character names.
+        // Retain the preceding callback's activity to help explain a later gap.
+        recentEventKinds: events.length
+          ? events.slice(0, 12).map(e => String(e.type || 'unknown').slice(0, 32))
+          : null,
         otherSimulationMs,
         frameWorkMs,
         intervalMs,

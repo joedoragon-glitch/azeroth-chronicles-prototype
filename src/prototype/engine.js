@@ -10,6 +10,21 @@
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   const classes = R.balance.classes;
+  // Fail closed when future classes are registered without an authored
+  // starting party or chase profile. Nothing here makes Rogue playable.
+  const classStartingCompanions = Object.freeze({
+    paladin: Object.freeze(['soldier', 'archer']),
+    mage: Object.freeze(['soldier', 'archer']),
+    ranger: Object.freeze(['soldier', 'archer']),
+    rogue: Object.freeze([]),
+  });
+  const basicAttackApproachRanges = Object.freeze({
+    paladin: 105,
+    mage: 350,
+    ranger: 350,
+    rogue: R.rogueHeroFoundation.basic.range, // Dormant until class admission is authorized.
+  });
+
   const talentMaxRanks = R.balance.disciplines.maxRanks;
   // Rounded from the level-1 class stat ratios: talent growth reinforces each class's natural strengths while keeping the old average power budget.
   const talentProfiles = R.balance.disciplines.profiles;
@@ -100,6 +115,8 @@
         // Earned optional manuals are permanent campaign knowledge, not items.
         // Crit chance stays OFF without an explicit native Party session.
         criticalCodices: {},
+        // Independent, save-safe nickname rotation for automated Rogue captures.
+        rogueNicknameCursor: { en: 0, es: 0 },
         gathered: {},
         tributeRemainder: 0,
         gatheringTarget: null,
@@ -180,7 +197,11 @@
         gameOver: false,
       };
       if (mode !== 'arena') this.initializeQuests();
-      this.s.party = [this.unit('soldier', 260, 390), this.unit('archer', 350, 380)];
+      const starterTypes = classStartingCompanions[heroClass];
+      if (!starterTypes) throw Error('Missing starting company for hero class');
+      this.s.party = starterTypes.map((type, i) =>
+        this.unit(type, i === 0 ? 260 : 350, i === 0 ? 390 : 380),
+      );
       if (mode === 'arena') {
         this.s.arenaStage = 'hub';
         this.s.arenaRegion = 0;
@@ -633,7 +654,8 @@
       }
       const step = Math.min(dt, h.seconds),
         amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
-      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      if (amount > 0) e.hp = Math.min(e.maxHp,
+        e.hp + amount * this.rogueEnemyHealingFactor(e));
       h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
       h.seconds = Math.max(0, h.seconds - step);
       if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp)
@@ -702,7 +724,8 @@
       }
       const step = Math.min(dt, h.seconds),
         amount = Math.min(e.maxHp - e.hp, (h.remaining * step) / h.seconds);
-      if (amount > 0) e.hp = Math.min(e.maxHp, e.hp + amount);
+      if (amount > 0) e.hp = Math.min(e.maxHp,
+        e.hp + amount * this.rogueEnemyHealingFactor(e));
       h.remaining = Math.max(0, h.remaining - Math.max(0, amount));
       h.seconds = Math.max(0, h.seconds - step);
       if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp) delete e.supportHeal;
@@ -2671,7 +2694,7 @@
       this.zone().buildings.push(b);
       builder.order = { type: 'build', id: b.id };
       this.say(
-        (builder.type === 'archer' ? 'Ranger' : 'Soldier') +
+        this.companionDisplayName(builder) +
           ' assigned to build the basic barracks.',
       );
       return true;
@@ -2686,7 +2709,7 @@
       this.s.recallActive = false;
       builder.order = { type: 'build', id: b.id };
       this.say(
-        (builder.type === 'archer' ? 'Ranger' : 'Soldier') + ' assigned to resume construction.',
+        this.companionDisplayName(builder) + ' assigned to resume construction.',
       );
       return true;
     }
@@ -2705,7 +2728,7 @@
       this.s.recallActive = false;
       builder.order = { type: 'upgrade', id: b.id };
       this.say(
-        (builder.type === 'archer' ? 'Ranger' : 'Soldier') + ' assigned to upgrade the barracks.',
+        this.companionDisplayName(builder) + ' assigned to upgrade the barracks.',
       );
       return true;
     }
@@ -3523,6 +3546,11 @@
     }
 
     die(cause = null) {
+      // Endure is per life; a genuine defeat starts a new one, never an infinite loop.
+      if (this.hero.class === 'rogue') {
+        this.hero.rogueEndureUsed = false;
+        delete this.hero.rogueEndureUntil;
+      }
       if (this.s.mode === 'arena') {
         this.s.statistics.deaths++;
         this.arenaSelectStage('hub');
@@ -3634,6 +3662,27 @@
         'warning',
       );
     }
+    heroBasicAttackApproachRange() {
+      const reach = basicAttackApproachRanges[this.hero.class];
+      if (!Number.isFinite(reach)) throw Error('Missing basic attack approach range');
+      return reach;
+    }
+    // Called only when class changes: preserve every owned companion, but
+    // never permit an inherited larger army to violate the successor's save.
+    normalizeSuccessorCompany() {
+      const active = this.s.party.filter((u) => u.active !== false),
+        overflow = active.length - this.expeditionPartyCap();
+      if (overflow <= 0) return 0;
+      for (const u of active.slice(-overflow)) {
+        this.clearPartyCharge(u);
+        this.clearCompanionJudgment(u);
+        u.active = false;
+        u.order = null;
+        u.path = [];
+      }
+      this.say(overflow + ' inherited companion' + (overflow === 1 ? '' : 's') + ' moved to reserve.');
+      return overflow;
+    }
     successor(heroClass) {
       if (
         !this.s.challenge.succession ||
@@ -3659,6 +3708,7 @@
         if (old[key] !== undefined) fresh[key] = clone(old[key]);
       this.s.hero = fresh;
       this.resetBasicCombo();
+      this.normalizeSuccessorCompany();
       this.syncCompanionLevelStats();
       this.s.challenge.pending = false;
       this.s.refuge = 'vale';
@@ -4251,7 +4301,7 @@
           ) {
             if (
               dist(h, target) >
-              (h.order.type === 'attack' ? (h.class === 'paladin' ? 105 : 350) : 25)
+              (h.order.type === 'attack' ? this.heroBasicAttackApproachRange() : 25)
             )
               this.follow(
                 h,
@@ -4309,9 +4359,10 @@
       const performanceMark =
         typeof input.performanceMark === 'function' ? input.performanceMark : null;
       performanceMark?.('partyStart');
-      this.updateParty(dt);
+      this.updateParty(dt, performanceMark);
       performanceMark?.('partyEnd');
       this.updateEnemies(dt);
+      this.tickRogueStations();
       // Scripted charges, pulls and teleports can bypass ordinary path collision.
       // Keep every arena combatant inside the same marked, walkable perimeter.
       if (this.s.mode === 'arena') this.arenaContainActors();
@@ -6655,7 +6706,8 @@
             if (left > 0) captainSelfHealRecovery.set(e, left);
             else captainSelfHealRecovery.delete(e);
           }
-          if (e.supportHeal) this.advanceEnemySupportHeal(e, dt);
+          if (e.hp > 0) this.tickRogueEnemyDot(e, dt);
+          if (e.hp > 0 && e.supportHeal) this.advanceEnemySupportHeal(e, dt);
           if (e.hybridSelfHeal) this.advanceHybridSelfHeal(e, dt);
         } else {
           if (e.supportHeal) delete e.supportHeal;
@@ -7243,6 +7295,7 @@
         } else if (
           e.nightOnly &&
           !this.mageSilenceActive(e) &&
+          !this.rogueEnemySilenced(e) &&
           e.specialCd <= 0 &&
           visible &&
           d <
@@ -8125,6 +8178,19 @@
       ? PrototypeEnemyVfxEvents
       : require('./enemy-vfx-events.js');
   EnemyVfxEvents.install(Campaign);
+  // Register the fourth class as one coherent capability: the live browser
+  // shell invokes this before loading saves or offering New Game/Succession.
+  // Native fixtures may still opt in deliberately to retain their original
+  // three-class baselines; saves never encode a registration switch.
+  Campaign.enableRoguePlaytest = () => {
+    if (classes.rogue) return false;
+    classes.rogue = Object.freeze({
+      icon: 'jingle-bell', ...R.rogueHeroFoundation.stats,
+    });
+    talentProfiles.rogue = Object.freeze({ ...R.rogueHeroFoundation.talents });
+    R.movementBasicClasses.rogue = true;
+    return true;
+  };
   Campaign.rules = R;
   Campaign.data = D;
   Campaign.classes = classes;

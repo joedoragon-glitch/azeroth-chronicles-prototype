@@ -58,15 +58,27 @@ for (const cls of ['paladin', 'mage', 'ranger'])
         near(g.hero.chargedCd[slot - 1], charged ? m('cooldown') : 0);
         // Hawk damage occurs on actual contact, never at launch.
         if (cls === 'ranger' && slot === 1 && charged) g.advanceHeroSkillEffects(0.2);
+        // Charged Mage's beam is a traveling effect; sample actual arrival.
+        if (cls === 'mage' && slot === 1 && charged) {
+          for (let i = 0; i < 10 && g._heroSkillEffects?.length; i++) {
+            g.s.time += 0.1;
+            g.advanceHeroSkillEffects(0.1);
+          }
+        }
         const output = raw.length ? raw : g.s.projectiles.map((p) => p.damage);
         if (m('damage') !== undefined)
           near(output[0], Array.isArray(m('damage')) ? m('damage')[0] : m('damage'));
         if (m('healing') !== undefined) near(g.hero.hp - 1, m('healing'));
         if (m('slow') !== undefined) {
           const shot = g.s.projectiles[0];
-          const actual = shot?.slow
-            ? shot.slow + C.rules.cooldownBalance.slowDurationBonusSeconds
-            : enemy.slow;
+          // Ranger's charged Pinning Volley launches physical arrows with
+          // rangerVolleySlow applied only on actual contact. The ordinary
+          // shot.slow field is correctly zero until that moment.
+          const actual = shot?.rangerVolleySlow
+            ? shot.rangerVolleySlow + C.rules.cooldownBalance.slowDurationBonusSeconds
+            : shot?.slow
+              ? shot.slow + C.rules.cooldownBalance.slowDurationBonusSeconds
+              : enemy.slow;
           assert(
             Math.abs(actual - m('slow')) < 1e-7,
             `${cls} slot ${slot} rank ${rank} charged ${charged}: Slow ${actual} vs ${m('slow')}`,

@@ -26,6 +26,12 @@
       'separationSegments',
       'routeCalls',
       'routeMs',
+      'companionRouteCalls',
+      'companionRouteMs',
+      'companionFollowCalls',
+      'companionFollowMs',
+      'companionTravelClearCalls',
+      'companionTravelClearMs',
       'actors',
       'maxCellBodies',
     ];
@@ -48,6 +54,12 @@
       ['actorStepAllowed', 'actorStepCalls', 'actorStepMs'],
       ['separateActors', 'separationCalls', 'separationMs'],
       ['route', 'routeCalls', 'routeMs'],
+      // Follow includes path planning and segment checks; these are nested
+      // timings, never additive. In particular, the companion A* search does
+      // not use the normal route() method.
+      ['companionRoute', 'companionRouteCalls', 'companionRouteMs'],
+      ['followCompanion', 'companionFollowCalls', 'companionFollowMs'],
+      ['companionTravelClear', 'companionTravelClearCalls', 'companionTravelClearMs'],
       ['nearbyActors', null, null],
       ['actorCrowd', null, null],
     ];
@@ -199,6 +211,16 @@
           m.routeMs.mean +
           '/' +
           m.routeMs.p95 +
+          '\\nCompanion follow ms mean/p95 ' +
+          m.companionFollowMs.mean +
+          '/' +
+          m.companionFollowMs.p95 +
+          ' · companion A* ' +
+          m.companionRouteMs.mean +
+          '/' +
+          m.companionRouteMs.p95 +
+          ' · route attempts/tick ' +
+          m.companionRouteCalls.mean +
           '\\nCalls/tick mean: move ' +
           m.moveCalls.mean +
           ', blocked ' +
@@ -402,7 +424,8 @@
               yy = y + dy,
               next = yy * n + xx;
             if (xx < 0 || yy < 0 || xx >= n || yy >= n || !free(next)) continue;
-            const g = current.g + step * Math.hypot(dx, dy);
+            // Unit cardinal/diagonal edge lengths are fixed; avoid repeated hypot in A*'s hot loop.
+            const g = current.g + step * (dx && dy ? Math.SQRT2 : 1);
             if (g >= (cost.get(next) ?? Infinity) || !clear(from, point(next))) continue;
             cost.set(next, g);
             parents.set(next, id);

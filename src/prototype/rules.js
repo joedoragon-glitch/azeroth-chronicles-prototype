@@ -6553,6 +6553,101 @@
       ranger: { ...classUltimates.ranger.charged },
     },
   });
+  // Phase 2: authored but dormant Rogue Bard foundation. The playable class
+  // registry intentionally stays at three until Charm and its tutorial ship.
+  // The weapon is a STAFF WITH AN OVERSIZED SUSPENDED JINGLE BELL; reference
+  // clothing and accessories are not canonical. Audio is a future asset task.
+  // Identity-only pools. Cycle each language independently; never use combat RNG.
+  const rogueCharmNicknames = Object.freeze({
+    en: Object.freeze(["Pipsqueak","Stinkums","Mittens","Nibbles","Pickles","Wiggles","Snookums","Crumpet","Dumpling","Sir Flops","Bubbles","Tater Tot","Pudding","Fluffbucket","Squiggles","Cupcake","Wobblekins","Fuzzbutt","Butterbean","Cheesepuff","Noodle","Snickerdoodle","Pebbles","Marshmallow","Biscuit","Tickletoes","Sprinkles","Doodles","Tootsie","Chublet","Puddlefoot","Babyfang","Mr. Wiggles","Lady Nibbles","Soggyboots","Muffinface","Rumpus","Boopnose","Dingleberry","Flapjack","Gumdrop","Cuddlebug","Waffles","Noodlehead","Squishums","Pookums","Jellybean","Squeaky","Nutterbutter","Bumblebum","Tippytoes","Pompom","Wigglebottom","Scampers","Tinseltoes","Fluffy Doom","Stinky Pete","Honeybun","Snuffles","Puddlewhisker","Tootle","Crinkle","Sweetpea","Lumpy","Eggnog","Oopsie","Doodlebug","Cabbage","Pumpernickel","Booples"]),
+    es: Object.freeze(["Pulguillas","Mocoso","Pelusín","Ñoñito","Chiquitín","Cabezón","Patitas","Bizcochito","Bomboncito","Cucharita","Babosín","Don Calcetín","Doña Croqueta","Tripita","Pompitas","Soplido","Piojito","Churretín","Naricitas","Barriguitas","Papanatas","Patatín","Quesito","Chicharrón","Burbujitas","Puchero","Chupetín","Calabacín","Morcillita","Fideo","Don Babero","Doña Pestañitas","Mojadito","Ñoñerías","Saltarín","Carraspera","Galletita","Mimosín","Pajarito","Pancito","Tontolín","Rabanito","Albondiguita","Puerquito","Cebollín","Lagartijita","Don Patán","Trastito","Guindilla","Pepinillo","Ñiquiñaque","Chiflito","Chisporrote","Cacahuete","Cachetitos","Doña Babita","Peluchín","Pedorretas","Pastelito","Bigotitos","Trompitas","Corazoncito","Chismocito","Panzón","Chancletita","Lagrimitas","Don Ronquiditos","Tiquismiquis","Chirimbolo","Ñoñorrón"]),
+  });
+  // Phase 5 first vertical slices: a mirrored area pulse and one short-lived
+  // session-only boon per family. Names remain provisional and are deliberately
+  // separate from these owner-tunable combat parameters.
+  const roguePerformances = Object.freeze({
+    2: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 3, slow: 1.5,
+        seconds: 4.5, move: 0.08, recovery: 0.05,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 185, cap: 4, slow: 2.2,
+        seconds: 6, move: 0.12, recovery: 0.08,
+      }),
+    }),
+    5: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 140, cap: 3, seconds: 4,
+        slow: 0.65, slowResistance: 0.25, ward: 0, pulseDamage: 0,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 180, cap: 4, seconds: 5,
+        slow: 0.85, slowResistance: 0.40, ward: 0.06, pulseDamage: 0.22,
+      }),
+    }),
+    8: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 160, cap: 4, damage: 1.15,
+        seconds: 4.5, criticalChance: 0.04, specialDamage: 0.04,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 205, cap: 6, damage: 1.65,
+        silence: 0.75, seconds: 6, criticalChance: 0.06, specialDamage: 0.06,
+      }),
+    }),
+    4: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 3, seconds: 4,
+        dotFraction: 0.015, antiHeal: 0.25, healFraction: 0.03, incomingHealing: 0.08,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 185, cap: 4, seconds: 5,
+        dotFraction: 0.025, antiHeal: 0.4, healFraction: 0.05, incomingHealing: 0.12,
+      }),
+    }),
+    3: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 2, debt: 0.6,
+        seconds: 3, protection: true,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 185, cap: 3, debt: 0.85,
+        silence: 1.2, seconds: 4, protection: true,
+      }),
+    }),
+    7: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 2, push: 25, weaken: 3,
+        weakenFraction: 0.14, seconds: 4, outgoing: 0.05,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 190, cap: 4, push: 40, weaken: 4,
+        weakenFraction: 0.20, seconds: 5.5, outgoing: 0.08,
+      }),
+    }),
+    6: Object.freeze({
+      tap: Object.freeze({
+        range: 260, radius: 145, cap: 2, debt: 0.6,
+        seconds: 4.5, specialRecovery: 0.12,
+      }),
+      charged: Object.freeze({
+        range: 300, radius: 190, cap: 4, debt: 1,
+        seconds: 6, specialRecovery: 0.18,
+      }),
+    }),
+  });
+  const rogueHeroFoundation = Object.freeze({
+    classId: 'rogue',
+    weapon: Object.freeze({ kind: 'staff', instrument: 'suspended-jingle-bell', basicCue: 'bell-jingle' }),
+    stats: Object.freeze({ hp: 90, mp: 60, power: 18, armor: 3, speed: 300 }),
+    talents: Object.freeze({ power: 7, mana: 2, hp: 27, speed: 38 }),
+    basic: Object.freeze({
+      range: 260, primaryMultiplier: 0.8, splashMultiplier: 0.25,
+      splashRadius: 100, secondaryCap: 2, finisherSecondaryCap: 4,
+    }),
+    endure: Object.freeze({ duration: 2, floorHp: 1 }),
+  });
   const basicAttackCombo = {
     steps: 3,
     resetSeconds: 4,
@@ -6962,6 +7057,49 @@
       reforgeBonus: { weapon: 5, armor: 3 },
     },
     companions: {
+      // Native friendly creature baselines, keyed by actual authored subtype.
+      // These values do not inherit hostile region/night/elite scaling.
+      charmed: {
+        goblin: {
+          melee: { hp: 100, damage: 10, armor: 3, speed: 1.14, interval: 0.78, reach: 65 },
+          ranged: { hp: 88, damage: 11, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 240 },
+        },
+        skeleton: {
+          melee: { hp: 114, damage: 12, armor: 5, speed: 0.98, interval: 0.88, reach: 70 },
+          ranged: { hp: 102, damage: 12, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 280 },
+        },
+        mireling: {
+          melee: { hp: 122, damage: 12, armor: 6, speed: 0.95, interval: 0.96, reach: 72 },
+          ranged: { hp: 110, damage: 12, armor: 4, speed: 0.97, interval: 1.08, reach: 230, retreat: 105, style: 'spit', shotSpeed: 230 },
+        },
+        reedbeast: {
+          melee: { hp: 138, damage: 13, armor: 7, speed: 0.93, interval: 1.04, reach: 74 },
+          ranged: { hp: 118, damage: 13, armor: 5, speed: 0.96, interval: 1.1, reach: 250, retreat: 125, style: 'spit', shotSpeed: 220 },
+        },
+        wolf: {
+          melee: { hp: 112, damage: 15, armor: 4, speed: 1.2, interval: 0.73, reach: 68 },
+        },
+        ogre: {
+          melee: { hp: 176, damage: 19, armor: 10, speed: 0.8, interval: 1.26, reach: 86 },
+          ranged: { hp: 152, damage: 17, armor: 8, speed: 0.83, interval: 1.23, reach: 260, retreat: 115, style: 'stone', shotSpeed: 220 },
+        },
+        orc: {
+          melee: { hp: 138, damage: 15, armor: 7, speed: 1.02, interval: 0.91, reach: 78 },
+          ranged: { hp: 122, damage: 15, armor: 5, speed: 1.04, interval: 1.06, reach: 260, retreat: 125, style: 'axe', shotSpeed: 250 },
+        },
+        archer: {
+          melee: { hp: 110, damage: 12, armor: 4, speed: 1.06, interval: 0.9, reach: 72 },
+          ranged: { hp: 104, damage: 14, armor: 3, speed: 1.08, interval: 0.94, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+        },
+        ashbeast: {
+          melee: { hp: 154, damage: 17, armor: 8, speed: 1.08, interval: 0.94, reach: 78 },
+          ranged: { hp: 134, damage: 16, armor: 6, speed: 1.04, interval: 1.16, reach: 270, retreat: 130, style: 'cinder', shotSpeed: 240 },
+        },
+        crownguard: {
+          melee: { hp: 148, damage: 16, armor: 9, speed: 0.99, interval: 0.88, reach: 78 },
+          ranged: { hp: 130, damage: 15, armor: 7, speed: 1, interval: 0.98, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+        },
+      },
       hp: { soldier: 120, archer: 105, pet: 112 },
       armor: { soldier: 8, archer: 5, pet: 6 },
       petDamage: 13,
@@ -7589,6 +7727,7 @@
     meleeReach,
     resourceMode,
     cooldownBalance,
+    roguePerformances,
     ashFeeding,
     vitalitySiphon,
     bossRecovery,
@@ -7638,6 +7777,8 @@
     heroAreaTargetCaps,
     classUltimates,
     basicAttackCombo,
+    rogueHeroFoundation,
+    rogueCharmNicknames,
     companionSkills,
     petCompanions,
     ordinaryMeleeScaling,

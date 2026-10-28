@@ -107,8 +107,15 @@
     const kind = e.renderKind;
     // Authored crowned class outfits have procedural detail not present in base sprites.
     if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];
-    if (kind === 'ally')
+    if (kind === 'ally') {
+      if (e.charmOrigin)
+        return [enemyKey({
+          species: e.charmOrigin.species,
+          ranged: e.charmOrigin.role === 'archer',
+          type: 'mob',
+        })];
       return e.type === 'pet' ? [] : ['ally:' + clean(e.class || e.type || 'worker')];
+    }
     if (kind === 'enemy') {
       // New authored multiracial armor and mounted-direwolf silhouettes are
       // procedural: the old generic guard/Wolf sprites cannot depict them.
@@ -219,7 +226,7 @@
     // registrations and their clips intact for recovery; Ranger/Archer stay raster.
     if (
       (e?.renderKind === 'hero' && ['paladin', 'mage'].includes(e.class)) ||
-      (e?.renderKind === 'ally' && (e.class || e.type) === 'soldier')
+      (e?.renderKind === 'ally' && !e.charmOrigin && (e.class || e.type) === 'soldier')
     )
       return null;
     // Owner-selected Greenwood cottage uses the current procedural design.

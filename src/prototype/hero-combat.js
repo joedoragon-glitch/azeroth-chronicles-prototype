@@ -3,8 +3,18 @@
   'use strict';
   function install(Campaign, { R }) {
     const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    // Enemy-only charged hush is transient; never saved or inherited.
+    const rogueEnemySilences = new WeakMap();
+    const rogueEnemyWithers = new WeakMap();
+    // At most two finite stationary performance circles per campaign.
+    // Weakly owned, unsaved and automatically scoped to the active region.
+    const rogueMusicStations = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
+    // Adding a hero to the class registry must not silently use Ranger shots,
+    // area geometry, critical keys or cooldowns before that class is authored.
+    // The fourth class intentionally remains blocked until its combat ships.
+    const implementedHeroCombatClasses = new Set(['paladin', 'mage', 'ranger']);
     class HeroCombat {
       tacticMilestones(rank) {
         return Math.floor(Math.max(1, rank || 1) / 2);
@@ -655,6 +665,9 @@
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
       }
       skillCooldown(slot, charged = false) {
+        // The Rogue's first charged performance has its own cooldown budget.
+        if (slot === 1 && charged && this.hero.class === 'rogue')
+          return 8 * (1 - this.heroCooldownReduction());
         const first = R.chargedSkills.first;
         const base =
           slot === 1
@@ -766,6 +779,10 @@
         return target;
       }
       heroSkillRange(slot, charged = false) {
+        if (this.hero.class === 'rogue')
+          return slot === 1 ? this.rogueSkill1Config(charged).range :
+            (R.roguePerformances[slot]?.[charged ? 'charged' : 'tap']?.range || 0);
+        if (!implementedHeroCombatClasses.has(this.hero.class)) return 0;
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           steps = this.tacticMilestones(this.hero.skills[slot - 1]);
         if (slot === 1 && charged) {
@@ -1137,6 +1154,469 @@
           return alive;
         });
       }
+      // Independently authored releases: automatic combo, manual Skill 1
+      // tap, and charged Skill 1 never share a critical action or Charm roll.
+      // This is strictly opt-in until the native Rogue controller is released.
+      rogueCriticalRelease(action) {
+        return this.hero.class === 'rogue' && this._criticalPartyNative?.enabled
+          ? this._criticalPartyNative.release(this, 'hero/rogue/' + action, 'hero')
+          : null;
+      }
+      // These are owner-tunable first-play numbers, not permanent skill names.
+      rogueStationProtection(unit) {
+        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
+            unit.active === false || !this.s.party.includes(unit)) return null;
+        let selected = null;
+        for (const field of rogueMusicStations.get(this) || []) {
+          if (field.zone !== this.zoneId || field.until <= this.s.time ||
+              dist(unit, field) > field.radius || !this.line(field, unit)) continue;
+          selected = {
+            resistance: Math.max(selected?.resistance || 0, field.resistance),
+            ward: Math.max(selected?.ward || 0, field.ward),
+          };
+        }
+        return selected;
+      }
+      tickRogueStations() {
+        const fields = rogueMusicStations.get(this);
+        if (!fields?.length) return;
+        if (this.hero.class !== 'rogue' || this.hero.hp <= 0 || this.peace) {
+          rogueMusicStations.delete(this);
+          return;
+        }
+        const live = fields.filter((field) =>
+          field.zone === this.zoneId && field.until > this.s.time);
+        if (!live.length) { rogueMusicStations.delete(this); return; }
+        rogueMusicStations.set(this, live);
+        for (const field of live) {
+          if (field.nextPulse > this.s.time) continue;
+          field.nextPulse = this.s.time + 0.65;
+          const contacts = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, field) <= field.radius && this.line(field, e))
+            .sort((a,b) => dist(a,field)-dist(b,field) || this.idOrder(a,b))
+            .slice(0,field.cap);
+          for (const e of contacts) {
+            this.applySlow(e, field.slow);
+            if (field.pulseDamage > 0)
+              this.damage(e, (this.power() + 8) * field.pulseDamage, 'hero', { area: true });
+          }
+        }
+      }
+      rogueEnemyHealingFactor(e) {
+        const state = rogueEnemyWithers.get(e);
+        return this.hero.class === 'rogue' && state?.zone === this.zoneId &&
+          state.until > this.s.time && e?.hp > 0 ? 1 - Math.min(0.4, state.antiHeal) : 1;
+      }
+      tickRogueEnemyDot(e, dt) {
+        const state = rogueEnemyWithers.get(e);
+        if (this.hero.class !== 'rogue' || this.peace || e?.hp <= 0 ||
+            !state || state.zone !== this.zoneId || state.until <= this.s.time - dt ||
+            !(state.remaining > 0)) return false;
+        const live = Math.max(0.01, state.until - (this.s.time - dt)),
+          amount = Math.min(state.remaining,
+            state.remaining * Math.min(dt, live) / live);
+        if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true })) return false;
+        state.remaining -= amount;
+        return true;
+      }
+      rogueEnemySilenced(e) {
+        const state = rogueEnemySilences.get(e);
+        return this.hero.class === 'rogue' && e?.hp > 0 &&
+          state?.zone === this.zoneId && state.until > this.s.time;
+      }
+      rogueSkill1Config(charged = false) {
+        return charged
+          ? { range: 300, radius: 190, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
+          : { range: 260, radius: 145, cap: 2, damage: 1.3, allyDamage: 0.05, seconds: 4 };
+      }
+      // Starting manual song: small / widened hostile pulse mirrored to
+      // living active allies in the same lawful area. Charms never come from
+      // manual attacks. The names are revisable independently of these rules.
+      castRogueSkill1(targetId = null, charged = false, encountersAtStart = null) {
+        const h = this.hero, form = this.rogueSkill1Config(charged),
+          rank = h.skills[0], selected = this.selectedHeroTarget(),
+          id = targetId ?? selected?.id ?? this.s.heroTarget;
+        if (h.class !== 'rogue' || this.peace || h.hp <= 0 || !rank ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
+          (charged && this.partyChargeRecovery(h) > 0) ||
+          this.mageSilenceActive(h) || !this.skillReady(1, charged)) return false;
+        const eligible = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+          dist(e, h) <= form.range && this.line(h, e),
+        ),
+          locked = !!selected || targetId !== null && targetId !== undefined,
+          primary = eligible.find((e) => e.id === id) ||
+            (locked ? null : eligible.sort((a, b) =>
+              dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
+        if (!primary) return false; // no hostile, no free buff or cooldown
+        const enemies = eligible.filter((e) =>
+          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)),
+        ).sort((a, b) => a === primary ? -1 : b === primary ? 1 :
+          dist(a, primary) - dist(b, primary) || this.idOrder(a, b)).slice(0, form.cap);
+        const allies = this.activeLivingParty().filter((u) =>
+          u.hp > 0 && u.active !== false &&
+          dist(u, primary) <= form.radius && this.line(primary, u));
+        this.releaseRecallForCombat();
+        this.engage(primary);
+        h.cd[0] = this.skillCooldown(1, false);
+        if (charged) h.chargedCd[0] = this.skillCooldown(1, true);
+        this.s.heroTarget = primary.id;
+        const criticalReceipt = this.rogueCriticalRelease(charged ? '1-charged' : '1-tap'),
+          amount = this.criticalHeroValue(criticalReceipt,
+            (this.power() + 12) * form.damage * (1 + 0.15 * (rank - 1)), 'damage');
+        let hits = 0;
+        for (const e of enemies) {
+          if (this.damage(e, amount, 'hero', {
+            area: true, ...(charged && encountersAtStart ? { encountersAtStart } : {}),
+          })) hits++;
+        }
+        // Stronger same-family application replaces the bonus; no stacking.
+        // Other families will use separate bounded effect records in Phase 5.
+        for (const u of allies) {
+          if ((u.rogueSharpRefrainUntil || 0) <= this.s.time) u.rogueSharpRefrainBonus = 0;
+          u.rogueSharpRefrainBonus = Math.max(u.rogueSharpRefrainBonus || 0, form.allyDamage);
+          u.rogueSharpRefrainUntil = Math.max(u.rogueSharpRefrainUntil || 0, this.s.time + form.seconds);
+        }
+        this.event('rogueBellSkill1', {
+          actor: 'hero', class: 'rogue', slot: 1,
+          form: charged ? 'charged' : 'tap', audioCue: 'bell-jingle',
+          instrument: R.rogueHeroFoundation.weapon.instrument,
+          x: primary.x, y: primary.y, radius: form.radius,
+          target: primary.id, hits, allyCount: allies.length,
+        });
+        return true;
+      }
+
+      // Phase 5: mirrored combat-only area songs. A single legal primary
+      // anchors the performance; enemies and living allies are resolved in
+      // the identical circle without coupling the two outcomes. No Charm.
+      castRoguePerformance(slot, targetId = null, charged = false) {
+        const h = this.hero, rank = h.skills[slot - 1],
+          form = R.roguePerformances[slot]?.[charged ? 'charged' : 'tap'],
+          selected = this.selectedHeroTarget(),
+          id = targetId ?? selected?.id ?? this.s.heroTarget;
+        if (!form || h.class !== 'rogue' || h.hp <= 0 || !rank || this.peace ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
+          (charged && this.partyChargeRecovery(h) > 0) ||
+          this.mageSilenceActive(h) || !this.skillReady(slot, charged))
+          return false;
+        const candidates = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+          dist(e, h) <= form.range && this.line(h, e));
+        const locked = !!selected || targetId !== null && targetId !== undefined,
+          primary = candidates.find((e) => e.id === id) ||
+            (locked ? null : candidates.sort((a, b) =>
+              dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
+        if (!primary) return false;
+        const enemies = candidates.filter((e) =>
+          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)))
+          .sort((a, b) => a === primary ? -1 : b === primary ? 1 :
+            dist(a, primary) - dist(b, primary) || this.idOrder(a, b))
+          .slice(0, form.cap);
+        const allies = this.activeLivingParty().filter((u) =>
+          dist(u, primary) <= form.radius && this.line(primary, u));
+        this.releaseRecallForCombat();
+        this.engage(primary);
+        h.cd[slot - 1] = this.skillCooldown(slot, false);
+        if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
+        this.s.heroTarget = primary.id;
+        // Exactly one frozen Party-stream receipt for this legal manual cast.
+        // Only the authored lever changes; allied and hostile sides never
+        // roll separately, and timed effects inherit the committed numbers.
+        const criticalReceipt = this.rogueCriticalRelease(
+          slot + (charged ? '-charged' : '-tap'));
+        let effectForm = form;
+        if (criticalReceipt?.critical) {
+          const field = ({
+            2: charged ? 'seconds' : 'slow',
+            3: charged ? 'silence' : 'debt',
+            4: 'healFraction',
+            5: charged ? 'ward' : 'slow',
+            6: charged ? 'seconds' : 'debt',
+            7: charged ? 'weaken' : 'push',
+            8: charged ? 'silence' : 'damage',
+          })[slot];
+          if (!field || !Object.prototype.hasOwnProperty.call(form, field))
+            throw Error('Missing authored Rogue critical consequence');
+          effectForm = {
+            ...form,
+            [field]: this.criticalHeroValue(
+              criticalReceipt, form[field], criticalReceipt.effect.lever,
+              field === 'ward' ? { max: 0.12 } : {}),
+            ...(slot === 4 ? { criticalMending: true } : {}),
+          };
+        }
+        if (slot === 5) {
+          const current = (rogueMusicStations.get(this) || []).filter((f) =>
+            f.zone === this.zoneId && f.until > this.s.time);
+          current.push({
+            zone: this.zoneId, x: primary.x, y: primary.y,
+            radius: effectForm.radius, cap: effectForm.cap, slow: effectForm.slow,
+            resistance: effectForm.slowResistance, ward: effectForm.ward,
+            pulseDamage: effectForm.pulseDamage, until: this.s.time + effectForm.seconds,
+            nextPulse: this.s.time,
+          });
+          rogueMusicStations.set(this, current.slice(-2));
+        }
+        for (const e of enemies) {
+          if (slot === 2) this.applySlow(e, effectForm.slow);
+          if (slot === 5) {
+            // Station pulses are scheduled from its single placement owner;
+            // never duplicate a pulse as a separate instant AoE result.
+          }
+          if (slot === 8) {
+            const scale = 1 + 0.15 * (rank - 1);
+            this.damage(e, (this.power() + 12) * effectForm.damage * scale, 'hero',
+              { area: true });
+            if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
+                !e.captain && !e.roomCaptain && !(e.immune > 0)) {
+              const old = rogueEnemySilences.get(e);
+              rogueEnemySilences.set(e, { zone: this.zoneId,
+                until: Math.max(old?.zone === this.zoneId ? old.until : 0,
+                  this.s.time + effectForm.silence) });
+            }
+          }
+          if (slot === 4) {
+            const prev = rogueEnemyWithers.get(e);
+            const still = prev?.zone === this.zoneId && prev.until > this.s.time;
+            rogueEnemyWithers.set(e, {
+              zone: this.zoneId,
+              until: Math.max(still ? prev.until : 0, this.s.time + effectForm.seconds),
+              remaining: Math.max(still ? prev.remaining : 0,
+                Math.min(80, Math.max(3, e.maxHp * effectForm.dotFraction))),
+              antiHeal: Math.max(still ? prev.antiHeal : 0, effectForm.antiHeal),
+            });
+          }
+          if (slot === 3) {
+            // Interrupt only an actual native warning/aim, never invent a cast.
+            const warning = e.telegraph || e.rangedAim;
+            if (warning && this.interruptEnemyAction(e, warning)) {
+              e.cd = Math.max(e.cd || 0, effectForm.debt);
+              e.specialCd = Math.max(e.specialCd || 0, effectForm.debt);
+            }
+            // Hush blocks new eligible non-boss specials only; it never
+            // erases protected boss phases or ordinary basic attacks.
+            if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
+                !e.captain && !e.roomCaptain && !(e.immune > 0)) {
+              const prev = rogueEnemySilences.get(e);
+              rogueEnemySilences.set(e, {
+                zone: this.zoneId,
+                until: Math.max(prev?.zone === this.zoneId ? prev.until : 0,
+                  this.s.time + effectForm.silence),
+              });
+            }
+          }
+          if (slot === 7) {
+            // Existing collision/legal-arena push; already executing a
+            // scripted charge is never overridden.
+            if (e.hp > 0) this.shieldPush(e, effectForm.push);
+            const active = (e.weakenUntil || 0) > this.s.time;
+            e.weakenUntil = Math.max(active ? e.weakenUntil : 0, this.s.time + effectForm.weaken);
+            e.weakenFraction = Math.max(active ? e.weakenFraction || 0 : 0,
+              effectForm.weakenFraction);
+          }
+          if (slot === 6) {
+            // Only real, not-ready enemy cooldowns receive finite debt. No
+            // fabricated timers or globally delayed boss phase transitions.
+            for (const key of ['cd', 'specialCd', 'summonCd',
+              'healCd', 'supportHealCd']) {
+              if (Number.isFinite(e[key]) && e[key] > 0)
+                e[key] = Math.min(1e6, e[key] + effectForm.debt);
+            }
+          }
+        }
+        for (const u of (slot === 5 ? [] : allies))
+          this.applyRogueSongBoon(u,
+            slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', effectForm);
+        this.event('rogueBellPerformance', {
+          actor: 'hero', class: 'rogue', slot,
+          form: charged ? 'charged' : 'tap',
+          audioCue: 'bell-jingle',
+          instrument: R.rogueHeroFoundation.weapon.instrument,
+          x: primary.x, y: primary.y, radius: form.radius,
+          target: primary.id, enemies: enemies.length, allies: allies.length,
+        });
+        return true;
+      }
+
+      // The exact individual monster subtype is an authored species plus its
+      // native melee/ranged variant. Player names and translations cannot own it.
+      rogueCharmProfile(e) {
+        if (
+          this.hero.class !== 'rogue' ||
+          !e || e.type !== 'mob' || e.form !== 'normal' || e.hp <= 0 ||
+          e.neutral || e.returning || e.guard || e.roomGuard ||
+          e.awakenedGuard || e.captain || e.roomCaptain || e.fieldCaptain ||
+          e.summon || e.owner || e.reinforcement || e.nightOnly ||
+          e.crownTroop || e.mountedCrownRider || e.veraEscort || e.family ||
+          this.s.mode === 'arena' || this.s.mode === 'developer'
+        ) return null;
+        const authored = Campaign.data.species.flat().find((row) => row[0] === e.species);
+        if (!authored) return null;
+        const ranged = e.ranged === true;
+        // A runtime flag alone cannot invent an authored monster subtype.
+        if (ranged && !R.rangedProfiles[e.species] &&
+          !['archer', 'crownguard'].includes(e.species)) return null;
+        const role = ranged ? 'archer' : 'soldier',
+          variant = ranged ? R.rangedProfiles[e.species]?.variant : null;
+        return {
+          typeId: 'enemy:' + e.species + ':' + (ranged ? 'ranged' : 'melee'),
+          species: e.species,
+          role,
+          typeName: authored[1] + (variant ? ' ' + variant : ''),
+          sourceEnemyId: e.id,
+          sourceZone: this.zoneId,
+        };
+      }
+      rogueCharmAttempt(primary, beforeHp, attackZone) {
+        if (
+          this.hero.class !== 'rogue' || this.hero.hp <= 0 || this.peace ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.zoneId !== attackZone || !primary ||
+          !(beforeHp > primary.hp) || primary.hp <= 0 ||
+          this.attackResetProtected(primary) || !this.tacticalDirectTargetable(primary)
+        ) return false;
+        const zone = this.zone(),
+          index = zone.enemies.findIndex((e) => e === primary),
+          profile = this.rogueCharmProfile(primary);
+        if (
+          index < 0 || !profile || this.s.party.length >= 200 ||
+          this.s.party.some((u) => u.charmOrigin?.sourceEnemyId === primary.id) ||
+          Object.values(this.s.charmCaptures || {}).some(
+            (entry) => entry.sourceEnemyId === primary.id,
+          ) ||
+          Object.values(this.s.pending).some((p) => p.base?.id === primary.id) ||
+          new Set(this.s.party.filter(
+            (u) => u.charmOrigin?.typeId === profile.typeId,
+          ).map((u) => u.id)).size >= this.expeditionPartyCap()
+        ) return false;
+        // A saved, independent stream: invalid attempts draw nothing, and Charm
+        // never disturbs the existing combat/World/Party critical RNG streams.
+        const state = Number.isInteger(this.s.rogueCharmRng)
+          ? this.s.rogueCharmRng
+          : (Math.imul(this.s.nextId, 747796405) + 2891336453) >>> 0;
+        const next = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+        this.s.rogueCharmRng = next;
+        // Owner-approved fixed 12% per eligible, surviving primary hit.
+        if (next / 4294967296 >= 0.12) return false;
+        const u = this.unit(profile.role, primary.x, primary.y);
+        // Every legitimate Charm is a fully healed, immediately named ally.
+        // Naming is automatic in both active-group and reserve admissions.
+        u.hp = u.maxHp;
+        u.icon = primary.icon;
+        u.name = profile.typeName;
+        u.customName = this.nextRogueCharmNickname();
+        u.charmOrigin = { ...profile };
+        u.charmSupportCd = 0;
+        const friendly = this.charmedCompanionProfile(u);
+        u.damage = friendly.damage;
+        u.maxHp = this.companionMaxHp(u);
+        u.hp = u.maxHp;
+        u.active = this.activeParty().length < this.expeditionPartyCap();
+        // No kill() call: no XP, loot, quests, streaks or death rewards.
+        // Retire every active target pointer/order before detaching the foe.
+        // The existing dust-cover helper already centralizes this cleanup.
+        this.tacticalDropDustTarget(primary);
+        this.cancelEncounter(primary);
+        this.clearEnemyUnderFire(primary);
+        this.tacticalClearThreat(primary);
+        this.tacticalClearBurst(primary);
+        this.tacticalClearRogueRegroup(primary);
+        this.s.projectiles = this.s.projectiles.filter(
+          (p) => p.source !== primary.id && p.target !== primary.id && p.owner !== primary.id,
+        );
+        this.s.hazards = this.s.hazards.filter(
+          (h) => h.source !== primary.id && h.owner !== primary.id,
+        );
+        zone.enemies.splice(index, 1);
+        this.s.party.push(u);
+        this.s.charmCaptures ??= {};
+        this.s.charmCaptures[u.id] = { ...profile };
+        if (this.s.heroTarget === primary.id) this.s.heroTarget = null;
+        this.resetBasicCombo();
+        this.event('rogueCharm', {
+          actor: 'hero', companionId: u.id, sourceEnemyId: primary.id,
+          typeId: profile.typeId, active: u.active, x: u.x, y: u.y,
+        });
+        this.say(u.customName + ' (' + profile.typeName + ') Charmed. ' +
+          (u.active ? 'Joined the group.' : 'Group full; resting in reserve.'));
+        return true;
+      }
+      // Rogue automatic basic: only the surviving primary may try Charm.
+      castRogueBasic(targetId = null) {
+        const cfg = R.rogueHeroFoundation.basic;
+        if (
+          this.hero.class !== 'rogue' || this.s.mode === 'developer' ||
+          this.peace || this.hero.hp <= 0 || !this.hero.skills[0] ||
+          (this.hero.basicCd || 0) > 0 ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(this.hero) ||
+          this.hero.deathRollHeld || this.hero.keeperHeld ||
+          this.hero.order?.type === 'skill-approach'
+        ) return false;
+        const selected = this.selectedHeroTarget(),
+          preferred = targetId ?? selected?.id ?? this.basicComboTargetId ?? this.s.heroTarget,
+          eligible = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, this.hero) <= cfg.range && this.line(this.hero, e),
+          ),
+          locked = !!selected || (targetId !== null && targetId !== undefined),
+          primary = eligible.find((e) => e.id === preferred) ||
+            (locked ? null : eligible.sort((a, b) =>
+              dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
+        if (!primary) return false;
+        this.releaseRecallForCombat();
+        this.engage(primary);
+        const combo = this.nextBasicCombo(primary.id),
+          rank = this.hero.skills[0],
+          baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
+            (1 + 0.15 * (rank - 1)) * combo.multiplier;
+        this.hero.basicCd = this.basicSkillCooldown();
+        const criticalReceipt = this.rogueCriticalRelease('auto'),
+          enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
+        const beforePrimaryHp = primary.hp,
+          attackZone = this.zoneId,
+          landed = this.damage(primary, enhancedBasic, 'hero', { automaticBasic: true });
+        let splashHits = 0;
+        if (landed) {
+          const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap,
+            axis = Math.atan2(primary.y - this.hero.y, primary.x - this.hero.x),
+            angleGap = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))),
+            halfAngle = combo.step === 3 ? 0.75 : 0.5;
+          const secondary = this.zone().enemies.filter((e) =>
+            e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
+            !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+            this.tacticalDirectTargetable(e) &&
+            dist(e, primary) <= cfg.splashRadius &&
+            dist(e, this.hero) <= cfg.range + cfg.splashRadius &&
+            angleGap(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), axis) <= halfAngle &&
+            this.line(this.hero, e),
+          ).sort((a, b) => dist(a, primary) - dist(b, primary) || this.idOrder(a, b));
+          for (const e of secondary.slice(0, max))
+            if (this.damage(e, enhancedBasic * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
+              splashHits++;
+        }
+        if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);
+        // Bell-jingle sound intent remains distinct from actual audio playback.
+        this.event('rogueBellBasic', {
+          actor: 'hero', class: 'rogue', slot: 1, automaticBasic: true,
+          instrument: R.rogueHeroFoundation.weapon.instrument,
+          audioCue: R.rogueHeroFoundation.weapon.basicCue,
+          x: this.hero.x, y: this.hero.y,
+          target: primary.id, targetX: primary.x, targetY: primary.y,
+          combo: combo.step, landed: !!landed, splashHits,
+        });
+        return true;
+      }
       castMovementBasic() {
         // A released skill owns its approach. Passive covering fire must not
         // replace the queued charged/ordinary command with Skill 1.
@@ -1144,6 +1624,16 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
+        // The unlocked Rogue songs are staged under the same unregistered
+        // class gate. Later performance families remain unavailable.
+        if (this.hero.class === 'rogue') {
+          if (slot === 1)
+            return automatic && !charged ? this.castRogueBasic(targetId)
+              : !automatic ? this.castRogueSkill1(targetId, !!charged, encountersAtStart)
+              : false;
+          return !automatic ? this.castRoguePerformance(slot, targetId, !!charged) : false;
+        }
+        if (!implementedHeroCombatClasses.has(this.hero.class)) return false;
         if (this.s.mode === 'developer' && slot === 1 && automatic) return false;
         const i = slot - 1,
           rank = this.hero.skills[i],

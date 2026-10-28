@@ -109,6 +109,13 @@
         'No healing or immunity. Fracture is nonstacking.',
       ],
     ],
+    // Working prototype names until the owner revisits bell-staff lore.
+    rogue: [
+      ['Ding and Sting', 'Bell burst / companion basic-damage refrain',
+       'A compact jingle-bell shock damages nearby foes and helps allies strike',
+       'Raise a Racket: a wider bell shock, stronger nearby allied basic strikes',
+       'Both prototype names are under owner revision; mechanics stay separate from labels.'],
+    ],
     ranger: [
       [
         'Rapid Arrows',
@@ -165,13 +172,105 @@
   };
 
   function card(game, slot) {
-    const row = skillCards[game.hero.class]?.[slot - 1];
+    // Repertoire labels are working descriptions, not owner-final names.
+    const experimental = {
+      2: ['Lead Feet', 'Slow / Quickstep',
+        'Slow nearby hostiles and quicken companions in the same area',
+        'Can\'t Dance: wider Slow and stronger allied movement/recovery',
+        'Phase 5 prototype name; subject to owner review.'],
+      5: ['Sticky Shuffle', 'Stationary music / allied inside-circle protection',
+        'Place a brief bell station that Slows enemies and steadies allies inside',
+        'Briar Boogie: a larger field with finite damaging pulses and a small allied ward',
+        'Owner-approved placed magical music station, not a trap. Maximum two fields; tuning pending playtest.'],
+      8: ['Bad Bell Day', 'Enemy blast / allied Finale',
+        'Blast nearby foes while boosting allied critical opportunity and specials',
+        'Last Laugh: bigger blast and a brief non-boss hush; stronger allied Finale',
+        'One native Rogue critical receipt per legal performance; no extra pulses or rerolls.'],
+      4: ['Sour Note', 'Enemy wither / allied Mending',
+        'Afflict nearby foes with timed damage and reduced incoming healing; mend allies',
+        'Rotten Chorus: stronger wither, small healing budget and heal-received boon',
+        'One finite damage and healing budget; no revival or recursively boosted healing.'],
+      3: ['Beat Breaker', 'Native cast interrupt / Steady Beat',
+        'Break a lawful enemy warning and protect nearby allied charges from damage',
+        'Shut the Band Up: wider interrupt, brief non-boss hush and longer protection',
+        'No immunity to death, invalid casts, Recall or boss scripting.'],
+      7: ['Wrong Foot', 'Push + Weaken / Firm Footing',
+        'Displace nearby enemies and weaken their attacks; bolster allied strikes',
+        'Panic Party: wider shove/Weaken and stronger allied damage',
+        'First-play working title; gameplay values are provisional.'],
+      6: ['Stolen Beat', 'Cooldown debt / Borrowed Time',
+        'Delay eligible enemy skills and accelerate allied special recovery',
+        'Time Out: larger debt pulse and stronger allied recharge',
+        'Phase 5 prototype name; subject to owner review.'],
+    };
+    const row = game.hero.class === 'rogue' && slot !== 1
+      ? (game.constructor.rules.roguePerformances[slot] ? experimental[slot] : null)
+      : skillCards[game.hero.class]?.[slot - 1];
     return row
       ? { name: row[0], role: row[1], tap: row[2], charge: row[3], note: row[4] || '' }
       : null;
   }
   function describe(game, slot, rank = game.hero.skills[slot - 1]) {
     const c = card(game, slot);
+    if (game.hero.class === 'rogue' && slot !== 1) {
+      if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
+      const R = game.constructor.rules,
+        entries = R.roguePerformances[slot];
+      const show = (charged) => {
+        const x = entries[charged ? 'charged' : 'tap'],
+          metrics = [
+            { key: 'reach', label: 'Reach', value: x.range, unit: '' },
+            { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
+            { key: 'targets', label: 'Maximum hostile targets', value: x.cap, unit: '' },
+            { key: 'duration', label: 'Companion boon', value: x.seconds, unit: 's' },
+            { key: 'cooldown', label: 'Cooldown',
+              value: game.skillCooldown(slot, charged), unit: 's' },
+          ];
+        if (slot === 2) metrics.push(
+          { key: 'slow', label: 'Enemy Slow',
+            value: x.slow + R.cooldownBalance.slowDurationBonusSeconds, unit: 's' },
+          { key: 'move', label: 'Companion movement', value: x.move * 100, unit: '%' },
+          { key: 'recovery', label: 'Companion cooldown recovery',
+            value: x.recovery * 100, unit: '%' },
+        );
+        if (slot === 5) metrics.push(
+          { key: 'slow', label: 'Enemy station pulse Slow', value: x.slow, unit: 's' },
+          { key: 'resistance', label: 'Inside Slow penalty resistance', value: x.slowResistance * 100, unit: '%' },
+          { key: 'ward', label: 'Inside received damage reduction', value: x.ward * 100, unit: '%' },
+          { key: 'stations', label: 'Maximum active stations', value: 2, unit: '' },
+        );
+        if (slot === 8) metrics.push(
+          { key: 'damage', label: 'Enemy damage coefficient', value: x.damage, unit: 'x' },
+          { key: 'criticalChance', label: 'Companion critical chance', value: x.criticalChance * 100, unit: 'pp' },
+          { key: 'specialDamage', label: 'Companion special damage', value: x.specialDamage * 100, unit: '%' },
+          { key: 'silence', label: 'Eligible non-boss hush', value: x.silence || 0, unit: 's' },
+        );
+        if (slot === 4) metrics.push(
+          { key: 'dot', label: 'Enemy wither budget', value: x.dotFraction * 100, unit: '% HP, capped' },
+          { key: 'antiHeal', label: 'Enemy healing reduced', value: x.antiHeal * 100, unit: '%' },
+          { key: 'heal', label: 'Companion heal budget', value: x.healFraction * 100, unit: '% max HP' },
+          { key: 'incomingHealing', label: 'Other incoming heals increased', value: x.incomingHealing * 100, unit: '%' },
+        );
+        if (slot === 3) metrics.push(
+          { key: 'interruptDebt', label: 'Interrupted enemy cooldown', value: x.debt, unit: 's' },
+          { key: 'silence', label: 'Eligible non-boss hush', value: x.silence || 0, unit: 's' },
+          { key: 'protection', label: 'Companion cast protection', value: x.seconds, unit: 's' },
+        );
+        if (slot === 7) metrics.push(
+          { key: 'push', label: 'Enemy push', value: x.push, unit: '' },
+          { key: 'weaken', label: 'Enemy Weaken', value: x.weaken, unit: 's' },
+          { key: 'outgoing', label: 'Companion outgoing damage', value: x.outgoing * 100, unit: '%' },
+        );
+        if (slot === 6) metrics.push(
+          { key: 'debt', label: 'Enemy cooldown debt', value: x.debt, unit: 's' },
+          { key: 'specialRecovery', label: 'Companion special recovery',
+            value: x.specialRecovery * 100, unit: '%' },
+        );
+        return { title: charged ? 'Charged' : 'Tap',
+          effect: charged ? c.charge : c.tap, metrics };
+      };
+      return { ...c, rank, auto: null, tap: show(false), charge: show(true) };
+    }
     if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
     const R = game.constructor.rules,
       cls = game.hero.class,
@@ -180,6 +279,7 @@
       steps = game.tacticMilestones(rank),
       tactics = R.heroTactics[cls],
       advanced = R.advancedCharges[slot]?.[cls];
+    if (cls === 'rogue' && slot !== 1) return null;
     const tap = { title: 'Tap', effect: c.tap, metrics: [] },
       charge = { title: 'Charged', effect: c.charge, metrics: [] };
     function add(form, key, label, value, unit = '') {
@@ -220,7 +320,30 @@
     ])
       add(f, 'cooldown', 'Cooldown', game.skillCooldown(slot, charged), 's');
     let auto = null;
-    if (slot === 1) {
+    if (slot === 1 && cls === 'rogue') {
+      const cfg = R.rogueHeroFoundation.basic,
+        base = (power + 12) * scale * cfg.primaryMultiplier,
+        tapCfg = game.rogueSkill1Config(false),
+        chargeCfg = game.rogueSkill1Config(true);
+      auto = {
+        title: 'Automatic basics',
+        effect: 'Jingle-bell fan: primary plus two nearby foes, with a five-contact third-hit combo finisher. Charm will affect surviving primary only.',
+        metrics: [],
+      };
+      add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
+      add(auto, 'comboDamage', 'Primary combo damage',
+        R.basicAttackCombo.multipliers.map((v) => base * v));
+      add(auto, 'splashDamage', 'Secondary damage', base * cfg.splashMultiplier);
+      add(auto, 'reach', 'Reach', cfg.range);
+      for (const [form, x] of [[tap, tapCfg], [charge, chargeCfg]]) {
+        add(form, 'damage', 'Damage per enemy', (power + 12) * scale * x.damage);
+        add(form, 'reach', 'Reach', x.range);
+        add(form, 'radius', 'Area radius', x.radius);
+        add(form, 'targets', 'Maximum enemy hits', x.cap);
+        add(form, 'allyBuff', 'Companion basic-hit bonus', x.allyDamage * 100, '%');
+        add(form, 'allyDuration', 'Companion boon duration', x.seconds, 's');
+      }
+    } else if (slot === 1) {
       const base = (power + 12) * scale,
         first = R.chargedSkills.first;
       auto = {

@@ -32,7 +32,8 @@
     }
     function record(game, key, source) {
       const original = resolver.release({ action: {}, key, domain: 'party', released: true });
-      const group = key.startsWith('hero/') ? 'hero' : 'companion';
+      const group = key.startsWith('hero/rogue/') ? 'rogue' :
+        key.startsWith('hero/') ? 'hero' : 'companion';
       const authored = tuning.effectFor(key, group, game.s?.mode || 'normal');
       if (!authored) throw Error('Critical action has no authored effect: ' + key);
       // Level is sampled at RELEASE: changing a developer dial cannot mutate

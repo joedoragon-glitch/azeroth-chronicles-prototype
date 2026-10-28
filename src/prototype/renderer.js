@@ -585,6 +585,37 @@
         yy = y - o.y;
       return { x: (xx / 0.76 + yy / 0.27) / 2, y: (yy / 0.27 - xx / 0.76) / 2 };
     }
+    // The same small, identity-only nameplate policy covers Canvas and Pixi.
+    // A Charmed creature keeps its own species/name, with a readable music cue.
+    function companionWorldLabel(e) {
+      return (e.charmOrigin ? '♫ ' : '') + game.companionDisplayName(e);
+    }
+    function charmedCompanion(e) {
+      return e.renderKind === 'ally' && !!e.charmOrigin;
+    }
+    // Named conventional companions retain their established treatment.
+    // Captured monsters reuse compact enemy-style text, not the large panel.
+    function namedCompanion(e) {
+      return e.renderKind === 'ally' && !!e.customName && !charmedCompanion(e);
+    }
+    function worldLabelWidth(name, e) {
+      return Math.min(
+        canvas.width - 20,
+        Math.max(62, name.length * (namedCompanion(e) ? 8.1 : 6.7) +
+          (namedCompanion(e) ? 18 : 10)),
+      );
+    }
+    function drawNamedCompanionLabel(name, slot) {
+      ctx.save();
+      ctx.fillStyle = '#15271edb';
+      ctx.fillRect(slot.x - slot.width / 2 - 3, slot.y - 16, slot.width + 6, 20);
+      ctx.font = 'bold 12px system-ui';
+      ctx.fillStyle = '#fff0b6';
+      ctx.shadowColor = '#04130b';
+      ctx.shadowBlur = 4;
+      ctx.fillText(name, slot.x, slot.y, slot.width);
+      ctx.restore();
+    }
     function worldLabelVisible(e) {
       if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
       if (e.renderKind === 'npc' || e.renderKind === 'building')
@@ -2354,7 +2385,7 @@
             ? e.presentation === 'mobile-captive' ? 'Mira · captive'
               : e.presentation === 'mobile-forge' ? 'Vera · captive field engineer'
               : e.name || ''
-            : kind === 'ally' ? game.companionDisplayName(e)
+            : kind === 'ally' ? companionWorldLabel(e)
               : kind === 'building' ? e.name || 'Barracks'
               : kind === 'node' ? 'Dark Lord Tribute' : e.name || '';
           records.push({ e, kind, p, name });
@@ -2367,16 +2398,28 @@
       add(game.activeLivingParty(), 'ally');
       const priority = (r) => r.kind === 'npc' ? 0
         : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain) ? 1
-          : r.kind === 'ally' ? 2 : r.kind === 'enemy' ? 3
+          : r.kind === 'ally' && namedCompanion(r.e) ? 1.5
+            : r.kind === 'ally' ? 2 : r.kind === 'enemy' ? 3
             : r.kind === 'building' ? 4 : 5;
       const claimed = [];
       ctx.save();
       ctx.textAlign = 'center';
       for (const { e, kind, p, name } of records.sort((a, b) => priority(a)-priority(b))) {
-        const width = Math.min(canvas.width-20, Math.max(62, name.length*6.7+10));
+        const width = worldLabelWidth(name, e);
         const baseY = kind === 'node' ? p.y-25 : p.y-spriteHeight(e)-5;
         let slot = null;
-        if (name) for (const dy of [0,-20,-40,-60,-80,20,40,60,-100]) {
+        if (name && charmedCompanion(e)) {
+          // The nickname follows its creature exactly. Never search alternate
+          // offsets as nearby fighters move, since that makes labels jump.
+          const x = Math.max(width / 2 + 6, Math.min(canvas.width - width / 2 - 6, p.x));
+          if (baseY >= 18 && baseY <= canvas.height - 8) {
+            slot = { x, y: baseY, width };
+            claimed.push({
+              l: x - width / 2 - 3, r: x + width / 2 + 3,
+              t: baseY - 17, b: baseY + 3,
+            });
+          }
+        } else if (name) for (const dy of [0,-20,-40,-60,-80,20,40,60,-100]) {
           for (const dx of [0,-42,42,-84,84]) {
             const x = Math.max(width/2+6,Math.min(canvas.width-width/2-6,p.x+dx)),
               y = baseY+dy, box = { l:x-width/2-3,r:x+width/2+3,t:y-17,b:y+3 };
@@ -2399,8 +2442,12 @@
             ctx.font='10px system-ui';ctx.fillStyle='#f5e7b8';
             ctx.fillText(name,slot.x,slot.y,slot.width);
           } else if (kind === 'ally') {
-            ctx.font='10px system-ui';ctx.fillStyle='#dcebcf';
-            ctx.fillText(name,slot.x,slot.y,slot.width);
+            if (namedCompanion(e)) drawNamedCompanionLabel(name, slot);
+            else {
+              ctx.font = charmedCompanion(e) ? 'bold 10px system-ui' : '10px system-ui';
+              ctx.fillStyle = charmedCompanion(e) ? '#99efcf' : '#dcebcf';
+              ctx.fillText(name, slot.x, slot.y, slot.width);
+            }
           } else if (kind === 'enemy') {
             ctx.font=e.type==='boss'?'bold 11px system-ui':'10px system-ui';
             ctx.fillStyle=e.type==='boss'?'#ead58c':'#f8cebd';
@@ -2702,7 +2749,7 @@
         if (e.renderKind === 'building') return e.name || 'Barracks';
         if (e.renderKind === 'node') return 'Dark Lord Tribute';
         if (e.renderKind === 'enemy') return e.name || '';
-        if (e.renderKind === 'ally') return game.companionDisplayName(e);
+        if (e.renderKind === 'ally') return companionWorldLabel(e);
         return '';
       };
       const labelPriority = (e) =>
@@ -2712,9 +2759,11 @@
             ? 1
             : e.renderKind === 'enemy' && (e.captain || e.roomCaptain)
               ? 1.5
-              : e.renderKind === 'ally'
-                ? 2
-                : e.renderKind === 'enemy'
+              : e.renderKind === 'ally' && namedCompanion(e)
+                ? 1.75
+                : e.renderKind === 'ally'
+                  ? 2
+                  : e.renderKind === 'enemy'
                   ? 3
                   : e.renderKind === 'building'
                     ? 4
@@ -2736,11 +2785,22 @@
           anchor.y > canvas.height + 100
         )
           continue;
-        const w = Math.min(canvas.width - 20, Math.max(62, name.length * 6.7 + 10));
-        const h = 17;
+        const w = worldLabelWidth(name, e);
+        const h = namedCompanion(e) ? 20 : 17;
         const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - spriteHeight(e) - 5;
         let slot = null;
-        for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
+        if (charmedCompanion(e)) {
+          // A Charmed nickname stays above the actor, even in a crowd.
+          // Other nameplates may yield to it; it never changes lanes.
+          const x = Math.max(w / 2 + 6, Math.min(canvas.width - w / 2 - 6, anchor.x));
+          if (baseY >= 18 && baseY <= canvas.height - 8) {
+            slot = { x, y: baseY, width: w };
+            claimedLabels.push({
+              l: x - w / 2 - 3, r: x + w / 2 + 3,
+              t: baseY - h, b: baseY + 3,
+            });
+          }
+        } else for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
           for (const dx of [0, -42, 42, -84, 84]) {
             const x = Math.max(w / 2 + 6, Math.min(canvas.width - w / 2 - 6, anchor.x + dx));
             const y = baseY + dy;
@@ -2874,13 +2934,17 @@
           if (visibleCombat) {
             const isTrueBoss = e.renderKind === 'enemy' && e.type === 'boss' && e.form === 'true',
               isCaptain = e.renderKind === 'enemy' && (e.captain || e.roomCaptain);
-            ctx.font = isTrueBoss
-              ? 'bold 12px system-ui'
+            ctx.font = charmedCompanion(e)
+              ? 'bold 10px system-ui'
+              : isTrueBoss
+                ? 'bold 12px system-ui'
               : e.type === 'boss' || isCaptain
                 ? 'bold 11px system-ui'
                 : '10px system-ui';
-            ctx.fillStyle = isTrueBoss
-              ? '#ffe08a'
+            ctx.fillStyle = charmedCompanion(e)
+              ? '#99efcf'
+              : isTrueBoss
+                ? '#ffe08a'
               : e.type === 'boss'
                 ? '#ead58c'
                 : isCaptain
@@ -2908,10 +2972,12 @@
                     ' · Lv ' +
                     e.level
                 : e.renderKind === 'ally'
-                  ? game.companionDisplayName(e)
+                  ? companionWorldLabel(e)
                   : '';
             const slot = labelSlots.get(e);
-            if (slot) {
+            if (slot && namedCompanion(e)) {
+              drawNamedCompanionLabel(label, slot);
+            } else if (slot) {
               if (e.renderKind === 'enemy' && (e.type === 'boss' || isCaptain)) {
                 ctx.fillStyle = e.type === 'boss' ? '#302915c9' : '#382b20b8';
                 ctx.fillRect(slot.x - slot.width / 2 - 3, slot.y - 12, slot.width + 6, 16);

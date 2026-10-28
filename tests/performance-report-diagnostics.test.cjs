@@ -30,7 +30,7 @@ const { shell } = require('./helpers/production-shell.cjs');
     for (let i = 0; i < 5 && !elements.get('modal').hidden; i++)
       elements.get('close-button').click();
     assert(elements.get('modal').hidden, 'player can return to gameplay with recording active');
-    for (const now of [20, 40, 110, 185, 225, 275, 355, 375])
+    for (const now of [20, 40, 110, 185, 225, 275, 355, 375, 550])
       app.frame(now);
     openPerformance();
     click(label('Stop renderer profiling', 'Detener registro del renderizador'));
@@ -39,6 +39,18 @@ const { shell } = require('./helpers/production-shell.cjs');
     const report = JSON.parse(await exported.text());
     assert(report.version, 'export retains the original version field');
     assert(report.performance.frameProfile, 'export retains standard frame profiling');
+    const slowdowns = report.performance.frameProfile.slowdownIncidents;
+    assert(slowdowns, 'ordinary export automatically includes exceptional callbacks');
+    assert(slowdowns.records.length >= 1,
+      'slow callback location is recorded without starting optional renderer profiling');
+    assert.equal(slowdowns.records.at(-1).location.zone, 'vale');
+    assert(Number.isFinite(slowdowns.records.at(-1).location.heroX));
+    assert(Number.isFinite(slowdowns.records.at(-1).location.gridX));
+    assert(slowdowns.records.at(-1).location.nearbyEnemyKinds);
+    assert(slowdowns.records.at(-1).previous,
+      'previous completed frame helps distinguish stalls from expensive work');
+    assert(!('campaign' in slowdowns.records.at(-1)),
+      'slowdown capture is bounded context, not a copied save');
     assert(report.performance.graphicsRenderer, 'export retains renderer status');
     const capture = report.performance.rendererDiagnostics;
     assert.equal(capture.state, 'stopped');
@@ -60,6 +72,8 @@ const { shell } = require('./helpers/production-shell.cjs');
     click(label('Clear renderer profiling', 'Borrar registro del renderizador'));
     click(label('Export playtest report', 'Exportar informe de prueba'));
     const cleared = JSON.parse(await exported.text());
+    assert(cleared.performance.frameProfile.slowdownIncidents.records.length >= 1,
+      'clearing optional renderer capture does not erase independent slowdown evidence');
     assert.equal(cleared.performance.rendererDiagnostics.state, 'not-recorded',
       'ordinary playtest export works without optional capture');
   }

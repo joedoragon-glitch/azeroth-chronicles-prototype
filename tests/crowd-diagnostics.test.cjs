@@ -91,6 +91,46 @@ assert(corridor16.nearbyActorHits > open3.nearbyActorHits,
   'Dense crowds produce more candidate actor encounters');
 assert(corridor16.segmentPoints > 0 && corridor16.blockedCalls > 0);
 
+// The regular route() counter cannot see companionRoute()'s separate A*.
+// Verify the new opt-in counters cover actual companion movement without
+// changing game state, and that Stop restores all instance wrappers.
+function companionNavigationProbe(measured) {
+  const g = fixture(false, 0);
+  const u = g.unit('soldier', 300, 1500, 'vale');
+  g.s.party = [u];
+  const originalRoute = g.companionRoute;
+  const originalFollow = g.followCompanion;
+  const originalClear = g.companionTravelClear;
+  if (measured) {
+    g.startCrowdDiagnostics();
+    g.crowdDiagnosticsBeginFrame();
+  }
+  g.companionRoute(u, { x: 330, y: 1500 });
+  g.followCompanion(u, { x: 360, y: 1500 }, 100, 0.05, 10);
+  if (measured) g.crowdDiagnosticsEndFrame();
+  const saved = g.snapshot();
+  if (measured) {
+    const metrics = g.crowdDiagnosticsReport().metrics;
+    assert.equal(metrics.companionRouteCalls.max, 1, 'separate A* attempts are counted');
+    assert.equal(metrics.companionFollowCalls.max, 1, 'companion follow is measured');
+    assert(metrics.companionTravelClearCalls.max >= 1, 'direct/route clearance is measured');
+    for (const key of ['companionRouteMs', 'companionFollowMs', 'companionTravelClearMs'])
+      assert(Number.isFinite(metrics[key].max), key + ' reports finite milliseconds');
+    assert.equal(metrics.routeCalls.max, 0, 'hero route() remains distinct from companion A*');
+    g.stopCrowdDiagnostics();
+    assert.equal(g.companionRoute, originalRoute);
+    assert.equal(g.followCompanion, originalFollow);
+    assert.equal(g.companionTravelClear, originalClear);
+    assert(!Object.hasOwn(g, 'companionRoute'), 'Stop removes temporary A* wrapper');
+  } else {
+    assert(!Object.hasOwn(g, 'companionRoute'), 'no production A* profiler');
+    assert.equal(g.crowdDiagnosticsReport().sampledSimulationTicks, 0);
+  }
+  return saved;
+}
+assert.deepEqual(companionNavigationProbe(true), companionNavigationProbe(false),
+  'companion route timing must preserve identical campaign state');
+
 // Collection is bounded, and the unsaved report never enters the campaign snapshot.
 const bounded = fixture(true, 2);
 bounded.startCrowdDiagnostics();
