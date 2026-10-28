@@ -17,6 +17,7 @@ const quick = new Set([
   'prototype-ui',
   'auto-potions',
   'combat-feedback',
+  'charmed-nameplates',
   'combat-conditions',
   'combat-trap-sources',
   'enemy-vfx-foundation',
