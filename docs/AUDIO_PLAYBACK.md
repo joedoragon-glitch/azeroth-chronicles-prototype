@@ -38,7 +38,7 @@ The existing theme names and original musical directions are:
 | Abyss Bastion | **Purple Wings** — the Dark Lord's dragon project |
 | Crown Citadel | **The Machinery of Rule** — controlled, formal power |
 
-The five outdoor regions each have night and settlement arrangements. Regions and main dungeons use synchronized **base and combat layers**; interior locations have quieter themes and peaceful versions. Boss families and TRUE forms use their real encounter identities rather than a generic boss track. Exact cue names, instrument recipes, tempos and gains belong to the [score book](../tools/audio/score-book.json) and [production manifest](../assets/audio/manifest.json). The [original v0.8.90 sound pass](AUDIO_SOUND_PASS.md) remains historical creative reference.
+The five outdoor regions each have night and settlement arrangements. Regions and main dungeons use synchronized **base and combat layers**; interior locations have quieter themes and peaceful versions. Boss families and TRUE forms use their real encounter identities rather than a generic boss track. Exact cue names, instrument recipes, tempos and gains belong to the [score book](../tools/audio/score-book.json) and [production manifest](../assets/audio/manifest.json). The [living soundtrack and sound-identity guide](AUDIO_SOUND_PASS.md) explains the current cue families, artistic rationale and reusable creative briefs. The v0.8.90 predecessor remains preserved in Git history.
 
 ## How sound reacts to gameplay
 
@@ -75,7 +75,7 @@ The [independent audition room](https://joedoragon-glitch.github.io/azeroth-chro
 | What you need | Source |
 | --- | --- |
 | Live cue inventory, credits and event/scene mapping | [Audio manifest](../assets/audio/manifest.json) |
-| Composer recipes and earlier creative decisions | [Score book](../tools/audio/score-book.json), [historical sound pass](AUDIO_SOUND_PASS.md) |
+| Composer recipes and artistic rationale | [Score book](../tools/audio/score-book.json), [living soundtrack design guide](AUDIO_SOUND_PASS.md) |
 | Rendering, importing, registration and release steps | [Audio authoring](AUDIO_AUTHORING.md) |
 | Environmental cue selection | [Environment reference](AUDIO_ENVIRONMENT.md), [`audio-environment.js`](../src/prototype/audio-environment.js) |
 | Combat music selection and stem intensity | [`audio-production.js`](../src/prototype/audio-production.js) |
