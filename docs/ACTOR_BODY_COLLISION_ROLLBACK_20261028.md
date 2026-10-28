@@ -1,5 +1,7 @@
 # Actor-body collision rollback — 28 October 2026
 
+**Release candidate:** `0.9.1+snapshot.dev.211` (unpublished until Pages validation). This game-facing change requires a fresh service-worker cache key.
+
 **Decision:** The owner has deliberately withdrawn PT-002's actor-to-actor collision/de-stacking realism feature. Preserve the pre-feature movement semantics while retaining physical terrain, authored scenery, doors, water, dungeon partitions, and movement/route safety. This is an experimental rollback for comparative Chromebook and Windows performance playtests; it is not proof that PT-002 caused every frame stall.
 
 ## Current replacement contract

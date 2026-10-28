@@ -102,6 +102,43 @@
       "newReadmeBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
       "method": "Full original README read; compared current source, release evidence, local links and register receipts. Historical receipts remain in git and linked existing documents. Documentation-only, not physical-device certification."
     },
+    "readableDevelopmentState": {
+      "auditedMainSha": "3765ed3bbbf67385561ba47b46887eda6ccf3e7c",
+      "currentMainBuild": "0.9.1+snapshot.dev.208",
+      "publicationRun": 40731474055,
+      "archiveFile": "docs/DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md",
+      "originalMarkdownCount": 417,
+      "candidateMarkdownCount": 418,
+      "archivedSourceSection": "docs/DEVELOPMENT_STATE.md starting at ## Historical release-status ledger",
+      "method": "Full original file reviewed; historical body preserved verbatim as one indexed archive. Current page re-pinned to exact main source and GitHub Actions. No game, test, workflow or save changes; no device certification."
+    },
+    "spanishGuideIntroduction": {
+      "auditedMainSha": "3765ed3bbbf67385561ba47b46887eda6ccf3e7c",
+      "prBranch": "docs/development-state-clear-status-20261028",
+      "primaryGuide": "GUIA_EN_ESPANOL.md",
+      "compatibilityPath": "CONTROLES.md",
+      "previousMarkdownCount": 418,
+      "candidateMarkdownCount": 419,
+      "evidence": "app.js actual language settings and launch flow, input.js default keys, official game name, current published dev.208 receipts; original controls guide preserved in history",
+      "languageScope": "Spanish presentation available with incomplete localization; never imply all story/world text translated."
+    },
+    "audioProductionGuide": {
+      "reviewedMainSha": "3765ed3bbbf67385561ba47b46887eda6ccf3e7c",
+      "currentGameVersion": "0.9.1+snapshot.dev.208",
+      "audioManifestAssets": {
+        "music": 83,
+        "ambience": 14,
+        "effect": 30,
+        "total": 127
+      },
+      "musicPlaces": 19,
+      "bossFamilies": 11,
+      "currentGuide": "docs/AUDIO_PLAYBACK.md",
+      "historicalSoundPass": "docs/AUDIO_SOUND_PASS.md",
+      "source": "assets/audio/manifest.json; src/prototype/audio-production.js, audio-runtime.js, audio-recordings.js, audio-mixer.js, audio-environment.js; app.js; docs/AUDIO_AUTHORING.md",
+      "method": "Source-level current production and catalog check; all historical v0.8.89 content remains retrievable by original exact Git SHA; no full browser/device listening certification.",
+      "newRuntimeOrAudioChanges": false
+    },
     "releaseConsistencyGatePR564": {
       "source": "draft PR #564",
       "scope": "Four edited current-document entrypoint blob receipts reconciled; no full-body re-audit claimed",
@@ -111,6 +148,36 @@
         "docs/DEVELOPMENT_STATE.md",
         "docs/DOCUMENTATION_INDEX.md"
       ]
+    },
+    "audioListeningRoomIntegration": {
+      "source": "PR #563 reconciled with merged #564",
+      "candidateBuild": "0.9.1+snapshot.dev.210",
+      "notes": "Updated maintained document blob receipts and preserved the historic archive; current entrypoints distinguish source candidate from verified Pages dev.209. Browser/device evidence retained separately.",
+      "updatedPaths": [
+        "AGENTS.md",
+        "GUIA_EN_ESPANOL.md",
+        "README.md",
+        "docs/ARCHITECTURE.md",
+        "docs/AUDIO_PLAYBACK.md",
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ]
+    },
+    "dev210PublicationCloseout": {
+      "releaseCommit": "7d4d8fa2d01b312abc90cbc7132f603504326c23",
+      "focusedAndPagesRun": 40769070733,
+      "scope": "Documentation-only post-publication status reconciliation: current source/build, verified Pages, archive and device acceptance separated.",
+      "reconciledDocuments": [
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/ARCHITECTURE.md",
+        "docs/AUDIO_PLAYBACK.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ]
+    },
+    "documentationIndexVisualHierarchy": {
+      "date": "2026-10-28",
+      "purpose": "Bold titles and labels for 102 non-dated guide/reference entries; 317 dated record entries remain unbolded.",
+      "preservedEntries": 419
     }
   },
   "semantics": {
@@ -306,7 +373,7 @@
     },
     {
       "path": "AGENTS.md",
-      "gitBlobSha": "a7bf4fd19034b22130832108dcd02e452140f472",
+      "gitBlobSha": "9923af42c629692336c57d2287f41f613f54e237",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -320,7 +387,7 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
-      "reconciliationReviewEvidence": "28 Oct, main@29be451: reviewed active authorization/docs ownership/CI rules; cross-checked merged PRs #508/#511/#541, focused-deploy and owner-opt-in full workflow. Older dated milestones explicitly historical. This verifies active policy routing, not every historic task or hardware result."
+      "reconciliationReviewEvidence": "28 Oct, main@29be451: reviewed active authorization/docs ownership/CI rules; cross-checked merged PRs #508/#511/#541, focused-deploy and owner-opt-in full workflow. Older dated milestones explicitly historical. This verifies active policy routing, not every historic task or hardware result. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes."
     },
     {
       "path": "assets/sprites/README.md",
@@ -338,7 +405,7 @@
     },
     {
       "path": "CONTROLES.md",
-      "gitBlobSha": "76b757d5951c8f4c9a969958bf05f8dfbe7d3b83",
+      "gitBlobSha": "c3409b1ec8cdb4f0f046cb99d7b8daa9ec9a262c",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -348,9 +415,11 @@
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "842082d7523eb7143e688e27451d223fcd7189c1",
       "previousPhase4GitBlobSha": "d987f1aa5b1513f32a8591d53009ea87dae040b2",
-      "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "previousSpanishGuideNavigationGitBlobSha": "76b757d5951c8f4c9a969958bf05f8dfbe7d3b83",
+      "reconciliationReviewEvidence": "28 Oct 2026: Former controls-only page now a short maintained compatibility link to GUIA_EN_ESPANOL.md; original full text preserved in git history. Verified destination exists; legacy links remain usable. No independent current gameplay guidance maintained here."
     },
     {
       "path": "docs/A2_A3_ARCHIVE_BOOKSHELF_READING_20261024.md",
@@ -539,7 +608,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "9cd04948b5bd80d4bf4adce1df576f791f939900",
+      "gitBlobSha": "58ffe46722bec1b979854873211ca6756be175a7",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -554,7 +623,7 @@
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
       "previousBatchAuthorityBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
-      "reconciliationReviewEvidence": "28 Oct, source main@29be451: cross-checked app.js Rogue registration, hero-combat Rogue dispatch (older triad guard belongs to legacy branch), party.js Charm companions, save/persistence owners, visuals.js bell staff, script graph, package/sw and focused/manual workflows. New current quick route verified; retained dev.205 audit remains historical, not re-certified.",
+      "reconciliationReviewEvidence": "28 Oct, source main@29be451: cross-checked app.js Rogue registration, hero-combat Rogue dispatch (older triad guard belongs to legacy branch), party.js Charm companions, save/persistence owners, visuals.js bell staff, script graph, package/sw and focused/manual workflows. New current quick route verified; retained dev.205 audit remains historical, not re-certified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing.",
       "previousStep1GitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371"
     },
     {
@@ -745,7 +814,7 @@
     },
     {
       "path": "docs/AUDIO_PLAYBACK.md",
-      "gitBlobSha": "e67d715fa631f75caea6d28e5c55bd1ea1fab298",
+      "gitBlobSha": "5ba43e0847c775272fbd8d62853d525416204d86",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -754,23 +823,30 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership",
       "previousPhase3GitBlobSha": "973d0d96eb3512cdd37b69f159f88045144e4af3",
-      "reconciliationRole": "reference material",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRole": "current authority",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "previousAudioGuideGitBlobSha": "e67d715fa631f75caea6d28e5c55bd1ea1fab298",
+      "reconciliationReviewEvidence": "28 October 2026: fully read old v0.8.89 playback guide; compared published dev.208 audio.js/app.js enableProduction, 127-asset manifest (83 music,14 ambience,30 effect), 19 location and 11 boss routing, audio-production/runtime/recordings/mixer/assets, AUDIO_SOUND_PASS/AUDIO_AUTHORING/AUDIO_ENVIRONMENT, and merged #470/#472/#473. Current production guide rewritten; remaining real-device listening and full browser certification explicitly unverified. No audio/runtime changes. 28 October PR #563 continuation: current audio guide now routes creative intent to living soundtrack/sound-identity page; runtime claims unchanged. 28 Oct PR #563 continuation: practical usage of redesigned complete audition room documented, including current draft vs published boundary and separate browser/device acceptance.",
+      "previousSoundIdentityGuideGitBlobSha": "42a0fb606092104194138af8b2a391694090ee0e",
+      "previousAuditionGuideGitBlobSha": "6cbd34d7f111c009d16a7d0f114598924337b55b"
     },
     {
       "path": "docs/AUDIO_SOUND_PASS.md",
-      "gitBlobSha": "57996f2f4ef2750beef9abc903a22c90eb75bc7f",
+      "gitBlobSha": "35c9ea1a89f6990ded200bfd380b9d583a61299a",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "audio",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership",
-      "reconciliationRole": "reference material",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "reconciliationRole": "active design",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "previousAudioGuideGitBlobSha": "57996f2f4ef2750beef9abc903a22c90eb75bc7f",
+      "reconciliationReviewEvidence": "28 October 2026, PR #563: transformed old v0.8.90 release-status narrative into living soundtrack and sound-identity reference; checked all 83 current score-book cue IDs, 19 place routes, 11 boss families and paired TRUE layers, 14 environmental books, 30 effects, manifest generation guides and verified audio production guide. Preserved historical version by exact Git link. Descriptive creative listening notes are editorial, not new canon, recording replacements or device certification.",
+      "previousSoundIdentityGuideGitBlobSha": "615af69d0a4f0dba0a4965a031175acaf635da86"
     },
     {
       "path": "docs/AUDIO_STAGE1_COVERAGE_20261025.md",
@@ -1053,7 +1129,7 @@
     },
     {
       "path": "docs/BRAND_IDENTITY.md",
-      "gitBlobSha": "c075f803a20b82b2beeb2797928d2afb41573034",
+      "gitBlobSha": "c9c1d7971e8acba3e406da755f96bb45d9929da6",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1065,7 +1141,7 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
-      "reconciliationReviewEvidence": "28 Oct: checked official independent-fantasy game title and historical repo name distinction against README, AGENTS and current status; physical installed-app/brand legal acceptance remains unverified."
+      "reconciliationReviewEvidence": "28 Oct: checked official independent-fantasy game title and historical repo name distinction against README, AGENTS and current status; physical installed-app/brand legal acceptance remains unverified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted."
     },
     {
       "path": "docs/BRIEF_COMPANY_DEV150.md",
@@ -1828,7 +1904,7 @@
     },
     {
       "path": "docs/DECISIONS.md",
-      "gitBlobSha": "4a4326afa664d4a1a579342c3bb2ee2d680b7f7a",
+      "gitBlobSha": "62538ef98553b313723a1689533adee3f0c32197",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1839,7 +1915,8 @@
       "previousPhase4GitBlobSha": "d832154a48cc47f300338d04eca1bc371a27fd99",
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "verified",
+      "reconciliationReviewEvidence": " 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing."
     },
     {
       "path": "docs/DEFENDER_SPACE_DEV129.md",
@@ -1912,8 +1989,23 @@
       "reconciliationReview": "unresolved"
     },
     {
+      "path": "docs/DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md",
+      "gitBlobSha": "2d6d389e29d3683a8a0cc8c36a46f3e23b70ed2c",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "historical_development_and_release_evidence",
+      "role": "historical_snapshot",
+      "authority": "historical_evidence",
+      "reviewDepth": "path_only",
+      "reconciliationRole": "historical record",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "unresolved",
+      "reconciliationReviewEvidence": "28 Oct: moved prior DEVELOPMENT_STATE.md historical section verbatim from main@3765ed3 into this explicitly non-operative archive. Every older claim retains original date and context; individual historical receipts are not freshly revalidated."
+    },
+    {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "867a28a6a141ac4afcd837c7b32216c7cff7bec2",
+      "gitBlobSha": "5c440bb47c785072f85f6cfec13acad572b9da1a",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1929,9 +2021,12 @@
       "reconciliationReview": "verified",
       "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
       "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
-      "reconciliationReviewEvidence": "28 Oct: source, package.json and sw.js agree on dev.208 at main@29be451; Actions 40720965138 focused validation and Pages jobs successful; PR #560 confirmed merged. Current top status/evidence gates checked, device adoption unverified. Not a recertification of every historical workstream row.",
+      "reconciliationReviewEvidence": "28 Oct 2026: prior source/checkpoint review retained for main@3765ed3 and successful focused + Pages Actions 40731474055. Spanish player guide links updated to the new path without changing the release-status facts; device tests remain unverified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct release-candidate integration: preserved newer published main Development State ledger rather than overwriting it with stale PR snapshot; audio audition and the other PR docs integrated with main in a merge commit. Candidate dev.210 remains unpublished until Pages verifies.",
       "previousStep1GitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
-      "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03"
+      "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03",
+      "previousReadableStatusGitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
+      "previousSpanishGuideNavigationGitBlobSha": "8377265de1d98324668fcaff9a750816a709f372",
+      "previousMergedMainStateBlobSha": "af07422aff5aa7ab89ac02a4352c9a4e23cbfb1a"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -2022,7 +2117,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "78af461ed8f35b4b8730cc9e727d2826a5f5ddb0",
+      "gitBlobSha": "c4c930f0d9ee69acd6d02ae3530a9b4fc6656c3a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2040,8 +2135,15 @@
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
       "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
       "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
-      "reconciliationReviewEvidence": "28 Oct, main@29be451: checked current authority hierarchy, Rogue soft release/companion/bell-staff paths, and links to agent policy, development state, architecture, brand and workflow. No claim of full-body review of historical index entries or all 417 document contents.",
-      "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe"
+      "reconciliationReviewEvidence": "28 October 2026: current documentation routing checked for Spanish guide, concise development status and new current audio-production guide. Audio row points to AUDIO_PLAYBACK/AUDIO_AUTHORING/AUDIO_ENVIRONMENT; original frozen historical census rows remain archival. 28 October PR #563 continuation: soundtrack creative-reference routing corrected; frozen historical index receipts untouched. 28 Oct PR #563 continuation: current audition room and practical guide linked from top navigation, not from frozen historical rows. 28 Oct PR #563 continuation: current-entrypoint route to mechanic development broadened to approved game/system changes, not dated Rogue-only procedures; frozen historic receipts unchanged. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing. 28 October PR #563: turned index from 129.7 KB mixed history/inventory into 88.6 KB annotated directory with exactly one linked one-liner for each of the 419 tracked Markdown files (including 11 formerly unlinked). Grouped by 13 subjects with 16 scan-friendly subtopics, checked high-value descriptions against maintained guides and representative records, retained full old inventory at an exact Git-history URL. Uninspected historical summaries are conservative filename/topic finding aids, not 419 full-body reviews or status certificates; README routes readers to annotated directory.",
+      "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe",
+      "previousReadableStatusGitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
+      "previousSpanishGuideNavigationGitBlobSha": "421a266a0d2a09f2853ae837e3e11723d196190e",
+      "previousSpanishGuideCountGitBlobSha": "925323765c021a28b4c03265587732c57143ebb2",
+      "previousAudioGuideGitBlobSha": "90a776517cea4dd404fca9e8390968bc01d52824",
+      "previousSoundIdentityGuideGitBlobSha": "7170fcf925b014be88340018b3e610ae84c54b29",
+      "previousAuditionGuideGitBlobSha": "ad4badea24601c00b46b5f689fcacfa046196ac6",
+      "previousMechanicWorkflowAuditBlobSha": "188c21056246fce77eb7b0572dfa491750df2e24"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -3511,21 +3613,22 @@
     },
     {
       "path": "docs/MECHANIC_DEVELOPMENT.md",
-      "gitBlobSha": "0111438ad2627c1fb408c1b0ba8750f054e714be",
+      "gitBlobSha": "035502391fd58b64d94138d58af2031e0647341a",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "subject_workflow_or_contract",
       "authority": "verify_with_current_source",
-      "reviewDepth": "current_entrypoint_checked",
+      "reviewDepth": "full_body_pr_disposition_checked",
       "historicalPinnedGitBlobSha": "ca17f8257babab5425862789e05ea255d156021d",
       "previousPhase4GitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352",
       "previousPhase5GitBlobSha": "939de2e45f9ec06f9e2c4822e92d8a6935da6099",
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
-      "reconciliationReviewEvidence": "28 Oct: checked owner authorization, ongoing documentation maintenance, focused-CI vs owner-opt-in full-suite rules and linked owner modules against AGENTS, .github/scripts/focused-ci.cjs and workflows. No individual mechanics or full test suite certified."
+      "reconciliationReviewEvidence": "28 October 2026, continuing draft PR #563: read whole former 25-27 Oct mechanic workflow, checked live AGENTS standing documentation policy, architectural status, main/PR release boundary, focused-ci selector and focused-deploy/pages workflow gates. Replaced dated Rogue-specific process/audit narrative with general seven-step authorized engineering workflow, regression and lifecycle expectations, safe writes/checkpoints, documentation truth, tested/merged/published/device evidence, and an explicit historical-link boundary. No gameplay or test policy changed; source/runtime/browser/device acceptance is not implied.",
+      "previousMechanicWorkflowAuditBlobSha": "0111438ad2627c1fb408c1b0ba8750f054e714be"
     },
     {
       "path": "docs/MECHANICS_AUDIT_V081.md",
@@ -6501,8 +6604,23 @@
       "reconciliationReview": "unresolved"
     },
     {
+      "path": "GUIA_EN_ESPANOL.md",
+      "gitBlobSha": "36e95cc39717dc61cd7aa788d4c5b9ba184ca730",
+      "location": "elsewhere",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "spanish_player_and_project_introduction",
+      "role": "current_entrypoint",
+      "authority": "current_entrypoint",
+      "reviewDepth": "current_entrypoint_checked",
+      "reconciliationRole": "current authority",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "reconciliationReviewEvidence": "28 Oct 2026: audited app.js New Game→chooseLanguage('normal')→Español→class selection and title Settings/systemMenu→Language / in-run Menu→Game and settings→Language; localStorage persistence key and es-419. Verified current Spanish labels, input.js defaults, README game identity and dev.208 release gates. Partial localization clearly disclosed. All internal links checked; no claim every text in game is translated or physical-device tested. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted."
+    },
+    {
       "path": "README.md",
-      "gitBlobSha": "fec70d76d8fd9ac2074bf2ac78d3ae4ca45e2623",
+      "gitBlobSha": "44c6c3a65c42f3119de7b58bf5b57e66c7f0b19a",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -6517,7 +6635,12 @@
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
       "previousReadmeNavigationGitBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
-      "reconciliationReviewEvidence": "28 Oct 2026 at main@6b625348: full README reviewed and rewritten as playable-game entrypoint. Verified dev.208 package/sw, publication run 40729904600, four-class/Rogue path, input.js defaults, current menu labels, local saves, CI owner gates, and linked documentation routing. Removed stale three-class instructions and historical audit walls. This review verifies README guidance only, not every linked document, full-game gameplay or device acceptance."
+      "reconciliationReviewEvidence": "28 October 2026: verified previous README front door and Spanish guide remain intact; current audio hyperlink now points to refreshed AUDIO_PLAYBACK, with older AUDIO_SOUND_PASS labeled historical. No source gameplay or player-control changes. 28 October PR #563 continuation: soundtrack link now identifies current design reference rather than a dated-only sound pass. 28 Oct PR #563 continuation: standalone listening room explains recorded scenes, all 127 registered assets and optional diagnostics; game remains dev.208 publicly until authorized release. 28 Oct PR #563 continuation: development-section link now identifies general engineering change workflow (gameplay, audio, UI, documentation/checkpoints), not solely mechanic instructions. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 October PR #563: turned index from 129.7 KB mixed history/inventory into 88.6 KB annotated directory with exactly one linked one-liner for each of the 419 tracked Markdown files (including 11 formerly unlinked). Grouped by 13 subjects with 16 scan-friendly subtopics, checked high-value descriptions against maintained guides and representative records, retained full old inventory at an exact Git-history URL. Uninspected historical summaries are conservative filename/topic finding aids, not 419 full-body reviews or status certificates; README routes readers to annotated directory.",
+      "previousSpanishGuideNavigationGitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
+      "previousAudioGuideGitBlobSha": "9bdd0ef9ab52212e10ad15a4fc66ca5d714cfebd",
+      "previousSoundIdentityGuideGitBlobSha": "94c50ea9a8ceff3747eeb3f0e7cd82b38b903813",
+      "previousAuditionGuideGitBlobSha": "169d42bbaaa5752b6638a89c854da7c3a607566a",
+      "previousMechanicWorkflowAuditBlobSha": "7eb50e24a422a1bedb37c37e69a2047d9e965761"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",

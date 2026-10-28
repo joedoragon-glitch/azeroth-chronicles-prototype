@@ -1,6 +1,6 @@
-# Brand identity — 11 October 2026
+# Brand identity — official title and safe legacy identifiers
 
-> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+**Original author decision: 11 October 2026; current-use review: 28 October 2026.** Apply this living naming rule with [Development state](DEVELOPMENT_STATE.md) and current [agent/owner authorization](../AGENTS.md). Old development-break instructions and historic release permissions are not current work orders.
 
 ## Official title
 
@@ -31,7 +31,7 @@ The Dark Lord already controls the five regions. The hero begins in Greenwood Va
 - Preserve v4 campaign saves, local storage identifiers, exported/importable save formats and existing filename conventions for old backups. Do not rename internal package, sprite keys, score IDs, or archived provenance.
 - Historic release records, artwork-generation provenance, archived documentation, independent legacy entrypoints and source identifiers may still carry the former title. They are history/compatibility, not the current public brand.
 - Do not replace the app icon with speculative art. A lore-faithful new icon and final marketing key art are independent asset deliverables.
-- Branding alone establishes no release evidence. The October snapshot is now published; consult [current release notes](V09_RELEASE_NOTES.md) for its actual validation limits and publication record.
+- Branding alone establishes no release evidence. For the latest verified release and acceptance consult [Development state](DEVELOPMENT_STATE.md); [October Community Snapshot release notes](V09_RELEASE_NOTES.md) describe an earlier milestone, not a live status feed.
 
 ## Remaining work
 
