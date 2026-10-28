@@ -1,5 +1,20 @@
 # Rogue Bard — static character and crowned Dark Lord visual specification
 
+## Active Rogue art contract — 28 October 2026
+
+**Status:** Rogue/Pícara is a playable fourth class after [merged PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) and the published `0.9.1+snapshot.dev.208` soft launch. **Already implemented:** static normal and crowned procedural Rogue drawings in [`src/prototype/visuals.js`](../src/prototype/visuals.js) (`rogueHero(false/true)`, `rogueBellStaff(crowned)`) and a targeted [source/Canvas test](../tests/rogue-bard-procedural-art.test.cjs). **Not certified:** complete owner art approval, real phone/desktop/Canvas/Pixi visual parity and sustained device acceptance. Follow [Development state](DEVELOPMENT_STATE.md) and [first phone findings](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md) for live acceptance, not the October 26/27 phase plan below.
+
+**Weapon and identity (binding):** Rogue carries a **staff with exactly one oversized suspended spherical jingle bell**, in both normal and crowned forms. The bell is suspended from the staff; it is not a generic handheld bell, guitar or lute. The four later reference images inform the **weapon only**, not skin, face, body, hair, costumes, or props. No guitar face, strings, strumming pose, guitar palette or guitar-themed QA requirement may be reintroduced.
+
+**First-play appearance retained:** warm dark-brown complexion, visible uncovered long wavy black hair, confident/mischievous expression, asymmetrical sari-inspired plum/violet/copper traveling outfit, sash, practical skirt/trousers and gold/brass jewelry. Crowned Rogue retains that same character identity with the existing royal mantle/circlet treatment, rather than becoming a generic armored Dark Lord. Keep the existing grounding/collision, scene-scale readability and procedural Canvas/Pixi fallback. No new character animation rig or movement-dependent pose.
+
+**Presentation and future art review:** preserve the already implemented static bell-staff silhouette and short jingle-bell attack identity. Skill 5 is a **placed magical music station**, not the rejected physical-trap proposal. Later art revisions should compare both Rogue forms at native desktop and phone sizes, in day/low light and Canvas/experimental Pixi, with visible bell/feet, Charmed-monster subtype, effects and legible telegraphs. These are **future acceptance checks**, not evidence that current device acceptance has passed. A new sprite or art redesign requires its own scope and approval.
+
+## Archived original October 26–27 candidate — rejected instructions, NOT a work order
+
+The following verbatim-era design and phase notes are retained for creative provenance. **All guitar, strumming, guitar color, guitar sound, manual guitar drawing, guitar screenshot and physical-trap instructions below are rejected.** Historical claims that Rogue is unregistered, that Phase 4/7 is still unimplemented, or that PR #511 is draft are no longer current. When the archived text disagrees with the active contract above, use the active contract and actual current source.
+
+
 > **Phase 1–3 consolidated status (27 October 2026):** **Phases 1, 2 and 3 are COMPLETE AS STAGED and focused-validated; Phase 4 is READY BUT NOT STARTED.** Charm is owner-approved at **12%** on an eligible surviving automatic primary hit; every capture gets **automatic permanent nickname** from **70 EN/70 ES** options plus **100% friendly max HP** (active or reserve), without popup/toggle/naming tutorial. The legitimate Charm-first → worker → Barracks tutorial remains Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024), with [docs-head check green](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428). Main through `5c6197e8` integrated, 0 behind at closeout. PR #511 is open/draft, unmerged/undeployed, class unregistered. Consult [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md); all earlier contradictory phase status, guitar, wounded-capture and optional/manual-naming descriptions are retained as historical proposals, not implementation instructions.
 
 **Original specification: 26 October 2026 | Owner-directed first-play implementation baseline: 27 October 2026**
@@ -10,7 +25,7 @@
 
 **Mandatory:** Azeroth Chronicles presently paints **static, canon-sized procedural character depictions and optional static sprites** at moving actor positions. A "dancer" here is a character concept, **not a request for animation**. NO dance frames, poses, attack stances, sprite sheets, skeleton rigs, particle emitter systems, directional sprite sets, fabric simulations or dedicated animation clock. Design must remain recognizable in the same native field size as Paladin/Mage/Ranger and retain Canvas/Pixi fallback behavior. Consult [visuals.js hero() and crownedHero()](../src/prototype/visuals.js#L6529-L6630), [actor dispatcher](../src/prototype/visuals.js#L17195-L17202), [sprites.js static entries and crowned fallback](../src/prototype/sprites.js#L107-L112), and [renderer.js](../src/prototype/renderer.js).
 
-## 1. Core character silhouette — regular Rogue (P design)
+### Historical — 1. Core character silhouette — regular Rogue (P design)
 
 **Concept:** attractive, mischievous South Asian–inspired traveling guitarist, a self-assured woman with a roguish stage presence. Dark warm-brown complexion; long wavy black hair partly gathered back with an engraved gold band; visible expressive eyes, mischievous half-smile; no hat that hides her face and no veil. **This is an original fantasy musician**, not a realistic portrait or a direct copy of any real-world religious ceremonial outfit. Cultural influences may be refined in owner review.
 
@@ -30,13 +45,13 @@
 
 Palette codes are visual reference proposals only. Confirm contrast against all five regions and both light/night conditions; do not pretend these have been tested on devices.
 
-### Exact still-frame construction recommendations
+#### Historical — Exact still-frame construction recommendations
 
 In \`visuals.js\` add one **Rogue branch** in the existing \`hero(role)\` / \`human(role)\` pipeline, or a **single authored static asset** with procedural fallback. Preserve the existing hero foot anchor, proportions and camera scaling. At minimum represent hair, face, purple drape, right-hand guitar body, high diagonal neck, strings and two feet. Avoid adding run frames or emitting any per-frame vectors with dynamic costume state. Procedural drawing is naturally replayed by renderer's existing static art pipeline; do not create new dynamic body state or invalidate sprite cache each attack.
 
 Existing art review/asset contract applies if a raster is later made: one approved, tested static hero image and its asset manifest/offline inclusion, not a sprite sheet. If no raster is approved, the original procedural depiction alone is a valid minimal implementation.
 
-## 2. Crowned Rogue: her Dark Lord appearance (P design)
+### Historical — 2. Crowned Rogue: her Dark Lord appearance (P design)
 
 **Concept:** she does not become a generic dark-armored knight; she becomes an **imperial, audacious Bard-Queen / Dark Lady of Discord**, the same identifiable woman and guitar with a more authoritarian, sinister stage-royalty silhouette.
 
@@ -49,13 +64,13 @@ Existing art review/asset contract applies if a raster is later made: one approv
 
 Regular vs Crowned should be visibly related: **same hair, complexion, facial features, guitar orientation and instrument proportions**. Only royal styling, darker palette, crown and ornamentation change. It must be clear that the *same hero* took the throne, not a newly summoned villain.
 
-## 3. Captured monsters and allied art
+### Historical — 3. Captured monsters and allied art
 
 Charmed companions retain their species **visual identity and source subtype** (melee goblin not a human Soldier, ranged goblin not an ordinary human Archer), but use ally selection/foot anchors/label coloration. Reuse existing **static enemy visuals** or species-specific procedural draw contracts, NOT hostile behavior/ownership. If the actor is stored internally as Soldier/Archer for reuse, presentation must use its trusted charmed provenance before generic \`allyBodyKind\` would otherwise choose human or generic goblin archer.
 
 Ringleaders/captains/bosses do not gain companion art via Charm; owner already forbade conversion. Boss pets keep their exact existing appearance and source-specific pet renderer. All new allied monster art is the existing corresponding static monster depiction, not a new unique pet art collection.
 
-## 4. Lightweight combat appearance (no animation)
+### Historical — 4. Lightweight combat appearance (no animation)
 
 | Gameplay event | Existing-style proposed portrayal | Explicit prohibition |
 |---|---|---|
@@ -70,7 +85,7 @@ Ringleaders/captains/bosses do not gain companion art via Charm; owner already f
 
 **Audio:** consider a limited synthesis palette of three short percussive string notes + one dissonant accent, wired through existing audio volume/mute/reduced-effects infrastructure; never play a looping song or dynamically synthesize many tracks for her ordinary 0.85s basic. If existing source takes no additional audio safely, default sound fallback is acceptable.
 
-## 5. Required visual proof before merge of any later implementation
+### Historical — 5. Required visual proof before merge of any later implementation
 
 One comparative still image set (normal and crowned Rogue) at **native desktop AND 375px phone scale**, by day and low-light, against regional terrain and next to all three current heroes; guitar face/strings and skin contrast must survive actual display. One sample melee goblin and one ranged goblin converted to friendly art, with pet beside them and nameplate/culling. Verify ordinary/projectile/critical cues and authored boss warning readability, reduced motion, main Canvas and opt-in Pixi, no Javascript errors, offline static asset load and unchanged gameplay hitbox. No approval should be inferred from a conceptual palette/spec alone.
 

@@ -1,8 +1,10 @@
+> **HISTORICAL PHASE RECORD — 28 October 2026 correction:** [Rogue PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) is **merged and published** and Rogue/Pícara is playable in `0.9.1+snapshot.dev.208`. The “Current decision,” “Phase 4 READY TO START,” draft/unmerged, and unplayable language below describes **27 October only**. It is preserved as exact staging evidence, **not a current work order**. Use [Development state](DEVELOPMENT_STATE.md) and [Rogue soft-launch record](ROGUE_SOFT_RELEASE_20261028.md) for present implementation and remaining independent acceptance.
+
 # Rogue Bard — phases 1–3 consolidated baseline and Phase 4 entry
 
 **27 October 2026 · Draft [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) · Documentation consolidation, no gameplay changes**
 
-## Current decision
+## Historical decision at the 27 October checkpoint
 
 **Phases 1 Foundation, 2 Hero Basics and 3 Authentic Charm: COMPLETE AS STAGED / FOCUSED VALIDATED. Phase 4 Companion Integration: READY TO START, NOT IMPLEMENTED.** Rogue is not registered/playable. PR #511 remains draft, unmerged, undeployed; no release or broad test authorization.
 
@@ -26,7 +28,7 @@ The initial CI run after latest-main integration detected a stale **renderer sou
 - On **every** lawful capture: immediately assign a permanent silly nickname from the current UI language's **70 English or 70 Spanish names** and restore **100% of proper friendly max HP**, active or reserve. Save independent language rotation/collision avoidance; old names never translate. No naming popup, opt-in toggle, naming/healing condition or naming tutorial.
 - Rogue begins alone, cannot recruit new ordinary Soldiers/Archers and never builds Barracks herself. A Rogue reached by Succession retains inherited conventional troops, pets and Charmed ownership. Weapon is a suspended oversized spherical **jingle bell on a staff**, not the historical guitar. Normal/charged Skill 1 and 1HP/2s Endure are staged behind the disabled class gate.
 
-## Phase 4 handoff — implementation still required
+## Historical Phase 4 handoff — implementation was then required
 
 1. **Monster-specific friendly profiles:** subtype-specific HP/damage/armor/movement/role; apply normal companion hero-level scaling, Vitality, training and inheritance rather than retaining hostile/night/dungeon multipliers or generic Soldier/Archer baselines.
 2. **Authentic allied AI and identity:** melee/ranged/support action, movement/targeting/retreat, death/recovery, native travel across any region, stable subtype/provenance/nickname, correct species appearance (avoid generic conventional troop fallback), Canvas2D safety and optional experimental Pixi fallback.
@@ -44,7 +46,7 @@ These later dependencies **prevent public class registration/merge/release**, bu
 
 Current scope: [eight-phase handoff](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md), [Phase 3 technical closeout](ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_20261027.md), [Charm and Barracks contract](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md), [canonical owner handoff](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md), [Phase 2 source receipt](ROGUE_BARD_PHASE2_HERO_FOUNDATION_20261027.md), and [original owner discussion record](ROGUE_BARD_DISCUSSION_RECORD_20261026.md) as chronological character/design evidence. The [full old PR description](ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md) is deliberately archived, **not current authority**. Earlier proposals remain readable but are explicitly superseded where they disagree with the binding Charm/naming/healing rules.
 
-**Start next phase:** confirm branch head/main drift and CI, read Phase 4 work boundaries, implement only approved companion integration, validate focused native behavior/build, update this same draft PR. No public class registration, merge, deploy or full certification without separate authorization.
+**Historical proposed next phase (not a current work order):** confirm branch head/main drift and CI, read Phase 4 work boundaries, implement only approved companion integration, validate focused native behavior/build, update this same draft PR. No public class registration, merge, deploy or full certification without separate authorization.
 
 ## Phase 4 continuation (27 October 2026)
 
