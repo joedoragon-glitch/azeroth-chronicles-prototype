@@ -53,6 +53,11 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert.equal(g.companionUseFirstSkill(u, e), false);
     assert.equal(g.companionUseSecondSkill(u, e), false);
     step(g, 80);
+    if (distance(u,e)<90) console.error('ROLLBACK-DIAGNOSTIC critical retreat',
+      JSON.stringify({cls,type,position:{x:u.x,y:u.y},enemy:{x:e.x,y:e.y},
+        hero:{x:g.hero.x,y:g.hero.y},distance:distance(u,e),
+        survival:g.companionSurvivalMode(u),retreat:g.companionRetreatMode(u),
+        blocked:g.blocked(u.x,u.y)}));
     assert(distance(u, e) >= 90, type + ' avoids basic melee reach');
     assert(distance(u, g.hero) < C.rules.companionJudgment.criticalFollowRadius + 20);
     // Existing skills/shots may contribute after reaching a safe screened position.
