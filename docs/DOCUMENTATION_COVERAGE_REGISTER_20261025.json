@@ -94,6 +94,13 @@
       "method": "Pinned GitHub source and scripts, merged PR dispositions, exact-commit focused+Pages jobs; scoped current-entrypoint cross-check only, not all 417 bodies or device acceptance",
       "all417MarkdownPathsAccountedFor": true,
       "proofreadCorrection": "Documented six individually verified entrypoints instead of implying all 417 unresolved; pinned pre-PR release ledger remains a dated published checkpoint after any merge."
+    },
+    "readmeNavigationReview": {
+      "auditedMainSha": "6b625348a4a4f87e0d7c181a542f487429281f6e",
+      "reviewedDocument": "README.md",
+      "priorReadmeBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
+      "newReadmeBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
+      "method": "Full original README read; compared current source, release evidence, local links and register receipts. Historical receipts remain in git and linked existing documents. Documentation-only, not physical-device certification."
     }
   },
   "semantics": {
@@ -6485,7 +6492,7 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
+      "gitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -6497,8 +6504,10 @@
       "previousPhase4GitBlobSha": "21d69c2f95ee9aec75237e83870f313958e90223",
       "previousPhase5GitBlobSha": "744a7ab54a6bacec1acc541090f955610499f45e",
       "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "previousReadmeNavigationGitBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
+      "reconciliationReviewEvidence": "28 Oct 2026 at main@6b625348: full README reviewed and rewritten as playable-game entrypoint. Verified dev.208 package/sw, publication run 40729904600, four-class/Rogue path, input.js defaults, current menu labels, local saves, CI owner gates, and linked documentation routing. Removed stale three-class instructions and historical audit walls. This review verifies README guidance only, not every linked document, full-game gameplay or device acceptance."
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",
