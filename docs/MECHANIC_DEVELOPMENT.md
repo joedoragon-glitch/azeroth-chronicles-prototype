@@ -48,6 +48,17 @@ Use the rows that actually apply; not every sound-guide edit needs combat or sav
 
 **On failure:** Record the exact test, base and candidate commit (SHA, the Git commit identifier), message and run link. Distinguish a real product regression from an outdated expectation, invalid setup, infrastructure failure or an *unexplained* result. Correct the cause; never silently waive a failing original suite or relabel it as passed. See [test reliability dispositions](TEST_RELIABILITY_STAGES_1_TO_3_20261027.md) for the fuller classification practice.
 
+**Typical focused commands** (choose the tests that actually match your change; `<test-file>` is a placeholder, not a literal command):
+
+```sh
+npm ci --ignore-scripts
+node tests/<test-file>.test.cjs
+npx prettier --check path/to/changed-file
+node scripts/build.cjs --check
+```
+
+The project's locked development dependencies supply the formatter; don't install random global replacements or run the full matrix by default. Check [package.json](../package.json) for maintained task names. A final build check verifies generated files are in sync; when they are stale, regenerate them through the actual build source rather than hand-editing the output.
+
 **Reuse evidence honestly:** a completed check on unchanged relevant inputs need not be rerun just because a chat disconnected. A code, test, build-input or dependency change can invalidate its evidence, however; verify the final candidate's relevant checks and keep the exact tested head. Focused passing checks do **not** certify a full campaign, every browser, physical phone, or artistic quality.
 
 ## 4. Keep source, documentation, and the PR together
@@ -96,7 +107,7 @@ The **definition of done** is the approved player-visible behavior implemented, 
 
 ## A concrete mini-example
 
-**Request:** "Make a companion recover correctly after a zone change."
+**Hypothetical request (not a pending assignment):** "Make a companion recover correctly after a zone change."
 
 - **Scope:** Confirm whether this is already implemented, what reset/recall should do, and which companion/save systems own it. Avoid restarting an old companion feature proposal.
 - **Code:** Fix the real zone-transition and roster path, preserving unit IDs and v4 save compatibility.
