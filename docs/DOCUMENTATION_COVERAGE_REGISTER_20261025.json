@@ -2797,7 +2797,7 @@
     },
     {
       "path": "docs/HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md",
-      "gitBlobSha": "a6df0586457fcfbd9e97d25c747dc12940097e47",
+      "gitBlobSha": "f01cdbf2c66aae16aba85cad057abb25ec55d44b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2815,7 +2815,9 @@
       "historicalPinnedDirectlyLinkedFromIndex": false,
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousSkillAuthorityBlobSha": "a6df0586457fcfbd9e97d25c747dc12940097e47",
+      "reconciliationReviewEvidence": "28 Oct: checked PR #439 merged and #436 closed unmerged; dated prominent candidate, review and restart directions. Remaining numerical, historical and later-source claims await full review."
     },
     {
       "path": "docs/HERO_SKILL1_AREA2_IMPLEMENTATION_20261024.md",
@@ -2841,7 +2843,7 @@
     },
     {
       "path": "docs/HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md",
-      "gitBlobSha": "4c3487234cbe63df6d0893493e52330256573b0b",
+      "gitBlobSha": "166b41a4f8644a0119f367fdf53690006f3a0ed7",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2859,7 +2861,9 @@
       "historicalPinnedDirectlyLinkedFromIndex": false,
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousSkillAuthorityBlobSha": "4c3487234cbe63df6d0893493e52330256573b0b",
+      "reconciliationReviewEvidence": "28 Oct: checked PR #439 merged and #436 closed unmerged; dated prominent candidate, review and restart directions. Remaining numerical, historical and later-source claims await full review."
     },
     {
       "path": "docs/HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md",
@@ -2885,7 +2889,7 @@
     },
     {
       "path": "docs/HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md",
-      "gitBlobSha": "0471c943ad1ad5d61448ace3b04a83ecf6be3ce5",
+      "gitBlobSha": "8f1fded1ad4e4a14707346d104a39bbe095b555e",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2903,7 +2907,9 @@
       "historicalPinnedDirectlyLinkedFromIndex": false,
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousSkillAuthorityBlobSha": "0471c943ad1ad5d61448ace3b04a83ecf6be3ce5",
+      "reconciliationReviewEvidence": "28 Oct: checked PR #439 merged and #436 closed unmerged; dated prominent candidate, review and restart directions. Remaining numerical, historical and later-source claims await full review."
     },
     {
       "path": "docs/HERO_SKILL1_AV_AND_IN_GAME_GUIDANCE_SCOPE_20261024.md",
@@ -2975,7 +2981,7 @@
     },
     {
       "path": "docs/HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md",
-      "gitBlobSha": "767af9306909dfa43fe3fece3e0519bd3e3d924a",
+      "gitBlobSha": "2e9690840eb804161b28e226db4c5c4ffa77caf8",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2993,7 +2999,9 @@
       "historicalPinnedDirectlyLinkedFromIndex": false,
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousSkillAuthorityBlobSha": "767af9306909dfa43fe3fece3e0519bd3e3d924a",
+      "reconciliationReviewEvidence": "28 Oct: checked PR #439 merged and #436 closed unmerged; dated prominent candidate, review and restart directions. Remaining numerical, historical and later-source claims await full review."
     },
     {
       "path": "docs/HERO_SKILLS_CONSOLIDATION_20261015.md",

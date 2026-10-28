@@ -1,8 +1,10 @@
+> **Historical checkpoint:** [PR #439](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) merged on 25 October 2026. The draft, implementation and next-step directions below describe that earlier candidate; they are not an instruction to resume or re-merge it. Consult [Development state](DEVELOPMENT_STATE.md) and current source for present behavior and acceptance.
+
 # Hero Skill 1: self-taught combat — approved class concepts and numerical design (24 October 2026)
 
-> **Status: owner-approved design and Area 1 gameplay code integrated on this draft branch; The Paladin's cross-shaped holy attack, the Mage's wide, multi-enemy arcane beam, and the Ranger's pursuing hawk that interrupts active enemy retreats are accepted *in concept* by the owner; the exact cooldown, damage, reach, hit and rank-scaling **design choices are now fixed for the implementation candidate** in the [numerical specification](HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md); visual presentation and working names remain for production review. These values are not runtime-tested or an authorization to merge. Area 2 audiovisual/game text, Area 3 remaining input/boss-motion decisions, and Area 4 full-repository verification remain; no merge/deployment authorization. [Area 1 checkpoint](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md).**
+> **Historical 24 October status: owner-approved design and Area 1 gameplay code integrated on this draft branch; The Paladin's cross-shaped holy attack, the Mage's wide, multi-enemy arcane beam, and the Ranger's pursuing hawk that interrupts active enemy retreats are accepted *in concept* by the owner; the exact cooldown, damage, reach, hit and rank-scaling **design choices are now fixed for the implementation candidate** in the [numerical specification](HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md); visual presentation and working names remain for production review. These values are not runtime-tested or an authorization to merge. Area 2 audiovisual/game text, Area 3 remaining input/boss-motion decisions, and Area 4 full-repository verification remain; no merge/deployment authorization. [Area 1 checkpoint](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md).**
 >
-> **Audit baseline:** `main` at `e4e8234b5f784ddc9492fe79d956fd0a696b12af`. [Unmerged prerequisite PR #436](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/436) removes the hero's movement requirement for automatic attacks. When this draft eventually becomes an implementation candidate, reconcile that work into the same proposed integration, do not assume #436 is deployed, and re-audit against then-current `main`.
+> **Historical audit baseline:** `main` at `e4e8234b5f784ddc9492fe79d956fd0a696b12af`. [Unmerged prerequisite PR #436](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/436) removes the hero's movement requirement for automatic attacks. The proposed integration at that time was to reconcile that work with the then-current `main`; #436 later closed unmerged and #439 integrated the relevant stationary-basic work.
 
 ## 1. Owner-directed meaning (approved design direction)
 
@@ -60,7 +62,7 @@ See [companion audit](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md) for the ex
 
 ## 6. Acceptance checklist / dependency-aware focused verification
 
-- [ ] Rebase this draft on current `main`; inspect #436's status/diff and incorporate stationary basics into **one** integrated implementation (do not merge source PR blindly).
+- Historical checkpoint: reconcile the then-draft with #436's stationary basics. PR #436 itself closed unmerged; #439 later integrated the relevant work and merged.
 - [ ] Class-by-class tests: Paladin, Mage, Ranger auto basic while idle/moving/navigating, all three combo beats and third-hit geometry, damage and class reach.
 - [ ] Verify independent automatic-basic timer vs activated Skill 1's **normal and charged** timers under combat, pause, menus, hidden page, restoration, Slow and Cooldown Training at ranks 0–5.
 - [ ] Assert prior charged attack becomes immediate Tap with identical meaningful attack content/damage/projectile class identity and **3s starting cooldown**, without old charge prep or charged opener receipt.

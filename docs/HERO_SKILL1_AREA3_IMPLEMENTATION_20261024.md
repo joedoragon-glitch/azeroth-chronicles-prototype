@@ -1,6 +1,8 @@
+> **Historical checkpoint:** [PR #439](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) merged on 25 October 2026. The draft, implementation and next-step directions below describe that earlier candidate; they are not an instruction to resume or re-merge it. Consult [Development state](DEVELOPMENT_STATE.md) and current source for present behavior and acceptance.
+
 # PR #439 — Area 3 implementation
 
-Development candidate only; no merge or publication authorized.
+At this checkpoint the work was a development candidate; PR #439 later merged.
 
 - `input.js` owns a transient, insertion-ordered queue with stable request IDs,
   16 pending entries across all slots, no deduplication and no silent eviction.

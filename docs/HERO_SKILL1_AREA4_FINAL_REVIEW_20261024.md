@@ -1,3 +1,5 @@
+> **Historical checkpoint:** [PR #439](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) merged on 25 October 2026. The draft, implementation and next-step directions below describe that earlier candidate; they are not an instruction to resume or re-merge it. Consult [Development state](DEVELOPMENT_STATE.md) and current source for present behavior and acceptance.
+
 # PR #439 — Integrated code review and focused validation
 
 **Candidate:** 0.9.1+snapshot.dev.178, continuing draft branch
@@ -96,10 +98,11 @@ activated action can run alongside basics; groups gain further from Cross/Beam.
 That is the explicit design's action-economy change, and it deserves owner
 playtesting. **No damage, cooldown, boss HP or companion strength was retuned.**
 
-## Next review action
+## Historical next review action (not a current work order)
 
-Read the current PR check and the owner-facing scope. Complete a bounded actual
-browser/play check when that environment is available, with particular attention
-to small-screen queue readability, class effects/audio and combined damage.
-Keep the draft and the approved initial numbers until owner review. Obtain the
-owner's explicit merge/publication authorization before releasing dev.178.
+> Read the current PR check and the owner-facing scope. Complete a bounded actual
+> browser/play check when that environment is available, with particular attention
+> to small-screen queue readability, class effects/audio and combined damage.
+> Keep the draft and the approved initial numbers until owner review. Obtain the
+> owner's explicit merge/publication authorization before releasing dev.178.
+>

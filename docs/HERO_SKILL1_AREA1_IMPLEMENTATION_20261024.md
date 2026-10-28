@@ -1,4 +1,6 @@
-**Current status:** This document preserves the original implementation checkpoint. Later work, repaired CI, completed FIFO input and expanded verification supersede its unfinished-work statements; see [the current final review](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md).
+> **Historical checkpoint:** [PR #439](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) merged on 25 October 2026. The draft, implementation and next-step directions below describe that earlier candidate; they are not an instruction to resume or re-merge it. Consult [Development state](DEVELOPMENT_STATE.md) and current source for present behavior and acceptance.
+
+**Historical status:** This document preserves the original implementation checkpoint. Later work, repaired CI, completed FIFO input and expanded verification supersede its unfinished-work statements; see [the current final review](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md).
 
 # Hero Skill 1 integration — Area 1 gameplay implementation checkpoint
 
@@ -34,7 +36,7 @@ This record distinguishes executable behavior on the PR branch from later audiov
 - The committed `tests/hero-skill1-stage1.test.cjs` source was **executed against native campaign module code** in a JS harness with a reduced set of inert noncombat services; its Skill 1 form, cross/beam/hawk, Skill 2, Shield Stance and save-validation assertions **passed**. This is **not** proof that `npm test`, the full game build, audio/presentation or browser input checks passed. The harness does not validate all dungeon/encounter motion paths.
 - No full automated suite, browser matrix, deployment or merge was performed as part of this first-stage implementation checkpoint.
 
-## Remaining work before this PR can be reviewed for merge
+## Historical work remaining at the Area 1 checkpoint
 
 **Area 2 — audiovisual plus actual bilingual in-game player teaching.** This code emits mechanical `heroSkillArea`, `heroHawk`, `skill1Tap` and `hawkRetreatInterrupted` receipts but the dedicated new cross/beam/hawk presentation art, impact/recovery sound design, live numeric Skill Journal, Keeper's Archive, HUD, instructor/guide copy and localized names **are not yet implemented**. See [mandatory A/V and game UI contract](HERO_SKILL1_AV_AND_IN_GAME_GUIDANCE_SCOPE_20261024.md). Temporary working names and Spanish translations suffice.
 
@@ -42,4 +44,4 @@ This record distinguishes executable behavior on the PR branch from later audiov
 
 **Area 4 — focused testing and test-led adjustment.** Run the committed native suite with Node in the full repository, add all-slot 1–8 cooldown + Slow/queue, save load/roundtrip, physical path and boss/companion regressions, then build/offline checks and appropriate targeted browser/Pixi/Canvas checks. Resolve any failures before considering PR ready. No broad tuning before observed data.
 
-**Do not merge, push to main, deploy, or mark this draft ready yet.** The PR remains the single integration candidate and requires further review.
+At this Area 1 checkpoint the draft was not ready for merge or deployment; PR #439 later merged.
