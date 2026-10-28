@@ -76,7 +76,7 @@ function context() {
 (async () => {
   {
     const f = fresh();
-    assert.equal(f.sprites.status().maxDecodedBytes, 256 * 1024 * 1024);
+    assert.equal(f.sprites.status().maxDecodedBytes, 1024 * 1024 * 1024);
     const catalog = Object.fromEntries(
       Array.from({ length: 80 }, (_, i) => [
         'prop:large-' + i + ':vale',
@@ -93,18 +93,20 @@ function context() {
     await warm;
     const status = f.sprites.status();
     assert.equal(count, 80);
-    assert.equal(status.decodedBytes, 256 * 1024 * 1024);
-    assert.equal(status.loaded, 64);
-    assert.equal(status.evictions, 16);
-    assert(status.peakReservedBytes <= 256 * 1024 * 1024);
+    assert.equal(status.decodedBytes, 320 * 1024 * 1024);
+    assert.equal(status.loaded, 80);
+    assert.equal(status.evictions, 0, 'retain all currently available sprite images');
+    assert(status.peakReservedBytes <= 1024 * 1024 * 1024);
     assert(status.peakConcurrent <= 2);
     assert(f.sprites.configure({ decodedBytes: 32 * 1024 * 1024 }));
     assert(f.sprites.status().decodedBytes <= 32 * 1024 * 1024);
-    assert(f.sprites.configure({ decodedBytes: 256 * 1024 * 1024 }));
+    assert(f.sprites.status().evictions > 0,
+      'explicitly lowering the cache limit can still retire old images');
+    assert(f.sprites.configure({ decodedBytes: 1024 * 1024 * 1024 }));
     f.sprites.installManifest(manifest({}));
     assert.equal(f.sprites.status().decodedBytes, 0);
     console.log(
-      'PASS 256 MiB sprite residency, reservation bounds, LRU retirement and smaller-budget configuration',
+      'PASS generous sprite residency, emergency reservation bounds and explicit small-cache configuration',
     );
   }
 
