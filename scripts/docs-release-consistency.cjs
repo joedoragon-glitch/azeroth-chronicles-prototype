@@ -29,11 +29,19 @@ function inspect(b, ctx = {}) {
     errors.push('Development state visible current source version missing or stale');
   }
   const row = String(b.state).match(/^\| Build\/cache version \|\s*\*\*\x60([^\x60]+)\x60\*\*/m);
-  if (row && row[1] !== version) errors.push('Development state build/cache table is stale');
-  for (const line of String(b.state).split(/\r?\n/).slice(0, 34)) {
-    if (/Current public game:|Latest verified playable update/i.test(line)) {
+  if (!row) errors.push('Development state build/cache table is missing');
+  else if (row[1] !== version) errors.push('Development state build/cache table is stale');
+  // A candidate source version may be newer than the last VERIFIED Pages
+  // publication. Never force a draft to claim its unshipped build is live.
+  const opening = String(b.state).split(/\r?\n/).slice(0, 34);
+  const publishedLine = opening.find(line => /^\*\*Latest verified playable update/i.test(line));
+  const publishedVersion = publishedLine?.match(/\b\d+\.\d+\.\d+\+snapshot\.dev\.\d+\b/)?.[0];
+  for (const line of opening) {
+    if (/Current public game:/i.test(line)) {
       const claim = line.match(/\b\d+\.\d+\.\d+\+snapshot\.dev\.\d+\b/);
-      if (claim && claim[0] !== version) errors.push('Development state incorrectly claims an older current release');
+      if (claim && claim[0] !== publishedVersion) {
+        errors.push('Development state current-public-game claim disagrees with verified publication');
+      }
     }
   }
   if (/(?:Last verified game build|Current public game|Current game build)[^\n]*snapshot\.dev\.\d+/i.test(b.readme)) {
@@ -53,7 +61,9 @@ function inspect(b, ctx = {}) {
     const runtime = ctx.changedPaths.filter(p =>
       /^src\/prototype\/.*\.(?:js|json)$|^styles\/.*\.css$|^assets\/(?:audio|sprites)\/|^tools\/(?:audio|sprites)\/.*\.(?:js|css|html|json)$|^(?:index|phone)\.html$/.test(p));
     const documented = ctx.changedPaths.some(p =>
-      /^docs\/.*\.md$|^(?:README|AGENTS|CONTROLES|GUIA_EN_ESPANOL)\.md$/.test(p));
+      (/^docs\/.*\.md$/.test(p) &&
+       !/^docs\/(?:DEVELOPMENT_STATE|DOCUMENTATION_INDEX)\.md$/.test(p)) ||
+      /^(?:README|CONTROLES|GUIA_EN_ESPANOL)\.md$/.test(p));
     if (runtime.length && !documented) {
       errors.push('Runtime changes have no accompanying feature/player documentation update in this PR');
     }
