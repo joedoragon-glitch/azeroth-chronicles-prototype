@@ -62,6 +62,21 @@ The released code includes the [first-gesture/recovery repair #470](https://gith
 
 **Technical limits worth knowing:** The recording system verifies SHA-256 file hashes and restricted local paths. Its design includes a **32 MiB default decoded-audio cache**, **32 MiB encoded catalog / 8 MiB per-file limit**, and **64-source ceiling** that reserves priority for critical warnings and interface effects. Assets load/decode lazily, playing loops remain pinned, and transitions free resources. These **are source policies**, not measurements of actual Chromebook/iPhone CPU, RAM or loudness.
 
+## Soundtrack listening room — practical guide (draft feature)
+
+The [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is a **separate, read-only player**. The currently published `dev.208` page still has an older layout; the revised interface in **draft PR #563** is **not published** until that PR is approved, merged and the updated offline cache reaches a particular device.
+
+In the revised interface:
+
+1. **Hear a game scene:** choose a place, an appropriate situation (exploration, combat, settlement, night or liberated world), or a boss and Normal/TRUE form, then press **Play this scene**. The same registered source music, synchronized action/TRUE layers and environmental rules are used without starting a saved campaign. The main title, defeat and finale are available under *Other game moments*.
+2. **Browse individual recordings:** filter the full catalog by **83 music tracks**, **14 environmental beds** or **30 sound effects**; search by name or stable ID, inspect the recording, then press **Play selected recording**. This plays a file by itself, which is different from the combined scene soundtrack. Where appropriate, **Play with paired layer** auditions the music together with its synchronized combat/TRUE part.
+3. **Reuse a creative brief:** the selected production asset displays its natural-language guide and exact recipe owner. **Copy creative brief** copies text for a composer or later development session; it does not change or regenerate audio.
+4. **Optional advanced tools:** expand **Advanced listening tools** for temporary volume/mix adjustments, diagnostic test tones, musical-bar transition timing, waveform measurements, live engineering data and a downloadable local JSON report. These are troubleshooting and sound-production aids, **not a sound-quality score or public feedback submission**.
+
+Audio begins only after the user chooses to play something. **Pause** and **Stop audio** appear near the top, rather than hiding among diagnostics. No campaign saves or local game preferences are read or written by the standalone room. The page is designed for desktop and phone, but **real-device acceptance for the revised interface is still required**. Automated focused source/build checks alone cannot certify audible output, phone gestures, offline reopening, or a complete browser playthrough.
+
+For creative decisions about *why* each composition exists, see [Soundtrack and sound identity](AUDIO_SOUND_PASS.md); for adding, replacing or regenerating a file, see [Audio authoring](AUDIO_AUTHORING.md).
+
 ## Audition, validation and unfinished acceptance
 
 The [independent audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) lets developers and the owner compare scores, individual cues, bosses, reference/quiet/phone mixes and local audio measurements. It does **not** read or write the playable campaign's saves.
