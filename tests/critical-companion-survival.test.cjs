@@ -23,10 +23,13 @@ function scene(type = 'soldier', cls = 'mage', native = false) {
     { species: 'goblin', name: 'Survival foe', level: 1, hp: 100000, damage: 0, gold: 0, xp: 0 },
     { x: 1050, y: 1500 },
   );
-  // Keep the original isolated companion fixture. This test is for the
-  // companion's decisions, not the full enemy opening/return-home lifecycle.
+  // This is an isolated companion survival probe. Vale's hero-first
+  // onboarding guard must be complete: otherwise the first friendly hit
+  // triggers openingCompanionHit() and makes the enemy return home.
+  g.s.valeFieldAwakened = true;
   e.aggro = true;
   z.enemies = [e];
+  assert(!g.awaitsHeroAttack(e), 'fixture is beyond hero-first field onboarding');
   g.zone();
   return { g, z, u, e };
 }
