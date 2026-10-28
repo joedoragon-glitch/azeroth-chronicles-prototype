@@ -67,6 +67,17 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     for (const allies of [false, true]) {
       const { g, e } = arena(cls, cls === 'paladin' ? 65 : 250, allies),
         hp = e.hp;
+      let landedDamage = 0, damageCalls = 0;
+      const originalDamage = g.damage;
+      g.damage = function(target, ...params) {
+        const before = target?.hp;
+        const result = originalDamage.call(this, target, ...params);
+        if (target === e && result && before > e.hp) {
+          damageCalls++;
+          landedDamage += before - e.hp;
+        }
+        return result;
+      };
       assert(g.cast(slot, e.id, charged), cls + ' ' + slot + ' ' + charged + ' can release');
       for (let i = 0; i < 70; i++) {
         g.s.time += 0.05;
@@ -80,8 +91,8 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
           pending:g.s.projectiles.map(p=>({x:p.x,y:p.y,target:p.target,life:p.life,
             source:p.source,style:p.style})),
           events:g.events?.slice(-10)}));
-      assert(e.hp < hp, cls + ' ' + slot + ' ' + charged + ' lands through allies');
-      results.push(hp - e.hp);
+      assert(landedDamage > 0, cls + ' ' + slot + ' ' + charged + ' lands through allies, actual damage receipts='+damageCalls);
+      results.push(landedDamage);
     }
     assert.equal(
       results[0],

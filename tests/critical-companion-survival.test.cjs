@@ -88,8 +88,24 @@ console.log(
   g.hero.order = { type: 'move', x: 1400, y: 1500 };
   const order = g.hero.order;
   const before = e.hp;
+  const originalDamage = g.damage;
+  let healthyContacts = 0, healthyDamage = 0;
+  g.damage = function(target, amount, source, options) {
+    const hp = target?.hp;
+    const result = originalDamage.call(this, target, amount, source, options);
+    if (target === e && source === healthy.id && result) {
+      healthyContacts++;
+      healthyDamage += Math.max(0, hp - e.hp);
+    }
+    return result;
+  };
   step(g, 30);
-  assert(e.hp < before, 'healthy companion continues attacking');
+  if (!(healthyContacts > 0)) console.error('ROLLBACK-DIAGNOSTIC healthy ally',
+    JSON.stringify({hp:before,now:e.hp,max:e.maxHp,healthy:{x:healthy.x,y:healthy.y,
+      hp:healthy.hp,cd:healthy.cd},hero:{x:g.hero.x,y:g.hero.y},
+      enemy:{x:e.x,y:e.y,aggro:e.aggro,returning:e.returning},
+      targets:[...g._tacticalPartyTargets],contacts:healthyContacts,landed:healthyDamage}));
+  assert(healthyContacts > 0, 'healthy companion continues landing real attacks');
   assert(g._tacticalPartyTargets.has(healthy.id));
   assert(distance(u, e) > 65 && distance(pet, e) > 65, 'wounded units avoid close melee');
   assert.equal(g.hero.order, order);

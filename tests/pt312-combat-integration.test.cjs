@@ -121,6 +121,13 @@ for (const form of ['normal', 'true']) {
     g.updateEnemies(0.05);
     refilled = g.bossOwnedSummons(e).length > 0;
   }
+  if(!refilled) console.error('ROLLBACK-DIAGNOSTIC boss no refill',
+    JSON.stringify({form,at:g.s.time,boss:{x:e.x,y:e.y,hp:e.hp,aggro:e.aggro,
+      returning:e.returning,summonCd:e.summonCd,cd:e.cd,telegraph:e.telegraph,
+      lastAttackIndex:e.lastAttackIndex,attackCd:e.attackCd},
+      hero:{x:g.hero.x,y:g.hero.y},weights:g.bossAttackWeights(e,g.hero,true),
+      pack:g.bossOwnedSummons(e).length,cap:g.bossSummonCap(e),
+      allEnemies:g.zone().enemies.length}));
   assert(refilled, form + ' actual Developer AI replenishes killed pups after recovery');
   assert(e.aggro && !e.returning, 'the probe stayed in a live encounter');
 }
