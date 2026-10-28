@@ -32,40 +32,39 @@ function add(g, point, species = 'goblin') {
   assert(!g.clearSegment(g.hero, { x: 1150, y: 1500 }),
     'real scenery remains impassable');
 }
-// PT-007: full-radius marks stay on connected floor and remain frozen after warning.
+// PT-007 revision: target-centered ground warnings remain full sized even if
+// scenery overlaps their footprint; patches remain frozen after commitment.
 for (const id of Object.keys(C.rules.treasuryArchitecture)) {
   const g = room(id), e = g.zone().enemies.find((u) => u.roomCaptain);
   if (!e) continue;
   for (const area of C.rules.treasuryArchitecture[id].walkable) {
     const [x1, x2, y1, y2] = area.bounds;
-    for (const point of [{ x: x1 + 25, y: y1 + 25 }, { x: x2 - 25, y: y2 - 25 }]) {
+    for (const point of [{x:x1+25,y:y1+25},{x:x2-25,y:y2-25}]) {
       if (g.blocked(point.x, point.y)) continue;
       Object.assign(e, point);
-      const a = { kind: 'circle', captainSpread: true, count: 4,
-        radius: 85, x: point.x, y: point.y, timer: 1.2, total: 1.2 }, sequence = [];
-      assert(g.prepareAttackSequence(e, a, sequence));
-      const beats = [a, ...sequence], patches = beats.flatMap((beat) => g.attackPatches(beat));
-      assert.equal(patches.length, 4, 'all four strikes retained, with sequential fallback if needed');
-      for (const p of patches) {
-        assert(!g.blocked(p.x, p.y, id, p.radius + C.rules.arenaPlacement.margin));
-        assert(g.route(e, p).length || distance(e, p) < 1, 'actual connected room');
-      }
-      const marks = JSON.stringify(g.attackPatches(a));
-      Object.assign(g.hero, g.safe(e.x + 100, e.y));
-      assert.equal(JSON.stringify(g.attackPatches(a)), marks, 'moving target cannot move warnings');
+      const attack={kind:'circle',captainSpread:true,count:4,radius:85,
+        x:point.x,y:point.y,timer:1.2,total:1.2}, sequence=[];
+      const authored=g.attackPatches(attack).map(({x,y,radius})=>({x,y,radius}));
+      assert(g.prepareAttackSequence(e,attack,sequence));
+      assert.equal(sequence.length,0,'ground clutter never invents extra delayed beats');
+      assert.deepEqual(g.attackPatches(attack).map(({x,y,radius})=>({x,y,radius})),
+        authored,'retain exact target-centered offsets and full radius');
+      const marks=JSON.stringify(g.attackPatches(attack));
+      Object.assign(g.hero,g.safe(e.x+100,e.y));
+      assert.equal(JSON.stringify(g.attackPatches(attack)),marks,'warning stays committed');
     }
   }
 }
-// Dual-line patterns use the same frozen corridor geometry in warnings and damage.
+// Two ground lanes retain full parallel warning/impact geometry, not
+// individually shortened or rescheduled by obstruction scans.
 {
-  const g = room('supply-highlands'), e = g.zone().enemies.find((u) => u.roomCaptain),
-    a = { kind: 'line', count: 2, angle: 0, fromX: e.x, fromY: e.y,
-      x: e.x + 300, y: e.y, timer: 1.5, total: 1.5 }, sequence = [];
-  assert(g.prepareAttackSequence(e, a, sequence));
-  const lines = [a, ...sequence].flatMap((beat) => beat.arenaLines);
-  assert.equal(lines.length, 2, 'both authored corridors survive confined-room placement');
-  for (const line of lines)
-    assert(g.clearSegment({ x: line.fromX, y: line.fromY }, line, line.halfWidth + 3));
+  const g=room('supply-highlands'),e=g.zone().enemies.find(u=>u.roomCaptain),
+    a={kind:'line',count:2,angle:0,fromX:e.x,fromY:e.y,
+      x:e.x+300,y:e.y,timer:1.5,total:1.5},seq=[];
+  assert(g.prepareAttackSequence(e,a,seq));
+  assert.equal(seq.length,0,'twin lanes remain simultaneous');
+  assert.deepEqual(a.arenaLines.map(({fromX,fromY,x,y})=>[fromX,fromY,x,y]),
+    [[e.x,e.y-85,e.x+300,e.y-85],[e.x,e.y+85,e.x+300,e.y+85]]);
 }
 // PT-001: existing four-skill kit, owned-pup accounting and genuine refill resolution.
 for (const form of ['normal', 'true']) {
