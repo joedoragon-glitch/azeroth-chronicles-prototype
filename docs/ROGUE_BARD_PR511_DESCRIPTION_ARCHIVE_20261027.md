@@ -1,3 +1,5 @@
+> **Current Rogue canon / archival notice — 28 October 2026:** Rogue/Pícara **has shipped as the fourth playable class** after PR #511 merged. This file is a dated implementation, art or preview record, **not the current release gate**. Binding equipment is one **staff with a suspended oversized spherical jingle bell** in normal/crowned art, never guitar, lute or strings. Critical intensity is developer-only (Rogue Level 2 default), and legitimately Charmed companions—not Rogue herself—construct the first Barracks. For any new changes or publicity follow [current Rogue canon](ROGUE_CURRENT_CANON.md) and [development state](DEVELOPMENT_STATE.md); old draft statuses, guitar audio/art, skill names and preview instructions below are superseded history.
+
 # PR #511 previous description — archival evidence
 
 **27 October 2026.** The text below is an exact copy of the old PR description immediately before consolidation at `922a9cc2`. It contains multiple superseded Phase 3 candidate statuses and naming/wound proposals. **Do not use it as a current implementation contract.** Read [the consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md) instead.
