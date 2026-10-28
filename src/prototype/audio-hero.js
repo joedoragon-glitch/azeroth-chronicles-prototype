@@ -18,26 +18,31 @@
           return true;
         if (e.class === 'rogue' &&
           ['rogueBellBasic', 'rogueBellSkill1', 'rogueBellPerformance'].includes(e.type)) {
-          // Actual release receipts only: bounded bell phrases, not per-contact
-          // voices or ongoing station audio that could increase phone load.
+          // The hero shakes a small *jingle bell*, not a resonant handbell:
+          // short, separated high-metallic rattles with tiny inharmonic ticks.
+          // Only genuine gameplay release receipts sound; never enemy-by-enemy.
           const now = this.ctx.currentTime;
           if (!this.allowSfx('rogue:' + e.type + ':' + (e.form || 'auto'), now, 0.075) ||
             this.voices.size > 38) return true;
           const basic = e.type === 'rogueBellBasic',
-            charged = e.form === 'charged',
+            emphatic = e.form === 'charged' || (basic && e.combo === 3),
             quiet = now - this.lastWarning < 0.4 ? 0.4 : 1,
-            weight = (charged ? 1.14 : 0.88) * quiet,
-            base = basic ? 82 : e.type === 'rogueBellSkill1'
-              ? 74 : 70 + Math.min(8, Math.max(2, e.slot || 2)),
+            weight = (emphatic ? 1.08 : 0.88) * quiet,
+            ticks = emphatic ? 3 : 2,
             prior = this.sourcePriority;
           this.sourcePriority = 1;
           try {
-            this.tone(base, now, 0.11, 0.032 * weight, 'triangle', 'effects', 0.003);
-            this.tone(base + (basic ? 7 : 5), now + 0.034,
-              0.13, 0.023 * weight, 'sine', 'effects', 0.004);
-            if (charged || (basic && e.combo === 3))
-              this.tone(base + 12, now + 0.079,
-                0.16, 0.02 * weight, 'triangle', 'effects', 0.005);
+            for (let i = 0; i < ticks; i++) {
+              const at = now + (i === 0 ? 0 : i === 1 ? 0.037 : 0.082);
+              // A pair/triple of tiny metal-shell collisions. These filtered
+              // noise taps are the body of the sound, not sustained notes.
+              this.noiseBurst(at, i === 0 ? 0.043 : 0.032,
+                (i === 0 ? 0.024 : 0.018) * weight, 'bandpass',
+                i % 2 ? 3650 : 2850, 1.4);
+              if (i === 0 || i === ticks - 1)
+                this.tone(i === 0 ? 94 : 99, at + 0.004, 0.052,
+                  0.011 * weight, 'triangle', 'effects', 0.001);
+            }
           } finally {
             this.sourcePriority = prior;
           }

@@ -11,9 +11,9 @@
 
 ## Narrow candidate staged in this draft (not yet published)
 
-- Consume **only actual Rogue release events** through the existing bounded hero-presentation and audio owners: bell cast and landed-contact art for auto basics; target-centered bounded rings for normal/charged Skill 1 and higher-song releases; brief synthesized bell tones. Charged and auto-combo finisher are distinguishable; existing Mute/effects level, voice cap and audio throttling respected. No per-hit, frame-loop or permanent-station sounds; no invented projectile or Charm effect.
+- Consume **only actual Rogue release events** through the existing bounded hero-presentation and audio owners: bell cast and landed-contact art for auto basics; target-centered bounded rings for normal/charged Skill 1 and higher-song releases; brief, bright handheld **jingle-bell rattles** (short metallic noise collisions with tiny partials, never a sustained pitched bell or melody). Charged and auto-combo finisher are distinguishable; existing Mute/effects level, voice cap and audio throttling respected. No per-hit, frame-loop or permanent-station sounds; no invented projectile or Charm effect.
 - No changes to gameplay, boss logic, saves, class balance, existing classes, Canvas/Pixi selection or PWA identity. Increment version/cache together to draft dev.207; **do not bump to 0.9.2**.
-- Focused regression from real event shapes and reproducible offline-ready build required. Do not merge/deploy without a fresh owner release decision.
+- Focused regression from real event shapes and reproducible offline-ready build required. Owner explicitly authorized merging and normal live GitHub Pages publication after focused checks; use ordinary live-player testing, **no preview/branch playtest workflow**. Await player acceptance after publication.
 
 ## Separate performance investigation
 

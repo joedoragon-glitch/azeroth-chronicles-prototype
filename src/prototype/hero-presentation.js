@@ -11,7 +11,7 @@
     force: ['#86d5db', '#ccf3f0'],
     arrow: ['#d5c29a', '#f0e4c8'],
     nature: ['#a9ce96', '#daebbd'],
-    bell: ['#d5a15d', '#fff0bd'],
+    jingle: ['#d5a15d', '#fff0bd'],
     song: ['#a987c7', '#e7caee'],
   };
   // One row per slot, tap/charged pairs: name, silhouette, material.
@@ -85,14 +85,14 @@
       ],
     ],
     rogue: [
-      [['Ding and Sting', 'bell', 'bell'], ['Raise a Racket', 'bell', 'song']],
-      [['Lead Feet', 'bell', 'bell'], ["Can't Dance", 'bell', 'song']],
-      [['Beat Breaker', 'bell', 'bell'], ['Shut the Band Up', 'bell', 'song']],
-      [['Sour Note', 'bell', 'bell'], ['Rotten Chorus', 'bell', 'song']],
-      [['Sticky Shuffle', 'bell', 'bell'], ['Briar Boogie', 'bell', 'song']],
-      [['Stolen Beat', 'bell', 'bell'], ['Time Out', 'bell', 'song']],
-      [['Wrong Foot', 'bell', 'bell'], ['Panic Party', 'bell', 'song']],
-      [['Bad Bell Day', 'bell', 'bell'], ['Last Laugh', 'bell', 'song']],
+      [['Ding and Sting', 'jingle', 'jingle'], ['Raise a Racket', 'jingle', 'song']],
+      [['Lead Feet', 'jingle', 'jingle'], ["Can't Dance", 'jingle', 'song']],
+      [['Beat Breaker', 'jingle', 'jingle'], ['Shut the Band Up', 'jingle', 'song']],
+      [['Sour Note', 'jingle', 'jingle'], ['Rotten Chorus', 'jingle', 'song']],
+      [['Sticky Shuffle', 'jingle', 'jingle'], ['Briar Boogie', 'jingle', 'song']],
+      [['Stolen Beat', 'jingle', 'jingle'], ['Time Out', 'jingle', 'song']],
+      [['Wrong Foot', 'jingle', 'jingle'], ['Panic Party', 'jingle', 'song']],
+      [['Bad Bell Day', 'jingle', 'jingle'], ['Last Laugh', 'jingle', 'song']],
     ],
     ranger: [
       [
@@ -137,7 +137,7 @@
         paladin: ['Sword Combo', 'slash', 'steel'],
         mage: ['Arcane Combo', 'orb', 'arcane'],
         ranger: ['Bow Combo', 'arrow', 'arrow'],
-        rogue: ['Jingle Bell Combo', 'bell', 'bell'],
+        rogue: ['Jingle Bell Combo', 'jingle', 'jingle'],
       };
       const row = basics[e.class];
       if (row) return { name: row[0], motif: row[1], material: row[2], colors: palettes[row[2]] };
@@ -251,15 +251,19 @@
       ctx.lineTo(x, y + size * 0.8);
       ctx.lineTo(x - size * 0.6, y);
       ctx.closePath();
-    } else if (motif === 'bell') {
-      ctx.moveTo(x, y - size);
-      ctx.lineTo(x, y - size * 0.78);
-      ctx.moveTo(x - size * 0.54, y + size * 0.48);
-      ctx.quadraticCurveTo(x - size * 0.68, y - size * 0.8, x, y - size * 0.8);
-      ctx.quadraticCurveTo(x + size * 0.68, y - size * 0.8, x + size * 0.54, y + size * 0.48);
-      ctx.lineTo(x - size * 0.54, y + size * 0.48);
-      ctx.moveTo(x - size * 0.2, y + size * 0.65);
-      ctx.quadraticCurveTo(x, y + size, x + size * 0.2, y + size * 0.65);
+    } else if (motif === 'jingle') {
+      // Round, slotted handheld jingle bell with its suspension eye and
+      // internal rattle. Not a hanging/conical church or handbell silhouette.
+      ctx.moveTo(x + size * 0.2, y - size * 0.7);
+      ctx.arc(x, y - size * 0.7, size * 0.2, 0, Math.PI * 2);
+      ctx.moveTo(x + size * 0.78, y + size * 0.12);
+      ctx.arc(x, y + size * 0.12, size * 0.78, 0, Math.PI * 2);
+      ctx.moveTo(x - size * 0.53, y - size * 0.02);
+      ctx.quadraticCurveTo(x, y + size * 0.28, x + size * 0.53, y - size * 0.02);
+      ctx.moveTo(x, y - size * 0.48);
+      ctx.lineTo(x, y + size * 0.6);
+      ctx.moveTo(x + size * 0.13, y + size * 0.57);
+      ctx.arc(x, y + size * 0.57, size * 0.13, 0, Math.PI * 2);
     } else if (motif === 'holy-cross') {
       ctx.moveTo(x - size, y);
       ctx.lineTo(x + size, y);
@@ -717,7 +721,7 @@
         ctx.globalAlpha = fade * 0.55;
         glyph(ctx, p.x, p.y - 16, 'arrow', 8);
       } else if (f.class === 'rogue') {
-        glyph(ctx, p.x, p.y - 24, 'bell', 9);
+        glyph(ctx, p.x, p.y - 24, 'jingle', 9);
         ctx.globalAlpha = fade * 0.55;
         ctx.beginPath();
         ctx.arc(p.x, p.y - 17, 16 + 9 * t, -1.15, 0.25);
