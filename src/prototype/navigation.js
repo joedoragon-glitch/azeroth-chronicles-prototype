@@ -604,6 +604,20 @@
         }
         return null;
       }
+      // Attack contact and terrain clearance still need actor dimensions.
+      // This helper no longer participates in actor-to-actor movement blocking.
+      actorRadius(unit) {
+        const cfg = R.actorContactRadii;
+        return unit === this.hero
+          ? cfg.hero
+          : unit.type === 'boss'
+            ? cfg.boss
+            : unit.mountedCrownRider
+              ? cfg.mounted
+              : unit.captain || unit.roomCaptain || unit.species === 'ogre'
+                ? cfg.large
+                : cfg.normal;
+      }
       setSceneryTraversal(z, ready = true) {
         if (ready) sceneryReady.add(z);
         else sceneryReady.delete(z);
