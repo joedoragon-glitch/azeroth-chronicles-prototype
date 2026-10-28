@@ -36,6 +36,8 @@ This page collects the owner's recorded design rules and their later amendments 
 
 Currency, loss and retrieval of crowns, Treasury ownership, regional recovery and resource-cost flow. The Treasury recovery decision records a *design rule*; its historical publication wording does not independently prove the current build.
 
+**Decision intent at a glance:** Crowns are the only player-facing currency; ordinary death removes the documented percentage after eligible Barracks protection, and the 21 October recovery design tracks the *actual removed crowns* by region and captain/cache collection. Succession deaths instead use their own class-loss consequence. Verify the owning economy/Treasury source for actual implementation.
+
 ### Current recorded recovery decision — 21 October 2026
 
 **21 October — approved Treasury recovery:** Death penalties now transfer the actual removed crowns into a regional recoverable balance. Defeating the designated captain announces the amount; collecting the separate marked cache returns the whole balance once and resets it. Native defenders can return for later attempts. Frontier uses its existing roaming Cinder Warlord, who drops the marked cache at the actual kill location (owner-selected and clarified); other regions use their existing Treasuries. Earlier unregionalized losses cannot be reconstructed. This changes the recoverability of the old loss, not penalty rates or hiring prices. See `TREASURY_DEATH_RECOVERY_DEV128.md`. Crypt/Archive/Mine fort protection remains undecided and is not automatically authorized by its absence in an audit.
@@ -60,6 +62,8 @@ The owner confirms difficulty should reward game knowledge/execution while respe
 ## Companions, Expedition, Barracks, recruitment, pets and labor
 
 Roster size, rank gates, training, health, formations, normal and TRUE boss pets, doctrine and resource labor. Later pet decisions can extend earlier Soldier/Archer-only scopes; do not silently discard either stage.
+
+**Decision intent at a glance:** Expedition rank gates group size and services; Basic/Full Barracks, training, reserve/fallen recovery, labor and doctrine use the shared companion system. Later TRUE-boss pets are extensions of that system, not separate rosters. The detailed costs, ranks and inheritance formulas are preserved below.
 
 ### Foundation rules (original baseline wording retained)
 
@@ -126,6 +130,8 @@ Owner chooses all available idle gatherers per ordinary source order, combat-per
 
 Class advancement, specialist prerequisites, input forms, ability targeting, charged skills and dormant systems. Keep player-facing keyboard/touch choices distinct from combat authority.
 
+**Decision intent at a glance:** Hero growth and Discipline Training are different from combat input; normal and charged skill forms share their real cooldowns, with explicit hold/cancel/target rules. Later queue-form decisions modify how inputs behave while cooling down. Sprint remains deliberately unavailable.
+
 ### Foundation rules (original baseline wording retained)
 
 #### Specialist rescue and training gates
@@ -164,6 +170,8 @@ Ranger companion Heal follows the same one-request principle: its button/H comma
 ## Combat balance, bosses, enemy AI and Nightmare
 
 Scaling, targeting permission, damage windows, boss mechanics, warning geometry, retreat, night bonuses and enemy behavior. Read the precedence notes below before changing numeric values.
+
+**Decision intent at a glance:** Actual attack geometry, targeting permission, boss warnings, night scaling and recovery follow approved rules, not visual approximations. The latest recorded ringleader compression decision here is 0.145/0.240; consult the later 20 October section before using the 9 October table.
 
 ### Foundation rules (original baseline wording retained)
 
@@ -259,6 +267,8 @@ The current warning follows the same center and gaps used by the resolved closur
 
 Authored places, occupied societies, routes, arrival/departure points, dungeon entrances, defended sites and geography. Some subsections also touch combat, art or lore; their original full decision text remains here.
 
+**Decision intent at a glance:** The five inhabited regions retain distinct economies, sites and routes. Restore explicitly approved outward departures; preserve safe arrivals, authored travel access, enemy density, dungeons and save compatibility. Some older regional interpretations remain provisional rather than owner-fixed canon.
+
 ### Foundation rules (original baseline wording retained)
 
 #### World regions and authored collision
@@ -318,6 +328,8 @@ Owner requests two entrance choices: enter or build an outside Barracks with rec
 
 Character identity, professional clothing, Archive voice and distinctions between established canon and provisional implementation interpretations. Regional lore is also preserved intact in the world chapter.
 
+**Decision intent at a glance:** Preserve the established identities of specialists and authority figures. Keeper-authored Archive records use his own first-person voice; development directives and implementation disclaimers are not in-world lore. Separate accepted decisions from provisional author interpretations.
+
 ### Dated decisions and later revisions
 
 #### Named specialist women · director clarification, 16 October 2026
@@ -334,6 +346,8 @@ The Keeper collected and authored the Archive. Self-history, old-company memorie
 ## Visuals, sprite authorship, camera, terrain and presentation
 
 Rendering-only boundaries, original sprite masters, camera framing, supported layout sizes and visual cues. Old sprite inventory numbers refer to their dated releases.
+
+**Decision intent at a glance:** The accepted 150% framing and original-master sprite workflow guide visual work; world collision, encounter rules and saves must not shift merely to match an image. Historical sprite counts do not describe today's installed manifest.
 
 ### Dated decisions and later revisions
 
@@ -365,6 +379,8 @@ Joel authorizes autonomous adaptation and publication of existing sprites, follo
 ## Music, sound effects, event coverage and diagnostics
 
 Musical identity, typed gameplay events, effect routing, report interpretation and message history. See the current audio production and soundtrack-design guides for catalog and implementation.
+
+**Decision intent at a glance:** Original contextual music and event-aware effects preserve each region, encounter and material identity; typed game events remain distinct from transient messages and notices. Use the [current audio production guide](AUDIO_PLAYBACK.md) and manifest to determine the *implemented* recording/fallback system.
 
 ### Foundation rules (original baseline wording retained)
 
@@ -400,6 +416,8 @@ The sources serve different purposes:
 ## Save modes, software boundaries and historical release governance
 
 Succession, backups, save compatibility, PWA/application boundaries and cross-system release decisions. The dated Snapshot authorization does not override current owner consent.
+
+**Decision intent at a glance:** Standard and Succession modes retain their distinct persistence semantics; exports remain portable local backups. Current owner authorization, not a dated Community Snapshot approval or waiver, governs implementation, testing and release.
 
 ### Shared application and release foundations (historical recorded wording)
 
