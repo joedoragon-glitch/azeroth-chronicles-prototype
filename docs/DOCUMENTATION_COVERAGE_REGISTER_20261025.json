@@ -55,6 +55,17 @@
       "updatedPriorFileReceipts": 10,
       "preservedHistoricalSnapshots": true,
       "method": "Full nontruncated recursive Git tree and exact file blob SHA comparison, path-level classification of 28 merged Rogue documents, direct index-basename references; not full-body correctness certification"
+    },
+    "pr556FingerprintRefresh": {
+      "candidateParentSha": "f299c2e571bc48b6cdc353fa738e984590a463ba",
+      "mainSha": "6721c61ede70b4ff64246ea22e269629c2308552",
+      "markdownPaths": 417,
+      "docsMarkdown": 398,
+      "updatedPriorFileReceipts": 12,
+      "addedPaths": [
+        "docs/COMMUNICATION_STYLE.md"
+      ],
+      "method": "Nontruncated recursive Git tree compared with existing register; one corrected handoff blob is included in the same commit. This is a path and fingerprint reconciliation, not a full-body review or source verification."
     }
   },
   "semantics": {
@@ -62,7 +73,7 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "Exact Git blob SHA at the integrated 28 October candidate tree basis.phase5FinalReconciliation.stagedCandidateShaBeforeRegistry; older file blob receipts remain in their historicalPinnedGitBlobSha, previousPhase3GitBlobSha and/or previousPhase4GitBlobSha fields. The registry JSON does not register itself.",
+    "gitBlobSha": "Exact Git blob SHA at basis.pr556FingerprintRefresh.candidateParentSha, except the Rogue canonical owner handoff formatting fix included in the same commit. The register JSON is not Markdown and does not register itself. Earlier receipts are preserved in previousPhase5GitBlobSha and historical fields. Recheck fingerprints when tracked documents change.",
     "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
     "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
     "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks.",
@@ -244,7 +255,7 @@
     },
     {
       "path": "AGENTS.md",
-      "gitBlobSha": "e627a5f15646a79702a03974da9efd1d71488d0e",
+      "gitBlobSha": "8fb5dee6217da15998cfea7fb2a9ceaeb061b960",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -253,7 +264,8 @@
       "authority": "current_entrypoint",
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "98e6d2311ac78561972ddf55564c6546b6d27cc3",
-      "previousPhase4GitBlobSha": "b70be63b4aeb030724c024e1bd6f58d534595abb"
+      "previousPhase4GitBlobSha": "b70be63b4aeb030724c024e1bd6f58d534595abb",
+      "previousPhase5GitBlobSha": "e627a5f15646a79702a03974da9efd1d71488d0e"
     },
     {
       "path": "assets/sprites/README.md",
@@ -433,7 +445,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "1719512012e3202eb19405d201c48654aff1d302",
+      "gitBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -442,7 +454,8 @@
       "authority": "current_entrypoint",
       "reviewDepth": "frozen_census_membership",
       "previousPhase3GitBlobSha": "21f635ebfc6efdc3e181099e605fc932ddf4c610",
-      "previousPhase4GitBlobSha": "1c27bc597514b009c078e8b6aff5551b3dfd4304"
+      "previousPhase4GitBlobSha": "1c27bc597514b009c078e8b6aff5551b3dfd4304",
+      "previousPhase5GitBlobSha": "1719512012e3202eb19405d201c48654aff1d302"
     },
     {
       "path": "docs/ARCHIVE_FLOOR_SEAM_DEV124.md",
@@ -847,14 +860,15 @@
     },
     {
       "path": "docs/BRAND_IDENTITY.md",
-      "gitBlobSha": "7f91d0d9892f73746b0699ac6a4b14da068c7b6d",
+      "gitBlobSha": "c075f803a20b82b2beeb2797928d2afb41573034",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "frozen_census_membership",
+      "previousPhase5GitBlobSha": "7f91d0d9892f73746b0699ac6a4b14da068c7b6d"
     },
     {
       "path": "docs/BRIEF_COMPANY_DEV150.md",
@@ -995,6 +1009,17 @@
       "role": "dated_record",
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership"
+    },
+    {
+      "path": "docs/COMMUNICATION_STYLE.md",
+      "gitBlobSha": "074edffc4f41cfd22a8e89119ad41a5c6b4991a3",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "governance_or_reference",
+      "role": "current_entrypoint",
+      "authority": "current_entrypoint",
+      "reviewDepth": "header_screened"
     },
     {
       "path": "docs/COMMUNITY_SNAPSHOT_ART_AUDIT_20261016.md",
@@ -1523,7 +1548,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "0e1f554778c6d07f2892ba69defa5f9918620a51",
+      "gitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1532,7 +1557,8 @@
       "authority": "current_entrypoint",
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "e7643a28c75eb33e0b2a481f65f2f458fc27884d",
-      "previousPhase4GitBlobSha": "257c7d7ce0b17a4c674096ff1ba70f0371b6207b"
+      "previousPhase4GitBlobSha": "257c7d7ce0b17a4c674096ff1ba70f0371b6207b",
+      "previousPhase5GitBlobSha": "0e1f554778c6d07f2892ba69defa5f9918620a51"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -1605,7 +1631,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "0d9570f5c5345b33cc03fa4783e800ddcaec7fde",
+      "gitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1615,7 +1641,8 @@
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "6777828d513cae4708017e98b5404acb9bbdaa9e",
       "previousPhase3GitBlobSha": "8ec8ea1181840de17c2ba24da6c22edfab9ffe39",
-      "previousPhase4GitBlobSha": "88b7473134655c82ed2a79f443053dd8f9add5c2"
+      "previousPhase4GitBlobSha": "88b7473134655c82ed2a79f443053dd8f9add5c2",
+      "previousPhase5GitBlobSha": "0d9570f5c5345b33cc03fa4783e800ddcaec7fde"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -2797,7 +2824,7 @@
     },
     {
       "path": "docs/MECHANIC_DEVELOPMENT.md",
-      "gitBlobSha": "939de2e45f9ec06f9e2c4822e92d8a6935da6099",
+      "gitBlobSha": "0111438ad2627c1fb408c1b0ba8750f054e714be",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2806,7 +2833,8 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "ca17f8257babab5425862789e05ea255d156021d",
-      "previousPhase4GitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352"
+      "previousPhase4GitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352",
+      "previousPhase5GitBlobSha": "939de2e45f9ec06f9e2c4822e92d8a6935da6099"
     },
     {
       "path": "docs/MECHANICS_AUDIT_V081.md",
@@ -3839,14 +3867,15 @@
     },
     {
       "path": "docs/PROJECT_HISTORY.md",
-      "gitBlobSha": "d4740b21a3ef0a0b7f99804bca1b0a117e876852",
+      "gitBlobSha": "4ed19aa8859a43b37efe48ca28b6dd6da3863342",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
-      "reviewDepth": "frozen_census_membership"
+      "reviewDepth": "frozen_census_membership",
+      "previousPhase5GitBlobSha": "d4740b21a3ef0a0b7f99804bca1b0a117e876852"
     },
     {
       "path": "docs/PROPORTION_IMPLEMENTATION_CHECKPOINT.md",
@@ -4059,14 +4088,15 @@
     },
     {
       "path": "docs/ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md",
-      "gitBlobSha": "874f8505253a2a7d50dcb4611b8a2287caffea8d",
+      "gitBlobSha": "a34e21c615d7764e0c35265cb4e19279117e646f",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousPhase5GitBlobSha": "874f8505253a2a7d50dcb4611b8a2287caffea8d"
     },
     {
       "path": "docs/ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md",
@@ -4114,14 +4144,15 @@
     },
     {
       "path": "docs/ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md",
-      "gitBlobSha": "21bf8aaeb293fab380208039d871208083aac121",
+      "gitBlobSha": "683bbab955be1b02e723f46155a57201a6e174fa",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousPhase5GitBlobSha": "21bf8aaeb293fab380208039d871208083aac121"
     },
     {
       "path": "docs/ROGUE_BARD_FOURTH_CLASS_FEASIBILITY_20261026.md",
@@ -4279,14 +4310,15 @@
     },
     {
       "path": "docs/ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md",
-      "gitBlobSha": "009a3ee1165cfa8674aa2fa53137e47c11d10094",
+      "gitBlobSha": "f71f52b3b542fd90ce5c269fac83328dbb04cc3b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "combat_and_survival",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousPhase5GitBlobSha": "009a3ee1165cfa8674aa2fa53137e47c11d10094"
     },
     {
       "path": "docs/ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md",
@@ -4301,14 +4333,15 @@
     },
     {
       "path": "docs/ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md",
-      "gitBlobSha": "9344515465d7cf48bec2b091eb52d6dae3b73528",
+      "gitBlobSha": "3b96b3f5e63a161759243a575658e6ca539b2ba3",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "art_and_sprites",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousPhase5GitBlobSha": "9344515465d7cf48bec2b091eb52d6dae3b73528"
     },
     {
       "path": "docs/ROGUE_CHARM_NAMEPLATE_POLISH_20261028.md",
@@ -5168,7 +5201,7 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "744a7ab54a6bacec1acc541090f955610499f45e",
+      "gitBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -5177,7 +5210,8 @@
       "authority": "current_entrypoint",
       "reviewDepth": "current_entrypoint_checked",
       "historicalPinnedGitBlobSha": "4e0ca0dbf470e2f8d98a6ae05f89c8801e6b55c0",
-      "previousPhase4GitBlobSha": "21d69c2f95ee9aec75237e83870f313958e90223"
+      "previousPhase4GitBlobSha": "21d69c2f95ee9aec75237e83870f313958e90223",
+      "previousPhase5GitBlobSha": "744a7ab54a6bacec1acc541090f955610499f45e"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",
