@@ -1,6 +1,8 @@
 # Runtime architecture
 
-## Verified current source integration — 27 October 2026 (Phase 4)
+## Verified current source integration — 27 October 2026 (Phase 4; dated baseline)
+
+> **Later 28 October integration note:** [Merged PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) now makes Rogue/Pícara a fourth playable class, with jingle-bell presentation and diagnostic additions through `dev.208`. [Merged PR #541](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/541) makes ongoing feature-document consistency an engineering responsibility. The `dev.205` table below is **historical source evidence**, not a claim that it covers the 234 newer development commits; see [current development state](DEVELOPMENT_STATE.md) and Rogue's dated [soft-release scope](ROGUE_SOFT_RELEASE_20261028.md).
 
 **Source audit:** [`main@5c6197e871f8f4393d26d9b7a261b9324ef85d12`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/5c6197e871f8f4393d26d9b7a261b9324ef85d12), `0.9.1+snapshot.dev.205`. The ownership table and architecture below were reconciled with actual runtime, packaging and selected technical records. This is a **source-to-document semantic check**, not exhaustive full-campaign/phone acceptance, proof of a hardware speedup, or authorization to implement older design proposals. For changing feature/release states, use [current development state](DEVELOPMENT_STATE.md), not this fixed audit date.
 

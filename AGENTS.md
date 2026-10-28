@@ -1,5 +1,7 @@
 # Agent operating policy and dated repository context
 
+**28 October 2026 live-source reconciliation:** Rogue/Pícara is now a playable fourth class following [merged PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) and the published `dev.208` build. [Merged PR #541](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/541) sets the standing obligation to keep *all feature documents current* while developing. For current implementation/release gates read [Development state](docs/DEVELOPMENT_STATE.md); historical dated sections below retain their original meaning.
+
 ## Standing documentation ownership — part of every change (28 October 2026)
 
 **Engineering responsibility, not an extra request from the owner:** Whoever implements an approved game change must keep its affected documentation accurate *while the work is happening*. This applies to planning, designs, game code, art, menus, balance, saves, tests, releases and interrupted work. Do not defer documentation to an occasional repository-wide cleanup, and do not ask the owner to manage this process.
