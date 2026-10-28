@@ -6,7 +6,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 **Read first:** [Development state](DEVELOPMENT_STATE.md) owns verified public-build and acceptance information; [Architecture](ARCHITECTURE.md) maps source owners; [Decisions](DECISIONS.md) gives design rules and supersessions; [AGENTS.md](../AGENTS.md) governs authorization; [Engineering workflow](MECHANIC_DEVELOPMENT.md) describes verification; [Brand identity](BRAND_IDENTITY.md) gives the official title and legacy exceptions.
 
-**Checkpoint:** `dev.209` was published on GitHub Pages ([release #40741421490](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40741421490)); the changed listening room and documentation in draft [PR #563](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/563) remain unpublished. Check GitHub for anything newer.
+**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the source candidate, the latest verified Pages publication and outstanding device acceptance. The listening-room release must not be treated as installed on a device merely because code or documentation has merged.
 
 **Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that all 419 bodies were independently audited. Labels such as *Dated record* describe source context, not a present work order.
 

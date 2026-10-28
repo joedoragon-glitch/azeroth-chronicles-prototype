@@ -62,9 +62,9 @@ The released code includes the [first-gesture/recovery repair #470](https://gith
 
 **Technical limits worth knowing:** The recording system verifies SHA-256 file hashes and restricted local paths. Its design includes a **32 MiB default decoded-audio cache**, **32 MiB encoded catalog / 8 MiB per-file limit**, and **64-source ceiling** that reserves priority for critical warnings and interface effects. Assets load/decode lazily, playing loops remain pinned, and transitions free resources. These **are source policies**, not measurements of actual Chromebook/iPhone CPU, RAM or loudness.
 
-## Soundtrack listening room — practical guide (draft feature)
+## Soundtrack listening room — practical guide
 
-The [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is a **separate, read-only player**. The currently published `dev.208` page still has an older layout; the revised interface in **draft PR #563** is **not published** until that PR is approved, merged and the updated offline cache reaches a particular device.
+The [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is a **separate, read-only player**. Its revised production-first interface is in the `dev.210` release candidate; consult [Development state](DEVELOPMENT_STATE.md) for exact publication status and verify the installed cache separately on each device.
 
 In the revised interface:
 
@@ -73,7 +73,7 @@ In the revised interface:
 3. **Reuse a creative brief:** the selected production asset displays its natural-language guide and exact recipe owner. **Copy creative brief** copies text for a composer or later development session; it does not change or regenerate audio.
 4. **Optional advanced tools:** expand **Advanced listening tools** for temporary volume/mix adjustments, diagnostic test tones, musical-bar transition timing, waveform measurements, live engineering data and a downloadable local JSON report. These are troubleshooting and sound-production aids, **not a sound-quality score or public feedback submission**.
 
-Audio begins only after the user chooses to play something. **Pause** and **Stop audio** appear near the top, rather than hiding among diagnostics. No campaign saves or local game preferences are read or written by the standalone room. The page is designed for desktop and phone, but **real-device acceptance for the revised interface is still required**. Automated focused source/build checks alone cannot certify audible output, phone gestures, offline reopening, or a complete browser playthrough.
+Audio begins only after the user chooses to play something. **Pause** and **Stop audio** appear near the top, rather than hiding among diagnostics. No campaign saves or local game preferences are read or written by the standalone room. The page is designed for desktop and phone. Dedicated Chromium desktop/phone, decoded-recording, and offline-reopen acceptance has passed for the candidate ([evidence #40761403220](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40761403220)), but real-device listening remains unverified. Focused source/build checks alone cannot certify perceived sound quality or hardware behavior.
 
 For creative decisions about *why* each composition exists, see [Soundtrack and sound identity](AUDIO_SOUND_PASS.md); for adding, replacing or regenerating a file, see [Audio authoring](AUDIO_AUTHORING.md).
 
@@ -81,7 +81,7 @@ For creative decisions about *why* each composition exists, see [Soundtrack and 
 
 The [independent audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) lets developers and the owner compare scores, individual cues, bosses, reference/quiet/phone mixes and local audio measurements. It does **not** read or write the playable campaign's saves.
 
-**Verified for this documentation update:** the `dev.208` source enables production audio, the manifest contains the 127 registered assets and present-day scene/event policies, and #470/#472/#473 were merged. The exact public build and focused Pages evidence are in [Development state](DEVELOPMENT_STATE.md). Historic [25 October Stage 5 preflight](AUDIO_STAGE5_RELEASE_PREFLIGHT_20261025.md) describes a **then-blocked standalone candidate**, not the present deployment or automatic authorization for further production.
+**Verified for this documentation update:** the active source enables production audio, the manifest contains the 127 registered assets and present-day scene/event policies, and #470/#472/#473 were merged. The exact public build and focused Pages evidence are in [Development state](DEVELOPMENT_STATE.md). Historic [25 October Stage 5 preflight](AUDIO_STAGE5_RELEASE_PREFLIGHT_20261025.md) describes a **then-blocked standalone candidate**, not the present deployment or automatic authorization for further production.
 
 **Still requiring direct evidence:** perceived balance and speaker/headphone comfort on physical devices; warning audibility in crowded fights; every boss/TRUE/music transition in context; fresh install and offline reopen on relevant phones; sustained listening/performance behavior. Focused CI, file counts and synthetic audio tests cannot certify those experiences. Treat problems as scoped testing/creative decisions, **not an automatic new optimization project**.
 
