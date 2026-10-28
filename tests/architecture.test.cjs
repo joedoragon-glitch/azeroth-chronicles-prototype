@@ -8,6 +8,8 @@ const decisions=fs.readFileSync(path.join(root,'docs/DECISIONS.md'),'utf8');
 
 assert(!Object.hasOwn(pkg.scripts||{},'release'),'canonical development must not require a portable single-HTML release script');
 assert(!/Azeroth_Chronicles_Playtest\.html|build-release/i.test(workflow),'CI deployment must not depend on the historical portable HTML');
-assert(readme.includes('canonical game is the multi-file GitHub Pages/PWA application'));
+assert.match(readme, /\*\*multi-file JavaScript \/ Canvas \/ Web Audio \/ PWA\*\* game/, 'README identifies the maintained multi-file application');
+assert.match(readme, /not a single-file prototype/, 'README explicitly rejects the obsolete single-file release constraint');
+assert.match(readme, /https:\/\/joedoragon-glitch\.github\.io\/azeroth-chronicles-prototype\//, 'README retains the canonical GitHub Pages entry');
 assert(decisions.includes('No feature, test, asset pipeline or release decision may require preserving a self-contained single-HTML build'));
 console.log('PASS GitHub Pages/PWA multi-file architecture is canonical and portable HTML cannot constrain releases');
