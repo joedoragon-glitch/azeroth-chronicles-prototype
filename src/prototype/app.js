@@ -3873,9 +3873,17 @@
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
   }
-  // Simple spherical jingle-bell mark, never a handbell or a staff composite.
+  // Spherical sleigh/jingle bell: a visible hanging loop and cross-cut
+  // sound slots, without the old smile/eyes illusion or a handbell silhouette.
   // Shared by New Game, Succession and HUD without a new asset workflow.
-  const rogueJingleIconSvg = '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-0.2em;flex:none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12.5" r="8" fill="#dcb968" stroke="#765126" stroke-width="1.3"/><path d="M7 11.5Q12 15 17 11.5M12 5v12.6M8.8 16.5Q12 19 15.2 16.5" stroke="#69432b" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="17.8" r="1.7" fill="#684229"/><circle cx="9.5" cy="8.2" r="1.3" fill="#fff0b8"/></svg>';
+  const rogueJingleIconSvg =
+    '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-0.2em;flex:none" xmlns="http://www.w3.org/2000/svg">' +
+    '<path d="M9.8 5.2V3.7a2.2 2.2 0 0 1 4.4 0v1.5" fill="none" stroke="#684421" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="13.2" r="8.3" fill="#dcb968" stroke="#765126" stroke-width="1.45"/>' +
+    '<path d="M7.7 9.3a6 6 0 0 1 3.4-2.3" stroke="#fff2b9" stroke-width="1.4" fill="none" stroke-linecap="round"/>' +
+    '<path d="M8.5 9.7l7 7m0-7l-7 7" stroke="#62401e" stroke-width="2.8" fill="none" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="13.2" r="1.55" fill="#473019"/>' +
+    '</svg>';
   // Read-only class selection copy. Registry membership alone governs
   // which buttons exist; a future class gets its own description, never Ranger's.
   const heroClassPresentation = Object.freeze({
