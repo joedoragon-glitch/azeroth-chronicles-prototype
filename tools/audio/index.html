@@ -3,130 +3,178 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>So I Became the Dark Lord's Problem · Audio audition</title>
+    <meta name="description" content="Listen to the complete original game soundtrack, environmental recordings, and effects without starting a campaign." />
+    <title>So I Became the Dark Lord's Problem · Soundtrack listening room</title>
     <link rel="stylesheet" href="./audition.css" />
   </head>
   <body>
     <main>
-      <header>
-        <a href="../../index.html">← Game</a>
+      <header class="intro">
+        <a class="back-link" href="../../index.html">← Back to game</a>
         <p class="eyebrow">So I Became the Dark Lord's Problem</p>
-        <h1>Audio audition</h1>
-        <p>
-          Compare scenes, loops and mixes. This separate listening room never reads or writes your
-          game saves.
-        </p>
+        <h1>Soundtrack listening room</h1>
+        <p class="lede">Listen to the game’s music and sound effects without playing a campaign. Choose a scene, or find a specific recording in the full library.</p>
+        <div class="intro-notes">
+          <p><strong>No save data is accessed.</strong> This is a separate listening room. Audio starts only when you press Play.</p>
+          <p id="catalog-count" aria-live="polite">Loading the current sound library…</p>
+        </div>
       </header>
-      <section aria-labelledby="scenes">
-        <h2 id="scenes">Current game sound</h2>
-        <div class="controls">
-          <label>Place<select id="place"></select></label
-          ><label
-            >Encounter<select id="boss">
-              <option value="">Exploration</option>
-            </select></label
-          >
-          <label
-            >Boss form<select id="form">
-              <option value="normal">Normal</option>
-              <option value="true">TRUE</option>
-            </select></label
-          >
-          <label><input type="checkbox" id="peace" /> Peaceful world</label
-          ><label><input type="checkbox" id="night" /> Night</label>
+
+      <div class="player-bar" aria-label="Audio playback controls">
+        <div class="player-copy">
+          <span class="eyebrow">Now listening</span>
+          <strong id="now-playing">Nothing playing</strong>
+          <p id="message" role="status" aria-live="polite">Choose a scene or recording and press Play.</p>
         </div>
-        <button id="scene-play">Listen to scene</button
-        ><label><input type="checkbox" id="new-score" checked /> New contextual soundtrack</label
-        ><button id="warning">Warning effect</button>
-        <p id="scene-description"></p>
-      </section>
-      <section aria-labelledby="recordings">
-        <h2 id="recordings">Recorded playback</h2>
-        <p>
-          The production registry is empty until soundtrack assets are approved. Diagnostic tones
-          test the system; they are not proposed music.
-        </p>
-        <div class="controls">
-          <label
-            >Source<select id="source">
-              <option value="diagnostic">Diagnostic tones</option>
-              <option value="production">Production registry</option>
-            </select></label
-          >
-          <label>Recording<select id="recording"></select></label
-          ><label
-            >Transition<select id="grid">
-              <option value="0">Immediate fade</option>
-              <option value="1">Next bar · 120 BPM</option>
-              <option value="2">Next two bars · 120 BPM</option>
-            </select></label
-          >
+        <div class="player-actions">
+          <button type="button" id="pause" disabled>Pause</button>
+          <button type="button" id="stop" disabled>Stop audio</button>
         </div>
-        <button id="record-play">Listen to recording</button
-        ><button id="stem-play">Two synchronized stems</button
-        ><button id="ui-play">Interface test</button>
-        <label class="slider"
-          >Second stem intensity<input
-            id="intensity"
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value="0.35"
-        /></label>
-        <canvas
-          id="waveform"
-          width="800"
-          height="120"
-          aria-label="Selected recording waveform"
-        ></canvas>
-        <p id="measurement"></p>
-      </section>
-      <section aria-labelledby="creative-guide">
-        <h2 id="creative-guide">Creative recipes and generation guides</h2>
-        <p>
-          These reusable briefs describe our original procedural sounds. They are guides for future
-          creation, rather than historical audio-model prompts.
-        </p>
-        <label
-          >Guide<select id="guide-event">
-            <option value="">Selected recording</option>
-          </select></label
-        >
-        <textarea
-          id="guide-text"
-          rows="7"
-          readonly
-          aria-label="Reusable sound generation guide"
-        ></textarea>
-        <p id="guide-recipe"></p>
-        <button id="copy-guide">Copy guide</button>
-      </section>
-      <section aria-labelledby="mix">
-        <h2 id="mix">Listening mix</h2>
-        <div class="controls">
-          <label
-            >Profile<select id="profile">
-              <option value="reference">Reference</option>
-              <option value="quiet">Quiet</option>
-              <option value="phone">Phone</option>
-            </select></label
-          >
-          <label
-            >Scene mix<select id="mix-scene">
-              <option value="world">World</option>
-              <option value="menu">Menu · music softened</option>
-              <option value="title">Title</option>
-            </select></label
-          >
+      </div>
+
+      <section id="scene-section" aria-labelledby="scenes">
+        <div class="section-title">
+          <div><span class="step">1 · Recommended</span><h2 id="scenes">Hear the music as it plays in the game</h2></div>
         </div>
-        <div id="volumes" class="controls"></div>
-        <label><input id="mute" type="checkbox" /> Mute</label>
-        <button id="pause">Pause / resume</button><button id="stop">Stop all</button
-        ><button id="report">Download local report</button>
+        <p>Choose a location and situation. The player combines the original music layers and environmental atmosphere just as the game does, without loading or changing a saved adventure.</p>
+        <div class="controls scene-fields">
+          <label for="place">Location <select id="place"></select></label>
+          <label for="scene-mode">Situation
+            <select id="scene-mode">
+              <option value="exploration">Exploring</option>
+              <option value="combat">Combat (adds the action music)</option>
+              <option value="settlement">Near a settlement</option>
+              <option value="night">At night</option>
+              <option value="peace">After liberation</option>
+            </select>
+          </label>
+        </div>
+        <div class="controls scene-fields">
+          <label for="boss">Optional boss encounter
+            <select id="boss"><option value="">None — use location music</option></select>
+          </label>
+          <label for="form">Boss form <select id="form" disabled><option value="normal">Normal</option><option value="true">TRUE (stronger second layer)</option></select></label>
+        </div>
+        <p id="scene-help" class="hint">Each location has its own theme. Some situations are only available outdoors.</p>
+        <div class="action-line">
+          <button type="button" id="scene-play" class="primary">Play this scene</button>
+          <span class="hint" id="scene-description" aria-live="polite">The selected theme and its layers will appear here.</span>
+        </div>
+        <details class="small-details">
+          <summary>What is a scene preview?</summary>
+          <p>A preview uses the actual soundtrack catalog and mixing rules. Exploring usually plays the main melody; combat adds a synchronized action layer. Boss music has a normal and a stronger TRUE treatment. These are audio previews, not playable battles or proof of device-quality mastering.</p>
+        </details>
       </section>
-      <p id="message" role="status" aria-live="polite">Choose a scene or recording to begin.</p>
-      <pre id="status" aria-label="Playback diagnostics"></pre>
+
+      <section id="library-section" aria-labelledby="recordings">
+        <div class="section-title"><div><span class="step">2 · Complete library</span><h2 id="recordings">Browse individual recordings</h2></div></div>
+        <p>Every registered music track, environmental recording and sound effect can be selected below. Unlike a scene preview, a single recording lets you hear one file by itself.</p>
+        <div class="controls library-filters">
+          <label for="kind">Show
+            <select id="kind">
+              <option value="music">Music (83 tracks)</option>
+              <option value="ambience">Environment (14 beds)</option>
+              <option value="effect">Effects (30 sounds)</option>
+              <option value="all">All recordings</option>
+            </select>
+          </label>
+          <label for="search">Find a sound
+            <input id="search" type="search" placeholder="Name, place, or sound ID" autocomplete="off" />
+          </label>
+        </div>
+        <label for="recording" class="full-label">Recording
+          <select id="recording"></select>
+        </label>
+        <div id="recording-info" class="sound-info" aria-live="polite">Choose a recording to see its name, purpose and source.</div>
+        <div class="action-line">
+          <button type="button" id="record-play" class="primary">Play selected recording</button>
+          <button type="button" id="stem-play" disabled>Play with paired layer</button>
+        </div>
+        <div class="paired-control">
+          <label for="intensity">Paired-layer volume <output id="intensity-value" for="intensity">35%</output>
+            <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.35" disabled />
+          </label>
+          <p class="hint" id="pair-help">Choose a main exploration theme or boss theme with a matching second layer to compare them together.</p>
+        </div>
+        <details class="small-details">
+          <summary>Why would I play two layers?</summary>
+          <p>In combat, the game can keep the main melody playing while adding rhythmic action music. Bosses likewise use a synchronized TRUE layer. This lets you audition that combination and adjust how prominent the second part sounds.</p>
+        </details>
+      </section>
+
+      <section id="creative-section" aria-labelledby="creative-guide">
+        <div class="section-title"><div><span class="step">3 · For sound creation</span><h2 id="creative-guide">Understand or rework a sound</h2></div></div>
+        <p>Every production recording has a reusable creative brief. Select a track above to read its design instructions, then copy the brief if you want to discuss a replacement or give a composer a starting point. The brief describes the sound; it is not the original prompt used to create it.</p>
+        <label for="guide-event" class="full-label">Creative brief
+          <select id="guide-event"><option value="">Selected recording’s creative brief</option></select>
+        </label>
+        <textarea id="guide-text" rows="5" readonly aria-label="Creative brief for the selected sound"></textarea>
+        <p id="guide-recipe" class="hint"></p>
+        <button type="button" id="copy-guide">Copy creative brief</button>
+      </section>
+
+      <details id="advanced" class="advanced-section">
+        <summary>Advanced listening tools <span>Optional · mixing, diagnostics, developer test tones</span></summary>
+        <div class="advanced-content">
+          <h2 id="mix">Listening levels and mixes</h2>
+          <p>These temporary controls affect only this listening room. They do not change your game’s saved settings.</p>
+          <div class="controls">
+            <label for="profile">Output profile
+              <select id="profile">
+                <option value="reference">Reference — normal mix</option>
+                <option value="quiet">Quiet — softer overall</option>
+                <option value="phone">Phone — less ambience, centered panning</option>
+              </select>
+            </label>
+            <label for="mix-scene">Mix simulation
+              <select id="mix-scene">
+                <option value="world">World — normal gameplay</option>
+                <option value="menu">Menu — music subdued, combat effects off</option>
+                <option value="title">Title screen — reduced effects</option>
+              </select>
+            </label>
+          </div>
+          <div id="volumes" class="volume-grid"></div>
+          <label class="toggle" for="mute"><input id="mute" type="checkbox" /> Mute everything in the audition room</label>
+          <h3>Technical playback experiments</h3>
+          <p>These are optional checks, not part of the soundtrack. They help test audio transitions, interface signals and fallback behavior.</p>
+          <div class="controls">
+            <label for="source">Listening source
+              <select id="source">
+                <option value="production">Real game recordings (default)</option>
+                <option value="diagnostic">Generated diagnostic test tones</option>
+              </select>
+            </label>
+            <label for="grid">When to switch loops
+              <select id="grid">
+                <option value="0">As soon as ready</option>
+                <option value="1">At the next musical bar</option>
+                <option value="2">After the next two bars</option>
+              </select>
+            </label>
+          </div>
+          <p class="hint">Bar timing uses the selected track’s real tempo. Switch timing is most noticeable when replacing one already playing loop with another. Generated tones are not game music.</p>
+          <div class="action-line">
+            <button type="button" id="ui-play">Play diagnostic interface tone</button>
+            <button type="button" id="warning">Hear warning effect</button>
+            <label class="toggle" for="new-score"><input id="new-score" type="checkbox" checked /> Use current recorded soundtrack in scene previews</label>
+          </div>
+          <h3>Waveform and technical report</h3>
+          <p>After you play an individual recording, the waveform shows its sound level across time. The numbers underneath measure peaks and average loudness; they cannot tell whether a composition sounds good.</p>
+          <canvas id="waveform" width="800" height="120" role="img" aria-label="Waveform for the last inspected recording"></canvas>
+          <p id="measurement" class="hint">No recording measured yet.</p>
+          <details class="diagnostics">
+            <summary>Live audio diagnostics (technical data)</summary>
+            <p>This is automatically updated engineering information, not feedback about the quality of your music. It is mainly useful when diagnosing a playback problem.</p>
+            <pre id="status" aria-label="Playback diagnostics"></pre>
+          </details>
+          <button type="button" id="report">Export technical report (JSON)</button>
+          <p class="hint">Downloads a local diagnostic file for sharing with a developer if playback fails. It is not a soundtrack export, game save, or automatically submitted feedback.</p>
+        </div>
+      </details>
+      <footer>
+        <p>Source: the game’s currently registered audio manifest. See the <a href="../../docs/AUDIO_SOUND_PASS.md">soundtrack design guide</a> for its artistic purpose and the <a href="../../docs/AUDIO_PLAYBACK.md">audio production guide</a> for technical work.</p>
+      </footer>
     </main>
     <script src="../../src/sprint.js"></script>
     <script src="../../src/prototype/highlands.js"></script>

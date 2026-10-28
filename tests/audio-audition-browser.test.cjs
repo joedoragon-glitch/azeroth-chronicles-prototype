@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, '..'),
   engine = process.env.AUDIO_BROWSER_ENGINE || 'chromium',
   prefix = '/azeroth-chronicles-prototype/';
 (async () => {
+  assert(fs.existsSync(path.join(root, 'assets/vendor/pixi-8.22.0.min.js')), 'Prepare pinned local PixiJS with node scripts/vendor-pixi.cjs --ensure before offline audition acceptance');
   let outage = false,
     outageRequests = 0;
   const server = http.createServer((req, res) => {
@@ -77,6 +78,14 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
+        assert.equal(await page.locator('#recording option').count(), 83);
+        assert((await page.locator('#catalog-count').textContent()).includes('127 registered'));
+        assert.equal(await page.locator('#advanced').getAttribute('open'), null);
+        await page.locator('#advanced').evaluate((el) => { el.open = true; });
+        await page.locator('#source').selectOption('diagnostic');
+        await page.waitForFunction(() =>
+          Object.keys(AudioAudition.audio.recordingManifest?.assets || {}).length === 3,
+        );
         const saved = await page.evaluate(() => JSON.stringify(localStorage));
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
         await press('#stem-play');
@@ -115,11 +124,22 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#profile').selectOption('phone');
         await page.locator('#mix-scene').selectOption('world');
         await press('#scene-play');
-        await page.waitForFunction(() => AudioAudition.audio.cue?.id === 'vale');
+        await page.waitForFunction(() => AudioAudition.audio.context?.zone === 'vale' && AudioAudition.audio.recordedScore?.id === 'place-vale');
+        await page.locator('#scene-mode').selectOption('combat');
+        await press('#scene-play');
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
+        assert.equal(await page.evaluate(() => AudioAudition.audio.recordedScore.voices.length), 2);
+        assert((await page.locator('#scene-description').textContent()).includes('2 synchronized'));
+        await page.locator('#scene-mode').selectOption('night');
+        await press('#scene-play');
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'night-vale');
+        await page.locator('#scene-mode').selectOption('peace');
+        await press('#scene-play');
+        await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'peace-vale');
         await page.locator('#boss').selectOption('darklord');
         await page.locator('#form').selectOption('true');
         await press('#scene-play');
-        await page.waitForFunction(() => AudioAudition.audio.cue?.id === 'darklord-boss');
+        await page.waitForFunction(() => AudioAudition.audio.context?.boss?.family === 'darklord');
         assert.equal(await page.evaluate(() => AudioAudition.audio.context.boss.form), 'true');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'boss-darklord');
         const bossStarts = await page.evaluate(() =>
@@ -139,6 +159,7 @@ const root = path.resolve(__dirname, '..'),
             AudioAudition.audio.recordingManifest &&
             Object.keys(AudioAudition.audio.recordingManifest.assets).length === 127,
         );
+        await page.locator('#kind').selectOption('music');
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
         assert((await page.locator('#message').textContent()).includes('Playing place-vale'));
@@ -153,6 +174,7 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#guide-event').selectOption('');
 
         if (!phone) {
+          console.log('Audition browser: decoding all 127 production recordings');
           const decoded = await page.evaluate(async () => {
             const a = AudioAudition.audio,
               output = [];
@@ -175,6 +197,7 @@ const root = path.resolve(__dirname, '..'),
             }
             return output;
           });
+          console.log('Audition browser: complete catalog decoded');
           assert.equal(
             decoded.length,
             Object.keys(require('../assets/audio/manifest.json').assets).length,
@@ -185,6 +208,7 @@ const root = path.resolve(__dirname, '..'),
           }
         }
 
+        await page.locator('#kind').selectOption('ambience');
         await page.locator('#recording').selectOption('env-marsh-day');
         assert((await page.locator('#guide-text').inputValue()).includes('shallow water'));
         assert(
@@ -245,18 +269,24 @@ const root = path.resolve(__dirname, '..'),
         assert(output.peak < 1);
         assert(output.rms > 0.0001);
         assert.equal(await page.evaluate(() => JSON.stringify(localStorage)), saved);
+        console.log('Audition browser: verifying offline service-worker installation');
         await page.evaluate(async () => {
-          await navigator.serviceWorker.ready;
+          await Promise.race([
+            navigator.serviceWorker.ready,
+            new Promise((_, reject) => setTimeout(() => reject(Error('Offline service worker did not become ready within 90 seconds')), 90000)),
+          ]);
         });
         await page.waitForFunction(() => !!navigator.serviceWorker.controller);
         outage = true;
         // WebKit's setOffline + service-worker reload can raise an internal browser error.
         // A server outage still proves every entry/script comes from cache: zero network reads.
         if (engine === 'chromium') await context.setOffline(true);
+        console.log('Audition browser: offline reload on ' + (phone ? 'phone' : 'desktop'));
         await page.reload();
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
-        assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Audio audition");
+        assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Soundtrack listening room");
         assert.equal(outageRequests, 0);
+        await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('production');
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');

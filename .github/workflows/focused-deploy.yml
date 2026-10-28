@@ -31,6 +31,20 @@ jobs:
           cache: npm
       - name: Install locked development tools
         run: npm ci --ignore-scripts
+      - name: Make the exact comparison commit available
+        env:
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -n "$CI_BASE_SHA" ] && [[ ! "$CI_BASE_SHA" =~ ^0+$ ]]; then
+            git cat-file -e "${CI_BASE_SHA}^{commit}" 2>/dev/null ||
+              git fetch --no-tags --depth=1 origin "$CI_BASE_SHA"
+          fi
+      - name: Validate game version and current documentation before publishing
+        env:
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          node tests/docs-release-consistency.test.cjs
+          node scripts/docs-release-consistency.cjs
       - name: Check only impacted subsystems
         env:
           CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}

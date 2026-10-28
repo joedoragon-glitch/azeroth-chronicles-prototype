@@ -1,119 +1,364 @@
+/* Standalone, read-only soundtrack room. No persistence, save import or gameplay boot. */
 (function () {
   'use strict';
-  const $ = (id) => document.getElementById(id),
-    audio = new PrototypeAudio(),
-    baseUrl = new URL('../../', location.href).href;
+
+  const $ = (id) => document.getElementById(id);
+  const audio = new PrototypeAudio();
+  const baseUrl = new URL('../../', location.href).href;
   const diagnostic = AudioDiagnosticFixtures.create();
-  let registry = null,
-    source = null,
-    action = 0,
+  const kindNames = { music: 'Music', ambience: 'Environment', effect: 'Effect' };
+  let registry = null;
+  let source = null;
+  let action = 0;
+  let userPaused = false;
+  let hasPlayback = false;
+
+  function message(value) {
+    $('message').textContent = value;
+  }
+  function playing(name, text) {
+    hasPlayback = true;
+    $('now-playing').textContent = name;
+    $('pause').disabled = false;
+    $('stop').disabled = false;
+    $('pause').textContent = 'Pause';
+    message(text);
+  }
+  function stopped(text) {
+    hasPlayback = false;
     userPaused = false;
-  const message = (text) => {
-    $('message').textContent = text;
-  };
-  function showGuide() {
-    const manifest = audio.recordingManifest,
-      event = $('guide-event').value,
-      entry = manifest?.assets[$('recording').value];
-    $('guide-text').value = event
-      ? manifest?.director?.eventGuides?.[event] || 'No guide registered.'
-      : entry?.generationGuide || 'This diagnostic recording is an engineering fixture.';
-    $('guide-recipe').textContent = event
-      ? 'Exact synthesis recipes: audio-effects.js, audio-production.js and audio-catalog.js.'
-      : entry?.managedBy === 'score-book'
-        ? 'Exact composition: tools/audio/score-book.json. Renderer: tools/audio/render-score.py.'
-        : entry?.managedBy === 'environment-book'
-          ? 'Exact sound design: tools/audio/environment-book.json. Renderer: tools/audio/render-environment.py.'
-          : entry?.creationMethod === 'imported-recording'
-            ? 'Imported recording: see its registered author/license. A retained guide is a creative reference.'
-            : 'Diagnostic PCM recipe: tools/audio/fixtures.js.';
+    $('now-playing').textContent = 'Nothing playing';
+    $('pause').disabled = true;
+    $('stop').disabled = true;
+    $('pause').textContent = 'Pause';
+    message(text);
   }
-  $('recording').addEventListener('change', showGuide);
-  $('guide-event').addEventListener('change', showGuide);
-  $('copy-guide').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText($('guide-text').value);
-      message('Guide copied.');
-    } catch (_) {
-      message('Select the guide text and copy it.');
+  function run(fn) {
+    return () => {
+      try {
+        Promise.resolve(fn()).catch((error) => {
+          message('Could not play audio: ' + (error?.message || String(error)));
+        });
+      } catch (error) {
+        message('Could not play audio: ' + (error?.message || String(error)));
+      }
+    };
+  }
+  function option(text, value) {
+    return new Option(text, value);
+  }
+  function group(label, items, select) {
+    if (!items.length) return;
+    const g = document.createElement('optgroup');
+    g.label = label;
+    for (const item of items) g.append(option(item.name, item.id));
+    select.add(g);
+  }
+  function human(text) {
+    return String(text).replace(/[._-]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+  function soundTitle(id, entry) {
+    // A legacy catalog display label survives for this asset; the score-book
+    // and the playable game's official title are the source of current naming.
+    if (id === 'title') return "So I Became the Dark Lord's Problem";
+    return entry?.title || human(id);
+  }
+  function catalogCounts(manifest) {
+    const count = { music: 0, ambience: 0, effect: 0 };
+    for (const entry of Object.values(manifest.assets || {}))
+      if (Object.hasOwn(count, entry.kind)) count[entry.kind]++;
+    return count;
+  }
+  function populatePlaces() {
+    group('Outdoor regions', PrototypeData.regions.map((r) => ({ id: r.id, name: r.name })), $('place'));
+    group(
+      'Main dungeons',
+      Campaign.dungeonIds.map((id) => {
+        const theme = PrototypeAudio.themes.find((t) => t.id === id);
+        return { id, name: theme?.name || human(id) };
+      }),
+      $('place'),
+    );
+    group(
+      'Treasuries',
+      PrototypeRules.supplyRooms.map((r) => ({ id: r.id, name: r.name || human(r.id) })),
+      $('place'),
+    );
+    group(
+      'Side interiors',
+      PrototypeRules.sideDungeons.map((r) => ({ id: r.id, name: r.name || human(r.id) })),
+      $('place'),
+    );
+    group(
+      'Other game moments',
+      [
+        { id: 'special:title', name: 'Main title screen' },
+        { id: 'special:defeat', name: 'Defeat' },
+        { id: 'special:finale', name: 'Peaceful finale' },
+      ],
+      $('place'),
+    );
+    for (const b of PrototypeData.bosses) $('boss').add(option(b.name, b.id));
+  }
+  function bossPlace(boss) {
+    return boss.kind !== 'dungeon'
+      ? boss.region
+      : boss.id === 'darklord'
+        ? 'citadel'
+        : boss.id;
+  }
+  function currentPlaceRoute() {
+    return registry?.director?.places?.[$('place').value] || null;
+  }
+  function syncScene() {
+    const special = $('place').value.startsWith('special:');
+    if (special) $('boss').value = '';
+    const boss = $('boss').value;
+    const route = currentPlaceRoute();
+    const mode = $('scene-mode');
+    for (const item of mode.options) {
+      item.disabled =
+        (item.value === 'combat' && !route?.action) ||
+        (item.value === 'settlement' && !route?.settlement) ||
+        (item.value === 'night' && !route?.night) ||
+        (item.value === 'peace' && !route?.peace);
     }
-  });
-  for (const region of PrototypeData.regions) $('place').add(new Option(region.name, region.id));
-  for (const id of Campaign.dungeonIds) {
-    const theme = PrototypeAudio.themes.find((t) => t.id === id);
-    $('place').add(new Option(theme?.name || id, id));
+    if (mode.selectedOptions[0]?.disabled) mode.value = 'exploration';
+    mode.disabled = special || !!boss;
+    $('boss').disabled = special;
+    $('form').disabled = !boss;
+    const info = special
+      ? 'This is a special cue, separate from regional exploration music.'
+      : boss
+        ? 'A boss has a unique theme. Normal and TRUE use the same musical clock, with a stronger second layer in TRUE.'
+        : mode.value === 'combat'
+          ? 'Combat keeps the location melody and adds synchronized action music.'
+          : mode.value === 'peace'
+            ? 'This arrangement reflects the world after liberation.'
+            : mode.value === 'settlement'
+              ? 'A quieter arrangement for nearby settlements.'
+              : mode.value === 'night'
+                ? 'A nighttime arrangement of the location music.'
+                : 'Exploration plays the main theme and the appropriate quiet environmental recording.';
+    $('scene-help').textContent = info;
+    const manifest = registry;
+    let cue = null;
+    if (manifest) {
+      if (special) cue = manifest.director?.specials?.[$('place').value.slice(8)]?.asset;
+      else if (boss) cue = manifest.director?.bosses?.[boss]?.base;
+      else cue = mode.value === 'peace'
+        ? route?.peace
+        : mode.value === 'settlement'
+          ? route?.settlement
+          : mode.value === 'night'
+            ? route?.night
+            : route?.base;
+    }
+    $('scene-description').textContent = cue && manifest?.assets?.[cue]
+      ? 'Selected: ' + soundTitle(cue, manifest.assets[cue])
+      : 'Select a location to hear its soundtrack.';
   }
-  for (const entry of [...PrototypeRules.supplyRooms, ...PrototypeRules.sideDungeons])
-    $('place').add(new Option(entry.name || entry.id, entry.id));
-  for (const boss of PrototypeData.bosses) $('boss').add(new Option(boss.name, boss.id));
-  for (const bus of ['master', 'music', 'ambience', 'effects', 'interface']) {
-    const label = document.createElement('label'),
-      input = document.createElement('input');
-    input.type = 'range';
-    input.min = '0';
-    input.max = '1';
-    input.step = '0.01';
-    input.value = String(audio.settings[bus] ?? audio.settings.effects);
-    input.id = 'volume-' + bus;
-    label.append(bus.charAt(0).toUpperCase() + bus.slice(1), input);
-    $('volumes').append(label);
-    input.addEventListener('input', () => audio.setSettings({ [bus]: Number(input.value) }));
+  function pairFor(id) {
+    const director = audio.recordingManifest?.director;
+    if (!director) return null;
+    for (const route of Object.values(director.places || {}))
+      if (route.action && (route.base === id || route.action === id))
+        return { base: route.base, layer: route.action, label: 'combat layer' };
+    for (const route of Object.values(director.bosses || {}))
+      if (route.true && (route.base === id || route.true === id))
+        return { base: route.base, layer: route.true, label: 'TRUE layer' };
+    return null;
   }
-  async function selectSource() {
-    const selected = $('source').value;
-    if (source === selected) return;
+  function fillLibrary(previousId) {
+    const manifest = audio.recordingManifest;
+    if (!manifest) return;
+    const chosenKind = $('kind').value;
+    const query = $('search').value.trim().toLowerCase();
+    const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [], ambience: [], effect: [] };
+    for (const [id, entry] of Object.entries(manifest.assets)) {
+      if (chosenKind !== 'all' && entry.kind !== chosenKind) continue;
+      if (query && !(id + ' ' + soundTitle(id, entry)).toLowerCase().includes(query)) continue;
+      const item = { id, name: soundTitle(id, entry) + ' · ' + id };
+      if (entry.kind !== 'music') bucket[entry.kind].push(item);
+      else if (id.startsWith('boss-')) bucket.bosses.push(item);
+      else if (id.startsWith('interior-') || id.startsWith('peace-interior-'))
+        bucket.interiors.push(item);
+      else if (['title', 'defeat', 'finale'].includes(id)) bucket.special.push(item);
+      else if (id.startsWith('place-')) bucket.main.push(item);
+      else bucket.variations.push(item);
+    }
+    const target = $('recording');
+    target.replaceChildren();
+    for (const [key, label] of [
+      ['main', 'Regional and dungeon main themes'],
+      ['variations', 'Combat, night, settlement, liberation'],
+      ['bosses', 'Bosses and TRUE themes'],
+      ['interiors', 'Treasuries and side interiors'],
+      ['special', 'Title, defeat and finale'],
+      ['ambience', 'Environmental sound beds'],
+      ['effect', 'Sound effects'],
+    ]) group(label, bucket[key], target);
+    if (!target.options.length) target.add(option('No recordings match this filter', ''));
+    if (previousId && [...target.options].some((o) => o.value === previousId))
+      target.value = previousId;
+    showRecording();
+  }
+  function showRecording() {
+    const id = $('recording').value;
+    const entry = audio.recordingManifest?.assets?.[id];
+    const info = $('recording-info');
+    info.replaceChildren();
+    const title = document.createElement('strong');
+    title.textContent = entry ? soundTitle(id, entry) : 'No recording selected';
+    info.append(title);
+    if (entry) {
+      const details = document.createElement('div');
+      const labels = [
+        kindNames[entry.kind] || human(entry.kind),
+        entry.bpm ? entry.bpm + ' BPM' : null,
+        entry.duration ? entry.duration.toFixed(1) + ' seconds' : null,
+        id,
+      ].filter(Boolean);
+      for (const part of labels) {
+        const span = document.createElement('span');
+        span.textContent = part;
+        details.append(span);
+      }
+      info.append(details);
+    }
+    const pair = pairFor(id);
+    $('record-play').disabled = !entry;
+    $('stem-play').disabled = !pair &&
+      !(source === 'diagnostic' && ['diagnostic-a', 'diagnostic-b'].includes(id));
+    $('intensity').disabled = $('stem-play').disabled;
+    $('pair-help').textContent = pair
+      ? 'Pair available: ' + soundTitle(pair.base, audio.recordingManifest.assets[pair.base]) +
+        ' + ' + pair.label + '. This does not replace or edit either sound.'
+      : source === 'diagnostic' && id
+        ? 'The two test tones are synchronized engineering fixtures, not soundtrack tracks.'
+        : 'This recording does not have a synchronized action/TRUE partner.';
+    showGuide();
+  }
+  function showGuide() {
+    const manifest = audio.recordingManifest;
+    const key = $('guide-event').value;
+    const entry = manifest?.assets?.[$('recording').value];
+    $('guide-text').value = key
+      ? manifest?.director?.eventGuides?.[key] || 'No creative brief registered.'
+      : entry?.generationGuide || 'This diagnostic fixture has no production creative brief.';
+    if (!key && $('recording').value === 'title')
+      $('guide-text').value = $('guide-text').value.replaceAll(
+        'Azeroth Chronicles',
+        "So I Became the Dark Lord's Problem",
+      );
+    $('guide-recipe').textContent = !key && $('recording').value === 'title'
+      ? "The recording's old descriptive text still uses the former development name. The official game and music title is So I Became the Dark Lord's Problem; do not reuse the old name in new creative work."
+      : key
+        ? 'Exact event implementation: src/prototype/audio-effects.js, audio-production.js and audio-catalog.js.'
+      : entry?.managedBy === 'score-book'
+        ? 'Original music recipe: tools/audio/score-book.json; renderer: render-score.py.'
+        : entry?.managedBy === 'environment-book'
+          ? 'Original environment recipe: tools/audio/environment-book.json; renderer: render-environment.py.'
+          : entry?.managedBy === 'sfx-book'
+            ? 'Original effect recipe: tools/audio/sfx-book.json; renderer: render-sfx.py.'
+            : entry?.creationMethod === 'imported-recording'
+              ? 'Imported asset: review its author and license metadata before reusing it.'
+              : 'Engineering-generated fixture or an asset with another recorded source.';
+  }
+  function fillGuides() {
+    const selected = $('guide-event').value;
+    $('guide-event').replaceChildren(option('Creative brief for the selected recording', ''));
+    for (const key of Object.keys(audio.recordingManifest?.director?.eventGuides || {}))
+      $('guide-event').add(option(human(key) + ' · event ' + key, key));
+    if ([...$('guide-event').options].some((o) => o.value === selected))
+      $('guide-event').value = selected;
+  }
+
+  async function selectSource(requested = $('source').value) {
+    if (source === requested && audio.recordingManifest) return;
     const token = ++action;
-    const data =
-      selected === 'diagnostic'
-        ? await diagnostic
-        : {
-            manifest:
-              registry ||
-              (await fetch(new URL('assets/audio/manifest.json', baseUrl)).then((r) => {
-                if (!r.ok) throw Error('Production registry unavailable');
-                return r.json();
-              })),
-          };
+    const data = requested === 'diagnostic'
+      ? await diagnostic
+      : { manifest: registry || await fetch(new URL('assets/audio/manifest.json', baseUrl))
+        .then((response) => {
+          if (!response.ok) throw Error('The game recording library could not be loaded (' + response.status + ').');
+          return response.json();
+        }) };
     if (token !== action) return;
-    if (selected === 'production') registry = data.manifest;
     audio.configureRecordings(data.manifest, {
       baseUrl,
       ...(data.fetch ? { fetch: data.fetch } : {}),
     });
-    source = selected;
-    $('recording').replaceChildren();
-    for (const [id, entry] of Object.entries(data.manifest.assets))
-      $('recording').add(new Option(id + ' · ' + entry.kind, id));
-    $('guide-event').replaceChildren(new Option('Selected recording', ''));
-    for (const key of Object.keys(data.manifest.director?.eventGuides || {}))
-      $('guide-event').add(new Option(key, key));
-    showGuide();
-    if (!$('recording').options.length)
-      $('recording').add(new Option('No production recordings yet', ''));
-    $('stem-play').disabled = selected !== 'diagnostic';
-    $('ui-play').disabled = selected !== 'diagnostic';
+    if (requested === 'production') registry = data.manifest;
+    if (source && source !== requested) stopped('Switched audio libraries. Choose a recording or scene to begin.');
+    source = requested;
+    $('source').value = requested;
+    fillGuides();
+    fillLibrary();
+    if (registry) {
+      const count = catalogCounts(registry);
+      $('catalog-count').textContent =
+        Object.keys(registry.assets).length + ' registered recordings: ' +
+        count.music + ' music tracks, ' + count.ambience + ' environmental sounds and ' +
+        count.effect + ' effects. All are browseable here.';
+    } else {
+      $('catalog-count').textContent = 'The production catalog is unavailable; you can still try engineering test tones.';
+    }
+    syncScene();
   }
   async function gesture() {
     userPaused = false;
     audio.setPaused(false);
-    if (!(await audio.unlock())) throw Error('Tap Listen again to enable audio.');
+    if (!(await audio.unlock())) throw Error('Your browser has not enabled audio. Press Play again, or check the device volume.');
+    audio.setMixProfile($('profile').value);
+    audio.setSceneMix($('mix-scene').value);
   }
-  function run(fn) {
-    return () => {
-      fn().catch((e) => message(e.message));
-    };
+  function stopIsolatedVoices() {
+    for (const voice of [...audio.voices])
+      if (voice.recorded && !voice.recordedScore) audio.stopRecording(voice, 0);
   }
   function clearProcedural() {
     audio.cue = null;
+    audio.key = null;
     audio.cancelMusic();
     audio.ambient();
   }
+  function sceneFromCampaign() {
+    const special = $('place').value.startsWith('special:');
+    if (special) {
+      const moment = $('place').value.slice(8);
+      return {
+        region: 'vale', zone: 'vale', interior: 'outdoors', settlement: null,
+        situation: moment === 'title' ? 'title' : moment === 'defeat' ? 'game-over' : 'peace',
+        started: moment !== 'title', gameOver: moment === 'defeat',
+        peace: moment === 'finale', night: false, boss: null, engaged: 0,
+      };
+    }
+    const boss = PrototypeData.bosses.find((b) => b.id === $('boss').value);
+    const place = boss ? bossPlace(boss) : $('place').value;
+    const campaign = new Campaign();
+    campaign.enter(place);
+    const scene = audio.describe(campaign);
+    const mode = $('scene-mode').value;
+    return {
+      ...scene,
+      night: !boss && mode === 'night',
+      peace: !boss && mode === 'peace',
+      settlement: !boss && mode === 'settlement' ? 'audition-refuge' : null,
+      boss: boss ? { family: boss.id, form: $('form').value, name: boss.name } : null,
+      engaged: boss ? 1 : mode === 'combat' ? 4 : 0,
+      situation: boss ? 'boss' : mode === 'combat' ? 'combat' : mode === 'peace' ? 'peace' : mode,
+      started: true,
+      gameOver: false,
+    };
+  }
   function draw(item) {
-    const samples = item.buffer.getChannelData(0),
-      canvas = $('waveform'),
-      ctx = canvas.getContext('2d');
-    let peak = 0,
-      sum = 0;
+    if (!item?.buffer) return;
+    const samples = item.buffer.getChannelData(0);
+    const canvas = $('waveform');
+    const ctx = canvas.getContext('2d');
+    let peak = 0;
+    let sum = 0;
     for (const n of samples) {
       peak = Math.max(peak, Math.abs(n));
       sum += n * n;
@@ -122,10 +367,9 @@
     ctx.strokeStyle = '#e5ce91';
     ctx.beginPath();
     for (let x = 0; x < canvas.width; x++) {
-      const start = Math.floor((x * samples.length) / canvas.width),
-        end = Math.max(start + 1, Math.floor(((x + 1) * samples.length) / canvas.width));
-      let min = 0,
-        max = 0;
+      const start = Math.floor((x * samples.length) / canvas.width);
+      const end = Math.max(start + 1, Math.floor(((x + 1) * samples.length) / canvas.width));
+      let min = 0, max = 0;
       for (let i = start; i < end; i++) {
         min = Math.min(min, samples[i]);
         max = Math.max(max, samples[i]);
@@ -134,191 +378,274 @@
       ctx.lineTo(x, 60 - min * 400);
     }
     ctx.stroke();
-    let seam = 'not looped';
+    let seam = 'not a music loop';
     if (item.entry.loop) {
-      const first = Math.round(item.entry.loop.start * item.buffer.sampleRate),
-        last = Math.min(
-          samples.length - 1,
-          Math.round(item.entry.loop.end * item.buffer.sampleRate) - 1,
-        );
+      const first = Math.min(samples.length - 1, Math.round(item.entry.loop.start * item.buffer.sampleRate));
+      const last = Math.min(samples.length - 1, Math.round(item.entry.loop.end * item.buffer.sampleRate) - 1);
       seam = Math.abs(samples[first] - samples[last]).toFixed(5) + ' sample-edge difference';
     }
-    $('measurement').textContent =
-      item.buffer.duration.toFixed(3) +
-      ' seconds · ' +
-      item.buffer.numberOfChannels +
-      ' channel(s) · peak ' +
-      peak.toFixed(3) +
-      ' · RMS ' +
-      Math.sqrt(sum / samples.length).toFixed(3) +
-      ' · ' +
-      seam +
-      '. Listen for seams; measurements alone do not establish a good loop.';
+    $('measurement').textContent = item.buffer.duration.toFixed(2) +
+      ' seconds · ' + item.buffer.numberOfChannels + ' channel(s) · peak ' +
+      peak.toFixed(3) + ' · RMS ' + Math.sqrt(sum / samples.length).toFixed(3) +
+      ' · ' + seam + '. Only listening can judge the sound.';
   }
-  $('source').addEventListener('change', run(selectSource));
-  $('scene-play').addEventListener(
-    'click',
-    run(async () => {
-      await gesture();
-      action++;
-      audio.stopRecordedScore();
-      for (const v of [...audio.voices]) if (v.recorded) audio.stopRecording(v);
-      const campaign = new Campaign(),
-        boss = PrototypeData.bosses.find((b) => b.id === $('boss').value);
-      const place = boss
-        ? boss.kind !== 'dungeon'
-          ? boss.region
-          : boss.id === 'darklord'
-            ? 'citadel'
-            : boss.id
-        : $('place').value;
-      campaign.enter(place);
-      if (boss && !campaign.zone().enemies.some((e) => e.type === 'boss' && e.family === boss.id)) {
-        // Isolated audition may stage progression-gated bosses through the canonical factory.
-        const point = campaign.safe(campaign.hero.x + 180, campaign.hero.y, place);
-        campaign.zone().enemies.push(campaign.bossEnemy(boss, 'normal', point));
+  function inspect(id) {
+    const item = audio.recordingAssets?.touch(id);
+    if (item) draw(item);
+  }
+  async function playScene() {
+    let token = ++action;
+    const useRecorded = $('new-score').checked;
+    audio.enableProduction(useRecorded);
+    // Call unlock within the actual click before any async catalog fetch: mobile
+    // browsers may otherwise reject playback because user activation expired.
+    await gesture();
+    if (token !== action) return;
+    if ($('source').value !== 'production' || source !== 'production') {
+      await selectSource('production');
+      token = action;
+      if (source !== 'production') return;
+    }
+    const scene = sceneFromCampaign();
+    audio.context = scene;
+    stopIsolatedVoices();
+    audio.stopEnvironment(0);
+    audio.finaleUntil = scene.situation === 'peace' && $('place').value === 'special:finale'
+      ? audio.ctx.currentTime + 120 : 0;
+    if (!useRecorded) {
+      if ($('place').value.startsWith('special:')) {
+        throw Error('Original procedural comparison is only available for locations and bosses.');
       }
-      for (const enemy of campaign.zone().enemies) {
-        enemy.aggro = enemy.type === 'boss' && enemy.family === boss?.id;
-        if (enemy.aggro) enemy.form = $('form').value;
+      const boss = PrototypeData.bosses.find((b) => b.id === $('boss').value);
+      const campaign = new Campaign();
+      campaign.enter(boss ? bossPlace(boss) : $('place').value);
+      if (boss) {
+        const point = campaign.safe(campaign.hero.x + 180, campaign.hero.y, campaign.zoneId);
+        campaign.zone().enemies.push(campaign.bossEnemy(boss, $('form').value, point));
       }
-      Object.defineProperty(campaign, 'peace', { value: $('peace').checked });
-      campaign.night = () => $('night').checked;
-      audio.key = null;
-      audio.enableProduction($('new-score').checked);
-      if ($('new-score').checked) {
-        const manifest =
-          registry ||
-          (await fetch(new URL('assets/audio/manifest.json', baseUrl)).then((r) => r.json()));
-        registry = manifest;
-        source = null;
-        audio.configureRecordings(manifest, { baseUrl });
-      }
-      audio.update(campaign);
-      $('scene-description').textContent = JSON.stringify(audio.context);
-      message(
-        'Playing current game sound. Boss names and scenes are observed from an isolated campaign.',
-      );
-    }),
-  );
-  $('record-play').addEventListener(
-    'click',
-    run(async () => {
-      await gesture();
-      audio.enableProduction(false);
-      await selectSource();
-      const id = $('recording').value;
-      if (!id) {
-        message('No production recording is registered yet.');
-        return;
-      }
-      const entry = audio.recordingManifest.assets[id];
+      for (const enemy of campaign.zone().enemies)
+        enemy.aggro = !!boss && enemy.type === 'boss' && enemy.family === boss.id;
+      Object.defineProperty(campaign, 'peace', { value: scene.peace });
+      campaign.night = () => scene.night;
       audio.stopRecordedScore(0);
-      for (const voice of [...audio.voices]) if (voice.recorded) audio.stopRecording(voice, 0);
-      let ok;
-      if (entry.kind === 'music' && entry.loop)
-        ok = await audio.setRecordedScore({
-          id,
-          stems: [{ id, gain: 0.6 }],
-          bpm: entry.bpm || 120,
-          quantizeBars: Number($('grid').value),
-        });
-      else {
-        audio.stopRecordedScore();
-        ok = await audio.playRecording(id, { gain: 0.6 });
-      }
-      if (ok) {
-        clearProcedural();
-        draw(audio.recordingAssets.touch(id));
-        message('Playing ' + id + '.');
-      } else message(audio.recordingError || 'Playback did not start.');
-    }),
-  );
-  $('stem-play').addEventListener(
-    'click',
-    run(async () => {
-      await gesture();
-      audio.enableProduction(false);
-      await selectSource();
-      const ok = await audio.setRecordedScore({
-        id: 'diagnostic-stems',
-        bpm: 120,
-        quantizeBars: Number($('grid').value),
-        stems: [
-          { id: 'diagnostic-a', gain: 0.5 },
-          { id: 'diagnostic-b', gain: Number($('intensity').value) },
-        ],
+      audio.update(campaign);
+      playing('Original synthesized game music', 'Playing the legacy procedural soundtrack for comparison.');
+      return;
+    }
+    clearProcedural();
+    const spec = audio.productionCue(scene);
+    if (!spec) throw Error('The selected scene has no registered soundtrack.');
+    const ok = await audio.setRecordedScore({
+      ...spec,
+      quantizeBars: Number($('grid').value),
+    });
+    if (token !== action) return;
+    if (!ok) throw Error(audio.recordingError || 'The selected scene could not start.');
+    if (scene.engaged && !scene.boss && spec.stems.length > 1)
+      audio.setStemGain(1, Math.min(0.55, 0.28 + scene.engaged * 0.045), 0.2);
+    audio.updateEnvironment(scene);
+    const main = registry.assets[spec.stems[0].id];
+    const label = soundTitle(spec.stems[0].id, main);
+    const situation = scene.boss ? scene.boss.form === 'true' ? 'TRUE boss' : 'Boss'
+      : $('place').value.startsWith('special:') ? 'Special scene'
+        : $('scene-mode').selectedOptions[0]?.textContent || 'Exploration';
+    $('scene-description').textContent = 'Playing: ' + label +
+      (spec.stems.length > 1 ? ' · ' + spec.stems.length + ' synchronized music layers' : ' · single music layer');
+    playing(label + ' · ' + situation, 'Listening to the recorded game scene. Use Stop audio when finished.');
+  }
+  async function playRecording() {
+    let token = ++action;
+    const requested = $('source').value;
+    audio.enableProduction(false);
+    await gesture();
+    if (token !== action) return;
+    if (source !== requested) {
+      await selectSource(requested);
+      token = action;
+      if (source !== requested) return;
+    }
+    const id = $('recording').value;
+    const entry = audio.recordingManifest?.assets?.[id];
+    if (!entry) throw Error('Choose a recording from the library first.');
+    audio.stopEnvironment(0);
+    audio.stopRecordedScore(0);
+    stopIsolatedVoices();
+    clearProcedural();
+    let ok;
+    if (entry.kind === 'music' && entry.loop)
+      ok = await audio.setRecordedScore({
+        id, stems: [{ id, gain: 0.65 }],
+        bpm: entry.bpm || 120, quantizeBars: Number($('grid').value),
       });
-      if (ok) {
-        clearProcedural();
-        draw(audio.recordingAssets.touch('diagnostic-a'));
-        message('Two diagnostic stems share the same start time and two-second loop.');
-      } else message(audio.recordingError || 'Stems did not start.');
-    }),
-  );
-  $('ui-play').addEventListener(
-    'click',
-    run(async () => {
-      await gesture();
-      await selectSource();
-      await audio.playRecording('diagnostic-click', { bus: 'interface', gain: 0.6 });
-    }),
-  );
-  $('warning').addEventListener(
-    'click',
-    run(async () => {
-      await gesture();
-      audio.effect('warning');
-    }),
-  );
-  $('intensity').addEventListener('input', () =>
-    audio.setStemGain(1, Number($('intensity').value)),
-  );
+    else
+      ok = await audio.playRecording(id, {
+        bus: entry.kind === 'ambience' ? 'ambience' : 'effects',
+        loop: entry.kind === 'ambience',
+        gain: 0.65,
+      });
+    if (token !== action) return;
+    if (!ok) throw Error(audio.recordingError || 'The recording could not play.');
+    inspect(id);
+    if (entry.kind === 'effect') {
+      hasPlayback = false;
+      $('now-playing').textContent = 'Last heard: ' + soundTitle(id, entry);
+      $('pause').disabled = true;
+      $('stop').disabled = true;
+      message('Played ' + id + '. Short effects finish on their own; press Play again to repeat.');
+    } else {
+      playing(soundTitle(id, entry), 'Playing ' + id + ' alone. Press Stop audio to end the loop.');
+    }
+  }
+  async function playPaired() {
+    const token = ++action;
+    const pair = source === 'diagnostic'
+      ? { base: 'diagnostic-a', layer: 'diagnostic-b', label: 'test tone' }
+      : pairFor($('recording').value);
+    if (!pair) throw Error('This recording has no synchronized second layer.');
+    const sourceLabel = source;
+    const entry = audio.recordingManifest.assets[pair.base];
+    audio.enableProduction(false);
+    await gesture();
+    if (token !== action) return;
+    audio.stopEnvironment(0);
+    stopIsolatedVoices();
+    clearProcedural();
+    const ok = await audio.setRecordedScore({
+      id: sourceLabel === 'diagnostic' ? 'diagnostic-stems' : pair.base + '-paired',
+      bpm: entry.bpm || 120, quantizeBars: Number($('grid').value),
+      stems: [
+        { id: pair.base, gain: 0.6 },
+        { id: pair.layer, gain: Number($('intensity').value) },
+      ],
+    });
+    if (token !== action) return;
+    if (!ok) throw Error(audio.recordingError || 'The two layers could not play together.');
+    inspect(pair.base);
+    playing(soundTitle(pair.base, entry) + ' + ' + pair.label,
+      'Both parts started in sync. Move Paired-layer volume to compare their balance.');
+  }
+  function volumeControls() {
+    for (const bus of ['master', 'music', 'ambience', 'effects', 'interface']) {
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      const output = document.createElement('output');
+      input.type = 'range';
+      input.min = '0';
+      input.max = '1';
+      input.step = '0.01';
+      input.value = String(audio.settings[bus] ?? 1);
+      input.id = 'volume-' + bus;
+      output.id = 'readout-' + bus;
+      output.textContent = Math.round(Number(input.value) * 100) + '%';
+      label.htmlFor = input.id;
+      label.append(human(bus) + ' level', output, input);
+      $('volumes').append(label);
+      input.addEventListener('input', () => {
+        audio.setSettings({ [bus]: Number(input.value) });
+        output.textContent = Math.round(Number(input.value) * 100) + '%';
+      });
+    }
+  }
+
+  populatePlaces();
+  volumeControls();
+  $('place').addEventListener('change', () => {
+    $('boss').value = '';
+    syncScene();
+  });
+  $('scene-mode').addEventListener('change', syncScene);
+  $('boss').addEventListener('change', () => {
+    const boss = PrototypeData.bosses.find((b) => b.id === $('boss').value);
+    if (boss) $('place').value = bossPlace(boss);
+    syncScene();
+  });
+  $('form').addEventListener('change', syncScene);
+  $('kind').addEventListener('change', () => fillLibrary());
+  $('search').addEventListener('input', () => fillLibrary());
+  $('recording').addEventListener('change', showRecording);
+  $('guide-event').addEventListener('change', showGuide);
+  $('source').addEventListener('change', run(async () => {
+    await selectSource();
+    message(source === 'diagnostic'
+      ? 'Engineering test tones selected. Return to Real game recordings for the soundtrack.'
+      : 'The complete production sound library is ready.');
+  }));
+  $('scene-play').addEventListener('click', run(playScene));
+  $('record-play').addEventListener('click', run(playRecording));
+  $('stem-play').addEventListener('click', run(playPaired));
+  $('intensity').addEventListener('input', () => {
+    $('intensity-value').textContent = Math.round(Number($('intensity').value) * 100) + '%';
+    audio.setStemGain(1, Number($('intensity').value));
+  });
+  $('copy-guide').addEventListener('click', run(async () => {
+    if (!navigator.clipboard?.writeText) throw Error('Clipboard is unavailable; select the text and copy it manually.');
+    await navigator.clipboard.writeText($('guide-text').value);
+    message('Creative brief copied. It describes the sound; no files were changed.');
+  }));
   $('profile').addEventListener('change', () => audio.setMixProfile($('profile').value));
   $('mix-scene').addEventListener('change', () => audio.setSceneMix($('mix-scene').value));
   $('mute').addEventListener('change', () => audio.setSettings({ muted: $('mute').checked }));
-  $('pause').addEventListener(
-    'click',
-    run(async () => {
-      userPaused = !userPaused;
-      audio.setPaused(userPaused);
-      if (!userPaused) await audio.unlock();
-    }),
-  );
+  $('pause').addEventListener('click', run(async () => {
+    if (!hasPlayback) return;
+    userPaused = !userPaused;
+    audio.setPaused(userPaused);
+    if (!userPaused && !(await audio.unlock())) throw Error('Playback could not resume.');
+    $('pause').textContent = userPaused ? 'Resume' : 'Pause';
+    message(userPaused ? 'Audio paused.' : 'Audio resumed.');
+  }));
   $('stop').addEventListener('click', () => {
     action++;
     audio.dispose();
-    source = null;
-    audio.cue = null;
-    audio.key = null;
-    message('Stopped. Choose Listen to reopen.');
+    stopped('Stopped. Choose any scene or recording to listen again.');
   });
+  $('warning').addEventListener('click', run(async () => {
+    await gesture();
+    audio.effect('warning');
+    message('Played the game warning effect. Keep warnings audible over music.');
+  }));
+  $('ui-play').addEventListener('click', run(async () => {
+    await gesture();
+    if (source === 'diagnostic') {
+      if (!(await audio.playRecording('diagnostic-click', { bus: 'interface', gain: 0.6 })))
+        throw Error(audio.recordingError || 'Diagnostic click could not play.');
+    } else {
+      audio.enableProduction(true);
+      audio.interfaceSound('confirm');
+    }
+    message('Played an interface test. The advanced menu simulation may alter its mix.');
+  }));
   $('report').addEventListener('click', () => {
     const report = {
       version: PrototypeBuild.version,
-      at: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
+      page: 'soundtrack-listening-room',
+      selectedSource: source,
+      selectedRecording: $('recording').value,
+      selectedScene: $('place').value,
+      currentMessage: $('message').textContent,
       audio: audio.status(),
-      measurement: $('measurement').textContent,
+      waveformMeasurement: $('measurement').textContent,
     };
-    const url = URL.createObjectURL(
-      new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }),
-    );
+    const url = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' }));
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'azeroth-audio-report.json';
+    link.download = 'sibdlp-audio-diagnostic.json';
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    message('Downloaded a local technical report. No data was uploaded.');
   });
-  document.addEventListener('visibilitychange', () =>
-    audio.setPaused(document.hidden || userPaused),
-  );
+  document.addEventListener('visibilitychange', () => audio.setPaused(document.hidden || userPaused));
   addEventListener('pagehide', () => audio.dispose());
   setInterval(() => {
-    $('status').textContent = JSON.stringify(audio.status(), null, 2);
-  }, 250);
-  selectSource().catch((e) => message(e.message));
-  // Same game-scoped worker, no game boot or storage owner is loaded in this room.
+    if ($('advanced').open && $('status').closest('details').open)
+      $('status').textContent = JSON.stringify(audio.status(), null, 2);
+  }, 1000);
+  selectSource('production').catch((error) => {
+    $('catalog-count').textContent = 'Could not load the production library. Choose Play to retry.';
+    message(error.message);
+  });
+  // The audition page deliberately never opens or writes campaign saves.
   if ('serviceWorker' in navigator)
     navigator.serviceWorker.register(new URL('sw.js', baseUrl)).catch(() => {});
-  window.AudioAudition = { audio, ready: diagnostic, selectSource };
+  window.AudioAudition = { audio, ready: diagnostic, selectSource, pairFor, syncScene };
 })();
