@@ -1,3 +1,5 @@
+> **Historical phase record (28 October 2026):** [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) merged and Rogue is playable. Draft status and instructions to resume or release its old phases below describe 27 October, not current work or authorization. Use [Development state](DEVELOPMENT_STATE.md), current source, and the [Rogue soft launch](ROGUE_SOFT_RELEASE_20261028.md) for current status and acceptance.
+
 # Rogue Bard — Phase 4 companion integration implementation record
 
 **27 October 2026 · Draft PR #511 · `design/rogue-bard-feasibility-20261026` · No merge/deploy/public fourth class.**
@@ -13,7 +15,7 @@ and [Charmed roster/Barracks contract](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRA
 At entry, PR #511 was draft, open, unmerged, 0 commits behind main, head
 `767d3d460b02bb0f8ad147abc3cf97ea469fc0d6`.
 
-## Native implementation (candidate pending final CI)
+## Native implementation (candidate at the time, then pending final CI)
 
 - **Creature stats:** The existing `soldier`/`archer` routing classes continue
   to own *only* existing movement/engagement mechanics; authentic species plus
