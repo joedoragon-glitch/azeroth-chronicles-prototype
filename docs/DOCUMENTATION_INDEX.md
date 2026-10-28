@@ -4,7 +4,7 @@
 
 **Guía principal para hispanohablantes (28 de octubre):** [Guía completa del juego en español](../GUIA_EN_ESPANOL.md), con acceso al juego, selección de idioma, historia, controles, guardados y orientación por GitHub. [CONTROLES.md](../CONTROLES.md) se conserva como enlace de compatibilidad para direcciones antiguas; no mantiene instrucciones independientes. La traducción del juego es parcial, aunque la selección de español está integrada.
 
-**Current audio guide (28 October):** [Sound design and audio production](AUDIO_PLAYBACK.md) describes the playable recording inventory, music identities, audio routing, sound-production workflow and remaining listening acceptance. The [v0.8.90 sound pass](AUDIO_SOUND_PASS.md) is historical creative context, not the live release ledger.
+**Current audio guide (28 October):** [Sound design and audio production](AUDIO_PLAYBACK.md) describes the playable recording inventory, music identities, audio routing, sound-production workflow and remaining listening acceptance. The [living soundtrack and sound-identity guide](AUDIO_SOUND_PASS.md) preserves the intent, cue IDs and source-grounded musical palettes of all 83 music cues, plus environmental/effect guidance and a composer handoff. Its original v0.8.90 version remains in Git history; the current guide is creative reference, not a release ledger.
 
 **Readable current status (28 October):** [Development state](DEVELOPMENT_STATE.md) now opens with a verified published-build summary, playable systems, unfinished functional work and device limits. Its former release-by-release diary is preserved verbatim in the [historical development-state archive](DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md); its past work orders are not live instructions.
 
