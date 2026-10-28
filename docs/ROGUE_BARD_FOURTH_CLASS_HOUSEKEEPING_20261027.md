@@ -1,3 +1,5 @@
+> **28 October status:** [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) has merged and Rogue is playable. Draft, unregistered and unfinished-phase statements below are dated historical context, not directions to restart the work. See [Development state](DEVELOPMENT_STATE.md) and current source; design proposals and test receipts remain bounded to their original checkpoints.
+
 # Fourth-class readiness housekeeping — draft PR #511
 
 > **Phase 1–3 consolidated status (27 October 2026):** **Phases 1, 2 and 3 are COMPLETE AS STAGED and focused-validated; Phase 4 is READY BUT NOT STARTED.** Charm is owner-approved at **12%** on an eligible surviving automatic primary hit; every capture gets **automatic permanent nickname** from **70 EN/70 ES** options plus **100% friendly max HP** (active or reserve), without popup/toggle/naming tutorial. The legitimate Charm-first → worker → Barracks tutorial remains Phase 7. [48 focused suites and reproducible build passed](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40503909024), with [docs-head check green](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40505058428). Main through `5c6197e8` integrated, 0 behind at closeout. PR #511 is open/draft, unmerged/undeployed, class unregistered. Consult [consolidated baseline](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md); all earlier contradictory phase status, guitar, wounded-capture and optional/manual-naming descriptions are retained as historical proposals, not implementation instructions.
@@ -42,7 +44,7 @@ The provisional Charmed monsters UI is **not a capture/save permission**: curren
 
 **Mainline source conflict reconciled:** [exact merge and verification record](ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md). The PR branch incorporated the updated `main` code at `3c6da60`, retaining Paladin/Mage/Ranger level-1 passives, melee pursuit, v4 save migration, new class-growth copy and the Rogue compatibility work in their common files. The combined JavaScript parsed successfully, but this is **not** proof that focused CI/full regression passed or permission to deploy.
 
-## Succession company and four independent intensity categories — owner confirmed
+## Historical Succession and intensity proposal — player slider superseded
 
 The current critical kernel has **Hero/Companion/World** Level 1–3 intensity groups. The planned **fourth Rogue group** will be independently selectable for her own hero actions only, separate from the existing Party/World RNG domains; it is still **not** a shipped user settings slider. Crit probability is a separate statistic.
 

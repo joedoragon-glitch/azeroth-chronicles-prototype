@@ -1,3 +1,5 @@
+> **28 October status:** [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) has merged and Rogue is playable. Draft, unregistered and unfinished-phase statements below are dated historical context, not directions to restart the work. See [Development state](DEVELOPMENT_STATE.md) and current source; design proposals and test receipts remain bounded to their original checkpoints.
+
 # Rogue Bard Phase 3 — technical closeout and Phase 4 handoff
 
 **27 October 2026 · Draft PR #511 · one Rogue Bard class only · verified code head `f24f16ef934ca340bc1a4413f1ee404868493e53`**
@@ -33,4 +35,4 @@ Initial focused [GitHub Actions run 40503170680](https://github.com/joedoragon-g
 
 **Phase 5:** remaining seven dual-form performances; **Phase 6:** Rogue critical mechanics; **Phase 7:** recorded bell/audio and normal/crowned appearance/Canvas-Pixi presentation, EN/ES/mobile, and **fresh-Rogue Charm first → first captured worker → Build Barracks** onboarding; **Phase 8:** real owner playtest, full game/browser/device/offline PWA release acceptance.
 
-Current policy: **keep draft PR #511 open/unmerged/undeployed**; do not register the Rogue class or start release gates. Recheck newer upstream `main` drift before subsequent integration. Later documentation-only closeout commits do not change the game code already proven at `f24f16ef`.
+At the 27 October checkpoint the policy was to keep PR #511 draft and defer registration and release gates. That direction is historical: the PR later merged and Rogue is playable. Documentation-only closeout commits did not change the game code proven at `f24f16ef`.
