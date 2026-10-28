@@ -19,6 +19,9 @@
     const companionJudgments = new WeakMap();
     const heroGuidance = new WeakMap();
     const rangerHealRequests = new WeakMap();
+    // Game-time song boons are transient, bounded, and never saved. Actors
+    // are weak keys; a zone or class change automatically invalidates them.
+    const roguePerformanceBoons = new WeakMap();
     // A charge fizzle earns the pet's ready first special one brief turn.
     // Kept outside unit/save state; never shared across pets or campaigns.
     const petFirstAfterFailedCharge = new WeakMap();
@@ -57,7 +60,7 @@
     class Party {
       // Stage 2: only six Soldier/Archer combat moves; feature gate is absent in production.
       troopCriticalRelease(u, move) {
-        if (!this._criticalPartyNative || !['soldier', 'archer'].includes(u?.type)) return null;
+        if (!this._criticalPartyNative || u?.charmOrigin || !['soldier', 'archer'].includes(u?.type)) return null;
         return this._criticalPartyNative.release(this, 'troop/' + u.type + '/' + move, u.id);
       }
       troopCriticalDamage(receipt, amount) {
@@ -805,6 +808,7 @@
         );
       }
       companionContributionRange(u, slot = 0) {
+        if (u.charmOrigin && slot) return 0;
         if (!slot) return this.companionCombatReach(u);
         if (u.type === 'pet') return this.petSkillDefinition(u, slot)?.range || 0;
         if (slot === 2) return R.companionSkills.second[u.type]?.range || 0;
@@ -1059,6 +1063,8 @@
         return this.follow(u, point, speed, dt, point === this.hero ? 35 : 15);
       }
       companionCombatReach(u) {
+        const monster = this.charmedCompanionProfile(u);
+        if (monster) return monster.reach;
         return u.type === 'pet'
           ? this.petDefinition(u)?.role === 'ranged'
             ? R.balance.companions.petBasicRange
@@ -1094,7 +1100,7 @@
         )
           return false;
         if (u.type === 'pet') return this.petDefensiveCounter(u, e);
-        u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
         const criticalReceipt = this.troopCriticalRelease(u, 'basic');
         if (u.type === 'archer') {
           const d = Math.max(1, dist(u, e));
@@ -1105,23 +1111,23 @@
             dx: (e.x - u.x) / d,
             dy: (e.y - u.y) / d,
             target: e.id,
-            damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+            damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: 450,
-            style: 'arrow',
+            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
           return true;
         }
         const hit = this.damage(
-          e, this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)), u.id,
+          e, this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)), u.id,
         );
         if (hit)
           this.event('melee', {
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: e.x,
             y: e.y,
             target: e.id,
@@ -1336,7 +1342,7 @@
           reach = this.companionCombatReach(u);
         if (!e || dist(e, u) > reach || !this.line(u, e) || !this.tacticalDirectTargetable(e))
           return;
-        u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+        u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
         const criticalReceipt = this.troopCriticalRelease(u, 'basic');
         if (u.type === 'archer') {
           const d = Math.max(1, dist(u, e));
@@ -1347,20 +1353,20 @@
             dx: (e.x - u.x) / d,
             dy: (e.y - u.y) / d,
             target: e.id,
-            damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+            damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: 450,
-            style: 'arrow',
+            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
         } else if (this.damage(e, this.troopCriticalDamage(
-          criticalReceipt, this.companionAttackDamage(u),
+          criticalReceipt, this.companionBasicAttackDamage(u),
         ), u.id))
           this.event('melee', {
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: e.x,
             y: e.y,
             target: e.id,
@@ -1389,6 +1395,33 @@
         this.hero[key] = name;
         return true;
       }
+      nextRogueCharmNickname() {
+        const locale = this.rogueNicknameLanguage === 'es' ? 'es' : 'en',
+          pool = R.rogueCharmNicknames[locale],
+          cursor = this.s.rogueNicknameCursor ??= { en: 0, es: 0 },
+          original = cursor[locale] || 0,
+          used = new Set(this.s.party.map((u) => u.customName)
+            .filter(Boolean).map((name) => name.toLocaleLowerCase()));
+        for (let offset = 0; offset < pool.length; offset++) {
+          const index = (original + offset) % pool.length,
+            name = pool[index];
+          if (used.has(name.toLocaleLowerCase())) continue;
+          cursor[locale] = (index + 1) % pool.length;
+          return name;
+        }
+        // Extremely large inherited rosters can occupy all 70 suggestions.
+        // Stay within the existing 24-character, one-time naming contract.
+        const base = pool[original],
+          limit = 24;
+        for (let suffix = 2; suffix <= 200; suffix++) {
+          const end = ' ' + suffix,
+            name = Array.from(base).slice(0, limit - end.length).join('') + end;
+          if (used.has(name.toLocaleLowerCase())) continue;
+          cursor[locale] = (original + 1) % pool.length;
+          return name;
+        }
+        throw Error('Charmed nickname pool exhausted');
+      }
       nameCompanion(id, value) {
         const unit = this.s.party.find((u) => u.id === id),
           name = normalizeCharacterName(value);
@@ -1398,6 +1431,7 @@
       }
       companionDisplayName(unit) {
         if (unit.customName) return unit.customName;
+        if (unit.charmOrigin) return unit.charmOrigin.typeName;
         if (!['soldier', 'archer', 'pet'].includes(unit.type))
           return unit.name || unit.type || 'Companion';
         return unit.type === 'pet'
@@ -1415,17 +1449,92 @@
           (u.rangerRallyUntil || 0) > this.s.time
         );
       }
+      rogueSongBoon(u, family) {
+        if (
+          this.hero.class !== 'rogue' ||
+          !u || u.hp <= 0 || u.active === false ||
+          !this.s.party.includes(u)
+        ) return null;
+        const saved = roguePerformanceBoons.get(u);
+        const entry = saved?.zone === this.zoneId ? saved[family] : null;
+        return entry && entry.until > this.s.time ? entry : null;
+      }
+      applyRogueSongBoon(u, family, form) {
+        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
+          this.hero.class !== 'rogue' || !this.activeLivingParty().includes(u))
+          return false;
+        let state = roguePerformanceBoons.get(u);
+        if (!state || state.zone !== this.zoneId) {
+          state = { zone: this.zoneId };
+          roguePerformanceBoons.set(u, state);
+        }
+        const previous = state[family]?.until > this.s.time ? state[family] : null;
+        const until = this.s.time + Math.min(8, Math.max(0, form.seconds || 0));
+        // One strongest instance per family, never additive or permanent.
+        state[family] = {
+          until: Math.max(previous?.until || 0, until),
+          move: Math.max(previous?.move || 0, Math.min(0.12, form.move || 0)),
+          recovery: Math.max(previous?.recovery || 0, Math.min(0.08, form.recovery || 0)),
+          specialRecovery: Math.max(previous?.specialRecovery || 0,
+            Math.min(0.18, form.specialRecovery || 0)),
+          outgoing: Math.max(previous?.outgoing || 0,
+            Math.min(0.08, form.outgoing || 0)),
+          protection: !!(previous?.protection || form.protection),
+          incomingHealing: Math.max(previous?.incomingHealing || 0,
+            Math.min(0.12, form.incomingHealing || 0)),
+          // Only a frozen critical Skill 4 release may increase the
+          // original 5%-of-max-HP HoT budget (up to Level-3 7.25%).
+          // Delivery ticks merely spend this finite budget; no extra rolls.
+          remainingHeal: Math.max(previous?.remainingHeal || 0,
+            Math.min(u.maxHp * (form.criticalMending === true ? 0.075 : 0.05),
+              u.maxHp * (form.healFraction || 0))),
+          criticalChance: Math.max(previous?.criticalChance || 0,
+            Math.min(0.06, form.criticalChance || 0)),
+          specialDamage: Math.max(previous?.specialDamage || 0,
+            Math.min(0.06, form.specialDamage || 0)),
+        };
+        return true;
+      }
+      advanceRogueMending(dt) {
+        if (this.hero.class !== 'rogue' || !Number.isFinite(dt) || dt <= 0) return;
+        for (const u of this.activeLivingParty()) {
+          const effect = this.rogueSongBoon(u, 'mending');
+          if (!effect || !(effect.remainingHeal > 0)) continue;
+          const live = Math.max(0.01, effect.until - (this.s.time - dt)),
+            paid = Math.min(effect.remainingHeal, effect.remainingHeal * Math.min(dt, live) / live);
+          u.hp = Math.min(u.maxHp, u.hp + paid);
+          effect.remainingHeal = Math.max(0, effect.remainingHeal - paid);
+        }
+      }
       companionRallyMoveSpeed(u, base) {
-        return (
-          this.companionMoveSpeed(base) *
-          (this.rangerRallyActive(u) ? 1 + Math.min(0.25, u.rangerRallyMovement || 0) : 1)
-        );
+        const rally = this.rangerRallyActive(u)
+          ? Math.min(0.25, u.rangerRallyMovement || 0) : 0;
+        const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
+        return this.companionMoveSpeed(base) *
+          (this.charmedCompanionProfile(u)?.speed || 1) *
+          (1 + Math.max(rally, quickstep));
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
       }
+      rogueCompanionSpecialDamage(u, amount) {
+        return amount * (1 + (this.rogueSongBoon(u, 'finale')?.specialDamage || 0));
+      }
       companionAttackDamage(u) {
-        return u.damage + this.hero.level * 2 + this.companionInheritedDamageBonus();
+        return (
+          (this.charmedCompanionProfile(u)?.damage ?? u.damage) +
+          this.hero.level * 2 + this.companionInheritedDamageBonus()
+        );
+      }
+      // Skill 1's short allied refrain affects ordinary companion basics only.
+      // Existing troop special skills retain their unmodified source damage.
+      companionBasicAttackDamage(u) {
+        const base = this.companionAttackDamage(u);
+        return base * (1 + ((u.rogueSharpRefrainUntil || 0) > this.s.time
+          ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0));
+      }
+      companionBasicInterval(u) {
+        return this.charmedCompanionProfile(u)?.interval || 0.85;
       }
       companionSecondSkillUnlocked() {
         return (this.s.companionCombatTraining || 1) >= 2 || (this.hero.skills[1] || 0) > 0;
@@ -1464,6 +1573,7 @@
           .sort((a, b) => this.idOrder(a, b));
       }
       companionUseFirstSkill(u, target) {
+        if (u.charmOrigin) return false;
         if (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, 1))
           return false;
         if (u.type === 'pet') return this.usePetSkill(u, target, 1);
@@ -1476,7 +1586,8 @@
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
           if (!this.damage(
-            target, this.troopCriticalDamage(criticalReceipt, base * cfg.multiplier), u.id,
+            target, this.troopCriticalDamage(criticalReceipt,
+              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)), u.id,
           )) return false;
           const veteran = R.companionSkills.veteran;
           if (
@@ -1493,7 +1604,7 @@
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: target.x,
             y: target.y,
             target: target.id,
@@ -1503,7 +1614,7 @@
             actor: 'companion',
             role: 'soldier',
             source: u.id,
-            weapon: 'sword',
+            weapon: u.charmOrigin ? 'claw' : 'sword',
             x: u.x,
             y: u.y,
             targetX: target.x,
@@ -1533,13 +1644,14 @@
             dx: (target.x - u.x) / shot,
             dy: (target.y - u.y) / shot,
             target: target.id,
-            damage: this.troopCriticalDamage(criticalReceipt, base),
+            damage: this.troopCriticalDamage(criticalReceipt,
+              this.rogueCompanionSpecialDamage(u, base)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: 520,
             delay: j * 0.08,
             ...(j > 0 ? { companionDelayedLaunch: true } : {}),
-            style: 'arrow',
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
             ...(j === 0 &&
@@ -1552,7 +1664,7 @@
           actor: 'companion',
           role: 'archer',
           source: u.id,
-          style: 'arrow',
+          style: this.charmedCompanionProfile(u)?.style || 'arrow',
           count: 3, // Retain existing three-shot audio contract.
           releasedCount: 1,
           pendingCount: 2,
@@ -1589,6 +1701,7 @@
       // The second companion skill is charged, not an instantaneous AoE.
       // The actor keeps the aim for 0.65s and releases only after surviving damage.
       companionUseSecondSkill(u, target, targets = this.companionSecondSkillTargets(u, target)) {
+        if (u.charmOrigin) return false;
         if (
           (this.companionSurvivalMode(u) && !this.companionSafeContribution(u, target, 2)) ||
           !this.companionSecondSkillUnlocked() ||
@@ -1638,7 +1751,8 @@
           return false;
         const criticalReceipt = this.troopCriticalRelease(u, 'second');
         const base = this.companionAttackDamage(u),
-          damage = this.troopCriticalDamage(criticalReceipt, base * def.multiplier),
+          damage = this.troopCriticalDamage(criticalReceipt,
+            this.rogueCompanionSpecialDamage(u, base * def.multiplier)),
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
         if (u.type === 'archer') {
@@ -1657,7 +1771,7 @@
               damage,
               source: u.id,
               speed: 650,
-              style: 'arrow',
+              style: this.charmedCompanionProfile(u)?.style || 'arrow',
               area: true,
               companionSkill: 'piercing-volley',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
@@ -1678,7 +1792,7 @@
                 actor: 'companion',
                 role: 'soldier',
                 source: u.id,
-                weapon: 'sword',
+                weapon: u.charmOrigin ? 'claw' : 'sword',
                 x: target.x,
                 y: target.y,
                 target: target.id,
@@ -1816,7 +1930,44 @@
         }
         return true;
       }
+      // The native ranged-species support repertoire already exists for enemy
+      // healers. Friendly captured ranged actors reuse its bounded recovery
+      // scale/cadence without inheriting Ranger spells or hero mana actions.
+      charmedRangedSupport(u, living) {
+        if (
+          !this.isCharmedCompanion(u) ||
+          u.type !== 'archer' ||
+          (u.charmSupportCd || 0) > 0 ||
+          u.order ||
+          this.peace ||
+          this.s.recallActive
+        )
+          return false;
+        const range = R.enemySupportHealing.range;
+        const patients = [this.hero, ...living]
+          .filter((ally) =>
+            ally.hp > 0 &&
+            ally.hp < ally.maxHp * R.enemySupportHealing.threshold &&
+            dist(u, ally) <= range &&
+            this.line(u, ally))
+          .sort((a, b) =>
+            a.hp / a.maxHp - b.hp / b.maxHp ||
+            dist(u, a) - dist(u, b));
+        const target = patients[0];
+        if (!target) return false;
+        const amount = Math.max(1, Math.ceil(
+          target.maxHp * R.enemySupportHealing.fraction,
+        ));
+        target.hp = Math.min(target.maxHp, target.hp + amount);
+        u.charmSupportCd = R.enemySupportHealing.ordinary.cooldown;
+        this.event('heal', {
+          x: target.x, y: target.y, target: target.id, resource: 'health',
+        });
+        return true;
+      }
       companionTrySkill(u, target) {
+        // An authored species must not inherit Soldier/Ranger special skills.
+        if (u.charmOrigin) return false;
         if (
           !target ||
           (u.skillGlobalCd || 0) > 0 ||
@@ -2035,7 +2186,7 @@
       availableRangers(type) {
         const key = type === 'health' ? 'healCd' : 'manaCd';
         return this.activeLivingParty().filter(
-          (u) => u.type === 'archer' && !u.keeperHeld && (u[key] || 0) <= 0,
+          (u) => u.type === 'archer' && !u.charmOrigin && !u.keeperHeld && (u[key] || 0) <= 0,
         );
       }
       supportEffectActive(type) {
@@ -2056,7 +2207,7 @@
       queuedRangerHeal() {
         const request = rangerHealRequests.get(this);
         if (!request) return null;
-        const active = this.activeLivingParty().filter((u) => u.type === 'archer');
+        const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
         if (
           request.hero !== this.hero ||
           request.zone !== this.zoneId ||
@@ -2127,7 +2278,7 @@
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
-            const active = this.activeLivingParty().filter((u) => u.type === 'archer');
+            const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
             if (!active.length)
               this.say(
                 'No active Ranger is available to use ' +
@@ -2239,13 +2390,15 @@
             if (u[field] >= u[max]) continue;
             const step = Math.min(dt, e.seconds),
               amount = (e.remaining * step) / e.seconds;
-            u[field] = Math.min(u[max], u[field] + amount);
+            u[field] = Math.min(u[max], u[field] + amount *
+              (field === 'hp' ? 1 + (this.rogueSongBoon(u, 'mending')?.incomingHealing || 0) : 1));
             e.remaining = Math.max(0, e.remaining - amount);
             e.seconds = Math.max(0, e.seconds - step);
             if (e.seconds > 0 && e.remaining > 0 && u[field] < u[max]) next.push(e);
           }
           u.supportEffects = next;
         }
+        this.advanceRogueMending(dt);
       }
       autoRangerSupport() {
         // Explicit queued hero care gets the first eligible Ranger before triage.
@@ -2296,6 +2449,10 @@
       }
       companionRecruitmentReason(type, barracksId = null, options = {}) {
         if (!['soldier', 'archer'].includes(type)) return 'Choose a Soldier or Ranger to recruit.';
+        // Capability gate, not a menu-only restriction: covers Captain,
+        // Barracks, paid requests, queued completions and direct API calls.
+        if (this.hero.class === 'rogue')
+          return 'Rogues cannot hire Soldiers or Rangers. Charm eligible monsters in battle.';
         if ((this.s.expeditionRank || 1) < 2)
           return 'Recruitment unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.';
         const request =
@@ -2546,8 +2703,19 @@
         if (!this.spend(this.companionRecoveryCost())) return false;
         const id = dead.id,
           active = dead.active !== false,
+          charmOrigin = dead.charmOrigin ? { ...dead.charmOrigin } : null,
           p = this.safe(this.hero.x + 40, this.hero.y),
           u = this.unit(dead.type, p.x, p.y, dead.petFamily);
+        if (charmOrigin) {
+          u.charmOrigin = charmOrigin;
+          u.name = charmOrigin.typeName;
+          u.icon = dead.icon;
+          u.damage = this.charmedCompanionProfile(u).damage;
+          u.charmSupportCd = 0;
+          u.maxHp = this.companionMaxHp(u);
+          u.hp = u.maxHp;
+          u.customName = dead.customName;
+        }
         this.clearPartyCharge(dead);
         this.clearCompanionJudgment(dead);
         this._partyChargeRecovery?.delete(dead);
@@ -2583,9 +2751,20 @@
         );
         return true;
       }
+      isCharmedCompanion(u) {
+        const origin = u?.charmOrigin,
+          receipt = this.s.charmCaptures?.[u?.id];
+        return !!origin && !!receipt &&
+          Object.keys(origin).length === 6 &&
+          Object.keys(receipt).length === 6 &&
+          Object.keys(origin).every((key) => receipt[key] === origin[key]) &&
+          origin.role === u.type &&
+          !!this.charmedCompanionProfile(u);
+      }
       canGatherTribute(u) {
         return (
           !!u &&
+          (!u.charmOrigin || this.isCharmedCompanion(u)) &&
           (['soldier', 'archer'].includes(u.type) ||
             (u.type === 'pet' && u.petFamily === R.gatheringTravel.petWorkerFamily))
         );
@@ -2595,7 +2774,8 @@
       }
       availableLabor() {
         return this.activeLivingParty().filter(
-          (u) => ['soldier', 'archer'].includes(u.type) && !u.order,
+          (u) => ['soldier', 'archer'].includes(u.type) &&
+            (!u.charmOrigin || this.isCharmedCompanion(u)) && !u.order,
         );
       }
       companionRestReason(id) {
@@ -2673,7 +2853,9 @@
           this.say('Boss pets stay in your collection. Rest them or recover them at a Barracks.');
           return false;
         }
-        this.s.party.splice(i, 1);
+        const dismissed = this.s.party.splice(i, 1)[0];
+        if (dismissed.charmOrigin && this.s.charmCaptures)
+          delete this.s.charmCaptures[dismissed.id];
         return true;
       }
       squadDefaultDoctrine() {
@@ -2822,7 +3004,7 @@
         return true;
       }
       partyFormationOffset(u, living = this.activeLivingParty()) {
-        const rangedHero = this.hero.class === 'mage' || this.hero.class === 'ranger';
+        const rangedHero = ['mage', 'ranger', 'rogue'].includes(this.hero.class);
         if (u.type === 'pet') {
           // Keep distinct mixed-pet lanes: melee pets screen a ranged hero and
           // flank behind a Paladin; ranged pets remain behind either hero role.
@@ -2851,6 +3033,7 @@
               [-62, -45],
               [62, -45],
               [0, -78],
+              [0, -225], // Seventh same-type actor: never recycle the first slot.
             ],
             soldier: [
               [0, 95],
@@ -2859,6 +3042,7 @@
               [-110, -25],
               [110, -25],
               [0, -105],
+              [0, 165],
             ],
           },
           melee = {
@@ -2869,6 +3053,7 @@
               [-68, -50],
               [68, -50],
               [0, 35],
+              [0, 105],
             ],
             archer: [
               [-65, -115],
@@ -2877,6 +3062,7 @@
               [-105, -145],
               [105, -145],
               [0, -175],
+              [0, -235],
             ],
           },
           slots = (rangedHero ? ranged : melee)[u.type] || [[0, -100]];
@@ -2935,7 +3121,8 @@
       }
       archerCombatPoint(u, e, living) {
         const anchor = this.partyFollowPoint(u, living),
-          preferred = 250,
+          // Do not let short-ranged species choose a preferred point outside reach.
+          preferred = Math.min(250, Math.max(110, this.companionCombatReach(u) - 35)),
           anchorRange = dist(anchor, e);
         if (anchorRange <= this.companionCombatReach(u) && this.line(anchor, e)) return anchor;
         const dx = anchor.x - e.x,
@@ -2964,6 +3151,7 @@
       }
       companionFight(u, e, living, dt) {
         this._tacticalPartyTargets.set(u.id, e.id);
+        const monster = this.charmedCompanionProfile(u);
         if (u.type === 'pet') {
           this.updatePetCombat(u, e, living, dt);
           return;
@@ -2972,7 +3160,7 @@
           const d = dist(u, e),
             visible = this.line(u, e),
             anchor = this.partyFollowPoint(u, living);
-          if (d < 150) {
+          if (d < (monster?.retreat ?? 150)) {
             // Veteran Rangers can cover a retreat with their existing Triple Shot.
             // Still move this frame; never trade the fallback for standing fire.
             this.companionCoveringShot(u, e);
@@ -3020,7 +3208,7 @@
           }
           if (this.companionTrySkill(u, e)) return;
           if (u.cd <= 0) {
-            u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+            u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
             const criticalReceipt = this.troopCriticalRelease(u, 'basic');
             const shot = Math.max(1, d);
             this.s.projectiles.push({
@@ -3030,17 +3218,17 @@
               dx: (e.x - u.x) / shot,
               dy: (e.y - u.y) / shot,
               target: e.id,
-              damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+              damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
               source: u.id,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-              speed: 450,
-              style: 'arrow',
+              speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+              style: this.charmedCompanionProfile(u)?.style || 'arrow',
             });
             this.event('projectileLaunch', {
               actor: 'companion',
               role: 'archer',
               source: u.id,
-              style: 'arrow',
+              style: this.charmedCompanionProfile(u)?.style || 'arrow',
               x: u.x,
               y: u.y,
               target: e.id,
@@ -3062,16 +3250,16 @@
             this.line(u, e) ? 55 : 0,
           );
         else if (u.cd <= 0) {
-          u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+          u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
           const criticalReceipt = this.troopCriticalRelease(u, 'basic');
           if (this.damage(e, this.troopCriticalDamage(
-            criticalReceipt, this.companionAttackDamage(u),
+            criticalReceipt, this.companionBasicAttackDamage(u),
           ), u.id))
             this.event('melee', {
               actor: 'companion',
               role: 'soldier',
               source: u.id,
-              weapon: 'sword',
+              weapon: u.charmOrigin ? 'claw' : 'sword',
               x: e.x,
               y: e.y,
               target: e.id,
@@ -3108,7 +3296,7 @@
         for (const u of living)
           if (
             context.engaged &&
-            u.type === 'soldier' &&
+            u.type === 'soldier' && !u.charmOrigin &&
             u.hp <= u.maxHp * 0.5 &&
             !this.mageSilenceActive(u) &&
             (u.survivalCd || 0) <= 0
@@ -3136,6 +3324,7 @@
             )[0] || null;
         for (const u of living) {
           const recovery = this.cooldownRecoveryElapsed(u, dt);
+          const specialRecovery = this.cooldownRecoveryElapsed(u, dt, false, true);
           u.slow = Math.max(0, (u.slow || 0) - dt);
           if (!u.slow) delete u.slowStacks;
           if (u.rogueSlow > 0) {
@@ -3143,9 +3332,11 @@
             if (!u.rogueSlow) delete u.rogueSlow;
           }
           u.cd = Math.max(0, u.cd - recovery);
-          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - recovery);
-          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - recovery);
-          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - recovery);
+          u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - specialRecovery);
+          u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - specialRecovery);
+          u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
+          if (u.charmOrigin)
+            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
@@ -3355,6 +3546,7 @@
             continue;
           }
           if (u.order) u.order = null;
+          if (context.engaged && this.charmedRangedSupport(u, living)) continue;
           if (this.peace || this.s.recallActive) {
             // Recall is a defensive escort posture: no target acquisition,
             // pursuit or active skills. A nearby attacking enemy may be
@@ -3381,7 +3573,7 @@
                   this.petDefensiveCounter(u, pursuer);
                   continue;
                 }
-                u.cd = 0.85 / this.companionRallyAttackSpeed(u);
+                u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
                 const criticalReceipt = this.troopCriticalRelease(u, 'basic');
                 if (u.type === 'archer') {
                   const d = Math.max(1, dist(u, pursuer));
@@ -3392,20 +3584,20 @@
                     dx: (pursuer.x - u.x) / d,
                     dy: (pursuer.y - u.y) / d,
                     target: pursuer.id,
-                    damage: this.troopCriticalDamage(criticalReceipt, this.companionAttackDamage(u)),
+                    damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
                     source: u.id,
                     ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-                    speed: 450,
-                    style: 'arrow',
+                    speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+                    style: this.charmedCompanionProfile(u)?.style || 'arrow',
                   });
                 } else if (this.damage(pursuer, this.troopCriticalDamage(
-                  criticalReceipt, this.companionAttackDamage(u),
+                  criticalReceipt, this.companionBasicAttackDamage(u),
                 ), u.id))
                   this.event('melee', {
                     actor: 'companion',
                     role: 'soldier',
                     source: u.id,
-                    weapon: 'sword',
+                    weapon: u.charmOrigin ? 'claw' : 'sword',
                     x: pursuer.x,
                     y: pursuer.y,
                     target: pursuer.id,

@@ -11,6 +11,9 @@
     combatDiagnosticsEnabled = /(?:^|[?&])combatDiagnostics=1(?:&|$)/.test(
       window.location?.search || '',
     );
+  // Quiet fourth-class release. Register before profile/load/save validation,
+  // New Game and Succession; v4 storage keys and original classes stay intact.
+  Campaign.enableRoguePlaytest();
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -355,6 +358,12 @@
       'Usa de 1 a 24 letras, números, espacios, apóstrofos, puntos o guiones.',
     'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.':
       'El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las tres, la partida termina.',
+    'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after four class deaths the run ends.':
+      'El Dark Lord gobierna estas tierras y mantiene cautivos a los especialistas que enseñan habilidades, forjan equipo y preparan aventureros. Rescátalos, recupera fuerzas y desafía su dominio.\n\nSucesión es opcional: cada clase que cae se pierde durante esta partida. Si mueren las cuatro, la partida termina.',
+    'All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.':
+      'Las tres clases han caído. Esta partida terminó. Puedes exportar su progreso, pero no continuarla.',
+    'All four classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.':
+      'Las cuatro clases han caído. Esta partida terminó. Puedes exportar su progreso, pero no continuarla.',
     'Choose the hero who will begin the resistance. You start with one skill; rescuing the captured specialists unlocks the training and equipment needed to face the Dark Lord.':
       'Elige al héroe que iniciará la resistencia. Comienzas con una habilidad; rescatar especialistas desbloquea el entrenamiento y equipo necesarios para enfrentar al Dark Lord.',
   };
@@ -694,6 +703,13 @@
     'Name companions': 'Nombrar compañeros',
     'Recruit companions': 'Reclutar compañeros',
     'Boss pet collection': 'Colección de mascotas de jefes',
+    'Charmed monsters': 'Monstruos encantados',
+    'Charmed creature': 'Criatura encantada',
+    'Previous page': 'Página anterior',
+    'Next page': 'Página siguiente',
+    Page: 'Página',
+    'Browse owned monster types and change their active status.':
+      'Consulta los tipos de monstruos que posees y cambia quién viaja contigo.',
     'Pet skills': 'Habilidades de mascota',
     'Rescued specialists': 'Especialistas rescatados',
     'Resources & labor': 'Recursos y trabajo',
@@ -1328,6 +1344,12 @@
     if (/^Local death loss: /.test(piece))
       return piece.replace('Local death loss: ', 'Pérdida local al caer: ');
     if (/^With you /.test(piece)) return piece.replace('With you ', 'Contigo ');
+    if (/^Resting /.test(piece)) return piece.replace('Resting ', 'En reserva ');
+    if (/^Fallen /.test(piece)) return piece.replace('Fallen ', 'Caídos ');
+    if (/^Local group cap /.test(piece))
+      return piece.replace('Local group cap ', 'Límite local del grupo ');
+    if (/^[0-9]+([/][0-9]+)? owned$/.test(piece)) return piece.replace('owned', 'poseídos');
+    if (/^[0-9]+ types$/.test(piece)) return piece.replace('types', 'tipos');
     if (/^[Ee]mployed /.test(piece)) return piece.replace(/^[Ee]mployed /, 'Contratados ');
     if (/^Rest /.test(piece))
       return piece.replace('Rest ', 'Descansar ').replace('Soldier', 'Soldado');
@@ -1437,6 +1459,7 @@
   }
   function setLanguage(value) {
     language = value === 'es' ? 'es' : 'en';
+    if (game) game.rogueNicknameLanguage = language;
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
     try {
       localStorage.setItem(languageKey, language);
@@ -1707,6 +1730,9 @@
   // Both isolated RNG streams resume from the same v4 save state.
   function activateLiveCritical(candidate) {
     if (!candidate) return candidate;
+    // Cosmetic capture nicknames follow the current interface language.
+    // Existing names never change when the language changes.
+    candidate.rogueNicknameLanguage = language;
     if (candidate._criticalPartyNative?.enabled && candidate._criticalWorldNative?.enabled)
       return candidate;
     PrototypeCriticalPartyNative.attachCampaign(
@@ -3710,10 +3736,7 @@
       D.regions.find((region) => region.id === option.zone)?.name ||
       D.bosses.find((boss) => boss.id === option.zone)?.place ||
       option.zone;
-    const heroClass =
-      language === 'es'
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[option.heroClass]
-        : option.heroClass;
+    const heroClass = heroClassLabel(option.heroClass);
     return tr('Level') + ' ' + option.level + ' · ' + heroClass + ' · ' + place;
   }
   function savedRunRecoveryOptions() {
@@ -3819,6 +3842,9 @@
   function classGrowthLine(heroClass) {
     const p = Campaign.rules.balance.classPassives;
     const es = language === 'es';
+    if (heroClass === 'rogue') return es
+      ? 'Travesura · Cada nivel: +2 puntos porcentuales de probabilidad crítica de la Pícara.'
+      : 'Mischief · Each level: +2 percentage points Rogue critical chance.';
     if (heroClass === 'paladin')
       return es
         ? 'Fortaleza · Cada nivel: +' + p.paladin.hpPerLevel +
@@ -3839,6 +3865,36 @@
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
   }
+  // Read-only class selection copy. Registry membership alone governs
+  // which buttons exist; a future class gets its own description, never Ranger's.
+  const heroClassPresentation = Object.freeze({
+    paladin: {
+      en: 'Paladin', es: 'Paladín',
+      detail: 'Melee, healing and brief immunity', detailEs: 'Combate cercano, curación e inmunidad breve',
+    },
+    mage: {
+      en: 'Mage', es: 'Mago',
+      detail: 'Ranged magic, frost control and protective barriers', detailEs: 'Magia a distancia, hielo y barreras protectoras',
+    },
+    ranger: {
+      en: 'Ranger', es: 'Explorador',
+      detail: 'Ranged bow, healing and mobility', detailEs: 'Arco a distancia, curación y movilidad',
+    },
+    rogue: {
+      en: 'Rogue', es: 'Pícara',
+      detail: 'Charmed companions, musical disruption and survival tricks. Start alone; automatic basic hits may Charm surviving eligible monsters, who can then build Barracks.', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia. Empiezas sola; los ataques básicos automáticos pueden encantar a monstruos aptos que sobreviven, y luego ellos pueden construir cuarteles.',
+    },
+  });
+  function heroClassLabel(id, localized = language === 'es') {
+    return (heroClassPresentation[id] || {})[localized ? 'es' : 'en'] || id;
+  }
+  function heroClassDetail(id) {
+    return heroClassPresentation[id]?.[language === 'es' ? 'detailEs' : 'detail'] || 'Class skills require authored rules';
+  }
+  function playableClassCountWord() {
+    const count = Object.keys(Campaign.classes).length;
+    return { 3: 'three', 4: 'four' }[count] || String(count);
+  }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
     if (mode === 'developer' && !developerEnabled) return;
@@ -3846,7 +3902,9 @@
     if (succession === undefined) {
       openMenu(
         'Challenge condition',
-        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after three class deaths the run ends.',
+        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after ' +
+          playableClassCountWord() +
+          ' class deaths the run ends.',
         [
           action('Standard death and refuge recovery', () => chooseClass(mode, false)),
           action('Succession challenge', () => chooseClass(mode, true)),
@@ -3867,9 +3925,7 @@
         action(
           c.icon +
             ' ' +
-            (language === 'es'
-              ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[id] || id
-              : id.charAt(0).toUpperCase() + id.slice(1)),
+            heroClassLabel(id),
           () => {
             const rawName = $('character-name')?.value || '',
               heroName = rawName.trim() ? Campaign.normalizeCharacterName(rawName) : null;
@@ -3891,19 +3947,7 @@
               return;
             start(mode, id, succession, heroName);
           },
-          (language === 'es'
-            ? {
-                paladin: 'Combate cercano, curación e inmunidad breve',
-                mage: 'Magia a distancia, hielo y barreras protectoras',
-                ranger: 'Arco a distancia, curación y movilidad',
-              }[id]
-            : {
-                paladin: 'Melee, healing and brief immunity',
-                mage: 'Ranged magic, frost control and protective barriers',
-                ranger: 'Ranged bow, healing and mobility',
-              }[id]) +
-            '\n' +
-            classGrowthLine(id),
+          heroClassDetail(id) + (classGrowthLine(id) ? '\n' + classGrowthLine(id) : ''),
         ),
       ),
       () => started ? chooseClass(mode) : newGameMenu(),
@@ -3966,8 +4010,8 @@
     const h = game.hero,
       es = language === 'es',
       className = es
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador' }[h.class]
-        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[h.class],
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara' }[h.class]
+        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[h.class],
       stats = [
         { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
         { label: es ? 'Poder' : 'Power', value: String(game.power()) },
@@ -4700,7 +4744,7 @@
     profile.nightmareUnlocked = true;
     persistProfile();
     const crownedClass =
-      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger' }[game.hero.class] || 'Hero';
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[game.hero.class] || 'Hero';
     const credits =
       'THE CROWN\n\n' +
       (game.hero.regnalName || game.hero.customName
@@ -4743,7 +4787,7 @@
       Object.entries(Campaign.classes)
         .filter(([id]) => !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
-          action(c.icon + ' ' + id + ' successor', () => {
+          action(c.icon + ' ' + heroClassLabel(id, false) + ' successor', () => {
             game.successor(id);
             save();
             closeMenu();
@@ -4754,7 +4798,9 @@
   function gameOver() {
     openMenu(
       'The last successor has fallen',
-      'All three classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
+      'All ' +
+        playableClassCountWord() +
+        ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
         action('Export final run', () =>
           exportJSON(game.snapshot(), 'Azeroth_Succession_Game_Over.json'),
@@ -5676,6 +5722,16 @@
         6: 'Repelling Shot / Volley',
         7: 'Piercing Arrow',
         8: 'Hunters Salvo / Grand Hunt',
+      },
+      rogue: {
+        1: 'Ding and Sting / Raise a Racket',
+        2: "Lead Feet / Can't Dance",
+        3: 'Beat Breaker / Shut the Band Up',
+        4: 'Sour Note / Rotten Chorus',
+        5: 'Sticky Shuffle / Briar Boogie',
+        6: 'Stolen Beat / Time Out',
+        7: 'Wrong Foot / Panic Party',
+        8: 'Bad Bell Day / Last Laugh',
       },
     };
     return tr(labels[game.hero.class]?.[slot] || skillNames[slot - 1]);

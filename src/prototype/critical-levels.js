@@ -1,11 +1,13 @@
-/* Critical effect INTENSITY, not critical hit probability. Optional authoring layer.
-   No auto-installation and no mutation of Campaign, renderers, or saves. */
+/* Critical effect INTENSITY, not critical hit probability.
+   DEVELOPER-ONLY authoring/tuning layer. Levels 1–3 and mode overrides are
+   authored in code/native test sessions, never offered as player settings.
+   No auto-installation and no mutation of Campaign, renderers, profiles or saves. */
 (function (root) {
   'use strict';
 
-  const GROUPS = Object.freeze(['hero', 'companion', 'world']);
+  const GROUPS = Object.freeze(['hero', 'rogue', 'companion', 'world']);
   const MODES = Object.freeze(['normal', 'nightmare', 'developer']);
-  const DEFAULT_LEVELS = Object.freeze({ hero: 1, companion: 1, world: 1 });
+  const DEFAULT_LEVELS = Object.freeze({ hero: 1, rogue: 2, companion: 1, world: 1 });
   // A lever changes only an existing action outcome; none changes hit geometry,
   // attack count, recovery, collision, AI, cooldown or immunity. These initial
   // authoring figures are candidates, NOT native gameplay balance evidence.
@@ -43,6 +45,13 @@
   // Index is Skill 1...8, with tap then charged. Each is explicitly assigned
   // an existing consequence, not a universal double-damage fallback.
   const heroSkills = Object.freeze({
+    // Slot and form identity is independent of revisable display names.
+    rogue: [
+      ['damage', 'damage'], ['slowDuration', 'hasteDuration'],
+      ['cooldownDebt', 'silenceDuration'], ['healAmount', 'healAmount'],
+      ['slowDuration', 'wardStrength'], ['cooldownDebt', 'hasteDuration'],
+      ['pushDistance', 'weakenDuration'], ['damage', 'silenceDuration'],
+    ],
     paladin: [
       ['damage', 'damage'], ['weakenDuration', 'weakenDuration'],
       ['wardDuration', 'pushDistance'], ['tauntDuration', 'tauntDuration'],
@@ -65,10 +74,11 @@
     ],
   });
   for (const [cls, skills] of Object.entries(heroSkills)) {
-    register('hero/' + cls + '/auto', 'hero', 'damage');
+    const group = cls === 'rogue' ? 'rogue' : 'hero';
+    register('hero/' + cls + '/auto', group, 'damage');
     skills.forEach(([tap, charged], index) => {
-      register('hero/' + cls + '/' + (index + 1) + '-tap', 'hero', tap);
-      register('hero/' + cls + '/' + (index + 1) + '-charged', 'hero', charged);
+      register('hero/' + cls + '/' + (index + 1) + '-tap', group, tap);
+      register('hero/' + cls + '/' + (index + 1) + '-charged', group, charged);
     });
   }
   const troops = Object.freeze({
@@ -273,7 +283,7 @@
     }
     function snapshot() {
       return Object.freeze({
-        hero: base.hero, companion: base.companion, world: base.world,
+        hero: base.hero, rogue: base.rogue, companion: base.companion, world: base.world,
         modes: Object.freeze({
           nightmare: Object.freeze({ ...modes.nightmare }),
           developer: Object.freeze({ ...modes.developer }),

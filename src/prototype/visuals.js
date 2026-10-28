@@ -257,6 +257,9 @@
     ctx.restore();
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
+    // A Charmed ally always keeps its canonical species silhouette, abroad too.
+    if (e?.renderKind === 'ally' && e.charmOrigin)
+      e = { ...e, species: e.charmOrigin.species, ranged: e.charmOrigin.role === 'archer' };
     if (e.renderKind === 'prop' && e.miningFacility) {
       Highlands.drawMining(ctx, e, p);
       return;
@@ -6526,7 +6529,131 @@
       grip(15, -4, '#9caa78');
     }
 
+
+    // Rogue first-play procedural art: one static presentation shared by the
+    // Canvas renderer and Pixi's procedural fallback, never game/save state.
+    function rogueBellStaff(crowned = false) {
+      const brass = crowned ? '#e0be77' : '#d6b16b';
+      // ONE suspended spherical jingle bell on a hooked staff. Its head stays
+      // separate from the shaft and from the Mage's crystal-staff silhouette.
+      line([[17, 13], [17, -44]], '#49362e', 4.6);
+      line([[18, 11], [18, -43]], '#a57a4d', 1.1);
+      shaped(brass, () => {
+        ctx.moveTo(15, -44);
+        ctx.bezierCurveTo(14, -52, 24, -54, 29, -49);
+        ctx.lineTo(28, -46);
+        ctx.bezierCurveTo(24, -51, 19, -49, 19, -43);
+      }, 0.85);
+      oval(28, -47, 2.4, 2.1, '#a67a46');
+      line([[28, -46], [28, -43]], '#e8cd8a', 1.7);
+      oval(28, -35, 8, 8, brass);
+      fillOval(25, -38, 2.8, 3.1, '#f6df9f', 0.65);
+      line([[22.5, -33.5], [33.5, -33.5]], '#795035', 1.8);
+      oval(28, -29.5, 1.7, 1.5, '#624734');
+      line([[25.5, -32], [28, -30], [30.5, -32]], '#b37d3d', 0.85);
+      softRect(14.7, -6, 4.6, 10, crowned ? '#6e405b' : '#614163', 1);
+      for (const y of [-3, 1]) line([[15, y], [19, y - 1]], brass, 0.9);
+    }
+
+    function rogueHero(crowned = false) {
+      const complexion = '#986548',
+        darkHair = '#1b1723',
+        goldTrim = crowned ? '#e0be77' : '#d6b16b';
+      // World-space foot anchor matches the existing heroes. Clothing, hair,
+      // weapon and crown never respond to time, facing or combat state.
+      shaped(crowned ? '#2b2039' : '#382b4e', () => {
+        ctx.moveTo(-8, -20);
+        ctx.bezierCurveTo(-20, -15, -19, -1, -20, 10);
+        ctx.quadraticCurveTo(-9, 14, -1, 9);
+        ctx.quadraticCurveTo(13, 17, 18, 9);
+        ctx.quadraticCurveTo(12, -6, 9, -20);
+      });
+      if (crowned)
+        shaped('#7d3345', () => {
+          ctx.moveTo(-14, -16);
+          ctx.quadraticCurveTo(-21, -3, -16, 9);
+          ctx.lineTo(-7, 8);
+          ctx.quadraticCurveTo(-13, -7, -9, -19);
+        });
+      // Long wavy, uncovered black hair: a silhouette rather than a helmet.
+      shaped(darkHair, () => {
+        ctx.moveTo(-8, -37);
+        ctx.bezierCurveTo(-17, -38, -17, -27, -14, -21);
+        ctx.quadraticCurveTo(-20, -11, -13, 1);
+        ctx.quadraticCurveTo(-9, 4, -8, -3);
+        ctx.quadraticCurveTo(-13, -20, -6, -29);
+        ctx.lineTo(8, -37);
+        ctx.bezierCurveTo(17, -34, 14, -21, 16, -16);
+        ctx.quadraticCurveTo(20, -7, 13, 2);
+        ctx.quadraticCurveTo(10, 4, 9, -2);
+        ctx.quadraticCurveTo(12, -22, 7, -30);
+      });
+      humanoid(crowned ? '#45324e' : '#614163', complexion, 0.94, false);
+      // One-shoulder sari-inspired plum drape over practical layered trousers.
+      softPoly([[-11, -15], [-15, -7], [-13, 9], [-4, 11], [0, -6]],
+        crowned ? '#332741' : '#382b4e', 2);
+      softPoly([[3, -18], [11, -17], [12, -2], [15, 10], [3, 11], [-2, -4]],
+        crowned ? '#412b4a' : '#614163', 2);
+      line([[-11, 8], [-5, 9], [0, 4]], goldTrim, 1.1);
+      line([[6, 9], [12, 9]], '#ba6e42', 1.2);
+      shaped('#ba6e42', () => {
+        ctx.moveTo(-11, -20);
+        ctx.quadraticCurveTo(-5, -22, -2, -18);
+        ctx.lineTo(8, 3);
+        ctx.quadraticCurveTo(3, 6, -1, 3);
+        ctx.lineTo(-8, -13);
+      }, 0.9);
+      line([[-8, -16], [0, -2], [7, 2]], goldTrim, 1.2);
+      // Dark burgundy sash and modest brass jewelry, not armor or a corset.
+      softPoly([[-10, -4], [7, -4], [10, 0], [-9, 1]],
+        crowned ? '#7d3345' : '#773b51', 1);
+      oval(1, -1, 2.1, 1.7, goldTrim);
+      for (const x of [-13, 13]) {
+        line([[x - 2, -4], [x + 2, -3]], goldTrim, 1.4);
+        line([[x - 2, -1], [x + 2, 0]], '#b78b54', 0.9);
+      }
+      // Repaint the face in the existing native expression vocabulary: sly.
+      face(0, -29, complexion, 0.94, false, 'sly', '#753d47');
+      // Frame the face with free, wavy side locks; never obscure her eyes.
+      shaped(darkHair, () => {
+        ctx.moveTo(-9, -35);
+        ctx.quadraticCurveTo(-14, -32, -12, -24);
+        ctx.lineTo(-8, -20);
+        ctx.quadraticCurveTo(-10, -29, -6, -34);
+      }, 0.6);
+      shaped(darkHair, () => {
+        ctx.moveTo(9, -36);
+        ctx.quadraticCurveTo(15, -31, 11, -22);
+        ctx.lineTo(8, -20);
+        ctx.quadraticCurveTo(10, -29, 6, -34);
+      }, 0.6);
+      shaped(darkHair, () => {
+        ctx.moveTo(-9, -36);
+        ctx.quadraticCurveTo(-6, -44, 2, -42);
+        ctx.quadraticCurveTo(10, -43, 10, -36);
+        ctx.lineTo(7, -33);
+        ctx.quadraticCurveTo(1, -37, -3, -34);
+        ctx.lineTo(-8, -32);
+      }, 0.7);
+      line([[-6, -40], [1, -41], [7, -39]], goldTrim, 1.4);
+      oval(-8.5, -24, 1.2, 2, goldTrim);
+      oval(8.5, -24, 1.2, 2, goldTrim);
+      if (crowned) {
+        // A narrow asymmetrical five-point obsidian/gold circlet, not a helmet.
+        softPoly([[-10, -39], [-12, -49], [-6, -45], [-3, -52],
+          [1, -46], [5, -55], [7, -45], [12, -49], [10, -39]],
+        '#302735', 0.75);
+        line([[-10, -40], [0, -39], [10, -40]], goldTrim, 1.7);
+        poly([[-2.3, -44], [0, -48], [2.3, -44], [0, -41]], '#ad79c6');
+        fillOval(0, -44.5, 0.8, 1.2, '#f4d9eb');
+      }
+      // Present the unique instrument over one hand; no second weapon.
+      rogueBellStaff(crowned);
+      grip(16.8, -1, complexion);
+    }
+
     function hero(role) {
+      if (role === 'rogue') return rogueHero(false);
       const cape = role === 'paladin' ? '#785848' : role === 'mage' ? '#394f78' : '#355643';
       shaped(cape, () => {
         ctx.moveTo(-10, -21);
@@ -6549,6 +6676,7 @@
     }
 
     function crownedHero(role, openFace = false) {
+      if (role === 'rogue') return rogueHero(true);
       const purple = '#4c405e',
         trim = '#d9b978',
         metal = role === 'paladin' ? '#9696a6' : '#697a82';
@@ -17195,7 +17323,7 @@
     } else if (type === 'hero') {
       if (e.crowned) crownedHero(e.class || 'paladin');
       else hero(e.class || 'paladin');
-    } else if (type === 'ally') {
+    } else if (type === 'ally' && !e.charmOrigin) {
       const role = allyBodyKind(e);
       if (e.type === 'pet') bossPet(e.petFamily);
       else if (role === 'goblin-archer') goblinArcher();
@@ -17406,7 +17534,9 @@
             break;
           case 'wolf':
             if (e.mountedCrownRider) crownDirewolfRider(!!e.ranged);
-            else wolf(region === 2 ? ['#7b5b43', '#b69a6d', '#a46543'][variant % 3] : undefined);
+            else wolf(!e.charmOrigin && region === 2
+              ? ['#7b5b43', '#b69a6d', '#a46543'][variant % 3]
+              : undefined);
             break;
           case 'mireling':
             if (e.ranged) {
@@ -17499,7 +17629,7 @@
             ogreBody(!!e.ranged);
             break;
           case 'archer':
-            if (region === 3) frontierRaider();
+            if (e.charmOrigin || region === 3) frontierRaider();
             else human('archer');
             break;
           case 'orc':

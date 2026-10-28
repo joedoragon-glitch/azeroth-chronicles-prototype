@@ -21,7 +21,10 @@
         return true;
       }
       talentProfile() {
-        return talentProfiles[this.hero.class];
+        // Dormant authoring: no Rogue registry admission until Charm exists.
+        return this.hero.class === 'rogue'
+          ? R.rogueHeroFoundation.talents
+          : talentProfiles[this.hero.class];
       }
       talentMaxRank(i) {
         return Number.isInteger(i) && i >= 0 && i < talentMaxRanks.length ? talentMaxRanks[i] : 0;
@@ -111,10 +114,15 @@
         const balance = R.criticalCodexBalance;
         const earned = Math.min(balance.maxBookBonus,
           this.criticalCodexCount() * balance.perBook);
-        if (source === 'hero') return earned;
+        if (source === 'hero') return earned +
+          (this.hero.class === 'rogue' ? 0.02 * Math.max(1, this.hero.level || 1) : 0);
         if (!this.s.party.some((u) => u.id === source &&
             ['soldier', 'archer', 'pet'].includes(u.type))) return 0;
-        return earned * this.expeditionSupportFraction('sharedTraining');
+        const shared = earned * this.expeditionSupportFraction('sharedTraining');
+        const unit = this.s.party.find((u) => u.id === source);
+        // An in-range Rogue Finale can boost each actor's own future
+        // critical probability, never the unrelated hero/world streams.
+        return shared + (this.rogueSongBoon?.(unit, 'finale')?.criticalChance || 0);
       }
       criticalPartyChance(source = 'hero') {
         return Math.max(0, Math.min(1, 0.10 + this.criticalPartyBonus(source)));
@@ -153,8 +161,18 @@
       companionVitalityFraction() {
         return this.companionVitalityRank() * R.balance.companions.vitalityPerRank;
       }
+      charmedCompanionProfile(unit) {
+        if (!unit?.charmOrigin) return null;
+        return (
+          R.balance.companions.charmed[unit.charmOrigin.species]?.[
+            unit.charmOrigin.role === 'archer' ? 'ranged' : 'melee'
+          ] || null
+        );
+      }
       companionMaxHp(type, level = this.hero.level) {
-        const base = R.balance.companions.hp[type];
+        const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
+        const base =
+          profile?.hp ?? R.balance.companions.hp[typeof type === 'object' ? type.type : type];
         if (!base) throw Error('Unknown companion type');
         const raw =
           base +
@@ -163,21 +181,25 @@
         return Math.round(raw * (1 + this.companionVitalityFraction()));
       }
       companionArmor(type) {
-        const base = R.balance.companions.armor[type];
+        const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
+        const base =
+          profile?.armor ?? R.balance.companions.armor[typeof type === 'object' ? type.type : type];
         if (base === undefined) throw Error('Unknown companion type');
         return base + this.companionInheritedArmorBonus();
       }
       syncCompanionLevelStats() {
         for (const u of this.s.party) {
           if (!['soldier', 'archer', 'pet'].includes(u.type)) continue;
-          const next = this.companionMaxHp(u.type),
+          const profile = this.charmedCompanionProfile(u),
+            next = this.companionMaxHp(u),
             gain = next - u.maxHp;
+          if (profile) u.damage = profile.damage;
           u.maxHp = next;
           if (u.hp > 0 && gain !== 0) u.hp = clamp(u.hp + gain, 1, next);
         }
       }
       expeditionPartyCap(rank = this.s.expeditionRank || 1) {
-        return R.balance.companions.activeCaps[clamp(rank, 1, 6)];
+        return Campaign.expeditionPartyCapFor(this.hero.class, rank);
       }
       expeditionInstructorCap(family) {
         return expeditionCeilings[family] || 0;
@@ -186,15 +208,21 @@
         return Object.keys(expeditionCeilings).find((id) => expeditionCeilings[id] > rank) || null;
       }
       expeditionUnlock(rank) {
-        return (
-          {
-            2: 'Recruitment + resources · active group 3',
-            3: 'Manual squad doctrine',
-            4: 'Full Barracks upgrade · active group 4',
-            5: 'Active group 5',
-            6: 'Active group 6',
-          }[rank] || ''
-        );
+        if (rank === 3) return 'Manual squad doctrine';
+        if (rank < 2 || rank > 6) return '';
+        // The conventional three classes retain exactly their existing copy.
+        // New class-specific active capacity is derived from the same rule used
+        // for save validation, not from a stale "active group 6" string.
+        const detail =
+          rank === 2
+            ? this.hero.class === 'rogue'
+              ? 'Resources'
+              : 'Recruitment + resources'
+            : rank === 4
+              ? 'Full Barracks upgrade'
+              : '';
+        const capacity = 'active group ' + this.expeditionPartyCap(rank);
+        return detail ? detail + ' · ' + capacity : capacity[0].toUpperCase() + capacity.slice(1);
       }
       expeditionTrainer() {
         return (
@@ -350,6 +378,7 @@
             paladin: 'Fortitude',
             ranger: 'Agility',
             mage: 'Arcane Power',
+            rogue: 'Mischief',
           }[this.hero.class];
           this.say(
             'Level ' +
@@ -706,6 +735,13 @@
         return true;
       }
     }
+    // One class-aware capacity source for active party, Barracks and v4 saves.
+    // Rogue is deliberately not registered as playable yet.
+    const activeSlotBonuses = Object.freeze({ rogue: 1 });
+    Campaign.activeSlotBonuses = activeSlotBonuses;
+    Campaign.expeditionPartyCapFor = (heroClass, rank) =>
+      R.balance.companions.activeCaps[clamp(rank, 1, 6)] +
+      (activeSlotBonuses[heroClass] || 0);
     for (const name of Object.getOwnPropertyNames(Progression.prototype))
       if (name !== 'constructor')
         Object.defineProperty(

@@ -8,23 +8,38 @@
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-    const recoveryCampOrder = (u, s) => {
+    // Persist only native work orders with an actual local target and a
+    // matching authenticated capture ledger. Existing Soldier/Archer recovery
+    // camp behavior is unchanged. Upgrade payment is never recharged on load.
+    const barracksWorkOrder = (u, s) => {
       if (
         s.recallActive ||
         u.active === false ||
         u.hp <= 0 ||
         !['soldier', 'archer'].includes(u.type) ||
-        u.order?.type !== 'build'
+        !['build', 'upgrade'].includes(u.order?.type)
       )
         return null;
+      const origin = u.charmOrigin;
+      const receipt = s.charmCaptures?.[u.id];
+      const charmed =
+        !!origin &&
+        !!receipt &&
+        Object.keys(origin).length === 6 &&
+        Object.keys(receipt).length === 6 &&
+        Object.keys(origin).every((key) => receipt[key] === origin[key]);
+      if (origin && !charmed) return null;
       const camp = s.zones?.[s.zone]?.buildings?.find(
-        (b) =>
-          b.id === u.order.id &&
-          b.kind === 'barracks' &&
-          b.progress < 4 &&
-          b.recoveryOnComplete === true,
+        (b) => b.id === u.order.id && b.kind === 'barracks',
       );
-      return camp ? { type: 'build', id: camp.id } : null;
+      if (!camp) return null;
+      if (u.order.type === 'build' && camp.progress < 4 &&
+        (charmed || camp.recoveryOnComplete === true))
+        return { type: 'build', id: camp.id };
+      if (u.order.type === 'upgrade' && charmed && camp.progress >= 4 &&
+        !camp.full && camp.upgradePaid === true)
+        return { type: 'upgrade', id: camp.id };
+      return null;
     };
     const gatheringOrder = (u, s) => {
       if (
@@ -109,10 +124,18 @@
         delete out.hero.shieldStance;
         delete out.hero.shieldRank;
         delete out.hero.silenceField;
+        // Never serialize an invulnerability window tied to a live encounter
+        // clock. The per-life spent flag remains to prevent reload retriggers.
+        delete out.hero.rogueEndureUntil;
+        // Companion song benefits never survive a save/restart boundary.
+        for (const unit of out.party) {
+          delete unit.rogueSharpRefrainUntil;
+          delete unit.rogueSharpRefrainBonus;
+        }
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
-          u.order = gatheringOrder(u, out) || recoveryCampOrder(u, out);
+          u.order = gatheringOrder(u, out) || barracksWorkOrder(u, out);
         });
         for (const z of Object.values(out.zones)) {
           z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -407,6 +430,15 @@
           s.hero.skills[0] < 1
         )
           throw Error('Invalid hero');
+        if (s.hero.rogueEndureUsed !== undefined && typeof s.hero.rogueEndureUsed !== 'boolean')
+          throw Error('Invalid Rogue Endure state');
+        if (s.hero.rogueEndureUntil !== undefined)
+          throw Error('Invalid Rogue Endure timer');
+        if (
+          Array.isArray(s.party) && s.party.some((u) =>
+            u && (u.rogueSharpRefrainUntil !== undefined ||
+              u.rogueSharpRefrainBonus !== undefined))
+        ) throw Error('Invalid saved temporary Rogue boon');
         // Older rosters may retain the core-only flag after learning hero Skill 2.
         // Repair the shared unlock without replacing units or resetting their cooldowns.
         if (s.hero.skills[1] > 0) s.companionCombatTraining = 2;
@@ -518,7 +550,8 @@
         if (
           !Array.isArray(s.party) ||
           s.party.length > 200 ||
-          s.party.filter((u) => u.active !== false).length > [0, 2, 3, 3, 4, 5, 6][s.expeditionRank]
+          s.party.filter((u) => u.active !== false).length >
+            Campaign.expeditionPartyCapFor(s.hero.class, s.expeditionRank)
         )
           throw Error('Invalid party');
         const ids = new Set(D.bosses.map((b) => b.id));
@@ -708,12 +741,13 @@
         if (!s.challenge)
           s.challenge = { succession: false, fallen: [], pending: false, gameOver: false };
         const ch = s.challenge;
+        const classCount = Object.keys(classes).length;
         if (
           typeof ch.succession !== 'boolean' ||
           typeof ch.pending !== 'boolean' ||
           typeof ch.gameOver !== 'boolean' ||
           !Array.isArray(ch.fallen) ||
-          ch.fallen.length > 3 ||
+          ch.fallen.length > classCount ||
           new Set(ch.fallen).size !== ch.fallen.length ||
           ch.fallen.some((id) => !classes[id])
         )
@@ -721,8 +755,11 @@
         if (
           (!ch.succession && (ch.fallen.length || ch.pending || ch.gameOver)) ||
           (ch.pending &&
-            (!ch.fallen.includes(s.hero.class) || ch.fallen.length !== 1 || s.hero.hp !== 0)) ||
-          (ch.gameOver && (ch.fallen.length !== 3 || ch.pending || s.hero.hp !== 0)) ||
+            (!ch.fallen.includes(s.hero.class) ||
+              ch.fallen.length < 1 ||
+              ch.fallen.length >= classCount - 1 ||
+              s.hero.hp !== 0)) ||
+          (ch.gameOver && (ch.fallen.length !== classCount || ch.pending || s.hero.hp !== 0)) ||
           (ch.succession && !ch.pending && !ch.gameOver && ch.fallen.includes(s.hero.class))
         )
           throw Error('Invalid succession state');
@@ -755,9 +792,74 @@
           finite(e.remaining, 0, 1000);
           finite(e.seconds, 0, 5);
         }
+
+        // A standalone imported charmOrigin is never an entitlement. The
+        // source and exact authored subtype must match a capture ledger.
+        // Client-side structural checks cannot cryptographically sign saves.
+        if (s.rogueCharmRng !== undefined &&
+          (!Number.isInteger(s.rogueCharmRng) ||
+            s.rogueCharmRng < 0 || s.rogueCharmRng > 4294967295))
+          throw Error('Invalid Charm RNG state');
+        // Legacy v4 campaigns have no nickname rotation yet.
+        s.rogueNicknameCursor ??= { en: 0, es: 0 };
+        if (!s.rogueNicknameCursor ||
+          typeof s.rogueNicknameCursor !== 'object' ||
+          Array.isArray(s.rogueNicknameCursor) ||
+          Object.keys(s.rogueNicknameCursor).length !== 2 ||
+          Object.keys(s.rogueNicknameCursor).some((key) =>
+            !Object.hasOwn(R.rogueCharmNicknames, key)) ||
+          Object.entries(R.rogueCharmNicknames).some(([key, pool]) =>
+            !Number.isInteger(s.rogueNicknameCursor[key]) ||
+            s.rogueNicknameCursor[key] < 0 ||
+            s.rogueNicknameCursor[key] >= pool.length))
+          throw Error('Invalid Charm nickname rotation');
+        const captures = s.charmCaptures ?? {};
+        if (!captures || typeof captures !== 'object' || Array.isArray(captures) ||
+          Object.keys(captures).length > 200)
+          throw Error('Invalid charm provenance');
+        const capturedSources = new Set(),
+          capturedIds = new Set(),
+          speciesNames = new Map(D.species.flat().map((row) => [row[0], row[1]]));
+        const validateCapture = (u) => {
+          const a = u.charmOrigin, record = captures[u.id];
+          if (!a || !record || typeof a !== 'object' || Array.isArray(a) ||
+            typeof record !== 'object' || Array.isArray(record) ||
+            !['soldier', 'archer'].includes(u.type) ||
+            Object.keys(a).length !== 6 || Object.keys(record).length !== 6)
+            throw Error('Invalid charm provenance');
+          const speciesName = speciesNames.get(a.species),
+            subtype = 'enemy:' + a.species + ':' +
+              (u.type === 'archer' ? 'ranged' : 'melee'),
+            variant = u.type === 'archer' ? R.rangedProfiles[a.species]?.variant : null,
+            canonicalName = speciesName + (variant ? ' ' + variant : '');
+          if (!speciesName || a.role !== u.type || a.typeId !== subtype ||
+            (u.type === 'archer' && !R.rangedProfiles[a.species] &&
+              !['archer', 'crownguard'].includes(a.species)) ||
+            a.typeName !== canonicalName ||
+            !/^enemy-[1-9]\d*$/.test(a.sourceEnemyId) ||
+            !Object.hasOwn(s.zones, a.sourceZone) ||
+            capturedSources.has(a.sourceEnemyId) ||
+            s.zones[a.sourceZone].enemies.some((e) => e.id === a.sourceEnemyId) ||
+            Object.keys(a).some((key) => record[key] !== a[key]))
+            throw Error('Invalid charm provenance');
+          capturedIds.add(u.id);
+          capturedSources.add(a.sourceEnemyId);
+        };
         const petFamilies = new Set();
         for (const u of s.party) {
-          u.order = gatheringOrder(u, s) || recoveryCampOrder(u, s);
+          if (u.charmOrigin !== undefined) {
+            validateCapture(u);
+            const profile = R.balance.companions.charmed[u.charmOrigin.species]?.[
+              u.type === 'archer' ? 'ranged' : 'melee'
+            ];
+            if (!profile) throw Error('Invalid charmed companion profile');
+            u.damage = profile.damage;
+            if (u.charmSupportCd === undefined) u.charmSupportCd = 0;
+            finite(u.charmSupportCd, 0, 1000);
+          } else if (u.charmSupportCd !== undefined) {
+            throw Error('Invalid Charmed recovery cooldown');
+          }
+          u.order = gatheringOrder(u, s) || barracksWorkOrder(u, s);
           validateName(u.customName);
           if (u.type === 'pet') {
             if (
@@ -818,6 +920,16 @@
             finite(e.seconds, 0, 5);
           }
         }
+        if (Object.keys(captures).some((id) => !capturedIds.has(id)))
+          throw Error('Invalid charm provenance');
+        const typeCounts = new Map();
+        for (const u of s.party) if (u.charmOrigin) {
+          const key = u.charmOrigin.typeId;
+          typeCounts.set(key, (typeCounts.get(key) || 0) + 1);
+        }
+        const captureQuota = Campaign.expeditionPartyCapFor('rogue', s.expeditionRank);
+        if ([...typeCounts.values()].some((count) => count > captureQuota))
+          throw Error('Invalid charm subtype quota');
         for (const [id, v] of Object.entries(s.earlyRoll || {}))
           if (!dungeonIds.includes(id) || typeof v !== 'boolean' || !s.normal[id])
             throw Error('Invalid TRUE roll');

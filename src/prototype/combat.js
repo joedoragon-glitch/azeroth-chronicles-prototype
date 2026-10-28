@@ -162,6 +162,10 @@
           if (unit.hp <= 0) this.clearPartyCharge(unit);
           return false;
         }
+        // Only eligible living companions preparing an actual native charge
+        // resist damage-threshold interruption. Death still breaks the cast.
+        if (unit !== this.hero && unit.hp > 0 &&
+            this.rogueSongBoon?.(unit, 'steadyBeat')?.protection) return false;
         cast.lostHp += actualLostHp;
         const rule = R.chargedSkills.interrupt,
           threshold = Math.max(rule.minimumHp, (unit.maxHp || 1) * rule.hpFraction);
@@ -544,10 +548,9 @@
       // Slow stack strength is one scalar per actor. Each extra hit suppresses
       // recovery with diminishing returns, without timers or work per stack.
       // Split the final frame at Slow expiry to keep recovery frame-rate stable.
-      cooldownRecoveryElapsed(unit, dt, enemy = false) {
+      cooldownRecoveryElapsed(unit, dt, enemy = false, special = false) {
         if (!Number.isFinite(dt) || dt <= 0) return 0;
         const slow = Number.isFinite(unit?.slow) ? Math.max(0, unit.slow) : 0;
-        if (!slow) return dt;
         const base = enemy
           ? R.cooldownBalance.enemySlowRecoveryMultiplier
           : R.cooldownBalance.slowRecoveryMultiplier;
@@ -560,8 +563,21 @@
         const stacks = enemy
           ? recordedStacks
           : Math.min(R.cooldownBalance.partySlowMaxStacks, recordedStacks);
-        const recovery = base / (1 + (stacks - 1) * perStack);
-        return dt - Math.min(dt, slow) * (1 - recovery);
+        const rawRecovery = base / (1 + (stacks - 1) * perStack);
+        // A stationed bell rhythm softens only the Slow penalty while an
+        // eligible companion is physically inside the field.
+        const station = !enemy && slow > 0
+          ? this.rogueStationProtection?.(unit) : null;
+        const recovery = rawRecovery + (1 - rawRecovery) *
+          (station?.resistance || 0);
+        const elapsed = dt - Math.min(dt, slow) * (1 - recovery);
+        // One native elapsed-time owner: movement song helps all party clocks;
+        // borrowed-time helps special clocks only. Both sum, capped at +25%.
+        const quick = enemy ? null : this.rogueSongBoon?.(unit, 'quickstep');
+        const borrowed = special && !enemy
+          ? this.rogueSongBoon?.(unit, 'borrowedTime') : null;
+        return elapsed * (1 + Math.min(0.25,
+          (quick?.recovery || 0) + (borrowed?.specialRecovery || 0)));
       }
 
       // Absolute encounter-clock readiness deadlines need the same recovery
@@ -644,7 +660,9 @@
 
       slowMovementFactor(unit) {
         if (!(unit?.slow > 0)) return 1;
-        return unit.rogueSlow > 0 ? R.tacticalFoundation.rogueSlowMovementFactor : 0.65;
+        const base = unit.rogueSlow > 0 ? R.tacticalFoundation.rogueSlowMovementFactor : 0.65,
+          resisted = this.rogueStationProtection?.(unit)?.resistance || 0;
+        return base + (1 - base) * resisted;
       }
 
       ashMovementFactor(unit) {
@@ -856,6 +874,10 @@
         // actual damage from both the hero and companions, once per hit.
         if (source === 'hero' && this.hero.class === 'paladin' && (this.hero.shieldStance || 0) > 0)
           amount *= R.heroTactics.paladin.shield.outgoing;
+        // Phase 5: only a genuine active companion attack within a timed
+        // Rogue boon can be enhanced. Never mutate base stats or hero damage.
+        if (source !== 'hero' && origin !== this.hero)
+          amount *= 1 + (this.rogueSongBoon?.(origin, 'firmFooting')?.outgoing || 0);
         if ((e.fractureUntil || 0) > this.s.time) amount *= 1 + (e.fractureFraction || 0);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         const reflected =
@@ -877,6 +899,9 @@
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
+        // Real two-second Endure window, class-only and never granted to pets.
+        if (u === this.hero && u.class === 'rogue' && (u.rogueEndureUntil || 0) > this.s.time)
+          return false;
         // Real source IDs also cover melee now. Passive bonuses never apply to
         // environment hazards, reflected damage, or unrelated named species.
         const attacker = rangedSourceId
@@ -887,7 +912,7 @@
           u === this.hero
             ? this.armor()
             : ['soldier', 'archer', 'pet'].includes(u.type)
-              ? this.companionArmor(u.type)
+              ? this.companionArmor(u)
               : 5 + this.hero.level * 0.5;
         const oldHp = u.hp;
         let mitigated = alreadyMitigated
@@ -913,8 +938,22 @@
         }
         if ((u.wardUntil || 0) > this.s.time)
           defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
+        // The stronger native/placed ward wins; never multiply wards.
+        defensiveFactor = Math.min(defensiveFactor,
+          1 - (this.rogueStationProtection?.(u)?.ward || 0));
         mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
+        if (
+          u === this.hero && u.class === 'rogue' && u.hp === 0 &&
+          u.rogueEndureUsed !== true && oldHp > 0
+        ) {
+          // Once per life is the conservative Phase-2 recovery policy; no
+          // unapproved 90s retrigger or automatic death is invented.
+          u.hp = R.rogueHeroFoundation.endure.floorHp;
+          u.rogueEndureUsed = true;
+          u.rogueEndureUntil = this.s.time + R.rogueHeroFoundation.endure.duration;
+          this.event('rogueEndure', { actor: 'hero', class: 'rogue', duration: 2, hp: u.hp });
+        }
         if (oldHp > u.hp && attacker) this.noteGatheringAttack(u, attacker);
         this.recordPartyChargeDamage(u, oldHp - u.hp);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);

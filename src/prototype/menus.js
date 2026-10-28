@@ -1038,17 +1038,14 @@
       return type === 'archer' ? 'Ranger' : 'Soldier';
     }
     function rosterLabel(u) {
-      const i = getGame().s.party.indexOf(u) + 1;
-      if (u.expeditionId)
-        return (
-          (u.customName ||
-            (u.type === 'pet' ? getGame().petDefinition(u).name : unitLabel(u.type) + ' #' + i)) +
-          ' · On expedition'
-        );
-      if (u.customName) return u.customName;
-      return u.type === 'pet'
-        ? getGame().petDefinition(u)?.name || 'Boss pet'
-        : unitLabel(u.type) + ' #' + i;
+      const i = getGame().s.party.indexOf(u) + 1,
+        label = u.customName ||
+          (u.charmOrigin
+            ? charmedTypeName(u) + ' #' + i
+            : u.type === 'pet'
+              ? getGame().petDefinition(u)?.name || 'Boss pet'
+              : unitLabel(u.type) + ' #' + i);
+      return label + (u.expeditionId ? ' · On expedition' : '');
     }
     function regionalSpecialistProgress() {
       const region = getGame().definition().id,
@@ -1545,41 +1542,64 @@
         back,
       );
     }
-    function barracksGroupMenu(b, back) {
-      const active = getGame().activeParty().length,
-        cap = getGame().barracksFieldCap(b),
-        actions = getGame().s.party.map((u) => {
-          const reason =
-            u.active !== false
-              ? getGame().companionRestReason(u.id)
-              : getGame().companionActivationReason(u.id, b.id);
-          return u.active !== false
-            ? action(
-                'Rest ' + rosterLabel(u),
-                () => {
-                  getGame().restCompanion(u.id);
-                  barracksGroupMenu(b, back);
-                },
-                reason ||
-                  (u.hp > 0
-                    ? 'With you · ' +
-                      Math.ceil(u.hp) +
-                      '/' +
-                      u.maxHp +
-                      ' HP · Rest to free a group slot.'
-                    : 'With you · FALLEN · Rest to free a group slot.'),
-                !!reason,
-              )
-            : action(
-                'Add ' + rosterLabel(u) + ' to group',
-                () => {
-                  getGame().activateCompanion(u.id, b.id);
-                  barracksGroupMenu(b, back);
-                },
-                reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
-                !!reason,
-              );
-        });
+    // Barracks company navigation remains cheap even when a future class owns
+    // many resting monsters. This reads roster snapshots only on menu opening.
+    const BARRACKS_ROSTER_PAGE_SIZE = 8;
+    function barracksPagedActions(rows, page, makeAction, reopen) {
+      const pages = Math.max(1, Math.ceil(rows.length / BARRACKS_ROSTER_PAGE_SIZE)),
+        current = Number.isInteger(page) ? Math.max(0, Math.min(pages - 1, page)) : 0,
+        from = current * BARRACKS_ROSTER_PAGE_SIZE,
+        result = rows.slice(from, from + BARRACKS_ROSTER_PAGE_SIZE).map(makeAction);
+      if (pages > 1) {
+        if (current > 0)
+          result.push(action('Previous page', () => reopen(current - 1)));
+        result.push(action('Page', () => {}, (current + 1) + '/' + pages, true));
+        if (current < pages - 1)
+          result.push(action('Next page', () => reopen(current + 1)));
+      }
+      return result;
+    }
+    function barracksCompanionAction(b, u, refresh) {
+      // Stable member ID, not array index: an action is revalidated by the
+      // authoritative companion operation before changing membership.
+      const reason =
+        u.active !== false
+          ? getGame().companionRestReason(u.id)
+          : getGame().companionActivationReason(u.id, b.id);
+      return u.active !== false
+        ? action(
+            'Rest ' + rosterLabel(u),
+            () => {
+              getGame().restCompanion(u.id);
+              refresh();
+            },
+            reason ||
+              (u.hp > 0
+                ? 'With you · ' +
+                  Math.ceil(u.hp) +
+                  '/' +
+                  u.maxHp +
+                  ' HP · Rest to free a group slot.'
+                : 'With you · FALLEN · Rest to free a group slot.'),
+            !!reason,
+          )
+        : action(
+            'Add ' + rosterLabel(u) + ' to group',
+            () => {
+              getGame().activateCompanion(u.id, b.id);
+              refresh();
+            },
+            reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
+            !!reason,
+          );
+    }
+    function barracksGroupMenu(b, back, page = 0) {
+      const game = getGame(),
+        active = game.activeParty().length,
+        cap = game.barracksFieldCap(b),
+        roster = game.s.party,
+        refresh = (next = page) => barracksGroupMenu(b, back, next),
+        actions = barracksPagedActions(roster, page, (u) => barracksCompanionAction(b, u, () => refresh()), refresh);
       openMenu(
         'Manage group',
         'With you ' +
@@ -1587,11 +1607,103 @@
           '/' +
           cap +
           ' · Employed ' +
-          getGame().rosterCount() +
+          game.rosterCount() +
           ' · Rest a companion to free a slot. ' +
-          (!b.full && (getGame().s.expeditionRank || 1) >= 4
+          (!b.full && (game.s.expeditionRank || 1) >= 4
             ? 'Basic cap: 3. Upgrade for larger groups.'
             : ''),
+        actions.length ? actions : [action('No companions employed', () => {}, '', true)],
+        back,
+      );
+    }
+    // This type-first path is dormant until authenticated Charm provenance exists.
+    // The stable typeId is a future capture/save contract; unknown provenance
+    // must NOT cause unrelated subtypes to be grouped together.
+    function charmedTypeId(u) {
+      if (!u?.charmOrigin || typeof u.charmOrigin !== 'object') return '';
+      return typeof u.charmOrigin.typeId === 'string' && u.charmOrigin.typeId
+        ? u.charmOrigin.typeId
+        : 'unclassified:' + u.id;
+    }
+    function charmedTypeName(u) {
+      const data = u.charmOrigin,
+        name = data?.typeName || data?.displayName || data?.typeId || '';
+      return typeof name === 'string' && name.trim()
+        ? name.trim()
+        : 'Charmed creature';
+    }
+    function charmedStatus(u) {
+      if (u.expeditionId) return 'Away';
+      if (u.hp <= 0) return 'Fallen';
+      return u.active === false ? 'Resting' : 'Active';
+    }
+    function barracksCharmedTypeMenu(b, typeId, back, page = 0, view = 'All') {
+      const game = getGame(),
+        owned = game.s.party.filter((u) => charmedTypeId(u) === typeId),
+        roster = owned.filter((u) => view === 'All' || charmedStatus(u) === view),
+        label = owned.length ? charmedTypeName(owned[0]) : 'Charmed creature',
+        refresh = (next = page, nextView = view) =>
+          barracksCharmedTypeMenu(b, typeId, back, next, nextView),
+        actions = barracksPagedActions(roster, page, (u) => {
+          const result = barracksCompanionAction(b, u, () => refresh());
+          return { ...result, detail: charmedStatus(u) + ' · ' + result.detail };
+        }, refresh),
+        views = ['All', 'Active', 'Resting', 'Fallen', 'Away'];
+      actions.push(action(
+        'Filter: ' + view,
+        () => refresh(0, views[(views.indexOf(view) + 1) % views.length]),
+        'Cycle All, Active, Resting, Fallen and Away.',
+      ));
+      openMenu(
+        'Charmed monsters',
+        label +
+          ' · ' +
+          owned.length +
+          ' owned · With you ' +
+          owned.filter((u) => u.active !== false).length +
+          ' · Resting ' +
+          owned.filter((u) => charmedStatus(u) === 'Resting').length +
+          ' · Fallen ' +
+          owned.filter((u) => charmedStatus(u) === 'Fallen').length +
+          ' · Away ' +
+          owned.filter((u) => charmedStatus(u) === 'Away').length +
+          ' · Local group cap ' +
+          game.barracksFieldCap(b),
+        actions,
+        back,
+      );
+    }
+    function barracksCharmedMenu(b, back, page = 0) {
+      const game = getGame(),
+        grouped = new Map();
+      for (const u of game.s.party) {
+        const key = charmedTypeId(u);
+        if (!key) continue;
+        if (!grouped.has(key)) grouped.set(key, []);
+        grouped.get(key).push(u);
+      }
+      const groups = Array.from(grouped.entries()).sort(([a], [b]) => a.localeCompare(b)),
+        refresh = (next = page) => barracksCharmedMenu(b, back, next),
+        actions = barracksPagedActions(groups, page, ([key, units]) => {
+          const active = units.filter((u) => u.active !== false).length,
+            fallen = units.filter((u) => u.hp <= 0).length,
+            owned = units.length,
+            limit = game.hero.class === 'rogue' ? game.expeditionPartyCap() : null;
+          return action(
+            charmedTypeName(units[0]) + ' · ' + owned + (limit ? '/' + limit : '') + ' owned',
+            () => barracksCharmedTypeMenu(b, key, () => barracksCharmedMenu(b, back, page)),
+            'With you ' + active + ' · Resting ' +
+              units.filter((u) => charmedStatus(u) === 'Resting').length +
+              ' · Fallen ' + fallen +
+              ' · Away ' + units.filter((u) => charmedStatus(u) === 'Away').length,
+          );
+        }, refresh);
+      openMenu(
+        'Charmed monsters',
+        groups.length +
+          ' types · ' +
+          game.s.party.filter((u) => !!charmedTypeId(u)).length +
+          ' owned · Basic Barracks manages up to 3 active members; Full Barracks uses Expedition capacity. Owned reserves are not Barracks storage slots.',
         actions.length ? actions : [action('No companions employed', () => {}, '', true)],
         back,
       );
@@ -1609,33 +1721,46 @@
         onDone: back,
       });
     }
-    function barracksNamesMenu(b, back) {
-      const returnHere = () => barracksNamesMenu(b, back);
+    function barracksNamesMenu(b, back, page = 0) {
+      const game = getGame(),
+        returnHere = (next = page) => barracksNamesMenu(b, back, next),
+        actions = barracksPagedActions(game.s.party, page, (u) =>
+          action(
+            rosterLabel(u),
+            () => nameCompanion(u.id, () => returnHere()),
+            (u.charmOrigin
+              ? charmedTypeName(u)
+              : u.type === 'pet'
+                ? game.petDefinition(u)?.name || 'Boss pet'
+                : unitLabel(u.type)) +
+              (u.customName ? ' · Permanent name chosen' : ' · Name available'),
+            !!u.customName,
+          ), returnHere);
       openMenu(
         'Name companions',
         'Choose a name once. You can skip and return later.',
-        getGame().s.party.length
-          ? getGame().s.party.map((u) =>
-              action(
-                rosterLabel(u),
-                () => nameCompanion(u.id, returnHere),
-                (u.type === 'pet' ? getGame().petDefinition(u).name : unitLabel(u.type)) +
-                  (u.customName ? ' · Permanent name chosen' : ' · Name available'),
-                !!u.customName,
-              ),
-            )
-          : [action('No companions employed', () => {}, '', true)],
+        actions.length ? actions : [action('No companions employed', () => {}, '', true)],
         back,
       );
     }
     function barracksCompanyMenu(b, back) {
       const returnHere = () => barracksCompanyMenu(b, back),
-        rank = getGame().s.expeditionRank || 1,
-        active = getGame().activeParty().length,
-        cap = getGame().barracksFieldCap(b);
+        game = getGame(),
+        rank = game.s.expeditionRank || 1,
+        active = game.activeParty().length,
+        cap = game.barracksFieldCap(b),
+        company = game.s.party,
+        charmed = company.filter((u) => !!charmedTypeId(u));
       openMenu(
         'Company',
-        'Choose who travels with you.',
+        'With you ' + active + '/' + cap +
+          ' · Resting ' + company.filter((u) => charmedStatus(u) === 'Resting').length +
+          ' · Fallen ' + company.filter((u) => charmedStatus(u) === 'Fallen').length +
+          ' · Away ' + company.filter((u) => charmedStatus(u) === 'Away').length +
+          (charmed.length
+            ? ' · Charmed ' + new Set(charmed.map(charmedTypeId)).size +
+              ' types / ' + charmed.length + ' owned'
+            : '') + '. Choose who travels with you.',
         [
           action(
             'Boss pet collection',
@@ -1647,27 +1772,40 @@
             () => barracksGroupMenu(b, returnHere),
             'With you ' + active + '/' + cap + ' · employed ' + getGame().rosterCount(),
           ),
+          ...(getGame().s.party.some((u) => !!charmedTypeId(u))
+            ? [
+                action(
+                  'Charmed monsters',
+                  () => barracksCharmedMenu(b, returnHere),
+                  'Browse owned monster types and change their active status.',
+                ),
+              ]
+            : []),
           action(
             'Name companions',
             () => barracksNamesMenu(b, returnHere),
             'Optional · chosen once.',
           ),
-          rank >= 2
-            ? action(
-                'Recruit companions',
-                () => barracksRecruitmentMenu(b, returnHere),
-                'Soldier ' +
-                  getGame().barracksRecruitPrice('soldier') +
-                  ' crowns · Ranger ' +
-                  getGame().barracksRecruitPrice('archer') +
-                  ' crowns',
-              )
-            : action(
-                'Recruitment — Expedition 2',
-                () => {},
-                'Rescue Mira and train Expedition to Rank 2',
-                true,
-              ),
+          ...(getGame().hero.class === 'rogue'
+            ? []
+            : [
+                rank >= 2
+                  ? action(
+                      'Recruit companions',
+                      () => barracksRecruitmentMenu(b, returnHere),
+                      'Soldier ' +
+                        getGame().barracksRecruitPrice('soldier') +
+                        ' crowns · Ranger ' +
+                        getGame().barracksRecruitPrice('archer') +
+                        ' crowns',
+                    )
+                  : action(
+                      'Recruitment — Expedition 2',
+                      () => {},
+                      'Rescue Mira and train Expedition to Rank 2',
+                      true,
+                    ),
+              ]),
         ],
         back,
       );
@@ -2129,6 +2267,19 @@
     }
     function townRecruitmentMenu(back) {
       const reopen = () => townRecruitmentMenu(back);
+      if (getGame().hero.class === 'rogue') {
+        openMenu(
+          getGame().definition().town + ' Captain',
+          'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain still provides companion recovery and treatment.',
+          [
+            ...otherRecruitmentCancellation(null, reopen),
+            careChoice('recovery', null, reopen),
+            careChoice('treatment', null, reopen),
+          ],
+          back,
+        );
+        return;
+      }
       const recruitmentLocked =
         (getGame().s.expeditionRank || 1) < 2 || getGame().rosterCount() >= 3;
       const actions = [
@@ -2173,7 +2324,12 @@
     function partyMenu(back = closeMenu) {
       const g = getGame(),
         tutorial = g.s.quests['quest-barracks'];
-      if (tutorial && !tutorial.paid && !tutorial.captainBriefed && (g.s.expeditionRank || 1) === 1)
+      if (g.hero.class === 'rogue') {
+        // The conventional starter-Soldier tutorial is false for a hero
+        // whose company begins empty; Charm onboarding is authored later.
+        g.briefCompanions();
+        townRecruitmentMenu(back);
+      } else if (tutorial && !tutorial.paid && !tutorial.captainBriefed && (g.s.expeditionRank || 1) === 1)
         companionBasics(back);
       else {
         g.briefCompanions();
