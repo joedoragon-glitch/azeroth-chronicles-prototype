@@ -2,9 +2,9 @@
 
 An original, offline-capable fantasy RPG about becoming a serious inconvenience to the Dark Lord. Explore five regions, rescue specialists, build a companion expedition, and make your way through ten settlements and five main dungeons.
 
-**[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía de controles en español](CONTROLES.md)**
+**[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía completa del juego en español](GUIA_EN_ESPANOL.md)**
 
-The playable Community Snapshot is still receiving updates. **The verified build and publication record is maintained in [Development state](docs/DEVELOPMENT_STATE.md).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
+The playable Community Snapshot is still receiving updates. **For the current code/build version and verified Pages publication, see [Development state](docs/DEVELOPMENT_STATE.md).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
 
 **Jump to:** [Play](#play) · [The game](#the-game) · [Controls](#controls) · [Saves and updates](#saves-updates-and-diagnostics) · [Graphics and audio](#graphics-and-audio) · [Development](#development) · [Documentation](#project-documentation)
 
@@ -48,7 +48,7 @@ These are **default** desktop bindings. Keyboard presets and individual keys can
 
 Tap **Target** to cycle eligible enemies; hold it for roughly **0.55 seconds** to lock the current target for the encounter. Menu selection follows the movement keys; F, Enter or Space confirms. Skills can be queued while cooling down. The Classic number-key preset and a mirrored left-hand preset are available in Controls.
 
-On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. The controls and settings are described in more detail in **[Controles (Español)](CONTROLES.md)** and the in-game Help / Controls menus.
+On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. The controls and settings are described in more detail in **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** and the in-game Help / Controls menus.
 
 ## Saves, updates and diagnostics
 
@@ -64,7 +64,7 @@ For the distinction between implemented, tested, merged, published and *device-v
 
 **Canvas 2D is the default renderer.** **PixiJS WebGL2** is an experimental, optional world-rendering path with a **15-second Keep/Revert trial** and Canvas fallback; it has not passed final device acceptance. Settings also provide rendering resolution, optimization and frame-skip options. Performance-report counters are diagnostic measurements, **not proof of visible frames per second on a Chromebook or phone**.
 
-The soundtrack changes with travel, settlements, night and combat. You can [visit the audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) without opening or changing a campaign. Current sound design and production detail live in [Audio playback](docs/AUDIO_PLAYBACK.md) and [Sound pass](docs/AUDIO_SOUND_PASS.md).
+The soundtrack changes with travel, settlements, night and combat. The separate [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) lets you preview game scenes and explore the complete registered catalog (83 music cues, 14 environmental beds and 30 sound effects) without starting or changing a campaign. It also offers production briefs; optional mixing and diagnostics are under Advanced listening tools. The [current sound design and audio production guide](docs/AUDIO_PLAYBACK.md) covers the live catalog, mix and creative workflow; the [soundtrack and sound-identity guide](docs/AUDIO_SOUND_PASS.md) preserves the creative intentions behind all current cue families, with the original v0.8.90 version retained in Git history.
 
 ## Development
 
@@ -83,7 +83,7 @@ For a scoped change, run the **affected focused tests** and relevant build check
 node scripts/build.cjs --check --site
 ```
 
-Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml); the [comprehensive browser/game workflow](.github/workflows/pages.yml) is **manual and requires explicit owner approval**. A successful push to `main` can trigger GitHub Pages publication. Work on a feature branch, preserve existing saves and assets, and do not merge or deploy without current authorization. See the [mechanic development workflow](docs/MECHANIC_DEVELOPMENT.md) for actual implementation and validation requirements.
+Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml); the [comprehensive browser/game workflow](.github/workflows/pages.yml) is **manual and requires explicit owner approval**. A successful push to `main` can trigger GitHub Pages publication. Work on a feature branch, preserve existing saves and assets, and do not merge or deploy without current authorization. Use the [engineering change workflow](docs/MECHANIC_DEVELOPMENT.md) for approved gameplay, audio, UI and other changes: source ownership, focused tests, lifecycle checks, documentation, recoverable handoffs and explicit release authorization.
 
 ## Project documentation
 
@@ -93,10 +93,10 @@ Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml);
 | Source modules and system ownership | [Architecture](docs/ARCHITECTURE.md) |
 | Design decisions and approved behavior | [Gameplay decisions](docs/DECISIONS.md) |
 | Development rules and release authorization | [Agent operating policy](AGENTS.md) |
-| Find a feature guide or a historical handoff | [Documentation index](docs/DOCUMENTATION_INDEX.md) |
+| Find the right guide or historical record, with a one-line explanation of each | [Annotated documentation directory](docs/DOCUMENTATION_INDEX.md) |
 | Official game identity and legacy-name rules | [Brand identity](docs/BRAND_IDENTITY.md) |
-| Spanish player guide | [Controles (Español)](CONTROLES.md) |
+| Spanish player guide | [Guía del juego (Español)](GUIA_EN_ESPANOL.md) |
 
-**About the repository name:** `azeroth-chronicles-prototype` is a historical technical identifier, **not** the game's current name or setting. The official title is **So I Became the Dark Lord's Problem**, an independent fantasy RPG. The [documentation index](docs/DOCUMENTATION_INDEX.md) preserves earlier releases, audits, source receipts and superseded plans without treating them as new implementation instructions.
+**About the repository name:** `azeroth-chronicles-prototype` is a historical technical identifier, **not** the game's current name or setting. The official title is **So I Became the Dark Lord's Problem**, an independent fantasy RPG. The [annotated documentation directory](docs/DOCUMENTATION_INDEX.md) describes every tracked Markdown document by subject, points to dated audits and superseded plans without reviving them, and links to the original historical inventory for exact source receipts.
 
 **Known limits:** Some art and localized text are unfinished; Pixi/device performance and complete human playthrough acceptance are not certified. For the current, evidence-backed limits, use [Development state](docs/DEVELOPMENT_STATE.md), not an old release snapshot.

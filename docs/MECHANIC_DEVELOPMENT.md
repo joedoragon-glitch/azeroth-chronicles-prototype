@@ -1,63 +1,107 @@
-# Adding a mechanic without restarting the project
+# Developing and verifying a game change
 
-> **Operational-use boundary — 25 October 2026:** Apply this workflow only to the owner's **currently authorized task**, using [current development state](DEVELOPMENT_STATE.md), [active agent policy](../AGENTS.md), current source and the owning PR/issue. The October 19 development break and its one-time test/merge waivers were dated decisions, **not a permanent work prohibition or blanket permission to resume unfinished tasks**. Dated implementation and verification records remain historical evidence. Ordinary work uses focused tests/build checks; comprehensive suites and release/merge require their own explicit owner authorization.
+**So I Became the Dark Lord's Problem** · Maintained engineering workflow · Reviewed 28 October 2026
 
-Use the existing feature PR/issue as the work record. No separate approval ceremony or report is required for each implementation step; follow the user's scope and merge/deployment authorization.
+**What this page is for:** A practical workflow for changing mechanics, AI, companions, menus, navigation, saves, graphics, audio and other game systems **without repeating old work or creating unverified releases**. It guides implementation and evidence, but **is not permission to start a historical task**.
 
-## Documentation stays with the feature — definition of done
+**The whole process:** Confirm the owner's request → find the active code and decisions → define a small acceptance target → implement through the real game → run relevant original regressions → reconcile documentation → record the tested commit → merge/publish **only when authorized**.
 
-When writing or updating a current feature document, describe **So I Became the Dark Lord's Problem** by its official title and original-fantasy identity. Do not reuse the former development name as the title of the present game. Preserve exact repository paths, persistent identifiers and dated original records under the [brand identity and historical-name rule](BRAND_IDENTITY.md).
+## 1. Know which source to trust
 
-As the technical implementer, maintain the documentation **during** the authorized work, not in a later cleanup pass. Follow the standing rule in [AGENTS.md](../AGENTS.md). Before drafting a new file, look for an existing owner guide or handoff to update. When an approved design, source behavior, implementation stage or test result changes, revise every related document created or modified in this feature, not just the newest one. Preserve historical evidence and mark older directions as superseded rather than deleting provenance.
+| Question | Consult |
+| --- | --- |
+| **May we do this, run broad tests, or release it?** | Current owner instructions and [AGENTS.md](../AGENTS.md). A past permission or waiver is not a standing approval. |
+| **What is the game supposed to do?** | Owner-approved design, [decisions](DECISIONS.md) and the current feature contract or owning PR/issue. |
+| **What does the code actually do?** | Current branch and `main`, plus the real modules in [architecture](ARCHITECTURE.md). An old handoff or source comment can be outdated. |
+| **What passed, merged, or shipped?** | Exact commit/test runs, GitHub PR and Pages results, then [development state](DEVELOPMENT_STATE.md). |
+| **Where is historic rationale?** | Dated audits and archived contracts, interpreted as evidence **at their stated date**, not new assignments. |
 
-At **every recoverable checkpoint and final handoff**, check that affected documents and the existing PR/issue agree with the actual source and owner decisions: what is planned, implemented, tested at an exact head, merged, published or awaiting real-device acceptance; what remains; and where to resume. Update relevant player instructions in both languages when UI paths change. If any document is still out of sync, identify that gap explicitly and do not describe the feature's documentation as complete. After an authorized merge/deploy, verify the real GitHub outcomes before updating the maintained current-release ledger; never predeclare a draft as shipped. This is normal engineering housekeeping, **not** a new approval gate, CI task, registry or requirement for the owner to manage documents.
+When records disagree, **investigate the exact conflict**. Do not automatically trust the newest date, a proposed feature, a convenient test expectation or an unmerged branch over approved design and live behavior. Preserve the official game name; historic repository paths and save keys retain compatibility names under [brand identity](BRAND_IDENTITY.md).
 
-1. **Start from the live contract.** Check current main, open overlapping work, architecture and the latest relevant decisions. Note the intended player behavior, owning modules and what must stay compatible in a few lines. Historical foundation documents are evidence, not unfinished assignments. Implement the smallest complete player-visible behavior first, then expand within the authorized scope.
-2. **Test the changed behavior while building.** Run affected existing suites directly; extend them for actual new outcomes. `test:quick` is a broad optional selection, not proof that a new mechanic is covered. For rogue work, `node tests/rogue-integration.test.cjs` exercises the live resolution path; also select existing targeting, combat, save and browser tests when those boundaries change. Do not rerun the whole browser/asset matrix after every small edit, or rerun quick/individual suites already covered by a successful full suite on unchanged inputs. When a gameplay rule, timing boundary, actor flag, terrain prerequisite or reset identity changes, update the affected existing tests and fixtures in the same feature PR. Exercise the current setup through its native boundary (for example, advancing Nightmare sunset), and assert prerequisites before forcing an attack. A passing new suite or diagnostic copy does not close related failures in original suites. Reconcile protected snapshots using reviewed, source-linked before/after deltas while keeping immutable original receipts; never regenerate expectations from runtime during the test. Run the affected real suites on the final candidate, and record exact results. Unrelated inherited failures may be recorded with a specific follow-up, but must not be described as passed or silently carried into a claim that their subsystem checks are complete. This requirement does not expand focused validation into broad CI or a whole-game matrix.
-3. **Check lifecycle early.** Cover normal execution, refusal/cancellation, target death, hero/companion death and recovery, zone exit/reentry, save/reload and relevant companion/AI interactions before multiplying variants. Verify actual outcomes through the live update/resolution path, not just configuration rows. A fatal-hit or restoration case can expose bugs that a large high-health attack matrix misses.
-4. **Publish complete updates.** Format changed files using the locked formatter locally. When runtime inputs change, update the version, build and check generated outputs together. Commit/push the complete file set once; with the GitHub API use one tree, one commit and a leased ref update. Do not create temporary CI workflows for routine formatting output. Checkpoints need not be release-ready: label remaining work honestly. Before opening a PR, push checkpoints to the feature branch; with an active PR, batch coherent updates. If interrupted mid-change, preserve it on a named checkpoint branch and record its head rather than publishing a knowingly inconsistent PR head. Never erase someone else's ongoing work.
-5. **Resume, then integrate.** Before long validation or handoff, preserve code remotely and record branch/head, what is done, tests/run links, the remaining failure and next command in the existing PR/issue. After a connection timeout, inspect the remote ref and existing run before repeating a write or launching another run. A transport error does not establish that a GitHub operation failed. Changed code/base/dependencies invalidate affected prior evidence; unchanged completed checks do not become invalid merely because chat disconnected. Reconcile overlapping main changes before final validation, regenerate once for the integrated version, run all **applicable owner-authorized focused gates** and retain the tested head; broader game/browser certification remains separately owner-gated. Merge/deploy only with the user's authorization.
+## 2. Start with one well-defined outcome
 
+Before editing:
 
-## Stage 5 — lightweight pre-CI check (27 October 2026)
+1. **Check the current authorization and existing work.** Read the relevant issue/PR and recent changes to `main`. Reuse the existing feature branch/PR when continuing it; don't open a new PR or document for each substep. Confirm whether the feature is already implemented, only planned, or awaiting acceptance.
+2. **Identify the owning source.** Find the real resolver, state owner, manifest/authoring source and relevant original tests. Do not edit generated assets as though they were authoring files.
+3. **Write a brief acceptance contract** in the existing PR/issue: intended player result, at least one important refusal/failure case, affected systems and behavior that must remain intact. Keep changes within the owner's approved scope.
 
-For **authorized** mechanics work, use this brief check within steps 1–5 above before publishing a candidate. It is guidance, **not another approval gate, test runner, registry or requirement to run the full suite**:
+Example: a proposed Rogue Charm correction must inspect the **currently playable** Rogue combat, companion and v4 save paths. It must not restart an old Rogue Phase 3 work order. This example is guidance, not authorization to change Rogue.
 
-1. **Pin the evidence:** record the issue/PR, the current comparison base, and the exact candidate head; check overlapping work before relying on prior results.
-2. **Name the contract:** identify changed behavior, the owning source and accepted design decision, plus important negative behavior that must remain intact. Derive numeric expected values independently where possible; never treat a production helper's output as its own oracle or restamp immutable historical receipts.
-3. **Map changed paths to original regressions:** consult the existing `.github/scripts/focused-ci.cjs` and this guide's impact map. List the smallest affected original suites, including cross-domain reference/save tests when the changed contract reaches them. Preserve manually deferred browser/device acceptance; a diagnostic copy is not a passing original test.
-4. **Check native setup:** confirm required field opening, actor eligibility, legal ranks, clocks, distance/line of sight, and lifecycle/save conditions relevant to the scenario. Make invalid prerequisites fail visibly rather than silently adjusting game rules or expected values.
-5. **Verify and classify:** run only the relevant tests during development; on the final integrated candidate, verify the applicable owner-authorized focused checks, formatter and reproducible build. Reuse valid results when inputs are unchanged. For each unexpected failure, retain the run ID, base/head, failing original case and exact message; compare base and candidate when needed, and classify with the existing [test reliability dispositions](TEST_RELIABILITY_STAGES_1_TO_3_20261027.md). Leave unsupported root causes `unexplained`. Never waive a real failure to make CI green.
-6. **Record the handoff:** in the existing PR/issue, note tested head, result links, unresolved issues and next action. Full-game/browser certification, merge and deployment still require the owner's separate authorization; a green focused run is not device acceptance.
+## 3. Implement through the real game, including its boundaries
 
-**Measure before automating.** For a small manual pilot, review **up to 10 ordinary non-documentation PRs within a 30-day observation window**, using the existing workflow's `focused-ci-evidence` JSON artifacts (retained for 30 days), Actions logs and PR histories. In the existing PR/issue notes, record for each sampled PR: its run ID and exact base/tested head; first-attempt outcome; independently classified unexpected failures; whether the same established root cause recurred; any observed time to useful diagnosis; and avoidable reruns on *unchanged relevant inputs*. Mark missing values `unknown`; distinguish deliberate negative probes, justified retries and unexamined failures from actual avoidable drift. Count both affected PRs and failure events, retain evidence links, and do not infer a time-saving percentage from a small sample. This is a manual review, **not a scheduled task or new CI job**.
+Make the **smallest coherent working change**, not an isolated demonstration that bypasses the player's normal path. Prefer an existing source owner over duplicate state, rules, trackers or scripts. Check the applicable lifecycle cases early:
 
-Only propose a small *view* of the **existing** focused selector if the sampled evidence shows repeated, consequential confusion about which original suites were selected. Do not create another selector, add a default full matrix, or change the maintained CI policy. Stage 4's separate expected-value/sprite-evidence repairs remain subject to their own implementation and acceptance; adding this checklist does **not** mean those tests have already been fixed.
+| Boundary | Typical question |
+| --- | --- |
+| **Happy path** | Does the actual player input reach the resolver and produce the expected outcome? |
+| **Refusal/cancellation** | What if the target disappears, action is ineligible, attack is interrupted or the player cancels? Are costs/state still correct? |
+| **Deaths and transitions** | Does it survive hero/companion death, target defeat, encounter reset, zone exit/reentry and pause/resume? |
+| **Persistence** | Does v4 save/reload preserve intended state and clear temporary state, including older backups when relevant? |
+| **Related systems** | Do other classes, AI, controls, UI, sound, renderer fallback and resource budgets still behave correctly? |
 
-## Why these changes
+Apply only relevant rows; an audio listening-room change, for instance, needs browser audio unlock, stop/replay, offline behavior and **no campaign-save access**, not a full combat matrix.
 
-The final rogue PR [#146](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/146) contains 79 commits. That count alone is not wasted work: the integration audit records genuine targeting, respawn and lifecycle corrections. However, one v0.8.108 update was published as four successive one-file commits: `c89b652` (package), `856a0b9` (lockfile), `2aeaa41` (build info) and `274a43e` (worker). Publishing that logical update once replaces four commit/ref publication steps with one (75% fewer); it does not establish a 75% reduction in total development time or historical CI runs. A temporary formatting workflow was also added (`709442d`) and removed (`99ac095`). The existing locked formatter already provides that feedback locally.
+**Never fake prerequisites silently.** If a game mechanic requires a real Nightmare opening, legal rank, aggro, line of sight, distance or other actor state, exercise the native setup and assert it before the behavior. Manually forcing fields in a fixture can make a broken rule look correct. Do not change gameplay to fit an invalid test.
 
-The later rogue audit found lifecycle gaps despite 99 basic and 51 signature cases. Preserve those valuable tests and add boundary cases early; do not chase a smaller test count. This process cannot repair OpenAI/client connectivity or quantify past outage time. Durable checkpoints and checking remote state prevent an interruption from forcing a restart or duplicate publication. No gameplay or rogue rules change in this workflow update.
+## 4. Test what changed and protect existing behavior
 
-## Existing survival tests to revisit when their inputs change
+**CI (continuous integration)** runs automated checks on commits. A **PR (pull request)** is proposed work, not proof of merge or publication.
 
-| Changed contract                                     | Existing suites/fixtures to reconcile                                                                                                                                                                                                                                                  |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Nightmare opening or day/night scaling               | `daylight-cycle`, `night-ringleader-rogue`, `enemy-support-healing`; explicit phase matrices in `snapshot-dreadmaw`, `cindermaw-ministry`, `snapshot-lifebinder`, `snapshot-scornfang`, `snapshot-passive-completion` and `garun-mechanics` via `helpers/specialist-night-context.cjs` |
-| Tactical Rogue tables or protected methods           | `snapshot-dreadmaw` and its immutable historical fixture plus explicit approved-delta receipt; `night-ringleader-rogue` and `enemy-withdrawal-actions` for live behavior                                                                                                               |
-| Captain dispatch or withdrawal casting               | `enemy-withdrawal-actions`; use native actor flags and verify specialist mechanics                                                                                                                                                                                                     |
-| Cindermaw/Dreadmaw attack geometry or native terrain | `cindermaw-ministry`, `snapshot-dreadmaw`; retain native placement/refusal checks before forced mechanical scenarios                                                                                                                                                                   |
-| Travel, defender replacement or encounter cleanup    | Lifecycle sections in both specialist suites; check the actual active roster after reset                                                                                                                                                                                               |
+- **Find the original regression suites.** Map changed modules and behavior through [the maintained focused selector](../.github/scripts/focused-ci.cjs). Extend the affected *existing* tests with positive and negative cases, rather than replacing them with a new test that only proves its own helper. Cross-system changes may require save, targeting, companion or browser checks as well.
+- **Use independently justified expectations.** Derive damage/timing/requirements from the approved decision, not the implementation being tested. Preserve historical fixtures; review an explicit source-linked delta rather than regenerating expectations from runtime.
+- **Verify the lifecycle.** Test refusal, interrupted/invalid states, death, reset and persistence where applicable. Distinguish quick source tests from browser, visual, listening, long-session and real-device results.
+- **Test the final relevant candidate.** Use focused checks, the locked formatter and a reproducible build. Don't default to `npm run test:quick` (which is not mechanic-specific), a full-game matrix, or repeated runs of unchanged successful checks.
 
-This is an impact map for focused selection, not a requirement to run every suite for every update. Expand it when a newly found dependency belongs here.
+Typical local commands (replace the placeholder with the actual affected test and file):
 
-The executable source-to-regression map is `.github/scripts/focused-ci.cjs`.
-Its policy test protects persistence/restore, Slow/save, runtime/skip, native
-opening/support and boss-geometry dependencies. A mapped test that is renamed or
-removed now produces an explicit failure. Post-opening isolated fixtures use
-`tests/helpers/field-opening.cjs` to perform the real first kill and assert
-admission; direct level/aggro assignments do not establish that prerequisite.
-Reviewed numeric expectations should retain their source decision rather than
-being regenerated from the resolver under test. See
-`AUDIT_INTEGRATION_REPAIRS_DEV175.md` for the concrete recurring-drift diagnosis.
+```sh
+npm ci --ignore-scripts
+node tests/<relevant-test>.test.cjs
+npx prettier --check path/to/changed-file
+node scripts/build.cjs --check
+```
+
+The [normal workflow](../.github/workflows/focused-deploy.yml) selects focused checks and validates the build. The [full game/Chromium/WebKit workflow](../.github/workflows/pages.yml) is **manual and requires explicit owner authorization**; a documentation or small mechanic edit does not launch it automatically.
+
+**If a test fails:** retain the exact failed *original* case, message, comparison base, tested commit SHA and Actions run. Diagnose a real regression, wrong assertion, invalid setup or infrastructure problem; leave unclear causes **unexplained** until established. A passing newly added test does not cancel a failed existing suite. [Test reliability dispositions](TEST_RELIABILITY_STAGES_1_TO_3_20261027.md) provides deeper guidance. Never waive failures just to show green CI.
+
+**Reuse valid evidence:** disconnection or a new chat does not invalidate tests on unchanged relevant inputs. Changes to code, tests, dependencies or build inputs can invalidate those results. A focused green run still cannot certify the full game or a physical device.
+
+## 5. Keep the documentation and change together
+
+Per [AGENTS.md](../AGENTS.md#standing-documentation-ownership--part-of-every-change-28-october-2026), the implementer owns documentation **throughout development**, not during an unrelated future audit.
+
+- **Reuse the existing guide** instead of creating competing "current" pages. Keep the owning PR/issue and every document created or edited for this feature consistent with approved decisions and actual source.
+- Update affected player instructions, including **English and Spanish** when controls or UI paths change. Keep links, code owners, behavior, implementation state and test limits accurate at each recoverable checkpoint and final handoff.
+- Preserve dated records and original evidence. Mark superseded plans as historical; don't erase provenance or treat them as pending work. If documentation conflicts remain, describe that gap rather than declaring the feature complete.
+- **After an authorized release**, verify the actual merge and publication before updating the maintained release status. A new branch version is not a new public version.
+
+## 6. Commit, resume and integrate without multiplying work
+
+- **Package a logical change coherently.** Format touched files with the locked tool. If runtime/versioned assets change, update `package.json`, lockfile, generated build info, service-worker cache and other build outputs **through the actual build process**; validate together. Documentation-only edits normally need no game-version bump.
+- **Save recoverable checkpoints.** A single coherent tree/commit is preferred for a complete update; labeled interim commits are fine when useful. With GitHub API multi-file edits, a tree + one commit + leased-ref update avoids partially published file sets. Avoid temporary CI workflows just for routine formatting.
+- **After an uncertain GitHub write or timeout, inspect the remote branch and its Actions run first.** The write may have completed. Don't blindly retry and create duplicate commits, PRs or tests.
+- **Reconcile overlapping work** before final validation, and rerun affected checks if source/base/dependencies changed. Don't force-overwrite another contributor's head or publish a knowingly inconsistent build.
+- **Leave a brief resume note** in the *existing* PR/issue: branch and SHA; implemented changes; exact passing/failing tests and run links; updated documentation; remaining acceptance and next action. No new mandatory report or approval ceremony for every minor step.
+
+## 7. Be exact about status and permission
+
+| Word | What you may claim |
+| --- | --- |
+| **Planned** | Approved/intended behavior, not proven to exist. |
+| **Implemented** | Written on a named branch/commit. |
+| **Tested** | Specific checks passed on an identifiable head; mention tests not run. |
+| **Merged** | GitHub confirms it entered the destination branch. |
+| **Published / deployed** | The release/Pages job confirms it reached the live site. |
+| **Device-verified** | The actual target phone/Chromebook loaded the right version and its relevant behavior was observed. |
+
+The owner authorizes scope. Normal **relevant focused checks** are part of approved engineering work. **Comprehensive browser/game validation, merging and publication require separate explicit approval**. A main-branch update can automatically publish through Pages, so pushing to `main` can be a release action. Don't infer permission from previous merges, historical one-time waivers, an old "next phase" checklist or a passing PR check.
+
+**Definition of done for an implementation candidate:** the approved change works through its real game path, its relevant original regressions are tested or unresolved failures are disclosed, affected documentation agrees, and the PR/issue identifies exact evidence and remaining work. Merged, published and device-verified are **separate later milestones**, not implied by a finished draft.
+
+## Historical context (not active work orders)
+
+The [original October 25–27 mechanic workflow and Stage 5 notes](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/3765ed3bbbf67385561ba47b46887eda6ccf3e7c/docs/MECHANIC_DEVELOPMENT.md) remain intact in Git history. They explain why this policy was created: Rogue PR #146's extensive integration history; a `dev.108` update spread across four one-file commits; temporary formatter-workflow churn; native Nightmare/Cindermaw/Dreadmaw regression mapping; and an **optional manual** sample of up to ten PRs for investigating test-selection confusion. None of those old stages or examples authorizes new implementation, a new CI system, or broad testing.
+
+Use the [documentation index](DOCUMENTATION_INDEX.md) to locate specific feature contracts and dated evidence. Consult the *live* focused selector and [current development state](DEVELOPMENT_STATE.md) before acting.

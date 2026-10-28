@@ -1,73 +1,100 @@
-# Recorded playback, mixing and audition · v0.8.89
+# Sound design and audio production — current game
 
-> **27 October 2026 source reconciliation:** The v0.8.89/v0.8.90 recording and playback narrative below is **historical engineering context**, not the current `dev.205` release gate. The integrated multi-file game loads audio through [`audio.js`](../src/prototype/audio.js), with distinct [runtime](../src/prototype/audio-runtime.js), [score](../src/prototype/audio-score.js), [effects](../src/prototype/audio-effects.js), recordings and environment owners. First-gesture recovery [#470](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/470) and ranged-pet impacts [#472](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/472) are merged. Current build/CI/Pages/installed-device and audio listening evidence are **separate** in [Development state](DEVELOPMENT_STATE.md); physical listening is not newly certified here. Preserve the original pre-integration tests and authoring decisions below.
+**So I Became the Dark Lord's Problem** · Source checked **28 October 2026** · Playable build **`0.9.1+snapshot.dev.208`**
 
+**Current status:** The contextual soundtrack, environmental sound, recorded effects, menu feedback and audio audition room are **implemented**. The earlier v0.8.89 plan to create a recorded-playback engine and begin a soundtrack pilot is **historical, not pending work**. Published code and automated checks do not establish that all music, speakers/headphones, boss transitions or installed offline sessions have passed final listening acceptance.
 
-> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+**Jump to:** [Sound in the game](#what-the-game-sounds-like) · [Regional music](#musical-identity-by-place) · [Playback](#how-sound-reacts-to-gameplay) · [Production](#how-to-create-or-change-a-sound) · [Listening and verification](#audition-validation-and-unfinished-acceptance) · [Technical owners](#technical-owners-and-reference-documents).
 
-**The production score and game menu sound are activated in v0.8.90. See [AUDIO_SOUND_PASS.md](AUDIO_SOUND_PASS.md). The implementation contracts below remain current; statements about an empty registry and unchanged menu behavior describe the preceding engineering phase.**
+## What the game sounds like
 
-Joel authorized the next engineering phase after the v0.8.88 audio housekeeping. The multi-file Web Audio stack is retained. This release makes recordings and contextual production practical without composing or activating a replacement soundtrack. Warm fantasy remains the broad direction; existing regional canon and all eleven boss identities must guide the later creative pilot.
+The score is **original, warm-fantasy instrumental music**, composed and rendered from the project's own recipes. Flutes, plucked strings, piano, cello, horns, bells, bowed layers and restrained percussion distinguish locations without burying combat and interface sounds. These aren't licensed commercial soundtrack recordings or live orchestral performances.
 
-## Historical v0.8.89 experience
+The **current production manifest** [`assets/audio/manifest.json`](../assets/audio/manifest.json) contains:
 
-The game keeps the original 14 synthesized themes, peaceful/night/TRUE arrangements, effect recipes, cue selection, settings defaults and menu suspension. The recorded production registry is empty. No game save, mechanics, costs, map, collision, sprite or approved game layout changes.
+| Registered audio | Count | Role |
+| --- | ---: | --- |
+| **Music** | **83** | Five outdoor regions, main dungeons, quieter interiors, situation variants, boss and TRUE-form themes, title/defeat/finale |
+| **Environmental recordings** | **14** | Woodland, marsh, wind, interior, mine and other background textures |
+| **Recorded effects** | **30** | Action and interface sounds, alongside retained synthesized effects |
+| **Total** | **127** | Local catalog with source paths, credits, hashes and routing |
 
-The separate [audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is available on desktop and phone and works offline after installation. It creates its own isolated campaign, offers every region/main dungeon/treasury/side interior and all eleven normal/TRUE bosses, and auditions existing sound, registered recordings or clearly marked diagnostic PCM tones. Selecting a boss chooses its actual home zone. It does not simulate the encounter or save that campaign.
+The soundtrack is mapped across **19 places** (five regions, five main dungeons, four treasuries and five side interiors). **Eleven boss families** have their own music and normal/TRUE arrangements. The 127 figure is a **registered asset count**, not proof that every gameplay action produces a distinct recording or every mix has been approved on physical devices.
 
-Scene and recorded Listen buttons provide A/B switching; diagnostic stems share timing, with a live intensity slider. The room includes reference, quiet and phone mixes, an independently audible interface test under a softened menu mix, warning ducking, pause/resume, stop/reopen, waveform/peak/RMS/loop-edge measurements and a local JSON report. It never loads `app.js` or `persistence.js`, and never reads or writes game saves. No analytics or report transmission occurs. Its four explicitly published files join the offline inventory; sprite tooling remains unpublished.
+## Musical identity by place
 
-## Owners and APIs
+The existing theme names and original musical directions are:
 
-| Owner | Contract |
+| Location | Music and atmosphere |
 | --- | --- |
-| `audio-assets.js` | Local fetch and SHA-256 verification; bounded codec retry; serialized lazy decode; measured duration/channels/loop checks; pinned LRU cache |
-| `audio-recordings.js` | Source handles; shared start/loop timing; at most one outgoing loop group; scene rules; transitions/intensity; procedural recovery |
-| `audio-mixer.js` | Independent mix profiles and foreground scene mix; priorities and bounded voice stealing |
-| `audio-runtime.js` | Gesture/context lifecycle; five buses; settings/duck automation; unified source cleanup; local status |
-| `tools/audio/*` | Isolated listening room and original engineering-only diagnostic WAV generation |
+| Greenwood Vale | **Orchard Roads** — flute, harp and a welcoming woodland character |
+| Mirefen Marches | **Reedwater** — piano, bells and uncertain marsh colors |
+| Ironroot Highlands | **Payday on the Ridge** — horn and dulcimer |
+| Ashen Frontier | **Embers Still Warm** — cello and guitar |
+| Crown Province | **Roads Beneath the Banner** — restrained minor cello/piano |
+| Forest Crypt | **The Unfinished Retreat** — the caretaker's abandoned retreat |
+| Sunken Archive | **Restoration After Rain** — delicate, working restoration |
+| Colossus Mine | **Veins and Old Stone** — measured labor and deep stone |
+| Abyss Bastion | **Purple Wings** — the Dark Lord's dragon project |
+| Crown Citadel | **The Machinery of Rule** — controlled, formal power |
 
-`configureRecordings(manifest, {baseUrl, fetch, budget})` configures an immutable snapshot of a registry. The optional fetch injection is for controlled tests/diagnostics; the game defaults to same-origin registered assets. No constructor loads files or creates a context. Without explicit configuration, the registry is fetched lazily from the game root when recorded playback is requested after gesture unlock.
+The five outdoor regions each have night and settlement arrangements. Regions and main dungeons use synchronized **base and combat layers**; interior locations have quieter themes and peaceful versions. Boss families and TRUE forms use their real encounter identities rather than a generic boss track. Exact cue names, instrument recipes, tempos and gains belong to the [score book](../tools/audio/score-book.json) and [production manifest](../assets/audio/manifest.json). The [living soundtrack and sound-identity guide](AUDIO_SOUND_PASS.md) explains the current cue families, artistic rationale and reusable creative briefs. The v0.8.90 predecessor remains preserved in Git history.
 
-`playRecording(id, {gain, bus, loop, pan, priority, fade})` returns a stoppable voice or `null` on failure. Music, ambience, effects and interface have distinct buses; metadata maps an `effect` to the effects bus. `stopRecording(voice, seconds)` releases resources at the end of its fade. A playing source pins its decoded buffer. Ambient recordings can use the same loop/source API and handles; this release does not select new ambient content automatically.
+## How sound reacts to gameplay
 
-`setRecordedScore({id, stems:[{id,gain}], bpm, quantizeBars, fade})` asynchronously prepares one to four music stems with explicit equal-length loop metadata. All start on the same AudioContext timestamp, at their own loop starts. The loop-length tolerance is one context sample. A transition may wait for the next 1/2/4-bar boundary on the current group's clock; zero chooses an immediate fade. BPM is 30–300, four beats per bar. Authors must supply loop lengths coherent with the selected tempo; sample equality does not establish musical alignment. `setStemGain(index, value, seconds)` smooths intensity without restarting transport. `stopRecordedScore(seconds)` returns to the existing procedural cue.
+- **Exploration and combat:** Scene and place select the score. Combat increases a synchronized action layer without starting the tune over, then recedes after fighting. Bosses and TRUE forms use dedicated layers; transitions crossfade instead of piling tracks on top of one another.
+- **Surroundings:** An independent environmental recording follows the region, interior and day/night context. Combat and boss activity lower its gain so danger signals remain audible. Optimization Mode can turn off optional ambience without changing game rules.
+- **Movement, attacks and menus:** Footsteps reflect actual hero movement and surface type. Enemy warnings, hero/companion actions and interface choices use recorded or synthesized effects with timing and priority limits. Menus soften music/ambience, suppress world effects and keep interface feedback audible.
+- **Starting, pausing and fallback:** Browser sound requires an eligible user gesture to unlock. Pause/background suspends the audio context. Local files are precached for offline-ready use; if a recording fails to load or decode, its procedural fallback remains available. Recorded music/environment use bounded retries, not perpetual per-frame restarts.
+- **Mixes and sliders:** **Game and settings → Sound settings** provides Master, Music, Ambience, Effects and Interface volume controls plus mute. The built-in phone profile reduces masking and centers recorded panning; it's a listening policy, **not proof of real-phone mastering**.
 
-An unsuccessful preparation, corrupt/unsupported file, missing asset, incompatible loop or memory refusal restores the existing procedural scheduler. Rapid transitions have request generations, so outdated loads cannot start later. Existing music continues while preparation is pending. Background or simulation pause freezes the shared AudioContext clock and cancels pending starts; active loops retain their position. Disposal aborts fetching, invalidates pending decode/start requests and releases every active graph/pin. Reopening builds a new context/cache.
+The released code includes the [first-gesture/recovery repair #470](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/470), [ranged-pet impact routing #472](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/472), and earlier [audio preparation #473](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/473). All three are **merged**, not future Stage 2/3 work orders.
 
-`setRecordedCueRules([{id,when,score}])` enables first-match authored rules. Supported exact match fields are region, zone, interior, settlement, situation, night, peace, bossFamily and bossForm. Place specific rules before broad ones. When no rule matches, the procedural cue returns. An empty rule list is the production default. Rules do not alter campaign data or infer mechanics from text; actual boss family/form come from the scene metadata. There is no retry every frame after an asset failure; a rule change, scene change or pause/reopen enables another attempt.
+## How to create or change a sound
 
-`setSceneMix('world'|'menu'|'title')` is separate from simulation/context pause. Menu mix attenuates music/ambience and silences world effects while interface sound remains available. The later creative pass can use this boundary when wiring actual menu sounds; the current game intentionally retains menu suspension. `setMixProfile('reference'|'quiet'|'phone')` changes listening factors without rewriting saved volume preferences. Phone centers recorded panning and lowers musical/ambient masking; it is an engineering audition profile, not a certified device master. `setSettings({interface})` supplies an independent interface level; absent that preference, the existing effects level is inherited. Mute always wins over duck restoration and profile changes.
+**Production authority:** [`assets/audio/manifest.json`](../assets/audio/manifest.json) defines the active audio IDs, files, music locations, boss cues, effects, gains and credits. The game loads the generated [`audio-library.js`](../src/prototype/audio-library.js); **don't hand-edit the generated file**.
 
-## Registration and codec policy
+1. **Listen first and identify the exact need.** Use the [audio audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) to compare the actual region/boss and existing recording against the original sound. Decide whether this is composition, environment, an effect, a missing event binding or mixing before creating another asset.
+2. **Edit the correct creative source.** Music comes from [`score-book.json`](../tools/audio/score-book.json) and [`render-score.py`](../tools/audio/render-score.py). Environment beds come from [`environment-book.json`](../tools/audio/environment-book.json) / [`render-environment.py`](../tools/audio/render-environment.py); effects from [`sfx-book.json`](../tools/audio/sfx-book.json) / [`render-sfx.py`](../tools/audio/render-sfx.py). Third-party/imported approved recordings go beneath `assets/audio/` with honest author/license information.
+3. **Keep the contract consistent.** Reuse stable IDs if replacing a sound, keep location/boss/event mappings correct, and ensure synchronized stem loops share compatible tempo and duration. The [authoring guide](AUDIO_AUTHORING.md) explains render/register/bind commands, safe replacements, and manifest regeneration.
+4. **Check the candidate, then listen in-game.** Run `npm run audio:check`, affected tests and relevant packaging/browser checks according to the change. Listen for warning intelligibility, starts/stops, boss changes, menu transitions and levels. Updating descriptions alone does not generate new sound; waveform or checksum checks do not demonstrate good music.
+5. **Release only by the normal authorized process.** Asset changes need consistent manifest hashes, generated resources, version and offline cache. Keep candidate sounds on their branch until approved; do not revive an old Stage 5 checklist or run the full browser suite merely because this document was refreshed.
 
-The v1 registry retains kind, local source, duration, SHA-256, author/license and optional loop contract from the foundation. An entry may now include up to three alternate `{src,sha256}` codec variants, in preferred order after the primary file. All variants represent the same duration/loop and each is validated, packaged and precached. Decoding tries the registered alternatives on failure instead of guessing support from a MIME string. Provide a broadly supported MP3 or WAV fallback for OGG; actual browser decoding is authoritative. WAV diagnostics verify the transport; final MP3/OGG production files still need their own codec/loop tests and listening checks.
+**Technical limits worth knowing:** The recording system verifies SHA-256 file hashes and restricted local paths. Its design includes a **32 MiB default decoded-audio cache**, **32 MiB encoded catalog / 8 MiB per-file limit**, and **64-source ceiling** that reserves priority for critical warnings and interface effects. Assets load/decode lazily, playing loops remain pinned, and transitions free resources. These **are source policies**, not measurements of actual Chromebook/iPhone CPU, RAM or loudness.
 
-Registered files stay under `assets/audio`, including real symlink containment at build time. Paths/hashes are rechecked at playback; corrupted fetched content is rejected. Remote URLs, unregistered file paths and escaping paths are refused. The game root resolves correctly under the GitHub Pages repository subpath. Offline playback uses complete precached files. Streaming/range requests are deliberately deferred: bounded short loop segments/stems avoid introducing a second media clock or an untested offline range cache. Long recordings that exceed the decoded budget are refused with procedural fallback; a later measured streaming path can address them.
+## Soundtrack listening room — practical guide
 
-## Resource and mix guards
+The [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is a **separate, read-only player**. Its revised production-first interface is in the `dev.210` release candidate; consult [Development state](DEVELOPMENT_STATE.md) for exact publication status and verify the installed cache separately on each device.
 
-| Resource | Initial policy |
+In the revised interface:
+
+1. **Hear a game scene:** choose a place, an appropriate situation (exploration, combat, settlement, night or liberated world), or a boss and Normal/TRUE form, then press **Play this scene**. The same registered source music, synchronized action/TRUE layers and environmental rules are used without starting a saved campaign. The main title, defeat and finale are available under *Other game moments*.
+2. **Browse individual recordings:** filter the full catalog by **83 music tracks**, **14 environmental beds** or **30 sound effects**; search by name or stable ID, inspect the recording, then press **Play selected recording**. This plays a file by itself, which is different from the combined scene soundtrack. Where appropriate, **Play with paired layer** auditions the music together with its synchronized combat/TRUE part.
+3. **Reuse a creative brief:** the selected production asset displays its natural-language guide and exact recipe owner. **Copy creative brief** copies text for a composer or later development session; it does not change or regenerate audio.
+4. **Optional advanced tools:** expand **Advanced listening tools** for temporary volume/mix adjustments, diagnostic test tones, musical-bar transition timing, waveform measurements, live engineering data and a downloadable local JSON report. These are troubleshooting and sound-production aids, **not a sound-quality score or public feedback submission**.
+
+Audio begins only after the user chooses to play something. **Pause** and **Stop audio** appear near the top, rather than hiding among diagnostics. No campaign saves or local game preferences are read or written by the standalone room. The page is designed for desktop and phone. Dedicated Chromium desktop/phone, decoded-recording, and offline-reopen acceptance has passed for the candidate ([evidence #40761403220](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40761403220)), but real-device listening remains unverified. Focused source/build checks alone cannot certify perceived sound quality or hardware behavior.
+
+For creative decisions about *why* each composition exists, see [Soundtrack and sound identity](AUDIO_SOUND_PASS.md); for adding, replacing or regenerating a file, see [Audio authoring](AUDIO_AUTHORING.md).
+
+## Audition, validation and unfinished acceptance
+
+The [independent audition room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) lets developers and the owner compare scores, individual cues, bosses, reference/quiet/phone mixes and local audio measurements. It does **not** read or write the playable campaign's saves.
+
+**Verified for this documentation update:** the active source enables production audio, the manifest contains the 127 registered assets and present-day scene/event policies, and #470/#472/#473 were merged. The exact public build and focused Pages evidence are in [Development state](DEVELOPMENT_STATE.md). Historic [25 October Stage 5 preflight](AUDIO_STAGE5_RELEASE_PREFLIGHT_20261025.md) describes a **then-blocked standalone candidate**, not the present deployment or automatic authorization for further production.
+
+**Still requiring direct evidence:** perceived balance and speaker/headphone comfort on physical devices; warning audibility in crowded fights; every boss/TRUE/music transition in context; fresh install and offline reopen on relevant phones; sustained listening/performance behavior. Focused CI, file counts and synthetic audio tests cannot certify those experiences. Treat problems as scoped testing/creative decisions, **not an automatic new optimization project**.
+
+## Technical owners and reference documents
+
+| What you need | Source |
 | --- | --- |
-| Encoded publishing | 8 MiB each, 32 MiB unique registered total, including codec variants |
-| Runtime fetch | 8 MiB each; streamed response length enforced; 15-second abort |
-| Registry | 256 KiB including creative guides; lazy fetch with 15-second abort |
-| Decode | One at a time, at most eight pending IDs; duplicate loads share one promise |
-| Decoded PCM | 32 MiB default LRU; playing/prepared stems pinned; conservative stereo admission before decode |
-| Decode watchdog | 20 seconds; a stalled decoder closes its asset store to prevent overlapping runaway decodes; reopen to retry |
-| Channels/duration | Mono/stereo; measured duration within max(80 ms, 1%); loop cannot exceed decoded end beyond one sample |
-| Score | 1–4 equal-length stems; current plus one outgoing group; bounded 0–4 second fades |
-| Transient voices | 64 total; ordinary synthesis/music stops at 56, ordinary effects at 60; final capacity reserved for warnings/UI |
-| Critical priority | Warning/death/game-over use priority 3; reserved capacity then steal a lower-priority source, always respecting 64 |
+| Live cue inventory, credits and event/scene mapping | [Audio manifest](../assets/audio/manifest.json) |
+| Composer recipes and artistic rationale | [Score book](../tools/audio/score-book.json), [living soundtrack design guide](AUDIO_SOUND_PASS.md) |
+| Rendering, importing, registration and release steps | [Audio authoring](AUDIO_AUTHORING.md) |
+| Environmental cue selection | [Environment reference](AUDIO_ENVIRONMENT.md), [`audio-environment.js`](../src/prototype/audio-environment.js) |
+| Combat music selection and stem intensity | [`audio-production.js`](../src/prototype/audio-production.js) |
+| Runtime, recorded transport and mix | [`audio.js`](../src/prototype/audio.js), [`audio-runtime.js`](../src/prototype/audio-runtime.js), [`audio-recordings.js`](../src/prototype/audio-recordings.js), [`audio-mixer.js`](../src/prototype/audio-mixer.js) |
+| Build, release and device evidence | [Development state](DEVELOPMENT_STATE.md) |
 
-PCM cost is samples × channels × four bytes, rather than compressed file size. At 48 kHz, the two diagnostic mono loops use roughly 0.73 MiB total; their in-memory encoded WAVs total about 0.17 MiB. A four-stem 30-second stereo score at 48 kHz uses roughly 44 MiB and is correctly refused by the 32 MiB default. Admission includes the old playing score and new stems during a crossfade; authors should budget loop duration/channels accordingly. Browser codec allocation and transient decode overhead are outside the cache accounting, which is why decodes are serialized and admitted conservatively. These are initial guards, not measurements of every Chromebook/iPhone's CPU or total memory.
-
-The reference/world profile retains previous levels and compression. New profile factors are comparison presets, not automatic loudness normalization. Recorded gain and panning are explicit. Waveform/RMS/peak and loop-edge measurements help find faults but do not prove pleasant sound, professional loudness, a seamless musical loop, or speaker comfort.
-
-## Verification and next production
-
-Non-browser tests preserve the exact original catalog/defaults, 67,088 note schedules and 186 effect events. New tests cover deduplicated loading, pin/eviction budgets, hashes/path/duration rejection, codec retry, synchronized starts/loops, quantized transitions, rapid switching, failure recovery, pause/dispose during loading, independent UI mixing and warning capacity. Packaging tests include populated isolated registries and offline subpath reads while keeping production manifests unchanged.
-
-Chromium and WebKit run the original game audio tests plus the separate desktop/phone audition checks: gesture unlock, actual WAV decoding, finite audible unclipped OfflineAudioContext rendering, stems, menu/UI routing, frozen pause clock, Dark Lord TRUE identity, untouched storage, offline reopening and disposal/reopen. CI also retains the full game/phone/layout/gesture suites. The implementing agent owns technical verification and release.
-
-Next: audit current place/boss canon into a cue coverage map, then produce a small representative exploration/combat/boss/ambience/interface pilot in this room and in the game. Joel judges the creative sound in context; no new engineering approval or command-line homework is required. Live iPhone speaker/headphone listening and long-session CPU/comfort remain part of that content pilot.
+**Historical specification:** The earlier [v0.8.89 recorded playback and audition document](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/3765ed3bbbf67385561ba47b46887eda6ccf3e7c/docs/AUDIO_PLAYBACK.md) preserves the old API details, original empty-library phase and then-planned soundtrack pilot. It is **not** the current sound-production status.

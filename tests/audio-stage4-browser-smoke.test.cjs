@@ -17,7 +17,7 @@ const prefix = '/azeroth-chronicles-prototype/';
       res.end();
       return;
     }
-    const types = { '.js': 'text/javascript', '.html': 'text/html', '.wav': 'audio/wav', '.mp3': 'audio/mpeg', '.json': 'application/json' };
+    const types = { '.js': 'text/javascript', '.css': 'text/css', '.html': 'text/html', '.wav': 'audio/wav', '.mp3': 'audio/mpeg', '.json': 'application/json' };
     res.setHeader('Content-Type', types[path.extname(file)] || 'application/octet-stream');
     fs.createReadStream(file).pipe(res);
   });
@@ -41,10 +41,45 @@ const prefix = '/azeroth-chronicles-prototype/';
       const click = async (id) => phone ? page.locator(id).tap() : page.locator(id).click();
       await page.addInitScript(() => localStorage.setItem('stage4-audio-save-sentinel', '{"preserved":true}'));
       await page.goto('http://127.0.0.1:' + server.address().port + prefix + 'tools/audio/index.html');
-      await page.waitForFunction(() => !!window.AudioAudition?.audio?.recordingManifest, null, { timeout: 15000 });
+      try {
+        await page.waitForFunction(() => !!window.AudioAudition?.audio?.recordingManifest, null, { timeout: 15000 });
+      } catch (error) {
+        console.error('Audition startup errors:', pageErrors);
+        console.error('Startup status:', await page.locator('#message').textContent().catch(() => 'no message'));
+        throw error;
+      }
       assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
       assert.equal(await page.locator('#boss option').count(), 12);
-      await click('#stem-play');
+      assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Responsive CSS must fit the phone viewport');
+      assert.equal(await page.locator('#recording option').count(), 83);
+      await page.locator('#advanced').evaluate((el) => { el.open = true; });
+      await page.locator('#source').selectOption('diagnostic');
+      await page.waitForFunction(() =>
+        Object.keys(AudioAudition.audio.recordingManifest?.assets || {}).length === 3,
+        null, { timeout: 15000 });
+      try {
+        await click('#stem-play');
+      } catch (error) {
+        const geometry = await page.evaluate(() => {
+          const target = document.querySelector('#stem-play');
+          const r = target.getBoundingClientRect();
+          const px = Math.round(r.left + r.width / 2);
+          const py = Math.round(r.top + r.height / 2);
+          return {
+            target: { x: r.x, y: r.y, width: r.width, height: r.height },
+            tapPoint: { x: px, y: py },
+            overlapping: document.elementFromPoint(px, py)?.outerHTML.slice(0, 400),
+            scrollY, innerWidth, innerHeight,
+            pageHeight: document.documentElement.scrollHeight,
+            viewport: { offsetTop: visualViewport?.offsetTop, width: visualViewport?.width, height: visualViewport?.height, scale: visualViewport?.scale },
+            styles: { overflow: getComputedStyle(document.body).overflow, position: getComputedStyle(target).position },
+          };
+        });
+        console.error('Phone tap geometry:', JSON.stringify(geometry));
+        require('node:fs').mkdirSync(require('node:path').join(root, 'test-results'), { recursive: true });
+        await page.screenshot({ path: path.join(root, 'test-results', 'audio-stage4-tap-' + phone + '.png'), fullPage: true });
+        throw error;
+      }
       await page.waitForFunction(() => AudioAudition.audio.recordedScore?.voices.length === 2, null, { timeout: 15000 });
       const diagnostic = await page.evaluate(() => {
         const a = AudioAudition.audio, voices = a.recordedScore.voices;
