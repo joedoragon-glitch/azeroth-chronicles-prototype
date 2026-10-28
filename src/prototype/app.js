@@ -3294,7 +3294,7 @@
         ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' }))]
           .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y) &&
             (!combatFirst || distance(e) <= 600))
-          .sort((a, b) => distance(a) - distance(b)).slice(0, 100)
+          .sort((a, b) => distance(a) - distance(b))
       : [];
     const keys = new Set();
     for (const actor of [...imminent, { ...hero, renderKind: 'hero' },
@@ -3302,7 +3302,6 @@
       // Appearance lookup never calls Campaign.zone()/enter() or consumes RNG.
       const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
       if (match?.key) keys.add(match.key);
-      if (keys.size >= 64) break;
     }
     return [...keys];
   }
@@ -3315,27 +3314,23 @@
       !!game.sideDungeon?.(destination) ||
       !!game.supplyRoom?.(destination);
   }
-  function warmScene(destination, milliseconds = 750, combatFirst = false) {
+  function warmScene(destination, combatFirst = false) {
     const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
     if (!sprites?.warm || document.hidden) return null;
     const keys = readOnlySceneKeys(destination, combatFirst);
     if (!keys.length) return null;
-    // The queue may outlive the deadline, but only presentation-cache bytes
-    // are touched; no delayed callback can commit travel or change the campaign.
-    return Promise.race([
-      Promise.resolve().then(() => sprites.warm(keys,
-        combatFirst ? { variants: true, clips: true } : {})).catch(() => null),
-      new Promise((resolve) => setTimeout(resolve, milliseconds)),
-    ]);
+    // Loading is readiness-driven: a slow decode is not a failed decode.
+    // Missing or broken images settle independently in the sprite cache.
+    // This never changes campaign state, game randomness or simulation time.
+    return Promise.resolve().then(() => sprites.warm(keys,
+      combatFirst ? { variants: true, clips: true } : {})).catch(() => null);
   }
   function prepareGpuForArrival() {
     if (graphicsController.status().mode !== 'webgl2' ||
         typeof pixiGame.warmArrival !== 'function') return null;
-    // Stall, GPU memory failure, or context loss falls back to reliable Canvas.
-    return Promise.race([
-      Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false),
-      new Promise((resolve) => setTimeout(() => resolve(false), 1800)),
-    ]);
+    // Await real GPU readiness rather than treating slow hardware as a failure.
+    // Actual Pixi errors/context cancellation still return false for Canvas recovery.
+    return Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false);
   }
   function drawReadyScene() {
     try {
@@ -3458,8 +3453,7 @@
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
       // Never spend an unbounded period trying to complete optional atlas art.
-      const encounterWarmup = warmScene(destination,
-        combatCriticalArrival(destination) ? 1400 : 1200, true);
+      const encounterWarmup = warmScene(destination, true);
       const reveal = () => {
         if (sceneTransition?.token !== token) return;
         requestAnimationFrame(() => revealSceneTransition(token));
@@ -3472,7 +3466,7 @@
     // Simulation remains held until the committed first frame is drawn and
     // the opaque interlude is removed. No artificial combat grace period.
     const critical = combatCriticalArrival(destination);
-    const pending = critical ? null : warmScene(destination, 750);
+    const pending = critical ? null : warmScene(destination);
     if (pending) void pending.then(proceed, proceed);
     else proceed();
     return true;
@@ -3538,7 +3532,7 @@
     document.body.classList.add('title-active');
     // Prepare only the *loaded* arrival view, never an unentered zone.
     titleWarmup = loaded
-      ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 1000 : 900, true)
+      ? warmScene(game.zoneId, true)
       : null;
     refreshTitleScreen();
     const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
@@ -3609,7 +3603,7 @@
         else requestAnimationFrame(finish);
       };
       // Recovering an unclean save can change the spawn after title warmup.
-      const actual = warmScene(game.zoneId, 1400, true);
+      const actual = warmScene(game.zoneId, true);
       if (actual) void actual.then(paint, paint);
       else paint();
     };
