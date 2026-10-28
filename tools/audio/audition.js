@@ -51,7 +51,7 @@
     if (!items.length) return;
     const g = document.createElement('optgroup');
     g.label = label;
-    for (const item of items) g.add(option(item.name, item.id));
+    for (const item of items) g.append(option(item.name, item.id));
     select.add(g);
   }
   function human(text) {
