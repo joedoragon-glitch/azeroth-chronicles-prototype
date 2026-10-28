@@ -25,7 +25,7 @@ assert.deepEqual(inspect(data()), []);
 { const b = data(); b.state = b.state.replace('CURRENT_BUILD_VERSION: ' + v, 'CURRENT_BUILD_VERSION: ' + old); rejects(b, 'CURRENT_BUILD_VERSION'); }
 { const b = data(); b.state = b.state.replace('version:** ' + tick + v, 'version:** ' + tick + old); rejects(b, 'visible current'); }
 { const b = data(); b.state = b.state.replace('| Build/cache version | **' + tick + v, '| Build/cache version | **' + tick + old); rejects(b, 'table is stale'); }
-{ const b = data(); b.state = b.state.replace(/^\\| Build\\/cache version.*$/m, ''); rejects(b, 'table is missing'); }
+{ const b = data(); b.state = b.state.split('\n').filter(line => !line.startsWith('| Build/cache version |')).join('\n'); rejects(b, 'table is missing'); }
 { // A new source candidate must retain the previous VERIFIED publication until Pages actually runs.
   const b = data(); const candidate = '0.9.1+snapshot.dev.210';
   b.pkg.version = candidate; b.lock.version = candidate; b.lock.packages[''].version = candidate;
