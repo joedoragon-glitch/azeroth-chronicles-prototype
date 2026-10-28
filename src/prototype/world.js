@@ -3872,7 +3872,26 @@
           this.s.zone = before;
         }
       }
+      // Presentation-only reconciliation also runs for already-current v4
+      // room/entrance layouts. Do not bump geometry versions or rebuild actors,
+      // furnishings, caches or recovered crowns to correct an owner's name.
+      greenwoodTreasuryNames(z) {
+        if (z.id !== 'vale' && z.id !== 'supply-vale') return;
+        const room = R.supplyRooms.find((r) => r.id === 'supply-vale');
+        for (const n of z.npcs) {
+          if (z.id === 'vale' && n.id === 'supply-entrance') n.name = room.name;
+          if (z.id === room.id && n.kind === 'exit') n.name = 'Leave ' + room.name;
+          if (
+            z.id === room.id &&
+            n.kind === 'bundle' &&
+            !n.treasuryRecovery &&
+            Number.isInteger(n.index)
+          )
+            n.name = room.name + ' cache ' + (n.index + 1);
+        }
+      }
       authoredPlaces(z) {
+        this.greenwoodTreasuryNames(z);
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
           this.treasuryGuardPopulation(z);

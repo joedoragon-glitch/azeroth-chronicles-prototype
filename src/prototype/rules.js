@@ -1561,8 +1561,8 @@
       boss: 'thorn',
       count: 2,
       entryOffset: [255, -170],
-      name: "Thornfang's Treasury",
-      objective: "Recover 2 caches from Thornfang's Treasury",
+      name: "Scornfang's Treasury",
+      objective: "Recover 2 caches from Scornfang's Treasury",
     },
     {
       id: 'supply-march',
@@ -7814,7 +7814,7 @@
           region: 'vale',
           zone: 'supply-vale',
           profile: 'supply-vale',
-          name: "Thornfang's Treasury",
+          name: "Scornfang's Treasury",
           point: [720, 690],
         },
         {

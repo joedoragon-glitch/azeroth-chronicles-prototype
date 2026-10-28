@@ -1,0 +1,31 @@
+{
+  "sourceBaseline": "3377ce6cdaf4bb25cb4f2bc54ef9586cb556b2b7",
+  "candidate": "dev.211 on feature/greenwood-scornfang-title-20261028",
+  "passed": [
+    "node tests/greenwood-scornfang-title.test.cjs",
+    "node tests/treasury-recovery.test.cjs",
+    "node scripts/build.cjs",
+    "node scripts/build.cjs --check"
+  ],
+  "inheritedFailures": {
+    "tests/town-street-audit.test.cjs": "Vale settlement-major-0 setback 195 < 207",
+    "tests/pt312-world-integration.test.cjs": "Highlands full usable crossing",
+    "tests/local-sites.test.cjs": [
+      "level-1 Thornfang fixture missing boss",
+      "Highlands hidden source count",
+      "Highlands Treasury frontage",
+      "Crown survey reward fixture",
+      "outdated Barracks title"
+    ],
+    "tests/prototype-ui.test.cjs": "VM lacks PrototypeCriticalPartyNative"
+  },
+  "failureBoundary": "All reported existing local-sites and prototype-ui failures reproduced on unchanged main with identical failure names; no claim these original suites pass",
+  "notRun": [
+    "full-game suite",
+    "browser matrix",
+    "physical-device/Pixi acceptance"
+  ],
+  "merged": false,
+  "published": false,
+  "architectureDisposition": "Original stale assertion reproduced at main@5addd94a; independently fixed on main@3377ce6c by merged documentation work; our redundant #565 closed unmerged"
+}
