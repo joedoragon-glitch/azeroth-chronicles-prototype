@@ -2213,6 +2213,17 @@
       return paused || !!menu || !focused || document.hidden;
     },
   };
+  // Bitmap dimension assignments erase every Canvas pixel, even when the
+  // assigned size is unchanged. Retain the current image on harmless resize
+  // requests (including some optimization-mode and viewport notifications).
+  // Count actual surface resets in the existing local playtest report so a
+  // reported twilight flash can be correlated with real backing changes.
+  const canvasBackingDiagnostics = {
+    resizeRequests: 0,
+    backingResets: 0,
+    avoidedResets: 0,
+    lastReset: null,
+  };
   function resize() {
     // Keep the 15-second *unconfirmed* trial conservative: resizing during
     // the trial still safely reverts. A confirmed selection instead rebuilds
@@ -2260,8 +2271,23 @@
     renderResolution.configure(maximumRatio);
     // Arena only: hard-cap world pixels without saving a preference.
     const ratio = game?.s?.mode === 'arena' ? Math.min(renderResolution.ratio, 0.5) : renderResolution.ratio;
-    canvas.width = Math.round(innerWidth * ratio);
-    canvas.height = Math.round(innerHeight * ratio);
+    const backingWidth = Math.round(innerWidth * ratio),
+      backingHeight = Math.round(innerHeight * ratio),
+      widthChanged = canvas.width !== backingWidth,
+      heightChanged = canvas.height !== backingHeight;
+    canvasBackingDiagnostics.resizeRequests++;
+    if (widthChanged) canvas.width = backingWidth;
+    if (heightChanged) canvas.height = backingHeight;
+    if (widthChanged || heightChanged) {
+      canvasBackingDiagnostics.backingResets++;
+      canvasBackingDiagnostics.lastReset = {
+        width: backingWidth,
+        height: backingHeight,
+        clock: Number.isFinite(game?.s?.clock) ? game.s.clock : null,
+        phase: game?.daylightPhase?.().phase || null,
+      };
+    } else canvasBackingDiagnostics.avoidedResets++;
+    // Restore presentation scale even when the existing bitmap is retained.
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
   resize();
@@ -4285,6 +4311,7 @@
                 backingPixelRatio: canvas.width / Math.max(1, viewport.width),
                 backingWidth: canvas.width,
                 backingHeight: canvas.height,
+                canvasBacking: { ...canvasBackingDiagnostics },
               },
               audio: audio.status(),
               sprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites.status(),
