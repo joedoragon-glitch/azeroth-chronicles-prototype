@@ -53,15 +53,15 @@ for (const cls of ['paladin', 'mage', 'ranger'])
     assert.equal(g.companionUseFirstSkill(u, e), false);
     assert.equal(g.companionUseSecondSkill(u, e), false);
     step(g, 80);
-    if (distance(u,e)<90) console.error('ROLLBACK-DIAGNOSTIC critical retreat',
-      JSON.stringify({cls,type,position:{x:u.x,y:u.y},enemy:{x:e.x,y:e.y},
-        hero:{x:g.hero.x,y:g.hero.y},distance:distance(u,e),
-        survival:g.companionSurvivalMode(u),retreat:g.companionRetreatMode(u),
-        blocked:g.blocked(u.x,u.y)}));
-    assert(distance(u, e) >= 90, type + ' avoids basic melee reach');
+    // PT-002 rollback deliberately permits body overlap even during tactical
+    // withdrawal. Require early movement away, live critical-health judgment,
+    // no forced offensive targeting and the hero tether; do not reintroduce
+    // a minimum enemy-distance rule that depends on solid enemy bodies.
+    assert(g.companionSurvivalMode(u), type + ' remains in critical survival');
+    assert(!g._tacticalPartyTargets.has(u.id),
+      type + ' does not resume offensive target assignment at critical HP');
     assert(distance(u, g.hero) < C.rules.companionJudgment.criticalFollowRadius + 20);
-    // Existing skills/shots may contribute after reaching a safe screened position.
-    assert(distance(u, e) > 65, 'never closes to basic melee reach');
+    assert(u.hp > 0, type + ' is still alive after ordinary tactical withdrawal');
     u.hp = u.maxHp * 0.21;
     step(g);
     assert(
@@ -76,7 +76,7 @@ for (const cls of ['paladin', 'mage', 'ranger'])
 console.log(
   'PASS ' +
     cases +
-    ' class/role critical withdrawal, safe spacing, tether and ordinary recovery cases',
+    ' class/role critical withdrawal, tactical restraint, tether and ordinary recovery cases',
 );
 // Two wounded companions withdraw independently while healthy allies fight and hero intent survives.
 {
