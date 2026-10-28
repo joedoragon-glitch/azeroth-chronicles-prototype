@@ -1,5 +1,7 @@
 # Runtime architecture
 
+This document describes the runtime of **So I Became the Dark Lord's Problem**, an independent fantasy RPG. Older project labels in technical file paths, stored keys and dated references are historical identifiers, not a current game title; see [brand identity and documentation naming](BRAND_IDENTITY.md). The GitHub repository address remains unchanged.
+
 ## Verified current source integration — 27 October 2026 (Phase 4; dated baseline)
 
 > **Later 28 October integration note:** [Merged PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) now makes Rogue/Pícara a fourth playable class, with jingle-bell presentation and diagnostic additions through `dev.208`. [Merged PR #541](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/541) makes ongoing feature-document consistency an engineering responsibility. The `dev.205` table below is **historical source evidence**, not a claim that it covers the 234 newer development commits; see [current development state](DEVELOPMENT_STATE.md) and Rogue's dated [soft-release scope](ROGUE_SOFT_RELEASE_20261028.md).

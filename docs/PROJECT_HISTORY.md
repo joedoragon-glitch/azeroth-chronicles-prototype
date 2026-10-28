@@ -4,6 +4,8 @@
 
 > Historical project narrative through v0.8.80. For current setup and boundaries, read the root README and docs/ARCHITECTURE.md.
 
+> **Name provenance — 28 October 2026:** The title used below is the former development name, retained because this is a dated historical record. The present independent game's official name is **So I Became the Dark Lord's Problem**; see [brand identity](BRAND_IDENTITY.md). This note does not alter the original v0.8.80 account or assign a date to the creative departure from the early Warcraft-related concept.
+
 # Azeroth Chronicles — expanded prototype v0.8.80
 
 Terrain and effects polish v0.8.80 corrects projected danger areas and charge corridors, restores visible main-dungeon walls, clarifies recovery recipients and normal abilities, and strengthens natural ground, roads, water, ravines and lava. Critical combat cues retain night contrast. Terrain/effects remain procedural; collision and balance values are unchanged. See [the terrain and effects scope](TERRAIN_EFFECTS_POLISH_V0880.md).
