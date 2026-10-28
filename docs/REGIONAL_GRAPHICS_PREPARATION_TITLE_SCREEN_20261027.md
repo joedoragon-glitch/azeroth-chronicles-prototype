@@ -1,8 +1,8 @@
 # Azeroth Chronicles — regional graphics preparation and main-screen lifecycle
 
-Status (latest development checkpoint): **Stages 0–5 implemented in draft with focused checks; Stage 6 combat-sensitive optional caching has a source/test candidate pending exact-head CI; Stage 7 real-browser/device validation and release decision not complete. No merge, deployment or GPU performance certification.**  
-**Resumption document:** [PR #518 engineering handoff, tested scope and next-phase checklist](PR518_ENGINEERING_HANDOFF_20261027.md). Read it first when restarting in another chat.  
-Baseline: `main` at `740c4549cabb87455e0d9af8369e52a88cd06ad1` (27 October 2026).  
+**Current disposition — 27 October 2026:** [#518](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518) **merged/published**, integrating Stages 0–6, the main-screen/Continue/guarded loading lifecycle, and bounded optional Pixi graphics preparation. Prior Stage 6 draft/merge holds below are **historical**. [Stage 7 device/browser visual, first-frame, memory and performance acceptance](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) remains outstanding; [Pixi graduation #478](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/478) is open. Pixi/WebGL2 stays **experimental/optional**; Canvas 2D default/fallback. No measured GPU residency or performance win is claimed.  
+**Historical implementation/handoff record:** [PR #518 engineering handoff](PR518_ENGINEERING_HANDOFF_20261027.md); read its merged-status preamble and do not resume the completed draft.  
+**Historical original proposal baseline:** `main@740c4549cabb87455e0d9af8369e52a88cd06ad1`; see [pinned current checkpoint](DOCUMENTATION_PHASE0_BASELINE_20261027.md).  
 Related: renderer graduation #478; GPU-resource/cache #417; crowd cold-art #481; alternate open draft #487; merged batch #490.
 
 ## Goal and non-goals

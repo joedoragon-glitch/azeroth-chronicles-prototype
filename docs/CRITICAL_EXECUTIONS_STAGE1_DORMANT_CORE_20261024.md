@@ -1,4 +1,6 @@
 # Stage 1 — Dormant Critical Execution Core
+
+**Current disposition — 27 October 2026:** [#440](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/440) **merged** the active Critical Executions/five-Codex feature. The dormant standalone module/no imports/no crits/no Codices statements below were **true at this Stage 1 historical checkpoint only**, not the current game. Separate [codex probability tests #515](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/515) remain draft; no gameplay changes are authorized by this notice.
 **24 October 2026 · PR #440 · Unmerged review checkpoint**
 
 **Status:** Isolated probability/resolution module and focused Node tests committed. **The game does not import or execute this module.** No actor has live critical chances, no skill changes damage/status/healing, and no codex is collectible.

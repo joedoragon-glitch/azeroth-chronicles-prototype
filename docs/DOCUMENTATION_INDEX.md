@@ -1,8 +1,16 @@
 # Documentation index and current-source routing
 
-**Active combat handoff — melee anti-kiting (26 Oct 2026):** Greenwood native Pursuit Burst 1.2s at 1.5× with 2s recovery is **merged and player-tested**. [Issue #504](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/504) and [the PR #508 implementation contract](MELEE_PURSUIT_EXPANSION_20261026.md) track a **separate unmerged** all-region expansion for nonsummoned ordinary melee and melee Ringleaders **only**. All summons, captain-Overtime workers, bosses/captains and ranged/hybrid actors stay on native cadence pending issue #510 reset/territory review. Under-fire sidestep unchanged. Older [PR #505](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/505) is still stale and unmerged; do not merge it unreconciled. Game-wide change is not live until approved, merged and published.
+**28 October routing refresh:** The current [development state](DEVELOPMENT_STATE.md) records Rogue/Pícara as the published fourth class (`dev.208`). [Feature documentation responsibility](../AGENTS.md) requires keeping every touched document current during development. All October 27 phase/stage counts below remain dated evidence, not assertions about today's branch.
 
-**Verified repository checkpoint — 25 October 2026 (after low-risk Batch A):** `main` at [`d64b182b991a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d64b182b991a02f02aa5f384c12f1960fb559a35), package `0.9.1+snapshot.dev.185`. [Exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40235196259) both succeeded. Six approved low-impact PRs — #447, #449, #456, #468, #473, #474 — have merged. This does **not** certify integrated audio runtime fixes, physical-device acceptance, client cache refresh, or unrelated draft work; always recheck current `main` and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297).
+**Current release and documentation routing:** [Development state](DEVELOPMENT_STATE.md) alone maintains the latest verified `main` SHA/build, focused CI, GitHub Pages publication, device/PWA adoption limits, open issues and active workstream matrix. The [Phase 0 inventory](DOCUMENTATION_PHASE0_BASELINE_20261027.md) is a dated receipt. This index routes to current sources and preserves archived inventories; its links and historical milestone references are **not** an independent release tracker.
+
+**Historical repository checkpoint — 25 October 2026 (after low-risk Batch A):** `main` at [`d64b182b991a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d64b182b991a02f02aa5f384c12f1960fb559a35), package `0.9.1+snapshot.dev.185`. [Exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40235196259) both succeeded. Six approved low-impact PRs — #447, #449, #456, #468, #473, #474 — have merged. This does **not** certify integrated audio runtime fixes, physical-device acceptance, client cache refresh, or unrelated draft work; always recheck current `main` and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297).
+
+**Historical Phase 0 inventory (27 October; no longer current):** The [pinned audit](DOCUMENTATION_PHASE0_BASELINE_20261027.md) originally found 368 `docs/*.md` paths and gaps in the prior registry/index. Phase 3 reconciled that snapshot. The 28 October continuation contains **397** direct `docs/*.md` files (396 from published `main` plus the separate retained Phase 0 baseline) and **416 Markdown paths repository-wide**, including 28 later Rogue design/handoff records. The October 19 historical inventory below is deliberately frozen.
+
+**Verified architecture and source-routing (Phase 4, pinned 27 October):** [Runtime architecture](ARCHITECTURE.md) now contains a system-by-system main-source cross-check for v4 saves, class/combat/criticals, Canvas and optional Pixi layers, title/controls, navigation/world, audio, sprites and release/test gates. See also [historical audio contract](AUDIO_PLAYBACK.md), [historical dev.169 performance receipts](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md) and [still-open Stage 7 device acceptance](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md). These routing links and source inspections do **not** certify physical hardware, all art, or a full-game run.
+
+**Feature documents to consult alongside the current workstream matrix (dated 27 October routing):** [all-region melee #508 (merged)](MELEE_PURSUIT_EXPANSION_20261026.md), [title and optional Pixi prep #518 (merged)](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md), [Stage 7 device acceptance](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md), [class passives #509 (merged)](HERO_CLASS_FOUNDATIONS_LEVEL1_AUDIT_20261026.md), [historical dormant Critical Stage 1](CRITICAL_EXECUTIONS_STAGE1_DORMANT_CORE_20261024.md), [historical audio preflight](AUDIO_STAGE5_RELEASE_PREFLIGHT_20261025.md). Use [current Development state](DEVELOPMENT_STATE.md) for release and acceptance gates; old handoffs are not present-day merge instructions.
 
 **Use now:** [Development state](DEVELOPMENT_STATE.md) for the verified checkpoint and governance boundaries; [architecture](ARCHITECTURE.md) for code owners; [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297) for outstanding work; [PR #449 governance audit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/449) for the **merged historical documentation-governance audit**; its proposed test-governance implementation remains separately gated. Historical reports retain their original dated evidence.
 
@@ -10,13 +18,103 @@
 
 **Documentation coverage (25 October; triaged, not certified):** [Coverage and authority notes](DOCUMENTATION_COVERAGE_NOTES_20261025.md) link the [machine-readable Markdown census](DOCUMENTATION_COVERAGE_REGISTER_20261025.json). This supplement lists the 152 `docs/` paths outside the original October 19 census and marks 74 lacking direct index links at the pinned checkpoint; file coverage is not full review or permission to resume older work.
 
-**How to read older “current” guides (as verified for dev.185):** The title or an old candidate status describes a document's **own checkpoint**, not automatically the latest playable build or permission to execute its old next steps. Recheck live source and the newest owner authorization before starting work.
+**How to read older “current” guides (historical dev.185 triage; current checkpoint above):** The title or an old candidate status describes a document's **own checkpoint**, not automatically the latest playable build or permission to execute its old next steps. Recheck live source and the newest owner authorization before starting work.
 
 | Topic | Present-day authority to consult | Dated context, not an open work order |
 | --- | --- | --- |
 | Sprite and art selections | [Sprite manifest](../assets/sprites/manifest.json), relevant procedural source, [per-design decision overlay](../tools/sprites/current-design-decisions.json) and later owner rulings; [sprite workflow](DESIGN_TO_SPRITE_WORKFLOW.md) explains how to preserve original masters and accepted design scope | [20 October dev.118 sprite restart](SPRITE_RESTART_20261020.md) and [8–20 October production journal](SPRITE_PRODUCTION_CURRENT_CONTEXT.md) are historical checkpoints; the overlay itself is dated and is not automatic production consent |
 | Performance and returning-player settings | Actual runtime/settings source, [verified development state](DEVELOPMENT_STATE.md) and exact Pages validation; real-device FPS remains a separate evidence question | [Published dev.169 performance assessment](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md) and [dev.170 implementation candidate](PERFORMANCE_BASELINE_DEV170_20261024.md) retain their own period-specific claims and instructions, not an unmerged task to restart |
 | Snapshot release history | [Verified current release state](DEVELOPMENT_STATE.md) for the same, continually updated live PWA | [October Community Snapshot notes (dev.119)](V09_RELEASE_NOTES.md) cover that earlier published milestone, not the entire subsequent update history |
+
+## Phase 3 — topical directory for previously unindexed Markdown paths (27 October 2026)
+
+The links below close **direct filename discoverability gaps**, without deleting any document or changing its historical meaning. These are **routing links, not approvals, current-feature claims, deep document reviews or proof that an unlinked document was broken**. For the complete machine-readable classification of **388 paths at the earlier Phase 3 checkpoint, expanded to 416 in the 28 October reconciliation**, including files outside `docs/`, see the [existing coverage register](DOCUMENTATION_COVERAGE_REGISTER_20261025.json) and its [dated methodology / later reconciliation](DOCUMENTATION_COVERAGE_NOTES_20261025.md). The live release and acceptance authority remains [Current development state](DEVELOPMENT_STATE.md).
+
+### Governance, audits and test reliability (4)
+
+- [DOCUMENTATION GOVERNANCE AUDIT HANDOFF 20261025](DOCUMENTATION_GOVERNANCE_AUDIT_HANDOFF_20261025.md) · [DOCUMENTATION GOVERNANCE DEEP AUDIT 20261025](DOCUMENTATION_GOVERNANCE_DEEP_AUDIT_20261025.md) · [HERO SKILL1 AREA3 QUEUE STACKING DECISION 20261024](HERO_SKILL1_AREA3_QUEUE_STACKING_DECISION_20261024.md) · [TEST RELIABILITY STAGES 1 TO 3 20261027](TEST_RELIABILITY_STAGES_1_TO_3_20261027.md)
+
+### Project coordination and community planning (9)
+
+- [AUDIT INTEGRATION REPAIRS DEV175](AUDIT_INTEGRATION_REPAIRS_DEV175.md) · [BRIEF COMPANY DEV150](BRIEF_COMPANY_DEV150.md) · [FOUNDING EXPLORERS EXECUTION RECORD](FOUNDING_EXPLORERS_EXECUTION_RECORD.md) · [FOUNDING EXPLORERS IMPLEMENTATION HANDOFF](FOUNDING_EXPLORERS_IMPLEMENTATION_HANDOFF.md) · [FOUNDING EXPLORERS LAUNCH PREP KIT 20261025](FOUNDING_EXPLORERS_LAUNCH_PREP_KIT_20261025.md)
+- [N1A SCENE RECONCILIATION 20261024](N1A_SCENE_RECONCILIATION_20261024.md) · [PR439 INDEPENDENT WORK HANDOFF 20261024](PR439_INDEPENDENT_WORK_HANDOFF_20261024.md) · [THORNFANG OPENING DEV146](THORNFANG_OPENING_DEV146.md) · [UPDATE NOTICE 20261020](UPDATE_NOTICE_20261020.md)
+
+### Narrative and Archive (6)
+
+- [A2 A3 ARCHIVE BOOKSHELF READING 20261024](A2_A3_ARCHIVE_BOOKSHELF_READING_20261024.md) · [A4 A5 ARCHIVE BILINGUAL VALIDATION 20261024](A4_A5_ARCHIVE_BILINGUAL_VALIDATION_20261024.md) · [ARCHIVE FORMATTING PASS 20261024](ARCHIVE_FORMATTING_PASS_20261024.md) · [ARCHIVE INTEGRATION REVIEW 20261024](ARCHIVE_INTEGRATION_REVIEW_20261024.md) · [KEEPER ARCHIVE MECHANICS AUDIT 20261024](KEEPER_ARCHIVE_MECHANICS_AUDIT_20261024.md)
+- [N1 BILINGUAL NARRATIVE INTEGRATION 20261024](N1_BILINGUAL_NARRATIVE_INTEGRATION_20261024.md)
+
+### World and regions (4)
+
+- [FERRY SIZE DEV137](FERRY_SIZE_DEV137.md) · [HIGHLANDS DEV138 GEOGRAPHY AESTHETIC AUDIT](HIGHLANDS_DEV138_GEOGRAPHY_AESTHETIC_AUDIT.md) · [HIGHLANDS TREASURY DEV138](HIGHLANDS_TREASURY_DEV138.md) · [ORCHARD WITNESS DEV147](ORCHARD_WITNESS_DEV147.md)
+
+### Rendering, PixiJS, performance and graphics (16)
+
+- [ADAPTIVE FRAME SKIP TWO FRAME 20261023](ADAPTIVE_FRAME_SKIP_TWO_FRAME_20261023.md) · [AUTO OPTIMIZATION EMERGENCY OVERRIDE 20261024](AUTO_OPTIMIZATION_EMERGENCY_OVERRIDE_20261024.md) · [AUTO RESOLUTION 20FPS DEV174](AUTO_RESOLUTION_20FPS_DEV174.md) · [CRITICAL FREEZE RESTART RECOVERY 20261023](CRITICAL_FREEZE_RESTART_RECOVERY_20261023.md) · [CROWD COLLISION FAST REJECT 20261023](CROWD_COLLISION_FAST_REJECT_20261023.md)
+- [CROWD MOVEMENT DIAGNOSTICS 20261023](CROWD_MOVEMENT_DIAGNOSTICS_20261023.md) · [MENU SCREEN PERFORMANCE STEP2 20261023](MENU_SCREEN_PERFORMANCE_STEP2_20261023.md) · [OPTIMIZATION AUDIT 20261020](OPTIMIZATION_AUDIT_20261020.md) · [PIXIJS PLAYTEST STEP2 20261022](PIXIJS_PLAYTEST_STEP2_20261022.md) · [PIXIJS PLAYTEST STEP3 AUDIT 20261022](PIXIJS_PLAYTEST_STEP3_AUDIT_20261022.md)
+- [PIXIJS PRE STEP4 HANDOFF 20261022](PIXIJS_PRE_STEP4_HANDOFF_20261022.md) · [PIXI TWILIGHT GLOW FAILURE 20261026](PIXI_TWILIGHT_GLOW_FAILURE_20261026.md) · [PR518 ENGINEERING HANDOFF 20261027](PR518_ENGINEERING_HANDOFF_20261027.md) · [RUNTIME WORKLOAD DEV177](RUNTIME_WORKLOAD_DEV177.md) · [RUNTIME WORKLOAD DEV177 AUDIT](RUNTIME_WORKLOAD_DEV177_AUDIT.md)
+- [WEBGL RENDERER PILOT PREPARATION 20261022](WEBGL_RENDERER_PILOT_PREPARATION_20261022.md)
+
+### Visual effects, art and sprite production (9)
+
+- [ART CHECK DEV177 REPAIR 20261025](ART_CHECK_DEV177_REPAIR_20261025.md) · [EFFECTS PR471 VERIFICATION 20261025](EFFECTS_PR471_VERIFICATION_20261025.md) · [EFFECTS STAGE5 GITHUB HANDOFF 20261025](EFFECTS_STAGE5_GITHUB_HANDOFF_20261025.md) · [GOBLIN SLINGER ARROW GEOMETRY DEV194](GOBLIN_SLINGER_ARROW_GEOMETRY_DEV194.md) · [MAGE HAIR QUICKFIX 20261020](MAGE_HAIR_QUICKFIX_20261020.md)
+- [PARTY PLAYTEST DIAGNOSTICS 20261025](PARTY_PLAYTEST_DIAGNOSTICS_20261025.md) · [PROCEDURAL CHARACTER QUICKFIX 20261020](PROCEDURAL_CHARACTER_QUICKFIX_20261020.md) · [PROCEDURAL COTTAGE 20261020](PROCEDURAL_COTTAGE_20261020.md) · [SLINGER ARROW ART REVIEW DEV195](SLINGER_ARROW_ART_REVIEW_DEV195.md)
+
+### Saves and recovery (1)
+
+- [SAVE RECOVERY CHECKPOINTS DEV176](SAVE_RECOVERY_CHECKPOINTS_DEV176.md)
+
+### Combat, criticals, balance and diagnostics (51)
+
+- [ASYMMETRIC TAP CHARGED COOLDOWNS 20261024](ASYMMETRIC_TAP_CHARGED_COOLDOWNS_20261024.md) · [CAPTAIN HEALING AND TREASURY GUARDS 20261025](CAPTAIN_HEALING_AND_TREASURY_GUARDS_20261025.md) · [COMBAT ARENA LOW SPEC](COMBAT_ARENA_LOW_SPEC.md) · [CRITICAL EXECUTIONS AND UNFORESEEN CODICES DESIGN 20261024](CRITICAL_EXECUTIONS_AND_UNFORESEEN_CODICES_DESIGN_20261024.md) · [CRITICAL EXECUTIONS FEASIBILITY PERFORMANCE IMPLEMENTATION AUDIT 20261024](CRITICAL_EXECUTIONS_FEASIBILITY_PERFORMANCE_IMPLEMENTATION_AUDIT_20261024.md)
+- [CRITICAL EXECUTIONS STAGE0 ACTION CATALOG PR439 20261025](CRITICAL_EXECUTIONS_STAGE0_ACTION_CATALOG_PR439_20261025.md) · [CRITICAL EXECUTIONS STAGE2 PARTY RECEIPT CHECKPOINT 20261024](CRITICAL_EXECUTIONS_STAGE2_PARTY_RECEIPT_CHECKPOINT_20261024.md) · [CRITICAL EXECUTIONS THREE LEVEL STRENGTH POLICY 20261024](CRITICAL_EXECUTIONS_THREE_LEVEL_STRENGTH_POLICY_20261024.md) · [ENEMY ORDINARY HEALING DEV181](ENEMY_ORDINARY_HEALING_DEV181.md) · [ENEMY RANGE TUNING SPLIT 20261027](ENEMY_RANGE_TUNING_SPLIT_20261027.md)
+- [FORT REPAIRS DEV151](FORT_REPAIRS_DEV151.md) · [GREENWOOD MELEE ANTI KITE PILOT 20261026](GREENWOOD_MELEE_ANTI_KITE_PILOT_20261026.md) · [GREENWOOD NATIVE PURSUIT 20261026](GREENWOOD_NATIVE_PURSUIT_20261026.md) · [HERO SKILL1 AREA1 IMPLEMENTATION 20261024](HERO_SKILL1_AREA1_IMPLEMENTATION_20261024.md) · [HERO SKILL1 AREA2 IMPLEMENTATION 20261024](HERO_SKILL1_AREA2_IMPLEMENTATION_20261024.md)
+- [HERO SKILL1 AREA3 IMPLEMENTATION 20261024](HERO_SKILL1_AREA3_IMPLEMENTATION_20261024.md) · [HERO SKILL1 AREA4 FINAL REVIEW 20261024](HERO_SKILL1_AREA4_FINAL_REVIEW_20261024.md) · [HERO SKILL1 AV AND IN GAME GUIDANCE SCOPE 20261024](HERO_SKILL1_AV_AND_IN_GAME_GUIDANCE_SCOPE_20261024.md) · [HERO SKILL1 COMPANION DEPENDENCIES 20261024](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md) · [HERO SKILL1 FINAL BALANCE SPEC 20261024](HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md)
+- [HERO SKILL1 SELF TAUGHT COMBAT DESIGN 20261024](HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md) · [ISSUE463 DEV186 INTEGRATION 20261025](ISSUE463_DEV186_INTEGRATION_20261025.md) · [ISSUE463 HERO COMPANION PROJECTILE AUDIT 20261025](ISSUE463_HERO_COMPANION_PROJECTILE_AUDIT_20261025.md) · [ISSUE463 PET FAMILY RELEASE IMPACT AUDIT 20261025](ISSUE463_PET_FAMILY_RELEASE_IMPACT_AUDIT_20261025.md) · [ISSUE463 POSTCAST INTEGRATION READINESS 20261025](ISSUE463_POSTCAST_INTEGRATION_READINESS_20261025.md)
+- [ISSUE463 PR464 INDEPENDENT CONTINUATION HANDOFF 20261025](ISSUE463_PR464_INDEPENDENT_CONTINUATION_HANDOFF_20261025.md) · [ISSUE463 UNMERGED WORK COMPATIBILITY AUDIT 20261025](ISSUE463_UNMERGED_WORK_COMPATIBILITY_AUDIT_20261025.md) · [MAGE BEAM TRAVEL AND HERO PROJECTILE AUDIT 20261025](MAGE_BEAM_TRAVEL_AND_HERO_PROJECTILE_AUDIT_20261025.md) · [MELEE BASIC RANGE REGRESSION AUDIT 20261026](MELEE_BASIC_RANGE_REGRESSION_AUDIT_20261026.md) · [MELEE REACH BALANCING WORKBENCH](MELEE_REACH_BALANCING_WORKBENCH.md)
+- [MELEE REACH MERGE READINESS 20261026](MELEE_REACH_MERGE_READINESS_20261026.md) · [NATIVE RANGE FORT AUDIT DEV145](NATIVE_RANGE_FORT_AUDIT_DEV145.md) · [NIGHTMARE SPECIALIST UPKEEP DEV145](NIGHTMARE_SPECIALIST_UPKEEP_DEV145.md) · [PET SKILL SCHEDULING DEV180](PET_SKILL_SCHEDULING_DEV180.md) · [PR440 CRITICAL STAGE2 STOP CHECKPOINT 20261025](PR440_CRITICAL_STAGE2_STOP_CHECKPOINT_20261025.md)
+- [PR440 DEV191 REVIEWED SPRITE SCOPE DELTA 20261025](PR440_DEV191_REVIEWED_SPRITE_SCOPE_DELTA_20261025.md) · [PR440 DEV192 PIXI MAIN RECONCILIATION 20261026](PR440_DEV192_PIXI_MAIN_RECONCILIATION_20261026.md) · [PR440 INDEPENDENT WORK HANDOFF 20261024](PR440_INDEPENDENT_WORK_HANDOFF_20261024.md) · [PR440 INTEGRATED CANDIDATE AUDIT HANDOFF 20261025](PR440_INTEGRATED_CANDIDATE_AUDIT_HANDOFF_20261025.md) · [PR440 STAGE2 GATE STAGE3 NATIVE HANDOFF 20261025](PR440_STAGE2_GATE_STAGE3_NATIVE_HANDOFF_20261025.md)
+- [PR440 STAGE2 PETS NATIVE CHECKPOINT 20261025](PR440_STAGE2_PETS_NATIVE_CHECKPOINT_20261025.md) · [PR440 STAGE3 BOSS GROUPED IMPLEMENTATION 20261025](PR440_STAGE3_BOSS_GROUPED_IMPLEMENTATION_20261025.md) · [PR440 STAGE3 CAPTAINS VERIFIED BOSS ENTRY HANDOFF 20261025](PR440_STAGE3_CAPTAINS_VERIFIED_BOSS_ENTRY_HANDOFF_20261025.md) · [PR440 STAGE3 CROSS PR COMPATIBILITY AUDIT 20261025](PR440_STAGE3_CROSS_PR_COMPATIBILITY_AUDIT_20261025.md) · [PR440 STAGE3 SPECIAL ACTIONS NATIVE CHECKPOINT 20261025](PR440_STAGE3_SPECIAL_ACTIONS_NATIVE_CHECKPOINT_20261025.md)
+- [PR440 STAGE GATES AND REGRESSION MATRIX 20261024](PR440_STAGE_GATES_AND_REGRESSION_MATRIX_20261024.md) · [RELEASE CANDIDATE HEALING ROGUE 20261025](RELEASE_CANDIDATE_HEALING_ROGUE_20261025.md) · [ROGUE RANGED PRESSURE DEV184 20261025](ROGUE_RANGED_PRESSURE_DEV184_20261025.md) · [ROGUE TERRITORIAL ESCALATION 20261025](ROGUE_TERRITORIAL_ESCALATION_20261025.md) · [SLOW CAP PLAYTEST REPAIR 20261025](SLOW_CAP_PLAYTEST_REPAIR_20261025.md)
+- [TWILIGHT FEASIBILITY AUDIT 20261020](TWILIGHT_FEASIBILITY_AUDIT_20261020.md)
+
+### Music, sound and audio stages (5)
+
+- [AUDIO STAGE1 COVERAGE 20261025](AUDIO_STAGE1_COVERAGE_20261025.md) · [AUDIO STAGE2 RECOVERY 20261025](AUDIO_STAGE2_RECOVERY_20261025.md) · [AUDIO STAGE3 HANDOFF 20261025](AUDIO_STAGE3_HANDOFF_20261025.md) · [AUDIO STAGE3 REAL ACTION AUDIT 20261025](AUDIO_STAGE3_REAL_ACTION_AUDIT_20261025.md) · [AUDIO STAGE4 MIX AUDIT 20261025](AUDIO_STAGE4_MIX_AUDIT_20261025.md)
+
+### Companions, pets and services (7)
+
+- [BARRACKS BUILD COPY DEV155](BARRACKS_BUILD_COPY_DEV155.md) · [BARRACKS TUTORIAL DEV154](BARRACKS_TUTORIAL_DEV154.md) · [BASIC BARRACKS MENUS DEV156](BASIC_BARRACKS_MENUS_DEV156.md) · [COMPANION ONBOARDING DEV148](COMPANION_ONBOARDING_DEV148.md) · [QUEUED COMPANION CARE DEV149](QUEUED_COMPANION_CARE_DEV149.md)
+- [RECALL HIGHLIGHT DEV153](RECALL_HIGHLIGHT_DEV153.md) · [RECALL TUTORIAL DEV152](RECALL_TUTORIAL_DEV152.md)
+
+### Menus, mobile HUD and usability (6)
+
+- [ADAPTIVE MOBILE HUD IMPLEMENTATION 20261027](ADAPTIVE_MOBILE_HUD_IMPLEMENTATION_20261027.md) · [GAME MENUS DEV157](GAME_MENUS_DEV157.md) · [HUD OPTION B PC PHONE 20261025](HUD_OPTION_B_PC_PHONE_20261025.md) · [MENU FOUNDATION STEP1 20261023](MENU_FOUNDATION_STEP1_20261023.md) · [MENU OVERHAUL STEPS3 7](MENU_OVERHAUL_STEPS3_7.md)
+- [MENU STEP7 AUDIT 20261023](MENU_STEP7_AUDIT_20261023.md)
+
+### Navigation and maps (5)
+
+- [MAP WAYFINDING FOLLOWUP](MAP_WAYFINDING_FOLLOWUP.md) · [NAVIGATION STAGE2 20261023](NAVIGATION_STAGE2_20261023.md) · [NAVIGATION STAGE3 20261023](NAVIGATION_STAGE3_20261023.md) · [NAVIGATION STAGE4 20261023](NAVIGATION_STAGE4_20261023.md) · [NAVIGATION STAGE5 20261023](NAVIGATION_STAGE5_20261023.md)
+
+## 28 October 2026 — Rogue fourth-class documentation routing
+
+**Current authority:** [Rogue soft launch](ROGUE_SOFT_RELEASE_20261028.md), [phone findings](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md), [dev.208 jingle/performance evidence](ROGUE_JINGLE_CANON_AND_SLOWDOWN_DEV208_20261028.md) and [Development state](DEVELOPMENT_STATE.md). [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) merged; Rogue is now normally selectable. Older draft/preview URLs, original stage gates and unmerged statements in the dated documents below remain *historical*, not current release instructions. These direct links improve discoverability without certifying the body of every old stage report.
+
+### Rogue/Bard design and staged implementation (23)
+
+- [ROGUE BARD CANONICAL OWNER HANDOFF 20261027](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md) · [ROGUE BARD CHARMED ROSTER BARRACKS CONTRACT 20261027](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md) · [ROGUE BARD CLASS INDEPENDENCE AUDIT 20261027](ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md)
+- [ROGUE BARD DISCUSSION RECORD 20261026](ROGUE_BARD_DISCUSSION_RECORD_20261026.md) · [ROGUE BARD DUAL SIDED PERFORMANCES CRITICAL TIERS 20261027](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md) · [ROGUE BARD EIGHT PHASE DEVELOPMENT HANDOFF 20261027](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md)
+- [ROGUE BARD FOURTH CLASS FEASIBILITY 20261026](ROGUE_BARD_FOURTH_CLASS_FEASIBILITY_20261026.md) · [ROGUE BARD FOURTH CLASS HOUSEKEEPING 20261027](ROGUE_BARD_FOURTH_CLASS_HOUSEKEEPING_20261027.md) · [ROGUE BARD GAMEPLAY BALANCE CANDIDATE 20261026](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md)
+- [ROGUE BARD IMPLEMENTATION HOUSEKEEPING 20261026](ROGUE_BARD_IMPLEMENTATION_HOUSEKEEPING_20261026.md) · [ROGUE BARD LIVE PLAYTEST GATE 20261027](ROGUE_BARD_LIVE_PLAYTEST_GATE_20261027.md) · [ROGUE BARD MAINLINE RECONCILIATION 20261027](ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md)
+- [ROGUE BARD OWNER REVIEW 20261026](ROGUE_BARD_OWNER_REVIEW_20261026.md) · [ROGUE BARD PHASE2 HERO FOUNDATION 20261027](ROGUE_BARD_PHASE2_HERO_FOUNDATION_20261027.md) · [ROGUE BARD PHASE3 TECHNICAL CLOSEOUT 20261027](ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_20261027.md)
+- [ROGUE BARD PHASE4 COMPANION INTEGRATION 20261027](ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md) · [ROGUE BARD PHASE5 MUSICAL REPERTOIRE 20261027](ROGUE_BARD_PHASE5_MUSICAL_REPERTOIRE_20261027.md) · [ROGUE BARD PHASE5 NAMES AND CRITICAL ALIGNMENT 20261027](ROGUE_BARD_PHASE5_NAMES_AND_CRITICAL_ALIGNMENT_20261027.md)
+- [ROGUE BARD PHASE5 PHASE6 RESTART CHECKPOINT 20261027](ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md) · [ROGUE BARD PHASE6 NATIVE CRITICAL CONTINUATION 20261027](ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md) · [ROGUE BARD PHASES 1 TO 3 CONSOLIDATION 20261027](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md)
+- [ROGUE BARD PR511 DESCRIPTION ARCHIVE 20261027](ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md) · [ROGUE BARD STATIC VISUAL DESIGN 20261026](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md)
+
+### Rogue release, mobile, art and follow-up (5)
+
+- [ROGUE CHARM NAMEPLATE POLISH 20261028](ROGUE_CHARM_NAMEPLATE_POLISH_20261028.md) · [ROGUE FIRST PHONE ACCEPTANCE 20261028](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md) · [ROGUE JINGLE CANON AND SLOWDOWN DEV208 20261028](ROGUE_JINGLE_CANON_AND_SLOWDOWN_DEV208_20261028.md)
+- [ROGUE PHASE7 PROCEDURAL ART 20261027](ROGUE_PHASE7_PROCEDURAL_ART_20261027.md) · [ROGUE SOFT RELEASE 20261028](ROGUE_SOFT_RELEASE_20261028.md)
 
 ## Earlier status and historical inventory (retained)
 

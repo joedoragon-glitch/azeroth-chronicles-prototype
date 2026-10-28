@@ -1,5 +1,8 @@
 # Current performance and instrumentation status — dev.169 (24 October 2026)
 
+> **Current-use boundary — 27 October 2026:** This is the **published dev.169 historical performance baseline**, not the latest release status or a device-level performance acceptance certificate. Latest audited `main` in [Development state](DEVELOPMENT_STATE.md) is `dev.205`, with subsequent title/loading and optional Pixi preparation [#518](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518), while hardware/browser acceptance remains open. The term “current” in the original dev.169 technical narrative is relative to its **24 October checkpoint**. Keep its exact measurements, original decisions and archived release receipts unchanged.
+
+
 **Status: merged and published, not merely a draft.** `main` at
 [`35bc942a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/35bc942a541017eb634f0c00789746ccd2aac57d)
 includes the consolidated [PR #426](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/426).

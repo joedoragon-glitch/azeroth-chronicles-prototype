@@ -1,3 +1,5 @@
+> **Current release status — 28 October 2026:** [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) **merged and published**; Rogue/Pícara is a normally selectable fourth class in `0.9.1+snapshot.dev.208`. Earlier branch, draft, URL-preview and unimplemented language below describes historical stages and is **superseded as a current instruction**. Phone/boss/visual/audio/long-tail performance acceptance still has independent gates; see [Development state](DEVELOPMENT_STATE.md), [Rogue soft launch](ROGUE_SOFT_RELEASE_20261028.md), and [phone findings](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md).
+
 # Rogue jingle-bell canon audit and focused slowdown report — 28 October 2026
 
 **Prepared release candidate:** 0.9.1+snapshot.dev.208. Base: published dev.207 / `main@a46effdc`. This candidate is **draft and not published**; owner is comfortable with ordinary live-first acceptance after an explicitly authorized release, not a preview testing workflow.
