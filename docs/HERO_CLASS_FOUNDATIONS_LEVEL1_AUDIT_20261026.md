@@ -25,7 +25,7 @@ This document began as a **documentation-only historical design audit**. That or
 | Ranger — Agility | +3 movement speed; +1 percentage point cooldown reduction | **+3 speed**, **1% passive CDR** | **+45 speed**, **15% passive CDR** |
 | Mage — Arcane Power | +2 Power; **no** cooldown/HP/speed bonus | **+2 Power**, resulting base+passive Power 24 | **+30 Power**, resulting base+passive Power 52 |
 
-**One consistent derived-value model, not yet implemented:**
+**Historical design model:** The following pseudocode describes the proposed calculation; the actual implementation is in [`progression.js`](../src/prototype/progression.js) and PR #509 has merged. Consult source for current behavior:
 
 ```js
 const ticks = hero.level; // valid hero levels start at 1

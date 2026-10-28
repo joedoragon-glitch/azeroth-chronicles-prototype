@@ -1,11 +1,11 @@
-# Hero Skill 1 — consolidated numerical and implementation-ready design specification
+# Hero Skill 1 — historical three-class first-pass balance specification
 
-**24 October 2026 · Draft PR #439 · owner-approved first-pass balance; Area 1 gameplay implementation now present on draft branch, not merged/deployed.**
+**Historical 24 October 2026 design checkpoint:** [PR #439](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/439) has since merged. The first-pass values below describe the three classes covered at that time; they are not a current specification for Rogue or proof that every subsequent change preserved those values. Use current source, approved decisions, and [Development state](DEVELOPMENT_STATE.md) before changing gameplay.
 **Baseline:** `main` at `e4e8234b5f784ddc9492fe79d956fd0a696b12af`, existing [design/companion audit](HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md), [companion dependency matrix](HERO_SKILL1_COMPANION_DEPENDENCIES_20261024.md), and [hero damage/cooldown source audit](HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md). Values below are the **chosen first-implementation specification**, rather than vague candidate ranges. Numerical effectiveness is **not certified** by a simulation or playtest; any actual adjustment requires reported focused evidence and owner review.
 
 ## One discipline, three actions, no additional rank or specialist
 
-All hero classes already start with `hero.skills[0] = 1`; later specialists may upgrade that same Skill 1 rank up to the established curricula. **Automatic basics, normal tap Skill 1 and charged hold Skill 1 all use this one learned rank**, its old costs and existing +15%-per-rank multiplier. Rescued teachers *refine* self-taught fundamentals; they are not required for the hero to know how to attack.
+The Paladin, Mage and Ranger classes covered by this 24 October specification started with `hero.skills[0] = 1`; later specialists may upgrade that same Skill 1 rank up to the established curricula. **Automatic basics, normal tap Skill 1 and charged hold Skill 1 all use this one learned rank**, its old costs and existing +15%-per-rank multiplier. Rescued teachers *refine* self-taught fundamentals; they are not required for the hero to know how to attack.
 
 **Use these common symbols for every damage formula:**
 - `P = this.power()`, the computed hero Power at the moment of execution, not the class's original starting Power.
@@ -26,7 +26,7 @@ All hero classes already start with `hero.skills[0] = 1`; later specialists may 
 
 **Charged input timing remains 0.65s** of preparation (a genuine release inside the existing <0.20s tap classification is a normal cast; middle threshold/cancel and charge queue behavior remain as currently implemented). Preserve existing charged interruption and protected-encounter receipt rules; no variable charge thresholds.
 
-## 1. Automatic basics (all hero classes; their combo stays automatic)
+## 1. Automatic basics (the three classes covered by this checkpoint)
 
 - **Same basic damage and beat order:** `B * M(r)` on beat 1; `1.1 B * M(r)` on beat 2; `1.2 B * M(r)` on beat 3, subject to native hit/contact and defense rules. The third beat keeps **55% of the unmultiplied base hit** for eligible secondary splash geometry, and current class-specific fan/cleave visuals, no extra statuses. Four seconds without a compatible target/hit and target switch follow present combo reset rules.
 - Paladin basic reach **120**, Mage **400**, Ranger **450** (existing targeting limits). Preserve hit/LOS, manual priority, no passive chase, stationary eligibility via PR #436 reconciliation, protected boss/first Vale opening, Recall and navigation, Shield Stance's block on Paladin basics, relevant Mage Silence exemptions, charge-overlap behavior and real combat pausing.

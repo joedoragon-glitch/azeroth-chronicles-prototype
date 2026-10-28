@@ -2697,7 +2697,7 @@
     },
     {
       "path": "docs/HERO_CLASS_FOUNDATIONS_LEVEL1_AUDIT_20261026.md",
-      "gitBlobSha": "0d754f119c55f4017af7768e8e98a0d3aabff2af",
+      "gitBlobSha": "60ab609de807c1d740624c97d3127cb58982f1af",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2707,7 +2707,9 @@
       "reviewDepth": "header_screened",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousClassAuthorityBlobSha": "0d754f119c55f4017af7768e8e98a0d3aabff2af",
+      "reconciliationReviewEvidence": "28 Oct: removed stale not-implemented claim after verifying PR #509 merge and progression source; full document review remains unresolved."
     },
     {
       "path": "docs/HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md",
@@ -2949,7 +2951,7 @@
     },
     {
       "path": "docs/HERO_SKILL1_FINAL_BALANCE_SPEC_20261024.md",
-      "gitBlobSha": "94494fa7e2d585188dbc7c32afbaeea39e3f04c6",
+      "gitBlobSha": "cc2f70b1ec8036873f1e0cce941a210b655c5827",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2967,7 +2969,9 @@
       "historicalPinnedDirectlyLinkedFromIndex": false,
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousClassAuthorityBlobSha": "94494fa7e2d585188dbc7c32afbaeea39e3f04c6",
+      "reconciliationReviewEvidence": "28 Oct: bounded original three-class specification and corrected PR #439 merged status; later gameplay and all numeric details remain unresolved."
     },
     {
       "path": "docs/HERO_SKILL1_SELF_TAUGHT_COMBAT_DESIGN_20261024.md",
