@@ -117,6 +117,53 @@ function openForwardTravel(app) {
     assert.equal(app.scope.Prototype.started, true);
   }
 
+  // A slow or stalled resource must not be treated as an expired stopwatch.
+  // The player can explicitly select Canvas instead of waiting indefinitely.
+  {
+    const app = shell('en');
+    const game = app.scope.Prototype.game;
+    const origin = game.zoneId;
+    app.scope.PrototypeSprites = {
+      definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
+      warm: () => new Promise(() => {}), // intentionally never resolves
+      advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
+    };
+    openForwardTravel(app).click();
+    await flush();
+    app.frame(12000);
+    assert.equal(game.zoneId, origin,
+      'no wall-clock budget prematurely commits a still-preparing trip');
+    const canvas = app.elements.get('scene-loading-retry');
+    assert.equal(canvas.hidden, false, 'manual Canvas bypass is offered');
+    canvas.click();
+    await flush();
+    assert.notEqual(game.zoneId, origin,
+      'Canvas bypass completes the authorized trip without waiting for stalled art');
+    app.frame(12100);
+    assert.equal(app.scope.Prototype.sceneLoading, false);
+  }
+  {
+    const app = shell('en', 'ranger', { stayOnTitle: true });
+    app.scope.PrototypeSprites = {
+      definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
+      warm: () => new Promise(() => {}), // intentionally never resolves
+      advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
+    };
+    app.elements.get('title-continue').click();
+    await flush();
+    app.frame(12000);
+    assert.equal(app.scope.Prototype.started, false,
+      'Continue waits for readiness without a forced timeout');
+    const button = app.elements.get('title-screen').children.find(
+      (item) => item.textContent === 'Continue with Canvas');
+    assert(button && !button.hidden, 'Continue offers an optional Canvas bypass');
+    button.click();
+    await flush();
+    app.frame(12100);
+    assert.equal(app.scope.Prototype.started, true,
+      'explicit Canvas choice releases the pending first scene');
+  }
+
   // A page hidden during pending preflight cancels the COMMIT, even if images finish later.
   {
     const app = shell('en');
