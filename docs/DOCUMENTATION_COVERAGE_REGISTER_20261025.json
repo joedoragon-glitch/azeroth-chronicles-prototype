@@ -101,6 +101,16 @@
       "priorReadmeBlobSha": "d58089f9327ab95315db4e5555def2bfd5143dcb",
       "newReadmeBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
       "method": "Full original README read; compared current source, release evidence, local links and register receipts. Historical receipts remain in git and linked existing documents. Documentation-only, not physical-device certification."
+    },
+    "releaseConsistencyGatePR564": {
+      "source": "draft PR #564",
+      "scope": "Four edited current-document entrypoint blob receipts reconciled; no full-body re-audit claimed",
+      "files": [
+        "AGENTS.md",
+        "README.md",
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ]
     }
   },
   "semantics": {
@@ -296,7 +306,7 @@
     },
     {
       "path": "AGENTS.md",
-      "gitBlobSha": "8fb5dee6217da15998cfea7fb2a9ceaeb061b960",
+      "gitBlobSha": "a7bf4fd19034b22130832108dcd02e452140f472",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1903,7 +1913,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
+      "gitBlobSha": "867a28a6a141ac4afcd837c7b32216c7cff7bec2",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2012,7 +2022,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
+      "gitBlobSha": "78af461ed8f35b4b8730cc9e727d2826a5f5ddb0",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -6492,7 +6502,7 @@
     },
     {
       "path": "README.md",
-      "gitBlobSha": "3a21e8bd74c0fa781ce2888fee6a3a978c782728",
+      "gitBlobSha": "fec70d76d8fd9ac2074bf2ac78d3ae4ca45e2623",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
