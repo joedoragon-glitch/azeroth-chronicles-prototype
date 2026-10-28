@@ -75,7 +75,8 @@
         "docs/MECHANIC_DEVELOPMENT.md",
         "docs/PROJECT_HISTORY.md",
         "docs/ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md"
-      ]
+      ],
+      "softReleaseClarificationHeadBeforeRegistry": "6b0b8f9bd16f62bf194ff851b4e5672ff771aa33"
     }
   },
   "semantics": {
@@ -83,7 +84,7 @@
     "censusSource": "Old table membership, not commit-creation date",
     "reviewDepth": "Full-body review is not claimed by header_screened or path_only; full_body_pr_disposition_checked means its text and indicated PR disposition were checked, NOT a comprehensive current-runtime or every-claim recertification",
     "authority": "Only current_entrypoint is routing authority; source and owner consent always prevail",
-    "gitBlobSha": "All 399 direct docs/*.md SHA receipts are checked against the exact final Rogue-canon branch tree at basis.rogueCanonReconciliation.finalEditorialRevisionHeadBeforeRegistry; historical pinned receipts are preserved. The register JSON does not register itself. Root and nested Markdown paths retain the Phase 5 baseline unless independently refreshed.",
+    "gitBlobSha": "All direct docs/*.md receipts were compared with the current Rogue-canon branch tree, including the later soft-release clarification in basis.rogueCanonReconciliation.softReleaseClarificationHeadBeforeRegistry. Historical receipts are preserved in previousRogueCanonGitBlobSha when a path changed. This registry JSON does not register itself.",
     "verifiedPrRouting": "GitHub PR disposition checked at the recorded publishedMainSha, NOT today's live implementation or user-device certification. merged_directly means the source PR merged; merged_via_integration means source PR closed unmerged and selected work later merged through integratedByPr. historical_evidence_with_later_merge marks a version-pinned evidence report with no individual implementing source PR; sourcePr is null.",
     "directlyLinkedFromIndex": "True if the current Phase 3 docs/DOCUMENTATION_INDEX.md contains the file basename; filename discoverability is a routing signal, not full-link, body-accuracy or authorization verification. For changed October 25 rows, historicalPinnedDirectlyLinkedFromIndex preserves the prior evidence.",
     "phase3NewDocumentReview": "New Phase 3 rows are conservatively header_screened, based on heading/header and file-path cues only. Role is routing classification, not source-level validation or permission to execute dated tasks.",
@@ -4462,14 +4463,15 @@
     },
     {
       "path": "docs/ROGUE_SOFT_RELEASE_20261028.md",
-      "gitBlobSha": "ba7cbf3acb3ceeb572ad28acbd71317c7a438377",
+      "gitBlobSha": "a6e00db71d6a464f7c4611437e11f9569d8f0f9b",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "dated_record",
       "authority": "verify_with_current_source",
-      "reviewDepth": "path_only"
+      "reviewDepth": "path_only",
+      "previousRogueCanonGitBlobSha": "ba7cbf3acb3ceeb572ad28acbd71317c7a438377"
     },
     {
       "path": "docs/ROGUE_TERRITORIAL_ESCALATION_20261025.md",
