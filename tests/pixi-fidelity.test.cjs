@@ -132,24 +132,30 @@ const runtime={
       });
     }
   })},
-  AzerothPixiSceneBridge:{create:()=>({
-    registerTexture(id){resources.add(id)},
-    hasTexture:id=>resources.has(id),
+  AzerothPixiSceneBridge:{create:()=>{
+    // Each reconstructed scene has its OWN registration map. A stale global
+    // resource set would hide missing re-registration after a viewport resize.
+    const sceneResources=new Set();
+    return {
+    registerTexture(id){resources.add(id);sceneResources.add(id)},
+    hasTexture:id=>sceneResources.has(id),
     unregisterTexture(id){
       assert(!currentActorTextures.has(id),'cannot destroy texture still used by a live sprite');
+      sceneResources.delete(id);
       return resources.delete(id);
     },
     setBackground(){},moveBackground(){},
     syncActors(list){
-      for(const actor of list)assert(resources.has(actor.textureId),
+      for(const actor of list)assert(sceneResources.has(actor.textureId),
         'an actor needs a registered texture before being drawn');
       currentActorTextures=new Set(list.map(actor=>actor.textureId));
       frames.push(list);
     },
     syncLamps(){},setAtmosphere(){},syncMotes(motes,zoom){moteFrames.push({motes,zoom});},setVignette(){},
     draw(){if(failSceneDraw)throw Error(failSceneDraw==='context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error')},
-    destroy(){}
-  })}
+    destroy(){sceneResources.clear();currentActorTextures=new Set()}
+  }}}
+
 };
 const mockDocument={createElement:()=>canvas(),head:{append(){}}};
 const manifest={sprites:{hero:{src:'./assets/sprites/test.png'}}};
@@ -259,12 +265,31 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'quality scaling must not discard reusable images from prior densities');
   assert.deepEqual(resizes,[1.5,1],'quality change resizes GPU in place');
   assert.equal(draws.at(-1).ratio,1,'background raster follows changed quality');
+  // Pixel density deliberately changed from 1.5 to 1: first bake this same
+  // stable actor at density 1. Only subsequent viewport-only reconstruction
+  // should reuse that new raster. Old-density reuse would be incorrect.
+  game.props=[{id:'arrival-near-combat',x:game.hero.x+10,y:game.hero.y,
+    structure:'lumber-pile'}];
+  gpu.draw();
+  game.props=[];
   // Mimic a confirmed iPhone returning from another app at a new viewport.
   // The renderer must rebuild its viewport-dependent layers without a new
   // graphics trial or a fall back to Canvas.
+  const bakesBeforeViewport=gpu.status().proceduralBakes;
+  const evictionsBeforeViewport=gpu.status().proceduralEvictions;
+  const cachedBeforeViewport=gpu.status().proceduralTextures;
   view.width=844;view.height=390;
   canvasSurface.width=844;canvasSurface.height=390;
   assert.doesNotThrow(()=>gpu.draw(),'confirmed viewport change must remain usable');
+  assert.equal(gpu.status().viewportRebuilds,1,'real viewport change rebuilds once');
+  assert.equal(gpu.status().proceduralTextures,cachedBeforeViewport,
+    'viewport-only reconstruction must retain original procedural GPU images');
+  assert.equal(gpu.status().proceduralBakes,bakesBeforeViewport,
+    'viewport-only resize must not synchronously re-bake existing scene art');
+  assert.equal(gpu.status().proceduralEvictions,evictionsBeforeViewport,
+    'viewport-only resize must not bulk-evict reusable art');
+  assert.equal(gpu.status().viewportRetainedProcedural,cachedBeforeViewport,
+    'renderer diagnostics count the cached images kept by the rebuilt scene');
   assert.equal(gpu.status().active,true);
   assert.equal(draws.at(-1).width,844+440,'terrain painter must use new logical width');
   assert.equal(draws.at(-1).height,390+440,'terrain painter must use new logical height');
@@ -276,13 +301,29 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   canvasSurface.width=912;canvasSurface.height=420;
   gpu.draw();
   assert.equal(gpu.status().active,true);
+  assert.equal(gpu.status().viewportRebuilds,2);
+  assert.equal(gpu.status().proceduralBakes,bakesBeforeViewport,
+    'second viewport reconstruction must also keep previously baked artwork');
+  assert.equal(gpu.status().proceduralEvictions,evictionsBeforeViewport);
+  // A formerly prewarmed actor must remain usable in the NEW scene, whose
+  // texture registry started empty, without manufacturing another texture.
+  game.props=[{id:'arrival-near-combat',x:game.hero.x+10,y:game.hero.y,
+    structure:'lumber-pile'}];
+  gpu.draw();
+  assert.equal(gpu.status().proceduralBakes,bakesBeforeViewport,
+    'new scene successfully uses the already-baked actor texture');
+  assert(gpu.status().lastDrawTiming &&
+    Number.isFinite(gpu.status().lastDrawTiming.actorsMs));
+  assert(Number.isFinite(gpu.status().lastDrawTiming.sceneDrawMs));
+  assert.equal(gpu.status().lastDrawTiming.proceduralBakes,0);
+  game.props=[];
   // Simulate region travel without altering saved combat state. Procedural
   // GPU textures from the previous region must be released before rebuilding.
   game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
   game.zoneId='highlands';
   gpu.draw();
-  assert.equal(gpu.status().proceduralTextures,1,
-    'prior density and viewport changes may legitimately clear old artwork');
+  assert.equal(gpu.status().proceduralTextures,cachedBeforeViewport+1,
+    'cross-zone actors add one retained texture without destroying earlier regions');
   assert(gpu.status().proceduralBytes>0);
   const initialBakes=gpu.status().proceduralBakes;
   for(const zone of ['vale','highlands','vale','highlands']){

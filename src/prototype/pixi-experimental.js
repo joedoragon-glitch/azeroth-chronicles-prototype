@@ -228,7 +228,11 @@
       approvedGpuPrepared = 0,
       proceduralGpuPrepared = 0,
       gpuPreparationMs = 0,
-      gpuPreparationBatches = 0;
+      gpuPreparationBatches = 0,
+      viewportRebuilds = 0,
+      viewportRetainedProcedural = 0,
+      lastDrawTiming = null,
+      slowestDrawTiming = null;
     let cancelGpuPreparation = null;
     // One portrait-stamped Crown coin texture, reused for every visible drop.
     const crownLootTextureId = 'pixi-world-crown-loot';
@@ -367,8 +371,11 @@
         requireValue(texture?.source, 'Approved artwork unavailable after resize: ' + src);
         return [src, texture];
       });
-      // Retired procedural textures must never remain referenced by sprites.
-      clearBakes(true);
+      // The Pixi application and GPU context survive a viewport resize.
+      // Scene containers are viewport-specific, but procedural artwork is not.
+      // Do not destroy the cached source textures: that forced every visible
+      // prop to be synchronously re-painted on each resize (potentially hundreds
+      // of milliseconds per frame). The old scene releases its sprite refs.
       releaseCrownLootTexture();
       scene.destroy();
       scene = null;
@@ -382,6 +389,12 @@
         PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
       });
       for (const [src, texture] of originals) scene.registerTexture(src, texture);
+      // Scene.destroy() discards registrations, not the retained image sources.
+      // Re-register them before the next actorFrame() can reference any sprite.
+      // Existing density/zoom/zone revision keys and the bounded LRU still apply.
+      for (const body of baked.values()) scene.registerTexture(body.id, body.texture);
+      viewportRebuilds++;
+      viewportRetainedProcedural += baked.size;
       if (game().s.mode !== 'arena') createBackgroundPainter();
       bakedZoom = null;
       drawBackground();
@@ -1136,20 +1149,34 @@
       // late callback must not replace that precise failure with "inactive".
       if (!active && lastFailure?.type === 'context-loss') return;
       let stage = 'active-check';
+      const started = measureNow(), bakesBefore = proceduralBakes;
+      const timing = { viewportMs: 0, resolutionMs: 0, backgroundMs: 0,
+        actorsMs: 0, atmosphereMs: 0, sceneDrawMs: 0,
+        proceduralBakes: 0, totalMs: 0 };
+      const timed = (field, work) => {
+        const at = measureNow();
+        work();
+        timing[field] = Math.max(0, measureNow() - at);
+      };
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
         stage = 'viewport-check';
-        syncViewport();
+        timed('viewportMs', syncViewport);
         stage = 'resolution';
-        syncResolution();
+        timed('resolutionMs', syncResolution);
         stage = 'background';
-        syncBackground();
+        timed('backgroundMs', syncBackground);
         stage = 'actors';
-        actorFrame();
+        timed('actorsMs', actorFrame);
         stage = 'atmosphere';
-        syncAtmosphere();
+        timed('atmosphereMs', syncAtmosphere);
         stage = 'scene-render';
-        scene.draw();
+        timed('sceneDrawMs', () => scene.draw());
+        timing.proceduralBakes = proceduralBakes - bakesBefore;
+        timing.totalMs = Math.max(0, measureNow() - started);
+        lastDrawTiming = timing;
+        if (!slowestDrawTiming || timing.totalMs > slowestDrawTiming.totalMs)
+          slowestDrawTiming = { ...timing };
       } catch (error) {
         // Pixi/ANGLE can signal context loss through its draw exception
         // BEFORE the browser fires webglcontextlost. Preserve that cause
@@ -1236,6 +1263,12 @@
         proceduralBakes,
         proceduralCacheHits,
         sharedProceduralHits,
+        // These CPU timings separate synchronous sprite preparation from
+        // Pixi scene drawing. Neither measures GPU completion/presented FPS.
+        viewportRebuilds,
+        viewportRetainedProcedural,
+        lastDrawTiming: lastDrawTiming && { ...lastDrawTiming },
+        slowestDrawTiming: slowestDrawTiming && { ...slowestDrawTiming },
         backgroundRepaints,
         backgroundLookaheadPaints,
         backgroundLookaheadPromotions,
