@@ -1849,8 +1849,11 @@
     const key = input.key('map');
     return input.actionFor('KeyM') === 'map' && key !== 'M' ? key + ' / M' : key;
   }
+  // Reuse the HUD target snapshot for paint; actions still recheck reach.
+  let interactionTarget = null;
   const rendererSetup = {
     getGame: () => game,
+    getInteractionTarget: () => interactionTarget,
     platform,
     chargePresentation,
     queuedChargePresentation,
@@ -4940,6 +4943,7 @@
   }
   function interact() {
     const n = nearestNPC();
+    interactionTarget = n || null;
     if (!n) {
       status('Nothing nearby to interact with.');
       return;
@@ -5002,7 +5006,16 @@
         'critical-codex',
       ].includes(n.kind)
     ) {
+      const priorMessage = game.messages.at(-1);
       const success = game.interact(n);
+      const reply = game.messages.at(-1);
+      if (success && (n.kind === 'landmark' || n.kind === 'mini')) {
+        // Display the existing authored site description until dismissed.
+        openMenu(n.name || 'Site inspection', reply || 'Site inspected.',
+          [action('Continue', closeMenu)], closeMenu);
+      } else if (success && !['throne', 'critical-codex'].includes(n.kind)) {
+        status(reply && reply !== priorMessage ? reply : (n.name || 'Interaction') + ' · complete.');
+      }
       if (!success) {
         if (n.kind === 'cage' && !game.s.keys[n.family])
           status('Defeat ' + game.boss(n.family).name + ' before freeing ' + n.name + '.');
@@ -5021,6 +5034,7 @@
               ? 'Expedition Rank 2 needed.'
               : 'An idle companion is needed.',
           );
+        else status(reply && reply !== priorMessage ? reply : 'Nothing changed at ' + (n.name || 'this site') + '.');
       }
       save();
       updateHUD();
@@ -7532,10 +7546,16 @@
           '\n' + backlog.map((r, index) => index + 1 + (r.charged ? 'C' : 'N')).join(' → ');
       b.dataset.queue = backlog.map((r) => (r.charged ? 'charged' : 'normal')).join(',');
     }
-    const n = nearestNPC();
-    $('touch-interact-button').hidden = !n || !activePlay();
+    const n = activePlay() ? nearestNPC() : null;
+    interactionTarget = n;
+    const interactButton = $('touch-interact-button');
+    const interactLabel = $('interaction-target-label');
+    interactButton.hidden = !n;
     setMarkup('touch-interact-button', tr('Interact'));
-    $('touch-interact-button').title = n ? n.name : '';
+    interactButton.title = n ? n.name : '';
+    interactButton.setAttribute('aria-label', n ? tr('Interact') + ': ' + n.name : tr('Interact'));
+    interactLabel.hidden = !n;
+    interactLabel.textContent = n ? tr('Interact') + ' · ' + n.name : '';
     $('order-button').textContent = tr('Confirm');
     $('desktop-hints').textContent =
       ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('') +

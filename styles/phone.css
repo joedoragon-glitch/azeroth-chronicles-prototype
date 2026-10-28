@@ -71,6 +71,17 @@ body[data-experience='phone'] .resource-line span {
 body[data-experience='phone'] .resource-line i {
   height: 5px;
 }
+body[data-experience='phone'] #interaction-target-label:not([hidden]) {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  font-size: 10px;
+  padding: 3px 6px;
+  text-align: center;
+  border-left: 0;
+  border-top: 1px solid #bd9e6480;
+  max-height: 36px;
+  overflow: hidden;
+}
 body[data-experience='phone'] #status {
   position: fixed;
   top: calc(max(8px, env(safe-area-inset-top)) + 62px);
@@ -83,6 +94,9 @@ body[data-experience='phone'] #status {
   font-size: 11px;
   line-height: 1.25;
   pointer-events: none;
+}
+body[data-experience='phone'] #hud:has(#interaction-target-label:not([hidden])) #status {
+  top: calc(max(8px, env(safe-area-inset-top)) + 92px);
 }
 body[data-experience='phone'] #status:empty {
   display: none;
