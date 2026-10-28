@@ -84,14 +84,6 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
         g.advanceHeroSkillEffects(0.05); // Charged Mage beam advances in this phase.
         g.updateProjectiles(0.05);
       }
-      if (!(e.hp < hp)) console.error('ROLLBACK-DIAGNOSTIC ally miss',
-        JSON.stringify({cls, slot, charged, allies, hp, finalHp:e.hp,
-          hero:{x:g.hero.x,y:g.hero.y}, enemy:{x:e.x,y:e.y,neutral:e.neutral,
-            returning:e.returning, immune:e.immune},
-          line:g.line(g.hero,e), directTargetable:g.tacticalDirectTargetable(e),
-          pending:g.s.projectiles.map(p=>({x:p.x,y:p.y,target:p.target,life:p.life,
-            source:p.source,style:p.style})),
-          events:g.events?.slice(-10)}));
       assert(landedDamage > 0, cls + ' ' + slot + ' ' + charged + ' lands through allies, actual damage receipts='+damageCalls);
       results.push(landedDamage);
     }

@@ -110,10 +110,13 @@ for (const form of ['normal', 'true']) {
   // Outside in Vale, Thornfang's ordinary patrol can legitimately return
   // home before a deliberately passive test hero ever attacks.
   g.enter('supply-vale');
-  Object.assign(g.hero, g.safe(850, 1450), { immune: 9999 });
+  // Use the room's authored safe player arrival; Vale world coordinates do
+  // not exist in this enclosed Treasury.
+  g.hero.immune = 9999;
   const e = g.developerSummon('boss:thorn:' + form);
+  assert(e, 'developer summons an authentic Thornfang in the connected room');
   g.zone().enemies = [e];
-  Object.assign(g.hero, g.safe(e.x - 90, e.y), { immune: 9999 });
+  g.hero.immune = 9999;
   g.s.party = [];
   g.s.mercyTime = 0;
   g.engage(e, true, false);
