@@ -19,6 +19,14 @@
       this.item = null;
       this.builds = 0;
       this.hits = 0;
+      // Observability only: no change to when, where or how terrain is drawn.
+      this.now = options.now || (() => root.performance?.now?.() ?? Date.now());
+      this.rebuildMs = 0;
+      this.lastRebuildMs = 0;
+      this.maxRebuildMs = 0;
+      this.failedBuilds = 0;
+      this.budgetSkips = 0;
+      this.transformSkips = 0;
     }
     clear() {
       if (this.item) this.item.canvas.width = this.item.canvas.height = 0;
@@ -27,6 +35,7 @@
     draw(ctx, { width, height, origin, scene, revision, paint }) {
       const t = ctx.getTransform?.();
       if (!t || t.b || t.c || t.e || t.f || t.a <= 0 || t.d <= 0) {
+        this.transformSkips++;
         this.clear();
         return false;
       }
@@ -41,6 +50,7 @@
         pixelsY = Math.ceil((height + margin * 2) * t.d),
         bytes = pixelsX * pixelsY * 4;
       if (!Number.isSafeInteger(bytes) || bytes <= 0 || bytes > this.budget) {
+        this.budgetSkips++;
         this.clear();
         return false;
       }
@@ -61,11 +71,13 @@
       ) {
         // Retire the old backing store before allocating its replacement.
         this.clear();
+        const buildStarted = this.now();
         let canvas;
         try {
           canvas = this.createCanvas(pixelsX, pixelsY);
           const q = canvas?.getContext('2d');
           if (!q) {
+            this.failedBuilds++;
             if (canvas) canvas.width = canvas.height = 0;
             return false;
           }
@@ -74,9 +86,15 @@
           q.fillRect(0, 0, pixelsX / t.a, pixelsY / t.d);
           paint(q, { x: origin.x + margin, y: origin.y + margin }, pixelsX / t.a, pixelsY / t.d);
         } catch (_) {
+          this.failedBuilds++;
           if (canvas) canvas.width = canvas.height = 0;
           return false;
         }
+        const measuredMs = this.now() - buildStarted;
+        const buildMs = Number.isFinite(measuredMs) ? Math.max(0, measuredMs) : 0;
+        this.lastRebuildMs = buildMs;
+        this.rebuildMs += buildMs;
+        this.maxRebuildMs = Math.max(this.maxRebuildMs, buildMs);
         item = this.item = {
           canvas,
           bytes,
@@ -107,6 +125,12 @@
         builds: this.builds,
         hits: this.hits,
         margin: this.item?.margin || 0,
+        rebuildMs: this.rebuildMs,
+        lastRebuildMs: this.lastRebuildMs,
+        maxRebuildMs: this.maxRebuildMs,
+        failedBuilds: this.failedBuilds,
+        budgetSkips: this.budgetSkips,
+        transformSkips: this.transformSkips,
       };
     }
   }
