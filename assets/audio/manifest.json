@@ -554,10 +554,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Thornfang's Treasury",
+      "title": "Scornfang's Treasury",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thornfang's Treasury\". A calm resting arrangement. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-vale."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Scornfang's Treasury\". A calm resting arrangement. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-vale."
     },
     "interior-supply-march": {
       "kind": "music",
@@ -1166,10 +1166,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Thornfang's Treasury \u2014 after liberation",
+      "title": "Scornfang's Treasury \u2014 after liberation",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thornfang's Treasury \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-vale."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Scornfang's Treasury \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-vale."
     },
     "peace-interior-supply-march": {
       "kind": "music",

@@ -415,7 +415,7 @@ const PrototypeData = {
   quests: [
     ['vale', 'A Teacher Taken', 'Defeat Thornfang; free Mira', 45, 50],
     ['vale', 'Roads Under Threat', 'Defeat 5 outdoor enemies in Greenwood Vale', 25, 88],
-    ['vale', 'Stolen Stores', "Recover 2 caches from Thornfang's Treasury", 35, 100],
+    ['vale', 'Stolen Stores', "Recover 2 caches from Scornfang's Treasury", 35, 100],
     ['vale', 'An Unfinished Retreat', 'Defeat Lifebinder; free Borin', 45, 137],
     ['vale', 'Keeping Trade Open', 'Visit Mill bridge and wagon stand', 0, 50],
     ['vale', 'Who Owns the Woods?', 'Discover any 3 Greenwood Vale sites', 10, 175],
