@@ -83,7 +83,7 @@ For a scoped change, run the **affected focused tests** and relevant build check
 node scripts/build.cjs --check --site
 ```
 
-Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml); the [comprehensive browser/game workflow](.github/workflows/pages.yml) is **manual and requires explicit owner approval**. A successful push to `main` can trigger GitHub Pages publication. Work on a feature branch, preserve existing saves and assets, and do not merge or deploy without current authorization. See the [mechanic development workflow](docs/MECHANIC_DEVELOPMENT.md) for actual implementation and validation requirements.
+Normal pull requests use [focused checks](.github/workflows/focused-deploy.yml); the [comprehensive browser/game workflow](.github/workflows/pages.yml) is **manual and requires explicit owner approval**. A successful push to `main` can trigger GitHub Pages publication. Work on a feature branch, preserve existing saves and assets, and do not merge or deploy without current authorization. Use the [engineering change workflow](docs/MECHANIC_DEVELOPMENT.md) for approved gameplay, audio, UI and other changes: source ownership, focused tests, lifecycle checks, documentation, recoverable handoffs and explicit release authorization.
 
 ## Project documentation
 
