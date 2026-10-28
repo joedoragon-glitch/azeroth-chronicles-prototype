@@ -3873,16 +3873,18 @@
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
   }
-  // Spherical sleigh/jingle bell: a visible hanging loop and cross-cut
-  // sound slots, without the old smile/eyes illusion or a handbell silhouette.
-  // Shared by New Game, Succession and HUD without a new asset workflow.
+  // Owner-approved Option A: pale-gold spherical jingle bell, taken from
+  // the simple line-art reference. Horizontal equator seam and ONE bottom
+  // keyhole slit replace the previously unreadable crossed cutouts.
+  // Shared unchanged across New Game, Succession and the HUD.
   const rogueJingleIconSvg =
     '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-0.2em;flex:none" xmlns="http://www.w3.org/2000/svg">' +
-    '<path d="M9.8 5.2V3.7a2.2 2.2 0 0 1 4.4 0v1.5" fill="none" stroke="#684421" stroke-width="1.9" stroke-linecap="round"/>' +
-    '<circle cx="12" cy="13.2" r="8.3" fill="#dcb968" stroke="#765126" stroke-width="1.45"/>' +
-    '<path d="M7.7 9.3a6 6 0 0 1 3.4-2.3" stroke="#fff2b9" stroke-width="1.4" fill="none" stroke-linecap="round"/>' +
-    '<path d="M8.5 9.7l7 7m0-7l-7 7" stroke="#62401e" stroke-width="2.8" fill="none" stroke-linecap="round"/>' +
-    '<circle cx="12" cy="13.2" r="1.55" fill="#473019"/>' +
+    '<path d="M9.75 5.1V4.2a2.25 2.25 0 0 1 4.5 0v.9" fill="none" stroke="#18140f" stroke-width="2.2" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="13.1" r="8.8" fill="#f1d77e" stroke="#18140f" stroke-width="1.9"/>' +
+    '<path d="M6.1 8.9Q7.5 6.8 10.9 6.6" stroke="#18140f" stroke-width="1.9" fill="none" stroke-linecap="round"/>' +
+    '<path d="M3 12.6H21" stroke="#18140f" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<path d="M12 17.9V21.65" stroke="#18140f" stroke-width="1.9" stroke-linecap="round"/>' +
+    '<circle cx="12" cy="17.2" r="1.65" fill="#18140f"/>' +
     '</svg>';
   // Read-only class selection copy. Registry membership alone governs
   // which buttons exist; a future class gets its own description, never Ranger's.
