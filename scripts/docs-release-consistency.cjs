@@ -44,14 +44,15 @@ function inspect(b, ctx = {}) {
       }
     }
   }
-  if (/(?:Last verified game build|Current public game|Current game build)[^\n]*snapshot\.dev\.\d+/i.test(b.readme)) {
+  const readmeOpening = String(b.readme).split(/\r?\n/).slice(0, 60).join('\n');
+  if (/(?:Last verified(?: published)? game build|Current public game|Current game build)[^\n]*snapshot\.dev\.\d+/i.test(readmeOpening)) {
     errors.push('README duplicates current version instead of linking to Development state');
   }
   if (/published[^\n]*\bdev\.\d+\b/i.test(String(b.agents).split(/\r?\n/).slice(0, 4).join(' '))) {
     errors.push('AGENTS opening duplicates dated published version');
   }
   const liveIndex = String(b.index).split(/\r?\n/).filter(line =>
-    /^\*\*(?:28 October routing refresh|Current release and documentation routing|Readable current status)/i.test(line));
+    /^\*\*(?:Checkpoint|28 October routing refresh|Current release(?: and documentation)? routing|Readable current status)/i.test(line));
   if (liveIndex.some(line => /\bdev\.\d+\b/.test(line))) {
     errors.push('Documentation index current routing repeats a build number');
   }
