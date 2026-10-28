@@ -31,6 +31,9 @@
     ringLife: 1.6,
     ringHalfWidth: 25,
   };
+  // Combat hit detection and terrain-safe placement still use these radii.
+  // No movement/body-blocking code consumes them.
+  const actorContactRadii = { normal: 14, hero: 14, large: 20, boss: 26, mounted: 23 };
   const navigationPlanning = { routeRetrySeconds: 1.3, movementPlansPerTick: 4 };
   // Canonical visible melee loadouts, shared by real strike metadata and expression.
   const enemyMeleeKits = {
@@ -7722,6 +7725,7 @@
     balance,
     combatGeometry,
     navigationPlanning,
+    actorContactRadii,
     enemyMeleeKits,
     enemyMeleeEquipment,
     arenaPlacement,
