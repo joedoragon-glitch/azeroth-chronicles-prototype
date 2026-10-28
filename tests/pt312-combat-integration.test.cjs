@@ -111,6 +111,8 @@ for (const form of ['normal', 'true']) {
   g.zone().enemies = [e];
   Object.assign(g.hero, g.safe(e.x - 90, e.y), { immune: 9999 });
   g.s.party = [];
+  g.s.mercyTime = 0;
+  g.engage(e, true, false);
   g.summonBossAdds(e, C.rules.attacks.thorn[3]);
   for (const pup of g.bossOwnedSummons(e)) pup.hp = 0;
   let refilled = false;
