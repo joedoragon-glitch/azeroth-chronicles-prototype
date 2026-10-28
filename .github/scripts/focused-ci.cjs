@@ -15,6 +15,14 @@ const {
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  {
+    match: /^tools\/greenwood-layout\//,
+    tests: [TEST + 'greenwood-layout-measurement.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/world\.js$/,
+    tests: [TEST + 'greenwood-onboarding-clearance.test.cjs', TEST + 'greenwood-scornfang-title.test.cjs'],
+  },
   { match: /^\.github\//, tests: [TEST + 'focused-ci-report.test.cjs'] },
   {
     match: /^tests\/helpers\/native-fixture-contracts\.cjs$/,

@@ -383,8 +383,8 @@
     [
       'Stolen Stores',
       'Suministros robados',
-      "Recover 2 caches from Thornfang's Treasury",
-      'Recupera 2 escondites del tesoro de Thornfang.',
+      "Recover 2 caches from Scornfang's Treasury",
+      'Recupera 2 escondites del tesoro de Scornfang.',
     ],
     [
       'An Unfinished Retreat',

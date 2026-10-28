@@ -1,7 +1,11 @@
+## Greenwood takeover checkpoint — 28 October 2026
+
+`main@753f4532` remains the source baseline and published dev.210 receipt below. Candidate **dev.211** on `feature/greenwood-flagship-resume-20261028` incorporates the existing GV-A evidence (#569), the approved title correction (#566), and the recovered post-onboarding roof/edge repair. Four deterministic fresh streams, preserved pre-change **synthetic QA v4** state, occupied-parcel fallback, service routes and two reloads pass their targeted original-state checks. Architecture passes on current main. No genuine player save is available. The complete flagship remains **in progress**, no map size selected; broader inherited street/Highlands/local-site/UI failures remain disclosed in the quality audit. No merge, publication, full certification, device or owner acceptance.
+
 # Current development state
 
-<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.210 -->
-**Current code/build version:** `0.9.1+snapshot.dev.210` (merged on `main@7d4d8fa2`; GitHub Pages publication [run #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733) succeeded; installed-device adoption is independent). Any future version bump must update this line and the marker in the implementation PR.
+<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.211 -->
+**Current code/build version:** `0.9.1+snapshot.dev.211` (unpublished Greenwood takeover candidate; last verified publication remains dev.210).
 
 **Maintained release and acceptance authority · refreshed 28 October 2026 (the 27 October baseline remains in the historical Phase 0 receipt).** This is the project's single current-status ledger for source, validated build, repository-side publication, installed-player adoption, and unresolved acceptance. Dated feature audits and earlier snapshot milestones retain their own evidence, but cannot supersede this checkpoint. The canonical player-facing name is **So I Became the Dark Lord's Problem**; `Azeroth Chronicles` remains the internal repository name. **No later `main` commit is implicitly covered**: refresh each field from its named evidence when the repository advances.
 
@@ -12,7 +16,7 @@
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
 | Source | **Published `main@7d4d8fa2` — dev.210** | [Exact main commit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/7d4d8fa2d01b312abc90cbc7132f603504326c23) integrates #563 listening room and documentation, #564 documentation gate, and the earlier #553/#554 graphics fixes |
-| Build/cache version | **`0.9.1+snapshot.dev.210`** | Package, lockfile, generated build-info and service-worker cache identifier agree in the published source; local installation adoption remains separate |
+| Build/cache version | **`0.9.1+snapshot.dev.211`** | Unpublished Greenwood candidate; package, lockfile, build-info and service worker agree. Last verified publication remains dev.210. |
 | Focused automation | **Passed** for `main@7d4d8fa2` | [Focused validation #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733) including documentation gate, impacted tests and reproducible offline build; no full-game certification claimed |
 | GitHub Pages publication | **Passed** for `main@7d4d8fa2` | [Actions #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733) finished Publish focused update successfully for dev.210; cache uptake on devices unverified |
 | An individual's open browser / installed PWA | **Unverified** for dev.210 | Confirm installation/update on each device, then inspect the exported diagnostic report's exact `version`. Publication alone does not prove refresh |
@@ -27,6 +31,7 @@ The following workstream dispositions were checked at earlier named source check
 
 | Workstream | Current disposition | Current factual boundary / next evidence |
 | --- | --- | --- |
+| Greenwood flagship #545 / GV-A #546 | **Measured evidence draft; not a region release** | `feature/greenwood-gva-measured-layout-20261028` records 2700/3200/3400 comparisons pinned to main@5addd94a, reconciled onto current main@3377ce6c with identical world/navigation/save/render source hashes. Four distinct seeded actor states per size, native 150% captures, routes and explicitly synthetic v4 diagnostics are implemented. Both initial larger layouts rejected; size/migration and district construction pending. See [live handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md#gv-a-execution-evidence-and-current-next-action). |
 | [#508](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/508) all-region native Pursuit Burst | **Merged; published** | Strictly eligible **nonsummoned native ordinary melee and melee Ringleaders**; no blanket summon, captain/Overtime, boss or ranged/hybrid rollout. [Historical scope](MELEE_PURSUIT_EXPANSION_20261026.md) |
 | [#510](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/510), [#514](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/514) combat territory fairness | **Issue open; PR closed unmerged** | Reproduced **500-unit damage permission vs 900/1300-unit chase territory** for excluded contexts remains independent of #508; not silently repaired or approved to implement |
 | [#504](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/504) anti-kiting rollout ledger | **Issue open; body reconciled** | Issue title still describes game-wide rollout as future, but the body acknowledges #508's release. This is issue-metadata cleanup for later separate approval, **not** a second pending implementation |

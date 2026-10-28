@@ -1,0 +1,577 @@
+{
+  "size": 2700,
+  "sourceSha": "5addd94a0401738e385d834db965694128b76e4b",
+  "results": [
+    {
+      "name": "opening-orientation-route",
+      "size": 2700,
+      "seed": 1196835073,
+      "elapsedSeconds": 27.6,
+      "completed": true,
+      "distance": 6507,
+      "nearbyDistinctEnemies220": 12,
+      "maxCalmSeconds": 6,
+      "steps": [
+        {
+          "id": "supplier",
+          "start": {
+            "x": 300,
+            "y": 350
+          },
+          "end": {
+            "x": 191.2306868290299,
+            "y": 428.3139054830985
+          },
+          "target": {
+            "x": 175,
+            "y": 440
+          },
+          "reached": true,
+          "elapsedSeconds": 0.5,
+          "distance": 134,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "recruiter",
+          "start": {
+            "x": 191.2306868290299,
+            "y": 428.3139054830985
+          },
+          "end": {
+            "x": 443.0864574644933,
+            "y": 244.115104827905
+          },
+          "target": {
+            "x": 459.2296877806479,
+            "y": 232.30849164039068
+          },
+          "reached": true,
+          "elapsedSeconds": 1.1,
+          "distance": 312,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "board",
+          "start": {
+            "x": 443.0864574644933,
+            "y": 244.115104827905
+          },
+          "end": {
+            "x": 544.4250607736923,
+            "y": 460.2623973638214
+          },
+          "target": {
+            "x": 552.9150817782261,
+            "y": 478.3709462659994
+          },
+          "reached": true,
+          "elapsedSeconds": 0.8,
+          "distance": 239,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "rest",
+          "start": {
+            "x": 544.4250607736923,
+            "y": 460.2623973638214
+          },
+          "end": {
+            "x": 660.759957877088,
+            "y": 216.61061363149895
+          },
+          "target": {
+            "x": 673.3349036215527,
+            "y": 190.27364994077686
+          },
+          "reached": true,
+          "elapsedSeconds": 0.9,
+          "distance": 270,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "minor",
+          "start": {
+            "x": 660.759957877088,
+            "y": 216.61061363149895
+          },
+          "end": {
+            "x": 241.19444533787123,
+            "y": 1400.0356993527237
+          },
+          "target": {
+            "x": 240,
+            "y": 1420
+          },
+          "reached": true,
+          "elapsedSeconds": 4.5,
+          "distance": 1317,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "orchard",
+          "start": {
+            "x": 241.19444533787123,
+            "y": 1400.0356993527237
+          },
+          "end": {
+            "x": 1087.4237229540354,
+            "y": 850.8900559973192
+          },
+          "target": {
+            "x": 1112.5,
+            "y": 848.2531754730549
+          },
+          "reached": true,
+          "elapsedSeconds": 4.4,
+          "distance": 1196,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "mill-pond",
+          "start": {
+            "x": 1087.4237229540354,
+            "y": 850.8900559973192
+          },
+          "end": {
+            "x": 696.0482908578512,
+            "y": 1444.0687360822683
+          },
+          "target": {
+            "x": 678.9088804955707,
+            "y": 1454.3760447723848
+          },
+          "reached": true,
+          "elapsedSeconds": 3.9,
+          "distance": 792,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "bridge-north",
+          "start": {
+            "x": 696.0482908578512,
+            "y": 1444.0687360822683
+          },
+          "end": {
+            "x": 1184.318983931773,
+            "y": 762.413933102285
+          },
+          "target": {
+            "x": 1200,
+            "y": 750
+          },
+          "reached": true,
+          "elapsedSeconds": 6.2,
+          "distance": 975,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "outbound",
+          "start": {
+            "x": 1184.318983931773,
+            "y": 762.413933102285
+          },
+          "end": {
+            "x": 2430.0259498831533,
+            "y": 651.0184900243444
+          },
+          "target": {
+            "x": 2450,
+            "y": 650
+          },
+          "reached": true,
+          "elapsedSeconds": 5.3,
+          "distance": 1272,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        }
+      ],
+      "simulationCpuMs": 1627,
+      "boundary": "normal tick(.1), native navigation orders, live enemies and original two companions; approach-only services/interiors; automatic combat unchanged; maximum 600 simulated seconds; NOT 30\u201360 minute human pacing acceptance"
+    },
+    {
+      "name": "farm-and-western-woods",
+      "size": 2700,
+      "seed": 1196835073,
+      "elapsedSeconds": 30.1,
+      "completed": true,
+      "distance": 7472,
+      "nearbyDistinctEnemies220": 14,
+      "maxCalmSeconds": 2,
+      "steps": [
+        {
+          "id": "minor",
+          "start": {
+            "x": 300,
+            "y": 350
+          },
+          "end": {
+            "x": 241.29606940010146,
+            "y": 1398.340866029831
+          },
+          "target": {
+            "x": 240,
+            "y": 1420
+          },
+          "reached": true,
+          "elapsedSeconds": 3.5,
+          "distance": 1050,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "orchard",
+          "start": {
+            "x": 241.29606940010146,
+            "y": 1398.340866029831
+          },
+          "end": {
+            "x": 1087.4237229540354,
+            "y": 850.8900559973192
+          },
+          "target": {
+            "x": 1112.5,
+            "y": 848.2531754730549
+          },
+          "reached": true,
+          "elapsedSeconds": 4.4,
+          "distance": 1194,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "mill-pond",
+          "start": {
+            "x": 1087.4237229540354,
+            "y": 850.8900559973192
+          },
+          "end": {
+            "x": 696.0482908578512,
+            "y": 1444.0687360822683
+          },
+          "target": {
+            "x": 678.9088804955707,
+            "y": 1454.3760447723848
+          },
+          "reached": true,
+          "elapsedSeconds": 3.2,
+          "distance": 792,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "goblin-camp",
+          "start": {
+            "x": 696.0482908578512,
+            "y": 1444.0687360822683
+          },
+          "end": {
+            "x": 538.6405613318229,
+            "y": 1068.9301018616898
+          },
+          "target": {
+            "x": 520,
+            "y": 1050
+          },
+          "reached": true,
+          "elapsedSeconds": 3.1,
+          "distance": 551,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "den-ruins",
+          "start": {
+            "x": 538.6405613318229,
+            "y": 1068.9301018616898
+          },
+          "end": {
+            "x": 545.0213219804828,
+            "y": 2200.6406011051913
+          },
+          "target": {
+            "x": 540,
+            "y": 2220
+          },
+          "reached": true,
+          "elapsedSeconds": 5.6,
+          "distance": 1295,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "bridge-south",
+          "start": {
+            "x": 545.0213219804828,
+            "y": 2200.6406011051913
+          },
+          "end": {
+            "x": 1180.4011471545552,
+            "y": 1753.9855949546586
+          },
+          "target": {
+            "x": 1200,
+            "y": 1750
+          },
+          "reached": true,
+          "elapsedSeconds": 2.9,
+          "distance": 866,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "rest",
+          "start": {
+            "x": 1180.4011471545552,
+            "y": 1753.9855949546586
+          },
+          "end": {
+            "x": 675.6211077638991,
+            "y": 210.14255203977365
+          },
+          "target": {
+            "x": 673.3349036215527,
+            "y": 190.27364994077686
+          },
+          "reached": true,
+          "elapsedSeconds": 7.4,
+          "distance": 1724,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        }
+      ],
+      "simulationCpuMs": 2326,
+      "boundary": "normal tick(.1), native navigation orders, live enemies and original two companions; approach-only services/interiors; automatic combat unchanged; maximum 600 simulated seconds; NOT 30\u201360 minute human pacing acceptance"
+    },
+    {
+      "name": "eastern-woods-and-estate",
+      "size": 2700,
+      "seed": 1196835073,
+      "elapsedSeconds": 23.5,
+      "completed": true,
+      "distance": 6280,
+      "nearbyDistinctEnemies220": 17,
+      "maxCalmSeconds": 2.8,
+      "steps": [
+        {
+          "id": "bridge-north",
+          "start": {
+            "x": 300,
+            "y": 350
+          },
+          "end": {
+            "x": 1179.2535571249443,
+            "y": 745.8192659154424
+          },
+          "target": {
+            "x": 1200,
+            "y": 750
+          },
+          "reached": true,
+          "elapsedSeconds": 3.3,
+          "distance": 972,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "cache",
+          "start": {
+            "x": 1179.2535571249443,
+            "y": 745.8192659154424
+          },
+          "end": {
+            "x": 1536.603426287663,
+            "y": 1135.1496864420335
+          },
+          "target": {
+            "x": 1550,
+            "y": 1150
+          },
+          "reached": true,
+          "elapsedSeconds": 1.8,
+          "distance": 529,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "entrance",
+          "start": {
+            "x": 1536.603426287663,
+            "y": 1135.1496864420335
+          },
+          "end": {
+            "x": 2139.042158419656,
+            "y": 2083.2690195176706
+          },
+          "target": {
+            "x": 2150,
+            "y": 2100
+          },
+          "reached": true,
+          "elapsedSeconds": 3.8,
+          "distance": 1127,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "skeleton-watch",
+          "start": {
+            "x": 2139.042158419656,
+            "y": 2083.2690195176706
+          },
+          "end": {
+            "x": 1843.1822530318495,
+            "y": 2257.580551057256
+          },
+          "target": {
+            "x": 1820,
+            "y": 2260
+          },
+          "reached": true,
+          "elapsedSeconds": 1.5,
+          "distance": 367,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 125,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "bridge-south",
+          "start": {
+            "x": 1843.1822530318495,
+            "y": 2257.580551057256
+          },
+          "end": {
+            "x": 1221.4832112995807,
+            "y": 1770.9327233448744
+          },
+          "target": {
+            "x": 1200,
+            "y": 1750
+          },
+          "reached": true,
+          "elapsedSeconds": 3.9,
+          "distance": 850,
+          "stalledSeconds": 0,
+          "interaction": true,
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "minor",
+          "start": {
+            "x": 1221.4832112995807,
+            "y": 1770.9327233448744
+          },
+          "end": {
+            "x": 254.66007673453578,
+            "y": 1433.6044900726754
+          },
+          "target": {
+            "x": 240,
+            "y": 1420
+          },
+          "reached": true,
+          "elapsedSeconds": 4.7,
+          "distance": 1096,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        },
+        {
+          "id": "rest",
+          "start": {
+            "x": 254.66007673453578,
+            "y": 1433.6044900726754
+          },
+          "end": {
+            "x": 667.2203808839108,
+            "y": 209.3160398036817
+          },
+          "target": {
+            "x": 673.3349036215527,
+            "y": 190.27364994077686
+          },
+          "reached": true,
+          "elapsedSeconds": 4.5,
+          "distance": 1338,
+          "stalledSeconds": 0,
+          "interaction": "not invoked (approach-only)",
+          "heroHp": 155,
+          "deadCompanions": [],
+          "death": false
+        }
+      ],
+      "simulationCpuMs": 1624,
+      "boundary": "normal tick(.1), native navigation orders, live enemies and original two companions; approach-only services/interiors; automatic combat unchanged; maximum 600 simulated seconds; NOT 30\u201360 minute human pacing acceptance"
+    }
+  ]
+}

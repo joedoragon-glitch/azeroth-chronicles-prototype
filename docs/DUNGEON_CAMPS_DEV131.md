@@ -1,10 +1,12 @@
 # Dungeon preparation and leader return rules — dev.131
 
+**28 October Greenwood title correction (draft, not published):** the author-approved owner is Scornfang. The existing `supply-vale` entrance, caches, exit, recovery title and EN/ES objective now use **Scornfang's Treasury** on `feature/greenwood-scornfang-title-20261028` (candidate dev.211). Internal `boss:'thorn'`, `mentor:'thorn'`, encounter, rewards and v4 identities remain unchanged; this does not complete regional geography/livelihood stages #546–#551. Focused title/save and Treasury recovery checks pass, as does the reproducible dev.211 build. Original broader `local-sites` (five scenarios) and `prototype-ui` VM-harness failures reproduce on unchanged main; they remain red, with receipts in [the scoped evidence](evidence/greenwood-scornfang-20261028/checks.json). The region is not yet ready for owner acceptance. The rest of this guide describes the established preparation behavior.
+
 The new preparation menu covers five main dungeons and four Treasuries. Side dungeons retain direct entry and their current behavior. Frontier's roaming captain has no entrance to modify.
 
 | Region | Main dungeon | Treasury |
 | --- | --- | --- |
-| Greenwood Vale | Forest Crypt | Thornfang's Treasury |
+| Greenwood Vale | Forest Crypt | Scornfang's Treasury |
 | Flooded Marches | Sunken Archive | Mirejaw's Treasury |
 | Ironroot Highlands | Colossus Mine | Ridge Tyrant's Treasury |
 | Ashen Frontier | Abyss Bastion | No interior: roaming captain unchanged |

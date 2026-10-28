@@ -13,3 +13,7 @@ Build and changed-source formatting/syntax/diff checks complete before publicati
 Next authorized task: Greenwood field monsters remain present but require hero initiation below level 2; companions alone cannot provoke them. At level 2 ordinary aggression returns. Additionally, level-2 silent Thornfang/Mira appearance and a once-per-run hero-first engagement rule, with companion-triggered withdrawal/reset and Mira following.
 
 PR #399 merged as `bb9df49bfaf6c47bd445669cb2667a207081ef0f`; package-only run 39708765406 succeeded. Public build matches merge. Normal workflow restored byte-for-byte; temporary publisher removed. Receipt: `docs/evidence/MILLHAVEN_DEV160_PUBLICATION_20261021.json`.
+
+## Recovered clearance implementation — 28 October 2026 (draft only)
+
+The original onboarding swaps happened after street clearance. The resumed draft rechecks the two moved decorative buildings against the original full roof setbacks, reserved service doors, compound boundaries and player camps. It brings the refuge roof inside the world boundary and updates a persisted refuge point. A failed parcel search never marks migration complete. The preserved main@753f synthetic QA fixture verifies IDs, resource amounts, actor states, quests, construction, two reloads and physical service/footpath segments; it is not a historical player export. This bounded repair is not map-size selection or completion of the flagship region.

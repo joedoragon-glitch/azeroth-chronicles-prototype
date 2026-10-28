@@ -1756,7 +1756,7 @@
             for (const radius of [
               110, 180, 260, 350, 450, 570, 700, 840, 980, 1150, 1350, 1550, 1800,
             ]) {
-              for (let j = 0; j < 32; j++) {
+              for (let j = 0; j < (radius ? 32 : 1); j++) {
                 const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
                 const angle = outward + (fan * Math.PI) / 16;
                 const point = {
@@ -1995,6 +1995,137 @@
         const footpath = [trail[0]];
         for (let i = 1; i < trail.length; i++) footpath.push(...this.route(trail[i - 1], trail[i]));
         z.footpaths.push(footpath);
+      }
+      greenwoodOnboardingClearance(z) {
+        if (
+          z.id !== 'vale' ||
+          (z.greenwoodFrontageVersion === 1 && z.greenwoodFrontageRoadVersion === z.roadVersion)
+        )
+          return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          let complete = true;
+          const refuge = z.npcs.find((n) => n.id === 'rest');
+          if (refuge && refuge.y < 115) {
+            const old = { ...refuge.servicePoint },
+              target = { x: refuge.x, y: 130 },
+              door = { x: old.x, y: old.y + target.y - refuge.y };
+            if (
+              !this.blocked(target.x, target.y, z.id, 20, true) &&
+              !this.blocked(door.x, door.y, z.id, 15) &&
+              this.distanceToRoad(z, target) >= 190
+            ) {
+              Object.assign(refuge, target);
+              refuge.servicePoint = door;
+              if (this.s.refugeSite?.zone === z.id && this.s.refugeSite.id === 'rest')
+                Object.assign(this.s.refugeSite, door);
+              for (const path of z.footpaths || []) {
+                if (dist(path.at(-1), old) > 1) continue;
+                const route = this.route(path[0], door);
+                if (route.length) path.splice(1, path.length - 1, ...route);
+                else complete = false;
+              }
+            } else complete = false;
+          }
+          for (const id of ['settlement-major-0', 'settlement-major-6']) {
+            const house = z.props.find((p) => p.id === id);
+            if (!house) {
+              complete = false;
+              continue;
+            }
+            const setback = this.roadSetback(house);
+            if (this.distanceToRoad(z, house) >= setback) continue;
+            const center = house,
+              near = this.nearestRoadPoint(z, center),
+              away = near ? Math.atan2(center.y - near.y, center.x - near.x) : 0;
+            const hostileCenters = (R.creatureStrongholds || [])
+              .filter((hold) => hold.region === z.id)
+              .map((hold) => this.creatureStrongholdCenter(z, hold))
+              .filter(Boolean);
+            const fits = (p) => {
+              const size = D.regions[0].size;
+              if (
+                Math.min(p.x, p.y, size - p.x, size - p.y) < 115 ||
+                this.blocked(p.x, p.y, z.id, Math.max(house.r || 32, 60), true) ||
+                this.distanceToRoad(z, p) < setback ||
+                this.distanceToRoad(z, p) > 360 ||
+                z.minis.some((m) => dist(m, p) < 280) ||
+                hostileCenters.some((c) => dist(c, p) < 260)
+              )
+                return false;
+              if (
+                z.props.some(
+                  (q) =>
+                    q !== house &&
+                    /house|cottage|workshop/.test(q.structure || '') &&
+                    Math.abs((p.x - p.y - q.x + q.y) * 0.76) < 110 &&
+                    Math.abs((p.x + p.y - q.x - q.y) * 0.27) < 110,
+                )
+              )
+                return false;
+              if (
+                z.nodes.some((n) => dist(n, p) < 100) ||
+                z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 120) ||
+                z.buildings.some((b) => dist(b, p) < 165) ||
+                z.props.some((q) => q !== house && dist(q, p) < (house.r || 32) + (q.r || 0) + 35)
+              )
+                return false;
+              return !z.npcs.some((n) => {
+                const point = n.servicePoint || n,
+                  dx = (p.x - p.y - point.x + point.y) * 0.76,
+                  dy = (p.x + p.y - point.x - point.y) * 0.27;
+                // The roof extends upward from its base. Reserve the real
+                // service door/actor, not just a circular collision anchor.
+                return dist(point, p) < 100 || (Math.abs(dx) < 75 && dy > -12 && dy < 110);
+              });
+            };
+            let selected = null;
+            for (const radius of [
+              0, 20, 35, 55, 80, 115, 150, 190, 225, 270, 320, 380, 450, 520, 600, 690, 790,
+            ]) {
+              for (let j = 0; j < (radius ? 32 : 1); j++) {
+                const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1),
+                  angle = away + (fan * Math.PI) / 16,
+                  p = {
+                    x: center.x + Math.cos(angle) * radius,
+                    y: center.y + Math.sin(angle) * radius,
+                  };
+                if (fits(p)) {
+                  selected = p;
+                  break;
+                }
+              }
+              if (selected) break;
+            }
+            if (!selected) {
+              // Existing player camps can occupy the nearest free parcel.
+              // Search a finite regional grid, nearest first, rather than
+              // delete scenery, move the camp or lower the roof setback.
+              const candidates = [],
+                size = D.regions[0].size;
+              for (let x = 125; x <= size - 125; x += 50)
+                for (let y = 125; y <= size - 125; y += 50) candidates.push({ x, y });
+              candidates.sort((a, b) => dist(a, center) - dist(b, center));
+              selected = candidates.find(fits) || null;
+            }
+            if (selected) {
+              Object.assign(house, selected);
+              const door = this.safe(house.x + 35, house.y + 100, z.id),
+                road = this.nearestRoadPoint(z, door),
+                path = road && this.route(road, door);
+              if (path?.length && dist(path.at(-1), door) < 35)
+                (z.footpaths ||= []).push([road, ...path]);
+              else complete = false;
+            } else complete = false; // Never mark a rejected essential repair as complete.
+          }
+          if (complete) {
+            z.greenwoodFrontageVersion = 1;
+            z.greenwoodFrontageRoadVersion = z.roadVersion;
+          }
+        } finally {
+          this.s.zone = previous;
+        }
       }
       reedportRefugeSpacing(z) {
         if (z.id !== 'march' || z.reedportRefugeSpacingVersion === 1) return;
@@ -2251,6 +2382,7 @@
           this.strongholdCourtyardClearance(z);
           this.reedportRefugeSpacing(z);
           this.millhavenOnboardingLayout(z);
+          this.greenwoodOnboardingClearance(z);
           this.interiorCoherence(z);
           this.defenderEncounterLayout(z);
           this.frontierEdgeRedistribution(z);
@@ -2672,6 +2804,7 @@
         this.strongholdCourtyardClearance(z);
         this.reedportRefugeSpacing(z);
         this.millhavenOnboardingLayout(z);
+        this.greenwoodOnboardingClearance(z);
         this.interiorCoherence(z);
         this.defenderEncounterLayout(z);
         this.refreshNPCs();
@@ -3872,7 +4005,26 @@
           this.s.zone = before;
         }
       }
+      // Presentation-only reconciliation also runs for already-current v4
+      // room/entrance layouts. Do not bump geometry versions or rebuild actors,
+      // furnishings, caches or recovered crowns to correct an owner's name.
+      greenwoodTreasuryNames(z) {
+        if (z.id !== 'vale' && z.id !== 'supply-vale') return;
+        const room = R.supplyRooms.find((r) => r.id === 'supply-vale');
+        for (const n of z.npcs) {
+          if (z.id === 'vale' && n.id === 'supply-entrance') n.name = room.name;
+          if (z.id === room.id && n.kind === 'exit') n.name = 'Leave ' + room.name;
+          if (
+            z.id === room.id &&
+            n.kind === 'bundle' &&
+            !n.treasuryRecovery &&
+            Number.isInteger(n.index)
+          )
+            n.name = room.name + ' cache ' + (n.index + 1);
+        }
+      }
       authoredPlaces(z) {
+        this.greenwoodTreasuryNames(z);
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
           this.treasuryGuardPopulation(z);
