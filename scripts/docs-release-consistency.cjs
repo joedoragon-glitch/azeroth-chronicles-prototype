@@ -47,6 +47,17 @@ function inspect(b, ctx = {}) {
   if (liveIndex.some(line => /\bdev\.\d+\b/.test(line))) {
     errors.push('Documentation index current routing repeats a build number');
   }
+  // If a game-facing runtime file changes, update an owning feature/player
+  // document in the same PR. This is a presence gate; reviewers verify accuracy.
+  if (Array.isArray(ctx.changedPaths) && ctx.changedPaths.length) {
+    const runtime = ctx.changedPaths.filter(p =>
+      /^src\/prototype\/.*\.(?:js|json)$|^styles\/.*\.css$|^assets\/(?:audio|sprites)\/|^tools\/(?:audio|sprites)\/.*\.(?:js|css|html|json)$|^(?:index|phone)\.html$/.test(p));
+    const documented = ctx.changedPaths.some(p =>
+      /^docs\/.*\.md$|^(?:README|AGENTS|CONTROLES|GUIA_EN_ESPANOL)\.md$/.test(p));
+    if (runtime.length && !documented) {
+      errors.push('Runtime changes have no accompanying feature/player documentation update in this PR');
+    }
+  }
   if (ctx.previousVersion && ctx.previousVersion !== version &&
       !(ctx.changedPaths || []).includes('docs/DEVELOPMENT_STATE.md')) {
     errors.push('Version bump omits Development state change in same PR/commit');

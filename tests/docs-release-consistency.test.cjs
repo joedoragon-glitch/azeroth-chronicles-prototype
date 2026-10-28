@@ -31,6 +31,9 @@ assert.deepEqual(inspect(data()), []);
 { const b = data(); b.index = '**28 October routing refresh:** current dev.208.'; rejects(b, 'Documentation index'); }
 { const b = data(); b.lock.version = old; rejects(b, 'package-lock'); }
 { const b = data(); b.sw = 'const CACHE_VERSION="azeroth-app-v' + old + '";'; rejects(b, 'sw.js'); }
+rejects(data(), 'Runtime changes have no accompanying', { changedPaths: ['src/prototype/renderer.js','tests/pixi-fidelity.test.cjs'] });
+assert.deepEqual(inspect(data(), { changedPaths: ['src/prototype/renderer.js','docs/PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md'] }), []);
+assert.deepEqual(inspect(data(), { changedPaths: ['tests/pixi-fidelity.test.cjs'] }), []);
 rejects(data(), 'Version bump omits', { previousVersion: old, changedPaths: ['package.json'] });
 assert.deepEqual(inspect(data(), { previousVersion: old, changedPaths: ['package.json','docs/DEVELOPMENT_STATE.md'] }), []);
-console.log('PASS release/docs consistency: 12 positive and negative scenarios');
+console.log('PASS release/docs consistency: 15 positive and negative scenarios');
