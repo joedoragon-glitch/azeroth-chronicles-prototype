@@ -38,8 +38,10 @@ assert.deepEqual(inspect(data()), []);
 }
 { const b = data(); b.state = '**Latest verified playable update:** ' + tick + v + tick + '\n**Current public game: ' + old + '**\n' + b.state; rejects(b, 'current-public-game claim'); }
 { const b = data(); b.readme = 'Last verified game build: ' + old; rejects(b, 'README duplicates'); }
+{ const b = data(); b.readme = 'Last verified published game build: ' + tick + old + tick; rejects(b, 'README duplicates'); }
 { const b = data(); b.agents = 'Rogue published in the dev.208 build.\n'; rejects(b, 'AGENTS opening'); }
 { const b = data(); b.index = '**28 October routing refresh:** current dev.208.'; rejects(b, 'Documentation index'); }
+{ const b = data(); b.index = '**Checkpoint:** ' + tick + 'dev.208' + tick + ' was published.'; rejects(b, 'Documentation index'); }
 { const b = data(); b.lock.version = old; rejects(b, 'package-lock'); }
 { const b = data(); b.sw = 'const CACHE_VERSION="azeroth-app-v' + old + '";'; rejects(b, 'sw.js'); }
 rejects(data(), 'Runtime changes have no accompanying', { changedPaths: ['src/prototype/renderer.js','tests/pixi-fidelity.test.cjs'] });
