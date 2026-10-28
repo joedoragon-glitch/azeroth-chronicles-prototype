@@ -1,3 +1,5 @@
+> **Current release status — 28 October 2026:** [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) **merged and published**; Rogue/Pícara is a normally selectable fourth class in `0.9.1+snapshot.dev.208`. Earlier branch, draft, URL-preview and unimplemented language below describes historical stages and is **superseded as a current instruction**. Phone/boss/visual/audio/long-tail performance acceptance still has independent gates; see [Development state](DEVELOPMENT_STATE.md), [Rogue soft launch](ROGUE_SOFT_RELEASE_20261028.md), and [phone findings](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md).
+
 # Rogue Bard — playable branch-preview gate and Skill 5 decision (27 October 2026)
 
 > Draft PR [#511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511), branch `design/rogue-bard-feasibility-20261026`. **Owner decision: Skill 5 IS a placed magical music station** (not a physical trap). Owner requires a class that can actually be selected and playtested in the game's own menus. The PR remains **draft, unmerged, and not deployed**; repository publishing and final public class release remain separate approvals.

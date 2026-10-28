@@ -1,10 +1,12 @@
 # Documentation index and current-source routing
 
+**28 October routing refresh:** The current [development state](DEVELOPMENT_STATE.md) records Rogue/Pícara as the published fourth class (`dev.208`). [Feature documentation responsibility](../AGENTS.md) requires keeping every touched document current during development. All October 27 phase/stage counts below remain dated evidence, not assertions about today's branch.
+
 **Current release and documentation routing:** [Development state](DEVELOPMENT_STATE.md) alone maintains the latest verified `main` SHA/build, focused CI, GitHub Pages publication, device/PWA adoption limits, open issues and active workstream matrix. The [Phase 0 inventory](DOCUMENTATION_PHASE0_BASELINE_20261027.md) is a dated receipt. This index routes to current sources and preserves archived inventories; its links and historical milestone references are **not** an independent release tracker.
 
 **Historical repository checkpoint — 25 October 2026 (after low-risk Batch A):** `main` at [`d64b182b991a`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/d64b182b991a02f02aa5f384c12f1960fb559a35), package `0.9.1+snapshot.dev.185`. [Exact-commit focused validation and GitHub Pages deployment](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40235196259) both succeeded. Six approved low-impact PRs — #447, #449, #456, #468, #473, #474 — have merged. This does **not** certify integrated audio runtime fixes, physical-device acceptance, client cache refresh, or unrelated draft work; always recheck current `main` and [Recovery Desk #297](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/297).
 
-**Current Phase 0 inventory:** [27 October baseline and discrepancy matrix](DOCUMENTATION_PHASE0_BASELINE_20261027.md) finds 368 `docs/*.md` paths, with 55 added since the pinned 25 October registry and 128 whose basenames are not mentioned directly in this index. Those are **Phase 3 classification/discoverability questions**, not proof of broken links. The new baseline ledger itself is not counted in the pinned inventory.
+**Historical Phase 0 inventory (27 October; no longer current):** The [pinned audit](DOCUMENTATION_PHASE0_BASELINE_20261027.md) originally found 368 `docs/*.md` paths and gaps in the prior registry/index. Phase 3 reconciled that snapshot. The 28 October continuation contains **397** direct `docs/*.md` files (396 from published `main` plus the separate retained Phase 0 baseline) and **416 Markdown paths repository-wide**, including 28 later Rogue design/handoff records. The October 19 historical inventory below is deliberately frozen.
 
 **Verified architecture and source-routing (Phase 4, pinned 27 October):** [Runtime architecture](ARCHITECTURE.md) now contains a system-by-system main-source cross-check for v4 saves, class/combat/criticals, Canvas and optional Pixi layers, title/controls, navigation/world, audio, sprites and release/test gates. See also [historical audio contract](AUDIO_PLAYBACK.md), [historical dev.169 performance receipts](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md) and [still-open Stage 7 device acceptance](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md). These routing links and source inspections do **not** certify physical hardware, all art, or a full-game run.
 
@@ -26,7 +28,7 @@
 
 ## Phase 3 — topical directory for previously unindexed Markdown paths (27 October 2026)
 
-The links below close **direct filename discoverability gaps**, without deleting any document or changing its historical meaning. These are **routing links, not approvals, current-feature claims, deep document reviews or proof that an unlinked document was broken**. For the complete machine-readable classification of **all 388 tracked Markdown paths**, including files outside `docs/`, see the [existing coverage register](DOCUMENTATION_COVERAGE_REGISTER_20261025.json) and its [dated methodology / later reconciliation](DOCUMENTATION_COVERAGE_NOTES_20261025.md). The live release and acceptance authority remains [Current development state](DEVELOPMENT_STATE.md).
+The links below close **direct filename discoverability gaps**, without deleting any document or changing its historical meaning. These are **routing links, not approvals, current-feature claims, deep document reviews or proof that an unlinked document was broken**. For the complete machine-readable classification of **388 paths at the earlier Phase 3 checkpoint, expanded to 416 in the 28 October reconciliation**, including files outside `docs/`, see the [existing coverage register](DOCUMENTATION_COVERAGE_REGISTER_20261025.json) and its [dated methodology / later reconciliation](DOCUMENTATION_COVERAGE_NOTES_20261025.md). The live release and acceptance authority remains [Current development state](DEVELOPMENT_STATE.md).
 
 ### Governance, audits and test reliability (4)
 
@@ -93,6 +95,26 @@ The links below close **direct filename discoverability gaps**, without deleting
 ### Navigation and maps (5)
 
 - [MAP WAYFINDING FOLLOWUP](MAP_WAYFINDING_FOLLOWUP.md) · [NAVIGATION STAGE2 20261023](NAVIGATION_STAGE2_20261023.md) · [NAVIGATION STAGE3 20261023](NAVIGATION_STAGE3_20261023.md) · [NAVIGATION STAGE4 20261023](NAVIGATION_STAGE4_20261023.md) · [NAVIGATION STAGE5 20261023](NAVIGATION_STAGE5_20261023.md)
+
+## 28 October 2026 — Rogue fourth-class documentation routing
+
+**Current authority:** [Rogue soft launch](ROGUE_SOFT_RELEASE_20261028.md), [phone findings](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md), [dev.208 jingle/performance evidence](ROGUE_JINGLE_CANON_AND_SLOWDOWN_DEV208_20261028.md) and [Development state](DEVELOPMENT_STATE.md). [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) merged; Rogue is now normally selectable. Older draft/preview URLs, original stage gates and unmerged statements in the dated documents below remain *historical*, not current release instructions. These direct links improve discoverability without certifying the body of every old stage report.
+
+### Rogue/Bard design and staged implementation (23)
+
+- [ROGUE BARD CANONICAL OWNER HANDOFF 20261027](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md) · [ROGUE BARD CHARMED ROSTER BARRACKS CONTRACT 20261027](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md) · [ROGUE BARD CLASS INDEPENDENCE AUDIT 20261027](ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md)
+- [ROGUE BARD DISCUSSION RECORD 20261026](ROGUE_BARD_DISCUSSION_RECORD_20261026.md) · [ROGUE BARD DUAL SIDED PERFORMANCES CRITICAL TIERS 20261027](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md) · [ROGUE BARD EIGHT PHASE DEVELOPMENT HANDOFF 20261027](ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md)
+- [ROGUE BARD FOURTH CLASS FEASIBILITY 20261026](ROGUE_BARD_FOURTH_CLASS_FEASIBILITY_20261026.md) · [ROGUE BARD FOURTH CLASS HOUSEKEEPING 20261027](ROGUE_BARD_FOURTH_CLASS_HOUSEKEEPING_20261027.md) · [ROGUE BARD GAMEPLAY BALANCE CANDIDATE 20261026](ROGUE_BARD_GAMEPLAY_BALANCE_CANDIDATE_20261026.md)
+- [ROGUE BARD IMPLEMENTATION HOUSEKEEPING 20261026](ROGUE_BARD_IMPLEMENTATION_HOUSEKEEPING_20261026.md) · [ROGUE BARD LIVE PLAYTEST GATE 20261027](ROGUE_BARD_LIVE_PLAYTEST_GATE_20261027.md) · [ROGUE BARD MAINLINE RECONCILIATION 20261027](ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md)
+- [ROGUE BARD OWNER REVIEW 20261026](ROGUE_BARD_OWNER_REVIEW_20261026.md) · [ROGUE BARD PHASE2 HERO FOUNDATION 20261027](ROGUE_BARD_PHASE2_HERO_FOUNDATION_20261027.md) · [ROGUE BARD PHASE3 TECHNICAL CLOSEOUT 20261027](ROGUE_BARD_PHASE3_TECHNICAL_CLOSEOUT_20261027.md)
+- [ROGUE BARD PHASE4 COMPANION INTEGRATION 20261027](ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md) · [ROGUE BARD PHASE5 MUSICAL REPERTOIRE 20261027](ROGUE_BARD_PHASE5_MUSICAL_REPERTOIRE_20261027.md) · [ROGUE BARD PHASE5 NAMES AND CRITICAL ALIGNMENT 20261027](ROGUE_BARD_PHASE5_NAMES_AND_CRITICAL_ALIGNMENT_20261027.md)
+- [ROGUE BARD PHASE5 PHASE6 RESTART CHECKPOINT 20261027](ROGUE_BARD_PHASE5_PHASE6_RESTART_CHECKPOINT_20261027.md) · [ROGUE BARD PHASE6 NATIVE CRITICAL CONTINUATION 20261027](ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md) · [ROGUE BARD PHASES 1 TO 3 CONSOLIDATION 20261027](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md)
+- [ROGUE BARD PR511 DESCRIPTION ARCHIVE 20261027](ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md) · [ROGUE BARD STATIC VISUAL DESIGN 20261026](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md)
+
+### Rogue release, mobile, art and follow-up (5)
+
+- [ROGUE CHARM NAMEPLATE POLISH 20261028](ROGUE_CHARM_NAMEPLATE_POLISH_20261028.md) · [ROGUE FIRST PHONE ACCEPTANCE 20261028](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md) · [ROGUE JINGLE CANON AND SLOWDOWN DEV208 20261028](ROGUE_JINGLE_CANON_AND_SLOWDOWN_DEV208_20261028.md)
+- [ROGUE PHASE7 PROCEDURAL ART 20261027](ROGUE_PHASE7_PROCEDURAL_ART_20261027.md) · [ROGUE SOFT RELEASE 20261028](ROGUE_SOFT_RELEASE_20261028.md)
 
 ## Earlier status and historical inventory (retained)
 
