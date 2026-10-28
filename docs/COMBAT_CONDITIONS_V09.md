@@ -1,5 +1,15 @@
 # Combat conditions and secondary effects · current consolidated source
 
+> **28 October 2026 — proposed PT-007 ground-AoE decision (PR #571, not yet merged):**
+> Ordinary boss/captain circular ground blasts and parallel non-projectile ground lanes keep
+> their authored, target-centered warning and damage footprints even when terrain or scenery
+> overlaps them. Characters within those footprints are hit without a separate
+> boss-to-character line-of-sight check, subject to immunity/mitigation and explicitly
+> authored special mechanics. Physical projectiles, charges, directed attacks and Veyra's
+> persistent validated checkerboard retain their separate obstacle/geometry constraints.
+> This is a gameplay targeting clarification, not a redefinition of Slow, immunity or saves.
+> See [the bounded design and validation contract](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md).
+
 > **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
 
 **Scope:** player skills, companion specials/support, ordinary and ranged monsters,
