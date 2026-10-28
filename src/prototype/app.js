@@ -1500,6 +1500,7 @@
     titleLoading = false,
     titleEpoch = 0,
     titleWarmup = null,
+    titleSkipGraphics = null,
     sceneTransition = null,
     sceneTransitionEpoch = 0,
     started = false,
@@ -3359,6 +3360,7 @@
     const previous = sceneTransition;
     if (!previous) return;
     ++sceneTransitionEpoch;
+    previous.resolveSkip?.(false);
     sceneTransition = null;
     $('scene-loading').hidden = true;
     $('scene-loading-retry').hidden = true;
@@ -3377,10 +3379,11 @@
     }
     if (!ticket.painted && drawReadyScene()) {
       ticket.painted = true;
-      const gpuWarmup = prepareGpuForArrival();
+      const gpuWarmup = ticket.skipped ? null : prepareGpuForArrival();
       if (gpuWarmup) {
         ticket.gpuPreparing = true;
-        void gpuWarmup.then((ready) => {
+        void Promise.race([gpuWarmup, ticket.skipPromise.then(() => false)])
+          .then((ready) => {
           if (sceneTransition?.token !== token) return;
           if (!ready) graphicsController.revert();
           ticket.gpuPreparing = false;
@@ -3399,6 +3402,7 @@
         : 'Arrival could not be drawn. Retry with Canvas.';
       $('scene-loading-retry').textContent = language === 'es'
         ? 'Reintentar con Canvas' : 'Retry with Canvas';
+      ticket.drawFailed = true;
       $('scene-loading-retry').hidden = false;
       $('scene-loading-retry').focus?.({ preventScroll: true });
       return;
@@ -3420,9 +3424,14 @@
     const token = ++sceneTransitionEpoch;
     const campaign = game;
     rendererEvent('arrival-start', destination);
-    sceneTransition = { token, campaign, destination, committed: false };
+    let resolveSkip;
+    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
+    sceneTransition = { token, campaign, destination, committed: false,
+      skipped: false, skipPromise, resolveSkip };
     $('scene-loading').hidden = false;
-    $('scene-loading-retry').hidden = true;
+    $('scene-loading-retry').hidden = false;
+    $('scene-loading-retry').textContent = language === 'es'
+      ? 'Continuar con Canvas' : 'Continue with Canvas';
     transitionLoadingText(label || destination, 'warm');
     clearInput();
     audio.setPaused(true);
@@ -3453,12 +3462,14 @@
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
       // Never spend an unbounded period trying to complete optional atlas art.
-      const encounterWarmup = warmScene(destination, true);
+      const encounterWarmup = sceneTransition.skipped
+        ? null : warmScene(destination, true);
       const reveal = () => {
         if (sceneTransition?.token !== token) return;
         requestAnimationFrame(() => revealSceneTransition(token));
       };
-      if (encounterWarmup) void encounterWarmup.then(reveal, reveal);
+      if (encounterWarmup)
+        void Promise.race([encounterWarmup, skipPromise]).then(reveal, reveal);
       else reveal();
     };
     // Dungeon entries are combat-critical: do not wait on an optional atlas,
@@ -3467,7 +3478,7 @@
     // the opaque interlude is removed. No artificial combat grace period.
     const critical = combatCriticalArrival(destination);
     const pending = critical ? null : warmScene(destination);
-    if (pending) void pending.then(proceed, proceed);
+    if (pending) void Promise.race([pending, skipPromise]).then(proceed, proceed);
     else proceed();
     return true;
   }
@@ -3507,6 +3518,9 @@
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
       $(id).disabled = titleLoading;
+    titleCanvasContinue.hidden = !titleLoading || !!titleSkipGraphics?.skipped;
+    titleCanvasContinue.textContent = language === 'es'
+      ? 'Continuar con Canvas' : 'Continue with Canvas';
     if (!titleLoading) {
       $('title-loading').hidden = true;
       $('title-loading').textContent = '';
@@ -3515,6 +3529,8 @@
   function showTitleScreen() {
     stopRendererRecording();
     ++titleEpoch;
+    titleSkipGraphics?.resolve(false);
+    titleSkipGraphics = null;
     titleLoading = false;
     cancelSceneTransition();
     started = false;
@@ -3543,6 +3559,12 @@
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
     titleLoading = true;
     const epoch = ++titleEpoch;
+    let resolveSkip;
+    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
+    titleSkipGraphics = { skipped: false, resolve: resolveSkip };
+    const waitOrSkip = (pending, onSettled) => pending
+      ? void Promise.race([pending, skipPromise]).then(onSettled, onSettled)
+      : onSettled();
     $('title-loading').hidden = false;
     $('title-loading').textContent = language === 'es'
       ? 'Preparando la primera escena…' : 'Preparing first scene…';
@@ -3568,6 +3590,8 @@
           return;
         }
         titleLoading = false;
+        titleSkipGraphics = null;
+        titleCanvasContinue.hidden = true;
         started = true;
         titleScreen.hidden = true;
         document.body.classList.remove('title-active');
@@ -3594,8 +3618,9 @@
           refreshTitleScreen();
           return;
         }
-        const gpuWarmup = prepareGpuForArrival();
-        if (gpuWarmup) void gpuWarmup.then((ready) => {
+        const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
+        if (gpuWarmup) void Promise.race([gpuWarmup, skipPromise.then(() => false)])
+          .then((ready) => {
           if (epoch !== titleEpoch) return;
           if (!ready) graphicsController.revert();
           requestAnimationFrame(finish);
@@ -3603,13 +3628,10 @@
         else requestAnimationFrame(finish);
       };
       // Recovering an unclean save can change the spawn after title warmup.
-      const actual = warmScene(game.zoneId, true);
-      if (actual) void actual.then(paint, paint);
-      else paint();
+      const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
+      waitOrSkip(actual, paint);
     };
-    const pending = titleWarmup;
-    if (pending) void pending.then(reveal, reveal);
-    else reveal();
+    waitOrSkip(titleWarmup, reveal);
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
@@ -8128,17 +8150,37 @@
     fps.suspend();
   });
   titleScreen = $('title-screen');
+  const titleCanvasContinue = document.createElement('button');
+  titleCanvasContinue.type = 'button';
+  titleCanvasContinue.hidden = true;
+  titleCanvasContinue.style.cssText =
+    'display:block;margin:14px auto 0;min-height:44px;padding:10px 18px;' +
+    'border:1px solid #dfc78f;border-radius:8px;background:#385c4b;' +
+    'color:#fff4d8;font:600 14px sans-serif;cursor:pointer';
+  titleScreen.append(titleCanvasContinue);
+  titleCanvasContinue.onclick = () => {
+    if (!titleLoading || !titleSkipGraphics) return;
+    titleSkipGraphics.skipped = true;
+    graphicsController.revert();
+    titleSkipGraphics.resolve(false);
+    titleCanvasContinue.hidden = true;
+  };
   $('title-continue').onclick = enterPreparedScene;
   $('title-new').onclick = newGameMenu;
   $('title-saves').onclick = titleSaveMenu;
   $('title-settings').onclick = systemMenu;
   $('title-help').onclick = titleHelpMenu;
   $('scene-loading-retry').onclick = () => {
-    if (!sceneTransition?.committed) return;
+    const ticket = sceneTransition;
+    if (!ticket) return;
+    ticket.skipped = true;
     graphicsController.revert();
-    const token = sceneTransition.token;
+    ticket.resolveSkip?.(false);
     $('scene-loading-retry').hidden = true;
-    requestAnimationFrame(() => revealSceneTransition(token));
+    // Awaiting preflight, decoded art or GPU upload is released by skipPromise.
+    // If a draw actually failed, try drawing the committed scene with Canvas.
+    if (ticket.drawFailed)
+      requestAnimationFrame(() => revealSceneTransition(ticket.token));
   };
   updateHUD();
   setLanguage(language);
