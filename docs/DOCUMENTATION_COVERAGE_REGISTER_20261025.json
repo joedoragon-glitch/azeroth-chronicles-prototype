@@ -73,6 +73,27 @@
       "initialMethod": "All rows assigned provisional roles from existing routing classification with a few known overrides; all review results unresolved. No body-wide or source verification claimed.",
       "dependency": "Originally stacked on PR #556; PR #556 merged as 3b9bd5c9d59da165bd94cb45e6ab5d4da8303883 and inventory PR retargeted to main. Recheck tree when main advances.",
       "indexLabelCorrectionParentSha": "b64a6cfa7aaed34f42234f22406ca71e721638cf"
+    },
+    "step1TrustedEntrypoints": {
+      "reviewedMainSha": "29be4517b57408c5584cfb88278fd288ba4c7165",
+      "stagedDocTreeSha": "dcf720e3b0dcbab7dac97e7abd61051a8d66a63c",
+      "reviewedEntrypointCount": 6,
+      "reviewedPaths": [
+        "AGENTS.md",
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/ARCHITECTURE.md",
+        "docs/DOCUMENTATION_INDEX.md",
+        "docs/BRAND_IDENTITY.md",
+        "docs/MECHANIC_DEVELOPMENT.md"
+      ],
+      "changedMarkdownReceipts": [
+        "docs/ARCHITECTURE.md",
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ],
+      "method": "Pinned GitHub source and scripts, merged PR dispositions, exact-commit focused+Pages jobs; scoped current-entrypoint cross-check only, not all 417 bodies or device acceptance",
+      "all417MarkdownPathsAccountedFor": true,
+      "proofreadCorrection": "Documented six individually verified entrypoints instead of implying all 417 unresolved; pinned pre-PR release ledger remains a dated published checkpoint after any merge."
     }
   },
   "semantics": {
@@ -280,8 +301,9 @@
       "previousPhase4GitBlobSha": "b70be63b4aeb030724c024e1bd6f58d534595abb",
       "previousPhase5GitBlobSha": "e627a5f15646a79702a03974da9efd1d71488d0e",
       "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "reconciliationReviewEvidence": "28 Oct, main@29be451: reviewed active authorization/docs ownership/CI rules; cross-checked merged PRs #508/#511/#541, focused-deploy and owner-opt-in full workflow. Older dated milestones explicitly historical. This verifies active policy routing, not every historic task or hardware result."
     },
     {
       "path": "assets/sprites/README.md",
@@ -500,22 +522,23 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371",
+      "gitBlobSha": "9cd04948b5bd80d4bf4adce1df576f791f939900",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
       "topic": "general_or_unresolved",
       "role": "current_entrypoint",
       "authority": "current_entrypoint",
-      "reviewDepth": "frozen_census_membership",
+      "reviewDepth": "current_entrypoint_checked",
       "previousPhase3GitBlobSha": "21f635ebfc6efdc3e181099e605fc932ddf4c610",
       "previousPhase4GitBlobSha": "1c27bc597514b009c078e8b6aff5551b3dfd4304",
       "previousPhase5GitBlobSha": "1719512012e3202eb19405d201c48654aff1d302",
       "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
       "previousBatchAuthorityBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
-      "reconciliationReviewEvidence": "28 Oct: dated audit heading and table label clarified; complete source/decision verification remains pending."
+      "reconciliationReviewEvidence": "28 Oct, source main@29be451: cross-checked app.js Rogue registration, hero-combat Rogue dispatch (older triad guard belongs to legacy branch), party.js Charm companions, save/persistence owners, visuals.js bell staff, script graph, package/sw and focused/manual workflows. New current quick route verified; retained dev.205 audit remains historical, not re-certified.",
+      "previousStep1GitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371"
     },
     {
       "path": "docs/ARCHIVE_FLOOR_SEAM_DEV124.md",
@@ -1023,8 +1046,9 @@
       "reviewDepth": "frozen_census_membership",
       "previousPhase5GitBlobSha": "7f91d0d9892f73746b0699ac6a4b14da068c7b6d",
       "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "reconciliationReviewEvidence": "28 Oct: checked official independent-fantasy game title and historical repo name distinction against README, AGENTS and current status; physical installed-app/brand legal acceptance remains unverified."
     },
     {
       "path": "docs/BRIEF_COMPANY_DEV150.md",
@@ -1872,7 +1896,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
+      "gitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1884,11 +1908,13 @@
       "previousPhase4GitBlobSha": "257c7d7ce0b17a4c674096ff1ba70f0371b6207b",
       "previousPhase5GitBlobSha": "0e1f554778c6d07f2892ba69defa5f9918620a51",
       "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
       "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
       "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
-      "reconciliationReviewEvidence": "28 Oct: release checkpoint refreshed to ebfd6c9 after focused validation and Pages publication (run 40717039180); other dated workstream dispositions remain to be rechecked."
+      "reconciliationReviewEvidence": "28 Oct: source, package.json and sw.js agree on dev.208 at main@29be451; Actions 40720965138 focused validation and Pages jobs successful; PR #560 confirmed merged. Current top status/evidence gates checked, device adoption unverified. Not a recertification of every historical workstream row.",
+      "previousStep1GitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
+      "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -1979,7 +2005,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
+      "gitBlobSha": "d382737942a461f6d0136996081817b69ee20594",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1992,10 +2018,13 @@
       "previousPhase4GitBlobSha": "88b7473134655c82ed2a79f443053dd8f9add5c2",
       "previousPhase5GitBlobSha": "0d9570f5c5345b33cc03fa4783e800ddcaec7fde",
       "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
       "previousPr556GitBlobSha": "76808c83725a5c7ef6176255ada1d1ee28a328d5",
-      "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4"
+      "previousInventoryDraftGitBlobSha": "a387326da6386c36000acb71f789d983d5b10be4",
+      "previousStep1GitBlobSha": "7031ea8127d7d5678852d44bf83d4ed505290f69",
+      "reconciliationReviewEvidence": "28 Oct, main@29be451: checked current authority hierarchy, Rogue soft release/companion/bell-staff paths, and links to agent policy, development state, architecture, brand and workflow. No claim of full-body review of historical index entries or all 417 document contents.",
+      "previousStep1ProofreadGitBlobSha": "8d6f5cb8689160f0076234a79f8de8451c5325fe"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -3477,8 +3506,9 @@
       "previousPhase4GitBlobSha": "6d4fea1a3365fd2ca7679c4e301356890d609352",
       "previousPhase5GitBlobSha": "939de2e45f9ec06f9e2c4822e92d8a6935da6099",
       "reconciliationRole": "current authority",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "verified",
+      "reconciliationReviewEvidence": "28 Oct: checked owner authorization, ongoing documentation maintenance, focused-CI vs owner-opt-in full-suite rules and linked owner modules against AGENTS, .github/scripts/focused-ci.cjs and workflows. No individual mechanics or full test suite certified."
     },
     {
       "path": "docs/MECHANICS_AUDIT_V081.md",
