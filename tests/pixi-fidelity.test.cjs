@@ -265,6 +265,13 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'quality scaling must not discard reusable images from prior densities');
   assert.deepEqual(resizes,[1.5,1],'quality change resizes GPU in place');
   assert.equal(draws.at(-1).ratio,1,'background raster follows changed quality');
+  // Pixel density deliberately changed from 1.5 to 1: first bake this same
+  // stable actor at density 1. Only subsequent viewport-only reconstruction
+  // should reuse that new raster. Old-density reuse would be incorrect.
+  game.props=[{id:'arrival-near-combat',x:game.hero.x+10,y:game.hero.y,
+    structure:'lumber-pile'}];
+  gpu.draw();
+  game.props=[];
   // Mimic a confirmed iPhone returning from another app at a new viewport.
   // The renderer must rebuild its viewport-dependent layers without a new
   // graphics trial or a fall back to Canvas.
