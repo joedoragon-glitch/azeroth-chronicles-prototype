@@ -44,6 +44,14 @@ assert.deepEqual(inspect(data()), []);
 { const b = data(); b.sw = 'const CACHE_VERSION="azeroth-app-v' + old + '";'; rejects(b, 'sw.js'); }
 rejects(data(), 'Runtime changes have no accompanying', { changedPaths: ['src/prototype/renderer.js','tests/pixi-fidelity.test.cjs'] });
 rejects(data(), 'Runtime changes have no accompanying', { changedPaths: ['src/prototype/renderer.js','docs/DEVELOPMENT_STATE.md','docs/DOCUMENTATION_INDEX.md','AGENTS.md'] });
+rejects(data(), 'Runtime changes have no accompanying', {
+  changedPaths: ['src/prototype/renderer.js','docs/NEW_FEATURE_GUIDE.md'],
+  modifiedPaths: ['src/prototype/renderer.js'],
+});
+assert.deepEqual(inspect(data(), {
+  changedPaths: ['src/prototype/renderer.js','docs/EXISTING_FEATURE_GUIDE.md'],
+  modifiedPaths: ['src/prototype/renderer.js','docs/EXISTING_FEATURE_GUIDE.md'],
+}), []);
 assert.deepEqual(inspect(data(), { changedPaths: ['src/prototype/renderer.js','docs/PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md'] }), []);
 assert.deepEqual(inspect(data(), { changedPaths: ['tests/pixi-fidelity.test.cjs'] }), []);
 rejects(data(), 'Version bump omits', { previousVersion: old, changedPaths: ['package.json'] });
