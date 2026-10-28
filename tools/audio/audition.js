@@ -246,6 +246,11 @@
     $('guide-text').value = key
       ? manifest?.director?.eventGuides?.[key] || 'No creative brief registered.'
       : entry?.generationGuide || 'This diagnostic fixture has no production creative brief.';
+    if (!key && $('recording').value === 'title')
+      $('guide-text').value = $('guide-text').value.replaceAll(
+        'Azeroth Chronicles',
+        "So I Became the Dark Lord's Problem",
+      );
     $('guide-recipe').textContent = !key && $('recording').value === 'title'
       ? "The recording's old descriptive text still uses the former development name. The official game and music title is So I Became the Dark Lord's Problem; do not reuse the old name in new creative work."
       : key
