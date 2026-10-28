@@ -422,8 +422,8 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   tinyGpu.activate();
   const baseline=tinyGpu.status();
   assert(baseline.proceduralBytes>0 && baseline.proceduralBytes<=800);
-  // Stage 6: retain repeat-use art during combat up to the hard budget,
-  // then resume normal soft LRU cleanup when the fight ends.
+  // Reuse cached artwork both during and after combat; retire only when
+  // a genuine hard-cap allocation needs the space.
   const combatEvictions=tinyGpu.status().proceduralCacheEvictions;
   game.s.projectiles=[{id:'active-attack'}];
   game.props=[1,2,3,4,5,6,7].map(i=>({
@@ -442,8 +442,8 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   game.props=[{id:'fight-7',x:game.hero.x+92,y:game.hero.y+6,
     structure:'lumber-pile'}];
   tinyGpu.draw();
-  assert(tinyGpu.status().proceduralBytes<fightCache.proceduralBytes,
-    'non-combat frames resume ordinary LRU reclamation');
+  assert(tinyGpu.status().proceduralBytes>=fightCache.proceduralBytes,
+    'non-combat frames retain already baked images for future reuse');
   const previousSceneTextures=destroyedProcedural;
   const seen=[];
   for(let i=1;i<=65;i++){
