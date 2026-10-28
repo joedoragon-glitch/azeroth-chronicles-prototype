@@ -1965,7 +1965,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "af07422aff5aa7ab89ac02a4352c9a4e23cbfb1a",
+      "gitBlobSha": "b2fbf686e78af1f2e0529156e6da8566ceaeda5c",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1981,11 +1981,12 @@
       "reconciliationReview": "verified",
       "previousLedgerCheckpointGitBlobSha": "0c23d4dc005ff063face79fc379132670e550fbd",
       "previousAuthorityBatchBlobSha": "746f90924f03c5738c0d482f3d80126c4514ce64",
-      "reconciliationReviewEvidence": "28 Oct 2026: prior source/checkpoint review retained for main@3765ed3 and successful focused + Pages Actions 40731474055. Spanish player guide links updated to the new path without changing the release-status facts; device tests remain unverified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted.",
+      "reconciliationReviewEvidence": "28 Oct 2026: prior source/checkpoint review retained for main@3765ed3 and successful focused + Pages Actions 40731474055. Spanish player guide links updated to the new path without changing the release-status facts; device tests remain unverified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct release-candidate integration: preserved newer published main Development State ledger rather than overwriting it with stale PR snapshot; audio audition and the other PR docs integrated with main in a merge commit. Candidate dev.210 remains unpublished until Pages verifies.",
       "previousStep1GitBlobSha": "ae70c7a60063f39771200641a31afc527d631ed7",
       "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03",
       "previousReadableStatusGitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
-      "previousSpanishGuideNavigationGitBlobSha": "8377265de1d98324668fcaff9a750816a709f372"
+      "previousSpanishGuideNavigationGitBlobSha": "8377265de1d98324668fcaff9a750816a709f372",
+      "previousMergedMainStateBlobSha": "af07422aff5aa7ab89ac02a4352c9a4e23cbfb1a"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",

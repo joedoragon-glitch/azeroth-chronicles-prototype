@@ -8,8 +8,8 @@ const Visuals = require('../src/prototype/visuals.js');
 
 const game = {
   hero: {id:'hero',x:334,y:298}, zoneId:'vale',
-  s:{rescued:{},throneClaimed:false,statistics:{deaths:0}},
-  zone:()=>({props:game.props||[],enemies:[],buildings:[]}),
+  s:{rescued:{},loot:[],projectiles:[],throneClaimed:false,statistics:{deaths:0}},
+  zone:()=>({props:game.props||[],enemies:game.enemies||[],buildings:[]}),
   visibleNPCs:()=>[],visibleResourceNodes:()=>[],activeLivingParty:()=>[],
   regionIndex:()=>0,isDungeon:()=>false,supplyRoom:()=>false,
   sideDungeon:()=>false,night:()=>false,daylightPhase:()=>({darkness:0})
@@ -40,6 +40,8 @@ assert.equal(oldImage.visualScale,1,'low-density art must not be blindly enlarge
 const inits=[],draws=[],resizes=[],frames=[],moteFrames=[],resources=new Set(), approvedTextures=new Map();
 const gpuUploadBatches=[];
 let idleCallback=null, backgroundCopies=0, textureUpdates=0, stagingGroundReuseDisabled=0;
+let desiredHeroFacing=1, desiredEnemyFacing=1, coinStampPaints=0;
+const facingOptions=[];
 let prepareRegistrations=0, holdGpuUpload=false, resolveGpuUpload=null;
 let holdWarmFrames=false, deferredWarmFrame=null;
 let currentActorTextures = new Set(), destroyedProcedural = 0,
@@ -109,18 +111,26 @@ const runtime={
       setGroundReuse(value){if(value===false)stagingGroundReuseDisabled++},draw(){
       draws.push({width:canvas.width,height:canvas.height,ratio:ctx.ratio});
     }}),
-    nightLightKind:()=>null
+    nightLightKind:()=>null,
+    drawCrownLoot:(_ctx,point)=>{
+      coinStampPaints++;
+      assert.equal(point.x,20);
+      assert.equal(point.y,20);
+    }
   },
   PrototypeSprites:{timeMs:()=>1000},
   PrototypeVisuals:{draw(){},atmosphereMotes:Visuals.atmosphereMotes},
   AzerothNativeWebGLCore:{lampGlowCommands:()=>[]},
   AzerothGpuSpriteAdapter:{create:()=>({
-    commandFor:(entity,point)=>entity.renderKind==='prop'
-      ? {supported:false,reason:'original-game-procedural-art'} : ({
-      supported:true,texture:{src:'./assets/sprites/test.png'},
-      command:{x:point.x,y:point.y,width:120,height:100,
-        opacity:1,flipX:false,sourceRect:null}
-    })
+    commandFor:(entity,point,{facing=1}={})=>{
+      facingOptions.push({id:entity.id,facing});
+      return entity.renderKind==='prop'||entity.species==='orc'
+        ? {supported:false,reason:'original-game-procedural-art'} : ({
+        supported:true,texture:{src:'./assets/sprites/test.png'},
+        command:{x:point.x,y:point.y,width:120,height:100,
+          opacity:1,flipX:facing<0,sourceRect:null}
+      });
+    }
   })},
   AzerothPixiSceneBridge:{create:()=>({
     registerTexture(id){resources.add(id)},
@@ -158,7 +168,9 @@ const gpuOptions={
   canvasRenderer:{
     screen:e=>({x:456+(e.x-game.hero.x)*1.5,y:210+(e.y-game.hero.y)*1.5}),
     presentEntity:painter.presentEntity,
-    groundPresentation:painter.groundPresentation
+    groundPresentation:painter.groundPresentation,
+    facingFor:e=>e.renderKind==='hero' ? desiredHeroFacing
+      : e.species==='orc' ? desiredEnemyFacing : 1
   },
   getRendererOptions:()=>({}),getOptimizationMode:()=>false,onFailure:()=>{}
 };
@@ -579,5 +591,64 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(startupGpu.failureDetails().type,'context-unavailable');
   assert.equal(startupGpu.failureDetails().stage,'webgl2-context');
   assert.match(startupGpu.failureDetails().message,/WebGL2 context not available/);
-  console.log('PASS Pixi/Canvas cache and precise draw/context/startup failure diagnostics');
+  // Narrow presentation acceptance on the real Pixi actorFrame path.
+  resources.clear();currentActorTextures.clear();
+  view.width=912;view.height=420;
+  canvasSurface.width=1368;canvasSurface.height=630;
+  platform.cameraZoom=1.5;
+  game.zoneId='vale';game.props=[];
+  game.enemies=[{id:'visible-orc',species:'orc',type:'mob',renderKind:'enemy',
+    x:game.hero.x+20,y:game.hero.y+10,hp:20,maxHp:20}];
+  game.s.loot=[
+    {id:'crown-one',zone:'vale',x:game.hero.x+30,y:game.hero.y},
+    {id:'crown-two',zone:'vale',x:game.hero.x+40,y:game.hero.y}
+  ];
+  const originalLoot=JSON.stringify(game.s.loot);
+  desiredHeroFacing=desiredEnemyFacing=-1;
+  const priorCoinStamps=coinStampPaints;
+  const parityGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await parityGpu.prepare(),true);
+  const parityFrame=frames.at(-1);
+  const leftOrc=parityFrame.find(item=>item.key==='enemy:visible-orc');
+  const portraitCoins=parityFrame.filter(item=>item.key.startsWith('crown-loot:'));
+  assert(parityFrame.find(item=>item.key==='hero:hero')?.flipX);
+  assert(leftOrc?.flipX,'procedural body uses original facing');
+  assert.equal(portraitCoins.length,2,'both live drops visible');
+  assert.equal(portraitCoins[0].textureId,portraitCoins[1].textureId);
+  assert.equal(coinStampPaints,priorCoinStamps+1,'only one stamp painted');
+  assert(portraitCoins.every(item=>item.depth===Number.MAX_SAFE_INTEGER));
+  assert.equal(JSON.stringify(game.s.loot),originalLoot,'GPU paint never changes loot');
+  assert(facingOptions.some(item=>item.id==='hero'&&item.facing===-1));
+  parityGpu.activate();
+  desiredHeroFacing=desiredEnemyFacing=1;
+  parityGpu.draw();
+  const rightOrc=frames.at(-1).find(item=>item.key==='enemy:visible-orc');
+  assert.equal(rightOrc.flipX,false);
+  assert.equal(frames.at(-1).find(item=>item.key==='hero:hero').flipX,false);
+  const orcAnchor=gpuOptions.canvasRenderer.screen(game.enemies[0]).x;
+  assert(Math.abs(leftOrc.x+leftOrc.width+rightOrc.x-2*orcAnchor)<0.001,
+    'procedural reflection uses the ground anchor');
+  assert.equal(coinStampPaints,priorCoinStamps+1,'steady frames reuse the coin stamp');
+  canvasSurface.width=912;canvasSurface.height=420;
+  parityGpu.draw();
+  assert.equal(coinStampPaints,priorCoinStamps+2,'DPR refreshes the coin stamp');
+  view.width=844;view.height=390;
+  canvasSurface.width=844;canvasSurface.height=390;
+  parityGpu.draw();
+  assert.equal(coinStampPaints,priorCoinStamps+3,'viewport rebuild remakes coin texture');
+  game.s.loot=[];
+  parityGpu.draw();
+  assert(!frames.at(-1).some(item=>item.key.startsWith('crown-loot:')),
+    'collected Crown drops must disappear immediately');
+  parityGpu.release();
+  game.enemies=[];desiredHeroFacing=desiredEnemyFacing=1;
+  // Overlay and Canvas use the same pause painter rather than separate text.
+  const rendererSource=fs.readFileSync(path.join(__dirname,
+    '../src/prototype/renderer.js'),'utf8');
+  const start=rendererSource.indexOf("if (renderLayer === 'overlay')");
+  const end=rendererSource.indexOf("ctx.fillStyle = game.s.mode",start);
+  assert(start>=0&&end>start);
+  assert.match(rendererSource.slice(start,end),/drawPausePresentation\(\);/);
+  assert.match(rendererSource,/function drawPausePresentation\(\)/);
+  console.log('PASS Pixi/Canvas cache, Crown/facing/pause parity and failure diagnostics');
 })().catch(error=>{console.error(error);process.exitCode=1});
