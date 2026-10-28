@@ -2,7 +2,7 @@
 
 **So I Became the Dark Lord's Problem** · Maintained directory updated 28 October 2026 · **419 Markdown documents indexed**.
 
-Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
+Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
 **Read first:** [Development state](DEVELOPMENT_STATE.md) owns verified public-build and acceptance information; [Architecture](ARCHITECTURE.md) maps source owners; [Decisions](DECISIONS.md) gives design rules and supersessions; [AGENTS.md](../AGENTS.md) governs authorization; [Engineering workflow](MECHANIC_DEVELOPMENT.md) describes verification; [Brand identity](BRAND_IDENTITY.md) gives the official title and legacy exceptions.
 
@@ -28,34 +28,34 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Essential guides and active project policy
 
-- [Agents](../AGENTS.md) — *Maintained guide.* Standing developer/AI-agent instructions for authorization, focused testing, documentation and releases.
-- [Controles](../CONTROLES.md) — *Reference.* Legacy Spanish controls entrypoint that directs players to the current complete Spanish guide.
-- [Architecture](ARCHITECTURE.md) — *Maintained guide.* Current Campaign execution map and source ownership across combat, saves, rendering, sound and builds.
-- [Brand Identity](BRAND_IDENTITY.md) — *Maintained guide.* Official title, Spanish promotional rendering and technical legacy identifiers to preserve.
-- [Communication Style](COMMUNICATION_STYLE.md) — *Maintained guide.* Voice and scope guidance for writing the owner's public posts and player-facing updates.
-- [Decisions](DECISIONS.md) — *Maintained guide.* Gameplay and world rules, with dated revisions reorganized into nine subjects.
-- [Development State](DEVELOPMENT_STATE.md) — *Maintained guide.* Verified published-build checkpoint, implemented features, pending work and acceptance limits.
-- [Documentation Index](DOCUMENTATION_INDEX.md) — *Maintained guide.* This annotated directory, explaining the purpose of every tracked Markdown document.
-- [Mechanic Development](MECHANIC_DEVELOPMENT.md) — *Maintained guide.* Engineering workflow for authorized changes, regression checks, documentation and integration.
-- [Guia En Espanol](../GUIA_EN_ESPANOL.md) — *Maintained guide.* Full Spanish player guide: controls, game progression, saving, language choice and repository help.
-- [Game README](../README.md) — *Maintained guide.* Player introduction, links to the playable game, controls, saves, graphics and development information.
+- **[Agents](../AGENTS.md)** — **Maintained guide.** Standing developer/AI-agent instructions for authorization, focused testing, documentation and releases.
+- **[Controles](../CONTROLES.md)** — **Reference.** Legacy Spanish controls entrypoint that directs players to the current complete Spanish guide.
+- **[Architecture](ARCHITECTURE.md)** — **Maintained guide.** Current Campaign execution map and source ownership across combat, saves, rendering, sound and builds.
+- **[Brand Identity](BRAND_IDENTITY.md)** — **Maintained guide.** Official title, Spanish promotional rendering and technical legacy identifiers to preserve.
+- **[Communication Style](COMMUNICATION_STYLE.md)** — **Maintained guide.** Voice and scope guidance for writing the owner's public posts and player-facing updates.
+- **[Decisions](DECISIONS.md)** — **Maintained guide.** Gameplay and world rules, with dated revisions reorganized into nine subjects.
+- **[Development State](DEVELOPMENT_STATE.md)** — **Maintained guide.** Verified published-build checkpoint, implemented features, pending work and acceptance limits.
+- **[Documentation Index](DOCUMENTATION_INDEX.md)** — **Maintained guide.** This annotated directory, explaining the purpose of every tracked Markdown document.
+- **[Mechanic Development](MECHANIC_DEVELOPMENT.md)** — **Maintained guide.** Engineering workflow for authorized changes, regression checks, documentation and integration.
+- **[Guia En Espanol](../GUIA_EN_ESPANOL.md)** — **Maintained guide.** Full Spanish player guide: controls, game progression, saving, language choice and repository help.
+- **[Game README](../README.md)** — **Maintained guide.** Player introduction, links to the playable game, controls, saves, graphics and development information.
 
 ## Music, sound effects and audio production
 
-- [Audio Authoring](AUDIO_AUTHORING.md) — *Maintained guide.* Audio recipe rendering, manifest registration, attribution and production validation.
-- [Audio Environment](AUDIO_ENVIRONMENT.md) — *Reference.* Environmental sound beds, their synthesis source and location/scene playback rules.
-- [Audio Foundation](AUDIO_FOUNDATION.md) — *Reference.* Reference structure or catalog for audio, with its original assumptions and scope.
-- [Audio Playback](AUDIO_PLAYBACK.md) — *Maintained guide.* Current audio engine, mixers, production scenes and standalone listening-room behavior.
-- [Audio Sound Pass](AUDIO_SOUND_PASS.md) — *Design reference.* Artistic identities of the soundtrack's 83 music cues and guidance for future composition.
+- **[Audio Authoring](AUDIO_AUTHORING.md)** — **Maintained guide.** Audio recipe rendering, manifest registration, attribution and production validation.
+- **[Audio Environment](AUDIO_ENVIRONMENT.md)** — **Reference.** Environmental sound beds, their synthesis source and location/scene playback rules.
+- **[Audio Foundation](AUDIO_FOUNDATION.md)** — **Reference.** Reference structure or catalog for audio, with its original assumptions and scope.
+- **[Audio Playback](AUDIO_PLAYBACK.md)** — **Maintained guide.** Current audio engine, mixers, production scenes and standalone listening-room behavior.
+- **[Audio Sound Pass](AUDIO_SOUND_PASS.md)** — **Design reference.** Artistic identities of the soundtrack's 83 music cues and guidance for future composition.
 - [Audio Stage1 Coverage 20261025](AUDIO_STAGE1_COVERAGE_20261025.md) — *Dated record.* Development-only observer for tracing game event coverage by the audio layer.
 - [Audio Stage2 Recovery 20261025](AUDIO_STAGE2_RECOVERY_20261025.md) — *Dated record.* Dated stage for Web Audio startup, interruption recovery and fallback.
 - [Audio Stage3 Handoff 20261025](AUDIO_STAGE3_HANDOFF_20261025.md) — *Dated record.* Preserves audio context, known work and next-stage questions from a dated handoff.
 - [Audio Stage3 Real Action Audit 20261025](AUDIO_STAGE3_REAL_ACTION_AUDIT_20261025.md) — *Dated record.* Tests real native game actions against audible cues rather than event-name assumptions.
 - [Audio Stage4 Mix Audit 20261025](AUDIO_STAGE4_MIX_AUDIT_20261025.md) — *Dated record.* Checks audio mixing and sound-stage acceptance at the original review checkpoint.
 - [Audio Stage5 Release Preflight 20261025](AUDIO_STAGE5_RELEASE_PREFLIGHT_20261025.md) — *Dated record.* Historical audio release-readiness gates and unresolved checks; not a new work order.
-- [Enemy Audio Coverage](ENEMY_AUDIO_COVERAGE.md) — *Reference.* Enemy actions that should make sound and deliberate silence/coverage decisions.
-- [Enemy Audio Final Audit](ENEMY_AUDIO_FINAL_AUDIT.md) — *Reference.* Examines enemy audio final for source or design inconsistencies, recording dated findings and limits.
-- [Enemy Audio Synchronization](ENEMY_AUDIO_SYNCHRONIZATION.md) — *Reference.* Timing of enemy audio relative to attack resolution and visual telegraphs.
+- **[Enemy Audio Coverage](ENEMY_AUDIO_COVERAGE.md)** — **Reference.** Enemy actions that should make sound and deliberate silence/coverage decisions.
+- **[Enemy Audio Final Audit](ENEMY_AUDIO_FINAL_AUDIT.md)** — **Reference.** Examines enemy audio final for source or design inconsistencies, recording dated findings and limits.
+- **[Enemy Audio Synchronization](ENEMY_AUDIO_SYNCHRONIZATION.md)** — **Reference.** Timing of enemy audio relative to attack resolution and visual telegraphs.
 
 ## Hero abilities, combat, enemies and bosses
 
@@ -64,8 +64,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Night Ringleader Rogue 20261020](NIGHT_RINGLEADER_ROGUE_20261020.md) — *Dated record.* Describes night ringleader rogue decisions, constraints or engineering observations from its original development checkpoint.
 - [Release Candidate Healing Rogue 20261025](RELEASE_CANDIDATE_HEALING_ROGUE_20261025.md) — *Dated record.* Documents historical release planning, gates and evidence for healing rogue.
-- [Rogue AI Phase2](ROGUE_AI_PHASE2.md) — *Reference.* Describes a particular development stage of rogue AI and its recorded work status.
-- [Rogue Bard Canonical Owner Handoff 20261027](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md) — *Design reference.* Preserves rogue bard canonical owner context, known work and next-stage questions from a dated handoff.
+- **[Rogue AI Phase2](ROGUE_AI_PHASE2.md)** — **Reference.** Describes a particular development stage of rogue AI and its recorded work status.
+- **[Rogue Bard Canonical Owner Handoff 20261027](ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md)** — **Design reference.** Preserves rogue bard canonical owner context, known work and next-stage questions from a dated handoff.
 - [Rogue Bard Class Independence Audit 20261027](ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md) — *Dated record.* Examines rogue bard class independence for source or design inconsistencies, recording dated findings and limits.
 - [Rogue Bard Discussion Record 20261026](ROGUE_BARD_DISCUSSION_RECORD_20261026.md) — *Dated record.* Preserves owner discussion and evolving decisions about rogue bard discussion, subject to later rulings.
 - [Rogue Bard Dual Sided Performances Critical Tiers 20261027](ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md) — *Dated record.* Discusses rogue bard dual sided performances critical tiers measurements, bottlenecks or optimization trade-offs.
@@ -85,8 +85,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Rogue Bard Phase6 Native Critical Continuation 20261027](ROGUE_BARD_PHASE6_NATIVE_CRITICAL_CONTINUATION_20261027.md) — *Dated record.* Preserves rogue bard native critical continuation context, known work and next-stage questions from a dated handoff.
 - [Rogue Bard Phases 1 To 3 Consolidation 20261027](ROGUE_BARD_PHASES_1_TO_3_CONSOLIDATION_20261027.md) — *Dated record.* Describes a particular development stage of rogue bard phases 1 to 3 consolidation and its recorded work status.
 - [Rogue Bard PR511 Description Archive 20261027](ROGUE_BARD_PR511_DESCRIPTION_ARCHIVE_20261027.md) — *Dated record.* Describes rogue bard description archive decisions, constraints or engineering observations from its original development checkpoint.
-- [Rogue Foundation Phase1](ROGUE_FOUNDATION_PHASE1.md) — *Reference.* Describes a particular development stage of rogue and its recorded work status.
-- [Rogue PR146 Integration Audit](ROGUE_PR146_INTEGRATION_AUDIT.md) — *Reference.* Examines rogue for source or design inconsistencies, recording dated findings and limits.
+- **[Rogue Foundation Phase1](ROGUE_FOUNDATION_PHASE1.md)** — **Reference.** Describes a particular development stage of rogue and its recorded work status.
+- **[Rogue PR146 Integration Audit](ROGUE_PR146_INTEGRATION_AUDIT.md)** — **Reference.** Examines rogue for source or design inconsistencies, recording dated findings and limits.
 - [Rogue Ranged Pressure DEV184 20261025](ROGUE_RANGED_PRESSURE_DEV184_20261025.md) — *Dated record.* Describes rogue ranged pressure decisions, constraints or engineering observations from its original development checkpoint.
 - [Rogue Territorial Escalation 20261025](ROGUE_TERRITORIAL_ESCALATION_20261025.md) — *Dated record.* Describes rogue territorial escalation decisions, constraints or engineering observations from its original development checkpoint.
 
@@ -119,12 +119,12 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Asymmetric Tap Charged Cooldowns 20261024](ASYMMETRIC_TAP_CHARGED_COOLDOWNS_20261024.md) — *Dated record.* Describes asymmetric tap charged cooldowns decisions, constraints or engineering observations from its original development checkpoint.
 - [Charge Slow Consolidation 20261015](CHARGE_SLOW_CONSOLIDATION_20261015.md) — *Dated record.* Describes charge slow consolidation decisions, constraints or engineering observations from its original development checkpoint.
 - [Cooldown Balance Audit 20261009](COOLDOWN_BALANCE_AUDIT_20261009.md) — *Dated record.* Examines cooldown balance for source or design inconsistencies, recording dated findings and limits.
-- [Cooldown Balance Next Chat](COOLDOWN_BALANCE_NEXT_CHAT.md) — *Reference.* Preserves cooldown balance context, known work and next-stage questions from a dated handoff.
-- [Cooldown Only Combat Migration](COOLDOWN_ONLY_COMBAT_MIGRATION.md) — *Reference.* Rules for migrating from mana-driven combat to cooldown-only abilities.
-- [Enemy Skill VFX Audit](ENEMY_SKILL_VFX_AUDIT.md) — *Reference.* Examines enemy skill VFX for source or design inconsistencies, recording dated findings and limits.
-- [Enemy Skill VFX Foundation](ENEMY_SKILL_VFX_FOUNDATION.md) — *Reference.* Reference structure or catalog for enemy skill VFX, with its original assumptions and scope.
-- [Enemy Skill VFX Quality Audit](ENEMY_SKILL_VFX_QUALITY_AUDIT.md) — *Reference.* Examines enemy skill VFX for source or design inconsistencies, recording dated findings and limits.
-- [Enemy Skill VFX Work Handoff](ENEMY_SKILL_VFX_WORK_HANDOFF.md) — *Reference.* Preserves enemy skill VFX work context, known work and next-stage questions from a dated handoff.
+- **[Cooldown Balance Next Chat](COOLDOWN_BALANCE_NEXT_CHAT.md)** — **Reference.** Preserves cooldown balance context, known work and next-stage questions from a dated handoff.
+- **[Cooldown Only Combat Migration](COOLDOWN_ONLY_COMBAT_MIGRATION.md)** — **Reference.** Rules for migrating from mana-driven combat to cooldown-only abilities.
+- **[Enemy Skill VFX Audit](ENEMY_SKILL_VFX_AUDIT.md)** — **Reference.** Examines enemy skill VFX for source or design inconsistencies, recording dated findings and limits.
+- **[Enemy Skill VFX Foundation](ENEMY_SKILL_VFX_FOUNDATION.md)** — **Reference.** Reference structure or catalog for enemy skill VFX, with its original assumptions and scope.
+- **[Enemy Skill VFX Quality Audit](ENEMY_SKILL_VFX_QUALITY_AUDIT.md)** — **Reference.** Examines enemy skill VFX for source or design inconsistencies, recording dated findings and limits.
+- **[Enemy Skill VFX Work Handoff](ENEMY_SKILL_VFX_WORK_HANDOFF.md)** — **Reference.** Preserves enemy skill VFX work context, known work and next-stage questions from a dated handoff.
 - [Forts Ranger Passage 20261020](FORTS_RANGER_PASSAGE_20261020.md) — *Dated record.* Describes forts ranger passage decisions, constraints or engineering observations from its original development checkpoint.
 - [Hero Class Skills 2 8 Consolidated Review 20261015](HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md) — *Dated record.* Examines hero class skills 2 8 consolidated for source or design inconsistencies, recording dated findings and limits.
 - [Hero Guided Survival DEV145](HERO_GUIDED_SURVIVAL_DEV145.md) — *Dated record.* Describes hero guided survival decisions, constraints or engineering observations from its original development checkpoint.
@@ -156,26 +156,26 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ### Enemy AI, bosses, captains and battle hazards
 
-- [Boss Captain Range Audit](BOSS_CAPTAIN_RANGE_AUDIT.md) — *Reference.* Examines boss captain range for source or design inconsistencies, recording dated findings and limits.
+- **[Boss Captain Range Audit](BOSS_CAPTAIN_RANGE_AUDIT.md)** — **Reference.** Examines boss captain range for source or design inconsistencies, recording dated findings and limits.
 - [Captain Healing And Treasury Guards 20261025](CAPTAIN_HEALING_AND_TREASURY_GUARDS_20261025.md) — *Dated record.* Describes captain healing and treasury guards decisions, constraints or engineering observations from its original development checkpoint.
 - [Enemy Healing Consolidation 20261015](ENEMY_HEALING_CONSOLIDATION_20261015.md) — *Dated record.* Describes enemy healing consolidation decisions, constraints or engineering observations from its original development checkpoint.
 - [Enemy Ordinary Healing DEV181](ENEMY_ORDINARY_HEALING_DEV181.md) — *Dated record.* Describes enemy ordinary healing decisions, constraints or engineering observations from its original development checkpoint.
 - [Enemy Range Tuning Split 20261027](ENEMY_RANGE_TUNING_SPLIT_20261027.md) — *Dated record.* Describes enemy range tuning split decisions, constraints or engineering observations from its original development checkpoint.
-- [Enemy VFX Validation](ENEMY_VFX_VALIDATION.md) — *Reference.* Records tests or acceptance criteria for enemy VFX at its original checkpoint.
+- **[Enemy VFX Validation](ENEMY_VFX_VALIDATION.md)** — **Reference.** Records tests or acceptance criteria for enemy VFX at its original checkpoint.
 - [Enemy Withdrawal DEV144](ENEMY_WITHDRAWAL_DEV144.md) — *Dated record.* Records enemy retreat and recovery behavior, including Dreadmaw's ring-closing complications.
 - [Fort Repairs DEV151](FORT_REPAIRS_DEV151.md) — *Dated record.* Describes fort decisions, constraints or engineering observations from its original development checkpoint.
 - [Frontier Aesthetics Boss Gather 20261020](FRONTIER_AESTHETICS_BOSS_GATHER_20261020.md) — *Dated record.* Describes frontier aesthetics boss gather decisions, constraints or engineering observations from its original development checkpoint.
-- [Monster Forts Territorial Audit](MONSTER_FORTS_TERRITORIAL_AUDIT.md) — *Reference.* Examines monster forts territorial for source or design inconsistencies, recording dated findings and limits.
+- **[Monster Forts Territorial Audit](MONSTER_FORTS_TERRITORIAL_AUDIT.md)** — **Reference.** Examines monster forts territorial for source or design inconsistencies, recording dated findings and limits.
 - [Native Range Fort Audit DEV145](NATIVE_RANGE_FORT_AUDIT_DEV145.md) — *Dated record.* Examines native range fort for source or design inconsistencies, recording dated findings and limits.
 - [Nightmare Specialist Upkeep DEV145](NIGHTMARE_SPECIALIST_UPKEEP_DEV145.md) — *Dated record.* Describes nightmare specialist upkeep decisions, constraints or engineering observations from its original development checkpoint.
 - [PR313 Enemy Healing 20261016](PR313_ENEMY_HEALING_20261016.md) — *Dated record.* Describes enemy healing decisions, constraints or engineering observations from its original development checkpoint.
 
 ### Other combat and survival investigations
 
-- [Combat Arena Low Spec](COMBAT_ARENA_LOW_SPEC.md) — *Reference.* Combat-space readability and technical constraints for lower-performance devices.
+- **[Combat Arena Low Spec](COMBAT_ARENA_LOW_SPEC.md)** — **Reference.** Combat-space readability and technical constraints for lower-performance devices.
 - [Combat Conditions V09](COMBAT_CONDITIONS_V09.md) — *Dated record.* Meaning and presentation of status conditions in combat.
 - [Combat Flow And Menus DEV126](COMBAT_FLOW_AND_MENUS_DEV126.md) — *Dated record.* Explains combat flow and menus player interaction or interface readability choices.
-- [Combat Party Housekeeping](COMBAT_PARTY_HOUSEKEEPING.md) — *Reference.* Describes combat party housekeeping decisions, constraints or engineering observations from its original development checkpoint.
+- **[Combat Party Housekeeping](COMBAT_PARTY_HOUSEKEEPING.md)** — **Reference.** Describes combat party housekeeping decisions, constraints or engineering observations from its original development checkpoint.
 - [Greenwood Melee Anti Kite Pilot 20261026](GREENWOOD_MELEE_ANTI_KITE_PILOT_20261026.md) — *Dated record.* Investigates greenwood melee anti kite pilot as a proposal or pilot without establishing production readiness.
 - [Greenwood Native Pursuit 20261026](GREENWOOD_NATIVE_PURSUIT_20261026.md) — *Dated record.* Describes greenwood native pursuit decisions, constraints or engineering observations from its original development checkpoint.
 - [Issue463 DEV186 Integration 20261025](ISSUE463_DEV186_INTEGRATION_20261025.md) — *Dated record.* Explains how issue463 was to be integrated, with its checkpoint-specific implementation evidence.
@@ -185,7 +185,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Issue463 Unmerged Work Compatibility Audit 20261025](ISSUE463_UNMERGED_WORK_COMPATIBILITY_AUDIT_20261025.md) — *Dated record.* Examines issue463 unmerged work compatibility for source or design inconsistencies, recording dated findings and limits.
 - [Melee Basic Range Regression Audit 20261026](MELEE_BASIC_RANGE_REGRESSION_AUDIT_20261026.md) — *Dated record.* Examines melee basic range regression for source or design inconsistencies, recording dated findings and limits.
 - [Melee Pursuit Expansion 20261026](MELEE_PURSUIT_EXPANSION_20261026.md) — *Dated record.* Describes melee pursuit expansion decisions, constraints or engineering observations from its original development checkpoint.
-- [Melee Reach Balancing Workbench](MELEE_REACH_BALANCING_WORKBENCH.md) — *Maintained guide.* Describes melee reach balancing workbench decisions, constraints or engineering observations from its original development checkpoint.
+- **[Melee Reach Balancing Workbench](MELEE_REACH_BALANCING_WORKBENCH.md)** — **Maintained guide.** Describes melee reach balancing workbench decisions, constraints or engineering observations from its original development checkpoint.
 - [Melee Reach Merge Readiness 20261026](MELEE_REACH_MERGE_READINESS_20261026.md) — *Dated record.* Documents historical release planning, gates and evidence for melee reach merge readiness.
 - [Neri Projectile Pet 20261020](NERI_PROJECTILE_PET_20261020.md) — *Dated record.* Describes neri projectile pet decisions, constraints or engineering observations from its original development checkpoint.
 - [Pet Parity Audit 20261020](PET_PARITY_AUDIT_20261020.md) — *Dated record.* Examines pet parity for source or design inconsistencies, recording dated findings and limits.
@@ -223,10 +223,10 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ### Regions, settlements, transportation and terrain
 
-- [Abyss Air Superiority Canon](ABYSS_AIR_SUPERIORITY_CANON.md) — *Reference.* Explains the Dark Lord's purple dragon and unfinished breeding, flight and air-superiority project at Abyss Bastion.
-- [Abyss Bastion Dungeon Depth](ABYSS_BASTION_DUNGEON_DEPTH.md) — *Reference.* Describes abyss bastion dungeon depth decisions, constraints or engineering observations from its original development checkpoint.
-- [Ashen Frontier Occupation Layout](ASHEN_FRONTIER_OCCUPATION_LAYOUT.md) — *Reference.* Maps the Ashen Frontier's occupied settlements, strategic infrastructure and authored world layout.
-- [Ashen Frontier Prop Depth](ASHEN_FRONTIER_PROP_DEPTH.md) — *Reference.* Describes ashen frontier prop depth decisions, constraints or engineering observations from its original development checkpoint.
+- **[Abyss Air Superiority Canon](ABYSS_AIR_SUPERIORITY_CANON.md)** — **Reference.** Explains the Dark Lord's purple dragon and unfinished breeding, flight and air-superiority project at Abyss Bastion.
+- **[Abyss Bastion Dungeon Depth](ABYSS_BASTION_DUNGEON_DEPTH.md)** — **Reference.** Describes abyss bastion dungeon depth decisions, constraints or engineering observations from its original development checkpoint.
+- **[Ashen Frontier Occupation Layout](ASHEN_FRONTIER_OCCUPATION_LAYOUT.md)** — **Reference.** Maps the Ashen Frontier's occupied settlements, strategic infrastructure and authored world layout.
+- **[Ashen Frontier Prop Depth](ASHEN_FRONTIER_PROP_DEPTH.md)** — **Reference.** Describes ashen frontier prop depth decisions, constraints or engineering observations from its original development checkpoint.
 - [Coastal Marches DEV134](COASTAL_MARCHES_DEV134.md) — *Dated record.* Describes coastal marches decisions, constraints or engineering observations from its original development checkpoint.
 - [Continue Highlands 20261021](CONTINUE_HIGHLANDS_20261021.md) — *Dated record.* Describes continue highlands decisions, constraints or engineering observations from its original development checkpoint.
 - [Director World Building Snapshot Canon Lock 20261012](DIRECTOR_WORLD_BUILDING_SNAPSHOT_CANON_LOCK_20261012.md) — *Dated record.* Describes director world building snapshot canon lock decisions, constraints or engineering observations from its original development checkpoint.
@@ -240,15 +240,15 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Highlands Appalachian DEV138](HIGHLANDS_APPALACHIAN_DEV138.md) — *Dated record.* Describes highlands appalachian decisions, constraints or engineering observations from its original development checkpoint.
 - [Highlands DEV138 Geography Aesthetic Audit](HIGHLANDS_DEV138_GEOGRAPHY_AESTHETIC_AUDIT.md) — *Dated record.* Examines highlands geography aesthetic for source or design inconsistencies, recording dated findings and limits.
 - [Highlands Treasury DEV138](HIGHLANDS_TREASURY_DEV138.md) — *Dated record.* Describes highlands treasury decisions, constraints or engineering observations from its original development checkpoint.
-- [Ironroot Highlands Layout](IRONROOT_HIGHLANDS_LAYOUT.md) — *Reference.* Describes ironroot highlands layout decisions, constraints or engineering observations from its original development checkpoint.
+- **[Ironroot Highlands Layout](IRONROOT_HIGHLANDS_LAYOUT.md)** — **Reference.** Describes ironroot highlands layout decisions, constraints or engineering observations from its original development checkpoint.
 - [Orchard Witness DEV147](ORCHARD_WITNESS_DEV147.md) — *Dated record.* Relocation and saved-position migration of the Orchard witness to a visible roadside spot.
-- [Regional Handoff Audit](REGIONAL_HANDOFF_AUDIT.md) — *Reference.* Examines regional for source or design inconsistencies, recording dated findings and limits.
+- **[Regional Handoff Audit](REGIONAL_HANDOFF_AUDIT.md)** — **Reference.** Examines regional for source or design inconsistencies, recording dated findings and limits.
 - [Side Dungeon Design Discussion 20261021](SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md) — *Dated record.* Preserves owner discussion and evolving decisions about side dungeon design discussion, subject to later rulings.
 - [Snapshot Transport And HUD Visual Preaudit 20261015](SNAPSHOT_TRANSPORT_AND_HUD_VISUAL_PREAUDIT_20261015.md) — *Dated record.* Examines snapshot transport and HUD visual preaudit for source or design inconsistencies, recording dated findings and limits.
 - [Tidal Ferry DEV136](TIDAL_FERRY_DEV136.md) — *Dated record.* Describes tidal ferry decisions, constraints or engineering observations from its original development checkpoint.
-- [Transport Arrivals And Burst Compression](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md) — *Reference.* Transport landing positions and tiered combat-damage compression requirements.
+- **[Transport Arrivals And Burst Compression](TRANSPORT_ARRIVALS_AND_BURST_COMPRESSION.md)** — **Reference.** Transport landing positions and tiered combat-damage compression requirements.
 - [World Life Fidelity V0862](WORLD_LIFE_FIDELITY_V0862.md) — *Dated record.* Worldbuilding standard linking named locations to credible, navigable in-game geography.
-- [World Proportion And Density Guardrails](WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md) — *Reference.* Describes world proportion and density guardrails decisions, constraints or engineering observations from its original development checkpoint.
+- **[World Proportion And Density Guardrails](WORLD_PROPORTION_AND_DENSITY_GUARDRAILS.md)** — **Reference.** Describes world proportion and density guardrails decisions, constraints or engineering observations from its original development checkpoint.
 
 ### Story, Archive, characters and localization
 
@@ -260,16 +260,16 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Development State Archive Through 20261028](DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md) — *Dated record.* Preserved release-by-release development diary and earlier validation records.
 - [Keeper Archive Copy Audit 20261020](KEEPER_ARCHIVE_COPY_AUDIT_20261020.md) — *Dated record.* Examines keeper archive copy for source or design inconsistencies, recording dated findings and limits.
 - [Keeper Archive Mechanics Audit 20261024](KEEPER_ARCHIVE_MECHANICS_AUDIT_20261024.md) — *Dated record.* Examines keeper archive mechanics for source or design inconsistencies, recording dated findings and limits.
-- [Keeper Reference Writing](KEEPER_REFERENCE_WRITING.md) — *Reference.* Keeper-authored Archive narrative voice and conditions for lore-consistent text.
+- **[Keeper Reference Writing](KEEPER_REFERENCE_WRITING.md)** — **Reference.** Keeper-authored Archive narrative voice and conditions for lore-consistent text.
 - [Keeper Unlock Audit 20261009](KEEPER_UNLOCK_AUDIT_20261009.md) — *Dated record.* Reviews Keeper access, rescue and unlock conditions against previously approved story progression.
 - [N1 Bilingual Narrative Integration 20261024](N1_BILINGUAL_NARRATIVE_INTEGRATION_20261024.md) — *Dated record.* Explains how n1 bilingual narrative was to be integrated, with its checkpoint-specific implementation evidence.
-- [Quest Archive Continuation](QUEST_ARCHIVE_CONTINUATION.md) — *Reference.* Preserves quest archive continuation context, known work and next-stage questions from a dated handoff.
+- **[Quest Archive Continuation](QUEST_ARCHIVE_CONTINUATION.md)** — **Reference.** Preserves quest archive continuation context, known work and next-stage questions from a dated handoff.
 - [Snapshot Precert Implementation And Narrative Audit 20261014](SNAPSHOT_PRECERT_IMPLEMENTATION_AND_NARRATIVE_AUDIT_20261014.md) — *Dated record.* Examines snapshot precert and narrative for source or design inconsistencies, recording dated findings and limits.
 - [Treasury Forts And Archive DEV125](TREASURY_FORTS_AND_ARCHIVE_DEV125.md) — *Dated record.* Describes treasury forts and archive decisions, constraints or engineering observations from its original development checkpoint.
 
 ### Other geographic and narrative records
 
-- [Dark Crown Regime Layout](DARK_CROWN_REGIME_LAYOUT.md) — *Reference.* Describes dark crown regime layout decisions, constraints or engineering observations from its original development checkpoint.
+- **[Dark Crown Regime Layout](DARK_CROWN_REGIME_LAYOUT.md)** — **Reference.** Describes dark crown regime layout decisions, constraints or engineering observations from its original development checkpoint.
 - [Snapshot Crown Economy Audit 20261015](SNAPSHOT_CROWN_ECONOMY_AUDIT_20261015.md) — *Dated record.* Examines snapshot crown economy for source or design inconsistencies, recording dated findings and limits.
 
 ## Sprite art, textures and visual design
@@ -278,26 +278,26 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ### Sprite pipelines, manifests and original-master policies
 
 - [Approved Art Pass 20261019](APPROVED_ART_PASS_20261019.md) — *Dated record.* Describes approved art decisions, constraints or engineering observations from its original development checkpoint.
-- [Camera Sprite Targets](CAMERA_SPRITE_TARGETS.md) — *Reference.* Describes camera sprite targets decisions, constraints or engineering observations from its original development checkpoint.
-- [Design To Sprite Workflow](DESIGN_TO_SPRITE_WORKFLOW.md) — *Maintained guide.* Sprite-art workflow from approved design and untouched masters through exports and review.
-- [Graphics Canon Sprite Audit](GRAPHICS_CANON_SPRITE_AUDIT.md) — *Reference.* Examines graphics canon sprite for source or design inconsistencies, recording dated findings and limits.
-- [Graphics Canon Sprite Coverage](GRAPHICS_CANON_SPRITE_COVERAGE.md) — *Reference.* Describes graphics canon sprite decisions, constraints or engineering observations from its original development checkpoint.
-- [Graphics Canon Sprite Prompt Audit](GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md) — *Reference.* Historical procedural sprite-catalog and prompt review, later superseded by new art scope.
-- [Graphics Canon Sprite Prompts](GRAPHICS_CANON_SPRITE_PROMPTS.md) — *Reference.* Describes graphics canon sprite prompts decisions, constraints or engineering observations from its original development checkpoint.
-- [Graphics Canon Sprite Roster](GRAPHICS_CANON_SPRITE_ROSTER.md) — *Reference.* Reference structure or catalog for graphics canon sprite roster, with its original assumptions and scope.
-- [Regional Environment Sprite Scope](REGIONAL_ENVIRONMENT_SPRITE_SCOPE.md) — *Reference.* Specifies intended regional environment sprite scope behavior or boundaries, subject to later decisions.
-- [Sprite Asset Lifecycle Animation Audit](SPRITE_ASSET_LIFECYCLE_ANIMATION_AUDIT.md) — *Reference.* Examines sprite asset lifecycle animation for source or design inconsistencies, recording dated findings and limits.
-- [Sprite Original Master Export Policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md) — *Maintained guide.* Source-resolution and provenance safeguards when exporting or replacing game sprites.
-- [Sprite Phase3 Pilot Release](SPRITE_PHASE3_PILOT_RELEASE.md) — *Reference.* Investigates sprite pilot as a proposal or pilot without establishing production readiness.
-- [Sprite Preparation Audit](SPRITE_PREPARATION_AUDIT.md) — *Reference.* Examines sprite preparation for source or design inconsistencies, recording dated findings and limits.
-- [Sprite Preparation Progress](SPRITE_PREPARATION_PROGRESS.md) — *Reference.* Summarizes the historical status, evidence or progression of sprite preparation progress.
-- [Sprite Preparation](SPRITE_PREPARATION.md) — *Reference.* Describes sprite preparation decisions, constraints or engineering observations from its original development checkpoint.
-- [Sprite Production Current Context](SPRITE_PRODUCTION_CURRENT_CONTEXT.md) — *Reference.* Describes sprite production current context decisions, constraints or engineering observations from its original development checkpoint.
+- **[Camera Sprite Targets](CAMERA_SPRITE_TARGETS.md)** — **Reference.** Describes camera sprite targets decisions, constraints or engineering observations from its original development checkpoint.
+- **[Design To Sprite Workflow](DESIGN_TO_SPRITE_WORKFLOW.md)** — **Maintained guide.** Sprite-art workflow from approved design and untouched masters through exports and review.
+- **[Graphics Canon Sprite Audit](GRAPHICS_CANON_SPRITE_AUDIT.md)** — **Reference.** Examines graphics canon sprite for source or design inconsistencies, recording dated findings and limits.
+- **[Graphics Canon Sprite Coverage](GRAPHICS_CANON_SPRITE_COVERAGE.md)** — **Reference.** Describes graphics canon sprite decisions, constraints or engineering observations from its original development checkpoint.
+- **[Graphics Canon Sprite Prompt Audit](GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md)** — **Reference.** Historical procedural sprite-catalog and prompt review, later superseded by new art scope.
+- **[Graphics Canon Sprite Prompts](GRAPHICS_CANON_SPRITE_PROMPTS.md)** — **Reference.** Describes graphics canon sprite prompts decisions, constraints or engineering observations from its original development checkpoint.
+- **[Graphics Canon Sprite Roster](GRAPHICS_CANON_SPRITE_ROSTER.md)** — **Reference.** Reference structure or catalog for graphics canon sprite roster, with its original assumptions and scope.
+- **[Regional Environment Sprite Scope](REGIONAL_ENVIRONMENT_SPRITE_SCOPE.md)** — **Reference.** Specifies intended regional environment sprite scope behavior or boundaries, subject to later decisions.
+- **[Sprite Asset Lifecycle Animation Audit](SPRITE_ASSET_LIFECYCLE_ANIMATION_AUDIT.md)** — **Reference.** Examines sprite asset lifecycle animation for source or design inconsistencies, recording dated findings and limits.
+- **[Sprite Original Master Export Policy](SPRITE_ORIGINAL_MASTER_EXPORT_POLICY.md)** — **Maintained guide.** Source-resolution and provenance safeguards when exporting or replacing game sprites.
+- **[Sprite Phase3 Pilot Release](SPRITE_PHASE3_PILOT_RELEASE.md)** — **Reference.** Investigates sprite pilot as a proposal or pilot without establishing production readiness.
+- **[Sprite Preparation Audit](SPRITE_PREPARATION_AUDIT.md)** — **Reference.** Examines sprite preparation for source or design inconsistencies, recording dated findings and limits.
+- **[Sprite Preparation Progress](SPRITE_PREPARATION_PROGRESS.md)** — **Reference.** Summarizes the historical status, evidence or progression of sprite preparation progress.
+- **[Sprite Preparation](SPRITE_PREPARATION.md)** — **Reference.** Describes sprite preparation decisions, constraints or engineering observations from its original development checkpoint.
+- **[Sprite Production Current Context](SPRITE_PRODUCTION_CURRENT_CONTEXT.md)** — **Reference.** Describes sprite production current context decisions, constraints or engineering observations from its original development checkpoint.
 - [Sprite Production Paused 2026 10 08](SPRITE_PRODUCTION_PAUSED_2026-10-08.md) — *Dated record.* Describes sprite production paused 2026 10 08 decisions, constraints or engineering observations from its original development checkpoint.
-- [Sprite Resolution Housekeeping](SPRITE_RESOLUTION_HOUSEKEEPING.md) — *Reference.* Describes sprite resolution housekeeping decisions, constraints or engineering observations from its original development checkpoint.
+- **[Sprite Resolution Housekeeping](SPRITE_RESOLUTION_HOUSEKEEPING.md)** — **Reference.** Describes sprite resolution housekeeping decisions, constraints or engineering observations from its original development checkpoint.
 - [Sprite Restart 20261020](SPRITE_RESTART_20261020.md) — *Dated record.* Describes sprite restart decisions, constraints or engineering observations from its original development checkpoint.
-- [Sprite Scope Reconciliation](SPRITE_SCOPE_RECONCILIATION.md) — *Reference.* Reconciles art identities, source variants and dated sprite production counts.
-- [Sprite Workflow Audit](SPRITE_WORKFLOW_AUDIT.md) — *Reference.* Examines sprite workflow for source or design inconsistencies, recording dated findings and limits.
+- **[Sprite Scope Reconciliation](SPRITE_SCOPE_RECONCILIATION.md)** — **Reference.** Reconciles art identities, source variants and dated sprite production counts.
+- **[Sprite Workflow Audit](SPRITE_WORKFLOW_AUDIT.md)** — **Reference.** Examines sprite workflow for source or design inconsistencies, recording dated findings and limits.
 - [Readme Approved Art Pass](../tools/visual-review/README_APPROVED_ART_PASS.md) — *Dated record.* Reference instructions for inspecting accepted visual artwork outside the game.
 
 ### Character/creature appearance and art reviews
@@ -309,7 +309,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Goblin Slinger Arrow Geometry DEV194](GOBLIN_SLINGER_ARROW_GEOMETRY_DEV194.md) — *Dated record.* Describes goblin slinger arrow geometry decisions, constraints or engineering observations from its original development checkpoint.
 - [Party Playtest Diagnostics 20261025](PARTY_PLAYTEST_DIAGNOSTICS_20261025.md) — *Dated record.* Records tests or acceptance criteria for party playtest diagnostics at its original checkpoint.
 - [Procedural Character Quickfix 20261020](PROCEDURAL_CHARACTER_QUICKFIX_20261020.md) — *Dated record.* Describes procedural character quickfix decisions, constraints or engineering observations from its original development checkpoint.
-- [Rogue Bard Static Visual Design 20261026](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md) — *Design reference.* Accepted Rogue jingle-bell staff appearance and procedural art constraints.
+- **[Rogue Bard Static Visual Design 20261026](ROGUE_BARD_STATIC_VISUAL_DESIGN_20261026.md)** — **Design reference.** Accepted Rogue jingle-bell staff appearance and procedural art constraints.
 - [Rogue Phase7 Procedural Art 20261027](ROGUE_PHASE7_PROCEDURAL_ART_20261027.md) — *Dated record.* Describes a particular development stage of rogue procedural art and its recorded work status.
 - [Slinger Arrow Art Review DEV195](SLINGER_ARROW_ART_REVIEW_DEV195.md) — *Dated record.* Examines slinger arrow art for source or design inconsistencies, recording dated findings and limits.
 - [Snapshot Crypt Retired Art Provenance 20261014](SNAPSHOT_CRYPT_RETIRED_ART_PROVENANCE_20261014.md) — *Dated record.* Describes snapshot crypt retired art provenance decisions, constraints or engineering observations from its original development checkpoint.
@@ -327,9 +327,9 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Effects PR471 Verification 20261025](EFFECTS_PR471_VERIFICATION_20261025.md) — *Dated record.* Records tests or acceptance criteria for effects at its original checkpoint.
 - [Effects Stage5 Github Handoff 20261025](EFFECTS_STAGE5_GITHUB_HANDOFF_20261025.md) — *Dated record.* Preserves effects github context, known work and next-stage questions from a dated handoff.
-- [Graphics Canon Paladin](GRAPHICS_CANON_PALADIN.md) — *Reference.* Describes graphics canon paladin decisions, constraints or engineering observations from its original development checkpoint.
-- [Graphics Canon Terrain Texture Candidates](GRAPHICS_CANON_TERRAIN_TEXTURE_CANDIDATES.md) — *Reference.* Describes graphics canon terrain texture candidates decisions, constraints or engineering observations from its original development checkpoint.
-- [Graphics Overhaul Phase1](GRAPHICS_OVERHAUL_PHASE1.md) — *Reference.* Describes a particular development stage of graphics overhaul and its recorded work status.
+- **[Graphics Canon Paladin](GRAPHICS_CANON_PALADIN.md)** — **Reference.** Describes graphics canon paladin decisions, constraints or engineering observations from its original development checkpoint.
+- **[Graphics Canon Terrain Texture Candidates](GRAPHICS_CANON_TERRAIN_TEXTURE_CANDIDATES.md)** — **Reference.** Describes graphics canon terrain texture candidates decisions, constraints or engineering observations from its original development checkpoint.
+- **[Graphics Overhaul Phase1](GRAPHICS_OVERHAUL_PHASE1.md)** — **Reference.** Describes a particular development stage of graphics overhaul and its recorded work status.
 - [Graphics Procedural Polish V0879](GRAPHICS_PROCEDURAL_POLISH_V0879.md) — *Dated record.* Describes graphics procedural polish decisions, constraints or engineering observations from its original development checkpoint.
 - [Mage Hair Quickfix 20261020](MAGE_HAIR_QUICKFIX_20261020.md) — *Dated record.* Describes mage hair quickfix decisions, constraints or engineering observations from its original development checkpoint.
 - [Procedural Cottage 20261020](PROCEDURAL_COTTAGE_20261020.md) — *Dated record.* Describes procedural cottage decisions, constraints or engineering observations from its original development checkpoint.
@@ -337,7 +337,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Rogue Charm Nameplate Polish 20261028](ROGUE_CHARM_NAMEPLATE_POLISH_20261028.md) — *Dated record.* Describes rogue charm nameplate polish decisions, constraints or engineering observations from its original development checkpoint.
 - [Rogue Jingle Canon And Slowdown DEV208 20261028](ROGUE_JINGLE_CANON_AND_SLOWDOWN_DEV208_20261028.md) — *Dated record.* Describes rogue jingle canon and slowdown decisions, constraints or engineering observations from its original development checkpoint.
 - [Snapshot Vale Cottage Original Export 20261014](SNAPSHOT_VALE_COTTAGE_ORIGINAL_EXPORT_20261014.md) — *Dated record.* Describes snapshot vale cottage original export decisions, constraints or engineering observations from its original development checkpoint.
-- [Terrain Texture Pipeline](TERRAIN_TEXTURE_PIPELINE.md) — *Reference.* Describes terrain texture pipeline decisions, constraints or engineering observations from its original development checkpoint.
+- **[Terrain Texture Pipeline](TERRAIN_TEXTURE_PIPELINE.md)** — **Reference.** Describes terrain texture pipeline decisions, constraints or engineering observations from its original development checkpoint.
 
 ## Rendering, optimization, performance and WebGL experiments
 
@@ -349,12 +349,12 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [PIXIJS Playtest Step3 Audit 20261022](PIXIJS_PLAYTEST_STEP3_AUDIT_20261022.md) — *Dated record.* Examines PIXIJS playtest for source or design inconsistencies, recording dated findings and limits.
 - [PIXIJS Pre Step4 Handoff 20261022](PIXIJS_PRE_STEP4_HANDOFF_20261022.md) — *Dated record.* Preserves PIXIJS pre context, known work and next-stage questions from a dated handoff.
 - [WEBGL Renderer Pilot Preparation 20261022](WEBGL_RENDERER_PILOT_PREPARATION_20261022.md) — *Dated record.* Investigates WEBGL renderer pilot preparation as a proposal or pilot without establishing production readiness.
-- [Canvas Vs WEBGL Readme](../tools/webgl-pilot/CANVAS_VS_WEBGL_README.md) — *Reference.* Canvas/WebGL comparison setup, results and technical limits.
-- [Full World Readme](../tools/webgl-pilot/FULL_WORLD_README.md) — *Reference.* Experimental full-world WebGL drawing prototype and its boundaries.
-- [Hybrid Readme](../tools/webgl-pilot/HYBRID_README.md) — *Reference.* Experimental split Canvas/WebGL rendering strategy and caveats.
-- [webgl pilot — README](../tools/webgl-pilot/README.md) — *Reference.* Entry guide for the experimental WebGL renderer pilots and demos.
-- [Real World GPU Readme](../tools/webgl-pilot/REAL_WORLD_GPU_README.md) — *Reference.* GPU pilot for drawing actual game scenes rather than simple synthetic geometry.
-- [Strategy Lab Readme](../tools/webgl-pilot/STRATEGY_LAB_README.md) — *Reference.* Experiments comparing alternative renderer strategies and their measurements.
+- **[Canvas Vs WEBGL Readme](../tools/webgl-pilot/CANVAS_VS_WEBGL_README.md)** — **Reference.** Canvas/WebGL comparison setup, results and technical limits.
+- **[Full World Readme](../tools/webgl-pilot/FULL_WORLD_README.md)** — **Reference.** Experimental full-world WebGL drawing prototype and its boundaries.
+- **[Hybrid Readme](../tools/webgl-pilot/HYBRID_README.md)** — **Reference.** Experimental split Canvas/WebGL rendering strategy and caveats.
+- **[webgl pilot — README](../tools/webgl-pilot/README.md)** — **Reference.** Entry guide for the experimental WebGL renderer pilots and demos.
+- **[Real World GPU Readme](../tools/webgl-pilot/REAL_WORLD_GPU_README.md)** — **Reference.** GPU pilot for drawing actual game scenes rather than simple synthetic geometry.
+- **[Strategy Lab Readme](../tools/webgl-pilot/STRATEGY_LAB_README.md)** — **Reference.** Experiments comparing alternative renderer strategies and their measurements.
 
 ### Frame rate, recovery, optimization and profiling
 
@@ -366,8 +366,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Community Snapshot Performance 20261016](COMMUNITY_SNAPSHOT_PERFORMANCE_20261016.md) — *Dated record.* Dated performance checks and limits for the October Community Snapshot candidate.
 - [Current Performance Status DEV169 20261024](CURRENT_PERFORMANCE_STATUS_DEV169_20261024.md) — *Dated record.* Dated dev.169 performance and adaptive frame-skip status; not current device FPS evidence.
 - [Frame Profiler DEV165](FRAME_PROFILER_DEV165.md) — *Dated record.* Describes frame profiler decisions, constraints or engineering observations from its original development checkpoint.
-- [Ground Window Performance](GROUND_WINDOW_PERFORMANCE.md) — *Reference.* Discusses ground window performance measurements, bottlenecks or optimization trade-offs.
-- [Material Rendering Performance](MATERIAL_RENDERING_PERFORMANCE.md) — *Reference.* Discusses material rendering performance measurements, bottlenecks or optimization trade-offs.
+- **[Ground Window Performance](GROUND_WINDOW_PERFORMANCE.md)** — **Reference.** Discusses ground window performance measurements, bottlenecks or optimization trade-offs.
+- **[Material Rendering Performance](MATERIAL_RENDERING_PERFORMANCE.md)** — **Reference.** Discusses material rendering performance measurements, bottlenecks or optimization trade-offs.
 - [Menu Screen Performance Step2 20261023](MENU_SCREEN_PERFORMANCE_STEP2_20261023.md) — *Dated record.* Describes a particular development stage of menu screen performance and its recorded work status.
 - [Optimization Audit 20261020](OPTIMIZATION_AUDIT_20261020.md) — *Dated record.* Examines optimization for source or design inconsistencies, recording dated findings and limits.
 - [Performance Baseline DEV170 20261024](PERFORMANCE_BASELINE_DEV170_20261024.md) — *Dated record.* Discusses performance baseline measurements, bottlenecks or optimization trade-offs.
@@ -383,21 +383,21 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Crowd Collision Fast Reject 20261023](CROWD_COLLISION_FAST_REJECT_20261023.md) — *Dated record.* Discusses crowd collision fast reject measurements, bottlenecks or optimization trade-offs.
 - [Crowd Escape 20261020](CROWD_ESCAPE_20261020.md) — *Dated record.* Discusses crowd escape measurements, bottlenecks or optimization trade-offs.
 - [Crowd Movement Diagnostics 20261023](CROWD_MOVEMENT_DIAGNOSTICS_20261023.md) — *Dated record.* Discusses crowd movement diagnostics measurements, bottlenecks or optimization trade-offs.
-- [Perf Ws2 Browser Canvas Controls](PERF_WS2_BROWSER_CANVAS_CONTROLS.md) — *Reference.* Explains perf ws2 browser canvas controls player interaction or interface readability choices.
-- [Perf Ws2 Full Render Diagnostics](PERF_WS2_FULL_RENDER_DIAGNOSTICS.md) — *Reference.* Discusses perf ws2 full render diagnostics measurements, bottlenecks or optimization trade-offs.
+- **[Perf Ws2 Browser Canvas Controls](PERF_WS2_BROWSER_CANVAS_CONTROLS.md)** — **Reference.** Explains perf ws2 browser canvas controls player interaction or interface readability choices.
+- **[Perf Ws2 Full Render Diagnostics](PERF_WS2_FULL_RENDER_DIAGNOSTICS.md)** — **Reference.** Discusses perf ws2 full render diagnostics measurements, bottlenecks or optimization trade-offs.
 - [Perf Ws2 Visuals V09](PERF_WS2_VISUALS_V09.md) — *Dated record.* Describes perf ws2 visuals decisions, constraints or engineering observations from its original development checkpoint.
 - [Perf Ws4 Infrastructure 20261010](PERF_WS4_INFRASTRUCTURE_20261010.md) — *Dated record.* Describes perf ws4 infrastructure decisions, constraints or engineering observations from its original development checkpoint.
-- [Perf Ws1 Terrain Road Rendering](perf-ws1-terrain-road-rendering.md) — *Reference.* Describes perf ws1 terrain road rendering decisions, constraints or engineering observations from its original development checkpoint.
-- [Perf Ws3 Interface Audio 20261010](perf-ws3-interface-audio-20261010.md) — *Reference.* Describes perf ws3 interface audio 20261010 decisions, constraints or engineering observations from its original development checkpoint.
+- **[Perf Ws1 Terrain Road Rendering](perf-ws1-terrain-road-rendering.md)** — **Reference.** Describes perf ws1 terrain road rendering decisions, constraints or engineering observations from its original development checkpoint.
+- **[Perf Ws3 Interface Audio 20261010](perf-ws3-interface-audio-20261010.md)** — **Reference.** Describes perf ws3 interface audio 20261010 decisions, constraints or engineering observations from its original development checkpoint.
 - [PR518 Engineering Handoff 20261027](PR518_ENGINEERING_HANDOFF_20261027.md) — *Dated record.* Engineering context and outstanding acceptance for the title, Canvas and experimental Pixi work.
-- [PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) — *Maintained guide.* Real-device acceptance plan for title/graphics and experimental Pixi presentation.
+- **[PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md)** — **Maintained guide.** Real-device acceptance plan for title/graphics and experimental Pixi presentation.
 - [Regional Graphics Preparation Title Screen 20261027](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md) — *Dated record.* Describes regional graphics preparation title screen decisions, constraints or engineering observations from its original development checkpoint.
 - [Runtime Workload DEV177 Audit](RUNTIME_WORKLOAD_DEV177_AUDIT.md) — *Dated record.* Examines runtime workload for source or design inconsistencies, recording dated findings and limits.
 - [Runtime Workload DEV177](RUNTIME_WORKLOAD_DEV177.md) — *Dated record.* Describes runtime workload decisions, constraints or engineering observations from its original development checkpoint.
 
 ## Navigation, maps and pathfinding
 
-- [Map Wayfinding Followup](MAP_WAYFINDING_FOLLOWUP.md) — *Reference.* Describes map wayfinding followup decisions, constraints or engineering observations from its original development checkpoint.
+- **[Map Wayfinding Followup](MAP_WAYFINDING_FOLLOWUP.md)** — **Reference.** Describes map wayfinding followup decisions, constraints or engineering observations from its original development checkpoint.
 - [Navigation Stage2 20261023](NAVIGATION_STAGE2_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
 - [Navigation Stage3 20261023](NAVIGATION_STAGE3_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
 - [Navigation Stage4 20261023](NAVIGATION_STAGE4_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
@@ -410,16 +410,16 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Game Menus DEV157](GAME_MENUS_DEV157.md) — *Dated record.* Explains game menus player interaction or interface readability choices.
 - [HUD Option B PC Phone 20261025](HUD_OPTION_B_PC_PHONE_20261025.md) — *Dated record.* Explains HUD option b pc phone player interaction or interface readability choices.
 - [Instructor Menus DEV158](INSTRUCTOR_MENUS_DEV158.md) — *Dated record.* Explains instructor menus player interaction or interface readability choices.
-- [Keyboard Ergonomics Audit](KEYBOARD_ERGONOMICS_AUDIT.md) — *Reference.* Examines keyboard ergonomics for source or design inconsistencies, recording dated findings and limits.
+- **[Keyboard Ergonomics Audit](KEYBOARD_ERGONOMICS_AUDIT.md)** — **Reference.** Examines keyboard ergonomics for source or design inconsistencies, recording dated findings and limits.
 - [Menu Foundation Step1 20261023](MENU_FOUNDATION_STEP1_20261023.md) — *Dated record.* Describes a particular development stage of menu and its recorded work status.
-- [Menu Overhaul Steps3 7](MENU_OVERHAUL_STEPS3_7.md) — *Reference.* Describes a particular development stage of menu overhaul steps3 7 and its recorded work status.
+- **[Menu Overhaul Steps3 7](MENU_OVERHAUL_STEPS3_7.md)** — **Reference.** Describes a particular development stage of menu overhaul steps3 7 and its recorded work status.
 - [Menu Step7 Audit 20261023](MENU_STEP7_AUDIT_20261023.md) — *Dated record.* Examines menu for source or design inconsistencies, recording dated findings and limits.
 - [Millhaven Onboarding DEV160](MILLHAVEN_ONBOARDING_DEV160.md) — *Dated record.* Describes millhaven onboarding decisions, constraints or engineering observations from its original development checkpoint.
 - [Responsive UI Audit 20261009](RESPONSIVE_UI_AUDIT_20261009.md) — *Dated record.* Examines responsive UI for source or design inconsistencies, recording dated findings and limits.
 
 ## Save data, backup and recovery
 
-- [Ashen Frontier Recovery 240 Note](ASHEN_FRONTIER_RECOVERY_240_NOTE.md) — *Reference.* Describes ashen frontier recovery 240 note decisions, constraints or engineering observations from its original development checkpoint.
+- **[Ashen Frontier Recovery 240 Note](ASHEN_FRONTIER_RECOVERY_240_NOTE.md)** — **Reference.** Describes ashen frontier recovery 240 note decisions, constraints or engineering observations from its original development checkpoint.
 - [Director Chat Requests And Recovery 20261014](DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md) — *Dated record.* Describes director chat requests and recovery decisions, constraints or engineering observations from its original development checkpoint.
 - [Regional Recovery And Warning Audit DEV123](REGIONAL_RECOVERY_AND_WARNING_AUDIT_DEV123.md) — *Dated record.* Examines regional recovery and warning for source or design inconsistencies, recording dated findings and limits.
 - [Save Recovery Checkpoints DEV176](SAVE_RECOVERY_CHECKPOINTS_DEV176.md) — *Dated record.* Bounded three-checkpoint save recovery and user-facing restore behavior.
@@ -434,13 +434,13 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Documentation Governance Audit Handoff 20261025](DOCUMENTATION_GOVERNANCE_AUDIT_HANDOFF_20261025.md) — *Dated record.* Examines documentation governance for source or design inconsistencies, recording dated findings and limits.
 - [Documentation Governance Deep Audit 20261025](DOCUMENTATION_GOVERNANCE_DEEP_AUDIT_20261025.md) — *Dated record.* Investigates conflicts between document authority, historical work orders and current governance.
 - [Documentation Phase0 Baseline 20261027](DOCUMENTATION_PHASE0_BASELINE_20261027.md) — *Dated record.* Frozen initial documentation inventory and historical indexing gaps.
-- [Economy Exp Housekeeping](ECONOMY_EXP_HOUSEKEEPING.md) — *Reference.* Describes economy exp housekeeping decisions, constraints or engineering observations from its original development checkpoint.
-- [Housekeeping Audit](HOUSEKEEPING_AUDIT.md) — *Reference.* Examines housekeeping for source or design inconsistencies, recording dated findings and limits.
-- [Housekeeping Progress](HOUSEKEEPING_PROGRESS.md) — *Reference.* Summarizes the historical status, evidence or progression of housekeeping progress.
+- **[Economy Exp Housekeeping](ECONOMY_EXP_HOUSEKEEPING.md)** — **Reference.** Describes economy exp housekeeping decisions, constraints or engineering observations from its original development checkpoint.
+- **[Housekeeping Audit](HOUSEKEEPING_AUDIT.md)** — **Reference.** Examines housekeeping for source or design inconsistencies, recording dated findings and limits.
+- **[Housekeeping Progress](HOUSEKEEPING_PROGRESS.md)** — **Reference.** Summarizes the historical status, evidence or progression of housekeeping progress.
 - [Housekeeping V0881](HOUSEKEEPING_V0881.md) — *Dated record.* Describes housekeeping decisions, constraints or engineering observations from its original development checkpoint.
 - [Monster Attack V09 Housekeeping](MONSTER_ATTACK_V09_HOUSEKEEPING.md) — *Dated record.* Describes monster attack housekeeping decisions, constraints or engineering observations from its original development checkpoint.
 - [Pre Break Documentation History 20261019](PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md) — *Dated record.* Verbatim pre-break historical status, architecture and release-note records.
-- [Project History](PROJECT_HISTORY.md) — *Reference.* Summarizes the historical status, evidence or progression of project history.
+- **[Project History](PROJECT_HISTORY.md)** — **Reference.** Summarizes the historical status, evidence or progression of project history.
 - [Test Drift History DEV145](TEST_DRIFT_HISTORY_DEV145.md) — *Dated record.* Records tests or acceptance criteria for drift history at its original checkpoint.
 - [Test Reliability Stages 1 To 3 20261027](TEST_RELIABILITY_STAGES_1_TO_3_20261027.md) — *Dated record.* Classifies test drift and regression failures, with baseline comparison procedures.
 
@@ -479,7 +479,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Snapshot Monster Stronghold Case Audit 20261014](SNAPSHOT_MONSTER_STRONGHOLD_CASE_AUDIT_20261014.md) — *Dated record.* Examines snapshot monster stronghold case for source or design inconsistencies, recording dated findings and limits.
 - [Snapshot Precert Implementation Quality Audit 20261014](SNAPSHOT_PRECERT_IMPLEMENTATION_QUALITY_AUDIT_20261014.md) — *Dated record.* Examines snapshot precert for source or design inconsistencies, recording dated findings and limits.
 - [Update Notice 20261020](UPDATE_NOTICE_20261020.md) — *Dated record.* Describes update notice decisions, constraints or engineering observations from its original development checkpoint.
-- [V09 Release Notes](V09_RELEASE_NOTES.md) — *Reference.* October Community Snapshot release record, not an up-to-date release ledger.
+- **[V09 Release Notes](V09_RELEASE_NOTES.md)** — **Reference.** October Community Snapshot release record, not an up-to-date release ledger.
 - [Work Mode PR313 Handoff Verification 20261016](WORK_MODE_PR313_HANDOFF_VERIFICATION_20261016.md) — *Dated record.* Records tests or acceptance criteria for work mode at its original checkpoint.
 - [Work Mode Single Pr Handoff 20261016](WORK_MODE_SINGLE_PR_HANDOFF_20261016.md) — *Dated record.* Preserves work mode single pr context, known work and next-stage questions from a dated handoff.
 - [Work Mode Source Handoff Audit 20261016](WORK_MODE_SOURCE_HANDOFF_AUDIT_20261016.md) — *Dated record.* Examines work mode source for source or design inconsistencies, recording dated findings and limits.
@@ -490,29 +490,29 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ### Gameplay, interface and environment follow-ups
 
 - [Lantern Dock DEV135](LANTERN_DOCK_DEV135.md) — *Dated record.* Describes lantern dock decisions, constraints or engineering observations from its original development checkpoint.
-- [Local Site Audit](LOCAL_SITE_AUDIT.md) — *Reference.* Examines local site for source or design inconsistencies, recording dated findings and limits.
+- **[Local Site Audit](LOCAL_SITE_AUDIT.md)** — **Reference.** Examines local site for source or design inconsistencies, recording dated findings and limits.
 - [Mechanics Audit V081](MECHANICS_AUDIT_V081.md) — *Dated record.* Reviews game-mechanic consistency at the historical v0.8.1 checkpoint.
 - [Night Tempo 20261020](NIGHT_TEMPO_20261020.md) — *Dated record.* Records nighttime enemy movement and attack-tempo scaling, including which timers remain unchanged.
 - [Older Gameplay Fixes Audit 20261009](OLDER_GAMEPLAY_FIXES_AUDIT_20261009.md) — *Dated record.* Examines older gameplay for source or design inconsistencies, recording dated findings and limits.
-- [Outdoor Road Infrastructure Audit](OUTDOOR_ROAD_INFRASTRUCTURE_AUDIT.md) — *Reference.* Examines outdoor road infrastructure for source or design inconsistencies, recording dated findings and limits.
+- **[Outdoor Road Infrastructure Audit](OUTDOOR_ROAD_INFRASTRUCTURE_AUDIT.md)** — **Reference.** Examines outdoor road infrastructure for source or design inconsistencies, recording dated findings and limits.
 - [Resource Discovery DEV132](RESOURCE_DISCOVERY_DEV132.md) — *Dated record.* Describes resource discovery decisions, constraints or engineering observations from its original development checkpoint.
-- [Scenery Notifications Batch 354](SCENERY_NOTIFICATIONS_BATCH_354.md) — *Reference.* Describes scenery notifications batch 354 decisions, constraints or engineering observations from its original development checkpoint.
+- **[Scenery Notifications Batch 354](SCENERY_NOTIFICATIONS_BATCH_354.md)** — **Reference.** Describes scenery notifications batch 354 decisions, constraints or engineering observations from its original development checkpoint.
 - [Terrain Effects Polish V0880](TERRAIN_EFFECTS_POLISH_V0880.md) — *Dated record.* Describes terrain effects polish decisions, constraints or engineering observations from its original development checkpoint.
 - [Thornfang Opening DEV146](THORNFANG_OPENING_DEV146.md) — *Dated record.* Describes thornfang opening decisions, constraints or engineering observations from its original development checkpoint.
 
 ### Cross-system observations, integration and open questions
 
-- [Sprite directory README](../assets/sprites/README.md) — *Reference.* Sprite-manifest structure, asset conventions and procedural fallback expectations.
+- **[Sprite directory README](../assets/sprites/README.md)** — **Reference.** Sprite-manifest structure, asset conventions and procedural fallback expectations.
 - [Adaptive Resolution 20261020](ADAPTIVE_RESOLUTION_20261020.md) — *Dated record.* Describes adaptive resolution decisions, constraints or engineering observations from its original development checkpoint.
-- [Amber Narration Implementation](AMBER_NARRATION_IMPLEMENTATION.md) — *Reference.* Explains how amber narration was to be integrated, with its checkpoint-specific implementation evidence.
+- **[Amber Narration Implementation](AMBER_NARRATION_IMPLEMENTATION.md)** — **Reference.** Explains how amber narration was to be integrated, with its checkpoint-specific implementation evidence.
 - [Approved Lips Staffs 20261020](APPROVED_LIPS_STAFFS_20261020.md) — *Dated record.* Describes approved lips staffs decisions, constraints or engineering observations from its original development checkpoint.
 - [Audit Fixes V070](AUDIT_FIXES_V070.md) — *Dated record.* Examines audit fixes v070 for source or design inconsistencies, recording dated findings and limits.
 - [Audit Integration Repairs DEV175](AUDIT_INTEGRATION_REPAIRS_DEV175.md) — *Dated record.* Examines audit integration repairs dev175 for source or design inconsistencies, recording dated findings and limits.
 - [Brief Company DEV150](BRIEF_COMPANY_DEV150.md) — *Dated record.* Describes brief company decisions, constraints or engineering observations from its original development checkpoint.
 - [Combined Validation Repairs 20261015](COMBINED_VALIDATION_REPAIRS_20261015.md) — *Dated record.* Records tests or acceptance criteria for combined at its original checkpoint.
 - [Defender Space DEV129](DEFENDER_SPACE_DEV129.md) — *Dated record.* Describes defender space decisions, constraints or engineering observations from its original development checkpoint.
-- [Deferred Encounter Time Audit](DEFERRED_ENCOUNTER_TIME_AUDIT.md) — *Reference.* Examines short boss fights, legitimate early-party setups and encounters left for further review.
-- [Developer Mode](DEVELOPER_MODE.md) — *Reference.* Describes developer mode decisions, constraints or engineering observations from its original development checkpoint.
+- **[Deferred Encounter Time Audit](DEFERRED_ENCOUNTER_TIME_AUDIT.md)** — **Reference.** Examines short boss fights, legitimate early-party setups and encounters left for further review.
+- **[Developer Mode](DEVELOPER_MODE.md)** — **Reference.** Describes developer mode decisions, constraints or engineering observations from its original development checkpoint.
 - [Development History Through V08133](DEVELOPMENT_HISTORY_THROUGH_V08133.md) — *Dated record.* Summarizes the historical status, evidence or progression of development history through.
 - [Encounter Space Audit DEV127](ENCOUNTER_SPACE_AUDIT_DEV127.md) — *Dated record.* Examines encounter space for source or design inconsistencies, recording dated findings and limits.
 - [Hero Class Foundations Level1 Audit 20261026](HERO_CLASS_FOUNDATIONS_LEVEL1_AUDIT_20261026.md) — *Dated record.* Examines hero class foundations level1 for source or design inconsistencies, recording dated findings and limits.
@@ -520,12 +520,12 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Item Equipment Integrity 20261010](ITEM_EQUIPMENT_INTEGRITY_20261010.md) — *Dated record.* Describes item equipment integrity decisions, constraints or engineering observations from its original development checkpoint.
 - [N1a Scene Reconciliation 20261024](N1A_SCENE_RECONCILIATION_20261024.md) — *Dated record.* Compares n1a scene with related source, feature decisions or branch changes.
 - [Next Update Reconciliation 20261018](NEXT_UPDATE_RECONCILIATION_20261018.md) — *Dated record.* Compares next update with related source, feature decisions or branch changes.
-- [Playtest Audit](PLAYTEST_AUDIT.md) — *Reference.* Examines playtest for source or design inconsistencies, recording dated findings and limits.
-- [Proportion Implementation Checkpoint](PROPORTION_IMPLEMENTATION_CHECKPOINT.md) — *Reference.* Explains how proportion was to be integrated, with its checkpoint-specific implementation evidence.
-- [Quest Announcement Requirements](QUEST_ANNOUNCEMENT_REQUIREMENTS.md) — *Reference.* Requirements for readable in-game quest, objective and discovery notifications.
+- **[Playtest Audit](PLAYTEST_AUDIT.md)** — **Reference.** Examines playtest for source or design inconsistencies, recording dated findings and limits.
+- **[Proportion Implementation Checkpoint](PROPORTION_IMPLEMENTATION_CHECKPOINT.md)** — **Reference.** Explains how proportion was to be integrated, with its checkpoint-specific implementation evidence.
+- **[Quest Announcement Requirements](QUEST_ANNOUNCEMENT_REQUIREMENTS.md)** — **Reference.** Requirements for readable in-game quest, objective and discovery notifications.
 - [Quest Interiors V082](QUEST_INTERIORS_V082.md) — *Dated record.* Describes quest interiors decisions, constraints or engineering observations from its original development checkpoint.
 - [Rogue First Phone Acceptance 20261028](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md) — *Dated record.* First Rogue phone playtest findings and remaining device-specific defects.
-- [Sprint](SPRINT.md) — *Reference.* Historical dormant Sprint design and why it does not appear in normal player controls.
+- **[Sprint](SPRINT.md)** — **Reference.** Historical dormant Sprint design and why it does not appear in normal player controls.
 - [Support Recipient Audit 20261020](SUPPORT_RECIPIENT_AUDIT_20261020.md) — *Dated record.* Examines support recipient for source or design inconsistencies, recording dated findings and limits.
 - [Talent Notice DEV133](TALENT_NOTICE_DEV133.md) — *Dated record.* Describes talent notice decisions, constraints or engineering observations from its original development checkpoint.
 - [Test Upkeep DEV145](TEST_UPKEEP_DEV145.md) — *Dated record.* Records tests or acceptance criteria for upkeep at its original checkpoint.

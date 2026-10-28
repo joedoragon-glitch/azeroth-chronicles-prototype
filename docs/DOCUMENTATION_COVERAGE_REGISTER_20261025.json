@@ -173,6 +173,11 @@
         "docs/AUDIO_PLAYBACK.md",
         "docs/DOCUMENTATION_INDEX.md"
       ]
+    },
+    "documentationIndexVisualHierarchy": {
+      "date": "2026-10-28",
+      "purpose": "Bold titles and labels for 102 non-dated guide/reference entries; 317 dated record entries remain unbolded.",
+      "preservedEntries": 419
     }
   },
   "semantics": {
@@ -2112,7 +2117,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "acf82572a0ef73292fb15ee741607088cab2dad6",
+      "gitBlobSha": "c4c930f0d9ee69acd6d02ae3530a9b4fc6656c3a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
