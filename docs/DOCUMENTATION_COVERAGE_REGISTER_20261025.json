@@ -4402,7 +4402,7 @@
     },
     {
       "path": "docs/PR313_RESUME_20261016.md",
-      "gitBlobSha": "4e4519541bfb9c71ad36a439d5f5f0beb0776482",
+      "gitBlobSha": "46cf0042da5ffc525e992a21051cb8ed4ee270eb",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -4411,11 +4411,12 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "frozen_census_membership",
       "reconciliationRole": "historical record",
-      "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "historical only",
       "previousHistoricalCorrectionGitBlobSha": "83d3f1420837b61ec9bb18bc4688e01e9a71bc36",
-      "reconciliationReviewEvidence": "28 Oct: historical headings and old finish/merge plan bounded following merged #313 and #319; remaining preserved instructions require further review.",
-      "previousBatchAuthorityBlobSha": "99525a6ef675e454f2ea8e22a4475c950c5927f8"
+      "reconciliationReviewEvidence": "28 Oct: reviewed full dated recovery text and quoted retained instructions as historical after confirming PR #313 and #319 merged; no old approval, local path, full-suite order or release instruction is current authority.",
+      "previousBatchAuthorityBlobSha": "99525a6ef675e454f2ea8e22a4475c950c5927f8",
+      "previousFullReviewBlobSha": "4e4519541bfb9c71ad36a439d5f5f0beb0776482"
     },
     {
       "path": "docs/PR313_THRONE_GATE_20261016.md",

@@ -2134,6 +2134,17 @@
       "previousFiles": {
         "docs/DEVELOPMENT_STATE.md": "fe72e5d9fe18529048e312981adc58e33aa22c737b547ecb258fc8e8c1b8f502"
       }
+    },
+    {
+      "canonicalIssue": 312,
+      "source": "PR #313 historical receipt maintenance; recovery work orders archived as quoted evidence, SOURCE ONLY, NOT TESTED by full certification.",
+      "reason": "Preserve historical recovery text and make the entire dated work order non-operative; no runtime changes.",
+      "files": {
+        "docs/PR313_RESUME_20261016.md": "f99eeb1307cd9187592a1c8dc113f1c2c90e05b18c98bff284950bb006ad260f"
+      },
+      "previousFiles": {
+        "docs/PR313_RESUME_20261016.md": "06d2bca1789b4f4d569aacf5f862dcdbd3a47aea3a418133b9c4a4c1e9a49473"
+      }
     }
   ],
   "authorizedPr313ApproachFrameRevision": {
