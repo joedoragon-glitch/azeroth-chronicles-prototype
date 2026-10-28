@@ -1,6 +1,6 @@
 'use strict';
-// Live playtest admission: Rogue Bard is genuinely selectable from Campaign.classes
-// only after an explicit preview opt-in. The public/default roster is preserved.
+// Quiet public release: the browser admits Rogue before save loading and class
+// selection; isolated native fixtures preserve three-class baseline tests.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -57,15 +57,18 @@ try {
   assert.doesNotThrow(() => Campaign.validate(s.snapshot()));
   // Production UI registration must happen before profile load and class selection.
   const app = fs.readFileSync(path.join(__dirname, '../src/prototype/app.js'), 'utf8');
-  assert.match(app, /roguePlaytestEnabled\s*=\s*\/.*roguePlaytest=1/);
-  assert.match(app, /if \(roguePlaytestEnabled\) Campaign\.enableRoguePlaytest\(\)/);
+  assert.match(app, /Campaign\.enableRoguePlaytest\(\);/);
+  assert(!/roguePlaytestEnabled|roguePlaytest=1/.test(app),
+    'Rogue must appear in the ordinary public game without an opt-in URL');
+  assert.match(app, /automatic basic hits may Charm surviving eligible monsters/,
+    'New Game should explain Charm-first labor before play');
   assert(app.indexOf('Campaign.enableRoguePlaytest()') < app.indexOf('let loaded ='),
     'preview registry must be ready before loading a Rogue save');
   assert(app.includes('Sticky Shuffle / Briar Boogie'),
     'Skill 5 placed music station must appear in real skill controls');
   assert(!/rogueCriticalMenu|rogueCriticalLevels/.test(app),
     'playable class does not turn developer critical intensity into a player setting');
-  console.log('PASS Rogue live playtest admission: gate, normal/nightmare/developer, controls, v4 save, growth, Succession isolation');
+  console.log('PASS Rogue quiet public admission: normal URL, four classes, controls, v4 save, growth, Succession isolation');
 } finally {
   delete Campaign.classes.rogue;
   delete Campaign.talentProfiles.rogue;

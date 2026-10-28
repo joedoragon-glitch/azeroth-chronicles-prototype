@@ -10,14 +10,10 @@
     // Unlisted low-spec test route. A query link is not authentication.
     combatDiagnosticsEnabled = /(?:^|[?&])combatDiagnostics=1(?:&|$)/.test(
       window.location?.search || '',
-    ),
-    roguePlaytestEnabled = /(?:^|[?&])roguePlaytest=1(?:&|$)/.test(
-      window.location?.search || '',
     );
-  // Opt-in playable class on the draft/preview build only. A query link is not
-  // authentication; keep the real public branch unchanged until release approval.
-  // Must precede profile/load/validation, class selection, and Succession lists.
-  if (roguePlaytestEnabled) Campaign.enableRoguePlaytest();
+  // Quiet fourth-class release. Register before profile/load/save validation,
+  // New Game and Succession; v4 storage keys and original classes stay intact.
+  Campaign.enableRoguePlaytest();
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -3886,7 +3882,7 @@
     },
     rogue: {
       en: 'Rogue', es: 'Pícara',
-      detail: 'Charmed companions, musical disruption and survival tricks', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia',
+      detail: 'Charmed companions, musical disruption and survival tricks. Start alone; automatic basic hits may Charm surviving eligible monsters, who can then build Barracks.', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia. Empiezas sola; los ataques básicos automáticos pueden encantar a monstruos aptos que sobreviven, y luego ellos pueden construir cuarteles.',
     },
   });
   function heroClassLabel(id, localized = language === 'es') {
