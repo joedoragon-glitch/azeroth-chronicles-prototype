@@ -3268,31 +3268,38 @@
     if (!sprites?.definitionFor || !game?.s?.zones) return [];
     const known = game.s.zones[destination] || null;
     const region = game.regionIndex(destination);
-    // The first encounter matters more than distant decorations. Once native
-    // travel has constructed the destination, prioritize nearby combat actors,
-    // including companions, instead of starving typical 4+ GB devices with a
-    // tiny arbitrary key count. The existing 256 MiB decoded cache remains
-    // the actual global memory owner and can evict cold resources.
+    // Prepare combat sprites and animations from the actual admitted scene,
+    // not just the first few visible actors. A save already records the hero,
+    // companions, living enemies and known encounter locations.
     const hero = game.hero;
     const companions = typeof game.activeParty === 'function'
       ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
       : [];
     const distance = (e) => Math.hypot(e.x - hero.x, e.y - hero.y);
+    const interior = combatCriticalArrival(destination);
+    const leaders = (e) => e.type === 'boss' || e.fieldCaptain ||
+      e.roomCaptain || e.captain;
     const enemies = known && destination === game.zoneId
       ? (known.enemies || []).filter((e) => e.hp > 0 &&
           Number.isFinite(e.x) && Number.isFinite(e.y))
-          .sort((a, b) => distance(a) - distance(b))
+          .sort((a, b) => Number(leaders(b)) - Number(leaders(a)) ||
+            distance(a) - distance(b))
           .map((e) => ({ ...e, renderKind: 'enemy' }))
       : [];
-    // Only a native admission/resumed save makes near-spawn enemy placement
-    // authoritative. Prior to entry we cannot inspect an ungenerated zone.
-    const imminent = combatFirst ? enemies.filter((e) => distance(e) <= 850) : [];
-    const fringe = combatFirst ? enemies.filter((e) => distance(e) <= 1300) : enemies;
+    // Only native entry or a restored save makes encounter placement real.
+    // Whole dungeon interiors and all already-spawned outdoor enemy classes
+    // are eligible; field bosses are never left for combat-time decoding.
+    const imminent = combatFirst ? enemies.filter(
+      (e) => leaders(e) || distance(e) <= 850) : [];
+    const fringe = combatFirst ? enemies : enemies.filter(
+      (e) => interior || distance(e) <= 4000);
     const neighbors = known && destination === game.zoneId
       ? [...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
-        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' }))]
+        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' })),
+        ...(known.buildings || []).map((e) => ({ ...e, renderKind: 'building' })),
+        ...(known.nodes || []).map((e) => ({ ...e, renderKind: 'node' }))]
           .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y) &&
-            (!combatFirst || distance(e) <= 600))
+            (interior || distance(e) <= 4000))
           .sort((a, b) => distance(a) - distance(b))
       : [];
     const keys = new Set();
