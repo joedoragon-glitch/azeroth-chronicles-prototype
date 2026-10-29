@@ -218,4 +218,21 @@ for(const [label, opts] of [
     peakBlocked:peak,totalBlocked:blocked,
   }));
 }
+
+// Guard the deliberate scope: bosses, captains and scripted return-state
+// actors retain the original full route() contract and cast/patrol timings.
+for (const state of ['boss','captain','returning','unengaged']) {
+  const g=world({count:1,companions:0,wall:true}),e=g.zone().enemies[0];
+  if (state==='boss') e.type='boss';
+  if (state==='captain') e.captain=true;
+  if (state==='returning') e.returning=1;
+  if (state==='unengaged') e.aggro=false;
+  const original=g.route;
+  let calls=0;
+  g.route=function (...args){calls++;return original.apply(this,args);};
+  g.follow(e,g.hero,150,.05,45);
+  delete g.route;
+  assert.equal(calls,1, state+' must retain the direct route path');
+}
+console.log('PASS boss/captain/returning/unengaged routing scope exclusions');
 console.log('PASS combat hotpath audit native multi-actor ticks and test-only instrumentation parity');
