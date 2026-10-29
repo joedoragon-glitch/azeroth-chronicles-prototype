@@ -69,6 +69,28 @@ async function sheet(region,pics){
   assert.equal(z.finalStreetClearanceVersion,undefined,
    region+' candidate should not execute the extra network sweep');
   const t=C.data.towns[k],m=C.data.minors[k],town={x:t[0],y:t[1]},hamlet={x:m[0],y:m[1]};
+  if(region==='highlands') {
+    const rest=z.npcs.find(n=>n.id==='rest');
+    const candidates=[];
+    const R=(p,q)=>Math.hypot(p.x-q.x,p.y-q.y);
+    const old={x:rest.x,y:rest.y};
+    for(let x=old.x-420;x<=old.x+420;x+=20)
+      for(let y=old.y-420;y<=old.y+420;y+=20){
+        const p={x,y},setback=g.distanceToRoad(z,p);
+        if(setback<190||Math.min(x,y,3400-x,3400-y)<115)continue;
+        if(g.blocked(x,y,region,Math.max(12,(rest.r||0)+9),true))continue;
+        if(z.props.some(q=>R(q,p)<(q.r||0)+(rest.r||0)+(q.decorative?26:29)))continue;
+        if(z.npcs.some(q=>q!==rest&&R(q,p)<Math.max(96,(['rest','minor'].includes(q.id)?82:42)+36)))continue;
+        if(z.buildings.some(q=>R(q,p)<165))continue;
+        if(z.nodes.some(q=>R(q,p)<(rest.r||0)+55))continue;
+        if(z.enemies.some(q=>q.hp>0&&R(q.home||q,p)<(rest.r||0)+145))continue;
+        const neighbor=R(p,town),distance=R(p,old);
+        if(neighbor>=460)continue;
+        candidates.push({x,y,travel:+distance.toFixed(2),road:+setback.toFixed(2),neighborhood:+neighbor.toFixed(2)});
+      }
+    candidates.sort((a,b)=>a.travel-b.travel||a.neighborhood-b.neighborhood);
+    console.log('HIGHLANDS_REFUGE_CHOICES '+JSON.stringify({old,candidates:candidates.slice(0,20),total:candidates.length}));
+  }
   const a=record(z),preTown=capture(g,town),preHamlet=capture(g,hamlet);
   g.clearStreetCorridors(z,true);
   const b=record(z),postTown=capture(g,town),postHamlet=capture(g,hamlet);
