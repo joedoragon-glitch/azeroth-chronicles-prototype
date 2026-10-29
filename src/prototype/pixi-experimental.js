@@ -186,6 +186,9 @@
       aheadReady = null,
       aheadIdle = null,
       aheadEpoch = 0,
+      predictiveIdle = null,
+      predictiveRunning = false,
+      predictionAnchor = null,
       backing = null,
       basePosition = null,
       baseZone = null,
@@ -699,9 +702,12 @@
     // interiors completely, outdoor approach and known boss territory first.
     // Yield between batches while simulation is held. Finish the selected
     // neighborhood rather than abandoning bakes after a time/count quota.
-    async function warmNeighborhood(epoch, arrival = false) {
+    async function warmNeighborhood(epoch, arrival = false, heading = null) {
       const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
       const current = game(), zoom = platform.cameraZoom || 1;
+      const originZone = current.zoneId, origin = project(current.hero);
+      const ahead = heading ? iso(heading) : null;
+      const headingLength = ahead ? Math.hypot(ahead.x, ahead.y) || 1 : 1;
       const width = viewport.width, height = viewport.height;
       // Dungeons are bounded interiors: prepare every admitted actor, prop,
       // NPC and building, not merely those near their entrance. Outdoors,
@@ -711,12 +717,14 @@
         !!current.sideDungeon?.();
       const fringe = candidates(current, project, width, height,
         canvasRenderer.presentEntity, arrival && dungeon ? Infinity :
-          arrival ? 4000 : 900, arrival)
+          arrival || heading ? 4000 : 900, arrival || !!heading)
         .filter(({entity,point}) =>
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
           (arrival || point.x < -270 || point.x > width + 270 ||
-            point.y < -270 || point.y > height + 270))
+            point.y < -270 || point.y > height + 270) &&
+          (!ahead || (point.x - origin.x) * ahead.x / headingLength +
+            (point.y - origin.y) * ahead.y / headingLength >= -250))
         .sort((a,b) => {
           if (arrival) {
             const priority = (item) =>
@@ -731,12 +739,19 @@
           }
           const distance = (p) => Math.hypot(
             Math.max(0,-p.x,p.x-width),Math.max(0,-p.y,p.y-height));
+          if (ahead) {
+            const threat = (item) => item.kind === 'enemy' &&
+              (item.entity.type === 'boss' || item.entity.fieldCaptain) ? 0 :
+              item.kind === 'enemy' ? 1 : 2;
+            return threat(a) - threat(b) || distance(a.point)-distance(b.point);
+          }
           return distance(a.point)-distance(b.point);
         });
       let prepared = 0,steps=0;
       for(const {entity,visual,point,key} of fringe) {
         if(epoch!==contextEpoch || !scene || !app || game()!==current ||
-           platform.cameraZoom!==zoom || root.document?.hidden) return false;
+           current.zoneId!==originZone || platform.cameraZoom!==zoom ||
+           root.document?.hidden) return false;
         // Actual loss of the GPU context cancels above; there is no deadline.
         // The emergency byte guard still prevents a failed allocation loop.
         if(imageBytes>=trimAt) break;
@@ -758,7 +773,49 @@
       neighborhoodPrepared += prepared;
       neighborhoodWarmupMs +=
         (typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
-      return epoch===contextEpoch;
+      return epoch===contextEpoch && current.zoneId===originZone;
+    }
+    // Outdoor predictive graphics work is strictly opportunistic and uses
+    // browser idle time. It never changes enemies, campaign state, RNG or the
+    // game clock. Move the lookahead toward the player's actual direction and
+    // upload fresh procedural textures before they appear in the viewport.
+    function queuePredictiveWarm(current) {
+      if (!active || !app || !scene || !root.requestIdleCallback ||
+          root.document?.hidden || current.s.mode === 'arena' ||
+          current.isDungeon() || nearActiveFight(current)) return;
+      const pose = { x: current.hero.x, y: current.hero.y, zone: current.zoneId,
+        zoom: platform.cameraZoom || 1 };
+      if (!predictionAnchor || predictionAnchor.zone !== pose.zone ||
+          predictionAnchor.zoom !== pose.zoom) {
+        predictionAnchor = pose;
+        return;
+      }
+      const heading = { x: pose.x - predictionAnchor.x,
+        y: pose.y - predictionAnchor.y };
+      if (Math.hypot(heading.x, heading.y) < 180 ||
+          predictiveIdle !== null || predictiveRunning) return;
+      predictionAnchor = pose;
+      const epoch = contextEpoch;
+      predictiveIdle = root.requestIdleCallback(async () => {
+        predictiveIdle = null;
+        if (epoch !== contextEpoch || !active || game() !== current ||
+            current.zoneId !== pose.zone || nearActiveFight(current)) return;
+        predictiveRunning = true;
+        try {
+          const before = new Set(baked.keys());
+          if (!await warmNeighborhood(epoch, false, heading) ||
+              epoch !== contextEpoch || current.zoneId !== pose.zone ||
+              nearActiveFight(current)) return;
+          const fresh = [...baked].filter(([key]) => !before.has(key))
+            .map(([, body]) => body.texture);
+          await prepareGpuTextures(epoch, fresh, 'procedural');
+        } catch (_) {
+          // Optional idle work must never interrupt play; mandatory visible
+          // graphics still use the normal renderer/fallback path.
+        } finally {
+          predictiveRunning = false;
+        }
+      });
     }
     async function warmArrival() {
       if (!active || !scene || !app || root.document?.hidden) return false;
@@ -1168,6 +1225,7 @@
         syncAtmosphere();
         stage = 'scene-render';
         scene.draw();
+        queuePredictiveWarm(game());
       } catch (error) {
         // Pixi/ANGLE can signal context loss through its draw exception
         // BEFORE the browser fires webglcontextlost. Preserve that cause
@@ -1192,6 +1250,7 @@
       requireValue(app?.canvas && scene, 'PixiJS scene not prepared');
       app.canvas.style.display = 'block';
       active = true;
+      predictionAnchor = null;
     }
     function deactivate() {
       active = false;
@@ -1199,6 +1258,9 @@
     }
     function disposeResources() {
       dropBackgroundLookahead(true);
+      if (predictiveIdle !== null) root.cancelIdleCallback?.(predictiveIdle);
+      predictiveIdle = null;
+      predictionAnchor = null;
       ++contextEpoch; // Cancel any asynchronous neighborhood preparation.
       cancelGpuPreparation?.();
       cancelGpuPreparation = null;
