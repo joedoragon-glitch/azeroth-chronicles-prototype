@@ -7,10 +7,11 @@
 
   const PIXI_SCRIPT = './assets/vendor/pixi-8.22.0.min.js';
   const BG_MARGIN = 220;
+  const REGION_TILE = 512;
   const BG_SHIFT = BG_MARGIN * 0.6;
   const BG_PREFETCH_TRIGGER = BG_MARGIN * 0.33;
   // Two CPU windows, one GPU source. Never provision a second regional GPU atlas.
-  const BG_TWO_WINDOW_BUDGET = 64 * 1024 * 1024;
+  const BG_TWO_WINDOW_BUDGET = 256 * 1024 * 1024;
   const iso = (point) => ({
     x: (point.x - point.y) * 0.76,
     y: (point.x + point.y) * 0.27,
@@ -67,17 +68,30 @@
     }
     return libraryRequest;
   }
-  function candidates(game, project, width, height, presentEntity, margin = 270) {
+  function candidates(game, project, width, height, presentEntity, margin = 270,
+    preloadEncounters = false) {
     const zone = game.zone();
     const result = [],
       used = new Map();
+    // Only already admitted enemies are inspected. Never trigger an unentered
+    // zone or roll future spawns just to manufacture a preload candidate.
+    const knownEnemies = preloadEncounters ? (zone.enemies || []).filter(
+      (e) => e.hp > 0 && Number.isFinite(e.x) && Number.isFinite(e.y)) : [];
+    const hotSpots = knownEnemies.filter(
+      (e) => e.type === 'boss' || e.fieldCaptain || e.roomCaptain || e.captain)
+      .flatMap((e) => [e, e.home].filter(
+        (p) => p && Number.isFinite(p.x) && Number.isFinite(p.y)))
+      .map(project);
     function add(entities, kind) {
       for (const entity of entities || []) {
         if (kind === 'enemy' && entity.hp <= 0) continue;
         const point = project(entity);
-        if (point.x < -margin || point.x > width + margin ||
-            point.y < -margin || point.y > height + margin)
-          continue;
+        const inCameraFringe = point.x >= -margin && point.x <= width + margin &&
+          point.y >= -margin && point.y <= height + margin;
+        const encounterActor = preloadEncounters && kind === 'enemy';
+        const bossTerritory = preloadEncounters && kind === 'prop' &&
+          hotSpots.some((p) => Math.hypot(point.x - p.x, point.y - p.y) <= 1600);
+        if (!inCameraFringe && !encounterActor && !bossTerritory) continue;
         const identity =
           entity.id == null
             ? String(entity.name || entity.structure || 'object') + ':' + entity.x + ':' + entity.y
@@ -173,6 +187,12 @@
       aheadReady = null,
       aheadIdle = null,
       aheadEpoch = 0,
+      terrainAtlas = null,
+      terrainTilesPrepared = 0,
+      terrainTileReuses = 0,
+      predictiveIdle = null,
+      predictiveRunning = false,
+      predictionAnchor = null,
       backing = null,
       basePosition = null,
       baseZone = null,
@@ -185,16 +205,13 @@
       lastFailure = null;
     const baked = new Map(),
       loaded = new Set();
-    // The old 64 MiB image budget preceded the procedural art expansion.
-    // Use 256 MiB as a strict image-data ceiling, with earlier LRU trimming
-    // to leave memory headroom for the original sprite, ground and audio caches.
+    // Prefer retained graphics over repeated CPU bakes during play.
+    // This is an emergency allocation guard, not an eager eviction target.
     const proceduralBudget = Number.isSafeInteger(options.proceduralTextureBudgetBytes)
       ? Math.max(1, options.proceduralTextureBudgetBytes)
-      : 256 * 1024 * 1024;
-    // Mainstream-device working set: retain nearby art through crossings while
-    // trimming stale textures before the unchanged 256 MiB hard ceiling.
-    const trimAt = Math.floor(proceduralBudget * 0.75);
-    const trimTo = Math.floor(proceduralBudget * 0.625);
+      : 1024 * 1024 * 1024;
+    const trimAt = proceduralBudget;
+    const trimTo = Math.floor(proceduralBudget * 0.9);
     let imageBytes = 0,
       disposed = false,
       baseGame = null,
@@ -367,8 +384,10 @@
         requireValue(texture?.source, 'Approved artwork unavailable after resize: ' + src);
         return [src, texture];
       });
-      // Retired procedural textures must never remain referenced by sprites.
-      clearBakes(true);
+      // Rebuild viewport-sized objects but keep the previously uploaded
+      // procedural artwork. The new bridge gets the same registered textures;
+      // no dungeon visit or display resize should force a full rebake.
+      scene.syncActors([]);
       releaseCrownLootTexture();
       scene.destroy();
       scene = null;
@@ -382,6 +401,7 @@
         PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
       });
       for (const [src, texture] of originals) scene.registerTexture(src, texture);
+      for (const body of baked.values()) scene.registerTexture(body.id, body.texture);
       if (game().s.mode !== 'arena') createBackgroundPainter();
       bakedZoom = null;
       drawBackground();
@@ -433,10 +453,130 @@
       }
       return freed;
     }
+
+    // Pre-render exactly one major region and its visited interiors in 512px
+    // tiles, with no mutation of the live hero or a hidden dungeon admission.
+    function parentRegion(current) {
+      return root.Campaign?.data?.regions?.[current.regionIndex()]?.id ||
+        (current.isDungeon() ? null : current.zoneId);
+    }
+    function terrainSignature(current) {
+      // Hot-path cache checks must not repeatedly rebuild the authored zone
+      // or stringify full roads/paths on every frame of Chromebook travel.
+      // The admitted layout owns stable revision/count metadata. Camera
+      // quality/zoom changes still invalidate the appropriate raster scale.
+      const zone = current.s.zones?.[current.zoneId];
+      return [current.zoneId, platform.cameraZoom, backingRatio,
+        !!options.getOptimizationMode(), current.zoneSize?.(),
+        zone?.roads?.length || 0, zone?.footpaths?.length || 0,
+        zone?.crownInheritedDecks?.length || 0,
+        zone?.roadNetworkVersion || 0, zone?.destinationLayoutVersion || 0,
+        zone?.dungeonSpaceVersion || 0, zone?.highlandsLandscapeVersion || 0,
+        zone?.frontierSceneVersion || 0, zone?.crownSceneVersion || 0].join('|');
+    }
+    function tileCache(current) {
+      if (!terrainAtlas || terrainAtlas.region !== parentRegion(current)) return null;
+      const found = terrainAtlas.zones.get(current.zoneId);
+      return found?.signature === terrainSignature(current) ? found : null;
+    }
+    async function prepareTerrainTiles(epoch) {
+      const current = game();
+      if (current.s.mode === 'arena' || !current.zoneSize?.()) return true;
+      const region = parentRegion(current);
+      if (!region) return true;
+      if (terrainAtlas?.region !== region)
+        terrainAtlas = { region, zones: new Map() };
+      if (tileCache(current)) return true;
+      const signature = terrainSignature(current), zoneId = current.zoneId,
+        zoom = platform.cameraZoom || 1, ratio = backingRatio,
+        size = current.zoneSize(), gutter = 320 * zoom;
+      const minX = -size * 0.76 * zoom - gutter,
+        minY = -gutter,
+        columns = Math.ceil((size * 1.52 * zoom + 2 * gutter) / REGION_TILE),
+        rows = Math.ceil((size * 0.54 * zoom + 2 * gutter) / REGION_TILE);
+      const tiles = new Map(), viewportTile = { width: REGION_TILE, height: REGION_TILE };
+      let tileX = minX, tileY = minY;
+      const tilePlatform = {
+        get cameraZoom() { return platform.cameraZoom; },
+        cameraAnchor() {
+          const hero = iso(current.hero);
+          return { x: hero.x * zoom - tileX, y: hero.y * zoom - tileY };
+        },
+      };
+      const canvas = makeCanvas(Math.round(REGION_TILE * ratio),
+        Math.round(REGION_TILE * ratio));
+      const ctx = requireValue(canvas.getContext('2d'), 'Terrain cache unavailable');
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const painter = root.PrototypeRenderer.create({
+        ...getRendererOptions(), canvas: viewportTile, ctx,
+        platform: tilePlatform, renderLayer: 'background',
+        staticTerrainTimeSeconds: measureNow() / 1000,
+      });
+      painter.setGroundReuse?.(false);
+      painter.setOptimizationMode(!!options.getOptimizationMode());
+      for (let y = 0; y < rows; y++) for (let x = 0; x < columns; x++) {
+        if (epoch !== contextEpoch || current !== game() ||
+            current.zoneId !== zoneId || root.document?.hidden ||
+            platform.cameraZoom !== zoom || backingRatio !== ratio) return false;
+        tileX = minX + x * REGION_TILE;
+        tileY = minY + y * REGION_TILE;
+        painter.draw();
+        const tile = makeCanvas(canvas.width, canvas.height);
+        requireValue(tile.getContext('2d'), 'Terrain tile unavailable')
+          .drawImage(canvas, 0, 0);
+        const finished = y * columns + x + 1;
+        tiles.set(finished - 1, tile);
+        if (finished === 1 || finished === rows * columns ||
+            finished % 4 === 0)
+          options.onPreparationProgress?.({ zone: zoneId, stage: 'terrain',
+            prepared: finished, total: rows * columns });
+        if ((x + columns * y) % 2 === 1 &&
+            typeof requestAnimationFrame === 'function')
+          await new Promise((done) => requestAnimationFrame(done));
+      }
+      if (epoch !== contextEpoch || current.zoneId !== zoneId ||
+          current !== game()) return false;
+      terrainAtlas.zones.set(zoneId,
+        { signature, minX, minY, columns, rows, tiles, tileWidth: REGION_TILE });
+      terrainTilesPrepared += tiles.size;
+      return true;
+    }
+    function paintFromTiles(current, cache) {
+      const ctx = backdrop?.getContext('2d');
+      if (!ctx?.drawImage || !ctx?.clearRect) return false;
+      const zoom = platform.cameraZoom || 1, ratio = backingRatio,
+        anchor = platform.cameraAnchor(viewport.width, viewport.height),
+        hero = iso(current.hero),
+        left = hero.x * zoom - anchor.x - BG_MARGIN,
+        top = hero.y * zoom - anchor.y - BG_MARGIN,
+        c1 = Math.max(0, Math.floor((left - cache.minX) / REGION_TILE)),
+        c2 = Math.min(cache.columns - 1,
+          Math.floor((left + viewport.width + BG_MARGIN * 2 - cache.minX) / REGION_TILE)),
+        r1 = Math.max(0, Math.floor((top - cache.minY) / REGION_TILE)),
+        r2 = Math.min(cache.rows - 1,
+          Math.floor((top + viewport.height + BG_MARGIN * 2 - cache.minY) / REGION_TILE));
+      if (c1 > c2 || r1 > r2) return false;
+      ctx.save?.();
+      try {
+        ctx.setTransform?.(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, backdrop.width, backdrop.height);
+        // Outside the authored square there is still the original dark
+        // background, never a transparent hole around the tile atlas.
+        ctx.fillStyle = '#0c1913';
+        ctx.fillRect?.(0, 0, backdrop.width, backdrop.height);
+        for (let y = r1; y <= r2; y++) for (let x = c1; x <= c2; x++) {
+          const tile = cache.tiles.get(y * cache.columns + x);
+          if (!tile) return false;
+          ctx.drawImage(tile, Math.round((cache.minX + x * REGION_TILE - left) * ratio),
+            Math.round((cache.minY + y * REGION_TILE - top) * ratio));
+        }
+      } finally { ctx.restore?.(); }
+      terrainTileReuses++;
+      return true;
+    }
     function drawBackground() {
       dropBackgroundLookahead();
       const started = measureNow();
-      backgroundRepaints++;
       const current = game(),
         zoom = platform.cameraZoom || 1;
       if (current.s.mode === 'arena') {
@@ -458,7 +598,11 @@
       baseZoom = zoom;
       baseOptimization = !!options.getOptimizationMode();
       backgroundRenderer.setOptimizationMode(baseOptimization);
-      backgroundRenderer.draw();
+      const cache = tileCache(current);
+      if (!cache || !paintFromTiles(current, cache)) {
+        backgroundRepaints++;
+        backgroundRenderer.draw();
+      }
       if (backing) {
         backing.source.update?.();
         scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
@@ -640,7 +784,7 @@
         dy = -movement.y * zoom;
       }
       scene.moveBackground(-BG_MARGIN + dx, -BG_MARGIN + dy);
-      queueBackgroundLookahead(current, dx, dy);
+      if (!tileCache(current)) queueBackgroundLookahead(current, dx, dy);
     }
     function paintedVisual(visual) {
       return visual.kind === 'archive-record'
@@ -685,40 +829,62 @@
       return baked.get(revision);
     }
     // On switching to Pixi, the existing live view is loaded first. Then,
-    // prepare a limited fringe just beyond the camera so a quick step from
-    // Millhaven toward its goblins doesn't require every first bake in combat.
-    // Yield between batches while the full game simulation is held still by
-    // the renderer preparation guard; never run this as an unbounded emitter.
-    async function warmNeighborhood(epoch, arrival = false) {
+    // Prepare the actual saved/admitted region before revealing it: dungeon
+    // interiors completely, outdoor approach and known boss territory first.
+    // Yield between batches while simulation is held. Finish the selected
+    // neighborhood rather than abandoning bakes after a time/count quota.
+    async function warmNeighborhood(epoch, arrival = false, heading = null) {
       const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
       const current = game(), zoom = platform.cameraZoom || 1;
+      const originZone = current.zoneId, origin = project(current.hero);
+      const ahead = heading ? iso(heading) : null;
+      const headingLength = ahead ? Math.hypot(ahead.x, ahead.y) || 1 : 1;
       const width = viewport.width, height = viewport.height;
+      // Prepare the WHOLE admitted zone before revealing gameplay: every
+      // outdoor actor/scenery record in the active region, or every actor and
+      // prop in the bounded dungeon. Keep these bakes across interior visits.
+      const dungeon = current.isDungeon() || !!current.supplyRoom?.() ||
+        !!current.sideDungeon?.();
       const fringe = candidates(current, project, width, height,
-        canvasRenderer.presentEntity, arrival ? 1300 : 650)
+        canvasRenderer.presentEntity, arrival ? Infinity :
+          heading ? 4000 : 900, arrival || !!heading)
         .filter(({entity,point}) =>
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
           (arrival || point.x < -270 || point.x > width + 270 ||
-            point.y < -270 || point.y > height + 270))
+            point.y < -270 || point.y > height + 270) &&
+          (!ahead || (point.x - origin.x) * ahead.x / headingLength +
+            (point.y - origin.y) * ahead.y / headingLength >= -250))
         .sort((a,b) => {
           if (arrival) {
-            const priority = (item) => item.kind === 'enemy' && item.entity.hp > 0 ? 0 :
-              item.kind === 'hero' || item.kind === 'ally' ? 1 : 2;
+            const priority = (item) =>
+              item.kind === 'enemy' && (item.entity.type === 'boss' ||
+                item.entity.fieldCaptain || item.entity.roomCaptain ||
+                item.entity.captain) ? 0 :
+              item.kind === 'enemy' && item.entity.hp > 0 ? 1 :
+              item.kind === 'hero' || item.kind === 'ally' ? 2 : 3;
             const dist = (item) => Math.hypot(
               item.entity.x-current.hero.x,item.entity.y-current.hero.y);
             return priority(a)-priority(b) || dist(a)-dist(b);
           }
           const distance = (p) => Math.hypot(
             Math.max(0,-p.x,p.x-width),Math.max(0,-p.y,p.y-height));
+          if (ahead) {
+            const threat = (item) => item.kind === 'enemy' &&
+              (item.entity.type === 'boss' || item.entity.fieldCaptain) ? 0 :
+              item.kind === 'enemy' ? 1 : 2;
+            return threat(a) - threat(b) || distance(a.point)-distance(b.point);
+          }
           return distance(a.point)-distance(b.point);
         });
       let prepared = 0,steps=0;
       for(const {entity,visual,point,key} of fringe) {
         if(epoch!==contextEpoch || !scene || !app || game()!==current ||
-           platform.cameraZoom!==zoom || root.document?.hidden) return false;
-        const elapsed=(typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
-        if(prepared >= (arrival ? 42 : 30) || elapsed > (arrival ? 1100 : 800) ||
-           imageBytes>=trimAt) break;
+           current.zoneId!==originZone || platform.cameraZoom!==zoom ||
+           root.document?.hidden) return false;
+        // Actual loss of the GPU context cancels above; there is no deadline.
+        // The emergency byte guard still prevents a failed allocation loop.
+        if(imageBytes>=trimAt) break;
         const painted=paintedVisual(visual);
         const chosen=adapter.commandFor(painted,
           {x:point.x/zoom,y:point.y/zoom},
@@ -737,13 +903,56 @@
       neighborhoodPrepared += prepared;
       neighborhoodWarmupMs +=
         (typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
-      return epoch===contextEpoch;
+      return epoch===contextEpoch && current.zoneId===originZone;
+    }
+    // Outdoor predictive graphics work is strictly opportunistic and uses
+    // browser idle time. It never changes enemies, campaign state, RNG or the
+    // game clock. Move the lookahead toward the player's actual direction and
+    // upload fresh procedural textures before they appear in the viewport.
+    function queuePredictiveWarm(current) {
+      if (!active || !app || !scene || !root.requestIdleCallback ||
+          root.document?.hidden || current.s.mode === 'arena' ||
+          current.isDungeon() || nearActiveFight(current)) return;
+      const pose = { x: current.hero.x, y: current.hero.y, zone: current.zoneId,
+        zoom: platform.cameraZoom || 1 };
+      if (!predictionAnchor || predictionAnchor.zone !== pose.zone ||
+          predictionAnchor.zoom !== pose.zoom) {
+        predictionAnchor = pose;
+        return;
+      }
+      const heading = { x: pose.x - predictionAnchor.x,
+        y: pose.y - predictionAnchor.y };
+      if (Math.hypot(heading.x, heading.y) < 180 ||
+          predictiveIdle !== null || predictiveRunning) return;
+      predictionAnchor = pose;
+      const epoch = contextEpoch;
+      predictiveIdle = root.requestIdleCallback(async () => {
+        predictiveIdle = null;
+        if (epoch !== contextEpoch || !active || game() !== current ||
+            current.zoneId !== pose.zone || nearActiveFight(current)) return;
+        predictiveRunning = true;
+        try {
+          const before = new Set(baked.keys());
+          if (!await warmNeighborhood(epoch, false, heading) ||
+              epoch !== contextEpoch || current.zoneId !== pose.zone ||
+              nearActiveFight(current)) return;
+          const fresh = [...baked].filter(([key]) => !before.has(key))
+            .map(([, body]) => body.texture);
+          await prepareGpuTextures(epoch, fresh, 'procedural');
+        } catch (_) {
+          // Optional idle work must never interrupt play; mandatory visible
+          // graphics still use the normal renderer/fallback path.
+        } finally {
+          predictiveRunning = false;
+        }
+      });
     }
     async function warmArrival() {
       if (!active || !scene || !app || root.document?.hidden) return false;
       const epoch = contextEpoch, current = game();
       const before = new Set(baked.keys());
       try {
+        if (!await prepareTerrainTiles(epoch)) return false;
         if (!await warmNeighborhood(epoch, true)) return false;
         if (epoch !== contextEpoch || current !== game() || !active) return false;
         // CPU procedural bakes alone do not make near-enemy WebGL frames ready.
@@ -800,9 +1009,9 @@
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
-      // Keep prior-zone textures warm for dungeon returns and adjacent travel.
-      // The global LRU/byte budget retires them as needed; zoom still invalidates
-      // pixel-density-dependent bakes to prevent blurred/misaligned sprites.
+      // Keep already prepared outdoor and dungeon artwork resident across
+      // normal entrances/exits. Only an actual hard allocation limit can
+      // retire cold images; changing zoom uses a distinct density key.
       // Revision identities include zoom too: changing camera scale never
       // aliases raster sizes, and revisits can reuse images until LRU trimming.
       bakedZoom = zoom;
@@ -899,12 +1108,9 @@
       }
       appendCrownLoot(records, current, zoom);
       scene.syncActors(records);
-      // Stage 6: defer optional soft LRU sweeps during close-range combat.
-      // Repeated attack frames can reuse art; the separate hard-budget path
-      // still reclaims cold textures when absolutely necessary and never
-      // removes currently visible identities.
-      if (imageBytes > trimAt && !nearActiveFight(current))
-        evictUnused(protectedRevisions, imageBytes - trimTo);
+      // Keep offscreen and previously visited artwork resident for reuse.
+      // Only a real emergency hard-budget allocation needs LRU retirement;
+      // that path protects all currently visible texture identities.
     }
     function syncAtmosphere() {
       const current = game(),
@@ -1117,8 +1323,14 @@
         syncAtmosphere();
         scene.draw();
         startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
-        stage = 'nearby-art-preparation';
-        if(!await warmNeighborhood(thisEpoch))return false;
+        // Any Pixi activation (not only a later native zone transition) must
+        // preload the complete currently admitted region while the renderer
+        // guard still presents its preparation panel. warmArrival() reuses
+        // these same tiles rather than painting a second copy on Continue.
+        stage = 'region-terrain-preparation';
+        if (!await prepareTerrainTiles(thisEpoch)) return false;
+        stage = 'region-art-preparation';
+        if (!await warmNeighborhood(thisEpoch, true)) return false;
         stage = 'gpu-procedural-upload';
         if (!await prepareGpuTextures(thisEpoch, [...baked.values()].map((body) => body.texture),
           'procedural')) return false;
@@ -1150,6 +1362,7 @@
         syncAtmosphere();
         stage = 'scene-render';
         scene.draw();
+        queuePredictiveWarm(game());
       } catch (error) {
         // Pixi/ANGLE can signal context loss through its draw exception
         // BEFORE the browser fires webglcontextlost. Preserve that cause
@@ -1174,6 +1387,7 @@
       requireValue(app?.canvas && scene, 'PixiJS scene not prepared');
       app.canvas.style.display = 'block';
       active = true;
+      predictionAnchor = null;
     }
     function deactivate() {
       active = false;
@@ -1181,6 +1395,9 @@
     }
     function disposeResources() {
       dropBackgroundLookahead(true);
+      if (predictiveIdle !== null) root.cancelIdleCallback?.(predictiveIdle);
+      predictiveIdle = null;
+      predictionAnchor = null;
       ++contextEpoch; // Cancel any asynchronous neighborhood preparation.
       cancelGpuPreparation?.();
       cancelGpuPreparation = null;
@@ -1199,6 +1416,7 @@
       }
       backgroundRenderer = null;
       backdrop = null;
+      terrainAtlas = null;
       basePosition = null;
       baseOptimization = null;
       baseGame = null;
@@ -1237,6 +1455,10 @@
         proceduralCacheHits,
         sharedProceduralHits,
         backgroundRepaints,
+        terrainTilesPrepared,
+        terrainTileReuses,
+        cachedTerrainRegion: terrainAtlas?.region || null,
+        cachedTerrainZones: [...(terrainAtlas?.zones.keys() || [])],
         backgroundLookaheadPaints,
         backgroundLookaheadPromotions,
         backgroundLookaheadMisses,

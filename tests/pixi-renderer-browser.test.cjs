@@ -32,12 +32,51 @@ async function selectPixi(page) {
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
-  await page.waitForFunction(() => {
-    const r=Prototype.experimentalGraphics;
-    return r.phase==='trial' ||
-      (r.phase==='canvas' && !!(r.lastError || r.lastFallbackReason));
-  }, null, {timeout:45000});
+  try {
+    // A complete current-region atlas can legitimately take much longer than
+    // the old fringe-only Pixi startup, especially with software WebGL2.
+    // This is a *test observation limit*, never a game loading deadline.
+    await page.waitForFunction(() => {
+      const r=Prototype.experimentalGraphics;
+      return r.phase==='trial' ||
+        (r.phase==='canvas' && !!(r.lastError || r.lastFallbackReason));
+    }, null, {timeout:240000});
+  } catch (error) {
+    const diagnostic = await page.evaluate(() => ({
+      renderer: Prototype.experimentalGraphics,
+      titleLoading: document.querySelector('#title-loading')?.textContent,
+      sceneLoading: document.querySelector('#scene-loading-text')?.textContent,
+      gpuPreparation: document.querySelector('#gpu-renderer-trial')?.textContent,
+      titleHidden: document.querySelector('#title-screen')?.hidden,
+      gameStarted: Prototype.started,
+    }));
+    throw Error('Pixi regional preload did not complete: ' +
+      JSON.stringify(diagnostic) + '; ' + String(error));
+  }
   return page.evaluate(() => Prototype.experimentalGraphics);
+}
+// Drive the actual modern title-screen flow. Earlier graphics tests relied
+// on automatic gameplay startup and could silently skip preloading entirely.
+async function enterPlayableGame(page) {
+  await page.waitForFunction(() => !!window.Prototype?.renderer);
+  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  const title = page.locator('#title-screen');
+  if (await title.evaluate((el) => !el.hidden)) {
+    if (!(await page.locator('#title-continue').isDisabled())) {
+      await page.locator('#title-continue').click();
+    } else {
+      await page.locator('#title-new').click();
+      await page.getByRole('button', {name:'New Normal game', exact:true}).click();
+      await page.getByRole('button', {name:/^English(?: ✓)?$/}).click();
+      await page.getByRole('button',
+        {name:'Standard death and refuge recovery', exact:true}).click();
+      await page.getByRole('button', {name:/Paladin/}).first().click();
+    }
+  }
+  await page.waitForFunction(() =>
+    !!window.Prototype?.started && document.querySelector('#title-screen')?.hidden &&
+    document.querySelector('#scene-loading')?.hidden !== false,
+    null, { timeout: 180000 });
 }
 // Use a real screen-coordinate touch on phone. Playwright locator.click() may
 // scroll the fixed 15-second trial panel during mobile restart, potentially
@@ -219,9 +258,7 @@ async function run() {
         const beamPage = await beamContext.newPage();
         await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
         await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
-        await require('./helpers/language-browser.cjs').selectEnglish(beamPage);
-        await beamPage.keyboard.press('f');
-        await beamPage.keyboard.press('f');
+        await enterPlayableGame(beamPage);
         await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
         await inspectMageBeamOverlay(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
@@ -244,9 +281,7 @@ async function run() {
       await page.goto(host + (phone ? 'phone.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
-      await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
+      await enterPlayableGame(page);
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
       await page.evaluate(() => {window.__gpuTestCampaign = Prototype.game;});
       // Canvas remains functional under the new three-way optimization policy.
@@ -364,11 +399,40 @@ async function run() {
         // not merely an internal profiler object or a static source assertion.
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
-        await page.getByRole('button', {name:'Save and game management', exact:true}).click();
-        const downloadPromise=page.waitForEvent('download');
-        await page.getByRole('button', {name:'Export playtest report', exact:true}).click();
-        const download=await downloadPromise;
-        const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
+        // The current UI owns diagnostics under Screen and performance, not
+        // the Save and game management section used by the older pilot.
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
+        // Headless Chromium does not reliably deliver downloads from a
+        // detached, script-clicked blob anchor. Exercise the actual menu action
+        // and inspect its generated JSON blob, without claiming OS download
+        // acceptance from this graphics-specific run.
+        await page.evaluate(() => {
+          window.__auditBlobCreate = URL.createObjectURL.bind(URL);
+          URL.createObjectURL = (blob) => {
+            if (blob.type === 'application/json') window.__auditReportBlob = blob;
+            return window.__auditBlobCreate(blob);
+          };
+        });
+        await page.getByRole('button', {name:/Export playtest report/}).click();
+        try {
+          await page.waitForFunction(() => !!window.__auditReportBlob, null, {timeout:8000});
+        } catch (error) {
+          const diag = await page.evaluate(() => ({
+            modal: document.querySelector('#modal-title')?.textContent,
+            buttons: [...document.querySelectorAll('#modal-actions button')]
+              .map((button) => button.textContent).slice(0, 15),
+            renderer: Prototype.experimentalGraphics.mode,
+          }));
+          throw Error('Playtest report menu action generated no JSON: ' +
+            JSON.stringify(diag) + '; ' + error);
+        }
+        const exported = await page.evaluate(async () => {
+          const report = JSON.parse(await window.__auditReportBlob.text());
+          URL.createObjectURL = window.__auditBlobCreate;
+          delete window.__auditBlobCreate;
+          delete window.__auditReportBlob;
+          return report;
+        });
         assert.equal(exported.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
         assert(exported.performance.graphicsRenderer.sceneMetrics.actors>0);
         assert.equal(exported.performance.render.measuredLayer,'canvas-combat-overlay');
@@ -427,9 +491,9 @@ async function run() {
             'An active WebGL scene must complete all lighting transitions');
         }
         await page.reload();
-        await page.waitForFunction(() => window.Prototype?.experimentalGraphics);
+        await enterPlayableGame(page);
         await page.waitForFunction(() =>
-          Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 30000});
+          Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 180000});
         let after = await page.evaluate(() => Prototype.experimentalGraphics);
         assert(['confirmed', 'canvas'].includes(after.phase), 'Restart must safely show a renderer');
         // A software browser may safely restore Canvas. If this is our

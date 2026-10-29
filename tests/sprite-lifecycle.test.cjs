@@ -76,7 +76,7 @@ function context() {
 (async () => {
   {
     const f = fresh();
-    assert.equal(f.sprites.status().maxDecodedBytes, 256 * 1024 * 1024);
+    assert.equal(f.sprites.status().maxDecodedBytes, 1024 * 1024 * 1024);
     const catalog = Object.fromEntries(
       Array.from({ length: 80 }, (_, i) => [
         'prop:large-' + i + ':vale',
@@ -93,18 +93,20 @@ function context() {
     await warm;
     const status = f.sprites.status();
     assert.equal(count, 80);
-    assert.equal(status.decodedBytes, 256 * 1024 * 1024);
-    assert.equal(status.loaded, 64);
-    assert.equal(status.evictions, 16);
-    assert(status.peakReservedBytes <= 256 * 1024 * 1024);
+    assert.equal(status.decodedBytes, 320 * 1024 * 1024);
+    assert.equal(status.loaded, 80);
+    assert.equal(status.evictions, 0, 'retain all currently available sprite images');
+    assert(status.peakReservedBytes <= 1024 * 1024 * 1024);
     assert(status.peakConcurrent <= 2);
     assert(f.sprites.configure({ decodedBytes: 32 * 1024 * 1024 }));
     assert(f.sprites.status().decodedBytes <= 32 * 1024 * 1024);
-    assert(f.sprites.configure({ decodedBytes: 256 * 1024 * 1024 }));
+    assert(f.sprites.status().evictions > 0,
+      'explicitly lowering the cache limit can still retire old images');
+    assert(f.sprites.configure({ decodedBytes: 1024 * 1024 * 1024 }));
     f.sprites.installManifest(manifest({}));
     assert.equal(f.sprites.status().decodedBytes, 0);
     console.log(
-      'PASS 256 MiB sprite residency, reservation bounds, LRU retirement and smaller-budget configuration',
+      'PASS generous sprite residency, emergency reservation bounds and explicit small-cache configuration',
     );
   }
 
@@ -374,8 +376,13 @@ function context() {
     assert(f.sprites.draw(c.ctx, entity, { x: 0, y: 0 }), 'visible resource stays pinned');
     assert.equal(
       f.sprites.configure({ decodedBytes: 257 * 1024 * 1024 }),
+      true,
+      'owner-selected cache can exceed the retired 256 MiB threshold',
+    );
+    assert.equal(
+      f.sprites.configure({ decodedBytes: 1024 * 1024 * 1024 + 1 }),
       false,
-      'cannot exceed the approved 256 MiB runtime cap',
+      'emergency decoded sprite cap still rejects allocations beyond 1 GiB',
     );
     console.log('PASS full 280-entry lazy registry, bounded concurrency/LRU and visible pinning');
   }

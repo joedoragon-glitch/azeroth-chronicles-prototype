@@ -1500,6 +1500,7 @@
     titleLoading = false,
     titleEpoch = 0,
     titleWarmup = null,
+    titleSkipGraphics = null,
     sceneTransition = null,
     sceneTransitionEpoch = 0,
     started = false,
@@ -1954,6 +1955,16 @@
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
           getOptimizationMode: () => optimizationMode,
+          onPreparationProgress: ({ prepared, total }) => {
+            // One loading surface throughout decode, terrain tiles and GPU
+            // uploads; the count shows actual completed terrain tiles.
+            const message = language === 'es'
+              ? 'Preparando terreno ' + prepared + '/' + total + '…'
+              : 'Preparing terrain ' + prepared + '/' + total + '…';
+            if (titleLoading && $('title-loading')) $('title-loading').textContent = message;
+            else if (sceneTransition && $('scene-loading-text'))
+              $('scene-loading-text').textContent = message;
+          },
           onFailure: (failure) => {
             graphicsController?.webglFailed(failure);
             const recovery = graphicsController?.status();
@@ -1971,7 +1982,10 @@
   function updateGpuTrial(snapshot) {
     const trial = snapshot.phase === 'trial';
     const preparing = snapshot.phase === 'preparing';
-    gpuTrialPanel.hidden = !trial && !preparing;
+    // A launch remains one visible title-screen preparation, including
+    // Pixi initialization and the actual saved arrival's GPU uploads.
+    // Manual renderer changes outside startup retain the Keep/Revert panel.
+    gpuTrialPanel.hidden = (!trial && !preparing) || (preparing && titleLoading);
     gpuTrialActions.style.display = trial ? 'grid' : 'none';
     if (preparing) {
       gpuTrialMessage.textContent = tr('Preparing PixiJS graphics…');
@@ -2054,15 +2068,10 @@
     graphicsController.visibilityChanged(document.hidden),
   );
   addEventListener('pagehide', () => graphicsController.visibilityChanged(true));
-  // Canvas always boots first. A previously confirmed GPU preference may
-  // reappear only after its first complete frame and recovery marker clear.
-  if (previousRendererChoice.renderer === 'webgl2') {
-    requestAnimationFrame(() => {
-      graphicsController.resumeConfirmedWebGL().then((ready) => {
-        if (!ready) status('Previous WebGL2 choice unavailable; Canvas is active.');
-      });
-    });
-  }
+  // Keep the fresh-launch title visible. Do not initialize previously confirmed
+  // Pixi in a separate, player-visible pass before Continue/New Game. The first
+  // playable scene will coordinate sprite, renderer and arrival GPU preparation
+  // under one title-screen loading state, using the saved spawn when available.
   function drawWorld() {
     // These measure synchronous draw calls, not completed GPU/presented frames.
     const timing = {
@@ -3269,32 +3278,36 @@
     if (!sprites?.definitionFor || !game?.s?.zones) return [];
     const known = game.s.zones[destination] || null;
     const region = game.regionIndex(destination);
-    // The first encounter matters more than distant decorations. Once native
-    // travel has constructed the destination, prioritize nearby combat actors,
-    // including companions, instead of starving typical 4+ GB devices with a
-    // tiny arbitrary key count. The existing 256 MiB decoded cache remains
-    // the actual global memory owner and can evict cold resources.
+    // Prepare combat sprites and animations from the actual admitted scene,
+    // not just the first few visible actors. A save already records the hero,
+    // companions, living enemies and known encounter locations.
     const hero = game.hero;
     const companions = typeof game.activeParty === 'function'
       ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
       : [];
     const distance = (e) => Math.hypot(e.x - hero.x, e.y - hero.y);
+    const leaders = (e) => e.type === 'boss' || e.fieldCaptain ||
+      e.roomCaptain || e.captain;
     const enemies = known && destination === game.zoneId
       ? (known.enemies || []).filter((e) => e.hp > 0 &&
           Number.isFinite(e.x) && Number.isFinite(e.y))
-          .sort((a, b) => distance(a) - distance(b))
+          .sort((a, b) => Number(leaders(b)) - Number(leaders(a)) ||
+            distance(a) - distance(b))
           .map((e) => ({ ...e, renderKind: 'enemy' }))
       : [];
-    // Only a native admission/resumed save makes near-spawn enemy placement
-    // authoritative. Prior to entry we cannot inspect an ungenerated zone.
-    const imminent = combatFirst ? enemies.filter((e) => distance(e) <= 850) : [];
-    const fringe = combatFirst ? enemies.filter((e) => distance(e) <= 1300) : enemies;
+    // Only native entry or a restored save makes encounter placement real.
+    // Whole dungeon interiors and all already-spawned outdoor enemy classes
+    // are eligible; field bosses are never left for combat-time decoding.
+    const imminent = combatFirst ? enemies.filter(
+      (e) => leaders(e) || distance(e) <= 850) : [];
+    const fringe = enemies;
     const neighbors = known && destination === game.zoneId
       ? [...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
-        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' }))]
-          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y) &&
-            (!combatFirst || distance(e) <= 600))
-          .sort((a, b) => distance(a) - distance(b)).slice(0, 100)
+        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' })),
+        ...(known.buildings || []).map((e) => ({ ...e, renderKind: 'building' })),
+        ...(known.nodes || []).map((e) => ({ ...e, renderKind: 'node' }))]
+          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
+          .sort((a, b) => distance(a) - distance(b))
       : [];
     const keys = new Set();
     for (const actor of [...imminent, { ...hero, renderKind: 'hero' },
@@ -3302,7 +3315,6 @@
       // Appearance lookup never calls Campaign.zone()/enter() or consumes RNG.
       const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
       if (match?.key) keys.add(match.key);
-      if (keys.size >= 64) break;
     }
     return [...keys];
   }
@@ -3315,27 +3327,23 @@
       !!game.sideDungeon?.(destination) ||
       !!game.supplyRoom?.(destination);
   }
-  function warmScene(destination, milliseconds = 750, combatFirst = false) {
+  function warmScene(destination, combatFirst = false) {
     const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
     if (!sprites?.warm || document.hidden) return null;
     const keys = readOnlySceneKeys(destination, combatFirst);
     if (!keys.length) return null;
-    // The queue may outlive the deadline, but only presentation-cache bytes
-    // are touched; no delayed callback can commit travel or change the campaign.
-    return Promise.race([
-      Promise.resolve().then(() => sprites.warm(keys,
-        combatFirst ? { variants: true, clips: true } : {})).catch(() => null),
-      new Promise((resolve) => setTimeout(resolve, milliseconds)),
-    ]);
+    // Loading is readiness-driven: a slow decode is not a failed decode.
+    // Missing or broken images settle independently in the sprite cache.
+    // This never changes campaign state, game randomness or simulation time.
+    return Promise.resolve().then(() => sprites.warm(keys,
+      combatFirst ? { variants: true, clips: true } : {})).catch(() => null);
   }
   function prepareGpuForArrival() {
     if (graphicsController.status().mode !== 'webgl2' ||
         typeof pixiGame.warmArrival !== 'function') return null;
-    // Stall, GPU memory failure, or context loss falls back to reliable Canvas.
-    return Promise.race([
-      Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false),
-      new Promise((resolve) => setTimeout(() => resolve(false), 1800)),
-    ]);
+    // Await real GPU readiness rather than treating slow hardware as a failure.
+    // Actual Pixi errors/context cancellation still return false for Canvas recovery.
+    return Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false);
   }
   function drawReadyScene() {
     try {
@@ -3364,6 +3372,7 @@
     const previous = sceneTransition;
     if (!previous) return;
     ++sceneTransitionEpoch;
+    previous.resolveSkip?.(false);
     sceneTransition = null;
     $('scene-loading').hidden = true;
     $('scene-loading-retry').hidden = true;
@@ -3382,10 +3391,11 @@
     }
     if (!ticket.painted && drawReadyScene()) {
       ticket.painted = true;
-      const gpuWarmup = prepareGpuForArrival();
+      const gpuWarmup = ticket.skipped ? null : prepareGpuForArrival();
       if (gpuWarmup) {
         ticket.gpuPreparing = true;
-        void gpuWarmup.then((ready) => {
+        void Promise.race([gpuWarmup, ticket.skipPromise.then(() => false)])
+          .then((ready) => {
           if (sceneTransition?.token !== token) return;
           if (!ready) graphicsController.revert();
           ticket.gpuPreparing = false;
@@ -3404,6 +3414,7 @@
         : 'Arrival could not be drawn. Retry with Canvas.';
       $('scene-loading-retry').textContent = language === 'es'
         ? 'Reintentar con Canvas' : 'Retry with Canvas';
+      ticket.drawFailed = true;
       $('scene-loading-retry').hidden = false;
       $('scene-loading-retry').focus?.({ preventScroll: true });
       return;
@@ -3425,9 +3436,14 @@
     const token = ++sceneTransitionEpoch;
     const campaign = game;
     rendererEvent('arrival-start', destination);
-    sceneTransition = { token, campaign, destination, committed: false };
+    let resolveSkip;
+    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
+    sceneTransition = { token, campaign, destination, committed: false,
+      skipped: false, skipPromise, resolveSkip };
     $('scene-loading').hidden = false;
-    $('scene-loading-retry').hidden = true;
+    $('scene-loading-retry').hidden = false;
+    $('scene-loading-retry').textContent = language === 'es'
+      ? 'Continuar con Canvas' : 'Continue with Canvas';
     transitionLoadingText(label || destination, 'warm');
     clearInput();
     audio.setPaused(true);
@@ -3458,13 +3474,14 @@
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
       // Never spend an unbounded period trying to complete optional atlas art.
-      const encounterWarmup = warmScene(destination,
-        combatCriticalArrival(destination) ? 1400 : 1200, true);
+      const encounterWarmup = sceneTransition.skipped
+        ? null : warmScene(destination, true);
       const reveal = () => {
         if (sceneTransition?.token !== token) return;
         requestAnimationFrame(() => revealSceneTransition(token));
       };
-      if (encounterWarmup) void encounterWarmup.then(reveal, reveal);
+      if (encounterWarmup)
+        void Promise.race([encounterWarmup, skipPromise]).then(reveal, reveal);
       else reveal();
     };
     // Dungeon entries are combat-critical: do not wait on an optional atlas,
@@ -3472,8 +3489,8 @@
     // Simulation remains held until the committed first frame is drawn and
     // the opaque interlude is removed. No artificial combat grace period.
     const critical = combatCriticalArrival(destination);
-    const pending = critical ? null : warmScene(destination, 750);
-    if (pending) void pending.then(proceed, proceed);
+    const pending = critical ? null : warmScene(destination);
+    if (pending) void Promise.race([pending, skipPromise]).then(proceed, proceed);
     else proceed();
     return true;
   }
@@ -3513,6 +3530,9 @@
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
       $(id).disabled = titleLoading;
+    titleCanvasContinue.hidden = !titleLoading || !!titleSkipGraphics?.skipped;
+    titleCanvasContinue.textContent = language === 'es'
+      ? 'Continuar con Canvas' : 'Continue with Canvas';
     if (!titleLoading) {
       $('title-loading').hidden = true;
       $('title-loading').textContent = '';
@@ -3521,6 +3541,8 @@
   function showTitleScreen() {
     stopRendererRecording();
     ++titleEpoch;
+    titleSkipGraphics?.resolve(false);
+    titleSkipGraphics = null;
     titleLoading = false;
     cancelSceneTransition();
     started = false;
@@ -3538,7 +3560,7 @@
     document.body.classList.add('title-active');
     // Prepare only the *loaded* arrival view, never an unentered zone.
     titleWarmup = loaded
-      ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 1000 : 900, true)
+      ? warmScene(game.zoneId, true)
       : null;
     refreshTitleScreen();
     const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
@@ -3549,6 +3571,12 @@
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
     titleLoading = true;
     const epoch = ++titleEpoch;
+    let resolveSkip;
+    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
+    titleSkipGraphics = { skipped: false, resolve: resolveSkip };
+    const waitOrSkip = (pending, onSettled) => pending
+      ? void Promise.race([pending, skipPromise]).then(onSettled, onSettled)
+      : onSettled();
     $('title-loading').hidden = false;
     $('title-loading').textContent = language === 'es'
       ? 'Preparando la primera escena…' : 'Preparing first scene…';
@@ -3574,6 +3602,8 @@
           return;
         }
         titleLoading = false;
+        titleSkipGraphics = null;
+        titleCanvasContinue.hidden = true;
         started = true;
         titleScreen.hidden = true;
         document.body.classList.remove('title-active');
@@ -3594,28 +3624,43 @@
           refreshTitleScreen();
           return;
         }
-        if (!drawReadyScene()) {
-          titleLoading = false;
-          status('Unable to prepare the game scene. Canvas backup is available.');
-          refreshTitleScreen();
-          return;
-        }
-        const gpuWarmup = prepareGpuForArrival();
-        if (gpuWarmup) void gpuWarmup.then((ready) => {
-          if (epoch !== titleEpoch) return;
-          if (!ready) graphicsController.revert();
-          requestAnimationFrame(finish);
-        });
-        else requestAnimationFrame(finish);
+        const showReadyFrame = () => {
+          if (epoch !== titleEpoch || document.hidden ||
+              campaign !== game || !writerGuard.canWrite()) return;
+          if (!drawReadyScene()) {
+            titleLoading = false;
+            status('Unable to prepare the game scene. Canvas backup is available.');
+            refreshTitleScreen();
+            return;
+          }
+          const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
+          if (gpuWarmup) void Promise.race([gpuWarmup, skipPromise.then(() => false)])
+            .then((ready) => {
+              if (epoch !== titleEpoch) return;
+              if (!ready) graphicsController.revert();
+              requestAnimationFrame(finish);
+            });
+          else requestAnimationFrame(finish);
+        };
+        // The save supplies the actual zone/hero/party. Only after recovery
+        // and that scene's sprite warmup do we initialize confirmed Pixi,
+        // all behind the SAME title loading surface. New Game shares this path.
+        const shouldRestorePixi = !titleSkipGraphics?.skipped &&
+          previousRendererChoice.renderer === 'webgl2' &&
+          graphicsController.status().phase === 'canvas' &&
+          graphicsController.status().preferredRenderer === 'webgl2';
+        if (!shouldRestorePixi) return showReadyFrame();
+        $('title-loading').textContent = language === 'es'
+          ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
+        const restoration = graphicsController.resumeConfirmedWebGL();
+        void Promise.race([restoration, skipPromise]).then(
+          showReadyFrame, showReadyFrame);
       };
       // Recovering an unclean save can change the spawn after title warmup.
-      const actual = warmScene(game.zoneId, 1400, true);
-      if (actual) void actual.then(paint, paint);
-      else paint();
+      const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
+      waitOrSkip(actual, paint);
     };
-    const pending = titleWarmup;
-    if (pending) void pending.then(reveal, reveal);
-    else reveal();
+    waitOrSkip(titleWarmup, reveal);
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
@@ -4126,6 +4171,7 @@
   const rendererDiagnosticCounters = [
     'proceduralBakes', 'proceduralCacheHits', 'sharedProceduralHits',
     'proceduralEvictions', 'proceduralCacheEvictions', 'backgroundRepaints',
+    'terrainTilesPrepared', 'terrainTileReuses',
     'backgroundLookaheadPaints', 'backgroundLookaheadPromotions',
     'backgroundLookaheadMisses', 'backgroundLookaheadFailures',
     'backgroundLookaheadPaintMs', 'backgroundLookaheadPromoteMs',
@@ -8134,17 +8180,39 @@
     fps.suspend();
   });
   titleScreen = $('title-screen');
+  const titleCanvasContinue = document.createElement('button');
+  titleCanvasContinue.type = 'button';
+  titleCanvasContinue.hidden = true;
+  titleCanvasContinue.style.cssText =
+    'position:fixed;bottom:max(16px,env(safe-area-inset-bottom));' +
+    'left:50%;transform:translateX(-50%);z-index:12;' +
+    'min-height:44px;padding:10px 18px;' +
+    'border:1px solid #dfc78f;border-radius:8px;background:#385c4b;' +
+    'color:#fff4d8;font:600 14px sans-serif;cursor:pointer';
+  titleScreen.append(titleCanvasContinue);
+  titleCanvasContinue.onclick = () => {
+    if (!titleLoading || !titleSkipGraphics) return;
+    titleSkipGraphics.skipped = true;
+    graphicsController.revert();
+    titleSkipGraphics.resolve(false);
+    titleCanvasContinue.hidden = true;
+  };
   $('title-continue').onclick = enterPreparedScene;
   $('title-new').onclick = newGameMenu;
   $('title-saves').onclick = titleSaveMenu;
   $('title-settings').onclick = systemMenu;
   $('title-help').onclick = titleHelpMenu;
   $('scene-loading-retry').onclick = () => {
-    if (!sceneTransition?.committed) return;
+    const ticket = sceneTransition;
+    if (!ticket) return;
+    ticket.skipped = true;
     graphicsController.revert();
-    const token = sceneTransition.token;
+    ticket.resolveSkip?.(false);
     $('scene-loading-retry').hidden = true;
-    requestAnimationFrame(() => revealSceneTransition(token));
+    // Awaiting preflight, decoded art or GPU upload is released by skipPromise.
+    // If a draw actually failed, try drawing the committed scene with Canvas.
+    if (ticket.drawFailed)
+      requestAnimationFrame(() => revealSceneTransition(ticket.token));
   };
   updateHUD();
   setLanguage(language);

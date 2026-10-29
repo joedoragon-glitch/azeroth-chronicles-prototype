@@ -214,7 +214,7 @@ const groups = [
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },
   {
-    match: /^src\/prototype\/sprites\.js$|^assets\/sprites\/|^tools\/sprites\//,
+    match: /^src\/prototype\/(?:sprites|sprite-format)\.js$|^assets\/sprites\/|^tools\/sprites\//,
     tests: [TEST + 'sprites.test.cjs', TEST + 'sprite-lifecycle.test.cjs'],
   },
   {
@@ -364,7 +364,10 @@ function run(
             ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
           }
         : process.env,
-      timeout: narrowBrowser ? 240000 : undefined,
+      // The owner-approved full-current-region Pixi smoke is readiness-driven,
+      // not bounded by the older 4-minute fringe-preload assumption. Preserve
+      // the test and its failure reporting with a longer runner ceiling.
+      timeout: pixiBrowser ? 360000 : narrowBrowser ? 240000 : undefined,
     });
     // Replay the full original stdout/stderr in CI; also retain a short
     // actionable first error for the structured report.
