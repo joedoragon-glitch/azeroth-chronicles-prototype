@@ -61,6 +61,10 @@
       // wait behind it indefinitely in a crowded active fight.
       pursuitTerrainProbesPerTick: 1024,
       pursuitRouteNodesPerTick: 320,
+      // The authored Thorn introductory withdrawal has its own strict
+      // frame budget; it must not steal ordinary pursuit/companion planning.
+      thornRetreatProbesPerTick: 768,
+      thornRetreatNodesPerTick: 240,
     });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
@@ -458,6 +462,8 @@
             nodes: cfg.routeNodesPerTick,
             pursuitProbes: cfg.pursuitTerrainProbesPerTick,
             pursuitNodes: cfg.pursuitRouteNodesPerTick,
+            thornRetreatProbes: cfg.thornRetreatProbesPerTick,
+            thornRetreatNodes: cfg.thornRetreatNodesPerTick,
           };
           routePlanningFrames.set(this, frame);
         }
@@ -465,16 +471,21 @@
         if (!plan || plan.zone !== zone || plan.mode !== mode ||
             plan.gathering !== gathering ||
             dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
-          const generator = mode === 'tactical' || mode === 'pursuit'
+          const generator = mode === 'tactical' || mode === 'pursuit' || mode === 'thorn-retreat'
             ? this.budgetedTacticalRoute(origin, target)
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
         }
-        const pursuit = mode === 'pursuit';
-        let probes = Math.min(pursuit ? frame.pursuitProbes : frame.probes,
-            cfg.terrainProbesPerSearch),
-          nodes = Math.min(pursuit ? frame.pursuitNodes : frame.nodes,
-            cfg.routeNodesPerSearch);
+        const pursuit = mode === 'pursuit',
+          retreat = mode === 'thorn-retreat';
+        let probes = Math.min(
+            retreat ? frame.thornRetreatProbes : pursuit ? frame.pursuitProbes : frame.probes,
+            retreat ? 768 : cfg.terrainProbesPerSearch
+          ),
+          nodes = Math.min(
+            retreat ? frame.thornRetreatNodes : pursuit ? frame.pursuitNodes : frame.nodes,
+            cfg.routeNodesPerSearch
+          );
         while (true) {
           if (!plan.request) {
             const next = plan.generator.next(plan.reply);
@@ -485,13 +496,15 @@
           if (plan.request.kind === 'node') {
             if (!nodes) break;
             nodes--;
-            if (pursuit) frame.pursuitNodes--;
+            if (retreat) frame.thornRetreatNodes--;
+            else if (pursuit) frame.pursuitNodes--;
             else frame.nodes--;
             plan.reply = undefined;
           } else if (plan.request.kind === 'blocked') {
             if (!probes) break;
             probes--;
-            if (pursuit) frame.pursuitProbes--;
+            if (retreat) frame.thornRetreatProbes--;
+            else if (pursuit) frame.pursuitProbes--;
             else frame.probes--;
             plan.reply = this.blocked(...plan.request.args);
           } else throw Error('Unknown route planning step');
@@ -1469,7 +1482,7 @@
         );
         z.npcs = z.npcs.filter((n) => !remove.has(n.id));
       }
-      follow(entity, target, speed, dt, stop = 45) {
+      follow(entity, target, speed, dt, stop = 45, planningMode = null) {
         if (this.s.party.includes(entity))
           return this.followCompanion(entity, target, speed, dt, stop);
         if (dist(entity, target) <= stop) return true;
@@ -1480,33 +1493,48 @@
           enemyPursuit = entity.aggro && !entity.returning &&
             entity.type !== 'boss' && !entity.captain && !entity.roomCaptain &&
             !entity.veraEscort && !this.thornPatroller(entity) &&
-            !this.cinderPatroller(entity) && zone.enemies.includes(entity);
+            !this.cinderPatroller(entity) && zone.enemies.includes(entity),
+          // This isolated exemption is only for the established passive
+          // opening-withdrawal path. Active bosses and scripted combat still
+          // retain their original follow()/route() semantics.
+          thornRetreat = planningMode === 'thorn-retreat' &&
+            entity.thornIntroRetreat !== undefined &&
+            !entity.aggro && zone.enemies.includes(entity);
         if (this.clearSegment(entity, target)) {
           entity.path = [];
-          if (enemyPursuit) terrainTrips.delete(entity);
+          if (enemyPursuit || thornRetreat) terrainTrips.delete(entity);
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
         let trip = terrainTrips.get(entity);
-        if (enemyPursuit) {
+        // A hero-first attack can interrupt the passive retreat immediately.
+        // Discard its unsaved search so active boss combat cannot inherit it.
+        if (!thornRetreat && trip?.kind === 'thorn-retreat') {
+          terrainTrips.delete(entity);
+          entity.path = [];
+          entity.routeAge = 0;
+          trip = null;
+        }
+        if (enemyPursuit || thornRetreat) {
+          const kind = thornRetreat ? 'thorn-retreat' : 'pursuit';
           // A moving hero must not reset the entire search frontier every
           // update. A pending search uses its frozen origin and destination;
           // its result is validated against the actor's actual position.
           const invalid = !trip || trip.zone !== zone ||
-            trip.kind !== 'pursuit' || trip.engagement !== entity.fightStart;
+            trip.kind !== kind || (!thornRetreat && trip.engagement !== entity.fightStart);
           const changed = !invalid && dist(trip.target, target) > 80;
           if (invalid || (changed && !trip.pending)) {
             entity.path = [];
-            trip = { zone, kind: 'pursuit', engagement: entity.fightStart,
+            trip = { zone, kind, engagement: entity.fightStart,
               target: { x: target.x, y: target.y }, pending: null };
             terrainTrips.set(entity, trip);
             entity.routeAge = 0;
           }
           if (trip.pending || entity.routeAge <= 0) {
-            if (trip.pending || this.reserveMovementPlan(entity)) {
+            if (thornRetreat || trip.pending || this.reserveMovementPlan(entity)) {
               const origin = trip.pending?.origin || entity,
                 destination = trip.pending?.target || target,
-                result = this.advanceBudgetedRoute(origin, destination, 'pursuit', trip.pending);
+                result = this.advanceBudgetedRoute(origin, destination, kind, trip.pending);
               if (result.pending) {
                 trip.pending = result.state;
               } else {

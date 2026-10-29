@@ -114,7 +114,7 @@
           together =
             !captive || !this.thornCaptiveFollowing() || dist(captive, e) <= cfg.waitForCaptive;
         e.aggro = false;
-        if (together) this.follow(e, { x, y }, cfg.speed, dt, cfg.arrival);
+        if (together) this.follow(e, { x, y }, cfg.speed, dt, cfg.arrival, 'thorn-retreat');
         if (dist(e, { x, y }) > cfg.arrival + 1e-7 || !together) return true;
         this.cancelEncounter(e);
         e.hp = e.maxHp;
