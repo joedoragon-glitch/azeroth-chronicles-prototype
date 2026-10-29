@@ -333,7 +333,9 @@
             typeof r !== 'object' ||
             Array.isArray(r) ||
             !Array.isArray(r.companionIds) ||
-            !r.companionIds.length ||
+            (!r.companionIds.length && !(kind === 'treatment' && r.heroWounded === true)) ||
+            (r.heroWounded !== undefined &&
+              (kind !== 'treatment' || typeof r.heroWounded !== 'boolean')) ||
             r.companionIds.length > (kind === 'recovery' ? 1 : 200) ||
             new Set(r.companionIds).size !== r.companionIds.length ||
             r.companionIds.some((id) => typeof id !== 'string' || !id.length || id.length > 160) ||
