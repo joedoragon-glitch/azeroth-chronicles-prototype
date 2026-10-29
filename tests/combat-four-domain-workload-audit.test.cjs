@@ -130,6 +130,16 @@ for(const kind of ['captain-tick','thorn-boss-tick']){
   g.s.time=40;e.aggro=true;e.fightStart=40;
   e.cd=50;e.specialCd=50;e.summonCd=50;
   const start={x:e.x,y:e.y},m=probe(g,combatNames),peaks=[];
+  const routeInstrumented=g.route,routeOrigins=[];
+  g.route=function(...args){
+    const from={x:args[0].x,y:args[0].y},
+      to={x:args[1].x,y:args[1].y},
+      reason=(new Error()).stack?.split('\\n').slice(2,7).join(' | ') || '';
+    const before=m.blocked, result=routeInstrumented.apply(this,args);
+    routeOrigins.push({from,to,blocked:m.blocked-before,reason,resultWaypoints:result.length,
+      aggro:e.aggro,returning:e.returning,time:this.s.time});
+    return result;
+  };
   for(let i=0;i<60;i++){
     const before=m.blocked;
     g.tick(.05,{x:0,y:0});
@@ -137,8 +147,10 @@ for(const kind of ['captain-tick','thorn-boss-tick']){
   }
   const r={kind,ticks:60,peakBlocked:Math.max(...peaks),totalBlocked:m.blocked,
     moved:+dist(e,start).toFixed(2),hp:e.hp,aggro:!!e.aggro,
+    routeOrigins,
     methods:m.rows().filter(x=>['updateEnemies','follow','route','advanceBudgetedRoute',
       'tacticalLocalSupport','tacticalPresentOpponents','line'].includes(x.name))};
+  g.route=routeInstrumented;
   m.stop();
   console.log('BOSS_CAPTAIN_LIVE_TICK_AUDIT '+JSON.stringify(r));
 }
