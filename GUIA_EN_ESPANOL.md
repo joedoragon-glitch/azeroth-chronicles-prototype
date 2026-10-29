@@ -40,6 +40,8 @@ La aventura tiene objetivos principales, encargos locales y una historia que con
 5. **Cuida a tu compañía:** los compañeros pueden luchar contigo, retirarse cuando están heridos y necesitar recuperación. El capitán y los cuarteles terminados ofrecen **Curar heridas** por 30 coronas: recupera toda la salud del héroe y los compañeros vivos cuando no haya combate cercano. En los refugios puedes curarlos gratis, con un tiempo de espera de 90 segundos. Los compañeros caídos necesitan una recuperación aparte.
 6. **Continúa cuando quieras:** en la pantalla principal, **Continuar aventura** retoma una partida guardada válida. El modo **Nightmare** (Pesadilla) se desbloquea tras alcanzar el final pacífico y usa un guardado separado.
 
+**Al minimizar o poner la aplicación en segundo plano:** el juego guarda la aventura mediante sus protecciones habituales y vuelve a la pantalla principal. Cuando regreses, pulsa **Continuar aventura**; se preparará la escena antes de reanudar el combate. Esto no borra la partida ni equivale a comenzar una nueva.
+
 Algunas opciones pueden conservar el nombre inglés en tu versión. Las explicaciones entre paréntesis ayudan a reconocerlas aunque todavía no estén traducidas.
 
 ## Controles básicos
