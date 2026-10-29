@@ -65,6 +65,16 @@ const groups = [
     ],
   },
   {
+    // Keep the owner's merged Rogue stacking contract in every future
+    // combat/party/journal regression, not only when its test file is edited.
+    match: /^src\/prototype\/(?:hero-combat|party|skill-reference)\.js$/,
+    tests: [
+      TEST + 'rogue-all-skills-stacking.test.cjs',
+      TEST + 'rogue-bard-critical-performances.test.cjs',
+      TEST + 'rogue-self-centered-performances.test.cjs',
+    ],
+  },
+  {
     match: /^src\/prototype\/(?:app|input)\.js$/,
     tests: [TEST + 'hero-skill1-area3-input.test.cjs'],
   },
