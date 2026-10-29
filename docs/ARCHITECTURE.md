@@ -1,6 +1,6 @@
 # Runtime architecture — current system map
 
-**So I Became the Dark Lord's Problem** · Current source and publication checked at `main@7d4d8fa2` on **28 October 2026** · Playable `0.9.1+snapshot.dev.210`.
+**So I Became the Dark Lord's Problem** · Architecture baseline reviewed at `main@7d4d8fa2` (28 October 2026); renderer-default integration separately examined on [PR #574](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/574) (29 October 2026). This is not a claim that the old `dev.210` checkpoint is the latest published build: use [Development state](DEVELOPMENT_STATE.md) for publication and installed-device evidence.
 
 **Purpose:** Help an owner, contributor or AI agent find the *actual owning code*, understand how systems interact, and make an approved change without creating a second game state, bypassing save compatibility or modifying gameplay from a rendering module. This document describes current source boundaries; it is **not** an authorization to implement or merge anything.
 
@@ -80,7 +80,7 @@ The table below is intentionally **current ownership reference**, rather than an
 | `visuals.js` / `combat-visuals.js` | Canonical procedural drawings, terrain, architecture and combat cues |
 | `sprite-format.js` / `sprites.js` | Shared static/variant/clip schema, bounded content-aware lazy loading, paused presentation clock, faithful sprite translation and procedural fallback |
 | `audio.js` / `audio-catalog.js` | Public audio facade and current compositions/event catalog |
-| `pixi-experimental.js` / `tools/webgl-pilot/*` | PixiJS WebGL2 world layer and graphics-switch safety; on the #574 rollout branch WebGL2 is the one-time-migrated default, while Canvas 2D remains selectable and the emergency fallback. Hardware certification is still pending. |
+| `pixi-experimental.js` / `tools/webgl-pilot/*` | PixiJS WebGL2 primary-world implementation and renderer preference/migration, 15-second manual trial, GPU recovery, and independent Canvas 2D fallback. The `pixi-experimental.js` filename is a legacy internal path, **not** the proposed player-facing graphics label. The PR #574 rollout is not hardware-certified. |
 | `material-contract.js` / `materials.js` | Manifest-driven optional world textures, deterministic compatibility/fallback and bounded decoded/presentation residency |
 | `audio-score.js` | Source-derived score cue selection, contextual observation, scheduling and transitions; the environment/recordings owners handle their independent playback. |
 | `audio-runtime.js` / `audio-effects.js` | Context lifecycle, mixer/source cleanup/bounds, diagnostics and contextual effect recipes |

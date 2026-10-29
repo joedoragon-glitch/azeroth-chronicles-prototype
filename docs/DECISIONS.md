@@ -368,6 +368,12 @@ Rendering-only boundaries, original sprite masters, camera framing, supported la
 
 ### Dated decisions and later revisions
 
+#### 29 October 2026 — PixiJS WebGL2 becomes the intended default renderer (PR #574)
+
+The owner's resumed direction is to make **PixiJS WebGL2** the **primary/default world renderer** and remove the **Experimental** suffix from player-facing graphics options. The two choices are **PixiJS WebGL2 · Default** and **Canvas 2D · Backup**, with corresponding Spanish **Predeterminado / Respaldo** labels. This is a change in **software default and UI classification**, not a promise of faster frames, hardware certification or permission to release before evidence is reviewed. Legacy internal paths named `pixi-experimental.js` may remain for compatibility; filenames must not dictate menu terminology.
+
+The rollout migrates older Canvas selections once, respects any later explicit Canvas choice across restarts, preserves Canvas as a full renderer and automatic WebGL failure fallback, and keeps the manual 15-second Keep/Revert trial. Default WebGL preparation belongs behind **New Game / Continue Adventure** loading, with a visible **Continue with Canvas** escape; it must not run uncontrolled behind an idle title screen. Retain interrupted-trial quarantine, recovery limits, native combat/visual geometry, save compatibility, offline PWA update handling and English/Spanish menus. [PR #574](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/574) is the unmerged implementation candidate; [#572](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/572) and the [Stage 7 device runbook](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) remain acceptance dependencies. Owner intent is confirmed; **merge/publication and device acceptance are separate gates**.
+
 #### Procedural canon polish v0.8.79
 
 **Historical inventory:** This era's sprite counts and 'no sprite is active' status do not describe later manifests or current art availability.
