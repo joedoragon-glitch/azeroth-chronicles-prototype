@@ -85,8 +85,12 @@ assert.equal(FX.pendingWarning({ timer: 0.01 }), true);
     'a pending boss strike must retain its readable pre-release warning');
   e.telegraph = original;
   original.timer = 0.01;
-  c.s.time += 0.02;
-  c.updateEnemies(0.02);
+  // A boss may be in its legitimate opening/patrol transition when this
+  // test begins. Advance native simulation, not a direct forced resolution.
+  for (let tick = 0; tick < 600 && e.telegraph === original; tick++) {
+    c.s.time += 0.02;
+    c.updateEnemies(0.02);
+  }
   assert.notEqual(e.telegraph, original,
     'native combat must retire the exact warned attack at release');
 }
@@ -169,8 +173,10 @@ for (const boss of C.data.bosses)
     assert(c.startAttack(e, c.hero, 0), boss.id + '/' + form + ' setup');
     const previous = e.telegraph;
     previous.timer = 0.01;
-    c.s.time += 0.02;
-    c.updateEnemies(0.02);
+    for (let tick = 0; tick < 600 && e.telegraph === previous; tick++) {
+      c.s.time += 0.02;
+      c.updateEnemies(0.02);
+    }
     assert.notEqual(e.telegraph, previous, boss.id + '/' + form + ' obsolete warning');
     assert(!FX.pendingWarning(previous), boss.id + '/' + form + ' expired cast');
     releases++;
