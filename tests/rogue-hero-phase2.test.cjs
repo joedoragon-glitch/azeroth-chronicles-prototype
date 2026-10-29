@@ -131,7 +131,10 @@ try {
   assert(cues[1].hits >= cues[0].hits, 'charged area capacity not smaller');
   assert.equal(cues[0].audioCue, 'bell-jingle');
   assert.equal(cues[1].allyCount, 1);
-  assert.equal(m.companionBasicAttackDamage(ally), baseline * 1.07);
+  assert.equal(m.companionBasicAttackDamage(ally), baseline * 1.12,
+    'tap +5% and charged +7% Refrains stack while both are active');
+  assert(Math.abs(m.rogueSongBoon(m.hero,'refrain').basicDamage - 0.12) < 1e-9,
+    'Rogue receives the same combined +12%');
   const skillCard = require('../src/prototype/skill-reference.js').describe(m, 1);
   assert(skillCard?.tap && skillCard?.charge && skillCard?.auto,
     'the starting three forms must have gameplay-facing descriptions');
