@@ -3645,11 +3645,12 @@
         // The save supplies the actual zone/hero/party. Only after recovery
         // and that scene's sprite warmup do we initialize confirmed Pixi,
         // all behind the SAME title loading surface. New Game shares this path.
+        const gpuState = graphicsController.status();
         const shouldRestorePixi = !titleSkipGraphics?.skipped &&
-          (previousRendererChoice.renderer === 'webgl2' ||
-            graphicsController.status().recoveryPending) &&
-          graphicsController.status().phase === 'canvas' &&
-          graphicsController.status().preferredRenderer === 'webgl2';
+          (previousRendererChoice.renderer === 'webgl2' || gpuState.recoveryPending) &&
+          !gpuState.recoveryPaused &&
+          gpuState.phase === 'canvas' &&
+          gpuState.preferredRenderer === 'webgl2';
         if (!shouldRestorePixi) return showReadyFrame();
         $('title-loading').textContent = language === 'es'
           ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
