@@ -385,6 +385,68 @@ try {
   assert.deepEqual(g.s.charmCaptures[id], origin);
   assert.doesNotThrow(() => Campaign.validate(g.snapshot()));
 
+  // Authentic Rogue Charmed allies release their field slot on native death,
+  // without visiting a Barracks or spending crowns.
+  const field = fresh();
+  field.hero.gold = 0;
+  const goblins = [capture(field), capture(field), capture(field)];
+  assert.equal(field.activeParty().length, 3);
+  const fallenCharm = goblins[0], fallenId = fallenCharm.id;
+  const fallenOrigin = { ...fallenCharm.charmOrigin };
+  const fallenName = fallenCharm.customName;
+  fallenCharm.path = [{ x: 530, y: 500 }];
+  assert.equal(field.hitParty(fallenCharm, fallenCharm.hp + 100, 0, null, true), true);
+  assert.equal(fallenCharm.hp, 0, 'native combat defeat');
+  assert.equal(fallenCharm.active, false, 'field slot freed on defeat');
+  assert.equal(fallenCharm.order, null);
+  assert.deepEqual(fallenCharm.path, []);
+  assert.equal(field.activeParty().length, 2);
+  assert.equal(field.rosterCount(), 3, 'fallen individual remains owned');
+  assert.deepEqual(field.s.charmCaptures[fallenId], fallenOrigin);
+  assert.equal(fallenCharm.customName, fallenName);
+  const replacement = capture(field, 'skeleton');
+  assert.equal(replacement.active, true, 'different-type Charm takes vacant field slot');
+  assert.equal(field.activeParty().length, 3, 'Expedition cap unchanged');
+  assert.equal(field.rosterCount(), 4);
+  const reserveCapture = capture(field, 'skeleton');
+  assert.equal(reserveCapture.active, false, 'full field retains new Charm in reserve');
+  const fourthGoblin = field.makeEnemy(
+    { species: 'goblin', name: 'Quota check', level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
+    { x: 585, y: 500 },
+  );
+  fourthGoblin.aggro = true;
+  field.zone().enemies = [fourthGoblin];
+  fourthGoblin.hp -= 1;
+  const rngBeforeQuota = field.s.rogueCharmRng;
+  assert.equal(field.rogueCharmAttempt(fourthGoblin, 10000, field.zoneId), false,
+    'fallen Goblin continues to occupy its per-type ownership quota');
+  assert.equal(field.s.rogueCharmRng, rngBeforeQuota);
+  assert.equal(field.s.party.filter((u) => u.charmOrigin?.typeId === fallenOrigin.typeId).length, 3);
+  const loadedField = Campaign.restore(field.snapshot(), () => 0.9);
+  const loadedFallen = loadedField.s.party.find((u) => u.id === fallenId);
+  assert.equal(loadedFallen.hp, 0);
+  assert.equal(loadedFallen.active, false);
+  assert.equal(loadedFallen.customName, fallenName);
+  assert.deepEqual(loadedField.s.charmCaptures[fallenId], fallenOrigin);
+  assert.equal(loadedField.activeParty().length, 3);
+  assert.doesNotThrow(() => Campaign.validate(loadedField.snapshot()));
+  field.zone().enemies = [];
+  field.hero.gold = 10000;
+  assert.equal(field.recover(fallenId), true, 'paid recovery still required');
+  assert.equal(fallenCharm.active, false, 'recovery cannot silently displace a field member');
+  assert.equal(field.activeParty().length, 3);
+  assert.equal(fallenCharm.customName, fallenName);
+  assert.deepEqual(fallenCharm.charmOrigin, fallenOrigin);
+  for (const cls of ['paladin', 'mage', 'ranger']) {
+    const old = new Campaign('normal', cls, () => 0.9);
+    old.s.party = [];
+    const soldier = old.unit('soldier', old.hero.x, old.hero.y);
+    old.s.party.push(soldier);
+    assert.equal(old.hitParty(soldier, soldier.hp + 100, 0, null, true), true);
+    assert.equal(soldier.hp, 0);
+    assert.equal(soldier.active, true, cls + ' retains legacy fallen-active behavior');
+  }
+
   // Original classes retain their normal companion profile, recruiting and
   // active capacity; they cannot make new Rogue captures.
   for (const cls of ['paladin', 'mage', 'ranger']) {
