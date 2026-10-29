@@ -7048,6 +7048,25 @@
       reforgeBonus: { weapon: 5, armor: 3 },
     },
     companions: {
+      // One native species maneuver, then one bounded elite signature after
+      // companion Skill 2. Shared squad spacing prevents simultaneous spam.
+      charmedSkills: {
+        basicCooldown: 12,
+        signatureCooldown: 22,
+        globalCooldown: 1.5,
+        basicSquadSpacing: 1.1,
+        eliteSquadSpacing: 3.5,
+        meleeManeuverReach: 175,
+        basicDamageMultiplier: 0.75,
+        signatureDamageMultiplier: 0.65,
+        basicSlowSeconds: 1.3,
+        signatureSlowSeconds: 1.6,
+        signatureTargetCap: 2,
+        pushDistance: 35,
+        retreatDistance: 85,
+        dustWardSeconds: 1.65,
+        dustWardReduction: 0.15,
+      },
       // Native friendly creature baselines, keyed by actual authored subtype.
       // These values do not inherit hostile region/night/elite scaling.
       charmed: {

@@ -5,6 +5,9 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const R = Campaign.rules;
 const Sprites = require('../src/prototype/sprites.js');
+const Critical = require('../src/prototype/critical-executions.js');
+const Levels = require('../src/prototype/critical-levels.js');
+const CriticalParty = require('../src/prototype/critical-party-native.js');
 
 assert.deepEqual(Object.keys(Campaign.classes), ['paladin', 'mage', 'ranger']);
 Campaign.classes.rogue = { ...R.rogueHeroFoundation.stats, icon: '🔔' };
@@ -39,6 +42,15 @@ try {
     return g.s.party.at(-1);
   }
 
+  function attachCritical(g, roll) {
+    let count = 0;
+    g._criticalPartyNative = CriticalParty.createSession(Critical, Levels, {
+      enabled: true,
+      stream: { next() { count++; return roll; } },
+    });
+    return () => count;
+  }
+
   // No Rogue constructor privilege or conventional hiring; the first builder
   // is a genuinely captured ordinary monster with a matching save ledger.
   const g = fresh();
@@ -66,7 +78,187 @@ try {
   assert.equal(goblin.damage, 10, 'monster base, not Soldier base');
   assert.equal(g.companionCombatReach(goblin), 65);
   assert.equal(g.companionTrySkill(goblin, { x: 550, y: 500, hp: 100 }), false,
-    'no inherited Soldier skill');
+    'no inherited Soldier skill or fabricated target');
+  // A lawful captured goblin gains its actual species maneuver with an
+  // ordinary cooldown, not the conventional Soldier Power Strike.
+  const testFoe = g.makeEnemy(
+    { species: 'goblin', name: 'Maneuver target', level: 1, hp: 1000,
+      damage: 1, gold: 0, xp: 0 },
+    { x: goblin.x + 55, y: goblin.y },
+  );
+  testFoe.aggro = true;
+  g.zone().enemies = [testFoe];
+  g.hero.skills[1] = 0;
+  g.s.companionCombatTraining = 1;
+  assert.equal(g.charmedEliteTrained(goblin), false);
+  testFoe.x = goblin.x + 150;
+  assert.equal(g.companionTrySkill(goblin, testFoe), false,
+    'melee natural skills cannot strike at distant enemy warning range');
+  testFoe.x = goblin.x + 55;
+  assert.equal(g.companionTrySkill(goblin, testFoe), true,
+    'native Goblin Blinding Dust can cast as ally Skill 1');
+  assert.equal(goblin.skill1Cd, R.balance.companions.charmedSkills.basicCooldown);
+  assert.equal(goblin.skill2Cd, 0, 'elite move locked');
+  assert.equal(g.companionTrySkill(goblin, testFoe), false,
+    'global/skill cooldown prevents spam');
+  testFoe.x = goblin.x + 150;
+  assert.equal(g.charmedPursuitFactor(goblin, testFoe),
+    R.balance.pursuit.burstMultiplier, 'native melee pursuit burst while closing');
+  g.s.time += R.balance.pursuit.burstSeconds;
+  assert.equal(g.charmedPursuitFactor(goblin, testFoe), 1,
+    'normal-speed recovery follows the burst');
+  g.s.time += R.balance.pursuit.meleeRecoverySeconds;
+  assert.equal(g.charmedPursuitFactor(goblin, testFoe),
+    R.balance.pursuit.burstMultiplier, 'pursuit refresh uses original cadence');
+  testFoe.x = goblin.x + 55;
+  assert(Campaign.validate(g.snapshot()).party[0].skill1Cd > 0,
+    'natural maneuver cooldown persists in v4');
+  goblin.skill1Cd = 0;
+  goblin.skillGlobalCd = 0;
+  g.hero.skills[1] = 1;
+  assert.equal(g.charmedEliteTrained(goblin), true,
+    'hero Skill 2 unlocks Ringleader inheritance');
+  assert.equal(g.charmedCombatMoveFactor(goblin), R.ringleaderScaling.pursuit);
+  goblin.hp = goblin.maxHp * 0.4;
+  assert.equal(g.companionBasicInterval(goblin),
+    R.balance.companions.charmed.goblin.melee.interval *
+    R.ringleaderScaling.frenzyCooldown, 'wounded elite inherits frenzy');
+  assert.equal(g.companionTrySkill(goblin, testFoe), true,
+    'Skill 2 unlocks goblin elite Rogue signature');
+  assert.equal(goblin.skill2Cd, R.balance.companions.charmedSkills.signatureCooldown);
+  g.zone().enemies = [];
+  // Ranged natives retain the longer hostile seven-second pursuit cadence.
+  const slingGame = fresh();
+  const sling = capture(slingGame, 'goblin', true);
+  const slingFoe = slingGame.makeEnemy(
+    { species: 'goblin', name: 'Distant target', level: 1, hp: 1000,
+      damage: 1, gold: 0, xp: 0 },
+    { x: sling.x + 350, y: sling.y },
+  );
+  slingFoe.aggro = true;
+  slingGame.zone().enemies = [slingFoe];
+  assert.equal(slingGame.charmedPursuitFactor(sling, slingFoe),
+    R.balance.pursuit.burstMultiplier);
+  slingGame.s.time += R.balance.pursuit.burstSeconds;
+  assert.equal(slingGame.charmedPursuitFactor(sling, slingFoe), 1);
+  slingGame.s.time = 7;
+  assert.equal(slingGame.charmedPursuitFactor(sling, slingFoe),
+    R.balance.pursuit.burstMultiplier,
+    'ranged pursuit keeps the seven-second native recovery');
+  // Ranged basic maneuvers are real projectiles; elite signatures have separate timers.
+  slingFoe.x = sling.x + 165;
+  assert.equal(slingGame.companionTrySkill(sling, slingFoe), true);
+  assert.equal(slingGame.s.projectiles.at(-1).slow,
+    R.balance.companions.charmedSkills.basicSlowSeconds);
+  sling.skillGlobalCd = 0;
+  slingGame.hero.skills[1] = 1;
+  assert.equal(slingGame.companionTrySkill(sling, slingFoe), true,
+    'ranged signature is independently available after Skill 2');
+  assert.equal(sling.skill2Cd, R.balance.companions.charmedSkills.signatureCooldown);
+  // A clock reset cannot indefinitely block future individual skills.
+  sling.skill1Cd = 0;
+  sling.skill2Cd = 100;
+  sling.skillGlobalCd = 0;
+  slingGame.s.time = 0;
+  assert.equal(slingGame.companionTrySkill(sling, slingFoe), true,
+    'transient squad windows must reset with the game clock');
+  // Both native hostile Rogue skill families have a critical damage lever.
+  // Compare the actual released damage against an otherwise identical
+  // noncritical Charmed cast; a critical must not multiply status durations.
+  const hitCases = [0.99, 0].map((roll) => {
+    const game = fresh();
+    const ally = capture(game, 'goblin');
+    const foe = game.makeEnemy(
+      { species: 'goblin', name: 'Critical target', level: 1, hp: 10000,
+        damage: 0, gold: 0, xp: 0 },
+      { x: ally.x + 55, y: ally.y },
+    );
+    foe.aggro = true;
+    game.zone().enemies = [foe];
+    const count = attachCritical(game, roll);
+    const actualDamage = [];
+    const damage = game.damage.bind(game);
+    game.damage = (enemy, amount, source, options) => {
+      if (source === ally.id) actualDamage.push(amount);
+      return damage(enemy, amount, source, options);
+    };
+    assert.equal(game.companionTrySkill(ally, foe), true);
+    assert.equal(count(), 1, 'one critical decision for the natural maneuver');
+    assert.equal(ally.skill1Cd, R.balance.companions.charmedSkills.basicCooldown);
+    assert.equal(ally.skill2Cd, 0, 'signature still locked');
+    game.hero.skills[1] = 1;
+    ally.skillGlobalCd = 0;
+    assert.equal(game.companionTrySkill(ally, foe), true,
+      'Ringleader training adds signature without removing the basic move');
+    assert.equal(count(), 2, 'one additional roll for the signature');
+    assert.equal(ally.skill2Cd, R.balance.companions.charmedSkills.signatureCooldown);
+    ally.skill1Cd = 0;
+    ally.skillGlobalCd = 0;
+    // A pivot signature moved the Goblin away; restore lawful melee reach.
+    ally.x = foe.x - 55;
+    ally.y = foe.y;
+    game.s.time += R.balance.companions.charmedSkills.basicSquadSpacing;
+    assert.equal(game.companionTrySkill(ally, foe), true,
+      'species basic stays usable while the signature is cooling down');
+    assert.equal(count(), 3);
+    assert.equal(ally.skill2Cd, R.balance.companions.charmedSkills.signatureCooldown);
+    // The native melee basic also retains its enemy-side damage crit.
+    ally.skill1Cd = 100;
+    ally.skill2Cd = 100;
+    ally.skillGlobalCd = 0;
+    ally.cd = 0;
+    game._tacticalPartyTargets = new Map();
+    game.companionFight(ally, foe, [ally], 1 / 60);
+    assert.equal(count(), 4, 'melee basic has its own eligible critical release');
+    return { actualDamage, count };
+  });
+  for (let i = 0; i < 4; i++)
+    assert(Math.abs(
+      hitCases[1].actualDamage[i] -
+      hitCases[0].actualDamage[i] * Levels.LEVERS.damage.values[0],
+    ) < 1e-6, 'Charmed basic and elite criticals match hostile damage-level effect');
+  // A physically launched ranged move carries ONE frozen critical receipt,
+  // and its normal Slow on actual contact is not increased by the crit.
+  const critShot = fresh();
+  const critArcher = capture(critShot, 'goblin', true);
+  const critTarget = critShot.makeEnemy(
+    { species: 'goblin', name: 'Critical ranged target', level: 1, hp: 10000,
+      damage: 0, gold: 0, xp: 0 },
+    { x: critArcher.x + 160, y: critArcher.y },
+  );
+  critTarget.aggro = true;
+  critShot.zone().enemies = [critTarget];
+  const rangedRolls = attachCritical(critShot, 0);
+  assert.equal(critShot.companionTrySkill(critArcher, critTarget), true);
+  const missile = critShot.s.projectiles.at(-1);
+  assert.equal(missile.criticalExecution?.key, 'charm/rogue/basic');
+  assert.equal(missile.criticalExecution.critical, true);
+  assert.equal(missile.slow, R.balance.companions.charmedSkills.basicSlowSeconds);
+  assert.equal(rangedRolls(), 1);
+  // Native ranged basics also crit, without borrowing generic Ranger
+  // specials. The physical attack and Heal are distinct releases.
+  critArcher.skill1Cd = 100;
+  critArcher.cd = 0;
+  critShot._tacticalPartyTargets = new Map();
+  critShot.partyFollowPoint = () => ({ x: critArcher.x, y: critArcher.y });
+  critShot.companionFight(critArcher, critTarget, [critArcher], 1 / 60);
+  const basicMissile = critShot.s.projectiles.at(-1);
+  assert.equal(basicMissile.criticalExecution?.key, 'troop/archer/basic');
+  assert.equal(rangedRolls(), 2);
+  critShot.hero.hp = Math.max(1, critShot.hero.maxHp - 90);
+  assert.equal(critShot.castCompanionHeal(critArcher, critShot.hero), true);
+  assert.equal(rangedRolls(), 3, 'the shared Heal rolls once, at casting');
+  assert.equal(critShot.hero.supportEffects.at(-1).remaining,
+    critShot.rangerSupportAmount('health') * Levels.LEVERS.healAmount.values[0],
+    'Charmed Heal crit preserves the normal allied Ranger effect');
+  // A forged Charm has no right to draw critical randomness.
+  const falseAlly = critShot.unit('archer', critArcher.x, critArcher.y);
+  falseAlly.charmOrigin = { ...critArcher.charmOrigin };
+  critShot.s.party.push(falseAlly);
+  assert.equal(critShot.companionTrySkill(falseAlly, critTarget), false);
+  assert.equal(rangedRolls(), 3, 'rejected charmer cannot roll');
+  critShot.s.party.pop();
+
   const forged = g.unit('soldier', 510, 500);
   forged.charmOrigin = { ...goblin.charmOrigin };
   forged.active = true;

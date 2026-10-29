@@ -485,7 +485,7 @@
           note: rank
             ? 'Only changed effects are shown. Cooldowns stay the same.'
             : slot === 2 && !g.companionSecondSkillUnlocked()
-              ? 'Also unlocks advanced Soldier and Ranger skills, plus charged pet skills.'
+              ? 'Also unlocks advanced Soldier/Ranger and pet skills, plus Charmed monster elite traits.'
               : info.note,
         },
         previewOnly
