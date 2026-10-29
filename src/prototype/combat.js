@@ -1024,6 +1024,9 @@
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
+        // Live target references can be reused across missed hostile shots.
+        // Any hit, impact callback or friendly shot invalidates the roster.
+        let hostileTargets = null;
         for (const p of [...this.s.projectiles]) {
           if (p.cancelledChargedOpener) continue;
           if (p.delay > 0) {
@@ -1087,12 +1090,13 @@
               if (terrainFraction === Infinity) terrainFraction = 0;
             }
             const radius = p.hitRadius ?? (p.style === 'cargo' ? 34 : 22);
-            const victim = this.combatTargets().find(
+            const victim = (hostileTargets ||= this.combatTargets()).find(
               (u) =>
                 this.distanceToSegment(u, before, p) < radius &&
                 sweptCircleEntry(u, before, p, radius) < terrainFraction,
             );
             if (terrainContact && !victim) {
+              hostileTargets = null;
               this.enemyVfxProjectileImpact?.(p, { ...terrainContact, terrain: true });
               if (p.style === 'cargo')
                 this.event('projectileImpact', {
@@ -1108,6 +1112,7 @@
               continue;
             }
             if (victim) {
+              hostileTargets = null;
               const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -1136,6 +1141,7 @@
               p.life = 0;
             }
             if (!victim && p.rangedArc && p.life <= 0 && !this.peace) {
+              hostileTargets = null;
               this.enemyVfxProjectileImpact?.(p, { x: p.x, y: p.y, terrain: true });
               this.event('projectileImpact', {
                 actor: 'enemy',
@@ -1152,6 +1158,8 @@
             if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
             continue;
           }
+          // Friendly projectile effects may alter living-party eligibility.
+          hostileTargets = null;
           const e = this.zone().enemies.find(
             (e) =>
               e.id === p.target &&
