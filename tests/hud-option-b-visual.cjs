@@ -78,22 +78,39 @@ async function capture(page,label) {
         // from the *actual* world-loot painter, not a generic CSS emoji or an
         // independently redrawn approximation.
         const portrait=await balance.evaluate(el=>{
-          const image=getComputedStyle(el).backgroundImage;
+          const icon=getComputedStyle(el,'::before');
           const coin=document.createElement('canvas');
-          coin.width=coin.height=48;
+          coin.width=coin.height=56;
           const ink=coin.getContext('2d');
           ink.setTransform(2,0,0,2,0,0);
-          PrototypeRenderer.drawCrownLoot(ink,{x:12,y:12});
-          return {image,expected:coin.toDataURL('image/png'),
-            size:getComputedStyle(el).backgroundSize,
-            padding:getComputedStyle(el).paddingLeft};
+          PrototypeRenderer.drawCrownLoot(ink,{x:14,y:14});
+          const edgeClear=y=>{
+            const pixels=ink.getImageData(0,y,coin.width,1).data;
+            for(let i=3;i<pixels.length;i+=4) if(pixels[i]) return false;
+            return true;
+          };
+          const parent=el.getBoundingClientRect();
+          // The absolutely positioned pseudo-element is NOT clipped by the
+          // shorter text line: its 19px box can extend beyond the baseline.
+          const iconTop=parent.top+parent.height/2-parseFloat(icon.height)/2;
+          return {image:icon.backgroundImage,expected:coin.toDataURL('image/png'),
+            size:icon.height,position:icon.position,contents:icon.content,
+            padding:getComputedStyle(el).paddingLeft,
+            overflow:getComputedStyle(el).overflow,
+            edgeClear:edgeClear(0)&&edgeClear(1)&&edgeClear(54)&&edgeClear(55),
+            iconTop,iconBottom:iconTop+parseFloat(icon.height)};
         });
         assert(portrait.image.includes(portrait.expected),config.name+' coin pixels match the in-world Crown painter');
-        assert.equal(portrait.size,'17px 17px',config.name+' portrait coin stays readable but compact');
-        assert.equal(portrait.padding,'19px',config.name+' portrait badge reserves horizontal room only');
+        assert(portrait.edgeClear,config.name+' full minted coin and shadow have transparent top/bottom margins');
+        assert.equal(portrait.position,'absolute',config.name+' coin not clipped by text line height');
+        assert.equal(portrait.size,'19px',config.name+' coin remains readable and compact');
+        assert.equal(portrait.padding,'20px',config.name+' portrait badge reserves horizontal room only');
+        assert.equal(portrait.overflow,'visible',config.name+' text label does not clip coin icon');
         const hpText=await box(page,'#hero-stats .hp-count');
         const crownText=await box(page,'#hero-stats .hud-crowns');
         const hpDock=await box(page,'#hud');
+        assert(portrait.iconTop>=hpDock.y && portrait.iconBottom<=hpDock.y+hpDock.height,
+          config.name+' complete coin artwork stays inside original HUD height');
         assert(!overlaps(hpText,crownText),config.name+' Crowns do not overlap HP numerals');
         assert(crownText.x>=hpDock.x&&crownText.x+crownText.width<=hpDock.x+hpDock.width+1,config.name+' Crowns stay inside the dock');
         await page.evaluate(()=>{Prototype.game.hero.gold=999999;Prototype.updateHUD();});
