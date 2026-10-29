@@ -16,78 +16,55 @@ function add(g, point, species = 'goblin') {
   g.zone().enemies.push(e);
   return e;
 }
-// PT-002: exact overlaps, body blocking, timed friendly congestion and terrain integrity.
+// PT-002 rollback: overlap and passage are once again legal for all actors.
 {
-  const g = room(), captain = g.zone().enemies.find((e) => e.roomCaptain),
-    p = g.safe(captain.x, captain.y);
-  g.zone().enemies = [];
-  Object.assign(g.hero, g.safe(200, 220));
-  const units = Array.from({ length: 3 }, () => add(g, p));
-  for (let i = 0; i < 80; i++) {
-    g.s.time += 0.05;
-    g.separateActors(0.05);
-  }
-  for (const [i, e] of units.entries()) {
-    assert(!g.blocked(e.x, e.y), 'de-stacking never enters a wall');
-    for (const other of units.slice(i + 1))
-      assert(distance(e, other) >= 26, 'three coincident actors separate');
-  }
-  const e = units[0], start = { ...g.hero };
-  Object.assign(g.hero, g.safe(e.x - 65, e.y));
-  g.s.time += 0.05;
-  g.move(g.hero, { x: e.x + 65, y: e.y }, 1000, 0.1);
-  assert(distance(g.hero, e) >= g.actorRadius(g.hero) + g.actorRadius(e) - 0.1,
-    'hero cannot tunnel through an opposing body');
-  Object.assign(g.hero, start);
-  const before = { x: e.x, y: e.y };
-  g.move(e, { x: -500, y: -500 }, 10000, 0.5);
-  assert(!g.blocked(e.x, e.y), 'long scripted steps still obey terrain');
-  assert(Number.isFinite(distance(e, before)));
+  const g = new C('developer', 'paladin', () => 0.73), z = g.zone();
+  z.enemies = []; z.props = []; z.buildings = [];
+  Object.assign(g.hero, { x: 1000, y: 1500 });
+  const enemy = add(g, { x: 1020, y: 1500 });
+  assert.equal(typeof g.actorStepAllowed, 'undefined', 'actor-body collision predicate removed');
+  assert.equal(typeof g.separateActors, 'undefined', 'passive separation removed');
+  assert.equal(typeof g.actorCrowd, 'undefined', 'spatial crowd index removed');
+  assert(g.move(g.hero, { x: 1040, y: 1500 }, 500, 0.08));
+  assert.equal(g.hero.x, 1040, 'hero crosses hostile body');
+  assert.equal(enemy.x, 1020, 'enemy is not shoved');
+  z.props.push({ id: 'solid-test', x: 1100, y: 1500, r: 35 });
+  assert(!g.clearSegment(g.hero, { x: 1150, y: 1500 }),
+    'real scenery remains impassable');
 }
-// Long steps inspect the swept crowd cells, including actors far from the endpoint.
-{
-  const g = room(); g.zone().enemies = [];
-  const lane = [{ x: 150, y: 180 }, { x: 500, y: 180 }];
-  if (g.clearSegment(...lane)) {
-    Object.assign(g.hero, lane[0]);
-    const e = add(g, { x: 280, y: 180 });
-    assert(!g.actorStepAllowed(g.hero, lane[1]), 'no endpoint-only hostile tunnelling');
-  }
-}
-// PT-007: full-radius marks stay on connected floor and remain frozen after warning.
+// PT-007 revision: target-centered ground warnings remain full sized even if
+// scenery overlaps their footprint; patches remain frozen after commitment.
 for (const id of Object.keys(C.rules.treasuryArchitecture)) {
   const g = room(id), e = g.zone().enemies.find((u) => u.roomCaptain);
   if (!e) continue;
   for (const area of C.rules.treasuryArchitecture[id].walkable) {
     const [x1, x2, y1, y2] = area.bounds;
-    for (const point of [{ x: x1 + 25, y: y1 + 25 }, { x: x2 - 25, y: y2 - 25 }]) {
+    for (const point of [{x:x1+25,y:y1+25},{x:x2-25,y:y2-25}]) {
       if (g.blocked(point.x, point.y)) continue;
       Object.assign(e, point);
-      const a = { kind: 'circle', captainSpread: true, count: 4,
-        radius: 85, x: point.x, y: point.y, timer: 1.2, total: 1.2 }, sequence = [];
-      assert(g.prepareAttackSequence(e, a, sequence));
-      const beats = [a, ...sequence], patches = beats.flatMap((beat) => g.attackPatches(beat));
-      assert.equal(patches.length, 4, 'all four strikes retained, with sequential fallback if needed');
-      for (const p of patches) {
-        assert(!g.blocked(p.x, p.y, id, p.radius + C.rules.arenaPlacement.margin));
-        assert(g.route(e, p).length || distance(e, p) < 1, 'actual connected room');
-      }
-      const marks = JSON.stringify(g.attackPatches(a));
-      Object.assign(g.hero, g.safe(e.x + 100, e.y));
-      assert.equal(JSON.stringify(g.attackPatches(a)), marks, 'moving target cannot move warnings');
+      const attack={kind:'circle',captainSpread:true,count:4,radius:85,
+        x:point.x,y:point.y,timer:1.2,total:1.2}, sequence=[];
+      const authored=g.attackPatches(attack).map(({x,y,radius})=>({x,y,radius}));
+      assert(g.prepareAttackSequence(e,attack,sequence));
+      assert.equal(sequence.length,0,'ground clutter never invents extra delayed beats');
+      assert.deepEqual(g.attackPatches(attack).map(({x,y,radius})=>({x,y,radius})),
+        authored,'retain exact target-centered offsets and full radius');
+      const marks=JSON.stringify(g.attackPatches(attack));
+      Object.assign(g.hero,g.safe(e.x+100,e.y));
+      assert.equal(JSON.stringify(g.attackPatches(attack)),marks,'warning stays committed');
     }
   }
 }
-// Dual-line patterns use the same frozen corridor geometry in warnings and damage.
+// Two ground lanes retain full parallel warning/impact geometry, not
+// individually shortened or rescheduled by obstruction scans.
 {
-  const g = room('supply-highlands'), e = g.zone().enemies.find((u) => u.roomCaptain),
-    a = { kind: 'line', count: 2, angle: 0, fromX: e.x, fromY: e.y,
-      x: e.x + 300, y: e.y, timer: 1.5, total: 1.5 }, sequence = [];
-  assert(g.prepareAttackSequence(e, a, sequence));
-  const lines = [a, ...sequence].flatMap((beat) => beat.arenaLines);
-  assert.equal(lines.length, 2, 'both authored corridors survive confined-room placement');
-  for (const line of lines)
-    assert(g.clearSegment({ x: line.fromX, y: line.fromY }, line, line.halfWidth + 3));
+  const g=room('supply-highlands'),e=g.zone().enemies.find(u=>u.roomCaptain),
+    a={kind:'line',count:2,angle:0,fromX:e.x,fromY:e.y,
+      x:e.x+300,y:e.y,timer:1.5,total:1.5},seq=[];
+  assert(g.prepareAttackSequence(e,a,seq));
+  assert.equal(seq.length,0,'twin lanes remain simultaneous');
+  assert.deepEqual(a.arenaLines.map(({fromX,fromY,x,y})=>[fromX,fromY,x,y]),
+    [[e.x,e.y-85,e.x+300,e.y-85],[e.x,e.y+85,e.x+300,e.y+85]]);
 }
 // PT-001: existing four-skill kit, owned-pup accounting and genuine refill resolution.
 for (const form of ['normal', 'true']) {
@@ -113,6 +90,12 @@ for (const form of ['normal', 'true']) {
   assert(g.bossAttackWeights(e, g.hero, true)[3] > 0, 'refill remains eligible after cooldown');
   e.telegraph = g.buildBossAttack(e, 3, g.hero).first;
   g.resolveAttack(e);
+  if(g.bossOwnedSummons(e).length !== g.bossSummonCap(e))
+    console.error('ROLLBACK-DIAGNOSTIC summon refill', JSON.stringify({
+      form, summoners:g.bossOwnedSummons(e).length,cap:g.bossSummonCap(e),
+      summonCd:e.summonCd, attack:g.bossAttackWeights(e,g.hero,true),
+      hero:{x:g.hero.x,y:g.hero.y},boss:{x:e.x,y:e.y},eHP:e.hp,
+      eAggro:e.aggro}));
   assert.equal(g.bossOwnedSummons(e).length, g.bossSummonCap(e));
 }
 // PT-001 automatic Developer path after a killed pack: no forced attack index or resolver.
@@ -122,11 +105,20 @@ for (const form of ['normal', 'true']) {
     seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
     return seed / 4294967296;
   });
-  Object.assign(g.hero, g.safe(850, 1450), { immune: 9999 });
+  // An enclosed Treasury provides a stable authentic combat arena.
+  // Outside in Vale, Thornfang's ordinary patrol can legitimately return
+  // home before a deliberately passive test hero ever attacks.
+  g.enter('supply-vale');
+  // Use the room's authored safe player arrival; Vale world coordinates do
+  // not exist in this enclosed Treasury.
+  g.hero.immune = 9999;
   const e = g.developerSummon('boss:thorn:' + form);
+  assert(e, 'developer summons an authentic Thornfang in the connected room');
   g.zone().enemies = [e];
-  Object.assign(g.hero, g.safe(e.x - 90, e.y), { immune: 9999 });
+  g.hero.immune = 9999;
   g.s.party = [];
+  g.s.mercyTime = 0;
+  g.engage(e, true, false);
   g.summonBossAdds(e, C.rules.attacks.thorn[3]);
   for (const pup of g.bossOwnedSummons(e)) pup.hp = 0;
   let refilled = false;
@@ -135,6 +127,13 @@ for (const form of ['normal', 'true']) {
     g.updateEnemies(0.05);
     refilled = g.bossOwnedSummons(e).length > 0;
   }
+  if(!refilled) console.error('ROLLBACK-DIAGNOSTIC boss no refill',
+    JSON.stringify({form,at:g.s.time,boss:{x:e.x,y:e.y,hp:e.hp,aggro:e.aggro,
+      returning:e.returning,summonCd:e.summonCd,cd:e.cd,telegraph:e.telegraph,
+      lastAttackIndex:e.lastAttackIndex,attackCd:e.attackCd},
+      hero:{x:g.hero.x,y:g.hero.y},weights:g.bossAttackWeights(e,g.hero,true),
+      pack:g.bossOwnedSummons(e).length,cap:g.bossSummonCap(e),
+      allEnemies:g.zone().enemies.length}));
   assert(refilled, form + ' actual Developer AI replenishes killed pups after recovery');
   assert(e.aggro && !e.returning, 'the probe stayed in a live encounter');
 }

@@ -129,6 +129,7 @@ function shell(language, heroClass = 'paladin', options = {}) {
     const runtime = scope.PrototypeRuntime;
     scope.PrototypeRuntime = { ...runtime, create: () => runtime.create(options.now) };
   }
+  if (options.graphicsGuard) scope.AzerothRendererSwitchGuard = options.graphicsGuard;
   scope.PrototypeVisuals = { draw() {}, roads() {}, height: () => 40 };
   scope.window = scope;
   vm.createContext(scope);

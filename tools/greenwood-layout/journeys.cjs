@@ -12,7 +12,7 @@ if (!process.argv.includes('--size')) {
   process.exit(0);
 }
 const size = Number(process.argv[process.argv.indexOf('--size') + 1]),
-  C = require('../../src/prototype/engine');
+  C = require('./fixtures.cjs').loadRuntime();
 candidate(C, size);
 const scripts = {
   'opening-orientation-route': [

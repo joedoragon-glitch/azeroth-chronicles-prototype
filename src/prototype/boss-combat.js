@@ -1901,6 +1901,8 @@
               : a.radius,
         }));
       }
+      // Connected-terrain scanning remains solely for the Citadel's persistent
+      // 16-tile court, NOT ordinary ground damage or warning placement.
       connectedArenaPoints(e) {
         const cfg = R.arenaPlacement,
           step = cfg.step,
@@ -1930,140 +1932,37 @@
         }
         return points;
       }
-      prepareGroundAttack(e, a, arena = null) {
+      prepareGroundAttack(e, a) {
         if (a?.kind === 'checkerboard' && !a.boardPlan) {
+          // This persistent court has independently validated physical tiles.
           a.boardPlan = this.sentinelBoardPlan(e);
-          if (!a.boardPlan) {
-            a.arenaInvalid = true;
-            return;
-          }
+          if (!a.boardPlan) { a.arenaInvalid = true; return; }
         }
         if (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines) {
-          const connected = arena || this.connectedArenaPoints(e),
-            width = R.combatGeometry.dualLineHalfWidth,
-            length = Math.max(60, Math.hypot(a.x - a.fromX, a.y - a.fromY)),
-            side = { x: -Math.sin(a.angle), y: Math.cos(a.angle) },
-            lines = [];
-          for (const offset of [-85, 85]) {
-            const ideal = { x: a.fromX + side.x * offset, y: a.fromY + side.y * offset },
-              candidates = [
-                ideal,
-                ...connected
-                  .filter((p) => dist(p, e) < 220)
-                  .sort((p, q) => dist(p, ideal) - dist(q, ideal)),
-              ];
-            let chosen = null;
-            for (const requireSpacing of [true, false]) {
-              for (const from of candidates) {
-                if (
-                  this.blocked(from.x, from.y, this.zoneId, width + 3) ||
-                  !connected.some(
-                    (p) =>
-                      dist(p, from) < R.arenaPlacement.step * 1.5 && this.clearSegment(p, from),
-                  )
-                )
-                  continue;
-                let to = from;
-                for (let n = 8; n <= length; n += 8) {
-                  const p = {
-                    x: from.x + Math.cos(a.angle) * n,
-                    y: from.y + Math.sin(a.angle) * n,
-                  };
-                  if (!this.clearSegment(to, p, width + 3)) break;
-                  to = p;
-                }
-                if (dist(from, to) < Math.min(48, length * 0.5)) continue;
-                if (
-                  requireSpacing &&
-                  lines.some(
-                    (line) =>
-                      this.distanceToSegment(from, { x: line.fromX, y: line.fromY }, line) <
-                        width * 2 + 18 ||
-                      this.distanceToSegment(to, { x: line.fromX, y: line.fromY }, line) <
-                        width * 2 + 18,
-                  )
-                )
-                  continue;
-                chosen = { fromX: from.x, fromY: from.y, x: to.x, y: to.y, halfWidth: width };
-                if (!requireSpacing) a.arenaSequential = true;
-                break;
-              }
-              if (chosen) break;
-            }
-            if (!chosen) {
-              a.arenaInvalid = true;
-              return;
-            }
-            lines.push(chosen);
-          }
-          a.arenaLines = lines;
+          // Retain the aimed parallel ground corridors, even across scenery.
+          const side = { x: -Math.sin(a.angle), y: Math.cos(a.angle) };
+          a.arenaLines = [-85, 85].map((offset) => ({
+            fromX: a.fromX + side.x * offset,
+            fromY: a.fromY + side.y * offset,
+            x: a.x + side.x * offset,
+            y: a.y + side.y * offset,
+            halfWidth: R.combatGeometry.dualLineHalfWidth,
+          }));
         }
-        if (
-          !a ||
-          a.kind !== 'circle' ||
-          a.arenaPatches ||
-          a.selfDefense ||
-          a.bossHeal ||
-          a.rogueMove ||
-          a.cinderMechanic === 'protection' ||
-          a.cinderMechanic === 'transfer'
-        )
-          return;
-        const cfg = R.arenaPlacement,
-          raw = this.attackPatches(a),
-          connected = arena || this.connectedArenaPoints(e),
-          placed = [];
-        let sequential = false;
-        for (const patch of raw) {
-          let radius = patch.radius,
-            selected = null;
-          const reachable = (p) =>
-            connected.some((q) => dist(p, q) <= cfg.step * 1.5 && this.clearSegment(p, q, 15));
-          const candidates = [
-              patch,
-              ...connected.slice().sort((p, q) => dist(p, patch) - dist(q, patch)),
-            ],
-            fits = (p, r) => !this.blocked(p.x, p.y, this.zoneId, r + cfg.margin),
-            spaced = (p, r) => placed.every((q) => dist(p, q) >= r + q.radius + cfg.separation);
-          selected = candidates.find(
-            (p) => fits(p, radius) && spaced(p, radius) && (p !== patch || reachable(p)),
-          );
-          if (!selected) {
-            // A confined arena uses fully warned sequential beats, never a stacked carpet.
-            sequential = true;
-            for (const scale of [1, 0.85, 0.65, 0.45, 0.25]) {
-              radius = Math.max(15, patch.radius * scale);
-              selected = candidates.find((p) => fits(p, radius) && (p !== patch || reachable(p)));
-              if (selected) break;
-            }
-          }
-          if (!selected) {
-            // A caster physically inside a corrupt/blocked room cannot author a legal warning.
-            // Refuse at commitment rather than display a strike that cannot exist.
-            a.arenaInvalid = true;
-            return;
-          }
-          placed.push({ x: selected.x, y: selected.y, radius });
-        }
-        a.arenaPatches = placed;
-        a.arenaSequential = sequential;
+        if (!a || a.kind !== 'circle' || a.arenaPatches || a.selfDefense ||
+            a.bossHeal || a.rogueMove || a.cinderMechanic === 'protection' ||
+            a.cinderMechanic === 'transfer') return;
+        // Frozen warning and actual hit area share the same target-centered
+        // geometry. Partial overlap with impassable terrain is acceptable.
+        const raw = this.attackPatches(a);
+        a.arenaPatches = raw.map(({ x, y, radius }) => ({ x, y, radius }));
         a.authoredPatchCount = raw.length;
-        if (placed.length === 1) Object.assign(a, placed[0]);
+        if (raw.length === 1) Object.assign(a, a.arenaPatches[0]);
       }
       prepareAttackSequence(e, first, sequence) {
-        const pending = [first, ...sequence].some(
-            (a) =>
-              (a?.kind === 'circle' ||
-                (a?.kind === 'line' && a.count === 2 && !a.charge && !a.cargo && !a.arenaLines)) &&
-              !a.arenaPatches &&
-              !a.selfDefense &&
-              !a.bossHeal &&
-              !a.rogueMove,
-          ),
-          arena = pending ? this.connectedArenaPoints(e) : null,
-          beats = [];
+        const beats = [];
         for (const a of [first, ...sequence]) {
-          this.prepareGroundAttack(e, a, arena);
+          this.prepareGroundAttack(e, a);
           if (a?.arenaInvalid) {
             this.event('attackPlacementFailed', { source: e.id, family: e.family, index: a.index });
             return false;
@@ -2722,6 +2621,9 @@
           deaths = this.s.statistics.deaths;
         const party = this.combatTargets(),
           patches = this.attackPatches(a),
+          groundAreaIgnoresLineOfSight =
+            a.kind === 'circle' ||
+            (a.kind === 'line' && !!a.arenaLines && !a.charge && !a.cargo),
           hits = (u) =>
             a.arenaLines
               ? a.arenaLines.some(
@@ -2770,7 +2672,7 @@
               )
             : null;
         for (const u of party)
-          if (hits(u) && this.line(e, u)) {
+          if (hits(u) && (groundAreaIgnoresLineOfSight || this.line(e, u))) {
             // The grabbed victim's Jaw Snap damage is distributed into roll
             // ticks instead of being applied once now and a second time later.
             const landed =

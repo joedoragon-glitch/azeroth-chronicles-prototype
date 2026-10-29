@@ -2,7 +2,7 @@
 const fs = require('node:fs'),
   path = require('node:path'),
   zlib = require('node:zlib');
-const C = require('../../src/prototype/engine.js');
+const C = require('./fixtures.cjs').loadRuntime();
 const { rng, clone } = require('./fixtures.cjs');
 // Save fixtures originate on the unchanged 2700 source, BEFORE proposals mutate tables.
 const baseline = new C('normal', 'paladin', rng(0x47564101));
@@ -46,7 +46,12 @@ const saves = [
   ['current-source-worker-carrying', working],
 ];
 fs.writeFileSync(
-  path.join(__dirname, '../../docs/evidence/greenwood-gva-20261028/synthetic-v4-inputs.json.gz'),
+  process.argv[2] ||
+    (() => {
+      throw Error(
+        'Supply an explicit output path; never overwrite archived baseline fixture inputs',
+      );
+    })(),
   zlib.gzipSync(
     JSON.stringify({
       provenance:

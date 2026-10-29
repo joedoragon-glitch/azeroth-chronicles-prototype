@@ -18,6 +18,9 @@ function arena(cls, distance, allies = true) {
   );
   z.enemies = [e];
   g.engage(e);
+  // Start at true maximum HP: this scenario tests outgoing hits, not passive
+  // regeneration from a fixture-created 100,000/124,910 HP deficit.
+  e.hp = e.maxHp;
   g.s.party = allies
     ? [
         g.unit('soldier', 1432, 1700),
@@ -30,11 +33,9 @@ function arena(cls, distance, allies = true) {
 let cases = 0;
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const { g, e } = arena(cls, cls === 'paladin' ? 65 : 250);
-  assert(g.actorCrowd(true).combatActive);
-  assert(
-    !g.actorStepAllowed(g.hero, { x: 1430, y: 1700 }),
-    cls + ': companion blocks combat movement',
-  );
+  assert(g.move(g.hero, { x: 1430, y: 1700 }, 200, 0.15),
+    cls + ': hero may pass through companions even while fighting');
+  assert.equal(g.hero.x, 1430, cls + ': no actor body barrier');
   assert(g.line(g.hero, e), cls + ': companion does not block skill sight');
   assert(g.clearSegment(g.hero, e, 0), cls + ': companion does not block shot flight');
   assert.equal(
@@ -66,13 +67,25 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     for (const allies of [false, true]) {
       const { g, e } = arena(cls, cls === 'paladin' ? 65 : 250, allies),
         hp = e.hp;
+      let landedDamage = 0, damageCalls = 0;
+      const originalDamage = g.damage;
+      g.damage = function(target, ...params) {
+        const before = target?.hp;
+        const result = originalDamage.call(this, target, ...params);
+        if (target === e && result && before > e.hp) {
+          damageCalls++;
+          landedDamage += before - e.hp;
+        }
+        return result;
+      };
       assert(g.cast(slot, e.id, charged), cls + ' ' + slot + ' ' + charged + ' can release');
       for (let i = 0; i < 70; i++) {
         g.s.time += 0.05;
+        g.advanceHeroSkillEffects(0.05); // Charged Mage beam advances in this phase.
         g.updateProjectiles(0.05);
       }
-      assert(e.hp < hp, cls + ' ' + slot + ' ' + charged + ' lands through allies');
-      results.push(hp - e.hp);
+      assert(landedDamage > 0, cls + ' ' + slot + ' ' + charged + ' lands through allies, actual damage receipts='+damageCalls);
+      results.push(landedDamage);
     }
     assert.equal(
       results[0],
@@ -85,5 +98,5 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
 console.log(
   'PASS ' +
     cases +
-    ' ally attack-passage cases: combat movement blocks, targeting/line/shot passage and actual class basic/charged/skill hits',
+    ' ally attack-passage cases: combat-body passage, targeting/line/shot passage and actual class basic/charged/skill hits',
 );

@@ -117,6 +117,105 @@ function openForwardTravel(app) {
     assert.equal(app.scope.Prototype.started, true);
   }
 
+  // A confirmed Pixi preference stays on the title screen and prepares the
+  // saved arrival in ONE visible loading sequence, not a separate boot panel.
+  {
+    let restored = 0, resolveRenderer;
+    const state = { mode: 'canvas2d', phase: 'canvas', preferredRenderer: 'webgl2' };
+    const guard = {
+      startupChoice: () => ({ renderer: 'webgl2' }),
+      create: () => ({
+        status: () => state,
+        resumeConfirmedWebGL: () => {
+          restored++;
+          state.phase = 'preparing';
+          return new Promise((resolve) => {
+            resolveRenderer = () => {
+              state.phase = 'confirmed';
+              state.mode = 'webgl2';
+              resolve(true);
+            };
+          });
+        },
+        requestWebGL: async () => false,
+        maybeRecover: async () => false,
+        confirm: () => true,
+        revert: () => { state.phase = 'canvas'; state.mode = 'canvas2d'; },
+        webglFailed() {},
+        visibilityChanged() {},
+      }),
+    };
+    const app = shell('en', 'ranger',
+      { stayOnTitle: true, graphicsGuard: guard });
+    const title = app.elements.get('title-screen');
+    assert.equal(restored, 0,
+      'confirmed Pixi is not initialized in a separate boot presentation');
+    assert.equal(title.hidden, false);
+    const startZone = app.scope.Prototype.game.zoneId;
+    app.elements.get('title-continue').click();
+    await flush();
+    assert.equal(restored, 1,
+      'confirmed Pixi initializes while the saved arrival is still hidden');
+    assert.equal(title.hidden, false,
+      'one title-screen loading surface remains visible throughout Pixi init');
+    assert.equal(app.elements.get('title-loading').hidden, false);
+    assert.equal(app.scope.Prototype.started, false);
+    resolveRenderer();
+    await flush();
+    app.frame(450);
+    assert.equal(app.scope.Prototype.started, true);
+    assert.equal(title.hidden, true);
+    assert.equal(app.scope.Prototype.game.zoneId, startZone,
+      'preparation does not move the saved hero to another location');
+  }
+
+  // A slow or stalled resource must not be treated as an expired stopwatch.
+  // The player can explicitly select Canvas instead of waiting indefinitely.
+  {
+    const app = shell('en');
+    const game = app.scope.Prototype.game;
+    const origin = game.zoneId;
+    app.scope.PrototypeSprites = {
+      definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
+      warm: () => new Promise(() => {}), // intentionally never resolves
+      advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
+    };
+    openForwardTravel(app).click();
+    await flush();
+    app.frame(12000);
+    assert.equal(game.zoneId, origin,
+      'no wall-clock budget prematurely commits a still-preparing trip');
+    const canvas = app.elements.get('scene-loading-retry');
+    assert.equal(canvas.hidden, false, 'manual Canvas bypass is offered');
+    canvas.click();
+    await flush();
+    assert.notEqual(game.zoneId, origin,
+      'Canvas bypass completes the authorized trip without waiting for stalled art');
+    app.frame(12100);
+    assert.equal(app.scope.Prototype.sceneLoading, false);
+  }
+  {
+    const app = shell('en', 'ranger', { stayOnTitle: true });
+    app.scope.PrototypeSprites = {
+      definitionFor: (actor) => actor.renderKind === 'hero' ? { key: 'hero' } : null,
+      warm: () => new Promise(() => {}), // intentionally never resolves
+      advance() {}, beginFrame() {}, endFrame() {}, status: () => ({}),
+    };
+    app.elements.get('title-continue').click();
+    await flush();
+    app.frame(12000);
+    assert.equal(app.scope.Prototype.started, false,
+      'Continue waits for readiness without a forced timeout');
+    const button = app.elements.get('title-screen').children.find(
+      (item) => item.textContent === 'Continue with Canvas');
+    assert(button && !button.hidden, 'Continue offers an optional Canvas bypass');
+    button.click();
+    await flush();
+    app.frame(12100);
+    assert.equal(app.scope.Prototype.started, true,
+      'explicit Canvas choice releases the pending first scene');
+  }
+
   // A page hidden during pending preflight cancels the COMMIT, even if images finish later.
   {
     const app = shell('en');

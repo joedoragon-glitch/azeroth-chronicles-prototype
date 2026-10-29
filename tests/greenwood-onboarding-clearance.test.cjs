@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict'),
   fs = require('node:fs'),
   zlib = require('node:zlib');
-const C = require('../src/prototype/engine.js');
+const C = require('../tools/greenwood-layout/fixtures.cjs').loadRuntime();
 const fixture = JSON.parse(
   zlib.gunzipSync(
     fs.readFileSync(__dirname + '/fixtures/greenwood/pre-clearance-main753f-v4.json.gz'),
@@ -104,8 +104,8 @@ for (const p of before.props.filter((p) => !ids.includes(p.id)))
 for (const n of before.npcs.filter((n) => n.id !== 'rest'))
   assert.deepEqual(
     z.npcs.find((q) => q.id === n.id),
-    n,
-    'unrelated service/site unchanged ' + n.id,
+    n.id === 'supply-entrance' ? { ...n, name: "Scornfang's Treasury" } : n,
+    'service/site unchanged except approved C06 visible name ' + n.id,
   );
 assert.deepEqual(
   C.restore(after, () => 0.73).snapshot(),

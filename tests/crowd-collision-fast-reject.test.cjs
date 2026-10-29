@@ -126,11 +126,9 @@ pair((a,b) => {
   place(a);place(b);
   for (let tick=0;tick<25;tick++) {
     for (const g of [a,b]) {
-      g.observeCrowdFrame(75);
       g.s.time += .075;
       for (const u of [g.hero, ...g.s.party, ...g.zone().enemies])
         g.move(u,{x:800,y:1500},100,.075);
-      g.separateActors(.075);
     }
     assert.deepEqual(JSON.parse(JSON.stringify(a.snapshot())),
       JSON.parse(JSON.stringify(b.snapshot())), 'crowd step '+tick);
@@ -167,7 +165,6 @@ console.log('Collision diagnostic comparison (shared CI timings not a certified 
 console.log(JSON.stringify({baseline,candidate,
   avoidedPreciseDistanceCalls:baseline.hypotCalls-candidate.hypotCalls}));
 
-// Guard preexisting crowd escape and retreat passage directly, not the full suite.
-require('./crowd-escape.test.cjs');
-require('./retreat-party-collision.test.cjs');
-console.log('PASS fast collision rejection: live baseline equivalence, mutation, crowd motion and focused contracts');
+// Guard terrain-only actor passage in the dedicated rollback suite.
+require('./actor-collision-rollback.test.cjs');
+console.log('PASS terrain/scenery fast rejection: exact baseline equivalence and preserved terrain movement');

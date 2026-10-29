@@ -62,9 +62,15 @@
         if (!def || z.npcs.some((n) => n.id === id)) return false;
         const point = this.safe(def.x, def.y, z.id);
         z.npcs.push({
-          id, kind: 'critical-codex', sideCodex: z.id,
-          name: def.name, nameEs: def.nameEs,
-          x: point.x, y: point.y, icon: '📖', presentation: 'critical-codex',
+          id,
+          kind: 'critical-codex',
+          sideCodex: z.id,
+          name: def.name,
+          nameEs: def.nameEs,
+          x: point.x,
+          y: point.y,
+          icon: '📖',
+          presentation: 'critical-codex',
         });
         return true;
       }
@@ -918,6 +924,7 @@
       roadNetwork(z) {
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
+        this.greenwoodReserve?.(z);
         const i = this.regionIndex(z.id),
           roadVersion = 17;
         if (z.roadVersion === roadVersion) return;
@@ -1001,7 +1008,10 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 65 : 85) }));
+            .map((p) => ({
+              ...p,
+              r: (p.r || 0) + (p.greenwoodReserved ? 190 : i === 2 ? 65 : 85),
+            }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
@@ -1078,7 +1088,11 @@
         // than displacing collision trees into hostile camps. Distinct authored
         // structures and district props survive for the frontage audit below.
         z.props = z.props.filter(
-          (p) => p.roadBlocker || p.structure || this.distanceToRoad(z, p) >= (p.r || 0) + 60,
+          (p) =>
+            p.greenwoodLegacyScenery ||
+            p.roadBlocker ||
+            p.structure ||
+            this.distanceToRoad(z, p) >= (p.r || 0) + 60,
         );
         // Relocate only long-lived settlement houses before livelihood and
         // occupation scenery is authored, so those scenes remain repeatable.
@@ -1802,6 +1816,7 @@
         return nearest;
       }
       roadSetback(p) {
+        if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
         if (p.stronghold && p.r > 0) return 85;
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
         // Building anchors sit below much of their painted roof; reserve more
@@ -1931,6 +1946,7 @@
             .map((enemy) => enemy.home || enemy);
           z.props = z.props.filter(
             (p) =>
+              p.greenwoodLegacyScenery ||
               !String(p.id || '').startsWith('forest-') ||
               !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
           );
@@ -2149,13 +2165,42 @@
       arenaStages() {
         const stages = [{ id: 'hub', label: 'Safe hub · specialists', region: 0, kind: 'hub' }];
         for (const [region, r] of D.regions.entries()) {
-          stages.push({ id: r.id + '-ordinary', label: r.name + ' · ordinary enemies', region, kind: 'ordinary' });
-          stages.push({ id: r.id + '-guardians', label: r.name + ' · guardians and captain', region, kind: 'guardians' });
+          stages.push({
+            id: r.id + '-ordinary',
+            label: r.name + ' · ordinary enemies',
+            region,
+            kind: 'ordinary',
+          });
+          stages.push({
+            id: r.id + '-guardians',
+            label: r.name + ' · guardians and captain',
+            region,
+            kind: 'guardians',
+          });
           if (r.id === 'march' || r.id === 'frontier')
-            stages.push({ id: r.id + '-night', label: r.name + ' · night enemies', region, kind: 'night' });
+            stages.push({
+              id: r.id + '-night',
+              label: r.name + ' · night enemies',
+              region,
+              kind: 'night',
+            });
           for (const boss of D.bosses.filter((b) => b.region === r.id)) {
-            stages.push({ id: 'boss-' + boss.id, label: r.name + ' · ' + boss.name + ' · Regular', region, kind: 'boss', boss: boss.id, form: 'normal' });
-            stages.push({ id: 'boss-' + boss.id + '-true', label: r.name + ' · ' + boss.name + ' · TRUE', region, kind: 'boss', boss: boss.id, form: 'true' });
+            stages.push({
+              id: 'boss-' + boss.id,
+              label: r.name + ' · ' + boss.name + ' · Regular',
+              region,
+              kind: 'boss',
+              boss: boss.id,
+              form: 'normal',
+            });
+            stages.push({
+              id: 'boss-' + boss.id + '-true',
+              label: r.name + ' · ' + boss.name + ' · TRUE',
+              region,
+              kind: 'boss',
+              boss: boss.id,
+              form: 'true',
+            });
           }
         }
         return stages;
@@ -2165,15 +2210,28 @@
         // Extremely hot: zone() is used by every combat and draw step. Do not
         // rebuild the catalog of stage objects when the actor roster is unchanged.
         if (old?.arenaStage === this.s.arenaStage) return old;
-        const stage = this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
+        const stage =
+          this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
         const z = {
-          id: 'arena', arenaStage: stage.id, enemies: [], props: [], npcs: [],
-          buildings: [], nodes: [], packTimers: {}, clock: 0,
+          id: 'arena',
+          arenaStage: stage.id,
+          enemies: [],
+          props: [],
+          npcs: [],
+          buildings: [],
+          nodes: [],
+          packTimers: {},
+          clock: 0,
         };
         this.s.zones.arena = z;
-        z.npcs.push({ id: 'arena-guide', kind: 'arena-guide', name: 'Arena Guide',
+        z.npcs.push({
+          id: 'arena-guide',
+          kind: 'arena-guide',
+          name: 'Arena Guide',
           x: stage.kind === 'hub' ? 900 : 520,
-          y: stage.kind === 'hub' ? 1080 : 870, icon: '🧭' });
+          y: stage.kind === 'hub' ? 1080 : 870,
+          icon: '🧭',
+        });
         const spawn = (def, x, y, options = {}) => {
           const enemy = this.makeEnemy(def, { x, y });
           // Native AI/combat, but no campaign rewards, victories or unlocks.
@@ -2185,42 +2243,65 @@
           z.enemies.push(enemy);
           return enemy;
         };
-        const region = D.regions[stage.region], species = D.species[stage.region];
+        const region = D.regions[stage.region],
+          species = D.species[stage.region];
         if (stage.kind === 'hub') {
-          for (const [i, boss] of D.bosses.filter((b) => b.captive && b.id !== 'darklord').entries()) {
+          for (const [i, boss] of D.bosses
+            .filter((b) => b.captive && b.id !== 'darklord')
+            .entries()) {
             // Wide service rows keep names readable and leave a direct walking
             // corridor from the entry to the Guide, Trainer and recovery.
             z.npcs.push({
               id: 'arena-specialist-' + boss.id,
               kind: R.teachers[boss.id] ? 'teacher' : boss.id === 'archive' ? 'alchemist' : 'smith',
-              family: boss.id, name: boss.captive,
+              family: boss.id,
+              name: boss.captive,
               x: 1120 + (i % 4) * 245,
-              y: 640 + Math.floor(i / 4) * 320, icon: '👤',
+              y: 640 + Math.floor(i / 4) * 320,
+              icon: '👤',
             });
           }
           z.npcs.push({
             id: 'arena-level-trainer',
             kind: 'arena-level-trainer',
             name: 'Level Trainer',
-            x: 730, y: 995,
+            x: 730,
+            y: 995,
             icon: '⭐',
           });
-          z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 810, y: 1320, icon: '💚' });
+          z.npcs.push({
+            id: 'arena-recovery',
+            kind: 'arena-recovery',
+            name: 'Free recovery',
+            x: 810,
+            y: 1320,
+            icon: '💚',
+          });
         } else if (stage.kind === 'ordinary' || stage.kind === 'guardians') {
           const guardian = stage.kind === 'guardians';
           // Native campaign HP/damage values, not new arena balance math.
-          const hp = 65 + stage.region * 105, damage = 7 + stage.region * 8;
+          const hp = 65 + stage.region * 105,
+            damage = 7 + stage.region * 8;
           for (let i = 0; i < (guardian ? 3 : 4); i++) {
             const sp = species[i % species.length];
-            const e = spawn({
-              species: sp[0], name: sp[1] + (guardian ? ' guardian' : ''), icon: sp[2],
-              level: stage.region * 3 + 1 + (guardian ? 1 : 0),
-              hp, damage,
-              gold: 0, xp: 0,
-            }, 1400 + (i % 2) * 250, 830 + Math.floor(i / 2) * 350, {
-              pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
-              ...(guardian ? { guard: true, guardianBalanceVersion: 2 } : {}),
-            });
+            const e = spawn(
+              {
+                species: sp[0],
+                name: sp[1] + (guardian ? ' guardian' : ''),
+                icon: sp[2],
+                level: stage.region * 3 + 1 + (guardian ? 1 : 0),
+                hp,
+                damage,
+                gold: 0,
+                xp: 0,
+              },
+              1400 + (i % 2) * 250,
+              830 + Math.floor(i / 2) * 350,
+              {
+                pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
+                ...(guardian ? { guard: true, guardianBalanceVersion: 2 } : {}),
+              },
+            );
             this.configureEnemy(e, i);
           }
           if (guardian) {
@@ -2228,18 +2309,31 @@
             const profile = R.roomCaptains?.[id];
             if (profile) {
               const sp = species[0];
-              const e = spawn({
-                species: profile.species || sp[0], name: profile.name, icon: sp[2],
-                level: stage.region * 3 + 2,
-                hp: hp * 2, damage: damage * 1.25,
-                gold: 0, xp: 0,
-              }, 1900, 1050, {
-                captain: true, captainProfile: id, captainMentor: profile.mentor,
-                captainVisualIdol: profile.visualIdol || profile.mentor,
-                visualScale: profile.visualScale || 1.16, specialCd: 0,
-                ...(id === 'frontier-overseer' ? { fieldCaptain: true, fieldCaptainVersion: 1 } :
-                    { roomCaptain: true, roomGuard: true, guard: true, roomCaptainVersion: 1 }),
-              });
+              const e = spawn(
+                {
+                  species: profile.species || sp[0],
+                  name: profile.name,
+                  icon: sp[2],
+                  level: stage.region * 3 + 2,
+                  hp: hp * 2,
+                  damage: damage * 1.25,
+                  gold: 0,
+                  xp: 0,
+                },
+                1900,
+                1050,
+                {
+                  captain: true,
+                  captainProfile: id,
+                  captainMentor: profile.mentor,
+                  captainVisualIdol: profile.visualIdol || profile.mentor,
+                  visualScale: profile.visualScale || 1.16,
+                  specialCd: 0,
+                  ...(id === 'frontier-overseer'
+                    ? { fieldCaptain: true, fieldCaptainVersion: 1 }
+                    : { roomCaptain: true, roomGuard: true, guard: true, roomCaptainVersion: 1 }),
+                },
+              );
               this.configureEnemy(e, 3);
             }
           }
@@ -2248,17 +2342,25 @@
           const id = region.id === 'march' ? 'wraith' : 'stalker';
           const cfg = R.nightEnemyCombat[id];
           for (let i = 0; i < 2; i++) {
-            const e = spawn({
-              species: id,
-              name: region.id === 'march' ? 'Lantern wraith' : 'Ash stalker',
-              icon: '👻',
-              level: stage.region * 3 + 2,
-              hp: Math.round((120 + stage.region * 100) * cfg.hp),
-              damage: Math.round((12 + stage.region * 7) * cfg.damage),
-              gold: 0, xp: 0,
-            }, 1450 + i * 260, 900 + i * 300, {
-              nightOnly: true, nightBalanceVersion: 1, specialCd: 1 + i * 0.35,
-            });
+            const e = spawn(
+              {
+                species: id,
+                name: region.id === 'march' ? 'Lantern wraith' : 'Ash stalker',
+                icon: '👻',
+                level: stage.region * 3 + 2,
+                hp: Math.round((120 + stage.region * 100) * cfg.hp),
+                damage: Math.round((12 + stage.region * 7) * cfg.damage),
+                gold: 0,
+                xp: 0,
+              },
+              1450 + i * 260,
+              900 + i * 300,
+              {
+                nightOnly: true,
+                nightBalanceVersion: 1,
+                specialCd: 1 + i * 0.35,
+              },
+            );
             this.configureEnemy(e, i);
           }
         } else if (stage.kind === 'boss') {
@@ -2271,11 +2373,21 @@
             if (boss.id !== 'darklord')
               for (let i = 0; i < 2; i++) {
                 const sp = species[i % species.length];
-                const e = spawn({
-                  species: sp[0], name: sp[1] + ' guardian', icon: sp[2],
-                  level: Math.max(1, boss.level - 1), hp: 65 + stage.region * 105,
-                  damage: 7 + stage.region * 8, gold: 0, xp: 0,
-                }, 1510, 770 + 600 * i, { guard: true, guardianBalanceVersion: 2 });
+                const e = spawn(
+                  {
+                    species: sp[0],
+                    name: sp[1] + ' guardian',
+                    icon: sp[2],
+                    level: Math.max(1, boss.level - 1),
+                    hp: 65 + stage.region * 105,
+                    damage: 7 + stage.region * 8,
+                    gold: 0,
+                    xp: 0,
+                  },
+                  1510,
+                  770 + 600 * i,
+                  { guard: true, guardianBalanceVersion: 2 },
+                );
                 this.configureEnemy(e, i);
               }
           }
@@ -2292,7 +2404,8 @@
           // Clamping a 14px hero only by actorRadius would leave its center
           // one pixel outside that segment and trap *both* movement directions.
           const radius = Math.max(15, this.actorRadius(actor)),
-            low = 40 + radius, high = size - 40 - radius;
+            low = 40 + radius,
+            high = size - 40 - radius;
           actor.x = Math.max(low, Math.min(high, actor.x));
           actor.y = Math.max(low, Math.min(high, actor.y));
         }
@@ -2323,8 +2436,7 @@
         return true;
       }
       arenaLevelUp() {
-        if (this.s.mode !== 'arena' || this.hero.level >= 10000 || this.hero.hp <= 0)
-          return false;
+        if (this.s.mode !== 'arena' || this.hero.level >= 10000 || this.hero.hp <= 0) return false;
         // One interaction = one real XP threshold and exactly one level-up.
         // The existing progression system awards HP, talent points, and notices.
         const oldLevel = this.hero.level;
@@ -2351,10 +2463,19 @@
         if (z.buildings.length >= 4) return z.buildings[z.buildings.length - 1];
         const b = {
           id: 'arena-barracks-' + this.s.nextId++,
-          kind: 'barracks', name: 'Arena Barracks', icon: '🏗️',
-          theme: 'vale', x: Math.min(1850, this.hero.x + 110), y: this.hero.y,
-          progress: 4, full: true, queue: 0, queueType: null,
-          upgradeProgress: 0, upgradePaid: true, interactionOnly: true,
+          kind: 'barracks',
+          name: 'Arena Barracks',
+          icon: '🏗️',
+          theme: 'vale',
+          x: Math.min(1850, this.hero.x + 110),
+          y: this.hero.y,
+          progress: 4,
+          full: true,
+          queue: 0,
+          queueType: null,
+          upgradeProgress: 0,
+          upgradePaid: true,
+          interactionOnly: true,
         };
         z.buildings.push(b);
         return b;
@@ -2363,6 +2484,7 @@
         if (this.s.mode === 'arena') return this.arenaZone();
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
+          this.greenwoodMigrate?.(z);
           // Keep authored generation/migrations on their established geometry.
           // Enable the scoped traversal correction only on the finished scene.
           this.setSceneryTraversal(z, false);
@@ -2390,6 +2512,7 @@
           this.crownSceneComposition(z);
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
+          this.greenwoodFinish?.(z);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -2399,6 +2522,9 @@
           id = this.s.zone;
         const z = {
           id,
+          ...(id === 'vale' && R.greenwoodLayout
+            ? { greenwoodSourceVersion: R.greenwoodLayout.version }
+            : {}),
           ...(id === 'highlands' ? { appalachianSourceVersion: 1 } : {}),
           enemies: [],
           props: [],
@@ -2815,6 +2941,7 @@
         this.crownSceneComposition(z);
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
+        this.greenwoodFinish?.(z);
         this.setSceneryTraversal(z);
         return z;
       }

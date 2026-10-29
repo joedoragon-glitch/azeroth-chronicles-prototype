@@ -8,6 +8,10 @@
   "preparedContracts": 75,
   "families": {
     "decoration": [
+      "vale-working-mill",
+      "mill-sluice",
+      "fruit-cellar",
+      "estate-scaffold",
       "frontier-grain-silo",
       "frontier-civic-fountain",
       "direwolf-kennel",
@@ -1162,12 +1166,12 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "2749290ca8b3ab69fffc62a71b62f9bdaebee9cd5cc9099cec77ea2aeafec6a3",
-    "src/prototype/world.js": "8b033e4b53fb586d7c00398d7925a95c509967c637b386f8e9e0953dba7c3071",
-    "src/prototype/rules.js": "db5713cc3a6f3c863f350c2caf9ee061880b3bbfa3f8eac3ffb0ae5d890279ab",
-    "src/prototype/data.js": "010daccf3b0a7a1f93527b0f900e56a2ce482429bfccfc178ddc3b29a208fee0",
+    "src/prototype/visuals.js": "9782c445d64d287cf89fcb109c7b967b35e13d7788441a59a544eb6d8f160ae5",
+    "src/prototype/world.js": "bac7afe1f7770b9509e416f701542233760074e066c2f9736e9f67ac3cc787bd",
+    "src/prototype/rules.js": "f80b5621f55a23f4487e741ff1a77ae47f1dd06785a7dff95e991ea553ffda1b",
+    "src/prototype/data.js": "82bfb2120ac6294817e0f5737ccae26aa1d2fd7dde670f027d9a5b529995986f",
     "src/prototype/sprites.js": "6057888eed7a54e415a9657f019c421557773d6e6dcb963f8716fe9ac55767df",
-    "src/prototype/renderer.js": "772650e6f83355a41d622f6c3bf20933afec69ad7a813b8114fda39292c5f567"
+    "src/prototype/renderer.js": "0e1205b0c72342080c455aafd36c71e7d58c24e2e9d5c79c83f1b6f70e404bfc"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }

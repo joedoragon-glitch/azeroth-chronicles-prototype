@@ -12,7 +12,7 @@ const PrototypeData = {
       transport: 'Merchant wagon',
       fare: 25,
       route:
-        "Millhaven at (300, 350) connects to Orchard Hamlet at (900, 700), the Forest Crypt at (2150, 2100), and the original merchant wagon stand at (2450, 650). A north to south river at x 1200 can be crossed at the mill bridge near y 750 and a southern footbridge near y 1750. Thornfang's den lies beyond the settled orchard country near (760, 1750).",
+        'Millhaven’s working street leads through Orchard Hamlet and its expanding groves to the western mill pond. Maintained cart roads cross the north–south river at Mill bridge and a narrower southern footbridge. Woodland tracks connect Thornfang’s den, the occupied Old Orchard Cellars, Scornfang’s Treasury and the Forest Crypt’s unfinished estate approach; the merchant wagon leaves from the northeast.',
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:

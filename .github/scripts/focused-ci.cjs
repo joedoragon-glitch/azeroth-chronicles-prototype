@@ -16,12 +16,19 @@ const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
   {
+    match: /^src\/prototype\/greenwood\.js$/,
+    tests: [TEST + 'greenwood-flagship.test.cjs', TEST + 'town-street-audit.test.cjs'],
+  },
+  {
     match: /^tools\/greenwood-layout\//,
     tests: [TEST + 'greenwood-layout-measurement.test.cjs'],
   },
   {
     match: /^src\/prototype\/world\.js$/,
-    tests: [TEST + 'greenwood-onboarding-clearance.test.cjs', TEST + 'greenwood-scornfang-title.test.cjs'],
+    tests: [
+      TEST + 'greenwood-onboarding-clearance.test.cjs',
+      TEST + 'greenwood-scornfang-title.test.cjs',
+    ],
   },
   { match: /^\.github\//, tests: [TEST + 'focused-ci-report.test.cjs'] },
   {
@@ -53,7 +60,8 @@ const groups = [
     tests: [TEST + 'rogue-anchor-under-fire-integrity.test.cjs'],
   },
   {
-    match: /^src\/prototype\/(?:renderer|rules|visuals|world|data|sprites)\.js$|^scripts\/sprite-scope-audit\.cjs$/,
+    match:
+      /^src\/prototype\/(?:renderer|rules|visuals|world|data|sprites)\.js$|^scripts\/sprite-scope-audit\.cjs$/,
     tests: [TEST + 'sprite-scope.test.cjs'],
   },
   {
@@ -222,7 +230,7 @@ const groups = [
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },
   {
-    match: /^src\/prototype\/sprites\.js$|^assets\/sprites\/|^tools\/sprites\//,
+    match: /^src\/prototype\/(?:sprites|sprite-format)\.js$|^assets\/sprites\/|^tools\/sprites\//,
     tests: [TEST + 'sprites.test.cjs', TEST + 'sprite-lifecycle.test.cjs'],
   },
   {
@@ -230,7 +238,8 @@ const groups = [
     tests: [TEST + 'materials.test.cjs', TEST + 'ground-cache.test.cjs'],
   },
   {
-    match: /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
+    match:
+      /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
     tests: [TEST + 'artwork-pipeline-checks.test.cjs'],
   },
   { match: /^src\/prototype\/input\.js$/, tests: [TEST + 'input.test.cjs'] },
@@ -252,15 +261,18 @@ const groups = [
   {
     // Phase 4 must be retested when any source owning capture, creature growth,
     // work orders, company operations, save or shared species artwork changes.
-    match: /^src\/prototype\/(?:party|progression|hero-combat|save|engine|rules|combat|menus|visuals|sprites)\.js$/,
+    match:
+      /^src\/prototype\/(?:party|progression|hero-combat|save|engine|rules|combat|menus|visuals|sprites)\.js$/,
     tests: [TEST + 'rogue-bard-phase4-companions.test.cjs'],
   },
   {
     // New song code, timing owners and card metadata must preserve mirrored
     // effects, old-class isolation and short-lived nonstacking party boons.
     match: /^src\/prototype\/(?:hero-combat|combat|party|rules|save|skill-reference)\.js$/,
-    tests: [TEST + 'rogue-bard-phase5-repertoire.test.cjs',
-      TEST + 'rogue-bard-critical-skill1.test.cjs'],
+    tests: [
+      TEST + 'rogue-bard-phase5-repertoire.test.cjs',
+      TEST + 'rogue-bard-critical-skill1.test.cjs',
+    ],
   },
 ];
 const eligible = (file) =>
@@ -372,7 +384,10 @@ function run(
             ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
           }
         : process.env,
-      timeout: narrowBrowser ? 240000 : undefined,
+      // The owner-approved full-current-region Pixi smoke is readiness-driven,
+      // not bounded by the older 4-minute fringe-preload assumption. Preserve
+      // the test and its failure reporting with a longer runner ceiling.
+      timeout: pixiBrowser ? 360000 : narrowBrowser ? 240000 : undefined,
     });
     // Replay the full original stdout/stderr in CI; also retain a short
     // actionable first error for the structured report.
@@ -416,8 +431,7 @@ function run(
     );
   if (sourceGaps.length)
     console.error(
-      '::error::Uncovered changed source requires focused test ownership: ' +
-        sourceGaps.join(', '),
+      '::error::Uncovered changed source requires focused test ownership: ' + sourceGaps.join(', '),
     );
   for (const file of manualBrowser)
     console.warn('::warning::Manual browser acceptance not run under ordinary CI: ' + file);
@@ -449,7 +463,8 @@ function run(
     } catch (error) {
       outcome = { ok: false, status: null, error: error?.message || String(error) };
     }
-    const detail = typeof outcome === 'boolean' ? { ok: outcome, status: outcome ? 0 : 1 } : outcome;
+    const detail =
+      typeof outcome === 'boolean' ? { ok: outcome, status: outcome ? 0 : 1 } : outcome;
     const ok = !!detail?.ok;
     checks.push({
       file,

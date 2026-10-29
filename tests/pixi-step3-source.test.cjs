@@ -57,8 +57,10 @@ assert(app.includes("addEventListener('pagehide'"),
 assert(pixi.includes('scene.unregisterTexture(body.id)'),
   'Area transitions must free obsolete Pixi textures');
 assert(pixi.includes("backingRatio + ':' + zoom + ':' + key + ':' + current.zoneId") &&
-  pixi.includes('imageBytes > trimAt') && pixi.includes('evictUnused(protectedRevisions'),
-  'Zone, zoom and pixel-density raster identities must reuse safely under a bounded LRU');
+  pixi.includes('evictUnused(protectedRevisions') &&
+  pixi.includes('imageBytes + bytes > proceduralBudget') &&
+  !pixi.includes('if (imageBytes > trimAt && !nearActiveFight(current))'),
+  'Zoom/density/zone raster identities must retain art until emergency allocation pressure');
 // Performance instrumentation is presentation-only, not a new FPS policy.
 const runtimeSource = read('src/prototype/runtime.js');
 assert(app.includes('pixiAttempted: false'), 'Pixi draw samples must be explicitly identified');

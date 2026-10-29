@@ -7,21 +7,42 @@ const crypto = require('node:crypto'),
   zlib = require('node:zlib');
 const { rng, candidate, clone } = require('./fixtures.cjs');
 const root = path.resolve(__dirname, '../..');
-const out = path.join(root, 'docs/evidence/greenwood-gva-20261028');
+const revised = process.argv.includes('--revised');
+const out = path.join(
+  root,
+  'docs/evidence/' + (revised ? 'greenwood-revised-20261028' : 'greenwood-gva-20261028'),
+);
+fs.mkdirSync(out, { recursive: true });
 const seeds = [0x47564101, 0x47564102, 0x47564103, 0x47564104];
 if (!process.argv.includes('--size')) {
   fs.mkdirSync(out, { recursive: true });
-  cp.execFileSync(process.execPath, [path.join(__dirname, 'make-saves.cjs')], { stdio: 'inherit' });
+  // Preserve the archived immutable input bytes; rebuilding a fixture must be explicit.
   for (const size of [2700, 3200, 3400])
     cp.execFileSync(process.execPath, [__filename, '--size', String(size)], { stdio: 'inherit' });
   process.exit(0);
 }
 const size = Number(process.argv[process.argv.indexOf('--size') + 1]);
-const C = require('../../src/prototype/engine.js');
+const C = require('./fixtures.cjs').loadRuntime(size, revised);
 const inputs = JSON.parse(
-  zlib.gunzipSync(fs.readFileSync(path.join(out, 'synthetic-v4-inputs.json.gz'))),
+  zlib.gunzipSync(
+    fs.readFileSync(
+      path.join(root, 'docs/evidence/greenwood-gva-20261028/synthetic-v4-inputs.json.gz'),
+    ),
+  ),
 );
-const plan = candidate(C, size),
+const plan = revised
+    ? (() => {
+        const G = require('../../src/prototype/greenwood');
+        const cfg = C.rules.greenwoodLayout;
+        G.install(C, { D: C.data, R: C.rules });
+        return {
+          ...cfg,
+          ...G.projection(size),
+          proposal:
+            'revised reserved parcels; versioned old-v4 migration enabled in isolated process',
+        };
+      })()
+    : candidate(C, size),
   R = C.rules;
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
   round = (n) => Math.round(n * 100) / 100;
@@ -384,10 +405,11 @@ for (const [name, raw] of saves) {
         .map((p) => p.id)
         .filter((id) => !once.zones.vale.props.some((p) => p.id === id)),
       routes: census(g, name).routes.map(({ points, ...r }) => r),
-      migrationBoundary:
-        size === 2700
-          ? 'unchanged-source restore'
-          : 'deliberately unadapted 2700 save under proposed geography; diagnostic, NOT migration acceptance',
+      migrationBoundary: revised
+        ? 'versioned Greenwood pre-prune migration; other inherited legacy migrations remain active'
+        : size === 2700
+          ? 'current-source baseline geometry restore'
+          : 'unadapted expansion diagnostic; NOT migration acceptance',
     });
   } catch (e) {
     saveResults.push({ name, error: e.stack });
@@ -398,8 +420,8 @@ const report = {
   worlds,
   saves: saveResults,
   genuinePlayerHistoricalSavesAvailable: false,
-  stageAComplete: false,
-  selectedSize: null,
+  stageAComplete: revised && size === 3200,
+  selectedSize: revised && size === 3200 ? 3200 : null,
 };
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(

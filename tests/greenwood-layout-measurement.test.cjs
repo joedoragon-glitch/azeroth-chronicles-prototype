@@ -18,7 +18,7 @@ for (const size of [2700, 3200, 3400]) {
       [
         '-e',
         `
- const C=require('./src/prototype/engine.js');
+ const C=require('./tools/greenwood-layout/fixtures.cjs').loadRuntime();
  const {rng,candidate}=require('./tools/greenwood-layout/fixtures.cjs');
  const other=JSON.stringify({regions:C.data.regions.slice(1),terrain:C.rules.terrain.slice(1),sites:C.rules.sites.slice(1)});
  const original={count:C.data.regions[0].enemy_count,rewards:C.rules.tributePlans.vale,house:C.rules.settlementLayouts.major};

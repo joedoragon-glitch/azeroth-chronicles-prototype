@@ -8,18 +8,30 @@ const fs = require('node:fs'),
 const { createCanvas } = require('@napi-rs/canvas'),
   sharp = require('sharp');
 const { rng, candidate } = require('./fixtures.cjs');
-const out = path.resolve(__dirname, '../../docs/evidence/greenwood-gva-20261028');
+const revised = process.argv.includes('--revised');
+const out = path.resolve(
+  __dirname,
+  '../../docs/evidence/' + (revised ? 'greenwood-revised-20261028' : 'greenwood-gva-20261028'),
+);
+fs.mkdirSync(out, { recursive: true });
 if (!process.argv.includes('--size')) {
   for (const size of [2700, 3200, 3400])
     cp.execFileSync(process.execPath, [__filename, '--size', String(size)], { stdio: 'inherit' });
   process.exit(0);
 }
 const size = Number(process.argv[process.argv.indexOf('--size') + 1]);
-const C = require('../../src/prototype/engine'),
+const C = require('./fixtures.cjs').loadRuntime(size, revised),
   V = require('../../src/prototype/visuals'),
   FX = require('../../src/prototype/combat-visuals'),
   Renderer = require('../../src/prototype/renderer');
-const plan = candidate(C, size),
+const plan = revised
+    ? (() => {
+        const G = require('../../src/prototype/greenwood');
+        // Tables already configured by loadRuntime before native installation.
+        G.install(C, { D: C.data, R: C.rules });
+        return { proposal: 'revised reserved-parcel comparison' };
+      })()
+    : candidate(C, size),
   g = new C('normal', 'paladin', rng(0x47564101));
 for (let j = 0; j < 120; j++) g.tick(0.1);
 const z = g.zone(),

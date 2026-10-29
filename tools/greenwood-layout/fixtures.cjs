@@ -103,4 +103,15 @@ function candidate(C, size) {
       'west-bank-weighted anchor redistribution; native local footprints, enemy counts and rewards retained; NOT a save migration',
   };
 }
-module.exports = { rng, candidate, clone };
+// Comparison dimensions are selected before the native engine installs the
+// production layout. Version zero disables only Greenwood's new layout in this
+// isolated Node process; it is never a game preference or a save schema value.
+function loadRuntime(size = 2700, revised = false) {
+  const D = require('../../src/prototype/data.js'),
+    R = require('../../src/prototype/rules.js');
+  if (Object.hasOwn(R, 'greenwoodLayout')) throw Error('Load one comparison per process');
+  if (revised) require('../../src/prototype/greenwood.js').configure(D, R, size);
+  else R.greenwoodLayout = { version: 0, size: 2700 };
+  return require('../../src/prototype/engine.js');
+}
+module.exports = { rng, candidate, clone, loadRuntime };

@@ -3,10 +3,13 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const selectedRegion = process.argv.find((a) => a.startsWith('--region='))?.slice(9);
+const regions = Campaign.data.regions.filter((r) => !selectedRegion || r.id === selectedRegion);
+assert(regions.length, 'unknown region selection');
 let routes = 0;
 let inspected = 0;
 
-for (const region of Campaign.data.regions) {
+for (const region of regions) {
   const game = new Campaign();
   game.enter(region.id);
   const zone = game.zone();
@@ -20,40 +23,55 @@ for (const region of Campaign.data.regions) {
 
   // Bridges can connect earlier spurs from either end. Validate the completed
   // geometric network, including segment-interior joins, independently of order.
-  const touches = (point, path) => path.some((p, j) => j &&
-    game.distanceToSegment(point, path[j - 1], p) < 1);
-  const connected = new Set(zone.roads.map((road, j) => touches(town, road) ? j : -1)
-    .filter(j => j >= 0));
-  for (let grew = true; grew;) {
+  const touches = (point, path) =>
+    path.some((p, j) => j && game.distanceToSegment(point, path[j - 1], p) < 1);
+  const connected = new Set(
+    zone.roads.map((road, j) => (touches(town, road) ? j : -1)).filter((j) => j >= 0),
+  );
+  for (let grew = true; grew; ) {
     grew = false;
     zone.roads.forEach((road, j) => {
       if (connected.has(j)) return;
-      if ([...connected].some(k => road.some(p => touches(p, zone.roads[k])) ||
-          zone.roads[k].some(p => touches(p, road)))) {
+      if (
+        [...connected].some(
+          (k) =>
+            road.some((p) => touches(p, zone.roads[k])) ||
+            zone.roads[k].some((p) => touches(p, road)),
+        )
+      ) {
         connected.add(j);
         grew = true;
       }
     });
   }
-  assert.equal(connected.size, zone.roads.length,
-    region.id + ' every road belongs to the town-connected network');
+  assert.equal(
+    connected.size,
+    zone.roads.length,
+    region.id + ' every road belongs to the town-connected network',
+  );
   for (const road of zone.roads) {
     assert(road.length > 1, region.id + ' has no empty streets');
     for (let j = 1; j < road.length; j++) {
-      assert(game.clearSegment(road[j - 1], road[j], 15),
-        region.id + ' road crosses collision geometry');
+      assert(
+        game.clearSegment(road[j - 1], road[j], 15),
+        region.id + ' road crosses collision geometry',
+      );
     }
     routes++;
   }
-  assert(zone.roads.some((road) => distance(road.at(-1), hamlet) < 2),
-    region.id + ' hamlet must be connected to town');
+  assert(
+    zone.roads.some((road) => distance(road.at(-1), hamlet) < 2),
+    region.id + ' hamlet must be connected to town',
+  );
   // Every authored village, named landmark, monster habitation and
   // occupying district needs a legible accessible street/approach.
   const R = Campaign.rules;
   const access = (id, x, y, limit = 260) => {
     const actual = game.distanceToRoad(zone, { x, y });
-    assert(actual <= limit,
-      region.id + ' ' + id + ' lacks road access (' + Math.round(actual) + ')');
+    assert(
+      actual <= limit,
+      region.id + ' ' + id + ' lacks road access (' + Math.round(actual) + ')',
+    );
   };
   access('main dungeon', Campaign.data.entrances[i][0], Campaign.data.entrances[i][1]);
   for (const [id, , x, y] of R.sites[i]) {
@@ -85,25 +103,43 @@ for (const region of Campaign.data.regions) {
     if (prop.roadTrace) continue; // Only explicitly flat road ruts / surface repairs may remain.
     const required = game.roadSetback(prop);
     const actual = game.distanceToRoad(zone, prop);
-    assert(actual + 0.01 >= required,
-      region.id + ' road obstruction ' + prop.id + ' (' + (prop.structure || prop.icon) +
-      ') at ' + Math.round(actual) + ' vs setback ' + required);
+    assert(
+      actual + 0.01 >= required,
+      region.id +
+        ' road obstruction ' +
+        prop.id +
+        ' (' +
+        (prop.structure || prop.icon) +
+        ') at ' +
+        Math.round(actual) +
+        ' vs setback ' +
+        required,
+    );
     inspected++;
   }
   for (const [id, settlementCenter, setback] of [
-    ['rest', town, 190], ['minor', hamlet, 180],
-    ['board', town, 95], ['supplier', town, 92], ['recruiter', town, 92],
+    ['rest', town, 190],
+    ['minor', hamlet, 180],
+    ['board', town, 95],
+    ['supplier', town, 92],
+    ['recruiter', town, 92],
   ]) {
     const npc = zone.npcs.find((n) => n.id === id);
     if (!npc) continue;
-    assert(game.distanceToRoad(zone, npc) + .01 >= setback,
-      region.id + ' ' + id + ' must stand beside a street, not in it');
-    assert(distance(npc, settlementCenter) < 460,
-      region.id + ' ' + id + ' must remain in its neighborhood');
+    assert(
+      game.distanceToRoad(zone, npc) + 0.01 >= setback,
+      region.id + ' ' + id + ' must stand beside a street, not in it',
+    );
+    assert(
+      distance(npc, settlementCenter) < 460,
+      region.id + ' ' + id + ' must remain in its neighborhood',
+    );
     if (id === 'rest' || id === 'minor') {
       const size = region.size;
-      assert(Math.min(npc.x, npc.y, size - npc.x, size - npc.y) >= 115,
-        region.id + ' refuge artwork must fit within its world boundary');
+      assert(
+        Math.min(npc.x, npc.y, size - npc.x, size - npc.y) >= 115,
+        region.id + ' refuge artwork must fit within its world boundary',
+      );
     }
   }
   const migrated = game.snapshot();
@@ -114,13 +150,24 @@ for (const region of Campaign.data.regions) {
   const rest = oldZone.npcs.find((n) => n.id === 'rest');
   Object.assign(rest, town);
   oldZone.props.push({
-    id: 'historical-cart-' + region.id, x: town.x + 10, y: town.y + 10,
-    r: 0, decorative: true, structure: 'cart',
+    id: 'historical-cart-' + region.id,
+    x: town.x + 10,
+    y: town.y + 10,
+    r: 0,
+    decorative: true,
+    structure: 'cart',
   });
   oldZone.buildings.push({
     id: 'historical-barracks-' + region.id,
-    kind: 'barracks', x: town.x, y: town.y, progress: 4, queue: 0,
-    queueType: null, full: true, upgradeProgress: 4, upgradePaid: true,
+    kind: 'barracks',
+    x: town.x,
+    y: town.y,
+    progress: 4,
+    queue: 0,
+    queueType: null,
+    full: true,
+    upgradeProgress: 4,
+    upgradePaid: true,
   });
   const originalGold = migrated.hero.gold;
   const restored = Campaign.restore(migrated);
@@ -131,21 +178,41 @@ for (const region of Campaign.data.regions) {
   assert.equal(restoredZone.streetClearanceVersion, 3);
   const oldCart = restoredZone.props.find((p) => p.id === 'historical-cart-' + region.id);
   assert(oldCart, region.id + ' old scenery was preserved');
-  assert(restored.distanceToRoad(restoredZone, oldCart) >= restored.roadSetback(oldCart),
-    region.id + ' historical clutter moved off road');
+  assert(
+    restored.distanceToRoad(restoredZone, oldCart) >= restored.roadSetback(oldCart),
+    region.id + ' historical clutter moved off road',
+  );
   const priorBarracks = restoredZone.buildings.find(
     (b) => b.id === 'historical-barracks-' + region.id,
   );
-  assert(priorBarracks && priorBarracks.progress === 4 && priorBarracks.full,
-    region.id + ' old barracks preserve construction/upgrades');
-  assert(restored.distanceToRoad(restoredZone, priorBarracks) >= 175,
-    region.id + ' historical barracks moved off the street');
-  assert(restored.distanceToRoad(restoredZone, restoredZone.npcs.find((n) => n.id === 'rest'))  >= 190,
-    region.id + ' restored refuge not on the central avenue');
+  assert(
+    priorBarracks && priorBarracks.progress === 4 && priorBarracks.full,
+    region.id + ' old barracks preserve construction/upgrades',
+  );
+  assert(
+    restored.distanceToRoad(restoredZone, priorBarracks) >= 175,
+    region.id + ' historical barracks moved off the street',
+  );
+  assert(
+    restored.distanceToRoad(
+      restoredZone,
+      restoredZone.npcs.find((n) => n.id === 'rest'),
+    ) >= 190,
+    region.id + ' restored refuge not on the central avenue',
+  );
 }
 const construction = new Campaign();
 assert(construction.build(), 'a new barracks finds a viable plot away from Millhaven roads');
-assert(construction.distanceToRoad(construction.zone(), construction.zone().buildings[0]) >= 175,
-  'new construction cannot obstruct a planned road');
-console.log('PASS ' + Campaign.data.regions.length + ' settlement street plans, ' +
-  routes + ' connected routes, ' + inspected + ' roadside props and historical save migration');
+assert(
+  construction.distanceToRoad(construction.zone(), construction.zone().buildings[0]) >= 175,
+  'new construction cannot obstruct a planned road',
+);
+console.log(
+  'PASS ' +
+    Campaign.data.regions.length +
+    ' settlement street plans, ' +
+    routes +
+    ' connected routes, ' +
+    inspected +
+    ' roadside props and historical save migration',
+);

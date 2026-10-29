@@ -31,25 +31,10 @@
     ringLife: 1.6,
     ringHalfWidth: 25,
   };
-  const actorSpacing = {
-    radius: 14,
-    heroRadius: 14,
-    largeRadius: 20,
-    bossRadius: 26,
-    mountedRadius: 23,
-    cellSize: 96,
-    tolerance: 0.75,
-    separationSpeed: 85,
-    congestionSeconds: 0.65,
-    relaxSeconds: 0.35,
-    escapeBlockedSeconds: 1,
-    escapeSeconds: 1.2,
-    slowFrameMs: 40,
-    slowFrameSeconds: 0.5,
-    pressureBlockedSeconds: 0.2,
-    routeRetrySeconds: 1.3,
-    movementPlansPerTick: 4,
-  };
+  // Combat hit detection and terrain-safe placement still use these radii.
+  // No movement/body-blocking code consumes them.
+  const actorContactRadii = { normal: 14, hero: 14, large: 20, boss: 26, mounted: 23 };
+  const navigationPlanning = { routeRetrySeconds: 1.3, movementPlansPerTick: 4 };
   // Canonical visible melee loadouts, shared by real strike metadata and expression.
   const enemyMeleeKits = {
     species: {
@@ -7739,7 +7724,8 @@
     }),
     balance,
     combatGeometry,
-    actorSpacing,
+    navigationPlanning,
+    actorContactRadii,
     enemyMeleeKits,
     enemyMeleeEquipment,
     arenaPlacement,

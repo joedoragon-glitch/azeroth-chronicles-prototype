@@ -11,7 +11,8 @@ const game = {
   s:{rescued:{},loot:[],projectiles:[],throneClaimed:false,statistics:{deaths:0}},
   zone:()=>({props:game.props||[],enemies:game.enemies||[],buildings:[]}),
   visibleNPCs:()=>[],visibleResourceNodes:()=>[],activeLivingParty:()=>[],
-  regionIndex:()=>0,isDungeon:()=>false,supplyRoom:()=>false,
+  regionIndex:()=>game.zoneId==='highlands'?1:0,
+  isDungeon:()=>!!game.inDungeon,supplyRoom:()=>false,
   sideDungeon:()=>false,night:()=>false,daylightPhase:()=>({darkness:0})
 };
 const view={width:912,height:420}, platform={
@@ -92,7 +93,7 @@ const textureFrom=image=>({source:{width:image.width,height:image.height,update(
   destroy(releaseSource){if(releaseSource)destroyedProcedural++}
 });
 const runtime={
-  Campaign:{rules:{terrain:[]}},
+  Campaign:{rules:{terrain:[]}, data:{regions:[{id:'vale'},{id:'highlands'}]}},
   PIXI:{
     Application,PrepareSystem:class PrepareSystem{},
     extensions:{add(){prepareRegistrations++;}},
@@ -271,18 +272,67 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(inits.length,1,'resize must reuse the same GPU application/context');
   assert.equal(resizes.at(-1),1,'resized GPU must match Canvas density');
   assert.equal(gpu.status().loadedTextures,1,'approved sprites must survive viewport rebuild');
+  assert.equal(gpu.status().proceduralEvictions,evictionsBeforeQuality,
+    'viewport rebuild does not throw away cached overworld artwork');
   // Normalizing back to the original landscape viewport is also safe.
   view.width=912;view.height=420;
   canvasSurface.width=912;canvasSurface.height=420;
   gpu.draw();
   assert.equal(gpu.status().active,true);
-  // Simulate region travel without altering saved combat state. Procedural
-  // GPU textures from the previous region must be released before rebuilding.
+  game.zoneSize=()=>200; // Tiny world keeps the atlas test deterministic.
+  // A whole-region preparation test: a prop well outside even the previous
+  // 4000-pixel lookahead is still baked and GPU-uploaded on arrival.
+  game.zoneId='vale';
+  game.props=[{id:'far-outdoor',x:9200,y:8100,structure:'lumber-pile'}];
+  const beforeEntireRegion=gpu.status().proceduralBakes;
+  assert.equal(await gpu.warmArrival(),true,
+    'active region completion awaits all known outdoor procedural art');
+  assert(gpu.status().terrainTilesPrepared>0,
+    'complete outdoor region terrain tiles are painted during loading');
+  assert.equal(gpu.status().cachedTerrainRegion,'vale');
+  assert.equal([...gpu.status().cachedTerrainZones].join(','),'vale');
+  assert(gpu.status().proceduralBakes>beforeEntireRegion,
+    'entire region, not a margin around the starting camera, is prepared');
+  const retainedOutdoor=gpu.status().proceduralBakes;
+  const retainedBytes=gpu.status().proceduralBytes;
+  // Dungeon admission must neither remove the overworld graphics nor
+  // require a future replay of the exterior's expensive original painter.
+  game.zoneId='crypt';game.inDungeon=true;
+  game.props=[{id:'far-crypt',x:9200,y:8100,structure:'lumber-pile'}];
+  gpu.draw();
+  assert.equal(await gpu.warmArrival(),true,
+    'whole admitted dungeon prepares behind its own loading surface');
+  assert(gpu.status().cachedTerrainZones.includes('vale') &&
+    gpu.status().cachedTerrainZones.includes('crypt'),
+    'interior cache must not throw away the exterior terrain tiles');
+  assert(gpu.status().proceduralBytes>retainedBytes,
+    'dungeon graphics are added without destroying the outdoor graphics');
+  game.zoneId='vale';game.inDungeon=false;
+  game.props=[{id:'far-outdoor',x:9200,y:8100,structure:'lumber-pile'}];
+  const revisitedBakes=gpu.status().proceduralBakes;
+  const beforeTileReuse=gpu.status().terrainTileReuses;
+  const previousRepaints=gpu.status().backgroundRepaints;
+  gpu.draw();
+  assert.equal(await gpu.warmArrival(),true);
+  assert(gpu.status().terrainTileReuses>beforeTileReuse,
+    'return must actually composite retained exterior tiles');
+  assert.equal(gpu.status().backgroundRepaints, previousRepaints,
+    'return must not invoke expensive original terrain painting');
+  assert.equal(gpu.status().cachedTerrainRegion,'vale');
+  assert.equal(gpu.status().proceduralBakes,revisitedBakes,
+    'return to overworld reuses the original prepared region artwork');
+  assert(gpu.status().proceduralBakes>retainedOutdoor,
+    'the newly admitted dungeon had its own cached graphics');
+  // Simulate another region without altering saved combat state.
   game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
   game.zoneId='highlands';
   gpu.draw();
-  assert.equal(gpu.status().proceduralTextures,1,
-    'prior density and viewport changes may legitimately clear old artwork');
+  assert.equal(await gpu.warmArrival(),true);
+  assert.equal(gpu.status().cachedTerrainRegion,'highlands');
+  assert.equal([...gpu.status().cachedTerrainZones].join(','),'highlands',
+    'interregional travel replaces old exterior and dungeon terrain atlas');
+  assert(gpu.status().proceduralTextures>=3,
+    'region changes retain earlier prepared outdoor and dungeon images');
   assert(gpu.status().proceduralBytes>0);
   const initialBakes=gpu.status().proceduralBakes;
   for(const zone of ['vale','highlands','vale','highlands']){
@@ -359,52 +409,43 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'warm frames preserve sharing without rebaking the two actors');
   sharedGpu.release();
   game.props=[];
-  // Prepaint one idle CPU window without changing gameplay state.
+  // A complete region is cached during readiness. Roaming and combat do
+  // not trigger the retired idle camera-window painter or repeat native
+  // terrain rasterization; the same GPU source receives tile composites.
   game.zoneId='vale';
+  game.zoneSize=()=>2000; // Realistic extent around the test hero.
   runtime.requestIdleCallback=(cb)=>{idleCallback=cb;return 7};
   runtime.cancelIdleCallback=()=>{idleCallback=null};
   const terrainGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await terrainGpu.prepare(),true);
   terrainGpu.activate();
-  const terrainBase=terrainGpu.status().backgroundRepaints;
-  const oldX=game.hero.x, copies=backgroundCopies, updates=textureUpdates;
-  game.hero.x+=100;
-  terrainGpu.draw();
-  assert.equal(typeof idleCallback,'function','outdoor travel schedules idle terrain lookahead');
+  assert(terrainGpu.status().cachedTerrainZones.includes('vale'),
+    'full current-region background tiles were prepared before activation');
+  const terrainBase=terrainGpu.status().backgroundRepaints,
+    initialReuses=terrainGpu.status().terrainTileReuses,
+    oldX=game.hero.x, updates=textureUpdates;
+  for (const distance of [100, 40, 160]) {
+    game.hero.x+=distance;
+    terrainGpu.draw();
+  }
+  assert(terrainGpu.status().terrainTileReuses>initialReuses,
+    'movement across camera windows composites the retained region tiles');
   assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
-    'active terrain remains intact before the actual crossing');
-  const idle=idleCallback;idleCallback=null;idle();
-  assert.equal(terrainGpu.status().backgroundLookaheadPaints,1);
-  assert(terrainGpu.status().backgroundLookaheadBytes>0);
-  assert(terrainGpu.status().backgroundLookaheadBytes*2<=64*1024*1024,
-    'combined CPU terrain raster windows remain within the budget');
-  assert(stagingGroundReuseDisabled>0,'idle painter cannot retain a second ground cache');
-  game.hero.x+=40;
-  terrainGpu.draw();
-  assert.equal(terrainGpu.status().backgroundLookaheadPromotions,1,
-    'arrival reuses the terrain window prepared during idle time');
-  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
-    'camera crossing avoids an immediate full terrain rebuild');
-  assert.equal(backgroundCopies,copies+1,'prepaint is copied into existing terrain canvas');
-  assert.equal(textureUpdates,updates+1,'existing GPU source is updated in place');
-  game.hero.x+=160;
-  terrainGpu.draw();
-  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase+1,
-    'without an idle-ready window movement falls back to the complete original painter');
-  assert(terrainGpu.status().backgroundLookaheadMisses>0,
-    'fallback is recorded, not silently reported as a successful promotion');
+    'ordinary movement does not re-run full original terrain painter');
+  assert.equal(terrainGpu.status().backgroundLookaheadPaints,0,
+    'obsolete camera-window idle painter is unnecessary with complete atlas');
+  assert(textureUpdates>updates,
+    'cached tiles update the existing GPU background source in place');
   game.s.projectiles=[{id:'danger-cue'}];
   game.hero.x+=100;
-  idleCallback=null;
   terrainGpu.draw();
-  assert.equal(idleCallback,null,
-    'active combat prevents scheduling optional terrain work');
-  assert(terrainGpu.status().backgroundLookaheadSkips.combat > 0,
-    'reports the combat reason rather than only a lookahead miss');
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
+    'combat while moving continues to reuse prepared terrain');
   game.s.projectiles=[];
   terrainGpu.release();
   assert.equal(terrainGpu.status().backgroundLookaheadBytes,0);
   game.hero.x=oldX;
+  game.zoneSize=()=>200;
   delete runtime.requestIdleCallback;
   delete runtime.cancelIdleCallback;
   // Approximately 100 pixel-bytes per miniature procedural texture suffice for the
@@ -422,8 +463,8 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   tinyGpu.activate();
   const baseline=tinyGpu.status();
   assert(baseline.proceduralBytes>0 && baseline.proceduralBytes<=800);
-  // Stage 6: retain repeat-use art during combat up to the hard budget,
-  // then resume normal soft LRU cleanup when the fight ends.
+  // Reuse cached artwork both during and after combat; retire only when
+  // a genuine hard-cap allocation needs the space.
   const combatEvictions=tinyGpu.status().proceduralCacheEvictions;
   game.s.projectiles=[{id:'active-attack'}];
   game.props=[1,2,3,4,5,6,7].map(i=>({
@@ -442,8 +483,8 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   game.props=[{id:'fight-7',x:game.hero.x+92,y:game.hero.y+6,
     structure:'lumber-pile'}];
   tinyGpu.draw();
-  assert(tinyGpu.status().proceduralBytes<fightCache.proceduralBytes,
-    'non-combat frames resume ordinary LRU reclamation');
+  assert(tinyGpu.status().proceduralBytes>=fightCache.proceduralBytes,
+    'non-combat frames retain already baked images for future reuse');
   const previousSceneTextures=destroyedProcedural;
   const seen=[];
   for(let i=1;i<=65;i++){
