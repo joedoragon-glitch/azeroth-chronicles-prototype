@@ -62,8 +62,8 @@ try {
     for(let i=0;i<oldHits.length;i++) {
       assert.equal(oldHits[i].automatic,true);
       assert.equal(newHits[i].automatic,true);
-      const earlierCadence = hit === 1 ? 1 :
-        1 + R.rogueHeroFoundation.basic.criticalCadence.basicDamage;
+      const earlierCadence = 1 +
+        (hit - 1) * R.rogueHeroFoundation.basic.criticalCadence.basicDamage;
       assert(Math.abs(newHits[i].amount-oldHits[i].amount*1.2*earlierCadence)<1e-8,
         'one Level-2 critical applies to original damage, with only earlier critical cadence on later basics');
     }
