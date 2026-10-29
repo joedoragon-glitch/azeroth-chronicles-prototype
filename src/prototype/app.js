@@ -615,6 +615,8 @@
       '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se quedan cerca y se defienden sin perseguir.\nDales una nueva orden para enviarlos de nuevo.\n\nDespués: construye tu primer cuartel GRATIS.',
     'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.':
       'Recluta compañeros o recupera tu compañía.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
+    'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.':
+      'Recluta compañeros, cura las heridas del grupo por 30 coronas o recupera a los caídos.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
     'Recruit at a Barracks': 'Recluta en un cuartel',
     'Town limit: 3 companions, reserves included.':
       'Límite del pueblo: 3 compañeros, incluidas las reservas.',
@@ -623,11 +625,32 @@
     'Queued · tap to cancel. No crowns spent.': 'En cola · toca para cancelar. Sin gastar coronas.',
     'Short on crowns? Tap to queue.': '¿Te faltan coronas? Toca para dejarlo en cola.',
     'Full health for living companions.': 'Salud completa para los compañeros vivos.',
+    'Full health for party.': 'Salud completa para el grupo.',
+    'No wounds to treat.': 'No hay heridas que curar.',
+    Hero: 'Héroe',
+    'Treat wounds': 'Curar heridas',
+    'Treat wounds heals the hero and living companions for 30 crowns. Fallen companions need separate recovery. Short on crowns? Tap to queue.':
+      'Curar heridas restaura al héroe y sus compañeros vivos por 30 coronas. Los caídos necesitan recuperación aparte. ¿Te faltan coronas? Toca para dejarlo en cola.',
+    'Treat party wounds or recover fallen companions.':
+      'Cura las heridas del grupo o recupera compañeros caídos.',
+    'Your field base. Recovery → Treat wounds heals your party for 30 crowns.':
+      'Tu base de campo. Recuperación → Curar heridas restaura al grupo por 30 coronas.',
+    'Party wounds treated. Fallen companions still require recovery.':
+      'Las heridas del grupo han sido curadas. Los compañeros caídos necesitan recuperación aparte.',
+    'Wounds treated': 'Heridas curadas',
+    'Hero and wounded living companions restored to full health.':
+      'El héroe y los compañeros vivos heridos recuperaron toda su salud.',
+    'No requested party member is still wounded.':
+      'Ningún miembro del grupo solicitado sigue herido.',
+    'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain can treat party wounds for 30 crowns or recover fallen companions.':
+      'Las Pícaras no contratan Soldados ni Rangers. Encantan monstruos elegibles en combate. El capitán puede curar al grupo por 30 coronas o recuperar compañeros caídos.',
     'Safe conditions required.': 'Requiere condiciones seguras.',
     'Joins your group; full groups send recruits to reserve.':
       'Se une al grupo; si está lleno, queda en reserva.',
     'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.':
       'Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nUn Soldado o Ranger libre lo construye.',
+    'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.':
+      'Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nUn Soldado o Ranger libre lo construye.\nAl terminar: Curar heridas restaura la salud de tu grupo por 30 coronas cuando estés a salvo.',
     "Let's go": 'Vamos',
     "COMPANIONS · Recall practiced. Continue the Captain's briefing.":
       'COMPAÑEROS · Reagrupar practicado. Continúa la explicación del capitán.',
@@ -641,6 +664,8 @@
       'BASE DE CAMPO · Construcción en curso. Mantén al constructor asignado.',
     'Open ground off the road. One companion builds it.':
       'Terreno abierto fuera del camino. Un compañero lo construye.',
+    'Open ground off the road. One companion builds it. Once built: Treat wounds heals the party for 30 crowns.':
+      'Terreno abierto fuera del camino. Un compañero lo construye. Al terminar, Curar heridas restaura la salud del grupo por 30 coronas.',
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
   });
@@ -1380,7 +1405,8 @@
     if (/^Queued (recovery|treatment): /.test(piece))
       return piece
         .replace('Queued recovery: ', 'Recuperación en cola: ')
-        .replace('Queued treatment: ', 'Tratamiento en cola: ');
+        .replace('Queued treatment: ', 'Tratamiento en cola: ')
+        .replace(': Hero', ': Héroe');
     if (/^Cancel queued (Soldier|Ranger)/.test(piece))
       return piece.replace('Cancel queued ', 'Cancelar en cola: ').replace('Soldier', 'Soldado');
     if (/^Queued recruitment: /.test(piece))
@@ -1393,9 +1419,9 @@
         .replace('Recruit ', 'Reclutar ')
         .replace('Soldier', 'Soldado')
         .replace('crowns', 'coronas');
-    if (/^Treat wounded companions/.test(piece))
+    if (/^Treat wounds/.test(piece))
       return piece
-        .replace('Treat wounded companions', 'Curar compañeros heridos')
+        .replace('Treat wounds', 'Curar heridas')
         .replace('crowns', 'coronas');
     if (/^Recover (?!fallen companion|Dark Lord)/.test(piece))
       return piece.replace('Recover ', 'Recuperar ');
@@ -4826,7 +4852,7 @@
           ? game.isDungeon()
             ? 'Build in the field, outside dungeons'
             : 'An idle active Soldier or Ranger is needed'
-          : 'Open ground off the road. One companion builds it.',
+          : 'Open ground off the road. One companion builds it. Once built: Treat wounds heals the party for 30 crowns.',
         !canBuild || game.hero.gold < cost,
         !!game.s.quests['quest-barracks']?.barracksBriefed &&
           !game.s.quests['quest-barracks'].paid &&
