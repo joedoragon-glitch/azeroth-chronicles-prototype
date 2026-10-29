@@ -11,7 +11,8 @@ const game = {
   s:{rescued:{},loot:[],projectiles:[],throneClaimed:false,statistics:{deaths:0}},
   zone:()=>({props:game.props||[],enemies:game.enemies||[],buildings:[]}),
   visibleNPCs:()=>[],visibleResourceNodes:()=>[],activeLivingParty:()=>[],
-  regionIndex:()=>0,isDungeon:()=>!!game.inDungeon,supplyRoom:()=>false,
+  regionIndex:()=>game.zoneId==='highlands'?1:0,
+  isDungeon:()=>!!game.inDungeon,supplyRoom:()=>false,
   sideDungeon:()=>false,night:()=>false,daylightPhase:()=>({darkness:0})
 };
 const view={width:912,height:420}, platform={
@@ -92,7 +93,7 @@ const textureFrom=image=>({source:{width:image.width,height:image.height,update(
   destroy(releaseSource){if(releaseSource)destroyedProcedural++}
 });
 const runtime={
-  Campaign:{rules:{terrain:[]}},
+  Campaign:{rules:{terrain:[]}, data:{regions:[{id:'vale'},{id:'highlands'}]}},
   PIXI:{
     Application,PrepareSystem:class PrepareSystem{},
     extensions:{add(){prepareRegistrations++;}},
@@ -278,6 +279,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   canvasSurface.width=912;canvasSurface.height=420;
   gpu.draw();
   assert.equal(gpu.status().active,true);
+  game.zoneSize=()=>200; // Tiny world keeps the atlas test deterministic.
   // A whole-region preparation test: a prop well outside even the previous
   // 4000-pixel lookahead is still baked and GPU-uploaded on arrival.
   game.zoneId='vale';
@@ -285,6 +287,10 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   const beforeEntireRegion=gpu.status().proceduralBakes;
   assert.equal(await gpu.warmArrival(),true,
     'active region completion awaits all known outdoor procedural art');
+  assert(gpu.status().terrainTilesPrepared>0,
+    'complete outdoor region terrain tiles are painted during loading');
+  assert.equal(gpu.status().cachedTerrainRegion,'vale');
+  assert.equal([...gpu.status().cachedTerrainZones].join(','),'vale');
   assert(gpu.status().proceduralBakes>beforeEntireRegion,
     'entire region, not a margin around the starting camera, is prepared');
   const retainedOutdoor=gpu.status().proceduralBakes;
@@ -296,13 +302,20 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   gpu.draw();
   assert.equal(await gpu.warmArrival(),true,
     'whole admitted dungeon prepares behind its own loading surface');
+  assert(gpu.status().cachedTerrainZones.includes('vale') &&
+    gpu.status().cachedTerrainZones.includes('crypt'),
+    'interior cache must not throw away the exterior terrain tiles');
   assert(gpu.status().proceduralBytes>retainedBytes,
     'dungeon graphics are added without destroying the outdoor graphics');
   game.zoneId='vale';game.inDungeon=false;
   game.props=[{id:'far-outdoor',x:9200,y:8100,structure:'lumber-pile'}];
   const revisitedBakes=gpu.status().proceduralBakes;
+  const beforeTileReuse=gpu.status().terrainTileReuses;
   gpu.draw();
   assert.equal(await gpu.warmArrival(),true);
+  assert(gpu.status().terrainTileReuses>=beforeTileReuse,
+    'return uses already painted exterior tiles');
+  assert.equal(gpu.status().cachedTerrainRegion,'vale');
   assert.equal(gpu.status().proceduralBakes,revisitedBakes,
     'return to overworld reuses the original prepared region artwork');
   assert(gpu.status().proceduralBakes>retainedOutdoor,
@@ -311,6 +324,10 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
   game.zoneId='highlands';
   gpu.draw();
+  assert.equal(await gpu.warmArrival(),true);
+  assert.equal(gpu.status().cachedTerrainRegion,'highlands');
+  assert.equal([...gpu.status().cachedTerrainZones].join(','),'highlands',
+    'interregional travel replaces old exterior and dungeon terrain atlas');
   assert(gpu.status().proceduralTextures>=3,
     'region changes retain earlier prepared outdoor and dungeon images');
   assert(gpu.status().proceduralBytes>0);
