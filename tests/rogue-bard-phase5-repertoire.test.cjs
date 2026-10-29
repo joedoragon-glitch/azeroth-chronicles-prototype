@@ -350,6 +350,71 @@ try {
   assert(skill5Guide.note.includes('even if they enter after placement'));
   assert(skill5Guide.tap.metrics.some(m=>m.key==='duration'&&
     m.label==='Station lifetime'));
+
+  // Audit actual effect consumption, not merely the presence of buff records.
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[0]=1;
+    assert(campaign.cast(1,sample.foe.id));
+    campaign.rogueCharmAttempt=()=>false;
+    hero.basicCd=0;
+    const previous=sample.foe.hp;
+    assert(campaign.castRogueBasic(sample.foe.id));
+    const actual=previous-sample.foe.hp;
+    const expected=(campaign.power()+12)*R.rogueHeroFoundation.basic.primaryMultiplier*1.05;
+    assert(Math.abs(actual-expected)<1e-6,
+      'Skill 1 heroine refrain actually increases her automatic basic hit');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[2]=1;
+    assert(campaign.cast(3,sample.foe.id));
+    assert(campaign.beginPartyCharge(hero,1));
+    assert.equal(campaign.recordPartyChargeDamage(hero,hero.maxHp*.5),false,
+      'Skill 3 self protection prevents nonlethal preparation interruption');
+    campaign.s.time+=R.roguePerformances[3].tap.seconds+.1;
+    assert.equal(campaign.recordPartyChargeDamage(hero,hero.maxHp*.5),true,
+      'interruption returns after the timed self-buff expires');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.hp-=25;
+    hero.skills[3]=1;
+    assert(campaign.cast(4,sample.foe.id));
+    const before=hero.hp;
+    campaign.s.time+=.5;
+    campaign.advanceRogueMending(.5);
+    assert(hero.hp>before,'Skill 4 heals Rogue herself with a finite budget');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[6]=1;
+    assert(campaign.cast(7,sample.foe.id));
+    const first=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero'));
+    const buffed=first-sample.foe.hp;
+    campaign.s.time+=R.roguePerformances[7].tap.seconds+.1;
+    const second=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero'));
+    const unbuffed=second-sample.foe.hp;
+    assert(Math.abs(buffed/unbuffed-1.05)<1e-6,
+      'Skill 7 heroine damage multiplier applies in the shared damage resolver');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[7]=1;
+    const beforeChance=campaign.criticalPartyChance('hero');
+    assert(campaign.cast(8,sample.foe.id));
+    assert(Math.abs(campaign.criticalPartyChance('hero')-beforeChance-.04)<1e-8);
+    const first=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero'));
+    const special=first-sample.foe.hp;
+    const second=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero',{automaticBasic:true}));
+    const basic=second-sample.foe.hp;
+    assert(Math.abs(special/basic-1.04)<1e-6,
+      'Skill 8 heroine bonus affects special hits but not automatic basics');
+  }
   // Non-Rogue classes retain their exact original cooldown/movement behavior.
   for(const cls of ['paladin','mage','ranger']) {
     const normal = new Campaign('normal',cls,()=>0.9);
