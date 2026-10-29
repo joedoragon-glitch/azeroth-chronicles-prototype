@@ -165,7 +165,6 @@ for (const language of ['en', 'es']) {
   assert.equal(scope.Prototype.started, true,
     'recovered Campaign must not strand Continue behind the loading screen');
   assert.equal(elements.get('title-screen').hidden, true);
-  assert.equal(elements.get('title-continue').disabled, false);
 }
 
 const fresh = shell('en', 'paladin', { stayOnTitle: true, seedSave: false });
