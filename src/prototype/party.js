@@ -2498,6 +2498,7 @@
           icon: base[2],
           cd: 0,
           masteryPoints: 0,
+          masteryGuardianKeys: [],
           skill1Cd: 0,
           skill2Cd: 0,
           skill3Cd: 0,
