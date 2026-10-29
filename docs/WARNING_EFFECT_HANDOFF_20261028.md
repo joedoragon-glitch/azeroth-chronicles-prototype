@@ -1,6 +1,6 @@
 # Combat warning-to-effect handoff — October 28, 2026
 
-**Project:** *So I Became the Dark Lord's Problem*. **Status:** draft fix in PR #578, not merged, deployed, or device-verified.
+**Project:** *So I Became the Dark Lord's Problem*. **Source:** PR #578. The PR and GitHub Actions records determine the current merge and publication status; physical-device confirmation is separately required.
 
 ## Player-facing behavior
 
@@ -24,4 +24,4 @@ This applies to ordinary ranged attacks, normal monster Rogue maneuvers, elite/b
 - `src/prototype/enemy-vfx-art.js`: actor windup presentation reads the same pending-warning gate; the existing event-owned release/travel/impact/linger effect paths are unchanged.
 - `tests/warning-effect-handoff.test.cjs`: verifies timed visibility boundaries with native Canvas pixels, ordinary Rogue casts, anonymous casts, ranged aims, Citadel transitions and release ownership of all boss families in Normal/TRUE form. Included in the quick regression runner.
 
-This entry describes an **implemented draft candidate** only. Automated CI, browser/phone playtesting, merging and publication must be reported separately after they actually occur. No version bump or release is authorized by this document.
+This entry describes the **source implementation**, not proof of publication. Record automated CI, browser/phone playtesting, merging and publication separately as they occur. No version bump or release is authorized by this document.
