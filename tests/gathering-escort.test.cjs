@@ -291,7 +291,8 @@ console.log(
       assert.equal(u.order.type, 'deposit', 'an incomplete search preserves the work order');
     } else resolved = result;
   }
-  assert(pending > 0, 'all destination routes cannot monopolize one frame');
+  assert.equal(pending, 0,
+    'a verified nearby delivery option prunes more distant destinations immediately');
   assert(resolved, 'finite route planning eventually completes');
   assert.equal(resolved.id, expected.id, 'original route-ranked deposit destination is retained');
   assert(!JSON.stringify(g.snapshot()).includes('depositPlans'),
