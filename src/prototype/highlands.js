@@ -414,7 +414,7 @@
         for (const p of work.sort((a, b) => (b.r || 0) - (a.r || 0))) {
           const k = group(p),
             raw = plots[p.id] ? point(plots[p.id]) : k ? shifted(p, k) : { x: p.x, y: p.y };
-          const fort = !!p.stronghold || /^mini-wall/.test(p.id || '');
+          const fort = !!p.stronghold; // Mini-dungeon stone walls still require a full road setback.
           const q = choose(
             raw,
             p,
@@ -570,7 +570,6 @@
           if (
             p.tributeScene ||
             p.stronghold ||
-            /^mini-wall/.test(p.id || '') ||
             this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p)
           )
             continue;
