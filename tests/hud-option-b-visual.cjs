@@ -74,6 +74,23 @@ async function capture(page,label) {
         const balance=page.locator('#hero-stats .hud-crowns');
         assert(await balance.isVisible(),config.name+' Crown counter is visible');
         assert((await balance.textContent()).includes(config.spanish?'42.424':'42,424'),config.name+' localized exact Crown count');
+        // Compare the icon's browser-rendered source against a fresh image
+        // from the *actual* world-loot painter, not a generic CSS emoji or an
+        // independently redrawn approximation.
+        const portrait=await balance.evaluate(el=>{
+          const image=getComputedStyle(el).backgroundImage;
+          const coin=document.createElement('canvas');
+          coin.width=coin.height=48;
+          const ink=coin.getContext('2d');
+          ink.setTransform(2,0,0,2,0,0);
+          PrototypeRenderer.drawCrownLoot(ink,{x:12,y:12});
+          return {image,expected:coin.toDataURL('image/png'),
+            size:getComputedStyle(el).backgroundSize,
+            padding:getComputedStyle(el).paddingLeft};
+        });
+        assert(portrait.image.includes(portrait.expected),config.name+' coin pixels match the in-world Crown painter');
+        assert.equal(portrait.size,'17px 17px',config.name+' portrait coin stays readable but compact');
+        assert.equal(portrait.padding,'19px',config.name+' portrait badge reserves horizontal room only');
         const hpText=await box(page,'#hero-stats .hp-count');
         const crownText=await box(page,'#hero-stats .hud-crowns');
         const hpDock=await box(page,'#hud');
