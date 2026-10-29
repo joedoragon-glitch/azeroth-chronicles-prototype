@@ -5449,7 +5449,7 @@
         for (const ally of group.members) {
           if (attempts++ >= 5) return false;
           const decision = this.tacticalBeginRogueRegroup(e, ally, pressure, true);
-          if (decision === null) return false; // resume this candidate on the next update
+          if (decision === null) return null; // waiting for the complete validated path
           if (decision) {
             this.event('rogueRegroup', { actor: e.id, ally: ally.id });
             return true;
@@ -5485,7 +5485,8 @@
           this.tacticalStopRogueRegroup(e);
           return false;
         }
-        if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
+        const support = this.tacticalSeekRogueSupport(e, totalPressure);
+        if (support === null || support) return true;
         // Exhausting local support is not a reason to spam an attack.
         // Field inhabitants seek remembered, more distant occupied posts.
         if (this.tacticalBeginExtendedRetreat(e)) return true;
@@ -5577,8 +5578,10 @@
         state.seekDelay -= dt;
         if (!committed && state.seekDelay <= 0) {
           state.seekDelay = 1;
-          if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
-          if (this.tacticalBeginExtendedRetreat(e)) return true;
+          const support = this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e));
+          if (support) return true;
+          if (support === null) state.seekDelay = 0; // keep fleeing, resume pending plan next update
+          else if (this.tacticalBeginExtendedRetreat(e)) return true;
         }
         const radius = this.tacticalDefenderTerritory(e);
         if (radius && dist(e, this.tacticalDefenderPost(e)) >= radius - 55) {
