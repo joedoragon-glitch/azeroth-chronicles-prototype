@@ -314,6 +314,10 @@ Ironroot stays mountains first. Its established mineral/coin economy supports th
 
 These handoffs authorize regional authoring while preserving existing campaign rescue gates, services, boss attacks, normal/TRUE progression and saves. The remaining Greenwood/Marches questions stay open, and Ironroot interpretations remain available for revision. This does not declare all three regions complete.
 
+#### Greenwood flagship selection — 29 October 2026
+
+The measured 3200-unit layout in #570 is selected over the preserved 2700 baseline and rejected 3400 alternative. Retain the approved 50-decision Piedmont-inspired authorial register, one western mill pond and working mill, cultivated orchard stages and separate decorative working cellar, both crossings and Scornfang's existing Treasury identity. Source migration 1 and scene revision 2 preserve v4 progress without double expansion; six quests, 32 ordinary outdoor enemies and 640 finite outdoor crowns remain. Existing Old Orchard Cellars, Thornfang/Mira and the estate's unfinished status are unchanged. The owner defers first-hour class/difficulty/companion judgment to post-release playtest and directs that unrelated-region test findings be documented separately rather than delay this implementation. Publication and device acceptance are recorded only in [Development state](DEVELOPMENT_STATE.md).
+
 #### Structure scale, edge-space and encounter density · 9 October 2026
 
 Joel extends the 150% sprite pre-pass to houses and interior-linked entrances, all trees including the Abandoned Orchard, player-used zone transports, Dark Lord oppressive architecture, and related major world features. Audit proportion and detail; generally consider 25–50% more **object world-space display size** where justified by hero-relative scale. Do not merely enlarge older 100% raster exports. Add readable structural detail through original-master exports/regeneration.

@@ -1,3 +1,5 @@
+> **29 October implementation reconciliation:** #570 implements the selected 3200-unit layout, source migration 1 and scene revision 2. The authorial decisions remain unchanged. This document preserves its original design/audit context; [current handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md) and [Development state](DEVELOPMENT_STATE.md) own current engineering, owner authorization, release and pending playtest status. Earlier directions to start measurement or await implementation are historical.
+
 # Greenwood Vale — approved owner art-direction decisions
 
 **28 October 2026 · Authorial decision register · 50/50 selections resolved, including C06**

@@ -1,3 +1,5 @@
+> **Current integration record — 29 October 2026:** The additional immediate pre-merge source is `main@87792f6441c8b01b3afd25282a209b695427f649`; keep the original `recovery/greenwood-pre-flagship-20261029` branch intact. #570 carries the selected 3200 layout, source migration 1 and scene revision 2. The owner authorizes release after Greenwood-specific checks and directs unrelated failures to separate documentation. Final merge and Pages receipts belong in [Development state](DEVELOPMENT_STATE.md). The safety procedures below remain applicable; a code revert cannot reverse migrated player saves.
+
 # Greenwood Vale flagship — recovery checkpoint and rollback runbook
 
 **29 October 2026 — operational safety record.** This is a **pre-merge recovery plan**, not evidence that the flagship reconstruction has been accepted, merged, published or device-verified.

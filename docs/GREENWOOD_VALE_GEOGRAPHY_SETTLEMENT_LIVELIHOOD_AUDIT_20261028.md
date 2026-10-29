@@ -11,7 +11,7 @@ The game's official player name is **So I Became the Dark Lord's Problem**. This
 
 **28 October 2026 Work-readiness critique:** Before using this source audit as an implementation plan, read the [adversarial task-execution/acceptance audit](GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md). It distinguishes actually observed code from intended work, documents the inherited PR #544 red CI result, and specifies mandatory reproducible route/placement/save/scene gates. This is **not** new game canon, and the source inventory below remains pinned to the stated historical main SHA.
 
-## Current engineering evidence overlay — 28 October 2026
+## Historical engineering evidence overlay — 28 October 2026
 
 The historical source inventory below is preserved. [GV-A measured evidence and next action](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md#gv-a-execution-evidence-and-current-next-action) now records native 2700 plus reversible 3200/3400 experiments on main@5addd94a, with [independent disposition of all 17 quality findings](GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md#independent-implementation-preflight--28-october-2026-current-main). Actual generated service locations differ materially from the declared anchors below. Both first larger-world proposals were rejected. The later [revised 3200 implementation](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md#revised-3200-implementation-and-current-gate--draft-570), draft #570 on main@edaeee85, supersedes that checkpoint: native geometry, working mill/cellar, staged orchard, woodland, Treasury staging and v4 pre-prune migration are implemented and focused-tested. Actual browser captures and a private genuine-save summary are now available. Final pacing/performance review remains open; no merge, publication or physical-device/owner acceptance is claimed. Approved owner register and original brief remain unchanged.
 
@@ -46,7 +46,7 @@ The owner originally supplied [Greenwood Vale — Regional Identity & Implementa
 
 ## Existing geographic and civic inventory
 
-Current Greenwood Vale declared dimensions: **2,700 × 2,700 world units** (7,290,000 square world units); levels 1–4; **32 configured ordinary outdoor enemies**; **640-crown finite regional outdoor tribute pool**. World bounds, collision and the 50-unit navigation grid read regional size. Increasing the size changes actual traversal/search space and some spawn distribution, even if no combat values change.
+Historical pre-reconstruction Greenwood dimensions: **2,700 × 2,700 world units** (7,290,000 square world units); levels 1–4; **32 configured ordinary outdoor enemies**; **640-crown finite regional outdoor tribute pool**. World bounds, collision and the 50-unit navigation grid read regional size. Increasing the size changes actual traversal/search space and some spawn distribution, even if no combat values change.
 
 | ID / place | Authored anchor | Current role / preservation constraint |
 | --- | --- | --- |

@@ -1833,6 +1833,9 @@
         return 72;
       }
       clearStreetCorridors(z, finalPass = false) {
+        // Greenwood owns its final authored frontages in greenwoodFinish.
+        // This inherited-region repair must not recompose either Vale layout.
+        if (finalPass && z.id === 'vale') return;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
@@ -1945,7 +1948,16 @@
                   other !== item &&
                   dist(other, p) <
                     Math.max(
-                      96,
+                      finalPass &&
+                        [item.id, other.id].includes('board') &&
+                        [item.id, other.id].includes('rest')
+                        ? 151
+                        : 96,
+                      finalPass &&
+                        [item.id, other.id].includes('board') &&
+                        [item.id, other.id].includes('supplier')
+                        ? 116
+                        : 96,
                       (['rest', 'minor'].includes(other.id) ? 82 : 42) +
                         (['rest', 'minor'].includes(item.id) ? 36 : 0),
                     ),
