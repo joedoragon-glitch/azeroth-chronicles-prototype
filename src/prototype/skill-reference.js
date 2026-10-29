@@ -211,7 +211,7 @@
           note: (row[4] || '') + (game.hero.class === 'rogue'
             ? slot === 5
               ? ' Rogue and companions receive protection while inside the music station, even if they enter after placement. Leaving removes protection immediately; critical effects follow the same area.'
-              : ' Rogue and nearby companions receive the same friendly boon from Rogue's own circle at release. Timed boons persist for their listed duration; critical enhancements follow the same eligibility.'
+              : ' Rogue and nearby companions receive the same friendly boon from the Rogue-centered circle at release. Timed boons persist for their listed duration; critical enhancements follow the same eligibility.'
             : '') }
       : null;
   }
