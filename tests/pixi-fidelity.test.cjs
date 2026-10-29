@@ -681,6 +681,29 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   parityGpu.draw();
   assert(!frames.at(-1).some(item=>item.key.startsWith('crown-loot:')),
     'collected Crown drops must disappear immediately');
+  // Profiling must be bounded and exclusive to developer mode. The same
+  // native Pixi draw() and already-verified texture/facing logic executes.
+  assert.equal(parityGpu.status().drawCpuProfile.sampledFrames,0);
+  game.s.mode='developer';
+  for(let i=0;i<24;i++) parityGpu.draw();
+  const developerPhases=parityGpu.status().drawCpuProfile;
+  assert.equal(developerPhases.sampleEvery,12);
+  assert.equal(developerPhases.sampledFrames,2);
+  for(const name of ['viewport','resolution','background','actors','atmosphere','scene']){
+    assert(Number.isFinite(developerPhases.phases[name].p50Ms));
+    assert(Number.isFinite(developerPhases.phases[name].p95Ms));
+    assert(developerPhases.phases[name].p95Ms>=0);
+  }
+  assert.match(developerPhases.note,/not GPU time/);
+  game.s.mode='normal';
+  parityGpu.draw();
+  assert.equal(parityGpu.status().drawCpuProfile.sampledFrames,2,
+    'ordinary gameplay must not create new timing samples');
+  game.s.mode='developer';
+  for(let i=0;i<1440;i++) parityGpu.draw();
+  assert.equal(parityGpu.status().drawCpuProfile.sampledFrames,120,
+    'developer history is capped to the last 120 timed frames');
+  game.s.mode='normal';
   parityGpu.release();
   game.enemies=[];desiredHeroFacing=desiredEnemyFacing=1;
   // Overlay and Canvas use the same pause painter rather than separate text.
