@@ -485,7 +485,7 @@ for (const kind of ['recovery', 'treatment']) {
   assert.equal(firstPage.length, 8);
   opened.actions.find((x) => x.label === 'Next page').action();
   const nextPage = opened.actions.filter((x) => x.label.startsWith('Recover '));
-  assert.equal(nextPage.length, 4, 'twelve fallen companions yield eight then four choices');
+  assert.equal(nextPage.length, 3, 'eleven fallen companions yield eight then three choices');
   nextPage[2].action();
   assert.equal(g.s.companionCareRequests.recovery.companionIds.length, 1);
 }
