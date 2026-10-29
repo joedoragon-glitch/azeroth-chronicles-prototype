@@ -225,7 +225,13 @@
       greenwoodFinish(z) {
         const cfg = R.greenwoodLayout;
         const sceneVersion = cfg?.sceneVersion || cfg?.version;
-        if (z.id !== 'vale' || !cfg?.version || z.greenwoodAttemptVersion === sceneVersion) return;
+        if (z.id !== 'vale' || !cfg?.version || z.greenwoodSceneVersion === sceneVersion) return;
+        // A failed receipt is not a completed scene. Retry it once in each
+        // restored Campaign; never repeat placement on every zone() query or
+        // serialize this transient admission guard into the player's save.
+        this._greenwoodSceneAttempts ||= new WeakMap();
+        if (this._greenwoodSceneAttempts.get(z) === sceneVersion) return;
+        this._greenwoodSceneAttempts.set(z, sceneVersion);
         const previous = this.s.zone;
         this.s.zone = z.id;
         try {

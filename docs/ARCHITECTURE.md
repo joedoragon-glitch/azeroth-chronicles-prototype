@@ -54,7 +54,7 @@ The table below is intentionally **current ownership reference**, rather than an
 | --- | --- |
 | `data.js` / `rules.js` | Approved content and authoritative live balance (`rules.balance`), combat/support and authored geometry tables |
 | `field-onboarding.js` | Saved opening-field hero-first admission, silent level-2 Thornfang/Mira arrival and physical companion-triggered Thornfang withdrawal; native combat/path/reset owners resolve admitted behavior |
-| `world.js` / `greenwood.js` | Region generation and world migrations; the Greenwood owner installs authored parcels plus independent one-time geometry and scenery revisions on the same Campaign |
+| `world.js` / `greenwood.js` | Region generation and world migrations; the Greenwood owner installs authored parcels plus independent one-time geometry and scenery revisions on the same Campaign; incomplete saved scenery retries once per restored Campaign through a transient admission guard |
 | `fortifications.js` | Authored defended footprints, position-derived enemy bonuses and enemy-only wall/low-cover shot permissions; transient geometry cache |
 | `navigation.js` | Collision, line of sight, route solving, movement/following, fast-reject obstacle checks and bounded opt-in crowd diagnostics |
 | `engine.js` | Authoritative Campaign state, simulation clock, enemy AI, encounter population, death/succession and quest orchestration |

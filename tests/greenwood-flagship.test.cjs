@@ -302,3 +302,42 @@ console.log(
   );
 }
 console.log('PASS scene-only outlet correction preserves source geometry and exact second reload');
+
+// A prior rejected placement must not permanently lock the essential scene.
+{
+  const g = new C('normal', 'paladin', rng(0x47564101));
+  const raw = g.snapshot(),
+    z = raw.zones.vale;
+  z.greenwoodSceneVersion = 1;
+  z.greenwoodAttemptVersion = 2;
+  z.props = z.props.filter((p) => p.id !== 'greenwood-orchard-new');
+  z.greenwoodSceneAudit.find((p) => p.id === 'greenwood-orchard-new').placed = false;
+  const original = JSON.stringify(raw);
+  const repaired = C.restore(raw, rng(0x47564101));
+  const once = repaired.snapshot();
+  assert.equal(JSON.stringify(raw), original, 'failed-attempt backup remains untouched');
+  assert(
+    once.zones.vale.props.some((p) => p.id === 'greenwood-orchard-new'),
+    'required planting recovers from an earlier rejected placement',
+  );
+  assert.equal(
+    once.zones.vale.greenwoodSceneVersion,
+    2,
+    'only a complete realized scene earns the revision',
+  );
+  assert(!once.zones.vale.greenwoodSceneAudit.some((p) => p.essential && !p.placed));
+  for (const key of ['hero', 'quests', 'paid', 'party'])
+    assert.deepEqual(once[key], raw[key], key + ' survives scene retry');
+  for (const key of ['enemies', 'nodes', 'buildings'])
+    assert.deepEqual(once.zones.vale[key], raw.zones.vale[key], key + ' survives scene retry');
+  for (let i = 0; i < 3; i++) repaired.zone();
+  assert.deepEqual(repaired.snapshot(), once, 'ordinary zone queries do not reapply scenery');
+  assert.deepEqual(
+    C.restore(once, rng(0x47564101)).snapshot(),
+    once,
+    'completed retry is exactly stable on reload',
+  );
+}
+console.log(
+  'PASS incomplete saved scene retries essential placement without changing progress or repeating completed work',
+);
