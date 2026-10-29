@@ -119,6 +119,8 @@
         criticalCodices: {},
         // Independent, save-safe nickname rotation for automated Rogue captures.
         rogueNicknameCursor: { en: 0, es: 0 },
+        // Rogue-only preference: the published default frees field slots on defeat.
+        rogueFallenCharmSlotPolicy: 'release',
         gathered: {},
         tributeRemainder: 0,
         gatheringTarget: null,
