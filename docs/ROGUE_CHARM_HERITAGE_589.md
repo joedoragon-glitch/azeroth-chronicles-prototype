@@ -6,7 +6,7 @@
 
 ## What changes in play
 
-When the Rogue charms an ordinary eligible monster, that creature remains an individual Soldier- or Ranger-role companion with its own name, capture identity, friendly HP, gear-compatible stats, and basic attacks. Each already has a **native species maneuver** (12-second cooldown); after learning **Skill 2**, it gains a **Ringleader tactical skill** (22-second cooldown), an improved combat pursuit profile, and native low-health frenzy. Neither existing ability is replaced.
+When the Rogue charms an ordinary eligible monster, that creature remains an individual Soldier- or Ranger-role companion with its own name, capture identity, friendly HP, gear-compatible stats, and basic attacks. Each already has a **native species Rogue maneuver** (12-second cooldown); after learning **Skill 2**, it gains a **Ringleader tactical skill** (22-second cooldown), an improved combat pursuit profile, and native low-health frenzy. Neither existing ability is replaced.
 
 With this feature, the same Skill-2-trained Charmed creature gains **one separate inherited heritage skill**, determined by its actual species. The third skill has its **own saved cooldown** (26–36 seconds), and is attempted in combat when the established native and Ringleader skill priorities are unavailable. A global companion skill interval prevents a single ally firing multiple skills at once. Skill 3 is the *companion's third ability*, not the Rogue hero's third button.
 
@@ -33,8 +33,8 @@ Some regional or thematic boss links are not established species ancestry. They 
 
 ## The two night-only species
 
-- **Lantern Wraith**, Flooded Marches / Lantern Shore: while the actual hostile night encounter is active, an ordinary living Wraith can be Charmed. Its ally native Skill 1 is **Soul Drain**: a short-range bounded spectral pulse, real Slow on contact, and a small self-heal based on enemy HP actually lost (never a free heal on miss). Its Ringleader signature remains distinct from the later **Pressure Grouting** heritage skill.
-- **Ash Stalker**, Ashen Frontier / Stalker Cinder Hold: at night, an ordinary living Stalker can be Charmed. Its ally native Skill 1 is **Shadow Pounce**: a short real collision-checked approach with impact damage and Slow. Its Ringleader signature remains separate from its **Flank Command** heritage skill.
+- **Lantern Wraith**, Flooded Marches / Lantern Shore: while the actual hostile night encounter is active, an ordinary living Wraith can be Charmed. Its **additional night power** is **Soul Drain**: a short-range bounded spectral pulse, real Slow on contact, and a small self-heal based on enemy HP actually lost (never a free heal on miss). Its ordinary species Rogue maneuver, Skill-2 Ringleader signature and later **Pressure Grouting** heritage skill remain independently available.
+- **Ash Stalker**, Ashen Frontier / Stalker Cinder Hold: at night, an ordinary living Stalker can be Charmed. Its **additional night power** is **Shadow Pounce**: a short real collision-checked approach with impact damage and Slow. Its ordinary species Rogue maneuver and Skill-2 Ringleader signature remain separate from its **Flank Command** heritage skill.
 
 **Captured night creatures remain companions after sunrise**, whether active or resting in the reserve. Wild Wraiths and Stalkers still spawn and despawn at the original night cycle. This does *not* grant Charm permission to summons, ringleaders, captains, bosses, corrupted/neutral encounters, or either species in daytime encounter states. The ordinary Charm chance, nickname, active-party cap, individual capture ledger, no-loot capture, recovery, and version-4 save checks are retained.
 
