@@ -49,6 +49,8 @@ try {
   assert.equal(g.cast(2, foe.id), true, 'song requires legal engaged hostile');
   assert(foe.slow > 0, 'native hostile slow');
   assert(g.rogueSongBoon(unit,'quickstep'), 'real nearby living ally receives boon');
+  assert(g.rogueSongBoon(g.hero,'quickstep'), 'Rogue receives her own legal Quickstep');
+  assert(g.heroMoveSpeed() > g.hero.speed, 'Rogue movement is faster inside the timed boon');
   assert(g.companionRallyMoveSpeed(unit,230) > initialSpeed);
   assert(g.cooldownRecoveryElapsed(unit,1) > 1);
   assert.equal(g.cast(2,foe.id), false, 'normal cooldown enforced');
@@ -78,6 +80,9 @@ try {
   assert.equal(g.cast(6, foe.id),true);
   assert(foe.specialCd > 3, 'native enemy special gets finite readiness debt');
   assert(g.rogueSongBoon(unit,'borrowedTime'));
+  assert(g.rogueSongBoon(g.hero,'borrowedTime'));
+  assert(g.cooldownRecoveryElapsed(g.hero,1,false,true) >
+    g.cooldownRecoveryElapsed(g.hero,1), 'Rogue specials recover faster than her basic');
   assert(g.cooldownRecoveryElapsed(unit,1,false,true) >
     g.cooldownRecoveryElapsed(unit,1,false,false),'special-only acceleration');
   assert(g.cooldownRecoveryElapsed(unit,1,false,true) <= 1.25 + 1e-8,
@@ -95,6 +100,7 @@ try {
   assert.equal(g.cast(7,foe.id),true);
   assert(foe.weakenUntil > g.s.time && foe.weakenFraction > 0);
   assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing === 0.05);
+  assert.equal(g.rogueSongBoon(g.hero,'firmFooting')?.outgoing, 0.05);
   assert.equal(unit.damage,previousUnitDamage,'no permanent stat modification');
   assert.equal(foe.damage,priorEnemyAttack,'hostile native attack untouched');
   assert(Reference.describe(g,7)?.charge.metrics.some((m)=>m.key==='outgoing'));
@@ -108,6 +114,7 @@ try {
   assert.equal(g.cast(3,foe.id),true);
   assert.equal(foe.rangedAim,null);
   assert(g.rogueSongBoon(unit,'steadyBeat')?.protection);
+  assert(g.rogueSongBoon(g.hero,'steadyBeat')?.protection);
   g.hero.cd[2] = 0;
   assert.equal(g.cast(3,foe.id,true),true);
   assert(g.rogueEnemySilenced(foe),'eligible enemy special hush is active');
@@ -120,11 +127,15 @@ try {
   const beforeMend = unit.hp, beforeWither = foe.hp;
   assert.equal(g.cast(4,foe.id),true);
   assert(g.rogueSongBoon(unit,'mending')?.remainingHeal > 0);
+  assert(g.rogueSongBoon(g.hero,'mending')?.remainingHeal > 0);
+  g.hero.hp = Math.max(1, g.hero.hp - 24);
+  const heroBeforeMend = g.hero.hp;
   assert(g.rogueEnemyHealingFactor(foe) < 1);
   assert.equal(g.tickRogueEnemyDot(foe,0.5),true);
   assert(foe.hp < beforeWither);
   g.advanceRogueMending(0.5);
   assert(unit.hp > beforeMend);
+  assert(g.hero.hp > heroBeforeMend, 'the original Mending heal also reaches Rogue');
   assert(!JSON.stringify(g.snapshot()).includes('remainingHeal'));
   // Skill 8: actual AoE blast and bounded per-companion Finale; the bonus
   // applies to the native critical chance source without changing the Rogue's.
@@ -134,7 +145,8 @@ try {
   assert.equal(g.cast(8,foe.id),true);
   assert(foe.hp < hitBefore);
   assert(Math.abs(g.criticalPartyChance(unit.id)-chanceBefore-0.04) < 1e-8);
-  assert.equal(g.criticalPartyChance('hero'),heroChance);
+  assert(Math.abs(g.criticalPartyChance('hero')-heroChance-0.04) < 1e-8,
+    'Finale grants Rogue the same temporary critical chance as companions');
   assert(g.rogueCompanionSpecialDamage(unit,100) > 100);
   g.hero.cd[7] = 0;
   assert.equal(g.cast(8,foe.id,true),true);
@@ -144,16 +156,23 @@ try {
   g.hero.cd[4] = 0;
   assert.equal(g.cast(5,foe.id),true);
   assert(g.rogueStationProtection(unit)?.resistance === 0.25);
+  assert(g.rogueStationProtection(g.hero)?.resistance === 0.25);
   g.tickRogueStations();
   assert(foe.slow > 0);
   g.hero.cd[4] = 0;
   assert.equal(g.cast(5,foe.id,true),true);
   assert(g.rogueStationProtection(unit)?.resistance >= 0.40);
+  assert(g.rogueStationProtection(g.hero)?.ward === 0.06);
   const savedStation = g.snapshot();
   assert(!JSON.stringify(savedStation).includes('pulseDamage'));
   unit.x += 400;
   assert.equal(g.rogueStationProtection(unit),null);
   unit.x -= 400;
+  g.hero.x -= 400;
+  assert.equal(g.rogueStationProtection(g.hero),null,
+    'station self-protection ceases immediately on exit');
+  g.hero.x += 400;
+  assert(g.rogueStationProtection(g.hero), 'station protects on re-entry');
   // Empty legal hostile range never yields a free party boon or consumes CD.
   g.zone().enemies = [];
   g.hero.cd[1]=0;
@@ -163,6 +182,15 @@ try {
   // A resting/off-field unit cannot retain active song benefits.
   g.s.party[0].active=false;
   assert.equal(g.rogueSongBoon(g.s.party[0],'quickstep'),null);
+  // Target range is not equivalent to the friendly AoE: outside gets no buff.
+  g.s.time += 12;
+  g.hero.x = 320;
+  foe.x = 590;
+  g.zone().enemies = [foe];
+  g.hero.cd[1] = 0;
+  assert(g.cast(2,foe.id,true));
+  assert.equal(g.rogueSongBoon(g.hero,'quickstep'),null,
+    'a charged performance at 270 range does not self-buff beyond its 185 area');
   // Non-Rogue classes retain their exact original cooldown/movement behavior.
   for(const cls of ['paladin','mage','ranger']) {
     const normal = new Campaign('normal',cls,()=>0.9);

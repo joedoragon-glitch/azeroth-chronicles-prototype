@@ -1165,7 +1165,8 @@
       // These are owner-tunable first-play numbers, not permanent skill names.
       rogueStationProtection(unit) {
         if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
-            unit.active === false || !this.s.party.includes(unit)) return null;
+            (unit !== this.hero &&
+              (unit.active === false || !this.s.party.includes(unit)))) return null;
         let selected = null;
         for (const field of rogueMusicStations.get(this) || []) {
           if (field.zone !== this.zoneId || field.until <= this.s.time ||
@@ -1277,6 +1278,11 @@
         }
         // Stronger same-family application replaces the bonus; no stacking.
         // Other families will use separate bounded effect records in Phase 5.
+        // Instant songs snapshot legal recipients at cast release.
+        if (dist(h, primary) <= form.radius && this.line(primary, h))
+          this.applyRogueSongBoon(h, 'refrain', {
+            seconds: form.seconds, basicDamage: form.allyDamage,
+          });
         for (const u of allies) {
           if ((u.rogueSharpRefrainUntil || 0) <= this.s.time) u.rogueSharpRefrainBonus = 0;
           u.rogueSharpRefrainBonus = Math.max(u.rogueSharpRefrainBonus || 0, form.allyDamage);
@@ -1432,7 +1438,11 @@
             }
           }
         }
-        for (const u of (slot === 5 ? [] : allies))
+        const recipients = slot === 5 ? [] : [
+          ...allies,
+          ...(dist(h, primary) <= form.radius && this.line(primary, h) ? [h] : []),
+        ];
+        for (const u of recipients)
           this.applyRogueSongBoon(u,
             slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', effectForm);
         this.event('rogueBellPerformance', {
@@ -1579,7 +1589,8 @@
         const combo = this.nextBasicCombo(primary.id),
           rank = this.hero.skills[0],
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
-            (1 + 0.15 * (rank - 1)) * combo.multiplier;
+            (1 + 0.15 * (rank - 1)) * combo.multiplier *
+            (1 + (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
           enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');

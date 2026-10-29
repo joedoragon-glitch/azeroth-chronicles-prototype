@@ -162,9 +162,8 @@
           if (unit.hp <= 0) this.clearPartyCharge(unit);
           return false;
         }
-        // Only eligible living companions preparing an actual native charge
-        // resist damage-threshold interruption. Death still breaks the cast.
-        if (unit !== this.hero && unit.hp > 0 &&
+        // Rogue and her companions share in-area charge protection; death still breaks it.
+        if (unit.hp > 0 &&
             this.rogueSongBoon?.(unit, 'steadyBeat')?.protection) return false;
         cast.lostHp += actualLostHp;
         const rule = R.chargedSkills.interrupt,
@@ -564,8 +563,7 @@
           ? recordedStacks
           : Math.min(R.cooldownBalance.partySlowMaxStacks, recordedStacks);
         const rawRecovery = base / (1 + (stacks - 1) * perStack);
-        // A stationed bell rhythm softens only the Slow penalty while an
-        // eligible companion is physically inside the field.
+        // The station softens Slow only while Rogue or a companion is inside.
         const station = !enemy && slow > 0
           ? this.rogueStationProtection?.(unit) : null;
         const recovery = rawRecovery + (1 - rawRecovery) *
@@ -874,10 +872,11 @@
         // actual damage from both the hero and companions, once per hit.
         if (source === 'hero' && this.hero.class === 'paladin' && (this.hero.shieldStance || 0) > 0)
           amount *= R.heroTactics.paladin.shield.outgoing;
-        // Phase 5: only a genuine active companion attack within a timed
-        // Rogue boon can be enhanced. Never mutate base stats or hero damage.
-        if (source !== 'hero' && origin !== this.hero)
-          amount *= 1 + (this.rogueSongBoon?.(origin, 'firmFooting')?.outgoing || 0);
+        // Apply the same authored offense boon to Rogue and eligible companions.
+        amount *= 1 + (this.rogueSongBoon?.(origin, 'firmFooting')?.outgoing || 0);
+        // Finale enhances Rogue's skill damage, not her automatic basics.
+        if (source === 'hero' && this.hero.class === 'rogue' && !options?.automaticBasic)
+          amount *= 1 + (this.rogueSongBoon(this.hero, 'finale')?.specialDamage || 0);
         if ((e.fractureUntil || 0) > this.s.time) amount *= 1 + (e.fractureFraction || 0);
         const actualDamage = Math.max(0, Math.min(e.hp, amount));
         const reflected =
