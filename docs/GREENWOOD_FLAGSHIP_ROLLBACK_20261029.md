@@ -51,6 +51,18 @@ The **safe default** is to restore the preserved **pre-upgrade player export** u
 
 After the rollback PR passes its **specific** tests and is owner-approved, merge it into current `main`; do **not** move `main` backwards or force-push. Correct build/version/service-worker cache identities so clients receive the restored release, then verify the **exact published Pages artifact** and PWA update/offline behavior. Check representative old-save loads, the original 2700-unit world, travel, quests and graphics. Label physical Chromebook/phone checks **device-unverified** until personally checked.
 
+## Emergency restore candidate — 29 October 2026 (dev.235, unmerged)
+
+**Owner direction:** The owner rejected the published dev.233 Greenwood visual/environmental reconstruction on an actual iPhone and requests returning the playable first region to its pre-reconstruction 2,700-unit map. A separate comprehensive Work redesign is staged in [draft PR #644](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/644); do not mistake this interim rollback for that overhaul.
+
+**Selective implementation in [draft PR #648](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/648):**
+- Turn off the 3,200-unit `Greenwood.configure` in the live engine, leaving current gameplay systems and unaffected regions in place. Restore the original `vale` geography, crossroads, original crossing widths, town/hamlet anchors, and ordinary map generation. This retains independent fixes, including Scornfang's Treasury name.
+- Keep `greenwood.js` present as a compatibility bridge. A v4 save with `zones.vale.greenwoodSourceVersion===1` is reverse-projected **once** to the older map coordinate space, including NPCs/service points, enemies/homes, ordinary props, nodes, constructed buildings, pending world actors, loot, hero and party when in Vale; `greenwoodRollbackVersion===1` prevents repeated reverse conversion. Regenerate the historical layout's authored street/settlement/bridge data instead of keeping the rejected roads. Only props explicitly authored by the new scene are removed.
+- Unmodified 2,700-unit v4 saves and newly started campaigns are not subjected to inverse conversion. Non-Vale saves, Gold, quests, paid flags, rescued companions, enemy identities, tributes and other progression must not be rolled back.
+- This is necessarily **not a byte-perfect reversal of scenic props already relocated by the 3,200-unit version**. Where the new geometry moves a structure or saved actor onto blocked terrain, normal safe-location reconciliation applies. Owners should still export a post-upgrade save and preserve any pre-upgrade export before trying the rollback.
+
+**Required before publication:** fresh 2,700 four-seed geometry and two bridges, 3,200→2,700 v4 sample inverse migration, original historical v4 samples, repeat load, quest/economy/encounter totals, save and barracks integrity, focused regression/build checks, exact-head main merge and Pages/PWA receipt. Publication is a separate event from writing this section. Do not close this as deployed until that receipt exists.
+
 ## Focused rollback audit checklist
 
 - [ ] A fresh `main` SHA and immutable historical recovery branch are recorded, and the branch matches the pinned commit.

@@ -153,9 +153,99 @@
             });
       }
 
+      // Reverse only campaigns already migrated to the rejected dev.233 map.
+      // Fresh and original 2700-unit campaigns are not touched.
+      greenwoodRollback(z) {
+        if (z.id !== 'vale' || z.greenwoodSourceVersion !== 1 ||
+            z.greenwoodRollbackVersion === 1) return;
+        const expanded = projection(3200);
+        const inverse = (value, forward) => {
+          let low = -500, high = 5000;
+          for (let j = 0; j < 48; j++) {
+            const mid = (low + high) / 2;
+            if (forward(mid) < value) low = mid;
+            else high = mid;
+          }
+          return (low + high) / 2;
+        };
+        const groups = [];
+        for (const h of (R.creatureStrongholds || []).filter((h) => h.region === 'vale')) {
+          const site = R.sites[0].find((s) => s[0] === h.site);
+          const coordinates = h.center || site?.slice(2, 4);
+          if (!coordinates) continue;
+          const before = { x: coordinates[0], y: coordinates[1] };
+          const after = h.id === 'goblin-road-fort'
+            ? expanded.point({ x: 400, y: 1550 })
+            : expanded.point(before);
+          groups.push({ id: h.id, dx: after.x - before.x, dy: after.y - before.y });
+        }
+        const oldRoadCamp = { x: 520, y: 1050 };
+        const newRoadCamp = expanded.point({ x: 400, y: 1550 });
+        groups.push({ id: 'goblin-road-camp',
+          dx: newRoadCamp.x - oldRoadCamp.x, dy: newRoadCamp.y - oldRoadCamp.y });
+        const moved = new Set();
+        const reverse = (p, forcedGroup) => {
+          if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y) || moved.has(p)) return;
+          moved.add(p);
+          const group = forcedGroup ||
+            groups.find((g) => g.id === p.stronghold || g.id === p.habitat);
+          if (group) {
+            p.x -= group.dx;
+            p.y -= group.dy;
+          } else {
+            p.x = inverse(p.x, expanded.x);
+            p.y = inverse(p.y, expanded.y);
+          }
+          if (p.home) reverse(p.home, group);
+          if (p.servicePoint) reverse(p.servicePoint, group);
+          if (p.order && Number.isFinite(p.order.x)) reverse(p.order, group);
+          for (const field of ['path', 'pathTarget', 'idleWanderTarget']) delete p[field];
+        };
+        // Drop only newly authored Greenwood scenery, never the old named
+        // world entities, player-owned buildings, earned loot or quest facts.
+        z.props = z.props.filter((p) => !p.greenwoodScene && !p.greenwoodReserved);
+        for (const p of [...z.props, ...z.npcs, ...z.enemies, ...z.nodes, ...z.buildings])
+          reverse(p);
+        for (const mini of z.minis || []) {
+          reverse(mini);
+          if (mini.center) reverse(mini.center);
+        }
+        if (z.thornArrival) {
+          reverse(z.thornArrival.boss);
+          reverse(z.thornArrival.captive);
+        }
+        for (const p of this.s.loot || []) if (p.zone === 'vale') reverse(p);
+        for (const p of Object.values(this.s.pending || {}))
+          if (p.zone === 'vale') reverse(p.base);
+        if (this.s.refugeSite?.zone === 'vale') reverse(this.s.refugeSite);
+        if (this.s.zone === 'vale') for (const p of [this.hero, ...this.s.party]) reverse(p);
+        for (const p of z.props) delete p.greenwoodLegacyScenery;
+        // Regenerate only authored old roads/settlement sites and reapply old
+        // onboarding once, rather than using expanded street coordinates.
+        z.roads = [];
+        z.footpaths = [];
+        delete z.bridgeApproaches;
+        for (const key of [
+          'roadVersion', 'roadNetworkVersion', 'destinationLayoutVersion',
+          'settlementLayoutVersion',
+          'environmentCoherenceVersion', 'landmarkRoadShoulderVersion',
+          'streetClearanceVersion', 'finalStreetClearanceVersion',
+          'townVisualClearanceVersion', 'greenwoodFrontageVersion',
+          'greenwoodFrontageRoadVersion', 'strongholdCourtyardSpacingVersion',
+          'greenwoodAttemptVersion', 'greenwoodSceneVersion', 'greenwoodSceneAudit',
+        ]) delete z[key];
+        // The marker must be set before any nested zone() invocation.
+        z.greenwoodRollbackVersion = 1;
+        // Mark 2700-unit coordinates so a later full redesign knows this is
+        // no longer a live expanded scene. Never rerun old 3200 migration.
+        z.greenwoodSourceVersion = 0;
+      }
+
       greenwoodMigrate(z) {
         const cfg = R.greenwoodLayout;
-        if (z.id !== 'vale' || !cfg?.version || z.greenwoodSourceVersion === cfg.version) return;
+        if (z.id !== 'vale') return;
+        if (!cfg?.version) return this.greenwoodRollback(z);
+        if (z.greenwoodSourceVersion === cfg.version) return;
         const map = projection(cfg.size),
           moved = new Set();
         const move = (p, forcedGroup) => {
