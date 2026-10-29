@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 28 October 2026 · **421 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **421 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
