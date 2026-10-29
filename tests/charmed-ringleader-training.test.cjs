@@ -58,6 +58,7 @@ try {
   assert.equal(g.charmedEliteTrained(u), false,
     'paying Orin does not bypass the Rogue Hero Skill-2 signature unlock');
   g.hero.skills[1] = 1;
+  g.s.companionCombatTraining = 2; // Permanent milestone learned through hero Skill 2.
   assert(g.charmedEliteTrained(u),
     'learning Rogue Skill 2 unlocks the elite signature without duplicate promotion');
   assert.equal(g.trainCharmedRingleader(u.id),false,'no duplicate purchase');
