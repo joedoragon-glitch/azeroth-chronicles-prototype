@@ -44,4 +44,22 @@ This draft removes only the **two invocations** of `this.clearStreetCorridors(z,
 
 **CI diagnosis (first draft run):** [PR run #40966373949](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40966373949) failed its documentation gate because the new audit was an *added* file, not an update to an existing feature guide. Runtime suites/build did **not** execute. The existing world-proportion/space guardrails now include the owner's actual physical-road versus automatic-connectivity rule; this is a relevant maintained feature-document update, not a waiver. Recheck the next exact-head focused run before changing test assertions.
 
+
+## Actual native before/after evidence — first seeded review (29 October)
+
+**Source/test provenance:** [Focused run #40967241998](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40967241998) at integration checkout `a9497f714e2760b182005e4ad94230818c80642b` (draft feature `0fa91a8a` against main after Greenwood recovery `fcc1f428`). The test invokes the exact formerly released `clearStreetCorridors(z,true)` manually on **the same freshly generated Campaign** after capturing the candidate's normal source state. It records every added road and NPC/prop/building displacement from that *one extra pass*, then uses the actual native Canvas renderer at 150% camera zoom for paired town/hamlet scenes. This is not every historical source edit; no real player v4 campaign or installed phone was inspected.
+
+| Region | Roads without → with extra pass | Added segments | Moved props | Moved NPCs | Moved player buildings |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `march` | 13 → 13 | 0 | 0 | 0 | 0 |
+| `highlands` | 13 → 13 | 0 | 0 | 3 | 0 |
+| `frontier` | 41 → 41 | 0 | 86 | 4 | 0 |
+| `crown` | 30 → 34 | 4 | 36 | 4 | 0 |
+
+**Image receipts:** [march paired native scenes](evidence/regional-street-rollback-20261029/march-native-before-after.webp) · [highlands paired native scenes](evidence/regional-street-rollback-20261029/highlands-native-before-after.webp) · [frontier paired native scenes](evidence/regional-street-rollback-20261029/frontier-native-before-after.webp) · [crown paired native scenes](evidence/regional-street-rollback-20261029/crown-native-before-after.webp). [Full per-object, per-road delta](evidence/regional-street-rollback-20261029/seeded-spatial-deltas.json) records each identity, coordinate, segment endpoint and travel distance; those binary captures are genuine rendered outputs of this diagnostic, not artistic mockups.
+
+**Independent visual/source interpretation:** March shows no change from this extra pass (the targeted Reedport and shoreline repairs are separate). Highlands moves three town services, including the `rest` NPC **463.82 units**; the original strict street audit on this candidate reports the unchanged refuge violates a road-side clearance, so a *targeted* repair is necessary. Frontier moves **86 props and four services without adding a road**, including noticeable hamlet structures/defenses. Crown adds **four connecting segments** and moves **36 props plus four services**, with at least one house moved **1,086.65 units**. The Crown visual pairs show substantial dislocation of the residential arrangement. These are grounded reasons to reject the blanket automatic completion/displacement pass, not claims that every moved decorative object was individually unacceptable.
+
+**CI boundary:** this native comparison passed, but the overall original run **failed**: `tests/sprite-scope.test.cjs` correctly requires updating the reviewed `world.js` source fingerprint, and the original `tests/town-street-audit.test.cjs` fails at `highlands rest must stand beside a street, not in it`. Neither failure has been waived or called green. This PR is still **not merge-ready**, and old v4 saved placements have not been reversed or proven safe.
+
 **Checkpoint:** Source scope classified and draft two-call rollback candidate created. **Not tested**, not merged, not published, not device-verified. Preserve both the rejected dev.233 reference and the owner's independent Greenwood rollback/redesign work.
