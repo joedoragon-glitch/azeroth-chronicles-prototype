@@ -896,6 +896,7 @@
           if (u.skill1Cd === undefined) u.skill1Cd = 0;
           if (u.skill2Cd === undefined) u.skill2Cd = 0;
           if (u.skill3Cd === undefined) u.skill3Cd = 0;
+          if (u.skillNightCd === undefined) u.skillNightCd = 0;
           if (u.skillGlobalCd === undefined) u.skillGlobalCd = 0;
           if (u.healCd === undefined) u.healCd = 0;
           if (u.manaCd === undefined) u.manaCd = 0;
@@ -912,6 +913,7 @@
             'skill1Cd',
             'skill2Cd',
             'skill3Cd',
+            'skillNightCd',
             'skillGlobalCd',
             'healCd',
             'manaCd',
