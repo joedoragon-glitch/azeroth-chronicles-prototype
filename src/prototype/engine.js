@@ -4943,6 +4943,7 @@
     tacticalClearRogueRegroup(e = null) {
       this.clearCinderResponses(e);
       if (e) {
+        tacticalRogueRouteSearches.delete(e);
         this._tacticalRegroups?.delete(e.id);
         this._tacticalRogueNext?.delete(e.id);
         this._tacticalVisitedAllies?.delete(e.id);
@@ -4965,6 +4966,7 @@
     tacticalStopRogueRegroup(e) {
       this._tacticalRegroups?.delete(e?.id);
       if (e) {
+        tacticalRogueRouteSearches.delete(e);
         e.path = [];
         e.routeAge = 0;
       }
