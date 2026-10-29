@@ -2392,7 +2392,7 @@
             zone: this.zoneId,
             deaths: this.s.statistics.deaths,
           });
-          this.say('Ranger Heal queued for the hero.');
+          this.say('Heal queued for the hero.');
           return true;
         }
         return this.rangerSupport('health', true);
