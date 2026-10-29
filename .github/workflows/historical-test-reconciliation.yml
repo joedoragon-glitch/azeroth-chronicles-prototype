@@ -15,12 +15,12 @@ concurrency:
 
 jobs:
   oldest-node-batch:
-    name: Oldest existing Node tests — batch 2
+    name: Oldest existing Node tests — batch 3
     runs-on: ubuntu-latest
     timeout-minutes: 32
     env:
       AUDIT_LANE: node
-      AUDIT_BATCH: '2'
+      AUDIT_BATCH: '3'
       AUDIT_SIZE: '12'
     steps:
       - name: Checkout with full test-path history
@@ -144,7 +144,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: historical-reconciliation-node-batch-2
+          name: historical-reconciliation-node-batch-3
           path: test-results/historical-reconciliation/
           if-no-files-found: warn
           retention-days: 30
