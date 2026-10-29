@@ -978,7 +978,9 @@
         const cfg = R.companionJudgment;
         this._tacticalPartyTargets?.delete(u.id);
         const moving = this.companionHeroMoving();
-        if (moving || (this.s.recallActive && dist(u, this.hero) > cfg.maxAdvanceFromHero)) {
+        // A distant hero is a higher-priority escape anchor than local replan.
+        // Keep the native followCompanion collision checks fully authoritative.
+        if (moving || dist(u, this.hero) > cfg.maxAdvanceFromHero) {
           this.clearPartyCharge(u);
           state.contributing = false;
           state.evading = false;
