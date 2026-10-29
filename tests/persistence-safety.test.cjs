@@ -146,7 +146,7 @@ console.log(
     'title must visibly confirm import instead of hiding the HUD status');
   assert.match(app.elements.get('title-import-feedback').textContent,
     /Import successful.*Continue Adventure/);
-  // Import button opens the native file input on a user click. File selection
+  // Import button embeds a native file input directly in its visible row. File selection
   // should visibly confirm success, identify the loaded save, and preserve a
   // separate Continue step. Cancellation does not pretend to have imported.
   for (const language of ['en', 'es']) {
@@ -154,17 +154,16 @@ console.log(
     candidate.hero.gold = 777;
     const app = shell(language, 'mage', { stayOnTitle: true });
     const input = app.elements.get('import-file');
-    let pickerRequests = 0;
-    input.click = () => { pickerRequests++; };
     app.elements.get('title-saves').click();
-    const importButton = app.elements.get('modal-actions').children.find(
+    const pickerRow = app.elements.get('modal-actions').children.find(
       (item) => item.textContent === (language === 'es' ? 'Importar partida' : 'Import save'),
     );
-    assert(importButton, 'title save manager must expose import');
-    importButton.click();
-    assert.equal(pickerRequests, 1, 'import action must invoke file input');
+    assert(pickerRow, 'title save manager must expose import');
+    assert(pickerRow.children.includes(input),
+      'native file input must be part of the visible import action');
+    assert.equal(input.hidden, false, 'import input must not remain hidden');
     assert.equal(app.elements.get('modal').hidden, false,
-      'opening a picker does not silently close the menu');
+      'import dialog stays open until a file has been selected');
     const selection = {
       files: [{ size: 100, text: async () => JSON.stringify(candidate.snapshot()) }],
       value: 'import',
