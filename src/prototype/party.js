@@ -1672,8 +1672,12 @@
       // Native Ringleader pursuit and wounded frenzy come from Rogue Skill 2
       // or a permanently promoted Charmed companion. Orin adds full HP/damage
       // once; this movement/frenzy layer must never apply twice.
+      charmedRingleaderCombatTraits(u) {
+        return this.charmedEliteTrained(u) ||
+          (u?.charmRingleaderTrained === true && this.isCharmedCompanion(u));
+      }
       charmedCombatMoveFactor(u) {
-        return this.charmedEliteTrained(u) ? R.ringleaderScaling.pursuit : 1;
+        return this.charmedRingleaderCombatTraits(u) ? R.ringleaderScaling.pursuit : 1;
       }
       charmedPursuitFactor(u, target) {
         if (!u?.charmOrigin || !['soldier', 'archer'].includes(u.type) ||
@@ -1696,7 +1700,7 @@
       }
       companionBasicInterval(u) {
         const base = this.charmedCompanionProfile(u)?.interval || 0.85;
-        return this.charmedEliteTrained(u) && u.hp > 0 &&
+        return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
           ? base * R.ringleaderScaling.frenzyCooldown : base;
       }
