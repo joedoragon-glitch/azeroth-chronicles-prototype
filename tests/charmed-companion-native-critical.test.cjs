@@ -110,8 +110,8 @@ for (const level of [1, 2, 3]) {
   const ordinary = charm(base, 'goblin', true);
   const healer = charm(boosted, 'goblin', true);
   const tally = attach(boosted, 0, level);
-  base.hero.hp = base.hero.maxHp - 200;
-  boosted.hero.hp = boosted.hero.maxHp - 200;
+  base.hero.hp = base.hero.maxHp - 40;
+  boosted.hero.hp = boosted.hero.maxHp - 40;
   assert.equal(base.requestRangerHeal(), true);
   assert.equal(boosted.requestRangerHeal(), true);
   const original = base.hero.supportEffects[0], effect = boosted.hero.supportEffects[0];
