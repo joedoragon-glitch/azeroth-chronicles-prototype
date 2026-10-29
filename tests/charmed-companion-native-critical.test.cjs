@@ -116,9 +116,10 @@ for (const level of [1, 2, 3]) {
   assert.equal(healer.healCd || 0, 0, 'Charmed Heal never gains a second timer');
   assert.equal(ordinary.charmSupportCd, healer.charmSupportCd);
   assert.equal(tally.count(), 1, 'one genuine Heal release at Level ' + level);
+  base.updateRangerSupport(2.5);
   boosted.updateRangerSupport(2.5);
   assert.equal(tally.count(), 1, 'Heal ticks do not reroll');
-  assert(boosted.hero.hp > base.hero.hp, 'Charmed critical Heal actually restores HP');
+  assert(boosted.hero.hp > base.hero.hp, 'Charmed critical Heal restores more HP than baseline');
   assert.equal(boosted.requestRangerHeal(), true, 'cooldown input queues hero Heal');
   assert(boosted.queuedRangerHeal(), 'hero Heal queue is retained');
   assert.equal(tally.count(), 1, 'queue does not count as a new cast');
