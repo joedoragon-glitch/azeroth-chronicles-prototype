@@ -2171,20 +2171,29 @@
           if (!seen.has(key)) { unique.push(site); seen.add(key); }
         }
         const key = unique.map((site) => site.x + ':' + site.y).join('|'),
+          // Euclidean distance is an admissible (never too high) lower bound
+          // for route distance. Check likely destinations first; once a
+          // proven best route is found, further sites whose straight-line
+          // lower bound cannot beat it need no A* expansion at all.
+          ordered = unique.map((site, index) => ({ site, index, lower: dist(u, site) }))
+            .sort((a, b) => a.lower - b.lower || a.index - b.index),
           now = this.s.time;
         let plan = depositPlans.get(u);
         if (!plan || plan.zone !== this.zoneId || plan.key !== key ||
             dist(plan.origin, u) > 20) {
           plan = {
             zone: this.zoneId, key, origin: { x: u.x, y: u.y },
-            sites: unique, index: 0, search: null,
-            best: null, bestScore: Infinity,
+            sites: ordered, index: 0, search: null,
+            best: null, bestScore: Infinity, bestIndex: Infinity,
           };
           depositPlans.set(u, plan);
         }
         while (plan.index < plan.sites.length) {
-          const site = plan.sites[plan.index],
-            result = this.advanceBudgetedRoute(u, site, 'companion', plan.search);
+          const { site, index, lower } = plan.sites[plan.index];
+          // Danger and avoidance penalties cannot be negative, so no
+          // remaining site can outrank an already validated best score.
+          if (lower > plan.bestScore) break;
+          const result = this.advanceBudgetedRoute(u, site, 'companion', plan.search);
           if (result.pending) {
             plan.search = result.state;
             return null;
@@ -2199,7 +2208,12 @@
               dist(avoid.point, site) < 30,
             score = length + danger * this.zoneSize() +
               (rejected ? this.zoneSize() * 4 : 0);
-          if (score < plan.bestScore) { plan.best = site; plan.bestScore = score; }
+          if (score < plan.bestScore ||
+              (score === plan.bestScore && index < plan.bestIndex)) {
+            plan.best = site;
+            plan.bestScore = score;
+            plan.bestIndex = index;
+          }
         }
         depositPlans.delete(u);
         depositTrips.set(u, {
