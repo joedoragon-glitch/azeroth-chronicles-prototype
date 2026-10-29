@@ -204,6 +204,7 @@ function marchCompanionCallsite(measured, mode) {
     'followPartyMember', 'companionSurvivalPoint', 'followCriticalCompanion',
     'companionCautiousCombat', 'companionSafetyAssessment',
     'companionSurvivalScore', 'companionAreaDanger',
+    'companionPositionProtected', 'line', 'enemyRangedLine',
     'followCompanion', 'companionRoute', 'clearSegment', 'move',
   ];
   const counts = new Map(names.map((name) => [name, { calls: 0, blocked: 0, ms: 0, maxBlocked: 0 }]));
