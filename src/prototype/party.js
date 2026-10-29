@@ -1649,10 +1649,12 @@
         return points >= three ? 3 : points >= two ? 2 : points >= one ? 1 : 0;
       }
       companionAttackDamage(u) {
-        return (
-          (this.charmedCompanionProfile(u)?.damage ?? u.damage) +
-          this.hero.level * 2 + this.companionInheritedDamageBonus()
-        );
+        const baseline = (this.charmedCompanionProfile(u)?.damage ?? u.damage) +
+          this.hero.level * 2 + this.companionInheritedDamageBonus();
+        // One full elite multiplier at the common attack source: specials,
+        // native basics and heritage inherit it without stacking a second time.
+        return baseline * (u?.charmRingleaderTrained === true &&
+          this.isCharmedCompanion(u) ? R.ringleaderScaling.damage : 1);
       }
       // Different Rogue song families stack additively for ordinary basics.
       // Each remains independently timed and capped; specials are unaffected.
@@ -1663,12 +1665,13 @@
           (this.rogueSongBoon(u, 'cadence')?.basicDamage || 0));
       }
       charmedEliteTrained(u) {
-        return this.hero.class === 'rogue' && !!u?.charmOrigin &&
-          this.isCharmedCompanion(u) && this.companionSecondSkillUnlocked();
+        return !!u?.charmOrigin && this.isCharmedCompanion(u) &&
+          ((this.hero.class === 'rogue' && this.companionSecondSkillUnlocked()) ||
+           u.charmRingleaderTrained === true);
       }
-      // Native Ringleaders move 20% faster in combat and enter a 0.6x
-      // basic-attack recovery at half health. Their hostile 2.5x HP / 1.5x
-      // damage scaling is NOT an allied training reward.
+      // Native Ringleader pursuit and wounded frenzy come from Rogue Skill 2
+      // or a permanently promoted Charmed companion. Orin adds full HP/damage
+      // once; this movement/frenzy layer must never apply twice.
       charmedCombatMoveFactor(u) {
         return this.charmedEliteTrained(u) ? R.ringleaderScaling.pursuit : 1;
       }
@@ -2140,7 +2143,8 @@
           team = charmedSquadSkills.get(this) ||
             { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time };
         if (!this.isCharmedCompanion(u) || u.active === false ||
-            u.hp <= 0 || this.hero.class !== 'rogue' ||
+            u.hp <= 0 ||
+            (this.hero.class !== 'rogue' && !u.charmRingleaderTrained) ||
             !def || (u[cooldown] || 0) > 0 ||
             this.s.time < (team[native ? 'basic' : 'heritage'] || 0) ||
             dist(u, target) > def.range) return false;
@@ -2263,7 +2267,8 @@
         return true;
       }
       charmedCompanionSkill(u, target) {
-        if (!this.isCharmedCompanion(u) || this.hero.class !== 'rogue' ||
+        if (!this.isCharmedCompanion(u) ||
+            (this.hero.class !== 'rogue' && !u.charmRingleaderTrained) ||
             u.hp <= 0 || u.active === false || this.peace || this.s.recallActive ||
             !target || !this.zone().enemies.includes(target) || target.hp <= 0 ||
             target.neutral || target.returning || !this.tacticalDirectTargetable(target) ||
