@@ -485,7 +485,7 @@
           note: rank
             ? 'Only changed effects are shown. Cooldowns stay the same.'
             : slot === 2 && !g.companionSecondSkillUnlocked()
-              ? 'Also unlocks advanced Soldier and Ranger skills, plus charged pet skills.'
+              ? 'Also unlocks advanced Soldier/Ranger and pet skills, plus Charmed monster elite traits.'
               : info.note,
         },
         previewOnly
@@ -1172,11 +1172,13 @@
       const g = getGame(),
         request = g.s.companionCareRequests[kind];
       if (!request) return '';
-      const names = request.companionIds
-        .map((id) => g.s.party.find((u) => u.id === id))
-        .filter(Boolean)
-        .map(rosterLabel)
-        .join(', ');
+      const names = [
+        ...(kind === 'treatment' && request.heroWounded ? ['Hero'] : []),
+        ...request.companionIds
+          .map((id) => g.s.party.find((u) => u.id === id))
+          .filter(Boolean)
+          .map(rosterLabel),
+      ].join(', ');
       const reason = g.companionCareReason(kind, request, { ignoreFunds: true, checkSource: true });
       return (
         (kind === 'recovery' ? 'Queued recovery: ' : 'Queued treatment: ') +
@@ -1214,7 +1216,7 @@
             : 'Cancel queued treatment'
           : kind === 'recovery'
             ? 'Recover fallen companion'
-            : 'Treat wounded companions') +
+            : 'Treat wounds') +
           ' · ' +
           cost +
           ' crowns',
@@ -1226,12 +1228,12 @@
           ? 'Queued · tap to cancel. No crowns spent.'
           : (reason === 'No requested companion is still fallen.'
               ? 'No fallen companions.'
-              : reason === 'No requested companion is living and wounded.'
-                ? 'No wounded companions.'
+              : reason === 'No requested party member is still wounded.'
+                ? 'No wounds to treat.'
                 : reason) ||
               (kind === 'recovery'
                 ? 'Recover ' + rosterLabel(target) + ' · '
-                : 'Full health for living companions. · ') +
+                : 'Full health for party. · ') +
                 (g.hero.gold < cost
                   ? 'Short on crowns? Tap to queue.'
                   : 'Safe conditions required.'),
@@ -1266,7 +1268,7 @@
       const refresh = () => barracksRecoveryMenu(b, back);
       openMenu(
         'Recovery',
-        'Restore companions. Short on crowns? Tap to queue.' +
+        'Treat wounds heals the hero and living companions for 30 crowns. Fallen companions need separate recovery. Short on crowns? Tap to queue.' +
           '\n' +
           (getGame().s.challenge.succession
             ? 'Succession: class loss replaces crown loss.'
@@ -2064,7 +2066,7 @@
           action(
             'Recovery',
             () => barracksRecoveryMenu(b, returnHere),
-            'Heal or recover companions.',
+            'Treat party wounds or recover fallen companions.',
           ),
           action(
             'Training',
@@ -2122,7 +2124,7 @@
               );
         openMenu(
           'Basic Barracks',
-          'Your field base. Choose a service.',
+          'Your field base. Recovery → Treat wounds heals your party for 30 crowns.',
           [...services, upgrade],
           back,
         );
@@ -2147,16 +2149,17 @@
     }
     function inventory(back = closeMenu, fromCharacter = false) {
       const g = getGame(),
-        rangers = g.activeLivingParty().filter((u) => u.type === 'archer'),
-        support = rangers.length
-          ? rangers.length +
-            ' active · Heal ' +
+        healers = g.healCompanionCasters(),
+        rangers = g.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin),
+        support = healers.length
+          ? healers.length +
+            ' active healer(s) · Heal ' +
             g.rangerSupportAmount('health') +
-            ' HP.\nUse the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
-            (Campaign.rules.resourceMode.manaEnabled
+            ' HP.\nUse the Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
+            (Campaign.rules.resourceMode.manaEnabled && rangers.length
               ? '\nMana Recovery ' + g.rangerSupportAmount('mana') + ' MP.'
               : '')
-          : 'Recruit a Ranger to unlock field Heal.',
+          : 'Field Heal requires an active Ranger, Charmed ranged monster or ally-healing pet.',
         tonics =
           'Stored: ' +
           g.preparationTonicStock() +
@@ -2260,7 +2263,7 @@
     function barracksBasics(back = closeMenu) {
       openMenu(
         'Meet your company',
-        'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.',
+        'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.',
         [action("Let's go", closeMenu)],
         back,
       );
@@ -2270,7 +2273,7 @@
       if (getGame().hero.class === 'rogue') {
         openMenu(
           getGame().definition().town + ' Captain',
-          'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain still provides companion recovery and treatment.',
+          'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain can treat party wounds for 30 crowns or recover fallen companions.',
           [
             ...otherRecruitmentCancellation(null, reopen),
             careChoice('recovery', null, reopen),
@@ -2315,7 +2318,7 @@
       ];
       openMenu(
         getGame().definition().town + ' Captain',
-        'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.' +
+        'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.' +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
         actions,
         back,

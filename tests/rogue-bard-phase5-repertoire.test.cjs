@@ -30,7 +30,7 @@ try {
     return {g,unit,foe};
   }
   const { g,unit,foe } = fresh();
-  assert.equal(g.heroSkillRange(2), 260);
+  assert.equal(g.heroSkillRange(2), 225);
   assert.equal(g.cast(2, foe.id), false, 'unlearned song barred');
   g.hero.skills[1] = 1;
   g.hero.skills[5] = 1;
@@ -49,6 +49,8 @@ try {
   assert.equal(g.cast(2, foe.id), true, 'song requires legal engaged hostile');
   assert(foe.slow > 0, 'native hostile slow');
   assert(g.rogueSongBoon(unit,'quickstep'), 'real nearby living ally receives boon');
+  assert(g.rogueSongBoon(g.hero,'quickstep'), 'Rogue receives her own legal Quickstep');
+  assert(g.heroMoveSpeed() > g.hero.speed, 'Rogue movement is faster inside the timed boon');
   assert(g.companionRallyMoveSpeed(unit,230) > initialSpeed);
   assert(g.cooldownRecoveryElapsed(unit,1) > 1);
   assert.equal(g.cast(2,foe.id), false, 'normal cooldown enforced');
@@ -78,6 +80,9 @@ try {
   assert.equal(g.cast(6, foe.id),true);
   assert(foe.specialCd > 3, 'native enemy special gets finite readiness debt');
   assert(g.rogueSongBoon(unit,'borrowedTime'));
+  assert(g.rogueSongBoon(g.hero,'borrowedTime'));
+  assert(g.cooldownRecoveryElapsed(g.hero,1,false,true) >
+    g.cooldownRecoveryElapsed(g.hero,1), 'Rogue specials recover faster than her basic');
   assert(g.cooldownRecoveryElapsed(unit,1,false,true) >
     g.cooldownRecoveryElapsed(unit,1,false,false),'special-only acceleration');
   assert(g.cooldownRecoveryElapsed(unit,1,false,true) <= 1.25 + 1e-8,
@@ -95,12 +100,16 @@ try {
   assert.equal(g.cast(7,foe.id),true);
   assert(foe.weakenUntil > g.s.time && foe.weakenFraction > 0);
   assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing === 0.05);
+  assert.equal(g.rogueSongBoon(g.hero,'firmFooting')?.outgoing, 0.05);
   assert.equal(unit.damage,previousUnitDamage,'no permanent stat modification');
   assert.equal(foe.damage,priorEnemyAttack,'hostile native attack untouched');
   assert(Reference.describe(g,7)?.charge.metrics.some((m)=>m.key==='outgoing'));
   g.hero.cd[6] = 0;
   assert.equal(g.cast(7,foe.id,true),true);
   assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing <= 0.08);
+  // Prior Skill 7 knockbacks can put the heroine beyond the next song's
+  // friendly radius. Move into the real footprint before testing self-buffs.
+  g.hero.x = foe.x - 80;
   // Skill 3 interrupts only a real warned enemy action; Steady Beat
   // protects a lawful living companion charge, never grants invulnerability.
   foe.rangedAim = { warning: true };
@@ -108,6 +117,7 @@ try {
   assert.equal(g.cast(3,foe.id),true);
   assert.equal(foe.rangedAim,null);
   assert(g.rogueSongBoon(unit,'steadyBeat')?.protection);
+  assert(g.rogueSongBoon(g.hero,'steadyBeat')?.protection);
   g.hero.cd[2] = 0;
   assert.equal(g.cast(3,foe.id,true),true);
   assert(g.rogueEnemySilenced(foe),'eligible enemy special hush is active');
@@ -120,11 +130,15 @@ try {
   const beforeMend = unit.hp, beforeWither = foe.hp;
   assert.equal(g.cast(4,foe.id),true);
   assert(g.rogueSongBoon(unit,'mending')?.remainingHeal > 0);
+  assert(g.rogueSongBoon(g.hero,'mending')?.remainingHeal > 0);
+  g.hero.hp = Math.max(1, g.hero.hp - 24);
+  const heroBeforeMend = g.hero.hp;
   assert(g.rogueEnemyHealingFactor(foe) < 1);
   assert.equal(g.tickRogueEnemyDot(foe,0.5),true);
   assert(foe.hp < beforeWither);
   g.advanceRogueMending(0.5);
   assert(unit.hp > beforeMend);
+  assert(g.hero.hp > heroBeforeMend, 'the original Mending heal also reaches Rogue');
   assert(!JSON.stringify(g.snapshot()).includes('remainingHeal'));
   // Skill 8: actual AoE blast and bounded per-companion Finale; the bonus
   // applies to the native critical chance source without changing the Rogue's.
@@ -134,7 +148,8 @@ try {
   assert.equal(g.cast(8,foe.id),true);
   assert(foe.hp < hitBefore);
   assert(Math.abs(g.criticalPartyChance(unit.id)-chanceBefore-0.04) < 1e-8);
-  assert.equal(g.criticalPartyChance('hero'),heroChance);
+  assert(Math.abs(g.criticalPartyChance('hero')-heroChance-0.04) < 1e-8,
+    'Finale grants Rogue the same temporary critical chance as companions');
   assert(g.rogueCompanionSpecialDamage(unit,100) > 100);
   g.hero.cd[7] = 0;
   assert.equal(g.cast(8,foe.id,true),true);
@@ -144,16 +159,38 @@ try {
   g.hero.cd[4] = 0;
   assert.equal(g.cast(5,foe.id),true);
   assert(g.rogueStationProtection(unit)?.resistance === 0.25);
+  assert(g.rogueStationProtection(g.hero)?.resistance === 0.25);
+  const originalLine = g.line;
+  let heroSightlineChecks = 0;
+  g.line = function(from, to, ...args) {
+    if (to === g.hero && from !== g.hero) heroSightlineChecks++;
+    return originalLine.call(this, from, to, ...args);
+  };
+  for (let i = 0; i < 40; i++)
+    assert(g.rogueStationProtection(g.hero)?.resistance === 0.25);
+  assert.equal(heroSightlineChecks, 0,
+    'unchanged hero position/time reuses the prior sightline result');
+  g.hero.x += 1;
+  assert(g.rogueStationProtection(g.hero)?.resistance === 0.25);
+  assert(heroSightlineChecks <= 2, 'one position change checks at most two stations');
+  g.hero.x -= 1;
+  g.line = originalLine;
   g.tickRogueStations();
   assert(foe.slow > 0);
   g.hero.cd[4] = 0;
   assert.equal(g.cast(5,foe.id,true),true);
   assert(g.rogueStationProtection(unit)?.resistance >= 0.40);
+  assert(g.rogueStationProtection(g.hero)?.ward === 0.06);
   const savedStation = g.snapshot();
   assert(!JSON.stringify(savedStation).includes('pulseDamage'));
   unit.x += 400;
   assert.equal(g.rogueStationProtection(unit),null);
   unit.x -= 400;
+  g.hero.x -= 400;
+  assert.equal(g.rogueStationProtection(g.hero),null,
+    'station self-protection ceases immediately on exit');
+  g.hero.x += 400;
+  assert(g.rogueStationProtection(g.hero), 'station protects on re-entry');
   // Empty legal hostile range never yields a free party boon or consumes CD.
   g.zone().enemies = [];
   g.hero.cd[1]=0;
@@ -163,6 +200,257 @@ try {
   // A resting/off-field unit cannot retain active song benefits.
   g.s.party[0].active=false;
   assert.equal(g.rogueSongBoon(g.s.party[0],'quickstep'),null);
+  // A performance only releases with a lawful hostile inside the Rogue's
+  // own circle. Both hostile consequences and self-buffs share that center.
+  g.s.time += 12;
+  g.hero.x = 309;
+  foe.x = 590;
+  g.zone().enemies = [foe];
+  g.hero.cd[1] = 0;
+  g.hero.chargedCd[1] = 0;
+  assert.equal(g.cast(2,foe.id,true),false,
+    'charged song cannot be projected 281 units from the performer');
+  g.hero.x = 320;
+  assert(g.cast(2,foe.id,true));
+  assert(g.rogueSongBoon(g.hero,'quickstep'),
+    'the performer receives her own song at 270 units when the enemy is inside 280');
+  // Full-party Skill 5 must not turn every gameplay query into terrain scans.
+  // Four additional companions plus the original unit and heroine stand in one
+  // charged music station; repeated frame reads should reuse one sightline.
+  const many = fresh(), partyGame = many.g;
+  partyGame.hero.skills[4] = 1;
+  for (let i = 0; i < 4; i++) {
+    const ally = partyGame.unit('soldier', 595 + i * 4, 500);
+    partyGame.s.party.push(ally);
+  }
+  assert(partyGame.cast(5, many.foe.id, true));
+  const actors = [partyGame.hero, ...partyGame.s.party];
+  const partyLine = partyGame.line;
+  let partyVisibilityCalls = 0;
+  partyGame.line = function(from, to, ...args) {
+    if (actors.includes(to) && from !== to) partyVisibilityCalls++;
+    return partyLine.call(this, from, to, ...args);
+  };
+  for (const actor of actors)
+    assert(partyGame.rogueStationProtection(actor), 'all six actors within station');
+  const warmedCalls = partyVisibilityCalls;
+  assert(warmedCalls <= actors.length * 2, 'initial warmup bounded by two stations');
+  for (let frame = 0; frame < 15; frame++) {
+    partyGame.s.time += 0.01;
+    partyGame.tickRogueStations();
+    for (let repeated = 0; repeated < 40; repeated++)
+      for (const actor of actors)
+        assert(partyGame.rogueStationProtection(actor));
+  }
+  assert.equal(partyVisibilityCalls, warmedCalls,
+    '240 repeated protection reads per frame across full party avoid terrain calls');
+  partyGame.s.time += 0.26;
+  for (const actor of actors) assert(partyGame.rogueStationProtection(actor));
+  assert(partyVisibilityCalls - warmedCalls <= actors.length * 2,
+    'each actor refreshes no more than two lines after the quarter-second interval');
+  const leaving = partyGame.s.party.at(-1);
+  leaving.x += 600;
+  const afterRefresh = partyVisibilityCalls;
+  assert.equal(partyGame.rogueStationProtection(leaving), null,
+    'companion leaving the field immediately loses protection');
+  assert.equal(partyVisibilityCalls, afterRefresh,
+    'outside-circle check never calls terrain sightline');
+  leaving.x -= 600;
+  assert(partyGame.rogueStationProtection(leaving),
+    'companion re-entering the field regains protection immediately');
+  assert(partyVisibilityCalls > afterRefresh,
+    're-entry invalidates cached visibility even without waiting');
+  // A newly placed station invalidates every actor cache without an extra scan.
+  partyGame.hero.cd[4] = 0;
+  assert(partyGame.cast(5, many.foe.id, false));
+  const placed = partyVisibilityCalls;
+  assert(partyGame.rogueStationProtection(leaving));
+  assert(partyVisibilityCalls > placed, 'new station invalidates stale visibility');
+  partyGame.s.time += R.roguePerformances[5].charged.seconds + 0.5;
+  assert.equal(partyGame.rogueStationProtection(leaving), null,
+    'expired fields cannot retain a cached ward');
+  partyGame.line = partyLine;
+  // Independent full-repertoire self-benefit audit: 8 skills x both forms
+  // x ordinary/critical releases. One frozen critical action per cast.
+  const Critical = require('../src/prototype/critical-executions.js');
+  const Levels = require('../src/prototype/critical-levels.js');
+  const Native = require('../src/prototype/critical-party-native.js');
+  const families = {1:'refrain',2:'quickstep',3:'steadyBeat',4:'mending',
+    6:'borrowedTime',7:'firmFooting',8:'finale'};
+  for (const critical of [false,true])
+    for (const charged of [false,true])
+      for (let slot=1; slot<=8; slot++) {
+        const sample=fresh(), campaign=sample.g;
+        campaign.hero.skills=Array(8).fill(1);
+        let rolls=0;
+        if (critical) {
+          const native=Native.createSession(Critical,Levels,{
+            enabled:true,stream:{next(){rolls++;return 0;}},
+          });
+          native.setCriticalLevel('rogue',3);
+          campaign._criticalPartyNative=native;
+        }
+        assert.equal(campaign.cast(slot,sample.foe.id,charged),true,
+          'Rogue slot '+slot+' should cast in '+(charged?'charged':'tap')+' form');
+        if(slot===5) {
+          assert(campaign.rogueStationProtection(campaign.hero),
+            'Rogue receives Skill 5 station protection');
+          assert(campaign.rogueStationProtection(sample.unit),
+            'companion retains station protection');
+        } else {
+          assert(campaign.rogueSongBoon(campaign.hero,families[slot]),
+            'Rogue receives Skill '+slot+' timed self-buff');
+          if(slot===1)
+            assert((sample.unit.rogueSharpRefrainBonus||0)>0,
+              'companion retains Skill 1 basic-buff');
+          else
+            assert(campaign.rogueSongBoon(sample.unit,families[slot]),
+              'companion retains Skill '+slot+' boon');
+        }
+        assert.equal(rolls,critical?1:0,'only one critical roll per cast');
+        campaign.s.time+=20;
+        assert.equal(slot===5
+          ? campaign.rogueStationProtection(campaign.hero)
+          : campaign.rogueSongBoon(campaign.hero,families[slot]),null,
+          'Rogue self-benefit does not persist after expiry');
+      }
+  // Self-centered geometry stays anchored to Rogue even after Skill 7
+  // displaces its primary enemy at the outer radius.
+  for (const charged of [false,true]) {
+    const sample=fresh(),h=sample.g.hero,
+      radius=R.roguePerformances[7][charged?'charged':'tap'].radius;
+    h.skills[6]=1;
+    sample.foe.x=h.x+radius-5;
+    const prior=sample.foe.x;
+    assert.equal(sample.g.cast(7,sample.foe.id,charged),true);
+    const receipt=sample.g.effects.filter(e=>e.type==='rogueBellPerformance').at(-1);
+    assert.equal(receipt.x,h.x,'music wave never moves with knocked-back enemy');
+    assert.equal(receipt.y,h.y);
+    assert.equal(receipt.radius,radius);
+    assert.equal(sample.g.rogueSongBoon(h,'firmFooting')?.outgoing,
+      charged?0.08:0.05,'performer retains damage buff after target displacement');
+    assert(sample.foe.x>=prior,'enemy push must not move primary toward Rogue');
+  }
+  // Every performance needs a lawful hostile within Rogue's own area.
+  // A remote target cannot give Rogue a free buff; a remote ally is excluded.
+  for (const charged of [false,true]) {
+    const remote=fresh(),h=remote.g.hero,
+      radius=R.roguePerformances[2][charged?'charged':'tap'].radius;
+    h.skills[1]=1;
+    remote.foe.x=h.x+radius+1;
+    const previous=h.cd[1];
+    assert.equal(remote.g.cast(2,remote.foe.id,charged),false);
+    assert.equal(remote.g.rogueSongBoon(h,'quickstep'),null);
+    assert.equal(h.cd[1],previous,'invalid cast does not consume recovery');
+    const near=fresh(),singer=near.g.hero;
+    singer.skills[1]=1;
+    near.unit.x=singer.x+radius+1;
+    assert(near.g.cast(2,near.foe.id,charged));
+    assert(near.g.rogueSongBoon(singer,'quickstep'));
+    assert.equal(near.g.rogueSongBoon(near.unit,'quickstep'),null);
+  }
+  // Every player-facing normal and charged effect must explicitly name Rogue.
+  for (let slot=1; slot<=8; slot++) {
+    const guide=Reference.describe(g,slot);
+    assert(guide.tap.effect.includes('Rogue'),
+      'Skill '+slot+' normal guidance names Rogue');
+    assert(guide.charge.effect.includes('Rogue'),
+      'Skill '+slot+' charged guidance names Rogue');
+  }
+  const skill5Guide=Reference.describe(g,5);
+  assert(skill5Guide.note.includes('even if they enter after placement'));
+  assert(skill5Guide.tap.metrics.some(m=>m.key==='duration'&&
+    m.label==='Station lifetime'));
+
+  // Audit actual effect consumption, not merely the presence of buff records.
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[0]=1;
+    assert(campaign.cast(1,sample.foe.id));
+    campaign.rogueCharmAttempt=()=>false;
+    hero.basicCd=0;
+    const previous=sample.foe.hp;
+    assert(campaign.castRogueBasic(sample.foe.id));
+    const actual=previous-sample.foe.hp;
+    const expected=(campaign.power()+12)*R.rogueHeroFoundation.basic.primaryMultiplier*1.05;
+    assert(Math.abs(actual-expected)<1e-6,
+      'Skill 1 heroine refrain actually increases her automatic basic hit');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[2]=1;
+    assert(campaign.cast(3,sample.foe.id));
+    assert(campaign.beginPartyCharge(hero,1));
+    assert.equal(campaign.recordPartyChargeDamage(hero,hero.maxHp*.5),false,
+      'Skill 3 self protection prevents nonlethal preparation interruption');
+    campaign.s.time+=R.roguePerformances[3].tap.seconds+.1;
+    // The protected preparation completed long before the boon expired.
+    // Start a NEW charge to test the unprotected state correctly.
+    campaign.clearPartyCharge(hero);
+    assert(campaign.beginPartyCharge(hero,1));
+    assert.equal(campaign.recordPartyChargeDamage(hero,hero.maxHp*.5),true,
+      'a new charge is interruptible after the timed self-buff expires');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.hp-=25;
+    hero.skills[3]=1;
+    assert(campaign.cast(4,sample.foe.id));
+    const before=hero.hp;
+    campaign.s.time+=.5;
+    campaign.advanceRogueMending(.5);
+    assert(hero.hp>before,'Skill 4 heals Rogue herself with a finite budget');
+  }
+  // Exact expiry must deliver Skill 4's final finite healing slice to
+  // Rogue AND living companions; no post-expiry revival or extra heal.
+  for(const charged of [false,true]){
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero,
+      ally=sample.unit, form=R.roguePerformances[4][charged?'charged':'tap'];
+    hero.skills[3]=1;
+    hero.hp-=20;
+    ally.hp-=20;
+    const beforeHero=hero.hp, beforeAlly=ally.hp;
+    assert(campaign.cast(4,sample.foe.id,charged));
+    for(let second=0;second<form.seconds;second++){
+      campaign.s.time+=1;
+      campaign.advanceRogueMending(1);
+    }
+    assert(Math.abs(hero.hp-beforeHero-hero.maxHp*form.healFraction)<1e-6,
+      'Rogue receives full finite healing budget through exact expiry');
+    assert(Math.abs(ally.hp-beforeAlly-ally.maxHp*form.healFraction)<1e-6,
+      'companion retains the same complete normal/charged healing budget');
+    assert.equal(campaign.rogueSongBoon(hero,'mending'),null,
+      'final delivery does not extend the expired buff');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[6]=1;
+    assert(campaign.cast(7,sample.foe.id));
+    const first=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero'));
+    const buffed=first-sample.foe.hp;
+    campaign.s.time+=R.roguePerformances[7].tap.seconds+.1;
+    const second=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero'));
+    const unbuffed=second-sample.foe.hp;
+    assert(Math.abs(buffed/unbuffed-1.05)<1e-6,
+      'Skill 7 heroine damage multiplier applies in the shared damage resolver');
+  }
+  {
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero;
+    hero.skills[7]=1;
+    const beforeChance=campaign.criticalPartyChance('hero');
+    assert(campaign.cast(8,sample.foe.id));
+    assert(Math.abs(campaign.criticalPartyChance('hero')-beforeChance-.04)<1e-8);
+    const first=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero'));
+    const special=first-sample.foe.hp;
+    const second=sample.foe.hp;
+    assert(campaign.damage(sample.foe,100,'hero',{automaticBasic:true}));
+    const basic=second-sample.foe.hp;
+    assert(Math.abs(special/basic-1.04)<1e-6,
+      'Skill 8 heroine bonus affects special hits but not automatic basics');
+  }
   // Non-Rogue classes retain their exact original cooldown/movement behavior.
   for(const cls of ['paladin','mage','ranger']) {
     const normal = new Campaign('normal',cls,()=>0.9);

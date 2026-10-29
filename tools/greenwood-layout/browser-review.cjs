@@ -159,7 +159,7 @@ const types = {
         );
         assert.equal(receipt.zoom, 1.5);
         assert(receipt.snapshotUnchanged);
-        assert.equal(receipt.version, '0.9.1+snapshot.dev.215');
+        assert.equal(receipt.version, require('../../package.json').version);
         assert.deepEqual(errors, []);
         const file = `browser-${name}-${viewport.width}x${viewport.height}-${viewport.clock === 120 ? 'day' : 'night'}.webp`;
         await sharp(await page.screenshot())

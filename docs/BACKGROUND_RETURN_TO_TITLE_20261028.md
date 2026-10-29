@@ -37,3 +37,21 @@ Automated regression cases cover English/Spanish title states; cold launch; succ
 ## Known limitations
 
 The browser can suspend/kill the page before a `visibilitychange` handler completes; the existing autosave and cold-boot recovery remain necessary. GPU context loss may occur after the title has reappeared; the existing renderer error/fallback path still applies. Nothing can guarantee that every driver-side GPU stall is measurable from JavaScript, and no claim is made that minimizing always destroys a cache.
+
+## 28 October 2026 follow-up — crash-recovered Continue identity (draft PR #581)
+
+A matching unclean-session recovery marker lets `recoverLoadedSession()` replace the validated in-memory Campaign with a new `Campaign.restore(snapshot)` clone, relocated to a barracks or regional refuge. The title loader previously retained its pre-recovery Campaign identity and silently rejected the newly recovered one in `showReadyFrame()`. That early return left `titleLoading` true, all title actions disabled and the text at **"Drawing first scene…"** even though the original save loaded.
+
+The proposed fix refreshes only the local Campaign reference after successful synchronous recovery. Earlier asynchronous preparation still checks its original identity; subsequent scene warmup uses the actual recovered zone. This is a lifecycle repair, **not a save migration, save format update, Pixi/Canvas optimization or automatic crash-recovery bypass**.
+
+A bilingual synthetic-v4 test supplies a matching `azeroth-active-play-recovery-v1` marker, verifies that recovery really changes the object, and checks that Continue exposes gameplay after the ready frame. The real player's exported save does **not** include the browser-local marker, so source evidence alone cannot confirm that marker was present at the time of the freeze. No personal save contents are stored in this PR.
+
+**Status:** Draft branch pending exact-head CI and owner device acceptance. Do not claim merged, published, or physically verified until those separate checks pass.
+
+## Import Save confirmation on the title screen (follow-up)
+
+Import Save opens the browser's native JSON file picker. After the user selects a valid file, the import performs validation and guarded replacement, resets the unclean-session marker, and intentionally returns to the title screen rather than starting simulation immediately. This protects the loaded campaign behind an explicit **Continue Adventure** action. Previously the only success notice was written to the gameplay HUD, hidden by the title overlay, making a successful import look like a no-op.
+
+The original import action only called JavaScript `.click()` on a permanently hidden file input *outside* the modal. On the owner's Chromebook the file chooser did not appear at all, so import could never begin. The menu now places that very same `<input type="file">` directly inside a visible, labeled full-width action, with the native input itself handling trusted pointer and keyboard selection. It is moved back to the document before rebuilding a menu so its event handler is not lost. All three import entry points use this direct control. Nothing in the change edits the uploaded campaign.
+
+The title screen also exposes a visible bilingual live-region confirmation instructing **Continue Adventure** after file selection succeeds; a failed import instead displays a readable error inside the current dialog and leaves the existing save untouched. Cancelling the native picker without selecting a file leaves the dialog unchanged. Regression tests check native input inclusion, bilingual confirmation and the manual Continue handoff. A separate local headless-Chromium file-chooser experiment confirmed the overlaid input receives a real file chooser event; that is **not** equivalent to verifying behavior in the owner's installed Chromebook PWA.

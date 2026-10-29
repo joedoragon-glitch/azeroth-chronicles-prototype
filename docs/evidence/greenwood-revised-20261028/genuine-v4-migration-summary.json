@@ -1,5 +1,4 @@
 {
-  "mode": "revised",
   "sourceSha256": "07c05533633f2e47072cfc3c4d3de8a8070238ec9ce6f66804b1d27b074b7c45",
   "genuinePlayerExport": true,
   "schema": 4,
@@ -12,8 +11,8 @@
   "valePropsAfter": 206,
   "missingPropIds": [],
   "valePropsAfterEntry": 249,
-  "sceneVersion": 1,
+  "sourceVersion": 1,
+  "sceneVersion": 2,
   "essentialMissing": [],
-  "heroOnDryGround": true,
-  "ordinaryRecords": 57
+  "heroOnDryGround": true
 }

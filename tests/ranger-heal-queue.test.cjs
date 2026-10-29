@@ -20,6 +20,7 @@ const heals = (g) =>
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const { g, ranger, soldier } = scene(cls);
   const cd = ranger.healCd;
+  assert(g.healCompanionCasters().includes(ranger), 'conventional Ranger remains an eligible healer');
   assert(g.requestRangerHeal());
   assert(g.queuedRangerHeal());
   assert.equal(heals(g).length, 0);

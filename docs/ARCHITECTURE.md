@@ -54,7 +54,7 @@ The table below is intentionally **current ownership reference**, rather than an
 | --- | --- |
 | `data.js` / `rules.js` | Approved content and authoritative live balance (`rules.balance`), combat/support and authored geometry tables |
 | `field-onboarding.js` | Saved opening-field hero-first admission, silent level-2 Thornfang/Mira arrival and physical companion-triggered Thornfang withdrawal; native combat/path/reset owners resolve admitted behavior |
-| `world.js` | Region generation, settlements, authored sites, interiors, occupation layouts and world migrations |
+| `world.js` / `greenwood.js` | Region generation and world migrations; the Greenwood owner installs authored parcels plus independent one-time geometry and scenery revisions on the same Campaign |
 | `fortifications.js` | Authored defended footprints, position-derived enemy bonuses and enemy-only wall/low-cover shot permissions; transient geometry cache |
 | `navigation.js` | Collision, line of sight, route solving, movement/following, fast-reject obstacle checks and bounded opt-in crowd diagnostics |
 | `engine.js` | Authoritative Campaign state, simulation clock, enemy AI, encounter population, death/succession and quest orchestration |
@@ -148,3 +148,14 @@ For a new change, confirm **(1)** owner approval and accepted design, **(2)** th
 ## Historical audits and deeper source evidence
 
 The [former architecture guide at commit f1d23ac](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/f1d23acbf8ff0d11670050cc8c9b11171301ab27/docs/ARCHITECTURE.md) retains its complete **27 October Phase 4 dev.205 integration audit**, source/PR receipts, dated performance discussion and old detailed coupling notes. Earlier [housekeeping audit](HOUSEKEEPING_AUDIT.md), [performance history](PERFORMANCE_EVIDENCE_REGISTER_20261024.md) and [development history](PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md) remain available. Those historical figures and one-time permissions are **not** extra current instructions or release gates. For the live release checkpoint use [Development state](DEVELOPMENT_STATE.md).
+
+
+## Bounded route planning (dev.218 integration of PR #584)
+
+Normal actor collision and line of sight remain authoritative in `navigation.js`. Three live planning paths now use a separate, resumable workload controller: companion following (eight-neighbor A*), worker delivery-site comparisons (the same A*), and tactical Rogue-enemy support regroup (four-neighbor BFS). Existing synchronous `companionRoute()` and `route()` APIs are kept for direct callers and world-generation geometry.
+
+The shared controller in `navigation.js::advanceBudgetedRoute` counts nested `blocked()` terrain probes and expanded grid nodes while advancing generator search state across simulation updates. Its allowance is per campaign and tick: 768 probes/240 nodes across all planning consumers, at most 512 probes/120 nodes per call (provisional and subject to audit). This configuration lives in navigation.js, not shared balance rules. Delivery sites are considered by straight-line lower bound and eliminated only when no possible route could outperform a fully validated result. The state is transient and keyed by the real actor/zone/target through existing navigation trips and the party/AI transient maps. A pending plan is not a failed route. Movement keeps native `move()` collision; no change is made to target acquisition, projectile collision, authoritative route search contracts, road generation or v4 save fields.
+
+**Integration status:** the source and matched native audit came from PR #584, whose final-head focused checks passed. This dev.218 port additionally preserves current dev.217 healing, HUD and combat changes and requires its own focused CI and publication evidence. Do not infer device FPS gains.
+
+**Lifecycle:** Explicit gathering cancellation or reassignment clears pending delivery ranking; Recall preserves the existing worker order. Critical worker withdrawal records the interrupted delivery site even when survival handling runs before ordinary labor, and per-enemy tactical route plans are dropped on encounter stop/reset. Intermediate search generators and shared counters are transient, not v4 snapshot fields. Full-path validation and actual movement collision remain required.

@@ -1,0 +1,261 @@
+{
+  "selectorCheckout": "6404fb080ef4a17fd5e7d9cfb54cdb217ae8af30",
+  "comparisonBase": "ef53b8b7f10e178e4f9bf68e9b00756df6602545",
+  "sourceHashes": {
+    "engine": "27865074b401e32abcc62dd339d8dc93c62f27514a70f7ba8a6aa2e1e02f5c50",
+    "greenwood": "f9a5d063cfac5bf55add7283e144087eb403c9d1cf38af63eb4e2c3876b62bfd",
+    "data": "82bfb2120ac6294817e0f5737ccae26aa1d2fd7dde670f027d9a5b529995986f",
+    "rules": "c4ccbcd46e3a3494781b339b482ee519d2cf1bcc3943143098a0f97a05009648",
+    "world": "bac7afe1f7770b9509e416f701542233760074e066c2f9736e9f67ac3cc787bd",
+    "navigation": "8b955b792c0721fd46a593ed0e965a38bc6a6cb94058902098d67e9022a68a7a",
+    "save": "4c4dbb15555e659188b118f9ad19677cca2b7fb9608a7ef311d523a018744d80",
+    "visuals": "9782c445d64d287cf89fcb109c7b967b35e13d7788441a59a544eb6d8f160ae5",
+    "renderer": "0e1205b0c72342080c455aafd36c71e7d58c24e2e9d5c79c83f1b6f70e404bfc",
+    "app": "204ae2addb058c586717f47e4c2dc0712006b494bf07848ea80b9884237d5b5d",
+    "sprites": "6057888eed7a54e415a9657f019c421557773d6e6dcb963f8716fe9ac55767df",
+    "materials": "14565836a362b367bf054989938ab9be3074551e276077ffbd77fd7b02fd6cc8"
+  },
+  "selected": 52,
+  "passed": 48,
+  "failed": [
+    "tests/local-sites.test.cjs",
+    "tests/prototype-ui.test.cjs",
+    "tests/sprite-scope.test.cjs",
+    "tests/town-street-audit.test.cjs"
+  ],
+  "checks": [
+    {
+      "file": "tests/app.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/architecture.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/archive-reference.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/asset-packaging.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/audio-catalog.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/audio-scheduler.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/beta-historical.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/ci-focus-policy.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/ci-scope.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/class-passives.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/cooldown-only.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/critical-restart-recovery.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/daylight-cycle.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/enemy-cross-species-idle-healing.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/enemy-ordinary-heal-balance.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/enemy-support-healing.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/field-onboarding.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/focused-ci-report.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/game-menu-ui.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/game.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/greenwood-flagship.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/greenwood-layout-measurement.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/greenwood-onboarding-clearance.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/greenwood-scornfang-title.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/hero-skill1-area3-input.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/hero-skill1-integration.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/hero-skill1-retreats.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/hero-skill1-stage1.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/local-sites.test.cjs",
+      "passed": false
+    },
+    {
+      "file": "tests/night-tempo.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/persistence-safety.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/platform-runtime.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/prototype-ui.test.cjs",
+      "passed": false
+    },
+    {
+      "file": "tests/pwa-release-id.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/ranged-pet-support.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/ranger-max-range-goblin-response.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/restart-recovery.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/rogue-anchor-under-fire-integrity.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/rogue-bard-critical-skill1.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/rogue-bard-phase4-companions.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/rogue-bard-phase5-repertoire.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/runtime-workload.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/save-recovery-checkpoints.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/save-writer.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/service-worker.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/slow-cooldown.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/snapshot-encounter-lifecycle.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/sprite-lifecycle.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/sprite-scope.test.cjs",
+      "passed": false
+    },
+    {
+      "file": "tests/sprites.test.cjs",
+      "passed": true
+    },
+    {
+      "file": "tests/town-street-audit.test.cjs",
+      "passed": false
+    },
+    {
+      "file": "tests/world-proportions.test.cjs",
+      "passed": true
+    }
+  ],
+  "correctiveRetests": [
+    {
+      "file": "tests/sprite-scope.test.cjs",
+      "result": "PASS",
+      "correction": "Only four reviewed Greenwood procedural families and their source fingerprints reconciled. Original rejection guards unchanged."
+    },
+    {
+      "file": "tests/prototype-ui.test.cjs",
+      "result": "PASS",
+      "correction": "Production critical modules, Continue/arrival completion, actual menus and legal input prerequisites restored; original runtime behavior unchanged."
+    }
+  ],
+  "remaining": [
+    {
+      "file": "tests/local-sites.test.cjs",
+      "comparison": "Five remaining failures reproduce on unchanged main: Highlands hidden source count, assigned-source worker test, Highlands Treasury roof setback, Crown quest-28 reward and quest-13 old title. Main also retains the level-1 Thornfang fixture failure repaired in this branch."
+    },
+    {
+      "file": "tests/town-street-audit.test.cjs",
+      "comparison": "Current main fails the earlier Vale cottage setback. A diagnostic copy with only the engine import redirected and the existing region selector reproduces March 0-of-12 road connectivity; the original full suite remains failed."
+    }
+  ],
+  "result": "RED: inherited cross-region failures remain; corrective retests do not turn the original selector run green",
+  "build": "PASS reproducible dev.223; release documentation contract PASS",
+  "browser": "PASS 27 production-page scene captures; no broad browser/full-game certification or device acceptance"
+}

@@ -31,9 +31,34 @@ const route = [
 const mode = process.argv[4] || 'orientation';
 if (!['orientation', 'farm-woods', 'estate'].includes(mode)) throw Error('Unknown pilot circuit');
 if (mode === 'farm-woods')
-  route.splice(0, route.length, 'supplier', 'recruiter', 'minor', 'orchard', 'mill-pond', 'goblin-camp', 'den-ruins', 'bridge-south', 'minor', 'rest');
+  route.splice(
+    0,
+    route.length,
+    'supplier',
+    'recruiter',
+    'minor',
+    'orchard',
+    'mill-pond',
+    'goblin-camp',
+    'den-ruins',
+    'bridge-south',
+    'minor',
+    'rest',
+  );
 if (mode === 'estate')
-  route.splice(0, route.length, 'supplier', 'recruiter', 'bridge-north', 'outbound', 'cache', 'entrance', 'supply-entrance', 'bridge-south', 'rest');
+  route.splice(
+    0,
+    route.length,
+    'supplier',
+    'recruiter',
+    'bridge-north',
+    'outbound',
+    'cache',
+    'entrance',
+    'supply-entrance',
+    'bridge-south',
+    'rest',
+  );
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
   visits = [],
   stalls = [],
@@ -63,12 +88,15 @@ for (let step = 0; step < seconds * 10; step++) {
   // pilot omitted healing/recovery and spammed rejected refuge calls every tick.
   // Retain that evidence; this strategy is a separate, explicitly named pilot.
   if (g.hero.talentPoints > 0) g.talent(g.hero.talents[2] < g.talentMaxRank(2) ? 2 : 0);
-  if (g.hero.hp < g.hero.maxHp * 0.7 && !g.hasSupportEffect(g.hero, 'health') && !g.queuedRangerHeal())
+  if (
+    g.hero.hp < g.hero.maxHp * 0.7 &&
+    !g.hasSupportEffect(g.hero, 'health') &&
+    !g.queuedRangerHeal()
+  )
     if (g.requestRangerHeal()) healRequests++;
   const captain = by('recruiter'),
     fallen = g.s.party.some((u) => u.hp <= 0);
-  if (captain && distance(g.hero, captain) <= 110 && fallen)
-    if (g.recover()) recoveries++;
+  if (captain && distance(g.hero, captain) <= 110 && fallen) if (g.recover()) recoveries++;
   const threat = z.enemies
     .filter(
       (e) =>
@@ -121,7 +149,10 @@ for (let step = 0; step < seconds * 10; step++) {
   g.tick(0.1);
   const moved = distance(before, g.hero);
   travel += moved;
-  still = moved < 0.05 && !threat && step / 10 >= dwellUntil && g.hero.hp >= g.hero.maxHp * 0.35 ? still + 0.1 : 0;
+  still =
+    moved < 0.05 && !threat && step / 10 >= dwellUntil && g.hero.hp >= g.hero.maxHp * 0.35
+      ? still + 0.1
+      : 0;
   if (still > 12) {
     stalls.push({
       time: step / 10,
@@ -180,7 +211,11 @@ const result = {
   boundary:
     'Native Normal Paladin and starting companions; move/attack orders, legal earned Health/Power training, requested Ranger healing, paid Captain recovery when affordable, native rests, five-second scene stops and one normal build request. No direct actor/crown/HP/XP/rank/damage/count edits. Algorithmic exploration is not manual newcomer or human enjoyment acceptance.',
   initialOrdinary,
-  travelUnits: Math.round(travel),
+  displacementUnitsIncludingTeleports: Math.round(travel),
+  distanceBoundary:
+    'Cumulative frame-to-frame displacement includes automatic death returns; not walked distance. Collision-route lengths are in the comparison datasets.',
+  stallBoundary:
+    'More than 12 seconds without movement while healthy, no nearby threat, outside scene stops; excludes combat/recovery loops.',
   combatSeconds: Math.round(combatSeconds),
   buildRequested: !!build,
   restCalls,

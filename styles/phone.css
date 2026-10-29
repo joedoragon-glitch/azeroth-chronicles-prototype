@@ -845,8 +845,14 @@ body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true']
 }
 body[data-experience='phone'][data-hud-style='adaptive'] #hero-stats .hud-low-health {
   position: absolute;
+  /* The Crown count owns the right side of the HP text row.
+     Keep the low-health warning over the bar, without adding HUD height. */
   right: 0;
-  top: 0;
+  top: 13px;
+  z-index: 1;
+  padding: 0 2px;
+  border-radius: 2px;
+  background: #182d38e8;
   display: inline-block;
   font-size: 9px;
   line-height: 1.3;

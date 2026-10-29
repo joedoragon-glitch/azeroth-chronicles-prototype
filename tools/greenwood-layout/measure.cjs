@@ -53,7 +53,9 @@ const summarize = (v) => ({
 });
 const provenance = {
   sourceSha: cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
-  baseMainSha: cp.execFileSync('git', ['merge-base', 'HEAD', 'origin/main'], { cwd: root, encoding: 'utf8' }).trim(),
+  baseMainSha: cp
+    .execFileSync('git', ['merge-base', 'HEAD', 'origin/main'], { cwd: root, encoding: 'utf8' })
+    .trim(),
   comparedRuntimeSha256: Object.fromEntries(
     [
       'engine',
@@ -302,7 +304,8 @@ function census(g, seed) {
     routes,
     essentialFeatures: {
       allAuthoredEssentialsPlaced: revised
-        ? z.greenwoodSceneVersion === (R.greenwoodLayout.sceneVersion || R.greenwoodLayout.version) &&
+        ? z.greenwoodSceneVersion ===
+            (R.greenwoodLayout.sceneVersion || R.greenwoodLayout.version) &&
           !!z.greenwoodSceneAudit?.length &&
           z.greenwoodSceneAudit.every((p) => !p.essential || p.placed)
         : false,

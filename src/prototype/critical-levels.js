@@ -107,6 +107,12 @@
     ['basic', '1', '2'].forEach((slot, index) =>
       register('pet/' + family + '/' + slot, 'companion', levers[index]));
 
+  // Captured enemies retain both hostile Rogue critical-DAMAGE outcomes;
+  // allied ownership uses the party stream, one roll per skill activation,
+  // with the same level-1 +8% damage effect as World Rogue maneuvers.
+  register('charm/rogue/basic', 'companion', 'damage');
+  register('charm/rogue/signature', 'companion', 'damage');
+
   // Stage 3 first native world slice: these two are real shared basic-action
   // owners, not a fallback for specials, traps, telegraphs, ticks or bosses'
   // authored abilities. Unregistered world moves still fail closed.

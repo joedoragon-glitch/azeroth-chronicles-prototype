@@ -525,8 +525,7 @@
               const frontage = [road, ...path];
               if (!z.footpaths.some((p) => JSON.stringify(p) === JSON.stringify(frontage)))
                 z.footpaths.push(frontage);
-            }
-            else
+            } else
               result.push({
                 id: 'frontage-' + destinations.indexOf(door),
                 essential: true,

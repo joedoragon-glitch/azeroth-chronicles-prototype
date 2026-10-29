@@ -9,6 +9,9 @@
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
     const rogueMusicStations = new WeakMap();
+    // One weak, unsaved, per-actor station-visibility cache. On-demand reads
+    // are cheap even when combat asks several times per frame for every ally.
+    const rogueStationChecks = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     // Adding a hero to the class registry must not silently use Ranger shots,
@@ -1164,17 +1167,49 @@
       }
       // These are owner-tunable first-play numbers, not permanent skill names.
       rogueStationProtection(unit) {
-        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
-            unit.active === false || !this.s.party.includes(unit)) return null;
+        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0) return null;
+        const fields = rogueMusicStations.get(this);
+        // No active stations means zero party membership or terrain work.
+        if (!fields?.length ||
+            (unit !== this.hero &&
+              (unit.active === false || !this.s.party.includes(unit)))) return null;
+        // Resolve the cheap geometric membership for Rogue and each companion
+        // on demand. Entry, exit and exact expiry never await cache refresh.
+        let inside = 0;
+        for (let i = 0; i < fields.length; i++) {
+          const field = fields[i], dx = unit.x - field.x, dy = unit.y - field.y;
+          if (field.zone === this.zoneId && field.until > this.s.time &&
+              dx * dx + dy * dy <= field.radius * field.radius) inside |= 1 << i;
+        }
+        if (!inside) {
+          // Leaving a circle drops cached visibility, so re-entry is checked
+          // immediately rather than reusing a prior inside-the-field result.
+          rogueStationChecks.delete(unit);
+          return null;
+        }
+        const cached = rogueStationChecks.get(unit),
+          moved = cached
+            ? (unit.x - cached.x) ** 2 + (unit.y - cached.y) ** 2 : Infinity;
+        // At most 2 fields, 4 Hz for an unmoving actor; walking farther than
+        // 24 units triggers an earlier visibility refresh. No extra timer,
+        // scan loop, or extra work for companions outside the stations.
+        if (cached && cached.owner === this && cached.fields === fields &&
+            cached.zone === this.zoneId && cached.inside === inside &&
+            this.s.time >= cached.checkedAt && this.s.time < cached.refreshAt &&
+            moved <= 24 * 24) return cached.effect;
         let selected = null;
-        for (const field of rogueMusicStations.get(this) || []) {
-          if (field.zone !== this.zoneId || field.until <= this.s.time ||
-              dist(unit, field) > field.radius || !this.line(field, unit)) continue;
+        for (let i = 0; i < fields.length; i++) {
+          if (!(inside & (1 << i)) || !this.line(fields[i], unit)) continue;
           selected = {
-            resistance: Math.max(selected?.resistance || 0, field.resistance),
-            ward: Math.max(selected?.ward || 0, field.ward),
+            resistance: Math.max(selected?.resistance || 0, fields[i].resistance),
+            ward: Math.max(selected?.ward || 0, fields[i].ward),
           };
         }
+        rogueStationChecks.set(unit, {
+          owner: this, fields, zone: this.zoneId, inside,
+          checkedAt: this.s.time, refreshAt: this.s.time + 0.25,
+          x: unit.x, y: unit.y, effect: selected,
+        });
         return selected;
       }
       tickRogueStations() {
@@ -1184,10 +1219,16 @@
           rogueMusicStations.delete(this);
           return;
         }
-        const live = fields.filter((field) =>
-          field.zone === this.zoneId && field.until > this.s.time);
-        if (!live.length) { rogueMusicStations.delete(this); return; }
-        rogueMusicStations.set(this, live);
+        // Stable field-list identity makes party-wide sightline caching useful;
+        // only create a new list when an old station actually expires.
+        let live = fields;
+        if (fields.some((field) =>
+          field.zone !== this.zoneId || field.until <= this.s.time)) {
+          live = fields.filter((field) =>
+            field.zone === this.zoneId && field.until > this.s.time);
+          if (!live.length) { rogueMusicStations.delete(this); return; }
+          rogueMusicStations.set(this, live);
+        }
         for (const field of live) {
           if (field.nextPulse > this.s.time) continue;
           field.nextPulse = this.s.time + 0.65;
@@ -1229,8 +1270,8 @@
       }
       rogueSkill1Config(charged = false) {
         return charged
-          ? { range: 300, radius: 190, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
-          : { range: 260, radius: 145, cap: 2, damage: 1.3, allyDamage: 0.05, seconds: 4 };
+          ? { range: 290, radius: 290, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
+          : { range: 225, radius: 225, cap: 2, damage: 1.3, allyDamage: 0.05, seconds: 4 };
       }
       // Starting manual song: small / widened hostile pulse mirrored to
       // living active allies in the same lawful area. Charms never come from
@@ -1254,13 +1295,16 @@
             (locked ? null : eligible.sort((a, b) =>
               dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false; // no hostile, no free buff or cooldown
+        // Acquisition already checked this same singer-centered radius and
+        // line of sight. Recheck only if future rules separate range/radius.
         const enemies = eligible.filter((e) =>
-          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)),
+          e === primary || form.radius === form.range ||
+          (dist(e, h) <= form.radius && this.line(h, e)),
         ).sort((a, b) => a === primary ? -1 : b === primary ? 1 :
-          dist(a, primary) - dist(b, primary) || this.idOrder(a, b)).slice(0, form.cap);
+          dist(a, h) - dist(b, h) || this.idOrder(a, b)).slice(0, form.cap);
         const allies = this.activeLivingParty().filter((u) =>
           u.hp > 0 && u.active !== false &&
-          dist(u, primary) <= form.radius && this.line(primary, u));
+          dist(u, h) <= form.radius && this.line(h, u));
         this.releaseRecallForCombat();
         this.engage(primary);
         h.cd[0] = this.skillCooldown(1, false);
@@ -1277,6 +1321,10 @@
         }
         // Stronger same-family application replaces the bonus; no stacking.
         // Other families will use separate bounded effect records in Phase 5.
+        // Instant songs snapshot legal recipients at cast release.
+        this.applyRogueSongBoon(h, 'refrain', {
+            seconds: form.seconds, basicDamage: form.allyDamage,
+          });
         for (const u of allies) {
           if ((u.rogueSharpRefrainUntil || 0) <= this.s.time) u.rogueSharpRefrainBonus = 0;
           u.rogueSharpRefrainBonus = Math.max(u.rogueSharpRefrainBonus || 0, form.allyDamage);
@@ -1286,7 +1334,7 @@
           actor: 'hero', class: 'rogue', slot: 1,
           form: charged ? 'charged' : 'tap', audioCue: 'bell-jingle',
           instrument: R.rogueHeroFoundation.weapon.instrument,
-          x: primary.x, y: primary.y, radius: form.radius,
+          x: h.x, y: h.y, radius: form.radius,
           target: primary.id, hits, allyCount: allies.length,
         });
         return true;
@@ -1315,13 +1363,17 @@
             (locked ? null : candidates.sort((a, b) =>
               dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false;
+        // One terrain sightline per candidate when the performer footprint
+        // equals the legal acquisition range (all current song forms).
         const enemies = candidates.filter((e) =>
-          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)))
+          e === primary || form.radius === form.range ||
+          (dist(e, h) <= form.radius && this.line(h, e)))
           .sort((a, b) => a === primary ? -1 : b === primary ? 1 :
-            dist(a, primary) - dist(b, primary) || this.idOrder(a, b))
+            dist(a, h) - dist(b, h) || this.idOrder(a, b))
           .slice(0, form.cap);
         const allies = this.activeLivingParty().filter((u) =>
-          dist(u, primary) <= form.radius && this.line(primary, u));
+          u.hp > 0 && u.active !== false &&
+          dist(u, h) <= form.radius && this.line(h, u));
         this.releaseRecallForCombat();
         this.engage(primary);
         h.cd[slot - 1] = this.skillCooldown(slot, false);
@@ -1357,7 +1409,7 @@
           const current = (rogueMusicStations.get(this) || []).filter((f) =>
             f.zone === this.zoneId && f.until > this.s.time);
           current.push({
-            zone: this.zoneId, x: primary.x, y: primary.y,
+            zone: this.zoneId, x: h.x, y: h.y,
             radius: effectForm.radius, cap: effectForm.cap, slow: effectForm.slow,
             resistance: effectForm.slowResistance, ward: effectForm.ward,
             pulseDamage: effectForm.pulseDamage, until: this.s.time + effectForm.seconds,
@@ -1432,7 +1484,11 @@
             }
           }
         }
-        for (const u of (slot === 5 ? [] : allies))
+        const recipients = slot === 5 ? [] : [
+          ...allies,
+          h,
+        ];
+        for (const u of recipients)
           this.applyRogueSongBoon(u,
             slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', effectForm);
         this.event('rogueBellPerformance', {
@@ -1440,7 +1496,7 @@
           form: charged ? 'charged' : 'tap',
           audioCue: 'bell-jingle',
           instrument: R.rogueHeroFoundation.weapon.instrument,
-          x: primary.x, y: primary.y, radius: form.radius,
+          x: h.x, y: h.y, radius: form.radius,
           target: primary.id, enemies: enemies.length, allies: allies.length,
         });
         return true;
@@ -1579,7 +1635,10 @@
         const combo = this.nextBasicCombo(primary.id),
           rank = this.hero.skills[0],
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
-            (1 + 0.15 * (rank - 1)) * combo.multiplier;
+            (1 + 0.15 * (rank - 1)) * combo.multiplier *
+            (1 + Math.max(
+              this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0,
+              this.rogueSongBoon(this.hero, 'cadence')?.basicDamage || 0));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
           enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
@@ -1589,22 +1648,29 @@
         let splashHits = 0;
         if (landed) {
           const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap,
-            axis = Math.atan2(primary.y - this.hero.y, primary.x - this.hero.x),
-            angleGap = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))),
-            halfAngle = combo.step === 3 ? 0.75 : 0.5;
+            radius = combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius;
           const secondary = this.zone().enemies.filter((e) =>
             e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
             !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
-            dist(e, primary) <= cfg.splashRadius &&
-            dist(e, this.hero) <= cfg.range + cfg.splashRadius &&
-            angleGap(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), axis) <= halfAngle &&
-            this.line(this.hero, e),
-          ).sort((a, b) => dist(a, primary) - dist(b, primary) || this.idOrder(a, b));
+            dist(e, this.hero) <= radius && this.line(this.hero, e),
+          ).sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
           for (const e of secondary.slice(0, max))
             if (this.damage(e, enhancedBasic * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
               splashHits++;
         }
+        // Critical bell strikes briefly inspire the singer and companions in
+        // the same physical circle. Only real landed criticals grant a boon;
+        // no extra critical/Charm roll, long aura, or added attack damage.
+        if (landed && criticalReceipt?.critical) {
+          const radius = combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius;
+          this.applyRogueSongBoon(this.hero, 'cadence', cfg.criticalCadence);
+          for (const ally of this.activeLivingParty()) {
+            if (dist(ally, this.hero) <= radius && this.line(this.hero, ally))
+              this.applyRogueSongBoon(ally, 'cadence', cfg.criticalCadence);
+          }
+        }
+        // Newly Charmed enemies cannot retroactively receive a cast-time boon.
         if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);
         // Bell-jingle sound intent remains distinct from actual audio playback.
         this.event('rogueBellBasic', {
@@ -1614,6 +1680,7 @@
           x: this.hero.x, y: this.hero.y,
           target: primary.id, targetX: primary.x, targetY: primary.y,
           combo: combo.step, landed: !!landed, splashHits,
+          radius: combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius,
         });
         return true;
       }

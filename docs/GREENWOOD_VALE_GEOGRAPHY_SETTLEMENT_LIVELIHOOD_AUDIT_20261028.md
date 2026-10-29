@@ -1,3 +1,5 @@
+> **Current implementation evidence, 29 October 2026:** The selected 3200-unit reconstruction, source migration 1 and shoreline scene revision 2 are in draft #570 on the current-main takeover branch. The [handoff closeout](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md#revised-3200-implementation-and-current-gate--draft-570) owns the measured comparison, actual ten-scenario/native evidence, save proofs and unresolved original-suite/pacing gates. This preserved source audit is historical analysis, not an assertion of completion or release.
+
 # Greenwood Vale — geography, settlement and livelihood reconstruction audit
 
 **28 October 2026 · Source/design audit · pinned baseline `main@2bab5c73a9492a91c39d2b261b958fab0f3548ee`**

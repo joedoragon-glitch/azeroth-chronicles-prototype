@@ -90,7 +90,10 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   assert(dist(mill, water) > water.r + mill.r);
   assert(dist(mill, water) < water.r + 100, 'wheel remains at actual pond');
   const sluice = z.props.find((p) => p.id === 'greenwood-mill-sluice');
-  assert(sluice && dist(sluice, water) <= water.r + 35, 'controlled outlet meets the real pond bank');
+  assert(
+    sluice && dist(sluice, water) <= water.r + 35,
+    'controlled outlet meets the real pond bank',
+  );
   assert(g.blocked(water.x, water.y, 'vale', 15, true));
   assert.equal(
     C.rules.terrain[0].filter((p) => p.kind === 'water').length,
@@ -253,15 +256,49 @@ console.log(
 // Scene revision must never run the 2700-to-3200 projection a second time.
 {
   const g = new C('normal', 'paladin', rng(0x47564101));
-  const raw = g.snapshot(), z = raw.zones.vale, pond = C.rules.terrain[0][0];
+  const raw = g.snapshot(),
+    z = raw.zones.vale,
+    pond = C.rules.terrain[0][0];
   z.greenwoodSceneVersion = z.greenwoodAttemptVersion = 1;
-  Object.assign(z.props.find((p) => p.id === 'greenwood-mill-sluice'), {x: pond.x + 170, y: pond.y - 30});
-  const before = JSON.stringify({hero: raw.hero, nodes: z.nodes, enemies: z.enemies, buildings: z.buildings});
-  const restored = C.restore(raw, rng(0x47564101)), once = restored.snapshot();
-  assert.equal(once.zones.vale.greenwoodSourceVersion, 1, 'source geometry migration stays at version 1');
+  Object.assign(
+    z.props.find((p) => p.id === 'greenwood-mill-sluice'),
+    { x: pond.x + 170, y: pond.y - 30 },
+  );
+  const before = JSON.stringify({
+    hero: raw.hero,
+    nodes: z.nodes,
+    enemies: z.enemies,
+    buildings: z.buildings,
+  });
+  const restored = C.restore(raw, rng(0x47564101)),
+    once = restored.snapshot();
+  assert.equal(
+    once.zones.vale.greenwoodSourceVersion,
+    1,
+    'source geometry migration stays at version 1',
+  );
   assert.equal(once.zones.vale.greenwoodSceneVersion, 2);
-  assert.equal(JSON.stringify({hero: once.hero, nodes: once.zones.vale.nodes, enemies: once.zones.vale.enemies, buildings: once.zones.vale.buildings}), before, 'scene-only repair preserves actors, tribute and construction without projecting twice');
-  assert(dist(once.zones.vale.props.find(p=>p.id==='greenwood-mill-sluice'),pond)<=pond.r+35);
-  assert.deepEqual(C.restore(once,rng(0x47564101)).snapshot(),once,'scene revision is exactly idempotent');
+  assert.equal(
+    JSON.stringify({
+      hero: once.hero,
+      nodes: once.zones.vale.nodes,
+      enemies: once.zones.vale.enemies,
+      buildings: once.zones.vale.buildings,
+    }),
+    before,
+    'scene-only repair preserves actors, tribute and construction without projecting twice',
+  );
+  assert(
+    dist(
+      once.zones.vale.props.find((p) => p.id === 'greenwood-mill-sluice'),
+      pond,
+    ) <=
+      pond.r + 35,
+  );
+  assert.deepEqual(
+    C.restore(once, rng(0x47564101)).snapshot(),
+    once,
+    'scene revision is exactly idempotent',
+  );
 }
 console.log('PASS scene-only outlet correction preserves source geometry and exact second reload');

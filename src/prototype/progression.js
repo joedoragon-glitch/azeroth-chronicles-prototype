@@ -50,7 +50,8 @@
           : 0;
       }
       heroMoveSpeed() {
-        return this.hero.speed + this.heroTalentSpeedBonus() + this.heroPassiveSpeedBonus();
+        return (this.hero.speed + this.heroTalentSpeedBonus() + this.heroPassiveSpeedBonus()) *
+          (1 + (this.rogueSongBoon?.(this.hero, 'quickstep')?.move || 0));
       }
       heroCooldownReduction() {
         const training =
@@ -115,7 +116,8 @@
         const earned = Math.min(balance.maxBookBonus,
           this.criticalCodexCount() * balance.perBook);
         if (source === 'hero') return earned +
-          (this.hero.class === 'rogue' ? 0.02 * Math.max(1, this.hero.level || 1) : 0);
+          (this.hero.class === 'rogue' ? 0.02 * Math.max(1, this.hero.level || 1) : 0) +
+          (this.rogueSongBoon?.(this.hero, 'finale')?.criticalChance || 0);
         if (!this.s.party.some((u) => u.id === source &&
             ['soldier', 'archer', 'pet'].includes(u.type))) return 0;
         const shared = earned * this.expeditionSupportFraction('sharedTraining');

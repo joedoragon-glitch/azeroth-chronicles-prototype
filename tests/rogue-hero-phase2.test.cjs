@@ -53,9 +53,9 @@ try {
   assert.equal(g.hero.maxHp, 90);
   assert.equal(g.hero.mp, 60);
   assert.equal(g.talentProfile().power, 7);
-  assert.equal(g.heroBasicAttackApproachRange(), 260);
-  assert.equal(g.heroSkillRange(1), 260, 'first tap available at level 1');
-  assert.equal(g.heroSkillRange(1, true), 300, 'first charge available at level 1');
+  assert.equal(g.heroBasicAttackApproachRange(), 220);
+  assert.equal(g.heroSkillRange(1), 225, 'first performer-centered tap radius at level 1');
+  assert.equal(g.heroSkillRange(1, true), 290, 'first performer-centered charged radius at level 1');
   assert.equal(g.cast(2, enemies[0].id), false);
   assert.equal(g.effects.filter((e) => e.type === 'rogueBellBasic').length, 0);
 
@@ -114,6 +114,8 @@ try {
     originalSpecial = m.companionAttackDamage(ally);
   assert(m.cast(1, foes[0].id), 'normal Skill 1 available from level one');
   assert.equal(m.hero.cd[0], m.skillCooldown(1));
+  assert.equal(m.rogueSongBoon(m.hero, 'refrain')?.basicDamage, 0.05,
+    'solo Rogue is eligible for Skill 1 basic-damage boon inside the cast area');
   assert.equal(m.hero.chargedCd[0], 0);
   assert.equal(m.hero.basicCd, 0);
   assert(m.companionBasicAttackDamage(ally) > baseline, 'friendly mirror actually changes basics');
