@@ -1404,6 +1404,7 @@
       }
       clearGatheringIntent(u) {
         laborAttacks.delete(u);
+        depositPlans.delete(u);
         depositTrips.delete(u);
         deliveryAvoidance.delete(u);
         this.clearCompanionTravel(u);
