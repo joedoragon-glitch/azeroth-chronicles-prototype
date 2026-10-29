@@ -72,9 +72,11 @@ try {
       species: 'goblin', name: 'Skill test dummy', hp: 10000, level: 1,
       damage: 1, gold: 0, xp: 0,
     }, { x, y });
-    e.aggro = true;
+    e.aggro = false;
     e.returning = false;
     game.zone().enemies.push(e);
+    // Let a genuine engagement freeze regional/night statistics exactly once.
+    // An already-aggro dummy skips this and gets healed on the first attack.
     // Engaging an unconfigured mock triggers native regional stat scaling.
     // Normalize it BEFORE measuring ability damage; never infer healing
     // from the initial encounter's 1.25x melee HP adjustment.
