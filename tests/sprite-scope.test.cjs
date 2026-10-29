@@ -120,6 +120,16 @@ assert.throws(
   () => audit({ source: source.replaceAll('#294b36', '#102030') }),
   /Terrain palette lacks current source evidence/,
 );
+for (const [region, color] of [
+  ['Flooded Marches', '#3e5544'],
+  ['Highlands', '#4a593b'],
+]) {
+  assert.throws(
+    () => audit({ source: source.replaceAll(color, '#102030') }),
+    /Terrain palette lacks current source evidence/,
+    region + ' current floor colors must remain anchored in the renderer',
+  );
+}
 const Sprites = require('../src/prototype/sprites.js');
 const pureRangedMirelingGuard = {
   renderKind: 'enemy',
