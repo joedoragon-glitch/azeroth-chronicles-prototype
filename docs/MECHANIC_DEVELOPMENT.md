@@ -18,6 +18,8 @@
 
 When records disagree, **investigate the exact conflict**. Do not automatically trust the newest date, a proposed feature, a convenient test expectation or an unmerged branch over approved design and live behavior. Preserve the official game name; historic repository paths and save keys retain compatibility names under [brand identity](BRAND_IDENTITY.md).
 
+**Region-specific work:** Apply [the one-region consent rule](../AGENTS.md#single-region-authority-and-paid-work-scope-29-october-2026). Test results from unrelated regions are evidence to defer, not new assignments; make no out-of-region edits without explicit owner permission. If shared source changes, verify all other regions remain unchanged. Preserve the owner's paid work allowance by avoiding unrelated CI/repair loops. See [incident #655](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/655).
+
 ## 2. Start with one well-defined outcome
 
 Before editing:

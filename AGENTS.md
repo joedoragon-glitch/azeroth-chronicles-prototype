@@ -35,6 +35,16 @@ For forum announcements, release posts, player replies, development reflections,
 
 **Historical source location:** The original dated release, task, approval and performance commentary has been preserved in [AGENTS historical development ledger (25 October archive)](AGENTS_HISTORY_20261025.md). That file is **historical evidence, not agent operating instructions**; use current source and this active section for any new work.
 
+## Single-region authority and paid-work scope (29 October 2026)
+
+**Incident:** [Greenwood #570 unauthorized cross-region work](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/655). A request to design or rework one region authorizes changes to **that region only**. A discovered problem, a failing test, a plausible technical improvement, or a demand for green CI is **not permission** to edit another region.
+
+- Before touching any other region's roads, buildings, settlements, props, water, terrain, habitats, NPC coordinates or old-save migrations, **describe the proposed change and ask the owner explicitly**. Park findings elsewhere with their baseline reproduction. Do not silently perform the repair and ask afterward.
+- Shared `world.js` / `rules.js` / rendering / save / navigation edits must be bounded to the commissioned region, including runtime effects on saved maps. Validate other regions as negative controls. A global finalizer that skips the target and modifies others is forbidden.
+- An inherited failing test already red on unchanged `main` does not become part of the regional implementation. Do not change other-region code, weaken tests or relabel failures green to satisfy a merge gate; report the blocker and request a decision. Avoid unrelated work and repeated CI runs that consume the owner's paid allowance.
+- For single-region PRs, name the region in the branch/title and use the lightweight CI scope guard. This catches direct foreign edits, **not all indirect effects** of generic code. Negative-control tests, a human review of affected runtime behavior and explicit owner consent remain necessary. No self-issued exceptions via PR descriptions or CI configuration.
+- No automatic cross-region modification, roll-forward, rollback, merge, deployment or expensive full-suite test is authorized by this policy itself.
+
 ## Active operating rules — current owner consent applies
 
 The rules here govern authorized work today. Dated historical tasks and approvals above do not independently reauthorize older features, broad tests, merges or deployments.
