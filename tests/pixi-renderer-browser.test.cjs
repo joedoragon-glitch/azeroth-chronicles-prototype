@@ -418,9 +418,17 @@ async function run() {
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        const downloadPromise=page.waitForEvent('download');
-        await page.getByRole('button', {name:'Export playtest report', exact:true}).click();
-        const download=await downloadPromise;
+        const reportButton=page.getByRole('button', {name:'Export playtest report', exact:true});
+        assert.equal(await reportButton.isVisible(), true,
+          'The Screen and performance menu must expose Export playtest report: ' +
+          JSON.stringify(await page.locator('#modal-actions button').allTextContents()));
+        // Await the download and the actual user click as one operation so a
+        // missing/misrouted button reports its own failure, not an unhandled
+        // download waiter timeout.
+        const [download]=await Promise.all([
+          page.waitForEvent('download',{timeout:15000}),
+          reportButton.click({timeout:15000}),
+        ]);
         const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
         assert.equal(exported.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
         assert(exported.performance.graphicsRenderer.sceneMetrics.actors>0);
