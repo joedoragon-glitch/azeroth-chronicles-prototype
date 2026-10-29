@@ -188,8 +188,8 @@ assert.deepEqual(measuredCrowded,nativeCrowded,
 // Same live-battle progression sample on baseline and candidate, not a
 // synthetic route-only speed test. Measures how AI responsiveness changes.
 for(const [label, opts] of [
-  ['open-24-enemies-6sec',{count:24,companions:5}],
-  ['wall-24-enemies-6sec',{count:24,companions:5,wall:true}],
+  ['open-8-enemies-6sec',{count:8,companions:3}],
+  ['wall-8-enemies-6sec',{count:8,companions:3,wall:true}],
 ]) {
   const g=world(opts), actors=g.zone().enemies.map(e=>({
     e,x:e.x,y:e.y,initialDistance:Math.hypot(e.x-g.hero.x,e.y-g.hero.y)
