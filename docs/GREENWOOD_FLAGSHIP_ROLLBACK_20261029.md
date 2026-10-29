@@ -1,5 +1,7 @@
 # Greenwood Vale flagship — recovery checkpoint and rollback runbook
 
+> **29 October owner-authorized selective rollback:** Restore only Vale's 2,700-unit layout to spare the public the rejected experimental redesign, not an entire old application revision. Other-region fixes and contemporary Rogue/Barracks gameplay remain in main. The dev.235 candidate uses an explicit reverse save-coordinate receipt for already-migrated v4 campaigns. Keep actual pre/post-layout player exports separately; no Git branch contains them. Do not claim release until focused checks and the final Pages run succeed. The Work full-redesign commissioning package remains draft #644.
+
 **29 October 2026 — operational safety record.** This is the recovery procedure for the flagship reconstruction. Merge/publication receipts are recorded below; a successful release does not establish device acceptance or a tested reverse save migration.
 
 The game's public title is *So I Became the Dark Lord's Problem*. Historic repository names and the `vale` internal region ID remain unchanged.
