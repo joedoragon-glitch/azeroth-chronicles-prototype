@@ -43,6 +43,7 @@ function open() {
     { x: 680, y: 1000 },
   );
   z.enemies = [e];
+  g.engage(e); // A real hostile encounter is the precondition for defensive combat.
   g.gather(n.id);
   const amount = n.amount,
     hp = e.hp;
