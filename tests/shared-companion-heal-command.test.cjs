@@ -111,6 +111,8 @@ try {
   // normally delivers its on-hit ally-heal is not replaced or put on cooldown.
   {
     const g = scene();
+    g.s.normal.crypt = true;
+    g.s.normal.thorn = true;
     g.s.true.crypt = true;
     g.s.true.thorn = true;
     const pet = g.unit('pet', 505, 500, 'crypt');
