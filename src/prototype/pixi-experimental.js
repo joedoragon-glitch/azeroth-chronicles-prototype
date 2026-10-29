@@ -516,7 +516,12 @@
         const tile = makeCanvas(canvas.width, canvas.height);
         requireValue(tile.getContext('2d'), 'Terrain tile unavailable')
           .drawImage(canvas, 0, 0);
-        tiles.set(y * columns + x, tile);
+        const finished = y * columns + x + 1;
+        tiles.set(finished - 1, tile);
+        if (finished === 1 || finished === rows * columns ||
+            finished % 4 === 0)
+          options.onPreparationProgress?.({ zone: zoneId, stage: 'terrain',
+            prepared: finished, total: rows * columns });
         if ((x + columns * y) % 2 === 1 &&
             typeof requestAnimationFrame === 'function')
           await new Promise((done) => requestAnimationFrame(done));
