@@ -49,10 +49,15 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 68 + 33 + 9 + 82, '110 party actions + 82 native World keys');
+assert.equal(ids.length, 68 + 33 + 9 + 2 + 82, '112 party actions + 82 native World keys');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 68);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
+assert.equal(ids.filter(k=>k.startsWith('charm/')).length, 2);
+for (const key of ['charm/rogue/basic', 'charm/rogue/signature']) {
+  assert.equal(Levels.ACTIONS[key].group, 'companion', key);
+  assert.equal(Levels.ACTIONS[key].lever, 'damage', key);
+}
 assert.equal(ids.filter(k=>k.startsWith('world/')).length, 82);
 assert.equal(Levels.ACTIONS['world/basic/melee'].lever, 'damage');
 assert.equal(Levels.ACTIONS['world/basic/ranged'].lever, 'damage');
