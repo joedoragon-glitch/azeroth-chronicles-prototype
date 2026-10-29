@@ -321,6 +321,10 @@
     'Charged skill interrupted by damage.': 'El daño interrumpió la habilidad cargada.',
     'Charged skill interrupted.': 'Habilidad cargada interrumpida.',
     'Ranger Heal queued for the hero.': 'Curación del Ranger en cola para el héroe.',
+    'Heal queued for the hero.': 'Curación en cola para el héroe.',
+    'Command Heal': 'Ordenar Curar',
+    'No active companion can use Heal.': 'Ningún compañero activo puede usar Curar.',
+    'Healer cannot use Heal while silenced.': 'El sanador no puede usar Curar mientras esté silenciado.',
     'Already up to date.': 'Ya tienes la versión más reciente.',
     'Update unavailable. Your saved run is safe.':
       'No se pudo actualizar. Tu partida está a salvo.',
@@ -982,8 +986,12 @@
     'Temporary maximum HP boost.': 'Aumento temporal de salud máxima.',
     'Recruit a Ranger to unlock field Heal.':
       'Recluta un Ranger para desbloquear la curación de campo.',
+    'Field Heal requires an active Ranger, Charmed ranged monster or ally-healing pet.':
+      'Curar en el campo requiere un Ranger activo, un monstruo encantado a distancia o una mascota que cure aliados.',
     'Use the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.':
       'Usa el botón Curar del Ranger. Durante la recuperación, toca para poner tu curación en cola. La curación automática sigue activa.',
+    'Use the Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.':
+      'Usa el botón Curar. Durante la recuperación, toca para poner tu curación en cola. La curación automática sigue activa.',
     ACTIVE: 'ACTIVO',
     '+10% maximum HP until rest or defeat.': ' +10% de salud máxima hasta descansar o caer.',
     '+10% maximum HP until rest or defeat. Use at a completed Barracks.':
@@ -2398,7 +2406,7 @@
                   '. En recuperación, toca para poner tu curación en cola.\nRecupera a los caídos con un capitán o cuartel.'
               : 'Recall: ' +
                   input.key('recall') +
-                  '. Companions return to you.\nRanger Heal: ' +
+                  '. Companions return to you.\nCompanion Heal: ' +
                   input.key('heal') +
                   '. During cooldown, tap to queue hero healing.\nRecover fallen companions at a Captain or Barracks.',
             [],
@@ -2621,8 +2629,8 @@
           p.mouseMove,
           (enabled) => select('mouseMove', enabled),
           manaEnabled
-            ? 'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.'
-            : 'When off, left click in the world commands Ranger Heal.',
+            ? 'When off, left click in the world commands companion Heal. Right click commands Ranger Mana Recovery.'
+            : 'When off, left click in the world commands companion Heal.',
         ),
       ],
       () => help(back),
@@ -6635,7 +6643,7 @@
     const b = document.createElement('button');
     b.id = type + '-potion';
     b.className = 'potion-button';
-    b.setAttribute('aria-label', 'Command Ranger ' + label);
+    b.setAttribute('aria-label', (type === 'health' ? 'Command ' : 'Command Ranger ') + label);
     b.onclick = (e) => {
       useRangerSupport(type);
     };
@@ -7439,8 +7447,9 @@
       $('status').textContent = '';
       statusUntil = 0;
     }
-    const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
-    $('quick-items').classList.toggle('has-rangers', rangers.length > 0);
+    const rangers = game.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
+    const healers = game.healCompanionCasters();
+    $('quick-items').classList.toggle('has-rangers', healers.length > 0 || rangers.length > 0);
     for (const [type, label, key, cdKey, threshold] of manaEnabled
       ? [
           ['health', 'Heal', input.key('heal'), 'healCd', 50],
@@ -7449,30 +7458,34 @@
       : [['health', 'Heal', input.key('heal'), 'healCd', 50]]) {
       const b = $(type + '-potion'),
         queuedHeal = type === 'health' ? game.queuedRangerHeal() : null,
-        ready = game.availableRangers(type).filter((u) => !game.mageSilenceActive(u)).length,
+        casters = type === 'health' ? healers : rangers,
+        ready = (type === 'health' ? game.availablePartyHealers() : game.availableRangers(type))
+          .filter((u) => !game.mageSilenceActive(u)).length,
         full =
           type === 'health'
             ? [h, ...game.activeLivingParty()].every((u) => u.hp >= u.maxHp)
             : h.mp >= h.maxMp,
-        next = rangers.length ? Math.min(...rangers.map((u) => u[cdKey] || 0)) : 0;
+        next = casters.length ? Math.min(...casters.map((u) =>
+          type === 'health' ? game.companionHealCooldown(u) : u[cdKey] || 0)) : 0;
       const recovering = type === 'mana' && game.hasSupportEffect(h, 'mana');
-      const canQueueHeal = type === 'health' && rangers.some((u) => (u.healCd || 0) > 0);
+      const canQueueHeal = type === 'health' &&
+        casters.some((u) => game.companionHealCooldown(u) > 0);
       b.disabled =
-        !rangers.length ||
+        !casters.length ||
         (!ready && !canQueueHeal && !queuedHeal) ||
         (full && !canQueueHeal && !queuedHeal) ||
         recovering;
       b.classList.toggle('support-queued', !!queuedHeal);
       b.setAttribute(
         'aria-label',
-        tr('Command Ranger ' + label) +
+        tr((type === 'health' ? 'Command ' : 'Command Ranger ') + label) +
           (queuedHeal
             ? language === 'es'
               ? ' · Curación del héroe en cola'
               : ' · Hero heal queued'
             : ''),
       );
-      b.hidden = platform.mode === 'phone' && !rangers.length;
+      b.hidden = platform.mode === 'phone' && !casters.length;
       setMarkup(
         type + '-potion',
         label +
@@ -7490,13 +7503,13 @@
               ? 'Restoring'
               : ready
                 ? ready + ' ready'
-                : rangers.length
+                : casters.length
                   ? next.toFixed(1) + 's'
-                  : 'Need Ranger') +
+                  : type === 'health' ? 'Need healer' : 'Need Ranger') +
           '</small>',
       );
       b.title =
-        'Ranger ' +
+        (type === 'health' ? 'Companion ' : 'Ranger ') +
         label +
         ' · ' +
         (type === 'health'
@@ -7504,7 +7517,7 @@
           : 'restores ' + game.rangerSupportAmount(type) + ' MP to the hero') +
         ' over five seconds · auto at ' +
         threshold +
-        '% or less · 10-second cooldown belongs only to the Ranger who casts it' +
+        '% or less · 10-second cooldown belongs only to the companion who casts it' +
         (type === 'health' ? ' · Tap during cooldown to queue one Heal for the hero' : '');
     }
     const remaining = Campaign.dungeonIds.filter((id) => !game.s.true[id]),
