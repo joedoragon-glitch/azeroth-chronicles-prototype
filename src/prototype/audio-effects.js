@@ -72,6 +72,12 @@
             : 'projectileImpact';
         }
         if (type === 'spell') {
+          // Authored Charmed ability foley uses one existing recorded/synth
+          // action per real cast; avoid 12 new overlapping audio voices.
+          if (e.kind === 'charmHeritage')
+            return ['wraith', 'stalker'].includes(e.species) ? 'magicCast'
+              : ['skeleton', 'ogre', 'orc', 'crownguard'].includes(e.species)
+                ? 'powerStrike' : 'creatureImpact';
           if (e.special === 'piercing-volley') return null;
           if (e.kind === 'soldierGuard') return 'guardCast';
           return e.class === 'paladin'
@@ -93,6 +99,7 @@
         if (
           [
             'companionSkill',
+            'charmHeritage',
             'petSkill',
             'companionChargeStart',
             'hit',

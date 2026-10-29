@@ -7050,6 +7050,20 @@
       reforgeBonus: { weapon: 5, armor: 3 },
     },
     companions: {
+      ringleaderTrainingCost: 100,
+      // Shared individual mastery budget. The same three thresholds apply to
+      // Charmed creatures, Soldiers, Rangers and boss pets. All coefficients
+      // are small, additive per tier, and never alter ability reach/cooldowns.
+      mastery: {
+        thresholds: [4, 10, 18],
+        nativeDamagePerTier: 0.03,
+        directDamagePerTier: 0.04,
+        controlDamagePerTier: 0.025,
+        slowSecondsPerTier: 0.075,
+        pushUnitsPerTier: 2,
+        siphonFractionPerTier: 0.005,
+        dustWardReductionPerTier: 0.01,
+      },
       // One native species maneuver, then one bounded elite signature after
       // companion Skill 2. Shared squad spacing prevents simultaneous spam.
       charmedSkills: {
@@ -7069,6 +7083,28 @@
         dustWardSeconds: 1.65,
         dustWardReduction: 0.15,
       },
+      // Owner-selected third heritage skill for each Charmed species (#589).
+      // This is a friendly adaptation, not the hostile boss's attack/AI.
+      charmHeritage: Object.freeze({
+        goblin: { name: 'Dust Entrainment', shape: 'cone', range: 110, halfAngle: 0.68, multiplier: 0.8, cooldown: 26, cap: 2, slow: 1.3 },
+        skeleton: { name: 'Disarticulation', shape: 'single', range: 105, multiplier: 1.25, cooldown: 28, cap: 1, push: 35 },
+        mireling: { name: 'Hydraulic Jump', shape: 'single', range: 160, multiplier: 1.2, cooldown: 32, cap: 1, dash: 90 },
+        reedbeast: { name: 'Mud Pumping', shape: 'circle', radius: 85, range: 170, multiplier: 0.6, cooldown: 34, cap: 2, slow: 1.5 },
+        wolf: { name: 'Crowd Dispersal', shape: 'circle', radius: 105, range: 105, multiplier: 0.7, cooldown: 32, cap: 2, push: 35 },
+        ogre: { name: 'Lateral Load Transfer', shape: 'line', range: 145, halfWidth: 24, multiplier: 1.2, cooldown: 30, cap: 2 },
+        orc: { name: 'Flank Command', shape: 'single', range: 125, multiplier: 1.2, cooldown: 28, cap: 1, dash: 65 },
+        archer: { name: 'Bad Deal', shape: 'cone', range: 115, halfAngle: 0.65, multiplier: 0.75, cooldown: 30, cap: 2 },
+        ashbeast: { name: 'Broodscreen Roar', shape: 'circle', radius: 110, range: 110, multiplier: 0.5, cooldown: 36, cap: 2, push: 35 },
+        crownguard: { name: 'Reversal', shape: 'single', range: 110, multiplier: 1.2, cooldown: 28, cap: 1, push: 35 },
+        wraith: { name: 'Pressure Grouting', shape: 'circle', radius: 95, range: 205, multiplier: 0.65, cooldown: 34, cap: 2, slow: 1.7 },
+        stalker: { name: 'Flank Command', shape: 'single', range: 140, multiplier: 1.15, cooldown: 30, cap: 1, dash: 70 },
+      }),
+      // Two separate native night skills: their hostile cooldown/damage
+      // never transfer to friendly companions. Wild night AI is untouched.
+      charmNightNative: Object.freeze({
+        wraith: { name: 'Soul Drain', shape: 'circle', radius: 160, range: 200, multiplier: 0.7, cap: 2, slow: 1.35, siphon: 0.08 },
+        stalker: { name: 'Shadow Pounce', shape: 'single', range: 165, multiplier: 0.85, cap: 1, slow: 1.6, dash: 85 },
+      }),
       // Native friendly creature baselines, keyed by actual authored subtype.
       // These values do not inherit hostile region/night/elite scaling.
       charmed: {
@@ -7110,6 +7146,14 @@
         crownguard: {
           melee: { hp: 148, damage: 16, armor: 9, speed: 0.99, interval: 0.88, reach: 78 },
           ranged: { hp: 130, damage: 15, armor: 7, speed: 1, interval: 0.98, reach: 280, retreat: 150, style: 'arrow', shotSpeed: 300 },
+        },
+        // Night species join the friendly roster only through exact Rogue
+        // Charm authorization; they are not added to the outdoor spawn pool.
+        wraith: {
+          ranged: { hp: 108, damage: 13, armor: 4, speed: 1.05, interval: 1.1, reach: 225, retreat: 120, style: 'spectral', shotSpeed: 260 },
+        },
+        stalker: {
+          melee: { hp: 125, damage: 16, armor: 5, speed: 1.14, interval: 0.84, reach: 74 },
         },
       },
       hp: { soldier: 120, archer: 105, pet: 112 },

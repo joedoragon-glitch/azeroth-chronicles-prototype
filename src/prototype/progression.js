@@ -180,7 +180,13 @@
           base +
           R.balance.companions.hpPerLevel * Math.max(0, level - 1) +
           this.companionInheritedHpBonus();
-        return Math.round(raw * (1 + this.companionVitalityFraction()));
+        // Orin trains the chosen genuine Charmed individual. Recalculate from
+        // the unpromoted baseline every time, never multiply old max HP.
+        const ringleader = typeof type === 'object' &&
+          type.charmRingleaderTrained === true &&
+          this.isCharmedCompanion(type);
+        return Math.round(raw * (1 + this.companionVitalityFraction()) *
+          (ringleader ? R.ringleaderScaling.hp : 1));
       }
       companionArmor(type) {
         const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
@@ -356,6 +362,71 @@
         return true;
       }
 
+      // Orin's optional *individual* Ringleader promotion is separate from
+      // the Rogue Skill-2 elite signature and shared three-tier mastery.
+      charmedRingleaderTrainingReason(unit, family = 'ridge') {
+        if (family !== 'ridge' || !this.s.rescued.ridge)
+          return 'Rescue Orin in Ironroot Highlands first.';
+        const reason = this.companionServiceReason();
+        if (reason) return reason;
+        if (!unit || !this.s.party.includes(unit) ||
+            !this.isCharmedCompanion(unit) || unit.hp <= 0)
+          return 'Select a living, owned Charmed monster.';
+        if (unit.charmRingleaderTrained === true)
+          return 'This monster has already received Ringleader Training.';
+        return '';
+      }
+      trainCharmedRingleader(companionId, family = 'ridge') {
+        const unit = this.s.party.find((u) => u.id === companionId),
+          reason = this.charmedRingleaderTrainingReason(unit, family);
+        if (reason) {
+          this.say(reason);
+          return false;
+        }
+        const cost = R.balance.companions.ringleaderTrainingCost;
+        if (!this.spend(cost)) {
+          this.say('Ringleader Training requires ' + cost + ' crowns.');
+          return false;
+        }
+        const oldMax = unit.maxHp,
+          missingHp = Math.max(0, oldMax - unit.hp);
+        unit.charmRingleaderTrained = true;
+        unit.maxHp = this.companionMaxHp(unit);
+        unit.hp = Math.max(1, Math.min(unit.maxHp, unit.maxHp - missingHp));
+        this.say((unit.customName || unit.name) +
+          ' received Ringleader Training from Orin for ' + cost + ' crowns.');
+        this.event('charmRingleaderTraining', {
+          companionId: unit.id, cost, hp: unit.maxHp,
+          attack: this.companionAttackDamage(unit),
+        });
+        return true;
+      }
+
+      // All authentic active, living companions share earned adventure mastery.
+      // One saved bounded counter per individual, with a separate receipt list
+      // for guarded elite encounters that can temporarily replenish.
+      awardCompanionMastery(points, guardianKey = null) {
+        if (!Number.isInteger(points) || points < 1 ||
+            ['arena', 'developer'].includes(this.s.mode)) return 0;
+        const maximum = R.balance.companions.mastery.thresholds[2];
+        let recipients = 0;
+        for (const u of this.s.party || []) {
+          if (!u || !['soldier', 'archer', 'pet'].includes(u.type) ||
+              u.hp <= 0 || u.active === false ||
+              (u.charmOrigin && !this.isCharmedCompanion(u)) ||
+              (u.type === 'pet' && !this.petUnlocked(u.petFamily))) continue;
+          const before = u.masteryPoints || 0;
+          if (before >= maximum) continue;
+          if (guardianKey !== null) {
+            const seen = u.masteryGuardianKeys ||= [];
+            if (seen.includes(guardianKey) || seen.length >= 256) continue;
+            seen.push(guardianKey);
+          }
+          u.masteryPoints = Math.min(maximum, before + points);
+          recipients++;
+        }
+        return recipients;
+      }
       xpRequired(level = this.hero.level) {
         return R.balance.growth.xpPerLevel * level;
       }
@@ -364,6 +435,7 @@
         while (this.hero.xp >= this.xpRequired()) {
           this.hero.xp -= this.xpRequired();
           this.hero.level++;
+          this.awardCompanionMastery(1);
           this.hero.maxHp +=
             R.balance.growth.hpPerLevel +
             (this.hero.class === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0);

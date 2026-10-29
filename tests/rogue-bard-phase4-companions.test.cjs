@@ -31,6 +31,11 @@ try {
       { x: 585, y: 500 },
     );
     foe.ranged = ranged;
+    // Night-only species must be acquired from lawful nighttime encounters.
+    if (species === 'wraith' || species === 'stalker') {
+      foe.nightOnly = true;
+      g.night = () => true;
+    }
     foe.aggro = true;
     foe.returning = false;
     g.zone().enemies = [foe];
@@ -205,6 +210,9 @@ try {
     // The native melee basic also retains its enemy-side damage crit.
     ally.skill1Cd = 100;
     ally.skill2Cd = 100;
+    // Isolate the ordinary basic critical: the new third heritage ability
+    // otherwise legitimately fires when the first two skills are cooling.
+    ally.skill3Cd = 100;
     ally.skillGlobalCd = 0;
     ally.cd = 0;
     game._tacticalPartyTargets = new Map();
