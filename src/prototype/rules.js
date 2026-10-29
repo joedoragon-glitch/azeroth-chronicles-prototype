@@ -6636,6 +6636,8 @@
       range: 220, primaryMultiplier: 0.8, splashMultiplier: 0.25,
       splashRadius: 220, finisherSplashRadius: 250,
       secondaryCap: 2, finisherSecondaryCap: 4,
+      // On a landed critical basic only; a separate, non-stacking boon family.
+      criticalCadence: Object.freeze({ seconds: 1.25, basicDamage: 0.02 }),
     }),
     endure: Object.freeze({ duration: 2, floorHp: 1 }),
   });
