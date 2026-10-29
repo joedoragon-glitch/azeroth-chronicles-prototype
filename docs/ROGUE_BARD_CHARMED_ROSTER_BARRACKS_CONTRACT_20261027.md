@@ -8,6 +8,10 @@ The fallen individual remains owned, with its ID, nickname, subtype/capture rece
 
 **Status:** Implemented and [merged in PR #632](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/632) at [main@bdc0a8d6](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/bdc0a8d6d5e3b62f7935911dab30581dd56017fa). [PR-head focused validation](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40870166571) passed 27 affected suites and the offline build; [merged-main focused validation and Pages publishing](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40870454100) also passed. Phone/Chromebook and installed-PWA acceptance remain unverified. Older references to fallen active slots describe the baseline behavior and do not supersede this Rogue-only exception.
 
+## 29 October 2026 — integration with stacked Barracks recovery (PR #636; candidate)
+
+The new recovery queue must include **fallen reserve** Charmed monsters exactly as it includes fallen active companions. No newly queued entry, save/reload or automatic 40-crown recovery may convert a Rogue's auto-reserved fallen Charmed monster back into an active field unit. The freed field slot remains available to a newly captured legal Charmed creature; after a recovery, activating the restored reserve member still requires the usual completed-Barracks and available-slot checks. Each restored member retains their own ID, nickname, authenticated subtype/capture receipt, exact-type ownership quota, permanent mastery and training. The Basic Barracks can stack three recovery requests, while a Full Barracks has no Barracks-specific pending cap. **This PR #636 change remains unmerged until focused validation and final audit pass; PR #632 itself remains published.**
+
 ## 29 October 2026 — Charmed creature combat progression (dev.220 release candidate)
 
 Owner requested native behavior before optional boss/captain heritage (deferred [#589](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/589)). Candidate branch `feature/charmed-natural-moves-elite-training-20261029` proposes:

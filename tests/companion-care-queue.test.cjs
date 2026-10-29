@@ -300,6 +300,8 @@ for (const kind of ['recovery', 'treatment']) {
   for (let i = 0; i < 4; i++) {
     const u = g.unit('soldier', g.hero.x + 10 + i, g.hero.y + 10 + i);
     u.hp = 0;
+    // Reserve members are owned but must not exceed the Expedition field cap.
+    u.active = false;
     u.customName = 'Recovery ' + i;
     g.s.party.push(u);
     fallen.push(u);
@@ -416,6 +418,7 @@ for (const kind of ['recovery', 'treatment']) {
   for (let i = 0; i < 3; i++) {
     const u = g.unit('soldier', g.hero.x + i, g.hero.y + i);
     u.hp = 0;
+    u.active = false; // The recovery menu also lists fallen reserve companions.
     g.s.party.push(u);
     companions.push(u);
   }
