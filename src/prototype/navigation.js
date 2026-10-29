@@ -1506,6 +1506,15 @@
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
+        // The authored destination stays fixed throughout an intro retreat.
+        // An already-computed, still-clear path is not made obsolete by the
+        // generic 1.3s retry timer. Replan only if its next leg is obstructed
+        // or the original path has been consumed.
+        if (thornRetreat && entity.routeAge <= 0 && entity.path?.length) {
+          if (this.clearSegment(entity, entity.path[0]))
+            entity.routeAge = R.navigationPlanning.routeRetrySeconds;
+          else entity.path = [];
+        }
         let trip = terrainTrips.get(entity);
         // A hero-first attack can interrupt the passive retreat immediately.
         // Discard its unsaved search so active boss combat cannot inherit it.

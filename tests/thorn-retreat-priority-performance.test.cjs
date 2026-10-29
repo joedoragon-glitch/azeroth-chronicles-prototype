@@ -208,6 +208,8 @@ for(const opts of [
   }
   delete g.blocked;
   assert(arrived,'Thorn retreat must eventually finish without teleport');
+  if(!opts.wall) assert(probes<200000,
+    'native retreat cannot repeatedly rebuild a still-valid full route');
   assert(Math.hypot(thorn.x-x,thorn.y-y)<=Campaign.rules.thornPatrol.arrival+1e-7,
     'Thorn must reach the selected real patrol destination');
   assert.equal(thorn.hp,thorn.maxHp,'complete retreat restores original boss HP');
