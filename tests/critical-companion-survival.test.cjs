@@ -405,3 +405,65 @@ console.log(
     cases +
     ' critical survival scenarios including mixed party, movement, preparation timing, labor, Recall, save/travel, ranged foes, walls and native engine ticks',
 );
+
+
+// #534: The retreat planner must respect a strict per-search and party-wide
+// terrain-probe budget, including nested protection and sweep checks. This is
+// an exact call-count contract, not a machine-dependent timing benchmark.
+{
+  const g = new C('developer', 'mage', () => 0.73);
+  g.enter('march');
+  const z = g.zone();
+  z.enemies = [];
+  g.s.party = [];
+  g.s.mercyTime = 0;
+  const origin = g.safe(244, 784);
+  Object.assign(g.hero, origin);
+  g.s.party = [0, 1, 2, 3, 4].map((i) => {
+    const point = g.safe(origin.x + 15 * i, origin.y + 80);
+    const u = g.unit(i % 2 ? 'archer' : 'soldier', point.x, point.y);
+    u.hp = u.maxHp * 0.1;
+    return u;
+  });
+  const originalBlocked = g.blocked;
+  let checks = 0;
+  const counted = function (...args) {
+    checks++;
+    return originalBlocked.apply(this, args);
+  };
+  g.blocked = counted;
+  // Force genuine candidate and swept-segment traversal rather than taking
+  // the protected-at-current-position fast path. Real terrain stays native.
+  g.companionPositionProtected = () => false;
+  g.s.time += 0.05;
+  const cfg = C.rules.companionJudgment;
+  const first = g.s.party[0];
+  const firstPoint = g.companionSurvivalPoint(first, g.s.party, []);
+  assert(checks <= cfg.criticalTerrainChecksPerSearch,
+    'nested checks never exceed one search allowance');
+  assert.equal(g.blocked, counted, 'original instance collision method restored');
+  assert(!g.blocked(firstPoint.x, firstPoint.y) ||
+    Math.hypot(firstPoint.x - first.x, firstPoint.y - first.y) < 0.01,
+  'returned position is either collision-clear or the unit remains in place');
+  checks = 0;
+  g.companionSurvivalPoint(first, g.s.party, []);
+  assert.equal(checks, 0, 'exhausted search waits before retrying');
+  for (const u of g.s.party.slice(1))
+    g.companionSurvivalPoint(u, g.s.party, []);
+  assert(checks <= cfg.criticalTerrainChecksPerTick,
+    'five wounded units share one simulation-tick allowance');
+  const oldCount = checks;
+  g.companionSurvivalPoint(first, g.s.party, []);
+  assert.equal(checks, oldCount, 'same-tick retry cannot evade cooldown');
+  g.s.time += cfg.criticalTerrainRetrySeconds + 0.05;
+  checks = 0;
+  g.companionSurvivalPoint(first, g.s.party, []);
+  assert(checks > 0 && checks <= cfg.criticalTerrainChecksPerSearch,
+    'the same critically wounded unit can re-evaluate after cooldown');
+  assert.equal(g.blocked, counted, 'temporary planning wrapper never persists');
+  assert(!JSON.stringify(g.snapshot()).includes('criticalRetreat'),
+    'transient budgets are never saved to v4 snapshots');
+  delete g.blocked;
+  assert.equal(g.blocked, originalBlocked, 'native prototype collision restored');
+}
+console.log('PASS #534 bounded critical retreat: exact shared and per-search terrain budget, cooldown and unsaved state');

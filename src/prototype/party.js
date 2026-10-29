@@ -17,6 +17,11 @@
       depositTrips = new WeakMap(),
       deliveryAvoidance = new WeakMap();
     const companionJudgments = new WeakMap();
+    // Unsaved, per-game retreat-search allowance. Only critical planning is
+    // metered: real movement, ordinary collision and combat checks never lie.
+    const criticalRetreatFrames = new WeakMap(),
+      criticalRetreatRetries = new WeakMap(),
+      criticalRetreatExhausted = Object.freeze({});
     const heroGuidance = new WeakMap();
     const rangerHealRequests = new WeakMap();
     // Game-time song boons are transient, bounded, and never saved. Actors
@@ -768,43 +773,116 @@
       companionSurvivalRadius() {
         return R.companionJudgment.criticalFollowRadius;
       }
-      companionSurvivalPoint(u, living, threats) {
+      withCriticalRetreatBudget(u, search, fallback) {
         const cfg = R.companionJudgment,
-          shapes = this.companionDangerShapes(),
-          preferred = this.partyFollowPoint(u, living),
-          radius = this.companionSurvivalRadius(),
-          candidates = [{ x: u.x, y: u.y }, preferred, { x: this.hero.x, y: this.hero.y }];
+          now = this.s.time;
+        let frame = criticalRetreatFrames.get(this);
+        if (!frame || frame.zone !== this.zoneId || frame.time !== now) {
+          frame = { zone: this.zoneId, time: now, remaining: cfg.criticalTerrainChecksPerTick };
+          criticalRetreatFrames.set(this, frame);
+        }
+        const retry = criticalRetreatRetries.get(u);
         if (
-          dist(u, this.hero) <= cfg.maxAdvanceFromHero &&
-          this.companionPositionProtected(u) &&
-          !this.companionAreaDanger(u, u, cfg.criticalAvoidLookahead, shapes)
+          retry?.zone === this.zoneId &&
+          now >= retry.since &&
+          now < retry.until
         )
-          return { x: u.x, y: u.y };
-        for (const [origin, radii] of [
-          [this.hero, [cfg.criticalPreferredRadius, radius]],
-          [u, cfg.criticalLocalRadii],
-        ])
-          for (const r of radii)
-            for (let i = 0; i < cfg.criticalDirections; i++) {
-              const angle = (i * Math.PI * 2) / cfg.criticalDirections;
-              candidates.push({
-                x: origin.x + Math.cos(angle) * r,
-                y: origin.y + Math.sin(angle) * r,
-              });
-            }
-        return (
-          candidates
-            .filter(
-              (p) =>
-                dist(p, this.hero) <= radius &&
-                !this.blocked(p.x, p.y, this.zoneId, this.actorRadius(u)) &&
-                this.clearSegment(u, p, this.actorRadius(u)),
+          return fallback();
+        const allowed = Math.min(frame.remaining, cfg.criticalTerrainChecksPerSearch);
+        if (allowed <= 0) {
+          criticalRetreatRetries.set(u, {
+            zone: this.zoneId, since: now, until: now + cfg.criticalTerrainRetrySeconds,
+          });
+          return fallback();
+        }
+        let remaining = allowed;
+        const hadOwn = Object.hasOwn(this, 'blocked'),
+          original = this.blocked;
+        // Scope this strict count to one synchronous retreat search. A thrown
+        // sentinel stops *nested* clearance and protection tests before they
+        // can exceed the allowance; no unchecked path is reported as clear.
+        this.blocked = function (...args) {
+          if (remaining <= 0 || frame.remaining <= 0) throw criticalRetreatExhausted;
+          remaining--;
+          frame.remaining--;
+          return original.apply(this, args);
+        };
+        try {
+          return search();
+        } catch (error) {
+          if (error !== criticalRetreatExhausted) throw error;
+          criticalRetreatRetries.set(u, {
+            zone: this.zoneId, since: now, until: now + cfg.criticalTerrainRetrySeconds,
+          });
+          return fallback();
+        } finally {
+          if (hadOwn) this.blocked = original;
+          else delete this.blocked;
+        }
+      }
+      companionSurvivalPoint(u, living, threats) {
+        const standing = { x: u.x, y: u.y };
+        let best = null, bestScore = Infinity;
+        return this.withCriticalRetreatBudget(
+          u,
+          () => {
+            const cfg = R.companionJudgment,
+              shapes = this.companionDangerShapes(),
+              preferred = this.partyFollowPoint(u, living),
+              radius = this.companionSurvivalRadius(),
+              // Spend the first checks on nearby steps *away* from the
+              // closest live threat, not distant formation candidates. This
+              // keeps first-tick withdrawal responsive on a small CPU budget.
+              nearest = threats
+                .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
+                .sort((a, b) => dist(a, u) - dist(b, u))[0],
+              away = nearest
+                ? Math.atan2(u.y - nearest.y, u.x - nearest.x)
+                : null,
+              candidates = [];
+            if (away !== null)
+              for (const distance of [cfg.criticalStep, ...cfg.criticalLocalRadii])
+                candidates.push({
+                  x: u.x + Math.cos(away) * distance,
+                  y: u.y + Math.sin(away) * distance,
+                });
+            candidates.push(preferred, { x: this.hero.x, y: this.hero.y }, standing);
+            if (
+              dist(u, this.hero) <= cfg.maxAdvanceFromHero &&
+              this.companionPositionProtected(u) &&
+              !this.companionAreaDanger(u, u, cfg.criticalAvoidLookahead, shapes)
             )
-            .map((point) => ({
-              point,
-              score: this.companionSurvivalScore(u, point, preferred, threats, shapes),
-            }))
-            .sort((a, b) => a.score - b.score)[0]?.point || { x: u.x, y: u.y }
+              return standing;
+            for (const [origin, radii] of [
+              [this.hero, [cfg.criticalPreferredRadius, radius]],
+              [u, cfg.criticalLocalRadii],
+            ])
+              for (const r of radii)
+                for (let i = 0; i < cfg.criticalDirections; i++) {
+                  const angle = (i * Math.PI * 2) / cfg.criticalDirections;
+                  candidates.push({
+                    x: origin.x + Math.cos(angle) * r,
+                    y: origin.y + Math.sin(angle) * r,
+                  });
+                }
+            for (const point of candidates) {
+              if (
+                dist(point, this.hero) > radius ||
+                this.blocked(point.x, point.y, this.zoneId, this.actorRadius(u)) ||
+                !this.clearSegment(u, point, this.actorRadius(u))
+              )
+                continue;
+              // Update only after every geometry check and the score finish.
+              // An interrupted candidate must never become an escape target.
+              const score = this.companionSurvivalScore(u, point, preferred, threats, shapes);
+              if (score < bestScore) {
+                best = point;
+                bestScore = score;
+              }
+            }
+            return best || standing;
+          },
+          () => best || standing,
         );
       }
       companionContributionRange(u, slot = 0) {
@@ -900,7 +978,9 @@
         const cfg = R.companionJudgment;
         this._tacticalPartyTargets?.delete(u.id);
         const moving = this.companionHeroMoving();
-        if (moving || (this.s.recallActive && dist(u, this.hero) > cfg.maxAdvanceFromHero)) {
+        // A distant hero is a higher-priority escape anchor than local replan.
+        // Keep the native followCompanion collision checks fully authoritative.
+        if (moving || dist(u, this.hero) > cfg.maxAdvanceFromHero) {
           this.clearPartyCharge(u);
           state.contributing = false;
           state.evading = false;
@@ -1008,30 +1088,39 @@
         if (dist(before, u) < 0.1 && dist(u, state.point) > cfg.criticalArrivalRadius) {
           // If a distant anchor has no safe route, make a bounded local escape
           // without ever relaxing hostile or terrain collision.
-          const danger = this.companionSurvivalThreats(),
-            preferred = this.partyFollowPoint(u, living),
-            candidates = [];
-          for (let i = 0; i < cfg.criticalDirections; i++) {
-            const angle = (i * Math.PI * 2) / cfg.criticalDirections,
-              p = {
-                x: u.x + Math.cos(angle) * cfg.criticalStep,
-                y: u.y + Math.sin(angle) * cfg.criticalStep,
-              };
-            if (
-              dist(p, this.hero) <=
-                Math.max(this.companionSurvivalRadius(danger), dist(u, this.hero)) + 1 &&
-              this.clearSegment(u, p, this.actorRadius(u)) &&
-              this.companionSurvivalScore(u, p, preferred, danger) <
-                this.companionSurvivalScore(u, u, preferred, danger)
-            )
-              candidates.push(p);
-          }
-          candidates.sort(
-            (a, b) =>
-              this.companionSurvivalScore(u, a, preferred, danger) -
-              this.companionSurvivalScore(u, b, preferred, danger),
+          let best = null;
+          const escape = this.withCriticalRetreatBudget(
+            u,
+            () => {
+              const danger = this.companionSurvivalThreats(),
+                preferred = this.partyFollowPoint(u, living),
+                standingScore = this.companionSurvivalScore(u, u, preferred, danger);
+              let bestScore = standingScore;
+              for (let i = 0; i < cfg.criticalDirections; i++) {
+                const angle = (i * Math.PI * 2) / cfg.criticalDirections,
+                  p = {
+                    x: u.x + Math.cos(angle) * cfg.criticalStep,
+                    y: u.y + Math.sin(angle) * cfg.criticalStep,
+                  };
+                if (
+                  dist(p, this.hero) <=
+                    Math.max(this.companionSurvivalRadius(danger), dist(u, this.hero)) + 1 &&
+                  this.clearSegment(u, p, this.actorRadius(u))
+                ) {
+                  const score = this.companionSurvivalScore(u, p, preferred, danger);
+                  if (score < bestScore) {
+                    best = p;
+                    bestScore = score;
+                  }
+                }
+              }
+              return best;
+            },
+            () => best,
           );
-          if (candidates.length) this.move(u, candidates[0], speed, dt);
+          // Movement is *outside* the planning budget and still checks real
+          // collision. No result means stay put, not permission to phase.
+          if (escape) this.move(u, escape, speed, dt);
         }
         if (this.s.recallActive) {
           const counter = this.companionContributionTargets().find((e) =>
