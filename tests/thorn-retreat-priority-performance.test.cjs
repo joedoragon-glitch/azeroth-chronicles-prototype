@@ -116,9 +116,14 @@ for(const opts of [
   {hero:[1650,1600],wall:false},
 ]) {
   const original=liveCombat(opts,true),optimized=liveCombat(opts,false);
-  assert.deepEqual(optimized.state,original.state,
-    'full native Thorn combat ticks must preserve gameplay after route priority optimization');
-  assert(optimized.peak<=original.peak,'Thorn real combat peak terrain checks cannot worsen');
+  // Selection and immediate cancellation are snapshot-identical above.
+  // The deliberate bounded planner moves later than a full synchronous path
+  // search; requiring frame-for-frame positions here would demand the stall.
+  // Instead preserve its chosen leg and enforce the native work budget.
+  assert.equal(optimized.leg,original.leg,
+    'bounded retreat must choose the same authored patrol destination');
+  assert(optimized.peak<=original.peak,
+    'Thorn real combat peak terrain probes must improve or remain equal');
   console.log('THORN_RETREAT_LIVE_TICK_PARITY '+JSON.stringify({opts,
     original:{leg:original.leg,peak:original.peak,checks:original.checks,calls:original.routeCalls},
     optimized:{leg:optimized.leg,peak:optimized.peak,checks:optimized.checks,calls:optimized.routeCalls}}));
@@ -130,3 +135,148 @@ assert.deepEqual(newFail.state,oldFail.state,
   'no reachable route must not manufacture a retreat or dismiss the boss');
 assert.equal(newFail.leg,null);
 console.log('PASS Thorn opening retreat priority, no-route behavior, native route cost and exact save parity');
+
+// The same native route graph must return identical existence answers for
+// every authored patrol goal, even when heuristic exploration order differs.
+for(const opts of [
+  {hero:[1230,1400],wall:true},
+  {hero:[1450,1300],wall:true},
+  {hero:[1650,1600],wall:false},
+]){
+  const {g,thorn}=fixture(opts);
+  for(const [x,y] of Campaign.rules.thornPatrol.route){
+    const p={x,y};
+    assert.equal(g.route(thorn,p,{reachabilityOnly:true}).length>0,
+      g.route(thorn,p).length>0,'native route existence must match at every patrol leg');
+  }
+}
+console.log('PASS all Thorn patrol reachability flags preserve native route existence');
+
+// Preserve the exact completed route when the 50-unit grid search is
+// performed over multiple updates. A pending route may not mutate boss save
+// fields, skip walls or inherit budgets from ordinary enemy pursuers.
+for(const opts of [
+  {hero:[1230,1400],wall:true},
+  {hero:[1650,1600],wall:false},
+]){
+  const {g,thorn}=fixture(opts);
+  const target={x:Campaign.rules.thornPatrol.route[opts.wall?5:1][0],
+    y:Campaign.rules.thornPatrol.route[opts.wall?5:1][1]};
+  const full=g.route(thorn,target);
+  let pending=null,result=null,peak=0;
+  const blocked=g.blocked;let probes=0;
+  g.blocked=function(...args){probes++;return blocked.apply(this,args)};
+  for(let tick=0;tick<200;tick++){
+    g.s.time+=.05;
+    const before=probes;
+    const current=g.advanceBudgetedRoute(pending?.origin||thorn,
+      pending?.target||target,'thorn-retreat',pending);
+    peak=Math.max(peak,probes-before);
+    if(!current.pending){result=current.path;break}
+    pending=current.state;
+  }
+  delete g.blocked;
+  assert(result!==null,'budgeted Thorn route must finish in finite ticks');
+  assert.deepEqual(result,full,'same original path and waypoints after incremental search');
+  assert(peak<=850,'single native Thorn planning tick must stay within terrain budget');
+  console.log('THORN_BUDGETED_ROUTE_PARITY '+JSON.stringify({
+    wall:opts.wall,peak,waypoints:result.length,probes}));
+}
+
+// The exact intro-retreat decision is unchanged, but executing a costly
+// patrol path may now take additional ticks. Assert eventual arrival and
+// absence of a stuck retreat, rather than silently declaring frame parity.
+for(const opts of [
+  {hero:[1230,1400],wall:true},
+  {hero:[1650,1600],wall:false},
+]){
+  const {g,thorn}=fixture(opts);
+  assert.equal(g.openingCompanionHit(thorn),true);
+  const chosen=thorn.thornIntroRetreat;
+  assert(Number.isInteger(chosen),'native companion opening selects a patrol leg');
+  const [x,y]=Campaign.rules.thornPatrol.route[chosen];
+  let arrived=false,peak=0,probes=0,plannerProbes=0,
+    plannerCalls=0,plannerCompletions=0,plannerPending=0;
+  const planHistory=[];
+  const old=g.blocked,originalAdvance=g.advanceBudgetedRoute;
+  g.blocked=function(...args){probes++;return old.apply(this,args)};
+  g.advanceBudgetedRoute=function(...args){
+    const before=probes,result=originalAdvance.apply(this,args);
+    if(args[2]==='thorn-retreat'){
+      plannerProbes+=probes-before;
+      plannerCalls++;
+      if(!args[3])planHistory.push({
+        startedAt:+g.s.time.toFixed(2),
+        x:+thorn.x.toFixed(2),y:+thorn.y.toFixed(2),
+        distance:+Math.hypot(thorn.x-x,thorn.y-y).toFixed(2),
+        currentPathLength:thorn.path?.length||0,routeAge:thorn.routeAge,
+      });
+      if(result.pending)plannerPending++;
+      else {
+        plannerCompletions++;
+        const last=planHistory.at(-1);
+        if(last)last.completedAt=+g.s.time.toFixed(2);
+        if(last)last.waypoints=result.path.length;
+      }
+    }
+    return result;
+  };
+  for(let tick=0;tick<500;tick++){
+    const before=probes;
+    g.tick(.05,{x:0,y:0});
+    peak=Math.max(peak,probes-before);
+    if(thorn.thornIntroRetreat===undefined){
+      arrived=true;break;
+    }
+  }
+  delete g.blocked;
+  delete g.advanceBudgetedRoute;
+  console.log('THORN_BUDGETED_RETREAT_WORKLOAD '+JSON.stringify({
+    wall:opts.wall,peak,probes,plannerCalls,plannerPending,
+    plannerCompletions,plannerProbes,arrived
+  }));
+  assert(arrived,'Thorn retreat must eventually finish without teleport');
+  console.log('THORN_RETREAT_ROUTE_REPLAN_TRACE '+JSON.stringify({
+    wall:opts.wall,history:planHistory
+  }));
+  assert(plannerCompletions<=2,'retreat must not repeatedly rebuild completed routes');
+  if(!opts.wall) assert(plannerProbes<=45000,
+    'actual Thorn route planner cannot repeatedly rescan an intact full route');
+  assert(Math.hypot(thorn.x-x,thorn.y-y)<=Campaign.rules.thornPatrol.arrival+1e-7,
+    'Thorn must reach the selected real patrol destination');
+  assert.equal(thorn.hp,thorn.maxHp,'complete retreat restores original boss HP');
+  assert(!thorn.aggro,'completed introductory retreat remains passive');
+  console.log('THORN_BUDGETED_RETREAT_LIVENESS '+JSON.stringify({
+    wall:opts.wall,selectedLeg:chosen,peak,probes,
+    arrivalDistance:+Math.hypot(thorn.x-x,thorn.y-y).toFixed(2)
+  }));
+}
+
+// A hero's actual opening hit must immediately retire passive retreat intent,
+// even when the boss's next movement has a clear direct approach.
+{
+  const {g,thorn}=fixture({hero:[1650,1600],wall:false});
+  assert.equal(g.openingCompanionHit(thorn),true);
+  for(let i=0;i<4;i++)g.tick(.05,{x:0,y:0});
+  assert(Number.isInteger(thorn.thornIntroRetreat),
+    'fixture must have an active passive introductory retreat');
+  g.admitOpeningHeroAttack(thorn);
+  assert.equal(g.s.thornHeroInitiated,true,'native hero-first rule must activate');
+  assert.equal(thorn.thornIntroRetreat,undefined,'hero attack cancels passive retreat');
+  // A native returning/aggro state can refuse immediate engage(); this
+  // boundary verifies accepted hero initiation, not invents a second fight.
+  assert(!g.awaitsHeroAttack(thorn),
+    'accepted hero hit must remove the introductory protection gate');
+  let retreatPlans=0;
+  const native=g.advanceBudgetedRoute;
+  g.advanceBudgetedRoute=function(...args){
+    if(args[2]==='thorn-retreat')retreatPlans++;
+    return native.apply(this,args);
+  };
+  g.follow(thorn,g.hero,145,.05,45);
+  delete g.advanceBudgetedRoute;
+  assert.equal(retreatPlans,0,'active boss may not consume passive retreat planning');
+  assert.equal(thorn.thornIntroRetreat,undefined,
+    'normal active combat cannot silently resume old retreat');
+  console.log('PASS hero-first interruption cannot continue passive Thorn routing');
+}
