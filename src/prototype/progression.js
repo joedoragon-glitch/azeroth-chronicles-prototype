@@ -364,7 +364,7 @@
             ['arena', 'developer'].includes(this.s.mode)) return 0;
         const maximum = R.balance.companions.mastery.thresholds[2];
         let recipients = 0;
-        for (const u of this.s.party) {
+        for (const u of this.s.party || []) {
           if (!u || !['soldier', 'archer', 'pet'].includes(u.type) ||
               u.hp <= 0 || u.active === false ||
               (u.charmOrigin && !this.isCharmedCompanion(u)) ||
