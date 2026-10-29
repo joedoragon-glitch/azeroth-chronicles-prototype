@@ -230,6 +230,17 @@
         "docs/TRAVEL_COMPANION_COLLISION_20261020.md"
       ],
       "method": "Tracked Git-tree census, exact current blob receipts and index-link coverage. Existing roles/review dispositions retained. Newly registered records are routing-only, provisionally header-screened; no blanket full-body or runtime verification is implied. Release status remains in DEVELOPMENT_STATE, detailed implementation evidence in the Greenwood handoff."
+    },
+    "pr570CrossRegionRollbackReview": {
+      "auditMainSha": "0feb0e420a4ecf9192e996a42fdc9c2de5586264",
+      "beforeMergeMainSha": "87792f6441c8b01b3afd25282a209b695427f649",
+      "introducingMergeSha": "323bb2a75ceec9bafa8dfe9d567be057309a0115",
+      "registeredMarkdownPaths": 436,
+      "newDocument": "docs/PR570_CROSS_REGION_BEFORE_AFTER_ROLLBACK_AUDIT_20261029.md",
+      "sourceScope": "PR570 non-Greenwood world.js/highlands.js and relevant original tests",
+      "rollbackCodeImplemented": false,
+      "mergeOrDeployment": false,
+      "method": "Source diff and exact SHA comparison, not a rendered-world or saved-player campaign test"
     }
   },
   "semantics": {
@@ -2176,7 +2187,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "f78a63eb76bc7016c0cf806c2bfc9ed12d165720",
+      "gitBlobSha": "8402c90a9ed2089e5e925e1e71906203ff087424",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2203,7 +2214,8 @@
       "previousSoundIdentityGuideGitBlobSha": "7170fcf925b014be88340018b3e610ae84c54b29",
       "previousAuditionGuideGitBlobSha": "ad4badea24601c00b46b5f689fcacfa046196ac6",
       "previousMechanicWorkflowAuditBlobSha": "188c21056246fce77eb7b0572dfa491750df2e24",
-      "previousGreenwoodCloseoutGitBlobSha": "c4c930f0d9ee69acd6d02ae3530a9b4fc6656c3a"
+      "previousGreenwoodCloseoutGitBlobSha": "c4c930f0d9ee69acd6d02ae3530a9b4fc6656c3a",
+      "previousPr570AuditBaselineGitBlobSha": "f78a63eb76bc7016c0cf806c2bfc9ed12d165720"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -7017,6 +7029,20 @@
       "reconciliationRole": "reference",
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/PR570_CROSS_REGION_BEFORE_AFTER_ROLLBACK_AUDIT_20261029.md",
+      "gitBlobSha": "2359ccb334b79a76b43eef3ea0445c3dfc51d697",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "full_body_source_compared",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "confirmed",
+      "reconciliationReview": "source_cross_checked"
     },
     {
       "path": "docs/GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md",
