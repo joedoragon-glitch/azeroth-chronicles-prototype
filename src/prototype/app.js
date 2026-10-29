@@ -7301,6 +7301,22 @@
     );
   }
   developerSummonButton.onclick = openDeveloperSummonMenu;
+  // Reuse the original portrait-stamped Crown loot painter for the HUD.
+  // Rasterize it ONCE at 2x for the tiny UI badge. No separate generic
+  // currency drawing, asset manifest, or recurring canvas work per HUD tick.
+  function prepareHudCrownCoin() {
+    const coin = document.createElement('canvas');
+    coin.width = coin.height = 48;
+    const ink = coin.getContext?.('2d');
+    if (!ink?.setTransform || typeof coin.toDataURL !== 'function') return;
+    ink.setTransform(2, 0, 0, 2, 0, 0);
+    PrototypeRenderer.drawCrownLoot(ink, { x: 12, y: 12 });
+    $('hero-stats').style?.setProperty?.(
+      '--hud-crown-image',
+      'url("' + coin.toDataURL('image/png') + '")',
+    );
+  }
+  prepareHudCrownCoin();
   const hudMarkup = new Map();
   function setMarkup(id, html) {
     if (hudMarkup.get(id) !== html) {
@@ -7365,7 +7381,7 @@
       '" aria-label="' +
       Math.floor(h.gold) +
       (language === 'es' ? ' coronas' : ' crowns') +
-      '">👑 ' +
+      '">' +
       Math.floor(h.gold).toLocaleString(language === 'es' ? 'es-ES' : 'en-US') +
       '</span></span><i style="--fill:' +
       hp +
