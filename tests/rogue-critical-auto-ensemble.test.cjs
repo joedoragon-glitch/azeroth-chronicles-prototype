@@ -1,6 +1,6 @@
 'use strict';
-// A critical automatic song pulse is a short, non-stacking shared performance.
-// It is separate from manual Skill 1, has no extra critical/Charm roll and does
+// A critical automatic song pulse is a bounded shared performance, additive
+// with manual Skill 1 but not with itself; no extra critical/Charm roll and does
 // not alter same-strike hostile damage or existing primary-only Charm eligibility.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
@@ -134,11 +134,29 @@ try {
     assert(basic(g, primary), 'critical auto while stronger refrain active');
     assert.equal(g.rogueSongBoon(g.hero, 'refrain')?.basicDamage, 0.05);
     assert.equal(g.companionBasicAttackDamage(near),
-      g.companionAttackDamage(near) * 1.05,
-      'critical cadence does not stack additively onto manual refrain');
+      g.companionAttackDamage(near) * 1.07,
+      'normal refrain and distinct critical cadence add to +7%');
+    const damage = [];
+    const original = g.damage.bind(g);
+    g.damage = (e, amount, source, options) => {
+      if (options?.automaticBasic && e === primary) damage.push(amount);
+      return original(e, amount, source, options);
+    };
+    assert(basic(g, primary), 'second critical auto with both benefits still live');
+    assert.equal(g.rogueSongBoon(g.hero, 'cadence')?.basicDamage, basicDamage,
+      'repeating critical cadence never doubles its own bonus');
+    assert.equal(g.companionBasicAttackDamage(near),
+      g.companionAttackDamage(near) * 1.07,
+      'repeated same-family criticals cannot grow +7% further');
+    assert(damage.length === 1, 'captured next legal primary basic');
+    const expectedBasic = (g.power() + 12) * R.rogueHeroFoundation.basic.primaryMultiplier *
+      (1 + 0.15 * (g.hero.skills[0] - 1)) * g.constructor.rules.basicAttackCombo.multipliers[2] *
+      1.07 * 1.2;
+    assert(Math.abs(damage[0] - expectedBasic) < 1e-8,
+      'Rogue next basic uses additive 7% before existing critical multiplier');
     g.s.time += 0.11;
     assert.equal(g.rogueSongBoon(g.hero, 'refrain'), null,
-      'critical basic does not extend stronger manual refrain');
+      'critical basic does not extend manual refrain');
     assert.equal(g.rogueSongBoon(g.hero, 'cadence')?.basicDamage, basicDamage);
     assert.equal(g.companionBasicAttackDamage(near),
       g.companionAttackDamage(near) * (1 + basicDamage));
