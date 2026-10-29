@@ -6264,7 +6264,7 @@
     // Max native blocked() probes for critical-retreat planning, not general
     // movement. Shared across companions each simulation tick.
     criticalTerrainChecksPerTick: 200,
-    criticalTerrainChecksPerSearch: 100,
+    criticalTerrainChecksPerSearch: 80,
     criticalTerrainRetrySeconds: 0.25,
     criticalDirections: 12,
     criticalLocalRadii: [80, 180],

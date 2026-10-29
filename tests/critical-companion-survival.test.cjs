@@ -437,6 +437,8 @@ console.log(
   g.companionPositionProtected = () => false;
   g.s.time += 0.05;
   const cfg = C.rules.companionJudgment;
+  assert.equal(cfg.criticalTerrainChecksPerSearch, 80, 'dev.216 per-search budget is 80');
+  assert.equal(cfg.criticalTerrainChecksPerTick, 200, 'shared per-tick budget stays 200');
   const first = g.s.party[0];
   const firstPoint = g.companionSurvivalPoint(first, g.s.party, []);
   assert(checks <= cfg.criticalTerrainChecksPerSearch,

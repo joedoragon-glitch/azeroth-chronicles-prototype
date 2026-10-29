@@ -258,6 +258,8 @@ function marchCompanionCallsite(measured, mode) {
   };
 }
 for (const mode of ['calm-follow', 'recall', 'critical-combat']) {
+  assert.equal(C.rules.companionJudgment.criticalTerrainChecksPerSearch, 80,
+    'dev.216 March comparison must actually run with the 80-check cap');
   const baseline = marchCompanionCallsite(false, mode),
     sampled = marchCompanionCallsite(true, mode);
   assert.deepEqual(sampled.snapshot, baseline.snapshot,
