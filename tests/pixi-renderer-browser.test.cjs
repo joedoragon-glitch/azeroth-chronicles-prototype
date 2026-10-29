@@ -39,6 +39,29 @@ async function selectPixi(page) {
   }, null, {timeout:45000});
   return page.evaluate(() => Prototype.experimentalGraphics);
 }
+// Drive the actual modern title-screen flow. Earlier graphics tests relied
+// on automatic gameplay startup and could silently skip preloading entirely.
+async function enterPlayableGame(page) {
+  await page.waitForFunction(() => !!window.Prototype?.renderer);
+  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  const title = page.locator('#title-screen');
+  if (await title.evaluate((el) => !el.hidden)) {
+    if (!(await page.locator('#title-continue').isDisabled())) {
+      await page.locator('#title-continue').click();
+    } else {
+      await page.locator('#title-new').click();
+      await page.getByRole('button', {name:'New Normal game', exact:true}).click();
+      await page.getByRole('button', {name:/^English(?: ✓)?$/}).click();
+      await page.getByRole('button',
+        {name:'Standard death and refuge recovery', exact:true}).click();
+      await page.getByRole('button', {name:/Paladin/}).first().click();
+    }
+  }
+  await page.waitForFunction(() =>
+    !!window.Prototype?.started && document.querySelector('#title-screen')?.hidden &&
+    document.querySelector('#scene-loading')?.hidden !== false,
+    null, { timeout: 180000 });
+}
 // Use a real screen-coordinate touch on phone. Playwright locator.click() may
 // scroll the fixed 15-second trial panel during mobile restart, potentially
 // changing the visual viewport and invalidating the graphics trial itself.
@@ -219,9 +242,7 @@ async function run() {
         const beamPage = await beamContext.newPage();
         await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
         await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
-        await require('./helpers/language-browser.cjs').selectEnglish(beamPage);
-        await beamPage.keyboard.press('f');
-        await beamPage.keyboard.press('f');
+        await enterPlayableGame(beamPage);
         await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
         await inspectMageBeamOverlay(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
@@ -244,9 +265,7 @@ async function run() {
       await page.goto(host + (phone ? 'phone.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
-      await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
+      await enterPlayableGame(page);
       await page.waitForFunction(() => document.querySelector('#modal').hidden);
       await page.evaluate(() => {window.__gpuTestCampaign = Prototype.game;});
       // Canvas remains functional under the new three-way optimization policy.
@@ -427,9 +446,9 @@ async function run() {
             'An active WebGL scene must complete all lighting transitions');
         }
         await page.reload();
-        await page.waitForFunction(() => window.Prototype?.experimentalGraphics);
+        await enterPlayableGame(page);
         await page.waitForFunction(() =>
-          Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 30000});
+          Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 180000});
         let after = await page.evaluate(() => Prototype.experimentalGraphics);
         assert(['confirmed', 'canvas'].includes(after.phase), 'Restart must safely show a renderer');
         // A software browser may safely restore Canvas. If this is our
