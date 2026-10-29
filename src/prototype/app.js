@@ -321,6 +321,7 @@
     'Charged skill interrupted by damage.': 'El daño interrumpió la habilidad cargada.',
     'Charged skill interrupted.': 'Habilidad cargada interrumpida.',
     'Ranger Heal queued for the hero.': 'Curación del Ranger en cola para el héroe.',
+    'Heal queued for the hero.': 'Curación en cola para el héroe.',
     'Command Heal': 'Ordenar Curar',
     'No active companion can use Heal.': 'Ningún compañero activo puede usar Curar.',
     'Healer cannot use Heal while silenced.': 'El sanador no puede usar Curar mientras esté silenciado.',
@@ -960,8 +961,12 @@
     'Temporary maximum HP boost.': 'Aumento temporal de salud máxima.',
     'Recruit a Ranger to unlock field Heal.':
       'Recluta un Ranger para desbloquear la curación de campo.',
+    'Field Heal requires an active Ranger, Charmed ranged monster or ally-healing pet.':
+      'Curar en el campo requiere un Ranger activo, un monstruo encantado a distancia o una mascota que cure aliados.',
     'Use the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.':
       'Usa el botón Curar del Ranger. Durante la recuperación, toca para poner tu curación en cola. La curación automática sigue activa.',
+    'Use the Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.':
+      'Usa el botón Curar. Durante la recuperación, toca para poner tu curación en cola. La curación automática sigue activa.',
     ACTIVE: 'ACTIVO',
     '+10% maximum HP until rest or defeat.': ' +10% de salud máxima hasta descansar o caer.',
     '+10% maximum HP until rest or defeat. Use at a completed Barracks.':
@@ -2375,7 +2380,7 @@
                   '. En recuperación, toca para poner tu curación en cola.\nRecupera a los caídos con un capitán o cuartel.'
               : 'Recall: ' +
                   input.key('recall') +
-                  '. Companions return to you.\nRanger Heal: ' +
+                  '. Companions return to you.\nCompanion Heal: ' +
                   input.key('heal') +
                   '. During cooldown, tap to queue hero healing.\nRecover fallen companions at a Captain or Barracks.',
             [],
@@ -2598,8 +2603,8 @@
           p.mouseMove,
           (enabled) => select('mouseMove', enabled),
           manaEnabled
-            ? 'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.'
-            : 'When off, left click in the world commands Ranger Heal.',
+            ? 'When off, left click in the world commands companion Heal. Right click commands Ranger Mana Recovery.'
+            : 'When off, left click in the world commands companion Heal.',
         ),
       ],
       () => help(back),
