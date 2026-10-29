@@ -859,10 +859,11 @@
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
-    'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.':
-      'Canvas 2D es la opción predeterminada segura. PixiJS WebGL2 es experimental; puedes volver a Canvas cuando quieras.',
-    'Canvas 2D · Default': 'Canvas 2D · Predeterminado',
-    'PixiJS WebGL2 · Experimental': 'PixiJS WebGL2 · Experimental',
+    'PixiJS WebGL2 is the default. Canvas 2D remains available as a backup.':
+      'PixiJS WebGL2 es el motor predeterminado. Canvas 2D sigue disponible como respaldo.',
+    'Canvas 2D · Backup': 'Canvas 2D · Respaldo',
+    'PixiJS WebGL2 · Default': 'PixiJS WebGL2 · Predeterminado',
+    'PixiJS WebGL2 · 15-second trial': 'PixiJS WebGL2 · Prueba de 15 segundos',
     'Keep WebGL2': 'Conservar WebGL2',
     'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
@@ -1892,7 +1893,7 @@
     return true;
   }
 
-  // Opt-in renderer pilot; one live Campaign, no saved graphics state.
+  // PixiJS primary renderer; one live Campaign, no saved graphics state.
   // Canvas is retained as an independent, always-available presentation surface.
   const gpuTrialPanel = document.createElement('section');
   gpuTrialPanel.id = 'gpu-renderer-trial';
@@ -1996,7 +1997,7 @@
       return;
     }
     gpuTrialMessage.textContent =
-      tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
+      tr('PixiJS WebGL2 · 15-second trial') + ' · ' + snapshot.secondsRemaining + 's';
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
@@ -2054,8 +2055,9 @@
     graphicsController.visibilityChanged(document.hidden),
   );
   addEventListener('pagehide', () => graphicsController.visibilityChanged(true));
-  // Canvas always boots first. A previously confirmed GPU preference may
-  // reappear only after its first complete frame and recovery marker clear.
+  // Canvas remains the boot-safe surface. The new PixiJS default (or a
+  // previously confirmed preference) activates after a complete GPU frame;
+  // crash quarantine and the Canvas fallback continue to take precedence.
   if (previousRendererChoice.renderer === 'webgl2') {
     requestAnimationFrame(() => {
       graphicsController.resumeConfirmedWebGL().then((ready) => {
@@ -4526,8 +4528,8 @@
         'Graphics renderer',
         graphicsController.status().preferredRenderer || graphicsController.status().mode,
         choices([
-          ['canvas2d', 'Canvas 2D · Default'],
-          ['webgl2', 'PixiJS WebGL2 · Experimental'],
+          ['webgl2', 'PixiJS WebGL2 · Default'],
+          ['canvas2d', 'Canvas 2D · Backup'],
         ]),
         (value) => {
           if (value === 'canvas2d') {
@@ -4546,7 +4548,7 @@
         graphicsController.status().preferredRenderer === 'webgl2' &&
           graphicsController.status().mode === 'canvas2d'
           ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
-          : 'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
+          : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused
         ? [action('Retry PixiJS WebGL2', () => {
