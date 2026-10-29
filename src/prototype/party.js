@@ -15,6 +15,7 @@
     Campaign.normalizeCharacterName = normalizeCharacterName;
     const laborAttacks = new WeakMap(),
       depositTrips = new WeakMap(),
+      depositPlans = new WeakMap(),
       deliveryAvoidance = new WeakMap();
     const companionJudgments = new WeakMap();
     // Unsaved, per-game retreat-search allowance. Only critical planning is
@@ -1403,6 +1404,7 @@
       }
       clearGatheringIntent(u) {
         laborAttacks.delete(u);
+        depositPlans.delete(u);
         depositTrips.delete(u);
         deliveryAvoidance.delete(u);
         this.clearCompanionTravel(u);
@@ -2165,7 +2167,82 @@
           Math.max(0, this.regionIndex()) * R.gatheringTravel.capacityPerRegion
         );
       }
-      depositSite(u) {
+      avoidDeliveryAfterThreat(u) {
+        const trip = depositTrips.get(u);
+        if (!trip?.site) return;
+        deliveryAvoidance.set(u, {
+          zone: this.zoneId,
+          point: { x: trip.site.x, y: trip.site.y },
+          until: this.s.time + R.gatheringTravel.retryDestinationSeconds,
+        });
+        depositTrips.delete(u);
+        // The same hazard invalidates any partially evaluated destination
+        // ranking, not just a completed cached delivery target.
+        depositPlans.delete(u);
+      }
+      budgetedDepositSite(u, sites, avoid) {
+        // The old ranking (shortest traversable path plus danger penalties)
+        // is preserved. Search progress is transient; an unfinished search
+        // never makes a legal supplier appear unreachable.
+        const unique = [], seen = new Set();
+        for (const site of sites) {
+          const key = site.x + ':' + site.y;
+          if (!seen.has(key)) { unique.push(site); seen.add(key); }
+        }
+        const key = unique.map((site) => site.x + ':' + site.y).join('|'),
+          // Euclidean distance is an admissible (never too high) lower bound
+          // for route distance. Check likely destinations first; once a
+          // proven best route is found, further sites whose straight-line
+          // lower bound cannot beat it need no A* expansion at all.
+          ordered = unique.map((site, index) => ({ site, index, lower: dist(u, site) }))
+            .sort((a, b) => a.lower - b.lower || a.index - b.index),
+          now = this.s.time;
+        let plan = depositPlans.get(u);
+        if (!plan || plan.zone !== this.zoneId || plan.key !== key ||
+            dist(plan.origin, u) > 20) {
+          plan = {
+            zone: this.zoneId, key, origin: { x: u.x, y: u.y },
+            sites: ordered, index: 0, search: null,
+            best: null, bestScore: Infinity, bestIndex: Infinity,
+          };
+          depositPlans.set(u, plan);
+        }
+        while (plan.index < plan.sites.length) {
+          const { site, index, lower } = plan.sites[plan.index];
+          // Danger and avoidance penalties cannot be negative, so no
+          // remaining site can outrank an already validated best score.
+          if (lower > plan.bestScore) break;
+          const result = this.advanceBudgetedRoute(u, site, 'companion', plan.search);
+          if (result.pending) {
+            plan.search = result.state;
+            return null;
+          }
+          plan.search = null;
+          plan.index++;
+          if (!result.path.length) continue;
+          let length = 0, from = u;
+          for (const p of result.path) { length += dist(from, p); from = p; }
+          const danger = this.gatheringThreats().filter((e) => dist(site, e) < e.r).length,
+            rejected = avoid?.zone === this.zoneId && avoid.until > now &&
+              dist(avoid.point, site) < 30,
+            score = length + danger * this.zoneSize() +
+              (rejected ? this.zoneSize() * 4 : 0);
+          if (score < plan.bestScore ||
+              (score === plan.bestScore && index < plan.bestIndex)) {
+            plan.best = site;
+            plan.bestScore = score;
+            plan.bestIndex = index;
+          }
+        }
+        depositPlans.delete(u);
+        depositTrips.set(u, {
+          zone: this.zoneId,
+          until: now + R.gatheringTravel.replanSeconds,
+          site: plan.best,
+        });
+        return plan.best;
+      }
+      depositSite(u, incremental = false) {
         const z = this.isDungeon() ? this.s.zones[this.definition().id] : this.zone(),
           i = this.regionIndex(),
           sites = [
@@ -2185,6 +2262,7 @@
           !(avoid?.until > this.s.time && dist(avoid.point, cached.site) < 30)
         )
           return cached.site;
+        if (incremental) return this.budgetedDepositSite(u, sites, avoid);
         const threats = this.gatheringThreats(),
           seen = new Set(),
           candidates = [];
@@ -3501,7 +3579,10 @@
                 .sort((a, b) => dist(u, a) - dist(u, b))[0]?.enemy ||
               (this.companionAreaDanger(u) ? { id: 'environment-danger', x: u.x, y: u.y } : null);
             if (threat) {
-              if (this.companionCautiousCombat(u, threat, living, dt)) continue;
+              if (this.companionCautiousCombat(u, threat, living, dt)) {
+                if (u.order?.type === 'deposit') this.avoidDeliveryAfterThreat(u);
+                continue;
+              }
             } else {
               this.clearCompanionJudgment(u);
               this.clearPartyCharge(u);
@@ -3592,17 +3673,7 @@
             const enemy = this.gatheringEncounter(u);
             if (enemy) {
               if (this.companionCautiousCombat(u, enemy, living, dt)) {
-                if (u.order.type === 'deposit') {
-                  const trip = depositTrips.get(u);
-                  if (trip?.site) {
-                    deliveryAvoidance.set(u, {
-                      zone: this.zoneId,
-                      point: { x: trip.site.x, y: trip.site.y },
-                      until: this.s.time + R.gatheringTravel.retryDestinationSeconds,
-                    });
-                    depositTrips.delete(u);
-                  }
-                }
+                if (u.order.type === 'deposit') this.avoidDeliveryAfterThreat(u);
               } else {
                 this.engage(enemy);
                 this._tacticalPartyTargets.set(u.id, enemy.id);
@@ -3665,9 +3736,11 @@
           if (u.order?.type === 'deposit') {
             this.gatheringCounterattack(u);
             const journey = u.order.journey;
-            const deposit = this.depositSite(u);
+            const deposit = this.depositSite(u, true);
             if (!deposit) {
-              this.laborRegroup(u, living, dt);
+              // Planning is still in progress, not an unreachable destination.
+              // Do not disrupt the worker with a premature regroup order.
+              if (!depositPlans.has(u)) this.laborRegroup(u, living, dt);
               continue;
             }
             if (dist(u, deposit) > 130)
