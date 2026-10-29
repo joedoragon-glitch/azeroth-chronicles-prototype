@@ -264,3 +264,37 @@ console.log(
   for (const family of Object.keys(C.rules.petCompanions))
     if (family !== 'ridge') assert(!g.canGatherTribute(g.unit('pet', n.x, n.y, family)));
 }
+
+
+// Runtime delivery decisions must not call every expensive route in one tick.
+// Direct depositSite() remains synchronous for existing service/menu callers.
+{
+  const { g, z, u, n } = open();
+  z.npcs = [
+    { id: 'near', kind: 'rest', x: 620, y: 1010 },
+    { id: 'far', kind: 'rest', x: 2200, y: 1020 },
+  ];
+  u.carry = 49;
+  u.order = { type: 'deposit', id: n.id, group: n.resourceGroup };
+  const expected = g.depositSite(u);
+  assert.equal(expected.id, 'near', 'native ranking chooses the closest legal site');
+  // Elapse the old immediate destination cache before exercising the real
+  // incremental resolver with multiple distant alternatives.
+  g.s.time += C.rules.gatheringTravel.replanSeconds + 0.1;
+  let resolved = null, pending = 0;
+  for (let i = 0; i < 100 && !resolved; i++) {
+    g.s.time += 0.05;
+    const result = g.depositSite(u, true);
+    if (!result) {
+      pending++;
+      assert.equal(u.carry, 49, 'planning never delivers or loses carried resources');
+      assert.equal(u.order.type, 'deposit', 'an incomplete search preserves the work order');
+    } else resolved = result;
+  }
+  assert(pending > 0, 'all destination routes cannot monopolize one frame');
+  assert(resolved, 'finite route planning eventually completes');
+  assert.equal(resolved.id, expected.id, 'original route-ranked deposit destination is retained');
+  assert(!JSON.stringify(g.snapshot()).includes('depositPlans'),
+    'incomplete route state is not part of the v4 save');
+}
+console.log('PASS incremental delivery selection retains exact route-based ranking and cargo');
