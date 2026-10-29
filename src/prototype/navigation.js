@@ -49,6 +49,15 @@
       ['followCompanion', 'companionFollowCalls', 'companionFollowMs'],
       ['companionTravelClear', 'companionTravelClearCalls', 'companionTravelClearMs'],
     ];
+    // Non-critical route planning shares one finite budget across live
+    // companion, delivery and tactical consumers. Keep unrelated gameplay
+    // balance and sprite-scope fingerprints untouched.
+    const routePlanningLimits = Object.freeze({
+      terrainProbesPerTick: 768,
+      terrainProbesPerSearch: 512,
+      routeNodesPerTick: 240,
+      routeNodesPerSearch: 120,
+    });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
       routePlanningFrames = new WeakMap();
@@ -430,8 +439,11 @@
         const primary = yield* search([starts[0]], [ends[0]]);
         return primary.length ? primary : yield* search(starts, ends);
       }
+      routePlanningLimits() {
+        return routePlanningLimits;
+      }
       advanceBudgetedRoute(a, b, mode, pending = null, gathering = false) {
-        const cfg = R.navigationPlanning, now = this.s.time,
+        const cfg = routePlanningLimits, now = this.s.time,
           zone = this.zoneId, origin = { x: a.x, y: a.y },
           target = { x: b.x, y: b.y };
         let frame = routePlanningFrames.get(this);
