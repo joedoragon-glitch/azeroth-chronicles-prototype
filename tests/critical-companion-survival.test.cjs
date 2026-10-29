@@ -437,6 +437,8 @@ console.log(
   g.companionPositionProtected = () => false;
   g.s.time += 0.05;
   const cfg = C.rules.companionJudgment;
+  assert.equal(cfg.criticalTerrainChecksPerTick, 150, 'approved critical-retreat group budget');
+  assert.equal(cfg.criticalTerrainChecksPerSearch, 100, 'retain bounded independent per-search cost');
   const first = g.s.party[0];
   const firstPoint = g.companionSurvivalPoint(first, g.s.party, []);
   assert(checks <= cfg.criticalTerrainChecksPerSearch,
