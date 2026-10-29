@@ -42,15 +42,17 @@
     // One-time rollout: the upgraded release supersedes any old Canvas
     // preference, but later manual choices remain authoritative. A crash
     // quarantine is never cleared just to enforce the new primary renderer.
+    let migrated=false;
     if(read(storage,PRIMARY_DEFAULT_MIGRATION_KEY)!=='applied' &&
        write(storage,PREFERENCE_KEY,'webgl2'))
-      write(storage,PRIMARY_DEFAULT_MIGRATION_KEY,'applied');
+      migrated=write(storage,PRIMARY_DEFAULT_MIGRATION_KEY,'applied');
     const saved=read(storage,PREFERENCE_KEY);
     const quarantined=read(storage,RECOVERY_HOLD_KEY);
     return {
       renderer:saved==='webgl2'&&!quarantined?'webgl2':defaultMode,
       reason:saved==='webgl2'
-        ? quarantined?'confirmed-recovery-quarantined':'confirmed-preference'
+        ? quarantined?'confirmed-recovery-quarantined':
+          migrated?'primary-default-migration':'confirmed-preference'
         : 'canvas-default'
     };
   }
