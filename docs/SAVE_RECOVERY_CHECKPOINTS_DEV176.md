@@ -1,3 +1,5 @@
+> **28 October 2026 successor configuration (proposed dev.214 / PR #575):** The checkpoint bundle now retains **one** validated recent checkpoint per mode, with a **2,000,000-character maximum encoded bundle**, replacing the former three entries / 500,000 characters. Old three-entry bundles remain readable for recovery; new checkpoint writes retain only the latest. If the sole checkpoint prevents a **primary** save due to storage quota, the writer discards the optional checkpoint and retries the primary write once. Unrelated storage errors do not delete checkpoints. The v4 save format and existing storage keys are unchanged. This source description is **not evidence of publication or device verification**; the dev.176 design and test receipts below are retained as history.
+
 # Save recovery checkpoints — dev.176
 
 Owner scope: bounded automatic checkpoints and a player-facing recovery path,
