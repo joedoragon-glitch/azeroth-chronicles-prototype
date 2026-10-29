@@ -2147,16 +2147,17 @@
     }
     function inventory(back = closeMenu, fromCharacter = false) {
       const g = getGame(),
-        rangers = g.activeLivingParty().filter((u) => u.type === 'archer'),
-        support = rangers.length
-          ? rangers.length +
-            ' active · Heal ' +
+        healers = g.healCompanionCasters(),
+        rangers = g.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin),
+        support = healers.length
+          ? healers.length +
+            ' active healer(s) · Heal ' +
             g.rangerSupportAmount('health') +
-            ' HP.\nUse the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
-            (Campaign.rules.resourceMode.manaEnabled
+            ' HP.\nUse the Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.' +
+            (Campaign.rules.resourceMode.manaEnabled && rangers.length
               ? '\nMana Recovery ' + g.rangerSupportAmount('mana') + ' MP.'
               : '')
-          : 'Recruit a Ranger to unlock field Heal.',
+          : 'Field Heal requires an active Ranger, Charmed ranged monster or ally-healing pet.',
         tonics =
           'Stored: ' +
           g.preparationTonicStock() +
