@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 28 October 2026 · **420 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **421 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -21,7 +21,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (44)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (5)
 - [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (11)
-- [Save data, backup and recovery](#save-data-backup-and-recovery) (5)
+- [Save data, backup and recovery](#save-data-backup-and-recovery) (6)
 - [Documentation governance and reference records](#documentation-governance-and-reference-records) (16)
 - [Historical releases, reviews and integration handoffs](#historical-releases-reviews-and-integration-handoffs) (37)
 - [Other dated system findings](#other-dated-system-findings) (39)
@@ -420,6 +420,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Save data, backup and recovery
 
+- **[Greenwood Flagship Rollback 20261029](GREENWOOD_FLAGSHIP_ROLLBACK_20261029.md)** — **Operational recovery runbook.** Pinned original Greenwood source branch, safe revert paths, player-save downgrade warnings and release verification gates.
 - **[Ashen Frontier Recovery 240 Note](ASHEN_FRONTIER_RECOVERY_240_NOTE.md)** — **Reference.** Describes ashen frontier recovery 240 note decisions, constraints or engineering observations from its original development checkpoint.
 - [Director Chat Requests And Recovery 20261014](DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md) — *Dated record.* Describes director chat requests and recovery decisions, constraints or engineering observations from its original development checkpoint.
 - [Regional Recovery And Warning Audit DEV123](REGIONAL_RECOVERY_AND_WARNING_AUDIT_DEV123.md) — *Dated record.* Examines regional recovery and warning for source or design inconsistencies, recording dated findings and limits.
