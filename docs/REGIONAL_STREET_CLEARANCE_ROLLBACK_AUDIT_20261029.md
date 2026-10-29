@@ -34,6 +34,40 @@ This draft removes only the **two invocations** of `this.clearStreetCorridors(z,
 
 **Do not assume a code-side disablement reverses already-saved changes.** The merged release may have persisted extra `z.roads`, moved NPCs, player buildings, scenery and version markers (`finalStreetClearanceVersion`, regional migration receipts, `frontierTownPlacements`, `crownTownPlacements`). A safe rollback needs an exact-old/new per-ID and per-road comparison. Never delete player-built structures, undo genuine Treasury clearances, reset a region, erase v4 progress, or blindly clear version markers. If an old or post-dev.233 save has no reliable per-object provenance, keep its positions and disclose the limitation rather than fabricating inverse coordinates.
 
+## Native rendered comparison — one seeded world per region (29 October 2026)
+
+**Measured, not inferred:** The original [focused CI #40967241998](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40967241998) executed `tests/regional-street-rollback-audit.test.cjs` on the source candidate `0fa91a8a`. It rendered four **native Canvas gameplay** views per region at **150% zoom**: town and hamlet with the additional global pass **disabled** (left), versus the same objects after explicitly forcing `clearStreetCorridors(z, true)` once (right). The corresponding exact-ID movement/road data is [retained in a machine-readable evidence record](evidence/regional-street-rollback-20261029/region-deltas.json). These are matched candidate-state simulations, **not** actual pre-#570 checkout screenshots; visual judgment is independent of the old test's connectivity requirement.
+
+| Region | Roads before→forced extra | Added road polylines | Prop moves | Service moves | Player building moves |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| march | 13 → 13 | 0 | 0 | 0 | 0 |
+| highlands | 13 → 13 | 0 | 0 | 3 | 0 |
+| frontier | 41 → 41 | 0 | 86 | 4 | 0 |
+| crown | 30 → 34 | 4 | 36 | 4 | 0 |
+
+**Visual inspection and engineering disposition:**
+
+- **Flooded Marches:** No added roads or object moves from the *additional global pass* on this seed. The Reedport-to-coast short link and named coastal clearance were already present in both views and remain separately subject to route judgment.
+- **Ironroot Highlands:** Global pass relocates supplier (85 units), board (55), and **Stonecross refuge 463.82** units. The town comparison shows the refuge building disappearing from its prior neighborhood, an unacceptable change without proof that it cannot remain nearby. However the original strict street audit on candidate fails `highlands rest must stand beside a street, not in it`. **The necessary physical-clearance fix is outstanding; don't accept a broad displacement as the only solution.**
+- **Ashen Frontier:** No road polyline added, but **86 props + four service NPCs** moved, including settlement and defensive props and a building-like watch structure in the hamlet scene. The town quest-board changes its visual relationship to the square. This is tangible unapproved layout churn in an already authored region.
+- **Dark Crown:** **Four new road segments**, with endpoints and lengths in JSON; **36 props + four service NPCs** moved. Several houses travel 400–1,086 units; shown Crown town and lava-side hamlet arrangements differ substantially. This broad re-composition is not justified solely by the wish to connect every road component.
+
+**Render evidence (left = candidate without extra sweep; right = explicit forced extra sweep):**
+
+### Flooded Marches
+![Flooded Marches: 150-percent native town and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/march.webp)
+
+### Ironroot Highlands
+![Ironroot Highlands: 150-percent native Stonecross and quarry hamlet before/after extra pass](evidence/regional-street-rollback-20261029/highlands.webp)
+
+### Ashen Frontier
+![Ashen Frontier: 150-percent native Emberwatch and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/frontier.webp)
+
+### Dark Crown
+![Dark Crown: 150-percent native Crownwatch and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/crown.webp)
+
+**Readiness:** This is a first real native visual pass, **not** a complete visual certification. Original merged-PR comparison, additional seeds, post-dev.233 v4 saves and after-reload shots are still required. The candidate is currently **not** merge-ready because the original Highlands road/service clearance assertion fails. Keep specific legitimate repairs and resolve this narrowly; do not relax the strict obstruction contract to suppress a real defect.
+
 ## Required evidence before this PR could merge
 
 1. On exact pinned pre-#570 source, shipped dev.233 source, and this draft candidate, capture **fresh seeded** non-Greenwood worlds plus representative v4 restored worlds. Enumerate every road polyline and every changed `props`, `buildings`, `npcs` object by ID, with *before (x,y), after (x,y), reason, and restoration status*. Report new links by endpoints and length. Do not compare only raw map design constants or only screenshots.
