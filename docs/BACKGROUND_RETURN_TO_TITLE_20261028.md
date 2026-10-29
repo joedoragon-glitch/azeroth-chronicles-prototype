@@ -37,3 +37,13 @@ Automated regression cases cover English/Spanish title states; cold launch; succ
 ## Known limitations
 
 The browser can suspend/kill the page before a `visibilitychange` handler completes; the existing autosave and cold-boot recovery remain necessary. GPU context loss may occur after the title has reappeared; the existing renderer error/fallback path still applies. Nothing can guarantee that every driver-side GPU stall is measurable from JavaScript, and no claim is made that minimizing always destroys a cache.
+
+## 28 October 2026 follow-up — crash-recovered Continue identity (draft PR #581)
+
+A matching unclean-session recovery marker lets `recoverLoadedSession()` replace the validated in-memory Campaign with a new `Campaign.restore(snapshot)` clone, relocated to a barracks or regional refuge. The title loader previously retained its pre-recovery Campaign identity and silently rejected the newly recovered one in `showReadyFrame()`. That early return left `titleLoading` true, all title actions disabled and the text at **"Drawing first scene…"** even though the original save loaded.
+
+The proposed fix refreshes only the local Campaign reference after successful synchronous recovery. Earlier asynchronous preparation still checks its original identity; subsequent scene warmup uses the actual recovered zone. This is a lifecycle repair, **not a save migration, save format update, Pixi/Canvas optimization or automatic crash-recovery bypass**.
+
+A bilingual synthetic-v4 test supplies a matching `azeroth-active-play-recovery-v1` marker, verifies that recovery really changes the object, and checks that Continue exposes gameplay after the ready frame. The real player's exported save does **not** include the browser-local marker, so source evidence alone cannot confirm that marker was present at the time of the freeze. No personal save contents are stored in this PR.
+
+**Status:** Draft branch pending exact-head CI and owner device acceptance. Do not claim merged, published, or physically verified until those separate checks pass.
