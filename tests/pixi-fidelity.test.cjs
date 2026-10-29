@@ -11,7 +11,7 @@ const game = {
   s:{rescued:{},loot:[],projectiles:[],throneClaimed:false,statistics:{deaths:0}},
   zone:()=>({props:game.props||[],enemies:game.enemies||[],buildings:[]}),
   visibleNPCs:()=>[],visibleResourceNodes:()=>[],activeLivingParty:()=>[],
-  regionIndex:()=>0,isDungeon:()=>false,supplyRoom:()=>false,
+  regionIndex:()=>0,isDungeon:()=>!!game.inDungeon,supplyRoom:()=>false,
   sideDungeon:()=>false,night:()=>false,daylightPhase:()=>({darkness:0})
 };
 const view={width:912,height:420}, platform={
@@ -271,18 +271,48 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(inits.length,1,'resize must reuse the same GPU application/context');
   assert.equal(resizes.at(-1),1,'resized GPU must match Canvas density');
   assert.equal(gpu.status().loadedTextures,1,'approved sprites must survive viewport rebuild');
+  assert.equal(gpu.status().proceduralEvictions,evictionsBeforeQuality,
+    'viewport rebuild does not throw away cached overworld artwork');
   // Normalizing back to the original landscape viewport is also safe.
   view.width=912;view.height=420;
   canvasSurface.width=912;canvasSurface.height=420;
   gpu.draw();
   assert.equal(gpu.status().active,true);
-  // Simulate region travel without altering saved combat state. Procedural
-  // GPU textures from the previous region must be released before rebuilding.
+  // A whole-region preparation test: a prop well outside even the previous
+  // 4000-pixel lookahead is still baked and GPU-uploaded on arrival.
+  game.zoneId='vale';
+  game.props=[{id:'far-outdoor',x:9200,y:8100,structure:'lumber-pile'}];
+  const beforeEntireRegion=gpu.status().proceduralBakes;
+  assert.equal(await gpu.warmArrival(),true,
+    'active region completion awaits all known outdoor procedural art');
+  assert(gpu.status().proceduralBakes>beforeEntireRegion,
+    'entire region, not a margin around the starting camera, is prepared');
+  const retainedOutdoor=gpu.status().proceduralBakes;
+  const retainedBytes=gpu.status().proceduralBytes;
+  // Dungeon admission must neither remove the overworld graphics nor
+  // require a future replay of the exterior's expensive original painter.
+  game.zoneId='crypt';game.inDungeon=true;
+  game.props=[{id:'far-crypt',x:9200,y:8100,structure:'lumber-pile'}];
+  gpu.draw();
+  assert.equal(await gpu.warmArrival(),true,
+    'whole admitted dungeon prepares behind its own loading surface');
+  assert(gpu.status().proceduralBytes>retainedBytes,
+    'dungeon graphics are added without destroying the outdoor graphics');
+  game.zoneId='vale';game.inDungeon=false;
+  game.props=[{id:'far-outdoor',x:9200,y:8100,structure:'lumber-pile'}];
+  const revisitedBakes=gpu.status().proceduralBakes;
+  gpu.draw();
+  assert.equal(await gpu.warmArrival(),true);
+  assert.equal(gpu.status().proceduralBakes,revisitedBakes,
+    'return to overworld reuses the original prepared region artwork');
+  assert(gpu.status().proceduralBakes>retainedOutdoor,
+    'the newly admitted dungeon had its own cached graphics');
+  // Simulate another region without altering saved combat state.
   game.props=[{id:'post',x:game.hero.x+10,y:game.hero.y+5,structure:'lumber-pile'}];
   game.zoneId='highlands';
   gpu.draw();
-  assert.equal(gpu.status().proceduralTextures,1,
-    'prior density and viewport changes may legitimately clear old artwork');
+  assert(gpu.status().proceduralTextures>=3,
+    'region changes retain earlier prepared outdoor and dungeon images');
   assert(gpu.status().proceduralBytes>0);
   const initialBakes=gpu.status().proceduralBakes;
   for(const zone of ['vale','highlands','vale','highlands']){
