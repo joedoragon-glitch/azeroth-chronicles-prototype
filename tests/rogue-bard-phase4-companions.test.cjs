@@ -130,11 +130,17 @@ try {
         creature.s.squadEngagement = 'fight';
         const beforeHeal = woundedHero.hp;
         assert.equal(creature.charmedRangedSupport(ally, [ally]), true);
-        assert(woundedHero.hp > beforeHeal, 'authored ranged support heals wounded hero');
-        assert(creature.s.party[0].charmSupportCd > 0);
+        assert.equal(woundedHero.hp, beforeHeal, 'Charmed Heal delivers over time');
+        assert.equal(woundedHero.supportEffects[0].remaining,
+          creature.rangerSupportAmount('health'), 'Neri-trained Ranger amount');
+        assert.equal(woundedHero.supportEffects[0].seconds, R.rangerSupport.duration);
+        assert.equal(creature.s.party[0].charmSupportCd, R.rangerSupport.cooldown);
         assert.equal(creature.charmedRangedSupport(ally, [ally]), false,
           'ranged support respects cooldown');
+        creature.updateRangerSupport(1);
+        assert(woundedHero.hp > beforeHeal, 'timed healing actually restores HP');
         woundedHero.hp = woundedHero.maxHp;
+        woundedHero.supportEffects = [];
       }
       const startingHp = ally.maxHp;
       creature.hero.level += 2;
