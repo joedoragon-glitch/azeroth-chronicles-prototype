@@ -7088,7 +7088,7 @@
       // Two separate native night skills: their hostile cooldown/damage
       // never transfer to friendly companions. Wild night AI is untouched.
       charmNightNative: Object.freeze({
-        wraith: { name: 'Soul Drain', shape: 'circle', radius: 95, range: 200, multiplier: 0.7, cap: 2, slow: 1.35, siphon: 0.08 },
+        wraith: { name: 'Soul Drain', shape: 'circle', radius: 160, range: 200, multiplier: 0.7, cap: 2, slow: 1.35, siphon: 0.08 },
         stalker: { name: 'Shadow Pounce', shape: 'single', range: 165, multiplier: 0.85, cap: 1, slow: 1.6, dash: 85 },
       }),
       // Native friendly creature baselines, keyed by actual authored subtype.
