@@ -461,11 +461,18 @@
         (current.isDungeon() ? null : current.zoneId);
     }
     function terrainSignature(current) {
-      const zone = current.zone();
+      // Hot-path cache checks must not repeatedly rebuild the authored zone
+      // or stringify full roads/paths on every frame of Chromebook travel.
+      // The admitted layout owns stable revision/count metadata. Camera
+      // quality/zoom changes still invalidate the appropriate raster scale.
+      const zone = current.s.zones?.[current.zoneId];
       return [current.zoneId, platform.cameraZoom, backingRatio,
         !!options.getOptimizationMode(), current.zoneSize?.(),
-        JSON.stringify(zone.roads || []), JSON.stringify(zone.footpaths || []),
-        JSON.stringify(zone.crownInheritedDecks || [])].join('|');
+        zone?.roads?.length || 0, zone?.footpaths?.length || 0,
+        zone?.crownInheritedDecks?.length || 0,
+        zone?.roadNetworkVersion || 0, zone?.destinationLayoutVersion || 0,
+        zone?.dungeonSpaceVersion || 0, zone?.highlandsLandscapeVersion || 0,
+        zone?.frontierSceneVersion || 0, zone?.crownSceneVersion || 0].join('|');
     }
     function tileCache(current) {
       if (!terrainAtlas || terrainAtlas.region !== parentRegion(current)) return null;
@@ -552,6 +559,10 @@
       try {
         ctx.setTransform?.(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, backdrop.width, backdrop.height);
+        // Outside the authored square there is still the original dark
+        // background, never a transparent hole around the tile atlas.
+        ctx.fillStyle = '#0c1913';
+        ctx.fillRect?.(0, 0, backdrop.width, backdrop.height);
         for (let y = r1; y <= r2; y++) for (let x = c1; x <= c2; x++) {
           const tile = cache.tiles.get(y * cache.columns + x);
           if (!tile) return false;
