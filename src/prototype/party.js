@@ -3313,7 +3313,19 @@
         this.clearCompanionJudgment(dead);
         this._partyChargeRecovery?.delete(dead);
         this.tacticalClearScatter(dead);
-        Object.assign(dead, u, { id, active, slow: 0 });
+        // Recover the same individual, not a fresh companion with its old
+        // name. Permanent mastery and Ringleader training survive death.
+        const masteryPoints = dead.masteryPoints || 0,
+          masteryGuardianKeys = [...(dead.masteryGuardianKeys || [])],
+          charmRingleaderTrained = dead.charmRingleaderTrained === true;
+        Object.assign(dead, u, {
+          id, active, slow: 0, masteryPoints, masteryGuardianKeys,
+          ...(charmOrigin ? { charmRingleaderTrained } : {}),
+        });
+        if (charmRingleaderTrained) {
+          dead.maxHp = this.companionMaxHp(dead);
+          dead.hp = dead.maxHp;
+        }
         delete dead.slowStacks;
         delete dead.rogueSlow;
         this.say('Companion recovered.');
