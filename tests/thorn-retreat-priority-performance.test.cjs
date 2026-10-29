@@ -251,3 +251,30 @@ for(const opts of [
     arrivalDistance:+Math.hypot(thorn.x-x,thorn.y-y).toFixed(2)
   }));
 }
+
+// A hero's actual opening hit must immediately retire passive retreat intent,
+// even when the boss's next movement has a clear direct approach.
+{
+  const {g,thorn}=fixture({hero:[1650,1600],wall:false});
+  assert.equal(g.openingCompanionHit(thorn),true);
+  for(let i=0;i<4;i++)g.tick(.05,{x:0,y:0});
+  assert(Number.isInteger(thorn.thornIntroRetreat),
+    'fixture must have an active passive introductory retreat');
+  g.admitOpeningHeroAttack(thorn);
+  assert.equal(g.s.thornHeroInitiated,true,'native hero-first rule must activate');
+  assert.equal(thorn.thornIntroRetreat,undefined,'hero attack cancels passive retreat');
+  const engaged=g.engage(thorn,true);
+  assert.equal(engaged,true,'original boss engagement must be admitted');
+  let retreatPlans=0;
+  const native=g.advanceBudgetedRoute;
+  g.advanceBudgetedRoute=function(...args){
+    if(args[2]==='thorn-retreat')retreatPlans++;
+    return native.apply(this,args);
+  };
+  g.follow(thorn,g.hero,145,.05,45);
+  delete g.advanceBudgetedRoute;
+  assert.equal(retreatPlans,0,'active boss may not consume passive retreat planning');
+  assert.equal(thorn.thornIntroRetreat,undefined,
+    'normal active combat cannot silently resume old retreat');
+  console.log('PASS hero-first interruption cannot continue passive Thorn routing');
+}

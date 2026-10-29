@@ -1500,7 +1500,20 @@
           thornRetreat = planningMode === 'thorn-retreat' &&
             entity.thornIntroRetreat !== undefined &&
             !entity.aggro && zone.enemies.includes(entity);
-        if (this.clearSegment(entity, target)) {
+        let trip = terrainTrips.get(entity);
+        // A hero-first interruption must retire its unsaved pending search,
+        // including when the new engagement has a clear direct approach.
+        if (!thornRetreat && trip?.kind === 'thorn-retreat') {
+          terrainTrips.delete(entity);
+          entity.path = [];
+          entity.routeAge = 0;
+          trip = null;
+        }
+        // During the passive opening withdrawal, keep the collision-validated
+        // waypoints rather than discarding them on a transient direct-line
+        // success. Segment sampling may alternate near obstacle corners;
+        // oscillating to "direct" movement repeatedly restarted long routes.
+        if ((!thornRetreat || !entity.path?.length) && this.clearSegment(entity, target)) {
           entity.path = [];
           if (enemyPursuit || thornRetreat) terrainTrips.delete(entity);
           return this.move(entity, target, speed, dt, stop);
@@ -1514,15 +1527,6 @@
           if (this.clearSegment(entity, entity.path[0]))
             entity.routeAge = R.navigationPlanning.routeRetrySeconds;
           else entity.path = [];
-        }
-        let trip = terrainTrips.get(entity);
-        // A hero-first attack can interrupt the passive retreat immediately.
-        // Discard its unsaved search so active boss combat cannot inherit it.
-        if (!thornRetreat && trip?.kind === 'thorn-retreat') {
-          terrainTrips.delete(entity);
-          entity.path = [];
-          entity.routeAge = 0;
-          trip = null;
         }
         if (enemyPursuit || thornRetreat) {
           const kind = thornRetreat ? 'thorn-retreat' : 'pursuit';
