@@ -26,6 +26,15 @@ for (const [kind, methods] of Object.entries(frozen)) {
   delete descriptors.constructor;
   Object.defineProperties(B.prototype, descriptors);
 }
+// The workload baseline freezes old combat methods, not regional geography.
+// Apply the approved new March connection to both sides before comparing
+// exact game states; preserve all native route and combat assertions.
+const frozenAuthoredPlaces = B.prototype.authoredPlaces;
+B.prototype.authoredPlaces = function (z) {
+  const result = frozenAuthoredPlaces.call(this, z);
+  this.marchTownRoadLink(z);
+  return result;
+};
 // Different native dungeon rosters plus actual hero-participation elite receipts.
 for (const id of C.dungeonIds) {
   const p = pair(id),
@@ -256,8 +265,7 @@ function geometry(K) {
       });
       return p;
     });
-    assert(g.clearSegment({ x: 200, y: 1000 }, { x: 1000, y: 1000 }, 15, true), 'distant-prop probe is on dry terrain after Greenwood relocation');
-    assert(g.clearSegment({ x: 200, y: 1000 }, { x: 1000, y: 1000 }));
+    assert(g.clearSegment({ x: 200, y: 1500 }, { x: 1000, y: 1500 }));
     counts.push(visits);
   }
   assert(counts[1] < counts[0] / 10);

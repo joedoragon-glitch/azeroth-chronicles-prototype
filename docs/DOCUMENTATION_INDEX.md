@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 28 October 2026 · **419 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 28 October 2026 · **420 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -14,7 +14,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (121)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (122)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (19)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (42)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
@@ -175,6 +175,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Combat Arena Low Spec](COMBAT_ARENA_LOW_SPEC.md)** — **Reference.** Combat-space readability and technical constraints for lower-performance devices.
 - [Combat Conditions V09](COMBAT_CONDITIONS_V09.md) — *Dated record.* Meaning and presentation of status conditions in combat.
 - [Combat Flow And Menus DEV126](COMBAT_FLOW_AND_MENUS_DEV126.md) — *Dated record.* Explains combat flow and menus player interaction or interface readability choices.
+- [Combat Four Domain Workload Audit 20261029](COMBAT_FOUR_DOMAIN_WORKLOAD_AUDIT_20261029.md) — *Dated record.* Native dev.224 combat-workload measurements, later merged micro-optimizations and unresolved follow-up investigations.
 - **[Combat Party Housekeeping](COMBAT_PARTY_HOUSEKEEPING.md)** — **Reference.** Describes combat party housekeeping decisions, constraints or engineering observations from its original development checkpoint.
 - [Greenwood Melee Anti Kite Pilot 20261026](GREENWOOD_MELEE_ANTI_KITE_PILOT_20261026.md) — *Dated record.* Investigates greenwood melee anti kite pilot as a proposal or pilot without establishing production readiness.
 - [Greenwood Native Pursuit 20261026](GREENWOOD_NATIVE_PURSUIT_20261026.md) — *Dated record.* Describes greenwood native pursuit decisions, constraints or engineering observations from its original development checkpoint.

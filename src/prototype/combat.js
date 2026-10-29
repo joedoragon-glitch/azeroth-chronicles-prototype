@@ -1066,13 +1066,16 @@
                 if (blocked(point)) {
                   let low = Math.max(0, (j - 1) / steps),
                     high = j / steps;
-                  // Refine only an actual obstruction; ordinary flights retain
-                  // their existing inexpensive segment/collision checks.
-                  for (let k = 0; k < 12; k++) {
-                    const middle = (low + high) / 2;
-                    if (blocked(pointAt(middle))) high = middle;
-                    else low = middle;
-                  }
+                  // A collision at j=0 is already the exact origin:
+                  // low === high === 0, so twelve midpoint probes would
+                  // recheck the identical point without refining contact.
+                  // Preserve all twelve native checks for actual intervals.
+                  if (j > 0)
+                    for (let k = 0; k < 12; k++) {
+                      const middle = (low + high) / 2;
+                      if (blocked(pointAt(middle))) high = middle;
+                      else low = middle;
+                    }
                   terrainFraction = high;
                   terrainContact = pointAt(high);
                   break;

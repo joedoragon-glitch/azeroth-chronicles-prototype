@@ -2497,6 +2497,7 @@
           this.clearStreetCorridors(z);
           this.regionalTravelSafety(z);
           this.environmentCoherence(z);
+          this.highlandsTreasuryFrontage(z);
           this.clearNamedRoadMarkers(z);
           this.townVisualClearance(z);
           // Environment coherence adds bridge approaches and clears their roads.
@@ -2925,6 +2926,7 @@
         this.clearStreetCorridors(z);
         this.regionalTravelSafety(z);
         this.environmentCoherence(z);
+        this.highlandsTreasuryFrontage(z);
         this.clearNamedRoadMarkers(z);
         this.townVisualClearance(z);
         this.strongholdCourtyardClearance(z);
@@ -4254,6 +4256,7 @@
         this.recoveryAndThermalLife(z);
         this.roadsideLanternLife(z);
         this.marchCoastalLayout(z);
+        this.marchTownRoadLink(z);
         this.lanternShoreLayout(z);
         this.highlandsTributeLayout(z);
       }
@@ -4331,6 +4334,47 @@
         const [x, y] = D.towns[0];
         Object.assign(supplier, this.safe(x + 115, y - 85, z.id));
         z.supplierPositionVersion = 2;
+      }
+      // The 2026 coastal layout begins at the harbor road (350,1370), not
+      // Reedport's actual refuge (350,1100). Attach that missing town leg on
+      // fresh and existing v4 worlds without rebuilding the coastal district.
+      // The Highlands Treasury roof historically sat directly over a public
+      // road. Preserve its interior/save identity and relocate only its stable
+      // exterior entrance to a real adjacent frontage, once per v4 campaign.
+      highlandsTreasuryFrontage(z) {
+        if (z.id !== 'highlands' || z.highlandsTreasuryFrontageVersion === 1) return;
+        const entrance = z.npcs.find((n) => n.id === 'supply-entrance');
+        if (!entrance) return;
+        if (this.distanceToRoad(z, entrance) < 190) {
+          const field = this.fieldCenter(this.regionIndex('highlands')),
+            room = R.supplyRooms.find((r) => r.id === 'supply-highlands'),
+            proposals = [
+              { x: 2170, y: 330 }, { x: 2166, y: 373 },
+              { x: 1795, y: 547 }, { x: 1759, y: 522 },
+            ],
+            valid = (p) =>
+              this.distanceToRoad(z, p) >= 190 &&
+              !this.blocked(p.x, p.y, z.id, 30, true) &&
+              dist(p, field) < Math.hypot(...room.entryOffset) + 195 &&
+              !z.npcs.some((n) => n !== entrance && dist(n, p) < 145) &&
+              !z.nodes.some((n) => dist(n, p) < 95) &&
+              !z.props.some((q) => q.roadBlocker && dist(q, p) < 195);
+          const frontage = proposals.find(valid);
+          if (!frontage) return; // Fail closed; never mark an obstructed door repaired.
+          Object.assign(entrance, frontage);
+        }
+        z.highlandsTreasuryFrontageVersion = 1;
+      }
+      marchTownRoadLink(z) {
+        if (z.id !== 'march' || z.coastalSwampVersion !== 1 || z.marchTownRoadVersion === 1)
+          return;
+        const town = { x: D.towns[1][0], y: D.towns[1][1] },
+          junction = { x: 350, y: 1370 },
+          onExistingRoad = (point) => z.roads.some((road) =>
+            road.some((p, j) => j && this.distanceToSegment(point, road[j - 1], p) < 1));
+        if (!onExistingRoad(junction)) return; // A failed layout cannot be certified.
+        if (!onExistingRoad(town)) z.roads.unshift([town, junction]);
+        z.marchTownRoadVersion = 1;
       }
       marchCoastalLayout(z) {
         if (z.id !== 'march' || z.coastalSwampVersion === 1) return;
