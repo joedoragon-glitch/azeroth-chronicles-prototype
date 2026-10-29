@@ -11,6 +11,7 @@
       'skill1Cd',
       'skill2Cd',
       'skill3Cd',
+      'skillNightCd',
       'skillGlobalCd',
       'healCd',
       'manaCd',
