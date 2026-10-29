@@ -295,6 +295,31 @@ function fullCrowdPursuit(legacy) {
     'bounded pursuit must reduce the worst crowded simulation update');
 }
 
+
+// A new encounter must never inherit a frontier frozen during the previous
+// fight. Existing pending work should resume while the engagement is stable.
+{
+  const g=world({count:1,companions:0,wall:true}),e=g.zone().enemies[0];
+  const original=g.advanceBudgetedRoute, seen=[];
+  g.advanceBudgetedRoute=function(...args) {
+    if(args[2]==='pursuit')seen.push({hadPending:!!args[3]});
+    return original.apply(this,args);
+  };
+  for(let step=0;step<2;step++) {
+    g.s.time+=.05;
+    g.follow(e,g.hero,150,.05,45);
+  }
+  assert.deepEqual(seen.slice(0,2).map(x=>x.hadPending),[false,true],
+    'unchanged fight resumes its already-started enemy pursuit frontier');
+  e.fightStart=(e.fightStart||0)+1;
+  g.s.time+=.05;
+  g.follow(e,g.hero,150,.05,45);
+  assert.equal(seen[2].hadPending,false,
+    'a new fight never resumes a frontier from the previous encounter');
+  delete g.advanceBudgetedRoute;
+}
+console.log('PASS enemy pursuit encounter-frontier reset and stable pending resume');
+
 // Guard the deliberate scope: bosses, captains and scripted return-state
 // actors retain the original full route() contract and cast/patrol timings.
 for (const state of ['boss','captain','returning','unengaged']) {
