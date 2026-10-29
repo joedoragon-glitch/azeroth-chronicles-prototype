@@ -1194,8 +1194,10 @@
         syncAtmosphere();
         scene.draw();
         startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
-        stage = 'nearby-art-preparation';
-        if(!await warmNeighborhood(thisEpoch))return false;
+        stage = 'region-art-preparation';
+        // First Pixi initialization prepares all admitted outdoor/interior art
+        // before activation, not just a fringe to be finished after reveal.
+        if(!await warmNeighborhood(thisEpoch, true))return false;
         stage = 'gpu-procedural-upload';
         if (!await prepareGpuTextures(thisEpoch, [...baked.values()].map((body) => body.texture),
           'procedural')) return false;
