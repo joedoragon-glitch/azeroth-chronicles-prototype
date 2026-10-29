@@ -258,6 +258,8 @@ function marchCompanionCallsite(measured, mode) {
   };
 }
 for (const mode of ['calm-follow', 'recall', 'critical-combat']) {
+  assert.equal(C.rules.companionJudgment.criticalTerrainChecksPerTick, 150,
+    'dev.216 comparison must exercise the approved 150-check critical-retreat allowance');
   const baseline = marchCompanionCallsite(false, mode),
     sampled = marchCompanionCallsite(true, mode);
   assert.deepEqual(sampled.snapshot, baseline.snapshot,
