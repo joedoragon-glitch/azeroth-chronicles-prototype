@@ -42,9 +42,15 @@
       }),
     ];
   }
+  // A warning belongs only to the pending cast. Once the native release
+  // clock expires, impact/travel/hazard art takes over; no stale floor mark,
+  // cast bar or aiming line should survive even for one presentation frame.
+  function pendingWarning(a) {
+    return !!a && Number.isFinite(a.timer) && a.timer > 0;
+  }
   function visibleWarning(e) {
     return (
-      e.telegraph &&
+      pendingWarning(e.telegraph) &&
       !e.telegraph.anonymousCast &&
       (e.telegraph.total > 0 || !e.telegraph.captainSkill)
     );
@@ -267,7 +273,10 @@
     ctx.save();
     for (const e of game
       .zone()
-      .enemies.filter((e) => e.telegraph?.anonymousCast || e.telegraph?.mobileRogueCast)) {
+      .enemies.filter(
+        (e) => pendingWarning(e.telegraph) &&
+          (e.telegraph.anonymousCast || e.telegraph.mobileRogueCast),
+      )) {
       const a = e.telegraph,
         p = screen(e);
       const transform = ctx.getTransform?.(),
@@ -544,13 +553,28 @@
           { x: cell.x + h, y: cell.y + h },
           { x: cell.x - h, y: cell.y + h },
         ]);
-        const warning = cell.selected && boss.board.phase === 'warn';
+        const warning = cell.selected && boss.board.phase === 'warn' && boss.board.timer > 0;
         const impact = cell.selected && boss.board.phase === 'rest';
-        ctx.lineWidth = warning || impact ? 2.2 : 1.1;
-        ctx.strokeStyle = warning ? '#fff1a7' : impact ? '#ff9267' : '#8794a766';
-        ctx.fillStyle = warning ? '#df795655' : impact ? '#e84b3d88' : '#536b8917';
+        // Rest begins exactly when the selected cells inflict their hit.
+        // Remove the old red footprint immediately; an impact spark, not
+        // another danger tile, communicates the already-resolved strike.
+        ctx.lineWidth = warning ? 2.2 : 1.1;
+        ctx.strokeStyle = warning ? '#fff1a7' : '#8794a766';
+        ctx.fillStyle = warning ? '#df795655' : '#536b8917';
         if (!cue) ctx.fill();
         ctx.stroke();
+        if (impact && !cue) {
+          const center = screen(cell);
+          ctx.strokeStyle = '#ffb078';
+          ctx.lineWidth = 2.4;
+          for (let j = 0; j < 4; j++) {
+            const angle = (Math.PI * j) / 2;
+            ctx.beginPath();
+            ctx.moveTo(center.x + Math.cos(angle) * 5, center.y + Math.sin(angle) * 5);
+            ctx.lineTo(center.x + Math.cos(angle) * 15, center.y + Math.sin(angle) * 11);
+            ctx.stroke();
+          }
+        }
       }
     if (cue)
       for (const guard of game
@@ -569,7 +593,7 @@
         circlePath(ctx, screen, guard.dressPost, 15);
         ctx.stroke();
       }
-    for (const e of game.zone().enemies.filter((e) => e.rangedAim)) {
+    for (const e of game.zone().enemies.filter((e) => pendingWarning(e.rangedAim))) {
       const p = screen(e),
         q = screen(e.rangedAim);
       if (cue) {
@@ -1426,6 +1450,8 @@
     capsulePoints,
     sectorPoints,
     warningShapes,
+    pendingWarning,
+    visibleWarning,
     royalTaxStatus,
     ground,
     actorCues,
