@@ -399,7 +399,9 @@ async function run() {
         // not merely an internal profiler object or a static source assertion.
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
-        await page.getByRole('button', {name:'Save and game management', exact:true}).click();
+        // The current UI owns diagnostics under Screen and performance, not
+        // the Save and game management section used by the older pilot.
+        await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
         const downloadPromise=page.waitForEvent('download');
         await page.getByRole('button', {name:'Export playtest report', exact:true}).click();
         const download=await downloadPromise;
