@@ -51,7 +51,15 @@ function open() {
   g.s.time += 0.1;
   g.updateParty(0.1);
   assert.equal(n.amount, amount, 'combat pauses harvest');
-  assert(e.hp < hp || g._companionCharges?.has(u.id), 'normal skills/attacks engage');
+  assert(e.hp < hp || g._companionCharges?.has(u.id),
+    'normal skills/attacks engage: ' + JSON.stringify({
+      enemyAggro: e.aggro, enemyHp: e.hp, originalHp: hp,
+      enemyPosition: [e.x, e.y], unitPosition: [u.x, u.y],
+      unitCd: u.cd, unitOrder: u.order?.type, unitType: u.type,
+      reach: g.companionCombatReach(u), line: g.line(u, e),
+      targetable: g.tacticalDirectTargetable(e),
+      tacticalTarget: g._tacticalPartyTargets?.get(u.id) || null,
+    }));
   assert.equal(u.order.id, n.id);
   assert.equal(g.s.gatheringTarget.id, n.id);
   // Critical wounds must retreat immediately and keep the assignment/cargo.
