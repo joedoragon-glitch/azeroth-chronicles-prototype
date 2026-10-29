@@ -167,4 +167,29 @@ function result(label, g, monitor, tickProbes, extra) {
     { durationMs: +(clock()-started).toFixed(2),
       committed: !!g._tacticalRegroups?.has(e.id), allyId: ally.id });
 }
+// Regression: a moving hero cannot force the same expensive A* plan to
+// restart indefinitely before it produces any legal waypoints.
+{
+  const { g, from, to } = scenario();
+  const u = g.unit('soldier', from.x, from.y);
+  g.s.party = [u];
+  const originalBlocked = g.blocked;
+  let peak = 0, probes = 0;
+  g.blocked = function (...args) { probes++; return originalBlocked.apply(this, args); };
+  for (let i = 0; i < 160; i++) {
+    g.s.time += 0.05;
+    const before = probes;
+    g.followCompanion(u, { x: to.x + 3.5 * i, y: to.y }, 190, 0.05, 25);
+    peak = Math.max(peak, probes - before);
+  }
+  delete g.blocked;
+  assert(u.x > from.x + 200,
+    'a moving destination must not repeatedly reset the pending A* frontier');
+  assert(peak <= 1100, 'moving-target pathfinding still has a bounded per-tick terrain burst');
+  console.log('TERRAIN_SEARCH_AUDIT ' + JSON.stringify({
+    label: 'moving-companion-target-160-ticks',
+    totalBlocked: probes, maxBlockedPerTick: peak,
+    actualMovedX: +(u.x-from.x).toFixed(2),
+  }));
+}
 console.log('PASS terrain-search workload audit: test-only instrumentation, source-call attribution, and unchanged native collision');
