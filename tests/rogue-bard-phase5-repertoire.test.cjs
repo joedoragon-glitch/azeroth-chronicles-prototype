@@ -334,6 +334,14 @@ try {
     assert.equal(sample.g.rogueSongBoon(h,'quickstep'),null);
     assert(sample.g.rogueSongBoon(sample.unit,'quickstep'));
   }
+  // Every player-facing normal and charged effect must explicitly name Rogue.
+  for (let slot=1; slot<=8; slot++) {
+    const guide=Reference.describe(g,slot);
+    assert(guide.tap.effect.includes('Rogue'),
+      'Skill '+slot+' normal guidance names Rogue');
+    assert(guide.charge.effect.includes('Rogue'),
+      'Skill '+slot+' charged guidance names Rogue');
+  }
   const skill5Guide=Reference.describe(g,5);
   assert(skill5Guide.note.includes('even if they enter after placement'));
   assert(skill5Guide.tap.metrics.some(m=>m.key==='duration'&&
