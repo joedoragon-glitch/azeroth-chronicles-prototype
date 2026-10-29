@@ -159,3 +159,12 @@ The shared controller in `navigation.js::advanceBudgetedRoute` counts nested `bl
 **Integration status:** the source and matched native audit came from PR #584, whose final-head focused checks passed. This dev.218 port additionally preserves current dev.217 healing, HUD and combat changes and requires its own focused CI and publication evidence. Do not infer device FPS gains.
 
 **Lifecycle:** Explicit gathering cancellation or reassignment clears pending delivery ranking; Recall preserves the existing worker order. Critical worker withdrawal records the interrupted delivery site even when survival handling runs before ordinary labor, and per-enemy tactical route plans are dropped on encounter stop/reset. Intermediate search generators and shared counters are transient, not v4 snapshot fields. Full-path validation and actual movement collision remain required.
+
+
+## Ordinary enemy pursuit — dev.224 engineering candidate
+
+The combat hotpath audit [#600](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/600) found an additional route-search hotspot outside dev.218: ordinary enemy `navigation.js::follow()` started full synchronous `route()` BFS when native movement was blocked. In 24 live combat simulation updates with 24 enemies and a real wall, this cost **59,496 `blocked()` probes in 24 direct route calls** and contributed to a **4,447 terrain-probe peak per update**. These counts are exact native test-fixture measurements, not physical-device FPS.
+
+The isolated dev.224 candidate retains synchronous `route()` for direct/road and non-enemy users, and preserves the already published companion/critical/tactical boundaries. Actual current-zone enemies instead advance a resumable four-neighbor pursuit BFS through the same shared 768 terrain-probe/240-node per-tick planning limits and 512-probe/120-node per-search advance. A pending frontier never grants movement or declares a route blocked. The target and origin are frozen until a full path exists, while the actor's current position and first leg are revalidated using the original native collision checks. Saved enemy pursuit, leash, aggression, disengage, projectile contact, authored road generation, and v4 saves are not given new authority. Pending frontiers are transient weak-keyed runtime state.
+
+**Status:** test-stage candidate on draft PR #610, not merged, published or device-verified. Route parity, combat liveness, frame-probe caps and existing gameplay regression results are mandatory before any release recommendation.
