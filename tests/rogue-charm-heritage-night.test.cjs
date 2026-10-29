@@ -173,8 +173,11 @@ try {
       species + ' save survives daylight');
     const old = game.snapshot();
     delete old.party[0].skill3Cd;
+    delete old.party[0].skillNightCd;
     assert.equal(Campaign.validate(old).party[0].skill3Cd, 0,
       'old v4 save migrates third cooldown');
+    assert.equal(Campaign.validate(old).party[0].skillNightCd, 0,
+      'old v4 save migrates separate night cooldown');
   }
 
   for (const species of ['wraith', 'stalker']) {
@@ -185,7 +188,9 @@ try {
     assert(game.charmedSpeciesSpecial(u, e, def, 'native'),
       species + ' native night skill lands in ally form');
     assert.equal(rolls(), 1, species + ' one night critical roll');
-    assert.equal(u.skill1Cd, R.balance.companions.charmedSkills.basicCooldown);
+    assert.equal(u.skillNightCd, R.balance.companions.charmedSkills.basicCooldown);
+    assert.equal(u.skill1Cd, 0, species + ' innate cannot replace its Rogue basic');
+    assert.equal(u.skill2Cd, 0, species + ' innate cannot consume Ringleader');
     assert.equal(u.skill3Cd, 0, species + ' innate cannot consume heritage');
     assert(game.effects.some(x => x.type === 'charmHeritage' &&
       x.kind === 'native' && x.species === species));
