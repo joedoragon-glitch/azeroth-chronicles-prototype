@@ -219,10 +219,9 @@
     const c = card(game, slot);
     if (game.hero.class === 'rogue' && slot !== 1) {
       if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
-      const R = game.constructor.rules,
-        entries = R.roguePerformances[slot];
+      const R = game.constructor.rules;
       const show = (charged) => {
-        const x = entries[charged ? 'charged' : 'tap'],
+        const x = game.roguePerformanceAtRank(slot, charged, rank),
           metrics = [
             { key: 'reach', label: 'Reach', value: x.range, unit: '' },
             { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
@@ -245,7 +244,8 @@
           { key: 'stations', label: 'Maximum active stations', value: 2, unit: '' },
         );
         if (slot === 8) metrics.push(
-          { key: 'damage', label: 'Enemy damage coefficient', value: x.damage, unit: 'x' },
+          { key: 'damage', label: 'Enemy damage per hit',
+            value: (game.power() + 12) * x.damage * (1 + 0.15 * (rank - 1)), unit: ' HP before defenses' },
           { key: 'criticalChance', label: 'Your / companion critical chance', value: x.criticalChance * 100, unit: 'pp' },
           { key: 'specialDamage', label: 'Your / companion special damage', value: x.specialDamage * 100, unit: '%' },
           { key: 'silence', label: 'Eligible non-boss hush', value: x.silence || 0, unit: 's' },
@@ -328,8 +328,8 @@
     if (slot === 1 && cls === 'rogue') {
       const cfg = R.rogueHeroFoundation.basic,
         base = (power + 12) * scale * cfg.primaryMultiplier,
-        tapCfg = game.rogueSkill1Config(false),
-        chargeCfg = game.rogueSkill1Config(true);
+        tapCfg = game.rogueSkill1Config(false, rank),
+        chargeCfg = game.rogueSkill1Config(true, rank);
       auto = {
         title: 'Automatic basics',
         effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. A landed critical briefly boosts Rogue and nearby active allies\' basic damage. Charm affects the surviving primary only.',

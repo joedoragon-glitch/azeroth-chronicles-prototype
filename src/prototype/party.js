@@ -1594,7 +1594,10 @@
           incomingHealing: Math.max(0, form.incomingHealing || 0),
           // Each lawful Mending cast owns a separate finite healing budget;
           // critical levels cannot amplify its later delivery ticks again.
-          remainingHeal: Math.min(u.maxHp * (form.criticalMending === true ? 0.075 : 0.05),
+          // Rank-8 Charged Mending legitimately exceeds the old Rank-1 5%
+          // ceiling. Bound each real song's budget without suppressing its
+          // training, and keep the one-roll critical boost independently finite.
+          remainingHeal: Math.min(u.maxHp * (form.criticalMending === true ? 0.10 : 0.08),
             u.maxHp * Math.max(0, form.healFraction || 0)),
           criticalChance: Math.max(0, form.criticalChance || 0),
           specialDamage: Math.max(0, form.specialDamage || 0),
