@@ -896,6 +896,11 @@
           // An individual Mastery 0–III progress counter, capped at Tier III.
           // Older version-4 saves begin at zero; malformed saves cannot inject
           // free levels or infinite mastery progression.
+          if (u.charmRingleaderTrained === undefined)
+            u.charmRingleaderTrained = false;
+          if (typeof u.charmRingleaderTrained !== 'boolean' ||
+              (u.charmRingleaderTrained && !u.charmOrigin))
+            throw Error('Invalid individual Ringleader training');
           if (u.masteryPoints === undefined) u.masteryPoints = 0;
           if (!Number.isInteger(u.masteryPoints) || u.masteryPoints < 0 ||
               u.masteryPoints > R.balance.companions.mastery.thresholds[2])
