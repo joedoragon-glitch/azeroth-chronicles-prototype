@@ -50,6 +50,26 @@ test('Ogre hearth and legacy habitat use one road-accessible settlement', () => 
     once, 'second restore never expands or repositions the same habitat',
   );
 });
+test('Historical Ironroot walls regain street clearance once, keeping their identity', () => {
+  const c = fresh();
+  c.enter('highlands');
+  const raw = c.snapshot(), zone = raw.zones.highlands;
+  const wall = zone.props.find((p) => p.id === 'stronghold-wolf-packhold-wall-6');
+  assert(wall, 'real named stronghold wall survives the first landscape');
+  const originalId = wall.id, originalStructure = wall.structure, originalGold = raw.hero.gold;
+  Object.assign(wall, { x: 520, y: 1165 }); // previous obstructing v4 coordinates
+  delete zone.highlandsFinalRoadsideVersion;
+  const restored = C.restore(raw), z = restored.zone(),
+    migrated = z.props.find((p) => p.id === originalId);
+  assert(migrated, 'no wall is removed');
+  assert.equal(migrated.structure, originalStructure);
+  assert.equal(restored.hero.gold, originalGold);
+  assert.equal(z.highlandsFinalRoadsideVersion, 1, 'only a verified full-width clearance is versioned');
+  assert(restored.distanceToRoad(z, migrated) + 0.01 >= restored.roadSetback(migrated));
+  const again = C.restore(restored.snapshot()), same = again.zone().props.find((p) => p.id === originalId);
+  assert.deepEqual({ x: same.x, y: same.y }, { x: migrated.x, y: migrated.y },
+    'second restore does not drift the repaired wall');
+});
 test('Ironroot production scenes leave homes, habitats, service spacing and roads intact', () => {
   const c = fresh();
   c.enter('highlands');
