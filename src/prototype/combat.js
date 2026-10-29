@@ -370,10 +370,13 @@
       }
 
       weakenedEnemyDamage(e) {
-        return (
-          e.damage *
-          ((e.weakenUntil || 0) > this.s.time ? 1 - Math.min(0.8, e.weakenFraction || 0) : 1)
-        );
+        // Rogue debuff casts keep separate expiries; do not freeze their
+        // strongest combined potency until the final cast expires.
+        const rogueFraction = this.rogueEnemyWeakenFraction?.(e) || 0;
+        const fraction = rogueFraction || ((e.weakenUntil || 0) > this.s.time
+          ? e.weakenFraction || 0 : 0);
+        return e.damage * (1 - Math.min(
+          rogueFraction > 0 ? 1 : 0.8, fraction));
       }
       tacticalHighestThreatTarget(e, fallback = this.hero) {
         const ledger = this.tacticalThreatSnapshot(e),
@@ -570,12 +573,12 @@
           (station?.resistance || 0);
         const elapsed = dt - Math.min(dt, slow) * (1 - recovery);
         // One native elapsed-time owner: movement song helps all party clocks;
-        // borrowed-time helps special clocks only. Both sum, capped at +25%.
+        // borrowed-time helps special clocks only; every live song contributes.
         const quick = enemy ? null : this.rogueSongBoon?.(unit, 'quickstep');
         const borrowed = special && !enemy
           ? this.rogueSongBoon?.(unit, 'borrowedTime') : null;
-        return elapsed * (1 + Math.min(0.25,
-          (quick?.recovery || 0) + (borrowed?.specialRecovery || 0)));
+        return elapsed * (1 +
+          (quick?.recovery || 0) + (borrowed?.specialRecovery || 0));
       }
 
       // Absolute encounter-clock readiness deadlines need the same recovery
