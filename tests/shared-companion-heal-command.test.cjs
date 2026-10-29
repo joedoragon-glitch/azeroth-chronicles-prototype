@@ -57,6 +57,29 @@ try {
     assert(saved, 'the lawful Charmed healer survives save/restore');
     assert.equal(saved.companionHealCooldown(saved.s.party[0]), R.rangerSupport.cooldown);
   }
+  // Automatic healing still uses the same support effect and one cooldown,
+  // without requiring combat or a separate Ranger in the party.
+  {
+    const g = scene();
+    const healer = capture(g, 'goblin', true);
+    g.hero.hp = g.hero.maxHp - 40;
+    g.autoRangerSupport();
+    assert(g.hasSupportEffect(g.hero, 'health'), 'Charmed ranged auto-Heal still works');
+    assert.equal(healer.charmSupportCd, R.rangerSupport.cooldown);
+    g.autoRangerSupport();
+    assert.equal(effects(g).length, 1, 'manual/auto routes cannot stack healing');
+  }
+  {
+    const g = scene();
+    g.s.normal.crypt = true;
+    g.s.true.crypt = true;
+    const pet = g.unit('pet', 505, 500, 'crypt');
+    g.s.party.push(pet);
+    g.hero.hp = g.hero.maxHp - 40;
+    g.autoRangerSupport();
+    assert(g.hasSupportEffect(g.hero, 'health'), 'authored healer pet joins idle triage');
+    assert.equal(pet.healCd, R.rangerSupport.cooldown);
+  }
   // While healing is on cooldown H queues one hero request and gives it
   // priority over automatic treatment of a wounded different-species ally.
   {
