@@ -300,6 +300,7 @@ for (const kind of ['recovery', 'treatment']) {
   const extra = Array.from({ length: 3 }, (_, i) => {
     const u = g.unit('soldier', g.hero.x + 30 + i * 10, g.hero.y);
     u.hp = 0;
+    u.active = false; // Larger rosters must use legal reserve slots in v4 saves.
     g.s.party.push(u);
     return u;
   });
@@ -343,6 +344,7 @@ for (const kind of ['recovery', 'treatment']) {
   for (let i = 0; i < 6; i++) {
     const u = g.unit('soldier', g.hero.x + i * 5 + 15, g.hero.y);
     u.hp = 0;
+    u.active = false; // Larger rosters must use legal reserve slots in v4 saves.
     g.s.party.push(u);
     ids.push(u.id);
   }
@@ -461,6 +463,7 @@ for (const kind of ['recovery', 'treatment']) {
   for (let i = 0; i < 10; i++) {
     const u = g.unit('soldier', g.hero.x + i * 6, g.hero.y);
     u.hp = 0;
+    u.active = false; // Larger rosters must use legal reserve slots in v4 saves.
     g.s.party.push(u);
   }
   let opened;
