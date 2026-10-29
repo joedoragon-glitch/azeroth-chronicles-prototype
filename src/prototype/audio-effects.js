@@ -99,6 +99,7 @@
         if (
           [
             'companionSkill',
+            'charmHeritage',
             'petSkill',
             'companionChargeStart',
             'hit',
