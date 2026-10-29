@@ -113,6 +113,19 @@ try {
     if (def.slow) assert(e.slow > 0, species + ' real Slow on contact');
   }
 
+  // Short-range ranged heritage must fire WHILE the Charmed Ranger retreats.
+  // It cannot require the actor to stand inside its own retreat threshold.
+  const retreat = fresh(), raider = ally(retreat, 'archer'), close = foe(retreat);
+  retreat.hero.skills[1] = 1;
+  raider.skill1Cd = 100;
+  raider.skill2Cd = 100;
+  retreat._tacticalPartyTargets = new Map();
+  const oldHp = close.hp;
+  retreat.companionFight(raider, close, [raider], 1 / 60);
+  assert.equal(raider.skill3Cd, R.balance.companions.charmHeritage.archer.cooldown,
+    'ranged Bad Deal fires at close quarters while retreating');
+  assert(close.hp < oldHp, 'defensive heritage actually hits');
+
   // Real AoE geometry and a strict two-target budget, not a radius shortcut.
   const cone = fresh(), caster = ally(cone, 'goblin'), near = foe(cone);
   const far = foe(cone, 925, 1000);
