@@ -4171,6 +4171,7 @@
   const rendererDiagnosticCounters = [
     'proceduralBakes', 'proceduralCacheHits', 'sharedProceduralHits',
     'proceduralEvictions', 'proceduralCacheEvictions', 'backgroundRepaints',
+    'terrainTilesPrepared', 'terrainTileReuses',
     'backgroundLookaheadPaints', 'backgroundLookaheadPromotions',
     'backgroundLookaheadMisses', 'backgroundLookaheadFailures',
     'backgroundLookaheadPaintMs', 'backgroundLookaheadPromoteMs',
