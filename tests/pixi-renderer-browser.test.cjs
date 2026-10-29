@@ -204,6 +204,45 @@ async function run() {
     const host = process.env.PLAYTEST_URL
       ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
       : 'http://127.0.0.1:' + server.address().port + '/';
+    // Exercise the actual shipped startup first: an existing Canvas choice is
+    // overridden once and automatic Pixi startup is not a 15-second trial.
+    const rolloutContext = await browser.newContext({viewport:{width:1280,height:800}});
+    try {
+      await rolloutContext.addInitScript(() => {
+        // This represents an existing install before the new default ships.
+        localStorage.setItem('azeroth-renderer-choice-v1','canvas2d');
+      });
+      const rolloutPage = await rolloutContext.newPage();
+      await rolloutPage.goto(host + 'index.html');
+      await rolloutPage.waitForFunction(() => !!window.Prototype?.renderer);
+      const migrated = await rolloutPage.evaluate(() => ({
+        marker: localStorage.getItem('azeroth-renderer-webgl-primary-v1'),
+        choice: localStorage.getItem('azeroth-renderer-choice-v1'),
+      }));
+      assert.equal(migrated.marker,'applied','Rollout must record a one-time migration');
+      assert.equal(migrated.choice,'webgl2','Upgraded Canvas users must receive Pixi default');
+      await rolloutPage.waitForFunction(() => {
+        const state = Prototype.experimentalGraphics;
+        return state.phase === 'confirmed' ||
+          (state.phase === 'canvas' && (state.lastFallbackReason || state.recoveryPending || state.recoveryPaused));
+      }, null, {timeout:45000});
+      const live = await rolloutPage.evaluate(() => Prototype.experimentalGraphics);
+      assert.equal(live.preferredRenderer,'webgl2');
+      assert(['webgl2','canvas2d'].includes(live.mode));
+      if (live.mode === 'webgl2')
+        assert.equal(live.phase,'confirmed','Default GPU startup must not show a Keep/Revert trial');
+      console.log('PASS existing Canvas preference migrated to Pixi primary ('+live.mode+')');
+    } finally {
+      await rolloutContext.close();
+    }
+    // Existing manual Keep/Revert acceptance starts on an intentionally
+    // retained Canvas choice, as if the player opted back to the backup.
+    const startCanvasManualTrial = () => {
+      if (localStorage.getItem('azeroth-renderer-webgl-primary-v1') !== 'applied') {
+        localStorage.setItem('azeroth-renderer-webgl-primary-v1','applied');
+        localStorage.setItem('azeroth-renderer-choice-v1','canvas2d');
+      }
+    };
     // Complete Mage-specific desktop and phone presentation first. A failure in
     // the separate generic WebGL recovery journey must not prevent recording
     // whether Mage Skill 1 itself draws on Canvas and the Pixi combat overlay.
@@ -216,6 +255,7 @@ async function run() {
         isMobile: phone, hasTouch: phone,
       });
       try {
+        await beamContext.addInitScript(startCanvasManualTrial);
         const beamPage = await beamContext.newPage();
         await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
         await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
@@ -238,6 +278,7 @@ async function run() {
         viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
         isMobile: phone, hasTouch: phone, acceptDownloads: true,
       });
+      await context.addInitScript(startCanvasManualTrial);
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
 
