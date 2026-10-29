@@ -3404,6 +3404,25 @@
             (!u.charmOrigin || this.isCharmedCompanion(u)) && !u.order,
         );
       }
+      reserveFallenRogueCharm(u) {
+        // This defeat transition bypasses the no-combat restriction on
+        // manual Barracks Rest, but never bypasses Charm provenance or quotas.
+        if (
+          this.hero.class !== 'rogue' ||
+          !u ||
+          u.hp > 0 ||
+          u.active === false ||
+          !this.s.party.includes(u) ||
+          !this.isCharmedCompanion(u)
+        )
+          return false;
+        this.clearPartyCharge(u);
+        this.clearCompanionJudgment(u);
+        u.active = false;
+        u.order = null;
+        u.path = [];
+        return true;
+      }
       companionRestReason(id) {
         const u = this.s.party.find((u) => u.id === id);
         if (!u) return 'This companion is no longer in your company. Reopen Manage active group.';
