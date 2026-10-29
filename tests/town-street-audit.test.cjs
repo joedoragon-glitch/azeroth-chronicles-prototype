@@ -8,6 +8,7 @@ const regions = Campaign.data.regions.filter((r) => !selectedRegion || r.id === 
 assert(regions.length, 'unknown region selection');
 
 const historic = require('./fixtures/region-original-street-20261029.json');
+const dev233Pilot = require('../docs/evidence/regional-street-rollback-20261029/seeded-spatial-deltas.json');
 const { rng: regionalRng } = require('../tools/greenwood-layout/fixtures.cjs');
 const rounded = (n) => Math.round(n * 10) / 10;
 // Owner accepted restoring these pre-#570 regional layouts instead of mandatory
@@ -76,6 +77,51 @@ function checkRestoredRegionalBaseline(id) {
   assert.equal(again.hero.gold,coins,id+' repeat restore currency retained');
   for(const k of ['props','npcs','buildings'])
     assert.deepEqual(again.zone()[k].map(e=>e.id),ids[k],id+' repeat restore '+k+' identities retained');
+
+  if (id === 'frontier' || id === 'crown') {
+    const historical = new Campaign('normal','paladin',
+      regionalRng(0x1c001d00 + index));
+    historical.enter(id);
+    const saved = historical.snapshot(),scene=saved.zones[id];
+    const sample=dev233Pilot.regions[id];
+    const originalRoads=scene.roads.length;
+    const reversible=[];
+    const twice=(values,key)=>values.filter(p=>String(p.id||p.structure||p.kind||'unknown')===key);
+    for (const m of sample.moved) {
+      const at=m.id.lastIndexOf('#'),key=m.id.slice(0,at),number=Number(m.id.slice(at+1));
+      const p=twice(scene[m.type],key)[number-1];
+      if(!p||Math.abs(p.x-m.from.x)>.06||Math.abs(p.y-m.from.y)>.06) continue;
+      p.x=m.to.x;p.y=m.to.y;
+      if(m.type==='npcs'&&scene[id+'TownPlacements']?.[key])
+        scene[id+'TownPlacements'][key]=[m.to.x,m.to.y];
+      reversible.push(m);
+    }
+    if(id==='crown'){
+      // Witnessed three-point 25-unit connector, no invented road geometry.
+      scene.roads.push([{x:875,y:1825},{x:875,y:1812.5},{x:875,y:1800}]);
+    }
+    assert(reversible.length>0,'historical synthetic fixture has actual move coverage');
+    scene.finalStreetClearanceVersion=1;
+    const playerGold=saved.hero.gold;
+    const restoredOld=Campaign.restore(saved),loaded=restoredOld.zone();
+    assert.equal(restoredOld.hero.gold,playerGold);
+    assert.equal(loaded.regionalStreetRollbackVersion,1,
+      'the inverse is versioned to run only once');
+    for(const m of reversible){
+      const at=m.id.lastIndexOf('#'),key=m.id.slice(0,at),number=Number(m.id.slice(at+1));
+      const p=twice(loaded[m.type],key)[number-1];
+      assert(p,'transformed object keeps its original identity');
+      assert(Math.abs(p.x-m.from.x)<=.06 && Math.abs(p.y-m.from.y)<=.06,
+        'dev.233 source-confirmed moved object restored: '+id+' '+m.id);
+    }
+    if(id==='crown') assert.equal(loaded.roads.length,originalRoads,
+      'only the exact auto-generated Crown connector is removed');
+    const againOld=Campaign.restore(restoredOld.snapshot());
+    assert.equal(againOld.hero.gold,playerGold,'repeated inverse cannot debit crowns');
+    assert.equal(againOld.zone().roads.length,loaded.roads.length,'no repeat road migration');
+    console.log('PASS '+id+' exact-match dev.233 saved-scene reversal ('+reversible.length+
+      ' moved objects), immutable identities/economy and repeated restore');
+  }
   console.log('PASS '+id+' historical-region geometry parity, documented exceptions, and v4 identity preservation');
 }
 
