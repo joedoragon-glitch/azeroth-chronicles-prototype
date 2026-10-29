@@ -98,9 +98,10 @@ try {
   assert(skeleton.maxHp > oldSkeletonMax, 'melee Charmed monster gains HP');
   assert.equal(g.hero.maxHp, oldHeroMax, 'Companion Vitality does not affect Rogue');
 
-  // Existing Ranger control contract remains unchanged: Charmed healers do
-  // not gain an unrelated mana skill or the conventional Ranger cast button.
+  // Conventional Ranger-only lookup remains separate from the shared H
+  // command; Charmed ranged healers can use Heal, never Ranger mana skills.
   assert.equal(g.availableRangers('health').length, 0);
+  assert(g.healCompanionCasters().includes(goblin));
   assert.equal(g.availableRangers('mana').length, 0);
   assert.equal(goblin.charmSupportCd > 0, true);
   const other = charm(g, 'skeleton', true);
