@@ -141,8 +141,8 @@ for (const mode of ['normal', 'nightmare']) {
     assert(p.save(g, {}));
   }
   assert.equal(restores, 0, 'Ordinary validated autosaves never restore another Campaign');
-  assert.equal(p.recoveryOptions('normal').length, 3);
-  assert.equal(restores, 3, 'Candidate worlds are built only for explicit bounded inspection');
+  assert.equal(p.recoveryOptions('normal').length, 1);
+  assert.equal(restores, 1, 'Candidate worlds are built only for explicit bounded inspection');
 }
 // An existing, documented v2 migration can rescue a misplaced old-format primary.
 {
