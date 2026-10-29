@@ -682,12 +682,22 @@
           trip.path = [];
           trip.age = 0;
         }
-        if (trip.age <= 0) {
-          if (this.reserveMovementPlan(u)) {
-            trip.path = this.companionRoute(u, target, cautious);
-            trip.age = R.gatheringTravel.replanSeconds;
-            trip.target = { x: target.x, y: target.y };
-            u.path = trip.path;
+        if (trip.age <= 0 || trip.search) {
+          if (trip.search || this.reserveMovementPlan(u)) {
+            // Incomplete searches retain their frontier and are not mistaken
+            // for an unreachable destination. Actual movement remains native.
+            const result = this.advanceBudgetedRoute(u, target, 'companion', trip.search, cautious);
+            if (result.pending) {
+              trip.search = result.state;
+              trip.age = 0;
+              if (!trip.path.length) return false;
+            } else {
+              trip.search = null;
+              trip.path = result.path;
+              trip.age = R.gatheringTravel.replanSeconds;
+              trip.target = { x: target.x, y: target.y };
+              u.path = trip.path;
+            }
           } else if (!trip.path.length) return false;
         }
         while (trip.path.length && dist(u, trip.path[0]) < 1) trip.path.shift();
