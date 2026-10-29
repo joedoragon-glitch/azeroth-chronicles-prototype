@@ -159,6 +159,13 @@ try {
       'both physically overlapping station resistances add');
     close(g.rogueStationProtection(g.hero).ward, 0.06,
       'only charged station contributes actual damage ward');
+    ally.wardUntil = g.s.time + 10;
+    ally.wardReduction = 0.20;
+    ally.hp = 1000;
+    ally.maxHp = 1000;
+    assert(g.hitParty(ally,100,0,null,true), 'native strike contacts the warded ally');
+    close(ally.hp, 926,
+      'native 20% ward and charged station 6% ward both mitigate one hit');
     g.s.time += 4.1;
     close(g.rogueStationProtection(ally).resistance, 0.40,
       'expired station ceases buff without erasing charged station');
