@@ -55,8 +55,11 @@ try {
   assert.equal(g.companionAttackDamage(generic),
     generic.damage + 2*g.hero.level + g.companionInheritedDamageBonus(),
     'standard Soldier not promoted');
+  assert.equal(g.charmedEliteTrained(u), false,
+    'paying Orin does not bypass the Rogue Hero Skill-2 signature unlock');
+  g.hero.skills[1] = 1;
   assert(g.charmedEliteTrained(u),
-    'paid permanent promotion grants elite skills independent of Hero Skill 2');
+    'learning Rogue Skill 2 unlocks the elite signature without duplicate promotion');
   assert.equal(g.trainCharmedRingleader(u.id),false,'no duplicate purchase');
   assert.equal(g.hero.gold,80,'no double charge');
   g.syncCompanionLevelStats();
