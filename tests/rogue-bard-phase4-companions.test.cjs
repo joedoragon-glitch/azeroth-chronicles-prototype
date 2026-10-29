@@ -31,6 +31,11 @@ try {
       { x: 585, y: 500 },
     );
     foe.ranged = ranged;
+    // Night-only species must be acquired from lawful nighttime encounters.
+    if (species === 'wraith' || species === 'stalker') {
+      foe.nightOnly = true;
+      g.night = () => true;
+    }
     foe.aggro = true;
     foe.returning = false;
     g.zone().enemies = [foe];
