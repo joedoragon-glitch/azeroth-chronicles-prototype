@@ -413,7 +413,7 @@ async function run() {
             return window.__auditBlobCreate(blob);
           };
         });
-        await page.getByRole('button', {name:'Export playtest report', exact:true}).click();
+        await page.getByRole('button', {name:/Export playtest report/}).click();
         try {
           await page.waitForFunction(() => !!window.__auditReportBlob, null, {timeout:8000});
         } catch (error) {
