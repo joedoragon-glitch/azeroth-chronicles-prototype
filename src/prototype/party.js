@@ -2263,33 +2263,21 @@
             : Math.min(cfg.meleeManeuverReach, this.companionCombatReach(u) + 25),
           distance = dist(u, target),
           team = charmedSquadSkills.get(this) ||
-            { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time };
+            { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time },
+          nightNative = R.balance.companions.charmNightNative[species],
+          heritage = R.balance.companions.charmHeritage[species];
         if (this.s.time < team.lastTime) {
           team.basic = 0;
           team.elite = 0;
           team.heritage = 0;
         }
         team.lastTime = this.s.time;
-        // The third skill is independent of both 12s native and 22s
-        // Ringleader cooldowns. It unlocks with companion Skill 2.
-        if (this.charmedEliteTrained(u) &&
-            this.charmedSpeciesSpecial(u, target,
-              R.balance.companions.charmHeritage[species])) return true;
-        // Only real night creatures replace the ordinary Rogue maneuver in
-        // native slot 1 with their own Soul Drain or Shadow Pounce.
-        if (R.balance.companions.charmNightNative[species] &&
-            !((u.skill1Cd || 0) > 0) &&
-            this.charmedSpeciesSpecial(u, target,
-              R.balance.companions.charmNightNative[species], 'native')) return true;
-        if (distance > reach) return false;
-        // A reset game clock must not trap squad skills behind a stale window.
-        if (this.s.time < team.lastTime) {
-          team.basic = 0;
-          team.elite = 0;
-        }
-        team.lastTime = this.s.time;
-        const eliteReady = !!signature && (u.skill2Cd || 0) <= 0 &&
-          this.s.time >= team.elite;
+        if (distance > reach &&
+            !(nightNative && distance <= nightNative.range) &&
+            !(this.charmedEliteTrained(u) && heritage &&
+              distance <= heritage.range)) return false;
+        const eliteReady = distance <= reach && !!signature &&
+          (u.skill2Cd || 0) <= 0 && this.s.time >= team.elite;
         const nearby = eliteReady && ['scatter', 'sweep'].includes(signature.effect)
           ? this.zone().enemies.filter((e) =>
             e.hp > 0 && !e.neutral && !e.returning &&
@@ -2301,10 +2289,17 @@
         const elite = eliteReady &&
           (signature.effect === 'scatter' || signature.effect === 'sweep'
             ? nearby.length > 0 : true);
+        // Native then Ringleader retain priority when their timers are ready.
+        // Heritage is a genuine third skill, never a replacement or a reason
+        // to starve a ready existing action. It fills the next legal opening.
+        if (!elite && nightNative && (u.skill1Cd || 0) <= 0 &&
+            this.charmedSpeciesSpecial(u, target, nightNative, 'native')) return true;
+        if (!elite && (nightNative || (u.skill1Cd || 0) > 0 ||
+            this.s.time < team.basic || distance > reach))
+          return this.charmedEliteTrained(u) &&
+            this.charmedSpeciesSpecial(u, target, heritage);
         const profile = elite ? signature : ordinary;
         const slot = elite ? 2 : 1;
-        if (!elite && ((u.skill1Cd || 0) > 0 || this.s.time < team.basic))
-          return false;
         // Native Ringleaders have both a species basic and a separate
         // signature. Slot 2 never replaces, disables or consumes Slot 1.
         // Skill 1 is single-target; skill 2 is max two actual contacts.
