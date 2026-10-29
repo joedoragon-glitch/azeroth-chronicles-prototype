@@ -1425,10 +1425,38 @@
         ),
       ];
     }
+    function rogueFallenCharmPolicyActions(b, refresh) {
+      const g = getGame();
+      if (g.hero.class !== 'rogue') return [];
+      const policy = g.s.rogueFallenCharmSlotPolicy || 'release';
+      return [
+        action(
+          'Rogue · Free slots when Charmed allies fall' +
+            (policy === 'release' ? ' · SELECTED' : ''),
+          () => {
+            if (getGame().setRogueFallenCharmSlotPolicy('release', b.id)) refresh();
+          },
+          'Default: fallen Charmed allies go to reserve. You can still recover them for 40 crowns; their field slot is free for a new Charm.',
+          policy === 'release',
+        ),
+        action(
+          'Rogue · Keep fallen Charmed allies in party slots' +
+            (policy === 'keep' ? ' · SELECTED' : ''),
+          () => {
+            if (getGame().setRogueFallenCharmSlotPolicy('keep', b.id)) refresh();
+          },
+          'Fallen Charmed allies keep their occupied slot like other classes until recovered or manually rested. New Charms cannot take that slot.',
+          policy === 'keep',
+        ),
+      ];
+    }
     function barracksRecoveryMenu(b, back, page = 0) {
       const refresh = () => barracksRecoveryMenu(b, back, page);
       refresh.back = back;
       const g = getGame(),
+        roguePolicyDescription = g.hero.class === 'rogue'
+          ? '\\n\\nRogue only: Choose how FUTURE fallen Charmed allies occupy party slots. The default frees the slot by moving the fallen ally to reserve. Keeping the slot instead lets you recover that same ally into your active group later. Both modes preserve ownership and require paid recovery. Switching modes never moves existing fallen companions.'
+          : '',
         pending = g.companionRecoveryRequests().filter(
           (r) => r.barracksId === b.id && r.zone === g.zoneId,
         );
@@ -1439,12 +1467,17 @@
         'Recovery',
         queueStatus + '\n' +
           'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds heals the hero and living companions for 30 crowns.' +
+          roguePolicyDescription +
           '\n' +
           (getGame().s.challenge.succession
             ? 'Succession: class loss replaces crown loss.'
             : 'Local death loss: ' + (b.full ? 5 : 15) + '%.') +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
-        [...barracksRecoveryActions(refresh, b, page), ...barracksRespawnActions(b, refresh)],
+        [
+          ...rogueFallenCharmPolicyActions(b, refresh),
+          ...barracksRecoveryActions(refresh, b, page),
+          ...barracksRespawnActions(b, refresh),
+        ],
         back,
       );
     }

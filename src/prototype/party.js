@@ -3478,11 +3478,32 @@
             (!u.charmOrigin || this.isCharmedCompanion(u)) && !u.order,
         );
       }
+      setRogueFallenCharmSlotPolicy(policy, barracksId) {
+        // A completed Barracks owns this Rogue-only choice. Existing fallen
+        // companions are never silently reallocated when the policy changes.
+        if (this.hero.class !== 'rogue' || !['release', 'keep'].includes(policy)) return false;
+        const sourceReason = this.companionServiceSourceReason(barracksId);
+        const safetyReason = this.companionServiceReason();
+        if (sourceReason || safetyReason) {
+          this.say(sourceReason || safetyReason);
+          return false;
+        }
+        if (this.s.rogueFallenCharmSlotPolicy === policy) return true;
+        this.s.rogueFallenCharmSlotPolicy = policy;
+        this.say(
+          policy === 'release'
+            ? 'Fallen Charmed allies will move to reserve, freeing their party slots.'
+            : 'Fallen Charmed allies will keep their party slots until recovered or rested.',
+        );
+        this.event('rogueCharmSlotPolicyChanged', { policy });
+        return true;
+      }
       reserveFallenRogueCharm(u) {
         // This defeat transition bypasses the no-combat restriction on
         // manual Barracks Rest, but never bypasses Charm provenance or quotas.
         if (
           this.hero.class !== 'rogue' ||
+          this.s.rogueFallenCharmSlotPolicy === 'keep' ||
           !u ||
           u.hp > 0 ||
           u.active === false ||

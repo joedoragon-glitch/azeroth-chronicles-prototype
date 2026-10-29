@@ -646,6 +646,15 @@
       'El héroe y los compañeros vivos heridos recuperaron toda su salud.',
     'No requested party member is still wounded.':
       'Ningún miembro del grupo solicitado sigue herido.',
+    "Rogue · Free slots when Charmed allies fall": "Pícara · Liberar espacios al caer compañeros encantados",
+    "Rogue · Keep fallen Charmed allies in party slots": "Pícara · Conservar espacios para compañeros encantados caídos",
+    "Rogue · Free slots when Charmed allies fall · SELECTED": "Pícara · Liberar espacios al caer compañeros encantados · SELECCIONADO",
+    "Rogue · Keep fallen Charmed allies in party slots · SELECTED": "Pícara · Conservar espacios para compañeros encantados caídos · SELECCIONADO",
+    "Default: fallen Charmed allies go to reserve. You can still recover them for 40 crowns; their field slot is free for a new Charm.": "Predeterminado: los encantados caídos pasan a reserva. Puedes recuperarlos por 40 coronas; su espacio queda libre para otro encantamiento.",
+    "Fallen Charmed allies keep their occupied slot like other classes until recovered or manually rested. New Charms cannot take that slot.": "Los encantados caídos conservan su espacio como en las demás clases hasta recuperarlos o pasarlos manualmente a reserva. Otros encantamientos no pueden usarlo.",
+    "Rogue only: Choose how FUTURE fallen Charmed allies occupy party slots. The default frees the slot by moving the fallen ally to reserve. Keeping the slot instead lets you recover that same ally into your active group later. Both modes preserve ownership and require paid recovery. Switching modes never moves existing fallen companions.": "Solo Pícara: elige qué ocurre con los espacios de los compañeros encantados que caigan EN EL FUTURO. De forma predeterminada pasan a reserva y liberan su espacio. Si lo conservas, podrás recuperar al mismo compañero dentro del grupo activo. Ambas opciones mantienen la propiedad y requieren pagar la recuperación. Cambiar de opción no mueve a los compañeros que ya hayan caído.",
+    "Fallen Charmed allies will move to reserve, freeing their party slots.": "Los encantados caídos pasarán a reserva y liberarán su espacio del grupo.",
+    "Fallen Charmed allies will keep their party slots until recovered or rested.": "Los encantados caídos conservarán su espacio hasta recuperarlos o pasarlos a reserva.",
     'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain can treat party wounds for 30 crowns or recover fallen companions.':
       'Las Pícaras no contratan Soldados ni Rangers. Encantan monstruos elegibles en combate. El capitán puede curar al grupo por 30 coronas o recuperar compañeros caídos.',
     'Safe conditions required.': 'Requiere condiciones seguras.',
@@ -8202,6 +8211,7 @@
           'companionRecruitment',
           'companionRecovery',
           'companionQueueChanged',
+          'rogueCharmSlotPolicyChanged',
           'supplies',
           'miniClear',
           'archiveKnowledge',

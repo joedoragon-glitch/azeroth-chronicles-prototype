@@ -865,6 +865,10 @@
         )
           throw Error('Invalid Charm RNG state');
         // Legacy v4 campaigns have no nickname rotation yet.
+        // Older version-4 runs retain the published default.
+        s.rogueFallenCharmSlotPolicy ??= 'release';
+        if (!['release', 'keep'].includes(s.rogueFallenCharmSlotPolicy))
+          throw Error('Invalid Rogue fallen-Charm slot policy');
         s.rogueNicknameCursor ??= { en: 0, es: 0 };
         if (
           !s.rogueNicknameCursor ||
