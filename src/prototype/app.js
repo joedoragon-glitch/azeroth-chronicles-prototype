@@ -2886,8 +2886,15 @@
       buttons[menuIndex].focus?.({ preventScroll: true });
     else $('modal').focus?.({ preventScroll: true });
   }
+  // The browser must receive a trusted click on the actual file input.
+  // Preserve its stable DOM node and onchange handler between dialog rebuilds.
+  const importFileInput = $('import-file');
   function renderActions() {
     const host = $('modal-actions');
+    if (!importFileInput.hidden) {
+      importFileInput.hidden = true;
+      document.body.append(importFileInput);
+    }
     host.replaceChildren();
     buttons = [];
     menuKeys = [];
@@ -2948,8 +2955,21 @@
         }
         continue;
       }
-      let b;
-      if (a.kind === 'toggle') {
+      let b, fileRow = null;
+      if (a.kind === 'file') {
+        // Keep the native input in the visible clickable row. An invisible
+        // off-menu input activated by a programmatic click can fail to show
+        // the system picker in a Chromium PWA.
+        b = importFileInput;
+        b.hidden = false;
+        b.disabled = false;
+        b.setAttribute('aria-label', tr(a.label));
+        b.onclick = () => {};
+        fileRow = document.createElement('label');
+        fileRow.className = 'menu-import-picker';
+        fileRow.textContent = tr(a.label);
+        fileRow.append(b);
+      } else if (a.kind === 'toggle') {
         b = document.createElement('button');
         b.className = 'menu-setting-toggle';
         const update = () => {
@@ -3026,7 +3046,7 @@
           updateHUD();
         };
       }
-      if (a.kind !== 'slider' && a.kind !== 'select') host.append(b);
+      if (a.kind !== 'slider' && a.kind !== 'select') host.append(fileRow || b);
       const buttonIndex = buttons.length;
       b.onfocus = () => {
         if (menuIndex === buttonIndex) return;
@@ -3739,7 +3759,7 @@
             if (raw) exportSaveText(raw, 'Azeroth_Original_' + mode + '.json');
           },
         })),
-        { label: tr('Import save'), action: () => $('import-file').click() },
+        { kind: 'file', label: 'Import save' },
       ],
       showTitleScreen,
       { view: 'title-saves' },
@@ -3818,7 +3838,7 @@
           '',
           !persistence.original(profile.activeMode),
         ),
-        action('Import save', () => $('import-file').click()),
+        { kind: 'file', label: 'Import save' },
         action('Start a new Normal run', () => chooseLanguage('normal')),
       ],
       started ? savedRunRecoveryMenu : showTitleScreen,
@@ -4437,7 +4457,7 @@
         action('Export save', () =>
           exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
         ),
-        action('Import save', () => $('import-file').click()),
+        { kind: 'file', label: 'Import save' },
       ],
       saveMenu,
     );
