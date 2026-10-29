@@ -114,8 +114,10 @@ try {
     originalSpecial = m.companionAttackDamage(ally);
   assert(m.cast(1, foes[0].id), 'normal Skill 1 available from level one');
   assert.equal(m.hero.cd[0], m.skillCooldown(1));
-  assert.equal(m.rogueSongBoon(m.hero, 'refrain')?.basicDamage, 0.05,
-    'solo Rogue is eligible for Skill 1 basic-damage boon inside the cast area');
+  assert.equal(m.rogueSongBoon(m.hero, 'refrainTap')?.basicDamage, 0.05,
+    'solo Rogue receives the normal Skill 1 boon inside her cast area');
+  assert.equal(m.rogueBasicDamageBonus(m.hero), 0.05);
+  assert.equal(m.rogueBasicDamageBonus(ally), 0.05);
   assert.equal(m.hero.chargedCd[0], 0);
   assert.equal(m.hero.basicCd, 0);
   assert(m.companionBasicAttackDamage(ally) > baseline, 'friendly mirror actually changes basics');
@@ -131,7 +133,14 @@ try {
   assert(cues[1].hits >= cues[0].hits, 'charged area capacity not smaller');
   assert.equal(cues[0].audioCue, 'bell-jingle');
   assert.equal(cues[1].allyCount, 1);
-  assert.equal(m.companionBasicAttackDamage(ally), baseline * 1.07);
+  assert.equal(m.rogueSongBoon(m.hero, 'refrainCharged')?.basicDamage, 0.07);
+  assert.equal(m.rogueBasicDamageBonus(m.hero), 0.12,
+    'normal + charged Skill 1 independently add to the Rogue basic');
+  assert.equal(m.rogueBasicDamageBonus(ally), 0.12,
+    'both legal performances stack on the same in-range companion');
+  assert.equal(m.companionBasicAttackDamage(ally), baseline * 1.12);
+  assert.equal(m.companionAttackDamage(ally), originalSpecial,
+    'overlap never amplifies special skills or permanent stats');
   const skillCard = require('../src/prototype/skill-reference.js').describe(m, 1);
   assert(skillCard?.tap && skillCard?.charge && skillCard?.auto,
     'the starting three forms must have gameplay-facing descriptions');
@@ -142,8 +151,33 @@ try {
   const forgedBoon = structuredClone(saveBoon);
   forgedBoon.party[0].rogueSharpRefrainBonus = 100;
   assert.throws(() => Campaign.validate(forgedBoon), /Invalid saved temporary Rogue boon/);
-  m.s.time += 5.1;
-  assert.equal(m.companionBasicAttackDamage(ally), baseline, 'benefit expires');
+  m.s.time += 4.1;
+  assert.equal(m.rogueBasicDamageBonus(m.hero), 0.07,
+    'normal +5% expires on its own while charged +7% remains');
+  assert.equal(m.companionBasicAttackDamage(ally), baseline * 1.07);
+  m.s.time += 1;
+  assert.equal(m.companionBasicAttackDamage(ally), baseline,
+    'the later charged expiry removes only its remaining contribution');
+  // Opposite order also works: the charged +7% expires first, preserving
+  // the later normal +5%. Recasting normal never manufactures a second stack.
+  m.hero.cd[0] = 0;
+  m.hero.chargedCd[0] = 0;
+  assert(m.cast(1, foes[0].id, true));
+  m.s.time += 2;
+  m.hero.cd[0] = 0;
+  assert(m.cast(1, foes[0].id));
+  assert.equal(m.rogueBasicDamageBonus(m.hero), 0.12);
+  assert.equal(m.companionBasicAttackDamage(ally), baseline * 1.12);
+  m.s.time += 3.1;
+  assert.equal(m.rogueBasicDamageBonus(ally), 0.05,
+    'charged expires while normal remains active after later tap');
+  m.hero.cd[0] = 0;
+  assert(m.cast(1, foes[0].id));
+  assert.equal(m.rogueBasicDamageBonus(ally), 0.05,
+    'repeating only the normal form refreshes without doubling its contribution');
+  m.s.time += 4.1;
+  assert.equal(m.companionBasicAttackDamage(ally), baseline,
+    'all normal/charged boon state expires; it never persists');
 
   const survival = fresh().g;
   survival.hero.hp = 8;
