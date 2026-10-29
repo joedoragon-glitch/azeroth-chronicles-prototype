@@ -195,9 +195,20 @@ for(const opts of [
   const chosen=thorn.thornIntroRetreat;
   assert(Number.isInteger(chosen),'native companion opening selects a patrol leg');
   const [x,y]=Campaign.rules.thornPatrol.route[chosen];
-  let arrived=false,peak=0,probes=0;
-  const old=g.blocked;
+  let arrived=false,peak=0,probes=0,plannerProbes=0,
+    plannerCalls=0,plannerCompletions=0,plannerPending=0;
+  const old=g.blocked,originalAdvance=g.advanceBudgetedRoute;
   g.blocked=function(...args){probes++;return old.apply(this,args)};
+  g.advanceBudgetedRoute=function(...args){
+    const before=probes,result=originalAdvance.apply(this,args);
+    if(args[2]==='thorn-retreat'){
+      plannerProbes+=probes-before;
+      plannerCalls++;
+      if(result.pending)plannerPending++;
+      else plannerCompletions++;
+    }
+    return result;
+  };
   for(let tick=0;tick<500;tick++){
     const before=probes;
     g.tick(.05,{x:0,y:0});
@@ -207,9 +218,15 @@ for(const opts of [
     }
   }
   delete g.blocked;
+  delete g.advanceBudgetedRoute;
+  console.log('THORN_BUDGETED_RETREAT_WORKLOAD '+JSON.stringify({
+    wall:opts.wall,peak,probes,plannerCalls,plannerPending,
+    plannerCompletions,plannerProbes,arrived
+  }));
   assert(arrived,'Thorn retreat must eventually finish without teleport');
-  if(!opts.wall) assert(probes<200000,
-    'native retreat cannot repeatedly rebuild a still-valid full route');
+  assert(plannerCompletions<=2,'retreat must not repeatedly rebuild completed routes');
+  if(!opts.wall) assert(plannerProbes<=45000,
+    'actual Thorn route planner cannot repeatedly rescan an intact full route');
   assert(Math.hypot(thorn.x-x,thorn.y-y)<=Campaign.rules.thornPatrol.arrival+1e-7,
     'Thorn must reach the selected real patrol destination');
   assert.equal(thorn.hp,thorn.maxHp,'complete retreat restores original boss HP');
