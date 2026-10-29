@@ -15,12 +15,12 @@ concurrency:
 
 jobs:
   oldest-node-batch:
-    name: Oldest existing Node tests — batch 0
+    name: Oldest existing Node tests — batch 1
     runs-on: ubuntu-latest
     timeout-minutes: 32
     env:
       AUDIT_LANE: node
-      AUDIT_BATCH: '0'
+      AUDIT_BATCH: '1'
       AUDIT_SIZE: '12'
     steps:
       - name: Checkout with full test-path history
@@ -34,6 +34,11 @@ jobs:
           cache: npm
       - name: Install locked dependencies
         run: npm ci --ignore-scripts
+      - name: Prepare production-equivalent pinned offline assets
+        run: node scripts/build.cjs --check
+      - name: Recheck original service-worker suite after required build preparation
+        run: node tests/service-worker.test.cjs
+        continue-on-error: true
       - name: Inventory existing tests and execute bounded oldest-first batch
         shell: bash
         run: |
@@ -139,7 +144,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: historical-reconciliation-node-batch-0
+          name: historical-reconciliation-node-batch-1
           path: test-results/historical-reconciliation/
           if-no-files-found: warn
           retention-days: 30
