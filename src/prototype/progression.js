@@ -180,7 +180,13 @@
           base +
           R.balance.companions.hpPerLevel * Math.max(0, level - 1) +
           this.companionInheritedHpBonus();
-        return Math.round(raw * (1 + this.companionVitalityFraction()));
+        // Orin trains the chosen genuine Charmed individual. Recalculate from
+        // the unpromoted baseline every time, never multiply old max HP.
+        const ringleader = typeof type === 'object' &&
+          type.charmRingleaderTrained === true &&
+          this.isCharmedCompanion(type);
+        return Math.round(raw * (1 + this.companionVitalityFraction()) *
+          (ringleader ? R.ringleaderScaling.hp : 1));
       }
       companionArmor(type) {
         const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
@@ -353,6 +359,46 @@
             '.',
         );
         this.event('expeditionSupport', { id, rank: next, family });
+        return true;
+      }
+
+      // Orin's optional *individual* Ringleader promotion is separate from
+      // the Rogue Skill-2 elite signature and shared three-tier mastery.
+      charmedRingleaderTrainingReason(unit, family = 'ridge') {
+        if (family !== 'ridge' || !this.s.rescued.ridge)
+          return 'Rescue Orin in Ironroot Highlands first.';
+        const reason = this.companionServiceReason();
+        if (reason) return reason;
+        if (!unit || !this.s.party.includes(unit) ||
+            !this.isCharmedCompanion(unit) || unit.hp <= 0)
+          return 'Select a living, owned Charmed monster.';
+        if (unit.charmRingleaderTrained === true)
+          return 'This monster has already received Ringleader Training.';
+        return '';
+      }
+      trainCharmedRingleader(companionId, family = 'ridge') {
+        const unit = this.s.party.find((u) => u.id === companionId),
+          reason = this.charmedRingleaderTrainingReason(unit, family);
+        if (reason) {
+          this.say(reason);
+          return false;
+        }
+        const cost = R.balance.companions.ringleaderTrainingCost;
+        if (!this.spend(cost)) {
+          this.say('Ringleader Training requires ' + cost + ' crowns.');
+          return false;
+        }
+        const oldMax = unit.maxHp,
+          missingHp = Math.max(0, oldMax - unit.hp);
+        unit.charmRingleaderTrained = true;
+        unit.maxHp = this.companionMaxHp(unit);
+        unit.hp = Math.max(1, Math.min(unit.maxHp, unit.maxHp - missingHp));
+        this.say((unit.customName || unit.name) +
+          ' received Ringleader Training from Orin for ' + cost + ' crowns.');
+        this.event('charmRingleaderTraining', {
+          companionId: unit.id, cost, hp: unit.maxHp,
+          attack: this.companionAttackDamage(unit),
+        });
         return true;
       }
 
