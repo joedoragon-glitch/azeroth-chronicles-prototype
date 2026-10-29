@@ -49,7 +49,7 @@ Owner-directed narrow save-system revision: keep the existing v4 primary snapsho
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
 | Source | **[main@1683d77a](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/1683d77a6f33d4eb800e1a54bfabbec7037abf44) — dev.227 published** | Includes #623 developer-only Pixi profiling, #619 targeted Thorn routing, #618 tactical scans and earlier companion work |
-| Build/cache version | **`0.9.1+snapshot.dev.227` merged and published** | Package/lock/build-info/service worker version parity; installed clients must be checked separately |
+| Build/cache version | **`0.9.1+snapshot.dev.227`** — merged and published | Package/lock/build-info/service worker version parity; installed clients must be checked separately |
 | Focused automation | **Dev.227 merged-main focused validation, docs consistency and reproducible build passed** | [Workflow #40849889899](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40849889899). Broad browser/game or physical-device certification not established |
 | GitHub Pages publication | **Dev.227 published from main@1683d77a** | [Successful deploy step #40849889899](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40849889899); local PWA adoption is separate |
 | An individual's open browser / installed PWA | **Unverified for dev.227 / PR #623** | A client can still hold older cached assets; export local diagnostics before concluding version/performance status |
