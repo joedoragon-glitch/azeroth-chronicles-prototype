@@ -86,8 +86,12 @@ try {
     g.cooldownRecoveryElapsed(g.hero,1), 'Rogue specials recover faster than her basic');
   assert(g.cooldownRecoveryElapsed(unit,1,false,true) >
     g.cooldownRecoveryElapsed(unit,1,false,false),'special-only acceleration');
-  assert(g.cooldownRecoveryElapsed(unit,1,false,true) > 1.25,
-    'overlapping songs are not truncated by the old arbitrary +25% cap');
+  assert(Math.abs(g.cooldownRecoveryElapsed(unit,1,false,true)-1.25)<1e-8,
+    'tap Quickstep and tap Borrowed Time contribute exactly 25%');
+  g.hero.cd[5] = 0;
+  assert.equal(g.cast(6,foe.id,true),true,'charged Skill 6 stacks with both tap songs');
+  assert(Math.abs(g.cooldownRecoveryElapsed(unit,1,false,true)-1.43)<1e-8,
+    'all three song contributions exceed the old arbitrary 25% cap');
   assert.equal(g.cast(6,foe.id),false);
   g.s.time += 9;
   assert.equal(g.rogueSongBoon(unit,'quickstep'),null);
