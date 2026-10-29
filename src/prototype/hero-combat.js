@@ -1659,7 +1659,6 @@
             if (this.damage(e, enhancedBasic * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
               splashHits++;
         }
-        if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);
         // Critical bell strikes briefly inspire the singer and companions in
         // the same physical circle. Only real landed criticals grant a boon;
         // no extra critical/Charm roll, long aura, or added attack damage.
@@ -1671,6 +1670,8 @@
               this.applyRogueSongBoon(ally, 'cadence', cfg.criticalCadence);
           }
         }
+        // Newly Charmed enemies cannot retroactively receive a cast-time boon.
+        if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);
         // Bell-jingle sound intent remains distinct from actual audio playback.
         this.event('rogueBellBasic', {
           actor: 'hero', class: 'rogue', slot: 1, automaticBasic: true,
