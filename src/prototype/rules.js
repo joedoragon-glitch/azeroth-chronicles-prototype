@@ -6261,6 +6261,11 @@
     criticalInstantSafetyMargin: 25,
     criticalChargeSafetyMargin: 60,
     criticalScreenMargin: 15,
+    // Max native blocked() probes for critical-retreat planning, not general
+    // movement. Shared across companions each simulation tick.
+    criticalTerrainChecksPerTick: 200,
+    criticalTerrainChecksPerSearch: 100,
+    criticalTerrainRetrySeconds: 0.25,
     criticalDirections: 12,
     criticalLocalRadii: [80, 180],
     criticalStep: 40,
