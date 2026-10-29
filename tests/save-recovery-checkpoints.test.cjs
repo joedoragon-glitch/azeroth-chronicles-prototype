@@ -315,6 +315,7 @@ for (const failure of ['stale', 'nonowner', 'archive-quota', 'primary-quota']) {
 // A late-game campaign sized like the reported save can still be checkpointed.
 {
   const f = fixture();
+  const startingGold = f.g.hero.gold;
   f.g.s.extra = 'x'.repeat(1000000);
   f.advance();
   assert(f.p.save(f.g, {}));
@@ -327,7 +328,7 @@ for (const failure of ['stale', 'nonowner', 'archive-quota', 'primary-quota']) {
   assert.equal(bundle.entries.length, 1);
   assert(bundle.entries[0].bytes.length > 500000);
   assert(f.values.get(P.checkpointKey('normal')).length <= P.checkpointMaxChars);
-  assert.equal(JSON.parse(bundle.entries[0].bytes).hero.gold, 0);
+  assert.equal(JSON.parse(bundle.entries[0].bytes).hero.gold, startingGold);
 }
 // A schema-valid oversized envelope stays savable while backup size remains bounded.
 {
