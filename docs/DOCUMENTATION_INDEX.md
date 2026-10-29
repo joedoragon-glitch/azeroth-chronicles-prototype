@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 28 October 2026 · **419 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **428 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -8,19 +8,19 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 **Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the source candidate, the latest verified Pages publication and outstanding device acceptance. The listening-room release must not be treated as installed on a device merely because code or documentation has merged.
 
-**Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that all 419 bodies were independently audited. Labels such as *Dated record* describe source context, not a present work order.
+**Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that all 428 bodies were independently audited. Labels such as *Dated record* describe source context, not a present work order.
 
 ## Jump to a subject
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (121)
-- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (19)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (124)
+- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (42)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
-- [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (44)
-- [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (5)
-- [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (11)
+- [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (45)
+- [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
+- [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (13)
 - [Save data, backup and recovery](#save-data-backup-and-recovery) (5)
 - [Documentation governance and reference records](#documentation-governance-and-reference-records) (16)
 - [Historical releases, reviews and integration handoffs](#historical-releases-reviews-and-integration-handoffs) (37)
@@ -195,6 +195,9 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Survival Followup Audit DEV145](SURVIVAL_FOLLOWUP_AUDIT_DEV145.md) — *Dated record.* Examines survival followup for source or design inconsistencies, recording dated findings and limits.
 - [Twilight DEV121](TWILIGHT_DEV121.md) — *Dated record.* Describes twilight decisions, constraints or engineering observations from its original development checkpoint.
 - [Twilight Feasibility Audit 20261020](TWILIGHT_FEASIBILITY_AUDIT_20261020.md) — *Dated record.* Examines twilight feasibility for source or design inconsistencies, recording dated findings and limits.
+- [PT-007 target-centered ground AoE](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md) — *Dated implementation contract.* Boss warning and impact share the authored target-centered footprint.
+- **[Rogue rank progression and stacking](ROGUE_SKILL_RANK_PROGRESS_AND_STACKING_RECONCILIATION_20261029.md)** — **Maintained feature reference.** Skill Rank 1–8, lawful stacking, instructor and Skill Journal integration.
+- [Combat warning-to-effect handoff](WARNING_EFFECT_HANDOFF_20261028.md) — *Dated implementation record.* Warning expiration when the real projectile, hazard or hit releases.
 
 ## Companions, Barracks, pets and specialists
 
@@ -217,6 +220,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Rogue Bard Charmed Roster Barracks Contract 20261027](ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md) — *Dated record.* Rogue Charm rules and interactions with companion slots, orders and Barracks.
 - [Rogue Bard Phase4 Companion Integration 20261027](ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md) — *Dated record.* Maps how Rogue Charm and companion abilities integrate with the existing roster and combat.
 - [Travel Companion Collision 20261020](TRAVEL_COMPANION_COLLISION_20261020.md) — *Dated record.* Describes travel companion collision decisions, constraints or engineering observations from its original development checkpoint.
+- **[Companion mastery and Orin Ringleader training](COMPANION_MASTERY_AND_CHARMED_RINGLEADER_TRAINING_20261029.md)** — **Maintained feature reference.** Mastery 0–III, heritage skills, one-time promotions and outstanding balance/device acceptance.
+- **[Rogue Charmed heritage and night species](ROGUE_CHARM_HERITAGE_589.md)** — **Maintained feature reference.** Species skills and native capture extensions with PR #608 release evidence.
 
 ## World, geography, travel and narrative
 
@@ -394,6 +399,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Regional Graphics Preparation Title Screen 20261027](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md) — *Dated record.* Describes regional graphics preparation title screen decisions, constraints or engineering observations from its original development checkpoint.
 - [Runtime Workload DEV177 Audit](RUNTIME_WORKLOAD_DEV177_AUDIT.md) — *Dated record.* Examines runtime workload for source or design inconsistencies, recording dated findings and limits.
 - [Runtime Workload DEV177](RUNTIME_WORKLOAD_DEV177.md) — *Dated record.* Describes runtime workload decisions, constraints or engineering observations from its original development checkpoint.
+- [Chromebook graphics preparation/cache policy](CHROMEBOOK_GRAPHICS_PREPARATION_CACHE_POLICY_20261028.md) — *Dated implementation contract.* Loading and cache retention from merged PR #573; hardware validation still outstanding.
 
 ## Navigation, maps and pathfinding
 
@@ -402,6 +408,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Navigation Stage3 20261023](NAVIGATION_STAGE3_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
 - [Navigation Stage4 20261023](NAVIGATION_STAGE4_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
 - [Navigation Stage5 20261023](NAVIGATION_STAGE5_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
+- [Actor-body collision rollback](ACTOR_BODY_COLLISION_ROLLBACK_20261028.md) — *Dated implementation contract.* Preserve terrain collision while reverting actor-body obstruction.
 
 ## Menus, controls, HUD and usability
 
@@ -416,6 +423,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Menu Step7 Audit 20261023](MENU_STEP7_AUDIT_20261023.md) — *Dated record.* Examines menu for source or design inconsistencies, recording dated findings and limits.
 - [Millhaven Onboarding DEV160](MILLHAVEN_ONBOARDING_DEV160.md) — *Dated record.* Describes millhaven onboarding decisions, constraints or engineering observations from its original development checkpoint.
 - [Responsive UI Audit 20261009](RESPONSIVE_UI_AUDIT_20261009.md) — *Dated record.* Examines responsive UI for source or design inconsistencies, recording dated findings and limits.
+- [Background return to title](BACKGROUND_RETURN_TO_TITLE_20261028.md) — *Dated implementation record.* Safeguarded save, title-screen return and Continue after backgrounding.
+- [Compact HUD live Crown balance](COMPACT_HUD_CROWN_READOUT_20261029.md) — *Dated implementation record.* Currency label/coin and follow-up clipping correction.
 
 ## Save data, backup and recovery
 

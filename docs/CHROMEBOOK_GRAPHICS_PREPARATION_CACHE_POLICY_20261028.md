@@ -1,6 +1,6 @@
 # Chromebook-first graphics preparation and cache retention — draft #573 (28 October 2026)
 
-**Status:** Source implementation proposed in draft PR #573. Not merged or deployed; hardware/browser measurements and final acceptance pending. Official game name: *So I Became the Dark Lord's Problem*.
+**Current disposition (29 October 2026):** [PR #573](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/573) has merged; its graphics-preparation behavior is in later verified Pages builds, including [dev.225 run #40848167247](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40848167247). Original draft title and acceptance plan below are historical. Physical Chromebook performance and installed-device acceptance remain unverified. Official game name: *So I Became the Dark Lord's Problem*.
 
 ## Player-facing behavior
 

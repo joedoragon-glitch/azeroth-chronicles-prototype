@@ -4,7 +4,7 @@ An original, offline-capable fantasy RPG about becoming a serious inconvenience 
 
 **[Play in your browser](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/)** · **[Play on your phone](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html)** · **[Guía completa del juego en español](GUIA_EN_ESPANOL.md)**
 
-The playable Community Snapshot is still receiving updates. **For the current code/build version and verified Pages publication, see [Development state](docs/DEVELOPMENT_STATE.md).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
+The playable Community Snapshot continues to receive updates. Rogue/Pícara is the fourth playable class. **For current source, verified publication, open issues and device-acceptance limits, consult [Development state](docs/DEVELOPMENT_STATE.md).** Publishing a release does not prove that an installed browser or PWA has loaded it.
 
 **Jump to:** [Play](#play) · [The game](#the-game) · [Controls](#controls) · [Saves and updates](#saves-updates-and-diagnostics) · [Graphics and audio](#graphics-and-audio) · [Development](#development) · [Documentation](#project-documentation)
 
@@ -18,7 +18,7 @@ On the title screen:
 2. Use **Continue Adventure** to resume an eligible saved game. **Saved Games & Backups** provides recovery and file import/export.
 3. During play, open **Adventure → Quest journal** for the story, **Map and travel routes** for destinations, and **Hero skills** for your class's actions and training information.
 
-The title screen also contains **Settings** and **Help & Credits**. English and **partial** Spanish localization are available; some names and text remain in English.
+The title screen also contains **Settings** and **Help & Credits**. After an active game is minimized/backgrounded, the application uses its existing save safeguards and returns to the title screen; on reopening, select **Continue Adventure** to prepare the scene before resuming. English and **partial** Spanish localization are available; some names and text remain in English.
 
 ## The game
 
