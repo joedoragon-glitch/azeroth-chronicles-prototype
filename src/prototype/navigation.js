@@ -677,8 +677,7 @@
         if (
           !trip ||
           trip.zone !== this.zoneId ||
-          trip.cautious !== cautious ||
-          dist(trip.target, target) > 30
+          trip.cautious !== cautious
         ) {
           trip = {
             zone: this.zoneId,
@@ -689,6 +688,14 @@
           };
           companionTrips.set(u, trip);
         }
+        // Moving heroes and workers cannot invalidate a search every few
+        // ticks. Keep walking a previously validated path while refreshing
+        // the destination, and finish any in-progress search against its
+        // frozen origin/target before considering another update.
+        if (!trip.search && dist(trip.target, target) > 30) {
+          trip.target = { x: target.x, y: target.y };
+          trip.age = 0;
+        }
         trip.age -= dt;
         if (trip.path.length && !this.companionTravelClear(u, trip.path[0], threats)) {
           trip.path = [];
@@ -698,7 +705,9 @@
           if (trip.search || this.reserveMovementPlan(u)) {
             // Incomplete searches retain their frontier and are not mistaken
             // for an unreachable destination. Actual movement remains native.
-            const result = this.advanceBudgetedRoute(u, target, 'companion', trip.search, cautious);
+            const origin = trip.search?.origin || u,
+              destination = trip.search?.target || target,
+              result = this.advanceBudgetedRoute(origin, destination, 'companion', trip.search, cautious);
             if (result.pending) {
               trip.search = result.state;
               trip.age = 0;
@@ -706,7 +715,11 @@
             } else {
               trip.search = null;
               trip.path = result.path;
-              trip.age = R.gatheringTravel.replanSeconds;
+              // The route may have been computed while the actor/hero moved.
+              // A stale first leg is not permission to bypass collision.
+              if (trip.path.length && !this.companionTravelClear(u, trip.path[0], threats))
+                trip.path = [];
+              trip.age = trip.path.length ? R.gatheringTravel.replanSeconds : 0;
               trip.target = { x: target.x, y: target.y };
               u.path = trip.path;
             }
