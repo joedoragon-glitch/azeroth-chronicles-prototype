@@ -86,7 +86,7 @@
               // winner. Test the farthest safe choices first, instead of
               // synchronously routing to every eligible patrol destination.
               .sort((a, b) => b.distance - a.distance || a.leg - b.leg);
-          const goal = choices.find((p) => this.route(thorn, p).length);
+          const goal = choices.find((p) => this.route(thorn, p, { reachabilityOnly: true }).length);
           if (goal) {
             this.cancelEncounter(thorn);
             thorn.aggro = false;

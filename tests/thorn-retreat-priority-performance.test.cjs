@@ -130,3 +130,19 @@ assert.deepEqual(newFail.state,oldFail.state,
   'no reachable route must not manufacture a retreat or dismiss the boss');
 assert.equal(newFail.leg,null);
 console.log('PASS Thorn opening retreat priority, no-route behavior, native route cost and exact save parity');
+
+// The same native route graph must return identical existence answers for
+// every authored patrol goal, even when heuristic exploration order differs.
+for(const opts of [
+  {hero:[1230,1400],wall:true},
+  {hero:[1450,1300],wall:true},
+  {hero:[1650,1600],wall:false},
+]){
+  const {g,thorn}=fixture(opts);
+  for(const [x,y] of Campaign.rules.thornPatrol.route){
+    const p={x,y};
+    assert.equal(g.route(thorn,p,{reachabilityOnly:true}).length>0,
+      g.route(thorn,p).length>0,'native route existence must match at every patrol leg');
+  }
+}
+console.log('PASS all Thorn patrol reachability flags preserve native route existence');

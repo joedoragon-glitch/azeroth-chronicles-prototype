@@ -1169,9 +1169,26 @@
             }
             return valid.get(id);
           };
+          // Only for boolean reachability: favor cells near the requested
+          // endpoint rather than building the shortest route. Every reachable
+          // cell is still considered, with the exact native blocked/edge tests.
+          const reachOnly = !!options.reachabilityOnly,
+            distanceScore = (id) => {
+              const p = point(id), dx = p.x - target.x, dy = p.y - target.y;
+              return dx * dx + dy * dy;
+            };
           for (let at = 0; at < queue.length; at++) {
+            if (reachOnly) {
+              let best = at, cost = distanceScore(queue[at]);
+              for (let j = at + 1; j < queue.length; j++) {
+                const next = distanceScore(queue[j]);
+                if (next < cost) { best = j; cost = next; }
+              }
+              if (best !== at) [queue[at], queue[best]] = [queue[best], queue[at]];
+            }
             const id = queue[at];
             if (destinations.has(id)) {
+              if (reachOnly) return [target];
               let path = [target];
               for (let j = id; j !== null; j = parents.get(j)) path.push(point(j));
               path.reverse();
@@ -1236,6 +1253,10 @@
         // Preserve all successful legacy routes and generated road geometry.
         // Only a false no-route retries with the other collision-validated
         // nearby anchors. Each seed and goal already has a clear end segment.
+        // Existence does not depend on the primary-anchor preference. All
+        // candidate anchors are already native collision-validated; one
+        // complete graph search is sufficient for a yes/no answer.
+        if (options.reachabilityOnly) return search(starts, ends);
         const primary = search([starts[0]], [ends[0]]);
         return primary.length ? primary : search(starts, ends);
       }
