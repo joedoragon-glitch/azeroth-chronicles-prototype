@@ -900,6 +900,14 @@
           if (!Number.isInteger(u.masteryPoints) || u.masteryPoints < 0 ||
               u.masteryPoints > R.balance.companions.mastery.thresholds[2])
             throw Error('Invalid companion mastery');
+          if (u.masteryGuardianKeys === undefined) u.masteryGuardianKeys = [];
+          if (!Array.isArray(u.masteryGuardianKeys) ||
+              u.masteryGuardianKeys.length > 256 ||
+              new Set(u.masteryGuardianKeys).size !== u.masteryGuardianKeys.length ||
+              u.masteryGuardianKeys.some((key) =>
+                typeof key !== 'string' ||
+                !/^[a-z0-9-]+:[a-z0-9-]+:-?\\d+:-?\\d+$/.test(key)))
+            throw Error('Invalid guardian mastery receipts');
           if (u.skill1Cd === undefined) u.skill1Cd = 0;
           if (u.skill2Cd === undefined) u.skill2Cd = 0;
           if (u.skill3Cd === undefined) u.skill3Cd = 0;
