@@ -1,12 +1,20 @@
 'use strict';
 const assert = require('node:assert/strict'),
-  { shell } = require('./helpers/production-shell.cjs');
+  { shell } = require('./helpers/production-shell.cjs'),
+  Campaign = require('../src/prototype/engine');
+// Current Rogue gameplay is test-injected on this baseline; never change production class choice.
+const hadRogue = Object.hasOwn(Campaign.classes, 'rogue');
+if (!hadRogue) {
+  Campaign.classes.rogue = { ...Campaign.rules.rogueHeroFoundation.stats, icon: 'bell' };
+  Campaign.talentProfiles.rogue = { ...Campaign.rules.rogueHeroFoundation.talents };
+}
 let cases = 0;
 for (const language of ['en', 'es'])
   for (const [heroClass, names] of Object.entries({
     paladin: ['Sword Combo', 'Sundering Strike'],
     mage: ['Arcane Combo', 'Frost Bolt'],
     ranger: ['Bow Combo', 'Pinning Shot'],
+    rogue: ['Ding and Sting', 'Lead Feet'],
   })) {
     const { scope: s, elements: e } = shell(language, heroClass),
       g = s.Prototype.game;
@@ -97,8 +105,12 @@ for (const language of ['en', 'es'])
     assert.equal(e.get('modal-title').textContent, mira.name);
     cases++;
   }
+if (!hadRogue) {
+  delete Campaign.classes.rogue;
+  delete Campaign.talentProfiles.rogue;
+}
 console.log(
   'PASS ' +
     cases +
-    ' actual English/Spanish Paladin/Mage/Ranger instructor flows: clear branches/Back, funds, native hero learning/upgrades and capped labels, free Expedition/next instructor, support charges and journal',
+    ' actual English/Spanish Paladin/Mage/Ranger/Rogue instructor flows: clear branches/Back, funds, native hero learning/upgrades and capped labels, free Expedition/next instructor, support charges and journal',
 );
