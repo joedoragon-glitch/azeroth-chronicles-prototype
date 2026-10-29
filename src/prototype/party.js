@@ -1589,8 +1589,15 @@
       advanceRogueMending(dt) {
         if (this.hero.class !== 'rogue' || !Number.isFinite(dt) || dt <= 0) return;
         for (const u of [this.hero, ...this.activeLivingParty()]) {
-          const effect = this.rogueSongBoon(u, 'mending');
-          if (!effect || !(effect.remainingHeal > 0)) continue;
+          // The simulation clock already advanced by dt. A Mending pulse
+          // active at frame start owes its final finite slice even if its
+          // expiry falls exactly on this tick (or within the tick).
+          // Normal boon queries rightly reject expired effects; healing
+          // delivery must use the overlap, without reviving fallen actors.
+          const state = roguePerformanceBoons.get(u),
+            effect = state?.zone === this.zoneId ? state.mending : null;
+          if (u.hp <= 0 || !effect || effect.until <= this.s.time - dt ||
+              !(effect.remainingHeal > 0)) continue;
           const live = Math.max(0.01, effect.until - (this.s.time - dt)),
             paid = Math.min(effect.remainingHeal, effect.remainingHeal * Math.min(dt, live) / live);
           u.hp = Math.min(u.maxHp, u.hp + paid);

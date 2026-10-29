@@ -390,6 +390,27 @@ try {
     campaign.advanceRogueMending(.5);
     assert(hero.hp>before,'Skill 4 heals Rogue herself with a finite budget');
   }
+  // Exact expiry must deliver Skill 4's final finite healing slice to
+  // Rogue AND living companions; no post-expiry revival or extra heal.
+  for(const charged of [false,true]){
+    const sample=fresh(), campaign=sample.g, hero=campaign.hero,
+      ally=sample.unit, form=R.roguePerformances[4][charged?'charged':'tap'];
+    hero.skills[3]=1;
+    hero.hp-=20;
+    ally.hp-=20;
+    const beforeHero=hero.hp, beforeAlly=ally.hp;
+    assert(campaign.cast(4,sample.foe.id,charged));
+    for(let second=0;second<form.seconds;second++){
+      campaign.s.time+=1;
+      campaign.advanceRogueMending(1);
+    }
+    assert(Math.abs(hero.hp-beforeHero-hero.maxHp*form.healFraction)<1e-6,
+      'Rogue receives full finite healing budget through exact expiry');
+    assert(Math.abs(ally.hp-beforeAlly-ally.maxHp*form.healFraction)<1e-6,
+      'companion retains the same complete normal/charged healing budget');
+    assert.equal(campaign.rogueSongBoon(hero,'mending'),null,
+      'final delivery does not extend the expired buff');
+  }
   {
     const sample=fresh(), campaign=sample.g, hero=campaign.hero;
     hero.skills[6]=1;
