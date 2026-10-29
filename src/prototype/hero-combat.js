@@ -1526,21 +1526,27 @@
       // The exact individual monster subtype is an authored species plus its
       // native melee/ranged variant. Player names and translations cannot own it.
       rogueCharmProfile(e) {
+        // Wild Wraiths and Stalkers may be captured ONLY during their lawful
+        // night encounter. A captured ally is a party member, not a night
+        // spawn, and remains usable after sunrise.
+        const nightSpecies = !!e?.nightOnly && this.night() &&
+          (e.species === 'wraith' || e.species === 'stalker');
         if (
           this.hero.class !== 'rogue' ||
           !e || e.type !== 'mob' || e.form !== 'normal' || e.hp <= 0 ||
           e.neutral || e.returning || e.guard || e.roomGuard ||
           e.awakenedGuard || e.captain || e.roomCaptain || e.fieldCaptain ||
-          e.summon || e.owner || e.reinforcement || e.nightOnly ||
+          e.summon || e.owner || e.reinforcement || (e.nightOnly && !nightSpecies) ||
           e.crownTroop || e.mountedCrownRider || e.veraEscort || e.family ||
           this.s.mode === 'arena' || this.s.mode === 'developer'
         ) return null;
-        const authored = Campaign.data.species.flat().find((row) => row[0] === e.species);
+        const authored = Campaign.data.species.flat().find((row) => row[0] === e.species) ||
+          (nightSpecies ? [e.species, e.species === 'wraith' ? 'Lantern wraith' : 'Ash stalker'] : null);
         if (!authored) return null;
-        const ranged = e.ranged === true;
+        const ranged = nightSpecies ? e.species === 'wraith' : e.ranged === true;
         // A runtime flag alone cannot invent an authored monster subtype.
         if (ranged && !R.rangedProfiles[e.species] &&
-          !['archer', 'crownguard'].includes(e.species)) return null;
+          !['archer', 'crownguard', ...(nightSpecies ? ['wraith'] : [])].includes(e.species)) return null;
         const role = ranged ? 'archer' : 'soldier',
           variant = ranged ? R.rangedProfiles[e.species]?.variant : null;
         return {
