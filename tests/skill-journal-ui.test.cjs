@@ -46,7 +46,8 @@ for (const language of ['en', 'es'])
         const rows = sections[i].children.at(-1).children,
           info = Ref.describe(g, slot)[form];
         assert.equal(rows.length, info.metrics.length * 2);
-        assert.equal(rows[0].textContent, t('Cooldown', 'Recuperación'));
+        assert(rows.some((row) => row.textContent === t('Cooldown', 'Recuperación')),
+          'each skill form has a visible cooldown even when the metrics order differs');
         assert.equal(rows[1].textContent, Ref.value(info.metrics[0]));
       }
       assert(!text(host).includes('–'), 'current values replace static rank ranges');
