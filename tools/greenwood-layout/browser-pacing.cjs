@@ -14,7 +14,13 @@ const { chromium } = require('playwright'),
 const root = path.resolve(__dirname, '../..'),
   seconds = Number(process.argv[2] || 600),
   seedId = Number(process.argv[3] || 0x47564101),
-  mode = process.argv[4] || 'orientation';
+  mode = process.argv[4] || 'orientation',
+  drawEachFrame = process.argv.includes('--draw-each-frame'),
+  firstFight = process.argv.includes('--first-fight'),
+  driverSha256 = crypto.createHash('sha256').update(fs.readFileSync(__filename)).digest('hex'),
+  sourceShaAtStart = cp
+    .execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' })
+    .trim();
 assert([600, 1800].includes(seconds));
 assert(['orientation', 'farm-woods', 'estate'].includes(mode));
 const out = path.join(root, 'docs/evidence/greenwood-revised-20261028/browser-pacing'),
@@ -128,10 +134,15 @@ const routes = {
     await page.evaluate(() => PrototypeSprites.preload());
     await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
     const initial = await page.evaluate(
-      ({ route }) => {
+      ({ route, drawEachFrame, firstFight }) => {
         const g = Prototype.game;
+        window.pilotDraw = Prototype.renderer.draw.bind(Prototype.renderer);
+        if (!drawEachFrame) Prototype.renderer.draw = () => {};
         window.pilot = {
           route,
+          firstFight,
+          electiveTarget: null,
+          electiveFightStarted: false,
           index: 0,
           visits: [],
           decisions: [],
@@ -165,7 +176,7 @@ const routes = {
           sceneVersion: g.zone().greenwoodSceneVersion,
         };
       },
-      { route: routes[mode] },
+      { route: routes[mode], drawEachFrame, firstFight },
     );
     assert(
       initial.criticalParty && initial.criticalWorld,
@@ -202,6 +213,31 @@ const routes = {
             .filter((e) => e.hp > 0 && !e.neutral && !e.returning && e.aggro && d(e, g.hero) < 350)
             .sort((a, b) => d(a, g.hero) - d(b, g.hero)),
           threat = engaged[0];
+        // One explicit first-hero-hit choice exercises native combat admission.
+        // Afterwards only respond to actors engaged by the native simulation.
+        if (p.firstFight && !p.electiveFightStarted && g.s.time - p.startTime >= 120) {
+          const candidate = z.enemies
+            .filter(
+              (e) =>
+                e.type === 'mob' &&
+                !e.guard &&
+                !e.summon &&
+                e.hp > 0 &&
+                !e.neutral &&
+                d(e, g.hero) < 350,
+            )
+            .sort((a, b) => d(a, g.hero) - d(b, g.hero))[0];
+          if (candidate) {
+            p.electiveTarget = candidate.id;
+            p.electiveFightStarted = true;
+            record('elective first fight', { target: candidate.id });
+          }
+        }
+        const elective = z.enemies.find(
+            (e) => e.id === p.electiveTarget && e.hp > 0 && !e.returning && d(e, g.hero) < 680,
+          ),
+          combatTarget = threat || elective;
+        if (!elective || elective.aggro) p.electiveTarget = null;
         const n = by(p.route[p.index % p.route.length]),
           target = n.servicePoint || n;
         const move = (q) => {
@@ -234,10 +270,10 @@ const routes = {
           }
           return { action: 'advance', time: g.s.time };
         }
-        if (threat) {
-          g.hero.order = { type: 'attack', id: threat.id };
-          g.holdHeroTarget(() => true, threat.id);
-          record('engaged combat', { target: threat.id });
+        if (combatTarget) {
+          g.hero.order = { type: 'attack', id: combatTarget.id };
+          g.holdHeroTarget(() => true, combatTarget.id);
+          record('engaged combat', { target: combatTarget.id });
           return { action: g.skillReady(1, true) ? 'charge' : 'advance', time: g.s.time };
         }
         if (g.s.time < p.dwellUntil) {
@@ -296,6 +332,12 @@ const routes = {
         shots.length < routes[mode].length &&
         !shots.some((s) => s.id === decision.visit.id)
       ) {
+        const draw = await page.evaluate(() => {
+          const before = JSON.stringify(Prototype.game.snapshot());
+          pilotDraw();
+          return before === JSON.stringify(Prototype.game.snapshot());
+        });
+        assert(draw, 'the observation draw must preserve persistent game state');
         const file = `live-${mode}-${decision.visit.id}-${seedId}.webp`;
         await sharp(await page.screenshot())
           .webp({ quality: 85 })
@@ -340,9 +382,10 @@ const routes = {
       };
     });
     const report = {
-      sourceSha: cp
-        .execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' })
-        .trim(),
+      sourceSha: sourceShaAtStart,
+      driverSha256,
+      drawEachFrame,
+      firstFight,
       build: require('../../package.json').version,
       seed: seedId,
       mode,
@@ -353,7 +396,14 @@ const routes = {
       initial,
       viewport: { width: 1280, height: 800, dpr: 1, zoom: 1.5 },
       boundary:
-        'One seeded fresh Normal Paladin resumed through real production Continue. Actual app frames and ordinary controls/charge admission, critical sessions and rendering run under virtual browser time. Native route requests, earned training, lawful rest/recovery; no immediate construction or attacks on unengaged passersby. No HP/XP/crown/count/damage edits. Software/virtual-time strategy is not physical-device FPS or human enjoyment acceptance.',
+        'One seeded fresh Normal Paladin resumed through real production Continue. Actual app simulation frames, ordinary controls/charge admission and critical sessions run under virtual browser time. Native route requests, earned training and lawful rest/recovery; no immediate construction. ' +
+        (firstFight
+          ? 'One elective first-hero-hit fight after two minutes, then responses to native engaged threats. '
+          : 'No attacks on unengaged passersby. ') +
+        (drawEachFrame
+          ? 'Actual rendering on ordinary frames. '
+          : 'Intermediate draw calls omitted for test efficiency; original production renderer used at every captured first arrival, with persistent-state equality asserted. This run cannot measure rendering cost. ') +
+        'No HP/XP/crown/count/damage edits. Software/virtual-time strategy is not physical-device FPS or human enjoyment acceptance.',
       errors,
       shots,
       ...result,
