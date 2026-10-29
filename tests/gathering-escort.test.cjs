@@ -43,7 +43,11 @@ function open() {
     { x: 680, y: 1000 },
   );
   z.enemies = [e];
-  g.engage(e); // A real hostile encounter is the precondition for defensive combat.
+  // Vale's hero-first opening protects fresh enemies from companion damage.
+  // Use a real hero hit to initiate the fight before testing worker defence.
+  assert(g.awaitsHeroAttack(e), 'the fresh Vale encounter starts hero-protected');
+  assert(g.damage(e, 1, 'hero'), 'the native hero opener initiates combat');
+  assert(!g.awaitsHeroAttack(e), 'companions may now defend the gathering order');
   g.gather(n.id);
   const amount = n.amount,
     hp = e.hp;
