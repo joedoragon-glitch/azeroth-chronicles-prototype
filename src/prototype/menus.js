@@ -1244,14 +1244,22 @@
       const g = getGame(),
         request = g.s.companionCareRequests[kind];
       if (!request) return '';
-      const names = [
-        ...(kind === 'treatment' && request.heroWounded ? ['Hero'] : []),
-        ...request.companionIds
+      const companionNames = request.companionIds
           .map((id) => g.s.party.find((u) => u.id === id))
           .filter(Boolean)
           .map(rosterLabel),
-      ].join(', ');
-      const reason = g.companionCareReason(kind, request, { ignoreFunds: true, checkSource: true });
+        displayed = kind === 'recovery' ? companionNames.slice(0, 3) : companionNames,
+        names = [
+          ...(kind === 'treatment' && request.heroWounded ? ['Hero'] : []),
+          ...displayed,
+        ].join(', ') +
+          (kind === 'recovery' && companionNames.length > 3
+            ? ' +' + (companionNames.length - 3) + ' more'
+            : ''),
+        current = kind === 'recovery'
+          ? { ...request, companionIds: request.companionIds.slice(0, 1) }
+          : request,
+        reason = g.companionCareReason(kind, current, { ignoreFunds: true, checkSource: true });
       return (
         (kind === 'recovery' ? 'Queued recovery: ' : 'Queued treatment: ') +
         names +
@@ -1312,10 +1320,51 @@
         !queued && !!reason,
       );
     }
-    function barracksRecoveryActions(refresh, barracksId) {
+    function barracksRecoveryActions(refresh, b) {
+      const g = getGame(),
+        fallen = g.s.party.filter((u) => u.hp <= 0),
+        queued = g.s.companionCareRequests.recovery,
+        queueAtThisBarracks =
+          !queued || (queued.barracksId === b.id && queued.zone === g.zoneId),
+        slots = g.companionRecoveryQueueLimit(b.id),
+        recoveryActions = fallen.map((u) => {
+          const position = queued?.companionIds.indexOf(u.id) ?? -1,
+            pending = position >= 0,
+            candidate = g.companionCareCandidate('recovery', b.id, u.id),
+            reason = g.companionCareReason('recovery', candidate, {
+              ignoreFunds: true,
+              checkSource: true,
+            }),
+            blocked = !pending
+              ? reason ||
+                (!queueAtThisBarracks
+                  ? 'Recovery queue belongs to another Captain or Barracks. Cancel queued companions first.'
+                  : queued && queued.companionIds.length >= slots
+                    ? 'This recovery queue is full. Upgrade to Full Barracks for unlimited slots.'
+                    : '')
+              : '';
+          return action(
+            (pending ? 'Cancel queued recovery: ' : 'Recover ') +
+              rosterLabel(u) +
+              (pending ? '' : ' · ' + g.companionRecoveryCost() + ' crowns'),
+            () => {
+              getGame().requestCompanionCare('recovery', b.id, u.id);
+              refresh();
+            },
+            pending
+              ? 'Queued #' + (position + 1) + ' · tap to cancel. No crowns spent.'
+              : blocked ||
+                (g.hero.gold < g.companionRecoveryCost()
+                  ? 'Short on crowns? Tap to queue.'
+                  : 'Recover this companion now.'),
+            !!blocked,
+          );
+        });
       return [
-        careChoice('recovery', barracksId, refresh),
-        careChoice('treatment', barracksId, refresh),
+        ...(recoveryActions.length
+          ? recoveryActions
+          : [action('No fallen companions', () => {}, '', true)]),
+        careChoice('treatment', b.id, refresh),
       ];
     }
     function barracksRespawnActions(b, refresh) {
@@ -1340,13 +1389,13 @@
       const refresh = () => barracksRecoveryMenu(b, back);
       openMenu(
         'Recovery',
-        'Treat wounds heals the hero and living companions for 30 crowns. Fallen companions need separate recovery. Short on crowns? Tap to queue.' +
+        'Recover each fallen companion for 40 crowns. Basic Barracks queues 3; Full Barracks has no recovery-queue limit. Short on crowns? Tap to queue. Treat wounds heals the living party for 30 crowns.' +
           '\n' +
           (getGame().s.challenge.succession
             ? 'Succession: class loss replaces crown loss.'
             : 'Local death loss: ' + (b.full ? 5 : 15) + '%.') +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
-        [...barracksRecoveryActions(refresh, b.id), ...barracksRespawnActions(b, refresh)],
+        [...barracksRecoveryActions(refresh, b), ...barracksRespawnActions(b, refresh)],
         back,
       );
     }

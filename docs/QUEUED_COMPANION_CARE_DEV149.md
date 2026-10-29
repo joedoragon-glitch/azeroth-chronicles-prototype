@@ -27,3 +27,11 @@ Owner authorized immediate live playtesting with minimum checks. Publication use
 ## Publication
 
 PR #388 merged as `02afb4e9a316cca99ba6e7b66242bce1796559fd`; package-only run 39699745777. Exact-public receipt: `docs/evidence/QUEUED_COMPANION_CARE_DEV149_PUBLICATION_20261021.json`. Normal Pages workflow restored byte-for-byte and temporary publisher removed in closeout.
+
+## 29 October 2026 — multi-companion Barracks queue extension (dev.232 candidate)
+
+**Owner decision (supersedes only the historical one-target recovery-queue limit above):** Completed **Basic Barracks** may queue at most **three** individually selected fallen companions. Completed **Full Barracks** may queue all genuinely owned fallen companions, with **no additional Barracks queue cap**. Town Captain recovery keeps its original **one pending companion**. The old single recovery request remains a legal v4 save; its `companionIds` list is extended in place, preserving the source/zone and original selection order, so no new campaign key or migration is required.
+
+A Barracks Recovery submenu lists each fallen companion and lets the player queue or cancel that particular ID, without removing others. Requests remain tied to their original service; adding from a different source requires clearing the old queue first, but cancellation can target a pending ID from another Barracks. Basic-to-Full upgrade preserves pending entries and unlocks more queue space. All queued recoveries cost **40 crowns each**, applied **first-in, first-out** as individual eligible requests; the first blocked request waits and the remaining members are not silently substituted. Before every charge, recheck the hero, combat safety, source completion, actual fallen target and resource-expedition absence. An invalid or already restored head is discarded without charging. Treatment at 30 crowns and ordinary recruitment retain independent queues and existing payment priority, and no paid request bypasses native service rules.
+
+**Candidate status:** Implementation and focused regression in PR pending; not merged, published or device-verified. Do not reinterpret dev.149's historical publication receipt as certification of dev.232.

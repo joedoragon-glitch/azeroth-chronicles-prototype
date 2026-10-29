@@ -3233,9 +3233,24 @@
           return 'Not enough crowns for companion care.';
         return '';
       }
-      cancelCompanionCareRequest(kind, unnecessary = false) {
-        if (!this.s.companionCareRequests[kind]) return false;
-        this.s.companionCareRequests[kind] = null;
+      // Only the queue is limited; paid recoveries still cost the normal 40 crowns.
+      // A Full Barracks can queue every eligible fallen member of the company.
+      companionRecoveryQueueLimit(barracksId = null, zone = this.zoneId) {
+        if (barracksId === null) return 1; // Preserve town Captain's one-request service.
+        const b = this.s.zones[zone]?.buildings.find(
+          (site) => site.id === barracksId && site.kind === 'barracks',
+        );
+        return b?.full ? Infinity : 3;
+      }
+      cancelCompanionCareRequest(kind, unnecessary = false, companionId = null) {
+        const request = this.s.companionCareRequests[kind];
+        if (!request) return false;
+        if (kind === 'recovery' && companionId !== null) {
+          const index = request.companionIds.indexOf(companionId);
+          if (index < 0) return false;
+          request.companionIds.splice(index, 1);
+          if (!request.companionIds.length) this.s.companionCareRequests.recovery = null;
+        } else this.s.companionCareRequests[kind] = null;
         const message = unnecessary
           ? 'Queued companion care is no longer needed. No crowns were spent.'
           : 'Queued companion care cancelled. No crowns were spent.';
@@ -3247,8 +3262,45 @@
       requestCompanionCare(kind, barracksId = null, companionId = null) {
         if (!['recovery', 'treatment'].includes(kind)) return false;
         const previous = this.s.companionCareRequests[kind];
-        if (previous && (!companionId || previous.companionIds.includes(companionId)))
-          return this.cancelCompanionCareRequest(kind);
+        if (kind === 'recovery') {
+          // Keep the historical Captain/simple API: repeating the same choice
+          // cancels the queue. Barracks pass an explicit ID to toggle one member.
+          if (previous && !companionId) return this.cancelCompanionCareRequest(kind);
+          if (previous?.companionIds.includes(companionId))
+            return this.cancelCompanionCareRequest(kind, false, companionId);
+          const request = this.companionCareCandidate(kind, barracksId, companionId),
+            reason = this.companionCareReason(kind, request, {
+              ignoreFunds: true,
+              checkSource: true,
+            });
+          if (reason) {
+            this.say(reason);
+            return false;
+          }
+          if (previous) {
+            if (previous.barracksId !== barracksId || previous.zone !== this.zoneId) {
+              this.say('Recovery queue belongs to another Captain or Barracks. Cancel queued companions first.');
+              return false;
+            }
+            if (previous.companionIds.length >= this.companionRecoveryQueueLimit(barracksId)) {
+              this.say('This recovery queue is full. Upgrade to Full Barracks for unlimited slots.');
+              return false;
+            }
+            previous.companionIds.push(request.companionIds[0]);
+            this.say('Companion recovery queued. Tap the same choice to cancel.');
+            this.event('companionQueueChanged', { kind });
+            // Respect original request order if crowns became available mid-queue.
+            this.resolveCompanionCareRequests();
+            return true;
+          }
+          if (this.hero.gold >= this.companionCarePrice(kind))
+            return this.recover(request.companionIds[0]);
+          this.s.companionCareRequests.recovery = request;
+          this.say('Companion recovery queued. Tap the same choice to cancel.');
+          this.event('companionQueueChanged', { kind });
+          return true;
+        }
+        if (previous) return this.cancelCompanionCareRequest(kind);
         const request = this.companionCareCandidate(kind, barracksId, companionId);
         const reason = this.companionCareReason(kind, request, {
           ignoreFunds: true,
@@ -3259,24 +3311,41 @@
           return false;
         }
         if (this.hero.gold >= this.companionCarePrice(kind)) {
-          const success =
-            kind === 'recovery'
-              ? this.recover(request.companionIds[0])
-              : this.treatCompanions(request.companionIds, request.heroWounded === true);
+          const success = this.treatCompanions(request.companionIds, request.heroWounded === true);
           if (success) this.s.companionCareRequests[kind] = null;
           return success;
         }
         this.s.companionCareRequests[kind] = request;
-        this.say(
-          kind === 'recovery'
-            ? 'Companion recovery queued. Tap the same choice to cancel.'
-            : 'Companion treatment queued. Tap the same choice to cancel.',
-        );
+        this.say('Companion treatment queued. Tap the same choice to cancel.');
         return true;
       }
       resolveCompanionCareRequests() {
-        // Preserve the company first when multiple services become affordable.
+        // Recovery is a FIFO: each target is checked and charged separately.
+        // Remaining requests stay saved if funds or safety are insufficient.
         for (const kind of ['recovery', 'treatment']) {
+          if (kind === 'recovery') {
+            while (this.s.companionCareRequests.recovery?.companionIds.length) {
+              const pending = this.s.companionCareRequests.recovery,
+                companionId = pending.companionIds[0],
+                one = { ...pending, companionIds: [companionId] };
+              if (!this.companionCareTargets('recovery', one).length) {
+                pending.companionIds.shift();
+                if (!pending.companionIds.length) this.s.companionCareRequests.recovery = null;
+                this.event('companionQueueChanged', { kind });
+                continue;
+              }
+              if (
+                this.hero.gold < this.companionRecoveryCost() ||
+                this.companionCareReason('recovery', one, { checkSource: true })
+              )
+                break;
+              if (!this.recover(companionId)) break;
+              pending.companionIds.shift();
+              if (!pending.companionIds.length) this.s.companionCareRequests.recovery = null;
+              this.event('companionQueueChanged', { kind });
+            }
+            continue;
+          }
           const request = this.s.companionCareRequests[kind];
           if (!request) continue;
           if (

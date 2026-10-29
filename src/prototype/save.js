@@ -336,7 +336,7 @@
             (!r.companionIds.length && !(kind === 'treatment' && r.heroWounded === true)) ||
             (r.heroWounded !== undefined &&
               (kind !== 'treatment' || typeof r.heroWounded !== 'boolean')) ||
-            r.companionIds.length > (kind === 'recovery' ? 1 : 200) ||
+            r.companionIds.length > 200 ||
             new Set(r.companionIds).size !== r.companionIds.length ||
             r.companionIds.some((id) => typeof id !== 'string' || !id.length || id.length > 160) ||
             typeof r.zone !== 'string' ||
@@ -349,6 +349,15 @@
             )
           )
             throw Error('Invalid companion care request');
+          if (kind === 'recovery' && r.companionIds.length > 1) {
+            // Preserve the one-slot Captain and three-slot Basic Barracks
+            // limits, including when restoring an untrusted v4 backup.
+            const barracks = s.zones[r.zone]?.buildings?.find(
+              (b) => b.id === r.barracksId && b.kind === 'barracks' && b.progress >= 4,
+            );
+            if (!barracks || (!barracks.full && r.companionIds.length > 3))
+              throw Error('Invalid companion recovery queue capacity');
+          }
         }
         if (s.companionVitalityRank === undefined) s.companionVitalityRank = 0;
         if (s.companionCombatTraining === undefined)

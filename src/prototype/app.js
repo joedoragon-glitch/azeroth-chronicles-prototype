@@ -625,6 +625,14 @@
     'Town limit: 3 companions, reserves included.':
       'Límite del pueblo: 3 compañeros, incluidas las reservas.',
     'No fallen companions.': 'No hay compañeros caídos.',
+    'No fallen companions': 'No hay compañeros caídos',
+    'Recover this companion now.': 'Recupera a este compañero ahora.',
+    'Recovery queue belongs to another Captain or Barracks. Cancel queued companions first.':
+      'La cola de recuperación pertenece a otro capitán o cuartel. Cancela primero a los compañeros en cola.',
+    'This recovery queue is full. Upgrade to Full Barracks for unlimited slots.':
+      'Esta cola de recuperación está llena. Mejora al cuartel completo para tener plazas ilimitadas.',
+    'Recover each fallen companion for 40 crowns. Basic Barracks queues 3; Full Barracks has no recovery-queue limit. Short on crowns? Tap to queue. Treat wounds heals the living party for 30 crowns.':
+      'Recupera cada compañero caído por 40 coronas. El cuartel básico admite 3 en cola; el completo no tiene límite. ¿Te faltan coronas? Toca para dejarlo en cola. Curar heridas restaura a los vivos por 30 coronas.',
     'No wounded companions.': 'No hay compañeros heridos.',
     'Queued · tap to cancel. No crowns spent.': 'En cola · toca para cancelar. Sin gastar coronas.',
     'Short on crowns? Tap to queue.': '¿Te faltan coronas? Toca para dejarlo en cola.',
@@ -1406,6 +1414,15 @@
           ' minutes of active play. Reserves can go. Tribute is delivered automatically on return.',
           ' minutos de juego activo. Los compañeros en reserva pueden ir. El tributo se entrega automáticamente al regresar.',
         );
+    if (/^Cancel queued recovery: /.test(piece))
+      return piece.replace('Cancel queued recovery: ', 'Cancelar recuperación en cola: ');
+    if (/^Recover .+ · 40 crowns$/.test(piece))
+      return piece.replace('Recover ', 'Recuperar ').replace('crowns', 'coronas');
+    if (/^Queued #\\d+ · tap to cancel/.test(piece))
+      return piece
+        .replace('Queued #', 'En cola #')
+        .replace('tap to cancel. No crowns spent.', 'toca para cancelar. No has gastado coronas.');
+    if (/^\\+\\d+ more$/.test(piece)) return piece.replace('more', 'más');
     if (/^Cancel queued (recovery|treatment)$/.test(piece))
       return piece
         .replace('Cancel queued recovery', 'Cancelar recuperación en cola')
