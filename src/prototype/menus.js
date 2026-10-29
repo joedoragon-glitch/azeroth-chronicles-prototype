@@ -1373,7 +1373,7 @@
           (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.') +
           '\n' +
           def.specialty +
-          (unit ? '\\n' + companionMasteryDisplay(unit) : ''),
+          (unit ? '\n' + companionMasteryDisplay(unit) : ''),
         [
           ...(unit
             ? [
