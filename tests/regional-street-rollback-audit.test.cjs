@@ -92,15 +92,19 @@ async function sheet(region,pics){
     console.log('HIGHLANDS_REFUGE_CHOICES '+JSON.stringify({old,candidates:candidates.slice(0,20),total:candidates.length}));
   }
   const a=record(z),preTown=capture(g,town),preHamlet=capture(g,hamlet);
+  // The released dev.233 extra pass is gone. Even an old caller supplying
+  // the former second argument must not add streets or relocate anything.
   g.clearStreetCorridors(z,true);
+  g.zone();
   const b=record(z),postTown=capture(g,town),postHamlet=capture(g,hamlet);
-  console.log('REGIONAL_DELTA '+JSON.stringify({region,receipt:z.finalStreetClearanceVersion||null,...delta(a,b)}));
+  assert.deepEqual(b,a,region+' revisiting a restored region must not modify roads or object locations');
+  console.log('REGIONAL_STABILITY '+JSON.stringify({region,...delta(a,b)}));
   await sheet(region,[
-    {label:region+' - town, without extra pass',png:preTown},
-    {label:region+' - town, with extra pass',png:postTown},
-    {label:region+' - hamlet, without extra pass',png:preHamlet},
-    {label:region+' - hamlet, with extra pass',png:postHamlet}
+    {label:region+' - restored town, initial view',png:preTown},
+    {label:region+' - restored town, repeated view',png:postTown},
+    {label:region+' - restored hamlet, initial view',png:preHamlet},
+    {label:region+' - restored hamlet, repeated view',png:postHamlet}
   ]);
  }
- console.log('PASS native regional road/layout before-after review; full image evidence embedded');
+ console.log('PASS native original-region scenery stable after old-call and repeat access');
 })().catch(e=>{console.error(e);process.exitCode=1;});
