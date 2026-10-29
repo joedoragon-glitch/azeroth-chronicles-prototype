@@ -1,0 +1,2885 @@
+{
+  "source": "fcc1f428df652c7470914f3465bebf56afffbb71",
+  "files": {
+    "engine": "ac6650a672efe3147f24b365d85f404fe4d0754b691a7b891aabb3777896404c",
+    "greenwood": "43bca06b5ce6145aeaa8841c1978602eae6bfc6d0d08d2f935acb2793c7a7a0f",
+    "world": "ba40dedd66961d7996b1f36ed36ed42a52826b87247afb1f37b02563ff7e1524",
+    "navigation": "21cc078b4420094884ecf3d22c9d6435289be0e41c0ed30f23e89d16748175be",
+    "save": "b5de877ac2623de433dbc488c6af214dc85826c0ec56695dab9501e4ae5d9e02",
+    "rules": "8c84007a1189246a1247531b43ad5001c698cc42361ef519b101fcdafb42fa70",
+    "data": "82bfb2120ac6294817e0f5737ccae26aa1d2fd7dde670f027d9a5b529995986f",
+    "visuals": "9782c445d64d287cf89fcb109c7b967b35e13d7788441a59a544eb6d8f160ae5",
+    "renderer": "66a78a71f90bc04afc5d9f1076a352a346f3b38cf0c68c52e93ca26b4f1394d9"
+  },
+  "scope": "Current rollback source. Synthetic seeded original saves. Native CPU observations, not browser/device/GPU acceptance.",
+  "rows": [
+    {
+      "seed": 1196835073,
+      "size": 2700,
+      "props": 198,
+      "edgeProps": 36,
+      "ordinary": 32,
+      "tribute": 640,
+      "questCount": 6,
+      "walkableSample": {
+        "sampled": 2916,
+        "walkable": 2405,
+        "grid": 50,
+        "radius": 15,
+        "exactPolygonArea": false
+      },
+      "routes": [
+        {
+          "id": "supplier",
+          "target": {
+            "x": 175,
+            "y": 440
+          },
+          "reached": true,
+          "units": 154,
+          "cpuMs": 0.31
+        },
+        {
+          "id": "recruiter",
+          "target": {
+            "x": 459.2296877806479,
+            "y": 232.30849164039068
+          },
+          "reached": true,
+          "units": 198,
+          "cpuMs": 0.13
+        },
+        {
+          "id": "board",
+          "target": {
+            "x": 552.9150817782261,
+            "y": 478.3709462659994
+          },
+          "reached": true,
+          "units": 284,
+          "cpuMs": 0.16
+        },
+        {
+          "id": "rest",
+          "target": {
+            "x": 673.3349036215527,
+            "y": 230
+          },
+          "reached": true,
+          "units": 392,
+          "cpuMs": 0.16
+        },
+        {
+          "id": "minor",
+          "target": {
+            "x": 240,
+            "y": 1420
+          },
+          "reached": true,
+          "units": 1072,
+          "cpuMs": 47.48
+        },
+        {
+          "id": "outbound",
+          "target": {
+            "x": 2450,
+            "y": 650
+          },
+          "reached": true,
+          "units": 2222,
+          "cpuMs": 134.21
+        },
+        {
+          "id": "entrance",
+          "target": {
+            "x": 2150,
+            "y": 2100
+          },
+          "reached": true,
+          "units": 2674,
+          "cpuMs": 209.64
+        },
+        {
+          "id": "bridge-north",
+          "target": {
+            "x": 1200,
+            "y": 750
+          },
+          "reached": true,
+          "units": 985,
+          "cpuMs": 0.28
+        },
+        {
+          "id": "bridge-south",
+          "target": {
+            "x": 1200,
+            "y": 1750
+          },
+          "reached": true,
+          "units": 1771,
+          "cpuMs": 107.41
+        },
+        {
+          "id": "orchard",
+          "target": {
+            "x": 1112.5,
+            "y": 848.2531754730549
+          },
+          "reached": true,
+          "units": 953,
+          "cpuMs": 0.28
+        },
+        {
+          "id": "den-ruins",
+          "target": {
+            "x": 540,
+            "y": 2220
+          },
+          "reached": true,
+          "units": 1981,
+          "cpuMs": 98.12
+        },
+        {
+          "id": "mill-pond",
+          "target": {
+            "x": 678.9088804955707,
+            "y": 1454.3760447723848
+          },
+          "reached": true,
+          "units": 1335,
+          "cpuMs": 69.7
+        },
+        {
+          "id": "cache",
+          "target": {
+            "x": 1550,
+            "y": 1150
+          },
+          "reached": true,
+          "units": 1551,
+          "cpuMs": 88.6
+        },
+        {
+          "id": "goblin-camp",
+          "target": {
+            "x": 520,
+            "y": 1050
+          },
+          "reached": true,
+          "units": 780,
+          "cpuMs": 41.53
+        },
+        {
+          "id": "supply-entrance",
+          "target": {
+            "x": 1042.1759997357647,
+            "y": 1478.5777882396478
+          },
+          "reached": true,
+          "units": 1443,
+          "cpuMs": 79.01
+        }
+      ],
+      "npcs": [
+        {
+          "id": "supplier",
+          "x": 175,
+          "y": 440
+        },
+        {
+          "id": "recruiter",
+          "x": 459.2296877806479,
+          "y": 232.30849164039068
+        },
+        {
+          "id": "board",
+          "x": 552.9150817782261,
+          "y": 478.3709462659994
+        },
+        {
+          "id": "rest",
+          "x": 638.3349036215527,
+          "y": 130,
+          "servicePoint": {
+            "x": 673.3349036215527,
+            "y": 230
+          }
+        },
+        {
+          "id": "minor",
+          "x": 180.25125623285066,
+          "y": 1339.9999549073596,
+          "servicePoint": {
+            "x": 240,
+            "y": 1420
+          }
+        },
+        {
+          "id": "outbound",
+          "x": 2450,
+          "y": 650
+        },
+        {
+          "id": "entrance",
+          "x": 2150,
+          "y": 2100
+        },
+        {
+          "id": "bridge-north",
+          "x": 1200,
+          "y": 750
+        },
+        {
+          "id": "bridge-south",
+          "x": 1200,
+          "y": 1750
+        },
+        {
+          "id": "orchard",
+          "x": 1112.5,
+          "y": 848.2531754730549
+        },
+        {
+          "id": "den-ruins",
+          "x": 540,
+          "y": 2220
+        },
+        {
+          "id": "mill-pond",
+          "x": 678.9088804955707,
+          "y": 1454.3760447723848
+        },
+        {
+          "id": "cache",
+          "x": 1550,
+          "y": 1150
+        },
+        {
+          "id": "goblin-camp",
+          "x": 520,
+          "y": 1050
+        },
+        {
+          "id": "mini-field-thorn",
+          "x": 630,
+          "y": 1740
+        },
+        {
+          "id": "supply-entrance",
+          "x": 1042.1759997357647,
+          "y": 1478.5777882396478
+        },
+        {
+          "id": "thorn-trailhead-0",
+          "x": 760,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-1",
+          "x": 520,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-2",
+          "x": 1120,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-3",
+          "x": 1280,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-4",
+          "x": 1820,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-5",
+          "x": 2250,
+          "y": 1900
+        },
+        {
+          "id": "thorn-trailhead-6",
+          "x": 1280,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-7",
+          "x": 1120,
+          "y": 1750
+        },
+        {
+          "id": "thorn-local-report",
+          "x": 780,
+          "y": 740
+        }
+      ],
+      "enemies": [
+        {
+          "id": "enemy-3",
+          "type": "mob",
+          "species": "goblin",
+          "x": 620,
+          "y": 1085,
+          "home": {
+            "x": 620,
+            "y": 1085
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-4",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1120,
+          "y": 785,
+          "home": {
+            "x": 1120,
+            "y": 785
+          }
+        },
+        {
+          "id": "enemy-5",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1165.9110991546881,
+          "y": 708.9417145876974,
+          "home": {
+            "x": 1165.9110991546881,
+            "y": 708.9417145876974
+          }
+        },
+        {
+          "id": "enemy-6",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 830,
+          "y": 1750,
+          "home": {
+            "x": 830,
+            "y": 1750
+          }
+        },
+        {
+          "id": "enemy-7",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 510,
+          "y": 1725,
+          "home": {
+            "x": 510,
+            "y": 1725
+          }
+        },
+        {
+          "id": "enemy-8",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 809.4974746830583,
+          "y": 1799.4974746830583,
+          "home": {
+            "x": 809.4974746830583,
+            "y": 1799.4974746830583
+          }
+        },
+        {
+          "id": "enemy-9",
+          "type": "mob",
+          "species": "goblin",
+          "x": 865,
+          "y": 1320,
+          "home": {
+            "x": 865,
+            "y": 1320
+          }
+        },
+        {
+          "id": "enemy-10",
+          "type": "mob",
+          "species": "goblin",
+          "x": 840.1040764008566,
+          "y": 1380.1040764008565,
+          "home": {
+            "x": 840.1040764008566,
+            "y": 1380.1040764008565
+          }
+        },
+        {
+          "id": "enemy-11",
+          "type": "mob",
+          "species": "goblin",
+          "x": 780,
+          "y": 1440,
+          "home": {
+            "x": 780,
+            "y": 1440
+          }
+        },
+        {
+          "id": "enemy-12",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 735,
+          "y": 1500,
+          "home": {
+            "x": 735,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-13",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1592.5,
+          "y": 1223.6121593216774,
+          "home": {
+            "x": 1592.5,
+            "y": 1223.6121593216774
+          }
+        },
+        {
+          "id": "enemy-14",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1550,
+          "y": 1270,
+          "home": {
+            "x": 1550,
+            "y": 1270
+          }
+        },
+        {
+          "id": "enemy-15",
+          "type": "mob",
+          "species": "goblin",
+          "x": 432.7645713530756,
+          "y": 1058.9777747886721,
+          "home": {
+            "x": 432.7645713530756,
+            "y": 1058.9777747886721
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-16",
+          "type": "mob",
+          "species": "goblin",
+          "x": 495,
+          "y": 955,
+          "home": {
+            "x": 495,
+            "y": 955
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-17",
+          "type": "mob",
+          "species": "goblin",
+          "x": 600,
+          "y": 985,
+          "home": {
+            "x": 600,
+            "y": 985
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-18",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1725,
+          "y": 2240,
+          "home": {
+            "x": 1725,
+            "y": 2240
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-19",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1795,
+          "y": 2165,
+          "home": {
+            "x": 1795,
+            "y": 2165
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-20",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1900,
+          "y": 2195,
+          "home": {
+            "x": 1900,
+            "y": 2195
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-21",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1535,
+          "y": 420,
+          "home": {
+            "x": 1535,
+            "y": 420
+          }
+        },
+        {
+          "id": "enemy-22",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1474.1920892679361,
+          "y": 443.6421602998928,
+          "home": {
+            "x": 1474.1920892679361,
+            "y": 443.6421602998928
+          }
+        },
+        {
+          "id": "enemy-23",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1505.507820653572,
+          "y": 357.24122442520024,
+          "home": {
+            "x": 1505.507820653572,
+            "y": 357.24122442520024
+          }
+        },
+        {
+          "id": "enemy-24",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1855,
+          "y": 2180,
+          "home": {
+            "x": 1855,
+            "y": 2180
+          }
+        },
+        {
+          "id": "enemy-25",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1794.1920892679361,
+          "y": 2203.642160299893,
+          "home": {
+            "x": 1794.1920892679361,
+            "y": 2203.642160299893
+          }
+        },
+        {
+          "id": "enemy-26",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1825.507820653572,
+          "y": 2117.2412244252,
+          "home": {
+            "x": 1825.507820653572,
+            "y": 2117.2412244252
+          }
+        },
+        {
+          "id": "enemy-27",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2485,
+          "y": 1500,
+          "home": {
+            "x": 2485,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-28",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2424.1920892679364,
+          "y": 1523.6421602998928,
+          "home": {
+            "x": 2424.1920892679364,
+            "y": 1523.6421602998928
+          }
+        },
+        {
+          "id": "enemy-29",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2455.507820653572,
+          "y": 1437.2412244252002,
+          "home": {
+            "x": 2455.507820653572,
+            "y": 1437.2412244252002
+          }
+        },
+        {
+          "id": "enemy-30",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1015,
+          "y": 2350,
+          "home": {
+            "x": 1015,
+            "y": 2350
+          }
+        },
+        {
+          "id": "enemy-31",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 954.1920892679362,
+          "y": 2373.642160299893,
+          "home": {
+            "x": 954.1920892679362,
+            "y": 2373.642160299893
+          }
+        },
+        {
+          "id": "enemy-32",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 985.507820653572,
+          "y": 2287.2412244252,
+          "home": {
+            "x": 985.507820653572,
+            "y": 2287.2412244252
+          }
+        },
+        {
+          "id": "enemy-33",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1965,
+          "y": 650,
+          "home": {
+            "x": 1965,
+            "y": 650
+          }
+        },
+        {
+          "id": "enemy-34",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1904.1920892679361,
+          "y": 673.6421602998928,
+          "home": {
+            "x": 1904.1920892679361,
+            "y": 673.6421602998928
+          }
+        }
+      ],
+      "propTypes": {
+        "\ud83c\udf32": 18,
+        "\ud83e\udea8": 8,
+        "vale-cottage": 10,
+        "vale-workshop": 3,
+        "vale-fence": 2,
+        "stockade": 12,
+        "pillar": 1,
+        "stump": 12,
+        "crate": 3,
+        "fallen-log": 1,
+        "fang-trophy": 2,
+        "stolen-goods": 3,
+        "thorn-bed": 1,
+        "market": 1,
+        "woodpile": 3,
+        "laundry": 2,
+        "well": 2,
+        "barrel": 2,
+        "cart": 1,
+        "ration": 2,
+        "garden": 1,
+        "bush": 21,
+        "grass": 13,
+        "wildflowers": 9,
+        "reeds": 7,
+        "animal-pen": 1,
+        "tax-post": 1,
+        "lean-to": 2,
+        "cookfire": 4,
+        "sleep-roll": 3,
+        "training-dummy": 2,
+        "bone-pile": 3,
+        "grave-marker": 2,
+        "root-table": 1,
+        "pup-nest": 1,
+        "grave-lamp": 1,
+        "caretaker-table": 1,
+        "ossuary": 1,
+        "stonewall": 8,
+        "tool-rack": 2,
+        "supply-stack": 1,
+        "fruit-tree": 4,
+        "stacked-lumber": 1,
+        "hay-rick": 3,
+        "pasture-sheep": 3,
+        "feed-trough": 2,
+        "furrow-plot": 2,
+        "poultry-yard": 2,
+        "farm-tool-rack": 2,
+        "sapling": 2,
+        "roadside-lantern": 3
+      }
+    },
+    {
+      "seed": 1196835074,
+      "size": 2700,
+      "props": 198,
+      "edgeProps": 36,
+      "ordinary": 32,
+      "tribute": 640,
+      "questCount": 6,
+      "walkableSample": {
+        "sampled": 2916,
+        "walkable": 2405,
+        "grid": 50,
+        "radius": 15,
+        "exactPolygonArea": false
+      },
+      "routes": [
+        {
+          "id": "supplier",
+          "target": {
+            "x": 175,
+            "y": 440
+          },
+          "reached": true,
+          "units": 154,
+          "cpuMs": 0.14
+        },
+        {
+          "id": "recruiter",
+          "target": {
+            "x": 459.2296877806479,
+            "y": 232.30849164039068
+          },
+          "reached": true,
+          "units": 198,
+          "cpuMs": 0.11
+        },
+        {
+          "id": "board",
+          "target": {
+            "x": 552.9150817782261,
+            "y": 478.3709462659994
+          },
+          "reached": true,
+          "units": 284,
+          "cpuMs": 0.14
+        },
+        {
+          "id": "rest",
+          "target": {
+            "x": 673.3349036215527,
+            "y": 230
+          },
+          "reached": true,
+          "units": 392,
+          "cpuMs": 0.16
+        },
+        {
+          "id": "minor",
+          "target": {
+            "x": 240,
+            "y": 1420
+          },
+          "reached": true,
+          "units": 1072,
+          "cpuMs": 42.61
+        },
+        {
+          "id": "outbound",
+          "target": {
+            "x": 2450,
+            "y": 650
+          },
+          "reached": true,
+          "units": 2222,
+          "cpuMs": 144.55
+        },
+        {
+          "id": "entrance",
+          "target": {
+            "x": 2150,
+            "y": 2100
+          },
+          "reached": true,
+          "units": 2674,
+          "cpuMs": 220.49
+        },
+        {
+          "id": "bridge-north",
+          "target": {
+            "x": 1200,
+            "y": 750
+          },
+          "reached": true,
+          "units": 985,
+          "cpuMs": 0.32
+        },
+        {
+          "id": "bridge-south",
+          "target": {
+            "x": 1200,
+            "y": 1750
+          },
+          "reached": true,
+          "units": 1771,
+          "cpuMs": 125.76
+        },
+        {
+          "id": "orchard",
+          "target": {
+            "x": 1112.5,
+            "y": 848.2531754730549
+          },
+          "reached": true,
+          "units": 953,
+          "cpuMs": 0.28
+        },
+        {
+          "id": "den-ruins",
+          "target": {
+            "x": 540,
+            "y": 2220
+          },
+          "reached": true,
+          "units": 1981,
+          "cpuMs": 112.45
+        },
+        {
+          "id": "mill-pond",
+          "target": {
+            "x": 678.9088804955707,
+            "y": 1454.3760447723848
+          },
+          "reached": true,
+          "units": 1335,
+          "cpuMs": 70.63
+        },
+        {
+          "id": "cache",
+          "target": {
+            "x": 1550,
+            "y": 1150
+          },
+          "reached": true,
+          "units": 1551,
+          "cpuMs": 93.77
+        },
+        {
+          "id": "goblin-camp",
+          "target": {
+            "x": 520,
+            "y": 1050
+          },
+          "reached": true,
+          "units": 780,
+          "cpuMs": 37.32
+        },
+        {
+          "id": "supply-entrance",
+          "target": {
+            "x": 1042.1759997357647,
+            "y": 1478.5777882396478
+          },
+          "reached": true,
+          "units": 1443,
+          "cpuMs": 81.08
+        }
+      ],
+      "npcs": [
+        {
+          "id": "supplier",
+          "x": 175,
+          "y": 440
+        },
+        {
+          "id": "recruiter",
+          "x": 459.2296877806479,
+          "y": 232.30849164039068
+        },
+        {
+          "id": "board",
+          "x": 552.9150817782261,
+          "y": 478.3709462659994
+        },
+        {
+          "id": "rest",
+          "x": 638.3349036215527,
+          "y": 130,
+          "servicePoint": {
+            "x": 673.3349036215527,
+            "y": 230
+          }
+        },
+        {
+          "id": "minor",
+          "x": 180.25125623285066,
+          "y": 1339.9999549073596,
+          "servicePoint": {
+            "x": 240,
+            "y": 1420
+          }
+        },
+        {
+          "id": "outbound",
+          "x": 2450,
+          "y": 650
+        },
+        {
+          "id": "entrance",
+          "x": 2150,
+          "y": 2100
+        },
+        {
+          "id": "bridge-north",
+          "x": 1200,
+          "y": 750
+        },
+        {
+          "id": "bridge-south",
+          "x": 1200,
+          "y": 1750
+        },
+        {
+          "id": "orchard",
+          "x": 1112.5,
+          "y": 848.2531754730549
+        },
+        {
+          "id": "den-ruins",
+          "x": 540,
+          "y": 2220
+        },
+        {
+          "id": "mill-pond",
+          "x": 678.9088804955707,
+          "y": 1454.3760447723848
+        },
+        {
+          "id": "cache",
+          "x": 1550,
+          "y": 1150
+        },
+        {
+          "id": "goblin-camp",
+          "x": 520,
+          "y": 1050
+        },
+        {
+          "id": "mini-field-thorn",
+          "x": 630,
+          "y": 1740
+        },
+        {
+          "id": "supply-entrance",
+          "x": 1042.1759997357647,
+          "y": 1478.5777882396478
+        },
+        {
+          "id": "thorn-trailhead-0",
+          "x": 760,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-1",
+          "x": 520,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-2",
+          "x": 1120,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-3",
+          "x": 1280,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-4",
+          "x": 1820,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-5",
+          "x": 2250,
+          "y": 1900
+        },
+        {
+          "id": "thorn-trailhead-6",
+          "x": 1280,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-7",
+          "x": 1120,
+          "y": 1750
+        },
+        {
+          "id": "thorn-local-report",
+          "x": 780,
+          "y": 740
+        }
+      ],
+      "enemies": [
+        {
+          "id": "enemy-3",
+          "type": "mob",
+          "species": "goblin",
+          "x": 620,
+          "y": 1085,
+          "home": {
+            "x": 620,
+            "y": 1085
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-4",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1120,
+          "y": 785,
+          "home": {
+            "x": 1120,
+            "y": 785
+          }
+        },
+        {
+          "id": "enemy-5",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1165.9110991546881,
+          "y": 708.9417145876974,
+          "home": {
+            "x": 1165.9110991546881,
+            "y": 708.9417145876974
+          }
+        },
+        {
+          "id": "enemy-6",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 830,
+          "y": 1750,
+          "home": {
+            "x": 830,
+            "y": 1750
+          }
+        },
+        {
+          "id": "enemy-7",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 510,
+          "y": 1725,
+          "home": {
+            "x": 510,
+            "y": 1725
+          }
+        },
+        {
+          "id": "enemy-8",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 809.4974746830583,
+          "y": 1799.4974746830583,
+          "home": {
+            "x": 809.4974746830583,
+            "y": 1799.4974746830583
+          }
+        },
+        {
+          "id": "enemy-9",
+          "type": "mob",
+          "species": "goblin",
+          "x": 865,
+          "y": 1320,
+          "home": {
+            "x": 865,
+            "y": 1320
+          }
+        },
+        {
+          "id": "enemy-10",
+          "type": "mob",
+          "species": "goblin",
+          "x": 840.1040764008566,
+          "y": 1380.1040764008565,
+          "home": {
+            "x": 840.1040764008566,
+            "y": 1380.1040764008565
+          }
+        },
+        {
+          "id": "enemy-11",
+          "type": "mob",
+          "species": "goblin",
+          "x": 780,
+          "y": 1440,
+          "home": {
+            "x": 780,
+            "y": 1440
+          }
+        },
+        {
+          "id": "enemy-12",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 735,
+          "y": 1500,
+          "home": {
+            "x": 735,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-13",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1592.5,
+          "y": 1223.6121593216774,
+          "home": {
+            "x": 1592.5,
+            "y": 1223.6121593216774
+          }
+        },
+        {
+          "id": "enemy-14",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1550,
+          "y": 1270,
+          "home": {
+            "x": 1550,
+            "y": 1270
+          }
+        },
+        {
+          "id": "enemy-15",
+          "type": "mob",
+          "species": "goblin",
+          "x": 432.7645713530756,
+          "y": 1058.9777747886721,
+          "home": {
+            "x": 432.7645713530756,
+            "y": 1058.9777747886721
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-16",
+          "type": "mob",
+          "species": "goblin",
+          "x": 495,
+          "y": 955,
+          "home": {
+            "x": 495,
+            "y": 955
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-17",
+          "type": "mob",
+          "species": "goblin",
+          "x": 600,
+          "y": 985,
+          "home": {
+            "x": 600,
+            "y": 985
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-18",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1725,
+          "y": 2240,
+          "home": {
+            "x": 1725,
+            "y": 2240
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-19",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1795,
+          "y": 2165,
+          "home": {
+            "x": 1795,
+            "y": 2165
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-20",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1900,
+          "y": 2195,
+          "home": {
+            "x": 1900,
+            "y": 2195
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-21",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1535,
+          "y": 420,
+          "home": {
+            "x": 1535,
+            "y": 420
+          }
+        },
+        {
+          "id": "enemy-22",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1474.1920892679361,
+          "y": 443.6421602998928,
+          "home": {
+            "x": 1474.1920892679361,
+            "y": 443.6421602998928
+          }
+        },
+        {
+          "id": "enemy-23",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1505.507820653572,
+          "y": 357.24122442520024,
+          "home": {
+            "x": 1505.507820653572,
+            "y": 357.24122442520024
+          }
+        },
+        {
+          "id": "enemy-24",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1855,
+          "y": 2180,
+          "home": {
+            "x": 1855,
+            "y": 2180
+          }
+        },
+        {
+          "id": "enemy-25",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1794.1920892679361,
+          "y": 2203.642160299893,
+          "home": {
+            "x": 1794.1920892679361,
+            "y": 2203.642160299893
+          }
+        },
+        {
+          "id": "enemy-26",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1825.507820653572,
+          "y": 2117.2412244252,
+          "home": {
+            "x": 1825.507820653572,
+            "y": 2117.2412244252
+          }
+        },
+        {
+          "id": "enemy-27",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2485,
+          "y": 1500,
+          "home": {
+            "x": 2485,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-28",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2424.1920892679364,
+          "y": 1523.6421602998928,
+          "home": {
+            "x": 2424.1920892679364,
+            "y": 1523.6421602998928
+          }
+        },
+        {
+          "id": "enemy-29",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2455.507820653572,
+          "y": 1437.2412244252002,
+          "home": {
+            "x": 2455.507820653572,
+            "y": 1437.2412244252002
+          }
+        },
+        {
+          "id": "enemy-30",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1015,
+          "y": 2350,
+          "home": {
+            "x": 1015,
+            "y": 2350
+          }
+        },
+        {
+          "id": "enemy-31",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 954.1920892679362,
+          "y": 2373.642160299893,
+          "home": {
+            "x": 954.1920892679362,
+            "y": 2373.642160299893
+          }
+        },
+        {
+          "id": "enemy-32",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 985.507820653572,
+          "y": 2287.2412244252,
+          "home": {
+            "x": 985.507820653572,
+            "y": 2287.2412244252
+          }
+        },
+        {
+          "id": "enemy-33",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1965,
+          "y": 650,
+          "home": {
+            "x": 1965,
+            "y": 650
+          }
+        },
+        {
+          "id": "enemy-34",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1904.1920892679361,
+          "y": 673.6421602998928,
+          "home": {
+            "x": 1904.1920892679361,
+            "y": 673.6421602998928
+          }
+        }
+      ],
+      "propTypes": {
+        "\ud83c\udf32": 18,
+        "\ud83e\udea8": 8,
+        "vale-cottage": 10,
+        "vale-workshop": 3,
+        "vale-fence": 2,
+        "stockade": 12,
+        "pillar": 1,
+        "stump": 12,
+        "crate": 3,
+        "fallen-log": 1,
+        "fang-trophy": 2,
+        "stolen-goods": 3,
+        "thorn-bed": 1,
+        "market": 1,
+        "woodpile": 3,
+        "laundry": 2,
+        "well": 2,
+        "barrel": 2,
+        "cart": 1,
+        "ration": 2,
+        "garden": 1,
+        "bush": 21,
+        "grass": 13,
+        "wildflowers": 9,
+        "reeds": 7,
+        "animal-pen": 1,
+        "tax-post": 1,
+        "lean-to": 2,
+        "cookfire": 4,
+        "sleep-roll": 3,
+        "training-dummy": 2,
+        "bone-pile": 3,
+        "grave-marker": 2,
+        "root-table": 1,
+        "pup-nest": 1,
+        "grave-lamp": 1,
+        "caretaker-table": 1,
+        "ossuary": 1,
+        "stonewall": 8,
+        "tool-rack": 2,
+        "supply-stack": 1,
+        "fruit-tree": 4,
+        "stacked-lumber": 1,
+        "hay-rick": 3,
+        "pasture-sheep": 3,
+        "feed-trough": 2,
+        "furrow-plot": 2,
+        "poultry-yard": 2,
+        "farm-tool-rack": 2,
+        "sapling": 2,
+        "roadside-lantern": 3
+      }
+    },
+    {
+      "seed": 1196835075,
+      "size": 2700,
+      "props": 198,
+      "edgeProps": 36,
+      "ordinary": 32,
+      "tribute": 640,
+      "questCount": 6,
+      "walkableSample": {
+        "sampled": 2916,
+        "walkable": 2405,
+        "grid": 50,
+        "radius": 15,
+        "exactPolygonArea": false
+      },
+      "routes": [
+        {
+          "id": "supplier",
+          "target": {
+            "x": 175,
+            "y": 440
+          },
+          "reached": true,
+          "units": 154,
+          "cpuMs": 0.16
+        },
+        {
+          "id": "recruiter",
+          "target": {
+            "x": 459.2296877806479,
+            "y": 232.30849164039068
+          },
+          "reached": true,
+          "units": 198,
+          "cpuMs": 0.11
+        },
+        {
+          "id": "board",
+          "target": {
+            "x": 552.9150817782261,
+            "y": 478.3709462659994
+          },
+          "reached": true,
+          "units": 284,
+          "cpuMs": 0.12
+        },
+        {
+          "id": "rest",
+          "target": {
+            "x": 673.3349036215527,
+            "y": 230
+          },
+          "reached": true,
+          "units": 392,
+          "cpuMs": 0.25
+        },
+        {
+          "id": "minor",
+          "target": {
+            "x": 240,
+            "y": 1420
+          },
+          "reached": true,
+          "units": 1072,
+          "cpuMs": 48.09
+        },
+        {
+          "id": "outbound",
+          "target": {
+            "x": 2450,
+            "y": 650
+          },
+          "reached": true,
+          "units": 2222,
+          "cpuMs": 144.83
+        },
+        {
+          "id": "entrance",
+          "target": {
+            "x": 2150,
+            "y": 2100
+          },
+          "reached": true,
+          "units": 2674,
+          "cpuMs": 218.13
+        },
+        {
+          "id": "bridge-north",
+          "target": {
+            "x": 1200,
+            "y": 750
+          },
+          "reached": true,
+          "units": 985,
+          "cpuMs": 0.58
+        },
+        {
+          "id": "bridge-south",
+          "target": {
+            "x": 1200,
+            "y": 1750
+          },
+          "reached": true,
+          "units": 1771,
+          "cpuMs": 119.34
+        },
+        {
+          "id": "orchard",
+          "target": {
+            "x": 1112.5,
+            "y": 848.2531754730549
+          },
+          "reached": true,
+          "units": 953,
+          "cpuMs": 0.34
+        },
+        {
+          "id": "den-ruins",
+          "target": {
+            "x": 540,
+            "y": 2220
+          },
+          "reached": true,
+          "units": 1981,
+          "cpuMs": 103.71
+        },
+        {
+          "id": "mill-pond",
+          "target": {
+            "x": 678.9088804955707,
+            "y": 1454.3760447723848
+          },
+          "reached": true,
+          "units": 1335,
+          "cpuMs": 72.05
+        },
+        {
+          "id": "cache",
+          "target": {
+            "x": 1550,
+            "y": 1150
+          },
+          "reached": true,
+          "units": 1551,
+          "cpuMs": 97.26
+        },
+        {
+          "id": "goblin-camp",
+          "target": {
+            "x": 520,
+            "y": 1050
+          },
+          "reached": true,
+          "units": 780,
+          "cpuMs": 36.42
+        },
+        {
+          "id": "supply-entrance",
+          "target": {
+            "x": 1042.1759997357647,
+            "y": 1478.5777882396478
+          },
+          "reached": true,
+          "units": 1443,
+          "cpuMs": 83.27
+        }
+      ],
+      "npcs": [
+        {
+          "id": "supplier",
+          "x": 175,
+          "y": 440
+        },
+        {
+          "id": "recruiter",
+          "x": 459.2296877806479,
+          "y": 232.30849164039068
+        },
+        {
+          "id": "board",
+          "x": 552.9150817782261,
+          "y": 478.3709462659994
+        },
+        {
+          "id": "rest",
+          "x": 638.3349036215527,
+          "y": 130,
+          "servicePoint": {
+            "x": 673.3349036215527,
+            "y": 230
+          }
+        },
+        {
+          "id": "minor",
+          "x": 180.25125623285066,
+          "y": 1339.9999549073596,
+          "servicePoint": {
+            "x": 240,
+            "y": 1420
+          }
+        },
+        {
+          "id": "outbound",
+          "x": 2450,
+          "y": 650
+        },
+        {
+          "id": "entrance",
+          "x": 2150,
+          "y": 2100
+        },
+        {
+          "id": "bridge-north",
+          "x": 1200,
+          "y": 750
+        },
+        {
+          "id": "bridge-south",
+          "x": 1200,
+          "y": 1750
+        },
+        {
+          "id": "orchard",
+          "x": 1112.5,
+          "y": 848.2531754730549
+        },
+        {
+          "id": "den-ruins",
+          "x": 540,
+          "y": 2220
+        },
+        {
+          "id": "mill-pond",
+          "x": 678.9088804955707,
+          "y": 1454.3760447723848
+        },
+        {
+          "id": "cache",
+          "x": 1550,
+          "y": 1150
+        },
+        {
+          "id": "goblin-camp",
+          "x": 520,
+          "y": 1050
+        },
+        {
+          "id": "mini-field-thorn",
+          "x": 630,
+          "y": 1740
+        },
+        {
+          "id": "supply-entrance",
+          "x": 1042.1759997357647,
+          "y": 1478.5777882396478
+        },
+        {
+          "id": "thorn-trailhead-0",
+          "x": 760,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-1",
+          "x": 520,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-2",
+          "x": 1120,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-3",
+          "x": 1280,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-4",
+          "x": 1820,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-5",
+          "x": 2250,
+          "y": 1900
+        },
+        {
+          "id": "thorn-trailhead-6",
+          "x": 1280,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-7",
+          "x": 1120,
+          "y": 1750
+        },
+        {
+          "id": "thorn-local-report",
+          "x": 780,
+          "y": 740
+        }
+      ],
+      "enemies": [
+        {
+          "id": "enemy-3",
+          "type": "mob",
+          "species": "goblin",
+          "x": 620,
+          "y": 1085,
+          "home": {
+            "x": 620,
+            "y": 1085
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-4",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1120,
+          "y": 785,
+          "home": {
+            "x": 1120,
+            "y": 785
+          }
+        },
+        {
+          "id": "enemy-5",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1165.9110991546881,
+          "y": 708.9417145876974,
+          "home": {
+            "x": 1165.9110991546881,
+            "y": 708.9417145876974
+          }
+        },
+        {
+          "id": "enemy-6",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 830,
+          "y": 1750,
+          "home": {
+            "x": 830,
+            "y": 1750
+          }
+        },
+        {
+          "id": "enemy-7",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 510,
+          "y": 1725,
+          "home": {
+            "x": 510,
+            "y": 1725
+          }
+        },
+        {
+          "id": "enemy-8",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 809.4974746830583,
+          "y": 1799.4974746830583,
+          "home": {
+            "x": 809.4974746830583,
+            "y": 1799.4974746830583
+          }
+        },
+        {
+          "id": "enemy-9",
+          "type": "mob",
+          "species": "goblin",
+          "x": 865,
+          "y": 1320,
+          "home": {
+            "x": 865,
+            "y": 1320
+          }
+        },
+        {
+          "id": "enemy-10",
+          "type": "mob",
+          "species": "goblin",
+          "x": 840.1040764008566,
+          "y": 1380.1040764008565,
+          "home": {
+            "x": 840.1040764008566,
+            "y": 1380.1040764008565
+          }
+        },
+        {
+          "id": "enemy-11",
+          "type": "mob",
+          "species": "goblin",
+          "x": 780,
+          "y": 1440,
+          "home": {
+            "x": 780,
+            "y": 1440
+          }
+        },
+        {
+          "id": "enemy-12",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 735,
+          "y": 1500,
+          "home": {
+            "x": 735,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-13",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1592.5,
+          "y": 1223.6121593216774,
+          "home": {
+            "x": 1592.5,
+            "y": 1223.6121593216774
+          }
+        },
+        {
+          "id": "enemy-14",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1550,
+          "y": 1270,
+          "home": {
+            "x": 1550,
+            "y": 1270
+          }
+        },
+        {
+          "id": "enemy-15",
+          "type": "mob",
+          "species": "goblin",
+          "x": 432.7645713530756,
+          "y": 1058.9777747886721,
+          "home": {
+            "x": 432.7645713530756,
+            "y": 1058.9777747886721
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-16",
+          "type": "mob",
+          "species": "goblin",
+          "x": 495,
+          "y": 955,
+          "home": {
+            "x": 495,
+            "y": 955
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-17",
+          "type": "mob",
+          "species": "goblin",
+          "x": 600,
+          "y": 985,
+          "home": {
+            "x": 600,
+            "y": 985
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-18",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1725,
+          "y": 2240,
+          "home": {
+            "x": 1725,
+            "y": 2240
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-19",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1795,
+          "y": 2165,
+          "home": {
+            "x": 1795,
+            "y": 2165
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-20",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1900,
+          "y": 2195,
+          "home": {
+            "x": 1900,
+            "y": 2195
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-21",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1535,
+          "y": 420,
+          "home": {
+            "x": 1535,
+            "y": 420
+          }
+        },
+        {
+          "id": "enemy-22",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1474.1920892679361,
+          "y": 443.6421602998928,
+          "home": {
+            "x": 1474.1920892679361,
+            "y": 443.6421602998928
+          }
+        },
+        {
+          "id": "enemy-23",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1505.507820653572,
+          "y": 357.24122442520024,
+          "home": {
+            "x": 1505.507820653572,
+            "y": 357.24122442520024
+          }
+        },
+        {
+          "id": "enemy-24",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1855,
+          "y": 2180,
+          "home": {
+            "x": 1855,
+            "y": 2180
+          }
+        },
+        {
+          "id": "enemy-25",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1794.1920892679361,
+          "y": 2203.642160299893,
+          "home": {
+            "x": 1794.1920892679361,
+            "y": 2203.642160299893
+          }
+        },
+        {
+          "id": "enemy-26",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1825.507820653572,
+          "y": 2117.2412244252,
+          "home": {
+            "x": 1825.507820653572,
+            "y": 2117.2412244252
+          }
+        },
+        {
+          "id": "enemy-27",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2485,
+          "y": 1500,
+          "home": {
+            "x": 2485,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-28",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2424.1920892679364,
+          "y": 1523.6421602998928,
+          "home": {
+            "x": 2424.1920892679364,
+            "y": 1523.6421602998928
+          }
+        },
+        {
+          "id": "enemy-29",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2455.507820653572,
+          "y": 1437.2412244252002,
+          "home": {
+            "x": 2455.507820653572,
+            "y": 1437.2412244252002
+          }
+        },
+        {
+          "id": "enemy-30",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1015,
+          "y": 2350,
+          "home": {
+            "x": 1015,
+            "y": 2350
+          }
+        },
+        {
+          "id": "enemy-31",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 954.1920892679362,
+          "y": 2373.642160299893,
+          "home": {
+            "x": 954.1920892679362,
+            "y": 2373.642160299893
+          }
+        },
+        {
+          "id": "enemy-32",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 985.507820653572,
+          "y": 2287.2412244252,
+          "home": {
+            "x": 985.507820653572,
+            "y": 2287.2412244252
+          }
+        },
+        {
+          "id": "enemy-33",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1965,
+          "y": 650,
+          "home": {
+            "x": 1965,
+            "y": 650
+          }
+        },
+        {
+          "id": "enemy-34",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1904.1920892679361,
+          "y": 673.6421602998928,
+          "home": {
+            "x": 1904.1920892679361,
+            "y": 673.6421602998928
+          }
+        }
+      ],
+      "propTypes": {
+        "\ud83c\udf32": 18,
+        "\ud83e\udea8": 8,
+        "vale-cottage": 10,
+        "vale-workshop": 3,
+        "vale-fence": 2,
+        "stockade": 12,
+        "pillar": 1,
+        "stump": 12,
+        "crate": 3,
+        "fallen-log": 1,
+        "fang-trophy": 2,
+        "stolen-goods": 3,
+        "thorn-bed": 1,
+        "market": 1,
+        "woodpile": 3,
+        "laundry": 2,
+        "well": 2,
+        "barrel": 2,
+        "cart": 1,
+        "ration": 2,
+        "garden": 1,
+        "bush": 21,
+        "grass": 13,
+        "wildflowers": 9,
+        "reeds": 7,
+        "animal-pen": 1,
+        "tax-post": 1,
+        "lean-to": 2,
+        "cookfire": 4,
+        "sleep-roll": 3,
+        "training-dummy": 2,
+        "bone-pile": 3,
+        "grave-marker": 2,
+        "root-table": 1,
+        "pup-nest": 1,
+        "grave-lamp": 1,
+        "caretaker-table": 1,
+        "ossuary": 1,
+        "stonewall": 8,
+        "tool-rack": 2,
+        "supply-stack": 1,
+        "fruit-tree": 4,
+        "stacked-lumber": 1,
+        "hay-rick": 3,
+        "pasture-sheep": 3,
+        "feed-trough": 2,
+        "furrow-plot": 2,
+        "poultry-yard": 2,
+        "farm-tool-rack": 2,
+        "sapling": 2,
+        "roadside-lantern": 3
+      }
+    },
+    {
+      "seed": 1196835076,
+      "size": 2700,
+      "props": 198,
+      "edgeProps": 36,
+      "ordinary": 32,
+      "tribute": 640,
+      "questCount": 6,
+      "walkableSample": {
+        "sampled": 2916,
+        "walkable": 2405,
+        "grid": 50,
+        "radius": 15,
+        "exactPolygonArea": false
+      },
+      "routes": [
+        {
+          "id": "supplier",
+          "target": {
+            "x": 175,
+            "y": 440
+          },
+          "reached": true,
+          "units": 154,
+          "cpuMs": 0.15
+        },
+        {
+          "id": "recruiter",
+          "target": {
+            "x": 459.2296877806479,
+            "y": 232.30849164039068
+          },
+          "reached": true,
+          "units": 198,
+          "cpuMs": 0.17
+        },
+        {
+          "id": "board",
+          "target": {
+            "x": 552.9150817782261,
+            "y": 478.3709462659994
+          },
+          "reached": true,
+          "units": 284,
+          "cpuMs": 0.12
+        },
+        {
+          "id": "rest",
+          "target": {
+            "x": 673.3349036215527,
+            "y": 230
+          },
+          "reached": true,
+          "units": 392,
+          "cpuMs": 0.13
+        },
+        {
+          "id": "minor",
+          "target": {
+            "x": 240,
+            "y": 1420
+          },
+          "reached": true,
+          "units": 1072,
+          "cpuMs": 48.3
+        },
+        {
+          "id": "outbound",
+          "target": {
+            "x": 2450,
+            "y": 650
+          },
+          "reached": true,
+          "units": 2222,
+          "cpuMs": 152.07
+        },
+        {
+          "id": "entrance",
+          "target": {
+            "x": 2150,
+            "y": 2100
+          },
+          "reached": true,
+          "units": 2674,
+          "cpuMs": 258.83
+        },
+        {
+          "id": "bridge-north",
+          "target": {
+            "x": 1200,
+            "y": 750
+          },
+          "reached": true,
+          "units": 985,
+          "cpuMs": 0.47
+        },
+        {
+          "id": "bridge-south",
+          "target": {
+            "x": 1200,
+            "y": 1750
+          },
+          "reached": true,
+          "units": 1771,
+          "cpuMs": 114.78
+        },
+        {
+          "id": "orchard",
+          "target": {
+            "x": 1112.5,
+            "y": 848.2531754730549
+          },
+          "reached": true,
+          "units": 953,
+          "cpuMs": 0.29
+        },
+        {
+          "id": "den-ruins",
+          "target": {
+            "x": 540,
+            "y": 2220
+          },
+          "reached": true,
+          "units": 1981,
+          "cpuMs": 104.64
+        },
+        {
+          "id": "mill-pond",
+          "target": {
+            "x": 678.9088804955707,
+            "y": 1454.3760447723848
+          },
+          "reached": true,
+          "units": 1335,
+          "cpuMs": 78.89
+        },
+        {
+          "id": "cache",
+          "target": {
+            "x": 1550,
+            "y": 1150
+          },
+          "reached": true,
+          "units": 1551,
+          "cpuMs": 117.38
+        },
+        {
+          "id": "goblin-camp",
+          "target": {
+            "x": 520,
+            "y": 1050
+          },
+          "reached": true,
+          "units": 780,
+          "cpuMs": 41.11
+        },
+        {
+          "id": "supply-entrance",
+          "target": {
+            "x": 1042.1759997357647,
+            "y": 1478.5777882396478
+          },
+          "reached": true,
+          "units": 1443,
+          "cpuMs": 102.93
+        }
+      ],
+      "npcs": [
+        {
+          "id": "supplier",
+          "x": 175,
+          "y": 440
+        },
+        {
+          "id": "recruiter",
+          "x": 459.2296877806479,
+          "y": 232.30849164039068
+        },
+        {
+          "id": "board",
+          "x": 552.9150817782261,
+          "y": 478.3709462659994
+        },
+        {
+          "id": "rest",
+          "x": 638.3349036215527,
+          "y": 130,
+          "servicePoint": {
+            "x": 673.3349036215527,
+            "y": 230
+          }
+        },
+        {
+          "id": "minor",
+          "x": 180.25125623285066,
+          "y": 1339.9999549073596,
+          "servicePoint": {
+            "x": 240,
+            "y": 1420
+          }
+        },
+        {
+          "id": "outbound",
+          "x": 2450,
+          "y": 650
+        },
+        {
+          "id": "entrance",
+          "x": 2150,
+          "y": 2100
+        },
+        {
+          "id": "bridge-north",
+          "x": 1200,
+          "y": 750
+        },
+        {
+          "id": "bridge-south",
+          "x": 1200,
+          "y": 1750
+        },
+        {
+          "id": "orchard",
+          "x": 1112.5,
+          "y": 848.2531754730549
+        },
+        {
+          "id": "den-ruins",
+          "x": 540,
+          "y": 2220
+        },
+        {
+          "id": "mill-pond",
+          "x": 678.9088804955707,
+          "y": 1454.3760447723848
+        },
+        {
+          "id": "cache",
+          "x": 1550,
+          "y": 1150
+        },
+        {
+          "id": "goblin-camp",
+          "x": 520,
+          "y": 1050
+        },
+        {
+          "id": "mini-field-thorn",
+          "x": 630,
+          "y": 1740
+        },
+        {
+          "id": "supply-entrance",
+          "x": 1042.1759997357647,
+          "y": 1478.5777882396478
+        },
+        {
+          "id": "thorn-trailhead-0",
+          "x": 760,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-1",
+          "x": 520,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-2",
+          "x": 1120,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-3",
+          "x": 1280,
+          "y": 750
+        },
+        {
+          "id": "thorn-trailhead-4",
+          "x": 1820,
+          "y": 1100
+        },
+        {
+          "id": "thorn-trailhead-5",
+          "x": 2250,
+          "y": 1900
+        },
+        {
+          "id": "thorn-trailhead-6",
+          "x": 1280,
+          "y": 1750
+        },
+        {
+          "id": "thorn-trailhead-7",
+          "x": 1120,
+          "y": 1750
+        },
+        {
+          "id": "thorn-local-report",
+          "x": 780,
+          "y": 740
+        }
+      ],
+      "enemies": [
+        {
+          "id": "enemy-3",
+          "type": "mob",
+          "species": "goblin",
+          "x": 620,
+          "y": 1085,
+          "home": {
+            "x": 620,
+            "y": 1085
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-4",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1120,
+          "y": 785,
+          "home": {
+            "x": 1120,
+            "y": 785
+          }
+        },
+        {
+          "id": "enemy-5",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1165.9110991546881,
+          "y": 708.9417145876974,
+          "home": {
+            "x": 1165.9110991546881,
+            "y": 708.9417145876974
+          }
+        },
+        {
+          "id": "enemy-6",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 830,
+          "y": 1750,
+          "home": {
+            "x": 830,
+            "y": 1750
+          }
+        },
+        {
+          "id": "enemy-7",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 510,
+          "y": 1725,
+          "home": {
+            "x": 510,
+            "y": 1725
+          }
+        },
+        {
+          "id": "enemy-8",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 809.4974746830583,
+          "y": 1799.4974746830583,
+          "home": {
+            "x": 809.4974746830583,
+            "y": 1799.4974746830583
+          }
+        },
+        {
+          "id": "enemy-9",
+          "type": "mob",
+          "species": "goblin",
+          "x": 865,
+          "y": 1320,
+          "home": {
+            "x": 865,
+            "y": 1320
+          }
+        },
+        {
+          "id": "enemy-10",
+          "type": "mob",
+          "species": "goblin",
+          "x": 840.1040764008566,
+          "y": 1380.1040764008565,
+          "home": {
+            "x": 840.1040764008566,
+            "y": 1380.1040764008565
+          }
+        },
+        {
+          "id": "enemy-11",
+          "type": "mob",
+          "species": "goblin",
+          "x": 780,
+          "y": 1440,
+          "home": {
+            "x": 780,
+            "y": 1440
+          }
+        },
+        {
+          "id": "enemy-12",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 735,
+          "y": 1500,
+          "home": {
+            "x": 735,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-13",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1592.5,
+          "y": 1223.6121593216774,
+          "home": {
+            "x": 1592.5,
+            "y": 1223.6121593216774
+          }
+        },
+        {
+          "id": "enemy-14",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1550,
+          "y": 1270,
+          "home": {
+            "x": 1550,
+            "y": 1270
+          }
+        },
+        {
+          "id": "enemy-15",
+          "type": "mob",
+          "species": "goblin",
+          "x": 432.7645713530756,
+          "y": 1058.9777747886721,
+          "home": {
+            "x": 432.7645713530756,
+            "y": 1058.9777747886721
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-16",
+          "type": "mob",
+          "species": "goblin",
+          "x": 495,
+          "y": 955,
+          "home": {
+            "x": 495,
+            "y": 955
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-17",
+          "type": "mob",
+          "species": "goblin",
+          "x": 600,
+          "y": 985,
+          "home": {
+            "x": 600,
+            "y": 985
+          },
+          "stronghold": "goblin-road-fort"
+        },
+        {
+          "id": "enemy-18",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1725,
+          "y": 2240,
+          "home": {
+            "x": 1725,
+            "y": 2240
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-19",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1795,
+          "y": 2165,
+          "home": {
+            "x": 1795,
+            "y": 2165
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-20",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1900,
+          "y": 2195,
+          "home": {
+            "x": 1900,
+            "y": 2195
+          },
+          "stronghold": "skeleton-watch"
+        },
+        {
+          "id": "enemy-21",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1535,
+          "y": 420,
+          "home": {
+            "x": 1535,
+            "y": 420
+          }
+        },
+        {
+          "id": "enemy-22",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1474.1920892679361,
+          "y": 443.6421602998928,
+          "home": {
+            "x": 1474.1920892679361,
+            "y": 443.6421602998928
+          }
+        },
+        {
+          "id": "enemy-23",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1505.507820653572,
+          "y": 357.24122442520024,
+          "home": {
+            "x": 1505.507820653572,
+            "y": 357.24122442520024
+          }
+        },
+        {
+          "id": "enemy-24",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1855,
+          "y": 2180,
+          "home": {
+            "x": 1855,
+            "y": 2180
+          }
+        },
+        {
+          "id": "enemy-25",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1794.1920892679361,
+          "y": 2203.642160299893,
+          "home": {
+            "x": 1794.1920892679361,
+            "y": 2203.642160299893
+          }
+        },
+        {
+          "id": "enemy-26",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1825.507820653572,
+          "y": 2117.2412244252,
+          "home": {
+            "x": 1825.507820653572,
+            "y": 2117.2412244252
+          }
+        },
+        {
+          "id": "enemy-27",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2485,
+          "y": 1500,
+          "home": {
+            "x": 2485,
+            "y": 1500
+          }
+        },
+        {
+          "id": "enemy-28",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2424.1920892679364,
+          "y": 1523.6421602998928,
+          "home": {
+            "x": 2424.1920892679364,
+            "y": 1523.6421602998928
+          }
+        },
+        {
+          "id": "enemy-29",
+          "type": "mob",
+          "species": "goblin",
+          "x": 2455.507820653572,
+          "y": 1437.2412244252002,
+          "home": {
+            "x": 2455.507820653572,
+            "y": 1437.2412244252002
+          }
+        },
+        {
+          "id": "enemy-30",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 1015,
+          "y": 2350,
+          "home": {
+            "x": 1015,
+            "y": 2350
+          }
+        },
+        {
+          "id": "enemy-31",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 954.1920892679362,
+          "y": 2373.642160299893,
+          "home": {
+            "x": 954.1920892679362,
+            "y": 2373.642160299893
+          }
+        },
+        {
+          "id": "enemy-32",
+          "type": "mob",
+          "species": "skeleton",
+          "x": 985.507820653572,
+          "y": 2287.2412244252,
+          "home": {
+            "x": 985.507820653572,
+            "y": 2287.2412244252
+          }
+        },
+        {
+          "id": "enemy-33",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1965,
+          "y": 650,
+          "home": {
+            "x": 1965,
+            "y": 650
+          }
+        },
+        {
+          "id": "enemy-34",
+          "type": "mob",
+          "species": "goblin",
+          "x": 1904.1920892679361,
+          "y": 673.6421602998928,
+          "home": {
+            "x": 1904.1920892679361,
+            "y": 673.6421602998928
+          }
+        }
+      ],
+      "propTypes": {
+        "\ud83c\udf32": 18,
+        "\ud83e\udea8": 8,
+        "vale-cottage": 10,
+        "vale-workshop": 3,
+        "vale-fence": 2,
+        "stockade": 12,
+        "pillar": 1,
+        "stump": 12,
+        "crate": 3,
+        "fallen-log": 1,
+        "fang-trophy": 2,
+        "stolen-goods": 3,
+        "thorn-bed": 1,
+        "market": 1,
+        "woodpile": 3,
+        "laundry": 2,
+        "well": 2,
+        "barrel": 2,
+        "cart": 1,
+        "ration": 2,
+        "garden": 1,
+        "bush": 21,
+        "grass": 13,
+        "wildflowers": 9,
+        "reeds": 7,
+        "animal-pen": 1,
+        "tax-post": 1,
+        "lean-to": 2,
+        "cookfire": 4,
+        "sleep-roll": 3,
+        "training-dummy": 2,
+        "bone-pile": 3,
+        "grave-marker": 2,
+        "root-table": 1,
+        "pup-nest": 1,
+        "grave-lamp": 1,
+        "caretaker-table": 1,
+        "ossuary": 1,
+        "stonewall": 8,
+        "tool-rack": 2,
+        "supply-stack": 1,
+        "fruit-tree": 4,
+        "stacked-lumber": 1,
+        "hay-rick": 3,
+        "pasture-sheep": 3,
+        "feed-trough": 2,
+        "furrow-plot": 2,
+        "poultry-yard": 2,
+        "farm-tool-rack": 2,
+        "sapling": 2,
+        "roadside-lantern": 3
+      }
+    }
+  ]
+}

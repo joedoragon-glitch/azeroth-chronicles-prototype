@@ -9,10 +9,10 @@ const { createCanvas } = require('@napi-rs/canvas'),
   sharp = require('sharp');
 const { rng, candidate } = require('./fixtures.cjs');
 const revised = process.argv.includes('--revised');
-const out = path.resolve(
-  __dirname,
-  '../../docs/evidence/' + (revised ? 'greenwood-revised-20261028' : 'greenwood-gva-20261028'),
-);
+const out = process.argv.includes('--out')
+  ? path.resolve(process.argv[process.argv.indexOf('--out') + 1])
+  : path.resolve(__dirname, '../../docs/evidence/' +
+      (revised ? 'greenwood-revised-20261028' : 'greenwood-gva-20261028'));
 fs.mkdirSync(out, { recursive: true });
 if (!process.argv.includes('--size')) {
   for (const size of [2700, 3200, 3400])

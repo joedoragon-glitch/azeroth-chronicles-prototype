@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **435 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **436 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -16,7 +16,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
 - [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (20)
-- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (47)
+- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (48)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
 - [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (45)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
@@ -228,6 +228,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## World, geography, travel and narrative
 
+- [Greenwood redesign masterplan comparison](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) — *Dated design evidence.* Two different regional plans, selected topology, unfixed size, current-source baseline and migration/acceptance requirements under commission #644.
 - **[Greenwood Flagship Work Handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md)** — **Maintained implementation handoff.** Selected 3200 layout, scene/save/route evidence, release authorization and pending owner playtest.
 - [Greenwood Geography and Livelihood Audit](GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md) — *Dated record.* Preserved 2700 source inventory, deficiencies and evidence overlays; current status routes to the handoff.
 - **[Greenwood Owner Art Direction](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md)** — **Approved design reference.** The 50 authorial decisions, including Scornfang ownership, with protected identities and engineering boundaries.
