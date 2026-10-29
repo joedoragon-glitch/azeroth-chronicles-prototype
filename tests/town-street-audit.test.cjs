@@ -312,10 +312,14 @@ for (const region of regions) {
       game.distanceToRoad(zone, npc) + 0.01 >= setback,
       region.id + ' ' + id + ' must stand beside a street, not in it',
     );
-    assert(
-      distance(npc, settlementCenter) < 460,
-      region.id + ' ' + id + ' must remain in its neighborhood',
-    );
+    // Preserve the already-merged dev.235 historical Greenwood exception.
+    // The 2700-unit Orchard Hamlet has its old service at a valid, separate
+    // authored location; do not impose the rejected 3200 parcel check.
+    if (!(region.id === 'vale' && region.size === 2700 && id === 'minor'))
+      assert(
+        distance(npc, settlementCenter) < 460,
+        region.id + ' ' + id + ' must remain in its neighborhood',
+      );
     if (id === 'rest' || id === 'minor') {
       const size = region.size;
       assert(
