@@ -1,12 +1,12 @@
 # Rogue Bard — Expedition ownership caps and low-friction Barracks company management
 
-## 29 October 2026 — Rogue fallen-Charm field-slot correction (dev.231 candidate)
+## 29 October 2026 — Rogue fallen-Charm field-slot correction (dev.231 merged and published)
 
 When a **legitimate active Charmed monster** reaches **0 HP** in actual combat while Rogue is the current hero, it immediately leaves the active field party and enters the **fallen reserve**, including during combat and without requiring crowns or a Barracks. A later successful eligible Charm takes the freed slot; no resting companion is automatically drafted. The Rogue's active capacity is unchanged (3/4/4/5/6/7 by Expedition rank).
 
 The fallen individual remains owned, with its ID, nickname, subtype/capture receipt, mastery, trained Ringleader status, and usual **paid recovery** rights. Fallen companions **continue counting toward their exact monster-type ownership quota**. A full active group still sends new captures to reserve. Recovery does not automatically redeploy anyone. This is specific to Rogue's authenticated Charmed allies; inherited ordinary Soldiers/Rangers, boss pets, other heroes and the manual Barracks Rest/Add conditions retain their existing behavior.
 
-**Status:** Implemented as an unmerged dev.231 candidate; final focused test, Pages publishing and physical-device verification require independent evidence. Older references to fallen active slots describe the baseline behavior and do not supersede this Rogue-only exception.
+**Status:** Implemented and [merged in PR #632](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/632) at [main@bdc0a8d6](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/bdc0a8d6d5e3b62f7935911dab30581dd56017fa). [PR-head focused validation](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40870166571) passed 27 affected suites and the offline build; [merged-main focused validation and Pages publishing](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40870454100) also passed. Phone/Chromebook and installed-PWA acceptance remain unverified. Older references to fallen active slots describe the baseline behavior and do not supersede this Rogue-only exception.
 
 ## 29 October 2026 — Charmed creature combat progression (dev.220 release candidate)
 
