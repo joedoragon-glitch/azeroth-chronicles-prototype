@@ -67,7 +67,8 @@
       // companion's recruitment method. Authenticated Charmed melee/ranged
       // actors use their role's existing basic and Heal release owners.
       // Never give a Charmed monster unowned Soldier/Ranger special skills.
-      // Production still requires the separate native critical feature gate.
+      // The live app attaches an enabled native session; standalone Campaign
+      // fixtures still require explicit test-only attachment.
       troopCriticalRelease(u, move) {
         if (!this._criticalPartyNative || !['soldier', 'archer'].includes(u?.type) ||
             (u.charmOrigin && !this.isCharmedCompanion(u))) return null;
