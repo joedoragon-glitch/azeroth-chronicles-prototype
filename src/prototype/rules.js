@@ -7050,6 +7050,7 @@
       reforgeBonus: { weapon: 5, armor: 3 },
     },
     companions: {
+      ringleaderTrainingCost: 100,
       // Shared individual mastery budget. The same three thresholds apply to
       // Charmed creatures, Soldiers, Rangers and boss pets. All coefficients
       // are small, additive per tier, and never alter ability reach/cooldowns.
