@@ -85,6 +85,16 @@ try {
       'no residual damage boost after expiration');
   }
   {
+    const a = arena(), { g, primary, reserve } = a;
+    // A successful primary Charm can admit a new friendly actor after contact;
+    // that actor was an enemy when the performance's audience was resolved.
+    reserve.active = true;
+    g.rogueCharmAttempt = () => { g.s.party.push(reserve); return true; };
+    assert(basic(g, primary));
+    assert.equal(g.rogueSongBoon(reserve, 'cadence'), null,
+      'a newly admitted companion must not receive retroactive cast-time support');
+  }
+  {
     const a = arena(false), { g, primary, near } = a;
     assert(basic(g, primary));
     assert.equal(a.samples(), 1, 'noncritical legal action still rolls exactly once');
