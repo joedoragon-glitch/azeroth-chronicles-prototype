@@ -10,6 +10,7 @@
       'cd',
       'skill1Cd',
       'skill2Cd',
+      'skill3Cd',
       'skillGlobalCd',
       'healCd',
       'manaCd',
