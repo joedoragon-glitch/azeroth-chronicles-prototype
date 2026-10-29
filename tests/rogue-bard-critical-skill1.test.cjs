@@ -62,8 +62,10 @@ try {
     for(let i=0;i<oldHits.length;i++) {
       assert.equal(oldHits[i].automatic,true);
       assert.equal(newHits[i].automatic,true);
-      assert(Math.abs(newHits[i].amount-oldHits[i].amount*1.2)<1e-8,
-        'all primary/splash contacts inherit one Level-2 automatic critical');
+      const earlierCadence = 1 +
+        (hit - 1) * R.rogueHeroFoundation.basic.criticalCadence.basicDamage;
+      assert(Math.abs(newHits[i].amount-oldHits[i].amount*1.2*earlierCadence)<1e-8,
+        'one Level-2 critical applies to original damage, with only earlier critical cadence on later basics');
     }
   }
   const third=powered.g.effects.filter(e=>e.type==='rogueBellBasic').at(-1);

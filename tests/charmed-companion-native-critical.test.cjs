@@ -63,6 +63,10 @@ function combat(ranged, roll = null) {
   g.partyFollowPoint = () => ({ x: unit.x, y: unit.y });
   g._tacticalPartyTargets = new Map();
   unit.cd = 0;
+  // Native basics remain available when the new Charmed species maneuver
+  // is cooling down; this fixture isolates the original basic critical owner.
+  unit.skill1Cd = 100;
+  unit.skill2Cd = 100;
   const tally = roll === null ? null : attach(g, roll);
   return { g, unit, enemy, tally };
 }

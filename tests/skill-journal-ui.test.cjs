@@ -1,10 +1,17 @@
 'use strict';
 const assert = require('node:assert/strict'),
   { shell } = require('./helpers/production-shell.cjs'),
-  Ref = require('../src/prototype/skill-reference');
+  Ref = require('../src/prototype/skill-reference'),
+  Campaign = require('../src/prototype/engine');
+// Test-inject the Rogue in this legacy three-class baseline without changing gameplay.
+const hadRogue = Object.hasOwn(Campaign.classes, 'rogue');
+if (!hadRogue) {
+  Campaign.classes.rogue = { ...Campaign.rules.rogueHeroFoundation.stats, icon: 'bell' };
+  Campaign.talentProfiles.rogue = { ...Campaign.rules.rogueHeroFoundation.talents };
+}
 const text = (el) => [el.textContent, ...el.children.map(text)].join(' ');
 for (const language of ['en', 'es'])
-  for (const cls of ['paladin', 'mage', 'ranger']) {
+  for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
     const { scope: s, elements: e, events } = shell(language, cls),
       g = s.Prototype.game,
       t = (a, b) => (language === 'en' ? a : b),
@@ -39,7 +46,8 @@ for (const language of ['en', 'es'])
         const rows = sections[i].children.at(-1).children,
           info = Ref.describe(g, slot)[form];
         assert.equal(rows.length, info.metrics.length * 2);
-        assert.equal(rows[0].textContent, t('Cooldown', 'Recuperación'));
+        assert(rows.some((row) => row.textContent === t('Cooldown', 'Recuperación')),
+          'each skill form has a visible cooldown even when the metrics order differs');
         assert.equal(rows[1].textContent, Ref.value(info.metrics[0]));
       }
       assert(!text(host).includes('–'), 'current values replace static rank ranges');
@@ -96,6 +104,10 @@ for (const language of ['en', 'es'])
       'journal refreshes actual newly trained output',
     );
   }
+if (!hadRogue) {
+  delete Campaign.classes.rogue;
+  delete Campaign.talentProfiles.rogue;
+}
 console.log(
-  'PASS 6 English/Spanish class journals: all 24 skills, structured current values, comparison/controls/Back, no reading mutations, maximum rank, funds gate, native confirmed upgrade and refreshed effects',
+  'PASS 8 English/Spanish class journals: all 32 skills, structured current values, comparison/controls/Back, no reading mutations, maximum rank, funds gate, native confirmed upgrade and refreshed effects',
 );

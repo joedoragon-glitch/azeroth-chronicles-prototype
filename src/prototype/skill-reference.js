@@ -112,7 +112,7 @@
     // Working prototype names until the owner revisits bell-staff lore.
     rogue: [
       ['Ding and Sting', 'Bell burst / basic-damage refrain for Rogue and companions',
-       'Perform a circular pulse around yourself, harming foes and boosting nearby allies\' basics',
+       'Perform a self-centered pulse, harming foes and boosting Rogue\'s and nearby allies\' basics',
        'Raise a Racket: larger self-centered pulse, stronger basics for Rogue and nearby allies',
        'Both prototype names are under owner revision; mechanics stay separate from labels.'],
     ],
@@ -176,31 +176,31 @@
     const experimental = {
       2: ['Lead Feet', 'Slow / Quickstep',
         'Slow nearby foes and quicken Rogue and companions in the same area',
-        'Can\'t Dance: wider Slow and stronger allied movement/recovery',
+        'Can\'t Dance: wider Slow and stronger movement/recovery for Rogue and nearby allies',
         'Phase 5 prototype name; subject to owner review.'],
-      5: ['Sticky Shuffle', 'Stationary music / allied inside-circle protection',
+      5: ['Sticky Shuffle', 'Stationary music / Rogue and allied inside-circle protection',
         'Place a bell station that Slows foes and protects Rogue and allies while inside',
-        'Briar Boogie: a larger field with finite damaging pulses and a small allied ward',
+        'Briar Boogie: wider station with damaging pulses and a protective ward for Rogue and nearby allies',
         'Owner-approved placed magical music station, not a trap. Maximum two fields; tuning pending playtest.'],
-      8: ['Bad Bell Day', 'Enemy blast / allied Finale',
+      8: ['Bad Bell Day', 'Enemy blast / Rogue and allied Finale',
         'Blast foes while boosting Rogue\'s and nearby allies\' criticals and specials',
-        'Last Laugh: bigger blast and a brief non-boss hush; stronger allied Finale',
+        'Last Laugh: bigger blast and non-boss hush; stronger Finale for Rogue and nearby allies',
         'One native Rogue critical receipt per legal performance; no extra pulses or rerolls.'],
-      4: ['Sour Note', 'Enemy wither / allied Mending',
+      4: ['Sour Note', 'Enemy wither / Rogue and allied Mending',
         'Afflict foes with withering damage; mend Rogue and nearby allies',
-        'Rotten Chorus: stronger wither, small healing budget and heal-received boon',
+        'Rotten Chorus: stronger wither and healing benefits for Rogue and nearby allies',
         'One finite damage and healing budget; no revival or recursively boosted healing.'],
       3: ['Beat Breaker', 'Native cast interrupt / Steady Beat',
         'Interrupt foes and protect Rogue\'s and nearby allies\' charged preparations',
-        'Shut the Band Up: wider interrupt, brief non-boss hush and longer protection',
+        'Shut the Band Up: wider interrupt, non-boss hush and longer protection for Rogue and allies',
         'No immunity to death, invalid casts, Recall or boss scripting.'],
       7: ['Wrong Foot', 'Push + Weaken / Firm Footing',
         'Displace and weaken foes; bolster Rogue\'s and nearby allies\' strikes',
-        'Panic Party: wider shove/Weaken and stronger allied damage',
+        'Panic Party: wider shove/Weaken and stronger Rogue and ally damage',
         'First-play working title; gameplay values are provisional.'],
       6: ['Stolen Beat', 'Cooldown debt / Borrowed Time',
         'Delay enemy skills; accelerate Rogue\'s and nearby allies\' special recovery',
-        'Time Out: larger debt pulse and stronger allied recharge',
+        'Time Out: larger debt pulse and stronger special recharge for Rogue and nearby allies',
         'Phase 5 prototype name; subject to owner review.'],
     };
     const row = game.hero.class === 'rogue' && slot !== 1
@@ -209,7 +209,9 @@
     return row
       ? { name: row[0], role: row[1], tap: row[2], charge: row[3],
           note: (row[4] || '') + (game.hero.class === 'rogue'
-            ? ' Rogue receives the same friendly boon if inside the skill area at cast release. Timed boons persist after instant pulses; Skill 5 protects only while inside its active station. Critical enhancements use the same eligibility.'
+            ? slot === 5
+              ? ' Rogue and companions receive protection while inside the music station, even if they enter after placement. Leaving removes protection immediately; critical effects follow the same area.'
+              : ' Rogue and nearby companions receive the same friendly boon from the Rogue-centered circle at release. Timed boons persist for their listed duration; critical enhancements follow the same eligibility.'
             : '') }
       : null;
   }
@@ -217,15 +219,14 @@
     const c = card(game, slot);
     if (game.hero.class === 'rogue' && slot !== 1) {
       if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
-      const R = game.constructor.rules,
-        entries = R.roguePerformances[slot];
+      const R = game.constructor.rules;
       const show = (charged) => {
-        const x = entries[charged ? 'charged' : 'tap'],
+        const x = game.roguePerformanceAtRank(slot, charged, rank),
           metrics = [
             { key: 'reach', label: 'Reach', value: x.range, unit: '' },
             { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
             { key: 'targets', label: 'Maximum hostile targets', value: x.cap, unit: '' },
-            { key: 'duration', label: 'Your / companion boon', value: x.seconds, unit: 's' },
+            { key: 'duration', label: slot === 5 ? 'Station lifetime' : 'Your / companion boon', value: x.seconds, unit: 's' },
             { key: 'cooldown', label: 'Cooldown',
               value: game.skillCooldown(slot, charged), unit: 's' },
           ];
@@ -243,7 +244,8 @@
           { key: 'stations', label: 'Maximum active stations', value: 2, unit: '' },
         );
         if (slot === 8) metrics.push(
-          { key: 'damage', label: 'Enemy damage coefficient', value: x.damage, unit: 'x' },
+          { key: 'damage', label: 'Enemy damage per hit',
+            value: (game.power() + 12) * x.damage * (1 + 0.15 * (rank - 1)), unit: ' HP before defenses' },
           { key: 'criticalChance', label: 'Your / companion critical chance', value: x.criticalChance * 100, unit: 'pp' },
           { key: 'specialDamage', label: 'Your / companion special damage', value: x.specialDamage * 100, unit: '%' },
           { key: 'silence', label: 'Eligible non-boss hush', value: x.silence || 0, unit: 's' },
@@ -326,11 +328,11 @@
     if (slot === 1 && cls === 'rogue') {
       const cfg = R.rogueHeroFoundation.basic,
         base = (power + 12) * scale * cfg.primaryMultiplier,
-        tapCfg = game.rogueSkill1Config(false),
-        chargeCfg = game.rogueSkill1Config(true);
+        tapCfg = game.rogueSkill1Config(false, rank),
+        chargeCfg = game.rogueSkill1Config(true, rank);
       auto = {
         title: 'Automatic basics',
-        effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. Charm affects the surviving primary only.',
+        effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. A landed critical briefly boosts Rogue and nearby active allies\' basic damage. Charm affects the surviving primary only.',
         metrics: [],
       };
       add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
@@ -339,6 +341,10 @@
       add(auto, 'splashDamage', 'Secondary damage', base * cfg.splashMultiplier);
       add(auto, 'reach', 'Reach / normal pulse radius', cfg.range);
       add(auto, 'finisherRadius', 'Third-hit pulse radius', cfg.finisherSplashRadius);
+      add(auto, 'criticalCadence', 'Critical-only self / ally basic-damage bonus',
+        cfg.criticalCadence.basicDamage * 100, '%');
+      add(auto, 'criticalCadenceDuration', 'Critical-only boon duration',
+        cfg.criticalCadence.seconds, 's');
       for (const [form, x] of [[tap, tapCfg], [charge, chargeCfg]]) {
         add(form, 'damage', 'Damage per enemy', (power + 12) * scale * x.damage);
         add(form, 'reach', 'Reach', x.range);

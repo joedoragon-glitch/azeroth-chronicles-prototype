@@ -28,6 +28,8 @@
     // Game-time song boons are transient, bounded, and never saved. Actors
     // are weak keys; a zone or class change automatically invalidates them.
     const roguePerformanceBoons = new WeakMap();
+    const charmedPursuitWindows = new WeakMap();
+    const charmedSquadSkills = new WeakMap();
     // A charge fizzle earns the pet's ready first special one brief turn.
     // Kept outside unit/save state; never shared across pets or campaigns.
     const petFirstAfterFailedCharge = new WeakMap();
@@ -64,12 +66,7 @@
 
 
     class Party {
-      // The companion critical tier follows the actual allied action, not the
-      // companion's recruitment method. Authenticated Charmed melee/ranged
-      // actors use their role's existing basic and Heal release owners.
-      // Never give a Charmed monster unowned Soldier/Ranger special skills.
-      // The live app attaches an enabled native session; standalone Campaign
-      // fixtures still require explicit test-only attachment.
+      // Stage 2: only six Soldier/Archer combat moves; feature gate is absent in production.
       troopCriticalRelease(u, move) {
         if (!this._criticalPartyNative || !['soldier', 'archer'].includes(u?.type) ||
             (u.charmOrigin && !this.isCharmedCompanion(u))) return null;
@@ -1553,11 +1550,25 @@
           (u !== this.hero && (u.active === false || !this.s.party.includes(u)))
         ) return null;
         const saved = roguePerformanceBoons.get(u);
-        const entry = saved?.zone === this.zoneId ? saved[family] : null;
-        return entry && entry.until > this.s.time ? entry : null;
+        const entries = saved?.zone === this.zoneId ? saved[family] : null;
+        if (!entries?.length) return null;
+        // Independently cast songs overlap for their own legal lifetimes.
+        // Keep one-instance reads allocation-free for frequent combat checks.
+        const active = entries.filter((effect) => effect.until > this.s.time);
+        if (!active.length) return null;
+        if (active.length === 1) return active[0];
+        const sum = { until: 0, protection: false };
+        for (const entry of active) {
+          sum.until = Math.max(sum.until, entry.until);
+          sum.protection ||= entry.protection;
+          for (const field of ['basicDamage', 'move', 'recovery', 'specialRecovery',
+            'outgoing', 'incomingHealing', 'remainingHeal', 'criticalChance', 'specialDamage'])
+            sum[field] = (sum[field] || 0) + (entry[field] || 0);
+        }
+        return sum;
       }
       applyRogueSongBoon(u, family, form) {
-        if (!['refrain', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
+        if (!['refrain', 'cadence', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
           this.hero.class !== 'rogue' ||
           !(u === this.hero ? u.hp > 0 : this.activeLivingParty().includes(u)))
           return false;
@@ -1566,43 +1577,51 @@
           state = { zone: this.zoneId };
           roguePerformanceBoons.set(u, state);
         }
-        const previous = state[family]?.until > this.s.time ? state[family] : null;
         const until = this.s.time + Math.min(8, Math.max(0, form.seconds || 0));
-        // One strongest instance per family, never additive or permanent.
-        state[family] = {
-          until: Math.max(previous?.until || 0, until),
-          basicDamage: Math.max(previous?.basicDamage || 0, Math.min(0.07, form.basicDamage || 0)),
-          move: Math.max(previous?.move || 0, Math.min(0.12, form.move || 0)),
-          recovery: Math.max(previous?.recovery || 0, Math.min(0.08, form.recovery || 0)),
-          specialRecovery: Math.max(previous?.specialRecovery || 0,
-            Math.min(0.18, form.specialRecovery || 0)),
-          outgoing: Math.max(previous?.outgoing || 0,
-            Math.min(0.08, form.outgoing || 0)),
-          protection: !!(previous?.protection || form.protection),
-          incomingHealing: Math.max(previous?.incomingHealing || 0,
-            Math.min(0.12, form.incomingHealing || 0)),
-          // Only a frozen critical Skill 4 release may increase the
-          // original 5%-of-max-HP HoT budget (up to Level-3 7.25%).
-          // Delivery ticks merely spend this finite budget; no extra rolls.
-          remainingHeal: Math.max(previous?.remainingHeal || 0,
-            Math.min(u.maxHp * (form.criticalMending === true ? 0.075 : 0.05),
-              u.maxHp * (form.healFraction || 0))),
-          criticalChance: Math.max(previous?.criticalChance || 0,
-            Math.min(0.06, form.criticalChance || 0)),
-          specialDamage: Math.max(previous?.specialDamage || 0,
-            Math.min(0.06, form.specialDamage || 0)),
-        };
+        if (until <= this.s.time) return false;
+        // One finite record per actual successful cast; successive tap,
+        // charged and automatic performances can truly combine. Remove
+        // expired records on the next application, no permanent unit stats.
+        const entries = (state[family] || []).filter((e) => e.until > this.s.time);
+        entries.push({
+          until,
+          basicDamage: Math.max(0, form.basicDamage || 0),
+          move: Math.max(0, form.move || 0),
+          recovery: Math.max(0, form.recovery || 0),
+          specialRecovery: Math.max(0, form.specialRecovery || 0),
+          outgoing: Math.max(0, form.outgoing || 0),
+          protection: !!form.protection,
+          incomingHealing: Math.max(0, form.incomingHealing || 0),
+          // Each lawful Mending cast owns a separate finite healing budget;
+          // critical levels cannot amplify its later delivery ticks again.
+          // Rank-8 Charged Mending legitimately exceeds the old Rank-1 5%
+          // ceiling. Bound each real song's budget without suppressing its
+          // training, and keep the one-roll critical boost independently finite.
+          remainingHeal: Math.min(u.maxHp * (form.criticalMending === true ? 0.10 : 0.08),
+            u.maxHp * Math.max(0, form.healFraction || 0)),
+          criticalChance: Math.max(0, form.criticalChance || 0),
+          specialDamage: Math.max(0, form.specialDamage || 0),
+        });
+        state[family] = entries;
         return true;
       }
       advanceRogueMending(dt) {
         if (this.hero.class !== 'rogue' || !Number.isFinite(dt) || dt <= 0) return;
         for (const u of [this.hero, ...this.activeLivingParty()]) {
-          const effect = this.rogueSongBoon(u, 'mending');
-          if (!effect || !(effect.remainingHeal > 0)) continue;
-          const live = Math.max(0.01, effect.until - (this.s.time - dt)),
-            paid = Math.min(effect.remainingHeal, effect.remainingHeal * Math.min(dt, live) / live);
-          u.hp = Math.min(u.maxHp, u.hp + paid);
-          effect.remainingHeal = Math.max(0, effect.remainingHeal - paid);
+          // The clock already advanced this frame. Deliver the final lawful
+          // finite Mending slice if still active at frame start, without
+          // reviving fallen units or extending its expiry.
+          const state = roguePerformanceBoons.get(u),
+            effects = state?.zone === this.zoneId ? state.mending : null;
+          if (u.hp <= 0 || !effects?.length) continue;
+          for (const effect of effects) {
+            if (effect.until <= this.s.time - dt || !(effect.remainingHeal > 0)) continue;
+            const live = Math.max(0.01, effect.until - (this.s.time - dt)),
+              paid = Math.min(effect.remainingHeal,
+                effect.remainingHeal * Math.min(dt, live) / live);
+            u.hp = Math.min(u.maxHp, u.hp + paid);
+            effect.remainingHeal = Math.max(0, effect.remainingHeal - paid);
+          }
         }
       }
       companionRallyMoveSpeed(u, base) {
@@ -1611,7 +1630,7 @@
         const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
         return this.companionMoveSpeed(base) *
           (this.charmedCompanionProfile(u)?.speed || 1) *
-          (1 + Math.max(rally, quickstep));
+          (1 + rally + quickstep);
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
@@ -1625,15 +1644,48 @@
           this.hero.level * 2 + this.companionInheritedDamageBonus()
         );
       }
-      // Skill 1's short allied refrain affects ordinary companion basics only.
-      // Existing troop special skills retain their unmodified source damage.
+      // Different Rogue song families stack additively for ordinary basics.
+      // Each remains independently timed and capped; specials are unaffected.
       companionBasicAttackDamage(u) {
         const base = this.companionAttackDamage(u);
-        return base * (1 + ((u.rogueSharpRefrainUntil || 0) > this.s.time
-          ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0));
+        return base * (1 +
+          (this.rogueSongBoon(u, 'refrain')?.basicDamage || 0) +
+          (this.rogueSongBoon(u, 'cadence')?.basicDamage || 0));
+      }
+      charmedEliteTrained(u) {
+        return this.hero.class === 'rogue' && !!u?.charmOrigin &&
+          this.isCharmedCompanion(u) && this.companionSecondSkillUnlocked();
+      }
+      // Native Ringleaders move 20% faster in combat and enter a 0.6x
+      // basic-attack recovery at half health. Their hostile 2.5x HP / 1.5x
+      // damage scaling is NOT an allied training reward.
+      charmedCombatMoveFactor(u) {
+        return this.charmedEliteTrained(u) ? R.ringleaderScaling.pursuit : 1;
+      }
+      charmedPursuitFactor(u, target) {
+        if (!u?.charmOrigin || !['soldier', 'archer'].includes(u.type) ||
+            !this.isCharmedCompanion(u) || !target || target.hp <= 0 ||
+            !this.line(u, target) || this.peace || this.s.recallActive)
+          return 1;
+        const cfg = R.balance.pursuit, now = this.s.time;
+        let burst = charmedPursuitWindows.get(u);
+        if (!burst || burst.zone !== this.zoneId) {
+          burst = { zone: this.zoneId, until: 0, readyAt: 0 };
+          charmedPursuitWindows.set(u, burst);
+        }
+        // Switching enemies cannot reset the cooldown or chain fresh bursts.
+        if (now >= burst.readyAt) {
+          burst.until = now + cfg.burstSeconds;
+          burst.readyAt = u.type === 'soldier'
+            ? burst.until + cfg.meleeRecoverySeconds : now + 7;
+        }
+        return now < burst.until ? cfg.burstMultiplier : 1;
       }
       companionBasicInterval(u) {
-        return this.charmedCompanionProfile(u)?.interval || 0.85;
+        const base = this.charmedCompanionProfile(u)?.interval || 0.85;
+        return this.charmedEliteTrained(u) && u.hp > 0 &&
+          u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
+          ? base * R.ringleaderScaling.frenzyCooldown : base;
       }
       companionSecondSkillUnlocked() {
         return (this.s.companionCombatTraining || 1) >= 2 || (this.hero.skills[1] || 0) > 0;
@@ -2067,9 +2119,157 @@
         if (!target) return false;
         return this.castCompanionHeal(u, target);
       }
+      charmedCompanionSkill(u, target) {
+        if (!this.isCharmedCompanion(u) || this.hero.class !== 'rogue' ||
+            u.hp <= 0 || u.active === false || this.peace || this.s.recallActive ||
+            !target || !this.zone().enemies.includes(target) || target.hp <= 0 ||
+            target.neutral || target.returning || !this.tacticalDirectTargetable(target) ||
+            this.mageSilenceActive(u) || this._companionCharges?.has(u.id) ||
+            (u.skillGlobalCd || 0) > 0 || !this.line(u, target) ||
+            this.companionSurvivalMode(u))
+          return false;
+        const cfg = R.balance.companions.charmedSkills,
+          species = u.charmOrigin.species,
+          ranged = u.type === 'archer',
+          moves = R.tacticalFoundation.rogueMoves,
+          ordinary = (ranged ? moves.ranged[species] : moves.species[species]) ||
+            (ranged ? moves.rangedFallback : moves.ordinary),
+          signature = this.charmedEliteTrained(u)
+            ? R.tacticalFoundation.rogueRingleaderSignatures[
+                ranged ? 'ranged' : 'melee'
+              ][species] : null,
+          reach = ranged
+            ? this.companionCombatReach(u)
+            : Math.min(cfg.meleeManeuverReach, this.companionCombatReach(u) + 25),
+          distance = dist(u, target),
+          team = charmedSquadSkills.get(this) || { basic: 0, elite: 0, lastTime: this.s.time };
+        if (distance > reach) return false;
+        // A reset game clock must not trap squad skills behind a stale window.
+        if (this.s.time < team.lastTime) {
+          team.basic = 0;
+          team.elite = 0;
+        }
+        team.lastTime = this.s.time;
+        const eliteReady = !!signature && (u.skill2Cd || 0) <= 0 &&
+          this.s.time >= team.elite;
+        const nearby = eliteReady && ['scatter', 'sweep'].includes(signature.effect)
+          ? this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            this.tacticalDirectTargetable(e) && this.line(u, e) &&
+            dist(u, e) <= signature.radius).sort((a, b) =>
+              (a === target ? -1 : 0) - (b === target ? -1 : 0) ||
+              dist(u, a) - dist(u, b))
+          : [];
+        const elite = eliteReady &&
+          (signature.effect === 'scatter' || signature.effect === 'sweep'
+            ? nearby.length > 0 : true);
+        const profile = elite ? signature : ordinary;
+        const slot = elite ? 2 : 1;
+        if (!elite && ((u.skill1Cd || 0) > 0 || this.s.time < team.basic))
+          return false;
+        // Native Ringleaders have both a species basic and a separate
+        // signature. Slot 2 never replaces, disables or consumes Slot 1.
+        // Skill 1 is single-target; skill 2 is max two actual contacts.
+        // No boss/captain AI, global monster searches or enemy summons.
+        const victims = elite && ['scatter', 'sweep'].includes(profile.effect)
+          ? nearby.slice(0, cfg.signatureTargetCap) : [target];
+        if (!victims.length) return false;
+        // Hostile Rogue basics and signatures have one native critical
+        // DAMAGE decision per actual cast. Keep the same authored damage
+        // lever, but use the allied critical stream and companion bonuses;
+        // do not re-roll per target, projectile impact or status application.
+        const criticalReceipt = this._criticalPartyNative?.enabled
+          ? this._criticalPartyNative.release(
+              this, elite ? 'charm/rogue/signature' : 'charm/rogue/basic', u.id)
+          : null;
+        const base = this.troopCriticalDamage(
+          criticalReceipt,
+          this.rogueCompanionSpecialDamage(
+            u, this.companionAttackDamage(u) *
+            (elite ? cfg.signatureDamageMultiplier : cfg.basicDamageMultiplier)),
+        );
+        let committed = false;
+        if (ranged && !elite) {
+          // Physical creature projectile: status applies only on contact.
+          const shot = Math.max(1, distance);
+          this.s.projectiles.push({
+            id: 'projectile-' + this.s.nextId++,
+            x: u.x, y: u.y,
+            dx: (target.x - u.x) / shot, dy: (target.y - u.y) / shot,
+            target: target.id, source: u.id, damage: base,
+            ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
+            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            slow: cfg.basicSlowSeconds,
+          });
+          this.event('projectileLaunch', {
+            actor: 'companion', role: 'archer', source: u.id,
+            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            x: u.x, y: u.y, target: target.id,
+          });
+          committed = true;
+        } else {
+          for (const enemy of victims) {
+            if (!this.damage(enemy, base, u.id, { area: elite })) continue;
+            committed = true;
+            if (enemy.hp <= 0) continue;
+            if (elite && ['scatter', 'sweep'].includes(profile.effect)) {
+              if (enemy.type !== 'boss' && !enemy.captain &&
+                  !enemy.roomCaptain && enemy.form !== 'ringleader') {
+                const gap = Math.max(1, dist(u, enemy));
+                const point = {
+                  x: enemy.x + (enemy.x - u.x) / gap * cfg.pushDistance,
+                  y: enemy.y + (enemy.y - u.y) / gap * cfg.pushDistance,
+                };
+                this.move(enemy, point, 210, 0.2);
+              }
+            } else if (profile.style === 'shove' &&
+                       enemy.type === 'mob' && enemy.form === 'normal') {
+              const gap = Math.max(1, dist(u, enemy));
+              const point = {
+                x: enemy.x + (enemy.x - u.x) / gap * cfg.pushDistance,
+                y: enemy.y + (enemy.y - u.y) / gap * cfg.pushDistance,
+              };
+              this.move(enemy, point, 210, 0.2);
+            } else this.applySlow(enemy, elite
+              ? cfg.signatureSlowSeconds : cfg.basicSlowSeconds);
+          }
+        }
+        if (!committed) return false;
+        if (profile.style === 'dash' && !elite &&
+            distance > Math.max(45, this.companionCombatReach(u) - 15))
+          this.move(u, target, 300, 0.25, 65);
+        if ((profile.style === 'withdraw' || profile.effect === 'pivot') &&
+            distance < 310) {
+          const gap = Math.max(1, dist(u, target));
+          const point = {
+            x: u.x + (u.x - target.x) / gap * cfg.retreatDistance,
+            y: u.y + (u.y - target.y) / gap * cfg.retreatDistance,
+          };
+          if (this.clearSegment(u, point, 12)) this.move(u, point, 300, 0.22);
+        }
+        // Hostile Goblin Dust grants temporary untargetability. An ally-sized
+        // interpretation is a short defensive ward, not an AI-breaking vanish.
+        if (!elite && profile.blinds > 0) {
+          u.wardUntil = Math.max(u.wardUntil || 0, this.s.time + cfg.dustWardSeconds);
+          u.wardReduction = Math.max(u.wardReduction || 0, cfg.dustWardReduction);
+        }
+        u[elite ? 'skill2Cd' : 'skill1Cd'] =
+          elite ? cfg.signatureCooldown : cfg.basicCooldown;
+        u.skillGlobalCd = cfg.globalCooldown;
+        u.cd = Math.max(u.cd, 0.35);
+        team[elite ? 'elite' : 'basic'] = this.s.time +
+          (elite ? cfg.eliteSquadSpacing : cfg.basicSquadSpacing);
+        charmedSquadSkills.set(this, team);
+        this.event('companionSkill', {
+          source: u.id, unitType: u.type,
+          skill: profile.name, targetId: target.id, slot,
+        });
+        return true;
+      }
       companionTrySkill(u, target) {
-        // An authored species must not inherit Soldier/Ranger special skills.
-        if (u.charmOrigin) return false;
+        // Charmed species never inherit the generic Soldier/Ranger skills.
+        if (u.charmOrigin) return this.charmedCompanionSkill(u, target);
         if (
           !target ||
           (u.skillGlobalCd || 0) > 0 ||
@@ -3375,7 +3575,8 @@
       }
       companionFight(u, e, living, dt) {
         this._tacticalPartyTargets.set(u.id, e.id);
-        const monster = this.charmedCompanionProfile(u);
+        const monster = this.charmedCompanionProfile(u),
+          eliteMove = this.charmedCombatMoveFactor(u);
         if (u.type === 'pet') {
           this.updatePetCombat(u, e, living, dt);
           return;
@@ -3392,6 +3593,7 @@
               u,
               this.archerFallbackPoint(u, e, living),
               this.companionRallyMoveSpeed(u, 270) *
+                eliteMove *
                 this.slowMovementFactor(u) *
                 this.mireBogMovementFactor(u) *
                 this.ashMovementFactor(u),
@@ -3405,6 +3607,7 @@
               u,
               this.archerCombatPoint(u, e, living),
               this.companionRallyMoveSpeed(u, 260) *
+                eliteMove * this.charmedPursuitFactor(u, e) *
                 this.slowMovementFactor(u) *
                 this.mireBogMovementFactor(u) *
                 this.ashMovementFactor(u),
@@ -3422,6 +3625,7 @@
               u,
               anchor,
               this.companionRallyMoveSpeed(u, 245) *
+                eliteMove *
                 this.slowMovementFactor(u) *
                 this.mireBogMovementFactor(u) *
                 this.ashMovementFactor(u),
@@ -3467,6 +3671,7 @@
             u,
             e,
             this.companionRallyMoveSpeed(u, 250) *
+              eliteMove * this.charmedPursuitFactor(u, e) *
               this.slowMovementFactor(u) *
               this.mireBogMovementFactor(u) *
               this.ashMovementFactor(u),
