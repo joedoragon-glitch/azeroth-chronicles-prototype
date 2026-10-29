@@ -44,9 +44,12 @@ function scene() {
       Object.assign(u, { x: start.x, y: start.y });
       Object.assign(e, { x: end.x, y: end.y });
       u.hp = u.maxHp * 0.5;
+      // This is ordinary wounded HP, not the <=20% critical-retreat state.
+      // The original test must still check normal first-skill legality.
       if (
         g.line(u, e) &&
-        g.companionSafeContribution(u, e, 1)
+        g.tacticalDirectTargetable(e) &&
+        g.petSkillTargets(u, e, 1).length > 0
       ) {
         clear = true;
         break;
