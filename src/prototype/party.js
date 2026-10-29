@@ -830,9 +830,23 @@
               shapes = this.companionDangerShapes(),
               preferred = this.partyFollowPoint(u, living),
               radius = this.companionSurvivalRadius(),
-              // Try likely useful escape positions before spending work on
-              // scoring the current position and distant alternatives.
-              candidates = [preferred, { x: this.hero.x, y: this.hero.y }, standing];
+              // Spend the first checks on nearby steps *away* from the
+              // closest live threat, not distant formation candidates. This
+              // keeps first-tick withdrawal responsive on a small CPU budget.
+              nearest = threats
+                .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
+                .sort((a, b) => dist(a, u) - dist(b, u))[0],
+              away = nearest
+                ? Math.atan2(u.y - nearest.y, u.x - nearest.x)
+                : null,
+              candidates = [];
+            if (away !== null)
+              for (const distance of [cfg.criticalStep, ...cfg.criticalLocalRadii])
+                candidates.push({
+                  x: u.x + Math.cos(away) * distance,
+                  y: u.y + Math.sin(away) * distance,
+                });
+            candidates.push(preferred, { x: this.hero.x, y: this.hero.y }, standing);
             if (
               dist(u, this.hero) <= cfg.maxAdvanceFromHero &&
               this.companionPositionProtected(u) &&
