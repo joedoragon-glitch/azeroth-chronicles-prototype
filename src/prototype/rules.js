@@ -902,8 +902,9 @@
           ],
         },
         {
+          // Keep the inhabited ogre hearth with its named Ironroot camp and road frontage.
           id: 'ogre-hearth',
-          center: [1980, 1820],
+          center: [940, 3010],
           props: [
             [-75, -20, 'lean-to'],
             [25, -25, 'ridge-hearth'],
@@ -1546,8 +1547,8 @@
       boss: 'thorn',
       count: 2,
       entryOffset: [255, -170],
-      name: "Thornfang's Treasury",
-      objective: "Recover 2 caches from Thornfang's Treasury",
+      name: "Scornfang's Treasury",
+      objective: "Recover 2 caches from Scornfang's Treasury",
     },
     {
       id: 'supply-march',
@@ -7871,7 +7872,7 @@
           region: 'vale',
           zone: 'supply-vale',
           profile: 'supply-vale',
-          name: "Thornfang's Treasury",
+          name: "Scornfang's Treasury",
           point: [720, 690],
         },
         {

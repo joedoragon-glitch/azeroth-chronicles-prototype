@@ -1354,7 +1354,7 @@
       "bars": 8
     },
     "interior-supply-vale": {
-      "title": "Thornfang's Treasury",
+      "title": "Scornfang's Treasury",
       "bpm": 92,
       "root": 65,
       "mode": "dorian",
@@ -2125,7 +2125,7 @@
       "bars": 8
     },
     "peace-interior-supply-vale": {
-      "title": "Thornfang's Treasury \u2014 after liberation",
+      "title": "Scornfang's Treasury \u2014 after liberation",
       "bpm": 92,
       "root": 65,
       "mode": "major",

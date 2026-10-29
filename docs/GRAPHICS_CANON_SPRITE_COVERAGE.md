@@ -404,3 +404,16 @@ These later requested procedural designs supplement the historical census withou
 | Crown contained heat raceways | PROCEDURAL — existing lava collision rectangles with masonry containment/dry aprons; handoff `tools/sprites/design-handoffs/crown-heat-raceways.json`. No new raster authorization. |
 
 Watchpost catalog 096 retains its identity and future raster classification. Its old exact procedural reference is superseded by the owner-requested supported tower overhaul in `tools/sprites/design-handoffs/approved-art-decoration-watchpost.json`; this new appearance does not inherit the 19 October exact-art acceptance.
+
+## Greenwood flagship procedural additions — owner mandate, 28 October 2026
+
+These four procedural families implement the approved 50-decision register in draft #570. No accepted raster master or registry binding is replaced; generated-appearance and device acceptance remain pending. The original numbered catalog above is historical.
+
+| Family | Classification | Source / approved purpose |
+| --- | --- | --- |
+| `vale-working-mill` | PROCEDURAL | W02–W04 signature timber mill, stone footing and bank-side wheel; reuses Vale workshop joinery |
+| `mill-sluice` | PROCEDURAL | W02/W04 understated timber gate and masonry bank at the single existing western water body |
+| `fruit-cellar` | PROCEDURAL | F04/F06 low earth-banked working storage entrance, distinct from occupied Old Orchard Cellars; no interaction |
+| `estate-scaffold` | PROCEDURAL | C04/C05 existing Crypt reclamation and unfinished estate works, using existing timber/stone materials |
+
+See `tools/sprites/design-handoffs/greenwood-flagship-working-scenes.json` for authorial basis, exact runtime identities, scope and unresolved review.

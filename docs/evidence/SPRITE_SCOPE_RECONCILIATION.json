@@ -8,6 +8,10 @@
   "preparedContracts": 75,
   "families": {
     "decoration": [
+      "vale-working-mill",
+      "mill-sluice",
+      "fruit-cellar",
+      "estate-scaffold",
       "frontier-grain-silo",
       "frontier-civic-fountain",
       "direwolf-kennel",
@@ -1162,10 +1166,10 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "1c901cdf547a11a0a506d3b3006ba988e3b2b4580902fa80fc1c696bd7c7181f",
-    "src/prototype/world.js": "8b033e4b53fb586d7c00398d7925a95c509967c637b386f8e9e0953dba7c3071",
-    "src/prototype/rules.js": "1ee89a835ea1399918c72c3a35f0b52f782950f447db46f8b226014a574dbe70",
-    "src/prototype/data.js": "010daccf3b0a7a1f93527b0f900e56a2ce482429bfccfc178ddc3b29a208fee0",
+    "src/prototype/visuals.js": "9782c445d64d287cf89fcb109c7b967b35e13d7788441a59a544eb6d8f160ae5",
+    "src/prototype/world.js": "ba40dedd66961d7996b1f36ed36ed42a52826b87247afb1f37b02563ff7e1524",
+    "src/prototype/rules.js": "8c84007a1189246a1247531b43ad5001c698cc42361ef519b101fcdafb42fa70",
+    "src/prototype/data.js": "82bfb2120ac6294817e0f5737ccae26aa1d2fd7dde670f027d9a5b529995986f",
     "src/prototype/sprites.js": "6057888eed7a54e415a9657f019c421557773d6e6dcb963f8716fe9ac55767df",
     "src/prototype/renderer.js": "66a78a71f90bc04afc5d9f1076a352a346f3b38cf0c68c52e93ca26b4f1394d9"
   },

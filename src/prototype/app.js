@@ -387,8 +387,8 @@
     [
       'Stolen Stores',
       'Suministros robados',
-      "Recover 2 caches from Thornfang's Treasury",
-      'Recupera 2 escondites del tesoro de Thornfang.',
+      "Recover 2 caches from Scornfang's Treasury",
+      'Recupera 2 escondites del tesoro de Scornfang.',
     ],
     [
       'An Unfinished Retreat',
@@ -575,7 +575,7 @@
       'Elige un objetivo para seguirlo. Las tareas opcionales del tablón están en Misiones secundarias.',
     'Optional tasks, exploration and extra rewards.':
       'Tareas opcionales, exploración y recompensas adicionales.',
-    'Meet the town Captain, try Recall squad, then establish your first Basic Barracks (free).':
+    'Meet the Captain, try Recall squad, then build your first Basic Barracks (free).':
       'Habla con el capitán, prueba Reagrupar y establece tu primer cuartel básico (gratis).',
     'Meet the town Captain to learn about your Soldier and Ranger.':
       'Habla con el capitán para conocer a tu Soldado y tu Ranger.',
@@ -1417,8 +1417,6 @@
         );
     if (/^Cancel queued recovery: /.test(piece))
       return piece.replace('Cancel queued recovery: ', 'Cancelar recuperación en cola: ');
-    if (/^Recover .+ · 40 crowns$/.test(piece))
-      return piece.replace('Recover ', 'Recuperar ').replace('crowns', 'coronas');
     if (/^Queued #\d+$/.test(piece)) return piece.replace('Queued #', 'En cola #');
     if (/^Cancel queued (recovery|treatment)$/.test(piece))
       return piece
