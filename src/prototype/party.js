@@ -1633,7 +1633,14 @@
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
       }
       rogueCompanionSpecialDamage(u, amount) {
-        return amount * (1 + (this.rogueSongBoon(u, 'finale')?.specialDamage || 0));
+        // All ordinary Soldier/Ranger active specials grow gently with
+        // individual mastery. Charmed native/heritage skills scale themselves
+        // exactly once on their authored action path below.
+        const mastery = u?.charmOrigin ? 1 :
+          1 + this.companionMasteryTier(u) *
+            R.balance.companions.mastery.nativeDamagePerTier;
+        return amount * mastery *
+          (1 + (this.rogueSongBoon(u, 'finale')?.specialDamage || 0));
       }
       // One individual progression counter for all companion families.
       companionMasteryTier(u) {
@@ -2764,7 +2771,9 @@
           this.hasSupportEffect(target, 'health') ||
           this.s.challenge.pending || this.s.challenge.gameOver
         ) return false;
-        const originalAmount = this.rangerSupportAmount('health'),
+        const originalAmount = this.rangerSupportAmount('health') *
+            (1 + this.companionMasteryTier(caster) *
+              R.balance.companions.mastery.nativeDamagePerTier),
           criticalReceipt = this.troopCriticalRelease(caster, 'heal'),
           amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
         if (caster.charmOrigin) caster.charmSupportCd = R.rangerSupport.cooldown;
