@@ -632,8 +632,8 @@
       'La cola de recuperación pertenece a otro capitán o cuartel. Cancela primero a los compañeros en cola.',
     'This recovery queue is full. Upgrade to Full Barracks for unlimited slots.':
       'Esta cola de recuperación está llena. Mejora al cuartel completo para tener plazas ilimitadas.',
-    'Recover each fallen companion for 40 crowns. Basic Barracks queues 3; Full Barracks has no recovery-queue limit. Short on crowns? Tap to queue. Treat wounds heals the living party for 30 crowns.':
-      'Recupera cada compañero caído por 40 coronas. El cuartel básico admite 3 en cola; el completo no tiene límite. ¿Te faltan coronas? Toca para dejarlo en cola. Curar heridas restaura a los vivos por 30 coronas.',
+    'Recover each fallen companion for 40 crowns. Basic Barracks queues 3; Full Barracks has no recovery-queue limit. Short on crowns? Tap to queue. Treat wounds heals the hero and living companions for 30 crowns.':
+      'Recupera cada compañero caído por 40 coronas. El cuartel básico admite 3 en cola; el completo no tiene límite. ¿Te faltan coronas? Toca para dejarlo en cola. Curar heridas restaura la salud del héroe y los compañeros vivos por 30 coronas.',
     'No wounded companions.': 'No hay compañeros heridos.',
     'Queued · tap to cancel. No crowns spent.': 'En cola · toca para cancelar. Sin gastar coronas.',
     'Short on crowns? Tap to queue.': '¿Te faltan coronas? Toca para dejarlo en cola.',

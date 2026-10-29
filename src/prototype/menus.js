@@ -1407,7 +1407,7 @@
       const refresh = (next = page) => barracksRecoveryMenu(b, back, next);
       openMenu(
         'Recovery',
-        'Recover each fallen companion for 40 crowns. Basic Barracks queues 3; Full Barracks has no recovery-queue limit. Short on crowns? Tap to queue. Treat wounds heals the living party for 30 crowns.' +
+        'Recover each fallen companion for 40 crowns. Basic Barracks queues 3; Full Barracks has no recovery-queue limit. Short on crowns? Tap to queue. Treat wounds heals the hero and living companions for 30 crowns.' +
           '\n' +
           (getGame().s.challenge.succession
             ? 'Succession: class loss replaces crown loss.'
