@@ -3582,7 +3582,7 @@
       ? 'Preparando la primera escena…' : 'Preparing first scene…';
     refreshTitleScreen();
     clearInput();
-    const campaign = game;
+    let campaign = game;
     const reveal = () => {
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
@@ -3592,6 +3592,10 @@
       }
       // Only Continue authorizes abnormal-session recovery.
       recoverLoadedSession();
+      // Crash recovery may replace the Campaign object with a safe-location
+      // clone. Continue's readiness guards must track that validated recovery,
+      // not silently abandon the title in its disabled loading state.
+      campaign = game;
       if (menu) closeMenu();
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
