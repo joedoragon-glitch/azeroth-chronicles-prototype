@@ -94,7 +94,7 @@ try {
     const hp = e.hp, originalSkill1 = u.skill1Cd, originalSkill2 = u.skill2Cd;
     assert.equal(game.charmedSpeciesSpecial(u, e, def), true,
       species + ' selected heritage must land');
-    assert(e.hp < hp, species + ' actual damage');
+    assert(e.hp < hp, species + ' actual damage: before=' + hp + ' after=' + e.hp + ' value=' + game.companionAttackDamage(u) + ' landed=' + (game.effects.find(x=>x.type === 'charmHeritage')?.hitCount));
     assert.equal(u.skill3Cd, def.cooldown, species + ' own third cooldown');
     assert.equal(u.skill1Cd, originalSkill1, species + ' Skill 1 untouched');
     assert.equal(u.skill2Cd, originalSkill2, species + ' Skill 2 untouched');
