@@ -332,7 +332,7 @@
         chargeCfg = game.rogueSkill1Config(true);
       auto = {
         title: 'Automatic basics',
-        effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. Charm affects the surviving primary only.',
+        effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. A landed critical briefly boosts Rogue and nearby active allies\' basic damage. Charm affects the surviving primary only.',
         metrics: [],
       };
       add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
@@ -341,6 +341,10 @@
       add(auto, 'splashDamage', 'Secondary damage', base * cfg.splashMultiplier);
       add(auto, 'reach', 'Reach / normal pulse radius', cfg.range);
       add(auto, 'finisherRadius', 'Third-hit pulse radius', cfg.finisherSplashRadius);
+      add(auto, 'criticalCadence', 'Critical-only self / ally basic-damage bonus',
+        cfg.criticalCadence.basicDamage * 100, '%');
+      add(auto, 'criticalCadenceDuration', 'Critical-only boon duration',
+        cfg.criticalCadence.seconds, 's');
       for (const [form, x] of [[tap, tapCfg], [charge, chargeCfg]]) {
         add(form, 'damage', 'Damage per enemy', (power + 12) * scale * x.damage);
         add(form, 'reach', 'Reach', x.range);
