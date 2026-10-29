@@ -57,6 +57,15 @@ try {
     'standard Soldier not promoted');
   assert.equal(g.charmedEliteTrained(u), false,
     'paying Orin does not bypass the Rogue Hero Skill-2 signature unlock');
+  assert.equal(g.charmedCombatMoveFactor(u), R.ringleaderScaling.pursuit,
+    'Orin grants missing Ringleader pursuit without granting locked skills');
+  const healthyHp = u.hp;
+  u.hp = u.maxHp * 0.4;
+  assert.equal(g.companionBasicInterval(u),
+    R.balance.companions.charmed.goblin.melee.interval *
+      R.ringleaderScaling.frenzyCooldown,
+    'Orin also grants wounded frenzy while keeping elite skill separately gated');
+  u.hp = healthyHp;
   g.hero.skills[1] = 1;
   g.s.companionCombatTraining = 2; // Permanent milestone learned through hero Skill 2.
   assert(g.charmedEliteTrained(u),
