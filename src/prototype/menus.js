@@ -1320,6 +1320,24 @@
         !queued && !!reason,
       );
     }
+    function captainRecoveryChoices(refresh) {
+      const g = getGame(),
+        request = g.s.companionCareRequests.recovery;
+      if (!request || request.companionIds.length <= 1)
+        return [careChoice('recovery', null, refresh)];
+      // The Captain must not erase an entire Full Barracks queue with one tap.
+      return request.companionIds.map((id) => {
+        const companion = g.s.party.find((u) => u.id === id);
+        return action(
+          'Cancel queued recovery: ' + (companion ? rosterLabel(companion) : id),
+          () => {
+            getGame().cancelCompanionCareRequest('recovery', false, id);
+            refresh();
+          },
+          'Queued · tap to cancel. No crowns spent.',
+        );
+      });
+    }
     function barracksRecoveryActions(refresh, b, page = 0) {
       const g = getGame(),
         fallen = g.s.party.filter((u) => u.hp <= 0),
@@ -2408,7 +2426,7 @@
           'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain can treat party wounds for 30 crowns or recover fallen companions.',
           [
             ...otherRecruitmentCancellation(null, reopen),
-            careChoice('recovery', null, reopen),
+            ...captainRecoveryChoices(reopen),
             careChoice('treatment', null, reopen),
           ],
           back,
@@ -2445,7 +2463,7 @@
         ]
           .filter(([type]) => !recruitmentLocked || getGame().recruitmentRequestMatches(type, null))
           .map(([type, label]) => recruitmentChoice(type, label, null, reopen)),
-        careChoice('recovery', null, reopen),
+        ...captainRecoveryChoices(reopen),
         careChoice('treatment', null, reopen),
       ];
       openMenu(

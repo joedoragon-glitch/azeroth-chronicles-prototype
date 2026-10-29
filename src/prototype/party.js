@@ -3329,9 +3329,7 @@
                 companionId = pending.companionIds[0],
                 one = { ...pending, companionIds: [companionId] };
               if (!this.companionCareTargets('recovery', one).length) {
-                pending.companionIds.shift();
-                if (!pending.companionIds.length) this.s.companionCareRequests.recovery = null;
-                this.event('companionQueueChanged', { kind });
+                this.cancelCompanionCareRequest('recovery', true, companionId);
                 continue;
               }
               if (

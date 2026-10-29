@@ -425,6 +425,34 @@ for (const kind of ['recovery', 'treatment']) {
   } }));
 }
 
+// The Captain can cancel individual members of an existing multi-member
+// Barracks queue without clearing the whole request.
+{
+  const { g, b, dead, wounded } = fixture();
+  wounded.hp = 0;
+  assert(g.requestCompanionCare('recovery', b.id, dead.id));
+  assert(g.requestCompanionCare('recovery', b.id, wounded.id));
+  g.s.quests['quest-barracks'].captainBriefed = true;
+  let opened;
+  const ui = Menus.create({
+    getGame: () => g,
+    Campaign: C,
+    D: C.data,
+    action: (label, action, detail = '', disabled = false) => ({ label, action, detail, disabled }),
+    openMenu: (title, description, actions, back) =>
+      (opened = { title, description, actions, back }),
+    closeMenu() {},
+    recallSquad() {},
+    showMap() {},
+    finaleMenu() {},
+  });
+  ui.partyMenu();
+  const entries = opened.actions.filter((a) => a.label.startsWith('Cancel queued recovery: '));
+  assert.equal(entries.length, 2);
+  entries[0].action();
+  assert.deepEqual(g.s.companionCareRequests.recovery.companionIds, [wounded.id]);
+}
+
 // A long Full Barracks recovery roster uses the existing eight-item page
 // navigation, without preventing selection of members on later pages.
 {
