@@ -99,8 +99,8 @@ this additional action uses its own finite `skill3Cd`, contact effects, a
 bounded cone/circle/line/single-target footprint, a distinct critical lever,
 and matching brief visual/audio feedback. Affected enemies can be Slowed,
 pushed or struck after a collision-aware leap, and a Charmed Wraith's native
-Soul Drain heals only from HP actually lost by an enemy. The Wraith's other
-natural skill is separate from the Stalker's native Shadow Pounce.
+Soul Drain heals only from HP actually lost by an enemy. The Wraith's extra native Soul Drain is separate from the Stalker's
+extra native Shadow Pounce; both also keep their original species Rogue basic.
 
 Lantern Wraith and Ash Stalker are intentionally admitted only from exact
 ordinary active night encounters. They receive dedicated authenticated
