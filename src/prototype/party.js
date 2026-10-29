@@ -2057,24 +2057,7 @@
             : patients.sort((a, b) =>
                 a.hp / a.maxHp - b.hp / b.maxHp)[0];
         if (!target) return false;
-        const amount = this.rangerSupportAmount('health');
-        this.addSupportEffect(target, 'health', amount);
-        u.charmSupportCd = R.rangerSupport.cooldown;
-        this.say(
-          (u.customName || u.charmOrigin.typeName) + ' casts Heal on ' +
-          (target === this.hero
-            ? 'the hero'
-            : target.customName || target.name || 'an ally') +
-          ' · restoring ' + amount + ' HP over ' +
-          R.rangerSupport.duration + ' seconds.',
-        );
-        this.event('heal', {
-          x: target.x, y: target.y,
-          fromX: u.x, fromY: u.y,
-          target: target === this.hero ? 'hero' : target.id,
-          resource: 'health',
-        });
-        return true;
+        return this.castCompanionHeal(u, target);
       }
       companionTrySkill(u, target) {
         // An authored species must not inherit Soldier/Ranger special skills.
@@ -2300,6 +2283,57 @@
           (u) => u.type === 'archer' && !u.charmOrigin && !u.keeperHeld && (u[key] || 0) <= 0,
         );
       }
+      // The Heal command is an ability, not a hero-class check. A legitimate
+      // Charmed ranged creature uses its existing support cooldown; a boss pet
+      // qualifies only when an authored skill explicitly heals an ally.
+      healCompanionCasters() {
+        return this.activeLivingParty().filter((u) => {
+          if (u.keeperHeld || u.deathRollHeld) return false;
+          if (u.type === 'archer')
+            return !u.charmOrigin || (!u.order && this.isCharmedCompanion(u));
+          return u.type === 'pet' && !u.order &&
+            !!(this.petSkillDefinition(u, 1)?.allyHeal ||
+              this.petSkillDefinition(u, 2)?.allyHeal);
+        });
+      }
+      companionHealCooldown(u) {
+        return u.charmOrigin ? u.charmSupportCd || 0 : u.healCd || 0;
+      }
+      availablePartyHealers() {
+        return this.healCompanionCasters().filter((u) => this.companionHealCooldown(u) <= 0);
+      }
+      castCompanionHeal(caster, target) {
+        if (
+          !this.healCompanionCasters().includes(caster) ||
+          this.companionHealCooldown(caster) > 0 ||
+          this.mageSilenceActive(caster) ||
+          !target || ![this.hero, ...this.activeLivingParty()].includes(target) ||
+          target.hp <= 0 || target.hp >= target.maxHp ||
+          this.hasSupportEffect(target, 'health') ||
+          this.s.challenge.pending || this.s.challenge.gameOver
+        ) return false;
+        const originalAmount = this.rangerSupportAmount('health'),
+          criticalReceipt = this.troopCriticalRelease(caster, 'heal'),
+          amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
+        if (caster.charmOrigin) caster.charmSupportCd = R.rangerSupport.cooldown;
+        else caster.healCd = R.rangerSupport.cooldown;
+        this.addSupportEffect(target, 'health', amount);
+        const name = caster.charmOrigin
+          ? caster.customName || caster.charmOrigin.typeName
+          : caster.type === 'pet'
+            ? this.petDefinition(caster).name
+            : 'Ranger';
+        this.say(
+          name + ' casts Heal on ' +
+          (target === this.hero ? 'the hero' : this.companionDisplayName(target)) +
+          ' · restoring ' + amount + ' HP over ' + R.rangerSupport.duration + ' seconds.',
+        );
+        this.event('heal', {
+          x: target.x, y: target.y, fromX: caster.x, fromY: caster.y,
+          resource: 'health', target: target === this.hero ? 'hero' : target.id,
+        });
+        return true;
+      }
       supportEffectActive(type) {
         return [this.hero, ...this.activeLivingParty()].some((u) =>
           (u.supportEffects || []).some((e) => e.type === type),
@@ -2318,7 +2352,7 @@
       queuedRangerHeal() {
         const request = rangerHealRequests.get(this);
         if (!request) return null;
-        const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
+        const active = this.healCompanionCasters();
         if (
           request.hero !== this.hero ||
           request.zone !== this.zoneId ||
@@ -2334,9 +2368,9 @@
         const casters = active.filter((u) => !u.keeperHeld);
         return {
           cooldown: casters.length
-            ? Math.max(0, Math.min(...casters.map((u) => u.healCd || 0)))
+            ? Math.max(0, Math.min(...casters.map((u) => this.companionHealCooldown(u))))
             : 0,
-          blocked: !casters.some((u) => (u.healCd || 0) <= 0 && !this.mageSilenceActive(u)),
+          blocked: !casters.some((u) => this.companionHealCooldown(u) <= 0 && !this.mageSilenceActive(u)),
         };
       }
       requestRangerHeal() {
@@ -2344,11 +2378,11 @@
           this.resolveQueuedRangerHeal();
           return true;
         }
-        const active = this.activeLivingParty().filter((u) => u.type === 'archer'),
-          ready = this.availableRangers('health').some((u) => !this.mageSilenceActive(u));
+        const active = this.healCompanionCasters(),
+          ready = this.availablePartyHealers().some((u) => !this.mageSilenceActive(u));
         if (
           !ready &&
-          active.some((u) => (u.healCd || 0) > 0) &&
+          active.some((u) => this.companionHealCooldown(u) > 0) &&
           this.hero.hp > 0 &&
           !this.s.challenge.pending &&
           !this.s.challenge.gameOver
@@ -2365,7 +2399,7 @@
       }
       resolveQueuedRangerHeal() {
         if (!this.queuedRangerHeal()) return false;
-        if (!this.availableRangers('health').some((u) => !this.mageSilenceActive(u))) return false;
+        if (!this.availablePartyHealers().some((u) => !this.mageSilenceActive(u))) return false;
         // A stored hero request must never fall back to a wounded companion.
         // Already-full/covered heroes need no duplicate effect or paid cooldown.
         if (this.hero.hp >= this.hero.maxHp || this.hasSupportEffect(this.hero, 'health')) {
@@ -2384,28 +2418,28 @@
           this.s.challenge.gameOver
         )
           return false;
-        const readyRangers = this.availableRangers(type),
+        const readyRangers = type === 'health'
+            ? this.availablePartyHealers() : this.availableRangers(type),
           rangers = readyRangers.filter((u) => !this.mageSilenceActive(u)),
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
-            const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
+            const active = type === 'health'
+              ? this.healCompanionCasters()
+              : this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
             if (!active.length)
-              this.say(
-                'No active Ranger is available to use ' +
-                  (type === 'health' ? 'Heal.' : 'Mana Recovery.'),
-              );
+              this.say(type === 'health'
+                ? 'No active companion can use Heal.'
+                : 'No active Ranger is available to use Mana Recovery.');
             else if (readyRangers.length)
-              this.say(
-                'Ranger cannot use ' +
-                  (type === 'health' ? 'Heal' : 'Mana Recovery') +
-                  ' while silenced.',
-              );
+              this.say((type === 'health' ? 'Healer' : 'Ranger') + ' cannot use ' +
+                (type === 'health' ? 'Heal' : 'Mana Recovery') + ' while silenced.');
             else
               this.say(
                 (type === 'health' ? 'Heal' : 'Mana Recovery') +
                   ' is cooling down · ' +
-                  Math.ceil(Math.min(...active.map((u) => u[key] || 0))) +
+                  Math.ceil(Math.min(...active.map((u) =>
+                    type === 'health' ? this.companionHealCooldown(u) : u[key] || 0))) +
                   's.',
               );
           }
@@ -2424,35 +2458,8 @@
                 ? targetOverride
                 : injured.includes(this.hero)
                   ? this.hero
-                  : injured.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0],
-            ranger = rangers[0],
-            originalAmount = this.rangerSupportAmount(type),
-            criticalReceipt = this.troopCriticalRelease(ranger, 'heal'),
-            amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
-          ranger[key] = R.rangerSupport.cooldown;
-          this.addSupportEffect(target, type, amount);
-          this.say(
-            'Ranger casts Heal on ' +
-              (target === this.hero
-                ? 'the hero'
-                : target.type === 'pet'
-                  ? this.petDefinition(target).name
-                  : target.type === 'archer'
-                    ? 'a Ranger'
-                    : 'a Soldier') +
-              ' · restoring ' +
-              amount +
-              ' HP over five seconds.',
-          );
-          this.event('heal', {
-            x: target.x,
-            y: target.y,
-            fromX: ranger.x,
-            fromY: ranger.y,
-            resource: 'health',
-            target: target === this.hero ? 'hero' : target.id,
-          });
-          return true;
+                  : injured.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+          return this.castCompanionHeal(rangers[0], target);
         }
         if (this.hero.mp >= this.hero.maxMp || this.hasSupportEffect(this.hero, 'mana')) {
           if (manual)
@@ -2519,7 +2526,7 @@
         const engaged = this.manaCombatActive(),
           healThreshold = engaged ? R.rangerSupport.healThreshold : 1,
           manaThreshold = engaged ? R.rangerSupport.manaThreshold : 1;
-        for (const ranger of this.availableRangers('health').slice()) {
+        for (const ranger of this.availablePartyHealers().slice()) {
           const candidates = [h, ...this.activeLivingParty()].filter(
             (u) =>
               u.hp > 0 &&
@@ -2531,16 +2538,8 @@
           const target = candidates.includes(h)
             ? h
             : candidates.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
-          if (!this.rangerSupport('health', false, target)) break;
+          if (!this.castCompanionHeal(ranger, target)) continue;
         }
-        // Heal after conventional Rangers have claimed patients. Every active
-        // Charmed ranged healer can then treat another wounded party member,
-        // including the Rogue, pets and companions of different species.
-        // Run even when no enemies are engaged; Ranger support does too.
-        const living = this.activeLivingParty();
-        for (const healer of living)
-          if (healer.charmOrigin && healer.type === 'archer')
-            this.charmedRangedSupport(healer, living);
         if (
           R.resourceMode.manaEnabled &&
           h.mp < h.maxMp &&
