@@ -31,7 +31,7 @@ Authoring tables stay in their existing canonical locations rather than being du
 | Town recruitment | `rules.balance.companions.recruitPrices` | Soldier 70, Archer/Ranger 100; three-total-companion cap |
 | Barracks recruitment | `rules.balance.companions.barracksRecruitPrices` | Soldier 60, Archer/Ranger 85; queue/roster gates remain |
 | Fallen companion recovery | `rules.balance.companions.recoveryCost` | 40 for one fallen companion |
-| Living companion treatment | `rules.balance.companions.treatmentCost` | 30; wounded living roster only, threat gate remains |
+| Party wound treatment | `rules.balance.companions.treatmentCost` | 30; wounded hero and living companions at Captain/Basic/Full Barracks; safe-service gate, queue and bound targets remain; fallen recovery separate |
 | Basic barracks | `rules.balance.barracks.buildCost` | First barracks free; subsequent buildings 20 |
 | Full barracks | `rules.balance.barracks.fullUpgradeCost` | 100, charged once before construction; Expedition 4 gate |
 | Preparation tonic | `rules.balance.economy.preparationTonicCost` | 70; rescued Neri/advanced service required; no repeat charge while active |
