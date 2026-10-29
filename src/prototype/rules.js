@@ -7050,6 +7050,19 @@
       reforgeBonus: { weapon: 5, armor: 3 },
     },
     companions: {
+      // Shared individual mastery budget. The same three thresholds apply to
+      // Charmed creatures, Soldiers, Rangers and boss pets. All coefficients
+      // are small, additive per tier, and never alter ability reach/cooldowns.
+      mastery: {
+        thresholds: [4, 10, 18],
+        nativeDamagePerTier: 0.03,
+        directDamagePerTier: 0.04,
+        controlDamagePerTier: 0.025,
+        slowSecondsPerTier: 0.075,
+        pushUnitsPerTier: 2,
+        siphonFractionPerTier: 0.005,
+        dustWardReductionPerTier: 0.01,
+      },
       // One native species maneuver, then one bounded elite signature after
       // companion Skill 2. Shared squad spacing prevents simultaneous spam.
       charmedSkills: {
