@@ -73,12 +73,14 @@
     rx: 225,
     ry: 1700,
   };
+  // Treasury entrance must remain off the carriageway (>=190 world units).
+  // The previous [1920,330] authored position was itself a road endpoint.
   const anchors = {
     town: [750, 2180],
     quarry: [2520, 510],
     field: [2850, 1170],
     mine: [2850, 2850],
-    treasury: [1920, 330],
+    treasury: [2170, 330],
     lookout: [3000, 2030],
     ore: [650, 390],
     wolf: [480, 1010],
