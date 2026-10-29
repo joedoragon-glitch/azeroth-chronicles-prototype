@@ -112,7 +112,7 @@
     // Working prototype names until the owner revisits bell-staff lore.
     rogue: [
       ['Ding and Sting', 'Bell burst / basic-damage refrain for Rogue and companions',
-       'Perform a circular pulse around yourself, harming foes and boosting nearby allies\' basics',
+       'Perform a self-centered pulse, harming foes and boosting Rogue\'s and nearby allies\' basics',
        'Raise a Racket: larger self-centered pulse, stronger basics for Rogue and nearby allies',
        'Both prototype names are under owner revision; mechanics stay separate from labels.'],
     ],
@@ -176,31 +176,31 @@
     const experimental = {
       2: ['Lead Feet', 'Slow / Quickstep',
         'Slow nearby foes and quicken Rogue and companions in the same area',
-        'Can\'t Dance: wider Slow and stronger allied movement/recovery',
+        'Can\'t Dance: wider Slow and stronger movement/recovery for Rogue and nearby allies',
         'Phase 5 prototype name; subject to owner review.'],
-      5: ['Sticky Shuffle', 'Stationary music / allied inside-circle protection',
+      5: ['Sticky Shuffle', 'Stationary music / Rogue and allied inside-circle protection',
         'Place a bell station that Slows foes and protects Rogue and allies while inside',
-        'Briar Boogie: a larger field with finite damaging pulses and a small allied ward',
+        'Briar Boogie: wider station with damaging pulses and a protective ward for Rogue and nearby allies',
         'Owner-approved placed magical music station, not a trap. Maximum two fields; tuning pending playtest.'],
-      8: ['Bad Bell Day', 'Enemy blast / allied Finale',
+      8: ['Bad Bell Day', 'Enemy blast / Rogue and allied Finale',
         'Blast foes while boosting Rogue\'s and nearby allies\' criticals and specials',
-        'Last Laugh: bigger blast and a brief non-boss hush; stronger allied Finale',
+        'Last Laugh: bigger blast and non-boss hush; stronger Finale for Rogue and nearby allies',
         'One native Rogue critical receipt per legal performance; no extra pulses or rerolls.'],
-      4: ['Sour Note', 'Enemy wither / allied Mending',
+      4: ['Sour Note', 'Enemy wither / Rogue and allied Mending',
         'Afflict foes with withering damage; mend Rogue and nearby allies',
-        'Rotten Chorus: stronger wither, small healing budget and heal-received boon',
+        'Rotten Chorus: stronger wither and healing benefits for Rogue and nearby allies',
         'One finite damage and healing budget; no revival or recursively boosted healing.'],
       3: ['Beat Breaker', 'Native cast interrupt / Steady Beat',
         'Interrupt foes and protect Rogue\'s and nearby allies\' charged preparations',
-        'Shut the Band Up: wider interrupt, brief non-boss hush and longer protection',
+        'Shut the Band Up: wider interrupt, non-boss hush and longer protection for Rogue and allies',
         'No immunity to death, invalid casts, Recall or boss scripting.'],
       7: ['Wrong Foot', 'Push + Weaken / Firm Footing',
         'Displace and weaken foes; bolster Rogue\'s and nearby allies\' strikes',
-        'Panic Party: wider shove/Weaken and stronger allied damage',
+        'Panic Party: wider shove/Weaken and stronger Rogue and ally damage',
         'First-play working title; gameplay values are provisional.'],
       6: ['Stolen Beat', 'Cooldown debt / Borrowed Time',
         'Delay enemy skills; accelerate Rogue\'s and nearby allies\' special recovery',
-        'Time Out: larger debt pulse and stronger allied recharge',
+        'Time Out: larger debt pulse and stronger special recharge for Rogue and nearby allies',
         'Phase 5 prototype name; subject to owner review.'],
     };
     const row = game.hero.class === 'rogue' && slot !== 1
@@ -209,7 +209,9 @@
     return row
       ? { name: row[0], role: row[1], tap: row[2], charge: row[3],
           note: (row[4] || '') + (game.hero.class === 'rogue'
-            ? ' Rogue receives the same friendly boon if inside the skill area at cast release. Timed boons persist after instant pulses; Skill 5 protects only while inside its active station. Critical enhancements use the same eligibility.'
+            ? slot === 5
+              ? ' Rogue and companions receive protection while inside the music station, even if they enter after placement. Leaving removes protection immediately; critical effects follow the same area.'
+              : ' Rogue and nearby companions receive the same friendly boon from the Rogue-centered circle at release. Timed boons persist for their listed duration; critical enhancements follow the same eligibility.'
             : '') }
       : null;
   }
@@ -225,7 +227,7 @@
             { key: 'reach', label: 'Reach', value: x.range, unit: '' },
             { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
             { key: 'targets', label: 'Maximum hostile targets', value: x.cap, unit: '' },
-            { key: 'duration', label: 'Your / companion boon', value: x.seconds, unit: 's' },
+            { key: 'duration', label: slot === 5 ? 'Station lifetime' : 'Your / companion boon', value: x.seconds, unit: 's' },
             { key: 'cooldown', label: 'Cooldown',
               value: game.skillCooldown(slot, charged), unit: 's' },
           ];

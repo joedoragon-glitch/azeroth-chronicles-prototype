@@ -1594,8 +1594,13 @@
       advanceRogueMending(dt) {
         if (this.hero.class !== 'rogue' || !Number.isFinite(dt) || dt <= 0) return;
         for (const u of [this.hero, ...this.activeLivingParty()]) {
-          const effect = this.rogueSongBoon(u, 'mending');
-          if (!effect || !(effect.remainingHeal > 0)) continue;
+          // The clock already advanced this frame. Deliver the final lawful
+          // finite Mending slice if still active at frame start, without
+          // reviving fallen units or extending its expiry.
+          const state = roguePerformanceBoons.get(u),
+            effect = state?.zone === this.zoneId ? state.mending : null;
+          if (u.hp <= 0 || !effect || effect.until <= this.s.time - dt ||
+              !(effect.remainingHeal > 0)) continue;
           const live = Math.max(0.01, effect.until - (this.s.time - dt)),
             paid = Math.min(effect.remainingHeal, effect.remainingHeal * Math.min(dt, live) / live);
           u.hp = Math.min(u.maxHp, u.hp + paid);
