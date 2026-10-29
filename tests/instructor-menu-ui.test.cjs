@@ -45,7 +45,9 @@ for (const language of ['en', 'es'])
     click(t('Hero skills', 'Habilidades del héroe'));
     brief();
     for (const name of names)
-      assert(e.get('modal-actions').children.some((b) => b.textContent.includes(name)));
+      assert(e.get('modal-actions').children.some((b) => b.textContent.includes(name)),
+        'Expected ' + name + ' for ' + heroClass + ' / ' + g.hero.class +
+        '; actual: ' + e.get('modal-actions').children.map((b) => b.textContent).join(' | '));
     const before = g.snapshot();
     e.get('modal-actions').children[1].click();
     assert(e.get('modal-actions').children[0].disabled, 'training remains blocked without funds');
