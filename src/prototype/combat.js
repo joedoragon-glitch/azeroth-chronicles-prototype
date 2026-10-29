@@ -938,11 +938,14 @@
               ),
           );
         }
-        if ((u.wardUntil || 0) > this.s.time)
-          defensiveFactor = Math.min(defensiveFactor, 1 - Math.min(0.75, u.wardReduction || 0));
-        // The stronger native/placed ward wins; never multiply wards.
+        const nativeWard = (u.wardUntil || 0) > this.s.time
+          ? Math.min(0.75, u.wardReduction || 0) : 0;
+        const stationWard = this.rogueStationProtection?.(u)?.ward || 0;
+        // Rogue's music supports existing native protection; don't discard
+        // either live benefit just because the other ward is stronger.
+        // The maximum meaningful reduction is 100% of post-armor damage.
         defensiveFactor = Math.min(defensiveFactor,
-          1 - (this.rogueStationProtection?.(u)?.ward || 0));
+          1 - Math.min(1, nativeWard + stationWard));
         mitigated *= defensiveFactor;
         u.hp = Math.max(0, u.hp - mitigated);
         if (
