@@ -356,7 +356,7 @@
               (b) => b.id === r.barracksId && b.kind === 'barracks' && b.progress >= 4,
             );
             if (!barracks || (!barracks.full && r.companionIds.length > 3))
-              throw Error('Invalid companion recovery queue capacity');
+              throw Error('Invalid companion care recovery queue capacity');
           }
         }
         if (s.companionVitalityRank === undefined) s.companionVitalityRank = 0;
