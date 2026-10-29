@@ -38,3 +38,11 @@ Latest synchronized branch: `main` incorporated as a second parent of the dedica
 This is **ready for owner code review**, not a claim of physical-device certification. In particular, no real Android/iOS thumb-play or full browser matrix was authorized; charged hold feedback, interact and navigation warning coexistence, small-screen on-device readability, rare app-update notifications, and first-run tutorial discoverability should still be checked in a real play session. Screenshot/geometry validation does not guarantee subjective aesthetics or performance on actual hardware.
 
 **Do not auto-merge or deploy.** A merge into `main` starts the automatic focused Pages pipeline, so obtain the owner's separate merge/release approval. The existing published game is unchanged until then.
+
+## 29 October follow-up — live Crowns in the same HP row (PR #593)
+
+The original 25 October Option B specification above remains the historical design record. The subsequent owner request keeps its minimal dock dimensions **but restores the carried Crown count** as a continuously visible item. The current implementation puts a small image rasterized directly from the existing silver Dark Lord portrait Crown loot painter plus the exact live, locale-formatted `hero.gold` amount **beside the HP values on the existing health-label row**, not in another wallet row. The XP/wallet detail line remains hidden; full finances and progression remain accessible through their existing menus. Desktop dock width remains 188px; phone HP dock remains capped at 186px. No extra controls, gameplay logic, or saved fields are added.
+
+No emoji, generic royal crown, new denomination, or separate artistic imitation is used. The shared coin image is prepared once at 2× resolution rather than repainted on every HUD tick. The adaptive phone low-health label is repositioned over the HP bar so it does not obscure the currency value. The focused test now checks that the amount fits without overlapping HP or growing the HUD for six-digit values across desktop, Spanish portrait phone, and two landscape phone layouts. See [the detailed implementation and test contract](COMPACT_HUD_CROWN_READOUT_20261029.md).
+
+**Status:** Draft PR #593, not merged or deployed. Automated validation and real-device visual acceptance must be reported separately.

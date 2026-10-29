@@ -362,6 +362,33 @@ button:disabled {
   font-size: 11px;
   margin: 8px 0;
 }
+/* Crown balance shares the existing HP text row, never adding another HUD line. */
+#hero-stats .health-readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+  min-width: 0;
+}
+#hero-stats .health-readout .hp-count,
+#hero-stats .health-readout .hud-crowns {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+#hero-stats .health-readout .hud-crowns {
+  /* A small 2x raster of the actual in-world silver Crown coin.
+     The background is out-of-flow: the HP row and HUD height do not grow. */
+  padding-left: 19px;
+  background-image: var(--hud-crown-image, none);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 17px 17px;
+  color: #dce6e9;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
 #hero-stats .restoring {
   display: block;
   color: #d7d6a0;
