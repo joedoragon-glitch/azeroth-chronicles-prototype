@@ -20,7 +20,13 @@ function scene(shots,blockedAtStart=true){
     speed:180,damage:2,life:3,hitRadius:18,style:'arrow',
   });
   let checks=0,impacts=0,terrainImpacts=0;
-  const oldBlocked=g.blocked,oldEvent=g.event;
+  const contacts=[];
+  const oldBlocked=g.blocked,oldEvent=g.event,oldVfx=g.enemyVfxProjectileImpact;
+  const hadVfx=Object.hasOwn(g,'enemyVfxProjectileImpact');
+  g.enemyVfxProjectileImpact=function(p,point){
+    contacts.push({x:point.x,y:point.y,terrain:!!point.terrain});
+    return oldVfx?.call(this,p,point);
+  };
   g.blocked=function(...args){checks++;return oldBlocked.apply(this,args)};
   g.event=function(name,detail){
     if(name==='projectileImpact'){impacts++;if(detail?.terrain)terrainImpacts++}
@@ -28,7 +34,9 @@ function scene(shots,blockedAtStart=true){
   };
   g.updateProjectiles(.05);
   delete g.blocked;delete g.event;
-  return {shots,blockedAtStart,checks,impacts,terrainImpacts,
+  if(hadVfx)g.enemyVfxProjectileImpact=oldVfx;
+  else delete g.enemyVfxProjectileImpact;
+  return {shots,blockedAtStart,checks,impacts,terrainImpacts,contacts,
     shotsRemaining:g.s.projectiles.length,heroHp:g.hero.hp,
     snapshot:g.snapshot()};
 }
@@ -38,6 +46,9 @@ for(const n of [1,24,96]){
   assert.equal(outcome.checks,n*2,
     'the j=0 terrain origin must need only segment rejection and initial contact');
   assert.equal(outcome.heroHp,10000,'no hero damage through terrain');
+  assert.equal(outcome.contacts.length,n,'every buried arrow receives one terrain impact');
+  assert(outcome.contacts.every(p=>p.x===1420&&p.y===1300&&p.terrain),
+    'degenerate terrain contact must be exactly the original projectile origin');
   console.log('PROJECTILE_ORIGIN_COLLISION '+JSON.stringify({
     shots:n,checks:outcome.checks,impacts:outcome.impacts,
     terrainImpacts:outcome.terrainImpacts,remaining:outcome.shotsRemaining,
