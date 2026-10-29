@@ -3276,7 +3276,6 @@
       ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
       : [];
     const distance = (e) => Math.hypot(e.x - hero.x, e.y - hero.y);
-    const interior = combatCriticalArrival(destination);
     const leaders = (e) => e.type === 'boss' || e.fieldCaptain ||
       e.roomCaptain || e.captain;
     const enemies = known && destination === game.zoneId
@@ -3291,15 +3290,13 @@
     // are eligible; field bosses are never left for combat-time decoding.
     const imminent = combatFirst ? enemies.filter(
       (e) => leaders(e) || distance(e) <= 850) : [];
-    const fringe = combatFirst ? enemies : enemies.filter(
-      (e) => interior || distance(e) <= 4000);
+    const fringe = enemies;
     const neighbors = known && destination === game.zoneId
       ? [...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
         ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' })),
         ...(known.buildings || []).map((e) => ({ ...e, renderKind: 'building' })),
         ...(known.nodes || []).map((e) => ({ ...e, renderKind: 'node' }))]
-          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y) &&
-            (interior || distance(e) <= 4000))
+          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
           .sort((a, b) => distance(a) - distance(b))
       : [];
     const keys = new Set();
