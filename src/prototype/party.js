@@ -1554,7 +1554,7 @@
         return entry && entry.until > this.s.time ? entry : null;
       }
       applyRogueSongBoon(u, family, form) {
-        if (!['refrain', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
+        if (!['refrain', 'cadence', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
           this.hero.class !== 'rogue' ||
           !(u === this.hero ? u.hp > 0 : this.activeLivingParty().includes(u)))
           return false;
@@ -1627,12 +1627,14 @@
           this.hero.level * 2 + this.companionInheritedDamageBonus()
         );
       }
-      // Skill 1's short allied refrain affects ordinary companion basics only.
-      // Existing troop special skills retain their unmodified source damage.
+      // Manual Skill 1 and critical automatic cadence affect ordinary basics.
+      // They have independent expiry and never add together or buff specials.
       companionBasicAttackDamage(u) {
         const base = this.companionAttackDamage(u);
-        return base * (1 + ((u.rogueSharpRefrainUntil || 0) > this.s.time
-          ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0));
+        const refrain = (u.rogueSharpRefrainUntil || 0) > this.s.time
+          ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0;
+        return base * (1 + Math.max(refrain,
+          this.rogueSongBoon(u, 'cadence')?.basicDamage || 0));
       }
       charmedEliteTrained(u) {
         return this.hero.class === 'rogue' && !!u?.charmOrigin &&
