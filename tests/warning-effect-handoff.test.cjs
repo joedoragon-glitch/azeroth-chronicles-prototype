@@ -14,6 +14,10 @@ function arena(family = 'thorn', form = 'normal') {
   c.s.party = [];
   c.s.mercyTime = 0;
   c.s.holdFire = true;
+  // Simulate a lawful committed field encounter: first-play Greenwood bosses
+  // and ordinary monsters otherwise refuse unprovoked hits by design.
+  c.s.thornHeroInitiated = true;
+  c.s.valeFieldAwakened = true;
   c.line = () => true;
   c.blocked = () => false;
   c.clearSegment = () => true;
