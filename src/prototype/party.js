@@ -2161,6 +2161,19 @@
           Math.max(0, this.regionIndex()) * R.gatheringTravel.capacityPerRegion
         );
       }
+      avoidDeliveryAfterThreat(u) {
+        const trip = depositTrips.get(u);
+        if (!trip?.site) return;
+        deliveryAvoidance.set(u, {
+          zone: this.zoneId,
+          point: { x: trip.site.x, y: trip.site.y },
+          until: this.s.time + R.gatheringTravel.retryDestinationSeconds,
+        });
+        depositTrips.delete(u);
+        // The same hazard invalidates any partially evaluated destination
+        // ranking, not just a completed cached delivery target.
+        depositPlans.delete(u);
+      }
       budgetedDepositSite(u, sites, avoid) {
         // The old ranking (shortest traversable path plus danger penalties)
         // is preserved. Search progress is transient; an unfinished search
@@ -3514,7 +3527,10 @@
                 .sort((a, b) => dist(u, a) - dist(u, b))[0]?.enemy ||
               (this.companionAreaDanger(u) ? { id: 'environment-danger', x: u.x, y: u.y } : null);
             if (threat) {
-              if (this.companionCautiousCombat(u, threat, living, dt)) continue;
+              if (this.companionCautiousCombat(u, threat, living, dt)) {
+                if (u.order?.type === 'deposit') this.avoidDeliveryAfterThreat(u);
+                continue;
+              }
             } else {
               this.clearCompanionJudgment(u);
               this.clearPartyCharge(u);
@@ -3605,17 +3621,7 @@
             const enemy = this.gatheringEncounter(u);
             if (enemy) {
               if (this.companionCautiousCombat(u, enemy, living, dt)) {
-                if (u.order.type === 'deposit') {
-                  const trip = depositTrips.get(u);
-                  if (trip?.site) {
-                    deliveryAvoidance.set(u, {
-                      zone: this.zoneId,
-                      point: { x: trip.site.x, y: trip.site.y },
-                      until: this.s.time + R.gatheringTravel.retryDestinationSeconds,
-                    });
-                    depositTrips.delete(u);
-                  }
-                }
+                if (u.order.type === 'deposit') this.avoidDeliveryAfterThreat(u);
               } else {
                 this.engage(enemy);
                 this._tacticalPartyTargets.set(u.id, enemy.id);
