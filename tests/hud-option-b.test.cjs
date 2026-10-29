@@ -44,7 +44,12 @@ test('Crowns remain visible inside the existing HP row on PC and phone', () => {
   const shared = read('styles/prototype.css');
   assert.match(app, /class="health-readout"/);
   assert.match(app, /class="hud-crowns"/);
+  assert.match(app, /PrototypeRenderer\.drawCrownLoot\(ink, \{ x: 12, y: 12 \}\)/,
+    'HUD coin uses the same Dark Lord portrait painter as world loot');
   assert.match(app, /Math\.floor\(h\.gold\)\.toLocaleString\(language === 'es' \? 'es-ES' : 'en-US'\)/);
+  assert.doesNotMatch(app, /'">👑 '/, 'generic emoji must not represent minted Crowns');
+  assert.match(shared, /background-image: var\(--hud-crown-image, none\);/);
+  assert.match(shared, /background-size: 17px 17px;/);
   assert.match(shared, /#hero-stats \.health-readout \{[^}]*display: flex;/);
   assert.match(shared, /#hero-stats \.health-readout \.hud-crowns \{[^}]*font-variant-numeric: tabular-nums;/);
   // The old wallet/XP row stays menu-only. The Crown counter is independent.
