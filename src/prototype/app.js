@@ -785,7 +785,25 @@
       'Grupos activos mayores y depósito de suministros.',
     'Keep watch while a companion builds. Recall pauses work; progress is kept.':
       'Vigila mientras un compañero construye. Reagrupar pausa el trabajo; se conserva el progreso.',
-    'Queue payment order: recovery → treatment → recruitment.':
+    'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds heals the hero and living companions for 30 crowns.':
+      'Elige qué compañeros caídos recuperar por 40 coronas cada uno. Si te faltan coronas, déjalos en cola por orden. Curar heridas devuelve toda la salud al héroe y a los compañeros vivos por 30 coronas.',
+    'Queue full: upgrade to Full Barracks for unlimited recovery requests.':
+      'Cola llena: mejora a cuartel completo para recuperar compañeros sin límite de solicitudes.',
+    'Your company has no fallen members.': 'No hay compañeros caídos en tu compañía.',
+    'Recover now for 40 crowns, or join the existing queue.':
+      'Recupera ahora por 40 coronas o añade a la cola existente.',
+    'Companion recovery queued. Select the same companion to cancel.':
+      'Recuperación en cola. Elige al mismo compañero para cancelarla.',
+    'The Captain already has a recovery queued.':
+      'El capitán ya tiene una recuperación en cola.',
+    'Basic Barracks recovery queue is full (3). Upgrade to Full Barracks for unlimited recovery requests.':
+      'La cola del cuartel básico está llena (3). Mejora a cuartel completo para eliminar el límite de solicitudes.',
+    'No fallen companions': 'No hay compañeros caídos',
+    'Queued · tap to cancel. No crowns spent.':
+      'En cola · toca para cancelar. No has gastado coronas.',
+    'Short on crowns? Tap to queue.': '¿Te faltan coronas? Toca para dejarlo en cola.',
+    'No fallen companions.': 'No hay compañeros caídos.',
+        'Queue payment order: recovery → treatment → recruitment.':
       'Orden de pago de la cola: recuperación → tratamiento → reclutamiento.',
     'Automatic when eligible.': 'Automático al cumplir los requisitos.',
     'Automatic when eligible; full group → reserve.':
@@ -1410,6 +1428,17 @@
       return piece
         .replace('Cancel queued recovery', 'Cancelar recuperación en cola')
         .replace('Cancel queued treatment', 'Cancelar tratamiento en cola');
+    if (/^Basic Barracks recovery queue: \d+\/3\.$/.test(piece))
+      return piece.replace('Basic Barracks recovery queue: ', 'Cola del cuartel básico: ');
+    if (/^Full Barracks recovery queue: \d+ \(no limit\)\.$/.test(piece))
+      return piece
+        .replace('Full Barracks recovery queue: ', 'Cola del cuartel completo: ')
+        .replace('(no limit)', '(sin límite)');
+    if (/^Recovery page \d+\/\d+$/.test(piece))
+      return piece.replace('Recovery page ', 'Página de recuperación ');
+    if (/^Queued #\d+$/.test(piece)) return piece.replace('Queued #', 'En cola #');
+    if (/^Queued recoveries: /.test(piece))
+      return piece.replace('Queued recoveries: ', 'Recuperaciones en cola: ');
     if (/^Queued (recovery|treatment): /.test(piece))
       return piece
         .replace('Queued recovery: ', 'Recuperación en cola: ')

@@ -447,6 +447,64 @@ try {
     assert.equal(soldier.active, true, cls + ' retains legacy fallen-active behavior');
   }
 
+  // PR #632 integration: a Rogue's fallen, auto-reserved Charmed allies
+  // remain recoverable in PR #636's multi-entry Basic Barracks queue without
+  // reoccupying field slots that subsequent lawful Charms have filled.
+  {
+    const queueRun = fresh();
+    const goblins = [capture(queueRun), capture(queueRun), capture(queueRun)];
+    const ids = goblins.slice(0, 2).map((u) => u.id);
+    const origins = goblins.slice(0, 2).map((u) => ({ ...u.charmOrigin }));
+    const names = goblins.slice(0, 2).map((u) => u.customName);
+    goblins[0].masteryPoints = 3;
+    const base = {
+      id: 'rogue-multi-recovery', kind: 'barracks', x: 550, y: 560,
+      progress: 4, full: false, queue: 0, queueType: null,
+      upgradeProgress: 0, upgradePaid: false,
+    };
+    queueRun.zone().buildings.push(base);
+    for (const u of goblins.slice(0, 2)) {
+      assert.equal(queueRun.hitParty(u, u.hp + 100, 0, null, true), true);
+      assert.equal(u.hp, 0);
+      assert.equal(u.active, false, 'native Rogue defeat frees the field slot');
+    }
+    assert.equal(queueRun.activeParty().length, 1);
+    const replacements = [capture(queueRun, 'skeleton'), capture(queueRun, 'skeleton')];
+    assert(replacements.every((u) => u.active));
+    assert.equal(queueRun.activeParty().length, 3);
+    const activeIds = queueRun.activeParty().map((u) => u.id);
+    queueRun.zone().enemies = [];
+    queueRun.hero.gold = 0;
+    for (const id of ids)
+      assert(queueRun.requestCompanionCare('recovery', base.id, id));
+    assert.deepEqual(
+      queueRun.companionRecoveryRequests().map((r) => r.companionIds[0]), ids,
+      'both fallen reserve Charms are queued by their original IDs',
+    );
+    const restored = Campaign.restore(queueRun.snapshot(), () => 0.9);
+    assert.deepEqual(
+      restored.companionRecoveryRequests().map((r) => r.companionIds[0]), ids,
+    );
+    assert.equal(restored.activeParty().length, 3);
+    restored.hero.gold = 80;
+    restored.resolveCompanionCareRequests();
+    assert.equal(restored.hero.gold, 0);
+    assert.equal(restored.companionRecoveryRequests().length, 0);
+    assert.deepEqual(restored.activeParty().map((u) => u.id), activeIds,
+      'recovery never retakes a field slot from replacement Charms');
+    for (const [i, id] of ids.entries()) {
+      const unit = restored.s.party.find((u) => u.id === id);
+      assert(unit && unit.hp === unit.maxHp);
+      assert.equal(unit.active, false, 'recovered Rogue ally stays in reserve');
+      assert.equal(unit.customName, names[i]);
+      assert.deepEqual(unit.charmOrigin, origins[i]);
+      assert.deepEqual(restored.s.charmCaptures[id], origins[i]);
+    }
+    assert.equal(restored.s.party.find((u) => u.id === ids[0]).masteryPoints, 3);
+    assert.equal(restored.rosterCount(), 5, 'paid recovery adds no new ownership');
+    assert.doesNotThrow(() => Campaign.validate(restored.snapshot()));
+  }
+
   // Original classes retain their normal companion profile, recruiting and
   // active capacity; they cannot make new Rogue captures.
   for (const cls of ['paladin', 'mage', 'ranger']) {
