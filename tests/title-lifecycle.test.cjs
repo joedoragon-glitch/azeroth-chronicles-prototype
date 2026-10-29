@@ -138,6 +138,36 @@ for (const [label, launchRenderer, pending, recoveryPaused, expectedAttempts] of
   assert.equal(attempts, expectedAttempts, label);
 }
 
+// A browser terminated in active gameplay leaves a tiny recovery marker. The
+// validated refuge relocation creates a NEW Campaign object; its first scene
+// must still pass the title readiness gate instead of leaving every button
+// disabled at "Drawing first scene…".
+for (const language of ['en', 'es']) {
+  const C = require('../src/prototype/engine');
+  const initial = new C('normal', 'mage', () => 0.5);
+  const snapshot = initial.snapshot();
+  const storage = new Map([
+    ['azeroth-v4-normal', JSON.stringify(snapshot)],
+    ['azeroth-active-play-recovery-v1', JSON.stringify({
+      version: 1, active: true, mode: 'normal', heroClass: 'mage',
+      nextId: snapshot.nextId, gameTime: snapshot.time,
+    })],
+  ]);
+  const { scope, elements, frame } =
+    shell(language, 'mage', { stayOnTitle: true, storage });
+  const beforeRecovery = scope.Prototype.game;
+  elements.get('title-continue').click();
+  assert.notEqual(scope.Prototype.game, beforeRecovery,
+    'crash marker must exercise a real recovered Campaign object');
+  assert.equal(scope.Prototype.started, false,
+    'recovery still waits for the ready scene before activation');
+  frame(850);
+  assert.equal(scope.Prototype.started, true,
+    'recovered Campaign must not strand Continue behind the loading screen');
+  assert.equal(elements.get('title-screen').hidden, true);
+  assert.equal(elements.get('title-continue').disabled, false);
+}
+
 const fresh = shell('en', 'paladin', { stayOnTitle: true, seedSave: false });
 assert.equal(fresh.scope.Prototype.started, false);
 assert.equal(fresh.elements.get('title-continue').disabled, true);
