@@ -787,7 +787,7 @@
       if (
         e.hp > 0 &&
         !e.returning &&
-        e.telegraph &&
+        FX.pendingWarning(e.telegraph) &&
         !e.telegraph.anonymousCast &&
         !(e.family === 'ridge' && e.ledgerOpen)
       ) {
