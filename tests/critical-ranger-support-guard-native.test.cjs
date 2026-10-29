@@ -44,6 +44,7 @@ assert.deepEqual(Levels.LEVERS.guardDuration.values, [0.15, 0.30, 0.50]);
 for (const level of [1, 2, 3]) {
   const a = arena(), b = arena();
   const counter = attach(b.g, {level});
+  assert(a.g.healCompanionCasters().includes(a.archer), 'native Ranger remains the critical Heal actor');
   assert(a.g.rangerSupport('health', true, a.g.hero));
   assert(b.g.rangerSupport('health', true, b.g.hero));
   assert.equal(counter.count(), 1, 'Heal releases once at Level ' + level);

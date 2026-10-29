@@ -42,7 +42,7 @@ These are **default** desktop bindings. Keyboard presets and individual keys can
 | Change target | E | Target button |
 | Recall companions | Backtick key (or Q with default bindings) | Recall button |
 | Squad doctrine | Tab (when available) | Contextual Squad button |
-| Ranger Heal | H | Heal button |
+| Companion Heal (Ranger, Charmed ranged healer, eligible pet) | H | Heal button |
 | Map / talents / skill reference | Z / C / X | Adventure menu |
 | Pause / help / back | P (or V) / G / Esc | Menu |
 

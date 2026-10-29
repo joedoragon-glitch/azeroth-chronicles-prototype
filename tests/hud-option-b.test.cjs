@@ -40,6 +40,29 @@ test('PC retains actions and context while reducing permanent sidebar', () => {
   assert.match(hidden, /#cancel-navigation-button \{[\s\S]*?right: 208px/);
 });
 
+test('Crowns remain visible inside the existing HP row on PC and phone', () => {
+  const shared = read('styles/prototype.css');
+  assert.match(app, /class="health-readout"/);
+  assert.match(app, /class="hud-crowns"/);
+  assert.match(app, /coin\.width = coin\.height = 56;/,
+    'coin texture includes padding for the full mint and shadow');
+  assert.match(app, /PrototypeRenderer\.drawCrownLoot\(ink, \{ x: 14, y: 14 \}\)/,
+    'HUD coin uses the same Dark Lord portrait painter as world loot');
+  assert.match(app, /Math\.floor\(h\.gold\)\.toLocaleString\(language === 'es' \? 'es-ES' : 'en-US'\)/);
+  assert.doesNotMatch(app, /'">👑 '/, 'generic emoji must not represent minted Crowns');
+  assert.match(shared, /#hero-stats \.health-readout \.hud-crowns::before \{/,
+    'coin sits in its own unclipped icon box instead of the short text line');
+  assert.match(shared, /#hero-stats \.health-readout \.hud-crowns::before \{[^}]*position: absolute;/);
+  assert.match(shared, /#hero-stats \.health-readout \.hud-crowns::before \{[^}]*width: 19px;[^}]*height: 19px;/);
+  assert.match(shared, /#hero-stats \.health-readout \.hud-crowns::before \{[^}]*background-image: var\(--hud-crown-image, none\);/);
+  assert.match(shared, /#hero-stats \.health-readout \{[^}]*display: flex;/);
+  assert.match(shared, /#hero-stats \.health-readout \.hud-crowns \{[^}]*font-variant-numeric: tabular-nums;/);
+  // The old wallet/XP row stays menu-only. The Crown counter is independent.
+  assert.match(desktop, /#hero-stats \.wallet \{\s*display: none;/);
+  assert.match(phone, /#hero-stats \.wallet,[\s\S]*?display: none;/);
+  assert.match(phone, /#hero-stats \.hud-low-health \{[\s\S]*?top: 13px;/);
+});
+
 test('Phone has one visible native Menu control with a readable label', () => {
   const menu = finalRule(phone, "body[data-experience='phone'] #hud #menu-button");
   assert.match(menu, /position: fixed/);

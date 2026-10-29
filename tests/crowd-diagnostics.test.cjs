@@ -269,3 +269,71 @@ for (const mode of ['calm-follow', 'recall', 'critical-combat']) {
 
   console.log('MARCH_COMPANION_CALLSITE ' + JSON.stringify(sampled.results));
 }
+
+
+// Resumable planning must produce the native A*/BFS result, including
+// obstacle detours, while bounding *nested* authoritative terrain probes.
+{
+  const g = new C('developer', 'mage', () => 0.73);
+  g.s.time = 80;
+  g.s.mercyTime = 0;
+  const z = g.zone();
+  z.enemies = [];
+  z.props = [];
+  const start = { x: 600, y: 1000 },
+    destination = { x: 900, y: 1000 };
+  g.blocked = (x, y, _zone, r = 15) =>
+    x < 40 + r || y < 40 + r || x > 2745 - r || y > 2745 - r ||
+    (x > 730 - r && x < 780 + r && y > 750 - r && y < 1150 + r);
+  assert(!g.clearSegment(start, destination), 'the synthetic narrow-wall detour is real');
+  const native = {
+    companion: g.companionRoute(start, destination),
+    tactical: g.route(start, destination),
+  };
+  for (const mode of ['companion', 'tactical']) {
+    assert(native[mode].length, mode + ' native route can pass the obstacle');
+    const originalBlocked = g.blocked;
+    let pending = null, result, probes = 0, turns = 0, sawPending = false;
+    while (!result && turns++ < 350) {
+      g.s.time += 0.05;
+      let tickChecks = 0;
+      g.blocked = function (...args) {
+        tickChecks++;
+        return originalBlocked.apply(this, args);
+      };
+      try {
+        const next = g.advanceBudgetedRoute(start, destination, mode, pending);
+        probes += tickChecks;
+        assert(tickChecks <= g.routePlanningLimits().terrainProbesPerSearch,
+          'one ' + mode + ' search cannot consume an unlimited nested segment');
+        if (next.pending) {
+          sawPending = true;
+          pending = next.state;
+        } else result = next.path;
+      } finally {
+        g.blocked = originalBlocked;
+      }
+    }
+    assert(sawPending, mode + ' must genuinely suspend at the work limit');
+    assert(result, mode + ' completes a resumable path');
+    assert.deepEqual(result, native[mode],
+      mode + ' original route selection and smoothing remain unchanged');
+    assert(probes > g.routePlanningLimits().terrainProbesPerSearch);
+  }
+  // Shared with all route-planning consumers, even when multiple actors ask
+  // for different searches in one simulation update.
+  g.s.time += 0.05;
+  const originalBlocked = g.blocked;
+  let combined = 0;
+  g.blocked = function (...args) { combined++; return originalBlocked.apply(this, args); };
+  try {
+    for (let i = 0; i < 4; i++)
+      g.advanceBudgetedRoute(start, destination, i % 2 ? 'tactical' : 'companion');
+  } finally { g.blocked = originalBlocked; }
+  assert(combined <= g.routePlanningLimits().terrainProbesPerTick,
+    'companion, delivery and enemy planning share one tick allowance');
+  assert(!JSON.stringify(g.snapshot()).includes('routePlanning'),
+    'search frontiers and counters are never persisted');
+  delete g.blocked;
+}
+console.log('PASS resumable companion/tactical route parity, shared hard terrain budget, and transient state');
