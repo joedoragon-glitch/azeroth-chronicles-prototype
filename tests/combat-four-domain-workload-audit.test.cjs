@@ -155,6 +155,57 @@ for(const kind of ['captain-tick','thorn-boss-tick']){
   console.log('BOSS_CAPTAIN_LIVE_TICK_AUDIT '+JSON.stringify(r));
 }
 
+
+// Source-equivalent Thorn first-companion-hit retreat selection experiment.
+// Do not modify Campaign; measure all reachable patrol legs vs sorting first.
+// The selected leg must remain identical for each native obstacle fixture.
+for(const fixture of [
+  {hero:[1230,1400],wall:true},
+  {hero:[1450,1300],wall:true},
+  {hero:[950,1600],wall:true},
+  {hero:[1650,1600],wall:false},
+]) {
+  const evaluate=(earlyExit)=>{
+    const g=world({count:1,party:3,wall:fixture.wall,projectiles:0}),
+      z=g.zone(), thorn=g.bossEnemy(g.boss('thorn'),'normal',{x:1390,y:1340});
+    z.enemies=[thorn];
+    Object.assign(g.hero,{x:fixture.hero[0],y:fixture.hero[1]});
+    g.s.thornHeroInitiated=false;
+    const cfg=Campaign.rules, party=[g.hero,...g.activeLivingParty()],
+      route=cfg.thornPatrol.route;
+    let blocked=0,routeCalls=0,peakRoute=0;
+    const old=g.blocked,oldRoute=g.route;
+    g.blocked=function(...args){blocked++;return old.apply(this,args)};
+    g.route=function(...args){
+      const prior=blocked;routeCalls++;
+      const result=oldRoute.apply(this,args);
+      peakRoute=Math.max(peakRoute,blocked-prior);
+      return result;
+    };
+    const choices=route.map(([x,y],leg)=>({
+      x,y,leg,distance:Math.min(...party.map(u=>dist(u,{x,y})))
+    }));
+    let goal;
+    if(earlyExit){
+      const sorted=choices.filter(p=>p.distance>=cfg.fieldOnboarding.withdrawClearance &&
+        !g.blocked(p.x,p.y))
+        .sort((a,b)=>b.distance-a.distance || a.leg-b.leg);
+      goal=sorted.find(p=>g.route(thorn,p).length);
+    }else{
+      const sorted=choices.filter(p=>p.distance>=cfg.fieldOnboarding.withdrawClearance &&
+        !g.blocked(p.x,p.y)&&g.route(thorn,p).length)
+        .sort((a,b)=>b.distance-a.distance || a.leg-b.leg);
+      goal=sorted[0];
+    }
+    delete g.blocked;delete g.route;
+    return {goal:goal?.leg??null,blocked,routeCalls,peakRoute};
+  };
+  const original=evaluate(false),sorted=evaluate(true);
+  assert.equal(sorted.goal,original.goal,'Thorn retreat priority must not change');
+  assert(sorted.blocked<=original.blocked,'sorting before route checks cannot increase native collision probes in fixed fixture');
+  console.log('THORN_RETREAT_SORT_AUDIT '+JSON.stringify({fixture,original,sorted}));
+}
+
 assert.equal(typeof renderer.create,'function');
 console.log('RENDERER_MEASUREMENT_BOUNDARY '+JSON.stringify({
   canvas:'renderer.js draw()/metrics().phases samples every twelfth permitted draw',
