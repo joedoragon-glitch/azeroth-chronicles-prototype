@@ -22,15 +22,16 @@ test('Ogre hearth and legacy habitat use one road-accessible settlement', () => 
   // Reproduce a version-1 Appalachian save created with the previous
   // 1980,1820 habitat source, without deleting or regenerating old props.
   const prior = c.snapshot(), oldZone = prior.zones.highlands;
-  const moved = oldZone.props.filter((p) =>
-    String(p.id || '').startsWith('world-life-habitat-') &&
-    Math.hypot(p.x - site[2], p.y - site[3]) < 230);
-  assert(moved.length > 0, 'production region has an inhabited ogre habitat');
+  // A new campaign replaces nearby generic furniture with the stronger
+  // authored ogre stronghold. Historical v1 saves may still contain the
+  // original generic props at 1980,1820; preserve their exact identities.
+  const moved = [
+    { id: 'world-life-habitat-9001', x: 1905, y: 1800, r: 0, decorative: true, structure: 'lean-to' },
+    { id: 'world-life-habitat-9002', x: 2005, y: 1795, r: 0, decorative: true, structure: 'ridge-hearth' },
+    { id: 'world-life-habitat-9003', x: 2065, y: 1855, r: 0, decorative: true, structure: 'stone-seat' },
+  ];
+  oldZone.props.push(...moved.map((p) => ({ ...p })));
   const expected = moved.map((p) => ({ id: p.id, structure: p.structure }));
-  for (const p of moved) {
-    p.x += 1040;
-    p.y -= 1190;
-  }
   delete oldZone.highlandsOgreHabitatVersion;
   const restored = C.restore(prior);
   const zone = restored.zone();
