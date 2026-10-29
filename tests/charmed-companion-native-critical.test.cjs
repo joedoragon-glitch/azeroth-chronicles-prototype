@@ -7,6 +7,12 @@ const Critical = require('../src/prototype/critical-executions.js');
 const Levels = require('../src/prototype/critical-levels.js');
 const Native = require('../src/prototype/critical-party-native.js');
 const R = Campaign.rules;
+const addedRogue = !Campaign.classes.rogue;
+if (addedRogue) {
+  // Node's standalone Campaign engine keeps Rogue registration test-local.
+  Campaign.classes.rogue = { ...R.rogueHeroFoundation.stats, icon: '🔔' };
+  Campaign.talentProfiles.rogue = { ...R.rogueHeroFoundation.talents };
+}
 
 function game() {
   const g = new Campaign('normal', 'rogue', () => 0.9);
@@ -166,4 +172,8 @@ for (const level of [1, 2, 3]) {
 }
 assert.equal(Campaign.prototype._criticalPartyNative, undefined,
   'do not switch on criticals globally as part of this correction');
+if (addedRogue) {
+  delete Campaign.classes.rogue;
+  delete Campaign.talentProfiles.rogue;
+}
 console.log('PASS native Charmed companion melee/ranged basics, critical Heal tiers/auto/queue, integrity, OFF gate');
