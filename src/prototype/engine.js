@@ -7911,13 +7911,28 @@
     }
     updatePacks(dt) {
       if (this.peace) return;
-      const z = this.zone();
-      for (const pack of new Set(z.enemies.filter((e) => e.pack && !e.guard).map((e) => e.pack))) {
-        const members = z.enemies.filter((e) => e.pack === pack);
+      const z = this.zone(),
+        packs = new Set(),
+        groups = new Map();
+      // Build membership once per update, preserving both the first ordinary
+      // member's pack order and every member's original roster order. Guards
+      // sharing an ordinary pack still participate in its existing lifecycle.
+      for (const e of z.enemies) {
+        if (!e.pack) continue;
+        if (!e.guard) packs.add(e.pack);
+        const members = groups.get(e.pack);
+        if (members) members.push(e);
+        else groups.set(e.pack, [e]);
+      }
+      let nearbyParty;
+      for (const pack of packs) {
+        const members = groups.get(pack);
         if (
           members.some((e) => e.hp > 0) ||
           members.some((e) =>
-            [this.hero, ...this.activeLivingParty()].some((u) => dist(e.home, u) < 350),
+            (nearbyParty ||= [this.hero, ...this.activeLivingParty()]).some(
+              (u) => dist(e.home, u) < 350,
+            ),
           )
         ) {
           delete z.packTimers[pack];
