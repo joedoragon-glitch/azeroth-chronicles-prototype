@@ -275,7 +275,7 @@ try {
   const Critical = require('../src/prototype/critical-executions.js');
   const Levels = require('../src/prototype/critical-levels.js');
   const Native = require('../src/prototype/critical-party-native.js');
-  const families = {1:'refrain',2:'quickstep',3:'steadyBeat',4:'mending',
+  const families = {2:'quickstep',3:'steadyBeat',4:'mending',
     6:'borrowedTime',7:'firmFooting',8:'finale'};
   for (const critical of [false,true])
     for (const charged of [false,true])
@@ -292,26 +292,28 @@ try {
         }
         assert.equal(campaign.cast(slot,sample.foe.id,charged),true,
           'Rogue slot '+slot+' should cast in '+(charged?'charged':'tap')+' form');
+        const family = slot === 1
+          ? charged ? 'refrainCharged' : 'refrainTap' : families[slot];
         if(slot===5) {
           assert(campaign.rogueStationProtection(campaign.hero),
             'Rogue receives Skill 5 station protection');
           assert(campaign.rogueStationProtection(sample.unit),
             'companion retains station protection');
         } else {
-          assert(campaign.rogueSongBoon(campaign.hero,families[slot]),
+          assert(campaign.rogueSongBoon(campaign.hero,family),
             'Rogue receives Skill '+slot+' timed self-buff');
           if(slot===1)
-            assert((sample.unit.rogueSharpRefrainBonus||0)>0,
-              'companion retains Skill 1 basic-buff');
+            assert(campaign.rogueBasicDamageBonus(sample.unit)>0,
+              'companion retains the lawful form-specific Skill 1 basic-buff');
           else
-            assert(campaign.rogueSongBoon(sample.unit,families[slot]),
+            assert(campaign.rogueSongBoon(sample.unit,family),
               'companion retains Skill '+slot+' boon');
         }
         assert.equal(rolls,critical?1:0,'only one critical roll per cast');
         campaign.s.time+=20;
         assert.equal(slot===5
           ? campaign.rogueStationProtection(campaign.hero)
-          : campaign.rogueSongBoon(campaign.hero,families[slot]),null,
+          : campaign.rogueSongBoon(campaign.hero,family),null,
           'Rogue self-benefit does not persist after expiry');
       }
   // Self-centered geometry stays anchored to Rogue even after Skill 7
