@@ -1550,8 +1550,22 @@
           (u !== this.hero && (u.active === false || !this.s.party.includes(u)))
         ) return null;
         const saved = roguePerformanceBoons.get(u);
-        const entry = saved?.zone === this.zoneId ? saved[family] : null;
-        return entry && entry.until > this.s.time ? entry : null;
+        const entries = saved?.zone === this.zoneId ? saved[family] : null;
+        if (!entries?.length) return null;
+        // Independently cast songs overlap for their own legal lifetimes.
+        // Keep one-instance reads allocation-free for frequent combat checks.
+        const active = entries.filter((effect) => effect.until > this.s.time);
+        if (!active.length) return null;
+        if (active.length === 1) return active[0];
+        const sum = { until: 0, protection: false };
+        for (const entry of active) {
+          sum.until = Math.max(sum.until, entry.until);
+          sum.protection ||= entry.protection;
+          for (const field of ['basicDamage', 'move', 'recovery', 'specialRecovery',
+            'outgoing', 'incomingHealing', 'remainingHeal', 'criticalChance', 'specialDamage'])
+            sum[field] = (sum[field] || 0) + (entry[field] || 0);
+        }
+        return sum;
       }
       applyRogueSongBoon(u, family, form) {
         if (!['refrain', 'cadence', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
@@ -1563,32 +1577,29 @@
           state = { zone: this.zoneId };
           roguePerformanceBoons.set(u, state);
         }
-        const previous = state[family]?.until > this.s.time ? state[family] : null;
         const until = this.s.time + Math.min(8, Math.max(0, form.seconds || 0));
-        // One strongest instance per family, never additive or permanent.
-        state[family] = {
-          until: Math.max(previous?.until || 0, until),
-          basicDamage: Math.max(previous?.basicDamage || 0, Math.min(0.07, form.basicDamage || 0)),
-          move: Math.max(previous?.move || 0, Math.min(0.12, form.move || 0)),
-          recovery: Math.max(previous?.recovery || 0, Math.min(0.08, form.recovery || 0)),
-          specialRecovery: Math.max(previous?.specialRecovery || 0,
-            Math.min(0.18, form.specialRecovery || 0)),
-          outgoing: Math.max(previous?.outgoing || 0,
-            Math.min(0.08, form.outgoing || 0)),
-          protection: !!(previous?.protection || form.protection),
-          incomingHealing: Math.max(previous?.incomingHealing || 0,
-            Math.min(0.12, form.incomingHealing || 0)),
-          // Only a frozen critical Skill 4 release may increase the
-          // original 5%-of-max-HP HoT budget (up to Level-3 7.25%).
-          // Delivery ticks merely spend this finite budget; no extra rolls.
-          remainingHeal: Math.max(previous?.remainingHeal || 0,
-            Math.min(u.maxHp * (form.criticalMending === true ? 0.075 : 0.05),
-              u.maxHp * (form.healFraction || 0))),
-          criticalChance: Math.max(previous?.criticalChance || 0,
-            Math.min(0.06, form.criticalChance || 0)),
-          specialDamage: Math.max(previous?.specialDamage || 0,
-            Math.min(0.06, form.specialDamage || 0)),
-        };
+        if (until <= this.s.time) return false;
+        // One finite record per actual successful cast; successive tap,
+        // charged and automatic performances can truly combine. Remove
+        // expired records on the next application, no permanent unit stats.
+        const entries = (state[family] || []).filter((e) => e.until > this.s.time);
+        entries.push({
+          until,
+          basicDamage: Math.max(0, form.basicDamage || 0),
+          move: Math.max(0, form.move || 0),
+          recovery: Math.max(0, form.recovery || 0),
+          specialRecovery: Math.max(0, form.specialRecovery || 0),
+          outgoing: Math.max(0, form.outgoing || 0),
+          protection: !!form.protection,
+          incomingHealing: Math.max(0, form.incomingHealing || 0),
+          // Each lawful Mending cast owns a separate finite healing budget;
+          // critical levels cannot amplify its later delivery ticks again.
+          remainingHeal: Math.min(u.maxHp * (form.criticalMending === true ? 0.075 : 0.05),
+            u.maxHp * Math.max(0, form.healFraction || 0)),
+          criticalChance: Math.max(0, form.criticalChance || 0),
+          specialDamage: Math.max(0, form.specialDamage || 0),
+        });
+        state[family] = entries;
         return true;
       }
       advanceRogueMending(dt) {
@@ -1598,13 +1609,16 @@
           // finite Mending slice if still active at frame start, without
           // reviving fallen units or extending its expiry.
           const state = roguePerformanceBoons.get(u),
-            effect = state?.zone === this.zoneId ? state.mending : null;
-          if (u.hp <= 0 || !effect || effect.until <= this.s.time - dt ||
-              !(effect.remainingHeal > 0)) continue;
-          const live = Math.max(0.01, effect.until - (this.s.time - dt)),
-            paid = Math.min(effect.remainingHeal, effect.remainingHeal * Math.min(dt, live) / live);
-          u.hp = Math.min(u.maxHp, u.hp + paid);
-          effect.remainingHeal = Math.max(0, effect.remainingHeal - paid);
+            effects = state?.zone === this.zoneId ? state.mending : null;
+          if (u.hp <= 0 || !effects?.length) continue;
+          for (const effect of effects) {
+            if (effect.until <= this.s.time - dt || !(effect.remainingHeal > 0)) continue;
+            const live = Math.max(0.01, effect.until - (this.s.time - dt)),
+              paid = Math.min(effect.remainingHeal,
+                effect.remainingHeal * Math.min(dt, live) / live);
+            u.hp = Math.min(u.maxHp, u.hp + paid);
+            effect.remainingHeal = Math.max(0, effect.remainingHeal - paid);
+          }
         }
       }
       companionRallyMoveSpeed(u, base) {
@@ -1613,7 +1627,7 @@
         const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
         return this.companionMoveSpeed(base) *
           (this.charmedCompanionProfile(u)?.speed || 1) *
-          (1 + Math.max(rally, quickstep));
+          (1 + rally + quickstep);
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
@@ -1631,9 +1645,8 @@
       // Each remains independently timed and capped; specials are unaffected.
       companionBasicAttackDamage(u) {
         const base = this.companionAttackDamage(u);
-        const refrain = (u.rogueSharpRefrainUntil || 0) > this.s.time
-          ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0;
-        return base * (1 + refrain +
+        return base * (1 +
+          (this.rogueSongBoon(u, 'refrain')?.basicDamage || 0) +
           (this.rogueSongBoon(u, 'cadence')?.basicDamage || 0));
       }
       charmedEliteTrained(u) {
