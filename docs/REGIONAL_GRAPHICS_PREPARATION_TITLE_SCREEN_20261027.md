@@ -1,5 +1,12 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
+## 28 October 2026 — background-session title contract, PR #576 (implementation candidate)
+
+**Newer owner decision, superseding this document's historical in-place background-resume requirement:** when the game is actually hidden/minimized while playing, save the validated live campaign and show the existing bilingual title screen. A simple window blur without a hidden document remains an in-place pause. Returning to a visible tab **does not automatically resume combat**; **Continue Adventure / Continuar aventura** explicitly starts sprite/terrain/GPU preparation, validates the ready scene, and only then activates the game. Reuse any surviving GPU textures; if the WebGL context was lost, use Canvas fallback and rebuild behind the loading state. If the tab is hidden during Continue loading, cancel the pending activation instead of launching it on foreground return. A failed save keeps the game paused in memory rather than abandoning progress.
+
+This policy responds to the owner's Chromebook minimize/reopen report (`0.9.1+snapshot.dev.213`), which recorded `webglcontextlost` and 1,426 released procedural textures. This is evidence of graphics-context recovery, **not** proof that browser disk caches were cleared. See [background-return design and acceptance](BACKGROUND_RETURN_TO_TITLE_20261028.md) for the exact scope, safety exceptions, regression cases, and real-device tests. The PR is **not automatically device-verified**; match its exact-head CI and review before merge. The original PR #518 and #573 status notes below remain historical to their own integrations.
+
+
 ## 28 October 2026 — Chromebook-first test candidate, PR #573 (DRAFT — not published)
 
 The owner prioritizes smooth gameplay over quick loading and authorizes a **single active-region cache** experiment, **not all five regions simultaneously**. The target contract is:
