@@ -125,7 +125,8 @@ const controls=[
   ['engaged-8-enemies-3-allies',{ count:8,companions:3 }],
   ['engaged-24-enemies-5-allies',{ count:24,companions:5 }],
   ['crowded-wall-24-enemies',{ count:24,companions:5,wall:true }],
-  ['projectiles-24-enemies-24-shots',{ count:24,companions:5,shots:24 }]
+  ['projectiles-24-enemies-24-shots',{ count:24,companions:5,shots:24 }],
+  ['wall-and-projectiles-24-enemies',{ count:24,companions:5,shots:24,wall:true }]
 ];
 for (const [label, options] of controls) run(label, options);
 // Verify observer wrappers preserve saved gameplay outcomes in a live battle.
@@ -133,4 +134,9 @@ const options={count:8, companions:3};
 const native=run('parity-uninstrumented',options,false);
 const measured=run('parity-instrumented',options,true);
 assert.deepEqual(measured,native,'test-only method wrappers may not alter combat');
+const crowdedOptions={count:24,companions:5,wall:true};
+const nativeCrowded=run('parity-wall-uninstrumented',crowdedOptions,false);
+const measuredCrowded=run('parity-wall-instrumented',crowdedOptions,true);
+assert.deepEqual(measuredCrowded,nativeCrowded,
+  'test-only instrumentation cannot change obstructed enemy pursuit decisions');
 console.log('PASS combat hotpath audit native multi-actor ticks and test-only instrumentation parity');
