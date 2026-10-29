@@ -1666,9 +1666,8 @@
       }
       charmedEliteTrained(u) {
         return !!u?.charmOrigin && this.isCharmedCompanion(u) &&
-          (this.hero.class === 'rogue'
-            ? this.companionSecondSkillUnlocked()
-            : u.charmRingleaderTrained === true);
+          this.companionSecondSkillUnlocked() &&
+          (this.hero.class === 'rogue' || u.charmRingleaderTrained === true);
       }
       // Native Ringleader pursuit and wounded frenzy come from Rogue Skill 2
       // or a permanently promoted Charmed companion. Orin adds full HP/damage
