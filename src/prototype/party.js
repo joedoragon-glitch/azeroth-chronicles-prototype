@@ -2717,6 +2717,10 @@
             (kind === 'recovery' ? u.hp <= 0 : kind === 'treatment' && u.hp > 0 && u.hp < u.maxHp),
         );
       }
+      companionCareHeroWounded(kind, request) {
+        return kind === 'treatment' && request?.heroWounded === true &&
+          this.hero.hp > 0 && this.hero.hp < this.hero.maxHp;
+      }
       companionCareCandidate(kind, barracksId = null, companionId = null) {
         const units =
           kind === 'recovery'
@@ -2726,15 +2730,22 @@
                   : this.s.party.find((u) => u.hp <= 0),
               ].filter(Boolean)
             : this.s.party.filter((u) => u.hp > 0 && u.hp < u.maxHp);
-        return { companionIds: units.map((u) => u.id), barracksId, zone: this.zoneId };
+        return {
+          companionIds: units.map((u) => u.id),
+          ...(kind === 'treatment'
+            ? { heroWounded: this.hero.hp > 0 && this.hero.hp < this.hero.maxHp }
+            : {}),
+          barracksId,
+          zone: this.zoneId,
+        };
       }
       companionCareReason(kind, request, options = {}) {
         if (!['recovery', 'treatment'].includes(kind)) return 'Choose recovery or treatment.';
         const targets = this.companionCareTargets(kind, request);
-        if (!targets.length)
+        if (!targets.length && !this.companionCareHeroWounded(kind, request))
           return kind === 'recovery'
             ? 'No requested companion is still fallen.'
-            : 'No requested companion is living and wounded.';
+            : 'No requested party member is still wounded.';
         if (targets.some((u) => u.expeditionId))
           return 'A requested companion is away on a resource expedition.';
         const serviceReason = this.companionServiceReason();
@@ -2776,7 +2787,7 @@
           const success =
             kind === 'recovery'
               ? this.recover(request.companionIds[0])
-              : this.treatCompanions(request.companionIds);
+              : this.treatCompanions(request.companionIds, request.heroWounded === true);
           if (success) this.s.companionCareRequests[kind] = null;
           return success;
         }
@@ -2793,7 +2804,10 @@
         for (const kind of ['recovery', 'treatment']) {
           const request = this.s.companionCareRequests[kind];
           if (!request) continue;
-          if (!this.companionCareTargets(kind, request).length) {
+          if (
+            !this.companionCareTargets(kind, request).length &&
+            !this.companionCareHeroWounded(kind, request)
+          ) {
             this.cancelCompanionCareRequest(kind, true);
             continue;
           }
@@ -2805,7 +2819,7 @@
           const success =
             kind === 'recovery'
               ? this.recover(request.companionIds[0])
-              : this.treatCompanions(request.companionIds);
+              : this.treatCompanions(request.companionIds, request.heroWounded === true);
           if (success) this.s.companionCareRequests[kind] = null;
         }
       }
@@ -2845,25 +2859,33 @@
         this.event('companionRecovery', { companionId: id });
         return true;
       }
-      treatCompanions(companionIds = null) {
+      treatCompanions(companionIds = null, heroWounded = false) {
         const request = this.companionCareCandidate('treatment');
-        if (companionIds) request.companionIds = companionIds;
+        if (companionIds !== null) {
+          request.companionIds = companionIds;
+          request.heroWounded = heroWounded === true;
+        }
         const reason = this.companionCareReason('treatment', request);
         if (reason) {
           this.say(reason);
           return false;
         }
         const wounded = this.companionCareTargets('treatment', request);
+        const healHero = this.companionCareHeroWounded('treatment', request);
         if (!this.spend(this.companionTreatmentCost())) return false;
+        if (healHero) {
+          this.hero.hp = this.hero.maxHp;
+          this.event('heal', { x: this.hero.x, y: this.hero.y, resource: 'health', target: 'hero' });
+        }
         for (const u of wounded) {
           u.hp = u.maxHp;
           this.event('heal', { x: u.x, y: u.y, resource: 'health', target: u.id });
         }
-        this.say('Living companions treated. Fallen companions still require recovery.');
+        this.say('Party wounds treated. Fallen companions still require recovery.');
         this.notice(
-          'Companions treated',
+          'Wounds treated',
           4,
-          'Living wounded companions restored to full health.',
+          'Hero and wounded living companions restored to full health.',
           'feedback',
         );
         return true;
