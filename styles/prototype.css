@@ -376,7 +376,14 @@ button:disabled {
   white-space: nowrap;
 }
 #hero-stats .health-readout .hud-crowns {
-  color: #f1d184;
+  /* A small 2x raster of the actual in-world silver Crown coin.
+     The background is out-of-flow: the HP row and HUD height do not grow. */
+  padding-left: 19px;
+  background-image: var(--hud-crown-image, none);
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 17px 17px;
+  color: #dce6e9;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: -0.02em;
