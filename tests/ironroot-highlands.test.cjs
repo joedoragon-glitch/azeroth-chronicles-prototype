@@ -11,6 +11,44 @@ function test(name, fn) {
   console.log('PASS ' + name);
 }
 const fresh = () => new C('normal', 'paladin', () => 0.9);
+test('Ogre hearth and legacy habitat use one road-accessible settlement', () => {
+  const c = fresh();
+  c.enter('highlands');
+  const site = C.rules.sites[2].find(([id]) => id === 'ogre-hearth');
+  const habitat = C.rules.worldLifePlans[2].habitats.find((h) => h.id === 'ogre-hearth');
+  assert.deepEqual(habitat.center, site.slice(2), 'habitat and named camp share one center');
+  assert(c.distanceToRoad(c.zone(), { x: site[2], y: site[3] }) <= 260);
+
+  // Reproduce a version-1 Appalachian save created with the previous
+  // 1980,1820 habitat source, without deleting or regenerating old props.
+  const prior = c.snapshot(), oldZone = prior.zones.highlands;
+  const moved = oldZone.props.filter((p) =>
+    String(p.id || '').startsWith('world-life-habitat-') &&
+    Math.hypot(p.x - site[2], p.y - site[3]) < 230);
+  assert(moved.length > 0, 'production region has an inhabited ogre habitat');
+  const expected = moved.map((p) => ({ id: p.id, structure: p.structure }));
+  for (const p of moved) {
+    p.x += 1040;
+    p.y -= 1190;
+  }
+  delete oldZone.highlandsOgreHabitatVersion;
+  const restored = C.restore(prior);
+  const zone = restored.zone();
+  assert.equal(zone.highlandsOgreHabitatVersion, 1);
+  for (const record of expected) {
+    const p = zone.props.find((q) => q.id === record.id);
+    assert(p, 'historical habitat prop keeps its ID');
+    assert.equal(p.structure, record.structure);
+    assert(Math.hypot(p.x - site[2], p.y - site[3]) < 310,
+      'historical habitat prop moves to the actual ogre camp');
+  }
+  const once = JSON.stringify(zone.props.filter((p) => expected.some((e) => e.id === p.id)));
+  const again = C.restore(restored.snapshot());
+  assert.equal(
+    JSON.stringify(again.zone().props.filter((p) => expected.some((e) => e.id === p.id))),
+    once, 'second restore never expands or repositions the same habitat',
+  );
+});
 test('Ironroot production scenes leave homes, habitats, service spacing and roads intact', () => {
   const c = fresh();
   c.enter('highlands');
