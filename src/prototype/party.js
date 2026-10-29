@@ -1627,14 +1627,14 @@
           this.hero.level * 2 + this.companionInheritedDamageBonus()
         );
       }
-      // Manual Skill 1 and critical automatic cadence affect ordinary basics.
-      // They have independent expiry and never add together or buff specials.
+      // Different Rogue song families stack additively for ordinary basics.
+      // Each remains independently timed and capped; specials are unaffected.
       companionBasicAttackDamage(u) {
         const base = this.companionAttackDamage(u);
         const refrain = (u.rogueSharpRefrainUntil || 0) > this.s.time
           ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0;
-        return base * (1 + Math.max(refrain,
-          this.rogueSongBoon(u, 'cadence')?.basicDamage || 0));
+        return base * (1 + refrain +
+          (this.rogueSongBoon(u, 'cadence')?.basicDamage || 0));
       }
       charmedEliteTrained(u) {
         return this.hero.class === 'rogue' && !!u?.charmOrigin &&
