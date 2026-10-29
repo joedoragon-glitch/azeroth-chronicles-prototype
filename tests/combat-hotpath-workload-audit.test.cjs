@@ -219,6 +219,82 @@ for(const [label, opts] of [
   }));
 }
 
+
+// Matched full-crowd responsiveness gate. Reconstruct the unchanged original
+// enemy-follow decision from main using the public synchronous route() and
+// the same movement-plan allowance, while leaving companion/hero logic native.
+// Both alternatives execute on the same candidate source and original native
+// collision/route geometry. No alternate combat mechanics are stubbed.
+function fullCrowdPursuit(legacy) {
+  const g=world({count:24,companions:5,wall:true});
+  if (legacy) {
+    const liveFollow=g.follow, plans=new WeakMap();
+    g.follow=function(entity,target,speed,dt,stop=45) {
+      if (!this.zone().enemies.includes(entity)) return liveFollow.call(this,entity,target,speed,dt,stop);
+      const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+      if (distance(entity,target)<=stop) return true;
+      if (this.clearSegment(entity,target)) {
+        entity.path=[];return this.move(entity,target,speed,dt,stop);
+      }
+      entity.routeAge=(entity.routeAge||0)-dt;
+      const trip=plans.get(entity),zone=this.s.zones[this.zoneId];
+      if(!trip||trip.zone!==zone||distance(trip.target,target)>80||entity.routeAge<=0) {
+        if(!trip||trip.zone!==zone||distance(trip.target,target)>80)entity.path=[];
+        if(this.reserveMovementPlan(entity)) {
+          entity.path=this.route(entity,target);
+          entity.routeAge=Campaign.rules.navigationPlanning.routeRetrySeconds;
+          plans.set(entity,{zone,target:{x:target.x,y:target.y}});
+        }
+      }
+      while(entity.path?.length&&distance(entity,entity.path[0])<1)entity.path.shift();
+      if(!entity.path?.length)return false;
+      const moved=this.move(entity,entity.path[0],speed,dt);
+      if(distance(entity,entity.path[0])<1)entity.path.shift();
+      return moved;
+    };
+  }
+  const actors=g.zone().enemies.map(e=>({
+    e,x:e.x,y:e.y,distance:Math.hypot(e.x-g.hero.x,e.y-g.hero.y)
+  }));
+  let probes=0,peak=0,firstMovement=null,firstContact=null;
+  const blocked=g.blocked;
+  g.blocked=function(...args){probes++;return blocked.apply(this,args);};
+  for(let i=0;i<120;i++){
+    const before=probes;
+    g.tick(.05,{x:0,y:0});
+    peak=Math.max(peak,probes-before);
+    if(firstMovement===null&&actors.some(({e,x,y})=>Math.hypot(e.x-x,e.y-y)>10))
+      firstMovement=i;
+    if(firstContact===null&&actors.some(({e})=>Math.hypot(e.x-g.hero.x,e.y-g.hero.y)<85))
+      firstContact=i;
+  }
+  delete g.blocked;
+  const rows=actors.map(({e,x,y,distance})=>({
+    moved:Math.hypot(e.x-x,e.y-y),
+    close:distance-Math.hypot(e.x-g.hero.x,e.y-g.hero.y),
+    noProgress:e.noProgress||0
+  }));
+  return {
+    type:legacy?'native-legacy-pursuit':'bounded-candidate-pursuit',
+    ticks:120, moved:rows.filter(row=>row.moved>10).length,
+    avgMovement:+(rows.reduce((s,row)=>s+row.moved,0)/rows.length).toFixed(2),
+    avgClosure:+(rows.reduce((s,row)=>s+row.close,0)/rows.length).toFixed(2),
+    firstMovementTick:firstMovement,firstContactTick:firstContact,
+    peakBlocked:peak,totalBlocked:probes,maxNoProgress:+Math.max(...rows.map(x=>x.noProgress)).toFixed(2),
+  };
+}
+{
+  const original=fullCrowdPursuit(true), candidate=fullCrowdPursuit(false);
+  console.log('COMBAT_24_ENEMY_RELEASE_GATE '+JSON.stringify({original,candidate}));
+  // The published engine does not guarantee every actor reaches contact
+  // in one crowded obstacle scene. Prevent *extra* full-crowd starvation.
+  assert(candidate.moved>=original.moved,'bounded planner cannot strand more enemies than legacy pursuit');
+  assert(candidate.avgMovement>=original.avgMovement-20,
+    'bounded planner must not significantly reduce crowd pursuit travel');
+  assert(candidate.peakBlocked<original.peakBlocked,
+    'bounded pursuit must reduce the worst crowded simulation update');
+}
+
 // Guard the deliberate scope: bosses, captains and scripted return-state
 // actors retain the original full route() contract and cast/patrol timings.
 for (const state of ['boss','captain','returning','unengaged']) {
