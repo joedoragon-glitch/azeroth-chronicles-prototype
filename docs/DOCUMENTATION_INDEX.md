@@ -229,10 +229,10 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ## World, geography, travel and narrative
 
 - **[Greenwood Flagship Work Handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md)** — **Maintained implementation handoff.** Selected 3200 layout, scene/save/route evidence, release authorization and pending owner playtest.
-- **[Greenwood Geography and Livelihood Audit](GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md)** — **Historical source audit.** Preserved 2700 source inventory, deficiencies and evidence overlays; current status routes to the handoff.
+- [Greenwood Geography and Livelihood Audit](GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md) — *Dated record.* Preserved 2700 source inventory, deficiencies and evidence overlays; current status routes to the handoff.
 - **[Greenwood Owner Art Direction](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md)** — **Approved design reference.** The 50 authorial decisions, including Scornfang ownership, with protected identities and engineering boundaries.
-- **[Greenwood Piedmont Design Brief](GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md)** — **Historical proposal.** Original environmental inspiration, subordinate to the approved decisions and selected measured implementation.
-- **[Greenwood Work Readiness Audit](GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md)** — **Historical quality audit.** Original 17 findings and route/scene/save acceptance rubric, with current status routed to the feature handoff.
+- [Greenwood Piedmont Design Brief](GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md) — *Dated record.* Original environmental inspiration, subordinate to the approved decisions and selected measured implementation.
+- [Greenwood Work Readiness Audit](GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md) — *Dated record.* Original 17 findings and route/scene/save acceptance rubric, with current status routed to the feature handoff.
 
 
 ### Regions, settlements, transportation and terrain

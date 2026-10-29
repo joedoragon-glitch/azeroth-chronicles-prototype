@@ -316,7 +316,7 @@ These handoffs authorize regional authoring while preserving existing campaign r
 
 #### Greenwood flagship selection — 29 October 2026
 
-The measured 3200-unit layout in #570 is selected over the preserved 2700 baseline and rejected 3400 alternative. Retain the approved 50-decision Piedmont-inspired authorial register, one western mill pond and working mill, cultivated orchard stages and separate decorative working cellar, both crossings and Scornfang's existing Treasury identity. Source migration 1 and scene revision 2 preserve v4 progress without double expansion; six quests, 32 ordinary outdoor enemies and 640 finite outdoor crowns remain. Existing Old Orchard Cellars, Thornfang/Mira and the estate's unfinished status are unchanged. The owner defers first-hour class/difficulty/companion judgment to post-release playtest and directs that unrelated-region test findings be documented separately rather than delay this implementation. Publication and device acceptance are recorded only in [Development state](DEVELOPMENT_STATE.md).
+The measured 3200-unit layout is selected over the preserved 2700 baseline and rejected 3400 alternative. The approved 50-decision Piedmont-inspired register governs the working mill and single western pond, staged orchards, separate decorative fruit cellar, both crossings and Scornfang's Treasury. Existing Old Orchard Cellars, Thornfang/Mira, the unfinished estate, six quests, 32 ordinary outdoor enemies and 640 finite outdoor crowns remain. [Authorial register](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md).
 
 #### Structure scale, edge-space and encounter density · 9 October 2026
 

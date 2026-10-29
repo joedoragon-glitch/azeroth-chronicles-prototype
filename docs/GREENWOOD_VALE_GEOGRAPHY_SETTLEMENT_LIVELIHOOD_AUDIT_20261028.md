@@ -1,6 +1,3 @@
-> **Current implementation evidence, 29 October 2026:** The selected 3200-unit reconstruction, source migration 1 and scene revision 2 are preserved in #570. The [current handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md) and [development state](DEVELOPMENT_STATE.md) own current candidate, validation and publication status. First-hour owner acceptance is deferred to post-release playtest; merge is authorized after the required engineering checks pass. The source audit below remains historical analysis.
-
-
 # Greenwood Vale — geography, settlement and livelihood reconstruction audit
 
 **28 October 2026 · Source/design audit · pinned baseline `main@2bab5c73a9492a91c39d2b261b958fab0f3548ee`**

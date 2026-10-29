@@ -1,10 +1,8 @@
-> **29 October implementation reconciliation:** #570 implements the selected 3200-unit layout, source migration 1 and scene revision 2. The authorial decisions remain unchanged. This document preserves its original design/audit context; [current handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md) and [Development state](DEVELOPMENT_STATE.md) own current engineering, owner authorization, release and pending playtest status. Earlier directions to start measurement or await implementation are historical.
-
 # Greenwood Vale — approved owner art-direction decisions
 
 **28 October 2026 · Authorial decision register · 50/50 selections resolved, including C06**
 
-**Game:** *So I Became the Dark Lord's Problem* (historical repository name: Azeroth Chronicles). **Scope:** flagship completion of the unfinished Greenwood Vale opening region, [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545) / [draft PR #544](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/544). **Status:** authorially **approved creative/art direction** and the exact Scornfang name—not new player-visible lore beyond expressly identified ownership, not a tested/merged/published feature, and not approval for every optional example in the earlier brief. Implementation awaits branch-based engineering.
+**Game:** *So I Became the Dark Lord's Problem* (historical repository name: Azeroth Chronicles). **Scope:** flagship completion of the unfinished Greenwood Vale opening region, [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545) / [planning PR #544](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/544). **Status:** authorially **approved creative/art direction** and the exact Scornfang name—not new player-visible lore beyond expressly identified ownership, not approval for every optional example in the earlier brief. Implementation evidence belongs in the [feature handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md); publication belongs in [Development state](DEVELOPMENT_STATE.md).
 
 ## Authority and how to use this register
 

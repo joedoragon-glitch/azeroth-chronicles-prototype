@@ -42,7 +42,7 @@ La aventura tiene objetivos principales, encargos locales y una historia que con
 
 Algunas opciones pueden conservar el nombre inglés en tu versión. Las explicaciones entre paréntesis ayudan a reconocerlas aunque todavía no estén traducidas.
 
-La reconstrucción de Greenwood amplía la región inicial con un molino y estanque de trabajo, huertos en distintas etapas y nuevas rutas por el bosque. **Scornfang's Treasury** conserva la misma Tesorería con el nombre corregido; **Old Orchard Cellars** sigue siendo un interior ocupado independiente de la bodega de trabajo decorativa. Las partidas existentes se adaptan al abrirse con la actualización. Conserva una copia exportada anterior; consulta [Estado de desarrollo](docs/DEVELOPMENT_STATE.md) para confirmar su publicación.
+Greenwood tiene un molino y estanque de trabajo, huertos en distintas etapas, una bodega decorativa independiente y rutas por el bosque. **Scornfang's Treasury** es un lugar distinto de **Old Orchard Cellars**, que sigue siendo un interior ocupado.
 
 ## Controles básicos
 
