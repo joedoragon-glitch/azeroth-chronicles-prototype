@@ -38,7 +38,7 @@
     // or examine paths/nearby actors while taking these observations.
     const partyDiagnosticSessions = new WeakMap();
     const partyDiagnosticCooldownKeys = [
-      'cd', 'skill1Cd', 'skill2Cd', 'skillGlobalCd', 'healCd', 'manaCd',
+      'cd', 'skill1Cd', 'skill2Cd', 'skill3Cd', 'skillGlobalCd', 'healCd', 'manaCd',
       'survivalCd', 'supportCd', 'potionCd',
     ];
     const partyDiagnosticRound = (value) =>
@@ -2116,6 +2116,129 @@
         if (!target) return false;
         return this.castCompanionHeal(u, target);
       }
+      // A third, separately timed, species-specific boss/captain heritage
+      // action. Night species also use this bounded geometry executor for their
+      // DIFFERENT innate Soul Drain / Shadow Pounce Skill 1.
+      charmedSpeciesSpecial(u, target, def, kind = 'heritage') {
+        const species = u.charmOrigin?.species,
+          native = kind === 'native',
+          cooldown = native ? 'skill1Cd' : 'skill3Cd',
+          cfg = R.balance.companions.charmedSkills,
+          team = charmedSquadSkills.get(this) ||
+            { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time };
+        if (!def || (u[cooldown] || 0) > 0 ||
+            this.s.time < (team[native ? 'basic' : 'heritage'] || 0) ||
+            dist(u, target) > def.range) return false;
+        const from = { x: u.x, y: u.y },
+          targetRange = Math.max(1, dist(u, target));
+        // A pounce/jump cannot damage before an actual traversable approach.
+        // Native Stalker Pounce is a real dash, not an invisible distant hit.
+        if (def.dash && (native || species === 'mireling')) {
+          if (!this.clearSegment(u, target, 12)) return false;
+          this.move(u, target, 560, 0.16, 35);
+          if (dist(u, target) > 88) return false;
+        }
+        const selfCenter = def.shape === 'circle' &&
+          (species === 'wolf' || species === 'ashbeast' || native);
+        const center = selfCenter ? u : target,
+          facing = Math.atan2(target.y - from.y, target.x - from.x),
+          end = { x: from.x + Math.cos(facing) * def.range,
+            y: from.y + Math.sin(facing) * def.range };
+        const lawful = (e) => e.hp > 0 && !e.neutral && !e.returning &&
+          this.tacticalDirectTargetable(e) && this.line(u, e);
+        // Only the chosen geometry touches a hostile. Never a circular
+        // distance-only shortcut for a cone or charge line.
+        const within = (e) => {
+          if (!lawful(e)) return false;
+          if (def.shape === 'single') return e === target;
+          if (def.shape === 'circle') return dist(e, center) <= def.radius;
+          if (def.shape === 'line')
+            return this.distanceToSegment(e, from, end) <= def.halfWidth &&
+              dist(e, from) <= def.range + def.halfWidth;
+          const heading = Math.atan2(e.y - from.y, e.x - from.x);
+          return dist(e, from) <= def.range &&
+            Math.abs(Math.atan2(Math.sin(heading - facing),
+              Math.cos(heading - facing))) <= def.halfAngle;
+        };
+        const victims = this.zone().enemies
+          .filter(within)
+          .sort((a, b) => (a === target ? -1 : 0) - (b === target ? -1 : 0) ||
+            dist(a, u) - dist(b, u) || this.idOrder(a, b))
+          .slice(0, def.cap);
+        if (!victims.length) return false;
+        const key = native
+            ? 'charm/night/' + (species === 'wraith' ? 'wraith-drain' : 'stalker-pounce')
+            : 'charm/heritage/' + species,
+          receipt = this._criticalPartyNative?.enabled
+            ? this._criticalPartyNative.release(this, key, u.id) : null,
+          criticalLever = receipt?.effect?.lever,
+          enhance = (value, lever) => criticalLever === lever
+            ? this._criticalPartyNative.enhance(receipt, value, lever)
+            : value,
+          base = this.rogueCompanionSpecialDamage(
+            u, this.companionAttackDamage(u) * def.multiplier),
+          damage = enhance(base, 'damage');
+        let landed = 0, actualDamage = 0;
+        for (const e of victims) {
+          const hp = e.hp;
+          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
+            continue;
+          landed++;
+          actualDamage += Math.max(0, hp - e.hp);
+          if (e.hp <= 0) continue;
+          if (def.slow) this.applySlow(e, enhance(def.slow, 'slowDuration'));
+          if (def.push && e.type === 'mob' && e.form === 'normal' &&
+              !e.captain && !e.roomCaptain) {
+            const gap = Math.max(1, dist(u, e)),
+              push = Math.min(45, enhance(def.push, 'pushDistance')),
+              point = { x: e.x + (e.x - u.x) / gap * push,
+                y: e.y + (e.y - u.y) / gap * push };
+            if (this.clearSegment(e, point, 12)) this.move(e, point, 210, 0.2);
+          }
+        }
+        if (!landed) return false;
+        // Siphon is based on actual post-mitigation lost HP, never theoretical
+        // damage. No overheal or duplicate support-heal critical roll.
+        if (def.siphon && u.hp > 0 && u.hp < u.maxHp) {
+          const recovered = Math.min(u.maxHp - u.hp, actualDamage * def.siphon);
+          if (recovered > 0) {
+            u.hp += recovered;
+            this.event('heal', { actor: 'companion', resource: 'health',
+              x: u.x, y: u.y, source: u.id, target: u.id });
+          }
+        }
+        // Flank Command is a lateral *reposition* after contact, not a second
+        // damage event; moving is blocked by the same real terrain collision.
+        if (def.dash && !native && species !== 'mireling') {
+          const angle = Math.atan2(target.y - u.y, target.x - u.x),
+            flank = { x: u.x - Math.sin(angle) * def.dash,
+              y: u.y + Math.cos(angle) * def.dash };
+          if (this.clearSegment(u, flank, 12))
+            this.move(u, flank, 560, 0.16);
+        }
+        u[cooldown] = native ? cfg.basicCooldown : def.cooldown;
+        u.skillGlobalCd = cfg.globalCooldown;
+        u.cd = Math.max(u.cd, 0.35);
+        team[native ? 'basic' : 'heritage'] =
+          this.s.time + (native ? cfg.basicSquadSpacing : cfg.eliteSquadSpacing);
+        team.lastTime = this.s.time;
+        charmedSquadSkills.set(this, team);
+        this.event('charmHeritage', {
+          source: u.id, actor: 'companion', species, name: def.name,
+          kind, x: center.x, y: center.y,
+          fromX: from.x, fromY: from.y, range: def.range,
+          shape: def.shape, radius: def.radius || 0,
+          halfWidth: def.halfWidth || 0, halfAngle: def.halfAngle || 0,
+          hitCount: landed, critical: !!receipt?.critical,
+        });
+        this.event('spell', { actor: 'companion', kind: 'charmHeritage',
+          species, x: u.x, y: u.y, source: u.id, skill: def.name });
+        this.event('companionSkill', {
+          source: u.id, unitType: u.type, skill: def.name,
+          targetId: target.id, slot: native ? 1 : 3, hits: landed,
+        });
+        return true;
+      }
       charmedCompanionSkill(u, target) {
         if (!this.isCharmedCompanion(u) || this.hero.class !== 'rogue' ||
             u.hp <= 0 || u.active === false || this.peace || this.s.recallActive ||
@@ -2139,7 +2262,25 @@
             ? this.companionCombatReach(u)
             : Math.min(cfg.meleeManeuverReach, this.companionCombatReach(u) + 25),
           distance = dist(u, target),
-          team = charmedSquadSkills.get(this) || { basic: 0, elite: 0, lastTime: this.s.time };
+          team = charmedSquadSkills.get(this) ||
+            { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time };
+        if (this.s.time < team.lastTime) {
+          team.basic = 0;
+          team.elite = 0;
+          team.heritage = 0;
+        }
+        team.lastTime = this.s.time;
+        // The third skill is independent of both 12s native and 22s
+        // Ringleader cooldowns. It unlocks with companion Skill 2.
+        if (this.charmedEliteTrained(u) &&
+            this.charmedSpeciesSpecial(u, target,
+              R.balance.companions.charmHeritage[species])) return true;
+        // Only real night creatures replace the ordinary Rogue maneuver in
+        // native slot 1 with their own Soul Drain or Shadow Pounce.
+        if (R.balance.companions.charmNightNative[species] &&
+            !((u.skill1Cd || 0) > 0) &&
+            this.charmedSpeciesSpecial(u, target,
+              R.balance.companions.charmNightNative[species], 'native')) return true;
         if (distance > reach) return false;
         // A reset game clock must not trap squad skills behind a stale window.
         if (this.s.time < team.lastTime) {
@@ -2332,6 +2473,7 @@
           cd: 0,
           skill1Cd: 0,
           skill2Cd: 0,
+          skill3Cd: 0,
           skillGlobalCd: 0,
           healCd: 0,
           manaCd: 0,
@@ -3762,6 +3904,7 @@
           u.cd = Math.max(0, u.cd - recovery);
           u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - specialRecovery);
           u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - specialRecovery);
+          u.skill3Cd = Math.max(0, (u.skill3Cd || 0) - specialRecovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
             u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
