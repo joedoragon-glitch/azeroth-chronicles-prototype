@@ -17,6 +17,13 @@ for (const region of Campaign.data.regions) {
   assert.equal(zone.roadVersion, 17, region.id + ' connected roads');
   assert.equal(zone.streetClearanceVersion, 3, region.id + ' full street audit');
   assert(zone.roads.length >= 4, region.id + ' real road links');
+  if (region.id === 'march') {
+    assert.equal(zone.marchTownRoadVersion, 1, 'Reedport road repair is versioned');
+    assert.equal(zone.roads.filter(road =>
+      road.some(p => distance(p, town) < 1) &&
+      road.some(p => distance(p, { x: 350, y: 1370 }) < 1)).length, 1,
+    'exactly one real Reedport-to-coastal-road leg, never a duplicate');
+  }
 
   // Bridges can connect earlier spurs from either end. Validate the completed
   // geometric network, including segment-interior joins, independently of order.
