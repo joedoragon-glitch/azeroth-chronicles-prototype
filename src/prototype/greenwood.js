@@ -227,7 +227,7 @@
         delete z.bridgeApproaches;
         for (const key of [
           'roadVersion', 'roadNetworkVersion', 'destinationLayoutVersion',
-          'settlementLayoutVersion', 'millhavenOnboardingVersion',
+          'settlementLayoutVersion',
           'environmentCoherenceVersion', 'landmarkRoadShoulderVersion',
           'streetClearanceVersion', 'finalStreetClearanceVersion',
           'townVisualClearanceVersion', 'greenwoodFrontageVersion',
@@ -236,6 +236,9 @@
         ]) delete z[key];
         // The marker must be set before any nested zone() invocation.
         z.greenwoodRollbackVersion = 1;
+        // Mark 2700-unit coordinates so a later full redesign knows this is
+        // no longer a live expanded scene. Never rerun old 3200 migration.
+        z.greenwoodSourceVersion = 0;
       }
 
       greenwoodMigrate(z) {
