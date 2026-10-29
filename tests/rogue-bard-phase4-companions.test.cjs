@@ -3,6 +3,7 @@
 // The test-only Rogue class registry does not authorize public class selection.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const Menus = require('../src/prototype/menus.js');
 const R = Campaign.rules;
 const Sprites = require('../src/prototype/sprites.js');
 const Critical = require('../src/prototype/critical-executions.js');
@@ -447,6 +448,167 @@ try {
     assert.equal(soldier.active, true, cls + ' retains legacy fallen-active behavior');
   }
 
+  // PR #632 integration: a Rogue's fallen, auto-reserved Charmed allies
+  // remain recoverable in PR #636's multi-entry Basic Barracks queue without
+  // reoccupying field slots that subsequent lawful Charms have filled.
+  {
+    const queueRun = fresh();
+    const goblins = [capture(queueRun), capture(queueRun), capture(queueRun)];
+    const ids = goblins.slice(0, 2).map((u) => u.id);
+    const origins = goblins.slice(0, 2).map((u) => ({ ...u.charmOrigin }));
+    const names = goblins.slice(0, 2).map((u) => u.customName);
+    goblins[0].masteryPoints = 3;
+    const base = {
+      id: 'rogue-multi-recovery', kind: 'barracks', x: 550, y: 560,
+      progress: 4, full: false, queue: 0, queueType: null,
+      upgradeProgress: 0, upgradePaid: false,
+    };
+    queueRun.zone().buildings.push(base);
+    for (const u of goblins.slice(0, 2)) {
+      assert.equal(queueRun.hitParty(u, u.hp + 100, 0, null, true), true);
+      assert.equal(u.hp, 0);
+      assert.equal(u.active, false, 'native Rogue defeat frees the field slot');
+    }
+    assert.equal(queueRun.activeParty().length, 1);
+    const replacements = [capture(queueRun, 'skeleton'), capture(queueRun, 'skeleton')];
+    assert(replacements.every((u) => u.active));
+    assert.equal(queueRun.activeParty().length, 3);
+    const activeIds = queueRun.activeParty().map((u) => u.id);
+    queueRun.zone().enemies = [];
+    queueRun.hero.gold = 0;
+    for (const id of ids)
+      assert(queueRun.requestCompanionCare('recovery', base.id, id));
+    assert.deepEqual(
+      queueRun.companionRecoveryRequests().map((r) => r.companionIds[0]), ids,
+      'both fallen reserve Charms are queued by their original IDs',
+    );
+    const restored = Campaign.restore(queueRun.snapshot(), () => 0.9);
+    assert.deepEqual(
+      restored.companionRecoveryRequests().map((r) => r.companionIds[0]), ids,
+    );
+    assert.equal(restored.activeParty().length, 3);
+    restored.hero.gold = 80;
+    restored.resolveCompanionCareRequests();
+    assert.equal(restored.hero.gold, 0);
+    assert.equal(restored.companionRecoveryRequests().length, 0);
+    assert.deepEqual(restored.activeParty().map((u) => u.id), activeIds,
+      'recovery never retakes a field slot from replacement Charms');
+    for (const [i, id] of ids.entries()) {
+      const unit = restored.s.party.find((u) => u.id === id);
+      assert(unit && unit.hp === unit.maxHp);
+      assert.equal(unit.active, false, 'recovered Rogue ally stays in reserve');
+      assert.equal(unit.customName, names[i]);
+      assert.deepEqual(unit.charmOrigin, origins[i]);
+      assert.deepEqual(restored.s.charmCaptures[id], origins[i]);
+    }
+    assert.equal(restored.s.party.find((u) => u.id === ids[0]).masteryPoints, 3);
+    assert.equal(restored.rosterCount(), 5, 'paid recovery adds no new ownership');
+    assert.doesNotThrow(() => Campaign.validate(restored.snapshot()));
+  }
+
+  // Rogue-only preference: the published slot-freeing default is kept on
+  // legacy saves; opting in keeps future fallen Charmed allies in active slots.
+  // No toggle retroactively moves a fallen ally or permits a free resurrection.
+  {
+    const loyal = fresh();
+    const goblins = [capture(loyal), capture(loyal), capture(loyal)];
+    const oldIds = goblins.slice(0, 2).map((u) => u.id);
+    const oldOrigins = goblins.slice(0, 2).map((u) => ({ ...u.charmOrigin }));
+    const base = {
+      id: 'loyal-rogue-barracks', kind: 'barracks', x: 550, y: 560,
+      progress: 4, full: false, queue: 0, queueType: null,
+      upgradeProgress: 0, upgradePaid: false,
+    };
+    loyal.zone().buildings.push(base);
+    loyal.zone().enemies = [];
+    loyal.hero.gold = 0;
+    assert.equal(loyal.s.rogueFallenCharmSlotPolicy, 'release', 'default unchanged');
+    assert(!loyal.setRogueFallenCharmSlotPolicy('keep', null),
+      'Captain cannot change the Barracks-only option');
+    assert(!loyal.setRogueFallenCharmSlotPolicy('invalid', base.id));
+    let opened;
+    const ui = Menus.create({
+      getGame: () => loyal, Campaign, D: Campaign.data,
+      action: (label, action, detail = '', disabled = false) =>
+        ({ label, action, detail, disabled }),
+      openMenu: (title, description, actions, back) =>
+        (opened = { title, description, actions, back }),
+      closeMenu() {}, recallSquad() {}, showMap() {}, finaleMenu() {},
+    });
+    ui.barracksMenu(base);
+    opened.actions.find((a) => a.label === 'Recovery').action();
+    assert.match(opened.description, /Rogue only: Choose how FUTURE/);
+    const defaultChoice = opened.actions.find((a) =>
+      a.label.includes('Free slots when Charmed allies fall'));
+    const keepChoice = opened.actions.find((a) =>
+      a.label.includes('Keep fallen Charmed allies in party slots'));
+    assert(defaultChoice?.disabled, 'default selected');
+    assert(keepChoice && !keepChoice.disabled, 'opt-in available only to Rogue');
+    keepChoice.action();
+    assert.equal(loyal.s.rogueFallenCharmSlotPolicy, 'keep');
+    assert(opened.actions.some((a) =>
+      a.label.includes('Keep fallen Charmed allies in party slots · SELECTED')));
+
+    const name = goblins[0].customName;
+    assert.equal(loyal.hitParty(goblins[0], goblins[0].hp + 100, 0, null, true), true);
+    assert.equal(goblins[0].hp, 0);
+    assert.equal(goblins[0].active, true, 'opted-in fallen Charm reserves its slot');
+    assert.equal(loyal.activeParty().length, 3);
+    const reserveNewCharm = capture(loyal, 'skeleton');
+    assert.equal(reserveNewCharm.active, false, 'new Charm cannot steal reserved slot');
+    loyal.zone().enemies = [];
+
+    // Version-4 save/reload retains the opt-in and the original fallen slot.
+    let saved = Campaign.restore(loyal.snapshot(), () => 0.9);
+    assert.equal(saved.s.rogueFallenCharmSlotPolicy, 'keep');
+    assert.equal(saved.s.party.find((u) => u.id === oldIds[0]).active, true);
+    assert.equal(saved.activeParty().length, 3);
+    const prior = saved.s.party.find((u) => u.id === oldIds[0]);
+    assert(saved.setRogueFallenCharmSlotPolicy('release', base.id));
+    assert.equal(prior.active, true, 'policy switch cannot retroactively rest the fallen');
+    const second = saved.s.party.find((u) => u.id === oldIds[1]);
+    assert.equal(saved.hitParty(second, second.hp + 100, 0, null, true), true);
+    assert.equal(second.active, false, 'subsequent defeat uses release policy');
+    const replacement = capture(saved, 'skeleton');
+    assert.equal(replacement.active, true, 'newly freed slot admits later lawful Charm');
+    saved.zone().enemies = [];
+    saved.hero.gold = 0;
+    assert(saved.requestCompanionCare('recovery', base.id, oldIds[0]));
+    assert(saved.requestCompanionCare('recovery', base.id, oldIds[1]));
+    assert.equal(saved.companionRecoveryRequests().length, 2);
+    const payment = Campaign.restore(saved.snapshot(), () => 0.9);
+    assert.equal(payment.s.rogueFallenCharmSlotPolicy, 'release');
+    payment.hero.gold = 80;
+    payment.zone().enemies = [];
+    payment.resolveCompanionCareRequests();
+    assert.equal(payment.hero.gold, 0);
+    assert.equal(payment.companionRecoveryRequests().length, 0);
+    assert.equal(payment.s.party.find((u) => u.id === oldIds[0]).active, true,
+      'paid recovery restores original active placement for the kept-slot ally');
+    assert.equal(payment.s.party.find((u) => u.id === oldIds[1]).active, false,
+      'released ally remains in reserve after paid recovery');
+    assert.equal(payment.s.party.find((u) => u.id === oldIds[0]).customName, name);
+    for (const [i, id] of oldIds.entries()) {
+      const member = payment.s.party.find((u) => u.id === id);
+      assert.equal(member.hp, member.maxHp);
+      assert.deepEqual(member.charmOrigin, oldOrigins[i]);
+      assert.deepEqual(payment.s.charmCaptures[id], oldOrigins[i]);
+    }
+    assert.equal(payment.s.party.find((u) => u.id === replacement.id).active, true);
+    assert.equal(payment.activeParty().length, 3);
+    assert.equal(payment.s.party.filter((u) =>
+      u.charmOrigin?.typeId === oldOrigins[0].typeId).length, 3,
+    'both modes retain exact subtype ownership quotas');
+    const legacy = payment.snapshot();
+    delete legacy.rogueFallenCharmSlotPolicy;
+    assert.equal(Campaign.restore(legacy).s.rogueFallenCharmSlotPolicy, 'release');
+    assert.throws(
+      () => Campaign.restore({ ...payment.snapshot(), rogueFallenCharmSlotPolicy: 'discard' }),
+      /Invalid Rogue fallen-Charm slot policy/,
+    );
+    assert.doesNotThrow(() => Campaign.validate(payment.snapshot()));
+  }
+
   // Original classes retain their normal companion profile, recruiting and
   // active capacity; they cannot make new Rogue captures.
   for (const cls of ['paladin', 'mage', 'ranger']) {
@@ -456,6 +618,8 @@ try {
     assert.equal(ordinary.companionArmor(unit), ordinary.companionArmor('soldier'));
     assert.equal(ordinary.expeditionPartyCap(1), 2);
     assert.equal(ordinary.rogueCharmProfile?.(ordinary.zone().enemies[0]), null);
+    assert.equal(ordinary.setRogueFallenCharmSlotPolicy('keep', 'some-barracks'), false,
+      'non-Rogue classes cannot configure fallen Charmed slots');
   }
   console.log('PASS Phase 4 native Charm companions: species, labor, recovery, travel, persistence');
 } finally {
