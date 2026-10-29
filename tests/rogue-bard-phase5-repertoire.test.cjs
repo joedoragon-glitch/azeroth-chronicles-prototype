@@ -373,8 +373,12 @@ try {
     assert.equal(campaign.recordPartyChargeDamage(hero,hero.maxHp*.5),false,
       'Skill 3 self protection prevents nonlethal preparation interruption');
     campaign.s.time+=R.roguePerformances[3].tap.seconds+.1;
+    // The protected preparation completed long before the boon expired.
+    // Start a NEW charge to test the unprotected state correctly.
+    campaign.clearPartyCharge(hero);
+    assert(campaign.beginPartyCharge(hero,1));
     assert.equal(campaign.recordPartyChargeDamage(hero,hero.maxHp*.5),true,
-      'interruption returns after the timed self-buff expires');
+      'a new charge is interruptible after the timed self-buff expires');
   }
   {
     const sample=fresh(), campaign=sample.g, hero=campaign.hero;
