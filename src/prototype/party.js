@@ -2291,7 +2291,7 @@
           if (u.keeperHeld || u.deathRollHeld) return false;
           if (u.type === 'archer')
             return !u.charmOrigin || (!u.order && this.isCharmedCompanion(u));
-          return u.type === 'pet' && !u.order &&
+          return u.type === 'pet' && !u.order && this.petUnlocked(u.petFamily) &&
             !!(this.petSkillDefinition(u, 1)?.allyHeal ||
               this.petSkillDefinition(u, 2)?.allyHeal);
         });
