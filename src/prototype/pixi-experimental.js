@@ -1377,30 +1377,30 @@
           ++developerDrawFrames % drawCpuSampleEvery === 0;
         const row = observe ? {} : null;
         let stamp = observe ? measureNow() : 0;
-        const record = (name) => {
-          if (!row) return;
+        // Ordinary frames must not allocate a recording callback.
+        const record = row ? (name) => {
           const next = measureNow();
           row[name] = Math.max(0, next - stamp);
           stamp = next;
-        };
+        } : null;
         stage = 'viewport-check';
         syncViewport();
-        record('viewport');
+        if (record) record('viewport');
         stage = 'resolution';
         syncResolution();
-        record('resolution');
+        if (record) record('resolution');
         stage = 'background';
         syncBackground();
-        record('background');
+        if (record) record('background');
         stage = 'actors';
         actorFrame();
-        record('actors');
+        if (record) record('actors');
         stage = 'atmosphere';
         syncAtmosphere();
-        record('atmosphere');
+        if (record) record('atmosphere');
         stage = 'scene-render';
         scene.draw();
-        record('scene');
+        if (record) record('scene');
         if (row) {
           drawCpuSamples.push(row);
           if (drawCpuSamples.length > 120) drawCpuSamples.shift();
