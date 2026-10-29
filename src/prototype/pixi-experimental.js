@@ -510,6 +510,7 @@
       const painter = root.PrototypeRenderer.create({
         ...getRendererOptions(), canvas: viewportTile, ctx,
         platform: tilePlatform, renderLayer: 'background',
+        staticTerrainTimeSeconds: measureNow() / 1000,
       });
       painter.setGroundReuse?.(false);
       painter.setOptimizationMode(!!options.getOptimizationMode());
