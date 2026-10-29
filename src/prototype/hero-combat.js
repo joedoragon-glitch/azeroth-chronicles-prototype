@@ -9,6 +9,9 @@
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
     const rogueMusicStations = new WeakMap();
+    // Lazy, unsaved Hero aura cache: avoid repeated line-of-sight calls at
+    // unchanged positions within one simulation instant.
+    const rogueHeroStationChecks = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     // Adding a hero to the class registry must not silently use Ranger shots,
@@ -1167,8 +1170,18 @@
         if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
             (unit !== this.hero &&
               (unit.active === false || !this.s.party.includes(unit)))) return null;
+        const fields = rogueMusicStations.get(this),
+          isHero = unit === this.hero;
+        if (isHero) {
+          const cached = rogueHeroStationChecks.get(this);
+          if (cached && cached.fields === fields &&
+              cached.zone === this.zoneId && cached.time === this.s.time &&
+              cached.x === unit.x && cached.y === unit.y) return cached.effect;
+        }
         let selected = null;
-        for (const field of rogueMusicStations.get(this) || []) {
+        // At most two live fields. Cheap distance before terrain sightline;
+        // no independent polling, and movement invalidates cached results.
+        for (const field of fields || []) {
           if (field.zone !== this.zoneId || field.until <= this.s.time ||
               dist(unit, field) > field.radius || !this.line(field, unit)) continue;
           selected = {
@@ -1176,6 +1189,10 @@
             ward: Math.max(selected?.ward || 0, field.ward),
           };
         }
+        if (isHero) rogueHeroStationChecks.set(this, {
+          fields, zone: this.zoneId, time: this.s.time,
+          x: unit.x, y: unit.y, effect: selected,
+        });
         return selected;
       }
       tickRogueStations() {

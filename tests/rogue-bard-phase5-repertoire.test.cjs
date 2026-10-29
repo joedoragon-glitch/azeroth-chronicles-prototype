@@ -160,6 +160,21 @@ try {
   assert.equal(g.cast(5,foe.id),true);
   assert(g.rogueStationProtection(unit)?.resistance === 0.25);
   assert(g.rogueStationProtection(g.hero)?.resistance === 0.25);
+  const originalLine = g.line;
+  let heroSightlineChecks = 0;
+  g.line = function(from, to, ...args) {
+    if (to === g.hero && from !== g.hero) heroSightlineChecks++;
+    return originalLine.call(this, from, to, ...args);
+  };
+  for (let i = 0; i < 40; i++)
+    assert(g.rogueStationProtection(g.hero)?.resistance === 0.25);
+  assert.equal(heroSightlineChecks, 0,
+    'unchanged hero position/time reuses the prior sightline result');
+  g.hero.x += 1;
+  assert(g.rogueStationProtection(g.hero)?.resistance === 0.25);
+  assert(heroSightlineChecks <= 2, 'one position change checks at most two stations');
+  g.hero.x -= 1;
+  g.line = originalLine;
   g.tickRogueStations();
   assert(foe.slow > 0);
   g.hero.cd[4] = 0;
