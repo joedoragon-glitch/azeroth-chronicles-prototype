@@ -459,7 +459,7 @@
         if (!plan || plan.zone !== zone || plan.mode !== mode ||
             plan.gathering !== gathering ||
             dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
-          const generator = mode === 'tactical'
+          const generator = mode === 'tactical' || mode === 'pursuit'
             ? this.budgetedTacticalRoute(origin, target)
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
@@ -1441,14 +1441,52 @@
         if (this.s.party.includes(entity))
           return this.followCompanion(entity, target, speed, dt, stop);
         if (dist(entity, target) <= stop) return true;
+        const zone = this.s.zones[this.zoneId],
+          // Only real enemy actors use this bounded combat planner. Hero
+          // orders, authored roads and non-enemy scripted routes retain the
+          // original synchronous route API and movement behavior.
+          enemyPursuit = zone.enemies.includes(entity);
         if (this.clearSegment(entity, target)) {
           entity.path = [];
+          if (enemyPursuit) terrainTrips.delete(entity);
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
-        const trip = terrainTrips.get(entity),
-          zone = this.s.zones[this.zoneId];
-        if (!trip || trip.zone !== zone || dist(trip.target, target) > 80 || entity.routeAge <= 0) {
+        let trip = terrainTrips.get(entity);
+        if (enemyPursuit) {
+          // A moving hero must not reset the entire search frontier every
+          // update. A pending search uses its frozen origin and destination;
+          // its result is validated against the actor's actual position.
+          const invalid = !trip || trip.zone !== zone;
+          const changed = !invalid && dist(trip.target, target) > 80;
+          if (invalid || (changed && !trip.pending)) {
+            entity.path = [];
+            trip = { zone, target: { x: target.x, y: target.y }, pending: null };
+            terrainTrips.set(entity, trip);
+            entity.routeAge = 0;
+          }
+          if (trip.pending || entity.routeAge <= 0) {
+            if (trip.pending || this.reserveMovementPlan(entity)) {
+              const origin = trip.pending?.origin || entity,
+                destination = trip.pending?.target || target,
+                result = this.advanceBudgetedRoute(origin, destination, 'pursuit', trip.pending);
+              if (result.pending) {
+                trip.pending = result.state;
+              } else {
+                trip.pending = null;
+                trip.target = { x: target.x, y: target.y };
+                entity.path = result.path;
+                // The actor might have escaped or been displaced while the
+                // frontier was suspended. Never accept a stale obstructed leg.
+                if (entity.path.length && !this.clearSegment(entity, entity.path[0]))
+                  entity.path = [];
+                entity.routeAge = entity.path.length
+                  ? R.navigationPlanning.routeRetrySeconds
+                  : Math.min(0.25, R.navigationPlanning.routeRetrySeconds);
+              }
+            }
+          }
+        } else if (!trip || trip.zone !== zone || dist(trip.target, target) > 80 || entity.routeAge <= 0) {
           if (!trip || trip.zone !== zone || dist(trip.target, target) > 80) entity.path = [];
           if (this.reserveMovementPlan(entity)) {
             entity.path = this.route(entity, target);
@@ -1460,7 +1498,6 @@
         if (!entity.path?.length) return false;
         const moved = this.move(entity, entity.path[0], speed, dt);
         if (dist(entity, entity.path[0]) < 1) entity.path.shift();
-        // Retain the retry clock even for an empty/unreachable terrain route.
         return moved;
       }
     }
