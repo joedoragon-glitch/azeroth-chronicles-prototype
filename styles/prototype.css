@@ -1228,6 +1228,8 @@ body.menu-open #cancel-navigation-button {
   font-size: clamp(24px, 5.2vw, 38px); line-height: 1.15; margin: 8px 0 18px; }
 #title-tagline { color: #c3ad80; font-size: 12px; letter-spacing: .03em; margin: 0; }
 #title-preview { min-height: 34px; color: #c7d8cb; font-size: 13px; }
+#title-import-feedback[hidden] { display: none !important; }
+#title-import-feedback { color: #eed8a6; font-size: 14px; line-height: 1.4; margin: 8px 0; }
 #title-screen nav { display: grid; gap: 10px; margin-top: 16px; }
 #title-screen nav button {
   min-height: 48px; padding: 12px 16px; border: 1px solid #9bb39b60;
