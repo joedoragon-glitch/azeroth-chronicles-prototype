@@ -626,6 +626,7 @@
       'Límite del pueblo: 3 compañeros, incluidas las reservas.',
     'No fallen companions.': 'No hay compañeros caídos.',
     'No fallen companions': 'No hay compañeros caídos',
+    'tap to cancel. No crowns spent.': 'toca para cancelar. No has gastado coronas.',
     'Recover this companion now.': 'Recupera a este compañero ahora.',
     'Recovery queue belongs to another Captain or Barracks. Cancel queued companions first.':
       'La cola de recuperación pertenece a otro capitán o cuartel. Cancela primero a los compañeros en cola.',
@@ -1418,11 +1419,7 @@
       return piece.replace('Cancel queued recovery: ', 'Cancelar recuperación en cola: ');
     if (/^Recover .+ · 40 crowns$/.test(piece))
       return piece.replace('Recover ', 'Recuperar ').replace('crowns', 'coronas');
-    if (/^Queued #\d+ · tap to cancel/.test(piece))
-      return piece
-        .replace('Queued #', 'En cola #')
-        .replace('tap to cancel. No crowns spent.', 'toca para cancelar. No has gastado coronas.');
-    if (/^\+\d+ more$/.test(piece)) return piece.replace('more', 'más');
+    if (/^Queued #\d+$/.test(piece)) return piece.replace('Queued #', 'En cola #');
     if (/^Cancel queued (recovery|treatment)$/.test(piece))
       return piece
         .replace('Cancel queued recovery', 'Cancelar recuperación en cola')
@@ -1431,7 +1428,8 @@
       return piece
         .replace('Queued recovery: ', 'Recuperación en cola: ')
         .replace('Queued treatment: ', 'Tratamiento en cola: ')
-        .replace(': Hero', ': Héroe');
+        .replace(': Hero', ': Héroe')
+        .replace(/ \+(\d+) more$/, ' +$1 más');
     if (/^Cancel queued (Soldier|Ranger)/.test(piece))
       return piece.replace('Cancel queued ', 'Cancelar en cola: ').replace('Soldier', 'Soldado');
     if (/^Queued recruitment: /.test(piece))
