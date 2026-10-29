@@ -1,6 +1,6 @@
 # Runtime architecture — current system map
 
-**So I Became the Dark Lord's Problem** · Source reconciled against `main@87792f64` and the Greenwood integration on **29 October 2026**. [Development state](DEVELOPMENT_STATE.md) owns current build/publication evidence.
+**So I Became the Dark Lord's Problem** · Source owners reconciled against [main@323bb2a7](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/323bb2a75ceec9bafa8dfe9d567be057309a0115), **29 October 2026**. [Development state](DEVELOPMENT_STATE.md) owns current build/publication evidence.
 
 **Purpose:** Help an owner, contributor or AI agent find the *actual owning code*, understand how systems interact, and make an approved change without creating a second game state, bypassing save compatibility or modifying gameplay from a rendering module. This document describes current source boundaries; it is **not** an authorization to implement or merge anything.
 
@@ -54,7 +54,7 @@ The table below is intentionally **current ownership reference**, rather than an
 | --- | --- |
 | `data.js` / `rules.js` | Approved content and authoritative live balance (`rules.balance`), combat/support and authored geometry tables |
 | `field-onboarding.js` | Saved opening-field hero-first admission, silent level-2 Thornfang/Mira arrival and physical companion-triggered Thornfang withdrawal; native combat/path/reset owners resolve admitted behavior |
-| `world.js` | Region generation, settlements, authored sites, interiors, occupation layouts and world migrations |
+| `world.js` / `greenwood.js` | Region generation, settlements, authored sites, interiors and migrations; Greenwood owns its own final parcels/scenes |
 | `fortifications.js` | Authored defended footprints, position-derived enemy bonuses and enemy-only wall/low-cover shot permissions; transient geometry cache |
 | `navigation.js` | Collision, line of sight, route solving, movement/following, fast-reject obstacle checks and bounded opt-in crowd diagnostics |
 | `engine.js` | Authoritative Campaign state, simulation clock, enemy AI, encounter population, death/succession and quest orchestration |
@@ -104,6 +104,8 @@ The table below is intentionally **current ownership reference**, rather than an
 ## World, navigation and authored geography
 
 `world.js` and the authored content tables own zones, settlements, dungeon layouts, transport sites and safe migration of saved positions. `fortifications.js` resolves defenses using their actual footprints. `navigation.js` provides shared collision, line of sight, route planning, movement/following and optional bounded crowd measurements. `app.js` can draw a map or accept a destination, but does not create a second saved regional model.
+
+`greenwood.js` owns Vale's authored parcels, final working scenes and v4 spatial migration through the shared world/save lifecycle. Other regional compositions finish through `world.js::clearStreetCorridors`, whose idempotent receipt protects connected roads, roof setbacks and service frontages. Existing IDs and service interaction points remain stable; native NPC refresh retains migrated placements.
 
 **Guardrail:** When changing arrival locations, structures or monsters, verify walkable space, safe roads, encounter density and save migration. Drawing a route or moving a sprite does not make a blocked world path traversable. Source-specific lore, transport positions and Monster Fort decisions are in [Gameplay Decisions](DECISIONS.md).
 
@@ -225,9 +227,3 @@ The passive Thorn retreat now retains the computed native waypoints for as long 
 **Subsequent native long-run diagnosis:** The first bounded candidate still repeated complete route plans: a direct-line success could clear Thorn's active `entity.path`, followed by a rejected line on the next step near an obstacle. The fixed special-case preserves an already collision-validated Thorn retreat path instead of opportunistically switching to direct movement; it continues to validate the next segment and replan on obstruction. Hero-first interruption removes the unsaved retreat state *before* either direct or routed movement. The long-run test records genuine `advanceBudgetedRoute('thorn-retreat')` completions and planner terrain probes separately from all other combat and movement checks, rejecting repeated route reconstruction rather than an unrelated full-fight probe total.
 
 The reachability-only selection frontier now uses a binary min-heap: picking the next nearest admissible cell costs logarithmic time instead of repeatedly scanning every queued cell. This avoids a quadratic CPU search in large/unreachable 3200-unit world layouts. It does not add a no-route cap or change which collision-validated anchors count as reachable; the ordinary route BFS and smoothing remain unchanged.
-
-## Final authored street clearance (Greenwood integration, 29 October 2026)
-
-`world.js` reuses `clearStreetCorridors` after non-Vale regional compositions finish; Greenwood retains its established `greenwoodFinish` owner. Its once-only `finalStreetClearanceVersion` v4 receipt covers actual connected roads, full prop/roof setbacks and town-service neighborhoods; rebuilding an older street plan invalidates that receipt. Disconnected roads gain native collision-routed joins, existing props/buildings are relocated without changing IDs, and saved service interaction points stay intact. Frontier/Crown refresh placements and Ironroot's service owner retain the corrected positions on later reads. Failed placements remain unversioned and cannot silently exempt an obstruction. This is scoped release-gate repair in #570, not a new settlement or navigation system.
-
-**Focused workflow capacity:** The unchanged selected-suite workflow has a fifteen-minute cap after #40949423104 exhausted ten minutes; this does not enable comprehensive certification or add tests. Owner release scope for #570 prioritizes Greenwood-specific quality, with unrelated findings retained separately in #613.

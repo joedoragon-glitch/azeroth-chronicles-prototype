@@ -1,5 +1,3 @@
-> **Current implementation:** The approved 3200-unit #570 layout supersedes the old western-edge Orchard Hamlet described below. Actual house/door placement, protected recovery behavior and repeat-load evidence are owned by the [Greenwood handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md); [Development state](DEVELOPMENT_STATE.md) owns release status.
-
 # Millhaven layout and recovery guidance — dev.160
 
 Owner requests Captain/Supplies swap to uncover the Captain cue on the initial phone view, Refuge/right-hand house swap to separate recovery from supplies, and relocation of the second recovery building with concise first-use guidance. The second site is Orchard Hamlet.
@@ -12,14 +10,6 @@ Validation: new native focused test covers three modes, fresh/idempotent/restore
 
 Build and changed-source formatting/syntax/diff checks complete before publication. Existing 18 seeded Thornfang/Mira class/mode patrol/lifecycle cases and witness suite pass; publication receipt follows at closeout.
 
-Historical next task, since implemented: Greenwood field monsters remain present but require hero initiation below level 2; companions alone cannot provoke them. At level 2 ordinary aggression returns. Additionally, level-2 silent Thornfang/Mira appearance and a once-per-run hero-first engagement rule, with companion-triggered withdrawal/reset and Mira following.
+Historical follow-on scope (subsequently implemented): Greenwood field monsters remain present but require hero initiation below level 2; companions alone cannot provoke them. At level 2 ordinary aggression returns. Additionally, level-2 silent Thornfang/Mira appearance and a once-per-run hero-first engagement rule, with companion-triggered withdrawal/reset and Mira following.
 
 PR #399 merged as `bb9df49bfaf6c47bd445669cb2667a207081ef0f`; package-only run 39708765406 succeeded. Public build matches merge. Normal workflow restored byte-for-byte; temporary publisher removed. Receipt: `docs/evidence/MILLHAVEN_DEV160_PUBLICATION_20261021.json`.
-
-## Historical recovered clearance checkpoint — 28 October 2026
-
-The original onboarding swaps happened after street clearance. The resumed draft rechecks the two moved decorative buildings against the original full roof setbacks, reserved service doors, compound boundaries and player camps. It brings the refuge roof inside the world boundary and updates a persisted refuge point. A failed parcel search never marks migration complete. The preserved main@753f synthetic QA fixture verifies IDs, resource amounts, actor states, quests, construction, two reloads and physical service/footpath segments; it is not a historical player export. This bounded repair is not map-size selection or completion of the flagship region.
-
-**Selected flagship implementation #570:** the revised 3200 implementation supersedes the old western-boundary Hamlet location. Its final house anchor is selected on dry, collision-free land with the full 180-unit road setback; the recovery door follows that house. Final projected frontage checks relocate a foreground workshop that concealed the hero, and two-load tests prevent restore from detaching the building and door. The original 2700 repair fixture remains separately runnable through the baseline comparison loader.
-
-**29 October fixture reconciliation:** `millhaven-onboarding.test.cjs` retains its original 2700-layout coordinates through the existing comparison loader; `greenwood-flagship.test.cjs` owns the approved production 3200 scene/door/route and v4 migration contract. The final inherited-region street pass deliberately leaves both Vale layouts to Greenwood's own final scene owner. No old coordinate assertion is imposed on the expanded map or deleted to hide a failed migration.

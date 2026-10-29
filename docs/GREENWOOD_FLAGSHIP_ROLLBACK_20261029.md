@@ -1,8 +1,6 @@
-> **Current integration record — 29 October 2026:** The additional immediate pre-merge source is `main@87792f6441c8b01b3afd25282a209b695427f649`; keep the original `recovery/greenwood-pre-flagship-20261029` branch intact. #570 carries the selected 3200 layout, source migration 1 and scene revision 2. The owner authorizes release after Greenwood-specific checks and directs unrelated failures to separate documentation. Final merge and Pages receipts belong in [Development state](DEVELOPMENT_STATE.md). The safety procedures below remain applicable; a code revert cannot reverse migrated player saves.
-
 # Greenwood Vale flagship — recovery checkpoint and rollback runbook
 
-**29 October 2026 — operational safety record.** This is a **pre-merge recovery plan**, not evidence that the flagship reconstruction has been accepted, merged, published or device-verified.
+**29 October 2026 — operational safety record.** This is the recovery procedure for the flagship reconstruction. Merge/publication receipts are recorded below; a successful release does not establish device acceptance or a tested reverse save migration.
 
 The game's public title is *So I Became the Dark Lord's Problem*. Historic repository names and the `vale` internal region ID remain unchanged.
 
@@ -10,8 +8,14 @@ The game's public title is *So I Became the Dark Lord's Problem*. Historic repos
 
 - **Verified pre-flagship source:** [`main@c55faef34a2122c4c8aa4177d262a2d865f81253`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/c55faef34a2122c4c8aa4177d262a2d865f81253), observed on 29 October 2026.
 - **Preserved branch:** [`recovery/greenwood-pre-flagship-20261029`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/tree/recovery/greenwood-pre-flagship-20261029), created **from that exact commit**. Treat as a protected historical checkpoint; never force-push, delete or repurpose it for development.
-- **Reconstruction under review:** [draft PR #570](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/570), [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545). It was **not merged** at checkpoint creation. Its final source, approved merge strategy and test results must be rechecked before any future rollout.
+- **Introduced reconstruction:** [merged PR #570](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/570), [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545). It was **not merged** at checkpoint creation. Its final source, approved merge strategy and test results must be rechecked before any future rollout.
 - This branch preserves **repository source** at a known checkpoint, **not** a player's local save files, installed PWA cache or a certified published Pages artifact. If unrelated changes land in `main` before #570 merges, create or record an additional exact **immediate pre-merge `main` SHA**; do not overwrite this historical branch.
+
+## Release receipt
+
+- Immediate pre-merge main: `87792f6441c8b01b3afd25282a209b695427f649`.
+- Introducing merge: [`323bb2a7`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/323bb2a75ceec9bafa8dfe9d567be057309a0115), feature head `37b7cb77dd3a6bdbf1747d247029e431f7a6d29e`, dev.233. A full merge revert would use first parent 1; review unrelated included repairs before choosing a whole-PR rollback.
+- [Focused validation and Pages #40951925946](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40951925946) succeeded. Public build stamp and Greenwood source match the introducing merge. The original recovery branch remains intact.
 
 ## Before merging a future Greenwood release (required safety gate)
 
