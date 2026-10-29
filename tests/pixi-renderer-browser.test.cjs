@@ -32,11 +32,27 @@ async function selectPixi(page) {
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
-  await page.waitForFunction(() => {
-    const r=Prototype.experimentalGraphics;
-    return r.phase==='trial' ||
-      (r.phase==='canvas' && !!(r.lastError || r.lastFallbackReason));
-  }, null, {timeout:45000});
+  try {
+    // A complete current-region atlas can legitimately take much longer than
+    // the old fringe-only Pixi startup, especially with software WebGL2.
+    // This is a *test observation limit*, never a game loading deadline.
+    await page.waitForFunction(() => {
+      const r=Prototype.experimentalGraphics;
+      return r.phase==='trial' ||
+        (r.phase==='canvas' && !!(r.lastError || r.lastFallbackReason));
+    }, null, {timeout:240000});
+  } catch (error) {
+    const diagnostic = await page.evaluate(() => ({
+      renderer: Prototype.experimentalGraphics,
+      titleLoading: document.querySelector('#title-loading')?.textContent,
+      sceneLoading: document.querySelector('#scene-loading-text')?.textContent,
+      gpuPreparation: document.querySelector('#gpu-renderer-trial')?.textContent,
+      titleHidden: document.querySelector('#title-screen')?.hidden,
+      gameStarted: Prototype.started,
+    }));
+    throw Error('Pixi regional preload did not complete: ' +
+      JSON.stringify(diagnostic) + '; ' + String(error));
+  }
   return page.evaluate(() => Prototype.experimentalGraphics);
 }
 // Drive the actual modern title-screen flow. Earlier graphics tests relied
