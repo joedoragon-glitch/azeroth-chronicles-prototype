@@ -893,6 +893,13 @@
             throw Error('Invalid companion survival retreat');
           // Dev.141's saved recovery lock is obsolete; health and tactical judgment own retreat.
           delete u.survivalRetreat;
+          // An individual Mastery 0–III progress counter, capped at Tier III.
+          // Older version-4 saves begin at zero; malformed saves cannot inject
+          // free levels or infinite mastery progression.
+          if (u.masteryPoints === undefined) u.masteryPoints = 0;
+          if (!Number.isInteger(u.masteryPoints) || u.masteryPoints < 0 ||
+              u.masteryPoints > R.balance.companions.mastery.thresholds[2])
+            throw Error('Invalid companion mastery');
           if (u.skill1Cd === undefined) u.skill1Cd = 0;
           if (u.skill2Cd === undefined) u.skill2Cd = 0;
           if (u.skill3Cd === undefined) u.skill3Cd = 0;
