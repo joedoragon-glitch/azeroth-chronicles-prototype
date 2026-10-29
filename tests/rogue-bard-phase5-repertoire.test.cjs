@@ -30,7 +30,7 @@ try {
     return {g,unit,foe};
   }
   const { g,unit,foe } = fresh();
-  assert.equal(g.heroSkillRange(2), 260);
+  assert.equal(g.heroSkillRange(2), 225);
   assert.equal(g.cast(2, foe.id), false, 'unlearned song barred');
   g.hero.skills[1] = 1;
   g.hero.skills[5] = 1;
@@ -200,16 +200,20 @@ try {
   // A resting/off-field unit cannot retain active song benefits.
   g.s.party[0].active=false;
   assert.equal(g.rogueSongBoon(g.s.party[0],'quickstep'),null);
-  // Target range is not equivalent to the friendly AoE: outside gets no buff.
+  // A performance only releases with a lawful hostile inside the Rogue's
+  // own circle. Both hostile consequences and self-buffs share that center.
   g.s.time += 12;
-  g.hero.x = 320;
+  g.hero.x = 309;
   foe.x = 590;
   g.zone().enemies = [foe];
   g.hero.cd[1] = 0;
   g.hero.chargedCd[1] = 0;
+  assert.equal(g.cast(2,foe.id,true),false,
+    'charged song cannot be projected 281 units from the performer');
+  g.hero.x = 320;
   assert(g.cast(2,foe.id,true));
-  assert.equal(g.rogueSongBoon(g.hero,'quickstep'),null,
-    'a charged performance at 270 range does not self-buff beyond its 185 area');
+  assert(g.rogueSongBoon(g.hero,'quickstep'),
+    'the performer receives her own song at 270 units when the enemy is inside 280');
   // Full-party Skill 5 must not turn every gameplay query into terrain scans.
   // Four additional companions plus the original unit and heroine stand in one
   // charged music station; repeated frame reads should reuse one sightline.

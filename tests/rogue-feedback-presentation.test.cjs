@@ -5,23 +5,24 @@ const Hero = require('../src/prototype/hero-presentation.js');
 const Audio = require('../src/prototype/audio.js');
 const cases = [
   { type: 'rogueBellBasic', actor: 'hero', class: 'rogue', slot: 1,
-    automaticBasic: true, combo: 1, landed: true, x: 100, y: 100,
+    automaticBasic: true, combo: 1, landed: true, x: 100, y: 100, radius: 220,
     targetX: 125, targetY: 94, audioCue: 'bell-jingle' },
   { type: 'rogueBellSkill1', actor: 'hero', class: 'rogue', slot: 1,
-    form: 'tap', x: 125, y: 94, radius: 145, audioCue: 'bell-jingle' },
+    form: 'tap', x: 100, y: 100, radius: 225, audioCue: 'bell-jingle' },
   { type: 'rogueBellSkill1', actor: 'hero', class: 'rogue', slot: 1,
-    form: 'charged', x: 125, y: 94, radius: 190, audioCue: 'bell-jingle' },
+    form: 'charged', x: 100, y: 100, radius: 290, audioCue: 'bell-jingle' },
   { type: 'rogueBellPerformance', actor: 'hero', class: 'rogue', slot: 5,
-    form: 'charged', x: 125, y: 94, radius: 180, audioCue: 'bell-jingle' },
+    form: 'charged', x: 100, y: 100, radius: 275, audioCue: 'bell-jingle' },
 ];
 const effects = [];
 Hero.queue(cases, (f, type, seconds, priority) =>
   effects.push({ ...f, type, life: seconds, max: seconds, priority }));
-assert.deepEqual(effects.map(f => f.stage), ['cast', 'impact', 'area', 'area', 'area']);
+assert.deepEqual(effects.map(f => f.stage), ['cast', 'area', 'area', 'area', 'area']);
 assert.equal(effects[0].name, 'Jingle Bell Combo');
 assert.equal(effects[0].motif, 'jingle', 'handheld jingle-ball identity, not a handbell');
-assert.equal(effects[1].x, cases[0].targetX);
-assert.equal(effects[1].y, cases[0].targetY);
+assert.equal(effects[1].x, cases[0].x);
+assert.equal(effects[1].y, cases[0].y);
+assert.equal(effects[1].radius, 220, 'basic sound wave uses true self-centered radius');
 assert.equal(effects[2].charged, false);
 assert.equal(effects[3].charged, true);
 assert(effects[3].max > effects[2].max);
