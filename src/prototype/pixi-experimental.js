@@ -1323,10 +1323,14 @@
         syncAtmosphere();
         scene.draw();
         startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
+        // Any Pixi activation (not only a later native zone transition) must
+        // preload the complete currently admitted region while the renderer
+        // guard still presents its preparation panel. warmArrival() reuses
+        // these same tiles rather than painting a second copy on Continue.
+        stage = 'region-terrain-preparation';
+        if (!await prepareTerrainTiles(thisEpoch)) return false;
         stage = 'region-art-preparation';
-        // First Pixi initialization prepares all admitted outdoor/interior art
-        // before activation, not just a fringe to be finished after reveal.
-        if(!await warmNeighborhood(thisEpoch, true))return false;
+        if (!await warmNeighborhood(thisEpoch, true)) return false;
         stage = 'gpu-procedural-upload';
         if (!await prepareGpuTextures(thisEpoch, [...baked.values()].map((body) => body.texture),
           'procedural')) return false;
