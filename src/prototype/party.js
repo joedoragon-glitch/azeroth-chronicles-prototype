@@ -3481,7 +3481,8 @@
       setRogueFallenCharmSlotPolicy(policy, barracksId) {
         // A completed Barracks owns this Rogue-only choice. Existing fallen
         // companions are never silently reallocated when the policy changes.
-        if (this.hero.class !== 'rogue' || !['release', 'keep'].includes(policy)) return false;
+        if (this.hero.class !== 'rogue' || !['release', 'keep'].includes(policy) ||
+          typeof barracksId !== 'string' || !barracksId.length) return false;
         const sourceReason = this.companionServiceSourceReason(barracksId);
         const safetyReason = this.companionServiceReason();
         if (sourceReason || safetyReason) {

@@ -1,5 +1,13 @@
 # Rogue Bard — Expedition ownership caps and low-friction Barracks company management
 
+## 29 October 2026 — optional Rogue fallen-Charm slot retention (PR #636 candidate)
+
+**Owner-approved amendment, not a retrospective change to the published dev.231 default:** Under **Barracks → Recovery**, Rogue alone may choose between **Free slots when Charmed allies fall** (the unchanged default) and **Keep fallen Charmed allies in party slots**. Free-slot mode transfers an authentic fallen Charmed companion to the global **fallen reserve** immediately, preserving its identity, ownership/quota and 40-crown recovery right while opening its slot to the next lawful Charm. Keep-slot mode instead leaves that individual **fallen but still assigned to the active group**, as other classes' fallen troops already are. New Charms may still be owned in reserve but cannot use that occupied active slot; restoring the fallen individual for 40 crowns returns it alive in its existing slot. This option is a **global Rogue campaign preference**, not a per-Barracks storage limit, not a ban on recovering fallen reserve members and not an automatic revival. Both modes keep recovery requests, capture receipts, mastery and subtype counts intact.
+
+The setting is available only from a **completed Barracks**, requires safe companion-service conditions, and affects **future deaths only**. Switching does not retroactively reassign existing fallen companions, consume crowns, bypass the ordinary Barracks rest rules or alter Paladin/Mage/Ranger, inherited conventional troops or boss pets. The default is restored on older v4 saves without the optional `rogueFallenCharmSlotPolicy` field. The Rogue-specific option and explanation are available in English and Spanish.
+
+**Status:** Implemented in draft [PR #636](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/636); focused tests, merging, hosted publication and device acceptance have separate gates. Historical dev.231 release evidence immediately below remains valid for its published **default** only.
+
 ## 29 October 2026 — Rogue fallen-Charm field-slot correction (dev.231 merged and published)
 
 When a **legitimate active Charmed monster** reaches **0 HP** in actual combat while Rogue is the current hero, it immediately leaves the active field party and enters the **fallen reserve**, including during combat and without requiring crowns or a Barracks. A later successful eligible Charm takes the freed slot; no resting companion is automatically drafted. The Rogue's active capacity is unchanged (3/4/4/5/6/7 by Expedition rank).

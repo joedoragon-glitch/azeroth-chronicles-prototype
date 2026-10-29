@@ -1455,7 +1455,7 @@
       refresh.back = back;
       const g = getGame(),
         roguePolicyDescription = g.hero.class === 'rogue'
-          ? '\\n\\nRogue only: Choose how FUTURE fallen Charmed allies occupy party slots. The default frees the slot by moving the fallen ally to reserve. Keeping the slot instead lets you recover that same ally into your active group later. Both modes preserve ownership and require paid recovery. Switching modes never moves existing fallen companions.'
+          ? '\n\nRogue only: Choose how FUTURE fallen Charmed allies occupy party slots. The default frees the slot by moving the fallen ally to reserve. Keeping the slot instead lets you recover that same ally into your active group later. Both modes preserve ownership and require paid recovery. Switching modes never moves existing fallen companions.'
           : '',
         pending = g.companionRecoveryRequests().filter(
           (r) => r.barracksId === b.id && r.zone === g.zoneId,
