@@ -194,7 +194,11 @@
           !targets.length
         )
           return false;
-        const criticalReceipt = this.petCriticalRelease(u, String(slot));
+        const criticalReceipt = this.petCriticalRelease(u, String(slot)),
+          tier = this.companionMasteryTier(u),
+          mastery = R.balance.companions.mastery,
+          damageMastery = 1 + tier * mastery.nativeDamagePerTier,
+          slowMastery = tier * mastery.slowSecondsPerTier;
         const projectile = this.petDefinition(u).role === 'ranged' && def.shape === 'target';
         let hits = 0;
         if (projectile) {
@@ -211,11 +215,12 @@
             petFamily: u.petFamily,
             damage: this.petCriticalConsequence(
               criticalReceipt,
-              this.companionAttackDamage(u) * def.multiplier,
+              this.companionAttackDamage(u) * def.multiplier * damageMastery,
               'damage',
             ),
             speed: R.balance.friendlyProjectiles.skillSpeed,
-            slow: this.petCriticalConsequence(criticalReceipt, def.slow || 0, 'slowDuration'),
+            slow: this.petCriticalConsequence(criticalReceipt,
+              def.slow ? Math.min(2.5, def.slow + slowMastery) : 0, 'slowDuration'),
             petSkillSlot: slot,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             // A delayed impact must keep the true shot origin after pet movement.
@@ -241,7 +246,8 @@
                 e,
                 this.petCriticalConsequence(
                   criticalReceipt,
-                  this.companionAttackDamage(u) * def.multiplier * woundedBonus,
+                  this.companionAttackDamage(u) * def.multiplier *
+                    woundedBonus * damageMastery,
                   'damage',
                 ),
                 u.id,
@@ -253,7 +259,8 @@
             if (def.slow)
               this.applySlow(
                 e,
-                this.petCriticalConsequence(criticalReceipt, def.slow, 'slowDuration'),
+                this.petCriticalConsequence(criticalReceipt,
+                  Math.min(2.5, def.slow + slowMastery), 'slowDuration'),
               );
           }
         }
@@ -273,10 +280,13 @@
       petSkillContact(u, target, slot, hits = 1, criticalReceipt = null, launchPoint = null) {
         const def = this.petSkillDefinition(u, slot);
         if (!def || u.hp <= 0 || u.active === false) return false;
+        const tier = this.companionMasteryTier(u),
+          healMastery = 1 + tier * R.balance.companions.mastery.nativeDamagePerTier,
+          wardMastery = Math.min(0.75, (def.ward || 0) + tier * 0.005);
         if (u.hp > 0 && def.heal) {
           u.hp = Math.min(
             u.maxHp,
-            u.hp + this.petCriticalConsequence(criticalReceipt, u.maxHp * def.heal, 'healAmount'),
+            u.hp + this.petCriticalConsequence(criticalReceipt, u.maxHp * def.heal * healMastery, 'healAmount'),
           );
           this.event('heal', { x: u.x, y: u.y, target: u.id, resource: 'health' });
         }
@@ -297,7 +307,7 @@
             ally.hp = Math.min(
               ally.maxHp,
               ally.hp +
-                this.petCriticalConsequence(criticalReceipt, u.maxHp * def.allyHeal, 'healAmount'),
+                this.petCriticalConsequence(criticalReceipt, u.maxHp * def.allyHeal * healMastery, 'healAmount'),
             );
             this.event('heal', {
               x: ally.x,
@@ -311,10 +321,10 @@
         }
         if (u.hp > 0 && def.ward) {
           // Self-only, strongest ward wins; never stacks with Paladin protection.
-          if ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= def.ward) {
+          if ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= wardMastery) {
             u.wardUntil =
               this.s.time + this.petCriticalConsequence(criticalReceipt, def.duration, 'wardDuration');
-            u.wardReduction = def.ward;
+            u.wardReduction = wardMastery;
           }
         }
         this.petSkillEvent(u, target, slot, hits, 'impact', launchPoint);
