@@ -821,7 +821,8 @@
           throw Error('Invalid charm provenance');
         const capturedSources = new Set(),
           capturedIds = new Set(),
-          speciesNames = new Map(D.species.flat().map((row) => [row[0], row[1]]));
+          speciesNames = new Map([...D.species.flat().map((row) => [row[0], row[1]]),
+            ['wraith', 'Lantern wraith'], ['stalker', 'Ash stalker']]);
         const validateCapture = (u) => {
           const a = u.charmOrigin, record = captures[u.id];
           if (!a || !record || typeof a !== 'object' || Array.isArray(a) ||
@@ -834,9 +835,12 @@
               (u.type === 'archer' ? 'ranged' : 'melee'),
             variant = u.type === 'archer' ? R.rangedProfiles[a.species]?.variant : null,
             canonicalName = speciesName + (variant ? ' ' + variant : '');
+          if ((a.species === 'wraith' && u.type !== 'archer') ||
+              (a.species === 'stalker' && u.type !== 'soldier'))
+            throw Error('Invalid night Charm role');
           if (!speciesName || a.role !== u.type || a.typeId !== subtype ||
             (u.type === 'archer' && !R.rangedProfiles[a.species] &&
-              !['archer', 'crownguard'].includes(a.species)) ||
+              !['archer', 'crownguard', 'wraith'].includes(a.species)) ||
             a.typeName !== canonicalName ||
             !/^enemy-[1-9]\d*$/.test(a.sourceEnemyId) ||
             !Object.hasOwn(s.zones, a.sourceZone) ||
@@ -891,6 +895,7 @@
           delete u.survivalRetreat;
           if (u.skill1Cd === undefined) u.skill1Cd = 0;
           if (u.skill2Cd === undefined) u.skill2Cd = 0;
+          if (u.skill3Cd === undefined) u.skill3Cd = 0;
           if (u.skillGlobalCd === undefined) u.skillGlobalCd = 0;
           if (u.healCd === undefined) u.healCd = 0;
           if (u.manaCd === undefined) u.manaCd = 0;
@@ -906,6 +911,7 @@
             'cd',
             'skill1Cd',
             'skill2Cd',
+            'skill3Cd',
             'skillGlobalCd',
             'healCd',
             'manaCd',
