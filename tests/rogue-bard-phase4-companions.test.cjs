@@ -3,6 +3,7 @@
 // The test-only Rogue class registry does not authorize public class selection.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
+const Menus = require('../src/prototype/menus.js');
 const R = Campaign.rules;
 const Sprites = require('../src/prototype/sprites.js');
 const Critical = require('../src/prototype/critical-executions.js');
@@ -483,6 +484,28 @@ try {
     assert.equal(care.activeParty().length, 0);
     const newCharm = capture(care, 'skeleton');
     assert.equal(newCharm.active, true, 'freed field slot accepts new lawful Charm');
+    // The actual Recovery menu must include fallen Charmed reserve entries,
+    // not only members still marked active in the field.
+    let opened;
+    const ui = Menus.create({
+      getGame: () => care,
+      Campaign,
+      D: Campaign.data,
+      action: (label, execute, detail = '', disabled = false) =>
+        ({ label, action: execute, detail, disabled }),
+      openMenu: (title, description, actions, back) =>
+        (opened = { title, description, actions, back }),
+      closeMenu() {},
+      recallSquad() {},
+      showMap() {},
+      finaleMenu() {},
+    });
+    ui.barracksMenu(barracks);
+    const recoveryMenu = opened.actions.find((a) => a.label === 'Recovery');
+    assert(recoveryMenu, 'Rogue uses the shared Barracks Recovery service');
+    recoveryMenu.action();
+    assert.equal(opened.actions.filter((a) => a.label.startsWith('Recover ')).length, 3,
+      'all three automatically reserved fallen Charms remain selectable');
     const ids = receipts.map((receipt) => receipt.id);
     for (const id of ids)
       assert(care.requestCompanionCare('recovery', barracks.id, id));
