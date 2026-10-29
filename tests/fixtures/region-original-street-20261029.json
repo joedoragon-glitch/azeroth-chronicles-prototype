@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 1,
+  "provenance": "Owner-approved restoration baseline; native focused CI 40970047493, deterministic seeds per region",
+  "source": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40970047493",
+  "seeds": {
+    "march": "0x11005a10",
+    "highlands": "0x11005a11",
+    "frontier": "0x11005a12",
+    "crown": "0x11005a13"
+  },
+  "regions": {
+    "march": {
+      "roads": 13,
+      "connected": 13,
+      "unsafeSegments": [],
+      "marginCount": 0,
+      "blockingProps": [],
+      "services": [],
+      "playerBuildings": []
+    },
+    "highlands": {
+      "roads": 12,
+      "connected": 12,
+      "unsafeSegments": [],
+      "marginCount": 40,
+      "blockingProps": [
+        [
+          "settlement-major-0",
+          335,
+          2291.1,
+          146.2,
+          207
+        ],
+        [
+          "settlement-major-1",
+          646,
+          1855.8,
+          119.3,
+          207
+        ],
+        [
+          "settlement-major-2",
+          1128.3,
+          2543.3,
+          133.3,
+          207
+        ],
+        [
+          "settlement-major-3",
+          475,
+          2525,
+          115,
+          207
+        ],
+        [
+          "settlement-major-4",
+          370,
+          2510,
+          116.6,
+          207
+        ],
+        [
+          "settlement-major-5",
+          620.7,
+          2550,
+          116.7,
+          207
+        ],
+        [
+          "settlement-major-6",
+          1099.6,
+          1981.4,
+          198.6,
+          207
+        ],
+        [
+          "settlement-major-7",
+          978.6,
+          2530.4,
+          120.4,
+          207
+        ],
+        [
+          "settlement-major-8",
+          290,
+          2423.9,
+          140.7,
+          207
+        ],
+        [
+          "settlement-minor-2",
+          2410,
+          780,
+          130,
+          207
+        ],
+        [
+          "settlement-minor-3",
+          2700,
+          790,
+          140,
+          207
+        ],
+        [
+          "settlement-minor-4",
+          2850,
+          400,
+          206.2,
+          207
+        ],
+        [
+          "settlement-minor-5",
+          2900,
+          880,
+          115.1,
+          207
+        ]
+      ],
+      "services": [
+        [
+          "board",
+          980,
+          2255,
+          75,
+          95
+        ],
+        [
+          "minor",
+          2530,
+          620,
+          30,
+          180
+        ],
+        [
+          "rest",
+          620,
+          2255,
+          75,
+          190
+        ],
+        [
+          "supplier",
+          865,
+          2145,
+          35,
+          92
+        ]
+      ],
+      "playerBuildings": []
+    },
+    "frontier": {
+      "roads": 41,
+      "connected": 41,
+      "unsafeSegments": [
+        [
+          37,
+          1,
+          1170,
+          350,
+          1170,
+          1450
+        ],
+        [
+          38,
+          1,
+          155,
+          1450,
+          1170,
+          1450
+        ]
+      ],
+      "marginCount": 86,
+      "blockingProps": [
+        [
+          "settlement-major-0",
+          210,
+          205,
+          145,
+          207
+        ],
+        [
+          "settlement-major-1",
+          745,
+          170,
+          180,
+          207
+        ],
+        [
+          "settlement-major-3",
+          1160,
+          190,
+          160,
+          207
+        ],
+        [
+          "settlement-major-5",
+          620,
+          1320,
+          130,
+          207
+        ],
+        [
+          "settlement-major-6",
+          975,
+          1180,
+          195,
+          207
+        ],
+        [
+          "settlement-major-7",
+          232.2,
+          1581.6,
+          111.9,
+          207
+        ],
+        [
+          "settlement-minor-0",
+          312.5,
+          2480.3,
+          81.6,
+          207
+        ],
+        [
+          "settlement-minor-1",
+          1940,
+          930,
+          65,
+          207
+        ],
+        [
+          "settlement-minor-2",
+          700,
+          2620,
+          107.9,
+          207
+        ],
+        [
+          "settlement-minor-4",
+          545,
+          2940,
+          115,
+          207
+        ],
+        [
+          "settlement-minor-5",
+          1165,
+          1420,
+          5,
+          207
+        ]
+      ],
+      "services": [
+        [
+          "board",
+          550,
+          420,
+          70,
+          95
+        ],
+        [
+          "minor",
+          1100,
+          1100,
+          70,
+          180
+        ],
+        [
+          "recruiter",
+          385,
+          650,
+          65,
+          92
+        ],
+        [
+          "supplier",
+          720,
+          420,
+          70,
+          92
+        ]
+      ],
+      "playerBuildings": []
+    },
+    "crown": {
+      "roads": 30,
+      "connected": 0,
+      "unsafeSegments": [
+        [
+          3,
+          11,
+          975,
+          2125,
+          1125,
+          2125
+        ]
+      ],
+      "marginCount": 34,
+      "blockingProps": [
+        [
+          "settlement-major-0",
+          180,
+          230,
+          150,
+          207
+        ],
+        [
+          "settlement-major-1",
+          400,
+          100,
+          80,
+          207
+        ],
+        [
+          "settlement-major-2",
+          1040,
+          230,
+          150,
+          207
+        ],
+        [
+          "settlement-major-3",
+          1040,
+          550,
+          133.1,
+          207
+        ],
+        [
+          "settlement-major-5",
+          600,
+          1400,
+          180,
+          207
+        ],
+        [
+          "settlement-major-6",
+          1040,
+          1490,
+          185,
+          207
+        ],
+        [
+          "settlement-major-7",
+          1040,
+          1000,
+          137.3,
+          207
+        ],
+        [
+          "settlement-major-8",
+          120,
+          360,
+          63.2,
+          207
+        ],
+        [
+          "settlement-minor-0",
+          740,
+          1870,
+          70,
+          207
+        ],
+        [
+          "settlement-minor-1",
+          1020,
+          2140,
+          15,
+          207
+        ],
+        [
+          "settlement-minor-2",
+          740,
+          2460,
+          160,
+          207
+        ],
+        [
+          "settlement-minor-3",
+          968.3,
+          3024.7,
+          68.3,
+          207
+        ],
+        [
+          "settlement-minor-4",
+          1020,
+          2460,
+          120,
+          207
+        ],
+        [
+          "settlement-minor-5",
+          680,
+          2040,
+          180,
+          207
+        ]
+      ],
+      "services": [
+        [
+          "board",
+          600,
+          750,
+          30,
+          95
+        ],
+        [
+          "minor",
+          1030,
+          1840,
+          15,
+          180
+        ],
+        [
+          "rest",
+          600,
+          550,
+          170,
+          190
+        ]
+      ],
+      "playerBuildings": []
+    }
+  }
+}

@@ -6,10 +6,87 @@ const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const selectedRegion = process.argv.find((a) => a.startsWith('--region='))?.slice(9);
 const regions = Campaign.data.regions.filter((r) => !selectedRegion || r.id === selectedRegion);
 assert(regions.length, 'unknown region selection');
+
+const historic = require('./fixtures/region-original-street-20261029.json');
+const { rng: regionalRng } = require('../tools/greenwood-layout/fixtures.cjs');
+const rounded = (n) => Math.round(n * 10) / 10;
+// Owner accepted restoring these pre-#570 regional layouts instead of mandatory
+// complete connectivity or a later broad aesthetic/roadside relocation sweep.
+// Strict legacy audit stays accessible with --strict-regional.
+function checkRestoredRegionalBaseline(id) {
+  const order = ['march','highlands','frontier','crown'];
+  const index = order.indexOf(id);
+  const game = new Campaign('normal', 'paladin', regionalRng(0x11005a10 + index));
+  game.enter(id);
+  const zone = game.zone();
+  const i = game.regionIndex();
+  const town = { x: Campaign.data.towns[i][0], y: Campaign.data.towns[i][1] };
+  const touch = (p, road) => road.some((q,j)=>j && game.distanceToSegment(p,road[j-1],q)<1);
+  const connected = new Set(zone.roads.map((r,j)=>touch(town,r)?j:-1).filter(j=>j>=0));
+  for(let grew=true;grew;){
+    grew=false;
+    zone.roads.forEach((r,j)=>{
+      if(connected.has(j))return;
+      if([...connected].some(k=>r.some(p=>touch(p,zone.roads[k]))||zone.roads[k].some(p=>touch(p,r)))){
+        connected.add(j);grew=true;
+      }
+    });
+  }
+  const unsafeSegments=[];
+  zone.roads.forEach((r,k)=>r.forEach((p,j)=>{
+    if(j && !game.clearSegment(r[j-1],p,15))
+      unsafeSegments.push([k,j,rounded(r[j-1].x),rounded(r[j-1].y),rounded(p.x),rounded(p.y)]);
+  }));
+  const margins=zone.props.filter(p=>!p.roadTrace && game.distanceToRoad(zone,p)+.01 < game.roadSetback(p));
+  const blocked=margins.filter(p=>p.roadBlocker).map(p=>[
+    p.id,rounded(p.x),rounded(p.y),rounded(game.distanceToRoad(zone,p)),game.roadSetback(p)
+  ]).sort((a,b)=>a[0].localeCompare(b[0]));
+  const services=[['rest',190],['minor',180],['supplier',92],['recruiter',92],['board',95]]
+    .flatMap(([id,required])=>{
+      const p=zone.npcs.find(n=>n.id===id);
+      return p && game.distanceToRoad(zone,p)+.01<required
+        ? [[id,rounded(p.x),rounded(p.y),rounded(game.distanceToRoad(zone,p)),required]]:[];
+    }).sort((a,b)=>a[0].localeCompare(b[0]));
+  const playerBuildings=zone.buildings.flatMap(b=>{
+    const actual=game.distanceToRoad(zone,b), required=175;
+    return actual+.01<required
+      ? [[b.id,rounded(b.x),rounded(b.y),rounded(actual),required]]:[];
+  }).sort((a,b)=>a[0].localeCompare(b[0]));
+  const actual={
+    roads:zone.roads.length,connected:connected.size,unsafeSegments,
+    marginCount:margins.length,blockingProps:blocked,services,playerBuildings
+  };
+  assert.deepEqual(actual,historic.regions[id],
+    id+' changed from the owner-approved original regional street/placement baseline');
+  assert.equal(zone.finalStreetClearanceVersion,undefined,
+    'new worlds must not reapply the rejected automatic final road pass');
+  // Keep a dev.233-versioned receipt harmless on v4 restore: preserve campaign
+  // economy, entity identities, quest data and the existing world snapshot.
+  // This does NOT claim historical scenery coordinates have been reversed.
+  const old=game.snapshot();
+  old.zones[id].finalStreetClearanceVersion=1;
+  const coins=old.hero.gold;
+  const ids=Object.fromEntries(['props','npcs','buildings'].map(k=>[k,old.zones[id][k].map(e=>e.id)]));
+  const restored=Campaign.restore(old);
+  const current=restored.zone();
+  assert.equal(restored.hero.gold,coins,id+' old save currency retained');
+  for(const k of ['props','npcs','buildings'])
+    assert.deepEqual(current[k].map(e=>e.id),ids[k],id+' old save '+k+' identities retained');
+  const again=Campaign.restore(restored.snapshot());
+  assert.equal(again.hero.gold,coins,id+' repeat restore currency retained');
+  for(const k of ['props','npcs','buildings'])
+    assert.deepEqual(again.zone()[k].map(e=>e.id),ids[k],id+' repeat restore '+k+' identities retained');
+  console.log('PASS '+id+' historical-region geometry parity, documented exceptions, and v4 identity preservation');
+}
+
 let routes = 0;
 let inspected = 0;
 
 for (const region of regions) {
+  if (region.id !== 'vale' && !process.argv.includes('--strict-regional')) {
+    checkRestoredRegionalBaseline(region.id);
+    continue;
+  }
   const game = new Campaign();
   game.enter(region.id);
   const zone = game.zone();
@@ -300,7 +377,7 @@ assert(
 console.log(
   'PASS ' +
     regions.length +
-    ' settlement street plans, ' +
+    ' owner-baseline region plans and strict Vale roads, ' +
     routes +
     ' connected routes, ' +
     inspected +

@@ -11,64 +11,56 @@ function test(name, fn) {
   console.log('PASS ' + name);
 }
 const fresh = () => new C('normal', 'paladin', () => 0.9);
-test('Ogre hearth and legacy habitat use one road-accessible settlement', () => {
+test('Ogre hearth remains authored; old-save habitat scenery stays at prior coordinates', () => {
   const c = fresh();
   c.enter('highlands');
   const site = C.rules.sites[2].find(([id]) => id === 'ogre-hearth');
   const habitat = C.rules.worldLifePlans[2].habitats.find((h) => h.id === 'ogre-hearth');
-  assert.deepEqual(habitat.center, site.slice(2), 'habitat and named camp share one center');
-  assert(c.distanceToRoad(c.zone(), { x: site[2], y: site[3] }) <= 260);
-
-  // Reproduce a version-1 Appalachian save created with the previous
-  // 1980,1820 habitat source, without deleting or regenerating old props.
-  const prior = c.snapshot(), oldZone = prior.zones.highlands;
-  // A new campaign replaces nearby generic furniture with the stronger
-  // authored ogre stronghold. Historical v1 saves may still contain the
-  // original generic props at 1980,1820; preserve their exact identities.
-  const moved = [
-    { id: 'world-life-habitat-9001', x: 1905, y: 1800, r: 0, decorative: true, structure: 'lean-to' },
-    { id: 'world-life-habitat-9002', x: 2005, y: 1795, r: 0, decorative: true, structure: 'ridge-hearth' },
-    { id: 'world-life-habitat-9003', x: 2065, y: 1855, r: 0, decorative: true, structure: 'stone-seat' },
+  assert.deepEqual(habitat.center, site.slice(2));
+  assert(c.distanceToRoad(c.zone(), {x:site[2],y:site[3]})<=260);
+  const old=c.snapshot();
+  const scenery=[
+    {id:'world-life-habitat-9001',x:1905,y:1800,r:0,decorative:true,structure:'lean-to'},
+    {id:'world-life-habitat-9002',x:2005,y:1795,r:0,decorative:true,structure:'ridge-hearth'},
+    {id:'world-life-habitat-9003',x:2065,y:1855,r:0,decorative:true,structure:'stone-seat'}
   ];
-  oldZone.props.push(...moved.map((p) => ({ ...p })));
-  const expected = moved.map((p) => ({ id: p.id, structure: p.structure }));
-  delete oldZone.highlandsOgreHabitatVersion;
-  const restored = C.restore(prior);
-  const zone = restored.zone();
-  assert.equal(zone.highlandsOgreHabitatVersion, 1);
-  for (const record of expected) {
-    const p = zone.props.find((q) => q.id === record.id);
-    assert(p, 'historical habitat prop keeps its ID');
-    assert.equal(p.structure, record.structure);
-    assert(Math.hypot(p.x - site[2], p.y - site[3]) < 310,
-      'historical habitat prop moves to the actual ogre camp');
+  old.zones.highlands.props.push(...scenery.map(p=>({...p})));
+  delete old.zones.highlands.highlandsOgreHabitatVersion;
+  const restored=C.restore(old);
+  const z=restored.zone();
+  assert.equal(z.highlandsOgreHabitatVersion,undefined,
+    'unrequested ogre-habitat relocation stays rolled back');
+  for(const p of scenery){
+    const q=z.props.find(q=>q.id===p.id);
+    assert(q,'historical scenery identity preserved');
+    assert.equal(q.structure,p.structure);
+    assert.deepEqual([q.x,q.y],[p.x,p.y],
+      'old regional habitat coordinates stay intact');
   }
-  const once = JSON.stringify(zone.props.filter((p) => expected.some((e) => e.id === p.id)));
-  const again = C.restore(restored.snapshot());
-  assert.equal(
-    JSON.stringify(again.zone().props.filter((p) => expected.some((e) => e.id === p.id))),
-    once, 'second restore never expands or repositions the same habitat',
-  );
+  const again=C.restore(restored.snapshot()).zone();
+  for(const p of scenery){
+    const q=again.props.find(q=>q.id===p.id);
+    assert.deepEqual([q.x,q.y],[p.x,p.y],'repeat save restore cannot move old habitat');
+  }
 });
-test('Historical Ironroot walls regain street clearance once, keeping their identity', () => {
-  const c = fresh();
-  c.enter('highlands');
-  const raw = c.snapshot(), zone = raw.zones.highlands;
-  const wall = zone.props.find((p) => p.id === 'stronghold-wolf-packhold-wall-6');
-  assert(wall, 'real named stronghold wall survives the first landscape');
-  const originalId = wall.id, originalStructure = wall.structure, originalGold = raw.hero.gold;
-  Object.assign(wall, { x: 520, y: 1165 }); // previous obstructing v4 coordinates
-  delete zone.highlandsFinalRoadsideVersion;
-  const restored = C.restore(raw), z = restored.zone(),
-    migrated = z.props.find((p) => p.id === originalId);
-  assert(migrated, 'no wall is removed');
-  assert.equal(migrated.structure, originalStructure);
-  assert.equal(restored.hero.gold, originalGold);
-  assert.equal(z.highlandsFinalRoadsideVersion, 1, 'only a verified full-width clearance is versioned');
-  assert(restored.distanceToRoad(z, migrated) + 0.01 >= restored.roadSetback(migrated));
-  const again = C.restore(restored.snapshot()), same = again.zone().props.find((p) => p.id === originalId);
-  assert.deepEqual({ x: same.x, y: same.y }, { x: migrated.x, y: migrated.y },
-    'second restore does not drift the repaired wall');
+test('Historical Highlands wall stays in its accepted place without blanket relocation', () => {
+  const c=fresh();c.enter('highlands');
+  const raw=c.snapshot(),z=raw.zones.highlands;
+  const wall=z.props.find(p=>p.id==='stronghold-wolf-packhold-wall-6');
+  assert(wall);
+  Object.assign(wall,{x:520,y:1165});
+  delete z.highlandsFinalRoadsideVersion;
+  const oldGold=raw.hero.gold;
+  const restored=C.restore(raw),found=restored.zone().props.find(p=>p.id===wall.id);
+  assert(found);
+  assert.equal(restored.hero.gold,oldGold);
+  assert.deepEqual([found.x,found.y],[520,1165],
+    'restoring prior scenery is preferred to unapproved broad sweeps');
+  assert.equal(restored.zone().highlandsFinalRoadsideVersion,undefined);
+  const next=C.restore(restored.snapshot()).zone().props.find(p=>p.id===wall.id);
+  assert.deepEqual([next.x,next.y],[520,1165]);
+  // Its old road-margin violation stays documented in PR #651 / issue #613;
+  // this is not a claim that the painted-street obstruction was repaired.
 });
 test('Ironroot production scenes leave homes, habitats, service spacing and roads intact', () => {
   const c = fresh();
