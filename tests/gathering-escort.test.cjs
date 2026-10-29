@@ -1,4 +1,5 @@
 'use strict';
+// Diagnostic audit PR #585: run this existing original regression unchanged against the dev.215 baseline.
 const assert = require('node:assert/strict'),
   C = require('../src/prototype/engine'),
   Menus = require('../src/prototype/menus');
