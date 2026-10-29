@@ -47,3 +47,9 @@ The proposed fix refreshes only the local Campaign reference after successful sy
 A bilingual synthetic-v4 test supplies a matching `azeroth-active-play-recovery-v1` marker, verifies that recovery really changes the object, and checks that Continue exposes gameplay after the ready frame. The real player's exported save does **not** include the browser-local marker, so source evidence alone cannot confirm that marker was present at the time of the freeze. No personal save contents are stored in this PR.
 
 **Status:** Draft branch pending exact-head CI and owner device acceptance. Do not claim merged, published, or physically verified until those separate checks pass.
+
+## Import Save confirmation on the title screen (follow-up)
+
+Import Save opens the browser's native JSON file picker. After the user selects a valid file, the import performs validation and guarded replacement, resets the unclean-session marker, and intentionally returns to the title screen rather than starting simulation immediately. This protects the loaded campaign behind an explicit **Continue Adventure** action. Previously the only success notice was written to the gameplay HUD, hidden by the title overlay, making a successful import look like a no-op.
+
+The title screen now exposes a visible bilingual live-region confirmation instructing **Continue Adventure**; a failed import instead displays a readable error inside the current dialog and leaves the existing save untouched. Cancelling the native picker without selecting a file leaves the dialog unchanged. The launch/restore tests verify native input invocation, bilingual confirmation, and manual Continue handoff. Actual browser file-picker behavior still requires device verification.
