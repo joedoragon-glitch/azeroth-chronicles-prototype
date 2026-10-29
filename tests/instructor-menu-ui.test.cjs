@@ -10,18 +10,12 @@ if (!hadRogue) {
 }
 let cases = 0;
 for (const language of ['en', 'es'])
-  for (const [heroClass, listedNames] of Object.entries({
-    paladin: ['Sword Combo', 'Sundering Strike'],
-    mage: ['Arcane Combo', 'Frost Bolt'],
-    ranger: ['Bow Combo', 'Pinning Shot'],
-    rogue: ['Ding and Sting', 'Lead Feet'],
-  })) {
+  for (const heroClass of ['paladin', 'mage', 'ranger', 'rogue']) {
     const { scope: s, elements: e } = shell(language, heroClass),
       g = s.Prototype.game;
-    // The Rogue's working repertoire names can change independently of trainer mechanics.
-    const names = heroClass === 'rogue'
-      ? [1, 2].map((slot) => require('../src/prototype/skill-reference').card(g, slot).name)
-      : listedNames;
+    // Resolve the real current curriculum names, rather than pinning retired class labels.
+    const names = [1, 2].map((slot) =>
+      require('../src/prototype/skill-reference').card(g, slot).name);
     const t = (en, es) => (language === 'en' ? en : es);
     const click = (prefix) => {
       const b = e.get('modal-actions').children.find((b) => b.textContent.startsWith(prefix));
