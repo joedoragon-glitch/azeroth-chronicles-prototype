@@ -114,6 +114,35 @@ for(const kind of ['ordinary','captain','boss']) {
   console.log('BOSS_CAPTAIN_ROUTE_AUDIT '+JSON.stringify(result));
   assert(result.movement>10,kind+' retains native pursuit progress');
 }
+
+// Complement isolated follow() costs with real Campaign.tick enemy behavior.
+// Unlike the isolated solver comparison, these honor actual boss/captain
+// cooldowns, target selection, leash checks and encounter state transitions.
+for(const kind of ['captain-tick','thorn-boss-tick']){
+  const g=world({count:1,party:3,wall:true,projectiles:0}),z=g.zone();
+  let e=z.enemies[0];
+  if(kind==='thorn-boss-tick'){
+    e=g.bossEnemy(g.boss('thorn'),'normal',{x:e.x,y:e.y});
+    z.enemies=[e];
+  }else{
+    e.captain=true;e.roomCaptain=true;e.captainProfile='supply-vale';
+  }
+  g.s.time=40;e.aggro=true;e.fightStart=40;
+  e.cd=50;e.specialCd=50;e.summonCd=50;
+  const start={x:e.x,y:e.y},m=probe(g,combatNames),peaks=[];
+  for(let i=0;i<60;i++){
+    const before=m.blocked;
+    g.tick(.05,{x:0,y:0});
+    peaks.push(m.blocked-before);
+  }
+  const r={kind,ticks:60,peakBlocked:Math.max(...peaks),totalBlocked:m.blocked,
+    moved:+dist(e,start).toFixed(2),hp:e.hp,aggro:!!e.aggro,
+    methods:m.rows().filter(x=>['updateEnemies','follow','route','advanceBudgetedRoute',
+      'tacticalLocalSupport','tacticalPresentOpponents','line'].includes(x.name))};
+  m.stop();
+  console.log('BOSS_CAPTAIN_LIVE_TICK_AUDIT '+JSON.stringify(r));
+}
+
 assert.equal(typeof renderer.create,'function');
 console.log('RENDERER_MEASUREMENT_BOUNDARY '+JSON.stringify({
   canvas:'renderer.js draw()/metrics().phases samples every twelfth permitted draw',
