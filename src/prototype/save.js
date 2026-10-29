@@ -337,7 +337,9 @@
           !care ||
           typeof care !== 'object' ||
           Array.isArray(care) ||
-          Object.keys(care).some((kind) => !['recovery', 'treatment'].includes(kind))
+          Object.keys(care).some(
+            (kind) => !['recovery', 'treatment', 'recoveryQueue'].includes(kind),
+          )
         )
           throw Error('Invalid companion care requests');
         for (const kind of ['recovery', 'treatment']) {
@@ -365,6 +367,43 @@
             )
           )
             throw Error('Invalid companion care request');
+        }
+        // Older saves contain only recovery/treatment. Extra recovery requests
+        // are optional, ordered, bound to exact companion IDs and bounded by
+        // the existing 200-member company ceiling (never a new save schema).
+        if (care.recoveryQueue !== undefined) {
+          const additional = care.recoveryQueue;
+          if (
+            !Array.isArray(additional) ||
+            additional.length > 199 ||
+            !care.recovery
+          )
+            throw Error('Invalid companion recovery queue');
+          const seen = new Set(care.recovery.companionIds);
+          for (const r of additional) {
+            if (
+              !r ||
+              typeof r !== 'object' ||
+              Array.isArray(r) ||
+              !Array.isArray(r.companionIds) ||
+              r.companionIds.length !== 1 ||
+              typeof r.companionIds[0] !== 'string' ||
+              !r.companionIds[0].length ||
+              r.companionIds[0].length > 160 ||
+              seen.has(r.companionIds[0]) ||
+              r.heroWounded !== undefined ||
+              typeof r.zone !== 'string' ||
+              !Object.hasOwn(s.zones || {}, r.zone) ||
+              !(
+                r.barracksId === null ||
+                (typeof r.barracksId === 'string' &&
+                  r.barracksId.length > 0 &&
+                  r.barracksId.length <= 160)
+              )
+            )
+              throw Error('Invalid companion recovery queue');
+            seen.add(r.companionIds[0]);
+          }
         }
         if (s.companionVitalityRank === undefined) s.companionVitalityRank = 0;
         if (s.companionCombatTraining === undefined)

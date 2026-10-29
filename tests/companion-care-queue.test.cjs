@@ -292,6 +292,167 @@ for (const kind of ['recovery', 'treatment']) {
   assert(opened.description.includes('class loss replaces crown loss'));
   assert(!opened.actions.some((a) => /death recovery/.test(a.label)));
 }
+// The Basic Barracks can hold three distinct unpaid recoveries, not three
+// attempts at the same individual. The fourth cannot replace or charge others.
+{
+  const { g, b, dead } = fixture();
+  const fallen = [dead];
+  for (let i = 0; i < 4; i++) {
+    const u = g.unit('soldier', g.hero.x + 10 + i, g.hero.y + 10 + i);
+    u.hp = 0;
+    u.customName = 'Recovery ' + i;
+    g.s.party.push(u);
+    fallen.push(u);
+  }
+  for (const u of fallen.slice(0, 3))
+    assert(g.requestCompanionCare('recovery', b.id, u.id));
+  assert.equal(g.companionRecoveryRequests().length, 3);
+  assert.deepEqual(
+    g.companionRecoveryRequests().map((r) => r.companionIds[0]),
+    fallen.slice(0, 3).map((u) => u.id),
+    'enrollment order, not roster order, is retained',
+  );
+  assert(!g.requestCompanionCare('recovery', b.id, fallen[3].id));
+  assert.equal(g.companionRecoveryRequests().length, 3);
+  assert.equal(g.hero.gold, 0);
+
+  // A cancellation frees one slot; pending members retain their order.
+  assert(g.requestCompanionCare('recovery', b.id, fallen[1].id));
+  assert.equal(g.companionRecoveryRequests().length, 2);
+  assert(g.requestCompanionCare('recovery', b.id, fallen[3].id));
+  assert.deepEqual(
+    g.companionRecoveryRequests().map((r) => r.companionIds[0]),
+    [fallen[0].id, fallen[2].id, fallen[3].id],
+  );
+  g.hero.gold = 40;
+  g.resolveCompanionCareRequests();
+  assert.equal(g.hero.gold, 0);
+  assert.equal(fallen[0].hp, fallen[0].maxHp);
+  assert.equal(fallen[2].hp, 0);
+  assert.equal(g.companionRecoveryRequests().length, 2);
+  b.full = true; // Upgrading never discards existing requests.
+  assert(g.requestCompanionCare('recovery', b.id, fallen[1].id));
+  assert(g.requestCompanionCare('recovery', b.id, fallen[4].id));
+  assert.equal(g.companionRecoveryRequests().length, 4);
+  const remainingIds = g.companionRecoveryRequests().map((r) => r.companionIds[0]);
+  let restored = C.restore(g.snapshot(), () => 0.5);
+  assert.deepEqual(
+    restored.companionRecoveryRequests().map((r) => r.companionIds[0]),
+    remainingIds,
+    'version-4 save round-trip retains queue order',
+  );
+  restored.hero.gold = 160;
+  restored.resolveCompanionCareRequests();
+  assert.equal(restored.hero.gold, 0);
+  assert.equal(restored.companionRecoveryRequests().length, 0);
+  for (const id of remainingIds)
+    assert.equal(
+      restored.s.party.find((u) => u.id === id).hp,
+      restored.s.party.find((u) => u.id === id).maxHp,
+    );
+  assert.equal(new Set(restored.s.party.map((u) => u.id)).size, restored.s.party.length);
+  paths++;
+}
+// Multiple source queues remain independent, and blocked entries do not swallow
+// the crowns or identities of eligible entries at another completed Barracks.
+{
+  const { g, b, dead } = fixture();
+  const other = { ...b, id: 'second-care-base', full: true };
+  g.zone().buildings.push(other);
+  const extra = g.unit('soldier', g.hero.x + 60, g.hero.y);
+  extra.hp = 0;
+  g.s.party.push(extra);
+  assert(g.requestCompanionCare('recovery', b.id, dead.id));
+  assert(g.requestCompanionCare('recovery', other.id, extra.id));
+  g.hero.gold = 40;
+  b.progress = 3;
+  g.resolveCompanionCareRequests();
+  assert.equal(dead.hp, 0);
+  assert.equal(extra.hp, extra.maxHp);
+  assert.equal(g.hero.gold, 0);
+  assert.equal(g.companionRecoveryRequests().length, 1);
+  assert.equal(g.companionRecoveryRequests()[0].companionIds[0], dead.id);
+  b.progress = 4;
+  dead.hp = 10;
+  g.resolveCompanionCareRequests();
+  assert.equal(g.companionRecoveryRequests().length, 0, 'stale target clears for free');
+  paths++;
+}
+// Old single-entry saves remain compatible; malformed multi-recovery state
+// cannot duplicate targets, bypass bounds or inject an unrelated care kind.
+{
+  const { g, b, dead } = fixture();
+  assert(g.requestCompanionCare('recovery', b.id, dead.id));
+  const original = g.snapshot();
+  assert.equal(original.companionCareRequests.recoveryQueue, undefined);
+  let restored = C.restore(original, () => 0.5);
+  const next = restored.unit('soldier', restored.hero.x, restored.hero.y);
+  next.hp = 0;
+  restored.s.party.push(next);
+  assert(restored.requestCompanionCare('recovery', b.id, next.id));
+  assert.equal(restored.companionRecoveryRequests().length, 2);
+  const saved = restored.snapshot();
+  for (const queue of [
+    {},
+    [{ ...saved.companionCareRequests.recovery, companionIds: [dead.id] }],
+    [{ ...saved.companionCareRequests.recovery, companionIds: [''] }],
+    [{ ...saved.companionCareRequests.recovery, companionIds: [next.id, dead.id] }],
+    Array.from({ length: 200 }, () => saved.companionCareRequests.recovery),
+  ])
+    assert.throws(
+      () => C.restore({
+        ...saved,
+        companionCareRequests: { ...saved.companionCareRequests, recoveryQueue: queue },
+      }),
+      /companion recovery queue/,
+    );
+  paths++;
+}
+// Real Barracks menu uses individual names, preserves Back/navigation and
+// disables the fourth Basic queue entry until an upgrade or cancellation.
+{
+  const { g, b, dead } = fixture();
+  const companions = [dead];
+  for (let i = 0; i < 3; i++) {
+    const u = g.unit('soldier', g.hero.x + i, g.hero.y + i);
+    u.hp = 0;
+    g.s.party.push(u);
+    companions.push(u);
+  }
+  let opened;
+  const ui = Menus.create({
+    getGame: () => g, Campaign: C, D: C.data,
+    action: (label, action, detail = '', disabled = false) => ({ label, action, detail, disabled }),
+    openMenu: (title, description, actions, back) =>
+      (opened = { title, description, actions, back }),
+    closeMenu() {}, recallSquad() {}, showMap() {}, finaleMenu() {},
+  });
+  const openRecovery = () => {
+    ui.barracksMenu(b);
+    opened.actions.find((a) => a.label === 'Recovery').action();
+  };
+  openRecovery();
+  assert(opened.description.includes('0/3'));
+  const recover = (id) => {
+    const a = opened.actions.find((a) => a.label.startsWith('Recover fallen companion') &&
+      a.label.includes(g.companionDisplayName(g.s.party.find((u) => u.id === id))));
+    assert(a && !a.disabled);
+    a.action();
+  };
+  for (const u of companions.slice(0, 3)) recover(u.id);
+  assert(opened.description.includes('3/3'));
+  const fourth = opened.actions.find((a) => a.label.startsWith('Recover fallen companion'));
+  assert(fourth && fourth.disabled);
+  assert.match(fourth.detail, /Queue full/);
+  const cancel = opened.actions.find((a) => a.label.startsWith('Cancel queued recovery'));
+  assert(cancel);
+  cancel.action();
+  recover(companions[3].id);
+  b.full = true;
+  openRecovery();
+  assert(opened.description.includes('no limit'));
+  paths++;
+}
 console.log(
   'PASS ' +
     paths +
