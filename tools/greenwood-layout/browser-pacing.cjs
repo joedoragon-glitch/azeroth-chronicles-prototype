@@ -146,6 +146,7 @@ const routes = {
           index: 0,
           visits: [],
           decisions: [],
+          retreating: false,
           restAttempts: 0,
           rests: 0,
           healRequests: 0,
@@ -253,19 +254,29 @@ const routes = {
           p.healRequests++;
           return { action: 'heal', time: g.s.time };
         }
-        if (g.hero.hp < g.hero.maxHp * 0.3) {
+        if (g.hero.hp < g.hero.maxHp * 0.3) p.retreating = true;
+        if (p.retreating) {
           const town = by('rest'),
             door = town.servicePoint || town;
           if (d(g.hero, door) <= 105 && !g.refugeThreat()) {
             if (g.s.time - p.lastRestAttempt > Math.max(1, g.s.restCooldown || 0)) {
               p.lastRestAttempt = g.s.time;
               p.restAttempts++;
-              if (g.interact(town)) p.rests++;
+              if (g.interact(town)) {
+                p.rests++;
+                p.retreating = false;
+              }
             }
             g.hero.order = null;
             record('recover', {});
           } else {
-            move(g.refugeThreat() && d(g.hero, door) <= 105 ? { x: 220, y: 270 } : door);
+            // Commit to the deeper refuge until its threat admission clears.
+            // Reconsidering at a distance threshold caused a test-only bounce.
+            const safeTown = g.safe(
+              PrototypeData.towns[0][0] - 100,
+              PrototypeData.towns[0][1] - 80,
+            );
+            move(g.refugeThreat() ? safeTown : door);
             record('retreat', {});
           }
           return { action: 'advance', time: g.s.time };
