@@ -11,37 +11,33 @@ function test(name, fn) {
   console.log('PASS ' + name);
 }
 const fresh = () => new C('normal', 'paladin', () => 0.9);
-test('Ogre hearth remains authored; old-save habitat scenery stays at prior coordinates', () => {
-  const c = fresh();
+test('Ogre hearth keeps the prior authored geography without automatic legacy re-homing', () => {
+  const c=fresh();
   c.enter('highlands');
-  const site = C.rules.sites[2].find(([id]) => id === 'ogre-hearth');
-  const habitat = C.rules.worldLifePlans[2].habitats.find((h) => h.id === 'ogre-hearth');
-  assert.deepEqual(habitat.center, site.slice(2));
-  assert(c.distanceToRoad(c.zone(), {x:site[2],y:site[3]})<=260);
+  const z=c.zone();
+  const site=C.rules.sites[2].find(([id])=>id==='ogre-hearth');
+  const habitat=C.rules.worldLifePlans[2].habitats.find(h=>h.id==='ogre-hearth');
+  assert.deepEqual(habitat.center,site.slice(2));
+  assert(c.distanceToRoad(z,{x:site[2],y:site[3]})<=260);
+  // Use genuine authored state. An invented 'world-life-habitat-9001'
+  // identifier may be pruned by the standard v4 save validator; it is not
+  // valid evidence that the removed migration needs to return.
+  const before=z.props.filter(p=>p.stronghold==='ogre-hearth-fort')
+    .map(p=>[p.id,p.structure,p.x,p.y]);
+  assert(before.length>0,'named ogre fort geometry exists');
   const old=c.snapshot();
-  const scenery=[
-    {id:'world-life-habitat-9001',x:1905,y:1800,r:0,decorative:true,structure:'lean-to'},
-    {id:'world-life-habitat-9002',x:2005,y:1795,r:0,decorative:true,structure:'ridge-hearth'},
-    {id:'world-life-habitat-9003',x:2065,y:1855,r:0,decorative:true,structure:'stone-seat'}
-  ];
-  old.zones.highlands.props.push(...scenery.map(p=>({...p})));
   delete old.zones.highlands.highlandsOgreHabitatVersion;
   const restored=C.restore(old);
-  const z=restored.zone();
-  assert.equal(z.highlandsOgreHabitatVersion,undefined,
-    'unrequested ogre-habitat relocation stays rolled back');
-  for(const p of scenery){
-    const q=z.props.find(q=>q.id===p.id);
-    assert(q,'historical scenery identity preserved');
-    assert.equal(q.structure,p.structure);
-    assert.deepEqual([q.x,q.y],[p.x,p.y],
-      'old regional habitat coordinates stay intact');
-  }
-  const again=C.restore(restored.snapshot()).zone();
-  for(const p of scenery){
-    const q=again.props.find(q=>q.id===p.id);
-    assert.deepEqual([q.x,q.y],[p.x,p.y],'repeat save restore cannot move old habitat');
-  }
+  const after=restored.zone().props.filter(p=>p.stronghold==='ogre-hearth-fort')
+    .map(p=>[p.id,p.structure,p.x,p.y]);
+  assert.deepEqual(after,before,'original authored ogre fort survives reload');
+  assert.equal(restored.zone().highlandsOgreHabitatVersion,undefined,
+    'unrequested generic habitat relocation remains absent');
+  const twice=C.restore(restored.snapshot()).zone();
+  assert.deepEqual(
+    twice.props.filter(p=>p.stronghold==='ogre-hearth-fort')
+      .map(p=>[p.id,p.structure,p.x,p.y]),
+    after,'named ogre fort does not drift on second restore');
 });
 test('Historical Highlands wall stays in its accepted place without blanket relocation', () => {
   const c=fresh();c.enter('highlands');

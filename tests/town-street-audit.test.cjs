@@ -67,16 +67,21 @@ function checkRestoredRegionalBaseline(id) {
   const old=game.snapshot();
   old.zones[id].finalStreetClearanceVersion=1;
   const coins=old.hero.gold;
-  const ids=Object.fromEntries(['props','npcs','buildings'].map(k=>[k,old.zones[id][k].map(e=>e.id)]));
+  const ids=Object.fromEntries(['npcs','buildings'].map(k=>[k,old.zones[id][k].map(e=>e.id)]));
   const restored=Campaign.restore(old);
   const current=restored.zone();
   assert.equal(restored.hero.gold,coins,id+' old save currency retained');
-  for(const k of ['props','npcs','buildings'])
+  for(const k of ['npcs','buildings'])
     assert.deepEqual(current[k].map(e=>e.id),ids[k],id+' old save '+k+' identities retained');
+  // Normal region/save migrations may legitimately replace authored scenery,
+  // unlike paid progress, player camps and named service identities.
+  const postProps=current.props.map(e=>e.id);
   const again=Campaign.restore(restored.snapshot());
   assert.equal(again.hero.gold,coins,id+' repeat restore currency retained');
-  for(const k of ['props','npcs','buildings'])
+  for(const k of ['npcs','buildings'])
     assert.deepEqual(again.zone()[k].map(e=>e.id),ids[k],id+' repeat restore '+k+' identities retained');
+  assert.deepEqual(again.zone().props.map(e=>e.id),postProps,
+    id+' post-migration scenery IDs remain stable across subsequent reloads');
 
   if (id === 'frontier' || id === 'crown') {
     const historical = new Campaign('normal','paladin',
