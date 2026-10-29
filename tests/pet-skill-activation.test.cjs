@@ -44,9 +44,28 @@ function scene() {
       Object.assign(u, { x: start.x, y: start.y });
       Object.assign(e, { x: end.x, y: end.y });
       u.hp = u.maxHp * 0.5;
+      // The projectile checks each travelled frame with clearSegment(, , 0).
+      // A coarse visible line can still cross a new native terrain edge.
+      // Select a continuous real flight corridor instead of mocking collision.
+      const distance = Math.hypot(e.x - u.x, e.y - u.y),
+        steps = Math.ceil(distance / 12);
+      let flightClear = true,
+        previous = { x: u.x, y: u.y };
+      for (let n = 1; n <= steps; n++) {
+        const point = {
+          x: u.x + ((e.x - u.x) * n) / steps,
+          y: u.y + ((e.y - u.y) * n) / steps,
+        };
+        if (!g.clearSegment(previous, point, 0)) {
+          flightClear = false;
+          break;
+        }
+        previous = point;
+      }
       // This is ordinary wounded HP, not the <=20% critical-retreat state.
       // The original test must still check normal first-skill legality.
       if (
+        flightClear &&
         g.line(u, e) &&
         g.tacticalDirectTargetable(e) &&
         g.petSkillTargets(u, e, 1).length > 0
