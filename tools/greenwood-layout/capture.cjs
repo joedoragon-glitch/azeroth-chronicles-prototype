@@ -235,6 +235,17 @@ async function capture(name, target, width, height, clock) {
       {
         sourceSha: cp.execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
         size,
+        sources: Object.fromEntries(
+          ['engine', 'greenwood', 'data', 'rules', 'world', 'save', 'visuals', 'renderer'].map(
+            (f) => [
+              f,
+              require('node:crypto')
+                .createHash('sha256')
+                .update(fs.readFileSync(path.join(__dirname, '../../src/prototype/' + f + '.js')))
+                .digest('hex'),
+            ],
+          ),
+        ),
         receipts,
       },
       null,

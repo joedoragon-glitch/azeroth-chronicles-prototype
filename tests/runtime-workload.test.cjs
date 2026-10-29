@@ -256,7 +256,8 @@ function geometry(K) {
       });
       return p;
     });
-    assert(g.clearSegment({ x: 200, y: 1500 }, { x: 1000, y: 1500 }));
+    assert(g.clearSegment({ x: 200, y: 1000 }, { x: 1000, y: 1000 }, 15, true), 'distant-prop probe is on dry terrain after Greenwood relocation');
+    assert(g.clearSegment({ x: 200, y: 1000 }, { x: 1000, y: 1000 }));
     counts.push(visits);
   }
   assert(counts[1] < counts[0] / 10);

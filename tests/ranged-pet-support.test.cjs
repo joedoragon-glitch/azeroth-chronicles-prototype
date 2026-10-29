@@ -3,6 +3,7 @@ const assert = require('node:assert/strict'),
   C = require('../src/prototype/engine');
 const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 function scene(family = 'crypt') {
+  const shiftX = C.rules.barriers[0].bounds[1] + 450 - 1400;
   const g = new C('normal', 'paladin', () => 0.9),
     z = g.zone();
   for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) z[key] = [];
@@ -12,16 +13,17 @@ function scene(family = 'crypt') {
   g.s.companionCombatTraining = 2;
   g.hero.level = 20;
   g.hero.maxHp = g.hero.hp = g.heroNaturalMaxHp();
-  Object.assign(g.hero, { x: 1380, y: 1700 });
+  Object.assign(g.hero, { x: 1380 + shiftX, y: 1700 });
   g.s.normal[family] = g.s.true[family] = true;
-  const u = g.unit('pet', 1400, 1700, family),
-    ally = g.unit('soldier', 1450, 1730),
-    other = g.unit('archer', 1440, 1750);
+  const u = g.unit('pet', 1400 + shiftX, 1700, family),
+    ally = g.unit('soldier', 1450 + shiftX, 1730),
+    other = g.unit('archer', 1440 + shiftX, 1750);
   g.s.party = [u, ally, other];
   const e = g.makeEnemy(
     { species: 'goblin', level: 20, hp: 100000, damage: 0, xp: 0, gold: 0 },
-    { x: 1630, y: 1700 },
+    { x: 1630 + shiftX, y: 1700 },
   );
+  assert(g.clearSegment(u,e,15,true), 'pet fixture uses dry same-bank ground at unchanged separation');
   z.enemies = [e];
   g.engage(e);
   const events = [],

@@ -21,6 +21,11 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
     z = g.zone(),
     by = (id) => z.npcs.find((n) => n.id === id);
   assert.equal(g.zoneSize(), 3200);
+  assert.deepEqual(
+    C.rules.barriers[0].gaps.map(([a, b]) => b - a),
+    [180, 130],
+    'main cart bridge and narrower southern footbridge share exact collision/paint widths',
+  );
   assert.equal(z.greenwoodSceneVersion, 1);
   assert(!z.greenwoodSceneAudit.some((p) => p.essential && !p.placed));
   assert(z.props.length <= 400);
@@ -170,6 +175,11 @@ for (const [name, raw] of cases) {
     name + ' construction',
   );
   assert.equal(z.greenwoodSceneVersion, 1, name + ' essential scenes');
+  for (const patch of [3, 4, 5])
+    assert(
+      z.props.some((p) => String(p.id).startsWith('forest-' + patch + '-')),
+      name + ' receives authored new woodland grove ' + patch,
+    );
   assert.deepEqual(
     C.restore(s, rng(0x47564102)).snapshot(),
     s,
@@ -178,4 +188,62 @@ for (const [name, raw] of cases) {
 }
 console.log(
   'PASS five preserved pre-change synthetic v4 variants: IDs, resources, quests, rewards, construction and exact two-load stability',
+);
+
+// Exercise the production companion locomotion methods, separately from the
+// terrain-radius probes above. Combat is outside this navigation fixture: no
+// enemy, reward, health or movement rule is altered and no full tick is run.
+{
+  const g = new C('normal', 'paladin', rng(0x47564103));
+  for (const bridge of g.zone().bridgeApproaches) {
+    for (const reverse of [false, true]) {
+      const start = reverse ? bridge.east : bridge.west;
+      const end = reverse ? bridge.west : bridge.east;
+      const direction = Math.sign(end.x - start.x);
+      Object.assign(g.hero, { x: start.x - direction * 100, y: start.y, path: [] });
+      g.formationHeading = { x: direction, y: 0 };
+      const party = g.activeLivingParty();
+      assert(party.length >= 2, 'actual starting companions');
+      for (let i = 0; i < party.length; i++) {
+        Object.assign(party[i], g.safe(g.hero.x - direction * (45 + i * 35), start.y));
+        g.clearCompanionTravel(party[i]);
+      }
+      const target = { x: end.x + direction * 170, y: end.y };
+      for (let step = 0; step < 600; step++) {
+        g.s.time += 0.1;
+        g.follow(g.hero, target, g.heroMoveSpeed(), 0.1, 5);
+        for (const u of party) {
+          const before = { x: u.x, y: u.y };
+          g.followPartyMember(u, party, 0.1);
+          assert(g.clearSegment(before, u, g.actorRadius(u)), bridge.id + ' companion sweep');
+          assert(!g.blocked(u.x, u.y, 'vale', g.actorRadius(u)), bridge.id + ' dry companion');
+        }
+        if (
+          dist(g.hero, target) <= 6 &&
+          party.every((u) => Math.abs(u.x - end.x) < 210 && direction * (u.x - end.x) > 0)
+        )
+          break;
+      }
+      assert(dist(g.hero, target) <= 6, bridge.id + ' hero crosses');
+      for (const u of party)
+        assert(direction * (u.x - end.x) > 0, bridge.id + ' companion crosses ' + u.id);
+    }
+  }
+  const departure = g.zone().npcs.find((n) => n.id === 'outbound');
+  Object.assign(g.hero, departure.servicePoint || departure);
+  // A paid-travel fixture supplies precisely the existing fare. This does not
+  // change rewards or permit free travel in the implementation.
+  const fare = g.travelFare(0, 1);
+  g.hero.gold = fare;
+  assert(g.travel(1));
+  assert.equal(g.zoneId, 'march');
+  assert.equal(g.hero.gold, 0);
+  assert(g.travel(-1), 'purchased return ticket');
+  assert.equal(g.zoneId, 'vale');
+  for (const u of [g.hero, ...g.activeLivingParty()])
+    assert(!g.blocked(u.x, u.y, 'vale', g.actorRadius(u)), 'safe native return ' + u.id);
+  assert.equal(g.hero.gold, 0, 'no repeated fare or payment');
+}
+console.log(
+  'PASS native companion locomotion across both bridges in both directions and paid transport return',
 );

@@ -3415,7 +3415,7 @@
         region: 'vale',
         name: 'Your First Company',
         objective:
-          'Meet the town Captain, try Recall squad, then establish your first Basic Barracks (free).',
+          'Meet the Captain, try Recall squad, then build your first Basic Barracks (free).',
         gold: 0,
         xp: 0,
         index: -1,

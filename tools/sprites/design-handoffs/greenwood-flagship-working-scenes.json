@@ -4,7 +4,7 @@
   "designId": "greenwood-flagship-working-scenes",
   "name": "Greenwood working mill, current fruit cellar and estate works",
   "kind": "regional-scene",
-  "nextAction": "Complete draft #570 native and focused browser route/scene review; do not merge or publish without separate approval.",
+  "nextAction": "Finish final exact-source companion/transport, pacing/performance and evidence reconciliation for draft #570; focused production-page scene captures exist. No merge/publication or physical-device/owner acceptance.",
   "context": {
     "originConversation": "Greenwood Vale Flagship Reconstruction and Engineering Quality Mandate, 28 October 2026",
     "decisionSummary": "Implements W02\u2013W04, F01/F04/F06 and C04/C05 using current timber, stone, orchard and construction families. No new gameplay, lore, fruit species or raster replacements.",
@@ -24,7 +24,7 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "94768078 (base; exact source hashes in capture/measurement receipts)",
+    "sourceCommit": "4991ae2e (remote checkpoint; exact runtime hashes in final capture/measurement receipts)",
     "ownerFilesAndBranches": [
       "src/prototype/greenwood.js",
       "src/prototype/visuals.js",
@@ -49,7 +49,8 @@
     "isolatedReferencePath": null,
     "isolatedReferenceHash": null,
     "gameplayContextPaths": [
-      "docs/evidence/greenwood-revised-20261028/captures-3200.json"
+      "docs/evidence/greenwood-revised-20261028/captures-3200.json",
+      "docs/evidence/greenwood-revised-20261028/browser/receipt.json"
     ],
     "traitsToPreserve": [
       "Signature timber mill larger than cottage; stone footing and visible bank-side wheel.",
@@ -68,10 +69,7 @@
       "fruit-cellar",
       "estate-scaffold"
     ],
-    "reusedDesignIds": [
-      "approved-art-structure-vale-workshop",
-      "approved-art-landmark-mill-pond"
-    ],
+    "reusedDesignIds": ["approved-art-structure-vale-workshop", "approved-art-landmark-mill-pond"],
     "variantRequirements": [],
     "proceduralOwnersAndReasons": [
       {
@@ -82,13 +80,8 @@
   },
   "animationRequirements": {
     "status": "static-procedural",
-    "gameplayStates": [
-      "day",
-      "night"
-    ],
-    "directions": [
-      "authored isometric frontage"
-    ],
+    "gameplayStates": ["day", "night"],
+    "directions": ["authored isometric frontage"],
     "pivotContract": "World anchor at building base; wheel remains associated with the actual western terrain pond.",
     "staticFallbackKey": null,
     "linkedFrameJobs": []

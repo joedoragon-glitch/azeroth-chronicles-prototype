@@ -66,6 +66,11 @@
       const d = y((a + b) / 2) - (a + b) / 2;
       return [a + d, b + d];
     });
+    // The main cart crossing retains its original breadth. The southern
+    // exploration crossing is a narrower, still companion-safe footbridge;
+    // paint and collision consume this same gap table.
+    const southMid = (b.gaps[1][0] + b.gaps[1][1]) / 2;
+    b.gaps[1] = [southMid - 65, southMid + 65];
     for (const p of R.landforms[0]) {
       if (p.points) p.points.forEach(pair);
       if (p.x !== undefined) point(p);
@@ -452,6 +457,45 @@
                   true,
                 ),
               );
+          // Old v4 zones already own their original nature layout. Add only
+          // the three new authored groves, with the same stable patch IDs as
+          // fresh generation; never rebuild old props or a player's camps.
+          for (let patch = 3; patch < R.forests[0].length; patch++) {
+            const prefix = 'forest-' + patch + '-';
+            if (z.props.some((p) => String(p.id).startsWith(prefix))) continue;
+            const [cx, cy, rx, ry] = R.forests[0][patch];
+            let placed = 0;
+            for (let k = 0; k < 45 && z.props.length < 380; k++) {
+              const a = k * 2.3999632297,
+                r = Math.sqrt((k + 0.5) / 45),
+                p = { x: cx + Math.cos(a) * rx * r, y: cy + Math.sin(a) * ry * r };
+              if (
+                this.blocked(p.x, p.y, z.id, 50) ||
+                this.distanceToRoad(z, p) < 88 ||
+                this.distanceToRoad({ roads: z.footpaths || [] }, p) < 75 ||
+                z.npcs.some((n) => distance(p, n.servicePoint || n) < 180) ||
+                z.buildings.some((b) => distance(p, b) < 200) ||
+                z.enemies.some((e) => distance(p, e.home || e) < 100)
+              )
+                continue;
+              z.props.push({
+                id: prefix + k,
+                ...p,
+                r: 24,
+                icon: k % 5 === 0 ? '🪨' : '🌲',
+                greenwoodScene: true,
+              });
+              placed++;
+            }
+            result.push({
+              id: 'woodland-grove-' + patch,
+              essential: false,
+              authored: 45,
+              placed,
+              reason:
+                'new authored woodland added to existing v4 zone without rebuilding old scenery',
+            });
+          }
           const destinations = [
             hamlet?.servicePoint,
             orchard,

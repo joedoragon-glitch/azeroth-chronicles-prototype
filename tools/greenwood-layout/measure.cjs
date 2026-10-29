@@ -54,7 +54,17 @@ const summarize = (v) => ({
 const provenance = {
   mainSha: cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
   comparedRuntimeSha256: Object.fromEntries(
-    ['data', 'rules', 'world', 'navigation', 'save', 'visuals', 'renderer'].map((f) => [
+    [
+      'engine',
+      'greenwood',
+      'data',
+      'rules',
+      'world',
+      'navigation',
+      'save',
+      'visuals',
+      'renderer',
+    ].map((f) => [
       f,
       crypto
         .createHash('sha256')
@@ -126,7 +136,7 @@ function route(g, id, scenario, a, b) {
   for (let j = 1; j < points.length; j++) {
     length += dist(points[j - 1], points[j]);
     clear &&= g.clearSegment(points[j - 1], points[j], 15);
-    companion &&= g.clearSegment(points[j - 1], points[j], R.actorSpacing.largeRadius);
+    companion &&= g.clearSegment(points[j - 1], points[j], R.actorContactRadii.large);
   }
   const error = ps.length ? dist(ps.at(-1), b) : null;
   // route() may legally snap its requested target. Do not mistake an arbitrary
@@ -282,11 +292,17 @@ function census(g, seed) {
     tribute: z.nodes.map((n) => ({ id: n.id, site: n.site, amount: n.amount, hidden: n.hidden })),
     routes,
     essentialFeatures: {
-      mill: false,
-      expandingOrchard: false,
-      workingCellar: false,
-      correctTreasuryName: false,
-      reason: 'known unchanged-source omissions; larger dimensions alone cannot pass GV-A/B/C/D',
+      mill: z.props.some((p) => p.id === 'greenwood-working-mill'),
+      expandingOrchard: ['established', 'young', 'new'].every((id) =>
+        z.props.some((p) => p.id === 'greenwood-orchard-' + id),
+      ),
+      workingCellar: z.props.some((p) => p.id === 'greenwood-working-cellar'),
+      correctTreasuryName: z.npcs.some(
+        (p) => p.id === 'supply-entrance' && p.name === "Scornfang's Treasury",
+      ),
+      reason: revised
+        ? 'installed scene IDs; geometry and native appearance separately verified'
+        : 'baseline scene census',
     },
     snapshot: g.snapshot(),
   };

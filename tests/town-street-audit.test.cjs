@@ -209,7 +209,7 @@ assert(
 );
 console.log(
   'PASS ' +
-    Campaign.data.regions.length +
+    regions.length +
     ' settlement street plans, ' +
     routes +
     ' connected routes, ' +
