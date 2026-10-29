@@ -785,8 +785,8 @@
       'Grupos activos mayores y depósito de suministros.',
     'Keep watch while a companion builds. Recall pauses work; progress is kept.':
       'Vigila mientras un compañero construye. Reagrupar pausa el trabajo; se conserva el progreso.',
-    'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds still costs 30 crowns.':
-      'Elige qué compañeros caídos recuperar por 40 coronas cada uno. Si no tienes suficientes coronas, déjalos en cola por orden. Curar heridas sigue costando 30 coronas.',
+    'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds heals the hero and living companions for 30 crowns.':
+      'Elige qué compañeros caídos recuperar por 40 coronas cada uno. Si te faltan coronas, déjalos en cola por orden. Curar heridas devuelve toda la salud al héroe y a los compañeros vivos por 30 coronas.',
     'Queue full: upgrade to Full Barracks for unlimited recovery requests.':
       'Cola llena: mejora a cuartel completo para recuperar compañeros sin límite de solicitudes.',
     'Your company has no fallen members.': 'No hay compañeros caídos en tu compañía.',

@@ -1438,7 +1438,7 @@
       openMenu(
         'Recovery',
         queueStatus + '\n' +
-          'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds still costs 30 crowns.' +
+          'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds heals the hero and living companions for 30 crowns.' +
           '\n' +
           (getGame().s.challenge.succession
             ? 'Succession: class loss replaces crown loss.'
