@@ -1,4 +1,18 @@
-# Azeroth Chronicles — regional graphics preparation and main-screen lifecycle
+# So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
+
+## 28 October 2026 — Chromebook-first test candidate, PR #573 (DRAFT — not published)
+
+The owner prioritizes smooth gameplay over quick loading and authorizes a **single active-region cache** experiment, **not all five regions simultaneously**. The target contract is:
+
+- Continue/New Game: one visible title loading state, with saved arrival, sprites, procedural objects, and Pixi GPU uploads prepared before the scene is revealed. Let the hardware determine the loading duration; slow is not a renderer failure.
+- Regional travel: prewarm the **destination region only** behind the transition. When entering a main dungeon, secondary dungeon or Treasury, prepare that entire interior using its actual native admission state; do not silently enter an unvisited dungeon or mutate an authoritative save for caching. Return from the interior should reuse the parent outdoor region's already prepared artwork.
+- Pixi artwork retention: current-zone arrival traverses all admitted scenery/enemies/NPC/buildings regardless of camera distance; do not evict automatically at an occupancy threshold. The 1 GiB default image estimate is a last-resort guard and **not a claim of actual device RAM, GPU VRAM, or memory compatibility**. The approved sprite set is loaded once. Viewport changes re-register existing procedural textures in the rebuilt scene instead of destroying them.
+- Directional idle preparation remains relevant for dynamically spawned or newly revealed assets, but already-admitted scenery should be ready at launch.
+- Player may manually choose Canvas while loading. Real WebGL context failure retains its recovery path; no wall-clock timeout automatically declares slow preparation a failure.
+
+**Critical boundary:** procedural *object texture* retention is implemented in this draft, but a **full-region terrain tile cache is not yet implemented**. Pixi currently has a camera-following Canvas terrain raster/background texture; normal motion can repaint it. Do not call this a fully cached map or claim all dungeon interiors are cached before first entry. Missing spawn-dependent art, possible screen/zoom-specific rasters, and additional GPU allocations also require actual-device verification.
+
+**Verification:** draft source edits and focused regression fixtures are written; exact-head CI and Chromium WebGL2 visual, loading-duration, memory, p95/p99 movement/frame-time, dungeon return and Chromebook acceptance are pending. Do not merge, deploy or advertise a measured FPS improvement without these checks. Historical #518 status and its original baseline below remain authoritative for the published version.
 
 **Current disposition — 27 October 2026:** [#518](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518) **merged/published**, integrating Stages 0–6, the main-screen/Continue/guarded loading lifecycle, and bounded optional Pixi graphics preparation. Prior Stage 6 draft/merge holds below are **historical**. [Stage 7 device/browser visual, first-frame, memory and performance acceptance](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) remains outstanding; [Pixi graduation #478](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/478) is open. Pixi/WebGL2 stays **experimental/optional**; Canvas 2D default/fallback. No measured GPU residency or performance win is claimed.  
 **Historical implementation/handoff record:** [PR #518 engineering handoff](PR518_ENGINEERING_HANDOFF_20261027.md); read its merged-status preamble and do not resume the completed draft.  
