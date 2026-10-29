@@ -57,6 +57,10 @@
       terrainProbesPerSearch: 512,
       routeNodesPerTick: 240,
       routeNodesPerSearch: 120,
+      // Enemy pursuit cannot consume the companion/delivery/regroup pool or
+      // wait behind it indefinitely in a crowded active fight.
+      pursuitTerrainProbesPerTick: 1024,
+      pursuitRouteNodesPerTick: 320,
     });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
@@ -452,6 +456,8 @@
             zone, time: now,
             probes: cfg.terrainProbesPerTick,
             nodes: cfg.routeNodesPerTick,
+            pursuitProbes: cfg.pursuitTerrainProbesPerTick,
+            pursuitNodes: cfg.pursuitRouteNodesPerTick,
           };
           routePlanningFrames.set(this, frame);
         }
@@ -464,8 +470,11 @@
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
         }
-        let probes = Math.min(frame.probes, cfg.terrainProbesPerSearch),
-          nodes = Math.min(frame.nodes, cfg.routeNodesPerSearch);
+        const pursuit = mode === 'pursuit';
+        let probes = Math.min(pursuit ? frame.pursuitProbes : frame.probes,
+            cfg.terrainProbesPerSearch),
+          nodes = Math.min(pursuit ? frame.pursuitNodes : frame.nodes,
+            cfg.routeNodesPerSearch);
         while (true) {
           if (!plan.request) {
             const next = plan.generator.next(plan.reply);
@@ -476,12 +485,14 @@
           if (plan.request.kind === 'node') {
             if (!nodes) break;
             nodes--;
-            frame.nodes--;
+            if (pursuit) frame.pursuitNodes--;
+            else frame.nodes--;
             plan.reply = undefined;
           } else if (plan.request.kind === 'blocked') {
             if (!probes) break;
             probes--;
-            frame.probes--;
+            if (pursuit) frame.pursuitProbes--;
+            else frame.probes--;
             plan.reply = this.blocked(...plan.request.args);
           } else throw Error('Unknown route planning step');
           plan.request = null;
