@@ -695,7 +695,7 @@
     for (const e of game.zone().enemies) {
       if (e.hp > 0 && !e.returning) {
         const closure =
-          e.dreadClosure || (e.telegraph?.dreadMechanic === 'closure' ? e.telegraph : null);
+          e.dreadClosure || (pendingWarning(e.telegraph) && e.telegraph.dreadMechanic === 'closure' ? e.telegraph : null);
         if (closure) {
           for (const points of dreadClosureShapes(closure)) {
             polygon(ctx, screen, points);
@@ -803,7 +803,7 @@
           ctx.fillText('PROTECTED', p.x, p.y + 18);
         }
       }
-      if (cue && e.telegraph?.cinderMechanic === 'delegation')
+      if (cue && pendingWarning(e.telegraph) && e.telegraph.cinderMechanic === 'delegation')
         for (const delegate of e.telegraph.delegates || []) {
           circlePath(ctx, screen, delegate.point, 18);
           ctx.strokeStyle = '#a5d5ed';
@@ -848,7 +848,7 @@
         e.returning ||
         !(
           e.anastylosis > 0 ||
-          (e.telegraph?.selfDefense && !e.telegraph.cinderMechanic && !e.telegraph.dreadMechanic)
+          (pendingWarning(e.telegraph) && e.telegraph.selfDefense && !e.telegraph.cinderMechanic && !e.telegraph.dreadMechanic)
         )
       )
         continue;
