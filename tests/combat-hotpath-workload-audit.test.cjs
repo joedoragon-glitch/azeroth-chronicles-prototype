@@ -184,4 +184,38 @@ assert.deepEqual(measuredCrowded,nativeCrowded,
     progressed:+Math.hypot(enemy.x-startX,enemy.y-1340).toFixed(1),
   }));
 }
+
+// Same live-battle progression sample on baseline and candidate, not a
+// synthetic route-only speed test. Measures how AI responsiveness changes.
+for(const [label, opts] of [
+  ['open-24-enemies-6sec',{count:24,companions:5}],
+  ['wall-24-enemies-6sec',{count:24,companions:5,wall:true}],
+]) {
+  const g=world(opts), actors=g.zone().enemies.map(e=>({
+    e,x:e.x,y:e.y,initialDistance:Math.hypot(e.x-g.hero.x,e.y-g.hero.y)
+  }));
+  let blocked=0, peak=0;
+  const original=g.blocked;
+  g.blocked=function(...args){blocked++;return original.apply(this,args);};
+  for(let i=0;i<120;i++) {
+    const before=blocked;
+    g.tick(.05,{x:0,y:0});
+    peak=Math.max(peak,blocked-before);
+  }
+  delete g.blocked;
+  const data=actors.map(({e,x,y,initialDistance})=>({
+    moved:Math.hypot(e.x-x,e.y-y),
+    closer:initialDistance-Math.hypot(e.x-g.hero.x,e.y-g.hero.y),
+    noProgress:e.noProgress||0,
+    aggro:!!e.aggro,
+  }));
+  console.log('COMBAT_PURSUIT_RESPONSIVENESS '+JSON.stringify({
+    label, ticks:120, enemyCount:actors.length,
+    enemiesMoved:data.filter(x=>x.moved>10).length,
+    meanMovement:+(data.reduce((s,x)=>s+x.moved,0)/data.length).toFixed(1),
+    meanDistanceImprovement:+(data.reduce((s,x)=>s+x.closer,0)/data.length).toFixed(1),
+    maximumNoProgress:+Math.max(...data.map(x=>x.noProgress)).toFixed(2),
+    peakBlocked:peak,totalBlocked:blocked,
+  }));
+}
 console.log('PASS combat hotpath audit native multi-actor ticks and test-only instrumentation parity');
