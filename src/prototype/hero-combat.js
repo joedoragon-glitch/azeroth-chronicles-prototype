@@ -1295,8 +1295,11 @@
             (locked ? null : eligible.sort((a, b) =>
               dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false; // no hostile, no free buff or cooldown
+        // Acquisition already checked this same singer-centered radius and
+        // line of sight. Recheck only if future rules separate range/radius.
         const enemies = eligible.filter((e) =>
-          e === primary || (dist(e, h) <= form.radius && this.line(h, e)),
+          e === primary || form.radius === form.range ||
+          (dist(e, h) <= form.radius && this.line(h, e)),
         ).sort((a, b) => a === primary ? -1 : b === primary ? 1 :
           dist(a, h) - dist(b, h) || this.idOrder(a, b)).slice(0, form.cap);
         const allies = this.activeLivingParty().filter((u) =>
@@ -1360,8 +1363,11 @@
             (locked ? null : candidates.sort((a, b) =>
               dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false;
+        // One terrain sightline per candidate when the performer footprint
+        // equals the legal acquisition range (all current song forms).
         const enemies = candidates.filter((e) =>
-          e === primary || (dist(e, h) <= form.radius && this.line(h, e)))
+          e === primary || form.radius === form.range ||
+          (dist(e, h) <= form.radius && this.line(h, e)))
           .sort((a, b) => a === primary ? -1 : b === primary ? 1 :
             dist(a, h) - dist(b, h) || this.idOrder(a, b))
           .slice(0, form.cap);
