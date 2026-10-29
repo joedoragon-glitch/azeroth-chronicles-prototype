@@ -53,6 +53,18 @@ assert.equal(again.zones.vale.nodes.reduce((n,p)=>n+p.amount,0),640);
 assert.equal(again.zones.vale.enemies.length,once.zones.vale.enemies.length);
 assert.deepEqual(again.quests,once.quests,'no earned quest loss');
 assert.deepEqual(again.paid,once.paid,'no paid-history loss');
+assert.equal(once.zones.vale.greenwoodSourceVersion,0,
+  'downgraded save explicitly records restored source geometry');
+const savedPositions=(snap)=>({
+  hero:{x:snap.hero.x,y:snap.hero.y},
+  party:(snap.party||[]).map(p=>[p.id,p.x,p.y,p.order?.x,p.order?.y]),
+  services:snap.zones.vale.npcs.map(p=>[p.id,p.x,p.y,p.servicePoint?.x,p.servicePoint?.y]),
+  enemies:snap.zones.vale.enemies.map(p=>[p.id,p.x,p.y,p.home?.x,p.home?.y]),
+  buildings:snap.zones.vale.buildings.map(p=>[p.id,p.x,p.y]),
+});
+assert.deepEqual(savedPositions(again),savedPositions(once),
+  'no actor/home/service/construction moves on second restore');
+
 const progress=JSON.parse(JSON.stringify(shipped));
 progress.hero.gold=9001;
 progress.zones.vale.nodes[0].amount=0;
