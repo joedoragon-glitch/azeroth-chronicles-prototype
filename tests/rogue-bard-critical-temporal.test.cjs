@@ -70,8 +70,12 @@ try {
     const { g, ally, foe, native, rolls } = arena();
     assert.equal(g.cast(4, foe.id, true), true);
     const boon = g.rogueSongBoon(ally, 'mending');
+    const self = g.rogueSongBoon(g.hero, 'mending');
+    assert(self, 'critical Mending keeps the heroine in the same eligible set');
     assert(boon, 'lawful ally receives Mending');
     const expected = ally.maxHp * R.roguePerformances[4].charged.healFraction * 1.45;
+    assert(Math.abs(self.remainingHeal -
+      g.hero.maxHp * R.roguePerformances[4].charged.healFraction * 1.45) < 1e-7);
     assert(Math.abs(boon.remainingHeal - expected) < 1e-7,
       'Level-3 critical Mending increases total HoT budget once');
     native.setCriticalLevel('rogue', 1);

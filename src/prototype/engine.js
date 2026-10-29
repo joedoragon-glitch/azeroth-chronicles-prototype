@@ -4204,9 +4204,10 @@
         )
           unit.deathRollHeld = false;
       }
-      const heroRecovery = this.cooldownRecoveryElapsed(h, dt);
-      h.cd = h.cd.map((c) => Math.max(0, c - heroRecovery));
-      h.chargedCd = h.chargedCd.map((c) => Math.max(0, c - heroRecovery));
+      const heroRecovery = this.cooldownRecoveryElapsed(h, dt),
+        heroSpecialRecovery = this.cooldownRecoveryElapsed(h, dt, false, true);
+      h.cd = h.cd.map((c) => Math.max(0, c - heroSpecialRecovery));
+      h.chargedCd = h.chargedCd.map((c) => Math.max(0, c - heroSpecialRecovery));
       h.basicCd = Math.max(0, h.basicCd - heroRecovery);
       if ((h.shieldStance || 0) > 0) {
         h.shieldStance = Math.max(0, h.shieldStance - dt);

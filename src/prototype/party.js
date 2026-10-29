@@ -1541,16 +1541,17 @@
       rogueSongBoon(u, family) {
         if (
           this.hero.class !== 'rogue' ||
-          !u || u.hp <= 0 || u.active === false ||
-          !this.s.party.includes(u)
+          !u || u.hp <= 0 ||
+          (u !== this.hero && (u.active === false || !this.s.party.includes(u)))
         ) return null;
         const saved = roguePerformanceBoons.get(u);
         const entry = saved?.zone === this.zoneId ? saved[family] : null;
         return entry && entry.until > this.s.time ? entry : null;
       }
       applyRogueSongBoon(u, family, form) {
-        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
-          this.hero.class !== 'rogue' || !this.activeLivingParty().includes(u))
+        if (!['refrain', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
+          this.hero.class !== 'rogue' ||
+          !(u === this.hero ? u.hp > 0 : this.activeLivingParty().includes(u)))
           return false;
         let state = roguePerformanceBoons.get(u);
         if (!state || state.zone !== this.zoneId) {
@@ -1562,6 +1563,7 @@
         // One strongest instance per family, never additive or permanent.
         state[family] = {
           until: Math.max(previous?.until || 0, until),
+          basicDamage: Math.max(previous?.basicDamage || 0, Math.min(0.07, form.basicDamage || 0)),
           move: Math.max(previous?.move || 0, Math.min(0.12, form.move || 0)),
           recovery: Math.max(previous?.recovery || 0, Math.min(0.08, form.recovery || 0)),
           specialRecovery: Math.max(previous?.specialRecovery || 0,
@@ -1586,7 +1588,7 @@
       }
       advanceRogueMending(dt) {
         if (this.hero.class !== 'rogue' || !Number.isFinite(dt) || dt <= 0) return;
-        for (const u of this.activeLivingParty()) {
+        for (const u of [this.hero, ...this.activeLivingParty()]) {
           const effect = this.rogueSongBoon(u, 'mending');
           if (!effect || !(effect.remainingHeal > 0)) continue;
           const live = Math.max(0.01, effect.until - (this.s.time - dt)),

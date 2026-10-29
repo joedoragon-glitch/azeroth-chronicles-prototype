@@ -114,6 +114,8 @@ try {
     originalSpecial = m.companionAttackDamage(ally);
   assert(m.cast(1, foes[0].id), 'normal Skill 1 available from level one');
   assert.equal(m.hero.cd[0], m.skillCooldown(1));
+  assert.equal(m.rogueSongBoon(m.hero, 'refrain')?.basicDamage, 0.05,
+    'solo Rogue is eligible for Skill 1 basic-damage boon inside the cast area');
   assert.equal(m.hero.chargedCd[0], 0);
   assert.equal(m.hero.basicCd, 0);
   assert(m.companionBasicAttackDamage(ally) > baseline, 'friendly mirror actually changes basics');
