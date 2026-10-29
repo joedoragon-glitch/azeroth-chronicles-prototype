@@ -1,3 +1,19 @@
+> **29 October 2026 — current Rogue performance change (PR #595):** Owner approved singer/dancer-centered circular AoE for all eight skills (normal and charged), including automatic basics. This is an active source change under CI review, not a claim that PR #595 is already merged, published, or phone-verified. All radius values below in the historical 27 October record are superseded by the table here. Damage, criticals, Charm probability, maximum hostile target counts, buff strength, durations, cooldowns, and up-to-two-station limit are unchanged.
+>
+> | Action | Normal radius | Charged radius |
+> | --- | ---: | ---: |
+> | Automatic basic / third-hit finisher | 220 / 250 | — |
+> | Skill 1 | 225 | 290 |
+> | Skill 2 | 225 | 280 |
+> | Skill 3 | 225 | 280 |
+> | Skill 4 | 225 | 280 |
+> | Skill 5 music station | 220 | 275 |
+> | Skill 6 | 225 | 290 |
+> | Skill 7 | 225 | 290 |
+> | Skill 8 | 240 | 310 |
+>
+> Casts require a legal hostile inside the Rogue-centered circle and use the same circle for enemy effects, lawful nearby companion boons and visual rings. Automatic attacks have one primary target (only that target can Charm) and circular secondary contacts; the third-hit finisher has a wider 250-unit pulse. Skill 5 stations remain fixed at the place she performed, not attached to her as she moves. Existing bounded VFX are centered on the singer and use lighter perimeter accents to remain legible in mobile/optimized rendering. Source-level and automated checks are separate from actual phone acceptance.
+
 > **Current release status — 28 October 2026:** [PR #511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/511) **merged and published**; Rogue/Pícara is a normally selectable fourth class in `0.9.1+snapshot.dev.208`. Earlier branch, draft, URL-preview and unimplemented language below describes historical stages and is **superseded as a current instruction**. Phone/boss/visual/audio/long-tail performance acceptance still has independent gates; see [Development state](DEVELOPMENT_STATE.md), [Rogue soft launch](ROGUE_SOFT_RELEASE_20261028.md), and [phone findings](ROGUE_FIRST_PHONE_ACCEPTANCE_20261028.md).
 
 # Rogue Bard — playable branch-preview gate and Skill 5 decision (27 October 2026)

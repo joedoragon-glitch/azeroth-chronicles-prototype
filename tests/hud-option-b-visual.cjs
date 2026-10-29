@@ -45,18 +45,22 @@ async function capture(page,label) {
       try {
         await page.goto('http://127.0.0.1:'+server.address().port+(config.phone?'/phone.html':'/index.html'),{waitUntil:'domcontentloaded'});
         await page.waitForFunction(()=>window.Prototype?.game,{timeout:30000});
-        if(config.spanish) {
-          const language=await page.locator('#modal-title').textContent();
-          if(language==='Choose your language' || language==='Elige tu idioma')
-            await page.getByRole('button',{name:/Español/}).click();
-        } else await require('./helpers/language-browser.cjs').selectEnglish(page);
-        await page.keyboard.press('f');await page.keyboard.press('f');
-        await page.waitForFunction(()=>document.querySelector('#modal').hidden,{timeout:25000});
+        // The game now opens on a title screen. Enter a real new campaign:
+        // merely dismissing two menus leaves skills hidden behind the title.
+        await require('./helpers/language-browser.cjs').selectEnglish(page);
+        await page.locator('#title-new').click();
+        await page.getByRole('button',{name:'New Normal game',exact:true}).click();
+        await page.getByRole('button',{name:config.spanish?/^Español(?: ✓)?$/:/^English(?: ✓)?$/}).click();
+        await page.getByRole('button',{name:config.spanish?'Muerte normal y recuperación en refugio':'Standard death and refuge recovery',exact:true}).click();
+        await page.getByRole('button',{name:/Palad[ií]n/i}).first().click();
+        await page.waitForFunction(()=>window.Prototype?.started &&
+          document.querySelector('#title-screen')?.hidden &&
+          document.querySelector('#scene-loading')?.hidden !== false,{timeout:60000});
         await page.evaluate(({left})=>{
           const g=Prototype.game;
           g.tick=()=>{};
           g.enter('vale');
-          Object.assign(g.hero,{class:'ranger',x:600,y:900,hp:750,maxHp:1000,order:null});
+          Object.assign(g.hero,{class:'ranger',x:600,y:900,hp:750,maxHp:1000,gold:42424,order:null});
           g.hero.skills=Array(8).fill(1);
           g.s.party=[g.unit('archer',650,900)];
           g.zone().enemies=[];
@@ -65,6 +69,39 @@ async function capture(page,label) {
         },{left:!!config.left});
         for(let n=1;n<=8;n++) assert(await page.locator('#skill-'+n).isVisible(),config.name+' skill '+n+' must remain usable');
         assert(await page.locator('#health-potion').isVisible(),config.name+' Ranger Heal command remains');
+        // The balance must appear on the HP text row at every viewport, with no
+        // additional dock height as the amount grows.
+        const balance=page.locator('#hero-stats .hud-crowns');
+        assert(await balance.isVisible(),config.name+' Crown counter is visible');
+        assert((await balance.textContent()).includes(config.spanish?'42.424':'42,424'),config.name+' localized exact Crown count');
+        // Compare the icon's browser-rendered source against a fresh image
+        // from the *actual* world-loot painter, not a generic CSS emoji or an
+        // independently redrawn approximation.
+        const portrait=await balance.evaluate(el=>{
+          const image=getComputedStyle(el).backgroundImage;
+          const coin=document.createElement('canvas');
+          coin.width=coin.height=48;
+          const ink=coin.getContext('2d');
+          ink.setTransform(2,0,0,2,0,0);
+          PrototypeRenderer.drawCrownLoot(ink,{x:12,y:12});
+          return {image,expected:coin.toDataURL('image/png'),
+            size:getComputedStyle(el).backgroundSize,
+            padding:getComputedStyle(el).paddingLeft};
+        });
+        assert(portrait.image.includes(portrait.expected),config.name+' coin pixels match the in-world Crown painter');
+        assert.equal(portrait.size,'17px 17px',config.name+' portrait coin stays readable but compact');
+        assert.equal(portrait.padding,'19px',config.name+' portrait badge reserves horizontal room only');
+        const hpText=await box(page,'#hero-stats .hp-count');
+        const crownText=await box(page,'#hero-stats .hud-crowns');
+        const hpDock=await box(page,'#hud');
+        assert(!overlaps(hpText,crownText),config.name+' Crowns do not overlap HP numerals');
+        assert(crownText.x>=hpDock.x&&crownText.x+crownText.width<=hpDock.x+hpDock.width+1,config.name+' Crowns stay inside the dock');
+        await page.evaluate(()=>{Prototype.game.hero.gold=999999;Prototype.updateHUD();});
+        const grownDock=await box(page,'#hud');
+        assert.equal(grownDock.height,hpDock.height,config.name+' larger balance must not grow HUD');
+        const grownCrown=await box(page,'#hero-stats .hud-crowns');
+        assert(grownCrown.x>=grownDock.x&&grownCrown.x+grownCrown.width<=grownDock.x+grownDock.width+1,config.name+' six-digit balance fits the dock');
+        await page.evaluate(()=>{Prototype.game.hero.gold=42424;Prototype.updateHUD();});
         const controls={};
         for(const id of ['#hud','#menu-button','#skills','#joystick','#recall-button','#target-button','#touch-interact-button','#squad-button','#health-potion']) controls[id]=await box(page,id);
         const m=controls['#menu-button'];assert(m,config.name+' Menu present');

@@ -112,8 +112,8 @@
     // Working prototype names until the owner revisits bell-staff lore.
     rogue: [
       ['Ding and Sting', 'Bell burst / basic-damage refrain for Rogue and companions',
-       'A compact shock damages foes and boosts Rogue\'s and nearby allies\' basics',
-       'Raise a Racket: wider bell shock, stronger basics for Rogue and nearby allies',
+       'Perform a self-centered pulse, harming foes and boosting Rogue\'s and nearby allies\' basics',
+       'Raise a Racket: larger self-centered pulse, stronger basics for Rogue and nearby allies',
        'Both prototype names are under owner revision; mechanics stay separate from labels.'],
     ],
     ranger: [
@@ -211,7 +211,7 @@
           note: (row[4] || '') + (game.hero.class === 'rogue'
             ? slot === 5
               ? ' Rogue and companions receive protection while inside the music station, even if they enter after placement. Leaving removes protection immediately; critical effects follow the same area.'
-              : ' Rogue and nearby companions receive the same friendly boon when inside the skill area at release. Timed boons persist for their listed duration; critical enhancements follow the same eligibility.'
+              : ' Rogue and nearby companions receive the same friendly boon from Rogue's own circle at release. Timed boons persist for their listed duration; critical enhancements follow the same eligibility.'
             : '') }
       : null;
   }
@@ -332,14 +332,15 @@
         chargeCfg = game.rogueSkill1Config(true);
       auto = {
         title: 'Automatic basics',
-        effect: 'Jingle-bell fan: primary plus two nearby foes, with a five-contact third-hit combo finisher. Charm will affect surviving primary only.',
+        effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. Charm affects the surviving primary only.',
         metrics: [],
       };
       add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
       add(auto, 'comboDamage', 'Primary combo damage',
         R.basicAttackCombo.multipliers.map((v) => base * v));
       add(auto, 'splashDamage', 'Secondary damage', base * cfg.splashMultiplier);
-      add(auto, 'reach', 'Reach', cfg.range);
+      add(auto, 'reach', 'Reach / normal pulse radius', cfg.range);
+      add(auto, 'finisherRadius', 'Third-hit pulse radius', cfg.finisherSplashRadius);
       for (const [form, x] of [[tap, tapCfg], [charge, chargeCfg]]) {
         add(form, 'damage', 'Damage per enemy', (power + 12) * scale * x.damage);
         add(form, 'reach', 'Reach', x.range);

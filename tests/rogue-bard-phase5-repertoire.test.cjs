@@ -30,7 +30,7 @@ try {
     return {g,unit,foe};
   }
   const { g,unit,foe } = fresh();
-  assert.equal(g.heroSkillRange(2), 260);
+  assert.equal(g.heroSkillRange(2), 225);
   assert.equal(g.cast(2, foe.id), false, 'unlearned song barred');
   g.hero.skills[1] = 1;
   g.hero.skills[5] = 1;
@@ -200,16 +200,20 @@ try {
   // A resting/off-field unit cannot retain active song benefits.
   g.s.party[0].active=false;
   assert.equal(g.rogueSongBoon(g.s.party[0],'quickstep'),null);
-  // Target range is not equivalent to the friendly AoE: outside gets no buff.
+  // A performance only releases with a lawful hostile inside the Rogue's
+  // own circle. Both hostile consequences and self-buffs share that center.
   g.s.time += 12;
-  g.hero.x = 320;
+  g.hero.x = 309;
   foe.x = 590;
   g.zone().enemies = [foe];
   g.hero.cd[1] = 0;
   g.hero.chargedCd[1] = 0;
+  assert.equal(g.cast(2,foe.id,true),false,
+    'charged song cannot be projected 281 units from the performer');
+  g.hero.x = 320;
   assert(g.cast(2,foe.id,true));
-  assert.equal(g.rogueSongBoon(g.hero,'quickstep'),null,
-    'a charged performance at 270 range does not self-buff beyond its 185 area');
+  assert(g.rogueSongBoon(g.hero,'quickstep'),
+    'the performer receives her own song at 270 units when the enemy is inside 280');
   // Full-party Skill 5 must not turn every gameplay query into terrain scans.
   // Four additional companions plus the original unit and heroine stand in one
   // charged music station; repeated frame reads should reuse one sightline.
@@ -266,7 +270,6 @@ try {
   assert.equal(partyGame.rogueStationProtection(leaving), null,
     'expired fields cannot retain a cached ward');
   partyGame.line = partyLine;
-
   // Independent full-repertoire self-benefit audit: 8 skills x both forms
   // x ordinary/critical releases. One frozen critical action per cast.
   const Critical = require('../src/prototype/critical-executions.js');
@@ -311,32 +314,40 @@ try {
           : campaign.rogueSongBoon(campaign.hero,families[slot]),null,
           'Rogue self-benefit does not persist after expiry');
       }
-  // Skill 7 must snapshot heroine eligibility before it pushes the primary
-  // beyond the original area; charged and tap share the same rule.
-  for(const charged of [false,true]){
-    const sample=fresh(),h=sample.g.hero;
+  // Self-centered geometry stays anchored to Rogue even after Skill 7
+  // displaces its primary enemy at the outer radius.
+  for (const charged of [false,true]) {
+    const sample=fresh(),h=sample.g.hero,
+      radius=R.roguePerformances[7][charged?'charged':'tap'].radius;
     h.skills[6]=1;
-    const radius=charged?190:145;
-    sample.foe.x=h.x+(charged?185:140);
-    const releaseX = sample.foe.x, releaseY = sample.foe.y;
+    sample.foe.x=h.x+radius-5;
+    const prior=sample.foe.x;
     assert.equal(sample.g.cast(7,sample.foe.id,charged),true);
-    const receipt = sample.g.effects.filter(e => e.type === 'rogueBellPerformance').at(-1);
-    assert.equal(receipt.x, releaseX, 'performance presentation retains original area X');
-    assert.equal(receipt.y, releaseY, 'performance presentation retains original area Y');
-    assert(Math.hypot(sample.foe.x-h.x,sample.foe.y-h.y)>radius,
-      'knockback should actually move the primary past the boon radius');
+    const receipt=sample.g.effects.filter(e=>e.type==='rogueBellPerformance').at(-1);
+    assert.equal(receipt.x,h.x,'music wave never moves with knocked-back enemy');
+    assert.equal(receipt.y,h.y);
+    assert.equal(receipt.radius,radius);
     assert.equal(sample.g.rogueSongBoon(h,'firmFooting')?.outgoing,
-      charged?0.08:0.05,'hero remains eligible in original release area');
+      charged?0.08:0.05,'performer retains damage buff after target displacement');
+    assert(sample.foe.x>=prior,'enemy push must not move primary toward Rogue');
   }
-  // Hostile targeting reach is greater than the friendly buff radius.
-  for(const charged of [false,true]){
-    const sample=fresh(),h=sample.g.hero;
+  // Every performance needs a lawful hostile within Rogue's own area.
+  // A remote target cannot give Rogue a free buff; a remote ally is excluded.
+  for (const charged of [false,true]) {
+    const remote=fresh(),h=remote.g.hero,
+      radius=R.roguePerformances[2][charged?'charged':'tap'].radius;
     h.skills[1]=1;
-    sample.foe.x=h.x+(charged?275:235);
-    sample.unit.x=sample.foe.x-10;
-    assert.equal(sample.g.cast(2,sample.foe.id,charged),true);
-    assert.equal(sample.g.rogueSongBoon(h,'quickstep'),null);
-    assert(sample.g.rogueSongBoon(sample.unit,'quickstep'));
+    remote.foe.x=h.x+radius+1;
+    const previous=h.cd[1];
+    assert.equal(remote.g.cast(2,remote.foe.id,charged),false);
+    assert.equal(remote.g.rogueSongBoon(h,'quickstep'),null);
+    assert.equal(h.cd[1],previous,'invalid cast does not consume recovery');
+    const near=fresh(),singer=near.g.hero;
+    singer.skills[1]=1;
+    near.unit.x=singer.x+radius+1;
+    assert(near.g.cast(2,near.foe.id,charged));
+    assert(near.g.rogueSongBoon(singer,'quickstep'));
+    assert.equal(near.g.rogueSongBoon(near.unit,'quickstep'),null);
   }
   // Every player-facing normal and charged effect must explicitly name Rogue.
   for (let slot=1; slot<=8; slot++) {
