@@ -1,5 +1,13 @@
 # Rogue Bard — Expedition ownership caps and low-friction Barracks company management
 
+## 29 October 2026 — Rogue fallen-Charm field-slot correction (dev.231 candidate)
+
+When a **legitimate active Charmed monster** reaches **0 HP** in actual combat while Rogue is the current hero, it immediately leaves the active field party and enters the **fallen reserve**, including during combat and without requiring crowns or a Barracks. A later successful eligible Charm takes the freed slot; no resting companion is automatically drafted. The Rogue's active capacity is unchanged (3/4/4/5/6/7 by Expedition rank).
+
+The fallen individual remains owned, with its ID, nickname, subtype/capture receipt, mastery, trained Ringleader status, and usual **paid recovery** rights. Fallen companions **continue counting toward their exact monster-type ownership quota**. A full active group still sends new captures to reserve. Recovery does not automatically redeploy anyone. This is specific to Rogue's authenticated Charmed allies; inherited ordinary Soldiers/Rangers, boss pets, other heroes and the manual Barracks Rest/Add conditions retain their existing behavior.
+
+**Status:** Implemented as an unmerged dev.231 candidate; final focused test, Pages publishing and physical-device verification require independent evidence. Older references to fallen active slots describe the baseline behavior and do not supersede this Rogue-only exception.
+
 ## 29 October 2026 — Charmed creature combat progression (dev.220 release candidate)
 
 Owner requested native behavior before optional boss/captain heritage (deferred [#589](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/589)). Candidate branch `feature/charmed-natural-moves-elite-training-20261029` proposes:
