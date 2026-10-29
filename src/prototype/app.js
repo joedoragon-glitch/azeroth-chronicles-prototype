@@ -7340,11 +7340,14 @@
   // currency drawing, asset manifest, or recurring canvas work per HUD tick.
   function prepareHudCrownCoin() {
     const coin = document.createElement('canvas');
-    coin.width = coin.height = 48;
+    // The loot painter extends 12.5 units above and 10.5 below its point.
+    // A 24-unit stamp cropped the upper crown; the 28-unit stamp gives the
+    // full silver coin, portrait, rim and ground shadow breathing room.
+    coin.width = coin.height = 56;
     const ink = coin.getContext?.('2d');
     if (!ink?.setTransform || typeof coin.toDataURL !== 'function') return;
     ink.setTransform(2, 0, 0, 2, 0, 0);
-    PrototypeRenderer.drawCrownLoot(ink, { x: 12, y: 12 });
+    PrototypeRenderer.drawCrownLoot(ink, { x: 14, y: 14 });
     $('hero-stats').style?.setProperty?.(
       '--hud-crown-image',
       'url("' + coin.toDataURL('image/png') + '")',
