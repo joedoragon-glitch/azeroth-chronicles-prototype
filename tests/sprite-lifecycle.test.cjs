@@ -376,8 +376,13 @@ function context() {
     assert(f.sprites.draw(c.ctx, entity, { x: 0, y: 0 }), 'visible resource stays pinned');
     assert.equal(
       f.sprites.configure({ decodedBytes: 257 * 1024 * 1024 }),
+      true,
+      'owner-selected cache can exceed the retired 256 MiB threshold',
+    );
+    assert.equal(
+      f.sprites.configure({ decodedBytes: 1024 * 1024 * 1024 + 1 }),
       false,
-      'cannot exceed the approved 256 MiB runtime cap',
+      'emergency decoded sprite cap still rejects allocations beyond 1 GiB',
     );
     console.log('PASS full 280-entry lazy registry, bounded concurrency/LRU and visible pinning');
   }
