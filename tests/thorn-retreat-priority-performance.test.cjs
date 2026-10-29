@@ -91,6 +91,39 @@ for(const opts of [
     candidate:{leg:candidate.leg,calls:candidate.calls,checks:candidate.checks,
       peakRoute:candidate.peakRoute}}));
 }
+
+// Also compare actual engine combat updates, not only direct method calls.
+// This catches a priority-preserving algorithm that accidentally changes
+// when Thorn disengages, attacks or completes his original retreat.
+function liveCombat(opts,legacy) {
+  const {g,thorn}=fixture(opts);
+  if(legacy)g.openingCompanionHit=originalOpeningCompanionHit;
+  let checks=0,peak=0,routeCalls=0;
+  const oldBlocked=g.blocked,oldRoute=g.route;
+  g.blocked=function(...args){checks++;return oldBlocked.apply(this,args)};
+  g.route=function(...args){routeCalls++;return oldRoute.apply(this,args)};
+  for(let i=0;i<24;i++){
+    const before=checks;
+    g.tick(.05,{x:0,y:0});
+    peak=Math.max(peak,checks-before);
+  }
+  delete g.route;delete g.blocked;
+  if(legacy)delete g.openingCompanionHit;
+  return {state:g.snapshot(),leg:thorn.thornIntroRetreat??null,peak,checks,routeCalls};
+}
+for(const opts of [
+  {hero:[1230,1400],wall:true},
+  {hero:[1650,1600],wall:false},
+]) {
+  const original=liveCombat(opts,true),optimized=liveCombat(opts,false);
+  assert.deepEqual(optimized.state,original.state,
+    'full native Thorn combat ticks must preserve gameplay after route priority optimization');
+  assert(optimized.peak<=original.peak,'Thorn real combat peak terrain checks cannot worsen');
+  console.log('THORN_RETREAT_LIVE_TICK_PARITY '+JSON.stringify({opts,
+    original:{leg:original.leg,peak:original.peak,checks:original.checks,calls:original.routeCalls},
+    optimized:{leg:optimized.leg,peak:optimized.peak,checks:optimized.checks,calls:optimized.routeCalls}}));
+}
+
 const unreachable={hero:[1230,1400],wall:true};
 const oldFail=sample(unreachable,true,true),newFail=sample(unreachable,false,true);
 assert.deepEqual(newFail.state,oldFail.state,
