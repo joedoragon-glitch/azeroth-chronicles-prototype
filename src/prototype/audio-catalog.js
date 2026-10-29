@@ -562,6 +562,7 @@
     'hit',
     'basicComboFinisher',
     'companionSkill',
+    'charmHeritage', // Visual-only receipt; the matching spell owns one audible cast.
     'petSkill', // Visual metadata; the corresponding spell/melee event owns audio.
     // Preparation is visible; concrete release and interruption own the sound.
     'companionChargeStart',
