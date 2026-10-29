@@ -209,7 +209,9 @@
     return row
       ? { name: row[0], role: row[1], tap: row[2], charge: row[3],
           note: (row[4] || '') + (game.hero.class === 'rogue'
-            ? ' Rogue receives the same friendly boon if inside the skill area at cast release. Timed boons persist after instant pulses; Skill 5 protects only while inside its active station. Critical enhancements use the same eligibility.'
+            ? slot === 5
+              ? ' Rogue and companions receive protection while inside the music station, even if they enter after placement. Leaving removes protection immediately; critical effects follow the same area.'
+              : ' Rogue and nearby companions receive the same friendly boon when inside the skill area at release. Timed boons persist for their listed duration; critical enhancements follow the same eligibility.'
             : '') }
       : null;
   }
@@ -225,7 +227,7 @@
             { key: 'reach', label: 'Reach', value: x.range, unit: '' },
             { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
             { key: 'targets', label: 'Maximum hostile targets', value: x.cap, unit: '' },
-            { key: 'duration', label: 'Your / companion boon', value: x.seconds, unit: 's' },
+            { key: 'duration', label: slot === 5 ? 'Station lifetime' : 'Your / companion boon', value: x.seconds, unit: 's' },
             { key: 'cooldown', label: 'Cooldown',
               value: game.skillCooldown(slot, charged), unit: 's' },
           ];

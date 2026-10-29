@@ -266,6 +266,78 @@ try {
   assert.equal(partyGame.rogueStationProtection(leaving), null,
     'expired fields cannot retain a cached ward');
   partyGame.line = partyLine;
+
+  // Independent full-repertoire self-benefit audit: 8 skills x both forms
+  // x ordinary/critical releases. One frozen critical action per cast.
+  const Critical = require('../src/prototype/critical-executions.js');
+  const Levels = require('../src/prototype/critical-levels.js');
+  const Native = require('../src/prototype/critical-party-native.js');
+  const families = {1:'refrain',2:'quickstep',3:'steadyBeat',4:'mending',
+    6:'borrowedTime',7:'firmFooting',8:'finale'};
+  for (const critical of [false,true])
+    for (const charged of [false,true])
+      for (let slot=1; slot<=8; slot++) {
+        const sample=fresh(), campaign=sample.g;
+        campaign.hero.skills=Array(8).fill(1);
+        let rolls=0;
+        if (critical) {
+          const native=Native.createSession(Critical,Levels,{
+            enabled:true,stream:{next(){rolls++;return 0;}},
+          });
+          native.setCriticalLevel('rogue',3);
+          campaign._criticalPartyNative=native;
+        }
+        assert.equal(campaign.cast(slot,sample.foe.id,charged),true,
+          'Rogue slot '+slot+' should cast in '+(charged?'charged':'tap')+' form');
+        if(slot===5) {
+          assert(campaign.rogueStationProtection(campaign.hero),
+            'Rogue receives Skill 5 station protection');
+          assert(campaign.rogueStationProtection(sample.unit),
+            'companion retains station protection');
+        } else {
+          assert(campaign.rogueSongBoon(campaign.hero,families[slot]),
+            'Rogue receives Skill '+slot+' timed self-buff');
+          if(slot===1)
+            assert((sample.unit.rogueSharpRefrainBonus||0)>0,
+              'companion retains Skill 1 basic-buff');
+          else
+            assert(campaign.rogueSongBoon(sample.unit,families[slot]),
+              'companion retains Skill '+slot+' boon');
+        }
+        assert.equal(rolls,critical?1:0,'only one critical roll per cast');
+        campaign.s.time+=20;
+        assert.equal(slot===5
+          ? campaign.rogueStationProtection(campaign.hero)
+          : campaign.rogueSongBoon(campaign.hero,families[slot]),null,
+          'Rogue self-benefit does not persist after expiry');
+      }
+  // Skill 7 must snapshot heroine eligibility before it pushes the primary
+  // beyond the original area; charged and tap share the same rule.
+  for(const charged of [false,true]){
+    const sample=fresh(),h=sample.g.hero;
+    h.skills[6]=1;
+    const radius=charged?190:145;
+    sample.foe.x=h.x+(charged?185:140);
+    assert.equal(sample.g.cast(7,sample.foe.id,charged),true);
+    assert(Math.hypot(sample.foe.x-h.x,sample.foe.y-h.y)>radius,
+      'knockback should actually move the primary past the boon radius');
+    assert.equal(sample.g.rogueSongBoon(h,'firmFooting')?.outgoing,
+      charged?0.08:0.05,'hero remains eligible in original release area');
+  }
+  // Hostile targeting reach is greater than the friendly buff radius.
+  for(const charged of [false,true]){
+    const sample=fresh(),h=sample.g.hero;
+    h.skills[1]=1;
+    sample.foe.x=h.x+(charged?275:235);
+    sample.unit.x=sample.foe.x-10;
+    assert.equal(sample.g.cast(2,sample.foe.id,charged),true);
+    assert.equal(sample.g.rogueSongBoon(h,'quickstep'),null);
+    assert(sample.g.rogueSongBoon(sample.unit,'quickstep'));
+  }
+  const skill5Guide=Reference.describe(g,5);
+  assert(skill5Guide.note.includes('even if they enter after placement'));
+  assert(skill5Guide.tap.metrics.some(m=>m.key==='duration'&&
+    m.label==='Station lifetime'));
   // Non-Rogue classes retain their exact original cooldown/movement behavior.
   for(const cls of ['paladin','mage','ranger']) {
     const normal = new Campaign('normal',cls,()=>0.9);

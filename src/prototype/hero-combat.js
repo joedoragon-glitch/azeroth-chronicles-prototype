@@ -1368,6 +1368,9 @@
           .slice(0, form.cap);
         const allies = this.activeLivingParty().filter((u) =>
           dist(u, primary) <= form.radius && this.line(primary, u));
+        // Resolve heroine and companion membership at the same release instant.
+        // Skill 7 moves its target afterward; knockback must not move this area.
+        const heroInside = dist(h, primary) <= form.radius && this.line(primary, h);
         this.releaseRecallForCombat();
         this.engage(primary);
         h.cd[slot - 1] = this.skillCooldown(slot, false);
@@ -1480,7 +1483,7 @@
         }
         const recipients = slot === 5 ? [] : [
           ...allies,
-          ...(dist(h, primary) <= form.radius && this.line(primary, h) ? [h] : []),
+          ...(heroInside ? [h] : []),
         ];
         for (const u of recipients)
           this.applyRogueSongBoon(u,
