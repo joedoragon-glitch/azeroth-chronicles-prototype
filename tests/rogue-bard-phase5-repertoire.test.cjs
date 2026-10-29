@@ -206,6 +206,7 @@ try {
   foe.x = 590;
   g.zone().enemies = [foe];
   g.hero.cd[1] = 0;
+  g.hero.chargedCd[1] = 0;
   assert(g.cast(2,foe.id,true));
   assert.equal(g.rogueSongBoon(g.hero,'quickstep'),null,
     'a charged performance at 270 range does not self-buff beyond its 185 area');
