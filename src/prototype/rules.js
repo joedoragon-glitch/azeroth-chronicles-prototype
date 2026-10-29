@@ -34,7 +34,16 @@
   // Combat hit detection and terrain-safe placement still use these radii.
   // No movement/body-blocking code consumes them.
   const actorContactRadii = { normal: 14, hero: 14, large: 20, boss: 26, mounted: 23 };
-  const navigationPlanning = { routeRetrySeconds: 1.3, movementPlansPerTick: 4 };
+  const navigationPlanning = {
+    routeRetrySeconds: 1.3,
+    movementPlansPerTick: 4,
+    // Shared across active companion, resource-delivery and enemy-regroup
+    // searches. Planning only; physical collision remains unrestricted.
+    terrainProbesPerTick: 240,
+    terrainProbesPerSearch: 120,
+    routeNodesPerTick: 120,
+    routeNodesPerSearch: 60,
+  };
   // Canonical visible melee loadouts, shared by real strike metadata and expression.
   const enemyMeleeKits = {
     species: {
