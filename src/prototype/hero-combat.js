@@ -1181,7 +1181,12 @@
           if (field.zone === this.zoneId && field.until > this.s.time &&
               dx * dx + dy * dy <= field.radius * field.radius) inside |= 1 << i;
         }
-        if (!inside) return null;
+        if (!inside) {
+          // Leaving a circle drops cached visibility, so re-entry is checked
+          // immediately rather than reusing a prior inside-the-field result.
+          rogueStationChecks.delete(unit);
+          return null;
+        }
         const cached = rogueStationChecks.get(unit),
           moved = cached
             ? (unit.x - cached.x) ** 2 + (unit.y - cached.y) ** 2 : Infinity;
