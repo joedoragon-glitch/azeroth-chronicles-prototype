@@ -45,13 +45,17 @@ async function capture(page,label) {
       try {
         await page.goto('http://127.0.0.1:'+server.address().port+(config.phone?'/phone.html':'/index.html'),{waitUntil:'domcontentloaded'});
         await page.waitForFunction(()=>window.Prototype?.game,{timeout:30000});
-        if(config.spanish) {
-          const language=await page.locator('#modal-title').textContent();
-          if(language==='Choose your language' || language==='Elige tu idioma')
-            await page.getByRole('button',{name:/Español/}).click();
-        } else await require('./helpers/language-browser.cjs').selectEnglish(page);
-        await page.keyboard.press('f');await page.keyboard.press('f');
-        await page.waitForFunction(()=>document.querySelector('#modal').hidden,{timeout:25000});
+        // The game now opens on a title screen. Enter a real new campaign:
+        // merely dismissing two menus leaves skills hidden behind the title.
+        await require('./helpers/language-browser.cjs').selectEnglish(page);
+        await page.locator('#title-new').click();
+        await page.getByRole('button',{name:'New Normal game',exact:true}).click();
+        await page.getByRole('button',{name:config.spanish?/^Español(?: ✓)?$/:/^English(?: ✓)?$/}).click();
+        await page.getByRole('button',{name:config.spanish?'Muerte normal y recuperación en refugio':'Standard death and refuge recovery',exact:true}).click();
+        await page.getByRole('button',{name:/Palad[ií]n/i}).first().click();
+        await page.waitForFunction(()=>window.Prototype?.started &&
+          document.querySelector('#title-screen')?.hidden &&
+          document.querySelector('#scene-loading')?.hidden !== false,{timeout:60000});
         await page.evaluate(({left})=>{
           const g=Prototype.game;
           g.tick=()=>{};
