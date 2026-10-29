@@ -2019,38 +2019,58 @@
         }
         return true;
       }
-      // The native ranged-species support repertoire already exists for enemy
-      // healers. Friendly captured ranged actors reuse its bounded recovery
-      // scale/cadence without inheriting Ranger spells or hero mana actions.
-      charmedRangedSupport(u, living) {
+      // A Charmed ranged healer uses the same automatic HP recovery as a
+      // conventional Ranger: the Neri-trained amount, five-second pulses,
+      // ten-second cooldown and idle/combat triage thresholds. Unlike the
+      // original hostile healer, it must support the friendly party while idle.
+      // Keep this separate from Ranger mana and offensive skill ownership.
+      charmedRangedSupport(u, living = this.activeLivingParty()) {
         if (
-          !this.isCharmedCompanion(u) ||
+          !u?.charmOrigin ||
           u.type !== 'archer' ||
+          !this.s.party.includes(u) ||
+          u.active === false ||
+          u.hp <= 0 ||
+          u.deathRollHeld ||
+          u.keeperHeld ||
+          !this.isCharmedCompanion(u) ||
           (u.charmSupportCd || 0) > 0 ||
           u.order ||
           this.peace ||
-          this.s.recallActive
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver ||
+          this.mageSilenceActive(u)
         )
           return false;
-        const range = R.enemySupportHealing.range;
-        const patients = [this.hero, ...living]
-          .filter((ally) =>
+        const healThreshold = this.manaCombatActive()
+            ? R.rangerSupport.healThreshold
+            : 1,
+          patients = [this.hero, ...living].filter((ally) =>
             ally.hp > 0 &&
-            ally.hp < ally.maxHp * R.enemySupportHealing.threshold &&
-            dist(u, ally) <= range &&
-            this.line(u, ally))
-          .sort((a, b) =>
-            a.hp / a.maxHp - b.hp / b.maxHp ||
-            dist(u, a) - dist(u, b));
-        const target = patients[0];
+            ally.hp < ally.maxHp &&
+            ally.hp <= ally.maxHp * healThreshold &&
+            !this.hasSupportEffect(ally, 'health')),
+          target = patients.includes(this.hero)
+            ? this.hero
+            : patients.sort((a, b) =>
+                a.hp / a.maxHp - b.hp / b.maxHp)[0];
         if (!target) return false;
-        const amount = Math.max(1, Math.ceil(
-          target.maxHp * R.enemySupportHealing.fraction,
-        ));
-        target.hp = Math.min(target.maxHp, target.hp + amount);
-        u.charmSupportCd = R.enemySupportHealing.ordinary.cooldown;
+        const amount = this.rangerSupportAmount('health');
+        this.addSupportEffect(target, 'health', amount);
+        u.charmSupportCd = R.rangerSupport.cooldown;
+        this.say(
+          (u.customName || u.charmOrigin.typeName) + ' casts Heal on ' +
+          (target === this.hero
+            ? 'the hero'
+            : target.customName || target.name || 'an ally') +
+          ' · restoring ' + amount + ' HP over ' +
+          R.rangerSupport.duration + ' seconds.',
+        );
         this.event('heal', {
-          x: target.x, y: target.y, target: target.id, resource: 'health',
+          x: target.x, y: target.y,
+          fromX: u.x, fromY: u.y,
+          target: target === this.hero ? 'hero' : target.id,
+          resource: 'health',
         });
         return true;
       }
@@ -2511,6 +2531,14 @@
             : candidates.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
           if (!this.rangerSupport('health', false, target)) break;
         }
+        // Heal after conventional Rangers have claimed patients. Every active
+        // Charmed ranged healer can then treat another wounded party member,
+        // including the Rogue, pets and companions of different species.
+        // Run even when no enemies are engaged; Ranger support does too.
+        const living = this.activeLivingParty();
+        for (const healer of living)
+          if (healer.charmOrigin && healer.type === 'archer')
+            this.charmedRangedSupport(healer, living);
         if (
           R.resourceMode.manaEnabled &&
           h.mp < h.maxMp &&
@@ -3637,7 +3665,6 @@
             continue;
           }
           if (u.order) u.order = null;
-          if (context.engaged && this.charmedRangedSupport(u, living)) continue;
           if (this.peace || this.s.recallActive) {
             // Recall is a defensive escort posture: no target acquisition,
             // pursuit or active skills. A nearby attacking enemy may be
