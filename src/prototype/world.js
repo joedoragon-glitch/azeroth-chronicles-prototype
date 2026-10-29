@@ -1832,20 +1832,77 @@
         if (p.r > 0) return p.r + 64;
         return 72;
       }
-      clearStreetCorridors(z) {
+      clearStreetCorridors(z, finalPass = false) {
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.streetClearanceVersion === 3
+          (finalPass ? z.finalStreetClearanceVersion === 1 : z.streetClearanceVersion === 3)
         )
           return;
+        // Rebuilding an older street plan invalidates its final-layout receipt.
+        if (!finalPass) delete z.finalStreetClearanceVersion;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
           const i = this.regionIndex(z.id),
             major = { x: D.towns[i][0], y: D.towns[i][1] },
             minor = { x: D.minors[i][0], y: D.minors[i][1] };
+          // Later authored road plans can leave the original town square just
+          // outside their network. Join that square to the existing road before
+          // the final clearance; never relocate a town to hide disconnection.
+          if (finalPass && this.distanceToRoad(z, major) >= 1) {
+            const junction = this.nearestRoadPoint(z, major);
+            const path = junction && this.route(major, junction, { road: true });
+            if (path?.length) z.roads.unshift([major, ...path]);
+          }
+          // Join disconnected authored spurs using real collision-routed links.
+          // Retain every existing road; endpoint-to-segment joins count too.
+          let networkComplete = true;
+          if (finalPass) {
+            const touches = (p, road) =>
+              road.some((q, j) => j && this.distanceToSegment(p, road[j - 1], q) < 1);
+            for (let attempt = 0, limit = z.roads.length; attempt < limit; attempt++) {
+              const connected = new Set(z.roads.filter((road) => touches(major, road)));
+              for (let grew = true; grew; ) {
+                grew = false;
+                for (const road of z.roads) {
+                  if (connected.has(road)) continue;
+                  if (
+                    [...connected].some(
+                      (other) =>
+                        road.some((p) => touches(p, other)) || other.some((p) => touches(p, road)),
+                    )
+                  ) {
+                    connected.add(road);
+                    grew = true;
+                  }
+                }
+              }
+              if (connected.size === z.roads.length) break;
+              const joined = { roads: [...connected] },
+                candidates = [];
+              for (const road of z.roads.filter((r) => !connected.has(r)))
+                for (const p of road) {
+                  const q = this.nearestRoadPoint(joined, p);
+                  if (q) candidates.push({ p, q });
+                }
+              candidates.sort((a, b) => dist(a.p, a.q) - dist(b.p, b.q));
+              let link = null;
+              for (const { p, q } of candidates) {
+                const path = this.route(p, q, { road: true });
+                if (path.length && dist(path.at(-1), q) < 1) {
+                  link = [p, ...path];
+                  break;
+                }
+              }
+              if (!link) {
+                networkComplete = false;
+                break;
+              }
+              z.roads.push(link);
+            }
+          }
           // Reposition the two refuge buildings: the canonical settlement
           // coordinates are STREET SQUARES, not house footprints.
           const frontages = [
@@ -1866,6 +1923,10 @@
             }
             if (this.blocked(p.x, p.y, z.id, Math.max(12, (item.r || 0) + 9), true)) return false;
             if (this.distanceToRoad(z, p) < setback) return false;
+            if (finalPass && frontages.some(([id]) => id === item.id)) {
+              const center = item.id === 'minor' ? minor : major;
+              if (dist(p, center) >= 460) return false;
+            }
             if (
               z.props.some(
                 (other) =>
@@ -1900,7 +1961,13 @@
             );
           };
           const moveOffRoad = (item, setback) => {
-            if (this.distanceToRoad(z, item) >= setback) return true;
+            const service = finalPass && frontages.some(([id]) => id === item.id),
+              neighborhood = item.id === 'minor' ? minor : major;
+            if (
+              this.distanceToRoad(z, item) >= setback &&
+              (!service || dist(item, neighborhood) < 460)
+            )
+              return true;
             const base = { x: item.x, y: item.y },
               center = dist(base, major) <= dist(base, minor) ? major : minor;
             // Prefer moving outward into a frontage plot, retaining the
@@ -1923,6 +1990,24 @@
                 return true;
               }
             }
+            if (finalPass) {
+              // Dense authored districts can leave a valid parcel between the
+              // polar samples. Keep services in their own neighborhood; search
+              // the region for large props, nearest first, retaining all IDs.
+              const service = frontages.some(([id]) => id === item.id),
+                center = service ? (item.id === 'minor' ? minor : major) : base,
+                reach = service ? 440 : D.regions[i].size,
+                candidates = [];
+              for (let x = center.x - reach; x <= center.x + reach; x += service ? 20 : 40)
+                for (let y = center.y - reach; y <= center.y + reach; y += service ? 20 : 40)
+                  candidates.push({ x, y });
+              candidates.sort((a, b) => dist(a, base) - dist(b, base));
+              const p = candidates.find((p) => canPlace(p, item, setback));
+              if (p) {
+                Object.assign(item, p);
+                return true;
+              }
+            }
             return false;
           };
           // Saved/player-built barracks are large buildings too. Relocate
@@ -1934,8 +2019,10 @@
             if (!npc) continue;
             // Services retain their original playable squares even though
             // their buildings/stands occupy neighboring frontage parcels.
-            if (id === 'rest') npc.servicePoint = { ...major };
-            if (id === 'minor') npc.servicePoint = { ...minor };
+            if (!finalPass) {
+              if (id === 'rest') npc.servicePoint = { ...major };
+              if (id === 'minor') npc.servicePoint = { ...minor };
+            }
             moveOffRoad(npc, setback);
           }
           // Generated forest obstacles must not invade the immediate living
@@ -1944,12 +2031,13 @@
           const rangedHomes = z.enemies
             .filter((enemy) => enemy.hp > 0 && (enemy.ranged || enemy.hybrid))
             .map((enemy) => enemy.home || enemy);
-          z.props = z.props.filter(
-            (p) =>
-              p.greenwoodLegacyScenery ||
-              !String(p.id || '').startsWith('forest-') ||
-              !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
-          );
+          if (!finalPass)
+            z.props = z.props.filter(
+              (p) =>
+                p.greenwoodLegacyScenery ||
+                !String(p.id || '').startsWith('forest-') ||
+                !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
+            );
           // Full corridor audit, not only collision-bearing props: market
           // stalls, carts, heaps, decorative houses and trees are visual
           // obstacles too. Keep every ID/scene role; move, do not erase.
@@ -1958,7 +2046,39 @@
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));
-          z.streetClearanceVersion = 3;
+          if (finalPass) {
+            const complete =
+              networkComplete &&
+              frontages.every(([id, setback]) => {
+                const npc = z.npcs.find((n) => n.id === id);
+                const center = id === 'minor' ? minor : major;
+                return (
+                  npc &&
+                  this.distanceToRoad(z, npc) + 0.01 >= setback &&
+                  dist(npc, center) < 460 &&
+                  (!['rest', 'minor'].includes(id) ||
+                    Math.min(npc.x, npc.y, D.regions[i].size - npc.x, D.regions[i].size - npc.y) >=
+                      115)
+                );
+              }) &&
+              z.buildings.every((b) => this.distanceToRoad(z, b) + 0.01 >= 175) &&
+              z.props.every(
+                (p) => p.roadTrace || this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p),
+              );
+            if (complete) {
+              z.finalStreetClearanceVersion = 1;
+              // Native refreshNPCs must retain the verified frontage rather
+              // than restore the older composition's obstructing coordinates.
+              for (const region of ['frontier', 'crown']) {
+                if (z.id !== region) continue;
+                const placements = (z[region + 'TownPlacements'] ||= {});
+                for (const [id] of frontages) {
+                  const npc = z.npcs.find((n) => n.id === id);
+                  if (npc) placements[id] = [npc.x, npc.y];
+                }
+              }
+            }
+          } else z.streetClearanceVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
@@ -2517,6 +2637,7 @@
           this.greenwoodFinish?.(z);
           // Finish after all region-specific scenery shifts and road updates.
           this.marchCoastalFinalClearance(z);
+          this.clearStreetCorridors(z, true);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -2950,6 +3071,7 @@
         this.greenwoodFinish?.(z);
         // Finish after all region-specific scenery shifts and road updates.
         this.marchCoastalFinalClearance(z);
+        this.clearStreetCorridors(z, true);
         this.setSceneryTraversal(z);
         return z;
       }
@@ -4355,8 +4477,10 @@
           const field = this.fieldCenter(this.regionIndex('highlands')),
             room = R.supplyRooms.find((r) => r.id === 'supply-highlands'),
             proposals = [
-              { x: 2170, y: 330 }, { x: 2166, y: 373 },
-              { x: 1795, y: 547 }, { x: 1759, y: 522 },
+              { x: 2170, y: 330 },
+              { x: 2166, y: 373 },
+              { x: 1795, y: 547 },
+              { x: 1759, y: 522 },
             ],
             valid = (p) =>
               this.distanceToRoad(z, p) >= 190 &&
@@ -4377,15 +4501,19 @@
       // The new segment also requires the refuge and nearby roof artwork to
       // honor the unchanged road-setback rule on fresh and v4 saved campaigns.
       highlandsQuarryRoadAccess(z) {
-        if (z.id !== 'highlands' || z.appalachianVersion !== 1 ||
-            z.highlandsQuarryRoadVersion === 1) return;
+        if (
+          z.id !== 'highlands' ||
+          z.appalachianVersion !== 1 ||
+          z.highlandsQuarryRoadVersion === 1
+        )
+          return;
         const town = { x: D.minors[2][0], y: D.minors[2][1] },
           junction = { x: 2520, y: 650 },
-          roadExists = z.roads.some((road) =>
-            dist(road.at(-1), town) < 1 && road.some((p) => dist(p, junction) < 1));
+          roadExists = z.roads.some(
+            (road) => dist(road.at(-1), town) < 1 && road.some((p) => dist(p, junction) < 1),
+          );
         if (!roadExists) {
-          const junctionPresent = z.roads.some((road) =>
-            road.some((p) => dist(p, junction) < 1));
+          const junctionPresent = z.roads.some((road) => road.some((p) => dist(p, junction) < 1));
           if (!junctionPresent || !this.clearSegment(junction, town, 15, true)) return;
           z.roads.push([junction, town]);
         }
@@ -4401,13 +4529,16 @@
               !z.npcs.some((n) => n !== obj && dist(n, p) < 105) &&
               !z.nodes.some((n) => dist(n, p) < 80) &&
               !z.buildings.some((b) => b !== obj && dist(b, p) < 155) &&
-              !z.props.some((q) => q !== obj && dist(q, p) <
-                Math.max(80, (q.r || 0) + radius + 36));
+              !z.props.some(
+                (q) => q !== obj && dist(q, p) < Math.max(80, (q.r || 0) + radius + 36),
+              );
           if (!refuge) return; // A missing legacy service must not be certified.
           if (!free(refuge, refuge, 180, 25)) {
             const candidates = [
-              { x: 2580, y: 300 }, { x: 2690, y: 245 },
-              { x: 2450, y: 270 }, { x: 2770, y: 360 },
+              { x: 2580, y: 300 },
+              { x: 2690, y: 245 },
+              { x: 2450, y: 270 },
+              { x: 2770, y: 360 },
             ];
             for (const r of [215, 260, 310, 365, 425])
               for (let j = 0; j < 32; j++) {
@@ -4417,39 +4548,46 @@
                   y: town.y + Math.sin(a) * r,
                 });
               }
-            const p = candidates.find((p) => dist(p, town) < 460 &&
-              free(p, refuge, 180, 25));
+            const p = candidates.find((p) => dist(p, town) < 460 && free(p, refuge, 180, 25));
             if (!p) return;
             Object.assign(refuge, p);
             refuge.servicePoint = { x: p.x, y: p.y };
-            if (this.s.refugeSite?.zone === z.id &&
-                this.s.refugeSite.id === refuge.id)
+            if (this.s.refugeSite?.zone === z.id && this.s.refugeSite.id === refuge.id)
               Object.assign(this.s.refugeSite, p);
           }
           // Relocate a roof affected by the new short road; retain its
           // original ID, construction purpose and the connected road itself.
-          const touching = z.props.filter((p) => !p.roadTrace &&
-            this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
-            this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p));
+          const touching = z.props.filter(
+            (p) =>
+              !p.roadTrace &&
+              this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
+              this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p),
+          );
           for (const prop of touching) {
-            const old = { x: prop.x, y: prop.y }, setback = this.roadSetback(prop);
+            const old = { x: prop.x, y: prop.y },
+              setback = this.roadSetback(prop);
             const candidates = [];
             for (const r of [20, 35, 55, 80, 110, 150, 195, 250, 320])
               for (let j = 0; j < 32; j++) {
-                const a = j * Math.PI / 16;
+                const a = (j * Math.PI) / 16;
                 candidates.push({
                   x: old.x + Math.cos(a) * r,
                   y: old.y + Math.sin(a) * r,
                 });
               }
-            const p = candidates.find((p) => free(p, prop, setback,
-              Math.max(15, prop.r || 0)));
+            const p = candidates.find((p) => free(p, prop, setback, Math.max(15, prop.r || 0)));
             if (!p) return; // Retry later, retaining all original objects.
             Object.assign(prop, p);
           }
-          if (z.props.some((p) => !p.roadTrace &&
-            this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
-            this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p))) return;
+          if (
+            z.props.some(
+              (p) =>
+                !p.roadTrace &&
+                this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
+                this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p),
+            )
+          )
+            return;
           if (this.distanceToRoad(z, refuge) + 0.01 < 180) return;
           z.highlandsQuarryRoadVersion = 1;
         } finally {
@@ -4460,8 +4598,10 @@
         if (z.id !== 'march' || z.coastalSwampVersion !== 1) return;
         const town = { x: D.towns[1][0], y: D.towns[1][1] },
           junction = { x: 350, y: 1370 },
-          onExistingRoad = (point) => z.roads.some((road) =>
-            road.some((p, j) => j && this.distanceToSegment(point, road[j - 1], p) < 1));
+          onExistingRoad = (point) =>
+            z.roads.some((road) =>
+              road.some((p, j) => j && this.distanceToSegment(point, road[j - 1], p) < 1),
+            );
         if (z.marchTownRoadVersion !== 1) {
           if (!onExistingRoad(junction)) return; // Do not certify an absent road.
           if (!onExistingRoad(town)) z.roads.unshift([town, junction]);
@@ -4497,9 +4637,10 @@
                 z.npcs.some((n) => dist(n, point) < 65) ||
                 z.nodes.some((n) => dist(n, point) < 60) ||
                 z.buildings.some((b) => dist(b, point) < 95) ||
-                z.props.some((p) =>
-                  p !== item && !p.decorative &&
-                  dist(p, point) < Math.max(25, p.r || 0) + 25)
+                z.props.some(
+                  (p) =>
+                    p !== item && !p.decorative && dist(p, point) < Math.max(25, p.r || 0) + 25,
+                )
               )
                 continue;
               relocated = point;

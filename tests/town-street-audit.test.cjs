@@ -21,20 +21,37 @@ for (const region of regions) {
   assert.equal(zone.streetClearanceVersion, 3, region.id + ' full street audit');
   assert(zone.roads.length >= 4, region.id + ' real road links');
   if (region.id === 'highlands') {
-    assert.equal(zone.highlandsQuarryRoadVersion, 1,
-      'quarry hamlet street and refuge repair is versioned');
-    assert.equal(zone.roads.filter(road =>
-      road.some(p => distance(p, { x: 2520, y: 650 }) < 1) &&
-      distance(road.at(-1), hamlet) < 1).length, 1,
-    'exactly one authentic quarry hamlet road spur, including old v4 saves');
+    assert.equal(
+      zone.highlandsQuarryRoadVersion,
+      1,
+      'quarry hamlet street and refuge repair is versioned',
+    );
+    assert.equal(
+      zone.roads.filter(
+        (road) =>
+          road.some((p) => distance(p, { x: 2520, y: 650 }) < 1) &&
+          distance(road.at(-1), hamlet) < 1,
+      ).length,
+      1,
+      'exactly one authentic quarry hamlet road spur, including old v4 saves',
+    );
   }
   if (region.id === 'march') {
     assert.equal(zone.marchTownRoadVersion, 1, 'Reedport road repair is versioned');
-    assert.equal(zone.marchCoastalRoadClearanceVersion, 1, 'old and new coastal scenery keeps full roadway setback');
-    assert.equal(zone.roads.filter(road =>
-      road.some(p => distance(p, town) < 1) &&
-      road.some(p => distance(p, { x: 350, y: 1370 }) < 1)).length, 1,
-    'exactly one real Reedport-to-coastal-road leg, never a duplicate');
+    assert.equal(
+      zone.marchCoastalRoadClearanceVersion,
+      1,
+      'old and new coastal scenery keeps full roadway setback',
+    );
+    assert.equal(
+      zone.roads.filter(
+        (road) =>
+          road.some((p) => distance(p, town) < 1) &&
+          road.some((p) => distance(p, { x: 350, y: 1370 }) < 1),
+      ).length,
+      1,
+      'exactly one real Reedport-to-coastal-road leg, never a duplicate',
+    );
   }
 
   // Bridges can connect earlier spurs from either end. Validate the completed
@@ -116,10 +133,16 @@ for (const region of regions) {
       access('livelihood:' + district.id, x, y);
     }
   if (region.id === 'march') {
-    const failures = zone.props.filter((p) => !p.roadTrace &&
-      game.distanceToRoad(zone, p) + 0.01 < game.roadSetback(p))
-      .map((p) => [p.id, p.structure, Math.round(game.distanceToRoad(zone, p)), game.roadSetback(p)]);
-    if (failures.length) console.error('MARCH STRICT ROAD OBSTRUCTIONS', JSON.stringify(failures.slice(0, 40)));
+    const failures = zone.props
+      .filter((p) => !p.roadTrace && game.distanceToRoad(zone, p) + 0.01 < game.roadSetback(p))
+      .map((p) => [
+        p.id,
+        p.structure,
+        Math.round(game.distanceToRoad(zone, p)),
+        game.roadSetback(p),
+      ]);
+    if (failures.length)
+      console.error('MARCH STRICT ROAD OBSTRUCTIONS', JSON.stringify(failures.slice(0, 40)));
   }
   // Report *all* violations together. Fail closed, with the same geometric
   // threshold, but avoid correcting one wall per six-minute CI cycle.
@@ -142,7 +165,10 @@ for (const region of regions) {
   assert.equal(
     obstructions.length,
     0,
-    region.id + ' road obstructions (' + obstructions.length + '): ' +
+    region.id +
+      ' road obstructions (' +
+      obstructions.length +
+      '): ' +
       JSON.stringify(obstructions.slice(0, 100)),
   );
   for (const [id, settlementCenter, setback] of [
@@ -169,6 +195,42 @@ for (const region of regions) {
         region.id + ' refuge artwork must fit within its world boundary',
       );
     }
+  }
+  // Reproduce pre-fix scene-composition service positions in an otherwise
+  // current v4 save. Repair must survive native NPC refresh and two reloads.
+  if (['highlands', 'frontier', 'crown'].includes(region.id)) {
+    const historical = game.snapshot(),
+      old = historical.zones[region.id];
+    delete old.finalStreetClearanceVersion;
+    const refuge = old.npcs.find((n) => n.id === 'rest');
+    Object.assign(refuge, town);
+    const priorGold = historical.hero.gold;
+    const repaired = Campaign.restore(historical),
+      fixed = repaired.zone();
+    repaired.refreshNPCs();
+    assert.equal(repaired.hero.gold, priorGold);
+    assert.equal(fixed.finalStreetClearanceVersion, 1, region.id + ' final clearance completed');
+    for (const [id, setback] of [
+      ['rest', 190],
+      ['minor', 180],
+      ['board', 95],
+      ['supplier', 92],
+      ['recruiter', 92],
+    ]) {
+      const n = fixed.npcs.find((n) => n.id === id);
+      assert(
+        n && repaired.distanceToRoad(fixed, n) + 0.01 >= setback,
+        region.id + ' refreshed service stays off the road: ' + id,
+      );
+    }
+    const positions = fixed.npcs.map((n) => [n.id, n.x, n.y, n.servicePoint]);
+    const again = Campaign.restore(repaired.snapshot());
+    again.refreshNPCs();
+    assert.deepEqual(
+      again.zone().npcs.map((n) => [n.id, n.x, n.y, n.servicePoint]),
+      positions,
+      region.id + ' second restore retains exact service positions',
+    );
   }
   const migrated = game.snapshot();
   const oldZone = migrated.zones[region.id];

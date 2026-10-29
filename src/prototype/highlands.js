@@ -299,6 +299,11 @@
         // A migrated quarry refuge must retain its legal roadside frontage
         // on every later zone read, not snap back onto the new hamlet road.
         if (n.id === 'minor' && z.highlandsQuarryRoadVersion === 1) continue;
+        if (
+          z.finalStreetClearanceVersion === 1 &&
+          ['rest', 'minor', 'supplier', 'recruiter', 'board'].includes(n.id)
+        )
+          continue;
         const target = npcTargets[n.id];
         if (
           target &&
@@ -319,10 +324,8 @@
         dx = anchors.ogre[0] - old.x,
         dy = anchors.ogre[1] - old.y;
       for (const p of z.props) {
-        if (
-          !String(p.id || '').startsWith('world-life-habitat-') ||
-          distance(p, old) > 220
-        ) continue;
+        if (!String(p.id || '').startsWith('world-life-habitat-') || distance(p, old) > 220)
+          continue;
         const target = { x: p.x + dx, y: p.y + dy };
         Object.assign(p, this.safe(target.x, target.y, z.id));
       }
@@ -341,15 +344,15 @@
           Math.min(q.x, q.y, 3400 - q.x, 3400 - q.y) >= 110 &&
           !this.blocked(q.x, q.y, z.id, radius, true) &&
           this.distanceToRoad(z, q) + 0.01 >= required &&
-          !z.props.some((other) =>
-            distance(q, other) < radius + Math.max(0, other.r || 0) + 24) &&
+          !z.props.some((other) => distance(q, other) < radius + Math.max(0, other.r || 0) + 24) &&
           !z.buildings.some((b) => distance(q, b) < radius + 90) &&
           !z.npcs.some((n) => distance(q, n) < radius + 60) &&
           !z.nodes.some((n) => distance(q, n) < radius + 65);
         // Work on the same objects rather than replacing IDs or recreating
         // camp/tribute props. Roads and authored encounter centers stay fixed.
-        const affected = z.props.filter((p) =>
-          !p.roadTrace && this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p));
+        const affected = z.props.filter(
+          (p) => !p.roadTrace && this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p),
+        );
         for (const p of affected) {
           const old = { x: p.x, y: p.y },
             required = this.roadSetback(p),
@@ -361,9 +364,8 @@
           for (const reach of [25, 40, 60, 85, 115, 150, 195, 250, 300]) {
             for (let j = 0; j < 24; j++) {
               const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
-              const angle = away + fan * Math.PI / 12,
-                q = { x: old.x + Math.cos(angle) * reach,
-                  y: old.y + Math.sin(angle) * reach };
+              const angle = away + (fan * Math.PI) / 12,
+                q = { x: old.x + Math.cos(angle) * reach, y: old.y + Math.sin(angle) * reach };
               if (fits(q, p, radius, required)) {
                 chosen = q;
                 break;
@@ -375,8 +377,11 @@
           z.props.push(p);
         }
         // Never certify a failed search or silently exempt defenses/tribute.
-        if (z.props.every((p) =>
-          p.roadTrace || this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p)))
+        if (
+          z.props.every(
+            (p) => p.roadTrace || this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p),
+          )
+        )
           z.highlandsFinalRoadsideVersion = 1;
       } finally {
         this.s.zone = previous;
