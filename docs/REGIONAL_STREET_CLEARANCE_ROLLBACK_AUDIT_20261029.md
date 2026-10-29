@@ -68,6 +68,23 @@ This draft removes only the **two invocations** of `this.clearStreetCorridors(z,
 
 **Readiness:** This is a first real native visual pass, **not** a complete visual certification. Original merged-PR comparison, additional seeds, post-dev.233 v4 saves and after-reload shots are still required. The candidate is currently **not** merge-ready because the original Highlands road/service clearance assertion fails. Keep specific legitimate repairs and resolve this narrowly; do not relax the strict obstruction contract to suppress a real defect.
 
+## Independent strict road-safety classification — 29 October 2026
+
+[Focused PR run #40968257242](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40968257242) also executed the separate, **non-mutating** `tests/regional-street-safety-audit.test.cjs`, using another deterministic fresh normal-mode seed per outdoor region. This test **did not waive the original street test**, did not alter gameplay geometry and recorded native road segments, full artwork setback, `roadBlocker` props, NPC service setbacks and player buildings separately. Its diagnostic completed; the overall PR CI remained **red** because the original `town-street-audit.test.cjs` reported Highlands refuge clearance.
+
+| Region | Town-connected roads | Road segments failing `clearSegment` | Props inside full visual setback | Of those, explicitly `roadBlocker` | Service NPCs too close |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Marches | 13 / 13 | 0 | 0 | 0 | 0 |
+| Highlands | 13 / 13 | 0 | 0 | 0 | 3 |
+| Frontier | 41 / 41 | **2** | 86 | 11 | 4 |
+| Crown | 0 / 30 from main-square origin | **1** | 34 | 14 | 3 |
+
+**What these numbers do — and do not — show:** `clearSegment` is an actual navigation/collision check. These three failures and the explicit roof/service encroachments cannot be disregarded merely because the extra finalizer aesthetically rearranges the town. Conversely, **full artwork setback is not synonymous with an impassable road**: an overhanging roof, a decorative prop on the shoulder, and a collision-blocking wall require different remedies. An unconnected historical road component is also not automatically an inaccessible destination. The Crown `0/30` result means the canonical square is not on the raw original road network, **not** that the player can traverse zero roads. Confirm actual `route()` access to authored towns/dungeons and destinations separately.
+
+**Highlands exact service values at candidate start:** refuge `(620,2255)` road distance **75 vs required 190**, supplier `(865,2145)` **35 vs 92**, board `(980,2255)` **75 vs 95**. The additional conservative, nearest-first **20-unit placement-grid diagnostic** reported **no fully legal refuge candidate** within its 420-unit search neighborhood after accounting for all current props/NPCs/terrain/buildings/creature homes and district radius. This is a failure of that *particular constrained search*, **not** proof no local solution exists. Moving the refuge 463.82 units under the global sweep would solve its measured setback but visibly remove it from the existing Stonecross town grouping. Preserve the real access requirement and find a scene-aware local arrangement rather than relaxing road collision or flattening the surrounding district.
+
+**Safety disposition:** the two-call rollback is still a **research candidate, not a release candidate**. A correct final patch needs to (a) preserve meaningful road traversal and collision clearance; (b) solve measured local service/roof conflicts with the smallest necessary authored edits; (c) avoid compulsory joining of unrelated side paths and high-volume scenery relocation; and (d) handle historical persisted positions explicitly. The owner has authorized genuine fixes, **not** blanket reversal of protective source. Do not merge this red candidate, publish it, or certify it by screenshots alone.
+
 ## Required evidence before this PR could merge
 
 1. On exact pinned pre-#570 source, shipped dev.233 source, and this draft candidate, capture **fresh seeded** non-Greenwood worlds plus representative v4 restored worlds. Enumerate every road polyline and every changed `props`, `buildings`, `npcs` object by ID, with *before (x,y), after (x,y), reason, and restoration status*. Report new links by endpoints and length. Do not compare only raw map design constants or only screenshots.
