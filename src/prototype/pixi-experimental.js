@@ -7,6 +7,7 @@
 
   const PIXI_SCRIPT = './assets/vendor/pixi-8.22.0.min.js';
   const BG_MARGIN = 220;
+  const REGION_TILE = 512;
   const BG_SHIFT = BG_MARGIN * 0.6;
   const BG_PREFETCH_TRIGGER = BG_MARGIN * 0.33;
   // Two CPU windows, one GPU source. Never provision a second regional GPU atlas.
@@ -186,6 +187,9 @@
       aheadReady = null,
       aheadIdle = null,
       aheadEpoch = 0,
+      terrainAtlas = null,
+      terrainTilesPrepared = 0,
+      terrainTileReuses = 0,
       predictiveIdle = null,
       predictiveRunning = false,
       predictionAnchor = null,
@@ -449,10 +453,113 @@
       }
       return freed;
     }
+
+    // Pre-render exactly one major region and its visited interiors in 512px
+    // tiles, with no mutation of the live hero or a hidden dungeon admission.
+    function parentRegion(current) {
+      return root.Campaign?.data?.regions?.[current.regionIndex()]?.id ||
+        (current.isDungeon() ? null : current.zoneId);
+    }
+    function terrainSignature(current) {
+      const zone = current.zone();
+      return [current.zoneId, platform.cameraZoom, backingRatio,
+        !!options.getOptimizationMode(), current.zoneSize?.(),
+        JSON.stringify(zone.roads || []), JSON.stringify(zone.footpaths || []),
+        JSON.stringify(zone.crownInheritedDecks || [])].join('|');
+    }
+    function tileCache(current) {
+      if (!terrainAtlas || terrainAtlas.region !== parentRegion(current)) return null;
+      const found = terrainAtlas.zones.get(current.zoneId);
+      return found?.signature === terrainSignature(current) ? found : null;
+    }
+    async function prepareTerrainTiles(epoch) {
+      const current = game();
+      if (current.s.mode === 'arena' || !current.zoneSize?.()) return true;
+      const region = parentRegion(current);
+      if (!region) return true;
+      if (terrainAtlas?.region !== region)
+        terrainAtlas = { region, zones: new Map() };
+      if (tileCache(current)) return true;
+      const signature = terrainSignature(current), zoneId = current.zoneId,
+        zoom = platform.cameraZoom || 1, ratio = backingRatio,
+        size = current.zoneSize(), gutter = 320 * zoom;
+      const minX = -size * 0.76 * zoom - gutter,
+        minY = -gutter,
+        columns = Math.ceil((size * 1.52 * zoom + 2 * gutter) / REGION_TILE),
+        rows = Math.ceil((size * 0.54 * zoom + 2 * gutter) / REGION_TILE);
+      const tiles = new Map(), viewportTile = { width: REGION_TILE, height: REGION_TILE };
+      let tileX = minX, tileY = minY;
+      const tilePlatform = {
+        get cameraZoom() { return platform.cameraZoom; },
+        cameraAnchor() {
+          const hero = iso(current.hero);
+          return { x: hero.x * zoom - tileX, y: hero.y * zoom - tileY };
+        },
+      };
+      const canvas = makeCanvas(Math.round(REGION_TILE * ratio),
+        Math.round(REGION_TILE * ratio));
+      const ctx = requireValue(canvas.getContext('2d'), 'Terrain cache unavailable');
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const painter = root.PrototypeRenderer.create({
+        ...getRendererOptions(), canvas: viewportTile, ctx,
+        platform: tilePlatform, renderLayer: 'background',
+      });
+      painter.setGroundReuse?.(false);
+      painter.setOptimizationMode(!!options.getOptimizationMode());
+      for (let y = 0; y < rows; y++) for (let x = 0; x < columns; x++) {
+        if (epoch !== contextEpoch || current !== game() ||
+            current.zoneId !== zoneId || root.document?.hidden ||
+            platform.cameraZoom !== zoom || backingRatio !== ratio) return false;
+        tileX = minX + x * REGION_TILE;
+        tileY = minY + y * REGION_TILE;
+        painter.draw();
+        const tile = makeCanvas(canvas.width, canvas.height);
+        requireValue(tile.getContext('2d'), 'Terrain tile unavailable')
+          .drawImage(canvas, 0, 0);
+        tiles.set(y * columns + x, tile);
+        if ((x + columns * y) % 2 === 1 &&
+            typeof requestAnimationFrame === 'function')
+          await new Promise((done) => requestAnimationFrame(done));
+      }
+      if (epoch !== contextEpoch || current.zoneId !== zoneId ||
+          current !== game()) return false;
+      terrainAtlas.zones.set(zoneId,
+        { signature, minX, minY, columns, rows, tiles, tileWidth: REGION_TILE });
+      terrainTilesPrepared += tiles.size;
+      return true;
+    }
+    function paintFromTiles(current, cache) {
+      const ctx = backdrop?.getContext('2d');
+      if (!ctx?.drawImage || !ctx?.clearRect) return false;
+      const zoom = platform.cameraZoom || 1, ratio = backingRatio,
+        anchor = platform.cameraAnchor(viewport.width, viewport.height),
+        hero = iso(current.hero),
+        left = hero.x * zoom - anchor.x - BG_MARGIN,
+        top = hero.y * zoom - anchor.y - BG_MARGIN,
+        c1 = Math.max(0, Math.floor((left - cache.minX) / REGION_TILE)),
+        c2 = Math.min(cache.columns - 1,
+          Math.floor((left + viewport.width + BG_MARGIN * 2 - cache.minX) / REGION_TILE)),
+        r1 = Math.max(0, Math.floor((top - cache.minY) / REGION_TILE)),
+        r2 = Math.min(cache.rows - 1,
+          Math.floor((top + viewport.height + BG_MARGIN * 2 - cache.minY) / REGION_TILE));
+      if (c1 > c2 || r1 > r2) return false;
+      ctx.save?.();
+      try {
+        ctx.setTransform?.(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, backdrop.width, backdrop.height);
+        for (let y = r1; y <= r2; y++) for (let x = c1; x <= c2; x++) {
+          const tile = cache.tiles.get(y * cache.columns + x);
+          if (!tile) return false;
+          ctx.drawImage(tile, Math.round((cache.minX + x * REGION_TILE - left) * ratio),
+            Math.round((cache.minY + y * REGION_TILE - top) * ratio));
+        }
+      } finally { ctx.restore?.(); }
+      terrainTileReuses++;
+      return true;
+    }
     function drawBackground() {
       dropBackgroundLookahead();
       const started = measureNow();
-      backgroundRepaints++;
       const current = game(),
         zoom = platform.cameraZoom || 1;
       if (current.s.mode === 'arena') {
@@ -474,7 +581,11 @@
       baseZoom = zoom;
       baseOptimization = !!options.getOptimizationMode();
       backgroundRenderer.setOptimizationMode(baseOptimization);
-      backgroundRenderer.draw();
+      const cache = tileCache(current);
+      if (!cache || !paintFromTiles(current, cache)) {
+        backgroundRepaints++;
+        backgroundRenderer.draw();
+      }
       if (backing) {
         backing.source.update?.();
         scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
@@ -656,7 +767,7 @@
         dy = -movement.y * zoom;
       }
       scene.moveBackground(-BG_MARGIN + dx, -BG_MARGIN + dy);
-      queueBackgroundLookahead(current, dx, dy);
+      if (!tileCache(current)) queueBackgroundLookahead(current, dx, dy);
     }
     function paintedVisual(visual) {
       return visual.kind === 'archive-record'
@@ -824,6 +935,7 @@
       const epoch = contextEpoch, current = game();
       const before = new Set(baked.keys());
       try {
+        if (!await prepareTerrainTiles(epoch)) return false;
         if (!await warmNeighborhood(epoch, true)) return false;
         if (epoch !== contextEpoch || current !== game() || !active) return false;
         // CPU procedural bakes alone do not make near-enemy WebGL frames ready.
@@ -1283,6 +1395,7 @@
       }
       backgroundRenderer = null;
       backdrop = null;
+      terrainAtlas = null;
       basePosition = null;
       baseOptimization = null;
       baseGame = null;
@@ -1321,6 +1434,10 @@
         proceduralCacheHits,
         sharedProceduralHits,
         backgroundRepaints,
+        terrainTilesPrepared,
+        terrainTileReuses,
+        cachedTerrainRegion: terrainAtlas?.region || null,
+        cachedTerrainZones: [...(terrainAtlas?.zones.keys() || [])],
         backgroundLookaheadPaints,
         backgroundLookaheadPromotions,
         backgroundLookaheadMisses,
