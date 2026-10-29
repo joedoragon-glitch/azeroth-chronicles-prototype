@@ -3797,6 +3797,18 @@
       // even while the hero is still level 1. A hit alone does not unlock it.
       if (e.heroParticipated && !e.neutral) this.s.valeFieldAwakened = true;
       this.awardEnemyReward(e);
+      // Captain victories remain repeatable, including crown-recovery returns.
+      // Ordinary respawning Ringleaders never award companion mastery.
+      if (e.captain || e.roomCaptain || e.fieldCaptain)
+        this.awardCompanionMastery(1);
+      else if (e.guard && e.form === 'ringleader' && e.home &&
+          Number.isFinite(e.home.x) && Number.isFinite(e.home.y)) {
+        // Stable location/species receipt rather than changing runtime enemy
+        // IDs: an uncleared dungeon cannot be farmed by guardian respawns.
+        const key = [this.zoneId, e.species,
+          Math.round(e.home.x), Math.round(e.home.y)].join(':');
+        this.awardCompanionMastery(1, key);
+      }
       this.treasuryCaptainDefeated(e);
       for (const q of this.questDefs().filter((q) => q.region === this.definition().id)) {
         const p = this.s.quests[q.id];
@@ -3818,6 +3830,8 @@
         const b = this.boss(e.family);
         const petWasUnlocked = this.petUnlocked(e.family);
         const firstVictory = this.victory(e.family, e.form);
+        // Each real normal/TRUE form victory pays its mastery once.
+        if (firstVictory) this.awardCompanionMastery(2);
         if (
           e.form === 'true' &&
           !petWasUnlocked &&
