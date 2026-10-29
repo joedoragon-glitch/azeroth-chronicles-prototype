@@ -1,5 +1,5 @@
 'use strict';
-// Focused real-browser acceptance for the optional PixiJS presentation.
+// Focused real-browser acceptance for manual PixiJS selection and Canvas recovery.
 // A software browser may lack WebGL2; in that case Canvas fallback is required.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -244,64 +244,8 @@ async function run() {
       ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
       : 'http://127.0.0.1:' + server.address().port + '/';
 
-    // Exercise both form factors through current title/new/continue preparation.
-    // A previous Canvas choice is superseded only on the first migrated boot.
-    for (const phone of [false, true]) {
-      const migrationContext = await browser.newContext({
-        viewport: phone ? {width:393,height:852} : {width:1280,height:800},
-        isMobile: phone, hasTouch: phone,
-      });
-      try {
-        await migrationContext.addInitScript(() => {
-          if (!localStorage.getItem('azeroth-renderer-webgl-primary-v1'))
-            localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
-        });
-        const migrationPage = await migrationContext.newPage();
-        await migrationPage.goto(host + (phone ? 'phone.html' : 'index.html'));
-        await migrationPage.waitForFunction(() => !!window.Prototype?.renderer);
-        const migrated = await migrationPage.evaluate(() => ({
-          marker: localStorage.getItem('azeroth-renderer-webgl-primary-v1'),
-          choice: localStorage.getItem('azeroth-renderer-choice-v1'),
-          phase: Prototype.experimentalGraphics.phase,
-        }));
-        assert.equal(migrated.marker, 'applied');
-        assert.equal(migrated.choice, 'webgl2');
-        assert.equal(migrated.phase, 'canvas',
-          'Title screen must not start expensive GPU preparation automatically');
-        await enterPlayableGame(migrationPage);
-        const active = await migrationPage.evaluate(() => Prototype.experimentalGraphics);
-        assert.equal(active.preferredRenderer, 'webgl2');
-        if (active.mode === 'webgl2')
-          assert.equal(active.phase, 'confirmed',
-            'Default Pixi is confirmed without the manual trial countdown');
-        else
-          assert(active.mode === 'canvas2d' &&
-            (active.lastError || active.lastFallbackReason || active.recoveryPaused),
-            'Unusable GPU must fall back to Canvas with a diagnostic reason');
-        if (!phone) {
-          await migrationPage.locator('#menu-button').click();
-          await migrationPage.getByRole('button',
-            {name:'Game and settings', exact:true}).click();
-          await migrationPage.getByRole('button',
-            {name:'Screen and performance', exact:true}).click();
-          await migrationPage.locator('select[aria-label="Graphics renderer"]')
-            .selectOption('canvas2d');
-          await migrationPage.reload();
-          await migrationPage.waitForFunction(() => !!window.Prototype?.renderer);
-          assert.equal(await migrationPage.evaluate(() =>
-            localStorage.getItem('azeroth-renderer-choice-v1')), 'canvas2d');
-          await enterPlayableGame(migrationPage);
-          assert.equal(await migrationPage.evaluate(() =>
-            Prototype.experimentalGraphics.mode), 'canvas2d');
-          const manual = await selectPixi(migrationPage);
-          if (manual.mode === 'webgl2') assert.equal(manual.phase,'trial');
-        }
-        console.log('PASS default Pixi migration, title, manual Canvas (' +
-          (phone ? 'phone' : 'desktop') + ')');
-      } finally {
-        await migrationContext.close();
-      }
-    }
+    // The rollout migration has its own short browser test; keep this
+    // established manual renderer trial/recovery suite as an independent gate.
     const startCanvasManualTrial = () => {
       if (localStorage.getItem('azeroth-renderer-webgl-primary-v1') !== 'applied') {
         localStorage.setItem('azeroth-renderer-webgl-primary-v1','applied');
