@@ -8273,7 +8273,7 @@
   World.install(Campaign, { D, R, dungeonIds, classes });
   const Greenwood =
     typeof PrototypeGreenwood !== 'undefined' ? PrototypeGreenwood : require('./greenwood.js');
-  if (!Object.hasOwn(R, 'greenwoodLayout')) Greenwood.configure(D, R, 3200);
+  // Keep old Vale geometry; install only the reverse migration for existing saves.
   Greenwood.install(Campaign, { D, R });
   const FieldOnboarding =
     typeof PrototypeFieldOnboarding !== 'undefined'

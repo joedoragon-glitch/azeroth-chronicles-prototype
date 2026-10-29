@@ -2146,7 +2146,7 @@
       }
       greenwoodOnboardingClearance(z) {
         if (
-          z.id !== 'vale' ||
+          !R.greenwoodLayout || z.id !== 'vale' ||
           (z.greenwoodFrontageVersion === 1 && z.greenwoodFrontageRoadVersion === z.roadVersion)
         )
           return;

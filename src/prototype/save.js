@@ -1472,8 +1472,8 @@
           return c;
         }
         for (const z of Object.values(c.s.zones)) {
-          // Greenwood moves complete old groups before terrain can prune any identity.
-          c.greenwoodMigrate?.(z);
+          // Convert the live 3200-unit Greenwood back to its original map once.
+          c.greenwoodRestoreLegacy?.(z);
           // Expand before old coordinates are filtered against the new floor.
           c.dungeonSpaceLayout(z);
           z.enemies = z.enemies.filter((e) => !e.summon && !e.arenaFixture);

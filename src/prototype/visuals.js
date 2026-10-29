@@ -9354,11 +9354,9 @@
           rockPiece(-1, 11, 12, 7);
           break;
         case 'mill-pond':
-          // The water is painted and collided by terrain, once. This is the
-          // dry loading/inspection bank beside the actual mill building.
-          timber([-21, 9], [24, 9], 4);
-          for (const x of [-17, 0, 19]) timber([x, 9], [x - 3, 20], 3);
-          craftAt(-20, 0, 0.4, () => grassTuft(0, 4, true));
+          pool();
+          craftAt(-25, 7, 0.5, () => grassTuft(0, 4, true));
+          timber([16, 3], [29, -7], 3);
           break;
         case 'night-site':
           pool();
