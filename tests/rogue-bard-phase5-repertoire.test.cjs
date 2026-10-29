@@ -62,9 +62,10 @@ try {
   assert(boon.move <= 0.12 && boon.recovery <= 0.08);
   g.hero.cd[1] = 0;
   assert.equal(g.cast(2, foe.id, true), true,'charged family available');
-  assert(g.rogueSongBoon(unit,'quickstep').move <= 0.12,
-    'charged refresh does not stack two movement bonuses');
-  assert(g.cooldownRecoveryElapsed(unit,1) <= 1.08 + 1e-8);
+  assert(Math.abs(g.rogueSongBoon(unit,'quickstep').move - 0.20) < 1e-8,
+    'normal and charged movement bonuses add while both last');
+  assert(Math.abs(g.cooldownRecoveryElapsed(unit,1) - 1.13) < 1e-8,
+    'normal and charged generic cooldown recovery contributions add');
   const earlySave = g.snapshot();
   assert(!JSON.stringify(earlySave).includes('quickstep'),
     'transient song family does not become a new save entitlement');
@@ -85,8 +86,12 @@ try {
     g.cooldownRecoveryElapsed(g.hero,1), 'Rogue specials recover faster than her basic');
   assert(g.cooldownRecoveryElapsed(unit,1,false,true) >
     g.cooldownRecoveryElapsed(unit,1,false,false),'special-only acceleration');
-  assert(g.cooldownRecoveryElapsed(unit,1,false,true) <= 1.25 + 1e-8,
-    'Quickstep and Borrowed Time combine below 25%');
+  assert(Math.abs(g.cooldownRecoveryElapsed(unit,1,false,true)-1.25)<1e-8,
+    'tap Quickstep and tap Borrowed Time contribute exactly 25%');
+  g.hero.cd[5] = 0;
+  assert.equal(g.cast(6,foe.id,true),true,'charged Skill 6 stacks with both tap songs');
+  assert(Math.abs(g.cooldownRecoveryElapsed(unit,1,false,true)-1.43)<1e-8,
+    'all three song contributions exceed the old arbitrary 25% cap');
   assert.equal(g.cast(6,foe.id),false);
   g.s.time += 9;
   assert.equal(g.rogueSongBoon(unit,'quickstep'),null);
@@ -106,7 +111,8 @@ try {
   assert(Reference.describe(g,7)?.charge.metrics.some((m)=>m.key==='outgoing'));
   g.hero.cd[6] = 0;
   assert.equal(g.cast(7,foe.id,true),true);
-  assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing <= 0.08);
+  assert(Math.abs(g.rogueSongBoon(unit,'firmFooting').outgoing - 0.13) < 1e-8,
+    'normal +5% and charged +8% outgoing bonuses combine');
   // Prior Skill 7 knockbacks can put the heroine beyond the next song's
   // friendly radius. Move into the real footprint before testing self-buffs.
   g.hero.x = foe.x - 80;
@@ -123,7 +129,7 @@ try {
   assert(g.rogueEnemySilenced(foe),'eligible enemy special hush is active');
   const protectedSnapshot = g.snapshot();
   assert(!JSON.stringify(protectedSnapshot).includes('steadyBeat'));
-  // Skill 4 uses a finite nonstacking wither/mend budget; only outside healing
+  // Skill 4 uses separate finite wither/mend budgets; only outside healing
   // receives the capped boost. No friend/enemy status enters a campaign save.
   g.hero.cd[3] = 0;
   unit.hp = Math.max(1, unit.hp - 25);
@@ -153,7 +159,8 @@ try {
   assert(g.rogueCompanionSpecialDamage(unit,100) > 100);
   g.hero.cd[7] = 0;
   assert.equal(g.cast(8,foe.id,true),true);
-  assert(g.rogueSongBoon(unit,'finale')?.criticalChance <= 0.06);
+  assert(Math.abs(g.rogueSongBoon(unit,'finale').criticalChance - 0.10) < 1e-8,
+    'both distinct Finale critical opportunities combine');
   // Skill 5: ephemeral two-station ceiling, no benefit outside footprints,
   // and direct native slow pulses rather than a new permanent actor.
   g.hero.cd[4] = 0;
@@ -179,7 +186,8 @@ try {
   assert(foe.slow > 0);
   g.hero.cd[4] = 0;
   assert.equal(g.cast(5,foe.id,true),true);
-  assert(g.rogueStationProtection(unit)?.resistance >= 0.40);
+  assert(Math.abs(g.rogueStationProtection(unit).resistance - 0.65) < 1e-8,
+    'overlapping normal and charged station Slow protection adds');
   assert(g.rogueStationProtection(g.hero)?.ward === 0.06);
   const savedStation = g.snapshot();
   assert(!JSON.stringify(savedStation).includes('pulseDamage'));
@@ -300,12 +308,8 @@ try {
         } else {
           assert(campaign.rogueSongBoon(campaign.hero,families[slot]),
             'Rogue receives Skill '+slot+' timed self-buff');
-          if(slot===1)
-            assert((sample.unit.rogueSharpRefrainBonus||0)>0,
-              'companion retains Skill 1 basic-buff');
-          else
-            assert(campaign.rogueSongBoon(sample.unit,families[slot]),
-              'companion retains Skill '+slot+' boon');
+          assert(campaign.rogueSongBoon(sample.unit,families[slot]),
+            'companion retains Skill '+slot+' song boon');
         }
         assert.equal(rolls,critical?1:0,'only one critical roll per cast');
         campaign.s.time+=20;

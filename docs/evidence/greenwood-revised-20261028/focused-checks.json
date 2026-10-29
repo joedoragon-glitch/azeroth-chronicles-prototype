@@ -257,5 +257,20 @@
   ],
   "result": "RED: inherited cross-region failures remain; corrective retests do not turn the original selector run green",
   "build": "PASS reproducible dev.223; release documentation contract PASS",
-  "browser": "PASS 27 production-page scene captures; no broad browser/full-game certification or device acceptance"
+  "browser": "PASS 27 production-page scene captures; no broad browser/full-game certification or device acceptance",
+  "latestIncrementalRetests": {
+    "checkout": "a73dfd8decd3ea678a28cec6eb0d4bbbebcc5c64",
+    "base": "53fd7fa0134261794d60c0adced2b9f87791af8d",
+    "build": "0.9.1+snapshot.dev.224",
+    "passed": [
+      "greenwood-flagship.test.cjs (four fresh/five v4/native crossings and source/scene separation)",
+      "prototype-ui.test.cjs (complete original suite)",
+      "sprite-scope.test.cjs (strict original guards)",
+      "genuine private v4 export progress/ID/full second reload",
+      "27 production-page 150% desktop/portrait/landscape/day/night captures",
+      "reproducible build",
+      "release documentation consistency"
+    ],
+    "boundary": "Only merged upstream Rogue stacking was incorporated. The earlier full 52-suite red receipt remains historical; no full-game or device certification."
+  }
 }

@@ -1,6 +1,8 @@
+**Latest base reconciliation (29 October):** Greenwood now includes merged Rogue stacking PR #606 (`main@53fd7fa0`) and uses candidate dev.224. The region does not alter that approved stacking behavior. Earlier dev.223 selector results and source receipts remain dated evidence; current build/scene/save checks are separate.
+
 ## Greenwood takeover — 29 October 2026
 
-Recovered draft #570, measured 3200-unit layout, current authorial register and unchanged save identities. The resumed candidate incorporates only merged source through `main@ef53b8b7`; separate renderer/default and Rogue stacking drafts are not integrated. The two completed native 30-minute algorithmic pilots have no route stalls but substantial combat/recovery failures, so first-hour acceptance remains unresolved. Original 28 October captures and save receipts are retained as dated evidence until final-source checks are refreshed.
+Recovered draft #570, measured 3200-unit layout, current authorial register and unchanged save identities. The resumed candidate incorporates only merged source through `main@53fd7fa0`; separate renderer/default and Rogue stacking drafts are not integrated. The two completed native 30-minute algorithmic pilots have no route stalls but substantial combat/recovery failures, so first-hour acceptance remains unresolved. Original 28 October captures and save receipts are retained as dated evidence until final-source checks are refreshed.
 
 # Current development state
 
@@ -14,8 +16,8 @@ Recovered draft #570, measured 3200-unit layout, current authorial register and 
 
 **Full-party wound treatment — dev.217 published 29 October 2026:** [merged PR #588](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/588) changed the Captain and completed Barracks **Treat wounds** service to fully heal the wounded hero and living companions for 30 crowns, while retaining separate 40-crown fallen recovery, safe-service checks, target-bound unpaid queues, v4 saves, and English/Spanish onboarding. [successful merged-main focused and Pages run #40823109435](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40823109435) verified publication; actual phone/Chromebook acceptance remains unverified.
 
-<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.223 -->
-**Current code/build version:** `0.9.1+snapshot.dev.223` is the unpublished Greenwood #570 candidate, reconciled onto `main@ef53b8b7` (merged PR #601, dev.222). Greenwood scene-only revision 2 leaves the one-time source-geometry migration at version 1. Focused checks and first-session review remain in progress; no Greenwood merge, Pages publication, device verification or owner acceptance.
+<!-- CURRENT_BUILD_VERSION: 0.9.1+snapshot.dev.224 -->
+**Current code/build version:** `0.9.1+snapshot.dev.224` is the unpublished Greenwood #570 candidate, reconciled onto `main@53fd7fa0` (merged PR #606, dev.223). Greenwood scene-only revision 2 leaves the one-time source-geometry migration at version 1. Focused checks and first-session review remain in progress; no Greenwood merge, Pages publication, device verification or owner acceptance.
 **Latest verified published code/build version:** `0.9.1+snapshot.dev.220` from [PR #590](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/590), [main@338fafe](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/338fafe66202cdb6e661ef508ad43a64beaeb7ae), with [successful merged-main Pages run #40828323237](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40828323237). Device/cache uptake remains unverified.
 
 **Maintained release and acceptance authority · refreshed 29 October 2026 UTC (the 27 October baseline remains in the historical Phase 0 receipt).** This is the project's single current-status ledger for source, validated build, repository-side publication, installed-player adoption, and unresolved acceptance. Dated feature audits and earlier snapshot milestones retain their own evidence, but cannot supersede this checkpoint. The canonical player-facing name is **So I Became the Dark Lord's Problem**; `Azeroth Chronicles` remains the internal repository name. **No later `main` commit is implicitly covered**: refresh each field from its named evidence when the repository advances.
@@ -40,8 +42,8 @@ Owner-directed narrow save-system revision: keep the existing v4 primary snapsho
 
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
-| Source | **Unpublished Greenwood dev.223 candidate based on merged main@ef53b8b7 (dev.222, PR #601)** | Preserves merged native Charmed skills, shared Heal, bounded route planning, HUD and performer-centered music geometry |
-| Build/cache version | **`0.9.1+snapshot.dev.223`** unpublished Greenwood #570 candidate | Package, lock, build-info and service-worker cache agree; merge, Pages and device acceptance remain separate |
+| Source | **Unpublished Greenwood dev.224 candidate based on merged main@53fd7fa0 (dev.223, PR #606)** | Preserves merged native Charmed skills, shared Heal, bounded route planning, HUD and performer-centered music geometry |
+| Build/cache version | **`0.9.1+snapshot.dev.224`** unpublished Greenwood #570 candidate | Package, lock, build-info and service-worker cache agree; merge, Pages and device acceptance remain separate |
 | Focused automation | **Current Greenwood impacted-subsystem checks in progress** | Four fresh layouts, five frozen v4 scenarios, native companion crossings, source/scene migration separation and scoped Vale street audit pass; final full impacted-selector result remains pending |
 | GitHub Pages publication | **No Greenwood publication** | The linked dev.220 receipt is historical verified release evidence; it does not certify this region, later device adoption or the current candidate |
 | An individual's open browser / installed PWA | **Unverified for dev.218** | A merged commit does not prove the device downloaded an update; confirm the local version and preserve device-local saves |

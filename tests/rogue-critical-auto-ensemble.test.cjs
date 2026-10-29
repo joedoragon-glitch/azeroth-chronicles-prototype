@@ -1,6 +1,6 @@
 'use strict';
-// A critical automatic song pulse is a short, non-stacking shared performance.
-// It is separate from manual Skill 1, has no extra critical/Charm roll and does
+// Each successful automatic critical is an independently timed performance,
+// additive with other song casts; no extra critical/Charm roll and does
 // not alter same-strike hostile damage or existing primary-only Charm eligibility.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
@@ -134,20 +134,39 @@ try {
     assert(basic(g, primary), 'critical auto while stronger refrain active');
     assert.equal(g.rogueSongBoon(g.hero, 'refrain')?.basicDamage, 0.05);
     assert.equal(g.companionBasicAttackDamage(near),
-      g.companionAttackDamage(near) * 1.05,
-      'critical cadence does not stack additively onto manual refrain');
+      g.companionAttackDamage(near) * 1.07,
+      'normal refrain and distinct critical cadence add to +7%');
+    const damage = [];
+    const original = g.damage.bind(g);
+    g.damage = (e, amount, source, options) => {
+      if (options?.automaticBasic && e === primary) damage.push(amount);
+      return original(e, amount, source, options);
+    };
+    assert(basic(g, primary), 'second critical auto with both benefits still live');
+    assert.equal(g.rogueSongBoon(g.hero, 'cadence')?.basicDamage, basicDamage * 2,
+      'each overlapping critical automatic performance contributes its own +2%');
+    assert.equal(g.companionBasicAttackDamage(near),
+      g.companionAttackDamage(near) * 1.09,
+      'normal Skill 1 + two legal critical pulses total +9%');
+    assert(damage.length === 1, 'captured next legal primary basic');
+    const expectedBasic = (g.power() + 12) * R.rogueHeroFoundation.basic.primaryMultiplier *
+      (1 + 0.15 * (g.hero.skills[0] - 1)) * g.constructor.rules.basicAttackCombo.multipliers[1] *
+      1.07 * 1.2;
+    assert(Math.abs(damage[0] - expectedBasic) < 1e-8,
+      'Rogue next basic uses prior +7% before existing critical multiplier');
     g.s.time += 0.11;
     assert.equal(g.rogueSongBoon(g.hero, 'refrain'), null,
-      'critical basic does not extend stronger manual refrain');
-    assert.equal(g.rogueSongBoon(g.hero, 'cadence')?.basicDamage, basicDamage);
+      'critical basic does not extend manual refrain');
+    assert.equal(g.rogueSongBoon(g.hero, 'cadence')?.basicDamage, basicDamage * 2,
+      'both separately timed critical pulses survive manual Skill 1 expiry');
     assert.equal(g.companionBasicAttackDamage(near),
-      g.companionAttackDamage(near) * (1 + basicDamage));
+      g.companionAttackDamage(near) * (1 + basicDamage * 2));
     const before = a.samples();
     g.hero.basicCd = 100;
     assert.equal(g.cast(1, primary.id, false, null, true), false);
     assert.equal(a.samples(), before, 'invalid basic never spends critical roll');
   }
-  console.log('PASS Rogue landed auto crit cadence: self+ally radius/LOS, combo finisher, expiry, no extra RNG/Charm, Skill 1 isolation');
+  console.log('PASS Rogue auto criticals stack per hit with Skill 1, self+ally radius/LOS, combo finisher, expiry and no extra RNG/Charm');
 } finally {
   delete Campaign.classes.rogue;
   delete Campaign.talentProfiles.rogue;
