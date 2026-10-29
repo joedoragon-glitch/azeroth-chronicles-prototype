@@ -1955,6 +1955,16 @@
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
           getOptimizationMode: () => optimizationMode,
+          onPreparationProgress: ({ prepared, total }) => {
+            // One loading surface throughout decode, terrain tiles and GPU
+            // uploads; the count shows actual completed terrain tiles.
+            const message = language === 'es'
+              ? 'Preparando terreno ' + prepared + '/' + total + '…'
+              : 'Preparing terrain ' + prepared + '/' + total + '…';
+            if (titleLoading && $('title-loading')) $('title-loading').textContent = message;
+            else if (sceneTransition && $('scene-loading-text'))
+              $('scene-loading-text').textContent = message;
+          },
           onFailure: (failure) => {
             graphicsController?.webglFailed(failure);
             const recovery = graphicsController?.status();
