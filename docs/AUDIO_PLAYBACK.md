@@ -64,6 +64,8 @@ The released code includes the [first-gesture/recovery repair #470](https://gith
 
 ## Soundtrack listening room — practical guide
 
+**29 October independent-entrypoint regression:** The original `tests/campaign-domains.test.cjs` caught a missing `src/prototype/greenwood.js` `<script>` in the audition page while the normal playable-game asset list already loaded that module. The resulting browser-only Campaign startup failure (`require is not defined`) is tracked in [#647](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/647). [Draft repair #650](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/650) inserts the same canonical dependency before `engine.js`; this is a **test-pending source correction**, not evidence that an updated audio room has been published or physically checked. Retain the real browser-script-graph assertion and verify the independent tool before any release.
+
 The [soundtrack listening room](https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/tools/audio/index.html) is a **separate, read-only player**. Its revised production-first interface is published in `dev.210` ([Pages run #40769070733](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40769070733)); consult [Development state](DEVELOPMENT_STATE.md) for current publication status and verify the installed cache separately on each device.
 
 In the revised interface:
