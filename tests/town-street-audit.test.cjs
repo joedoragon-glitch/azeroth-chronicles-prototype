@@ -121,24 +121,30 @@ for (const region of regions) {
       .map((p) => [p.id, p.structure, Math.round(game.distanceToRoad(zone, p)), game.roadSetback(p)]);
     if (failures.length) console.error('MARCH STRICT ROAD OBSTRUCTIONS', JSON.stringify(failures.slice(0, 40)));
   }
+  // Report *all* violations together. Fail closed, with the same geometric
+  // threshold, but avoid correcting one wall per six-minute CI cycle.
+  const obstructions = [];
   for (const prop of zone.props) {
     if (prop.roadTrace) continue; // Only explicitly flat road ruts / surface repairs may remain.
     const required = game.roadSetback(prop);
     const actual = game.distanceToRoad(zone, prop);
-    assert(
-      actual + 0.01 >= required,
-      region.id +
-        ' road obstruction ' +
-        prop.id +
-        ' (' +
-        (prop.structure || prop.icon) +
-        ') at ' +
-        Math.round(actual) +
-        ' vs setback ' +
+    if (actual + 0.01 < required)
+      obstructions.push({
+        id: prop.id,
+        structure: prop.structure || prop.icon,
+        x: Math.round(prop.x),
+        y: Math.round(prop.y),
+        actual: Math.round(actual),
         required,
-    );
+      });
     inspected++;
   }
+  assert.equal(
+    obstructions.length,
+    0,
+    region.id + ' road obstructions (' + obstructions.length + '): ' +
+      JSON.stringify(obstructions.slice(0, 100)),
+  );
   for (const [id, settlementCenter, setback] of [
     ['rest', town, 190],
     ['minor', hamlet, 180],
