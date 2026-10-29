@@ -148,3 +148,12 @@ For a new change, confirm **(1)** owner approval and accepted design, **(2)** th
 ## Historical audits and deeper source evidence
 
 The [former architecture guide at commit f1d23ac](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/f1d23acbf8ff0d11670050cc8c9b11171301ab27/docs/ARCHITECTURE.md) retains its complete **27 October Phase 4 dev.205 integration audit**, source/PR receipts, dated performance discussion and old detailed coupling notes. Earlier [housekeeping audit](HOUSEKEEPING_AUDIT.md), [performance history](PERFORMANCE_EVIDENCE_REGISTER_20261024.md) and [development history](PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md) remain available. Those historical figures and one-time permissions are **not** extra current instructions or release gates. For the live release checkpoint use [Development state](DEVELOPMENT_STATE.md).
+
+
+## Runtime route-planning budgets (dev.216 draft candidate)
+
+Normal actor collision and line of sight remain authoritative in \`navigation.js\`. Three live planning paths now use a separate, resumable workload controller: companion following (eight-neighbor A*), worker delivery-site comparisons (the same A*), and tactical Rogue-enemy support regroup (four-neighbor BFS). Existing synchronous \`companionRoute()\` and \`route()\` APIs are kept for direct callers and world-generation geometry.
+
+The shared controller in \`navigation.js::advanceBudgetedRoute\` counts nested \`blocked()\` terrain probes and expanded grid nodes while advancing generator search state across simulation updates. Its allowance is per campaign and tick: 240 probes/120 nodes across all planning consumers, at most 120 probes/60 nodes per call. The state is transient and keyed by the real actor/zone/target through existing navigation trips and the party/AI transient maps. A pending plan is not a failed route. Movement keeps native \`move()\` collision; no change is made to target acquisition, projectile collision, authoritative route search contracts, road generation or v4 save fields.
+
+**Status:** implementation candidate on an unmerged branch. Final regression and hardware timing evidence remain to be established; this section is not a published-build claim.
