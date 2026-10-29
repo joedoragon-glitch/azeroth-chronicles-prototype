@@ -25,6 +25,7 @@ const quick = new Set([
   'enemy-vfx-art',
   'enemy-vfx-assets',
   'enemy-vfx-quality',
+  'warning-effect-handoff',
 
   'enemy-audio',
   'enemy-vfx-inventory',
