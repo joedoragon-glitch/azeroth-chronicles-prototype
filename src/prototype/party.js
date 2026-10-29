@@ -63,9 +63,14 @@
 
 
     class Party {
-      // Stage 2: only six Soldier/Archer combat moves; feature gate is absent in production.
+      // The companion critical tier follows the actual allied action, not the
+      // companion's recruitment method. Authenticated Charmed melee/ranged
+      // actors use their role's existing basic and Heal release owners.
+      // Never give a Charmed monster unowned Soldier/Ranger special skills.
+      // Production still requires the separate native critical feature gate.
       troopCriticalRelease(u, move) {
-        if (!this._criticalPartyNative || u?.charmOrigin || !['soldier', 'archer'].includes(u?.type)) return null;
+        if (!this._criticalPartyNative || !['soldier', 'archer'].includes(u?.type) ||
+            (u.charmOrigin && !this.isCharmedCompanion(u))) return null;
         return this._criticalPartyNative.release(this, 'troop/' + u.type + '/' + move, u.id);
       }
       troopCriticalDamage(receipt, amount) {
