@@ -418,7 +418,7 @@ async function run() {
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        const reportButton=page.getByRole('button', {name:'Export playtest report', exact:true});
+        const reportButton=page.getByRole('button', {name:/^Export playtest report/});
         assert.equal(await reportButton.isVisible(), true,
           'The Screen and performance menu must expose Export playtest report: ' +
           JSON.stringify(await page.locator('#modal-actions button').allTextContents()));
