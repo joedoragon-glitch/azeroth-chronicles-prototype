@@ -1456,7 +1456,7 @@
           if (slot === 4) {
             const prev = rogueEnemyWithers.get(e);
             const effects = prev?.zone === this.zoneId
-              ? prev.effects.filter((v) => v.until > this.s.time && v.remaining > 0) : [];
+              ? prev.effects.filter((v) => v.until > this.s.time) : [];
             effects.push({
               until: this.s.time + effectForm.seconds,
               remaining: Math.min(80, Math.max(3, e.maxHp * effectForm.dotFraction)),
