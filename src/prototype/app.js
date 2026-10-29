@@ -1498,6 +1498,7 @@
     game,
     titleScreen = null,
     titleLoading = false,
+    titleImportNotice = false,
     titleEpoch = 0,
     titleWarmup = null,
     titleSkipGraphics = null,
@@ -3520,6 +3521,12 @@
       : persistence.loadFailed(profile.activeMode)
         ? t('Saved adventure needs recovery', 'La partida requiere recuperación')
         : t('Your adventure awaits', 'Tu aventura te espera');
+    const importFeedback = $('title-import-feedback');
+    importFeedback.hidden = !titleImportNotice || titleLoading;
+    importFeedback.textContent = titleImportNotice
+      ? t('Import successful. Select Continue Adventure to play.',
+          'Importación completada. Selecciona Continuar aventura para jugar.')
+      : '';
     $('title-continue').textContent = t('Continue Adventure', 'Continuar aventura');
     $('title-new').textContent = t('New Game', 'Nueva partida');
     $('title-saves').textContent = t('Saved Games & Backups', 'Partidas y copias de seguridad');
@@ -3570,6 +3577,7 @@
     if (titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
     titleLoading = true;
+    titleImportNotice = false;
     const epoch = ++titleEpoch;
     let resolveSkip;
     const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
@@ -3685,6 +3693,7 @@
     }
     game = activateLiveCritical(candidate);
     loaded = true;
+    titleImportNotice = false;
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     persistProfile();
     showTitleScreen();
@@ -4928,14 +4937,20 @@
       if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
         throw Error('Combat Diagnostics import requires the playtest link');
       persistence.writeCandidate(candidate);
-      resumeSavedRun(candidate);
+      resumeSavedRun(candidate, { imported: true });
       status('Imported successfully.');
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
+      // The normal status bar is hidden by the title screen. Keep failures
+      // visible in the current save dialog without replacing any campaign.
+      if (menu && $('modal-description')) $('modal-description').textContent =
+        language === 'es'
+          ? 'No se pudo importar el archivo. Tu partida actual se conservó.'
+          : 'Unable to import that file. Your current run was kept intact.';
     }
     e.target.value = '';
   };
-  function resumeSavedRun(candidate) {
+  function resumeSavedRun(candidate, { imported = false } = {}) {
     if (candidate?.s?.mode === 'arena' && !combatDiagnosticsEnabled) return;
     restartGuard.clean();
     game = activateLiveCritical(candidate);
@@ -4950,6 +4965,7 @@
     if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
     persistProfile();
+    titleImportNotice = imported;
     showTitleScreen();
   }
   function nearestNPC() {
