@@ -419,7 +419,7 @@
             raw,
             p,
             (q) =>
-              (fort || this.distanceToRoad(z, q) > 80 + (p.r || 0)) &&
+              (fort || this.distanceToRoad(z, q) + 0.01 >= this.roadSetback(p)) &&
               !specials.some((n) => distance(n, q) < (p.r || 0) + 100),
           );
           Object.assign(p, q);
@@ -571,7 +571,7 @@
             p.tributeScene ||
             p.stronghold ||
             /^mini-wall/.test(p.id || '') ||
-            this.distanceToRoad(z, p) >= 75 + (p.r || 0)
+            this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p)
           )
             continue;
           z.props.splice(z.props.indexOf(p), 1);
@@ -579,7 +579,7 @@
             p,
             p,
             (q) =>
-              this.distanceToRoad(z, q) >= 80 + (p.r || 0) &&
+              this.distanceToRoad(z, q) + 0.01 >= this.roadSetback(p) &&
               !specials.some((n) => distance(n, q) < (p.r || 0) + 100),
           );
           Object.assign(p, q);
