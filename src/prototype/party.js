@@ -3720,9 +3720,13 @@
             visible = this.line(u, e),
             anchor = this.partyFollowPoint(u, living);
           if (d < (monster?.retreat ?? 150)) {
-            // Veteran Rangers can cover a retreat with their existing Triple Shot.
-            // Still move this frame; never trade the fallback for standing fire.
-            this.companionCoveringShot(u, e);
+            // A Charmed ranged creature can release its close-range native or
+            // heritage skill while still retreating THIS frame. Otherwise short
+            // cone and circle heritage options could never become reachable.
+            // Ordinary Rangers keep their original covering-shot behavior.
+            const defensiveSkill = !!monster && !!u.charmOrigin &&
+              this.companionTrySkill(u, e);
+            if (!defensiveSkill) this.companionCoveringShot(u, e);
             this.follow(
               u,
               this.archerFallbackPoint(u, e, living),
