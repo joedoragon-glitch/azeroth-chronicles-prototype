@@ -30,6 +30,32 @@ function scene() {
   );
   z.enemies = [e];
   g.engage(e);
+  // Greenwood's reconstructed terrain can block the historic fixed 230-unit
+  // shot even with scenery props hidden. Find real walkable open ground instead
+  // of disabling line-of-sight or companion safety checks in this combat test.
+  const fullHp = u.hp;
+  let clear = false;
+  for (const y of [1700, 1400, 2000, 1100, 2300, 800, 2600, 500, 2900]) {
+    for (const x of [1400, 1000, 1800, 600, 2200, 2600]) {
+      const start = g.safe(x, y);
+      const end = g.safe(start.x + 230, start.y);
+      if (Math.hypot(end.x - start.x, end.y - start.y) < 225) continue;
+      Object.assign(g.hero, { x: start.x, y: start.y });
+      Object.assign(u, { x: start.x, y: start.y });
+      Object.assign(e, { x: end.x, y: end.y });
+      u.hp = u.maxHp * 0.5;
+      if (
+        g.line(u, e) &&
+        g.companionSafeContribution(u, e, 1)
+      ) {
+        clear = true;
+        break;
+      }
+    }
+    if (clear) break;
+  }
+  assert(clear, 'pet skill fixture needs a naturally valid open Greenwood engagement');
+  u.hp = fullHp;
   return { g, u, e };
 }
 function fly(g) {
