@@ -402,10 +402,37 @@ async function run() {
         // The current UI owns diagnostics under Screen and performance, not
         // the Save and game management section used by the older pilot.
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        const downloadPromise=page.waitForEvent('download');
+        // Headless Chromium does not reliably deliver downloads from a
+        // detached, script-clicked blob anchor. Exercise the actual menu action
+        // and inspect its generated JSON blob, without claiming OS download
+        // acceptance from this graphics-specific run.
+        await page.evaluate(() => {
+          window.__auditBlobCreate = URL.createObjectURL.bind(URL);
+          URL.createObjectURL = (blob) => {
+            if (blob.type === 'application/json') window.__auditReportBlob = blob;
+            return window.__auditBlobCreate(blob);
+          };
+        });
         await page.getByRole('button', {name:'Export playtest report', exact:true}).click();
-        const download=await downloadPromise;
-        const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
+        try {
+          await page.waitForFunction(() => !!window.__auditReportBlob, null, {timeout:8000});
+        } catch (error) {
+          const diag = await page.evaluate(() => ({
+            modal: document.querySelector('#modal-title')?.textContent,
+            buttons: [...document.querySelectorAll('#modal-actions button')]
+              .map((button) => button.textContent).slice(0, 15),
+            renderer: Prototype.experimentalGraphics.mode,
+          }));
+          throw Error('Playtest report menu action generated no JSON: ' +
+            JSON.stringify(diag) + '; ' + error);
+        }
+        const exported = await page.evaluate(async () => {
+          const report = JSON.parse(await window.__auditReportBlob.text());
+          URL.createObjectURL = window.__auditBlobCreate;
+          delete window.__auditBlobCreate;
+          delete window.__auditReportBlob;
+          return report;
+        });
         assert.equal(exported.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
         assert(exported.performance.graphicsRenderer.sceneMetrics.actors>0);
         assert.equal(exported.performance.render.measuredLayer,'canvas-combat-overlay');
