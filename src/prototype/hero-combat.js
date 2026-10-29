@@ -1319,17 +1319,14 @@
             area: true, ...(charged && encountersAtStart ? { encountersAtStart } : {}),
           })) hits++;
         }
-        // Stronger same-family application replaces the bonus; no stacking.
-        // Other families will use separate bounded effect records in Phase 5.
+        // Each legal form grants its own timed boon to Rogue and in-range
+        // companions. Tap and Charged add (+5%/+7%) while overlapping;
+        // repeating one form only refreshes its own bounded duration.
         // Instant songs snapshot legal recipients at cast release.
-        this.applyRogueSongBoon(h, 'refrain', {
-            seconds: form.seconds, basicDamage: form.allyDamage,
-          });
-        for (const u of allies) {
-          if ((u.rogueSharpRefrainUntil || 0) <= this.s.time) u.rogueSharpRefrainBonus = 0;
-          u.rogueSharpRefrainBonus = Math.max(u.rogueSharpRefrainBonus || 0, form.allyDamage);
-          u.rogueSharpRefrainUntil = Math.max(u.rogueSharpRefrainUntil || 0, this.s.time + form.seconds);
-        }
+        for (const u of [h, ...allies])
+          this.applyRogueSongBoon(u,
+            charged ? 'refrainCharged' : 'refrainTap',
+            { seconds: form.seconds, basicDamage: form.allyDamage });
         this.event('rogueBellSkill1', {
           actor: 'hero', class: 'rogue', slot: 1,
           form: charged ? 'charged' : 'tap', audioCue: 'bell-jingle',
@@ -1636,7 +1633,7 @@
           rank = this.hero.skills[0],
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
             (1 + 0.15 * (rank - 1)) * combo.multiplier *
-            (1 + (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0));
+            (1 + this.rogueBasicDamageBonus(this.hero));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
           enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
