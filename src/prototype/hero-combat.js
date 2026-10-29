@@ -1636,9 +1636,8 @@
           rank = this.hero.skills[0],
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
             (1 + 0.15 * (rank - 1)) * combo.multiplier *
-            (1 + Math.max(
-              this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0,
-              this.rogueSongBoon(this.hero, 'cadence')?.basicDamage || 0));
+            (1 + (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0) +
+              (this.rogueSongBoon(this.hero, 'cadence')?.basicDamage || 0));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
           enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
