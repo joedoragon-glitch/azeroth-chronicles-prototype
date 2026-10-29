@@ -296,6 +296,9 @@
     Campaign.prototype.highlandsTownServices = function (z) {
       if (z.id !== 'highlands' || !z.appalachianVersion) return;
       for (const n of z.npcs) {
+        // A migrated quarry refuge must retain its legal roadside frontage
+        // on every later zone read, not snap back onto the new hamlet road.
+        if (n.id === 'minor' && z.highlandsQuarryRoadVersion === 1) continue;
         const target = npcTargets[n.id];
         if (
           target &&

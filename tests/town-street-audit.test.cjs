@@ -20,6 +20,14 @@ for (const region of regions) {
   assert.equal(zone.roadVersion, 17, region.id + ' connected roads');
   assert.equal(zone.streetClearanceVersion, 3, region.id + ' full street audit');
   assert(zone.roads.length >= 4, region.id + ' real road links');
+  if (region.id === 'highlands') {
+    assert.equal(zone.highlandsQuarryRoadVersion, 1,
+      'quarry hamlet street and refuge repair is versioned');
+    assert.equal(zone.roads.filter(road =>
+      road.some(p => distance(p, { x: 2520, y: 650 }) < 1) &&
+      distance(road.at(-1), hamlet) < 1).length, 1,
+    'exactly one authentic quarry hamlet road spur, including old v4 saves');
+  }
   if (region.id === 'march') {
     assert.equal(zone.marchTownRoadVersion, 1, 'Reedport road repair is versioned');
     assert.equal(zone.marchCoastalRoadClearanceVersion, 1, 'old and new coastal scenery keeps full roadway setback');

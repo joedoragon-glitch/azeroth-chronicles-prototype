@@ -2512,6 +2512,7 @@
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
           this.highlandsLandscape(z);
+          this.highlandsQuarryRoadAccess(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
           // Finish after all region-specific scenery shifts and road updates.
@@ -2944,6 +2945,7 @@
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
         this.highlandsLandscape(z);
+        this.highlandsQuarryRoadAccess(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);
         // Finish after all region-specific scenery shifts and road updates.
@@ -4368,6 +4370,91 @@
           Object.assign(entrance, frontage);
         }
         z.highlandsTreasuryFrontageVersion = 1;
+      }
+      // The Appalachian quarry hamlet previously ended 140 units north of
+      // the actual town-connected roadway. Keep its square at the canonical
+      // [2520,510] and add one genuine access spur without recreating streets.
+      // The new segment also requires the refuge and nearby roof artwork to
+      // honor the unchanged road-setback rule on fresh and v4 saved campaigns.
+      highlandsQuarryRoadAccess(z) {
+        if (z.id !== 'highlands' || z.appalachianVersion !== 1 ||
+            z.highlandsQuarryRoadVersion === 1) return;
+        const town = { x: D.minors[2][0], y: D.minors[2][1] },
+          junction = { x: 2520, y: 650 },
+          roadExists = z.roads.some((road) =>
+            dist(road.at(-1), town) < 1 && road.some((p) => dist(p, junction) < 1));
+        if (!roadExists) {
+          const junctionPresent = z.roads.some((road) =>
+            road.some((p) => dist(p, junction) < 1));
+          if (!junctionPresent || !this.clearSegment(junction, town, 15, true)) return;
+          z.roads.push([junction, town]);
+        }
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const refuge = z.npcs.find((n) => n.id === 'minor'),
+            boundsOK = (p) => Math.min(p.x, p.y, 3400 - p.x, 3400 - p.y) >= 115,
+            free = (p, obj, setback, radius) =>
+              boundsOK(p) &&
+              this.distanceToRoad(z, p) + 0.01 >= setback &&
+              !this.blocked(p.x, p.y, z.id, radius, true) &&
+              !z.npcs.some((n) => n !== obj && dist(n, p) < 105) &&
+              !z.nodes.some((n) => dist(n, p) < 80) &&
+              !z.buildings.some((b) => b !== obj && dist(b, p) < 155) &&
+              !z.props.some((q) => q !== obj && dist(q, p) <
+                Math.max(80, (q.r || 0) + radius + 36));
+          if (!refuge) return; // A missing legacy service must not be certified.
+          if (!free(refuge, refuge, 180, 25)) {
+            const candidates = [
+              { x: 2580, y: 300 }, { x: 2690, y: 245 },
+              { x: 2450, y: 270 }, { x: 2770, y: 360 },
+            ];
+            for (const r of [215, 260, 310, 365, 425])
+              for (let j = 0; j < 32; j++) {
+                const a = -Math.PI / 2 + (j * Math.PI) / 16;
+                candidates.push({
+                  x: town.x + Math.cos(a) * r,
+                  y: town.y + Math.sin(a) * r,
+                });
+              }
+            const p = candidates.find((p) => dist(p, town) < 460 &&
+              free(p, refuge, 180, 25));
+            if (!p) return;
+            Object.assign(refuge, p);
+            refuge.servicePoint = { x: p.x, y: p.y };
+            if (this.s.refugeSite?.zone === z.id &&
+                this.s.refugeSite.id === refuge.id)
+              Object.assign(this.s.refugeSite, p);
+          }
+          // Relocate a roof affected by the new short road; retain its
+          // original ID, construction purpose and the connected road itself.
+          const touching = z.props.filter((p) => !p.roadTrace &&
+            this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
+            this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p));
+          for (const prop of touching) {
+            const old = { x: prop.x, y: prop.y }, setback = this.roadSetback(prop);
+            const candidates = [];
+            for (const r of [20, 35, 55, 80, 110, 150, 195, 250, 320])
+              for (let j = 0; j < 32; j++) {
+                const a = j * Math.PI / 16;
+                candidates.push({
+                  x: old.x + Math.cos(a) * r,
+                  y: old.y + Math.sin(a) * r,
+                });
+              }
+            const p = candidates.find((p) => free(p, prop, setback,
+              Math.max(15, prop.r || 0)));
+            if (!p) return; // Retry later, retaining all original objects.
+            Object.assign(prop, p);
+          }
+          if (z.props.some((p) => !p.roadTrace &&
+            this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
+            this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p))) return;
+          if (this.distanceToRoad(z, refuge) + 0.01 < 180) return;
+          z.highlandsQuarryRoadVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
       }
       marchTownRoadLink(z) {
         if (z.id !== 'march' || z.coastalSwampVersion !== 1) return;
