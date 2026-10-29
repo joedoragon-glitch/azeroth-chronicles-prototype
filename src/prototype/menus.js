@@ -1320,14 +1320,14 @@
         !queued && !!reason,
       );
     }
-    function barracksRecoveryActions(refresh, b) {
+    function barracksRecoveryActions(refresh, b, page = 0) {
       const g = getGame(),
         fallen = g.s.party.filter((u) => u.hp <= 0),
         queued = g.s.companionCareRequests.recovery,
         queueAtThisBarracks =
           !queued || (queued.barracksId === b.id && queued.zone === g.zoneId),
         slots = g.companionRecoveryQueueLimit(b.id),
-        recoveryActions = fallen.map((u) => {
+        recoveryActions = barracksPagedActions(fallen, page, (u) => {
           const position = queued?.companionIds.indexOf(u.id) ?? -1,
             pending = position >= 0,
             candidate = g.companionCareCandidate('recovery', b.id, u.id),
@@ -1359,7 +1359,7 @@
                   : 'Recover this companion now.'),
             !!blocked,
           );
-        });
+        }, refresh);
       return [
         ...(recoveryActions.length
           ? recoveryActions
@@ -1385,8 +1385,8 @@
         ),
       ];
     }
-    function barracksRecoveryMenu(b, back) {
-      const refresh = () => barracksRecoveryMenu(b, back);
+    function barracksRecoveryMenu(b, back, page = 0) {
+      const refresh = (next = page) => barracksRecoveryMenu(b, back, next);
       openMenu(
         'Recovery',
         'Recover each fallen companion for 40 crowns. Basic Barracks queues 3; Full Barracks has no recovery-queue limit. Short on crowns? Tap to queue. Treat wounds heals the living party for 30 crowns.' +
@@ -1395,7 +1395,7 @@
             ? 'Succession: class loss replaces crown loss.'
             : 'Local death loss: ' + (b.full ? 5 : 15) + '%.') +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
-        [...barracksRecoveryActions(refresh, b), ...barracksRespawnActions(b, refresh)],
+        [...barracksRecoveryActions(refresh, b, page), ...barracksRespawnActions(b, refresh)],
         back,
       );
     }

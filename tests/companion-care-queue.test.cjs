@@ -425,6 +425,40 @@ for (const kind of ['recovery', 'treatment']) {
   } }));
 }
 
+// A long Full Barracks recovery roster uses the existing eight-item page
+// navigation, without preventing selection of members on later pages.
+{
+  const { g, b } = fixture();
+  b.full = true;
+  for (let i = 0; i < 10; i++) {
+    const u = g.unit('soldier', g.hero.x + i * 6, g.hero.y);
+    u.hp = 0;
+    g.s.party.push(u);
+  }
+  let opened;
+  const ui = Menus.create({
+    getGame: () => g,
+    Campaign: C,
+    D: C.data,
+    action: (label, action, detail = '', disabled = false) => ({ label, action, detail, disabled }),
+    openMenu: (title, description, actions, back) =>
+      (opened = { title, description, actions, back }),
+    closeMenu() {},
+    recallSquad() {},
+    showMap() {},
+    finaleMenu() {},
+  });
+  ui.barracksMenu(b);
+  opened.actions.find((x) => x.label === 'Recovery').action();
+  const firstPage = opened.actions.filter((x) => x.label.startsWith('Recover '));
+  assert.equal(firstPage.length, 8);
+  opened.actions.find((x) => x.label === 'Next page').action();
+  const nextPage = opened.actions.filter((x) => x.label.startsWith('Recover '));
+  assert.equal(nextPage.length, 3);
+  nextPage[2].action();
+  assert.equal(g.s.companionCareRequests.recovery.companionIds.length, 1);
+}
+
 // The actual Barracks menu exposes each fallen member and can toggle them
 // independently without cancelling other entries.
 {

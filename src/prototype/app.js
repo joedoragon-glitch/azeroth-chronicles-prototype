@@ -1418,11 +1418,11 @@
       return piece.replace('Cancel queued recovery: ', 'Cancelar recuperación en cola: ');
     if (/^Recover .+ · 40 crowns$/.test(piece))
       return piece.replace('Recover ', 'Recuperar ').replace('crowns', 'coronas');
-    if (/^Queued #\\d+ · tap to cancel/.test(piece))
+    if (/^Queued #\d+ · tap to cancel/.test(piece))
       return piece
         .replace('Queued #', 'En cola #')
         .replace('tap to cancel. No crowns spent.', 'toca para cancelar. No has gastado coronas.');
-    if (/^\\+\\d+ more$/.test(piece)) return piece.replace('more', 'más');
+    if (/^\+\d+ more$/.test(piece)) return piece.replace('more', 'más');
     if (/^Cancel queued (recovery|treatment)$/.test(piece))
       return piece
         .replace('Cancel queued recovery', 'Cancelar recuperación en cola')
