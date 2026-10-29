@@ -926,7 +926,10 @@
         this.settlementLayout(z);
         this.greenwoodReserve?.(z);
         const i = this.regionIndex(z.id),
-          roadVersion = 17;
+          // Only Greenwood gets a road-plan revision. Other regions keep v17.
+          // Historic Vale saves regenerate the roads once, without touching
+          // coordinates, campaign IDs or the flagship scene migration.
+          roadVersion = z.id === 'vale' ? 18 : 17;
         if (z.roadVersion === roadVersion) return;
         const origin = { x: D.towns[i][0], y: D.towns[i][1] },
           field = this.fieldCenter(i),
@@ -1029,7 +1032,7 @@
               let start = origin;
               // Main town-to-hamlet and town-to-field arterials retain
               // their original direct course; spurs join existing streets.
-              if (z.roads.length && !(x === field.x && y === field.y)) {
+              if (z.roads.length && (z.id === 'vale' || !(x === field.x && y === field.y))) {
                 const junctions = z.roads.flatMap((path) => path);
                 const closest = junctions.reduce(
                   (best, p) => (!best || dist(p, destination) < dist(best, destination) ? p : best),

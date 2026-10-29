@@ -19835,15 +19835,43 @@
     }
     return commands;
   }
-  function footpaths(ctx, paths, screen) {
+  function footpaths(ctx, paths, screen, roads = [], region = -1) {
+    // Trail paint must stop where a narrow doorstep path joins a wide
+    // carriageway, not show a second diagonal stripe through the road.
+    // This changes painting only; saved paths and navigation stay intact.
+    const roadDistance = (p) => {
+      if (region !== 0 || !roads.length) return Infinity;
+      let best = Infinity;
+      for (const route of roads)
+        for (let i = 1; i < route.length; i++) {
+          const a = route[i - 1], b = route[i],
+            vx = b.x - a.x, vy = b.y - a.y,
+            t = Math.max(0, Math.min(1,
+              ((p.x - a.x) * vx + (p.y - a.y) * vy) / Math.max(1, vx * vx + vy * vy)));
+          best = Math.min(best, Math.hypot(p.x - a.x - t * vx, p.y - a.y - t * vy));
+        }
+      return best;
+    };
     ctx.save();
     ctx.lineJoin = 'round';
     for (const path of paths || [])
       for (let j = 1; j < path.length; j++) {
-        const a = path[j - 1],
-          b = path[j],
-          d = Math.hypot(b.x - a.x, b.y - a.y);
-        if (!d) continue;
+        let a = path[j - 1],
+          b = path[j];
+        const first = roadDistance(a), last = roadDistance(b);
+        if (first < 34 && last < 34) continue;
+        const originalLength = Math.hypot(b.x - a.x, b.y - a.y);
+        if (!originalLength) continue;
+        // Trim only the overlapping mouth, retaining the visible doorstep.
+        if (first < 34) {
+          const t = Math.min(0.45, (34 - first) / originalLength);
+          a = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+        } else if (last < 34) {
+          const t = Math.min(0.45, (34 - last) / originalLength);
+          b = { x: b.x + (a.x - b.x) * t, y: b.y + (a.y - b.y) * t };
+        }
+        const d = Math.hypot(b.x - a.x, b.y - a.y);
+        if (d < 1) continue;
         const nx = (-(b.y - a.y) / d) * 9,
           ny = ((b.x - a.x) / d) * 9,
           points = [
