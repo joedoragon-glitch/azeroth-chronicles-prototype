@@ -22,6 +22,7 @@ for (const region of regions) {
   assert(zone.roads.length >= 4, region.id + ' real road links');
   if (region.id === 'march') {
     assert.equal(zone.marchTownRoadVersion, 1, 'Reedport road repair is versioned');
+    assert.equal(zone.marchCoastalRoadClearanceVersion, 1, 'old and new coastal scenery keeps full roadway setback');
     assert.equal(zone.roads.filter(road =>
       road.some(p => distance(p, town) < 1) &&
       road.some(p => distance(p, { x: 350, y: 1370 }) < 1)).length, 1,
@@ -106,6 +107,12 @@ for (const region of regions) {
       const y = district.props.reduce((sum, p) => sum + p[1], 0) / district.props.length;
       access('livelihood:' + district.id, x, y);
     }
+  if (region.id === 'march') {
+    const failures = zone.props.filter((p) => !p.roadTrace &&
+      game.distanceToRoad(zone, p) + 0.01 < game.roadSetback(p))
+      .map((p) => [p.id, p.structure, Math.round(game.distanceToRoad(zone, p)), game.roadSetback(p)]);
+    if (failures.length) console.error('MARCH STRICT ROAD OBSTRUCTIONS', JSON.stringify(failures.slice(0, 40)));
+  }
   for (const prop of zone.props) {
     if (prop.roadTrace) continue; // Only explicitly flat road ruts / surface repairs may remain.
     const required = game.roadSetback(prop);

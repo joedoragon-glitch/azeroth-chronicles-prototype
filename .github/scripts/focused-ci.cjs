@@ -20,6 +20,16 @@ const groups = [
     tests: [TEST + 'greenwood-flagship.test.cjs', TEST + 'town-street-audit.test.cjs'],
   },
   {
+    // Ironroot authoring owns Treasury entrances, transport roads and old-save placement.
+    // Source-only edits must run native geography and quest/road clearance contracts.
+    match: /^src\/prototype\/highlands\.js$/,
+    tests: [
+      TEST + 'ironroot-highlands.test.cjs',
+      TEST + 'local-sites.test.cjs',
+      TEST + 'town-street-audit.test.cjs',
+    ],
+  },
+  {
     match: /^tools\/greenwood-layout\//,
     tests: [TEST + 'greenwood-layout-measurement.test.cjs'],
   },

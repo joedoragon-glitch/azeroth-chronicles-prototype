@@ -246,11 +246,9 @@ function geometry(K) {
   assert.throws(() => a.clearSegment({ x: 200, y: 1500 }, { x: 900, y: 1500 }), /probe/);
   a.blocked = old;
   checks('exception cleanup');
-  const counts = [];
-  for (const K of [B, C]) {
-    const g = geometry(K);
-    let visits = 0;
-    g.s.zones.vale.props = Array.from({ length: 600 }, (_, i) => {
+  const samples = [B, C].map((K) => {
+    const game = geometry(K), stats = { visits: 0 };
+    game.s.zones.vale.props = Array.from({ length: 600 }, (_, i) => {
       const p = {
         id: 'distant' + i,
         x: 200 + (i % 20) * 140,
@@ -259,15 +257,30 @@ function geometry(K) {
       };
       Object.defineProperty(p, 'decorative', {
         get() {
-          visits++;
+          stats.visits++;
           return false;
         },
       });
       return p;
     });
-    assert(g.clearSegment({ x: 200, y: 1500 }, { x: 1000, y: 1500 }));
-    counts.push(visits);
-  }
+    return { game, stats };
+  });
+  // The old [200,1500]-[1000,1500] lane now crosses Greenwood's
+  // reconstructed terrain. Choose ONE identical genuinely open test segment
+  // for both versions so the same 600 distant blockers are still measured.
+  const corridors = [];
+  for (const y of [350, 500, 700, 900, 1150, 1350, 1600, 1800])
+    for (const x of [175, 300, 450, 600])
+      corridors.push([{ x, y }, { x: x + 300, y }]);
+  const corridor = corridors.find(([from, to]) =>
+    samples.every(({ game }) => game.clearSegment(from, to)));
+  assert(corridor, 'both implementations retain a shared 300-unit walkable test corridor');
+  const counts = samples.map(({ game, stats }) => {
+    stats.visits = 0;
+    assert(game.clearSegment(...corridor));
+    return stats.visits;
+  });
+  assert(counts[0] > 0, 'original broadphase must inspect distant props');
   assert(counts[1] < counts[0] / 10);
   console.log(
     'PASS collision equivalence, immediate edits, route/exception safety; candidate visits ' +

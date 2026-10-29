@@ -4366,15 +4366,57 @@
         z.highlandsTreasuryFrontageVersion = 1;
       }
       marchTownRoadLink(z) {
-        if (z.id !== 'march' || z.coastalSwampVersion !== 1 || z.marchTownRoadVersion === 1)
-          return;
+        if (z.id !== 'march' || z.coastalSwampVersion !== 1) return;
         const town = { x: D.towns[1][0], y: D.towns[1][1] },
           junction = { x: 350, y: 1370 },
           onExistingRoad = (point) => z.roads.some((road) =>
             road.some((p, j) => j && this.distanceToSegment(point, road[j - 1], p) < 1));
-        if (!onExistingRoad(junction)) return; // A failed layout cannot be certified.
-        if (!onExistingRoad(town)) z.roads.unshift([town, junction]);
-        z.marchTownRoadVersion = 1;
+        if (z.marchTownRoadVersion !== 1) {
+          if (!onExistingRoad(junction)) return; // Do not certify an absent road.
+          if (!onExistingRoad(town)) z.roads.unshift([town, junction]);
+          z.marchTownRoadVersion = 1;
+        }
+        // Coastal decor was generated AFTER the original street-clearance pass
+        // using a 58-unit buffer even where artwork needs >=72. Move ONLY the
+        // authored shore details, preserving their ID, style and old-save state.
+        if (z.marchCoastalRoadClearanceVersion === 1) return;
+        const coastal = z.props.filter((p) => String(p.id || '').startsWith('lantern-coast-'));
+        for (const item of coastal) {
+          const setback = this.roadSetback(item);
+          if (this.distanceToRoad(z, item) + 0.01 >= setback) continue;
+          const nearest = this.nearestRoadPoint(z, item),
+            base = { x: item.x, y: item.y },
+            outward = nearest ? Math.atan2(base.y - nearest.y, base.x - nearest.x) : 0;
+          let relocated = null;
+          for (const radius of [12, 22, 35, 50, 75, 105, 145, 195, 260, 340]) {
+            for (let j = 0; j < 32; j++) {
+              const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1),
+                angle = outward + (fan * Math.PI) / 16,
+                point = {
+                  x: base.x + Math.cos(angle) * radius,
+                  y: base.y + Math.sin(angle) * radius,
+                };
+              if (
+                Math.min(point.x, point.y, 3000 - point.x, 3000 - point.y) < 35 ||
+                this.distanceToRoad(z, point) + 0.01 < setback ||
+                this.blocked(point.x, point.y, z.id, 8, true) ||
+                z.npcs.some((n) => dist(n, point) < 65) ||
+                z.nodes.some((n) => dist(n, point) < 60) ||
+                z.buildings.some((b) => dist(b, point) < 95) ||
+                z.props.some((p) =>
+                  p !== item && !p.decorative &&
+                  dist(p, point) < Math.max(25, p.r || 0) + 25)
+              )
+                continue;
+              relocated = point;
+              break;
+            }
+            if (relocated) break;
+          }
+          if (!relocated) return; // Fail closed: original strict road test remains red.
+          Object.assign(item, relocated);
+        }
+        z.marchCoastalRoadClearanceVersion = 1;
       }
       marchCoastalLayout(z) {
         if (z.id !== 'march' || z.coastalSwampVersion === 1) return;
