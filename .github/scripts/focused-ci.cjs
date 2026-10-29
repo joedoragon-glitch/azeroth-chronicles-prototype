@@ -364,7 +364,10 @@ function run(
             ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
           }
         : process.env,
-      timeout: narrowBrowser ? 240000 : undefined,
+      // The owner-approved full-current-region Pixi smoke is readiness-driven,
+      // not bounded by the older 4-minute fringe-preload assumption. Preserve
+      // the test and its failure reporting with a longer runner ceiling.
+      timeout: pixiBrowser ? 360000 : narrowBrowser ? 240000 : undefined,
     });
     // Replay the full original stdout/stderr in CI; also retain a short
     // actionable first error for the structured report.
