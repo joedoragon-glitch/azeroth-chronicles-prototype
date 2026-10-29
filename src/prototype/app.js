@@ -3646,7 +3646,8 @@
         // and that scene's sprite warmup do we initialize confirmed Pixi,
         // all behind the SAME title loading surface. New Game shares this path.
         const shouldRestorePixi = !titleSkipGraphics?.skipped &&
-          previousRendererChoice.renderer === 'webgl2' &&
+          (previousRendererChoice.renderer === 'webgl2' ||
+            graphicsController.status().recoveryPending) &&
           graphicsController.status().phase === 'canvas' &&
           graphicsController.status().preferredRenderer === 'webgl2';
         if (!shouldRestorePixi) return showReadyFrame();
@@ -6931,8 +6932,28 @@
     if (document.hidden) {
       if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
       renderResolution.suspend();
-      if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
+      // A hidden browser may lose its GPU context and require expensive
+      // texture reconstruction. Never resume simulation directly into it.
+      const wasPlaying = started;
+      const saved = save();
+      if (saved && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
+      if (wasPlaying) {
+        if (saved && writerGuard.canWrite()) {
+          // warmScene explicitly skips hidden documents. Continue will perform
+          // the normal sprite/GPU arrival preparation behind the loading UI.
+          // Keep surviving GPU resources intact for a cheap warm return.
+          showTitleScreen();
+        } else {
+          // Match manual Return to Main Menu: do not abandon unsaved progress.
+          paused = true;
+          status('Saving failed. Export your run before closing.');
+        }
+      } else if (titleLoading) {
+        // Invalidate an interrupted Continue. No pending promise or graphics
+        // upload may silently activate gameplay when the page is reopened.
+        showTitleScreen();
+      }
     } else {
       if (sceneTransition?.committed) {
         const token = sceneTransition.token;
