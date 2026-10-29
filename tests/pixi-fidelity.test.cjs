@@ -409,52 +409,43 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
     'warm frames preserve sharing without rebaking the two actors');
   sharedGpu.release();
   game.props=[];
-  // Prepaint one idle CPU window without changing gameplay state.
+  // A complete region is cached during readiness. Roaming and combat do
+  // not trigger the retired idle camera-window painter or repeat native
+  // terrain rasterization; the same GPU source receives tile composites.
   game.zoneId='vale';
+  game.zoneSize=()=>2000; // Realistic extent around the test hero.
   runtime.requestIdleCallback=(cb)=>{idleCallback=cb;return 7};
   runtime.cancelIdleCallback=()=>{idleCallback=null};
   const terrainGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(await terrainGpu.prepare(),true);
   terrainGpu.activate();
-  const terrainBase=terrainGpu.status().backgroundRepaints;
-  const oldX=game.hero.x, copies=backgroundCopies, updates=textureUpdates;
-  game.hero.x+=100;
-  terrainGpu.draw();
-  assert.equal(typeof idleCallback,'function','outdoor travel schedules idle terrain lookahead');
+  assert(terrainGpu.status().cachedTerrainZones.includes('vale'),
+    'full current-region background tiles were prepared before activation');
+  const terrainBase=terrainGpu.status().backgroundRepaints,
+    initialReuses=terrainGpu.status().terrainTileReuses,
+    oldX=game.hero.x, updates=textureUpdates;
+  for (const distance of [100, 40, 160]) {
+    game.hero.x+=distance;
+    terrainGpu.draw();
+  }
+  assert(terrainGpu.status().terrainTileReuses>initialReuses,
+    'movement across camera windows composites the retained region tiles');
   assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
-    'active terrain remains intact before the actual crossing');
-  const idle=idleCallback;idleCallback=null;idle();
-  assert.equal(terrainGpu.status().backgroundLookaheadPaints,1);
-  assert(terrainGpu.status().backgroundLookaheadBytes>0);
-  assert(terrainGpu.status().backgroundLookaheadBytes*2<=64*1024*1024,
-    'combined CPU terrain raster windows remain within the budget');
-  assert(stagingGroundReuseDisabled>0,'idle painter cannot retain a second ground cache');
-  game.hero.x+=40;
-  terrainGpu.draw();
-  assert.equal(terrainGpu.status().backgroundLookaheadPromotions,1,
-    'arrival reuses the terrain window prepared during idle time');
-  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
-    'camera crossing avoids an immediate full terrain rebuild');
-  assert.equal(backgroundCopies,copies+1,'prepaint is copied into existing terrain canvas');
-  assert.equal(textureUpdates,updates+1,'existing GPU source is updated in place');
-  game.hero.x+=160;
-  terrainGpu.draw();
-  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase+1,
-    'without an idle-ready window movement falls back to the complete original painter');
-  assert(terrainGpu.status().backgroundLookaheadMisses>0,
-    'fallback is recorded, not silently reported as a successful promotion');
+    'ordinary movement does not re-run full original terrain painter');
+  assert.equal(terrainGpu.status().backgroundLookaheadPaints,0,
+    'obsolete camera-window idle painter is unnecessary with complete atlas');
+  assert(textureUpdates>updates,
+    'cached tiles update the existing GPU background source in place');
   game.s.projectiles=[{id:'danger-cue'}];
   game.hero.x+=100;
-  idleCallback=null;
   terrainGpu.draw();
-  assert.equal(idleCallback,null,
-    'active combat prevents scheduling optional terrain work');
-  assert(terrainGpu.status().backgroundLookaheadSkips.combat > 0,
-    'reports the combat reason rather than only a lookahead miss');
+  assert.equal(terrainGpu.status().backgroundRepaints,terrainBase,
+    'combat while moving continues to reuse prepared terrain');
   game.s.projectiles=[];
   terrainGpu.release();
   assert.equal(terrainGpu.status().backgroundLookaheadBytes,0);
   game.hero.x=oldX;
+  game.zoneSize=()=>200;
   delete runtime.requestIdleCallback;
   delete runtime.cancelIdleCallback;
   // Approximately 100 pixel-bytes per miniature procedural texture suffice for the
