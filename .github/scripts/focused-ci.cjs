@@ -81,6 +81,16 @@ const groups = [
     ],
   },
   {
+    // Keep the owner's merged Rogue stacking contract in every future
+    // combat/party/journal regression, not only when its test file is edited.
+    match: /^src\/prototype\/(?:hero-combat|party|skill-reference)\.js$/,
+    tests: [
+      TEST + 'rogue-all-skills-stacking.test.cjs',
+      TEST + 'rogue-bard-critical-performances.test.cjs',
+      TEST + 'rogue-self-centered-performances.test.cjs',
+    ],
+  },
+  {
     match: /^src\/prototype\/(?:app|input)\.js$/,
     tests: [TEST + 'hero-skill1-area3-input.test.cjs'],
   },
@@ -257,6 +267,14 @@ const groups = [
   {
     match: /^(?:package(?:-lock)?\.json|sw\.js|src\/prototype\/build-info\.js)$/,
     tests: [TEST + 'pwa-release-id.test.cjs', TEST + 'service-worker.test.cjs'],
+  },
+  {
+    // Individual mastery and Orin training touch authoritative quest payment,
+    // levels, actual deaths, barracks recovery, companion skills and v4 saves.
+    // Keep their regression suite selected whenever any of those change.
+    match: /^src\/prototype\/(?:rewards|progression|party|party-pets|engine|rules|save|menus|hero-combat)\.js$/,
+    tests: [TEST + 'companion-mastery-rewards.test.cjs',
+      TEST + 'charmed-ringleader-training.test.cjs'],
   },
   {
     // Phase 4 must be retested when any source owning capture, creature growth,

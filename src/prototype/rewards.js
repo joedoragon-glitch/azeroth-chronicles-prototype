@@ -78,6 +78,8 @@
         if (!q || !p?.done || p.paid || p.closedByPeace) return false;
         p.paid = true;
         p.active = false;
+        // Credit only a real once-paid quest; reserve/fallen actors receive none.
+        this.awardCompanionMastery(1);
         if (q.kind === 'barracks')
           this.say('First Barracks established. You now have a field base for companion recovery.');
         else {

@@ -1189,6 +1189,11 @@
             : 0.65;
         push(e, e.type, life, e.slot === 2 ? 5 : 4);
       }
+      else if (e.type === 'charmHeritage') {
+        // A real committed companion hit owns the bounded cue. No phantom
+        // warning on an aborted cast; damage/status comes only from combat.
+        push(e, 'charmHeritage', 0.6, 5);
+      }
       else if (e.type === 'chargedArea')
         push(
           e,

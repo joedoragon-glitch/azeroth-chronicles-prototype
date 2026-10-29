@@ -1,15 +1,21 @@
 'use strict';
 const assert = require('node:assert/strict'),
-  { shell } = require('./helpers/production-shell.cjs');
+  { shell } = require('./helpers/production-shell.cjs'),
+  Campaign = require('../src/prototype/engine');
+// Current Rogue gameplay is test-injected on this baseline; never change production class choice.
+const hadRogue = Object.hasOwn(Campaign.classes, 'rogue');
+if (!hadRogue) {
+  Campaign.classes.rogue = { ...Campaign.rules.rogueHeroFoundation.stats, icon: 'bell' };
+  Campaign.talentProfiles.rogue = { ...Campaign.rules.rogueHeroFoundation.talents };
+}
 let cases = 0;
 for (const language of ['en', 'es'])
-  for (const [heroClass, names] of Object.entries({
-    paladin: ['Sword Combo', 'Sundering Strike'],
-    mage: ['Arcane Combo', 'Frost Bolt'],
-    ranger: ['Bow Combo', 'Pinning Shot'],
-  })) {
+  for (const heroClass of ['paladin', 'mage', 'ranger', 'rogue']) {
     const { scope: s, elements: e } = shell(language, heroClass),
       g = s.Prototype.game;
+    // Resolve the real current curriculum names, rather than pinning retired class labels.
+    const names = [1, 2].map((slot) =>
+      require('../src/prototype/skill-reference').card(g, slot).name);
     const t = (en, es) => (language === 'en' ? en : es);
     const click = (prefix) => {
       const b = e.get('modal-actions').children.find((b) => b.textContent.startsWith(prefix));
@@ -33,7 +39,9 @@ for (const language of ['en', 'es'])
     click(t('Hero skills', 'Habilidades del héroe'));
     brief();
     for (const name of names)
-      assert(e.get('modal-actions').children.some((b) => b.textContent.includes(name)));
+      assert(e.get('modal-actions').children.some((b) => b.textContent.includes(name)),
+        'Expected ' + name + ' for ' + heroClass + ' / ' + g.hero.class +
+        '; actual: ' + e.get('modal-actions').children.map((b) => b.textContent).join(' | '));
     const before = g.snapshot();
     e.get('modal-actions').children[1].click();
     assert(e.get('modal-actions').children[0].disabled, 'training remains blocked without funds');
@@ -97,8 +105,12 @@ for (const language of ['en', 'es'])
     assert.equal(e.get('modal-title').textContent, mira.name);
     cases++;
   }
+if (!hadRogue) {
+  delete Campaign.classes.rogue;
+  delete Campaign.talentProfiles.rogue;
+}
 console.log(
   'PASS ' +
     cases +
-    ' actual English/Spanish Paladin/Mage/Ranger instructor flows: clear branches/Back, funds, native hero learning/upgrades and capped labels, free Expedition/next instructor, support charges and journal',
+    ' actual English/Spanish Paladin/Mage/Ranger/Rogue instructor flows: clear branches/Back, funds, native hero learning/upgrades and capped labels, free Expedition/next instructor, support charges and journal',
 );

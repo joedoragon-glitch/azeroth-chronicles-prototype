@@ -1293,17 +1293,67 @@
         // performances append finite disable time without erasing each other.
         rogueEnemySilences.set(e, { zone: this.zoneId, until: remaining + seconds });
       }
-      rogueSkill1Config(charged = false) {
+      // One purchased rank governs the automatic attack and both manual
+      // Skill 1 variants. Rank changes the two independent temporary Refrains;
+      // it does not force overlap or change native basic-critical rolls.
+      rogueSkill1Config(charged = false, rank = this.hero?.skills[0] || 1) {
+        const gained = Math.max(0, Math.min(8, rank) - 1) / 7;
         return charged
-          ? { range: 290, radius: 290, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
-          : { range: 225, radius: 225, cap: 2, damage: 1.3, allyDamage: 0.05, seconds: 4 };
+          ? { range: 290, radius: 290, cap: 4, damage: 1.8,
+              allyDamage: +(0.07 + 0.02 * gained).toFixed(6), seconds: 5 }
+          : { range: 225, radius: 225, cap: 2, damage: 1.3,
+              allyDamage: +(0.05 + 0.02 * gained).toFixed(6), seconds: 4 };
+      }
+      // Rank-resolved Rogue effects are shared by live combat and the Skill
+      // Journal. Source values at Rank 1 are untouched. The small increases
+      // happen on every training rank and preserve Tap/Charged identities,
+      // legal footprints, two-station ceiling and additive song ownership.
+      roguePerformanceAtRank(slot, charged = false, rank = this.hero?.skills[slot - 1] || 1) {
+        const base = R.roguePerformances[slot]?.[charged ? 'charged' : 'tap'];
+        if (!base || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
+        if (rank === 1) return base;
+        const p = (rank - 1) / 7, form = { ...base };
+        const grow = (key, by) => {
+          if (typeof form[key] === 'number')
+            form[key] = +(form[key] + by * p).toFixed(6);
+        };
+        if (slot === 2) {
+          grow('slow', 0.6); grow('seconds', 0.5);
+          grow('move', 0.04); grow('recovery', 0.03);
+        } else if (slot === 3) {
+          grow('debt', 0.2); grow('seconds', 1);
+          if (charged) grow('silence', 0.3);
+        } else if (slot === 4) {
+          grow('dotFraction', charged ? 0.007 : 0.005);
+          grow('antiHeal', charged ? 0.06 : 0.08);
+          grow('healFraction', charged ? 0.01 : 0.015);
+          grow('incomingHealing', 0.02);
+        } else if (slot === 5) {
+          grow('slow', 0.15); grow('slowResistance', 0.05);
+          grow('seconds', 0.5);
+          if (charged) { grow('ward', 0.02); grow('pulseDamage', 0.05); }
+        } else if (slot === 6) {
+          grow('debt', charged ? 0.3 : 0.25);
+          grow('seconds', 0.5); grow('specialRecovery', 0.03);
+        } else if (slot === 7) {
+          grow('push', charged ? 10 : 8); grow('weaken', 0.6);
+          grow('weakenFraction', charged ? 0.03 : 0.025);
+          grow('seconds', 0.5); grow('outgoing', 0.02);
+        } else if (slot === 8) {
+          // Ultimate's direct hit already gains +15% Rank-1 damage per rank.
+          grow('criticalChance', 0.01); grow('specialDamage', 0.01);
+          grow('seconds', 0.5);
+          if (charged) grow('silence', 0.15);
+        }
+        return form;
       }
       // Starting manual song: small / widened hostile pulse mirrored to
       // living active allies in the same lawful area. Charms never come from
       // manual attacks. The names are revisable independently of these rules.
       castRogueSkill1(targetId = null, charged = false, encountersAtStart = null) {
-        const h = this.hero, form = this.rogueSkill1Config(charged),
-          rank = h.skills[0], selected = this.selectedHeroTarget(),
+        const h = this.hero, rank = h.skills[0],
+          form = this.rogueSkill1Config(charged, rank),
+          selected = this.selectedHeroTarget(),
           id = targetId ?? selected?.id ?? this.s.heroTarget;
         if (h.class !== 'rogue' || this.peace || h.hp <= 0 || !rank ||
           this.s.challenge.pending || this.s.challenge.gameOver ||
@@ -1366,7 +1416,7 @@
       // the identical circle without coupling the two outcomes. No Charm.
       castRoguePerformance(slot, targetId = null, charged = false) {
         const h = this.hero, rank = h.skills[slot - 1],
-          form = R.roguePerformances[slot]?.[charged ? 'charged' : 'tap'],
+          form = this.roguePerformanceAtRank(slot, charged, rank),
           selected = this.selectedHeroTarget(),
           id = targetId ?? selected?.id ?? this.s.heroTarget;
         if (!form || h.class !== 'rogue' || h.hp <= 0 || !rank || this.peace ||
@@ -1526,21 +1576,27 @@
       // The exact individual monster subtype is an authored species plus its
       // native melee/ranged variant. Player names and translations cannot own it.
       rogueCharmProfile(e) {
+        // Wild Wraiths and Stalkers may be captured ONLY during their lawful
+        // night encounter. A captured ally is a party member, not a night
+        // spawn, and remains usable after sunrise.
+        const nightSpecies = !!e?.nightOnly && this.night() &&
+          (e.species === 'wraith' || e.species === 'stalker');
         if (
           this.hero.class !== 'rogue' ||
           !e || e.type !== 'mob' || e.form !== 'normal' || e.hp <= 0 ||
           e.neutral || e.returning || e.guard || e.roomGuard ||
           e.awakenedGuard || e.captain || e.roomCaptain || e.fieldCaptain ||
-          e.summon || e.owner || e.reinforcement || e.nightOnly ||
+          e.summon || e.owner || e.reinforcement || (e.nightOnly && !nightSpecies) ||
           e.crownTroop || e.mountedCrownRider || e.veraEscort || e.family ||
           this.s.mode === 'arena' || this.s.mode === 'developer'
         ) return null;
-        const authored = Campaign.data.species.flat().find((row) => row[0] === e.species);
+        const authored = Campaign.data.species.flat().find((row) => row[0] === e.species) ||
+          (nightSpecies ? [e.species, e.species === 'wraith' ? 'Lantern wraith' : 'Ash stalker'] : null);
         if (!authored) return null;
-        const ranged = e.ranged === true;
+        const ranged = nightSpecies ? e.species === 'wraith' : e.ranged === true;
         // A runtime flag alone cannot invent an authored monster subtype.
         if (ranged && !R.rangedProfiles[e.species] &&
-          !['archer', 'crownguard'].includes(e.species)) return null;
+          !['archer', 'crownguard', ...(nightSpecies ? ['wraith'] : [])].includes(e.species)) return null;
         const role = ranged ? 'archer' : 'soldier',
           variant = ranged ? R.rangedProfiles[e.species]?.variant : null;
         return {

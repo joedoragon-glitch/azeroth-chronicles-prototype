@@ -251,6 +251,12 @@
                 ),
               ]
             : []),
+          ...(n.family === 'ridge'
+            ? [action(
+                'Charmed Ringleader Training · 100 crowns',
+                () => teacherRingleader(n, returnHere),
+                'Train one chosen monster with Orin; +150% HP and +50% attack.',
+              )] : []),
           action('Open skill journal', () => skillBook(returnHere), 'Effects and controls.'),
           ...(nextSkillInstructor(n.family)
             ? [
@@ -262,6 +268,72 @@
               ]
             : []),
         ],
+        back,
+      );
+    }
+    function teacherRingleader(n, back) {
+      const g = getGame(),
+        candidates = g.s.party.filter((u) => u.charmOrigin &&
+          g.isCharmedCompanion(u)),
+        cost = Campaign.rules.balance.companions.ringleaderTrainingCost;
+      openMenu(
+        'Orin · Ringleader Training',
+        'Select one Charmed monster for a permanent individual promotion. ' +
+          cost + ' crowns each · 2.5× max HP and 1.5× damage, based on friendly scaled stats. ' +
+          'Existing elite skills and mastery remain independent.',
+        candidates.length
+          ? candidates.map((u) => {
+              const reason = g.charmedRingleaderTrainingReason(u, n.family);
+              return action(
+                g.companionDisplayName(u) + ' · Mastery ' +
+                  g.companionMasteryTier(u) +
+                  (u.charmRingleaderTrained ? ' · Ringleader trained' : ' · ' + cost + ' crowns'),
+                () => teacherRingleaderPreview(n, u.id,
+                  () => teacherRingleader(n, back)),
+                reason || 'Review health/damage and confirm your investment.',
+                !!reason,
+              );
+            })
+          : [action('No Charmed monsters available', () => {},
+              'Only personally captured Charmed monsters may train.', true)],
+        back,
+      );
+    }
+    function teacherRingleaderPreview(n, id, back) {
+      const g = getGame(),
+        u = g.s.party.find((u) => u.id === id),
+        cost = Campaign.rules.balance.companions.ringleaderTrainingCost,
+        reason = g.charmedRingleaderTrainingReason(u, n.family);
+      if (reason) {
+        back();
+        return;
+      }
+      const beforeHp = g.companionMaxHp(u),
+        beforeDamage = g.companionAttackDamage(u),
+        afterHp = Math.round(beforeHp * Campaign.rules.ringleaderScaling.hp),
+        afterDamage = beforeDamage * Campaign.rules.ringleaderScaling.damage;
+      openMenu(
+        'Ringleader Training · ' + g.companionDisplayName(u),
+        'Orin will train this individual monster, not the entire species. ' +
+          'HP ' + beforeHp + ' → ' + afterHp +
+          ' · attack ' + beforeDamage.toFixed(1) + ' → ' + afterDamage.toFixed(1) +
+          ' · mastery Tier ' + g.companionMasteryTier(u) +
+          ' remains unchanged. Crowns ' + Math.floor(g.hero.gold) + '.',
+        [action(
+          'Confirm training · ' + cost + ' crowns',
+          () => {
+            // Never purchase on a stale menu or for a replaced companion.
+            if (getGame() !== g || !g.s.party.includes(u) ||
+                g.charmedRingleaderTrainingReason(u, n.family))
+              return back();
+            g.trainCharmedRingleader(id, n.family);
+            back();
+          },
+          g.hero.gold < cost
+            ? 'Not enough crowns. No payment is made.'
+            : 'Permanent, one-time promotion for this companion.',
+          g.hero.gold < cost,
+        )],
         back,
       );
     }
@@ -1300,7 +1372,8 @@
           '\n' +
           (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.') +
           '\n' +
-          def.specialty,
+          def.specialty +
+          (unit ? '\n' + companionMasteryDisplay(unit) : ''),
         [
           ...(unit
             ? [
@@ -1561,6 +1634,14 @@
       }
       return result;
     }
+    function companionMasteryDisplay(u) {
+      const g = getGame(),
+        tier = g.companionMasteryTier(u),
+        next = Campaign.rules.balance.companions.mastery.thresholds[tier],
+        points = u.masteryPoints || 0;
+      return 'Mastery ' + tier + (next ? ' · ' + points + '/' + next + ' points' : ' · MAX') +
+        (u.charmRingleaderTrained ? ' · Ringleader trained' : '');
+    }
     function barracksCompanionAction(b, u, refresh) {
       // Stable member ID, not array index: an action is revalidated by the
       // authoritative companion operation before changing membership.
@@ -1582,7 +1663,8 @@
                   '/' +
                   u.maxHp +
                   ' HP · Rest to free a group slot.'
-                : 'With you · FALLEN · Rest to free a group slot.'),
+                : 'With you · FALLEN · Rest to free a group slot.') +
+              ' · ' + companionMasteryDisplay(u),
             !!reason,
           )
         : action(
@@ -1591,7 +1673,8 @@
               getGame().activateCompanion(u.id, b.id);
               refresh();
             },
-            reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
+            (reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP') +
+              ' · ' + companionMasteryDisplay(u),
             !!reason,
           );
     }
