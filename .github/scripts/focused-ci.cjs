@@ -214,7 +214,7 @@ const groups = [
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },
   {
-    match: /^src\/prototype\/sprites\.js$|^assets\/sprites\/|^tools\/sprites\//,
+    match: /^src\/prototype\/(?:sprites|sprite-format)\.js$|^assets\/sprites\/|^tools\/sprites\//,
     tests: [TEST + 'sprites.test.cjs', TEST + 'sprite-lifecycle.test.cjs'],
   },
   {
