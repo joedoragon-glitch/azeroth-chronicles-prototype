@@ -28,6 +28,8 @@ Combat is **cooldown-based**, not mana-based. Skills have a normal tap action an
 
 The game includes an original contextual soundtrack, authored regional spaces, boss encounters, procedural character art and optional illustrated assets. It is a single-player experience; **there is no playable co-op or cloud save synchronization**.
 
+Greenwood's reconstructed opening region has a working mill and pond, expanded orchards, a separate working fruit cellar and woodland routes. **Scornfang's Treasury** is the existing Treasury under its corrected name; **Old Orchard Cellars** remain a separate occupied interior. Existing campaigns migrate when opened in the update. Keep an exported pre-update save backup; see [Development state](docs/DEVELOPMENT_STATE.md) for confirmed availability.
+
 ## Controls
 
 These are **default** desktop bindings. Keyboard presets and individual keys can be changed under **Game and settings → Controls → Customize keyboard**; existing saved preferences are preserved. On phone, use the on-screen buttons and joystick or tap a reachable destination.

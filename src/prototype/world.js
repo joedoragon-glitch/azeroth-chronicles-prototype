@@ -62,9 +62,15 @@
         if (!def || z.npcs.some((n) => n.id === id)) return false;
         const point = this.safe(def.x, def.y, z.id);
         z.npcs.push({
-          id, kind: 'critical-codex', sideCodex: z.id,
-          name: def.name, nameEs: def.nameEs,
-          x: point.x, y: point.y, icon: '📖', presentation: 'critical-codex',
+          id,
+          kind: 'critical-codex',
+          sideCodex: z.id,
+          name: def.name,
+          nameEs: def.nameEs,
+          x: point.x,
+          y: point.y,
+          icon: '📖',
+          presentation: 'critical-codex',
         });
         return true;
       }
@@ -918,6 +924,7 @@
       roadNetwork(z) {
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
+        this.greenwoodReserve?.(z);
         const i = this.regionIndex(z.id),
           roadVersion = 17;
         if (z.roadVersion === roadVersion) return;
@@ -1001,7 +1008,10 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 65 : 85) }));
+            .map((p) => ({
+              ...p,
+              r: (p.r || 0) + (p.greenwoodReserved ? 190 : i === 2 ? 65 : 85),
+            }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
@@ -1078,7 +1088,11 @@
         // than displacing collision trees into hostile camps. Distinct authored
         // structures and district props survive for the frontage audit below.
         z.props = z.props.filter(
-          (p) => p.roadBlocker || p.structure || this.distanceToRoad(z, p) >= (p.r || 0) + 60,
+          (p) =>
+            p.greenwoodLegacyScenery ||
+            p.roadBlocker ||
+            p.structure ||
+            this.distanceToRoad(z, p) >= (p.r || 0) + 60,
         );
         // Relocate only long-lived settlement houses before livelihood and
         // occupation scenery is authored, so those scenes remain repeatable.
@@ -1756,7 +1770,7 @@
             for (const radius of [
               110, 180, 260, 350, 450, 570, 700, 840, 980, 1150, 1350, 1550, 1800,
             ]) {
-              for (let j = 0; j < 32; j++) {
+              for (let j = 0; j < (radius ? 32 : 1); j++) {
                 const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
                 const angle = outward + (fan * Math.PI) / 16;
                 const point = {
@@ -1802,6 +1816,7 @@
         return nearest;
       }
       roadSetback(p) {
+        if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
         if (p.stronghold && p.r > 0) return 85;
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
         // Building anchors sit below much of their painted roof; reserve more
@@ -1817,20 +1832,80 @@
         if (p.r > 0) return p.r + 64;
         return 72;
       }
-      clearStreetCorridors(z) {
+      clearStreetCorridors(z, finalPass = false) {
+        // Greenwood owns its final authored frontages in greenwoodFinish.
+        // This inherited-region repair must not recompose either Vale layout.
+        if (finalPass && z.id === 'vale') return;
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          z.streetClearanceVersion === 3
+          (finalPass ? z.finalStreetClearanceVersion === 1 : z.streetClearanceVersion === 3)
         )
           return;
+        // Rebuilding an older street plan invalidates its final-layout receipt.
+        if (!finalPass) delete z.finalStreetClearanceVersion;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
           const i = this.regionIndex(z.id),
             major = { x: D.towns[i][0], y: D.towns[i][1] },
             minor = { x: D.minors[i][0], y: D.minors[i][1] };
+          // Later authored road plans can leave the original town square just
+          // outside their network. Join that square to the existing road before
+          // the final clearance; never relocate a town to hide disconnection.
+          if (finalPass && this.distanceToRoad(z, major) >= 1) {
+            const junction = this.nearestRoadPoint(z, major);
+            const path = junction && this.route(major, junction, { road: true });
+            if (path?.length) z.roads.unshift([major, ...path]);
+          }
+          // Join disconnected authored spurs using real collision-routed links.
+          // Retain every existing road; endpoint-to-segment joins count too.
+          let networkComplete = true;
+          if (finalPass) {
+            const touches = (p, road) =>
+              road.some((q, j) => j && this.distanceToSegment(p, road[j - 1], q) < 1);
+            for (let attempt = 0, limit = z.roads.length; attempt < limit; attempt++) {
+              const connected = new Set(z.roads.filter((road) => touches(major, road)));
+              for (let grew = true; grew; ) {
+                grew = false;
+                for (const road of z.roads) {
+                  if (connected.has(road)) continue;
+                  if (
+                    [...connected].some(
+                      (other) =>
+                        road.some((p) => touches(p, other)) || other.some((p) => touches(p, road)),
+                    )
+                  ) {
+                    connected.add(road);
+                    grew = true;
+                  }
+                }
+              }
+              if (connected.size === z.roads.length) break;
+              const joined = { roads: [...connected] },
+                candidates = [];
+              for (const road of z.roads.filter((r) => !connected.has(r)))
+                for (const p of road) {
+                  const q = this.nearestRoadPoint(joined, p);
+                  if (q) candidates.push({ p, q });
+                }
+              candidates.sort((a, b) => dist(a.p, a.q) - dist(b.p, b.q));
+              let link = null;
+              for (const { p, q } of candidates) {
+                const path = this.route(p, q, { road: true });
+                if (path.length && dist(path.at(-1), q) < 1) {
+                  link = [p, ...path];
+                  break;
+                }
+              }
+              if (!link) {
+                networkComplete = false;
+                break;
+              }
+              z.roads.push(link);
+            }
+          }
           // Reposition the two refuge buildings: the canonical settlement
           // coordinates are STREET SQUARES, not house footprints.
           const frontages = [
@@ -1851,6 +1926,10 @@
             }
             if (this.blocked(p.x, p.y, z.id, Math.max(12, (item.r || 0) + 9), true)) return false;
             if (this.distanceToRoad(z, p) < setback) return false;
+            if (finalPass && frontages.some(([id]) => id === item.id)) {
+              const center = item.id === 'minor' ? minor : major;
+              if (dist(p, center) >= 460) return false;
+            }
             if (
               z.props.some(
                 (other) =>
@@ -1869,7 +1948,16 @@
                   other !== item &&
                   dist(other, p) <
                     Math.max(
-                      96,
+                      finalPass &&
+                        [item.id, other.id].includes('board') &&
+                        [item.id, other.id].includes('rest')
+                        ? 151
+                        : 96,
+                      finalPass &&
+                        [item.id, other.id].includes('board') &&
+                        [item.id, other.id].includes('supplier')
+                        ? 116
+                        : 96,
                       (['rest', 'minor'].includes(other.id) ? 82 : 42) +
                         (['rest', 'minor'].includes(item.id) ? 36 : 0),
                     ),
@@ -1885,7 +1973,13 @@
             );
           };
           const moveOffRoad = (item, setback) => {
-            if (this.distanceToRoad(z, item) >= setback) return true;
+            const service = finalPass && frontages.some(([id]) => id === item.id),
+              neighborhood = item.id === 'minor' ? minor : major;
+            if (
+              this.distanceToRoad(z, item) >= setback &&
+              (!service || dist(item, neighborhood) < 460)
+            )
+              return true;
             const base = { x: item.x, y: item.y },
               center = dist(base, major) <= dist(base, minor) ? major : minor;
             // Prefer moving outward into a frontage plot, retaining the
@@ -1908,6 +2002,24 @@
                 return true;
               }
             }
+            if (finalPass) {
+              // Dense authored districts can leave a valid parcel between the
+              // polar samples. Keep services in their own neighborhood; search
+              // the region for large props, nearest first, retaining all IDs.
+              const service = frontages.some(([id]) => id === item.id),
+                center = service ? (item.id === 'minor' ? minor : major) : base,
+                reach = service ? 440 : D.regions[i].size,
+                candidates = [];
+              for (let x = center.x - reach; x <= center.x + reach; x += service ? 20 : 40)
+                for (let y = center.y - reach; y <= center.y + reach; y += service ? 20 : 40)
+                  candidates.push({ x, y });
+              candidates.sort((a, b) => dist(a, base) - dist(b, base));
+              const p = candidates.find((p) => canPlace(p, item, setback));
+              if (p) {
+                Object.assign(item, p);
+                return true;
+              }
+            }
             return false;
           };
           // Saved/player-built barracks are large buildings too. Relocate
@@ -1919,8 +2031,10 @@
             if (!npc) continue;
             // Services retain their original playable squares even though
             // their buildings/stands occupy neighboring frontage parcels.
-            if (id === 'rest') npc.servicePoint = { ...major };
-            if (id === 'minor') npc.servicePoint = { ...minor };
+            if (!finalPass) {
+              if (id === 'rest') npc.servicePoint = { ...major };
+              if (id === 'minor') npc.servicePoint = { ...minor };
+            }
             moveOffRoad(npc, setback);
           }
           // Generated forest obstacles must not invade the immediate living
@@ -1929,11 +2043,13 @@
           const rangedHomes = z.enemies
             .filter((enemy) => enemy.hp > 0 && (enemy.ranged || enemy.hybrid))
             .map((enemy) => enemy.home || enemy);
-          z.props = z.props.filter(
-            (p) =>
-              !String(p.id || '').startsWith('forest-') ||
-              !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
-          );
+          if (!finalPass)
+            z.props = z.props.filter(
+              (p) =>
+                p.greenwoodLegacyScenery ||
+                !String(p.id || '').startsWith('forest-') ||
+                !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
+            );
           // Full corridor audit, not only collision-bearing props: market
           // stalls, carts, heaps, decorative houses and trees are visual
           // obstacles too. Keep every ID/scene role; move, do not erase.
@@ -1942,7 +2058,39 @@
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));
-          z.streetClearanceVersion = 3;
+          if (finalPass) {
+            const complete =
+              networkComplete &&
+              frontages.every(([id, setback]) => {
+                const npc = z.npcs.find((n) => n.id === id);
+                const center = id === 'minor' ? minor : major;
+                return (
+                  npc &&
+                  this.distanceToRoad(z, npc) + 0.01 >= setback &&
+                  dist(npc, center) < 460 &&
+                  (!['rest', 'minor'].includes(id) ||
+                    Math.min(npc.x, npc.y, D.regions[i].size - npc.x, D.regions[i].size - npc.y) >=
+                      115)
+                );
+              }) &&
+              z.buildings.every((b) => this.distanceToRoad(z, b) + 0.01 >= 175) &&
+              z.props.every(
+                (p) => p.roadTrace || this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p),
+              );
+            if (complete) {
+              z.finalStreetClearanceVersion = 1;
+              // Native refreshNPCs must retain the verified frontage rather
+              // than restore the older composition's obstructing coordinates.
+              for (const region of ['frontier', 'crown']) {
+                if (z.id !== region) continue;
+                const placements = (z[region + 'TownPlacements'] ||= {});
+                for (const [id] of frontages) {
+                  const npc = z.npcs.find((n) => n.id === id);
+                  if (npc) placements[id] = [npc.x, npc.y];
+                }
+              }
+            }
+          } else z.streetClearanceVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
@@ -1996,6 +2144,137 @@
         for (let i = 1; i < trail.length; i++) footpath.push(...this.route(trail[i - 1], trail[i]));
         z.footpaths.push(footpath);
       }
+      greenwoodOnboardingClearance(z) {
+        if (
+          z.id !== 'vale' ||
+          (z.greenwoodFrontageVersion === 1 && z.greenwoodFrontageRoadVersion === z.roadVersion)
+        )
+          return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          let complete = true;
+          const refuge = z.npcs.find((n) => n.id === 'rest');
+          if (refuge && refuge.y < 115) {
+            const old = { ...refuge.servicePoint },
+              target = { x: refuge.x, y: 130 },
+              door = { x: old.x, y: old.y + target.y - refuge.y };
+            if (
+              !this.blocked(target.x, target.y, z.id, 20, true) &&
+              !this.blocked(door.x, door.y, z.id, 15) &&
+              this.distanceToRoad(z, target) >= 190
+            ) {
+              Object.assign(refuge, target);
+              refuge.servicePoint = door;
+              if (this.s.refugeSite?.zone === z.id && this.s.refugeSite.id === 'rest')
+                Object.assign(this.s.refugeSite, door);
+              for (const path of z.footpaths || []) {
+                if (dist(path.at(-1), old) > 1) continue;
+                const route = this.route(path[0], door);
+                if (route.length) path.splice(1, path.length - 1, ...route);
+                else complete = false;
+              }
+            } else complete = false;
+          }
+          for (const id of ['settlement-major-0', 'settlement-major-6']) {
+            const house = z.props.find((p) => p.id === id);
+            if (!house) {
+              complete = false;
+              continue;
+            }
+            const setback = this.roadSetback(house);
+            if (this.distanceToRoad(z, house) >= setback) continue;
+            const center = house,
+              near = this.nearestRoadPoint(z, center),
+              away = near ? Math.atan2(center.y - near.y, center.x - near.x) : 0;
+            const hostileCenters = (R.creatureStrongholds || [])
+              .filter((hold) => hold.region === z.id)
+              .map((hold) => this.creatureStrongholdCenter(z, hold))
+              .filter(Boolean);
+            const fits = (p) => {
+              const size = D.regions[0].size;
+              if (
+                Math.min(p.x, p.y, size - p.x, size - p.y) < 115 ||
+                this.blocked(p.x, p.y, z.id, Math.max(house.r || 32, 60), true) ||
+                this.distanceToRoad(z, p) < setback ||
+                this.distanceToRoad(z, p) > 360 ||
+                z.minis.some((m) => dist(m, p) < 280) ||
+                hostileCenters.some((c) => dist(c, p) < 260)
+              )
+                return false;
+              if (
+                z.props.some(
+                  (q) =>
+                    q !== house &&
+                    /house|cottage|workshop/.test(q.structure || '') &&
+                    Math.abs((p.x - p.y - q.x + q.y) * 0.76) < 110 &&
+                    Math.abs((p.x + p.y - q.x - q.y) * 0.27) < 110,
+                )
+              )
+                return false;
+              if (
+                z.nodes.some((n) => dist(n, p) < 100) ||
+                z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 120) ||
+                z.buildings.some((b) => dist(b, p) < 165) ||
+                z.props.some((q) => q !== house && dist(q, p) < (house.r || 32) + (q.r || 0) + 35)
+              )
+                return false;
+              return !z.npcs.some((n) => {
+                const point = n.servicePoint || n,
+                  dx = (p.x - p.y - point.x + point.y) * 0.76,
+                  dy = (p.x + p.y - point.x - point.y) * 0.27;
+                // The roof extends upward from its base. Reserve the real
+                // service door/actor, not just a circular collision anchor.
+                return dist(point, p) < 100 || (Math.abs(dx) < 75 && dy > -12 && dy < 110);
+              });
+            };
+            let selected = null;
+            for (const radius of [
+              0, 20, 35, 55, 80, 115, 150, 190, 225, 270, 320, 380, 450, 520, 600, 690, 790,
+            ]) {
+              for (let j = 0; j < (radius ? 32 : 1); j++) {
+                const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1),
+                  angle = away + (fan * Math.PI) / 16,
+                  p = {
+                    x: center.x + Math.cos(angle) * radius,
+                    y: center.y + Math.sin(angle) * radius,
+                  };
+                if (fits(p)) {
+                  selected = p;
+                  break;
+                }
+              }
+              if (selected) break;
+            }
+            if (!selected) {
+              // Existing player camps can occupy the nearest free parcel.
+              // Search a finite regional grid, nearest first, rather than
+              // delete scenery, move the camp or lower the roof setback.
+              const candidates = [],
+                size = D.regions[0].size;
+              for (let x = 125; x <= size - 125; x += 50)
+                for (let y = 125; y <= size - 125; y += 50) candidates.push({ x, y });
+              candidates.sort((a, b) => dist(a, center) - dist(b, center));
+              selected = candidates.find(fits) || null;
+            }
+            if (selected) {
+              Object.assign(house, selected);
+              const door = this.safe(house.x + 35, house.y + 100, z.id),
+                road = this.nearestRoadPoint(z, door),
+                path = road && this.route(road, door);
+              if (path?.length && dist(path.at(-1), door) < 35)
+                (z.footpaths ||= []).push([road, ...path]);
+              else complete = false;
+            } else complete = false; // Never mark a rejected essential repair as complete.
+          }
+          if (complete) {
+            z.greenwoodFrontageVersion = 1;
+            z.greenwoodFrontageRoadVersion = z.roadVersion;
+          }
+        } finally {
+          this.s.zone = previous;
+        }
+      }
       reedportRefugeSpacing(z) {
         if (z.id !== 'march' || z.reedportRefugeSpacingVersion === 1) return;
         // Keep the refuge frontage open. These are decorative town services,
@@ -2018,13 +2297,42 @@
       arenaStages() {
         const stages = [{ id: 'hub', label: 'Safe hub · specialists', region: 0, kind: 'hub' }];
         for (const [region, r] of D.regions.entries()) {
-          stages.push({ id: r.id + '-ordinary', label: r.name + ' · ordinary enemies', region, kind: 'ordinary' });
-          stages.push({ id: r.id + '-guardians', label: r.name + ' · guardians and captain', region, kind: 'guardians' });
+          stages.push({
+            id: r.id + '-ordinary',
+            label: r.name + ' · ordinary enemies',
+            region,
+            kind: 'ordinary',
+          });
+          stages.push({
+            id: r.id + '-guardians',
+            label: r.name + ' · guardians and captain',
+            region,
+            kind: 'guardians',
+          });
           if (r.id === 'march' || r.id === 'frontier')
-            stages.push({ id: r.id + '-night', label: r.name + ' · night enemies', region, kind: 'night' });
+            stages.push({
+              id: r.id + '-night',
+              label: r.name + ' · night enemies',
+              region,
+              kind: 'night',
+            });
           for (const boss of D.bosses.filter((b) => b.region === r.id)) {
-            stages.push({ id: 'boss-' + boss.id, label: r.name + ' · ' + boss.name + ' · Regular', region, kind: 'boss', boss: boss.id, form: 'normal' });
-            stages.push({ id: 'boss-' + boss.id + '-true', label: r.name + ' · ' + boss.name + ' · TRUE', region, kind: 'boss', boss: boss.id, form: 'true' });
+            stages.push({
+              id: 'boss-' + boss.id,
+              label: r.name + ' · ' + boss.name + ' · Regular',
+              region,
+              kind: 'boss',
+              boss: boss.id,
+              form: 'normal',
+            });
+            stages.push({
+              id: 'boss-' + boss.id + '-true',
+              label: r.name + ' · ' + boss.name + ' · TRUE',
+              region,
+              kind: 'boss',
+              boss: boss.id,
+              form: 'true',
+            });
           }
         }
         return stages;
@@ -2034,15 +2342,28 @@
         // Extremely hot: zone() is used by every combat and draw step. Do not
         // rebuild the catalog of stage objects when the actor roster is unchanged.
         if (old?.arenaStage === this.s.arenaStage) return old;
-        const stage = this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
+        const stage =
+          this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
         const z = {
-          id: 'arena', arenaStage: stage.id, enemies: [], props: [], npcs: [],
-          buildings: [], nodes: [], packTimers: {}, clock: 0,
+          id: 'arena',
+          arenaStage: stage.id,
+          enemies: [],
+          props: [],
+          npcs: [],
+          buildings: [],
+          nodes: [],
+          packTimers: {},
+          clock: 0,
         };
         this.s.zones.arena = z;
-        z.npcs.push({ id: 'arena-guide', kind: 'arena-guide', name: 'Arena Guide',
+        z.npcs.push({
+          id: 'arena-guide',
+          kind: 'arena-guide',
+          name: 'Arena Guide',
           x: stage.kind === 'hub' ? 900 : 520,
-          y: stage.kind === 'hub' ? 1080 : 870, icon: '🧭' });
+          y: stage.kind === 'hub' ? 1080 : 870,
+          icon: '🧭',
+        });
         const spawn = (def, x, y, options = {}) => {
           const enemy = this.makeEnemy(def, { x, y });
           // Native AI/combat, but no campaign rewards, victories or unlocks.
@@ -2054,42 +2375,65 @@
           z.enemies.push(enemy);
           return enemy;
         };
-        const region = D.regions[stage.region], species = D.species[stage.region];
+        const region = D.regions[stage.region],
+          species = D.species[stage.region];
         if (stage.kind === 'hub') {
-          for (const [i, boss] of D.bosses.filter((b) => b.captive && b.id !== 'darklord').entries()) {
+          for (const [i, boss] of D.bosses
+            .filter((b) => b.captive && b.id !== 'darklord')
+            .entries()) {
             // Wide service rows keep names readable and leave a direct walking
             // corridor from the entry to the Guide, Trainer and recovery.
             z.npcs.push({
               id: 'arena-specialist-' + boss.id,
               kind: R.teachers[boss.id] ? 'teacher' : boss.id === 'archive' ? 'alchemist' : 'smith',
-              family: boss.id, name: boss.captive,
+              family: boss.id,
+              name: boss.captive,
               x: 1120 + (i % 4) * 245,
-              y: 640 + Math.floor(i / 4) * 320, icon: '👤',
+              y: 640 + Math.floor(i / 4) * 320,
+              icon: '👤',
             });
           }
           z.npcs.push({
             id: 'arena-level-trainer',
             kind: 'arena-level-trainer',
             name: 'Level Trainer',
-            x: 730, y: 995,
+            x: 730,
+            y: 995,
             icon: '⭐',
           });
-          z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 810, y: 1320, icon: '💚' });
+          z.npcs.push({
+            id: 'arena-recovery',
+            kind: 'arena-recovery',
+            name: 'Free recovery',
+            x: 810,
+            y: 1320,
+            icon: '💚',
+          });
         } else if (stage.kind === 'ordinary' || stage.kind === 'guardians') {
           const guardian = stage.kind === 'guardians';
           // Native campaign HP/damage values, not new arena balance math.
-          const hp = 65 + stage.region * 105, damage = 7 + stage.region * 8;
+          const hp = 65 + stage.region * 105,
+            damage = 7 + stage.region * 8;
           for (let i = 0; i < (guardian ? 3 : 4); i++) {
             const sp = species[i % species.length];
-            const e = spawn({
-              species: sp[0], name: sp[1] + (guardian ? ' guardian' : ''), icon: sp[2],
-              level: stage.region * 3 + 1 + (guardian ? 1 : 0),
-              hp, damage,
-              gold: 0, xp: 0,
-            }, 1400 + (i % 2) * 250, 830 + Math.floor(i / 2) * 350, {
-              pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
-              ...(guardian ? { guard: true, guardianBalanceVersion: 2 } : {}),
-            });
+            const e = spawn(
+              {
+                species: sp[0],
+                name: sp[1] + (guardian ? ' guardian' : ''),
+                icon: sp[2],
+                level: stage.region * 3 + 1 + (guardian ? 1 : 0),
+                hp,
+                damage,
+                gold: 0,
+                xp: 0,
+              },
+              1400 + (i % 2) * 250,
+              830 + Math.floor(i / 2) * 350,
+              {
+                pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
+                ...(guardian ? { guard: true, guardianBalanceVersion: 2 } : {}),
+              },
+            );
             this.configureEnemy(e, i);
           }
           if (guardian) {
@@ -2097,18 +2441,31 @@
             const profile = R.roomCaptains?.[id];
             if (profile) {
               const sp = species[0];
-              const e = spawn({
-                species: profile.species || sp[0], name: profile.name, icon: sp[2],
-                level: stage.region * 3 + 2,
-                hp: hp * 2, damage: damage * 1.25,
-                gold: 0, xp: 0,
-              }, 1900, 1050, {
-                captain: true, captainProfile: id, captainMentor: profile.mentor,
-                captainVisualIdol: profile.visualIdol || profile.mentor,
-                visualScale: profile.visualScale || 1.16, specialCd: 0,
-                ...(id === 'frontier-overseer' ? { fieldCaptain: true, fieldCaptainVersion: 1 } :
-                    { roomCaptain: true, roomGuard: true, guard: true, roomCaptainVersion: 1 }),
-              });
+              const e = spawn(
+                {
+                  species: profile.species || sp[0],
+                  name: profile.name,
+                  icon: sp[2],
+                  level: stage.region * 3 + 2,
+                  hp: hp * 2,
+                  damage: damage * 1.25,
+                  gold: 0,
+                  xp: 0,
+                },
+                1900,
+                1050,
+                {
+                  captain: true,
+                  captainProfile: id,
+                  captainMentor: profile.mentor,
+                  captainVisualIdol: profile.visualIdol || profile.mentor,
+                  visualScale: profile.visualScale || 1.16,
+                  specialCd: 0,
+                  ...(id === 'frontier-overseer'
+                    ? { fieldCaptain: true, fieldCaptainVersion: 1 }
+                    : { roomCaptain: true, roomGuard: true, guard: true, roomCaptainVersion: 1 }),
+                },
+              );
               this.configureEnemy(e, 3);
             }
           }
@@ -2117,17 +2474,25 @@
           const id = region.id === 'march' ? 'wraith' : 'stalker';
           const cfg = R.nightEnemyCombat[id];
           for (let i = 0; i < 2; i++) {
-            const e = spawn({
-              species: id,
-              name: region.id === 'march' ? 'Lantern wraith' : 'Ash stalker',
-              icon: '👻',
-              level: stage.region * 3 + 2,
-              hp: Math.round((120 + stage.region * 100) * cfg.hp),
-              damage: Math.round((12 + stage.region * 7) * cfg.damage),
-              gold: 0, xp: 0,
-            }, 1450 + i * 260, 900 + i * 300, {
-              nightOnly: true, nightBalanceVersion: 1, specialCd: 1 + i * 0.35,
-            });
+            const e = spawn(
+              {
+                species: id,
+                name: region.id === 'march' ? 'Lantern wraith' : 'Ash stalker',
+                icon: '👻',
+                level: stage.region * 3 + 2,
+                hp: Math.round((120 + stage.region * 100) * cfg.hp),
+                damage: Math.round((12 + stage.region * 7) * cfg.damage),
+                gold: 0,
+                xp: 0,
+              },
+              1450 + i * 260,
+              900 + i * 300,
+              {
+                nightOnly: true,
+                nightBalanceVersion: 1,
+                specialCd: 1 + i * 0.35,
+              },
+            );
             this.configureEnemy(e, i);
           }
         } else if (stage.kind === 'boss') {
@@ -2140,11 +2505,21 @@
             if (boss.id !== 'darklord')
               for (let i = 0; i < 2; i++) {
                 const sp = species[i % species.length];
-                const e = spawn({
-                  species: sp[0], name: sp[1] + ' guardian', icon: sp[2],
-                  level: Math.max(1, boss.level - 1), hp: 65 + stage.region * 105,
-                  damage: 7 + stage.region * 8, gold: 0, xp: 0,
-                }, 1510, 770 + 600 * i, { guard: true, guardianBalanceVersion: 2 });
+                const e = spawn(
+                  {
+                    species: sp[0],
+                    name: sp[1] + ' guardian',
+                    icon: sp[2],
+                    level: Math.max(1, boss.level - 1),
+                    hp: 65 + stage.region * 105,
+                    damage: 7 + stage.region * 8,
+                    gold: 0,
+                    xp: 0,
+                  },
+                  1510,
+                  770 + 600 * i,
+                  { guard: true, guardianBalanceVersion: 2 },
+                );
                 this.configureEnemy(e, i);
               }
           }
@@ -2161,7 +2536,8 @@
           // Clamping a 14px hero only by actorRadius would leave its center
           // one pixel outside that segment and trap *both* movement directions.
           const radius = Math.max(15, this.actorRadius(actor)),
-            low = 40 + radius, high = size - 40 - radius;
+            low = 40 + radius,
+            high = size - 40 - radius;
           actor.x = Math.max(low, Math.min(high, actor.x));
           actor.y = Math.max(low, Math.min(high, actor.y));
         }
@@ -2192,8 +2568,7 @@
         return true;
       }
       arenaLevelUp() {
-        if (this.s.mode !== 'arena' || this.hero.level >= 10000 || this.hero.hp <= 0)
-          return false;
+        if (this.s.mode !== 'arena' || this.hero.level >= 10000 || this.hero.hp <= 0) return false;
         // One interaction = one real XP threshold and exactly one level-up.
         // The existing progression system awards HP, talent points, and notices.
         const oldLevel = this.hero.level;
@@ -2220,10 +2595,19 @@
         if (z.buildings.length >= 4) return z.buildings[z.buildings.length - 1];
         const b = {
           id: 'arena-barracks-' + this.s.nextId++,
-          kind: 'barracks', name: 'Arena Barracks', icon: '🏗️',
-          theme: 'vale', x: Math.min(1850, this.hero.x + 110), y: this.hero.y,
-          progress: 4, full: true, queue: 0, queueType: null,
-          upgradeProgress: 0, upgradePaid: true, interactionOnly: true,
+          kind: 'barracks',
+          name: 'Arena Barracks',
+          icon: '🏗️',
+          theme: 'vale',
+          x: Math.min(1850, this.hero.x + 110),
+          y: this.hero.y,
+          progress: 4,
+          full: true,
+          queue: 0,
+          queueType: null,
+          upgradeProgress: 0,
+          upgradePaid: true,
+          interactionOnly: true,
         };
         z.buildings.push(b);
         return b;
@@ -2232,6 +2616,7 @@
         if (this.s.mode === 'arena') return this.arenaZone();
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
+          this.greenwoodMigrate?.(z);
           // Keep authored generation/migrations on their established geometry.
           // Enable the scoped traversal correction only on the finished scene.
           this.setSceneryTraversal(z, false);
@@ -2244,6 +2629,7 @@
           this.clearStreetCorridors(z);
           this.regionalTravelSafety(z);
           this.environmentCoherence(z);
+          this.highlandsTreasuryFrontage(z);
           this.clearNamedRoadMarkers(z);
           this.townVisualClearance(z);
           // Environment coherence adds bridge approaches and clears their roads.
@@ -2251,13 +2637,19 @@
           this.strongholdCourtyardClearance(z);
           this.reedportRefugeSpacing(z);
           this.millhavenOnboardingLayout(z);
+          this.greenwoodOnboardingClearance(z);
           this.interiorCoherence(z);
           this.defenderEncounterLayout(z);
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
           this.highlandsLandscape(z);
+          this.highlandsQuarryRoadAccess(z);
           this.syncThornArrival(z);
+          this.greenwoodFinish?.(z);
+          // Finish after all region-specific scenery shifts and road updates.
+          this.marchCoastalFinalClearance(z);
+          this.clearStreetCorridors(z, true);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -2267,6 +2659,9 @@
           id = this.s.zone;
         const z = {
           id,
+          ...(id === 'vale' && R.greenwoodLayout
+            ? { greenwoodSourceVersion: R.greenwoodLayout.version }
+            : {}),
           ...(id === 'highlands' ? { appalachianSourceVersion: 1 } : {}),
           enemies: [],
           props: [],
@@ -2667,11 +3062,13 @@
         this.clearStreetCorridors(z);
         this.regionalTravelSafety(z);
         this.environmentCoherence(z);
+        this.highlandsTreasuryFrontage(z);
         this.clearNamedRoadMarkers(z);
         this.townVisualClearance(z);
         this.strongholdCourtyardClearance(z);
         this.reedportRefugeSpacing(z);
         this.millhavenOnboardingLayout(z);
+        this.greenwoodOnboardingClearance(z);
         this.interiorCoherence(z);
         this.defenderEncounterLayout(z);
         this.refreshNPCs();
@@ -2681,7 +3078,12 @@
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
         this.highlandsLandscape(z);
+        this.highlandsQuarryRoadAccess(z);
         this.syncThornArrival(z);
+        this.greenwoodFinish?.(z);
+        // Finish after all region-specific scenery shifts and road updates.
+        this.marchCoastalFinalClearance(z);
+        this.clearStreetCorridors(z, true);
         this.setSceneryTraversal(z);
         return z;
       }
@@ -3872,7 +4274,26 @@
           this.s.zone = before;
         }
       }
+      // Presentation-only reconciliation also runs for already-current v4
+      // room/entrance layouts. Do not bump geometry versions or rebuild actors,
+      // furnishings, caches or recovered crowns to correct an owner's name.
+      greenwoodTreasuryNames(z) {
+        if (z.id !== 'vale' && z.id !== 'supply-vale') return;
+        const room = R.supplyRooms.find((r) => r.id === 'supply-vale');
+        for (const n of z.npcs) {
+          if (z.id === 'vale' && n.id === 'supply-entrance') n.name = room.name;
+          if (z.id === room.id && n.kind === 'exit') n.name = 'Leave ' + room.name;
+          if (
+            z.id === room.id &&
+            n.kind === 'bundle' &&
+            !n.treasuryRecovery &&
+            Number.isInteger(n.index)
+          )
+            n.name = room.name + ' cache ' + (n.index + 1);
+        }
+      }
       authoredPlaces(z) {
+        this.greenwoodTreasuryNames(z);
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
           this.treasuryGuardPopulation(z);
@@ -3975,6 +4396,7 @@
         this.recoveryAndThermalLife(z);
         this.roadsideLanternLife(z);
         this.marchCoastalLayout(z);
+        this.marchTownRoadLink(z);
         this.lanternShoreLayout(z);
         this.highlandsTributeLayout(z);
       }
@@ -4052,6 +4474,196 @@
         const [x, y] = D.towns[0];
         Object.assign(supplier, this.safe(x + 115, y - 85, z.id));
         z.supplierPositionVersion = 2;
+      }
+      // The 2026 coastal layout begins at the harbor road (350,1370), not
+      // Reedport's actual refuge (350,1100). Attach that missing town leg on
+      // fresh and existing v4 worlds without rebuilding the coastal district.
+      // The Highlands Treasury roof historically sat directly over a public
+      // road. Preserve its interior/save identity and relocate only its stable
+      // exterior entrance to a real adjacent frontage, once per v4 campaign.
+      highlandsTreasuryFrontage(z) {
+        if (z.id !== 'highlands' || z.highlandsTreasuryFrontageVersion === 1) return;
+        const entrance = z.npcs.find((n) => n.id === 'supply-entrance');
+        if (!entrance) return;
+        if (this.distanceToRoad(z, entrance) < 190) {
+          const field = this.fieldCenter(this.regionIndex('highlands')),
+            room = R.supplyRooms.find((r) => r.id === 'supply-highlands'),
+            proposals = [
+              { x: 2170, y: 330 },
+              { x: 2166, y: 373 },
+              { x: 1795, y: 547 },
+              { x: 1759, y: 522 },
+            ],
+            valid = (p) =>
+              this.distanceToRoad(z, p) >= 190 &&
+              !this.blocked(p.x, p.y, z.id, 30, true) &&
+              dist(p, field) < Math.hypot(...room.entryOffset) + 195 &&
+              !z.npcs.some((n) => n !== entrance && dist(n, p) < 145) &&
+              !z.nodes.some((n) => dist(n, p) < 95) &&
+              !z.props.some((q) => q.roadBlocker && dist(q, p) < 195);
+          const frontage = proposals.find(valid);
+          if (!frontage) return; // Fail closed; never mark an obstructed door repaired.
+          Object.assign(entrance, frontage);
+        }
+        z.highlandsTreasuryFrontageVersion = 1;
+      }
+      // The Appalachian quarry hamlet previously ended 140 units north of
+      // the actual town-connected roadway. Keep its square at the canonical
+      // [2520,510] and add one genuine access spur without recreating streets.
+      // The new segment also requires the refuge and nearby roof artwork to
+      // honor the unchanged road-setback rule on fresh and v4 saved campaigns.
+      highlandsQuarryRoadAccess(z) {
+        if (
+          z.id !== 'highlands' ||
+          z.appalachianVersion !== 1 ||
+          z.highlandsQuarryRoadVersion === 1
+        )
+          return;
+        const town = { x: D.minors[2][0], y: D.minors[2][1] },
+          junction = { x: 2520, y: 650 },
+          roadExists = z.roads.some(
+            (road) => dist(road.at(-1), town) < 1 && road.some((p) => dist(p, junction) < 1),
+          );
+        if (!roadExists) {
+          const junctionPresent = z.roads.some((road) => road.some((p) => dist(p, junction) < 1));
+          if (!junctionPresent || !this.clearSegment(junction, town, 15, true)) return;
+          z.roads.push([junction, town]);
+        }
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const refuge = z.npcs.find((n) => n.id === 'minor'),
+            boundsOK = (p) => Math.min(p.x, p.y, 3400 - p.x, 3400 - p.y) >= 115,
+            free = (p, obj, setback, radius) =>
+              boundsOK(p) &&
+              this.distanceToRoad(z, p) + 0.01 >= setback &&
+              !this.blocked(p.x, p.y, z.id, radius, true) &&
+              !z.npcs.some((n) => n !== obj && dist(n, p) < 105) &&
+              !z.nodes.some((n) => dist(n, p) < 80) &&
+              !z.buildings.some((b) => b !== obj && dist(b, p) < 155) &&
+              !z.props.some(
+                (q) => q !== obj && dist(q, p) < Math.max(80, (q.r || 0) + radius + 36),
+              );
+          if (!refuge) return; // A missing legacy service must not be certified.
+          if (!free(refuge, refuge, 180, 25)) {
+            const candidates = [
+              { x: 2580, y: 300 },
+              { x: 2690, y: 245 },
+              { x: 2450, y: 270 },
+              { x: 2770, y: 360 },
+            ];
+            for (const r of [215, 260, 310, 365, 425])
+              for (let j = 0; j < 32; j++) {
+                const a = -Math.PI / 2 + (j * Math.PI) / 16;
+                candidates.push({
+                  x: town.x + Math.cos(a) * r,
+                  y: town.y + Math.sin(a) * r,
+                });
+              }
+            const p = candidates.find((p) => dist(p, town) < 460 && free(p, refuge, 180, 25));
+            if (!p) return;
+            Object.assign(refuge, p);
+            refuge.servicePoint = { x: p.x, y: p.y };
+            if (this.s.refugeSite?.zone === z.id && this.s.refugeSite.id === refuge.id)
+              Object.assign(this.s.refugeSite, p);
+          }
+          // Relocate a roof affected by the new short road; retain its
+          // original ID, construction purpose and the connected road itself.
+          const touching = z.props.filter(
+            (p) =>
+              !p.roadTrace &&
+              this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
+              this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p),
+          );
+          for (const prop of touching) {
+            const old = { x: prop.x, y: prop.y },
+              setback = this.roadSetback(prop);
+            const candidates = [];
+            for (const r of [20, 35, 55, 80, 110, 150, 195, 250, 320])
+              for (let j = 0; j < 32; j++) {
+                const a = (j * Math.PI) / 16;
+                candidates.push({
+                  x: old.x + Math.cos(a) * r,
+                  y: old.y + Math.sin(a) * r,
+                });
+              }
+            const p = candidates.find((p) => free(p, prop, setback, Math.max(15, prop.r || 0)));
+            if (!p) return; // Retry later, retaining all original objects.
+            Object.assign(prop, p);
+          }
+          if (
+            z.props.some(
+              (p) =>
+                !p.roadTrace &&
+                this.distanceToSegment(p, junction, town) <= this.roadSetback(p) + 30 &&
+                this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p),
+            )
+          )
+            return;
+          if (this.distanceToRoad(z, refuge) + 0.01 < 180) return;
+          z.highlandsQuarryRoadVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
+      marchTownRoadLink(z) {
+        if (z.id !== 'march' || z.coastalSwampVersion !== 1) return;
+        const town = { x: D.towns[1][0], y: D.towns[1][1] },
+          junction = { x: 350, y: 1370 },
+          onExistingRoad = (point) =>
+            z.roads.some((road) =>
+              road.some((p, j) => j && this.distanceToSegment(point, road[j - 1], p) < 1),
+            );
+        if (z.marchTownRoadVersion !== 1) {
+          if (!onExistingRoad(junction)) return; // Do not certify an absent road.
+          if (!onExistingRoad(town)) z.roads.unshift([town, junction]);
+          z.marchTownRoadVersion = 1;
+        }
+      }
+      marchCoastalFinalClearance(z) {
+        if (z.id !== 'march' || z.marchTownRoadVersion !== 1) return;
+        // Coastal decor was generated AFTER the original street-clearance pass
+        // using a 58-unit buffer even where artwork needs >=72. Move ONLY the
+        // authored shore details, preserving their ID, style and old-save state.
+        if (z.marchCoastalRoadClearanceVersion === 1) return;
+        const coastal = z.props.filter((p) => String(p.id || '').startsWith('lantern-coast-'));
+        for (const item of coastal) {
+          const setback = this.roadSetback(item);
+          if (this.distanceToRoad(z, item) + 0.01 >= setback) continue;
+          const nearest = this.nearestRoadPoint(z, item),
+            base = { x: item.x, y: item.y },
+            outward = nearest ? Math.atan2(base.y - nearest.y, base.x - nearest.x) : 0;
+          let relocated = null;
+          for (const radius of [12, 22, 35, 50, 75, 105, 145, 195, 260, 340]) {
+            for (let j = 0; j < 32; j++) {
+              const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1),
+                angle = outward + (fan * Math.PI) / 16,
+                point = {
+                  x: base.x + Math.cos(angle) * radius,
+                  y: base.y + Math.sin(angle) * radius,
+                };
+              if (
+                Math.min(point.x, point.y, 3000 - point.x, 3000 - point.y) < 35 ||
+                this.distanceToRoad(z, point) + 0.01 < setback ||
+                this.blocked(point.x, point.y, z.id, 8, true) ||
+                z.npcs.some((n) => dist(n, point) < 65) ||
+                z.nodes.some((n) => dist(n, point) < 60) ||
+                z.buildings.some((b) => dist(b, point) < 95) ||
+                z.props.some(
+                  (p) =>
+                    p !== item && !p.decorative && dist(p, point) < Math.max(25, p.r || 0) + 25,
+                )
+              )
+                continue;
+              relocated = point;
+              break;
+            }
+            if (relocated) break;
+          }
+          if (!relocated) return; // Fail closed: original strict road test remains red.
+          Object.assign(item, relocated);
+        }
+        z.marchCoastalRoadClearanceVersion = 1;
       }
       marchCoastalLayout(z) {
         if (z.id !== 'march' || z.coastalSwampVersion === 1) return;

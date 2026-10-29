@@ -11,6 +11,7 @@ function scene(clock, points = 0, ranged = false, distance = 50) {
     if (points-- > 0) g.victory(b.id, 'normal');
     if (points-- > 0) g.victory(b.id, 'true');
   }
+  const dryX = C.rules.barriers[0].bounds[1] + 400;
   const e = g.makeEnemy(
     {
       species: ranged ? 'archer' : 'goblin',
@@ -21,7 +22,7 @@ function scene(clock, points = 0, ranged = false, distance = 50) {
       gold: 0,
       xp: 0,
     },
-    { x: 1400, y: 1700 },
+    { x: dryX, y: 1700 },
   );
   Object.assign(e, { aggro: true, fightStart: 0, ranged, cd: 0 });
   g.zone().enemies = [e];
@@ -30,6 +31,8 @@ function scene(clock, points = 0, ranged = false, distance = 50) {
   g.s.mercyTime = 0;
   g.s.time = 30;
   Object.assign(g.hero, { x: e.x + distance, y: e.y, level: 5 });
+  assert(!g.blocked(e.x,e.y,'vale',15,true) && !g.blocked(g.hero.x,g.hero.y,'vale',15,true), 'tempo fixture is on dry same-bank ground');
+  assert(g.clearSegment(e,g.hero,15,true), 'tempo fixture does not straddle the relocated river');
   return { g, e };
 }
 for (const [points, expected] of [

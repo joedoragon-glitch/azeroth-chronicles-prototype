@@ -137,14 +137,26 @@ function thornScene(cls = 'paladin') {
   const goal = e.thornIntroRetreat,
     start = { x: e.x, y: e.y },
     mira = { x: n.x, y: n.y };
-  for (let i = 0; i < 25; i++) {
+  // The retreat route is now planned incrementally to protect frame time.
+  // Verify physical travel with a finite liveness bound, not an assumption
+  // that an obstacle-heavy route is available inside the old 2.5s window.
+  let maxStep = 0;
+  for (let i = 0; i < 250 &&
+      (distance(e, start) <= 50 || distance(n, mira) <= 50); i++) {
+    const before = { x: e.x, y: e.y };
     g.s.time += 0.1;
     g.updateEnemies(0.1);
+    maxStep = Math.max(maxStep, distance(e, before));
     assert(!e.aggro);
     assert(!e.telegraph);
   }
+  assert(
+    maxStep <= C.rules.thornPatrol.speed * 0.1 + 0.01,
+    'scripted withdrawal moves normally, never teleports to clear the test',
+  );
   assert(distance(e, start) > 50, 'companion hit produces real withdrawal');
   assert(distance(n, mira) > 50, 'Mira follows the withdrawal');
+  assert(Number.isInteger(e.thornIntroRetreat), 'withdrawal remains active for save/reload');
   const restored = C.restore(g.snapshot(), () => 0.9),
     re = restored.zone().enemies.find((u) => u.id === ids[0]),
     rn = restored.thornCaptive();
