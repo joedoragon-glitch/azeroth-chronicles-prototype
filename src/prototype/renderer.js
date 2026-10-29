@@ -2721,7 +2721,7 @@
           staticTerrainTimeSeconds,
         );
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
-      PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
+      PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen, z.roads || [], i);
       if (!game.isDungeon())
         PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       } else {
