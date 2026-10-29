@@ -107,6 +107,37 @@ for (const language of ['en', 'es']) {
   assert.equal(scope.Prototype.started, true, 'explicit new Continue works');
 }
 
+// Confirmed WebGL loss in a session may restore behind Continue, but the
+// startup quarantine and repeated-failure hold must not be bypassed.
+for (const [label, launchRenderer, pending, recoveryPaused, expectedAttempts] of [
+  ['in-session context loss after Canvas startup', 'canvas2d', true, false, 1],
+  ['no recovery requested after Canvas startup', 'canvas2d', false, false, 0],
+  ['repeated WebGL failure hold', 'webgl2', false, true, 0],
+]) {
+  let attempts = 0;
+  const state = {
+    mode: 'canvas2d', phase: 'canvas', preferredRenderer: 'webgl2',
+    recoveryPending: pending, recoveryPaused,
+  };
+  const graphicsGuard = {
+    startupChoice: () => ({ renderer: launchRenderer }),
+    create: () => ({
+      status: () => state,
+      visibilityChanged() {},
+      check: () => state,
+      confirm: () => false,
+      revert: () => false,
+      requestWebGL: async () => false,
+      maybeRecover: async () => false,
+      webglFailed: () => false,
+      resumeConfirmedWebGL: async () => { attempts++; return false; },
+    }),
+  };
+  const { elements } = shell('en', 'mage', { stayOnTitle: true, graphicsGuard });
+  elements.get('title-continue').click();
+  assert.equal(attempts, expectedAttempts, label);
+}
+
 const fresh = shell('en', 'paladin', { stayOnTitle: true, seedSave: false });
 assert.equal(fresh.scope.Prototype.started, false);
 assert.equal(fresh.elements.get('title-continue').disabled, true);
