@@ -21,3 +21,13 @@ No comprehensive suite, browser matrix or deployment was run. Normal simulation 
 ## Resume
 
 Local branch: `perf/retrospective-runtime-20261024`. Complete candidate patch is relative to the pinned dev.175 base. Owner permission to push this branch to `joedoragon-glitch/azeroth-chronicles-prototype` and open a review PR has been received. The owner has authorized merging/deployment after the audit and the required focused release checks pass. Before publishing, reconcile any later main changes and the candidate version. Do not rerun already-passed unchanged checks merely because a conversation resumed.
+
+
+## Assessment checkpoint — 29 October 2026 (preserved work, not a release)
+
+Owner scope is now assessment only. Two candidate edits prepared before that change are retained explicitly at the owner's request, based on main `ef53b8b7f10e178e4f9bf68e9b00756df6602545` / dev.222:
+
+- `combat.js`: choose the earliest swept hostile-projectile actor contact before terrain, retaining actor order for ties. Baseline native diagnostic: a front companion intercepts at 16.67/33.33ms, but the rear hero receives damage at 100ms. The existing projectile-order test covers actor-versus-terrain ordering; multi-actor regression coverage is still needed.
+- `engine.js`: build ordinary-pack membership once per update instead of rescanning all enemies for each pack, retaining pack/member order and shared-pack guards; lazily reuse the living-party query within that synchronous update. Baseline Crown roster: 65 enemies, 15 eligible packs, 1,495 enemy-array element reads across the native update including its `zone()` reconciliation; the fully dead eligible-pack diagnostic calls `activeLivingParty()` 52 times. These are instrumented baseline counts, not candidate savings or device FPS.
+
+Only the baseline diagnostics were exercised. The retained candidate has no local regression/build validation, no new regression tests and no release-version bump. It must remain a draft until separately scoped verification, documentation reconciliation and current-main integration are completed. Automatic focused PR results, if any, are separate evidence and must be checked on the actual head. No merge, publication or device acceptance is claimed. Further findings are assessment only and are recorded in the owning draft PR. Preserve v4 saves, collision authority, rewards, respawn timing and existing renderer/companion work.

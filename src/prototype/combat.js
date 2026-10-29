@@ -1073,11 +1073,19 @@
               if (terrainFraction === Infinity) terrainFraction = 0;
             }
             const radius = p.hitRadius ?? (p.style === 'cargo' ? 34 : 22);
-            const victim = this.combatTargets().find(
-              (u) =>
-                this.distanceToSegment(u, before, p) < radius &&
-                sweptCircleEntry(u, before, p, radius) < terrainFraction,
-            );
+            // Resolve the first physical contact, independent of party order
+            // or how many actors a slower frame crosses. Keep terrain ties
+            // blocked and retain target order only for equal contact times.
+            let victim = null,
+              firstContact = terrainFraction;
+            for (const u of this.combatTargets()) {
+              if (this.distanceToSegment(u, before, p) >= radius) continue;
+              const contact = sweptCircleEntry(u, before, p, radius);
+              if (contact < firstContact) {
+                victim = u;
+                firstContact = contact;
+              }
+            }
             if (terrainContact && !victim) {
               this.enemyVfxProjectileImpact?.(p, { ...terrainContact, terrain: true });
               if (p.style === 'cargo')
