@@ -906,7 +906,7 @@
               new Set(u.masteryGuardianKeys).size !== u.masteryGuardianKeys.length ||
               u.masteryGuardianKeys.some((key) =>
                 typeof key !== 'string' ||
-                !/^[a-z0-9-]+:[a-z0-9-]+:-?\\d+:-?\\d+$/.test(key)))
+                !/^[a-z0-9-]+:[a-z0-9-]+:-?\d+:-?\d+$/.test(key)))
             throw Error('Invalid guardian mastery receipts');
           if (u.skill1Cd === undefined) u.skill1Cd = 0;
           if (u.skill2Cd === undefined) u.skill2Cd = 0;
