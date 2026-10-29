@@ -274,7 +274,8 @@
     for (const e of game
       .zone()
       .enemies.filter(
-        (e) => pendingWarning(e.telegraph) &&
+        (e) =>
+          pendingWarning(e.telegraph) &&
           (e.telegraph.anonymousCast || e.telegraph.mobileRogueCast),
       )) {
       const a = e.telegraph,
@@ -695,7 +696,10 @@
     for (const e of game.zone().enemies) {
       if (e.hp > 0 && !e.returning) {
         const closure =
-          e.dreadClosure || (pendingWarning(e.telegraph) && e.telegraph.dreadMechanic === 'closure' ? e.telegraph : null);
+          e.dreadClosure ||
+          (pendingWarning(e.telegraph) && e.telegraph.dreadMechanic === 'closure'
+            ? e.telegraph
+            : null);
         if (closure) {
           for (const points of dreadClosureShapes(closure)) {
             polygon(ctx, screen, points);
@@ -848,7 +852,10 @@
         e.returning ||
         !(
           e.anastylosis > 0 ||
-          (pendingWarning(e.telegraph) && e.telegraph.selfDefense && !e.telegraph.cinderMechanic && !e.telegraph.dreadMechanic)
+          (pendingWarning(e.telegraph) &&
+            e.telegraph.selfDefense &&
+            !e.telegraph.cinderMechanic &&
+            !e.telegraph.dreadMechanic)
         )
       )
         continue;
