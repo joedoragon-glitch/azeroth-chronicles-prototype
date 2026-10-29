@@ -1445,7 +1445,9 @@
           // Only real enemy actors use this bounded combat planner. Hero
           // orders, authored roads and non-enemy scripted routes retain the
           // original synchronous route API and movement behavior.
-          enemyPursuit = zone.enemies.includes(entity);
+          enemyPursuit = entity.aggro && !entity.returning &&
+            entity.type !== 'boss' && !entity.captain && !entity.roomCaptain &&
+            zone.enemies.includes(entity);
         if (this.clearSegment(entity, target)) {
           entity.path = [];
           if (enemyPursuit) terrainTrips.delete(entity);
