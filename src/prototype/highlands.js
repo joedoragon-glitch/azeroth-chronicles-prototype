@@ -310,9 +310,28 @@
         }
       }
     };
+    // Early Appalachian saves placed the generic ogre habitat at its old
+    // [1980,1820] coordinates even after the named camp moved south.
+    // Rehouse only that existing group, preserving every prop ID and save fact.
+    Campaign.prototype.highlandsOgreHabitatFrontage = function (z) {
+      if (z.id !== 'highlands' || z.highlandsOgreHabitatVersion === 1) return;
+      const old = { x: 1980, y: 1820 },
+        dx = anchors.ogre[0] - old.x,
+        dy = anchors.ogre[1] - old.y;
+      for (const p of z.props) {
+        if (
+          !/^world-life-habitat-\\d+$/.test(String(p.id || '')) ||
+          distance(p, old) > 220
+        ) continue;
+        const target = { x: p.x + dx, y: p.y + dy };
+        Object.assign(p, this.safe(target.x, target.y, z.id));
+      }
+      z.highlandsOgreHabitatVersion = 1;
+    };
     Campaign.prototype.highlandsLandscape = function (z) {
       if (z.id !== 'highlands') return;
       if (z.appalachianVersion === 1) {
+        this.highlandsOgreHabitatFrontage(z);
         this.highlandsTributeLayout(z);
         this.highlandsTownServices(z);
         return;
@@ -662,6 +681,7 @@
           z.props.push({ ...p, ...q });
         }
         z.appalachianVersion = 1;
+        this.highlandsOgreHabitatFrontage(z);
         this.highlandsTownServices(z);
         if (previous === z.id)
           for (const u of [this.hero, ...this.activeParty()])
