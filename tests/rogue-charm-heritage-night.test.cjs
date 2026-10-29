@@ -75,6 +75,11 @@ try {
     e.aggro = true;
     e.returning = false;
     game.zone().enemies.push(e);
+    // Engaging an unconfigured mock triggers native regional stat scaling.
+    // Normalize it BEFORE measuring ability damage; never infer healing
+    // from the initial encounter's 1.25x melee HP adjustment.
+    game.engage(e, true);
+    e.maxHp = e.hp = 10000;
     return e;
   }
   function attachCritical(game, roll) {
@@ -110,6 +115,28 @@ try {
     assert.equal(rolls(), 1, species + ' invalid recast draws nothing');
     assert.equal(Campaign.validate(game.snapshot()).party[0].skill3Cd,
       def.cooldown, species + ' v4 cooldown persisted');
+    // Personal mastery is saved, while every legitimate effect gets a small,
+    // bounded potency gain without changing radius, target count or timers.
+    const tierDamage = [];
+    for (const points of [0, 4, 10, 18]) {
+      const tierGame = fresh(), tierAlly = ally(tierGame, species);
+      const tierEnemy = foe(tierGame);
+      tierGame.hero.skills[1] = 1;
+      tierAlly.masteryPoints = points;
+      const before = tierEnemy.hp;
+      assert(tierGame.charmedSpeciesSpecial(tierAlly, tierEnemy, def),
+        species + ' tier ' + points + ' legal hit');
+      tierDamage.push(before - tierEnemy.hp);
+      assert.equal(Campaign.validate(tierGame.snapshot()).party[0].masteryPoints,
+        points, 'mastery points persisted at ' + points);
+      assert.equal(tierGame.companionMasteryTier(tierAlly),
+        [0, 4, 10, 18].indexOf(points));
+      assert.equal(tierAlly.skill3Cd, def.cooldown, 'mastery never shortens cooldown');
+    }
+    assert(tierDamage.every((n, i) => i === 0 || n >= tierDamage[i - 1]),
+      species + ' mastery never weakens on-hit damage');
+    assert(tierDamage[3] <= tierDamage[0] * 1.13 + 0.01,
+      species + ' mastery cannot inflate heritage damage excessively');
     if (def.slow) assert(e.slow > 0, species + ' real Slow on contact');
   }
 
