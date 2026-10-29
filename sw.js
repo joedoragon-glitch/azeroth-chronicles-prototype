@@ -4,7 +4,7 @@ const CACHE_VERSION = "azeroth-app-v0.9.1+snapshot.dev.212";
 (function (root) {
   'use strict';
   const LIMITS = Object.freeze({
-    decodedBytes: 256 * 1024 * 1024,
+    decodedBytes: 1024 * 1024 * 1024,
     concurrent: 2,
     resourcePixels: 1024 * 1024,
   });
