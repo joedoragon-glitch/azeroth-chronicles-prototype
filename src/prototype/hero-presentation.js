@@ -196,10 +196,11 @@
       const emit = (stage, life, extra = {}) =>
         push({ ...e, ...extra, stage, ...p }, 'heroSkill', life, 4);
       if (e.class === 'rogue' && e.type === 'rogueBellBasic') {
-        // Instant attack: real cast and landed primary contact only.
+        // A landed basic releases one self-centered visible pulse, not a
+        // distant target impact or one separate VFX per splash victim.
         emit('cast', 0.24);
-        if (e.landed && Number.isFinite(e.targetX) && Number.isFinite(e.targetY))
-          emit('impact', 0.3, { x: e.targetX, y: e.targetY, charged: e.combo === 3 });
+        if (e.landed && Number.isFinite(e.radius) && e.radius > 0)
+          emit('area', e.combo === 3 ? 0.34 : 0.26, { charged: e.combo === 3 });
       } else if (e.class === 'rogue' &&
         ['rogueBellSkill1', 'rogueBellPerformance'].includes(e.type)) {
         // One bounded circle per lawful release; no per-contact effects.
@@ -810,14 +811,21 @@
           ctx.globalAlpha = fade * 0.28;
           ring(ctx, screen, f, radius * Math.max(0.15, expansion - 0.17));
         }
-        for (let j = 0; j < (reduced ? 4 : count); j++) {
-          const angle = (j * Math.PI * 2) / (reduced ? 4 : count),
+        // Rogue performances are broad sound/dance waves: a few light
+        // perimeter accents make the larger circle legible without a
+        // screenful of oversized bell glyphs or per-target particles.
+        const accents = f.class === 'rogue'
+          ? (reduced || optimized ? 2 : f.charged ? 4 : 3)
+          : (reduced ? 4 : count);
+        for (let j = 0; j < accents; j++) {
+          const angle = (j * Math.PI * 2) / accents,
             q = screen({
               x: f.x + Math.cos(angle) * radius * 0.8,
               y: f.y + Math.sin(angle) * radius * 0.8,
             });
-          ctx.globalAlpha = fade * 0.65;
-          glyph(ctx, q.x, q.y - 5, f.motif, f.charged ? 8 : 5);
+          ctx.globalAlpha = fade * (f.class === 'rogue' ? 0.4 : 0.65);
+          glyph(ctx, q.x, q.y - 5, f.motif,
+            f.class === 'rogue' ? (f.charged ? 4.5 : 3.5) : (f.charged ? 8 : 5));
         }
       }
       if (f.class === 'ranger' && f.slot === 5 && f.contacts) {
