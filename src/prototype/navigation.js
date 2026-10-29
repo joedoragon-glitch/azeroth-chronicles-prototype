@@ -1187,19 +1187,50 @@
           // cell is still considered, with the exact native blocked/edge tests.
           const reachOnly = !!options.reachabilityOnly,
             distanceScore = (id) => {
-              const p = point(id), dx = p.x - target.x, dy = p.y - target.y;
+              const p = point(id),
+                dx = p.x - target.x,
+                dy = p.y - target.y;
               return dx * dx + dy * dy;
-            };
-          for (let at = 0; at < queue.length; at++) {
-            if (reachOnly) {
-              let best = at, cost = distanceScore(queue[at]);
-              for (let j = at + 1; j < queue.length; j++) {
-                const next = distanceScore(queue[j]);
-                if (next < cost) { best = j; cost = next; }
+            },
+            // A binary min-heap keeps the reachability-only frontier at
+            // O(log N) insertion/removal rather than scanning the full
+            // remaining queue on every node. Normal BFS is unchanged.
+            priority = [],
+            pushPriority = (id) => {
+              const item = { id, cost: distanceScore(id) };
+              let index = priority.length;
+              priority.push(item);
+              while (index > 0) {
+                const parent = (index - 1) >> 1;
+                if (priority[parent].cost <= item.cost) break;
+                priority[index] = priority[parent];
+                index = parent;
               }
-              if (best !== at) [queue[at], queue[best]] = [queue[best], queue[at]];
-            }
-            const id = queue[at];
+              priority[index] = item;
+            },
+            popPriority = () => {
+              const first = priority[0],
+                last = priority.pop();
+              if (priority.length) {
+                let index = 0;
+                while (index * 2 + 1 < priority.length) {
+                  let child = index * 2 + 1;
+                  if (
+                    child + 1 < priority.length &&
+                    priority[child + 1].cost < priority[child].cost
+                  )
+                    child++;
+                  if (priority[child].cost >= last.cost) break;
+                  priority[index] = priority[child];
+                  index = child;
+                }
+                priority[index] = last;
+              }
+              return first.id;
+            };
+          if (reachOnly) for (const id of sources) pushPriority(id);
+          for (let at = 0; at < queue.length; at++) {
+            const id = reachOnly ? popPriority() : queue[at];
             if (destinations.has(id)) {
               if (reachOnly) return [target];
               let path = [target];
@@ -1259,6 +1290,7 @@
                 continue;
               parents.set(j, id);
               queue.push(j);
+              if (reachOnly) pushPriority(j);
             }
           }
           return [];

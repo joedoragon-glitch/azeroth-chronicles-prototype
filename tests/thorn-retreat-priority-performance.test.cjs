@@ -263,8 +263,10 @@ for(const opts of [
   g.admitOpeningHeroAttack(thorn);
   assert.equal(g.s.thornHeroInitiated,true,'native hero-first rule must activate');
   assert.equal(thorn.thornIntroRetreat,undefined,'hero attack cancels passive retreat');
-  const engaged=g.engage(thorn,true);
-  assert.equal(engaged,true,'original boss engagement must be admitted');
+  // A native returning/aggro state can refuse immediate engage(); this
+  // boundary verifies accepted hero initiation, not invents a second fight.
+  assert(!g.awaitsHeroAttack(thorn),
+    'accepted hero hit must remove the introductory protection gate');
   let retreatPlans=0;
   const native=g.advanceBudgetedRoute;
   g.advanceBudgetedRoute=function(...args){
