@@ -143,7 +143,8 @@ for (const language of ['en', 'es']) {
   g.s.party.push(g.unit('soldier', g.hero.x + 40, g.hero.y));
   s.Prototype.closeMenu();
   e.get('touch-interact-button').click();
-  assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 24);
+  assert(e.get('modal-description').textContent.includes('30'), 'Captain explains paid party healing');
+  assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 48);
   assert(
     e
       .get('modal-actions')
