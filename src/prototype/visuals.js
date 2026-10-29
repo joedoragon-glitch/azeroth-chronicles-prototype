@@ -19835,57 +19835,95 @@
     }
     return commands;
   }
+  let footpathPaintCache = null;
+  function samePaintPaths(paths, saved) {
+    return (
+      paths.length === saved?.length &&
+      paths.every(
+        (path, i) =>
+          path.length === saved[i].length &&
+          path.every((p, j) => p.x === saved[i][j][0] && p.y === saved[i][j][1]),
+      )
+    );
+  }
   function footpaths(ctx, paths, screen, roads = [], region = -1) {
-    // Trail paint must stop where a narrow doorstep path joins a wide
-    // carriageway, not show a second diagonal stripe through the road.
-    // This changes painting only; saved paths and navigation stay intact.
-    const roadDistance = (p) => {
-      if (region !== 0 || !roads.length) return Infinity;
-      let best = Infinity;
-      for (const route of roads)
-        for (let i = 1; i < route.length; i++) {
-          const a = route[i - 1], b = route[i],
-            vx = b.x - a.x, vy = b.y - a.y,
-            t = Math.max(0, Math.min(1,
-              ((p.x - a.x) * vx + (p.y - a.y) * vy) / Math.max(1, vx * vx + vy * vy)));
-          best = Math.min(best, Math.hypot(p.x - a.x - t * vx, p.y - a.y - t * vy));
-        }
-      return best;
-    };
-    ctx.save();
-    ctx.lineJoin = 'round';
-    for (const path of paths || [])
-      for (let j = 1; j < path.length; j++) {
-        let a = path[j - 1],
-          b = path[j];
-        const first = roadDistance(a), last = roadDistance(b);
-        if (first < 34 && last < 34) continue;
-        const originalLength = Math.hypot(b.x - a.x, b.y - a.y);
-        if (!originalLength) continue;
-        // Trim only the overlapping mouth, retaining the visible doorstep.
-        if (first < 34) {
-          const t = Math.min(0.45, (34 - first) / originalLength);
-          a = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
-        } else if (last < 34) {
-          const t = Math.min(0.45, (34 - last) / originalLength);
-          b = { x: b.x + (a.x - b.x) * t, y: b.y + (a.y - b.y) * t };
-        }
-        const d = Math.hypot(b.x - a.x, b.y - a.y);
-        if (d < 1) continue;
-        const nx = (-(b.y - a.y) / d) * 9,
-          ny = ((b.x - a.x) / d) * 9,
-          points = [
+    // Saved roads/footpaths are mutable. Compare coordinates, not object identity,
+    // before reusing this presentation-only overlay. Avoid O(paths * roads)
+    // route-distance probes in every iPhone frame.
+    const hit =
+      footpathPaintCache?.region === region &&
+      samePaintPaths(paths, footpathPaintCache.paths) &&
+      samePaintPaths(roads, footpathPaintCache.roads);
+    let quads = hit ? footpathPaintCache.quads : null;
+    if (!quads) {
+      const roadDistance = (p) => {
+        if (region !== 0 || !roads.length) return Infinity;
+        let best = Infinity;
+        for (const route of roads)
+          for (let i = 1; i < route.length; i++) {
+            const a = route[i - 1], b = route[i],
+              vx = b.x - a.x, vy = b.y - a.y,
+              t = Math.max(0, Math.min(1,
+                ((p.x - a.x) * vx + (p.y - a.y) * vy) / Math.max(1, vx * vx + vy * vy)));
+            best = Math.min(best, Math.hypot(p.x - a.x - t * vx, p.y - a.y - t * vy));
+          }
+        return best;
+      };
+      const distances = new Map();
+      const distance = (p) => {
+        const key = p.x + ':' + p.y;
+        if (!distances.has(key)) distances.set(key, roadDistance(p));
+        return distances.get(key);
+      };
+      quads = [];
+      for (const path of paths)
+        for (let j = 1; j < path.length; j++) {
+          let a = path[j - 1], b = path[j];
+          const first = distance(a), last = distance(b);
+          if (first < 34 && last < 34) continue;
+          const originalLength = Math.hypot(b.x - a.x, b.y - a.y);
+          if (!originalLength) continue;
+          // Narrow doorstep trails stop at the cart-road edge rather than
+          // painting a second diagonal road on top of the carriageway.
+          if (first < 34) {
+            const t = Math.min(0.45, (34 - first) / originalLength);
+            a = { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+          } else if (last < 34) {
+            const t = Math.min(0.45, (34 - last) / originalLength);
+            b = { x: b.x + (a.x - b.x) * t, y: b.y + (a.y - b.y) * t };
+          }
+          const d = Math.hypot(b.x - a.x, b.y - a.y);
+          if (d < 1) continue;
+          const nx = (-(b.y - a.y) / d) * 9,
+            ny = ((b.x - a.x) / d) * 9;
+          quads.push([
             { x: a.x + nx, y: a.y + ny },
             { x: b.x + nx, y: b.y + ny },
             { x: b.x - nx, y: b.y - ny },
             { x: a.x - nx, y: a.y - ny },
-          ].map(screen);
-        ctx.fillStyle = '#8f805568';
-        ctx.beginPath();
-        points.forEach((p, k) => (k ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
-        ctx.closePath();
-        ctx.fill();
-      }
+          ]);
+        }
+      const count = (paths.reduce((n, p) => n + p.length, 0) +
+        roads.reduce((n, p) => n + p.length, 0));
+      footpathPaintCache = count <= 8192 && quads.length <= 4096
+        ? {
+            region,
+            paths: paths.map((p) => p.map((q) => [q.x, q.y])),
+            roads: roads.map((p) => p.map((q) => [q.x, q.y])),
+            quads,
+          }
+        : null;
+    }
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.fillStyle = '#8f805568';
+    for (const quad of quads) {
+      const points = quad.map(screen);
+      ctx.beginPath();
+      points.forEach((p, k) => (k ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
+      ctx.closePath();
+      ctx.fill();
+    }
     ctx.restore();
   }
   function roads(ctx, paths, screen, region = 0, materials = null, viewport = null) {
