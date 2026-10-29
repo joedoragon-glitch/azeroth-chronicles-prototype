@@ -36,7 +36,7 @@ This draft removes only the **two invocations** of `this.clearStreetCorridors(z,
 
 ## Native rendered comparison — one seeded world per region (29 October 2026)
 
-**Measured, not inferred:** The original [focused CI #40967241998](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40967241998) executed `tests/regional-street-rollback-audit.test.cjs` on the source candidate `0fa91a8a`. It rendered four **native Canvas gameplay** views per region at **150% zoom**: town and hamlet with the additional global pass **disabled** (left), versus the same objects after explicitly forcing `clearStreetCorridors(z, true)` once (right). The corresponding exact-ID movement/road data is [retained in a machine-readable evidence record](evidence/regional-street-rollback-20261029/region-deltas.json). These are matched candidate-state simulations, **not** actual pre-#570 checkout screenshots; visual judgment is independent of the old test's connectivity requirement.
+**Measured, not inferred:** The original [focused CI #40967241998](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40967241998) executed `tests/regional-street-rollback-audit.test.cjs` on the source candidate `0fa91a8a`. It rendered four **native Canvas gameplay** views per region at **150% zoom**: town and hamlet with the additional global pass **disabled** (left), versus the same objects after explicitly forcing `clearStreetCorridors(z, true)` once (right). The corresponding exact-ID movement/road data is [retained in a machine-readable evidence record](evidence/regional-street-rollback-20261029/seeded-spatial-deltas.json). These are matched candidate-state simulations, **not** actual pre-#570 checkout screenshots; visual judgment is independent of the old test's connectivity requirement.
 
 | Region | Roads before→forced extra | Added road polylines | Prop moves | Service moves | Player building moves |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -55,16 +55,16 @@ This draft removes only the **two invocations** of `this.clearStreetCorridors(z,
 **Render evidence (left = candidate without extra sweep; right = explicit forced extra sweep):**
 
 ### Flooded Marches
-![Flooded Marches: 150-percent native town and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/march.webp)
+![Flooded Marches: 150-percent native town and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/march-native-before-after.webp)
 
 ### Ironroot Highlands
-![Ironroot Highlands: 150-percent native Stonecross and quarry hamlet before/after extra pass](evidence/regional-street-rollback-20261029/highlands.webp)
+![Ironroot Highlands: 150-percent native Stonecross and quarry hamlet before/after extra pass](evidence/regional-street-rollback-20261029/highlands-native-before-after.webp)
 
 ### Ashen Frontier
-![Ashen Frontier: 150-percent native Emberwatch and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/frontier.webp)
+![Ashen Frontier: 150-percent native Emberwatch and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/frontier-native-before-after.webp)
 
 ### Dark Crown
-![Dark Crown: 150-percent native Crownwatch and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/crown.webp)
+![Dark Crown: 150-percent native Crownwatch and hamlet before/after extra pass](evidence/regional-street-rollback-20261029/crown-native-before-after.webp)
 
 **Readiness:** This is a first real native visual pass, **not** a complete visual certification. Original merged-PR comparison, additional seeds, post-dev.233 v4 saves and after-reload shots are still required. The candidate is currently **not** merge-ready because the original Highlands road/service clearance assertion fails. Keep specific legitimate repairs and resolve this narrowly; do not relax the strict obstruction contract to suppress a real defect.
 
@@ -90,7 +90,6 @@ This draft removes only the **two invocations** of `this.clearStreetCorridors(z,
 | `frontier` | 41 → 41 | 0 | 86 | 4 | 0 |
 | `crown` | 30 → 34 | 4 | 36 | 4 | 0 |
 
-**Image receipts:** [march paired native scenes](evidence/regional-street-rollback-20261029/march-native-before-after.webp) · [highlands paired native scenes](evidence/regional-street-rollback-20261029/highlands-native-before-after.webp) · [frontier paired native scenes](evidence/regional-street-rollback-20261029/frontier-native-before-after.webp) · [crown paired native scenes](evidence/regional-street-rollback-20261029/crown-native-before-after.webp). [Full per-object, per-road delta](evidence/regional-street-rollback-20261029/seeded-spatial-deltas.json) records each identity, coordinate, segment endpoint and travel distance; those binary captures are genuine rendered outputs of this diagnostic, not artistic mockups.
 
 **Independent visual/source interpretation:** March shows no change from this extra pass (the targeted Reedport and shoreline repairs are separate). Highlands moves three town services, including the `rest` NPC **463.82 units**; the original strict street audit on this candidate reports the unchanged refuge violates a road-side clearance, so a *targeted* repair is necessary. Frontier moves **86 props and four services without adding a road**, including noticeable hamlet structures/defenses. Crown adds **four connecting segments** and moves **36 props plus four services**, with at least one house moved **1,086.65 units**. The Crown visual pairs show substantial dislocation of the residential arrangement. These are grounded reasons to reject the blanket automatic completion/displacement pass, not claims that every moved decorative object was individually unacceptable.
 
