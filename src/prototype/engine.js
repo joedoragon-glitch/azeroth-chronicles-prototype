@@ -5006,13 +5006,19 @@
       if (incremental) {
         const previous = tacticalRogueRouteSearches.get(e),
           pending = previous?.allyId === ally.id ? previous.state : null,
-          result = this.advanceBudgetedRoute(e, destination, 'tactical', pending);
+          result = this.advanceBudgetedRoute(
+            pending?.origin || e, pending?.target || destination, 'tactical', pending,
+          );
         if (result.pending) {
           tacticalRogueRouteSearches.set(e, { allyId: ally.id, state: result.state });
           return null; // pending is distinct from an invalid or unreachable regroup
         }
         tacticalRogueRouteSearches.delete(e);
         path = result.path;
+        // An actor may have continued its defensive escape while a route
+        // was being planned. Never commit a path with an obstructed first
+        // leg from the actor's actual current position.
+        if (path.length && !this.clearSegment(e, path[0])) return false;
       } else path = this.route(e, destination);
       if (!path.length) return false;
       let length = 0;
