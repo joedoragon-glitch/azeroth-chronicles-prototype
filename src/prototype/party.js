@@ -1635,6 +1635,12 @@
       rogueCompanionSpecialDamage(u, amount) {
         return amount * (1 + (this.rogueSongBoon(u, 'finale')?.specialDamage || 0));
       }
+      // One individual progression counter for all companion families.
+      companionMasteryTier(u) {
+        const points = Number.isInteger(u?.masteryPoints) ? u.masteryPoints : 0;
+        const [one, two, three] = R.balance.companions.mastery.thresholds;
+        return points >= three ? 3 : points >= two ? 2 : points >= one ? 1 : 0;
+      }
       companionAttackDamage(u) {
         return (
           (this.charmedCompanionProfile(u)?.damage ?? u.damage) +
@@ -2177,8 +2183,13 @@
           enhance = (value, lever) => criticalLever === lever
             ? this._criticalPartyNative.enhance(receipt, value, lever)
             : value,
+          tier = this.companionMasteryTier(u),
+          mastery = R.balance.companions.mastery,
+          damageGrowth = def.slow || def.push
+            ? mastery.controlDamagePerTier : mastery.directDamagePerTier,
           base = this.rogueCompanionSpecialDamage(
-            u, this.companionAttackDamage(u) * def.multiplier),
+            u, this.companionAttackDamage(u) * def.multiplier *
+              (1 + tier * damageGrowth)),
           damage = enhance(base, 'damage');
         let landed = 0, actualDamage = 0;
         for (const e of victims) {
@@ -2188,11 +2199,13 @@
           landed++;
           actualDamage += Math.max(0, hp - e.hp);
           if (e.hp <= 0) continue;
-          if (def.slow) this.applySlow(e, enhance(def.slow, 'slowDuration'));
+          if (def.slow) this.applySlow(e, Math.min(2.5,
+            enhance(def.slow + tier * mastery.slowSecondsPerTier, 'slowDuration')));
           if (def.push && e.type === 'mob' && e.form === 'normal' &&
               !e.captain && !e.roomCaptain) {
             const gap = Math.max(1, dist(u, e)),
-              push = Math.min(45, enhance(def.push, 'pushDistance')),
+              push = Math.min(45, enhance(
+                def.push + tier * mastery.pushUnitsPerTier, 'pushDistance')),
               point = { x: e.x + (e.x - u.x) / gap * push,
                 y: e.y + (e.y - u.y) / gap * push };
             if (this.clearSegment(e, point, 12)) this.move(e, point, 210, 0.2);
@@ -2202,7 +2215,8 @@
         // Siphon is based on actual post-mitigation lost HP, never theoretical
         // damage. No overheal or duplicate support-heal critical roll.
         if (def.siphon && u.hp > 0 && u.hp < u.maxHp) {
-          const recovered = Math.min(u.maxHp - u.hp, actualDamage * def.siphon);
+          const recovered = Math.min(u.maxHp - u.hp,
+            actualDamage * (def.siphon + tier * mastery.siphonFractionPerTier));
           if (recovered > 0) {
             u.hp += recovered;
             this.event('heal', { actor: 'companion', resource: 'health',
@@ -2325,7 +2339,9 @@
           criticalReceipt,
           this.rogueCompanionSpecialDamage(
             u, this.companionAttackDamage(u) *
-            (elite ? cfg.signatureDamageMultiplier : cfg.basicDamageMultiplier)),
+            (elite ? cfg.signatureDamageMultiplier : cfg.basicDamageMultiplier) *
+              (1 + this.companionMasteryTier(u) *
+                R.balance.companions.mastery.nativeDamagePerTier)),
         );
         let committed = false;
         if (ranged && !elite) {
@@ -2339,7 +2355,8 @@
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
-            slow: cfg.basicSlowSeconds,
+            slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
+              R.balance.companions.mastery.slowSecondsPerTier,
           });
           this.event('projectileLaunch', {
             actor: 'companion', role: 'archer', source: u.id,
@@ -2357,8 +2374,10 @@
                   !enemy.roomCaptain && enemy.form !== 'ringleader') {
                 const gap = Math.max(1, dist(u, enemy));
                 const point = {
-                  x: enemy.x + (enemy.x - u.x) / gap * cfg.pushDistance,
-                  y: enemy.y + (enemy.y - u.y) / gap * cfg.pushDistance,
+                  x: enemy.x + (enemy.x - u.x) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
+                  y: enemy.y + (enemy.y - u.y) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
                 };
                 this.move(enemy, point, 210, 0.2);
               }
@@ -2366,12 +2385,16 @@
                        enemy.type === 'mob' && enemy.form === 'normal') {
               const gap = Math.max(1, dist(u, enemy));
               const point = {
-                x: enemy.x + (enemy.x - u.x) / gap * cfg.pushDistance,
-                y: enemy.y + (enemy.y - u.y) / gap * cfg.pushDistance,
+                x: enemy.x + (enemy.x - u.x) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
+                y: enemy.y + (enemy.y - u.y) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
               };
               this.move(enemy, point, 210, 0.2);
-            } else this.applySlow(enemy, elite
-              ? cfg.signatureSlowSeconds : cfg.basicSlowSeconds);
+            } else this.applySlow(enemy, (elite
+              ? cfg.signatureSlowSeconds : cfg.basicSlowSeconds) +
+                this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.slowSecondsPerTier);
           }
         }
         if (!committed) return false;
@@ -2391,7 +2414,9 @@
         // interpretation is a short defensive ward, not an AI-breaking vanish.
         if (!elite && profile.blinds > 0) {
           u.wardUntil = Math.max(u.wardUntil || 0, this.s.time + cfg.dustWardSeconds);
-          u.wardReduction = Math.max(u.wardReduction || 0, cfg.dustWardReduction);
+          u.wardReduction = Math.max(u.wardReduction || 0,
+            cfg.dustWardReduction + this.companionMasteryTier(u) *
+              R.balance.companions.mastery.dustWardReductionPerTier);
         }
         u[elite ? 'skill2Cd' : 'skill1Cd'] =
           elite ? cfg.signatureCooldown : cfg.basicCooldown;
@@ -2472,6 +2497,7 @@
           damage: base[1],
           icon: base[2],
           cd: 0,
+          masteryPoints: 0,
           skill1Cd: 0,
           skill2Cd: 0,
           skill3Cd: 0,
