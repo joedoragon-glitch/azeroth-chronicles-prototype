@@ -52,7 +52,8 @@ const summarize = (v) => ({
   max: round(Math.max(...v)),
 });
 const provenance = {
-  mainSha: cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+  sourceSha: cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+  baseMainSha: cp.execFileSync('git', ['merge-base', 'HEAD', 'origin/main'], { cwd: root, encoding: 'utf8' }).trim(),
   comparedRuntimeSha256: Object.fromEntries(
     [
       'engine',
@@ -248,6 +249,14 @@ function census(g, seed) {
       items: rural,
     },
     architecture,
+    scenes: {
+      version: z.greenwoodSceneVersion || 0,
+      attemptVersion: z.greenwoodAttemptVersion || 0,
+      items: clone(z.greenwoodSceneAudit || []),
+      missingEssentialIds: (z.greenwoodSceneAudit || [])
+        .filter((p) => p.essential && !p.placed)
+        .map((p) => p.id),
+    },
     grid: {
       pitch: 50,
       sampled: grid.length,
@@ -292,6 +301,11 @@ function census(g, seed) {
     tribute: z.nodes.map((n) => ({ id: n.id, site: n.site, amount: n.amount, hidden: n.hidden })),
     routes,
     essentialFeatures: {
+      allAuthoredEssentialsPlaced: revised
+        ? z.greenwoodSceneVersion === (R.greenwoodLayout.sceneVersion || R.greenwoodLayout.version) &&
+          !!z.greenwoodSceneAudit?.length &&
+          z.greenwoodSceneAudit.every((p) => !p.essential || p.placed)
+        : false,
       mill: z.props.some((p) => p.id === 'greenwood-working-mill'),
       expandingOrchard: ['established', 'young', 'new'].every((id) =>
         z.props.some((p) => p.id === 'greenwood-orchard-' + id),
@@ -436,8 +450,11 @@ const report = {
   worlds,
   saves: saveResults,
   genuinePlayerHistoricalSavesAvailable: false,
-  stageAComplete: revised && size === 3200,
-  selectedSize: revised && size === 3200 ? 3200 : null,
+  measurementComplete: true,
+  stageAComplete: false,
+  selectedSize: null,
+  selectionBoundary:
+    'A measured candidate is not an accepted region. Review placed/skipped essentials, saves, routes, scenes and pacing together; the engineering selection is recorded in the existing handoff.',
 };
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(

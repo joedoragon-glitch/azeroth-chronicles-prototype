@@ -116,6 +116,7 @@
     const pond = R.terrain[0][0];
     R.greenwoodLayout = {
       version: 1,
+      sceneVersion: 2,
       size,
       groups,
       hamlet: { x: D.minors[0][0] - 220, y: D.minors[0][1] + 20 },
@@ -223,7 +224,8 @@
       }
       greenwoodFinish(z) {
         const cfg = R.greenwoodLayout;
-        if (z.id !== 'vale' || !cfg?.version || z.greenwoodAttemptVersion === cfg.version) return;
+        const sceneVersion = cfg?.sceneVersion || cfg?.version;
+        if (z.id !== 'vale' || !cfg?.version || z.greenwoodAttemptVersion === sceneVersion) return;
         const previous = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -419,7 +421,17 @@
           }
           const mill = add('greenwood-working-mill', 'vale-working-mill', cfg.mill, true, 52, true);
           // A dry wheel-side bank is part of the mill, not a second painted pool.
-          add('greenwood-mill-sluice', 'mill-sluice', { x: pond.x + 135, y: pond.y - 30 }, true);
+          // Put the controlled outlet on the pond's rim. The former proposal
+          // was rejected by terrain clearance and drifted onto dry ground.
+          // This is scene revision 2, independent of the one-time expansion.
+          const sluice = add(
+            'greenwood-mill-sluice',
+            'mill-sluice',
+            { x: pond.x + 125, y: pond.y - 70 },
+            true,
+          );
+          if (sluice && distance(sluice, pond) > pond.r + 35)
+            result.find((p) => p.id === sluice.id).placed = false;
           const orchardBase = cfg.orchard;
           for (const [id, dx, dy, kind] of [
             ['established', -160, 50, 'fruit-tree'],
@@ -509,7 +521,11 @@
           for (const door of destinations) {
             const road = this.nearestRoadPoint(z, door),
               path = road && this.route(road, door);
-            if (path?.length && distance(path.at(-1), door) < 35) z.footpaths.push([road, ...path]);
+            if (path?.length && distance(path.at(-1), door) < 35) {
+              const frontage = [road, ...path];
+              if (!z.footpaths.some((p) => JSON.stringify(p) === JSON.stringify(frontage)))
+                z.footpaths.push(frontage);
+            }
             else
               result.push({
                 id: 'frontage-' + destinations.indexOf(door),
@@ -541,8 +557,8 @@
             }
           }
           z.greenwoodSceneAudit = result;
-          z.greenwoodAttemptVersion = cfg.version;
-          if (result.every((p) => !p.essential || p.placed)) z.greenwoodSceneVersion = cfg.version;
+          z.greenwoodAttemptVersion = sceneVersion;
+          if (result.every((p) => !p.essential || p.placed)) z.greenwoodSceneVersion = sceneVersion;
         } finally {
           this.s.zone = previous;
         }
