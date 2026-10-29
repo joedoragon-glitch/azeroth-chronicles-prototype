@@ -335,6 +335,8 @@
         effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. Charm affects the surviving primary only.',
         metrics: [],
       };
+      tap.effect += ' Normal +5% basic damage and Charged +7% add up to +12% while independently active; repeats refresh only their own effect.';
+      charge.effect += ' Charged +7% and Normal +5% basic damage add up to +12% while their independent boon timers overlap.';
       add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
       add(auto, 'comboDamage', 'Primary combo damage',
         R.basicAttackCombo.multipliers.map((v) => base * v));
