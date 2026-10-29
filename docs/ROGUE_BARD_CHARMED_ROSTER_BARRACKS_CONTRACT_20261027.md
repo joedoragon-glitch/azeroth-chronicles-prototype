@@ -1,5 +1,11 @@
 # Rogue Bard — Expedition ownership caps and low-friction Barracks company management
 
+## 29 October 2026 — PR #635 queued recovery compatibility (dev.234 candidate)
+
+**Reconciliation with merged PR #632:** A Rogue's legally Charmed ally who falls during native combat is **automatically assigned to fallen reserve**, freeing the active field slot immediately for a new lawful Charm; this is a roster transition, **not a physical trip to a Barracks**. The fallen individual remains owned and counts toward its original monster-subtype cap. Paid recovery subsequently works from the existing Captain or completed Barracks service. The new per-companion recovery menu includes **fallen reserve Charmed allies**, not only fallen active troops, so a Basic Barracks may queue up to three and a Full Barracks may queue every owned fallen member. Each selected Charmed companion retains its ID, personal name, authenticated capture receipt, subtype quota and mastery across queued save/reload and individual 40-crown fulfillment. Completion leaves it **alive in reserve**, never auto-drafting it into the slot now occupied by a newly Charmed creature. Normal Paladin/Mage/Ranger and non-Charmed-party death behavior is unchanged.
+
+**Status:** Candidate reconciliation in [draft PR #635](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/635), with a new native multi-Charm combat-death → replacement Charm → queued Barracks recovery → v4 reload → paid FIFO integration regression in the original Rogue Phase 4 test. Full focused CI and merge/publication must be reported separately; this paragraph does not claim those gates passed.
+
 ## 29 October 2026 — Rogue fallen-Charm field-slot correction (dev.231 merged and published)
 
 When a **legitimate active Charmed monster** reaches **0 HP** in actual combat while Rogue is the current hero, it immediately leaves the active field party and enters the **fallen reserve**, including during combat and without requiring crowns or a Barracks. A later successful eligible Charm takes the freed slot; no resting companion is automatically drafted. The Rogue's active capacity is unchanged (3/4/4/5/6/7 by Expedition rank).

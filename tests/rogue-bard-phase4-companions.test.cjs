@@ -447,6 +447,76 @@ try {
     assert.equal(soldier.active, true, cls + ' retains legacy fallen-active behavior');
   }
 
+  // PR #632's native Rogue death-to-reserve transition must work with the
+  // individually queued paid recovery from the Barracks (PR #635). No slot
+  // returns to the field, and the original Charmed identities/quotas survive.
+  {
+    const care = fresh();
+    const captured = [capture(care), capture(care), capture(care)];
+    const receipts = captured.map((u) => ({
+      id: u.id,
+      name: u.customName,
+      origin: { ...u.charmOrigin },
+      mastery: u.masteryPoints,
+    }));
+    const barracks = {
+      id: 'rogue-recovery-base',
+      kind: 'barracks',
+      name: 'Rogue Recovery',
+      x: 600,
+      y: 550,
+      progress: 4,
+      queue: 0,
+      queueType: null,
+      full: false,
+      upgradeProgress: 0,
+      upgradePaid: false,
+    };
+    care.zone().buildings.push(barracks);
+    care.hero.gold = 0;
+    for (const u of captured) {
+      assert.equal(care.hitParty(u, u.hp + 100, 0, null, true), true);
+      assert.equal(u.hp, 0);
+      assert.equal(u.active, false, 'native Rogue death moves Charmed member to reserve');
+      assert.equal(care.isCharmedCompanion(u), true, 'capture provenance stays valid');
+    }
+    assert.equal(care.activeParty().length, 0);
+    const newCharm = capture(care, 'skeleton');
+    assert.equal(newCharm.active, true, 'freed field slot accepts new lawful Charm');
+    const ids = receipts.map((receipt) => receipt.id);
+    for (const id of ids)
+      assert(care.requestCompanionCare('recovery', barracks.id, id));
+    assert.deepEqual(care.s.companionCareRequests.recovery.companionIds, ids);
+    assert.equal(care.hero.gold, 0, 'no cost to queue');
+    let restored = Campaign.restore(care.snapshot(), () => 0.9);
+    assert.deepEqual(restored.s.companionCareRequests.recovery.companionIds, ids);
+    assert.equal(restored.activeParty().length, 1);
+    assert.equal(restored.rosterCount(), 4);
+    restored.zone().enemies = [];
+    restored.hero.gold = 80;
+    restored.resolveCompanionCareRequests();
+    assert.deepEqual(restored.s.companionCareRequests.recovery.companionIds, [ids[2]]);
+    assert.equal(restored.hero.gold, 0, 'two recoveries charge 40 crowns each');
+    assert.equal(restored.activeParty().length, 1, 'paid recovery cannot consume replacement slot');
+    for (const receipt of receipts) {
+      const u = restored.s.party.find((member) => member.id === receipt.id);
+      assert.equal(u.customName, receipt.name);
+      assert.deepEqual(u.charmOrigin, receipt.origin);
+      assert.deepEqual(restored.s.charmCaptures[u.id], receipt.origin);
+      assert.equal(u.masteryPoints, receipt.mastery);
+      assert.equal(u.active, false, 'recovering a fallen Rogue Charmed monster keeps it in reserve');
+      assert.equal(u.hp > 0, receipt.id !== ids[2], 'only paid queued members recover');
+      assert.equal(restored.isCharmedCompanion(u), true);
+    }
+    restored.hero.gold = 40;
+    restored.resolveCompanionCareRequests();
+    assert.equal(restored.s.companionCareRequests.recovery, null);
+    assert.equal(restored.activeParty().length, 1);
+    assert.equal(restored.s.party.filter((u) => u.charmOrigin?.typeId === receipts[0].origin.typeId).length, 3,
+      'fallen/recovered creatures still count toward the original subtype quota');
+    assert.doesNotThrow(() => Campaign.validate(restored.snapshot()));
+  }
+
   // Original classes retain their normal companion profile, recruiting and
   // active capacity; they cannot make new Rogue captures.
   for (const cls of ['paladin', 'mage', 'ranger']) {
