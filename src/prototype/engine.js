@@ -5003,7 +5003,7 @@
         retreatOrigin = { x: e.x, y: e.y };
       if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
       let path;
-      if (incremental) {
+      if (incremental && !Object.hasOwn(this, 'route')) {
         const previous = tacticalRogueRouteSearches.get(e),
           pending = previous?.allyId === ally.id ? previous.state : null,
           result = this.advanceBudgetedRoute(e, destination, 'tactical', pending);
