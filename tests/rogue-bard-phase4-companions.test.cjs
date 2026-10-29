@@ -205,6 +205,9 @@ try {
     // The native melee basic also retains its enemy-side damage crit.
     ally.skill1Cd = 100;
     ally.skill2Cd = 100;
+    // Isolate the ordinary basic critical: the new third heritage ability
+    // otherwise legitimately fires when the first two skills are cooling.
+    ally.skill3Cd = 100;
     ally.skillGlobalCd = 0;
     ally.cd = 0;
     game._tacticalPartyTargets = new Map();
