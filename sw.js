@@ -1,10 +1,10 @@
 /* Bump CACHE_VERSION when app assets change. Ready updates wait for the player. */
-const CACHE_VERSION = "azeroth-app-v0.9.1+snapshot.dev.212";
+const CACHE_VERSION = "azeroth-app-v0.9.1+snapshot.dev.219";
 /* Shared sprite/variant/clip resource contract: runtime, packaging and offline caching. */
 (function (root) {
   'use strict';
   const LIMITS = Object.freeze({
-    decodedBytes: 256 * 1024 * 1024,
+    decodedBytes: 1024 * 1024 * 1024,
     concurrent: 2,
     resourcePixels: 1024 * 1024,
   });

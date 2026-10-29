@@ -15,8 +15,14 @@
     Campaign.normalizeCharacterName = normalizeCharacterName;
     const laborAttacks = new WeakMap(),
       depositTrips = new WeakMap(),
+      depositPlans = new WeakMap(),
       deliveryAvoidance = new WeakMap();
     const companionJudgments = new WeakMap();
+    // Unsaved, per-game retreat-search allowance. Only critical planning is
+    // metered: real movement, ordinary collision and combat checks never lie.
+    const criticalRetreatFrames = new WeakMap(),
+      criticalRetreatRetries = new WeakMap(),
+      criticalRetreatExhausted = Object.freeze({});
     const heroGuidance = new WeakMap();
     const rangerHealRequests = new WeakMap();
     // Game-time song boons are transient, bounded, and never saved. Actors
@@ -58,9 +64,15 @@
 
 
     class Party {
-      // Stage 2: only six Soldier/Archer combat moves; feature gate is absent in production.
+      // The companion critical tier follows the actual allied action, not the
+      // companion's recruitment method. Authenticated Charmed melee/ranged
+      // actors use their role's existing basic and Heal release owners.
+      // Never give a Charmed monster unowned Soldier/Ranger special skills.
+      // The live app attaches an enabled native session; standalone Campaign
+      // fixtures still require explicit test-only attachment.
       troopCriticalRelease(u, move) {
-        if (!this._criticalPartyNative || u?.charmOrigin || !['soldier', 'archer'].includes(u?.type)) return null;
+        if (!this._criticalPartyNative || !['soldier', 'archer'].includes(u?.type) ||
+            (u.charmOrigin && !this.isCharmedCompanion(u))) return null;
         return this._criticalPartyNative.release(this, 'troop/' + u.type + '/' + move, u.id);
       }
       troopCriticalDamage(receipt, amount) {
@@ -768,43 +780,116 @@
       companionSurvivalRadius() {
         return R.companionJudgment.criticalFollowRadius;
       }
-      companionSurvivalPoint(u, living, threats) {
+      withCriticalRetreatBudget(u, search, fallback) {
         const cfg = R.companionJudgment,
-          shapes = this.companionDangerShapes(),
-          preferred = this.partyFollowPoint(u, living),
-          radius = this.companionSurvivalRadius(),
-          candidates = [{ x: u.x, y: u.y }, preferred, { x: this.hero.x, y: this.hero.y }];
+          now = this.s.time;
+        let frame = criticalRetreatFrames.get(this);
+        if (!frame || frame.zone !== this.zoneId || frame.time !== now) {
+          frame = { zone: this.zoneId, time: now, remaining: cfg.criticalTerrainChecksPerTick };
+          criticalRetreatFrames.set(this, frame);
+        }
+        const retry = criticalRetreatRetries.get(u);
         if (
-          dist(u, this.hero) <= cfg.maxAdvanceFromHero &&
-          this.companionPositionProtected(u) &&
-          !this.companionAreaDanger(u, u, cfg.criticalAvoidLookahead, shapes)
+          retry?.zone === this.zoneId &&
+          now >= retry.since &&
+          now < retry.until
         )
-          return { x: u.x, y: u.y };
-        for (const [origin, radii] of [
-          [this.hero, [cfg.criticalPreferredRadius, radius]],
-          [u, cfg.criticalLocalRadii],
-        ])
-          for (const r of radii)
-            for (let i = 0; i < cfg.criticalDirections; i++) {
-              const angle = (i * Math.PI * 2) / cfg.criticalDirections;
-              candidates.push({
-                x: origin.x + Math.cos(angle) * r,
-                y: origin.y + Math.sin(angle) * r,
-              });
-            }
-        return (
-          candidates
-            .filter(
-              (p) =>
-                dist(p, this.hero) <= radius &&
-                !this.blocked(p.x, p.y, this.zoneId, this.actorRadius(u)) &&
-                this.clearSegment(u, p, this.actorRadius(u)),
+          return fallback();
+        const allowed = Math.min(frame.remaining, cfg.criticalTerrainChecksPerSearch);
+        if (allowed <= 0) {
+          criticalRetreatRetries.set(u, {
+            zone: this.zoneId, since: now, until: now + cfg.criticalTerrainRetrySeconds,
+          });
+          return fallback();
+        }
+        let remaining = allowed;
+        const hadOwn = Object.hasOwn(this, 'blocked'),
+          original = this.blocked;
+        // Scope this strict count to one synchronous retreat search. A thrown
+        // sentinel stops *nested* clearance and protection tests before they
+        // can exceed the allowance; no unchecked path is reported as clear.
+        this.blocked = function (...args) {
+          if (remaining <= 0 || frame.remaining <= 0) throw criticalRetreatExhausted;
+          remaining--;
+          frame.remaining--;
+          return original.apply(this, args);
+        };
+        try {
+          return search();
+        } catch (error) {
+          if (error !== criticalRetreatExhausted) throw error;
+          criticalRetreatRetries.set(u, {
+            zone: this.zoneId, since: now, until: now + cfg.criticalTerrainRetrySeconds,
+          });
+          return fallback();
+        } finally {
+          if (hadOwn) this.blocked = original;
+          else delete this.blocked;
+        }
+      }
+      companionSurvivalPoint(u, living, threats) {
+        const standing = { x: u.x, y: u.y };
+        let best = null, bestScore = Infinity;
+        return this.withCriticalRetreatBudget(
+          u,
+          () => {
+            const cfg = R.companionJudgment,
+              shapes = this.companionDangerShapes(),
+              preferred = this.partyFollowPoint(u, living),
+              radius = this.companionSurvivalRadius(),
+              // Spend the first checks on nearby steps *away* from the
+              // closest live threat, not distant formation candidates. This
+              // keeps first-tick withdrawal responsive on a small CPU budget.
+              nearest = threats
+                .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
+                .sort((a, b) => dist(a, u) - dist(b, u))[0],
+              away = nearest
+                ? Math.atan2(u.y - nearest.y, u.x - nearest.x)
+                : null,
+              candidates = [];
+            if (away !== null)
+              for (const distance of [cfg.criticalStep, ...cfg.criticalLocalRadii])
+                candidates.push({
+                  x: u.x + Math.cos(away) * distance,
+                  y: u.y + Math.sin(away) * distance,
+                });
+            candidates.push(preferred, { x: this.hero.x, y: this.hero.y }, standing);
+            if (
+              dist(u, this.hero) <= cfg.maxAdvanceFromHero &&
+              this.companionPositionProtected(u) &&
+              !this.companionAreaDanger(u, u, cfg.criticalAvoidLookahead, shapes)
             )
-            .map((point) => ({
-              point,
-              score: this.companionSurvivalScore(u, point, preferred, threats, shapes),
-            }))
-            .sort((a, b) => a.score - b.score)[0]?.point || { x: u.x, y: u.y }
+              return standing;
+            for (const [origin, radii] of [
+              [this.hero, [cfg.criticalPreferredRadius, radius]],
+              [u, cfg.criticalLocalRadii],
+            ])
+              for (const r of radii)
+                for (let i = 0; i < cfg.criticalDirections; i++) {
+                  const angle = (i * Math.PI * 2) / cfg.criticalDirections;
+                  candidates.push({
+                    x: origin.x + Math.cos(angle) * r,
+                    y: origin.y + Math.sin(angle) * r,
+                  });
+                }
+            for (const point of candidates) {
+              if (
+                dist(point, this.hero) > radius ||
+                this.blocked(point.x, point.y, this.zoneId, this.actorRadius(u)) ||
+                !this.clearSegment(u, point, this.actorRadius(u))
+              )
+                continue;
+              // Update only after every geometry check and the score finish.
+              // An interrupted candidate must never become an escape target.
+              const score = this.companionSurvivalScore(u, point, preferred, threats, shapes);
+              if (score < bestScore) {
+                best = point;
+                bestScore = score;
+              }
+            }
+            return best || standing;
+          },
+          () => best || standing,
         );
       }
       companionContributionRange(u, slot = 0) {
@@ -900,7 +985,9 @@
         const cfg = R.companionJudgment;
         this._tacticalPartyTargets?.delete(u.id);
         const moving = this.companionHeroMoving();
-        if (moving || (this.s.recallActive && dist(u, this.hero) > cfg.maxAdvanceFromHero)) {
+        // A distant hero is a higher-priority escape anchor than local replan.
+        // Keep the native followCompanion collision checks fully authoritative.
+        if (moving || dist(u, this.hero) > cfg.maxAdvanceFromHero) {
           this.clearPartyCharge(u);
           state.contributing = false;
           state.evading = false;
@@ -1008,30 +1095,39 @@
         if (dist(before, u) < 0.1 && dist(u, state.point) > cfg.criticalArrivalRadius) {
           // If a distant anchor has no safe route, make a bounded local escape
           // without ever relaxing hostile or terrain collision.
-          const danger = this.companionSurvivalThreats(),
-            preferred = this.partyFollowPoint(u, living),
-            candidates = [];
-          for (let i = 0; i < cfg.criticalDirections; i++) {
-            const angle = (i * Math.PI * 2) / cfg.criticalDirections,
-              p = {
-                x: u.x + Math.cos(angle) * cfg.criticalStep,
-                y: u.y + Math.sin(angle) * cfg.criticalStep,
-              };
-            if (
-              dist(p, this.hero) <=
-                Math.max(this.companionSurvivalRadius(danger), dist(u, this.hero)) + 1 &&
-              this.clearSegment(u, p, this.actorRadius(u)) &&
-              this.companionSurvivalScore(u, p, preferred, danger) <
-                this.companionSurvivalScore(u, u, preferred, danger)
-            )
-              candidates.push(p);
-          }
-          candidates.sort(
-            (a, b) =>
-              this.companionSurvivalScore(u, a, preferred, danger) -
-              this.companionSurvivalScore(u, b, preferred, danger),
+          let best = null;
+          const escape = this.withCriticalRetreatBudget(
+            u,
+            () => {
+              const danger = this.companionSurvivalThreats(),
+                preferred = this.partyFollowPoint(u, living),
+                standingScore = this.companionSurvivalScore(u, u, preferred, danger);
+              let bestScore = standingScore;
+              for (let i = 0; i < cfg.criticalDirections; i++) {
+                const angle = (i * Math.PI * 2) / cfg.criticalDirections,
+                  p = {
+                    x: u.x + Math.cos(angle) * cfg.criticalStep,
+                    y: u.y + Math.sin(angle) * cfg.criticalStep,
+                  };
+                if (
+                  dist(p, this.hero) <=
+                    Math.max(this.companionSurvivalRadius(danger), dist(u, this.hero)) + 1 &&
+                  this.clearSegment(u, p, this.actorRadius(u))
+                ) {
+                  const score = this.companionSurvivalScore(u, p, preferred, danger);
+                  if (score < bestScore) {
+                    best = p;
+                    bestScore = score;
+                  }
+                }
+              }
+              return best;
+            },
+            () => best,
           );
-          if (candidates.length) this.move(u, candidates[0], speed, dt);
+          // Movement is *outside* the planning budget and still checks real
+          // collision. No result means stay put, not permission to phase.
+          if (escape) this.move(u, escape, speed, dt);
         }
         if (this.s.recallActive) {
           const counter = this.companionContributionTargets().find((e) =>
@@ -1314,6 +1410,7 @@
       }
       clearGatheringIntent(u) {
         laborAttacks.delete(u);
+        depositPlans.delete(u);
         depositTrips.delete(u);
         deliveryAvoidance.delete(u);
         this.clearCompanionTravel(u);
@@ -1452,16 +1549,17 @@
       rogueSongBoon(u, family) {
         if (
           this.hero.class !== 'rogue' ||
-          !u || u.hp <= 0 || u.active === false ||
-          !this.s.party.includes(u)
+          !u || u.hp <= 0 ||
+          (u !== this.hero && (u.active === false || !this.s.party.includes(u)))
         ) return null;
         const saved = roguePerformanceBoons.get(u);
         const entry = saved?.zone === this.zoneId ? saved[family] : null;
         return entry && entry.until > this.s.time ? entry : null;
       }
       applyRogueSongBoon(u, family, form) {
-        if (!['quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
-          this.hero.class !== 'rogue' || !this.activeLivingParty().includes(u))
+        if (!['refrain', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
+          this.hero.class !== 'rogue' ||
+          !(u === this.hero ? u.hp > 0 : this.activeLivingParty().includes(u)))
           return false;
         let state = roguePerformanceBoons.get(u);
         if (!state || state.zone !== this.zoneId) {
@@ -1473,6 +1571,7 @@
         // One strongest instance per family, never additive or permanent.
         state[family] = {
           until: Math.max(previous?.until || 0, until),
+          basicDamage: Math.max(previous?.basicDamage || 0, Math.min(0.07, form.basicDamage || 0)),
           move: Math.max(previous?.move || 0, Math.min(0.12, form.move || 0)),
           recovery: Math.max(previous?.recovery || 0, Math.min(0.08, form.recovery || 0)),
           specialRecovery: Math.max(previous?.specialRecovery || 0,
@@ -1497,7 +1596,7 @@
       }
       advanceRogueMending(dt) {
         if (this.hero.class !== 'rogue' || !Number.isFinite(dt) || dt <= 0) return;
-        for (const u of this.activeLivingParty()) {
+        for (const u of [this.hero, ...this.activeLivingParty()]) {
           const effect = this.rogueSongBoon(u, 'mending');
           if (!effect || !(effect.remainingHeal > 0)) continue;
           const live = Math.max(0.01, effect.until - (this.s.time - dt)),
@@ -1930,40 +2029,43 @@
         }
         return true;
       }
-      // The native ranged-species support repertoire already exists for enemy
-      // healers. Friendly captured ranged actors reuse its bounded recovery
-      // scale/cadence without inheriting Ranger spells or hero mana actions.
-      charmedRangedSupport(u, living) {
+      // A Charmed ranged healer uses the same automatic HP recovery as a
+      // conventional Ranger: the Neri-trained amount, five-second pulses,
+      // ten-second cooldown and idle/combat triage thresholds. Unlike the
+      // original hostile healer, it must support the friendly party while idle.
+      // Keep this separate from Ranger mana and offensive skill ownership.
+      charmedRangedSupport(u, living = this.activeLivingParty()) {
         if (
-          !this.isCharmedCompanion(u) ||
+          !u?.charmOrigin ||
           u.type !== 'archer' ||
+          !this.s.party.includes(u) ||
+          u.active === false ||
+          u.hp <= 0 ||
+          u.deathRollHeld ||
+          u.keeperHeld ||
+          !this.isCharmedCompanion(u) ||
           (u.charmSupportCd || 0) > 0 ||
           u.order ||
           this.peace ||
-          this.s.recallActive
+          this.s.challenge.pending ||
+          this.s.challenge.gameOver ||
+          this.mageSilenceActive(u)
         )
           return false;
-        const range = R.enemySupportHealing.range;
-        const patients = [this.hero, ...living]
-          .filter((ally) =>
+        const healThreshold = this.manaCombatActive()
+            ? R.rangerSupport.healThreshold
+            : 1,
+          patients = [this.hero, ...living].filter((ally) =>
             ally.hp > 0 &&
-            ally.hp < ally.maxHp * R.enemySupportHealing.threshold &&
-            dist(u, ally) <= range &&
-            this.line(u, ally))
-          .sort((a, b) =>
-            a.hp / a.maxHp - b.hp / b.maxHp ||
-            dist(u, a) - dist(u, b));
-        const target = patients[0];
+            ally.hp < ally.maxHp &&
+            ally.hp <= ally.maxHp * healThreshold &&
+            !this.hasSupportEffect(ally, 'health')),
+          target = patients.includes(this.hero)
+            ? this.hero
+            : patients.sort((a, b) =>
+                a.hp / a.maxHp - b.hp / b.maxHp)[0];
         if (!target) return false;
-        const amount = Math.max(1, Math.ceil(
-          target.maxHp * R.enemySupportHealing.fraction,
-        ));
-        target.hp = Math.min(target.maxHp, target.hp + amount);
-        u.charmSupportCd = R.enemySupportHealing.ordinary.cooldown;
-        this.event('heal', {
-          x: target.x, y: target.y, target: target.id, resource: 'health',
-        });
-        return true;
+        return this.castCompanionHeal(u, target);
       }
       companionTrySkill(u, target) {
         // An authored species must not inherit Soldier/Ranger special skills.
@@ -2071,7 +2173,82 @@
           Math.max(0, this.regionIndex()) * R.gatheringTravel.capacityPerRegion
         );
       }
-      depositSite(u) {
+      avoidDeliveryAfterThreat(u) {
+        const trip = depositTrips.get(u);
+        if (!trip?.site) return;
+        deliveryAvoidance.set(u, {
+          zone: this.zoneId,
+          point: { x: trip.site.x, y: trip.site.y },
+          until: this.s.time + R.gatheringTravel.retryDestinationSeconds,
+        });
+        depositTrips.delete(u);
+        // The same hazard invalidates any partially evaluated destination
+        // ranking, not just a completed cached delivery target.
+        depositPlans.delete(u);
+      }
+      budgetedDepositSite(u, sites, avoid) {
+        // The old ranking (shortest traversable path plus danger penalties)
+        // is preserved. Search progress is transient; an unfinished search
+        // never makes a legal supplier appear unreachable.
+        const unique = [], seen = new Set();
+        for (const site of sites) {
+          const key = site.x + ':' + site.y;
+          if (!seen.has(key)) { unique.push(site); seen.add(key); }
+        }
+        const key = unique.map((site) => site.x + ':' + site.y).join('|'),
+          // Euclidean distance is an admissible (never too high) lower bound
+          // for route distance. Check likely destinations first; once a
+          // proven best route is found, further sites whose straight-line
+          // lower bound cannot beat it need no A* expansion at all.
+          ordered = unique.map((site, index) => ({ site, index, lower: dist(u, site) }))
+            .sort((a, b) => a.lower - b.lower || a.index - b.index),
+          now = this.s.time;
+        let plan = depositPlans.get(u);
+        if (!plan || plan.zone !== this.zoneId || plan.key !== key ||
+            dist(plan.origin, u) > 20) {
+          plan = {
+            zone: this.zoneId, key, origin: { x: u.x, y: u.y },
+            sites: ordered, index: 0, search: null,
+            best: null, bestScore: Infinity, bestIndex: Infinity,
+          };
+          depositPlans.set(u, plan);
+        }
+        while (plan.index < plan.sites.length) {
+          const { site, index, lower } = plan.sites[plan.index];
+          // Danger and avoidance penalties cannot be negative, so no
+          // remaining site can outrank an already validated best score.
+          if (lower > plan.bestScore) break;
+          const result = this.advanceBudgetedRoute(u, site, 'companion', plan.search);
+          if (result.pending) {
+            plan.search = result.state;
+            return null;
+          }
+          plan.search = null;
+          plan.index++;
+          if (!result.path.length) continue;
+          let length = 0, from = u;
+          for (const p of result.path) { length += dist(from, p); from = p; }
+          const danger = this.gatheringThreats().filter((e) => dist(site, e) < e.r).length,
+            rejected = avoid?.zone === this.zoneId && avoid.until > now &&
+              dist(avoid.point, site) < 30,
+            score = length + danger * this.zoneSize() +
+              (rejected ? this.zoneSize() * 4 : 0);
+          if (score < plan.bestScore ||
+              (score === plan.bestScore && index < plan.bestIndex)) {
+            plan.best = site;
+            plan.bestScore = score;
+            plan.bestIndex = index;
+          }
+        }
+        depositPlans.delete(u);
+        depositTrips.set(u, {
+          zone: this.zoneId,
+          until: now + R.gatheringTravel.replanSeconds,
+          site: plan.best,
+        });
+        return plan.best;
+      }
+      depositSite(u, incremental = false) {
         const z = this.isDungeon() ? this.s.zones[this.definition().id] : this.zone(),
           i = this.regionIndex(),
           sites = [
@@ -2091,6 +2268,7 @@
           !(avoid?.until > this.s.time && dist(avoid.point, cached.site) < 30)
         )
           return cached.site;
+        if (incremental) return this.budgetedDepositSite(u, sites, avoid);
         const threats = this.gatheringThreats(),
           seen = new Set(),
           candidates = [];
@@ -2189,6 +2367,57 @@
           (u) => u.type === 'archer' && !u.charmOrigin && !u.keeperHeld && (u[key] || 0) <= 0,
         );
       }
+      // The Heal command is an ability, not a hero-class check. A legitimate
+      // Charmed ranged creature uses its existing support cooldown; a boss pet
+      // qualifies only when an authored skill explicitly heals an ally.
+      healCompanionCasters() {
+        return this.activeLivingParty().filter((u) => {
+          if (u.keeperHeld || u.deathRollHeld) return false;
+          if (u.type === 'archer')
+            return !u.charmOrigin || (!u.order && this.isCharmedCompanion(u));
+          return u.type === 'pet' && !u.order && this.petUnlocked(u.petFamily) &&
+            !!(this.petSkillDefinition(u, 1)?.allyHeal ||
+              this.petSkillDefinition(u, 2)?.allyHeal);
+        });
+      }
+      companionHealCooldown(u) {
+        return u.charmOrigin ? u.charmSupportCd || 0 : u.healCd || 0;
+      }
+      availablePartyHealers() {
+        return this.healCompanionCasters().filter((u) => this.companionHealCooldown(u) <= 0);
+      }
+      castCompanionHeal(caster, target) {
+        if (
+          !this.healCompanionCasters().includes(caster) ||
+          this.companionHealCooldown(caster) > 0 ||
+          this.mageSilenceActive(caster) ||
+          !target || ![this.hero, ...this.activeLivingParty()].includes(target) ||
+          target.hp <= 0 || target.hp >= target.maxHp ||
+          this.hasSupportEffect(target, 'health') ||
+          this.s.challenge.pending || this.s.challenge.gameOver
+        ) return false;
+        const originalAmount = this.rangerSupportAmount('health'),
+          criticalReceipt = this.troopCriticalRelease(caster, 'heal'),
+          amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
+        if (caster.charmOrigin) caster.charmSupportCd = R.rangerSupport.cooldown;
+        else caster.healCd = R.rangerSupport.cooldown;
+        this.addSupportEffect(target, 'health', amount);
+        const name = caster.charmOrigin
+          ? caster.customName || caster.charmOrigin.typeName
+          : caster.type === 'pet'
+            ? this.petDefinition(caster).name
+            : 'Ranger';
+        this.say(
+          name + ' casts Heal on ' +
+          (target === this.hero ? 'the hero' : this.companionDisplayName(target)) +
+          ' · restoring ' + amount + ' HP over ' + R.rangerSupport.duration + ' seconds.',
+        );
+        this.event('heal', {
+          x: target.x, y: target.y, fromX: caster.x, fromY: caster.y,
+          resource: 'health', target: target === this.hero ? 'hero' : target.id,
+        });
+        return true;
+      }
       supportEffectActive(type) {
         return [this.hero, ...this.activeLivingParty()].some((u) =>
           (u.supportEffects || []).some((e) => e.type === type),
@@ -2207,7 +2436,7 @@
       queuedRangerHeal() {
         const request = rangerHealRequests.get(this);
         if (!request) return null;
-        const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
+        const active = this.healCompanionCasters();
         if (
           request.hero !== this.hero ||
           request.zone !== this.zoneId ||
@@ -2223,9 +2452,9 @@
         const casters = active.filter((u) => !u.keeperHeld);
         return {
           cooldown: casters.length
-            ? Math.max(0, Math.min(...casters.map((u) => u.healCd || 0)))
+            ? Math.max(0, Math.min(...casters.map((u) => this.companionHealCooldown(u))))
             : 0,
-          blocked: !casters.some((u) => (u.healCd || 0) <= 0 && !this.mageSilenceActive(u)),
+          blocked: !casters.some((u) => this.companionHealCooldown(u) <= 0 && !this.mageSilenceActive(u)),
         };
       }
       requestRangerHeal() {
@@ -2233,11 +2462,11 @@
           this.resolveQueuedRangerHeal();
           return true;
         }
-        const active = this.activeLivingParty().filter((u) => u.type === 'archer'),
-          ready = this.availableRangers('health').some((u) => !this.mageSilenceActive(u));
+        const active = this.healCompanionCasters(),
+          ready = this.availablePartyHealers().some((u) => !this.mageSilenceActive(u));
         if (
           !ready &&
-          active.some((u) => (u.healCd || 0) > 0) &&
+          active.some((u) => this.companionHealCooldown(u) > 0) &&
           this.hero.hp > 0 &&
           !this.s.challenge.pending &&
           !this.s.challenge.gameOver
@@ -2247,14 +2476,14 @@
             zone: this.zoneId,
             deaths: this.s.statistics.deaths,
           });
-          this.say('Ranger Heal queued for the hero.');
+          this.say('Heal queued for the hero.');
           return true;
         }
         return this.rangerSupport('health', true);
       }
       resolveQueuedRangerHeal() {
         if (!this.queuedRangerHeal()) return false;
-        if (!this.availableRangers('health').some((u) => !this.mageSilenceActive(u))) return false;
+        if (!this.availablePartyHealers().some((u) => !this.mageSilenceActive(u))) return false;
         // A stored hero request must never fall back to a wounded companion.
         // Already-full/covered heroes need no duplicate effect or paid cooldown.
         if (this.hero.hp >= this.hero.maxHp || this.hasSupportEffect(this.hero, 'health')) {
@@ -2273,28 +2502,28 @@
           this.s.challenge.gameOver
         )
           return false;
-        const readyRangers = this.availableRangers(type),
+        const readyRangers = type === 'health'
+            ? this.availablePartyHealers() : this.availableRangers(type),
           rangers = readyRangers.filter((u) => !this.mageSilenceActive(u)),
           key = type === 'health' ? 'healCd' : 'manaCd';
         if (!rangers.length) {
           if (manual) {
-            const active = this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
+            const active = type === 'health'
+              ? this.healCompanionCasters()
+              : this.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
             if (!active.length)
-              this.say(
-                'No active Ranger is available to use ' +
-                  (type === 'health' ? 'Heal.' : 'Mana Recovery.'),
-              );
+              this.say(type === 'health'
+                ? 'No active companion can use Heal.'
+                : 'No active Ranger is available to use Mana Recovery.');
             else if (readyRangers.length)
-              this.say(
-                'Ranger cannot use ' +
-                  (type === 'health' ? 'Heal' : 'Mana Recovery') +
-                  ' while silenced.',
-              );
+              this.say((type === 'health' ? 'Healer' : 'Ranger') + ' cannot use ' +
+                (type === 'health' ? 'Heal' : 'Mana Recovery') + ' while silenced.');
             else
               this.say(
                 (type === 'health' ? 'Heal' : 'Mana Recovery') +
                   ' is cooling down · ' +
-                  Math.ceil(Math.min(...active.map((u) => u[key] || 0))) +
+                  Math.ceil(Math.min(...active.map((u) =>
+                    type === 'health' ? this.companionHealCooldown(u) : u[key] || 0))) +
                   's.',
               );
           }
@@ -2313,35 +2542,8 @@
                 ? targetOverride
                 : injured.includes(this.hero)
                   ? this.hero
-                  : injured.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0],
-            ranger = rangers[0],
-            originalAmount = this.rangerSupportAmount(type),
-            criticalReceipt = this.troopCriticalRelease(ranger, 'heal'),
-            amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
-          ranger[key] = R.rangerSupport.cooldown;
-          this.addSupportEffect(target, type, amount);
-          this.say(
-            'Ranger casts Heal on ' +
-              (target === this.hero
-                ? 'the hero'
-                : target.type === 'pet'
-                  ? this.petDefinition(target).name
-                  : target.type === 'archer'
-                    ? 'a Ranger'
-                    : 'a Soldier') +
-              ' · restoring ' +
-              amount +
-              ' HP over five seconds.',
-          );
-          this.event('heal', {
-            x: target.x,
-            y: target.y,
-            fromX: ranger.x,
-            fromY: ranger.y,
-            resource: 'health',
-            target: target === this.hero ? 'hero' : target.id,
-          });
-          return true;
+                  : injured.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
+          return this.castCompanionHeal(rangers[0], target);
         }
         if (this.hero.mp >= this.hero.maxMp || this.hasSupportEffect(this.hero, 'mana')) {
           if (manual)
@@ -2408,7 +2610,7 @@
         const engaged = this.manaCombatActive(),
           healThreshold = engaged ? R.rangerSupport.healThreshold : 1,
           manaThreshold = engaged ? R.rangerSupport.manaThreshold : 1;
-        for (const ranger of this.availableRangers('health').slice()) {
+        for (const ranger of this.availablePartyHealers().slice()) {
           const candidates = [h, ...this.activeLivingParty()].filter(
             (u) =>
               u.hp > 0 &&
@@ -2420,7 +2622,7 @@
           const target = candidates.includes(h)
             ? h
             : candidates.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
-          if (!this.rangerSupport('health', false, target)) break;
+          if (!this.castCompanionHeal(ranger, target)) continue;
         }
         if (
           R.resourceMode.manaEnabled &&
@@ -2600,6 +2802,10 @@
             (kind === 'recovery' ? u.hp <= 0 : kind === 'treatment' && u.hp > 0 && u.hp < u.maxHp),
         );
       }
+      companionCareHeroWounded(kind, request) {
+        return kind === 'treatment' && request?.heroWounded === true &&
+          this.hero.hp > 0 && this.hero.hp < this.hero.maxHp;
+      }
       companionCareCandidate(kind, barracksId = null, companionId = null) {
         const units =
           kind === 'recovery'
@@ -2609,15 +2815,22 @@
                   : this.s.party.find((u) => u.hp <= 0),
               ].filter(Boolean)
             : this.s.party.filter((u) => u.hp > 0 && u.hp < u.maxHp);
-        return { companionIds: units.map((u) => u.id), barracksId, zone: this.zoneId };
+        return {
+          companionIds: units.map((u) => u.id),
+          ...(kind === 'treatment'
+            ? { heroWounded: this.hero.hp > 0 && this.hero.hp < this.hero.maxHp }
+            : {}),
+          barracksId,
+          zone: this.zoneId,
+        };
       }
       companionCareReason(kind, request, options = {}) {
         if (!['recovery', 'treatment'].includes(kind)) return 'Choose recovery or treatment.';
         const targets = this.companionCareTargets(kind, request);
-        if (!targets.length)
+        if (!targets.length && !this.companionCareHeroWounded(kind, request))
           return kind === 'recovery'
             ? 'No requested companion is still fallen.'
-            : 'No requested companion is living and wounded.';
+            : 'No requested party member is still wounded.';
         if (targets.some((u) => u.expeditionId))
           return 'A requested companion is away on a resource expedition.';
         const serviceReason = this.companionServiceReason();
@@ -2659,7 +2872,7 @@
           const success =
             kind === 'recovery'
               ? this.recover(request.companionIds[0])
-              : this.treatCompanions(request.companionIds);
+              : this.treatCompanions(request.companionIds, request.heroWounded === true);
           if (success) this.s.companionCareRequests[kind] = null;
           return success;
         }
@@ -2676,7 +2889,10 @@
         for (const kind of ['recovery', 'treatment']) {
           const request = this.s.companionCareRequests[kind];
           if (!request) continue;
-          if (!this.companionCareTargets(kind, request).length) {
+          if (
+            !this.companionCareTargets(kind, request).length &&
+            !this.companionCareHeroWounded(kind, request)
+          ) {
             this.cancelCompanionCareRequest(kind, true);
             continue;
           }
@@ -2688,7 +2904,7 @@
           const success =
             kind === 'recovery'
               ? this.recover(request.companionIds[0])
-              : this.treatCompanions(request.companionIds);
+              : this.treatCompanions(request.companionIds, request.heroWounded === true);
           if (success) this.s.companionCareRequests[kind] = null;
         }
       }
@@ -2728,25 +2944,33 @@
         this.event('companionRecovery', { companionId: id });
         return true;
       }
-      treatCompanions(companionIds = null) {
+      treatCompanions(companionIds = null, heroWounded = false) {
         const request = this.companionCareCandidate('treatment');
-        if (companionIds) request.companionIds = companionIds;
+        if (companionIds !== null) {
+          request.companionIds = companionIds;
+          request.heroWounded = heroWounded === true;
+        }
         const reason = this.companionCareReason('treatment', request);
         if (reason) {
           this.say(reason);
           return false;
         }
         const wounded = this.companionCareTargets('treatment', request);
+        const healHero = this.companionCareHeroWounded('treatment', request);
         if (!this.spend(this.companionTreatmentCost())) return false;
+        if (healHero) {
+          this.hero.hp = this.hero.maxHp;
+          this.event('heal', { x: this.hero.x, y: this.hero.y, resource: 'health', target: 'hero' });
+        }
         for (const u of wounded) {
           u.hp = u.maxHp;
           this.event('heal', { x: u.x, y: u.y, resource: 'health', target: u.id });
         }
-        this.say('Living companions treated. Fallen companions still require recovery.');
+        this.say('Party wounds treated. Fallen companions still require recovery.');
         this.notice(
-          'Companions treated',
+          'Wounds treated',
           4,
-          'Living wounded companions restored to full health.',
+          'Hero and wounded living companions restored to full health.',
           'feedback',
         );
         return true;
@@ -3361,7 +3585,10 @@
                 .sort((a, b) => dist(u, a) - dist(u, b))[0]?.enemy ||
               (this.companionAreaDanger(u) ? { id: 'environment-danger', x: u.x, y: u.y } : null);
             if (threat) {
-              if (this.companionCautiousCombat(u, threat, living, dt)) continue;
+              if (this.companionCautiousCombat(u, threat, living, dt)) {
+                if (u.order?.type === 'deposit') this.avoidDeliveryAfterThreat(u);
+                continue;
+              }
             } else {
               this.clearCompanionJudgment(u);
               this.clearPartyCharge(u);
@@ -3452,17 +3679,7 @@
             const enemy = this.gatheringEncounter(u);
             if (enemy) {
               if (this.companionCautiousCombat(u, enemy, living, dt)) {
-                if (u.order.type === 'deposit') {
-                  const trip = depositTrips.get(u);
-                  if (trip?.site) {
-                    deliveryAvoidance.set(u, {
-                      zone: this.zoneId,
-                      point: { x: trip.site.x, y: trip.site.y },
-                      until: this.s.time + R.gatheringTravel.retryDestinationSeconds,
-                    });
-                    depositTrips.delete(u);
-                  }
-                }
+                if (u.order.type === 'deposit') this.avoidDeliveryAfterThreat(u);
               } else {
                 this.engage(enemy);
                 this._tacticalPartyTargets.set(u.id, enemy.id);
@@ -3525,9 +3742,11 @@
           if (u.order?.type === 'deposit') {
             this.gatheringCounterattack(u);
             const journey = u.order.journey;
-            const deposit = this.depositSite(u);
+            const deposit = this.depositSite(u, true);
             if (!deposit) {
-              this.laborRegroup(u, living, dt);
+              // Planning is still in progress, not an unreachable destination.
+              // Do not disrupt the worker with a premature regroup order.
+              if (!depositPlans.has(u)) this.laborRegroup(u, living, dt);
               continue;
             }
             if (dist(u, deposit) > 130)
@@ -3548,7 +3767,6 @@
             continue;
           }
           if (u.order) u.order = null;
-          if (context.engaged && this.charmedRangedSupport(u, living)) continue;
           if (this.peace || this.s.recallActive) {
             // Recall is a defensive escort posture: no target acquisition,
             // pursuit or active skills. A nearby attacking enemy may be

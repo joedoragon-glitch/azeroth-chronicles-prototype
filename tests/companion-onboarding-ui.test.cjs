@@ -103,7 +103,9 @@ for (const language of ['en', 'es']) {
         : 'Abre Menú → Establecer cuartel básico',
     ),
   );
-  assert(directions.trim().split(/\s+/).length <= 32);
+  assert(directions.includes(language === 'en' ? 'Treat wounds' : 'Curar heridas'));
+  assert(directions.includes('30'));
+  assert(directions.trim().split(/\s+/).length <= 52);
   assert(g.s.quests['quest-barracks'].barracksBriefed);
   assert(JSON.parse(storage.get('azeroth-v4-normal')).quests['quest-barracks'].barracksBriefed);
   assert(C.restore(g.snapshot()).s.quests['quest-barracks'].barracksBriefed);
@@ -141,7 +143,8 @@ for (const language of ['en', 'es']) {
   g.s.party.push(g.unit('soldier', g.hero.x + 40, g.hero.y));
   s.Prototype.closeMenu();
   e.get('touch-interact-button').click();
-  assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 24);
+  assert(e.get('modal-description').textContent.includes('30'), 'Captain explains paid party healing');
+  assert(e.get('modal-description').textContent.trim().split(/\s+/).length <= 48);
   assert(
     e
       .get('modal-actions')
@@ -165,7 +168,7 @@ for (const language of ['en', 'es']) {
   );
   assert(
     careDetails.includes(
-      language === 'en' ? 'No wounded companions.' : 'No hay compañeros heridos.',
+      language === 'en' ? 'No wounds to treat.' : 'No hay heridas que curar.',
     ),
   );
   g.s.party.pop();
@@ -181,7 +184,7 @@ for (const language of ['en', 'es']) {
     JSON.parse(storage.get('azeroth-v4-normal')).companionCareRequests.recovery.companionIds[0],
     g.s.party[0].id,
   );
-  click(language === 'en' ? 'Treat wounded companions' : 'Curar compañeros heridos');
+  click(language === 'en' ? 'Treat wounds' : 'Curar heridas');
   assert(JSON.parse(storage.get('azeroth-v4-normal')).companionCareRequests.treatment);
   const enemy = g.makeEnemy(
     { species: 'goblin', level: 1, hp: 100, damage: 1, gold: 0, xp: 0 },
@@ -241,6 +244,9 @@ for (const language of ['en', 'es']) {
     e.get('modal-actions').children.find((b) => b.textContent.startsWith(buildPrefix));
   e.get('menu-button').click();
   assert(buildButton().classList.contains('tutorial-highlight'));
+  assert(buildButton().children.some((detail) =>
+    detail.textContent.includes(language === 'en' ? 'Treat wounds' : 'Curar heridas')
+  ), 'construction hint teaches paid party healing');
   events.keydown.forEach((fn) => fn({ code: 'ArrowDown', preventDefault() {} }));
   assert(buildButton().classList.contains('tutorial-highlight'));
   s.Prototype.closeMenu();
@@ -302,6 +308,12 @@ for (const language of ['en', 'es']) {
 
   click(text('Recovery', 'Recuperación'));
   shortHeader();
+  assert(
+    e.get('modal-actions').children.some((b) =>
+      b.textContent.startsWith(text('Treat wounds · 30 crowns', 'Curar heridas · 30 coronas')),
+    ),
+  );
+  assert(e.get('modal-description').textContent.includes('30'));
   assert(
     e
       .get('modal-description')

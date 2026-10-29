@@ -111,9 +111,9 @@
     ],
     // Working prototype names until the owner revisits bell-staff lore.
     rogue: [
-      ['Ding and Sting', 'Bell burst / companion basic-damage refrain',
-       'A compact jingle-bell shock damages nearby foes and helps allies strike',
-       'Raise a Racket: a wider bell shock, stronger nearby allied basic strikes',
+      ['Ding and Sting', 'Bell burst / basic-damage refrain for Rogue and companions',
+       'Perform a circular pulse around yourself, harming foes and boosting nearby allies\' basics',
+       'Raise a Racket: larger self-centered pulse, stronger basics for Rogue and nearby allies',
        'Both prototype names are under owner revision; mechanics stay separate from labels.'],
     ],
     ranger: [
@@ -175,31 +175,31 @@
     // Repertoire labels are working descriptions, not owner-final names.
     const experimental = {
       2: ['Lead Feet', 'Slow / Quickstep',
-        'Slow nearby hostiles and quicken companions in the same area',
+        'Slow nearby foes and quicken Rogue and companions in the same area',
         'Can\'t Dance: wider Slow and stronger allied movement/recovery',
         'Phase 5 prototype name; subject to owner review.'],
       5: ['Sticky Shuffle', 'Stationary music / allied inside-circle protection',
-        'Place a brief bell station that Slows enemies and steadies allies inside',
+        'Place a bell station that Slows foes and protects Rogue and allies while inside',
         'Briar Boogie: a larger field with finite damaging pulses and a small allied ward',
         'Owner-approved placed magical music station, not a trap. Maximum two fields; tuning pending playtest.'],
       8: ['Bad Bell Day', 'Enemy blast / allied Finale',
-        'Blast nearby foes while boosting allied critical opportunity and specials',
+        'Blast foes while boosting Rogue\'s and nearby allies\' criticals and specials',
         'Last Laugh: bigger blast and a brief non-boss hush; stronger allied Finale',
         'One native Rogue critical receipt per legal performance; no extra pulses or rerolls.'],
       4: ['Sour Note', 'Enemy wither / allied Mending',
-        'Afflict nearby foes with timed damage and reduced incoming healing; mend allies',
+        'Afflict foes with withering damage; mend Rogue and nearby allies',
         'Rotten Chorus: stronger wither, small healing budget and heal-received boon',
         'One finite damage and healing budget; no revival or recursively boosted healing.'],
       3: ['Beat Breaker', 'Native cast interrupt / Steady Beat',
-        'Break a lawful enemy warning and protect nearby allied charges from damage',
+        'Interrupt foes and protect Rogue\'s and nearby allies\' charged preparations',
         'Shut the Band Up: wider interrupt, brief non-boss hush and longer protection',
         'No immunity to death, invalid casts, Recall or boss scripting.'],
       7: ['Wrong Foot', 'Push + Weaken / Firm Footing',
-        'Displace nearby enemies and weaken their attacks; bolster allied strikes',
+        'Displace and weaken foes; bolster Rogue\'s and nearby allies\' strikes',
         'Panic Party: wider shove/Weaken and stronger allied damage',
         'First-play working title; gameplay values are provisional.'],
       6: ['Stolen Beat', 'Cooldown debt / Borrowed Time',
-        'Delay eligible enemy skills and accelerate allied special recovery',
+        'Delay enemy skills; accelerate Rogue\'s and nearby allies\' special recovery',
         'Time Out: larger debt pulse and stronger allied recharge',
         'Phase 5 prototype name; subject to owner review.'],
     };
@@ -207,7 +207,10 @@
       ? (game.constructor.rules.roguePerformances[slot] ? experimental[slot] : null)
       : skillCards[game.hero.class]?.[slot - 1];
     return row
-      ? { name: row[0], role: row[1], tap: row[2], charge: row[3], note: row[4] || '' }
+      ? { name: row[0], role: row[1], tap: row[2], charge: row[3],
+          note: (row[4] || '') + (game.hero.class === 'rogue'
+            ? ' Rogue receives the same friendly boon if inside the skill area at cast release. Timed boons persist after instant pulses; Skill 5 protects only while inside its active station. Critical enhancements use the same eligibility.'
+            : '') }
       : null;
   }
   function describe(game, slot, rank = game.hero.skills[slot - 1]) {
@@ -222,15 +225,15 @@
             { key: 'reach', label: 'Reach', value: x.range, unit: '' },
             { key: 'radius', label: 'Area radius', value: x.radius, unit: '' },
             { key: 'targets', label: 'Maximum hostile targets', value: x.cap, unit: '' },
-            { key: 'duration', label: 'Companion boon', value: x.seconds, unit: 's' },
+            { key: 'duration', label: 'Your / companion boon', value: x.seconds, unit: 's' },
             { key: 'cooldown', label: 'Cooldown',
               value: game.skillCooldown(slot, charged), unit: 's' },
           ];
         if (slot === 2) metrics.push(
           { key: 'slow', label: 'Enemy Slow',
             value: x.slow + R.cooldownBalance.slowDurationBonusSeconds, unit: 's' },
-          { key: 'move', label: 'Companion movement', value: x.move * 100, unit: '%' },
-          { key: 'recovery', label: 'Companion cooldown recovery',
+          { key: 'move', label: 'Your / companion movement', value: x.move * 100, unit: '%' },
+          { key: 'recovery', label: 'Your / companion cooldown recovery',
             value: x.recovery * 100, unit: '%' },
         );
         if (slot === 5) metrics.push(
@@ -241,29 +244,29 @@
         );
         if (slot === 8) metrics.push(
           { key: 'damage', label: 'Enemy damage coefficient', value: x.damage, unit: 'x' },
-          { key: 'criticalChance', label: 'Companion critical chance', value: x.criticalChance * 100, unit: 'pp' },
-          { key: 'specialDamage', label: 'Companion special damage', value: x.specialDamage * 100, unit: '%' },
+          { key: 'criticalChance', label: 'Your / companion critical chance', value: x.criticalChance * 100, unit: 'pp' },
+          { key: 'specialDamage', label: 'Your / companion special damage', value: x.specialDamage * 100, unit: '%' },
           { key: 'silence', label: 'Eligible non-boss hush', value: x.silence || 0, unit: 's' },
         );
         if (slot === 4) metrics.push(
           { key: 'dot', label: 'Enemy wither budget', value: x.dotFraction * 100, unit: '% HP, capped' },
           { key: 'antiHeal', label: 'Enemy healing reduced', value: x.antiHeal * 100, unit: '%' },
-          { key: 'heal', label: 'Companion heal budget', value: x.healFraction * 100, unit: '% max HP' },
+          { key: 'heal', label: 'Your / companion heal budget', value: x.healFraction * 100, unit: '% max HP' },
           { key: 'incomingHealing', label: 'Other incoming heals increased', value: x.incomingHealing * 100, unit: '%' },
         );
         if (slot === 3) metrics.push(
           { key: 'interruptDebt', label: 'Interrupted enemy cooldown', value: x.debt, unit: 's' },
           { key: 'silence', label: 'Eligible non-boss hush', value: x.silence || 0, unit: 's' },
-          { key: 'protection', label: 'Companion cast protection', value: x.seconds, unit: 's' },
+          { key: 'protection', label: 'Your / companion cast protection', value: x.seconds, unit: 's' },
         );
         if (slot === 7) metrics.push(
           { key: 'push', label: 'Enemy push', value: x.push, unit: '' },
           { key: 'weaken', label: 'Enemy Weaken', value: x.weaken, unit: 's' },
-          { key: 'outgoing', label: 'Companion outgoing damage', value: x.outgoing * 100, unit: '%' },
+          { key: 'outgoing', label: 'Your / companion outgoing damage', value: x.outgoing * 100, unit: '%' },
         );
         if (slot === 6) metrics.push(
           { key: 'debt', label: 'Enemy cooldown debt', value: x.debt, unit: 's' },
-          { key: 'specialRecovery', label: 'Companion special recovery',
+          { key: 'specialRecovery', label: 'Your / companion special recovery',
             value: x.specialRecovery * 100, unit: '%' },
         );
         return { title: charged ? 'Charged' : 'Tap',
@@ -327,21 +330,22 @@
         chargeCfg = game.rogueSkill1Config(true);
       auto = {
         title: 'Automatic basics',
-        effect: 'Jingle-bell fan: primary plus two nearby foes, with a five-contact third-hit combo finisher. Charm will affect surviving primary only.',
+        effect: 'Circular performer pulse: primary plus up to two nearby foes, with a wider five-contact third hit. Charm affects the surviving primary only.',
         metrics: [],
       };
       add(auto, 'basicInterval', 'Basic attack interval', game.basicSkillCooldown(), 's');
       add(auto, 'comboDamage', 'Primary combo damage',
         R.basicAttackCombo.multipliers.map((v) => base * v));
       add(auto, 'splashDamage', 'Secondary damage', base * cfg.splashMultiplier);
-      add(auto, 'reach', 'Reach', cfg.range);
+      add(auto, 'reach', 'Reach / normal pulse radius', cfg.range);
+      add(auto, 'finisherRadius', 'Third-hit pulse radius', cfg.finisherSplashRadius);
       for (const [form, x] of [[tap, tapCfg], [charge, chargeCfg]]) {
         add(form, 'damage', 'Damage per enemy', (power + 12) * scale * x.damage);
         add(form, 'reach', 'Reach', x.range);
         add(form, 'radius', 'Area radius', x.radius);
         add(form, 'targets', 'Maximum enemy hits', x.cap);
-        add(form, 'allyBuff', 'Companion basic-hit bonus', x.allyDamage * 100, '%');
-        add(form, 'allyDuration', 'Companion boon duration', x.seconds, 's');
+        add(form, 'allyBuff', 'Your / companion basic-hit bonus', x.allyDamage * 100, '%');
+        add(form, 'allyDuration', 'Your / companion boon duration', x.seconds, 's');
       }
     } else if (slot === 1) {
       const base = (power + 12) * scale,

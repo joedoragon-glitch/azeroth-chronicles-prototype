@@ -24,7 +24,7 @@
     ['skills', 'Skills and teachers', 'KeyX'],
     ['pause', 'Pause', 'KeyP'],
     ['help', 'Controls', 'KeyG'],
-    ['heal', 'Command Ranger Heal', 'KeyH'],
+    ['heal', 'Command companion Heal', 'KeyH'],
     ...(legacyManaEnabled ? [['mana', 'Command Ranger Mana Recovery', 'KeyM']] : []),
   ];
   const defaults = Object.fromEntries(actions.map(([id, , code]) => [id, code]));

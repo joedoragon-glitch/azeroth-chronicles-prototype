@@ -45,6 +45,8 @@
     mercyStartRadius = R.balance.pursuit.mercyStartRadius;
   // Civilian restoration routes are runtime-only; only the worker's position saves.
   const archiveRestorationTrips = new WeakMap();
+  // No tactical search frontier is serialized or allowed to grant a regroup.
+  const tacticalRogueRouteSearches = new WeakMap();
   // Per-caster leader-heal cadence is independent of buffed ordinary casts.
   // Runtime-only WeakMap: no additional fields on saved enemy actors.
   const enemyLeaderHealRecovery = new WeakMap();
@@ -4204,9 +4206,10 @@
         )
           unit.deathRollHeld = false;
       }
-      const heroRecovery = this.cooldownRecoveryElapsed(h, dt);
-      h.cd = h.cd.map((c) => Math.max(0, c - heroRecovery));
-      h.chargedCd = h.chargedCd.map((c) => Math.max(0, c - heroRecovery));
+      const heroRecovery = this.cooldownRecoveryElapsed(h, dt),
+        heroSpecialRecovery = this.cooldownRecoveryElapsed(h, dt, false, true);
+      h.cd = h.cd.map((c) => Math.max(0, c - heroSpecialRecovery));
+      h.chargedCd = h.chargedCd.map((c) => Math.max(0, c - heroSpecialRecovery));
       h.basicCd = Math.max(0, h.basicCd - heroRecovery);
       if ((h.shieldStance || 0) > 0) {
         h.shieldStance = Math.max(0, h.shieldStance - dt);
@@ -4941,6 +4944,7 @@
     tacticalClearRogueRegroup(e = null) {
       this.clearCinderResponses(e);
       if (e) {
+        tacticalRogueRouteSearches.delete(e);
         this._tacticalRegroups?.delete(e.id);
         this._tacticalRogueNext?.delete(e.id);
         this._tacticalVisitedAllies?.delete(e.id);
@@ -4963,6 +4967,7 @@
     tacticalStopRogueRegroup(e) {
       this._tacticalRegroups?.delete(e?.id);
       if (e) {
+        tacticalRogueRouteSearches.delete(e);
         e.path = [];
         e.routeAge = 0;
       }
@@ -4977,7 +4982,7 @@
       }
       if (retired) this._tacticalEmergencyCleanupPending = true;
     }
-    tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
+    tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0, incremental = false) {
       const prior = this.tacticalRogueRegroup(e),
         preparing = prior?.phase === 'thinking' || prior?.phase === 'escape';
       if (
@@ -5000,7 +5005,24 @@
       const destination = { x: ally.x, y: ally.y },
         retreatOrigin = { x: e.x, y: e.y };
       if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
-      const path = this.route(e, destination);
+      let path;
+      if (incremental) {
+        const previous = tacticalRogueRouteSearches.get(e),
+          pending = previous?.allyId === ally.id ? previous.state : null,
+          result = this.advanceBudgetedRoute(
+            pending?.origin || e, pending?.target || destination, 'tactical', pending,
+          );
+        if (result.pending) {
+          tacticalRogueRouteSearches.set(e, { allyId: ally.id, state: result.state });
+          return null; // pending is distinct from an invalid or unreachable regroup
+        }
+        tacticalRogueRouteSearches.delete(e);
+        path = result.path;
+        // An actor may have continued its defensive escape while a route
+        // was being planned. Never commit a path with an obstructed first
+        // leg from the actor's actual current position.
+        if (path.length && !this.clearSegment(e, path[0])) return false;
+      } else path = this.route(e, destination);
       if (!path.length) return false;
       let length = 0;
       let previous = e;
@@ -5435,7 +5457,9 @@
       for (const group of this.tacticalRegroupGroups(e)) {
         for (const ally of group.members) {
           if (attempts++ >= 5) return false;
-          if (this.tacticalBeginRogueRegroup(e, ally, pressure)) {
+          const decision = this.tacticalBeginRogueRegroup(e, ally, pressure, true);
+          if (decision === null) return null; // waiting for the complete validated path
+          if (decision) {
             this.event('rogueRegroup', { actor: e.id, ally: ally.id });
             return true;
           }
@@ -5470,7 +5494,8 @@
           this.tacticalStopRogueRegroup(e);
           return false;
         }
-        if (this.tacticalSeekRogueSupport(e, totalPressure)) return true;
+        const support = this.tacticalSeekRogueSupport(e, totalPressure);
+        if (support === null || support) return true;
         // Exhausting local support is not a reason to spam an attack.
         // Field inhabitants seek remembered, more distant occupied posts.
         if (this.tacticalBeginExtendedRetreat(e)) return true;
@@ -5562,8 +5587,10 @@
         state.seekDelay -= dt;
         if (!committed && state.seekDelay <= 0) {
           state.seekDelay = 1;
-          if (this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e))) return true;
-          if (this.tacticalBeginExtendedRetreat(e)) return true;
+          const support = this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e));
+          if (support) return true;
+          if (support === null) state.seekDelay = 0; // keep fleeing, resume pending plan next update
+          else if (this.tacticalBeginExtendedRetreat(e)) return true;
         }
         const radius = this.tacticalDefenderTerritory(e);
         if (radius && dist(e, this.tacticalDefenderPost(e)) >= radius - 55) {

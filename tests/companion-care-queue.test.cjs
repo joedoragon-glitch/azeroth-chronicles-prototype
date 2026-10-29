@@ -158,6 +158,75 @@ for (const kind of ['recovery', 'treatment']) {
   g.resolveCompanionCareRequests();
   assert.equal(wounded.hp, wounded.maxHp);
 }
+// Wound treatment heals a wounded hero even if every companion is already healthy.
+{
+  const { g, wounded, dead } = fixture();
+  wounded.hp = wounded.maxHp;
+  g.hero.hp = g.hero.maxHp - 19;
+  g.hero.gold = 30;
+  assert(g.requestCompanionCare('treatment'));
+  assert.equal(g.hero.hp, g.hero.maxHp);
+  assert.equal(g.hero.gold, 0);
+  assert.equal(dead.hp, 0);
+  assert(!g.requestCompanionCare('treatment'), 'fully healthy party cannot pay again');
+}
+// Hero-only care persists across save/restore with no companion IDs and charges once.
+{
+  let { g, wounded } = fixture();
+  wounded.hp = wounded.maxHp;
+  g.hero.hp = g.hero.maxHp - 10;
+  assert(g.requestCompanionCare('treatment'));
+  assert.deepEqual(g.s.companionCareRequests.treatment.companionIds, []);
+  assert.equal(g.s.companionCareRequests.treatment.heroWounded, true);
+  g = C.restore(g.snapshot(), () => 0.5);
+  g.hero.gold = 30;
+  g.resolveCompanionCareRequests();
+  assert.equal(g.hero.hp, g.hero.maxHp);
+  assert.equal(g.hero.gold, 0);
+  assert.equal(g.s.companionCareRequests.treatment, null);
+}
+// A queued request heals both originally wounded recipients but never revives the fallen.
+{
+  let { g, wounded, dead } = fixture();
+  const woundedId = wounded.id;
+  const deadId = dead.id;
+  g.hero.hp = g.hero.maxHp - 12;
+  assert(g.requestCompanionCare('treatment'));
+  assert.equal(g.s.companionCareRequests.treatment.heroWounded, true);
+  assert.deepEqual(g.s.companionCareRequests.treatment.companionIds, [woundedId]);
+  g = C.restore(g.snapshot(), () => 0.5);
+  g.hero.gold = 30;
+  g.resolveCompanionCareRequests();
+  assert.equal(g.hero.hp, g.hero.maxHp);
+  assert.equal(g.s.party.find((u) => u.id === woundedId).hp, g.s.party.find((u) => u.id === woundedId).maxHp);
+  assert.equal(g.s.party.find((u) => u.id === deadId).hp, 0);
+  assert.equal(g.hero.gold, 0);
+}
+// Unneeded hero-only queues cancel without payment.
+{
+  const { g, wounded } = fixture();
+  wounded.hp = wounded.maxHp;
+  g.hero.hp = g.hero.maxHp - 10;
+  assert(g.requestCompanionCare('treatment'));
+  g.hero.hp = g.hero.maxHp;
+  g.hero.gold = 30;
+  g.resolveCompanionCareRequests();
+  assert.equal(g.hero.gold, 30);
+  assert.equal(g.s.companionCareRequests.treatment, null);
+}
+// Legacy companion-only queues must not enroll the hero if she is wounded later.
+{
+  let { g } = fixture();
+  assert(g.requestCompanionCare('treatment'));
+  const old = g.snapshot();
+  delete old.companionCareRequests.treatment.heroWounded;
+  old.hero.hp = old.hero.maxHp - 10;
+  g = C.restore(old);
+  g.hero.gold = 30;
+  g.resolveCompanionCareRequests();
+  assert.equal(g.hero.hp, g.hero.maxHp - 10);
+  assert.equal(g.s.party[1].hp, g.s.party[1].maxHp);
+}
 // Recovery/treatment requests keep independent targets and reject malformed saved data.
 {
   const { g } = fixture();
@@ -170,6 +239,9 @@ for (const kind of ['recovery', 'treatment']) {
     { recovery: { companionIds: [], barracksId: null, zone: 'vale' } },
     { recovery: { companionIds: ['a', 'b'], barracksId: null, zone: 'vale' } },
     { treatment: { companionIds: ['a'], barracksId: null, zone: 'missing' } },
+    { treatment: { companionIds: [], heroWounded: false, barracksId: null, zone: 'vale' } },
+    { treatment: { companionIds: [], heroWounded: 'yes', barracksId: null, zone: 'vale' } },
+    { recovery: { companionIds: ['a'], heroWounded: true, barracksId: null, zone: 'vale' } },
   ])
     assert.throws(
       () => C.restore({ ...g.snapshot(), companionCareRequests: bad }),
@@ -202,13 +274,14 @@ for (const kind of ['recovery', 'treatment']) {
   ui.partyMenu();
   click('Recover fallen companion');
   assert(g.s.companionCareRequests.recovery);
-  click('Treat wounded companions');
+  click('Treat wounds');
   assert(g.s.companionCareRequests.treatment);
   assert(opened.description.includes('payment order'));
   ui.barracksMenu(b);
   assert.equal(opened.actions.length, 5);
   click('Recovery');
   assert(opened.description.includes('Local death loss: 15%'));
+  assert(opened.description.includes('hero and living companions'));
   click('Cancel queued recovery');
   assert.equal(g.s.companionCareRequests.recovery, null);
   click('Cancel queued treatment');

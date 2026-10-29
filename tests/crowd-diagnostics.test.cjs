@@ -155,3 +155,185 @@ app.scope.Prototype.game.stopCrowdDiagnostics();
 console.log('Navigation characterization (terrain counts; timing includes profiler overhead):');
 for (const row of comparisons) console.log(JSON.stringify(row));
 console.log('PASS navigation diagnostics: no state differences, terrain profiling, bounded samples, actual frame integration');
+
+
+// #534: Test-only source-call attribution. This does not install production
+// wrappers, add saved fields, or change the runtime profiler. It exercises the
+// real March terrain and native five-unit companion simulation, rather than
+// attributing every blocked() query to A* or treating overlapping times as
+// exclusive CPU costs. The logger is diagnostic evidence, not a speed target.
+function marchCompanionCallsite(measured, mode) {
+  const g = new C('developer', 'mage', () => 0.73);
+  g.enter('march');
+  assert.equal(g.zoneId, 'march');
+  const z = g.zone();
+  z.enemies = [];
+  g.s.party = [];
+  g.s.mercyTime = 0;
+  const location = g.safe(244, 784);
+  Object.assign(g.hero, location);
+  const members = [
+    ['soldier', undefined],
+    ['archer', undefined],
+    ['soldier', undefined],
+    ['pet', 'warlord'],
+    ['pet', 'ridge'],
+  ];
+  g.s.party = members.map(([type, family], index) => {
+    const offset = (index - 2) * 12;
+    const point = g.safe(location.x + offset, location.y + 80 + (index % 2) * 16);
+    return g.unit(type, point.x, point.y, family);
+  });
+  if (mode === 'critical-combat') {
+    for (const [i, u] of g.s.party.entries()) {
+      if (i < 2) u.hp = u.maxHp * 0.15;
+    }
+    const enemy = g.makeEnemy(
+      { species: 'goblin', name: 'Profiling combat foe', level: 1,
+        hp: 100000, damage: 0, gold: 0, xp: 0 },
+      { x: location.x + 70, y: location.y + 70 },
+    );
+    enemy.aggro = true;
+    z.enemies.push(enemy);
+  } else if (mode === 'recall') {
+    g.recallParty();
+    assert.equal(g.s.recallActive, true, 'the real Recall order remains active');
+  }
+  const names = [
+    'safe', 'partyFollowPoint', 'followRecalledCompanion',
+    'followPartyMember', 'companionSurvivalPoint', 'followCriticalCompanion',
+    'companionCautiousCombat', 'companionSafetyAssessment',
+    'companionSurvivalScore', 'companionAreaDanger',
+    'companionPositionProtected', 'line', 'enemyRangedLine',
+    'followCompanion', 'companionRoute', 'clearSegment', 'move',
+  ];
+  const counts = new Map(names.map((name) => [name, { calls: 0, blocked: 0, ms: 0, maxBlocked: 0 }]));
+  let blocked = 0;
+  const originals = new Map();
+  if (measured) {
+    const originalBlocked = g.blocked;
+    originals.set('blocked', originalBlocked);
+    g.blocked = function (...args) {
+      blocked++;
+      return originalBlocked.apply(this, args);
+    };
+    for (const name of names) {
+      const original = g[name];
+      assert.equal(typeof original, 'function', name + ' is a current source method');
+      originals.set(name, original);
+      g[name] = function (...args) {
+        const before = blocked, start = performance.now();
+        try {
+          return original.apply(this, args);
+        } finally {
+          const row = counts.get(name);
+          row.calls++;
+          row.blocked += blocked - before;
+          row.maxBlocked = Math.max(row.maxBlocked, blocked - before);
+          row.ms += performance.now() - start;
+        }
+      };
+    }
+  }
+  for (let i = 0; i < 10; i++) {
+    g.s.time += 0.05;
+    g.updateParty(0.05);
+  }
+  const snapshot = g.snapshot();
+  for (const [name, original] of originals) {
+    // All instrumentation is local to this test instance. No wrapper is
+    // attached to the Campaign prototype or saved into a campaign.
+    delete g[name];
+    assert.equal(g[name], original);
+  }
+  return {
+    snapshot,
+    results: {
+      mode,
+      totalBlocked: blocked,
+      methods: [...counts].map(([name, metrics]) => ({
+        name, ...metrics, ms: +metrics.ms.toFixed(2),
+      })).filter(({ calls }) => calls).sort((a, b) => b.blocked - a.blocked),
+    },
+  };
+}
+for (const mode of ['calm-follow', 'recall', 'critical-combat']) {
+  const baseline = marchCompanionCallsite(false, mode),
+    sampled = marchCompanionCallsite(true, mode);
+  assert.deepEqual(sampled.snapshot, baseline.snapshot,
+    mode + ': test-only callsite instrumentation must preserve campaign state');
+  assert(sampled.results.totalBlocked > 0, mode + ': real March collision calls observed');
+  if (mode === 'critical-combat')
+    assert(sampled.results.totalBlocked < 3500,
+      'the bounded retreat must substantially reduce the unbounded 5,284-query baseline');
+
+  console.log('MARCH_COMPANION_CALLSITE ' + JSON.stringify(sampled.results));
+}
+
+
+// Resumable planning must produce the native A*/BFS result, including
+// obstacle detours, while bounding *nested* authoritative terrain probes.
+{
+  const g = new C('developer', 'mage', () => 0.73);
+  g.s.time = 80;
+  g.s.mercyTime = 0;
+  const z = g.zone();
+  z.enemies = [];
+  z.props = [];
+  const start = { x: 600, y: 1000 },
+    destination = { x: 900, y: 1000 };
+  g.blocked = (x, y, _zone, r = 15) =>
+    x < 40 + r || y < 40 + r || x > 2745 - r || y > 2745 - r ||
+    (x > 730 - r && x < 780 + r && y > 750 - r && y < 1150 + r);
+  assert(!g.clearSegment(start, destination), 'the synthetic narrow-wall detour is real');
+  const native = {
+    companion: g.companionRoute(start, destination),
+    tactical: g.route(start, destination),
+  };
+  for (const mode of ['companion', 'tactical']) {
+    assert(native[mode].length, mode + ' native route can pass the obstacle');
+    const originalBlocked = g.blocked;
+    let pending = null, result, probes = 0, turns = 0, sawPending = false;
+    while (!result && turns++ < 350) {
+      g.s.time += 0.05;
+      let tickChecks = 0;
+      g.blocked = function (...args) {
+        tickChecks++;
+        return originalBlocked.apply(this, args);
+      };
+      try {
+        const next = g.advanceBudgetedRoute(start, destination, mode, pending);
+        probes += tickChecks;
+        assert(tickChecks <= g.routePlanningLimits().terrainProbesPerSearch,
+          'one ' + mode + ' search cannot consume an unlimited nested segment');
+        if (next.pending) {
+          sawPending = true;
+          pending = next.state;
+        } else result = next.path;
+      } finally {
+        g.blocked = originalBlocked;
+      }
+    }
+    assert(sawPending, mode + ' must genuinely suspend at the work limit');
+    assert(result, mode + ' completes a resumable path');
+    assert.deepEqual(result, native[mode],
+      mode + ' original route selection and smoothing remain unchanged');
+    assert(probes > g.routePlanningLimits().terrainProbesPerSearch);
+  }
+  // Shared with all route-planning consumers, even when multiple actors ask
+  // for different searches in one simulation update.
+  g.s.time += 0.05;
+  const originalBlocked = g.blocked;
+  let combined = 0;
+  g.blocked = function (...args) { combined++; return originalBlocked.apply(this, args); };
+  try {
+    for (let i = 0; i < 4; i++)
+      g.advanceBudgetedRoute(start, destination, i % 2 ? 'tactical' : 'companion');
+  } finally { g.blocked = originalBlocked; }
+  assert(combined <= g.routePlanningLimits().terrainProbesPerTick,
+    'companion, delivery and enemy planning share one tick allowance');
+  assert(!JSON.stringify(g.snapshot()).includes('routePlanning'),
+    'search frontiers and counters are never persisted');
+  delete g.blocked;
+}
+console.log('PASS resumable companion/tactical route parity, shared hard terrain budget, and transient state');

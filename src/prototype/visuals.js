@@ -18224,12 +18224,19 @@
     materialLayer = null,
     viewport = null,
     inheritedDecks = [],
+    staticTerrainTimeSeconds = null,
   ) {
     const bounds = viewport || {
       width: ctx.canvas?.width || 10000,
       height: ctx.canvas?.height || 10000,
     };
-    const time = (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
+    // A full-region atlas spans several event-loop frames. Reuse one water
+    // animation phase across its tiles so a river cannot develop seams just
+    // because one tile was painted a moment later. Normal live Canvas uses
+    // the original animated clock, unchanged.
+    const time = Number.isFinite(staticTerrainTimeSeconds)
+      ? staticTerrainTimeSeconds
+      : (typeof performance !== 'undefined' ? performance.now() : 0) / 1000;
     const poly = (points, color, material = null) => {
       const ps = points.map(screen);
       if (outsideScreen(ps, bounds, 100)) return;

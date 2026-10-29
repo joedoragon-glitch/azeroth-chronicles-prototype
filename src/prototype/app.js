@@ -321,6 +321,10 @@
     'Charged skill interrupted by damage.': 'El daño interrumpió la habilidad cargada.',
     'Charged skill interrupted.': 'Habilidad cargada interrumpida.',
     'Ranger Heal queued for the hero.': 'Curación del Ranger en cola para el héroe.',
+    'Heal queued for the hero.': 'Curación en cola para el héroe.',
+    'Command Heal': 'Ordenar Curar',
+    'No active companion can use Heal.': 'Ningún compañero activo puede usar Curar.',
+    'Healer cannot use Heal while silenced.': 'El sanador no puede usar Curar mientras esté silenciado.',
     'Already up to date.': 'Ya tienes la versión más reciente.',
     'Update unavailable. Your saved run is safe.':
       'No se pudo actualizar. Tu partida está a salvo.',
@@ -615,6 +619,8 @@
       '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se quedan cerca y se defienden sin perseguir.\nDales una nueva orden para enviarlos de nuevo.\n\nDespués: construye tu primer cuartel GRATIS.',
     'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.':
       'Recluta compañeros o recupera tu compañía.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
+    'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.':
+      'Recluta compañeros, cura las heridas del grupo por 30 coronas o recupera a los caídos.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
     'Recruit at a Barracks': 'Recluta en un cuartel',
     'Town limit: 3 companions, reserves included.':
       'Límite del pueblo: 3 compañeros, incluidas las reservas.',
@@ -623,11 +629,32 @@
     'Queued · tap to cancel. No crowns spent.': 'En cola · toca para cancelar. Sin gastar coronas.',
     'Short on crowns? Tap to queue.': '¿Te faltan coronas? Toca para dejarlo en cola.',
     'Full health for living companions.': 'Salud completa para los compañeros vivos.',
+    'Full health for party.': 'Salud completa para el grupo.',
+    'No wounds to treat.': 'No hay heridas que curar.',
+    Hero: 'Héroe',
+    'Treat wounds': 'Curar heridas',
+    'Treat wounds heals the hero and living companions for 30 crowns. Fallen companions need separate recovery. Short on crowns? Tap to queue.':
+      'Curar heridas restaura al héroe y sus compañeros vivos por 30 coronas. Los caídos necesitan recuperación aparte. ¿Te faltan coronas? Toca para dejarlo en cola.',
+    'Treat party wounds or recover fallen companions.':
+      'Cura las heridas del grupo o recupera compañeros caídos.',
+    'Your field base. Recovery → Treat wounds heals your party for 30 crowns.':
+      'Tu base de campo. Recuperación → Curar heridas restaura al grupo por 30 coronas.',
+    'Party wounds treated. Fallen companions still require recovery.':
+      'Las heridas del grupo han sido curadas. Los compañeros caídos necesitan recuperación aparte.',
+    'Wounds treated': 'Heridas curadas',
+    'Hero and wounded living companions restored to full health.':
+      'El héroe y los compañeros vivos heridos recuperaron toda su salud.',
+    'No requested party member is still wounded.':
+      'Ningún miembro del grupo solicitado sigue herido.',
+    'Rogues do not hire Soldiers or Rangers. Charm eligible monsters in battle. The Captain can treat party wounds for 30 crowns or recover fallen companions.':
+      'Las Pícaras no contratan Soldados ni Rangers. Encantan monstruos elegibles en combate. El capitán puede curar al grupo por 30 coronas o recuperar compañeros caídos.',
     'Safe conditions required.': 'Requiere condiciones seguras.',
     'Joins your group; full groups send recruits to reserve.':
       'Se une al grupo; si está lleno, queda en reserva.',
     'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.':
       'Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nUn Soldado o Ranger libre lo construye.',
+    'Leave town. Find open ground off the road.\nOpen Menu → Establish Basic Barracks (FREE).\nOne idle Soldier or Ranger builds it.\nOnce built: Treat wounds fully heals your party for 30 crowns when safe.':
+      'Sal del pueblo. Busca terreno abierto fuera del camino.\nAbre Menú → Establecer cuartel básico (GRATIS).\nUn Soldado o Ranger libre lo construye.\nAl terminar: Curar heridas restaura la salud de tu grupo por 30 coronas cuando estés a salvo.',
     "Let's go": 'Vamos',
     "COMPANIONS · Recall practiced. Continue the Captain's briefing.":
       'COMPAÑEROS · Reagrupar practicado. Continúa la explicación del capitán.',
@@ -641,6 +668,8 @@
       'BASE DE CAMPO · Construcción en curso. Mantén al constructor asignado.',
     'Open ground off the road. One companion builds it.':
       'Terreno abierto fuera del camino. Un compañero lo construye.',
+    'Open ground off the road. One companion builds it. Once built: Treat wounds heals the party for 30 crowns.':
+      'Terreno abierto fuera del camino. Un compañero lo construye. Al terminar, Curar heridas restaura la salud del grupo por 30 coronas.',
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
   });
@@ -958,8 +987,12 @@
     'Temporary maximum HP boost.': 'Aumento temporal de salud máxima.',
     'Recruit a Ranger to unlock field Heal.':
       'Recluta un Ranger para desbloquear la curación de campo.',
+    'Field Heal requires an active Ranger, Charmed ranged monster or ally-healing pet.':
+      'Curar en el campo requiere un Ranger activo, un monstruo encantado a distancia o una mascota que cure aliados.',
     'Use the Ranger Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.':
       'Usa el botón Curar del Ranger. Durante la recuperación, toca para poner tu curación en cola. La curación automática sigue activa.',
+    'Use the Heal button. During cooldown, tap to queue hero healing. Automatic healing stays active.':
+      'Usa el botón Curar. Durante la recuperación, toca para poner tu curación en cola. La curación automática sigue activa.',
     ACTIVE: 'ACTIVO',
     '+10% maximum HP until rest or defeat.': ' +10% de salud máxima hasta descansar o caer.',
     '+10% maximum HP until rest or defeat. Use at a completed Barracks.':
@@ -1381,7 +1414,8 @@
     if (/^Queued (recovery|treatment): /.test(piece))
       return piece
         .replace('Queued recovery: ', 'Recuperación en cola: ')
-        .replace('Queued treatment: ', 'Tratamiento en cola: ');
+        .replace('Queued treatment: ', 'Tratamiento en cola: ')
+        .replace(': Hero', ': Héroe');
     if (/^Cancel queued (Soldier|Ranger)/.test(piece))
       return piece.replace('Cancel queued ', 'Cancelar en cola: ').replace('Soldier', 'Soldado');
     if (/^Queued recruitment: /.test(piece))
@@ -1394,9 +1428,9 @@
         .replace('Recruit ', 'Reclutar ')
         .replace('Soldier', 'Soldado')
         .replace('crowns', 'coronas');
-    if (/^Treat wounded companions/.test(piece))
+    if (/^Treat wounds/.test(piece))
       return piece
-        .replace('Treat wounded companions', 'Curar compañeros heridos')
+        .replace('Treat wounds', 'Curar heridas')
         .replace('crowns', 'coronas');
     if (/^Recover (?!fallen companion|Dark Lord)/.test(piece))
       return piece.replace('Recover ', 'Recuperar ');
@@ -1499,8 +1533,10 @@
     game,
     titleScreen = null,
     titleLoading = false,
+    titleImportNotice = false,
     titleEpoch = 0,
     titleWarmup = null,
+    titleSkipGraphics = null,
     sceneTransition = null,
     sceneTransitionEpoch = 0,
     started = false,
@@ -1955,6 +1991,16 @@
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
           getOptimizationMode: () => optimizationMode,
+          onPreparationProgress: ({ prepared, total }) => {
+            // One loading surface throughout decode, terrain tiles and GPU
+            // uploads; the count shows actual completed terrain tiles.
+            const message = language === 'es'
+              ? 'Preparando terreno ' + prepared + '/' + total + '…'
+              : 'Preparing terrain ' + prepared + '/' + total + '…';
+            if (titleLoading && $('title-loading')) $('title-loading').textContent = message;
+            else if (sceneTransition && $('scene-loading-text'))
+              $('scene-loading-text').textContent = message;
+          },
           onFailure: (failure) => {
             graphicsController?.webglFailed(failure);
             const recovery = graphicsController?.status();
@@ -1972,7 +2018,10 @@
   function updateGpuTrial(snapshot) {
     const trial = snapshot.phase === 'trial';
     const preparing = snapshot.phase === 'preparing';
-    gpuTrialPanel.hidden = !trial && !preparing;
+    // A launch remains one visible title-screen preparation, including
+    // Pixi initialization and the actual saved arrival's GPU uploads.
+    // Manual renderer changes outside startup retain the Keep/Revert panel.
+    gpuTrialPanel.hidden = (!trial && !preparing) || (preparing && titleLoading);
     gpuTrialActions.style.display = trial ? 'grid' : 'none';
     if (preparing) {
       gpuTrialMessage.textContent = tr('Preparing PixiJS graphics…');
@@ -2055,16 +2104,10 @@
     graphicsController.visibilityChanged(document.hidden),
   );
   addEventListener('pagehide', () => graphicsController.visibilityChanged(true));
-  // Canvas remains the boot-safe surface. The new PixiJS default (or a
-  // previously confirmed preference) activates after a complete GPU frame;
-  // crash quarantine and the Canvas fallback continue to take precedence.
-  if (previousRendererChoice.renderer === 'webgl2') {
-    requestAnimationFrame(() => {
-      graphicsController.resumeConfirmedWebGL().then((ready) => {
-        if (!ready) status('Previous WebGL2 choice unavailable; Canvas is active.');
-      });
-    });
-  }
+  // Keep the fresh-launch title visible. Do not initialize previously confirmed
+  // Pixi in a separate, player-visible pass before Continue/New Game. The first
+  // playable scene will coordinate sprite, renderer and arrival GPU preparation
+  // under one title-screen loading state, using the saved spawn when available.
   function drawWorld() {
     // These measure synchronous draw calls, not completed GPU/presented frames.
     const timing = {
@@ -2364,7 +2407,7 @@
                   '. En recuperación, toca para poner tu curación en cola.\nRecupera a los caídos con un capitán o cuartel.'
               : 'Recall: ' +
                   input.key('recall') +
-                  '. Companions return to you.\nRanger Heal: ' +
+                  '. Companions return to you.\nCompanion Heal: ' +
                   input.key('heal') +
                   '. During cooldown, tap to queue hero healing.\nRecover fallen companions at a Captain or Barracks.',
             [],
@@ -2587,8 +2630,8 @@
           p.mouseMove,
           (enabled) => select('mouseMove', enabled),
           manaEnabled
-            ? 'When off, left click in the world commands Ranger Heal. Right click commands Mana Recovery.'
-            : 'When off, left click in the world commands Ranger Heal.',
+            ? 'When off, left click in the world commands companion Heal. Right click commands Ranger Mana Recovery.'
+            : 'When off, left click in the world commands companion Heal.',
         ),
       ],
       () => help(back),
@@ -2878,8 +2921,15 @@
       buttons[menuIndex].focus?.({ preventScroll: true });
     else $('modal').focus?.({ preventScroll: true });
   }
+  // The browser must receive a trusted click on the actual file input.
+  // Preserve its stable DOM node and onchange handler between dialog rebuilds.
+  const importFileInput = $('import-file');
   function renderActions() {
     const host = $('modal-actions');
+    if (!importFileInput.hidden) {
+      importFileInput.hidden = true;
+      document.body.append(importFileInput);
+    }
     host.replaceChildren();
     buttons = [];
     menuKeys = [];
@@ -2940,8 +2990,21 @@
         }
         continue;
       }
-      let b;
-      if (a.kind === 'toggle') {
+      let b, fileRow = null;
+      if (a.kind === 'file') {
+        // Keep the native input in the visible clickable row. An invisible
+        // off-menu input activated by a programmatic click can fail to show
+        // the system picker in a Chromium PWA.
+        b = importFileInput;
+        b.hidden = false;
+        b.disabled = false;
+        b.setAttribute('aria-label', tr(a.label));
+        b.onclick = () => {};
+        fileRow = document.createElement('label');
+        fileRow.className = 'menu-import-picker';
+        fileRow.textContent = tr(a.label);
+        fileRow.append(b);
+      } else if (a.kind === 'toggle') {
         b = document.createElement('button');
         b.className = 'menu-setting-toggle';
         const update = () => {
@@ -3018,7 +3081,7 @@
           updateHUD();
         };
       }
-      if (a.kind !== 'slider' && a.kind !== 'select') host.append(b);
+      if (a.kind !== 'slider' && a.kind !== 'select') host.append(fileRow || b);
       const buttonIndex = buttons.length;
       b.onfocus = () => {
         if (menuIndex === buttonIndex) return;
@@ -3271,32 +3334,36 @@
     if (!sprites?.definitionFor || !game?.s?.zones) return [];
     const known = game.s.zones[destination] || null;
     const region = game.regionIndex(destination);
-    // The first encounter matters more than distant decorations. Once native
-    // travel has constructed the destination, prioritize nearby combat actors,
-    // including companions, instead of starving typical 4+ GB devices with a
-    // tiny arbitrary key count. The existing 256 MiB decoded cache remains
-    // the actual global memory owner and can evict cold resources.
+    // Prepare combat sprites and animations from the actual admitted scene,
+    // not just the first few visible actors. A save already records the hero,
+    // companions, living enemies and known encounter locations.
     const hero = game.hero;
     const companions = typeof game.activeParty === 'function'
       ? game.activeParty().map((actor) => ({ ...actor, renderKind: 'ally' }))
       : [];
     const distance = (e) => Math.hypot(e.x - hero.x, e.y - hero.y);
+    const leaders = (e) => e.type === 'boss' || e.fieldCaptain ||
+      e.roomCaptain || e.captain;
     const enemies = known && destination === game.zoneId
       ? (known.enemies || []).filter((e) => e.hp > 0 &&
           Number.isFinite(e.x) && Number.isFinite(e.y))
-          .sort((a, b) => distance(a) - distance(b))
+          .sort((a, b) => Number(leaders(b)) - Number(leaders(a)) ||
+            distance(a) - distance(b))
           .map((e) => ({ ...e, renderKind: 'enemy' }))
       : [];
-    // Only a native admission/resumed save makes near-spawn enemy placement
-    // authoritative. Prior to entry we cannot inspect an ungenerated zone.
-    const imminent = combatFirst ? enemies.filter((e) => distance(e) <= 850) : [];
-    const fringe = combatFirst ? enemies.filter((e) => distance(e) <= 1300) : enemies;
+    // Only native entry or a restored save makes encounter placement real.
+    // Whole dungeon interiors and all already-spawned outdoor enemy classes
+    // are eligible; field bosses are never left for combat-time decoding.
+    const imminent = combatFirst ? enemies.filter(
+      (e) => leaders(e) || distance(e) <= 850) : [];
+    const fringe = enemies;
     const neighbors = known && destination === game.zoneId
       ? [...(known.npcs || []).map((e) => ({ ...e, renderKind: 'npc' })),
-        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' }))]
-          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y) &&
-            (!combatFirst || distance(e) <= 600))
-          .sort((a, b) => distance(a) - distance(b)).slice(0, 100)
+        ...(known.props || []).map((e) => ({ ...e, renderKind: 'prop' })),
+        ...(known.buildings || []).map((e) => ({ ...e, renderKind: 'building' })),
+        ...(known.nodes || []).map((e) => ({ ...e, renderKind: 'node' }))]
+          .filter((e) => Number.isFinite(e.x) && Number.isFinite(e.y))
+          .sort((a, b) => distance(a) - distance(b))
       : [];
     const keys = new Set();
     for (const actor of [...imminent, { ...hero, renderKind: 'hero' },
@@ -3304,7 +3371,6 @@
       // Appearance lookup never calls Campaign.zone()/enter() or consumes RNG.
       const match = sprites.definitionFor(actor, region, !!game.s.rescued?.[actor.family]);
       if (match?.key) keys.add(match.key);
-      if (keys.size >= 64) break;
     }
     return [...keys];
   }
@@ -3317,27 +3383,23 @@
       !!game.sideDungeon?.(destination) ||
       !!game.supplyRoom?.(destination);
   }
-  function warmScene(destination, milliseconds = 750, combatFirst = false) {
+  function warmScene(destination, combatFirst = false) {
     const sprites = typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites;
     if (!sprites?.warm || document.hidden) return null;
     const keys = readOnlySceneKeys(destination, combatFirst);
     if (!keys.length) return null;
-    // The queue may outlive the deadline, but only presentation-cache bytes
-    // are touched; no delayed callback can commit travel or change the campaign.
-    return Promise.race([
-      Promise.resolve().then(() => sprites.warm(keys,
-        combatFirst ? { variants: true, clips: true } : {})).catch(() => null),
-      new Promise((resolve) => setTimeout(resolve, milliseconds)),
-    ]);
+    // Loading is readiness-driven: a slow decode is not a failed decode.
+    // Missing or broken images settle independently in the sprite cache.
+    // This never changes campaign state, game randomness or simulation time.
+    return Promise.resolve().then(() => sprites.warm(keys,
+      combatFirst ? { variants: true, clips: true } : {})).catch(() => null);
   }
   function prepareGpuForArrival() {
     if (graphicsController.status().mode !== 'webgl2' ||
         typeof pixiGame.warmArrival !== 'function') return null;
-    // Stall, GPU memory failure, or context loss falls back to reliable Canvas.
-    return Promise.race([
-      Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false),
-      new Promise((resolve) => setTimeout(() => resolve(false), 1800)),
-    ]);
+    // Await real GPU readiness rather than treating slow hardware as a failure.
+    // Actual Pixi errors/context cancellation still return false for Canvas recovery.
+    return Promise.resolve().then(() => pixiGame.warmArrival()).catch(() => false);
   }
   function drawReadyScene() {
     try {
@@ -3366,6 +3428,7 @@
     const previous = sceneTransition;
     if (!previous) return;
     ++sceneTransitionEpoch;
+    previous.resolveSkip?.(false);
     sceneTransition = null;
     $('scene-loading').hidden = true;
     $('scene-loading-retry').hidden = true;
@@ -3384,10 +3447,11 @@
     }
     if (!ticket.painted && drawReadyScene()) {
       ticket.painted = true;
-      const gpuWarmup = prepareGpuForArrival();
+      const gpuWarmup = ticket.skipped ? null : prepareGpuForArrival();
       if (gpuWarmup) {
         ticket.gpuPreparing = true;
-        void gpuWarmup.then((ready) => {
+        void Promise.race([gpuWarmup, ticket.skipPromise.then(() => false)])
+          .then((ready) => {
           if (sceneTransition?.token !== token) return;
           if (!ready) graphicsController.revert();
           ticket.gpuPreparing = false;
@@ -3406,6 +3470,7 @@
         : 'Arrival could not be drawn. Retry with Canvas.';
       $('scene-loading-retry').textContent = language === 'es'
         ? 'Reintentar con Canvas' : 'Retry with Canvas';
+      ticket.drawFailed = true;
       $('scene-loading-retry').hidden = false;
       $('scene-loading-retry').focus?.({ preventScroll: true });
       return;
@@ -3427,9 +3492,14 @@
     const token = ++sceneTransitionEpoch;
     const campaign = game;
     rendererEvent('arrival-start', destination);
-    sceneTransition = { token, campaign, destination, committed: false };
+    let resolveSkip;
+    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
+    sceneTransition = { token, campaign, destination, committed: false,
+      skipped: false, skipPromise, resolveSkip };
     $('scene-loading').hidden = false;
-    $('scene-loading-retry').hidden = true;
+    $('scene-loading-retry').hidden = false;
+    $('scene-loading-retry').textContent = language === 'es'
+      ? 'Continuar con Canvas' : 'Continue with Canvas';
     transitionLoadingText(label || destination, 'warm');
     clearInput();
     audio.setPaused(true);
@@ -3460,13 +3530,14 @@
       // nearby enemies. Warm the close-range encounter artwork *after* that
       // authoritative step while the clock is stopped and the screen covered.
       // Never spend an unbounded period trying to complete optional atlas art.
-      const encounterWarmup = warmScene(destination,
-        combatCriticalArrival(destination) ? 1400 : 1200, true);
+      const encounterWarmup = sceneTransition.skipped
+        ? null : warmScene(destination, true);
       const reveal = () => {
         if (sceneTransition?.token !== token) return;
         requestAnimationFrame(() => revealSceneTransition(token));
       };
-      if (encounterWarmup) void encounterWarmup.then(reveal, reveal);
+      if (encounterWarmup)
+        void Promise.race([encounterWarmup, skipPromise]).then(reveal, reveal);
       else reveal();
     };
     // Dungeon entries are combat-critical: do not wait on an optional atlas,
@@ -3474,8 +3545,8 @@
     // Simulation remains held until the committed first frame is drawn and
     // the opaque interlude is removed. No artificial combat grace period.
     const critical = combatCriticalArrival(destination);
-    const pending = critical ? null : warmScene(destination, 750);
-    if (pending) void pending.then(proceed, proceed);
+    const pending = critical ? null : warmScene(destination);
+    if (pending) void Promise.race([pending, skipPromise]).then(proceed, proceed);
     else proceed();
     return true;
   }
@@ -3505,6 +3576,12 @@
       : persistence.loadFailed(profile.activeMode)
         ? t('Saved adventure needs recovery', 'La partida requiere recuperación')
         : t('Your adventure awaits', 'Tu aventura te espera');
+    const importFeedback = $('title-import-feedback');
+    importFeedback.hidden = !titleImportNotice || titleLoading;
+    importFeedback.textContent = titleImportNotice
+      ? t('Import successful. Select Continue Adventure to play.',
+          'Importación completada. Selecciona Continuar aventura para jugar.')
+      : '';
     $('title-continue').textContent = t('Continue Adventure', 'Continuar aventura');
     $('title-new').textContent = t('New Game', 'Nueva partida');
     $('title-saves').textContent = t('Saved Games & Backups', 'Partidas y copias de seguridad');
@@ -3515,6 +3592,9 @@
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
       $(id).disabled = titleLoading;
+    titleCanvasContinue.hidden = !titleLoading || !!titleSkipGraphics?.skipped;
+    titleCanvasContinue.textContent = language === 'es'
+      ? 'Continuar con Canvas' : 'Continue with Canvas';
     if (!titleLoading) {
       $('title-loading').hidden = true;
       $('title-loading').textContent = '';
@@ -3523,6 +3603,8 @@
   function showTitleScreen() {
     stopRendererRecording();
     ++titleEpoch;
+    titleSkipGraphics?.resolve(false);
+    titleSkipGraphics = null;
     titleLoading = false;
     cancelSceneTransition();
     started = false;
@@ -3540,7 +3622,7 @@
     document.body.classList.add('title-active');
     // Prepare only the *loaded* arrival view, never an unentered zone.
     titleWarmup = loaded
-      ? warmScene(game.zoneId, combatCriticalArrival(game.zoneId) ? 1000 : 900, true)
+      ? warmScene(game.zoneId, true)
       : null;
     refreshTitleScreen();
     const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
@@ -3550,13 +3632,20 @@
     if (titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
     titleLoading = true;
+    titleImportNotice = false;
     const epoch = ++titleEpoch;
+    let resolveSkip;
+    const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
+    titleSkipGraphics = { skipped: false, resolve: resolveSkip };
+    const waitOrSkip = (pending, onSettled) => pending
+      ? void Promise.race([pending, skipPromise]).then(onSettled, onSettled)
+      : onSettled();
     $('title-loading').hidden = false;
     $('title-loading').textContent = language === 'es'
       ? 'Preparando la primera escena…' : 'Preparing first scene…';
     refreshTitleScreen();
     clearInput();
-    const campaign = game;
+    let campaign = game;
     const reveal = () => {
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
@@ -3566,6 +3655,10 @@
       }
       // Only Continue authorizes abnormal-session recovery.
       recoverLoadedSession();
+      // Crash recovery may replace the Campaign object with a safe-location
+      // clone. Continue's readiness guards must track that validated recovery,
+      // not silently abandon the title in its disabled loading state.
+      campaign = game;
       if (menu) closeMenu();
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
@@ -3576,6 +3669,8 @@
           return;
         }
         titleLoading = false;
+        titleSkipGraphics = null;
+        titleCanvasContinue.hidden = true;
         started = true;
         titleScreen.hidden = true;
         document.body.classList.remove('title-active');
@@ -3596,28 +3691,45 @@
           refreshTitleScreen();
           return;
         }
-        if (!drawReadyScene()) {
-          titleLoading = false;
-          status('Unable to prepare the game scene. Canvas backup is available.');
-          refreshTitleScreen();
-          return;
-        }
-        const gpuWarmup = prepareGpuForArrival();
-        if (gpuWarmup) void gpuWarmup.then((ready) => {
-          if (epoch !== titleEpoch) return;
-          if (!ready) graphicsController.revert();
-          requestAnimationFrame(finish);
-        });
-        else requestAnimationFrame(finish);
+        const showReadyFrame = () => {
+          if (epoch !== titleEpoch || document.hidden ||
+              campaign !== game || !writerGuard.canWrite()) return;
+          if (!drawReadyScene()) {
+            titleLoading = false;
+            status('Unable to prepare the game scene. Canvas backup is available.');
+            refreshTitleScreen();
+            return;
+          }
+          const gpuWarmup = titleSkipGraphics?.skipped ? null : prepareGpuForArrival();
+          if (gpuWarmup) void Promise.race([gpuWarmup, skipPromise.then(() => false)])
+            .then((ready) => {
+              if (epoch !== titleEpoch) return;
+              if (!ready) graphicsController.revert();
+              requestAnimationFrame(finish);
+            });
+          else requestAnimationFrame(finish);
+        };
+        // The save supplies the actual zone/hero/party. Only after recovery
+        // and that scene's sprite warmup do we initialize confirmed Pixi,
+        // all behind the SAME title loading surface. New Game shares this path.
+        const gpuState = graphicsController.status();
+        const shouldRestorePixi = !titleSkipGraphics?.skipped &&
+          (previousRendererChoice.renderer === 'webgl2' || gpuState.recoveryPending) &&
+          !gpuState.recoveryPaused &&
+          gpuState.phase === 'canvas' &&
+          gpuState.preferredRenderer === 'webgl2';
+        if (!shouldRestorePixi) return showReadyFrame();
+        $('title-loading').textContent = language === 'es'
+          ? 'Preparando gráficos PixiJS…' : 'Preparing PixiJS graphics…';
+        const restoration = graphicsController.resumeConfirmedWebGL();
+        void Promise.race([restoration, skipPromise]).then(
+          showReadyFrame, showReadyFrame);
       };
       // Recovering an unclean save can change the spawn after title warmup.
-      const actual = warmScene(game.zoneId, 1400, true);
-      if (actual) void actual.then(paint, paint);
-      else paint();
+      const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
+      waitOrSkip(actual, paint);
     };
-    const pending = titleWarmup;
-    if (pending) void pending.then(reveal, reveal);
-    else reveal();
+    waitOrSkip(titleWarmup, reveal);
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
@@ -3636,6 +3748,7 @@
     }
     game = activateLiveCritical(candidate);
     loaded = true;
+    titleImportNotice = false;
     if (!['developer', 'arena'].includes(mode)) profile.activeMode = mode;
     persistProfile();
     showTitleScreen();
@@ -3681,7 +3794,7 @@
             if (raw) exportSaveText(raw, 'Azeroth_Original_' + mode + '.json');
           },
         })),
-        { label: tr('Import save'), action: () => $('import-file').click() },
+        { kind: 'file', label: 'Import save' },
       ],
       showTitleScreen,
       { view: 'title-saves' },
@@ -3760,7 +3873,7 @@
           '',
           !persistence.original(profile.activeMode),
         ),
-        action('Import save', () => $('import-file').click()),
+        { kind: 'file', label: 'Import save' },
         action('Start a new Normal run', () => chooseLanguage('normal')),
       ],
       started ? savedRunRecoveryMenu : showTitleScreen,
@@ -4128,6 +4241,7 @@
   const rendererDiagnosticCounters = [
     'proceduralBakes', 'proceduralCacheHits', 'sharedProceduralHits',
     'proceduralEvictions', 'proceduralCacheEvictions', 'backgroundRepaints',
+    'terrainTilesPrepared', 'terrainTileReuses',
     'backgroundLookaheadPaints', 'backgroundLookaheadPromotions',
     'backgroundLookaheadMisses', 'backgroundLookaheadFailures',
     'backgroundLookaheadPaintMs', 'backgroundLookaheadPromoteMs',
@@ -4378,7 +4492,7 @@
         action('Export save', () =>
           exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
         ),
-        action('Import save', () => $('import-file').click()),
+        { kind: 'file', label: 'Import save' },
       ],
       saveMenu,
     );
@@ -4747,7 +4861,7 @@
           ? game.isDungeon()
             ? 'Build in the field, outside dungeons'
             : 'An idle active Soldier or Ranger is needed'
-          : 'Open ground off the road. One companion builds it.',
+          : 'Open ground off the road. One companion builds it. Once built: Treat wounds heals the party for 30 crowns.',
         !canBuild || game.hero.gold < cost,
         !!game.s.quests['quest-barracks']?.barracksBriefed &&
           !game.s.quests['quest-barracks'].paid &&
@@ -4878,14 +4992,20 @@
       if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
         throw Error('Combat Diagnostics import requires the playtest link');
       persistence.writeCandidate(candidate);
-      resumeSavedRun(candidate);
+      resumeSavedRun(candidate, { imported: true });
       status('Imported successfully.');
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
+      // The normal status bar is hidden by the title screen. Keep failures
+      // visible in the current save dialog without replacing any campaign.
+      if (menu && $('modal-description')) $('modal-description').textContent =
+        language === 'es'
+          ? 'No se pudo importar el archivo. Tu partida actual se conservó.'
+          : 'Unable to import that file. Your current run was kept intact.';
     }
     e.target.value = '';
   };
-  function resumeSavedRun(candidate) {
+  function resumeSavedRun(candidate, { imported = false } = {}) {
     if (candidate?.s?.mode === 'arena' && !combatDiagnosticsEnabled) return;
     restartGuard.clean();
     game = activateLiveCritical(candidate);
@@ -4900,6 +5020,7 @@
     if (game.peace && game.s.finalRestCompleted && !['developer', 'arena'].includes(game.s.mode))
       profile.nightmareUnlocked = true;
     persistProfile();
+    titleImportNotice = imported;
     showTitleScreen();
   }
   function nearestNPC() {
@@ -6523,7 +6644,7 @@
     const b = document.createElement('button');
     b.id = type + '-potion';
     b.className = 'potion-button';
-    b.setAttribute('aria-label', 'Command Ranger ' + label);
+    b.setAttribute('aria-label', (type === 'health' ? 'Command ' : 'Command Ranger ') + label);
     b.onclick = (e) => {
       useRangerSupport(type);
     };
@@ -6887,8 +7008,28 @@
     if (document.hidden) {
       if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
       renderResolution.suspend();
-      if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
+      // A hidden browser may lose its GPU context and require expensive
+      // texture reconstruction. Never resume simulation directly into it.
+      const wasPlaying = started;
+      const saved = save();
+      if (saved && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
+      if (wasPlaying) {
+        if (saved && writerGuard.canWrite()) {
+          // warmScene explicitly skips hidden documents. Continue will perform
+          // the normal sprite/GPU arrival preparation behind the loading UI.
+          // Keep surviving GPU resources intact for a cheap warm return.
+          showTitleScreen();
+        } else {
+          // Match manual Return to Main Menu: do not abandon unsaved progress.
+          paused = true;
+          status('Saving failed. Export your run before closing.');
+        }
+      } else if (titleLoading) {
+        // Invalidate an interrupted Continue. No pending promise or graphics
+        // upload may silently activate gameplay when the page is reopened.
+        showTitleScreen();
+      }
     } else {
       if (sceneTransition?.committed) {
         const token = sceneTransition.token;
@@ -7195,6 +7336,25 @@
     );
   }
   developerSummonButton.onclick = openDeveloperSummonMenu;
+  // Reuse the original portrait-stamped Crown loot painter for the HUD.
+  // Rasterize it ONCE at 2x for the tiny UI badge. No separate generic
+  // currency drawing, asset manifest, or recurring canvas work per HUD tick.
+  function prepareHudCrownCoin() {
+    const coin = document.createElement('canvas');
+    // The loot painter extends 12.5 units above and 10.5 below its point.
+    // A 24-unit stamp cropped the upper crown; the 28-unit stamp gives the
+    // full silver coin, portrait, rim and ground shadow breathing room.
+    coin.width = coin.height = 56;
+    const ink = coin.getContext?.('2d');
+    if (!ink?.setTransform || typeof coin.toDataURL !== 'function') return;
+    ink.setTransform(2, 0, 0, 2, 0, 0);
+    PrototypeRenderer.drawCrownLoot(ink, { x: 14, y: 14 });
+    $('hero-stats').style?.setProperty?.(
+      '--hud-crown-image',
+      'url("' + coin.toDataURL('image/png') + '")',
+    );
+  }
+  prepareHudCrownCoin();
   const hudMarkup = new Map();
   function setMarkup(id, html) {
     if (hudMarkup.get(id) !== html) {
@@ -7249,11 +7409,19 @@
       '</span><small>' +
       (language === 'es' ? 'NIVEL ' : 'LEVEL ') +
       h.level +
-      '</small></div><div class="resource-line health"><span>HP ' +
+      '</small></div><div class="resource-line health"><span class="health-readout"><span class="hp-count">HP ' +
       Math.ceil(h.hp) +
       ' / ' +
       h.maxHp +
-      '</span><i style="--fill:' +
+      '</span><span class="hud-crowns" title="' +
+      Math.floor(h.gold) +
+      (language === 'es' ? ' coronas' : ' crowns') +
+      '" aria-label="' +
+      Math.floor(h.gold) +
+      (language === 'es' ? ' coronas' : ' crowns') +
+      '">' +
+      Math.floor(h.gold).toLocaleString(language === 'es' ? 'es-ES' : 'en-US') +
+      '</span></span><i style="--fill:' +
       hp +
       '%"></i>' +
       (lowHP
@@ -7307,8 +7475,9 @@
       $('status').textContent = '';
       statusUntil = 0;
     }
-    const rangers = game.activeLivingParty().filter((u) => u.type === 'archer');
-    $('quick-items').classList.toggle('has-rangers', rangers.length > 0);
+    const rangers = game.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
+    const healers = game.healCompanionCasters();
+    $('quick-items').classList.toggle('has-rangers', healers.length > 0 || rangers.length > 0);
     for (const [type, label, key, cdKey, threshold] of manaEnabled
       ? [
           ['health', 'Heal', input.key('heal'), 'healCd', 50],
@@ -7317,30 +7486,34 @@
       : [['health', 'Heal', input.key('heal'), 'healCd', 50]]) {
       const b = $(type + '-potion'),
         queuedHeal = type === 'health' ? game.queuedRangerHeal() : null,
-        ready = game.availableRangers(type).filter((u) => !game.mageSilenceActive(u)).length,
+        casters = type === 'health' ? healers : rangers,
+        ready = (type === 'health' ? game.availablePartyHealers() : game.availableRangers(type))
+          .filter((u) => !game.mageSilenceActive(u)).length,
         full =
           type === 'health'
             ? [h, ...game.activeLivingParty()].every((u) => u.hp >= u.maxHp)
             : h.mp >= h.maxMp,
-        next = rangers.length ? Math.min(...rangers.map((u) => u[cdKey] || 0)) : 0;
+        next = casters.length ? Math.min(...casters.map((u) =>
+          type === 'health' ? game.companionHealCooldown(u) : u[cdKey] || 0)) : 0;
       const recovering = type === 'mana' && game.hasSupportEffect(h, 'mana');
-      const canQueueHeal = type === 'health' && rangers.some((u) => (u.healCd || 0) > 0);
+      const canQueueHeal = type === 'health' &&
+        casters.some((u) => game.companionHealCooldown(u) > 0);
       b.disabled =
-        !rangers.length ||
+        !casters.length ||
         (!ready && !canQueueHeal && !queuedHeal) ||
         (full && !canQueueHeal && !queuedHeal) ||
         recovering;
       b.classList.toggle('support-queued', !!queuedHeal);
       b.setAttribute(
         'aria-label',
-        tr('Command Ranger ' + label) +
+        tr((type === 'health' ? 'Command ' : 'Command Ranger ') + label) +
           (queuedHeal
             ? language === 'es'
               ? ' · Curación del héroe en cola'
               : ' · Hero heal queued'
             : ''),
       );
-      b.hidden = platform.mode === 'phone' && !rangers.length;
+      b.hidden = platform.mode === 'phone' && !casters.length;
       setMarkup(
         type + '-potion',
         label +
@@ -7358,13 +7531,13 @@
               ? 'Restoring'
               : ready
                 ? ready + ' ready'
-                : rangers.length
+                : casters.length
                   ? next.toFixed(1) + 's'
-                  : 'Need Ranger') +
+                  : type === 'health' ? 'Need healer' : 'Need Ranger') +
           '</small>',
       );
       b.title =
-        'Ranger ' +
+        (type === 'health' ? 'Companion ' : 'Ranger ') +
         label +
         ' · ' +
         (type === 'health'
@@ -7372,7 +7545,7 @@
           : 'restores ' + game.rangerSupportAmount(type) + ' MP to the hero') +
         ' over five seconds · auto at ' +
         threshold +
-        '% or less · 10-second cooldown belongs only to the Ranger who casts it' +
+        '% or less · 10-second cooldown belongs only to the companion who casts it' +
         (type === 'health' ? ' · Tap during cooldown to queue one Heal for the hero' : '');
     }
     const remaining = Campaign.dungeonIds.filter((id) => !game.s.true[id]),
@@ -8136,17 +8309,39 @@
     fps.suspend();
   });
   titleScreen = $('title-screen');
+  const titleCanvasContinue = document.createElement('button');
+  titleCanvasContinue.type = 'button';
+  titleCanvasContinue.hidden = true;
+  titleCanvasContinue.style.cssText =
+    'position:fixed;bottom:max(16px,env(safe-area-inset-bottom));' +
+    'left:50%;transform:translateX(-50%);z-index:12;' +
+    'min-height:44px;padding:10px 18px;' +
+    'border:1px solid #dfc78f;border-radius:8px;background:#385c4b;' +
+    'color:#fff4d8;font:600 14px sans-serif;cursor:pointer';
+  titleScreen.append(titleCanvasContinue);
+  titleCanvasContinue.onclick = () => {
+    if (!titleLoading || !titleSkipGraphics) return;
+    titleSkipGraphics.skipped = true;
+    graphicsController.revert();
+    titleSkipGraphics.resolve(false);
+    titleCanvasContinue.hidden = true;
+  };
   $('title-continue').onclick = enterPreparedScene;
   $('title-new').onclick = newGameMenu;
   $('title-saves').onclick = titleSaveMenu;
   $('title-settings').onclick = systemMenu;
   $('title-help').onclick = titleHelpMenu;
   $('scene-loading-retry').onclick = () => {
-    if (!sceneTransition?.committed) return;
+    const ticket = sceneTransition;
+    if (!ticket) return;
+    ticket.skipped = true;
     graphicsController.revert();
-    const token = sceneTransition.token;
+    ticket.resolveSkip?.(false);
     $('scene-loading-retry').hidden = true;
-    requestAnimationFrame(() => revealSceneTransition(token));
+    // Awaiting preflight, decoded art or GPU upload is released by skipPromise.
+    // If a draw actually failed, try drawing the committed scene with Canvas.
+    if (ticket.drawFailed)
+      requestAnimationFrame(() => revealSceneTransition(ticket.token));
   };
   updateHUD();
   setLanguage(language);

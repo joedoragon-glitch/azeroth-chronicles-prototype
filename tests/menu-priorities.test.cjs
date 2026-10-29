@@ -48,7 +48,7 @@ for (const full of [false, true]) {
     'Basic and Full expose the same top-level service order',
   );
   assert(!opened.actions.some((a) =>
-    /^(Recover fallen companion|Treat wounded companions|Gather resources|Rescued specialists|Skill journal|Resource expeditions)$/.test(a.label),
+    /^(Recover fallen companion|Treat wounds|Gather resources|Rescued specialists|Skill journal|Resource expeditions)$/.test(a.label),
   ), 'all detailed services remain inside their appropriate category');
   click('Recovery');
   assert.equal(opened.title, 'Recovery');
@@ -56,7 +56,7 @@ for (const full of [false, true]) {
   click('Recover fallen companion');
   assert.equal(fallen.hp, fallen.maxHp);
   assert(opened.actions[0].disabled, 'cannot pay twice to recover same companion');
-  click('Treat wounded companions');
+  click('Treat wounds');
   assert.equal(wounded.hp, wounded.maxHp);
   assert(opened.actions[1].disabled, 'cannot pay twice to treat same companions');
   assert(opened.actions.some((a) => /death recovery point/.test(a.label)));

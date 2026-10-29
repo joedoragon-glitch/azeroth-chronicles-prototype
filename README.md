@@ -22,7 +22,7 @@ The title screen also contains **Settings** and **Help & Credits**. English and 
 
 ## The game
 
-Recruit and recover companions, rescue instructors and craftspeople, establish a Barracks, and travel through occupied regions toward the Dark Lord. Crowns are the in-world currency. The quest journal tracks major story objectives; local work comes from settlement boards.
+Recruit and recover companions, rescue instructors and craftspeople, establish a Barracks, and travel through occupied regions toward the Dark Lord. Town Captains and completed Barracks offer **Treat wounds** for 30 crowns to restore the hero and living companions when safe; refuges offer free healing on a 90-second cooldown. Fallen companions require separate recovery. Crowns are the in-world currency. The quest journal tracks major story objectives; local work comes from settlement boards.
 
 Combat is **cooldown-based**, not mana-based. Skills have a normal tap action and, where applicable, a stronger charged action. Automatic basic attacks continue separately. **Rogue** uses her own musical combat actions and can Charm eligible foes into companions; she is playable, but her extended phone, audio, boss and performance acceptance remains unfinished. For exact effects and cooldowns, use **Adventure → Hero skills** in the running game rather than an old balance table.
 
@@ -42,7 +42,7 @@ These are **default** desktop bindings. Keyboard presets and individual keys can
 | Change target | E | Target button |
 | Recall companions | Backtick key (or Q with default bindings) | Recall button |
 | Squad doctrine | Tab (when available) | Contextual Squad button |
-| Ranger Heal | H | Heal button |
+| Companion Heal (Ranger, Charmed ranged healer, eligible pet) | H | Heal button |
 | Map / talents / skill reference | Z / C / X | Adventure menu |
 | Pause / help / back | P (or V) / G / Esc | Menu |
 

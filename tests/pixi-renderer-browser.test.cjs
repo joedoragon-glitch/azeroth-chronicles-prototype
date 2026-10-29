@@ -26,36 +26,57 @@ function installedChromium() {
     } catch (_) {}
   return null;
 }
-// The real app opens on a title screen now. Explicitly enter a fresh
-// campaign before using the in-game settings button and drawing loop.
-async function startFreshPlaytest(page) {
-  await page.locator('#title-new').click();
-  await page.getByRole('button', {name:'New Normal game', exact:true}).click();
-  await page.getByRole('button', {name:/^English/}).click();
-  await page.getByRole('button', {name:'Standard death and refuge recovery', exact:true}).click();
-  await page.getByRole('button', {name:/paladin/i}).click();
-  await page.waitForFunction(() => Prototype.started &&
-    document.querySelector('#title-screen').hidden &&
-    document.querySelector('#modal').hidden, null, {timeout:45000});
-}
 async function selectPixi(page) {
-  // After a genuine reload the title screen is the current interface; do
-  // not try to click the hidden in-game menu button.
-  if (await page.locator('#title-screen').isVisible())
-    await page.locator('#title-settings').click();
-  else {
-    await page.locator('#menu-button').click();
-    await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
-  }
+  await page.locator('#menu-button').click();
+  await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
-  await page.waitForFunction(() => {
-    const r=Prototype.experimentalGraphics;
-    return r.phase==='trial' ||
-      (r.phase==='canvas' && !!(r.lastError || r.lastFallbackReason));
-  }, null, {timeout:45000});
+  try {
+    // A complete current-region atlas can legitimately take much longer than
+    // the old fringe-only Pixi startup, especially with software WebGL2.
+    // This is a *test observation limit*, never a game loading deadline.
+    await page.waitForFunction(() => {
+      const r=Prototype.experimentalGraphics;
+      return r.phase==='trial' ||
+        (r.phase==='canvas' && !!(r.lastError || r.lastFallbackReason));
+    }, null, {timeout:240000});
+  } catch (error) {
+    const diagnostic = await page.evaluate(() => ({
+      renderer: Prototype.experimentalGraphics,
+      titleLoading: document.querySelector('#title-loading')?.textContent,
+      sceneLoading: document.querySelector('#scene-loading-text')?.textContent,
+      gpuPreparation: document.querySelector('#gpu-renderer-trial')?.textContent,
+      titleHidden: document.querySelector('#title-screen')?.hidden,
+      gameStarted: Prototype.started,
+    }));
+    throw Error('Pixi regional preload did not complete: ' +
+      JSON.stringify(diagnostic) + '; ' + String(error));
+  }
   return page.evaluate(() => Prototype.experimentalGraphics);
+}
+// Drive the actual modern title-screen flow. Earlier graphics tests relied
+// on automatic gameplay startup and could silently skip preloading entirely.
+async function enterPlayableGame(page) {
+  await page.waitForFunction(() => !!window.Prototype?.renderer);
+  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  const title = page.locator('#title-screen');
+  if (await title.evaluate((el) => !el.hidden)) {
+    if (!(await page.locator('#title-continue').isDisabled())) {
+      await page.locator('#title-continue').click();
+    } else {
+      await page.locator('#title-new').click();
+      await page.getByRole('button', {name:'New Normal game', exact:true}).click();
+      await page.getByRole('button', {name:/^English(?: ✓)?$/}).click();
+      await page.getByRole('button',
+        {name:'Standard death and refuge recovery', exact:true}).click();
+      await page.getByRole('button', {name:/Paladin/}).first().click();
+    }
+  }
+  await page.waitForFunction(() =>
+    !!window.Prototype?.started && document.querySelector('#title-screen')?.hidden &&
+    document.querySelector('#scene-loading')?.hidden !== false,
+    null, { timeout: 180000 });
 }
 // Use a real screen-coordinate touch on phone. Playwright locator.click() may
 // scroll the fixed 15-second trial panel during mobile restart, potentially
@@ -222,39 +243,65 @@ async function run() {
     const host = process.env.PLAYTEST_URL
       ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
       : 'http://127.0.0.1:' + server.address().port + '/';
-    // Exercise the actual shipped startup first: an existing Canvas choice is
-    // overridden once and automatic Pixi startup is not a 15-second trial.
-    const rolloutContext = await browser.newContext({viewport:{width:1280,height:800}});
-    try {
-      await rolloutContext.addInitScript(() => {
-        // This represents an existing install before the new default ships.
-        localStorage.setItem('azeroth-renderer-choice-v1','canvas2d');
+
+    // Exercise both form factors through current title/new/continue preparation.
+    // A previous Canvas choice is superseded only on the first migrated boot.
+    for (const phone of [false, true]) {
+      const migrationContext = await browser.newContext({
+        viewport: phone ? {width:393,height:852} : {width:1280,height:800},
+        isMobile: phone, hasTouch: phone,
       });
-      const rolloutPage = await rolloutContext.newPage();
-      await rolloutPage.goto(host + 'index.html');
-      await rolloutPage.waitForFunction(() => !!window.Prototype?.renderer);
-      const migrated = await rolloutPage.evaluate(() => ({
-        marker: localStorage.getItem('azeroth-renderer-webgl-primary-v1'),
-        choice: localStorage.getItem('azeroth-renderer-choice-v1'),
-      }));
-      assert.equal(migrated.marker,'applied','Rollout must record a one-time migration');
-      assert.equal(migrated.choice,'webgl2','Upgraded Canvas users must receive Pixi default');
-      await rolloutPage.waitForFunction(() => {
-        const state = Prototype.experimentalGraphics;
-        return state.phase === 'confirmed' ||
-          (state.phase === 'canvas' && (state.lastFallbackReason || state.recoveryPending || state.recoveryPaused));
-      }, null, {timeout:45000});
-      const live = await rolloutPage.evaluate(() => Prototype.experimentalGraphics);
-      assert.equal(live.preferredRenderer,'webgl2');
-      assert(['webgl2','canvas2d'].includes(live.mode));
-      if (live.mode === 'webgl2')
-        assert.equal(live.phase,'confirmed','Default GPU startup must not show a Keep/Revert trial');
-      console.log('PASS existing Canvas preference migrated to Pixi primary ('+live.mode+')');
-    } finally {
-      await rolloutContext.close();
+      try {
+        await migrationContext.addInitScript(() => {
+          if (!localStorage.getItem('azeroth-renderer-webgl-primary-v1'))
+            localStorage.setItem('azeroth-renderer-choice-v1', 'canvas2d');
+        });
+        const migrationPage = await migrationContext.newPage();
+        await migrationPage.goto(host + (phone ? 'phone.html' : 'index.html'));
+        await migrationPage.waitForFunction(() => !!window.Prototype?.renderer);
+        const migrated = await migrationPage.evaluate(() => ({
+          marker: localStorage.getItem('azeroth-renderer-webgl-primary-v1'),
+          choice: localStorage.getItem('azeroth-renderer-choice-v1'),
+          phase: Prototype.experimentalGraphics.phase,
+        }));
+        assert.equal(migrated.marker, 'applied');
+        assert.equal(migrated.choice, 'webgl2');
+        assert.equal(migrated.phase, 'canvas',
+          'Title screen must not start expensive GPU preparation automatically');
+        await enterPlayableGame(migrationPage);
+        const active = await migrationPage.evaluate(() => Prototype.experimentalGraphics);
+        assert.equal(active.preferredRenderer, 'webgl2');
+        if (active.mode === 'webgl2')
+          assert.equal(active.phase, 'confirmed',
+            'Default Pixi is confirmed without the manual trial countdown');
+        else
+          assert(active.mode === 'canvas2d' &&
+            (active.lastError || active.lastFallbackReason || active.recoveryPaused),
+            'Unusable GPU must fall back to Canvas with a diagnostic reason');
+        if (!phone) {
+          await migrationPage.locator('#menu-button').click();
+          await migrationPage.getByRole('button',
+            {name:'Game and settings', exact:true}).click();
+          await migrationPage.getByRole('button',
+            {name:'Screen and performance', exact:true}).click();
+          await migrationPage.locator('select[aria-label="Graphics renderer"]')
+            .selectOption('canvas2d');
+          await migrationPage.reload();
+          await migrationPage.waitForFunction(() => !!window.Prototype?.renderer);
+          assert.equal(await migrationPage.evaluate(() =>
+            localStorage.getItem('azeroth-renderer-choice-v1')), 'canvas2d');
+          await enterPlayableGame(migrationPage);
+          assert.equal(await migrationPage.evaluate(() =>
+            Prototype.experimentalGraphics.mode), 'canvas2d');
+          const manual = await selectPixi(migrationPage);
+          if (manual.mode === 'webgl2') assert.equal(manual.phase,'trial');
+        }
+        console.log('PASS default Pixi migration, title, manual Canvas (' +
+          (phone ? 'phone' : 'desktop') + ')');
+      } finally {
+        await migrationContext.close();
+      }
     }
-    // Existing manual Keep/Revert acceptance starts on an intentionally
-    // retained Canvas choice, as if the player opted back to the backup.
     const startCanvasManualTrial = () => {
       if (localStorage.getItem('azeroth-renderer-webgl-primary-v1') !== 'applied') {
         localStorage.setItem('azeroth-renderer-webgl-primary-v1','applied');
@@ -277,7 +324,8 @@ async function run() {
         const beamPage = await beamContext.newPage();
         await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
         await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
-        await startFreshPlaytest(beamPage);
+        await enterPlayableGame(beamPage);
+        await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
         await inspectMageBeamOverlay(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
         if (mageGpu.mode === 'webgl2')
@@ -300,7 +348,8 @@ async function run() {
       await page.goto(host + (phone ? 'phone.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
-      await startFreshPlaytest(page);
+      await enterPlayableGame(page);
+      await page.waitForFunction(() => document.querySelector('#modal').hidden);
       await page.evaluate(() => {window.__gpuTestCampaign = Prototype.game;});
       // Canvas remains functional under the new three-way optimization policy.
       assert.equal(await page.evaluate(() =>
@@ -417,19 +466,40 @@ async function run() {
         // not merely an internal profiler object or a static source assertion.
         await page.locator('#menu-button').click();
         await page.getByRole('button', {name:'Game and settings', exact:true}).click();
+        // The current UI owns diagnostics under Screen and performance, not
+        // the Save and game management section used by the older pilot.
         await page.getByRole('button', {name:'Screen and performance', exact:true}).click();
-        const reportButton=page.getByRole('button', {name:/^Export playtest report/});
-        assert.equal(await reportButton.isVisible(), true,
-          'The Screen and performance menu must expose Export playtest report: ' +
-          JSON.stringify(await page.locator('#modal-actions button').allTextContents()));
-        // Await the download and the actual user click as one operation so a
-        // missing/misrouted button reports its own failure, not an unhandled
-        // download waiter timeout.
-        const [download]=await Promise.all([
-          page.waitForEvent('download',{timeout:15000}),
-          reportButton.click({timeout:15000}),
-        ]);
-        const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
+        // Headless Chromium does not reliably deliver downloads from a
+        // detached, script-clicked blob anchor. Exercise the actual menu action
+        // and inspect its generated JSON blob, without claiming OS download
+        // acceptance from this graphics-specific run.
+        await page.evaluate(() => {
+          window.__auditBlobCreate = URL.createObjectURL.bind(URL);
+          URL.createObjectURL = (blob) => {
+            if (blob.type === 'application/json') window.__auditReportBlob = blob;
+            return window.__auditBlobCreate(blob);
+          };
+        });
+        await page.getByRole('button', {name:/Export playtest report/}).click();
+        try {
+          await page.waitForFunction(() => !!window.__auditReportBlob, null, {timeout:8000});
+        } catch (error) {
+          const diag = await page.evaluate(() => ({
+            modal: document.querySelector('#modal-title')?.textContent,
+            buttons: [...document.querySelectorAll('#modal-actions button')]
+              .map((button) => button.textContent).slice(0, 15),
+            renderer: Prototype.experimentalGraphics.mode,
+          }));
+          throw Error('Playtest report menu action generated no JSON: ' +
+            JSON.stringify(diag) + '; ' + error);
+        }
+        const exported = await page.evaluate(async () => {
+          const report = JSON.parse(await window.__auditReportBlob.text());
+          URL.createObjectURL = window.__auditBlobCreate;
+          delete window.__auditBlobCreate;
+          delete window.__auditReportBlob;
+          return report;
+        });
         assert.equal(exported.performance.graphicsRenderer.activeRenderer, 'pixijs-webgl2');
         assert(exported.performance.graphicsRenderer.sceneMetrics.actors>0);
         assert.equal(exported.performance.render.measuredLayer,'canvas-combat-overlay');
@@ -488,9 +558,9 @@ async function run() {
             'An active WebGL scene must complete all lighting transitions');
         }
         await page.reload();
-        await page.waitForFunction(() => window.Prototype?.experimentalGraphics);
+        await enterPlayableGame(page);
         await page.waitForFunction(() =>
-          Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 30000});
+          Prototype.experimentalGraphics.phase !== 'preparing', null, {timeout: 180000});
         let after = await page.evaluate(() => Prototype.experimentalGraphics);
         assert(['confirmed', 'canvas'].includes(after.phase), 'Restart must safely show a renderer');
         // A software browser may safely restore Canvas. If this is our

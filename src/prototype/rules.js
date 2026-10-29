@@ -6261,6 +6261,11 @@
     criticalInstantSafetyMargin: 25,
     criticalChargeSafetyMargin: 60,
     criticalScreenMargin: 15,
+    // Max native blocked() probes for critical-retreat planning, not general
+    // movement. Shared across companions each simulation tick.
+    criticalTerrainChecksPerTick: 200,
+    criticalTerrainChecksPerSearch: 100,
+    criticalTerrainRetrySeconds: 0.25,
     criticalDirections: 12,
     criticalLocalRadii: [80, 180],
     criticalStep: 40,
@@ -6553,71 +6558,71 @@
   const roguePerformances = Object.freeze({
     2: Object.freeze({
       tap: Object.freeze({
-        range: 260, radius: 145, cap: 3, slow: 1.5,
+        range: 225, radius: 225, cap: 3, slow: 1.5,
         seconds: 4.5, move: 0.08, recovery: 0.05,
       }),
       charged: Object.freeze({
-        range: 300, radius: 185, cap: 4, slow: 2.2,
+        range: 280, radius: 280, cap: 4, slow: 2.2,
         seconds: 6, move: 0.12, recovery: 0.08,
       }),
     }),
     5: Object.freeze({
       tap: Object.freeze({
-        range: 260, radius: 140, cap: 3, seconds: 4,
+        range: 220, radius: 220, cap: 3, seconds: 4,
         slow: 0.65, slowResistance: 0.25, ward: 0, pulseDamage: 0,
       }),
       charged: Object.freeze({
-        range: 300, radius: 180, cap: 4, seconds: 5,
+        range: 275, radius: 275, cap: 4, seconds: 5,
         slow: 0.85, slowResistance: 0.40, ward: 0.06, pulseDamage: 0.22,
       }),
     }),
     8: Object.freeze({
       tap: Object.freeze({
-        range: 260, radius: 160, cap: 4, damage: 1.15,
+        range: 240, radius: 240, cap: 4, damage: 1.15,
         seconds: 4.5, criticalChance: 0.04, specialDamage: 0.04,
       }),
       charged: Object.freeze({
-        range: 300, radius: 205, cap: 6, damage: 1.65,
+        range: 310, radius: 310, cap: 6, damage: 1.65,
         silence: 0.75, seconds: 6, criticalChance: 0.06, specialDamage: 0.06,
       }),
     }),
     4: Object.freeze({
       tap: Object.freeze({
-        range: 260, radius: 145, cap: 3, seconds: 4,
+        range: 225, radius: 225, cap: 3, seconds: 4,
         dotFraction: 0.015, antiHeal: 0.25, healFraction: 0.03, incomingHealing: 0.08,
       }),
       charged: Object.freeze({
-        range: 300, radius: 185, cap: 4, seconds: 5,
+        range: 280, radius: 280, cap: 4, seconds: 5,
         dotFraction: 0.025, antiHeal: 0.4, healFraction: 0.05, incomingHealing: 0.12,
       }),
     }),
     3: Object.freeze({
       tap: Object.freeze({
-        range: 260, radius: 145, cap: 2, debt: 0.6,
+        range: 225, radius: 225, cap: 2, debt: 0.6,
         seconds: 3, protection: true,
       }),
       charged: Object.freeze({
-        range: 300, radius: 185, cap: 3, debt: 0.85,
+        range: 280, radius: 280, cap: 3, debt: 0.85,
         silence: 1.2, seconds: 4, protection: true,
       }),
     }),
     7: Object.freeze({
       tap: Object.freeze({
-        range: 260, radius: 145, cap: 2, push: 25, weaken: 3,
+        range: 225, radius: 225, cap: 2, push: 25, weaken: 3,
         weakenFraction: 0.14, seconds: 4, outgoing: 0.05,
       }),
       charged: Object.freeze({
-        range: 300, radius: 190, cap: 4, push: 40, weaken: 4,
+        range: 290, radius: 290, cap: 4, push: 40, weaken: 4,
         weakenFraction: 0.20, seconds: 5.5, outgoing: 0.08,
       }),
     }),
     6: Object.freeze({
       tap: Object.freeze({
-        range: 260, radius: 145, cap: 2, debt: 0.6,
+        range: 225, radius: 225, cap: 2, debt: 0.6,
         seconds: 4.5, specialRecovery: 0.12,
       }),
       charged: Object.freeze({
-        range: 300, radius: 190, cap: 4, debt: 1,
+        range: 290, radius: 290, cap: 4, debt: 1,
         seconds: 6, specialRecovery: 0.18,
       }),
     }),
@@ -6628,8 +6633,9 @@
     stats: Object.freeze({ hp: 90, mp: 60, power: 18, armor: 3, speed: 300 }),
     talents: Object.freeze({ power: 7, mana: 2, hp: 27, speed: 38 }),
     basic: Object.freeze({
-      range: 260, primaryMultiplier: 0.8, splashMultiplier: 0.25,
-      splashRadius: 100, secondaryCap: 2, finisherSecondaryCap: 4,
+      range: 220, primaryMultiplier: 0.8, splashMultiplier: 0.25,
+      splashRadius: 220, finisherSplashRadius: 250,
+      secondaryCap: 2, finisherSecondaryCap: 4,
     }),
     endure: Object.freeze({ duration: 2, floorHp: 1 }),
   });
