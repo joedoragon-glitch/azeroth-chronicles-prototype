@@ -9,6 +9,9 @@
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
     const rogueMusicStations = new WeakMap();
+    // One weak, unsaved, per-actor station-visibility cache. On-demand reads
+    // are cheap even when combat asks several times per frame for every ally.
+    const rogueStationChecks = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     // Adding a hero to the class registry must not silently use Ranger shots,
@@ -1164,17 +1167,49 @@
       }
       // These are owner-tunable first-play numbers, not permanent skill names.
       rogueStationProtection(unit) {
-        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
-            unit.active === false || !this.s.party.includes(unit)) return null;
+        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0) return null;
+        const fields = rogueMusicStations.get(this);
+        // No active stations means zero party membership or terrain work.
+        if (!fields?.length ||
+            (unit !== this.hero &&
+              (unit.active === false || !this.s.party.includes(unit)))) return null;
+        // Resolve the cheap geometric membership for Rogue and each companion
+        // on demand. Entry, exit and exact expiry never await cache refresh.
+        let inside = 0;
+        for (let i = 0; i < fields.length; i++) {
+          const field = fields[i], dx = unit.x - field.x, dy = unit.y - field.y;
+          if (field.zone === this.zoneId && field.until > this.s.time &&
+              dx * dx + dy * dy <= field.radius * field.radius) inside |= 1 << i;
+        }
+        if (!inside) {
+          // Leaving a circle drops cached visibility, so re-entry is checked
+          // immediately rather than reusing a prior inside-the-field result.
+          rogueStationChecks.delete(unit);
+          return null;
+        }
+        const cached = rogueStationChecks.get(unit),
+          moved = cached
+            ? (unit.x - cached.x) ** 2 + (unit.y - cached.y) ** 2 : Infinity;
+        // At most 2 fields, 4 Hz for an unmoving actor; walking farther than
+        // 24 units triggers an earlier visibility refresh. No extra timer,
+        // scan loop, or extra work for companions outside the stations.
+        if (cached && cached.owner === this && cached.fields === fields &&
+            cached.zone === this.zoneId && cached.inside === inside &&
+            this.s.time >= cached.checkedAt && this.s.time < cached.refreshAt &&
+            moved <= 24 * 24) return cached.effect;
         let selected = null;
-        for (const field of rogueMusicStations.get(this) || []) {
-          if (field.zone !== this.zoneId || field.until <= this.s.time ||
-              dist(unit, field) > field.radius || !this.line(field, unit)) continue;
+        for (let i = 0; i < fields.length; i++) {
+          if (!(inside & (1 << i)) || !this.line(fields[i], unit)) continue;
           selected = {
-            resistance: Math.max(selected?.resistance || 0, field.resistance),
-            ward: Math.max(selected?.ward || 0, field.ward),
+            resistance: Math.max(selected?.resistance || 0, fields[i].resistance),
+            ward: Math.max(selected?.ward || 0, fields[i].ward),
           };
         }
+        rogueStationChecks.set(unit, {
+          owner: this, fields, zone: this.zoneId, inside,
+          checkedAt: this.s.time, refreshAt: this.s.time + 0.25,
+          x: unit.x, y: unit.y, effect: selected,
+        });
         return selected;
       }
       tickRogueStations() {
@@ -1184,10 +1219,16 @@
           rogueMusicStations.delete(this);
           return;
         }
-        const live = fields.filter((field) =>
-          field.zone === this.zoneId && field.until > this.s.time);
-        if (!live.length) { rogueMusicStations.delete(this); return; }
-        rogueMusicStations.set(this, live);
+        // Stable field-list identity makes party-wide sightline caching useful;
+        // only create a new list when an old station actually expires.
+        let live = fields;
+        if (fields.some((field) =>
+          field.zone !== this.zoneId || field.until <= this.s.time)) {
+          live = fields.filter((field) =>
+            field.zone === this.zoneId && field.until > this.s.time);
+          if (!live.length) { rogueMusicStations.delete(this); return; }
+          rogueMusicStations.set(this, live);
+        }
         for (const field of live) {
           if (field.nextPulse > this.s.time) continue;
           field.nextPulse = this.s.time + 0.65;
@@ -1277,6 +1318,11 @@
         }
         // Stronger same-family application replaces the bonus; no stacking.
         // Other families will use separate bounded effect records in Phase 5.
+        // Instant songs snapshot legal recipients at cast release.
+        if (dist(h, primary) <= form.radius && this.line(primary, h))
+          this.applyRogueSongBoon(h, 'refrain', {
+            seconds: form.seconds, basicDamage: form.allyDamage,
+          });
         for (const u of allies) {
           if ((u.rogueSharpRefrainUntil || 0) <= this.s.time) u.rogueSharpRefrainBonus = 0;
           u.rogueSharpRefrainBonus = Math.max(u.rogueSharpRefrainBonus || 0, form.allyDamage);
@@ -1432,7 +1478,11 @@
             }
           }
         }
-        for (const u of (slot === 5 ? [] : allies))
+        const recipients = slot === 5 ? [] : [
+          ...allies,
+          ...(dist(h, primary) <= form.radius && this.line(primary, h) ? [h] : []),
+        ];
+        for (const u of recipients)
           this.applyRogueSongBoon(u,
             slot === 2 ? 'quickstep' : slot === 3 ? 'steadyBeat' : slot === 4 ? 'mending' : slot === 7 ? 'firmFooting' : slot === 8 ? 'finale' : 'borrowedTime', effectForm);
         this.event('rogueBellPerformance', {
@@ -1579,7 +1629,8 @@
         const combo = this.nextBasicCombo(primary.id),
           rank = this.hero.skills[0],
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
-            (1 + 0.15 * (rank - 1)) * combo.multiplier;
+            (1 + 0.15 * (rank - 1)) * combo.multiplier *
+            (1 + (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
           enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
