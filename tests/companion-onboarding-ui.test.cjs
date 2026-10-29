@@ -243,7 +243,9 @@ for (const language of ['en', 'es']) {
     e.get('modal-actions').children.find((b) => b.textContent.startsWith(buildPrefix));
   e.get('menu-button').click();
   assert(buildButton().classList.contains('tutorial-highlight'));
-  assert(buildButton().textContent.includes(language === 'en' ? 'Treat wounds' : 'Curar heridas'));
+  assert(buildButton().children.some((detail) =>
+    detail.textContent.includes(language === 'en' ? 'Treat wounds' : 'Curar heridas')
+  ), 'construction hint teaches paid party healing');
   events.keydown.forEach((fn) => fn({ code: 'ArrowDown', preventDefault() {} }));
   assert(buildButton().classList.contains('tutorial-highlight'));
   s.Prototype.closeMenu();
