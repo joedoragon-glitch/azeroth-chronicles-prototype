@@ -107,6 +107,9 @@ try {
   g.hero.cd[6] = 0;
   assert.equal(g.cast(7,foe.id,true),true);
   assert(g.rogueSongBoon(unit,'firmFooting')?.outgoing <= 0.08);
+  // Prior Skill 7 knockbacks can put the heroine beyond the next song's
+  // friendly radius. Move into the real footprint before testing self-buffs.
+  g.hero.x = foe.x - 80;
   // Skill 3 interrupts only a real warned enemy action; Steady Beat
   // protects a lawful living companion charge, never grants invulnerability.
   foe.rangedAim = { warning: true };
