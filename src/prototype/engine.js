@@ -45,6 +45,8 @@
     mercyStartRadius = R.balance.pursuit.mercyStartRadius;
   // Civilian restoration routes are runtime-only; only the worker's position saves.
   const archiveRestorationTrips = new WeakMap();
+  // No tactical search frontier is serialized or allowed to grant a regroup.
+  const tacticalRogueRouteSearches = new WeakMap();
   // Per-caster leader-heal cadence is independent of buffed ordinary casts.
   // Runtime-only WeakMap: no additional fields on saved enemy actors.
   const enemyLeaderHealRecovery = new WeakMap();
@@ -4977,7 +4979,7 @@
       }
       if (retired) this._tacticalEmergencyCleanupPending = true;
     }
-    tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0) {
+    tacticalBeginRogueRegroup(e, ally, activeTargetCount = 0, incremental = false) {
       const prior = this.tacticalRogueRegroup(e),
         preparing = prior?.phase === 'thinking' || prior?.phase === 'escape';
       if (
@@ -5000,7 +5002,18 @@
       const destination = { x: ally.x, y: ally.y },
         retreatOrigin = { x: e.x, y: e.y };
       if (!Number.isFinite(destination.x) || !Number.isFinite(destination.y)) return false;
-      const path = this.route(e, destination);
+      let path;
+      if (incremental) {
+        const previous = tacticalRogueRouteSearches.get(e),
+          pending = previous?.allyId === ally.id ? previous.state : null,
+          result = this.advanceBudgetedRoute(e, destination, 'tactical', pending);
+        if (result.pending) {
+          tacticalRogueRouteSearches.set(e, { allyId: ally.id, state: result.state });
+          return null; // pending is distinct from an invalid or unreachable regroup
+        }
+        tacticalRogueRouteSearches.delete(e);
+        path = result.path;
+      } else path = this.route(e, destination);
       if (!path.length) return false;
       let length = 0;
       let previous = e;
@@ -5435,7 +5448,9 @@
       for (const group of this.tacticalRegroupGroups(e)) {
         for (const ally of group.members) {
           if (attempts++ >= 5) return false;
-          if (this.tacticalBeginRogueRegroup(e, ally, pressure)) {
+          const decision = this.tacticalBeginRogueRegroup(e, ally, pressure, true);
+          if (decision === null) return false; // resume this candidate on the next update
+          if (decision) {
             this.event('rogueRegroup', { actor: e.id, ally: ally.id });
             return true;
           }
