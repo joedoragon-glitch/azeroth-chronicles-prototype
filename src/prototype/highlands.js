@@ -320,7 +320,7 @@
         dy = anchors.ogre[1] - old.y;
       for (const p of z.props) {
         if (
-          !String(p.id || '').startsWith('world-life-habitat-') || '')) ||
+          !String(p.id || '').startsWith('world-life-habitat-') ||
           distance(p, old) > 220
         ) continue;
         const target = { x: p.x + dx, y: p.y + dy };
