@@ -2511,6 +2511,7 @@
           cd: 0,
           masteryPoints: 0,
           masteryGuardianKeys: [],
+          charmRingleaderTrained: false,
           skill1Cd: 0,
           skill2Cd: 0,
           skill3Cd: 0,
