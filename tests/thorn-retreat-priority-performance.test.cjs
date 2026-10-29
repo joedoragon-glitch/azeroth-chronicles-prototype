@@ -197,6 +197,7 @@ for(const opts of [
   const [x,y]=Campaign.rules.thornPatrol.route[chosen];
   let arrived=false,peak=0,probes=0,plannerProbes=0,
     plannerCalls=0,plannerCompletions=0,plannerPending=0;
+  const planHistory=[];
   const old=g.blocked,originalAdvance=g.advanceBudgetedRoute;
   g.blocked=function(...args){probes++;return old.apply(this,args)};
   g.advanceBudgetedRoute=function(...args){
@@ -204,8 +205,19 @@ for(const opts of [
     if(args[2]==='thorn-retreat'){
       plannerProbes+=probes-before;
       plannerCalls++;
+      if(!args[3])planHistory.push({
+        startedAt:+g.s.time.toFixed(2),
+        x:+thorn.x.toFixed(2),y:+thorn.y.toFixed(2),
+        distance:+Math.hypot(thorn.x-x,thorn.y-y).toFixed(2),
+        currentPathLength:thorn.path?.length||0,routeAge:thorn.routeAge,
+      });
       if(result.pending)plannerPending++;
-      else plannerCompletions++;
+      else {
+        plannerCompletions++;
+        const last=planHistory.at(-1);
+        if(last)last.completedAt=+g.s.time.toFixed(2);
+        if(last)last.waypoints=result.path.length;
+      }
     }
     return result;
   };
@@ -224,6 +236,9 @@ for(const opts of [
     plannerCompletions,plannerProbes,arrived
   }));
   assert(arrived,'Thorn retreat must eventually finish without teleport');
+  console.log('THORN_RETREAT_ROUTE_REPLAN_TRACE '+JSON.stringify({
+    wall:opts.wall,history:planHistory
+  }));
   assert(plannerCompletions<=2,'retreat must not repeatedly rebuild completed routes');
   if(!opts.wall) assert(plannerProbes<=45000,
     'actual Thorn route planner cannot repeatedly rescan an intact full route');
