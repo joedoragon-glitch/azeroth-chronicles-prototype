@@ -1458,7 +1458,8 @@
           // original synchronous route API and movement behavior.
           enemyPursuit = entity.aggro && !entity.returning &&
             entity.type !== 'boss' && !entity.captain && !entity.roomCaptain &&
-            zone.enemies.includes(entity);
+            !entity.veraEscort && !this.thornPatroller(entity) &&
+            !this.cinderPatroller(entity) && zone.enemies.includes(entity);
         if (this.clearSegment(entity, target)) {
           entity.path = [];
           if (enemyPursuit) terrainTrips.delete(entity);
@@ -1470,11 +1471,13 @@
           // A moving hero must not reset the entire search frontier every
           // update. A pending search uses its frozen origin and destination;
           // its result is validated against the actor's actual position.
-          const invalid = !trip || trip.zone !== zone;
+          const invalid = !trip || trip.zone !== zone ||
+            trip.kind !== 'pursuit' || trip.engagement !== entity.fightStart;
           const changed = !invalid && dist(trip.target, target) > 80;
           if (invalid || (changed && !trip.pending)) {
             entity.path = [];
-            trip = { zone, target: { x: target.x, y: target.y }, pending: null };
+            trip = { zone, kind: 'pursuit', engagement: entity.fightStart,
+              target: { x: target.x, y: target.y }, pending: null };
             terrainTrips.set(entity, trip);
             entity.routeAge = 0;
           }
