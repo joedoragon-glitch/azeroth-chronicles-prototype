@@ -26,6 +26,18 @@ function installedChromium() {
     } catch (_) {}
   return null;
 }
+// The real app opens on a title screen now. Explicitly enter a fresh
+// campaign before using the in-game settings button and drawing loop.
+async function startFreshPlaytest(page) {
+  await page.locator('#title-new').click();
+  await page.getByRole('button', {name:'New Normal game', exact:true}).click();
+  await page.getByRole('button', {name:/^English/}).click();
+  await page.getByRole('button', {name:'Standard death and refuge recovery', exact:true}).click();
+  await page.getByRole('button', {name:/paladin/i}).click();
+  await page.waitForFunction(() => Prototype.started &&
+    document.querySelector('#title-screen').hidden &&
+    document.querySelector('#modal').hidden, null, {timeout:45000});
+}
 async function selectPixi(page) {
   await page.locator('#menu-button').click();
   await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
@@ -259,10 +271,7 @@ async function run() {
         const beamPage = await beamContext.newPage();
         await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
         await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
-        await require('./helpers/language-browser.cjs').selectEnglish(beamPage);
-        await beamPage.keyboard.press('f');
-        await beamPage.keyboard.press('f');
-        await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
+        await startFreshPlaytest(beamPage);
         await inspectMageBeamOverlay(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
         if (mageGpu.mode === 'webgl2')
@@ -285,10 +294,7 @@ async function run() {
       await page.goto(host + (phone ? 'phone.html' : 'index.html'));
       await page.waitForFunction(() => !!window.Prototype && !!window.Prototype.renderer);
       assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.mode), 'canvas2d');
-      await require('./helpers/language-browser.cjs').selectEnglish(page);
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
-      await page.waitForFunction(() => document.querySelector('#modal').hidden);
+      await startFreshPlaytest(page);
       await page.evaluate(() => {window.__gpuTestCampaign = Prototype.game;});
       // Canvas remains functional under the new three-way optimization policy.
       assert.equal(await page.evaluate(() =>
