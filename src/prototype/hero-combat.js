@@ -1270,8 +1270,8 @@
       }
       rogueSkill1Config(charged = false) {
         return charged
-          ? { range: 300, radius: 190, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
-          : { range: 260, radius: 145, cap: 2, damage: 1.3, allyDamage: 0.05, seconds: 4 };
+          ? { range: 290, radius: 290, cap: 4, damage: 1.8, allyDamage: 0.07, seconds: 5 }
+          : { range: 225, radius: 225, cap: 2, damage: 1.3, allyDamage: 0.05, seconds: 4 };
       }
       // Starting manual song: small / widened hostile pulse mirrored to
       // living active allies in the same lawful area. Charms never come from
@@ -1296,12 +1296,12 @@
               dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false; // no hostile, no free buff or cooldown
         const enemies = eligible.filter((e) =>
-          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)),
+          e === primary || (dist(e, h) <= form.radius && this.line(h, e)),
         ).sort((a, b) => a === primary ? -1 : b === primary ? 1 :
-          dist(a, primary) - dist(b, primary) || this.idOrder(a, b)).slice(0, form.cap);
+          dist(a, h) - dist(b, h) || this.idOrder(a, b)).slice(0, form.cap);
         const allies = this.activeLivingParty().filter((u) =>
           u.hp > 0 && u.active !== false &&
-          dist(u, primary) <= form.radius && this.line(primary, u));
+          dist(u, h) <= form.radius && this.line(h, u));
         this.releaseRecallForCombat();
         this.engage(primary);
         h.cd[0] = this.skillCooldown(1, false);
@@ -1319,8 +1319,7 @@
         // Stronger same-family application replaces the bonus; no stacking.
         // Other families will use separate bounded effect records in Phase 5.
         // Instant songs snapshot legal recipients at cast release.
-        if (dist(h, primary) <= form.radius && this.line(primary, h))
-          this.applyRogueSongBoon(h, 'refrain', {
+        this.applyRogueSongBoon(h, 'refrain', {
             seconds: form.seconds, basicDamage: form.allyDamage,
           });
         for (const u of allies) {
@@ -1332,7 +1331,7 @@
           actor: 'hero', class: 'rogue', slot: 1,
           form: charged ? 'charged' : 'tap', audioCue: 'bell-jingle',
           instrument: R.rogueHeroFoundation.weapon.instrument,
-          x: primary.x, y: primary.y, radius: form.radius,
+          x: h.x, y: h.y, radius: form.radius,
           target: primary.id, hits, allyCount: allies.length,
         });
         return true;
@@ -1362,12 +1361,13 @@
               dist(a, h) - dist(b, h) || this.idOrder(a, b))[0]);
         if (!primary) return false;
         const enemies = candidates.filter((e) =>
-          e === primary || (dist(e, primary) <= form.radius && this.line(primary, e)))
+          e === primary || (dist(e, h) <= form.radius && this.line(h, e)))
           .sort((a, b) => a === primary ? -1 : b === primary ? 1 :
-            dist(a, primary) - dist(b, primary) || this.idOrder(a, b))
+            dist(a, h) - dist(b, h) || this.idOrder(a, b))
           .slice(0, form.cap);
         const allies = this.activeLivingParty().filter((u) =>
-          dist(u, primary) <= form.radius && this.line(primary, u));
+          u.hp > 0 && u.active !== false &&
+          dist(u, h) <= form.radius && this.line(h, u));
         this.releaseRecallForCombat();
         this.engage(primary);
         h.cd[slot - 1] = this.skillCooldown(slot, false);
@@ -1403,7 +1403,7 @@
           const current = (rogueMusicStations.get(this) || []).filter((f) =>
             f.zone === this.zoneId && f.until > this.s.time);
           current.push({
-            zone: this.zoneId, x: primary.x, y: primary.y,
+            zone: this.zoneId, x: h.x, y: h.y,
             radius: effectForm.radius, cap: effectForm.cap, slow: effectForm.slow,
             resistance: effectForm.slowResistance, ward: effectForm.ward,
             pulseDamage: effectForm.pulseDamage, until: this.s.time + effectForm.seconds,
@@ -1480,7 +1480,7 @@
         }
         const recipients = slot === 5 ? [] : [
           ...allies,
-          ...(dist(h, primary) <= form.radius && this.line(primary, h) ? [h] : []),
+          h,
         ];
         for (const u of recipients)
           this.applyRogueSongBoon(u,
@@ -1490,7 +1490,7 @@
           form: charged ? 'charged' : 'tap',
           audioCue: 'bell-jingle',
           instrument: R.rogueHeroFoundation.weapon.instrument,
-          x: primary.x, y: primary.y, radius: form.radius,
+          x: h.x, y: h.y, radius: form.radius,
           target: primary.id, enemies: enemies.length, allies: allies.length,
         });
         return true;
@@ -1640,18 +1640,13 @@
         let splashHits = 0;
         if (landed) {
           const max = combo.step === 3 ? cfg.finisherSecondaryCap : cfg.secondaryCap,
-            axis = Math.atan2(primary.y - this.hero.y, primary.x - this.hero.x),
-            angleGap = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b))),
-            halfAngle = combo.step === 3 ? 0.75 : 0.5;
+            radius = combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius;
           const secondary = this.zone().enemies.filter((e) =>
             e !== primary && e.hp > 0 && !e.neutral && !e.returning &&
             !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
             this.tacticalDirectTargetable(e) &&
-            dist(e, primary) <= cfg.splashRadius &&
-            dist(e, this.hero) <= cfg.range + cfg.splashRadius &&
-            angleGap(Math.atan2(e.y - this.hero.y, e.x - this.hero.x), axis) <= halfAngle &&
-            this.line(this.hero, e),
-          ).sort((a, b) => dist(a, primary) - dist(b, primary) || this.idOrder(a, b));
+            dist(e, this.hero) <= radius && this.line(this.hero, e),
+          ).sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
           for (const e of secondary.slice(0, max))
             if (this.damage(e, enhancedBasic * cfg.splashMultiplier, 'hero', { area: true, automaticBasic: true }))
               splashHits++;
@@ -1665,6 +1660,7 @@
           x: this.hero.x, y: this.hero.y,
           target: primary.id, targetX: primary.x, targetY: primary.y,
           combo: combo.step, landed: !!landed, splashHits,
+          radius: combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius,
         });
         return true;
       }
