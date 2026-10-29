@@ -80,11 +80,13 @@
               .filter(
                 (p) =>
                   p.distance >= R.fieldOnboarding.withdrawClearance &&
-                  !this.blocked(p.x, p.y) &&
-                  this.route(thorn, p).length,
+                  !this.blocked(p.x, p.y),
               )
+              // The original highest-priority reachable leg remains the
+              // winner. Test the farthest safe choices first, instead of
+              // synchronously routing to every eligible patrol destination.
               .sort((a, b) => b.distance - a.distance || a.leg - b.leg);
-          const goal = choices[0];
+          const goal = choices.find((p) => this.route(thorn, p).length);
           if (goal) {
             this.cancelEncounter(thorn);
             thorn.aggro = false;
