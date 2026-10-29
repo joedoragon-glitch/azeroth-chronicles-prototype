@@ -53,9 +53,9 @@ try {
   assert.equal(g.hero.maxHp, 90);
   assert.equal(g.hero.mp, 60);
   assert.equal(g.talentProfile().power, 7);
-  assert.equal(g.heroBasicAttackApproachRange(), 260);
-  assert.equal(g.heroSkillRange(1), 260, 'first tap available at level 1');
-  assert.equal(g.heroSkillRange(1, true), 300, 'first charge available at level 1');
+  assert.equal(g.heroBasicAttackApproachRange(), 220);
+  assert.equal(g.heroSkillRange(1), 225, 'first performer-centered tap radius at level 1');
+  assert.equal(g.heroSkillRange(1, true), 290, 'first performer-centered charged radius at level 1');
   assert.equal(g.cast(2, enemies[0].id), false);
   assert.equal(g.effects.filter((e) => e.type === 'rogueBellBasic').length, 0);
 
