@@ -19,6 +19,15 @@
 
 ---
 
+## Post-audit implementation outcome — dev.229–230 (29 October 2026)
+
+The numerical tables below remain **unchanged dev.224 baseline evidence**; do not read them as dev.230 current measurements. Following the already-merged dev.225–228 targeted corrections, two further source-grounded improvements have now been implemented, exact-head focused-tested, merged and published:
+
+- **Projectile CPU roster reuse — [#628](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/628), dev.229.** In the native 1/24/96 missed hostile-shot fixtures, repeated `combatTargets()` builds fell from **1/24/96 to 1/1/1**, and two successive lethal shots still targeted distinct live companions. [CI #40856398314](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40856398314) passed 23 relevant files; [main/Pages #40856769462](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40856769462) succeeded. General terrain and fort projectile saturation remains under [#616](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/616).
+- **Thorn passive introductory-retreat routing — [#630](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/630), dev.230.** The original-geometry reachability min-heap and separate per-update retreat path budget eliminated a duplicate synchronous full route and its repeated regeneration. Open-layout **peak native full-tick blocked checks 21,269 → 2,902**; long-run route completions **11 → 1**, planner probes **99,037 → 19,691**, with original selected destination, route geometry, eventual arrival and hero-first interruption tested. [Exact-head CI #40861098068](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40861098068) passed 13 focused files; [merged-main Pages #40861507956](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40861507956) succeeded. Remaining generic boss/captain routing stays tracked in [#615](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/615).
+
+The current published code is `0.9.1+snapshot.dev.230`. **No physical-phone/Chromebook FPS or GPU completion results were measured**. The renderer experiment/diagnostics follow-up remains [#481](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/481). A focused success is not full-campaign certification.
+
 ## A. Boss and captain navigation
 
 With a genuine native obstruction and 120 manual `follow()` advances, one ordinary engaged enemy used the bounded planning route (peak **518** `blocked()` probes per update; 127.1 units progressed). With an identically positioned captain or boss, legacy synchronous `route()` was invoked twice, reached **1,587 probes in one update** and progressed the *same 127.1 units* over the same 120 advances. Captains and bosses retain authored patrol/attack/telegraph decisions not simulated by this isolated movement fixture.
