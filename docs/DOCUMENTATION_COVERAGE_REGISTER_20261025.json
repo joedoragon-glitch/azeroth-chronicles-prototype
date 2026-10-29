@@ -5137,6 +5137,20 @@
       "previousGreenwoodCloseoutGitBlobSha": "8e36b19edbb2e286f3e75ec997b05b36e658aed2"
     },
     {
+      "path": "docs/REGIONAL_STREET_CLEARANCE_ROLLBACK_AUDIT_20261029.md",
+      "gitBlobSha": "c8c19852e7d973d33609406d01a4453b2ee97546",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "dated_audit_or_evidence",
+      "authority": "dated_context_only",
+      "reviewDepth": "source_checked",
+      "reconciliationRole": "historical_audit",
+      "reconciliationRoleConfidence": "verified",
+      "reconciliationReview": "source-checked 2026-10-29; runtime before/after pending"
+    },
+    {
       "path": "docs/REGIONAL_HANDOFF_AUDIT.md",
       "gitBlobSha": "9294353a8bd756ac73fe8353281cf59ed15bb876",
       "location": "docs",

@@ -73,13 +73,12 @@
     rx: 225,
     ry: 1700,
   };
-  // Treasury entrance must remain off the carriageway (>=190 world units).
-  // The previous [1920,330] authored position was itself a road endpoint.
   const anchors = {
     town: [750, 2180],
     quarry: [2520, 510],
     field: [2850, 1170],
     mine: [2850, 2850],
+    // Preserve the one documented real road-blocking Treasury entrance fix.
     treasury: [2170, 330],
     lookout: [3000, 2030],
     ore: [650, 390],
@@ -296,14 +295,6 @@
     Campaign.prototype.highlandsTownServices = function (z) {
       if (z.id !== 'highlands' || !z.appalachianVersion) return;
       for (const n of z.npcs) {
-        // A migrated quarry refuge must retain its legal roadside frontage
-        // on every later zone read, not snap back onto the new hamlet road.
-        if (n.id === 'minor' && z.highlandsQuarryRoadVersion === 1) continue;
-        if (
-          z.finalStreetClearanceVersion === 1 &&
-          ['rest', 'minor', 'supplier', 'recruiter', 'board'].includes(n.id)
-        )
-          continue;
         const target = npcTargets[n.id];
         if (
           target &&
@@ -315,85 +306,11 @@
         }
       }
     };
-    // Early Appalachian saves placed the generic ogre habitat at its old
-    // [1980,1820] coordinates even after the named camp moved south.
-    // Rehouse only that existing group, preserving every prop ID and save fact.
-    Campaign.prototype.highlandsOgreHabitatFrontage = function (z) {
-      if (z.id !== 'highlands' || z.highlandsOgreHabitatVersion === 1) return;
-      const old = { x: 1980, y: 1820 },
-        dx = anchors.ogre[0] - old.x,
-        dy = anchors.ogre[1] - old.y;
-      for (const p of z.props) {
-        if (!String(p.id || '').startsWith('world-life-habitat-') || distance(p, old) > 220)
-          continue;
-        const target = { x: p.x + dx, y: p.y + dy };
-        Object.assign(p, this.safe(target.x, target.y, z.id));
-      }
-      z.highlandsOgreHabitatVersion = 1;
-    };
-    // The road solver validates collision, but a stone wall, roof or decorative
-    // cart can still overlap the *painted* street. Clear the final street
-    // footprint, after the actual road geometry and all scenery are installed.
-    // This is a once-only, ID-preserving migration for pre-fix v4 saves too.
-    Campaign.prototype.highlandsFinalRoadsideClearance = function (z) {
-      if (z.id !== 'highlands' || z.highlandsFinalRoadsideVersion === 1) return;
-      const previous = this.s.zone;
-      this.s.zone = z.id;
-      try {
-        const fits = (q, p, radius, required) =>
-          Math.min(q.x, q.y, 3400 - q.x, 3400 - q.y) >= 110 &&
-          !this.blocked(q.x, q.y, z.id, radius, true) &&
-          this.distanceToRoad(z, q) + 0.01 >= required &&
-          !z.props.some((other) => distance(q, other) < radius + Math.max(0, other.r || 0) + 24) &&
-          !z.buildings.some((b) => distance(q, b) < radius + 90) &&
-          !z.npcs.some((n) => distance(q, n) < radius + 60) &&
-          !z.nodes.some((n) => distance(q, n) < radius + 65);
-        // Work on the same objects rather than replacing IDs or recreating
-        // camp/tribute props. Roads and authored encounter centers stay fixed.
-        const affected = z.props.filter(
-          (p) => !p.roadTrace && this.distanceToRoad(z, p) + 0.01 < this.roadSetback(p),
-        );
-        for (const p of affected) {
-          const old = { x: p.x, y: p.y },
-            required = this.roadSetback(p),
-            radius = Math.max(15, p.r || 0),
-            near = this.nearestRoadPoint(z, p),
-            away = near ? Math.atan2(p.y - near.y, p.x - near.x) : -Math.PI / 2;
-          z.props.splice(z.props.indexOf(p), 1);
-          let chosen = null;
-          for (const reach of [25, 40, 60, 85, 115, 150, 195, 250, 300]) {
-            for (let j = 0; j < 24; j++) {
-              const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
-              const angle = away + (fan * Math.PI) / 12,
-                q = { x: old.x + Math.cos(angle) * reach, y: old.y + Math.sin(angle) * reach };
-              if (fits(q, p, radius, required)) {
-                chosen = q;
-                break;
-              }
-            }
-            if (chosen) break;
-          }
-          if (chosen) Object.assign(p, chosen);
-          z.props.push(p);
-        }
-        // Never certify a failed search or silently exempt defenses/tribute.
-        if (
-          z.props.every(
-            (p) => p.roadTrace || this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p),
-          )
-        )
-          z.highlandsFinalRoadsideVersion = 1;
-      } finally {
-        this.s.zone = previous;
-      }
-    };
     Campaign.prototype.highlandsLandscape = function (z) {
       if (z.id !== 'highlands') return;
       if (z.appalachianVersion === 1) {
-        this.highlandsOgreHabitatFrontage(z);
         this.highlandsTributeLayout(z);
         this.highlandsTownServices(z);
-        this.highlandsFinalRoadsideClearance(z);
         return;
       }
       const previous = this.s.zone;
@@ -474,12 +391,12 @@
         for (const p of work.sort((a, b) => (b.r || 0) - (a.r || 0))) {
           const k = group(p),
             raw = plots[p.id] ? point(plots[p.id]) : k ? shifted(p, k) : { x: p.x, y: p.y };
-          const fort = !!p.stronghold; // Mini-dungeon stone walls still require a full road setback.
+          const fort = !!p.stronghold || /^mini-wall/.test(p.id || '');
           const q = choose(
             raw,
             p,
             (q) =>
-              (fort || this.distanceToRoad(z, q) + 0.01 >= this.roadSetback(p)) &&
+              (fort || this.distanceToRoad(z, q) > 80 + (p.r || 0)) &&
               !specials.some((n) => distance(n, q) < (p.r || 0) + 100),
           );
           Object.assign(p, q);
@@ -630,7 +547,8 @@
           if (
             p.tributeScene ||
             p.stronghold ||
-            this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p)
+            /^mini-wall/.test(p.id || '') ||
+            this.distanceToRoad(z, p) >= 75 + (p.r || 0)
           )
             continue;
           z.props.splice(z.props.indexOf(p), 1);
@@ -638,7 +556,7 @@
             p,
             p,
             (q) =>
-              this.distanceToRoad(z, q) + 0.01 >= this.roadSetback(p) &&
+              this.distanceToRoad(z, q) >= 80 + (p.r || 0) &&
               !specials.some((n) => distance(n, q) < (p.r || 0) + 100),
           );
           Object.assign(p, q);
@@ -740,9 +658,7 @@
           z.props.push({ ...p, ...q });
         }
         z.appalachianVersion = 1;
-        this.highlandsOgreHabitatFrontage(z);
         this.highlandsTownServices(z);
-        this.highlandsFinalRoadsideClearance(z);
         if (previous === z.id)
           for (const u of [this.hero, ...this.activeParty()])
             if (this.blocked(u.x, u.y, z.id, this.actorRadius(u)))
