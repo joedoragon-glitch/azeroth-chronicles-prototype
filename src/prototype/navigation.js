@@ -57,6 +57,10 @@
       terrainProbesPerSearch: 512,
       routeNodesPerTick: 240,
       routeNodesPerSearch: 120,
+      // Enemy pursuit cannot consume the companion/delivery/regroup pool or
+      // wait behind it indefinitely in a crowded active fight.
+      pursuitTerrainProbesPerTick: 1024,
+      pursuitRouteNodesPerTick: 320,
     });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
@@ -452,6 +456,8 @@
             zone, time: now,
             probes: cfg.terrainProbesPerTick,
             nodes: cfg.routeNodesPerTick,
+            pursuitProbes: cfg.pursuitTerrainProbesPerTick,
+            pursuitNodes: cfg.pursuitRouteNodesPerTick,
           };
           routePlanningFrames.set(this, frame);
         }
@@ -459,13 +465,16 @@
         if (!plan || plan.zone !== zone || plan.mode !== mode ||
             plan.gathering !== gathering ||
             dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
-          const generator = mode === 'tactical'
+          const generator = mode === 'tactical' || mode === 'pursuit'
             ? this.budgetedTacticalRoute(origin, target)
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
         }
-        let probes = Math.min(frame.probes, cfg.terrainProbesPerSearch),
-          nodes = Math.min(frame.nodes, cfg.routeNodesPerSearch);
+        const pursuit = mode === 'pursuit';
+        let probes = Math.min(pursuit ? frame.pursuitProbes : frame.probes,
+            cfg.terrainProbesPerSearch),
+          nodes = Math.min(pursuit ? frame.pursuitNodes : frame.nodes,
+            cfg.routeNodesPerSearch);
         while (true) {
           if (!plan.request) {
             const next = plan.generator.next(plan.reply);
@@ -476,12 +485,14 @@
           if (plan.request.kind === 'node') {
             if (!nodes) break;
             nodes--;
-            frame.nodes--;
+            if (pursuit) frame.pursuitNodes--;
+            else frame.nodes--;
             plan.reply = undefined;
           } else if (plan.request.kind === 'blocked') {
             if (!probes) break;
             probes--;
-            frame.probes--;
+            if (pursuit) frame.pursuitProbes--;
+            else frame.probes--;
             plan.reply = this.blocked(...plan.request.args);
           } else throw Error('Unknown route planning step');
           plan.request = null;
@@ -1441,14 +1452,62 @@
         if (this.s.party.includes(entity))
           return this.followCompanion(entity, target, speed, dt, stop);
         if (dist(entity, target) <= stop) return true;
+        const zone = this.s.zones[this.zoneId],
+          // Only real enemy actors use this bounded combat planner. Hero
+          // orders, authored roads and non-enemy scripted routes retain the
+          // original synchronous route API and movement behavior.
+          enemyPursuit = entity.aggro && !entity.returning &&
+            entity.type !== 'boss' && !entity.captain && !entity.roomCaptain &&
+            !entity.veraEscort && !this.thornPatroller(entity) &&
+            !this.cinderPatroller(entity) && zone.enemies.includes(entity);
         if (this.clearSegment(entity, target)) {
           entity.path = [];
+          if (enemyPursuit) terrainTrips.delete(entity);
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
-        const trip = terrainTrips.get(entity),
-          zone = this.s.zones[this.zoneId];
-        if (!trip || trip.zone !== zone || dist(trip.target, target) > 80 || entity.routeAge <= 0) {
+        let trip = terrainTrips.get(entity);
+        if (enemyPursuit) {
+          // A moving hero must not reset the entire search frontier every
+          // update. A pending search uses its frozen origin and destination;
+          // its result is validated against the actor's actual position.
+          const invalid = !trip || trip.zone !== zone ||
+            trip.kind !== 'pursuit' || trip.engagement !== entity.fightStart;
+          const changed = !invalid && dist(trip.target, target) > 80;
+          if (invalid || (changed && !trip.pending)) {
+            entity.path = [];
+            trip = { zone, kind: 'pursuit', engagement: entity.fightStart,
+              target: { x: target.x, y: target.y }, pending: null };
+            terrainTrips.set(entity, trip);
+            entity.routeAge = 0;
+          }
+          if (trip.pending || entity.routeAge <= 0) {
+            if (trip.pending || this.reserveMovementPlan(entity)) {
+              const origin = trip.pending?.origin || entity,
+                destination = trip.pending?.target || target,
+                result = this.advanceBudgetedRoute(origin, destination, 'pursuit', trip.pending);
+              if (result.pending) {
+                trip.pending = result.state;
+              } else {
+                trip.pending = null;
+                trip.target = { x: target.x, y: target.y };
+                entity.path = result.path;
+                // The actor might have escaped or been displaced while the
+                // frontier was suspended. Never accept a stale obstructed leg.
+                const staleFirstLeg =
+                  entity.path.length && !this.clearSegment(entity, entity.path[0]);
+                if (staleFirstLeg) entity.path = [];
+                // Preserve the original no-route cooldown: a closed or
+                // unreachable arena must not be searched four times as often.
+                // Only a search invalidated by the actor's own movement may
+                // retry sooner, after fresh native collision validation.
+                entity.routeAge = staleFirstLeg
+                  ? Math.min(0.25, R.navigationPlanning.routeRetrySeconds)
+                  : R.navigationPlanning.routeRetrySeconds;
+              }
+            }
+          }
+        } else if (!trip || trip.zone !== zone || dist(trip.target, target) > 80 || entity.routeAge <= 0) {
           if (!trip || trip.zone !== zone || dist(trip.target, target) > 80) entity.path = [];
           if (this.reserveMovementPlan(entity)) {
             entity.path = this.route(entity, target);
@@ -1460,7 +1519,6 @@
         if (!entity.path?.length) return false;
         const moved = this.move(entity, entity.path[0], speed, dt);
         if (dist(entity, entity.path[0]) < 1) entity.path.shift();
-        // Retain the retry clock even for an empty/unreachable terrain route.
         return moved;
       }
     }
