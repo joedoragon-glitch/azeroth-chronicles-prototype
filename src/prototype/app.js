@@ -7355,11 +7355,19 @@
       '</span><small>' +
       (language === 'es' ? 'NIVEL ' : 'LEVEL ') +
       h.level +
-      '</small></div><div class="resource-line health"><span>HP ' +
+      '</small></div><div class="resource-line health"><span class="health-readout"><span class="hp-count">HP ' +
       Math.ceil(h.hp) +
       ' / ' +
       h.maxHp +
-      '</span><i style="--fill:' +
+      '</span><span class="hud-crowns" title="' +
+      Math.floor(h.gold) +
+      (language === 'es' ? ' coronas' : ' crowns') +
+      '" aria-label="' +
+      Math.floor(h.gold) +
+      (language === 'es' ? ' coronas' : ' crowns') +
+      '">👑 ' +
+      Math.floor(h.gold).toLocaleString(language === 'es' ? 'es-ES' : 'en-US') +
+      '</span></span><i style="--fill:' +
       hp +
       '%"></i>' +
       (lowHP
