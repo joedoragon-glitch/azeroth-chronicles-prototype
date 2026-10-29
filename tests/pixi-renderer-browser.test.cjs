@@ -39,8 +39,14 @@ async function startFreshPlaytest(page) {
     document.querySelector('#modal').hidden, null, {timeout:45000});
 }
 async function selectPixi(page) {
-  await page.locator('#menu-button').click();
-  await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
+  // After a genuine reload the title screen is the current interface; do
+  // not try to click the hidden in-game menu button.
+  if (await page.locator('#title-screen').isVisible())
+    await page.locator('#title-settings').click();
+  else {
+    await page.locator('#menu-button').click();
+    await page.getByRole('button', {name: 'Game and settings', exact: true}).click();
+  }
   await page.getByRole('button', {name: 'Screen and performance', exact: true}).click();
   // The current UI exposes an inline SELECT, not the old Graphics submenu.
   await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
