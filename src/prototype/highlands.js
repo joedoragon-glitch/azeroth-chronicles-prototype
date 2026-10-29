@@ -390,10 +390,8 @@
     Campaign.prototype.highlandsLandscape = function (z) {
       if (z.id !== 'highlands') return;
       if (z.appalachianVersion === 1) {
-        this.highlandsOgreHabitatFrontage(z);
         this.highlandsTributeLayout(z);
         this.highlandsTownServices(z);
-        this.highlandsFinalRoadsideClearance(z);
         return;
       }
       const previous = this.s.zone;
@@ -740,9 +738,7 @@
           z.props.push({ ...p, ...q });
         }
         z.appalachianVersion = 1;
-        this.highlandsOgreHabitatFrontage(z);
         this.highlandsTownServices(z);
-        this.highlandsFinalRoadsideClearance(z);
         if (previous === z.id)
           for (const u of [this.hero, ...this.activeParty()])
             if (this.blocked(u.x, u.y, z.id, this.actorRadius(u)))

@@ -1832,80 +1832,20 @@
         if (p.r > 0) return p.r + 64;
         return 72;
       }
-      clearStreetCorridors(z, finalPass = false) {
-        // Greenwood owns its final authored frontages in greenwoodFinish.
-        // This inherited-region repair must not recompose either Vale layout.
-        if (finalPass && z.id === 'vale') return;
+      clearStreetCorridors(z) {
         if (
           dungeonIds.includes(z.id) ||
           this.supplyRoom(z.id) ||
           this.sideDungeon(z.id) ||
-          (finalPass ? z.finalStreetClearanceVersion === 1 : z.streetClearanceVersion === 3)
+          z.streetClearanceVersion === 3
         )
           return;
-        // Rebuilding an older street plan invalidates its final-layout receipt.
-        if (!finalPass) delete z.finalStreetClearanceVersion;
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
           const i = this.regionIndex(z.id),
             major = { x: D.towns[i][0], y: D.towns[i][1] },
             minor = { x: D.minors[i][0], y: D.minors[i][1] };
-          // Later authored road plans can leave the original town square just
-          // outside their network. Join that square to the existing road before
-          // the final clearance; never relocate a town to hide disconnection.
-          if (finalPass && this.distanceToRoad(z, major) >= 1) {
-            const junction = this.nearestRoadPoint(z, major);
-            const path = junction && this.route(major, junction, { road: true });
-            if (path?.length) z.roads.unshift([major, ...path]);
-          }
-          // Join disconnected authored spurs using real collision-routed links.
-          // Retain every existing road; endpoint-to-segment joins count too.
-          let networkComplete = true;
-          if (finalPass) {
-            const touches = (p, road) =>
-              road.some((q, j) => j && this.distanceToSegment(p, road[j - 1], q) < 1);
-            for (let attempt = 0, limit = z.roads.length; attempt < limit; attempt++) {
-              const connected = new Set(z.roads.filter((road) => touches(major, road)));
-              for (let grew = true; grew; ) {
-                grew = false;
-                for (const road of z.roads) {
-                  if (connected.has(road)) continue;
-                  if (
-                    [...connected].some(
-                      (other) =>
-                        road.some((p) => touches(p, other)) || other.some((p) => touches(p, road)),
-                    )
-                  ) {
-                    connected.add(road);
-                    grew = true;
-                  }
-                }
-              }
-              if (connected.size === z.roads.length) break;
-              const joined = { roads: [...connected] },
-                candidates = [];
-              for (const road of z.roads.filter((r) => !connected.has(r)))
-                for (const p of road) {
-                  const q = this.nearestRoadPoint(joined, p);
-                  if (q) candidates.push({ p, q });
-                }
-              candidates.sort((a, b) => dist(a.p, a.q) - dist(b.p, b.q));
-              let link = null;
-              for (const { p, q } of candidates) {
-                const path = this.route(p, q, { road: true });
-                if (path.length && dist(path.at(-1), q) < 1) {
-                  link = [p, ...path];
-                  break;
-                }
-              }
-              if (!link) {
-                networkComplete = false;
-                break;
-              }
-              z.roads.push(link);
-            }
-          }
           // Reposition the two refuge buildings: the canonical settlement
           // coordinates are STREET SQUARES, not house footprints.
           const frontages = [
@@ -1926,10 +1866,6 @@
             }
             if (this.blocked(p.x, p.y, z.id, Math.max(12, (item.r || 0) + 9), true)) return false;
             if (this.distanceToRoad(z, p) < setback) return false;
-            if (finalPass && frontages.some(([id]) => id === item.id)) {
-              const center = item.id === 'minor' ? minor : major;
-              if (dist(p, center) >= 460) return false;
-            }
             if (
               z.props.some(
                 (other) =>
@@ -1948,16 +1884,7 @@
                   other !== item &&
                   dist(other, p) <
                     Math.max(
-                      finalPass &&
-                        [item.id, other.id].includes('board') &&
-                        [item.id, other.id].includes('rest')
-                        ? 151
-                        : 96,
-                      finalPass &&
-                        [item.id, other.id].includes('board') &&
-                        [item.id, other.id].includes('supplier')
-                        ? 116
-                        : 96,
+                      96,
                       (['rest', 'minor'].includes(other.id) ? 82 : 42) +
                         (['rest', 'minor'].includes(item.id) ? 36 : 0),
                     ),
@@ -1973,13 +1900,7 @@
             );
           };
           const moveOffRoad = (item, setback) => {
-            const service = finalPass && frontages.some(([id]) => id === item.id),
-              neighborhood = item.id === 'minor' ? minor : major;
-            if (
-              this.distanceToRoad(z, item) >= setback &&
-              (!service || dist(item, neighborhood) < 460)
-            )
-              return true;
+            if (this.distanceToRoad(z, item) >= setback) return true;
             const base = { x: item.x, y: item.y },
               center = dist(base, major) <= dist(base, minor) ? major : minor;
             // Prefer moving outward into a frontage plot, retaining the
@@ -2002,24 +1923,6 @@
                 return true;
               }
             }
-            if (finalPass) {
-              // Dense authored districts can leave a valid parcel between the
-              // polar samples. Keep services in their own neighborhood; search
-              // the region for large props, nearest first, retaining all IDs.
-              const service = frontages.some(([id]) => id === item.id),
-                center = service ? (item.id === 'minor' ? minor : major) : base,
-                reach = service ? 440 : D.regions[i].size,
-                candidates = [];
-              for (let x = center.x - reach; x <= center.x + reach; x += service ? 20 : 40)
-                for (let y = center.y - reach; y <= center.y + reach; y += service ? 20 : 40)
-                  candidates.push({ x, y });
-              candidates.sort((a, b) => dist(a, base) - dist(b, base));
-              const p = candidates.find((p) => canPlace(p, item, setback));
-              if (p) {
-                Object.assign(item, p);
-                return true;
-              }
-            }
             return false;
           };
           // Saved/player-built barracks are large buildings too. Relocate
@@ -2031,10 +1934,8 @@
             if (!npc) continue;
             // Services retain their original playable squares even though
             // their buildings/stands occupy neighboring frontage parcels.
-            if (!finalPass) {
-              if (id === 'rest') npc.servicePoint = { ...major };
-              if (id === 'minor') npc.servicePoint = { ...minor };
-            }
+            if (id === 'rest') npc.servicePoint = { ...major };
+            if (id === 'minor') npc.servicePoint = { ...minor };
             moveOffRoad(npc, setback);
           }
           // Generated forest obstacles must not invade the immediate living
@@ -2043,13 +1944,11 @@
           const rangedHomes = z.enemies
             .filter((enemy) => enemy.hp > 0 && (enemy.ranged || enemy.hybrid))
             .map((enemy) => enemy.home || enemy);
-          if (!finalPass)
-            z.props = z.props.filter(
-              (p) =>
-                p.greenwoodLegacyScenery ||
-                !String(p.id || '').startsWith('forest-') ||
-                !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
-            );
+          z.props = z.props.filter(
+            (p) =>
+              !String(p.id || '').startsWith('forest-') ||
+              !rangedHomes.some((home) => dist(p, home) < (p.r || 0) + 70),
+          );
           // Full corridor audit, not only collision-bearing props: market
           // stalls, carts, heaps, decorative houses and trees are visual
           // obstacles too. Keep every ID/scene role; move, do not erase.
@@ -2058,39 +1957,7 @@
             .filter((p) => this.distanceToRoad(z, p) < this.roadSetback(p))
             .sort((a, b) => (b.r || 0) - (a.r || 0) || a.id.localeCompare(b.id));
           for (const prop of affected) moveOffRoad(prop, this.roadSetback(prop));
-          if (finalPass) {
-            const complete =
-              networkComplete &&
-              frontages.every(([id, setback]) => {
-                const npc = z.npcs.find((n) => n.id === id);
-                const center = id === 'minor' ? minor : major;
-                return (
-                  npc &&
-                  this.distanceToRoad(z, npc) + 0.01 >= setback &&
-                  dist(npc, center) < 460 &&
-                  (!['rest', 'minor'].includes(id) ||
-                    Math.min(npc.x, npc.y, D.regions[i].size - npc.x, D.regions[i].size - npc.y) >=
-                      115)
-                );
-              }) &&
-              z.buildings.every((b) => this.distanceToRoad(z, b) + 0.01 >= 175) &&
-              z.props.every(
-                (p) => p.roadTrace || this.distanceToRoad(z, p) + 0.01 >= this.roadSetback(p),
-              );
-            if (complete) {
-              z.finalStreetClearanceVersion = 1;
-              // Native refreshNPCs must retain the verified frontage rather
-              // than restore the older composition's obstructing coordinates.
-              for (const region of ['frontier', 'crown']) {
-                if (z.id !== region) continue;
-                const placements = (z[region + 'TownPlacements'] ||= {});
-                for (const [id] of frontages) {
-                  const npc = z.npcs.find((n) => n.id === id);
-                  if (npc) placements[id] = [npc.x, npc.y];
-                }
-              }
-            }
-          } else z.streetClearanceVersion = 3;
+          z.streetClearanceVersion = 3;
         } finally {
           this.s.zone = oldZone;
         }
@@ -2644,7 +2511,6 @@
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
           this.highlandsLandscape(z);
-          this.highlandsQuarryRoadAccess(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
           // Keep only region-specific late street repairs; do not auto-join all roads.
@@ -3077,7 +2943,6 @@
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
         this.highlandsLandscape(z);
-        this.highlandsQuarryRoadAccess(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);
         // Keep only region-specific late street repairs; do not auto-join all roads.
