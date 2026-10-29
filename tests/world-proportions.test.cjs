@@ -41,7 +41,7 @@ assert.equal(sample('enemy', { species: 'goblin' }), 1);
 assert.equal(sample('prop', { structure: 'vale-fence' }), 1);
 
 const baselines = [
-  ['vale', 3200, 32],
+  ['vale', 2700, 32],
   ['march', 3000, 40],
   ['highlands', 3400, 48],
   ['frontier', 3400, 56],
