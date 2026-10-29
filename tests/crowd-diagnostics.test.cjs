@@ -304,7 +304,7 @@ for (const mode of ['calm-follow', 'recall', 'critical-combat']) {
       try {
         const next = g.advanceBudgetedRoute(start, destination, mode, pending);
         probes += tickChecks;
-        assert(tickChecks <= C.rules.navigationPlanning.terrainProbesPerSearch,
+        assert(tickChecks <= g.routePlanningLimits().terrainProbesPerSearch,
           'one ' + mode + ' search cannot consume an unlimited nested segment');
         if (next.pending) {
           sawPending = true;
@@ -318,7 +318,7 @@ for (const mode of ['calm-follow', 'recall', 'critical-combat']) {
     assert(result, mode + ' completes a resumable path');
     assert.deepEqual(result, native[mode],
       mode + ' original route selection and smoothing remain unchanged');
-    assert(probes > C.rules.navigationPlanning.terrainProbesPerSearch);
+    assert(probes > g.routePlanningLimits().terrainProbesPerSearch);
   }
   // Shared with all route-planning consumers, even when multiple actors ask
   // for different searches in one simulation update.
@@ -330,7 +330,7 @@ for (const mode of ['calm-follow', 'recall', 'critical-combat']) {
     for (let i = 0; i < 4; i++)
       g.advanceBudgetedRoute(start, destination, i % 2 ? 'tactical' : 'companion');
   } finally { g.blocked = originalBlocked; }
-  assert(combined <= C.rules.navigationPlanning.terrainProbesPerTick,
+  assert(combined <= g.routePlanningLimits().terrainProbesPerTick,
     'companion, delivery and enemy planning share one tick allowance');
   assert(!JSON.stringify(g.snapshot()).includes('routePlanning'),
     'search frontiers and counters are never persisted');
