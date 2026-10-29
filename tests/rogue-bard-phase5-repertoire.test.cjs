@@ -210,6 +210,62 @@ try {
   assert(g.cast(2,foe.id,true));
   assert.equal(g.rogueSongBoon(g.hero,'quickstep'),null,
     'a charged performance at 270 range does not self-buff beyond its 185 area');
+  // Full-party Skill 5 must not turn every gameplay query into terrain scans.
+  // Four additional companions plus the original unit and heroine stand in one
+  // charged music station; repeated frame reads should reuse one sightline.
+  const many = fresh(), partyGame = many.g;
+  partyGame.hero.skills[4] = 1;
+  for (let i = 0; i < 4; i++) {
+    const ally = partyGame.unit('soldier', 595 + i * 4, 500);
+    partyGame.s.party.push(ally);
+  }
+  assert(partyGame.cast(5, many.foe.id, true));
+  const actors = [partyGame.hero, ...partyGame.s.party];
+  const partyLine = partyGame.line;
+  let partyVisibilityCalls = 0;
+  partyGame.line = function(from, to, ...args) {
+    if (actors.includes(to) && from !== to) partyVisibilityCalls++;
+    return partyLine.call(this, from, to, ...args);
+  };
+  for (const actor of actors)
+    assert(partyGame.rogueStationProtection(actor), 'all six actors within station');
+  const warmedCalls = partyVisibilityCalls;
+  assert(warmedCalls <= actors.length * 2, 'initial warmup bounded by two stations');
+  for (let frame = 0; frame < 15; frame++) {
+    partyGame.s.time += 0.01;
+    partyGame.tickRogueStations();
+    for (let repeated = 0; repeated < 40; repeated++)
+      for (const actor of actors)
+        assert(partyGame.rogueStationProtection(actor));
+  }
+  assert.equal(partyVisibilityCalls, warmedCalls,
+    '240 repeated protection reads per frame across full party avoid terrain calls');
+  partyGame.s.time += 0.26;
+  for (const actor of actors) assert(partyGame.rogueStationProtection(actor));
+  assert(partyVisibilityCalls - warmedCalls <= actors.length * 2,
+    'each actor refreshes no more than two lines after the quarter-second interval');
+  const leaving = partyGame.s.party.at(-1);
+  leaving.x += 600;
+  const afterRefresh = partyVisibilityCalls;
+  assert.equal(partyGame.rogueStationProtection(leaving), null,
+    'companion leaving the field immediately loses protection');
+  assert.equal(partyVisibilityCalls, afterRefresh,
+    'outside-circle check never calls terrain sightline');
+  leaving.x -= 600;
+  assert(partyGame.rogueStationProtection(leaving),
+    'companion re-entering the field regains protection immediately');
+  assert(partyVisibilityCalls > afterRefresh,
+    're-entry invalidates cached visibility even without waiting');
+  // A newly placed station invalidates every actor cache without an extra scan.
+  partyGame.hero.cd[4] = 0;
+  assert(partyGame.cast(5, many.foe.id, false));
+  const placed = partyVisibilityCalls;
+  assert(partyGame.rogueStationProtection(leaving));
+  assert(partyVisibilityCalls > placed, 'new station invalidates stale visibility');
+  partyGame.s.time += R.roguePerformances[5].charged.seconds + 0.5;
+  assert.equal(partyGame.rogueStationProtection(leaving), null,
+    'expired fields cannot retain a cached ward');
+  partyGame.line = partyLine;
   // Non-Rogue classes retain their exact original cooldown/movement behavior.
   for(const cls of ['paladin','mage','ranger']) {
     const normal = new Campaign('normal',cls,()=>0.9);

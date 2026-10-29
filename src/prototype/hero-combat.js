@@ -9,9 +9,9 @@
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
     const rogueMusicStations = new WeakMap();
-    // Lazy, unsaved Hero aura cache: avoid repeated line-of-sight calls at
-    // unchanged positions within one simulation instant.
-    const rogueHeroStationChecks = new WeakMap();
+    // One weak, unsaved, per-actor station-visibility cache. On-demand reads
+    // are cheap even when combat asks several times per frame for every ally.
+    const rogueStationChecks = new WeakMap();
     const costs = R.balance.skills.costs,
       cooldowns = R.balance.skills.cooldowns;
     // Adding a hero to the class registry must not silently use Ranger shots,
@@ -1167,30 +1167,42 @@
       }
       // These are owner-tunable first-play numbers, not permanent skill names.
       rogueStationProtection(unit) {
-        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0 ||
+        if (this.hero.class !== 'rogue' || !unit || unit.hp <= 0) return null;
+        const fields = rogueMusicStations.get(this);
+        // No active stations means zero party membership or terrain work.
+        if (!fields?.length ||
             (unit !== this.hero &&
               (unit.active === false || !this.s.party.includes(unit)))) return null;
-        const fields = rogueMusicStations.get(this),
-          isHero = unit === this.hero;
-        if (isHero) {
-          const cached = rogueHeroStationChecks.get(this);
-          if (cached && cached.fields === fields &&
-              cached.zone === this.zoneId && cached.time === this.s.time &&
-              cached.x === unit.x && cached.y === unit.y) return cached.effect;
+        // Resolve the cheap geometric membership for Rogue and each companion
+        // on demand. Entry, exit and exact expiry never await cache refresh.
+        let inside = 0;
+        for (let i = 0; i < fields.length; i++) {
+          const field = fields[i], dx = unit.x - field.x, dy = unit.y - field.y;
+          if (field.zone === this.zoneId && field.until > this.s.time &&
+              dx * dx + dy * dy <= field.radius * field.radius) inside |= 1 << i;
         }
+        if (!inside) return null;
+        const cached = rogueStationChecks.get(unit),
+          moved = cached
+            ? (unit.x - cached.x) ** 2 + (unit.y - cached.y) ** 2 : Infinity;
+        // At most 2 fields, 4 Hz for an unmoving actor; walking farther than
+        // 24 units triggers an earlier visibility refresh. No extra timer,
+        // scan loop, or extra work for companions outside the stations.
+        if (cached && cached.owner === this && cached.fields === fields &&
+            cached.zone === this.zoneId && cached.inside === inside &&
+            this.s.time >= cached.checkedAt && this.s.time < cached.refreshAt &&
+            moved <= 24 * 24) return cached.effect;
         let selected = null;
-        // At most two live fields. Cheap distance before terrain sightline;
-        // no independent polling, and movement invalidates cached results.
-        for (const field of fields || []) {
-          if (field.zone !== this.zoneId || field.until <= this.s.time ||
-              dist(unit, field) > field.radius || !this.line(field, unit)) continue;
+        for (let i = 0; i < fields.length; i++) {
+          if (!(inside & (1 << i)) || !this.line(fields[i], unit)) continue;
           selected = {
-            resistance: Math.max(selected?.resistance || 0, field.resistance),
-            ward: Math.max(selected?.ward || 0, field.ward),
+            resistance: Math.max(selected?.resistance || 0, fields[i].resistance),
+            ward: Math.max(selected?.ward || 0, fields[i].ward),
           };
         }
-        if (isHero) rogueHeroStationChecks.set(this, {
-          fields, zone: this.zoneId, time: this.s.time,
+        rogueStationChecks.set(unit, {
+          owner: this, fields, zone: this.zoneId, inside,
+          checkedAt: this.s.time, refreshAt: this.s.time + 0.25,
           x: unit.x, y: unit.y, effect: selected,
         });
         return selected;
@@ -1202,10 +1214,16 @@
           rogueMusicStations.delete(this);
           return;
         }
-        const live = fields.filter((field) =>
-          field.zone === this.zoneId && field.until > this.s.time);
-        if (!live.length) { rogueMusicStations.delete(this); return; }
-        rogueMusicStations.set(this, live);
+        // Stable field-list identity makes party-wide sightline caching useful;
+        // only create a new list when an old station actually expires.
+        let live = fields;
+        if (fields.some((field) =>
+          field.zone !== this.zoneId || field.until <= this.s.time)) {
+          live = fields.filter((field) =>
+            field.zone === this.zoneId && field.until > this.s.time);
+          if (!live.length) { rogueMusicStations.delete(this); return; }
+          rogueMusicStations.set(this, live);
+        }
         for (const field of live) {
           if (field.nextPulse > this.s.time) continue;
           field.nextPulse = this.s.time + 0.65;
