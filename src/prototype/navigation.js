@@ -50,7 +50,8 @@
       ['companionTravelClear', 'companionTravelClearCalls', 'companionTravelClearMs'],
     ];
     const terrainTrips = new WeakMap(),
-      movementPlanFrames = new WeakMap();
+      movementPlanFrames = new WeakMap(),
+      routePlanningFrames = new WeakMap();
     const patrolResumes = new WeakMap();
     const sceneryReady = new WeakSet();
     // This shortlist exists only during one synchronous line/segment query.
@@ -231,6 +232,249 @@
         return threats.every(
           (e) => this.distanceToSegment(e, a, b) >= Math.min(e.r, dist(e, origin)) - 0.001,
         );
+      }
+      // Incremental searches use the same collision geometry as the native
+      // solvers. The caller controls how many authoritative blocked() probes
+      // and node expansions may run in one simulation update.
+      *budgetedRouteSafe(x, y) {
+        if (!(yield { kind: 'blocked', args: [x, y, this.zoneId, 15] })) return { x, y };
+        for (let r = 30; r < 450; r += 30)
+          for (let i = 0; i < 24; i++) {
+            const angle = (i * Math.PI) / 12,
+              p = { x: x + Math.cos(angle) * r, y: y + Math.sin(angle) * r };
+            if (!(yield { kind: 'blocked', args: [p.x, p.y, this.zoneId, 15] })) return p;
+          }
+        throw Error('No safe arrival');
+      }
+      *budgetedRouteSegment(a, b, radius = 15) {
+        const n = Math.max(1, Math.ceil(dist(a, b) / 8));
+        for (let j = 0; j <= n; j++) {
+          const x = a.x + ((b.x - a.x) * j) / n,
+            y = a.y + ((b.y - a.y) * j) / n;
+          if (yield { kind: 'blocked', args: [x, y, this.zoneId, radius] }) return false;
+        }
+        return true;
+      }
+      *budgetedCompanionRoute(a, b, gathering = false) {
+        const target = yield* this.budgetedRouteSafe(b.x, b.y),
+          threats = gathering ? this.gatheringThreats() : [],
+          step = R.gatheringTravel.gridStep,
+          n = Math.ceil(this.zoneSize() / step),
+          point = (id) => ({
+            x: (id % n) * step + step / 2,
+            y: Math.floor(id / n) * step + step / 2,
+          }),
+          game = this,
+          clear = function* (p, q) {
+            if (!(yield* game.budgetedRouteSegment(p, q))) return false;
+            return threats.every((e) =>
+              game.distanceToSegment(e, p, q) >= Math.min(e.r, dist(e, a)) - 0.001);
+          },
+          valid = new Map(),
+          free = function* (id) {
+            if (!valid.has(id)) {
+              const p = point(id);
+              valid.set(id, !(yield { kind: 'blocked', args: [p.x, p.y, game.zoneId, 15] }));
+            }
+            return valid.get(id);
+          };
+        if (yield* clear(a, target)) return [target];
+        const near = function* (p) {
+          const out = [],
+            cx = Math.floor(p.x / step), cy = Math.floor(p.y / step);
+          for (let dx = -2; dx <= 2; dx++)
+            for (let dy = -2; dy <= 2; dy++) {
+              const x = cx + dx, y = cy + dy, id = y * n + x;
+              if (x >= 0 && y >= 0 && x < n && y < n &&
+                  (yield* free(id)) && (yield* clear(p, point(id)))) out.push(id);
+            }
+          return out.sort((i, j) => dist(point(i), p) - dist(point(j), p)).slice(0, 8);
+        };
+        const starts = yield* near(a), ends = new Set(yield* near(target));
+        if (!starts.length || !ends.size) return [];
+        const heap = [], cost = new Map(), parents = new Map(),
+          push = (id, g) => {
+            const item = { id, g, f: g + dist(point(id), target) };
+            let i = heap.length;
+            heap.push(item);
+            while (i) {
+              const p = (i - 1) >> 1;
+              if (heap[p].f <= item.f) break;
+              heap[i] = heap[p];
+              i = p;
+            }
+            heap[i] = item;
+          },
+          pop = () => {
+            const first = heap[0], last = heap.pop();
+            if (heap.length) {
+              let i = 0;
+              while (i * 2 + 1 < heap.length) {
+                let j = i * 2 + 1;
+                if (j + 1 < heap.length && heap[j + 1].f < heap[j].f) j++;
+                if (heap[j].f >= last.f) break;
+                heap[i] = heap[j];
+                i = j;
+              }
+              heap[i] = last;
+            }
+            return first;
+          };
+        for (const id of starts) {
+          const g = dist(a, point(id));
+          cost.set(id, g);
+          parents.set(id, null);
+          push(id, g);
+        }
+        while (heap.length) {
+          yield { kind: 'node' };
+          const current = pop(), id = current.id;
+          if (current.g !== cost.get(id)) continue;
+          if (ends.has(id)) {
+            const path = [target];
+            for (let at = id; at !== null; at = parents.get(at)) path.push(point(at));
+            path.reverse();
+            const smooth = [];
+            let from = a, j = 0;
+            while (j < path.length) {
+              let far = j;
+              for (let k = path.length - 1; k > j; k--)
+                if (yield* clear(from, path[k])) { far = k; break; }
+              smooth.push(path[far]);
+              from = path[far];
+              j = far + 1;
+            }
+            return smooth;
+          }
+          const x = id % n, y = Math.floor(id / n), from = point(id);
+          for (const [dx, dy] of [
+            [1, 0], [-1, 0], [0, 1], [0, -1],
+            [1, 1], [1, -1], [-1, 1], [-1, -1],
+          ]) {
+            const xx = x + dx, yy = y + dy, next = yy * n + xx;
+            if (xx < 0 || yy < 0 || xx >= n || yy >= n || !(yield* free(next))) continue;
+            const g = current.g + step * (dx && dy ? Math.SQRT2 : 1);
+            if (g >= (cost.get(next) ?? Infinity) || !(yield* clear(from, point(next))))
+              continue;
+            cost.set(next, g);
+            parents.set(next, id);
+            push(next, g);
+          }
+        }
+        return [];
+      }
+      *budgetedTacticalRoute(a, b) {
+        const target = yield* this.budgetedRouteSafe(b.x, b.y),
+          step = 50, n = Math.ceil(this.zoneSize() / step),
+          point = (id) => ({ x: (id % n) * step + 25, y: Math.floor(id / n) * step + 25 }),
+          game = this;
+        if (yield* this.budgetedRouteSegment(a, target)) return [target];
+        const nearby = function* (p) {
+          const out = [], cx = Math.floor(p.x / step), cy = Math.floor(p.y / step);
+          for (let dx = -2; dx <= 2; dx++)
+            for (let dy = -2; dy <= 2; dy++) {
+              const x = cx + dx, y = cy + dy;
+              if (x < 0 || y < 0 || x >= n || y >= n) continue;
+              const id = y * n + x, q = point(id);
+              if (!(yield { kind: 'blocked', args: [q.x, q.y, game.zoneId, 15] }) &&
+                  (yield* game.budgetedRouteSegment(p, q))) out.push(id);
+            }
+          return out.sort((x, y) => dist(point(x), p) - dist(point(y), p));
+        };
+        const starts = yield* nearby(a), ends = yield* nearby(target);
+        if (!starts.length || !ends.length) return [];
+        const search = function* (sources, goals) {
+          const queue = [...sources],
+            parents = new Map(sources.map((id) => [id, null])),
+            destinations = new Set(goals), valid = new Map(),
+            free = function* (id) {
+              if (!valid.has(id)) {
+                const p = point(id);
+                valid.set(id, !(yield { kind: 'blocked', args: [p.x, p.y, game.zoneId, 15] }));
+              }
+              return valid.get(id);
+            };
+          for (let at = 0; at < queue.length; at++) {
+            yield { kind: 'node' };
+            const id = queue[at];
+            if (destinations.has(id)) {
+              const path = [target];
+              for (let j = id; j !== null; j = parents.get(j)) path.push(point(j));
+              path.reverse();
+              const smooth = [];
+              let current = a, j = 0;
+              while (j < path.length) {
+                let far = j;
+                for (let k = j + 1; k < path.length; k++) {
+                  if (!(yield* game.budgetedRouteSegment(current, path[k]))) break;
+                  far = k;
+                }
+                smooth.push(path[far]);
+                current = path[far];
+                j = far + 1;
+              }
+              return smooth;
+            }
+            const x = id % n, y = Math.floor(id / n), from = point(id);
+            for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+              const xx = x + dx, yy = y + dy, next = yy * n + xx;
+              if (xx < 0 || yy < 0 || xx >= n || yy >= n || parents.has(next) ||
+                  !(yield* free(next)) ||
+                  !(yield* game.budgetedRouteSegment(from, point(next)))) continue;
+              parents.set(next, id);
+              queue.push(next);
+            }
+          }
+          return [];
+        };
+        const primary = yield* search([starts[0]], [ends[0]]);
+        return primary.length ? primary : yield* search(starts, ends);
+      }
+      advanceBudgetedRoute(a, b, mode, pending = null, gathering = false) {
+        const cfg = R.navigationPlanning, now = this.s.time,
+          zone = this.zoneId, origin = { x: a.x, y: a.y },
+          target = { x: b.x, y: b.y };
+        let frame = routePlanningFrames.get(this);
+        if (!frame || frame.zone !== zone || frame.time !== now) {
+          frame = {
+            zone, time: now,
+            probes: cfg.terrainProbesPerTick,
+            nodes: cfg.routeNodesPerTick,
+          };
+          routePlanningFrames.set(this, frame);
+        }
+        let plan = pending;
+        if (!plan || plan.zone !== zone || plan.mode !== mode ||
+            plan.gathering !== gathering ||
+            dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
+          const generator = mode === 'tactical'
+            ? this.budgetedTacticalRoute(origin, target)
+            : this.budgetedCompanionRoute(origin, target, gathering);
+          plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
+        }
+        let probes = Math.min(frame.probes, cfg.terrainProbesPerSearch),
+          nodes = Math.min(frame.nodes, cfg.routeNodesPerSearch);
+        while (true) {
+          if (!plan.request) {
+            const next = plan.generator.next(plan.reply);
+            plan.reply = undefined;
+            if (next.done) return { pending: false, path: next.value, state: null };
+            plan.request = next.value;
+          }
+          if (plan.request.kind === 'node') {
+            if (!nodes) break;
+            nodes--;
+            frame.nodes--;
+            plan.reply = undefined;
+          } else if (plan.request.kind === 'blocked') {
+            if (!probes) break;
+            probes--;
+            frame.probes--;
+            plan.reply = this.blocked(...plan.request.args);
+          } else throw Error('Unknown route planning step');
+          plan.request = null;
+        }
+        return { pending: true, path: null, state: plan };
       }
       companionRoute(a, b, gathering = false) {
         const target = this.safe(b.x, b.y),
