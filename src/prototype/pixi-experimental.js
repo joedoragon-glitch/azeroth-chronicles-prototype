@@ -253,6 +253,28 @@
       crownLootDensity = 0;
     const measureNow = () =>
       typeof performance !== 'undefined' ? performance.now() : Date.now();
+    // Opt-in developer-mode CPU stage timings. A JS draw() completion means
+    // commands were submitted, not that GPU rendering/presentation finished.
+    // Never allocate a sample or read a clock during ordinary player frames.
+    const drawCpuSamples = [];
+    let developerDrawFrames = 0;
+    const drawCpuSampleEvery = 12;
+    function drawCpuReport() {
+      const names = ['viewport', 'resolution', 'background', 'actors', 'atmosphere', 'scene'];
+      const quantile = (values, p) => {
+        const list = values.slice().sort((a, b) => a - b);
+        return +(list[Math.floor((list.length - 1) * p)] || 0).toFixed(2);
+      };
+      return {
+        sampleEvery: drawCpuSampleEvery,
+        sampledFrames: drawCpuSamples.length,
+        phases: Object.fromEntries(names.map(name => {
+          const values = drawCpuSamples.map(row => row[name]);
+          return [name, { p50Ms: quantile(values, 0.5), p95Ms: quantile(values, 0.95) }];
+        })),
+        note: 'Developer-only JavaScript submission cost, not GPU time, frame pacing or device FPS.',
+      };
+    }
     function recordBackgroundPaint(started) {
       const elapsed = Math.max(0, measureNow() - started);
       syncBackgroundPaintMs += elapsed;
@@ -1350,18 +1372,39 @@
       let stage = 'active-check';
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
+        // Sampling is silent outside explicitly selected developer mode.
+        const observe = game()?.s?.mode === 'developer' &&
+          ++developerDrawFrames % drawCpuSampleEvery === 0;
+        const row = observe ? {} : null;
+        let stamp = observe ? measureNow() : 0;
+        const record = (name) => {
+          if (!row) return;
+          const next = measureNow();
+          row[name] = Math.max(0, next - stamp);
+          stamp = next;
+        };
         stage = 'viewport-check';
         syncViewport();
+        record('viewport');
         stage = 'resolution';
         syncResolution();
+        record('resolution');
         stage = 'background';
         syncBackground();
+        record('background');
         stage = 'actors';
         actorFrame();
+        record('actors');
         stage = 'atmosphere';
         syncAtmosphere();
+        record('atmosphere');
         stage = 'scene-render';
         scene.draw();
+        record('scene');
+        if (row) {
+          drawCpuSamples.push(row);
+          if (drawCpuSamples.length > 120) drawCpuSamples.shift();
+        }
         queuePredictiveWarm(game());
       } catch (error) {
         // Pixi/ANGLE can signal context loss through its draw exception
@@ -1446,6 +1489,7 @@
         lastError,
         // Actual Pixi scene counters; Canvas overlay counters are separate.
         sceneMetrics: scene?.metrics?.() || null,
+        drawCpuProfile: drawCpuReport(),
         loadedTextures: loaded.size,
         proceduralBytes: imageBytes,
         proceduralTextures: baked.size,
