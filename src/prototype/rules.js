@@ -902,8 +902,9 @@
           ],
         },
         {
+          // Keep the inhabited ogre hearth with its named Ironroot camp and road frontage.
           id: 'ogre-hearth',
-          center: [1980, 1820],
+          center: [940, 3010],
           props: [
             [-75, -20, 'lean-to'],
             [25, -25, 'ridge-hearth'],
