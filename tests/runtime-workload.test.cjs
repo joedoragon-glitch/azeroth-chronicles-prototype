@@ -268,10 +268,17 @@ function geometry(K) {
   // The old [200,1500]-[1000,1500] lane now crosses Greenwood's
   // reconstructed terrain. Choose ONE identical genuinely open test segment
   // for both versions so the same 600 distant blockers are still measured.
+  // The broadphase deliberately uses the first eight checks without a
+  // shortlist. Short (300-unit) lanes cannot substantiate a 10x reduction:
+  // restore the original >=800-unit physical workload.
   const corridors = [];
-  for (const y of [350, 500, 700, 900, 1150, 1350, 1600, 1800])
-    for (const x of [175, 300, 450, 600])
-      corridors.push([{ x, y }, { x: x + 300, y }]);
+  for (const y of [180, 300, 450, 600, 800, 1000, 1200, 1450, 1650, 1850, 2100, 2450])
+    for (const x of [180, 300, 450, 600, 800, 1050, 1300, 1550, 1800, 2100, 2300]) {
+      if (x + 840 < 3120)
+        corridors.push([{ x, y }, { x: x + 840, y }]);
+      if (y + 840 < 3120)
+        corridors.push([{ x, y }, { x, y: y + 840 }]);
+    }
   // Measure only genuinely open corridors shared by both methods.
   // The former first-match case exited before enough scene probes to test the optimization.
   const measured = corridors.flatMap((corridor) => {
@@ -284,7 +291,7 @@ function geometry(K) {
     });
     return [{ corridor, counts }];
   });
-  assert(measured.length, 'both implementations retain a shared 300-unit walkable test corridor');
+  assert(measured.length, 'both implementations retain a shared 840-unit walkable test corridor');
   measured.sort((a, b) => b.counts[0] - a.counts[0]);
   const { corridor, counts } = measured[0];
   console.log('NATIVE BROADPHASE OPEN-CORRIDOR', JSON.stringify({ corridor, counts, sampleCount: measured.length }));
