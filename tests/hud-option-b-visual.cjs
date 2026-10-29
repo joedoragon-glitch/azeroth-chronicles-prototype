@@ -56,7 +56,7 @@ async function capture(page,label) {
           const g=Prototype.game;
           g.tick=()=>{};
           g.enter('vale');
-          Object.assign(g.hero,{class:'ranger',x:600,y:900,hp:750,maxHp:1000,order:null});
+          Object.assign(g.hero,{class:'ranger',x:600,y:900,hp:750,maxHp:1000,gold:42424,order:null});
           g.hero.skills=Array(8).fill(1);
           g.s.party=[g.unit('archer',650,900)];
           g.zone().enemies=[];
@@ -65,6 +65,22 @@ async function capture(page,label) {
         },{left:!!config.left});
         for(let n=1;n<=8;n++) assert(await page.locator('#skill-'+n).isVisible(),config.name+' skill '+n+' must remain usable');
         assert(await page.locator('#health-potion').isVisible(),config.name+' Ranger Heal command remains');
+        // The balance must appear on the HP text row at every viewport, with no
+        // additional dock height as the amount grows.
+        const balance=page.locator('#hero-stats .hud-crowns');
+        assert(await balance.isVisible(),config.name+' Crown counter is visible');
+        assert((await balance.textContent()).includes(config.spanish?'42.424':'42,424'),config.name+' localized exact Crown count');
+        const hpText=await box(page,'#hero-stats .hp-count');
+        const crownText=await box(page,'#hero-stats .hud-crowns');
+        const hpDock=await box(page,'#hud');
+        assert(!overlaps(hpText,crownText),config.name+' Crowns do not overlap HP numerals');
+        assert(crownText.x>=hpDock.x&&crownText.x+crownText.width<=hpDock.x+hpDock.width+1,config.name+' Crowns stay inside the dock');
+        await page.evaluate(()=>{Prototype.game.hero.gold=999999;Prototype.updateHUD();});
+        const grownDock=await box(page,'#hud');
+        assert.equal(grownDock.height,hpDock.height,config.name+' larger balance must not grow HUD');
+        const grownCrown=await box(page,'#hero-stats .hud-crowns');
+        assert(grownCrown.x>=grownDock.x&&grownCrown.x+grownCrown.width<=grownDock.x+grownDock.width+1,config.name+' six-digit balance fits the dock');
+        await page.evaluate(()=>{Prototype.game.hero.gold=42424;Prototype.updateHUD();});
         const controls={};
         for(const id of ['#hud','#menu-button','#skills','#joystick','#recall-button','#target-button','#touch-interact-button','#squad-button','#health-potion']) controls[id]=await box(page,id);
         const m=controls['#menu-button'];assert(m,config.name+' Menu present');
