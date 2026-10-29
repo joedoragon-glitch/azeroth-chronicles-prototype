@@ -5471,10 +5471,8 @@
       // Present individuals on the hero's side are all effectively hero-level.
       // Every nearby active monster, of any species or strength, contributes
       // one defender; summons and bosses are meaningful support too.
-      return (
-        this.tacticalPresentOpponents(e) >= 2 &&
-        this.tacticalPresentOpponents(e) > this.tacticalLocalSupport(e)
-      );
+      const present = this.tacticalPresentOpponents(e);
+      return present >= 2 && present > this.tacticalLocalSupport(e);
     }
     tacticalAdvanceRogueRegroup(e, target, dt, committed = false) {
       const state = this.tacticalRogueRegroup(e);
