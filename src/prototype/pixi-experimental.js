@@ -67,17 +67,30 @@
     }
     return libraryRequest;
   }
-  function candidates(game, project, width, height, presentEntity, margin = 270) {
+  function candidates(game, project, width, height, presentEntity, margin = 270,
+    preloadEncounters = false) {
     const zone = game.zone();
     const result = [],
       used = new Map();
+    // Only already admitted enemies are inspected. Never trigger an unentered
+    // zone or roll future spawns just to manufacture a preload candidate.
+    const knownEnemies = preloadEncounters ? (zone.enemies || []).filter(
+      (e) => e.hp > 0 && Number.isFinite(e.x) && Number.isFinite(e.y)) : [];
+    const hotSpots = knownEnemies.filter(
+      (e) => e.type === 'boss' || e.fieldCaptain || e.roomCaptain || e.captain)
+      .flatMap((e) => [e, e.home].filter(
+        (p) => p && Number.isFinite(p.x) && Number.isFinite(p.y)))
+      .map(project);
     function add(entities, kind) {
       for (const entity of entities || []) {
         if (kind === 'enemy' && entity.hp <= 0) continue;
         const point = project(entity);
-        if (point.x < -margin || point.x > width + margin ||
-            point.y < -margin || point.y > height + margin)
-          continue;
+        const inCameraFringe = point.x >= -margin && point.x <= width + margin &&
+          point.y >= -margin && point.y <= height + margin;
+        const encounterActor = preloadEncounters && kind === 'enemy';
+        const bossTerritory = preloadEncounters && kind === 'prop' &&
+          hotSpots.some((p) => Math.hypot(point.x - p.x, point.y - p.y) <= 1600);
+        if (!inCameraFringe && !encounterActor && !bossTerritory) continue;
         const identity =
           entity.id == null
             ? String(entity.name || entity.structure || 'object') + ':' + entity.x + ':' + entity.y
@@ -682,16 +695,23 @@
       return baked.get(revision);
     }
     // On switching to Pixi, the existing live view is loaded first. Then,
-    // prepare a limited fringe just beyond the camera so a quick step from
-    // Millhaven toward its goblins doesn't require every first bake in combat.
+    // Prepare the actual saved/admitted region before revealing it: dungeon
+    // interiors completely, outdoor approach and known boss territory first.
     // Yield between batches while simulation is held. Finish the selected
     // neighborhood rather than abandoning bakes after a time/count quota.
     async function warmNeighborhood(epoch, arrival = false) {
       const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
       const current = game(), zoom = platform.cameraZoom || 1;
       const width = viewport.width, height = viewport.height;
+      // Dungeons are bounded interiors: prepare every admitted actor, prop,
+      // NPC and building, not merely those near their entrance. Outdoors,
+      // reach farther past town gates and include all live encounter actors
+      // plus scenery around known boss territories.
+      const dungeon = current.isDungeon() || !!current.supplyRoom?.() ||
+        !!current.sideDungeon?.();
       const fringe = candidates(current, project, width, height,
-        canvasRenderer.presentEntity, arrival ? 2000 : 900)
+        canvasRenderer.presentEntity, arrival && dungeon ? Infinity :
+          arrival ? 4000 : 900, arrival)
         .filter(({entity,point}) =>
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
@@ -699,8 +719,12 @@
             point.y < -270 || point.y > height + 270))
         .sort((a,b) => {
           if (arrival) {
-            const priority = (item) => item.kind === 'enemy' && item.entity.hp > 0 ? 0 :
-              item.kind === 'hero' || item.kind === 'ally' ? 1 : 2;
+            const priority = (item) =>
+              item.kind === 'enemy' && (item.entity.type === 'boss' ||
+                item.entity.fieldCaptain || item.entity.roomCaptain ||
+                item.entity.captain) ? 0 :
+              item.kind === 'enemy' && item.entity.hp > 0 ? 1 :
+              item.kind === 'hero' || item.kind === 'ally' ? 2 : 3;
             const dist = (item) => Math.hypot(
               item.entity.x-current.hero.x,item.entity.y-current.hero.y);
             return priority(a)-priority(b) || dist(a)-dist(b);
