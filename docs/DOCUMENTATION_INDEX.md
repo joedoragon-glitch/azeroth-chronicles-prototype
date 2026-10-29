@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **435 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **436 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -16,7 +16,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
 - [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (20)
-- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (47)
+- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (48)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
 - [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (45)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
@@ -256,6 +256,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Highlands Treasury DEV138](HIGHLANDS_TREASURY_DEV138.md) — *Dated record.* Describes highlands treasury decisions, constraints or engineering observations from its original development checkpoint.
 - **[Ironroot Highlands Layout](IRONROOT_HIGHLANDS_LAYOUT.md)** — **Reference.** Describes ironroot highlands layout decisions, constraints or engineering observations from its original development checkpoint.
 - [Orchard Witness DEV147](ORCHARD_WITNESS_DEV147.md) — *Dated record.* Relocation and saved-position migration of the Orchard witness to a visible roadside spot.
+- [Regional Street Clearance Rollback Audit 20261029](REGIONAL_STREET_CLEARANCE_ROLLBACK_AUDIT_20261029.md) — *Dated source/rollback review.* Before-and-after ledger of non-Greenwood road connections, moved props and conservative rollback limits.
 - **[Regional Handoff Audit](REGIONAL_HANDOFF_AUDIT.md)** — **Reference.** Examines regional for source or design inconsistencies, recording dated findings and limits.
 - [Side Dungeon Design Discussion 20261021](SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md) — *Dated record.* Preserves owner discussion and evolving decisions about side dungeon design discussion, subject to later rulings.
 - [Snapshot Transport And HUD Visual Preaudit 20261015](SNAPSHOT_TRANSPORT_AND_HUD_VISUAL_PREAUDIT_20261015.md) — *Dated record.* Examines snapshot transport and HUD visual preaudit for source or design inconsistencies, recording dated findings and limits.

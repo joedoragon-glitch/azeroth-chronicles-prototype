@@ -2647,9 +2647,8 @@
           this.highlandsQuarryRoadAccess(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
-          // Finish after all region-specific scenery shifts and road updates.
+          // Keep only region-specific late street repairs; do not auto-join all roads.
           this.marchCoastalFinalClearance(z);
-          this.clearStreetCorridors(z, true);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -3081,9 +3080,8 @@
         this.highlandsQuarryRoadAccess(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);
-        // Finish after all region-specific scenery shifts and road updates.
+        // Keep only region-specific late street repairs; do not auto-join all roads.
         this.marchCoastalFinalClearance(z);
-        this.clearStreetCorridors(z, true);
         this.setSceneryTraversal(z);
         return z;
       }
