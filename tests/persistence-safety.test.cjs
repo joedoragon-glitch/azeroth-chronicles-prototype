@@ -74,6 +74,47 @@ for (const original of ['{broken', JSON.stringify({ ...new C().snapshot(), versi
   assert.throws(() => quota.writeCandidate(new C()));
   assert.equal(storage.getItem(P.saveKey('normal')), original);
 }
+
+// Import button opens the native file input on a user click. File selection
+// should visibly confirm success, identify the loaded save, and preserve a
+// separate Continue step. Cancellation does not pretend to have imported.
+for (const language of ['en', 'es']) {
+  const candidate = new C('normal', 'mage', () => 0.5);
+  candidate.hero.gold = 777;
+  const app = shell(language, 'mage', { stayOnTitle: true });
+  const input = app.elements.get('import-file');
+  let pickerRequests = 0;
+  input.click = () => { pickerRequests++; };
+  app.elements.get('title-saves').click();
+  const importButton = app.elements.get('modal-actions').children.find(
+    (item) => item.textContent === (language === 'es' ? 'Importar partida' : 'Import save'),
+  );
+  assert(importButton, 'title save manager must expose import');
+  importButton.click();
+  assert.equal(pickerRequests, 1, 'import action must invoke file input');
+  assert.equal(app.elements.get('modal').hidden, false,
+    'opening a picker does not silently close the menu');
+  const selection = {
+    files: [{ size: 100, text: async () => JSON.stringify(candidate.snapshot()) }],
+    value: 'import',
+  };
+  await input.onchange({ target: selection });
+  assert.equal(app.scope.Prototype.game.hero.gold, 777);
+  assert.equal(app.elements.get('title-screen').hidden, false);
+  assert.equal(app.elements.get('title-import-feedback').hidden, false);
+  assert.match(
+    app.elements.get('title-import-feedback').textContent,
+    language === 'es' ? /Importación completada.*Continuar aventura/ :
+      /Import successful.*Continue Adventure/,
+  );
+  assert.match(app.elements.get('title-preview').textContent,
+    language === 'es' ? /Nivel 1/ : /Level 1/);
+  app.elements.get('title-continue').click();
+  app.frame(60);
+  assert.equal(app.scope.Prototype.started, true,
+    'Continue must activate the imported save');
+}
+
 console.log(
   'PASS protected failed-load originals, startup lifecycle, explicit replacement backup and rejected writes',
 );
@@ -138,6 +179,12 @@ console.log(
   await app.elements.get('import-file').onchange({ target: input });
   assert.equal(app.scope.Prototype.game.hero.gold, 321);
   assert.equal(app.storage.get(P.saveKey('normal') + '-unreadable-backup'), original);
+  assert.equal(app.elements.get('title-screen').hidden, false,
+    'successful import deliberately returns to the title');
+  assert.equal(app.elements.get('title-import-feedback').hidden, false,
+    'title must visibly confirm import instead of hiding the HUD status');
+  assert.match(app.elements.get('title-import-feedback').textContent,
+    /Import successful.*Continue Adventure/);
   console.log(
     'PASS original export, cancelled replacement, quota-safe new run/import and explicit recovery',
   );
