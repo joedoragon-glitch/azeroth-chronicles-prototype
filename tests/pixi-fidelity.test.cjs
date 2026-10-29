@@ -311,10 +311,13 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   game.props=[{id:'far-outdoor',x:9200,y:8100,structure:'lumber-pile'}];
   const revisitedBakes=gpu.status().proceduralBakes;
   const beforeTileReuse=gpu.status().terrainTileReuses;
+  const previousRepaints=gpu.status().backgroundRepaints;
   gpu.draw();
   assert.equal(await gpu.warmArrival(),true);
-  assert(gpu.status().terrainTileReuses>=beforeTileReuse,
-    'return uses already painted exterior tiles');
+  assert(gpu.status().terrainTileReuses>beforeTileReuse,
+    'return must actually composite retained exterior tiles');
+  assert.equal(gpu.status().backgroundRepaints, previousRepaints,
+    'return must not invoke expensive original terrain painting');
   assert.equal(gpu.status().cachedTerrainRegion,'vale');
   assert.equal(gpu.status().proceduralBakes,revisitedBakes,
     'return to overworld reuses the original prepared region artwork');
