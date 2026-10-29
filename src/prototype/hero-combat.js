@@ -1636,7 +1636,9 @@
           rank = this.hero.skills[0],
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
             (1 + 0.15 * (rank - 1)) * combo.multiplier *
-            (1 + (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0));
+            (1 + Math.max(
+              this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0,
+              this.rogueSongBoon(this.hero, 'cadence')?.basicDamage || 0));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
           enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
@@ -1658,6 +1660,17 @@
               splashHits++;
         }
         if (landed) this.rogueCharmAttempt(primary, beforePrimaryHp, attackZone);
+        // Critical bell strikes briefly inspire the singer and companions in
+        // the same physical circle. Only real landed criticals grant a boon;
+        // no extra critical/Charm roll, long aura, or added attack damage.
+        if (landed && criticalReceipt?.critical) {
+          const radius = combo.step === 3 ? cfg.finisherSplashRadius : cfg.splashRadius;
+          this.applyRogueSongBoon(this.hero, 'cadence', cfg.criticalCadence);
+          for (const ally of this.activeLivingParty()) {
+            if (dist(ally, this.hero) <= radius && this.line(this.hero, ally))
+              this.applyRogueSongBoon(ally, 'cadence', cfg.criticalCadence);
+          }
+        }
         // Bell-jingle sound intent remains distinct from actual audio playback.
         this.event('rogueBellBasic', {
           actor: 'hero', class: 'rogue', slot: 1, automaticBasic: true,
