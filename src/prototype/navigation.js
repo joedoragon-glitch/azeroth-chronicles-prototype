@@ -1478,11 +1478,16 @@
                 entity.path = result.path;
                 // The actor might have escaped or been displaced while the
                 // frontier was suspended. Never accept a stale obstructed leg.
-                if (entity.path.length && !this.clearSegment(entity, entity.path[0]))
-                  entity.path = [];
-                entity.routeAge = entity.path.length
-                  ? R.navigationPlanning.routeRetrySeconds
-                  : Math.min(0.25, R.navigationPlanning.routeRetrySeconds);
+                const staleFirstLeg =
+                  entity.path.length && !this.clearSegment(entity, entity.path[0]);
+                if (staleFirstLeg) entity.path = [];
+                // Preserve the original no-route cooldown: a closed or
+                // unreachable arena must not be searched four times as often.
+                // Only a search invalidated by the actor's own movement may
+                // retry sooner, after fresh native collision validation.
+                entity.routeAge = staleFirstLeg
+                  ? Math.min(0.25, R.navigationPlanning.routeRetrySeconds)
+                  : R.navigationPlanning.routeRetrySeconds;
               }
             }
           }
