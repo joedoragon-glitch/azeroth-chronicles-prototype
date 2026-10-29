@@ -380,8 +380,10 @@
         requireValue(texture?.source, 'Approved artwork unavailable after resize: ' + src);
         return [src, texture];
       });
-      // Retired procedural textures must never remain referenced by sprites.
-      clearBakes(true);
+      // Rebuild viewport-sized objects but keep the previously uploaded
+      // procedural artwork. The new bridge gets the same registered textures;
+      // no dungeon visit or display resize should force a full rebake.
+      scene.syncActors([]);
       releaseCrownLootTexture();
       scene.destroy();
       scene = null;
@@ -395,6 +397,7 @@
         PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
       });
       for (const [src, texture] of originals) scene.registerTexture(src, texture);
+      for (const body of baked.values()) scene.registerTexture(body.id, body.texture);
       if (game().s.mode !== 'arena') createBackgroundPainter();
       bakedZoom = null;
       drawBackground();
@@ -709,15 +712,14 @@
       const ahead = heading ? iso(heading) : null;
       const headingLength = ahead ? Math.hypot(ahead.x, ahead.y) || 1 : 1;
       const width = viewport.width, height = viewport.height;
-      // Dungeons are bounded interiors: prepare every admitted actor, prop,
-      // NPC and building, not merely those near their entrance. Outdoors,
-      // reach farther past town gates and include all live encounter actors
-      // plus scenery around known boss territories.
+      // Prepare the WHOLE admitted zone before revealing gameplay: every
+      // outdoor actor/scenery record in the active region, or every actor and
+      // prop in the bounded dungeon. Keep these bakes across interior visits.
       const dungeon = current.isDungeon() || !!current.supplyRoom?.() ||
         !!current.sideDungeon?.();
       const fringe = candidates(current, project, width, height,
-        canvasRenderer.presentEntity, arrival && dungeon ? Infinity :
-          arrival || heading ? 4000 : 900, arrival || !!heading)
+        canvasRenderer.presentEntity, arrival ? Infinity :
+          heading ? 4000 : 900, arrival || !!heading)
         .filter(({entity,point}) =>
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
@@ -878,9 +880,9 @@
     function actorFrame() {
       const current = game(),
         zoom = platform.cameraZoom || 1;
-      // Keep prior-zone textures warm for dungeon returns and adjacent travel.
-      // The global LRU/byte budget retires them as needed; zoom still invalidates
-      // pixel-density-dependent bakes to prevent blurred/misaligned sprites.
+      // Keep already prepared outdoor and dungeon artwork resident across
+      // normal entrances/exits. Only an actual hard allocation limit can
+      // retire cold images; changing zoom uses a distinct density key.
       // Revision identities include zoom too: changing camera scale never
       // aliases raster sizes, and revisits can reuse images until LRU trimming.
       bakedZoom = zoom;
