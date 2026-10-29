@@ -1372,7 +1372,8 @@
           '\n' +
           (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.') +
           '\n' +
-          def.specialty,
+          def.specialty +
+          (unit ? '\\n' + companionMasteryDisplay(unit) : ''),
         [
           ...(unit
             ? [
@@ -1633,6 +1634,14 @@
       }
       return result;
     }
+    function companionMasteryDisplay(u) {
+      const g = getGame(),
+        tier = g.companionMasteryTier(u),
+        next = Campaign.rules.balance.companions.mastery.thresholds[tier],
+        points = u.masteryPoints || 0;
+      return 'Mastery ' + tier + (next ? ' · ' + points + '/' + next + ' points' : ' · MAX') +
+        (u.charmRingleaderTrained ? ' · Ringleader trained' : '');
+    }
     function barracksCompanionAction(b, u, refresh) {
       // Stable member ID, not array index: an action is revalidated by the
       // authoritative companion operation before changing membership.
@@ -1654,7 +1663,8 @@
                   '/' +
                   u.maxHp +
                   ' HP · Rest to free a group slot.'
-                : 'With you · FALLEN · Rest to free a group slot.'),
+                : 'With you · FALLEN · Rest to free a group slot.') +
+              ' · ' + companionMasteryDisplay(u),
             !!reason,
           )
         : action(
@@ -1663,7 +1673,8 @@
               getGame().activateCompanion(u.id, b.id);
               refresh();
             },
-            reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
+            (reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP') +
+              ' · ' + companionMasteryDisplay(u),
             !!reason,
           );
     }
