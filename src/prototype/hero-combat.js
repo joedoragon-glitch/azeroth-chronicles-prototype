@@ -6,6 +6,7 @@
     // Enemy-only charged hush is transient; never saved or inherited.
     const rogueEnemySilences = new WeakMap();
     const rogueEnemyWithers = new WeakMap();
+    const rogueEnemyWeakens = new WeakMap();
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
     const rogueMusicStations = new WeakMap();
@@ -1201,8 +1202,10 @@
         for (let i = 0; i < fields.length; i++) {
           if (!(inside & (1 << i)) || !this.line(fields[i], unit)) continue;
           selected = {
-            resistance: Math.max(selected?.resistance || 0, fields[i].resistance),
-            ward: Math.max(selected?.ward || 0, fields[i].ward),
+            // The two independent stations add while physically overlapping.
+            // Fractions cannot exceed the complete (100%) prevention boundary.
+            resistance: Math.min(1, (selected?.resistance || 0) + fields[i].resistance),
+            ward: Math.min(1, (selected?.ward || 0) + fields[i].ward),
           };
         }
         rogueStationChecks.set(unit, {
@@ -1248,25 +1251,47 @@
       }
       rogueEnemyHealingFactor(e) {
         const state = rogueEnemyWithers.get(e);
-        return this.hero.class === 'rogue' && state?.zone === this.zoneId &&
-          state.until > this.s.time && e?.hp > 0 ? 1 - Math.min(0.4, state.antiHeal) : 1;
+        if (this.hero.class !== 'rogue' || state?.zone !== this.zoneId || e?.hp <= 0)
+          return 1;
+        const suppression = state.effects.reduce((sum, effect) =>
+          sum + (effect.until > this.s.time ? effect.antiHeal : 0), 0);
+        return 1 - Math.min(1, suppression);
       }
       tickRogueEnemyDot(e, dt) {
         const state = rogueEnemyWithers.get(e);
         if (this.hero.class !== 'rogue' || this.peace || e?.hp <= 0 ||
-            !state || state.zone !== this.zoneId || state.until <= this.s.time - dt ||
-            !(state.remaining > 0)) return false;
-        const live = Math.max(0.01, state.until - (this.s.time - dt)),
-          amount = Math.min(state.remaining,
-            state.remaining * Math.min(dt, live) / live);
-        if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true })) return false;
-        state.remaining -= amount;
-        return true;
+            state?.zone !== this.zoneId) return false;
+        let landed = false;
+        for (const effect of state.effects) {
+          if (e.hp <= 0) break;
+          if (effect.until <= this.s.time - dt || !(effect.remaining > 0)) continue;
+          const live = Math.max(0.01, effect.until - (this.s.time - dt)),
+            amount = Math.min(effect.remaining,
+              effect.remaining * Math.min(dt, live) / live);
+          if (!(amount > 0) || !this.damage(e, amount, 'hero', { area: true })) continue;
+          effect.remaining -= amount;
+          landed = true;
+        }
+        return landed;
+      }
+      rogueEnemyWeakenFraction(e) {
+        const state = rogueEnemyWeakens.get(e);
+        if (this.hero.class !== 'rogue' || state?.zone !== this.zoneId) return 0;
+        return state.effects.reduce((sum, effect) =>
+          sum + (effect.until > this.s.time ? effect.fraction : 0), 0);
       }
       rogueEnemySilenced(e) {
         const state = rogueEnemySilences.get(e);
         return this.hero.class === 'rogue' && e?.hp > 0 &&
           state?.zone === this.zoneId && state.until > this.s.time;
+      }
+      applyRogueEnemySilence(e, seconds) {
+        const previous = rogueEnemySilences.get(e);
+        const remaining = previous?.zone === this.zoneId
+          ? Math.max(this.s.time, previous.until) : this.s.time;
+        // Silence cannot be 'twice as silent': consecutive legal hush
+        // performances append finite disable time without erasing each other.
+        rogueEnemySilences.set(e, { zone: this.zoneId, until: remaining + seconds });
       }
       rogueSkill1Config(charged = false) {
         return charged
@@ -1319,17 +1344,13 @@
             area: true, ...(charged && encountersAtStart ? { encountersAtStart } : {}),
           })) hits++;
         }
-        // Stronger same-family application replaces the bonus; no stacking.
-        // Other families will use separate bounded effect records in Phase 5.
+        // Normal and charged Refrains are independent performances, even
+        // for the same actor. Both can combine with critical auto Cadence.
         // Instant songs snapshot legal recipients at cast release.
-        this.applyRogueSongBoon(h, 'refrain', {
+        for (const u of [h, ...allies])
+          this.applyRogueSongBoon(u, 'refrain', {
             seconds: form.seconds, basicDamage: form.allyDamage,
           });
-        for (const u of allies) {
-          if ((u.rogueSharpRefrainUntil || 0) <= this.s.time) u.rogueSharpRefrainBonus = 0;
-          u.rogueSharpRefrainBonus = Math.max(u.rogueSharpRefrainBonus || 0, form.allyDamage);
-          u.rogueSharpRefrainUntil = Math.max(u.rogueSharpRefrainUntil || 0, this.s.time + form.seconds);
-        }
         this.event('rogueBellSkill1', {
           actor: 'hero', class: 'rogue', slot: 1,
           form: charged ? 'charged' : 'tap', audioCue: 'bell-jingle',
@@ -1429,22 +1450,19 @@
               { area: true });
             if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
                 !e.captain && !e.roomCaptain && !(e.immune > 0)) {
-              const old = rogueEnemySilences.get(e);
-              rogueEnemySilences.set(e, { zone: this.zoneId,
-                until: Math.max(old?.zone === this.zoneId ? old.until : 0,
-                  this.s.time + effectForm.silence) });
+              this.applyRogueEnemySilence(e, effectForm.silence);
             }
           }
           if (slot === 4) {
             const prev = rogueEnemyWithers.get(e);
-            const still = prev?.zone === this.zoneId && prev.until > this.s.time;
-            rogueEnemyWithers.set(e, {
-              zone: this.zoneId,
-              until: Math.max(still ? prev.until : 0, this.s.time + effectForm.seconds),
-              remaining: Math.max(still ? prev.remaining : 0,
-                Math.min(80, Math.max(3, e.maxHp * effectForm.dotFraction))),
-              antiHeal: Math.max(still ? prev.antiHeal : 0, effectForm.antiHeal),
+            const effects = prev?.zone === this.zoneId
+              ? prev.effects.filter((v) => v.until > this.s.time) : [];
+            effects.push({
+              until: this.s.time + effectForm.seconds,
+              remaining: Math.min(80, Math.max(3, e.maxHp * effectForm.dotFraction)),
+              antiHeal: effectForm.antiHeal,
             });
+            rogueEnemyWithers.set(e, { zone: this.zoneId, effects });
           }
           if (slot === 3) {
             // Interrupt only an actual native warning/aim, never invent a cast.
@@ -1457,22 +1475,25 @@
             // erases protected boss phases or ordinary basic attacks.
             if (effectForm.silence && e.hp > 0 && e.type !== 'boss' &&
                 !e.captain && !e.roomCaptain && !(e.immune > 0)) {
-              const prev = rogueEnemySilences.get(e);
-              rogueEnemySilences.set(e, {
-                zone: this.zoneId,
-                until: Math.max(prev?.zone === this.zoneId ? prev.until : 0,
-                  this.s.time + effectForm.silence),
-              });
+              this.applyRogueEnemySilence(e, effectForm.silence);
             }
           }
           if (slot === 7) {
             // Existing collision/legal-arena push; already executing a
             // scripted charge is never overridden.
             if (e.hp > 0) this.shieldPush(e, effectForm.push);
-            const active = (e.weakenUntil || 0) > this.s.time;
-            e.weakenUntil = Math.max(active ? e.weakenUntil : 0, this.s.time + effectForm.weaken);
-            e.weakenFraction = Math.max(active ? e.weakenFraction || 0 : 0,
-              effectForm.weakenFraction);
+            const earlier = rogueEnemyWeakens.get(e);
+            const effects = earlier?.zone === this.zoneId
+              ? earlier.effects.filter((effect) => effect.until > this.s.time) : [];
+            effects.push({
+              until: this.s.time + effectForm.weaken,
+              fraction: effectForm.weakenFraction,
+            });
+            rogueEnemyWeakens.set(e, { zone: this.zoneId, effects });
+            // Keep the existing public/UI duration fields as a snapshot;
+            // real combat reads the independently expiring entries.
+            e.weakenUntil = Math.max(...effects.map((v) => v.until));
+            e.weakenFraction = effects.reduce((sum, v) => sum + v.fraction, 0);
           }
           if (slot === 6) {
             // Only real, not-ready enemy cooldowns receive finite debt. No
@@ -1636,9 +1657,8 @@
           rank = this.hero.skills[0],
           baseDamage = (this.power() + 12) * cfg.primaryMultiplier *
             (1 + 0.15 * (rank - 1)) * combo.multiplier *
-            (1 + Math.max(
-              this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0,
-              this.rogueSongBoon(this.hero, 'cadence')?.basicDamage || 0));
+            (1 + (this.rogueSongBoon(this.hero, 'refrain')?.basicDamage || 0) +
+              (this.rogueSongBoon(this.hero, 'cadence')?.basicDamage || 0));
         this.hero.basicCd = this.basicSkillCooldown();
         const criticalReceipt = this.rogueCriticalRelease('auto'),
           enhancedBasic = this.criticalHeroValue(criticalReceipt, baseDamage, 'damage');
