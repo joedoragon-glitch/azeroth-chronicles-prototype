@@ -242,6 +242,14 @@ const groups = [
     tests: [TEST + 'pwa-release-id.test.cjs', TEST + 'service-worker.test.cjs'],
   },
   {
+    // Individual mastery and Orin training touch authoritative quest payment,
+    // levels, actual deaths, barracks recovery, companion skills and v4 saves.
+    // Keep their regression suite selected whenever any of those change.
+    match: /^src\/prototype\/(?:rewards|progression|party|party-pets|engine|rules|save|menus|hero-combat)\.js$/,
+    tests: [TEST + 'companion-mastery-rewards.test.cjs',
+      TEST + 'charmed-ringleader-training.test.cjs'],
+  },
+  {
     // Phase 4 must be retested when any source owning capture, creature growth,
     // work orders, company operations, save or shared species artwork changes.
     match: /^src\/prototype\/(?:party|progression|hero-combat|save|engine|rules|combat|menus|visuals|sprites)\.js$/,
