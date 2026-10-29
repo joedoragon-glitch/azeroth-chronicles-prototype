@@ -3975,6 +3975,7 @@
         this.recoveryAndThermalLife(z);
         this.roadsideLanternLife(z);
         this.marchCoastalLayout(z);
+        this.marchTownRoadLink(z);
         this.lanternShoreLayout(z);
         this.highlandsTributeLayout(z);
       }
@@ -4052,6 +4053,20 @@
         const [x, y] = D.towns[0];
         Object.assign(supplier, this.safe(x + 115, y - 85, z.id));
         z.supplierPositionVersion = 2;
+      }
+      // The 2026 coastal layout begins at the harbor road (350,1370), not
+      // Reedport's actual refuge (350,1100). Attach that missing town leg on
+      // fresh and existing v4 worlds without rebuilding the coastal district.
+      marchTownRoadLink(z) {
+        if (z.id !== 'march' || z.coastalSwampVersion !== 1 || z.marchTownRoadVersion === 1)
+          return;
+        const town = { x: D.towns[1][0], y: D.towns[1][1] },
+          junction = { x: 350, y: 1370 },
+          onExistingRoad = (point) => z.roads.some((road) =>
+            road.some((p, j) => j && this.distanceToSegment(point, road[j - 1], p) < 1));
+        if (!onExistingRoad(town) && onExistingRoad(junction))
+          z.roads.unshift([town, junction]);
+        z.marchTownRoadVersion = 1;
       }
       marchCoastalLayout(z) {
         if (z.id !== 'march' || z.coastalSwampVersion === 1) return;
