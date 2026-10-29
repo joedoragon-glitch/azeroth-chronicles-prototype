@@ -318,7 +318,11 @@ try {
     h.skills[6]=1;
     const radius=charged?190:145;
     sample.foe.x=h.x+(charged?185:140);
+    const releaseX = sample.foe.x, releaseY = sample.foe.y;
     assert.equal(sample.g.cast(7,sample.foe.id,charged),true);
+    const receipt = sample.g.effects.filter(e => e.type === 'rogueBellPerformance').at(-1);
+    assert.equal(receipt.x, releaseX, 'performance presentation retains original area X');
+    assert.equal(receipt.y, releaseY, 'performance presentation retains original area Y');
     assert(Math.hypot(sample.foe.x-h.x,sample.foe.y-h.y)>radius,
       'knockback should actually move the primary past the boon radius');
     assert.equal(sample.g.rogueSongBoon(h,'firmFooting')?.outgoing,

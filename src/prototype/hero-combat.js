@@ -1370,7 +1370,8 @@
           dist(u, primary) <= form.radius && this.line(primary, u));
         // Resolve heroine and companion membership at the same release instant.
         // Skill 7 moves its target afterward; knockback must not move this area.
-        const heroInside = dist(h, primary) <= form.radius && this.line(primary, h);
+        const heroInside = dist(h, primary) <= form.radius && this.line(primary, h),
+          releaseCenter = { x: primary.x, y: primary.y };
         this.releaseRecallForCombat();
         this.engage(primary);
         h.cd[slot - 1] = this.skillCooldown(slot, false);
@@ -1493,7 +1494,7 @@
           form: charged ? 'charged' : 'tap',
           audioCue: 'bell-jingle',
           instrument: R.rogueHeroFoundation.weapon.instrument,
-          x: primary.x, y: primary.y, radius: form.radius,
+          x: releaseCenter.x, y: releaseCenter.y, radius: form.radius,
           target: primary.id, enemies: enemies.length, allies: allies.length,
         });
         return true;
