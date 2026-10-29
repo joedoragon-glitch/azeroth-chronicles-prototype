@@ -160,7 +160,13 @@ assert.equal(FX.pendingWarning({ timer: 0.01 }), true);
   const warning = paint(c, false);
   assert(warning.strokes.includes('#fff1a7'),
     'the Citadel board still announces a future dangerous tile');
-  e.board.phase = 'rest';
+  // Use the actual Citadel damage engine rather than advancing the
+  // presentation phase by hand: the warning must retire on the hit tick.
+  Object.assign(c.hero, { x: e.x, y: e.y, immune: 0 });
+  const hpBefore = c.hero.hp;
+  c.sentinelUpdateBoard(e, 0.31);
+  assert.equal(e.board.phase, 'rest', 'Citadel must enter rest on impact');
+  assert(c.hero.hp < hpBefore, 'Citadel checkerboard must inflict native damage at release');
   const impact = paint(c, false);
   assert(!impact.strokes.includes('#ff9267') && !impact.fills.includes('#e84b3d88'),
     'old damaging square outline/fill persists after the board hit');
@@ -183,6 +189,9 @@ for (const boss of C.data.bosses)
     }
     assert.notEqual(e.telegraph, previous, boss.id + '/' + form + ' obsolete warning');
     assert(!FX.pendingWarning(previous), boss.id + '/' + form + ' expired cast');
+    if (e.telegraph)
+      assert(FX.pendingWarning(e.telegraph),
+        boss.id + '/' + form + ' next attack warning must remain actionable');
     releases++;
   }
 console.log('PASS warning/effect handoff: pending timers, Rogue, ranged, Citadel, ' +
