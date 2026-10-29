@@ -1553,8 +1553,16 @@
         const entry = saved?.zone === this.zoneId ? saved[family] : null;
         return entry && entry.until > this.s.time ? entry : null;
       }
+      // Tap and Charged Skill 1 are separate short-lived performances.
+      // Their basic-attack bonuses add while both are active, but repeated
+      // applications of either form only refresh that one bounded entry.
+      rogueBasicDamageBonus(u) {
+        return Math.min(0.12,
+          (this.rogueSongBoon(u, 'refrainTap')?.basicDamage || 0) +
+          (this.rogueSongBoon(u, 'refrainCharged')?.basicDamage || 0));
+      }
       applyRogueSongBoon(u, family, form) {
-        if (!['refrain', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
+        if (!['refrainTap', 'refrainCharged', 'quickstep', 'borrowedTime', 'steadyBeat', 'firmFooting', 'mending', 'finale'].includes(family) ||
           this.hero.class !== 'rogue' ||
           !(u === this.hero ? u.hp > 0 : this.activeLivingParty().includes(u)))
           return false;
@@ -1627,12 +1635,10 @@
           this.hero.level * 2 + this.companionInheritedDamageBonus()
         );
       }
-      // Skill 1's short allied refrain affects ordinary companion basics only.
-      // Existing troop special skills retain their unmodified source damage.
+      // Skill 1 Tap and Charged independently empower ordinary basics only.
+      // Transient boons live in the unsaved per-unit song cache, not base stats.
       companionBasicAttackDamage(u) {
-        const base = this.companionAttackDamage(u);
-        return base * (1 + ((u.rogueSharpRefrainUntil || 0) > this.s.time
-          ? Math.min(0.07, Math.max(0, u.rogueSharpRefrainBonus || 0)) : 0));
+        return this.companionAttackDamage(u) * (1 + this.rogueBasicDamageBonus(u));
       }
       charmedEliteTrained(u) {
         return this.hero.class === 'rogue' && !!u?.charmOrigin &&
