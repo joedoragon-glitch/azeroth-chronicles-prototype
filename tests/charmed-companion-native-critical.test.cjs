@@ -1,6 +1,6 @@
 'use strict';
 // Native criticals belong to legitimate allied actions, not a recruitment class.
-// The gameplay feature gate remains OFF: tests attach only an opt-in native session.
+// Standalone Campaign fixtures need explicit native sessions; the live app attaches them.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const Critical = require('../src/prototype/critical-executions.js');
@@ -75,7 +75,7 @@ for (const ranged of [false, true]) {
   const normal = combat(ranged), critical = combat(ranged, 0);
   const type = ranged ? 'archer' : 'soldier';
   assert.equal(normal.g.troopCriticalRelease(normal.unit, 'basic'), null,
-    'normal Campaign keeps the critical feature gate OFF');
+    'unattached standalone Campaign has no critical session');
   basicAttack(normal);
   basicAttack(critical);
   assert.equal(critical.tally.count(), 1, type + ' Charmed basic rolls once');
@@ -139,7 +139,7 @@ for (const level of [1, 2, 3]) {
 {
   const g = game(), healer = charm(g, 'goblin', true);
   const tally = attach(g, 0);
-  g.hero.hp = g.hero.maxHp - 100;
+  g.hero.hp = g.hero.maxHp - 40;
   g.autoRangerSupport();
   assert.equal(g.hero.supportEffects[0].remaining, 66);
   assert.equal(healer.charmSupportCd, 10);
@@ -171,9 +171,9 @@ for (const level of [1, 2, 3]) {
   assert.equal(tally.count(), 1);
 }
 assert.equal(Campaign.prototype._criticalPartyNative, undefined,
-  'do not switch on criticals globally as part of this correction');
+  'standalone Campaign does not attach app-owned critical sessions');
 if (addedRogue) {
   delete Campaign.classes.rogue;
   delete Campaign.talentProfiles.rogue;
 }
-console.log('PASS native Charmed companion melee/ranged basics, critical Heal tiers/auto/queue, integrity, OFF gate');
+console.log('PASS native Charmed companion melee/ranged basics, critical Heal tiers/auto/queue, integrity, live attachment boundary');
