@@ -38,7 +38,7 @@
     // or examine paths/nearby actors while taking these observations.
     const partyDiagnosticSessions = new WeakMap();
     const partyDiagnosticCooldownKeys = [
-      'cd', 'skill1Cd', 'skill2Cd', 'skill3Cd', 'skillGlobalCd', 'healCd', 'manaCd',
+      'cd', 'skill1Cd', 'skill2Cd', 'skill3Cd', 'skillNightCd', 'skillGlobalCd', 'healCd', 'manaCd',
       'survivalCd', 'supportCd', 'potionCd',
     ];
     const partyDiagnosticRound = (value) =>
@@ -2122,11 +2122,13 @@
       charmedSpeciesSpecial(u, target, def, kind = 'heritage') {
         const species = u.charmOrigin?.species,
           native = kind === 'native',
-          cooldown = native ? 'skill1Cd' : 'skill3Cd',
+          cooldown = native ? 'skillNightCd' : 'skill3Cd',
           cfg = R.balance.companions.charmedSkills,
           team = charmedSquadSkills.get(this) ||
             { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time };
-        if (!def || (u[cooldown] || 0) > 0 ||
+        if (!this.isCharmedCompanion(u) || u.active === false ||
+            u.hp <= 0 || this.hero.class !== 'rogue' ||
+            !def || (u[cooldown] || 0) > 0 ||
             this.s.time < (team[native ? 'basic' : 'heritage'] || 0) ||
             dist(u, target) > def.range) return false;
         const from = { x: u.x, y: u.y },
@@ -2292,12 +2294,16 @@
         // Native then Ringleader retain priority when their timers are ready.
         // Heritage is a genuine third skill, never a replacement or a reason
         // to starve a ready existing action. It fills the next legal opening.
-        if (!elite && nightNative && (u.skill1Cd || 0) <= 0 &&
-            this.charmedSpeciesSpecial(u, target, nightNative, 'native')) return true;
-        if (!elite && (nightNative || (u.skill1Cd || 0) > 0 ||
-            this.s.time < team.basic || distance > reach))
+        // Night-native powers are ADDITIONAL, not a replacement for the
+        // species' Rogue basic. This preserves the authored ordinary,
+        // Skill-2 Ringleader, night signature and third heritage identities.
+        if (!elite && ((u.skill1Cd || 0) > 0 ||
+            this.s.time < team.basic || distance > reach)) {
+          if (nightNative && this.charmedSpeciesSpecial(
+              u, target, nightNative, 'native')) return true;
           return this.charmedEliteTrained(u) &&
             this.charmedSpeciesSpecial(u, target, heritage);
+        }
         const profile = elite ? signature : ordinary;
         const slot = elite ? 2 : 1;
         // Native Ringleaders have both a species basic and a separate
@@ -2469,6 +2475,7 @@
           skill1Cd: 0,
           skill2Cd: 0,
           skill3Cd: 0,
+          skillNightCd: 0,
           skillGlobalCd: 0,
           healCd: 0,
           manaCd: 0,
@@ -3904,6 +3911,7 @@
           u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - specialRecovery);
           u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - specialRecovery);
           u.skill3Cd = Math.max(0, (u.skill3Cd || 0) - specialRecovery);
+          u.skillNightCd = Math.max(0, (u.skillNightCd || 0) - specialRecovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
             u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
