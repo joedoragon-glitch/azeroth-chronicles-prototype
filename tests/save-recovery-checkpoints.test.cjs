@@ -39,8 +39,8 @@ for (const mode of ['normal', 'nightmare']) {
   }
   assert.deepEqual(
     f.bundle().entries.map((e) => JSON.parse(e.bytes).hero.gold),
-    [5, 4, 3],
-    'Only the three most recent preceding durable checkpoints remain',
+    [5],
+    'Only the most recent preceding durable checkpoint remains',
   );
   assert(f.values.get(P.checkpointKey(mode)).length <= P.checkpointMaxChars);
   const backupWrites = f.writes.filter((key) => key === P.checkpointKey(mode)).length;
@@ -66,7 +66,7 @@ for (const mode of ['normal', 'nightmare']) {
   assert.equal(recovery.load(mode), null);
   const before = f.writes.length;
   const options = recovery.recoveryOptions(mode);
-  assert.equal(options.length, 3);
+  assert.equal(options.length, 1);
   assert.equal(f.writes.length, before, 'Inspection never replaces any data');
   assert.equal(f.values.get(P.saveKey(mode)), broken);
   assert.throws(() => recovery.recover(mode, 'unknown'));
@@ -208,7 +208,7 @@ for (const failure of ['stale', 'nonowner', 'archive-quota', 'primary-quota']) {
   assert.equal(JSON.parse(f.values.get(P.saveKey('normal'))).hero.gold, 43);
   assert.equal(f.bundle().entries.length, 1, 'Failed bundle replacement preserves its old bytes');
 }
-// If primary growth hits quota, older backups yield space before saving is rejected.
+// When the single checkpoint blocks the primary, reclaim it and retry once.
 {
   const f = fixture();
   for (let i = 1; i <= 3; i++) {
@@ -216,24 +216,77 @@ for (const failure of ['stale', 'nonowner', 'archive-quota', 'primary-quota']) {
     f.g.hero.gold = i;
     assert(f.p.save(f.g, {}));
   }
+  const primary = P.saveKey('normal'),
+    checkpoint = P.checkpointKey('normal'),
+    statuses = [];
   let failures = 0;
   const storage = {
     getItem: f.storage.getItem,
+    removeItem(key) {
+      f.values.delete(key);
+    },
     setItem(key, value) {
-      if (key === P.saveKey('normal') && f.bundle().entries.length > 1) {
+      if (key === primary && f.values.has(checkpoint)) {
         failures++;
         throw Error('quota');
       }
+      // A device may still lack space to recreate the optional checkpoint.
+      if (key === checkpoint && !f.values.has(checkpoint)) throw Error('quota');
       f.storage.setItem(key, value);
     },
   };
-  const p = P.create({ storage, Campaign: C });
+  const p = P.create({ storage, Campaign: C, status: (message) => statuses.push(message) });
   f.g.hero.gold = 987;
-  assert(p.writeCandidate(f.g));
-  assert.equal(failures, 2);
-  assert.equal(f.bundle().entries.length, 1);
-  assert.equal(JSON.parse(f.values.get(P.saveKey('normal'))).hero.gold, 987);
-  assert.equal(JSON.parse(f.bundle().entries[0].bytes).hero.gold, 3);
+  assert(p.save(f.g, {}));
+  assert.equal(failures, 1, 'Exactly one primary write retry');
+  assert.equal(f.values.has(checkpoint), false);
+  assert.equal(JSON.parse(f.values.get(primary)).hero.gold, 987);
+  assert.match(statuses.at(-1), /recovery checkpoint could not be stored/);
+}
+// A genuinely failed primary write does not replace the previous primary.
+{
+  const f = fixture(),
+    primary = P.saveKey('normal'),
+    original = f.values.get(P.saveKey('normal'));
+  const p = P.create({
+    storage: {
+      getItem: f.storage.getItem,
+      removeItem(key) {
+        f.values.delete(key);
+      },
+      setItem(key, value) {
+        if (key === primary) throw Error('quota');
+        f.storage.setItem(key, value);
+      },
+    },
+    Campaign: C,
+  });
+  f.g.hero.gold = 999;
+  assert.equal(p.save(f.g, {}), false);
+  assert.equal(f.values.get(primary), original);
+}
+// Unrelated storage faults must not cause backup deletion.
+{
+  const f = fixture(),
+    primary = P.saveKey('normal'),
+    checkpoint = P.checkpointKey('normal'),
+    before = f.values.get(P.checkpointKey('normal'));
+  const p = P.create({
+    storage: {
+      getItem: f.storage.getItem,
+      removeItem(key) {
+        f.values.delete(key);
+      },
+      setItem(key, value) {
+        if (key === primary) throw Error('storage disabled');
+        f.storage.setItem(key, value);
+      },
+    },
+    Campaign: C,
+  });
+  f.g.hero.gold = 999;
+  assert.equal(p.save(f.g, {}), false);
+  assert.equal(f.values.get(checkpoint), before);
 }
 // Recovery for one mode cannot consume or replace the other mode's history.
 {
@@ -258,6 +311,23 @@ for (const failure of ['stale', 'nonowner', 'archive-quota', 'primary-quota']) {
     backup,
     'Invalid live state never enters history',
   );
+}
+// A late-game campaign sized like the reported save can still be checkpointed.
+{
+  const f = fixture();
+  f.g.s.extra = 'x'.repeat(1000000);
+  f.advance();
+  assert(f.p.save(f.g, {}));
+  f.g.hero.gold = 71;
+  f.advance();
+  assert(f.p.save(f.g, {}));
+  const bundle = f.bundle();
+  assert.equal(P.checkpointLimit, 1);
+  assert.equal(P.checkpointMaxChars, 2000000);
+  assert.equal(bundle.entries.length, 1);
+  assert(bundle.entries[0].bytes.length > 500000);
+  assert(f.values.get(P.checkpointKey('normal')).length <= P.checkpointMaxChars);
+  assert.equal(JSON.parse(bundle.entries[0].bytes).hero.gold, 0);
 }
 // A schema-valid oversized envelope stays savable while backup size remains bounded.
 {

@@ -4,9 +4,9 @@
   const profileKey = 'azeroth-v4-profile',
     saveKey = (mode) => 'azeroth-v4-' + mode,
     checkpointKey = (mode) => saveKey(mode) + '-checkpoints-v1';
-  const checkpointLimit = 3,
+  const checkpointLimit = 1,
     checkpointIntervalMs = 60000,
-    checkpointMaxChars = 500000;
+    checkpointMaxChars = 2000000;
   function create({ storage, Campaign, status = () => {}, canWrite = () => true, now = Date.now }) {
     const failedLoads = new Map();
     const expected = new Map(),
@@ -29,8 +29,9 @@
         if (!raw || raw.length > checkpointMaxChars) return [];
         const value = JSON.parse(raw);
         if (value?.version !== 1 || !Array.isArray(value.entries)) return [];
+        // Read historical three-entry bundles; new writes always retain one.
         const entries = value.entries
-          .slice(0, checkpointLimit)
+          .slice(0, 3)
           .filter(
             (entry) =>
               entry &&
@@ -67,7 +68,7 @@
         backupWarning = true;
         return;
       }
-      if (entries.some((entry) => entry.bytes === bytes)) return;
+      if (entries.length === 1 && entries[0].bytes === bytes) return;
       const age = timestamp - (entries[0]?.savedAt ?? -Infinity);
       if (!force && age >= 0 && age < checkpointIntervalMs) return;
       try {
@@ -91,22 +92,32 @@
       }
       backupWarning = true;
     }
+    function isQuotaFailure(error) {
+      return (
+        error?.name === 'QuotaExceededError' ||
+        error?.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+        error?.code === 22 ||
+        error?.code === 1014 ||
+        /quota/i.test(String(error?.message || ''))
+      );
+    }
     function writePrimary(mode, bytes) {
       try {
         storage.setItem(saveKey(mode), bytes);
       } catch (error) {
-        // Backup retention must not consume the space needed for normal saving.
-        // Keep at least one checkpoint while attempting to free older entries.
-        const entries = readCheckpoints(mode);
-        while (entries.length > 1) {
-          entries.pop();
-          try {
-            storage.setItem(checkpointKey(mode), JSON.stringify({ version: 1, entries }));
-            storage.setItem(saveKey(mode), bytes);
-            return;
-          } catch (_) {}
+        // The optional checkpoint can yield space if (and only if) storage
+        // quota prevents writing the authoritative primary campaign.
+        if (!isQuotaFailure(error) || !readCheckpoints(mode).length) throw error;
+        try {
+          if (typeof storage.removeItem === 'function') storage.removeItem(checkpointKey(mode));
+          else storage.setItem(checkpointKey(mode), '');
+          checkpointCache.delete(mode);
+          storage.setItem(saveKey(mode), bytes);
+          backupWarning = true;
+        } catch (_) {
+          // Failed primary writes leave the previous durable primary untouched.
+          throw error;
         }
-        throw error;
       }
     }
     function writeSnapshot(game, replace = false) {
@@ -150,7 +161,11 @@
       expected.set(mode, bytes);
       validatedBytes.set(mode, bytes);
       failedLoads.delete(mode);
-      if (!readCheckpoints(mode).length) remember(mode, bytes, true);
+      if (!readCheckpoints(mode).length) {
+        remember(mode, bytes, true);
+        // An immediately rebuilt checkpoint clears the capacity warning.
+        if (readCheckpoints(mode).length) backupWarning = false;
+      }
       return true;
     }
     function loadProfile(defaults) {
