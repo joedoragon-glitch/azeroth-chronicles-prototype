@@ -272,16 +272,25 @@ function geometry(K) {
   for (const y of [350, 500, 700, 900, 1150, 1350, 1600, 1800])
     for (const x of [175, 300, 450, 600])
       corridors.push([{ x, y }, { x: x + 300, y }]);
-  const corridor = corridors.find(([from, to]) =>
-    samples.every(({ game }) => game.clearSegment(from, to)));
-  assert(corridor, 'both implementations retain a shared 300-unit walkable test corridor');
-  const counts = samples.map(({ game, stats }) => {
-    stats.visits = 0;
-    assert(game.clearSegment(...corridor));
-    return stats.visits;
+  // Measure only genuinely open corridors shared by both methods.
+  // The former first-match case exited before enough scene probes to test the optimization.
+  const measured = corridors.flatMap((corridor) => {
+    const clear = samples.every(({ game }) => game.clearSegment(...corridor));
+    if (!clear) return [];
+    const counts = samples.map(({ game, stats }) => {
+      stats.visits = 0;
+      assert(game.clearSegment(...corridor));
+      return stats.visits;
+    });
+    return [{ corridor, counts }];
   });
+  assert(measured.length, 'both implementations retain a shared 300-unit walkable test corridor');
+  measured.sort((a, b) => b.counts[0] - a.counts[0]);
+  const { corridor, counts } = measured[0];
+  console.log('NATIVE BROADPHASE OPEN-CORRIDOR', JSON.stringify({ corridor, counts, sampleCount: measured.length }));
   assert(counts[0] > 0, 'original broadphase must inspect distant props');
-  assert(counts[1] < counts[0] / 10);
+  assert(counts[1] < counts[0] / 10,
+    'broadphase shortlist must reduce actual prop checks by at least 10x');
   console.log(
     'PASS collision equivalence, immediate edits, route/exception safety; candidate visits ' +
       counts.join(' -> '),

@@ -2514,6 +2514,8 @@
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
+          // Finish after all region-specific scenery shifts and road updates.
+          this.marchCoastalFinalClearance(z);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -2944,6 +2946,8 @@
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);
+        // Finish after all region-specific scenery shifts and road updates.
+        this.marchCoastalFinalClearance(z);
         this.setSceneryTraversal(z);
         return z;
       }
@@ -4376,6 +4380,9 @@
           if (!onExistingRoad(town)) z.roads.unshift([town, junction]);
           z.marchTownRoadVersion = 1;
         }
+      }
+      marchCoastalFinalClearance(z) {
+        if (z.id !== 'march' || z.marchTownRoadVersion !== 1) return;
         // Coastal decor was generated AFTER the original street-clearance pass
         // using a 58-unit buffer even where artwork needs >=72. Move ONLY the
         // authored shore details, preserving their ID, style and old-save state.
