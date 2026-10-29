@@ -490,22 +490,28 @@
 
       tacticalPresentOpponents(e) {
         const radius = R.tacticalFoundation.presenceRadius;
-        const party = this.activeLivingParty().filter(
-          (u) => !u.order && !this.s.recallActive && dist(u, e) <= radius,
-        );
-        const heroHere = this.hero.hp > 0 && dist(this.hero, e) <= radius;
-        return party.length + (heroHere ? 1 : 0);
+        // Count directly instead of allocating an array for every tactical
+        // assessment; the living/active roster remains authoritative.
+        let count = this.hero.hp > 0 && dist(this.hero, e) <= radius ? 1 : 0;
+        for (const u of this.activeLivingParty())
+          if (!u.order && !this.s.recallActive && dist(u, e) <= radius) count++;
+        return count;
       }
 
       tacticalLocalSupport(e) {
-        return this.zone().enemies.filter(
-          (ally) =>
+        // This executes once for each tactical actor during active combat.
+        // Avoid the short-lived filtered roster and retain every native
+        // eligibility/distance check, including self as in the original.
+        let count = 0;
+        for (const ally of this.zone().enemies)
+          if (
             ally.hp > 0 &&
             !ally.neutral &&
             !ally.returning &&
             !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
-            dist(ally, e) <= R.tacticalFoundation.supportRadius + 35,
-        ).length;
+            dist(ally, e) <= R.tacticalFoundation.supportRadius + 35
+          ) count++;
+        return count;
       }
 
       tacticalRogueWounded(e) {
