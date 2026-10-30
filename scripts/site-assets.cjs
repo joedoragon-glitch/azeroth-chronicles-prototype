@@ -5,6 +5,7 @@ const scripts = [
   ...[
     'highlands',
     'greenwood-landscape',
+    'greenwood-interiors',
     'data',
     'rules',
     'world',

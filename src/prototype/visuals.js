@@ -8,6 +8,10 @@
     typeof PrototypeGreenwoodLandscape !== 'undefined'
       ? PrototypeGreenwoodLandscape
       : require('./greenwood-landscape.js');
+  const GreenwoodInteriors =
+    typeof PrototypeGreenwoodInteriors !== 'undefined'
+      ? PrototypeGreenwoodInteriors
+      : require('./greenwood-interiors.js');
   // Ogre-quality craft across the existing catalog: organic contours and worn
   // material joins, with deliberate mineral, weapon and fortification edges retained.
   const organicContours = new Set([
@@ -261,6 +265,10 @@
     ctx.restore();
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
+    if (region === 0 && e.renderKind === 'prop' && e.greenwoodInteriorAsset) {
+      GreenwoodInteriors.draw(ctx, e, p);
+      return;
+    }
     if (region === 0 && e.renderKind === 'prop' && e.greenwoodWall) {
       GreenwoodLandscape.drawWall(ctx, e, p);
       return;
@@ -19464,9 +19472,12 @@
   function dungeonArchitecture(ctx, screen, dungeonId = '', size) {
     const layout = dungeonLayout(dungeonId, size);
     if (!layout) return;
+    const greenwoodInterior = R.greenwoodLayout?.version === 2 && ['crypt', 'supply-vale'].includes(dungeonId);
     const palette =
       dungeonId === 'supply-highlands'
         ? { top: '#979a86', side: '#626658', edge: '#c7c4a4' }
+        : dungeonId === 'supply-vale' && greenwoodInterior
+          ? { top: '#9b987c', side: '#696e58', edge: '#c5bb92' }
         : dungeonId === 'abyss'
           ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
           : dungeonId === 'crypt'
@@ -19490,7 +19501,7 @@
     };
     const block = (x1, x2, y1, y2) => {
       const rise =
-          dungeonId === 'supply-highlands' ? (Math.max(x2 - x1, y2 - y1) <= 45 ? 44 : 30) : 0,
+          dungeonId === 'supply-highlands' ? (Math.max(x2 - x1, y2 - y1) <= 45 ? 44 : 30) : greenwoodInterior ? 24 : 0,
         top = [
           { x: x1, y: y1 },
           { x: x2, y: y1 },
@@ -19521,7 +19532,7 @@
         ctx.stroke();
       }
 
-      if (dungeonId === 'supply-highlands') {
+      if (dungeonId === 'supply-highlands' || greenwoodInterior) {
         // Masonry courses and staggered joints make the counting screens real built cover.
         for (const [a, b] of [
           [top[1], top[2]],

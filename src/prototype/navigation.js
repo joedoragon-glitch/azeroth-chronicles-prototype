@@ -94,7 +94,7 @@
         query.candidates = null;
       }
       // Early obstructions and short moves don't pay for a shortlist.
-      if (++query.reads <= 8) return props;
+      if (++query.reads <= (z?.id === 'vale' && z.greenwoodRedesignScene ? 2 : 8)) return props;
       if (!query.candidates)
         query.candidates = props.filter((p) => {
           const r =
@@ -1085,11 +1085,19 @@
           (!terrainOnly &&
             collisionProps(this, z, x, y, radius)?.some((p) => {
               if (fort?.props.has(p.id)) return false;
-              if (z.id === 'vale' && p.greenwoodWall)
-                return (
-                  this.distanceToSegment({ x, y }, p.greenwoodWall.a, p.greenwoodWall.b) <
-                  radius + 5
-                );
+              if (z.id === 'vale' && p.greenwoodWall) {
+                const { a, b } = p.greenwoodWall,
+                  reach = radius + 5;
+                // Exact segment distance is unnecessary outside its expanded
+                // box. Read current endpoints: moved saved walls stay correct.
+                if (
+                  x < Math.min(a.x, b.x) - reach ||
+                  x > Math.max(a.x, b.x) + reach ||
+                  y < Math.min(a.y, b.y) - reach ||
+                  y > Math.max(a.y, b.y) + reach
+                ) return false;
+                return this.distanceToSegment({ x, y }, a, b) < reach;
+              }
               // Zero-radius queries are the existing LOS/projectile contract.
               // Only positive-radius outdoor movement receives this first pass.
               const candidate =

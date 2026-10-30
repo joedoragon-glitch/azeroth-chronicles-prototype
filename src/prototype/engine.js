@@ -159,8 +159,7 @@
       };
       const c = classes[heroClass];
       const innateHp = heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0;
-      const start =
-        R.greenwoodLayout?.version === 2 ? R.greenwoodLayout.anchors.town : { x: 300, y: 350 };
+      const start = R.greenwoodLayout?.version === 2 ? R.greenwoodLayout.start : { x: 300, y: 350 };
       this.s.hero = {
         class: heroClass,
         x: start.x,
@@ -8293,6 +8292,11 @@
   // Keep both historical adapters for existing v4 campaigns. This is the new
   // authored geography, never the rejected dev.233 projection.
   Greenwood.install(Campaign, { D, R });
+  const GreenwoodInteriors =
+    typeof PrototypeGreenwoodInteriors !== 'undefined'
+      ? PrototypeGreenwoodInteriors
+      : require('./greenwood-interiors.js');
+  GreenwoodInteriors.install(Campaign, { R });
   const FieldOnboarding =
     typeof PrototypeFieldOnboarding !== 'undefined'
       ? PrototypeFieldOnboarding

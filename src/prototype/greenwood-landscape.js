@@ -233,10 +233,11 @@
     R.millhavenOnboarding.orchardTrail = [a.town, q([650, 1550]), a.hamlet];
     const cfg = {
       version: 2,
-      sceneVersion: 4,
+      sceneVersion: 5,
       size,
       scale,
       anchors: a,
+      start: q([520, 600]),
       legacy: old,
       controls,
       waters,
@@ -374,6 +375,7 @@
                 [1330, 1000],
                 [1670, 1000],
                 [2070, 1000],
+                [2320, 900],
                 [2480, 650],
                 plan.wagon,
               ],
@@ -585,7 +587,7 @@
           const scenes = {
             civic: [
               ['market', 360, 800],
-              ['well', 650, 770],
+              ['well', 780, 900],
               ['ration', 700, 420],
               ['roadside-lantern', 650, 500],
             ],
@@ -606,10 +608,10 @@
               ['farm-tool-rack', 400, 1370],
             ],
             hamlet: [
-              ['well', 650, 1870],
+              ['well', 780, 1710],
               ['laundry', 160, 1700],
               ['garden', 180, 2000],
-              ['farm-tool-rack', 580, 1550],
+              ['farm-tool-rack', 500, 1500],
               ['hay-rick', 220, 2240],
               ['pasture-sheep', 200, 2330],
               ['feed-trough', 330, 2280],
@@ -624,7 +626,7 @@
               ['furrow-plot', 1130, 1870],
               ['drying-rack', 960, 2330],
               ['farm-tool-rack', 600, 1960],
-              ['crate', 1100, 2250],
+              ['crate', 1280, 2140],
             ],
             mill: [
               ['cart', 1340, 1780],
@@ -637,7 +639,7 @@
               ['crate', 3030, 290],
             ],
             cache: [
-              ['cart', 2320, 1820],
+              ['cart', 2540, 1980],
               ['supply-stack', 2490, 1830],
               ['scribe-desk', 2560, 1700],
             ],
@@ -651,9 +653,9 @@
               ['stump', 980, 2470],
               ['crate', 1180, 2570],
               ['fallen-log', 1250, 2440],
-              ['lean-to', 1190, 2350],
+              ['lean-to', 1380, 2550],
               ['cookfire', 1290, 2450],
-              ['sleep-roll', 1150, 2300],
+              ['sleep-roll', 1220, 2580],
             ],
             den: [
               ['lean-to', 700, 2830],
@@ -686,7 +688,7 @@
             roadBlocker: true,
           });
           put('greenwood-mill-sluice', 'mill-sluice', [1005, 1340], { greenwoodFacility: 'weir' });
-          put('greenwood-orchard-new-planting', 'sapling', [1080, 2260], {
+          put('greenwood-orchard-new-planting', 'sapling', [1240, 2070], {
             greenwoodFacility: 'new-planting',
             greenwoodDistrict: 'orchard',
           });
@@ -854,7 +856,12 @@
           // substitute for a compatible construction migration.
           for (const b of z.buildings) {
             const essential = (p) => p.greenwoodWall || p.greenwoodFacility || p.roadBlocker;
-            if (z.props.some((p) => essential(p) && distance(p, b) < 190)) {
+            if (
+              z.props.some((p) => essential(p) && distance(p, b) < 190) ||
+              this.distanceToRoad(z, b) < 175 ||
+              this.blocked(b.x, b.y, 'vale', 50, true) ||
+              z.npcs.some((n) => distance(n.servicePoint || n, b) < 120)
+            ) {
               const before = { x: b.x, y: b.y };
               const entrance =
                 b.dungeonEntrance &&
@@ -1375,16 +1382,24 @@
               { x: b.x - nx, y: b.y - ny },
               { x: a.x - nx, y: a.y - ny },
             ],
-            color,
+            index === 0 && (j === 2 || j === 3) && w <= width
+              ? w === width
+                ? '#93674f'
+                : '#b17a57'
+              : color,
           );
         }
-        for (const p of path)
+        for (const [j, p] of path.entries())
           poly(
             Array.from({ length: 16 }, (_, j) => ({
               x: p.x + Math.cos((j * Math.PI) / 8) * w,
               y: p.y + Math.sin((j * Math.PI) / 8) * w,
             })),
-            color,
+            index === 0 && j >= 1 && j <= 3 && w <= width
+              ? w === width
+                ? '#93674f'
+                : '#b17a57'
+              : color,
           );
       }
     }

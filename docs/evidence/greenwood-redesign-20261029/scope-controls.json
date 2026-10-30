@@ -1,9 +1,9 @@
 {
-  "comparisonCommit": "eb435b538d73de0eb233e487375368bcf9c28db8",
+  "comparisonCommit": "7bd288fd8d0fd21a552f19de0bb1aa750ec96cab",
   "scope": "One seeded fresh and one restore state per unchanged other region at the 3200 study configuration; exact roads, props, services, actors, resources and construction, not broad gameplay certification",
   "sourceFiles": {
-    "greenwood-landscape": "701ac12eede0959fc999b5273c36dc3b2bf2cb3f441d368438c498c045cba185",
-    "world": "cef8defb4d562e445956db8e524aa9dd1a25e7fbbb61c6d40ad3e14565f53bb7",
+    "greenwood-landscape": "4b054065a157636842f66f805ec4f3ce5abe2bc9418262d8ee0154cecbad79e9",
+    "world": "c4859c3d11d77d027c87aaa5a3776b7940b234df777d1d8c77e26e94522c6ada",
     "save": "dd9870e6eaa95bf52778e4eb7c0539b7b74464a7c73ff6b653cb921e97f611f6"
   },
   "regions": [
@@ -20,28 +20,28 @@
       "region": "highlands",
       "freshEqual": true,
       "restoredEqual": true,
-      "beforeFreshSha256": "2cbd42d47d6b0b5d424961d92b9cb0f027868d6d0d8e7a519bad18ae4501fc21",
-      "afterFreshSha256": "2cbd42d47d6b0b5d424961d92b9cb0f027868d6d0d8e7a519bad18ae4501fc21",
-      "beforeRestoredSha256": "2cbd42d47d6b0b5d424961d92b9cb0f027868d6d0d8e7a519bad18ae4501fc21",
-      "afterRestoredSha256": "2cbd42d47d6b0b5d424961d92b9cb0f027868d6d0d8e7a519bad18ae4501fc21"
+      "beforeFreshSha256": "12552ab2b7a518d4bc78cf844d0db3322fe521d532f68c9d90039a3ed16ed131",
+      "afterFreshSha256": "12552ab2b7a518d4bc78cf844d0db3322fe521d532f68c9d90039a3ed16ed131",
+      "beforeRestoredSha256": "12552ab2b7a518d4bc78cf844d0db3322fe521d532f68c9d90039a3ed16ed131",
+      "afterRestoredSha256": "12552ab2b7a518d4bc78cf844d0db3322fe521d532f68c9d90039a3ed16ed131"
     },
     {
       "region": "frontier",
       "freshEqual": true,
       "restoredEqual": true,
-      "beforeFreshSha256": "96f3ed09016123b149f604187b6fb22c709dbbf98c1335f7111a2c1c88b58116",
-      "afterFreshSha256": "96f3ed09016123b149f604187b6fb22c709dbbf98c1335f7111a2c1c88b58116",
-      "beforeRestoredSha256": "96f3ed09016123b149f604187b6fb22c709dbbf98c1335f7111a2c1c88b58116",
-      "afterRestoredSha256": "96f3ed09016123b149f604187b6fb22c709dbbf98c1335f7111a2c1c88b58116"
+      "beforeFreshSha256": "247171a006f4675f93f8e34a4a5e5d4ebeb766b24baf8c152cde0ae0527b7081",
+      "afterFreshSha256": "247171a006f4675f93f8e34a4a5e5d4ebeb766b24baf8c152cde0ae0527b7081",
+      "beforeRestoredSha256": "247171a006f4675f93f8e34a4a5e5d4ebeb766b24baf8c152cde0ae0527b7081",
+      "afterRestoredSha256": "247171a006f4675f93f8e34a4a5e5d4ebeb766b24baf8c152cde0ae0527b7081"
     },
     {
       "region": "crown",
       "freshEqual": true,
       "restoredEqual": true,
-      "beforeFreshSha256": "a50dd4d9c5ecc13ddf63ba5ba92326b200c8354328be8707932f2f1d1fe5e27a",
-      "afterFreshSha256": "a50dd4d9c5ecc13ddf63ba5ba92326b200c8354328be8707932f2f1d1fe5e27a",
-      "beforeRestoredSha256": "a50dd4d9c5ecc13ddf63ba5ba92326b200c8354328be8707932f2f1d1fe5e27a",
-      "afterRestoredSha256": "a50dd4d9c5ecc13ddf63ba5ba92326b200c8354328be8707932f2f1d1fe5e27a"
+      "beforeFreshSha256": "6228a6bd6589847614a75ff0013be2e288235850b62b418740c4410b54469dc1",
+      "afterFreshSha256": "6228a6bd6589847614a75ff0013be2e288235850b62b418740c4410b54469dc1",
+      "beforeRestoredSha256": "6228a6bd6589847614a75ff0013be2e288235850b62b418740c4410b54469dc1",
+      "afterRestoredSha256": "6228a6bd6589847614a75ff0013be2e288235850b62b418740c4410b54469dc1"
     }
   ]
 }

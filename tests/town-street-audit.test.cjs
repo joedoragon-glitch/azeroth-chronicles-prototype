@@ -144,6 +144,8 @@ for (const region of regions) {
   const i = game.regionIndex();
   const town = { x: Campaign.data.towns[i][0], y: Campaign.data.towns[i][1] };
   const hamlet = { x: Campaign.data.minors[i][0], y: Campaign.data.minors[i][1] };
+  const authoredVale = region.id === 'vale' && Campaign.rules.greenwoodLayout?.version === 2;
+  const network = authoredVale ? [...zone.roads, ...zone.footpaths] : zone.roads;
   assert.equal(zone.settlementLayoutVersion, 4, region.id + ' new parcel plan');
   assert.equal(zone.roadVersion, 17, region.id + ' connected roads');
   assert.equal(zone.streetClearanceVersion, 3, region.id + ' full street audit');
@@ -187,17 +189,17 @@ for (const region of regions) {
   const touches = (point, path) =>
     path.some((p, j) => j && game.distanceToSegment(point, path[j - 1], p) < 1);
   const connected = new Set(
-    zone.roads.map((road, j) => (touches(town, road) ? j : -1)).filter((j) => j >= 0),
+    network.map((road, j) => (touches(town, road) ? j : -1)).filter((j) => j >= 0),
   );
   for (let grew = true; grew; ) {
     grew = false;
-    zone.roads.forEach((road, j) => {
+    network.forEach((road, j) => {
       if (connected.has(j)) return;
       if (
         [...connected].some(
           (k) =>
-            road.some((p) => touches(p, zone.roads[k])) ||
-            zone.roads[k].some((p) => touches(p, road)),
+            road.some((p) => touches(p, network[k])) ||
+            network[k].some((p) => touches(p, road)),
         )
       ) {
         connected.add(j);
@@ -207,10 +209,10 @@ for (const region of regions) {
   }
   assert.equal(
     connected.size,
-    zone.roads.length,
+    network.length,
     region.id + ' every road belongs to the town-connected network',
   );
-  for (const road of zone.roads) {
+  for (const road of network) {
     assert(road.length > 1, region.id + ' has no empty streets');
     for (let j = 1; j < road.length; j++) {
       assert(
@@ -221,14 +223,14 @@ for (const region of regions) {
     routes++;
   }
   assert(
-    zone.roads.some((road) => distance(road.at(-1), hamlet) < 2),
+    network.some((road) => authoredVale ? touches(hamlet, road) : distance(road.at(-1), hamlet) < 2),
     region.id + ' hamlet must be connected to town',
   );
   // Every authored village, named landmark, monster habitation and
   // occupying district needs a legible accessible street/approach.
   const R = Campaign.rules;
   const access = (id, x, y, limit = 260) => {
-    const actual = game.distanceToRoad(zone, { x, y });
+    const actual = game.distanceToRoad(authoredVale ? { roads: network } : zone, { x, y });
     assert(
       actual <= limit,
       region.id + ' ' + id + ' lacks road access (' + Math.round(actual) + ')',
@@ -392,18 +394,22 @@ for (const region of regions) {
     upgradePaid: true,
   });
   const originalGold = migrated.hero.gold;
+  if (authoredVale) delete oldZone.greenwoodRedesignScene;
   const restored = Campaign.restore(migrated);
   const restoredZone = restored.zone();
   assert.equal(restored.hero.gold, originalGold, region.id + ' save currency');
   assert.equal(restoredZone.roadVersion, 17);
   assert.equal(restoredZone.settlementLayoutVersion, 4);
-  assert.equal(restoredZone.streetClearanceVersion, 3);
+  if (authoredVale) assert.equal(restoredZone.greenwoodRedesignScene, Campaign.rules.greenwoodLayout.sceneVersion);
+  else assert.equal(restoredZone.streetClearanceVersion, 3);
   const oldCart = restoredZone.props.find((p) => p.id === 'historical-cart-' + region.id);
-  assert(oldCart, region.id + ' old scenery was preserved');
-  assert(
+  if (!authoredVale) {
+    assert(oldCart, region.id + ' old scenery was preserved');
+    assert(
     restored.distanceToRoad(restoredZone, oldCart) >= restored.roadSetback(oldCart),
     region.id + ' historical clutter moved off road',
-  );
+    );
+  } else assert(!oldCart, 'replacement discards temporary unowned scenery, preserving player construction below');
   const priorBarracks = restoredZone.buildings.find(
     (b) => b.id === 'historical-barracks-' + region.id,
   );

@@ -1,10 +1,10 @@
 {
   "size": 3200,
   "sourceFiles": {
-    "greenwood-landscape": "701ac12eede0959fc999b5273c36dc3b2bf2cb3f441d368438c498c045cba185",
+    "greenwood-landscape": "7c99367ff2672ac58cdfd167e134671052e0e05b415b6cfcf497e7da36531d3c",
     "greenwood": "2d4f965bf3e01c97eab6eec7f1cd56abd4d459b15e1fe384e21893b20d09c240",
-    "world": "cef8defb4d562e445956db8e524aa9dd1a25e7fbbb61c6d40ad3e14565f53bb7",
-    "engine": "39830f8a9ea1d39deca7a5b4ed0e20cfd2dde60aae9d77ef8682da50d9d31d19",
+    "world": "c4859c3d11d77d027c87aaa5a3776b7940b234df777d1d8c77e26e94522c6ada",
+    "engine": "c32ec867f9d00f7814fdba1b910b47167c25b2cd5e8cecf54f261e8bb57f94e0",
     "save": "dd9870e6eaa95bf52778e4eb7c0539b7b74464a7c73ff6b653cb921e97f611f6",
     "party": "b0e85fa7ea561f50b6860a9f0210aabdd41102015eac11ba8b6d9b0c91e4b637"
   },
@@ -21,7 +21,7 @@
       "preparation": "Native build/work/gather/interior actions, controlled legal actor staging and explicit progression prerequisites; synthetic, not a sustained playthrough or player export"
     }
   },
-  "status": "Inactive study; synthetic historical inputs, bounded native lifecycle checks; no device, visual, combat or full-game acceptance",
+  "status": "Synthetic historical v4 inputs; active replacement at 3200 and 3400 comparison; bounded lifecycle checks, no device, visual, combat or full-game acceptance",
   "cases": [
     {
       "name": "expanded:partial-recovery-camp",
@@ -36,7 +36,7 @@
           "kind": "barracks",
           "name": "Barracks",
           "theme": "vale",
-          "icon": "🏗️",
+          "icon": "\ud83c\udfd7\ufe0f",
           "full": false,
           "upgradeProgress": 0,
           "upgradePaid": false,
@@ -59,7 +59,7 @@
           "kind": "barracks",
           "name": "Barracks",
           "theme": "vale",
-          "icon": "🏗️",
+          "icon": "\ud83c\udfd7\ufe0f",
           "full": false,
           "upgradeProgress": 1.2,
           "upgradePaid": true,
@@ -116,7 +116,7 @@
           "kind": "barracks",
           "name": "Barracks",
           "theme": "vale",
-          "icon": "🏗️",
+          "icon": "\ud83c\udfd7\ufe0f",
           "full": false,
           "upgradeProgress": 0,
           "upgradePaid": false,
@@ -139,7 +139,7 @@
           "kind": "barracks",
           "name": "Barracks",
           "theme": "vale",
-          "icon": "🏗️",
+          "icon": "\ud83c\udfd7\ufe0f",
           "full": false,
           "upgradeProgress": 1.2,
           "upgradePaid": true,

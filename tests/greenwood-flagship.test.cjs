@@ -1,12 +1,12 @@
 'use strict';
-// Current Greenwood acceptance: owner-authorized return to the historical
-// 2700-unit world. The rejected dev.233 flagship assertions remain in PR #570.
+// Preserve the historical rollback adapter as an explicit fixture, then verify
+// the active replacement and original/expanded/rollback save lifecycles.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const cp = require('node:child_process');
 const zlib = require('node:zlib');
-const C = require('../src/prototype/engine');
-const { rng } = require('../tools/greenwood-layout/fixtures.cjs');
+const { rng, loadRuntime } = require('../tools/greenwood-layout/fixtures.cjs');
+const C = loadRuntime();
 assert.equal(C.data.regions[0].size, 2700, 'original Greenwood region size');
 assert.equal(C.rules.barriers[0].gaps.length, 2, 'original two crossings');
 assert.equal(
@@ -125,10 +125,33 @@ for (const [name, raw] of archive) {
 console.log(
   'PASS rollback: original 2700 worlds, upgraded v4 conversion, identity, progress and reloading',
 );
-// The inactive replacement has its own source-aware lifecycle contract. Keep
-// it attached to the existing Greenwood regression without activating the map
-// or rerunning unrelated regional suites. CI is read-only; --record-study is
-// the explicit local evidence-generation command.
+// Isolate the actual default engine from the deliberately historical fixture.
+cp.execFileSync(
+  process.execPath,
+  [
+    '-e',
+    `
+ const assert=require('node:assert/strict');
+ const C=require('./src/prototype/engine');
+ const {rng}=require('./tools/greenwood-layout/fixtures.cjs');
+ assert.equal(C.rules.greenwoodLayout.version,2);
+ assert.equal(C.data.regions[0].size,3200);
+ for(const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
+  const g=new C('normal','paladin',rng(seed)),z=g.zone();
+  assert.deepEqual({x:g.hero.x,y:g.hero.y},C.rules.greenwoodLayout.start);
+  assert.equal(z.greenwoodRedesignScene,C.rules.greenwoodLayout.sceneVersion);
+  assert.equal(z.enemies.filter(e=>e.type==='mob'&&!e.summon).length,32);
+  assert.equal(z.nodes.reduce((n,p)=>n+p.amount,0),640);
+  assert(z.props.length<=400);
+  for(const id of ['greenwood-working-mill','greenwood-mill-sluice','greenwood-working-cellar','greenwood-orchard-new-planting']) assert(z.props.some(p=>p.id===id),id);
+  assert(z.greenwoodSceneAudit.every(p=>!p.essential||p.placed));
+ }
+ console.log('PASS active default: four seeds, authored opening, essentials, population and finite tribute');
+`,
+  ],
+  { cwd: require('node:path').resolve(__dirname, '..'), stdio: 'inherit' },
+);
+// CI is read-only; --record-study explicitly refreshes lifecycle receipts.
 cp.execFileSync(
   process.execPath,
   [

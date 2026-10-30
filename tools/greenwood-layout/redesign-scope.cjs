@@ -7,17 +7,17 @@ const path = require('node:path');
 const cp = require('node:child_process');
 const crypto = require('node:crypto');
 const root = path.resolve(__dirname, '../..');
-const previous = 'eb435b538d73de0eb233e487375368bcf9c28db8';
+const previous = '7bd288fd8d0fd21a552f19de0bb1aa750ec96cab';
 if (process.argv.includes('--runtime')) {
   const dir = process.argv[process.argv.indexOf('--runtime') + 1];
   const D = require(path.join(dir, 'src/prototype/data'));
   const R = require(path.join(dir, 'src/prototype/rules'));
-  require(path.join(dir, 'src/prototype/greenwood-landscape')).configure(D, R, 3200);
   const C = require(path.join(dir, 'src/prototype/engine'));
   const { rng } = require('./fixtures.cjs');
   const rows = [];
   for (const region of ['march', 'highlands', 'frontier', 'crown']) {
     const g = new C('normal', 'paladin', rng(0x47564102));
+    g.random = rng(0x47564102);
     g.enter(region);
     const raw = g.snapshot();
     const stable = (z) => ({

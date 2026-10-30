@@ -57,7 +57,8 @@ const result = {
   ),
   fresh: [],
   migration: [],
-  status: 'Construction study; inactive in default game; not authorial or device acceptance',
+  status:
+    'Focused replacement layout measurements; default dev.237 uses 3200; not authorial or device acceptance',
 };
 const spatial = (s) => ({
   hero: [s.hero.x, s.hero.y],

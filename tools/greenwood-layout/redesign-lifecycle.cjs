@@ -232,7 +232,7 @@ const report = {
   fixtureSha256: sha(fixtureBytes),
   fixtureSources: fixtures.sources,
   status:
-    'Inactive study; synthetic historical inputs, bounded native lifecycle checks; no device, visual, combat or full-game acceptance',
+    'Synthetic historical v4 inputs; active replacement at 3200 and 3400 comparison; bounded lifecycle checks, no device, visual, combat or full-game acceptance',
   cases,
   failures,
 };

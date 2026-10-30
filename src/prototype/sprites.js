@@ -219,6 +219,7 @@
       e?.greenwoodNature ||
       e?.greenwoodFacility ||
       e?.greenwoodWall ||
+      e?.greenwoodInteriorAsset ||
       e?.miningFacility ||
       e?.treasuryBoss === 'ridge' ||
       e?.captainProfile === 'supply-highlands'

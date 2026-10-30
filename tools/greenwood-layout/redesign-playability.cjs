@@ -1,6 +1,6 @@
 'use strict';
-// Controlled native first-region acceptance. Boss defeat/rescue fixtures do
-// not claim human combat play; full-session pilots are recorded separately.
+// Short controlled defect checks. Fixtures do not claim human combat play
+// or substitute for the owner's first-hour acceptance.
 const assert = require('node:assert/strict'),
   fs = require('node:fs'),
   path = require('node:path'),
@@ -11,10 +11,10 @@ const rows = [],
   out = path.resolve(__dirname, '../../docs/evidence/greenwood-redesign-20261029');
 const fresh = () => new C('normal', 'paladin', rng(0x47564101));
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const kill = (g, e) => {
+const kill = (g, e, heroParticipated = true) => {
   assert(e);
   e.hp = 0;
-  e.heroParticipated = true;
+  e.heroParticipated = heroParticipated;
   g.kill(e);
 };
 const test = (name, fn) => {
@@ -26,7 +26,7 @@ const test = (name, fn) => {
 test('native opening, authored road/door clearances, essential scenes and mill water continuity', () => {
   const g = fresh(),
     z = g.zone();
-  assert.deepEqual([g.hero.x, g.hero.y], C.data.towns[0]);
+  assert.deepEqual({ x: g.hero.x, y: g.hero.y }, C.rules.greenwoodLayout.start);
   assert(g.s.party.every((u) => !g.blocked(u.x, u.y)));
   for (const r of [...z.roads, ...z.footpaths])
     for (let j = 1; j < r.length; j++)
@@ -141,7 +141,8 @@ for (const q of quests)
       Object.assign(g.hero, captive);
       assert(g.interact(captive));
       if (q.clear)
-        for (const e of g.zone().enemies.filter((e) => e.mini === q.clear && e.hp > 0)) kill(g, e);
+        for (const e of g.zone().enemies.filter((e) => e.mini === q.clear && e.hp > 0))
+          kill(g, e, false);
       g.enter('vale');
       const service = g
         .zone()
@@ -166,7 +167,7 @@ for (const q of quests)
       assert.equal(bundles.length, 2);
       Object.assign(g.hero, bundles[0]);
       assert(!g.interact(bundles[0]), 'native Treasury guards remain authoritative');
-      for (const e of z.enemies.filter((e) => e.guard && e.hp > 0)) kill(g, e);
+      for (const e of z.enemies.filter((e) => e.guard && e.hp > 0)) kill(g, e, false);
       for (const n of bundles) {
         Object.assign(g.hero, n);
         assert(g.interact(n));

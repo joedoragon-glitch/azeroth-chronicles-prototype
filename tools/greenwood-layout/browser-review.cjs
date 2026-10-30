@@ -129,37 +129,56 @@ const types = {
         Prototype.game.hero.order = null;
         Prototype.closeMenu();
       });
-      const names = viewport.touch
-        ? ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt']
-        : [
-            'start',
-            'refuge',
-            'hamlet',
-            'orchard',
-            'mill',
-            'north-bridge',
-            'south-bridge',
-            'eastern-pond',
-            'cache',
-            'treasury',
-            'crypt',
-            'old-cellars',
-            'thorn-den',
-            'goblin-camp',
-            'skeleton-watch',
-            'wagon',
-            'north-smallholds',
-          ];
-      for (const name of names) {
+      const names = process.argv.includes('--interiors')
+        ? ['treasury-interior', 'crypt-interior', 'cellars-interior']
+        : viewport.touch
+          ? ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt']
+          : [
+              'start',
+              'refuge',
+              'hamlet',
+              'orchard',
+              'mill',
+              'north-bridge',
+              'south-bridge',
+              'eastern-pond',
+              'cache',
+              'treasury',
+              'crypt',
+              'old-cellars',
+              'thorn-den',
+              'goblin-camp',
+              'skeleton-watch',
+              'wagon',
+              'north-smallholds',
+            ];
+      for (const name of names.filter(
+        (name) =>
+          !process.argv.includes('--scenes') ||
+          process.argv[process.argv.indexOf('--scenes') + 1].split(',').includes(name),
+      )) {
         const receipt = await page.evaluate(
           ({ name, clock }) => {
-            const g = Prototype.game,
-              z = g.zone(),
+            const g = Prototype.game;
+            const interiors = {
+              'treasury-interior': 'supply-vale',
+              'crypt-interior': 'crypt',
+              'cellars-interior': 'side-vale-cellars',
+            };
+            if (interiors[name]) g.enter(interiors[name]);
+            else if (g.zoneId !== 'vale') g.enter('vale');
+            const z = g.zone(),
               n = (id) => z.npcs.find((n) => n.id === id),
-              p = (id) => n(id).servicePoint || n(id);
+              p = (id) => n(id)?.servicePoint || n(id);
             const hold = PrototypeRules.creatureStrongholds.find((h) => h.id === 'skeleton-watch');
             const targets = {
-              start: { x: Campaign.data.towns[0][0], y: Campaign.data.towns[0][1] },
+              'treasury-interior': { x: 570, y: 480 },
+              'crypt-interior': { x: 1070, y: 1160 },
+              'cellars-interior': { x: 550, y: 540 },
+              start: PrototypeRules.greenwoodLayout?.start || {
+                x: Campaign.data.towns[0][0],
+                y: Campaign.data.towns[0][1],
+              },
               wagon: p('outbound'),
               'north-smallholds': { x: 700, y: 170 },
               refuge: p('rest'),
@@ -237,6 +256,7 @@ const types = {
               'engine',
               'greenwood',
               'greenwood-landscape',
+              'greenwood-interiors',
               'world',
               'save',
               'visuals',
