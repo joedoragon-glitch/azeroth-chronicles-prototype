@@ -1330,6 +1330,8 @@ body.menu-open #cancel-navigation-button {
   outline: 2px solid #d4b479; outline-offset: 2px;
 }
 #title-screen nav button:disabled { opacity: .45; cursor: not-allowed; }
+#startup-update-notice[hidden] { display: none !important; }
+#startup-update-notice { color: #e4c791; font-size: 13px; line-height: 1.5; margin: 16px 0 0; }
 #title-loading { color: #d3bc89; font-size: 13px; margin: 16px 0 0; }
 body.title-active #world,
 body.title-active #hud,
