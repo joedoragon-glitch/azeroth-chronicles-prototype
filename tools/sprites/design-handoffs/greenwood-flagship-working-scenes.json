@@ -4,7 +4,7 @@
   "designId": "greenwood-flagship-working-scenes",
   "name": "Greenwood working mill, current fruit cellar and estate works",
   "kind": "regional-scene",
-  "nextAction": "Keep draft #570 unmerged; close the recorded inherited regression and first-hour pacing gates before owner acceptance. Current native/browser scene, route and v4 proofs are in the existing handoff. No raster production, Pages or device acceptance.",
+  "nextAction": "Continue inactive Greenwood reconstruction study in draft #654 under commission #644. Resolve save/route/art/browser gates and select dimensions before candidate activation; no merge or publication. Historical #570 was published, artistically rejected and then rolled back.",
   "context": {
     "originConversation": "Greenwood Vale Flagship Reconstruction and Engineering Quality Mandate, 28 October 2026",
     "decisionSummary": "Implements W02\u2013W04, F01/F04/F06 and C04/C05 using current timber, stone, orchard and construction families. No new gameplay, lore, fruit species or raster replacements.",
@@ -103,5 +103,13 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
+  },
+  "reconstructionStudy": {
+    "status": "unaccepted procedural construction study",
+    "source": "src/prototype/greenwood-landscape.js",
+    "record": "docs/GREENWOOD_REDESIGN_MASTERPLAN_20261029.md",
+    "scope": "Greenwood Vale only; new summer hardwood/understory, ground, waterworks and complete district/defense geometry",
+    "appearanceAcceptance": "Not owner accepted",
+    "retainedMasters": "Existing originals, registrations and historical references remain intact"
   }
 }

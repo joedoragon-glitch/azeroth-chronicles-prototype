@@ -98,7 +98,19 @@
       if (!query.candidates)
         query.candidates = props.filter((p) => {
           const r =
-            Math.max(0, p.r || 0, R.sceneryTraversal.radii[p.structure] || 0) + query.padding;
+            Math.max(
+              0,
+              p.r || 0,
+              R.sceneryTraversal.radii[p.structure] || 0,
+              p.greenwoodWall
+                ? Math.hypot(
+                    p.greenwoodWall.a.x - p.greenwoodWall.b.x,
+                    p.greenwoodWall.a.y - p.greenwoodWall.b.y,
+                  ) /
+                    2 +
+                    5
+                : 0,
+            ) + query.padding;
           return (
             ![r, p.x, p.y, p.r].every(Number.isFinite) ||
             (p.x + r >= query.left &&
@@ -1073,6 +1085,11 @@
           (!terrainOnly &&
             collisionProps(this, z, x, y, radius)?.some((p) => {
               if (fort?.props.has(p.id)) return false;
+              if (z.id === 'vale' && p.greenwoodWall)
+                return (
+                  this.distanceToSegment({ x, y }, p.greenwoodWall.a, p.greenwoodWall.b) <
+                  radius + 5
+                );
               // Zero-radius queries are the existing LOS/projectile contract.
               // Only positive-radius outdoor movement receives this first pass.
               const candidate =
@@ -1378,7 +1395,12 @@
         }
         // Open western road shoulder: clear of the hamlet roofs and lantern.
         // Reposition the same resident on old saves as well as fresh campaigns.
-        Object.assign(witness, this.safe(780, 740, 'vale'));
+        Object.assign(
+          witness,
+          R.greenwoodLayout?.version === 2
+            ? this.safe(850 * R.greenwoodLayout.scale, 750 * R.greenwoodLayout.scale, 'vale')
+            : this.safe(780, 740, 'vale'),
+        );
       }
       thornReport(concise = false) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';

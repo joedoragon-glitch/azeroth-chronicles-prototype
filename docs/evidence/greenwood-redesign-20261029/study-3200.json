@@ -1,0 +1,572 @@
+{
+  "size": 3200,
+  "otherRegionalTablesUnchanged": true,
+  "sourceFiles": {
+    "greenwood-landscape": "1e20bcb145b2f510352e601c3c06faec210b2184ba00a06119a75a79f00db4b8",
+    "greenwood": "2d4f965bf3e01c97eab6eec7f1cd56abd4d459b15e1fe384e21893b20d09c240",
+    "world": "571f7169fbe2949468f1e75960fdc008b79a861bb060d97d940b319051af65e4",
+    "navigation": "e1b9a7703ad9b7c2ac79801364dacb69c58d65ebeaf7e8640029dae204330c4b",
+    "save": "913a355c6935a6a0c61807b32e64af108d562707bc627368b11b4d5f78d9324a",
+    "rules": "221b0c39304a258928537b32403b1e6c1f7351e3f64f32ad9dfcd5cd7af14e8d",
+    "engine": "39830f8a9ea1d39deca7a5b4ed0e20cfd2dde60aae9d77ef8682da50d9d31d19",
+    "visuals": "9fa582dc34fbe7e33ff85ff84f52da271c5a3681f4bf93c42afe436d1e13e526",
+    "sprites": "c209e2a55d86ab78f205fc1fb463767f6b18779ede48acb7f95b21a3711b135c"
+  },
+  "fresh": [
+    {
+      "seed": 1196835073,
+      "props": 293,
+      "nature": {
+        "trees": 115,
+        "low": 59
+      },
+      "ordinary": 32,
+      "tribute": 640,
+      "blockedSegments": [],
+      "routes": [
+        {
+          "id": "supplier",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1
+        },
+        {
+          "id": "recruiter",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 257
+        },
+        {
+          "id": "board",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 168
+        },
+        {
+          "id": "rest",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 80
+        },
+        {
+          "id": "minor",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 533
+        },
+        {
+          "id": "outbound",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1273
+        },
+        {
+          "id": "entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1723
+        },
+        {
+          "id": "bridge-north",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 801
+        },
+        {
+          "id": "bridge-south",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1309
+        },
+        {
+          "id": "orchard",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 730
+        },
+        {
+          "id": "den-ruins",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1042
+        },
+        {
+          "id": "mill-pond",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 586
+        },
+        {
+          "id": "cache",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1279
+        },
+        {
+          "id": "goblin-camp",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 822
+        },
+        {
+          "id": "mini-field-thorn",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1129
+        },
+        {
+          "id": "supply-entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 916
+        }
+      ],
+      "secondSpatialStable": true,
+      "thirdSpatialStable": true,
+      "lostOnReload": []
+    },
+    {
+      "seed": 1196835074,
+      "props": 293,
+      "nature": {
+        "trees": 115,
+        "low": 59
+      },
+      "ordinary": 32,
+      "tribute": 640,
+      "blockedSegments": [],
+      "routes": [
+        {
+          "id": "supplier",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1
+        },
+        {
+          "id": "recruiter",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 216
+        },
+        {
+          "id": "board",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 142
+        },
+        {
+          "id": "rest",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 69
+        },
+        {
+          "id": "minor",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 415
+        },
+        {
+          "id": "outbound",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1248
+        },
+        {
+          "id": "entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1588
+        },
+        {
+          "id": "bridge-north",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 667
+        },
+        {
+          "id": "bridge-south",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1283
+        },
+        {
+          "id": "orchard",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 753
+        },
+        {
+          "id": "den-ruins",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1112
+        },
+        {
+          "id": "mill-pond",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 604
+        },
+        {
+          "id": "cache",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1307
+        },
+        {
+          "id": "goblin-camp",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 934
+        },
+        {
+          "id": "mini-field-thorn",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1105
+        },
+        {
+          "id": "supply-entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 975
+        }
+      ],
+      "secondSpatialStable": true,
+      "thirdSpatialStable": true,
+      "lostOnReload": []
+    },
+    {
+      "seed": 1196835075,
+      "props": 293,
+      "nature": {
+        "trees": 115,
+        "low": 59
+      },
+      "ordinary": 32,
+      "tribute": 640,
+      "blockedSegments": [],
+      "routes": [
+        {
+          "id": "supplier",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1
+        },
+        {
+          "id": "recruiter",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 226
+        },
+        {
+          "id": "board",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 151
+        },
+        {
+          "id": "rest",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 86
+        },
+        {
+          "id": "minor",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 472
+        },
+        {
+          "id": "outbound",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1325
+        },
+        {
+          "id": "entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1587
+        },
+        {
+          "id": "bridge-north",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 679
+        },
+        {
+          "id": "bridge-south",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1291
+        },
+        {
+          "id": "orchard",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 779
+        },
+        {
+          "id": "den-ruins",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1085
+        },
+        {
+          "id": "mill-pond",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 712
+        },
+        {
+          "id": "cache",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1389
+        },
+        {
+          "id": "goblin-camp",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 919
+        },
+        {
+          "id": "mini-field-thorn",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1280
+        },
+        {
+          "id": "supply-entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1078
+        }
+      ],
+      "secondSpatialStable": true,
+      "thirdSpatialStable": true,
+      "lostOnReload": []
+    },
+    {
+      "seed": 1196835076,
+      "props": 293,
+      "nature": {
+        "trees": 115,
+        "low": 59
+      },
+      "ordinary": 32,
+      "tribute": 640,
+      "blockedSegments": [],
+      "routes": [
+        {
+          "id": "supplier",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1
+        },
+        {
+          "id": "recruiter",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 216
+        },
+        {
+          "id": "board",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 149
+        },
+        {
+          "id": "rest",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 70
+        },
+        {
+          "id": "minor",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 427
+        },
+        {
+          "id": "outbound",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1170
+        },
+        {
+          "id": "entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1572
+        },
+        {
+          "id": "bridge-north",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 667
+        },
+        {
+          "id": "bridge-south",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1250
+        },
+        {
+          "id": "orchard",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 733
+        },
+        {
+          "id": "den-ruins",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1109
+        },
+        {
+          "id": "mill-pond",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 615
+        },
+        {
+          "id": "cache",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1337
+        },
+        {
+          "id": "goblin-camp",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 853
+        },
+        {
+          "id": "mini-field-thorn",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1143
+        },
+        {
+          "id": "supply-entrance",
+          "clear": true,
+          "forward": true,
+          "reverse": true,
+          "cpuMs": 1014
+        }
+      ],
+      "secondSpatialStable": true,
+      "thirdSpatialStable": true,
+      "lostOnReload": []
+    }
+  ],
+  "migration": [
+    {
+      "name": "original-1196835073",
+      "inputUnchanged": true,
+      "ordinary": 32,
+      "tribute": 640,
+      "questsUnchanged": true,
+      "paidUnchanged": true,
+      "secondSpatialStable": true,
+      "unresolved": []
+    },
+    {
+      "name": "original-1196835074",
+      "inputUnchanged": true,
+      "ordinary": 32,
+      "tribute": 640,
+      "questsUnchanged": true,
+      "paidUnchanged": true,
+      "secondSpatialStable": true,
+      "unresolved": []
+    },
+    {
+      "name": "original-1196835075",
+      "inputUnchanged": true,
+      "ordinary": 32,
+      "tribute": 640,
+      "questsUnchanged": true,
+      "paidUnchanged": true,
+      "secondSpatialStable": true,
+      "unresolved": []
+    },
+    {
+      "name": "original-1196835076",
+      "inputUnchanged": true,
+      "ordinary": 32,
+      "tribute": 640,
+      "questsUnchanged": true,
+      "paidUnchanged": true,
+      "secondSpatialStable": true,
+      "unresolved": []
+    }
+  ],
+  "status": "Construction study; inactive in default game; not authorial or device acceptance"
+}

@@ -2729,6 +2729,12 @@
     { bend: 18, width: 0.09 },
   ];
   function channelBanks(region, y) {
+    if (region === 0 && R.greenwoodLayout?.version === 2)
+      return (
+        typeof PrototypeGreenwoodLandscape !== 'undefined'
+          ? PrototypeGreenwoodLandscape
+          : require('./greenwood-landscape.js')
+      ).riverBanks(y, R.greenwoodLayout.size);
     if (region === 2)
       return (
         typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js')

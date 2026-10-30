@@ -1488,7 +1488,13 @@
           }
           z.props = z.props.filter(
             (p) =>
-              !p.garunTemporary && !p.garunPreview && !c.blocked(p.x, p.y, z.id, p.r || 0, true),
+              !p.garunTemporary &&
+              !p.garunPreview &&
+              ((z.id === 'vale' &&
+                z.greenwoodSourceVersion === 2 &&
+                p.greenwoodFacility === 'weir' &&
+                p.r === 0) ||
+                !c.blocked(p.x, p.y, z.id, p.r || 0, true)),
           );
           c.roadNetwork(z);
           for (const e of z.enemies) {
@@ -1531,7 +1537,16 @@
               Object.assign(e, c.safe(e.x, e.y, z.id));
           }
           for (const n of [...z.npcs, ...z.nodes, ...z.buildings])
-            if (c.blocked(n.x, n.y, z.id)) Object.assign(n, c.safe(n.x, n.y, z.id));
+            if (
+              !(
+                z.id === 'vale' &&
+                z.greenwoodSourceVersion === 2 &&
+                n.servicePoint &&
+                !c.blocked(n.servicePoint.x, n.servicePoint.y, z.id)
+              ) &&
+              c.blocked(n.x, n.y, z.id)
+            )
+              Object.assign(n, c.safe(n.x, n.y, z.id));
           c.authoredPlaces(z);
           c.ensureCriticalCodex(z);
           c.migrateThornPatrol(z);

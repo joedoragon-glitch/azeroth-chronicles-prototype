@@ -8273,6 +8273,11 @@
   World.install(Campaign, { D, R, dungeonIds, classes });
   const Greenwood =
     typeof PrototypeGreenwood !== 'undefined' ? PrototypeGreenwood : require('./greenwood.js');
+  const GreenwoodLandscape =
+    typeof PrototypeGreenwoodLandscape !== 'undefined'
+      ? PrototypeGreenwoodLandscape
+      : require('./greenwood-landscape.js');
+  GreenwoodLandscape.install(Campaign, { D, R });
   // Emergency owner-directed environmental rollback: keep the original 2700-unit
   // Vale. The Greenwood module stays installed only to reverse expanded saves.
   // Do not reconfigure geography to the rejected dev.233 layout.

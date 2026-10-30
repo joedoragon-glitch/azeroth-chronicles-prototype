@@ -114,4 +114,10 @@ function loadRuntime(size = 2700, revised = false) {
   else R.greenwoodLayout = { version: 0, size: 2700 };
   return require('../../src/prototype/engine.js');
 }
-module.exports = { rng, candidate, clone, loadRuntime };
+function loadRedesign(size) {
+  const D = require('../../src/prototype/data.js'),
+    R = require('../../src/prototype/rules.js');
+  require('../../src/prototype/greenwood-landscape.js').configure(D, R, size);
+  return require('../../src/prototype/engine.js');
+}
+module.exports = { rng, candidate, clone, loadRuntime, loadRedesign };

@@ -4,6 +4,10 @@
   const R = typeof PrototypeRules !== 'undefined' ? PrototypeRules : require('./rules.js');
   const Highlands =
     typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js');
+  const GreenwoodLandscape =
+    typeof PrototypeGreenwoodLandscape !== 'undefined'
+      ? PrototypeGreenwoodLandscape
+      : require('./greenwood-landscape.js');
   // Ogre-quality craft across the existing catalog: organic contours and worn
   // material joins, with deliberate mineral, weapon and fortification edges retained.
   const organicContours = new Set([
@@ -257,6 +261,18 @@
     ctx.restore();
   }
   function draw(ctx, e, p, region = 0, rescued = false) {
+    if (region === 0 && e.renderKind === 'prop' && e.greenwoodWall) {
+      GreenwoodLandscape.drawWall(ctx, e, p);
+      return;
+    }
+    if (region === 0 && e.renderKind === 'prop' && e.greenwoodNature) {
+      GreenwoodLandscape.drawNature(ctx, e, p);
+      return;
+    }
+    if (region === 0 && e.renderKind === 'prop' && e.greenwoodFacility) {
+      GreenwoodLandscape.drawFacility(ctx, e, p);
+      return;
+    }
     // A Charmed ally always keeps its canonical species silhouette, abroad too.
     if (e?.renderKind === 'ally' && e.charmOrigin)
       e = { ...e, species: e.charmOrigin.species, ranged: e.charmOrigin.role === 'archer' };
@@ -18193,6 +18209,8 @@
     frontierTreeShoots(ctx, e, p, region);
   }
   function unscaledHeight(e) {
+    if (e.greenwoodNature === 'tree') return 140;
+    if (e.greenwoodFacility === 'mill') return 160;
     if (e.miningFacility) return 90;
     if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
@@ -18513,6 +18531,7 @@
           ? colors[2]
           : colors[0];
     if (outdoor) color = colors[0];
+    if (outdoor && region === 0 && R.greenwoodLayout?.version === 2) color = '#4b6741';
     ctx.fillStyle = color;
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
@@ -18526,7 +18545,12 @@
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
-    if (!blocked && materials && !(outdoor && region === 2) && dungeonId !== 'supply-highlands') {
+    if (
+      !blocked &&
+      materials &&
+      !(outdoor && (region === 2 || (region === 0 && R.greenwoodLayout?.version === 2))) &&
+      dungeonId !== 'supply-highlands'
+    ) {
       const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
       const key =
         'terrain:' +
@@ -18838,6 +18862,8 @@
         ctx.restore();
       }
     ctx.restore();
+    if (region === 0 && R.greenwoodLayout?.version === 2)
+      GreenwoodLandscape.drawGround(ctx, screen, R.greenwoodLayout, bounds);
     const b = R.barriers[region];
     strip(b.kind, ...b.bounds, (y) => R.channelBanks(region, y));
     if (region === 1) {
@@ -19107,7 +19133,10 @@
             );
             line({ x: x - 5, y: y - 3 }, { x: x + 2, y: y - 5 }, '#b1b09a', 1);
           }
-          for (const j of [5, 21]) {
+          for (const j of [
+            Math.floor(pool.points.length * 0.16),
+            Math.floor(pool.points.length * 0.66),
+          ]) {
             const q = pool.points[j],
               foot = screen({ x: q.x + (j === 5 ? 10 : -12), y: q.y });
             for (let n = 0; n < 4; n++) {
@@ -19261,6 +19290,10 @@
     };
     ctx.save();
     for (const [lo, hi] of gaps) {
+      if (region === 0 && R.greenwoodLayout?.version === 2) {
+        [x1, x2] = R.channelBanks(0, (lo + hi) / 2);
+        stone = lo < R.greenwoodLayout.anchors.south.y - 100;
+      }
       if (region === 2) {
         [x1, x2] = R.channelBanks(2, (lo + hi) / 2);
         stone = lo < 1100;
@@ -19861,6 +19894,8 @@
     ctx.restore();
   }
   function roads(ctx, paths, screen, region = 0, materials = null, viewport = null) {
+    if (region === 0 && R.greenwoodLayout?.version === 2)
+      return GreenwoodLandscape.drawRoads(ctx, paths, screen);
     const barrier = R.barriers[region];
     let commands;
     if (roadCacheMatches(paths, region, barrier)) commands = roadCache.commands;

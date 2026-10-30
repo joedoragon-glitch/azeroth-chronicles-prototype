@@ -4,6 +4,7 @@ const scripts = [
   'src/sprint.js',
   ...[
     'highlands',
+    'greenwood-landscape',
     'data',
     'rules',
     'world',

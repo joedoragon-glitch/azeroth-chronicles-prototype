@@ -2616,6 +2616,15 @@
         if (this.s.mode === 'arena') return this.arenaZone();
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
+          if (
+            z.id === 'vale' &&
+            R.greenwoodLayout?.version === 2 &&
+            z.greenwoodRedesignScene === 1
+          ) {
+            this.syncThornArrival(z);
+            this.setSceneryTraversal(z);
+            return z;
+          }
           this.greenwoodMigrate?.(z);
           // Keep authored generation/migrations on their established geometry.
           // Enable the scoped traversal correction only on the finished scene.
