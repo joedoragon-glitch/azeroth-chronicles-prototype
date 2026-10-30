@@ -50,6 +50,8 @@ function reference(key) {
   const sandbox = {
     PrototypeRules: rules,
     PrototypeHighlands: require('../src/prototype/highlands.js'),
+    PrototypeGreenwoodLandscape: require('../src/prototype/greenwood-landscape.js'),
+    PrototypeGreenwoodInteriors: require('../src/prototype/greenwood-interiors.js'),
     performance: { now: () => 16000 },
   };
   vm.runInNewContext(fs.readFileSync(path.join(root, 'src/prototype/visuals.js'), 'utf8'), sandbox);
