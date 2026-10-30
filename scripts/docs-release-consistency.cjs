@@ -50,7 +50,7 @@ function inspect(b, ctx = {}) {
       errors.push('Development state current published build still marked draft or unmerged');
     }
     const playableLine = stateLines.find(line => /^\*\*Latest verified playable update\b/i.test(line));
-    const playableDev = playableLine?.match(/:\s*dev\.(\d+)\b/i)?.[1];
+    const playableDev = playableLine?.match(/\bdev\.(\d+)\b/i)?.[1];
     if (playableLine && playableDev !== currentDev) {
       errors.push('Development state latest playable release is stale');
     }
