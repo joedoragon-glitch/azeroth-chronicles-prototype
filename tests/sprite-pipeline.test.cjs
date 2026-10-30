@@ -50,8 +50,13 @@ const root = path.resolve(__dirname, '..');
     );
     assert.throws(() => pipeline.contractFor('enemy:goblin:ranged'), /No prepared contract/);
     for (const contract of contracts) {
-      const reference = pipeline.reference(contract),
+      const reference = pipeline.reference(contract);
+      let report;
+      try {
         report = await pipeline.inspect(reference);
+      } catch (error) {
+        throw new Error('Sprite reference ' + contract.key + ' failed inspection: ' + error.message, { cause: error });
+      }
       assert.equal(report.width, contract.canvas.width);
       assert.equal(report.height, contract.canvas.height);
       assert(report.padding >= 2 && report.visiblePixels > 0 && report.transparentPixels > 0);
