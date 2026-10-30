@@ -5,10 +5,6 @@ name: Focused checks and deploy
 on:
   push:
     branches: [main]
-    # One-time approved Greenwood publication: the deployment workflow file
-    # alone must not rerun the CI suite. Other source changes remain tested.
-    paths-ignore:
-      - '.github/workflows/greenwood-publish-only-20261030.yml'
   pull_request:
     # Stacked Archive drafts need checks without retargeting them onto main.
     branches: [main, 'archive/**', 'narrative/**']
