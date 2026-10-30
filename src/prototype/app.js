@@ -1644,12 +1644,13 @@
     appControllerReloaded = false,
     appUpdateCheck = null,
     appUpdateBusy = false,
-    appLastUpdateCheck = -Infinity;
+    appLastUpdateCheck = -Infinity,
+    startupUpdatePending = true;
   let hadServiceWorkerController = !!navigator.serviceWorker?.controller;
   function refreshUpdateNotice() {
     appUpdateReady = !!appRegistration?.waiting;
     const button = $('update-button');
-    button.hidden = !appUpdateReady;
+    button.hidden = startupUpdatePending || !appUpdateReady;
     button.textContent = tr('Update available');
     button.setAttribute('aria-label', tr('Install available game update'));
     button.disabled = appUpdateBusy || appReloadRequested;
@@ -1671,7 +1672,7 @@
     return appUpdateCheck;
   }
   async function updateApp() {
-    if (!appRegistration || appUpdateBusy || appReloadRequested) return;
+    if (startupUpdatePending || !appRegistration || appUpdateBusy || appReloadRequested) return;
     let activationPause = null;
     appUpdateBusy = true;
     refreshUpdateNotice();
@@ -1730,6 +1731,103 @@
     }
   }
   $('update-button').onclick = updateApp;
+
+  // The startup gate runs before the title becomes visible or graphics are
+  // prepared. Service-worker installation is atomic: an incomplete download
+  // never replaces the previous offline game or its save storage.
+  function startupUpdateText(english, spanish) {
+    $('startup-update-text').textContent = language === 'es' ? spanish : english;
+  }
+  function startupBound(promise, milliseconds) {
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => resolve(false), milliseconds);
+      Promise.resolve(promise).then(
+        (value) => { clearTimeout(timer); resolve(value); },
+        () => { clearTimeout(timer); resolve(false); },
+      );
+    });
+  }
+  function waitForWorkerInstall(worker) {
+    if (!worker || ['installed', 'activated', 'redundant'].includes(worker.state))
+      return Promise.resolve(true);
+    return new Promise((resolve) => {
+      const done = () => {
+        if (!['installed', 'activated', 'redundant'].includes(worker.state)) return;
+        worker.removeEventListener('statechange', done);
+        resolve(true);
+      };
+      worker.addEventListener('statechange', done);
+      done();
+    });
+  }
+  function finishStartupUpdate() {
+    if (!startupUpdatePending) return;
+    startupUpdatePending = false;
+    $('startup-update').hidden = true;
+    refreshUpdateNotice();
+    showTitleScreen();
+  }
+  async function initializeStartupUpdate() {
+    const supported = 'serviceWorker' in navigator &&
+      (location.protocol === 'https:' || location.hostname === 'localhost' ||
+       location.hostname === '127.0.0.1');
+    if (!supported) return finishStartupUpdate();
+    const serviceWorker = navigator.serviceWorker;
+    try {
+      startupUpdateText('Checking for updates…', 'Buscando actualizaciones…');
+      const reg = await startupBound(
+        serviceWorker.getRegistration('./').then(
+          (existing) => existing || serviceWorker.register('./sw.js'),
+        ),
+        12000,
+      );
+      if (!reg) return finishStartupUpdate();
+      appRegistration = reg;
+      const watchWorker = () => {
+        refreshUpdateNotice();
+        reg.installing?.addEventListener('statechange', refreshUpdateNotice);
+      };
+      reg.addEventListener('updatefound', watchWorker);
+      watchWorker();
+
+      // A fully downloaded waiting update also works offline. Otherwise do
+      // one explicit freshness check, before any menu or game-scene preparation.
+      if (!reg.waiting && serviceWorker.controller && navigator.onLine !== false) {
+        await startupBound(checkAppUpdate(true), 12000);
+        if (reg.installing) {
+          startupUpdateText('Downloading update…', 'Descargando actualización…');
+          await startupBound(waitForWorkerInstall(reg.installing), 25000);
+        }
+      }
+      if (reg.waiting && serviceWorker.controller) {
+        startupUpdateText('Applying update…', 'Aplicando actualización…');
+        appReloadRequested = true;
+        // controllerchange performs the one silent reload required to load
+        // the new HTML, JavaScript, CSS and translations as one coherent build.
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        setTimeout(() => {
+          // An activation that never completes must not trap offline players.
+          if (startupUpdatePending && !appControllerReloaded) {
+            appReloadRequested = false;
+            finishStartupUpdate();
+          }
+        }, 12000);
+        return;
+      }
+      finishStartupUpdate();
+      // Ongoing checks may discover an update while playing, but must never
+      // automatically replace the code of an active campaign.
+      setInterval(() => {
+        if (!document.hidden && navigator.onLine !== false)
+          checkAppUpdate().catch(() => {});
+      }, 300000);
+    } catch (_) {
+      // Network, registration and storage failures preserve the old game.
+      appReloadRequested = false;
+      finishStartupUpdate();
+    }
+  }
+
   function runningAsApp() {
     return (
       (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
@@ -3624,11 +3722,11 @@
     $('title-saves').textContent = t('Saved Games & Backups', 'Partidas y copias de seguridad');
     $('title-settings').textContent = t('Settings', 'Ajustes');
     $('title-help').textContent = t('Help & Credits', 'Ayuda y créditos');
-    $('title-continue').disabled = titleLoading || !valid ||
+    $('title-continue').disabled = startupUpdatePending || titleLoading || !valid ||
       !writerGuard.canWrite() || persistence.conflicted(game.s.mode) ||
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
-      $(id).disabled = titleLoading;
+      $(id).disabled = startupUpdatePending || titleLoading;
     titleCanvasContinue.hidden = !titleLoading || !!titleSkipGraphics?.skipped;
     titleCanvasContinue.textContent = language === 'es'
       ? 'Continuar con Canvas' : 'Continue with Canvas';
@@ -3655,22 +3753,27 @@
       $('modal').hidden = true;
       document.body.classList.remove('menu-open');
     }
-    titleScreen.hidden = false;
+    titleScreen.hidden = startupUpdatePending;
+    $('startup-update').hidden = !startupUpdatePending;
     document.body.classList.add('title-active');
-    // Prepare only the *loaded* arrival view, never an unentered zone.
-    titleWarmup = loaded
-      ? warmScene(game.zoneId, true)
-      : null;
+    // No sprite, material or GPU warmup until Continue/New Game is chosen.
+    titleWarmup = null;
     refreshTitleScreen();
-    const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
-    primary.focus?.({ preventScroll: true });
+    if (!startupUpdatePending) {
+      const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
+      primary.focus?.({ preventScroll: true });
+    }
   }
   function enterPreparedScene() {
-    if (titleLoading || started || !loaded || !writerGuard.canWrite()) return;
+    if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
     titleLoading = true;
     titleImportNotice = false;
     const epoch = ++titleEpoch;
+    // First-scene resources belong to this explicit entry, not idle title.
+    const materialsReady = typeof PrototypeMaterials !== 'undefined'
+      ? PrototypeMaterials.load() : null;
+    titleWarmup = warmScene(game.zoneId, true);
     let resolveSkip;
     const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
     titleSkipGraphics = { skipped: false, resolve: resolveSkip };
@@ -3766,7 +3869,7 @@
       const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
       waitOrSkip(actual, paint);
     };
-    waitOrSkip(titleWarmup, reveal);
+    waitOrSkip(Promise.all([materialsReady, titleWarmup].filter(Boolean)), reveal);
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
@@ -8459,48 +8562,22 @@
     installPrompt = null;
     status('Game installed. Open it from your home screen.');
   });
-  if (
-    location.protocol === 'https:' ||
-    location.hostname === 'localhost' ||
-    location.hostname === '127.0.0.1'
-  ) {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (appControllerReloaded) return;
-        if (hadServiceWorkerController) {
-          appReloadRequested = false;
-          appControllerReloaded = true;
-          if (started && writerGuard.canWrite() && !save()) {
-            appControllerReloaded = false;
-            status('Saving failed. Export your run before closing.');
-            return;
-          }
-          location.reload();
-        } else hadServiceWorkerController = true;
-      });
-      navigator.serviceWorker
-        .getRegistration('./')
-        .then((reg) => reg || navigator.serviceWorker.register('./sw.js'))
-        .then((reg) => {
-          appRegistration = reg;
-          function check() {
-            refreshUpdateNotice();
-          }
-          check();
-          function watchWorker() {
-            const worker = reg.installing;
-            if (worker) worker.addEventListener('statechange', check);
-          }
-          reg.addEventListener('updatefound', watchWorker);
-          watchWorker();
-          checkAppUpdate(true).catch(() => {});
-          setInterval(() => {
-            if (!document.hidden && navigator.onLine !== false) checkAppUpdate().catch(() => {});
-          }, 300000);
-        })
-        .catch(() => {});
-    }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (appControllerReloaded) return;
+      if (hadServiceWorkerController) {
+        appReloadRequested = false;
+        appControllerReloaded = true;
+        if (started && writerGuard.canWrite() && !save()) {
+          appControllerReloaded = false;
+          status('Saving failed. Export your run before closing.');
+          return;
+        }
+        location.reload();
+      } else hadServiceWorkerController = true;
+    });
   }
+  // This is the sole entry to the interactive title. The preflight finishes
+  // first; a pending update silently reloads into its own complete new shell.
+  void initializeStartupUpdate();
 })();
-
-if (typeof PrototypeMaterials !== 'undefined') void PrototypeMaterials.load();
