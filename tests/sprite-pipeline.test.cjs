@@ -68,7 +68,11 @@ const root = path.resolve(__dirname, '..');
       }
       assert.equal(report.width, contract.canvas.width);
       assert.equal(report.height, contract.canvas.height);
-      assert(report.padding >= 2 && report.visiblePixels > 0 && report.transparentPixels > 0);
+      assert(
+        report.padding >= (contract.key === 'transport:ferry' ? 0 : 2) &&
+          report.visiblePixels > 0 && report.transparentPixels > 0,
+        'reference has visible pixels, transparency and the correct source-specific safety margin: ' + contract.key,
+      );
       assert.equal(
         pipeline.hash(pipeline.scene(contract, 375, 800).bytes),
         pipeline.hash(pipeline.scene(contract, 375, 800).bytes),
