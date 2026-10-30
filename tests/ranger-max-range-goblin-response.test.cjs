@@ -184,10 +184,11 @@ for (const mode of ['normal', 'nightmare']) {
 {
   const g=new Campaign('normal','ranger',()=>0.91);
   g.enter('vale');
+  const { target, hero } = findNative450Lane(g);
   const e=g.makeEnemy({species:'goblin',name:'unhit control',level:1,
-    hp:4000,damage:2,gold:0,xp:0},{x:1800,y:1800});
+    hp:4000,damage:2,gold:0,xp:0},target);
   e.ranged=false;
-  prep(g,e,{x:2250,y:1800});
+  prep(g,e,hero);
   g.engage(e,true,false);
   g._tacticalRegroups=new Map([[e.id,{
     phase:'anchored',anchor:{x:e.x,y:e.y},holdRemaining:12,
@@ -209,9 +210,10 @@ for(const [name, flags] of [
 ]){
   const g=new Campaign('normal','ranger',()=>0.91);
   g.enter('vale');
+  const { target, hero } = findNative450Lane(g);
   const e=g.makeEnemy({species:'goblin',name:name+' control',level:1,
-    hp:4000,damage:2,gold:0,xp:0},{x:1800,y:1800});
-  prep(g,e,{x:2250,y:1800});
+    hp:4000,damage:2,gold:0,xp:0},target);
+  prep(g,e,hero);
   Object.assign(e,flags);
   assert(g.damage(e,25,'hero'),name+': a genuine hit applies');
   assert(g.enemyUnderFireAlert(e),name+': alert really exists');
