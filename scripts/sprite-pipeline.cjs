@@ -17,6 +17,8 @@ const Sprites = require('../src/prototype/sprites.js');
 const Format = require('../src/prototype/sprite-format.js');
 const visualSandbox = {
   PrototypeHighlands: require('../src/prototype/highlands.js'),
+  PrototypeGreenwoodLandscape: require('../src/prototype/greenwood-landscape.js'),
+  PrototypeGreenwoodInteriors: require('../src/prototype/greenwood-interiors.js'),
   PrototypeRules: require('../src/prototype/rules.js'),
   performance: { now: () => 16000 },
 };
