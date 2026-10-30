@@ -3804,8 +3804,7 @@
     titleImportNotice = false;
     const epoch = ++titleEpoch;
     // First-scene resources belong to this explicit entry, not idle title.
-    const materialsReady = typeof PrototypeMaterials !== 'undefined'
-      ? PrototypeMaterials.load() : null;
+    if (typeof PrototypeMaterials !== 'undefined') void PrototypeMaterials.load();
     titleWarmup = warmScene(game.zoneId, true);
     let resolveSkip;
     const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
@@ -3902,7 +3901,7 @@
       const actual = titleSkipGraphics?.skipped ? null : warmScene(game.zoneId, true);
       waitOrSkip(actual, paint);
     };
-    waitOrSkip(Promise.all([materialsReady, titleWarmup].filter(Boolean)), reveal);
+    waitOrSkip(titleWarmup, reveal);
   }
   function returnToTitleScreen() {
     if (!started || !writerGuard.canWrite() || !save()) {
