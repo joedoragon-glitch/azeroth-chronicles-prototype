@@ -51,7 +51,7 @@ const server = http.createServer((req, res) => {
         '<nav aria-label="Main menu" data-menu-revision="c">'));
   if (generation === 'c' && relative === '/src/prototype/app.js')
     return res.end(fs.readFileSync(file, 'utf8') +
-      "\\ndocument.body.dataset.menuRevision = 'c';\\n");
+      "\ndocument.body.dataset.menuRevision = 'c';\n");
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
