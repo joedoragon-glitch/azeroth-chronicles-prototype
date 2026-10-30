@@ -72,6 +72,12 @@ function publishedData() {
     '| GitHub Pages publication | **Published dev.' + dev + '** | receipt |';
   return b;
 }
+{ // Prior release mentioned in an evidence cell must not convert a draft into a published build.
+  const draft = data();
+  draft.state = draft.state.replace('| current code |',
+    '| prior dev.208 was merged and published; current source is still a candidate |');
+  assert.deepEqual(inspect(draft), []);
+}
 assert.deepEqual(inspect(publishedData()), []);
 { const b = publishedData(); b.state = b.state.replace('published code/build version:** ' + tick + v,
   'published code/build version:** ' + tick + old); rejects(b, 'latest verified published version'); }
