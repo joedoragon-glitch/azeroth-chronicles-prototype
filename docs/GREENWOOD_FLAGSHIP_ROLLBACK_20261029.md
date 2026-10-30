@@ -1,6 +1,6 @@
 # Greenwood Vale flagship — recovery checkpoint and rollback runbook
 
-**29 October 2026 — operational safety record.** This is a **pre-merge recovery plan**, not evidence that the flagship reconstruction has been accepted, merged, published or device-verified.
+**29 October 2026 — operational safety record.** This is the recovery procedure for the flagship reconstruction. Merge/publication receipts are recorded below; a successful release does not establish device acceptance or a tested reverse save migration.
 
 The game's public title is *So I Became the Dark Lord's Problem*. Historic repository names and the `vale` internal region ID remain unchanged.
 
@@ -8,8 +8,14 @@ The game's public title is *So I Became the Dark Lord's Problem*. Historic repos
 
 - **Verified pre-flagship source:** [`main@c55faef34a2122c4c8aa4177d262a2d865f81253`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/c55faef34a2122c4c8aa4177d262a2d865f81253), observed on 29 October 2026.
 - **Preserved branch:** [`recovery/greenwood-pre-flagship-20261029`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/tree/recovery/greenwood-pre-flagship-20261029), created **from that exact commit**. Treat as a protected historical checkpoint; never force-push, delete or repurpose it for development.
-- **Reconstruction under review:** [draft PR #570](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/570), [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545). It was **not merged** at checkpoint creation. Its final source, approved merge strategy and test results must be rechecked before any future rollout.
+- **Introduced reconstruction:** [merged PR #570](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/570), [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545). It was **not merged** at checkpoint creation. Its final source, approved merge strategy and test results must be rechecked before any future rollout.
 - This branch preserves **repository source** at a known checkpoint, **not** a player's local save files, installed PWA cache or a certified published Pages artifact. If unrelated changes land in `main` before #570 merges, create or record an additional exact **immediate pre-merge `main` SHA**; do not overwrite this historical branch.
+
+## Release receipt
+
+- Immediate pre-merge main: `87792f6441c8b01b3afd25282a209b695427f649`.
+- Introducing merge: [`323bb2a7`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/323bb2a75ceec9bafa8dfe9d567be057309a0115), feature head `37b7cb77dd3a6bdbf1747d247029e431f7a6d29e`, dev.233. A full merge revert would use first parent 1; review unrelated included repairs before choosing a whole-PR rollback.
+- [Focused validation and Pages #40951925946](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40951925946) succeeded. Public build stamp and Greenwood source match the introducing merge. The original recovery branch remains intact.
 
 ## Before merging a future Greenwood release (required safety gate)
 
@@ -44,6 +50,18 @@ The **safe default** is to restore the preserved **pre-upgrade player export** u
 ### D. Restore the playable release
 
 After the rollback PR passes its **specific** tests and is owner-approved, merge it into current `main`; do **not** move `main` backwards or force-push. Correct build/version/service-worker cache identities so clients receive the restored release, then verify the **exact published Pages artifact** and PWA update/offline behavior. Check representative old-save loads, the original 2700-unit world, travel, quests and graphics. Label physical Chromebook/phone checks **device-unverified** until personally checked.
+
+## Emergency restore receipt — 29 October 2026 (dev.235, published)
+
+**Owner direction:** The owner rejected the published dev.233 Greenwood visual/environmental reconstruction on an actual iPhone and requests returning the playable first region to its pre-reconstruction 2,700-unit map. A separate comprehensive Work redesign is staged in [draft PR #644](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/644); do not mistake this interim rollback for that overhaul.
+
+**Selective implementation in [merged PR #648](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/648):**
+- Turn off the 3,200-unit `Greenwood.configure` in the live engine, leaving current gameplay systems and unaffected regions in place. Restore the original `vale` geography, crossroads, original crossing widths, town/hamlet anchors, and ordinary map generation. This retains independent fixes, including Scornfang's Treasury name.
+- Keep `greenwood.js` present as a compatibility bridge. A v4 save with `zones.vale.greenwoodSourceVersion===1` is reverse-projected **once** to the older map coordinate space, including NPCs/service points, enemies/homes, ordinary props, nodes, constructed buildings, pending world actors, loot, hero and party when in Vale; `greenwoodRollbackVersion===1` prevents repeated reverse conversion. Regenerate the historical layout's authored street/settlement/bridge data instead of keeping the rejected roads. Only props explicitly authored by the new scene are removed.
+- Unmodified 2,700-unit v4 saves and newly started campaigns are not subjected to inverse conversion. Non-Vale saves, Gold, quests, paid flags, rescued companions, enemy identities, tributes and other progression must not be rolled back.
+- This is necessarily **not a byte-perfect reversal of scenic props already relocated by the 3,200-unit version**. Where the new geometry moves a structure or saved actor onto blocked terrain, normal safe-location reconciliation applies. Owners should still export a post-upgrade save and preserve any pre-upgrade export before trying the rollback.
+
+**Verified merge and publication:** [PR #648](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/648) passed exact-head focused validation including original 2,700-unit geometry, four seeds, two crossings, authentic expanded-save inverse migration, original save fixtures, repeat-load idempotence, and preserved quest/paid/crown/encounter state. It merged as [`main@fcc1f428`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/fcc1f428df652c7470914f3465bebf56afffbb71). [GitHub Actions #40966950141](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/40966950141) completed both **Focused validation** and **Publish focused update** successfully against that merged SHA. Public build/cache version is `0.9.1+snapshot.dev.235`. No claim of installed-iPhone or Chromebook acceptance: device checks remain outstanding. The old region is a temporary player-facing restore, not the owner-approved future environmental redesign ([draft #644](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/644)). Keep pre/post upgrade player exports; the inverse is save-compatible but cannot reconstruct every scene prop's old pixel-exact placement.
 
 ## Focused rollback audit checklist
 

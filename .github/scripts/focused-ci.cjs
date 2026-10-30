@@ -15,6 +15,31 @@ const {
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  {
+    match: /^src\/prototype\/greenwood\.js$/,
+    tests: [TEST + 'greenwood-flagship.test.cjs', TEST + 'town-street-audit.test.cjs'],
+  },
+  {
+    // Ironroot authoring owns Treasury entrances, transport roads and old-save placement.
+    // Source-only edits must run native geography and quest/road clearance contracts.
+    match: /^src\/prototype\/highlands\.js$/,
+    tests: [
+      TEST + 'ironroot-highlands.test.cjs',
+      TEST + 'local-sites.test.cjs',
+      TEST + 'town-street-audit.test.cjs',
+    ],
+  },
+  {
+    match: /^tools\/greenwood-layout\//,
+    tests: [TEST + 'greenwood-layout-measurement.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/world\.js$/,
+    tests: [
+      TEST + 'greenwood-onboarding-clearance.test.cjs',
+      TEST + 'greenwood-scornfang-title.test.cjs',
+    ],
+  },
   { match: /^\.github\//, tests: [TEST + 'focused-ci-report.test.cjs'] },
   {
     match: /^tests\/helpers\/native-fixture-contracts\.cjs$/,
@@ -45,7 +70,8 @@ const groups = [
     tests: [TEST + 'rogue-anchor-under-fire-integrity.test.cjs'],
   },
   {
-    match: /^src\/prototype\/(?:renderer|rules|visuals|world|data|sprites)\.js$|^scripts\/sprite-scope-audit\.cjs$/,
+    match:
+      /^src\/prototype\/(?:renderer|rules|visuals|world|data|sprites)\.js$|^scripts\/sprite-scope-audit\.cjs$/,
     tests: [TEST + 'sprite-scope.test.cjs'],
   },
   {
@@ -232,7 +258,8 @@ const groups = [
     tests: [TEST + 'materials.test.cjs', TEST + 'ground-cache.test.cjs'],
   },
   {
-    match: /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
+    match:
+      /^scripts\/(?:sprite-pipeline|sprite-scope-audit|material-pipeline)\.cjs$|^tools\/sprites\/(?:terrain-specifications\.json|approved\.json|materials\/approved\.json)$|^assets\/(?:sprites|materials)\/manifest\.json$/,
     tests: [TEST + 'artwork-pipeline-checks.test.cjs'],
   },
   { match: /^src\/prototype\/input\.js$/, tests: [TEST + 'input.test.cjs'] },
@@ -262,15 +289,18 @@ const groups = [
   {
     // Phase 4 must be retested when any source owning capture, creature growth,
     // work orders, company operations, save or shared species artwork changes.
-    match: /^src\/prototype\/(?:party|progression|hero-combat|save|engine|rules|combat|menus|visuals|sprites)\.js$/,
+    match:
+      /^src\/prototype\/(?:party|progression|hero-combat|save|engine|rules|combat|menus|visuals|sprites)\.js$/,
     tests: [TEST + 'rogue-bard-phase4-companions.test.cjs'],
   },
   {
     // New song code, timing owners and card metadata must preserve mirrored
     // effects, old-class isolation and short-lived nonstacking party boons.
     match: /^src\/prototype\/(?:hero-combat|combat|party|rules|save|skill-reference)\.js$/,
-    tests: [TEST + 'rogue-bard-phase5-repertoire.test.cjs',
-      TEST + 'rogue-bard-critical-skill1.test.cjs'],
+    tests: [
+      TEST + 'rogue-bard-phase5-repertoire.test.cjs',
+      TEST + 'rogue-bard-critical-skill1.test.cjs',
+    ],
   },
 ];
 const eligible = (file) =>
@@ -429,8 +459,7 @@ function run(
     );
   if (sourceGaps.length)
     console.error(
-      '::error::Uncovered changed source requires focused test ownership: ' +
-        sourceGaps.join(', '),
+      '::error::Uncovered changed source requires focused test ownership: ' + sourceGaps.join(', '),
     );
   for (const file of manualBrowser)
     console.warn('::warning::Manual browser acceptance not run under ordinary CI: ' + file);
@@ -462,7 +491,8 @@ function run(
     } catch (error) {
       outcome = { ok: false, status: null, error: error?.message || String(error) };
     }
-    const detail = typeof outcome === 'boolean' ? { ok: outcome, status: outcome ? 0 : 1 } : outcome;
+    const detail =
+      typeof outcome === 'boolean' ? { ok: outcome, status: outcome ? 0 : 1 } : outcome;
     const ok = !!detail?.ok;
     checks.push({
       file,

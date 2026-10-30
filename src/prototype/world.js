@@ -2,6 +2,1056 @@
 (function (root) {
   'use strict';
   const roadPlans = new Map();
+  // Evidence-confirmed reverse of the *rejected* dev.233 global final-pass moves.
+  // Every row requires an exact matching AFTER coordinate; unrelated saves
+  // and player-built objects are deliberately never repositioned.
+  const dev233StreetInverse = {
+    "frontier": [
+      [
+        "props",
+        "settlement-minor-0#1",
+        312.5,
+        2480.31,
+        216.81,
+        2371.37
+      ],
+      [
+        "props",
+        "settlement-minor-2#1",
+        700,
+        2620,
+        680.67,
+        2506.64
+      ],
+      [
+        "props",
+        "settlement-minor-4#1",
+        545,
+        2940,
+        657.63,
+        3080.41
+      ],
+      [
+        "props",
+        "mini-wall-field-warlord-17#1",
+        3104.72,
+        1472.13,
+        3203.97,
+        1414.04
+      ],
+      [
+        "props",
+        "aesthetic-hamlet-10#1",
+        1175,
+        1120,
+        1092.46,
+        1140.32
+      ],
+      [
+        "props",
+        "aesthetic-nature-15#1",
+        312.28,
+        1282.28,
+        258.11,
+        1272.74
+      ],
+      [
+        "props",
+        "aesthetic-nature-21#1",
+        190,
+        2732,
+        149.35,
+        2769.05
+      ],
+      [
+        "props",
+        "aesthetic-nature-24#1",
+        571.71,
+        1130.71,
+        617.26,
+        1161.52
+      ],
+      [
+        "props",
+        "aesthetic-nature-26#1",
+        379,
+        1366,
+        294.28,
+        1359.05
+      ],
+      [
+        "props",
+        "aesthetic-nature-27#1",
+        282.54,
+        1814.46,
+        249.96,
+        1858.77
+      ],
+      [
+        "props",
+        "aesthetic-nature-28#1",
+        450,
+        1931,
+        512.77,
+        1988.31
+      ],
+      [
+        "props",
+        "aesthetic-nature-29#1",
+        468,
+        2207,
+        610.61,
+        2180.77
+      ],
+      [
+        "props",
+        "aesthetic-nature-30#1",
+        386,
+        2452,
+        345.65,
+        2489.38
+      ],
+      [
+        "props",
+        "aesthetic-nature-31#1",
+        405,
+        2708,
+        517.21,
+        2733.19
+      ],
+      [
+        "props",
+        "aesthetic-nature-32#1",
+        468,
+        2929,
+        500.85,
+        2973.12
+      ],
+      [
+        "props",
+        "aesthetic-nature-37#1",
+        626,
+        1657,
+        612.44,
+        1603.7
+      ],
+      [
+        "props",
+        "aesthetic-nature-40#1",
+        714,
+        2720,
+        893.6,
+        2731.97
+      ],
+      [
+        "props",
+        "aesthetic-nature-43#1",
+        937,
+        189,
+        983.35,
+        159.4
+      ],
+      [
+        "props",
+        "aesthetic-nature-62#1",
+        1270,
+        2232,
+        1268.66,
+        2286.98
+      ],
+      [
+        "props",
+        "aesthetic-nature-69#1",
+        1692.37,
+        1867.83,
+        1598.95,
+        1800.77
+      ],
+      [
+        "props",
+        "aesthetic-bank-103#1",
+        1248.32,
+        429.84,
+        1341.18,
+        318.47
+      ],
+      [
+        "props",
+        "aesthetic-bank-105#1",
+        1304.16,
+        1273,
+        1343.64,
+        1311.29
+      ],
+      [
+        "props",
+        "aesthetic-bank-108#1",
+        1339.94,
+        1828.82,
+        1356.72,
+        1881.2
+      ],
+      [
+        "props",
+        "aesthetic-bank-109#1",
+        1644.98,
+        1834,
+        1590.46,
+        1826.79
+      ],
+      [
+        "props",
+        "frontier-layout-emberwatch-livelihood-6#1",
+        480,
+        1226.24,
+        528.73,
+        1251.75
+      ],
+      [
+        "props",
+        "frontier-layout-burned-hamlet-recovery-8#1",
+        246.72,
+        1514,
+        96.9,
+        1613.78
+      ],
+      [
+        "props",
+        "frontier-layout-burned-hamlet-recovery-12#1",
+        411.19,
+        1869.06,
+        357.91,
+        1882.7
+      ],
+      [
+        "props",
+        "frontier-layout-burned-hamlet-recovery-13#1",
+        620,
+        1810,
+        610.44,
+        1864.16
+      ],
+      [
+        "props",
+        "frontier-layout-burned-hamlet-recovery-14#1",
+        552.5,
+        1785.31,
+        553.86,
+        1840.29
+      ],
+      [
+        "props",
+        "frontier-layout-burned-hamlet-recovery-15#1",
+        410,
+        1760,
+        368.17,
+        1795.72
+      ],
+      [
+        "props",
+        "frontier-layout-burned-hamlet-recovery-16#1",
+        679.25,
+        1794.25,
+        645.38,
+        1837.58
+      ],
+      [
+        "props",
+        "frontier-layout-roadworks-yard-23#1",
+        1090,
+        385,
+        1053.81,
+        426.42
+      ],
+      [
+        "props",
+        "frontier-layout-inspection-yard-25#1",
+        2900,
+        1480,
+        2802.16,
+        1419.57
+      ],
+      [
+        "props",
+        "frontier-layout-inspection-yard-26#1",
+        3015,
+        1440,
+        3070,
+        1439.41
+      ],
+      [
+        "props",
+        "frontier-layout-inspection-yard-28#1",
+        2910,
+        1700,
+        2875.76,
+        1743.04
+      ],
+      [
+        "props",
+        "frontier-layout-inspection-yard-29#1",
+        3110,
+        1670,
+        3161.58,
+        1689.09
+      ],
+      [
+        "props",
+        "frontier-layout-checkpoint-support-32#1",
+        2237.3,
+        2806.22,
+        2207.69,
+        2852.57
+      ],
+      [
+        "props",
+        "frontier-layout-checkpoint-support-33#1",
+        2285.45,
+        2853.42,
+        2236.89,
+        2879.24
+      ],
+      [
+        "props",
+        "frontier-layout-checkpoint-support-36#1",
+        2314.69,
+        3132.5,
+        2283.49,
+        3177.8
+      ],
+      [
+        "props",
+        "frontier-layout-bastion-cordon-40#1",
+        3134,
+        2938.23,
+        3174.45,
+        3012.99
+      ],
+      [
+        "props",
+        "frontier-layout-bastion-cordon-42#1",
+        2881.59,
+        3217.12,
+        2886.86,
+        3271.87
+      ],
+      [
+        "props",
+        "frontier-layout-bastion-cordon-43#1",
+        3136.32,
+        3209.08,
+        3171.48,
+        3251.37
+      ],
+      [
+        "props",
+        "frontier-layout-bastion-cordon-45#1",
+        3234,
+        3042.97,
+        3271.82,
+        3082.91
+      ],
+      [
+        "props",
+        "frontier-layout-route-convoy-service-47#1",
+        263.58,
+        2722.18,
+        235.22,
+        2769.3
+      ],
+      [
+        "props",
+        "frontier-layout-route-convoy-service-50#1",
+        528.3,
+        2762.37,
+        616.54,
+        2560.85
+      ],
+      [
+        "props",
+        "frontier-layout-route-north-ravine-works-51#1",
+        1192.25,
+        765.81,
+        1049.33,
+        790.26
+      ],
+      [
+        "props",
+        "frontier-layout-route-inspection-spur-55#1",
+        2870,
+        1250,
+        2864.3,
+        1195.3
+      ],
+      [
+        "props",
+        "frontier-layout-route-inspection-spur-57#1",
+        3029.69,
+        1482.5,
+        3112.01,
+        1461.34
+      ],
+      [
+        "props",
+        "frontier-layout-route-checkpoint-logistics-61#1",
+        2305.5,
+        2944.5,
+        2302.95,
+        2999.44
+      ],
+      [
+        "props",
+        "frontier-layout-route-bastion-cordon-65#1",
+        3139.09,
+        3004.97,
+        3176.26,
+        3045.5
+      ],
+      [
+        "props",
+        "regime-banner-frontier-3#1",
+        3073.42,
+        2575.72,
+        3128.32,
+        2572.48
+      ],
+      [
+        "props",
+        "recovery-heat-frontier-1#1",
+        517.93,
+        1070.71,
+        524.43,
+        1125.33
+      ],
+      [
+        "props",
+        "recovery-heat-frontier-17#1",
+        1218.43,
+        2058.95,
+        1200.15,
+        2110.83
+      ],
+      [
+        "props",
+        "recovery-heat-frontier-33#1",
+        2330,
+        2870,
+        2301.55,
+        2917.07
+      ],
+      [
+        "props",
+        "recovery-heat-frontier-36#1",
+        3070,
+        3130,
+        3149.73,
+        3159.45
+      ],
+      [
+        "props",
+        "recovery-heat-frontier-42#1",
+        3010,
+        1350,
+        3093.27,
+        1367.04
+      ],
+      [
+        "props",
+        "public-lantern-frontier-1#1",
+        1201.79,
+        1118.34,
+        1244.11,
+        1153.47
+      ],
+      [
+        "props",
+        "settlement-major-0#1",
+        210,
+        205,
+        156.36,
+        139.06
+      ],
+      [
+        "props",
+        "settlement-major-1#1",
+        745,
+        170,
+        781.66,
+        129
+      ],
+      [
+        "props",
+        "settlement-major-3#1",
+        1160,
+        190,
+        1180.08,
+        138.8
+      ],
+      [
+        "props",
+        "settlement-major-5#1",
+        620,
+        1320,
+        685.63,
+        1225.57
+      ],
+      [
+        "props",
+        "settlement-major-6#1",
+        975,
+        1180,
+        834.29,
+        1215.03
+      ],
+      [
+        "props",
+        "settlement-major-7#1",
+        232.22,
+        1581.57,
+        137.47,
+        2052.13
+      ],
+      [
+        "props",
+        "settlement-minor-1#1",
+        1940,
+        930,
+        2104.75,
+        1002.52
+      ],
+      [
+        "props",
+        "settlement-minor-5#1",
+        1165,
+        1420,
+        950.13,
+        1182.87
+      ],
+      [
+        "props",
+        "aesthetic-town-1#1",
+        1180,
+        835,
+        1090.59,
+        762.67
+      ],
+      [
+        "props",
+        "aesthetic-town-5#1",
+        1100,
+        995,
+        1045.02,
+        993.63
+      ],
+      [
+        "props",
+        "aesthetic-town-6#1",
+        1110,
+        1260,
+        1077.55,
+        1304.41
+      ],
+      [
+        "props",
+        "aesthetic-hamlet-9#1",
+        1190,
+        1330,
+        1242.18,
+        1347.39
+      ],
+      [
+        "props",
+        "frontier-layout-emberwatch-livelihood-0#1",
+        260,
+        1390,
+        233.81,
+        1309.14
+      ],
+      [
+        "props",
+        "frontier-layout-emberwatch-livelihood-1#1",
+        385,
+        1540,
+        120.35,
+        1593.48
+      ],
+      [
+        "props",
+        "frontier-layout-emberwatch-livelihood-2#1",
+        850,
+        1420,
+        837.6,
+        1366.42
+      ],
+      [
+        "props",
+        "frontier-layout-emberwatch-livelihood-4#1",
+        1180,
+        1510,
+        1228.45,
+        1536.02
+      ],
+      [
+        "props",
+        "frontier-layout-emberwatch-livelihood-5#1",
+        1220,
+        1180,
+        1352.5,
+        1238.89
+      ],
+      [
+        "props",
+        "frontier-layout-roadworks-yard-18#1",
+        1190,
+        725,
+        1075.81,
+        738.62
+      ],
+      [
+        "props",
+        "frontier-layout-roadworks-yard-20#1",
+        1220,
+        690,
+        1045.71,
+        734.98
+      ],
+      [
+        "props",
+        "frontier-layout-roadworks-yard-22#1",
+        1100.82,
+        434.44,
+        1011.13,
+        179.77
+      ],
+      [
+        "props",
+        "frontier-layout-route-north-ravine-works-52#1",
+        1115,
+        915,
+        1083.2,
+        870.13
+      ],
+      [
+        "props",
+        "regional-handoff-1#1",
+        1161.82,
+        1541.82,
+        1209.12,
+        1513.75
+      ],
+      [
+        "props",
+        "public-lantern-frontier-0#1",
+        475,
+        570,
+        524.71,
+        593.54
+      ],
+      [
+        "props",
+        "frontier-poppy-1#1",
+        708.43,
+        292.78,
+        664.09,
+        260.24
+      ],
+      [
+        "props",
+        "frontier-poppy-3#1",
+        550,
+        1405,
+        523.87,
+        1356.61
+      ],
+      [
+        "props",
+        "frontier-poppy-4#1",
+        1032.78,
+        1621.57,
+        981.69,
+        1641.94
+      ],
+      [
+        "props",
+        "frontier-poppy-6#1",
+        381.66,
+        2024.72,
+        344.96,
+        2065.68
+      ],
+      [
+        "props",
+        "frontier-poppy-15#1",
+        3030,
+        2180,
+        3075.44,
+        2210.99
+      ],
+      [
+        "props",
+        "frontier-poppy-17#1",
+        3130,
+        3095,
+        3166.18,
+        3136.42
+      ],
+      [
+        "npcs",
+        "supplier#1",
+        720,
+        420,
+        762.01,
+        244.97
+      ],
+      [
+        "npcs",
+        "recruiter#1",
+        385,
+        650,
+        350.82,
+        693.09
+      ],
+      [
+        "npcs",
+        "board#1",
+        550,
+        420,
+        569.88,
+        241.1
+      ],
+      [
+        "npcs",
+        "minor#1",
+        1100,
+        1100,
+        985.21,
+        1093.11
+      ]
+    ],
+    "crown": [
+      [
+        "props",
+        "aesthetic-nature-49#1",
+        895,
+        2437,
+        822.04,
+        2480.61
+      ],
+      [
+        "props",
+        "aesthetic-nature-65#1",
+        1554.07,
+        3041,
+        1500.65,
+        3054.09
+      ],
+      [
+        "props",
+        "crown-layout-route-levy-road-19#1",
+        278.9,
+        1563.14,
+        242.97,
+        1521.49
+      ],
+      [
+        "props",
+        "crown-layout-route-levy-road-20#1",
+        245,
+        1665,
+        201.28,
+        1698.37
+      ],
+      [
+        "props",
+        "regime-banner-crown-5#1",
+        300,
+        1530,
+        263.25,
+        1489.08
+      ],
+      [
+        "props",
+        "settlement-major-0#1",
+        180,
+        230,
+        144.51,
+        152.76
+      ],
+      [
+        "props",
+        "settlement-major-1#1",
+        400,
+        100,
+        1040,
+        100
+      ],
+      [
+        "props",
+        "settlement-major-2#1",
+        1040,
+        230,
+        1101.96,
+        171.81
+      ],
+      [
+        "props",
+        "settlement-major-3#1",
+        1040,
+        550,
+        1511.41,
+        640.4
+      ],
+      [
+        "props",
+        "settlement-major-5#1",
+        600,
+        1400,
+        120,
+        1800
+      ],
+      [
+        "props",
+        "settlement-major-6#1",
+        1040,
+        1490,
+        1446.29,
+        1349.19
+      ],
+      [
+        "props",
+        "settlement-major-7#1",
+        1040,
+        1000,
+        1455.27,
+        1240.73
+      ],
+      [
+        "props",
+        "settlement-major-8#1",
+        120,
+        360,
+        1200,
+        240
+      ],
+      [
+        "props",
+        "settlement-minor-0#1",
+        740,
+        1870,
+        620,
+        1430
+      ],
+      [
+        "props",
+        "settlement-minor-1#1",
+        1020,
+        2140,
+        1491.3,
+        2049.05
+      ],
+      [
+        "props",
+        "settlement-minor-2#1",
+        740,
+        2460,
+        260,
+        2380
+      ],
+      [
+        "props",
+        "settlement-minor-3#1",
+        968.34,
+        3024.72,
+        896.62,
+        3336.58
+      ],
+      [
+        "props",
+        "settlement-minor-4#1",
+        1020,
+        2460,
+        1260,
+        3060
+      ],
+      [
+        "props",
+        "settlement-minor-5#1",
+        680,
+        2040,
+        253.36,
+        1986.36
+      ],
+      [
+        "props",
+        "crown-layout-labor-quarter-0#1",
+        180,
+        550,
+        125.02,
+        548.67
+      ],
+      [
+        "props",
+        "aesthetic-town-0#1",
+        180,
+        710,
+        116.93,
+        653.02
+      ],
+      [
+        "props",
+        "aesthetic-town-1#1",
+        976.36,
+        1196.36,
+        953.65,
+        1146.27
+      ],
+      [
+        "props",
+        "aesthetic-town-3#1",
+        460,
+        920,
+        512.01,
+        902.12
+      ],
+      [
+        "props",
+        "aesthetic-town-4#1",
+        320,
+        610,
+        267.82,
+        627.39
+      ],
+      [
+        "props",
+        "aesthetic-town-5#1",
+        180,
+        810,
+        145.39,
+        852.75
+      ],
+      [
+        "props",
+        "aesthetic-town-6#1",
+        320,
+        840,
+        313.18,
+        894.58
+      ],
+      [
+        "props",
+        "aesthetic-hamlet-8#1",
+        650,
+        1820,
+        637.54,
+        1873.57
+      ],
+      [
+        "props",
+        "aesthetic-hamlet-10#1",
+        960,
+        2010,
+        982.45,
+        1959.79
+      ],
+      [
+        "props",
+        "aesthetic-hamlet-12#1",
+        640,
+        2250,
+        589.59,
+        2228
+      ],
+      [
+        "props",
+        "world-life-civilian-0#1",
+        290,
+        700,
+        191.39,
+        640.83
+      ],
+      [
+        "props",
+        "world-life-civilian-1#1",
+        1040,
+        1140,
+        1005.13,
+        1030.41
+      ],
+      [
+        "props",
+        "world-life-civilian-2#1",
+        180,
+        1560,
+        96.3,
+        1545.18
+      ],
+      [
+        "props",
+        "world-life-civilian-4#1",
+        790,
+        1560,
+        741.24,
+        1534.56
+      ],
+      [
+        "props",
+        "crown-layout-route-frontier-return-16#1",
+        820,
+        150,
+        977.8,
+        63.41
+      ],
+      [
+        "props",
+        "crown-layout-route-frontier-return-18#1",
+        740,
+        310,
+        761.81,
+        259.51
+      ],
+      [
+        "props",
+        "public-lantern-crown-1#1",
+        900,
+        1980,
+        797.73,
+        2032.6
+      ],
+      [
+        "npcs",
+        "recruiter#1",
+        600,
+        1100,
+        523.7,
+        1013.96
+      ],
+      [
+        "npcs",
+        "board#1",
+        600,
+        750,
+        520.06,
+        667.33
+      ],
+      [
+        "npcs",
+        "rest#1",
+        600,
+        550,
+        645.76,
+        580.51
+      ],
+      [
+        "npcs",
+        "minor#1",
+        1030,
+        1840,
+        1251.99,
+        1993.69
+      ]
+    ]
+  };
+  const dev233CrownLinks = [[350,600,400,600,5,120.71],[875,1825,875,1800,3,25],[1130,1220,1225,1220,5,112.07],[1040,380,840,380,5,231.62]];
   function install(Campaign, { D, R, dungeonIds, classes }) {
     // Roster lookups are frequent during AI/render observation. Homes are
     // normally fixed; reuse their geometric distance, never the mutable roster
@@ -62,9 +1112,15 @@
         if (!def || z.npcs.some((n) => n.id === id)) return false;
         const point = this.safe(def.x, def.y, z.id);
         z.npcs.push({
-          id, kind: 'critical-codex', sideCodex: z.id,
-          name: def.name, nameEs: def.nameEs,
-          x: point.x, y: point.y, icon: '📖', presentation: 'critical-codex',
+          id,
+          kind: 'critical-codex',
+          sideCodex: z.id,
+          name: def.name,
+          nameEs: def.nameEs,
+          x: point.x,
+          y: point.y,
+          icon: '📖',
+          presentation: 'critical-codex',
         });
         return true;
       }
@@ -918,6 +1974,7 @@
       roadNetwork(z) {
         if (dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id)) return;
         this.settlementLayout(z);
+        this.greenwoodReserve?.(z);
         const i = this.regionIndex(z.id),
           roadVersion = 17;
         if (z.roadVersion === roadVersion) return;
@@ -1001,7 +2058,10 @@
           props = z.props,
           blockers = z.props
             .filter((p) => p.roadBlocker)
-            .map((p) => ({ ...p, r: (p.r || 0) + (i === 2 ? 65 : 85) }));
+            .map((p) => ({
+              ...p,
+              r: (p.r || 0) + (p.greenwoodReserved ? 190 : i === 2 ? 65 : 85),
+            }));
         z.props = blockers;
         try {
           if (roadPlans.has(key)) z.roads = clone(roadPlans.get(key));
@@ -1078,7 +2138,11 @@
         // than displacing collision trees into hostile camps. Distinct authored
         // structures and district props survive for the frontage audit below.
         z.props = z.props.filter(
-          (p) => p.roadBlocker || p.structure || this.distanceToRoad(z, p) >= (p.r || 0) + 60,
+          (p) =>
+            p.greenwoodLegacyScenery ||
+            p.roadBlocker ||
+            p.structure ||
+            this.distanceToRoad(z, p) >= (p.r || 0) + 60,
         );
         // Relocate only long-lived settlement houses before livelihood and
         // occupation scenery is authored, so those scenes remain repeatable.
@@ -1756,7 +2820,7 @@
             for (const radius of [
               110, 180, 260, 350, 450, 570, 700, 840, 980, 1150, 1350, 1550, 1800,
             ]) {
-              for (let j = 0; j < 32; j++) {
+              for (let j = 0; j < (radius ? 32 : 1); j++) {
                 const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1);
                 const angle = outward + (fan * Math.PI) / 16;
                 const point = {
@@ -1794,6 +2858,45 @@
           this.s.zone = previousZone;
         }
       }
+      rollbackDev233GlobalStreets(z) {
+        // A dev.233 save may already contain the rejected *second* automatic pass.
+        // Reverse only coordinates and Crown connector shapes with demonstrated
+        // exact AFTER-state matches. Preserve every ID, reward and player camp.
+        if (!['frontier','crown'].includes(z.id) ||
+            z.finalStreetClearanceVersion !== 1 ||
+            z.regionalStreetRollbackVersion === 1) return;
+        const near = (a,b) => Math.abs(a-b) <= 0.06;
+        for (const [type,key,oldX,oldY,newX,newY] of dev233StreetInverse[z.id]) {
+          const mark = key.lastIndexOf('#'),
+            id = key.slice(0,mark), number = Number(key.slice(mark+1)),
+            candidates = (z[type] || []).filter(p => String(p.id || p.structure || p.kind || 'unknown') === id),
+            p = candidates[number-1];
+          if (!p || !near(p.x,newX) || !near(p.y,newY)) continue;
+          p.x = oldX;
+          p.y = oldY;
+          if (type === 'npcs') {
+            const placements = z[z.id + 'TownPlacements'];
+            const cached = placements?.[id];
+            if (cached && near(cached[0],newX) && near(cached[1],newY))
+              placements[id] = [oldX,oldY];
+            if (this.s.refugeSite?.zone === z.id && this.s.refugeSite.id === id &&
+                near(this.s.refugeSite.x,newX) && near(this.s.refugeSite.y,newY))
+              Object.assign(this.s.refugeSite,{x:oldX,y:oldY});
+          }
+        }
+        if (z.id === 'crown' && Array.isArray(z.roads)) {
+          // Never remove an authored or player road on a vague endpoint guess:
+          // length AND polyline vertex count must match a witnessed new link.
+          z.roads = z.roads.filter(road => !dev233CrownLinks.some(
+            ([x,y,tx,ty,count,length]) =>
+              road.length === count &&
+              near(road[0].x,x) && near(road[0].y,y) &&
+              near(road.at(-1).x,tx) && near(road.at(-1).y,ty) &&
+              near(road.reduce((sum,p,i) => sum + (i ? dist(p,road[i-1]) : 0),0),length)
+          ));
+        }
+        z.regionalStreetRollbackVersion = 1;
+      }
       distanceToRoad(z, point) {
         let nearest = Infinity;
         for (const path of z.roads || [])
@@ -1802,6 +2905,7 @@
         return nearest;
       }
       roadSetback(p) {
+        if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
         if (p.stronghold && p.r > 0) return 85;
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
         // Building anchors sit below much of their painted roof; reserve more
@@ -1996,6 +3100,137 @@
         for (let i = 1; i < trail.length; i++) footpath.push(...this.route(trail[i - 1], trail[i]));
         z.footpaths.push(footpath);
       }
+      greenwoodOnboardingClearance(z) {
+        if (
+          z.id !== 'vale' ||
+          (z.greenwoodFrontageVersion === 1 && z.greenwoodFrontageRoadVersion === z.roadVersion)
+        )
+          return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          let complete = true;
+          const refuge = z.npcs.find((n) => n.id === 'rest');
+          if (refuge && refuge.y < 115) {
+            const old = { ...refuge.servicePoint },
+              target = { x: refuge.x, y: 130 },
+              door = { x: old.x, y: old.y + target.y - refuge.y };
+            if (
+              !this.blocked(target.x, target.y, z.id, 20, true) &&
+              !this.blocked(door.x, door.y, z.id, 15) &&
+              this.distanceToRoad(z, target) >= 190
+            ) {
+              Object.assign(refuge, target);
+              refuge.servicePoint = door;
+              if (this.s.refugeSite?.zone === z.id && this.s.refugeSite.id === 'rest')
+                Object.assign(this.s.refugeSite, door);
+              for (const path of z.footpaths || []) {
+                if (dist(path.at(-1), old) > 1) continue;
+                const route = this.route(path[0], door);
+                if (route.length) path.splice(1, path.length - 1, ...route);
+                else complete = false;
+              }
+            } else complete = false;
+          }
+          for (const id of ['settlement-major-0', 'settlement-major-6']) {
+            const house = z.props.find((p) => p.id === id);
+            if (!house) {
+              complete = false;
+              continue;
+            }
+            const setback = this.roadSetback(house);
+            if (this.distanceToRoad(z, house) >= setback) continue;
+            const center = house,
+              near = this.nearestRoadPoint(z, center),
+              away = near ? Math.atan2(center.y - near.y, center.x - near.x) : 0;
+            const hostileCenters = (R.creatureStrongholds || [])
+              .filter((hold) => hold.region === z.id)
+              .map((hold) => this.creatureStrongholdCenter(z, hold))
+              .filter(Boolean);
+            const fits = (p) => {
+              const size = D.regions[0].size;
+              if (
+                Math.min(p.x, p.y, size - p.x, size - p.y) < 115 ||
+                this.blocked(p.x, p.y, z.id, Math.max(house.r || 32, 60), true) ||
+                this.distanceToRoad(z, p) < setback ||
+                this.distanceToRoad(z, p) > 360 ||
+                z.minis.some((m) => dist(m, p) < 280) ||
+                hostileCenters.some((c) => dist(c, p) < 260)
+              )
+                return false;
+              if (
+                z.props.some(
+                  (q) =>
+                    q !== house &&
+                    /house|cottage|workshop/.test(q.structure || '') &&
+                    Math.abs((p.x - p.y - q.x + q.y) * 0.76) < 110 &&
+                    Math.abs((p.x + p.y - q.x - q.y) * 0.27) < 110,
+                )
+              )
+                return false;
+              if (
+                z.nodes.some((n) => dist(n, p) < 100) ||
+                z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 120) ||
+                z.buildings.some((b) => dist(b, p) < 165) ||
+                z.props.some((q) => q !== house && dist(q, p) < (house.r || 32) + (q.r || 0) + 35)
+              )
+                return false;
+              return !z.npcs.some((n) => {
+                const point = n.servicePoint || n,
+                  dx = (p.x - p.y - point.x + point.y) * 0.76,
+                  dy = (p.x + p.y - point.x - point.y) * 0.27;
+                // The roof extends upward from its base. Reserve the real
+                // service door/actor, not just a circular collision anchor.
+                return dist(point, p) < 100 || (Math.abs(dx) < 75 && dy > -12 && dy < 110);
+              });
+            };
+            let selected = null;
+            for (const radius of [
+              0, 20, 35, 55, 80, 115, 150, 190, 225, 270, 320, 380, 450, 520, 600, 690, 790,
+            ]) {
+              for (let j = 0; j < (radius ? 32 : 1); j++) {
+                const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1),
+                  angle = away + (fan * Math.PI) / 16,
+                  p = {
+                    x: center.x + Math.cos(angle) * radius,
+                    y: center.y + Math.sin(angle) * radius,
+                  };
+                if (fits(p)) {
+                  selected = p;
+                  break;
+                }
+              }
+              if (selected) break;
+            }
+            if (!selected) {
+              // Existing player camps can occupy the nearest free parcel.
+              // Search a finite regional grid, nearest first, rather than
+              // delete scenery, move the camp or lower the roof setback.
+              const candidates = [],
+                size = D.regions[0].size;
+              for (let x = 125; x <= size - 125; x += 50)
+                for (let y = 125; y <= size - 125; y += 50) candidates.push({ x, y });
+              candidates.sort((a, b) => dist(a, center) - dist(b, center));
+              selected = candidates.find(fits) || null;
+            }
+            if (selected) {
+              Object.assign(house, selected);
+              const door = this.safe(house.x + 35, house.y + 100, z.id),
+                road = this.nearestRoadPoint(z, door),
+                path = road && this.route(road, door);
+              if (path?.length && dist(path.at(-1), door) < 35)
+                (z.footpaths ||= []).push([road, ...path]);
+              else complete = false;
+            } else complete = false; // Never mark a rejected essential repair as complete.
+          }
+          if (complete) {
+            z.greenwoodFrontageVersion = 1;
+            z.greenwoodFrontageRoadVersion = z.roadVersion;
+          }
+        } finally {
+          this.s.zone = previous;
+        }
+      }
       reedportRefugeSpacing(z) {
         if (z.id !== 'march' || z.reedportRefugeSpacingVersion === 1) return;
         // Keep the refuge frontage open. These are decorative town services,
@@ -2018,13 +3253,42 @@
       arenaStages() {
         const stages = [{ id: 'hub', label: 'Safe hub · specialists', region: 0, kind: 'hub' }];
         for (const [region, r] of D.regions.entries()) {
-          stages.push({ id: r.id + '-ordinary', label: r.name + ' · ordinary enemies', region, kind: 'ordinary' });
-          stages.push({ id: r.id + '-guardians', label: r.name + ' · guardians and captain', region, kind: 'guardians' });
+          stages.push({
+            id: r.id + '-ordinary',
+            label: r.name + ' · ordinary enemies',
+            region,
+            kind: 'ordinary',
+          });
+          stages.push({
+            id: r.id + '-guardians',
+            label: r.name + ' · guardians and captain',
+            region,
+            kind: 'guardians',
+          });
           if (r.id === 'march' || r.id === 'frontier')
-            stages.push({ id: r.id + '-night', label: r.name + ' · night enemies', region, kind: 'night' });
+            stages.push({
+              id: r.id + '-night',
+              label: r.name + ' · night enemies',
+              region,
+              kind: 'night',
+            });
           for (const boss of D.bosses.filter((b) => b.region === r.id)) {
-            stages.push({ id: 'boss-' + boss.id, label: r.name + ' · ' + boss.name + ' · Regular', region, kind: 'boss', boss: boss.id, form: 'normal' });
-            stages.push({ id: 'boss-' + boss.id + '-true', label: r.name + ' · ' + boss.name + ' · TRUE', region, kind: 'boss', boss: boss.id, form: 'true' });
+            stages.push({
+              id: 'boss-' + boss.id,
+              label: r.name + ' · ' + boss.name + ' · Regular',
+              region,
+              kind: 'boss',
+              boss: boss.id,
+              form: 'normal',
+            });
+            stages.push({
+              id: 'boss-' + boss.id + '-true',
+              label: r.name + ' · ' + boss.name + ' · TRUE',
+              region,
+              kind: 'boss',
+              boss: boss.id,
+              form: 'true',
+            });
           }
         }
         return stages;
@@ -2034,15 +3298,28 @@
         // Extremely hot: zone() is used by every combat and draw step. Do not
         // rebuild the catalog of stage objects when the actor roster is unchanged.
         if (old?.arenaStage === this.s.arenaStage) return old;
-        const stage = this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
+        const stage =
+          this.arenaStages().find((s) => s.id === this.s.arenaStage) || this.arenaStages()[0];
         const z = {
-          id: 'arena', arenaStage: stage.id, enemies: [], props: [], npcs: [],
-          buildings: [], nodes: [], packTimers: {}, clock: 0,
+          id: 'arena',
+          arenaStage: stage.id,
+          enemies: [],
+          props: [],
+          npcs: [],
+          buildings: [],
+          nodes: [],
+          packTimers: {},
+          clock: 0,
         };
         this.s.zones.arena = z;
-        z.npcs.push({ id: 'arena-guide', kind: 'arena-guide', name: 'Arena Guide',
+        z.npcs.push({
+          id: 'arena-guide',
+          kind: 'arena-guide',
+          name: 'Arena Guide',
           x: stage.kind === 'hub' ? 900 : 520,
-          y: stage.kind === 'hub' ? 1080 : 870, icon: '🧭' });
+          y: stage.kind === 'hub' ? 1080 : 870,
+          icon: '🧭',
+        });
         const spawn = (def, x, y, options = {}) => {
           const enemy = this.makeEnemy(def, { x, y });
           // Native AI/combat, but no campaign rewards, victories or unlocks.
@@ -2054,42 +3331,65 @@
           z.enemies.push(enemy);
           return enemy;
         };
-        const region = D.regions[stage.region], species = D.species[stage.region];
+        const region = D.regions[stage.region],
+          species = D.species[stage.region];
         if (stage.kind === 'hub') {
-          for (const [i, boss] of D.bosses.filter((b) => b.captive && b.id !== 'darklord').entries()) {
+          for (const [i, boss] of D.bosses
+            .filter((b) => b.captive && b.id !== 'darklord')
+            .entries()) {
             // Wide service rows keep names readable and leave a direct walking
             // corridor from the entry to the Guide, Trainer and recovery.
             z.npcs.push({
               id: 'arena-specialist-' + boss.id,
               kind: R.teachers[boss.id] ? 'teacher' : boss.id === 'archive' ? 'alchemist' : 'smith',
-              family: boss.id, name: boss.captive,
+              family: boss.id,
+              name: boss.captive,
               x: 1120 + (i % 4) * 245,
-              y: 640 + Math.floor(i / 4) * 320, icon: '👤',
+              y: 640 + Math.floor(i / 4) * 320,
+              icon: '👤',
             });
           }
           z.npcs.push({
             id: 'arena-level-trainer',
             kind: 'arena-level-trainer',
             name: 'Level Trainer',
-            x: 730, y: 995,
+            x: 730,
+            y: 995,
             icon: '⭐',
           });
-          z.npcs.push({ id: 'arena-recovery', kind: 'arena-recovery', name: 'Free recovery', x: 810, y: 1320, icon: '💚' });
+          z.npcs.push({
+            id: 'arena-recovery',
+            kind: 'arena-recovery',
+            name: 'Free recovery',
+            x: 810,
+            y: 1320,
+            icon: '💚',
+          });
         } else if (stage.kind === 'ordinary' || stage.kind === 'guardians') {
           const guardian = stage.kind === 'guardians';
           // Native campaign HP/damage values, not new arena balance math.
-          const hp = 65 + stage.region * 105, damage = 7 + stage.region * 8;
+          const hp = 65 + stage.region * 105,
+            damage = 7 + stage.region * 8;
           for (let i = 0; i < (guardian ? 3 : 4); i++) {
             const sp = species[i % species.length];
-            const e = spawn({
-              species: sp[0], name: sp[1] + (guardian ? ' guardian' : ''), icon: sp[2],
-              level: stage.region * 3 + 1 + (guardian ? 1 : 0),
-              hp, damage,
-              gold: 0, xp: 0,
-            }, 1400 + (i % 2) * 250, 830 + Math.floor(i / 2) * 350, {
-              pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
-              ...(guardian ? { guard: true, guardianBalanceVersion: 2 } : {}),
-            });
+            const e = spawn(
+              {
+                species: sp[0],
+                name: sp[1] + (guardian ? ' guardian' : ''),
+                icon: sp[2],
+                level: stage.region * 3 + 1 + (guardian ? 1 : 0),
+                hp,
+                damage,
+                gold: 0,
+                xp: 0,
+              },
+              1400 + (i % 2) * 250,
+              830 + Math.floor(i / 2) * 350,
+              {
+                pack: 'arena-' + stage.id + '-' + Math.floor(i / 2),
+                ...(guardian ? { guard: true, guardianBalanceVersion: 2 } : {}),
+              },
+            );
             this.configureEnemy(e, i);
           }
           if (guardian) {
@@ -2097,18 +3397,31 @@
             const profile = R.roomCaptains?.[id];
             if (profile) {
               const sp = species[0];
-              const e = spawn({
-                species: profile.species || sp[0], name: profile.name, icon: sp[2],
-                level: stage.region * 3 + 2,
-                hp: hp * 2, damage: damage * 1.25,
-                gold: 0, xp: 0,
-              }, 1900, 1050, {
-                captain: true, captainProfile: id, captainMentor: profile.mentor,
-                captainVisualIdol: profile.visualIdol || profile.mentor,
-                visualScale: profile.visualScale || 1.16, specialCd: 0,
-                ...(id === 'frontier-overseer' ? { fieldCaptain: true, fieldCaptainVersion: 1 } :
-                    { roomCaptain: true, roomGuard: true, guard: true, roomCaptainVersion: 1 }),
-              });
+              const e = spawn(
+                {
+                  species: profile.species || sp[0],
+                  name: profile.name,
+                  icon: sp[2],
+                  level: stage.region * 3 + 2,
+                  hp: hp * 2,
+                  damage: damage * 1.25,
+                  gold: 0,
+                  xp: 0,
+                },
+                1900,
+                1050,
+                {
+                  captain: true,
+                  captainProfile: id,
+                  captainMentor: profile.mentor,
+                  captainVisualIdol: profile.visualIdol || profile.mentor,
+                  visualScale: profile.visualScale || 1.16,
+                  specialCd: 0,
+                  ...(id === 'frontier-overseer'
+                    ? { fieldCaptain: true, fieldCaptainVersion: 1 }
+                    : { roomCaptain: true, roomGuard: true, guard: true, roomCaptainVersion: 1 }),
+                },
+              );
               this.configureEnemy(e, 3);
             }
           }
@@ -2117,17 +3430,25 @@
           const id = region.id === 'march' ? 'wraith' : 'stalker';
           const cfg = R.nightEnemyCombat[id];
           for (let i = 0; i < 2; i++) {
-            const e = spawn({
-              species: id,
-              name: region.id === 'march' ? 'Lantern wraith' : 'Ash stalker',
-              icon: '👻',
-              level: stage.region * 3 + 2,
-              hp: Math.round((120 + stage.region * 100) * cfg.hp),
-              damage: Math.round((12 + stage.region * 7) * cfg.damage),
-              gold: 0, xp: 0,
-            }, 1450 + i * 260, 900 + i * 300, {
-              nightOnly: true, nightBalanceVersion: 1, specialCd: 1 + i * 0.35,
-            });
+            const e = spawn(
+              {
+                species: id,
+                name: region.id === 'march' ? 'Lantern wraith' : 'Ash stalker',
+                icon: '👻',
+                level: stage.region * 3 + 2,
+                hp: Math.round((120 + stage.region * 100) * cfg.hp),
+                damage: Math.round((12 + stage.region * 7) * cfg.damage),
+                gold: 0,
+                xp: 0,
+              },
+              1450 + i * 260,
+              900 + i * 300,
+              {
+                nightOnly: true,
+                nightBalanceVersion: 1,
+                specialCd: 1 + i * 0.35,
+              },
+            );
             this.configureEnemy(e, i);
           }
         } else if (stage.kind === 'boss') {
@@ -2140,11 +3461,21 @@
             if (boss.id !== 'darklord')
               for (let i = 0; i < 2; i++) {
                 const sp = species[i % species.length];
-                const e = spawn({
-                  species: sp[0], name: sp[1] + ' guardian', icon: sp[2],
-                  level: Math.max(1, boss.level - 1), hp: 65 + stage.region * 105,
-                  damage: 7 + stage.region * 8, gold: 0, xp: 0,
-                }, 1510, 770 + 600 * i, { guard: true, guardianBalanceVersion: 2 });
+                const e = spawn(
+                  {
+                    species: sp[0],
+                    name: sp[1] + ' guardian',
+                    icon: sp[2],
+                    level: Math.max(1, boss.level - 1),
+                    hp: 65 + stage.region * 105,
+                    damage: 7 + stage.region * 8,
+                    gold: 0,
+                    xp: 0,
+                  },
+                  1510,
+                  770 + 600 * i,
+                  { guard: true, guardianBalanceVersion: 2 },
+                );
                 this.configureEnemy(e, i);
               }
           }
@@ -2161,7 +3492,8 @@
           // Clamping a 14px hero only by actorRadius would leave its center
           // one pixel outside that segment and trap *both* movement directions.
           const radius = Math.max(15, this.actorRadius(actor)),
-            low = 40 + radius, high = size - 40 - radius;
+            low = 40 + radius,
+            high = size - 40 - radius;
           actor.x = Math.max(low, Math.min(high, actor.x));
           actor.y = Math.max(low, Math.min(high, actor.y));
         }
@@ -2192,8 +3524,7 @@
         return true;
       }
       arenaLevelUp() {
-        if (this.s.mode !== 'arena' || this.hero.level >= 10000 || this.hero.hp <= 0)
-          return false;
+        if (this.s.mode !== 'arena' || this.hero.level >= 10000 || this.hero.hp <= 0) return false;
         // One interaction = one real XP threshold and exactly one level-up.
         // The existing progression system awards HP, talent points, and notices.
         const oldLevel = this.hero.level;
@@ -2220,10 +3551,19 @@
         if (z.buildings.length >= 4) return z.buildings[z.buildings.length - 1];
         const b = {
           id: 'arena-barracks-' + this.s.nextId++,
-          kind: 'barracks', name: 'Arena Barracks', icon: '🏗️',
-          theme: 'vale', x: Math.min(1850, this.hero.x + 110), y: this.hero.y,
-          progress: 4, full: true, queue: 0, queueType: null,
-          upgradeProgress: 0, upgradePaid: true, interactionOnly: true,
+          kind: 'barracks',
+          name: 'Arena Barracks',
+          icon: '🏗️',
+          theme: 'vale',
+          x: Math.min(1850, this.hero.x + 110),
+          y: this.hero.y,
+          progress: 4,
+          full: true,
+          queue: 0,
+          queueType: null,
+          upgradeProgress: 0,
+          upgradePaid: true,
+          interactionOnly: true,
         };
         z.buildings.push(b);
         return b;
@@ -2232,6 +3572,8 @@
         if (this.s.mode === 'arena') return this.arenaZone();
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
+          this.rollbackDev233GlobalStreets(z);
+          this.greenwoodMigrate?.(z);
           // Keep authored generation/migrations on their established geometry.
           // Enable the scoped traversal correction only on the finished scene.
           this.setSceneryTraversal(z, false);
@@ -2244,6 +3586,7 @@
           this.clearStreetCorridors(z);
           this.regionalTravelSafety(z);
           this.environmentCoherence(z);
+          this.highlandsTreasuryFrontage(z);
           this.clearNamedRoadMarkers(z);
           this.townVisualClearance(z);
           // Environment coherence adds bridge approaches and clears their roads.
@@ -2251,6 +3594,7 @@
           this.strongholdCourtyardClearance(z);
           this.reedportRefugeSpacing(z);
           this.millhavenOnboardingLayout(z);
+          this.greenwoodOnboardingClearance(z);
           this.interiorCoherence(z);
           this.defenderEncounterLayout(z);
           this.frontierEdgeRedistribution(z);
@@ -2258,6 +3602,9 @@
           this.crownSceneComposition(z);
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
+          this.greenwoodFinish?.(z);
+          // Keep only region-specific late street repairs; do not auto-join all roads.
+          this.marchCoastalFinalClearance(z);
           this.setSceneryTraversal(z);
           return z;
         }
@@ -2267,6 +3614,9 @@
           id = this.s.zone;
         const z = {
           id,
+          ...(id === 'vale' && R.greenwoodLayout
+            ? { greenwoodSourceVersion: R.greenwoodLayout.version }
+            : {}),
           ...(id === 'highlands' ? { appalachianSourceVersion: 1 } : {}),
           enemies: [],
           props: [],
@@ -2667,11 +4017,13 @@
         this.clearStreetCorridors(z);
         this.regionalTravelSafety(z);
         this.environmentCoherence(z);
+        this.highlandsTreasuryFrontage(z);
         this.clearNamedRoadMarkers(z);
         this.townVisualClearance(z);
         this.strongholdCourtyardClearance(z);
         this.reedportRefugeSpacing(z);
         this.millhavenOnboardingLayout(z);
+        this.greenwoodOnboardingClearance(z);
         this.interiorCoherence(z);
         this.defenderEncounterLayout(z);
         this.refreshNPCs();
@@ -2682,6 +4034,9 @@
         this.crownSceneComposition(z);
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
+        this.greenwoodFinish?.(z);
+        // Keep only region-specific late street repairs; do not auto-join all roads.
+        this.marchCoastalFinalClearance(z);
         this.setSceneryTraversal(z);
         return z;
       }
@@ -3872,7 +5227,26 @@
           this.s.zone = before;
         }
       }
+      // Presentation-only reconciliation also runs for already-current v4
+      // room/entrance layouts. Do not bump geometry versions or rebuild actors,
+      // furnishings, caches or recovered crowns to correct an owner's name.
+      greenwoodTreasuryNames(z) {
+        if (z.id !== 'vale' && z.id !== 'supply-vale') return;
+        const room = R.supplyRooms.find((r) => r.id === 'supply-vale');
+        for (const n of z.npcs) {
+          if (z.id === 'vale' && n.id === 'supply-entrance') n.name = room.name;
+          if (z.id === room.id && n.kind === 'exit') n.name = 'Leave ' + room.name;
+          if (
+            z.id === room.id &&
+            n.kind === 'bundle' &&
+            !n.treasuryRecovery &&
+            Number.isInteger(n.index)
+          )
+            n.name = room.name + ' cache ' + (n.index + 1);
+        }
+      }
       authoredPlaces(z) {
+        this.greenwoodTreasuryNames(z);
         if (this.supplyRoom(z.id)) {
           this.treasuryInterior(z);
           this.treasuryGuardPopulation(z);
@@ -3975,6 +5349,7 @@
         this.recoveryAndThermalLife(z);
         this.roadsideLanternLife(z);
         this.marchCoastalLayout(z);
+        this.marchTownRoadLink(z);
         this.lanternShoreLayout(z);
         this.highlandsTributeLayout(z);
       }
@@ -4052,6 +5427,97 @@
         const [x, y] = D.towns[0];
         Object.assign(supplier, this.safe(x + 115, y - 85, z.id));
         z.supplierPositionVersion = 2;
+      }
+      // The 2026 coastal layout begins at the harbor road (350,1370), not
+      // Reedport's actual refuge (350,1100). Attach that missing town leg on
+      // fresh and existing v4 worlds without rebuilding the coastal district.
+      // The Highlands Treasury roof historically sat directly over a public
+      // road. Preserve its interior/save identity and relocate only its stable
+      // exterior entrance to a real adjacent frontage, once per v4 campaign.
+      highlandsTreasuryFrontage(z) {
+        if (z.id !== 'highlands' || z.highlandsTreasuryFrontageVersion === 1) return;
+        const entrance = z.npcs.find((n) => n.id === 'supply-entrance');
+        if (!entrance) return;
+        if (this.distanceToRoad(z, entrance) < 190) {
+          const field = this.fieldCenter(this.regionIndex('highlands')),
+            room = R.supplyRooms.find((r) => r.id === 'supply-highlands'),
+            proposals = [
+              { x: 2170, y: 330 },
+              { x: 2166, y: 373 },
+              { x: 1795, y: 547 },
+              { x: 1759, y: 522 },
+            ],
+            valid = (p) =>
+              this.distanceToRoad(z, p) >= 190 &&
+              !this.blocked(p.x, p.y, z.id, 30, true) &&
+              dist(p, field) < Math.hypot(...room.entryOffset) + 195 &&
+              !z.npcs.some((n) => n !== entrance && dist(n, p) < 145) &&
+              !z.nodes.some((n) => dist(n, p) < 95) &&
+              !z.props.some((q) => q.roadBlocker && dist(q, p) < 195);
+          const frontage = proposals.find(valid);
+          if (!frontage) return; // Fail closed; never mark an obstructed door repaired.
+          Object.assign(entrance, frontage);
+        }
+        z.highlandsTreasuryFrontageVersion = 1;
+      }
+      marchTownRoadLink(z) {
+        if (z.id !== 'march' || z.coastalSwampVersion !== 1) return;
+        const town = { x: D.towns[1][0], y: D.towns[1][1] },
+          junction = { x: 350, y: 1370 },
+          onExistingRoad = (point) =>
+            z.roads.some((road) =>
+              road.some((p, j) => j && this.distanceToSegment(point, road[j - 1], p) < 1),
+            );
+        if (z.marchTownRoadVersion !== 1) {
+          if (!onExistingRoad(junction)) return; // Do not certify an absent road.
+          if (!onExistingRoad(town)) z.roads.unshift([town, junction]);
+          z.marchTownRoadVersion = 1;
+        }
+      }
+      marchCoastalFinalClearance(z) {
+        if (z.id !== 'march' || z.marchTownRoadVersion !== 1) return;
+        // Coastal decor was generated AFTER the original street-clearance pass
+        // using a 58-unit buffer even where artwork needs >=72. Move ONLY the
+        // authored shore details, preserving their ID, style and old-save state.
+        if (z.marchCoastalRoadClearanceVersion === 1) return;
+        const coastal = z.props.filter((p) => String(p.id || '').startsWith('lantern-coast-'));
+        for (const item of coastal) {
+          const setback = this.roadSetback(item);
+          if (this.distanceToRoad(z, item) + 0.01 >= setback) continue;
+          const nearest = this.nearestRoadPoint(z, item),
+            base = { x: item.x, y: item.y },
+            outward = nearest ? Math.atan2(base.y - nearest.y, base.x - nearest.x) : 0;
+          let relocated = null;
+          for (const radius of [12, 22, 35, 50, 75, 105, 145, 195, 260, 340]) {
+            for (let j = 0; j < 32; j++) {
+              const fan = j === 0 ? 0 : Math.ceil(j / 2) * (j % 2 ? 1 : -1),
+                angle = outward + (fan * Math.PI) / 16,
+                point = {
+                  x: base.x + Math.cos(angle) * radius,
+                  y: base.y + Math.sin(angle) * radius,
+                };
+              if (
+                Math.min(point.x, point.y, 3000 - point.x, 3000 - point.y) < 35 ||
+                this.distanceToRoad(z, point) + 0.01 < setback ||
+                this.blocked(point.x, point.y, z.id, 8, true) ||
+                z.npcs.some((n) => dist(n, point) < 65) ||
+                z.nodes.some((n) => dist(n, point) < 60) ||
+                z.buildings.some((b) => dist(b, point) < 95) ||
+                z.props.some(
+                  (p) =>
+                    p !== item && !p.decorative && dist(p, point) < Math.max(25, p.r || 0) + 25,
+                )
+              )
+                continue;
+              relocated = point;
+              break;
+            }
+            if (relocated) break;
+          }
+          if (!relocated) return; // Fail closed: original strict road test remains red.
+          Object.assign(item, relocated);
+        }
+        z.marchCoastalRoadClearanceVersion = 1;
       }
       marchCoastalLayout(z) {
         if (z.id !== 'march' || z.coastalSwampVersion === 1) return;

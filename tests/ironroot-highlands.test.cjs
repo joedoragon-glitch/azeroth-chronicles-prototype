@@ -11,6 +11,53 @@ function test(name, fn) {
   console.log('PASS ' + name);
 }
 const fresh = () => new C('normal', 'paladin', () => 0.9);
+test('Ogre hearth keeps the prior authored geography without automatic legacy re-homing', () => {
+  const c=fresh();
+  c.enter('highlands');
+  const z=c.zone();
+  const site=C.rules.sites[2].find(([id])=>id==='ogre-hearth');
+  const habitat=C.rules.worldLifePlans[2].habitats.find(h=>h.id==='ogre-hearth');
+  assert.deepEqual(habitat.center,site.slice(2));
+  assert(c.distanceToRoad(z,{x:site[2],y:site[3]})<=260);
+  // Use genuine authored state. An invented 'world-life-habitat-9001'
+  // identifier may be pruned by the standard v4 save validator; it is not
+  // valid evidence that the removed migration needs to return.
+  const before=z.props.filter(p=>p.stronghold==='ogre-hearth-fort')
+    .map(p=>[p.id,p.structure,p.x,p.y]);
+  assert(before.length>0,'named ogre fort geometry exists');
+  const old=c.snapshot();
+  delete old.zones.highlands.highlandsOgreHabitatVersion;
+  const restored=C.restore(old);
+  const after=restored.zone().props.filter(p=>p.stronghold==='ogre-hearth-fort')
+    .map(p=>[p.id,p.structure,p.x,p.y]);
+  assert.deepEqual(after,before,'original authored ogre fort survives reload');
+  assert.equal(restored.zone().highlandsOgreHabitatVersion,undefined,
+    'unrequested generic habitat relocation remains absent');
+  const twice=C.restore(restored.snapshot()).zone();
+  assert.deepEqual(
+    twice.props.filter(p=>p.stronghold==='ogre-hearth-fort')
+      .map(p=>[p.id,p.structure,p.x,p.y]),
+    after,'named ogre fort does not drift on second restore');
+});
+test('Historical Highlands wall stays in its accepted place without blanket relocation', () => {
+  const c=fresh();c.enter('highlands');
+  const raw=c.snapshot(),z=raw.zones.highlands;
+  const wall=z.props.find(p=>p.id==='stronghold-wolf-packhold-wall-6');
+  assert(wall);
+  Object.assign(wall,{x:520,y:1165});
+  delete z.highlandsFinalRoadsideVersion;
+  const oldGold=raw.hero.gold;
+  const restored=C.restore(raw),found=restored.zone().props.find(p=>p.id===wall.id);
+  assert(found);
+  assert.equal(restored.hero.gold,oldGold);
+  assert.deepEqual([found.x,found.y],[520,1165],
+    'restoring prior scenery is preferred to unapproved broad sweeps');
+  assert.equal(restored.zone().highlandsFinalRoadsideVersion,undefined);
+  const next=C.restore(restored.snapshot()).zone().props.find(p=>p.id===wall.id);
+  assert.deepEqual([next.x,next.y],[520,1165]);
+  // Its old road-margin violation stays documented in PR #651 / issue #613;
+  // this is not a claim that the painted-street obstruction was repaired.
+});
 test('Ironroot production scenes leave homes, habitats, service spacing and roads intact', () => {
   const c = fresh();
   c.enter('highlands');

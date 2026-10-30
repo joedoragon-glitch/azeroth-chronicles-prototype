@@ -1,0 +1,772 @@
+{
+  "sourceSha": "6d9280372ca26550e2f36dbd4ca3d05aa8dc9fa5",
+  "size": 3200,
+  "sources": {
+    "engine": "27865074b401e32abcc62dd339d8dc93c62f27514a70f7ba8a6aa2e1e02f5c50",
+    "greenwood": "f9a5d063cfac5bf55add7283e144087eb403c9d1cf38af63eb4e2c3876b62bfd",
+    "data": "82bfb2120ac6294817e0f5737ccae26aa1d2fd7dde670f027d9a5b529995986f",
+    "rules": "c4ccbcd46e3a3494781b339b482ee519d2cf1bcc3943143098a0f97a05009648",
+    "world": "bac7afe1f7770b9509e416f701542233760074e066c2f9736e9f67ac3cc787bd",
+    "save": "4c4dbb15555e659188b118f9ad19677cca2b7fb9608a7ef311d523a018744d80",
+    "visuals": "9782c445d64d287cf89fcb109c7b967b35e13d7788441a59a544eb6d8f160ae5",
+    "renderer": "0e1205b0c72342080c455aafd36c71e7d58c24e2e9d5c79c83f1b6f70e404bfc"
+  },
+  "receipts": [
+    {
+      "file": "native-3200-start-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 300,
+        "y": 350
+      },
+      "actualHero": {
+        "x": 300,
+        "y": 350
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        95.49,
+        44.84,
+        33.06,
+        36.43,
+        41.14,
+        48.37
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-refuge-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 367.3622452525542,
+        "y": 677.5765655151833
+      },
+      "actualHero": {
+        "x": 367.3622452525542,
+        "y": 677.5765655151833
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        42.72,
+        44.72,
+        39.66,
+        42.7,
+        46.32,
+        37.28
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-hamlet-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 782.5,
+        "y": 1205.6217782649107
+      },
+      "actualHero": {
+        "x": 782.5,
+        "y": 1205.6217782649107
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        80.39,
+        79.53,
+        66.99,
+        84.67,
+        73.3,
+        66.64
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-orchard-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 1266.6666666666667,
+        "y": 1200
+      },
+      "actualHero": {
+        "x": 1266.6666666666667,
+        "y": 1200
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        51.31,
+        66.17,
+        78.77,
+        67.58,
+        73.95,
+        62.69
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-mill-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 858.75,
+        "y": 1683.3333333333333
+      },
+      "actualHero": {
+        "x": 858.75,
+        "y": 1683.3333333333333
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        69.35,
+        75.19,
+        50.4,
+        56.41,
+        57.17,
+        51.76
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-north-bridge-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 1550,
+        "y": 908.3333333333333
+      },
+      "actualHero": {
+        "x": 1550,
+        "y": 908.3333333333333
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        41.32,
+        44.85,
+        47.69,
+        51.72,
+        58.14,
+        52.82
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-south-bridge-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 1550,
+        "y": 2075
+      },
+      "actualHero": {
+        "x": 1550,
+        "y": 2075
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        76.51,
+        65.4,
+        53.51,
+        64.28,
+        72.79,
+        446.62
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-eastern-pond-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 2485,
+        "y": 1410
+      },
+      "actualHero": {
+        "x": 2665,
+        "y": 1410
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        26.54,
+        25.17,
+        25.51,
+        23.52,
+        32.76,
+        26.55
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-cache-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 1935,
+        "y": 1375
+      },
+      "actualHero": {
+        "x": 1935,
+        "y": 1375
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        39.01,
+        57.56,
+        35.5,
+        34.97,
+        35.6,
+        40
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-treasury-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 1187.5,
+        "y": 1905
+      },
+      "actualHero": {
+        "x": 1187.5,
+        "y": 1905
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        50.33,
+        40.43,
+        40.66,
+        42.21,
+        41.54,
+        45.79
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-crypt-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 2595,
+        "y": 2489.4736842105262
+      },
+      "actualHero": {
+        "x": 2595,
+        "y": 2489.4736842105262
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        36.63,
+        33.76,
+        31.67,
+        30,
+        31.18,
+        41.48
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-old-cellars-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 630,
+        "y": 2631.578947368421
+      },
+      "actualHero": {
+        "x": 630,
+        "y": 2631.578947368421
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        34.54,
+        28.79,
+        31.52,
+        29.19,
+        30.72,
+        31.12
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-thorn-den-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 932.5,
+        "y": 2075
+      },
+      "actualHero": {
+        "x": 932.5,
+        "y": 2075
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        52.27,
+        39.54,
+        42.91,
+        49.32,
+        53.27,
+        40.36
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-goblin-camp-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 437.5,
+        "y": 1841.6666666666665
+      },
+      "actualHero": {
+        "x": 437.5,
+        "y": 1841.6666666666665
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        53.09,
+        51.14,
+        51.01,
+        49.1,
+        45.3,
+        44.05
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-skeleton-watch-1280x800-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 1280,
+      "height": 800,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 2232,
+        "y": 2678.9473684210525
+      },
+      "actualHero": {
+        "x": 2232,
+        "y": 2678.9473684210525
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        43.91,
+        40.32,
+        47.26,
+        41.4,
+        36.61,
+        36.08
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-start-393x852-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 393,
+      "height": 852,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 300,
+        "y": 350
+      },
+      "actualHero": {
+        "x": 300,
+        "y": 350
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        25.1,
+        30.08,
+        29.38,
+        31.06,
+        29.42,
+        29.32
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-start-852x393-night.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 852,
+      "height": 393,
+      "dpr": 1,
+      "clock": 500,
+      "requestedScene": {
+        "x": 300,
+        "y": 350
+      },
+      "actualHero": {
+        "x": 300,
+        "y": 350
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        30.14,
+        25.79,
+        25.28,
+        24.32,
+        29.39,
+        29.09
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-hamlet-393x852-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 393,
+      "height": 852,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 782.5,
+        "y": 1205.6217782649107
+      },
+      "actualHero": {
+        "x": 782.5,
+        "y": 1205.6217782649107
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        33.98,
+        34,
+        30.54,
+        42.09,
+        45.07,
+        45.94
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-hamlet-852x393-night.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 852,
+      "height": 393,
+      "dpr": 1,
+      "clock": 500,
+      "requestedScene": {
+        "x": 782.5,
+        "y": 1205.6217782649107
+      },
+      "actualHero": {
+        "x": 782.5,
+        "y": 1205.6217782649107
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        33.26,
+        30.25,
+        32.94,
+        34.49,
+        31.34,
+        31.85
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-orchard-393x852-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 393,
+      "height": 852,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 1266.6666666666667,
+        "y": 1200
+      },
+      "actualHero": {
+        "x": 1266.6666666666667,
+        "y": 1200
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        30.03,
+        32.33,
+        32.76,
+        27.57,
+        28.36,
+        32.1
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-orchard-852x393-night.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 852,
+      "height": 393,
+      "dpr": 1,
+      "clock": 500,
+      "requestedScene": {
+        "x": 1266.6666666666667,
+        "y": 1200
+      },
+      "actualHero": {
+        "x": 1266.6666666666667,
+        "y": 1200
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        35.38,
+        24.25,
+        25.25,
+        24.35,
+        26.87,
+        25.62
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-mill-393x852-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 393,
+      "height": 852,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 858.75,
+        "y": 1683.3333333333333
+      },
+      "actualHero": {
+        "x": 858.75,
+        "y": 1683.3333333333333
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        28.77,
+        29.68,
+        38.24,
+        32.58,
+        27.15,
+        30.16
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-mill-852x393-night.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 852,
+      "height": 393,
+      "dpr": 1,
+      "clock": 500,
+      "requestedScene": {
+        "x": 858.75,
+        "y": 1683.3333333333333
+      },
+      "actualHero": {
+        "x": 858.75,
+        "y": 1683.3333333333333
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        45.24,
+        45.43,
+        45.67,
+        44.36,
+        40.4,
+        28.98
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-north-bridge-393x852-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 393,
+      "height": 852,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 1550,
+        "y": 908.3333333333333
+      },
+      "actualHero": {
+        "x": 1550,
+        "y": 908.3333333333333
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        27.32,
+        32.29,
+        29.61,
+        28.39,
+        32.84,
+        23.68
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-north-bridge-852x393-night.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 852,
+      "height": 393,
+      "dpr": 1,
+      "clock": 500,
+      "requestedScene": {
+        "x": 1550,
+        "y": 908.3333333333333
+      },
+      "actualHero": {
+        "x": 1550,
+        "y": 908.3333333333333
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        38.7,
+        35.5,
+        33.13,
+        33.23,
+        32.12,
+        32.75
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-crypt-393x852-day.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 393,
+      "height": 852,
+      "dpr": 1,
+      "clock": 120,
+      "requestedScene": {
+        "x": 2595,
+        "y": 2489.4736842105262
+      },
+      "actualHero": {
+        "x": 2595,
+        "y": 2489.4736842105262
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        29.13,
+        28.28,
+        28.51,
+        28.57,
+        28.63,
+        25.47
+      ],
+      "stateUnchanged": true
+    },
+    {
+      "file": "native-3200-crypt-852x393-night.webp",
+      "size": 3200,
+      "seed": 1196835073,
+      "cameraZoom": 1.5,
+      "width": 852,
+      "height": 393,
+      "dpr": 1,
+      "clock": 500,
+      "requestedScene": {
+        "x": 2595,
+        "y": 2489.4736842105262
+      },
+      "actualHero": {
+        "x": 2595,
+        "y": 2489.4736842105262
+      },
+      "layer": "production Canvas renderer with procedural fallback; native @napi-rs/canvas; actors retained, simulation frozen during capture; NO shell/browser/bitmap/material/device acceptance",
+      "drawCpuMs": [
+        28.86,
+        25.25,
+        29.54,
+        31.47,
+        30.91,
+        27.93
+      ],
+      "stateUnchanged": true
+    }
+  ]
+}

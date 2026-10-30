@@ -1008,6 +1008,8 @@
           u.slow = 0;
           delete u.slowStacks;
           this.tacticalClearScatter(u);
+          // A fallen Rogue Charm frees its field slot, not its ownership.
+          if (u !== this.hero) this.reserveFallenRogueCharm(u);
           if (u === this.hero)
             this.die({ source: rangedSourceId, damage: mitigated, hpBefore: oldHp });
         }

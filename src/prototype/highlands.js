@@ -78,7 +78,8 @@
     quarry: [2520, 510],
     field: [2850, 1170],
     mine: [2850, 2850],
-    treasury: [1920, 330],
+    // Preserve the one documented real road-blocking Treasury entrance fix.
+    treasury: [2170, 330],
     lookout: [3000, 2030],
     ore: [650, 390],
     wolf: [480, 1010],

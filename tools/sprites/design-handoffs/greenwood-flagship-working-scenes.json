@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "status": "procedural-design",
+  "designId": "greenwood-flagship-working-scenes",
+  "name": "Greenwood working mill, current fruit cellar and estate works",
+  "kind": "regional-scene",
+  "nextAction": "Keep draft #570 unmerged; close the recorded inherited regression and first-hour pacing gates before owner acceptance. Current native/browser scene, route and v4 proofs are in the existing handoff. No raster production, Pages or device acceptance.",
+  "context": {
+    "originConversation": "Greenwood Vale Flagship Reconstruction and Engineering Quality Mandate, 28 October 2026",
+    "decisionSummary": "Implements W02\u2013W04, F01/F04/F06 and C04/C05 using current timber, stone, orchard and construction families. No new gameplay, lore, fruit species or raster replacements.",
+    "decisionDate": "2026-10-28",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/570",
+    "contentDocuments": [
+      "docs/GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md",
+      "docs/GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md"
+    ],
+    "locationAndLore": "Single western pond, working orchard storage distinct from occupied Old Orchard Cellars, established Crypt-to-cache-to-Treasury reclamation."
+  },
+  "decisions": {
+    "conceptAcceptance": "Owner-approved 50-decision register; implementation authority in flagship mandate.",
+    "proceduralDesignAcceptance": "Implemented engineering candidate; exact new appearance not yet owner-accepted.",
+    "spriteProductionAuthorization": "No raster generation or registration authorized or performed.",
+    "generatedAppearanceAcceptance": "Not applicable; procedural scene only.",
+    "pendingCorrections": []
+  },
+  "reference": {
+    "sourceCommit": "Current source hashes in docs/evidence/greenwood-revised-20261028/source-verification.json; main baseline ef53b8b7 and remotely retained recovery 7c6fd0aa",
+    "ownerFilesAndBranches": [
+      "src/prototype/greenwood.js",
+      "src/prototype/visuals.js",
+      "feature/greenwood-flagship-resume-20261028",
+      "feature/greenwood-takeover-20261028"
+    ],
+    "exactEntityState": [
+      {
+        "id": "greenwood-working-mill",
+        "structure": "vale-working-mill",
+        "renderKind": "prop",
+        "r": 52,
+        "region": 0
+      },
+      {
+        "id": "greenwood-working-cellar",
+        "structure": "fruit-cellar",
+        "renderKind": "prop",
+        "r": 25,
+        "region": 0
+      }
+    ],
+    "isolatedReferencePath": null,
+    "isolatedReferenceHash": null,
+    "gameplayContextPaths": [
+      "docs/evidence/greenwood-revised-20261028/captures-3200.json",
+      "docs/evidence/greenwood-revised-20261028/browser/receipt.json"
+    ],
+    "traitsToPreserve": [
+      "Signature timber mill larger than cottage; stone footing and visible bank-side wheel.",
+      "Exactly one western terrain pond; no independent landmark pool.",
+      "Low earth-banked fruit storage; decorative only and distinct from the occupied Goblin side dungeon.",
+      "Existing artwork masters, stable site IDs, all quest rewards and encounter identities."
+    ],
+    "assetSpecificDependencies": []
+  },
+  "scope": {
+    "catalogIds": [],
+    "verifiedRuntimeKeys": [],
+    "requiredVisibleAssets": [
+      "vale-working-mill",
+      "mill-sluice",
+      "fruit-cellar",
+      "estate-scaffold"
+    ],
+    "reusedDesignIds": [
+      "approved-art-structure-vale-workshop",
+      "approved-art-landmark-mill-pond"
+    ],
+    "variantRequirements": [],
+    "proceduralOwnersAndReasons": [
+      {
+        "owner": "src/prototype/visuals.js::craftedDecoration",
+        "reason": "Compose owner-required working rural scenes from existing material language."
+      }
+    ]
+  },
+  "animationRequirements": {
+    "status": "static-procedural",
+    "gameplayStates": [
+      "day",
+      "night"
+    ],
+    "directions": [
+      "authored isometric frontage"
+    ],
+    "pivotContract": "World anchor at building base; wheel remains associated with the actual western terrain pond.",
+    "staticFallbackKey": null,
+    "linkedFrameJobs": []
+  },
+  "production": {
+    "candidateRecords": [],
+    "approvedRecordKey": null,
+    "activeContentRevision": null,
+    "expectedReplacementRevision": null,
+    "rollbackRevision": null,
+    "releaseCommit": null,
+    "releaseEvidence": null
+  }
+}

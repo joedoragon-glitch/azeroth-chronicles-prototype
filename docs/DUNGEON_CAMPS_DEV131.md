@@ -4,7 +4,7 @@ The new preparation menu covers five main dungeons and four Treasuries. Side dun
 
 | Region | Main dungeon | Treasury |
 | --- | --- | --- |
-| Greenwood Vale | Forest Crypt | Thornfang's Treasury |
+| Greenwood Vale | Forest Crypt | Scornfang's Treasury |
 | Flooded Marches | Sunken Archive | Mirejaw's Treasury |
 | Ironroot Highlands | Colossus Mine | Ridge Tyrant's Treasury |
 | Ashen Frontier | Abyss Bastion | No interior: roaming captain unchanged |

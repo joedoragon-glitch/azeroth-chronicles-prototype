@@ -22,11 +22,13 @@ The title screen also contains **Settings** and **Help & Credits**. English and 
 
 ## The game
 
-Recruit and recover companions, rescue instructors and craftspeople, establish a Barracks, and travel through occupied regions toward the Dark Lord. Town Captains and completed Barracks offer **Treat wounds** for 30 crowns to restore the hero and living companions when safe; refuges offer free healing on a 90-second cooldown. Fallen companions require separate recovery. Crowns are the in-world currency. The quest journal tracks major story objectives; local work comes from settlement boards.
+Recruit and recover companions, rescue instructors and craftspeople, establish a Barracks, and travel through occupied regions toward the Dark Lord. Town Captains and completed Barracks offer **Treat wounds** for 30 crowns to restore the hero and living companions when safe; refuges offer free healing on a 90-second cooldown. Fallen companions require separate 40-crown recovery. A completed Basic Barracks can queue up to three individually selected fallen companions, while a completed Full Barracks has no Barracks-specific recovery queue limit. Queued recoveries preserve their targets and order across saves and resolve automatically when affordable and safe; town Captains retain one recovery request. Rogues can also choose in a completed Barracks whether future fallen Charmed allies free active group slots (default) or keep those slots until recovery/rest; both choices retain ownership and the same 40-crown recovery. Crowns are the in-world currency. The quest journal tracks major story objectives; local work comes from settlement boards.
 
 Combat is **cooldown-based**, not mana-based. Skills have a normal tap action and, where applicable, a stronger charged action. Automatic basic attacks continue separately. **Rogue** uses her own musical combat actions and can Charm eligible foes into companions; she is playable, but her extended phone, audio, boss and performance acceptance remains unfinished. For exact effects and cooldowns, use **Adventure → Hero skills** in the running game rather than an old balance table.
 
 The game includes an original contextual soundtrack, authored regional spaces, boss encounters, procedural character art and optional illustrated assets. It is a single-player experience; **there is no playable co-op or cloud save synchronization**.
+
+Greenwood has a working mill and pond, cultivated orchards, a separate decorative fruit cellar and woodland routes. **Scornfang's Treasury** is distinct from the occupied **Old Orchard Cellars**.
 
 ## Controls
 
