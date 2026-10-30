@@ -1,0 +1,70 @@
+name: Greenwood approved live-playtest publication (one-time, no CI tests)
+
+# A one-time publication of the exact, owner-approved Greenwood merge commit.
+# This release-only branch is isolated from the normal focused CI triggers.
+# Do not add tests, modify gameplay, or move the main branch here.
+on:
+  push:
+    branches:
+      - release/greenwood-654-publish-only-20261030
+    paths:
+      - .github/workflows/greenwood-publish-only-20261030.yml
+
+concurrency:
+  group: greenwood-654-publish-only
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package exact approved main commit (without CI suites)
+    if: github.ref == 'refs/heads/release/greenwood-654-publish-only-20261030'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout approved Greenwood merge, not the release workflow branch
+        uses: actions/checkout@v4
+        with:
+          ref: 863bf53ef7e1698f64cb0d71155fad8fe71123fd
+          persist-credentials: false
+      - name: Confirm exact approved source revision
+        run: |
+          test "$(git rev-parse HEAD)" = "863bf53ef7e1698f64cb0d71155fad8fe71123fd"
+          echo 'Packaging the approved Greenwood merge without running additional CI suites.'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked production packaging dependencies
+        run: npm ci --ignore-scripts
+      - name: Build deployable game and stamp approved release identifier
+        env:
+          GITHUB_SHA: 863bf53ef7e1698f64cb0d71155fad8fe71123fd
+        run: node scripts/build.cjs --check --site
+      - name: Upload one-time Greenwood site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy already approved Greenwood build to GitHub Pages
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publish.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - name: Publish approved merge commit
+        uses: actions/deploy-pages@v4
+        id: publish
+      - name: Record provenance
+        run: |
+          echo 'Published approved Greenwood source commit 863bf53ef7e1698f64cb0d71155fad8fe71123fd without additional CI suites.' >> "$GITHUB_STEP_SUMMARY"
