@@ -2204,8 +2204,10 @@
         this.narrativeSceneReconciliation(z);
         const side = this.sideDungeon(z.id),
           room = this.supplyRoom(z.id);
-        if ((!side && !room && !dungeonIds.includes(z.id)) || z.interiorCoherenceVersion === 3)
+        if ((!side && !room && !dungeonIds.includes(z.id)) || z.interiorCoherenceVersion === 3) {
+          this.greenwoodInteriorScene?.(z);
           return;
+        }
         const previous = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -2296,6 +2298,7 @@
         } finally {
           this.s.zone = previous;
         }
+        this.greenwoodInteriorScene?.(z);
       }
       nearestRoadPoint(z, point, predicate = () => true) {
         let best = null,
@@ -2905,6 +2908,7 @@
         return nearest;
       }
       roadSetback(p) {
+        if (p.greenwoodWall) return 60; // Low line-built perimeter: cart half-width 31 + wall 5 + party 20, not a house roof.
         if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
         if (p.stronghold && p.r > 0) return 85;
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
@@ -3572,6 +3576,15 @@
         if (this.s.mode === 'arena') return this.arenaZone();
         if (this.s.zones[this.s.zone]) {
           const z = this.s.zones[this.s.zone];
+          if (
+            z.id === 'vale' &&
+            R.greenwoodLayout?.version === 2 &&
+            z.greenwoodRedesignScene === R.greenwoodLayout.sceneVersion
+          ) {
+            this.syncThornArrival(z);
+            this.setSceneryTraversal(z);
+            return z;
+          }
           this.rollbackDev233GlobalStreets(z);
           this.greenwoodMigrate?.(z);
           // Keep authored generation/migrations on their established geometry.

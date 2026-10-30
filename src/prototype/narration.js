@@ -173,8 +173,8 @@
       "es": "«He vuelto porque he querido. Esos libros siguen húmedos y todavía queda mucho por hacer. Sé cómo cuidarlos». Neri se vuelve hacia los volúmenes. Sigue ofreciendo sus tónicos y su entrenamiento."
     },
     "D01": {
-      "en": "An old ossuary opens onto guest rooms still under construction. A building plan shows six places set at the winter table.",
-      "es": "El antiguo osario da paso a habitaciones para invitados todavía sin terminar. En los planos de la residencia de invierno aparece una mesa con seis asientos."
+      "en": "The Lifebinder brought his skeleton work crews to this old crypt; they were not raised from its graves. Their tools and pay records lie beside the unfinished guest rooms. A building plan shows six places set at the winter table.",
+      "es": "El Lifebinder trajo sus cuadrillas de esqueletos a esta antigua cripta; no los levantó de sus tumbas. Sus herramientas y registros de pago están junto a las habitaciones para invitados todavía en obras. En los planos de la residencia de invierno aparece una mesa con seis asientos."
     },
     "D02": {
       "en": "Garun's geometric mark appears on roads and settlements he helped design. At Colossus Mine, he inspects the Ogre wardens and structural supports; Ridge Tyrant handles the wages. Beyond the forge, small machines and angular ornaments fill Garun's workshop.",

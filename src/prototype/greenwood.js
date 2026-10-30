@@ -130,6 +130,7 @@
     class Greenwood {
       greenwoodReserve(z) {
         const cfg = R.greenwoodLayout;
+        if (cfg?.version === 2) return;
         if (z.id !== 'vale' || !cfg?.version) return;
         for (const [id, structure, p, r] of [
           ['greenwood-working-mill', 'vale-working-mill', cfg.mill, 52],
@@ -243,6 +244,7 @@
 
       greenwoodMigrate(z) {
         const cfg = R.greenwoodLayout;
+        if (cfg?.version === 2) return this.greenwoodRedesignMigrate(z);
         if (z.id !== 'vale') return;
         if (!cfg?.version) return this.greenwoodRollback(z);
         if (z.greenwoodSourceVersion === cfg.version) return;
@@ -314,6 +316,7 @@
       }
       greenwoodFinish(z) {
         const cfg = R.greenwoodLayout;
+        if (cfg?.version === 2) return this.greenwoodRedesignFinish(z);
         const sceneVersion = cfg?.sceneVersion || cfg?.version;
         if (z.id !== 'vale' || !cfg?.version || z.greenwoodAttemptVersion === sceneVersion) return;
         const previous = this.s.zone;

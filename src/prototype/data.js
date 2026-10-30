@@ -163,7 +163,7 @@ const PrototypeData = {
       kind: 'dungeon',
       name: 'Lifebinder',
       history:
-        'The Lifebinder was one of the Dark Lord’s old companions. He binds the fallen into aware, enduring skeletons rather than bringing them back to life. His professional disciplines are Mortuary Science and Thanatology, and Architectural Conservation and Adaptive Reuse. Their work keeps the unfinished winter estate running; Borin was compelled to build and repair it.',
+        'The Lifebinder was one of the Dark Lord’s old companions. He binds the fallen into aware, enduring skeletons rather than bringing them back to life. His professional disciplines are Mortuary Science and Thanatology, and Architectural Conservation and Adaptive Reuse. He brought his aware skeleton followers here as paid work crews to convert the old crypt into the winter estate; they were not raised from its graves. They have reservations about the conversion and little freedom to refuse. Borin was compelled to build and repair it.',
       level: 3,
       captive: 'Borin the Village Smith',
       service: 'Village weapon improvements and basic equipment crafting',

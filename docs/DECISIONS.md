@@ -324,6 +324,10 @@ These handoffs authorize regional authoring while preserving existing campaign r
 
 #### Greenwood flagship selection — 29 October 2026
 
+**New implementation decision — #654, 30 October 2026:** The replacement uses 3200 after comparison of two complete regional concepts and the selected topology at 3200/3400, with fixed art/encounter/economy scale, native land-use/edge and journey measurements, routes and save lifecycle evidence. The new river, districts and perimeter use replace the rejected blueprint. 3200 is a result, not a ceiling inherited from the rollback. The owner additionally approved a focused procedural interior pass: Scornfang's reclamation workplace/private household, the prepared Lifebinder Crypt and occupied Goblin Cellars. His aware skeleton crews came with him, are paid and have reservations/little freedom to refuse the crypt conversion; they were not raised from its graves. No future undead class/neutrality system is implemented. [Implementation, audit and handoff](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) own the exact evidence; owner first-hour and release approval remain separate.
+
+**Historical selection, superseded:** the owner rejected dev.233's environment and authorized the interim original-layout rollback. [The #644/#654 replacement study](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) replaces the spatial blueprint, preserves gameplay/progress and compares 3200/3400 without a final dimension choice. The selection below describes the rejected first reconstruction, not a constraint on the new design.
+
 The measured 3200-unit layout is selected over the preserved 2700 baseline and rejected 3400 alternative. The approved 50-decision Piedmont-inspired register governs the working mill and single western pond, staged orchards, separate decorative fruit cellar, both crossings and Scornfang's Treasury. Existing Old Orchard Cellars, Thornfang/Mira, the unfinished estate, six quests, 32 ordinary outdoor enemies and 640 finite outdoor crowns remain. [Authorial register](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md).
 
 #### Structure scale, edge-space and encounter density · 9 October 2026

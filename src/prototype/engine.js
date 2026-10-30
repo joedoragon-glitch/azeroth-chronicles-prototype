@@ -159,10 +159,11 @@
       };
       const c = classes[heroClass];
       const innateHp = heroClass === 'paladin' ? R.balance.classPassives.paladin.hpPerLevel : 0;
+      const start = R.greenwoodLayout?.version === 2 ? R.greenwoodLayout.start : { x: 300, y: 350 };
       this.s.hero = {
         class: heroClass,
-        x: 300,
-        y: 350,
+        x: start.x,
+        y: start.y,
         hp: c.hp + innateHp,
         maxHp: c.hp + innateHp,
         mp: c.mp,
@@ -203,7 +204,7 @@
       const starterTypes = classStartingCompanions[heroClass];
       if (!starterTypes) throw Error('Missing starting company for hero class');
       this.s.party = starterTypes.map((type, i) =>
-        this.unit(type, i === 0 ? 260 : 350, i === 0 ? 390 : 380),
+        this.unit(type, start.x + (i === 0 ? -40 : 50), start.y + (i === 0 ? 40 : 30)),
       );
       if (mode === 'arena') {
         this.s.arenaStage = 'hub';
@@ -3817,14 +3818,17 @@
       this.awardEnemyReward(e);
       // Captain victories remain repeatable, including crown-recovery returns.
       // Ordinary respawning Ringleaders never award companion mastery.
-      if (e.captain || e.roomCaptain || e.fieldCaptain)
-        this.awardCompanionMastery(1);
-      else if (e.guard && e.form === 'ringleader' && e.home &&
-          Number.isFinite(e.home.x) && Number.isFinite(e.home.y)) {
+      if (e.captain || e.roomCaptain || e.fieldCaptain) this.awardCompanionMastery(1);
+      else if (
+        e.guard &&
+        e.form === 'ringleader' &&
+        e.home &&
+        Number.isFinite(e.home.x) &&
+        Number.isFinite(e.home.y)
+      ) {
         // Stable location/species receipt rather than changing runtime enemy
         // IDs: an uncleared dungeon cannot be farmed by guardian respawns.
-        const key = [this.zoneId, e.species,
-          Math.round(e.home.x), Math.round(e.home.y)].join(':');
+        const key = [this.zoneId, e.species, Math.round(e.home.x), Math.round(e.home.y)].join(':');
         this.awardCompanionMastery(1, key);
       }
       this.treasuryCaptainDefeated(e);
@@ -5043,7 +5047,10 @@
         const previous = tacticalRogueRouteSearches.get(e),
           pending = previous?.allyId === ally.id ? previous.state : null,
           result = this.advanceBudgetedRoute(
-            pending?.origin || e, pending?.target || destination, 'tactical', pending,
+            pending?.origin || e,
+            pending?.target || destination,
+            'tactical',
+            pending,
           );
         if (result.pending) {
           tacticalRogueRouteSearches.set(e, { allyId: ally.id, state: result.state });
@@ -5691,7 +5698,8 @@
           state.seekDelay = 1;
           const support = this.tacticalSeekRogueSupport(e, this.tacticalActiveTargetCount(e));
           if (support) return true;
-          if (support === null) state.seekDelay = 0; // keep fleeing, resume pending plan next update
+          if (support === null)
+            state.seekDelay = 0; // keep fleeing, resume pending plan next update
           else if (this.tacticalBeginExtendedRetreat(e)) return true;
         }
         const radius = this.tacticalDefenderTerritory(e);
@@ -8273,10 +8281,22 @@
   World.install(Campaign, { D, R, dungeonIds, classes });
   const Greenwood =
     typeof PrototypeGreenwood !== 'undefined' ? PrototypeGreenwood : require('./greenwood.js');
-  // Emergency owner-directed environmental rollback: keep the original 2700-unit
-  // Vale. The Greenwood module stays installed only to reverse expanded saves.
-  // Do not reconfigure geography to the rejected dev.233 layout.
+  const GreenwoodLandscape =
+    typeof PrototypeGreenwoodLandscape !== 'undefined'
+      ? PrototypeGreenwoodLandscape
+      : require('./greenwood-landscape.js');
+  // The completed replacement is playable on this draft. Isolated historical
+  // comparison loaders can still select their explicit original configuration.
+  if (!R.greenwoodLayout) GreenwoodLandscape.configure(D, R, 3200);
+  GreenwoodLandscape.install(Campaign, { D, R });
+  // Keep both historical adapters for existing v4 campaigns. This is the new
+  // authored geography, never the rejected dev.233 projection.
   Greenwood.install(Campaign, { D, R });
+  const GreenwoodInteriors =
+    typeof PrototypeGreenwoodInteriors !== 'undefined'
+      ? PrototypeGreenwoodInteriors
+      : require('./greenwood-interiors.js');
+  GreenwoodInteriors.install(Campaign, { R });
   const FieldOnboarding =
     typeof PrototypeFieldOnboarding !== 'undefined'
       ? PrototypeFieldOnboarding

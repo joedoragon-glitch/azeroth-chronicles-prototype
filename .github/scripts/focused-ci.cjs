@@ -16,8 +16,12 @@ const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
   {
-    match: /^src\/prototype\/greenwood\.js$/,
+    match: /^src\/prototype\/(?:greenwood|greenwood-landscape)\.js$/,
     tests: [TEST + 'greenwood-flagship.test.cjs', TEST + 'town-street-audit.test.cjs'],
+  },
+  {
+    match: /^src\/prototype\/narration\.js$/,
+    tests: [TEST + 'greenwood-interiors.test.cjs'],
   },
   {
     // Ironroot authoring owns Treasury entrances, transport roads and old-save placement.

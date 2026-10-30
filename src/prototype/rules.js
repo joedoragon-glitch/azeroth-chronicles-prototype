@@ -2729,6 +2729,12 @@
     { bend: 18, width: 0.09 },
   ];
   function channelBanks(region, y) {
+    if (region === 0 && R.greenwoodLayout?.version === 2)
+      return (
+        typeof PrototypeGreenwoodLandscape !== 'undefined'
+          ? PrototypeGreenwoodLandscape
+          : require('./greenwood-landscape.js')
+      ).riverBanks(y, R.greenwoodLayout.size);
     if (region === 2)
       return (
         typeof PrototypeHighlands !== 'undefined' ? PrototypeHighlands : require('./highlands.js')
@@ -5137,7 +5143,7 @@
   const dungeonLore = {
     mine: "Garun's geometric mark appears on roads and settlements he helped design. At Colossus Mine, he inspects the Ogre wardens and structural supports; Ridge Tyrant handles the wages. Beyond the forge, small machines and angular ornaments fill Garun's workshop.",
     crypt:
-      'An old ossuary opens onto guest rooms still under construction. A building plan shows six places set at the winter table.',
+      'The Lifebinder brought his skeleton work crews to this old crypt; they were not raised from its graves. Their tools and pay records lie beside the unfinished guest rooms. A building plan shows six places set at the winter table.',
     abyss:
       "Abyss Bastion is preparing equipment for dragon riders and maintains a hatchery for the planned royal air force. The launch platform is unfinished. Veyrith, the Dark Lord's purple personal mount, has no completed fleet to command yet.",
     citadel:

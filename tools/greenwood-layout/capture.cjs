@@ -9,10 +9,12 @@ const { createCanvas } = require('@napi-rs/canvas'),
   sharp = require('sharp');
 const { rng, candidate } = require('./fixtures.cjs');
 const revised = process.argv.includes('--revised');
-const out = path.resolve(
-  __dirname,
-  '../../docs/evidence/' + (revised ? 'greenwood-revised-20261028' : 'greenwood-gva-20261028'),
-);
+const out = process.argv.includes('--out')
+  ? path.resolve(process.argv[process.argv.indexOf('--out') + 1])
+  : path.resolve(
+      __dirname,
+      '../../docs/evidence/' + (revised ? 'greenwood-revised-20261028' : 'greenwood-gva-20261028'),
+    );
 fs.mkdirSync(out, { recursive: true });
 if (!process.argv.includes('--size')) {
   for (const size of [2700, 3200, 3400])
@@ -20,25 +22,30 @@ if (!process.argv.includes('--size')) {
   process.exit(0);
 }
 const size = Number(process.argv[process.argv.indexOf('--size') + 1]);
-const C = require('./fixtures.cjs').loadRuntime(size, revised),
+const landscape = process.argv.includes('--landscape');
+const C = landscape
+    ? require('./fixtures.cjs').loadRedesign(size)
+    : require('./fixtures.cjs').loadRuntime(size, revised),
   V = require('../../src/prototype/visuals'),
   FX = require('../../src/prototype/combat-visuals'),
   Renderer = require('../../src/prototype/renderer');
-const plan = revised
-    ? (() => {
-        const G = require('../../src/prototype/greenwood');
-        // Tables already configured by loadRuntime before native installation.
-        G.install(C, { D: C.data, R: C.rules });
-        return { proposal: 'revised reserved-parcel comparison' };
-      })()
-    : candidate(C, size),
+const plan = landscape
+    ? { proposal: 'New regional topology study; not accepted' }
+    : revised
+      ? (() => {
+          const G = require('../../src/prototype/greenwood');
+          // Tables already configured by loadRuntime before native installation.
+          G.install(C, { D: C.data, R: C.rules });
+          return { proposal: 'revised reserved-parcel comparison' };
+        })()
+      : candidate(C, size),
   g = new C('normal', 'paladin', rng(0x47564101));
 for (let j = 0; j < 120; j++) g.tick(0.1);
 const z = g.zone(),
   by = (id) => z.npcs.find((n) => n.id === id),
   p = (id) => by(id).servicePoint || by(id);
 const scenes = [
-  ['start', { x: 300, y: 350 }],
+  ['start', { x: g.hero.x, y: g.hero.y }],
   ['refuge', p('rest')],
   ['hamlet', p('minor')],
   ['orchard', p('orchard')],
@@ -152,6 +159,18 @@ async function capture(name, target, width, height, clock) {
     ctx.fillRect(p.x, p.y, (b - a) * scale, 21 * scale);
   }
   for (const w of C.rules.terrain[0]) {
+    if (w.pools) {
+      for (const pool of w.pools) {
+        ctx.beginPath();
+        pool.points.forEach((point, j) => {
+          const p = pt(point);
+          j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y);
+        });
+        ctx.closePath();
+        ctx.fill();
+      }
+      continue;
+    }
     const p = pt(w);
     ctx.beginPath();
     ctx.arc(p.x, p.y, w.r * scale, 0, Math.PI * 2);
@@ -236,15 +255,23 @@ async function capture(name, target, width, height, clock) {
         sourceSha: cp.execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
         size,
         sources: Object.fromEntries(
-          ['engine', 'greenwood', 'data', 'rules', 'world', 'save', 'visuals', 'renderer'].map(
-            (f) => [
-              f,
-              require('node:crypto')
-                .createHash('sha256')
-                .update(fs.readFileSync(path.join(__dirname, '../../src/prototype/' + f + '.js')))
-                .digest('hex'),
-            ],
-          ),
+          [
+            'engine',
+            'greenwood',
+            'greenwood-landscape',
+            'data',
+            'rules',
+            'world',
+            'save',
+            'visuals',
+            'renderer',
+          ].map((f) => [
+            f,
+            require('node:crypto')
+              .createHash('sha256')
+              .update(fs.readFileSync(path.join(__dirname, '../../src/prototype/' + f + '.js')))
+              .digest('hex'),
+          ]),
         ),
         receipts,
       },

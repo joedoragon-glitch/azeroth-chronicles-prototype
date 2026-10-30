@@ -4,32 +4,34 @@
   "designId": "greenwood-flagship-working-scenes",
   "name": "Greenwood working mill, current fruit cellar and estate works",
   "kind": "regional-scene",
-  "nextAction": "Keep draft #570 unmerged; close the recorded inherited regression and first-hour pacing gates before owner acceptance. Current native/browser scene, route and v4 proofs are in the existing handoff. No raster production, Pages or device acceptance.",
+  "nextAction": "Implementation and extended execution-quality audit completed in dev.238/#654. Next chat owns PR/check/merge workflow; owner owns real first-hour acceptance after authorized merge. Preserve all source/hash evidence and do not run long automated playthroughs.",
   "context": {
     "originConversation": "Greenwood Vale Flagship Reconstruction and Engineering Quality Mandate, 28 October 2026",
-    "decisionSummary": "Implements W02\u2013W04, F01/F04/F06 and C04/C05 using current timber, stone, orchard and construction families. No new gameplay, lore, fruit species or raster replacements.",
-    "decisionDate": "2026-10-28",
-    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/570",
+    "decisionSummary": "Owner authorized full Greenwood replacement under the 50 choices, then a procedural interior pass on 30 October: Scornfang reclamation workplace/private household, Lifebinder prepared Crypt and aware paid skeleton workforce brought from elsewhere, occupied Goblin Cellars. Generic unprotected outdoor art may also be redrawn where needed. No new gameplay, roster, payouts, playable undead class or raster production.",
+    "decisionDate": "2026-10-30",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/654",
     "contentDocuments": [
       "docs/GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md",
-      "docs/GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md"
+      "docs/GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md",
+      "docs/GREENWOOD_REDESIGN_MASTERPLAN_20261029.md"
     ],
     "locationAndLore": "Single western pond, working orchard storage distinct from occupied Old Orchard Cellars, established Crypt-to-cache-to-Treasury reclamation."
   },
   "decisions": {
     "conceptAcceptance": "Owner-approved 50-decision register; implementation authority in flagship mandate.",
-    "proceduralDesignAcceptance": "Implemented engineering candidate; exact new appearance not yet owner-accepted.",
-    "spriteProductionAuthorization": "No raster generation or registration authorized or performed.",
+    "proceduralDesignAcceptance": "Implemented and self-audited engineering candidate; exact appearance is not yet owner-accepted.",
+    "spriteProductionAuthorization": "Owner authorized suitable procedural authoring for interiors and replacement of unprotected generic outdoor assets; no raster generation or registration requested.",
     "generatedAppearanceAcceptance": "Not applicable; procedural scene only.",
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "Current source hashes in docs/evidence/greenwood-revised-20261028/source-verification.json; main baseline ef53b8b7 and remotely retained recovery 7c6fd0aa",
+    "sourceCommit": "Runtime fingerprints in docs/evidence/greenwood-redesign-20261029; historical dev.233 appearance is rejected, not the replacement blueprint.",
     "ownerFilesAndBranches": [
+      "src/prototype/greenwood-landscape.js",
       "src/prototype/greenwood.js",
       "src/prototype/visuals.js",
-      "feature/greenwood-flagship-resume-20261028",
-      "feature/greenwood-takeover-20261028"
+      "feat/greenwood-flagship-redesign-20261029",
+      "src/prototype/greenwood-interiors.js"
     ],
     "exactEntityState": [
       {
@@ -45,19 +47,198 @@
         "renderKind": "prop",
         "r": 25,
         "region": 0
+      },
+      {
+        "id": "treasury-0",
+        "x": 190,
+        "y": 740,
+        "r": 24,
+        "decorative": false,
+        "structure": "goblin-cot",
+        "treasuryBoss": "thorn",
+        "sceneRole": "private",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "goblin-cot",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-1",
+        "x": 180,
+        "y": 235,
+        "r": 0,
+        "decorative": true,
+        "structure": "reclamation-cradles",
+        "treasuryBoss": "thorn",
+        "sceneRole": "receiving",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "reclamation-cradles",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-2",
+        "x": 740,
+        "y": 235,
+        "r": 24,
+        "decorative": false,
+        "structure": "inventory-cabinet",
+        "treasuryBoss": "thorn",
+        "sceneRole": "inventory",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "inventory-cabinet",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-3",
+        "x": 675,
+        "y": 520,
+        "r": 26,
+        "decorative": false,
+        "structure": "reclamation-bench",
+        "treasuryBoss": "thorn",
+        "sceneRole": "work",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "reclamation-bench",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-5",
+        "x": 775,
+        "y": 770,
+        "r": 20,
+        "decorative": false,
+        "structure": "pay-chest",
+        "treasuryBoss": "thorn",
+        "sceneRole": "reserve",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "pay-chest",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-6",
+        "x": 300,
+        "y": 760,
+        "r": 0,
+        "decorative": true,
+        "structure": "personal-locker",
+        "treasuryBoss": "thorn",
+        "sceneRole": "private",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "personal-locker",
+        "renderKind": "prop"
+      },
+      {
+        "id": "treasury-11",
+        "x": 745,
+        "y": 570,
+        "r": 0,
+        "decorative": true,
+        "structure": "reclamation-ledger",
+        "treasuryBoss": "thorn",
+        "sceneRole": "accounts",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "reclamation-ledger",
+        "renderKind": "prop"
+      },
+      {
+        "id": "decor-25",
+        "x": 800,
+        "y": 1150,
+        "r": 0,
+        "decorative": true,
+        "structure": "binding-desk",
+        "icon": "\ud83d\udd6f\ufe0f",
+        "dungeonDistrict": "estate-work",
+        "sceneRole": "occupied-crypt",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "binding-desk",
+        "renderKind": "prop"
+      },
+      {
+        "id": "greenwood-crypt-estate-plan",
+        "x": 710,
+        "y": 460,
+        "structure": "estate-plan-board",
+        "r": 0,
+        "decorative": true,
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "estate-plan-board",
+        "renderKind": "prop"
+      },
+      {
+        "id": "greenwood-crypt-worker-tools",
+        "x": 1160,
+        "y": 300,
+        "structure": "worker-tool-stand",
+        "r": 0,
+        "decorative": true,
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "worker-tool-stand",
+        "renderKind": "prop"
+      },
+      {
+        "id": "greenwood-crypt-command-lamp",
+        "x": 1370,
+        "y": 1320,
+        "structure": "cellar-hearth",
+        "r": 0,
+        "decorative": true,
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "cellar-hearth",
+        "renderKind": "prop"
+      },
+      {
+        "id": "side-decor-2",
+        "x": 440,
+        "y": 210,
+        "r": 0,
+        "decorative": true,
+        "structure": "preserve-rack",
+        "sceneRole": "occupied-side-vale-cellars",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "preserve-rack",
+        "renderKind": "prop"
+      },
+      {
+        "id": "side-decor-7",
+        "x": 640,
+        "y": 530,
+        "r": 0,
+        "decorative": true,
+        "structure": "tool-basket",
+        "sceneRole": "occupied-side-vale-cellars",
+        "greenwoodInterior": true,
+        "greenwoodInteriorAsset": "tool-basket",
+        "renderKind": "prop"
+      },
+      {
+        "id": "side-wall-0",
+        "x": 435,
+        "y": 180,
+        "r": 28,
+        "structure": "cellar-pier",
+        "sideDungeon": "side-vale-cellars",
+        "householdPartition": "cellar",
+        "sceneRole": "occupied-wall-alcove",
+        "greenwoodInteriorAsset": "cellar-pier",
+        "greenwoodInterior": true,
+        "renderKind": "prop"
       }
     ],
-    "isolatedReferencePath": null,
-    "isolatedReferenceHash": null,
+    "isolatedReferencePath": "docs/evidence/greenwood-redesign-20261029/interiors-after/procedural-furniture.webp",
+    "isolatedReferenceHash": "ebc89ebaedc0428ef51846b788b151469b52db77c96322f421391f4b7e2896b7",
     "gameplayContextPaths": [
-      "docs/evidence/greenwood-revised-20261028/captures-3200.json",
-      "docs/evidence/greenwood-revised-20261028/browser/receipt.json"
+      "docs/evidence/greenwood-redesign-20261029/interiors-after/receipt.json",
+      "docs/evidence/greenwood-redesign-20261029/interiors-browser/receipt.json",
+      "docs/evidence/greenwood-redesign-20261029/outdoors-browser-final/receipt.json"
     ],
     "traitsToPreserve": [
       "Signature timber mill larger than cottage; stone footing and visible bank-side wheel.",
       "Exactly one western terrain pond; no independent landmark pool.",
       "Low earth-banked fruit storage; decorative only and distinct from the occupied Goblin side dungeon.",
-      "Existing artwork masters, stable site IDs, all quest rewards and encounter identities."
+      "Existing artwork masters, stable site IDs, all quest rewards and encounter identities.",
+      "Scornfang: padded receiving frames, labelled material inventory, conservation bench and accounts desk; Goblin cot/locker rather than wolf den furnishings.",
+      "Crypt: old funerary architecture and new work/lodging are distinct from a clear prepared command arena with alternate approaches.",
+      "Goblin Cellars: paid preserves, cots, family nests and cooking; low piers must not conceal actors or the inspection/Codex."
     ],
     "assetSpecificDependencies": []
   },
@@ -68,7 +249,21 @@
       "vale-working-mill",
       "mill-sluice",
       "fruit-cellar",
-      "estate-scaffold"
+      "estate-scaffold",
+      "goblin-cot",
+      "reclamation-cradles",
+      "inventory-cabinet",
+      "reclamation-bench",
+      "pay-chest",
+      "personal-locker",
+      "reclamation-ledger",
+      "binding-desk",
+      "estate-plan-board",
+      "worker-tool-stand",
+      "cellar-hearth",
+      "preserve-rack",
+      "tool-basket",
+      "cellar-pier"
     ],
     "reusedDesignIds": [
       "approved-art-structure-vale-workshop",
@@ -77,8 +272,12 @@
     "variantRequirements": [],
     "proceduralOwnersAndReasons": [
       {
-        "owner": "src/prototype/visuals.js::craftedDecoration",
-        "reason": "Compose owner-required working rural scenes from existing material language."
+        "owner": "src/prototype/greenwood-landscape.js",
+        "reason": "Author the replacement Piedmont landscape, whole compounds, connected mill waterworks and distinct orchard growth stages; retained sprite masters remain available."
+      },
+      {
+        "owner": "src/prototype/greenwood-interiors.js",
+        "reason": "Scoped source-authored furniture, occupied room composition and idempotent v4 reconciliation; keep original roster, rewards, saved progress and retained raster lineage."
       }
     ]
   },
@@ -103,5 +302,13 @@
     "rollbackRevision": null,
     "releaseCommit": null,
     "releaseEvidence": null
+  },
+  "reconstructionStudy": {
+    "status": "unaccepted procedural construction study",
+    "source": "src/prototype/greenwood-landscape.js",
+    "record": "docs/GREENWOOD_REDESIGN_MASTERPLAN_20261029.md",
+    "scope": "Greenwood Vale only; new summer hardwood/understory, ground, waterworks and complete district/defense geometry",
+    "appearanceAcceptance": "Not owner accepted",
+    "retainedMasters": "Existing originals, registrations and historical references remain intact"
   }
 }

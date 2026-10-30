@@ -1,0 +1,983 @@
+{
+  "size": 3200,
+  "generationMs": 1238.49,
+  "sourceFiles": {
+    "greenwood-landscape": "4b054065a157636842f66f805ec4f3ce5abe2bc9418262d8ee0154cecbad79e9",
+    "engine": "c32ec867f9d00f7814fdba1b910b47167c25b2cd5e8cecf54f261e8bb57f94e0",
+    "rules": "bc2bab1fe55f59f543b267b7522244a74dd06b3903e3e2ebd45c5ed5ffdc18f7",
+    "world": "c4859c3d11d77d027c87aaa5a3776b7940b234df777d1d8c77e26e94522c6ada",
+    "navigation": "ab4bb18a97dbfe365d3300a03095e2f0f42b3ea1b3e53491df4dffbc1519666d",
+    "save": "dd9870e6eaa95bf52778e4eb7c0539b7b74464a7c73ff6b653cb921e97f611f6"
+  },
+  "method": "50-unit cell-center walkability, hero radius 15; 16 equal cells; outer one-eighth bands/corners overlap; roads sampled every <=20 units; geometric native routes and initial living homes within 220, NOT actual encounter/combat/first-hour time. No invented density target.",
+  "props": 331,
+  "nature": {
+    "trees": 138,
+    "low": 71
+  },
+  "ordinary": 32,
+  "tribute": 640,
+  "cells": [
+    {
+      "row": 0,
+      "col": 0,
+      "bounds": {
+        "x1": 0,
+        "y1": 0,
+        "x2": 800,
+        "y2": 800
+      },
+      "samples": 256,
+      "terrainClear": 225,
+      "walkable": 215,
+      "props": 14,
+      "nature": 9,
+      "destinations": [
+        "supplier",
+        "board",
+        "rest"
+      ],
+      "enemyHomes": [],
+      "roadLength": 2399.25
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "bounds": {
+        "x1": 800,
+        "y1": 0,
+        "x2": 1600,
+        "y2": 800
+      },
+      "samples": 256,
+      "terrainClear": 240,
+      "walkable": 209,
+      "props": 21,
+      "nature": 13,
+      "destinations": [
+        "recruiter"
+      ],
+      "enemyHomes": [],
+      "roadLength": 1735.61
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "bounds": {
+        "x1": 1600,
+        "y1": 0,
+        "x2": 2400,
+        "y2": 800
+      },
+      "samples": 256,
+      "terrainClear": 185,
+      "walkable": 146,
+      "props": 30,
+      "nature": 30,
+      "destinations": [],
+      "enemyHomes": [],
+      "roadLength": 19.79
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "bounds": {
+        "x1": 2400,
+        "y1": 0,
+        "x2": 3200,
+        "y2": 800
+      },
+      "samples": 256,
+      "terrainClear": 225,
+      "walkable": 210,
+      "props": 16,
+      "nature": 13,
+      "destinations": [
+        "outbound"
+      ],
+      "enemyHomes": [
+        "enemy-21",
+        "enemy-22",
+        "enemy-23"
+      ],
+      "roadLength": 1246.29
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "bounds": {
+        "x1": 0,
+        "y1": 800,
+        "x2": 800,
+        "y2": 1600
+      },
+      "samples": 256,
+      "terrainClear": 237,
+      "walkable": 223,
+      "props": 25,
+      "nature": 13,
+      "destinations": [],
+      "enemyHomes": [],
+      "roadLength": 945.95
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "bounds": {
+        "x1": 800,
+        "y1": 800,
+        "x2": 1600,
+        "y2": 1600
+      },
+      "samples": 256,
+      "terrainClear": 183,
+      "walkable": 179,
+      "props": 4,
+      "nature": 0,
+      "destinations": [
+        "mill-pond"
+      ],
+      "enemyHomes": [
+        "enemy-9",
+        "enemy-10",
+        "enemy-11",
+        "enemy-29"
+      ],
+      "roadLength": 934.92
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "bounds": {
+        "x1": 1600,
+        "y1": 800,
+        "x2": 2400,
+        "y2": 1600
+      },
+      "samples": 256,
+      "terrainClear": 231,
+      "walkable": 205,
+      "props": 20,
+      "nature": 5,
+      "destinations": [
+        "bridge-north",
+        "supply-entrance"
+      ],
+      "enemyHomes": [],
+      "roadLength": 1781.24
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "bounds": {
+        "x1": 2400,
+        "y1": 800,
+        "x2": 3200,
+        "y2": 1600
+      },
+      "samples": 256,
+      "terrainClear": 211,
+      "walkable": 211,
+      "props": 3,
+      "nature": 0,
+      "destinations": [],
+      "enemyHomes": [
+        "enemy-33",
+        "enemy-34"
+      ],
+      "roadLength": 1975.46
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "bounds": {
+        "x1": 0,
+        "y1": 1600,
+        "x2": 800,
+        "y2": 2400
+      },
+      "samples": 256,
+      "terrainClear": 240,
+      "walkable": 224,
+      "props": 17,
+      "nature": 5,
+      "destinations": [
+        "minor",
+        "orchard"
+      ],
+      "enemyHomes": [
+        "enemy-5",
+        "enemy-32"
+      ],
+      "roadLength": 1729.29
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "bounds": {
+        "x1": 800,
+        "y1": 1600,
+        "x2": 1600,
+        "y2": 2400
+      },
+      "samples": 256,
+      "terrainClear": 235,
+      "walkable": 211,
+      "props": 31,
+      "nature": 20,
+      "destinations": [],
+      "enemyHomes": [
+        "enemy-4",
+        "enemy-27",
+        "enemy-28"
+      ],
+      "roadLength": 1460.55
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "bounds": {
+        "x1": 1600,
+        "y1": 1600,
+        "x2": 2400,
+        "y2": 2400
+      },
+      "samples": 256,
+      "terrainClear": 225,
+      "walkable": 216,
+      "props": 16,
+      "nature": 16,
+      "destinations": [
+        "bridge-south"
+      ],
+      "enemyHomes": [],
+      "roadLength": 1567.41
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "bounds": {
+        "x1": 2400,
+        "y1": 1600,
+        "x2": 3200,
+        "y2": 2400
+      },
+      "samples": 256,
+      "terrainClear": 240,
+      "walkable": 205,
+      "props": 39,
+      "nature": 23,
+      "destinations": [
+        "cache"
+      ],
+      "enemyHomes": [
+        "enemy-13",
+        "enemy-14",
+        "enemy-18",
+        "enemy-19",
+        "enemy-20",
+        "enemy-24",
+        "enemy-25",
+        "enemy-26"
+      ],
+      "roadLength": 407.58
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "bounds": {
+        "x1": 0,
+        "y1": 2400,
+        "x2": 800,
+        "y2": 3200
+      },
+      "samples": 256,
+      "terrainClear": 225,
+      "walkable": 197,
+      "props": 26,
+      "nature": 10,
+      "destinations": [
+        "goblin-camp"
+      ],
+      "enemyHomes": [
+        "enemy-3",
+        "enemy-6",
+        "enemy-7",
+        "enemy-15",
+        "enemy-16",
+        "enemy-17",
+        "enemy-30",
+        "enemy-31"
+      ],
+      "roadLength": 964.79
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "bounds": {
+        "x1": 800,
+        "y1": 2400,
+        "x2": 1600,
+        "y2": 3200
+      },
+      "samples": 256,
+      "terrainClear": 228,
+      "walkable": 217,
+      "props": 29,
+      "nature": 19,
+      "destinations": [
+        "den-ruins"
+      ],
+      "enemyHomes": [
+        "enemy-8",
+        "enemy-12"
+      ],
+      "roadLength": 677.34
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "bounds": {
+        "x1": 1600,
+        "y1": 2400,
+        "x2": 2400,
+        "y2": 3200
+      },
+      "samples": 256,
+      "terrainClear": 190,
+      "walkable": 172,
+      "props": 15,
+      "nature": 15,
+      "destinations": [],
+      "enemyHomes": [],
+      "roadLength": 292.88
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "bounds": {
+        "x1": 2400,
+        "y1": 2400,
+        "x2": 3200,
+        "y2": 3200
+      },
+      "samples": 256,
+      "terrainClear": 225,
+      "walkable": 202,
+      "props": 25,
+      "nature": 18,
+      "destinations": [
+        "entrance"
+      ],
+      "enemyHomes": [],
+      "roadLength": 505.85
+    }
+  ],
+  "edges": {
+    "north": {
+      "samples": 512,
+      "walkable": 340,
+      "props": 60,
+      "structures": [
+        "settlement-major-0",
+        "settlement-major-1",
+        "settlement-major-2",
+        "settlement-major-5",
+        "settlement-major-7"
+      ],
+      "destinations": [
+        "outbound"
+      ],
+      "enemyHomes": [],
+      "roadLength": 2000.77
+    },
+    "south": {
+      "samples": 512,
+      "walkable": 365,
+      "props": 52,
+      "structures": [],
+      "destinations": [
+        "entrance",
+        "goblin-camp"
+      ],
+      "enemyHomes": [
+        "enemy-3",
+        "enemy-7",
+        "enemy-8"
+      ],
+      "roadLength": 642.75
+    },
+    "west": {
+      "samples": 512,
+      "walkable": 383,
+      "props": 59,
+      "structures": [
+        "settlement-major-1",
+        "settlement-major-3",
+        "settlement-major-4",
+        "settlement-minor-0",
+        "settlement-minor-1"
+      ],
+      "destinations": [
+        "goblin-camp"
+      ],
+      "enemyHomes": [
+        "enemy-15",
+        "enemy-16"
+      ],
+      "roadLength": 1464.02
+    },
+    "east": {
+      "samples": 512,
+      "walkable": 389,
+      "props": 53,
+      "structures": [],
+      "destinations": [
+        "outbound",
+        "entrance"
+      ],
+      "enemyHomes": [
+        "enemy-33",
+        "enemy-34"
+      ],
+      "roadLength": 1649.65
+    },
+    "NW": {
+      "samples": 64,
+      "walkable": 45,
+      "props": 10,
+      "structures": [
+        "settlement-major-1"
+      ],
+      "destinations": [],
+      "enemyHomes": [],
+      "roadLength": 544.26
+    },
+    "NE": {
+      "samples": 64,
+      "walkable": 43,
+      "props": 8,
+      "structures": [],
+      "destinations": [
+        "outbound"
+      ],
+      "enemyHomes": [],
+      "roadLength": 253.67
+    },
+    "SW": {
+      "samples": 64,
+      "walkable": 44,
+      "props": 4,
+      "structures": [],
+      "destinations": [
+        "goblin-camp"
+      ],
+      "enemyHomes": [],
+      "roadLength": 40
+    },
+    "SE": {
+      "samples": 64,
+      "walkable": 49,
+      "props": 2,
+      "structures": [],
+      "destinations": [
+        "entrance"
+      ],
+      "enemyHomes": [],
+      "roadLength": 38.91
+    }
+  },
+  "journeys": [
+    {
+      "name": "orientation",
+      "length": 4703.11,
+      "noCombatSecondsEstimate": 15.68,
+      "nearbyHomes220": 5,
+      "longestCalmRunUnits": 2521.26,
+      "legs": [
+        {
+          "from": "start",
+          "to": "supplier",
+          "reached": true,
+          "length": 162.79,
+          "cpuMs": 0.71
+        },
+        {
+          "from": "supplier",
+          "to": "recruiter",
+          "reached": true,
+          "length": 410.49,
+          "cpuMs": 0.91
+        },
+        {
+          "from": "recruiter",
+          "to": "board",
+          "reached": true,
+          "length": 261.73,
+          "cpuMs": 0.61
+        },
+        {
+          "from": "board",
+          "to": "minor",
+          "reached": true,
+          "length": 1247.69,
+          "cpuMs": 1.82
+        },
+        {
+          "from": "minor",
+          "to": "orchard",
+          "reached": true,
+          "length": 578.12,
+          "cpuMs": 1.59
+        },
+        {
+          "from": "orchard",
+          "to": "mill-pond",
+          "reached": true,
+          "length": 679.87,
+          "cpuMs": 142.38
+        },
+        {
+          "from": "mill-pond",
+          "to": "rest",
+          "reached": true,
+          "length": 1362.43,
+          "cpuMs": 260.68
+        }
+      ]
+    },
+    {
+      "name": "farm-woods",
+      "length": 8180.35,
+      "noCombatSecondsEstimate": 27.27,
+      "nearbyHomes220": 16,
+      "longestCalmRunUnits": 1689.23,
+      "legs": [
+        {
+          "from": "rest",
+          "to": "mill-pond",
+          "reached": true,
+          "length": 1284.48,
+          "cpuMs": 210.56
+        },
+        {
+          "from": "mill-pond",
+          "to": "minor",
+          "reached": true,
+          "length": 648.17,
+          "cpuMs": 0.63
+        },
+        {
+          "from": "minor",
+          "to": "orchard",
+          "reached": true,
+          "length": 578.12,
+          "cpuMs": 2.61
+        },
+        {
+          "from": "orchard",
+          "to": "goblin-camp",
+          "reached": true,
+          "length": 1135.97,
+          "cpuMs": 186.71
+        },
+        {
+          "from": "goblin-camp",
+          "to": "den-ruins",
+          "reached": true,
+          "length": 904.43,
+          "cpuMs": 99.54
+        },
+        {
+          "from": "den-ruins",
+          "to": "bridge-south",
+          "reached": true,
+          "length": 698.93,
+          "cpuMs": 0.99
+        },
+        {
+          "from": "bridge-south",
+          "to": "rest",
+          "reached": true,
+          "length": 2930.24,
+          "cpuMs": 572.32
+        }
+      ]
+    },
+    {
+      "name": "estate",
+      "length": 12696.26,
+      "noCombatSecondsEstimate": 42.32,
+      "nearbyHomes220": 10,
+      "longestCalmRunUnits": 5334.09,
+      "legs": [
+        {
+          "from": "rest",
+          "to": "bridge-north",
+          "reached": true,
+          "length": 1317,
+          "cpuMs": 1.33
+        },
+        {
+          "from": "bridge-north",
+          "to": "outbound",
+          "reached": true,
+          "length": 1681.01,
+          "cpuMs": 257.95
+        },
+        {
+          "from": "outbound",
+          "to": "cache",
+          "reached": true,
+          "length": 1483.14,
+          "cpuMs": 1.45
+        },
+        {
+          "from": "cache",
+          "to": "entrance",
+          "reached": true,
+          "length": 1336.97,
+          "cpuMs": 264.89
+        },
+        {
+          "from": "entrance",
+          "to": "supply-entrance",
+          "reached": true,
+          "length": 2566.7,
+          "cpuMs": 261.26
+        },
+        {
+          "from": "supply-entrance",
+          "to": "bridge-south",
+          "reached": true,
+          "length": 1381.2,
+          "cpuMs": 122.93
+        },
+        {
+          "from": "bridge-south",
+          "to": "rest",
+          "reached": true,
+          "length": 2930.24,
+          "cpuMs": 569.23
+        }
+      ]
+    }
+  ],
+  "destinations": [
+    {
+      "id": "supplier",
+      "name": "Millhaven Supplies",
+      "kind": "supplier",
+      "x": 400,
+      "y": 710,
+      "icon": "🛒"
+    },
+    {
+      "id": "recruiter",
+      "name": "Millhaven Captain",
+      "kind": "recruiter",
+      "x": 810,
+      "y": 730,
+      "icon": "👥"
+    },
+    {
+      "id": "board",
+      "name": "Millhaven Quest board",
+      "kind": "quests",
+      "x": 780,
+      "y": 470,
+      "icon": "📜"
+    },
+    {
+      "id": "rest",
+      "x": 460,
+      "y": 480
+    },
+    {
+      "id": "minor",
+      "x": 405,
+      "y": 1660
+    },
+    {
+      "id": "outbound",
+      "name": "Merchant wagon to Flooded Marches",
+      "kind": "transport",
+      "direction": 1,
+      "x": 2880,
+      "y": 280,
+      "icon": "🐎"
+    },
+    {
+      "id": "entrance",
+      "name": "Forest Crypt",
+      "kind": "dungeon",
+      "family": "crypt",
+      "x": 2830,
+      "y": 2850,
+      "icon": "🏛️"
+    },
+    {
+      "id": "bridge-north",
+      "name": "Mill bridge",
+      "kind": "landmark",
+      "x": 1670,
+      "y": 1000,
+      "icon": "🪵"
+    },
+    {
+      "id": "bridge-south",
+      "name": "Southern footbridge",
+      "kind": "landmark",
+      "x": 1740,
+      "y": 2280,
+      "icon": "🪵"
+    },
+    {
+      "id": "orchard",
+      "name": "Orchard expansion",
+      "kind": "landmark",
+      "x": 780,
+      "y": 2100,
+      "icon": "🏚️"
+    },
+    {
+      "id": "den-ruins",
+      "name": "Old Orchard Cellars",
+      "kind": "dungeon",
+      "x": 1080,
+      "y": 2510,
+      "icon": "🏚️",
+      "family": "side-vale-cellars",
+      "sideDungeon": true
+    },
+    {
+      "id": "mill-pond",
+      "name": "Mill pond",
+      "kind": "landmark",
+      "x": 1040,
+      "y": 1530,
+      "icon": "🏚️"
+    },
+    {
+      "id": "cache",
+      "name": "Woodland supply cache",
+      "kind": "landmark",
+      "x": 2420,
+      "y": 1690,
+      "icon": "🏚️"
+    },
+    {
+      "id": "goblin-camp",
+      "name": "Goblin roadside camp",
+      "kind": "landmark",
+      "x": 350,
+      "y": 2820,
+      "icon": "🏕️"
+    },
+    {
+      "id": "supply-entrance",
+      "x": 2120,
+      "y": 1250,
+      "name": "Scornfang's Treasury",
+      "kind": "dungeon",
+      "family": "supply-vale",
+      "treasury": true,
+      "treasuryBoss": "thorn",
+      "icon": "🗝️"
+    }
+  ],
+  "homes": [
+    {
+      "id": "enemy-3",
+      "species": "goblin",
+      "x": 450,
+      "y": 2855
+    },
+    {
+      "id": "enemy-4",
+      "species": "goblin",
+      "x": 840.1040764008566,
+      "y": 2160.1040764008567
+    },
+    {
+      "id": "enemy-5",
+      "species": "goblin",
+      "x": 780,
+      "y": 2220
+    },
+    {
+      "id": "enemy-6",
+      "species": "skeleton",
+      "x": 670,
+      "y": 2780
+    },
+    {
+      "id": "enemy-7",
+      "species": "skeleton",
+      "x": 670,
+      "y": 2855
+    },
+    {
+      "id": "enemy-8",
+      "species": "skeleton",
+      "x": 990,
+      "y": 2880
+    },
+    {
+      "id": "enemy-9",
+      "species": "goblin",
+      "x": 1048.6121593216774,
+      "y": 1432.403810567666
+    },
+    {
+      "id": "enemy-10",
+      "species": "goblin",
+      "x": 1035.1040764008565,
+      "y": 1450.0078869685224
+    },
+    {
+      "id": "enemy-11",
+      "species": "goblin",
+      "x": 975,
+      "y": 1509.903810567666
+    },
+    {
+      "id": "enemy-12",
+      "species": "skeleton",
+      "x": 895,
+      "y": 2630
+    },
+    {
+      "id": "enemy-13",
+      "species": "skeleton",
+      "x": 2480.1040764008567,
+      "y": 1750.1040764008565
+    },
+    {
+      "id": "enemy-14",
+      "species": "skeleton",
+      "x": 2420,
+      "y": 1810
+    },
+    {
+      "id": "enemy-15",
+      "species": "goblin",
+      "x": 255,
+      "y": 2800
+    },
+    {
+      "id": "enemy-16",
+      "species": "goblin",
+      "x": 325,
+      "y": 2725
+    },
+    {
+      "id": "enemy-17",
+      "species": "goblin",
+      "x": 430,
+      "y": 2755
+    },
+    {
+      "id": "enemy-18",
+      "species": "skeleton",
+      "x": 2575,
+      "y": 2200
+    },
+    {
+      "id": "enemy-19",
+      "species": "skeleton",
+      "x": 2645,
+      "y": 2125
+    },
+    {
+      "id": "enemy-20",
+      "species": "skeleton",
+      "x": 2750,
+      "y": 2155
+    },
+    {
+      "id": "enemy-21",
+      "species": "goblin",
+      "x": 2585,
+      "y": 620
+    },
+    {
+      "id": "enemy-22",
+      "species": "goblin",
+      "x": 2524.1920892679364,
+      "y": 643.6421602998928
+    },
+    {
+      "id": "enemy-23",
+      "species": "goblin",
+      "x": 2555.507820653572,
+      "y": 557.2412244252002
+    },
+    {
+      "id": "enemy-24",
+      "species": "skeleton",
+      "x": 2705,
+      "y": 2220
+    },
+    {
+      "id": "enemy-25",
+      "species": "skeleton",
+      "x": 2644.1920892679364,
+      "y": 2243.642160299893
+    },
+    {
+      "id": "enemy-26",
+      "species": "skeleton",
+      "x": 2675.507820653572,
+      "y": 2157.2412244252
+    },
+    {
+      "id": "enemy-27",
+      "species": "goblin",
+      "x": 1315,
+      "y": 1630
+    },
+    {
+      "id": "enemy-28",
+      "species": "goblin",
+      "x": 1254.1920892679361,
+      "y": 1653.6421602998928
+    },
+    {
+      "id": "enemy-29",
+      "species": "goblin",
+      "x": 1293.2723920066476,
+      "y": 1596.2189992138724
+    },
+    {
+      "id": "enemy-30",
+      "species": "skeleton",
+      "x": 585,
+      "y": 2420
+    },
+    {
+      "id": "enemy-31",
+      "species": "skeleton",
+      "x": 524.1920892679362,
+      "y": 2443.642160299893
+    },
+    {
+      "id": "enemy-32",
+      "species": "skeleton",
+      "x": 555.507820653572,
+      "y": 2357.2412244252
+    },
+    {
+      "id": "enemy-33",
+      "species": "goblin",
+      "x": 2905,
+      "y": 980
+    },
+    {
+      "id": "enemy-34",
+      "species": "goblin",
+      "x": 2844.1920892679364,
+      "y": 1003.6421602998928
+    }
+  ]
+}
