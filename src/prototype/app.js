@@ -1645,7 +1645,8 @@
     appUpdateCheck = null,
     appUpdateBusy = false,
     appLastUpdateCheck = -Infinity,
-    startupUpdatePending = true;
+    startupUpdatePending = true,
+    startupUpdateNotice = null;
   let hadServiceWorkerController = !!navigator.serviceWorker?.controller;
   function refreshUpdateNotice() {
     appUpdateReady = !!appRegistration?.waiting;
@@ -1735,6 +1736,19 @@
   // The startup gate runs before the title becomes visible or graphics are
   // prepared. Service-worker installation is atomic: an incomplete download
   // never replaces the previous offline game or its save storage.
+  function refreshStartupUpdateNotice() {
+    const notice = $('startup-update-notice');
+    notice.hidden = !startupUpdateNotice;
+    notice.textContent = startupUpdateNotice === 'offline'
+      ? (language === 'es'
+        ? 'Sin conexión. No se pudieron buscar actualizaciones; jugarás con la última versión instalada.'
+        : 'You are offline. Could not check for updates; playing the last installed version.')
+      : startupUpdateNotice === 'unavailable'
+        ? (language === 'es'
+          ? 'No se pudieron buscar actualizaciones. Puedes jugar con la última versión instalada.'
+          : 'Could not check for updates. You can play the last installed version.')
+        : '';
+  }
   function startupUpdateText(english, spanish) {
     $('startup-update-text').textContent = language === 'es' ? spanish : english;
   }
@@ -1771,7 +1785,10 @@
     const supported = 'serviceWorker' in navigator &&
       (location.protocol === 'https:' || location.hostname === 'localhost' ||
        location.hostname === '127.0.0.1');
-    if (!supported) return finishStartupUpdate();
+    if (!supported) {
+      startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
+      return finishStartupUpdate();
+    }
     const serviceWorker = navigator.serviceWorker;
     try {
       startupUpdateText('Checking for updates…', 'Buscando actualizaciones…');
@@ -1781,7 +1798,10 @@
         ),
         12000,
       );
-      if (!reg) return finishStartupUpdate();
+      if (!reg) {
+        startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
+        return finishStartupUpdate();
+      }
       appRegistration = reg;
       const watchWorker = () => {
         refreshUpdateNotice();
@@ -1792,12 +1812,23 @@
 
       // A fully downloaded waiting update also works offline. Otherwise do
       // one explicit freshness check, before any menu or game-scene preparation.
-      if (!reg.waiting && serviceWorker.controller && navigator.onLine !== false) {
-        await startupBound(checkAppUpdate(true), 12000);
-        if (reg.installing) {
-          startupUpdateText('Downloading update…', 'Descargando actualización…');
-          await startupBound(waitForWorkerInstall(reg.installing), 25000);
+      if (!reg.waiting && serviceWorker.controller) {
+        if (navigator.onLine === false) startupUpdateNotice = 'offline';
+        else {
+          // A rejected or timed-out check is not an update: keep the complete
+          // installed version playable and explain what could not be verified.
+          const checked = await startupBound(
+            checkAppUpdate(true).then(() => true, () => false), 12000);
+          if (!checked)
+            startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
+          if (reg.installing) {
+            startupUpdateText('Downloading update…', 'Descargando actualización…');
+            const installed = await startupBound(waitForWorkerInstall(reg.installing), 25000);
+            if (!installed && !reg.waiting) startupUpdateNotice = 'unavailable';
+          }
         }
+      } else if (navigator.onLine === false && !reg.waiting) {
+        startupUpdateNotice = 'offline';
       }
       if (reg.waiting && serviceWorker.controller) {
         startupUpdateText('Applying update…', 'Aplicando actualización…');
@@ -1824,6 +1855,7 @@
     } catch (_) {
       // Network, registration and storage failures preserve the old game.
       appReloadRequested = false;
+      startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
       finishStartupUpdate();
     }
   }
@@ -3722,6 +3754,7 @@
     $('title-saves').textContent = t('Saved Games & Backups', 'Partidas y copias de seguridad');
     $('title-settings').textContent = t('Settings', 'Ajustes');
     $('title-help').textContent = t('Help & Credits', 'Ayuda y créditos');
+    refreshStartupUpdateNotice();
     $('title-continue').disabled = startupUpdatePending || titleLoading || !valid ||
       !writerGuard.canWrite() || persistence.conflicted(game.s.mode) ||
       !!game.s.challenge?.gameOver;
@@ -7141,7 +7174,18 @@
     if (started && !paused && !document.hidden) restartGuard.arm(game);
     checkAppUpdate().catch(() => {});
   });
-  addEventListener('online', () => checkAppUpdate(true).catch(() => {}));
+  addEventListener('online', () => {
+    if (startupUpdateNotice === 'offline') {
+      startupUpdateNotice = null;
+      refreshStartupUpdateNotice();
+    }
+    checkAppUpdate(true).catch(() => {
+      if (!started) {
+        startupUpdateNotice = 'unavailable';
+        refreshStartupUpdateNotice();
+      }
+    });
+  });
   document.addEventListener('visibilitychange', () => {
     clearInput();
     last = performance.now();
