@@ -14,6 +14,18 @@ const fixtures = JSON.parse(
   ),
 );
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const Narration = require('../src/prototype/narration.js');
+assert(Narration.approved.D01.en.includes('brought his skeleton work crews') &&
+  Narration.approved.D01.en.includes('not raised from its graves') &&
+  Narration.approved.D01.en.includes('pay records'),
+  'Greenwood Crypt EN narration preserves paid imported work crews and the archaeological distinction');
+assert(Narration.approved.D01.es.includes('trajo sus cuadrillas de esqueletos') &&
+  Narration.approved.D01.es.includes('no los levantó de sus tumbas') &&
+  Narration.approved.D01.es.includes('registros de pago'),
+  'Greenwood Crypt ES narration preserves the same approved historical facts');
+assert(C.rules.dungeonLore.crypt.includes('not raised from its graves'),
+  'Crypt gameplay lore and bilingual narrative agree on the crews historical origin');
+
 {
   const g = new C('normal', 'paladin', rng(0x47564101));
   const door = g.zone().npcs.find((n) => n.id === 'den-ruins');
