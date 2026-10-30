@@ -34,7 +34,7 @@ function inspect(b, ctx = {}) {
   // When the release table says this build is already published, the
   // canonical latest-published line and all publication-gate status cells
   // must refer to the same release. Draft candidates are deliberately exempt.
-  const publishedBuild = /^\| Build\/cache version \|[^\n]*\bmerged and published\b/im.test(String(b.state));
+  const publishedBuild = /^\| Build\/cache version \|[^|\n]*\bmerged and published\b/im.test(String(b.state));
   if (publishedBuild) {
     const stateLines = String(b.state).split(/\r?\n/);
     const latest = stateLines.find(line => line.startsWith('**Latest verified published code/build version:**'));
