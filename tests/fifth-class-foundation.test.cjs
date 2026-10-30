@@ -37,6 +37,7 @@ const foundation = {
 };
 for (const [id, value] of [
   ['__proto__', foundation],
+  ['constructor', foundation],
   ['fifth', { ...foundation, basicAttackApproachRange: NaN }],
   ['fifth', { ...foundation, startingCompanions: ['dragon'] }],
   ['fifth', { ...foundation, formationRole: 'wizard' }],
@@ -52,9 +53,13 @@ assert.throws(() => Campaign.defineClassFoundation('fifth-fixture', foundation),
 assert.equal(Campaign.classes['fifth-fixture'], undefined);
 assert.deepEqual(Object.keys(classes), origin, 'foundation is not playable admission');
 assert.throws(() => new Campaign('normal', 'fifth-fixture'), /Unknown mode or class/);
+assert.throws(() => new Campaign('normal', 'constructor'), /Unknown mode or class/);
 const tampered = copy(priorSave);
 tampered.hero.class = 'fifth-fixture';
 assert.throws(() => Campaign.validate(tampered), /Invalid save/);
+const inherited = copy(priorSave);
+inherited.hero.class = 'constructor';
+assert.throws(() => Campaign.validate(inherited), /Invalid save/);
 assert.deepEqual(prior.snapshot(), priorSave, 'dormant registration changed no campaign');
 
 const candidate = {
