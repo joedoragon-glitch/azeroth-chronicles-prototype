@@ -6,6 +6,19 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const { assertNativeClearLane, nativeBasicProjectileHit } = require('./helpers/native-fixture-contracts.cjs');
+function findNative450Lane(g) {
+  // Locate an actual clear shot in the current authored Vale rather than
+  // assuming that coordinates from the pre-reconstruction map remain open.
+  for (let y = 350; y < g.zoneSize() - 350; y += 100)
+    for (let x = 250; x < g.zoneSize() - 700; x += 100) {
+      const target = { x, y }, hero = { x: x + 450, y };
+      if (!g.blocked(target.x, target.y, 'vale', 15) &&
+          !g.blocked(hero.x, hero.y, 'vale', 15) &&
+          g.line(target, hero) && g.clearSegment(target, hero, 15))
+        return { target, hero };
+    }
+  throw Error('Reconstructed Greenwood must retain a legal 450-unit firing lane');
+}
 const dist = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
 function prep(g,e,p) {
   const z=g.zone();
@@ -129,8 +142,7 @@ for(const range of [350,400,440,449,450]){
 for (const mode of ['normal', 'nightmare']) {
   const g=new Campaign(mode,'ranger',()=>0.91);
   g.enter('vale');
-  const target={x:1800,y:1800};
-  const hero={x:2250,y:1800};
+  const { target, hero } = findNative450Lane(g);
   assert(!g.blocked(target.x,target.y,'vale',15) &&
     !g.blocked(hero.x,hero.y,'vale',15) && g.line(target,hero) &&
     g.clearSegment(target,hero,15), 'clear native Greenwood long-range lane');
