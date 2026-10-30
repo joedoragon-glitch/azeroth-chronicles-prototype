@@ -6870,7 +6870,7 @@
         pointer !== null || worldPointer !== null) return false;
     const obstacles = [
       '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
-      '#skills', '#quick-items', '#developer-summon', '#cancel-navigation-button',
+      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#cancel-navigation-button',
       '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
     ].flatMap((selector) => {
       const el = document.querySelector(selector);
@@ -7352,6 +7352,12 @@
   developerSummonButton.setAttribute('aria-label', 'Summon a regional boss or captain');
   developerSummonButton.hidden = true;
   document.body.append(developerSummonButton);
+  const developerFinisherButton = document.createElement('button');
+  developerFinisherButton.id = 'developer-finisher';
+  developerFinisherButton.textContent = 'Finish';
+  developerFinisherButton.setAttribute('aria-label', 'Developer finisher and nearby sweep');
+  developerFinisherButton.hidden = true;
+  document.body.append(developerFinisherButton);
   const developerCombatMonitor = document.createElement('aside');
   developerCombatMonitor.id = 'developer-combat-monitor';
   developerCombatMonitor.setAttribute('aria-label', 'Developer combat monitor');
@@ -7373,6 +7379,31 @@
     );
   }
   developerSummonButton.onclick = openDeveloperSummonMenu;
+  function runDeveloperFinisher(sweep) {
+    closeMenu();
+    if (!started || game.s.mode !== 'developer') return;
+    const result = game.developerFinisher(null, sweep);
+    status(
+      result.kills
+        ? 'Developer finisher · ' + result.kills + (result.kills === 1 ? ' enemy defeated.' : ' enemies defeated.')
+        : 'No eligible enemy hit. Select a target or move into range and line of sight.',
+    );
+    if (result.kills) save();
+    updateHUD();
+  }
+  developerFinisherButton.onclick = () => {
+    if (!activePlay() || game.s.mode !== 'developer') return;
+    openMenu(
+      'Developer · Finisher',
+      'Extreme damage through normal enemy deaths. Real enemies drop real loot and advance progress; developer summons do not.',
+      [
+        action('Finish selected or nearest enemy', () => runDeveloperFinisher(false)),
+        action('Sweep nearby enemies (up to 8)', () => runDeveloperFinisher(true)),
+      ],
+      closeMenu,
+    );
+  };
+
   // Reuse the original portrait-stamped Crown loot painter for the HUD.
   // Rasterize it ONCE at 2x for the tiny UI badge. No separate generic
   // currency drawing, asset manifest, or recurring canvas work per HUD tick.
@@ -7403,6 +7434,7 @@
     if (navigationGuide && navigationGuide.campaign !== game) navigationGuide = null;
     const devActive = started && game.s.mode === 'developer';
     developerSummonButton.hidden = !devActive;
+    developerFinisherButton.hidden = !devActive;
     developerCombatMonitor.hidden = !devActive;
     if (devActive) {
       const telemetry = game.developerCombatSnapshot(),
