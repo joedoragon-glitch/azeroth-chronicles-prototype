@@ -582,3 +582,40 @@ for (const [heroClass, expectedRange] of [
   const restored = Campaign.restore(snapshot, () => 0.9);
   assert.equal(restored.hero.order?.type, 'attack', 'legacy attack order survives v4 restore');
 }
+
+
+// Investigation #684: live movement/navigation and Recall characterization.
+// These establish present four-class behavior; future fixes must not preserve
+// an unwanted Rogue-only Recall side effect by treating this as specification.
+for (const [heroClass, reach] of [
+  ['paladin', 120], ['mage', 400], ['ranger', 450], ['rogue', 220],
+]) {
+  const moving = heroAutoInvestigation(heroClass, [reach - 50]).game;
+  const beforeX = moving.hero.x;
+  moving.tick(0.05, { x: 1, y: 0 });
+  assert(moving.hero.x > beforeX, heroClass + ' moves through the native tick');
+  assert(moving.castMovementBasic(), heroClass + ' can passively attack after movement');
+  assert.equal(moving.hero.order, null, 'moving autoattack does not start pursuit');
+
+  const navigating = heroAutoInvestigation(heroClass, [reach - 50]).game;
+  const destination = { x: navigating.hero.x + 80, y: navigating.hero.y };
+  navigating.hero.order = { type: 'move', ...destination, navigation: true };
+  navigating.hero.path = navigating.route(navigating.hero, destination);
+  navigating.hero.routeAge = 1.3;
+  navigating.tick(0.05, { x: 0, y: 0 });
+  const journey = navigating.hero.order;
+  assert.equal(journey?.type, 'move', 'native map-style travel order remains active');
+  assert(navigating.castMovementBasic(), heroClass + ' fires while traveling');
+  assert.equal(navigating.hero.order, journey, 'passive fire retains journey command');
+
+  const recalled = heroAutoInvestigation(heroClass, [reach - 20]).game;
+  const returning = recalled.unit('soldier', recalled.hero.x + 10, recalled.hero.y + 10);
+  recalled.s.party = [returning];
+  recalled.s.recallActive = true;
+  assert(recalled.castMovementBasic(), heroClass + ' can defend during Recall');
+  assert.equal(
+    recalled.s.recallActive,
+    heroClass !== 'rogue',
+    heroClass + ' current passive basic Recall behavior (Rogue discrepancy under investigation)',
+  );
+}
