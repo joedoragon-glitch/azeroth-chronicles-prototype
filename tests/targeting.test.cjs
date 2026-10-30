@@ -485,3 +485,97 @@ for (const kind of ['archer', 'pet']) {
 console.log(
   'PASS visible target cycling, manual attack priority, queued approach, fallback and boss/summon lock, disengagement and zone cleanup',
 );
+
+
+// Investigation #684: characterize existing auto range, manual selection and legacy orders.
+// These are baseline observations, NOT approval of the existing target-lock policy
+// or the obsolete attack-order movement and automatic Skill 1 behavior.
+function heroAutoInvestigation(heroClass, distances) {
+  const game = new Campaign('normal', heroClass, () => 0.9);
+  const zone = game.zone();
+  for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) zone[key] = [];
+  game.s.party = [];
+  game.s.mercyTime = 0;
+  game.s.valeFieldAwakened = true;
+  game.s.thornHeroInitiated = true;
+  const reach = heroClass === 'rogue'
+    ? Campaign.rules.rogueHeroFoundation.basic.range
+    : game.heroSkillRange(1);
+  const lane = rangedBasicClearLane(game, Math.max(reach + 60, ...distances) + 1);
+  Object.assign(game.hero, { ...lane, basicCd: 0, order: null });
+  const enemies = distances.map((distance, i) =>
+    game.makeEnemy(
+      { species: 'goblin', name: 'Auto investigation ' + i,
+        level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
+      { x: lane.x + distance, y: lane.y },
+    ));
+  zone.enemies = enemies;
+  for (const enemy of enemies)
+    assert(game.line(game.hero, enemy), heroClass + ' clear investigation sightline');
+  return { game, reach, enemies };
+}
+
+for (const [heroClass, expectedRange] of [
+  ['paladin', 120], ['mage', 400], ['ranger', 450], ['rogue', 220],
+]) {
+  for (const distance of [expectedRange - 1, expectedRange, expectedRange + 1]) {
+    const { game, reach } = heroAutoInvestigation(heroClass, [distance]);
+    assert.equal(reach, expectedRange, heroClass + ' current basic reach');
+    const attacked = game.castMovementBasic();
+    assert.equal(
+      attacked, distance <= expectedRange,
+      heroClass + ' passive acquisition at ' + distance,
+    );
+    assert.equal(game.hero.basicCd > 0, attacked, heroClass + ' basic-only recovery');
+    assert.equal(game.hero.order, null, 'passive fire never creates an approach order');
+  }
+
+  // A manually selected, still-visible distant enemy is currently exclusive:
+  // even a different enemy within legal auto-basic reach does not receive fire.
+  // This is a documented design question, not a proposed future invariant.
+  {
+    const { game, enemies } = heroAutoInvestigation(heroClass, [
+      expectedRange - 20, expectedRange + 40,
+    ]);
+    const [near, distant] = enemies;
+    assert.equal(game.cycleHeroTarget(() => true)?.id, near.id);
+    assert.equal(game.cycleHeroTarget(() => true)?.id, distant.id);
+    assert.equal(game.selectedHeroTarget()?.id, distant.id);
+    assert.equal(
+      game.castMovementBasic(), false,
+      heroClass + ' current distant manual target suppresses near auto-basic',
+    );
+    assert.equal(game.hero.basicCd, 0, 'suppressed passive cast consumes no basic recovery');
+    assert.equal(game.hero.order, null, 'suppressed passive cast does not chase');
+
+    // A merely remembered squad/last-combo focus is not the same as a manual
+    // selection. When the player releases selection, nearby valid fire resumes.
+    game.manualHeroTargetId = null;
+    game.manualHeroTargetZone = null;
+    game.manualHeroTargetLocked = false;
+    assert.equal(game.s.heroTarget, distant.id, 'historical focus remains for fallback check');
+    assert.equal(game.castMovementBasic(), true, heroClass + ' unselected near target fires');
+    assert.equal(game.basicComboTargetId, near.id, 'automatic fallback targets near foe');
+  }
+}
+
+// The old order is an independent live instruction, unlike pointer move and
+// targeted skill-approach. Verify the source behavior without changing rules.
+{
+  const { game, enemies } = heroAutoInvestigation('ranger', [345]);
+  game.hero.order = { type: 'attack', id: enemies[0].id };
+  game.tick(0.05, { x: 0, y: 0 });
+  assert(game.hero.cd[0] > 0, 'legacy attack order automatically invokes manual Skill 1');
+  assert.equal(game.hero.basicCd, 0, 'legacy order did not fire the passive basic');
+  assert.equal(game.hero.order?.type, 'attack', 'legacy command remains active after its cast');
+}
+{
+  const game = new Campaign('normal', 'mage', () => 0.9);
+  const enemy = game.zone().enemies.find((e) => e.hp > 0 && !e.neutral);
+  assert(enemy, 'real enemy for persisted-order characterization');
+  game.hero.order = { type: 'attack', id: enemy.id };
+  const snapshot = game.snapshot();
+  assert.equal(snapshot.hero.order?.type, 'attack', 'legacy attack order enters v4 snapshot');
+  const restored = Campaign.restore(snapshot, () => 0.9);
+  assert.equal(restored.hero.order?.type, 'attack', 'legacy attack order survives v4 restore');
+}
