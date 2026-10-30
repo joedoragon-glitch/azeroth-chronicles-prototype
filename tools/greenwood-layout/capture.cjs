@@ -45,7 +45,7 @@ const z = g.zone(),
   by = (id) => z.npcs.find((n) => n.id === id),
   p = (id) => by(id).servicePoint || by(id);
 const scenes = [
-  ['start', { x: 300, y: 350 }],
+  ['start', { x: g.hero.x, y: g.hero.y }],
   ['refuge', p('rest')],
   ['hamlet', p('minor')],
   ['orchard', p('orchard')],
@@ -255,15 +255,23 @@ async function capture(name, target, width, height, clock) {
         sourceSha: cp.execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
         size,
         sources: Object.fromEntries(
-          ['engine', 'greenwood', 'data', 'rules', 'world', 'save', 'visuals', 'renderer'].map(
-            (f) => [
-              f,
-              require('node:crypto')
-                .createHash('sha256')
-                .update(fs.readFileSync(path.join(__dirname, '../../src/prototype/' + f + '.js')))
-                .digest('hex'),
-            ],
-          ),
+          [
+            'engine',
+            'greenwood',
+            'greenwood-landscape',
+            'data',
+            'rules',
+            'world',
+            'save',
+            'visuals',
+            'renderer',
+          ].map((f) => [
+            f,
+            require('node:crypto')
+              .createHash('sha256')
+              .update(fs.readFileSync(path.join(__dirname, '../../src/prototype/' + f + '.js')))
+              .digest('hex'),
+          ]),
         ),
         receipts,
       },

@@ -1,8 +1,8 @@
 # Greenwood Vale — regional design comparison
 
-**29 October 2026 · Inactive construction study · No replacement activated or accepted**
+**29 October 2026 · dev.237 implemented on draft #654 · Execution-quality audit in progress · Unmerged/unpublished**
 
-Authority: [restart commission on draft #644](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/644), [50 owner decisions](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md), [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545). This record contains distinct design evidence, not another release ledger. The five original documents remain historical references. Coordinates below are proposed whole-region plans, not claims about the playable map.
+Authority: [restart commission on draft #644](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/644), [50 owner decisions](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md), [epic #545](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/545). This record contains distinct design evidence, not another release ledger. The five original documents remain historical references. The alternatives preserve the design rationale; the selected 3200 implementation is now playable on the draft. Historical study receipts below describe their recorded revisions, not the current candidate.
 
 ## Fresh reality audit
 
@@ -43,17 +43,17 @@ Both plans retain the same identities and encounter/reward totals. Neither deriv
 | Millhaven: rest/supplier/recruiter/board | 650,600 | Central east–west working street; public fronts reserved before houses; south farm exit and east freight exit; gardens/storage behind frontages |
 | Orchard Hamlet: minor | 550,1750 | Small village frontage on western farm lane; crops/pastures rather than another town ring |
 | Orchard expansion: orchard | 780,2100 | Bearing/young/new plantings, drying/store yard and decorative working cellar; freight north to mill/town |
-| Western mill: mill-pond | Pond 950,1250; mill 1200,1400; shore marker 1040,1530 | Upstream tributary → retained impoundment/weir → short wetted headrace meeting wheel → tailrace joining river; dry loading apron on farm road |
+| Western mill: mill-pond | Pond 900,1260; mill 1200,1400; shore marker 1040,1530 | Upstream tributary → retained impoundment/weir → short wetted headrace meeting wheel → tailrace joining river; dry loading apron on farm road |
 | Northern crossing: bridge-north | 1670,1000 | Full-width maintained freight crossing, stone abutments, bridgehead receiving lane |
 | Southern crossing: bridge-south | 1740,2280 | Narrow timber rural crossing, visible continuous two-bank approaches |
-| Goblin roadside camp: goblin-camp / goblin-road-fort | 350,2640 | Legible broken-rectangle palisade, one open gate, guarded forecourt, domestic court and stores; separate from civilian street |
+| Goblin roadside camp: goblin-camp / goblin-road-fort | 350,2820 | Legible broken-rectangle palisade, one open gate, guarded forecourt, domestic court and stores; separate from civilian street |
 | Occupied old cellar: den-ruins / side-vale-cellars | 1080,2510 | Existing dangerous household/entrance, distinct from the current fruit store; woodland branch off agricultural loop |
 | Thornfang/Mira: field-thorn and native patrol | 920,2880 | Southern woodland home/training/feeding space, physical patrol across both banks; keep newcomer path safety and hero-first admission |
 | Scornfang Treasury: supply-entrance / supply-vale | 2120,1250 | Off-road entrance and defended receiving yard overlooking freight approach; fair gate opening and covered domestic/storage spaces |
 | Woodland cache: cache | 2420,1690 | Quiet east-bank staging clearing on the reclamation lane |
 | Skeleton watch: skeleton-watch | 2670,2220 | Older funerary stone enclosure with working domestic court; forest/estate path, not a civilian service |
-| Forest Crypt / unfinished estate: entrance | 2740,2790 | Southeast arrival court, old funerary mass behind new scaffold/material yards; associated guards/captive/interior IDs retained |
-| Merchant wagon: outbound | 2910,420 | Northeast terminal, yard/turning space and road south to bridge; remains an independent destination |
+| Forest Crypt / unfinished estate: entrance | 2830,2850 | Southeast arrival court, old funerary mass behind new scaffold/material yards; associated guards/captive/interior IDs retained |
+| Merchant wagon: outbound | 2880,280 | Northeast terminal, yard/turning space and road south to bridge; remains an independent destination |
 | Eastern farm water | 2720,1320 | Separate rural pond with managed pasture banks, not another mill |
 
 **Route hierarchy:** one principal cart spine town → northern bridge → northeast wagon, with a Treasury receiving spur; a narrower western farm lane town → mill → Hamlet/orchard; east-bank reclamation lane bridge → cache → estate; faint woodland circuits connect old cellar, den, southern crossing and watch. Purposeful loops may connect districts; no automatic join-every-component pass may paint extra roads. Private fronts are short door paths, not additional regional arterials.
@@ -70,7 +70,7 @@ Reject the candidate internally for any missing essential scene, road/roof/door 
 
 **Baseline receipts:** [four-seed native census](evidence/greenwood-redesign-20261029/baseline/census.json), [27 source-pinned Canvas captures](evidence/greenwood-redesign-20261029/baseline/captures-2700.json), [scene contact sheet](evidence/greenwood-redesign-20261029/baseline/native-contact-2700.webp) and [actual object/road overview](evidence/greenwood-redesign-20261029/baseline/overview-2700.webp). These are procedural fallback software-Canvas views at 150%, with live actors retained and simulation frozen for capture; not browser HUD, retained bitmap, Pixi, physical-device or owner acceptance. All four source worlds have 198 props, 32 ordinary enemies and 640 outdoor crowns; all 15 sampled destination routes reach their native targets. The existing `greenwood-flagship.test.cjs` rollback suite passed on unchanged source@fcc1f42: original worlds, expanded-save inverse conversion, identity/progress and repeat reload. Its pass certifies the baseline rollback contract only.
 
-## Construction study checkpoint — draft #654
+## Historical construction study checkpoint — draft #654
 
 The [implementation draft #654](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/654) now contains an **inactive construction study**, enabled only by `tools/greenwood-layout/fixtures.cjs::loadRedesign(size)`. The default game still uses the published rollback configuration. `greenwood-landscape.js` owns the new basin, authored route hierarchy, settlement parcels, complete gated perimeters, mill waterworks, summer hardwood/understory drawings and ground variation. Existing raster masters and registrations remain intact. Both sizes use the same topology with unchanged local building/actor footprints.
 
@@ -86,7 +86,7 @@ The first visual iteration was internally rejected: retained prototype scenery c
 
 **Still incomplete:** genuinely player-authored expanded/rolled-back saves; full first-region encounter/patrol and rescued-service review; meaningful land-use/edge and journey comparisons beyond raw prop counts; complete art/frontage/hydraulic self-review; actual Canvas/Pixi browser parity, sustained regional play and performance checks; final dimension choice, candidate activation/versioning and owner-ready evidence. Original-source synthetic migrations pass both sizes (unchanged input, quests/payments and tribute, 32 ordinary enemies, stable second reload, no unresolved placements). The bounded construction/worker/interior stage below extends this evidence; it does not certify all played saves. No candidate is offered for owner acceptance yet. No merge, publication or device verification is claimed.
 
-## Resumed lifecycle stage — source migration 2, scene revision 2
+## Historical resumed lifecycle stage — source migration 2, scene revision 2
 
 The supplied READY archives were read, all five actual owner screenshots inspected, and the recovered branch/head matched to #654. #644 remains the commission; #655's final disposition closes the proposed safeguard project without installing it. This stage changes Greenwood only and leaves the study inactive.
 
@@ -97,3 +97,14 @@ The first run exposed unchanged delivery breadcrumbs, a resident displaced on th
 Focused validation checks unchanged raw inputs; quests/payments/discovery/victories/rescues; exact remaining tribute and dead identities; construction and upgrade payment/progress; cargo delivery exactly once; stable second/third spatial reloads; recovery-camp reachability and native work completion; all three native interior exits and party arrivals; and transport-relative wagon arrival at both sizes. Final [3200 lifecycle receipt](evidence/greenwood-redesign-20261029/lifecycle-3200.json) and [3400 receipt](evidence/greenwood-redesign-20261029/lifecycle-3400.json) each pass all 14 cases with runtime/fixture hashes. `node tests/greenwood-flagship.test.cjs --record-study` passes the original default rollback checks plus these 28 cases; `node scripts/build.cjs --check`, changed-code Prettier 3.5.3 and `git diff --check` pass. The refreshed four-seed studies also pass every sampled destination/road, source migration, population/tribute and repeat-reload check at each size. [Four bounded unchanged-region controls](evidence/greenwood-redesign-20261029/scope-controls.json) compare exact fresh/restored roads, props, services, enemies, resources and construction to prior #654 head eb435b53; all match. These controls cover one seed at the 3200 configuration and do not certify whole-region gameplay or the independently newer main layouts. Reported runtime hashes were checked against the completed source. The ordinary test entry is `tests/greenwood-flagship.test.cjs`; its optional `--record-study` flag explicitly writes lifecycle receipts, while normal CI is read-only.
 
 No first-hour, encounter, art, renderer-parity, performance or owner-acceptance gate is closed by this stage. Next: measured edge-use/journey comparison and encounter/service review, then completed scene self-review before activation.
+
+
+## Implementation closeout and mandatory execution-quality gate
+
+The owner explicitly requires completion of the actual region, followed by an audit for poor task execution **before formal acceptance testing**. That audit must judge the built world against all 50 decisions, the five original documents, both restart commissions, the real owner screenshots and later clarifications, and the Marches/Highlands/Frontier quality references. It must identify and correct omissions, timid substitutions, weak composition and misleading completion claims; passing tests are not a substitute.
+
+The owner's real first-hour experience and final acceptance are reserved for direct exploration after the finished work is merged. Long automated playthroughs are **not required** and must not substitute for that review. The previous long orientation pilot was interrupted; its partial images/progress are diagnostic only, never a completed acceptance session. Gameplay automation is limited to short, specific defect checks and audit observations.
+
+The implementation now targets 3200: the same district relationships fit without shrinking assets, while 3400 lengthens the measured journeys without adding a required function. Current dev.236 main is integrated, including its authorized restoration of other regions. The draft enables the replacement as dev.237; it is not merged or published. Newcomers start at Millhaven; outer corners now contain the northern managed-woodland loop, northeast wagon yard, southwest Goblin household compound and southeast Crypt/estate approach. River/mill hydraulics, working frontages, separated growth stages, rare dry-rise conifers and restrained source-owned nature are authored together. Paid camp conflicts relocate the complete camp where possible instead of pulling the mill or defensive walls apart.
+
+**Next gate is the execution-quality audit, not a long playthrough.** Exact final evidence and the 50-decision disposition are still being assembled; older study captures and receipts retain their own source hashes and do not certify this revision.

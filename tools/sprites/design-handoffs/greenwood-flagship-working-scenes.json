@@ -4,12 +4,12 @@
   "designId": "greenwood-flagship-working-scenes",
   "name": "Greenwood working mill, current fruit cellar and estate works",
   "kind": "regional-scene",
-  "nextAction": "Continue inactive Greenwood reconstruction study in draft #654 under commission #644. Resolve save/route/art/browser gates and select dimensions before candidate activation; no merge or publication. Historical #570 was published, artistically rejected and then rolled back.",
+  "nextAction": "Complete the owner-required poor-task-execution audit of playable dev.237/#654 against all 50 decisions and reference materials before formal targeted acceptance checks. The owner conducts the real first-hour review after merge; long automated play is not a requirement.",
   "context": {
     "originConversation": "Greenwood Vale Flagship Reconstruction and Engineering Quality Mandate, 28 October 2026",
     "decisionSummary": "Implements W02\u2013W04, F01/F04/F06 and C04/C05 using current timber, stone, orchard and construction families. No new gameplay, lore, fruit species or raster replacements.",
     "decisionDate": "2026-10-28",
-    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/570",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/654",
     "contentDocuments": [
       "docs/GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md",
       "docs/GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md"
@@ -24,12 +24,12 @@
     "pendingCorrections": []
   },
   "reference": {
-    "sourceCommit": "Current source hashes in docs/evidence/greenwood-revised-20261028/source-verification.json; main baseline ef53b8b7 and remotely retained recovery 7c6fd0aa",
+    "sourceCommit": "Runtime fingerprints in docs/evidence/greenwood-redesign-20261029; historical dev.233 appearance is rejected, not the replacement blueprint.",
     "ownerFilesAndBranches": [
+      "src/prototype/greenwood-landscape.js",
       "src/prototype/greenwood.js",
       "src/prototype/visuals.js",
-      "feature/greenwood-flagship-resume-20261028",
-      "feature/greenwood-takeover-20261028"
+      "feat/greenwood-flagship-redesign-20261029"
     ],
     "exactEntityState": [
       {
@@ -77,8 +77,8 @@
     "variantRequirements": [],
     "proceduralOwnersAndReasons": [
       {
-        "owner": "src/prototype/visuals.js::craftedDecoration",
-        "reason": "Compose owner-required working rural scenes from existing material language."
+        "owner": "src/prototype/greenwood-landscape.js",
+        "reason": "Author the replacement Piedmont landscape, whole compounds, connected mill waterworks and distinct orchard growth stages; retained sprite masters remain available."
       }
     ]
   },

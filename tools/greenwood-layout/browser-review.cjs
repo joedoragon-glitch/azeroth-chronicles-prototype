@@ -7,9 +7,15 @@ const fs = require('node:fs'),
   crypto = require('node:crypto');
 const { chromium } = require('playwright'),
   sharp = require('sharp'),
-  C = require('../../src/prototype/engine');
+  C = process.argv.includes('--landscape')
+    ? require('./fixtures.cjs').loadRedesign(3200)
+    : require('../../src/prototype/engine');
 const root = path.resolve(__dirname, '../..'),
-  out = path.join(root, 'docs/evidence/greenwood-revised-20261028/browser');
+  out = process.argv.includes('--out')
+    ? path.resolve(process.argv[process.argv.indexOf('--out') + 1])
+    : path.join(root, 'docs/evidence/greenwood-revised-20261028/browser');
+const pixi = process.argv.includes('--pixi'),
+  landscape = process.argv.includes('--landscape');
 const executable = process.env.CHROMIUM_EXECUTABLE;
 if (!executable)
   throw Error('Set CHROMIUM_EXECUTABLE to an available official Chromium/headless-shell runtime');
@@ -47,6 +53,11 @@ const types = {
       'Content-Type': types[path.extname(file)] || 'application/octet-stream',
       'Cache-Control': 'no-store',
     });
+    if (landscape && relative === 'src/prototype/engine.js')
+      return res.end(
+        'PrototypeGreenwoodLandscape.configure(PrototypeData,PrototypeRules,3200);\n' +
+          fs.readFileSync(file, 'utf8'),
+      );
     fs.createReadStream(file).pipe(res);
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -55,14 +66,22 @@ const types = {
     browser = await chromium.launch({
       headless: true,
       executablePath: executable,
-      args: ['--no-sandbox', '--disable-dev-shm-usage'],
+      args: [
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--use-gl=angle',
+        '--use-angle=swiftshader',
+        '--enable-unsafe-swiftshader',
+        '--ignore-gpu-blocklist',
+        '--font-render-hinting=none',
+      ],
     });
     const receipts = [];
     for (const viewport of [
       { width: 1280, height: 800, touch: false, clock: 120 },
       { width: 393, height: 852, touch: true, clock: 120 },
       { width: 852, height: 393, touch: true, clock: 500 },
-    ]) {
+    ].filter((v, i) => !process.argv.includes('--desktop-only') || i === 0)) {
       const context = await browser.newContext({
           viewport: { width: viewport.width, height: viewport.height },
           hasTouch: viewport.touch,
@@ -86,6 +105,24 @@ const types = {
       assert(await resume.isEnabled());
       await resume.click();
       await page.waitForFunction(() => window.Prototype?.started && !Prototype.sceneLoading);
+      if (pixi) {
+        await page.locator('#menu-button').click();
+        await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
+        await page.getByRole('button', { name: 'Screen and performance', exact: true }).click();
+        await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
+        await page.waitForFunction(
+          () =>
+            Prototype.experimentalGraphics.phase === 'trial' ||
+            (Prototype.experimentalGraphics.phase === 'canvas' &&
+              Prototype.experimentalGraphics.lastError),
+          null,
+          { timeout: 240000 },
+        );
+        const graphics = await page.evaluate(() => Prototype.experimentalGraphics);
+        assert.equal(graphics.phase, 'trial', JSON.stringify(graphics));
+        await page.getByRole('button', { name: 'Keep WebGL2', exact: true }).click();
+        assert.equal(await page.evaluate(() => Prototype.experimentalGraphics.phase), 'confirmed');
+      }
       await page.evaluate(async () => {
         await PrototypeSprites.preload();
         Prototype.game.tick = () => {};
@@ -110,6 +147,8 @@ const types = {
             'thorn-den',
             'goblin-camp',
             'skeleton-watch',
+            'wagon',
+            'north-smallholds',
           ];
       for (const name of names) {
         const receipt = await page.evaluate(
@@ -120,7 +159,9 @@ const types = {
               p = (id) => n(id).servicePoint || n(id);
             const hold = PrototypeRules.creatureStrongholds.find((h) => h.id === 'skeleton-watch');
             const targets = {
-              start: { x: 300, y: 350 },
+              start: { x: Campaign.data.towns[0][0], y: Campaign.data.towns[0][1] },
+              wagon: p('outbound'),
+              'north-smallholds': { x: 700, y: 170 },
               refuge: p('rest'),
               hamlet: p('minor'),
               orchard: p('orchard'),
@@ -151,6 +192,8 @@ const types = {
               snapshotUnchanged: before === JSON.stringify(g.snapshot()),
               frameSkip: Prototype.frameSkip.status(),
               sprites: PrototypeSprites.status(),
+              graphics: Prototype.experimentalGraphics,
+              frameProfile: Prototype.frameProfile.report(),
               materials:
                 typeof PrototypeMaterials !== 'undefined' ? PrototypeMaterials.status() : null,
             };
@@ -161,6 +204,8 @@ const types = {
         assert(receipt.snapshotUnchanged);
         assert.equal(receipt.version, require('../../package.json').version);
         assert.deepEqual(errors, []);
+        if (pixi) assert.equal(receipt.graphics.mode, 'webgl2');
+        await page.waitForTimeout(180);
         const file = `browser-${name}-${viewport.width}x${viewport.height}-${viewport.clock === 120 ? 'day' : 'night'}.webp`;
         await sharp(await page.screenshot())
           .webp({ quality: 88 })
@@ -171,7 +216,9 @@ const types = {
           dpr: 1,
           ...receipt,
           layer:
-            'actual production HTML/Canvas/HUD with normal registered sprites and materials; seeded scene fixture, simulation frozen only during capture; desktop Chromium software runtime, not physical device acceptance',
+            'Actual production HTML/HUD with normal registered sprites/materials, ' +
+            (pixi ? 'confirmed Pixi WebGL2' : 'Canvas fallback') +
+            '; scoped seeded fixture, simulation frozen during capture; Chromium 153 with software SwiftShader, not physical-device or hardware FPS evidence',
         });
       }
       await context.close();
@@ -189,6 +236,7 @@ const types = {
               'app',
               'engine',
               'greenwood',
+              'greenwood-landscape',
               'world',
               'save',
               'visuals',

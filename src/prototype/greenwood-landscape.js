@@ -13,18 +13,18 @@
     town: [650, 600],
     hamlet: [550, 1750],
     orchard: [780, 2100],
-    pond: [950, 1250],
+    pond: [900, 1260],
     mill: [1200, 1400],
     north: [1670, 1000],
     south: [1740, 2280],
-    goblin: [350, 2640],
+    goblin: [350, 2820],
     cellars: [1080, 2510],
     den: [920, 2880],
     treasury: [2120, 1250],
     cache: [2420, 1690],
     watch: [2670, 2220],
-    crypt: [2740, 2790],
-    wagon: [2910, 420],
+    crypt: [2830, 2850],
+    wagon: [2880, 280],
   };
   const river = [
     [0, 1730, 68],
@@ -158,8 +158,8 @@
       [350, 2640],
       [550, 2420],
       [1080, 2730],
-      [2240, 440],
-      [2650, 800],
+      [2550, 620],
+      [2870, 980],
       [2740, 1570],
       [2670, 2220],
       [2860, 2940],
@@ -186,8 +186,8 @@
     ];
     const pond = ellipse(a.pond.x, a.pond.y, 140, 120),
       headrace = [
-        [1070, 1310],
-        [1090, 1350],
+        [1005, 1340],
+        [1040, 1390],
         [1110, 1415],
       ].map(q),
       tailrace = [
@@ -197,8 +197,8 @@
         [1500, 1550],
       ].map(q),
       stream = [
-        [850, 700],
-        [875, 910],
+        [900, 880],
+        [875, 980],
         [930, 1090],
         [950, 1160],
       ].map(q);
@@ -224,8 +224,8 @@
       q([350, 2450]),
       q([1460, 1000]),
       q([1880, 1000]),
-      a.cache,
-      q([2490, 2640]),
+      a.watch,
+      q([2730, 2630]),
       q([1940, 2280]),
       q([1530, 2280]),
     ].map((p) => [p.x, p.y]);
@@ -233,7 +233,7 @@
     R.millhavenOnboarding.orchardTrail = [a.town, q([650, 1550]), a.hamlet];
     const cfg = {
       version: 2,
-      sceneVersion: 2,
+      sceneVersion: 4,
       size,
       scale,
       anchors: a,
@@ -375,7 +375,7 @@
                 [1670, 1000],
                 [2070, 1000],
                 [2480, 650],
-                [2910, 420],
+                plan.wagon,
               ],
             ],
             [
@@ -394,20 +394,13 @@
               'farm',
               [
                 [650, 1550],
-                [940, 1620],
-                [1200, 1620],
+                [940, 1660],
+                [1200, 1660],
               ],
             ],
             [
               'farm',
-              [
-                [2320, 900],
-                [2500, 1350],
-                [2420, 1690],
-                [2240, 1980],
-                [2240, 2510],
-                [2740, 2790],
-              ],
+              [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], plan.crypt],
             ],
             [
               'path',
@@ -422,13 +415,7 @@
                 [1300, 2280],
               ],
             ],
-            [
-              'path',
-              [
-                [650, 2640],
-                [350, 2640],
-              ],
-            ],
+            ['path', [[650, 2640], [550, 2820], plan.goblin]],
             [
               'path',
               [
@@ -445,6 +432,74 @@
                 [1870, 1000],
                 [1870, 1250],
                 [2120, 1250],
+              ],
+            ],
+            [
+              'path',
+              [
+                [250, 600],
+                [75, 520],
+                [75, 180],
+                [450, 110],
+                [1000, 110],
+                [1590, 480],
+                [1590, 750],
+                [1430, 990],
+                [1330, 1000],
+              ],
+            ],
+            [
+              'path',
+              [
+                plan.wagon,
+                [3030, 620],
+                [3020, 1020],
+                [3030, 1480],
+                [2920, 1570],
+                [2520, 1570],
+                [2500, 1350],
+              ],
+            ],
+            [
+              'path',
+              [
+                [460, 480],
+                [460, 600],
+              ],
+            ],
+            [
+              'path',
+              [
+                [400, 710],
+                [400, 600],
+              ],
+            ],
+            [
+              'path',
+              [
+                [810, 730],
+                [810, 623],
+              ],
+            ],
+            [
+              'path',
+              [
+                [780, 470],
+                [780, 619],
+              ],
+            ],
+            [
+              'path',
+              [
+                [405, 1660],
+                [595, 1660],
+              ],
+            ],
+            [
+              'path',
+              [
+                [1040, 1530],
+                [1040, 1660],
               ],
             ],
           ].map(([kind, points]) => ({ kind, points: points.map(q) }));
@@ -466,7 +521,7 @@
             supplier: [400, 710],
             recruiter: [810, 730],
             board: [780, 470],
-            rest: [425, 390],
+            rest: [425, 380],
             minor: [370, 1560],
             outbound: plan.wagon,
             entrance: plan.crypt,
@@ -511,18 +566,18 @@
           const house = (id, kind, p) =>
             put(id, kind, p, { r: 38, decorative: false, roadBlocker: true });
           for (const [id, kind, p] of [
-            ['settlement-major-0', 'vale-cottage', [425, 390]],
+            ['settlement-major-0', 'vale-cottage', [425, 380]],
             ['settlement-major-1', 'vale-cottage', [200, 390]],
             ['settlement-major-2', 'vale-workshop', [1100, 360]],
             ['settlement-major-3', 'vale-cottage', [250, 940]],
-            ['settlement-major-4', 'vale-cottage', [560, 940]],
-            ['settlement-major-5', 'vale-cottage', [980, 940]],
-            ['settlement-major-6', 'vale-workshop', [1220, 700]],
+            ['settlement-major-4', 'vale-cottage', [380, 1180]],
+            ['settlement-major-5', 'vale-cottage', [970, 360]],
+            ['settlement-major-6', 'vale-workshop', [1390, 600]],
             ['settlement-major-7', 'vale-cottage', [850, 260]],
             ['settlement-minor-0', 'vale-cottage', [370, 1560]],
             ['settlement-minor-1', 'vale-cottage', [170, 1840]],
             ['settlement-minor-2', 'vale-cottage', [420, 2070]],
-            ['settlement-minor-3', 'vale-workshop', [1000, 1850]],
+            ['settlement-minor-3', 'vale-workshop', [1000, 1920]],
           ])
             house(id, kind, p);
           // Scene cards reserve a small working group of props at authored
@@ -544,6 +599,11 @@
               ['garden', 190, 1070],
               ['garden', 490, 1080],
               ['barrel', 1020, 1080],
+              ['garden', 160, 330],
+              ['woodpile', 1030, 235],
+              ['furrow-plot', 230, 1300],
+              ['furrow-plot', 340, 1300],
+              ['farm-tool-rack', 400, 1370],
             ],
             hamlet: [
               ['well', 650, 1870],
@@ -561,20 +621,20 @@
               ['fruit-tree', 880, 2010],
               ['sapling', 750, 1900],
               ['sapling', 900, 1820],
-              ['furrow-plot', 1060, 1950],
+              ['furrow-plot', 1130, 1870],
               ['drying-rack', 960, 2330],
               ['farm-tool-rack', 600, 1960],
               ['crate', 1100, 2250],
             ],
             mill: [
-              ['cart', 1190, 1660],
+              ['cart', 1340, 1780],
               ['supply-stack', 1350, 1640],
               ['barrel', 1310, 1500],
             ],
             wagon: [
-              ['cart', 2820, 400],
-              ['barrel', 2970, 570],
-              ['crate', 3030, 500],
+              ['cart', 2790, 260],
+              ['barrel', 2970, 380],
+              ['crate', 3030, 290],
             ],
             cache: [
               ['cart', 2320, 1820],
@@ -582,10 +642,10 @@
               ['scribe-desk', 2560, 1700],
             ],
             estate: [
-              ['estate-scaffold', 2880, 2700],
+              ['estate-scaffold', 2970, 2760],
               ['stacked-lumber', 2860, 2920],
               ['tool-rack', 2620, 2940],
-              ['supply-stack', 2780, 3020],
+              ['supply-stack', 2860, 3050],
             ],
             cellars: [
               ['stump', 980, 2470],
@@ -620,12 +680,16 @@
             roadBlocker: true,
             greenwoodFacility: 'mill',
           });
-          put('greenwood-working-cellar', 'fruit-cellar', [1020, 2120], {
+          put('greenwood-working-cellar', 'fruit-cellar', [1120, 2040], {
             r: 25,
             decorative: false,
             roadBlocker: true,
           });
-          put('greenwood-mill-sluice', 'mill-sluice', [1070, 1310], { greenwoodFacility: 'weir' });
+          put('greenwood-mill-sluice', 'mill-sluice', [1005, 1340], { greenwoodFacility: 'weir' });
+          put('greenwood-orchard-new-planting', 'sapling', [1080, 2260], {
+            greenwoodFacility: 'new-planting',
+            greenwoodDistrict: 'orchard',
+          });
           // Perimeters use shared line segments, with one deliberate gate.
           // Every picket and collision query reads these same world endpoints.
           const perimeter = [
@@ -648,7 +712,20 @@
           ]) {
             const center = a[key],
               rotate = key === 'goblin' ? 1 : -1;
-            perimeter.forEach(([x1, y1, x2, y2], j) => {
+            const walls =
+              key === 'goblin'
+                ? [
+                    [-210, -120, -70, -175],
+                    [-70, -175, 130, -150],
+                    [130, -150, 200, -80],
+                    [200, -80, 200, -65],
+                    [200, 75, 185, 200],
+                    [185, 200, 40, 220],
+                    [40, 220, -190, 170],
+                    [-190, 170, -210, -120],
+                  ]
+                : perimeter;
+            walls.forEach(([x1, y1, x2, y2], j) => {
               const start = { x: center.x + x1 * rotate, y: center.y + y1 },
                 end = { x: center.x + x2 * rotate, y: center.y + y2 };
               put('stronghold-' + id + '-wall-' + j, material, [0, 0], {
@@ -701,10 +778,15 @@
             [2940, 1900, 210, 360],
             [2220, 2980, 280, 180],
             [2040, 1780, 260, 240],
+            [2100, 680, 200, 240],
+            [2940, 2490, 180, 230],
+            [1390, 1910, 190, 250],
+            [1200, 2200, 190, 190],
+            [2870, 120, 220, 100],
           ];
           let trees = 0,
             low = 0;
-          for (let j = 0; j < 190; j++) {
+          for (let j = 0; j < 260; j++) {
             const id = 'greenwood-nature-' + j,
               h = hash(id),
               stand = stands[j % stands.length],
@@ -721,6 +803,12 @@
                 this.blocked(candidate.x, candidate.y, 'vale', 20, true) ||
                 this.distanceToRoad(z, candidate) < 105 ||
                 this.distanceToRoad({ roads: z.footpaths }, candidate) < 65 ||
+                cfg.tailrace.some(
+                  (p, j, points) =>
+                    j > 0 &&
+                    this.distanceToSegment(candidate, points[j - 1], p) <
+                      (kind === 'tree' ? 185 : 70),
+                ) ||
                 z.npcs.some((n) => distance(candidate, n.servicePoint || n) < 170) ||
                 z.buildings.some((b) => distance(candidate, b) < 230) ||
                 z.enemies.some((e) => distance(candidate, e.home || e) < 70) ||
@@ -739,7 +827,21 @@
             put(id, null, [0, 0], {
               ...selected,
               greenwoodNature: kind,
-              treeSpecies: ['oak', 'hickory', 'beech', 'tulip', 'sycamore'][h % 5],
+              treeSpecies:
+                j === 43 || j === 183
+                  ? 'pine'
+                  : [
+                      'oak',
+                      'oak',
+                      'oak',
+                      'oak',
+                      'hickory',
+                      'hickory',
+                      'hickory',
+                      'beech',
+                      'tulip',
+                      'sycamore',
+                    ][h % 10],
               r: kind === 'tree' ? 18 : 0,
               decorative: kind !== 'tree',
               icon: kind === 'tree' ? '🌲' : null,
@@ -747,10 +849,63 @@
             if (kind === 'tree') trees++;
             else low++;
           }
-          // Player construction has priority over authored scenery. A collision
-          // remains a failed acceptance item; never remove a paid structure.
-          for (const b of z.buildings)
+          // Keep a migrated paid camp as a complete functional object. Its new
+          // plot may change; tearing a mill or perimeter apart is not a safe
+          // substitute for a compatible construction migration.
+          for (const b of z.buildings) {
+            const essential = (p) => p.greenwoodWall || p.greenwoodFacility || p.roadBlocker;
+            if (z.props.some((p) => essential(p) && distance(p, b) < 190)) {
+              const before = { x: b.x, y: b.y };
+              const entrance =
+                b.dungeonEntrance &&
+                z.npcs.find((n) => n.kind === 'dungeon' && n.family === b.dungeonEntrance);
+              let plot = null;
+              for (let d = 220; d <= 900 && !plot; d += 40)
+                for (let j = 0; j < 32; j++) {
+                  const angle = (j * Math.PI) / 16,
+                    candidate = {
+                      x: before.x + Math.cos(angle) * d,
+                      y: before.y + Math.sin(angle) * d,
+                    };
+                  if (
+                    this.blocked(candidate.x, candidate.y, 'vale', 50, true) ||
+                    this.distanceToRoad(z, candidate) < 175 ||
+                    (entrance && distance(candidate, entrance) > R.dungeonCamp.builtRadius) ||
+                    z.buildings.some((other) => other !== b && distance(other, candidate) < 190) ||
+                    z.npcs.some((n) => distance(n.servicePoint || n, candidate) < 120) ||
+                    z.props.some((p) => essential(p) && distance(p, candidate) < 190)
+                  )
+                    continue;
+                  const route = this.route(a.town, candidate);
+                  if (route.length && distance(route.at(-1), candidate) < 35) {
+                    plot = candidate;
+                    break;
+                  }
+                }
+              if (plot) {
+                Object.assign(b, plot);
+                if (previous === 'vale')
+                  for (const u of this.s.party)
+                    if (u.order?.id === b.id && distance(u, before) < 220)
+                      Object.assign(u, { x: u.x + plot.x - before.x, y: u.y + plot.y - before.y });
+              } else
+                audit.push({
+                  id: b.id,
+                  essential: true,
+                  placed: false,
+                  reason: 'paid camp requires a compatible plot; object retained',
+                });
+            }
             for (const p of z.props.filter((p) => !p.playerOwned && distance(p, b) < 190)) {
+              if (essential(p)) {
+                audit.push({
+                  id: p.id,
+                  essential: true,
+                  placed: false,
+                  reason: 'fixed compound conflicts with retained paid camp',
+                });
+                continue;
+              }
               let selected = null;
               for (let d = 230; d <= 600 && !selected; d += 40)
                 for (let j = 0; j < 24; j++) {
@@ -765,7 +920,7 @@
                     break;
                   }
                 }
-              if (selected && !p.greenwoodWall) Object.assign(p, selected);
+              if (selected) Object.assign(p, selected);
               else
                 audit.push({
                   id: p.id,
@@ -774,6 +929,7 @@
                   reason: 'owned building parcel conflict',
                 });
             }
+          }
           z.greenwoodSceneAudit = audit;
           z.greenwoodNatureCensus = { trees, low };
           z.greenwoodRedesignScene = cfg.sceneVersion;
@@ -825,9 +981,9 @@
     if (e.greenwoodNature === 'tree') {
       const tall = species === 'hickory' || species === 'tulip',
         pale = species === 'sycamore' || species === 'beech',
-        height = tall ? 105 : 83,
+        height = tall ? 105 : species === 'oak' ? 76 : 83,
         spread =
-          species === 'oak' ? 47 : species === 'hickory' ? 31 : species === 'sycamore' ? 50 : 38;
+          species === 'oak' ? 55 : species === 'hickory' ? 38 : species === 'sycamore' ? 58 : 44;
       oval(3, 8, spread * 0.83, 10, '#112e2440');
       stroke(
         [
@@ -875,6 +1031,31 @@
             '#3f3829',
             0.9,
           );
+      if (species === 'pine') {
+        for (let j = 0; j < 5; j++) {
+          const y = -109 + j * 17,
+            w = 13 + j * 6;
+          ctx.beginPath();
+          ctx.moveTo(-w, y + 20);
+          ctx.quadraticCurveTo(-w * 0.8, y + 9, -4, y - 13);
+          ctx.quadraticCurveTo(2, y - 21, 8, y - 5);
+          ctx.quadraticCurveTo(w * 0.6, y + 7, w, y + 19);
+          ctx.quadraticCurveTo(0, y + 31, -w, y + 20);
+          ctx.fillStyle = j % 2 ? '#31583e' : '#3b6949';
+          ctx.fill();
+          stroke(
+            [
+              [-w * 0.5, y + 16],
+              [0, y + 11],
+              [w * 0.45, y + 17],
+            ],
+            '#749052',
+            1.5,
+          );
+        }
+        ctx.restore();
+        return;
+      }
       // Stable, asymmetrical lobed masses. Species alter branch topology and
       // crown proportion, rather than recoloring the generic tree bitmap.
       const palette =
@@ -896,23 +1077,18 @@
         [-1, -height + 30, spread * 0.66, 29],
       ];
       for (const [j, m] of masses.entries()) {
-        const [x, y, rx, ry] = m,
-          n = 11;
+        const [x, y, rx, ry] = m;
         ctx.beginPath();
-        for (let k = 0; k <= n; k++) {
-          const a = (k * Math.PI * 2) / n,
-            r = 1 + 0.12 * Math.sin(k * 2.7 + (h % 41) + j);
-          const px = x + Math.cos(a) * rx * r,
-            py = y + Math.sin(a) * ry * r;
-          if (!k) ctx.moveTo(px, py);
-          else
-            ctx.quadraticCurveTo(
-              px,
-              py,
-              x + Math.cos(a + 0.15) * rx * r,
-              y + Math.sin(a + 0.15) * ry * r,
-            );
-        }
+        const n = 10,
+          points = Array.from({ length: n }, (_, k) => {
+            const angle = (k * Math.PI * 2) / n;
+            const radius = 1 + 0.1 * Math.sin(k * 2.7 + (h % 41) + j);
+            return [x + Math.cos(angle) * rx * radius, y + Math.sin(angle) * ry * radius];
+          });
+        const middle = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+        ctx.moveTo(...middle(points[n - 1], points[0]));
+        for (let k = 0; k < n; k++)
+          ctx.quadraticCurveTo(...points[k], ...middle(points[k], points[(k + 1) % n]));
         ctx.closePath();
         ctx.fillStyle = palette[j % 3];
         ctx.fill();
@@ -1089,7 +1265,7 @@
       // Wheel root matches the shared world-space head/tailrace junction:
       // (-90,+15) world = (-79.8,-20.25) screen relative to this body.
       const wx = -79.8,
-        wy = -36;
+        wy = -56.25;
       ctx.strokeStyle = '#453c2d';
       ctx.lineWidth = 8;
       ctx.beginPath();
@@ -1116,6 +1292,29 @@
         '#8a8970',
       );
       line([-58, 10], [2, 28], '#b0ac89', 3);
+    } else if (e.greenwoodFacility === 'new-planting') {
+      for (const [x, y] of [
+        [-26, 4],
+        [8, -6],
+        [30, 6],
+      ]) {
+        ctx.fillStyle = '#776344';
+        ctx.beginPath();
+        ctx.ellipse(x, y, 12, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        line([x - 5, y], [x - 5, y - 24], '#a7905d', 2);
+        line([x, y], [x, y - 13], '#55713b', 2);
+        line([x - 5, y - 9], [x + 1, y - 9], '#c7b77e', 1);
+        poly(
+          [
+            [x, y - 10],
+            [x - 6, y - 15],
+            [x - 8, y - 10],
+            [x, y - 7],
+          ],
+          '#72934a',
+        );
+      }
     } else {
       poly(
         [
@@ -1126,8 +1325,24 @@
         ],
         '#777b66',
       );
-      for (let j = -26; j < 27; j += 9) line([j, -2 - j * 0.24], [j, -15 - j * 0.24], '#a08d61', 5);
-      line([-32, -15], [32, -28], '#d3bd89', 3);
+      line([-29, 2], [-29, -32], '#68523a', 5);
+      line([29, -10], [29, -44], '#68523a', 5);
+      line([-34, -33], [34, -46], '#baa06b', 5);
+      poly(
+        [
+          [-22, -13],
+          [22, -22],
+          [22, -10],
+          [-22, -1],
+        ],
+        '#8c7249',
+      );
+      line([0, -40], [0, -6], '#504c3a', 2);
+      ctx.strokeStyle = '#b7a879';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, -42, 8, 5, -0.2, 0, Math.PI * 2);
+      ctx.stroke();
     }
     ctx.restore();
   }

@@ -257,6 +257,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Highlands Treasury DEV138](HIGHLANDS_TREASURY_DEV138.md) — *Dated record.* Describes highlands treasury decisions, constraints or engineering observations from its original development checkpoint.
 - **[Ironroot Highlands Layout](IRONROOT_HIGHLANDS_LAYOUT.md)** — **Reference.** Describes ironroot highlands layout decisions, constraints or engineering observations from its original development checkpoint.
 - [Orchard Witness DEV147](ORCHARD_WITNESS_DEV147.md) — *Dated record.* Relocation and saved-position migration of the Orchard witness to a visible roadside spot.
+- [Regional Street Clearance Rollback Audit 20261029](REGIONAL_STREET_CLEARANCE_ROLLBACK_AUDIT_20261029.md) — *Dated source/rollback review.* Before-and-after ledger of non-Greenwood road connections, moved props and conservative rollback limits.
 - **[Regional Handoff Audit](REGIONAL_HANDOFF_AUDIT.md)** — **Reference.** Examines regional for source or design inconsistencies, recording dated findings and limits.
 - [Side Dungeon Design Discussion 20261021](SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md) — *Dated record.* Preserves owner discussion and evolving decisions about side dungeon design discussion, subject to later rulings.
 - [Snapshot Transport And HUD Visual Preaudit 20261015](SNAPSHOT_TRANSPORT_AND_HUD_VISUAL_PREAUDIT_20261015.md) — *Dated record.* Examines snapshot transport and HUD visual preaudit for source or design inconsistencies, recording dated findings and limits.
