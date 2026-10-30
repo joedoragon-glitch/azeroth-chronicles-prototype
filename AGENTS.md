@@ -17,6 +17,15 @@
 
 - **Pre-publication docs gate:** The existing focused workflow runs the lightweight offline `scripts/docs-release-consistency.cjs` check before its build can publish. Every build-version bump must update the active `docs/DEVELOPMENT_STATE.md` source-version marker and visible build line **in the same implementation PR**. Keep README, this policy and the documentation index free of independent 'latest build' numbers. Game-facing runtime changes must include an affected existing feature/player documentation update in the same PR, even without a version bump. Automation checks documentation presence and current-version/status consistency; PR review checks semantic accuracy. Never predeclare a candidate published before the exact GitHub Pages run succeeds; after an authorized publication, reconcile its verified receipt in the existing Development state. This does not introduce a broad test suite, extra workflow, automatic merge or device-verification claim.
 
+## Owner–assistant Developer Mode link convention (30 October 2026)
+
+When the owner asks for "Developer Mode", "the Developer Mode link", says they want to enter Developer Mode, or plans to inspect a region using Developer Mode, interpret this as the game's existing opt-in developer testing session. **Answer immediately with the direct playable URL; do not ask what Developer Mode means or begin a web/repository investigation each time.**
+
+- **iPhone / touch:** https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/phone.html?developer=1
+- **Desktop / browser:** https://joedoragon-glitch.github.io/azeroth-chronicles-prototype/index.html?developer=1
+- If the owner is using their iPhone, default to the phone link; otherwise provide the relevant device link, or both when the device is unclear. Use the existing query parameter `?developer=1`, not an imagined `dev=1` parameter. For how developer saves and testing controls work, consult [Developer Mode](docs/DEVELOPER_MODE.md).
+- These are **convenience links, not passwords**: `?developer=1` is a publicly knowable opt-in feature and does not provide access control. The owner does **not** want a new player-facing README shortcut, UI link, game runtime change, or separate document just to support this conversational workflow. Do not publish private save data, credentials, or diagnostic session details.
+
 ## Owner's public communication voice (28 October 2026)
 
 For forum announcements, release posts, player replies, development reflections, and other public ghostwriting attributed to the owner, read [Public communication voice](docs/COMMUNICATION_STYLE.md) before drafting. Match the existing thread and language, write naturally rather than as a promotional release, distinguish verified published status from intentions, and respect [brand identity](docs/BRAND_IDENTITY.md). The private Writing Profile v1.1 and original samples are not part of this public repository; never copy private source text into commits or forum drafts without owner approval. This does **not** change the narrative voices of in-game characters or authorize posting, merging or deployment.
