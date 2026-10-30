@@ -491,6 +491,9 @@ console.log(
 // These are baseline observations, NOT approval of the existing target-lock policy
 // or the obsolete attack-order movement and automatic Skill 1 behavior.
 function heroAutoInvestigation(heroClass, distances) {
+  // The browser registers the playable fourth class at startup; standalone
+  // native tests must explicitly opt into the same registry first.
+  if (heroClass === 'rogue' && !Campaign.classes.rogue) Campaign.enableRoguePlaytest();
   const game = new Campaign('normal', heroClass, () => 0.9);
   const zone = game.zone();
   for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) zone[key] = [];
