@@ -129,12 +129,13 @@ for(const mode of ['normal','nightmare']){
     retreatOrigin:{x:e.x,y:e.y},travelRemaining:12,stalled:0,
     anchor:null,holdRemaining:12
   }]]);
+  const originalHome = { ...e.home };
   const hp=e.hp;
   assert(g.damage(e,100,'hero'));
   assert(hp-e.hp>0 && hp-e.hp<100,'in-travel damage reduction remains active');
   tick(g);
   assert.equal(g.tacticalRogueRegroup(e)?.phase,'travel',
     'damage never forcibly discards a supported regroup journey');
-  assert.deepEqual(e.home, { x: e.x, y: e.y }, 'original home is intact');
+  assert.deepEqual(e.home, originalHome, 'original home is intact despite travel movement');
 }
 console.log('PASS Rogue anchor integrity: prior vs new hit, outmatched think/flee, cooldown, no-hit, allied retreat');
