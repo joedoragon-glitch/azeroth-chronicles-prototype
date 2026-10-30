@@ -91,6 +91,14 @@ The table below is intentionally **current ownership reference**, rather than an
 
 **How domain modules work:** World, navigation, progression, save, hero/boss/shared combat, party, economy and rewards **install method descriptors on the shared `Campaign`** before the constructor is exported. Modules receive the constructor and explicit dependencies rather than importing `engine.js` or browser storage. `Campaign.classes`, discipline profiles, live rules and migration maps remain compatible interfaces, **not** license to make parallel balance tables. The existing game and tests depend on those descriptors.
 
+### Dormant fifth-class foundation — proposed branch code, not a fifth playable hero
+
+The fifth-class housekeeping branch consolidates independent company, basic-attack approach distance, and formation-role assumptions into a per-class **foundation** in `engine.js`. Paladin, Mage, Ranger and Rogue keep their existing values. `Campaign.defineClassFoundation(id, profile)` validates and freezes a future class's **dormant** metadata without exposing it in `Campaign.classes`, saves, Succession or New Game. Rejected partial or duplicate descriptors never replace an existing class.
+
+`Campaign.classAdmissionIssues(id, definition)` checks class icon, stats, discipline growth, the actual `hero-combat.js` dispatch owner and charged Skill 1 timing. `Campaign.registerPlayableClass` fails before mutating any active class registry if a check is missing. Rogue's current explicit opt-in uses that guarded path; no new class is admitted. Unknown charged Skill 1 cooldowns now fail closed rather than producing `NaN`; `party.js` reads declared formation roles, and `app.js` does not mislabel a future class's growth as Mage growth. Fifth-class count wording is dormant until five real classes are registered.
+
+**Not implemented by the housekeeping:** Strategist gameplay, terrain skills, Field Orders, the eight authored normal/charged forms, instructor skill descriptions, controls, visual effects, localization, actual Fifth-class saves, real browser acceptance or device performance. The future class implementer must still supply a real combat owner and charged form and verify every active-system boundary; a foundation does not assert readiness. This is not a v4 migration, live class toggle or release.
+
 ## Simulation, combat and cross-system ownership
 
 `engine.js` remains the authoritative model for world time, enemies, encounters, quest progress, death/Succession and overall campaign state. `rules.js` holds live balance and combat-geometry figures; `progression.js` owns learned skill/discipline/instructor/equipment growth; `hero-combat.js` dispatches native moves for **Paladin, Mage, Ranger and Rogue**. Some old `hero-combat.js` header wording refers to the three-class generic branch; it is **not** proof the playable Rogue is missing.
