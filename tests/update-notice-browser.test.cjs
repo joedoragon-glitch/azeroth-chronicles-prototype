@@ -167,13 +167,27 @@ const server = http.createServer((req, res) => {
       const loaded = page.waitForEvent('domcontentloaded');
       await page.locator('#update-button').click();
       await loaded;
-      await page.waitForFunction(() => window.Prototype?.game.hero.gold === 42424);
+      await page.waitForFunction(() =>
+        document.getElementById('startup-update').hidden &&
+        !document.getElementById('title-screen').hidden &&
+        window.Prototype?.game.hero.gold === 42424);
       assert(await page.locator('#update-button').isHidden());
+      await page.locator('#title-continue').click();
+      await page.waitForFunction(() => window.Prototype?.started);
       const cachesAfter = await page.evaluate(() => caches.keys());
       assert(cachesAfter.includes(cacheName()));
       assert(!cachesAfter.includes('azeroth-app-v' + version + '-notice-a'));
       await page.reload();
-      await page.waitForFunction(() => window.Prototype?.game.hero.gold === 42424);
+      await page.waitForFunction(() =>
+        document.getElementById('startup-update').hidden &&
+        !document.getElementById('title-screen').hidden &&
+        window.Prototype?.game.hero.gold === 42424);
+      const offlineNotice = await page.locator('#startup-update-notice').textContent();
+      assert.match(offlineNotice, phone
+        ? /Sin conexión.*No se pudieron buscar actualizaciones/i
+        : /offline.*could not check for updates/i);
+      await page.locator('#title-continue').click();
+      await page.waitForFunction(() => window.Prototype?.started);
       failUpdateCheck = true;
       await page.locator('#menu-button').click();
       await page
