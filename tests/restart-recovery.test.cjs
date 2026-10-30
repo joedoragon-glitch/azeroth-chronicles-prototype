@@ -150,12 +150,15 @@ function bootstrap(store) {
   const app1 = bootstrap(store);
   // Reposition and save through an ordinary pagehide; this is a clean exit.
   const g1 = app1.scope.Prototype.game;
-  Object.assign(g1.hero, { x: 1020, y: 1290 });
+  // The approved Greenwood reconstruction changes collision geometry. Save a genuinely
+  // safe landing and require exact persistence of that valid coordinate.
+  const cleanLanding = g1.safe(1020, 1290);
+  Object.assign(g1.hero, cleanLanding);
   for (const listener of app1.events.pagehide || []) listener();
   const guard = Persistence.createRestartGuard({ storage: store, Campaign });
   assert.equal(guard.read(), null, 'Clean close must remove crash suspicion');
   const app2 = bootstrap(store);
-  assert.deepEqual(position(app2.scope.Prototype.game), [1020, 1290],
+  assert.deepEqual(position(app2.scope.Prototype.game), [cleanLanding.x, cleanLanding.y],
     'Normal clean reopen resumes at the exact previous player position');
   assert.equal(app2.scope.Prototype.game.hero.gold, original.hero.gold);
 }
