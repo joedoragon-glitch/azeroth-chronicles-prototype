@@ -16,7 +16,7 @@
   const classFoundations = Object.create(null);
   function defineClassFoundation(id, profile) {
     if (typeof id !== 'string' || !/^[a-z][a-z0-9-]{1,31}$/.test(id) ||
-        Object.hasOwn(classFoundations, id))
+        Object.hasOwn(classFoundations, id) || Object.hasOwn(Object.prototype, id))
       throw Error('Invalid or duplicate hero class foundation');
     const { startingCompanions, basicAttackApproachRange, formationRole } = profile || {};
     if (!Array.isArray(startingCompanions) || startingCompanions.length > 4 ||
@@ -86,7 +86,7 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !classes[heroClass])
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass))
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -3733,7 +3733,7 @@
         !this.s.challenge.succession ||
         !this.s.challenge.pending ||
         this.s.challenge.fallen.includes(heroClass) ||
-        !classes[heroClass]
+        !Object.hasOwn(classes, heroClass)
       )
         return false;
       const old = this.hero,
