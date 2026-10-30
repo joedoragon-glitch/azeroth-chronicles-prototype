@@ -2619,7 +2619,7 @@
           if (
             z.id === 'vale' &&
             R.greenwoodLayout?.version === 2 &&
-            z.greenwoodRedesignScene === 1
+            z.greenwoodRedesignScene === R.greenwoodLayout.sceneVersion
           ) {
             this.syncThornArrival(z);
             this.setSceneryTraversal(z);

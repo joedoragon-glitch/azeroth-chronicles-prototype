@@ -373,11 +373,7 @@
         // the existing 200-member company ceiling (never a new save schema).
         if (care.recoveryQueue !== undefined) {
           const additional = care.recoveryQueue;
-          if (
-            !Array.isArray(additional) ||
-            additional.length > 199 ||
-            !care.recovery
-          )
+          if (!Array.isArray(additional) || additional.length > 199 || !care.recovery)
             throw Error('Invalid companion recovery queue');
           const seen = new Set(care.recovery.companionIds);
           for (const r of additional) {
@@ -896,8 +892,11 @@
           throw Error('Invalid charm provenance');
         const capturedSources = new Set(),
           capturedIds = new Set(),
-          speciesNames = new Map([...D.species.flat().map((row) => [row[0], row[1]]),
-            ['wraith', 'Lantern wraith'], ['stalker', 'Ash stalker']]);
+          speciesNames = new Map([
+            ...D.species.flat().map((row) => [row[0], row[1]]),
+            ['wraith', 'Lantern wraith'],
+            ['stalker', 'Ash stalker'],
+          ]);
         const validateCapture = (u) => {
           const a = u.charmOrigin,
             record = captures[u.id];
@@ -917,8 +916,10 @@
             subtype = 'enemy:' + a.species + ':' + (u.type === 'archer' ? 'ranged' : 'melee'),
             variant = u.type === 'archer' ? R.rangedProfiles[a.species]?.variant : null,
             canonicalName = speciesName + (variant ? ' ' + variant : '');
-          if ((a.species === 'wraith' && u.type !== 'archer') ||
-              (a.species === 'stalker' && u.type !== 'soldier'))
+          if (
+            (a.species === 'wraith' && u.type !== 'archer') ||
+            (a.species === 'stalker' && u.type !== 'soldier')
+          )
             throw Error('Invalid night Charm role');
           if (
             !speciesName ||
@@ -984,22 +985,28 @@
           // An individual Mastery 0–III progress counter, capped at Tier III.
           // Older version-4 saves begin at zero; malformed saves cannot inject
           // free levels or infinite mastery progression.
-          if (u.charmRingleaderTrained === undefined)
-            u.charmRingleaderTrained = false;
-          if (typeof u.charmRingleaderTrained !== 'boolean' ||
-              (u.charmRingleaderTrained && !u.charmOrigin))
+          if (u.charmRingleaderTrained === undefined) u.charmRingleaderTrained = false;
+          if (
+            typeof u.charmRingleaderTrained !== 'boolean' ||
+            (u.charmRingleaderTrained && !u.charmOrigin)
+          )
             throw Error('Invalid individual Ringleader training');
           if (u.masteryPoints === undefined) u.masteryPoints = 0;
-          if (!Number.isInteger(u.masteryPoints) || u.masteryPoints < 0 ||
-              u.masteryPoints > R.balance.companions.mastery.thresholds[2])
+          if (
+            !Number.isInteger(u.masteryPoints) ||
+            u.masteryPoints < 0 ||
+            u.masteryPoints > R.balance.companions.mastery.thresholds[2]
+          )
             throw Error('Invalid companion mastery');
           if (u.masteryGuardianKeys === undefined) u.masteryGuardianKeys = [];
-          if (!Array.isArray(u.masteryGuardianKeys) ||
-              u.masteryGuardianKeys.length > 256 ||
-              new Set(u.masteryGuardianKeys).size !== u.masteryGuardianKeys.length ||
-              u.masteryGuardianKeys.some((key) =>
-                typeof key !== 'string' ||
-                !/^[a-z0-9-]+:[a-z0-9-]+:-?\d+:-?\d+$/.test(key)))
+          if (
+            !Array.isArray(u.masteryGuardianKeys) ||
+            u.masteryGuardianKeys.length > 256 ||
+            new Set(u.masteryGuardianKeys).size !== u.masteryGuardianKeys.length ||
+            u.masteryGuardianKeys.some(
+              (key) => typeof key !== 'string' || !/^[a-z0-9-]+:[a-z0-9-]+:-?\d+:-?\d+$/.test(key),
+            )
+          )
             throw Error('Invalid guardian mastery receipts');
           if (u.skill1Cd === undefined) u.skill1Cd = 0;
           if (u.skill2Cd === undefined) u.skill2Cd = 0;
@@ -1492,8 +1499,10 @@
               !p.garunPreview &&
               ((z.id === 'vale' &&
                 z.greenwoodSourceVersion === 2 &&
-                p.greenwoodFacility === 'weir' &&
-                p.r === 0) ||
+                ((p.greenwoodFacility === 'weir' && p.r === 0) ||
+                  p.playerOwned ||
+                  p.owned ||
+                  p.custom)) ||
                 !c.blocked(p.x, p.y, z.id, p.r || 0, true)),
           );
           c.roadNetwork(z);
@@ -1565,6 +1574,10 @@
             families.add(e.family);
             return true;
           });
+          // An imported hero can be inside a Greenwood interior. Complete its
+          // parent exterior before the exit action reads the entrance position;
+          // enter() otherwise receives a stale pre-composition arrival point.
+          if (z.id === 'vale' && R.greenwoodLayout?.version === 2) c.greenwoodFinish(z);
         }
         c.zone();
         c.refreshNPCs();

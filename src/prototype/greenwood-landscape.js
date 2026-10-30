@@ -233,7 +233,7 @@
     R.millhavenOnboarding.orchardTrail = [a.town, q([650, 1550]), a.hamlet];
     const cfg = {
       version: 2,
-      sceneVersion: 1,
+      sceneVersion: 2,
       size,
       scale,
       anchors: a,
@@ -301,6 +301,12 @@
           if (p.home) move(p.home, key);
           if (p.servicePoint) move(p.servicePoint, key);
           if (p.order && Number.isFinite(p.order.x)) move(p.order, key);
+          // Expanded saves keep breadcrumbs in expanded coordinates. The old
+          // rollback did not convert these, and later play could replace some
+          // with 2700 coordinates: that mixed history cannot be safely inferred.
+          // Let native delivery replan only that route; retain order/cargo/costs.
+          if (z.greenwoodRollbackVersion === 1 && p.order?.journey) delete p.order.journey;
+          else for (const step of p.order?.journey?.points || []) move(step, key);
           for (const k of ['path', 'pathTarget', 'idleWanderTarget']) delete p[k];
         };
         for (const p of [...z.props, ...z.npcs, ...z.enemies, ...z.nodes, ...z.buildings]) move(p);
@@ -778,7 +784,14 @@
           for (const node of z.nodes)
             if (this.blocked(node.x, node.y, 'vale'))
               Object.assign(node, this.safe(node.x, node.y, 'vale'));
-          const witness = z.npcs.find(n => n.id === 'thorn-local-report');
+          // Restore's first safety pass saw the old scenery. Resolve against
+          // the completed scene now, so a second reload cannot move a resident
+          // out of a newly installed mill, house or perimeter.
+          for (const enemy of z.enemies)
+            for (const p of [enemy.home, enemy])
+              if (p && this.blocked(p.x, p.y, 'vale'))
+                Object.assign(p, this.safe(p.x, p.y, 'vale'));
+          const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
         } finally {
           this.s.zone = previous;

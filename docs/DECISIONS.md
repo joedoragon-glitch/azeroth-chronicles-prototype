@@ -324,6 +324,8 @@ These handoffs authorize regional authoring while preserving existing campaign r
 
 #### Greenwood flagship selection — 29 October 2026
 
+**Historical selection, superseded:** the owner rejected dev.233's environment and authorized the interim original-layout rollback. [The #644/#654 replacement study](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) replaces the spatial blueprint, preserves gameplay/progress and compares 3200/3400 without a final dimension choice. The selection below describes the rejected first reconstruction, not a constraint on the new design.
+
 The measured 3200-unit layout is selected over the preserved 2700 baseline and rejected 3400 alternative. The approved 50-decision Piedmont-inspired register governs the working mill and single western pond, staged orchards, separate decorative fruit cellar, both crossings and Scornfang's Treasury. Existing Old Orchard Cellars, Thornfang/Mira, the unfinished estate, six quests, 32 ordinary outdoor enemies and 640 finite outdoor crowns remain. [Authorial register](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md).
 
 #### Structure scale, edge-space and encounter density · 9 October 2026

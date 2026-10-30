@@ -228,7 +228,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## World, geography, travel and narrative
 
-- [Greenwood redesign masterplan comparison](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) — *Dated design evidence.* Two different regional plans, selected topology, unfixed size, current-source baseline and migration/acceptance requirements under commission #644.
+- [Greenwood redesign masterplan comparison](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) — *Dated design evidence.* Two different regional plans, selected topology, unfixed size, current-source baseline and source-pinned construction/worker/interior lifecycle evidence under commission #644; acceptance requirements remain open.
 - **[Greenwood Flagship Work Handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md)** — **Maintained implementation handoff.** Selected 3200 layout, scene/save/route evidence, release authorization and pending owner playtest.
 - [Greenwood Geography and Livelihood Audit](GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md) — *Dated record.* Preserved 2700 source inventory, deficiencies and evidence overlays; current status routes to the handoff.
 - **[Greenwood Owner Art Direction](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md)** — **Approved design reference.** The 50 authorial decisions, including Scornfang ownership, with protected identities and engineering boundaries.
