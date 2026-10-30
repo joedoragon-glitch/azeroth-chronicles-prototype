@@ -34,19 +34,19 @@ function inspect(b, ctx = {}) {
   // When the release table says this build is already published, the
   // canonical latest-published line and all publication-gate status cells
   // must refer to the same release. Draft candidates are deliberately exempt.
-  const publishedBuild = /^\\| Build\\/cache version \\|[^\\n]*\\bmerged and published\\b/im.test(String(b.state));
+  const publishedBuild = /^\| Build\/cache version \|[^\n]*\bmerged and published\b/im.test(String(b.state));
   if (publishedBuild) {
-    const stateLines = String(b.state).split(/\\r?\\n/);
+    const stateLines = String(b.state).split(/\r?\n/);
     const latest = stateLines.find(line => line.startsWith('**Latest verified published code/build version:**'));
-    const actual = latest?.match(/`(\\d+\\.\\d+\\.\\d+\\+snapshot\\.dev\\.\\d+)`/)?.[1];
+    const actual = latest?.match(/`(\d+\.\d+\.\d+\+snapshot\.dev\.\d+)`/)?.[1];
     if (actual !== version) {
       errors.push('Development state latest verified published version missing or stale');
     }
-    const currentDev = version.match(/\\.dev\\.(\\d+)$/)[1];
+    const currentDev = version.match(/\.dev\.(\d+)$/)[1];
     for (const label of ['Source', 'Focused automation', 'GitHub Pages publication']) {
       const row = stateLines.find(line => line.startsWith('| ' + label + ' |'));
       const statusCell = row?.split('|')[2] || '';
-      if (statusCell.match(/\\bdev\\.(\\d+)\\b/i)?.[1] !== currentDev) {
+      if (statusCell.match(/\bdev\.(\d+)\b/i)?.[1] !== currentDev) {
         errors.push('Development state ' + label + ' published checkpoint missing or stale');
       }
     }
