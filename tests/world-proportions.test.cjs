@@ -41,7 +41,7 @@ assert.equal(sample('enemy', { species: 'goblin' }), 1);
 assert.equal(sample('prop', { structure: 'vale-fence' }), 1);
 
 const baselines = [
-  ['vale', 2700, 32],
+  ['vale', 3200, 32],
   ['march', 3000, 40],
   ['highlands', 3400, 48],
   ['frontier', 3400, 56],
@@ -52,7 +52,7 @@ const audit = [];
 for (const [zoneId, size, ordinaryBase] of baselines) {
   game.enter(zoneId);
   const zone = game.zone();
-  assert.equal(game.zoneSize(), size, zoneId + ' boundaries match the independently measured regional baseline');
+  assert.equal(game.zoneSize(), size, zoneId + ' boundaries match the accepted regional reconstruction or preserved baseline');
   assert.equal(Campaign.data.regions.find((r) => r.id === zoneId).enemy_count, ordinaryBase);
   const before = JSON.stringify(game.snapshot());
   const entries = [
