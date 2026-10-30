@@ -38,7 +38,7 @@
     // or examine paths/nearby actors while taking these observations.
     const partyDiagnosticSessions = new WeakMap();
     const partyDiagnosticCooldownKeys = [
-      'cd', 'skill1Cd', 'skill2Cd', 'skillGlobalCd', 'healCd', 'manaCd',
+      'cd', 'skill1Cd', 'skill2Cd', 'skill3Cd', 'skillNightCd', 'skillGlobalCd', 'healCd', 'manaCd',
       'survivalCd', 'supportCd', 'potionCd',
     ];
     const partyDiagnosticRound = (value) =>
@@ -1636,13 +1636,28 @@
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
       }
       rogueCompanionSpecialDamage(u, amount) {
-        return amount * (1 + (this.rogueSongBoon(u, 'finale')?.specialDamage || 0));
+        // All ordinary Soldier/Ranger active specials grow gently with
+        // individual mastery. Charmed native/heritage skills scale themselves
+        // exactly once on their authored action path below.
+        const mastery = u?.charmOrigin ? 1 :
+          1 + this.companionMasteryTier(u) *
+            R.balance.companions.mastery.nativeDamagePerTier;
+        return amount * mastery *
+          (1 + (this.rogueSongBoon(u, 'finale')?.specialDamage || 0));
+      }
+      // One individual progression counter for all companion families.
+      companionMasteryTier(u) {
+        const points = Number.isInteger(u?.masteryPoints) ? u.masteryPoints : 0;
+        const [one, two, three] = R.balance.companions.mastery.thresholds;
+        return points >= three ? 3 : points >= two ? 2 : points >= one ? 1 : 0;
       }
       companionAttackDamage(u) {
-        return (
-          (this.charmedCompanionProfile(u)?.damage ?? u.damage) +
-          this.hero.level * 2 + this.companionInheritedDamageBonus()
-        );
+        const baseline = (this.charmedCompanionProfile(u)?.damage ?? u.damage) +
+          this.hero.level * 2 + this.companionInheritedDamageBonus();
+        // One full elite multiplier at the common attack source: specials,
+        // native basics and heritage inherit it without stacking a second time.
+        return baseline * (u?.charmRingleaderTrained === true &&
+          this.isCharmedCompanion(u) ? R.ringleaderScaling.damage : 1);
       }
       // Different Rogue song families stack additively for ordinary basics.
       // Each remains independently timed and capped; specials are unaffected.
@@ -1653,14 +1668,19 @@
           (this.rogueSongBoon(u, 'cadence')?.basicDamage || 0));
       }
       charmedEliteTrained(u) {
-        return this.hero.class === 'rogue' && !!u?.charmOrigin &&
-          this.isCharmedCompanion(u) && this.companionSecondSkillUnlocked();
+        return !!u?.charmOrigin && this.isCharmedCompanion(u) &&
+          this.companionSecondSkillUnlocked() &&
+          (this.hero.class === 'rogue' || u.charmRingleaderTrained === true);
       }
-      // Native Ringleaders move 20% faster in combat and enter a 0.6x
-      // basic-attack recovery at half health. Their hostile 2.5x HP / 1.5x
-      // damage scaling is NOT an allied training reward.
+      // Native Ringleader pursuit and wounded frenzy come from Rogue Skill 2
+      // or a permanently promoted Charmed companion. Orin adds full HP/damage
+      // once; this movement/frenzy layer must never apply twice.
+      charmedRingleaderCombatTraits(u) {
+        return this.charmedEliteTrained(u) ||
+          (u?.charmRingleaderTrained === true && this.isCharmedCompanion(u));
+      }
       charmedCombatMoveFactor(u) {
-        return this.charmedEliteTrained(u) ? R.ringleaderScaling.pursuit : 1;
+        return this.charmedRingleaderCombatTraits(u) ? R.ringleaderScaling.pursuit : 1;
       }
       charmedPursuitFactor(u, target) {
         if (!u?.charmOrigin || !['soldier', 'archer'].includes(u.type) ||
@@ -1683,7 +1703,7 @@
       }
       companionBasicInterval(u) {
         const base = this.charmedCompanionProfile(u)?.interval || 0.85;
-        return this.charmedEliteTrained(u) && u.hp > 0 &&
+        return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
           ? base * R.ringleaderScaling.frenzyCooldown : base;
       }
@@ -2119,8 +2139,143 @@
         if (!target) return false;
         return this.castCompanionHeal(u, target);
       }
+      // A third, separately timed, species-specific boss/captain heritage
+      // action. Night species also use this bounded geometry executor for their
+      // DIFFERENT innate Soul Drain / Shadow Pounce Skill 1.
+      charmedSpeciesSpecial(u, target, def, kind = 'heritage') {
+        const species = u.charmOrigin?.species,
+          native = kind === 'native',
+          cooldown = native ? 'skillNightCd' : 'skill3Cd',
+          cfg = R.balance.companions.charmedSkills,
+          team = charmedSquadSkills.get(this) ||
+            { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time };
+        if (!this.isCharmedCompanion(u) || u.active === false ||
+            u.hp <= 0 ||
+            (this.hero.class !== 'rogue' && !u.charmRingleaderTrained) ||
+            !def || (u[cooldown] || 0) > 0 ||
+            this.s.time < (team[native ? 'basic' : 'heritage'] || 0) ||
+            dist(u, target) > def.range) return false;
+        const from = { x: u.x, y: u.y },
+          targetRange = Math.max(1, dist(u, target));
+        // A pounce/jump cannot damage before an actual traversable approach.
+        // Native Stalker Pounce is a real dash, not an invisible distant hit.
+        if (def.dash && (native || species === 'mireling')) {
+          if (!this.clearSegment(u, target, 12)) return false;
+          this.move(u, target, 560, 0.16, 35);
+          if (dist(u, target) > 88) return false;
+        }
+        const selfCenter = def.shape === 'circle' &&
+          (species === 'wolf' || species === 'ashbeast' || native);
+        const center = selfCenter ? u : target,
+          facing = Math.atan2(target.y - from.y, target.x - from.x),
+          end = { x: from.x + Math.cos(facing) * def.range,
+            y: from.y + Math.sin(facing) * def.range };
+        const lawful = (e) => e.hp > 0 && !e.neutral && !e.returning &&
+          this.tacticalDirectTargetable(e) && this.line(u, e);
+        // Only the chosen geometry touches a hostile. Never a circular
+        // distance-only shortcut for a cone or charge line.
+        const within = (e) => {
+          if (!lawful(e)) return false;
+          if (def.shape === 'single') return e === target;
+          if (def.shape === 'circle') return dist(e, center) <= def.radius;
+          if (def.shape === 'line')
+            return this.distanceToSegment(e, from, end) <= def.halfWidth &&
+              dist(e, from) <= def.range + def.halfWidth;
+          const heading = Math.atan2(e.y - from.y, e.x - from.x);
+          return dist(e, from) <= def.range &&
+            Math.abs(Math.atan2(Math.sin(heading - facing),
+              Math.cos(heading - facing))) <= def.halfAngle;
+        };
+        const victims = this.zone().enemies
+          .filter(within)
+          .sort((a, b) => (a === target ? -1 : 0) - (b === target ? -1 : 0) ||
+            dist(a, u) - dist(b, u) || this.idOrder(a, b))
+          .slice(0, def.cap);
+        if (!victims.length) return false;
+        const key = native
+            ? 'charm/night/' + (species === 'wraith' ? 'wraith-drain' : 'stalker-pounce')
+            : 'charm/heritage/' + species,
+          receipt = this._criticalPartyNative?.enabled
+            ? this._criticalPartyNative.release(this, key, u.id) : null,
+          criticalLever = receipt?.effect?.lever,
+          enhance = (value, lever) => criticalLever === lever
+            ? this._criticalPartyNative.enhance(receipt, value, lever)
+            : value,
+          tier = this.companionMasteryTier(u),
+          mastery = R.balance.companions.mastery,
+          damageGrowth = def.slow || def.push
+            ? mastery.controlDamagePerTier : mastery.directDamagePerTier,
+          base = this.rogueCompanionSpecialDamage(
+            u, this.companionAttackDamage(u) * def.multiplier *
+              (1 + tier * damageGrowth)),
+          damage = enhance(base, 'damage');
+        let landed = 0, actualDamage = 0;
+        for (const e of victims) {
+          const hp = e.hp;
+          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
+            continue;
+          landed++;
+          actualDamage += Math.max(0, hp - e.hp);
+          if (e.hp <= 0) continue;
+          if (def.slow) this.applySlow(e, Math.min(2.5,
+            enhance(def.slow + tier * mastery.slowSecondsPerTier, 'slowDuration')));
+          if (def.push && e.type === 'mob' && e.form === 'normal' &&
+              !e.captain && !e.roomCaptain) {
+            const gap = Math.max(1, dist(u, e)),
+              push = Math.min(45, enhance(
+                def.push + tier * mastery.pushUnitsPerTier, 'pushDistance')),
+              point = { x: e.x + (e.x - u.x) / gap * push,
+                y: e.y + (e.y - u.y) / gap * push };
+            if (this.clearSegment(e, point, 12)) this.move(e, point, 210, 0.2);
+          }
+        }
+        if (!landed) return false;
+        // Siphon is based on actual post-mitigation lost HP, never theoretical
+        // damage. No overheal or duplicate support-heal critical roll.
+        if (def.siphon && u.hp > 0 && u.hp < u.maxHp) {
+          const recovered = Math.min(u.maxHp - u.hp,
+            actualDamage * (def.siphon + tier * mastery.siphonFractionPerTier));
+          if (recovered > 0) {
+            u.hp += recovered;
+            this.event('heal', { actor: 'companion', resource: 'health',
+              x: u.x, y: u.y, source: u.id, target: u.id });
+          }
+        }
+        // Flank Command is a lateral *reposition* after contact, not a second
+        // damage event; moving is blocked by the same real terrain collision.
+        if (def.dash && !native && species !== 'mireling') {
+          const angle = Math.atan2(target.y - u.y, target.x - u.x),
+            flank = { x: u.x - Math.sin(angle) * def.dash,
+              y: u.y + Math.cos(angle) * def.dash };
+          if (this.clearSegment(u, flank, 12))
+            this.move(u, flank, 560, 0.16);
+        }
+        u[cooldown] = native ? cfg.basicCooldown : def.cooldown;
+        u.skillGlobalCd = cfg.globalCooldown;
+        u.cd = Math.max(u.cd, 0.35);
+        team[native ? 'basic' : 'heritage'] =
+          this.s.time + (native ? cfg.basicSquadSpacing : cfg.eliteSquadSpacing);
+        team.lastTime = this.s.time;
+        charmedSquadSkills.set(this, team);
+        this.event('charmHeritage', {
+          source: u.id, actor: 'companion', species, name: def.name,
+          kind, x: center.x, y: center.y,
+          fromX: from.x, fromY: from.y, range: def.range,
+          shape: def.shape, radius: def.radius || 0,
+          halfWidth: def.halfWidth || 0, halfAngle: def.halfAngle || 0,
+          hitCount: landed, critical: !!receipt?.critical,
+        });
+        this.event('spell', { actor: 'companion', kind: 'charmHeritage',
+          species, x: u.x, y: u.y, source: u.id, skill: def.name });
+        this.event('companionSkill', {
+          source: u.id, unitType: u.type, skill: def.name,
+          targetId: target.id, slot: native ? 1 : 3, hits: landed,
+        });
+        return true;
+      }
       charmedCompanionSkill(u, target) {
-        if (!this.isCharmedCompanion(u) || this.hero.class !== 'rogue' ||
+        if (!this.isCharmedCompanion(u) ||
+            (this.hero.class !== 'rogue' && !u.charmRingleaderTrained) ||
             u.hp <= 0 || u.active === false || this.peace || this.s.recallActive ||
             !target || !this.zone().enemies.includes(target) || target.hp <= 0 ||
             target.neutral || target.returning || !this.tacticalDirectTargetable(target) ||
@@ -2142,16 +2297,22 @@
             ? this.companionCombatReach(u)
             : Math.min(cfg.meleeManeuverReach, this.companionCombatReach(u) + 25),
           distance = dist(u, target),
-          team = charmedSquadSkills.get(this) || { basic: 0, elite: 0, lastTime: this.s.time };
-        if (distance > reach) return false;
-        // A reset game clock must not trap squad skills behind a stale window.
+          team = charmedSquadSkills.get(this) ||
+            { basic: 0, elite: 0, heritage: 0, lastTime: this.s.time },
+          nightNative = R.balance.companions.charmNightNative[species],
+          heritage = R.balance.companions.charmHeritage[species];
         if (this.s.time < team.lastTime) {
           team.basic = 0;
           team.elite = 0;
+          team.heritage = 0;
         }
         team.lastTime = this.s.time;
-        const eliteReady = !!signature && (u.skill2Cd || 0) <= 0 &&
-          this.s.time >= team.elite;
+        if (distance > reach &&
+            !(nightNative && distance <= nightNative.range) &&
+            !(this.charmedEliteTrained(u) && heritage &&
+              distance <= heritage.range)) return false;
+        const eliteReady = distance <= reach && !!signature &&
+          (u.skill2Cd || 0) <= 0 && this.s.time >= team.elite;
         const nearby = eliteReady && ['scatter', 'sweep'].includes(signature.effect)
           ? this.zone().enemies.filter((e) =>
             e.hp > 0 && !e.neutral && !e.returning &&
@@ -2163,10 +2324,21 @@
         const elite = eliteReady &&
           (signature.effect === 'scatter' || signature.effect === 'sweep'
             ? nearby.length > 0 : true);
+        // Native then Ringleader retain priority when their timers are ready.
+        // Heritage is a genuine third skill, never a replacement or a reason
+        // to starve a ready existing action. It fills the next legal opening.
+        // Night-native powers are ADDITIONAL, not a replacement for the
+        // species' Rogue basic. This preserves the authored ordinary,
+        // Skill-2 Ringleader, night signature and third heritage identities.
+        if (!elite && ((u.skill1Cd || 0) > 0 ||
+            this.s.time < team.basic || distance > reach)) {
+          if (nightNative && this.charmedSpeciesSpecial(
+              u, target, nightNative, 'native')) return true;
+          return this.charmedEliteTrained(u) &&
+            this.charmedSpeciesSpecial(u, target, heritage);
+        }
         const profile = elite ? signature : ordinary;
         const slot = elite ? 2 : 1;
-        if (!elite && ((u.skill1Cd || 0) > 0 || this.s.time < team.basic))
-          return false;
         // Native Ringleaders have both a species basic and a separate
         // signature. Slot 2 never replaces, disables or consumes Slot 1.
         // Skill 1 is single-target; skill 2 is max two actual contacts.
@@ -2186,7 +2358,9 @@
           criticalReceipt,
           this.rogueCompanionSpecialDamage(
             u, this.companionAttackDamage(u) *
-            (elite ? cfg.signatureDamageMultiplier : cfg.basicDamageMultiplier)),
+            (elite ? cfg.signatureDamageMultiplier : cfg.basicDamageMultiplier) *
+              (1 + this.companionMasteryTier(u) *
+                R.balance.companions.mastery.nativeDamagePerTier)),
         );
         let committed = false;
         if (ranged && !elite) {
@@ -2200,7 +2374,8 @@
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
-            slow: cfg.basicSlowSeconds,
+            slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
+              R.balance.companions.mastery.slowSecondsPerTier,
           });
           this.event('projectileLaunch', {
             actor: 'companion', role: 'archer', source: u.id,
@@ -2218,8 +2393,10 @@
                   !enemy.roomCaptain && enemy.form !== 'ringleader') {
                 const gap = Math.max(1, dist(u, enemy));
                 const point = {
-                  x: enemy.x + (enemy.x - u.x) / gap * cfg.pushDistance,
-                  y: enemy.y + (enemy.y - u.y) / gap * cfg.pushDistance,
+                  x: enemy.x + (enemy.x - u.x) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
+                  y: enemy.y + (enemy.y - u.y) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
                 };
                 this.move(enemy, point, 210, 0.2);
               }
@@ -2227,12 +2404,16 @@
                        enemy.type === 'mob' && enemy.form === 'normal') {
               const gap = Math.max(1, dist(u, enemy));
               const point = {
-                x: enemy.x + (enemy.x - u.x) / gap * cfg.pushDistance,
-                y: enemy.y + (enemy.y - u.y) / gap * cfg.pushDistance,
+                x: enemy.x + (enemy.x - u.x) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
+                y: enemy.y + (enemy.y - u.y) / gap * (cfg.pushDistance + this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.pushUnitsPerTier),
               };
               this.move(enemy, point, 210, 0.2);
-            } else this.applySlow(enemy, elite
-              ? cfg.signatureSlowSeconds : cfg.basicSlowSeconds);
+            } else this.applySlow(enemy, (elite
+              ? cfg.signatureSlowSeconds : cfg.basicSlowSeconds) +
+                this.companionMasteryTier(u) *
+                  R.balance.companions.mastery.slowSecondsPerTier);
           }
         }
         if (!committed) return false;
@@ -2252,7 +2433,9 @@
         // interpretation is a short defensive ward, not an AI-breaking vanish.
         if (!elite && profile.blinds > 0) {
           u.wardUntil = Math.max(u.wardUntil || 0, this.s.time + cfg.dustWardSeconds);
-          u.wardReduction = Math.max(u.wardReduction || 0, cfg.dustWardReduction);
+          u.wardReduction = Math.max(u.wardReduction || 0,
+            cfg.dustWardReduction + this.companionMasteryTier(u) *
+              R.balance.companions.mastery.dustWardReductionPerTier);
         }
         u[elite ? 'skill2Cd' : 'skill1Cd'] =
           elite ? cfg.signatureCooldown : cfg.basicCooldown;
@@ -2333,8 +2516,13 @@
           damage: base[1],
           icon: base[2],
           cd: 0,
+          masteryPoints: 0,
+          masteryGuardianKeys: [],
+          charmRingleaderTrained: false,
           skill1Cd: 0,
           skill2Cd: 0,
+          skill3Cd: 0,
+          skillNightCd: 0,
           skillGlobalCd: 0,
           healCd: 0,
           manaCd: 0,
@@ -2596,7 +2784,9 @@
           this.hasSupportEffect(target, 'health') ||
           this.s.challenge.pending || this.s.challenge.gameOver
         ) return false;
-        const originalAmount = this.rangerSupportAmount('health'),
+        const originalAmount = this.rangerSupportAmount('health') *
+            (1 + this.companionMasteryTier(caster) *
+              R.balance.companions.mastery.nativeDamagePerTier),
           criticalReceipt = this.troopCriticalRelease(caster, 'heal'),
           amount = this.troopCriticalSupportAmount(criticalReceipt, originalAmount);
         if (caster.charmOrigin) caster.charmSupportCd = R.rangerSupport.cooldown;
@@ -3043,22 +3233,91 @@
           return 'Not enough crowns for companion care.';
         return '';
       }
-      cancelCompanionCareRequest(kind, unnecessary = false) {
-        if (!this.s.companionCareRequests[kind]) return false;
-        this.s.companionCareRequests[kind] = null;
+      // Preserve the original single recovery save field for older v4 runs.
+      // Additional FIFO requests live in an optional bounded list.
+      companionRecoveryRequests() {
+        return [
+          ...(this.s.companionCareRequests.recovery
+            ? [this.s.companionCareRequests.recovery]
+            : []),
+          ...(this.s.companionCareRequests.recoveryQueue || []),
+        ];
+      }
+      companionRecoveryQueueLimit(barracksId, zone = this.zoneId) {
+        if (barracksId === null) return 1; // Town Captain retains its single slot.
+        const b = this.s.zones[zone]?.buildings.find(
+          (b) => b.id === barracksId && b.kind === 'barracks',
+        );
+        return b?.full ? Infinity : 3;
+      }
+      removeCompanionRecoveryRequest(companionId) {
+        const pending = this.companionRecoveryRequests();
+        const index = pending.findIndex((r) => r.companionIds.includes(companionId));
+        if (index < 0) return false;
+        pending.splice(index, 1);
+        this.s.companionCareRequests.recovery = pending[0] || null;
+        if (pending.length > 1) this.s.companionCareRequests.recoveryQueue = pending.slice(1);
+        else delete this.s.companionCareRequests.recoveryQueue;
+        this.event('companionQueueChanged', { kind: 'recovery' });
+        return true;
+      }
+      cancelCompanionCareRequest(kind, unnecessary = false, companionId = null) {
+        if (kind === 'recovery') {
+          const targetId = companionId || this.companionRecoveryRequests()[0]?.companionIds[0];
+          if (!targetId || !this.removeCompanionRecoveryRequest(targetId)) return false;
+        } else {
+          if (!this.s.companionCareRequests[kind]) return false;
+          this.s.companionCareRequests[kind] = null;
+          this.event('companionQueueChanged', { kind });
+        }
         const message = unnecessary
           ? 'Queued companion care is no longer needed. No crowns were spent.'
           : 'Queued companion care cancelled. No crowns were spent.';
         this.say(message);
         if (unnecessary) this.notice(message, 3.5, '', 'feedback');
-        this.event('companionQueueChanged', { kind });
         return true;
       }
       requestCompanionCare(kind, barracksId = null, companionId = null) {
         if (!['recovery', 'treatment'].includes(kind)) return false;
+        if (kind === 'recovery') {
+          const requests = this.companionRecoveryRequests();
+          const matching = companionId
+            ? requests.find((r) => r.companionIds.includes(companionId))
+            : requests[0];
+          if (matching)
+            return this.cancelCompanionCareRequest('recovery', false, matching.companionIds[0]);
+          const request = this.companionCareCandidate(kind, barracksId, companionId);
+          const reason = this.companionCareReason(kind, request, {
+            ignoreFunds: true,
+            checkSource: true,
+          });
+          if (reason) {
+            this.say(reason);
+            return false;
+          }
+          const atSource = requests.filter(
+            (r) => r.zone === request.zone && r.barracksId === barracksId,
+          ).length;
+          const limit = this.companionRecoveryQueueLimit(barracksId);
+          if (atSource >= limit) {
+            this.say(
+              barracksId === null
+                ? 'The Captain already has a recovery queued.'
+                : 'Basic Barracks recovery queue is full (3). Upgrade to Full Barracks for unlimited recovery requests.',
+            );
+            return false;
+          }
+          if (!requests.length && this.hero.gold >= this.companionCarePrice(kind))
+            return this.recover(request.companionIds[0]);
+          if (!this.s.companionCareRequests.recovery)
+            this.s.companionCareRequests.recovery = request;
+          else (this.s.companionCareRequests.recoveryQueue ??= []).push(request);
+          this.say('Companion recovery queued. Select the same companion to cancel.');
+          this.event('companionQueueChanged', { kind: 'recovery' });
+          return true;
+        }
         const previous = this.s.companionCareRequests[kind];
-        if (previous && (!companionId || previous.companionIds.includes(companionId)))
-          return this.cancelCompanionCareRequest(kind);
+        if (previous) return this.cancelCompanionCareRequest(kind);
         const request = this.companionCareCandidate(kind, barracksId, companionId);
         const reason = this.companionCareReason(kind, request, {
           ignoreFunds: true,
@@ -3069,44 +3328,49 @@
           return false;
         }
         if (this.hero.gold >= this.companionCarePrice(kind)) {
-          const success =
-            kind === 'recovery'
-              ? this.recover(request.companionIds[0])
-              : this.treatCompanions(request.companionIds, request.heroWounded === true);
+          const success = this.treatCompanions(
+            request.companionIds,
+            request.heroWounded === true,
+          );
           if (success) this.s.companionCareRequests[kind] = null;
           return success;
         }
         this.s.companionCareRequests[kind] = request;
-        this.say(
-          kind === 'recovery'
-            ? 'Companion recovery queued. Tap the same choice to cancel.'
-            : 'Companion treatment queued. Tap the same choice to cancel.',
-        );
+        this.say('Companion treatment queued. Tap the same choice to cancel.');
         return true;
       }
       resolveCompanionCareRequests() {
-        // Preserve the company first when multiple services become affordable.
-        for (const kind of ['recovery', 'treatment']) {
-          const request = this.s.companionCareRequests[kind];
-          if (!request) continue;
-          if (
-            !this.companionCareTargets(kind, request).length &&
-            !this.companionCareHeroWounded(kind, request)
-          ) {
-            this.cancelCompanionCareRequest(kind, true);
+        // Recover in enrollment order, then treat wounds, then recruit (engine.js).
+        // An invalid or temporarily unavailable entry never steals another's target.
+        for (const request of [...this.companionRecoveryRequests()]) {
+          const companionId = request.companionIds[0];
+          if (!this.companionCareTargets('recovery', request).length) {
+            this.cancelCompanionCareRequest('recovery', true, companionId);
             continue;
           }
           if (
-            this.hero.gold < this.companionCarePrice(kind) ||
-            this.companionCareReason(kind, request, { checkSource: true })
+            this.hero.gold < this.companionCarePrice('recovery') ||
+            this.companionCareReason('recovery', request, { checkSource: true })
           )
             continue;
-          const success =
-            kind === 'recovery'
-              ? this.recover(request.companionIds[0])
-              : this.treatCompanions(request.companionIds, request.heroWounded === true);
-          if (success) this.s.companionCareRequests[kind] = null;
+          if (this.recover(companionId)) this.removeCompanionRecoveryRequest(companionId);
         }
+        const treatment = this.s.companionCareRequests.treatment;
+        if (!treatment) return;
+        if (
+          !this.companionCareTargets('treatment', treatment).length &&
+          !this.companionCareHeroWounded('treatment', treatment)
+        ) {
+          this.cancelCompanionCareRequest('treatment', true);
+          return;
+        }
+        if (
+          this.hero.gold < this.companionCarePrice('treatment') ||
+          this.companionCareReason('treatment', treatment, { checkSource: true })
+        )
+          return;
+        if (this.treatCompanions(treatment.companionIds, treatment.heroWounded === true))
+          this.s.companionCareRequests.treatment = null;
       }
       recover(companionId = null) {
         const request = this.companionCareCandidate('recovery', null, companionId);
@@ -3136,7 +3400,19 @@
         this.clearCompanionJudgment(dead);
         this._partyChargeRecovery?.delete(dead);
         this.tacticalClearScatter(dead);
-        Object.assign(dead, u, { id, active, slow: 0 });
+        // Recover the same individual, not a fresh companion with its old
+        // name. Permanent mastery and Ringleader training survive death.
+        const masteryPoints = dead.masteryPoints || 0,
+          masteryGuardianKeys = [...(dead.masteryGuardianKeys || [])],
+          charmRingleaderTrained = dead.charmRingleaderTrained === true;
+        Object.assign(dead, u, {
+          id, active, slow: 0, masteryPoints, masteryGuardianKeys,
+          ...(charmOrigin ? { charmRingleaderTrained } : {}),
+        });
+        if (charmRingleaderTrained) {
+          dead.maxHp = this.companionMaxHp(dead);
+          dead.hp = dead.maxHp;
+        }
         delete dead.slowStacks;
         delete dead.rogueSlow;
         this.say('Companion recovered.');
@@ -3201,6 +3477,47 @@
           (u) => ['soldier', 'archer'].includes(u.type) &&
             (!u.charmOrigin || this.isCharmedCompanion(u)) && !u.order,
         );
+      }
+      setRogueFallenCharmSlotPolicy(policy, barracksId) {
+        // A completed Barracks owns this Rogue-only choice. Existing fallen
+        // companions are never silently reallocated when the policy changes.
+        if (this.hero.class !== 'rogue' || !['release', 'keep'].includes(policy) ||
+          typeof barracksId !== 'string' || !barracksId.length) return false;
+        const sourceReason = this.companionServiceSourceReason(barracksId);
+        const safetyReason = this.companionServiceReason();
+        if (sourceReason || safetyReason) {
+          this.say(sourceReason || safetyReason);
+          return false;
+        }
+        if (this.s.rogueFallenCharmSlotPolicy === policy) return true;
+        this.s.rogueFallenCharmSlotPolicy = policy;
+        this.say(
+          policy === 'release'
+            ? 'Fallen Charmed allies will move to reserve, freeing their party slots.'
+            : 'Fallen Charmed allies will keep their party slots until recovered or rested.',
+        );
+        this.event('rogueCharmSlotPolicyChanged', { policy });
+        return true;
+      }
+      reserveFallenRogueCharm(u) {
+        // This defeat transition bypasses the no-combat restriction on
+        // manual Barracks Rest, but never bypasses Charm provenance or quotas.
+        if (
+          this.hero.class !== 'rogue' ||
+          this.s.rogueFallenCharmSlotPolicy === 'keep' ||
+          !u ||
+          u.hp > 0 ||
+          u.active === false ||
+          !this.s.party.includes(u) ||
+          !this.isCharmedCompanion(u)
+        )
+          return false;
+        this.clearPartyCharge(u);
+        this.clearCompanionJudgment(u);
+        u.active = false;
+        u.order = null;
+        u.path = [];
+        return true;
       }
       companionRestReason(id) {
         const u = this.s.party.find((u) => u.id === id);
@@ -3586,9 +3903,13 @@
             visible = this.line(u, e),
             anchor = this.partyFollowPoint(u, living);
           if (d < (monster?.retreat ?? 150)) {
-            // Veteran Rangers can cover a retreat with their existing Triple Shot.
-            // Still move this frame; never trade the fallback for standing fire.
-            this.companionCoveringShot(u, e);
+            // A Charmed ranged creature can release its close-range native or
+            // heritage skill while still retreating THIS frame. Otherwise short
+            // cone and circle heritage options could never become reachable.
+            // Ordinary Rangers keep their original covering-shot behavior.
+            const defensiveSkill = !!monster && !!u.charmOrigin &&
+              this.companionTrySkill(u, e);
+            if (!defensiveSkill) this.companionCoveringShot(u, e);
             this.follow(
               u,
               this.archerFallbackPoint(u, e, living),
@@ -3765,6 +4086,8 @@
           u.cd = Math.max(0, u.cd - recovery);
           u.skill1Cd = Math.max(0, (u.skill1Cd || 0) - specialRecovery);
           u.skill2Cd = Math.max(0, (u.skill2Cd || 0) - specialRecovery);
+          u.skill3Cd = Math.max(0, (u.skill3Cd || 0) - specialRecovery);
+          u.skillNightCd = Math.max(0, (u.skillNightCd || 0) - specialRecovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
             u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);

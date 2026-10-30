@@ -112,6 +112,18 @@
   // with the same level-1 +8% damage effect as World Rogue maneuvers.
   register('charm/rogue/basic', 'companion', 'damage');
   register('charm/rogue/signature', 'companion', 'damage');
+  // One independent Companion-domain draw per native night or heritage cast.
+  // Use the source skill's real lever: control effects strengthen control,
+  // direct hits strengthen damage. Never roll once per target/Slow tick.
+  register('charm/night/wraith-drain', 'companion', 'damage');
+  register('charm/night/stalker-pounce', 'companion', 'damage');
+  for (const [species, lever] of Object.entries({
+    goblin: 'slowDuration', skeleton: 'pushDistance', mireling: 'damage',
+    reedbeast: 'slowDuration', wolf: 'pushDistance', ogre: 'damage',
+    orc: 'damage', archer: 'damage', ashbeast: 'pushDistance',
+    crownguard: 'pushDistance', wraith: 'slowDuration', stalker: 'damage',
+  }))
+    register('charm/heritage/' + species, 'companion', lever);
 
   // Stage 3 first native world slice: these two are real shared basic-action
   // owners, not a fallback for specials, traps, telegraphs, ticks or bosses'

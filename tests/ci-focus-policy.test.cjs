@@ -163,6 +163,7 @@ for (const [source, expected] of [
     ['persistence-safety', 'slow-cooldown', 'beta-historical', 'snapshot-encounter-lifecycle'],
   ],
   ['navigation', ['navigation-route-stage4', 'crowd-collision-fast-reject', 'runtime-workload']],
+  ['highlands', ['ironroot-highlands', 'local-sites', 'town-street-audit']],
   ['world', ['runtime-workload']],
   ['engine', ['runtime-workload', 'night-tempo']],
   [

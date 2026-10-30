@@ -58,4 +58,36 @@ assert.deepEqual(inspect(data(), { changedPaths: ['src/prototype/renderer.js','d
 assert.deepEqual(inspect(data(), { changedPaths: ['tests/pixi-fidelity.test.cjs'] }), []);
 rejects(data(), 'Version bump omits', { previousVersion: old, changedPaths: ['package.json'] });
 assert.deepEqual(inspect(data(), { previousVersion: old, changedPaths: ['package.json','docs/DEVELOPMENT_STATE.md'] }), []);
+
+function publishedData() {
+  const b = data();
+  const dev = v.match(/\.dev\.(\d+)$/)[1];
+  b.state = b.state.replace(
+    '| Build/cache version | **' + tick + v + tick + '** | current code |',
+    '| Build/cache version | **' + tick + v + tick + '** — merged and published | release receipt |',
+  ) + '\n' +
+    '**Latest verified published code/build version:** ' + tick + v + tick + '\n' +
+    '| Source | **dev.' + dev + ' published gameplay source** | receipt |\n' +
+    '| Focused automation | **Dev.' + dev + ' merged-main tests** | receipt |\n' +
+    '| GitHub Pages publication | **Published dev.' + dev + '** | receipt |';
+  return b;
+}
+{ // Prior release mentioned in an evidence cell must not convert a draft into a published build.
+  const draft = data();
+  draft.state = draft.state.replace('| current code |',
+    '| prior dev.208 was merged and published; current source is still a candidate |');
+  assert.deepEqual(inspect(draft), []);
+}
+assert.deepEqual(inspect(publishedData()), []);
+{ const b = publishedData(); b.state = b.state.replace('published code/build version:** ' + tick + v,
+  'published code/build version:** ' + tick + old); rejects(b, 'latest verified published version'); }
+{ const b = publishedData(); b.state = b.state.replace('**Latest verified published code/build version:** ' + tick + v + tick + '\n', '');
+  rejects(b, 'latest verified published version'); }
+{ const b = publishedData(); b.state = b.state.replace('| Source | **dev.209', '| Source | **dev.208');
+  rejects(b, 'Source published checkpoint'); }
+{ const b = publishedData(); b.state = b.state.replace('| Focused automation | **Dev.209', '| Focused automation | **Dev.208');
+  rejects(b, 'Focused automation published checkpoint'); }
+{ const b = publishedData(); b.state = b.state.replace('| GitHub Pages publication | **Published dev.209', '| GitHub Pages publication | **Published dev.208');
+  rejects(b, 'GitHub Pages publication published checkpoint'); }
+
 console.log('PASS release/docs consistency positive and negative scenarios');

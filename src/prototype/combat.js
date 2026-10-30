@@ -10,6 +10,8 @@
       'cd',
       'skill1Cd',
       'skill2Cd',
+      'skill3Cd',
+      'skillNightCd',
       'skillGlobalCd',
       'healCd',
       'manaCd',
@@ -490,22 +492,25 @@
 
       tacticalPresentOpponents(e) {
         const radius = R.tacticalFoundation.presenceRadius;
-        const party = this.activeLivingParty().filter(
-          (u) => !u.order && !this.s.recallActive && dist(u, e) <= radius,
-        );
-        const heroHere = this.hero.hp > 0 && dist(this.hero, e) <= radius;
-        return party.length + (heroHere ? 1 : 0);
+        // Count directly; no filtered array is retained between assessments.
+        let count = this.hero.hp > 0 && dist(this.hero, e) <= radius ? 1 : 0;
+        for (const u of this.activeLivingParty())
+          if (!u.order && !this.s.recallActive && dist(u, e) <= radius) count++;
+        return count;
       }
 
       tacticalLocalSupport(e) {
-        return this.zone().enemies.filter(
-          (ally) =>
+        // Preserve every live eligibility test without allocating a roster.
+        let count = 0;
+        for (const ally of this.zone().enemies)
+          if (
             ally.hp > 0 &&
             !ally.neutral &&
             !ally.returning &&
             !['travel', 'escape', 'extended'].includes(this.tacticalRogueRegroup(ally)?.phase) &&
-            dist(ally, e) <= R.tacticalFoundation.supportRadius + 35,
-        ).length;
+            dist(ally, e) <= R.tacticalFoundation.supportRadius + 35
+          ) count++;
+        return count;
       }
 
       tacticalRogueWounded(e) {
@@ -1003,6 +1008,8 @@
           u.slow = 0;
           delete u.slowStacks;
           this.tacticalClearScatter(u);
+          // A fallen Rogue Charm frees its field slot, not its ownership.
+          if (u !== this.hero) this.reserveFallenRogueCharm(u);
           if (u === this.hero)
             this.die({ source: rangedSourceId, damage: mitigated, hpBefore: oldHp });
         }
@@ -1019,6 +1026,9 @@
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
+        // Live target references can be reused across missed hostile shots.
+        // Any hit, impact callback or friendly shot invalidates the roster.
+        let hostileTargets = null;
         for (const p of [...this.s.projectiles]) {
           if (p.cancelledChargedOpener) continue;
           if (p.delay > 0) {
@@ -1061,13 +1071,16 @@
                 if (blocked(point)) {
                   let low = Math.max(0, (j - 1) / steps),
                     high = j / steps;
-                  // Refine only an actual obstruction; ordinary flights retain
-                  // their existing inexpensive segment/collision checks.
-                  for (let k = 0; k < 12; k++) {
-                    const middle = (low + high) / 2;
-                    if (blocked(pointAt(middle))) high = middle;
-                    else low = middle;
-                  }
+                  // A collision at j=0 is already the exact origin:
+                  // low === high === 0, so twelve midpoint probes would
+                  // recheck the identical point without refining contact.
+                  // Preserve all twelve native checks for actual intervals.
+                  if (j > 0)
+                    for (let k = 0; k < 12; k++) {
+                      const middle = (low + high) / 2;
+                      if (blocked(pointAt(middle))) high = middle;
+                      else low = middle;
+                    }
                   terrainFraction = high;
                   terrainContact = pointAt(high);
                   break;
@@ -1079,12 +1092,13 @@
               if (terrainFraction === Infinity) terrainFraction = 0;
             }
             const radius = p.hitRadius ?? (p.style === 'cargo' ? 34 : 22);
-            const victim = this.combatTargets().find(
+            const victim = (hostileTargets ||= this.combatTargets()).find(
               (u) =>
                 this.distanceToSegment(u, before, p) < radius &&
                 sweptCircleEntry(u, before, p, radius) < terrainFraction,
             );
             if (terrainContact && !victim) {
+              hostileTargets = null;
               this.enemyVfxProjectileImpact?.(p, { ...terrainContact, terrain: true });
               if (p.style === 'cargo')
                 this.event('projectileImpact', {
@@ -1100,6 +1114,7 @@
               continue;
             }
             if (victim) {
+              hostileTargets = null;
               const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -1128,6 +1143,7 @@
               p.life = 0;
             }
             if (!victim && p.rangedArc && p.life <= 0 && !this.peace) {
+              hostileTargets = null;
               this.enemyVfxProjectileImpact?.(p, { x: p.x, y: p.y, terrain: true });
               this.event('projectileImpact', {
                 actor: 'enemy',
@@ -1144,6 +1160,8 @@
             if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
             continue;
           }
+          // Friendly projectile effects may alter living-party eligibility.
+          hostileTargets = null;
           const e = this.zone().enemies.find(
             (e) =>
               e.id === p.target &&

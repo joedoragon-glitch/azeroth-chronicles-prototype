@@ -5,6 +5,20 @@ const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 const d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const PHASE='anchored';
+function findNative450Lane(g) {
+  // Locate an actual clear shot in the current authored Vale rather than
+  // assuming that coordinates from the pre-reconstruction map remain open.
+  for (let y = 350; y < g.zoneSize() - 350; y += 100)
+    for (let x = 250; x < g.zoneSize() - 700; x += 100) {
+      const target = { x, y }, hero = { x: x + 450, y };
+      if (!g.blocked(target.x, target.y, 'vale', 15) &&
+          !g.blocked(hero.x, hero.y, 'vale', 15) &&
+          g.line(target, hero) && g.clearSegment(target, hero, 15))
+        return { target, hero };
+    }
+  throw Error('Reconstructed Greenwood must retain a legal 450-unit firing lane');
+}
+
 function fixture(mode='normal') {
   const g=new Campaign(mode,'ranger',()=>0.91);
   g.enter('vale');
@@ -13,13 +27,14 @@ function fixture(mode='normal') {
   g.s.party=[];
   g.s.thornHeroInitiated=true;
   g.s.valeFieldAwakened=true;
+  const { target, hero } = findNative450Lane(g);
   Object.assign(g.hero,{
-    x:2250,y:1800,level:4,hp:100000,maxHp:100000,order:null,slow:0
+    ...hero,level:4,hp:100000,maxHp:100000,order:null,slow:0
   });
   const e=g.makeEnemy({
     species:'goblin',name:'outmatched level-one goblin',type:'mob',level:1,
     hp:4000,damage:1,gold:0,xp:0
-  },{x:1800,y:1800});
+  },target);
   e.ranged=false;e.hybrid=false;e.cd=100;e.specialCd=100;
   g.zone().enemies=[e];
   assert(g.line(g.hero,e) && g.clearSegment(g.hero,e,15),'real Greenwood firing lane');
@@ -105,20 +120,22 @@ for(const mode of ['normal','nightmare']){
 // and 50%-damage protection instead of interrupting to pursue the attacker.
 {
   const {g,e}=fixture();
+  const allyPosition = { x: e.x + 100, y: e.y };
   const ally=g.makeEnemy({species:'goblin',name:'support',level:1,
-    hp:100,damage:1,gold:0,xp:0},{x:1900,y:1800});
+    hp:100,damage:1,gold:0,xp:0},allyPosition);
   g.zone().enemies.push(ally);
   g._tacticalRegroups=new Map([[e.id,{
-    phase:'travel',allyId:ally.id,destination:{x:1900,y:1800},
-    retreatOrigin:{x:1800,y:1800},travelRemaining:12,stalled:0,
+    phase:'travel',allyId:ally.id,destination:allyPosition,
+    retreatOrigin:{x:e.x,y:e.y},travelRemaining:12,stalled:0,
     anchor:null,holdRemaining:12
   }]]);
+  const originalHome = { ...e.home };
   const hp=e.hp;
   assert(g.damage(e,100,'hero'));
   assert(hp-e.hp>0 && hp-e.hp<100,'in-travel damage reduction remains active');
   tick(g);
   assert.equal(g.tacticalRogueRegroup(e)?.phase,'travel',
     'damage never forcibly discards a supported regroup journey');
-  assert.deepEqual(e.home,{x:1800,y:1800},'original home is intact');
+  assert.deepEqual(e.home, originalHome, 'original home is intact despite travel movement');
 }
 console.log('PASS Rogue anchor integrity: prior vs new hit, outmatched think/flee, cooldown, no-hit, allied retreat');

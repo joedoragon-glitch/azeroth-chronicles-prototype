@@ -1,0 +1,10 @@
+{
+  "simulatedSeconds": 273.79199999996706,
+  "visits": 15,
+  "deaths": 0,
+  "charged": 1,
+  "hp": 48.559999999999924,
+  "status": "aborted diagnostic; not a completed 30-minute trial",
+  "reason": "Driver v2 could alternate refuge-door and inner-town retreat targets at the 105-unit threshold. Correct the pilot controller before drawing pacing conclusions.",
+  "driverGitBlob": "6abb2976ba1e070321090ffbcd7e4f36f0c226a0"
+}

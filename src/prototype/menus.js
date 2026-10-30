@@ -251,6 +251,12 @@
                 ),
               ]
             : []),
+          ...(n.family === 'ridge'
+            ? [action(
+                'Charmed Ringleader Training · 100 crowns',
+                () => teacherRingleader(n, returnHere),
+                'Train one chosen monster with Orin; +150% HP and +50% attack.',
+              )] : []),
           action('Open skill journal', () => skillBook(returnHere), 'Effects and controls.'),
           ...(nextSkillInstructor(n.family)
             ? [
@@ -262,6 +268,72 @@
               ]
             : []),
         ],
+        back,
+      );
+    }
+    function teacherRingleader(n, back) {
+      const g = getGame(),
+        candidates = g.s.party.filter((u) => u.charmOrigin &&
+          g.isCharmedCompanion(u)),
+        cost = Campaign.rules.balance.companions.ringleaderTrainingCost;
+      openMenu(
+        'Orin · Ringleader Training',
+        'Select one Charmed monster for a permanent individual promotion. ' +
+          cost + ' crowns each · 2.5× max HP and 1.5× damage, based on friendly scaled stats. ' +
+          'Existing elite skills and mastery remain independent.',
+        candidates.length
+          ? candidates.map((u) => {
+              const reason = g.charmedRingleaderTrainingReason(u, n.family);
+              return action(
+                g.companionDisplayName(u) + ' · Mastery ' +
+                  g.companionMasteryTier(u) +
+                  (u.charmRingleaderTrained ? ' · Ringleader trained' : ' · ' + cost + ' crowns'),
+                () => teacherRingleaderPreview(n, u.id,
+                  () => teacherRingleader(n, back)),
+                reason || 'Review health/damage and confirm your investment.',
+                !!reason,
+              );
+            })
+          : [action('No Charmed monsters available', () => {},
+              'Only personally captured Charmed monsters may train.', true)],
+        back,
+      );
+    }
+    function teacherRingleaderPreview(n, id, back) {
+      const g = getGame(),
+        u = g.s.party.find((u) => u.id === id),
+        cost = Campaign.rules.balance.companions.ringleaderTrainingCost,
+        reason = g.charmedRingleaderTrainingReason(u, n.family);
+      if (reason) {
+        back();
+        return;
+      }
+      const beforeHp = g.companionMaxHp(u),
+        beforeDamage = g.companionAttackDamage(u),
+        afterHp = Math.round(beforeHp * Campaign.rules.ringleaderScaling.hp),
+        afterDamage = beforeDamage * Campaign.rules.ringleaderScaling.damage;
+      openMenu(
+        'Ringleader Training · ' + g.companionDisplayName(u),
+        'Orin will train this individual monster, not the entire species. ' +
+          'HP ' + beforeHp + ' → ' + afterHp +
+          ' · attack ' + beforeDamage.toFixed(1) + ' → ' + afterDamage.toFixed(1) +
+          ' · mastery Tier ' + g.companionMasteryTier(u) +
+          ' remains unchanged. Crowns ' + Math.floor(g.hero.gold) + '.',
+        [action(
+          'Confirm training · ' + cost + ' crowns',
+          () => {
+            // Never purchase on a stale menu or for a replaced companion.
+            if (getGame() !== g || !g.s.party.includes(u) ||
+                g.charmedRingleaderTrainingReason(u, n.family))
+              return back();
+            g.trainCharmedRingleader(id, n.family);
+            back();
+          },
+          g.hero.gold < cost
+            ? 'Not enough crowns. No payment is made.'
+            : 'Permanent, one-time promotion for this companion.',
+          g.hero.gold < cost,
+        )],
         back,
       );
     }
@@ -1170,24 +1242,34 @@
     }
     function careQueueSummary(kind) {
       const g = getGame(),
-        request = g.s.companionCareRequests[kind];
-      if (!request) return '';
-      const names = [
+        requests =
+          kind === 'recovery'
+            ? g.companionRecoveryRequests()
+            : [g.s.companionCareRequests[kind]].filter(Boolean);
+      if (!requests.length) return '';
+      const names = requests.flatMap((request) => [
         ...(kind === 'treatment' && request.heroWounded ? ['Hero'] : []),
         ...request.companionIds
           .map((id) => g.s.party.find((u) => u.id === id))
           .filter(Boolean)
           .map(rosterLabel),
-      ].join(', ');
-      const reason = g.companionCareReason(kind, request, { ignoreFunds: true, checkSource: true });
+      ]);
+      const shown = names.slice(0, 5).join(', ') +
+        (names.length > 5 ? ' +' + (names.length - 5) + ' more' : '');
+      const reason = g.companionCareReason(kind, requests[0], {
+        ignoreFunds: true,
+        checkSource: true,
+      });
       return (
-        (kind === 'recovery' ? 'Queued recovery: ' : 'Queued treatment: ') +
-        names +
+        (kind === 'recovery' ? 'Queued recoveries: ' : 'Queued treatment: ') +
+        shown +
         ' · ' +
         Math.floor(g.hero.gold) +
         '/' +
         g.companionCarePrice(kind) +
-        ' crowns · ' +
+        ' crowns' +
+        (kind === 'recovery' ? ' each' : '') +
+        ' · ' +
         (reason || 'Automatic when eligible.')
       );
     }
@@ -1202,10 +1284,23 @@
     }
     function careChoice(kind, barracksId, refresh) {
       const g = getGame(),
-        queued = !!g.s.companionCareRequests[kind],
+        recoveryRequests = kind === 'recovery' ? g.companionRecoveryRequests() : [],
+        queuedRequest =
+          kind === 'recovery'
+            ? recoveryRequests.find((r) => r.barracksId === barracksId && r.zone === g.zoneId)
+            : g.s.companionCareRequests[kind],
+        queued = !!queuedRequest,
+        candidate =
+          kind === 'recovery'
+            ? g.s.party.find(
+                (u) => u.hp <= 0 && !recoveryRequests.some((r) => r.companionIds.includes(u.id)),
+              )
+            : null,
         request = queued
-          ? g.s.companionCareRequests[kind]
-          : g.companionCareCandidate(kind, barracksId),
+          ? queuedRequest
+          : kind === 'recovery' && !candidate
+            ? { companionIds: [], barracksId, zone: g.zoneId }
+            : g.companionCareCandidate(kind, barracksId, candidate?.id || null),
         reason = g.companionCareReason(kind, request, { ignoreFunds: true, checkSource: true }),
         cost = g.companionCarePrice(kind),
         target = g.companionCareTargets(kind, request)[0];
@@ -1221,7 +1316,11 @@
           cost +
           ' crowns',
         () => {
-          getGame().requestCompanionCare(kind, barracksId);
+          getGame().requestCompanionCare(
+            kind,
+            barracksId,
+            kind === 'recovery' ? queuedRequest?.companionIds[0] || candidate?.id || null : null,
+          );
           refresh();
         },
         queued
@@ -1240,10 +1339,72 @@
         !queued && !!reason,
       );
     }
-    function barracksRecoveryActions(refresh, barracksId) {
+    function barracksRecoveryActions(refresh, b, page = 0) {
+      const g = getGame(),
+        pending = g.companionRecoveryRequests(),
+        fallen = g.s.party.filter((u) => u.hp <= 0),
+        pageSize = 10,
+        pages = Math.max(1, Math.ceil(fallen.length / pageSize)),
+        currentPage = Math.min(page, pages - 1),
+        atSource = pending.filter((r) => r.barracksId === b.id && r.zone === g.zoneId).length,
+        limit = g.companionRecoveryQueueLimit(b.id),
+        cost = g.companionCarePrice('recovery');
+      const rows = fallen
+        .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
+        .map((u) => {
+          const queuedIndex = pending.findIndex((r) => r.companionIds.includes(u.id)),
+            queued = queuedIndex >= 0,
+            request = queued
+              ? pending[queuedIndex]
+              : g.companionCareCandidate('recovery', b.id, u.id),
+            reason = g.companionCareReason('recovery', request, {
+              ignoreFunds: true,
+              checkSource: true,
+            }),
+            full = !queued && atSource >= limit;
+          return action(
+            (queued ? 'Cancel queued recovery' : 'Recover fallen companion') +
+              ' · ' +
+              rosterLabel(u) +
+              ' · ' +
+              cost +
+              ' crowns',
+            () => {
+              getGame().requestCompanionCare('recovery', b.id, u.id);
+              refresh();
+            },
+            queued
+              ? 'Queued #' + (queuedIndex + 1) + ' · tap to cancel. No crowns spent.'
+              : full
+                ? 'Queue full: upgrade to Full Barracks for unlimited recovery requests.'
+                : reason ||
+                  (g.hero.gold < cost
+                    ? 'Short on crowns? Tap to queue.'
+                    : 'Recover now for 40 crowns, or join the existing queue.'),
+            !queued && (full || !!reason),
+          );
+        });
       return [
-        careChoice('recovery', barracksId, refresh),
-        careChoice('treatment', barracksId, refresh),
+        ...(rows.length
+          ? rows
+          : [action('No fallen companions', () => {}, 'Your company has no fallen members.', true)]),
+        ...(pages > 1
+          ? [
+              action(
+                'Previous page',
+                () => barracksRecoveryMenu(b, refresh.back, Math.max(0, currentPage - 1)),
+                'Recovery page ' + (currentPage + 1) + '/' + pages,
+                currentPage === 0,
+              ),
+              action(
+                'Next page',
+                () => barracksRecoveryMenu(b, refresh.back, Math.min(pages - 1, currentPage + 1)),
+                'Recovery page ' + (currentPage + 1) + '/' + pages,
+                currentPage === pages - 1,
+              ),
+            ]
+          : []),
+        careChoice('treatment', b.id, refresh),
       ];
     }
     function barracksRespawnActions(b, refresh) {
@@ -1264,17 +1425,59 @@
         ),
       ];
     }
-    function barracksRecoveryMenu(b, back) {
-      const refresh = () => barracksRecoveryMenu(b, back);
+    function rogueFallenCharmPolicyActions(b, refresh) {
+      const g = getGame();
+      if (g.hero.class !== 'rogue') return [];
+      const policy = g.s.rogueFallenCharmSlotPolicy || 'release';
+      return [
+        action(
+          'Rogue · Free slots when Charmed allies fall' +
+            (policy === 'release' ? ' · SELECTED' : ''),
+          () => {
+            if (getGame().setRogueFallenCharmSlotPolicy('release', b.id)) refresh();
+          },
+          'Default: fallen Charmed allies go to reserve. You can still recover them for 40 crowns; their field slot is free for a new Charm.',
+          policy === 'release',
+        ),
+        action(
+          'Rogue · Keep fallen Charmed allies in party slots' +
+            (policy === 'keep' ? ' · SELECTED' : ''),
+          () => {
+            if (getGame().setRogueFallenCharmSlotPolicy('keep', b.id)) refresh();
+          },
+          'Fallen Charmed allies keep their occupied slot like other classes until recovered or manually rested. New Charms cannot take that slot.',
+          policy === 'keep',
+        ),
+      ];
+    }
+    function barracksRecoveryMenu(b, back, page = 0) {
+      const refresh = () => barracksRecoveryMenu(b, back, page);
+      refresh.back = back;
+      const g = getGame(),
+        roguePolicyDescription = g.hero.class === 'rogue'
+          ? '\n\nRogue only: Choose how FUTURE fallen Charmed allies occupy party slots. The default frees the slot by moving the fallen ally to reserve. Keeping the slot instead lets you recover that same ally into your active group later. Both modes preserve ownership and require paid recovery. Switching modes never moves existing fallen companions.'
+          : '',
+        pending = g.companionRecoveryRequests().filter(
+          (r) => r.barracksId === b.id && r.zone === g.zoneId,
+        );
+      const queueStatus = b.full
+        ? 'Full Barracks recovery queue: ' + pending.length + ' (no limit).'
+        : 'Basic Barracks recovery queue: ' + pending.length + '/3.';
       openMenu(
         'Recovery',
-        'Treat wounds heals the hero and living companions for 30 crowns. Fallen companions need separate recovery. Short on crowns? Tap to queue.' +
+        queueStatus + '\n' +
+          'Select fallen companions to recover for 40 crowns each. Short on crowns? Queue them in order. Treat wounds heals the hero and living companions for 30 crowns.' +
+          roguePolicyDescription +
           '\n' +
           (getGame().s.challenge.succession
             ? 'Succession: class loss replaces crown loss.'
             : 'Local death loss: ' + (b.full ? 5 : 15) + '%.') +
           (companionQueueSummary() ? '\n\n' + companionQueueSummary() : ''),
-        [...barracksRecoveryActions(refresh, b.id), ...barracksRespawnActions(b, refresh)],
+        [
+          ...rogueFallenCharmPolicyActions(b, refresh),
+          ...barracksRecoveryActions(refresh, b, page),
+          ...barracksRespawnActions(b, refresh),
+        ],
         back,
       );
     }
@@ -1300,7 +1503,8 @@
           '\n' +
           (def.role === 'ranged' ? 'Ranged support.' : 'Close-range support.') +
           '\n' +
-          def.specialty,
+          def.specialty +
+          (unit ? '\n' + companionMasteryDisplay(unit) : ''),
         [
           ...(unit
             ? [
@@ -1561,6 +1765,14 @@
       }
       return result;
     }
+    function companionMasteryDisplay(u) {
+      const g = getGame(),
+        tier = g.companionMasteryTier(u),
+        next = Campaign.rules.balance.companions.mastery.thresholds[tier],
+        points = u.masteryPoints || 0;
+      return 'Mastery ' + tier + (next ? ' · ' + points + '/' + next + ' points' : ' · MAX') +
+        (u.charmRingleaderTrained ? ' · Ringleader trained' : '');
+    }
     function barracksCompanionAction(b, u, refresh) {
       // Stable member ID, not array index: an action is revalidated by the
       // authoritative companion operation before changing membership.
@@ -1582,7 +1794,8 @@
                   '/' +
                   u.maxHp +
                   ' HP · Rest to free a group slot.'
-                : 'With you · FALLEN · Rest to free a group slot.'),
+                : 'With you · FALLEN · Rest to free a group slot.') +
+              ' · ' + companionMasteryDisplay(u),
             !!reason,
           )
         : action(
@@ -1591,7 +1804,8 @@
               getGame().activateCompanion(u.id, b.id);
               refresh();
             },
-            reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP',
+            (reason || 'Resting · ' + Math.ceil(u.hp) + '/' + u.maxHp + ' HP') +
+              ' · ' + companionMasteryDisplay(u),
             !!reason,
           );
     }

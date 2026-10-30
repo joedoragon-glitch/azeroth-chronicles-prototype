@@ -1,0 +1,19 @@
+{
+  "sourceSha256": "07c05533633f2e47072cfc3c4d3de8a8070238ec9ce6f66804b1d27b074b7c45",
+  "genuinePlayerExport": true,
+  "schema": 4,
+  "originalZone": "march",
+  "rawBytesUnchanged": true,
+  "progressUnchanged": true,
+  "progressSecondReload": true,
+  "fullSnapshotIdempotent": true,
+  "valePropsBefore": 198,
+  "valePropsAfter": 206,
+  "missingPropIds": [],
+  "valePropsAfterEntry": 249,
+  "sourceVersion": 1,
+  "sceneVersion": 2,
+  "essentialMissing": [],
+  "heroOnDryGround": true,
+  "validatedBuild": "0.9.1+snapshot.dev.224"
+}

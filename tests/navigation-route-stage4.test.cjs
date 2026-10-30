@@ -77,11 +77,26 @@ function safeSegments(game, from, path) {
   // This narrow check is intentionally not the broad roads/AI test matrix.
   const Campaign = require('../src/prototype/engine.js');
   const campaign = new Campaign('normal', 'paladin', () => 0.73);
+  // Greenwood's accepted reconstruction relocated the town and scenery.
+  // Find a genuinely open native corridor before placing our test blocker.
+  let corridor = null;
+  for (let y = 300; y < campaign.zoneSize() - 300 && !corridor; y += 100)
+    for (let x = 200; x < campaign.zoneSize() - 350; x += 100) {
+      const origin = { x, y }, destination = { x: x + 100, y };
+      if (campaign.clearSegment(origin, destination, 15) &&
+          !campaign.blocked(x + 50, y + 50, 'vale', 15) &&
+          !campaign.blocked(x + 50, y - 50, 'vale', 15)) {
+        corridor = { origin, destination, midpoint: { x: x + 50, y } };
+        break;
+      }
+    }
+  assert(corridor, 'the reconstructed region retains a traversable native corridor');
+  const { origin, destination, midpoint } = corridor;
   campaign.zone().props.push({
-    id: 'stage4-follow-obstacle', x: 350, y: 350, r: 24, icon: 'rock',
+    id: 'stage4-follow-obstacle', ...midpoint, r: 24, icon: 'rock',
   });
-  const origin = { x: 300, y: 350 };
-  const destination = { x: 400, y: 350 };
+  assert(!campaign.clearSegment(origin, destination, 15),
+    'the native obstacle blocks the formerly open direct corridor');
   const route = campaign.route(origin, destination);
   assert(route.length, 'production actor still receives an obstacle-aware route');
   safeSegments(campaign, origin, route);

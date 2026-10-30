@@ -12,7 +12,7 @@ const PrototypeData = {
       transport: 'Merchant wagon',
       fare: 25,
       route:
-        "Millhaven at (300, 350) connects to Orchard Hamlet at (900, 700), the Forest Crypt at (2150, 2100), and the original merchant wagon stand at (2450, 650). A north to south river at x 1200 can be crossed at the mill bridge near y 750 and a southern footbridge near y 1750. Thornfang's den lies beyond the settled orchard country near (760, 1750).",
+        'Millhaven’s working street leads through Orchard Hamlet and its expanding groves to the western mill pond. Maintained cart roads cross the north–south river at Mill bridge and a narrower southern footbridge. Woodland tracks connect Thornfang’s den, the occupied Old Orchard Cellars, Scornfang’s Treasury and the Forest Crypt’s unfinished estate approach; the merchant wagon leaves from the northeast.',
       obstacle:
         'Dense thickets close direct shortcuts, but broad woodland paths remain walkable. The river, lake shore and mill pond are impassable water. Houses and fences shape streets without blocking exits.',
       exploration:
@@ -163,7 +163,7 @@ const PrototypeData = {
       kind: 'dungeon',
       name: 'Lifebinder',
       history:
-        'The Lifebinder was one of the Dark Lord’s old companions. He binds the fallen into aware, enduring skeletons rather than bringing them back to life. His professional disciplines are Mortuary Science and Thanatology, and Architectural Conservation and Adaptive Reuse. Their work keeps the unfinished winter estate running; Borin was compelled to build and repair it.',
+        'The Lifebinder was one of the Dark Lord’s old companions. He binds the fallen into aware, enduring skeletons rather than bringing them back to life. His professional disciplines are Mortuary Science and Thanatology, and Architectural Conservation and Adaptive Reuse. He brought his aware skeleton followers here as paid work crews to convert the old crypt into the winter estate; they were not raised from its graves. They have reservations about the conversion and little freedom to refuse. Borin was compelled to build and repair it.',
       level: 3,
       captive: 'Borin the Village Smith',
       service: 'Village weapon improvements and basic equipment crafting',
@@ -415,7 +415,7 @@ const PrototypeData = {
   quests: [
     ['vale', 'A Teacher Taken', 'Defeat Thornfang; free Mira', 45, 50],
     ['vale', 'Roads Under Threat', 'Defeat 5 outdoor enemies in Greenwood Vale', 25, 88],
-    ['vale', 'Stolen Stores', "Recover 2 caches from Thornfang's Treasury", 35, 100],
+    ['vale', 'Stolen Stores', "Recover 2 caches from Scornfang's Treasury", 35, 100],
     ['vale', 'An Unfinished Retreat', 'Defeat Lifebinder; free Borin', 45, 137],
     ['vale', 'Keeping Trade Open', 'Visit Mill bridge and wagon stand', 0, 50],
     ['vale', 'Who Owns the Woods?', 'Discover any 3 Greenwood Vale sites', 10, 175],

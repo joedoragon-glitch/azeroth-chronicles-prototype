@@ -216,6 +216,10 @@
   function definitionFor(e, region = 0, rescued = false) {
     if (
       e?.highlandsNature ||
+      e?.greenwoodNature ||
+      e?.greenwoodFacility ||
+      e?.greenwoodWall ||
+      e?.greenwoodInteriorAsset ||
       e?.miningFacility ||
       e?.treasuryBoss === 'ridge' ||
       e?.captainProfile === 'supply-highlands'

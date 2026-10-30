@@ -38,9 +38,13 @@ La aventura tiene objetivos principales, encargos locales y una historia que con
 3. **Consulta qué hacer:** abre **Aventura → Diario de misiones** (*Adventure → Quest journal*) para seguir los objetivos de la historia. El **Mapa y rutas de viaje** te ayuda a encontrar destinos.
 4. **Aprende tus habilidades:** ve a **Aventura → Habilidades del héroe** (*Hero skills*) para consultar las acciones disponibles, sus mejoras y cómo entrenarlas. Las habilidades usan **tiempos de reutilización**, no una barra de maná.
 5. **Cuida a tu compañía:** los compañeros pueden luchar contigo, retirarse cuando están heridos y necesitar recuperación. El capitán y los cuarteles terminados ofrecen **Curar heridas** por 30 coronas: recupera toda la salud del héroe y los compañeros vivos cuando no haya combate cercano. En los refugios puedes curarlos gratis, con un tiempo de espera de 90 segundos. Los compañeros caídos necesitan una recuperación aparte.
+   En **Cuartel → Recuperación** puedes elegir individualmente a los compañeros caídos. Un cuartel básico permite dejar **hasta 3 recuperaciones pendientes**; un cuartel completo admite todas las que necesites dentro de tu compañía. Cada compañero cuesta **40 coronas**. Puedes cancelar una solicitud sin pagar; se procesa automáticamente al reunir las coronas y cumplir las condiciones de seguridad. El capitán conserva una sola solicitud de recuperación. Curar heridas cuesta 30 coronas y no revive a los caídos.
+   **Solo para la Pícara:** en **Cuartel → Recuperación** puedes decidir qué ocurre cuando cae un monstruo encantado. La opción predeterminada lo manda a la reserva para liberar un espacio del grupo activo. También puedes hacer que **conserve ese espacio**, como los compañeros de las otras clases, hasta que lo recuperes por 40 coronas o lo pases manualmente a reserva. En ambos casos sigue siendo tu compañero y conserva su identidad. El cambio solo afecta a los futuros caídos: no mueve a los que ya estén caídos.
 6. **Continúa cuando quieras:** en la pantalla principal, **Continuar aventura** retoma una partida guardada válida. El modo **Nightmare** (Pesadilla) se desbloquea tras alcanzar el final pacífico y usa un guardado separado.
 
 Algunas opciones pueden conservar el nombre inglés en tu versión. Las explicaciones entre paréntesis ayudan a reconocerlas aunque todavía no estén traducidas.
+
+Greenwood tiene un molino y estanque de trabajo, huertos en distintas etapas, una bodega decorativa independiente y rutas por el bosque. **Scornfang's Treasury** es un lugar distinto de **Old Orchard Cellars**, que sigue siendo un interior ocupado.
 
 ## Controles básicos
 
@@ -78,7 +82,7 @@ Si necesitas ayuda mientras juegas, abre el menú de **Controles** o **Ayuda y c
 
 **Cambio preparado en el PR #574:** **PixiJS WebGL2 · Predeterminado** será el motor gráfico principal y **Canvas 2D · Respaldo** seguirá disponible para elegirlo o recuperarse de un fallo de WebGL. La actualización reemplazará la preferencia antigua por Canvas **una sola vez**; si vuelves a elegir Canvas, el juego respetará esa decisión al reiniciar. PixiJS se preparará al entrar en **Nueva partida / Continuar aventura**, no mientras esperas en el menú principal. Si la preparación tarda demasiado, podrás seleccionar **Continuar con Canvas**. Si cambias manualmente de Canvas a PixiJS, se conservará la confirmación de 15 segundos. La opción de PixiJS ya no llevará la etiqueta «Experimental», pero eso **no garantiza** mejor rendimiento ni sustituye las pruebas en Chromebook o teléfono.
 
-**Disponibilidad:** al **29 de octubre de 2026**, el PR #574 todavía no se ha integrado ni publicado. La versión instalada puede conservar los gráficos anteriores hasta que se publique y se instale la actualización. Consulta [Estado de desarrollo](docs/DEVELOPMENT_STATE.md) y el informe de diagnóstico para comprobar la versión y el motor realmente activos.
+**Disponibilidad:** al **30 de octubre de 2026**, el PR #574 todavía no se ha integrado ni publicado. La versión instalada puede conservar los gráficos anteriores hasta que se publique y se instale la actualización. Consulta [Estado de desarrollo](docs/DEVELOPMENT_STATE.md) y el informe de diagnóstico para comprobar la versión y el motor realmente activos.
 
 ## Palabras que quizá veas en inglés
 

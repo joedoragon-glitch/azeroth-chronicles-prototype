@@ -1,0 +1,188 @@
+{
+  "size": 3400,
+  "sourceFiles": {
+    "greenwood-landscape": "7c99367ff2672ac58cdfd167e134671052e0e05b415b6cfcf497e7da36531d3c",
+    "greenwood": "2d4f965bf3e01c97eab6eec7f1cd56abd4d459b15e1fe384e21893b20d09c240",
+    "world": "c4859c3d11d77d027c87aaa5a3776b7940b234df777d1d8c77e26e94522c6ada",
+    "engine": "c32ec867f9d00f7814fdba1b910b47167c25b2cd5e8cecf54f261e8bb57f94e0",
+    "save": "dd9870e6eaa95bf52778e4eb7c0539b7b74464a7c73ff6b653cb921e97f611f6",
+    "party": "b0e85fa7ea561f50b6860a9f0210aabdd41102015eac11ba8b6d9b0c91e4b637"
+  },
+  "fixtureSha256": "0c3df638ab014372a5ec34ef4bbadb0c9e848a198f2f8132bf062618b27fb6bb",
+  "fixtureSources": {
+    "expanded": {
+      "commit": "bda30dabd8701f2826b50401ec54213118494433",
+      "geometry": "dev.233 geometry in dev.234 engine",
+      "preparation": "Native build/work/gather/interior actions, controlled legal actor staging and explicit progression prerequisites; synthetic, not a sustained playthrough or player export"
+    },
+    "rollback": {
+      "commit": "fcc1f428df652c7470914f3465bebf56afffbb71",
+      "geometry": "Native dev.235 inverse restore of those expanded inputs, sourceVersion=0 and rollbackVersion=1",
+      "preparation": "Native build/work/gather/interior actions, controlled legal actor staging and explicit progression prerequisites; synthetic, not a sustained playthrough or player export"
+    }
+  },
+  "status": "Synthetic historical v4 inputs; active replacement at 3200 and 3400 comparison; bounded lifecycle checks, no device, visual, combat or full-game acceptance",
+  "cases": [
+    {
+      "name": "expanded:partial-recovery-camp",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [
+        {
+          "id": "barracks-36",
+          "progress": 1.3,
+          "queue": 0,
+          "queueType": null,
+          "kind": "barracks",
+          "name": "Barracks",
+          "theme": "vale",
+          "icon": "\ud83c\udfd7\ufe0f",
+          "full": false,
+          "upgradeProgress": 0,
+          "upgradePaid": false,
+          "recoveryOnComplete": true,
+          "dungeonEntrance": "crypt"
+        }
+      ],
+      "sourceVersion": 2
+    },
+    {
+      "name": "expanded:paid-partial-upgrade",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [
+        {
+          "id": "barracks-36",
+          "progress": 4,
+          "queue": 0,
+          "queueType": null,
+          "kind": "barracks",
+          "name": "Barracks",
+          "theme": "vale",
+          "icon": "\ud83c\udfd7\ufe0f",
+          "full": false,
+          "upgradeProgress": 1.2,
+          "upgradePaid": true,
+          "dungeonEntrance": "crypt"
+        }
+      ],
+      "sourceVersion": 2
+    },
+    {
+      "name": "expanded:worker-loaded",
+      "passed": true,
+      "remainingTribute": 592.0000000000005,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "expanded:worker-journey",
+      "passed": true,
+      "remainingTribute": 470,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "expanded:inside-crypt",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "expanded:inside-supply-vale",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "expanded:inside-side-vale-cellars",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "rollback:partial-recovery-camp",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [
+        {
+          "id": "barracks-36",
+          "progress": 1.3,
+          "queue": 0,
+          "queueType": null,
+          "kind": "barracks",
+          "name": "Barracks",
+          "theme": "vale",
+          "icon": "\ud83c\udfd7\ufe0f",
+          "full": false,
+          "upgradeProgress": 0,
+          "upgradePaid": false,
+          "recoveryOnComplete": true,
+          "dungeonEntrance": "crypt"
+        }
+      ],
+      "sourceVersion": 2
+    },
+    {
+      "name": "rollback:paid-partial-upgrade",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [
+        {
+          "id": "barracks-36",
+          "progress": 4,
+          "queue": 0,
+          "queueType": null,
+          "kind": "barracks",
+          "name": "Barracks",
+          "theme": "vale",
+          "icon": "\ud83c\udfd7\ufe0f",
+          "full": false,
+          "upgradeProgress": 1.2,
+          "upgradePaid": true,
+          "dungeonEntrance": "crypt"
+        }
+      ],
+      "sourceVersion": 2
+    },
+    {
+      "name": "rollback:worker-loaded",
+      "passed": true,
+      "remainingTribute": 592.0000000000005,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "rollback:worker-journey",
+      "passed": true,
+      "remainingTribute": 470,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "rollback:inside-crypt",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "rollback:inside-supply-vale",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [],
+      "sourceVersion": 2
+    },
+    {
+      "name": "rollback:inside-side-vale-cellars",
+      "passed": true,
+      "remainingTribute": 640,
+      "buildings": [],
+      "sourceVersion": 2
+    }
+  ],
+  "failures": []
+}

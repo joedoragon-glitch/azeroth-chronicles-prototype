@@ -1723,7 +1723,65 @@
         }
         ctx.save();
         ctx.globalAlpha = a;
-        if (f.type === 'petSkill') {
+        if (f.type === 'charmHeritage') {
+          // Every visible contour uses the EXACT committed gameplay geometry.
+          // Only one bounded 0.6s afterimage; no independent search or damage.
+          const source = screen({ x: f.fromX, y: f.fromY }),
+            hue = f.species === 'wraith' ? '#bbb6ff' :
+              f.species === 'stalker' ? '#a88fe5' :
+              f.species === 'ashbeast' ? '#ffad72' :
+              ['reedbeast', 'mireling', 'goblin'].includes(f.species)
+                ? '#a9d6a1' : '#e5d0a7',
+            heading = Math.atan2(f.y - f.fromY, f.x - f.fromX);
+          ctx.strokeStyle = hue;
+          ctx.fillStyle = hue;
+          ctx.lineWidth = f.critical ? 3 : 2;
+          ctx.lineCap = 'round';
+          if (f.shape === 'circle') {
+            const radius = Math.abs(screen({ x: f.x + f.radius, y: f.y }).x - p.x);
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, Math.max(2, radius * (0.85 + grow * 0.15)),
+              0, Math.PI * 2);
+            ctx.stroke();
+          } else if (f.shape === 'cone') {
+            ctx.beginPath();
+            ctx.moveTo(source.x, source.y);
+            for (let j = 0; j <= 12; j++) {
+              const angle = heading - f.halfAngle + j * f.halfAngle / 6,
+                edge = screen({ x: f.fromX + Math.cos(angle) * f.range,
+                  y: f.fromY + Math.sin(angle) * f.range });
+              ctx.lineTo(edge.x, edge.y);
+            }
+            ctx.closePath();
+            ctx.stroke();
+          } else if (f.shape === 'line') {
+            const end = { x: f.fromX + Math.cos(heading) * f.range,
+              y: f.fromY + Math.sin(heading) * f.range },
+              offset = { x: -Math.sin(heading) * f.halfWidth,
+                y: Math.cos(heading) * f.halfWidth },
+              corners = [
+                { x: f.fromX + offset.x, y: f.fromY + offset.y },
+                { x: end.x + offset.x, y: end.y + offset.y },
+                { x: end.x - offset.x, y: end.y - offset.y },
+                { x: f.fromX - offset.x, y: f.fromY - offset.y },
+              ].map(screen);
+            ctx.beginPath();
+            corners.forEach((q, j) => j ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y));
+            ctx.closePath();
+            ctx.stroke();
+          } else {
+            ctx.beginPath();
+            ctx.moveTo(source.x, source.y);
+            ctx.lineTo(p.x, p.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, f.kind === 'native' ? 12 : 9, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 3 + grow * 5, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (f.type === 'petSkill') {
           if (f.stage !== 'release' && !f.physicalProjectile) drawPetSkillGeometry(f);
           PrototypeEnemyVfxArt?.petSkill?.(ctx, screen, f, { reduced: reducedMotion(), optimized });
         } else if (f.type === 'ability') {

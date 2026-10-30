@@ -30,6 +30,13 @@ function scene() {
   );
   z.enemies = [e];
   g.engage(e);
+  // This is an isolated PET-SKILL decision/flight/dodge/heal unit test,
+  // not a Greenwood terrain test. Keep this one shot unobstructed so terrain
+  // reconstruction cannot turn an intended on-target hit into a wall impact.
+  // The separate native projectile/collision suites test actual obstructions.
+  // LOS refusal remains tested below by explicitly setting g.line = false.
+  g.line = () => true;
+  g.clearSegment = () => true;
   return { g, u, e };
 }
 function fly(g) {

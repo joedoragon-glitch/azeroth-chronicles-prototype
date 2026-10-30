@@ -49,11 +49,15 @@ assert.throws(() => Levels.createTuning({ modes: { nightmare: { enemy: 3 } } }),
 assert.throws(() => Levels.createTuning({ modes: { normal: { world: 3 } } }), /Normal/);
 
 const ids = Object.keys(Levels.ACTIONS);
-assert.equal(ids.length, 68 + 33 + 9 + 2 + 82, '112 party actions + 82 native World keys');
+assert.equal(ids.length, 68 + 33 + 9 + 16 + 82, '126 party actions + 82 native World keys');
 assert.equal(ids.filter(k=>k.startsWith('hero/')).length, 68);
 assert.equal(ids.filter(k=>k.startsWith('pet/')).length, 33);
 assert.equal(ids.filter(k=>k.startsWith('troop/')).length, 9);
-assert.equal(ids.filter(k=>k.startsWith('charm/')).length, 2);
+assert.equal(ids.filter(k=>k.startsWith('charm/')).length, 16);
+for (const species of ['goblin','skeleton','mireling','reedbeast','wolf','ogre','orc','archer','ashbeast','crownguard','wraith','stalker'])
+  assert.equal(Levels.ACTIONS['charm/heritage/' + species].group, 'companion', species + ' heritage critical');
+for (const species of ['wraith-drain','stalker-pounce'])
+  assert.equal(Levels.ACTIONS['charm/night/' + species].group, 'companion', species + ' native night critical');
 for (const key of ['charm/rogue/basic', 'charm/rogue/signature']) {
   assert.equal(Levels.ACTIONS[key].group, 'companion', key);
   assert.equal(Levels.ACTIONS[key].lever, 'damage', key);

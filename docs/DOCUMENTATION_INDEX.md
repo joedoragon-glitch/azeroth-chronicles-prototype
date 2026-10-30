@@ -1,27 +1,27 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 28 October 2026 · **419 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **436 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
 **Read first:** [Development state](DEVELOPMENT_STATE.md) owns verified public-build and acceptance information; [Architecture](ARCHITECTURE.md) maps source owners; [Decisions](DECISIONS.md) gives design rules and supersessions; [AGENTS.md](../AGENTS.md) governs authorization; [Engineering workflow](MECHANIC_DEVELOPMENT.md) describes verification; [Brand identity](BRAND_IDENTITY.md) gives the official title and legacy exceptions.
 
-**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the source candidate, the latest verified Pages publication and outstanding device acceptance. The listening-room release must not be treated as installed on a device merely because code or documentation has merged.
+**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the source candidate, the latest verified Pages publication and outstanding device acceptance. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
 
-**Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that all 419 bodies were independently audited. Labels such as *Dated record* describe source context, not a present work order.
+**Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that every historical body was independently audited. Labels such as *Dated record* describe source context, not a present work order.
 
 ## Jump to a subject
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (121)
-- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (19)
-- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (42)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
+- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (20)
+- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (48)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
-- [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (44)
-- [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (5)
-- [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (11)
-- [Save data, backup and recovery](#save-data-backup-and-recovery) (5)
+- [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (45)
+- [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
+- [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (13)
+- [Save data, backup and recovery](#save-data-backup-and-recovery) (6)
 - [Documentation governance and reference records](#documentation-governance-and-reference-records) (16)
 - [Historical releases, reviews and integration handoffs](#historical-releases-reviews-and-integration-handoffs) (37)
 - [Other dated system findings](#other-dated-system-findings) (39)
@@ -58,6 +58,11 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Enemy Audio Synchronization](ENEMY_AUDIO_SYNCHRONIZATION.md)** — **Reference.** Timing of enemy audio relative to attack resolution and visual telegraphs.
 
 ## Hero abilities, combat, enemies and bosses
+
+- **[Target Centered Boss Ground AoE](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md)** — **Design reference.** Committed boss damage footprints, warning parity and terrain/line-of-sight boundaries.
+- **[Rogue Charm Heritage](ROGUE_CHARM_HERITAGE_589.md)** — **Reference.** Charmed heritage abilities, nighttime species, published implementation evidence and pending balance review.
+- **[Rogue Rank and Stacking Reconciliation](ROGUE_SKILL_RANK_PROGRESS_AND_STACKING_RECONCILIATION_20261029.md)** — **Reference.** Current #606 stacking/rank integration versus earlier alternatives and instructor/journal verification.
+- **[Warning Effect Handoff](WARNING_EFFECT_HANDOFF_20261028.md)** — **Reference.** Native warning expiration at actual attack release across Canvas and the Pixi overlay.
 
 
 ### Rogue/Bard fourth-class work
@@ -175,6 +180,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Combat Arena Low Spec](COMBAT_ARENA_LOW_SPEC.md)** — **Reference.** Combat-space readability and technical constraints for lower-performance devices.
 - [Combat Conditions V09](COMBAT_CONDITIONS_V09.md) — *Dated record.* Meaning and presentation of status conditions in combat.
 - [Combat Flow And Menus DEV126](COMBAT_FLOW_AND_MENUS_DEV126.md) — *Dated record.* Explains combat flow and menus player interaction or interface readability choices.
+- [Combat Four Domain Workload Audit 20261029](COMBAT_FOUR_DOMAIN_WORKLOAD_AUDIT_20261029.md) — *Dated record.* Native dev.224 combat-workload measurements, later merged micro-optimizations and unresolved follow-up investigations.
 - **[Combat Party Housekeeping](COMBAT_PARTY_HOUSEKEEPING.md)** — **Reference.** Describes combat party housekeeping decisions, constraints or engineering observations from its original development checkpoint.
 - [Greenwood Melee Anti Kite Pilot 20261026](GREENWOOD_MELEE_ANTI_KITE_PILOT_20261026.md) — *Dated record.* Investigates greenwood melee anti kite pilot as a proposal or pilot without establishing production readiness.
 - [Greenwood Native Pursuit 20261026](GREENWOOD_NATIVE_PURSUIT_20261026.md) — *Dated record.* Describes greenwood native pursuit decisions, constraints or engineering observations from its original development checkpoint.
@@ -198,6 +204,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Companions, Barracks, pets and specialists
 
+- **[Companion Mastery and Charmed Training](COMPANION_MASTERY_AND_CHARMED_RINGLEADER_TRAINING_20261029.md)** — **Design reference.** Shared companion mastery, Orin Ringleader promotion, implemented scope and outstanding follow-up decisions.
+
 - [Barracks Build Copy DEV155](BARRACKS_BUILD_COPY_DEV155.md) — *Dated record.* Describes barracks build copy decisions, constraints or engineering observations from its original development checkpoint.
 - [Barracks Roster Feedback DEV127](BARRACKS_ROSTER_FEEDBACK_DEV127.md) — *Dated record.* Reference structure or catalog for barracks roster feedback, with its original assumptions and scope.
 - [Barracks Tutorial DEV154](BARRACKS_TUTORIAL_DEV154.md) — *Dated record.* Describes barracks tutorial decisions, constraints or engineering observations from its original development checkpoint.
@@ -219,6 +227,13 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Travel Companion Collision 20261020](TRAVEL_COMPANION_COLLISION_20261020.md) — *Dated record.* Describes travel companion collision decisions, constraints or engineering observations from its original development checkpoint.
 
 ## World, geography, travel and narrative
+
+- [Greenwood redesign masterplan comparison](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) — *Dated design evidence.* Two distinct regional plans, the implemented dev.238 replacement, all-50 execution-quality audit, interior extension and handoff under #644/#654. Owner first-hour acceptance remains pending.
+- **[Greenwood Flagship Work Handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md)** — **Maintained implementation handoff.** Historical dev.233 evidence with a current routing banner to #654; the new design record owns implementation/audit/handoff.
+- [Greenwood Geography and Livelihood Audit](GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md) — *Dated record.* Preserved 2700 source inventory, deficiencies and evidence overlays; current status routes to the handoff.
+- **[Greenwood Owner Art Direction](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md)** — **Approved design reference.** The 50 authorial decisions, including Scornfang ownership, with protected identities and engineering boundaries.
+- [Greenwood Piedmont Design Brief](GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md) — *Dated record.* Original environmental inspiration, subordinate to the approved decisions and selected measured implementation.
+- [Greenwood Work Readiness Audit](GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md) — *Dated record.* Original 17 findings and route/scene/save acceptance rubric, with current status routed to the feature handoff.
 
 
 ### Regions, settlements, transportation and terrain
@@ -242,6 +257,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Highlands Treasury DEV138](HIGHLANDS_TREASURY_DEV138.md) — *Dated record.* Describes highlands treasury decisions, constraints or engineering observations from its original development checkpoint.
 - **[Ironroot Highlands Layout](IRONROOT_HIGHLANDS_LAYOUT.md)** — **Reference.** Describes ironroot highlands layout decisions, constraints or engineering observations from its original development checkpoint.
 - [Orchard Witness DEV147](ORCHARD_WITNESS_DEV147.md) — *Dated record.* Relocation and saved-position migration of the Orchard witness to a visible roadside spot.
+- [Regional Street Clearance Rollback Audit 20261029](REGIONAL_STREET_CLEARANCE_ROLLBACK_AUDIT_20261029.md) — *Dated source/rollback review.* Before-and-after ledger of non-Greenwood road connections, moved props and conservative rollback limits.
 - **[Regional Handoff Audit](REGIONAL_HANDOFF_AUDIT.md)** — **Reference.** Examines regional for source or design inconsistencies, recording dated findings and limits.
 - [Side Dungeon Design Discussion 20261021](SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md) — *Dated record.* Preserves owner discussion and evolving decisions about side dungeon design discussion, subject to later rulings.
 - [Snapshot Transport And HUD Visual Preaudit 20261015](SNAPSHOT_TRANSPORT_AND_HUD_VISUAL_PREAUDIT_20261015.md) — *Dated record.* Examines snapshot transport and HUD visual preaudit for source or design inconsistencies, recording dated findings and limits.
@@ -341,6 +357,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Rendering, optimization, performance and WebGL experiments
 
+- **[Chromebook Graphics Preparation Cache Policy](CHROMEBOOK_GRAPHICS_PREPARATION_CACHE_POLICY_20261028.md)** — **Design reference.** Prepared arrivals, voluntary Canvas bypass and graphics cache retention; source/release status is separately evidenced.
+
 
 ### Experimental PixiJS, GPU and WebGL
 
@@ -390,12 +408,14 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Perf Ws1 Terrain Road Rendering](perf-ws1-terrain-road-rendering.md)** — **Reference.** Describes perf ws1 terrain road rendering decisions, constraints or engineering observations from its original development checkpoint.
 - **[Perf Ws3 Interface Audio 20261010](perf-ws3-interface-audio-20261010.md)** — **Reference.** Describes perf ws3 interface audio 20261010 decisions, constraints or engineering observations from its original development checkpoint.
 - [PR518 Engineering Handoff 20261027](PR518_ENGINEERING_HANDOFF_20261027.md) — *Dated record.* Engineering context and outstanding acceptance for the title, Canvas and experimental Pixi work.
-- **[PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md)** — **Maintained guide.** Real-device acceptance for Pixi/Canvas parity and the PR #574 Pixi-default rollout; older opt-in guidance is marked historical, and hardware acceptance remains pending.
+- **[PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md)** — **Maintained guide.** Historical Pixi opt-in protocol plus the updated #574 Pixi-default acceptance addendum: migration, Canvas recovery and Chromebook/phone performance remain unverified.
 - [Regional Graphics Preparation Title Screen 20261027](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md) — *Dated record.* Describes regional graphics preparation title screen decisions, constraints or engineering observations from its original development checkpoint.
 - [Runtime Workload DEV177 Audit](RUNTIME_WORKLOAD_DEV177_AUDIT.md) — *Dated record.* Examines runtime workload for source or design inconsistencies, recording dated findings and limits.
 - [Runtime Workload DEV177](RUNTIME_WORKLOAD_DEV177.md) — *Dated record.* Describes runtime workload decisions, constraints or engineering observations from its original development checkpoint.
 
 ## Navigation, maps and pathfinding
+
+- **[Actor Body Collision Rollback](ACTOR_BODY_COLLISION_ROLLBACK_20261028.md)** — **Design reference.** Removal of actor-to-actor obstruction while preserving terrain, scenery, doors and route safety.
 
 - **[Map Wayfinding Followup](MAP_WAYFINDING_FOLLOWUP.md)** — **Reference.** Describes map wayfinding followup decisions, constraints or engineering observations from its original development checkpoint.
 - [Navigation Stage2 20261023](NAVIGATION_STAGE2_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
@@ -404,6 +424,9 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Navigation Stage5 20261023](NAVIGATION_STAGE5_20261023.md) — *Dated record.* Describes a particular development stage of navigation and its recorded work status.
 
 ## Menus, controls, HUD and usability
+
+- **[Background Return to Title](BACKGROUND_RETURN_TO_TITLE_20261028.md)** — **Reference.** Visibility lifecycle, protected saving, guarded Continue and renderer recovery.
+- **[Compact HUD Crown Readout](COMPACT_HUD_CROWN_READOUT_20261029.md)** — **Reference.** Live localized Crown balance in the compact desktop/phone health row and icon-clipping follow-up.
 
 - [Adaptive Mobile HUD Implementation 20261027](ADAPTIVE_MOBILE_HUD_IMPLEMENTATION_20261027.md) — *Dated record.* Explains how adaptive mobile HUD was to be integrated, with its checkpoint-specific implementation evidence.
 - [Field Onboarding DEV161](FIELD_ONBOARDING_DEV161.md) — *Dated record.* Describes field onboarding decisions, constraints or engineering observations from its original development checkpoint.
@@ -419,6 +442,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Save data, backup and recovery
 
+- **[Greenwood Flagship Rollback 20261029](GREENWOOD_FLAGSHIP_ROLLBACK_20261029.md)** — **Operational recovery runbook.** Pinned original Greenwood source branch, safe revert paths, player-save downgrade warnings and release verification gates.
 - **[Ashen Frontier Recovery 240 Note](ASHEN_FRONTIER_RECOVERY_240_NOTE.md)** — **Reference.** Describes ashen frontier recovery 240 note decisions, constraints or engineering observations from its original development checkpoint.
 - [Director Chat Requests And Recovery 20261014](DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md) — *Dated record.* Describes director chat requests and recovery decisions, constraints or engineering observations from its original development checkpoint.
 - [Regional Recovery And Warning Audit DEV123](REGIONAL_RECOVERY_AND_WARNING_AUDIT_DEV123.md) — *Dated record.* Examines regional recovery and warning for source or design inconsistencies, recording dated findings and limits.

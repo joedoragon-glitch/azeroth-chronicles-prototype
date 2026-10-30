@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1020" viewBox="0 0 1440 1020">
+<rect width="1440" height="1020" fill="#f2eee3"/>
+<style>text{font-family:Arial,sans-serif;fill:#203d32}.title{font-size:25px;font-weight:bold}.sub{font-size:16px}.label{font-size:14px;font-weight:bold;paint-order:stroke;stroke:#f2eee3;stroke-width:4px;stroke-linejoin:round}.small{font-size:13px}</style>
+<text x="44" y="44" class="title">Greenwood Vale · two different regional designs</text>
+<text x="44" y="72" class="sub">PROPOSED GEOGRAPHY · No game screenshots · Dimensions provisional · North at top</text>
+<text x="45" y="113" class="title">A · Cultivated west / wooded east</text>
+<rect x="45" y="142" width="640" height="640" fill="#c6d1a7" stroke="#55765d"/>
+<ellipse cx="95.0" cy="210.0" rx="44.0" ry="60.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="265.0" cy="202.0" rx="62.0" ry="36.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="125.0" cy="378.0" rx="46.0" ry="50.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="105.0" cy="606.0" rx="40.0" ry="76.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="267.0" cy="704.0" rx="78.0" ry="58.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="473.0" cy="222.0" rx="42.0" ry="60.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="575.0" cy="498.0" rx="80.0" ry="76.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="501.0" cy="722.0" rx="50.0" ry="44.0" fill="#617f58" opacity=".65"/>
+<ellipse cx="139.0" cy="516.0" rx="56.0" ry="88.0" fill="#cdb879" opacity=".8"/>
+<ellipse cx="593.0" cy="406.0" rx="42.0" ry="42.0" fill="#cdb879" opacity=".8"/>
+<ellipse cx="215.0" cy="322.0" rx="48.0" ry="34.0" fill="#cdb879" opacity=".8"/>
+<path d="M 391.0,142.0 C 391.0,187.0 403.0,187.0 403.0,232.0 C 403.0,287.0 379.0,287.0 379.0,342.0 C 379.0,397.0 345.0,397.0 345.0,452.0 C 345.0,525.0 393.0,525.0 393.0,598.0 C 393.0,643.0 367.0,643.0 367.0,688.0 C 367.0,735.0 399.0,735.0 399.0,782.0" fill="none" stroke="#819e88" stroke-width="31"/>
+<path d="M 391.0,142.0 C 391.0,187.0 403.0,187.0 403.0,232.0 C 403.0,287.0 379.0,287.0 379.0,342.0 C 379.0,397.0 345.0,397.0 345.0,452.0 C 345.0,525.0 393.0,525.0 393.0,598.0 C 393.0,643.0 367.0,643.0 367.0,688.0 C 367.0,735.0 399.0,735.0 399.0,782.0" fill="none" stroke="#5b98a5" stroke-width="22"/>
+<polyline points="219.0,358.0 225.0,388.0 245.0,412.0 267.0,438.0 315.0,460.0 345.0,452.0" fill="none" stroke="#5b98a5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+<ellipse cx="245.0" cy="412.0" rx="23" ry="16" fill="#5b98a5"/>
+<ellipse cx="589.0" cy="406.0" rx="18" ry="12" fill="#5b98a5"/>
+<polyline points="105.0,262.0 175.0,262.0 245.0,272.0 311.0,342.0 379.0,342.0 459.0,342.0 541.0,272.0 627.0,226.0" fill="none" stroke="#97674b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="175.0,262.0 175.0,352.0 245.0,452.0 155.0,492.0 201.0,562.0 305.0,598.0 393.0,598.0" fill="none" stroke="#ad9163" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="459.0,342.0 481.0,412.0 529.0,480.0 543.0,612.0 593.0,700.0" fill="none" stroke="#ad9163" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="155.0,492.0 95.0,562.0 115.0,670.0 229.0,718.0 261.0,644.0 305.0,598.0" fill="none" stroke="#f3e5bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="393.0,598.0 475.0,612.0 579.0,586.0 593.0,700.0" fill="none" stroke="#f3e5bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="355.0,342.0 403.0,342.0" fill="none" stroke="#e4c78e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="369.0,598.0 417.0,598.0" fill="none" stroke="#e4c78e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="175.0" cy="262.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="183.0" y="253.0" text-anchor="start" class="label">Millhaven</text>
+<circle cx="155.0" cy="492.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="163.0" y="483.0" text-anchor="start" class="label">Hamlet</text>
+<circle cx="201.0" cy="562.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="209.0" y="553.0" text-anchor="start" class="label">Orchards</text>
+<circle cx="245.0" cy="412.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="253.0" y="403.0" text-anchor="start" class="label">Mill</text>
+<circle cx="115.0" cy="670.0" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="123.0" y="661.0" text-anchor="start" class="label">Goblin fort</text>
+<circle cx="261.0" cy="644.0" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="269.0" y="635.0" text-anchor="start" class="label">Old cellars</text>
+<circle cx="229.0" cy="718.0" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="237.0" y="709.0" text-anchor="start" class="label">Thornfang</text>
+<circle cx="459.0" cy="352.0" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="467.0" y="343.0" text-anchor="start" class="label">Treasury</text>
+<circle cx="529.0" cy="480.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="521.0" y="471.0" text-anchor="end" class="label">Cache</text>
+<circle cx="579.0" cy="586.0" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="571.0" y="577.0" text-anchor="end" class="label">Skeleton watch</text>
+<circle cx="593.0" cy="700.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="585.0" y="691.0" text-anchor="end" class="label">Crypt / estate</text>
+<circle cx="627.0" cy="226.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="619.0" y="217.0" text-anchor="end" class="label">Wagon</text>
+<path d="M205.0,142v640" stroke="#ffffff" opacity=".22"/>
+<path d="M45,302.0h640" stroke="#ffffff" opacity=".22"/>
+<path d="M365.0,142v640" stroke="#ffffff" opacity=".22"/>
+<path d="M45,462.0h640" stroke="#ffffff" opacity=".22"/>
+<path d="M525.0,142v640" stroke="#ffffff" opacity=".22"/>
+<path d="M45,622.0h640" stroke="#ffffff" opacity=".22"/>
+<text x="45" y="815" class="sub">3200 drafting grid · scale and placement subject to measurement</text>
+<text x="755" y="113" class="title">B · River-elbow crossroads</text>
+<rect x="755" y="142" width="640" height="640" fill="#c6d1a7" stroke="#55765d"/>
+<ellipse cx="819.0" cy="224.8235294117647" rx="41.411764705882355" ry="48.94117647058823" fill="#617f58" opacity=".65"/>
+<ellipse cx="852.8823529411765" cy="463.88235294117646" rx="62.11764705882353" ry="48.94117647058823" fill="#617f58" opacity=".65"/>
+<ellipse cx="877.3529411764706" cy="669.0588235294117" rx="79.05882352941177" ry="65.88235294117646" fill="#617f58" opacity=".65"/>
+<ellipse cx="1056.1764705882354" cy="236.11764705882354" rx="75.29411764705883" ry="56.470588235294116" fill="#617f58" opacity=".65"/>
+<ellipse cx="1300.8823529411766" cy="510.94117647058823" rx="65.88235294117646" ry="48.94117647058823" fill="#617f58" opacity=".65"/>
+<ellipse cx="1282.0588235294117" cy="697.2941176470588" rx="65.88235294117646" ry="71.52941176470588" fill="#617f58" opacity=".65"/>
+<ellipse cx="1061.8235294117646" cy="718.0" rx="48.94117647058823" ry="43.294117647058826" fill="#617f58" opacity=".65"/>
+<ellipse cx="1235.0" cy="330.2352941176471" rx="75.29411764705883" ry="79.05882352941177" fill="#cdb879" opacity=".8"/>
+<ellipse cx="967.7058823529412" cy="424.3529411764706" rx="43.294117647058826" ry="45.17647058823529" fill="#cdb879" opacity=".8"/>
+<path d="M 943.2352941176471,142.0 C 943.2352941176471,203.1764705882353 924.4117647058823,203.1764705882353 924.4117647058823,264.3529411764706 C 924.4117647058823,316.11764705882354 999.7058823529412,316.11764705882354 999.7058823529412,367.88235294117646 C 999.7058823529412,414.0 1086.2941176470588,414.0 1086.2941176470588,460.11764705882354 C 1086.2941176470588,508.11764705882354 1131.4705882352941,508.11764705882354 1131.4705882352941,556.1176470588235 C 1131.4705882352941,612.5882352941176 1195.4705882352941,612.5882352941176 1195.4705882352941,669.0588235294117 C 1195.4705882352941,725.5294117647059 1178.5294117647059,725.5294117647059 1178.5294117647059,782.0" fill="none" stroke="#819e88" stroke-width="31"/>
+<path d="M 943.2352941176471,142.0 C 943.2352941176471,203.1764705882353 924.4117647058823,203.1764705882353 924.4117647058823,264.3529411764706 C 924.4117647058823,316.11764705882354 999.7058823529412,316.11764705882354 999.7058823529412,367.88235294117646 C 999.7058823529412,414.0 1086.2941176470588,414.0 1086.2941176470588,460.11764705882354 C 1086.2941176470588,508.11764705882354 1131.4705882352941,508.11764705882354 1131.4705882352941,556.1176470588235 C 1131.4705882352941,612.5882352941176 1195.4705882352941,612.5882352941176 1195.4705882352941,669.0588235294117 C 1195.4705882352941,725.5294117647059 1178.5294117647059,725.5294117647059 1178.5294117647059,782.0" fill="none" stroke="#5b98a5" stroke-width="22"/>
+<polyline points="871.7,226.7 877.4,396.1 1027.9,480.8 1086.3,460.1 1187.9,433.8 1231.2,302.0 1300.9,207.9" fill="none" stroke="#97674b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="1231.2,302.0 1285.8,364.1 1315.9,437.5" fill="none" stroke="#ad9163" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="1027.9,480.8 958.3,586.2 958.3,689.8" fill="none" stroke="#ad9163" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="1187.9,433.8 1233.1,556.1 1315.9,642.7 1297.1,723.6" fill="none" stroke="#ad9163" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="877.4,396.1 845.4,343.4" fill="none" stroke="#f3e5bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="958.3,586.2 839.7,655.9 958.3,689.8 1093.8,669.1 1195.5,669.1 1297.1,723.6" fill="none" stroke="#f3e5bd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="1063.7,460.1 1108.9,460.1" fill="none" stroke="#e4c78e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+<polyline points="1172.9,669.1 1218.1,669.1" fill="none" stroke="#e4c78e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+<circle cx="1027.9411764705883" cy="480.8235294117647" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="1035.9411764705883" y="471.8235294117647" text-anchor="start" class="label">Millhaven</text>
+<circle cx="1231.235294117647" cy="302.0" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="1223.235294117647" y="293.0" text-anchor="end" class="label">Hamlet</text>
+<circle cx="1285.8235294117649" cy="364.11764705882354" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="1277.8235294117649" y="355.11764705882354" text-anchor="end" class="label">Orchards</text>
+<circle cx="871.7058823529412" cy="226.70588235294116" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="879.7058823529412" y="217.70588235294116" text-anchor="start" class="label">Mill</text>
+<circle cx="845.3529411764706" cy="343.4117647058823" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="853.3529411764706" y="334.4117647058823" text-anchor="start" class="label">Goblin fort</text>
+<circle cx="1315.9411764705883" cy="437.52941176470586" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="1307.9411764705883" y="428.52941176470586" text-anchor="end" class="label">Old cellars</text>
+<circle cx="839.7058823529412" cy="655.8823529411765" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="847.7058823529412" y="646.8823529411765" text-anchor="start" class="label">Thornfang</text>
+<circle cx="958.2941176470588" cy="689.7647058823529" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="966.2941176470588" y="680.7647058823529" text-anchor="start" class="label">Treasury</text>
+<circle cx="1233.1176470588234" cy="556.1176470588235" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="1225.1176470588234" y="547.1176470588235" text-anchor="end" class="label">Cache</text>
+<circle cx="1315.9411764705883" cy="642.7058823529412" r="5" fill="#9a4c3c" stroke="#f2eee3" stroke-width="2"/>
+<text x="1307.9411764705883" y="633.7058823529412" text-anchor="end" class="label">Skeleton watch</text>
+<circle cx="1297.1176470588234" cy="723.6470588235294" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="1289.1176470588234" y="714.6470588235294" text-anchor="end" class="label">Crypt / estate</text>
+<circle cx="1300.8823529411766" cy="207.88235294117646" r="5" fill="#294936" stroke="#f2eee3" stroke-width="2"/>
+<text x="1292.8823529411766" y="198.88235294117646" text-anchor="end" class="label">Wagon</text>
+<path d="M915.0,142v640" stroke="#ffffff" opacity=".22"/>
+<path d="M755,302.0h640" stroke="#ffffff" opacity=".22"/>
+<path d="M1075.0,142v640" stroke="#ffffff" opacity=".22"/>
+<path d="M755,462.0h640" stroke="#ffffff" opacity=".22"/>
+<path d="M1235.0,142v640" stroke="#ffffff" opacity=".22"/>
+<path d="M755,622.0h640" stroke="#ffffff" opacity=".22"/>
+<text x="755" y="815" class="sub">3400 drafting grid · scale and placement subject to measurement</text>
+<text x="45" y="864" class="sub">Green stands: layered hardwood woods · Ochre: cultivation / pasture · Blue: shared basin concept</text>
+<text x="45" y="894" class="sub">Heavy brown: cart spine · Light brown: farm / freight lanes · Pale: woodland paths · Red: existing hostile households</text>
+<text x="45" y="945" class="sub">A selected for construction study. Compare A at 3200 / 3400 before fixing size; expand further if needed.</text>
+<text x="45" y="976" class="small">No gameplay, new lore, enemies or rewards introduced. See the masterplan record for protected IDs, edge use and migration requirements.</text>
+</svg>

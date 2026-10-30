@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-28",
+  "asOf": "2026-10-29",
   "basis": {
     "publishedMainSha": "e3c78266b28f3325d2afdcb76ae849fcff306deb",
     "documentBranchShaBeforeRegistry": "84249365a69dee658b7427356d6b8af18732989b",
@@ -178,6 +178,58 @@
       "date": "2026-10-28",
       "purpose": "Bold titles and labels for 102 non-dated guide/reference entries; 317 dated record entries remain unbolded.",
       "preservedEntries": 419
+    },
+    "greenwoodReleaseCloseout": {
+      "publishedMainSha": "323bb2a75ceec9bafa8dfe9d567be057309a0115",
+      "pagesRun": 40951925946,
+      "gameVersion": "0.9.1+snapshot.dev.233",
+      "markdownPaths": 435,
+      "newlyRegisteredPaths": [
+        "docs/ACTOR_BODY_COLLISION_ROLLBACK_20261028.md",
+        "docs/BACKGROUND_RETURN_TO_TITLE_20261028.md",
+        "docs/CHROMEBOOK_GRAPHICS_PREPARATION_CACHE_POLICY_20261028.md",
+        "docs/COMBAT_FOUR_DOMAIN_WORKLOAD_AUDIT_20261029.md",
+        "docs/COMPACT_HUD_CROWN_READOUT_20261029.md",
+        "docs/COMPANION_MASTERY_AND_CHARMED_RINGLEADER_TRAINING_20261029.md",
+        "docs/GREENWOOD_FLAGSHIP_ROLLBACK_20261029.md",
+        "docs/GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md",
+        "docs/GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md",
+        "docs/GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md",
+        "docs/GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md",
+        "docs/GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md",
+        "docs/PT007_TARGET_CENTERED_GROUND_AOE_20261028.md",
+        "docs/ROGUE_CHARM_HERITAGE_589.md",
+        "docs/ROGUE_SKILL_RANK_PROGRESS_AND_STACKING_RECONCILIATION_20261029.md",
+        "docs/WARNING_EFFECT_HANDOFF_20261028.md"
+      ],
+      "refreshedBlobReceipts": [
+        "GUIA_EN_ESPANOL.md",
+        "README.md",
+        "docs/ARCHITECTURE.md",
+        "docs/COMBAT_CONDITIONS_V09.md",
+        "docs/COMPANION_RETREAT_PASSAGE_DEV140.md",
+        "docs/CRITICAL_COMPANION_SURVIVAL_DEV141.md",
+        "docs/CROWD_ESCAPE_20261020.md",
+        "docs/DECISIONS.md",
+        "docs/DEVELOPMENT_STATE.md",
+        "docs/DOCUMENTATION_INDEX.md",
+        "docs/DUNGEON_CAMPS_DEV131.md",
+        "docs/ECONOMY_EXP_HOUSEKEEPING.md",
+        "docs/ENEMY_VFX_VALIDATION.md",
+        "docs/GRAPHICS_CANON_SPRITE_COVERAGE.md",
+        "docs/HUD_OPTION_B_PC_PHONE_20261025.md",
+        "docs/MILLHAVEN_ONBOARDING_DEV160.md",
+        "docs/PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md",
+        "docs/REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md",
+        "docs/ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md",
+        "docs/ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md",
+        "docs/ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md",
+        "docs/ROGUE_BARD_LIVE_PLAYTEST_GATE_20261027.md",
+        "docs/ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md",
+        "docs/SAVE_RECOVERY_CHECKPOINTS_DEV176.md",
+        "docs/TRAVEL_COMPANION_COLLISION_20261020.md"
+      ],
+      "method": "Tracked Git-tree census, exact current blob receipts and index-link coverage. Existing roles/review dispositions retained. Newly registered records are routing-only, provisionally header-screened; no blanket full-body or runtime verification is implied. Release status remains in DEVELOPMENT_STATE, detailed implementation evidence in the Greenwood handoff."
     }
   },
   "semantics": {
@@ -608,7 +660,7 @@
     },
     {
       "path": "docs/ARCHITECTURE.md",
-      "gitBlobSha": "58ffe46722bec1b979854873211ca6756be175a7",
+      "gitBlobSha": "b582e05aefcafb7329c3f6df2b9f223923129bec",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -624,7 +676,8 @@
       "reconciliationReview": "verified",
       "previousBatchAuthorityBlobSha": "6853c60ee28e2b4c6e6cd925d1d7a93be35e8c88",
       "reconciliationReviewEvidence": "28 Oct, source main@29be451: cross-checked app.js Rogue registration, hero-combat Rogue dispatch (older triad guard belongs to legacy branch), party.js Charm companions, save/persistence owners, visuals.js bell staff, script graph, package/sw and focused/manual workflows. New current quick route verified; retained dev.205 audit remains historical, not re-certified. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct final core-guide consistency: obsolete audio routing corrected and active engineering rule generalized to scoped game/documentation changes. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing.",
-      "previousStep1GitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371"
+      "previousStep1GitBlobSha": "a13d0332187e55d55cb6f8ac3a6c0b7c35c85371",
+      "previousGreenwoodCloseoutGitBlobSha": "58ffe46722bec1b979854873211ca6756be175a7"
     },
     {
       "path": "docs/ARCHIVE_FLOOR_SEAM_DEV124.md",
@@ -1262,7 +1315,7 @@
     },
     {
       "path": "docs/COMBAT_CONDITIONS_V09.md",
-      "gitBlobSha": "73abacc227dd1e72bd2b9adb54fca713118fefb0",
+      "gitBlobSha": "af25e9a03a7c9b4e7e0b95bf65818e47dba41cbd",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1272,7 +1325,8 @@
       "reviewDepth": "frozen_census_membership",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "73abacc227dd1e72bd2b9adb54fca713118fefb0"
     },
     {
       "path": "docs/COMBAT_FLOW_AND_MENUS_DEV126.md",
@@ -1585,7 +1639,7 @@
     },
     {
       "path": "docs/COMPANION_RETREAT_PASSAGE_DEV140.md",
-      "gitBlobSha": "2a5fd8796ff59008ae8326787f167ed6ce9e8da4",
+      "gitBlobSha": "43af4af2138dbdbd6c0aae044ae6a5664e27bc5a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1595,7 +1649,8 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "2a5fd8796ff59008ae8326787f167ed6ce9e8da4"
     },
     {
       "path": "docs/CONTINUE_HIGHLANDS_20261021.md",
@@ -1655,7 +1710,7 @@
     },
     {
       "path": "docs/CRITICAL_COMPANION_SURVIVAL_DEV141.md",
-      "gitBlobSha": "150bfa8f244d33ff5b8a70fd3456175472672f21",
+      "gitBlobSha": "01a5a5e66858e7fcbbd7cb595e9d8f10adf71e29",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1665,7 +1720,8 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "150bfa8f244d33ff5b8a70fd3456175472672f21"
     },
     {
       "path": "docs/CRITICAL_EXECUTIONS_AND_UNFORESEEN_CODICES_DESIGN_20261024.md",
@@ -1811,7 +1867,7 @@
     },
     {
       "path": "docs/CROWD_ESCAPE_20261020.md",
-      "gitBlobSha": "c31ee24086ca6764510cfa842eb5d9ac5fe0e18e",
+      "gitBlobSha": "2ab9bf4983f5ccdd78f85571339ba7b82a54bd9d",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -1828,7 +1884,8 @@
       },
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "c31ee24086ca6764510cfa842eb5d9ac5fe0e18e"
     },
     {
       "path": "docs/CROWD_MOVEMENT_DIAGNOSTICS_20261023.md",
@@ -1904,7 +1961,7 @@
     },
     {
       "path": "docs/DECISIONS.md",
-      "gitBlobSha": "62538ef98553b313723a1689533adee3f0c32197",
+      "gitBlobSha": "da76323d473c3aa70439bc3bea23aa0d728b1498",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -1916,7 +1973,8 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "verified",
-      "reconciliationReviewEvidence": " 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing."
+      "reconciliationReviewEvidence": " 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted. 28 Oct PR #563 deep structure pass: Architecture rewritten as current system owners, data flow, domain boundaries, offline/release design; old dev.205 Phase 4 audit remains preserved at exact Git commit. Decisions reorganized by nine subjects with all 29 baseline rule paragraphs, 32 dated decision bodies, explicit supersession table and topic summaries; exact rule wording retained. Documentation index updated to route. Verified source module existence and manifests, no runtime change, no claim full gameplay/device testing.",
+      "previousGreenwoodCloseoutGitBlobSha": "62538ef98553b313723a1689533adee3f0c32197"
     },
     {
       "path": "docs/DEFENDER_SPACE_DEV129.md",
@@ -2005,7 +2063,7 @@
     },
     {
       "path": "docs/DEVELOPMENT_STATE.md",
-      "gitBlobSha": "5c440bb47c785072f85f6cfec13acad572b9da1a",
+      "gitBlobSha": "b26c587a74f345617e82eb9ba1ae5ccb3663abe7",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2026,7 +2084,8 @@
       "previousStep1ProofreadGitBlobSha": "aa3775b293a98c8e3ddd0ff608cbe491d3020d03",
       "previousReadableStatusGitBlobSha": "64a320b84ae351d70568e7078f91ef70b02180e8",
       "previousSpanishGuideNavigationGitBlobSha": "8377265de1d98324668fcaff9a750816a709f372",
-      "previousMergedMainStateBlobSha": "af07422aff5aa7ab89ac02a4352c9a4e23cbfb1a"
+      "previousMergedMainStateBlobSha": "af07422aff5aa7ab89ac02a4352c9a4e23cbfb1a",
+      "previousGreenwoodCloseoutGitBlobSha": "5c440bb47c785072f85f6cfec13acad572b9da1a"
     },
     {
       "path": "docs/DIRECTOR_CHAT_REQUESTS_AND_RECOVERY_20261014.md",
@@ -2117,7 +2176,7 @@
     },
     {
       "path": "docs/DOCUMENTATION_INDEX.md",
-      "gitBlobSha": "c4c930f0d9ee69acd6d02ae3530a9b4fc6656c3a",
+      "gitBlobSha": "f78a63eb76bc7016c0cf806c2bfc9ed12d165720",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2143,7 +2202,8 @@
       "previousAudioGuideGitBlobSha": "90a776517cea4dd404fca9e8390968bc01d52824",
       "previousSoundIdentityGuideGitBlobSha": "7170fcf925b014be88340018b3e610ae84c54b29",
       "previousAuditionGuideGitBlobSha": "ad4badea24601c00b46b5f689fcacfa046196ac6",
-      "previousMechanicWorkflowAuditBlobSha": "188c21056246fce77eb7b0572dfa491750df2e24"
+      "previousMechanicWorkflowAuditBlobSha": "188c21056246fce77eb7b0572dfa491750df2e24",
+      "previousGreenwoodCloseoutGitBlobSha": "c4c930f0d9ee69acd6d02ae3530a9b4fc6656c3a"
     },
     {
       "path": "docs/DOCUMENTATION_PHASE0_BASELINE_20261027.md",
@@ -2161,7 +2221,7 @@
     },
     {
       "path": "docs/DUNGEON_CAMPS_DEV131.md",
-      "gitBlobSha": "70f1d862d0ab95b331b29d49066b690e59b2c12d",
+      "gitBlobSha": "e40ca6baa626659615f5577a2b201cae08540901",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -2171,11 +2231,12 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "70f1d862d0ab95b331b29d49066b690e59b2c12d"
     },
     {
       "path": "docs/ECONOMY_EXP_HOUSEKEEPING.md",
-      "gitBlobSha": "d4ab5cd830c127647206d0563871fd93b0a04a18",
+      "gitBlobSha": "719a3dcc99e21098f5ca98d680a1de52e911ba0f",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2185,7 +2246,8 @@
       "reviewDepth": "frozen_census_membership",
       "reconciliationRole": "reference material",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "d4ab5cd830c127647206d0563871fd93b0a04a18"
     },
     {
       "path": "docs/EFFECTS_PR471_VERIFICATION_20261025.md",
@@ -2379,7 +2441,7 @@
     },
     {
       "path": "docs/ENEMY_VFX_VALIDATION.md",
-      "gitBlobSha": "047482c72bd980aa1b4e5bbeccc74fb61a02973a",
+      "gitBlobSha": "4c28f07c6829b81ac02b5b71b807ad129d231d14",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2389,7 +2451,8 @@
       "reviewDepth": "frozen_census_membership",
       "reconciliationRole": "reference material",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "047482c72bd980aa1b4e5bbeccc74fb61a02973a"
     },
     {
       "path": "docs/ENEMY_WITHDRAWAL_DEV144.md",
@@ -2704,7 +2767,7 @@
     },
     {
       "path": "docs/GRAPHICS_CANON_SPRITE_COVERAGE.md",
-      "gitBlobSha": "473b1294291b89f4703aebfaaf3797499e7e8216",
+      "gitBlobSha": "f3e311ca5acc790d7aa4f3f581971557459f1369",
       "location": "docs",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -2714,7 +2777,8 @@
       "reviewDepth": "frozen_census_membership",
       "reconciliationRole": "reference material",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "473b1294291b89f4703aebfaaf3797499e7e8216"
     },
     {
       "path": "docs/GRAPHICS_CANON_SPRITE_PROMPT_AUDIT.md",
@@ -3283,7 +3347,7 @@
     },
     {
       "path": "docs/HUD_OPTION_B_PC_PHONE_20261025.md",
-      "gitBlobSha": "4add1e4c61f449690801b0cd4c88db0af212e2f7",
+      "gitBlobSha": "a185c5edfd92ce0db9647436c40f26d4f652a640",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -3293,7 +3357,8 @@
       "reviewDepth": "header_screened",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "4add1e4c61f449690801b0cd4c88db0af212e2f7"
     },
     {
       "path": "docs/INSTRUCTOR_MENUS_DEV158.md",
@@ -3790,7 +3855,7 @@
     },
     {
       "path": "docs/MILLHAVEN_ONBOARDING_DEV160.md",
-      "gitBlobSha": "a2a29c0531fd464fef3ea06c3cee1e5932ca2e37",
+      "gitBlobSha": "6741dbfc306c7d5612a24489be1a9c3e6081041a",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -3800,7 +3865,8 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "a2a29c0531fd464fef3ea06c3cee1e5932ca2e37"
     },
     {
       "path": "docs/MONSTER_ATTACK_V09_HOUSEKEEPING.md",
@@ -4811,7 +4877,7 @@
     },
     {
       "path": "docs/PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md",
-      "gitBlobSha": "1924c728deb9d4e66ec820f27347d9313edb6a8f",
+      "gitBlobSha": "a0a1b9961a9916396114f21b52bddbbbbd0ec83c",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -4822,7 +4888,8 @@
       "previousPhase3GitBlobSha": "fea30731d0822f7e89c994d9cf928ab803414d79",
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "1924c728deb9d4e66ec820f27347d9313edb6a8f"
     },
     {
       "path": "docs/PRE_BREAK_DOCUMENTATION_HISTORY_20261019.md",
@@ -5056,7 +5123,7 @@
     },
     {
       "path": "docs/REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md",
-      "gitBlobSha": "8e36b19edbb2e286f3e75ec997b05b36e658aed2",
+      "gitBlobSha": "34f09a7cba5c0e619e36f730dc5515f90ee2ba77",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5066,7 +5133,22 @@
       "reviewDepth": "header_screened",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "8e36b19edbb2e286f3e75ec997b05b36e658aed2"
+    },
+    {
+      "path": "docs/REGIONAL_STREET_CLEARANCE_ROLLBACK_AUDIT_20261029.md",
+      "gitBlobSha": "c8c19852e7d973d33609406d01a4453b2ee97546",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "dated_audit_or_evidence",
+      "authority": "dated_context_only",
+      "reviewDepth": "source_checked",
+      "reconciliationRole": "historical_audit",
+      "reconciliationRoleConfidence": "verified",
+      "reconciliationReview": "source-checked 2026-10-29; runtime before/after pending"
     },
     {
       "path": "docs/REGIONAL_HANDOFF_AUDIT.md",
@@ -5176,7 +5258,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_CANONICAL_OWNER_HANDOFF_20261027.md",
-      "gitBlobSha": "6b63578ac2067af1061feecea1d01d13d97b422b",
+      "gitBlobSha": "9179dfcda00a0ac00d1b9663d81f946cab6de2d9",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5189,11 +5271,12 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousBatchAuthorityBlobSha": "a34e21c615d7764e0c35265cb4e19279117e646f",
-      "reconciliationReviewEvidence": "28 Oct: retired start-here claim and phase-banner direction dated; active gameplay claims still require source and decision verification."
+      "reconciliationReviewEvidence": "28 Oct: retired start-here claim and phase-banner direction dated; active gameplay claims still require source and decision verification.",
+      "previousGreenwoodCloseoutGitBlobSha": "6b63578ac2067af1061feecea1d01d13d97b422b"
     },
     {
       "path": "docs/ROGUE_BARD_CHARMED_ROSTER_BARRACKS_CONTRACT_20261027.md",
-      "gitBlobSha": "6bd419e8cbdf208b2bd47f686bea95b57a590e5e",
+      "gitBlobSha": "cba8bb309519d423ec0baccfdce67df854dcf42f",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5205,7 +5288,8 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousCharmReconciliationBlobSha": "7e05ee6ac2d58fdd4f85315d8015d4f6fa8a2bbe",
-      "reconciliationReviewEvidence": "28 Oct: compared Charm capture and per-subtype quota with src/prototype/hero-combat.js at main ebfd6c9 and corrected obsolete probability, phase and naming-popup directions. Historical design and Barracks UI details remain unresolved pending wider source and decision review."
+      "reconciliationReviewEvidence": "28 Oct: compared Charm capture and per-subtype quota with src/prototype/hero-combat.js at main ebfd6c9 and corrected obsolete probability, phase and naming-popup directions. Historical design and Barracks UI details remain unresolved pending wider source and decision review.",
+      "previousGreenwoodCloseoutGitBlobSha": "6bd419e8cbdf208b2bd47f686bea95b57a590e5e"
     },
     {
       "path": "docs/ROGUE_BARD_CLASS_INDEPENDENCE_AUDIT_20261027.md",
@@ -5239,7 +5323,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_DUAL_SIDED_PERFORMANCES_CRITICAL_TIERS_20261027.md",
-      "gitBlobSha": "a6a8838b50c807f5df93a4d8b8d5bf2abd8312ac",
+      "gitBlobSha": "b3f9b213e5a401653f1153ac947b82cfbbe19b86",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5251,7 +5335,8 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousPhaseAuthorityBlobSha": "7d96fcfa1b1226011bc53e719bcdd29797939a65",
-      "reconciliationReviewEvidence": "28 Oct: bounded prominent pre-release status or superseded instruction after checking merged PR #511 and current source; substantive design and body claims remain unresolved."
+      "reconciliationReviewEvidence": "28 Oct: bounded prominent pre-release status or superseded instruction after checking merged PR #511 and current source; substantive design and body claims remain unresolved.",
+      "previousGreenwoodCloseoutGitBlobSha": "a6a8838b50c807f5df93a4d8b8d5bf2abd8312ac"
     },
     {
       "path": "docs/ROGUE_BARD_EIGHT_PHASE_DEVELOPMENT_HANDOFF_20261027.md",
@@ -5330,7 +5415,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_LIVE_PLAYTEST_GATE_20261027.md",
-      "gitBlobSha": "e7c2fd0463e60a4cb1807426e5c94df0a6c297e8",
+      "gitBlobSha": "ccc329151460fd4adbe18dc004b53c660e55c3f2",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5340,7 +5425,8 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "e7c2fd0463e60a4cb1807426e5c94df0a6c297e8"
     },
     {
       "path": "docs/ROGUE_BARD_MAINLINE_RECONCILIATION_20261027.md",
@@ -5404,7 +5490,7 @@
     },
     {
       "path": "docs/ROGUE_BARD_PHASE4_COMPANION_INTEGRATION_20261027.md",
-      "gitBlobSha": "cbda18403efe80c5d16321f7788f5348e8354d47",
+      "gitBlobSha": "3caac0819ffcc4ece04421d948915a297f751104",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5416,7 +5502,8 @@
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved",
       "previousPhaseAuthorityBlobSha": "93b22cbf1aff616ebf691ab76851c3ede7414d86",
-      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review."
+      "reconciliationReviewEvidence": "28 Oct: compared old PR #511 phase/release status against merged PR and current ledger; bounded prominent stale restart directions. Body claims and surviving decision evidence remain unresolved pending full source review.",
+      "previousGreenwoodCloseoutGitBlobSha": "cbda18403efe80c5d16321f7788f5348e8354d47"
     },
     {
       "path": "docs/ROGUE_BARD_PHASE5_MUSICAL_REPERTOIRE_20261027.md",
@@ -5717,7 +5804,7 @@
     },
     {
       "path": "docs/SAVE_RECOVERY_CHECKPOINTS_DEV176.md",
-      "gitBlobSha": "6d10dfcf650bd67a46b2947a77c246c553c44224",
+      "gitBlobSha": "d2e2af6b86b9f0eb1f01e33abef02c5927936a9f",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -5735,7 +5822,8 @@
       "historicalPinnedDirectlyLinkedFromIndex": false,
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "6d10dfcf650bd67a46b2947a77c246c553c44224"
     },
     {
       "path": "docs/SCENERY_NOTIFICATIONS_BATCH_354.md",
@@ -6378,7 +6466,7 @@
     },
     {
       "path": "docs/TRAVEL_COMPANION_COLLISION_20261020.md",
-      "gitBlobSha": "57aacbb4449e235ba364c216361e047e40606804",
+      "gitBlobSha": "a9b05bbd073bdb0575bbbe8e733251f66f14bde6",
       "location": "docs",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -6388,7 +6476,8 @@
       "reviewDepth": "path_only",
       "reconciliationRole": "historical record",
       "reconciliationRoleConfidence": "provisional",
-      "reconciliationReview": "unresolved"
+      "reconciliationReview": "unresolved",
+      "previousGreenwoodCloseoutGitBlobSha": "57aacbb4449e235ba364c216361e047e40606804"
     },
     {
       "path": "docs/TREASURER_MONEYBAG_20261020.md",
@@ -6605,7 +6694,7 @@
     },
     {
       "path": "GUIA_EN_ESPANOL.md",
-      "gitBlobSha": "36e95cc39717dc61cd7aa788d4c5b9ba184ca730",
+      "gitBlobSha": "257437f97b0854b0939cf5012b20818cafa3c9e3",
       "location": "elsewhere",
       "censusSource": "post_oct19",
       "directlyLinkedFromIndex": true,
@@ -6616,11 +6705,12 @@
       "reconciliationRole": "current authority",
       "reconciliationRoleConfidence": "confirmed",
       "reconciliationReview": "verified",
-      "reconciliationReviewEvidence": "28 Oct 2026: audited app.js New Game→chooseLanguage('normal')→Español→class selection and title Settings/systemMenu→Language / in-run Menu→Game and settings→Language; localStorage persistence key and es-419. Verified current Spanish labels, input.js defaults, README game identity and dev.208 release gates. Partial localization clearly disclosed. All internal links checked; no claim every text in game is translated or physical-device tested. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted."
+      "reconciliationReviewEvidence": "28 Oct 2026: audited app.js New Game→chooseLanguage('normal')→Español→class selection and title Settings/systemMenu→Language / in-run Menu→Game and settings→Language; localStorage persistence key and es-419. Verified current Spanish labels, input.js defaults, README game identity and dev.208 release gates. Partial localization clearly disclosed. All internal links checked; no claim every text in game is translated or physical-device tested. 28 Oct PR #563 seven-authority cross-document reconciliation: read existing entrypoints and current main publication evidence; updated dev.209 vs earlier dev.208, correct #553/#554 merge/publication boundary, owner consent, historic decision supersession and bilingual entry routes. Historical sections intentionally preserved; no full-game/browser/device certification asserted.",
+      "previousGreenwoodCloseoutGitBlobSha": "36e95cc39717dc61cd7aa788d4c5b9ba184ca730"
     },
     {
       "path": "README.md",
-      "gitBlobSha": "44c6c3a65c42f3119de7b58bf5b57e66c7f0b19a",
+      "gitBlobSha": "03771966f7fcc079616955423a95371d0415dc61",
       "location": "elsewhere",
       "censusSource": "oct19_frozen",
       "directlyLinkedFromIndex": true,
@@ -6640,7 +6730,8 @@
       "previousAudioGuideGitBlobSha": "9bdd0ef9ab52212e10ad15a4fc66ca5d714cfebd",
       "previousSoundIdentityGuideGitBlobSha": "94c50ea9a8ceff3747eeb3f0e7cd82b38b903813",
       "previousAuditionGuideGitBlobSha": "169d42bbaaa5752b6638a89c854da7c3a607566a",
-      "previousMechanicWorkflowAuditBlobSha": "7eb50e24a422a1bedb37c37e69a2047d9e965761"
+      "previousMechanicWorkflowAuditBlobSha": "7eb50e24a422a1bedb37c37e69a2047d9e965761",
+      "previousGreenwoodCloseoutGitBlobSha": "44c6c3a65c42f3119de7b58bf5b57e66c7f0b19a"
     },
     {
       "path": "tools/visual-review/emberwatch-river-dev108/README.md",
@@ -6705,7 +6796,7 @@
       "gitBlobSha": "65753456391cfb1173396319a32c876eaa1a1c29",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "dated_record",
       "authority": "verify_with_current_source",
@@ -6763,7 +6854,7 @@
       "gitBlobSha": "5255342c360083378b2f7a7fb9fa49cb71f3b79f",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
@@ -6777,7 +6868,7 @@
       "gitBlobSha": "aaae4e9111eac88fbb56eafc7dfe9f724b7c293d",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
@@ -6791,7 +6882,7 @@
       "gitBlobSha": "29f4fe0070cfb512a4717fe9e9fc7ea1d6b9a17e",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
@@ -6820,7 +6911,7 @@
       "gitBlobSha": "af12925e7cc93bcce1cbc45418f5623b1c27a09e",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
@@ -6834,12 +6925,236 @@
       "gitBlobSha": "3a17866f944829089164482e85aae2b518480c62",
       "location": "elsewhere",
       "censusSource": "post_oct19",
-      "directlyLinkedFromIndex": false,
+      "directlyLinkedFromIndex": true,
       "topic": "governance_or_reference",
       "role": "other_reference",
       "authority": "verify_with_current_source",
       "reviewDepth": "path_only",
       "reconciliationRole": "reference material",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/ACTOR_BODY_COLLISION_ROLLBACK_20261028.md",
+      "gitBlobSha": "bc015dd40a6d9d7b32fe1e5a4fc1002f59727f08",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/BACKGROUND_RETURN_TO_TITLE_20261028.md",
+      "gitBlobSha": "c61fabec19ebb94d3e82ab4521edddfd196b0f4d",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "menus_and_ux",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/CHROMEBOOK_GRAPHICS_PREPARATION_CACHE_POLICY_20261028.md",
+      "gitBlobSha": "1baf6f0968d537bb32d93bcdbc7fb609265d5baf",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/COMBAT_FOUR_DOMAIN_WORKLOAD_AUDIT_20261029.md",
+      "gitBlobSha": "6ccd3b9c2ce5d75642e71ba946050be9394eb9eb",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "performance_or_rendering",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "historical record",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/COMPACT_HUD_CROWN_READOUT_20261029.md",
+      "gitBlobSha": "3f134f10c8ca1005eb40a2595d741ee2bfbfc451",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "menus_and_ux",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/COMPANION_MASTERY_AND_CHARMED_RINGLEADER_TRAINING_20261029.md",
+      "gitBlobSha": "8148057221907d2de6789a2f5aa83dbf4329b53d",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "companions_and_services",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/GREENWOOD_FLAGSHIP_ROLLBACK_20261029.md",
+      "gitBlobSha": "6137ae19b68601895866930feb232cd18b8074f4",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md",
+      "gitBlobSha": "8aee0f38c9f0437ddf9f78da27a39592c0280034",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md",
+      "gitBlobSha": "8cec940eb89ff3ad40973f4fe30206f78e07160d",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "historical record",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md",
+      "gitBlobSha": "c65e01f3a4ce9228171982320eb5391eed48b0c1",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md",
+      "gitBlobSha": "9baa4b973696f143e812a4dcae6837eab4176b10",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "historical record",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md",
+      "gitBlobSha": "699087c828368a9c9048811983d9f711fe8a0781",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "world_and_regions",
+      "role": "dated_record",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "historical record",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/PT007_TARGET_CENTERED_GROUND_AOE_20261028.md",
+      "gitBlobSha": "1a1d1c490f53642a7bf3a7b49cf59c6ac1094750",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/ROGUE_CHARM_HERITAGE_589.md",
+      "gitBlobSha": "07e9b05b0ea82ef1b1547d7a426b59426d2e2bdf",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/ROGUE_SKILL_RANK_PROGRESS_AND_STACKING_RECONCILIATION_20261029.md",
+      "gitBlobSha": "ece349bb26cf198942f49b2ccf74a503632988ef",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
+      "reconciliationRoleConfidence": "provisional",
+      "reconciliationReview": "unresolved"
+    },
+    {
+      "path": "docs/WARNING_EFFECT_HANDOFF_20261028.md",
+      "gitBlobSha": "94c32b81462e5a6d4a793c6257e2bb6f4c1e5671",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "subject_workflow_or_contract",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "header_screened",
+      "reconciliationRole": "reference",
       "reconciliationRoleConfidence": "provisional",
       "reconciliationReview": "unresolved"
     }

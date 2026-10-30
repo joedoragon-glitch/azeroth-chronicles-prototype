@@ -1,0 +1,73 @@
+{
+  "status": "Focused controlled geometry, patrol, companions and all six native Vale quest/rescued-service checks; no combat rebalance, human-enjoyment or physical-device claim",
+  "sourceFiles": {
+    "engine": "c32ec867f9d00f7814fdba1b910b47167c25b2cd5e8cecf54f261e8bb57f94e0",
+    "greenwood-landscape": "7c99367ff2672ac58cdfd167e134671052e0e05b415b6cfcf497e7da36531d3c",
+    "world": "c4859c3d11d77d027c87aaa5a3776b7940b234df777d1d8c77e26e94522c6ada",
+    "navigation": "ab4bb18a97dbfe365d3300a03095e2f0f42b3ea1b3e53491df4dffbc1519666d",
+    "rules": "bc2bab1fe55f59f543b267b7522244a74dd06b3903e3e2ebd45c5ed5ffdc18f7",
+    "save": "dd9870e6eaa95bf52778e4eb7c0539b7b74464a7c73ff6b653cb921e97f611f6"
+  },
+  "rows": [
+    {
+      "name": "native opening, authored road/door clearances, essential scenes and mill water continuity",
+      "passed": true,
+      "hostMs": 1166
+    },
+    {
+      "name": "both crossings physically carry hero and both original companions in both directions",
+      "passed": true,
+      "hostMs": 1115
+    },
+    {
+      "name": "patrol observations",
+      "visitedLegs": [
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        0
+      ],
+      "simulatedSeconds": 100.9,
+      "maxCaptiveGap": 96.41594578792295
+    },
+    {
+      "name": "all eight native Thornfang/Mira patrol legs, shared crossings and captive spacing",
+      "passed": true,
+      "hostMs": 6561
+    },
+    {
+      "name": "A Teacher Taken completes and pays once through native objectives",
+      "passed": true,
+      "hostMs": 633
+    },
+    {
+      "name": "Roads Under Threat completes and pays once through native objectives",
+      "passed": true,
+      "hostMs": 626
+    },
+    {
+      "name": "Stolen Stores completes and pays once through native objectives",
+      "passed": true,
+      "hostMs": 643
+    },
+    {
+      "name": "An Unfinished Retreat completes and pays once through native objectives",
+      "passed": true,
+      "hostMs": 563
+    },
+    {
+      "name": "Keeping Trade Open completes and pays once through native objectives",
+      "passed": true,
+      "hostMs": 599
+    },
+    {
+      "name": "Who Owns the Woods? completes and pays once through native objectives",
+      "passed": true,
+      "hostMs": 671
+    }
+  ]
+}

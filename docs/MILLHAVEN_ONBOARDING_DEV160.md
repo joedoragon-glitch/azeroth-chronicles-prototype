@@ -10,6 +10,6 @@ Validation: new native focused test covers three modes, fresh/idempotent/restore
 
 Build and changed-source formatting/syntax/diff checks complete before publication. Existing 18 seeded Thornfang/Mira class/mode patrol/lifecycle cases and witness suite pass; publication receipt follows at closeout.
 
-Next authorized task: Greenwood field monsters remain present but require hero initiation below level 2; companions alone cannot provoke them. At level 2 ordinary aggression returns. Additionally, level-2 silent Thornfang/Mira appearance and a once-per-run hero-first engagement rule, with companion-triggered withdrawal/reset and Mira following.
+Historical follow-on scope (subsequently implemented): Greenwood field monsters remain present but require hero initiation below level 2; companions alone cannot provoke them. At level 2 ordinary aggression returns. Additionally, level-2 silent Thornfang/Mira appearance and a once-per-run hero-first engagement rule, with companion-triggered withdrawal/reset and Mira following.
 
 PR #399 merged as `bb9df49bfaf6c47bd445669cb2667a207081ef0f`; package-only run 39708765406 succeeded. Public build matches merge. Normal workflow restored byte-for-byte; temporary publisher removed. Receipt: `docs/evidence/MILLHAVEN_DEV160_PUBLICATION_20261021.json`.

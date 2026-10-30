@@ -61,6 +61,10 @@
       // wait behind it indefinitely in a crowded active fight.
       pursuitTerrainProbesPerTick: 1024,
       pursuitRouteNodesPerTick: 320,
+      // The authored Thorn introductory withdrawal has its own strict
+      // frame budget; it must not steal ordinary pursuit/companion planning.
+      thornRetreatProbesPerTick: 768,
+      thornRetreatNodesPerTick: 240,
     });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
@@ -90,11 +94,23 @@
         query.candidates = null;
       }
       // Early obstructions and short moves don't pay for a shortlist.
-      if (++query.reads <= 8) return props;
+      if (++query.reads <= (z?.id === 'vale' && z.greenwoodRedesignScene ? 2 : 8)) return props;
       if (!query.candidates)
         query.candidates = props.filter((p) => {
           const r =
-            Math.max(0, p.r || 0, R.sceneryTraversal.radii[p.structure] || 0) + query.padding;
+            Math.max(
+              0,
+              p.r || 0,
+              R.sceneryTraversal.radii[p.structure] || 0,
+              p.greenwoodWall
+                ? Math.hypot(
+                    p.greenwoodWall.a.x - p.greenwoodWall.b.x,
+                    p.greenwoodWall.a.y - p.greenwoodWall.b.y,
+                  ) /
+                    2 +
+                    5
+                : 0,
+            ) + query.padding;
           return (
             ![r, p.x, p.y, p.r].every(Number.isFinite) ||
             (p.x + r >= query.left &&
@@ -458,6 +474,8 @@
             nodes: cfg.routeNodesPerTick,
             pursuitProbes: cfg.pursuitTerrainProbesPerTick,
             pursuitNodes: cfg.pursuitRouteNodesPerTick,
+            thornRetreatProbes: cfg.thornRetreatProbesPerTick,
+            thornRetreatNodes: cfg.thornRetreatNodesPerTick,
           };
           routePlanningFrames.set(this, frame);
         }
@@ -465,16 +483,21 @@
         if (!plan || plan.zone !== zone || plan.mode !== mode ||
             plan.gathering !== gathering ||
             dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
-          const generator = mode === 'tactical' || mode === 'pursuit'
+          const generator = mode === 'tactical' || mode === 'pursuit' || mode === 'thorn-retreat'
             ? this.budgetedTacticalRoute(origin, target)
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
         }
-        const pursuit = mode === 'pursuit';
-        let probes = Math.min(pursuit ? frame.pursuitProbes : frame.probes,
-            cfg.terrainProbesPerSearch),
-          nodes = Math.min(pursuit ? frame.pursuitNodes : frame.nodes,
-            cfg.routeNodesPerSearch);
+        const pursuit = mode === 'pursuit',
+          retreat = mode === 'thorn-retreat';
+        let probes = Math.min(
+            retreat ? frame.thornRetreatProbes : pursuit ? frame.pursuitProbes : frame.probes,
+            retreat ? 768 : cfg.terrainProbesPerSearch
+          ),
+          nodes = Math.min(
+            retreat ? frame.thornRetreatNodes : pursuit ? frame.pursuitNodes : frame.nodes,
+            cfg.routeNodesPerSearch
+          );
         while (true) {
           if (!plan.request) {
             const next = plan.generator.next(plan.reply);
@@ -485,13 +508,15 @@
           if (plan.request.kind === 'node') {
             if (!nodes) break;
             nodes--;
-            if (pursuit) frame.pursuitNodes--;
+            if (retreat) frame.thornRetreatNodes--;
+            else if (pursuit) frame.pursuitNodes--;
             else frame.nodes--;
             plan.reply = undefined;
           } else if (plan.request.kind === 'blocked') {
             if (!probes) break;
             probes--;
-            if (pursuit) frame.pursuitProbes--;
+            if (retreat) frame.thornRetreatProbes--;
+            else if (pursuit) frame.pursuitProbes--;
             else frame.probes--;
             plan.reply = this.blocked(...plan.request.args);
           } else throw Error('Unknown route planning step');
@@ -1060,6 +1085,19 @@
           (!terrainOnly &&
             collisionProps(this, z, x, y, radius)?.some((p) => {
               if (fort?.props.has(p.id)) return false;
+              if (z.id === 'vale' && p.greenwoodWall) {
+                const { a, b } = p.greenwoodWall,
+                  reach = radius + 5;
+                // Exact segment distance is unnecessary outside its expanded
+                // box. Read current endpoints: moved saved walls stay correct.
+                if (
+                  x < Math.min(a.x, b.x) - reach ||
+                  x > Math.max(a.x, b.x) + reach ||
+                  y < Math.min(a.y, b.y) - reach ||
+                  y > Math.max(a.y, b.y) + reach
+                ) return false;
+                return this.distanceToSegment({ x, y }, a, b) < reach;
+              }
               // Zero-radius queries are the existing LOS/projectile contract.
               // Only positive-radius outdoor movement receives this first pass.
               const candidate =
@@ -1169,9 +1207,57 @@
             }
             return valid.get(id);
           };
+          // Only for boolean reachability: favor cells near the requested
+          // endpoint rather than building the shortest route. Every reachable
+          // cell is still considered, with the exact native blocked/edge tests.
+          const reachOnly = !!options.reachabilityOnly,
+            distanceScore = (id) => {
+              const p = point(id),
+                dx = p.x - target.x,
+                dy = p.y - target.y;
+              return dx * dx + dy * dy;
+            },
+            // A binary min-heap keeps the reachability-only frontier at
+            // O(log N) insertion/removal rather than scanning the full
+            // remaining queue on every node. Normal BFS is unchanged.
+            priority = [],
+            pushPriority = (id) => {
+              const item = { id, cost: distanceScore(id) };
+              let index = priority.length;
+              priority.push(item);
+              while (index > 0) {
+                const parent = (index - 1) >> 1;
+                if (priority[parent].cost <= item.cost) break;
+                priority[index] = priority[parent];
+                index = parent;
+              }
+              priority[index] = item;
+            },
+            popPriority = () => {
+              const first = priority[0],
+                last = priority.pop();
+              if (priority.length) {
+                let index = 0;
+                while (index * 2 + 1 < priority.length) {
+                  let child = index * 2 + 1;
+                  if (
+                    child + 1 < priority.length &&
+                    priority[child + 1].cost < priority[child].cost
+                  )
+                    child++;
+                  if (priority[child].cost >= last.cost) break;
+                  priority[index] = priority[child];
+                  index = child;
+                }
+                priority[index] = last;
+              }
+              return first.id;
+            };
+          if (reachOnly) for (const id of sources) pushPriority(id);
           for (let at = 0; at < queue.length; at++) {
-            const id = queue[at];
+            const id = reachOnly ? popPriority() : queue[at];
             if (destinations.has(id)) {
+              if (reachOnly) return [target];
               let path = [target];
               for (let j = id; j !== null; j = parents.get(j)) path.push(point(j));
               path.reverse();
@@ -1229,6 +1315,7 @@
                 continue;
               parents.set(j, id);
               queue.push(j);
+              if (reachOnly) pushPriority(j);
             }
           }
           return [];
@@ -1236,6 +1323,10 @@
         // Preserve all successful legacy routes and generated road geometry.
         // Only a false no-route retries with the other collision-validated
         // nearby anchors. Each seed and goal already has a clear end segment.
+        // Existence does not depend on the primary-anchor preference. All
+        // candidate anchors are already native collision-validated; one
+        // complete graph search is sufficient for a yes/no answer.
+        if (options.reachabilityOnly) return search(starts, ends);
         const primary = search([starts[0]], [ends[0]]);
         return primary.length ? primary : search(starts, ends);
       }
@@ -1312,7 +1403,12 @@
         }
         // Open western road shoulder: clear of the hamlet roofs and lantern.
         // Reposition the same resident on old saves as well as fresh campaigns.
-        Object.assign(witness, this.safe(780, 740, 'vale'));
+        Object.assign(
+          witness,
+          R.greenwoodLayout?.version === 2
+            ? this.safe(850 * R.greenwoodLayout.scale, 750 * R.greenwoodLayout.scale, 'vale')
+            : this.safe(780, 740, 'vale'),
+        );
       }
       thornReport(concise = false) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
@@ -1448,7 +1544,7 @@
         );
         z.npcs = z.npcs.filter((n) => !remove.has(n.id));
       }
-      follow(entity, target, speed, dt, stop = 45) {
+      follow(entity, target, speed, dt, stop = 45, planningMode = null) {
         if (this.s.party.includes(entity))
           return this.followCompanion(entity, target, speed, dt, stop);
         if (dist(entity, target) <= stop) return true;
@@ -1459,33 +1555,61 @@
           enemyPursuit = entity.aggro && !entity.returning &&
             entity.type !== 'boss' && !entity.captain && !entity.roomCaptain &&
             !entity.veraEscort && !this.thornPatroller(entity) &&
-            !this.cinderPatroller(entity) && zone.enemies.includes(entity);
-        if (this.clearSegment(entity, target)) {
+            !this.cinderPatroller(entity) && zone.enemies.includes(entity),
+          // This isolated exemption is only for the established passive
+          // opening-withdrawal path. Active bosses and scripted combat still
+          // retain their original follow()/route() semantics.
+          thornRetreat = planningMode === 'thorn-retreat' &&
+            entity.thornIntroRetreat !== undefined &&
+            !entity.aggro && zone.enemies.includes(entity);
+        let trip = terrainTrips.get(entity);
+        // A hero-first interruption must retire its unsaved pending search,
+        // including when the new engagement has a clear direct approach.
+        if (!thornRetreat && trip?.kind === 'thorn-retreat') {
+          terrainTrips.delete(entity);
           entity.path = [];
-          if (enemyPursuit) terrainTrips.delete(entity);
+          entity.routeAge = 0;
+          trip = null;
+        }
+        // During the passive opening withdrawal, keep the collision-validated
+        // waypoints rather than discarding them on a transient direct-line
+        // success. Segment sampling may alternate near obstacle corners;
+        // oscillating to "direct" movement repeatedly restarted long routes.
+        if ((!thornRetreat || !entity.path?.length) && this.clearSegment(entity, target)) {
+          entity.path = [];
+          if (enemyPursuit || thornRetreat) terrainTrips.delete(entity);
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
-        let trip = terrainTrips.get(entity);
-        if (enemyPursuit) {
+        // The authored destination stays fixed throughout an intro retreat.
+        // An already-computed, still-clear path is not made obsolete by the
+        // generic 1.3s retry timer. Replan only if its next leg is obstructed
+        // or the original path has been consumed.
+        if (thornRetreat && entity.routeAge <= 0 && entity.path?.length) {
+          if (this.clearSegment(entity, entity.path[0]))
+            entity.routeAge = R.navigationPlanning.routeRetrySeconds;
+          else entity.path = [];
+        }
+        if (enemyPursuit || thornRetreat) {
+          const kind = thornRetreat ? 'thorn-retreat' : 'pursuit';
           // A moving hero must not reset the entire search frontier every
           // update. A pending search uses its frozen origin and destination;
           // its result is validated against the actor's actual position.
           const invalid = !trip || trip.zone !== zone ||
-            trip.kind !== 'pursuit' || trip.engagement !== entity.fightStart;
+            trip.kind !== kind || (!thornRetreat && trip.engagement !== entity.fightStart);
           const changed = !invalid && dist(trip.target, target) > 80;
           if (invalid || (changed && !trip.pending)) {
             entity.path = [];
-            trip = { zone, kind: 'pursuit', engagement: entity.fightStart,
+            trip = { zone, kind, engagement: entity.fightStart,
               target: { x: target.x, y: target.y }, pending: null };
             terrainTrips.set(entity, trip);
             entity.routeAge = 0;
           }
           if (trip.pending || entity.routeAge <= 0) {
-            if (trip.pending || this.reserveMovementPlan(entity)) {
+            if (thornRetreat || trip.pending || this.reserveMovementPlan(entity)) {
               const origin = trip.pending?.origin || entity,
                 destination = trip.pending?.target || target,
-                result = this.advanceBudgetedRoute(origin, destination, 'pursuit', trip.pending);
+                result = this.advanceBudgetedRoute(origin, destination, kind, trip.pending);
               if (result.pending) {
                 trip.pending = result.state;
               } else {

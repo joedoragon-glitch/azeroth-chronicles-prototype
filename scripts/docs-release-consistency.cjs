@@ -31,6 +31,26 @@ function inspect(b, ctx = {}) {
   const row = String(b.state).match(/^\| Build\/cache version \|\s*\*\*\x60([^\x60]+)\x60\*\*/m);
   if (!row) errors.push('Development state build/cache table is missing');
   else if (row[1] !== version) errors.push('Development state build/cache table is stale');
+  // When the release table says this build is already published, the
+  // canonical latest-published line and all publication-gate status cells
+  // must refer to the same release. Draft candidates are deliberately exempt.
+  const publishedBuild = /^\| Build\/cache version \|[^|\n]*\bmerged and published\b/im.test(String(b.state));
+  if (publishedBuild) {
+    const stateLines = String(b.state).split(/\r?\n/);
+    const latest = stateLines.find(line => line.startsWith('**Latest verified published code/build version:**'));
+    const actual = latest?.match(/`(\d+\.\d+\.\d+\+snapshot\.dev\.\d+)`/)?.[1];
+    if (actual !== version) {
+      errors.push('Development state latest verified published version missing or stale');
+    }
+    const currentDev = version.match(/\.dev\.(\d+)$/)[1];
+    for (const label of ['Source', 'Focused automation', 'GitHub Pages publication']) {
+      const row = stateLines.find(line => line.startsWith('| ' + label + ' |'));
+      const statusCell = row?.split('|')[2] || '';
+      if (statusCell.match(/\bdev\.(\d+)\b/i)?.[1] !== currentDev) {
+        errors.push('Development state ' + label + ' published checkpoint missing or stale');
+      }
+    }
+  }
   // A candidate source version may be newer than the last VERIFIED Pages
   // publication. Never force a draft to claim its unshipped build is live.
   const opening = String(b.state).split(/\r?\n/).slice(0, 34);

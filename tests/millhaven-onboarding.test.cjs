@@ -1,10 +1,18 @@
 'use strict';
 const assert = require('node:assert/strict'),
-  C = require('../src/prototype/engine'),
+  // Preserve the original 2700-layout contract and its exact historical
+  // coordinates. Production 3200 scenes/migration/doors are exercised by
+  // greenwood-flagship.test.cjs, not compared with this superseded layout.
+  C = require('../tools/greenwood-layout/fixtures.cjs').loadRuntime(),
   Renderer = require('../src/prototype/renderer');
 const pos = (p) => ({ x: p.x, y: p.y }),
   near = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
   by = (g, id) => g.zone().npcs.find((n) => n.id === id);
+assert.equal(
+  C.data.regions[0].size,
+  2700,
+  'historical onboarding fixture stays on its original geometry',
+);
 for (const mode of ['normal', 'nightmare', 'developer']) {
   const g = new C(mode, 'mage', () => 0.5),
     z = g.zone(),

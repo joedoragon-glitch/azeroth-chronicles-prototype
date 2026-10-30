@@ -85,3 +85,31 @@ No musical skills (Phase 5), critical mechanism/controller (Phase 6),
 new sprite/audio/presentation or authored onboarding (Phase 7), or full
 browser/phone/PWA acceptance and release (Phase 8) are claimed.
 Completed class behavior and Phase 1–3 Charm/naming/heal design remain locked.
+
+
+## Current follow-up — selected heritage skills and night captures (29 October 2026)
+
+The historical Phase-4 scope above is preserved as written. New work in
+[draft PR #608](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/608), authorized by the owner
+under [issue #589](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/589), extends the **current**
+Charmed companion architecture without overwriting its native maneuver or
+Skill-2 Ringleader signature. Each of the ten ordinary species and both
+night species receives the specific owner-selected **third heritage skill**;
+this additional action uses its own finite `skill3Cd`, contact effects, a
+bounded cone/circle/line/single-target footprint, a distinct critical lever,
+and matching brief visual/audio feedback. Affected enemies can be Slowed,
+pushed or struck after a collision-aware leap, and a Charmed Wraith's native
+Soul Drain heals only from HP actually lost by an enemy. The Wraith's extra native Soul Drain is separate from the Stalker's
+extra native Shadow Pounce; both also keep their original species Rogue basic.
+
+Lantern Wraith and Ash Stalker are intentionally admitted only from exact
+ordinary active night encounters. They receive dedicated authenticated
+friendly species profiles and can remain active or resting after sunrise;
+ordinary nighttime world spawn/despawn rules do not grant or remove party
+membership. Save validation preserves genuine capture identity and migrates
+old v4 third-skill cooldowns to zero.
+
+[Full owner selections, provisional numbers and player effect behavior](ROGUE_CHARM_HERITAGE_589.md).
+**Status of this follow-up:** implemented on draft #608 only. Automated CI,
+merged status, publication and native phone/desktop effect verification must
+be reported separately. The earlier PR #511 historical status is not current.
