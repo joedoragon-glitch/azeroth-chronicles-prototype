@@ -208,7 +208,7 @@
           s.version !== 4 ||
           !['normal', 'nightmare', 'developer', 'arena'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
-          !classes[s.hero?.class]
+          !Object.hasOwn(classes, s.hero?.class)
         )
           throw Error('Invalid save');
         if (s.recallActive === undefined) s.recallActive = false;
@@ -806,7 +806,7 @@
           !Array.isArray(ch.fallen) ||
           ch.fallen.length > classCount ||
           new Set(ch.fallen).size !== ch.fallen.length ||
-          ch.fallen.some((id) => !classes[id])
+          ch.fallen.some((id) => !Object.hasOwn(classes, id))
         )
           throw Error('Invalid succession');
         if (
@@ -1617,7 +1617,7 @@
         this.s.legacyRescueAuditVersion = 1;
       }
       static migrate(old, random = Math.random) {
-        if (old?.version !== 2 || !old.player || !classes[old.player.heroClass || 'paladin'])
+        if (old?.version !== 2 || !old.player || !Object.hasOwn(classes, old.player.heroClass || 'paladin'))
           throw Error('Unknown legacy save');
         const c = new Campaign('normal', old.player.heroClass || 'paladin', random),
           p = old.player,
