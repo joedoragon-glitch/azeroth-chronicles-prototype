@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 2 / #727 — outdoors source-verified studio; unregistered preview only",
-  "status": "SOURCES INDEPENDENTLY PINNED from GitHub Actions 41226542323; preview render and encoded signal gates next; ear/creative approvals remain HOLD",
+  "status": "STAGE 2 DAYLIGHT PILOTS PRODUCED, SOURCE SHA1/SHA256/bytes PASS, true decoded MP3 studio signal PASS at run #41227145631; ARTISTIC HOLD, game REGISTERED NO, NIGHT/CROWN RETAIN. Stage 2 overall IN PROGRESS.",
   "authority": "Stage 1 issue #727 comments 6546812555 and 6546828387; docs/AUDIO_ENVIRONMENT.md; AGENTS.md",
   "preservation": "DO NOT edit the 18 existing ambience MP3s, 18 scene rules, 14 original book cues, night events, 18 Dark Crown masters, or soundtrack #673.",
   "sources": [
@@ -111,14 +111,57 @@
       "Unmerged no-deploy artifact accessible with provenance"
     ],
     "sourceApproval": "PASS source identity and published CC0 claims; waveform and fit not yet heard",
-    "technicalApproval": "HOLD pending candidate render checks",
-    "listeningApproval": "HOLD until actual human hearing",
+    "technicalApproval": "PASS source identity, MP3 decode, loop, true peak, EBU loudness, clip, spectrum, variation and scene contrast at exact producing head 32607d8639e2f923c149a8bd483564b5b1674d69. This is studio signal QA ONLY, not real game QA.",
+    "listeningApproval": "HOLD: nobody has yet approved by hearing the actual output in context; recognizable birds/frogs and low-step water remain risks",
     "registration": "NO",
     "merged": "NO",
     "deployed": "NO",
     "deviceVerified": "NO",
     "artifactId": 13052285283,
     "firstCandidateSignalRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226930949",
-    "firstCandidateDiagnosis": "Vale decoded jump 0.00688785 BLOCK; March decoded jump 0.00067574 PASS. Both envelope deltas within 4.25 dB. Repair only Vale; no acceptance yet."
+    "firstCandidateDiagnosis": "Vale decoded jump 0.00688785 BLOCK; March decoded jump 0.00067574 PASS. Both envelope deltas within 4.25 dB. Repair only Vale; no acceptance yet.",
+    "browserPlayback": "NOT TESTED with these candidate recordings, which are unregistered",
+    "cacheBudget": "PENDING: two 72s decoded mono float32 PCM buffers consume 18,432,000 bytes (~17.58 MiB) if both resident. Previous browser peak 84.80 MiB /96MiB; adding both without intelligent eviction could exceed cap. Evaluate during Stage 6 before registration."
+  },
+  "encodedPreviews": {
+    "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41227145631",
+    "artifactId": 13052069308,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41227145631/artifacts/13052069308",
+    "producingHead": "32607d8639e2f923c149a8bd483564b5b1674d69",
+    "codec": "MP3 mono 32000Hz 128kbps; each active 72 seconds guarded by 0.15 seconds",
+    "fileBytesTotal": 2316762,
+    "decodedIfBothResidentBytes": 18432000,
+    "actualArtifactsOnly": true,
+    "status": "TECHNICAL SIGNAL PASS / CREATIVE AND PLAYABLE QA HOLD",
+    "outputs": [
+      {
+        "id": "study-vale-day-727",
+        "bytes": 1158381,
+        "sha256": "6f3578366881b4f9dd675d0401085992be4d1546aff6cb9480fad9a6f0f0af00",
+        "lufs": -33.04,
+        "truePeakDbTP": -19.01,
+        "decodedLoopSampleJump": 0.003744665998965502,
+        "loopFirstLast1sDb": -0.967,
+        "fieldEnergyFraction": 0.7229508196721312,
+        "mid250to2000Fraction": 0.7910179996449633,
+        "maxOneSecondCrestDb": 13.887,
+        "signalGate": "PASS",
+        "creativeApproval": "HOLD"
+      },
+      {
+        "id": "study-march-day-727",
+        "bytes": 1158381,
+        "sha256": "642eab06bd673948540120a85c1f50440d24bd107c0d8c000756b040b7346dcc",
+        "lufs": -33.1,
+        "truePeakDbTP": -14.68,
+        "decodedLoopSampleJump": 0.0006757387891411781,
+        "loopFirstLast1sDb": -0.879,
+        "fieldEnergyFraction": 0.6869901245169601,
+        "mid250to2000Fraction": 0.8777921881649492,
+        "maxOneSecondCrestDb": 18.471,
+        "signalGate": "PASS",
+        "creativeApproval": "HOLD"
+      }
+    ]
   }
 }
