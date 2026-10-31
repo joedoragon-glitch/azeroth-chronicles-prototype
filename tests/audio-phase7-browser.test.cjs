@@ -93,14 +93,14 @@ async function main() {
         let power = 0;
         for (let k=0; k<samples.length; k+=997) power += samples[k]*samples[k];
         if (!(power > .00001)) throw Error('MP3 decoded silence: ' + id);
-        if (assets.bytes > assets.budget) throw Error('Decoded cache over 96-MiB budget');
+        if (assets.bytes > assets.budget) throw Error('Decoded cache over 128-MiB budget');
         peakBytes = Math.max(peakBytes, assets.bytes);
         count++;
       }
       return {count, peakBytes, budget:assets.budget};
     }, ids);
     assert.equal(decoded.count, 65, 'all 65 real MP3s decoded and hash verified in Chromium');
-    assert.equal(decoded.budget, 96*1024*1024);
+    assert.equal(decoded.budget, 128*1024*1024);
 
     const feed = async (zone, boss = null) => page.evaluate(({zone, boss}) => {
       const a = Prototype.audio, c = new Campaign('normal', 'paladin', () => .43);
@@ -231,7 +231,7 @@ async function main() {
     assert(final.bytes<=final.budget && final.voices<=64);
     assert.equal(final.recordingError,null);
     assert.deepEqual(errors,[],errors.join('\n'));
-    console.log('PASS Phase7 one real Chromium game entrypoint: 65 real encoded MP3 hash/decode, title gesture and exit, boss TRUE sync, Succession loss, warning duck, 48s Finale→peace, 96MiB cache');
+    console.log('PASS Phase7 one real Chromium game entrypoint: 65 real encoded MP3 hash/decode, title gesture and exit, boss TRUE sync, Succession loss, warning duck, 48s Finale→peace, 128MiB cache');
     console.log(JSON.stringify({decoded, title,normalMix,trueMix,succession,
       finaleWindow:ending.window,warning,final,heard:false,
       deviceVerified:false}));

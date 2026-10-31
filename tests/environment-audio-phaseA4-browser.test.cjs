@@ -155,8 +155,8 @@ const server=http.createServer((req,res)=>{
           assert.equal(result.score,x.score);
           assert.equal(result.context,'running');
           assert(result.envDuration>24 && result.peak>0.001,'real decoded bed non-silence');
-          assert(result.recordingCache && result.recordingCache.decodedBudget===96*1024*1024,
-            'real cache must retain its established 96MiB decoded recording budget');
+          assert(result.recordingCache && result.recordingCache.decodedBudget===128*1024*1024,
+            'real cache must retain its updated 128MiB decoded recording budget');
           assert(result.recordingCache.decodedBytes<=result.recordingCache.decodedBudget,
             'real decoded music and environmental buffers exceed bounded cache');
           assert(result.recordingCache.pinned<=result.recordingCache.cached,

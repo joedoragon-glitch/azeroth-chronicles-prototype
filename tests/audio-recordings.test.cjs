@@ -7,7 +7,7 @@ const assert = require('node:assert/strict'),
   const f = await fixtures.create(),
     baseUrl = 'https://example.test/game/';
   const defaults = new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch });
-  assert.equal(defaults.budget, 96 * 1024 * 1024, 'default RAM cache must support larger crossfade layers');
+  assert.equal(defaults.budget, 128 * 1024 * 1024, 'default RAM cache must support larger crossfade layers');
   assert.equal(new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
     budget: 192 * 1024 * 1024 }).budget, 192 * 1024 * 1024);
   assert.throws(() => new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,

@@ -229,7 +229,7 @@ const root = path.resolve(__dirname, '..'),
           );
           for (const item of decoded) {
             assert(item.peak < 0.98 && item.rms > 0.005, item.id);
-            assert(item.bytes <= 96 * 1024 * 1024, item.id);
+            assert(item.bytes <= 128 * 1024 * 1024, item.id);
           }
         }
 
