@@ -368,10 +368,10 @@ async function run() {
         await inspectMageBeamOverlay(beamPage, 'canvas2d');
         await inspectStatusPixels(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
-        if (mageGpu.mode === 'webgl2')
+        if (mageGpu.mode === 'webgl2') {
           await inspectMageBeamOverlay(beamPage, 'webgl2');
           await inspectStatusPixels(beamPage, 'webgl2');
-        else
+        } else
           assert(!requireWebGL, 'Mage beam overlay needs the required WebGL2 scene');
       } finally {
         await beamContext.close();
