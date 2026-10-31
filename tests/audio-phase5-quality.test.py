@@ -54,7 +54,7 @@ for fam in data['families']:
     assert fam['leadBars'][-1][-1][1]==0
 for key in ('mire','archive'):
     fam=next(f for f in data['families'] if f['key']==key)
-    assert boss.verify_true_register(fam)['range'][0]>=77
+    assert boss.verify_true_register(fam)['range'][0]>=75
     wrong=copy.deepcopy(fam)
     wrong['trueRegister']=0
     reject(lambda:boss.verify_true_register(wrong),

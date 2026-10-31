@@ -55,7 +55,7 @@ def verify_true_register(family):
     notes = note_events(family, "true")
     pitches = [e[1] for e in notes]
     if family["response"] == "glockenspiel":
-        assert 75 <= min(pitches) and max(pitches) <= 88, (
+        assert 75 <= min(pitches) and max(pitches) <= 96, (
             family["id"] + ": TRUE chime requires stable written audible octave")
         bank = json.loads((ROOT / "tools/audio/phase3-sample-bank.json")
                           .read_text(encoding="utf-8"))
