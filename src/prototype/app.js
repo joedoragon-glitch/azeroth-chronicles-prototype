@@ -3793,7 +3793,10 @@
     started = false;
     paused = false;
     clearInput();
-    audio.setPaused(true);
+    // The main title has its own recorded theme. A title screen is inactive
+    // gameplay, NOT a suspended music player. The browser gesture still owns
+    // first-time Web Audio unlocking; hidden/unfocused pages remain silent.
+    audio.setPaused(!focused || document.hidden);
     last = performance.now();
     if (menu) {
       menu = null;
@@ -8209,6 +8212,15 @@
   }
   function frame(now) {
     if (!started || sceneTransition) {
+      // The title does not simulate or render the campaign, but it must tick
+      // the soundtrack director after the first user audio-unlock gesture.
+      if (!started && !sceneTransition)
+        audio.update(game, paused || !focused || document.hidden, {
+          started: false,
+          menu: !!menu,
+          backgrounded: !focused || document.hidden,
+          paused,
+        });
       last = now;
       clearEmergencyEscalation();
       frameSkip.suspend();
