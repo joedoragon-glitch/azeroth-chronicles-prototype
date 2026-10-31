@@ -217,7 +217,8 @@ def render_part(family, part, shared, sampler):
                 tone(bar, at, root + family.get("trueRegister", 12) + semitone,
                      duration, family["response"], .051, soft=True)
             if bar % 4 == 2:
-                tone(bar, .4, root - 12 + sampler.degree(chord, mode),
+                tone(bar, .4, root + family.get("bassRegister", -12) +
+                     sampler.degree(chord, mode),
                      1.0, "cello", .017, soft=True)
             if family["companionBars"] and bar in family["companionBars"]:
                 for at, semitone, duration in shared["motif"]:
