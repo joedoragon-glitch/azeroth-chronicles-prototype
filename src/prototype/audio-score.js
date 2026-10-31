@@ -61,6 +61,8 @@
           lowHealth: hero.hp > 0 && hero.hp / hero.maxHp <= 0.25,
           started: activity.started !== false,
           gameOver: !!campaign.s.challenge.gameOver,
+          // Presentation-only Succession flag; the campaign owns death and successor rules.
+          succession: !!campaign.s.challenge.succession,
         };
       }
       choose(campaign) {
