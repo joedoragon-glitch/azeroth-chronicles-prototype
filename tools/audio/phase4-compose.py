@@ -375,15 +375,16 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler,
                          (acoustic["lowpassHz"], "lowpass")):
         sos = butter(2, cutoff, btype=kind, fs=rate, output="sos")
         wave = sosfilt(sos, np.concatenate((wave, wave), axis=0), axis=0)[n:]
-    # Preserve the musical clock while repairing a real seam discovered in
-    # the decoded Ridge treasury preview (0.04751 full-scale sample jump).
-    # Rolling effects/filtered sustain can leave end and start at different
-    # instantaneous amplitudes. Distribute that tiny residual difference
-    # smoothly over the final 18 ms instead of leaving a hard loop click.
-    tail_frames = max(8, round(.018 * rate))
-    edge_residual = wave[0] - wave[-1]
-    smooth = .5 - .5 * np.cos(np.linspace(0, np.pi, tail_frames))
-    wave[-tail_frames:] += smooth[:, None] * edge_residual
+    # The previous source had a provable decoded seam discontinuity in
+    # Ridge Tyrant's Treasury (up to 0.04751 of full scale). MP3's
+    # psychoacoustic filter can reproduce a new edge even when raw adjacent
+    # PCM endpoints merely match. A short, symmetrical 45-ms raised-cosine
+    # boundary taper creates a quiet musical breath with no cut waveform.
+    # This neither stretches the family clock nor inserts a fake extra bar.
+    edge_frames = max(8, round(.045 * rate))
+    taper = np.sin(np.linspace(0, np.pi / 2, edge_frames)) ** 2
+    wave[:edge_frames] *= taper[:, None]
+    wave[-edge_frames:] *= taper[::-1, None]
     assert float(np.max(np.abs(wave[0] - wave[-1]))) < 1e-6
     rms = float(np.sqrt(np.mean(wave ** 2)))
     peak = float(np.max(np.abs(wave)))
