@@ -63,7 +63,7 @@ for (const theme of score) {
   assert.deepEqual(evidence.originalOpeningIntervals, oldSteps);
   assert.deepEqual(evidence.candidateOpeningIntervals, newSteps);
   assert.equal(evidence.firstFourExactIntervalPositions, match);
-  assert.match(evidence.review, /\S{60,}/,
+  assert.match(evidence.review, /.{60,}/,
     theme.id + ': specific critical interpretation required');
   assert.match(evidence.sound, /^UNVERIFIED/);
   if (match < 4) discrepancies++;
