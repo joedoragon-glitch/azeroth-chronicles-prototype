@@ -67,7 +67,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ### Strategist fifth-class project — linked design and evidence block (31 October 2026)
 
-**Single entrypoint:** [#674 — Strategist: fifth playable class](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/674) tracks the evolving gameplay spec and superseding owner direction. The maintained [hero-class decisions](DECISIONS.md#strategist-fifth-class--frontline-alchemy-and-field-lab-31-october-2026-owner-direction-unimplemented) records the current frontline/Field Lab rules; **no playable Strategist exists yet**.
+**Single entrypoint:** [#674 — Strategist: fifth playable class](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/674) tracks the evolving gameplay spec and superseding owner direction. The maintained [hero-class decisions](DECISIONS.md#strategist-fifth-class) records the current frontline/Field Lab rules; **no playable Strategist exists yet**.
 
 | Existing record | Role and status |
 | --- | --- |
