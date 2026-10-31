@@ -12,6 +12,19 @@
   let action = 0;
   let userPaused = false;
   let hasPlayback = false;
+  let visibleRecordings = [];
+  let visibleLimit = 24;
+  const generatedCues = [
+    ...Object.keys(PrototypeAudioCatalog.eventNotes).map((id) => ({
+      id: 'event:' + id, title: human(id), category: 'Story / system',
+    })),
+    ...['select', 'confirm', 'back', 'denied', 'open', 'close'].map((id) => ({
+      id: 'ui:' + id, title: 'Menu · ' + human(id), category: 'Interface',
+    })),
+    ...['grass', 'wet', 'gravel', 'stone', 'wood'].map((id) => ({
+      id: 'step:' + id, title: 'Step · ' + human(id), category: 'Movement',
+    })),
+  ];
 
   function message(value) {
     $('message').textContent = value;
@@ -169,19 +182,168 @@
         return { base: route.base, layer: route.true, label: 'TRUE layer' };
     return null;
   }
+  function usageFor(id, manifest) {
+    const uses = [], director = manifest?.director || {};
+    for (const [place, route] of Object.entries(director.places || {}))
+      for (const [role, asset] of Object.entries(route))
+        if (asset === id) uses.push(human(place) + ' · ' + human(role));
+    for (const [boss, route] of Object.entries(director.bosses || {}))
+      for (const [role, asset] of Object.entries(route))
+        if (asset === id) uses.push(human(boss) + ' · ' + human(role) + ' boss');
+    for (const [moment, spec] of Object.entries(director.specials || {}))
+      if (spec.asset === id) uses.push(human(moment) + ' scene');
+    for (const rule of director.environment?.rules || [])
+      if (rule.asset === id) uses.push('Environment · ' + human(rule.id));
+    for (const [event, bindings] of Object.entries(director.events || {}))
+      if (bindings.some((rule) => rule.asset === id)) uses.push('Event · ' + human(event));
+    return [...new Set(uses)];
+  }
+  function collectionFor(id, entry) {
+    if (entry.kind === 'ambience') return 'environment';
+    if (entry.kind === 'effect') return 'effects';
+    return entry.creationMethod === 'authored-recorded-source-score' ? 'new-score' : 'dark-crown';
+  }
+  function labelFor(id, entry) {
+    if (entry.kind === 'ambience') return 'Environment';
+    if (entry.kind === 'effect') return 'Recorded effect';
+    if (collectionFor(id, entry) === 'dark-crown') return 'Preserved original';
+    if (id.endsWith('-true')) return 'TRUE boss layer';
+    if (id.startsWith('boss-')) return 'Boss score';
+    if (id.startsWith('action-')) return 'Action layer';
+    return 'Soundtrack';
+  }
+  function cardFor({ id, entry, uses }) {
+    const card = document.createElement('article');
+    card.className = 'sound-card';
+    card.dataset.id = id;
+    card.dataset.selected = String($('recording').value === id);
+    card.setAttribute('role', 'listitem');
+    const top = document.createElement('div');
+    top.className = 'card-top';
+    const label = document.createElement('span');
+    label.className = 'tag';
+    label.textContent = labelFor(id, entry);
+    const duration = document.createElement('span');
+    duration.className = 'duration';
+    if (Number.isFinite(entry.duration)) {
+      const seconds = Math.round(entry.duration);
+      duration.textContent = Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+    }
+    top.append(label, duration);
+    const title = document.createElement('button');
+    title.type = 'button';
+    title.className = 'card-title';
+    title.textContent = soundTitle(id, entry);
+    title.setAttribute('aria-label', 'Select ' + soundTitle(id, entry));
+    title.addEventListener('click', () => selectRecording(id));
+    const context = document.createElement('p');
+    context.className = 'card-context';
+    context.textContent = uses.length ? uses.slice(0, 2).join('; ') : 'Listen to this recording alone';
+    const code = document.createElement('span');
+    code.className = 'card-id';
+    code.textContent = id;
+    const play = document.createElement('button');
+    play.type = 'button';
+    play.className = 'quick-play';
+    play.textContent = '▶ Play';
+    play.setAttribute('aria-label', 'Play ' + soundTitle(id, entry));
+    play.addEventListener('click', run(async () => {
+      selectRecording(id);
+      await playRecording();
+    }));
+    card.append(top, title, context, code, play);
+    return card;
+  }
+  function selectRecording(id) {
+    if (![...$('recording').options].some((o) => o.value === id)) return;
+    $('recording').value = id;
+    showRecording();
+  }
+  function renderCards() {
+    $('library-grid').replaceChildren(...visibleRecordings.slice(0, visibleLimit).map(cardFor));
+    $('show-more').hidden = visibleLimit >= visibleRecordings.length;
+  }
+  function renderGenerated() {
+    const query = $('search').value.trim().toLowerCase();
+    const cues = generatedCues.filter((item) => !query ||
+      (item.id + ' ' + item.title + ' ' + item.category).toLowerCase().includes(query));
+    const grid = $('generated-grid');
+    grid.replaceChildren();
+    for (const item of cues) {
+      const card = document.createElement('article');
+      card.className = 'sound-card';
+      card.setAttribute('role', 'listitem');
+      const label = document.createElement('span');
+      label.className = 'tag';
+      label.textContent = item.category;
+      const title = document.createElement('strong');
+      title.textContent = item.title;
+      const id = document.createElement('span');
+      id.className = 'card-id';
+      id.textContent = item.id;
+      const play = document.createElement('button');
+      play.type = 'button';
+      play.className = 'quick-play';
+      play.textContent = '▶ Play generated cue';
+      play.setAttribute('aria-label', 'Play ' + item.title);
+      play.addEventListener('click', run(() => playGenerated(item.id, item.title)));
+      card.append(label, title, id, play);
+      grid.append(card);
+    }
+    $('result-count').textContent = cues.length + ' generated game cues · ' + generatedCues.length + ' in this collection';
+    $('library-grid').hidden = true;
+    $('recorded-panel').hidden = true;
+    $('generated-panel').hidden = false;
+    $('show-more').hidden = true;
+  }
+  async function playGenerated(id, title) {
+    const token = ++action;
+    audio.enableProduction(true);
+    await gesture();
+    if (token !== action) return;
+    audio.stopEnvironment(0);
+    audio.stopRecordedScore(0);
+    stopIsolatedVoices();
+    clearProcedural();
+    if (id.startsWith('ui:')) audio.interfaceSound(id.slice(3));
+    else if (id.startsWith('step:')) {
+      const surface = id.slice(5);
+      audio.context = {
+        region: surface === 'wet' ? 'march' : surface === 'gravel' ? 'frontier' : 'vale',
+        interior: ['wood', 'stone'].includes(surface) ? 'treasury' : 'outdoors',
+        zone: surface === 'wood' ? 'supply-vale' : 'vale', situation: 'exploration', started: true,
+      };
+      audio.stepDistance = 0;
+      audio.footstep({}, 43);
+    } else audio.effect(id.slice(6));
+    hasPlayback = false;
+    $('now-playing').textContent = 'Last heard: ' + title;
+    $('pause').disabled = true;
+    $('stop').disabled = true;
+    message('Played ' + title + ' with the game engine. Press Play again to repeat.');
+  }
   function fillLibrary(previousId) {
     const manifest = audio.recordingManifest;
     if (!manifest) return;
-    const chosenKind = $('kind').value;
+    if ($('kind').value === 'generated') return renderGenerated();
+    $('library-grid').hidden = false;
+    $('recorded-panel').hidden = false;
+    $('generated-panel').hidden = true;
+    const kind = $('kind').value, collection = $('collection').value;
     const query = $('search').value.trim().toLowerCase();
-    const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [], legacy: [], ambience: [], effect: [] };
+    const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [],
+      legacy: [], ambience: [], effect: [] };
+    visibleRecordings = [];
     for (const [id, entry] of Object.entries(manifest.assets)) {
-      if (chosenKind !== 'all' && entry.kind !== chosenKind) continue;
-      if (query && !(id + ' ' + soundTitle(id, entry)).toLowerCase().includes(query)) continue;
-      const item = { id, name: soundTitle(id, entry) + ' · ' + id };
+      if (kind !== 'all' && entry.kind !== kind) continue;
+      if (collection !== 'all' && collectionFor(id, entry) !== collection) continue;
+      const uses = usageFor(id, manifest);
+      if (query && !(id + ' ' + soundTitle(id, entry) + ' ' + uses.join(' ') +
+        ' ' + (entry.generationGuide || '')).toLowerCase().includes(query)) continue;
+      const item = { id, name: soundTitle(id, entry) + ' · ' + id, entry, uses };
+      visibleRecordings.push(item);
       if (entry.kind !== 'music') bucket[entry.kind].push(item);
-      else if (entry.creationMethod !== 'authored-recorded-source-score')
-        bucket.legacy.push(item);
+      else if (entry.creationMethod !== 'authored-recorded-source-score') bucket.legacy.push(item);
       else if (id.startsWith('boss-')) bucket.bosses.push(item);
       else if (id.startsWith('interior-') || id.startsWith('peace-interior-'))
         bucket.interiors.push(item);
@@ -189,7 +351,11 @@
       else if (id.startsWith('place-')) bucket.main.push(item);
       else bucket.variations.push(item);
     }
-    const target = $('recording');
+    if ($('sort').value !== 'catalog') {
+      const value = (item) => $('sort').value === 'id' ? item.id : soundTitle(item.id, item.entry);
+      visibleRecordings.sort((a, b) => value(a).localeCompare(value(b)));
+    }
+    const target = $('recording'), selected = previousId || target.value;
     target.replaceChildren();
     for (const [key, label] of [
       ['main', 'Regional and dungeon main themes'],
@@ -197,13 +363,15 @@
       ['bosses', 'Bosses and TRUE themes'],
       ['interiors', 'Treasuries and side interiors'],
       ['special', 'Title, defeat and finale'],
-      ['legacy', 'Original Dark Crown — preserved, not rebuilt in this soundtrack'],
+      ['legacy', 'Original Dark Crown — preserved'],
       ['ambience', 'Environmental sound beds'],
-      ['effect', 'Sound effects'],
+      ['effect', 'Recorded sound effects'],
     ]) group(label, bucket[key], target);
     if (!target.options.length) target.add(option('No recordings match this filter', ''));
-    if (previousId && [...target.options].some((o) => o.value === previousId))
-      target.value = previousId;
+    if (selected && [...target.options].some((o) => o.value === selected)) target.value = selected;
+    $('result-count').textContent = visibleRecordings.length + ' matching recordings · ' +
+      Object.keys(manifest.assets).length + ' total registered';
+    renderCards();
     showRecording();
   }
   function showRecording() {
@@ -233,6 +401,14 @@
       }
       info.append(details);
     }
+    const uses = entry ? usageFor(id, audio.recordingManifest) : [];
+    if (uses.length) {
+      const context = document.createElement('p');
+      context.textContent = 'Used in: ' + uses.slice(0, 5).join('; ') + (uses.length > 5 ? '…' : '');
+      info.append(context);
+    }
+    for (const card of $('library-grid').children)
+      card.dataset.selected = String(card.dataset.id === id);
     const pair = pairFor(id);
     $('record-play').disabled = !entry;
     $('stem-play').disabled = !pair &&
@@ -309,8 +485,8 @@
       $('catalog-count').textContent =
         Object.keys(registry.assets).length + ' registered recordings: ' +
         count.music + ' music tracks, ' + count.ambience + ' environmental sounds and ' +
-        count.effect + ' effects. All are browseable here. Candidate build: ' +
-        PrototypeBuild.version + '.';
+        count.effect + ' effects; plus ' + generatedCues.length +
+        ' synthesized game cues. Candidate build: ' + PrototypeBuild.version + '.';
     } else {
       $('catalog-count').textContent = 'The production catalog is unavailable; you can still try engineering test tones.';
     }
@@ -570,8 +746,19 @@
     syncScene();
   });
   $('form').addEventListener('change', syncScene);
-  $('kind').addEventListener('change', () => fillLibrary());
-  $('search').addEventListener('input', () => fillLibrary());
+  $('kind').addEventListener('change', () => { visibleLimit = 24; fillLibrary(); });
+  $('collection').addEventListener('change', () => { visibleLimit = 24; fillLibrary(); });
+  $('sort').addEventListener('change', () => fillLibrary());
+  $('search').addEventListener('input', () => { visibleLimit = 24; fillLibrary(); });
+  $('show-more').addEventListener('click', () => { visibleLimit += 24; renderCards(); });
+  $('reset-library').addEventListener('click', () => {
+    $('kind').value = 'all';
+    $('collection').value = 'all';
+    $('sort').value = 'catalog';
+    $('search').value = '';
+    visibleLimit = 24;
+    fillLibrary();
+  });
   $('recording').addEventListener('change', showRecording);
   $('guide-event').addEventListener('change', showGuide);
   $('source').addEventListener('change', run(async () => {
@@ -657,5 +844,5 @@
   // The audition page deliberately never opens or writes campaign saves.
   if ('serviceWorker' in navigator)
     navigator.serviceWorker.register(new URL('sw.js', baseUrl)).catch(() => {});
-  window.AudioAudition = { audio, ready: diagnostic, selectSource, pairFor, syncScene };
+  window.AudioAudition = { audio, ready: diagnostic, selectSource, pairFor, syncScene, usageFor, collectionFor };
 })();

@@ -36,6 +36,18 @@ assert(
   auditionGreenwood > 0 && auditionGreenwood < auditionEngine,
   'independent listening room must load Greenwood before Campaign',
 );
+
+for (const [module, preceding] of [
+  ['greenwood-landscape', 'highlands'],
+  ['greenwood-interiors', 'greenwood-landscape'],
+  ['enemy-vfx-events', 'enemy-vfx'],
+]) {
+  const location = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/' + module + '.js'));
+  const owner = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/' + preceding + '.js'));
+  assert(location > owner && location < auditionEngine,
+    'standalone listening room must load ' + module + ' in Campaign dependency order');
+}
+assert(auditionGreenwood > auditionGraph.indexOf(path.join(__dirname, '../src/prototype/greenwood-interiors.js')));
 for (const file of auditionGraph.slice(0, auditionEngine + 1))
   vm.runInContext(fs.readFileSync(file, 'utf8'), auditionContext, { filename: file });
 assert.equal(typeof auditionContext.Campaign.prototype.updateCinderRegularState, 'function');
