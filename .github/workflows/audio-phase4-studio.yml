@@ -8,6 +8,14 @@ on:
       - "tools/audio/**"
       - "tests/audio-phase4*.test.cjs"
       - "docs/AUDIO_*.md"
+  pull_request:
+    branches:
+      - audio/phase3-primary-themes-20261031
+    paths:
+      - "tools/audio/**"
+      - "tests/audio-phase4*.test.cjs"
+      - "docs/AUDIO_*.md"
+      - ".github/workflows/audio-phase4-studio.yml"
   workflow_dispatch:
 permissions:
   contents: read
