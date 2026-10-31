@@ -58,9 +58,9 @@ const degree = (n, mode) => Math.floor(n / 7) * 12 + scales[mode][((n % 7) + 7) 
 for (const t of score.themes.filter((s) => !s.pilotFamily)) {
   const notes = [];
   for (let bar = 0; bar < t.bars; bar++) {
-    for (const [beat, pitch] of t.cells[t.phrases[bar]]) {
+    for (const [beat, pitch, , accidental = 0] of t.cells[t.phrases[bar]]) {
       notes.push({ when: bar * 4 + beat,
-        midi: t.root + 12 + degree(t.harmony[bar] + pitch, t.mode) });
+        midi: t.root + 12 + degree(t.harmony[bar] + pitch, t.mode) + accidental });
     }
   }
   notes.sort((a, b) => a.when - b.when);
