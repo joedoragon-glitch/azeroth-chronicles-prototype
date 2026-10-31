@@ -160,8 +160,16 @@ for(const [zone,match,expectedPhase] of [
   const {g,z,e}=scene('frontier',u=>u.fieldCaptain);
   const center=g.safe(1200,950);
   Object.assign(e,center);e.home={...center};
-  const outer={x:center.x+270,y:center.y};
-  assert(!g.blocked(outer.x,outer.y),'outside target initially walkable');
+  let outer=null;
+  for(const radius of [270,330,390,450]) {
+    for(let n=0;n<24;n++) {
+      const angle=n*Math.PI/12;
+      const point={x:center.x+radius*Math.cos(angle),y:center.y+radius*Math.sin(angle)};
+      if(!g.blocked(point.x,point.y)){outer=point;break;}
+    }
+    if(outer)break;
+  }
+  assert(outer,'source-authored Frontier needs a walkable point outside sealed ring');
   Object.assign(g.hero,outer);
   for(let i=0;i<32;i++){
     const a=i*Math.PI/16;
