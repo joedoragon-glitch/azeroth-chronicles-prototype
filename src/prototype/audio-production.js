@@ -124,7 +124,13 @@
         this.updateEnvironment(scene);
         this.sceneDetails(scene);
         const now = this.ctx.currentTime;
-        if (scene.settlement) {
+        // A title-screen snapshot is not live exploration. Clearing the
+        // settlement hold avoids carrying the saved hero's nearby refuge into
+        // the next actual gameplay scene (and selecting settlement music).
+        if (scene.started === false || scene.situation === 'title') {
+          this.settlementUntil = 0;
+          this.settlementZone = null;
+        } else if (scene.settlement) {
           this.settlementUntil = now + 4;
           this.settlementZone = scene.zone;
         }
