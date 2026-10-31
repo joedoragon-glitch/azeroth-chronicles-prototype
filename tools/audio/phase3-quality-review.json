@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-31",
-  "status": "Corrective engineering/composition review; NOT a passed musical acceptance",
+  "status": "Motif-identity source corrections to six new themes; two pilot bases still require critical remediation; NO sonic acceptance",
   "sources": [
     "tools/audio/score-book.json",
     "tools/audio/phase2-pilots-v2.json",
@@ -13,11 +13,11 @@
   "method": "Exact first-two-bar melodic pitch/rhythm from authored score as played by present renderers (for pilot use source family shifts). Semitone intervals include actual bar-to-bar transposition and are compared to the first two original bars. The count of matching positions is a diagnostic, never an artistic ranking or rejection threshold. Does not listen to sound.",
   "gate": {
     "sourceComposition": "REVISE",
-    "renderedTechnical": "HISTORICALLY PASSED on prior candidate; not remeasured against any future corrective edits",
+    "renderedTechnical": "PENDING: previous eight MP3 render evidence is obsolete after source changes; re-encode/decode corrected candidate",
     "heardSound": "UNVERIFIED",
     "phase4": "BLOCKED"
   },
-  "rootCause": "Previous checks counted different harmony/phrase arrays and safe encodes as source-quality GO without demonstrating performed motif continuity, expressive instrument realism, meaningful form or critical internal listening.",
+  "rootCause": "Previous checks counted different harmony/phrase arrays and safe encodes as source-quality GO without demonstrating performed motif continuity, expressive instrument realism, meaningful form or critical internal listening. Six new hooks now restored at the note level, but this does not pass timbral/orchestral quality, and the reused v2 pilot bases still deviate from historical openings.",
   "cues": [
     {
       "id": "place-vale",
@@ -145,24 +145,24 @@
           0
         ],
         [
-          1.3,
+          2,
+          4
+        ],
+        [
+          3,
           3
         ],
         [
-          2.55,
+          4,
           2
         ],
         [
-          4.25,
-          12
+          6,
+          6
         ],
         [
-          5.3,
-          9
-        ],
-        [
-          6.65,
-          5
+          7,
+          4
         ]
       ],
       "originalOpeningIntervals": [
@@ -173,14 +173,14 @@
         -2
       ],
       "candidateOpeningIntervals": [
-        3,
+        4,
         -1,
-        10,
-        -3,
-        -4
+        -1,
+        4,
+        -2
       ],
-      "firstFourExactIntervalPositions": 1,
-      "review": "Original interrupt-rise +4/-1/-1 contrasts with rendered +3/-1/+10; the half-step remains, but recognition and phrasing have not been demonstrated.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: first two bars now directly retain D–F#–F then E–G#–F# with original rests; note identity restored but chromatic overtones, chord approach and piano/reed timbre require internal A/B.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     },
     {
@@ -221,32 +221,28 @@
           0
         ],
         [
-          0.8,
+          1,
           0
         ],
         [
-          1.9,
+          2,
           4
-        ],
-        [
-          3.05,
-          7
         ],
         [
           4,
-          0
-        ],
-        [
-          4.8,
-          0
-        ],
-        [
-          5.9,
-          4
-        ],
-        [
-          7.05,
           7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          7,
+          4
         ]
       ],
       "originalOpeningIntervals": [
@@ -261,13 +257,12 @@
         0,
         4,
         3,
-        -7,
         0,
-        4,
-        3
+        -2,
+        -1
       ],
-      "firstFourExactIntervalPositions": 3,
-      "review": "Opening work-call 0/+4/+3 is retained, but the next-bar return is down a seventh rather than the original held note. Assess the identity over repeated bars.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: original G–G–B–(rest) | D–D–C–B work call and plateau restored; assess industrial weight versus excessive repetitive hammer figure or synthetic horn attack.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     },
     {
@@ -308,28 +303,28 @@
           0
         ],
         [
-          1.15,
+          1,
           2
         ],
         [
-          2.1,
+          2,
           0
         ],
         [
-          3.1,
+          3,
+          4
+        ],
+        [
+          4,
           3
         ],
         [
-          4.25,
-          9
+          6,
+          2
         ],
         [
-          5.6,
-          10
-        ],
-        [
-          6.85,
-          9
+          7,
+          0
         ]
       ],
       "originalOpeningIntervals": [
@@ -343,13 +338,13 @@
       "candidateOpeningIntervals": [
         2,
         -2,
-        3,
-        6,
-        1,
-        -1
+        4,
+        -1,
+        -1,
+        -2
       ],
-      "firstFourExactIntervalPositions": 2,
-      "review": "Original A/B/A/C# (+2/-2/+4) becomes A/B/A/C (+2/-2/+3) and the next bar leaps upward. A small chromatic alteration is meaningful for Ashen's identity; review its harmonic choice.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: original A–B–A–C# | C–(rest)–B–A and intentional major/minor-third contradiction restored; test whether exposed chromatic interplay resolves expressively in cello, not just note-level.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     },
     {
@@ -383,23 +378,19 @@
         ],
         [
           2,
-          3
-        ],
-        [
-          3.2,
-          2
+          4
         ],
         [
           4,
-          12
+          3
         ],
         [
-          5.3,
-          10
+          5,
+          2
         ],
         [
-          6.65,
-          9
+          7,
+          0
         ]
       ],
       "originalOpeningIntervals": [
@@ -409,14 +400,13 @@
         -2
       ],
       "candidateOpeningIntervals": [
-        3,
+        4,
         -1,
-        10,
-        -2,
-        -1
+        -1,
+        -2
       ],
-      "firstFourExactIntervalPositions": 2,
-      "review": "The original suspended A/C# (four semitones with intentional rests) becomes a minor-third A/C, followed by a 10-semitone phrase jump. Resolve the broken-key hook deliberately, not by copy/paste.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: unfinished estate's A–(rest)–C#–(rest) | C–B–(rest)–A retained; sustained A tonic under borrowed major-to-minor motion intended. Inspect register, low-frequency mud, and quiet skeletal labor pulse.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     },
     {
@@ -535,32 +525,24 @@
           0
         ],
         [
-          0.85,
+          1,
           0
         ],
         [
-          2.05,
+          3,
           3
         ],
         [
-          3.2,
-          7
-        ],
-        [
           4,
-          10
+          0
         ],
         [
-          4.9,
-          12
+          5,
+          2
         ],
         [
-          6.15,
-          10
-        ],
-        [
-          7.25,
-          7
+          6,
+          4
         ]
       ],
       "originalOpeningIntervals": [
@@ -573,14 +555,12 @@
       "candidateOpeningIntervals": [
         0,
         3,
-        4,
-        3,
+        -3,
         2,
-        -2,
-        -3
+        2
       ],
-      "firstFourExactIntervalPositions": 2,
-      "review": "Stone-cut 0/+3 is present, but the next retained original descent -3 becomes +4. Review the mine's rhythmic/interval recognition and smooth the next phrase.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: F–F–(rest)–Ab | F–G–A–(rest) restored; original raised-third ambiguity needs critical harmonic/articulation resolution under stone chisel rather than bare loud horn.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     },
     {
@@ -621,24 +601,28 @@
           0
         ],
         [
-          1.15,
+          1,
+          2
+        ],
+        [
+          2,
           3
         ],
         [
-          2.25,
-          5
-        ],
-        [
           4,
-          15
+          4
         ],
         [
-          5.8,
-          14
+          5,
+          3
+        ],
+        [
+          6,
+          2
         ],
         [
           7,
-          12
+          0
         ]
       ],
       "originalOpeningIntervals": [
@@ -650,19 +634,20 @@
         -2
       ],
       "candidateOpeningIntervals": [
-        3,
         2,
-        10,
+        1,
+        1,
+        -1,
         -1,
         -2
       ],
-      "firstFourExactIntervalPositions": 1,
-      "review": "Old close-step 0/+2/+1/+1 opens as 0/+3/+2 and the following phrase leaps +10. Reconstruct recognizable aspirational lift rather than relying on identical title/palette.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: G–A–Bb–(rest) | B–Bb–A–G retained; chromatic yearning deliberate, but upper register brass, flight rhythm and fatigue must be audibly inspected.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     }
   ],
   "returnToGo": [
-    "For all eight, review old and new performed hook timing/pitch with documented intentional preservation or artistically justified replacement; revise score source where meaningfully weak",
+    "For all eight, compare and verify performed old-to-new hooks; six new primary source openings have been amended, but Greenwood and Archive v2 bases still need intentional audit/rework before source GO.",
     "Independently review harmony/voice-leading, phrase resolution, density, purposeful silence, distinct acoustic behavior of actual timbral engine, and comparable long-loop energy; do not certify from descriptive prose",
     "Make and decode exact corrected previews; retain Crown hash checks and honest integrated resource projections after PR #712",
     "Use real internal audition and A/B comparison where possible; log exact source/format/headphones and perceived problems; owner first listens only at Phase 9",
