@@ -10,6 +10,7 @@ an isolated review MP3 + measurements; it never edits the game catalog, the
 Requires numpy, ffmpeg, ffprobe. No neural/audio model or web runtime required.
 """
 import hashlib
+import importlib.util
 import json
 import math
 import re
@@ -22,7 +23,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 RATE = 32000
-SECONDS = 24
+SECONDS = 72  # Long-form candidate, never repeat a 24-second file three times.
 GUARD = round(0.15 * RATE)
 LENGTH = SECONDS * RATE
 
@@ -129,8 +130,15 @@ def main():
             sources[item['key']] = decode(downloaded)
             provenance.append(record)
             print('PROVENANCE', json.dumps(record))
+        source_book = json.loads((ROOT / 'tools/audio/environment-book.json').read_text())
+        spec = importlib.util.spec_from_file_location(
+            'sibdlp_environment_renderer', ROOT / 'tools/audio/render-environment.py')
+        renderer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(renderer)
         reports = []
         for cue in palette['pilots']:
+            if cue.get('loopSeconds') != SECONDS:
+                raise ValueError('Studio output contract does not match the authored long loop')
             asset = manifest['assets'][cue['baseBed']]
             if asset['kind'] != 'ambience':
                 raise ValueError('Cannot use a non-environmental parent')
@@ -143,7 +151,14 @@ def main():
             base = original[start:start + LENGTH]
             if len(base) != LENGTH:
                 raise ValueError('Invalid source loop bounds')
-            tinted = selective_color(base, cue['highpassHz'], cue['lowpassHz'])
+            # Re-render the *same owned regional spectral source recipe* at 72 s.
+            # Do not triple the original 24-second file: that would preserve
+            # exactly the same cyclic noise and obvious fixed-event recurrence.
+            regional = next(x for x in source_book['cues'] if x['id'] == cue['baseBed'])
+            independent = renderer.render(regional, SECONDS)
+            if len(independent) != LENGTH:
+                raise ValueError('Wrong rendered atmospheric length')
+            tinted = selective_color(independent, cue['highpassHz'], cue['lowpassHz'])
             candidate = tinted * cue['bedGain']
             clip = sources[cue['physicalDetail']]
             # No stretching, no rate manipulation, no repeated tonal one-shot.
@@ -177,6 +192,9 @@ def main():
                       'relativeLevelChangeDb': round(rendered_loudness - source_loudness, 3),
                       'loopBoundaryDeltaPcm': seam_delta(encoded_loop),
                       'decodedLoopSeconds': len(encoded_loop) / RATE,
+                      'longFormIndependentBed': True,
+                      'relativeLoopRepetitionFactor': SECONDS / 24,
+                      'decodedPcmBytesPerCandidate': LENGTH * 4,
                       'decodedPeak': float(np.max(np.abs(encoded_loop))),
                       'originalSpectralBands': band_fractions(base),
                       'candidateSpectralBands': band_fractions(encoded_loop),
@@ -189,9 +207,11 @@ def main():
                    'pinnedSourceCount': sum(int(p['approvedShaPinned']) for p in provenance)}
         (output / 'environment-studio-results.json').write_text(
             json.dumps(summary, indent=2) + '\n')
+        if any(x['decodedLoopSeconds'] != SECONDS for x in reports):
+            raise ValueError('A studio candidate repeated a short source period')
         if len(reports) != 2:
             raise ValueError('Expected exactly two independently authored room pilots')
-        print('PASS two real-sample environmental studio previews: format and signal integrity only; heard sound HOLD')
+        print('PASS two 72-second independently varied regional studios with true recorded details: engineering only; heard sound HOLD')
 
 
 if __name__ == '__main__':
