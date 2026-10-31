@@ -98,6 +98,11 @@ const server = http.createServer((req, res) => {
         page = await context.newPage(),
         errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
+      // Count full document navigations. A coherent update MUST trigger its
+      // controllerchange reload, beyond the player's ordinary page reload.
+      await page.addInitScript(() => sessionStorage.setItem(
+        'pwa-browser-boot-count',
+        String(Number(sessionStorage.getItem('pwa-browser-boot-count') || 0) + 1)));
       if (phone)
         await page.addInitScript(() => localStorage.setItem('azeroth-display-language-v1', 'es'));
       await page.goto(url + (phone ? '/phone.html' : '/index.html'));
@@ -290,7 +295,14 @@ const server = http.createServer((req, res) => {
       await context.setOffline(false);
       generation = 'c';
       requestLog.length = 0;
+      const bootsBefore = await page.evaluate(() =>
+        Number(sessionStorage.getItem('pwa-browser-boot-count') || 0));
       await page.reload();
+      // The new HTML/JS cannot be judged until the waiting worker activates
+      // and the game performs its coherent second navigation.
+      await page.waitForFunction((before) =>
+        Number(sessionStorage.getItem('pwa-browser-boot-count') || 0) >= before + 2,
+        bootsBefore, { timeout: 90000 });
       await page.waitForFunction(async () => {
         const name = 'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c';
         if (!(await caches.keys()).includes(name)) return false;
