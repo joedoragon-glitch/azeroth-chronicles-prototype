@@ -184,6 +184,32 @@ def parse_room_cell(source):
             (piece.split(":") for piece in source.split())]
 
 
+
+def phrase_material(cue, theme, room, bar, pilots):
+    """Actual per-bar notes, with the base/action layering decision explicit.
+
+    The base is already playing under an action stem, so the latter contributes
+    a counterline, NOT a second copy of the historical lead melody.
+    """
+    phrase = cue["form"][bar]
+    if phrase == "R":
+        return "rest", [], False
+    if phrase == "H":
+        if cue["kind"] == "action":
+            return "counterline", cue["answer"], False
+        if theme:
+            notes, absolute = heritage_notes(theme, bar, pilots)
+            return "heritage", notes, absolute
+        return "interior-heritage", parse_room_cell(room["motif"]), False
+    if phrase == "A":
+        notes = cue["answer"] if theme else parse_room_cell(room["reply"])
+        return "answer", notes, False
+    if phrase == "Q":
+        notes = cue["question"] if theme else parse_room_cell(room["question"])
+        return "question", notes, False
+    raise ValueError("Invalid phrase slot: " + phrase)
+
+
 def render_arrangement(cue, by_id, pilots, rooms, sampler,
                        grooves, acoustic_profiles, action_accents):
     import numpy as np
@@ -289,26 +315,13 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler,
             tone(bar, 0, 0, 1.55 if additive else 2.35,
                  "cello", .013 if additive else .027, soft=True,
                  register_shift=-12, bass_voice=True)
-        if phrase == "H":
-            if additive:
-                # The parent base theme is STILL PLAYING. An action stem
-                # cannot simply restate the complete lead at each attack.
-                # This cue's own answer cell plays a restrained counterline,
-                # preserving the audible original melody in the base.
-                notes = cue["answer"]
-                for at, degree, duration in notes:
-                    tone(bar, at, degree, min(duration, .7),
-                         cue["response"], .026, soft=True)
-            else:
-                if theme:
-                    notes, absolute = heritage_notes(theme, bar, pilots)
-                else:
-                    notes, absolute = parse_room_cell(room["motif"]), False
+        source_role, notes, absolute = phrase_material(
+            cue, theme, room, bar, pilots)
+        if source_role != "rest":
+            if source_role in ("heritage", "interior-heritage"):
                 for idx, event in enumerate(notes):
                     at, degree, duration = event[:3]
                     accidental = event[3] if len(event) > 3 else 0
-                    # Respect the Phase 3 later-bar low-horn rewrite on
-                    # compatible arrangements; first two bars retain pitch.
                     inherited_register = (
                         theme.get("leadRegisterByBar", [0] * bars)[bar]
                         if theme and theme.get("lead") == "horn"
@@ -318,16 +331,19 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler,
                          absolute=absolute, chromatic=accidental,
                          soft=role in ("night", "peace", "interior-peace"),
                          register_shift=inherited_register)
-        elif phrase == "A":
-            notes = cue["answer"] if theme else parse_room_cell(room["reply"])
-            for at, degree, duration in notes:
-                tone(bar, at, degree, duration, cue["response"],
-                     .036 if additive else .059, soft=True)
-        elif phrase == "Q":
-            notes = cue["question"] if theme else parse_room_cell(room["question"])
-            for at, degree, duration in notes:
-                tone(bar, at, degree, duration, cue["lead"],
-                     .031 if additive else .053, soft=True)
+            else:
+                # Action H is one restrained response, *never* the full
+                # parent melody; A and Q develop their own situated cells.
+                instrument = (cue["response"] if source_role in
+                              ("counterline", "answer") else cue["lead"])
+                amount = (.026 if source_role == "counterline" else
+                          .036 if additive and source_role == "answer" else
+                          .031 if additive else
+                          .059 if source_role == "answer" else .053)
+                for at, degree, duration in notes:
+                    tone(bar, at, degree,
+                         min(duration, .7) if source_role == "counterline" else duration,
+                         instrument, amount, soft=True)
         if additive and dynamic > .82 and bar % 4 in (1, 2):
             # Actual location-specific accents: restrained percussion
             # supports the rhythmic argument rather than a shared boss loop.
