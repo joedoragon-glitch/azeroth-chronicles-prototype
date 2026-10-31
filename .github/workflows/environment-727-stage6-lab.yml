@@ -37,6 +37,11 @@ jobs:
           node tests/environment-727-stage6-source.test.cjs
           node tests/environment-727-stage5-source.test.cjs
           node tests/environment-audio-inventory.test.cjs
+      - name: Package unchanged dev248 current-main PWA as update baseline
+        run: |
+          node scripts/build.cjs --site
+          mv _site _site-env727-baseline
+          test -s _site-env727-baseline/sw.js
       - name: Obtain physically authored frozen MP3s (disposable checkout only)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -78,6 +83,10 @@ jobs:
         run: |
           set -o pipefail
           node tests/environment-727-stage6-browser.test.cjs | tee test-results/environment-727-stage6-48khz.log
+      - name: Check existing 131-asset PWA upgrade to 147 candidate comparison assets then offline reopen
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-upgrade-browser.test.cjs | tee test-results/environment-727-stage6-upgrade.log
       - name: Preserve only isolated QA receipts, never a deployable game artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -88,5 +97,6 @@ jobs:
             test-results/environment-727-stage6-browser.log
             test-results/environment-727-stage6-offline.log
             test-results/environment-727-stage6-48khz.log
+            test-results/environment-727-stage6-upgrade.log
           if-no-files-found: warn
           retention-days: 14
