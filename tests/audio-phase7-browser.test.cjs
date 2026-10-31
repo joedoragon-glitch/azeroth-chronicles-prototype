@@ -148,6 +148,8 @@ async function main() {
 
     const succession=await page.evaluate(() => {
       const c=new Campaign('normal','paladin',()=>.43,{succession:true}),a=Prototype.audio;
+      // Mirror app frame order: observe the current campaign before it dies.
+      window.phase7RealUpdate(c,false,{started:true});
       c.die();
       const types=c.effects.map(e=>e.type);
       for(const e of c.effects.splice(0))a.effect(e);
