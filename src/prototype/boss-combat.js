@@ -1197,7 +1197,11 @@
         const gap = dist(e, target),
           visible = this.line(e, target);
         let skill = false;
-        if (!this.mageSilenceActive(e) && visible && e.cd <= 0) {
+        // Rogue Hush blocks NEW ordinary specials, including a Wraith's
+        // withdrawal cast. Neither Silence stops the normal covering basic
+        // selected below this block.
+        if (!this.mageSilenceActive(e) && !this.rogueEnemySilenced(e) &&
+            visible && e.cd <= 0) {
           if (
             (e.captain || e.roomCaptain) &&
             e.specialCd <= 0 &&
