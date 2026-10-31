@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-31",
-  "status": "exact score-producing source 44.1-kHz/192-kbps stereo 8-preview technical PASS after score articulation and honest bank routing checks; musical REVISE, heard sound UNVERIFIED, Phase4 BLOCKED",
-  "sourceHeadSha": "5ac0687ef890ca25ddd497adb4754b017d9f2bf2",
-  "workflowRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41185790451",
+  "status": "exact source head isolated 44.1-kHz/192-kbps stereo eight-track codec PASS after selective lower-horn reorchestration, explicit instrument selection and original-pilot full-score correction; source candidate critically reviewed but no ear-certified musical GO; heard UNVERIFIED, Phase4 BLOCKED",
+  "sourceHeadSha": "e013fe9b3990d96216266f7382f3603db94aaa55",
+  "workflowRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41186994520",
   "codec": "192kbps stereo MP3",
   "sampleRateHz": 44100,
   "originalCatalogUnchanged": true,
@@ -34,8 +34,8 @@
       "cue": "place-march",
       "seconds": 40.975601,
       "channels": 2,
-      "stereoSideRms": 0.00523,
-      "foldedMonoPeak": 0.48838,
+      "stereoSideRms": 0.00521,
+      "foldedMonoPeak": 0.48826,
       "decodedSamples": 1820254,
       "expectedSamples": 1820254,
       "loop": {
@@ -43,18 +43,18 @@
         "end": 41.12560090702948
       },
       "encodedBytes": 992487,
-      "sha256": "4cc242149fc7cc5c77899c2f5e935aaec54ffbcf875efffd079293a60616e91e",
-      "decodedPeak": 0.51716,
+      "sha256": "25f770ffa86a2761bbf2ed9e5885839823cee18786dfe8a0c83e80c7d8684665",
+      "decodedPeak": 0.51706,
       "decodedRms": 0.08029,
-      "loopEdgeDelta": 0.00002,
+      "loopEdgeDelta": 0.00001,
       "recordedInstrumentNotes": 89
     },
     {
       "cue": "place-highlands",
       "seconds": 38.181814,
       "channels": 2,
-      "stereoSideRms": 0.00674,
-      "foldedMonoPeak": 0.47402,
+      "stereoSideRms": 0.0064,
+      "foldedMonoPeak": 0.45714,
       "decodedSamples": 1697048,
       "expectedSamples": 1697048,
       "loop": {
@@ -62,18 +62,18 @@
         "end": 38.331814058956915
       },
       "encodedBytes": 925404,
-      "sha256": "c40795ec34a6220c1fff2ca962e07d6a89226e92fac56a9f6131d891fd99df84",
-      "decodedPeak": 0.48271,
-      "decodedRms": 0.08746,
-      "loopEdgeDelta": 0,
+      "sha256": "2512881864d4592e70d750dbc5dc12ede09db3074ae9407807157f69410397a7",
+      "decodedPeak": 0.48514,
+      "decodedRms": 0.08733,
+      "loopEdgeDelta": 0.00001,
       "recordedInstrumentNotes": 96
     },
     {
       "cue": "place-frontier",
       "seconds": 40,
       "channels": 2,
-      "stereoSideRms": 0.00593,
-      "foldedMonoPeak": 0.58581,
+      "stereoSideRms": 0.00592,
+      "foldedMonoPeak": 0.58745,
       "decodedSamples": 1777230,
       "expectedSamples": 1777230,
       "loop": {
@@ -81,18 +81,18 @@
         "end": 40.15
       },
       "encodedBytes": 968663,
-      "sha256": "18837f8fd9b49efd9c1b99dff964d76176b1377b547fd93f2a0e87396e7a40a5",
-      "decodedPeak": 0.63209,
+      "sha256": "41ca99c16dd3994873d825e5b10c067b5ffe3dc267be100ab4bcd55a3d2a16db",
+      "decodedPeak": 0.63349,
       "decodedRms": 0.08123,
-      "loopEdgeDelta": 0.00001,
+      "loopEdgeDelta": 0.00002,
       "recordedInstrumentNotes": 104
     },
     {
       "cue": "place-crypt",
       "seconds": 34.285714,
       "channels": 2,
-      "stereoSideRms": 0.00502,
-      "foldedMonoPeak": 0.49852,
+      "stereoSideRms": 0.00513,
+      "foldedMonoPeak": 0.52564,
       "decodedSamples": 1525230,
       "expectedSamples": 1525230,
       "loop": {
@@ -100,8 +100,8 @@
         "end": 34.43571428571428
       },
       "encodedBytes": 831363,
-      "sha256": "f6b177371b2b63694bbe08a41fba0305c6603db10b1ea54557ce7f08627eace7",
-      "decodedPeak": 0.53058,
+      "sha256": "b35987c904e03c1c808346b169a85eac4edd8dd9a8ae3795b27c33f382cea937",
+      "decodedPeak": 0.55714,
       "decodedRms": 0.07832,
       "loopEdgeDelta": 0.00001,
       "recordedInstrumentNotes": 69
@@ -110,8 +110,8 @@
       "cue": "place-archive",
       "seconds": 44.651156,
       "channels": 2,
-      "stereoSideRms": 0.00729,
-      "foldedMonoPeak": 0.61167,
+      "stereoSideRms": 0.00699,
+      "foldedMonoPeak": 0.61305,
       "decodedSamples": 1982346,
       "expectedSamples": 1982346,
       "loop": {
@@ -119,18 +119,18 @@
         "end": 44.801156462585034
       },
       "encodedBytes": 1080258,
-      "sha256": "af36574734f751523bd29b74c417f6c9e7708ba9e4c3ad2ba66ca098d30402f7",
-      "decodedPeak": 0.65906,
-      "decodedRms": 0.08808,
-      "loopEdgeDelta": 0.00002,
-      "recordedInstrumentNotes": 123
+      "sha256": "fab0aa683be52455e42cac2ad6e26c8f2004aee25d3ba68321e5bae6c66e59be",
+      "decodedPeak": 0.65899,
+      "decodedRms": 0.08442,
+      "loopEdgeDelta": 0.00001,
+      "recordedInstrumentNotes": 119
     },
     {
       "cue": "place-mine",
       "seconds": 35,
       "channels": 2,
       "stereoSideRms": 0.00649,
-      "foldedMonoPeak": 0.51027,
+      "foldedMonoPeak": 0.61839,
       "decodedSamples": 1556730,
       "expectedSamples": 1556730,
       "loop": {
@@ -138,9 +138,9 @@
         "end": 35.15
       },
       "encodedBytes": 848918,
-      "sha256": "35ab6a12c54f0e3b472620578b77a6638220afaac019c16497efada9d12b2b08",
-      "decodedPeak": 0.53014,
-      "decodedRms": 0.08826,
+      "sha256": "ce5f4f3297b01a42eb0935d2f90fd26543d5fd02355a18c62a200191e180a1da",
+      "decodedPeak": 0.62578,
+      "decodedRms": 0.0882,
       "loopEdgeDelta": 0.00008,
       "recordedInstrumentNotes": 85
     },
@@ -148,8 +148,8 @@
       "cue": "place-abyss",
       "seconds": 40,
       "channels": 2,
-      "stereoSideRms": 0.00937,
-      "foldedMonoPeak": 0.48891,
+      "stereoSideRms": 0.00907,
+      "foldedMonoPeak": 0.60497,
       "decodedSamples": 1777230,
       "expectedSamples": 1777230,
       "loop": {
@@ -157,70 +157,36 @@
         "end": 40.15
       },
       "encodedBytes": 968663,
-      "sha256": "d4d32b6ffada5bb190d1406bef09ad4fee60db0addfacb54b466939dfd09129b",
-      "decodedPeak": 0.51296,
-      "decodedRms": 0.08625,
-      "loopEdgeDelta": 0.00003,
+      "sha256": "eaeb49da37bd0fa8448f7c709f9a5a834fdd226994bbf02d55382f7b6c5925be",
+      "decodedPeak": 0.63775,
+      "decodedRms": 0.08622,
+      "loopEdgeDelta": 0.00005,
       "recordedInstrumentNotes": 95
     }
   ],
   "sourceSampleSnapshot": {
-    "recordedCalls": 759,
+    "recordedCalls": 755,
     "sampleFilesDecoded": 46,
     "uniqueSourceSamples": 46,
-    "maxSemitonePitchShift": 7,
+    "maxSemitonePitchShift": 6,
     "shiftHistogram": {
-      "0": 230,
-      "1": 109,
-      "2": 225,
-      "3": 125,
-      "4": 15,
-      "5": 34,
-      "6": 5,
-      "7": 16
+      "0": 254,
+      "1": 127,
+      "2": 244,
+      "3": 116,
+      "4": 3,
+      "5": 8,
+      "6": 3
     },
     "provisionalTimbreSubstitutions": {
-      "bell → glockenspiel": 20,
+      "bell → glockenspiel": 2,
       "cello → basses": 20,
-      "cello → celli": 158,
-      "dulcimer → marimba": 66,
-      "strings → celli": 29,
+      "cello → celli": 157,
+      "strings → celli": 28,
       "strings → violins": 31
     },
     "sourceFamilyCount": 2,
     "largePitchShifts": [
-      {
-        "cue": "place-abyss",
-        "instrument": "horn",
-        "requestedMidi": 65,
-        "sampleMidi": 60,
-        "semitones": 5,
-        "notes": 4
-      },
-      {
-        "cue": "place-abyss",
-        "instrument": "horn",
-        "requestedMidi": 67,
-        "sampleMidi": 60,
-        "semitones": 7,
-        "notes": 6
-      },
-      {
-        "cue": "place-abyss",
-        "instrument": "horn",
-        "requestedMidi": 69,
-        "sampleMidi": 74,
-        "semitones": -5,
-        "notes": 2
-      },
-      {
-        "cue": "place-archive",
-        "instrument": "glockenspiel",
-        "requestedMidi": 89,
-        "sampleMidi": 84,
-        "semitones": 5,
-        "notes": 1
-      },
       {
         "cue": "place-crypt",
         "instrument": "basses",
@@ -238,76 +204,12 @@
         "notes": 4
       },
       {
-        "cue": "place-frontier",
-        "instrument": "horn",
-        "requestedMidi": 69,
-        "sampleMidi": 74,
-        "semitones": -5,
-        "notes": 1
-      },
-      {
-        "cue": "place-highlands",
-        "instrument": "horn",
-        "requestedMidi": 65,
-        "sampleMidi": 60,
-        "semitones": 5,
-        "notes": 4
-      },
-      {
-        "cue": "place-highlands",
-        "instrument": "horn",
-        "requestedMidi": 67,
-        "sampleMidi": 60,
-        "semitones": 7,
-        "notes": 8
-      },
-      {
-        "cue": "place-highlands",
-        "instrument": "horn",
-        "requestedMidi": 69,
-        "sampleMidi": 74,
-        "semitones": -5,
-        "notes": 5
-      },
-      {
-        "cue": "place-march",
-        "instrument": "glockenspiel",
-        "requestedMidi": 89,
-        "sampleMidi": 84,
-        "semitones": 5,
-        "notes": 2
-      },
-      {
         "cue": "place-mine",
         "instrument": "basses",
         "requestedMidi": 34,
         "sampleMidi": 28,
         "semitones": 6,
         "notes": 3
-      },
-      {
-        "cue": "place-mine",
-        "instrument": "horn",
-        "requestedMidi": 65,
-        "sampleMidi": 60,
-        "semitones": 5,
-        "notes": 7
-      },
-      {
-        "cue": "place-mine",
-        "instrument": "horn",
-        "requestedMidi": 67,
-        "sampleMidi": 60,
-        "semitones": 7,
-        "notes": 2
-      },
-      {
-        "cue": "place-mine",
-        "instrument": "horn",
-        "requestedMidi": 68,
-        "sampleMidi": 74,
-        "semitones": -6,
-        "notes": 2
       }
     ],
     "instrumentFamilies": [
@@ -333,7 +235,7 @@
         "place-vale",
         12,
         92,
-        "Phase3 heritage opening / v2 body"
+        "Phase3 heritage opening / critically reviewed v2 body"
       ],
       [
         "place-march",
@@ -363,7 +265,7 @@
         "place-archive",
         16,
         86,
-        "Phase3 heritage opening / v2 body"
+        "Phase3 heritage opening / critically reviewed v2 body"
       ],
       [
         "place-mine",
@@ -402,8 +304,8 @@
         "cue": "place-march",
         "seconds": 40.975601,
         "channels": 2,
-        "stereoSideRms": 0.00523,
-        "foldedMonoPeak": 0.48838,
+        "stereoSideRms": 0.00521,
+        "foldedMonoPeak": 0.48826,
         "decodedSamples": 1820254,
         "expectedSamples": 1820254,
         "loop": {
@@ -411,18 +313,18 @@
           "end": 41.12560090702948
         },
         "encodedBytes": 992487,
-        "sha256": "4cc242149fc7cc5c77899c2f5e935aaec54ffbcf875efffd079293a60616e91e",
-        "decodedPeak": 0.51716,
+        "sha256": "25f770ffa86a2761bbf2ed9e5885839823cee18786dfe8a0c83e80c7d8684665",
+        "decodedPeak": 0.51706,
         "decodedRms": 0.08029,
-        "loopEdgeDelta": 0.00002,
+        "loopEdgeDelta": 0.00001,
         "recordedInstrumentNotes": 89
       },
       {
         "cue": "place-highlands",
         "seconds": 38.181814,
         "channels": 2,
-        "stereoSideRms": 0.00674,
-        "foldedMonoPeak": 0.47402,
+        "stereoSideRms": 0.0064,
+        "foldedMonoPeak": 0.45714,
         "decodedSamples": 1697048,
         "expectedSamples": 1697048,
         "loop": {
@@ -430,18 +332,18 @@
           "end": 38.331814058956915
         },
         "encodedBytes": 925404,
-        "sha256": "c40795ec34a6220c1fff2ca962e07d6a89226e92fac56a9f6131d891fd99df84",
-        "decodedPeak": 0.48271,
-        "decodedRms": 0.08746,
-        "loopEdgeDelta": 0,
+        "sha256": "2512881864d4592e70d750dbc5dc12ede09db3074ae9407807157f69410397a7",
+        "decodedPeak": 0.48514,
+        "decodedRms": 0.08733,
+        "loopEdgeDelta": 0.00001,
         "recordedInstrumentNotes": 96
       },
       {
         "cue": "place-frontier",
         "seconds": 40,
         "channels": 2,
-        "stereoSideRms": 0.00593,
-        "foldedMonoPeak": 0.58581,
+        "stereoSideRms": 0.00592,
+        "foldedMonoPeak": 0.58745,
         "decodedSamples": 1777230,
         "expectedSamples": 1777230,
         "loop": {
@@ -449,18 +351,18 @@
           "end": 40.15
         },
         "encodedBytes": 968663,
-        "sha256": "18837f8fd9b49efd9c1b99dff964d76176b1377b547fd93f2a0e87396e7a40a5",
-        "decodedPeak": 0.63209,
+        "sha256": "41ca99c16dd3994873d825e5b10c067b5ffe3dc267be100ab4bcd55a3d2a16db",
+        "decodedPeak": 0.63349,
         "decodedRms": 0.08123,
-        "loopEdgeDelta": 0.00001,
+        "loopEdgeDelta": 0.00002,
         "recordedInstrumentNotes": 104
       },
       {
         "cue": "place-crypt",
         "seconds": 34.285714,
         "channels": 2,
-        "stereoSideRms": 0.00502,
-        "foldedMonoPeak": 0.49852,
+        "stereoSideRms": 0.00513,
+        "foldedMonoPeak": 0.52564,
         "decodedSamples": 1525230,
         "expectedSamples": 1525230,
         "loop": {
@@ -468,8 +370,8 @@
           "end": 34.43571428571428
         },
         "encodedBytes": 831363,
-        "sha256": "f6b177371b2b63694bbe08a41fba0305c6603db10b1ea54557ce7f08627eace7",
-        "decodedPeak": 0.53058,
+        "sha256": "b35987c904e03c1c808346b169a85eac4edd8dd9a8ae3795b27c33f382cea937",
+        "decodedPeak": 0.55714,
         "decodedRms": 0.07832,
         "loopEdgeDelta": 0.00001,
         "recordedInstrumentNotes": 69
@@ -478,8 +380,8 @@
         "cue": "place-archive",
         "seconds": 44.651156,
         "channels": 2,
-        "stereoSideRms": 0.00729,
-        "foldedMonoPeak": 0.61167,
+        "stereoSideRms": 0.00699,
+        "foldedMonoPeak": 0.61305,
         "decodedSamples": 1982346,
         "expectedSamples": 1982346,
         "loop": {
@@ -487,18 +389,18 @@
           "end": 44.801156462585034
         },
         "encodedBytes": 1080258,
-        "sha256": "af36574734f751523bd29b74c417f6c9e7708ba9e4c3ad2ba66ca098d30402f7",
-        "decodedPeak": 0.65906,
-        "decodedRms": 0.08808,
-        "loopEdgeDelta": 0.00002,
-        "recordedInstrumentNotes": 123
+        "sha256": "fab0aa683be52455e42cac2ad6e26c8f2004aee25d3ba68321e5bae6c66e59be",
+        "decodedPeak": 0.65899,
+        "decodedRms": 0.08442,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 119
       },
       {
         "cue": "place-mine",
         "seconds": 35,
         "channels": 2,
         "stereoSideRms": 0.00649,
-        "foldedMonoPeak": 0.51027,
+        "foldedMonoPeak": 0.61839,
         "decodedSamples": 1556730,
         "expectedSamples": 1556730,
         "loop": {
@@ -506,9 +408,9 @@
           "end": 35.15
         },
         "encodedBytes": 848918,
-        "sha256": "35ab6a12c54f0e3b472620578b77a6638220afaac019c16497efada9d12b2b08",
-        "decodedPeak": 0.53014,
-        "decodedRms": 0.08826,
+        "sha256": "ce5f4f3297b01a42eb0935d2f90fd26543d5fd02355a18c62a200191e180a1da",
+        "decodedPeak": 0.62578,
+        "decodedRms": 0.0882,
         "loopEdgeDelta": 0.00008,
         "recordedInstrumentNotes": 85
       },
@@ -516,8 +418,8 @@
         "cue": "place-abyss",
         "seconds": 40,
         "channels": 2,
-        "stereoSideRms": 0.00937,
-        "foldedMonoPeak": 0.48891,
+        "stereoSideRms": 0.00907,
+        "foldedMonoPeak": 0.60497,
         "decodedSamples": 1777230,
         "expectedSamples": 1777230,
         "loop": {
@@ -525,10 +427,10 @@
           "end": 40.15
         },
         "encodedBytes": 968663,
-        "sha256": "d4d32b6ffada5bb190d1406bef09ad4fee60db0addfacb54b466939dfd09129b",
-        "decodedPeak": 0.51296,
-        "decodedRms": 0.08625,
-        "loopEdgeDelta": 0.00003,
+        "sha256": "eaeb49da37bd0fa8448f7c709f9a5a834fdd226994bbf02d55382f7b6c5925be",
+        "decodedPeak": 0.63775,
+        "decodedRms": 0.08622,
+        "loopEdgeDelta": 0.00005,
         "recordedInstrumentNotes": 95
       }
     ],
@@ -537,62 +439,28 @@
     "outputChannels": 2,
     "instrumentEngine": "verified-CC0-samples-with-explicit-drums",
     "samplerEvidence": {
-      "recordedCalls": 759,
+      "recordedCalls": 755,
       "sampleFilesDecoded": 46,
       "uniqueSourceSamples": 46,
-      "maxSemitonePitchShift": 7,
+      "maxSemitonePitchShift": 6,
       "shiftHistogram": {
-        "0": 230,
-        "1": 109,
-        "2": 225,
-        "3": 125,
-        "4": 15,
-        "5": 34,
-        "6": 5,
-        "7": 16
+        "0": 254,
+        "1": 127,
+        "2": 244,
+        "3": 116,
+        "4": 3,
+        "5": 8,
+        "6": 3
       },
       "provisionalTimbreSubstitutions": {
-        "bell → glockenspiel": 20,
+        "bell → glockenspiel": 2,
         "cello → basses": 20,
-        "cello → celli": 158,
-        "dulcimer → marimba": 66,
-        "strings → celli": 29,
+        "cello → celli": 157,
+        "strings → celli": 28,
         "strings → violins": 31
       },
       "sourceFamilyCount": 2,
       "largePitchShifts": [
-        {
-          "cue": "place-abyss",
-          "instrument": "horn",
-          "requestedMidi": 65,
-          "sampleMidi": 60,
-          "semitones": 5,
-          "notes": 4
-        },
-        {
-          "cue": "place-abyss",
-          "instrument": "horn",
-          "requestedMidi": 67,
-          "sampleMidi": 60,
-          "semitones": 7,
-          "notes": 6
-        },
-        {
-          "cue": "place-abyss",
-          "instrument": "horn",
-          "requestedMidi": 69,
-          "sampleMidi": 74,
-          "semitones": -5,
-          "notes": 2
-        },
-        {
-          "cue": "place-archive",
-          "instrument": "glockenspiel",
-          "requestedMidi": 89,
-          "sampleMidi": 84,
-          "semitones": 5,
-          "notes": 1
-        },
         {
           "cue": "place-crypt",
           "instrument": "basses",
@@ -610,76 +478,12 @@
           "notes": 4
         },
         {
-          "cue": "place-frontier",
-          "instrument": "horn",
-          "requestedMidi": 69,
-          "sampleMidi": 74,
-          "semitones": -5,
-          "notes": 1
-        },
-        {
-          "cue": "place-highlands",
-          "instrument": "horn",
-          "requestedMidi": 65,
-          "sampleMidi": 60,
-          "semitones": 5,
-          "notes": 4
-        },
-        {
-          "cue": "place-highlands",
-          "instrument": "horn",
-          "requestedMidi": 67,
-          "sampleMidi": 60,
-          "semitones": 7,
-          "notes": 8
-        },
-        {
-          "cue": "place-highlands",
-          "instrument": "horn",
-          "requestedMidi": 69,
-          "sampleMidi": 74,
-          "semitones": -5,
-          "notes": 5
-        },
-        {
-          "cue": "place-march",
-          "instrument": "glockenspiel",
-          "requestedMidi": 89,
-          "sampleMidi": 84,
-          "semitones": 5,
-          "notes": 2
-        },
-        {
           "cue": "place-mine",
           "instrument": "basses",
           "requestedMidi": 34,
           "sampleMidi": 28,
           "semitones": 6,
           "notes": 3
-        },
-        {
-          "cue": "place-mine",
-          "instrument": "horn",
-          "requestedMidi": 65,
-          "sampleMidi": 60,
-          "semitones": 5,
-          "notes": 7
-        },
-        {
-          "cue": "place-mine",
-          "instrument": "horn",
-          "requestedMidi": 67,
-          "sampleMidi": 60,
-          "semitones": 7,
-          "notes": 2
-        },
-        {
-          "cue": "place-mine",
-          "instrument": "horn",
-          "requestedMidi": 68,
-          "sampleMidi": 74,
-          "semitones": -6,
-          "notes": 2
         }
       ],
       "instrumentFamilies": [
@@ -856,9 +660,9 @@
   "acceptance": {
     "motifFirstTwoBars": "SOURCE-TESTED 8/8: pitches and beat onsets against historical score; no extended-form quality claim",
     "recordedSourceProvenance": "SOURCE-TESTED 55 files, 2 CC0 origin families; 46 files used in eight preview renders",
-    "technicalEncodeDecode": "PASS",
+    "technicalEncodeDecode": "PASS exact score-producing source e013fe9b3990d96216266f7382f3603db94aaa55",
     "technicalIsolation": "PASS",
-    "musicalComposition": "REVISE",
+    "musicalComposition": "REVISED CANDIDATE / NO SOURCE CREATIVE GO WITHOUT EAR COMPARISON",
     "heardQuality": "UNVERIFIED",
     "phase4": "BLOCKED",
     "merge": "NOT MERGED",
@@ -866,15 +670,13 @@
     "deviceVerified": "NO"
   },
   "audibleRisks": [
-    "Several CC0 source samples originated in mono 96-kbps MP3; higher output bitrate does not recover source information",
-    "55 performed notes shift 5–7 semitones from sample originals, 41 of these horn",
-    "66 score-written dulcimer notes still played on recorded marimba; 20 bell notes on glockenspiel",
-    "Six authored regions have differing reflection/tonal/width profiles by design; distinct parameters are not evidence they actually sound distinct",
-    "Both v2 pilot base scores keep their older processing profile pending source-driven refinement and evaluation",
-    "No full game/overlay/dialogue-warning masking, offline package install, iPhone or Chromebook audio verification",
-    "Older stacked PR has unrelated sprite-scope test failure; standalone studio PASS is not full-PR green",
-    "Actual headphone critical review remains absent; note expression and 6 source acoustic treatments are unverified by hearing.",
-    "This evidence is for score-producing commit 5ac0687ef890ca25ddd497adb4754b017d9f2bf2 only; a subsequent evidence-only commit does not itself create new render files."
+    "No genuine internal/owner headphone A/B listening or playback-fatigue evaluation has occurred; source design and MP3 decode alone are not an artistic acceptance.",
+    "11 recorded low-bass events shift 5–6 semitones from sparse sources (Crypt 4, Frontier 4, Mine 3); no upper horn now has a >=5-semitone source transposition.",
+    "Vale/Archive pilot material remains subject to the same final by-ear and mix qualification as all six new scenes; Archive Phase3 first-bar accompaniment correction cannot be called heard quality.",
+    "Recorded CC0 sample source includes 96-kbit/s mono upstream clips; final 192-kbit/s stereo encoding does not restore lost source fidelity.",
+    "Distinct recorded timbres/score registers and acoustic profiles need real comparison for emotional character, instrumentation balance and fatigue.",
+    "Integrated gameplay warnings/action stem masking, PWA offline audio, iOS/Chromebook and real-device acceptance remain future gated work.",
+    "The older stacked PR still has unrelated main merge conflict and sprite-scope test mismatch; isolated studio CI is not whole-PR green."
   ],
   "expressionDesign": [
     {
@@ -924,6 +726,137 @@
         "leadAttackMs": 92,
         "textureJitterMs": 5
       }
+    }
+  ],
+  "authoredOrchestration": [
+    {
+      "cue": "place-vale",
+      "revision": "Twelve bars are reviewed as arrival, porch conversation, orchard lane, uneasy patrol and a sparse home return. The theme has clear recurring question/answer cells and dominant-to-tonic loop recovery; preserve the existing v2 body unless an actual aural comparison reveals fatigue or displaced emphasis. Opening notes are Phase 3-corrected. This is a source-level retain decision, not a final pilot exemption.",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": null
+    },
+    {
+      "cue": "place-march",
+      "revision": "Scene-specific scored arrangement",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "glockenspiel",
+        "harp",
+        "piano",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-highlands",
+      "revision": "First two heritage bars stay at the original pitch. Later working-horn calls intentionally occupy a warmer lower octave; recorded marimba represents the dry mallet/labor pulse instead of pretending to be a dulcimer.",
+      "hornRegisterByBar": [
+        0,
+        0,
+        -12,
+        -12,
+        0,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        0
+      ],
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "harp",
+        "horn",
+        "marimba",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-frontier",
+      "revision": "Scene-specific scored arrangement",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "guitar",
+        "harp",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-crypt",
+      "revision": "Scene-specific scored arrangement",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "glockenspiel",
+        "harp",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-archive",
+      "revision": "Sixteen bars contrast fragile scholarship, hurried salvage, missing records and incomplete rescue. Phase 3's F-sharp heritage note previously overlapped the old F-natural piano arpeggio in the opening Dorian accompaniment. Replace ONLY that first-bar busy figure with its established sparse D-pedal breath figure, letting the original D–F-sharp–A opening resolve without an unintentional F/F-sharp collision. Later borrowed chromatic responses remain intentional uncertainty, pending real listening.",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": null
+    },
+    {
+      "cue": "place-mine",
+      "revision": "Two-bar stone-worker reply stays untouched. Lower horn phrases and softened wooden mallet strikes support heavy craft without exaggerated upper-brass repitching.",
+      "hornRegisterByBar": [
+        0,
+        0,
+        -12,
+        -12,
+        0,
+        0,
+        -12,
+        -12,
+        -12,
+        0,
+        -12,
+        -12,
+        -12,
+        0
+      ],
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "glockenspiel",
+        "horn",
+        "marimba",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-abyss",
+      "revision": "First two dragon-flight heritage bars stay at original pitch. Later proud horn replies use its more authentic middle register, letting the written flute/strings provide aerial height; harp replaces unrelated dulcimer color.",
+      "hornRegisterByBar": [
+        0,
+        0,
+        -12,
+        -12,
+        0,
+        0,
+        -12,
+        -12,
+        -12,
+        -12,
+        0,
+        -12,
+        0,
+        -12,
+        -12,
+        0
+      ],
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "flute",
+        "harp",
+        "horn",
+        "strings"
+      ]
     }
   ]
 }
