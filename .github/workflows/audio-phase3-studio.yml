@@ -35,6 +35,7 @@ jobs:
           node tests/audio-phase3-sample-bank.test.cjs
           node tests/audio-phase3-quality-review.test.cjs
           python tools/audio/phase3-compose.py --check
+          python tests/audio-phase3-sampler.test.py
       - name: Recompose all eight original-primary candidates from the recorded bank
         run: python tools/audio/phase3-compose.py --render "$RUNNER_TEMP/sibdlp-phase3-preview"
       - name: Verify rendered bank use, codec facts, Crown freeze and distinct cue IDs
