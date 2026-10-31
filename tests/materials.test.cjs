@@ -239,6 +239,15 @@ const entry = (n) => ({
     const { core } = require(path.join(checkout, 'scripts/site-assets.cjs'));
     const materialFile = 'assets/materials/' + record.output.hash + '.png';
     assert(core.includes(materialFile), 'active material is enumerated for deployment/offline');
+    // Mirror the build worker's per-file fingerprint contract in this isolated
+    // material fixture. The legacy test omitted this newer required template
+    // variable and consequently failed before exercising offline material safety.
+    const materialBytes = fs.readFileSync(path.join(checkout, materialFile));
+    const fingerprint = require('node:crypto')
+      .createHash('sha1')
+      .update('blob ' + materialBytes.length + '\\0')
+      .update(materialBytes)
+      .digest('hex');
     const worker = fs
       .readFileSync(path.join(root, 'templates/service-worker.js'), 'utf8')
       .replace(
@@ -247,6 +256,7 @@ const entry = (n) => ({
       )
       .replace('{{CACHE_VERSION}}', '"azeroth-app-material-fixture"')
       .replace('{{APP_FILES}}', JSON.stringify(core.map((f) => './' + f)))
+      .replace('{{APP_FINGERPRINTS}}', JSON.stringify({ ['./' + materialFile]: fingerprint }))
       .replace('{{LEGACY_FILES}}', '[]');
     const offline = (missing) => {
       const handlers = {},
