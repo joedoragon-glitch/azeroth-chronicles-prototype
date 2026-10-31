@@ -124,7 +124,10 @@
               return true;
             }
             search.pending = null;
-            if (result.path.length) search.choices.push(stop);
+            // Keep each solver-approved waypoint list alongside its original
+            // facility candidate. The selected itinerary must not pay for the
+            // same costly search a second time after the authored pause.
+            if (result.path.length) search.choices.push({ ...stop, path: result.path });
             search.index++;
           }
           // Plan during the already-authored inspection pause. The boss
@@ -140,7 +143,12 @@
             Math.min(search.choices.length - 1, Math.floor(this.random() * search.choices.length))
           ];
           e.cinderDestination = { x: p.x, y: p.y, name: p.name, i: p.i };
-          delete e.path;
+          // An invalidated first leg falls back to a new bounded search;
+          // never trust a stale path after collision/actor displacement.
+          if (!this.adoptBudgetedRoute(e, e.cinderDestination, 'cinder-patrol', p.path)) {
+            delete e.path;
+            e.routeAge = 0;
+          }
         }
         if (e.cinderInspectionPause > 0) return true;
         const p = e.cinderDestination;
