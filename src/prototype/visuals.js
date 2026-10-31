@@ -220,19 +220,6 @@
       walking: progress < 1,
     };
   }
-  // A burned woodland is a population of trees, not one stamped silhouette.
-  // These small, stable shape differences are presentation-only. Keep the roots
-  // at their authored positions and match attached new shoots to the same tree.
-  function frontierDeadTreeProfile(e) {
-    let h = 2166136261 >>> 0;
-    for (const ch of String(e.id || `${e.x}:${e.y}:dead-tree`))
-      h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
-    return {
-      width: 0.84 + (h & 7) * 0.044,
-      height: 0.83 + ((h >>> 3) & 7) * 0.049,
-      lean: (((h >>> 6) & 7) - 3.5) * 0.044,
-    };
-  }
   // Fresh epicormic shoots on surviving burned trunks, including retained raster bodies.
   // Fixed positions derive from identity; no animation or simulation fields.
   function frontierTreeShoots(ctx, e, p, region = 0, raster = false) {
@@ -249,11 +236,6 @@
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.scale(scale, scale);
-    if (!raster && e.structure === 'dead-tree') {
-      const profile = frontierDeadTreeProfile(e);
-      ctx.scale(profile.width, profile.height);
-      ctx.rotate(profile.lean);
-    }
     ctx.lineCap = 'round';
     const shoot = (x, y, side, size) => {
       ctx.strokeStyle = '#6f8050';
@@ -272,9 +254,14 @@
       }
     };
     if (raster) {
-      shoot(-10, -13, -1, 0.95);
-      shoot(8, -10, 1, 0.85);
-      if (seed % 3 !== 0) shoot(-2, 7, -1, 0.75);
+      // Retained approved burned-tree sprites must never be re-scaled or redrawn
+      // simply to break repetition. Vary only anchored epicormic shoots within
+      // the original trunk/branch contact area, by stable tree identity.
+      const wiggle = (bit) => ((seed >>> bit) & 3) - 1.5;
+      shoot(-10 + wiggle(3), -13 + wiggle(5), -1, 0.8 + ((seed >>> 7) & 7) * 0.035);
+      shoot(8 + wiggle(10), -10 + wiggle(12), 1, 0.73 + ((seed >>> 14) & 7) * 0.04);
+      if (seed % 3 !== 0)
+        shoot(-2 + wiggle(17), 7 + wiggle(19), -1, 0.65 + ((seed >>> 21) & 7) * 0.033);
     } else {
       shoot(-13, -25, -1, 1);
       shoot(14, -29, 1, 0.9);
@@ -14333,14 +14320,9 @@
         case 'dead-tree':
         case 'dead-shrub':
         case 'dry-scrub':
-          craftAt(0, 0, kind === 'dead-tree' ? 1 : kind === 'dead-shrub' ? 0.65 : 0.55, () => {
-            if (kind === 'dead-tree' && region === 3) {
-              const profile = frontierDeadTreeProfile(e);
-              ctx.scale(profile.width, profile.height);
-              ctx.rotate(profile.lean);
-            }
-            naturalTrunk(true);
-          });
+          craftAt(0, 0, kind === 'dead-tree' ? 1 : kind === 'dead-shrub' ? 0.65 : 0.55, () =>
+            naturalTrunk(true),
+          );
           break;
         case 'ash-patch':
         case 'scorched-floor':
