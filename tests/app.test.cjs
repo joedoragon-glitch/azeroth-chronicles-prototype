@@ -1,4 +1,4 @@
-const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert/strict');
+const fs = require('fs'), path = require('path'), vm = require('vm'), assert = require('assert/strict'), crypto = require('node:crypto');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'src/app.js'), 'utf8');
 function fresh({coarse = true, preference = null, storageDenied = false, controlled = true, sprint = false} = {}) {
@@ -46,6 +46,12 @@ async function test(name,fn){try{await fn();passed++;console.log('PASS '+name)}c
     const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest')));
     assert.equal(manifest.start_url,'./phone.html');assert.equal(manifest.scope,'./');assert.equal(manifest.display,'standalone');assert.equal(manifest.orientation,'any');
     for(const icon of manifest.icons){const png=fs.readFileSync(path.join(root,icon.src));const size=Number(icon.sizes.split('x')[0]);assert.equal(png.readUInt32BE(16),size);assert.equal(png.readUInt32BE(20),size);assert.equal(icon.purpose,'any')}
+    // These exact hashes preserve the owner's final selected artwork; no variant-sheet recreation.
+    for(const [file,sha256] of [
+      ['assets/branding/rising-trouble-approved-master.png','bf55aa52eb40d992af4f848c2e8c273b6d5890a00a2393d3c99aa5ce32dc18c1'],
+      ['icons/icon-512.png','cb5e1adb3c7bac13dc322c381a878e5967b4efacbef423ef78e8a6935fa575fe'],
+      ['icons/icon-192.png','6e55411da2918d02bff5ce153b13613222a39462b2d91b26e66a87a248276cc7'],
+    ]) assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex'),sha256);
     const html=fs.readFileSync(path.join(root,'tests/fixtures/legacy.html'),'utf8');for(const match of html.matchAll(/(?:src|href)="(\.\/[^\"]+)"/g))assert(fs.existsSync(path.join(root,match[1])));
   });
   await test('Joystick captures one finger, clamps input and ignores other fingers',()=>{
