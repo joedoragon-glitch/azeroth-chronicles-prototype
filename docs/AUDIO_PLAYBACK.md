@@ -6,6 +6,8 @@
 
 **Jump to:** [Sound in the game](#what-the-game-sounds-like) · [Regional music](#musical-identity-by-place) · [Playback](#how-sound-reacts-to-gameplay) · [Production](#how-to-create-or-change-a-sound) · [Listening and verification](#audition-validation-and-unfinished-acceptance) · [Technical owners](#technical-owners-and-reference-documents).
 
+**Status distinction for the new artistic palette:** The [curated-source production guide](ARTISTIC_ASSET_WORKFLOW.md) and [Phase 3 recorded-instrument bank](../tools/audio/phase3-sample-bank.json) belong to the unmerged studio-work draft. They do **not** add music to the live game or prove heard quality. The published original sound catalog remains in place.
+
 ## What the game sounds like
 
 The score is **original, warm-fantasy instrumental music**, composed and rendered from the project's own recipes. Flutes, plucked strings, piano, cello, horns, bells, bowed layers and restrained percussion distinguish locations without burying combat and interface sounds. These aren't licensed commercial soundtrack recordings or live orchestral performances.
