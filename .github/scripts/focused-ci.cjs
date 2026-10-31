@@ -266,6 +266,12 @@ const groups = [
     tests: [TEST + 'environment-727-stage6-source.test.cjs'],
   },
   {
+    // #727 Stage 7 offline owner-audition scripts and template are source:
+    // a syntax/content-focused preflight must own each changed path.
+    match: /^tools\/audio\/environment-727-audition(?:-pack\.cjs|\/(?:player\.js|index\.html))$/,
+    tests: [TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
     match: /^src\/prototype\/(?:audio[^/]*\.js)$|^assets\/audio\//,
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },

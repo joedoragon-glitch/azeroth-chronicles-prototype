@@ -43,4 +43,21 @@ if(fs.existsSync(pinned)){
   }
   console.log('PASS #727 Stage6 durable source preview archive: 16/16 exact SHA-256 and byte length, all deliberately unregistered.');
 }
+// The owner-only listening room is another non-game source component; ensure
+// every linked script parses and the on-disk HTML exposes the controls used by
+// the isolated comparison. Its full source/data packaging runs after CI import.
+for(const p of [
+  'tools/audio/environment-727-audition-pack.cjs',
+  'tools/audio/environment-727-audition/player.js'
+]){
+  assert(fs.existsSync(path.join(root,p)),p+' must be tracked');
+  execFileSync(process.execPath,['--check',p],{cwd:root,stdio:'inherit'});
+}
+const audition=fs.readFileSync(path.join(root,'tools/audio/environment-727-audition/index.html'),'utf8');
+for(const id of ['scene','original','candidate','amb','score','critical','warning','decision','notes','export'])
+  assert(audition.includes('id="'+id+'"'),'Audition control missing: '+id);
+assert(audition.includes('src="data.js"')&&audition.includes('src="player.js"'),
+  'Portable listening room must load embedded manifest and local player scripts');
+console.log('PASS #727 owner-only offline A/B listening room source syntax/control inventory, no playable-registration change.');
+
 console.log('PASS #727 Stage6 source preflight: all archived studio candidates remain outside the playable original catalog.');
