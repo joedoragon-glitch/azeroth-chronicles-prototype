@@ -6,6 +6,14 @@ Joel's 8 October 2026 instruction makes sprite delivery part of the content work
 
 This is an agent workflow. Joel can give feedback and request the next stage in ordinary conversation. The agent owns records, catalog updates, reference capture, processing, checks, implementation and publication within the authorized task. A request for procedural design alone does not silently authorize generating or activating final sprites. Existing authorization to produce sprites does not need another technical permission round.
 
+## Owner-approved artistic research and palette selection — 31 October 2026
+
+For an already commissioned visual/design job, proactively examine legally reusable references, texture/material libraries, sample palettes, high-quality source masters and relevant production tools rather than producing a generic procedural substitute. The owner explicitly approves this *research-and-integration workflow* across creative disciplines, not only soundtrack samples; there is no need to request separate permission to examine a suitably licensed library each time. Use a deliberate **art-direction palette** (silhouette, material, texture, hue, lighting, scale, regional context and intended atmosphere) so reused materials form a coherent composition rather than disconnected purchased-looking parts.
+
+**Preserve canon and rights:** Procedural or generated originals that have explicit acceptance remain authoritative for identity and function; adapt reference assets to their world, not vice versa. Record each outside source's provenance, verified license, stable revision/file hash, modifications and required credits with the candidate/handoff. A browsable/downloadable library is not automatically licensed for commercial redistribution. CC0 is a useful option, not a creative requirement; source permission does not grant permission to replace an unrelated approved asset or publish a candidate.
+
+**Artistic gate beyond tooling:** Inspect the *actual scene in the intended renderer, zoom and lighting* for shape and material logic, focal hierarchy, environmental cohesion, tiling/repetition, ugly procedural artifacts, readability, runtime cost and fallback. The agent owns curation and revision; no perfunctory approval for passing an image/atlas test. Keep production, human visual acceptance, merge, deployment and device verification distinct; update the existing issue/PR and handoff, rather than relying on a chat-only note.
+
 ## Persistent handoff
 
 At the end of content/design work, write or update a per-design record under `tools/sprites/design-handoffs/<stable-design-id>.json`, using `tools/sprites/design-handoff-template.json`. Keep its durable reference in the content issue/PR and relevant location/lore document. These records track the transition; the prompt catalog, exact specifications and approved registry keep their existing ownership. Do not copy those registries into a second catalog.
