@@ -137,6 +137,39 @@ const server=http.createServer((req,res)=>{
           assert.equal(result.browserContext,'AudioContext');
           console.log('A4_GAME_BROWSER '+JSON.stringify({profile:phone?'phone-emulated':'desktop',...description,...result}));
         }
+        // A1/A4 real WebAudio attenuation and optimization gate. Use the
+        // actual current scene+rule from Campaign; only the event state is
+        // deliberately changed to isolate combat / boss / global peace.
+        const attenuation=await page.evaluate(()=>{
+          const a=Prototype.audio,s=a.environmentScene,rule=a.environmentCue(s);
+          const original=a.environmentVoice.targetGain;
+          a.updateEnvironment({...s,engaged:3,boss:null,peace:false});
+          const combat=a.environmentVoice.targetGain;
+          a.updateEnvironment({...s,engaged:0,boss:{family:'citadel',form:'normal'},peace:false});
+          const boss=a.environmentVoice.targetGain;
+          a.updateEnvironment({...s,engaged:0,boss:null,peace:true});
+          const peace=a.environmentVoice.targetGain;
+          return {bed:a.environmentVoice.id,rule:rule.id,original,combat,boss,peace,
+            activeRecordedAmbient:[...a.voices].filter(v=>v.recorded&&v.bus==='ambience').length};
+        });
+        assert(Math.abs(attenuation.combat-attenuation.original*.45)<1e-10,'combat bed gain');
+        assert(Math.abs(attenuation.boss-attenuation.original*.25)<1e-10,'boss bed gain');
+        assert(Math.abs(attenuation.peace-attenuation.original)<1e-10,'global peace bed recovery');
+        await page.evaluate(()=>Prototype.audio.setOptimizationMode(true));
+        const off=await page.evaluate(()=>{
+          const a=Prototype.audio;
+          return {environment:a.environmentVoice?.id||null,
+            activeRecordedAmbient:[...a.voices].filter(v=>v.recorded&&v.bus==='ambience').length};
+        });
+        assert.equal(off.environment,null,'optimization stops environment source');
+        assert.equal(off.activeRecordedAmbient,0,'optimization releases recorded ambient source');
+        await page.evaluate(()=>Prototype.audio.setOptimizationMode(false));
+        await page.waitForFunction(bed=>Prototype.audio.environmentVoice?.id===bed,
+          attenuation.bed,{timeout:20000});
+        console.log('A4_GAME_TRANSITIONS '+JSON.stringify({
+          profile:phone?'phone-emulated':'desktop',...attenuation,optimizationOff:off,
+          resumed:await page.evaluate(()=>Prototype.audio.environmentVoice?.id)
+        }));
         const mix=await page.evaluate(()=>{
           const a=Prototype.audio;
           const original={music:a.mixLevel('music'),ambience:a.mixLevel('ambience'),effects:a.mixLevel('effects')};
@@ -165,7 +198,7 @@ const server=http.createServer((req,res)=>{
         assert.deepEqual(errors,[],'game browser runtime page errors');
         assert.equal(await page.evaluate(()=>localStorage.getItem('audio-audit-709-sentinel')),'untouched');
         console.log('PASS #709 A4 GAME '+(phone?'phone-emulated':'desktop')+
-          ': 21 real Campaign scenes (19 unique zones + 2 night routes) + decoded MP3 beds, pause/resume, warning duck, mute, cleanup');
+          ': 21 real Campaign scenes (19 unique zones + 2 night routes) + decoded MP3 beds, pause/resume, warning duck, combat/boss/peace, optimization, mute, cleanup');
       }catch(error){
         console.error('A4 failed profile '+(phone?'phone-emulated':'desktop'),errors);
         console.error('game title',await page.locator('#title-heading').textContent().catch(()=>null));
