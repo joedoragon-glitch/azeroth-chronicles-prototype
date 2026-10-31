@@ -1643,7 +1643,9 @@
             entity.routeAge = 0;
           }
           if (trip.pending || entity.routeAge <= 0) {
-            if (scriptedVale || captainPatrol || trip.pending || this.reserveMovementPlan(entity)) {
+            // The elite pool also owns admission: combat leaders cannot consume
+            // the companion/delivery shared route-plan count.
+            if (scriptedVale || captainPatrol || elitePursuit || trip.pending || this.reserveMovementPlan(entity)) {
               const origin = trip.pending?.origin || entity,
                 destination = trip.pending?.target || target,
                 result = this.advanceBudgetedRoute(origin, destination, kind, trip.pending);
