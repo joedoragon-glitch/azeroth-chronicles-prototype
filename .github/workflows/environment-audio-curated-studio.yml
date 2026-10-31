@@ -43,5 +43,6 @@ jobs:
         with:
           name: environment-709-curated-studio-private-preview
           path: tools/audio/.environment-studio-preview/
-          if-no-files-found: warn
+          if-no-files-found: error
+          include-hidden-files: true
           retention-days: 14
