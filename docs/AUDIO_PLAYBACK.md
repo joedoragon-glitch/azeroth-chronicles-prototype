@@ -125,6 +125,8 @@ The current [83-ID music director](../assets/audio/manifest.json) stays active s
 
 The released code includes the [first-gesture/recovery repair #470](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/470), [ranged-pet impact routing #472](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/472), and earlier [audio preparation #473](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/473). All three are **merged**, not future Stage 2/3 work orders.
 
+**Owner listening feedback — 31 October 2026 (candidate review, not an approved composition change):** In Millhaven, the player hears clashing cheerful and ominous musical material, subjectively resembling two simultaneous songs. Verify whether the scene resolves to `settlement-vale` (single track) or `place-vale` plus its initially muted `action-vale` encounter stem. Check lingering crossfades and unintended action gain, then audition the individual authored recording if routing is correct. A routing assertion alone cannot prove the musical arrangement is subjectively coherent. Keep all recorded music and ambience unchanged until the actual cause is established. The same combined audio/defaults draft PR addresses the reported title playback lifecycle; its iOS device outcome is not yet confirmed.
+
 ## How to create or change a sound
 
 **Production authority:** [`assets/audio/manifest.json`](../assets/audio/manifest.json) defines the active audio IDs, files, music locations, boss cues, effects, gains and credits. The game loads the generated [`audio-library.js`](../src/prototype/audio-library.js); **don't hand-edit the generated file**.
