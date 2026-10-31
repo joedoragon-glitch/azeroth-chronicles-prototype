@@ -1736,7 +1736,10 @@
         if (!entity.path?.length) {
           // A pending search is not a failed patrol leg: retain the authored
           // destination instead of immediately skipping the checkpoint.
-          return !!(captainPatrol && trip?.pending);
+          // A still-running Treasury support search is not a failed approach:
+          // hold the healer's position instead of starting idle wandering
+          // and invalidating its next legitimate route frontier.
+          return !!((captainPatrol || supportApproach) && trip?.pending);
         }
         const moved = this.move(entity, entity.path[0], speed, dt);
         if (dist(entity, entity.path[0]) < 1) entity.path.shift();
