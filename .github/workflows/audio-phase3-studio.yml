@@ -1,0 +1,70 @@
+name: Phase 3 isolated studio audio QA (NO deploy)
+on:
+  push:
+    branches:
+      - audio/phase3-primary-themes-20261031
+    paths:
+      - ".github/workflows/audio-phase3-studio.yml"
+      - "tools/audio/**"
+      - "tests/audio-phase3*.test.cjs"
+      - "docs/AUDIO_*.md"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  recorded-score-and-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+      - name: Node 22 for source gate
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Python 3.11 for isolated render
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Pin scientific and FFmpeg dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --quiet numpy==2.2.6 scipy==1.16.1 imageio-ffmpeg==0.6.0
+          ffmpeg -version | head -n 2
+      - name: Verify exact CC0 bytes and truthful motif review
+        run: |
+          node tests/audio-phase3-sample-bank.test.cjs
+          node tests/audio-phase3-quality-review.test.cjs
+          python tools/audio/phase3-compose.py --check
+      - name: Recompose all eight original-primary candidates from the recorded bank
+        run: python tools/audio/phase3-compose.py --render "$RUNNER_TEMP/sibdlp-phase3-preview"
+      - name: Verify rendered bank use, codec facts, Crown freeze and distinct cue IDs
+        shell: bash
+        run: |
+          python - "$RUNNER_TEMP/sibdlp-phase3-preview/phase3-metrics.json" <<'PY'
+          import json, pathlib, sys
+          p = pathlib.Path(sys.argv[1])
+          r = json.loads(p.read_text())
+          assert len(r['tracks']) == 8 and r['crownFrozen'] == 18
+          assert r['instrumentEngine'] == 'verified-CC0-samples-with-explicit-drums'
+          assert r['samplerEvidence']['recordedCalls'] > 120
+          assert r['samplerEvidence']['uniqueSourceSamples'] >= 12
+          assert r['samplerEvidence']['sourceFamilyCount'] == 2
+          assert r['replacementProjectionBytes'] < 256 * 1024 * 1024
+          for cue in r['tracks']:
+              assert cue['recordedInstrumentNotes'] >= 12, cue
+              assert 0.0 < cue['decodedPeak'] < .98, cue
+              assert .005 < cue['decodedRms'] < .5, cue
+              assert cue['loopEdgeDelta'] < .2, cue
+              assert cue['encodedBytes'] < 16 * 1024 * 1024, cue
+              assert cue['decodedSamples'] >= cue['expectedSamples'] - 32, cue
+          print('PASS: eight isolated recorded-source MP3s, hashes, budget and loops')
+          print('IMPORTANT: this does not represent human audition or source creative GO')
+          print('Sampler:', r['samplerEvidence'])
+          PY
+      - name: Preserve metrics only (not owner audio audition or game publication)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-isolated-studio-metrics
+          path: ${{ runner.temp }}/sibdlp-phase3-preview/phase3-metrics.json
+          if-no-files-found: ignore
