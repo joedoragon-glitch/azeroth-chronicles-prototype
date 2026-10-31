@@ -65,6 +65,14 @@ jobs:
           path: test-artifacts/environment-708-liquid/
           if-no-files-found: ignore
           retention-days: 30
+      - name: Preserve #708 combined Wraith and region evidence
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-708-wraith-and-regions
+          path: test-artifacts/environment-708/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Verify reproducible, offline-ready build
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
