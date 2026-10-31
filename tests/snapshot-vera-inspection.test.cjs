@@ -177,6 +177,11 @@ for (const mode of ['normal', 'nightmare'])
       shieldLoss = mitigatedHit * C.rules.cinderInspection.repairs.absorption;
     const hp = g.hp;
     assert(c.damage(g, 30));
+    console.log('VERA_FORTIFICATION_EQUIPMENT '+JSON.stringify({
+      mode,form,fortified:!!c.enemyFort(g),species:g.species,type:g.type,
+      hpLost:hp-g.hp,equipmentLost:max-equipment.remaining,
+      expectedHpLost:mitigatedHit-shieldLoss,expectedEquipmentLoss:shieldLoss,
+    }));
     assert(Math.abs(hp - g.hp - (mitigatedHit - shieldLoss)) < 1e-7,
       'real fortified/ordinary HP damage is mitigated before Vera equipment');
     assert(Math.abs(equipment.remaining - (max - shieldLoss)) < 1e-7,
