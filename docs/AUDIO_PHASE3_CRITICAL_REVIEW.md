@@ -40,6 +40,20 @@ At source checkpoint `8c105e09`: **55 sampled note events** require >=5 semitone
 
 Explicit provisional substitution counts: **66 authored dulcimer notes use marimba**, **20 authored bell notes use glockenspiel**, and some low cello/string roles use recorded basses/celli. Not all substitutions are automatically musically wrong, but none is approved by merely naming the surrogate instrument.
 
+## Pinned upstream candidates for the next genuine A/B source trial
+
+**Research only — not acquired, registered, rendered, listened to or accepted.** The already-credited CC0 [tiny-orchestra 0.2.0 repository](https://github.com/MarianBecher/tiny-orchestra/tree/60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f/samples) contains specific additional recorded clips at its pinned upstream commit `60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f`. The following raw Git blob hashes and lengths were checked against upstream directory metadata on 31 October 2026. They are **source acquisition targets**, not a conclusion about the sound:
+
+| Candidate recorded clip | Authored performance problem it might address | Upstream Git blob SHA-1 | Upstream bytes |
+| --- | --- | --- | ---: |
+| `trombone/F4.mp3` (MIDI 65) | Upper working-brass passage in Highlands/Mine; substitutes a genuine lower brass timbre instead of stretching horn C4 5–7 semitones | `07b4a38dac75da8e3bc25fe6750d4b8a257ae1d5` | 31,914 |
+| `trumpet/G4.mp3` (MIDI 67) | Abyss's proud aerial upper brass; avoids repitching horn C4 seven semitones for G4 | `1461c967fa0f97a6a519215f9d1ff9601260d26c` | 38,288 |
+| `trumpet/As4.mp3` (MIDI 70) | Alternative source one semitone from the Abyss A4 target (69), rather than horn D5 down five | `c3bf59edcea7ecbee00982f3c38b2eeca2bbdde0` | 38,288 |
+| `basses/G1.mp3` (MIDI 31) | Low F2/F#2 (33/34) bass events presently shifted five/six semitones from E1 | `395a11f432b5591a296786b8a67a047282c798b3` | 31,914 |
+| `glockenspiel/G6.mp3` (MIDI 91) | Isolated F6 (89) bell surrogate, reducing the five-semitone source shift | `d15a393d5bca24852df76a2509e5daa276405327` | 34,213 |
+
+These files must be acquired **byte-for-byte**, reverified against upstream Git hashes and instrument-specific CC0 license terms, then considered with explicit source/score routing. A trombone or trumpet is not literally the same instrument as a French horn: replacing exposed horn lines can create *new* tone/attack inconsistencies even if numeric pitch shifts shrink. Test musical role and transitions before accepting a palette change. Likewise, expanding glockenspiel coverage does not turn it into a convincing warm bell or marimba into a dulcimer. The correct bar is a **genuine, compositionally convincing heard A/B** plus safe final technical renders. Until then, this is an actionable source shortlist, not an implemented improvement.
+
 ## Inherited pilots are not final cues — mandatory retrospective requalification
 
 **Owner corrective direction, 31 October 2026:** A **Phase 2 source/codec GO was permission to *learn from the pilot*, not an artistically accepted music-master designation**. The subsequent Phase 3 REVISE/HOLD exposed gaps in source motif preservation, instrumental realism and genuine sound review. **Every Phase 2 pilot cue remains a candidate and is subject to all later-discovered quality corrections.** Do not let its earlier test results override newer evidence. When orchestration, sample source, expression, harmonic grammar, phrase length or mastering improves later, **revisit every earlier affected pilot family** before it can be included in the final soundtrack. No prototype has special exemption because it was developed first.
