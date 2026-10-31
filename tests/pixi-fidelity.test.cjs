@@ -120,7 +120,7 @@ const runtime={
     }
   },
   PrototypeSprites:{timeMs:()=>1000},
-  PrototypeVisuals:{draw(){},atmosphereMotes:Visuals.atmosphereMotes,terrainMotionLines:()=>[]}, 
+  PrototypeVisuals:{draw(){},atmosphereMotes:Visuals.atmosphereMotes,terrainMotionLines:()=>[]},
   AzerothNativeWebGLCore:{lampGlowCommands:()=>[]},
   AzerothGpuSpriteAdapter:{create:()=>({
     commandFor:(entity,point,{facing=1}={})=>{
@@ -349,6 +349,7 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
   assert.equal(prepareRegistrations,1,'repeated Pixi preparations reuse the registered plugin');
+
   // Issue #481: model the first westward approach from Millhaven as a cold
   // crowd, not merely one offscreen prop. This is a deterministic Pixi/Canvas
   // mock contract test; actual iPhone frame pacing remains device acceptance.
