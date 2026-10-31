@@ -88,6 +88,14 @@ jobs:
           path: test-artifacts/environment-708/
           if-no-files-found: ignore
           retention-days: 14
+      - name: Retain Phase 3 actual interior photographic audit
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-phase3-14-interiors
+          path: test-artifacts/environment-phase3/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Verify reproducible, offline-ready build
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
