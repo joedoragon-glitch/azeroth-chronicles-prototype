@@ -65,8 +65,9 @@ for name in PILOT_HERITAGE:
             assert played_pitch == expected_pitch and at == ev[0]
             original_performed.append((ev[0], expected_pitch, ev[2]))
             candidate_performed.append((at, played_pitch, duration))
-        quality.verify_heritage(original_performed, candidate_performed,
-                                cue=name + ":bar" + str(bar))
+        if original_performed:
+            quality.verify_heritage(original_performed, candidate_performed,
+                                    cue=name + ":bar" + str(bar))
 
 for cue in data["arrangements"]:
     theme = bases.get(cue["parent"])
