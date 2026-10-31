@@ -1,5 +1,5 @@
 /* Each published release prepares an atomic offline cache; the game controls activation. */
-const CACHE_VERSION = "azeroth-app-v0.9.1+snapshot.dev.243";
+const CACHE_VERSION = "azeroth-app-v0.9.1+snapshot.dev.244";
 /* Shared sprite/variant/clip resource contract: runtime, packaging and offline caching. */
 (function (root) {
   'use strict';
