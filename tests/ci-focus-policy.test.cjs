@@ -200,4 +200,12 @@ assert(
   ).missing.includes(TEST_PATH('save-writer')),
   'Renaming a mapped regression must not silently remove protection',
 );
+// Imported environmental recordings now have an explicit focused-test owner.
+const environmentalImport = selectTests(['tools/audio/integrate-regional-candidates.cjs']);
+assert.deepEqual(environmentalImport.uncovered, [],
+  'new recording registration source must never silently escape focused CI');
+assert(environmentalImport.tests.includes('tests/audio-catalog.test.cjs'),
+  'imported master credits/ownership/manifest validation must execute');
+assert(environmentalImport.tests.includes('tests/environment-audio-inventory.test.cjs'),
+  'all nineteen scene routes and fourteen retained original recordings must execute');
 console.log('PASS owner-approved full CI and focused-only automatic policy');

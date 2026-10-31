@@ -1761,6 +1761,21 @@
       );
     });
   }
+  // Browsers can serve an offline page from a service-worker cache while
+  // navigator.onLine still reports true. Probe a HEAD request that our worker
+  // explicitly does not intercept before claiming an online update check.
+  async function startupNetworkAvailable() {
+    if (navigator.onLine === false) return false;
+    if (typeof fetch !== 'function') return true; // non-browser test shell
+    try {
+      return !!(await startupBound(
+        fetch(new URL('./sw.js?network-probe=' + Date.now(), location.href), {
+          method: 'HEAD', cache: 'no-store',
+        }).then(() => true, () => false),
+        4000,
+      ));
+    } catch (_) { return false; }
+  }
   function waitForWorkerInstall(worker) {
     if (!worker || ['installed', 'activated', 'redundant'].includes(worker.state))
       return Promise.resolve(true);
@@ -1813,7 +1828,7 @@
       // A fully downloaded waiting update also works offline. Otherwise do
       // one explicit freshness check, before any menu or game-scene preparation.
       if (!reg.waiting && serviceWorker.controller) {
-        if (navigator.onLine === false) startupUpdateNotice = 'offline';
+        if (!await startupNetworkAvailable()) startupUpdateNotice = 'offline';
         else {
           // A rejected or timed-out check is not an update: keep the complete
           // installed version playable and explain what could not be verified.
@@ -4182,9 +4197,11 @@
         : 'Agility · Each level: +' + p.ranger.speedPerLevel +
             ' speed and +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
             '% cooldown reduction.';
-    return es
+    if (heroClass === 'mage') return es
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
+    // Unknown classes never inherit an invented Mage growth description.
+    return '';
   }
   // Owner-approved Option A: pale-gold spherical jingle bell, taken from
   // the simple line-art reference. Horizontal equator seam and ONE bottom
@@ -4227,7 +4244,7 @@
   }
   function playableClassCountWord() {
     const count = Object.keys(Campaign.classes).length;
-    return { 3: 'three', 4: 'four' }[count] || String(count);
+    return { 3: 'three', 4: 'four', 5: 'five' }[count] || String(count);
   }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
@@ -7005,7 +7022,7 @@
         pointer !== null || worldPointer !== null) return false;
     const obstacles = [
       '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
-      '#skills', '#quick-items', '#developer-summon', '#cancel-navigation-button',
+      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#cancel-navigation-button',
       '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
     ].flatMap((selector) => {
       const el = document.querySelector(selector);
@@ -7498,11 +7515,35 @@
   developerSummonButton.setAttribute('aria-label', 'Summon a regional boss or captain');
   developerSummonButton.hidden = true;
   document.body.append(developerSummonButton);
+  const developerFinisherButton = document.createElement('button');
+  developerFinisherButton.id = 'developer-finisher';
+  developerFinisherButton.textContent = 'Finish';
+  developerFinisherButton.setAttribute('aria-label', 'Developer finisher and nearby sweep');
+  developerFinisherButton.hidden = true;
+  document.body.append(developerFinisherButton);
   const developerCombatMonitor = document.createElement('aside');
   developerCombatMonitor.id = 'developer-combat-monitor';
   developerCombatMonitor.setAttribute('aria-label', 'Developer combat monitor');
   developerCombatMonitor.hidden = true;
   document.body.append(developerCombatMonitor);
+  const developerCompanionMonitor = document.createElement('aside');
+  developerCompanionMonitor.id = 'developer-companion-monitor';
+  developerCompanionMonitor.setAttribute('aria-label', 'Developer companion damage monitor');
+  developerCompanionMonitor.hidden = true;
+  const companionMonitorToggle = document.createElement('button');
+  companionMonitorToggle.type = 'button';
+  companionMonitorToggle.textContent = 'DEV · COMPANIONS';
+  companionMonitorToggle.setAttribute('aria-expanded', String(platform.mode !== 'phone'));
+  const companionMonitorContent = document.createElement('div');
+  companionMonitorContent.id = 'developer-companion-content';
+  companionMonitorContent.hidden = platform.mode === 'phone';
+  companionMonitorToggle.onclick = () => {
+    const collapsed = !companionMonitorContent.hidden;
+    companionMonitorContent.hidden = collapsed;
+    companionMonitorToggle.setAttribute('aria-expanded', String(!collapsed));
+  };
+  developerCompanionMonitor.append(companionMonitorToggle, companionMonitorContent);
+  document.body.append(developerCompanionMonitor);
   function openDeveloperSummonMenu() {
     if (!activePlay() || game.s.mode !== 'developer') return;
     openMenu(
@@ -7519,6 +7560,31 @@
     );
   }
   developerSummonButton.onclick = openDeveloperSummonMenu;
+  function runDeveloperFinisher(sweep) {
+    closeMenu();
+    if (!started || game.s.mode !== 'developer') return;
+    const result = game.developerFinisher(null, sweep);
+    status(
+      result.kills
+        ? 'Developer finisher · ' + result.kills + (result.kills === 1 ? ' enemy defeated.' : ' enemies defeated.')
+        : 'No eligible enemy hit. Select a target or move into range and line of sight.',
+    );
+    if (result.kills) save();
+    updateHUD();
+  }
+  developerFinisherButton.onclick = () => {
+    if (!activePlay() || game.s.mode !== 'developer') return;
+    openMenu(
+      'Developer · Finisher',
+      'Extreme damage through normal enemy deaths. Real enemies drop real loot and advance progress; developer summons do not.',
+      [
+        action('Finish selected or nearest enemy', () => runDeveloperFinisher(false)),
+        action('Sweep nearby enemies (up to 8)', () => runDeveloperFinisher(true)),
+      ],
+      closeMenu,
+    );
+  };
+
   // Reuse the original portrait-stamped Crown loot painter for the HUD.
   // Rasterize it ONCE at 2x for the tiny UI badge. No separate generic
   // currency drawing, asset manifest, or recurring canvas work per HUD tick.
@@ -7549,7 +7615,9 @@
     if (navigationGuide && navigationGuide.campaign !== game) navigationGuide = null;
     const devActive = started && game.s.mode === 'developer';
     developerSummonButton.hidden = !devActive;
+    developerFinisherButton.hidden = !devActive;
     developerCombatMonitor.hidden = !devActive;
+    developerCompanionMonitor.hidden = !devActive;
     if (devActive) {
       const telemetry = game.developerCombatSnapshot(),
         recent = (hits) => hits.map((hit) => Math.round(hit)).join(' / ') || '—';
@@ -7566,6 +7634,19 @@
         '\n' +
         'Outgoing DPS: ' +
         telemetry.outgoing.dps.toFixed(1);
+      const companionRows = game.developerCompanionSnapshot() || [];
+      companionMonitorToggle.textContent = 'DEV · COMPANIONS (' + companionRows.length + ')';
+      const body = companionRows.length
+        ? companionRows.map((row) => row.name + ' [' + row.type + ' · ' + row.id + ']\n' +
+            'Moves: ' + (row.last.map((m) =>
+              m.name + ' ' + Math.round(m.damage)).join(' / ') || '—') +
+            '\n5s DPS: ' + row.dps.toFixed(1)).join('\n\n')
+        : 'No active companions.';
+      if (companionMonitorContent.textContent !== body) {
+        const previousScroll = companionMonitorContent.scrollTop;
+        companionMonitorContent.textContent = body;
+        companionMonitorContent.scrollTop = previousScroll;
+      }
     }
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),

@@ -1,5 +1,39 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
+## 30 October 2026 — incremental browser updates and offline cache audit
+
+The current game is distributed by an HTTPS web link, **not as a native app**.
+A service worker runs inside browsers that support it; installation to a home
+screen is optional and does not change the update mechanism. A first visit must
+still download the needed game content, and a browser may evict cached data
+under storage pressure or private-mode restrictions.
+
+For later published releases, the release-specific service worker prepares a
+**new complete logical offline cache**, but does **not** transfer the entire
+game again. The reproducible build embeds fingerprints of all core published
+assets, including HTML, CSS, JavaScript, icons, graphics materials, and audio.
+Unchanged files are copied from the prior browser Cache Storage entry; changed
+or missing files are fetched with HTTP cache bypass. Sprite and audio manifests
+are freshly fetched and their declared content hashes determine reuse of their
+resources. The first incremental release also hashes legacy cached files
+locally to reuse them without requiring an existing fingerprint index.
+
+No activation occurs until the new offline snapshot is fully prepared.
+Errors retain the working prior release. Once activated, the old release cache
+is removed, avoiding accumulation across releases. Startup update checks and
+the coherent one-time navigation reload remain unchanged; updates discovered
+during active gameplay still require the existing manual action. This is
+incremental **network transfer** rather than an in-place overwrite of a live
+HTML/JavaScript runtime. No game-save state is migrated or overwritten by the
+cache routine.
+
+Regression coverage includes identical and changed code/assets, hashed sprite
+and audio reuse, complete offline installation, cache cleanup, fallback on
+missing downloads, and update activation. A passing CI test does not prove
+performance or storage behavior on every player's browser/device.
+
+**Distribution-scope decision (31 October 2026):** This incremental service-worker updater is intended for the **current link-based web game / optional PWA**, not an already-selected future native-app packaging strategy. When a native app is planned, reassess app-binary versus downloadable-content updates, platform/store requirements, saves, offline behavior, compatibility and rollback. Do not silently make older versions obsolete; deliberate breaking/minimum-version changes need explicit owner review. The [authoritative cross-platform owner decision](DECISIONS.md#31-october-2026--web-updater-is-transitional-native-application-delivery-requires-a-new-decision) is **planned future governance**, not an implemented native updater or forced-upgrade mechanism.
+
 ## 30 October 2026 — startup update gate
 
 Latest design supersedes the manual update-first launch policy. A simple,

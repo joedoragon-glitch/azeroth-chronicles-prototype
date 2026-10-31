@@ -10,7 +10,7 @@
 > This is a gameplay targeting clarification, not a redefinition of Slow, immunity or saves. Refer to [release state](DEVELOPMENT_STATE.md) for live version evidence.
 > See [the bounded design and validation contract](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md).
 
-> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+> **Historical boundary — 19 October 2026:** The pause instruction below applied to that earlier release checkpoint. Apply this mechanical register with [current development state](DEVELOPMENT_STATE.md) and the owner's current authorizations; older verification/rollout notes never authorize new work by themselves.
 
 **Scope:** player skills, companion specials/support, ordinary and ranged monsters,
 night threats, ringleaders, captains, normal/TRUE bosses, traps, hazards and tactical
@@ -19,8 +19,36 @@ skills or a combat rebalance. The runtime contract comes from `rules.js` and the
 actual owners; skill names, descriptions, sounds and visual cues do not grant effects.
 
 The supported GitHub Pages/PWA game is multi-file. The version-4 save model and
-existing procedural/sprite graphics remain canonical. Development is paused under
-[current state](DEVELOPMENT_STATE.md); no new stabilization or testing cycle starts here.
+existing procedural/sprite graphics remain canonical. The current implementation,
+verification and publication state is recorded in [Development state](DEVELOPMENT_STATE.md).
+This historical register does not independently authorize a new testing cycle.
+
+## Status-effects completion candidate · 31 October 2026
+
+The implementation follow-up to [audit PR #700](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/700)
+and [issue #702](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/702)
+makes Charmed ranged-support `charmSupportCd` and hybrid enemy `hybridSelfHealCd`
+eligible for the **existing** Slow hit-time cooldown debt. Their already-slowed
+per-tick recovery remains unchanged. Ready actions never gain debt; no saved
+state or tuning value is introduced. This is an **unmerged, unpublished candidate**
+until verified otherwise.
+
+The shared Canvas status layer (also used above PixiJS/WebGL2) presents Mage
+and Rogue Hush Silence, Slow with finite/compact stack-number display, Taunt,
+Rogue Wither, Fracture and Weaken. Hero and living active companions receive
+world Slow cues, complementing the existing HUD duration. Fracture and Weaken
+have deliberately different silhouettes. At four or more enemy conditions,
+the first two rows prioritize Silence and Slow, while the third remains the
+existing `+N` count for the conditions hidden beyond the first two. The
+24-enemy budget, target/boss priority, and absence of icons for instant
+shoves, projectiles or other non-status events are retained.
+
+Rogue Hush prevents new eligible non-boss special starts, including ordinary
+support, hybrid self-recovery and a Wraith's retreat-cast path. Existing
+warnings, tactical repositioning and covering basic attacks, already committed
+effects and protected boss phases continue under their original rules.
+Its independent temporary producer remains in an unsaved WeakMap. Test pixels
+on actual phones before claiming device readability.
 
 ## Current update and where players learn it · 15 October 2026
 

@@ -885,7 +885,8 @@ body.menu-open::before {
 }
 
 /* Opt-in combat laboratory. Not visible in ordinary play. */
-#developer-summon {
+#developer-summon,
+#developer-finisher {
   position: fixed;
   left: 12px;
   bottom: 78px;
@@ -895,8 +896,14 @@ body.menu-open::before {
   font-weight: 700;
   text-align: center;
 }
+#developer-finisher {
+  left: 95px;
+}
 #developer-summon[hidden],
-#developer-combat-monitor[hidden] {
+#developer-finisher[hidden],
+#developer-combat-monitor[hidden],
+#developer-companion-monitor[hidden],
+#developer-companion-content[hidden] {
   display: none !important;
 }
 #developer-combat-monitor {
@@ -916,7 +923,43 @@ body.menu-open::before {
   white-space: pre-line;
   pointer-events: none;
 }
-body.menu-open #developer-summon {
+#developer-companion-monitor {
+  pointer-events: none;
+  position: fixed;
+  right: 12px;
+  top: 35%;
+  z-index: 6;
+  width: min(310px, 37vw);
+  max-height: min(45vh, 430px);
+  border: 1px solid #c9b47c99;
+  border-radius: 8px;
+  background: #12241eed;
+  color: #e7eacb;
+  font: 12px/1.5 ui-monospace, monospace;
+}
+#developer-companion-monitor > button {
+  pointer-events: auto;
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-bottom: 1px solid #c9b47c55;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+#developer-companion-content {
+  overflow: auto;
+  max-height: min(38vh, 375px);
+  padding: 8px 10px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  pointer-events: auto;
+}
+body.menu-open #developer-summon,
+body.menu-open #developer-finisher {
   visibility: hidden;
 }
 

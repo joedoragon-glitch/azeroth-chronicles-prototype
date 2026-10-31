@@ -6,8 +6,6 @@
 
 **The whole process:** Confirm the owner's request → find the active code and decisions → define a small acceptance target → implement through the real game → run relevant original regressions → reconcile documentation → record the tested commit → merge/publish **only when authorized**.
 
-> **Soundtrack source-production discipline (31 October 2026):** The [Phase 4 critical review](AUDIO_PHASE4_CRITICAL_REVIEW.md) corrected real deficiencies despite a previously green 38-file encoder run. Every following score phase must exercise [reusable performed-note, layered-lead, cloned-form and decoded-preview guards](../tools/audio/score-quality-controls.py), plus [mutation fixtures](../tests/audio-score-quality-controls.test.py), against the **actual candidate** before claiming a scoped technical GO. Source/technical, genuine hearing, integration, merge, publish and owner Phase 9 acceptance stay separate. Phase 4 scoped milestone is closed; Phase 5 16 boss/TRUE cues next per [authoring handoff](AUDIO_AUTHORING.md#phase-5-authoring-handoff--eight-boss--eight-synchronized-true-cues).
- 
 ## 1. Know which source to trust
 
 | Question | Consult |
@@ -123,8 +121,3 @@ The owner authorizes scope. Normal **relevant focused checks** are part of appro
 The [original October 25–27 mechanic workflow and Stage 5 notes](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/3765ed3bbbf67385561ba47b46887eda6ccf3e7c/docs/MECHANIC_DEVELOPMENT.md) remain intact in Git history. They explain why this policy was created: Rogue PR #146's extensive integration history; a `dev.108` update spread across four one-file commits; temporary formatter-workflow churn; native Nightmare/Cindermaw/Dreadmaw regression mapping; and an **optional manual** sample of up to ten PRs for investigating test-selection confusion. None of those old stages or examples authorizes new implementation, a new CI system, or broad testing.
 
 Use the [documentation index](DOCUMENTATION_INDEX.md) to locate specific feature contracts and dated evidence. Consult the *live* focused selector and [current development state](DEVELOPMENT_STATE.md) before acting.
-
-
-## Soundtrack phase-specific gate — Phase 3 (31 October 2026)
-
-Soundtrack composition uses the [standing designer-led audit](AUDIO_AUTHORING.md#standing-soundtrack-quality-gate) and master [issue #673](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/673). Independently check motifs, intentional harmonic tension/resolution, form and phrasing, instrument/expressivity, narrative fidelity, adaptive layers, warning headroom and repeated-loop risks **before** scaling composition. Keep source design, codec/loop/budget technical checks, actually heard music and final owner acceptance in separate columns; an unperformed listening check is **UNVERIFIED** rather than a pass. Phase 3's eight base themes are source-only, not merged or made audible to the owner. Source standards do not override explicit consent for broad tests, merging, publication or device checks.

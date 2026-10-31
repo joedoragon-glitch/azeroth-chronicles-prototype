@@ -10,19 +10,43 @@
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   const classes = R.balance.classes;
-  // Fail closed when future classes are registered without an authored
-  // starting party or chase profile. Nothing here makes Rogue playable.
-  const classStartingCompanions = Object.freeze({
-    paladin: Object.freeze(['soldier', 'archer']),
-    mage: Object.freeze(['soldier', 'archer']),
-    ranger: Object.freeze(['soldier', 'archer']),
-    rogue: Object.freeze([]),
+  // Foundations are movement/company metadata, not playable-class admission.
+  // A fifth class can declare a foundation without joining New Game, saves
+  // or Succession until its real combat and charged forms are implemented.
+  const classFoundations = Object.create(null);
+  function defineClassFoundation(id, profile) {
+    if (typeof id !== 'string' || !/^[a-z][a-z0-9-]{1,31}$/.test(id) ||
+        Object.hasOwn(classFoundations, id) || Object.hasOwn(Object.prototype, id))
+      throw Error('Invalid or duplicate hero class foundation');
+    const { startingCompanions, basicAttackApproachRange, formationRole } = profile || {};
+    if (!Array.isArray(startingCompanions) || startingCompanions.length > 4 ||
+        !startingCompanions.every((kind) => ['soldier', 'archer'].includes(kind)) ||
+        !Number.isFinite(basicAttackApproachRange) ||
+        basicAttackApproachRange <= 0 || basicAttackApproachRange > 1000 ||
+        !['melee', 'ranged'].includes(formationRole))
+      throw Error('Incomplete hero class foundation');
+    const saved = Object.freeze({
+      startingCompanions: Object.freeze([...startingCompanions]),
+      basicAttackApproachRange,
+      formationRole,
+    });
+    classFoundations[id] = saved;
+    return saved;
+  }
+  defineClassFoundation('paladin', {
+    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 105, formationRole: 'melee',
   });
-  const basicAttackApproachRanges = Object.freeze({
-    paladin: 105,
-    mage: 350,
-    ranger: 350,
-    rogue: R.rogueHeroFoundation.basic.range, // Dormant until class admission is authorized.
+  defineClassFoundation('mage', {
+    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+  });
+  defineClassFoundation('ranger', {
+    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+  });
+  // Rogue's foundation exists in legacy headless fixtures before its
+  // explicit admission; this alone grants no Charm, skills or class slot.
+  defineClassFoundation('rogue', {
+    startingCompanions: [], basicAttackApproachRange: R.rogueHeroFoundation.basic.range,
+    formationRole: 'ranged',
   });
 
   const talentMaxRanks = R.balance.disciplines.maxRanks;
@@ -62,7 +86,7 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !classes[heroClass])
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass))
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -79,6 +103,11 @@
       // Non-persistent test telemetry must not alter ordinary campaign state.
       if (mode === 'developer') {
         this.developerCombat = { incoming: [], outgoing: [], startedAt: 0 };
+        // ID-bound, ephemeral diagnostics. Never copied into v4 saved state.
+        this.developerCompanions = {
+          moves: new Map(), hits: new Map(), projectiles: new Map(),
+          sequence: 0,
+        };
       }
       this.s = {
         version: 4,
@@ -201,7 +230,7 @@
         gameOver: false,
       };
       if (mode !== 'arena') this.initializeQuests();
-      const starterTypes = classStartingCompanions[heroClass];
+      const starterTypes = classFoundations[heroClass]?.startingCompanions;
       if (!starterTypes) throw Error('Missing starting company for hero class');
       this.s.party = starterTypes.map((type, i) =>
         this.unit(type, start.x + (i === 0 ? -40 : 50), start.y + (i === 0 ? 40 : 30)),
@@ -476,6 +505,7 @@
         !skill ||
         !this.enemyHealingActor(e) ||
         this.mageSilenceActive(e) ||
+        this.rogueEnemySilenced(e) ||
         this.peace ||
         e.returning ||
         e.motion ||
@@ -622,6 +652,7 @@
         this.peace ||
         e.returning ||
         this.mageSilenceActive(e) ||
+        this.rogueEnemySilenced(e) ||
         e.motion ||
         e.telegraph ||
         e.rangedAim ||
@@ -748,6 +779,8 @@
       if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp) delete e.supportHeal;
     }
     event(type, data = {}) {
+      if (type === 'companionSkill' && this.s.mode === 'developer')
+        this.developerCompanionLabelLastMove(data.source, data.skill);
       this.s.statistics.events.push({ time: Math.round(this.s.time), type, ...data });
       if (this.s.statistics.events.length > 400) this.s.statistics.events.shift();
       this.effects.push({ type, ...data });
@@ -2118,6 +2151,112 @@
       history.push({ time: this.s.time, damage: amount });
       while (history.length > 3 && history[0].time < this.s.time - 5) history.shift();
     }
+    developerCompanionNewMove(source, label) {
+      const d = this.developerCompanions;
+      if (!d) return null;
+      const list = d.moves.get(source) || [];
+      const move = { id: ++d.sequence, time: this.s.time, label,
+        damage: 0, pending: 0, resolved: true };
+      list.push(move);
+      while (list.length > 48) {
+        // An orphaned projectile must not retain a permanent history.
+        const old = list.shift();
+        for (const [pid, entry] of d.projectiles)
+          if (entry.move === old) d.projectiles.delete(pid);
+      }
+      d.moves.set(source, list);
+      return move;
+    }
+    developerCompanionTrackProjectile(unit, label, projectile, releaseMove = null) {
+      if (this.s.mode !== 'developer' || !projectile || !unit?.id) return;
+      // A token comes from the actual committed action, never frame timing.
+      const d = this.developerCompanions,
+        move = releaseMove || this.developerCompanionNewMove(unit.id, label);
+      if (!move) return;
+      d.projectiles.set(projectile.id, { source: unit.id, move });
+      move.pending++;
+      move.resolved = false;
+    }
+    developerCompanionBeginDirect(unit, label) {
+      if (this.s.mode !== 'developer') return null;
+      const previous = this._developerCompanionDirectMove || null;
+      this._developerCompanionDirectMove = {
+        source: unit.id, move: this.developerCompanionNewMove(unit.id, label),
+      };
+      return previous;
+    }
+    developerCompanionEndDirect(previous) {
+      if (this.s.mode === 'developer') this._developerCompanionDirectMove = previous;
+    }
+    // Observe the actual melee release even if a legal attempt removes no HP.
+    // Its damage, RNG and normal-mode behavior still belong to Campaign.damage.
+    developerCompanionDamage(unit, label, target, amount, options = null) {
+      if (this.s.mode !== 'developer')
+        return this.damage(target, amount, unit.id, options);
+      const previous = this.developerCompanionBeginDirect(unit, label);
+      try {
+        return this.damage(target, amount, unit.id, options);
+      } finally {
+        this.developerCompanionEndDirect(previous);
+      }
+    }
+    recordDeveloperCompanionDamage(source, amount) {
+      if (this.s.mode !== 'developer' || !(amount > 0) ||
+          !this.s.party.some((u) => u.id === source)) return;
+      const d = this.developerCompanions;
+      const mapped = d.projectiles.get(this._developerCompanionProjectileInFlight);
+      const direct = this._developerCompanionDirectMove;
+      const move = mapped?.source === source ? mapped.move
+        : direct?.source === source ? direct.move
+          : this.developerCompanionNewMove(source, 'Basic attack');
+      if (!move) return;
+      move.damage += amount;
+      const hits = d.hits.get(source) || [];
+      const lastHit = hits.at(-1);
+      if (lastHit?.time === this.s.time) lastHit.damage += amount;
+      else hits.push({ time: this.s.time, damage: amount });
+      while (hits.length && hits[0].time < this.s.time - 5) hits.shift();
+      if (hits.length > 1024) hits.splice(0, hits.length - 1024);
+      d.hits.set(source, hits);
+    }
+    developerCompanionLabelLastMove(source, label) {
+      if (this.s.mode !== 'developer' || !source || !label) return;
+      const last = this.developerCompanions.moves.get(source)?.at(-1);
+      if (last?.time === this.s.time && !last.pending) last.label = label;
+    }
+    developerCompanionSnapshot() {
+      if (this.s.mode !== 'developer') return null;
+      const d = this.developerCompanions, now = this.s.time,
+        available = this.s.party.filter((u) => u.active !== false &&
+          u.hp > 0 && !u.expeditionId && ['soldier','archer','pet'].includes(u.type) &&
+          (!u.charmOrigin || this.isCharmedCompanion(u)) &&
+          (u.type !== 'pet' || this.petUnlocked(u.petFamily))),
+        eligible = new Set(available.map((u) => u.id)),
+        flying = new Set(this.s.projectiles.map((p) => p.id));
+      // Missed, expired or cancelled shots resolve with zero damage. A shared
+      // multi-arrow move resolves only after every attached projectile ends.
+      for (const [id, entry] of d.projectiles) {
+        if (flying.has(id) && eligible.has(entry.source)) continue;
+        d.projectiles.delete(id);
+        entry.move.pending = Math.max(0, entry.move.pending - 1);
+        if (!entry.move.pending) entry.move.resolved = true;
+      }
+      for (const id of d.moves.keys()) if (!eligible.has(id)) d.moves.delete(id);
+      for (const [id, hits] of d.hits) {
+        if (!eligible.has(id)) { d.hits.delete(id); continue; }
+        while (hits.length && hits[0].time < now - 5) hits.shift();
+      }
+      const elapsed = Math.min(5,
+        Math.max(1, now - this.developerCombat.startedAt));
+      return available.map((u) => ({
+        id: u.id, name: this.companionDisplayName(u),
+        type: u.type === 'pet' ? 'Pet' : u.charmOrigin ? 'Charmed' : 'Companion',
+        last: (d.moves.get(u.id) || []).filter((m) => m.resolved).slice(-3)
+          .reverse().map((m) => ({ name: m.label, damage: m.damage })),
+        dps: (d.hits.get(u.id) || [])
+          .reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
+      }));
+    }
     developerCombatSnapshot() {
       if (this.s.mode !== 'developer') return null;
       const windowSeconds = 5;
@@ -2139,6 +2278,60 @@
         };
       };
       return { incoming: read('incoming'), outgoing: read('outgoing') };
+    }
+    // Developer-only quick kills still use the ordinary damage -> kill pipeline:
+    // real enemies grant real drops/progress, temporary test summons do not.
+    developerFinisher(targetId = null, sweep = false) {
+      const result = { hits: 0, kills: 0 };
+      if (
+        this.s.mode !== 'developer' ||
+        this.peace ||
+        this.hero.hp <= 0 ||
+        this.s.challenge?.pending ||
+        this.s.challenge?.gameOver
+      )
+        return result;
+      const zone = this.zone();
+      const eligible = (enemy, radius) =>
+        enemy.hp > 0 &&
+        !enemy.neutral &&
+        !this.attackResetProtected(enemy) &&
+        this.tacticalDirectTargetable(enemy) &&
+        dist(this.hero, enemy) <= radius &&
+        this.line(this.hero, enemy);
+      let targets;
+      if (sweep) {
+        // Snapshot a bounded group. A death-triggered spawn is for the next hit,
+        // not an accidental part of this one developer action.
+        targets = zone.enemies
+          .filter((enemy) => eligible(enemy, 360))
+          .sort((a, b) => dist(this.hero, a) - dist(this.hero, b) || this.idOrder(a, b))
+          .slice(0, 8);
+      } else {
+        const selected = targetId == null
+          ? this.selectedHeroTarget()
+          : zone.enemies.find((enemy) => enemy.id === targetId);
+        const nearest = targetId == null && !selected
+          ? zone.enemies
+              .filter((enemy) => eligible(enemy, 680))
+              .sort((a, b) => dist(this.hero, a) - dist(this.hero, b) || this.idOrder(a, b))[0]
+          : null;
+        const target = selected || nearest;
+        targets = target && eligible(target, 680) ? [target] : [];
+      }
+      for (const enemy of targets) {
+        // Piercing removes defensive multipliers, not walls, retreat/reset
+        // protection, target validity or the normal death/reward lifecycle.
+        const hit = this.damage(
+          enemy,
+          Math.max(1e9, enemy.maxHp * 10000),
+          'hero',
+          { piercing: true },
+        );
+        if (hit) result.hits++;
+        if (hit && enemy.hp === 0) result.kills++;
+      }
+      return result;
     }
     developerSummonOptions() {
       if (this.s.mode !== 'developer' || this.peace) return [];
@@ -3682,7 +3875,7 @@
       );
     }
     heroBasicAttackApproachRange() {
-      const reach = basicAttackApproachRanges[this.hero.class];
+      const reach = classFoundations[this.hero.class]?.basicAttackApproachRange;
       if (!Number.isFinite(reach)) throw Error('Missing basic attack approach range');
       return reach;
     }
@@ -3709,7 +3902,7 @@
         !this.s.challenge.succession ||
         !this.s.challenge.pending ||
         this.s.challenge.fallen.includes(heroClass) ||
-        !classes[heroClass]
+        !Object.hasOwn(classes, heroClass)
       )
         return false;
       const old = this.hero,
@@ -7286,9 +7479,8 @@
           }
         }
         if (e.telegraph && this.mageSilenceActive(e)) {
-          // Existing warned specials remain queued, but cannot resolve
-          // inside a Silence Field. Pausing the warning preserves boss
-          // phase/sequence integrity rather than erasing authored attacks.
+          // Mage's field can hold warned specials. Rogue Hush only blocks
+          // NEW eligible special starts, not a committed action in progress.
           e.noProgress = 0;
           continue;
         }
@@ -8379,19 +8571,55 @@
       ? PrototypeEnemyVfxEvents
       : require('./enemy-vfx-events.js');
   EnemyVfxEvents.install(Campaign);
-  // Register the fourth class as one coherent capability: the live browser
-  // shell invokes this before loading saves or offering New Game/Succession.
-  // Native fixtures may still opt in deliberately to retain their original
-  // three-class baselines; saves never encode a registration switch.
+  // A dormant foundation never mutates the roster. Admission checks the
+  // separately authored class combat before touching active rules or saves.
+  Campaign.classFoundationFor = (id) => classFoundations[id] || null;
+  Campaign.defineClassFoundation = (id, profile) => defineClassFoundation(id, profile);
+  Campaign.classAdmissionIssues = (id, definition = {}) => {
+    const issues = [];
+    if (!classFoundations[id]) issues.push('missing foundation');
+    if (Object.hasOwn(classes, id)) issues.push('already playable');
+    const fields = definition && typeof definition === 'object' ? definition : {};
+    if (typeof fields.icon !== 'string' || !fields.icon.trim())
+      issues.push('missing class icon');
+    const stats = fields.stats;
+    if (!stats || typeof stats !== 'object' ||
+        !['hp', 'mp', 'power', 'armor', 'speed'].every((key) =>
+          Number.isFinite(stats[key]) && stats[key] >= (key === 'mp' || key === 'armor' ? 0 : 1)))
+      issues.push('missing class stats');
+    const talents = fields.talents;
+    if (!talents || typeof talents !== 'object' ||
+        !['power', 'mana', 'hp', 'speed'].every((key) =>
+          Number.isFinite(talents[key]) && talents[key] > 0))
+      issues.push('missing discipline growth');
+    if (!Campaign.heroCombatSupports?.(id)) issues.push('missing authored combat owner');
+    // Rogue's first charged performance has a separate authored cooldown.
+    // Other classes require a real value, never a NaN timer or Ranger fallback.
+    if (id !== 'rogue' && !(R.chargedSkills.first.chargedSeconds[id] > 0))
+      issues.push('missing charged Skill 1 cooldown');
+    return issues;
+  };
+  Campaign.registerPlayableClass = (id, definition) => {
+    const issues = Campaign.classAdmissionIssues(id, definition);
+    if (issues.length) throw Error('Class admission blocked: ' + issues.join(', '));
+    const { icon, stats, talents } = definition;
+    // No active registry mutation is allowed before validation completes.
+    classes[id] = Object.freeze({ icon, ...stats });
+    talentProfiles[id] = Object.freeze({ ...talents });
+    // Moving automatic attacks are a separate authored capability, not
+    // something every newly admitted class automatically inherits.
+    if (definition.movementBasic === true) R.movementBasicClasses[id] = true;
+    return true;
+  };
+  // The already-playable Rogue continues through its original opt-in.
   Campaign.enableRoguePlaytest = () => {
     if (classes.rogue) return false;
-    classes.rogue = Object.freeze({
+    return Campaign.registerPlayableClass('rogue', {
       icon: 'jingle-bell',
-      ...R.rogueHeroFoundation.stats,
+      stats: R.rogueHeroFoundation.stats,
+      talents: R.rogueHeroFoundation.talents,
+      movementBasic: true,
     });
-    talentProfiles.rogue = Object.freeze({ ...R.rogueHeroFoundation.talents });
-    R.movementBasicClasses.rogue = true;
-    return true;
   };
   Campaign.rules = R;
   Campaign.data = D;
