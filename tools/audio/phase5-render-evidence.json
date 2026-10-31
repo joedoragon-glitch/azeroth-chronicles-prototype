@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "scope": "16 isolated Phase 5 recorded-source stereo previews; metrics checkpoint only",
+  "testedAudioProducingCommit": "229065ff7d284d05952838e983aeca165bdad926",
+  "isolatedCIRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41207846367",
+  "candidateStatus": "DRAFT / UNREGISTERED / UNMERGED / UNPUBLISHED",
+  "heardAcousticQuality": "UNVERIFIED; no genuine hearing",
+  "ownerAcceptance": "PHASE 9 ONLY",
+  "musicIdsInOriginalCatalog": 83,
+  "crownOriginalPhysicalHashCount": 18,
+  "tracks": [
+    {
+      "id": "boss-thorn",
+      "sha256": "6420d43055205478ec31ac4844c155960340b6f9829973a9607c5a027cc65a9c",
+      "encodedBytes": 803151,
+      "decodedPeak": 0.41727
+    },
+    {
+      "id": "boss-thorn-true",
+      "sha256": "78de6f91b529df89d8ee30474fb65f1302c7dfb8c00c440925702bbb076d5c24",
+      "encodedBytes": 803151,
+      "decodedPeak": 0.22365
+    },
+    {
+      "id": "boss-crypt",
+      "sha256": "83402b687f6725a68e10a6139525dcc0b21cf39381f3d3215ca1d276b863a7d9",
+      "encodedBytes": 894684,
+      "decodedPeak": 0.42894
+    },
+    {
+      "id": "boss-crypt-true",
+      "sha256": "dddf0303c9e322b5d545594720c417306a2708339d5dd9394daf661251f89318",
+      "encodedBytes": 894684,
+      "decodedPeak": 0.16566
+    },
+    {
+      "id": "boss-mire",
+      "sha256": "75fa15dff02e1b88672f53e0e825b6d4b8276ca413a44203a63b3840d7882499",
+      "encodedBytes": 648924,
+      "decodedPeak": 0.46094
+    },
+    {
+      "id": "boss-mire-true",
+      "sha256": "a6e539d943af3c6ed008585182163f56511066ba7df1cf578887d7d764bcbb73",
+      "encodedBytes": 648924,
+      "decodedPeak": 0.22308
+    },
+    {
+      "id": "boss-archive",
+      "sha256": "2218ecf6e7998d55f5b8e8c7918e04e89f4503ee86442c1caeeffeba753d1e76",
+      "encodedBytes": 862083,
+      "decodedPeak": 0.52342
+    },
+    {
+      "id": "boss-archive-true",
+      "sha256": "226768f981d4e5d1ff9abb7aabba695ac947b9889f482230c5a92a6d22e5b6c4",
+      "encodedBytes": 862083,
+      "decodedPeak": 0.22243
+    },
+    {
+      "id": "boss-ridge",
+      "sha256": "9efe348e11eaf0cbd1e7a283cab002d774150b19965702783febf4f4e4068a65",
+      "encodedBytes": 862083,
+      "decodedPeak": 0.4986
+    },
+    {
+      "id": "boss-ridge-true",
+      "sha256": "1f99587f8e55fe706c9dfb8ec4f619927150b322676015ec9cc5f178a005ba96",
+      "encodedBytes": 862083,
+      "decodedPeak": 0.21862
+    },
+    {
+      "id": "boss-mine",
+      "sha256": "1ca22cdbb53795fb1ebc2f61bc8ffbed3290afad9e9afd453e4f7d3957b635e0",
+      "encodedBytes": 1160506,
+      "decodedPeak": 0.42953
+    },
+    {
+      "id": "boss-mine-true",
+      "sha256": "65969f85dcd3630b6b7696b91f54b1a0e8cc94cec3bcab2d7e124d7cc73e9258",
+      "encodedBytes": 1160506,
+      "decodedPeak": 0.22325
+    },
+    {
+      "id": "boss-warlord",
+      "sha256": "35df032dc2535b8cc0fb6198d112db47bddc0d67dee6d4236012d436bd8a3145",
+      "encodedBytes": 776820,
+      "decodedPeak": 0.35478
+    },
+    {
+      "id": "boss-warlord-true",
+      "sha256": "61998e977e400980995dbddfcb09628912b08b6ea1b5f3a0ad053f354442886b",
+      "encodedBytes": 776820,
+      "decodedPeak": 0.20182
+    },
+    {
+      "id": "boss-abyss",
+      "sha256": "ebb643be3f0d9a17f60f27c92078a233bcd6a9a8a32ed2bfab2e8e03507ba14c",
+      "encodedBytes": 831363,
+      "decodedPeak": 0.52379
+    },
+    {
+      "id": "boss-abyss-true",
+      "sha256": "f020dccbbd7cf3b0489c980de19e1643d85c75684de6880c367f5bb11aa1a685",
+      "encodedBytes": 831363,
+      "decodedPeak": 0.11646
+    }
+  ],
+  "encodedBytesTotal": 13679228,
+  "codec": "192-kbps MP3",
+  "sampleRateHz": 44100,
+  "channels": 2,
+  "sourceRecordedCalls": 1139,
+  "recordedUniqueSourceSamples": 42,
+  "recordedSourceFamilies": 2,
+  "largeRecordedSampleShiftCount": 9,
+  "largeRecordedSampleShifts": "Five source-transposition groups within original exposed horn opening motifs: three Ridge, two Abyss; 9 note events total. Exactly 7 legacy opening motifs retained pitch/onset/duration; Lifebinder requalified with -12-semitone cello transformation.",
+  "maxDecodedLoopEdgeDelta": 0.00001,
+  "maxDecodedPeak": 0.52379,
+  "rawPairsChecked": 8,
+  "maxCombinedRawPairPeak": 0.581755638548519,
+  "phase5OnlyCatalogProjectionBytes": 35880337,
+  "encodedCatalogBudgetBytes": 268435456,
+  "provenanceNotes": "The exact tested 16-track metrics including full sample sources, pitch histograms, normal/TRUE overlay frame counts, mono/stereo measures and performed-note comparisons are stored in the corresponding CI artifact. The instrument bank pins upstream CC0 recordings by SHA. This tracked file preserves exact MP3 hashes but is NOT equivalent to listening, a complete catalog budget projection, or integrated game delivery."
+}
