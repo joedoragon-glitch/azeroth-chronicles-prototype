@@ -157,6 +157,7 @@ Class advancement, specialist prerequisites, input forms, ability targeting, cha
 
 **Decision intent at a glance:** Hero growth and Discipline Training are different from combat input; normal and charged skill forms share their real cooldowns, with explicit hold/cancel/target rules. Later queue-form decisions modify how inputs behave while cooling down. Sprint remains deliberately unavailable.
 
+<a id="strategist-fifth-class"></a>
 ### Strategist fifth class — frontline alchemy and Field Lab (31 October 2026; owner direction, unimplemented)
 
 **Status and priority.** This records new authorial design direction for the planned **Ogre Strategist**, not approved numeric balance or finished gameplay. The [parent Strategist issue #674](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/674) remains the detailed work tracker; [draft warning-reversal proof #696](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/696) remains nonproduction, and the [draft Ogre visual brief #697](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/697) is a separate art contract, not a new class mechanic. No new quest, new companion, class admission or release is implied. This newer direction supersedes older assumptions that Water/Earth/Fire can always be cast in unsuitable terrain without a preparation cost.
