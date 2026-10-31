@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   environment-studio:
-    name: Source-provenance + two physical-sample 24-second acoustic pilots
+    name: Source-provenance + two 72-second physical-sample acoustic pilots
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
