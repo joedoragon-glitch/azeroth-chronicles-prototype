@@ -4566,7 +4566,7 @@
         return true;
       }
       if (
-        !this.follow(e, target, (profile.patrolSpeed || 82) * this.mountedMovementFactor(e), dt, 20)
+        !this.follow(e, target, (profile.patrolSpeed || 82) * this.mountedMovementFactor(e), dt, 20, 'captain-patrol')
       ) {
         e.captainPatrolIndex = (index + 1) % patrol.length;
         e.captainPatrolWait = 0.5;
