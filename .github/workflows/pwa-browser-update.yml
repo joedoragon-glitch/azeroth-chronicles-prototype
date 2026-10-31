@@ -1,0 +1,40 @@
+name: Browser PWA update acceptance
+
+# One targeted Chromium service-worker integration test for update-path changes.
+# Not a full-game test suite or cross-browser matrix.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'templates/service-worker.js'
+      - 'sw.js'
+      - 'scripts/build.cjs'
+      - 'tests/update-notice-browser.test.cjs'
+      - 'tests/service-worker.test.cjs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pwa-browser-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  update-browser:
+    name: PWA update in Chromium
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts
+      - name: Install focused Chromium runtime
+        run: npx playwright install chromium --with-deps
+      - name: Check generated website and service worker
+        run: node scripts/build.cjs --check
+      - name: Exercise startup, in-game updates, offline mode and incremental transfers
+        run: node tests/update-notice-browser.test.cjs

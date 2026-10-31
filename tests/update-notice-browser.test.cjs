@@ -5,15 +5,50 @@ const assert = require('node:assert/strict'),
   fs = require('node:fs'),
   path = require('node:path'),
   http = require('node:http'),
+  crypto = require('node:crypto'),
   { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..'),
   version = require('../package.json').version;
 let generation = 'a',
   failUpdateCheck = false;
 const cacheName = () => 'azeroth-app-v' + version + '-notice-' + generation;
+const requestLog = [];
+const releaseFile = (relative) => {
+  const file = path.resolve(root, '.' + (relative === '/' ? '/index.html' : relative));
+  const source = fs.readFileSync(file, 'utf8');
+  if (generation !== 'c') return source;
+  if (['/', '/index.html', '/phone.html'].includes(relative))
+    return source.replace('<nav aria-label="Main menu">',
+      '<nav aria-label="Main menu" data-menu-revision="c">');
+  if (relative === '/src/prototype/app.js')
+    return source + "\ndocument.body.dataset.menuRevision = 'c';\n";
+  return source;
+};
+const gitBlobHash = (source) => {
+  const bytes = Buffer.from(source);
+  return crypto.createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex');
+};
+const releaseWorker = (file) => {
+  let worker = fs.readFileSync(file, 'utf8')
+    .replace('"azeroth-app-v' + version + '"', JSON.stringify(cacheName()));
+  if (generation !== 'c') return worker;
+  // Model real published bytes: changed HTML and JS also change the worker's
+  // build-generated content fingerprints. Otherwise the fixture is not a release.
+  const prefix = 'const APP_FINGERPRINTS = ';
+  const before = worker.split(prefix)[1].split(';')[0],
+    hashes = JSON.parse(before);
+  for (const [asset, relative] of [
+    ['./', '/index.html'], ['./index.html', '/index.html'],
+    ['./phone.html', '/phone.html'],
+    ['./src/prototype/app.js', '/src/prototype/app.js'],
+  ]) hashes[asset] = gitBlobHash(releaseFile(relative));
+  worker = worker.replace(prefix + before + ';', prefix + JSON.stringify(hashes) + ';');
+  return worker;
+};
 const server = http.createServer((req, res) => {
   const relative = new URL(req.url, 'http://localhost').pathname,
     file = path.resolve(root, '.' + (relative === '/' ? '/index.html' : relative));
+  requestLog.push({ generation, relative });
   if (relative === '/sw.js' && failUpdateCheck) {
     res.writeHead(503);
     return res.end('offline update fixture');
@@ -37,21 +72,10 @@ const server = http.createServer((req, res) => {
         '.webmanifest': 'application/manifest+json',
       }[path.extname(file)] || 'application/octet-stream',
   });
-  if (relative === '/sw.js')
-    return res.end(
-      fs
-        .readFileSync(file, 'utf8')
-        .replace('"azeroth-app-v' + version + '"', JSON.stringify(cacheName())),
-    );
-  // Model a release that changes both menu markup and its JavaScript.
-  // The startup preflight must never expose an old/new hybrid menu.
-  if (generation === 'c' && ['/index.html', '/phone.html'].includes(relative))
-    return res.end(fs.readFileSync(file, 'utf8')
-      .replace('<nav aria-label="Main menu">',
-        '<nav aria-label="Main menu" data-menu-revision="c">'));
-  if (generation === 'c' && relative === '/src/prototype/app.js')
-    return res.end(fs.readFileSync(file, 'utf8') +
-      "\ndocument.body.dataset.menuRevision = 'c';\n");
+  if (relative === '/sw.js') return res.end(releaseWorker(file));
+  if (generation === 'c' &&
+      ['/', '/index.html', '/phone.html', '/src/prototype/app.js'].includes(relative))
+    return res.end(releaseFile(relative));
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
@@ -74,15 +98,29 @@ const server = http.createServer((req, res) => {
         page = await context.newPage(),
         errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
+      // Count full document navigations. A coherent update MUST trigger its
+      // controllerchange reload, beyond the player's ordinary page reload.
+      await page.addInitScript(() => sessionStorage.setItem(
+        'pwa-browser-boot-count',
+        String(Number(sessionStorage.getItem('pwa-browser-boot-count') || 0) + 1)));
       if (phone)
         await page.addInitScript(() => localStorage.setItem('azeroth-display-language-v1', 'es'));
       await page.goto(url + (phone ? '/phone.html' : '/index.html'));
       await page.waitForFunction(() => window.Prototype && !!navigator.serviceWorker.controller);
-      if (!phone) await require('./helpers/language-browser.cjs').selectEnglish(page);
-      else await page.getByRole('button', { name: /^Español/ }).click();
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
-      await page.waitForFunction(() => document.getElementById('modal').hidden);
+      // The current player flow begins on the title screen, not directly in-game.
+      // Create a real saved run before testing manual updates during gameplay.
+      await page.waitForFunction(() =>
+        document.getElementById('startup-update').hidden &&
+        !document.getElementById('title-screen').hidden &&
+        !document.getElementById('title-new').disabled);
+      await page.locator('#title-new').click();
+      await page.locator('#modal-actions').getByRole('button', { name: /Normal/i }).first().click();
+      await page.locator('#modal-actions').getByRole('button', {
+        name: phone ? /^Español/ : /^English/,
+      }).click();
+      await page.locator('#modal-actions').getByRole('button').first().click();
+      await page.locator('#modal-actions').getByRole('button').first().click();
+      await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
         Prototype.game.hero.gold = 42424;
         Prototype.game.tick = () => {};
@@ -191,10 +229,19 @@ const server = http.createServer((req, res) => {
         document.getElementById('startup-update').hidden &&
         !document.getElementById('title-screen').hidden &&
         window.Prototype?.game.hero.gold === 42424);
-      const offlineNotice = await page.locator('#startup-update-notice').textContent();
-      assert.match(offlineNotice, phone
+      const offlineState = await page.evaluate(async () => ({
+        notice: document.getElementById('startup-update-notice').textContent,
+        noticeHidden: document.getElementById('startup-update-notice').hidden,
+        online: navigator.onLine,
+        controller: !!navigator.serviceWorker.controller,
+        waiting: !!(await navigator.serviceWorker.getRegistration()).waiting,
+        titleVisible: !document.getElementById('title-screen').hidden,
+        lang: document.documentElement.lang,
+      }));
+      assert.match(offlineState.notice, phone
         ? /Sin conexión.*No se pudieron buscar actualizaciones/i
-        : /offline.*could not check for updates/i);
+        : /offline.*could not check for updates/i,
+      'offline status after reloading a cached release: ' + JSON.stringify(offlineState));
       await page.locator('#title-continue').click();
       await page.waitForFunction(() => window.Prototype?.started);
       failUpdateCheck = true;
@@ -247,10 +294,26 @@ const server = http.createServer((req, res) => {
       failUpdateCheck = false;
       await context.setOffline(false);
       generation = 'c';
+      requestLog.length = 0;
+      const bootsBefore = await page.evaluate(() =>
+        Number(sessionStorage.getItem('pwa-browser-boot-count') || 0));
       await page.reload();
+      // The new HTML/JS cannot be judged until the waiting worker activates
+      // and the game performs its coherent second navigation.
+      await page.waitForFunction((before) =>
+        Number(sessionStorage.getItem('pwa-browser-boot-count') || 0) >= before + 2,
+        bootsBefore, { timeout: 90000 });
       await page.waitForFunction(async () => {
-        const cacheReady = (await caches.keys()).includes(
-          'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c');
+        const name = 'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c';
+        if (!(await caches.keys()).includes(name)) return false;
+        const cache = await caches.open(name);
+        const files = await Promise.all(['./index.html', './phone.html',
+          './src/prototype/app.js'].map((file) => cache.match(file)));
+        // Cache names appear at the *beginning* of installation; wait for
+        // the required bytes, not merely a newly created empty cache.
+        const registration = await navigator.serviceWorker.getRegistration();
+        const cacheReady = files.every(Boolean) && !registration?.installing &&
+          !registration?.waiting;
         return cacheReady &&
           document.getElementById('startup-update').hidden &&
           !document.getElementById('title-screen').hidden &&
@@ -258,6 +321,46 @@ const server = http.createServer((req, res) => {
           document.body.dataset.menuRevision === 'c';
       }, null, { timeout: 90000 });
       assert.equal(await page.evaluate(() => window.Prototype?.game.hero.gold), 42424);
+      const releaseRequests = requestLog.filter((entry) => entry.generation === 'c')
+        .map((entry) => entry.relative);
+      const releaseCache = await page.evaluate(async () => {
+        const cache = await caches.open('azeroth-app-v' + PrototypeBuild.version + '-notice-c');
+        const inspect = async (file, marker) => {
+          const response = await cache.match('./' + file);
+          return response ? (await response.text()).includes(marker) : null;
+        };
+        return {
+          index: await inspect('index.html', 'data-menu-revision="c"'),
+          phone: await inspect('phone.html', 'data-menu-revision="c"'),
+          script: await inspect('src/prototype/app.js', "dataset.menuRevision = 'c'"),
+        };
+      });
+      const workerStatus = await page.evaluate(async () => {
+        const reg = await navigator.serviceWorker.getRegistration();
+        const cache = await caches.open('azeroth-app-v' + PrototypeBuild.version + '-notice-c');
+        return {
+          controller: navigator.serviceWorker.controller?.state,
+          active: reg.active?.state,
+          installing: reg.installing?.state,
+          waiting: reg.waiting?.state,
+          cacheEntries: (await cache.keys()).length,
+        };
+      });
+      console.log('Release c service worker: ' + JSON.stringify(workerStatus));
+      console.log('Release c transfers and offline cache: ' +
+        JSON.stringify({ phone, releaseRequests, releaseCache }));
+      for (const changed of ['/index.html', '/phone.html', '/src/prototype/app.js'])
+        assert(releaseRequests.includes(changed), 'changed release bytes must download: ' + changed);
+      for (const unchanged of [
+        '/src/prototype/renderer.js',
+        '/assets/audio/music/title.mp3',
+        '/tools/webgl-pilot/native-webgl2-core.js',
+        '/tools/webgl-pilot/native-sprite-adapter.js',
+        '/tools/webgl-pilot/pixi-scene-bridge.js',
+        '/tools/webgl-pilot/renderer-switch-guard.js',
+      ])
+        assert(!releaseRequests.includes(unchanged),
+          'unchanged browser-cached assets must not download: ' + unchanged);
       assert(await page.locator('#update-button').isHidden(),
         'automatic preflight never asks for an update tap');
       assert.deepEqual(errors, []);

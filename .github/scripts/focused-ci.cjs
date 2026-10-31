@@ -471,7 +471,10 @@ function run(
     console.warn('::warning::Manual browser acceptance not run under ordinary CI: ' + file);
   const checks = [];
   for (const file of paths)
-    if (/\.(?:js|cjs|mjs)$/.test(file) && fs.existsSync(path.join(root, file))) {
+    // This source is a build template with {{PLACEHOLDER}} tokens, not runnable JS.
+    // Its generated sw.js is syntax-checked separately and by the build check.
+    if (file !== 'templates/service-worker.js' &&
+        /\.(?:js|cjs|mjs)$/.test(file) && fs.existsSync(path.join(root, file))) {
       const began = Date.now();
       const result = cp.spawnSync(process.execPath, ['--check', path.join(root, file)], {
         stdio: 'inherit',
