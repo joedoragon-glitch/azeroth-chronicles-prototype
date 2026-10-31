@@ -283,7 +283,7 @@ async function main() {
       const resources=await cache.keys();
       return {version:cachesForRelease[0],
         audio:resources.filter(r=>new URL(r.url).pathname.includes('/assets/audio/') &&
-          /\.(mp3|json)$/.test(new URL(r.url).pathname)).length,
+          /\.(mp3|wav|json)$/.test(new URL(r.url).pathname)).length,
         complete:resources.length};
     });
     assert.equal(cachedAudio.version,'azeroth-app-v'+require('../package.json').version,

@@ -44,6 +44,12 @@ const server = http.createServer((req, res) => {
         return a.ctx?.state === 'running' && a.recordedScore && a.recordedScore.id !== 'title' &&
           a.recordedScore.id === a.productionCue(a.context)?.id;
       }, null, { timeout: 15000 });
+      // The entry transition may briefly suspend/resume Web Audio while the
+      // first graphics frame commits. It must settle into running playback,
+      // without requiring an extra movement or skill gesture.
+      await page.waitForTimeout(300);
+      await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running' && !Prototype.audio.paused,
+        null, { timeout: 8000 });
       const loaded = await page.evaluate(() => ({
         id: Prototype.audio.recordedScore.id, at: Prototype.audio.recordedScore.at,
         started: Prototype.started, state: Prototype.audio.ctx.state,

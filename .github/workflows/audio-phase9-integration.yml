@@ -61,3 +61,5 @@ jobs:
         run: node tests/audio-phase9-lifecycle-browser.test.cjs
       - name: Actual 65-score playback and fresh offline PWA installation
         run: node tests/audio-phase7-browser.test.cjs
+      - name: Complete music, environment, effects and mobile-layout listening-room acceptance
+        run: node tests/audio-audition-browser.test.cjs
