@@ -10,6 +10,7 @@ on:
       - 'tools/audio/integrate-regional-candidates.cjs'
       - '.github/workflows/environment-integrate-candidates.yml'
       - 'tests/audio-stage5-release-preflight.test.cjs'
+      - 'tests/environment-audio-phaseA3-signal.test.cjs'
 
 permissions:
   contents: write
