@@ -21,6 +21,10 @@ const degree = (n, mode) =>
 const intervals = (notes) => notes.slice(1).map((n, i) => n[1] - notes[i][1]);
 assert.equal(audit.schemaVersion, 1);
 assert.equal(audit.cues.length, 8);
+const explicitlyRetainedHooks = new Set([
+  'place-march', 'place-highlands', 'place-frontier',
+  'place-crypt', 'place-mine', 'place-abyss',
+]);
 assert.deepEqual(audit.cues.map((c) => c.id), score.map((t) => t.id));
 assert.equal(audit.gate.sourceComposition, 'REVISE',
   'Source GO cannot be inherited from a file-count or codec test');
@@ -52,6 +56,11 @@ for (const theme of score) {
           degree(pitch + theme.harmony[bar], theme.mode) + accidental]);
       }
     }
+  }
+  if (explicitlyRetainedHooks.has(theme.id)) {
+    assert.deepEqual(performed, original,
+      theme.id + ': deliberate original opening pitch/onset identity regressed; ' +
+        'document any artistic replacement as a reviewed source decision');
   }
   const oldSteps = intervals(original);
   const newSteps = intervals(performed);
