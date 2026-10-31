@@ -65,6 +65,25 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Warning Effect Handoff](WARNING_EFFECT_HANDOFF_20261028.md)** — **Reference.** Native warning expiration at actual attack release across Canvas and the Pixi overlay.
 
 
+<a id="strategist-project"></a>
+### Strategist fifth-class project — linked design and evidence block (31 October 2026)
+
+**Current authorial answers incorporated (31 October 2026):** Five material themes are **Water, Mineral (stone/ore; never dirt), Fire, Wood and Acid**, with three further tactical/hybrid skills. Acid Bottles are shared consumables for the powerful third combo beat and acid techniques, with limited starting stock; a **staffed windmill-powered Lab** replenishes them. One Lab per region with a **placed (not necessarily completed) Barracks**, centralized assignments, persistent affordable worker qualification, stacked but reduced remote production, and no offline progress. Neri teaches **individually paid** advanced alchemy lessons and increases Lab capacity via mastery; the dedicated contextual Reversal is outside all eight skills. The detailed [maintained decision contract](DECISIONS.md#strategist-fifth-class) is authoritative; older material proposals in #674–#678 are historical, not alternative current options.
+
+**Single entrypoint:** [#674 — Strategist: fifth playable class](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/674) tracks the evolving gameplay spec and superseding owner direction. The maintained [hero-class decisions](DECISIONS.md#strategist-fifth-class) records the current frontline/Field Lab rules; **no playable Strategist exists yet**.
+
+| Existing record | Role and status |
+| --- | --- |
+| [#674 — main Strategist design](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/674) | Authoritative active gameplay decision/tracker: eight forms, contextual reversal, speed/dodge, Neri, new Field Lab and open numerical choices. Older chronological text may be superseded by newer headings. |
+| [#675](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/675), [#676](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/676), [#677](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/677), [#678](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/678) | Completed **source/feasibility investigations**, not a playable class. Retain as supporting engineering evidence. |
+| [PR #681](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/681) | **Merged foundation only**: guarded class registration and safe dormant metadata; intentionally no Strategist gameplay. |
+| [PR #696](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/696) | **Unmerged, draft** native warning-reversal experiment on two boss warning types. Not a full counter system or selectable hero. |
+| [PR #697](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/697) | **Unmerged, draft docs-only reconciliation** [Ogre hero visual brief](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/docs/strategist-ogre-visual-principles-20261030/docs/STRATEGIST_OGRE_VISUAL_DESIGN_PRINCIPLES_20261030.md); existing-species visual identity, not released sprites. |
+| [#695](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/695) | **Deferred story/companion expansion**, explicitly not required for fifth-class completion. |
+
+This is a **navigation block for existing issue/PR records**, not seven new Markdown documents, a new documentation authority hierarchy or a claim that draft work shipped. See also [architecture](ARCHITECTURE.md) for the actual module owners and [development state](DEVELOPMENT_STATE.md) for verified publication.
+
+
 ### Rogue/Bard fourth-class work
 
 - [Night Ringleader Rogue 20261020](NIGHT_RINGLEADER_ROGUE_20261020.md) — *Dated record.* Describes night ringleader rogue decisions, constraints or engineering observations from its original development checkpoint.
