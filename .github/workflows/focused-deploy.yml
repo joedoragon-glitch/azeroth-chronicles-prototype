@@ -57,6 +57,14 @@ jobs:
           path: ${{ runner.temp }}/azeroth-focused-ci-report.json
           if-no-files-found: ignore
           retention-days: 30
+      - name: Preserve issue 708 liquid-motion browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-708-liquid-real-render
+          path: test-artifacts/environment-708-liquid/
+          if-no-files-found: ignore
+          retention-days: 30
       - name: Verify reproducible, offline-ready build
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
