@@ -191,9 +191,10 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
             wave[:len(stereo)-end] += stereo[end:]
 
     def tone(bar, at, degree, duration, inst, amount,
-             absolute=False, chromatic=0, soft=False):
+             absolute=False, chromatic=0, soft=False, register_shift=0):
         pitch = degree if absolute else harmony[bar] + degree
-        midi = root + sampler.degree(pitch, mode) + REGISTERS[inst] + chromatic
+        midi = (root + sampler.degree(pitch, mode) + REGISTERS[inst]
+                + chromatic + register_shift)
         # Explicit orchestration ranges, preserving pitch class across
         # octave revoicings. These are score-level choices for the actual
         # recorded palette, NOT silent pitch-shift compensation or a fallback
@@ -252,10 +253,18 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
             for idx, event in enumerate(notes):
                 at, degree, duration = event[:3]
                 accidental = event[3] if len(event) > 3 else 0
+                # A parent horn score's later -12 register decisions are
+                # actual orchestration, not a technical workaround. Apply
+                # them to heritage statements of the same phrase in every
+                # Phase 4 context; first two original motif bars stay exact.
+                inherited_register = (theme.get("leadRegisterByBar", [0] * bars)[bar]
+                                      if theme and theme.get("lead") == "horn"
+                                      and cue["lead"] == "horn" else 0)
                 tone(bar, at, degree, duration, cue["lead"],
                      (.041 if additive else .073) * (1.06 if idx == 0 else .90),
                      absolute=absolute, chromatic=accidental,
-                     soft=role in ("night", "peace", "interior-peace"))
+                     soft=role in ("night", "peace", "interior-peace"),
+                     register_shift=inherited_register)
         elif phrase == "A":
             notes = cue["answer"] if theme else parse_room_cell(room["reply"])
             for at, degree, duration in notes:
