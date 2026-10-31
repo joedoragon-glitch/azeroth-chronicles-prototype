@@ -45,7 +45,7 @@ jobs:
           import json,sys
           b=json.load(open('tools/audio/environment-727-treasury-studies.json'))
           if len(b['studies'])!=2 or len(b['sources'])!=4:
-              sys.exit('Scope violation: two optional side interiors and four original source records required')
+              sys.exit('Scope violation: two optional Treasury studies and four original source records required')
           pinned=all(isinstance(s.get('sha1'),str) and len(s['sha1'])==40 and
                      isinstance(s.get('sha256'),str) and len(s['sha256'])==64 and
                      isinstance(s.get('bytes'),int) and s['bytes']>500 for s in b['sources'])
@@ -62,7 +62,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: environmental-stage5-three-interiors-original-source-and-MP3-studies
+          name: environmental-stage5-two-treasury-original-source-and-MP3-studies
           path: tools/audio/.environment-727-treasury-preview/
           include-hidden-files: true
           if-no-files-found: error
