@@ -10,7 +10,7 @@
 > This is a gameplay targeting clarification, not a redefinition of Slow, immunity or saves. Refer to [release state](DEVELOPMENT_STATE.md) for live version evidence.
 > See [the bounded design and validation contract](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md).
 
-> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+> **Historical boundary — 19 October 2026:** The pause instruction below applied to that earlier release checkpoint. Apply this mechanical register with [current development state](DEVELOPMENT_STATE.md) and the owner's current authorizations; older verification/rollout notes never authorize new work by themselves.
 
 **Scope:** player skills, companion specials/support, ordinary and ranged monsters,
 night threats, ringleaders, captains, normal/TRUE bosses, traps, hazards and tactical
@@ -19,8 +19,9 @@ skills or a combat rebalance. The runtime contract comes from `rules.js` and the
 actual owners; skill names, descriptions, sounds and visual cues do not grant effects.
 
 The supported GitHub Pages/PWA game is multi-file. The version-4 save model and
-existing procedural/sprite graphics remain canonical. Development is paused under
-[current state](DEVELOPMENT_STATE.md); no new stabilization or testing cycle starts here.
+existing procedural/sprite graphics remain canonical. The current implementation,
+verification and publication state is recorded in [Development state](DEVELOPMENT_STATE.md).
+This historical register does not independently authorize a new testing cycle.
 
 ## Status-effects completion candidate · 31 October 2026
 
