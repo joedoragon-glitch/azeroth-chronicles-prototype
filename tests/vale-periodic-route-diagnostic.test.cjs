@@ -26,7 +26,9 @@ function heroAt(t){
   return {x:p[1],y:p[2]};
 }
 function measure(label,options={}){
-  const g=new Campaign('normal','rogue',()=>.73);
+  // Current native test registry excludes Rogue; Paladin with party removed
+  // isolates class-neutral enemy navigation without changing class registration.
+  const g=new Campaign('normal','paladin',()=>.73);
   g.xp(120);
   assert.equal(g.hero.level,2,'same level as the owner report');
   const z=g.zone(),thorn=z.enemies.find(e=>e.family==='thorn'&&e.hp>0);
@@ -87,7 +89,7 @@ function measure(label,options={}){
   delete g.follow;delete g.route;delete g.blocked;
   const sorted=perTick.slice().sort((a,b)=>b.probes-a.probes).slice(0,12);
   const heavy=routeCalls.filter(x=>x.probes>=800);
-  const result={label,version:'dev.238 source',heroClass:'rogue',level:g.hero.level,
+  const result={label,version:'dev.238 source',heroClass:'paladin/no-party engine proxy (Rogue unavailable to direct test entrypoint)',level:g.hero.level,
     roster:z.enemies.length,thornPresent:!options.noThorn,
     thornStart:options.fromLeg===undefined?'native':options.fromLeg,
     targetLeg:options.toLeg??null,
