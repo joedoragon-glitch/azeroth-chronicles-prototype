@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 2 continued — distinct Greenwood/Marches nighttime and two conservative Crown ambience candidates; NO game registration",
-  "status": "STAGE 2 nighttime & Crown audio-production candidates COMPLETE: four actual guarded 72s MP3s signal-tested in #41228315630 (PASS) with fixed sources, original routes safe; final exact-head reproducibility pending; all creative hearing / registration / game QA HOLD.",
+  "status": "STAGE 2 STUDIO SOURCE-AUTHORING & ENCODED SIGNAL QA COMPLETE: 6/6 full outdoor studies across both ledgers, four night/Crown frozen byte-identical outputs reproduced at #41228571725. Creative hearing, game runtime, merge/deploy DEVICE QA HOLD.",
   "predecessorStudio": "tools/audio/environment-727-outdoor-studies.json",
   "authority": "Issue #727 Stage1 canon briefs; AGENTS.md; docs/AUDIO_ENVIRONMENT.md",
   "sources": [
@@ -145,7 +145,7 @@
     "declaredCreativePolicy": "Night stems are time-of-day-neutral *air*, not falsely labelled night recordings. Crown trials are comparative, not invented civic labor audio.",
     "cacheRisk": "Six 72s 32kHz mono float32 candidate buffers across day+night/Crown A/B total 55,296,000 bytes (~52.73MiB) if cached simultaneously, in previous 84.80MiB/96MiB default system; none registered, Stage6 genuine memory QA mandatory before choosing.",
     "registration": "NO",
-    "technicalPass": "PASS 4 exact real-encoded MP3s at #41228315630, final strict reproducibility of exact recorded output SHA pending at next CI run",
+    "technicalPass": "PASS actual source SHA1/SHA256/byte/codec, 4 encoded MP3 decoder/seam/peak/spectrum gates at #41228315630 and EXACT reproduced frozen original output SHA256/bytes at #41228571725 (tested script+source head bebf02c68a5d0e23c7b65174fe78ce2b97e08c66).",
     "artisticHearing": "HOLD; nighttime source is daytime open-field wind and may require alternatives, Crown built-wind likely too howling, river source may contain frogs/birds; no direct listening",
     "merged": "NO",
     "deployed": "NO",
@@ -229,7 +229,15 @@
         "heard": false,
         "gameRegistered": false
       }
-    ]
+    ],
+    "reproduction": {
+      "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228571725",
+      "artifactId": 13053145958,
+      "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228571725/artifacts/13053145958",
+      "producingSha": "bebf02c68a5d0e23c7b65174fe78ce2b97e08c66",
+      "outputDigestsMatched": "4 of 4 SHA-256 and byte-for-byte verified by the strict renderer",
+      "status": "PASS; source/decoded preview only; no actual in-game playback of candidates"
+    }
   },
   "selectedCreativeDirection": {
     "valeNight": "STUDIO CANDIDATE: quiet field wind plus existing separate insect detail; compare by ear vs original bed, retain original until demonstrated superior",

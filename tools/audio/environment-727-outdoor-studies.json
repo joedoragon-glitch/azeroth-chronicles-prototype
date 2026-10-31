@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 2 / #727 — outdoors source-verified studio; unregistered preview only",
-  "status": "STAGE 2 DAYLIGHT PILOTS PRODUCED, SOURCE SHA1/SHA256/bytes PASS, true decoded MP3 studio signal PASS at run #41227145631; ARTISTIC HOLD, game REGISTERED NO, NIGHT/CROWN RETAIN. Stage 2 overall IN PROGRESS.",
+  "status": "STAGE 2 DAYLIGHT AUTHORS COMPLETE; both verified guarded 72s MP3s frozen at #41227391733; all SIX across day+night+Crown source-led technical studio studies finished at #41228571725. Gameplay sound replacement/audio selection NOT done. Human ear and game QA HOLD.",
   "authority": "Stage 1 issue #727 comments 6546812555 and 6546828387; docs/AUDIO_ENVIRONMENT.md; AGENTS.md",
   "preservation": "DO NOT edit the 18 existing ambience MP3s, 18 scene rules, 14 original book cues, night events, 18 Dark Crown masters, or soundtrack #673.",
   "sources": [
@@ -111,7 +111,7 @@
       "Unmerged no-deploy artifact accessible with provenance"
     ],
     "sourceApproval": "PASS source identity and published CC0 claims; waveform and fit not yet heard",
-    "technicalApproval": "PASS source identity, MP3 decode, loop, true peak, EBU loudness, clip, spectrum, variation and scene contrast at exact producing head 32607d8639e2f923c149a8bd483564b5b1674d69. This is studio signal QA ONLY, not real game QA.",
+    "technicalApproval": "PASS actual original source identity / real encoded MP3 decoded signal, SHA256/bytes and exact reproducible daylight studio runs #41227391733. Six-scene Stage2 studio complete in night/Crown ledger #41228571725. No playable-source game mix test.",
     "listeningApproval": "HOLD: nobody has yet approved by hearing the actual output in context; recognizable birds/frogs and low-step water remain risks",
     "registration": "NO",
     "merged": "NO",
@@ -121,7 +121,9 @@
     "firstCandidateSignalRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226930949",
     "firstCandidateDiagnosis": "Vale decoded jump 0.00688785 BLOCK; March decoded jump 0.00067574 PASS. Both envelope deltas within 4.25 dB. Repair only Vale; no acceptance yet.",
     "browserPlayback": "NOT TESTED with these candidate recordings, which are unregistered",
-    "cacheBudget": "PENDING: two 72s decoded mono float32 PCM buffers consume 18,432,000 bytes (~17.58 MiB) if both resident. Previous browser peak 84.80 MiB /96MiB; adding both without intelligent eviction could exceed cap. Evaluate during Stage 6 before registration."
+    "cacheBudget": "PENDING: two 72s decoded mono float32 PCM buffers consume 18,432,000 bytes (~17.58 MiB) if both resident. Previous browser peak 84.80 MiB /96MiB; adding both without intelligent eviction could exceed cap. Evaluate during Stage 6 before registration.",
+    "stage2Exit": "Authoring/standalone audio signal-production complete (6 previews across two ledgers); not registered, not merge/deploy, artwork and ecology/hearing hold. Stage6 gameplay/music/offline/cache and Stage7 human ear required before audio acceptance.",
+    "artisticHearing": "NOT DONE; original small park birds before rain and low-river-step with frogs/birds may not fit Greenwood or the Marches, review actual preview before any promotion."
   },
   "encodedPreviews": {
     "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41227145631",
