@@ -2,6 +2,8 @@
 
 ## Phase 5 owner-directed musical-source re-audit (31 October 2026)
 
+**New mandatory gate:** Distinct TRUE prose and a working encoder are not enough when many simultaneous main and counterphrase accented notes grind against unrelated chord roots. Selected scored TRUE arrival bars now intentionally voice the chord on the accent; other melodic tensions are retained and individually reviewed. The glockenspiel written parts must also stay within the actual two-sample G5/C6 source coverage after whole-phrase revoicing, not silently octave fold or undergo extreme interpolation. No sound-by-ear quality pass is claimed.
+
 The initial Phase 5 16/16 technical PASS did not cover all musical craft mandated by this sound bible: six inherited boss opening melodies were reharmonized without review; Mirejaw/Drowned Keeper TRUE glockenspiel and Ridge TRUE cello could invert their own played intervals via silent note-by-note octave correction; and original/performed comparisons did not inspect full-form notes delivered to the sampler. These are **actual source defects**, not mere unauditioned sonic risks. [The revised Phase 5 adversarial review](AUDIO_PHASE5_CRITICAL_REVIEW.md#independent-adversarial-audit--source-revise-until-revised-exact-source-validation) and source/negative tests now require full chord inheritance, explicit TRUE registers, evidenced tonic returns and measured performed MIDI at the sampler boundary. The previous green MP3s are superseded when source changes; rerender exact new code before accepting the source/isolated technical milestone. Sound-by-ear remains UNVERIFIED, first owner audition Phase 9, all 18 Dark Crown recordings protected.
 
 

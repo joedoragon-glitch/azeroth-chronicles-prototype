@@ -56,9 +56,21 @@ for key in ('mire','archive'):
     fam=next(f for f in data['families'] if f['key']==key)
     assert boss.verify_true_register(fam)['range'][0]>=77
     wrong=copy.deepcopy(fam)
-    wrong['trueRegister']=12
+    wrong['trueRegister']=0
     reject(lambda:boss.verify_true_register(wrong),
            'TRUE chime requires stable written audible octave')
+    far=copy.deepcopy(fam)
+    far['trueRegister']+=12
+    reject(lambda:boss.verify_true_register(far),
+           'TRUE chime source pitch shift exceeds 4 semitones')
+for fam in data['families']:
+    assert boss.verify_true_chord_anchors(fam)>0
+    changed=copy.deepcopy(fam)
+    first=changed['trueChordAnchors'][0]-1
+    accent=next(x for x in changed['trueBars'][first] if x[0]<=.4)
+    accent[1]+=1
+    reject(lambda:boss.verify_true_chord_anchors(changed),
+           'TRUE accented chord anchor drift')
 ridge=next(f for f in data['families'] if f['key']=='ridge')
 assert boss.verify_true_register(ridge)['range'][1]<=71
 wrong=copy.deepcopy(ridge);wrong['trueRegister']=12

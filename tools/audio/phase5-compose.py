@@ -55,13 +55,53 @@ def verify_true_register(family):
     notes = note_events(family, "true")
     pitches = [e[1] for e in notes]
     if family["response"] == "glockenspiel":
-        assert 77 <= min(pitches) and max(pitches) <= 108, (
+        assert 75 <= min(pitches) and max(pitches) <= 88, (
             family["id"] + ": TRUE chime requires stable written audible octave")
+        bank = json.loads((ROOT / "tools/audio/phase3-sample-bank.json")
+                          .read_text(encoding="utf-8"))
+        recorded = [s["midi"] for s in
+                    bank["instruments"]["glockenspiel"]["samples"]]
+        assert recorded and all(min(abs(m - s) for s in recorded) <= 4
+                                for m in pitches), (
+            family["id"] + ": TRUE chime source pitch shift exceeds 4 semitones")
     if family["response"] == "cello":
         assert max(pitches) <= 71 and min(pitches) >= 36, (
             family["id"] + ": TRUE cello would silently octave-fold")
     return {"cue": family["trueId"], "range": [min(pitches), max(pitches)],
             "response": family["response"]}
+
+
+
+TRUE_ANCHOR_MINIMA = {"thorn": 7, "crypt": 6, "mire": 5, "archive": 4,
+                      "ridge": 11, "mine": 6, "warlord": 10, "abyss": 11}
+MODE_SCALE = {"minor": (0, 2, 3, 5, 7, 8, 10),
+              "dorian": (0, 2, 3, 5, 7, 9, 10)}
+
+
+def verify_true_chord_anchors(family):
+    """Review hand-authored strong beats against actual accompaniment triads.
+
+    Intentionally suspended/offbeat notes are allowed elsewhere. The source
+    selects explicit arrival bars; this does not blindly snap every note.
+    """
+    scale = MODE_SCALE[family["mode"]]
+    bars = family["trueChordAnchors"]
+    assert len(bars) >= TRUE_ANCHOR_MINIMA[family["key"]], (
+        family["id"] + ": insufficient reviewed TRUE harmonic anchors")
+    assert bars == sorted(set(bars))
+    assert {int(k) for k in family["trueHarmonicAdaptations"]} == set(bars)
+    for number in bars:
+        chord = family["harmony"][number - 1]
+        pcs = {(scale[(chord + voice) % 7] +
+                12 * ((chord + voice) // 7)) % 12 for voice in (0, 2, 4)}
+        accented = [note for note in family["trueBars"][number - 1]
+                    if note[0] <= .4]
+        assert accented and all((note[1] % 12) in pcs
+                                for note in accented), (
+            family["id"] + ": TRUE accented chord anchor drift bar " +
+            str(number))
+    return len(bars)
+
 
 
 def source_contract():
@@ -95,6 +135,7 @@ def source_contract():
         assert family["leadBars"][-1][-1][1] == 0, (
             cue + ": no returning tonic in completed boss base")
         verify_true_register(family)
+        verify_true_chord_anchors(family)
         assert len(family["identity"]) >= 65 and len(family["truePsychology"]) >= 80
         assert len(family["harmony"]) == family["bars"] == len(family["energy"])
         assert len(family["leadBars"]) == len(family["trueBars"]) == family["bars"]
@@ -211,7 +252,7 @@ def render_part(family, part, shared, sampler, played_notes=None):
             midi -= 12
         elif inst == "flute" and midi < 60:
             midi += 12
-        if inst == "glockenspiel" and midi < 77:
+        if inst == "glockenspiel" and midi < 75:
             raise ValueError(family["id"] + ": unscored chime octave folding")
         if performed_role is not None:
             if midi != written_midi:

@@ -22,11 +22,24 @@ for(const [i,f] of s.families.entries()){
  assert.equal(f.leadBars.at(-1).at(-1)[1],0,'final base cadence lacks return to tonic');
  for(const k of ['harmony','energy','leadBars','trueBars'])assert.equal(f[k].length,f.bars);
  assert.notDeepEqual(f.leadBars,f.trueBars);
+ const expectedAnchors={thorn:7,crypt:6,mire:5,archive:4,ridge:11,mine:6,warlord:10,abyss:11};
+ assert.equal(f.trueChordAnchors.length,expectedAnchors[f.key]);
+ assert.deepEqual(Object.keys(f.trueHarmonicAdaptations).map(Number).sort((a,b)=>a-b),f.trueChordAnchors);
+ const scales={minor:[0,2,3,5,7,8,10],dorian:[0,2,3,5,7,9,10]};
+ const pc=x=>(x%12+12)%12;
+ const degree=k=>scales[f.mode][(k%7+7)%7]+12*Math.floor(k/7);
+ for(const bar of f.trueChordAnchors){
+   const triad=new Set([0,2,4].map(k=>pc(degree(f.harmony[bar-1]+k))));
+   const accented=f.trueBars[bar-1].filter(e=>e[0]<=.4);
+   assert.ok(accented.length>0 && accented.every(e=>triad.has(pc(e[1]))),
+     f.id+' unexpectedly unresolved TRUE chord anchor '+bar);
+ }
  if(f.leadRegisterByBar){assert.equal(f.leadRegisterByBar.length,f.bars);assert.deepEqual(f.leadRegisterByBar.slice(0,4),[f.register,f.register,f.register,f.register]);}
  if(f.key==='crypt') {assert.equal(f.trueRegister,0);assert.equal(f.pulseRegister,-12);}
  if(f.key==='ridge') {assert.equal(f.pulseRegister,-12);assert.ok(f.leadRegisterByBar.slice(4).includes(0));assert.equal(f.trueRegister,0);}
- if(f.key==='mire') assert.equal(f.trueRegister,36,'Mire TRUE chime requires a coherent scored register');
- if(f.key==='archive') assert.equal(f.trueRegister,24,'Keeper TRUE chime requires a coherent scored register');
+ if(f.key==='mire') assert.equal(f.trueRegister,24,'Mire TRUE chime requires a coherent scored register');
+ if(f.key==='archive') assert.equal(f.trueRegister,12,'Keeper TRUE chime requires a coherent scored register');
+ if(f.key==='warlord') assert.equal(f.trueRegister,0,'Warlord TRUE orders must occupy natural lower horn samples');
  if(f.key==='abyss') {assert.equal(f.companionRegister,0);assert.ok(f.leadRegisterByBar.slice(4).includes(0));}
  assert.ok(f.identity.length>=65 && f.truePsychology.length>=80);
  for(let t=0;t<16;t++){
