@@ -116,7 +116,7 @@ for(const item of regional.sources) {
   assert(item.evidence&&item.license&&item.creator,item.id+' provenance absent');
 }
 assert.equal(former.status.registered,'NO');
-assert.equal(regional.status.sourceInGame,'NO');
+assert.match(regional.status.sourceInGame,/^NO(?:\b|;)/, 'New source registrations are explicitly pending');
 assert.equal(regional.status.artisticAcousticHearing.startsWith('UNVERIFIED'),true);
 assert.equal(regional.status.ownerFinalAcceptance.startsWith('HOLD'),true);
 assert.equal(regional.status.merged,'NO');
