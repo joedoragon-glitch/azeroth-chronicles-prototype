@@ -238,6 +238,7 @@ def main():
             print('PASS SOURCE PROBE ONLY: exact bytes and hashes recorded; no candidate produced', flush=True)
             return
         reports = []
+        signal_blocks = []
         rendered = {}
         for cue in book["studies"]:
             identifier = cue["id"]
@@ -321,8 +322,17 @@ def main():
             # naturally turbulent recorded field air can straddle the window.
             # Keep the actual measured delta visible; don't flatten a genuine
             # long-form field recording simply to satisfy a 0.011dB mismatch.
-            if abs(edge_envelope_db) > 4.25 or edge > .005:
-                raise ValueError('Loop edge has an excessive sample/envelope mismatch')
+            edge_block = abs(edge_envelope_db) > 4.25 or edge > .005
+            print('LOOP_QA', json.dumps({'id': identifier,
+                'edgeSampleDelta': edge, 'firstLast1sDb': round(edge_envelope_db, 3),
+                'maxEdgeSampleDelta': .005, 'maxEnvelopeDb': 4.25,
+                'pass': not edge_block}), flush=True)
+            if edge_block:
+                # Still collect all preview measurements so the designer can
+                # diagnose both source intervals; FAIL at end, NEVER promote.
+                signal_blocks.append({'id': identifier, 'edgeSampleDelta': edge,
+                                      'firstLast1sDb': round(edge_envelope_db, 3),
+                                      'reason': 'decoded MP3 loop boundary quality'})
             measured_true_peak = actual_true_peak(target_file)
             if measured_true_peak >= -1.5:
                 raise ValueError('Actual encoded true peak too close to clipping')
@@ -348,7 +358,8 @@ def main():
                       'correlations24s':block_correlations,
                       'sparsePhysicalEvents':event_stats,
                       'catalogRegistered':False, 'genuinelyHeard':False,
-                      'artisticApproval':'HOLD'}
+                      'artisticApproval':'HOLD',
+                      'signalGate':'BLOCK' if edge_block else 'PASS'}
             reports.append(report)
             rendered[identifier] = decoded
             print('CANDIDATE',json.dumps(report),flush=True)
@@ -367,9 +378,13 @@ def main():
         result={'productionShaSource':'read from Actions run', 'sources':provenance,
                 'candidates':reports,'sceneCrossContrasts':contrast,
                 'boundary':'NO game registration; NO merge or Pages; no hearing/physical-speaker approval',
+                'signalQualityBlocks':signal_blocks,
+                'technicalAcceptance':'BLOCK' if signal_blocks else 'CANDIDATE SIGNAL PASS / ARTISTIC HOLD',
                 'encodedTotalBytes':sum(x['bytes'] for x in reports),
                 'decodedTotalBytesIfBothCached':2*LENGTH*4}
         (OUT / 'outdoor-studio-measurements.json').write_text(json.dumps(result,indent=2)+'\n')
+        if signal_blocks:
+            raise ValueError('Candidate decoded loop quality BLOCKS: ' + json.dumps(signal_blocks))
         print('PASS: two 72s distinct source-verified outdoor encoded PREVIEWS; artistic HOLD; runtime untouched',flush=True)
 
 
