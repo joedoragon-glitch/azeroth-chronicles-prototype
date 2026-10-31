@@ -78,25 +78,42 @@ const server=http.createServer((req,res)=>{
         // The test server changes the published *files* without allowing a
         // public deployment. update() is the actual Service Worker update path.
         serveNew=true;
-        const upgraded=await page.evaluate(async suffix=>{
-          const deadline=Date.now()+120000;
-          const reg=await navigator.serviceWorker.ready;
-          await reg.update();
-          while(Date.now()<deadline){
-            const current=await navigator.serviceWorker.getRegistration();
-            if(current?.waiting)current.waiting.postMessage({type:'SKIP_WAITING'});
-            const names=(await caches.keys()).filter(n=>n.startsWith('azeroth-app-v'));
-            if(names.length===1&&names[0].endsWith(suffix)&&navigator.serviceWorker.controller){
+        // At the title screen the real game may automatically reload after
+        // discovering a waiting worker. Start the update without awaiting a
+        // long Promise within one document; survive legitimate navigations.
+        await page.evaluate(()=>{
+          navigator.serviceWorker.ready.then(reg=>reg.update()).catch(error=>{
+            console.error('Stage6 worker update start:',error.message);
+          });
+        });
+        let upgraded=null,updateDiagnostic=null;
+        const deadline=Date.now()+120000;
+        while(Date.now()<deadline){
+          try{
+            const state=await page.evaluate(async suffix=>{
+              const current=await navigator.serviceWorker.getRegistration();
+              if(current?.waiting)current.waiting.postMessage({type:'SKIP_WAITING'});
+              const names=(await caches.keys()).filter(n=>n.startsWith('azeroth-app-v'));
+              if(names.length!==1||!names[0].endsWith(suffix)||!navigator.serviceWorker.controller)
+                return {done:false,names,controlled:!!navigator.serviceWorker.controller,
+                  installing:current?.installing?.state||null,waiting:current?.waiting?.state||null};
               const cache=await caches.open(names[0]);
               const catalog=await cache.match(new URL('./assets/audio/manifest.json',location.href));
               if(!catalog?.ok)throw Error('Updated manifest absent from active offline cache');
               const manifest=await catalog.json();
-              return {names,entries:(await cache.keys()).length,assets:Object.keys(manifest.assets).length};
-            }
-            await new Promise(done=>setTimeout(done,300));
+              return {done:true,names,entries:(await cache.keys()).length,assets:Object.keys(manifest.assets).length};
+            },nextVersion);
+            updateDiagnostic=state;
+            if(state.done){upgraded=state;break;}
+          }catch(error){
+            // A document navigation destroys the former JS execution context;
+            // it is normal for the app's title-screen update coordinator.
+            if(!/Execution context was destroyed|navigation|Target closed/.test(error.message))
+              throw error;
           }
-          throw Error('SW updated release never activated and cleaned prior cache');
-        },nextVersion);
+          await new Promise(done=>setTimeout(done,350));
+        }
+        assert(upgraded,'PWA incremental update did not activate: '+JSON.stringify(updateDiagnostic));
         assert.equal(upgraded.names.length,1);
         assert(upgraded.names[0].endsWith(nextVersion));
         assert.equal(upgraded.assets,147);
