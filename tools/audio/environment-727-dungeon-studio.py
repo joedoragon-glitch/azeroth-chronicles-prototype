@@ -74,6 +74,33 @@ def file_sha(path):
     return h.hexdigest()
 
 
+def soft_loop_envelope_match(data, policy):
+    """Bounded, slowly tapered seam-energy correction for measured room only."""
+    if not policy:
+        return data
+    seconds=float(policy["windowSeconds"])
+    target=float(policy["targetFirstLast1sDb"])
+    limit=float(policy["maxCompensationDb"])
+    if not (2 <= seconds <= 4 and 2.5 <= target <= 4 and 0 < limit <= 1.8):
+        raise ValueError("Invalid acoustic room edge policy")
+    first=lib.rms(data[:RATE])
+    last=lib.rms(data[-RATE:])
+    difference=20*math.log10(max(first,1e-10)/max(last,1e-10))
+    if abs(difference) <= target:
+        return data
+    correction=min(abs(difference)-target,limit)
+    start_db=-math.copysign(correction/2,difference)
+    end_db=math.copysign(correction/2,difference)
+    n=round(seconds*RATE)
+    ease=(1-np.cos(np.linspace(0,np.pi,n)))/2
+    out=data.copy()
+    out[:n] *= 10**(start_db/20)*(1-ease) + ease
+    out[-n:] *= 1-ease + 10**(end_db/20)*ease
+    print("ENCLOSURE_SEAM_REPAIR",json.dumps({"sourceFirstLast1sDb":difference,
+        "correctionDb":correction,"seconds":seconds,"qualityGateDbUnchanged":4.25}),flush=True)
+    return out
+
+
 def event_clip(raw, e):
     start = round(float(e["start"]) * RATE)
     count = round(float(e["duration"]) * RATE)
@@ -204,6 +231,7 @@ def main():
             raw *= level
             pre_peak = float(np.max(np.abs(raw)))
             raw = lib.transparent_peak_knee(raw)
+            raw = soft_loop_envelope_match(raw, cue.get("envelopeEdgeMatch"))
             raw = lib.codec_edge_declick(raw, cue.get("codecEdgeDeclick"))
             audio_path = OUT / (name + ".mp3")
             decoded = lib.encode(raw, audio_path)
@@ -251,6 +279,7 @@ def main():
                       "loopSampleJump":edge,"loopOneSecondEnvelopeDb":seam_db,
                       "oneSecMaxCrestDb":crest,"three24sBlockCorrelations":correlations,
                       "spectrumEnergy":spec,"sparseFoley":foley_report,
+                      "envelopeEdgeMatch":cue.get("envelopeEdgeMatch"),
                       "roomReflectionsMs":cue["reflectionMs"],"roomType":cue["room"],
                       "humanHeard":False,"registeredInGame":False,"creativeApproval":"HOLD",
                       "technicalSignal":"BLOCK" if failures else "PASS"}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 3 of #727: five canon-specific main dungeon recorded-source ambience production studio",
-  "status": "ALL 8 PHYSICAL ORIGINAL SOURCES INDEPENDENTLY FINGERPRINTED PASS #41230940635, candidate audio production/encoded analysis next; original game audio untouched",
+  "status": "Initial source-led 5 MP3s: Forest Crypt, Archive, Mine, Bastion PASS; Citadel first/last1s envelope BLOCK -4.632dB; bounded source-local correction now pending new real MP3 decode. All existing game audio untouched.",
   "parent": "tools/audio/environment-727-outdoor-expansion.json",
   "authority": "Issue #727 Stage1 creative brief; docs/AUDIO_ENVIRONMENT.md; docs/ABYSS_AIR_SUPERIORITY_CANON.md and src/prototype rules/data; current manifest",
   "sources": [
@@ -217,9 +217,10 @@
           "at": 43.3,
           "start": 4.1,
           "duration": 0.58,
-          "peak": 0.026,
+          "peak": 0.046,
           "lowpassHz": 1550,
-          "highpassHz": 210
+          "highpassHz": 210,
+          "reason": "Recorded book handling originally -17.49dB vs bed and likely buried. Conservative local increase to keep physically purposeful, but still requires source-interval ear judgment for potential paper tearing."
         }
       ],
       "description": "Active effort to save books/records amid water, physically enclosed; one distant paper touch that should not sound like ripping or shredding; existing subtle water director details preserved. Do not invent flood cause.",
@@ -343,13 +344,20 @@
           "at": 59.4,
           "start": 0,
           "duration": 0.28,
-          "peak": 0.018,
+          "peak": 0.029,
           "lowpassHz": 1350,
-          "highpassHz": 250
+          "highpassHz": 250,
+          "reason": "Sparse material gesture was ~15.52dB beneath unmastered bed; raise only this object's recorded excerpt; never boost the global ambience mix."
         }
       ],
       "description": "Command/administration, organized material, restrained stone architecture; less bass-dominant than original without global volume change, occasional distant paper/equipment only.",
-      "negative": "no ominous machinery rhythm, permanent wrenches, voice/crowd, lava roar"
+      "negative": "no ominous machinery rhythm, permanent wrenches, voice/crowd, lava roar",
+      "envelopeEdgeMatch": {
+        "windowSeconds": 3.5,
+        "targetFirstLast1sDb": 3.3,
+        "maxCompensationDb": 1.8,
+        "reason": "Decoded Citadel initial firstLast1s=-4.6318dB FAIL vs unchanged ±4.25dB limit, despite clean sample join 0.00077; bounded scene-local gradual edge energy adjustment only."
+      }
     }
   ],
   "hardConstraints": {
@@ -368,7 +376,8 @@
     "sceneRouting": "Original 18 rules, 19 locations, 14 original and 4 #711 MP3s unchanged",
     "regressionScope": "exact five native routes and night/SFX/music preservation; max 5 source-authored studio previews; no runtime registration",
     "notes": "This is an offline comparative studio, never automatically a shipped replacement. 5x 72s float32 mono buffers ~43.95MiB if all resident, currently 96MiB cache with earlier observed 84.80MiB peak; Stage6 must explicitly solve caching/eviction.",
-    "sourceAuthenticity": "PASS all original 8 SHA-1/SHA-256/bytes/FFprobe in GH Actions #41230940635; all licenses from original creator/public-domain pages, hearing unverified"
+    "sourceAuthenticity": "PASS all original 8 SHA-1/SHA-256/bytes/FFprobe in GH Actions #41230940635; all licenses from original creator/public-domain pages, hearing unverified",
+    "initialStudioRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231085791"
   },
   "rejected": [
     "Generic horror dungeon music or dark drones",
