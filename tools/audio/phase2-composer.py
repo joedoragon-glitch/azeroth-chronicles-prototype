@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import tempfile
 import wave
+import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 PILOTS = ROOT / "tools/audio/phase2-pilots.json"
@@ -84,12 +85,19 @@ def check_contract():
 
 
 def load_renderer():
-    spec = importlib.util.spec_from_file_location(
-        "original_score_renderer", ROOT / "tools/audio/render-score.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    # Loading by filename does not put the renderer's sibling module on sys.path.
+    # Restore the original import search path after the module is initialized.
+    local_dir = str(ROOT / "tools/audio")
+    sys.path.insert(0, local_dir)
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "original_score_renderer", ROOT / "tools/audio/render-score.py"
+        )
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        sys.path.remove(local_dir)
 
 
 def render_family_stem(family, part, renderer):
@@ -219,7 +227,21 @@ def render_family_stem(family, part, renderer):
     return signal, rate
 
 
-def encode_stem(out_dir, cue_id, signal, rate):
+def find_ffmpeg():
+    executable = shutil.which("ffmpeg")
+    if executable:
+        return executable
+    # CI runners need not have the system encoder. The fallback is an
+    # explicit Python dependency with a self-contained ffmpeg binary.
+    try:
+        import imageio_ffmpeg
+    except ImportError:
+        return None
+    executable = imageio_ffmpeg.get_ffmpeg_exe()
+    return executable if Path(executable).is_file() else None
+
+
+def encode_stem(out_dir, cue_id, signal, rate, ffmpeg):
     import numpy as np
     guard = round(.15 * rate)
     loop_samples = len(signal)
@@ -233,11 +255,11 @@ def encode_stem(out_dir, cue_id, signal, rate):
             wav.setframerate(rate)
             wav.writeframes(pcm.tobytes())
         target = out_dir / (cue_id + ".mp3")
-        subprocess.run(["ffmpeg", "-nostdin", "-hide_banner", "-loglevel", "error",
+        subprocess.run([ffmpeg, "-nostdin", "-hide_banner", "-loglevel", "error",
                         "-y", "-i", str(wav_path), "-codec:a", "libmp3lame",
                         "-b:a", "96k", "-write_xing", "1", "-map_metadata", "-1",
                         str(target)], check=True)
-    raw = subprocess.check_output(["ffmpeg", "-nostdin", "-hide_banner", "-loglevel",
+    raw = subprocess.check_output([ffmpeg, "-nostdin", "-hide_banner", "-loglevel",
                                    "error", "-i", str(target), "-f", "f32le",
                                    "-ac", "1", "-ar", str(rate), "pipe:1"])
     decoded = np.frombuffer(raw, dtype="<f4")
@@ -245,7 +267,11 @@ def encode_stem(out_dir, cue_id, signal, rate):
     rms = float(np.sqrt(np.mean(decoded ** 2)))
     if not np.isfinite(decoded).all() or peak >= .98 or rms <= .005:
         raise RuntimeError("Invalid decoded pilot: " + cue_id)
+    if len(decoded) < guard + loop_samples:
+        raise RuntimeError("Incomplete decoded MP3 loop: " + cue_id)
     return {"cue": cue_id, "seconds": round(loop_samples / rate, 6),
+            "decodedSamples": int(len(decoded)),
+            "expectedSamples": int(len(extended)),
             "loop": {"start": guard / rate, "end": (guard + loop_samples) / rate},
             "encodedBytes": target.stat().st_size,
             "sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
@@ -270,17 +296,19 @@ def main():
     out = args.render.expanduser().resolve()
     if out == ROOT or out.is_relative_to(ROOT):
         parser.error("Pilot output must be OUTSIDE the repository, never live assets")
-    if shutil.which("ffmpeg") is None:
-        parser.error("ffmpeg is required for pilot MP3 validation")
+    ffmpeg = find_ffmpeg()
+    if not ffmpeg:
+        parser.error("ffmpeg or the imageio-ffmpeg fallback is required for pilot MP3 validation")
     out.mkdir(parents=True, exist_ok=True)
     renderer = load_renderer()
     metrics = []
     previews = {}
+    overlays = []
     for family in book["families"]:
         for cue in family["cues"]:
             samples, rate = render_family_stem(family, cue["part"], renderer)
             previews[cue["id"]] = samples
-            metrics.append(encode_stem(out, cue["id"], samples, rate))
+            metrics.append(encode_stem(out, cue["id"], samples, rate, ffmpeg))
             print("Rendered internal pilot", cue["id"], metrics[-1]["seconds"], "seconds")
         base, second = [previews[cue["id"]] for cue in family["cues"]]
         if base.shape != second.shape:
@@ -289,9 +317,17 @@ def main():
         overlay_gain = .55 if family["context"] == "boss-true" else (
             .5 if family["cues"][1]["part"] == "action" else 0)
         if overlay_gain:
-            combined_peak = float(np.max(np.abs(.85 * base + overlay_gain * second)))
+            combined = .85 * base + overlay_gain * second
+            combined_peak = float(np.max(np.abs(combined)))
             if combined_peak >= .98:
                 raise RuntimeError("Potential pilot overlay clipping: " + family["family"])
+            overlays.append({"family": family["family"],
+                             "baseGain": .85, "secondGain": overlay_gain,
+                             "peak": round(combined_peak, 5),
+                             "rms": round(float(np.sqrt(np.mean(combined ** 2))), 5)})
+        else:
+            # The interior variant is a replacement peace mix, not an overlay.
+            overlays.append({"family": family["family"], "mode": "alternate"})
     # Production routing never reads this standalone report.
     total_current = sum((ROOT / a["src"]).stat().st_size for a in catalog["assets"].values()
                         if a.get("src", "").startswith("./assets/audio/"))
@@ -301,6 +337,7 @@ def main():
     report = {"schemaVersion": 1, "scope": "unpublished internal Phase 2 pilot",
               "crownFrozen": len(frozen), "musicRegistered": 83,
               "pilotFamilies": 4, "pilotStems": metrics,
+              "pilotPairOverlays": overlays,
               "encodedBudgetBytes": LIMIT_BYTES,
               "originalCatalogBytes": total_current,
               "pilotReplacementProjectionBytes": total_current - original_pilot + new_pilot,

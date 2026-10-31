@@ -110,13 +110,20 @@ if (
   };
   runChecked('python3', ['-m', 'venv', venv], 60000);
   runChecked(py, ['-m', 'pip', 'install', '--disable-pip-version-check', '--quiet',
-    'numpy==2.2.6', 'scipy==1.16.1'], 180000);
+    'numpy==2.2.6', 'scipy==1.16.1', 'imageio-ffmpeg==0.6.0'], 180000);
   runChecked(py, ['tools/audio/phase2-composer.py', '--render', outputDir], 540000);
   const report = JSON.parse(fs.readFileSync(path.join(outputDir, 'pilot-metrics.json'), 'utf8'));
   assert.equal(report.musicRegistered, 83);
   assert.equal(report.crownFrozen, 18);
   assert.equal(report.pilotFamilies, 4);
   assert.equal(report.pilotStems.length, 8);
+  assert.equal(report.pilotPairOverlays.length, 4);
+  for (const overlay of report.pilotPairOverlays) {
+    if (overlay.mode !== 'alternate') {
+      assert(overlay.peak > 0 && overlay.peak < .98, overlay.family + ' overlay peak');
+      assert(overlay.rms > 0 && overlay.rms < .5, overlay.family + ' overlay RMS');
+    }
+  }
   assert(report.headroomAfterPilotProjectionBytes > 0, '32 MiB catalog budget breached');
   for (const item of report.pilotStems) {
     assert(item.decodedPeak > 0 && item.decodedPeak < .98, item.cue + ' decoded peak');
@@ -124,6 +131,9 @@ if (
     assert(item.encodedBytes > 0 && item.encodedBytes < 8 * 1024 * 1024, item.cue + ' size');
     assert(fs.existsSync(path.join(outputDir, item.cue + '.mp3')), item.cue + ' missing MP3');
     assert(item.loop.end > item.loop.start);
+    assert(item.decodedSamples >= item.expectedSamples - 32,
+      item.cue + ' unexpected MP3 decoder padding');
+    assert(item.loopEdgeDelta < .2, item.cue + ' suspicious loop boundary');
   }
   console.log('PHASE2_INTERNAL_RENDER_METRICS=' + JSON.stringify(report));
   console.log('PASS eight isolated MP3 previews rendered/decoded and frozen Crown content rechecked; do not treat this as an audition or deployment');
