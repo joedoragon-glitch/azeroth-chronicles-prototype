@@ -50,7 +50,7 @@ for (const boss of data.bosses) {
 }
 assert.equal(data.bosses.length, 11);
 assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'music').length, 83);
-assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'ambience').length, 18);
+assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'ambience').length, 34);
 for (const zone of Object.keys(production.places)) {
   const interior = zone.startsWith('supply-')
     ? 'treasury'
