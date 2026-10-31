@@ -23,13 +23,17 @@ function pixiFixture(){
     constructor(){
       this.position={x:0,y:0,set:(x,y)=>{this.position.x=x;this.position.y=y}};
       this.blendMode='normal';this.circles=[];this.rects=[];this.ellipses=[];this.strokes=[];this.fills=[];
+      this.scale={x:1,y:1,set:(x,y)=>{this.scale.x=x;this.scale.y=y}};
+      this.curves=[];this.lines=[];this.closed=0;
     }
-    clear(){this.circles=[];this.rects=[];this.ellipses=[];this.strokes=[];this.fills=[];return this;}
+    clear(){this.circles=[];this.rects=[];this.ellipses=[];this.strokes=[];this.fills=[];this.curves=[];this.lines=[];this.closed=0;return this;}
     circle(...args){this.circles.push(args);return this;}
     rect(...args){this.rects.push(args);return this;}
     ellipse(...args){this.ellipses.push(args);return this;}
     moveTo(x,y){this.lastPoint=[x,y];return this;}
-    lineTo(x,y){this.lastEnd=[x,y];return this;}
+    lineTo(x,y){this.lastEnd=[x,y];this.lines.push([x,y]);return this;}
+    quadraticCurveTo(...args){this.curves.push(args);return this;}
+    closePath(){this.closed++;return this;}
     stroke(g){this.strokes.push(g);return this;}
     fill(g){this.fillStyle=g;this.fills.push(g);calls.glows++;return this;}
     destroy(){}
@@ -77,6 +81,51 @@ test('real sprite atlas frames move as Pixi scene nodes without Canvas painting'
   assert.equal(calls.render,1);
   assert.equal(calls.images,1,'same frame atlas subtexture is cached');
   bridge.destroy();
+});
+test('Frontier raster recovery shoots are depth-sorted GPU geometry without extra textures',()=>{
+  const {PIXI,app,calls}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:640,height:360});
+  scene.registerTexture('hero.png',picture());
+  const id='frontier-burned-12';
+  const tree={...actor('burned-tree',90,5),frontierShoots:{
+    id,x:94,y:123,zoom:1.5,visualScale:1.25,flipX:false
+  }};
+  scene.syncActors([actor('foreground',220,10),tree,actor('background',20,0)]);
+  const stage=app.stage.children[0].children[1];
+  assert.equal(stage.children.length,4,'tree has raster + shoots, other actors only raster');
+  const [background,trunk,shoots,foreground]=stage.children;
+  assert.equal(background.position.x,20);
+  assert.equal(trunk.position.x,90);
+  assert.equal(foreground.position.x,220);
+  assert(shoots instanceof PIXI.Graphics,'native vector geometry');
+  assert.equal(shoots.position.x,94);
+  assert.equal(shoots.position.y,123);
+  assert.equal(shoots.scale.x,1.875);
+  const seed=String(id).split('').reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7);
+  assert.equal(shoots.strokes.length,2+(seed%3!==0?1:0));
+  assert.equal(shoots.curves.length,shoots.strokes.length,'curved stems retained');
+  assert.equal(shoots.closed,shoots.strokes.length*3,'colored leaves retained');
+  assert.equal(shoots.fills.length,shoots.strokes.length*3);
+  assert.equal(shoots.strokes[0].color,0x6f8050);
+  assert.deepEqual(shoots.curves[0],[-13,-17,-12,-22],
+    'original first stem control/end points');
+  assert.equal(calls.images,1,'one preexisting shared sprite atlas frame');
+  const leaves=shoots.fills.length;
+  scene.syncActors([{...tree,frontierShoots:{...tree.frontierShoots,
+    x:120,y:142,zoom:2,flipX:true}}]);
+  assert.equal(stage.children[1],shoots,'zoom/reentry reuses GPU geometry');
+  assert.equal(shoots.scale.x,-2.5);
+  assert.equal(shoots.scale.y,2.5);
+  assert.equal(shoots.position.x,120);
+  assert.equal(shoots.fills.length,leaves,'identity unchanged: no redraw');
+  assert.equal(calls.images,1,'no GPU textures created by zoom');
+  scene.syncActors([{...tree,frontierShoots:null}]);
+  assert.equal(stage.children.length,1,'no shoots outside eligible renderer path');
+  scene.syncActors([tree]);
+  assert.equal(stage.children.length,2,'reentry draws foliage again');
+  scene.syncActors([]);
+  assert.equal(stage.children.length,0,'offscreen overlays cleaned up');
+  scene.destroy();
 });
 test('issue #708 live liquid strokes stay between cached background and depth-sorted actors',()=>{
   const {PIXI,app}=pixiFixture();
