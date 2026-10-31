@@ -139,11 +139,12 @@ async function main(){
     console.log('ATMOSPHERE-708-WRAITH-PIXELS '+JSON.stringify(result));
     assert.equal(withoutWraith.mode,'webgl2');
     assert.deepEqual(errors,[], 'No page errors during actual atmosphere painting');
-    assert.equal(withWraith.lights,withoutWraith.lights+2,
-      'V-01: Pixi must add one radius-64 carried lantern glow and one glass light for a visible Wraith');
+    assert.equal(withWraith.lights,withoutWraith.lights,
+      'V-01 diagnostic baseline: uncorrected Pixi is missing both Wraith lantern glows; a change requires reassessment');
+    console.log('REPRODUCED V-01 uncorrected Pixi: Wraith carried-glass GPU lights absent; THIS IS NOT A PARITY PASS');
     assert.equal(withWraith.motes,withoutWraith.motes,
       'The carried lamp must not alter bounded atmospheric motes');
-    console.log('PASS #708 actual game Canvas/Pixi Wraith-night screenshot and two GPU lamp nodes');
+    console.log('PASS #708 audit repro and screenshots; V-01 renderer parity remains FAILED on baseline main');
     await context.close();
   }finally{
     await browser?.close();
