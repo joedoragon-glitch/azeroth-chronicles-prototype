@@ -32,6 +32,7 @@ jobs:
       - name: Independent encoded roster, eight overlays and technical checks
         run: |
           python tools/audio/score-quality-controls.py "$RUNNER_TEMP/phase5-isolated/phase5-metrics.json" --expected-count 16 --layer-count 8 --expected-source tools/audio/phase5-scores.json --expected-list-key cues
+          python tests/audio-phase5-quality.test.py "$RUNNER_TEMP/phase5-isolated/phase5-metrics.json"
           cp "$RUNNER_TEMP/phase5-isolated/phase5-metrics.json" phase5-metrics.json
       - name: Save metrics only; no listening or publishing
         uses: actions/upload-artifact@v4

@@ -1,5 +1,10 @@
 # Curated artistic source and sample-palette workflow
 
+## Permanent lesson from Phase 5 owner-directed adversarial audit (31 October 2026)
+
+**Recorded-source melodic continuity is not just a declaration in JSON.** For every preserved passage, compare the original score's **actual harmonic accompaniment as well as played melody** (tempo, onset, length, pitch and octave). Inspect the recorded sampler's *final incoming MIDI note after all written register decisions*; a per-note pitch-range fallback can silently octave-fold one note of a phrase and invert the intended interval while codec and duration tests remain green. Write consistent whole-phrase source registers, document intentional harmony transformations and cadences, and require negative regressions that would reject old false passes. Compare actual instrument-boundary events through full forms, not just the opening hook or a helper that reads the same JSON twice. This supplements rather than replaces actual hearing. The owner's first soundtrack audition remains Phase 9; no recorded or integrated music is accepted solely from numerical evidence.
+
+
 **Standing creative-production practice — adopted 31 October 2026 by the project owner.**
 Applies when making or commissioning **SIBDLP music, sound, world/environment art, interiors, characters, interface graphics and related visual assets**. The same method is a reusable preference for other artistic commissions: choose meaningful reference material and palettes, preserve provenance, compose deliberately, and critically review the actual result. This is a quality-production method, **not permission to reuse proprietary artwork or publish anything**.
 

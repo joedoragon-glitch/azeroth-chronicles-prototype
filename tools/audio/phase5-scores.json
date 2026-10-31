@@ -95,8 +95,8 @@
       "register": 12,
       "harmony": [
         0,
+        5,
         3,
-        0,
         4,
         5,
         3,
@@ -393,7 +393,7 @@
           ],
           [
             2.1,
-            2,
+            0,
             0.7
           ]
         ]
@@ -658,7 +658,18 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop."
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop. The first four original chord roots are also restored and separately tested against the historical original renderer.",
+      "openingHarmonyHeritage": [
+        0,
+        5,
+        3,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "A held tonic against the later dominant in bar 12 remains a deliberately unresolved hunting pause; restored original opening chords frame the recognisable hunt.",
+        "cadence": "The last flute answer lands on the tonic in bar 16, closing its previous suspended ninth rather than resetting the loop in mid-question.",
+        "registerAndTrue": "The cello TRUE response stays low and does not reuse the original flute melody."
+      }
     },
     {
       "id": "boss-crypt",
@@ -679,7 +690,7 @@
       "register": 0,
       "harmony": [
         0,
-        1,
+        3,
         5,
         4,
         0,
@@ -1230,10 +1241,21 @@
         null
       ],
       "motifDisposition": "transformed",
-      "motifRationale": "The original four-bar cello melody retains its complete interval, onset and duration sequence but is transposed down exactly one octave to the recorded cello register. The obsolete 16-bar Phase 2 workshop pilot is not reused; new winter-estate drama and an independent TRUE countermelody requalify both cues.",
+      "motifRationale": "The original four-bar cello melody retains its complete interval, onset and duration sequence but is transposed down exactly one octave to the recorded cello register. The obsolete 16-bar Phase 2 workshop pilot is not reused; new winter-estate drama and an independent TRUE countermelody requalify both cues. The first four original chord roots are also restored and separately tested against the historical original renderer.",
       "trueRegister": 0,
       "companionRegister": 0,
-      "pulseRegister": -12
+      "pulseRegister": -12,
+      "openingHarmonyHeritage": [
+        0,
+        3,
+        5,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "The measured workshop phrase is allowed to suspend the tonic over the dominant on bars 8/12, implying an ethical choice withheld until the final tonic at 16.",
+        "cadence": "The final sustained cello tonic concludes the winter work without falsely resolving the Lifebinder's moral conflict.",
+        "registerAndTrue": "TRUE uses a consistently lower written horn register, preserving every local phrase interval and the quiet 3-note former-party fragment."
+      }
     },
     {
       "id": "boss-mire",
@@ -1648,7 +1670,19 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop."
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop. The first four original chord roots are also restored and separately tested against the historical original renderer.",
+      "openingHarmonyHeritage": [
+        0,
+        5,
+        3,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "The approach remains unsettled against an upper chord on bar 8; the predator's longer withheld gesture closes back on tonic in bar 12.",
+        "cadence": "TRUE's unresolved minor-seven at the loop end deliberately spills forward into the next stalking entry, not an accidental unreviewed cadence.",
+        "registerAndTrue": "The TRUE chime is authored uniformly in one high register: it may not octave-fold individual notes, which previously inverted intervals."
+      },
+      "trueRegister": 36
     },
     {
       "id": "boss-archive",
@@ -1669,8 +1703,8 @@
       "register": 12,
       "harmony": [
         0,
-        3,
         5,
+        3,
         4,
         0,
         1,
@@ -2204,7 +2238,19 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop."
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop. The first four original chord roots are also restored and separately tested against the historical original renderer.",
+      "openingHarmonyHeritage": [
+        0,
+        5,
+        3,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "The scholar's contested question falls across a dominant in bar 12; its learned piano line returns to the tonic at bar 16 instead of permanently resolving the argument.",
+        "cadence": "The TRUE final bell question remains suspended to meet the fresh piano entry, as an intentional contrapuntal question.",
+        "registerAndTrue": "The complete bell TRUE response stays in a single written sounding register above G5 and never uses per-note octave shuffling."
+      },
+      "trueRegister": 24
     },
     {
       "id": "boss-ridge",
@@ -2225,9 +2271,9 @@
       "register": 12,
       "harmony": [
         0,
-        4,
         3,
         5,
+        4,
         0,
         3,
         4,
@@ -2813,7 +2859,7 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop. The first four original chord roots are also restored and separately tested against the historical original renderer.",
       "leadRegisterByBar": [
         12,
         12,
@@ -2832,7 +2878,19 @@
         0,
         0
       ],
-      "pulseRegister": -12
+      "pulseRegister": -12,
+      "openingHarmonyHeritage": [
+        0,
+        3,
+        5,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "The ledger stamp with tonic over the bar-8 supertonic is deliberately a deferred payment, but the later account is counted back to tonic by bar 12/16.",
+        "cadence": "TRUE's written cello counters remain in one warm midrange and never silently fold high notes into a lower octave.",
+        "registerAndTrue": "The original horn's first four chords are reinstated, avoiding an unapproved opening reharmonization."
+      },
+      "trueRegister": 0
     },
     {
       "id": "boss-mine",
@@ -3538,8 +3596,19 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
-      "bassRegister": -5
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop. The first four original chord roots are also restored and separately tested against the historical original renderer.",
+      "bassRegister": -5,
+      "openingHarmonyHeritage": [
+        0,
+        5,
+        3,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "The architectural phrase keeps the dominantly suspended stone weight at bar 8/16, then resolves the human-scale oath on bar 12 and the full loop return at 20.",
+        "cadence": "TRUE's last two-note vow remains slightly suspended over its tonic to answer Garun's next measured entrance.",
+        "registerAndTrue": "Long quarry reverberations remain bounded; low cello register is deliberate rather than a transposition accident."
+      }
     },
     {
       "id": "boss-warlord",
@@ -3560,9 +3629,9 @@
       "register": 12,
       "harmony": [
         0,
+        5,
         3,
         4,
-        5,
         0,
         5,
         3,
@@ -4208,8 +4277,19 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
-      "bassRegister": -7
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop. The first four original chord roots are also restored and separately tested against the historical original renderer.",
+      "bassRegister": -7,
+      "openingHarmonyHeritage": [
+        0,
+        5,
+        3,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "Suspended tonic over the bar-8 dominant is a disciplined halt, not random tonality; bar 12 clarifies the motion and bar 16 resolves to tonic.",
+        "cadence": "The interrupted TRUE commands avoid doubling the chief horn line, leaving strategic silences for combat cues.",
+        "registerAndTrue": "The first four beats' original command phrases must stay accompanied by their original chord progression."
+      }
     },
     {
       "id": "boss-abyss",
@@ -4230,9 +4310,9 @@
       "register": 12,
       "harmony": [
         0,
+        3,
         5,
         4,
-        3,
         0,
         4,
         5,
@@ -4407,7 +4487,7 @@
           ],
           [
             2.25,
-            4,
+            3,
             0.83
           ]
         ],
@@ -4475,7 +4555,7 @@
           ],
           [
             2.25,
-            4,
+            3,
             0.83
           ]
         ],
@@ -4548,7 +4628,7 @@
           ],
           [
             2.65,
-            2,
+            0,
             0.9
           ]
         ]
@@ -4835,7 +4915,7 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop. The first four original chord roots are also restored and separately tested against the historical original renderer.",
       "leadRegisterByBar": [
         12,
         12,
@@ -4854,7 +4934,18 @@
         0,
         0
       ],
-      "companionRegister": 0
+      "companionRegister": 0,
+      "openingHarmonyHeritage": [
+        0,
+        3,
+        5,
+        4
+      ],
+      "harmonicReview": {
+        "tension": "The high horn remains airborne across extended harmonies; the late bar-8/12 cadences are now shaped to the mode's minor-third instead of an unexplained semitone clash.",
+        "cadence": "The final bar explicitly lands on tonic while the TRUE aerial fragment remains questioning, making the loop breathe instead of snapping at the ninth.",
+        "registerAndTrue": "Veyrith's two marked high flight phrases are intentional; outside them a lower horn register reduces extreme source repitches."
+      }
     }
   ],
   "formerCompanions": {

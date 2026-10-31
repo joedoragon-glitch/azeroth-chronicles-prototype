@@ -14,11 +14,19 @@ for(const [i,f] of s.families.entries()){
  assert.equal(f.key,names[i]);const original=old.cues[f.id];
  assert.equal(f.bpm,original.bpm);assert.equal(f.mode,original.mode);assert.equal(f.root,original.root);
  assert.deepEqual(f.originalHook,original.melody);
+ const historicalChords=original.flavor%3===1?[0,3,5,4]:[0,5,3,4];
+ assert.deepEqual(f.harmony.slice(0,4),historicalChords,
+   'Opening motif pitch alone does not preserve original chord context');
+ assert.deepEqual(f.openingHarmonyHeritage,historicalChords);
+ assert.equal(f.harmony.at(-1),0);
+ assert.equal(f.leadBars.at(-1).at(-1)[1],0,'final base cadence lacks return to tonic');
  for(const k of ['harmony','energy','leadBars','trueBars'])assert.equal(f[k].length,f.bars);
  assert.notDeepEqual(f.leadBars,f.trueBars);
  if(f.leadRegisterByBar){assert.equal(f.leadRegisterByBar.length,f.bars);assert.deepEqual(f.leadRegisterByBar.slice(0,4),[f.register,f.register,f.register,f.register]);}
  if(f.key==='crypt') {assert.equal(f.trueRegister,0);assert.equal(f.pulseRegister,-12);}
- if(f.key==='ridge') {assert.equal(f.pulseRegister,-12);assert.ok(f.leadRegisterByBar.slice(4).includes(0));}
+ if(f.key==='ridge') {assert.equal(f.pulseRegister,-12);assert.ok(f.leadRegisterByBar.slice(4).includes(0));assert.equal(f.trueRegister,0);}
+ if(f.key==='mire') assert.equal(f.trueRegister,36,'Mire TRUE chime requires a coherent scored register');
+ if(f.key==='archive') assert.equal(f.trueRegister,24,'Keeper TRUE chime requires a coherent scored register');
  if(f.key==='abyss') {assert.equal(f.companionRegister,0);assert.ok(f.leadRegisterByBar.slice(4).includes(0));}
  assert.ok(f.identity.length>=65 && f.truePsychology.length>=80);
  for(let t=0;t<16;t++){

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Mutation tests; metric/source correctness is NOT acoustic listening."""
-import copy,importlib.util,json
+import copy,importlib.util,json,hashlib,sys
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 def load(name,path):
@@ -38,4 +38,57 @@ bad=copy.deepcopy(contexts)
 for k in ('performedRhythm','form','energy','harmony'):bad[1][k]=copy.deepcopy(bad[0][k])
 reject(lambda:guard.guard_not_cloned_contexts(bad),'clones complete arrangement')
 assert {f['key'] for f in data['families'] if f['companionBars']}=={'crypt','archive','mine','abyss'}
-print('PASS Phase 5 mutations: octave, onset, inherited pilot, lead-copy, cloned families and four old companions')
+
+
+
+# Cross-check actual retained chord context against original renderer's
+# historical progression, not just the scores' own unvalidated labels.
+old=json.loads((root/'tools/audio/score-book.json').read_text())
+for fam in data['families']:
+    reference=old['cues'][fam['id']]
+    assert boss.verify_opening_harmony(fam,reference)==fam['harmony'][:4]
+    wrong=copy.deepcopy(fam)
+    wrong['harmony'][1]=(wrong['harmony'][1]+1)%7
+    reject(lambda:boss.verify_opening_harmony(wrong,reference),
+           'legacy opening harmony drift')
+    assert fam['leadBars'][-1][-1][1]==0
+for key in ('mire','archive'):
+    fam=next(f for f in data['families'] if f['key']==key)
+    assert boss.verify_true_register(fam)['range'][0]>=77
+    wrong=copy.deepcopy(fam)
+    wrong['trueRegister']=12
+    reject(lambda:boss.verify_true_register(wrong),
+           'TRUE chime requires stable written audible octave')
+ridge=next(f for f in data['families'] if f['key']=='ridge')
+assert boss.verify_true_register(ridge)['range'][1]<=71
+wrong=copy.deepcopy(ridge);wrong['trueRegister']=12
+reject(lambda:boss.verify_true_register(wrong),
+       'TRUE cello would silently octave-fold')
+
+# These adversarial note edits occur OUTSIDE the heritage opening, catching
+# altered performed notes anywhere in the 12–20-bar full score and TRUE.
+for fam in data['families']:
+    for part in ('base','true'):
+        written=boss.note_events(fam,part)
+        altered=copy.deepcopy(written)
+        altered[-1][1]+=12
+        reject(lambda:guard.verify_heritage(written,altered,
+                   cue=fam['id']+':'+part),
+               'claimed-retained motif changed')
+
+# Run a *second* time after actual rendering to cross-check per-note MIDI
+# hashes captured at the recorded-sampler boundary, not declared only in JSON.
+if len(sys.argv)>1:
+    report=json.loads(Path(sys.argv[1]).read_text())
+    listed={t['cue']:t for t in report['tracks']}
+    assert set(listed)=={c['id'] for c in data['cues']}
+    for fam in data['families']:
+        for part in ('base','true'):
+            key=fam['id'] if part=='base' else fam['trueId']
+            raw=boss.note_events(fam,part)
+            wanted=hashlib.sha256(json.dumps(raw,separators=(',',':')).encode()).hexdigest()
+            assert listed[key]['soundedLeadSha256']==wanted,(key,'actual MIDI note drift')
+            assert listed[key]['soundedLeadEvents']==len(raw)
+    print('PASS actual MIDI instrument-boundary snapshots for all 16 full-form parts')
+
+print('PASS Phase 5 adversarial mutations: full-form performed MIDI, original chords, chime/cello octave, clone/copy, protected scenes')

@@ -38,6 +38,32 @@ def note_events(family, part):
     ]
 
 
+
+def verify_opening_harmony(family, original):
+    """Original sounded legacy hook includes its changing chord frame, not only notes."""
+    expected = ([0, 3, 5, 4] if original["flavor"] % 3 == 1
+                else [0, 5, 3, 4])
+    assert family["harmony"][:4] == expected, (
+        family["id"] + ": legacy opening harmony drift")
+    assert family["openingHarmonyHeritage"] == expected, (
+        family["id"] + ": unsupported historical chord declaration")
+    return expected
+
+
+def verify_true_register(family):
+    """Prevent note-by-note octave folding from corrupting TRUE phrase intervals."""
+    notes = note_events(family, "true")
+    pitches = [e[1] for e in notes]
+    if family["response"] == "glockenspiel":
+        assert 77 <= min(pitches) and max(pitches) <= 108, (
+            family["id"] + ": TRUE chime requires stable written audible octave")
+    if family["response"] == "cello":
+        assert max(pitches) <= 71 and min(pitches) >= 36, (
+            family["id"] + ": TRUE cello would silently octave-fold")
+    return {"cue": family["trueId"], "range": [min(pitches), max(pitches)],
+            "response": family["response"]}
+
+
 def source_contract():
     p3 = module("phase5_phase3", PHASE3)
     original, catalog, frozen, _, pilots, _ = p3.source_contract()
@@ -62,6 +88,13 @@ def source_contract():
         assert (family["root"], family["mode"], family["bpm"]) == (
             reference["root"], reference["mode"], reference["bpm"])
         assert family["originalHook"] == reference["melody"]
+        verify_opening_harmony(family, reference)
+        assert all(len(str(family["harmonicReview"][k])) >= 70
+                   for k in ("tension", "cadence", "registerAndTrue"))
+        assert family["harmony"][-1] == 0
+        assert family["leadBars"][-1][-1][1] == 0, (
+            cue + ": no returning tonic in completed boss base")
+        verify_true_register(family)
         assert len(family["identity"]) >= 65 and len(family["truePsychology"]) >= 80
         assert len(family["harmony"]) == family["bars"] == len(family["energy"])
         assert len(family["leadBars"]) == len(family["trueBars"]) == family["bars"]
@@ -75,7 +108,7 @@ def source_contract():
         assert len(offsets) == family["bars"] and offsets[:4] == [
             family["register"]] * 4
         assert set(offsets) <= {0, 12}
-        assert family.get("trueRegister", 12) in (0, 12)
+        assert family.get("trueRegister", 12) in (0, 12, 24, 36)
         assert family.get("companionRegister", 12) in (0, 12)
         assert family.get("pulseRegister", 0) in (-12, 0)
         assert family.get("bassRegister", -12) in (-12, -7, -5)
@@ -139,7 +172,7 @@ def source_contract():
     return original, catalog, frozen, data, inheritance, copies, ctl
 
 
-def render_part(family, part, shared, sampler):
+def render_part(family, part, shared, sampler, played_notes=None):
     import numpy as np
     from scipy.signal import butter, sosfilt
 
@@ -167,8 +200,10 @@ def render_part(family, part, shared, sampler):
         if n < len(stereo):
             wave[:len(stereo)-n] += stereo[n:]
 
-    def tone(bar, at, midi, length, inst, amount, soft=False, jitter=False):
+    def tone(bar, at, midi, length, inst, amount, soft=False, jitter=False,
+             performed_role=None):
         midi = int(midi)
+        written_midi = midi
         # A score-level octave choice, not a silent renderer substitution.
         if inst == "cello" and midi > 71:
             midi -= 12
@@ -176,9 +211,17 @@ def render_part(family, part, shared, sampler):
             midi -= 12
         elif inst == "flute" and midi < 60:
             midi += 12
-        if inst == "glockenspiel":
-            while midi < 77:
-                midi += 12
+        if inst == "glockenspiel" and midi < 77:
+            raise ValueError(family["id"] + ": unscored chime octave folding")
+        if performed_role is not None:
+            if midi != written_midi:
+                raise ValueError(family["id"] +
+                                 ": performed lead/TRUE silently changed octaves")
+            if played_notes is not None:
+                # Observed at the instrument boundary AFTER final octave
+                # decisions, not inferred from the JSON score.
+                played_notes.append([4 * bar + float(at), int(midi),
+                                     float(length)])
         pcm = sampler.instrument(midi, length * beat, inst, rng)
         if soft:
             k = min(round(.048 * rate), len(pcm))
@@ -209,13 +252,14 @@ def render_part(family, part, shared, sampler):
                     [family["register"]] * bars)[bar]
                 tone(bar, at, root + register + semitone,
                      duration, family["lead"], .105, soft=family["lead"]
-                     in ("horn", "cello"))
+                     in ("horn", "cello"), performed_role="base")
         else:
             # Each family supplies an independent written secondary gesture,
             # not the old parent lead played twice.
             for at, semitone, duration in family["trueBars"][bar]:
                 tone(bar, at, root + family.get("trueRegister", 12) + semitone,
-                     duration, family["response"], .051, soft=True)
+                     duration, family["response"], .051, soft=True,
+                     performed_role="true")
             if bar % 4 == 2:
                 tone(bar, .4, root + family.get("bassRegister", -12) +
                      sampler.degree(chord, mode),
@@ -289,12 +333,23 @@ def main():
             cue = family["id"] if part == "base" else family["trueId"]
             sampler.cue = cue
             before = sampler.calls
-            wave, rate = render_part(family, part, data["formerCompanions"], sampler)
+            played_notes = []
+            wave, rate = render_part(family, part, data["formerCompanions"],
+                                     sampler, played_notes)
+            # Independent source-versus-instrument-boundary comparison,
+            # over the FULL form for each BASE and TRUE (not only opening).
+            performed = ctl.verify_heritage(
+                note_events(family, part), played_notes, cue=cue)
+            assert performed["exact"]
             result = original.encode_stem(out, cue, wave, rate, encoder,
                                           bitrate="192k")
             result["part"] = part
             result["parent"] = family["id"]
             result["recordedInstrumentNotes"] = sampler.calls - before
+            result["soundedLeadEvents"] = len(played_notes)
+            result["soundedLeadSha256"] = hashlib.sha256(
+                json.dumps(played_notes, separators=(",", ":")).encode()
+            ).hexdigest()
             assert result["encodedBytes"] < MAX_FILE
             assert result["channels"] == 2 and result["decodedPeak"] < .98
             assert result["stereoSideRms"] > .0008
