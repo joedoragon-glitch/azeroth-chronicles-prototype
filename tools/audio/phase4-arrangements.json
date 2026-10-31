@@ -476,7 +476,9 @@
       "bars": 16,
       "bpm": 86,
       "groovePalette": "place-archive",
-      "spacePalette": "place-archive"
+      "spacePalette": "place-archive",
+      "secondaryFluteOctave": -12,
+      "secondaryFluteDecision": "The newly written flute answer belongs in a natural human-scale singing register; lower the complete secondary phrase by one octave while leaving the inherited primary theme untouched."
     },
     {
       "id": "action-mine",
@@ -1217,7 +1219,9 @@
       "bars": 14,
       "bpm": 82,
       "groovePalette": "place-march",
-      "spacePalette": "place-march"
+      "spacePalette": "place-march",
+      "secondaryFluteOctave": -12,
+      "secondaryFluteDecision": "The newly written flute answer belongs in a natural human-scale singing register; lower the complete secondary phrase by one octave while leaving the inherited primary theme untouched."
     },
     {
       "id": "settlement-highlands",
@@ -1868,7 +1872,13 @@
       "groovePalette": "side-highlands-signal",
       "spacePalette": "side-highlands-signal",
       "secondaryHornOctave": -12,
-      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches.",
+      "heritageHornLowerBars": [
+        5,
+        8,
+        9
+      ],
+      "heritageRegisterDecision": "At these three interior bars the entire two-note signal phrase moves down one octave, preserving its ascending interval rather than octave-folding a single stretched horn note or corrupting the call."
     },
     {
       "id": "peace-interior-side-highlands-signal",
@@ -1919,7 +1929,13 @@
       "groovePalette": "side-highlands-signal",
       "spacePalette": "side-highlands-signal",
       "secondaryHornOctave": -12,
-      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches.",
+      "heritageHornLowerBars": [
+        7,
+        8,
+        9
+      ],
+      "heritageRegisterDecision": "At these three interior bars the entire two-note signal phrase moves down one octave, preserving its ascending interval rather than octave-folding a single stretched horn note or corrupting the call."
     },
     {
       "id": "interior-side-frontier-shrine",
