@@ -7,9 +7,14 @@ const Campaign = require('../src/prototype/engine.js');
 const { audio } = require('./helpers/audio-context.cjs');
 const manifest = require('../assets/audio/manifest.json');
 const flush = () => new Promise(resolve => setImmediate(resolve));
+const nativeCampaigns = new Map();
 function sceneFor(a, id, night=false, peace=false) {
-  const campaign = new Campaign('normal', 'paladin', () => 0.73);
-  campaign.enter(id);
+  let campaign = nativeCampaigns.get(id);
+  if (!campaign) {
+    campaign = new Campaign('normal', 'paladin', () => 0.73);
+    campaign.enter(id);
+    nativeCampaigns.set(id, campaign);
+  }
   assert.equal(campaign.zoneId, id);
   const before = JSON.stringify(campaign.s);
   const scene = { ...a.describe(campaign, {started:true}), night, peace };
