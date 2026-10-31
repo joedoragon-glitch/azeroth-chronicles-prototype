@@ -52,6 +52,16 @@ def source_contract():
         assert 64 <= cue["bpm"] <= 100 and 7500 <= cue["lowpassHz"] <= 12000
         assert len(cue["arc"]) == 4 and all(len(x) >= 25 for x in cue["arc"])
         assert 1 <= len(cue["room"]) <= 3
+        assert len(cue["chords"]) == cue["bars"]
+        assert all(len(chord) == 4 for chord in cue["chords"])
+        assert all(len(cue["harmonicReview"][key]) >= 55
+                   for key in ("anchorRule","tension","cadence"))
+        early_nonchord = sorted({e[0] for e in cue["events"]
+            if e[6] == "lead" and e[1] <= .4 and
+            e[2] % 12 not in [p % 12 for p in cue["chords"][e[0]]]})
+        assert early_nonchord == cue["harmonicReview"]["earlyNonchord"]
+        assert len(early_nonchord) <= 1, (
+            cue["id"] + ": unreviewed early strong-note/chord collisions")
         assert len(cue["events"]) >= (25 if cue["id"] == "defeat" else 75)
         role_notes = [e for e in cue["events"] if e[6] == "lead"]
         assert len(role_notes) >= cue["bars"] + 2
@@ -76,6 +86,9 @@ def source_contract():
             recorded = [x["midi"] for x in inst["samples"]]
             assert min(abs(midi - sample) for sample in recorded) <= 4, (
                 cue["id"], instrument, midi, "overstretched sample")
+            if role != "lead":
+                assert midi % 12 in [p % 12 for p in cue["chords"][bar]], (
+                    cue["id"], bar, "accompaniment drift from authored harmony", midi)
             if role == "lead":
                 assert instrument == cue["lead"], cue["id"] + ": unreviewed voice swap"
         phrase = lead_notes(cue)
@@ -183,13 +196,27 @@ def main():
         sampler.cue = cue["id"]
         before = sampler.calls
         performed = []
-        wav, rate = render_cue(cue, sampler, performed)
+        observed = []
+        original_instrument = sampler.instrument
+        def observed_sampler(midi, duration, instrument, rng):
+            observed.append([int(midi), instrument, round(duration, 7)])
+            return original_instrument(midi, duration, instrument, rng)
+        sampler.instrument = observed_sampler
+        try:
+            wav, rate = render_cue(cue, sampler, performed)
+        finally:
+            sampler.instrument = original_instrument
+        expected_calls = [[e[2], e[4], round(e[3] * 60 / cue["bpm"], 7)]
+                          for e in cue["events"]]
+        assert observed == expected_calls, cue["id"] + ": actual recorded sampler calls drift"
         played = ctl.verify_heritage(lead_notes(cue), performed, cue=cue["id"])
         assert played["exact"], cue["id"] + ": sampler-boundary MIDI mismatch"
         report = original.encode_stem(out,cue["id"],wav,rate,encoder,bitrate="192k")
         report["recordedInstrumentNotes"] = sampler.calls - before
         report["performedLeadSha256"] = hashlib.sha256(json.dumps(
             performed,separators=(",",":")).encode()).hexdigest()
+        report["performedAllNotesSha256"] = hashlib.sha256(json.dumps(
+            observed,separators=(",",":")).encode()).hexdigest()
         assert report["recordedInstrumentNotes"] >= len(performed)
         assert report["encodedBytes"] < MAX_FILE
         assert report["channels"] == 2 and report["decodedPeak"] < .98
