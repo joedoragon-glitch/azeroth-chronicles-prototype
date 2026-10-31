@@ -321,7 +321,7 @@ const root = path.resolve(__dirname, '..'),
         console.log('Audition browser: offline reload on ' + (phone ? 'phone' : 'desktop'));
         await page.reload();
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
-        assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Soundtrack listening room");
+        assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Game sound library");
         assert.equal(outageRequests, 0);
         await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('production');
