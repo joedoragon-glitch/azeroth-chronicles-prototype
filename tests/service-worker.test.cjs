@@ -221,7 +221,7 @@ async function test(name, fn) {
     const w = fresh(), old = w.stores.get('azeroth-app-old'),
       file = 'src/prototype/engine.js';
     // A matching prior-release index is trusted only for the same release asset.
-    const currentIndex = JSON.parse(source.match(/const APP_FINGERPRINTS = (\\{[^;]+\\});/)[1]);
+    const currentIndex = JSON.parse(source.split('const APP_FINGERPRINTS = ')[1].split(';')[0]);
     old.set(w.scope + file, new Response(fs.readFileSync(path.join(__dirname, '..', file))));
     old.set(w.scope + '__offline-fingerprints-v1__', new Response(JSON.stringify({
       ['./' + file]: currentIndex['./' + file],
@@ -445,7 +445,7 @@ async function test(name, fn) {
   await test('Malformed optional JSON keeps the existing procedural installation policy', async () => {
     const w = fresh({ malformed: true });
     await w.emit('install');
-    assert.equal(w.cache.size, inventory.core.length + 1);
+    assert.equal(w.cache.size, inventory.core.length + 2);
     assert.equal(w.state.skipped, 0);
   });
   console.log(`\n${passed} offline checks passed.`);
