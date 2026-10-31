@@ -40,8 +40,8 @@ for(const [i,side] of sides.entries()){
   pillarHashes.push(pillar(side.theme,index));
   const g=new C('normal','paladin',()=>0.73);assert(g.enter(side.id));
   const z=g.zone(),walls=z.props.filter(p=>p.id.startsWith('side-wall-'));
-  assert(walls.length>=6 && walls.every(p=>p.structure==='pillar'),
-    'Original side columns and collision remain present in '+side.name);
+  assert(walls.length>=6 && walls.every(p=>p.r===28 && (p.structure==='pillar' || (side.id==='side-vale-cellars' && p.structure==='cellar-pier'))),
+    'Original solid columns, including Greenwood-specific cellar piers, and collision remain present in '+side.name);
   assert(walls.some(p=>p.householdPartition===side.theme),
     'Original occupied-wall alcove receives its true theme in '+side.name);
   assert(z.enemies.filter(e=>e.hp>0).every(e=>e.species===side.species),
