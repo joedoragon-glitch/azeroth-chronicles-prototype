@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 5 of environmental #727: four Treasury retention/reuse/new source comparison, two trial masters only",
-  "status": "STAGE 5 two optional physical source 72s MP3 trials rendered with strict decoded technical QA PASS 2/2 at #41237685020; 4/4 Treasury baseline comparison authored. Re-render of exact frozen SHA-256/size pending; not game-registered, artistically heard, merged, published or device-tested.",
+  "status": "STAGE 5 source-authored studio COMPLETE: 4/4 Treasury comparisons (two retained env-home, two optional physical-source 72s MP3 A/B studies), initial strict decoded QA PASS 2/2 at #41237685020 and independent frozen SHA-256/byte-for-byte reproduction PASS 2/2 at #41237842801. No game registration, human hearing, integration/browser, merge, deployment or device acceptance.",
   "parent": "tools/audio/environment-727-side-interiors.json",
   "authority": "Live src/prototype/rules.js treasuryArchitectures/Decor and manifest env-home; issue #727 Stage 1 signed sound design; AUDIO_ENVIRONMENT.md, AUDIO_AUTHORING.md",
   "decisions": [
@@ -254,7 +254,10 @@
     "renderRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237685020",
     "artifactId": 13055562993,
     "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237685020/artifacts/13055562993",
-    "reproduction": "PENDING exact frozen rerender",
+    "reproduction": "PASS 2/2 independent original-source re-fetch, SHA-1/SHA-256/bytes verification, exact frozen MP3 SHA-256 and 1,158,381-byte size for both, strict encoded/decoded QA unchanged",
+    "reproductionRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237842801",
+    "reproductionArtifactId": 13055689661,
+    "reproductionArtifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237842801/artifacts/13055689661",
     "humanHeard": false,
     "gameRegistered": false
   }

@@ -47,6 +47,16 @@ assert.deepEqual(ledger.studies.map(x=>[x.sceneId,x.referenceBed]),expected,
  'Two Treasury candidate scene contracts cannot change without explicit review');
 const production = audio();
 production.enableProduction();
+for (const [sceneId, region] of [
+  ['supply-vale','vale'],
+  ['supply-march','march'],
+  ['supply-highlands','highlands'],
+  ['supply-crown','crown']
+]) {
+  const original = production.environmentCue({zone:sceneId,region,interior:'treasury',
+    started:true,gameOver:false,night:false,situation:'world'});
+  assert.equal(original.asset,'env-home','All four Treasuries must retain the current original route: '+sceneId);
+}
 for (const c of ledger.studies) {
   assert(sources.has(c.mainSource));
   assert(c.events.length >= 1 && c.events.length<=2,'Only sparse recorded physical details');
@@ -77,5 +87,5 @@ if (ledger.encodedPreviewEvidence) {
     assert.equal(c.gameRegistered,false);
   }
 }
-console.log('PASS #727 Stage5: four original physical sources have dual hashes, three canon-specific occupied Treasuries are unregistered; all 18 original+prior masters, 18 rules/19 playable scenes, score and night effects protected.');
+console.log('PASS #727 Stage5: four original physical sources have dual hashes, four occupied Treasuries retain env-home; both authored previews are unregistered; all 18 original+prior masters, 18 rules/19 playable scenes, score and night effects protected.');
 console.log('ARTISTIC HOLD: source identity and decoder QA do not prove an actual sound-designer or owner hearing decision.');
