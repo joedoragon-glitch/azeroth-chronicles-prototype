@@ -259,6 +259,10 @@ const root = path.resolve(__dirname, '..'),
         assert.equal(await page.locator('#generated-grid .sound-card').count(), 1);
         await press('#generated-grid .quick-play');
         await page.waitForFunction(() => document.querySelector('#message')?.textContent.includes('Played Menu · Confirm'));
+        await page.locator('#search').fill('Paladin sword strike');
+        assert.equal(await page.locator('#generated-grid .sound-card').count(), 1);
+        await press('#generated-grid .quick-play');
+        await page.waitForFunction(() => document.querySelector('#message')?.textContent.includes('Played Paladin sword strike'));
         await press('#reset-library');
 
         // Actual decode + OfflineAudioContext render: synchronized samples remain finite, audible and below clipping.

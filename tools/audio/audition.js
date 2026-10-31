@@ -24,6 +24,26 @@
     ...['grass', 'wet', 'gravel', 'stone', 'wood'].map((id) => ({
       id: 'step:' + id, title: 'Step · ' + human(id), category: 'Movement',
     })),
+    // Representative event contexts, not a claim that every actor/material variant
+    // has a standalone recording. The actual game engine owns the resulting sound.
+    { id: 'combat:paladin-melee', title: 'Paladin sword strike', category: 'Combat action',
+      event: { type: 'melee', actor: 'hero', class: 'paladin', combo: 1 } },
+    { id: 'combat:power-strike', title: 'Soldier power strike', category: 'Combat action',
+      event: { type: 'melee', actor: 'companion', role: 'soldier', special: 'power-strike' } },
+    { id: 'combat:ranger-bow', title: 'Ranger arrow release', category: 'Combat action',
+      event: { type: 'projectileLaunch', actor: 'hero', class: 'ranger', style: 'arrow' } },
+    { id: 'combat:arrow-impact', title: 'Arrow impact', category: 'Combat action',
+      event: { type: 'projectileImpact', actor: 'hero', style: 'arrow' } },
+    { id: 'combat:mage-cast', title: 'Mage spell', category: 'Combat action',
+      event: { type: 'spell', class: 'mage', actor: 'hero' } },
+    { id: 'combat:holy-cast', title: 'Paladin holy cast', category: 'Combat action',
+      event: { type: 'spell', class: 'paladin', actor: 'hero' } },
+    { id: 'combat:magic-charge', title: 'Mage charged magic', category: 'Combat action',
+      event: { type: 'charged', class: 'mage', actor: 'hero' } },
+    { id: 'combat:combo-finish', title: 'Ranger combo finisher', category: 'Combat action',
+      event: { type: 'basicComboFinisher', class: 'ranger', actor: 'hero' } },
+    { id: 'combat:body-hit', title: 'Body impact', category: 'Combat action',
+      event: { type: 'hurt', actor: 'hero' } },
   ];
 
   function message(value) {
@@ -331,6 +351,10 @@
       };
       audio.stepDistance = 0;
       audio.footstep({}, 43);
+    } else if (id.startsWith('combat:')) {
+      const fixture = generatedCues.find((item) => item.id === id)?.event;
+      if (!fixture) throw Error('Unknown contextual game sound.');
+      audio.effect(fixture);
     } else audio.effect(id.slice(6));
     hasPlayback = false;
     $('now-playing').textContent = 'Last heard: ' + title;
