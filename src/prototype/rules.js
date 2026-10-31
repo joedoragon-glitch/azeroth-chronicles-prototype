@@ -6924,6 +6924,9 @@
     // Approved hostile ranged BASIC reach is an absolute final distance, not
     // another 10% bonus on a legacy species-specific shotRange.
     enemyRangedBasicRange: 320,
+    // Slinger stones should launch decisively without changing attack cadence
+    // or the maximum distance a missed hostile shot can travel.
+    goblinSlingerProjectileSpeedMultiplier: 2,
     // Melee/ordinary enemy awareness keeps its separate historical tuning.
     enemyAcquisitionRangeMultiplier: 1.1,
     // All ordinary and elite basic reach comes from meleeReachTuning.
