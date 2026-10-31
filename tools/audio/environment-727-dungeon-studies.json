@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 3 of #727: five canon-specific main dungeon recorded-source ambience production studio",
-  "status": "Initial source-led 5 MP3s: Forest Crypt, Archive, Mine, Bastion PASS; Citadel first/last1s envelope BLOCK -4.632dB; bounded source-local correction now pending new real MP3 decode. All existing game audio untouched.",
+  "status": "STAGE 3 FIVE MAIN DUNGEONS — FIVE actual 72s recorded-source MP3 studio previews produced and source/codec/decoded signal QA PASS on GitHub Actions #41231321540; immutable output SHA freeze pending exact-head reproduction. Artistic hearing/real game integration H O L D; no merge/publish/device verification.",
   "parent": "tools/audio/environment-727-outdoor-expansion.json",
   "authority": "Issue #727 Stage1 creative brief; docs/AUDIO_ENVIRONMENT.md; docs/ABYSS_AIR_SUPERIORITY_CANON.md and src/prototype rules/data; current manifest",
   "sources": [
@@ -367,8 +367,8 @@
     "license": "verified original CC0/public domain only; SHA1+SHA256+bytes pinned from actual files before render",
     "registered": false,
     "gameplayChanged": false,
-    "artisticApproval": "HOLD",
-    "inGamePlayback": "NOT TESTED",
+    "artisticApproval": "HOLD: Real outdoor wind was deliberately filtered as interior air; it was NOT an actual recording of these fictional indoor spaces. Paper sources include ripping, anvil is workshop and chair is furniture; only human listening can determine timbral plausibility and music/warning masks.",
+    "inGamePlayback": "NOT TESTED candidate; current published game tests if run are old registered sounds only",
     "merged": false,
     "deployed": false,
     "deviceVerified": false,
@@ -377,7 +377,9 @@
     "regressionScope": "exact five native routes and night/SFX/music preservation; max 5 source-authored studio previews; no runtime registration",
     "notes": "This is an offline comparative studio, never automatically a shipped replacement. 5x 72s float32 mono buffers ~43.95MiB if all resident, currently 96MiB cache with earlier observed 84.80MiB peak; Stage6 must explicitly solve caching/eviction.",
     "sourceAuthenticity": "PASS all original 8 SHA-1/SHA-256/bytes/FFprobe in GH Actions #41230940635; all licenses from original creator/public-domain pages, hearing unverified",
-    "initialStudioRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231085791"
+    "initialStudioRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231085791",
+    "technicalStudio": "PASS 8/8 independent original SHA1/SHA256/bytes/codec #41230940635 and 5/5 actual encoded MP3s decoder/loop/LUFS/truepeak/crest/midband/24s repetition and pair contrast #41231321540; byte-exact source-to-output re-render pending new CI.",
+    "nextGates": "Stage6 integrate only selected, artistically viable masters after actual cache residency/eviction, WebAudio crossfade, music/warnings, offline PWA, phone emulated; Stage7 actual by-ear and owner final acceptance."
   },
   "rejected": [
     "Generic horror dungeon music or dark drones",
@@ -386,5 +388,87 @@
     "Loud continuous blacksmith/pick/wood work loops",
     "Modern office/industrial object close-mic timbre in old fantasy structures",
     "Claimed physical spatialization when game has only scene-level environmental audio"
-  ]
+  ],
+  "encodedPreviewEvidence": {
+    "producingHead": "07ac3c372cd82a1ad508b04811eb5d5226321a7c",
+    "producingRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231321540",
+    "artifactId": 13053543356,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231321540/artifacts/13053543356",
+    "codec": "guarded mono 32kHz 128kbps MP3; 0.15s guards + 72s active loop",
+    "encodedBytesTotal": 5791905,
+    "decodedIfAllFiveResidentBytes": 46080000,
+    "sourceStudyAcceptance": "TECHNICAL SOURCE+ACTUAL MP3 SIGNAL PASS; not proof of perceptual authenticity or player hearing",
+    "outputs": [
+      {
+        "id": "studio-crypt-winter-estate-727",
+        "sha256": "9d7ab96c06266fd953fc1c739703e0bdb261e2b272bcd596789e15c6c328d7be",
+        "bytes": 1158381,
+        "lufs": -37.17,
+        "truePeakDbTP": -18.35,
+        "decodedLoopSampleJump": 0.000800823443569243,
+        "firstVsLast1SecDb": -0.22828484401933807,
+        "physicalSourceFraction": 0.629811056682995,
+        "midbandFraction": 0.7222823330719771,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-archive-restoration-727",
+        "sha256": "7eb6cdba92d83c3a729c44dd214cbde16b9409a0e9a1ff57c2a122ada054b14e",
+        "bytes": 1158381,
+        "lufs": -35.91,
+        "truePeakDbTP": -21.21,
+        "decodedLoopSampleJump": 0.0006488868966698647,
+        "firstVsLast1SecDb": -0.9481357537662254,
+        "physicalSourceFraction": 0.5971058644325972,
+        "midbandFraction": 0.8958747255061793,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-colossus-mine-727",
+        "sha256": "cf183389f9b5ff7b3378876c87ac043a878a455215bdb1d2ee549bef3ae4ca42",
+        "bytes": 1158381,
+        "lufs": -35.1,
+        "truePeakDbTP": -15.77,
+        "decodedLoopSampleJump": 0.00036216527223587036,
+        "firstVsLast1SecDb": 1.0299894407826233,
+        "physicalSourceFraction": 0.6490735541830435,
+        "midbandFraction": 0.5218782830666848,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-abyss-flight-hall-727",
+        "sha256": "79cafbd90349eae5efcb17bea436e994e6bf12a7b6e1b5b4f9b9d2ed2a4bbecc",
+        "bytes": 1158381,
+        "lufs": -35.44,
+        "truePeakDbTP": -17.83,
+        "decodedLoopSampleJump": 0.002213355153799057,
+        "firstVsLast1SecDb": -1.3503376445067645,
+        "physicalSourceFraction": 0.7482693517935809,
+        "midbandFraction": 0.8442516234138141,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-citadel-command-727",
+        "sha256": "618155910983eb3794129b148288d26ae35c511f06659083249ce4cbcf81ca00",
+        "bytes": 1158381,
+        "lufs": -34.72,
+        "truePeakDbTP": -15.14,
+        "decodedLoopSampleJump": 0.00016883178614079952,
+        "firstVsLast1SecDb": -3.396418321552509,
+        "physicalSourceFraction": 0.5369863013698629,
+        "midbandFraction": 0.7155875653729955,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      }
+    ]
+  }
 }
