@@ -161,7 +161,9 @@ const entry = (n) => ({
     );
     assert(
       stored.history['terrain:ground:vale'].some(
-        (r) => r.revision === 'b8bbf9f365d240dad6bb42ac87b2e3fdc96b639fd0366fcfe8b87bf6f5166556' && r.review?.status === 'approved',
+        (r) =>
+          r.revision === 'b8bbf9f365d240dad6bb42ac87b2e3fdc96b639fd0366fcfe8b87bf6f5166556' &&
+          r.review?.status === 'approved',
       ),
       'approved T001 raster remains in rollback history',
     );
