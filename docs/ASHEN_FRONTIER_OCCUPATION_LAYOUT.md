@@ -4,6 +4,22 @@
 
 This pass keeps Ashen Frontier fully procedural and turns its existing ingredients into a clearer occupied-frontier identity. It introduces no sprites, no new rewards, no combat rebalance and no progression changes.
 
+## Current lore-ground reconciliation — 30 October 2026, draft PR #698
+
+The Frontier is a recovering occupied province, not uniformly scorched. Its current
+`data.js` and `rules.frontierRecoveryScenes` explicitly place pioneer grasses,
+young trees, poppies, repaired gardens and cool soil among charred ruins. The older
+T004 uniform ash raster is therefore retired from active registration, preserving
+its original and approval record as rollback history. The draft renderer adds
+one restrained west-to-east cool-soil transition, feathered local moss-earth washes, fine mixed ash/sediment grain, and sparse rooted growth in those named
+locations, with damage and military infrastructure still visible. The original
+ravine, pools, roads, existing props and gameplay/collision geometry are untouched.
+
+**Native engineering art review, 31 October 2026:** Six real-game Canvas views at 150% zoom (Emberwatch, Burned Hamlet, western regrowth, northern ravine, checkpoint and night Bastion) were compared before/after on the same engine/world. The area transitions, subdued regrowth, road readability and preserved scarred areas were examined; an excessively smooth first pass was corrected by procedural ash/soil grain. The current PR's exact-head [12 focused checks and offline build](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41175895963) and [browser PWA update checks](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41175895959) passed on the pre-cleanup candidate. This is **not** owner-device acceptance or measured FPS; the final test-harness cleanup requires revalidation before merge.
+Before release, inspect actual 150% day/night scenes and run the focused material,
+rendering and reproducible offline checks. No broad terrain recoloring or green
+meadow replacement is authorized by this focused reconstruction.
+
 ## Regional identity
 
 Ashen Frontier is no longer treated as only a burned battlefield on the road to Dark Crown. The region now reads as land that was devastated first and then consolidated because stable roads, specialist labor, garrison rest points and reliable supply flow are more useful to the regime than permanent chaos.
