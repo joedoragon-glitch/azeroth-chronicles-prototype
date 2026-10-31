@@ -65,3 +65,19 @@ assert.equal(a.optimizationMode,false);
 a.dispose();
 console.log('PASS issue #709: 127 assets/14 ambience/18 routing rules, '+
  routeCases+' real director place-night-peace policy checks, authoring parity, title gating, optimization');
+
+
+const {execFileSync}=require('node:child_process');
+for(const file of [
+ 'tests/audio-environment.test.cjs',
+ 'tests/audio-stage4-mix-matrix.test.cjs',
+ 'tests/audio-recordings.test.cjs',
+ 'tests/audio-stage2-recovery.test.cjs',
+ 'tests/audio-stage5-release-preflight.test.cjs',
+ 'tests/optimization-mode.test.cjs'
+]) {
+  console.log('AUDIT-EXISTING-TEST '+file);
+  execFileSync(process.execPath,[file],{cwd:require('node:path').resolve(__dirname,'..'),
+   stdio:'inherit',timeout:180000});
+}
+console.log('PASS issue #709 independent historical regression replay');
