@@ -130,7 +130,9 @@ const server=http.createServer((req,res)=>{
           assert(result.envDuration>24 && result.peak>0.001,'real decoded bed non-silence');
           assert(result.envRate>=32000 && result.musicRate>=32000);
           assert.equal(result.loop,true);
-          assert(Math.abs(result.loopStart-0.15)<0.001 && Math.abs(result.loopEnd-24.15)<0.001);
+          const expectedEnd = ['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(x.bed) ? 72.15 : 24.15;
+          assert(Math.abs(result.loopStart-0.15)<0.001 && Math.abs(result.loopEnd-expectedEnd)<0.001,
+            x.zone+' must decode and start the actual '+expectedEnd+'-second source loop');
           assert(result.environmentVoices<=2,'environment must not accumulate voices');
           assert(result.voiceCount<=64 && result.voiceCount>=2,'bounded music and environment');
           assert(result.ambientBus>0 && result.musicBus>0);
