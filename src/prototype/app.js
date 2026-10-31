@@ -915,10 +915,11 @@
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
-    'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.':
-      'Canvas 2D es la opción predeterminada segura. PixiJS WebGL2 es experimental; puedes volver a Canvas cuando quieras.',
-    'Canvas 2D · Default': 'Canvas 2D · Predeterminado',
-    'PixiJS WebGL2 · Experimental': 'PixiJS WebGL2 · Experimental',
+    'PixiJS WebGL2 is the default. Canvas 2D remains available as a backup.':
+      'PixiJS WebGL2 es el motor predeterminado. Canvas 2D sigue disponible como respaldo.',
+    'Canvas 2D · Backup': 'Canvas 2D · Respaldo',
+    'PixiJS WebGL2 · Default': 'PixiJS WebGL2 · Predeterminado',
+    'PixiJS WebGL2 · 15-second trial': 'PixiJS WebGL2 · Prueba de 15 segundos',
     'Keep WebGL2': 'Conservar WebGL2',
     'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
@@ -2111,7 +2112,7 @@
     return true;
   }
 
-  // Opt-in renderer pilot; one live Campaign, no saved graphics state.
+  // PixiJS primary renderer; one live Campaign, no saved graphics state.
   // Canvas is retained as an independent, always-available presentation surface.
   const gpuTrialPanel = document.createElement('section');
   gpuTrialPanel.id = 'gpu-renderer-trial';
@@ -2228,7 +2229,7 @@
       return;
     }
     gpuTrialMessage.textContent =
-      tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
+      tr('PixiJS WebGL2 · 15-second trial') + ' · ' + snapshot.secondsRemaining + 's';
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
@@ -4831,8 +4832,8 @@
         'Graphics renderer',
         graphicsController.status().preferredRenderer || graphicsController.status().mode,
         choices([
-          ['canvas2d', 'Canvas 2D · Default'],
-          ['webgl2', 'PixiJS WebGL2 · Experimental'],
+          ['canvas2d', 'Canvas 2D · Backup'],
+          ['webgl2', 'PixiJS WebGL2 · Default'],
         ]),
         (value) => {
           if (value === 'canvas2d') {
@@ -4851,7 +4852,7 @@
         graphicsController.status().preferredRenderer === 'webgl2' &&
           graphicsController.status().mode === 'canvas2d'
           ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
-          : 'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
+          : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused
         ? [action('Retry PixiJS WebGL2', () => {
