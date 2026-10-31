@@ -1871,9 +1871,35 @@
           ((def.siphon + tier * mastery.siphonFractionPerTier) * 100).toFixed(1) +
           '% of actual HP damage' : '') +
         (def.dash ? ' · movement ' + def.dash + ' units (collision checked)' : '');
+      const friendlyMove = (profile) => {
+        const descriptions = {
+          snare: 'Disrupts and slows an enemy',
+          shove: 'Strikes and pushes an ordinary enemy away',
+          dash: 'Closes distance with a swift maneuver',
+          withdraw: 'Fires while making room to retreat',
+          scatter: 'Strikes and scatters up to two nearby enemies',
+          sweep: 'Sweeps up to two nearby enemies aside',
+          pivot: 'Slows an enemy and repositions to a safer angle',
+          bind: 'Hinders an enemy with a slowing attack',
+        };
+        const effect = descriptions[profile.effect || profile.style] ||
+          'A distinctive single-target combat maneuver';
+        return effect + (profile.blinds ? ' and provides a brief defensive ward' : '');
+      };
+      // An ability page is a readable index, not a wall of dim disabled buttons.
+      // Tapping a read-only skill reveals its source-derived details; no action
+      // here spends crowns, starts combat, or unlocks anything.
       const entry = (name, description, locked = '') =>
-        rows.push(action((locked ? 'Locked · ' : '') + name, () => {},
-          (locked ? locked + ' · ' : '') + description, true));
+        rows.push(action(
+          (locked ? 'Locked · ' : 'Available · ') + name,
+          () => {
+            if (getGame() !== g || !g.s.party.includes(u)) return back();
+            openMenu(name,
+              (locked ? 'Locked: ' + locked + '\\n\\n' : '') + description,
+              [], () => barracksCompanionAbilities(id, back));
+          },
+          locked || description.split(' · ').slice(0, 2).join(' · '),
+        ));
       if (u.charmOrigin && g.isCharmedCompanion(u)) {
         const species = u.charmOrigin.species,
           ranged = u.type === 'archer',
@@ -1893,14 +1919,16 @@
             (!allowed ? ' Orin training is required after non-Rogue Succession.' : '');
         if (native)
           entry('Native · ' + native.name,
-            'Individual melee/ranged maneuver · ' + (native.effect || native.style || 'direct hit') +
-              ' · ' + cfg.basicCooldown + 's recovery · ' +
+            friendlyMove(native) + ' · ' + cfg.basicCooldown + 's recovery · ' +
               potency(cfg.basicDamageMultiplier, mastery.nativeDamagePerTier),
             nativeLock);
         if (signature)
           entry('Ringleader signature · ' + signature.name,
-            (signature.effect || signature.style || 'direct hit') +
-              ' · up to ' + cfg.signatureTargetCap + ' targets · ' +
+            friendlyMove(signature) +
+              ' · up to ' + (['scatter','sweep'].includes(signature.effect)
+                ? cfg.signatureTargetCap : 1) + ' targets' +
+              (['scatter','sweep'].includes(signature.effect) && signature.radius
+                ? ' · radius ' + signature.radius : '') + ' · ' +
               cfg.signatureCooldown + 's recovery · ' +
               potency(cfg.signatureDamageMultiplier, mastery.nativeDamagePerTier),
             eliteLock);
