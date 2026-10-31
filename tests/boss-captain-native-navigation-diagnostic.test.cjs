@@ -193,6 +193,39 @@ const results=[
   measure('Warlord field boss','frontier','field-boss')
 ];
 assert.equal(results.length,4);
+// Exact original native waypoint contract on unchanged authored obstruction.
+// The independent pools may spread search over ticks but cannot substitute
+// different collision, corners, destination or failed-route behavior.
+for(const [zone,kind,mode] of [
+  ['highlands','field-boss','elite-pursuit'],
+  ['frontier','field-captain','captain-patrol'],
+  ['supply-highlands','room-captain','elite-pursuit'],
+]) {
+  const {g,e}=build(zone,kind),way=lane(g,e);
+  assert(way,'expected reachable authored obstruction for parity in '+zone);
+  const original=g.route(way.a,way.b);
+  assert(original.length>0,'native route must be reachable');
+  const realBlocked=g.blocked;
+  let blocked=0,peak=0,pending=null,found=null,ticks=0;
+  g.blocked=function(...args){blocked++;return realBlocked.apply(this,args)};
+  for(;ticks<400;ticks++){
+    g.s.time+=dt;
+    const before=blocked;
+    const result=g.advanceBudgetedRoute(pending?.origin||way.a,
+      pending?.target||way.b,mode,pending);
+    peak=Math.max(peak,blocked-before);
+    if(!result.pending){found=result.path;break;}
+    pending=result.state;
+  }
+  delete g.blocked;
+  assert(found!==null,'bounded '+mode+' must terminate in reachable native terrain');
+  assert.deepEqual(found,original,'exact native route waypoints for '+mode+' '+zone);
+  assert(peak<=512,'per-search elite terrain budget not exceeded');
+  console.log('ISSUE615_ELITE_WAYPOINT_PARITY '+JSON.stringify({
+    zone,mode,waypoints:found.length,searchTicks:ticks+1,
+    peakTerrainProbes:peak,totalTerrainProbes:blocked,
+    origin:xy(way.a),target:xy(way.b)}));
+}
 console.log('ISSUE615_SUMMARY '+JSON.stringify(results.map(r=>({
   label:r.label,originKind:r.setup.originKind,peak:r.probes.peakTick.probes,
   p95:r.probes.p95,heavyRoutes:r.probes.heavyRoutes,
