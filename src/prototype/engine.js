@@ -106,7 +106,7 @@
         // ID-bound, ephemeral diagnostics. Never copied into v4 saved state.
         this.developerCompanions = {
           moves: new Map(), hits: new Map(), projectiles: new Map(),
-          launches: new Map(), sequence: 0,
+          sequence: 0,
         };
       }
       this.s = {
@@ -2162,30 +2162,36 @@
       d.moves.set(source, list);
       return move;
     }
-    developerCompanionTrackProjectile(unit, label, projectile) {
+    developerCompanionTrackProjectile(unit, label, projectile, releaseMove = null) {
       if (this.s.mode !== 'developer' || !projectile || !unit?.id) return;
-      const d = this.developerCompanions, old = d.launches.get(unit.id);
-      // Consecutive projectiles in one release have the same simulation clock.
-      const move = old?.time === this.s.time && old.label === label
-        ? old.move : this.developerCompanionNewMove(unit.id, label);
+      // A token comes from the actual committed action, never frame timing.
+      const d = this.developerCompanions,
+        move = releaseMove || this.developerCompanionNewMove(unit.id, label);
       if (!move) return;
-      d.launches.set(unit.id, { time: this.s.time, label, move });
       d.projectiles.set(projectile.id, { source: unit.id, move });
       move.pending++;
       move.resolved = false;
+    }
+    developerCompanionBeginDirect(unit, label) {
+      if (this.s.mode !== 'developer') return null;
+      const previous = this._developerCompanionDirectMove || null;
+      this._developerCompanionDirectMove = {
+        source: unit.id, move: this.developerCompanionNewMove(unit.id, label),
+      };
+      return previous;
+    }
+    developerCompanionEndDirect(previous) {
+      if (this.s.mode === 'developer') this._developerCompanionDirectMove = previous;
     }
     recordDeveloperCompanionDamage(source, amount) {
       if (this.s.mode !== 'developer' || !(amount > 0) ||
           !this.s.party.some((u) => u.id === source)) return;
       const d = this.developerCompanions;
       const mapped = d.projectiles.get(this._developerCompanionProjectileInFlight);
-      let move = mapped?.source === source ? mapped.move : null;
-      if (!move) {
-        const last = d.moves.get(source)?.at(-1);
-        move = last && last.resolved && last.pending === 0 &&
-          last.time === this.s.time
-          ? last : this.developerCompanionNewMove(source, 'Basic attack');
-      }
+      const direct = this._developerCompanionDirectMove;
+      const move = mapped?.source === source ? mapped.move
+        : direct?.source === source ? direct.move
+          : this.developerCompanionNewMove(source, 'Basic attack');
       if (!move) return;
       move.damage += amount;
       const hits = d.hits.get(source) || [];
@@ -2213,7 +2219,8 @@
         if (!hits.length && !this.s.party.some((u) => u.id === id)) d.hits.delete(id);
       }
       const elapsed = Math.min(5, Math.max(1, now));
-      return this.s.party.filter((u) => u.active !== false).map((u) => ({
+      return this.s.party.filter((u) => u.active !== false && u.hp > 0 && !u.expeditionId)
+        .map((u) => ({
         id: u.id, name: this.companionDisplayName(u),
         type: u.type === 'pet' ? 'Pet' : u.charmOrigin ? 'Charmed' : 'Companion',
         last: (d.moves.get(u.id) || []).filter((m) => m.resolved).slice(-3)
