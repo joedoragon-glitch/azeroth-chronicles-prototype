@@ -741,7 +741,7 @@
       // retain native healer targeting and let follow validate its path once.
       if (!ally) return false;
       const before = { x: e.x, y: e.y };
-      this.follow(
+      const advancing = this.follow(
         e,
         ally,
         160 * this.slowMovementFactor(e) * this.mountedMovementFactor(e) * this.nightTempo(),
@@ -749,7 +749,9 @@
         cfg.range - 25,
         'support-approach',
       );
-      if (dist(before, e) <= 0.1) return false;
+      // A pending frontier counts as a continuing support approach. Only a
+      // genuinely failed or completed no-movement attempt may idle-wander.
+      if (dist(before, e) <= 0.1) return advancing;
       e.noProgress = 0;
       return true;
     }
