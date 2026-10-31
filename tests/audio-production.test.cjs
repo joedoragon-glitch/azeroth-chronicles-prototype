@@ -91,6 +91,17 @@ assert(gains.some((g) => g[0] === 1 && g[1] > 0));
 a.ctx.currentTime = 5;
 a.updateProduction(scene);
 assert.equal(gains.at(-1)[1], 0);
+// Regression: a loaded hero may stand beside a refuge while the game is
+// showing its inactive title. That snapshot must NOT retain a settlement
+// hold and replace the first true outdoor track with settlement music.
+a.updateProduction({ ...scene, settlement: 'vale-refuge' });
+assert.equal(a.productionKey && JSON.parse(a.productionKey)[0], 'settlement-vale');
+a.updateProduction({ ...scene, settlement: 'vale-refuge', started: false, situation: 'title' });
+assert.equal(a.settlementZone, null);
+assert.equal(a.settlementUntil, 0);
+a.updateProduction({ ...scene, situation: 'exploration', settlement: null });
+assert.equal(JSON.parse(a.productionKey)[0], 'place-vale',
+  'title snapshot must never leak refuge-scoring into new exploration');
 let steps = 0;
 a.noiseBurst = () => {
   steps++;
