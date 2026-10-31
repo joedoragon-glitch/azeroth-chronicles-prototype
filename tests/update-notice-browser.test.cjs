@@ -224,10 +224,19 @@ const server = http.createServer((req, res) => {
         document.getElementById('startup-update').hidden &&
         !document.getElementById('title-screen').hidden &&
         window.Prototype?.game.hero.gold === 42424);
-      const offlineNotice = await page.locator('#startup-update-notice').textContent();
-      assert.match(offlineNotice, phone
+      const offlineState = await page.evaluate(async () => ({
+        notice: document.getElementById('startup-update-notice').textContent,
+        noticeHidden: document.getElementById('startup-update-notice').hidden,
+        online: navigator.onLine,
+        controller: !!navigator.serviceWorker.controller,
+        waiting: !!(await navigator.serviceWorker.getRegistration()).waiting,
+        titleVisible: !document.getElementById('title-screen').hidden,
+        lang: document.documentElement.lang,
+      }));
+      assert.match(offlineState.notice, phone
         ? /Sin conexión.*No se pudieron buscar actualizaciones/i
-        : /offline.*could not check for updates/i);
+        : /offline.*could not check for updates/i,
+      'offline status after reloading a cached release: ' + JSON.stringify(offlineState));
       await page.locator('#title-continue').click();
       await page.waitForFunction(() => window.Prototype?.started);
       failUpdateCheck = true;
