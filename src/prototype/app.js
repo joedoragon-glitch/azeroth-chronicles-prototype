@@ -4182,9 +4182,11 @@
         : 'Agility · Each level: +' + p.ranger.speedPerLevel +
             ' speed and +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
             '% cooldown reduction.';
-    return es
+    if (heroClass === 'mage') return es
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
+    // Unknown classes never inherit an invented Mage growth description.
+    return '';
   }
   // Owner-approved Option A: pale-gold spherical jingle bell, taken from
   // the simple line-art reference. Horizontal equator seam and ONE bottom
@@ -4227,7 +4229,7 @@
   }
   function playableClassCountWord() {
     const count = Object.keys(Campaign.classes).length;
-    return { 3: 'three', 4: 'four' }[count] || String(count);
+    return { 3: 'three', 4: 'four', 5: 'five' }[count] || String(count);
   }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
