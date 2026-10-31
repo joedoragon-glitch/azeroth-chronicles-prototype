@@ -77,7 +77,7 @@ jobs:
           print("PASS: 38 recorded-source encodes and eight additive checks")
           print("NOT: audition, integrated catalog, acceptance or gameplay QA")
           PY
-          python tools/audio/score-quality-controls.py "$RUNNER_TEMP/sibdlp-phase4/phase4-metrics.json" --expected-count 38 --layer-count 8
+          python tools/audio/score-quality-controls.py "$RUNNER_TEMP/sibdlp-phase4/phase4-metrics.json" --expected-count 38 --layer-count 8 --expected-source tools/audio/phase4-arrangements.json
       - name: Preserve metrics without publishing music
         if: always()
         uses: actions/upload-artifact@v4
