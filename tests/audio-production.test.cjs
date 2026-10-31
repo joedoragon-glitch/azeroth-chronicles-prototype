@@ -108,10 +108,10 @@ assert.equal(steps, 1);
 a.setSceneMix('menu');
 a.enableProduction(false);
 assert.equal(a.mixScene, 'menu');
-// #709 A5: The original else-if(scene.night) turned the same synthesized
-// insects on in every outdoor night, including barren ridges, the recovering
-// Frontier and Crown streets. Respect region-specific ecology instead of
-// inventing a generic nocturnal identity where no authored source exists.
+// #709 authorial preservation: original sparse night-insect events remain
+// in Vale, Highlands, Frontier and Crown until a *new approved recording*
+// supersedes them. Marches keep their distinct water/night detail. A generic
+// existing cue is a review item, not authorization to erase audible content.
 const detailsAudio = audio();
 detailsAudio.enableProduction();
 detailsAudio.cue = { id: 'vale' };
@@ -122,9 +122,9 @@ detailsAudio.noiseBurst = () => { throw Error('Unexpected fallback detail'); };
 const expectedDetails = {
   vale: 'ambience.insects',
   march: 'ambience.water',
-  highlands: null,
-  frontier: null,
-  crown: null,
+  highlands: 'ambience.insects',
+  frontier: 'ambience.insects',
+  crown: 'ambience.insects',
 };
 for (const [region, expected] of Object.entries(expectedDetails)) {
   detailsAudio.ctx.currentTime += 41;
@@ -135,10 +135,27 @@ for (const [region, expected] of Object.entries(expectedDetails)) {
     zone: region, region, interior: 'outdoors', night: true, peace: false,
     engaged: 0, boss: null, settlement: null, started: true, situation: 'exploration',
   });
-  assert.deepEqual(detailEvents, expected ? [expected] : [],
-    region + " night must not inherit another region's detail");
-  if (!expected) assert.equal(detailTones.length, 0,
-    region + ' night must not emit generic chirps');
+  assert.deepEqual(detailEvents, [expected],
+    region + ' nighttime behavior must survive sound-quality work');
+  assert.equal(detailTones.length, region === 'march' ? 1 : 0,
+    region + ' night must retain only its intended detail');
+}
+// No registered insect recording currently exists. Exercise the real
+// three-tone procedural fallback, not only the successful-event stub above.
+detailsAudio.playSoundEvent = (name) => { detailEvents.push(name); return false; };
+for (const region of ['vale', 'highlands', 'frontier', 'crown']) {
+  detailsAudio.ctx.currentTime += 41;
+  detailsAudio.nextSceneDetail = 0;
+  detailEvents = [];
+  detailTones = [];
+  detailsAudio.sceneDetails({
+    zone: region, region, interior: 'outdoors', night: true, peace: false,
+    engaged: 0, boss: null, settlement: null, started: true, situation: 'exploration',
+  });
+  assert.deepEqual(detailEvents, ['ambience.insects'],
+    region + ' original night insect binding must remain available');
+  assert.equal(detailTones.length, 3,
+    region + ' original three sparse chirps must remain as an audible fallback');
 }
 detailsAudio.dispose();
 console.log(
