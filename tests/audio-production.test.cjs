@@ -72,6 +72,15 @@ for (const zone of Object.keys(production.places)) {
 }
 a.updateEnvironment = () => {};
 assert.equal(a.productionCue({ ...scene, started: false }).id, 'title');
+const idleVale = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
+  settlement: null, engaged: 0 });
+assert.deepEqual(idleVale.stems.map(s => s.id), ['place-vale', 'action-vale']);
+assert.equal(idleVale.stems[1].gain, 0,
+  'Greenwood encounter layer must start silent in exploration');
+const millhaven = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
+  settlement: 'millhaven', engaged: 0 });
+assert.deepEqual(millhaven.stems.map(s => s.id), ['settlement-vale'],
+  'Millhaven settlement music must not run concurrently with the outdoor score');
 assert.equal(a.productionCue({ ...scene, gameOver: true }).id, 'defeat');
 a.finaleUntil = 3;
 assert.equal(a.productionCue({ ...scene, peace: true }).id, 'finale');
