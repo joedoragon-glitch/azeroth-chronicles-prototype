@@ -148,8 +148,8 @@ def main():
                 raise ValueError('Existing encoded parent hash mismatch')
             original = decode(root_file)
             start = round(asset['loop']['start'] * RATE)
-            base = original[start:start + LENGTH]
-            if len(base) != LENGTH:
+            base = original[start:start + 24 * RATE]
+            if len(base) != 24 * RATE:
                 raise ValueError('Invalid source loop bounds')
             # Re-render the *same owned regional spectral source recipe* at 72 s.
             # Do not triple the original 24-second file: that would preserve
