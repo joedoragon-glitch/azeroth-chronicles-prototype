@@ -4458,9 +4458,11 @@
         h.rogueSlow = Math.max(0, h.rogueSlow - dt);
         if (!h.rogueSlow) delete h.rogueSlow;
       }
+      const idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier();
       for (const u of this.s.party) {
         const recovery = this.cooldownRecoveryElapsed(u, dt);
-        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - recovery);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) -
+          recovery * idleHealRecovery);
         u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
         u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
