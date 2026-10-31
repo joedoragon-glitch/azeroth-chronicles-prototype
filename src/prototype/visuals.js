@@ -220,6 +220,19 @@
       walking: progress < 1,
     };
   }
+  // A burned woodland is a population of trees, not one stamped silhouette.
+  // These small, stable shape differences are presentation-only. Keep the roots
+  // at their authored positions and match attached new shoots to the same tree.
+  function frontierDeadTreeProfile(e) {
+    let h = 2166136261 >>> 0;
+    for (const ch of String(e.id || `${e.x}:${e.y}:dead-tree`))
+      h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0;
+    return {
+      width: 0.84 + (h & 7) * 0.044,
+      height: 0.83 + ((h >>> 3) & 7) * 0.049,
+      lean: (((h >>> 6) & 7) - 3.5) * 0.044,
+    };
+  }
   // Fresh epicormic shoots on surviving burned trunks, including retained raster bodies.
   // Fixed positions derive from identity; no animation or simulation fields.
   function frontierTreeShoots(ctx, e, p, region = 0, raster = false) {
@@ -236,6 +249,11 @@
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.scale(scale, scale);
+    if (!raster && e.structure === 'dead-tree') {
+      const profile = frontierDeadTreeProfile(e);
+      ctx.scale(profile.width, profile.height);
+      ctx.rotate(profile.lean);
+    }
     ctx.lineCap = 'round';
     const shoot = (x, y, side, size) => {
       ctx.strokeStyle = '#6f8050';
@@ -14315,9 +14333,14 @@
         case 'dead-tree':
         case 'dead-shrub':
         case 'dry-scrub':
-          craftAt(0, 0, kind === 'dead-tree' ? 1 : kind === 'dead-shrub' ? 0.65 : 0.55, () =>
-            naturalTrunk(true),
-          );
+          craftAt(0, 0, kind === 'dead-tree' ? 1 : kind === 'dead-shrub' ? 0.65 : 0.55, () => {
+            if (kind === 'dead-tree' && region === 3) {
+              const profile = frontierDeadTreeProfile(e);
+              ctx.scale(profile.width, profile.height);
+              ctx.rotate(profile.lean);
+            }
+            naturalTrunk(true);
+          });
           break;
         case 'ash-patch':
         case 'scorched-floor':
