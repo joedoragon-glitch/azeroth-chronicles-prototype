@@ -24,8 +24,13 @@ assert.deepEqual(Object.keys(bank.instruments).sort(),
 assert.equal(scores.phase4, 'BLOCKED');
 assert.equal(scores.sourceQuality, 'REVISE');
 assert.equal(scores.sonicQuality, 'UNVERIFIED');
-assert.equal(scoreRenderer.includes('phase3-sample-bank.json'), false,
-  'If the source bank is wired into the renderer, update this gate and test actual audio');
+assert.match(scoreRenderer, /phase3-sampler\.py/,
+  'Isolated Phase 3 composer must explicitly load the recorded bank player');
+const samplerSource = fs.readFileSync(fromRoot('tools/audio/phase3-sampler.py'),'utf8');
+assert.match(samplerSource, /class RecordedSampler:/);
+assert.match(samplerSource, /sourceGitBlob/);
+assert.doesNotMatch(samplerSource, /self\.original\.instrument\(/,
+  'Tonal instruments must never silently fall back to oscillator sounds');
 let count = 0, bytes = 0;
 const sampleFiles = new Set();
 for (const [instrument, def] of Object.entries(bank.instruments)) {
@@ -95,9 +100,9 @@ for (const t of scores.themes.filter(t => !t.pilotFamily)) {
   }
 }
 assert(missingOrOvershot.size > 0,
-  'If all ranges become covered, update the bank-coverage review before changing status');
+  'Provisional timbre, range and technical-source review must not be mistaken for listening acceptance');
 console.log('PASS source/provenance ONLY: '+count+' pinned CC0 source recordings / '+
   bytes+' encoded bytes, all upstream Git blob hashes match');
 console.log('HOLD: '+missingOrOvershot.size+
   ' distinct uncovered pitch/patch uses in six authored themes. '+
-  'Bank is not wired into composer, actual sound UNVERIFIED, Phase 4 BLOCKED.');
+  'Bank is wired into isolated composer, but source register, timbre and hearing still need QA; Phase 4 BLOCKED.');

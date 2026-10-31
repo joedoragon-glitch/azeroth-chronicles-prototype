@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "55 pinned CC0 samples in ten recorded-instrument categories; isolated Phase 3 studio bank, sonic quality UNVERIFIED, Phase 4 BLOCKED",
+  "status": "55 pinned CC0 recordings across ten instruments, now wired to Phase3 isolated sampler only; audio quality UNVERIFIED, Phase4 BLOCKED",
   "source": "tiny-orchestra 0.2.0 (edited VSCO-2 CE CC0 recordings)",
   "sourceRepository": "https://github.com/MarianBecher/tiny-orchestra",
   "sourceCommit": "60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f",
@@ -17,7 +17,7 @@
     "channels": 1,
     "loudnessTarget": -20
   },
-  "qualityCaveat": "Real recorded performances are a major advance over one oscillator patch, but these are lossy compact source samples and pitch shifting/short sustain loops can introduce audible artifacts. They are not a professional master quality guarantee. No claim of actual listening or production approval. The eight piano Ogg samples are a sparse CC0 subset and do not establish full-piano fidelity.",
+  "qualityCaveat": "Real recorded performances are a major advance over one oscillator patch, but these are lossy compact source samples and pitch shifting/short sustain loops can introduce audible artifacts. They are not a professional master quality guarantee. No claim of actual listening or production approval. The eight piano Ogg samples are a sparse CC0 subset and do not establish full-piano fidelity. Phase 3 isolated renderer now uses recorded tonal notes, with disclosed marimba-for-dulcimer and glockenspiel-for-bell substitutions and prior original synthesized drums; this is NOT a confirmed sonic-quality pass.",
   "instruments": {
     "flute": {
       "sustain": true,
@@ -605,7 +605,7 @@
       "gain": 0.85,
       "range": [
         53,
-        88
+        89
       ],
       "format": "ogg",
       "sampleRate": 48000,

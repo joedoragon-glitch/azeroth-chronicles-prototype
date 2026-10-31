@@ -17,6 +17,7 @@ THEMES = ROOT / "tools/audio/phase3-themes.json"
 PILOTS = ROOT / "tools/audio/phase2-pilots-v2.json"
 PHASE2 = ROOT / "tools/audio/phase2-composer.py"
 ENSEMBLE = ROOT / "tools/audio/phase2-ensemble.py"
+SAMPLER = ROOT / "tools/audio/phase3-sampler.py"
 IDS = (
     "place-vale", "place-march", "place-highlands", "place-frontier",
     "place-crypt", "place-archive", "place-mine", "place-abyss",
@@ -152,8 +153,11 @@ def render_new(t, renderer):
             # A small intentional chromatic alteration preserves particular old
             # hooks (e.g. March F# to F, Frontier C# to C) under the mode.
             emphasis = 1.05 if idx == 0 else .88 if idx == len(phrase)-1 else .96
-            play(bar, at, degree, duration, t["lead"], .114 * emphasis, 12,
-                 chromatic=accidental)
+            # Horn/cello register is actually playable (and sampleable),
+            # not an oscillator pretending that brass/cello reaches D6.
+            lead_register = 0 if t["lead"] in ("horn", "cello") else 12
+            play(bar, at, degree, duration, t["lead"], .114 * emphasis,
+                 lead_register, chromatic=accidental)
         for at, degree, duration, instrument, gain in t.get("counterpoint", {}).get(str(bar), []):
             play(bar, at, degree, duration, instrument, .058 * gain, 0)
 
@@ -195,13 +199,18 @@ def main():
     encoder = original.find_ffmpeg()
     if encoder is None: p.error("ffmpeg/imageio-ffmpeg required")
     out.mkdir(parents=True, exist_ok=True)
-    renderer = original.load_renderer()
+    original_renderer = original.load_renderer()
     from importlib.util import spec_from_file_location, module_from_spec
+    sampler_spec = spec_from_file_location("phase3_recorded_instruments", SAMPLER)
+    sampler_module = module_from_spec(sampler_spec)
+    sampler_spec.loader.exec_module(sampler_module)
+    renderer = sampler_module.RecordedSampler(original_renderer, encoder)
     spec = spec_from_file_location("phase3_v2_ensemble", ENSEMBLE)
     ensemble = module_from_spec(spec)
     spec.loader.exec_module(ensemble)
     reports = []
     for theme in themes:
+        before_calls = renderer.calls
         if "pilotFamily" in theme:
             family = copy.deepcopy(pilots[theme["pilotFamily"]])
             family["performance"]["leadOverrides"].update(theme["pilotLeadOverrides"])
@@ -211,6 +220,9 @@ def main():
         result = original.encode_stem(out, theme["id"], wave, rate, encoder)
         if result["loopEdgeDelta"] >= .2:
             raise RuntimeError(theme["id"] + ": unstable loop seam")
+        result["recordedInstrumentNotes"] = renderer.calls - before_calls
+        if result["recordedInstrumentNotes"] < 12:
+            raise RuntimeError(theme["id"] + ": expected real recorded instrumentation")
         reports.append(result)
         print("Rendered primary theme", theme["id"], result["seconds"], "seconds", flush=True)
     catalog_bytes = sum((ROOT / a["src"]).stat().st_size for a in catalog["assets"].values()
@@ -223,11 +235,13 @@ def main():
         "scope": "Phase 3 eight unregistered primary base themes only",
         "musicRegistered": 83, "crownFrozen": len(freeze),
         "authored": descriptions,
-        "tracks": reports, "existingCatalogBytes": catalog_bytes,
+        "tracks": reports, "instrumentEngine": "verified-CC0-samples-with-explicit-drums",
+        "samplerEvidence": renderer.snapshot(),
+        "existingCatalogBytes": catalog_bytes,
         "replacementProjectionBytes": projection,
         "encodedCatalogLimitBytes": original.LIMIT_BYTES,
         "headroomAfterEightOnlyBytes": original.LIMIT_BYTES - projection,
-        "limitations": "Not Phase 4 variants or Phase 7 integrated music QA. No real listening, "
+        "limitations": "Real CC0 sources are technically pinned, not perceptually reviewed; marimba-for-dulcimer and glockenspiel-for-bell remain provisional. Not Phase 4 variants or integrated music QA. No actual hearing, "
                        "warning masking, audible timbre acceptance, in-game mixing or device verification."
     }
     (out / "phase3-metrics.json").write_text(json.dumps(report, indent=2) + "\n")
