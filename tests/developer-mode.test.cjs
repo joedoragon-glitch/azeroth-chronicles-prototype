@@ -28,7 +28,8 @@ assert(incoming.dps > 0);
 const summoned = dev.developerSummon('boss:thorn:true');
 assert(summoned && summoned.type === 'boss' && summoned.form === 'true');
 assert.equal(summoned.neutral, false);
-assert.equal(summoned.aggro, true);
+assert.equal(summoned.aggro, true, 'developer summons are immediately hostile despite natural Thorn intro protection');
+assert.equal(dev.awaitsHeroAttack(summoned), false, 'developer summon never inherits natural intro gate');
 assert.equal(summoned.developerSummon, true);
 assert.equal(summoned.summon, true);
 assert.equal(summoned.summonBalanceVersion, 1, 'native boss stats are not re-scaled as a minion');
@@ -109,7 +110,107 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
     assert.equal(enemy.hp, enemy.maxHp, 'refused auto-attack deals no damage');
     assert.equal(game.cast(1, enemy.id, charged), true, heroClass + ': manual Skill 1 works');
     assert(game.hero.cd[0] > 0, 'manual attack retains its normal cooldown');
-    assert(enemy.hp < enemy.maxHp || game.s.projectiles.length > 0, 'manual attack damages or launches a real projectile');
+    if (charged && (heroClass === 'mage' || heroClass === 'ranger')) {
+      // Charged Mage beam and Ranger hawk travel as native transient effects,
+      // not immediate damage/projectiles. Advance their real resolver before
+      // checking the impact rather than misclassifying the cast as inert.
+      const effect = heroClass === 'mage' ? 'wide-beam' : 'hawk';
+      assert(
+        game._heroSkillEffects?.some((f) => f.kind === effect && f.targetId === enemy.id),
+        heroClass + ': charged Skill 1 launched its actual ' + effect,
+      );
+      game.advanceHeroSkillEffects(0.25);
+    }
+    assert(
+      enemy.hp < enemy.maxHp || game.s.projectiles.length > 0,
+      heroClass + (charged ? ' charged' : ' tap') + ': manual attack damages or launches a real projectile',
+    );
   }
 }
-console.log('PASS Developer Mode isolation, immortality, manual Skill 1, disabled movement auto-attack, hostile regional summons and combat telemetry');
+
+for (const mode of ['normal', 'nightmare', 'arena']) {
+  const game = new Campaign(mode, 'paladin', () => 0.5);
+  game.zone().props = [];
+  Object.assign(game.hero, { x: 500, y: 500 });
+  const enemy = game.makeEnemy(
+    { species: 'goblin', name: 'Protected normal enemy', level: 1, hp: 100, damage: 0, gold: 30, xp: 5 },
+    { x: 550, y: 500 },
+  );
+  game.zone().enemies = [enemy];
+  assert.deepEqual(game.developerFinisher(enemy.id), { hits: 0, kills: 0 });
+  assert.deepEqual(game.developerFinisher(null, true), { hits: 0, kills: 0 });
+  assert.equal(enemy.hp, enemy.maxHp, mode + ': no developer ability');
+}
+// Verify every class the live Campaign constructor actually admits.
+// Rogue has a separate, currently dormant foundation in balance.rules;
+// this developer helper must not silently activate or redefine a hero class.
+for (const heroClass of Object.keys(Campaign.rules.balance.classes)) {
+  const game = new Campaign('developer', heroClass, () => 0.5);
+  game.zone().props = [];
+  game.s.mercyTime = 0;
+  Object.assign(game.hero, { x: 500, y: 500 });
+  const enemy = game.makeEnemy(
+    { species: 'goblin', name: 'Finisher loot target', level: 1, hp: 1000, damage: 0, gold: 50, xp: 20 },
+    { x: 550, y: 500 },
+  );
+  game.zone().enemies = [enemy];
+  const initialKills = game.s.statistics.kills;
+  const initialLoot = game.s.loot.length;
+  assert.deepEqual(game.developerFinisher(enemy.id), { hits: 1, kills: 1 }, heroClass + ': native finisher');
+  assert.equal(enemy.hp, 0);
+  assert.equal(game.s.statistics.kills, initialKills + 1);
+  assert.equal(enemy.deathPaid, true);
+  assert(game.s.loot.length > initialLoot, heroClass + ': actual enemy death creates loot');
+  assert.deepEqual(game.developerFinisher(enemy.id), { hits: 0, kills: 0 }, 'dead actor cannot pay twice');
+  assert.equal(game.s.loot.length, initialLoot + 1, 'loot emitted exactly once');
+}
+const blast = new Campaign('developer', 'ranger', () => 0.5);
+blast.zone().props = [];
+blast.s.mercyTime = 0;
+Object.assign(blast.hero, { x: 500, y: 500 });
+const mobs = [540, 590, 630].map((x) =>
+  blast.makeEnemy(
+    { species: 'goblin', name: 'Sweep target', level: 1, hp: 200, damage: 0, gold: 0, xp: 0 },
+    { x, y: 500 },
+  ),
+);
+const bystander = blast.makeEnemy(
+  { species: 'goblin', name: 'Neutral nearby', level: 1, hp: 200, damage: 0, gold: 0, xp: 0 },
+  { x: 660, y: 500 },
+);
+bystander.neutral = true;
+const distant = blast.makeEnemy(
+  { species: 'goblin', name: 'Distant enemy', level: 1, hp: 200, damage: 0, gold: 0, xp: 0 },
+  { x: 950, y: 500 },
+);
+blast.zone().enemies = [...mobs, bystander, distant];
+assert.deepEqual(blast.developerFinisher(null, true), { hits: 3, kills: 3 });
+assert(mobs.every((enemy) => enemy.hp === 0));
+assert.equal(bystander.hp, bystander.maxHp, 'neutral excluded');
+assert.equal(distant.hp, distant.maxHp, 'out-of-radius enemy excluded');
+assert.deepEqual(blast.developerFinisher(987654321), { hits: 0, kills: 0 }, 'invalid explicit target cannot fall back to another enemy');
+
+const realBoss = new Campaign('developer', 'paladin', () => 0.5);
+realBoss.zone().props = [];
+realBoss.s.mercyTime = 0;
+Object.assign(realBoss.hero, { x: 500, y: 500 });
+const thorn = realBoss.bossEnemy(realBoss.boss('thorn'), 'normal', { x: 590, y: 500 });
+realBoss.zone().enemies = [thorn];
+assert.deepEqual(realBoss.developerFinisher(thorn.id), { hits: 1, kills: 1 }, 'real boss dies through real pipeline');
+assert.equal(realBoss.s.normal.thorn, true, 'real victory credited');
+assert(realBoss.s.statistics.kills > 0, 'boss death increments kill statistic');
+
+const spawned = new Campaign('developer', 'paladin', () => 0.5);
+spawned.zone().props = [];
+spawned.s.mercyTime = 0;
+Object.assign(spawned.hero, { x: 500, y: 500 });
+const testBoss = spawned.developerSummon('boss:thorn:normal');
+assert(testBoss, 'developer boss spawned');
+const priorKills = spawned.s.statistics.kills;
+const priorLoot = spawned.s.loot.length;
+assert.deepEqual(spawned.developerFinisher(testBoss.id), { hits: 1, kills: 1 }, 'summoned boss can be finished');
+assert.equal(spawned.s.statistics.kills, priorKills, 'test summon yields no kill statistic');
+assert.equal(spawned.s.loot.length, priorLoot, 'test summon yields no drops');
+assert.equal(spawned.s.normal.thorn, undefined, 'test summon yields no real boss victory');
+
+console.log('PASS Developer Mode isolation, immortality, class-independent native finisher/sweep, real reward/death events, summoned reward isolation and combat telemetry');

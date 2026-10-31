@@ -2164,6 +2164,60 @@
       };
       return { incoming: read('incoming'), outgoing: read('outgoing') };
     }
+    // Developer-only quick kills still use the ordinary damage -> kill pipeline:
+    // real enemies grant real drops/progress, temporary test summons do not.
+    developerFinisher(targetId = null, sweep = false) {
+      const result = { hits: 0, kills: 0 };
+      if (
+        this.s.mode !== 'developer' ||
+        this.peace ||
+        this.hero.hp <= 0 ||
+        this.s.challenge?.pending ||
+        this.s.challenge?.gameOver
+      )
+        return result;
+      const zone = this.zone();
+      const eligible = (enemy, radius) =>
+        enemy.hp > 0 &&
+        !enemy.neutral &&
+        !this.attackResetProtected(enemy) &&
+        this.tacticalDirectTargetable(enemy) &&
+        dist(this.hero, enemy) <= radius &&
+        this.line(this.hero, enemy);
+      let targets;
+      if (sweep) {
+        // Snapshot a bounded group. A death-triggered spawn is for the next hit,
+        // not an accidental part of this one developer action.
+        targets = zone.enemies
+          .filter((enemy) => eligible(enemy, 360))
+          .sort((a, b) => dist(this.hero, a) - dist(this.hero, b) || this.idOrder(a, b))
+          .slice(0, 8);
+      } else {
+        const selected = targetId == null
+          ? this.selectedHeroTarget()
+          : zone.enemies.find((enemy) => enemy.id === targetId);
+        const nearest = targetId == null && !selected
+          ? zone.enemies
+              .filter((enemy) => eligible(enemy, 680))
+              .sort((a, b) => dist(this.hero, a) - dist(this.hero, b) || this.idOrder(a, b))[0]
+          : null;
+        const target = selected || nearest;
+        targets = target && eligible(target, 680) ? [target] : [];
+      }
+      for (const enemy of targets) {
+        // Piercing removes defensive multipliers, not walls, retreat/reset
+        // protection, target validity or the normal death/reward lifecycle.
+        const hit = this.damage(
+          enemy,
+          Math.max(1e9, enemy.maxHp * 10000),
+          'hero',
+          { piercing: true },
+        );
+        if (hit) result.hits++;
+        if (hit && enemy.hp === 0) result.kills++;
+      }
+      return result;
+    }
     developerSummonOptions() {
       if (this.s.mode !== 'developer' || this.peace) return [];
       const region = this.definition()?.id;
