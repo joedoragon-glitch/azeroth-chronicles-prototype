@@ -118,6 +118,30 @@ def actual_lufs(path):
     return float(m.group(1))
 
 
+def actual_true_peak(path):
+    output = command(['ffmpeg', '-nostdin', '-hide_banner', '-loglevel', 'info',
+                      '-i', str(path), '-af',
+                      'loudnorm=I=-23:TP=-2:LRA=11:print_format=json',
+                      '-f', 'null', '-']).stderr.decode('utf8', errors='replace')
+    m = re.search(r'"input_tp"\\s*:\\s*"([^"]+)"', output)
+    if not m or not math.isfinite(float(m.group(1))):
+        raise ValueError('True peak missing from decoded EBU loudness analysis')
+    return float(m.group(1))
+
+
+def transparent_peak_knee(data, threshold=.17, width=.095):
+    """Keep low-level field nuance and smoothly constrain isolated sharp peaks.
+
+    A bounded monotonic transfer function, not a whole-scene compressor or
+    new game mix gain. Starts with unit derivative at its threshold.
+    """
+    absolute = np.abs(data)
+    excess = np.maximum(absolute - threshold, 0)
+    limited = np.where(absolute <= threshold, absolute,
+                       threshold + width * excess / (width + excess))
+    return np.copysign(limited, data)
+
+
 def encode(data, target):
     guards = np.concatenate([data[-GUARD:], data, data[:GUARD]])
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp:
@@ -234,8 +258,11 @@ def main():
             if gain > 4 or gain < .15:
                 raise ValueError('Unexpected candidate scale needed: '+identifier)
             raw *= gain
-            if np.max(np.abs(raw)) > .8:
-                raise ValueError('Unacceptably high instantaneous source peak')
+            pre_knee_sample_peak = float(np.max(np.abs(raw)))
+            raw = transparent_peak_knee(raw)
+            post_knee_sample_peak = float(np.max(np.abs(raw)))
+            if post_knee_sample_peak > .27:
+                raise ValueError('Regional field preview contains unbounded transient')
             target_file = OUT / (identifier + '.mp3')
             decoded = encode(raw, target_file)
             thirds = [decoded[i*RATE*24:(i+1)*RATE*24] for i in range(3)]
@@ -246,16 +273,33 @@ def main():
             if not np.isfinite(decoded).all() or np.max(np.abs(decoded)) >= .95:
                 raise ValueError('Decoded preview clipping or invalid audio')
             edge = float(abs(decoded[0] - decoded[-1]))
+            one_second = decoded.reshape(SECONDS, RATE).astype('float64')
+            seconds_rms = np.sqrt(np.mean(np.square(one_second), axis=1))
+            edge_envelope_db = 20 * math.log10(
+                max(float(seconds_rms[0]), 1e-12) / max(float(seconds_rms[-1]), 1e-12))
+            if abs(edge_envelope_db) > 4:
+                raise ValueError('Loop end/start 1-second envelope differs by >4dB')
+            measured_true_peak = actual_true_peak(target_file)
+            if measured_true_peak >= -1.5:
+                raise ValueError('Actual encoded true peak too close to clipping')
             report = {'id':identifier, 'zone':cue["zone"],
                       'previewSha256':hashlib.sha256(target_file.read_bytes()).hexdigest(),
                       'bytes':target_file.stat().st_size, 'decodedSeconds':72.0,
                       'codec':'mp3 mono 32kHz 128kbps', 'sourceCatalogParent':cue['referenceBed'],
                       'sourceCatalogSha256':actual_sha, 'sourceLUFS':actual_lufs(previous),
                       'candidateLUFS':actual_lufs(target_file),
+                      'candidateTruePeakDbTP':measured_true_peak,
+                      'preKneeSamplePeak':pre_knee_sample_peak,
+                      'postKneeSamplePeak':post_knee_sample_peak,
                       'fieldSource':cue["mainSource"],
                       'recordedFieldEnergyFractionPreCrossTerms':real_fraction,
                       'recordedFieldRmsBeforeMixGain':rms(field),
-                      'loopEdgeDelta':edge, 'trueDecodedPeak':float(np.max(np.abs(decoded))),
+                      'loopEdgeDelta':edge,
+                      'loopStartEndOneSecondRmsDb':round(edge_envelope_db, 3),
+                      'decodedSamplePeak':float(np.max(np.abs(decoded))),
+                      'maxOneSecondCrestDb':round(float(np.max(20*np.log10(
+                          np.max(np.abs(one_second),axis=1) /
+                          np.maximum(seconds_rms, 1e-12)))), 3),
                       'spectral':spectral(decoded),
                       'correlations24s':block_correlations,
                       'sparsePhysicalEvents':event_stats,
