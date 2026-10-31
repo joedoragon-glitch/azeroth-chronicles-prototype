@@ -18,6 +18,9 @@ PILOTS = ROOT / "tools/audio/phase2-pilots-v2.json"
 PHASE2 = ROOT / "tools/audio/phase2-composer.py"
 ENSEMBLE = ROOT / "tools/audio/phase2-ensemble.py"
 SAMPLER = ROOT / "tools/audio/phase3-sampler.py"
+# Match the published dev.242 encoded budget without modifying older Phase 2 studies.
+PACKAGE_LIMIT_BYTES = 256 * 1024 * 1024
+PER_FILE_LIMIT_BYTES = 16 * 1024 * 1024
 IDS = (
     "place-vale", "place-march", "place-highlands", "place-frontier",
     "place-crypt", "place-archive", "place-mine", "place-abyss",
@@ -218,6 +221,8 @@ def main():
         else:
             wave, rate = render_new(theme, renderer)
         result = original.encode_stem(out, theme["id"], wave, rate, encoder)
+        if result["encodedBytes"] > PER_FILE_LIMIT_BYTES:
+            raise RuntimeError(theme["id"] + ": exceeds 16 MiB per-file budget")
         if result["loopEdgeDelta"] >= .2:
             raise RuntimeError(theme["id"] + ": unstable loop seam")
         result["recordedInstrumentNotes"] = renderer.calls - before_calls
@@ -239,15 +244,15 @@ def main():
         "samplerEvidence": renderer.snapshot(),
         "existingCatalogBytes": catalog_bytes,
         "replacementProjectionBytes": projection,
-        "encodedCatalogLimitBytes": original.LIMIT_BYTES,
-        "headroomAfterEightOnlyBytes": original.LIMIT_BYTES - projection,
+        "encodedCatalogLimitBytes": PACKAGE_LIMIT_BYTES,
+        "headroomAfterEightOnlyBytes": PACKAGE_LIMIT_BYTES - projection,
         "limitations": "Real CC0 sources are technically pinned, not perceptually reviewed; marimba-for-dulcimer and glockenspiel-for-bell remain provisional. Not Phase 4 variants or integrated music QA. No actual hearing, "
                        "warning masking, audible timbre acceptance, in-game mixing or device verification."
     }
     (out / "phase3-metrics.json").write_text(json.dumps(report, indent=2) + "\n")
     original.check_contract()  # recheck every frozen Crown disk SHA after rendering
-    if projection > original.LIMIT_BYTES:
-        raise RuntimeError("Even eight-only encoded catalog projection breaches 32 MiB")
+    if projection > PACKAGE_LIMIT_BYTES:
+        raise RuntimeError("Eight-only projection breaches the published 256 MiB budget")
     print("PASS Phase 3 ENCODING ONLY: eight MP3s decoded and seams measured; "
           "Crown hashes intact. Musical-source/sonic acceptance is NOT implied.")
     print("PHASE3_INTERNAL_METRICS=" + json.dumps(report), flush=True)
