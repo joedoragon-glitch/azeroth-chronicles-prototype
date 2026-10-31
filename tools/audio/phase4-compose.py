@@ -113,6 +113,9 @@ def score_contract():
         assert cue["parent"] in by_id or cue["parent"] in data["interiors"]
         assert cue["groovePalette"] == cue["parent"]
         assert cue["spacePalette"] == cue["parent"]
+        if "secondaryHornOctave" in cue:
+            assert cue["secondaryHornOctave"] == -12
+            assert len(cue["secondaryHornDecision"]) >= 100
         if cue["parent"] in by_id:
             base = by_id[cue["parent"]]
             if "pilotFamily" in base:
@@ -341,9 +344,15 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler,
                           .031 if additive else
                           .059 if source_role == "answer" else .053)
                 for at, degree, duration in notes:
+                    # Only *newly authored* secondary horn gestures get the
+                    # lower, genuine recorded-source register. H heritage
+                    # lead phrases retain their parent score's chosen pitch.
+                    brass_register = (cue.get("secondaryHornOctave", 0)
+                                      if instrument == "horn" else 0)
                     tone(bar, at, degree,
                          min(duration, .7) if source_role == "counterline" else duration,
-                         instrument, amount, soft=True)
+                         instrument, amount, soft=True,
+                         register_shift=brass_register)
         if additive and dynamic > .82 and bar % 4 in (1, 2):
             # Actual location-specific accents: restrained percussion
             # supports the rhythmic argument rather than a shared boss loop.
