@@ -85,7 +85,7 @@
     "rendered": "two 72.0-second independently varied MP3 studio previews encoded at 32kHz mono 128kbps with 150ms guards",
     "signalChecked": "SUCCESS isolated no-deploy source SHA e0a0582d34d92f50dfc5bbb8a06e63324494811d, Actions run 41198262753; artifact file 13040829187",
     "retrospectiveQA": "first 24-second version rejected for fixed-event fatigue; first 72-second preview corrected because a physically recorded detail was buried around 21-24dB below background; physical preview ZIP initially not retained due hidden folder and uploader now fails closed",
-    "decodedIndependentReview": "Final actual MP3s were downloaded from prior 72-second successful artifact and decoded independently; 24-second block correlations magnitude <0.02; revised output EBU R128/physical-spectral/seam checked by real decoder in CI; not a human audition.",
+    "decodedIndependentReview": "Final exact 72s studio MP3 artifact #13040829187 decoded independently: both SHA-256s match, both mono 32kHz/128kbps, no clipping, non-tiled 24s blocks; sparse recorded events 11.47dB (Keep) and 9.14dB (Shrine) above adjacent codec residual, but still -13.35 and -17.45dB relative to the continuous bed. No human hearing.",
     "heard": "UNVERIFIED (no genuine audio hearing performed)",
     "accepted": "ARTISTIC HOLD — continuous bed still procedural; two very short recorded details do not prove inhabited locale, scene-specific exterior identity or score/warning mix; no production integration",
     "registered": "NO",
@@ -123,6 +123,24 @@
     ],
     "encodedAdditionalTotalBytes": 2316762,
     "twoCandidateDecodedPcmBytes": 18432000,
-    "note": "Source/gain/spectrum and output-artefact proof only. Do not certify timbral authenticity, actual audibility over music, warning priority, loop fatigue as heard, or iPhone playback."
+    "note": "Source/gain/spectrum and output-artefact proof only. Do not certify timbral authenticity, actual audibility over music, warning priority, loop fatigue as heard, or iPhone playback.",
+    "independentFinalDecode": {
+      "method": "Downloaded exact final MP3 ZIP artifact #13040829187, inspected with ffprobe/FFmpeg and reconstructed dry 72s noise textures from the existing region seeds. Compared decoded output residual with codec noise in nearby event-free sections. This is signal analysis only, NOT any actual human listening.",
+      "sha256BothMatch": true,
+      "sourceBlockRepetition": "All pairwise correlations of 0-24/24-48/48-72 decoded mono blocks were |r| < 0.02; not a naive 24-second tile.",
+      "signalKeep": {
+        "residualEventVsCodecFloorDb": 11.47,
+        "residualEventVsRegeneratedBedDb": -13.35,
+        "decodedPeak": 0.17706974,
+        "loopSeamSampleDelta": 0.0016399
+      },
+      "shrineBarracks": {
+        "residualEventVsCodecFloorDb": 9.14,
+        "residualEventVsRegeneratedBedDb": -17.45,
+        "decodedPeak": 0.13858923,
+        "loopSeamSampleDelta": 0.00008388
+      },
+      "limitation": "Event residual includes codec differences; codec floor was estimated from nearby event-free windows; no psychoacoustic masking or speaker frequency-response tests were performed. Three-slice noncorrelation is not a human long-loop-fatigue pass."
+    }
   }
 }
