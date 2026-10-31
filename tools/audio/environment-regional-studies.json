@@ -24,8 +24,8 @@
       "license": "CC0 as explicitly declared by original uploader",
       "evidence": "https://opengameart.org/content/park-ambiences",
       "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
-      "sha1": null,
-      "bytes": null,
+      "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
+      "bytes": 73960096,
       "maxBytes": 85000000,
       "role": "Real open-field gusts for recovering Frontier, distinct from hardwood",
       "cautions": "Source address, checksum, portability and acoustic suitability need real studio download before accepting; do not silently use fake fallback."
@@ -168,5 +168,9 @@
       "name": "Rain, crows, crickets, wolves",
       "why": "no approved permanent fauna/weather additions and can obscure score/warnings"
     }
-  ]
+  ],
+  "provenancePilot": {
+    "run": 41206105351,
+    "verified": "Field WAVs downloaded independently and checked: autumn Commons 121316676 bytes SHA1 b10826f1c65d4c1bea131fc93592baf6e4829fe6; OGA wind 73960096 bytes SHA1 b518ae8ad9a5e83f6a1479d3f9190d962af52673. Initial exploratory job intentionally failed closed on unpinned wind; now pinned."
+  }
 }
