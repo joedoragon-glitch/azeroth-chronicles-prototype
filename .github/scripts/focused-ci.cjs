@@ -193,6 +193,8 @@ const groups = [
       TEST + 'navigation-route-stage4.test.cjs',
       TEST + 'crowd-collision-fast-reject.test.cjs',
       TEST + 'projectile-order.test.cjs',
+      TEST + 'vale-periodic-route-regression.test.cjs',
+      TEST + 'snapshot-thorn-patrol.test.cjs',
     ],
   },
   {
