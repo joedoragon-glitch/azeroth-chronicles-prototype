@@ -1,6 +1,6 @@
 # Sound design and audio production — current game
 
-**#727 pending cache-headroom adjustment (PR #744, 31 October 2026):** A **128 MiB decoded recording cache default** is implemented in the environmental-audio integration draft to give the current dev.248 soundtrack and environment beds more crossfade room. The **192 MiB explicit override ceiling, lazy loading/eviction/voice priority and 16 MiB/file / 256 MiB encoded packaging limits** remain unchanged. This is draft-only; the published game still uses 96 MiB. Browser emulation cannot substitute for real phone memory verification. Earlier 96 MiB references in dated release sections are historical.
+**#727 pending cache-headroom adjustment (PR #744, 31 October 2026):** A **128 MiB transition-time decoded recording cache budget** is implemented in the environmental-audio integration draft to give the current dev.248 soundtrack and environment beds more crossfade room; after outgoing voice release, unused PCM is reclaimed toward the **96 MiB idle retention target**. The **192 MiB explicit override ceiling, lazy loading/eviction/voice priority and 16 MiB/file / 256 MiB encoded packaging limits** remain unchanged. This is draft-only; the published game still uses 96 MiB. Browser emulation cannot substitute for real phone memory verification. Earlier 96 MiB references in dated release sections are historical.
 
 ## Published 65-track soundtrack / deferred artistic audition (31 October 2026)
 

@@ -8,6 +8,8 @@ const assert = require('node:assert/strict'),
     baseUrl = 'https://example.test/game/';
   const defaults = new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch });
   assert.equal(defaults.budget, 128 * 1024 * 1024, 'default RAM cache must support larger crossfade layers');
+  assert.equal(defaults.retentionBudget, 96 * 1024 * 1024,
+    'released recordings must return toward the previous 96-MiB retention target');
   assert.equal(new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
     budget: 192 * 1024 * 1024 }).budget, 192 * 1024 * 1024);
   assert.throws(() => new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
@@ -23,6 +25,25 @@ const assert = require('node:assert/strict'),
     '128-MiB default must accommodate one extra 72-second mono environment crossfade');
   assert.throws(() => headroom.room(40 * MiB), /Active recordings fill decoded memory budget/,
     'The higher default must still reject exceeding 128 MiB of pinned buffers');
+  // A pinned outgoing score plus the incoming source may temporarily exceed
+  // 96 MiB; the old source must only become reclaimable after its release.
+  const outgoing = { bytes: 90 * MiB, refs: 1 };
+  const incoming = { bytes: 12 * MiB, refs: 1 };
+  headroom.cache.set('outgoing-score', outgoing);
+  headroom.cache.set('incoming-bed', incoming);
+  headroom.bytes = outgoing.bytes + incoming.bytes;
+  assert.equal(headroom.cache.size, 2);
+  headroom.trimReleased();
+  assert.equal(headroom.bytes, 102 * MiB, 'Never evict the pinned outgoing crossfade');
+  headroom.release(outgoing);
+  assert.equal(headroom.cache.has('outgoing-score'), false,
+    'Fade completion must reclaim the old buffer below the retention target');
+  assert.equal(headroom.cache.has('incoming-bed'), true,
+    'The new live bed must remain pinned and uninterrupted');
+  assert.equal(headroom.bytes, 12 * MiB);
+  assert.equal(headroom.status().retentionBudget, 96 * MiB);
+  assert.throws(() => new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
+    retentionBudget: 129 * MiB }), /retained memory budget/);
   headroom.dispose();
   defaults.dispose();
   let calls = 0;
