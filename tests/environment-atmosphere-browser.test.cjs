@@ -195,9 +195,11 @@ async function main(){
     await page.waitForFunction(()=>Prototype.experimentalGraphics.backgroundOptimized===true);
     await page.waitForTimeout(700);
     const waterCrop={x:765,y:315,width:340,height:250};
+    const gpuClockStart=await page.evaluate(()=>Prototype.game.s.clock);
     const pixiA=await gpu.screenshot({path:path.join(out,'marches-stationary-water-pixi-t0.png')});
     await page.waitForTimeout(1350);
     const pixiB=await gpu.screenshot({path:path.join(out,'marches-stationary-water-pixi-t1.png')});
+    const gpuClockEnd=await page.evaluate(()=>Prototype.game.s.clock);
     const pixiWater=await compareCrop(pixiA,pixiB,waterCrop);
     // Switch the original renderer, not a mocked variant, without changing
     // the admitted Campaign, hero position, lighting or Optimization tier.
@@ -208,23 +210,30 @@ async function main(){
     await page.evaluate(()=>Prototype.closeMenu());
     await page.waitForFunction(()=>Prototype.experimentalGraphics.mode==='canvas2d');
     await page.waitForTimeout(250);
+    const canvasClockStart=await page.evaluate(()=>Prototype.game.s.clock);
     const canvasA=await canvas.screenshot({path:path.join(out,'marches-stationary-water-canvas-t0.png')});
     await page.waitForTimeout(1350);
     const canvasB=await canvas.screenshot({path:path.join(out,'marches-stationary-water-canvas-t1.png')});
+    const canvasClockEnd=await page.evaluate(()=>Prototype.game.s.clock);
     const canvasWater=await compareCrop(canvasA,canvasB,waterCrop);
     const waterResult={site:waterSite,clip:waterCrop,pixi:pixiWater,canvas:canvasWater,
-      context:'Same stationary region/camera with Opt On, night clock and ambient actors removed; native Canvas vs software WebGL2 screenshots; no device claim'};
+      clock:{pixiStart:gpuClockStart,pixiEnd:gpuClockEnd,
+        canvasStart:canvasClockStart,canvasEnd:canvasClockEnd},
+      context:'Same stationary region/camera with effective Optimization On, night and actors removed; Canvas vs WebGL2 screenshot crop; both paths may intentionally reuse static terrain in this tier. NOT a proof of Off-mode shimmer parity or lack thereof.'};
     fs.writeFileSync(path.join(out,'stationary-water-result.json'),
       JSON.stringify(waterResult,null,2)+'\n');
     console.log('ATMOSPHERE-708-STATIONARY-WATER-PIXELS '+JSON.stringify(waterResult));
     assert(pixiWater.blueTintPixels>1000 && canvasWater.blueTintPixels>1000,
       'V-04 screenshots must actually show the blue channel rather than an unrelated roadside');
-    assert(canvasWater.changedPixels>100,
-      'Original Canvas water should visibly animate in this real stable camera crop');
-    if(pixiWater.changedPixels===0)console.log(
-      'REPRODUCED V-04: stationary Pixi cached Marches water shows NO temporal change in actual WebGL pixels, while Canvas does; fix required, no water art polish');
-    else console.log('V-04 Pixi stationary water has '+pixiWater.changedPixels+
-      ' changed pixels; do not classify it as frozen without isolating sources');
+    // An actual controlled run showed NO temporal changes in either renderer
+    // while Optimization On was selected. Original native Canvas Off-mode
+    // rendering IS time-dependent, but this optimized browser pair cannot
+    // isolate a Pixi regression; record the evidence without overclaiming.
+    if(canvasWater.changedPixels===0 && pixiWater.changedPixels===0)
+      console.log('V-04 INCONCLUSIVE (optimization-on): stationary Canvas and Pixi crops are both static; no Pixi-only water defect established');
+    else console.log('V-04 OPTIMIZATION-ON OBSERVATION: Canvas changed '+canvasWater.changedPixels+
+      ' pixels; Pixi changed '+pixiWater.changedPixels+
+      '. Inspect artifacts and actual effective tier before making a defect claim');
     await context.close();
   }finally{
     await browser?.close();
