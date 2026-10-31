@@ -220,7 +220,8 @@ def main():
             wave, rate = ensemble.render_stem(family, "base", renderer)
         else:
             wave, rate = render_new(theme, renderer)
-        result = original.encode_stem(out, theme["id"], wave, rate, encoder)
+        result = original.encode_stem(out, theme["id"], wave, rate, encoder,
+                                      bitrate="160k")
         if result["encodedBytes"] > PER_FILE_LIMIT_BYTES:
             raise RuntimeError(theme["id"] + ": exceeds 16 MiB per-file budget")
         if result["loopEdgeDelta"] >= .2:
@@ -240,7 +241,9 @@ def main():
         "scope": "Phase 3 eight unregistered primary base themes only",
         "musicRegistered": 83, "crownFrozen": len(freeze),
         "authored": descriptions,
-        "tracks": reports, "instrumentEngine": "verified-CC0-samples-with-explicit-drums",
+        "tracks": reports, "sampleRateHz": renderer.RATE,
+        "encodedBitrate": "160k-mono-MP3",
+        "instrumentEngine": "verified-CC0-samples-with-explicit-drums",
         "samplerEvidence": renderer.snapshot(),
         "existingCatalogBytes": catalog_bytes,
         "replacementProjectionBytes": projection,

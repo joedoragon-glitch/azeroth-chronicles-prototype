@@ -22,7 +22,10 @@ SAMPLES = (ROOT / "tools/audio/phase3-samples").resolve()
 class RecordedSampler:
     def __init__(self, original, ffmpeg):
         self.original = original
-        self.RATE = original.RATE
+        # Offline score renders may use CD-quality 44.1 kHz; legacy drum
+        # patches are at 32 kHz and are resampled, never mis-timed.
+        assert original.RATE == 32000
+        self.RATE = 44100
         self.ffmpeg = ffmpeg
         self.bank = json.loads(BANK.read_text(encoding="utf-8"))
         assert self.bank["schemaVersion"] == 1
@@ -42,7 +45,7 @@ class RecordedSampler:
     def drum(self, kind, rng):
         # Existing drum synthesis is explicit and isolated; tonal instruments
         # must NEVER silently fall back to one generic oscillator patch.
-        return self.original.drum(kind, rng)
+        return resample_poly(self.original.drum(kind, rng), 441, 320)
 
     def _route(self, midi, kind):
         original = kind

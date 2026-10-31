@@ -241,7 +241,9 @@ def find_ffmpeg():
     return executable if Path(executable).is_file() else None
 
 
-def encode_stem(out_dir, cue_id, signal, rate, ffmpeg):
+def encode_stem(out_dir, cue_id, signal, rate, ffmpeg, bitrate="96k"):
+    if bitrate not in ("96k", "160k", "192k"):
+        raise ValueError("Unexpected isolated audio bitrate")
     import numpy as np
     guard = round(.15 * rate)
     loop_samples = len(signal)
@@ -257,7 +259,7 @@ def encode_stem(out_dir, cue_id, signal, rate, ffmpeg):
         target = out_dir / (cue_id + ".mp3")
         subprocess.run([ffmpeg, "-nostdin", "-hide_banner", "-loglevel", "error",
                         "-y", "-i", str(wav_path), "-codec:a", "libmp3lame",
-                        "-b:a", "96k", "-write_xing", "1", "-map_metadata", "-1",
+                        "-b:a", bitrate, "-write_xing", "1", "-map_metadata", "-1",
                         str(target)], check=True)
     raw = subprocess.check_output([ffmpeg, "-nostdin", "-hide_banner", "-loglevel",
                                    "error", "-i", str(target), "-f", "f32le",
