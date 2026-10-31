@@ -100,4 +100,4 @@ if (process.env.GITHUB_ACTIONS === 'true' &&
   }
   console.log('PASS isolated eight-MP3 decode, loop, budget and Crown freeze checks; NOT auditory approval');
 }
-console.log('PASS Phase 3: eight source-authored primary themes, six distinct new works and two approved-v2 continuations');
+console.log('PASS Phase 3 score-schema/codec checks only; musical source REVISE, genuine sonic hearing UNVERIFIED, Phase 4 BLOCKED');
