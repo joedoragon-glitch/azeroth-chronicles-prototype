@@ -1,7 +1,7 @@
 'use strict';
 // #709 A4: SCOPED Chromium WebAudio on the real published-score/current catalog.
 // One desktop and one phone-EMULATED context, not a native iPhone/device test.
-// Actual playable game and this read-only listening room share the Audio owner.
+// Runs the PLAYABLE GAME entrypoint directly. Listening-room #647 is intentionally deferred to soundtrack Phase 8.
 // This does not measure perceived quality or authorize publication.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -48,27 +48,46 @@ const server=http.createServer((req,res)=>{
       page.on('pageerror',e=>errors.push(e.message));
       await page.addInitScript(()=>localStorage.setItem('audio-audit-709-sentinel','untouched'));
       try{
-        await page.goto('http://127.0.0.1:'+server.address().port+prefix+'tools/audio/index.html');
-        await page.waitForFunction(()=>!!window.AudioAudition?.audio?.recordingManifest?.assets?.['env-woodland-day'],null,{timeout:18000});
-        assert.equal(await page.evaluate(()=>AudioAudition.audio.ctx),null,'no auto-play before gesture');
-        await page.locator('#advanced').evaluate(el=>{el.open=true});
-        await page.locator('#profile').selectOption(phone?'phone':'reference');
+        await page.goto('http://127.0.0.1:'+server.address().port+prefix+(phone?'phone.html':'index.html'));
+        await page.waitForFunction(()=>!!window.Prototype?.audio && !!window.Campaign && !!document.querySelector('#modal-title'),null,{timeout:18000});
+        assert.equal(await page.evaluate(()=>Prototype.audio.ctx),null,'no auto-play before gesture');
+        if(phone)await page.locator('#modal-title').tap();
+        else await page.locator('#modal-title').click();
+        await page.waitForFunction(()=>Prototype.audio.ctx?.state==='running',null,{timeout:18000});
+        await page.evaluate(phone=>{
+          const a=Prototype.audio;
+          a.update=()=>{}; // hold simulation-driven audio selection while testing real Campaign scenes
+          a.enableProduction(true);
+          a.setMixProfile(phone?'phone':'reference');
+        },phone);
         for(const x of cases){
-          await page.locator('#place').selectOption(x.zone);
-          await page.locator('#scene-mode').selectOption(x.mode);
-          const go=page.locator('#scene-play');
-          if(phone)await go.tap();else await go.click();
+          const description=await page.evaluate(({zone,mode})=>{
+            const a=Prototype.audio;
+            const g=new Campaign('normal','paladin',()=>0.73);
+            g.enter(zone);
+            const before=JSON.stringify(g.s);
+            const original=a.describe(g,{started:true});
+            if(JSON.stringify(g.s)!==before)throw Error('Audio description mutated campaign');
+            const scene={...original,night:mode==='night',peace:false,engaged:0,boss:null,
+              settlement:null,situation:'exploration',started:true,gameOver:false};
+            a.context=scene;
+            a.updateProduction(scene);
+            return {zone:scene.zone,region:scene.region,interior:scene.interior,
+              selected:a.environmentCue(scene)?.asset,score:a.productionCue(scene)?.id};
+          },{zone:x.zone,mode:x.mode});
+          assert.equal(description.zone,x.zone);
+          assert.equal(description.selected,x.bed);
+          assert.equal(description.score,x.score);
           await page.waitForFunction(({bed,score})=>{
-            const a=AudioAudition.audio;
+            const a=Prototype.audio;
             return a.ctx?.state==='running'&&a.environmentVoice?.id===bed &&
               a.recordedScore?.id===score;
           },{bed:x.bed,score:x.score},{timeout:35000});
           const result=await page.evaluate(()=>{
-            const a=AudioAudition.audio,e=a.environmentVoice,m=a.recordedScore;
+            const a=Prototype.audio,e=a.environmentVoice,m=a.recordedScore;
             const pcm=e.item.buffer.getChannelData(0);
             let peak=0;
-            // A real decoded MP3, not a synthetic fake buffer, with an actual
-            // browser AudioBufferSource routed through the ambience bus.
+            // The real browser decoded the actual production MP3; no simulated PCM.
             for(let i=0;i<pcm.length;i+=257)peak=Math.max(peak,Math.abs(pcm[i]));
             return {bed:e.id,score:m.id,envRate:e.item.buffer.sampleRate,
               musicRate:m.voices[0].item.buffer.sampleRate,
@@ -77,26 +96,24 @@ const server=http.createServer((req,res)=>{
               voiceCount:a.voices.size,environmentVoices:[...a.voices].filter(v=>v.recorded&&v.bus==='ambience').length,
               musicStems:m.voices.map(v=>v.id),envGain:e.targetGain,
               ambientBus:a.mixLevel('ambience'),musicBus:a.mixLevel('music'),
-              context:a.ctx.state,defaultSettings:{...a.settings},
+              context:a.ctx.state,settings:{...a.settings},
               browserContext:a.ctx.constructor.name};
           });
           assert.equal(result.bed,x.bed);
           assert.equal(result.score,x.score);
           assert.equal(result.context,'running');
-          assert(result.envDuration>24 && result.peak>0.001,'actual decoded bed must be non-silent');
+          assert(result.envDuration>24 && result.peak>0.001,'real decoded bed non-silence');
           assert(result.envRate>=32000 && result.musicRate>=32000);
           assert.equal(result.loop,true);
           assert(Math.abs(result.loopStart-0.15)<0.001 && Math.abs(result.loopEnd-24.15)<0.001);
-          assert(result.environmentVoices<=2,'environment transport must not accumulate voices');
-          assert(result.voiceCount<=64 && result.voiceCount>=2,'bounded music + environment');
+          assert(result.environmentVoices<=2,'environment must not accumulate voices');
+          assert(result.voiceCount<=64 && result.voiceCount>=2,'bounded music and environment');
           assert(result.ambientBus>0 && result.musicBus>0);
           assert.equal(result.browserContext,'AudioContext');
-          console.log('A4_BROWSER '+JSON.stringify({profile:phone?'phone-emulated':'desktop',zone:x.zone,mode:x.mode,...result}));
+          console.log('A4_GAME_BROWSER '+JSON.stringify({profile:phone?'phone-emulated':'desktop',...description,...result}));
         }
-        // Real production warning should duck music+ambience without silencing
-        // the effects bus; phone profile must not increase environmental level.
         const mix=await page.evaluate(()=>{
-          const a=AudioAudition.audio;
+          const a=Prototype.audio;
           const original={music:a.mixLevel('music'),ambience:a.mixLevel('ambience'),effects:a.mixLevel('effects')};
           a.setSceneMix('menu');
           const menu={music:a.mixLevel('music'),ambience:a.mixLevel('ambience'),effects:a.mixLevel('effects')};
@@ -113,20 +130,20 @@ const server=http.createServer((req,res)=>{
         assert(mix.warning.duckUntil>mix.warning.now && mix.warning.effects>0);
         assert.deepEqual(mix.muted,{music:0,ambience:0,effects:0});
         assert.equal(mix.after,mix.original.ambience);
-        console.log('A4_MIX '+JSON.stringify({profile:phone?'phone-emulated':'desktop',...mix}));
-        if(phone)await page.locator('#pause').tap();else await page.locator('#pause').click();
-        await page.waitForFunction(()=>AudioAudition.audio.ctx?.state==='suspended');
-        if(phone)await page.locator('#pause').tap();else await page.locator('#pause').click();
-        await page.waitForFunction(()=>AudioAudition.audio.ctx?.state==='running');
-        if(phone)await page.locator('#stop').tap();else await page.locator('#stop').click();
-        await page.waitForFunction(()=>AudioAudition.audio.ctx===null && AudioAudition.audio.voices.size===0);
-        assert.deepEqual(errors,[],'page errors');
+        console.log('A4_GAME_MIX '+JSON.stringify({profile:phone?'phone-emulated':'desktop',...mix}));
+        await page.evaluate(()=>Prototype.audio.setPaused(true));
+        await page.waitForFunction(()=>Prototype.audio.ctx?.state==='suspended');
+        await page.evaluate(()=>Prototype.audio.setPaused(false));
+        await page.waitForFunction(()=>Prototype.audio.ctx?.state==='running');
+        await page.evaluate(()=>Prototype.audio.dispose());
+        await page.waitForFunction(()=>Prototype.audio.ctx===null && Prototype.audio.voices.size===0);
+        assert.deepEqual(errors,[],'game browser runtime page errors');
         assert.equal(await page.evaluate(()=>localStorage.getItem('audio-audit-709-sentinel')),'untouched');
-        console.log('PASS #709 A4 '+(phone?'phone-emulated':'desktop')+
-          ': 5 actual recorded scene scores+MP3 environmental beds, pause/resume, warning duck, mute, cleanup, no save mutation');
+        console.log('PASS #709 A4 GAME '+(phone?'phone-emulated':'desktop')+
+          ': five real Campaign scene scores + recorded ambient beds, pause/resume, warning duck, mute, cleanup');
       }catch(error){
         console.error('A4 failed profile '+(phone?'phone-emulated':'desktop'),errors);
-        console.error('page message',await page.locator('#message').textContent().catch(()=>null));
+        console.error('game title',await page.locator('#modal-title').textContent().catch(()=>null));
         throw error;
       }finally{await context.close();}
     }
