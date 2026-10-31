@@ -56,7 +56,12 @@
       "lowpassHz": 3050,
       "routeGain": 0.36,
       "events": [],
-      "description": "A restrained productive Piedmont-inspired wooded-river countryside, without constant labor/bird calls or a forest-dungeon drone. Compare against original woodland day; preserve separate night bed and sparse bird detail."
+      "description": "A restrained productive Piedmont-inspired wooded-river countryside, without constant labor/bird calls or a forest-dungeon drone. Compare against original woodland day; preserve separate night bed and sparse bird detail.",
+      "codecEdgeDeclick": {
+        "windowMs": 18,
+        "edgeGain": 0.56,
+        "reason": "Actual decoded MP3 seam on initial pinned studio run exceeded 0.005 sample jump (0.00688785); first/last 1-second RMS passed (-0.973 dB). Localized matched sub-20-ms de-click, no threshold relaxation or global gain. Require re-encode and exact decoded gate."
+      }
     },
     {
       "id": "study-march-day-727",
@@ -112,6 +117,8 @@
     "merged": "NO",
     "deployed": "NO",
     "deviceVerified": "NO",
-    "artifactId": 13052285283
+    "artifactId": 13052285283,
+    "firstCandidateSignalRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226930949",
+    "firstCandidateDiagnosis": "Vale decoded jump 0.00688785 BLOCK; March decoded jump 0.00067574 PASS. Both envelope deltas within 4.25 dB. Repair only Vale; no acceptance yet."
   }
 }

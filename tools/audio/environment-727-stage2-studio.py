@@ -150,6 +150,29 @@ def transparent_peak_knee(data, threshold=.17, width=.095):
     return np.copysign(limited, data)
 
 
+def codec_edge_declick(data, policy):
+    """Localized physical-source loop seam repair; no gain-bus or loudness change.
+
+    A smooth, matched 18ms boundary taper lowers quantization discontinuity
+    while preserving the full 72-second contiguous field performance.
+    Only use on the separately measured offending scene. Never remove the
+    strict post-encode loop quality gate.
+    """
+    if not policy:
+        return data
+    ms = float(policy["windowMs"])
+    floor = float(policy["edgeGain"])
+    if not (8 <= ms <= 30 and 0.4 <= floor <= 0.9):
+        raise ValueError("Unreviewed codec-edge de-click parameters")
+    n = round(ms * RATE / 1000)
+    theta = np.linspace(0, np.pi, n, endpoint=True)
+    ramp = floor + (1 - floor) * (0.5 - 0.5 * np.cos(theta))
+    out = data.copy()
+    out[:n] *= ramp
+    out[-n:] *= ramp[::-1]
+    return out
+
+
 def encode(data, target):
     guards = np.concatenate([data[-GUARD:], data, data[:GUARD]])
     with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp:
@@ -301,6 +324,7 @@ def main():
             raw *= gain
             pre_knee_sample_peak = float(np.max(np.abs(raw)))
             raw = transparent_peak_knee(raw)
+            raw = codec_edge_declick(raw, cue.get('codecEdgeDeclick'))
             post_knee_sample_peak = float(np.max(np.abs(raw)))
             if post_knee_sample_peak > .27:
                 raise ValueError('Regional field preview contains unbounded transient')
@@ -346,6 +370,7 @@ def main():
                       'preKneeSamplePeak':pre_knee_sample_peak,
                       'postKneeSamplePeak':post_knee_sample_peak,
                       'fieldSource':cue["mainSource"],
+                      'codecEdgeDeclick':cue.get('codecEdgeDeclick'),
                       'recordedFieldEnergyFractionPreCrossTerms':real_fraction,
                       'recordedFieldRmsBeforeMixGain':rms(field),
                       'loopEdgeDelta':edge,
