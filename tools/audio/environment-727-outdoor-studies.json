@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 2 / #727 — outdoors source-verified studio; unregistered preview only",
-  "status": "SOURCE_DISCOVERY: publisher pages checked, exact originals not yet independently pinned. The --probe-sources mode measures bytes/hash/codecs; promotion requires adding confirmed sha1/bytes then rerunning strict render.",
+  "status": "SOURCES INDEPENDENTLY PINNED from GitHub Actions 41226542323; preview render and encoded signal gates next; ear/creative approvals remain HOLD",
   "authority": "Stage 1 issue #727 comments 6546812555 and 6546828387; docs/AUDIO_ENVIRONMENT.md; AGENTS.md",
   "preservation": "DO NOT edit the 18 existing ambience MP3s, 18 scene rules, 14 original book cues, night events, 18 Dark Crown masters, or soundtrack #673.",
   "sources": [
@@ -12,11 +12,16 @@
       "license": "CC0 1.0",
       "evidence": "https://opengameart.org/content/park-ambiences",
       "url": "https://opengameart.org/sites/default/files/park_ambience_birds.wav",
-      "sha1": null,
-      "bytes": null,
+      "sha1": "8b5ece9217e9855c5d1dbde4c7e4819f93320127",
+      "bytes": 86190432,
       "maxBytes": 99000000,
       "role": "Field-recorded tree air and subtle foliage for Greenwood daylight, contingent on source intervals free from prominent bird chorus or imminent rain",
-      "cautions": "Adelaide public park species not Greenwood canon; birds may be too identifiable, with a pre-rain transition. No night reuse. Reject if foreground wildlife, rain or microphone noise survives mix."
+      "cautions": "Adelaide public park species not Greenwood canon; birds may be too identifiable, with a pre-rain transition. No night reuse. Reject if foreground wildlife, rain or microphone noise survives mix.",
+      "sha256": "dc1a5ac34b89cab7f8f261b53a23da7c1c5e3cc895aae4cb6fb4a1a04001b2af",
+      "durationSeconds": 448.904667,
+      "codec": "pcm_s16le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226542323",
+      "status": "Original file independently downloaded and digest/format measured; acoustic material suitability still unapproved"
     },
     {
       "id": "march-low-river-field",
@@ -25,11 +30,16 @@
       "license": "CC0 1.0",
       "evidence": "https://opengameart.org/content/park-ambiences",
       "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
-      "sha1": null,
-      "bytes": null,
+      "sha1": "4bd89af752ae34f5d50d52a87de3416afa6e71a9",
+      "bytes": 99072736,
       "maxBytes": 112000000,
       "role": "Genuine low moving water as an optional ingredient of daytime Flooded Marches",
-      "cautions": "Recording includes waterfall-over-step, birds, frogs. It can easily be too loud and species/location-inappropriate for diffuse shallow marsh; reject if audible as continuous cascade or repetitive identifiable wildlife."
+      "cautions": "Recording includes waterfall-over-step, birds, frogs. It can easily be too loud and species/location-inappropriate for diffuse shallow marsh; reject if audible as continuous cascade or repetitive identifiable wildlife.",
+      "sha256": "da0c0c9b1249a83a1611cc116d5737b0864a8db9f45f1ae8dcc079d0f7c0bbbf",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226542323",
+      "status": "Original file independently downloaded and digest/format measured; acoustic material suitability still unapproved"
     }
   ],
   "studies": [
@@ -95,12 +105,13 @@
       "Two candidate cross-correlations and acoustic spectral distribution",
       "Unmerged no-deploy artifact accessible with provenance"
     ],
-    "sourceApproval": "HOLD until hashes pinned",
-    "technicalApproval": "HOLD pending CI",
+    "sourceApproval": "PASS source identity and published CC0 claims; waveform and fit not yet heard",
+    "technicalApproval": "HOLD pending candidate render checks",
     "listeningApproval": "HOLD until actual human hearing",
     "registration": "NO",
     "merged": "NO",
     "deployed": "NO",
-    "deviceVerified": "NO"
+    "deviceVerified": "NO",
+    "artifactId": 13052285283
   }
 }
