@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SIBDLP — Environmental Sound Listening Room</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,sans-serif;background:#111721;color:#eef0ed}
+body{margin:auto;max-width:900px;padding:clamp(14px,3vw,35px);line-height:1.5}
+h1{font-size:clamp(1.35rem,3.5vw,2rem);line-height:1.2;margin:.2rem 0}
+p{max-width:76ch;color:#c1c7d0}
+.panel{background:#1c2632;border:1px solid #344354;border-radius:12px;padding:20px;margin:16px 0}
+label{display:block;margin:12px 0 4px}
+select,textarea,button,input{font:inherit}
+select,textarea{box-sizing:border-box;width:100%;background:#101822;color:#fff;border:1px solid #5b6a7c;border-radius:8px;padding:10px}
+button{background:#335775;color:#fff;border:1px solid #7095ac;border-radius:8px;padding:11px 13px;cursor:pointer;margin:5px 6px 5px 0}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9ed2ff}
+audio{display:block;width:100%;margin:12px 0}
+section small,.hint{color:#b8c4d4}
+input[type=range]{width:min(100%,360px)}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+input[type=checkbox]{width:20px;height:20px}
+footer{font-size:.92rem;margin:24px 0}
+</style></head>
+<body>
+<header><p>Stage 7 · Source-verified, unregistered preview comparisons</p>
+<h1>So I Became the Dark Lord’s Problem</h1>
+<p>Environmental sound listening room. Review the original and new recordings together before any creative acceptance. This is a local listening reference—not the game mixer, not a release, and not a physical-device verification.</p></header>
+<main>
+<section class="panel"><label for="scene">Location and comparison</label><select id="scene"></select>
+<h2 id="label">Choose a location</h2><p id="identity"></p><p id="creative"></p>
+<div class="row"><button id="original">Play registered original</button><button id="candidate">Play new preview</button><button id="pause">Pause both</button></div>
+<p aria-live="polite" id="status">Ready.</p>
+<audio id="amb" controls preload="none" loop></audio>
+<label for="bed-volume">Environmental level for comparison (not calibrated)</label><input id="bed-volume" type="range" min="0" max="100" value="85"></section>
+<section class="panel"><div class="row"><input id="music" type="checkbox"><label for="music">Layer this location’s current published soundtrack</label></div>
+<p id="music-identity"></p><audio id="score" controls preload="none" loop></audio>
+<label for="music-volume">Relative music level</label><input id="music-volume" type="range" min="0" max="100" value="40">
+<p class="hint">These independent HTML audio controls do not reproduce the game’s compressor, music ducking, fades, or built-in gain. Audibility measured by the actual browser game tests remains a separate engineering result.</p></section>
+<section class="panel"><button id="critical">Play isolated critical-warning sample</button>
+<audio id="warning" preload="none"></audio>
+<label for="warning-volume">Warning sample level</label><input id="warning-volume" type="range" min="0" max="100" value="70">
+<p class="hint">This sample is not an in-combat critical-warning intelligibility test.</p></section>
+<section class="panel"><h2>Your creative decision</h2>
+<label for="decision">Selection for this comparison</label>
+<select id="decision"><option value="undecided">Undecided</option><option value="keep">Keep the original</option><option value="preview">Prefer the preview (pending game-mix acceptance)</option></select>
+<label for="notes">Optional notes (room identity, loop repetition, missing details, masking)</label>
+<textarea id="notes" rows="4"></textarea>
+<button id="export">Export all decisions to one text file</button>
+<p class="hint">The page does not upload or save your choices anywhere; export the file before closing it. Two Treasuries deliberately have no preview to approve.</p></section>
+</main><footer>Test a full new 72-second cycle and compare against the existing bed. Prefer retention when the new recording is not an audible improvement. Source provenance, hashes and technical results belong to <a href="https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727">GitHub issue #727</a> and draft PR #744.</footer>
+<script src="data.js"></script><script src="player.js"></script>
+</body></html>
