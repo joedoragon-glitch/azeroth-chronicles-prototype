@@ -64,6 +64,35 @@ jobs:
           else
             node scripts/build.cjs --check
           fi
+      # Temporary, strictly PR-branch-scoped internal composition validation.
+      # No live audio assets, service worker, or deployed game are changed.
+      - name: Prepare Phase 2 internal renderer dependencies
+        if: github.event_name == 'pull_request' && github.head_ref == 'audio/phase2-composition-pilots-20261030'
+        run: |
+          python3 -m venv "$RUNNER_TEMP/sibdlp-phase2-venv"
+          "$RUNNER_TEMP/sibdlp-phase2-venv/bin/python" -m pip install --disable-pip-version-check --quiet 'numpy==2.2.6' 'scipy==1.16.1'
+      - name: Render and decode isolated Phase 2 soundtrack pilots
+        if: github.event_name == 'pull_request' && github.head_ref == 'audio/phase2-composition-pilots-20261030'
+        run: |
+          "$RUNNER_TEMP/sibdlp-phase2-venv/bin/python" tools/audio/phase2-composer.py --render "$RUNNER_TEMP/sibdlp-phase2-internal"
+          "$RUNNER_TEMP/sibdlp-phase2-venv/bin/python" - <<'PY'
+          import json, os
+          from pathlib import Path
+          report = json.loads((Path(os.environ['RUNNER_TEMP']) / 'sibdlp-phase2-internal/pilot-metrics.json').read_text())
+          assert report['musicRegistered'] == 83
+          assert report['crownFrozen'] == 18
+          assert len(report['pilotStems']) == 8
+          assert report['headroomAfterPilotProjectionBytes'] > 0, 'Encoded library exceeds 32 MiB after pilot projection'
+          print('PILOT_RENDER_EVIDENCE=' + json.dumps(report, sort_keys=True), flush=True)
+          PY
+      - name: Preserve non-public Phase 2 internal pilot audio and measurements
+        if: always() && github.event_name == 'pull_request' && github.head_ref == 'audio/phase2-composition-pilots-20261030'
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2-internal-pilot-previews
+          path: ${{ runner.temp }}/sibdlp-phase2-internal/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Upload validated Pages package
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
