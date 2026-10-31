@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 3 of #727: five canon-specific main dungeon recorded-source ambience production studio",
-  "status": "STAGE 3 FIVE MAIN DUNGEONS — FIVE actual 72s recorded-source MP3 studio previews produced and source/codec/decoded signal QA PASS on GitHub Actions #41231321540; immutable output SHA freeze pending exact-head reproduction. Artistic hearing/real game integration H O L D; no merge/publish/device verification.",
+  "status": "STAGE 3 STUDIO PREPRODUCTION COMPLETE: 8/8 real source SHA1/SHA256/bytes/codec verified, 5/5 independently encoded 72s MP3 previews decoded QA PASS, and all five source-to-output SHA256 identities byte-reproduced in #41231633052. No game registration, hearing acceptance, merge, publication or device verification.",
   "parent": "tools/audio/environment-727-outdoor-expansion.json",
   "authority": "Issue #727 Stage1 creative brief; docs/AUDIO_ENVIRONMENT.md; docs/ABYSS_AIR_SUPERIORITY_CANON.md and src/prototype rules/data; current manifest",
   "sources": [
@@ -378,8 +378,9 @@
     "notes": "This is an offline comparative studio, never automatically a shipped replacement. 5x 72s float32 mono buffers ~43.95MiB if all resident, currently 96MiB cache with earlier observed 84.80MiB peak; Stage6 must explicitly solve caching/eviction.",
     "sourceAuthenticity": "PASS all original 8 SHA-1/SHA-256/bytes/FFprobe in GH Actions #41230940635; all licenses from original creator/public-domain pages, hearing unverified",
     "initialStudioRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231085791",
-    "technicalStudio": "PASS 8/8 independent original SHA1/SHA256/bytes/codec #41230940635 and 5/5 actual encoded MP3s decoder/loop/LUFS/truepeak/crest/midband/24s repetition and pair contrast #41231321540; byte-exact source-to-output re-render pending new CI.",
-    "nextGates": "Stage6 integrate only selected, artistically viable masters after actual cache residency/eviction, WebAudio crossfade, music/warnings, offline PWA, phone emulated; Stage7 actual by-ear and owner final acceptance."
+    "technicalStudio": "PASS: all eight original source SHA1/SHA256/bytes/codec #41230940635; five real encoded MP3 decoder, loop, loudness, true peak, crest, midband, repetition and scene distinctness #41231321540; exact all five decoded master SHA256 and byte-size rerender #41231633052 at source head e01077a69795c3fb1c01e6ac81aca895d9a0c8a3. This does not certify physical listener perceptions or playable integration.",
+    "nextGates": "Stage6 integrate only selected, artistically viable masters after actual cache residency/eviction, WebAudio crossfade, music/warnings, offline PWA, phone emulated; Stage7 actual by-ear and owner final acceptance.",
+    "stage3Go": "GO — five physical-source ambience studies authored, provenance pinned and technical studio source-to-output frozen. Creative/actual game acceptance HOLD; Stage 4 side interiors NEXT, Stage 6 integration/optimizations, Stage 7 real audition/owner approval."
   },
   "rejected": [
     "Generic horror dungeon music or dark drones",
@@ -469,6 +470,16 @@
         "heard": false,
         "gameRegistered": false
       }
-    ]
+    ],
+    "reproducibility": {
+      "status": "PASS exact 5/5 SHA256 byte-match and source re-download, not runtime registration",
+      "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231633052",
+      "artifactId": 13053643629,
+      "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231633052/artifacts/13053643629",
+      "sourceHead": "e01077a69795c3fb1c01e6ac81aca895d9a0c8a3",
+      "checkedAgainst": "encodedPreviewEvidence.outputs[0..4] SHA-256/bytes",
+      "humanHearing": "NOT DONE",
+      "playableCandidateIntegration": "NOT DONE"
+    }
   }
 }
