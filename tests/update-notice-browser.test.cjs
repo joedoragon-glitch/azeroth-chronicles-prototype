@@ -102,11 +102,20 @@ const server = http.createServer((req, res) => {
         await page.addInitScript(() => localStorage.setItem('azeroth-display-language-v1', 'es'));
       await page.goto(url + (phone ? '/phone.html' : '/index.html'));
       await page.waitForFunction(() => window.Prototype && !!navigator.serviceWorker.controller);
-      if (!phone) await require('./helpers/language-browser.cjs').selectEnglish(page);
-      else await page.getByRole('button', { name: /^Español/ }).click();
-      await page.keyboard.press('f');
-      await page.keyboard.press('f');
-      await page.waitForFunction(() => document.getElementById('modal').hidden);
+      // The current player flow begins on the title screen, not directly in-game.
+      // Create a real saved run before testing manual updates during gameplay.
+      await page.waitForFunction(() =>
+        document.getElementById('startup-update').hidden &&
+        !document.getElementById('title-screen').hidden &&
+        !document.getElementById('title-new').disabled);
+      await page.locator('#title-new').click();
+      await page.locator('#modal-actions').getByRole('button', { name: /Normal/i }).first().click();
+      await page.locator('#modal-actions').getByRole('button', {
+        name: phone ? /^Español/ : /^English/,
+      }).click();
+      await page.locator('#modal-actions').getByRole('button').first().click();
+      await page.locator('#modal-actions').getByRole('button').first().click();
+      await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
         Prototype.game.hero.gold = 42424;
         Prototype.game.tick = () => {};
