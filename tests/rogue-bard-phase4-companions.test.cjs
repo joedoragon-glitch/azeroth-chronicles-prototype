@@ -57,6 +57,47 @@ try {
     return () => count;
   }
 
+  // All ten Charm-eligible ranged archetypes use their hostile native speed.
+  // Fixed distant shots keep their old total travel distance; conventional
+  // hired Archers continue using their original speed and default lifetime.
+  {
+    const ranged = [
+      'goblin', 'skeleton', 'mireling', 'reedbeast', 'ogre',
+      'orc', 'archer', 'ashbeast', 'crownguard', 'wraith',
+    ];
+    for (const species of ranged) {
+      const game = fresh();
+      const ally = capture(game, species, true);
+      const enemy = game.makeEnemy(
+        { species, name: species, level: 1, hp: 1000, damage: 1, gold: 0, xp: 0 },
+        { x: ally.x + 130, y: ally.y },
+      );
+      game.configureEnemy(enemy, 2);
+      const nativeSpeed = enemy.shotSpeed || 260;
+      const stonePace = species === 'goblin'
+        ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
+      const expected = nativeSpeed * R.rangedEnemyCombat.projectileMultiplier * stonePace;
+      const flight = game.charmedProjectileFlight(ally);
+      assert.equal(flight.speed, expected, species + ': hostile launch parity');
+      assert.equal(flight.style, game.charmedCompanionProfile(ally).style,
+        species + ': preserve native style');
+      const formerTravel = R.balance.friendlyProjectiles.lifeSeconds *
+        game.charmedCompanionProfile(ally).shotSpeed;
+      assert(Math.abs(flight.life * flight.speed - formerTravel) < 1e-8,
+        species + ': preserve friendly missed-shot travel budget');
+      game.zone().enemies = [enemy];
+      ally.cd = 0;
+      game.companionCoverAttack(ally, enemy, true);
+      const shot = game.s.projectiles.find((p) => p.source === ally.id);
+      assert(shot, species + ': real ally projectile was launched');
+      assert.equal(shot.speed, expected, species + ': actual ally launch');
+      assert.equal(shot.life, flight.life, species + ': actual ally lifetime');
+    }
+    const conventional = fresh().unit('archer', 500, 500);
+    assert.deepEqual(fresh().charmedProjectileFlight(conventional),
+      { speed: 450, style: 'arrow' }, 'ordinary Archer unchanged');
+  }
+
   // No Rogue constructor privilege or conventional hiring; the first builder
   // is a genuinely captured ordinary monster with a matching save ledger.
   const g = fresh();
