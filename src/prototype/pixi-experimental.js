@@ -1086,6 +1086,10 @@
           if (!scene.hasTexture(chosen.texture.src))
             throw Error('New sprite needs Pixi preload: ' + chosen.texture.src);
           const c = chosen.command;
+          const frontierTree = current.regionIndex() === 3 &&
+            painted.renderKind === 'prop' &&
+            (painted.structure === 'dead-tree' ||
+              (!painted.structure && /🌲|🌳/.test(painted.icon || '')));
           records.push({
             key,
             textureId: chosen.texture.src,
@@ -1097,6 +1101,15 @@
             opacity: c.opacity,
             flipX: c.flipX,
             ground,
+            // Original Canvas overlays these on the registered raster only.
+            // Procedural fallback textures already include their own leaves.
+            frontierShoots: frontierTree ? {
+              id: String(painted.id || 'tree'),
+              x: point.x, y: point.y, zoom,
+              visualScale: Number.isFinite(painted.visualScale) && painted.visualScale > 0
+                ? painted.visualScale : 1,
+              flipX: facing < 0,
+            } : null,
             depth: entity.x + entity.y,
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
