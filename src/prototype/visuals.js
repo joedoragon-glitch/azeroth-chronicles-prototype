@@ -18736,6 +18736,11 @@
       if (!['water','lava'].includes(kind) || y2 <= y1) return;
       const water = kind === 'water';
       for (let y=y1+24; y<y2-8; y+=water?62:48) {
+        // Original bridge decks cover the channel in these authored gaps.
+        // The new live GPU layer sits above the retained ground raster, so
+        // avoid exposing highlights through a solid crossing.
+        if (banks && R.barriers[region].gaps.some(([lo,hi])=>y>=lo-18&&y<=hi+18))
+          continue;
         const [lo,hi] = banks ? banks(y) : [x1,x2];
         const localWidth=hi-lo, center={x:(lo+hi)/2,y};
         if (!visible(center)) continue;
@@ -18934,7 +18939,7 @@
           const x = localX1 + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
           if (!omitTerrainMotion)
-  line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
           line(
             { x: x + span * 0.15, y: y + 12 },
             { x: x + span * 0.65, y: y + 14 },
