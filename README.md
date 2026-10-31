@@ -60,6 +60,8 @@ On a phone, tap-to-move is enabled by default; mouse click-to-move is optional a
 - **Check for updates:** **Game and settings → Check for game update**, then **Install available game update** when offered. A new deployment can still leave an existing browser or installed PWA using an older cached build.
 - **See the version actually running:** **Game and settings → Screen and performance → Export playtest report**. This downloads local JSON diagnostics, including the `version` field. **It is not a save backup**, and the game does not automatically send telemetry.
 
+**Distribution boundary:** This automatic/incremental update mechanism is for the current link-based browser game and optional PWA. A future packaged mobile or desktop app will require a fresh platform-specific update and save-compatibility review; it must not simply inherit the browser service-worker design. See the [recorded owner decision](docs/DECISIONS.md#31-october-2026--web-updater-is-transitional-native-application-delivery-requires-a-new-decision). No native updater or breaking-version policy enforcement is implemented by that decision.
+
 For the distinction between implemented, tested, merged, published and *device-verified*, consult [Development state](docs/DEVELOPMENT_STATE.md).
 
 ## Graphics and audio

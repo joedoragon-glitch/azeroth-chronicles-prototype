@@ -32,6 +32,8 @@ and audio reuse, complete offline installation, cache cleanup, fallback on
 missing downloads, and update activation. A passing CI test does not prove
 performance or storage behavior on every player's browser/device.
 
+**Distribution-scope decision (31 October 2026):** This incremental service-worker updater is intended for the **current link-based web game / optional PWA**, not an already-selected future native-app packaging strategy. When a native app is planned, reassess app-binary versus downloadable-content updates, platform/store requirements, saves, offline behavior, compatibility and rollback. Do not silently make older versions obsolete; deliberate breaking/minimum-version changes need explicit owner review. The [authoritative cross-platform owner decision](DECISIONS.md#31-october-2026--web-updater-is-transitional-native-application-delivery-requires-a-new-decision) is **planned future governance**, not an implemented native updater or forced-upgrade mechanism.
+
 ## 30 October 2026 — startup update gate
 
 Latest design supersedes the manual update-first launch policy. A simple,
