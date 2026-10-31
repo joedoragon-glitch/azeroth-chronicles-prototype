@@ -239,6 +239,7 @@
             target: target.id,
           });
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(u, def.name);
           for (const e of targets) {
             if (u.hp <= 0) break;
             const woundedBonus =
@@ -265,6 +266,7 @@
                   Math.min(2.5, def.slow + slowMastery), 'slowDuration'),
               );
           }
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!projectile && !hits) return false;
         u[key] =
