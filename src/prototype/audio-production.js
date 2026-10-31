@@ -331,7 +331,11 @@
               this.tone(88, now, 0.1, 0.007, 'sine', 'ambience');
               this.tone(93, now + 0.14, 0.075, 0.005, 'sine', 'ambience');
             }
-          } else if (scene.night) {
+          } else if (scene.region === 'vale' && scene.night) {
+            // Sparse nocturnal insects belong to the temperate Vale, not to
+            // every open-air scene. Highlands ridges, the recovering Frontier
+            // and the Crown's inhabited streets must not share a generic
+            // high-pitched night chirp when no authored local source exists.
             if (!this.playSoundEvent('ambience.insects', scene))
               for (let i = 0; i < 3; i++)
                 this.tone(95, now + i * 0.11, 0.045, 0.003, 'sine', 'ambience', 0.006);
