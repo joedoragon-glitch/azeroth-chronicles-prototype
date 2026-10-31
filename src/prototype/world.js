@@ -4870,6 +4870,65 @@
           this.s.zone = oldZone;
         }
       }
+      // Phase 2: Ash Refuge has actual Crown households on cooled stone, but
+      // generic roadside-life filtering can leave their working domestic corner
+      // empty. Reuse TWO already-established household facilities by the homes;
+      // never move homes, roads, enemy territory or gameplay interactions.
+      ashRefugeDomesticLife(z) {
+        if (z.id !== 'crown' || z.ashRefugeDomesticVersion === 1) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const [mx, my] = D.minors[this.regionIndex(z.id)];
+          const minor = { x: mx, y: my },
+            homes = z.props
+              .filter((p) =>
+                ['crown-ash-house', 'crown-forgehouse'].includes(p.structure) &&
+                dist(p, minor) < 490,
+              )
+              .sort((a, b) => dist(a, minor) - dist(b, minor));
+          const clear = (p) =>
+            dist(p, minor) < 435 &&
+            !this.blocked(p.x, p.y, z.id, 19, true) &&
+            this.distanceToRoad(z, p) >= 78 &&
+            !z.npcs.some((n) => dist(n, p) < 100) &&
+            !z.nodes.some((n) => dist(n, p) < 75) &&
+            !z.buildings.some((b) => dist(b, p) < 105) &&
+            !z.enemies.some((e) => e.hp > 0 && dist(e.home || e, p) < 110) &&
+            !z.props.some((q) => dist(q, p) < (q.r || 0) + 76);
+          for (const [key, structure, role] of [
+            ['kitchen', 'field-kitchen', 'household-cooking'],
+            ['washing', 'laundry', 'household-washing'],
+          ]) {
+            const id = 'crown-ash-refuge-life-' + key;
+            if (z.props.some((p) => p.id === id ||
+              (p.structure === structure && dist(p, minor) < 350))) continue;
+            let found = null;
+            for (const home of homes) {
+              // Prefer open ground to one side of existing roofs, not their
+              // door fronts or roads. Deterministic ring offsets survive saves.
+              for (const radius of [95, 135, 180, 225]) {
+                for (const angle of [Math.PI, -Math.PI / 2, Math.PI / 2,
+                  Math.PI * 0.75, -Math.PI * 0.75, 0, Math.PI * 0.25]) {
+                  const p = { x: home.x + Math.cos(angle) * radius,
+                    y: home.y + Math.sin(angle) * radius };
+                  if (clear(p)) { found = p; break; }
+                }
+                if (found) break;
+              }
+              if (found) break;
+            }
+            if (!found) continue; // Do not force a cookfire into lava or a door.
+            z.props.push({
+              id, ...found, r: 0, decorative: true,
+              structure, ashRefugeDomestic: true, sceneRole: role,
+            });
+          }
+          z.ashRefugeDomesticVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
       harborLayout(z) {
         const h = R.harbors?.[z.id];
         if (!h) return;
@@ -5346,6 +5405,7 @@
         this.creatureStrongholds(z);
         this.frontierOccupationLayout(z);
         this.darkCrownLayout(z);
+        this.ashRefugeDomesticLife(z);
         this.ordinaryMeleePopulation(z);
         this.ordinaryRangedPopulation(z);
         this.guardianPopulation(z);
