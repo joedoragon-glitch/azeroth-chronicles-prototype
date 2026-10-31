@@ -4,7 +4,7 @@
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine');
 const Menus = require('../src/prototype/menus');
-let game = new Campaign('normal', 'paladin', () => 0.9), screen;
+let game = new Campaign('normal', 'paladin', () => 0.9), screen, nameRequest = null;
 const navigate = Menus.create({
   getGame: () => game, Campaign, D: Campaign.data,
   action: (label, action, detail = '', disabled = false) =>
@@ -13,6 +13,7 @@ const navigate = Menus.create({
     screen = {title, description, actions, back};
   },
   closeMenu() {}, showMap() {}, finaleMenu() {},
+  requestName: (request) => { nameRequest = request; },
 });
 const choose = (prefix) => {
   const row = screen.actions.find((a) => a.label.startsWith(prefix));
@@ -36,6 +37,8 @@ choose('Inspect · ');
 assert.match(screen.title, /Companion/);
 assert.match(screen.description, /Mastery 2.*10\/18 points/);
 assert.match(screen.description, new RegExp(soldier.id));
+const firstNameAction = screen.actions.find((a) => a.label === 'Choose permanent name');
+assert(firstNameAction && !firstNameAction.disabled);
 choose('Abilities & mastery');
 assert(screen.actions.some((a) => a.label.includes('Power Strike')));
 assert(screen.actions.some((a) => a.label.includes('Holy Cleave')));
@@ -143,4 +146,16 @@ game.hero.gold = 200;
 stale.action();
 assert.equal(old.hero.gold, 200, 'old game never charged');
 assert.equal(game.hero.gold, 200, 'replacement game never charged');
+// A profile opened for a previous run must not name a new actor with a reused ID.
+firstNameAction.action();
+assert.equal(nameRequest, null, 'stale profile action never opens a new run name modal');
+game = old;
+firstNameAction.action();
+assert(nameRequest && typeof nameRequest.onSubmit === 'function');
+const newer = new Campaign('normal', 'paladin', () => 0.9);
+game = newer;
+assert.equal(nameRequest.onSubmit('Wrong Hero Ally'), false,
+  'stale name confirmation must reject a different game instance');
+assert.equal(newer.s.party[0].customName, undefined);
+assert.equal(old.s.party[0].customName, undefined);
 console.log('PASS #620 Barracks actor profiles, pet abilities, Orin pagination, exact identity and guarded purchase');

@@ -1837,7 +1837,10 @@
           })(),
           ...(!u.customName
             ? [action('Choose permanent name',
-                () => nameCompanion(id, () => barracksCompanionProfile(b, id, back)),
+                () => {
+                  if (getGame() !== g || !g.s.party.includes(u)) return back();
+                  nameCompanion(id, () => barracksCompanionProfile(b, id, back));
+                },
                 'Optional; name this individual once.')]
             : []),
         ],
@@ -2137,14 +2140,18 @@
       );
     }
     function nameCompanion(id, back) {
-      const unit = getGame().s.party.find((u) => u.id === id);
+      const game = getGame(), unit = game.s.party.find((u) => u.id === id);
       if (!unit || unit.customName) return back();
       requestName({
         title: 'Name your companion',
         description:
-          getGame().companionDisplayName(unit) +
+          game.companionDisplayName(unit) +
           ' · Choose a permanent name, or skip and return later.',
-        onSubmit: (name) => getGame().nameCompanion(id, name),
+        // A name-confirmation modal can remain open across a New Run. An
+        // identical future ID must never redirect a permanent name to a
+        // different actor or campaign.
+        onSubmit: (name) => getGame() === game && game.s.party.includes(unit) &&
+          game.nameCompanion(id, name),
         onSkip: back,
         onDone: back,
       });
@@ -2155,7 +2162,10 @@
         actions = barracksPagedActions(game.s.party, page, (u) =>
           action(
             rosterLabel(u),
-            () => nameCompanion(u.id, () => returnHere()),
+            () => {
+              if (getGame() !== game || !game.s.party.includes(u)) return back();
+              nameCompanion(u.id, () => returnHere());
+            },
             (u.charmOrigin
               ? charmedTypeName(u)
               : u.type === 'pet'
