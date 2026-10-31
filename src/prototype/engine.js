@@ -7784,6 +7784,9 @@
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
         this.event('reset');
+        // A paint-only receipt: do not add coordinates or a new event type
+        // to persisted gameplay statistics for an ordinary enemy reset.
+        this.effects.push({ type: 'resetCue', zone: this.zoneId, x: e.x, y: e.y });
       }
       if (resetPoint) this.beginFieldBossReturn(e, resetPoint);
       const mobilityReturn = this.advanceFieldBossReturn(e, dt);
@@ -7835,8 +7838,19 @@
           !resume &&
           !mobilityReturn &&
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
-        )
+        ) {
+          // The original one-second anti-kiting reset still wins immediately.
+          // Capture the source of a visible home snap for paint-only feedback;
+          // never create a movement path, extend the reset or change protection.
+          const fromX = e.x, fromY = e.y,
+            visibleSnap = dist(e, e.home) > 28;
           Object.assign(e, e.home);
+          if (visibleSnap)
+            this.effects.push({
+              type: 'resetArrival', zone: this.zoneId,
+              x: e.x, y: e.y, fromX, fromY,
+            });
+        }
         this.finishDisengage(e);
       }
     }
