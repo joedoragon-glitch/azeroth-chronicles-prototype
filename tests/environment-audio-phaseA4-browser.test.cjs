@@ -165,7 +165,7 @@ const server=http.createServer((req,res)=>{
             'recording cache reports inconsistent active resource pins');
           assert(result.envRate>=32000 && result.musicRate>=32000);
           assert.equal(result.loop,true);
-          const newRecording=['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(x.bed);
+          const newRecording=['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(x.bed) || x.bed.startsWith('study-') || x.bed.startsWith('studio-');
           const expectedEnd=newRecording ? 72.15 : 24.15;
           if(newRecording)assert(result.envDecodedBytes>8*1024*1024 && result.envDecodedBytes<16*1024*1024,
             'real 72-second environmental MP3 must decode to an expected bounded mono PCM buffer');
