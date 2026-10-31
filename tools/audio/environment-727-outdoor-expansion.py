@@ -396,6 +396,15 @@ def main():
                       'catalogRegistered':False, 'genuinelyHeard':False,
                       'artisticApproval':'HOLD',
                       'signalGate':'BLOCK' if edge_block else 'PASS'}
+            # If a source-master output has been frozen, reject any real MP3 byte
+            # drift. Do not treat the JSON evidence as a substitute for decoding.
+            expected_outputs = book.get("encodedPreviewEvidence", {}).get("outputs", [])
+            if expected_outputs:
+                matches = [entry for entry in expected_outputs if entry["id"] == identifier]
+                if len(matches) != 1 or (
+                        matches[0]["sha256"] != report["previewSha256"] or
+                        matches[0]["bytes"] != report["bytes"]):
+                    raise ValueError('Frozen physical preview SHA/bytes drift: ' + identifier)
             reports.append(report)
             rendered[identifier] = decoded
             print('CANDIDATE',json.dumps(report),flush=True)

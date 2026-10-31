@@ -55,5 +55,20 @@ assert.equal(game.director.environment.rules.find(v => v.id === 'crown').asset, 
 assert.equal(book.constraints.registration, 'NO');
 assert.equal(book.constraints.merged, 'NO');
 assert.equal(book.constraints.deployed, 'NO');
+assert.equal(book.encodedPreviewEvidence.outputs.length, 4,
+  'All four recorded candidate masters need immutable source/encoded evidence');
+assert.deepEqual(
+  book.encodedPreviewEvidence.outputs.map(x=>x.id),book.studies.map(x=>x.id),
+  'Freeze the output identities in source-study order');
+for (const x of book.encodedPreviewEvidence.outputs) {
+  assert.match(x.sha256,/^[0-9a-f]{64}$/);
+  assert.equal(x.bytes,1158381,'Mono guarded 72s MP3 identity must remain measurable');
+  assert(x.loopEdgeDelta < .005);
+  assert(Math.abs(x.firstVsLast1SecDb) < 4.25);
+  assert.equal(x.technicalSignal,'PASS');
+  assert.equal(x.heard,false);
+  assert.equal(x.gameRegistered,false);
+}
+
 console.log('PASS #727 nocturnal/Crown 4 studies: pinned physical original bytes, no new fauna, no playable asset edits, original 14 + four #711 masters/19 scenes/rules protected.');
 console.log('ARTISTIC HOLD: real source identity/signal tests never certify whether a bird/frog/canyon/building actually fits the game.');
