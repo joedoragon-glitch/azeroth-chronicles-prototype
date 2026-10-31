@@ -3,7 +3,8 @@
 const fs = require('node:fs'),
   path = require('node:path'),
   crypto = require('node:crypto');
-const limits = Object.freeze({ perFile: 8 * 1024 * 1024, total: 32 * 1024 * 1024 });
+// Encoded on-disk package ceiling. Decoded Web Audio buffers have a separate RAM budget.
+const limits = Object.freeze({ perFile: 16 * 1024 * 1024, total: 256 * 1024 * 1024 });
 function publishedFiles(root, suppliedManifest) {
   const manifestFile = 'assets/audio/manifest.json';
   const manifest =
