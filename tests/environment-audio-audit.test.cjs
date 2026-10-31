@@ -6,15 +6,15 @@ const {validateCatalog}=require('../src/prototype/audio-contract.js');
 const manifest=require('../assets/audio/manifest.json');
 const book=require('../tools/audio/environment-book.json');
 const director=manifest.director;
-assert.equal(Object.keys(manifest.assets).length,127);
+assert.equal(Object.keys(manifest.assets).length,131);
 const assets=Object.entries(manifest.assets).filter(([,x])=>x.kind==='ambience');
-assert.equal(assets.length,14,'exact retained environmental asset count');
+assert.equal(assets.length,18,'all 14 preserved original + 4 recorded environment candidates');
 assert.equal(Object.keys(director.places).length,19,'exact mapped music/scene places');
 assert.equal(director.environment.rules.length,18,'first-match location rule inventory');
 assert.equal(book.seconds,24);
 assert.equal(book.cues.length,14);
-assert.deepEqual(new Set(assets.map(([id])=>id)),new Set(book.cues.map(c=>c.id)),
- '14 scored procedural environmental sources have an authoring book entry');
+assert.deepEqual(new Set(assets.filter(([,a])=>a.managedBy==='environment-book').map(([id])=>id)),new Set(book.cues.map(c=>c.id)),
+ '14 preserved procedural environmental sources have an authoring book entry');
 for(const [id,asset] of assets) {
   assert(asset.loop && asset.loop.end>asset.loop.start && asset.loop.end<=asset.duration,
    id+' must have valid loop bounds');
@@ -54,8 +54,8 @@ for(const region of ['vale','march','highlands','frontier','crown']) {
 // #709 A5: indoor Signal Keep and occupied converted Shrine do not use
 // exposed outdoor Highland/Frontier air. The actual outdoor rules are unchanged.
 for(const [zone,region,bed] of [
-  ['side-highlands-signal','highlands','env-cellar'],
-  ['side-frontier-shrine','frontier','env-retreat']
+  ['side-highlands-signal','highlands','env-signal-occupied'],
+  ['side-frontier-shrine','frontier','env-shrine-occupied']
 ]) {
   assert.equal(a.environmentCue({...base,zone,region,interior:'side-dungeon'}).asset,bed);
   assert.equal(a.environmentCue({...base,zone:region,region,interior:'outdoors'}).asset,
