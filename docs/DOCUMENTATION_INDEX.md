@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **436 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 30 October 2026 · **437 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -14,7 +14,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (127)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (20)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (48)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
@@ -59,6 +59,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Hero abilities, combat, enemies and bosses
 
+- [Strategist warned-attack reversal — isolated native proof](STRATEGIST_WARNING_REVERSAL_PROTOTYPE_20261030.md) — *Dated draft evidence.* Exact-warning counter, full-party protection and reflected harm; source-only PR #696 with no playable fifth class or publication.
 - **[Target Centered Boss Ground AoE](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md)** — **Design reference.** Committed boss damage footprints, warning parity and terrain/line-of-sight boundaries.
 - **[Rogue Charm Heritage](ROGUE_CHARM_HERITAGE_589.md)** — **Reference.** Charmed heritage abilities, nighttime species, published implementation evidence and pending balance review.
 - **[Rogue Rank and Stacking Reconciliation](ROGUE_SKILL_RANK_PROGRESS_AND_STACKING_RECONCILIATION_20261029.md)** — **Reference.** Current #606 stacking/rank integration versus earlier alternatives and instructor/journal verification.
