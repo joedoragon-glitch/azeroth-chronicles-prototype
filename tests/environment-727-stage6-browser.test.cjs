@@ -1,5 +1,5 @@
 'use strict';
-// #727 Stage 6: exact frozen MP3 previews temporarily imported only in disposable CI checkout.
+// #727 Stage 6: test the actual permanently registered 72-second source recordings.
 // One desktop and one phone-EMULATED context, not a native iPhone/device test.
 // Runs the PLAYABLE GAME entrypoint directly. Listening-room #647 is intentionally deferred to soundtrack Phase 8.
 // This does not measure perceived quality, authorize registration in a published build, or authorize publication.
@@ -30,9 +30,9 @@ const cases=[
   {zone:'mine',mode:'exploration',score:'place-mine',bed:'studio-colossus-mine-727'},
   {zone:'abyss',mode:'exploration',score:'place-abyss',bed:'studio-abyss-flight-hall-727'},
   {zone:'citadel',mode:'exploration',score:'place-citadel',bed:'studio-citadel-command-727'},
-  {zone:'supply-vale',mode:'exploration',score:'interior-supply-vale',bed:'env-home'},
+  {zone:'supply-vale',mode:'exploration',score:'interior-supply-vale',bed:'studio-orchard-cellars-727'},
   {zone:'supply-march',mode:'exploration',score:'interior-supply-march',bed:'studio-mirejaw-guarded-wet-store-727'},
-  {zone:'supply-highlands',mode:'exploration',score:'interior-supply-highlands',bed:'env-home'},
+  {zone:'supply-highlands',mode:'exploration',score:'interior-supply-highlands',bed:'env-signal-occupied'},
   {zone:'supply-crown',mode:'exploration',score:'interior-supply-crown',bed:'studio-cindermaw-roost-vault-727'},
   {zone:'side-vale-cellars',mode:'exploration',score:'interior-side-vale-cellars',bed:'studio-orchard-cellars-727'},
   {zone:'side-march-watchhouse',mode:'exploration',score:'interior-side-march-watchhouse',bed:'studio-drowned-watchhouse-727'},

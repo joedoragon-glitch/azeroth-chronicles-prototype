@@ -238,7 +238,7 @@ async function main() {
     await context.close();
 
     // Separate focused offline run in the *same* Chromium process. This uses
-    // the actual new 131-asset PWA service worker and a completely fresh
+    // the actual new 147-asset PWA service worker and a completely fresh
     // browser cache: no mocked network or synthetic audio fixtures.
     const offlineContext = await browser.newContext({viewport:{width:1024,height:800},
       serviceWorkers:'allow'});
@@ -288,7 +288,7 @@ async function main() {
     });
     assert.equal(cachedAudio.version,'azeroth-app-v'+require('../package.json').version,
       'the offline soundtrack must belong to this exact draft build');
-    assert.equal(cachedAudio.audio,132, 'all 131 recordings plus manifest should be cached');
+    assert.equal(cachedAudio.audio,148, 'all 147 recordings plus manifest must be cached');
     assert(cachedAudio.complete>180,'game must have its offline scripts/assets as well');
     await offlineContext.setOffline(true);
     await offlinePage.reload({waitUntil:'domcontentloaded',timeout:30000});
@@ -311,7 +311,7 @@ async function main() {
     assert(Object.values(off.loaded).every(x=>x.duration>20 && x.channels>=1));
     assert(off.cache.decodedBytes<=off.cache.decodedBudget);
     assert.equal(off.audioError,null);
-    console.log('PASS Phase7 single-Chromium offline real PWA: 131 cached MP3s + manifest, offline reload, Title playback and representative new music/ambience hash+decode; no network');
+    console.log('PASS Phase7 single-Chromium offline real PWA: 147 cached recorded assets + manifest, offline reload, Title playback and representative new music/ambience hash+decode; no network');
     console.log(JSON.stringify({cachedAudio,offline:off,heard:false,deviceVerified:false}));
     await offlineContext.close();
   } finally {
