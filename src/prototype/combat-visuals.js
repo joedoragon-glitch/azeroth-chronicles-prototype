@@ -1146,7 +1146,7 @@
       )
         push(e, 'contact', 0.32, 1);
       else if (
-        e.type === 'reset' && e.zone === game.zoneId &&
+        e.type === 'resetCue' && e.zone === game.zoneId &&
         Number.isFinite(e.x) && Number.isFinite(e.y)
       )
         push(e, 'resetCue', 0.2, 2);
