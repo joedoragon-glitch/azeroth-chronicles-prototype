@@ -288,7 +288,8 @@
         // Narrative events are owned by the campaign. Observe them even if effect
         // playback is muted or the sound effect has no synthesized note.
         if (this.ctx && type === 'death' && this.context?.succession) {
-          const seconds = this.recordingManifest?.assets?.defeat?.duration || 25.3;
+          const entry = this.recordingManifest?.assets?.defeat;
+          const seconds = entry?.loop ? entry.loop.end - entry.loop.start : 25.3;
           this.defeatUntil = this.ctx.currentTime + Math.min(30, Math.max(4, seconds));
         }
         if (this.ctx && type === 'successor' && this.defeatUntil > this.ctx.currentTime) {
