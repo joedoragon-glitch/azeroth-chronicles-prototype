@@ -1811,7 +1811,9 @@
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.4);
         const shot = Math.max(1, dist(u, target));
-        for (let j = 0; j < 3; j++)
+        const volleyMove = this.s.mode === 'developer'
+          ? this.developerCompanionNewMove(u.id, 'Triple Shot') : null;
+        for (let j = 0; j < 3; j++) {
           this.s.projectiles.push({
             id: 'projectile-' + this.s.nextId++,
             x: u.x,
@@ -1835,8 +1837,10 @@
               ? { slow: R.companionSkills.veteran.coveringSlow }
               : {}),
           });
-          if (this.s.mode === 'developer')
-            this.developerCompanionTrackProjectile(u, 'Triple Shot', this.s.projectiles.at(-1));
+          if (volleyMove)
+            this.developerCompanionTrackProjectile(u, 'Triple Shot',
+              this.s.projectiles.at(-1), volleyMove);
+        }
         this.event('projectileLaunch', {
           actor: 'companion',
           role: 'archer',
@@ -1933,6 +1937,8 @@
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
         if (u.type === 'archer') {
+          const volleyMove = this.s.mode === 'developer'
+            ? this.developerCompanionNewMove(u.id, 'Piercing Volley') : null;
           // #464: the original selected targets receive real physical arrows.
           // A single committed critical receipt is shared across all shafts;
           // no damage/status occurs until the native projectile contact.
@@ -1953,8 +1959,9 @@
               companionSkill: 'piercing-volley',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             });
-            if (this.s.mode === 'developer')
-              this.developerCompanionTrackProjectile(u, 'Piercing Volley', this.s.projectiles.at(-1));
+            if (volleyMove)
+              this.developerCompanionTrackProjectile(u, 'Piercing Volley',
+                this.s.projectiles.at(-1), volleyMove);
             hits++;
           }
         } else {
