@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "phase": "Stage 2 / #727 — outdoors source-verified studio; unregistered preview only",
+  "status": "SOURCE_DISCOVERY: publisher pages checked, exact originals not yet independently pinned. The --probe-sources mode measures bytes/hash/codecs; promotion requires adding confirmed sha1/bytes then rerunning strict render.",
+  "authority": "Stage 1 issue #727 comments 6546812555 and 6546828387; docs/AUDIO_ENVIRONMENT.md; AGENTS.md",
+  "preservation": "DO NOT edit the 18 existing ambience MP3s, 18 scene rules, 14 original book cues, night events, 18 Dark Crown masters, or soundtrack #673.",
+  "sources": [
+    {
+      "id": "vale-copse-field",
+      "creator": "Thimras",
+      "title": "Park ambiences — copse before rain, South Australia, winter",
+      "license": "CC0 1.0",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_birds.wav",
+      "sha1": null,
+      "bytes": null,
+      "maxBytes": 99000000,
+      "role": "Field-recorded tree air and subtle foliage for Greenwood daylight, contingent on source intervals free from prominent bird chorus or imminent rain",
+      "cautions": "Adelaide public park species not Greenwood canon; birds may be too identifiable, with a pre-rain transition. No night reuse. Reject if foreground wildlife, rain or microphone noise survives mix."
+    },
+    {
+      "id": "march-low-river-field",
+      "creator": "Thimras",
+      "title": "Park ambiences — low river step with fauna, South Australia, winter",
+      "license": "CC0 1.0",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
+      "sha1": null,
+      "bytes": null,
+      "maxBytes": 112000000,
+      "role": "Genuine low moving water as an optional ingredient of daytime Flooded Marches",
+      "cautions": "Recording includes waterfall-over-step, birds, frogs. It can easily be too loud and species/location-inappropriate for diffuse shallow marsh; reject if audible as continuous cascade or repetitive identifiable wildlife."
+    }
+  ],
+  "studies": [
+    {
+      "id": "study-vale-day-727",
+      "zone": "Greenwood Vale day",
+      "region": "vale",
+      "referenceBed": "env-woodland-day",
+      "mainSource": "vale-copse-field",
+      "fieldExcerptStart": 22,
+      "fieldGain": 0.42,
+      "windGain": 0.26,
+      "highpassHz": 145,
+      "lowpassHz": 3050,
+      "routeGain": 0.36,
+      "events": [],
+      "description": "A restrained productive Piedmont-inspired wooded-river countryside, without constant labor/bird calls or a forest-dungeon drone. Compare against original woodland day; preserve separate night bed and sparse bird detail."
+    },
+    {
+      "id": "study-march-day-727",
+      "zone": "Flooded Marches day",
+      "region": "march",
+      "referenceBed": "env-marsh-day",
+      "mainSource": "march-low-river-field",
+      "fieldExcerptStart": 29,
+      "fieldGain": 0.4,
+      "windGain": 0.27,
+      "highpassHz": 130,
+      "lowpassHz": 2200,
+      "routeGain": 0.36,
+      "events": [],
+      "description": "Shallow reedland and low water movement for working wetlands; never river-cascade wallpaper or frog chorus. Compare against original marsh day; preserve original marsh night/water events."
+    }
+  ],
+  "deferred": [
+    {
+      "scene": "Greenwood Vale night",
+      "reason": "The shortlisted public-park daylight wildlife recording is not an acceptable nighttime woodland identity. Retain env-woodland-night until a different physically credible night air source is vetted."
+    },
+    {
+      "scene": "Flooded Marches night",
+      "reason": "Do not globally transplant daytime birds/frogs or repeating river-step audio into nocturnal wetlands. Retain env-marsh-night and original water/night tone pending night-specific proof."
+    },
+    {
+      "scene": "Dark Crown outdoors",
+      "reason": "No credible, subdued long-form outdoor stone/civic/mineral field source is yet selected. Preserve env-crown-courtyard and night insects rather than invent lava/machinery wallpaper."
+    }
+  ],
+  "constraints": {
+    "sourcePolicy": "Use CC0 or genuinely public-domain original source pages, record original URL/author/license, recheck bytes and SHA before render; do not silently substitute.",
+    "seconds": 72,
+    "sampleRate": 32000,
+    "codec": "mono 128kbps MP3 guarded 0.15 seconds",
+    "sourceLocation": "GitHub isolated runner temp only",
+    "testGates": [
+      "Independently downloaded original SHA1/bytes match pinned ledger",
+      "Real FFmpeg decode; finite samples",
+      "Exact original game master SHA matches manifest; no runtime registration",
+      "Decoded MP3 loudness and actual true peak",
+      "Clip/sample peak and per-second crests",
+      "Loop sample discontinuity and first/last 1s RMS contrast",
+      "Nonrepeated 24s blocks",
+      "Two candidate cross-correlations and acoustic spectral distribution",
+      "Unmerged no-deploy artifact accessible with provenance"
+    ],
+    "sourceApproval": "HOLD until hashes pinned",
+    "technicalApproval": "HOLD pending CI",
+    "listeningApproval": "HOLD until actual human hearing",
+    "registration": "NO",
+    "merged": "NO",
+    "deployed": "NO",
+    "deviceVerified": "NO"
+  }
+}
