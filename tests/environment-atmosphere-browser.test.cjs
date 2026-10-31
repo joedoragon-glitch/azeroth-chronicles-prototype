@@ -117,6 +117,7 @@ async function main(){
       phase:Prototype.game.daylightPhase().phase,
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
       motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
+      optimized:Prototype.experimentalGraphics.backgroundOptimized,
       time:Prototype.game.s.clock
     }));
     assert.equal(withWraith.mode,'webgl2','No GPU fallback during reproduction');
@@ -131,7 +132,8 @@ async function main(){
     const withoutWraith=await page.evaluate(()=>({
       mode:Prototype.experimentalGraphics.mode,
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
-      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes
+      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
+      optimized:Prototype.experimentalGraphics.backgroundOptimized
     }));
     assert((await gpu.screenshot({path:path.join(out,'marches-no-wraith-pixi.png')})).length>1024);
     const result={scene,withWraith,withoutWraith,errors};
@@ -142,8 +144,16 @@ async function main(){
     assert.equal(withWraith.lights,withoutWraith.lights,
       'V-01 diagnostic baseline: uncorrected Pixi is missing both Wraith lantern glows; a change requires reassessment');
     console.log('REPRODUCED V-01 uncorrected Pixi: Wraith carried-glass GPU lights absent; THIS IS NOT A PARITY PASS');
-    assert.equal(withWraith.motes,withoutWraith.motes,
-      'The carried lamp must not alter bounded atmospheric motes');
+    // Software WebGL2 can legitimately trigger the emergency Optimization
+    // override even when the saved preference was Off. The mode transition
+    // suppresses ambient motes; never mislabel this as a Wraith-light defect.
+    if(withWraith.optimized===withoutWraith.optimized) {
+      assert.equal(withWraith.motes,withoutWraith.motes,
+        'At a matched effective Optimization tier, removing a Wraith cannot alter motes');
+    } else {
+      console.log('OBSERVED EMERGENCY OPTIMIZATION OVERRIDE: '+withWraith.motes+
+        ' to '+withoutWraith.motes+' motes; tier changed during software-GPU scene');
+    }
     console.log('PASS #708 audit repro and screenshots; V-01 renderer parity remains FAILED on baseline main');
     await context.close();
   }finally{
