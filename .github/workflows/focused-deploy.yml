@@ -57,6 +57,14 @@ jobs:
           path: ${{ runner.temp }}/azeroth-focused-ci-report.json
           if-no-files-found: ignore
           retention-days: 30
+      - name: Preserve targeted issue 708 actual-render screenshots
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-708-real-render
+          path: test-artifacts/environment-708/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Verify reproducible, offline-ready build
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
