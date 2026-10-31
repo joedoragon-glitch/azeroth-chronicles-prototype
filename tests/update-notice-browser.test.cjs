@@ -303,6 +303,20 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.evaluate(() => window.Prototype?.game.hero.gold), 42424);
       const releaseRequests = requestLog.filter((entry) => entry.generation === 'c')
         .map((entry) => entry.relative);
+      const releaseCache = await page.evaluate(async () => {
+        const cache = await caches.open('azeroth-app-v' + PrototypeBuild.version + '-notice-c');
+        const inspect = async (file, marker) => {
+          const response = await cache.match('./' + file);
+          return response ? (await response.text()).includes(marker) : null;
+        };
+        return {
+          index: await inspect('index.html', 'data-menu-revision="c"'),
+          phone: await inspect('phone.html', 'data-menu-revision="c"'),
+          script: await inspect('src/prototype/app.js', "dataset.menuRevision = 'c'"),
+        };
+      });
+      console.log('Release c transfers and offline cache: ' +
+        JSON.stringify({ phone, releaseRequests, releaseCache }));
       for (const changed of ['/index.html', '/phone.html', '/src/prototype/app.js'])
         assert(releaseRequests.includes(changed), 'changed release bytes must download: ' + changed);
       for (const unchanged of ['/src/prototype/renderer.js', '/assets/audio/music/title.mp3'])
