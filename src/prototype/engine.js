@@ -2158,7 +2158,12 @@
       const move = { id: ++d.sequence, time: this.s.time, label,
         damage: 0, pending: 0, resolved: true };
       list.push(move);
-      while (list.length > 32 && list[0].resolved) list.shift();
+      while (list.length > 48) {
+        // An orphaned projectile must not retain a permanent history.
+        const old = list.shift();
+        for (const [pid, entry] of d.projectiles)
+          if (entry.move === old) d.projectiles.delete(pid);
+      }
       d.moves.set(source, list);
       return move;
     }
@@ -2183,6 +2188,18 @@
     developerCompanionEndDirect(previous) {
       if (this.s.mode === 'developer') this._developerCompanionDirectMove = previous;
     }
+    // Observe the actual melee release even if a legal attempt removes no HP.
+    // Its damage, RNG and normal-mode behavior still belong to Campaign.damage.
+    developerCompanionDamage(unit, label, target, amount, options = null) {
+      if (this.s.mode !== 'developer')
+        return this.damage(target, amount, unit.id, options);
+      const previous = this.developerCompanionBeginDirect(unit, label);
+      try {
+        return this.damage(target, amount, unit.id, options);
+      } finally {
+        this.developerCompanionEndDirect(previous);
+      }
+    }
     recordDeveloperCompanionDamage(source, amount) {
       if (this.s.mode !== 'developer' || !(amount > 0) ||
           !this.s.party.some((u) => u.id === source)) return;
@@ -2195,8 +2212,11 @@
       if (!move) return;
       move.damage += amount;
       const hits = d.hits.get(source) || [];
-      hits.push({ time: this.s.time, damage: amount });
-      if (hits.length > 128) hits.shift();
+      const lastHit = hits.at(-1);
+      if (lastHit?.time === this.s.time) lastHit.damage += amount;
+      else hits.push({ time: this.s.time, damage: amount });
+      while (hits.length && hits[0].time < this.s.time - 5) hits.shift();
+      if (hits.length > 1024) hits.splice(0, hits.length - 1024);
       d.hits.set(source, hits);
     }
     developerCompanionLabelLastMove(source, label) {
@@ -2207,25 +2227,34 @@
     developerCompanionSnapshot() {
       if (this.s.mode !== 'developer') return null;
       const d = this.developerCompanions, now = this.s.time,
+        available = this.s.party.filter((u) => u.active !== false &&
+          u.hp > 0 && !u.expeditionId && ['soldier','archer','pet'].includes(u.type) &&
+          (!u.charmOrigin || this.isCharmedCompanion(u)) &&
+          (u.type !== 'pet' || this.petUnlocked(u.petFamily))),
+        eligible = new Set(available.map((u) => u.id)),
         flying = new Set(this.s.projectiles.map((p) => p.id));
+      // Missed, expired or cancelled shots resolve with zero damage. A shared
+      // multi-arrow move resolves only after every attached projectile ends.
       for (const [id, entry] of d.projectiles) {
-        if (flying.has(id)) continue;
+        if (flying.has(id) && eligible.has(entry.source)) continue;
         d.projectiles.delete(id);
         entry.move.pending = Math.max(0, entry.move.pending - 1);
         if (!entry.move.pending) entry.move.resolved = true;
       }
+      for (const id of d.moves.keys()) if (!eligible.has(id)) d.moves.delete(id);
       for (const [id, hits] of d.hits) {
+        if (!eligible.has(id)) { d.hits.delete(id); continue; }
         while (hits.length && hits[0].time < now - 5) hits.shift();
-        if (!hits.length && !this.s.party.some((u) => u.id === id)) d.hits.delete(id);
       }
-      const elapsed = Math.min(5, Math.max(1, now));
-      return this.s.party.filter((u) => u.active !== false && u.hp > 0 && !u.expeditionId)
-        .map((u) => ({
+      const elapsed = Math.min(5,
+        Math.max(1, now - this.developerCombat.startedAt));
+      return available.map((u) => ({
         id: u.id, name: this.companionDisplayName(u),
         type: u.type === 'pet' ? 'Pet' : u.charmOrigin ? 'Charmed' : 'Companion',
         last: (d.moves.get(u.id) || []).filter((m) => m.resolved).slice(-3)
           .reverse().map((m) => ({ name: m.label, damage: m.damage })),
-        dps: (d.hits.get(u.id) || []).reduce((sum, h) => sum + h.damage, 0) / elapsed,
+        dps: (d.hits.get(u.id) || [])
+          .reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
       }));
     }
     developerCombatSnapshot() {

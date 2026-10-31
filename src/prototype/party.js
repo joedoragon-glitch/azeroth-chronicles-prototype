@@ -1214,8 +1214,9 @@
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           return true;
         }
-        const hit = this.damage(
-          e, this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)), u.id,
+        const hit = this.developerCompanionDamage(
+          u, 'Basic attack', e,
+          this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
         );
         if (hit)
           this.event('melee', {
@@ -1457,9 +1458,9 @@
           });
           if (this.s.mode === 'developer')
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
-        } else if (this.damage(e, this.troopCriticalDamage(
-          criticalReceipt, this.companionBasicAttackDamage(u),
-        ), u.id))
+        } else if (this.developerCompanionDamage(u, 'Basic attack', e, this.troopCriticalDamage(
+            criticalReceipt, this.companionBasicAttackDamage(u),
+          )))
           this.event('melee', {
             actor: 'companion',
             role: 'soldier',
@@ -1760,9 +1761,9 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
-          if (!this.damage(
-            target, this.troopCriticalDamage(criticalReceipt,
-              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)), u.id,
+          if (!this.developerCompanionDamage(
+            u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
+              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
           )) return false;
           const veteran = R.companionSkills.veteran;
           if (
@@ -4028,9 +4029,9 @@
         else if (u.cd <= 0) {
           u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
           const criticalReceipt = this.troopCriticalRelease(u, 'basic');
-          if (this.damage(e, this.troopCriticalDamage(
+          if (this.developerCompanionDamage(u, 'Basic attack', e, this.troopCriticalDamage(
             criticalReceipt, this.companionBasicAttackDamage(u),
-          ), u.id))
+          )))
             this.event('melee', {
               actor: 'companion',
               role: 'soldier',
@@ -4366,9 +4367,9 @@
                   });
                   if (this.s.mode === 'developer')
                     this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
-                } else if (this.damage(pursuer, this.troopCriticalDamage(
-                  criticalReceipt, this.companionBasicAttackDamage(u),
-                ), u.id))
+                } else if (this.developerCompanionDamage(u, 'Basic attack', pursuer, this.troopCriticalDamage(
+            criticalReceipt, this.companionBasicAttackDamage(u),
+          )))
                   this.event('melee', {
                     actor: 'companion',
                     role: 'soldier',

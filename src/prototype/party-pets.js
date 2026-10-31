@@ -446,10 +446,9 @@
             target: target.id,
           });
         } else if (
-          this.damage(
-            target,
+          this.developerCompanionDamage(
+            u, 'Basic attack', target,
             this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
-            u.id,
           )
         ) {
           this.event('melee', {
@@ -562,10 +561,9 @@
             target: target.id,
           });
         } else if (
-          this.damage(
-            target,
+          this.developerCompanionDamage(
+            u, 'Basic attack', target,
             this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
-            u.id,
           )
         ) {
           this.event('melee', {
