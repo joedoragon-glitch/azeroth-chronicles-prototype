@@ -232,6 +232,14 @@ async function audioHashes(cache) {
         return hashes;
     } catch (_) { return new Map(); }
 }
+// The recorded soundtrack increases the initial cache's media count. Large
+// atomic addAll bursts can exhaust a browser's simultaneous fetch resources.
+// Install the complete release in bounded groups; the worker still cannot
+// activate until every group and its hash manifest have succeeded.
+async function addCacheInBatches(cache, requests) {
+    for (let i = 0; i < requests.length; i += 12)
+        await cache.addAll(requests.slice(i, i + 12));
+}
 self.addEventListener('install', event => {
     event.waitUntil((async () => {
         const cache = await caches.open(CACHE_VERSION);
@@ -275,7 +283,7 @@ self.addEventListener('install', event => {
             }
             if (!reused) downloads.push(new Request(url, { cache: 'reload' }));
         }
-        if (downloads.length) await cache.addAll(downloads);
+        if (downloads.length) await addCacheInBatches(cache, downloads);
         const spriteDownloads = [];
         for (const [url, hash] of await spriteHashes(cache)) {
             let reused = false;
@@ -291,7 +299,7 @@ self.addEventListener('install', event => {
             }
             if (!reused) spriteDownloads.push(new Request(url, { cache: 'reload' }));
         }
-        if (spriteDownloads.length) await cache.addAll(spriteDownloads);
+        if (spriteDownloads.length) await addCacheInBatches(cache, spriteDownloads);
         // Persist the release's trusted fingerprints for fast reuse on its next update.
         await cache.put(fingerprintURL, new Response(JSON.stringify(APP_FINGERPRINTS),
             { headers: { 'Content-Type': 'application/json' } }));
