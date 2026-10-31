@@ -54,7 +54,7 @@ function reachableObstruction(g,e){
   return null;
 }
 function observe(g,e,ticks) {
-  let probes=0,peak=0,routeCalls=0,elitePlans=0,peakPlanner=0;
+  let probes=0,peak=0,routeCalls=0,elitePlans=0,peakPlanner=0,actorFollowDepth=0;
   let warn=0,releases=0,maxFollowMotion=0,illegalLegs=0;
   const old={blocked:g.blocked,route:g.route,advance:g.advanceBudgetedRoute,
     follow:g.follow,startBoss:g.startAttack,startCaptain:g.startCaptainAttack,
@@ -63,7 +63,7 @@ function observe(g,e,ticks) {
   g.route=function(a,b,...rest){if(a===e)routeCalls++;return old.route.call(this,a,b,...rest)};
   g.advanceBudgetedRoute=function(a,b,mode,...rest){
     const before=probes,result=old.advance.call(this,a,b,mode,...rest);
-    if(mode==='elite-pursuit'||mode==='captain-patrol'){
+    if(actorFollowDepth>0&&(mode==='elite-pursuit'||mode==='captain-patrol')){
       elitePlans++;peakPlanner=Math.max(peakPlanner,probes-before);
     }
     return result;
@@ -83,9 +83,12 @@ function observe(g,e,ticks) {
     return old.resolve.call(this,actor,...args);
   };
   g.follow=function(actor,...args){
-    const before={x:actor.x,y:actor.y};
-    const outcome=old.follow.call(this,actor,...args);
-    if(actor===e && distance(before,actor)>0) {
+    const before={x:actor.x,y:actor.y},isSubject=actor===e;
+    if(isSubject)actorFollowDepth++;
+    let outcome;
+    try{outcome=old.follow.call(this,actor,...args);}
+    finally{if(isSubject)actorFollowDepth--;}
+    if(isSubject && distance(before,actor)>0) {
       const moved=distance(before,actor);
       maxFollowMotion=Math.max(maxFollowMotion,moved);
       if(!g.clearSegment(before,actor))illegalLegs++;
