@@ -43,7 +43,7 @@ const root = path.resolve(__dirname, '..'),
     res.setHeader('Content-Type', types[ext] || 'text/html');
     fs.createReadStream(file).pipe(res);
   });
-  await new Promise((r) => server.listen(0, '131.0.0.1', r));
+  await new Promise((r) => server.listen(0, '127.0.0.1', r));
   let browser;
   try {
     const launch = { headless: true };
@@ -73,7 +73,7 @@ const root = path.resolve(__dirname, '..'),
           localStorage.setItem('azeroth-save-sentinel', '{"keep":"original"}');
         });
         await page.goto(
-          'http://131.0.0.1:' + server.address().port + prefix + 'tools/audio/index.html',
+          'http://127.0.0.1:' + server.address().port + prefix + 'tools/audio/index.html',
         );
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
