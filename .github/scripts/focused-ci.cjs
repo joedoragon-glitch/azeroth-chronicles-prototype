@@ -252,6 +252,13 @@ const groups = [
     ],
   },
   {
+    // The four-source importer updates actual game sound registration,
+    // provenance, 19 location routes and generated offline references.
+    // Every future change to this one-off source must retain real tests.
+    match: /^tools\/audio\/integrate-regional-candidates\.cjs$/,
+    tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-audio-inventory.test.cjs'],
+  },
+  {
     match: /^src\/prototype\/(?:audio[^/]*\.js)$|^assets\/audio\//,
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },
