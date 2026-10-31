@@ -71,6 +71,12 @@
       thornPatrolNodesPerTick: 160,
       thornEscortProbesPerTick: 512,
       thornEscortNodesPerTick: 160,
+      // Active elites and the Frontier captain's patrol are independent
+      // of ordinary pursuit, companions, Thorn's retreat and Mira's escort.
+      eliteProbesPerTick: 768,
+      eliteNodesPerTick: 240,
+      captainPatrolProbesPerTick: 512,
+      captainPatrolNodesPerTick: 160,
     });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
@@ -486,6 +492,10 @@
             thornPatrolNodes: cfg.thornPatrolNodesPerTick,
             thornEscortProbes: cfg.thornEscortProbesPerTick,
             thornEscortNodes: cfg.thornEscortNodesPerTick,
+            eliteProbes: cfg.eliteProbesPerTick,
+            eliteNodes: cfg.eliteNodesPerTick,
+            captainPatrolProbes: cfg.captainPatrolProbesPerTick,
+            captainPatrolNodes: cfg.captainPatrolNodesPerTick,
           };
           routePlanningFrames.set(this, frame);
         }
@@ -493,7 +503,8 @@
         if (!plan || plan.zone !== zone || plan.mode !== mode ||
             plan.gathering !== gathering ||
             dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
-          const generator = ['tactical', 'pursuit', 'thorn-retreat', 'thorn-patrol', 'thorn-escort'].includes(mode)
+          const generator = ['tactical', 'pursuit', 'thorn-retreat', 'thorn-patrol', 'thorn-escort',
+              'elite-pursuit', 'captain-patrol'].includes(mode)
             ? this.budgetedTacticalRoute(origin, target)
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
@@ -501,7 +512,9 @@
         const pool = mode === 'thorn-retreat' ? 'thornRetreat'
           : mode === 'thorn-patrol' ? 'thornPatrol'
             : mode === 'thorn-escort' ? 'thornEscort'
-              : mode === 'pursuit' ? 'pursuit' : '';
+              : mode === 'elite-pursuit' ? 'elite'
+                : mode === 'captain-patrol' ? 'captainPatrol'
+                  : mode === 'pursuit' ? 'pursuit' : '';
         const probeKey = pool ? pool + 'Probes' : 'probes',
           nodeKey = pool ? pool + 'Nodes' : 'nodes';
         let probes = Math.min(frame[probeKey],
@@ -1562,8 +1575,8 @@
             !entity.veraEscort && !this.thornPatroller(entity) &&
             !this.cinderPatroller(entity) && zone.enemies.includes(entity),
           // This isolated exemption is only for the established passive
-          // opening-withdrawal path. Active bosses and scripted combat still
-          // retain their original follow()/route() semantics.
+          // opening-withdrawal path. Active bosses retain their authored
+          // phases; a separate incremental planner bounds their route cost.
           thornRetreat = planningMode === 'thorn-retreat' &&
             entity.thornIntroRetreat !== undefined &&
             !entity.aggro && zone.enemies.includes(entity),
@@ -1572,7 +1585,15 @@
             entity.thornIntroRetreat === undefined && entity.hp > 0,
           thornEscort = planningMode === 'thorn-escort' &&
             entity === this.thornCaptive() && this.thornCaptiveFollowing() && !this.peace,
-          scriptedVale = thornRetreat || thornPatrol || thornEscort;
+          // Only route calculation changes. Native boss/captain attacks,
+          // special phases, telegraphs and reset logic still own each tick.
+          elitePursuit = entity.aggro && !entity.returning &&
+            (entity.type === 'boss' || entity.captain || entity.roomCaptain || entity.fieldCaptain) &&
+            zone.enemies.includes(entity),
+          captainPatrol = planningMode === 'captain-patrol' && entity.fieldCaptain &&
+            !entity.aggro && !entity.returning && zone.enemies.includes(entity),
+          scriptedVale = thornRetreat || thornPatrol || thornEscort,
+          incremental = enemyPursuit || scriptedVale || elitePursuit || captainPatrol;
         let trip = terrainTrips.get(entity);
         // A hero-first interruption must retire its unsaved pending search,
         // including when the new engagement has a clear direct approach.
@@ -1589,7 +1610,7 @@
         if ((!(thornRetreat || thornPatrol) || !entity.path?.length) &&
             this.clearSegment(entity, target)) {
           entity.path = [];
-          if (enemyPursuit || scriptedVale) terrainTrips.delete(entity);
+          if (incremental) terrainTrips.delete(entity);
           return this.move(entity, target, speed, dt, stop);
         }
         entity.routeAge = (entity.routeAge || 0) - dt;
@@ -1602,10 +1623,12 @@
             entity.routeAge = R.navigationPlanning.routeRetrySeconds;
           else entity.path = [];
         }
-        if (enemyPursuit || scriptedVale) {
+        if (incremental) {
           const kind = thornRetreat ? 'thorn-retreat'
             : thornPatrol ? 'thorn-patrol'
-              : thornEscort ? 'thorn-escort' : 'pursuit';
+              : thornEscort ? 'thorn-escort'
+                : captainPatrol ? 'captain-patrol'
+                  : elitePursuit ? 'elite-pursuit' : 'pursuit';
           // A moving hero must not reset the entire search frontier every
           // update. A pending search uses its frozen origin and destination;
           // its result is validated against the actor's actual position.
@@ -1620,7 +1643,7 @@
             entity.routeAge = 0;
           }
           if (trip.pending || entity.routeAge <= 0) {
-            if (scriptedVale || trip.pending || this.reserveMovementPlan(entity)) {
+            if (scriptedVale || captainPatrol || trip.pending || this.reserveMovementPlan(entity)) {
               const origin = trip.pending?.origin || entity,
                 destination = trip.pending?.target || target,
                 result = this.advanceBudgetedRoute(origin, destination, kind, trip.pending);
@@ -1654,7 +1677,11 @@
           }
         }
         while (entity.path?.length && dist(entity, entity.path[0]) < 1) entity.path.shift();
-        if (!entity.path?.length) return false;
+        if (!entity.path?.length) {
+          // A pending search is not a failed patrol leg: retain the authored
+          // destination instead of immediately skipping the checkpoint.
+          return !!(captainPatrol && trip?.pending);
+        }
         const moved = this.move(entity, entity.path[0], speed, dt);
         if (dist(entity, entity.path[0]) < 1) entity.path.shift();
         return moved;
