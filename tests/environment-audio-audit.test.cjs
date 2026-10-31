@@ -51,6 +51,16 @@ for(const region of ['vale','march','highlands','frontier','crown']) {
     if(region==='march') assert.equal(rule.asset,night?'env-marsh-night':'env-marsh-day');
   }
 }
+// #709 A5: indoor Signal Keep and occupied converted Shrine do not use
+// exposed outdoor Highland/Frontier air. The actual outdoor rules are unchanged.
+for(const [zone,region,bed] of [
+  ['side-highlands-signal','highlands','env-cellar'],
+  ['side-frontier-shrine','frontier','env-retreat']
+]) {
+  assert.equal(a.environmentCue({...base,zone,region,interior:'side-dungeon'}).asset,bed);
+  assert.equal(a.environmentCue({...base,zone:region,region,interior:'outdoors'}).asset,
+    region==='highlands'?'env-highland-wind':'env-frontier-air');
+}
 for(const extra of [
  {started:false},{gameOver:true},{situation:'title'},
  {situation:'game-over'}
