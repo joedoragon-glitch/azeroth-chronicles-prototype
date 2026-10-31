@@ -38,12 +38,12 @@
       "baseBed": "env-highland-wind",
       "physicalDetail": "wood-creak",
       "eventAtSeconds": 39.1,
-      "eventPeak": 0.019,
+      "eventPeak": 0.056,
       "bedGain": 0.94,
       "highpassHz": 82,
       "lowpassHz": 3600,
       "routeGain": 0.22,
-      "notes": "Retain Highland midrange ridge air; attenuate exposed gusts as heard inside occupied timber-and-stone structures; no invented horn or whistle. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening.",
+      "notes": "Retain Highland midrange ridge air; attenuate exposed gusts as heard inside occupied timber-and-stone structures; no invented horn or whistle. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening. Acoustic QA revision: encoded first-pass physical event contribution measured ~21-24 dB BELOW its own background, effectively concealed; increase only that single sparse local event, preserve regional bed and game bus gains. No hearing inferred.",
       "loopSeconds": 72
     },
     {
@@ -52,12 +52,12 @@
       "baseBed": "env-frontier-air",
       "physicalDetail": "wood-utensils",
       "eventAtSeconds": 51.7,
-      "eventPeak": 0.018,
+      "eventPeak": 0.062,
       "bedGain": 0.94,
       "highpassHz": 100,
       "lowpassHz": 3400,
       "routeGain": 0.23,
-      "notes": "Retain dry recovering Frontier presence through an occupied Orc barracks envelope; one tiny domestic movement rather than repeated military clanks or faux ceremony. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening.",
+      "notes": "Retain dry recovering Frontier presence through an occupied Orc barracks envelope; one tiny domestic movement rather than repeated military clanks or faux ceremony. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening. Acoustic QA revision: encoded first-pass physical event contribution measured ~21-24 dB BELOW its own background, effectively concealed; increase only that single sparse local event, preserve regional bed and game bus gains. No hearing inferred.",
       "loopSeconds": 72
     }
   ],
@@ -83,7 +83,7 @@
     "sourceReview": "done",
     "downloads": "exploratory physical-source downloads verified in no-deploy CI #41197469581; original source checksum now pinned in the book",
     "rendered": "First-pass two 24-second MP3 isolated previews encoded in #41197495058; 72-second fatigue correction pending",
-    "signalChecked": "First pass signal metrics #41197495058; heard sound UNVERIFIED",
+    "signalChecked": "72s source/codec/seams/24s-nonrepeat verified #41197968518; independent decoded A/B found recorded event -21 to -24 dB below its own bed, requiring selective event-balance revision",
     "heard": "unverified",
     "accepted": "HOLD",
     "registered": "no",
