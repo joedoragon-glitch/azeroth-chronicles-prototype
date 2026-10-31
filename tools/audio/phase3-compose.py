@@ -168,8 +168,10 @@ def main():
     if not args.check and args.render is None:
         p.error("Specify --check or --render")
     original, catalog, freeze, themes, pilots, descriptions = source_contract()
-    print("PASS Phase 3 source: eight distinct primary scene IDs; two corrected-v2 reuse, "
-          "six fully authored themes; 83 music IDs, 65 allowed, 18 physical Crown hashes")
+    print("PASS Phase 3 SOURCE CONTRACT ONLY: eight primary IDs, two v2 reuse, "
+          "six authored-score structures; 83 music IDs and 18 physical Crown hashes")
+    print("QUALITY HOLD: source musical craft REVISE; actual heard sound UNVERIFIED; "
+          "Phase 4 blocked. See phase3-quality-review.json and #673.")
     if args.render is None:
         return
     out = args.render.expanduser().resolve()
