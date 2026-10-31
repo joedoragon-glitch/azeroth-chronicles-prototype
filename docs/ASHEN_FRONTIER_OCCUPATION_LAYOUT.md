@@ -15,7 +15,7 @@ one restrained west-to-east cool-soil transition, feathered local moss-earth was
 locations, with damage and military infrastructure still visible. The original
 ravine, pools, roads, existing props and gameplay/collision geometry are untouched.
 
-**Candidate only:** neither visual quality nor device FPS has been verified.
+**Native engineering art review, 31 October 2026:** Six real-game Canvas views at 150% zoom (Emberwatch, Burned Hamlet, western regrowth, northern ravine, checkpoint and night Bastion) were compared before/after on the same engine/world. The area transitions, subdued regrowth, road readability and preserved scarred areas were examined; an excessively smooth first pass was corrected by procedural ash/soil grain. The current PR's exact-head [12 focused checks and offline build](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41175895963) and [browser PWA update checks](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41175895959) passed on the pre-cleanup candidate. This is **not** owner-device acceptance or measured FPS; the final test-harness cleanup requires revalidation before merge.
 Before release, inspect actual 150% day/night scenes and run the focused material,
 rendering and reproducible offline checks. No broad terrain recoloring or green
 meadow replacement is authorized by this focused reconstruction.
