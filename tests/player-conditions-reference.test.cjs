@@ -27,7 +27,11 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   assert(
     topics.find((t) => t[0] === 'Shields, wards and immunity')[2].includes('No class’s Skill 8'),
   );
-  assert(topics.find((t) => t[0] === 'Healing in battle')[2].includes('recipient'));
+  const healing = topics.find((t) => t[0] === 'Healing in battle')[2];
+  assert(healing.includes('ordinary patient') &&
+    healing.includes('full heal measured from wounds') &&
+    healing.includes('per-healer leader interval'),
+    'current Keeper guide distinguishes full ordinary treatment from leader healing');
   let opened;
   const menus = Menus.create({
     getGame: () => g,
