@@ -73,3 +73,33 @@ for (const structure of Object.keys(C.rules.ambientLife)) {
 console.log(
   'PASS all five wildlife families retain canonical pixels at two times with independent parts',
 );
+
+// The original Canvas actor presentation point includes identity-phase breathing.
+// Pixi must use that point for raster and procedural bodies and actor attachments,
+// while ground markers stay at the unmodified world anchor. Rendering may not
+// repair idle motion by rebaking a procedural body every frame.
+const pixiSource = require('node:fs').readFileSync(
+  require.resolve('../src/prototype/pixi-experimental.js'), 'utf8',
+);
+const actorFrame = pixiSource.split('function actorFrame() {')[1]?.split('// #708:')[0];
+assert(actorFrame, 'Pixi original actor submission exists');
+assert(
+  actorFrame.includes('const bodyPoint = canvasRenderer.visualPositionFor?.(visual) || point;'),
+  'Pixi actor body must use Canvas live presentation position',
+);
+assert(
+  actorFrame.includes('x: point.x,\n                y: point.y,\n                scale: zoom'),
+  'Foot shadows and ground markers remain at original world coordinates',
+);
+assert(
+  actorFrame.includes('{ x: bodyPoint.x / zoom, y: bodyPoint.y / zoom }') &&
+  actorFrame.includes('x: bodyPoint.x + b.dx * zoom') &&
+  actorFrame.includes('y: bodyPoint.y + b.dy * zoom') &&
+  actorFrame.includes('x: source.bodyPoint.x'),
+  'Raster and procedural art, plus character-specific details, must follow idle motion',
+);
+assert(
+  !actorFrame.includes('revision + \'idle\'') && !actorFrame.includes('revision + time'),
+  'Idle motion must not trigger procedural rebaking',
+);
+console.log('PASS Pixi uses Canvas idle/active body position while world feet and cached art stay fixed');
