@@ -48,6 +48,7 @@ def fetch(source, folder):
     name = source["id"]
     dst = folder / (name + Path(url).suffix)
     digest = hashlib.sha1()
+    digest256 = hashlib.sha256()
     size = 0
     req = urllib.request.Request(
         url, headers={"User-Agent": "SIBDLP-curated-environment-studio/0.2 (licensed audio audit)"})
@@ -60,14 +61,18 @@ def fetch(source, folder):
             if size > source["maxBytes"]:
                 raise ValueError("Source exceeds independently reviewed budget: " + name)
             digest.update(block)
+            digest256.update(block)
             saved.write(block)
-    result = {'id': name, 'sha1': digest.hexdigest(), 'bytes': size,
+    result = {'id': name, 'sha1': digest.hexdigest(),
+              'sha256': digest256.hexdigest(), 'bytes': size,
               'license': source['license'], 'evidence': source['evidence'],
               'pinned': bool(source.get('sha1') and source.get('bytes'))}
     print("SOURCE", json.dumps(result), flush=True)
-    if not PROBE and (not source.get('sha1') or not source.get('bytes')):
+    if not PROBE and (not source.get('sha1') or not source.get('sha256')
+                      or not source.get('bytes')):
         raise ValueError("Source provenance is not yet pinned: " + name)
     if (source.get('sha1') and result['sha1'] != source['sha1']) or (
+            source.get('sha256') and result['sha256'] != source['sha256']) or (
             source.get('bytes') and size != source['bytes']):
         raise ValueError("Original file differs from pinned SHA-1/size: " + name)
     if size < 1000:
@@ -222,7 +227,8 @@ def main():
             else:
                 sources[item["id"]] = decode(original_path)
                 provenance.append({'id': item['id'], 'url': item['url'],
-                                   'sha1': item['sha1'], 'bytes': item['bytes'],
+                                   'sha1': item['sha1'], 'sha256': item['sha256'],
+                                   'bytes': item['bytes'],
                                    'license': item['license']})
         if PROBE:
             (OUT / 'outdoor-source-probe.json').write_text(json.dumps({
