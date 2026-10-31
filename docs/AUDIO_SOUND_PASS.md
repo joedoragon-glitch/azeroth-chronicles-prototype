@@ -268,6 +268,14 @@ The catalog already stores a `generationGuide` for each recorded asset. **Copy t
 
 This is a **future-facing brief template**, not a recovered original AI prompt. If exact reproduction is wanted, use the source score and synthesis recipe rather than prose alone. The generation guide describes intent but does not encode every note, timbre or mastering parameter.
 
+## Phase 3 source-quality correction and blocked expansion — 31 October 2026
+
+The completed **eight isolated sound files** described in [draft PR #704](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/704) are *technical composition candidates*, **not approved artistic assets**. The previous source GO was withdrawn after an exact note-level comparison found substantial gaps between several original hooks and the currently played new ones; the corrections must consider the recycled Greenwood and Archive v2 bases as well as six new themes. [`phase3-quality-review.json`](../tools/audio/phase3-quality-review.json) identifies the actual pitches/rhythms and per-area questions, with a regression test to prevent future source changes from making the critique stale. Its interval matches are diagnostic prompts rather than numerical creative grades.
+
+All six new songs use the same inherited oscillator instrument synthesis/mastering. Although arrangements and instrument labels differ, **convincing individual tone, phrasing, release, mix, identifiable motif and long-session comfort have not been genuinely heard and verified**. Re-rendered MP3 duration, hash, peak and loop-edge checks do not cure those deficiencies. The owner did not authorize dropping the standard just because the next phase is large.
+
+**Binding gate: Phase 3 source musical quality REVISE, old isolated technical encodes historically passed, genuinely heard quality UNVERIFIED; Phase 4 42-cue expansion BLOCKED.** Repair and critically compare the final actual notes, harmonic path, orchestration, timbre and musical pacing **before** generating derivative families. Real internal sound judgment must be documented honestly when obtainable, without asking the owner for early musical acceptance; Phase 9 remains the owner’s first audition. The new [audio budget PR #712](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/712) was merged and published separately, but greater capacity is not a musical-quality certificate. The 18 deferred Dark Crown recordings remain frozen.
+
 ## Listening, revision and acceptance
 
 1. **Identify the actual cue** by stable ID and current game context in the source-backed 26-family sound bible. Developers may use independent proven playback for technical/critical music QC. **Do not ask the owner to listen to work in progress.** The owner first listens in Phase 9 through the Phase 8 certified standalone room, comparing base/action/global-peace or boss/TRUE **as a set** without playing a campaign.
