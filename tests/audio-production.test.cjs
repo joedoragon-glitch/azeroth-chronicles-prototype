@@ -136,7 +136,7 @@ for (const [region, expected] of Object.entries(expectedDetails)) {
     engaged: 0, boss: null, settlement: null, started: true, situation: 'exploration',
   });
   assert.deepEqual(detailEvents, expected ? [expected] : [],
-    region + ' night must not inherit another region\\'s detail');
+    region + " night must not inherit another region's detail");
   if (!expected) assert.equal(detailTones.length, 0,
     region + ' night must not emit generic chirps');
 }
