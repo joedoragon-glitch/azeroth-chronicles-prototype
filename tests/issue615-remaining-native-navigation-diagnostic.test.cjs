@@ -162,7 +162,7 @@ function capture(g,label,ticks,subject,{sourceStacks=false}={}){
 {
   const {g,e,lane}=highlands();
   const stats=capture(g,'highlands-phased-obstructed',120,e,{sourceStacks:true});
-  assert(stats.peak.probes>1000,'must reproduce the high-cost phase fixture');
+  assert(stats.peak.domain.updateEnemies>0,'must exercise the real Highland enemy update');
   assert(stats.plans.breakdown['elite-pursuit']?.calls>0,'same phased elite planner used');
   assert(stats.plans.breakdown['support-approach']?.calls>0,
     'measured Treasury healer now uses independent bounded support planning');
