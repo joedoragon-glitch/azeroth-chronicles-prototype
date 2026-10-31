@@ -1965,7 +1965,9 @@
             hits++;
           }
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(u, def.name);
           for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
@@ -2225,6 +2227,7 @@
               (1 + tier * damageGrowth)),
           damage = enhance(base, 'damage');
         let landed = 0, actualDamage = 0;
+        const previousDirect = this.developerCompanionBeginDirect(u, def.name);
         for (const e of victims) {
           const hp = e.hp;
           if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
@@ -2244,6 +2247,7 @@
             if (this.clearSegment(e, point, 12)) this.move(e, point, 210, 0.2);
           }
         }
+        this.developerCompanionEndDirect(previousDirect);
         if (!landed) return false;
         // Siphon is based on actual post-mitigation lost HP, never theoretical
         // damage. No overheal or duplicate support-heal critical roll.
@@ -2401,6 +2405,8 @@
           });
           committed = true;
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(
+            u, profile.name || 'Native maneuver');
           for (const enemy of victims) {
             if (!this.damage(enemy, base, u.id, { area: elite })) continue;
             committed = true;
@@ -2432,6 +2438,7 @@
                 this.companionMasteryTier(u) *
                   R.balance.companions.mastery.slowSecondsPerTier);
           }
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!committed) return false;
         if (profile.style === 'dash' && !elite &&
