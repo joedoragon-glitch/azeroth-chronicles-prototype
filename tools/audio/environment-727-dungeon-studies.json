@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 3 of #727: five canon-specific main dungeon recorded-source ambience production studio",
-  "status": "PLANNED SOURCE PROBE; original byte/source SHA pins for several unverified originals; no renders or game registration until real download pinning",
+  "status": "ALL 8 PHYSICAL ORIGINAL SOURCES INDEPENDENTLY FINGERPRINTED PASS #41230940635, candidate audio production/encoded analysis next; original game audio untouched",
   "parent": "tools/audio/environment-727-outdoor-expansion.json",
   "authority": "Issue #727 Stage1 creative brief; docs/AUDIO_ENVIRONMENT.md; docs/ABYSS_AIR_SUPERIORITY_CANON.md and src/prototype rules/data; current manifest",
   "sources": [
@@ -17,7 +17,11 @@
       "bytes": 73960096,
       "maxBytes": 85000000,
       "role": "Authentic physical air for restrained architectural attenuation; never claim recorded inside a dungeon",
-      "cautions": "Original is an Adelaide outdoor field, not a castle/estate/mineshaft. Distinct sound by enclosure processing and sparse physical occupational cues; if all rooms still sound like the same wind reject/rework."
+      "cautions": "Original is an Adelaide outdoor field, not a castle/estate/mineshaft. Distinct sound by enclosure processing and sparse physical occupational cues; if all rooms still sound like the same wind reject/rework.",
+      "durationSeconds": 256.803333,
+      "codec": "pcm_s24le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     },
     {
       "id": "interior-low-river",
@@ -31,7 +35,11 @@
       "bytes": 99072736,
       "maxBytes": 112000000,
       "role": "Distant damp stone/water air for active Sunken Archive, not globally rushing water",
-      "cautions": "Original has actual river step and frogs/birds; avoid invented archival flood cause, loud waterfall, repeating fauna. Keep original two existing water details."
+      "cautions": "Original has actual river step and frogs/birds; avoid invented archival flood cause, loud waterfall, repeating fauna. Keep original two existing water details.",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     },
     {
       "id": "old-oak-chair-flex",
@@ -40,12 +48,16 @@
       "license": "public domain — PDSounds original record 544",
       "evidence": "https://commons.wikimedia.org/wiki/File:Creaky_wooden_swivel_chair.ogg",
       "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Creaky_wooden_swivel_chair.ogg",
-      "sha1": null,
-      "sha256": null,
-      "bytes": null,
+      "sha1": "4820aaac68fcced1bc31ee896987845f1b573b16",
+      "sha256": "4593efa9c75a66a66771a5ea4c8b706940cd43d653923cd342de48755b50d54a",
+      "bytes": 90505,
       "maxBytes": 125000,
       "role": "Very rare real timber/furniture handling under occupied unfinished Forest Crypt winter estate",
-      "cautions": "Original is a chair, NOT a timber roof or crypt coffin; reject if it sounds modern or is too recognizable."
+      "cautions": "Original is a chair, NOT a timber roof or crypt coffin; reject if it sounds modern or is too recognizable.",
+      "durationSeconds": 6.556735,
+      "codec": "vorbis/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     },
     {
       "id": "archival-paper",
@@ -55,11 +67,15 @@
       "evidence": "https://commons.wikimedia.org/wiki/File:Book_paper_pages_assorted.ogg",
       "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/Book_paper_pages_assorted.ogg",
       "sha1": "cdd0f8c62a767f43d9acbeba9ae214492921bf2f",
-      "sha256": null,
+      "sha256": "7725928b65296676cff33f2d2c6f1489e810acf27c1a48a9c452263c26fd2a08",
       "bytes": 2474211,
       "maxBytes": 2700000,
       "role": "Sparse rare working paper gestures in Archive and restrained Citadel paperwork",
-      "cautions": "Contains assorted book browsing, crumpling, tearing and ripping; only short suitable physically coherent excerpts allowed; do not imply records being deliberately torn."
+      "cautions": "Contains assorted book browsing, crumpling, tearing and ripping; only short suitable physically coherent excerpts allowed; do not imply records being deliberately torn.",
+      "durationSeconds": 77.949388,
+      "codec": "vorbis/44100Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     },
     {
       "id": "mine-workshop-anvil",
@@ -68,12 +84,16 @@
       "license": "CC0 1.0 original uploader",
       "evidence": "https://opengameart.org/content/blacksmiths-hammer",
       "url": "https://opengameart.org/sites/default/files/blacksmithhammer.wav",
-      "sha1": null,
-      "sha256": null,
-      "bytes": null,
+      "sha1": "c9e482acec2b75c464f0319ea3794be9323ec6fe",
+      "sha256": "a26c2e964e468fb7e68c8adf2b1c1d6e6778fe6e5ef4842463ae211e55ec7ae2",
+      "bytes": 88588,
       "maxBytes": 200000,
       "role": "One distant credible metal-repair note for Garun's mine workshop, not a permanently active forge or a Crown Foundry soundscape",
-      "cautions": "Real anvil is not rock pick. Keep short, quiet, infrequent; context remains mine/architecture rather than industrial machinery."
+      "cautions": "Real anvil is not rock pick. Keep short, quiet, infrequent; context remains mine/architecture rather than industrial machinery.",
+      "durationSeconds": 0.5,
+      "codec": "pcm_f32le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     },
     {
       "id": "aerie-equipment-clank",
@@ -82,12 +102,16 @@
       "license": "CC0 1.0 original uploader",
       "evidence": "https://opengameart.org/content/mechanical-sounds",
       "url": "https://opengameart.org/sites/default/files/clank1.wav",
-      "sha1": null,
-      "sha256": null,
-      "bytes": null,
+      "sha1": "7bb575823a0f10913cb622f8f4ae4a4059a6a1ad",
+      "sha256": "899a46a8423fa0ca349b3c70a07a422d1eaa3a58695ce6facfbae074dd70226f",
+      "bytes": 59436,
       "maxBytes": 130000,
       "role": "Rare muted material handling in incomplete dragon-flight equipment workshop; do not imply dragon fleet is deployed",
-      "cautions": "Original physical vs constructed recording method not guaranteed; artist license and original upload must be confirmed. Avoid loud steel modern factory ring."
+      "cautions": "Original physical vs constructed recording method not guaranteed; artist license and original upload must be confirmed. Avoid loud steel modern factory ring.",
+      "durationSeconds": 0.673379,
+      "codec": "pcm_s16le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     },
     {
       "id": "citadel-equipment-clunk",
@@ -96,12 +120,16 @@
       "license": "CC0 1.0 original uploader",
       "evidence": "https://opengameart.org/content/mechanical-sounds",
       "url": "https://opengameart.org/sites/default/files/lightclunk1.wav",
-      "sha1": null,
-      "sha256": null,
-      "bytes": null,
+      "sha1": "fb868b44b5a0ca069003229deffac6607e6d4f3f",
+      "sha256": "d5a2aa8764c02924f6ed6fbaad0c650ab2d57ec57a626cee9e6645f941dbc8fa",
+      "bytes": 32812,
       "maxBytes": 110000,
       "role": "Rare small formal-room equipment movement, not modern industry",
-      "cautions": "Metal handling can be too close-mic/modern, must be deeply muted and human-vetted."
+      "cautions": "Metal handling can be too close-mic/modern, must be deeply muted and human-vetted.",
+      "durationSeconds": 0.371519,
+      "codec": "pcm_s16le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     },
     {
       "id": "bastion-wind-through-building",
@@ -115,7 +143,11 @@
       "bytes": 1112243,
       "maxBytes": 2500000,
       "role": "Very quiet secondary source of genuinely building-shaped wind for broad vaulted Abyss Bastion",
-      "cautions": "Prior Crown experiment judged potentially haunted. In Bastion too, if air whistles supernaturally or suggests modern HVAC, reject instead of promoting; no dragon noises."
+      "cautions": "Prior Crown experiment judged potentially haunted. In Bastion too, if air whistles supernaturally or suggests modern HVAC, reject instead of promoting; no dragon noises.",
+      "durationSeconds": 128.306313,
+      "codec": "vorbis/16000Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
     }
   ],
   "studies": [
@@ -220,11 +252,12 @@
         {
           "source": "mine-workshop-anvil",
           "at": 39.4,
-          "start": 0.13,
-          "duration": 0.48,
+          "start": 0.035,
+          "duration": 0.35,
           "peak": 0.029,
           "lowpassHz": 1750,
-          "highpassHz": 190
+          "highpassHz": 190,
+          "sourceExcerptReason": "Actual PCM anvil original was 0.500s (FFprobe), so use 0.035-0.385s; no source stretching/repeating"
         }
       ],
       "description": "Actual silver/copper extraction + Garun architectural gallery/workshop, with guards and wolf kennels as implied rooms but NO wolf barking; occasional subtle human repair material, no industrial work beat.",
@@ -334,7 +367,8 @@
     "plannedFileDecodedBytesIfAllFiveResident": 46080000,
     "sceneRouting": "Original 18 rules, 19 locations, 14 original and 4 #711 MP3s unchanged",
     "regressionScope": "exact five native routes and night/SFX/music preservation; max 5 source-authored studio previews; no runtime registration",
-    "notes": "This is an offline comparative studio, never automatically a shipped replacement. 5x 72s float32 mono buffers ~43.95MiB if all resident, currently 96MiB cache with earlier observed 84.80MiB peak; Stage6 must explicitly solve caching/eviction."
+    "notes": "This is an offline comparative studio, never automatically a shipped replacement. 5x 72s float32 mono buffers ~43.95MiB if all resident, currently 96MiB cache with earlier observed 84.80MiB peak; Stage6 must explicitly solve caching/eviction.",
+    "sourceAuthenticity": "PASS all original 8 SHA-1/SHA-256/bytes/FFprobe in GH Actions #41230940635; all licenses from original creator/public-domain pages, hearing unverified"
   },
   "rejected": [
     "Generic horror dungeon music or dark drones",
