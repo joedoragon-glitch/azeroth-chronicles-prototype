@@ -193,6 +193,8 @@ const groups = [
       TEST + 'navigation-route-stage4.test.cjs',
       TEST + 'crowd-collision-fast-reject.test.cjs',
       TEST + 'projectile-order.test.cjs',
+      TEST + 'vale-periodic-route-regression.test.cjs',
+      TEST + 'snapshot-thorn-patrol.test.cjs',
     ],
   },
   {
@@ -337,6 +339,7 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
     // browser smoke. Never select an entire browser matrix by subsystem.
     if (
       file === TEST + 'pixi-renderer-browser.test.cjs' ||
+      file === TEST + 'status-renderer-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs'
     ) {
@@ -399,8 +402,9 @@ function run(
   paths,
   invoke = (file) => {
     const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs';
+    const statusBrowser = file === TEST + 'status-renderer-browser.test.cjs';
     const narrowBrowser =
-      pixiBrowser ||
+      pixiBrowser || statusBrowser ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
@@ -413,13 +417,13 @@ function run(
         ? {
             ...process.env,
             BROWSER_ENGINE: 'chromium',
-            ...(pixiBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
+            ...(pixiBrowser || statusBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
           }
         : process.env,
       // The owner-approved full-current-region Pixi smoke is readiness-driven,
       // not bounded by the older 4-minute fringe-preload assumption. Preserve
       // the test and its failure reporting with a longer runner ceiling.
-      timeout: pixiBrowser ? 360000 : narrowBrowser ? 240000 : undefined,
+      timeout: statusBrowser ? 660000 : pixiBrowser ? 360000 : narrowBrowser ? 240000 : undefined,
     });
     // Replay the full original stdout/stderr in CI; also retain a short
     // actionable first error for the structured report.
@@ -469,7 +473,10 @@ function run(
     console.warn('::warning::Manual browser acceptance not run under ordinary CI: ' + file);
   const checks = [];
   for (const file of paths)
-    if (/\.(?:js|cjs|mjs)$/.test(file) && fs.existsSync(path.join(root, file))) {
+    // This source is a build template with {{PLACEHOLDER}} tokens, not runnable JS.
+    // Its generated sw.js is syntax-checked separately and by the build check.
+    if (file !== 'templates/service-worker.js' &&
+        /\.(?:js|cjs|mjs)$/.test(file) && fs.existsSync(path.join(root, file))) {
       const began = Date.now();
       const result = cp.spawnSync(process.execPath, ['--check', path.join(root, file)], {
         stdio: 'inherit',

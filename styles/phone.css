@@ -604,6 +604,16 @@ body[data-experience='phone'] #developer-summon {
   transform: scale(var(--phone-ui-fit, 1));
   transform-origin: bottom left;
 }
+body[data-experience='phone'] #developer-finisher {
+  left: calc(max(8px, env(safe-area-inset-left)) + 175px);
+  bottom: calc(64px + env(safe-area-inset-bottom));
+  width: 64px;
+  min-height: 42px;
+  padding: 4px;
+  font-size: 11px;
+  transform: scale(var(--phone-ui-fit, 1));
+  transform-origin: bottom left;
+}
 body[data-experience='phone'] #developer-combat-monitor {
   left: auto;
   right: max(8px, env(safe-area-inset-right));

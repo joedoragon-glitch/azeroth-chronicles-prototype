@@ -20,6 +20,10 @@ Tagline for draft promotion: **He conquered the world. He wasn't expecting you.*
 
 In historical records, preserve the original titles, dates, release receipts and author decisions. If an older document could be mistaken for present-day guidance, add a clearly labeled contemporary note pointing to this policy and [current development state](DEVELOPMENT_STATE.md) instead of silently rewriting history. There is no verified date in these records that establishes the precise moment the concept became independent; do not invent one. The creator has raised the companion-system design as a possible turning point, not a dated historical finding.
 
+## Image-generation prompt safety
+
+Every new game-related image request—character sprites, development jokes, memes, posters, logos, menus, splash art and promotional images—must use **So I Became the Dark Lord's Problem** when a game name is necessary. Transparent sprites should have no title, label or watermark. Do not infer the public brand from legacy source filenames, the repository slug or earlier image-generation requests. The maintained [sprite prompt catalog](GRAPHICS_CANON_SPRITE_PROMPTS.md) now uses the official title while preserving unused artwork, original masters, revisions and prior approval hashes. This is a naming correction, not authorization to generate or publish artwork.
+
 ## Story connection
 
 The Dark Lord already controls the five regions. The hero begins in Greenwood Vale, rescues captive instructors and craftspeople, grows a companion expedition, traverses the occupied regions and challenges the ruling regime. The follow-on Awakening and eventual peaceful ending remain unchanged. The name is playful, but neither the world nor its characters are retconned into parody.

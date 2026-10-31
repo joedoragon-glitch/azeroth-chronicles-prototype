@@ -3,7 +3,7 @@
 > **Current status — 27 October 2026:** [#518](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/518) **merged and published**. The Stage 7 acceptance protocol **remains applicable and uncompleted**: physical Chromebook/phone Pixi-versus-Canvas parity, first frames, context loss, memory and actual frame pacing are **not** certified by the successful integration. Earlier text below about testing an *unmerged draft* and conditionally permitting *this specific PR's merge* is historical context; future fixes require a fresh issue/branch/owner release decision. Consult [current development state](DEVELOPMENT_STATE.md) before beginning a real-device run. This docs-only reconciliation does not approve broad browser or physical-device matrices.
 
 
-**Original Stage 7 status:** manual plan for testing, **not** evidence of success. Game’s public branding is **So I Became the Dark Lord's Problem**. The published dev.236 code still offers PixiJS/WebGL2 as optional, with Canvas 2D the default. The later draft #574 proposes Pixi software-default and retains Canvas recovery; the proposal has not been published or verified on hardware.
+**Original Stage 7 status:** manual plan for testing, **not** evidence of success. Game’s public branding is **So I Became the Dark Lord's Problem**. The published dev.242 code still offers PixiJS/WebGL2 as optional, with Canvas 2D the default. The later draft #574 proposes Pixi software-default and retains Canvas recovery; the proposal has not been published or verified on hardware.
 
 ## PR #574 WebGL2-default rollout acceptance addendum — 30 October 2026
 

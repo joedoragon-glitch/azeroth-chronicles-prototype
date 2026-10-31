@@ -10,6 +10,7 @@ const quick = new Set([
   'input',
   'game',
   'service-worker',
+  'startup-update',
   'sprites',
   'prototype',
   'migration',

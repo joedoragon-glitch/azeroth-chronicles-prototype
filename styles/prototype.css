@@ -885,7 +885,8 @@ body.menu-open::before {
 }
 
 /* Opt-in combat laboratory. Not visible in ordinary play. */
-#developer-summon {
+#developer-summon,
+#developer-finisher {
   position: fixed;
   left: 12px;
   bottom: 78px;
@@ -895,7 +896,11 @@ body.menu-open::before {
   font-weight: 700;
   text-align: center;
 }
+#developer-finisher {
+  left: 95px;
+}
 #developer-summon[hidden],
+#developer-finisher[hidden],
 #developer-combat-monitor[hidden] {
   display: none !important;
 }
@@ -916,7 +921,8 @@ body.menu-open::before {
   white-space: pre-line;
   pointer-events: none;
 }
-body.menu-open #developer-summon {
+body.menu-open #developer-summon,
+body.menu-open #developer-finisher {
   visibility: hidden;
 }
 
@@ -1281,6 +1287,23 @@ body.menu-open #cancel-navigation-button {
   white-space: nowrap;
 }
 
+/* Startup preflight stays above the title and world until the installed
+   application is coherent. No menu interaction or scene preparation beneath it. */
+#startup-update[hidden] { display: none !important; }
+#startup-update {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center; text-align: center;
+  background: radial-gradient(ellipse at 50% 25%, #274337 0%, #14291f 52%, #07130f 100%);
+  color: #f0ddb0;
+  padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
+}
+.startup-update-panel {
+  width: min(100%, 440px); border: 1px solid #b69a6380;
+  border-radius: 18px; padding: 30px 24px;
+  background: #14251edc; box-shadow: 0 12px 50px #0008;
+}
+#startup-update-heading { color: #f0ddb0; font: 600 clamp(22px, 5vw, 32px)/1.25 Georgia, serif; }
+#startup-update-text { color: #d3bc89; margin: 16px 0 0; line-height: 1.5; }
 /* A separate opaque, responsive main-screen surface; menu dialogs overlay it. */
 #title-screen[hidden], #title-loading[hidden] { display: none !important; }
 #title-screen {
@@ -1313,6 +1336,8 @@ body.menu-open #cancel-navigation-button {
   outline: 2px solid #d4b479; outline-offset: 2px;
 }
 #title-screen nav button:disabled { opacity: .45; cursor: not-allowed; }
+#startup-update-notice[hidden] { display: none !important; }
+#startup-update-notice { color: #e4c791; font-size: 13px; line-height: 1.5; margin: 16px 0 0; }
 #title-loading { color: #d3bc89; font-size: 13px; margin: 16px 0 0; }
 body.title-active #world,
 body.title-active #hud,
