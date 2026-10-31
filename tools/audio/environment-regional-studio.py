@@ -123,7 +123,7 @@ def actual_true_peak(path):
                       '-i', str(path), '-af',
                       'loudnorm=I=-23:TP=-2:LRA=11:print_format=json',
                       '-f', 'null', '-']).stderr.decode('utf8', errors='replace')
-    m = re.search(r'"input_tp"\\s*:\\s*"([^"]+)"', output)
+    m = re.search(r'"input_tp"\s*:\s*"([^"]+)"', output)
     if not m or not math.isfinite(float(m.group(1))):
         raise ValueError('True peak missing from decoded EBU loudness analysis')
     return float(m.group(1))
