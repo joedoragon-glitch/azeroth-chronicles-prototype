@@ -1207,8 +1207,7 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
           if (this.s.mode === 'developer')
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -1453,8 +1452,7 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
           if (this.s.mode === 'developer')
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -1633,9 +1631,13 @@
         const rally = this.rangerRallyActive(u)
           ? Math.min(0.25, u.rangerRallyMovement || 0) : 0;
         const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
-        return this.companionMoveSpeed(base) *
-          (this.charmedCompanionProfile(u)?.speed || 1) *
-          (1 + rally + quickstep);
+        const profile = this.charmedCompanionProfile(u);
+        const speed = this.companionMoveSpeed(base) * (profile?.speed || 1);
+        // Ordinary pursuit should never be slower than a wild monster's
+        // 175-unit baseline. Explicit short defensive moves keep their pace.
+        const nativeFloor = profile && base >= 230
+          ? R.balance.enemyOrdinaryMeleePursuitSpeed : 0;
+        return Math.max(speed, nativeFloor) * (1 + rally + quickstep);
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
@@ -1707,7 +1709,12 @@
         return now < burst.until ? cfg.burstMultiplier : 1;
       }
       companionBasicInterval(u) {
-        const base = this.charmedCompanionProfile(u)?.interval || 0.85;
+        const profile = this.charmedCompanionProfile(u);
+        // Keep all existing quicker allied attacks, but prevent future Charm
+        // profiles from swinging slower than the native ordinary hostile.
+        const base = profile
+          ? Math.min(profile.interval || 0.85, R.balance.enemyOrdinaryMeleeBasicInterval)
+          : 0.85;
         return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
           ? base * R.ringleaderScaling.frenzyCooldown : base;
@@ -2121,7 +2128,7 @@
       }
       // A Charmed ranged healer uses the same automatic HP recovery as a
       // conventional Ranger: the Neri-trained amount, five-second pulses,
-      // ten-second cooldown and idle/combat triage thresholds. Unlike the
+      // ten-second combat cooldown (faster idle recovery) and idle/combat triage. Unlike the
       // original hostile healer, it must support the friendly party while idle.
       // Keep this separate from Ranger mana and offensive skill ownership.
       charmedRangedSupport(u, living = this.activeLivingParty()) {
@@ -2392,8 +2399,7 @@
             dx: (target.x - u.x) / shot, dy: (target.y - u.y) / shot,
             target: target.id, source: u.id, damage: base,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
             slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
               R.balance.companions.mastery.slowSecondsPerTier,
           });
@@ -2795,6 +2801,17 @@
       }
       companionHealCooldown(u) {
         return u.charmOrigin ? u.charmSupportCd || 0 : u.healCd || 0;
+      }
+      alliedHealCooldownRecoveryMultiplier() {
+        // Idle recovery belongs only to allied Heal. Keep every attack,
+        // native pet special and ordinary combat cooldown at its native pace.
+        if (this.manaCombatActive() ||
+            this.s.projectiles.some((p) => p.source === 'enemy')) return 1;
+        const living = this.activeLivingParty();
+        if (this.zone().enemies.some((e) => e.hp > 0 && e.aggro &&
+            !e.neutral && !e.returning && living.some((u) => dist(e, u) < 700)))
+          return 1;
+        return R.rangerSupport.idleHealCooldownRecoveryMultiplier;
       }
       availablePartyHealers() {
         return this.healCompanionCasters().filter((u) => this.companionHealCooldown(u) <= 0);
@@ -3995,8 +4012,7 @@
               damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
               source: u.id,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-              speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-              style: this.charmedCompanionProfile(u)?.style || 'arrow',
+              ...this.charmedProjectileFlight(u),
             });
             if (this.s.mode === 'developer')
               this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -4049,7 +4065,12 @@
         const z = this.zone(),
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
-          claimed = new Set();
+          claimed = new Set(),
+          idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier(),
+          // A working, reserved or forged Charmed unit cannot exploit the
+          // idle Heal clock; only authenticated active ranged healers qualify.
+          idleCharmHealers = idleHealRecovery > 1
+            ? new Set(this.healCompanionCasters().filter((u) => !!u.charmOrigin)) : null;
         const returningLabor = this._gatherRecallResume;
         if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
           this._gatherRecallResume = null;
@@ -4117,7 +4138,8 @@
           u.skillNightCd = Math.max(0, (u.skillNightCd || 0) - specialRecovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
-            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
+            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) -
+              specialRecovery * (idleCharmHealers?.has(u) ? idleHealRecovery : 1));
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
@@ -4362,8 +4384,7 @@
                     damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
                     source: u.id,
                     ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-                    speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-                    style: this.charmedCompanionProfile(u)?.style || 'arrow',
+                    ...this.charmedProjectileFlight(u),
                   });
                   if (this.s.mode === 'developer')
                     this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));

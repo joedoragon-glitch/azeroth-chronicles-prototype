@@ -4458,9 +4458,15 @@
         h.rogueSlow = Math.max(0, h.rogueSlow - dt);
         if (!h.rogueSlow) delete h.rogueSlow;
       }
+      const idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier();
+      // Only active, lawful Heal casters receive the idle bonus. A Soldier's
+      // dormant healCd (or any other non-healer's) keeps native Slow recovery.
+      const idleHealers = idleHealRecovery > 1
+        ? new Set(this.healCompanionCasters()) : null;
       for (const u of this.s.party) {
         const recovery = this.cooldownRecoveryElapsed(u, dt);
-        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - recovery);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) -
+          recovery * (idleHealers?.has(u) ? idleHealRecovery : 1));
         u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
         u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
@@ -7585,14 +7591,17 @@
               // ranged shot launches; collision, dodges and armor stay native.
               const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
+              const stonePace = e.species === 'goblin' && style === 'stone'
+                ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
                 x: e.x,
                 y: e.y,
                 dx: Math.cos(angle),
                 dy: Math.sin(angle),
-                speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
-                life: 2.5 / pace.projectileMultiplier,
+                speed: (e.shotSpeed || 260) * pace.projectileMultiplier * stonePace,
+                // Keep the original travel budget: faster stones do not fly farther.
+                life: 2.5 / pace.projectileMultiplier / stonePace,
                 damage: this.worldCriticalDamage(
                   criticalReceipt,
                   this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
@@ -7723,7 +7732,7 @@
           this.follow(
             e,
             target,
-            (e.type === 'boss' ? 145 : 175) *
+            (e.type === 'boss' ? 145 : R.balance.enemyOrdinaryMeleePursuitSpeed) *
               this.mountedMovementFactor(e) *
               (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
               (e.captainPhaseMove || 1) *
@@ -7775,6 +7784,9 @@
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
         this.event('reset');
+        // A paint-only receipt: do not add coordinates or a new event type
+        // to persisted gameplay statistics for an ordinary enemy reset.
+        this.effects.push({ type: 'resetCue', zone: this.zoneId, x: e.x, y: e.y });
       }
       if (resetPoint) this.beginFieldBossReturn(e, resetPoint);
       const mobilityReturn = this.advanceFieldBossReturn(e, dt);
@@ -7826,8 +7838,19 @@
           !resume &&
           !mobilityReturn &&
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
-        )
+        ) {
+          // The original one-second anti-kiting reset still wins immediately.
+          // Capture the source of a visible home snap for paint-only feedback;
+          // never create a movement path, extend the reset or change protection.
+          const fromX = e.x, fromY = e.y,
+            visibleSnap = dist(e, e.home) > 28;
           Object.assign(e, e.home);
+          if (visibleSnap)
+            this.effects.push({
+              type: 'resetArrival', zone: this.zoneId,
+              x: e.x, y: e.y, fromX, fromY,
+            });
+        }
         this.finishDisengage(e);
       }
     }

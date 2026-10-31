@@ -57,6 +57,93 @@ try {
     return () => count;
   }
 
+  // All ten Charm-eligible ranged archetypes use their hostile native speed.
+  // Fixed distant shots keep their old total travel distance; conventional
+  // hired Archers continue using their original speed and default lifetime.
+  {
+    const ranged = [
+      'goblin', 'skeleton', 'mireling', 'reedbeast', 'ogre',
+      'orc', 'archer', 'ashbeast', 'crownguard', 'wraith',
+    ];
+    for (const species of ranged) {
+      const game = fresh();
+      const ally = capture(game, species, true);
+      const enemy = game.makeEnemy(
+        { species, name: species, level: 1, hp: 1000, damage: 1, gold: 0, xp: 0 },
+        { x: ally.x + 130, y: ally.y },
+      );
+      game.configureEnemy(enemy, 2);
+      const nativeSpeed = enemy.shotSpeed || 260;
+      const stonePace = species === 'goblin'
+        ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
+      const expected = nativeSpeed * R.rangedEnemyCombat.projectileMultiplier * stonePace;
+      const flight = game.charmedProjectileFlight(ally);
+      assert.equal(flight.speed, expected, species + ': hostile launch parity');
+      assert.equal(flight.style, game.charmedCompanionProfile(ally).style,
+        species + ': preserve native style');
+      const formerTravel = R.balance.friendlyProjectiles.lifeSeconds *
+        game.charmedCompanionProfile(ally).shotSpeed;
+      assert(Math.abs(flight.life * flight.speed - formerTravel) < 1e-8,
+        species + ': preserve friendly missed-shot travel budget');
+      game.zone().enemies = [enemy];
+      ally.cd = 0;
+      game.companionCoverAttack(ally, enemy, true);
+      const shot = game.s.projectiles.find((p) => p.source === ally.id);
+      assert(shot, species + ': real ally projectile was launched');
+      assert.equal(shot.speed, expected, species + ': actual ally launch');
+      assert.equal(shot.life, flight.life, species + ': actual ally lifetime');
+    }
+    const conventional = fresh().unit('archer', 500, 500);
+    assert.deepEqual(fresh().charmedProjectileFlight(conventional),
+      { speed: 450, style: 'arrow' }, 'ordinary Archer unchanged');
+  }
+
+  // A level-1/2 Greenwood Rogue starts without inheritance, so both native
+  // species must contribute more HP and basic power than ordinary local wilds.
+  // This is a real Charm capture, not a fabricated unit with borrowed stats.
+  {
+    const opening = {
+      'goblin:melee': [112, 12],
+      'goblin:ranged': [100, 13],
+      'skeleton:melee': [126, 14],
+      'skeleton:ranged': [114, 14],
+    };
+    for (const level of [1, 2])
+      for (const species of ['goblin', 'skeleton'])
+        for (const ranged of [false, true]) {
+          const game = fresh();
+          game.hero.level = level;
+          const ally = capture(game, species, ranged);
+          const role = ranged ? 'ranged' : 'melee',
+            profile = game.charmedCompanionProfile(ally),
+            [nativeHp, nativePower] = opening[species + ':' + role],
+            fieldScale = ranged ? R.ordinaryRangedScaling[0] : R.ordinaryMeleeScaling[0],
+            fieldHp = Math.round(65 * fieldScale.hp),
+            fieldDamage = Math.round(7 * fieldScale.damage);
+          assert.equal(profile.hp, nativeHp, species + '/' + role + ': Greenwood HP');
+          assert.equal(profile.damage, nativePower, species + '/' + role + ': Greenwood power');
+          assert.equal(game.companionInheritedHpBonus(), 0);
+          assert.equal(game.companionInheritedDamageBonus(), 0);
+          assert(game.companionMaxHp(ally) >= fieldHp,
+            species + '/' + role + ': early HP at or above wild counterpart');
+          assert(game.companionAttackDamage(ally) >= fieldDamage,
+            species + '/' + role + ': early basic power at or above wild counterpart');
+          assert(game.companionRallyMoveSpeed(ally, 230) >=
+            R.balance.enemyOrdinaryMeleePursuitSpeed,
+            species + '/' + role + ': combat pursuit no slower than wild baseline');
+        }
+    for (const species of ['goblin', 'skeleton', 'mireling', 'reedbeast',
+      'wolf', 'ogre', 'orc', 'archer', 'ashbeast', 'crownguard', 'stalker']) {
+      const game = fresh();
+      const ally = capture(game, species, false);
+      assert(game.companionBasicInterval(ally) <= R.balance.enemyOrdinaryMeleeBasicInterval,
+        species + ': ordinary melee cadence at least native hostile cadence');
+      assert(game.companionRallyMoveSpeed(ally, 230) >=
+        R.balance.enemyOrdinaryMeleePursuitSpeed,
+        species + ': ordinary combat movement at least hostile ground pursuit');
+    }
+  }
+
   // No Rogue constructor privilege or conventional hiring; the first builder
   // is a genuinely captured ordinary monster with a matching save ledger.
   const g = fresh();
@@ -78,10 +165,10 @@ try {
     g.s.gatheringTarget = null;
     g.s.expeditionRank = 1;
   }
-  assert.equal(g.charmedCompanionProfile(goblin).hp, 100);
+  assert.equal(g.charmedCompanionProfile(goblin).hp, 112);
   assert.equal(goblin.maxHp, g.companionMaxHp(goblin));
   assert.equal(goblin.hp, goblin.maxHp, 'captured at proper full friendly HP');
-  assert.equal(goblin.damage, 10, 'monster base, not Soldier base');
+  assert.equal(goblin.damage, 12, 'Greenwood Charmed base power, not Soldier base');
   assert.equal(g.companionCombatReach(goblin), 65);
   assert.equal(g.companionTrySkill(goblin, { x: 550, y: 500, hp: 100 }), false,
     'no inherited Soldier skill or fabricated target');
