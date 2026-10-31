@@ -259,6 +259,13 @@ const groups = [
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-audio-inventory.test.cjs'],
   },
   {
+    // #727 Stage 2–6 source ledgers are the production truth for the isolated
+    // preview importer; its own source preflight must not fall through to a
+    // generic architecture test.
+    match: /^tools\/audio\/environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies)\.json)$/,
+    tests: [TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
     match: /^src\/prototype\/(?:audio[^/]*\.js)$|^assets\/audio\//,
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },
