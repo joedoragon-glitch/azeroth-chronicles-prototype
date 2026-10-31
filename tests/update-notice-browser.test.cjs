@@ -351,7 +351,14 @@ const server = http.createServer((req, res) => {
         JSON.stringify({ phone, releaseRequests, releaseCache }));
       for (const changed of ['/index.html', '/phone.html', '/src/prototype/app.js'])
         assert(releaseRequests.includes(changed), 'changed release bytes must download: ' + changed);
-      for (const unchanged of ['/src/prototype/renderer.js', '/assets/audio/music/title.mp3'])
+      for (const unchanged of [
+        '/src/prototype/renderer.js',
+        '/assets/audio/music/title.mp3',
+        '/tools/webgl-pilot/native-webgl2-core.js',
+        '/tools/webgl-pilot/native-sprite-adapter.js',
+        '/tools/webgl-pilot/pixi-scene-bridge.js',
+        '/tools/webgl-pilot/renderer-switch-guard.js',
+      ])
         assert(!releaseRequests.includes(unchanged),
           'unchanged browser-cached assets must not download: ' + unchanged);
       assert(await page.locator('#update-button').isHidden(),
