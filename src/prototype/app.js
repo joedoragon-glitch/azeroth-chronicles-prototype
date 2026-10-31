@@ -7527,6 +7527,24 @@
   developerCombatMonitor.setAttribute('aria-label', 'Developer combat monitor');
   developerCombatMonitor.hidden = true;
   document.body.append(developerCombatMonitor);
+  const developerCompanionMonitor = document.createElement('aside');
+  developerCompanionMonitor.id = 'developer-companion-monitor';
+  developerCompanionMonitor.setAttribute('aria-label', 'Developer companion damage monitor');
+  developerCompanionMonitor.hidden = true;
+  const companionMonitorToggle = document.createElement('button');
+  companionMonitorToggle.type = 'button';
+  companionMonitorToggle.textContent = 'DEV · COMPANIONS';
+  companionMonitorToggle.setAttribute('aria-expanded', String(platform.mode !== 'phone'));
+  const companionMonitorContent = document.createElement('div');
+  companionMonitorContent.id = 'developer-companion-content';
+  companionMonitorContent.hidden = platform.mode === 'phone';
+  companionMonitorToggle.onclick = () => {
+    const collapsed = !companionMonitorContent.hidden;
+    companionMonitorContent.hidden = collapsed;
+    companionMonitorToggle.setAttribute('aria-expanded', String(!collapsed));
+  };
+  developerCompanionMonitor.append(companionMonitorToggle, companionMonitorContent);
+  document.body.append(developerCompanionMonitor);
   function openDeveloperSummonMenu() {
     if (!activePlay() || game.s.mode !== 'developer') return;
     openMenu(
@@ -7600,6 +7618,7 @@
     developerSummonButton.hidden = !devActive;
     developerFinisherButton.hidden = !devActive;
     developerCombatMonitor.hidden = !devActive;
+    developerCompanionMonitor.hidden = !devActive;
     if (devActive) {
       const telemetry = game.developerCombatSnapshot(),
         recent = (hits) => hits.map((hit) => Math.round(hit)).join(' / ') || '—';
@@ -7616,6 +7635,19 @@
         '\n' +
         'Outgoing DPS: ' +
         telemetry.outgoing.dps.toFixed(1);
+      const companionRows = game.developerCompanionSnapshot() || [];
+      companionMonitorToggle.textContent = 'DEV · COMPANIONS (' + companionRows.length + ')';
+      const body = companionRows.length
+        ? companionRows.map((row) => row.name + ' [' + row.type + ' · ' + row.id + ']\n' +
+            'Moves: ' + (row.last.map((m) =>
+              m.name + ' ' + Math.round(m.damage)).join(' / ') || '—') +
+            '\n5s DPS: ' + row.dps.toFixed(1)).join('\n\n')
+        : 'No active companions.';
+      if (companionMonitorContent.textContent !== body) {
+        const previousScroll = companionMonitorContent.scrollTop;
+        companionMonitorContent.textContent = body;
+        companionMonitorContent.scrollTop = previousScroll;
+      }
     }
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),

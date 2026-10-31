@@ -82,7 +82,7 @@ Si necesitas ayuda mientras juegas, abre el menú de **Controles** o **Ayuda y c
 
 **Cambio preparado en el PR #574:** **PixiJS WebGL2 · Predeterminado** será el motor gráfico principal y **Canvas 2D · Respaldo** seguirá disponible para elegirlo o recuperarse de un fallo de WebGL. La actualización reemplazará la preferencia antigua por Canvas **una sola vez**; si vuelves a elegir Canvas, el juego respetará esa decisión al reiniciar. PixiJS se preparará al entrar en **Nueva partida / Continuar aventura**, no mientras esperas en el menú principal. Si la preparación tarda demasiado, podrás seleccionar **Continuar con Canvas**. Si cambias manualmente de Canvas a PixiJS, se conservará la confirmación de 15 segundos. La opción de PixiJS ya no llevará la etiqueta «Experimental», pero eso **no garantiza** mejor rendimiento ni sustituye las pruebas en Chromebook o teléfono.
 
-**Disponibilidad:** al **31 de octubre de 2026**, el PR #574 todavía no se ha integrado ni publicado. La versión instalada puede conservar los gráficos anteriores hasta que se publique y se instale la actualización. Consulta [Estado de desarrollo](docs/DEVELOPMENT_STATE.md) y el informe de diagnóstico para comprobar la versión y el motor realmente activos.
+**Disponibilidad:** la actualización del PR #574 entra en el código del juego al integrarse en `main` y requiere una publicación correcta de GitHub Pages. Una instalación PWA puede conservar la versión anterior hasta actualizarse. Consulta [Estado de desarrollo](docs/DEVELOPMENT_STATE.md) y el informe de diagnóstico para comprobar la versión y el motor realmente activos.
 
 ## Palabras que quizá veas en inglés
 
