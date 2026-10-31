@@ -281,6 +281,26 @@ async function test(name, fn) {
       fs.readFileSync(path.join(__dirname, '../phone.html'), 'utf8'),
     );
     assert.equal(w.state.fetches, fetches);
+    for (const file of [
+      'tools/webgl-pilot/native-webgl2-core.js',
+      'tools/webgl-pilot/native-sprite-adapter.js',
+      'tools/webgl-pilot/pixi-scene-bridge.js',
+      'tools/webgl-pilot/renderer-switch-guard.js',
+    ]) {
+      const response = await w.emit('fetch', {
+        request: { url: w.scope + file, method: 'GET', mode: 'cors' },
+      });
+      assert.equal(await response.text(),
+        fs.readFileSync(path.join(__dirname, '..', file), 'utf8'),
+        'shared WebGL helper must remain usable offline: ' + file);
+    }
+    assert.equal(w.state.fetches, fetches,
+      'shared WebGL helper scripts must not request the network offline');
+    // The optional graphics demo must remain its own page, not an RPG route.
+    assert.equal(await w.emit('fetch', { request: {
+      url: w.scope + 'tools/webgl-pilot/index.html',
+      method: 'GET', mode: 'navigate',
+    } }), undefined);
   });
   await test('Historical games load only on demand and remain offline after first use', async () => {
     const w = fresh();
