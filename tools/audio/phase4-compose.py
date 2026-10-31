@@ -26,7 +26,7 @@ INTERIORS = ("supply-vale", "supply-march", "supply-highlands",
              "side-highlands-signal", "side-frontier-shrine")
 REGISTERS = {"flute": 12, "horn": 0, "cello": 0, "strings": 12,
              "harp": 0, "piano": 12, "marimba": -12,
-             "glockenspiel": 24, "guitar": -12}
+             "glockenspiel": 12, "guitar": -12}
 ALLOWED_KINDS = {"action", "peace", "night", "settlement",
                  "interior", "interior-peace"}
 
@@ -194,6 +194,15 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
              absolute=False, chromatic=0, soft=False):
         pitch = degree if absolute else harmony[bar] + degree
         midi = root + sampler.degree(pitch, mode) + REGISTERS[inst] + chromatic
+        if inst == "glockenspiel":
+            # Chime is an accompaniment, not the heroic lead. Voice it in
+            # a playable G5-C6 neighborhood instead of octave-stretching
+            # sparse G5/C6 recordings into an implausibly shrill attack.
+            # Transposition is by full octaves, preserving pitch class.
+            while midi < 75:
+                midi += 12
+            while midi > 88:
+                midi -= 12
         pcm = sampler.instrument(midi, duration * beat, inst, rng)
         if soft:
             fade = min(round(.050 * rate), len(pcm))
