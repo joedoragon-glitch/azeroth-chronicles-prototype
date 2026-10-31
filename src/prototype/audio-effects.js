@@ -300,7 +300,8 @@
         if (this.ctx && type === 'peace') {
           // The game emits peace only after its real TRUE/throne/dungeon gate.
           // The new Finale is ~48s, not the older 12s effect-sting window.
-          const seconds = this.recordingManifest?.assets?.finale?.duration || 48;
+          const entry = this.recordingManifest?.assets?.finale;
+          const seconds = entry?.loop ? entry.loop.end - entry.loop.start : 48;
           this.finaleUntil = this.ctx.currentTime + Math.max(12, Math.min(60, seconds));
           this.key = null;
         }
