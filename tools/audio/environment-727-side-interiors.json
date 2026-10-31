@@ -1,0 +1,258 @@
+{
+  "schemaVersion": 1,
+  "phase": "Stage 4 of #727: three lore-specific side interiors source-authored ambient studio previews",
+  "status": "SOURCE PROBE IN PROGRESS: existing four physical sources independently pinned in Stage 3; two newly selected originals still require actual SHA-256/probe. PREVIEWS NOT YET RENDERED/TESTED. No game registration, listening acceptance, merge, publication or device verification.",
+  "parent": "tools/audio/environment-727-dungeon-studies.json",
+  "authority": "#727 Stage 1 canon and source palette; src/prototype/rules.js side-dungeon lore, docs/SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md (ideas NOT implemented), docs/AUDIO_ENVIRONMENT.md and AUDIO_AUTHORING.md",
+  "hardConstraints": {
+    "registered": false,
+    "merged": false,
+    "deployed": false,
+    "inGamePlayback": "NOT TESTED — studio previews only",
+    "humanHearing": false,
+    "soundtrackModified": false
+  },
+  "sources": [
+    {
+      "id": "interior-open-field-wind",
+      "creator": "Thimras",
+      "title": "Park ambiences — genuine open-field wind",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
+      "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
+      "sha256": "5c381856745b4706e7eba55eb9271a61a530e90c05df8126adb2db89ecfa6c5a",
+      "bytes": 73960096,
+      "maxBytes": 85000000,
+      "role": "Authentic physical air for restrained architectural attenuation; never claim recorded inside a dungeon",
+      "cautions": "Original is an Adelaide outdoor field, not a castle/estate/mineshaft. Distinct sound by enclosure processing and sparse physical occupational cues; if all rooms still sound like the same wind reject/rework.",
+      "durationSeconds": 256.803333,
+      "codec": "pcm_s24le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "interior-low-river",
+      "creator": "Thimras",
+      "title": "Park ambiences — low river over step",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
+      "sha1": "4bd89af752ae34f5d50d52a87de3416afa6e71a9",
+      "sha256": "da0c0c9b1249a83a1611cc116d5737b0864a8db9f45f1ae8dcc079d0f7c0bbbf",
+      "bytes": 99072736,
+      "maxBytes": 112000000,
+      "role": "Distant damp stone/water air for active Sunken Archive, not globally rushing water",
+      "cautions": "Original has actual river step and frogs/birds; avoid invented archival flood cause, loud waterfall, repeating fauna. Keep original two existing water details.",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "mine-workshop-anvil",
+      "creator": "VishwaJai",
+      "title": "Blacksmith's Hammer — anvil repair strike",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/blacksmiths-hammer",
+      "url": "https://opengameart.org/sites/default/files/blacksmithhammer.wav",
+      "sha1": "c9e482acec2b75c464f0319ea3794be9323ec6fe",
+      "sha256": "a26c2e964e468fb7e68c8adf2b1c1d6e6778fe6e5ef4842463ae211e55ec7ae2",
+      "bytes": 88588,
+      "maxBytes": 200000,
+      "role": "One distant credible metal-repair note for Garun's mine workshop, not a permanently active forge or a Crown Foundry soundscape",
+      "cautions": "Real anvil is not rock pick. Keep short, quiet, infrequent; context remains mine/architecture rather than industrial machinery.",
+      "durationSeconds": 0.5,
+      "codec": "pcm_f32le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "citadel-equipment-clunk",
+      "creator": "BMacZero (Brian MacIntosh)",
+      "title": "Mechanical Sounds — lightclunk1.wav",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/mechanical-sounds",
+      "url": "https://opengameart.org/sites/default/files/lightclunk1.wav",
+      "sha1": "fb868b44b5a0ca069003229deffac6607e6d4f3f",
+      "sha256": "d5a2aa8764c02924f6ed6fbaad0c650ab2d57ec57a626cee9e6645f941dbc8fa",
+      "bytes": 32812,
+      "maxBytes": 110000,
+      "role": "Rare small formal-room equipment movement, not modern industry",
+      "cautions": "Metal handling can be too close-mic/modern, must be deeply muted and human-vetted.",
+      "durationSeconds": 0.371519,
+      "codec": "pcm_s16le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "cellar-domestic-handling",
+      "creator": "thore",
+      "title": "Wood and Cutlery — original physical object handling",
+      "license": "public domain — PDSounds author dedication",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Wood_and_cutlery.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Wood_and_cutlery.ogg",
+      "sha1": "9ca9ab8edadd4671cd67f36ea6ae37365db6d26e",
+      "sha256": null,
+      "bytes": 57274,
+      "maxBytes": 70000,
+      "role": "One sparse muted domestic work gesture in occupied Goblin family cellar",
+      "cautions": "Original is contemporary cutlery/object handling, not a sealed jar. Reject if recognizable as modern tableware or too conspicuous. First pin actual original SHA-256 by independent studio."
+    },
+    {
+      "id": "watchhouse-wetland-swale",
+      "creator": "Ksd5 / Siddharth Patil",
+      "title": "Swale trickling into stream — own recorded shallow flowing water",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Swale.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/84/Swale.ogg",
+      "sha1": "4f97748c715d90fda6357073f14a12e68f294d73",
+      "sha256": null,
+      "bytes": 1092440,
+      "maxBytes": 1400000,
+      "role": "One short infrequent local water movement at partially flooded Reed Beast dwelling, not a world-wide river bed",
+      "cautions": "31-second original; only one nonrepeating excerpt. Presence of running stream might imply more flow than interior's standing water; reject if too constant/loud."
+    }
+  ],
+  "studies": [
+    {
+      "id": "studio-orchard-cellars-727",
+      "zone": "Old Orchard Cellars — displaced Goblin worker families and purchased preserves",
+      "sceneId": "side-vale-cellars",
+      "referenceBed": "env-cellar",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 88,
+      "fieldGain": 0.33,
+      "windGain": 0.21,
+      "highpassHz": 190,
+      "lowpassHz": 1640,
+      "routeGain": 0.3,
+      "room": "earth-insulated occupied fruit cellar with root table and warm brazier; small wood and masonry cavity",
+      "reflectionMs": [
+        27,
+        64,
+        127
+      ],
+      "reflectionGains": [
+        0.12,
+        0.068,
+        0.025
+      ],
+      "events": [
+        {
+          "source": "cellar-domestic-handling",
+          "at": 42.6,
+          "start": 0.1,
+          "duration": 0.54,
+          "peak": 0.035,
+          "lowpassHz": 1250,
+          "highpassHz": 230
+        }
+      ],
+      "description": "Former fruit cellar now sleeping, gathering, storing purchased preserves and playing games; quiet, slightly warm enclosed air and one restrained real domestic object gesture. Do not fabricate Goblin voices, panicked children, cooking loop or theft.",
+      "negative": "no abandoned horror crypt, monster growl, breakage, uncanny roof moan, constant cutlery, forced labor sounds"
+    },
+    {
+      "id": "studio-drowned-watchhouse-727",
+      "zone": "Drowned Watchhouse — Reed Beast shelter above partial floodwater",
+      "sceneId": "side-march-watchhouse",
+      "referenceBed": "env-archive",
+      "mainSource": "interior-low-river",
+      "fieldExcerptStart": 302,
+      "fieldGain": 0.34,
+      "windGain": 0.185,
+      "highpassHz": 210,
+      "lowpassHz": 1740,
+      "routeGain": 0.3,
+      "room": "flood-damp abandoned military shell now inhabited, with reed nests, fishing nets and fish racks",
+      "reflectionMs": [
+        41,
+        96,
+        181
+      ],
+      "reflectionGains": [
+        0.14,
+        0.067,
+        0.025
+      ],
+      "events": [
+        {
+          "source": "watchhouse-wetland-swale",
+          "at": 49.2,
+          "start": 9.1,
+          "duration": 1.5,
+          "peak": 0.029,
+          "lowpassHz": 1320,
+          "highpassHz": 190
+        }
+      ],
+      "description": "Quiet occupied shallow-water shelter with restrained recorded wet air; one attenuated swale texture as optional comparison, not a constant outdoor river. No claim about Archive's flood origin or new Reed Beast calls.",
+      "negative": "no generic haunted watchtower, permanent torrent, dripping metronome, frog chorus, invented clue, Reed Beast vocal sample"
+    },
+    {
+      "id": "studio-ruined-foundry-727",
+      "zone": "Ruined Foundry — active Crown repair forge, repair benches, kitchen and bunks",
+      "sceneId": "side-crown-foundry",
+      "referenceBed": "env-mine",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 119,
+      "fieldGain": 0.36,
+      "windGain": 0.18,
+      "highpassHz": 240,
+      "lowpassHz": 1940,
+      "routeGain": 0.29,
+      "room": "damaged thick foundry masonry with working forge and short hard-sided work bays",
+      "reflectionMs": [
+        23,
+        58,
+        112
+      ],
+      "reflectionGains": [
+        0.15,
+        0.088,
+        0.03
+      ],
+      "events": [
+        {
+          "source": "mine-workshop-anvil",
+          "at": 27.8,
+          "start": 0.06,
+          "duration": 0.28,
+          "peak": 0.034,
+          "lowpassHz": 1510,
+          "highpassHz": 260
+        },
+        {
+          "source": "citadel-equipment-clunk",
+          "at": 57.3,
+          "start": 0,
+          "duration": 0.29,
+          "peak": 0.027,
+          "lowpassHz": 1290,
+          "highpassHz": 280
+        }
+      ],
+      "description": "Functioning damaged Crown forge: dry warm mineral/air presence and two isolated believable workshop gestures. Men stationed here have bunks, racks, field kitchen; do not imply modern factory, perpetual rhythmic forge hammer or deployed machinery.",
+      "negative": "no smelting explosions, steam engine, roaring lava, assembly-line rhythm, soldiers speaking, fantasy-industrial drone"
+    }
+  ],
+  "rejectedOrHeld": [
+    {
+      "proposal": "Goblin chatter, nursery/voices, conflict dialogue",
+      "reason": "No source recordings or owner approval; would invent actual voices."
+    },
+    {
+      "proposal": "Watchhouse horror, flooding mystery or Archive same-room effects",
+      "reason": "Reed Beast dwelling is not Archive; flood cause is unselected."
+    },
+    {
+      "proposal": "Permanent rhythmic forge anvil or generic factory/steam drone",
+      "reason": "Working Crown repair economy is established, but modern machinery and repeated strikes are not."
+    },
+    {
+      "proposal": "Place existing Sunken Archive/Mine stage masters directly into these side interiors",
+      "reason": "Stage 3 previews are unregistered; comparisons must remain honest and source-specific."
+    }
+  ],
+  "encodedPreviewEvidence": null
+}
