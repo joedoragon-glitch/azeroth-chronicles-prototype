@@ -735,7 +735,11 @@
             dist(e, u) <= cfg.range + 210,
         )
         .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
-      if (!ally || !this.route(e, ally).length) return false;
+      // One full route feasibility search followed by another in follow()
+      // caused the measured 8,830-probe Treasury captain-phase frame.
+      // A pending bounded approach is neither unreachable nor a movement;
+      // retain native healer targeting and let follow validate its path once.
+      if (!ally) return false;
       const before = { x: e.x, y: e.y };
       this.follow(
         e,
@@ -743,6 +747,7 @@
         160 * this.slowMovementFactor(e) * this.mountedMovementFactor(e) * this.nightTempo(),
         dt,
         cfg.range - 25,
+        'support-approach',
       );
       if (dist(before, e) <= 0.1) return false;
       e.noProgress = 0;
@@ -7689,7 +7694,7 @@
         e.aggro = false;
         const together = this.cinderEntourageTogether(e);
         const goal = resume?.point || e.home;
-        if (together) this.follow(e, goal, R.cinderInspection.speed, dt, 0);
+        if (together) this.follow(e, goal, R.cinderInspection.speed, dt, 0, 'cinder-return');
         if (dist(e, goal) > 1e-7 || !together) return;
         e.returning = 0;
         delete e.cinderReturn;
@@ -7704,7 +7709,7 @@
             this.zone().enemies.find((u) => this.cinderPatroller(u) && u.hp > 0 && !u.neutral),
           goal = minister || e.home,
           stop = minister ? 65 : 0;
-        this.follow(e, goal, R.cinderInspection.guardSpeed, dt, stop);
+        this.follow(e, goal, R.cinderInspection.guardSpeed, dt, stop, 'cinder-guard');
         if (dist(e, goal) > stop + 1e-7) return;
         e.returning = 0;
       } else e.returning -= dt;
