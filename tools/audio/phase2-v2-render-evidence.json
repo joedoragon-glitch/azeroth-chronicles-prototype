@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 2,
+  "scope": "unpublished revised Phase 2 source studies",
+  "musicRegistered": 83,
+  "crownFrozen": 18,
+  "pilotFamilies": 4,
+  "pilotStems": [
+    {
+      "cue": "place-vale",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "e8df5f898c21334e5aa9cc549c4b97f34835f4b886cc2f2d36cb23a884877088",
+      "decodedPeak": 0.42862,
+      "decodedRms": 0.08723,
+      "loopEdgeDelta": 0.00001
+    },
+    {
+      "cue": "action-vale",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "127f68649d29895ff6ddc38d54768f10620cc9eb95cb0214c218c89d9aa68843",
+      "decodedPeak": 0.69657,
+      "decodedRms": 0.06147,
+      "loopEdgeDelta": 0
+    },
+    {
+      "cue": "place-archive",
+      "seconds": 44.651156,
+      "decodedSamples": 1438437,
+      "expectedSamples": 1438437,
+      "loop": {
+        "start": 0.15,
+        "end": 44.80115625
+      },
+      "encodedBytes": 540476,
+      "sha256": "a7568d2dfbe5cec511f3d956bb7047995c9fe0440d77b97a8f8f0bf3cd29dd81",
+      "decodedPeak": 0.52024,
+      "decodedRms": 0.08733,
+      "loopEdgeDelta": 0.00008
+    },
+    {
+      "cue": "action-archive",
+      "seconds": 44.651156,
+      "decodedSamples": 1438437,
+      "expectedSamples": 1438437,
+      "loop": {
+        "start": 0.15,
+        "end": 44.80115625
+      },
+      "encodedBytes": 540476,
+      "sha256": "46c83a53fd9b08ff23bbe4919550814e6cb0e9f83a060eb34768f2466d14b825",
+      "decodedPeak": 0.64848,
+      "decodedRms": 0.05923,
+      "loopEdgeDelta": 0
+    },
+    {
+      "cue": "interior-side-vale-cellars",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "ff9e546a23a3c871c7f57fbc6f5970828db8d73b72fe9be875251a6d87cad6d4",
+      "decodedPeak": 0.52562,
+      "decodedRms": 0.08702,
+      "loopEdgeDelta": 0.00005
+    },
+    {
+      "cue": "peace-interior-side-vale-cellars",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "74de2569070335531f6749e6f3d8f2622e562b6ee4ac390a795b88e7cd938942",
+      "decodedPeak": 0.37754,
+      "decodedRms": 0.08325,
+      "loopEdgeDelta": 0.00037
+    },
+    {
+      "cue": "boss-crypt",
+      "seconds": 36.923063,
+      "decodedSamples": 1191138,
+      "expectedSamples": 1191138,
+      "loop": {
+        "start": 0.15,
+        "end": 37.0730625
+      },
+      "encodedBytes": 447596,
+      "sha256": "b56ec7a7da49924caab11031cc84a01ac55e9d79ef7b2ffdfd1b96949118b2ec",
+      "decodedPeak": 0.46507,
+      "decodedRms": 0.08719,
+      "loopEdgeDelta": 0.00091
+    },
+    {
+      "cue": "boss-crypt-true",
+      "seconds": 36.923063,
+      "decodedSamples": 1191138,
+      "expectedSamples": 1191138,
+      "loop": {
+        "start": 0.15,
+        "end": 37.0730625
+      },
+      "encodedBytes": 447596,
+      "sha256": "ba0b50ae6faad7d58a456e8398002ea6e9b26c15bac1ededb2acbdf991ce96fb",
+      "decodedPeak": 0.55095,
+      "decodedRms": 0.0616,
+      "loopEdgeDelta": 0.00012
+    }
+  ],
+  "pilotPairOverlays": [
+    {
+      "family": "greenwood-outdoors",
+      "baseGain": 0.85,
+      "secondGain": 0.5,
+      "peak": 0.58649,
+      "rms": 0.08563
+    },
+    {
+      "family": "archive-rescue",
+      "baseGain": 0.85,
+      "secondGain": 0.5,
+      "peak": 0.51252,
+      "rms": 0.08426
+    },
+    {
+      "family": "orchard-cellars",
+      "mode": "alternate"
+    },
+    {
+      "family": "lifebinder-winter-works",
+      "baseGain": 0.85,
+      "secondGain": 0.55,
+      "peak": 0.46741,
+      "rms": 0.08653
+    }
+  ],
+  "authoredStructure": [
+    {
+      "family": "greenwood-outdoors",
+      "sections": 4,
+      "baseFigures": 5,
+      "otherFigures": 6,
+      "dynamicRange": 0.62,
+      "authoredLeadOverrides": 2,
+      "motifIdentity": "Orchard Roads original welcoming C–D–E–G hook develops into porch, lane, and patrol replies"
+    },
+    {
+      "family": "archive-rescue",
+      "sections": 4,
+      "baseFigures": 6,
+      "otherFigures": 5,
+      "dynamicRange": 0.76,
+      "authoredLeadOverrides": 3,
+      "motifIdentity": "Sunken Archive D–F–A scholar gesture fragmented by urgent salvage and uncertain rescue"
+    },
+    {
+      "family": "orchard-cellars",
+      "sections": 4,
+      "baseFigures": 6,
+      "otherFigures": 6,
+      "dynamicRange": 0.69,
+      "authoredLeadOverrides": 2,
+      "motifIdentity": "Old Orchard Cellars Goblin family refuge: original rising figure; fragile global peace is an answer"
+    },
+    {
+      "family": "lifebinder-winter-works",
+      "sections": 4,
+      "baseFigures": 9,
+      "otherFigures": 9,
+      "dynamicRange": 0.84,
+      "authoredLeadOverrides": 4,
+      "motifIdentity": "Lifebinder's old falling cello phrase as winter craft, TRUE companion memory and difficult loyalty"
+    }
+  ],
+  "encodedBudgetBytes": 33554432,
+  "originalCatalogBytes": 25654373,
+  "pilotReplacementProjectionBytes": 27131805,
+  "headroomAfterPilotProjectionBytes": 6422627,
+  "limitations": "No owner/independent musical listening, in-game mix or device QA. Four-family source arrangements only.",
+  "provenance": {
+    "repository": "joedoragon-glitch/azeroth-chronicles-prototype",
+    "branch": "audio/phase2-composition-pilots-20261030",
+    "sourceHead": "f4ccfd3dbe3eaf3102d640c7822edf483d6cce43",
+    "workflowRunId": 41171093136,
+    "workflowJobId": 124449013896,
+    "conclusion": "success",
+    "url": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41171093136",
+    "capture": "real 8-file MP3/decode, source-preserved first-generation baseline"
+  },
+  "caveat": "Internal source/test evidence only: no human listening, no comparisons heard, no production asset registration, no browser/device verification, no musical acceptance."
+}

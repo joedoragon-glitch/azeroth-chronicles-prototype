@@ -198,6 +198,10 @@ Scaling, targeting permission, damage windows, boss mechanics, warning geometry,
 
 **Decision intent at a glance:** Actual attack geometry, targeting permission, boss warnings, night scaling and recovery follow approved rules, not visual approximations. The latest recorded ringleader compression decision here is 0.145/0.240; consult the later 20 October section before using the 9 October table.
 
+#### 31 October 2026 — quick anti-exploit pursuit reset presentation (draft candidate)
+
+The owner requires enemy disengagement to remain **fast** and to prevent off-territory kiting, while looking deliberate rather than like a rendering glitch. The implementation candidate leaves native reset timing (the ordinary one-second return), HP/aggro cleanup, target immunity during return, encounter/leash boundaries and all special physical roaming-boss returns unchanged. A short, unobtrusive dust/ground ring marks initial disengagement; where the native ordinary return actually snaps an enemy home over a visible distance, a paired departure/arrival dust cue explains the relocation. It uses existing capped, low-priority presentation effects shared by Canvas and the Pixi overlay, with no new animation delay, physics, save field or gameplay resource. Only transitions in the current zone receive visual cues. The source change is tracked in [PR #742](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/742); confirm its exact tested, merged and published state in the PR and [development state](DEVELOPMENT_STATE.md). Source-level presentation work does not certify physical-device appearance. The existing independent damage/chase mismatch in [issue #510](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/510) is not resolved or changed by this presentation work.
+
 ### Foundation rules (original baseline wording retained)
 
 #### Outdoor ranged enemy stat scaling
@@ -514,3 +518,7 @@ The owner requested a source audit before execution, then authorized corrections
 **Completeness check:** All 29 baseline rule passages and all 32 prior dated decision bodies appear above once, reorganized under their principal topic. Dated language is kept as evidence, **including** old one-task instructions; the table marks the known supersessions rather than deleting contradictory history.
 
 **Source of historic ordering:** [Previous chronological version at commit f1d23ac](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/f1d23acbf8ff0d11670050cc8c9b11171301ab27/docs/DECISIONS.md). For current implementation use [source owners](ARCHITECTURE.md), [development-state releases](DEVELOPMENT_STATE.md) and feature-specific approved contracts. This rewrite does not claim a gameplay execution test or owner approval for new implementation.
+
+### 31 October 2026 — soundtrack technical integration without mandatory first audition
+
+The solo developer defers artistic listening and authorizes technically checked integration and merge of 65 new musical recordings without implying any unheard cue was creatively approved. Browser autoplay requires a user gesture; play the main title theme when the user permits audio and on later returns to title. In-game menus and ordinary manual pause freeze simulation without suspending music or resetting its selection; Continue requests the current saved location score before play when available. Protect the 18 Dark Crown original recordings and existing environmental/effect assets. See `docs/AUDIO_PLAYBACK.md`.

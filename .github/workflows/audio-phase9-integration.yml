@@ -1,0 +1,65 @@
+name: Soundtrack Phase 9 focused integration QA (no deployment)
+on:
+  push:
+    branches: ['audio/phase9-first-listening-20261031']
+permissions:
+  contents: write
+concurrency:
+  group: soundtrack-phase9-candidate
+  cancel-in-progress: false
+jobs:
+  focused-audio-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Generate versioned PWA artifacts on the unmerged candidate
+        run: node scripts/build.cjs
+      - name: Focused audio, menu and release consistency
+        run: |
+          node scripts/build.cjs --check
+          node scripts/docs-release-consistency.cjs
+          node tests/audio-title-menu-lifecycle.test.cjs
+          node tests/audio-production.test.cjs
+          node tests/audio-phase7-narrative.test.cjs
+          node tests/audio-catalog.test.cjs
+          node tests/campaign-domains.test.cjs
+      - name: Commit regenerated files only to draft soundtrack branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/prototype/build-info.js src/prototype/audio-library.js sw.js
+          git diff --cached --quiet && exit 0
+          git commit -m 'build(audio): refresh unmerged dev.248 offline catalog and worker'
+          git push origin HEAD:audio/phase9-first-listening-20261031
+  one-chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      # The full offline worker references a pinned, locally generated PixiJS
+      # bundle. A clean Chromium checkout MUST prepare that file before install;
+      # otherwise the service-worker install can never finish successfully.
+      - name: Prepare the actual offline candidate including pinned PixiJS
+        run: |
+          node scripts/build.cjs
+          node scripts/build.cjs --check
+      - run: npx playwright install --with-deps chromium
+      - name: Real title, Continue, in-game settings and Return-to-title lifecycle
+        run: node tests/audio-phase9-lifecycle-browser.test.cjs
+      - name: Actual 65-score playback and fresh offline PWA installation
+        run: node tests/audio-phase7-browser.test.cjs
+      - name: Complete music, environment, effects and mobile-layout listening-room acceptance
+        run: node tests/audio-audition-browser.test.cjs

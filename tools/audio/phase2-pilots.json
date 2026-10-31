@@ -1,0 +1,664 @@
+{
+  "schemaVersion": 1,
+  "status": "Phase 2 internal pilots; no game-audio registration",
+  "families": [
+    {
+      "family": "greenwood-outdoors",
+      "context": "outdoor",
+      "bpm": 92,
+      "root": 60,
+      "mode": "major",
+      "bars": 12,
+      "style": "pastoral",
+      "lead": "flute",
+      "pluck": "harp",
+      "harmony": [
+        0,
+        4,
+        3,
+        0,
+        5,
+        3,
+        4,
+        0,
+        3,
+        5,
+        4,
+        0
+      ],
+      "cells": {
+        "arrival": [
+          [
+            0,
+            0,
+            1.3
+          ],
+          [
+            1.5,
+            2,
+            0.45
+          ],
+          [
+            2.25,
+            4,
+            0.75
+          ],
+          [
+            3.25,
+            2,
+            0.65
+          ]
+        ],
+        "porch": [
+          [
+            0,
+            4,
+            1.75
+          ],
+          [
+            2,
+            3,
+            0.5
+          ],
+          [
+            2.75,
+            2,
+            0.5
+          ],
+          [
+            3.4,
+            0,
+            0.5
+          ]
+        ],
+        "questions": [
+          [
+            0.5,
+            5,
+            0.65
+          ],
+          [
+            1.5,
+            4,
+            0.7
+          ],
+          [
+            2.5,
+            2,
+            1.1
+          ]
+        ],
+        "return": [
+          [
+            0,
+            2,
+            0.7
+          ],
+          [
+            0.9,
+            4,
+            0.7
+          ],
+          [
+            2,
+            0,
+            1.7
+          ]
+        ],
+        "rest": [],
+        "changed": [
+          [
+            0,
+            0,
+            0.7
+          ],
+          [
+            1,
+            3,
+            0.75
+          ],
+          [
+            2,
+            4,
+            1.6
+          ]
+        ]
+      },
+      "phrases": [
+        "arrival",
+        "porch",
+        "questions",
+        "return",
+        "rest",
+        "arrival",
+        "questions",
+        "porch",
+        "changed",
+        "questions",
+        "return",
+        "rest"
+      ],
+      "cues": [
+        {
+          "id": "place-vale",
+          "part": "base"
+        },
+        {
+          "id": "action-vale",
+          "part": "action"
+        }
+      ],
+      "intent": "Warm household-scale music with a disquieting question under the orchard hospitality; combat gains momentum without hijacking the melody."
+    },
+    {
+      "family": "archive-rescue",
+      "context": "main-dungeon",
+      "bpm": 86,
+      "root": 62,
+      "mode": "dorian",
+      "bars": 16,
+      "style": "archive",
+      "lead": "piano",
+      "pluck": "bell",
+      "harmony": [
+        0,
+        5,
+        3,
+        4,
+        0,
+        2,
+        5,
+        4,
+        0,
+        3,
+        1,
+        4,
+        5,
+        3,
+        4,
+        0
+      ],
+      "cells": {
+        "fragile": [
+          [
+            0,
+            0,
+            0.5
+          ],
+          [
+            0.75,
+            3,
+            0.5
+          ],
+          [
+            1.5,
+            5,
+            1
+          ],
+          [
+            3.25,
+            4,
+            0.5
+          ]
+        ],
+        "documents": [
+          [
+            0,
+            6,
+            0.8
+          ],
+          [
+            1,
+            4,
+            0.55
+          ],
+          [
+            1.75,
+            3,
+            0.55
+          ],
+          [
+            2.65,
+            1,
+            1
+          ]
+        ],
+        "rescue": [
+          [
+            0,
+            2,
+            0.45
+          ],
+          [
+            0.5,
+            4,
+            0.6
+          ],
+          [
+            1.35,
+            5,
+            0.6
+          ],
+          [
+            2.5,
+            7,
+            0.75
+          ],
+          [
+            3.45,
+            5,
+            0.45
+          ]
+        ],
+        "question": [
+          [
+            0.25,
+            4,
+            1.1
+          ],
+          [
+            2,
+            2,
+            0.5
+          ],
+          [
+            2.75,
+            1,
+            1
+          ]
+        ],
+        "breath": [],
+        "missing": [
+          [
+            0,
+            -1,
+            1
+          ],
+          [
+            1.5,
+            2,
+            0.5
+          ],
+          [
+            2.5,
+            0,
+            1.25
+          ]
+        ]
+      },
+      "phrases": [
+        "fragile",
+        "documents",
+        "question",
+        "rescue",
+        "breath",
+        "fragile",
+        "rescue",
+        "missing",
+        "documents",
+        "question",
+        "rescue",
+        "breath",
+        "missing",
+        "rescue",
+        "fragile",
+        "breath"
+      ],
+      "cues": [
+        {
+          "id": "place-archive",
+          "part": "base"
+        },
+        {
+          "id": "action-archive",
+          "part": "action"
+        }
+      ],
+      "intent": "Irreplaceable knowledge under active salvage; uneasy counterpoint and irregular urgent gestures rather than generic underwater dread."
+    },
+    {
+      "family": "orchard-cellars",
+      "context": "inhabited-interior",
+      "bpm": 92,
+      "root": 55,
+      "mode": "minor",
+      "peaceMode": "major",
+      "bars": 12,
+      "style": "domestic",
+      "lead": "cello",
+      "peaceLead": "piano",
+      "pluck": "guitar",
+      "harmony": [
+        0,
+        3,
+        5,
+        4,
+        0,
+        2,
+        3,
+        4,
+        5,
+        3,
+        4,
+        0
+      ],
+      "peaceHarmony": [
+        0,
+        3,
+        4,
+        0,
+        5,
+        3,
+        4,
+        0,
+        2,
+        5,
+        4,
+        0
+      ],
+      "cells": {
+        "kitchen": [
+          [
+            0.5,
+            0,
+            0.65
+          ],
+          [
+            1.5,
+            2,
+            0.6
+          ],
+          [
+            2.5,
+            3,
+            0.5
+          ],
+          [
+            3.25,
+            2,
+            0.5
+          ]
+        ],
+        "family": [
+          [
+            0,
+            4,
+            1.2
+          ],
+          [
+            1.75,
+            2,
+            0.5
+          ],
+          [
+            2.5,
+            0,
+            1.1
+          ]
+        ],
+        "footsteps": [
+          [
+            0,
+            2,
+            0.5
+          ],
+          [
+            0.75,
+            1,
+            0.5
+          ],
+          [
+            2,
+            3,
+            0.65
+          ],
+          [
+            3,
+            0,
+            0.75
+          ]
+        ],
+        "unease": [
+          [
+            0.5,
+            5,
+            0.5
+          ],
+          [
+            1.5,
+            3,
+            0.5
+          ],
+          [
+            2.5,
+            1,
+            1.25
+          ]
+        ],
+        "rest": [],
+        "relief": [
+          [
+            0,
+            2,
+            1.5
+          ],
+          [
+            2,
+            4,
+            0.7
+          ],
+          [
+            3,
+            2,
+            0.75
+          ]
+        ]
+      },
+      "phrases": [
+        "kitchen",
+        "family",
+        "footsteps",
+        "unease",
+        "rest",
+        "kitchen",
+        "family",
+        "unease",
+        "footsteps",
+        "kitchen",
+        "unease",
+        "rest"
+      ],
+      "peacePhrases": [
+        "relief",
+        "family",
+        "rest",
+        "kitchen",
+        "relief",
+        "family",
+        "unease",
+        "rest",
+        "relief",
+        "family",
+        "relief",
+        "rest"
+      ],
+      "cues": [
+        {
+          "id": "interior-side-vale-cellars",
+          "part": "base"
+        },
+        {
+          "id": "peace-interior-side-vale-cellars",
+          "part": "peace"
+        }
+      ],
+      "intent": "An inhabited refuge for displaced Goblin families: daily routines, shelter, and danger. Global peace remains provisional, not a local boss-defeat fanfare."
+    },
+    {
+      "family": "lifebinder-winter-works",
+      "context": "boss-true",
+      "bpm": 104,
+      "root": 57,
+      "mode": "minor",
+      "bars": 16,
+      "style": "craft",
+      "lead": "cello",
+      "pluck": "dulcimer",
+      "harmony": [
+        0,
+        1,
+        5,
+        4,
+        0,
+        3,
+        2,
+        4,
+        5,
+        3,
+        1,
+        4,
+        0,
+        5,
+        4,
+        0
+      ],
+      "cells": {
+        "work": [
+          [
+            0,
+            0,
+            0.5
+          ],
+          [
+            0.75,
+            1,
+            0.5
+          ],
+          [
+            1.5,
+            3,
+            1.1
+          ],
+          [
+            3.25,
+            2,
+            0.5
+          ]
+        ],
+        "stitch": [
+          [
+            0,
+            4,
+            1
+          ],
+          [
+            1.5,
+            3,
+            0.6
+          ],
+          [
+            2.25,
+            1,
+            0.6
+          ],
+          [
+            3.25,
+            0,
+            0.65
+          ]
+        ],
+        "judgment": [
+          [
+            0,
+            5,
+            0.65
+          ],
+          [
+            0.9,
+            4,
+            0.55
+          ],
+          [
+            1.75,
+            2,
+            0.6
+          ],
+          [
+            2.75,
+            1,
+            1.1
+          ]
+        ],
+        "companion": [
+          [
+            0,
+            0,
+            0.8
+          ],
+          [
+            1.1,
+            1,
+            0.4
+          ],
+          [
+            2,
+            -1,
+            1.4
+          ]
+        ],
+        "silence": [],
+        "insist": [
+          [
+            0,
+            0,
+            0.5
+          ],
+          [
+            0.75,
+            3,
+            0.5
+          ],
+          [
+            1.5,
+            4,
+            0.5
+          ],
+          [
+            2.5,
+            2,
+            1.2
+          ]
+        ]
+      },
+      "phrases": [
+        "work",
+        "stitch",
+        "work",
+        "judgment",
+        "silence",
+        "stitch",
+        "companion",
+        "insist",
+        "work",
+        "judgment",
+        "companion",
+        "silence",
+        "stitch",
+        "insist",
+        "judgment",
+        "work"
+      ],
+      "cues": [
+        {
+          "id": "boss-crypt",
+          "part": "base"
+        },
+        {
+          "id": "boss-crypt-true",
+          "part": "true"
+        }
+      ],
+      "intent": "Winter estate craftsmanship and a morally uneasy old companion. TRUE intensifies the work rhythm and the difficult choice instead of layering a generic louder boss march."
+    }
+  ]
+}

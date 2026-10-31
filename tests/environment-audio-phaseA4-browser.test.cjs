@@ -103,11 +103,29 @@ const server=http.createServer((req,res)=>{
           assert.equal(description.zone,x.zone);
           assert.equal(description.selected,x.bed);
           assert.equal(description.score,x.score);
-          await page.waitForFunction(({bed,score})=>{
-            const a=Prototype.audio;
-            return a.ctx?.state==='running'&&a.environmentVoice?.id===bed &&
-              a.recordedScore?.id===score;
-          },{bed:x.bed,score:x.score},{timeout:35000});
+          try {
+            await page.waitForFunction(({bed,score})=>{
+              const a=Prototype.audio;
+              return a.ctx?.state==='running'&&a.environmentVoice?.id===bed &&
+                a.recordedScore?.id===score;
+            },{bed:x.bed,score:x.score},{timeout:14000});
+          } catch (error) {
+            console.error('ENV_PHASE7_BROWSER_DIAG', JSON.stringify({
+              case:x, state:await page.evaluate(()=>{
+                const a=Prototype.audio; return {
+                  ctx:a.ctx?.state,paused:a.paused,productionKey:a.productionKey,
+                  productionRetry:a.productionRetry,productionPending:!!a.productionPending,
+                  recordedScore:a.recordedScore?.id,recordingError:a.recordingError,
+                  lastError:a.recordingAssets?.lastError,environmentKey:a.environmentKey,
+                  environmentVoice:a.environmentVoice?.id,environmentError:a.environmentError,
+                  environmentRetry:a.environmentRetry,
+                  pendingAssetLoads:[...a.recordingAssets?.pending?.keys()||[]],
+                  cache:a.recordingAssets?.status(),context:a.context
+                };
+              })
+            }));
+            throw error;
+          }
           const result=await page.evaluate(()=>{
             const a=Prototype.audio,e=a.environmentVoice,m=a.recordedScore;
             const pcm=e.item.buffer.getChannelData(0);

@@ -186,7 +186,7 @@ const copy = (v) => structuredClone(v),
   a.effect('warning');
   assert.equal(ducks, 1);
   a.effect('peace');
-  assert.equal(a.finaleUntil, a.ctx.currentTime + 12);
+  assert.equal(a.finaleUntil, a.ctx.currentTime + 48); // Synthetic fixture has no Finale; actual manifest uses its loop span.
   a.interfaceSound('confirm');
   assert([...a.voices].some((v) => v.id === 'diagnostic-click' && v.bus === 'interface'));
   a.stepDistance = 0;
