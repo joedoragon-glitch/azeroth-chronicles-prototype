@@ -7635,6 +7635,7 @@
         'Outgoing DPS: ' +
         telemetry.outgoing.dps.toFixed(1);
       const companionRows = game.developerCompanionSnapshot() || [];
+      companionMonitorToggle.textContent = 'DEV · COMPANIONS (' + companionRows.length + ')';
       const body = companionRows.length
         ? companionRows.map((row) => row.name + ' [' + row.type + ' · ' + row.id + ']\n' +
             'Moves: ' + (row.last.map((m) =>
