@@ -79,7 +79,7 @@ def source_lufs(file):
            '-i', str(file), '-af',
            'loudnorm=I=-23:TP=-2:LRA=11:print_format=json', '-f', 'null', '-']
     output = run(cmd).stderr.decode('utf8', errors='replace')
-    match = re.search(r'"input_i"\\s*:\\s*"([^"]+)"', output)
+    match = re.search(r'"input_i"\s*:\s*"([^"]+)"', output)
     if not match or not math.isfinite(float(match.group(1))):
         raise ValueError('Integrated LUFS was not measured')
     return float(match.group(1))
@@ -188,7 +188,7 @@ def main():
                    'boundary': 'NO catalog edits, NO music changes, not heard, NO artistic GO',
                    'pinnedSourceCount': sum(int(p['approvedShaPinned']) for p in provenance)}
         (output / 'environment-studio-results.json').write_text(
-            json.dumps(summary, indent=2) + '\\n')
+            json.dumps(summary, indent=2) + '\n')
         if len(reports) != 2:
             raise ValueError('Expected exactly two independently authored room pilots')
         print('PASS two real-sample environmental studio previews: format and signal integrity only; heard sound HOLD')
