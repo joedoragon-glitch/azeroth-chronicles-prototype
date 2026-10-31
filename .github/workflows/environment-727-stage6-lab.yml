@@ -100,6 +100,10 @@ jobs:
           node tools/audio/environment-727-audition-pack.cjs
           test -s test-results/environment-727-listening-room/index.html
           test -s test-results/environment-727-listening-room/data.js
+      - name: Smoke-test owner-only offline A/B playback, score, retention and decision export
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-audition-browser.test.cjs | tee test-results/environment-727-stage7-owner-ui.log
       - name: Archive self-contained listening packet for owner creative review (NOT a game build)
         uses: actions/upload-artifact@v4
         with:
@@ -118,5 +122,6 @@ jobs:
             test-results/environment-727-stage6-offline.log
             test-results/environment-727-stage6-48khz.log
             test-results/environment-727-stage6-upgrade.log
+            test-results/environment-727-stage7-owner-ui.log
           if-no-files-found: warn
           retention-days: 14
