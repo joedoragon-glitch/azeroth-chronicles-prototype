@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 4 of #727: three lore-specific side interiors source-authored ambient studio previews",
-  "status": "SOURCE PROBE PASS 6/6 including two newly verified originals (Action #41235061850); 3 authored 72s encoded previews and strict decoded QA PENDING. No game registration, listening, merge, publication or device verification.",
+  "status": "STAGE 4 STUDIO SIGNAL PASS: six original physical source SHA-1/SHA-256/bytes/codec verified at #41235061850, three real 72s mono MP3 previews encoded and decoded QA PASS at #41235332219 (artifact #13054214992). Repeat of frozen master hashes pending. No game routing, human hearing, cache/game playback, merge, publication or device approval.",
   "parent": "tools/audio/environment-727-dungeon-studies.json",
   "authority": "#727 Stage 1 canon and source palette; src/prototype/rules.js side-dungeon lore, docs/SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md (ideas NOT implemented), docs/AUDIO_ENVIRONMENT.md and AUDIO_AUTHORING.md",
   "hardConstraints": {
@@ -258,5 +258,58 @@
       "reason": "Stage 3 previews are unregistered; comparisons must remain honest and source-specific."
     }
   ],
-  "encodedPreviewEvidence": null
+  "encodedPreviewEvidence": {
+    "outputs": [
+      {
+        "id": "studio-orchard-cellars-727",
+        "sha256": "39ede621eba96ecd38fa2abb1d3d1a0a4f2af1734060712e7daf841dde3c1383",
+        "bytes": 1158381,
+        "lufs": -37.15,
+        "truePeakDbTP": -15.1,
+        "loopSampleJump": 0.0019143831450492144,
+        "loopOneSecondEnvelopeDb": -1.8125527861304633,
+        "mid250to2000": 0.6610599379610425,
+        "realSourceShare": 0.7117647058823531,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-drowned-watchhouse-727",
+        "sha256": "163f14796e966a1d83301a83ed1eb77ce5d0b18ae44aba05f28dff5ffdae22f7",
+        "bytes": 1158381,
+        "lufs": -35.72,
+        "truePeakDbTP": -17.67,
+        "loopSampleJump": 0.0010637342929840088,
+        "loopOneSecondEnvelopeDb": -1.2679970529663405,
+        "mid250to2000": 0.933043905970919,
+        "realSourceShare": 0.7715668279659602,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-ruined-foundry-727",
+        "sha256": "abb44187a12a635644a6c5bd9aa72b55dfaf2805e38d7808d717792124a860e1",
+        "bytes": 1158381,
+        "lufs": -34.54,
+        "truePeakDbTP": -16.03,
+        "loopSampleJump": 0.00039437226951122284,
+        "loopOneSecondEnvelopeDb": -0.43684556558595794,
+        "mid250to2000": 0.8692954720093624,
+        "realSourceShare": 0.8000000000000003,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      }
+    ],
+    "renderRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235332219",
+    "artifactId": 13054214992,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235332219/artifacts/13054214992",
+    "originalSourcesRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+    "productionHead": "079afdeb965aa22adc6cf0675f36539d798b1f08",
+    "reproduction": "PENDING frozen SHA/bytes repeat",
+    "humanHeard": false,
+    "gameRegistered": false
+  }
 }
