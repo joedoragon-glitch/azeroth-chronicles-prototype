@@ -25,8 +25,10 @@ function encounter(offset = 180) {
   g.disengage(e, 0.1);
   assert(e.returning > 0 && e.returning < 1, 'existing one-second return remains');
   assert.equal(e.hp, e.baseHp / 2, 'HP is not instantly restored when return begins');
-  const breaking = g.effects.filter(f => f.type === 'reset');
-  assert.equal(breaking.length, 1, 'only one disengage receipt');
+  const breaking = g.effects.filter(f => f.type === 'resetCue');
+  assert.equal(breaking.length, 1, 'one transient disengage visual receipt');
+  assert.equal(g.effects.filter(f => f.type === 'reset').length, 1,
+    'existing gameplay reset event remains unchanged');
   assert.deepEqual({ x: breaking[0].x, y: breaking[0].y, zone: breaking[0].zone },
     { ...old, zone: g.zoneId });
   assert(!g.effects.some(f => f.type === 'resetArrival'), 'arrival awaits actual reset');
@@ -38,6 +40,8 @@ function encounter(offset = 180) {
   assert.deepEqual({ x: e.x, y: e.y }, home, 'native home position retained');
   const arrival = g.effects.filter(f => f.type === 'resetArrival');
   assert.equal(arrival.length, 1);
+  assert(!g.s.statistics.events.some(f => f.type === 'resetCue' || f.type === 'resetArrival'),
+    'paint receipts never enter persisted gameplay event history');
   assert.deepEqual({
     x: arrival[0].x, y: arrival[0].y,
     fromX: arrival[0].fromX, fromY: arrival[0].fromY,
