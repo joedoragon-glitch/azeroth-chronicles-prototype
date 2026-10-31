@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Isolated environmental quality studies, NOT game-registered ambience or artistic acceptance.",
+  "sonicContract": "Keep original 24-second loop bed regional color, replace repetitive sine-like 'detail' with sparse unpitched real micro-foley; no looping a whole short sample, voices, loud weather, new music, or system gain shifts.",
+  "sourcePolicy": "Only same-host Wikimedia original audio with independently reviewed public-domain license; validate SHA-1 and exact recorded file size before decoding, pin every source before adoption. Sources never ship to the game or repo; temporary studio downloads only.",
+  "sources": [
+    {
+      "key": "wood-creak",
+      "creator": "stephan",
+      "title": "Creaky Wooden Casket",
+      "source": "PDSounds.org #319",
+      "license": "Public domain (author dedication)",
+      "licenseEvidence": "https://commons.wikimedia.org/wiki/File:Creaky_wooden_casket.ogg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Creaky_wooden_casket.ogg",
+      "sha1": "d0fcb9a572c27ddf16892c6bd65a52156d1ad0a1",
+      "bytes": 31616,
+      "role": "quiet older timber flex; only as one sparse, softened structural sound",
+      "risks": "Very short source, high recognizability if repeated, small-object rather than a whole room. Not an authenticated signal-keep recording."
+    },
+    {
+      "key": "wood-utensils",
+      "creator": "thore",
+      "title": "Wood and Cutlery",
+      "source": "PDSounds.org #376",
+      "license": "Public domain (author dedication)",
+      "licenseEvidence": "https://commons.wikimedia.org/wiki/File:Wood_and_cutlery.ogg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Wood_and_cutlery.ogg",
+      "sha1": null,
+      "bytes": null,
+      "role": "infrequent muted domestic equipment movement in occupied barracks",
+      "risks": "Original metallic cutlery may be too modern/prominent; source checksum must be verified/pinned before any catalog inclusion."
+    }
+  ],
+  "pilots": [
+    {
+      "id": "side-highlands-signal-preview",
+      "place": "Old Signal Keep",
+      "baseBed": "env-highland-wind",
+      "physicalDetail": "wood-creak",
+      "eventAtSeconds": 13.2,
+      "eventPeak": 0.019,
+      "bedGain": 0.94,
+      "highpassHz": 82,
+      "lowpassHz": 3600,
+      "routeGain": 0.22,
+      "notes": "Retain Highland midrange ridge air; attenuate exposed gusts as heard inside occupied timber-and-stone structures; no invented horn or whistle."
+    },
+    {
+      "id": "side-frontier-shrine-preview",
+      "place": "Ruined Shrine Barracks",
+      "baseBed": "env-frontier-air",
+      "physicalDetail": "wood-utensils",
+      "eventAtSeconds": 17.3,
+      "eventPeak": 0.018,
+      "bedGain": 0.94,
+      "highpassHz": 100,
+      "lowpassHz": 3400,
+      "routeGain": 0.23,
+      "notes": "Retain dry recovering Frontier presence through an occupied Orc barracks envelope; one tiny domestic movement rather than repeated military clanks or faux ceremony."
+    }
+  ],
+  "rejectedExploration": [
+    {
+      "source": "https://freesound.org/people/Akacie/sounds/73715/",
+      "reason": "CC BY-NC and login-only download: cannot import into potentially commercial game"
+    },
+    {
+      "source": "https://commons.wikimedia.org/wiki/File:Wind_in_Swedish_pine_forest_at_25_mps.ogg",
+      "reason": "CC BY-SA obligations, intense 25 m/s wind, poor match for sheltered inhabited interiors"
+    },
+    {
+      "source": "https://commons.wikimedia.org/wiki/File:20090610_0_ambience.ogg",
+      "reason": "Public domain but uploader explicitly reports microphone noise and intrusive crows; inappropriate automatically as a premium regional master"
+    },
+    {
+      "source": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
+      "reason": "CC0 but described as howling inside a building; too overtly severe for normal occupied Signal Keep and converted barracks without audition"
+    }
+  ],
+  "status": {
+    "sourceReview": "done",
+    "downloads": "not attempted",
+    "rendered": "not attempted",
+    "signalChecked": "not attempted",
+    "heard": "unverified",
+    "accepted": "HOLD",
+    "registered": "no",
+    "merged": "no",
+    "deployed": "no"
+  }
+}
