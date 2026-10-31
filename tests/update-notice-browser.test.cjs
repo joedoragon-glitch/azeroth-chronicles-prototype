@@ -292,8 +292,14 @@ const server = http.createServer((req, res) => {
       requestLog.length = 0;
       await page.reload();
       await page.waitForFunction(async () => {
-        const cacheReady = (await caches.keys()).includes(
-          'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c');
+        const name = 'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c';
+        if (!(await caches.keys()).includes(name)) return false;
+        const cache = await caches.open(name);
+        const files = await Promise.all(['./index.html', './phone.html',
+          './src/prototype/app.js'].map((file) => cache.match(file)));
+        // Cache names appear at the *beginning* of installation; wait for
+        // the required bytes, not merely a newly created empty cache.
+        const cacheReady = files.every(Boolean);
         return cacheReady &&
           document.getElementById('startup-update').hidden &&
           !document.getElementById('title-screen').hidden &&
@@ -315,6 +321,18 @@ const server = http.createServer((req, res) => {
           script: await inspect('src/prototype/app.js', "dataset.menuRevision = 'c'"),
         };
       });
+      const workerStatus = await page.evaluate(async () => {
+        const reg = await navigator.serviceWorker.getRegistration();
+        const cache = await caches.open('azeroth-app-v' + PrototypeBuild.version + '-notice-c');
+        return {
+          controller: navigator.serviceWorker.controller?.state,
+          active: reg.active?.state,
+          installing: reg.installing?.state,
+          waiting: reg.waiting?.state,
+          cacheEntries: (await cache.keys()).length,
+        };
+      });
+      console.log('Release c service worker: ' + JSON.stringify(workerStatus));
       console.log('Release c transfers and offline cache: ' +
         JSON.stringify({ phone, releaseRequests, releaseCache }));
       for (const changed of ['/index.html', '/phone.html', '/src/prototype/app.js'])
