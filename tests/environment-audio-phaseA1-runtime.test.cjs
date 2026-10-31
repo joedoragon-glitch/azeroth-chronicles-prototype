@@ -63,7 +63,7 @@ async function run() {
     }
   }
   assert.equal(rows,76);
-  assert.equal(distinct.size,14);
+  assert.equal(distinct.size,16,'two original regional masters are retained as revertible but unused; four new scene recordings increase routed variety to 16');
   let s=sceneFor(a,'vale');
   a.updateEnvironment(s);
   assert.equal(await a.environmentPending,true);
