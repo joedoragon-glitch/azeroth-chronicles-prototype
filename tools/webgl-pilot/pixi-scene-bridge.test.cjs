@@ -28,6 +28,8 @@ function pixiFixture(){
     circle(...args){this.circles.push(args);return this;}
     rect(...args){this.rects.push(args);return this;}
     ellipse(...args){this.ellipses.push(args);return this;}
+    moveTo(x,y){this.lastPoint=[x,y];return this;}
+    lineTo(x,y){this.lastEnd=[x,y];return this;}
     stroke(g){this.strokes.push(g);return this;}
     fill(g){this.fillStyle=g;this.fills.push(g);calls.glows++;return this;}
     destroy(){}
@@ -63,18 +65,40 @@ test('real sprite atlas frames move as Pixi scene nodes without Canvas painting'
   bridge.registerTexture('hero.png',picture());
   bridge.setBackground(picture('floor',960,680),-160,-160);
   bridge.syncActors([actor()]);
-  const first=app.stage.children[0].children[1].children[0];
+  const first=app.stage.children[0].children[2].children[0];
   assert.equal(first.position.x,60);assert.equal(first.position.y,120);
   assert.equal(first.texture.frame.width,96);
   assert.equal(calls.images,1);
   bridge.syncActors([actor('hero',105)]);
-  const moved=app.stage.children[0].children[1].children[0];
+  const moved=app.stage.children[0].children[2].children[0];
   assert.equal(moved,first,'same GPU actor must be reused');
   assert.equal(moved.position.x,105,'new camera/hero movement updates GPU sprite');
   bridge.draw();
   assert.equal(calls.render,1);
   assert.equal(calls.images,1,'same frame atlas subtexture is cached');
   bridge.destroy();
+});
+test('issue #708 live liquid strokes stay between cached background and depth-sorted actors',()=>{
+  const {PIXI,app}=pixiFixture();
+  const scene=Bridge.create({PIXI,app,width:600,height:350});
+  const root=app.stage.children[0];
+  assert.equal(root.children.length,3,'liquid, actors and atmospheric grade use separate stages');
+  const [liquid,actors,effects]=root.children;
+  assert.equal(liquid instanceof PIXI.Graphics,true);
+  assert.equal(actors instanceof PIXI.Container,true);
+  assert.equal(effects instanceof PIXI.Container,true);
+  scene.syncLiquidMotion([
+    {x1:10,y1:20,x2:40,y2:25,color:'#9abeb788',width:1.2},
+    {x1:70,y1:35,x2:75,y2:48,color:'#ffd076',width:2},
+  ]);
+  assert.equal(scene.metrics().liquidStrokes,2);
+  assert.equal(liquid.strokes.length,2,'two native geometry strokes, not new painted texture');
+  assert.equal(liquid.strokes[0].alpha,0x88/255);
+  assert.equal(liquid.strokes[1].alpha,1,'opaque lava has no artificial alpha');
+  scene.syncLiquidMotion([]);
+  assert.equal(scene.metrics().liquidStrokes,0);
+  assert.equal(liquid.strokes.length,0);
+  scene.destroy();
 });
 test('frame swaps use bounded reusable Pixi atlas frames',()=>{
   const {PIXI,app,calls}=pixiFixture();
@@ -103,7 +127,7 @@ test('native radial lamps use screen blend and independent per-light transforms'
   const scene=Bridge.create({PIXI,app,width:600,height:350});
   const light={x:180,y:100,radius:90,rgb:[255,207,132],alpha:0.3};
   scene.syncLamps([light]);
-  const visual=app.stage.children[0].children[1].children[0];
+  const visual=app.stage.children[0].children[2].children[0];
   assert.equal(visual.blendMode,'screen');
   assert.equal(visual.position.x,180);
   assert.equal(visual.circles[0][2],90);
@@ -120,7 +144,7 @@ test('scene orders real actors by original isometric depth and retains default G
   const scene=Bridge.create({PIXI,app,width:600,height:350});
   scene.registerTexture('hero.png',picture());
   scene.syncActors([actor('far',170,99),actor('near',20,1)]);
-  const actorContainer=app.stage.children[0].children[0];
+  const actorContainer=app.stage.children[0].children[1];
   assert.equal(actorContainer.children[0].position.x,20);
   assert.equal(actorContainer.children[1].position.x,170);
   scene.destroy();
@@ -178,7 +202,7 @@ test('native vignette remains last after lamp updates and caches unchanged fill'
   scene.syncLamps([{x:150,y:200,radius:90,rgb:[255,207,132],alpha:.3}]);
   scene.setAtmosphere({region:0,darkness:1});
   scene.setVignette({darkness:1,optimized:false});
-  const effects=app.stage.children[0].children[1];
+  const effects=app.stage.children[0].children[2];
   const v=effects.children.at(-1);
   assert.equal(v.fillStyle.options.type,'radial');
   assert.equal(v.fillStyle.options.outerRadius,1152);
@@ -295,7 +319,7 @@ test('high-DPI Pixi backdrop retains the same logical geometry as Canvas',()=>{
   const scene=Bridge.create({PIXI,app,width:912,height:420});
   const backing=picture('high-density-ground',2028,1290);
   scene.setBackground(backing,-220,-220,1352,860);
-  const node=app.stage.children[0].children[0];
+  const node=app.stage.children[0].children[1];
   assert.equal(node.position.x,-220);
   assert.equal(node.position.y,-220);
   assert.equal(node.width,1352,'logical terrain width must not inherit 1.5x bitmap width');
@@ -331,7 +355,7 @@ test('Pixi atmosphere restores the same bounded daylight motes as Canvas, before
   scene.setAtmosphere({region:0,darkness:0});
   scene.syncMotes(daylight,1.5);
   scene.setVignette({darkness:0,optimized:false});
-  const effects=app.stage.children[0].children[1];
+  const effects=app.stage.children[0].children[2];
   const moteGraphic=effects.children.at(-2);
   assert.equal(moteGraphic.circles.length,14,'one reused GPU batch represents all Canvas motes');
   assert.deepEqual(moteGraphic.circles[0],[
@@ -381,7 +405,7 @@ test('Canvas-matched hero shadows and ground markers sit below sprite and track 
   const hero={...actor(),ground:{x:112,y:174,rx:18,ry:5.5,
     marker:{color:'#f5d992bb',important:true}}};
   scene.syncActors([hero]);
-  const nodes=app.stage.children[0].children[0].children;
+  const nodes=app.stage.children[0].children[1].children;
   assert.equal(nodes.length,2,'one reusable ground graphic and one sprite');
   const [ground,sprite]=nodes;
   assert.equal(sprite.texture.source.width,576);
@@ -396,13 +420,13 @@ test('Canvas-matched hero shadows and ground markers sit below sprite and track 
   scene.syncActors([{...hero,x:88,ground:{...hero.ground,x:160,y:199,scale:1.5}}]);
   assert.deepEqual(ground.ellipses.at(-1),[1.5,16.5,27,8.25],
     'GPU shadow scales with 150% camera zoom and retains Canvas feet offset');
-  const moved=app.stage.children[0].children[0].children;
+  const moved=app.stage.children[0].children[1].children;
   assert.equal(moved[0],ground,'reuse ground artwork without allocating per frame');
   assert.equal(moved[1],sprite,'same approved actor sprite remains');
   assert.equal(ground.position.x,160);
   assert.equal(ground.position.y,199);
   scene.syncActors([]);
-  assert.equal(app.stage.children[0].children[0].children.length,0);
+  assert.equal(app.stage.children[0].children[1].children.length,0);
   scene.destroy();
 });
 test('shadows use Canvas prop sizes and share depth ordering with their actor',()=>{
@@ -412,7 +436,7 @@ test('shadows use Canvas prop sizes and share depth ordering with their actor',(
   const prop={...actor('house',170,5),ground:{x:170,y:180,rx:31,ry:8,marker:null}};
   const sheep={...actor('sheep',35,2),ground:{x:35,y:155,rx:18,ry:5.5,marker:null}};
   scene.syncActors([prop,sheep]);
-  const nodes=app.stage.children[0].children[0].children;
+  const nodes=app.stage.children[0].children[1].children;
   assert.equal(nodes.length,4);
   assert.deepEqual(nodes[0].ellipses.at(-1),[1,11,18,5.5]);
   assert.deepEqual(nodes[2].ellipses.at(-1),[1,11,31,8]);
