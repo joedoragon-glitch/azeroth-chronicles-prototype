@@ -5,6 +5,7 @@ name: Environmental audio 14-file signal QA (NO deploy)
 on:
   pull_request:
     paths:
+      - 'tests/environment-audio-phaseA2-acoustic-contrast.test.cjs'
       - 'tests/environment-audio-phaseA3-signal.test.cjs'
       - 'tests/environment-audio-phaseA4-levels.test.cjs'
       - '.github/workflows/environment-audio-signal-audit.yml'
@@ -12,6 +13,7 @@ on:
     branches:
       - 'audit/environment-709-evidence-*'
     paths:
+      - 'tests/environment-audio-phaseA2-acoustic-contrast.test.cjs'
       - 'tests/environment-audio-phaseA3-signal.test.cjs'
       - 'tests/environment-audio-phaseA4-levels.test.cjs'
       - '.github/workflows/environment-audio-signal-audit.yml'
@@ -42,3 +44,5 @@ jobs:
         run: node tests/environment-audio-phaseA3-signal.test.cjs
       - name: Compare actual current music and environmental levels at default game settings
         run: node tests/environment-audio-phaseA4-levels.test.cjs
+      - name: Compare real beds for spectral homogeneity and temporal variation (not an artistic GO)
+        run: node tests/environment-audio-phaseA2-acoustic-contrast.test.cjs
