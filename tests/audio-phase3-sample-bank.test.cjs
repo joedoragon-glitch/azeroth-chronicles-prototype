@@ -20,7 +20,7 @@ assert.equal(bank.instruments.piano.samples.filter(s => s.vel < 1).length, 2);
 assert.match(bank.status, /UNVERIFIED/);
 assert.match(bank.qualityCaveat, /not a professional master quality guarantee/i);
 assert.deepEqual(Object.keys(bank.instruments).sort(),
-  ['basses', 'celli', 'flute', 'glockenspiel', 'harp', 'horn', 'marimba', 'piano', 'violins']);
+  ['basses', 'celli', 'flute', 'glockenspiel', 'guitar', 'harp', 'horn', 'marimba', 'piano', 'violins']);
 assert.equal(scores.phase4, 'BLOCKED');
 assert.equal(scores.sourceQuality, 'REVISE');
 assert.equal(scores.sonicQuality, 'UNVERIFIED');
@@ -60,7 +60,7 @@ for (const [instrument, def] of Object.entries(bank.instruments)) {
   }
   assert(pitches.size >= 2, instrument + ': insufficient recorded pitch coverage');
 }
-assert.equal(count, 49);
+assert.equal(count, 55);
 const recorded = new Set(sampleFiles);
 function filesIn(dir, prefix='') {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(e =>

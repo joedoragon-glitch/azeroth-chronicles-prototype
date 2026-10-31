@@ -10,3 +10,7 @@ These original, unmodified compact MP3 source clips are redistributed from **tin
 ## Second source: recorded CC0 piano
 
 Eight Ogg Vorbis clips, six pitches and two alternative gentle velocities, pinned from [Meta Piano / Meta-open-sound](https://github.com/facebookincubator/Meta-open-sound/tree/251c0be57d5d1b3242b91f53e0cde62ab1cb42d9/systems/instruments/meta-piano). The specific [CC0 1.0 license](https://github.com/facebookincubator/Meta-open-sound/blob/251c0be57d5d1b3242b91f53e0cde62ab1cb42d9/systems/instruments/meta-piano/LICENSE) applies. Sources originated as 48-kHz 24-bit stereo piano recordings, distributed as mono Ogg; this is a deliberately sparse subset, not an approved piano sound. Preserve hashes and listening caveats.
+
+## Third instrument — recorded nylon guitar, same CC0 source as piano
+
+Six warm fingerstyle nylon-string guitar clips from [Meta Open Sound's nylon guitar collection](https://github.com/facebookincubator/Meta-open-sound/tree/251c0be57d5d1b3242b91f53e0cde62ab1cb42d9/systems/instruments/meta-nylon-guitar), same pinned upstream revision. Its [instrument-specific CC0 1.0 license](https://github.com/facebookincubator/Meta-open-sound/blob/251c0be57d5d1b3242b91f53e0cde62ab1cb42d9/systems/instruments/meta-nylon-guitar/LICENSE) applies. They cover MIDI 40–64 sparsely; re-pitching and temporal articulation require explicit technical and perceived-quality review. The source also provides other plucking dynamics, not yet selected or approved.

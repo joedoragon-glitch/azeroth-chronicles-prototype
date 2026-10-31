@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "49-file CC0 recorded palette, studio candidate; composer NOT yet wired, sonic quality UNVERIFIED, Phase 4 BLOCKED",
+  "status": "55 pinned CC0 samples in ten recorded-instrument categories; isolated Phase 3 studio bank, sonic quality UNVERIFIED, Phase 4 BLOCKED",
   "source": "tiny-orchestra 0.2.0 (edited VSCO-2 CE CC0 recordings)",
   "sourceRepository": "https://github.com/MarianBecher/tiny-orchestra",
   "sourceCommit": "60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f",
@@ -668,6 +668,62 @@
           "sourceBytes": 96331
         }
       ]
+    },
+    "guitar": {
+      "sustain": false,
+      "release": 0.23,
+      "gain": 0.84,
+      "range": [
+        40,
+        64
+      ],
+      "format": "ogg",
+      "sampleRate": 48000,
+      "source": "Meta Nylon Guitar CC0 fingerstyle",
+      "samples": [
+        {
+          "file": "guitar/INSGuitarNylon_StringLowE_Vel01Finger_E2_01.ogg",
+          "midi": 40,
+          "vel": 0.68,
+          "sourceGitBlob": "2597910937ccbb9c0e04b94bf258069d02190ba4",
+          "sourceBytes": 77832
+        },
+        {
+          "file": "guitar/INSGuitarNylon_StringA_Vel01Finger_A2_01.ogg",
+          "midi": 45,
+          "vel": 0.68,
+          "sourceGitBlob": "827accd2919f1fcbf6fc34326e93d7426387298b",
+          "sourceBytes": 101583
+        },
+        {
+          "file": "guitar/INSGuitarNylon_StringD_Vel01Finger_D3_01.ogg",
+          "midi": 50,
+          "vel": 0.68,
+          "sourceGitBlob": "886ecff426a331f2781b535623efb69c2d473d08",
+          "sourceBytes": 97995
+        },
+        {
+          "file": "guitar/INSGuitarNylon_StringG_Vel01Finger_G3_01.ogg",
+          "midi": 55,
+          "vel": 0.68,
+          "sourceGitBlob": "1b51583ef2571199f1a9c9f6656cb26db53f6fc8",
+          "sourceBytes": 49013
+        },
+        {
+          "file": "guitar/INSGuitarNylon_StringB_Vel01Finger_B3_01.ogg",
+          "midi": 59,
+          "vel": 0.68,
+          "sourceGitBlob": "754737d07c5e3f3f43af0a3c9832f01965b71697",
+          "sourceBytes": 41191
+        },
+        {
+          "file": "guitar/INSGuitarNylon_StringHighE_Vel01Finger_E4_01.ogg",
+          "midi": 64,
+          "vel": 0.68,
+          "sourceGitBlob": "01603e3280332642701c201ba462b82fdb9f9033",
+          "sourceBytes": 44864
+        }
+      ]
     }
   },
   "sources": [
@@ -689,15 +745,17 @@
       "format": "mono 44.1 kHz MP3"
     },
     {
-      "project": "Meta Piano",
+      "project": "Meta Piano and Nylon Guitar",
       "repo": "https://github.com/facebookincubator/Meta-open-sound",
       "commit": "251c0be57d5d1b3242b91f53e0cde62ab1cb42d9",
       "license": "CC0-1.0",
       "evidence": "https://github.com/facebookincubator/Meta-open-sound/blob/251c0be57d5d1b3242b91f53e0cde62ab1cb42d9/systems/instruments/meta-piano/LICENSE",
       "instruments": [
-        "piano"
+        "piano",
+        "guitar"
       ],
-      "format": "mono 48 kHz Ogg Vorbis, from 24-bit stereo WAV"
+      "format": "mono 48 kHz Ogg Vorbis, from 24-bit stereo WAV",
+      "guitarLicenseUrl": "https://github.com/facebookincubator/Meta-open-sound/blob/251c0be57d5d1b3242b91f53e0cde62ab1cb42d9/systems/instruments/meta-nylon-guitar/LICENSE"
     }
   ]
 }
