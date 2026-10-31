@@ -299,7 +299,9 @@ const server = http.createServer((req, res) => {
           './src/prototype/app.js'].map((file) => cache.match(file)));
         // Cache names appear at the *beginning* of installation; wait for
         // the required bytes, not merely a newly created empty cache.
-        const cacheReady = files.every(Boolean);
+        const registration = await navigator.serviceWorker.getRegistration();
+        const cacheReady = files.every(Boolean) && !registration?.installing &&
+          !registration?.waiting;
         return cacheReady &&
           document.getElementById('startup-update').hidden &&
           !document.getElementById('title-screen').hidden &&
