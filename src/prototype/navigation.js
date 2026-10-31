@@ -77,6 +77,21 @@
       eliteNodesPerTick: 240,
       captainPatrolProbesPerTick: 512,
       captainPatrolNodesPerTick: 160,
+      // #615: each native asynchronous consumer has a separate ceiling.
+      // Treasury support, Crown inspection, minister return, Vera and the
+      // two guards cannot steal elite/ordinary/Thorn or companion budgets.
+      supportApproachProbesPerTick: 512,
+      supportApproachNodesPerTick: 160,
+      cinderSelectionProbesPerTick: 512,
+      cinderSelectionNodesPerTick: 160,
+      cinderPatrolProbesPerTick: 512,
+      cinderPatrolNodesPerTick: 160,
+      cinderEscortProbesPerTick: 512,
+      cinderEscortNodesPerTick: 160,
+      cinderGuardProbesPerTick: 512,
+      cinderGuardNodesPerTick: 160,
+      cinderReturnProbesPerTick: 512,
+      cinderReturnNodesPerTick: 160,
     });
     const terrainTrips = new WeakMap(),
       movementPlanFrames = new WeakMap(),
@@ -496,6 +511,18 @@
             eliteNodes: cfg.eliteNodesPerTick,
             captainPatrolProbes: cfg.captainPatrolProbesPerTick,
             captainPatrolNodes: cfg.captainPatrolNodesPerTick,
+            supportApproachProbes: cfg.supportApproachProbesPerTick,
+            supportApproachNodes: cfg.supportApproachNodesPerTick,
+            cinderSelectionProbes: cfg.cinderSelectionProbesPerTick,
+            cinderSelectionNodes: cfg.cinderSelectionNodesPerTick,
+            cinderPatrolProbes: cfg.cinderPatrolProbesPerTick,
+            cinderPatrolNodes: cfg.cinderPatrolNodesPerTick,
+            cinderEscortProbes: cfg.cinderEscortProbesPerTick,
+            cinderEscortNodes: cfg.cinderEscortNodesPerTick,
+            cinderGuardProbes: cfg.cinderGuardProbesPerTick,
+            cinderGuardNodes: cfg.cinderGuardNodesPerTick,
+            cinderReturnProbes: cfg.cinderReturnProbesPerTick,
+            cinderReturnNodes: cfg.cinderReturnNodesPerTick,
           };
           routePlanningFrames.set(this, frame);
         }
@@ -504,7 +531,9 @@
             plan.gathering !== gathering ||
             dist(plan.origin, origin) > 20 || dist(plan.target, target) > 20) {
           const generator = ['tactical', 'pursuit', 'thorn-retreat', 'thorn-patrol', 'thorn-escort',
-              'elite-pursuit', 'captain-patrol'].includes(mode)
+              'elite-pursuit', 'captain-patrol', 'support-approach',
+              'cinder-selection', 'cinder-patrol', 'cinder-escort',
+              'cinder-guard', 'cinder-return'].includes(mode)
             ? this.budgetedTacticalRoute(origin, target)
             : this.budgetedCompanionRoute(origin, target, gathering);
           plan = { zone, mode, gathering, origin, target, generator, request: null, reply: undefined };
@@ -514,7 +543,13 @@
             : mode === 'thorn-escort' ? 'thornEscort'
               : mode === 'elite-pursuit' ? 'elite'
                 : mode === 'captain-patrol' ? 'captainPatrol'
-                  : mode === 'pursuit' ? 'pursuit' : '';
+                  : mode === 'support-approach' ? 'supportApproach'
+                    : mode === 'cinder-selection' ? 'cinderSelection'
+                      : mode === 'cinder-patrol' ? 'cinderPatrol'
+                        : mode === 'cinder-escort' ? 'cinderEscort'
+                          : mode === 'cinder-guard' ? 'cinderGuard'
+                            : mode === 'cinder-return' ? 'cinderReturn'
+                              : mode === 'pursuit' ? 'pursuit' : '';
         const probeKey = pool ? pool + 'Probes' : 'probes',
           nodeKey = pool ? pool + 'Nodes' : 'nodes';
         let probes = Math.min(frame[probeKey],
@@ -1593,7 +1628,20 @@
           captainPatrol = planningMode === 'captain-patrol' && entity.fieldCaptain &&
             !entity.aggro && !entity.returning && zone.enemies.includes(entity),
           scriptedVale = thornRetreat || thornPatrol || thornEscort,
-          incremental = enemyPursuit || scriptedVale || elitePursuit || captainPatrol;
+          supportApproach = planningMode === 'support-approach' &&
+            entity.hp > 0 && !entity.returning && zone.enemies.includes(entity),
+          cinderPatrol = planningMode === 'cinder-patrol' &&
+            this.cinderPatroller(entity) && !entity.aggro && !entity.returning && entity.hp > 0,
+          cinderEscort = planningMode === 'cinder-escort' &&
+            this.zoneId === 'crown' && entity === this.veraCaptive() && this.veraHeld(),
+          cinderGuard = planningMode === 'cinder-guard' &&
+            this.zoneId === 'crown' && entity.veraEscort && entity.hp > 0 &&
+            zone.enemies.includes(entity),
+          cinderReturn = planningMode === 'cinder-return' &&
+            this.cinderPatroller(entity) && (entity.returning || entity.cinderReturn),
+          scriptedCinder = cinderPatrol || cinderEscort || cinderGuard || cinderReturn,
+          incremental = enemyPursuit || scriptedVale || elitePursuit || captainPatrol ||
+            supportApproach || scriptedCinder;
         let trip = terrainTrips.get(entity);
         // A hero-first interruption must retire its unsaved pending search,
         // including when the new engagement has a clear direct approach.
@@ -1628,7 +1676,12 @@
             : thornPatrol ? 'thorn-patrol'
               : thornEscort ? 'thorn-escort'
                 : captainPatrol ? 'captain-patrol'
-                  : elitePursuit ? 'elite-pursuit' : 'pursuit';
+                  : elitePursuit ? 'elite-pursuit'
+                    : supportApproach ? 'support-approach'
+                      : cinderPatrol ? 'cinder-patrol'
+                        : cinderEscort ? 'cinder-escort'
+                          : cinderGuard ? 'cinder-guard'
+                            : cinderReturn ? 'cinder-return' : 'pursuit';
           // A moving hero must not reset the entire search frontier every
           // update. A pending search uses its frozen origin and destination;
           // its result is validated against the actor's actual position.
@@ -1645,7 +1698,8 @@
           if (trip.pending || entity.routeAge <= 0) {
             // The elite pool also owns admission: combat leaders cannot consume
             // the companion/delivery shared route-plan count.
-            if (scriptedVale || captainPatrol || elitePursuit || trip.pending || this.reserveMovementPlan(entity)) {
+            if (scriptedVale || captainPatrol || elitePursuit || supportApproach || scriptedCinder ||
+                trip.pending || this.reserveMovementPlan(entity)) {
               const origin = trip.pending?.origin || entity,
                 destination = trip.pending?.target || target,
                 result = this.advanceBudgetedRoute(origin, destination, kind, trip.pending);
