@@ -68,6 +68,15 @@ The [normal workflow](../.github/workflows/focused-deploy.yml) selects focused c
 
 **Reuse valid evidence:** disconnection or a new chat does not invalidate tests on unchanged relevant inputs. Changes to code, tests, dependencies or build inputs can invalidate those results. A focused green run still cannot certify the full game or a physical device.
 
+### Design and perceived-quality gates are not CI green lights
+
+**Apply a proactive creative review as part of implementation, not after the owner complains.** Before propagating a feature or asset system across many cases, compare the *actual output and authored source* with approved intent, player context, the old design and neighboring variants. Technical tests answer “does this run without violating contracts?”; a design-quality review answers “does it do the right thing *well*?” Record both separately in the existing PR/issue. Do not assume a beautifully named recipe, numerical metrics or a test that only checks its own generated output proves an enjoyable result.
+
+For soundtrack composition in particular, follow [the mandatory sound-designer gate](AUDIO_AUTHORING.md#standing-soundtrack-quality-gate): inspect melodic identity, voice-leading/harmonic resolution, form/dynamics, expressive timbre, original-motif continuity, scene-appropriate base/action/TRUE/peace differentiation, warning headroom and repeat fatigue **before batch authoring more cues**. A source-level design risk can hold scaling while a codec/loop test still passes. Existing [Phase 2 remediation #701](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/701) is a worked failure case.
+
+**Evidence categories:** source/design review performed; code/audio technical tests performed; actually observed visual/listening/player QA performed; owner's eventual subjective approval. Mark missing audible/visual evidence **UNVERIFIED**. Do not report that someone heard or saw an output unless that happened. In the current soundtrack workflow, the owner only listens in Phase 9; this is not permission for the team to neglect earlier composition craft.
+
+
 ## 5. Keep the documentation and change together
 
 Per [AGENTS.md](../AGENTS.md#standing-documentation-ownership--part-of-every-change-28-october-2026), the implementer owns documentation **throughout development**, not during an unrelated future audit.

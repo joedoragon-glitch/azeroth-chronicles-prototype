@@ -4,6 +4,15 @@
 
 **Use this authority order:** the owner's current authorization defines scope; this policy defines consent and engineering responsibilities; [Development state](docs/DEVELOPMENT_STATE.md) tracks released evidence; [Architecture](docs/ARCHITECTURE.md) routes code ownership; [Decisions](docs/DECISIONS.md) retains approved design and supersessions; [Engineering workflow](docs/MECHANIC_DEVELOPMENT.md) describes implementation/testing. Dated tasks and one-time permissions do not automatically resume.
 
+## Standing authored-experience quality responsibility (31 October 2026)
+
+**A feature working technically does not establish that it is good or that it fulfills the intended player experience.** Engineers/creators must proactively review *what the player will actually experience*, relative to the current owner-approved design and source truth, **before** applying a new approach broadly or declaring its quality adequate. This includes audio composition, visuals, animation, layouts, scene atmosphere, storytelling, pacing, combat feel and other creative systems. The owner should not have to request a separate audit to uncover predictable weaknesses that could have been caught during normal implementation.
+
+In particular, music/sound work must follow [the maintained sound-design quality gate](docs/AUDIO_AUTHORING.md#standing-soundtrack-quality-gate), the [approved soundtrack sound bible](docs/AUDIO_SOUND_PASS.md) and current owner decisions in [soundtrack #673](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/673). Assess written composition, character/place identity, expressive timbre, harmonic purpose, dynamic form, motif continuity, adaptive layers and repeated-play sound—not just renderability, hashes, loudness and clean CI. The [pilot audit #701](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/701) demonstrates why green waveform tests did not suffice; **Phase 3 may not scale unresolved weak pilot patterns**.
+
+Separate evidence for **source/design suitability**, **automated technical correctness**, **actual perceptual review** (listening/looking/player experience), and **owner acceptance**. When perception cannot be observed, record **UNVERIFIED**, not a fictitious pass; carry the real risk to the authorized review stage without pretending the quality is established. Internal review belongs to development; **do not require the owner to audition work-in-progress music before the established Phase 9 gate**. Keep such checks in existing issue/PR and feature documentation rather than adding an approval ceremony or broad test suite.
+
+
 ## Standing documentation ownership — part of every change (28 October 2026)
 
 **Engineering responsibility, not an extra request from the owner:** Whoever implements an approved game change must keep its affected documentation accurate *while the work is happening*. This applies to planning, designs, game code, art, menus, balance, saves, tests, releases and interrupted work. Do not defer documentation to an occasional repository-wide cleanup, and do not ask the owner to manage this process.
