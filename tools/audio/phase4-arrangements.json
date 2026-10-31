@@ -3018,5 +3018,103 @@
       "stageWidth": 0.82
     }
   },
-  "auditNote": "Phase 4 rhythmic gestures and recorded room spaces are composed per regional/interior parent rather than fixed by role; role dynamics retain base-clock compatibility. This is not a hearing claim."
+  "auditNote": "Phase 4 rhythmic gestures and recorded room spaces are composed per regional/interior parent rather than fixed by role; role dynamics retain base-clock compatibility. This is not a hearing claim. Action percussion accents differ by actual region; the base melody is a foreground voice and must not be re-doubled into its additive action layer.",
+  "actionAccents": {
+    "place-vale": [
+      [
+        1.35,
+        "shaker",
+        0.037
+      ],
+      [
+        3.1,
+        "frame",
+        0.041
+      ]
+    ],
+    "place-march": [
+      [
+        0.8,
+        "shaker",
+        0.039
+      ],
+      [
+        2.95,
+        "tom",
+        0.048
+      ]
+    ],
+    "place-highlands": [
+      [
+        0.15,
+        "frame",
+        0.048
+      ],
+      [
+        2.45,
+        "tom",
+        0.043
+      ]
+    ],
+    "place-frontier": [
+      [
+        0.5,
+        "tom",
+        0.044
+      ],
+      [
+        2.9,
+        "shaker",
+        0.033
+      ]
+    ],
+    "place-crypt": [
+      [
+        1.2,
+        "frame",
+        0.031
+      ],
+      [
+        3.15,
+        "shaker",
+        0.024
+      ]
+    ],
+    "place-archive": [
+      [
+        0.85,
+        "shaker",
+        0.039
+      ],
+      [
+        2.65,
+        "frame",
+        0.041
+      ]
+    ],
+    "place-mine": [
+      [
+        0,
+        "tom",
+        0.051
+      ],
+      [
+        2.25,
+        "frame",
+        0.037
+      ]
+    ],
+    "place-abyss": [
+      [
+        0.25,
+        "frame",
+        0.04
+      ],
+      [
+        3.05,
+        "tom",
+        0.05
+      ]
+    ]
+  }
 }
