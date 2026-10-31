@@ -38,6 +38,13 @@ jobs:
           sudo apt-get install -y -qq ffmpeg
           ffmpeg -version | head -n 1
           ffprobe -version | head -n 1
+      - name: Install locked tools for focused PWA and routing regressions
+        run: npm ci --ignore-scripts
+      - name: Verify corrected source-routing, generated worker and offline build
+        run: |
+          node tests/environment-audio-audit.test.cjs
+          node tests/pwa-release-id.test.cjs
+          node scripts/build.cjs --check
       - name: Analyze all 14 real catalog MP3s (strict, never skip decode)
         env:
           REQUIRE_AUDIO_SIGNAL_DECODE: '1'
