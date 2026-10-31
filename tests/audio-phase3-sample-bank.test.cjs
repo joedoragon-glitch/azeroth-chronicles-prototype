@@ -40,7 +40,7 @@ for (const [instrument, def] of Object.entries(bank.instruments)) {
   const pitches = new Set();
   for (const s of def.samples) {
     assert(s.file.startsWith(instrument + '/'));
-    assert.match(s.file, /^[a-zA-Z]+\/[a-zA-Z0-9-]+\.(mp3|ogg)$/);
+    assert.match(s.file, /^[a-zA-Z]+\/[a-zA-Z0-9_-]+\.(mp3|ogg)$/);
     assert(!sampleFiles.has(s.file), 'Duplicate source sample: ' + s.file);
     assert(Number.isInteger(s.midi) && s.midi >= def.range[0] && s.midi <= def.range[1],
       instrument + ': invalid recorded pitch ' + s.midi);
