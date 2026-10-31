@@ -111,6 +111,52 @@ for (const family of ['mine', 'archive']) {
     ' single-warning reversal, party protection, rebound and rejection gates');
 }
 
+// Overlapping warnings remain independent. One correct counter protects the
+// whole team from the first release, NOT from the second caster's release.
+{
+  const { g, boss, warning, soldier } = scene('mine');
+  const hp = g.hero.hp, soldierHp = soldier.hp;
+  const another = g.bossEnemy(g.boss('mine'), 'normal', { x: boss.x, y: boss.y });
+  another.id = 'independent-stacked-warning-source';
+  another.aggro = true;
+  another.telegraph = g.buildBossAttack(another, 0, g.hero, false).first;
+  g.prepareGroundAttack(another, another.telegraph);
+  assert(g.strategistReversalCovers(another.telegraph, g.hero));
+  assert(g.strategistReversalCovers(another.telegraph, soldier));
+  g.zone().enemies.push(another);
+  assert.equal(g.attemptStrategistReversal(boss.id), true);
+  assert(!another.telegraph.strategistReversal,
+    'the other caster owns a completely separate pending attack receipt');
+  warning.timer = 0;
+  g.resolveAttack(boss);
+  assert.equal(g.hero.hp, hp);
+  assert.equal(soldier.hp, soldierHp);
+  another.telegraph.timer = 0;
+  g.resolveAttack(another);
+  assert(g.hero.hp < hp, 'uncountered overlapping warning still hurts hero');
+  assert(soldier.hp < soldierHp, 'uncountered overlapping warning still hurts companion');
+  console.log('PASS two overlapping warning sources keep independent harm');
+}
+
+// Combat training may strengthen the reflected consequence without reducing
+// the full-party protection earned by an accurate response at low rank.
+{
+  const damageAtRank = (rank) => {
+    const { g, boss, warning, soldier } = scene('mine');
+    g.hero.skills[0] = rank; // Temporary class-rank proxy; not instructor integration.
+    const initial = boss.hp, hp = g.hero.hp, soldierHp = soldier.hp;
+    assert(g.attemptStrategistReversal(boss.id));
+    warning.timer = 0;
+    g.resolveAttack(boss);
+    assert.equal(g.hero.hp, hp);
+    assert.equal(soldier.hp, soldierHp);
+    return initial - boss.hp;
+  };
+  assert(damageAtRank(5) > damageAtRank(1),
+    'later combat mastery increases rebound force without bleed-through damage');
+  console.log('PASS training proxy scales reflected force while protection stays exact');
+}
+
 // A successful counter cannot turn an unrelated healing / summon / charge
 // warning into a free enemy-damage button. Original four classes remain inert.
 const other = scene('mine');
