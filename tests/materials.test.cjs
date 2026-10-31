@@ -156,6 +156,18 @@ const entry = (n) => ({
       'reconstructed Greenwood uses procedural ground',
     );
     assert(
+      !stored.assets['terrain:ground:frontier'] &&
+        !require('../assets/materials/manifest.json').materials['terrain:ground:frontier'],
+      'reconstructed Frontier soil is fully procedural',
+    );
+    assert(
+      stored.history['terrain:ground:frontier'].some(
+        (r) =>
+          r.revision === '75b4324a6eab58666e1150da6e88e9ced01eecddf2f2beac3f27aaab144ee776' && r.review?.status === 'approved',
+      ),
+      'approved T004 survives intact in reversible history',
+    );
+    assert(
       !require('../assets/materials/manifest.json').materials['terrain:ground:vale'],
       'retired Greenwood texture is not loaded',
     );
@@ -168,7 +180,6 @@ const entry = (n) => ({
       'approved T001 raster remains in rollback history',
     );
     for (const key of [
-      'terrain:ground:frontier',
       'terrain:ground:crown',
       'terrain:road:vale',
       'terrain:road:highlands',

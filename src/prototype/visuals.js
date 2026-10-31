@@ -18262,6 +18262,51 @@
         : 1;
     return unscaledHeight(e) * scale;
   }
+
+  // Lore-driven recovery zones derive from the named Frontier scenery anchors.
+  // Rendered ground is presentation only; no geometry or save changes.
+  const frontierGroundProfiles = [
+    ['old-siege-margin', 460, 340, 0.86, '105,128,78'],
+    ['hamlet-approach', 455, 345, 0.85, '100,122,76'],
+    ['burned-hamlet', 370, 330, 0.73, '118,124,80'],
+    ['lower-recovered-slope', 500, 435, 0.85, '100,122,76'],
+    ['western-woodland', 510, 515, 0.92, '91,123,78'],
+    ['old-char', 565, 370, 0.61, '115,125,83'],
+    ['repaired-supply-road', 405, 315, 0.47, '116,122,84'],
+    ['bastion-outskirts', 365, 300, 0.35, '122,124,89'],
+    ['ravine-safe-bank', 355, 300, 0.5, '111,124,89'],
+    ['east-flank', 355, 575, 0.52, '108,122,85'],
+    ['fortified-road', 370, 310, 0.36, '112,119,82'],
+  ];
+  const frontierGroundZones = frontierGroundProfiles
+    .map(([name, rx, ry, strength, rgb]) => {
+      const sites = R.frontierRecoveryScenes.filter((row) => row[3] === name);
+      if (!sites.length) return null;
+      const x = sites.reduce((sum, row) => sum + row[0], 0) / sites.length,
+        y = sites.reduce((sum, row) => sum + row[1], 0) / sites.length;
+      return { name, x, y, rx, ry, strength, rgb };
+    })
+    .filter(Boolean);
+  function frontierGroundRecoveryAt(x, y) {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return 0;
+    // Slowly warped ellipse edges avoid stamped circles and tile boundaries.
+    const a = x + 35 * Math.sin(y / 205 + x / 510),
+      b = y + 28 * Math.cos(x / 225 - y / 480);
+    let cover = 0;
+    for (const z of frontierGroundZones) {
+      const dx = (a - z.x) / z.rx,
+        dy = (b - z.y) / z.ry,
+        d2 = dx * dx + dy * dy;
+      if (d2 >= 1) continue;
+      const t = 1 - d2;
+      cover = Math.max(cover, z.strength * t * t * (3 - 2 * t));
+    }
+    // Neither the interior of the ravine nor its raw eroded banks recover.
+    const [left, right] = R.channelBanks(3, y),
+      distance = Math.max(left - x, x - right),
+      bankFade = Math.max(0, Math.min(1, (distance - 25) / 140));
+    return cover * bankFade;
+  }
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
     ['#3e5544', '#4b614b', '#30483c', '#a2b48e'],
@@ -18282,7 +18327,7 @@
     'supply-highlands': ['#55534b', '#636056', '#46443e', '#b9ae91'],
     'supply-crown': ['#44404b', '#514b59', '#37343e', '#aa96b0'],
   };
-  function groundDetail(ctx, p, seed, region, room, dungeonId, colors) {
+  function groundDetail(ctx, p, seed, region, room, dungeonId, colors, worldX = 0, worldY = 0) {
     if (seed % 3 === 0) return;
     const dx = (seed % 35) - 17,
       dy = ((seed >>> 5) % 15) + 12,
@@ -18460,7 +18505,16 @@
         dot(x + 3, y + 1, 1.8, '#75826b');
       }
     } else if (region === 3) {
-      if (k < 3) {
+      const recovery = frontierGroundRecoveryAt(worldX, worldY);
+      if (recovery > 0.16 && seed % 23 < recovery * 20) {
+        // New pioneer stems appear among, not instead of, charcoal and grit.
+        for (const offset of [-5, 0, 5]) {
+          const height = 4 + ((seed + offset + 20) % 5);
+          line(x + offset, y + 3, x + offset + (offset < 0 ? -2 : 2), y + 3 - height,
+            offset ? '#87946e' : '#9aab7c', 0.9);
+        }
+        dot(x + 1, y + 1, 1.7, '#6c7958');
+      } else if (k < 3) {
         line(x - 7, y + 3, x - 1, y - 6, '#72594b', 1.5);
         line(x - 1, y - 6, x + 5, y + 2, '#72594b', 1.5);
       } else if (k === 3) {
@@ -18556,7 +18610,7 @@
     if (
       !blocked &&
       materials &&
-      !(outdoor && (region === 2 || (region === 0 && R.greenwoodLayout?.version === 2))) &&
+      !(outdoor && ([2, 3].includes(region) || (region === 0 && R.greenwoodLayout?.version === 2))) &&
       dungeonId !== 'supply-highlands'
     ) {
       const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
@@ -18574,7 +18628,7 @@
         { x, y: y + 80 },
       ]);
     }
-    if (!materials && !blocked) {
+    if ((!materials || (outdoor && region === 3)) && !blocked) {
       ctx.save();
       ctx.globalAlpha = outdoor ? 0.055 : 0.035;
       ctx.fillStyle = colors[1];
@@ -18623,7 +18677,7 @@
         ctx.stroke();
       }
     }
-    if (!blocked) groundDetail(ctx, p, seed, region, room, dungeonId, colors);
+    if (!blocked) groundDetail(ctx, p, seed, region, room, dungeonId, colors, x + 40, y + 40);
   }
   // Culling uses logical viewport units, not backing-store pixels.
   function outsideScreen(points, viewport, margin = 0) {
@@ -18869,6 +18923,62 @@
         ctx.fillRect(-rx, -rx, rx * 2, rx * 2);
         ctx.restore();
       }
+
+    if (region === 3) {
+      // The country is recovering in selected cool-earth districts, not
+      // uniformly greening. Roads, ravine, pools and buildings paint later.
+      for (const z of frontierGroundZones) {
+        const p = screen({ x: z.x, y: z.y }),
+          radius = (z.rx + z.ry) * 0.76;
+        if (p.x < -radius - 100 || p.x > bounds.width + radius + 100 ||
+            p.y < -radius - 100 || p.y > bounds.height + radius + 100) continue;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.transform(0.76, 0.27, -0.76, 0.27, 0, 0);
+        ctx.scale(z.rx, z.ry);
+        const wash = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        wash.addColorStop(0, `rgba(${z.rgb},${(z.strength * 0.74).toFixed(3)})`);
+        wash.addColorStop(0.46, `rgba(${z.rgb},${(z.strength * 0.44).toFixed(3)})`);
+        wash.addColorStop(0.85, `rgba(${z.rgb},${(z.strength * 0.1).toFixed(3)})`);
+        wash.addColorStop(1, `rgba(${z.rgb},0)`);
+        ctx.fillStyle = wash;
+        ctx.beginPath();
+        ctx.arc(0, 0, 1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      // Sparse rooted grass in world coordinates: no checkerboard tiling.
+      // All static and viewport-culled, including Canvas and Pixi backgrounds.
+      for (let x = 65; x < size; x += 135)
+        for (let y = 80; y < size; y += 135) {
+          const seed =
+              (Math.imul(Math.floor(x / 135) + 17, 73856093) ^
+                Math.imul(Math.floor(y / 135) + 29, 19349663)) >>> 0,
+            wx = x + (seed % 35) - 17,
+            wy = y + ((seed >>> 8) % 39) - 19,
+            recovery = frontierGroundRecoveryAt(wx, wy);
+          if (recovery < 0.24 || (seed % 101) / 101 > recovery * 0.8) continue;
+          const p = screen({ x: wx, y: wy });
+          if (p.x < -20 || p.y < -20 || p.x > bounds.width + 20 || p.y > bounds.height + 20)
+            continue;
+          ctx.save();
+          ctx.strokeStyle = seed % 3 ? '#879875' : '#a1a77a';
+          ctx.lineWidth = 0.95;
+          for (const offset of [-5, 0, 5]) {
+            const height = 5 + ((seed + offset + 30) % 6);
+            ctx.beginPath();
+            ctx.moveTo(p.x + offset, p.y + 2);
+            ctx.quadraticCurveTo(
+              p.x + offset + 1,
+              p.y - height * 0.55,
+              p.x + offset + (offset < 0 ? -2 : 3),
+              p.y - height,
+            );
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+    }
     ctx.restore();
     if (region === 0 && R.greenwoodLayout?.version === 2)
       GreenwoodLandscape.drawGround(ctx, screen, R.greenwoodLayout, bounds);
@@ -20238,6 +20348,7 @@
   root.PrototypeVisuals = {
     draw,
     frontierTreeShoots,
+    frontierGroundRecoveryAt,
     height,
     floor,
     dungeonFloorPath,

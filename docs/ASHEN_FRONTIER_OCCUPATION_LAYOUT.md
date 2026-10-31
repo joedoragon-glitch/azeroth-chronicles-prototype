@@ -4,6 +4,22 @@
 
 This pass keeps Ashen Frontier fully procedural and turns its existing ingredients into a clearer occupied-frontier identity. It introduces no sprites, no new rewards, no combat rebalance and no progression changes.
 
+## Current lore-ground reconciliation — 30 October 2026, draft PR #698
+
+The Frontier is a recovering occupied province, not uniformly scorched. Its current
+`data.js` and `rules.frontierRecoveryScenes` explicitly place pioneer grasses,
+young trees, poppies, repaired gardens and cool soil among charred ruins. The older
+T004 uniform ash raster is therefore retired from active registration, preserving
+its original and approval record as rollback history. The draft renderer adds
+feathered, localized moss-earth washes and sparse rooted growth in those named
+locations, with damage and military infrastructure still visible. The original
+ravine, pools, roads, existing props and gameplay/collision geometry are untouched.
+
+**Candidate only:** neither visual quality nor device FPS has been verified.
+Before release, inspect actual 150% day/night scenes and run the focused material,
+rendering and reproducible offline checks. No broad terrain recoloring or green
+meadow replacement is authorized by this focused reconstruction.
+
 ## Regional identity
 
 Ashen Frontier is no longer treated as only a burned battlefield on the road to Dark Crown. The region now reads as land that was devastated first and then consolidated because stable roads, specialist labor, garrison rest points and reliable supply flow are more useful to the regime than permanent chaos.

@@ -107,7 +107,7 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 > Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #50413b, #5d4b42, #423732, #b9987b. Muted warm gray-brown ash/char earth with subdued grit and dry weathering. No embers. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
 
-**Current status:** T004 remains active. Frontier's later occupation/layout work has not by itself established that the original ash/char ground grain is obsolete. Retain until a source-and-scene comparison demonstrates supersession.
+**Current status (30 October 2026, PR #698 candidate):** T004 is superseded by the authored recovery landscape. The old uniformly ashen ground grain cannot represent the approved coexistence of cooled soil, pioneer vegetation and visible battle scars. Its original, approved image and provenance remain in rollback history. The new surface uses restrained procedural soil and rooted ground cover aligned with the named recovery scenes, preserving ravine, ruins and occupation. Release and native visual verification remain pending.
 
 ### T005 — Dark Crown ground
 
