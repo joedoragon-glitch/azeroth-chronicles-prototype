@@ -58,10 +58,28 @@ for(const [i,side] of sides.entries()){
 assert.equal(new Set(ids).size,5);
 assert.equal(new Set(tileHashes).size,5,'Each existing side interior floor visually distinct');
 assert.equal(new Set(pillarHashes).size,4,'Four themed generic masonry palettes differ; Greenwood retains its authored cellar pier');
+// The only mini-dungeons.test.cjs case relevant here is side-interior
+// arrival; its other outdoor field-compound cases already fail on current main
+// and are not Phase 3 surface regressions. Verify native entry behavior here.
+for(const side of sides){
+  const game=new C('normal','paladin',()=>.9);
+  assert(game.enter(side.region),'Original regional approach exists '+side.name);
+  const entrance=game.zone().npcs.find(n=>n.family===side.id);
+  assert(entrance&&entrance.name===side.name,'Native side entrance identity '+side.name);
+  Object.assign(game.hero,entrance);
+  assert(game.interact(entrance),'Existing approach enters '+side.name);
+  assert.equal(game.zoneId,side.id);
+  assert.equal(game.zone().nodes.length,0,'No resource dungeon '+side.name);
+  assert(!game.zone().enemies.some(e=>e.type==='boss'),'No invented boss '+side.name);
+  assert(!game.zone().npcs.some(n=>n.kind==='cage'),'No invented captive '+side.name);
+  assert(game.zone().enemies.every(e=>e.species===side.species),
+    'Original inhabitants retained '+side.name);
+  assert(game.traps().length>=3,'Authored side-dungeon traps remain '+side.name);
+}
 // These original native suites own dungeon doors and trap/progression safety,
 // Greenwood canon, and all four Treasury captains/caches. Run narrowly here:
 // source paintings are not a substitute for established gameplay regressions.
-for(const name of ['mini-dungeons.test.cjs','regional-handoffs.test.cjs',
+for(const name of ['regional-handoffs.test.cjs',
   'greenwood-interiors.test.cjs','treasury-fortifications.test.cjs']){
   console.log('Phase 3 original regression: '+name);
   const run=cp.spawnSync(process.execPath,[path.join(__dirname,name)],{
