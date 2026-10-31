@@ -116,6 +116,7 @@ jobs:
           git fetch origin "refs/heads/$GITHUB_REF_NAME"
           mkdir -p /tmp/environment727-archive
           git worktree add --detach /tmp/environment727-archive "$(git rev-parse FETCH_HEAD)"
+          mkdir -p /tmp/environment727-archive/tools/audio/frozen-preview
           cp tools/audio/frozen-preview/*.mp3 /tmp/environment727-archive/tools/audio/frozen-preview/
           cd /tmp/environment727-archive
           git config user.name 'github-actions[bot]'
