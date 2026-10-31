@@ -164,6 +164,11 @@ function capture(g,label,ticks,subject,{sourceStacks=false}={}){
   const stats=capture(g,'highlands-phased-obstructed',120,e,{sourceStacks:true});
   assert(stats.peak.probes>1000,'must reproduce the high-cost phase fixture');
   assert(stats.plans.breakdown['elite-pursuit']?.calls>0,'same phased elite planner used');
+  assert(stats.plans.breakdown['support-approach']?.calls>0,
+    'measured Treasury healer now uses independent bounded support planning');
+  assert(!stats.routes.top.some(v=>v.stack.some(s=>s.includes('enemySupportApproach'))),
+    'Treasury healer must not perform its former unbounded preliminary route');
+  assert(stats.peak.probes<3500,'Treasury phase must not retain an 8,830-probe whole-tick burst');
   console.log('ISSUE615_HIGHLANDS_SETUP '+JSON.stringify({origin:xy(lane.a),hero:xy(lane.b),
     exactWaypoints:lane.waypoints}));
 }
@@ -184,6 +189,8 @@ function crown(seed=11){
 {
   const {g,boss,vera,guards}=crown(11);
   const stats=capture(g,'cinder-passive-authored-spawn',240,[boss,vera,...guards]);
+  assert(stats.peak.probes<4000,'idle Cindermaw convoy must not retain 110k+ route bursts');
+  assert.equal(stats.routes.calls,0,'passive Cindermaw convoy must use no synchronous routes');
   console.log('ISSUE615_CINDER_BASELINE '+JSON.stringify({
     inspection:!!boss.cinderDestination,stop:boss.cinderStop,forgeDistance:num(dist(boss,vera)),
     guardDistances:guards.map(u=>num(dist(u,boss))),routeCalls:stats.routes.calls}));
@@ -194,6 +201,9 @@ function crown(seed=11){
   // itinerary selection, NPC following and collision remain original.
   boss.cinderInspectionPause=0;delete boss.cinderDestination;
   const stats=capture(g,'cinder-inspection-selection',80,[boss,vera,...guards]);
+  assert(stats.peak.probes<4000,'Cinder stop selection remains bounded per frame');
+  assert.equal(stats.routes.calls,0,'Cinder selection and escorts cannot synchronously route');
+  assert(stats.plans.breakdown['cinder-selection']?.calls>0,'stop selection advances finite search');
   console.log('ISSUE615_CINDER_SELECTION '+JSON.stringify({
     stop:boss.cinderStop,destination:boss.cinderDestination||null,
     forgeDistance:num(dist(boss,vera)),routeCalls:stats.routes.calls}));
@@ -208,6 +218,10 @@ function crown(seed=11){
   const target={...stops[idx],i:idx};
   boss.cinderDestination=target;boss.cinderInspectionPause=0;
   const stats=capture(g,'cinder-inspection-leg-and-escort',240,[boss,vera,...guards]);
+  assert(stats.peak.probes<4000,'Cinder patrol, forge and guard paths remain bounded');
+  assert.equal(stats.routes.calls,0,'inspection/escort cannot synchronously route');
+  assert(stats.plans.breakdown['cinder-patrol']?.calls>0,'native minister leg uses finite search');
+  assert(dist(boss,{x:2200,y:1750})>30,'Cinder makes legal progress on authored route');
   console.log('ISSUE615_CINDER_LEG '+JSON.stringify({target:xy(target),stop:boss.cinderStop,
     destination:boss.cinderDestination||null,forgeDistance:num(dist(boss,vera)),
     routeCalls:stats.routes.calls}));
@@ -229,9 +243,38 @@ function crown(seed=11){
   g.disengage(boss,dt);
   assert(boss.cinderReturn || boss.returning,'native Cindermaw return initiated');
   const stats=capture(g,'cinder-remote-disengage-return',400,[boss,vera,...guards]);
+  assert(stats.peak.probes<4000,'Cinder physical return must not retain 78k+ burst');
+  assert.equal(stats.routes.calls,0,'Cinder return/escort must use no synchronous route');
+  assert(stats.plans.breakdown['cinder-return']?.calls>0,'real boss return uses finite search');
   console.log('ISSUE615_CINDER_RETURN '+JSON.stringify({
     bossReturning:!!boss.cinderReturn,returnedHome:dist(boss,boss.home)<.1,
     forgeDistance:num(dist(boss,vera)),guardDistances:guards.map(u=>num(dist(u,boss))),
     routeCalls:stats.routes.calls}));
 }
-console.log('PASS #615 diagnostic complete; traces are evidence, not automatic gameplay acceptance.');
+// Preserve the exact original native route for a long Crown inspection leg;
+// lower per-tick work may not alter walkable corners, final goal or target.
+{
+  const {g,boss}=crown(11),target=g.cinderInspectionStops()[1];
+  const reference=g.route(boss,target);
+  assert(reference.length>0,'Crownwatch native authored inspection leg exists');
+  const old=g.blocked;
+  let probes=0,peak=0,pending=null,out=null,ticks=0;
+  g.blocked=function(...args){probes++;return old.apply(this,args)};
+  for(;ticks<200;ticks++){
+    g.s.time+=dt;
+    const before=probes;
+    const step=g.advanceBudgetedRoute(pending?.origin||boss,
+      pending?.target||target,'cinder-patrol',pending);
+    peak=Math.max(peak,probes-before);
+    if(!step.pending){out=step.path;break;}
+    pending=step.state;
+  }
+  delete g.blocked;
+  assert(out!==null,'long Crown route must complete using finite updates');
+  assert.deepEqual(out,reference,'original Crown inspection waypoints preserved exactly');
+  assert(peak<=512,'Crown planner per-tick probe budget');
+  console.log('ISSUE615_CINDER_WAYPOINT_PARITY '+JSON.stringify({
+    origin:xy(boss),target:xy(target),waypoints:out.length,
+    searchTicks:ticks+1,peakProbePerTick:peak,totalProbes:probes}));
+}
+console.log('PASS #615 native Highlands and Cinder source-grounded budgets, movement and waypoint parity.');
