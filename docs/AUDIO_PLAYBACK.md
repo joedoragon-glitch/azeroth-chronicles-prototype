@@ -1,5 +1,10 @@
 # Sound design and audio production — current game
 
+## Phase 9 — owner first listening STARTED FOR PREPARATION (31 October 2026)
+
+The owner considers the Phase 8 design sufficiently complete to **advance to Phase 9 sequencing**. This does **not** certify Phase 8's unexecuted browser/device tests, fix parent Phase 7 offline service-worker installation issue #699, or authorize release. The dedicated [Phase 9 first-listening guide](AUDIO_PHASE9_FIRST_LISTEN.md) maps the **65 exact authored candidate tracks** and the **18 protected Crown references** by name and stable ID, explains correct scene/stem pairing and provenance, and preserves the first actual owner ear verdict as **UNVERIFIED / NOT YET HEARD**. The live public room has not been proven to run this unmerged candidate; do not send the owner to old published music as though it were the completed score. The independent environmental #727 previews remain outside the game catalog. The Phase 9 draft is documentation-only, stacked on Phase 8 #737; no audio files, runtime, saved-game data, merge or deployment changed.
+
+
 ## Phase 8 scope audit correction — complete game sound library (31 October 2026)
 
 **Critical dependency defect found and corrected:** the previous minimal standalone Greenwood fix still omitted two newer engine-owned modules (Greenwood Landscape and Greenwood Interiors) and Enemy VFX Events. The redesigned room now loads all three in the same source order as the canonical game entrypoint; its existing campaign-domain VM regression now checks **exact parity** with the canonical pre-engine script inventory, rejecting missing, duplicated or reordered scripts, and executes the room graph through Campaign construction. The previous duplicate `enemy-vfx-events.js` script inclusion has also been removed. This was an actual source defect, not an assumption of successful browser execution.
