@@ -57,10 +57,13 @@ class RecordedSampler:
             kind = "glockenspiel"
             while midi < 79:
                 midi += 12
-        elif kind == "cello" and midi < 36:
-            kind = "basses"
-        elif kind == "cello" and midi > 75:
-            raise ValueError("Cannot play cello above bank range+4: MIDI " + str(midi))
+        elif kind == "cello":
+            if midi < 36:
+                kind = "basses"
+            elif midi > 75:
+                raise ValueError("Cannot play cello above bank range+4: MIDI " + str(midi))
+            else:
+                kind = "celli"
         if kind not in self.instruments:
             raise ValueError("Missing recorded instrument: " + original)
         low, high = self.instruments[kind]["range"]
