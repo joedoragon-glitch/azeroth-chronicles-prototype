@@ -390,6 +390,12 @@ The owner directs that the current authored procedural terrain of each rebuilt r
 
 The initial source audit finds Greenwood v2 already bypasses T001 ground painting; the proposed material retirement eliminates a redundant live registration without changing accepted Greenwood terrain. March T002 and Highlands T003 were already inactive. Frontier T004 is additionally superseded in the current draft after comparing its uniform old palette to the modern lore and scene placements: selected cool-earth/pioneer-regrowth patches must be part of the ground, not just isolated props. Its approved raster is archived for rollback; ravine, scorched ruins, occupation and roads remain. Crown T005 stays registered pending separate review. This paragraph records the proposed October 30 reconciliation, not a merged build, release or device verification.
 
+#### 29 October 2026 — PixiJS WebGL2 becomes the intended default renderer (PR #574)
+
+The owner has directed **PixiJS WebGL2** to become the primary/default world renderer, with **Canvas 2D** retained as a full selectable backup and automatic WebGL failure fallback. Player-facing labels will be **PixiJS WebGL2 · Default** / **Canvas 2D · Backup** (Spanish **Predeterminado / Respaldo**), without “Experimental.” The historical internal `pixi-experimental.js` filename does not dictate menu wording. This is a product role and intended release change, **not** hardware certification or evidence of better frame pacing.
+
+[PR #574](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/574) implements a one-time migration of old Canvas preferences while preserving later explicit Canvas choices, the manual 15-second Keep/Revert trial, title-first New Game/Continue Pixi preparation, visible Continue with Canvas escape, context-loss recovery/quarantine, original v4 saves and PWA update integrity. The merged source chooses Pixi by default; GitHub Pages publication and owner hardware acceptance are separately verified. Severe real-device performance and [Stage 7 acceptance](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md) remain unresolved; obsolete [#572](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/572) is not an automatic merge dependency.
+
 #### Procedural canon polish v0.8.79
 
 **Historical inventory:** This era's sprite counts and 'no sprite is active' status do not describe later manifests or current art availability.
