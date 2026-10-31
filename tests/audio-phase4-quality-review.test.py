@@ -18,6 +18,7 @@ spec.loader.exec_module(phase4)
 phase3, original, catalog, frozen, bases, pilots, data = phase4.score_contract()
 
 PILOT_HERITAGE = ("place-vale", "place-archive")
+original_renderer = original.load_renderer()
 recovered_pilot_notes = 0
 action_counterline_bars = 0
 heritage_bars = 0
@@ -50,10 +51,10 @@ for name in PILOT_HERITAGE:
         root = pilot["root"]
         for (at, deg, _, chromatic), ev in zip(actual, original_events):
             expected_pitch = (root + 12 +
-                              original.load_renderer().degree(
+                              original_renderer.degree(
                                   harmony + ev[1], mode) +
                               (ev[3] if len(ev) == 4 else 0))
-            played_pitch = root + 12 + original.load_renderer().degree(
+            played_pitch = root + 12 + original_renderer.degree(
                 deg, mode) + chromatic
             assert played_pitch == expected_pitch and at == ev[0]
 
