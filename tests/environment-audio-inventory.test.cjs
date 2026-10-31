@@ -24,10 +24,11 @@ function sha(buffer) {
 }
 const registered = Object.entries(manifest.assets).filter(([,a]) => a.kind === 'ambience');
 const registeredIds = registered.map(([id]) => id);
-assert.equal(registered.length, 14, 'A change to shipped ambience count requires explicit inventory reconciliation');
-assert.equal(Object.keys(manifest.assets).length, 127, 'Entire catalog changed: audit audio release contract first');
+assert.equal(registered.length, 18, 'Preserve 14 original beds and register exactly four new ones');
+assert.equal(Object.keys(manifest.assets).length, 131, 'Other music/effect catalog identities must remain untouched');
 assert.equal(book.cues.length, 14);
-equalSets(registeredIds, book.cues.map(c=>c.id), 'Original source book versus playable recordings');
+equalSets(registered.filter(([,a])=>a.managedBy==='environment-book').map(([id])=>id),
+  book.cues.map(c=>c.id), 'Every original bed preserved and source-book-owned');
 
 // Source file listing must equal the manifest, not merely contain it. Any
 // forgotten MP3 in assets/audio/ambience makes this inventory test fail.
@@ -36,9 +37,9 @@ const physical = fs.readdirSync(folder).filter(x=>/\.(mp3|ogg|wav)$/i.test(x)).s
 const referenced = registered.map(([,a]) => path.basename(a.src)).sort();
 equalSets(physical, referenced, 'Physical ambient files and catalog registration');
 for (const [id,asset] of registered) {
-  assert.equal(asset.managedBy, 'environment-book', id+' changes source method: reconsider audit');
+  assert(['environment-book',undefined].includes(asset.managedBy),id+' invalid creation ownership');
   assert.equal(asset.loop.start,.15);
-  assert.equal(asset.loop.end,24.15);
+  assert.equal(asset.loop.end,asset.managedBy==='environment-book'?24.15:72.15);
   const bytes = fs.readFileSync(path.join(root,asset.src.slice(2)));
   assert.equal(sha(bytes),asset.sha256,id+' actual registered bytes differ from catalog');
   assert(asset.credits?.license && asset.credits?.author,id+' credits absent');
@@ -52,8 +53,8 @@ assert.equal(Object.keys(manifest.director.places).length,19);
 const scenes = [
   ['vale','vale','outdoors','env-woodland-day'],
   ['march','march','outdoors','env-marsh-day'],
-  ['highlands','highlands','outdoors','env-highland-wind'],
-  ['frontier','frontier','outdoors','env-frontier-air'],
+  ['highlands','highlands','outdoors','env-highlands-autumn'],
+  ['frontier','frontier','outdoors','env-frontier-recovery'],
   ['crown','crown','outdoors','env-crown-courtyard'],
   ['crypt','vale','dungeon','env-retreat'],
   ['archive','march','dungeon','env-archive'],
@@ -66,8 +67,8 @@ const scenes = [
   ['supply-crown','crown','treasury','env-home'],
   ['side-vale-cellars','vale','side-dungeon','env-cellar'],
   ['side-march-watchhouse','march','side-dungeon','env-archive'],
-  ['side-highlands-signal','highlands','side-dungeon','env-cellar'],
-  ['side-frontier-shrine','frontier','side-dungeon','env-retreat'],
+  ['side-highlands-signal','highlands','side-dungeon','env-signal-occupied'],
+  ['side-frontier-shrine','frontier','side-dungeon','env-shrine-occupied'],
   ['side-crown-foundry','crown','side-dungeon','env-mine'],
 ];
 equalSets(scenes.map(s=>s[0]),Object.keys(manifest.director.places),'All authored playable scenes represented');
@@ -79,7 +80,7 @@ for(const [zone,region,interior,expected] of scenes) {
   assert(route,zone+' has no playable ambient route');
   assert.equal(route.asset,expected,'PLAYABLE route changed without audit update: '+zone);
   assert(registeredIds.includes(route.asset),zone+' references a missing audio master');
-  console.log('INVENTORY_SCENE '+JSON.stringify({zone,bed:route.asset,status:'registered-original'}));
+  console.log('INVENTORY_SCENE '+JSON.stringify({zone,bed:route.asset,status: ['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(route.asset) ? 'registered-new':'registered-original'}));
 }
 for(const [region,id] of [['vale','env-woodland-night'],['march','env-marsh-night']]){
   assert.equal(a.environmentCue({zone:region,region,interior:'outdoors',night:true,
@@ -104,9 +105,8 @@ for(const output of both){
   const digest=output.sha256;
   assert(/^[0-9a-f]{64}$/.test(digest),'Candidate MP3 SHA missing '+output.id);
   assert.equal(output.encodedBytes ?? output.bytes,1158381,output.id+' encoded byte size drift');
-  assert(!registeredIds.includes(output.id),output.id+' accidentally registered without design review');
   assert(!fs.existsSync(path.join(folder,output.id+'.mp3')),
-    output.id+' untracked candidate entered game assets');
+    output.id+' studio identity must not enter game without a separate reviewed production name');
   console.log('INVENTORY_CANDIDATE '+JSON.stringify({id:output.id,
     sha256:digest,status:currentIds.includes(output.id)?'new-studio-only':'superseded-studio-only'}));
 }
@@ -116,15 +116,31 @@ for(const item of regional.sources) {
   assert(item.evidence&&item.license&&item.creator,item.id+' provenance absent');
 }
 assert.equal(former.status.registered,'NO');
-assert.match(regional.status.sourceInGame,/^NO(?:\b|;)/, 'New source registrations are explicitly pending');
+const mastered=[
+  ['regional-ironroot-autumn','env-highlands-autumn','highlands'],
+  ['regional-frontier-recovery','env-frontier-recovery','frontier'],
+  ['regional-signal-occupied','env-signal-occupied','side-highlands-signal'],
+  ['regional-shrine-occupied','env-shrine-occupied','side-frontier-shrine'],
+];
+for(const [studioId,gameId,zone] of mastered){
+  const evidence=regional.finalRecordedOutputs.candidateFiles.find(x=>x.id===studioId);
+  const registeredMaster=manifest.assets[gameId];
+  assert(registeredMaster && registeredMaster.kind==='ambience',
+    gameId+' new production master missing from catalog');
+  assert.equal(registeredMaster.sha256,evidence.sha256,gameId+' must match the source-reviewed recording');
+  assert.equal(registeredMaster.managedBy,undefined,gameId+' original renderer must never overwrite it');
+  assert.equal(registeredMaster.creationMethod,'imported-recording');
+  assert.equal(registeredMaster.loop.end,72.15);
+  assert.equal(manifest.director.environment.rules.find(x=>x.id===zone).asset,gameId);
+}
+assert.match(regional.status.sourceInGame,/^YES/, 'Game registration must be marked complete in source ledger');
 assert.equal(regional.status.artisticAcousticHearing.startsWith('UNVERIFIED'),true);
 assert.equal(regional.status.ownerFinalAcceptance.startsWith('HOLD'),true);
 assert.equal(regional.status.merged,'NO');
 assert.equal(regional.status.published,'NO');
 assert.equal(regional.finalRecordedOutputs.candidateFiles.length,4);
-console.log('PASS #709 completeness audit: 14/14 shipped actual MP3 hashes and no orphan source; ' +
-  '19/19 explicit playable scene routes, 18 ordering rules, 2 nights; ' +
-  '2 superseded + 4 newer studio masters have identities/hashes/provenance/evidence.');
-console.log('HOLD #709 delivery: 0/4 new intended sounds registered, 0/19 locations use a '+
-  'new studio master, 14/14 existing MP3s unchanged. No genuine listening, integrated '+
-  'new-recording music/warning QA or owner acceptance. NOT MERGE READY AS REPLACEMENT.');
+console.log('PASS #709 completeness audit: 18/18 playable MP3 hashes (14 original + 4 new), zero orphan files; '+
+  '19/19 scene contexts, all 18 selection rules, both night routes; two superseded masters archived, '+
+  'four current masters registered with exact studio SHA256, old recordings preserved.');
+console.log('ARTISTIC HOLD #709: 4/4 source-integrated in draft, final actual heard '+
+  'score/ambience/warning acceptance, physical phone and owner sign-off remain pending; no merge/deploy.');
