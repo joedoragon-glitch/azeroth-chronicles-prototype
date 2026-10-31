@@ -11,7 +11,7 @@ const game = {
   s:{rescued:{},loot:[],projectiles:[],throneClaimed:false,statistics:{deaths:0}},
   zone:()=>({props:game.props||[],enemies:game.enemies||[],buildings:[]}),
   visibleNPCs:()=>[],visibleResourceNodes:()=>[],activeLivingParty:()=>[],
-  regionIndex:()=>game.zoneId==='highlands'?1:0,
+  regionIndex:()=>game.zoneId==='frontier'?3:game.zoneId==='highlands'?1:0,
   isDungeon:()=>!!game.inDungeon,supplyRoom:()=>false,
   sideDungeon:()=>false,night:()=>false,daylightPhase:()=>({darkness:0})
 };
@@ -125,7 +125,7 @@ const runtime={
   AzerothGpuSpriteAdapter:{create:()=>({
     commandFor:(entity,point,{facing=1}={})=>{
       facingOptions.push({id:entity.id,facing});
-      return entity.renderKind==='prop'||entity.species==='orc'
+      return (entity.renderKind==='prop'&&entity.structure!=='dead-tree')||entity.species==='orc'
         ? {supported:false,reason:'original-game-procedural-art'} : ({
         supported:true,texture:{src:'./assets/sprites/test.png'},
         command:{x:point.x,y:point.y,width:120,height:100,
@@ -732,6 +732,27 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   parityGpu.draw();
   assert(!frames.at(-1).some(item=>item.key.startsWith('crown-loot:')),
     'collected Crown drops must disappear immediately');
+  // Issue #708: the same registered tree must have shoots only in Frontier.
+  game.enemies=[];
+  game.props=[{id:'burned-12',structure:'dead-tree',
+    x:game.hero.x+12,y:game.hero.y+9}];
+  game.zoneId='frontier';
+  parityGpu.draw();
+  const shoots=frames.at(-1).find(item=>item.key==='prop:burned-12')?.frontierShoots;
+  assert(shoots,'Frontier registered raster receives native shoot geometry');
+  assert.equal(shoots.id,'burned-12');
+  assert.equal(shoots.zoom,platform.cameraZoom);
+  assert.equal(shoots.flipX,false);
+  game.zoneId='vale';
+  parityGpu.draw();
+  assert.equal(frames.at(-1).find(item=>item.key==='prop:burned-12')?.frontierShoots,null,
+    'same tree in non-Frontier region has no foliage overlay');
+  game.zoneId='frontier';
+  game.props=[{id:'scrub',structure:'lumber-pile',x:game.hero.x+12,y:game.hero.y+9}];
+  parityGpu.draw();
+  assert(!frames.at(-1).some(item=>item.frontierShoots),
+    'procedural art never receives a duplicate overlay');
+  game.props=[];game.zoneId='vale';
   // Profiling must be bounded and exclusive to developer mode. The same
   // native Pixi draw() and already-verified texture/facing logic executes.
   assert.equal(parityGpu.status().drawCpuProfile.sampledFrames,0);
