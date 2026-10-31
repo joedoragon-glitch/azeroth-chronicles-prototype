@@ -500,6 +500,7 @@
         !skill ||
         !this.enemyHealingActor(e) ||
         this.mageSilenceActive(e) ||
+        this.rogueEnemySilenced(e) ||
         this.peace ||
         e.returning ||
         e.motion ||
@@ -646,6 +647,7 @@
         this.peace ||
         e.returning ||
         this.mageSilenceActive(e) ||
+        this.rogueEnemySilenced(e) ||
         e.motion ||
         e.telegraph ||
         e.rangedAim ||
@@ -7364,9 +7366,8 @@
           }
         }
         if (e.telegraph && this.mageSilenceActive(e)) {
-          // Existing warned specials remain queued, but cannot resolve
-          // inside a Silence Field. Pausing the warning preserves boss
-          // phase/sequence integrity rather than erasing authored attacks.
+          // Mage's field can hold warned specials. Rogue Hush only blocks
+          // NEW eligible special starts, not a committed action in progress.
           e.noProgress = 0;
           continue;
         }
