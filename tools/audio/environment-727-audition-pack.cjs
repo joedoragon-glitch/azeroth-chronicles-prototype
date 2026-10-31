@@ -66,7 +66,7 @@ function soundtrack(zone,rule){
 }
 function row({rule,original:oldId,trial,gain,keep=false,alternative=false}){
   const zone=zoneFor(rule);
-  return {rule,zone,title:labels[rule]||zone,old:addAsset(oldId,'original'),
+  return {rule,zone,title:labels[rule]||labels[zone]||zone,old:addAsset(oldId,'original'),
     proposal:trial?addTrial(trial):null,
     music:soundtrack(zone,rule),
     gain,keep,alternative};
@@ -78,6 +78,19 @@ for(const zone of report.retainedTreasuries){
   assert(['supply-vale','supply-highlands'].includes(zone),'Unexpected keep choice');
   rows.push(row({rule:zone,original:'env-home',gain:report.originalRouting.find(r=>r.id==='homes').gain,keep:true}));
 }
+// Present by geographical/creative task order, NOT by internal environment
+// rule priority (which starts with dungeons). This also keeps the two
+// intentional Treasury retains at the end for a simpler owner-only verdict.
+const presentationOrder=[
+  'vale','vale-night','march','march-night','crown','crown-alt',
+  'crypt','archive','mine','abyss','citadel',
+  'side-vale-cellars','side-march-watchhouse','side-crown-foundry',
+  'stage6-supply-march','stage6-supply-crown','supply-vale','supply-highlands'
+];
+assert.equal(new Set(presentationOrder).size,18);
+assert(rows.every(r=>presentationOrder.includes(r.rule)),'Unexpected source-study comparison');
+rows.sort((a,b)=>presentationOrder.indexOf(a.rule)-presentationOrder.indexOf(b.rule));
+assert.deepEqual(rows.map(r=>r.rule),presentationOrder);
 assert.equal(rows.length,18);
 assert.equal(rows.filter(r=>r.proposal).length,16);
 assert.equal(new Set(rows.filter(r=>r.proposal).map(r=>r.proposal.id)).size,16);

@@ -17,8 +17,9 @@ const index=pathToFileURL(entry).href;
     for(const phone of [false,true]){
       const context=await browser.newContext({viewport:phone?{width:375,height:812}:{width:1280,height:800},
         hasTouch:phone,isMobile:phone,acceptDownloads:true});
-      const page=await context.newPage(),errors=[];
+      const page=await context.newPage(),errors=[],external=[];
       page.on('pageerror',e=>errors.push(e.message));
+      page.on('request',request=>{if(/^https?:/.test(request.url()))external.push(request.url());});
       try{
         await page.goto(index);
         await page.waitForFunction(()=>window.ENV727_DATA?.rows?.length===18);
@@ -55,6 +56,10 @@ const index=pathToFileURL(entry).href;
           const x=document.getElementById('score');
           return !x.paused&&x.currentSrc.endsWith('/place-vale.mp3')&&x.duration>10;
         },null,{timeout:12000});
+        await hit('#critical');
+        const warning=await page.locator('#warning').evaluate(el=>el.currentSrc);
+        assert(warning.endsWith('/sfx-critical-warning.wav'),
+          'The original critical warning WAV must not be re-encoded');
         await page.locator('#decision').selectOption('preview');
         await page.locator('#notes').fill('Preview preferred in test only; no human hearing verdict');
         const altIndex=await page.evaluate(()=>window.ENV727_DATA.rows.findIndex(x=>x.alternative));
@@ -84,6 +89,7 @@ const index=pathToFileURL(entry).href;
         assert(bytes.includes('Ridge Tyrant Treasury'));
         assert.equal(bytes.split('\n').filter(l=>l.includes(' | old ')).length,18,
           'One exported row per comparison, including deliberate keeps');
+        assert.deepEqual(external,[],'Extracted listening room must use zero network requests');
         assert.deepEqual(errors,[],'Local listening room has no runtime errors');
         console.log('PASS STAGE7_OFFLINE_LISTENING_UI '+JSON.stringify({
           profile:phone?'phone-emulated':'desktop',study,originalPlayed:first.playing,
