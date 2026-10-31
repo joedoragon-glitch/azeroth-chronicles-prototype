@@ -3745,7 +3745,7 @@
         return true;
       }
       partyFormationOffset(u, living = this.activeLivingParty()) {
-        const rangedHero = ['mage', 'ranger', 'rogue'].includes(this.hero.class);
+        const rangedHero = Campaign.classFoundationFor(this.hero.class)?.formationRole === 'ranged';
         if (u.type === 'pet') {
           // Keep distinct mixed-pet lanes: melee pets screen a ranged hero and
           // flank behind a Paladin; ranged pets remain behind either hero role.

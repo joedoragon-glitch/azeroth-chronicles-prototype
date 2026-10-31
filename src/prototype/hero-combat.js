@@ -681,7 +681,9 @@
             : !R.resourceMode.manaEnabled && charged
               ? R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot]
               : cooldowns[slot];
-        return base * (1 - this.heroCooldownReduction());
+        return Number.isFinite(base) && base > 0
+          ? base * (1 - this.heroCooldownReduction())
+          : Infinity;
       }
       basicSkillCooldown() {
         return R.chargedSkills.first.basicSeconds * (1 - this.heroCooldownReduction());
@@ -2870,6 +2872,8 @@
         return true;
       }
     }
+    // Only genuinely implemented combat owners may admit a playable class.
+    Campaign.heroCombatSupports = (id) => implementedHeroCombatClasses.has(id) || id === 'rogue';
     for (const name of Object.getOwnPropertyNames(HeroCombat.prototype))
       if (name !== 'constructor')
         Object.defineProperty(

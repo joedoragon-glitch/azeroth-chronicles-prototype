@@ -10,19 +10,43 @@
     clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
     dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   const classes = R.balance.classes;
-  // Fail closed when future classes are registered without an authored
-  // starting party or chase profile. Nothing here makes Rogue playable.
-  const classStartingCompanions = Object.freeze({
-    paladin: Object.freeze(['soldier', 'archer']),
-    mage: Object.freeze(['soldier', 'archer']),
-    ranger: Object.freeze(['soldier', 'archer']),
-    rogue: Object.freeze([]),
+  // Foundations are movement/company metadata, not playable-class admission.
+  // A fifth class can declare a foundation without joining New Game, saves
+  // or Succession until its real combat and charged forms are implemented.
+  const classFoundations = Object.create(null);
+  function defineClassFoundation(id, profile) {
+    if (typeof id !== 'string' || !/^[a-z][a-z0-9-]{1,31}$/.test(id) ||
+        Object.hasOwn(classFoundations, id) || Object.hasOwn(Object.prototype, id))
+      throw Error('Invalid or duplicate hero class foundation');
+    const { startingCompanions, basicAttackApproachRange, formationRole } = profile || {};
+    if (!Array.isArray(startingCompanions) || startingCompanions.length > 4 ||
+        !startingCompanions.every((kind) => ['soldier', 'archer'].includes(kind)) ||
+        !Number.isFinite(basicAttackApproachRange) ||
+        basicAttackApproachRange <= 0 || basicAttackApproachRange > 1000 ||
+        !['melee', 'ranged'].includes(formationRole))
+      throw Error('Incomplete hero class foundation');
+    const saved = Object.freeze({
+      startingCompanions: Object.freeze([...startingCompanions]),
+      basicAttackApproachRange,
+      formationRole,
+    });
+    classFoundations[id] = saved;
+    return saved;
+  }
+  defineClassFoundation('paladin', {
+    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 105, formationRole: 'melee',
   });
-  const basicAttackApproachRanges = Object.freeze({
-    paladin: 105,
-    mage: 350,
-    ranger: 350,
-    rogue: R.rogueHeroFoundation.basic.range, // Dormant until class admission is authorized.
+  defineClassFoundation('mage', {
+    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+  });
+  defineClassFoundation('ranger', {
+    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+  });
+  // Rogue's foundation exists in legacy headless fixtures before its
+  // explicit admission; this alone grants no Charm, skills or class slot.
+  defineClassFoundation('rogue', {
+    startingCompanions: [], basicAttackApproachRange: R.rogueHeroFoundation.basic.range,
+    formationRole: 'ranged',
   });
 
   const talentMaxRanks = R.balance.disciplines.maxRanks;
@@ -62,7 +86,7 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !classes[heroClass])
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass))
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -201,7 +225,7 @@
         gameOver: false,
       };
       if (mode !== 'arena') this.initializeQuests();
-      const starterTypes = classStartingCompanions[heroClass];
+      const starterTypes = classFoundations[heroClass]?.startingCompanions;
       if (!starterTypes) throw Error('Missing starting company for hero class');
       this.s.party = starterTypes.map((type, i) =>
         this.unit(type, start.x + (i === 0 ? -40 : 50), start.y + (i === 0 ? 40 : 30)),
@@ -3682,7 +3706,7 @@
       );
     }
     heroBasicAttackApproachRange() {
-      const reach = basicAttackApproachRanges[this.hero.class];
+      const reach = classFoundations[this.hero.class]?.basicAttackApproachRange;
       if (!Number.isFinite(reach)) throw Error('Missing basic attack approach range');
       return reach;
     }
@@ -3709,7 +3733,7 @@
         !this.s.challenge.succession ||
         !this.s.challenge.pending ||
         this.s.challenge.fallen.includes(heroClass) ||
-        !classes[heroClass]
+        !Object.hasOwn(classes, heroClass)
       )
         return false;
       const old = this.hero,
@@ -8379,19 +8403,55 @@
       ? PrototypeEnemyVfxEvents
       : require('./enemy-vfx-events.js');
   EnemyVfxEvents.install(Campaign);
-  // Register the fourth class as one coherent capability: the live browser
-  // shell invokes this before loading saves or offering New Game/Succession.
-  // Native fixtures may still opt in deliberately to retain their original
-  // three-class baselines; saves never encode a registration switch.
+  // A dormant foundation never mutates the roster. Admission checks the
+  // separately authored class combat before touching active rules or saves.
+  Campaign.classFoundationFor = (id) => classFoundations[id] || null;
+  Campaign.defineClassFoundation = (id, profile) => defineClassFoundation(id, profile);
+  Campaign.classAdmissionIssues = (id, definition = {}) => {
+    const issues = [];
+    if (!classFoundations[id]) issues.push('missing foundation');
+    if (Object.hasOwn(classes, id)) issues.push('already playable');
+    const fields = definition && typeof definition === 'object' ? definition : {};
+    if (typeof fields.icon !== 'string' || !fields.icon.trim())
+      issues.push('missing class icon');
+    const stats = fields.stats;
+    if (!stats || typeof stats !== 'object' ||
+        !['hp', 'mp', 'power', 'armor', 'speed'].every((key) =>
+          Number.isFinite(stats[key]) && stats[key] >= (key === 'mp' || key === 'armor' ? 0 : 1)))
+      issues.push('missing class stats');
+    const talents = fields.talents;
+    if (!talents || typeof talents !== 'object' ||
+        !['power', 'mana', 'hp', 'speed'].every((key) =>
+          Number.isFinite(talents[key]) && talents[key] > 0))
+      issues.push('missing discipline growth');
+    if (!Campaign.heroCombatSupports?.(id)) issues.push('missing authored combat owner');
+    // Rogue's first charged performance has a separate authored cooldown.
+    // Other classes require a real value, never a NaN timer or Ranger fallback.
+    if (id !== 'rogue' && !(R.chargedSkills.first.chargedSeconds[id] > 0))
+      issues.push('missing charged Skill 1 cooldown');
+    return issues;
+  };
+  Campaign.registerPlayableClass = (id, definition) => {
+    const issues = Campaign.classAdmissionIssues(id, definition);
+    if (issues.length) throw Error('Class admission blocked: ' + issues.join(', '));
+    const { icon, stats, talents } = definition;
+    // No active registry mutation is allowed before validation completes.
+    classes[id] = Object.freeze({ icon, ...stats });
+    talentProfiles[id] = Object.freeze({ ...talents });
+    // Moving automatic attacks are a separate authored capability, not
+    // something every newly admitted class automatically inherits.
+    if (definition.movementBasic === true) R.movementBasicClasses[id] = true;
+    return true;
+  };
+  // The already-playable Rogue continues through its original opt-in.
   Campaign.enableRoguePlaytest = () => {
     if (classes.rogue) return false;
-    classes.rogue = Object.freeze({
+    return Campaign.registerPlayableClass('rogue', {
       icon: 'jingle-bell',
-      ...R.rogueHeroFoundation.stats,
+      stats: R.rogueHeroFoundation.stats,
+      talents: R.rogueHeroFoundation.talents,
+      movementBasic: true,
     });
-    talentProfiles.rogue = Object.freeze({ ...R.rogueHeroFoundation.talents });
-    R.movementBasicClasses.rogue = true;
-    return true;
   };
   Campaign.rules = R;
   Campaign.data = D;
