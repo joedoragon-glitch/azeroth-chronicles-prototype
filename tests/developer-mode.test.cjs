@@ -110,7 +110,21 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
     assert.equal(enemy.hp, enemy.maxHp, 'refused auto-attack deals no damage');
     assert.equal(game.cast(1, enemy.id, charged), true, heroClass + ': manual Skill 1 works');
     assert(game.hero.cd[0] > 0, 'manual attack retains its normal cooldown');
-    assert(enemy.hp < enemy.maxHp || game.s.projectiles.length > 0, 'manual attack damages or launches a real projectile');
+    if (charged && (heroClass === 'mage' || heroClass === 'ranger')) {
+      // Charged Mage beam and Ranger hawk travel as native transient effects,
+      // not immediate damage/projectiles. Advance their real resolver before
+      // checking the impact rather than misclassifying the cast as inert.
+      const effect = heroClass === 'mage' ? 'wide-beam' : 'hawk';
+      assert(
+        game._heroSkillEffects?.some((f) => f.kind === effect && f.targetId === enemy.id),
+        heroClass + ': charged Skill 1 launched its actual ' + effect,
+      );
+      game.advanceHeroSkillEffects(0.25);
+    }
+    assert(
+      enemy.hp < enemy.maxHp || game.s.projectiles.length > 0,
+      heroClass + (charged ? ' charged' : ' tap') + ': manual attack damages or launches a real projectile',
+    );
   }
 }
 
