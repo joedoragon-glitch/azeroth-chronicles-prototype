@@ -36,6 +36,10 @@ bank = module.RecordedSampler(Old(), ffmpeg)
 assert bank.pan("strings", 61) == bank.pan("strings", 62)
 assert -0.5 < bank.pan("strings", 61) < 0
 assert bank.pan("horn", 65) == bank.pan("horn", 66)
+assert bank.pan("marimba", 53) == bank.pan("dulcimer", 53)
+assert bank.pan("glockenspiel", 77) == bank.pan("bell", 77)
+assert bank._route(77, "glockenspiel") == ("glockenspiel", 77)
+assert bank._route(69, "bell") == ("glockenspiel", 81)
 cases = [
     ("flute", 72), ("horn", 67), ("cello", 69), ("cello", 31),
     ("harp", 55), ("piano", 74), ("guitar", 59),

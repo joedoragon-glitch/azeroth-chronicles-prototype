@@ -94,7 +94,7 @@ function inspect(t, instrument, midi, role, bar) {
     instrument = 'marimba';
   else if (instrument === 'bell' || instrument === 'glockenspiel') {
     instrument = 'glockenspiel';
-    while (midi < 79) midi += 12;
+    while (midi < 75) midi += 12;
   } else if (instrument === 'cello')
     instrument = midi < 36 ? 'basses' : 'celli';
   if (originalInstrument !== instrument)

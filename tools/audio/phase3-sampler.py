@@ -30,6 +30,7 @@ class RecordedSampler:
             return -.27
         return {"piano": -.16, "flute": -.19, "harp": .32,
                 "guitar": .25, "dulcimer": .27, "bell": .33,
+                "marimba": .27, "glockenspiel": .33,
                 "horn": .16, "cello": -.14}.get(kind, 0)
 
     def __init__(self, original, ffmpeg):
@@ -73,7 +74,9 @@ class RecordedSampler:
             # Older bell pilot aliases retain the same octave mapping; no pilot
             # recordings are modified here.
             kind = "glockenspiel"
-            while midi < 79:
+            # The bank allows four semitones below its G5 source (MIDI79).
+            # An authored F5 (77) should remain F5, not jump up to F6.
+            while midi < 75:
                 midi += 12
         elif kind == "cello":
             if midi < 36:
