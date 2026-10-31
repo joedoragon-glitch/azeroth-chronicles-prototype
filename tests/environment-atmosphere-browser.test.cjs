@@ -329,7 +329,7 @@ async function main(){
       views:offEvidence,errors,
     };
     fs.writeFileSync(path.join(out,'stationary-liquid-off-attempt-result.json'),
-      JSON.stringify(v04,null,2)+'\\n');
+      JSON.stringify(v04,null,2)+'\n');
     console.log('ATMOSPHERE-708-V04-EFFECTIVE-OFF-ATTEMPT '+JSON.stringify(v04));
     assert.deepEqual(errors,[],'No page errors during V-04 real browser attempts');
     await context.close();
