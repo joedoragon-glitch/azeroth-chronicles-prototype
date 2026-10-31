@@ -141,7 +141,10 @@ for (const mode of ['normal', 'nightmare', 'arena']) {
   assert.deepEqual(game.developerFinisher(null, true), { hits: 0, kills: 0 });
   assert.equal(enemy.hp, enemy.maxHp, mode + ': no developer ability');
 }
-for (const heroClass of ['paladin', 'mage', 'ranger', 'rogue']) {
+// Verify every class the live Campaign constructor actually admits.
+// Rogue has a separate, currently dormant foundation in balance.rules;
+// this developer helper must not silently activate or redefine a hero class.
+for (const heroClass of Object.keys(Campaign.rules.balance.classes)) {
   const game = new Campaign('developer', heroClass, () => 0.5);
   game.zone().props = [];
   game.s.mercyTime = 0;
