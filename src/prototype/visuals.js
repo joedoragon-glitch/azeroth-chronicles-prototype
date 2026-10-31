@@ -18712,6 +18712,82 @@
     );
   }
   // World-space surfaces avoid losing narrow barriers between coarse tile samples.
+  // Original water/lava motion as a small, read-only list of screen-space
+  // strokes. Pixi's immutable 512px terrain tiles must omit ONLY these strokes,
+  // then draw the same authored ripples over the cached background.
+  // No new animation family, biome, palette or saved/gameplay state.
+  function terrainMotionLines(region, screen, viewport, time) {
+    if (!Number.isInteger(region) || region < 0 || region >= R.barriers.length ||
+        typeof screen !== 'function' || !Number.isFinite(time)) return [];
+    const bounds = viewport || {width:10000,height:10000}, lines = [];
+    const visible = (q) => {
+      const p = screen(q);
+      return p.x > -150 && p.x < bounds.width + 150 &&
+        p.y > -150 && p.y < bounds.height + 150;
+    };
+    const line = (from,to,color,width) => {
+      const a = screen(from), b = screen(to);
+      if (![a.x,a.y,b.x,b.y].every(Number.isFinite)) return;
+      if (Math.max(a.x,b.x) < -30 || Math.min(a.x,b.x) > bounds.width+30 ||
+          Math.max(a.y,b.y) < -30 || Math.min(a.y,b.y) > bounds.height+30) return;
+      lines.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,color,width});
+    };
+    const strip = (kind,x1,x2,y1,y2,banks=null) => {
+      if (!['water','lava'].includes(kind) || y2 <= y1) return;
+      const water = kind === 'water';
+      for (let y=y1+24; y<y2-8; y+=water?62:48) {
+        const [lo,hi] = banks ? banks(y) : [x1,x2];
+        const localWidth=hi-lo, center={x:(lo+hi)/2,y};
+        if (!visible(center)) continue;
+        const phase=Math.sin(time*(water?0.9:1.3)+y*0.035),
+          seed=Math.abs(Math.floor(y*13+region*47));
+        if (water) {
+          const x=lo+localWidth*(0.28+(seed%4)*0.1),
+            span=Math.min(55,localWidth*0.38);
+          line({x,y:y+phase*3},{x:x+span,y:y+5+phase*3},'#9abeb788',1.2);
+        } else {
+          const mid=lo+localWidth*(0.4+(seed%3)*0.08);
+          line({x:mid-10,y},{x:mid+8,y:y+11+phase*3},'#ffd076',2);
+          line({x:mid+8,y:y+11+phase*3},{x:mid-4,y:y+27},'#ed963f',1.5);
+        }
+      }
+    };
+    const barrier=R.barriers[region];
+    strip(barrier.kind,...barrier.bounds,y=>R.channelBanks(region,y));
+    const harbor=R.harbors?.[['vale','march','highlands','frontier','crown'][region]];
+    if (harbor?.water && !harbor.water.points) {
+      const w=harbor.water;
+      strip('water',w.x1,w.x2,w.y1,w.y2);
+    }
+    for (const p of R.terrain[region] || []) {
+      const kind=p.kind||'cliff';
+      if (kind==='rain-pools') {
+        for (const pool of p.pools)
+          for (const offset of [-0.35,0.15,0.48]) {
+            const y=pool.y+pool.ry*offset,
+              x=pool.x-13+Math.sin(time*0.7+offset)*3;
+            line({x,y},{x:x+23,y:y+3},'#a4c2b688',1);
+          }
+        continue;
+      }
+      if (p.r) {
+        if (kind==='water')
+          for (let j=0;j<4;j++) {
+            const y=p.y+(j-1.5)*p.r*0.3,
+              x=p.x-p.r*0.25+Math.sin(time*0.8+j)*5;
+            line({x,y},{x:x+p.r*0.45,y:y+5},'#b4d4c388',1);
+          }
+      } else if (kind==='water'||kind==='lava') {
+        let at=p.y1;
+        for (const [lo,hi] of p.gaps||[]) {
+          strip(kind,p.x1,p.x2,at,lo);at=hi;
+        }
+        strip(kind,p.x1,p.x2,at,p.y2);
+      }
+    }
+    return lines;
+  }
+
   function terrain(
     ctx,
     screen,
@@ -18721,6 +18797,7 @@
     viewport = null,
     inheritedDecks = [],
     staticTerrainTimeSeconds = null,
+    omitTerrainMotion = false,
   ) {
     const bounds = viewport || {
       width: ctx.canvas?.width || 10000,
@@ -18856,7 +18933,8 @@
         if (water) {
           const x = localX1 + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+          if (!omitTerrainMotion)
+  line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
           line(
             { x: x + span * 0.15, y: y + 12 },
             { x: x + span * 0.65, y: y + 14 },
@@ -18865,8 +18943,10 @@
           );
         } else if (lava) {
           const mid = localX1 + localWidth * (0.4 + (seed % 3) * 0.08);
-          line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
-          line({ x: mid + 8, y: y + 11 + phase * 3 }, { x: mid - 4, y: y + 27 }, '#ed963f', 1.5);
+          if (!omitTerrainMotion) {
+            line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
+            line({ x: mid + 8, y: y + 11 + phase * 3 }, { x: mid - 4, y: y + 27 }, '#ed963f', 1.5);
+          }
           poly(
             [
               { x: x1 + width * 0.24, y: y + 28 },
@@ -19310,7 +19390,7 @@
               ctx.stroke();
             }
           }
-          for (const offset of [-0.35, 0.15, 0.48]) {
+          if (!omitTerrainMotion) for (const offset of [-0.35, 0.15, 0.48]) {
             const y = pool.y + pool.ry * offset,
               x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
             line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
@@ -19366,7 +19446,7 @@
             water ? '#65796a88' : kind === 'obsidian' ? '#82709266' : '#aba18a77',
           );
         }
-        if (water)
+        if (water && !omitTerrainMotion)
           for (let j = 0; j < 4; j++) {
             const y = p.y + (j - 1.5) * p.r * 0.3,
               x = p.x - p.r * 0.25 + Math.sin(time * 0.8 + j) * 5;
@@ -20397,6 +20477,7 @@
     roads,
     footpaths,
     terrain,
+    terrainMotionLines,
     bridges,
     atmosphere,
     atmosphereMotes,
