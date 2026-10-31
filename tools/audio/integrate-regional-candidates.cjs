@@ -75,6 +75,13 @@ if(Object.keys(manifest.assets).length!==131 ||
   throw Error('Post-integration asset or scene count unexpectedly changed');
 publishedFiles(root,manifest);
 fs.writeFileSync(path.join(root,'assets/audio/manifest.json'),JSON.stringify(manifest,null,2)+'\n');
+// Preserve the original provenance and artistic cautions. Mark only the
+// registration fact as complete; technical acceptance is tested separately.
+studio.constraints.registered=true;
+studio.status.sourceInGame='YES; four exact MP3 candidates installed as additional independent scene-specific environment IDs on unmerged draft; all 14 original bed files retained';
+studio.status.playableSourceTesting='PENDING at integration; CI real-game tests must independently confirm';
+studio.status.integratedSourceHead='determined by GitHub merge/CI run; script does not claim final acceptance';
+fs.writeFileSync(path.join(root,'tools/audio/environment-regional-studies.json'),JSON.stringify(studio,null,2)+'\n');
 for(const item of mapping) console.log('INTEGRATED '+JSON.stringify({
   scene:item.route,old:expectedOld[item.route],new:item.id,
   sha256:manifest.assets[item.id].sha256,loop:manifest.assets[item.id].loop
