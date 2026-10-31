@@ -43,6 +43,15 @@ const server = http.createServer((req, res) => {
         .readFileSync(file, 'utf8')
         .replace('"azeroth-app-v' + version + '"', JSON.stringify(cacheName())),
     );
+  // Model a release that changes both menu markup and its JavaScript.
+  // The startup preflight must never expose an old/new hybrid menu.
+  if (generation === 'c' && ['/index.html', '/phone.html'].includes(relative))
+    return res.end(fs.readFileSync(file, 'utf8')
+      .replace('<nav aria-label="Main menu">',
+        '<nav aria-label="Main menu" data-menu-revision="c">'));
+  if (generation === 'c' && relative === '/src/prototype/app.js')
+    return res.end(fs.readFileSync(file, 'utf8') +
+      "\ndocument.body.dataset.menuRevision = 'c';\n");
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
@@ -167,13 +176,27 @@ const server = http.createServer((req, res) => {
       const loaded = page.waitForEvent('domcontentloaded');
       await page.locator('#update-button').click();
       await loaded;
-      await page.waitForFunction(() => window.Prototype?.game.hero.gold === 42424);
+      await page.waitForFunction(() =>
+        document.getElementById('startup-update').hidden &&
+        !document.getElementById('title-screen').hidden &&
+        window.Prototype?.game.hero.gold === 42424);
       assert(await page.locator('#update-button').isHidden());
+      await page.locator('#title-continue').click();
+      await page.waitForFunction(() => window.Prototype?.started);
       const cachesAfter = await page.evaluate(() => caches.keys());
       assert(cachesAfter.includes(cacheName()));
       assert(!cachesAfter.includes('azeroth-app-v' + version + '-notice-a'));
       await page.reload();
-      await page.waitForFunction(() => window.Prototype?.game.hero.gold === 42424);
+      await page.waitForFunction(() =>
+        document.getElementById('startup-update').hidden &&
+        !document.getElementById('title-screen').hidden &&
+        window.Prototype?.game.hero.gold === 42424);
+      const offlineNotice = await page.locator('#startup-update-notice').textContent();
+      assert.match(offlineNotice, phone
+        ? /Sin conexión.*No se pudieron buscar actualizaciones/i
+        : /offline.*could not check for updates/i);
+      await page.locator('#title-continue').click();
+      await page.waitForFunction(() => window.Prototype?.started);
       failUpdateCheck = true;
       await page.locator('#menu-button').click();
       await page
@@ -218,6 +241,25 @@ const server = http.createServer((req, res) => {
         !(await page.evaluate(() => Prototype.paused)),
         'failed network check does not freeze play',
       );
+
+      // An ordinary next launch discovers another release automatically.
+      // Changed HTML and JS must both be present before unlocking its menu.
+      failUpdateCheck = false;
+      await context.setOffline(false);
+      generation = 'c';
+      await page.reload();
+      await page.waitForFunction(async () => {
+        const cacheReady = (await caches.keys()).includes(
+          'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c');
+        return cacheReady &&
+          document.getElementById('startup-update').hidden &&
+          !document.getElementById('title-screen').hidden &&
+          document.querySelector('#title-screen nav')?.dataset.menuRevision === 'c' &&
+          document.body.dataset.menuRevision === 'c';
+      }, null, { timeout: 90000 });
+      assert.equal(await page.evaluate(() => window.Prototype?.game.hero.gold), 42424);
+      assert(await page.locator('#update-button').isHidden(),
+        'automatic preflight never asks for an update tap');
       assert.deepEqual(errors, []);
       console.log(
         'PASS ready notice, localized layout/menu access, waiting activation, offline install, save retention and offline reload: ' +
