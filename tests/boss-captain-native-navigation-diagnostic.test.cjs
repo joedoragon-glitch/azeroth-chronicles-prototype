@@ -158,8 +158,8 @@ function measure(label,zone,kind) {
 }
 const results=[
   measure('Ridge field boss','highlands','field-boss'),
-  measure('Ironroot field captain','highlands','field-captain'),
-  measure('Crypt room captain','crypt','room-captain'),
+  measure('Frontier field captain','frontier','field-captain'),
+  measure('Highlands treasury room captain','supply-highlands','room-captain'),
   measure('Warlord field boss','frontier','field-boss')
 ];
 assert.equal(results.length,4);
