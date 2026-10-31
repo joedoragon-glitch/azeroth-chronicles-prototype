@@ -411,6 +411,10 @@ Joel authorizes autonomous adaptation and publication of existing sprites, follo
 <a id="audio"></a>
 ## Music, sound effects, event coverage and diagnostics
 
+### 31 October 2026 — Phase 7 implementation checkpoint (NOT published)
+
+The owner's binding instruction remains **recorded-source soundtrack integration, not speculative compositional revision**. [Phase 7 draft #729](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/729) now holds the 65 new exact registered recordings with the 18 original Dark Crown recordings untouched, all 83 music IDs unchanged, and current-main environmental audio preserved. The title music advances on the inactive main menu; the Defeat song is an actual Succession death event (including explicit/automatic replacement), without modifying class-loss or recovery rules; Finale is limited to one ~48-second musical phrase following the genuine complete TRUE peace gate, then the location's peace score. [Integration receipt](../tools/audio/phase7-integration-evidence.json) and [handoff](AUDIO_PHASE7_HANDOFF.md) document technical evidence and remaining real playback and human-listening gates. The earlier owner decision below explains **why** the changes were authorized; its pre-implementation source description is now historical. No release, merge, physical-device test, or Phase 8/9 audition has occurred.
+
 ### 31 October 2026 — narrative Defeat cue is a Succession loss cue, not a Normal/Nightmare Game Over
 
 **Owner decision, ready for Phase 7 implementation:** The new `defeat` narrative theme is appropriate at **each actual Succession hero death**, including before the player chooses the next available character, when the only remaining successor is chosen automatically, and when the last available class dies and the run ends. It is **not restricted to a terminal 'game over' flag**. The theme should be bounded and transition back to gameplay/selection context without trapping the player in a full-length song. The precise fade and interruption timing belong to Phase 7 focused routing tests.
