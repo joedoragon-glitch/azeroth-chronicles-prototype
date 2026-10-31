@@ -186,7 +186,7 @@ const copy = (v) => structuredClone(v),
   a.effect('warning');
   assert.equal(ducks, 1);
   a.effect('peace');
-  assert.equal(a.finaleUntil, a.ctx.currentTime + 12);
+  assert.equal(a.finaleUntil, a.ctx.currentTime + Math.max(12, Math.min(60, production.assets.finale.duration)));
   a.interfaceSound('confirm');
   assert([...a.voices].some((v) => v.id === 'diagnostic-click' && v.bus === 'interface'));
   a.stepDistance = 0;
