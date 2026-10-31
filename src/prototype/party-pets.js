@@ -227,6 +227,8 @@
             launchX: u.x,
             launchY: u.y,
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, def.name, this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -237,6 +239,7 @@
             target: target.id,
           });
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(u, def.name);
           for (const e of targets) {
             if (u.hp <= 0) break;
             const woundedBonus =
@@ -263,6 +266,7 @@
                   Math.min(2.5, def.slow + slowMastery), 'slowDuration'),
               );
           }
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!projectile && !hits) return false;
         u[key] =
@@ -430,6 +434,8 @@
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -440,10 +446,9 @@
             target: target.id,
           });
         } else if (
-          this.damage(
-            target,
+          this.developerCompanionDamage(
+            u, 'Basic attack', target,
             this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
-            u.id,
           )
         ) {
           this.event('melee', {
@@ -544,6 +549,8 @@
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -554,10 +561,9 @@
             target: target.id,
           });
         } else if (
-          this.damage(
-            target,
+          this.developerCompanionDamage(
+            u, 'Basic attack', target,
             this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
-            u.id,
           )
         ) {
           this.event('melee', {

@@ -1210,10 +1210,13 @@
             speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           return true;
         }
-        const hit = this.damage(
-          e, this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)), u.id,
+        const hit = this.developerCompanionDamage(
+          u, 'Basic attack', e,
+          this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
         );
         if (hit)
           this.event('melee', {
@@ -1453,9 +1456,11 @@
             speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
-        } else if (this.damage(e, this.troopCriticalDamage(
-          criticalReceipt, this.companionBasicAttackDamage(u),
-        ), u.id))
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
+        } else if (this.developerCompanionDamage(u, 'Basic attack', e, this.troopCriticalDamage(
+            criticalReceipt, this.companionBasicAttackDamage(u),
+          )))
           this.event('melee', {
             actor: 'companion',
             role: 'soldier',
@@ -1756,9 +1761,9 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
-          if (!this.damage(
-            target, this.troopCriticalDamage(criticalReceipt,
-              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)), u.id,
+          if (!this.developerCompanionDamage(
+            u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
+              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
           )) return false;
           const veteran = R.companionSkills.veteran;
           if (
@@ -1807,7 +1812,9 @@
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.4);
         const shot = Math.max(1, dist(u, target));
-        for (let j = 0; j < 3; j++)
+        const volleyMove = this.s.mode === 'developer'
+          ? this.developerCompanionNewMove(u.id, 'Triple Shot') : null;
+        for (let j = 0; j < 3; j++) {
           this.s.projectiles.push({
             id: 'projectile-' + this.s.nextId++,
             x: u.x,
@@ -1831,6 +1838,10 @@
               ? { slow: R.companionSkills.veteran.coveringSlow }
               : {}),
           });
+          if (volleyMove)
+            this.developerCompanionTrackProjectile(u, 'Triple Shot',
+              this.s.projectiles.at(-1), volleyMove);
+        }
         this.event('projectileLaunch', {
           actor: 'companion',
           role: 'archer',
@@ -1927,6 +1938,8 @@
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
         if (u.type === 'archer') {
+          const volleyMove = this.s.mode === 'developer'
+            ? this.developerCompanionNewMove(u.id, 'Piercing Volley') : null;
           // #464: the original selected targets receive real physical arrows.
           // A single committed critical receipt is shared across all shafts;
           // no damage/status occurs until the native projectile contact.
@@ -1947,10 +1960,15 @@
               companionSkill: 'piercing-volley',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             });
+            if (volleyMove)
+              this.developerCompanionTrackProjectile(u, 'Piercing Volley',
+                this.s.projectiles.at(-1), volleyMove);
             hits++;
           }
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(u, def.name);
           for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
@@ -2210,6 +2228,7 @@
               (1 + tier * damageGrowth)),
           damage = enhance(base, 'damage');
         let landed = 0, actualDamage = 0;
+        const previousDirect = this.developerCompanionBeginDirect(u, def.name);
         for (const e of victims) {
           const hp = e.hp;
           if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
@@ -2229,6 +2248,7 @@
             if (this.clearSegment(e, point, 12)) this.move(e, point, 210, 0.2);
           }
         }
+        this.developerCompanionEndDirect(previousDirect);
         if (!landed) return false;
         // Siphon is based on actual post-mitigation lost HP, never theoretical
         // damage. No overheal or duplicate support-heal critical roll.
@@ -2377,6 +2397,8 @@
             slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
               R.balance.companions.mastery.slowSecondsPerTier,
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion', role: 'archer', source: u.id,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
@@ -2384,6 +2406,8 @@
           });
           committed = true;
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(
+            u, profile.name || 'Native maneuver');
           for (const enemy of victims) {
             if (!this.damage(enemy, base, u.id, { area: elite })) continue;
             committed = true;
@@ -2415,6 +2439,7 @@
                 this.companionMasteryTier(u) *
                   R.balance.companions.mastery.slowSecondsPerTier);
           }
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!committed) return false;
         if (profile.style === 'dash' && !elite &&
@@ -3973,6 +3998,8 @@
               speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
               style: this.charmedCompanionProfile(u)?.style || 'arrow',
             });
+            if (this.s.mode === 'developer')
+              this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
             this.event('projectileLaunch', {
               actor: 'companion',
               role: 'archer',
@@ -4002,9 +4029,9 @@
         else if (u.cd <= 0) {
           u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
           const criticalReceipt = this.troopCriticalRelease(u, 'basic');
-          if (this.damage(e, this.troopCriticalDamage(
+          if (this.developerCompanionDamage(u, 'Basic attack', e, this.troopCriticalDamage(
             criticalReceipt, this.companionBasicAttackDamage(u),
-          ), u.id))
+          )))
             this.event('melee', {
               actor: 'companion',
               role: 'soldier',
@@ -4338,9 +4365,11 @@
                     speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
                     style: this.charmedCompanionProfile(u)?.style || 'arrow',
                   });
-                } else if (this.damage(pursuer, this.troopCriticalDamage(
-                  criticalReceipt, this.companionBasicAttackDamage(u),
-                ), u.id))
+                  if (this.s.mode === 'developer')
+                    this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
+                } else if (this.developerCompanionDamage(u, 'Basic attack', pursuer, this.troopCriticalDamage(
+            criticalReceipt, this.companionBasicAttackDamage(u),
+          )))
                   this.event('melee', {
                     actor: 'companion',
                     role: 'soldier',
