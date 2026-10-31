@@ -7,7 +7,7 @@ register evidence, not simply echo the same score through the same function.
 The same protections are intended for Phase 5 boss/TRUE pairs, Phase 6 narrative
 cues, and Phase 7 integrated cue validation.
 
-Usage: python tools/audio/score-quality-controls.py path/to/metrics.json --expected-count 38 --layer-count 8
+Usage: python tools/audio/score-quality-controls.py path/to/metrics.json --expected-count 38 --layer-count 8 --expected-source tools/audio/phase4-arrangements.json
 Preview metadata is verified without listening or publishing recordings.
 """
 import argparse
@@ -186,13 +186,22 @@ def main():
     parser.add_argument("metrics", type=Path)
     parser.add_argument("--expected-count", type=int, required=True)
     parser.add_argument("--layer-count", type=int, default=None)
+    parser.add_argument("--expected-source", type=Path, required=True,
+                        help="Independent authored source JSON, NOT the metrics output")
+    parser.add_argument("--expected-list-key", default="arrangements",
+                        help="Array of cue records with stable IDs; Phases 5/6 may use 'cues'")
     args = parser.parse_args()
     data = json.loads(args.metrics.read_text(encoding="utf-8"))
-    actual = [t["cue"] for t in data["tracks"]]
-    require(len(actual) == args.expected_count,
-            "Expected count does not match decoded previews")
+    authored = json.loads(args.expected_source.read_text(encoding="utf-8"))
+    entries = authored[args.expected_list_key]
+    require(isinstance(entries, list),
+            "Authored independent cue roster must be a JSON list")
+    required_ids = [x if isinstance(x, str) else x["id"] for x in entries]
+    require(len(required_ids) == args.expected_count and
+            len(set(required_ids)) == args.expected_count,
+            "Independent authored stable-ID roster does not match expected phase size")
     print("PASS shared soundtrack source/technical quality controls:",
-          verify_decoded_report(data, expected_cues=set(actual),
+          verify_decoded_report(data, expected_cues=set(required_ids),
                                 layer_count=args.layer_count))
     print("NEVER an acoustic audition, creative approval, integration, merge or deployment")
 
