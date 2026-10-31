@@ -9,6 +9,7 @@ on:
     paths:
       - 'tools/audio/integrate-regional-candidates.cjs'
       - '.github/workflows/environment-integrate-candidates.yml'
+      - 'tests/audio-stage5-release-preflight.test.cjs'
 
 permissions:
   contents: write
@@ -68,8 +69,14 @@ jobs:
       - name: Check change allowlist; no new music, effect files or gameplay edits
         run: |
           git status --short
-          git diff --name-only | grep -E -v '^(assets/audio/manifest.json|src/prototype/audio-library.js|sw.js|tools/audio/environment-regional-studies.json)$' && exit 1 || true
-          git ls-files --others --exclude-standard | grep -E -v '^assets/audio/ambience/(env-highlands-autumn|env-frontier-recovery|env-signal-occupied|env-shrine-occupied)\.mp3$' && exit 1 || true
+          if git diff --name-only | grep -E -v '^(assets/audio/manifest.json|src/prototype/audio-library.js|sw.js|tools/audio/environment-regional-studies.json)$'; then
+            echo 'Unexpected change to unrelated tracked source; no commit' >&2
+            exit 1
+          fi
+          if git ls-files --others --exclude-standard | grep -E -v '^assets/audio/ambience/(env-highlands-autumn|env-frontier-recovery|env-signal-occupied|env-shrine-occupied)\.mp3$'; then
+            echo 'Unapproved new file found; only four pinned audio masters may be added' >&2
+            exit 1
+          fi
           test "$(git ls-files --others --exclude-standard | wc -l)" -eq 4
       - name: Commit four real MP3s, catalog/routes, ledger and offline PWA hashes to draft only
         run: |
