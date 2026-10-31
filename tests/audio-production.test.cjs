@@ -79,8 +79,9 @@ assert.equal(idleVale.stems[1].gain, 0,
   'Greenwood encounter layer must start silent in exploration');
 const millhaven = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
   settlement: 'millhaven', engaged: 0 });
-assert.deepEqual(millhaven.stems.map(s => s.id), ['settlement-vale'],
-  'Millhaven settlement music must not run concurrently with the outdoor score');
+assert.deepEqual(millhaven.stems.map(s => s.id), ['settlement-vale', 'action-vale']);
+assert.equal(millhaven.stems[1].gain, 0,
+  'Millhaven encounter music must be loaded silently until nearby combat');
 assert.equal(a.productionCue({ ...scene, gameOver: true }).id, 'defeat');
 a.finaleUntil = 3;
 assert.equal(a.productionCue({ ...scene, peace: true }).id, 'finale');
@@ -117,6 +118,13 @@ a.updateProduction({ ...scene, started: true, situation: 'pause' });
 assert.equal(a.mixScene, 'world', 'manual pause preserves music level');
 a.updateProduction({ ...scene, started: false, situation: 'menu' });
 assert.equal(a.mixScene, 'title', 'main title settings still use title mix');
+a.combatUntil = 0;
+a.ctx.currentTime = 25;
+a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 2, nearbyEngaged: 0 });
+assert.equal(gains.at(-1)[1], 0,
+  'distant aggro must not turn on encounter music in Millhaven');
+a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 2, nearbyEngaged: 2 });
+assert(gains.at(-1)[1] > 0, 'nearby combat should still raise the encounter stem');
 let steps = 0;
 a.noiseBurst = () => {
   steps++;
