@@ -1,7 +1,11 @@
 /* Recorded audio: verified local fetch, lazy decode and bounded LRU ownership. */
 (function (root) {
   'use strict';
-  const encodedLimit = 8 * 1024 * 1024;
+  // Match scripts/audio-assets.cjs per-file validation; the full package is offline-cached,
+  // while this loader only keeps a bounded window of decoded recordings in RAM.
+  const encodedLimit = 16 * 1024 * 1024;
+  const defaultDecodedBudget = 96 * 1024 * 1024;
+  const maxDecodedBudget = 192 * 1024 * 1024;
   class Assets {
     constructor(ctx, manifest, options = {}) {
       this.ctx = ctx;
