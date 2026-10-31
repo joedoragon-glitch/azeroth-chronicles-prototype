@@ -1177,20 +1177,40 @@
           )
             lights.push({ ...project(n), kind: 'lantern', id: n.id });
       }
-      const local = lights
-        .filter(
-          (p) =>
-            p.x > -140 * zoom &&
-            p.x < viewport.width + 140 * zoom &&
-            p.y > -160 * zoom &&
-            p.y < viewport.height + 140 * zoom,
-        )
-        .sort(
-          (a, b) =>
-            (a.x - viewport.width / 2) ** 2 +
-            (a.y - viewport.height / 2) ** 2 -
-            ((b.x - viewport.width / 2) ** 2 + (b.y - viewport.height / 2) ** 2),
-        )
+      // Canvas already lights the glass actually carried by living, nonboss
+      // Wraiths. Reuse its facing and idle presentation rather than inventing
+      // a disconnected floor lantern at the creature's collision anchor.
+      const carriedLanterns = [];
+      for (const e of z.enemies) {
+        if (e.species !== 'wraith' || e.type === 'boss' || e.hp <= 0) continue;
+        const visual = canvasRenderer.presentEntity(e, 'enemy');
+        const p = canvasRenderer.visualPositionFor(visual);
+        const facing = canvasRenderer.facingFor(visual);
+        const scale = e.captain || e.roomCaptain ? visual.visualScale || 1.18 : 1;
+        carriedLanterns.push({
+          x: p.x + facing * 22.5 * scale * zoom,
+          y: p.y + 1.5 * scale * zoom,
+          kind: 'carried-lantern',
+          id: e.id,
+        });
+      }
+      const nearby = (p) =>
+        p.x > -140 * zoom &&
+        p.x < viewport.width + 140 * zoom &&
+        p.y > -160 * zoom &&
+        p.y < viewport.height + 140 * zoom;
+      const byDistance = (a, b) =>
+        (a.x - viewport.width / 2) ** 2 +
+        (a.y - viewport.height / 2) ** 2 -
+        ((b.x - viewport.width / 2) ** 2 + (b.y - viewport.height / 2) ** 2) ||
+        String(a.id).localeCompare(String(b.id));
+      // Match Canvas source priority: at most eight carried lights followed
+      // by the nearest authored civic lights, within the existing 36-light
+      // GPU command budget. Daylight keeps only Wraith glass's tiny bloom.
+      const local = [
+        ...carriedLanterns.filter(nearby).sort(byDistance).slice(0, 8),
+        ...lights.filter(nearby).sort(byDistance).slice(0, 44),
+      ]
         .slice(0, 36)
         .map((p) => ({ ...p, x: p.x / zoom, y: p.y / zoom }));
       const hero = project(current.hero);
