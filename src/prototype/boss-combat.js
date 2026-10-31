@@ -2094,7 +2094,77 @@
         }
         return newlyBuilt.length;
       }
+      // Isolated fifth-class proof: a reversal belongs to ONE real attack
+      // instance, never to the boss, a global ward or every future warning.
+      // The Strategist is not admitted to the playable roster by this hook.
+      strategistReversalSupported(e, a) {
+        if (!e || !a || e.hp <= 0 || e.type !== 'boss' || a.captainSkill ||
+            a.bossHeal || a.rogueMove || a.charge || a.landing ||
+            a.sabotage || a.anonymousCast || !Number.isFinite(a.timer) ||
+            !Number.isFinite(a.total) || a.timer <= 0 || a.timer > a.total)
+          return false;
+        // Two positive native cases, not a blanket cancel of summon, grab,
+        // delayed hazards, anonymous attacks or boss multi-phase mechanics.
+        return (
+          (e.family === 'mine' && a.family === 'mine' && a.index === 0 &&
+            a.kind === 'circle' && a.arenaPatches?.length === 1) ||
+          (e.family === 'archive' && a.family === 'archive' && a.index === 1 &&
+            a.kind === 'line' && a.arenaLines?.length === 2)
+        );
+      }
+      strategistReversalCovers(a, point) {
+        if (a.kind === 'circle')
+          return this.attackPatches(a).some((p) =>
+            Number.isFinite(p.radius) && p.radius > 0 && dist(point, p) < p.radius);
+        if (a.kind === 'line')
+          return a.arenaLines.some((line) =>
+            Number.isFinite(line.halfWidth) && line.halfWidth > 0 &&
+            this.distanceToSegment(point, { x: line.fromX, y: line.fromY }, line) <
+              line.halfWidth);
+        return false;
+      }
+      // Explicit input destination for a later left-hand Field Order. There is
+      // deliberately NO shared invulnerability timer or arbitrary combo cap:
+      // a player must meet every separate attack's live footprint and deadline.
+      attemptStrategistReversal(enemyId) {
+        const h = this.hero;
+        if (h.class !== 'strategist' || h.hp <= 0 || !(h.skills?.[0] > 0) ||
+            this.peace || this.s.challenge?.pending || this.s.challenge?.gameOver ||
+            this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld)
+          return false;
+        const e = this.zone().enemies.find((unit) => unit.id === enemyId);
+        const a = e?.telegraph;
+        if (!this.strategistReversalSupported(e, a) || a.strategistReversal ||
+            !this.strategistReversalCovers(a, h) ||
+            !this.line(h, e) || this.attackResetProtected(e))
+          return false;
+        // This only marks the CURRENT warning. The later real enemy release
+        // will atomically consume it, protecting every normal recipient.
+        a.strategistReversal = { rank: h.skills[0] };
+        this.event('strategistReversalReadied', {
+          actor: 'hero', source: e.id, family: e.family, index: a.index,
+          x: h.x, y: h.y, remaining: a.timer,
+        });
+        return true;
+      }
+      strategistResolveReversal(e, a) {
+        if (!a?.strategistReversal || !this.strategistReversalSupported(e, a))
+          return false;
+        const rank = a.strategistReversal.rank;
+        delete a.strategistReversal;
+        // Rank affects the enemy's own force returned to them. An accurate
+        // early counter already prevents its entire ONE warned release.
+        const incoming = this.weakenedEnemyDamage(e) * (a.coefficient || 1);
+        const reflectedDamage = Math.max(1, incoming * (0.35 + 0.10 * (rank - 1)));
+        const reflected = this.damage(e, reflectedDamage, 'hero', { area: true });
+        this.event('strategistReversal', {
+          actor: 'hero', source: e.id, family: e.family, index: a.index,
+          reflected, damageAttempt: reflectedDamage, x: a.x, y: a.y,
+        });
+        return true;
+      }
       resolveAttack(e) {
+        if (this.strategistResolveReversal(e, e.telegraph)) return;
         const a = e.telegraph;
         if (!a) return;
         if (a.selfDefense && e.family === 'crypt' && a.index === 5) {
