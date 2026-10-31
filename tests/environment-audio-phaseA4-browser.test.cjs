@@ -117,6 +117,8 @@ const server=http.createServer((req,res)=>{
             return {bed:e.id,score:m.id,envRate:e.item.buffer.sampleRate,
               musicRate:m.voices[0].item.buffer.sampleRate,
               envDuration:e.item.buffer.duration,peak,
+              envDecodedBytes:e.item.buffer.length*e.item.buffer.numberOfChannels*4,
+              recordingCache:a.recordingAssets?.status(),
               loop:e.osc.loop,loopStart:e.osc.loopStart,loopEnd:e.osc.loopEnd,
               voiceCount:a.voices.size,environmentVoices:[...a.voices].filter(v=>v.recorded&&v.bus==='ambience').length,
               musicStems:m.voices.map(v=>v.id),envGain:e.targetGain,
@@ -128,9 +130,18 @@ const server=http.createServer((req,res)=>{
           assert.equal(result.score,x.score);
           assert.equal(result.context,'running');
           assert(result.envDuration>24 && result.peak>0.001,'real decoded bed non-silence');
+          assert(result.recordingCache && result.recordingCache.decodedBudget===96*1024*1024,
+            'real cache must retain its established 96MiB decoded recording budget');
+          assert(result.recordingCache.decodedBytes<=result.recordingCache.decodedBudget,
+            'real decoded music and environmental buffers exceed bounded cache');
+          assert(result.recordingCache.pinned<=result.recordingCache.cached,
+            'recording cache reports inconsistent active resource pins');
           assert(result.envRate>=32000 && result.musicRate>=32000);
           assert.equal(result.loop,true);
-          const expectedEnd = ['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(x.bed) ? 72.15 : 24.15;
+          const newRecording=['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(x.bed);
+          const expectedEnd=newRecording ? 72.15 : 24.15;
+          if(newRecording)assert(result.envDecodedBytes>8*1024*1024 && result.envDecodedBytes<16*1024*1024,
+            'real 72-second environmental MP3 must decode to an expected bounded mono PCM buffer');
           assert(Math.abs(result.loopStart-0.15)<0.001 && Math.abs(result.loopEnd-expectedEnd)<0.001,
             x.zone+' must decode and start the actual '+expectedEnd+'-second source loop');
           assert(result.environmentVoices<=2,'environment must not accumulate voices');
