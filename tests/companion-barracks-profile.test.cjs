@@ -1,0 +1,16 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const Menus = require('../src/prototype/menus');
+const Campaign = require('../src/prototype/engine');
+const source = fs.readFileSync(require.resolve('../src/prototype/menus'), 'utf8');
+assert.match(source, /function barracksCompanionProfile\(b, id, back\)/);
+assert.match(source, /function barracksCompanionAbilities\(id, back\)/);
+assert.match(source, /barracksPagedActions\(candidates, page/);
+assert.match(source, /g\.charmedEliteTrained\(u\)/);
+assert.match(source, /g\.petSkillSummary\(u\.petFamily, slot, true\)/);
+assert.match(source, /barracksInspectAction\(b, u,/);
+const g = new Campaign('normal','paladin',()=>0.9);
+assert.equal(g.companionMasteryTier(g.s.party[0]),0);
+assert.deepEqual(Campaign.rules.balance.companions.mastery.thresholds,[4,10,18]);
+console.log('PASS Issue 620 Barracks profiles and Orin bounded picker contracts');

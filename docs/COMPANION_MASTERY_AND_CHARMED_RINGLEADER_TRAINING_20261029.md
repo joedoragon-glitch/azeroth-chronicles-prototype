@@ -110,3 +110,10 @@ The owner may later assess **extra, paid training for Soldiers, Archers/Rangers 
 | **Broad acceptance** | Not yet certified | Run opt-in comprehensive browser/phone/nightmare suites and human device checks. Include old v4 import, reserve/fallen recovery, permanent daytime companions, progression after Succession, combat geometry, audio, and sustained performance. Never claim full-game, real-device FPS, installation or visual acceptance from focused CI alone. |
 
 **Explicitly not missing:** a new general mastery system for pets, Soldiers or Rangers; that shared system was implemented with #608. **Actually deferred:** *additional individualized paid training for those types*, post-monster-balance review. Historical draft/branch notes above should not be interpreted as fresh implementation requests.
+
+
+## Issue #620 Stage A implementation checkpoint (31 October 2026; draft branch only)
+
+Barracks Company roster and Charmed-species pages now lead to a per-ID **Inspect** view rather than immediately invoking Rest/Activate. The individual view retains a separate explicit management choice, shows personal HP, status, Mastery tier/cumulative threshold and Orin marker, and opens a read-only ability overview from current `Campaign.rules` and companion values. That overview distinguishes native, Ringleader signature, third heritage, night-native, troop, and boss-pet skills; unlock conditions and approximate noncritical pre-defense current/next-tier damage are shown. Boss-pet details reuse the same owned-unit ability overview. Orin's existing trainer picker now uses the roster's 8-per-page pagination while preserving the exact selected actor ID, price preview and guarded confirmation.
+
+This source modification is **implemented on an unmerged development branch only**; no claim of focused CI, publication, physical-device usability or owner's acceptance is made here. Stage B Developer Mode companion damage remains separate and pending. See [issue #620](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/620) for acceptance and scope.
