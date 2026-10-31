@@ -47,6 +47,7 @@ def source_contract():
     assert len({t["id"] for t in themes}) == 8
     descriptions = []
     structural_signatures = set()
+    acoustic_signatures = set()
     for t in themes:
         cue = t["id"]
         assert cue in catalog["assets"] and cue not in freeze
@@ -103,13 +104,26 @@ def source_contract():
             for at, degree, duration, instrument, gain in notes:
                 assert 0 <= at < 4 and 0 < duration <= 2
                 assert instrument in INSTRUMENTS and 0 < gain <= 1
+        profile = t.get("production")
+        assert profile and len(profile["space"]) >= 35, cue
+        assert len(profile["earlyReflections"]) == 3, cue
+        assert all(.02 <= delay <= .6 and 0 < gain < .12
+                   for delay, gain in profile["earlyReflections"]), cue
+        assert 30 <= profile["highpassHz"] <= 80
+        assert 6500 <= profile["lowpassHz"] < 18000
+        assert .07 <= profile["targetRms"] <= .11
+        assert .7 <= profile["stageWidth"] <= 1.2
+        assert 0 < profile["crossfeed"] <= .04
+        acoustic_signature = tuple(tuple(a) for a in profile["earlyReflections"])
+        assert acoustic_signature not in acoustic_signatures, cue
+        acoustic_signatures.add(acoustic_signature)
         signature = (t["bars"], t["bpm"], t["mode"],
                      tuple(t["harmony"]), tuple(t["phrases"]),
                      tuple(t["figures"]))
         assert signature not in structural_signatures
         structural_signatures.add(signature)
         descriptions.append((cue, bars, t["bpm"], "new-authored"))
-    assert len(structural_signatures) == 6
+    assert len(structural_signatures) == 6 and len(acoustic_signatures) == 6
     return original, catalog, freeze, themes, families, descriptions
 
 
@@ -125,6 +139,7 @@ def render_new(t, renderer):
     mix = np.zeros((n,2) if stereo else n, dtype=np.float64)
     seed = hashlib.sha256((t["id"] + ":phase3-master").encode()).digest()
     rng = np.random.default_rng(int.from_bytes(seed[:8], "little"))
+    production = t["production"]
 
     def add(bar, at, sound, strength, pan=0):
         start = round((bar * 4 + at) * beat * rate) % n
@@ -150,7 +165,7 @@ def render_new(t, renderer):
             fade = min(len(wave), round(.043 * rate))
             if fade: wave[:fade] *= np.linspace(.05, 1., fade)
         add(bar, at, wave, gain,
-            renderer.pan(inst, midi) if stereo else 0)
+            renderer.pan(inst, midi) * production["stageWidth"] if stereo else 0)
 
     for bar in range(t["bars"]):
         for at, pitch, length, instrument, gain, register in t["textures"][t["figures"][bar]]:
@@ -173,20 +188,22 @@ def render_new(t, renderer):
     # Circular early reflections + periodic filter settling make the seam a
     # compositional loop, rather than an arbitrary cut through a reverb tail.
     dry = mix.copy()
-    for delay, gain in ((.049, .055), (.115, .03), (.247, .013)):
+    for delay, gain in production["earlyReflections"]:
         mix += np.roll(dry, round(delay * rate), axis=0) * gain
     if stereo:
-        mix[:,0] += np.roll(dry[:,1],round(.123*rate)) * .016
-        mix[:,1] += np.roll(dry[:,0],round(.155*rate)) * .018
-    mix = sosfilt(butter(2, 45, btype="highpass", fs=rate, output="sos"),
+        mix[:,0] += np.roll(dry[:,1],round(.121*rate)) * production["crossfeed"]
+        mix[:,1] += np.roll(dry[:,0],round(.157*rate)) * production["crossfeed"]
+    mix = sosfilt(butter(2, production["highpassHz"], btype="highpass",
+                            fs=rate, output="sos"),
                   np.concatenate((mix,mix),axis=0),axis=0)[n:]
-    mix = sosfilt(butter(2, 10800, btype="lowpass", fs=rate, output="sos"),
+    mix = sosfilt(butter(2, production["lowpassHz"], btype="lowpass",
+                            fs=rate, output="sos"),
                   np.concatenate((mix,mix),axis=0),axis=0)[n:]
     rms = float(np.sqrt(np.mean(mix ** 2)))
     peak = float(np.max(np.abs(mix)))
     if rms <= 1e-8 or not np.isfinite(mix).all():
         raise RuntimeError(t["id"] + ": silent or nonfinite output")
-    mix *= min(.088 / rms, .69 / max(peak, 1e-8))
+    mix *= min(production["targetRms"] / rms, .69 / max(peak, 1e-8))
     return mix, rate
 
 

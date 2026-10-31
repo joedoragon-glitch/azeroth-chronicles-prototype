@@ -48,6 +48,11 @@ for (const t of score.themes) {
 assert.equal(newCount, 6, 'Do not quietly replace the approved v2 pilot material');
 assert.equal(harmonies.size, 6, 'Six new scenes must not copy a single harmony sequence');
 assert.equal(phraseForms.size, 6, 'Six new scenes must not copy the same phrase form');
+const spaces = score.themes.filter(t=>!t.pilotFamily).map(t=>t.production);
+assert.equal(spaces.length, 6);
+assert.equal(new Set(spaces.map(p=>JSON.stringify(p.earlyReflections))).size, 6,
+  'No generic acoustic-space preset shared among six authored regions');
+assert(spaces.every(p=>p.space.length>=35 && p.stageWidth>.7 && p.lowpassHz<18000));
 // Source-level phrase review: an accidental octave-plus switch is not
 // an approved form of dramatic contrast. Explicitly review such leaps instead.
 const scales = {
