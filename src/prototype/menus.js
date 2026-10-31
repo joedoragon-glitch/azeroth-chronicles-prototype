@@ -271,7 +271,7 @@
         back,
       );
     }
-    function teacherRingleader(n, back) {
+    function teacherRingleader(n, back, page = 0) {
       const g = getGame(),
         candidates = g.s.party.filter((u) => u.charmOrigin &&
           g.isCharmedCompanion(u)),
@@ -282,18 +282,18 @@
           cost + ' crowns each · 2.5× max HP and 1.5× damage, based on friendly scaled stats. ' +
           'Existing elite skills and mastery remain independent.',
         candidates.length
-          ? candidates.map((u) => {
+          ? barracksPagedActions(candidates, page, (u) => {
               const reason = g.charmedRingleaderTrainingReason(u, n.family);
               return action(
-                g.companionDisplayName(u) + ' · Mastery ' +
+                companionIdentityLabel(u) + ' · Mastery ' +
                   g.companionMasteryTier(u) +
                   (u.charmRingleaderTrained ? ' · Ringleader trained' : ' · ' + cost + ' crowns'),
                 () => teacherRingleaderPreview(n, u.id,
-                  () => teacherRingleader(n, back)),
+                  () => teacherRingleader(n, back, page)),
                 reason || 'Review health/damage and confirm your investment.',
-                !!reason,
+                false,
               );
-            })
+            }, (next) => teacherRingleader(n, back, next))
           : [action('No Charmed monsters available', () => {},
               'Only personally captured Charmed monsters may train.', true)],
         back,
@@ -305,15 +305,24 @@
         cost = Campaign.rules.balance.companions.ringleaderTrainingCost,
         reason = g.charmedRingleaderTrainingReason(u, n.family);
       if (reason) {
-        back();
+        openMenu(
+          'Ringleader Training · ' + (u ? companionIdentityLabel(u) : id),
+          'This individual cannot be trained now: ' + reason +
+            '. No crowns are charged.',
+          [action('Training unavailable', () => {}, reason, true)],
+          back,
+        );
         return;
       }
       const beforeHp = g.companionMaxHp(u),
         beforeDamage = g.companionAttackDamage(u),
-        afterHp = Math.round(beforeHp * Campaign.rules.ringleaderScaling.hp),
+        // Ask the authoritative stat formula to preview a promoted copy.
+        // Rounding the already-rounded beforeHp * 2.5 can promise a different
+        // maximum HP from what the real training transaction grants.
+        afterHp = g.companionMaxHp({ ...u, charmRingleaderTrained: true }),
         afterDamage = beforeDamage * Campaign.rules.ringleaderScaling.damage;
       openMenu(
-        'Ringleader Training · ' + g.companionDisplayName(u),
+        'Ringleader Training · ' + companionIdentityLabel(u),
         'Orin will train this individual monster, not the entire species. ' +
           'HP ' + beforeHp + ' → ' + afterHp +
           ' · attack ' + beforeDamage.toFixed(1) + ' → ' + afterDamage.toFixed(1) +
@@ -1518,8 +1527,10 @@
             : []),
           action(
             'Pet skills',
-            () => barracksPetSkills(b, family, () => barracksPetDetail(b, family, back)),
-            'Automatic attacks and charged skills.',
+            () => unit
+              ? barracksCompanionAbilities(unit.id, () => barracksPetDetail(b, family, back))
+              : barracksPetSkills(b, family, () => barracksPetDetail(b, family, back)),
+            'Automatic attacks, charged skills and personal Mastery effects.',
           ),
           action(
             state === 'Locked'
@@ -1765,6 +1776,14 @@
       }
       return result;
     }
+    function companionIdentityLabel(u) {
+      const g = getGame(), name = u.customName ||
+        (u.charmOrigin ? charmedTypeName(u)
+          : u.type === 'pet' ? g.petDefinition(u)?.name || 'Boss pet' : unitLabel(u.type));
+      // Array positions are not identities: removing a Goblin must not
+      // silently rename all the surviving individuals in the company ledger.
+      return name + ' [' + u.id + ']';
+    }
     function companionMasteryDisplay(u) {
       const g = getGame(),
         tier = g.companionMasteryTier(u),
@@ -1772,6 +1791,203 @@
         points = u.masteryPoints || 0;
       return 'Mastery ' + tier + (next ? ' · ' + points + '/' + next + ' points' : ' · MAX') +
         (u.charmRingleaderTrained ? ' · Ringleader trained' : '');
+    }
+
+    // The roster is an inspection surface first. Management remains a separate,
+    // explicitly labelled choice, and all callbacks use the saved actor ID.
+    function barracksInspectAction(b, u, back) {
+      return action(
+        'Inspect · ' + companionIdentityLabel(u),
+        () => {
+          const g = getGame();
+          if (!g.s.party.includes(u)) return back();
+          barracksCompanionProfile(b, u.id, back);
+        },
+        charmedStatus(u) + ' · ' + Math.ceil(Math.max(0, u.hp)) +
+          '/' + u.maxHp + ' HP · ' + companionMasteryDisplay(u),
+      );
+    }
+    function barracksCompanionProfile(b, id, back) {
+      const g = getGame(), u = g.s.party.find((row) => row.id === id);
+      if (!u) return back();
+      const role = u.charmOrigin
+        ? charmedTypeName(u) + ' · ' + (u.type === 'archer' ? 'ranged' : 'melee')
+        : u.type === 'pet'
+          ? (g.petDefinition(u)?.name || 'Boss pet') + ' · ' + u.petFamily
+          : unitLabel(u.type);
+      openMenu(
+        'Companion · ' + companionIdentityLabel(u),
+        role + ' · ' + charmedStatus(u) +
+          '\nHealth ' + Math.ceil(Math.max(0, u.hp)) + '/' + u.maxHp +
+          ' · ' + companionMasteryDisplay(u) +
+          '\nIndividual ID ' + u.id,
+        [
+          action('Abilities & mastery', () => {
+            if (getGame() !== g || !g.s.party.includes(u)) return back();
+            barracksCompanionAbilities(id,
+              () => barracksCompanionProfile(b, id, back));
+          },
+            'Current ability effects, unlocks, recovery and next-tier growth.'),
+          (() => {
+            const manage = barracksCompanionAction(b, u, () => back());
+            return { ...manage, action: () => {
+              if (getGame() !== g || !g.s.party.includes(u)) return back();
+              manage.action();
+            } };
+          })(),
+          ...(!u.customName
+            ? [action('Choose permanent name',
+                () => {
+                  if (getGame() !== g || !g.s.party.includes(u)) return back();
+                  nameCompanion(id, () => barracksCompanionProfile(b, id, back));
+                },
+                'Optional; name this individual once.')]
+            : []),
+        ],
+        back,
+      );
+    }
+    function barracksCompanionAbilities(id, back) {
+      const g = getGame(), u = g.s.party.find((row) => row.id === id);
+      if (!u) return back();
+      const R = Campaign.rules, tier = g.companionMasteryTier(u),
+        mastery = R.balance.companions.mastery,
+        nextTier = Math.min(3, tier + 1),
+        nextThreshold = mastery.thresholds[tier],
+        combatGate = 'Learn hero Skill 2 from Mira to unlock advanced companion skills.',
+        rows = [];
+      const potency = (multiplier, growth) => {
+        const value = (n) => (g.companionAttackDamage(u) * multiplier *
+          (1 + n * growth)).toFixed(1);
+        return 'Damage before defenses/critical: ' + value(tier) +
+          (tier < 3 ? ' → ' + value(nextTier) + ' at next Mastery' : ' · max Mastery');
+      };
+      const detail = (def) =>
+        (def.shape === 'single' || def.shape === 'target'
+          ? 'one target' : def.shape || 'one target') +
+        (def.range ? ' · reach ' + def.range : '') +
+        (def.radius ? ' · radius ' + def.radius : '') +
+        (def.halfWidth ? ' · half-width ' + def.halfWidth : '') +
+        (def.cap ? ' · at most ' + def.cap + ' targets' : '') +
+        (def.slow ? ' · Slow ' +
+          Math.min(2.5, def.slow + tier * mastery.slowSecondsPerTier).toFixed(2) + 's' : '') +
+        (def.push ? ' · shove up to ' +
+          Math.min(45, def.push + tier * mastery.pushUnitsPerTier) + ' units' : '') +
+        (def.siphon ? ' · siphon ' +
+          ((def.siphon + tier * mastery.siphonFractionPerTier) * 100).toFixed(1) +
+          '% of actual HP damage' : '') +
+        (def.dash ? ' · movement ' + def.dash + ' units (collision checked)' : '');
+      const friendlyMove = (profile) => {
+        const descriptions = {
+          snare: 'Disrupts and slows an enemy',
+          shove: 'Strikes and pushes an ordinary enemy away',
+          dash: 'Closes distance with a swift maneuver',
+          withdraw: 'Fires while making room to retreat',
+          scatter: 'Strikes and scatters up to two nearby enemies',
+          sweep: 'Sweeps up to two nearby enemies aside',
+          pivot: 'Slows an enemy and repositions to a safer angle',
+          bind: 'Hinders an enemy with a slowing attack',
+        };
+        const effect = descriptions[profile.effect || profile.style] ||
+          'A distinctive single-target combat maneuver';
+        return effect + (profile.blinds ? ' and provides a brief defensive ward' : '');
+      };
+      // An ability page is a readable index, not a wall of dim disabled buttons.
+      // Tapping a read-only skill reveals its source-derived details; no action
+      // here spends crowns, starts combat, or unlocks anything.
+      const entry = (name, description, locked = '') =>
+        rows.push(action(
+          (locked ? 'Locked · ' : 'Available · ') + name,
+          () => {
+            if (getGame() !== g || !g.s.party.includes(u)) return back();
+            openMenu(name,
+              (locked ? 'Locked: ' + locked + '\n\n' : '') + description,
+              [], () => barracksCompanionAbilities(id, back));
+          },
+          locked || description.split(' · ').slice(0, 2).join(' · '),
+        ));
+      if (u.charmOrigin && g.isCharmedCompanion(u)) {
+        const species = u.charmOrigin.species,
+          ranged = u.type === 'archer',
+          foundation = R.tacticalFoundation,
+          native = (ranged ? foundation.rogueMoves.ranged[species]
+            : foundation.rogueMoves.species[species]) ||
+            (ranged ? foundation.rogueMoves.rangedFallback : foundation.rogueMoves.ordinary),
+          signature = foundation.rogueRingleaderSignatures[
+            ranged ? 'ranged' : 'melee'][species],
+          cfg = R.balance.companions.charmedSkills,
+          elite = g.charmedEliteTrained(u),
+          allowed = g.hero.class === 'rogue' || u.charmRingleaderTrained,
+          heritage = R.balance.companions.charmHeritage[species],
+          night = R.balance.companions.charmNightNative[species],
+          nativeLock = allowed ? '' : 'Only Rogue companions or Orin-trained companions can execute Charmed skills',
+          eliteLock = elite ? '' : combatGate +
+            (!allowed ? ' Orin training is required after non-Rogue Succession.' : '');
+        if (native)
+          entry('Native · ' + native.name,
+            friendlyMove(native) + ' · ' + cfg.basicCooldown + 's recovery · ' +
+              potency(cfg.basicDamageMultiplier, mastery.nativeDamagePerTier),
+            nativeLock);
+        if (signature)
+          entry('Ringleader signature · ' + signature.name,
+            friendlyMove(signature) +
+              ' · up to ' + (['scatter','sweep'].includes(signature.effect)
+                ? cfg.signatureTargetCap : 1) + ' targets' +
+              (['scatter','sweep'].includes(signature.effect) && signature.radius
+                ? ' · radius ' + signature.radius : '') + ' · ' +
+              cfg.signatureCooldown + 's recovery · ' +
+              potency(cfg.signatureDamageMultiplier, mastery.nativeDamagePerTier),
+            eliteLock);
+        if (heritage)
+          entry('Third heritage · ' + heritage.name,
+            detail(heritage) + ' · ' + heritage.cooldown + 's recovery · ' +
+              potency(heritage.multiplier,
+                heritage.slow || heritage.push
+                  ? mastery.controlDamagePerTier : mastery.directDamagePerTier),
+            eliteLock);
+        if (night)
+          entry('Night-native · ' + night.name,
+            detail(night) + ' · ' + cfg.basicCooldown + 's recovery · ' +
+              potency(night.multiplier,
+                night.slow || night.push
+                  ? mastery.controlDamagePerTier : mastery.directDamagePerTier),
+            nativeLock);
+      } else if (u.type === 'pet') {
+        const def = g.petDefinition(u);
+        if (def) for (const slot of [1, 2]) {
+          const skill = slot === 1 ? def.first : def.second;
+          entry((slot === 1 ? 'First · ' : 'Charged · ') + skill.name,
+            g.petSkillSummary(u.petFamily, slot, true) + ' · ' +
+              potency(skill.multiplier, mastery.nativeDamagePerTier),
+            slot === 2 && !g.companionSecondSkillUnlocked() ? combatGate : '');
+        }
+      } else if (u.type === 'soldier' || u.type === 'archer') {
+        const first = R.companionSkills.first,
+          second = R.companionSkills.second[u.type];
+        entry('First · ' + first[u.type].name,
+          first.cooldown + 's recovery · ' +
+            (u.type === 'archer' ? 'Three physical shots · each: ' : 'Single melee strike · ') +
+            potency(u.type === 'archer' ? 1 : first.multiplier,
+              mastery.nativeDamagePerTier));
+        entry('Charged · ' + second.name,
+          detail(second) + ' · ' + R.companionSkills.second.cooldown +
+            's recovery · ' + potency(second.multiplier, mastery.nativeDamagePerTier),
+          g.companionSecondSkillUnlocked() ? '' : combatGate);
+        if (u.type === 'archer')
+          entry('Ranger support · healing',
+            'Automatic wounded-ally support · ' + R.rangerSupport.cooldown +
+              's cooldown; unlock and amount follow rescued Neri’s training.');
+      }
+      openMenu(
+        'Abilities · ' + companionIdentityLabel(u),
+        companionMasteryDisplay(u) + '\n' +
+          (nextThreshold ? 'Next Mastery at ' + nextThreshold + ' total points.' :
+            'Tier III is the maximum.') +
+          '\nValues are pre-critical estimates. Defenses, buffs and current combat conditions can change actual damage.',
+        rows.length ? rows : [action('No authored combat abilities', () => {},
+          'This individual has no available skill record.', true)],
+        back,
+      );
     }
     function barracksCompanionAction(b, u, refresh) {
       // Stable member ID, not array index: an action is revalidated by the
@@ -1815,7 +2031,7 @@
         cap = game.barracksFieldCap(b),
         roster = game.s.party,
         refresh = (next = page) => barracksGroupMenu(b, back, next),
-        actions = barracksPagedActions(roster, page, (u) => barracksCompanionAction(b, u, () => refresh()), refresh);
+        actions = barracksPagedActions(roster, page, (u) => barracksInspectAction(b, u, () => refresh()), refresh);
       openMenu(
         'Manage group',
         'With you ' +
@@ -1861,8 +2077,7 @@
         refresh = (next = page, nextView = view) =>
           barracksCharmedTypeMenu(b, typeId, back, next, nextView),
         actions = barracksPagedActions(roster, page, (u) => {
-          const result = barracksCompanionAction(b, u, () => refresh());
-          return { ...result, detail: charmedStatus(u) + ' · ' + result.detail };
+          return barracksInspectAction(b, u, () => refresh());
         }, refresh),
         views = ['All', 'Active', 'Resting', 'Fallen', 'Away'];
       actions.push(action(
@@ -1925,14 +2140,18 @@
       );
     }
     function nameCompanion(id, back) {
-      const unit = getGame().s.party.find((u) => u.id === id);
+      const game = getGame(), unit = game.s.party.find((u) => u.id === id);
       if (!unit || unit.customName) return back();
       requestName({
         title: 'Name your companion',
         description:
-          getGame().companionDisplayName(unit) +
+          game.companionDisplayName(unit) +
           ' · Choose a permanent name, or skip and return later.',
-        onSubmit: (name) => getGame().nameCompanion(id, name),
+        // A name-confirmation modal can remain open across a New Run. An
+        // identical future ID must never redirect a permanent name to a
+        // different actor or campaign.
+        onSubmit: (name) => getGame() === game && game.s.party.includes(unit) &&
+          game.nameCompanion(id, name),
         onSkip: back,
         onDone: back,
       });
@@ -1943,7 +2162,10 @@
         actions = barracksPagedActions(game.s.party, page, (u) =>
           action(
             rosterLabel(u),
-            () => nameCompanion(u.id, () => returnHere()),
+            () => {
+              if (getGame() !== game || !game.s.party.includes(u)) return back();
+              nameCompanion(u.id, () => returnHere());
+            },
             (u.charmOrigin
               ? charmedTypeName(u)
               : u.type === 'pet'
@@ -2001,6 +2223,18 @@
             'Name companions',
             () => barracksNamesMenu(b, returnHere),
             'Optional · chosen once.',
+          ),
+          action(
+            'How Mastery works',
+            () => openMenu(
+              'How Mastery works',
+              'Each active, living companion earns independent points: +1 paid quest; +1 hero level; +1 captain; +1 first credited guardian; +2 first credited regular or TRUE boss. No Mastery rewards in Arena or Developer Mode. Total thresholds: 4 / 10 / 18. Mastery strengthens existing abilities; it never unlocks a locked hero skill.',
+              [action('Tier I · 4 points', () => {}, 'Individual gains begin at the first milestone.', true),
+               action('Tier II · 10 points', () => {}, 'Existing ability effects improve again.', true),
+               action('Tier III · 18 points', () => {}, 'Maximum Mastery tier.', true)],
+              returnHere,
+            ),
+            'Personal progress, rewards and tier thresholds.',
           ),
           ...(getGame().hero.class === 'rogue'
             ? []

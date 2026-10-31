@@ -623,6 +623,22 @@ body[data-experience='phone'] #developer-combat-monitor {
   font-size: 10px;
 }
 
+body[data-experience='phone'] #developer-companion-monitor {
+  left: max(8px, env(safe-area-inset-left));
+  right: auto;
+  top: calc(90px + env(safe-area-inset-top));
+  width: min(185px, 41vw);
+  max-height: 37vh;
+  font-size: 10px;
+}
+body[data-experience='phone'] #developer-companion-content {
+  max-height: 28vh;
+  padding: 5px 7px;
+}
+body[data-experience='phone'] #developer-companion-monitor > button {
+  min-height: 40px;
+  padding: 6px;
+}
 /* Phone-sized shared menu settings controls. */
 body[data-experience='phone'] #modal-actions .menu-setting {
   padding: 8px;

@@ -103,6 +103,11 @@
       // Non-persistent test telemetry must not alter ordinary campaign state.
       if (mode === 'developer') {
         this.developerCombat = { incoming: [], outgoing: [], startedAt: 0 };
+        // ID-bound, ephemeral diagnostics. Never copied into v4 saved state.
+        this.developerCompanions = {
+          moves: new Map(), hits: new Map(), projectiles: new Map(),
+          sequence: 0,
+        };
       }
       this.s = {
         version: 4,
@@ -735,10 +740,9 @@
             dist(e, u) <= cfg.range + 210,
         )
         .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
-      // One full route feasibility search followed by another in follow()
-      // caused the measured 8,830-probe Treasury captain-phase frame.
-      // A pending bounded approach is neither unreachable nor a movement;
-      // retain native healer targeting and let follow validate its path once.
+      // The previous full-route feasibility check duplicated follow()'s
+      // route, causing the measured Treasury healer frame spike.
+      // A pending bounded path is not a failed support attempt.
       if (!ally) return false;
       const before = { x: e.x, y: e.y };
       const advancing = this.follow(
@@ -749,8 +753,6 @@
         cfg.range - 25,
         'support-approach',
       );
-      // A pending frontier counts as a continuing support approach. Only a
-      // genuinely failed or completed no-movement attempt may idle-wander.
       if (dist(before, e) <= 0.1) return advancing;
       e.noProgress = 0;
       return true;
@@ -781,6 +783,8 @@
       if (h.seconds <= 0 || h.remaining <= 0 || e.hp >= e.maxHp) delete e.supportHeal;
     }
     event(type, data = {}) {
+      if (type === 'companionSkill' && this.s.mode === 'developer')
+        this.developerCompanionLabelLastMove(data.source, data.skill);
       this.s.statistics.events.push({ time: Math.round(this.s.time), type, ...data });
       if (this.s.statistics.events.length > 400) this.s.statistics.events.shift();
       this.effects.push({ type, ...data });
@@ -2150,6 +2154,112 @@
       const history = this.developerCombat[direction];
       history.push({ time: this.s.time, damage: amount });
       while (history.length > 3 && history[0].time < this.s.time - 5) history.shift();
+    }
+    developerCompanionNewMove(source, label) {
+      const d = this.developerCompanions;
+      if (!d) return null;
+      const list = d.moves.get(source) || [];
+      const move = { id: ++d.sequence, time: this.s.time, label,
+        damage: 0, pending: 0, resolved: true };
+      list.push(move);
+      while (list.length > 48) {
+        // An orphaned projectile must not retain a permanent history.
+        const old = list.shift();
+        for (const [pid, entry] of d.projectiles)
+          if (entry.move === old) d.projectiles.delete(pid);
+      }
+      d.moves.set(source, list);
+      return move;
+    }
+    developerCompanionTrackProjectile(unit, label, projectile, releaseMove = null) {
+      if (this.s.mode !== 'developer' || !projectile || !unit?.id) return;
+      // A token comes from the actual committed action, never frame timing.
+      const d = this.developerCompanions,
+        move = releaseMove || this.developerCompanionNewMove(unit.id, label);
+      if (!move) return;
+      d.projectiles.set(projectile.id, { source: unit.id, move });
+      move.pending++;
+      move.resolved = false;
+    }
+    developerCompanionBeginDirect(unit, label) {
+      if (this.s.mode !== 'developer') return null;
+      const previous = this._developerCompanionDirectMove || null;
+      this._developerCompanionDirectMove = {
+        source: unit.id, move: this.developerCompanionNewMove(unit.id, label),
+      };
+      return previous;
+    }
+    developerCompanionEndDirect(previous) {
+      if (this.s.mode === 'developer') this._developerCompanionDirectMove = previous;
+    }
+    // Observe the actual melee release even if a legal attempt removes no HP.
+    // Its damage, RNG and normal-mode behavior still belong to Campaign.damage.
+    developerCompanionDamage(unit, label, target, amount, options = null) {
+      if (this.s.mode !== 'developer')
+        return this.damage(target, amount, unit.id, options);
+      const previous = this.developerCompanionBeginDirect(unit, label);
+      try {
+        return this.damage(target, amount, unit.id, options);
+      } finally {
+        this.developerCompanionEndDirect(previous);
+      }
+    }
+    recordDeveloperCompanionDamage(source, amount) {
+      if (this.s.mode !== 'developer' || !(amount > 0) ||
+          !this.s.party.some((u) => u.id === source)) return;
+      const d = this.developerCompanions;
+      const mapped = d.projectiles.get(this._developerCompanionProjectileInFlight);
+      const direct = this._developerCompanionDirectMove;
+      const move = mapped?.source === source ? mapped.move
+        : direct?.source === source ? direct.move
+          : this.developerCompanionNewMove(source, 'Basic attack');
+      if (!move) return;
+      move.damage += amount;
+      const hits = d.hits.get(source) || [];
+      const lastHit = hits.at(-1);
+      if (lastHit?.time === this.s.time) lastHit.damage += amount;
+      else hits.push({ time: this.s.time, damage: amount });
+      while (hits.length && hits[0].time < this.s.time - 5) hits.shift();
+      if (hits.length > 1024) hits.splice(0, hits.length - 1024);
+      d.hits.set(source, hits);
+    }
+    developerCompanionLabelLastMove(source, label) {
+      if (this.s.mode !== 'developer' || !source || !label) return;
+      const last = this.developerCompanions.moves.get(source)?.at(-1);
+      if (last?.time === this.s.time && !last.pending) last.label = label;
+    }
+    developerCompanionSnapshot() {
+      if (this.s.mode !== 'developer') return null;
+      const d = this.developerCompanions, now = this.s.time,
+        available = this.s.party.filter((u) => u.active !== false &&
+          u.hp > 0 && !u.expeditionId && ['soldier','archer','pet'].includes(u.type) &&
+          (!u.charmOrigin || this.isCharmedCompanion(u)) &&
+          (u.type !== 'pet' || this.petUnlocked(u.petFamily))),
+        eligible = new Set(available.map((u) => u.id)),
+        flying = new Set(this.s.projectiles.map((p) => p.id));
+      // Missed, expired or cancelled shots resolve with zero damage. A shared
+      // multi-arrow move resolves only after every attached projectile ends.
+      for (const [id, entry] of d.projectiles) {
+        if (flying.has(id) && eligible.has(entry.source)) continue;
+        d.projectiles.delete(id);
+        entry.move.pending = Math.max(0, entry.move.pending - 1);
+        if (!entry.move.pending) entry.move.resolved = true;
+      }
+      for (const id of d.moves.keys()) if (!eligible.has(id)) d.moves.delete(id);
+      for (const [id, hits] of d.hits) {
+        if (!eligible.has(id)) { d.hits.delete(id); continue; }
+        while (hits.length && hits[0].time < now - 5) hits.shift();
+      }
+      const elapsed = Math.min(5,
+        Math.max(1, now - this.developerCombat.startedAt));
+      return available.map((u) => ({
+        id: u.id, name: this.companionDisplayName(u),
+        type: u.type === 'pet' ? 'Pet' : u.charmOrigin ? 'Charmed' : 'Companion',
+        last: (d.moves.get(u.id) || []).filter((m) => m.resolved).slice(-3)
+          .reverse().map((m) => ({ name: m.label, damage: m.damage })),
+        dps: (d.hits.get(u.id) || [])
+          .reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
+      }));
     }
     developerCombatSnapshot() {
       if (this.s.mode !== 'developer') return null;
