@@ -107,6 +107,11 @@ const patrolA=measure('thorn-patrol-0-to-4',{fromLeg:0,toLeg:4});
 const patrolB=measure('thorn-patrol-4-to-0',{fromLeg:4,toLeg:0});
 assert(baseline.roster>0&&control.roster>0);
 assert.equal(baseline.roster-control.roster,1);
+assert(patrolA.peakTickProbes<2000 && patrolB.peakTickProbes<2000,
+  'Thorn and Mira must not repeat multi-thousand-probe synchronous route scans');
+assert(!patrolA.heavyRoutes.some(r=>r.sourceFamily==='thorn') &&
+  !patrolB.heavyRoutes.some(r=>r.sourceFamily==='thorn'),
+  'Idle scripted Vale pathfinding must use bounded planning');
 console.log('VALE_IDLE_ROUTE_COMPARISON '+JSON.stringify({
   native:baseline.peakTickProbes,control:control.peakTickProbes,
   patrolA:patrolA.peakTickProbes,patrolB:patrolB.peakTickProbes,
