@@ -116,7 +116,7 @@ async function main(){
       mode:Prototype.experimentalGraphics.mode,
       phase:Prototype.game.daylightPhase().phase,
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
-      motes:Prototype.experimentalGraphics.sceneMetrics?.motes,
+      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
       time:Prototype.game.s.clock
     }));
     assert.equal(withWraith.mode,'webgl2','No GPU fallback during reproduction');
@@ -131,7 +131,7 @@ async function main(){
     const withoutWraith=await page.evaluate(()=>({
       mode:Prototype.experimentalGraphics.mode,
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
-      motes:Prototype.experimentalGraphics.sceneMetrics?.motes
+      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes
     }));
     assert((await gpu.screenshot({path:path.join(out,'marches-no-wraith-pixi.png')})).length>1024);
     const result={scene,withWraith,withoutWraith,errors};
