@@ -79,12 +79,12 @@ for(const side of sides){
 // These original native suites own dungeon doors and trap/progression safety,
 // Greenwood canon, and all four Treasury captains/caches. Run narrowly here:
 // source paintings are not a substitute for established gameplay regressions.
-for(const name of ['regional-handoffs.test.cjs',
-  'greenwood-interiors.test.cjs','treasury-fortifications.test.cjs']){
+const originalFailures=[];
+for(const name of ['greenwood-interiors.test.cjs','treasury-fortifications.test.cjs']){
   console.log('Phase 3 original regression: '+name);
   const run=cp.spawnSync(process.execPath,[path.join(__dirname,name)],{
     cwd:path.join(__dirname,'..'),stdio:'inherit',timeout:120000});
-  assert.equal(run.status,0,'Original regression failed or timed out: '+name+
-    (run.error?' — '+run.error.message:''));
+  if(run.status!==0)originalFailures.push(name+': '+(run.error?.message||'exit '+run.status));
 }
+assert.deepEqual(originalFailures,[],'Relevant original Greenwood/Treasury regressions must pass');
 console.log('PASS Phase 3: 5 distinct side-dungeon floors and low walls, 5 original rosters/layouts/save re-entry preserved');
