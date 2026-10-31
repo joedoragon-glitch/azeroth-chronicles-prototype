@@ -59,7 +59,7 @@ for(const [zone,region,bed] of [
 ]) {
   assert.equal(a.environmentCue({...base,zone,region,interior:'side-dungeon'}).asset,bed);
   assert.equal(a.environmentCue({...base,zone:region,region,interior:'outdoors'}).asset,
-    region==='highlands'?'env-highland-wind':'env-frontier-air');
+    region==='highlands'?'env-highlands-autumn':'env-frontier-recovery');
 }
 for(const extra of [
  {started:false},{gameOver:true},{situation:'title'},
@@ -73,7 +73,7 @@ assert.equal(a.optimizationMode,true);
 assert.equal(a.setOptimizationMode(false),true);
 assert.equal(a.optimizationMode,false);
 a.dispose();
-console.log('PASS issue #709: 127 assets/14 ambience/18 routing rules, '+
+console.log('PASS issue #709: 131 assets/18 ambience (14 preserved+4 new)/18 routing rules, '+
  routeCases+' real director place-night-peace policy checks, authoring parity, title gating, optimization');
 
 
