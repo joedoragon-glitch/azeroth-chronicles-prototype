@@ -500,6 +500,7 @@
         !skill ||
         !this.enemyHealingActor(e) ||
         this.mageSilenceActive(e) ||
+        this.rogueEnemySilenced(e) ||
         this.peace ||
         e.returning ||
         e.motion ||
@@ -646,6 +647,7 @@
         this.peace ||
         e.returning ||
         this.mageSilenceActive(e) ||
+        this.rogueEnemySilenced(e) ||
         e.motion ||
         e.telegraph ||
         e.rangedAim ||
@@ -7335,7 +7337,8 @@
         )
           continue;
         // Native pursuit and existing Rogue tactics retain their own cadence.
-        if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
+        if (!this.mageSilenceActive(e) && !this.rogueEnemySilenced(e) &&
+            this.tacticalAutoRogue(e, target)) continue;
         const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
           regroup = this.tacticalRogueRegroup(e),
           extendedCover = regroup?.phase === 'extended' && !!e.telegraph?.rogueMove,
@@ -7363,10 +7366,10 @@
             continue;
           }
         }
-        if (e.telegraph && this.mageSilenceActive(e)) {
-          // Existing warned specials remain queued, but cannot resolve
-          // inside a Silence Field. Pausing the warning preserves boss
-          // phase/sequence integrity rather than erasing authored attacks.
+        if (e.telegraph &&
+            (this.mageSilenceActive(e) || this.rogueEnemySilenced(e))) {
+          // Mage Silence and eligible ordinary Rogue Hush hold warned
+          // specials. Boss scripted phases retain their original sequence.
           e.noProgress = 0;
           continue;
         }

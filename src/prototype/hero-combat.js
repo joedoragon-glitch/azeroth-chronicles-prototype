@@ -1251,6 +1251,13 @@
           }
         }
       }
+      // Read independently timed Wither without altering or persisting its WeakMap.
+      rogueEnemyWithered(e) {
+        const state = rogueEnemyWithers.get(e);
+        return this.hero.class === 'rogue' && e?.hp > 0 &&
+          state?.zone === this.zoneId &&
+          state.effects.some(effect => effect.until > this.s.time);
+      }
       rogueEnemyHealingFactor(e) {
         const state = rogueEnemyWithers.get(e);
         if (this.hero.class !== 'rogue' || state?.zone !== this.zoneId || e?.hp <= 0)

@@ -14,6 +14,7 @@
       'skillNightCd',
       'skillGlobalCd',
       'healCd',
+      'charmSupportCd', // Existing Charmed ranged-healer timer.
       'manaCd',
       'survivalCd',
     ];
@@ -23,6 +24,7 @@
       'summonCd',
       'healCd',
       'supportHealCd',
+      'hybridSelfHealCd', // Existing independent hybrid self-heal timer.
       'anastylosisCd',
       'sabotageCd',
     ];

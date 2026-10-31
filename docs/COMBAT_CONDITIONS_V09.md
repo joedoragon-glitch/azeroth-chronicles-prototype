@@ -22,6 +22,32 @@ The supported GitHub Pages/PWA game is multi-file. The version-4 save model and
 existing procedural/sprite graphics remain canonical. Development is paused under
 [current state](DEVELOPMENT_STATE.md); no new stabilization or testing cycle starts here.
 
+## Status-effects completion candidate · 31 October 2026
+
+The implementation follow-up to [audit PR #700](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/700)
+and [issue #702](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/702)
+makes Charmed ranged-support `charmSupportCd` and hybrid enemy `hybridSelfHealCd`
+eligible for the **existing** Slow hit-time cooldown debt. Their already-slowed
+per-tick recovery remains unchanged. Ready actions never gain debt; no saved
+state or tuning value is introduced. This is an **unmerged, unpublished candidate**
+until verified otherwise.
+
+The shared Canvas status layer (also used above PixiJS/WebGL2) presents Mage
+and Rogue Hush Silence, Slow with finite/compact stack-number display, Taunt,
+Rogue Wither, Fracture and Weaken. Hero and living active companions receive
+world Slow cues, complementing the existing HUD duration. Fracture and Weaken
+have deliberately different silhouettes. At four or more enemy conditions,
+the first two rows prioritize Silence and Slow, while the third remains the
+existing `+N` count for the conditions hidden beyond the first two. The
+24-enemy budget, target/boss priority, and absence of icons for instant
+shoves, projectiles or other non-status events are retained.
+
+Rogue Hush can prevent new eligible non-boss special starts, including ordinary
+support and hybrid self-recovery, and delay an eligible warned cast; normal
+basics, already committed effects and protected boss phases are not silenced.
+Its independent temporary producer remains in an unsaved WeakMap. Test pixels
+on actual phones before claiming device readability.
+
 ## Current update and where players learn it · 15 October 2026
 
 PR #308 now includes the complete hero Skills 1–8 and audiovisual sources, Slow

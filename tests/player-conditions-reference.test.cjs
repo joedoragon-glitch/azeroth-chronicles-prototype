@@ -14,7 +14,9 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   );
   assert.deepEqual(shelf.topics, topics, 'Archive and short reference use the same definitions');
   const slow = topics.find((t) => t[0] === 'Slow');
-  assert(slow[1].includes('skill cooldowns') && slow[1].includes('already slowed'));
+  assert(slow[1].includes('skill cooldowns') &&
+    slow[1].includes('Repeated Slow hits') &&
+    slow[1].includes('lasting cooldown debt'));
   assert(slow[2].includes('65%') && slow[2].includes('85%') && slow[2].includes('40%'));
   const silence = topics.find((t) => t[0] === 'Silence');
   assert(silence[1].includes('you and companions') && silence[1].includes('ordinary attacks'));
