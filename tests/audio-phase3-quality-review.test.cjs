@@ -77,8 +77,9 @@ for (const theme of score) {
   assert.match(evidence.sound, /^UNVERIFIED/);
   if (match < 4) discrepancies++;
 }
-assert(discrepancies >= 1,
-  'When musical source is corrected, update the gate/evidence rather than retaining a stale HOLD');
+// Even if all eight hooks match, preserve the quality HOLD until independent
+// musical, timbral and rendered-audio review; an interval count is not a gate.
+assert.equal(audit.gate.phase4, 'BLOCKED');
 console.log('PASS adversarial Phase 3 review record tracks actual original/performed notes');
 console.log('HOLD: ' + discrepancies +
   '/8 candidate openings currently diverge in >=1 of first four interval positions; ' +
