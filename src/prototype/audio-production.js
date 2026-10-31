@@ -65,7 +65,9 @@
           };
         };
         if (scene.started === false || scene.situation === 'title') return special('title');
-        if (scene.gameOver || scene.situation === 'game-over') return special('defeat');
+        if (scene.gameOver || scene.situation === 'game-over' ||
+            (scene.succession && this.ctx && this.ctx.currentTime < (this.defeatUntil || 0)))
+          return special('defeat');
         if (this.ctx && this.ctx.currentTime < this.finaleUntil && scene.peace)
           return special('finale');
         const boss = director.bosses[scene.boss?.family];
@@ -112,7 +114,11 @@
       }
       updateProduction(scene) {
         if (!this.production || !this.ctx || this.paused || this.ctx.state !== 'running') return;
-        const mix =
+        // Do not attenuate a Succession loss to the routine 22% menu music mix.
+        // The successor picker is a narrative moment, not an ordinary settings menu.
+        const lossPlaying = (scene.gameOver || scene.succession &&
+          this.ctx.currentTime < (this.defeatUntil || 0)) && scene.started !== false;
+        const mix = lossPlaying ? 'world' :
           scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world';
         if (this.mixScene !== mix) this.setSceneMix(mix);
         this.updateEnvironment(scene);
