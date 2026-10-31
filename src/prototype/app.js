@@ -1761,6 +1761,21 @@
       );
     });
   }
+  // Browsers can serve an offline page from a service-worker cache while
+  // navigator.onLine still reports true. Probe a HEAD request that our worker
+  // explicitly does not intercept before claiming an online update check.
+  async function startupNetworkAvailable() {
+    if (navigator.onLine === false) return false;
+    if (typeof fetch !== 'function') return true; // non-browser test shell
+    try {
+      return !!(await startupBound(
+        fetch(new URL('./sw.js?network-probe=' + Date.now(), location.href), {
+          method: 'HEAD', cache: 'no-store',
+        }).then(() => true, () => false),
+        4000,
+      ));
+    } catch (_) { return false; }
+  }
   function waitForWorkerInstall(worker) {
     if (!worker || ['installed', 'activated', 'redundant'].includes(worker.state))
       return Promise.resolve(true);
@@ -1813,7 +1828,7 @@
       // A fully downloaded waiting update also works offline. Otherwise do
       // one explicit freshness check, before any menu or game-scene preparation.
       if (!reg.waiting && serviceWorker.controller) {
-        if (navigator.onLine === false) startupUpdateNotice = 'offline';
+        if (!await startupNetworkAvailable()) startupUpdateNotice = 'offline';
         else {
           // A rejected or timed-out check is not an update: keep the complete
           // installed version playable and explain what could not be verified.

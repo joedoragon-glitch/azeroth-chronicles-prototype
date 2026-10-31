@@ -1,4 +1,5 @@
 const fs = require('fs'),
+  crypto = require('node:crypto'),
   path = require('path'),
   vm = require('vm'),
   assert = require('assert/strict');
@@ -85,8 +86,9 @@ function fresh({
     skipWaiting() {
       state.skipped++;
     },
+    crypto: crypto.webcrypto,
   };
-  vm.runInNewContext(source, { self, caches, URL, Request, Response, fetch: network, console });
+  vm.runInNewContext(source, { self, caches, URL, Request, Response, TextEncoder, fetch: network, console });
   return {
     state,
     stores,
@@ -128,7 +130,7 @@ async function test(name, fn) {
   await test('Precache uses the project subpath, includes every offline asset and waits for update acceptance', async () => {
     const w = fresh();
     await w.emit('install');
-    assert.equal(w.cache.size, inventory.core.length + 1);
+    assert.equal(w.cache.size, inventory.core.length + 2);
     for (const file of inventory.core) assert(w.cache.has(w.scope + file), file);
     for (const file of inventory.legacy)
       assert(!w.cache.has(w.scope + file), 'Historical downloads stay optional: ' + file);
@@ -192,7 +194,62 @@ async function test(name, fn) {
     );
     for (const file of inventory.core)
       assert(w.cache.has(w.scope + file), 'complete offline installation: ' + file);
-    assert(w.requests.includes(w.scope + 'src/prototype/renderer.js'), 'code always refreshes');
+    assert(w.requests.includes(w.scope + 'src/prototype/renderer.js'), 'uncached code must download');
+  });
+  await test('Existing browser-link installations reuse matching code and icons, not changed bytes', async () => {
+    const w = fresh(), old = w.stores.get('azeroth-app-old');
+    const stable = 'src/prototype/engine.js',
+      changed = 'src/prototype/combat.js',
+      icon = 'icons/icon-192.png';
+    for (const file of [stable, icon]) {
+      old.set(w.scope + file, new Response(fs.readFileSync(path.join(__dirname, '..', file))));
+    }
+    old.set(w.scope + changed, new Response('outdated combat code'));
+    await w.emit('install');
+    assert(!w.requests.includes(w.scope + stable), 'identical cached JS does not redownload');
+    assert(!w.requests.includes(w.scope + icon), 'identical cached icon does not redownload');
+    assert(w.requests.includes(w.scope + changed), 'changed JS must be fetched afresh');
+    assert.equal(await w.cache.get(w.scope + stable).clone().text(),
+      fs.readFileSync(path.join(__dirname, '..', stable), 'utf8'));
+    assert.equal(await w.cache.get(w.scope + changed).clone().text(),
+      fs.readFileSync(path.join(__dirname, '..', changed), 'utf8'));
+    const index = await w.cache.get(w.scope + '__offline-fingerprints-v1__').clone().json();
+    assert(/^[a-f0-9]{40}$/.test(index['./src/prototype/engine.js']));
+    assert(/^sha256:[a-f0-9]{64}$/.test(index['./assets/vendor/pixi-8.22.0.min.js']));
+  });
+  await test('Previous release fingerprints permit fast reuse without a second download', async () => {
+    const w = fresh(), old = w.stores.get('azeroth-app-old'),
+      file = 'src/prototype/engine.js';
+    // A matching prior-release index is trusted only for the same release asset.
+    const currentIndex = JSON.parse(source.split('const APP_FINGERPRINTS = ')[1].split(';')[0]);
+    old.set(w.scope + file, new Response(fs.readFileSync(path.join(__dirname, '..', file))));
+    old.set(w.scope + '__offline-fingerprints-v1__', new Response(JSON.stringify({
+      ['./' + file]: currentIndex['./' + file],
+    })));
+    await w.emit('install');
+    assert(!w.requests.includes(w.scope + file), 'stable fingerprint reuses prior cache');
+  });
+  await test('Unchanged hashed sprites are copied while changed atlases are redownloaded', async () => {
+    const manifest = fixtures.manifest(true),
+      w = fresh({ manifest }),
+      old = w.stores.get('azeroth-app-old');
+    for (const entry of Object.values(manifest.sprites)) {
+      const file = entry.src.slice(2);
+      entry.hash = crypto.createHash('sha256').update(fixtures.images.get(file)).digest('hex');
+      entry.width = 2;
+      entry.height = 2;
+    }
+    const stale = JSON.parse(JSON.stringify(manifest)),
+      staleEntry = stale.sprites['ally:soldier'];
+    staleEntry.hash = 'f'.repeat(64);
+    old.set(w.scope + 'assets/sprites/manifest.json', new Response(JSON.stringify(stale)));
+    for (const [file, bytes] of fixtures.images)
+      old.set(w.scope + file, new Response(bytes));
+    await w.emit('install');
+    const stableFile = w.scope + 'assets/sprites/test-fixture-a.png';
+    const replacedFile = w.scope + 'assets/sprites/test-fixture-b.png';
+    assert(!w.requests.includes(stableFile), 'identical sprite image stays local');
+    assert(w.requests.includes(replacedFile), 'changed sprite metadata forces fresh download');
   });
   await test('Activation deletes only obsolete game caches and claims clients', async () => {
     const w = fresh();
@@ -224,6 +281,26 @@ async function test(name, fn) {
       fs.readFileSync(path.join(__dirname, '../phone.html'), 'utf8'),
     );
     assert.equal(w.state.fetches, fetches);
+    for (const file of [
+      'tools/webgl-pilot/native-webgl2-core.js',
+      'tools/webgl-pilot/native-sprite-adapter.js',
+      'tools/webgl-pilot/pixi-scene-bridge.js',
+      'tools/webgl-pilot/renderer-switch-guard.js',
+    ]) {
+      const response = await w.emit('fetch', {
+        request: { url: w.scope + file, method: 'GET', mode: 'cors' },
+      });
+      assert.equal(await response.text(),
+        fs.readFileSync(path.join(__dirname, '..', file), 'utf8'),
+        'shared WebGL helper must remain usable offline: ' + file);
+    }
+    assert.equal(w.state.fetches, fetches,
+      'shared WebGL helper scripts must not request the network offline');
+    // The optional graphics demo must remain its own page, not an RPG route.
+    assert.equal(await w.emit('fetch', { request: {
+      url: w.scope + 'tools/webgl-pilot/index.html',
+      method: 'GET', mode: 'navigate',
+    } }), undefined);
   });
   await test('Historical games load only on demand and remain offline after first use', async () => {
     const w = fresh();
@@ -311,7 +388,7 @@ async function test(name, fn) {
           w = fresh({ manifest });
         await w.emit('install');
         const images = [...new Set(Object.values(manifest.sprites).map((e) => e.src.slice(2)))];
-        assert.equal(w.cache.size, inventory.core.length + 1 + images.length);
+        assert.equal(w.cache.size, inventory.core.length + 2 + images.length);
         assert.deepEqual(
           await w.cache
             .get(w.scope + 'assets/sprites/manifest.json')
@@ -388,7 +465,7 @@ async function test(name, fn) {
   await test('Malformed optional JSON keeps the existing procedural installation policy', async () => {
     const w = fresh({ malformed: true });
     await w.emit('install');
-    assert.equal(w.cache.size, inventory.core.length + 1);
+    assert.equal(w.cache.size, inventory.core.length + 2);
     assert.equal(w.state.skipped, 0);
   });
   console.log(`\n${passed} offline checks passed.`);
