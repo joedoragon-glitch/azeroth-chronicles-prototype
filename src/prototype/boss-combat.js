@@ -2100,8 +2100,7 @@
       strategistReversalSupported(e, a) {
         if (!e || !a || e.hp <= 0 || e.type !== 'boss' || a.captainSkill ||
             a.bossHeal || a.rogueMove || a.charge || a.landing ||
-            a.sabotage || a.anonymousCast || !Number.isFinite(a.timer) ||
-            !Number.isFinite(a.total) || a.timer <= 0 || a.timer > a.total)
+            a.sabotage || a.anonymousCast)
           return false;
         // Two positive native cases, not a blanket cancel of summon, grab,
         // delayed hazards, anonymous attacks or boss multi-phase mechanics.
@@ -2135,6 +2134,8 @@
         const e = this.zone().enemies.find((unit) => unit.id === enemyId);
         const a = e?.telegraph;
         if (!this.strategistReversalSupported(e, a) || a.strategistReversal ||
+            !Number.isFinite(a.timer) || !Number.isFinite(a.total) ||
+            a.timer <= 0 || a.timer > a.total ||
             !this.strategistReversalCovers(a, h) ||
             !this.line(h, e) || this.attackResetProtected(e))
           return false;
