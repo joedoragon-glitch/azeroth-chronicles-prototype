@@ -45,6 +45,8 @@ La aventura tiene objetivos principales, encargos locales y una historia que con
 
 Algunas opciones pueden conservar el nombre inglés en tu versión. Las explicaciones entre paréntesis ayudan a reconocerlas aunque todavía no estén traducidas.
 
+**Música y menús:** la banda sonora nueva ya está publicada: 65 grabaciones musicales nuevas sustituyen las anteriores en sus escenas correspondientes y se conservan las 18 piezas originales de Dark Crown. El tema principal empieza después de la primera interacción que autorice el sonido en el navegador (por ejemplo, un toque o clic), sin necesidad de mover al personaje o usar una habilidad. Al volver al menú principal, regresa el tema del título. Si abres el menú **Aventura** o **Juego y ajustes** dentro de la partida, la acción puede quedar en pausa, pero la música del lugar continúa. Al elegir **Continuar aventura**, el juego prepara la música de la zona cargada antes de darte el control cuando es posible. Algunos navegadores impiden reproducir sonido antes de cualquier interacción; la actualización de una aplicación instalada depende de su caché. Las pruebas automáticas de la versión publicada pasaron, pero las pruebas personales de escucha y del teléfono siguen pendientes, sin impedir que juegues.
+
 Greenwood tiene un molino y estanque de trabajo, huertos en distintas etapas, una bodega decorativa independiente y rutas por el bosque. **Scornfang's Treasury** es un lugar distinto de **Old Orchard Cellars**, que sigue siendo un interior ocupado.
 
 ## Controles básicos

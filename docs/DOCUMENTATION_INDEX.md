@@ -1,19 +1,19 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **438 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **447 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
 **Read first:** [Development state](DEVELOPMENT_STATE.md) owns verified public-build and acceptance information; [Architecture](ARCHITECTURE.md) maps source owners; [Decisions](DECISIONS.md) gives design rules and supersessions; [AGENTS.md](../AGENTS.md) governs authorization; [Engineering workflow](MECHANIC_DEVELOPMENT.md) describes verification; [Brand identity](BRAND_IDENTITY.md) gives the official title and legacy exceptions.
 
-**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the source candidate, the latest verified Pages publication and outstanding device acceptance. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
+**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the exact published build and outstanding device acceptance. The [65-song soundtrack](AUDIO_PHASE9_FIRST_LISTEN.md) is now **integrated and live** in dev.248; its independent [environmental redesign #727](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727) remains separate. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
 
 **Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that every historical body was independently audited. Labels such as *Dated record* describe source context, not a present work order.
 
 ## Jump to a subject
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
-- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
+- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (23)
 - [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (49)
@@ -47,6 +47,15 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Audio Foundation](AUDIO_FOUNDATION.md)** — **Reference.** Reference structure or catalog for audio, with its original assumptions and scope.
 - **[Audio Playback](AUDIO_PLAYBACK.md)** — **Maintained guide.** Current audio engine, mixers, production scenes and standalone listening-room behavior.
 - **[Audio Sound Pass](AUDIO_SOUND_PASS.md)** — **Design reference.** Artistic identities of the soundtrack's 83 music cues and guidance for future composition.
+- [Audio Environment Production Inventory 20261031](AUDIO_ENVIRONMENT_PRODUCTION_INVENTORY_20261031.md) — *Dated production record.* Original environmental-bed inventory, protected routes, and source quality assessments distinct from soundtrack #740.
+- [Audio Environment Stage1 Handoff 20261031](AUDIO_ENVIRONMENT_STAGE1_HANDOFF_20261031.md) — *Dated production record.* Independent environmental-sound workflow and stage transition; not part of the published 65-song soundtrack.
+- [Audio Phase3 Critical Review](AUDIO_PHASE3_CRITICAL_REVIEW.md) — *Dated production record.* Source-note and orchestration audits underlying eight recorded primary music cues.
+- [Audio Phase4 Critical Review](AUDIO_PHASE4_CRITICAL_REVIEW.md) — *Dated production record.* Contextual and interior arrangement corrections underlying the Phase 4 recordings.
+- [Audio Phase5 Critical Review](AUDIO_PHASE5_CRITICAL_REVIEW.md) — *Dated production record.* Sixteen boss/TRUE overlays, source corrections and recorded-sample evidence.
+- [Audio Phase6 Critical Review](AUDIO_PHASE6_CRITICAL_REVIEW.md) — *Dated production record.* Title, defeat and finale score decisions and measured isolated source corrections.
+- [Audio Phase7 Handoff](AUDIO_PHASE7_HANDOFF.md) — *Closed phase handoff.* Former 65-cue integration plan and focused source checks; publication supersession is at the top.
+- **[Audio Phase9 First Listen](AUDIO_PHASE9_FIRST_LISTEN.md)** — **Optional listening reference.** All 65 released new songs and 18 protected Crown references by stable ID; personal creative review is deferred.
+- [Audio Sample Bank Source README](../tools/audio/phase3-samples/README.md) — *Dated source-provenance record.* Pinned CC0 source recordings and attribution used in authored soundtrack production.
 - [Audio Stage1 Coverage 20261025](AUDIO_STAGE1_COVERAGE_20261025.md) — *Dated record.* Development-only observer for tracing game event coverage by the audio layer.
 - [Audio Stage2 Recovery 20261025](AUDIO_STAGE2_RECOVERY_20261025.md) — *Dated record.* Dated stage for Web Audio startup, interruption recovery and fallback.
 - [Audio Stage3 Handoff 20261025](AUDIO_STAGE3_HANDOFF_20261025.md) — *Dated record.* Preserves audio context, known work and next-stage questions from a dated handoff.
