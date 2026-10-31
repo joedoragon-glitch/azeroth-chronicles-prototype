@@ -65,7 +65,8 @@ jobs:
           for t in r["tracks"]:
               assert t["channels"] == 2 and t["decodedPeak"] < .98, t["cue"]
               assert .004 < t["decodedRms"] < .5, t["cue"]
-              assert t["loopEdgeDelta"] < .2, t["cue"]
+              assert t["loopEdgeDelta"] < .005, t["cue"]
+              assert t["stereoSideRms"] > .0008 and t["foldedMonoPeak"] < .98, t["cue"]
               assert t["recordedInstrumentNotes"] >= 10, t["cue"]
               assert t["encodedBytes"] < 16 * 1024 * 1024, t["cue"]
           assert r["heardListeningStatus"].startswith("UNVERIFIED")
