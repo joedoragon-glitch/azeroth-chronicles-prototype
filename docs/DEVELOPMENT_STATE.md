@@ -140,6 +140,10 @@ The redesigned [soundtrack listening room](../tools/audio/index.html) has a sear
 
 The release consistency gate was integrated by [#564](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/564); it requires candidate code/build and active version documentation to agree and runtime changes to include an edited existing feature/player guide. **At that 28 October checkpoint, dev.210 followed dev.209.** The current verified publication is recorded above.
 
+## Unmerged soundtrack-composition work — NOT a released game feature (31 October 2026)
+
+The owner has closed the **Phase 4 source/isolated-technical milestone** (38 arrangement candidates) after [draft PR #716](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/716)'s [corrective composer audit](AUDIO_PHASE4_CRITICAL_REVIEW.md) and [isolated CI #41197094516](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41197094516) passed. This is **not** an application/code merge, live asset replacement, Pages build, offline installation, actual musical audition or physical-device verification. Phase 3 eight primary candidates remain in unmerged draft [#704](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/704). Phase 5's next **16 boss/TRUE candidates** are not implemented, Phase 6 title/defeat/finale and Phase 7 full integration are also pending; owner first listening and artistic acceptance remain **Phase 9**. [Master #673](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/673) remains open for those phases. **No game build/version or released soundtrack status changes** in this draft documentation checkpoint; the game continues using its previously registered recordings and 18 Crown cues remain frozen.
+
 ## Historical development record
 
 The original dated release diary remains preserved in [Archived development-state ledger through 28 October 2026](DEVELOPMENT_STATE_ARCHIVE_THROUGH_20261028.md). Historical approvals and release candidates are evidence, not active instructions. Use the current dashboard above for source, publication and acceptance status.
