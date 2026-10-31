@@ -107,7 +107,8 @@ async function main(){
         const s=await page.evaluate(target=>{
           const g=Prototype.game, r=Prototype.renderer, gpu=Prototype.experimentalGraphics;
           return {
-            zone:g.zoneId, hero:{x:g.hero.x,y:g.hero.y},
+            zone:g.zoneId, hero:{x:g.hero.x,y:g.hero.y,hp:g.hero.hp},
+            deaths:g.s.statistics?.deaths, sceneMode:g.s.mode,
             projected:r.screen(target.hazard),
             zoom:Prototype.platform.cameraZoom, renderer:gpu.mode,
             effective:r.metrics().optimizationMode,
@@ -134,21 +135,18 @@ async function main(){
     async function sample(site,mode){
       const status=await page.evaluate(s=>{
         const g=Prototype.game;
-        if(!g.enter(s.zone))throw Error('Could not enter current '+s.zone);
-        Object.assign(g.hero,s.hero);
+        // The Campaign's own entry method must establish the arrival.
+        // Changing the hero directly during a still-pending region entry let
+        // the authoritative arrival reset it to Crown town mid-comparison.
+        if(!g.enter(s.zone,s.hero))throw Error('Could not enter current '+s.zone);
         g.hero.order=null;g.hero.path=[];
         g.s.clock=480;g.zone().enemies=[];g.zone().npcs=[];g.s.party=[];
         return {zone:g.zoneId,hero:{x:g.hero.x,y:g.hero.y},phase:g.daylightPhase().phase};
       },site);
       assert.equal(status.phase,'night');
-      // Finish region entry before moving the scripted camera to its target.
-      // This avoids a pending region-enter reset after the first screenshot.
+      // Let the real region-entry transition settle without rewriting
+      // the simulation's hero coordinates after the fact.
       await page.waitForTimeout(900);
-      await page.evaluate(s=>{
-        const g=Prototype.game;
-        if(g.zoneId!==s.zone)throw Error('Region changed before camera positioning');
-        Object.assign(g.hero,s.hero);g.hero.order=null;g.hero.path=[];
-      },site);
       const firstView=await stableView(site,mode);
       const p=firstView.projected;
       const crop={x:Math.max(0,Math.min(1000,Math.round(p.x-90))),
