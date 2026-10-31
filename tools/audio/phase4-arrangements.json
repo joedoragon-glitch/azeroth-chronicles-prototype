@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "Phase 4 corrective source audit completed and isolated recorded-source studio technically verified (exact audio source a9f588c; CI #41195837083); genuinely heard audio quality UNVERIFIED, owner acceptance Phase 9, never registered or published",
+  "status": "OWNER-AUTHORIZED PHASE 4 SOURCE/ISOLATED TECHNICAL MILESTONE CLOSED; 38 authored arrangements corrected, passed dedicated source-and-studio CI. Perceptual acoustic quality UNVERIFIED, game unregistered, unmerged, unpublished, protected 18 Crown recordings unchanged; owner creative acceptance Phase 9.",
   "inheritance": "Phase 3 exact music clock and corrected pilot heritage; all old Phase 2 MP3s are prototypes only",
   "peaceActivation": "global ending PLUS throne conditions, never merely a local boss defeat",
   "scope": {
@@ -3060,7 +3060,7 @@
       "stageWidth": 0.82
     }
   },
-  "auditNote": "Phase 4 rhythmic gestures and recorded room spaces are composed per regional/interior parent rather than fixed by role; role dynamics retain base-clock compatibility. This is not a hearing claim. Action percussion accents differ by actual region; the base melody is a foreground voice and must not be re-doubled into its additive action layer. Newly authored, non-heritage horn counterlines in twelve selected regional/interior variants are set a full octave lower as an orchestration choice, rather than stretching sparse high CC0 horn clips five–seven semitones. The parent historic lead does not change. Per-cue evidence, specific corrections, exceptions and real-listening boundaries: docs/AUDIO_PHASE4_CRITICAL_REVIEW.md.",
+  "auditNote": "Phase 4 rhythmic gestures and recorded room spaces are composed per regional/interior parent rather than fixed by role; role dynamics retain base-clock compatibility. This is not a hearing claim. Action percussion accents differ by actual region; the base melody is a foreground voice and must not be re-doubled into its additive action layer. Newly authored, non-heritage horn counterlines in twelve selected regional/interior variants are set a full octave lower as an orchestration choice, rather than stretching sparse high CC0 horn clips five–seven semitones. The parent historic lead does not change. Per-cue evidence, specific corrections, exceptions and real-listening boundaries: docs/AUDIO_PHASE4_CRITICAL_REVIEW.md. Source-independent stable-ID roster checking is now mandatory for every isolated CI metrics report via tools/audio/score-quality-controls.py --expected-source; metrics cannot validate their own cue list.",
   "actionAccents": {
     "place-vale": [
       [
