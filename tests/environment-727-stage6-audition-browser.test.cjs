@@ -32,6 +32,11 @@ const index=pathToFileURL(entry).href;
         assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),
           'Listening panel must fit chosen device viewport');
         const hit=async id=>{if(phone)await page.locator(id).tap();else await page.locator(id).click();};
+        // Frozen production ledgers order the comparisons by studio stage,
+        // not alphabetically. Always select the actual Greenwood day row.
+        const valeIndex=await page.evaluate(()=>window.ENV727_DATA.rows.findIndex(x=>x.rule==='vale'));
+        assert(valeIndex>=0,'Expected Greenwood daytime comparison row');
+        await page.locator('#scene').selectOption(String(valeIndex));
         await hit('#original');
         await page.waitForFunction(()=>{
           const x=document.getElementById('amb');
@@ -63,7 +68,7 @@ const index=pathToFileURL(entry).href;
           assert(await page.locator('#candidate').isDisabled(),'Retained Treasury has no new recording');
           assert.equal(await page.locator('#decision').inputValue(),'undecided');
         }
-        await page.locator('#scene').selectOption('0');
+        await page.locator('#scene').selectOption(String(valeIndex));
         assert.equal(await page.locator('#decision').inputValue(),'preview',
           'User choice must survive navigation between comparisons');
         assert((await page.locator('#notes').inputValue()).startsWith('Preview preferred'));
