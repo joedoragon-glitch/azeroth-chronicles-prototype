@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **436 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **438 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -15,8 +15,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
 - [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
-- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (20)
-- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (48)
+- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
+- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (49)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
 - [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (45)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
@@ -204,6 +204,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Companions, Barracks, pets and specialists
 
+- **[Companion Company Experience](COMPANION_COMPANY_EXPERIENCE_620.md)** — **Design and integration reference.** Individual Barracks profiles, real abilities, Orin selector and developer-only companion telemetry, with explicit visual-acceptance limits.
 - **[Companion Mastery and Charmed Training](COMPANION_MASTERY_AND_CHARMED_RINGLEADER_TRAINING_20261029.md)** — **Design reference.** Shared companion mastery, Orin Ringleader promotion, implemented scope and outstanding follow-up decisions.
 
 - [Barracks Build Copy DEV155](BARRACKS_BUILD_COPY_DEV155.md) — *Dated record.* Describes barracks build copy decisions, constraints or engineering observations from its original development checkpoint.
@@ -408,7 +409,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Perf Ws1 Terrain Road Rendering](perf-ws1-terrain-road-rendering.md)** — **Reference.** Describes perf ws1 terrain road rendering decisions, constraints or engineering observations from its original development checkpoint.
 - **[Perf Ws3 Interface Audio 20261010](perf-ws3-interface-audio-20261010.md)** — **Reference.** Describes perf ws3 interface audio 20261010 decisions, constraints or engineering observations from its original development checkpoint.
 - [PR518 Engineering Handoff 20261027](PR518_ENGINEERING_HANDOFF_20261027.md) — *Dated record.* Engineering context and outstanding acceptance for the title, Canvas and experimental Pixi work.
-- **[PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md)** — **Maintained guide.** Real-device acceptance plan for title/graphics and experimental Pixi presentation.
+- **[PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md)** — **Maintained guide.** Historical Pixi opt-in protocol plus the updated #574 Pixi-default acceptance addendum: migration, Canvas recovery and Chromebook/phone performance remain unverified.
 - [Regional Graphics Preparation Title Screen 20261027](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md) — *Dated record.* Describes regional graphics preparation title screen decisions, constraints or engineering observations from its original development checkpoint.
 - [Runtime Workload DEV177 Audit](RUNTIME_WORKLOAD_DEV177_AUDIT.md) — *Dated record.* Examines runtime workload for source or design inconsistencies, recording dated findings and limits.
 - [Runtime Workload DEV177](RUNTIME_WORKLOAD_DEV177.md) — *Dated record.* Describes runtime workload decisions, constraints or engineering observations from its original development checkpoint.

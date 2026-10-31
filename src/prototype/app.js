@@ -915,10 +915,11 @@
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
-    'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.':
-      'Canvas 2D es la opción predeterminada segura. PixiJS WebGL2 es experimental; puedes volver a Canvas cuando quieras.',
-    'Canvas 2D · Default': 'Canvas 2D · Predeterminado',
-    'PixiJS WebGL2 · Experimental': 'PixiJS WebGL2 · Experimental',
+    'PixiJS WebGL2 is the default. Canvas 2D remains available as a backup.':
+      'PixiJS WebGL2 es el motor predeterminado. Canvas 2D sigue disponible como respaldo.',
+    'Canvas 2D · Backup': 'Canvas 2D · Respaldo',
+    'PixiJS WebGL2 · Default': 'PixiJS WebGL2 · Predeterminado',
+    'PixiJS WebGL2 · 15-second trial': 'PixiJS WebGL2 · Prueba de 15 segundos',
     'Keep WebGL2': 'Conservar WebGL2',
     'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
@@ -1615,18 +1616,14 @@
   // Existing menu/button unlocks remain the click/tap fallback for WebKit.
   function unlockSoundtrackOnGesture(event) {
     if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
-    if (audio.ctx?.state === 'running') {
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
-      return;
-    }
-    void audio.unlock().then((ready) => {
-      if (!ready) return;
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
-    });
+    if (audio.ctx?.state === 'running') return;
+    void audio.unlock();
   }
+  // Safari may recognize a completed tap rather than pointerdown. Keep
+  // listening so an interrupted audio context can resume on another gesture.
   addEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+  addEventListener('touchend', unlockSoundtrackOnGesture, true);
+  addEventListener('click', unlockSoundtrackOnGesture, true);
   addEventListener('keydown', unlockSoundtrackOnGesture, true);
   if (typeof PrototypeMaterials !== 'undefined')
     PrototypeMaterials.setOptimizationMode(optimizationMode);
@@ -2111,7 +2108,7 @@
     return true;
   }
 
-  // Opt-in renderer pilot; one live Campaign, no saved graphics state.
+  // PixiJS primary renderer; one live Campaign, no saved graphics state.
   // Canvas is retained as an independent, always-available presentation surface.
   const gpuTrialPanel = document.createElement('section');
   gpuTrialPanel.id = 'gpu-renderer-trial';
@@ -2228,7 +2225,7 @@
       return;
     }
     gpuTrialMessage.textContent =
-      tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
+      tr('PixiJS WebGL2 · 15-second trial') + ' · ' + snapshot.secondsRemaining + 's';
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
@@ -3615,9 +3612,9 @@
     $('scene-loading').hidden = true;
     $('scene-loading-retry').hidden = true;
     // If the gameplay commit occurred, do not roll back or replay it.
-    // A hidden page is safely saved by the existing visibility/pagehide owner.
+    // Title and game menus may not suspend the soundtrack on travel cleanup.
     last = performance.now();
-    audio.setPaused(!started || !focused || document.hidden || paused);
+    audio.setPaused(!focused || document.hidden);
   }
   function revealSceneTransition(token) {
     const ticket = sceneTransition;
@@ -3793,9 +3790,7 @@
     started = false;
     paused = false;
     clearInput();
-    // The main title has its own recorded theme. A title screen is inactive
-    // gameplay, NOT a suspended music player. The browser gesture still owns
-    // first-time Web Audio unlocking; hidden/unfocused pages remain silent.
+    // Title stops gameplay simulation, not its own theme's audio clock.
     audio.setPaused(!focused || document.hidden);
     last = performance.now();
     if (menu) {
@@ -3818,6 +3813,8 @@
   function enterPreparedScene() {
     if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
+    // Continue is already a browser gesture. Unlock before asynchronous warmup.
+    const entryUnlock = audio.unlock();
     titleLoading = true;
     titleImportNotice = false;
     const epoch = ++titleEpoch;
@@ -3836,6 +3833,7 @@
     refreshTitleScreen();
     clearInput();
     let campaign = game;
+    let entryAudioAttempted = false;
     const reveal = () => {
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
@@ -3853,9 +3851,27 @@
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
       const finish = () => {
-        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
           titleLoading = false;
           refreshTitleScreen();
+          return;
+        }
+        if (!entryAudioAttempted) {
+          entryAudioAttempted = true;
+          $('title-loading').textContent = language === 'es'
+            ? 'Preparando la música…' : 'Preparing soundtrack…';
+          // Start the destination score before movement is enabled. Missing
+          // audio must not trap the player behind a permanent loading screen.
+          const ready = Promise.resolve(entryUnlock).then((unlocked) => {
+            if (!unlocked || epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
+                campaign !== game || !titleLoading) return false;
+            audio.update(game, false, {
+              started: true, menu: false, paused: false, backgrounded: false,
+            });
+            return audio.productionPending || true;
+          }).catch(() => false);
+          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))])
+            .then(() => requestAnimationFrame(finish));
           return;
         }
         titleLoading = false;
@@ -4834,8 +4850,8 @@
         'Graphics renderer',
         graphicsController.status().preferredRenderer || graphicsController.status().mode,
         choices([
-          ['canvas2d', 'Canvas 2D · Default'],
-          ['webgl2', 'PixiJS WebGL2 · Experimental'],
+          ['canvas2d', 'Canvas 2D · Backup'],
+          ['webgl2', 'PixiJS WebGL2 · Default'],
         ]),
         (value) => {
           if (value === 'canvas2d') {
@@ -4854,7 +4870,7 @@
         graphicsController.status().preferredRenderer === 'webgl2' &&
           graphicsController.status().mode === 'canvas2d'
           ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
-          : 'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
+          : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused
         ? [action('Retry PixiJS WebGL2', () => {
@@ -8212,14 +8228,11 @@
   }
   function frame(now) {
     if (!started || sceneTransition) {
-      // The title does not simulate or render the campaign, but it must tick
-      // the soundtrack director after the first user audio-unlock gesture.
-      if (!started && !sceneTransition)
-        audio.update(game, paused || !focused || document.hidden, {
-          started: false,
-          menu: !!menu,
-          backgrounded: !focused || document.hidden,
-          paused,
+      // Idle title runs its music director without simulating a campaign.
+      if (!started && !sceneTransition && !startupUpdatePending)
+        audio.update(game, !focused || document.hidden, {
+          started: false, menu: !!menu, backgrounded: !focused || document.hidden,
+          paused: false,
         });
       last = now;
       clearEmergencyEscalation();
@@ -8320,7 +8333,8 @@
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
-    audio.update(game, paused || !focused || document.hidden || recovering, {
+    // An in-game menu or manual pause freezes simulation, not audio playback.
+    audio.update(game, !focused || document.hidden || recovering, {
       menu: !!menu,
       backgrounded: !focused || document.hidden,
       paused: paused || recovering,

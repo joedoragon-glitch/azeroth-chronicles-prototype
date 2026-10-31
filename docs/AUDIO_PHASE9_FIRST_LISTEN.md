@@ -1,5 +1,7 @@
 # Phase 9 — first soundtrack listening and owner creative review
 
+**Owner decision update (31 October 2026):** First listening is voluntarily deferred until the solo developer has time. The owner authorizes technically verified soundtrack integration/merge without first rating 65 cues. This is **not** a Keep decision for any recording; the below index remains available for optional later feedback. See [audio playback](AUDIO_PLAYBACK.md) and Phase 9 PR #740 for current technical gates.
+
 **Stage:** ACTIVE FOR PREPARATION / FIRST LISTENING NOT YET CONDUCTED (31 October 2026). The owner expressly chose to advance from Phase 8 to Phase 9. This is a **creative acceptance stage**, not another automated codec test or authority to merge/deploy.
 
 **Exact candidate:** [Phase 9 draft branch](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/tree/audio/phase9-first-listening-20261031), stacked on [Phase 8 draft #737](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/737) at `53711b932b5ccb98b8426bbf54d5153651bc6ee0`. Includes Phase 7's 65 authored recorded-source music replacements, 18 original untouched Dark Crown recordings, total 83 music IDs, 18 currently registered environmental beds and 30 recorded SFX. Current candidate build `0.9.1+snapshot.dev.245`. No sound files or game routing are changed by this Phase 9 preparation.

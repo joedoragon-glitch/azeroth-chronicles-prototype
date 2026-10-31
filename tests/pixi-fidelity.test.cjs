@@ -120,7 +120,7 @@ const runtime={
     }
   },
   PrototypeSprites:{timeMs:()=>1000},
-  PrototypeVisuals:{draw(){},atmosphereMotes:Visuals.atmosphereMotes},
+  PrototypeVisuals:{draw(){},atmosphereMotes:Visuals.atmosphereMotes,terrainMotionLines:()=>[]},
   AzerothNativeWebGLCore:{lampGlowCommands:()=>[]},
   AzerothGpuSpriteAdapter:{create:()=>({
     commandFor:(entity,point,{facing=1}={})=>{
@@ -147,7 +147,7 @@ const runtime={
       currentActorTextures=new Set(list.map(actor=>actor.textureId));
       frames.push(list);
     },
-    syncLamps(){},setAtmosphere(){},syncMotes(motes,zoom){moteFrames.push({motes,zoom});},setVignette(){},
+    syncLamps(){},setAtmosphere(){},syncMotes(motes,zoom){moteFrames.push({motes,zoom});},syncLiquidMotion(){},setVignette(){},
     draw(){if(failSceneDraw)throw Error(failSceneDraw==='context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error')},
     destroy(){}
   })}

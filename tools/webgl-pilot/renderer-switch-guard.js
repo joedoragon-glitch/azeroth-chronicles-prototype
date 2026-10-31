@@ -1,4 +1,4 @@
-/* Optional graphics renderer controller. Keep the original Canvas safe.
+/* Primary PixiJS/WebGL2 renderer controller. Keep the original Canvas safe.
  * The 15-second selection is a TRIAL until confirmed.
  * A dedicated Canvas surface must remain alive beneath/alongside WebGL2.
  * This module does NOT assert that a complete WebGL renderer exists.
@@ -9,6 +9,7 @@
   const PENDING_KEY='azeroth-renderer-trial-pending-v1';
   const DURATION_MS=15000;
   const RECOVERY_HOLD_KEY='azeroth-webgl2-recovery-hold-v1';
+  const PRIMARY_DEFAULT_MIGRATION_KEY='azeroth-renderer-webgl-primary-v1';
   const RECOVERY_BACKOFF_MS=[5000,20000];
   const defaultMode='canvas2d';
   const read=(storage,key)=>{
@@ -24,6 +25,9 @@
     // Interrupted trial or crash: discard WebGL preference before initializing
     // ANY graphics contexts. A failed trial can never strand a player.
     if(read(storage,PENDING_KEY)==='pending'){
+      // Never force a new GPU boot on the heels of an interrupted GPU trial
+      // or confirmed restore. Consume this rollout safely on Canvas instead.
+      write(storage,PRIMARY_DEFAULT_MIGRATION_KEY,'applied');
       // A confirmed restoration can crash while preparing. Quarantine that
       // automatic boot without erasing the owner's previously saved choice.
       if(read(storage,PREFERENCE_KEY)==='webgl2'){
@@ -35,12 +39,20 @@
       remove(storage,PENDING_KEY);
       return {renderer:defaultMode,reason:'interrupted-trial'};
     }
+    // One-time rollout: the upgraded release supersedes any old Canvas
+    // preference, but later manual choices remain authoritative. A crash
+    // quarantine is never cleared just to enforce the new primary renderer.
+    let migrated=false;
+    if(read(storage,PRIMARY_DEFAULT_MIGRATION_KEY)!=='applied' &&
+       write(storage,PREFERENCE_KEY,'webgl2'))
+      migrated=write(storage,PRIMARY_DEFAULT_MIGRATION_KEY,'applied');
     const saved=read(storage,PREFERENCE_KEY);
     const quarantined=read(storage,RECOVERY_HOLD_KEY);
     return {
       renderer:saved==='webgl2'&&!quarantined?'webgl2':defaultMode,
       reason:saved==='webgl2'
-        ? quarantined?'confirmed-recovery-quarantined':'confirmed-preference'
+        ? quarantined?'confirmed-recovery-quarantined':
+          migrated?'primary-default-migration':'confirmed-preference'
         : 'canvas-default'
     };
   }
@@ -323,7 +335,7 @@
   }
   const api=Object.freeze({
     create,startupChoice,armConfirmedBoot,finishConfirmedBoot,
-    PREFERENCE_KEY,PENDING_KEY,RECOVERY_HOLD_KEY,DURATION_MS
+    PREFERENCE_KEY,PENDING_KEY,RECOVERY_HOLD_KEY,PRIMARY_DEFAULT_MIGRATION_KEY,DURATION_MS
   });
   if(typeof module!=='undefined'&&module.exports)module.exports=api;
   else root.AzerothRendererSwitchGuard=api;

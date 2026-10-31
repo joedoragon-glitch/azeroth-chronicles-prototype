@@ -495,6 +495,7 @@
     PrototypeMaterials,
     renderLayer = 'full',
     staticTerrainTimeSeconds = null,
+    omitTerrainMotion = false,
     PrototypeGroundCache = root.PrototypeGroundCache ||
       (typeof require === 'function' ? require('./ground-cache.js') : null),
     now = () => performance.now(),
@@ -1723,7 +1724,32 @@
         }
         ctx.save();
         ctx.globalAlpha = a;
-        if (f.type === 'charmHeritage') {
+        if (f.type === 'resetCue' || f.type === 'resetArrival') {
+          // A restrained ground-level break/settle, not a teleport spell.
+          // Both renderers use this same overlay; no simulation or reset clock
+          // depends on whether the effect is drawn (including frame skipping).
+          const dust = (q, arrival) => {
+            ctx.globalAlpha = a * (arrival ? 0.82 : 0.58);
+            ctx.strokeStyle = arrival ? '#d4c5a4' : '#aeb4a0';
+            ctx.lineWidth = arrival ? 1.8 : 1.3;
+            ctx.beginPath();
+            ctx.ellipse(q.x, q.y + 9, 14 + grow * (arrival ? 13 : 8),
+              5 + grow * 3, 0, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.strokeStyle = '#ded1b4';
+            ctx.lineWidth = 1;
+            for (const side of [-1, 1]) {
+              const drift = reducedMotion() ? 0 : grow * 7;
+              ctx.beginPath();
+              ctx.moveTo(q.x + side * (7 + drift), q.y - 2 - drift);
+              ctx.lineTo(q.x + side * (11 + drift), q.y - 6 - drift);
+              ctx.stroke();
+            }
+          };
+          dust(p, f.type === 'resetArrival');
+          if (f.type === 'resetArrival')
+            dust(screen({ x: f.fromX, y: f.fromY }), false);
+        } else if (f.type === 'charmHeritage') {
           // Every visible contour uses the EXACT committed gameplay geometry.
           // Only one bounded 0.6s afterimage; no independent search or damage.
           const source = screen({ x: f.fromX, y: f.fromY }),
@@ -2719,6 +2745,7 @@
           i === 2 ? { width: canvas.width, height: canvas.height } : null,
           z.crownInheritedDecks || [],
           staticTerrainTimeSeconds,
+          omitTerrainMotion,
         );
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
       PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
@@ -3305,6 +3332,14 @@
       facingFor: (visual) => {
         game = getGame();
         return paintedFacing(visual);
+      },
+      // Keep carried Wraith lanterns attached to the same idle/bob position
+      // Canvas paints. Pixi needs the live presentation point, not just the
+      // collision/foot anchor, and the result is in screen pixels.
+      visualPositionFor: (visual) => {
+        game = getGame();
+        const p = visualPosition(visual, screen(visual));
+        return { x: p.x * zoom(), y: p.y * zoom() };
       },
       groundPresentation,
       // Presentation-only layer split for the opt-in PixiJS experiment.

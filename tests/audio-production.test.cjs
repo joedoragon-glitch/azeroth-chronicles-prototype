@@ -102,6 +102,12 @@ assert.equal(a.settlementUntil, 0);
 a.updateProduction({ ...scene, situation: 'exploration', settlement: null });
 assert.equal(JSON.parse(a.productionKey)[0], 'place-vale',
   'title snapshot must never leak refuge-scoring into new exploration');
+a.updateProduction({ ...scene, started: true, situation: 'menu' });
+assert.equal(a.mixScene, 'world', 'in-game menu preserves music level');
+a.updateProduction({ ...scene, started: true, situation: 'pause' });
+assert.equal(a.mixScene, 'world', 'manual pause preserves music level');
+a.updateProduction({ ...scene, started: false, situation: 'menu' });
+assert.equal(a.mixScene, 'title', 'main title settings still use title mix');
 let steps = 0;
 a.noiseBurst = () => {
   steps++;

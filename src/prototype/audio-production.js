@@ -118,8 +118,10 @@
         // The successor picker is a narrative moment, not an ordinary settings menu.
         const lossPlaying = (scene.gameOver || scene.succession &&
           this.ctx.currentTime < (this.defeatUntil || 0)) && scene.started !== false;
-        const mix = lossPlaying ? 'world' :
-          scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world';
+        // Title has its own mix. An in-game menu must not lower or restart
+        // the current score just because gameplay simulation is frozen.
+        const mix = scene.started === false || scene.situation === 'title'
+          ? 'title' : 'world';
         if (this.mixScene !== mix) this.setSceneMix(mix);
         this.updateEnvironment(scene);
         this.sceneDetails(scene);
