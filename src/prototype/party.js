@@ -4066,7 +4066,11 @@
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
           claimed = new Set(),
-          idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier();
+          idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier(),
+          // A working, reserved or forged Charmed unit cannot exploit the
+          // idle Heal clock; only authenticated active ranged healers qualify.
+          idleCharmHealers = idleHealRecovery > 1
+            ? new Set(this.healCompanionCasters().filter((u) => !!u.charmOrigin)) : null;
         const returningLabor = this._gatherRecallResume;
         if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
           this._gatherRecallResume = null;
@@ -4135,7 +4139,7 @@
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
             u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) -
-              specialRecovery * idleHealRecovery);
+              specialRecovery * (idleCharmHealers?.has(u) ? idleHealRecovery : 1));
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
