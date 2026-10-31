@@ -3306,6 +3306,14 @@
         game = getGame();
         return paintedFacing(visual);
       },
+      // Keep carried Wraith lanterns attached to the same idle/bob position
+      // Canvas paints. Pixi needs the live presentation point, not just the
+      // collision/foot anchor, and the result is in screen pixels.
+      visualPositionFor: (visual) => {
+        game = getGame();
+        const p = visualPosition(visual, screen(visual));
+        return { x: p.x * zoom(), y: p.y * zoom() };
+      },
       groundPresentation,
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
