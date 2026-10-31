@@ -31,6 +31,11 @@ if not ffmpeg:
     import imageio_ffmpeg
     ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
 bank = module.RecordedSampler(Old(), ffmpeg)
+# A single violin/cello section must not teleport across the stereo stage
+# merely because an ascending melody changes MIDI pitch parity.
+assert bank.pan("strings", 61) == bank.pan("strings", 62)
+assert -0.5 < bank.pan("strings", 61) < 0
+assert bank.pan("horn", 65) == bank.pan("horn", 66)
 cases = [
     ("flute", 72), ("horn", 67), ("cello", 69), ("cello", 31),
     ("harp", 55), ("piano", 74), ("guitar", 59),

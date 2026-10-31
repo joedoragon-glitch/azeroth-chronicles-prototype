@@ -104,6 +104,11 @@ def source_contract():
             for at, degree, duration, instrument, gain in notes:
                 assert 0 <= at < 4 and 0 < duration <= 2
                 assert instrument in INSTRUMENTS and 0 < gain <= 1
+        expression = t.get("expression")
+        assert expression, cue + ": authored expressive performance missing"
+        assert .72 <= expression["leadGate"] <= 1.0, cue
+        assert 5 <= expression["leadAttackMs"] <= 140, cue
+        assert 0 <= expression["textureJitterMs"] <= 12, cue
         profile = t.get("production")
         assert profile and len(profile["space"]) >= 35, cue
         assert len(profile["earlyReflections"]) == 3, cue
@@ -140,9 +145,13 @@ def render_new(t, renderer):
     seed = hashlib.sha256((t["id"] + ":phase3-master").encode()).digest()
     rng = np.random.default_rng(int.from_bytes(seed[:8], "little"))
     production = t["production"]
+    expression = t["expression"]
 
-    def add(bar, at, sound, strength, pan=0):
-        start = round((bar * 4 + at) * beat * rate) % n
+    def add(bar, at, sound, strength, pan=0, jitter_ms=0):
+        # Only accompaniment receives hand-played microtiming. Lead onset and
+        # bar clock remain exact, including every protected heritage opening.
+        delta = round(rng.uniform(-jitter_ms, jitter_ms) * rate / 1000) if jitter_ms else 0
+        start = (round((bar * 4 + at) * beat * rate) + delta) % n
         if len(sound) >= n:
             raise ValueError(t["id"] + ": one note is longer than the whole loop")
         sound = sound * strength * t["energy"][bar]
@@ -155,17 +164,21 @@ def render_new(t, renderer):
         if len(sound) > first:
             mix[:len(sound) - first] += sound[first:]
 
-    def play(bar, at, degree, duration, inst, gain, register=0, chromatic=0):
+    def play(bar, at, degree, duration, inst, gain, register=0,
+             chromatic=0, role="texture"):
         midi = (t["root"] + renderer.degree(t["harmony"][bar] + degree, t["mode"])
                 + register + chromatic)
-        wave = renderer.instrument(midi, duration * beat, inst, rng)
-        # A soft bow/woodwind entrance prevents a flat note-every-beat attack
-        # without changing the exact shared clock.
-        if inst in ("cello", "strings", "horn", "flute"):
-            fade = min(len(wave), round(.043 * rate))
+        # First two bars retain their original note durations, not just their
+        # pitches/onsets. Later phrases have deliberately varied breath/gates.
+        gate = expression["leadGate"] if role == "lead" and bar >= 2 else 1.0
+        wave = renderer.instrument(midi, duration * gate * beat, inst, rng)
+        if inst in ("cello", "strings", "horn", "flute") or role == "lead":
+            attack_ms = expression["leadAttackMs"] if role == "lead" else 43
+            fade = min(len(wave), round(attack_ms * rate / 1000))
             if fade: wave[:fade] *= np.linspace(.05, 1., fade)
         add(bar, at, wave, gain,
-            renderer.pan(inst, midi) * production["stageWidth"] if stereo else 0)
+            renderer.pan(inst, midi) * production["stageWidth"] if stereo else 0,
+            expression["textureJitterMs"] if role == "texture" else 0)
 
     for bar in range(t["bars"]):
         for at, pitch, length, instrument, gain, register in t["textures"][t["figures"][bar]]:
@@ -181,9 +194,10 @@ def render_new(t, renderer):
             # not an oscillator pretending that brass/cello reaches D6.
             lead_register = 0 if t["lead"] in ("horn", "cello") else 12
             play(bar, at, degree, duration, t["lead"], .114 * emphasis,
-                 lead_register, chromatic=accidental)
+                 lead_register, chromatic=accidental, role="lead")
         for at, degree, duration, instrument, gain in t.get("counterpoint", {}).get(str(bar), []):
-            play(bar, at, degree, duration, instrument, .058 * gain, 0)
+            play(bar, at, degree, duration, instrument, .058 * gain, 0,
+                 role="counterpoint")
 
     # Circular early reflections + periodic filter settling make the seam a
     # compositional loop, rather than an arbitrary cut through a reverb tail.

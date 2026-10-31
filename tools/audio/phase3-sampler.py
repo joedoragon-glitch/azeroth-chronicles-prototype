@@ -25,7 +25,9 @@ class RecordedSampler:
     def pan(self, kind, midi=60):
         """Moderate source-instrument stage placement, not generic fake width."""
         if kind == "strings":
-            return -.34 if midi % 2 else .34
+            # A fixed section on stage: MIDI parity must not make a single
+            # violin line jump left/right each time its pitch changes.
+            return -.27
         return {"piano": -.16, "flute": -.19, "harp": .32,
                 "guitar": .25, "dulcimer": .27, "bell": .33,
                 "horn": .16, "cello": -.14}.get(kind, 0)

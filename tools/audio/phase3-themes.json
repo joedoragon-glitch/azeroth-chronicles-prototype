@@ -475,6 +475,11 @@
         "targetRms": 0.083,
         "stageWidth": 0.82,
         "crossfeed": 0.013
+      },
+      "expression": {
+        "leadGate": 0.88,
+        "leadAttackMs": 14,
+        "textureJitterMs": 7
       }
     },
     {
@@ -911,6 +916,11 @@
         "targetRms": 0.09,
         "stageWidth": 0.9,
         "crossfeed": 0.011
+      },
+      "expression": {
+        "leadGate": 0.85,
+        "leadAttackMs": 75,
+        "textureJitterMs": 5
       }
     },
     {
@@ -1368,6 +1378,11 @@
         "targetRms": 0.084,
         "stageWidth": 1,
         "crossfeed": 0.017
+      },
+      "expression": {
+        "leadGate": 0.96,
+        "leadAttackMs": 102,
+        "textureJitterMs": 9
       }
     },
     {
@@ -1758,6 +1773,11 @@
         "targetRms": 0.081,
         "stageWidth": 0.83,
         "crossfeed": 0.012
+      },
+      "expression": {
+        "leadGate": 0.94,
+        "leadAttackMs": 118,
+        "textureJitterMs": 8
       }
     },
     {
@@ -2209,6 +2229,11 @@
         "targetRms": 0.091,
         "stageWidth": 0.88,
         "crossfeed": 0.018
+      },
+      "expression": {
+        "leadGate": 0.78,
+        "leadAttackMs": 54,
+        "textureJitterMs": 4
       }
     },
     {
@@ -2624,6 +2649,11 @@
         "targetRms": 0.089,
         "stageWidth": 1.08,
         "crossfeed": 0.015
+      },
+      "expression": {
+        "leadGate": 0.92,
+        "leadAttackMs": 92,
+        "textureJitterMs": 5
       }
     }
   ],

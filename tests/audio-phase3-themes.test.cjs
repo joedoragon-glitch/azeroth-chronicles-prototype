@@ -48,6 +48,13 @@ for (const t of score.themes) {
 assert.equal(newCount, 6, 'Do not quietly replace the approved v2 pilot material');
 assert.equal(harmonies.size, 6, 'Six new scenes must not copy a single harmony sequence');
 assert.equal(phraseForms.size, 6, 'Six new scenes must not copy the same phrase form');
+const expressions = score.themes.filter(t=>!t.pilotFamily).map(t=>t.expression);
+assert.equal(expressions.length, 6);
+assert(expressions.every(e => e && e.leadGate >= .72 && e.leadGate <= 1 &&
+  e.leadAttackMs >= 5 && e.leadAttackMs <= 140 &&
+  e.textureJitterMs >= 0 && e.textureJitterMs <= 12));
+assert.equal(new Set(expressions.map(e => JSON.stringify(e))).size, 6,
+  'Each new score needs scene-specific expression, not cloned attack/gate timing');
 const spaces = score.themes.filter(t=>!t.pilotFamily).map(t=>t.production);
 assert.equal(spaces.length, 6);
 assert.equal(new Set(spaces.map(p=>JSON.stringify(p.earlyReflections))).size, 6,
