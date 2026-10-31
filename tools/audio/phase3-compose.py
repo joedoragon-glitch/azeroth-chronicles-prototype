@@ -77,7 +77,7 @@ def source_contract():
                 at, pitch, duration = event[:3]
                 alteration = event[3] if len(event) == 4 else 0
                 assert isinstance(alteration, int) and -2 <= alteration <= 2
-                assert 0 <= at < 4 and -4 <= pitch <= 8 and 0 < duration <= 4
+                assert 0 <= at < 4 and -7 <= pitch <= 8 and 0 < duration <= 4
                 distinct_rhythms.add((at, duration))
         assert len(distinct_rhythms) >= 9, cue + ": monotony risk"
         for figure, notes in t["textures"].items():
