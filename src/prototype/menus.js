@@ -285,13 +285,13 @@
           ? barracksPagedActions(candidates, page, (u) => {
               const reason = g.charmedRingleaderTrainingReason(u, n.family);
               return action(
-                rosterLabel(u) + ' · Mastery ' +
+                companionIdentityLabel(u) + ' · Mastery ' +
                   g.companionMasteryTier(u) +
                   (u.charmRingleaderTrained ? ' · Ringleader trained' : ' · ' + cost + ' crowns'),
                 () => teacherRingleaderPreview(n, u.id,
                   () => teacherRingleader(n, back, page)),
                 reason || 'Review health/damage and confirm your investment.',
-                !!reason,
+                false,
               );
             }, (next) => teacherRingleader(n, back, next))
           : [action('No Charmed monsters available', () => {},
@@ -305,7 +305,13 @@
         cost = Campaign.rules.balance.companions.ringleaderTrainingCost,
         reason = g.charmedRingleaderTrainingReason(u, n.family);
       if (reason) {
-        back();
+        openMenu(
+          'Ringleader Training · ' + (u ? companionIdentityLabel(u) : id),
+          'This individual cannot be trained now: ' + reason +
+            '. No crowns are charged.',
+          [action('Training unavailable', () => {}, reason, true)],
+          back,
+        );
         return;
       }
       const beforeHp = g.companionMaxHp(u),
@@ -313,7 +319,7 @@
         afterHp = Math.round(beforeHp * Campaign.rules.ringleaderScaling.hp),
         afterDamage = beforeDamage * Campaign.rules.ringleaderScaling.damage;
       openMenu(
-        'Ringleader Training · ' + g.companionDisplayName(u),
+        'Ringleader Training · ' + companionIdentityLabel(u),
         'Orin will train this individual monster, not the entire species. ' +
           'HP ' + beforeHp + ' → ' + afterHp +
           ' · attack ' + beforeDamage.toFixed(1) + ' → ' + afterDamage.toFixed(1) +
@@ -1767,6 +1773,14 @@
       }
       return result;
     }
+    function companionIdentityLabel(u) {
+      const g = getGame(), name = u.customName ||
+        (u.charmOrigin ? charmedTypeName(u)
+          : u.type === 'pet' ? g.petDefinition(u)?.name || 'Boss pet' : unitLabel(u.type));
+      // Array positions are not identities: removing a Goblin must not
+      // silently rename all the surviving individuals in the company ledger.
+      return name + ' [' + u.id + ']';
+    }
     function companionMasteryDisplay(u) {
       const g = getGame(),
         tier = g.companionMasteryTier(u),
@@ -1780,8 +1794,12 @@
     // explicitly labelled choice, and all callbacks use the saved actor ID.
     function barracksInspectAction(b, u, back) {
       return action(
-        'Inspect · ' + rosterLabel(u),
-        () => barracksCompanionProfile(b, u.id, back),
+        'Inspect · ' + companionIdentityLabel(u),
+        () => {
+          const g = getGame();
+          if (!g.s.party.includes(u)) return back();
+          barracksCompanionProfile(b, u.id, back);
+        },
         charmedStatus(u) + ' · ' + Math.ceil(Math.max(0, u.hp)) +
           '/' + u.maxHp + ' HP · ' + companionMasteryDisplay(u),
       );
@@ -1795,16 +1813,25 @@
           ? (g.petDefinition(u)?.name || 'Boss pet') + ' · ' + u.petFamily
           : unitLabel(u.type);
       openMenu(
-        'Companion · ' + rosterLabel(u),
+        'Companion · ' + companionIdentityLabel(u),
         role + ' · ' + charmedStatus(u) +
           '\\nHealth ' + Math.ceil(Math.max(0, u.hp)) + '/' + u.maxHp +
           ' · ' + companionMasteryDisplay(u) +
           '\\nIndividual ID ' + u.id,
         [
-          action('Abilities & mastery', () => barracksCompanionAbilities(id,
-            () => barracksCompanionProfile(b, id, back)),
+          action('Abilities & mastery', () => {
+            if (getGame() !== g || !g.s.party.includes(u)) return back();
+            barracksCompanionAbilities(id,
+              () => barracksCompanionProfile(b, id, back));
+          },
             'Current ability effects, unlocks, recovery and next-tier growth.'),
-          barracksCompanionAction(b, u, () => back()),
+          (() => {
+            const manage = barracksCompanionAction(b, u, () => back());
+            return { ...manage, action: () => {
+              if (getGame() !== g || !g.s.party.includes(u)) return back();
+              manage.action();
+            } };
+          })(),
           ...(!u.customName
             ? [action('Choose permanent name',
                 () => nameCompanion(id, () => barracksCompanionProfile(b, id, back)),
@@ -1918,7 +1945,7 @@
               's cooldown; unlock and amount follow rescued Neri’s training.');
       }
       openMenu(
-        'Abilities · ' + rosterLabel(u),
+        'Abilities · ' + companionIdentityLabel(u),
         companionMasteryDisplay(u) + '\\n' +
           (nextThreshold ? 'Next Mastery at ' + nextThreshold + ' total points.' :
             'Tier III is the maximum.') +
@@ -2155,6 +2182,18 @@
             'Name companions',
             () => barracksNamesMenu(b, returnHere),
             'Optional · chosen once.',
+          ),
+          action(
+            'How Mastery works',
+            () => openMenu(
+              'How Mastery works',
+              'Each active, living companion earns independent points: +1 paid quest; +1 hero level; +1 captain; +1 first credited guardian; +2 first credited regular or TRUE boss. No Mastery rewards in Arena or Developer Mode. Total thresholds: 4 / 10 / 18. Mastery strengthens existing abilities; it never unlocks a locked hero skill.',
+              [action('Tier I · 4 points', () => {}, 'Individual gains begin at the first milestone.', true),
+               action('Tier II · 10 points', () => {}, 'Existing ability effects improve again.', true),
+               action('Tier III · 18 points', () => {}, 'Maximum Mastery tier.', true)],
+              returnHere,
+            ),
+            'Personal progress, rewards and tier thresholds.',
           ),
           ...(getGame().hero.class === 'rogue'
             ? []
