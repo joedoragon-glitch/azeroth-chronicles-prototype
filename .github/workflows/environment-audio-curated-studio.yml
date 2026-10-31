@@ -1,0 +1,48 @@
+# Issue #709: two isolated, source-verified acoustic studies. NO game registration,
+# release, music replacement, listening-room modification or Pages publication.
+name: Environmental curated-source studio (NO deploy)
+
+on:
+  pull_request:
+    paths:
+      - 'tools/audio/environment-curated-pilots.json'
+      - 'tools/audio/environment-quality-studio.py'
+      - '.github/workflows/environment-audio-curated-studio.yml'
+  push:
+    branches:
+      - 'audit/environment-709-evidence-*'
+    paths:
+      - 'tools/audio/environment-curated-pilots.json'
+      - 'tools/audio/environment-quality-studio.py'
+      - '.github/workflows/environment-audio-curated-studio.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  environment-studio:
+    name: Source-provenance + two 72-second physical-sample acoustic pilots
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install reproducible audio analysis prerequisites
+        run: |
+          python -m pip install --disable-pip-version-check numpy==2.3.5
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffprobe -version | head -n 1
+      - name: Decode real registered ambient beds and curated recorded physical sources
+        run: python tools/audio/environment-quality-studio.py
+      - name: Save isolated MP3 proofs and decoded-signal metrics, never publish
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-709-curated-studio-private-preview
+          path: tools/audio/.environment-studio-preview/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14

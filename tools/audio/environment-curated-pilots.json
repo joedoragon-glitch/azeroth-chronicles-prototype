@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Isolated environmental quality studies, NOT game-registered ambience or artistic acceptance.",
+  "sonicContract": "Second-pass prototype: independently generated 72-second periodic regional-air envelope (not 24 seconds tiled three times), one subtle genuine recorded physical detail at a non-boundary placement, restrained harmonically neutral room filtering. Preserve current 24-second production files as baseline for A/B; do not register previews until genuinely heard artistic approval.",
+  "sourcePolicy": "Only same-host Wikimedia original audio with independently reviewed public-domain license; validate SHA-1 and exact recorded file size before decoding, pin every source before adoption. Sources never ship to the game or repo; temporary studio downloads only.",
+  "sources": [
+    {
+      "key": "wood-creak",
+      "creator": "stephan",
+      "title": "Creaky Wooden Casket",
+      "source": "PDSounds.org #319",
+      "license": "Public domain (author dedication)",
+      "licenseEvidence": "https://commons.wikimedia.org/wiki/File:Creaky_wooden_casket.ogg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Creaky_wooden_casket.ogg",
+      "sha1": "d0fcb9a572c27ddf16892c6bd65a52156d1ad0a1",
+      "bytes": 31616,
+      "role": "quiet older timber flex; only as one sparse, softened structural sound",
+      "risks": "Very short source, high recognizability if repeated, small-object rather than a whole room. Not an authenticated signal-keep recording."
+    },
+    {
+      "key": "wood-utensils",
+      "creator": "thore",
+      "title": "Wood and Cutlery",
+      "source": "PDSounds.org #376",
+      "license": "Public domain (author dedication)",
+      "licenseEvidence": "https://commons.wikimedia.org/wiki/File:Wood_and_cutlery.ogg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Wood_and_cutlery.ogg",
+      "sha1": "9ca9ab8edadd4671cd67f36ea6ae37365db6d26e",
+      "bytes": 57274,
+      "role": "infrequent muted domestic equipment movement in occupied barracks",
+      "risks": "Original metallic cutlery may be too modern/prominent; source checksum must be verified/pinned before any catalog inclusion."
+    }
+  ],
+  "pilots": [
+    {
+      "id": "side-highlands-signal-preview",
+      "place": "Old Signal Keep",
+      "baseBed": "env-highland-wind",
+      "physicalDetail": "wood-creak",
+      "eventAtSeconds": 39.1,
+      "eventPeak": 0.056,
+      "bedGain": 0.94,
+      "highpassHz": 82,
+      "lowpassHz": 3600,
+      "routeGain": 0.22,
+      "notes": "Retain Highland midrange ridge air; attenuate exposed gusts as heard inside occupied timber-and-stone structures; no invented horn or whistle. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening. Acoustic QA revision: encoded first-pass physical event contribution measured ~21-24 dB BELOW its own background, effectively concealed; increase only that single sparse local event, preserve regional bed and game bus gains. No hearing inferred.",
+      "loopSeconds": 72
+    },
+    {
+      "id": "side-frontier-shrine-preview",
+      "place": "Ruined Shrine Barracks",
+      "baseBed": "env-frontier-air",
+      "physicalDetail": "wood-utensils",
+      "eventAtSeconds": 51.7,
+      "eventPeak": 0.062,
+      "bedGain": 0.94,
+      "highpassHz": 100,
+      "lowpassHz": 3400,
+      "routeGain": 0.23,
+      "notes": "Retain dry recovering Frontier presence through an occupied Orc barracks envelope; one tiny domestic movement rather than repeated military clanks or faux ceremony. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening. Acoustic QA revision: encoded first-pass physical event contribution measured ~21-24 dB BELOW its own background, effectively concealed; increase only that single sparse local event, preserve regional bed and game bus gains. No hearing inferred.",
+      "loopSeconds": 72
+    }
+  ],
+  "rejectedExploration": [
+    {
+      "source": "https://freesound.org/people/Akacie/sounds/73715/",
+      "reason": "CC BY-NC and login-only download: cannot import into potentially commercial game"
+    },
+    {
+      "source": "https://commons.wikimedia.org/wiki/File:Wind_in_Swedish_pine_forest_at_25_mps.ogg",
+      "reason": "CC BY-SA obligations, intense 25 m/s wind, poor match for sheltered inhabited interiors"
+    },
+    {
+      "source": "https://commons.wikimedia.org/wiki/File:20090610_0_ambience.ogg",
+      "reason": "Public domain but uploader explicitly reports microphone noise and intrusive crows; inappropriate automatically as a premium regional master"
+    },
+    {
+      "source": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
+      "reason": "CC0 but described as howling inside a building; too overtly severe for normal occupied Signal Keep and converted barracks without audition"
+    }
+  ],
+  "status": {
+    "sourceReview": "two PDSounds author-public-domain recordings reviewed against Commons license pages; access verified",
+    "downloads": "real original OGGs SHA-1 and byte lengths pinned and rechecked",
+    "rendered": "two 72.0-second independently varied MP3 studio previews encoded at 32kHz mono 128kbps with 150ms guards",
+    "signalChecked": "SUCCESS isolated no-deploy source SHA e0a0582d34d92f50dfc5bbb8a06e63324494811d, Actions run 41198262753; artifact file 13040829187",
+    "retrospectiveQA": "first 24-second version rejected for fixed-event fatigue; first 72-second preview corrected because a physically recorded detail was buried around 21-24dB below background; physical preview ZIP initially not retained due hidden folder and uploader now fails closed",
+    "decodedIndependentReview": "Final exact 72s studio MP3 artifact #13040829187 decoded independently: both SHA-256s match, both mono 32kHz/128kbps, no clipping, non-tiled 24s blocks; sparse recorded events 11.47dB (Keep) and 9.14dB (Shrine) above adjacent codec residual, but still -13.35 and -17.45dB relative to the continuous bed. No human hearing.",
+    "heard": "UNVERIFIED (no genuine audio hearing performed)",
+    "accepted": "ARTISTIC HOLD — continuous bed still procedural; two very short recorded details do not prove inhabited locale, scene-specific exterior identity or score/warning mix; no production integration",
+    "registered": "NO",
+    "merged": "NO",
+    "deployed": "NO",
+    "deviceVerified": "NO"
+  },
+  "evidence": {
+    "sourceHead": "e0a0582d34d92f50dfc5bbb8a06e63324494811d",
+    "runUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41198262753",
+    "artifactId": 13040829187,
+    "outputs": [
+      {
+        "id": "side-highlands-signal-preview",
+        "sha256": "754e57e4063a7633d74ea2f564702a0101d04fb7967fa4886b0697fc0841c7a4",
+        "encodedBytes": 1158381,
+        "integratedLUFS": -31.97,
+        "referenceRegisteredLUFS": -31.16,
+        "decodedPeak": 0.17706974,
+        "loopEndSampleDelta": 0.0016399,
+        "midBandEnergy250to2000": 0.817478,
+        "physicalEventToBedDbBeforeCodec": -13.155
+      },
+      {
+        "id": "side-frontier-shrine-preview",
+        "sha256": "0b40e333ba7b1637ca9e84e83bbd7ff3d508e5468abf5669bbf46152c4f14bae",
+        "encodedBytes": 1158381,
+        "integratedLUFS": -33.78,
+        "referenceRegisteredLUFS": -33.17,
+        "decodedPeak": 0.13858923,
+        "loopEndSampleDelta": 0.000083877,
+        "midBandEnergy250to2000": 0.923717,
+        "physicalEventToBedDbBeforeCodec": -17.6
+      }
+    ],
+    "encodedAdditionalTotalBytes": 2316762,
+    "twoCandidateDecodedPcmBytes": 18432000,
+    "note": "Source/gain/spectrum and output-artefact proof only. Do not certify timbral authenticity, actual audibility over music, warning priority, loop fatigue as heard, or iPhone playback.",
+    "independentFinalDecode": {
+      "method": "Downloaded exact final MP3 ZIP artifact #13040829187, inspected with ffprobe/FFmpeg and reconstructed dry 72s noise textures from the existing region seeds. Compared decoded output residual with codec noise in nearby event-free sections. This is signal analysis only, NOT any actual human listening.",
+      "sha256BothMatch": true,
+      "sourceBlockRepetition": "All pairwise correlations of 0-24/24-48/48-72 decoded mono blocks were |r| < 0.02; not a naive 24-second tile.",
+      "signalKeep": {
+        "residualEventVsCodecFloorDb": 11.47,
+        "residualEventVsRegeneratedBedDb": -13.35,
+        "decodedPeak": 0.17706974,
+        "loopSeamSampleDelta": 0.0016399
+      },
+      "shrineBarracks": {
+        "residualEventVsCodecFloorDb": 9.14,
+        "residualEventVsRegeneratedBedDb": -17.45,
+        "decodedPeak": 0.13858923,
+        "loopSeamSampleDelta": 0.00008388
+      },
+      "limitation": "Event residual includes codec differences; codec floor was estimated from nearby event-free windows; no psychoacoustic masking or speaker frequency-response tests were performed. Three-slice noncorrelation is not a human long-loop-fatigue pass."
+    }
+  }
+}
