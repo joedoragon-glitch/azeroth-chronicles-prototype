@@ -103,6 +103,7 @@ async function main(){
       w.neutral=true;
       g.zone().enemies.push(w);
       window.__environment708Wraith=w;
+      window.__environment708Game=g;
       return {region:g.zoneId,clock:g.s.clock,id:w.id};
     });
     await page.waitForTimeout(180);
@@ -112,13 +113,23 @@ async function main(){
     await switchPixi(page);
     await page.waitForFunction(()=>Prototype.experimentalGraphics.sceneMetrics?.lights>=1);
     await page.waitForTimeout(180);
-    const withWraith=await page.evaluate(()=>({
-      mode:Prototype.experimentalGraphics.mode,
-      phase:Prototype.game.daylightPhase().phase,
-      lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
-      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
-      time:Prototype.game.s.clock
-    }));
+    const withWraith=await page.evaluate(()=>{
+      const g=Prototype.game, w=window.__environment708Wraith;
+      const source=g.zone().enemies.find(e=>e.id===w?.id);
+      return {
+        mode:Prototype.experimentalGraphics.mode,
+        phase:g.daylightPhase().phase,
+        zone:g.zoneId, gameSame:g===window.__environment708Game,
+        wraithAlive:!!source&&source.species==='wraith'&&source.hp>0,
+        wraithType:source?.type, wraithHp:source?.hp,
+        sourceCount:g.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length,
+        lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
+        motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
+        optimized:Prototype.experimentalGraphics.backgroundOptimized,
+        optimizationSetting:localStorage.getItem('azeroth-optimization-mode-v1'),
+        time:g.s.clock
+      };
+    });
     assert.equal(withWraith.mode,'webgl2','No GPU fallback during reproduction');
     assert.equal(withWraith.phase,'night','Wraith scene must be night');
     const gpu=page.locator('#world-pixi-experimental');
@@ -130,8 +141,12 @@ async function main(){
     await page.waitForTimeout(240);
     const withoutWraith=await page.evaluate(()=>({
       mode:Prototype.experimentalGraphics.mode,
+      zone:Prototype.game.zoneId,
+      optimized:Prototype.experimentalGraphics.backgroundOptimized,
+      optimizationSetting:localStorage.getItem('azeroth-optimization-mode-v1'),
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
-      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes
+      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
+      sourceCount:Prototype.game.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length
     }));
     assert((await gpu.screenshot({path:path.join(out,'marches-no-wraith-pixi.png')})).length>1024);
     const result={scene,withWraith,withoutWraith,errors};
@@ -139,6 +154,10 @@ async function main(){
     console.log('ATMOSPHERE-708-WRAITH-PIXELS '+JSON.stringify(result));
     assert.equal(withoutWraith.mode,'webgl2');
     assert.deepEqual(errors,[], 'No page errors during actual atmosphere painting');
+    assert.equal(withWraith.gameSame,true,'GPU transition replaced the live campaign');
+    assert.equal(withWraith.wraithAlive,true,'Wraith must still exist before computing GPU light parity');
+    assert.equal(withWraith.optimizationSetting,'off','Off user preference must remain selected');
+    assert.equal(withoutWraith.optimizationSetting,'off','Off preference must persist after Wraith removal');
     assert.equal(withWraith.lights,withoutWraith.lights+2,
       'V-01: Pixi must add one radius-64 carried lantern glow and one glass light for a visible Wraith');
     assert.equal(withWraith.motes,withoutWraith.motes,
