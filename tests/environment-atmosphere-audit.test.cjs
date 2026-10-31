@@ -86,17 +86,32 @@ for(const zone of ['vale','march','highlands','frontier','crown']) {
   }
   console.log('AMBIENT-LIFE-CENSUS '+zone+' '+JSON.stringify(counts));
 }
-const {execFileSync}=require('node:child_process');
-for(const file of [
+const {spawnSync}=require('node:child_process');
+const path=require('node:path');
+const regressions=[
   'tests/daylight-cycle.test.cjs',
   'tests/ambient-life.test.cjs',
   'tests/optimization-mode.test.cjs',
   'tests/pixi-fidelity.test.cjs',
   'tools/webgl-pilot/pixi-scene-bridge.test.cjs',
   'tests/ground-cache.test.cjs'
-]) {
+];
+const failures=[];
+for(const file of regressions) {
   console.log('AUDIT-EXISTING-TEST '+file);
-  execFileSync(process.execPath,[file],{cwd:require('node:path').resolve(__dirname,'..'),
-    stdio:'inherit',timeout:180000});
+  const outcome=spawnSync(process.execPath,[file],{
+    cwd:path.resolve(__dirname,'..'),encoding:'utf8',timeout:180000
+  });
+  if(outcome.stdout) process.stdout.write(outcome.stdout);
+  if(outcome.stderr) process.stderr.write(outcome.stderr);
+  if(outcome.status!==0) {
+    failures.push(file);
+    console.error('AUDIT-EXISTING-FAIL '+file+' exit='+outcome.status+
+      ' error='+(outcome.error?.message||'n/a'));
+  } else console.log('AUDIT-EXISTING-PASS '+file);
 }
-console.log('PASS issue #708 independent historical regression replay');
+if(failures.length) {
+  console.error('AUDIT-REPLAY-INCOMPLETE: '+failures.length+
+    ' historical regressions failed (not waived): '+failures.join(', '));
+  process.exitCode=1;
+} else console.log('PASS issue #708 independent historical regression replay');
