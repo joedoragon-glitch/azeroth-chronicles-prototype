@@ -261,7 +261,7 @@ async function main() {
       const resources=await cache.keys();
       return {version:cachesForRelease[0],
         audio:resources.filter(r=>new URL(r.url).pathname.includes('/assets/audio/') &&
-          /\\.(mp3|json)$/.test(new URL(r.url).pathname)).length,
+          /\.(mp3|json)$/.test(new URL(r.url).pathname)).length,
         complete:resources.length};
     });
     assert.equal(cachedAudio.audio,132, 'all 131 recordings plus manifest should be cached');
