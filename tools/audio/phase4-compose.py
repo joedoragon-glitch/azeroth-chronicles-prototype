@@ -116,6 +116,16 @@ def score_contract():
         if "secondaryHornOctave" in cue:
             assert cue["secondaryHornOctave"] == -12
             assert len(cue["secondaryHornDecision"]) >= 100
+        if "secondaryFluteOctave" in cue:
+            assert cue["secondaryFluteOctave"] == -12
+            assert cue["id"] in ("action-archive", "settlement-march")
+            assert len(cue["secondaryFluteDecision"]) >= 90
+        if "heritageHornLowerBars" in cue:
+            assert cue["parent"] == "side-highlands-signal"
+            assert cue["lead"] == "horn"
+            assert len(cue["heritageHornLowerBars"]) == 3
+            assert all(cue["form"][i] == "H" for i in cue["heritageHornLowerBars"])
+            assert len(cue["heritageRegisterDecision"]) >= 110
         if cue["parent"] in by_id:
             base = by_id[cue["parent"]]
             if "pilotFamily" in base:
@@ -329,6 +339,12 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler,
                         theme.get("leadRegisterByBar", [0] * bars)[bar]
                         if theme and theme.get("lead") == "horn"
                         and cue["lead"] == "horn" else 0)
+                    if not theme and cue["lead"] == "horn" and (
+                            bar in cue.get("heritageHornLowerBars", [])):
+                        # Revoice BOTH notes of the active signal call down
+                        # together; an individual octave fold would reverse
+                        # the historical ascending interval.
+                        inherited_register = -12
                     tone(bar, at, degree, duration, cue["lead"],
                          .072 * (1.06 if idx == 0 else .89),
                          absolute=absolute, chromatic=accidental,
@@ -347,12 +363,15 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler,
                     # Only *newly authored* secondary horn gestures get the
                     # lower, genuine recorded-source register. H heritage
                     # lead phrases retain their parent score's chosen pitch.
-                    brass_register = (cue.get("secondaryHornOctave", 0)
-                                      if instrument == "horn" else 0)
+                    phrase_register = (
+                        cue.get("secondaryHornOctave", 0)
+                        if instrument == "horn" else
+                        cue.get("secondaryFluteOctave", 0)
+                        if instrument == "flute" else 0)
                     tone(bar, at, degree,
                          min(duration, .7) if source_role == "counterline" else duration,
                          instrument, amount, soft=True,
-                         register_shift=brass_register)
+                         register_shift=phrase_register)
         if additive and dynamic > .82 and bar % 4 in (1, 2):
             # Actual location-specific accents: restrained percussion
             # supports the rhythmic argument rather than a shared boss loop.
