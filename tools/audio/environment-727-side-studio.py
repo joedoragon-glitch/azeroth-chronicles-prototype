@@ -5,9 +5,9 @@ After pinning sources in studies JSON, rerun normally to write three real 72s
 mono MP3 research masters and measure *decoded* signal integrity. This script
 does not register assets, change routing, score, game sources, PWA or builds.
 
-Sonic art is not certified by data: real field wind is not authentic castle
-roomtone; paper may be ripping, anvil may read too industrial, woodchair can
-sound contemporary, equipment may be overly close. All require later audition.
+Sonic art is not certified by data: exterior wind is not genuine enclosed roomtone; domestic cutlery can sound
+modern, swale water can suggest an outdoor stream, and hammer/clunk gestures
+can become industrial. All require later perceptual audition.
 """
 from __future__ import annotations
 
@@ -131,7 +131,7 @@ def source_probe(book, originals, temp):
         print("SIDE_INTERIOR_SOURCE_PROBE", json.dumps(reported), flush=True)
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "source-probe.json").write_text(json.dumps({
-        "kind": "SIBDLP #727 Stage 4 original-source fingerprinting",
+        "kind": "SIBDLP #727 Stage 4 side-interior original-source fingerprinting",
         "sources": reports, "gameRegistration": False, "authoredPreviews": False,
         "humanListening": False, "deployed": False}, indent=2) + "\n")
     print("PASS SOURCE PROBE ONLY: pin all original digests and byte sizes; NO encoded previews", flush=True)
@@ -154,7 +154,7 @@ def main():
     source_book = json.loads((ROOT / "tools/audio/environment-book.json").read_text())
     catalog = json.loads((ROOT / "assets/audio/manifest.json").read_text())
     if len(book["studies"]) != 3 or len(book["sources"]) != 6:
-        raise ValueError("Stage 4 requires three side interiors and eight screened physical originals")
+        raise ValueError("Stage 4 requires three side interiors and six verified original sources")
     OUT.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="sibdlp-side-interior-originals-") as workspace:
         temp = Path(workspace)
@@ -177,7 +177,7 @@ def main():
         decoded_outputs = {}
         blocks = []
         known_cues = {c["id"]: c for c in source_book["cues"]}
-        ledger = book.get("encodedPreviewEvidence", {}).get("outputs", [])
+        ledger = (book.get("encodedPreviewEvidence") or {}).get("outputs", [])
         for cue in book["studies"]:
             name = cue["id"]
             parent = catalog["assets"].get(cue["referenceBed"])
