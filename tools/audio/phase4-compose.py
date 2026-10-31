@@ -24,7 +24,7 @@ DUNGEONS = ("crypt", "archive", "mine", "abyss")
 INTERIORS = ("supply-vale", "supply-march", "supply-highlands",
              "side-vale-cellars", "side-march-watchhouse",
              "side-highlands-signal", "side-frontier-shrine")
-REGISTERS = {"flute": 12, "horn": 0, "cello": 0, "strings": 12,
+REGISTERS = {"flute": 12, "horn": 0, "cello": 0, "strings": 0,
              "harp": 0, "piano": 12, "marimba": -12,
              "glockenspiel": 12, "guitar": -12}
 ALLOWED_KINDS = {"action", "peace", "night", "settlement",
@@ -200,7 +200,8 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
         # to synthetic instruments. Upper cello answers belong in its warm
         # singing register; short chimes should not pierce above C6.
         ranges = {"glockenspiel": (75, 88), "cello": (40, 71),
-                  "horn": (46, 75), "guitar": (40, 64)}
+                  "horn": (46, 75), "guitar": (40, 64),
+                  "strings": (55, 80), "flute": (60, 90)}
         if inst in ranges:
             low, high = ranges[inst]
             while midi < low:
