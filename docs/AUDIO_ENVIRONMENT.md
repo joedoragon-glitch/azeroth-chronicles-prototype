@@ -2,6 +2,8 @@
 
 > **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
 
+**Audit-of-the-audit gate (31 October 2026):** [Complete 14 original MP3 + six retained studio masters + 19 playable locations inventory](AUDIO_ENVIRONMENT_PRODUCTION_INVENTORY_20261031.md) is the authoritative **current replacement-readiness record**. Every registered track and every retained candidate has an explicit identity; the four newer regional/interior recordings are still **not registered or playable**, and 15 of 19 location contexts have no new studio candidate. The documentation/test inventory passes are **not** an artistic approval or merge green light. The soundtrack #673 and final owner-only hearing boundary remain separate.
+
 Environmental playback is independent of the soundtrack. `audio-environment.js` owns one active loop, at most one outgoing loop, scene selection, load cancellation and gain changes. Music/form changes do not restart the environmental transport. Scene observation never changes gameplay, weather, collisions, saves or progression.
 
 ## Creative direction
