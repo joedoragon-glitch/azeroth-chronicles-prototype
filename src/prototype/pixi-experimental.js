@@ -453,7 +453,8 @@
       return (
         backingRatio + ':' + zoom + ':' + key + ':' + current.zoneId + ':' +
         !!current.s.rescued[entity.family] + ':' + (entity.form || '') + ':' +
-        (entity.presentation || '') + ':' + !!visual.crowned
+        (entity.presentation || '') + ':' + !!visual.crowned + ':' +
+        !!visual.rangedAim + ':' + !!visual.frenzy
       );
     }
     function evictUnused(protectedRevisions, bytesNeeded) {
@@ -1059,6 +1060,7 @@
           revisionFor(entity, visual, key, current, zoom),
         ),
       );
+      scene.syncWorldIndicators?.(canvasRenderer.ashCloudPresentation?.() || []);
       const records = [];
       let detachedForEviction = false;
       for (const { entity, visual, point, key } of visible) {
@@ -1070,6 +1072,7 @@
             : {
                 x: point.x, y: point.y,
                 scale: zoom,
+                ledgerMarked: !!canvasRenderer.ledgerMarked?.(visual),
                 ...canvasRenderer.groundPresentation(visual),
               };
         // Canvas repaints these identities as their actual in-world objects.
@@ -1101,6 +1104,10 @@
             opacity: c.opacity,
             flipX: c.flipX,
             ground,
+            spriteAccessories: chosen.additionalArt?.spriteAccessories ? {
+              ...chosen.additionalArt.spriteAccessories,
+              x: point.x, y: point.y, zoom, flipX: facing < 0,
+            } : null,
             // Original Canvas overlays these on the registered raster only.
             // Procedural fallback textures already include their own leaves.
             frontierShoots: frontierTree ? {

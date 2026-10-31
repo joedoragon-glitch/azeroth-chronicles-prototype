@@ -777,6 +777,7 @@
     height,
     status,
     entityScale,
+    drawOverlay: overlay,
   };
   root.PrototypeSprites = api;
   if (typeof module !== 'undefined') module.exports = api;

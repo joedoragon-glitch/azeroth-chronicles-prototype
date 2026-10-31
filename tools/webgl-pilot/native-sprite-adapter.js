@@ -117,7 +117,11 @@
         // The shipping scene bridge now owns the native Frontier shoots.
         // This standalone selector still flags other procedural overlays.
         additionalArt: {
-          proceduralOverlaysNotYetPorted: true,
+          spriteAccessories: (entity.rangedAim || entity.form === 'true' || entity.form === 'ringleader') ? {
+            form: entity.form, type: entity.type, rangedAim: !!entity.rangedAim,
+            frenzy: !!entity.frenzy, scale: sprites.entityScale(entity, entry),
+            overlayScale: Number(entry.overlayScale) || 1,
+          } : null,
           frontierTreeShootsSceneOverlayRequired: region === 3 &&
             entity.renderKind === 'prop' && entity.structure === 'dead-tree'
         }

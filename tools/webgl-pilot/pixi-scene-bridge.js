@@ -83,10 +83,13 @@
    // Original liquid highlights sit above the baked terrain yet below
    // scenery/actors and the existing atmospheric grade.
    const liquidGraphic=new PIXI.Graphics();
+   const fieldGraphic=new PIXI.Graphics();
    const actorsStage=new PIXI.Container();
    const effectsStage=new PIXI.Container();
    app.stage.addChild(rootStage);
    rootStage.addChild(liquidGraphic);
+   // Attached lazily to preserve existing empty-scene ordering.
+   let fieldSignature=null,fieldCount=0;
    rootStage.addChild(actorsStage);
    rootStage.addChild(effectsStage);
    const actors=new Map(), glowObjects=new Map(), gradients=new Map(), frameTextures=new Map();
@@ -150,6 +153,22 @@
    // Match the Canvas entityShadow/groundMarker presentation contract.
    // These GPU graphics live in the same depth-sorted stage immediately below
    // each sprite; a 2D overlay would incorrectly draw them over actors.
+   function syncWorldIndicators(list) {
+     const signature=JSON.stringify(list);
+     if(signature===fieldSignature)return;
+     fieldGraphic.clear();
+     fieldCount=list.length;
+     for(const c of list) {
+       assert([c.x,c.y,c.rx,c.ry,c.lineWidth].every(Number.isFinite) &&
+         c.rx>0&&c.ry>0&&c.lineWidth>0,'Finite Choking Ash geometry required');
+       fieldGraphic.ellipse(c.x,c.y,c.rx,c.ry)
+         .fill({color:0x786d64,alpha:0xa0/255})
+         .stroke({color:0xd4bba0,alpha:0x88/255,width:c.lineWidth});
+     }
+     if(list.length)rootStage.addChildAt(fieldGraphic,rootStage.children.indexOf(actorsStage));
+     else rootStage.removeChild(fieldGraphic);
+     fieldSignature=signature;
+   }
    function groundGraphic(graphic,ground) {
      const {rx,ry,marker}=ground;
      const zoom=ground.scale||1;
@@ -165,6 +184,9 @@
          graphic.ellipse(0,9*zoom,34*zoom,14*zoom)
            .stroke({color:0xf3e2bb,alpha:0x44/255,width:(important?2:1)*zoom});
      }
+     if(ground.ledgerMarked)
+       graphic.ellipse(0,3*zoom,23*zoom,10*zoom)
+         .stroke({color:0xebc479,width:2*zoom});
      graphic.ellipse(4*zoom,13*zoom,rx*1.18*zoom,ry*1.35*zoom)
        .fill({color:0x05100c,alpha:0x38/255});
      graphic.ellipse(1*zoom,11*zoom,rx*zoom,ry*zoom)
@@ -198,6 +220,40 @@
      shoot(-10,-13,-1,0.95);
      shoot(8,-10,1,0.85);
      if(seed%3!==0)shoot(-2,7,-1,0.75);
+   }
+   // Execute the canonical small Canvas accessory recipe as retained GPU paths.
+   // No bitmap, Canvas surface, texture upload, or per-frame path reconstruction.
+   function paintSpriteAccessories(graphic, art) {
+     graphic.clear();
+     const stack=[];
+     let path=[];
+     const ctx={globalAlpha:1,lineWidth:1,fillStyle:'#000000',strokeStyle:'#000000',
+       save(){stack.push([this.globalAlpha,this.lineWidth,this.fillStyle,this.strokeStyle]);},
+       restore(){[this.globalAlpha,this.lineWidth,this.fillStyle,this.strokeStyle]=stack.pop();},
+       translate(x,y){assert(x===0&&y===0,'Accessory paths use a local foot anchor');},
+       beginPath(){path=[];},
+       moveTo(...p){path.push(['moveTo',p]);},lineTo(...p){path.push(['lineTo',p]);},
+       closePath(){path.push(['closePath',[]]);},
+       arc(x,y,r,start,end){
+         assert(start===0&&Math.abs(end-Math.PI*2)<0.001,'Accessory glints are circles');
+         path.push(['circle',[x,y,r]]);
+       },
+       ellipse(x,y,rx,ry,rotation,start,end){
+         assert(rotation===0&&start===0&&Math.abs(end-Math.PI*2)<0.001,'Accessory rings are complete ellipses');
+         path.push(['ellipse',[x,y,rx,ry]]);
+       },
+       fill(){paint(this.fillStyle,false);},stroke(){paint(this.strokeStyle,true);},
+     };
+     function paint(css,stroke) {
+       assert(/^#[0-9a-f]{6}(?:[0-9a-f]{2})?$/i.test(css),'Canonical accessory color required');
+       for(const [op,args] of path)graphic[op](...args);
+       const color=parseInt(css.slice(1,7),16),
+         alpha=ctx.globalAlpha*(css.length===9?parseInt(css.slice(7),16)/255:1);
+       if(stroke)graphic.stroke({color,alpha,width:ctx.lineWidth,cap:'round',join:'round'});
+       else graphic.fill({color,alpha});
+     }
+     assert(root.PrototypeSprites?.drawOverlay,'Canonical sprite accessory artist required');
+     root.PrototypeSprites.drawOverlay(ctx,art,{x:0,y:0},{overlayScale:art.overlayScale},art.scale);
    }
    // Each actor moves/animates as a GPU sprite. Canvas never paints a frame.
    // A one-time procedural body bake is allowed as an explicitly counted source.
@@ -240,6 +296,7 @@
          actorsStage.removeChild(old.sprite);
          if(old.ground){actorsStage.removeChild(old.ground);old.ground.destroy();}
          if(old.shoots){actorsStage.removeChild(old.shoots);old.shoots.destroy();}
+         if(old.accessories){actorsStage.removeChild(old.accessories);old.accessories.destroy();}
          old.sprite.destroy();actors.delete(id);discarded++;
        }
      }
@@ -267,7 +324,7 @@
          if(!state.ground)state.ground=new PIXI.Graphics();
          const signature=JSON.stringify({
            rx:item.ground.rx,ry:item.ground.ry,
-           scale:item.ground.scale,marker:item.ground.marker
+           scale:item.ground.scale,marker:item.ground.marker,ledgerMarked:item.ground.ledgerMarked
          });
          if(state.groundSignature!==signature) {
            groundGraphic(state.ground,item.ground);
@@ -299,6 +356,21 @@
          state.shoots.destroy();
          state.shoots=null;
          state.shootsIdentity=null;
+       }
+       if(item.spriteAccessories){
+         const o=item.spriteAccessories;
+         if(!state.accessories)state.accessories=new PIXI.Graphics();
+         const signature=JSON.stringify([o.form,o.type,o.rangedAim,o.frenzy,o.scale,o.overlayScale]);
+         if(state.accessorySignature!==signature){
+           paintSpriteAccessories(state.accessories,o);
+           state.accessorySignature=signature;
+         }
+         state.accessories.position.set(o.x,o.y);
+         state.accessories.scale.set((o.flipX?-1:1)*o.zoom,o.zoom);
+         actorsStage.addChild(state.accessories);
+       }else if(state.accessories){
+         actorsStage.removeChild(state.accessories);state.accessories.destroy();
+         state.accessories=null;state.accessorySignature=null;
        }
        spritesUpdated++;
      }
@@ -493,7 +565,7 @@
    }
    function draw() {app.render();}
    function metrics(){return{
-     actors:actors.size,lights:glowObjects.size,vignetteActive:!!vignette,
+     worldIndicators:fieldCount,actors:actors.size,lights:glowObjects.size,vignetteActive:!!vignette,
      atmosphereMotes:moteCount,liquidStrokes:liquidCount,
      textureSources:resources.size,lampGradients:gradients.size,
      spriteUpdates:spritesUpdated,discarded
@@ -502,6 +574,7 @@
      for(const state of actors.values()){
        state.ground?.destroy();
        state.shoots?.destroy();
+       state.accessories?.destroy();
        state.sprite.destroy();
      }
      for(const state of glowObjects.values())state.graphic.destroy();
@@ -509,6 +582,7 @@
      if(vignette)vignette.destroy();
      if(moteGraphic){moteGraphic.destroy();moteGraphic=null;}
      if(vignetteGradient)vignetteGradient.destroy?.();
+     fieldGraphic.destroy();
      liquidGraphic.destroy();
      if(background)background.destroy();
      for(const texture of frameTextures.values())texture.destroy?.(false);
@@ -520,7 +594,7 @@
    }
    return Object.freeze({
      setBackground,setSolidBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
-     syncActors,syncLamps,setAtmosphere,clearAtmosphere,syncMotes,syncLiquidMotion,setVignette,
+     syncWorldIndicators,syncActors,syncLamps,setAtmosphere,clearAtmosphere,syncMotes,syncLiquidMotion,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }

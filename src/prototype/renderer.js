@@ -4,6 +4,25 @@
   // Crowns are portrait-stamped coinage from Ironroot, not generic gold discs.
   // This is intentionally paint-only: older loot objects still use the
   // historical 'gold' amount key, pickup radius, rewards and save schema.
+  // Shared presentation-only contracts. Gameplay remains authoritative.
+  function ashCloudPresentation(game, project, scale = 1) {
+    const clouds = [];
+    for (const e of game.zone().enemies)
+      if (e.type === 'boss' && e.family === 'warlord' && e.aggro && e.hp > 0 &&
+          e.ashCloud && e.ashCloud.expires > game.s.time) {
+        const center = project(e.ashCloud);
+        const edge = project({ x: e.ashCloud.x + 180, y: e.ashCloud.y });
+        const span = Math.max(35 * scale, Math.abs(edge.x - center.x));
+        clouds.push({ x: center.x, y: center.y, rx: span, ry: span * 0.48,
+          lineWidth: 2.5 * scale });
+      }
+    return clouds;
+  }
+  function ledgerMarked(game, actor) {
+    return ['hero', 'ally'].includes(actor.renderKind) && game.zone().enemies.some(
+      (b) => b.family === 'ridge' && b.hp > 0 && b.ledgerMarkUntil > game.s.time &&
+        b.ledgerMarkedId === (actor.renderKind === 'hero' ? 'hero' : actor.id));
+  }
   function drawCrownLoot(ctx, p) {
     ctx.save();
     ctx.translate(p.x, p.y - 3);
@@ -2998,16 +3017,7 @@
           }
           ctx.restore();
         }
-        if (
-          ['hero', 'ally'].includes(e.renderKind) &&
-          z.enemies.some(
-            (b) =>
-              b.family === 'ridge' &&
-              b.hp > 0 &&
-              b.ledgerMarkUntil > game.s.time &&
-              b.ledgerMarkedId === (e.renderKind === 'hero' ? 'hero' : e.id),
-          )
-        ) {
+        if (ledgerMarked(game, e)) {
           ctx.save();
           ctx.strokeStyle = '#ebc479';
           ctx.lineWidth = 2;
@@ -3265,29 +3275,18 @@
         hero: screen(game.hero),
         lights: [...carriedLanterns, ...nightSources],
       });
-      // Choking Ash is intentionally visible and remains fixed where cast.
-      for (const e of z.enemies)
-        if (
-          e.type === 'boss' &&
-          e.family === 'warlord' &&
-          e.aggro &&
-          e.hp > 0 &&
-          e.ashCloud &&
-          e.ashCloud.expires > game.s.time
-        ) {
-          const center = screen(e.ashCloud);
-          const edge = screen({ x: e.ashCloud.x + 180, y: e.ashCloud.y });
-          const span = Math.max(35, Math.abs(edge.x - center.x));
-          ctx.save();
-          ctx.fillStyle = '#786d64a0';
-          ctx.strokeStyle = '#d4bba088';
-          ctx.lineWidth = 2.5;
-          ctx.beginPath();
-          ctx.ellipse(center.x, center.y, span, span * 0.48, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
-          ctx.restore();
-        }
+      // Original Canvas composition retained; GPU places this field below actors.
+      for (const cloud of ashCloudPresentation(game, screen)) {
+        ctx.save();
+        ctx.fillStyle = '#786d64a0';
+        ctx.strokeStyle = '#d4bba088';
+        ctx.lineWidth = cloud.lineWidth;
+        ctx.beginPath();
+        ctx.ellipse(cloud.x, cloud.y, cloud.rx, cloud.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
       PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
       drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
@@ -3342,6 +3341,11 @@
         return { x: p.x * zoom(), y: p.y * zoom() };
       },
       groundPresentation,
+      ledgerMarked: (actor) => ledgerMarked(getGame(), actor),
+      ashCloudPresentation: () => ashCloudPresentation(getGame(), (p) => {
+        const point = screen(p);
+        return { x: point.x * zoom(), y: point.y * zoom() };
+      }, zoom()),
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
         if (layer !== 'full' && layer !== 'overlay' && layer !== 'background')
@@ -3398,6 +3402,8 @@
   }
   const api = {
     create,
+    ashCloudPresentation,
+    ledgerMarked,
     createEffectDiagnostics,
     nightLightKind,
     bodyFacingSide,
