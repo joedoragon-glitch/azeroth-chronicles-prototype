@@ -27,6 +27,8 @@ const assert = require('node:assert/strict'),
     'The higher default must still reject exceeding 128 MiB of pinned buffers');
   // A pinned outgoing score plus the incoming source may temporarily exceed
   // 96 MiB; the old source must only become reclaimable after its release.
+  headroom.cache.clear();
+  headroom.bytes = 0;
   const outgoing = { bytes: 90 * MiB, refs: 1 };
   const incoming = { bytes: 12 * MiB, refs: 1 };
   headroom.cache.set('outgoing-score', outgoing);
