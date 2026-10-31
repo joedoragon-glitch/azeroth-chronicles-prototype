@@ -9,7 +9,7 @@ const root = path.resolve(__dirname, '..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
 const manifest = read('assets/audio/manifest.json');
 const scorebook = read('tools/audio/score-book.json');
-const pilot = read('tools/audio/phase2-pilots.json');
+const pilot = read('tools/audio/phase2-pilots-v2.json');
 const freeze = read('tools/audio/phase2-crown-freeze.json').frozen;
 const crownIds = [
   'place-crown', 'action-crown', 'peace-crown', 'night-crown', 'settlement-crown',
@@ -36,7 +36,7 @@ for (const id of crownIds) {
   assert.equal(crypto.createHash('sha256').update(fs.readFileSync(filepath)).digest('hex'),
     fixed.sha256, id + ' changed on disk');
 }
-assert.equal(pilot.schemaVersion, 1);
+assert.equal(pilot.schemaVersion, 2);
 assert.equal(pilot.families.length, 4);
 assert.deepEqual(new Set(pilot.families.map((f) => f.context)),
   new Set(['outdoor', 'main-dungeon', 'inhabited-interior', 'boss-true']));
@@ -79,12 +79,12 @@ assert.equal(seen.size, 8);
 assert.equal(structuralSignatures.size, 4);
 // The Python --check path is intentionally stdlib-only: actual Crown disk hashes,
 // recipe schema and Python syntax are exercised by the focused Node test.
-const pythonResult = cp.spawnSync('python3', ['tools/audio/phase2-composer.py', '--check'],
+const pythonResult = cp.spawnSync('python3', ['tools/audio/phase2-recompose.py', '--check'],
   { cwd: root, encoding: 'utf8', timeout: 120000 });
 if (pythonResult.error) throw pythonResult.error;
 assert.equal(pythonResult.status, 0,
   'Python pilot contract check failed: ' + pythonResult.stdout + pythonResult.stderr);
-assert.match(pythonResult.stdout, /83 live IDs, 65 allowed, 18 Crown hashes verified/);
+assert.match(pythonResult.stdout, /83 original music IDs, 65 allowed, 18 Crown audio hashes/);
 console.log('PASS Python isolated composer preflight and frozen Crown disk hashes');
 
 // Only the isolated Phase 2 draft branch renders previews in ordinary focused
@@ -111,7 +111,7 @@ if (
   runChecked('python3', ['-m', 'venv', venv], 60000);
   runChecked(py, ['-m', 'pip', 'install', '--disable-pip-version-check', '--quiet',
     'numpy==2.2.6', 'scipy==1.16.1', 'imageio-ffmpeg==0.6.0'], 180000);
-  runChecked(py, ['tools/audio/phase2-composer.py', '--render', outputDir], 540000);
+  runChecked(py, ['tools/audio/phase2-recompose.py', '--render', outputDir], 540000);
   const report = JSON.parse(fs.readFileSync(path.join(outputDir, 'pilot-metrics.json'), 'utf8'));
   assert.equal(report.musicRegistered, 83);
   assert.equal(report.crownFrozen, 18);
