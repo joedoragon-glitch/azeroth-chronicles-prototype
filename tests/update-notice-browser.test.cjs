@@ -5,15 +5,50 @@ const assert = require('node:assert/strict'),
   fs = require('node:fs'),
   path = require('node:path'),
   http = require('node:http'),
+  crypto = require('node:crypto'),
   { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '..'),
   version = require('../package.json').version;
 let generation = 'a',
   failUpdateCheck = false;
 const cacheName = () => 'azeroth-app-v' + version + '-notice-' + generation;
+const requestLog = [];
+const releaseFile = (relative) => {
+  const file = path.resolve(root, '.' + (relative === '/' ? '/index.html' : relative));
+  const source = fs.readFileSync(file, 'utf8');
+  if (generation !== 'c') return source;
+  if (['/', '/index.html', '/phone.html'].includes(relative))
+    return source.replace('<nav aria-label="Main menu">',
+      '<nav aria-label="Main menu" data-menu-revision="c">');
+  if (relative === '/src/prototype/app.js')
+    return source + "\\ndocument.body.dataset.menuRevision = 'c';\\n";
+  return source;
+};
+const gitBlobHash = (source) => {
+  const bytes = Buffer.from(source);
+  return crypto.createHash('sha1').update('blob ' + bytes.length + '\\0').update(bytes).digest('hex');
+};
+const releaseWorker = (file) => {
+  let worker = fs.readFileSync(file, 'utf8')
+    .replace('"azeroth-app-v' + version + '"', JSON.stringify(cacheName()));
+  if (generation !== 'c') return worker;
+  // Model real published bytes: changed HTML and JS also change the worker's
+  // build-generated content fingerprints. Otherwise the fixture is not a release.
+  const prefix = 'const APP_FINGERPRINTS = ';
+  const before = worker.split(prefix)[1].split(';')[0],
+    hashes = JSON.parse(before);
+  for (const [asset, relative] of [
+    ['./', '/index.html'], ['./index.html', '/index.html'],
+    ['./phone.html', '/phone.html'],
+    ['./src/prototype/app.js', '/src/prototype/app.js'],
+  ]) hashes[asset] = gitBlobHash(releaseFile(relative));
+  worker = worker.replace(prefix + before + ';', prefix + JSON.stringify(hashes) + ';');
+  return worker;
+};
 const server = http.createServer((req, res) => {
   const relative = new URL(req.url, 'http://localhost').pathname,
     file = path.resolve(root, '.' + (relative === '/' ? '/index.html' : relative));
+  requestLog.push({ generation, relative });
   if (relative === '/sw.js' && failUpdateCheck) {
     res.writeHead(503);
     return res.end('offline update fixture');
@@ -37,21 +72,10 @@ const server = http.createServer((req, res) => {
         '.webmanifest': 'application/manifest+json',
       }[path.extname(file)] || 'application/octet-stream',
   });
-  if (relative === '/sw.js')
-    return res.end(
-      fs
-        .readFileSync(file, 'utf8')
-        .replace('"azeroth-app-v' + version + '"', JSON.stringify(cacheName())),
-    );
-  // Model a release that changes both menu markup and its JavaScript.
-  // The startup preflight must never expose an old/new hybrid menu.
-  if (generation === 'c' && ['/index.html', '/phone.html'].includes(relative))
-    return res.end(fs.readFileSync(file, 'utf8')
-      .replace('<nav aria-label="Main menu">',
-        '<nav aria-label="Main menu" data-menu-revision="c">'));
-  if (generation === 'c' && relative === '/src/prototype/app.js')
-    return res.end(fs.readFileSync(file, 'utf8') +
-      "\ndocument.body.dataset.menuRevision = 'c';\n");
+  if (relative === '/sw.js') return res.end(releaseWorker(file));
+  if (generation === 'c' &&
+      ['/', '/index.html', '/phone.html', '/src/prototype/app.js'].includes(relative))
+    return res.end(releaseFile(relative));
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
@@ -247,6 +271,7 @@ const server = http.createServer((req, res) => {
       failUpdateCheck = false;
       await context.setOffline(false);
       generation = 'c';
+      requestLog.length = 0;
       await page.reload();
       await page.waitForFunction(async () => {
         const cacheReady = (await caches.keys()).includes(
@@ -258,6 +283,13 @@ const server = http.createServer((req, res) => {
           document.body.dataset.menuRevision === 'c';
       }, null, { timeout: 90000 });
       assert.equal(await page.evaluate(() => window.Prototype?.game.hero.gold), 42424);
+      const releaseRequests = requestLog.filter((entry) => entry.generation === 'c')
+        .map((entry) => entry.relative);
+      for (const changed of ['/index.html', '/phone.html', '/src/prototype/app.js'])
+        assert(releaseRequests.includes(changed), 'changed release bytes must download: ' + changed);
+      for (const unchanged of ['/src/prototype/renderer.js', '/assets/audio/music/title.mp3'])
+        assert(!releaseRequests.includes(unchanged),
+          'unchanged browser-cached assets must not download: ' + unchanged);
       assert(await page.locator('#update-button').isHidden(),
         'automatic preflight never asks for an update tap');
       assert.deepEqual(errors, []);
