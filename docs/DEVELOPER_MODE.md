@@ -37,3 +37,14 @@ Normal/Nightmare campaign. v4 save compatibility is retained.
 Verify each hero class, five regions, both boss forms, captains, phone and desktop
 controls, normal and lethal hits, Skill 1 across all input paths, other skills,
 save/reload, and ordinary startup/import **without** `?developer=1`.
+
+## Developer Finisher — fast death/progression testing
+
+While actively playing a Developer Mode run, the **Dev Finish** control sits next to **Summon**, on both desktop and phone. It opens two actions, independent of the hero class, learned skills, mana and ordinary cooldowns:
+
+- **Finish target:** delivers an extreme, piercing, single-target hit to the currently selected foe (via **Target**), or the nearest valid enemy if no target was selected, up to 680 world units away.
+- **Sweep nearby:** delivers the same hit to up to eight eligible hostiles within 360 world units of the hero. Use this for quick kill-count, quest and event checks; a newly spawned enemy from a kill-triggered event is not automatically included in the same sweep.
+
+These actions require genuine target eligibility and line of sight; they do **not** teleport through walls, hit neutral characters or override combat-reset protection. Reposition the developer hero when needed. Each hit uses the actual `Campaign.damage()` and `Campaign.kill()` pathway, so a **real** monster/boss death can create ordinary loot drops, advance quests, award victories and trigger native after-death encounters. This is a developer test run, not a claim that a normal-mode character could win this way.
+
+**Important:** Developer Mode's *Summon* button creates temporary encounter fixtures. Those fixtures **still cannot award real loot, kill counts, boss victories, quest progress or persistent rewards** even when a Dev Finisher kills them. To inspect the genuine death/reward outcome, visit and kill the **naturally spawned** enemy/boss in the actual region or dungeon. Developer run saves remain isolated from normal campaigns.

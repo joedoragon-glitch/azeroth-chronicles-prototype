@@ -49,6 +49,15 @@
         );
       }
       awaitsHeroAttack(e) {
+        // Temporary developer summons are deliberately immediately hostile.
+        // The introductory Thorn/field protection applies only to natural
+        // encounters, including their real summoned adds.
+        if (
+          e?.developerSummon ||
+          (e?.summon &&
+            this.s.zones.vale?.enemies.some((owner) => owner.id === e.owner && owner.developerSummon))
+        )
+          return false;
         if (this.zoneId !== 'vale' || this.peace || !e || e.neutral || e.hp <= 0) return false;
         const thorn = this.openingThornOwner(e);
         if (thorn) return !this.s.thornHeroInitiated && (thorn === e || !e.introHeroProvoked);

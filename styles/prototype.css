@@ -885,7 +885,8 @@ body.menu-open::before {
 }
 
 /* Opt-in combat laboratory. Not visible in ordinary play. */
-#developer-summon {
+#developer-summon,
+#developer-finisher {
   position: fixed;
   left: 12px;
   bottom: 78px;
@@ -895,7 +896,11 @@ body.menu-open::before {
   font-weight: 700;
   text-align: center;
 }
+#developer-finisher {
+  left: 95px;
+}
 #developer-summon[hidden],
+#developer-finisher[hidden],
 #developer-combat-monitor[hidden] {
   display: none !important;
 }
@@ -916,7 +921,8 @@ body.menu-open::before {
   white-space: pre-line;
   pointer-events: none;
 }
-body.menu-open #developer-summon {
+body.menu-open #developer-summon,
+body.menu-open #developer-finisher {
   visibility: hidden;
 }
 
