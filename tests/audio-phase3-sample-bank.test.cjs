@@ -75,34 +75,68 @@ function filesIn(dir, prefix='') {
 for (const f of filesIn(fromRoot('tools/audio/phase3-samples'))) {
   if (/\.(mp3|ogg)$/.test(f)) assert(recorded.has(f), 'Unproven/unindexed sample: ' + f);
 }
-// A sampler must not pretend to play outside instrument ranges. Current score
-// exceeds some ranges; preserve as a pre-integration finding, not a quality pass.
+// Check the ACTUAL authored pitch and route before judging missing sources.
+// The lead renderer uses register 0 for horn/cello, not +12; strings split
+// into violins/celli/basses; bell and dulcimer are explicit substitutions.
+// Previously this test reported false out-of-range patches by ignoring all
+// three production rules. This is a source coverage audit, not listening QA.
 const scales = { major: [0,2,4,5,7,9,11], minor: [0,2,3,5,7,8,10],
   dorian: [0,2,3,5,7,9,10], mixolydian: [0,2,4,5,7,9,10] };
 const degree = (n, mode) => 12 * Math.floor(n / 7) +
   scales[mode][((n % 7) + 7) % 7];
-const missingOrOvershot = new Set();
+const routedNotes = [];
+const aliases = new Map();
+function inspect(t, instrument, midi, role, bar) {
+  const originalInstrument = instrument;
+  if (instrument === 'strings')
+    instrument = midi >= 55 ? 'violins' : midi >= 36 ? 'celli' : 'basses';
+  else if (instrument === 'dulcimer')
+    instrument = 'marimba';
+  else if (instrument === 'bell') {
+    instrument = 'glockenspiel';
+    while (midi < 79) midi += 12;
+  } else if (instrument === 'cello')
+    instrument = midi < 36 ? 'basses' : 'celli';
+  if (originalInstrument !== instrument)
+    aliases.set(originalInstrument + ' → ' + instrument,
+      (aliases.get(originalInstrument + ' → ' + instrument) || 0) + 1);
+  const def = bank.instruments[instrument];
+  assert(def, t.id + ' needs a missing recorded family ' + instrument);
+  assert(midi >= def.range[0] - 4 && midi <= def.range[1] + 4,
+    t.id + ': ' + originalInstrument + ' MIDI ' + midi +
+    ' outside actual sampler bounds');
+  const nearest = Math.min(...def.samples.map(s => Math.abs(midi - s.midi)));
+  assert(nearest <= 7, t.id + ': source pitch shift exceeds seven semitones');
+  routedNotes.push({cue:t.id, bar:bar+1, role, instrument,
+    requestedMidi:midi, smallestSemitoneShift:nearest});
+}
 for (const t of scores.themes.filter(t => !t.pilotFamily)) {
   for (let bar=0; bar<t.bars; bar++) {
-    const passage=t.cells[t.phrases[bar]];
-    for (const [, d, , alt=0] of passage) {
-      const midi=t.root+12+degree(t.harmony[bar]+d,t.mode)+alt;
-      const def=bank.instruments[t.lead];
-      if (!def || midi<def.range[0] || midi>def.range[1])
-        missingOrOvershot.add(t.id+': '+t.lead+' lead MIDI '+midi);
+    for (const [,d,,alt=0] of t.cells[t.phrases[bar]]) {
+      const register = ['horn','cello'].includes(t.lead) ? 0 : 12;
+      inspect(t, t.lead,
+        t.root+register+degree(t.harmony[bar]+d,t.mode)+alt,
+        'lead',bar);
     }
-    for (const [,d,,inst,,register] of t.textures[t.figures[bar]]) {
-      const midi=t.root+degree(t.harmony[bar]+d,t.mode)+register;
-      const def=bank.instruments[inst];
-      if (!def || midi<def.range[0] || midi>def.range[1])
-        missingOrOvershot.add(t.id+': '+inst+' texture MIDI '+midi);
-    }
+    for (const [,d,,inst,,register] of t.textures[t.figures[bar]])
+      inspect(t, inst,
+        t.root+degree(t.harmony[bar]+d,t.mode)+register,
+        'texture',bar);
+    for (const [,d,,inst] of (t.counterpoint?.[String(bar)] || []))
+      inspect(t, inst,
+        t.root+degree(t.harmony[bar]+d,t.mode),
+        'counterpoint',bar);
   }
 }
-assert(missingOrOvershot.size > 0,
-  'Provisional timbre, range and technical-source review must not be mistaken for listening acceptance');
+const largeShifts = routedNotes.filter(x=>x.smallestSemitoneShift>=5);
+assert(largeShifts.length > 0,
+  'Do not silently convert an outlier-heavy bank into a certified palette');
+assert(aliases.get('dulcimer → marimba') > 0);
+assert(aliases.get('bell → glockenspiel') > 0);
 console.log('PASS source/provenance ONLY: '+count+' pinned CC0 source recordings / '+
   bytes+' encoded bytes, all upstream Git blob hashes match');
-console.log('HOLD: '+missingOrOvershot.size+
-  ' distinct uncovered pitch/patch uses in six authored themes. '+
-  'Bank is wired into isolated composer, but source register, timbre and hearing still need QA; Phase 4 BLOCKED.');
+console.log('HOLD: '+routedNotes.length+' six-theme tonal notes checked against the '+
+  'real performed register and sampler routing; '+largeShifts.length+
+  ' have >=5-semitone shifts from the closest source. Recorded-surrogate counts: '+
+  JSON.stringify(Object.fromEntries(aliases))+
+  '. No actual hearing or creative GO; Phase 4 BLOCKED.');
