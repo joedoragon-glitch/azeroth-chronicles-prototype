@@ -8,7 +8,53 @@
       "id": "place-vale",
       "pilotFamily": "greenwood-outdoors",
       "title": "Orchard Roads",
-      "intent": "Q01 A — welcoming farmland with guarded estate unease; reuse the corrected Phase 2 base source; Phase 4 arranges variants."
+      "intent": "Q01 A — welcoming farmland with guarded estate unease; reuse the corrected Phase 2 base source; Phase 4 arranges variants. Phase 3-only source motif repair: keep the Phase 2 v2 body but reintroduce old opening notes and rhythms; harmonic and sonic acceptance UNVERIFIED.",
+      "pilotLeadOverrides": {
+        "0": [
+          [
+            0,
+            0,
+            0.65
+          ],
+          [
+            1,
+            1,
+            0.52
+          ],
+          [
+            2,
+            2,
+            0.72
+          ],
+          [
+            3,
+            4,
+            0.94
+          ]
+        ],
+        "1": [
+          [
+            0,
+            2,
+            0.92
+          ],
+          [
+            1,
+            1,
+            0.6
+          ],
+          [
+            2,
+            0,
+            0.63
+          ],
+          [
+            3,
+            1,
+            0.72
+          ]
+        ]
+      }
     },
     {
       "id": "place-march",
@@ -1630,7 +1676,46 @@
       "id": "place-archive",
       "pilotFamily": "archive-rescue",
       "title": "Restoration After Rain",
-      "intent": "Q05 A — actively saving irreplaceable records; reuse the corrected Phase 2 source, with new arrangements in Phase 4."
+      "intent": "Q05 A — actively saving irreplaceable records; reuse the corrected Phase 2 source, with new arrangements in Phase 4. Phase 3-only source motif repair: keep the Phase 2 v2 body but reintroduce old opening notes and rhythms; harmonic and sonic acceptance UNVERIFIED.",
+      "pilotLeadOverrides": {
+        "0": [
+          [
+            0,
+            0,
+            0.7
+          ],
+          [
+            1,
+            2,
+            0.55,
+            1
+          ],
+          [
+            3,
+            4,
+            0.85
+          ]
+        ],
+        "1": [
+          [
+            0,
+            3,
+            0.67,
+            1
+          ],
+          [
+            2,
+            2,
+            0.57,
+            1
+          ],
+          [
+            3,
+            2,
+            0.57
+          ]
+        ]
+      }
     },
     {
       "id": "place-mine",

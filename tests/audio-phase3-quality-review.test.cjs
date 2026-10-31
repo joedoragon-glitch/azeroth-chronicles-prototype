@@ -42,11 +42,12 @@ for (const theme of score) {
     const family = pilots.find((p) => p.family === theme.pilotFamily);
     assert(family, theme.id + ': missing pilot');
     for (let bar = 0; bar < 2; bar++) {
-      const notes = family.performance.leadOverrides?.[String(bar)] ||
+      const notes = theme.pilotLeadOverrides?.[String(bar)] ||
+        family.performance.leadOverrides?.[String(bar)] ||
         family.cells[family.phrases[bar]].map(([at, pitch, len]) =>
           [at, pitch + family.performance.leadShifts[bar], len]);
-      for (const [at, pitch] of notes) {
-        performed.push([+(bar * 4 + at).toFixed(3), degree(pitch, family.mode)]);
+      for (const [at, pitch, , accidental=0] of notes) {
+        performed.push([+(bar * 4 + at).toFixed(3), degree(pitch, family.mode)+accidental]);
       }
     }
   } else {
@@ -57,7 +58,7 @@ for (const theme of score) {
       }
     }
   }
-  if (explicitlyRetainedHooks.has(theme.id)) {
+  if (explicitlyRetainedHooks.has(theme.id) || theme.pilotLeadOverrides) {
     assert.deepEqual(performed, original,
       theme.id + ': deliberate original opening pitch/onset identity regressed; ' +
         'document any artistic replacement as a reviewed source decision');

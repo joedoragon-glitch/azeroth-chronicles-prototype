@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-31",
-  "status": "Motif-identity source corrections to six new themes; two pilot bases still require critical remediation; NO sonic acceptance",
+  "status": "All eight first two-bar melody pitch/onset sources now match originals; broader harmony, timbre, form and audio acceptance still REVISE/HOLD",
   "sources": [
     "tools/audio/score-book.json",
     "tools/audio/phase2-pilots-v2.json",
@@ -61,32 +61,32 @@
           0
         ],
         [
-          0.8,
+          1,
           2
         ],
         [
-          1.65,
+          2,
           4
         ],
         [
-          2.65,
+          3,
           7
         ],
         [
           4,
-          14
+          4
+        ],
+        [
+          5,
+          2
         ],
         [
           6,
-          12
+          0
         ],
         [
-          6.75,
-          11
-        ],
-        [
-          7.4,
-          7
+          7,
+          2
         ]
       ],
       "originalOpeningIntervals": [
@@ -102,13 +102,13 @@
         2,
         2,
         3,
-        7,
+        -3,
         -2,
-        -1,
-        -4
+        -2,
+        2
       ],
-      "firstFourExactIntervalPositions": 3,
-      "review": "First three lead intervals quote the original major rise; subsequent bar-1 contour is revoiced by the pilot. Must assess recognizable return rather than declare full continuity.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Original Orchard Roads' first two bars now reappear by intentional Phase 3-only pilot lead overrides; natural flute articulation and bar-three transition remain unverified by hearing.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     },
     {
@@ -443,32 +443,24 @@
           0
         ],
         [
-          0.8,
-          3
+          1,
+          4
         ],
         [
-          1.75,
+          3,
           7
         ],
         [
-          3.15,
-          5
-        ],
-        [
           4,
-          9
+          6
         ],
         [
-          5,
-          5
+          6,
+          4
         ],
         [
-          5.75,
+          7,
           3
-        ],
-        [
-          6.65,
-          0
         ]
       ],
       "originalOpeningIntervals": [
@@ -479,16 +471,14 @@
         -1
       ],
       "candidateOpeningIntervals": [
+        4,
         3,
-        4,
+        -1,
         -2,
-        4,
-        -4,
-        -2,
-        -3
+        -1
       ],
-      "firstFourExactIntervalPositions": 0,
-      "review": "Corrected v2 pilot also differs substantially from original Archive opening; its original +4/+3/-1 scholarly hook is no longer visibly present. Re-audit the reused base, not just six new tunes.",
+      "firstFourExactIntervalPositions": 4,
+      "review": "Original Restoration After Rain two-bar D–F#–A then G#–F#–F hook now reappears through chromatic Phase 3-only pilot lead overrides; Dorian chord clash and piano timbre require critical review and actual listening.",
       "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
     },
     {
@@ -647,7 +637,7 @@
     }
   ],
   "returnToGo": [
-    "For all eight, compare and verify performed old-to-new hooks; six new primary source openings have been amended, but Greenwood and Archive v2 bases still need intentional audit/rework before source GO.",
+    "Eight original opening identities restored at note level, but musical harmonic integration and realism remain unverified and source gate REVISE.",
     "Independently review harmony/voice-leading, phrase resolution, density, purposeful silence, distinct acoustic behavior of actual timbral engine, and comparable long-loop energy; do not certify from descriptive prose",
     "Make and decode exact corrected previews; retain Crown hash checks and honest integrated resource projections after PR #712",
     "Use real internal audition and A/B comparison where possible; log exact source/format/headphones and perceived problems; owner first listens only at Phase 9",

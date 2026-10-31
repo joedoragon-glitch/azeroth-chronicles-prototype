@@ -9,6 +9,7 @@ This program does not modify the manifest, scorebook, game, or any MP3.
 import argparse
 import hashlib
 import json
+import copy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -50,7 +51,14 @@ def source_contract():
             assert PILOT_IDS[cue] == t["pilotFamily"]
             source = families[t["pilotFamily"]]
             assert source["cues"][0] == {"id": cue, "part": "base"}
-            descriptions.append((cue, source["bars"], source["bpm"], "v2-continuity"))
+            assert set(t.get("pilotLeadOverrides", {})) == {"0", "1"}, cue
+            for bar in ("0", "1"):
+                for item in t["pilotLeadOverrides"][bar]:
+                    assert len(item) in (3, 4) and 0 <= item[0] < 4
+                    assert isinstance(item[1], int) and -8 <= item[1] <= 10
+                    assert 0 < item[2] <= 4
+                    assert len(item) == 3 or (isinstance(item[3], int) and -2 <= item[3] <= 2)
+            descriptions.append((cue, source["bars"], source["bpm"], "Phase3 heritage opening / v2 body"))
             continue
         assert len(t["identity"]) >= 100 and len(t["motifDecision"]) >= 90
         assert len(t["oldMotif"]) >= 10 and len(t["scenes"]) == 4
@@ -195,7 +203,9 @@ def main():
     reports = []
     for theme in themes:
         if "pilotFamily" in theme:
-            wave, rate = ensemble.render_stem(pilots[theme["pilotFamily"]], "base", renderer)
+            family = copy.deepcopy(pilots[theme["pilotFamily"]])
+            family["performance"]["leadOverrides"].update(theme["pilotLeadOverrides"])
+            wave, rate = ensemble.render_stem(family, "base", renderer)
         else:
             wave, rate = render_new(theme, renderer)
         result = original.encode_stem(out, theme["id"], wave, rate, encoder)

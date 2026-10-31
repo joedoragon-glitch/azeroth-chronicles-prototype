@@ -39,8 +39,8 @@ def render_stem(family, part, original):
             signal[:len(wet) - first] += wet[first:]
 
     def note(bar, pos, degree, length, instrument, gain, register=0,
-             articulation="normal", jitter=False):
-        midi = family["root"] + register + original.degree(degree, mode)
+             articulation="normal", jitter=False, chromatic=0):
+        midi = family["root"] + register + original.degree(degree, mode) + chromatic
         sample = original.instrument(midi, length * beat, instrument, rng)
         # Shapes the instrument's written phrase, rather than applying one
         # immutable amplitude to every nominally distinct note.
@@ -169,12 +169,15 @@ def render_stem(family, part, original):
         notes = overrides.get(str(bar))
         if notes is None:
             notes = [(at,degree+shifts[bar],length) for at,degree,length in family["cells"][phrases[bar]]]
-        for i,(at,degree,length) in enumerate(notes):
+        for i,event in enumerate(notes):
+            at,degree,length = event[:3]
+            chromatic = event[3] if len(event) == 4 else 0
             strength = (.119 if style in ("pastoral","domestic") else .139)
             # Phrasal downbeat vs. breath-tone accents; fixed musical-clock bar.
             strength *= (1.06 if i == 0 else .91 if i == len(notes)-1 else .96)
             note(bar,at,degree,length,lead,strength,12,
-                 "bowed" if lead in ("cello","strings") and length > .75 else "normal")
+                 "bowed" if lead in ("cello","strings") and length > .75 else "normal",
+                 chromatic=chromatic)
         counter = plan.get("peaceCounterpoint",{}) if peace else plan["counterpoint"]
         for at,degree,length,kind,amount in counter.get(str(bar),[]):
             note(bar,at,degree,length,kind,.084 * amount,0,"soft")
