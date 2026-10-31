@@ -347,6 +347,7 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
     if (
       file === TEST + 'pixi-renderer-browser.test.cjs' ||
       file === TEST + 'pixi-renderer-phone-browser.test.cjs' ||
+      file === TEST + 'environment-atmosphere-browser.test.cjs' ||
       file === TEST + 'status-renderer-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs'
@@ -414,6 +415,7 @@ function run(
     const statusBrowser = file === TEST + 'status-renderer-browser.test.cjs';
     const narrowBrowser =
       pixiBrowser || statusBrowser ||
+      file === TEST + 'environment-atmosphere-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
     const result = cp.spawnSync(process.execPath, [path.join(root, file)], {
