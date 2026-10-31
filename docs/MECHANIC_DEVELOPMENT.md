@@ -6,6 +6,8 @@
 
 **The whole process:** Confirm the owner's request → find the active code and decisions → define a small acceptance target → implement through the real game → run relevant original regressions → reconcile documentation → record the tested commit → merge/publish **only when authorized**.
 
+> **Soundtrack source-production discipline (31 October 2026):** The [Phase 4 critical review](AUDIO_PHASE4_CRITICAL_REVIEW.md) corrected real deficiencies despite a previously green 38-file encoder run. Every following score phase must exercise [reusable performed-note, layered-lead, cloned-form and decoded-preview guards](../tools/audio/score-quality-controls.py), plus [mutation fixtures](../tests/audio-score-quality-controls.test.py), against the **actual candidate** before claiming a scoped technical GO. Source/technical, genuine hearing, integration, merge, publish and owner Phase 9 acceptance stay separate. Phase 4 scoped milestone is closed; Phase 5 16 boss/TRUE cues next per [authoring handoff](AUDIO_AUTHORING.md#phase-5-authoring-handoff--eight-boss--eight-synchronized-true-cues).
+ 
 ## 1. Know which source to trust
 
 | Question | Consult |
