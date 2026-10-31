@@ -384,6 +384,12 @@ Rendering-only boundaries, original sprite masters, camera framing, supported la
 
 ### Dated decisions and later revisions
 
+#### 30 October 2026 — obsolete region-floor rasters yield to reconstructed procedural ground (candidate)
+
+The owner directs that the current authored procedural terrain of each rebuilt region supersedes an older generated `terrain:ground:*` raster **when that raster is obsolete**. Evaluate floor surfaces by their current regional authoring, not by historical asset approval alone. Retire only superseded active registrations, while retaining immutable originals, approval records and reversible registry history. Do not apply a blanket ban to intentional road, bridge, interior, rock, scenery or atmosphere art. Keep existing Canvas and Pixi ground-image caching and procedural detail, gameplay geometry, collision and v4 saves intact. Verify any performance benefit rather than assuming it.
+
+The initial source audit finds Greenwood v2 already bypasses T001 ground painting; the proposed material retirement eliminates a redundant live registration without changing accepted Greenwood terrain. March T002 and Highlands T003 were already inactive. Frontier T004 and Crown T005 remain registered because their later procedural district/layout work has not yet demonstrated that these particular base-ground treatments are obsolete. Those two require current-scene comparison before any retirement. This paragraph records the proposed October 30 reconciliation, not a merged build, release or device verification.
+
 #### Procedural canon polish v0.8.79
 
 **Historical inventory:** This era's sprite counts and 'no sprite is active' status do not describe later manifests or current art availability.
