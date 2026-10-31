@@ -264,7 +264,36 @@
     }
     ctx.restore();
   }
-  function draw(ctx, e, p, region = 0, rescued = false) {
+  function draw(ctx, e, p, region = 0, rescued = false, ambientLayer = null) {
+    // Optional bake-time separation of original animal pixels from their home.
+    // The normal Canvas artist takes the unchanged direct path.
+    let paintingAmbient = false;
+    if (ambientLayer?.mode === 'part') {
+      const target = ctx;
+      const paintMethods = new Set([
+        'fill',
+        'stroke',
+        'fillRect',
+        'strokeRect',
+        'drawImage',
+        'fillText',
+        'strokeText',
+      ]);
+      ctx = new Proxy(target, {
+        get(object, key) {
+          const value = object[key];
+          if (paintMethods.has(key))
+            return (...args) => {
+              if (paintingAmbient) return value.apply(object, args);
+            };
+          return typeof value === 'function' ? value.bind(object) : value;
+        },
+        set(object, key, value) {
+          object[key] = value;
+          return true;
+        },
+      });
+    }
     if (region === 0 && e.renderKind === 'prop' && e.greenwoodInteriorAsset) {
       GreenwoodInteriors.draw(ctx, e, p);
       return;
@@ -10525,12 +10554,25 @@
     }
 
     function ambientAt(x, y, scale, index, paint) {
-      const motion = ambientAnimalPose(e, index, e.ambientTime || 0);
+      ambientLayer?.onPart?.({ index, x, y });
+      if (
+        ambientLayer?.mode === 'static' ||
+        (ambientLayer?.mode === 'part' && ambientLayer.index !== index)
+      )
+        return;
+      const motion = ambientLayer
+        ? { x: 0, y: 0, facing: 1 }
+        : ambientAnimalPose(e, index, e.ambientTime || 0);
       ctx.save();
       ctx.translate(x + motion.x, y + motion.y);
       ctx.scale(scale * motion.facing, scale);
-      paint();
-      ctx.restore();
+      paintingAmbient = true;
+      try {
+        paint();
+      } finally {
+        paintingAmbient = false;
+        ctx.restore();
+      }
     }
     function craftAt(x, y, scale, paint) {
       ctx.save();
@@ -17242,15 +17284,54 @@
           );
           // A single old seam or use-mark; keep the silhouette clean at 150%.
           if (e.householdPartition === 'cellar')
-            line([[-13, -6], [0, -4], [12, -6]], '#c6a07a', 1.2);
+            line(
+              [
+                [-13, -6],
+                [0, -4],
+                [12, -6],
+              ],
+              '#c6a07a',
+              1.2,
+            );
           else if (e.householdPartition === 'flooded')
-            line([[-14, 4], [0, 6], [13, 3]], '#95ada2', 1.5);
+            line(
+              [
+                [-14, 4],
+                [0, 6],
+                [13, 3],
+              ],
+              '#95ada2',
+              1.5,
+            );
           else if (e.householdPartition === 'keep')
-            line([[-13, -7], [1, -5], [14, -6]], '#444c49', 1.3);
+            line(
+              [
+                [-13, -7],
+                [1, -5],
+                [14, -6],
+              ],
+              '#444c49',
+              1.3,
+            );
           else if (e.householdPartition === 'shrine')
-            line([[-11, -7], [-2, -2], [9, -3]], '#cab49d', 1.2);
+            line(
+              [
+                [-11, -7],
+                [-2, -2],
+                [9, -3],
+              ],
+              '#cab49d',
+              1.2,
+            );
           else if (e.householdPartition === 'foundry')
-            line([[-14, -4], [12, -6]], '#393740', 2);
+            line(
+              [
+                [-14, -4],
+                [12, -6],
+              ],
+              '#393740',
+              2,
+            );
           oval(0, 14, 26, 5, finish[3]);
         } else {
           rect(-13, -44, 26, 58, '#9ca49a');
@@ -18600,9 +18681,7 @@
           nx,
           ny,
           0.8 + ((seed >>> (shift + 2)) % 3) * 0.32,
-          settled
-            ? ['#817b60', '#6d7056', '#9a8a6b'][j]
-            : ['#8d7662', '#685d55', '#a08b72'][j],
+          settled ? ['#817b60', '#6d7056', '#9a8a6b'][j] : ['#8d7662', '#685d55', '#a08b72'][j],
         );
       }
       if (seed % 11 === 4)
@@ -18611,8 +18690,14 @@
         // New pioneer stems appear among, not instead of, charcoal and grit.
         for (const offset of [-5, 0, 5]) {
           const height = 4 + ((seed + offset + 20) % 5);
-          line(x + offset, y + 3, x + offset + (offset < 0 ? -2 : 2), y + 3 - height,
-            offset ? '#87946e' : '#9aab7c', 0.9);
+          line(
+            x + offset,
+            y + 3,
+            x + offset + (offset < 0 ? -2 : 2),
+            y + 3 - height,
+            offset ? '#87946e' : '#9aab7c',
+            0.9,
+          );
         }
         dot(x + 1, y + 1, 1.7, '#6c7958');
       } else if (k < 3) {
@@ -18711,7 +18796,10 @@
     if (
       !blocked &&
       materials &&
-      !(outdoor && ([2, 3].includes(region) || (region === 0 && R.greenwoodLayout?.version === 2))) &&
+      !(
+        outdoor &&
+        ([2, 3].includes(region) || (region === 0 && R.greenwoodLayout?.version === 2))
+      ) &&
       dungeonId !== 'supply-highlands'
     ) {
       const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
@@ -18778,7 +18866,8 @@
         ctx.stroke();
       }
     }
-    if (!blocked && (!materials || String(dungeonId).startsWith('side-'))) groundDetail(ctx, p, seed, region, room, dungeonId, colors, x + 40, y + 40);
+    if (!blocked && (!materials || String(dungeonId).startsWith('side-')))
+      groundDetail(ctx, p, seed, region, room, dungeonId, colors, x + 40, y + 40);
   }
   // Culling uses logical viewport units, not backing-store pixels.
   function outsideScreen(points, viewport, margin = 0) {
@@ -18795,77 +18884,91 @@
   // then draw the same authored ripples over the cached background.
   // No new animation family, biome, palette or saved/gameplay state.
   function terrainMotionLines(region, screen, viewport, time) {
-    if (!Number.isInteger(region) || region < 0 || region >= R.barriers.length ||
-        typeof screen !== 'function' || !Number.isFinite(time)) return [];
-    const bounds = viewport || {width:10000,height:10000}, lines = [];
+    if (
+      !Number.isInteger(region) ||
+      region < 0 ||
+      region >= R.barriers.length ||
+      typeof screen !== 'function' ||
+      !Number.isFinite(time)
+    )
+      return [];
+    const bounds = viewport || { width: 10000, height: 10000 },
+      lines = [];
     const visible = (q) => {
       const p = screen(q);
-      return p.x > -150 && p.x < bounds.width + 150 &&
-        p.y > -150 && p.y < bounds.height + 150;
+      return p.x > -150 && p.x < bounds.width + 150 && p.y > -150 && p.y < bounds.height + 150;
     };
-    const line = (from,to,color,width) => {
-      const a = screen(from), b = screen(to);
-      if (![a.x,a.y,b.x,b.y].every(Number.isFinite)) return;
-      if (Math.max(a.x,b.x) < -30 || Math.min(a.x,b.x) > bounds.width+30 ||
-          Math.max(a.y,b.y) < -30 || Math.min(a.y,b.y) > bounds.height+30) return;
-      lines.push({x1:a.x,y1:a.y,x2:b.x,y2:b.y,color,width});
+    const line = (from, to, color, width) => {
+      const a = screen(from),
+        b = screen(to);
+      if (![a.x, a.y, b.x, b.y].every(Number.isFinite)) return;
+      if (
+        Math.max(a.x, b.x) < -30 ||
+        Math.min(a.x, b.x) > bounds.width + 30 ||
+        Math.max(a.y, b.y) < -30 ||
+        Math.min(a.y, b.y) > bounds.height + 30
+      )
+        return;
+      lines.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, color, width });
     };
-    const strip = (kind,x1,x2,y1,y2,banks=null) => {
-      if (!['water','lava'].includes(kind) || y2 <= y1) return;
+    const strip = (kind, x1, x2, y1, y2, banks = null) => {
+      if (!['water', 'lava'].includes(kind) || y2 <= y1) return;
       const water = kind === 'water';
-      for (let y=y1+24; y<y2-8; y+=water?62:48) {
+      for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
         // Original bridge decks cover the channel in these authored gaps.
         // The new live GPU layer sits above the retained ground raster, so
         // avoid exposing highlights through a solid crossing.
-        if (banks && R.barriers[region].gaps.some(([lo,hi])=>y>=lo-18&&y<=hi+18))
+        if (banks && R.barriers[region].gaps.some(([lo, hi]) => y >= lo - 18 && y <= hi + 18))
           continue;
-        const [lo,hi] = banks ? banks(y) : [x1,x2];
-        const localWidth=hi-lo, center={x:(lo+hi)/2,y};
+        const [lo, hi] = banks ? banks(y) : [x1, x2];
+        const localWidth = hi - lo,
+          center = { x: (lo + hi) / 2, y };
         if (!visible(center)) continue;
-        const phase=Math.sin(time*(water?0.9:1.3)+y*0.035),
-          seed=Math.abs(Math.floor(y*13+region*47));
+        const phase = Math.sin(time * (water ? 0.9 : 1.3) + y * 0.035),
+          seed = Math.abs(Math.floor(y * 13 + region * 47));
         if (water) {
-          const x=lo+localWidth*(0.28+(seed%4)*0.1),
-            span=Math.min(55,localWidth*0.38);
-          line({x,y:y+phase*3},{x:x+span,y:y+5+phase*3},'#9abeb788',1.2);
+          const x = lo + localWidth * (0.28 + (seed % 4) * 0.1),
+            span = Math.min(55, localWidth * 0.38);
+          line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
         } else {
-          const mid=lo+localWidth*(0.4+(seed%3)*0.08);
-          line({x:mid-10,y},{x:mid+8,y:y+11+phase*3},'#ffd076',2);
-          line({x:mid+8,y:y+11+phase*3},{x:mid-4,y:y+27},'#ed963f',1.5);
+          const mid = lo + localWidth * (0.4 + (seed % 3) * 0.08);
+          line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
+          line({ x: mid + 8, y: y + 11 + phase * 3 }, { x: mid - 4, y: y + 27 }, '#ed963f', 1.5);
         }
       }
     };
-    const barrier=R.barriers[region];
-    strip(barrier.kind,...barrier.bounds,y=>R.channelBanks(region,y));
-    const harbor=R.harbors?.[['vale','march','highlands','frontier','crown'][region]];
+    const barrier = R.barriers[region];
+    strip(barrier.kind, ...barrier.bounds, (y) => R.channelBanks(region, y));
+    const harbor = R.harbors?.[['vale', 'march', 'highlands', 'frontier', 'crown'][region]];
     if (harbor?.water && !harbor.water.points) {
-      const w=harbor.water;
-      strip('water',w.x1,w.x2,w.y1,w.y2);
+      const w = harbor.water;
+      strip('water', w.x1, w.x2, w.y1, w.y2);
     }
     for (const p of R.terrain[region] || []) {
-      const kind=p.kind||'cliff';
-      if (kind==='rain-pools') {
+      const kind = p.kind || 'cliff';
+      if (kind === 'rain-pools') {
         for (const pool of p.pools)
-          for (const offset of [-0.35,0.15,0.48]) {
-            const y=pool.y+pool.ry*offset,
-              x=pool.x-13+Math.sin(time*0.7+offset)*3;
-            line({x,y},{x:x+23,y:y+3},'#a4c2b688',1);
+          for (const offset of [-0.35, 0.15, 0.48]) {
+            const y = pool.y + pool.ry * offset,
+              x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
+            line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
           }
         continue;
       }
       if (p.r) {
-        if (kind==='water')
-          for (let j=0;j<4;j++) {
-            const y=p.y+(j-1.5)*p.r*0.3,
-              x=p.x-p.r*0.25+Math.sin(time*0.8+j)*5;
-            line({x,y},{x:x+p.r*0.45,y:y+5},'#b4d4c388',1);
+        if (kind === 'water')
+          for (let j = 0; j < 4; j++) {
+            const y = p.y + (j - 1.5) * p.r * 0.3,
+              x = p.x - p.r * 0.25 + Math.sin(time * 0.8 + j) * 5;
+            line({ x, y }, { x: x + p.r * 0.45, y: y + 5 }, '#b4d4c388', 1);
           }
-      } else if (kind==='water'||kind==='lava') {
-        let at=p.y1;
-        for (const [lo,hi] of p.gaps||[]) {
-          strip(kind,p.x1,p.x2,at,lo);at=hi;
+      } else if (kind === 'water' || kind === 'lava') {
+        let at = p.y1;
+        for (const [lo, hi] of p.gaps || []) {
+          strip(kind, p.x1, p.x2, at, lo);
+          at = hi;
         }
-        strip(kind,p.x1,p.x2,at,p.y2);
+        strip(kind, p.x1, p.x2, at, p.y2);
       }
     }
     return lines;
@@ -19130,8 +19233,13 @@
       for (const z of frontierGroundZones) {
         const p = screen({ x: z.x, y: z.y }),
           radius = (z.rx + z.ry) * 0.76;
-        if (p.x < -radius - 100 || p.x > bounds.width + radius + 100 ||
-            p.y < -radius - 100 || p.y > bounds.height + radius + 100) continue;
+        if (
+          p.x < -radius - 100 ||
+          p.x > bounds.width + radius + 100 ||
+          p.y < -radius - 100 ||
+          p.y > bounds.height + radius + 100
+        )
+          continue;
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.transform(0.76, 0.27, -0.76, 0.27, 0, 0);
@@ -19153,7 +19261,8 @@
         for (let y = 80; y < size; y += 135) {
           const seed =
               (Math.imul(Math.floor(x / 135) + 17, 73856093) ^
-                Math.imul(Math.floor(y / 135) + 29, 19349663)) >>> 0,
+                Math.imul(Math.floor(y / 135) + 29, 19349663)) >>>
+              0,
             wx = x + (seed % 35) - 17,
             wy = y + ((seed >>> 8) % 39) - 19;
           // Viewport check before the heavier lore-surface lookup. These tufts
@@ -19473,11 +19582,12 @@
               ctx.stroke();
             }
           }
-          if (!omitTerrainMotion) for (const offset of [-0.35, 0.15, 0.48]) {
-            const y = pool.y + pool.ry * offset,
-              x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
-            line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
-          }
+          if (!omitTerrainMotion)
+            for (const offset of [-0.35, 0.15, 0.48]) {
+              const y = pool.y + pool.ry * offset,
+                x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
+              line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
+            }
         }
         continue;
       }
@@ -19784,21 +19894,22 @@
   function dungeonArchitecture(ctx, screen, dungeonId = '', size) {
     const layout = dungeonLayout(dungeonId, size);
     if (!layout) return;
-    const greenwoodInterior = R.greenwoodLayout?.version === 2 && ['crypt', 'supply-vale'].includes(dungeonId);
+    const greenwoodInterior =
+      R.greenwoodLayout?.version === 2 && ['crypt', 'supply-vale'].includes(dungeonId);
     const palette =
       dungeonId === 'supply-highlands'
         ? { top: '#979a86', side: '#626658', edge: '#c7c4a4' }
         : dungeonId === 'supply-vale' && greenwoodInterior
           ? { top: '#9b987c', side: '#696e58', edge: '#c5bb92' }
-        : dungeonId === 'abyss'
-          ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
-          : dungeonId === 'crypt'
-            ? { top: '#69565d', side: '#41343f', edge: '#bf9870' }
-            : dungeonId === 'archive'
-              ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
-              : dungeonId === 'mine'
-                ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
-                : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
+          : dungeonId === 'abyss'
+            ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
+            : dungeonId === 'crypt'
+              ? { top: '#69565d', side: '#41343f', edge: '#bf9870' }
+              : dungeonId === 'archive'
+                ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
+                : dungeonId === 'mine'
+                  ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
+                  : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
     const poly = (pts, fill, stroke, width = 1) => {
       ctx.fillStyle = fill;
       ctx.beginPath();
@@ -19813,7 +19924,13 @@
     };
     const block = (x1, x2, y1, y2) => {
       const rise =
-          dungeonId === 'supply-highlands' ? (Math.max(x2 - x1, y2 - y1) <= 45 ? 44 : 30) : greenwoodInterior ? 24 : 0,
+          dungeonId === 'supply-highlands'
+            ? Math.max(x2 - x1, y2 - y1) <= 45
+              ? 44
+              : 30
+            : greenwoodInterior
+              ? 24
+              : 0,
         top = [
           { x: x1, y: y1 },
           { x: x2, y: y1 },
@@ -20337,6 +20454,52 @@
     });
   }
 
+  function drawLightFixtures(ctx, renderedLights) {
+    for (const p of renderedLights) {
+      if (p.kind === 'window') {
+        ctx.fillStyle = '#483d31';
+        ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
+        ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
+        ctx.fillStyle = '#f2cb81';
+        ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
+        ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
+        ctx.strokeStyle = '#8d6543';
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        for (const x of [p.x - 9, p.x + 12]) {
+          ctx.moveTo(x, p.y - 42);
+          ctx.lineTo(x, p.y - 32);
+        }
+        ctx.stroke();
+      } else if (p.kind === 'lantern' && p.fixture === 'post') {
+        // Illuminate the glass already painted on the actual post. Do not
+        // manufacture a second floating service lantern beside it.
+        ctx.fillStyle = '#f4c57e';
+        ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
+      } else if (p.kind === 'lantern') {
+        // A modest iron hook and glazed hanging lamp by the service stand.
+        const x = p.x + 19,
+          y = p.y - 22;
+        ctx.strokeStyle = '#817c69';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(x - 7, y + 17);
+        ctx.lineTo(x - 7, y - 14);
+        ctx.lineTo(x + 1, y - 14);
+        ctx.lineTo(x + 1, y - 9);
+        ctx.stroke();
+        ctx.fillStyle = '#574b40';
+        ctx.fillRect(x - 6, y - 9, 14, 4);
+        ctx.fillStyle = '#f4c57e';
+        ctx.fillRect(x - 5, y - 5, 12, 12);
+        ctx.strokeStyle = '#635a4b';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - 5, y - 5, 12, 12);
+        ctx.fillStyle = '#7a6450';
+        ctx.fillRect(x - 6, y + 7, 14, 3);
+      }
+    }
+  }
   function atmosphere(ctx, canvas, region = 0, opts = {}) {
     const night = !!opts.night,
       peace = !!opts.peace,
@@ -20404,50 +20567,7 @@
       ctx.globalCompositeOperation = 'source-over';
       // Luminous windows and sheltered lantern glass are localized light
       // sources, not new scenery obstacles. Fires already have drawn flames.
-      for (const p of renderedLights) {
-        if (p.kind === 'window') {
-          ctx.fillStyle = '#483d31';
-          ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
-          ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
-          ctx.fillStyle = '#f2cb81';
-          ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
-          ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
-          ctx.strokeStyle = '#8d6543';
-          ctx.lineWidth = 1.3;
-          ctx.beginPath();
-          for (const x of [p.x - 9, p.x + 12]) {
-            ctx.moveTo(x, p.y - 42);
-            ctx.lineTo(x, p.y - 32);
-          }
-          ctx.stroke();
-        } else if (p.kind === 'lantern' && p.fixture === 'post') {
-          // Illuminate the glass already painted on the actual post. Do not
-          // manufacture a second floating service lantern beside it.
-          ctx.fillStyle = '#f4c57e';
-          ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
-        } else if (p.kind === 'lantern') {
-          // A modest iron hook and glazed hanging lamp by the service stand.
-          const x = p.x + 19,
-            y = p.y - 22;
-          ctx.strokeStyle = '#817c69';
-          ctx.lineWidth = 2.2;
-          ctx.beginPath();
-          ctx.moveTo(x - 7, y + 17);
-          ctx.lineTo(x - 7, y - 14);
-          ctx.lineTo(x + 1, y - 14);
-          ctx.lineTo(x + 1, y - 9);
-          ctx.stroke();
-          ctx.fillStyle = '#574b40';
-          ctx.fillRect(x - 6, y - 9, 14, 4);
-          ctx.fillStyle = '#f4c57e';
-          ctx.fillRect(x - 5, y - 5, 12, 12);
-          ctx.strokeStyle = '#635a4b';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(x - 5, y - 5, 12, 12);
-          ctx.fillStyle = '#7a6450';
-          ctx.fillRect(x - 6, y + 7, 14, 3);
-        }
-      }
+      drawLightFixtures(ctx, renderedLights);
     }
     if (darkness < 1) {
       ctx.globalAlpha = 1 - darkness;
@@ -20563,6 +20683,7 @@
     terrainMotionLines,
     bridges,
     atmosphere,
+    drawLightFixtures,
     atmosphereMotes,
     allyBodyKind,
     enemyBodyKind,
