@@ -12,6 +12,17 @@ The assets contain no third-party recordings, music or model-generated audio. `t
 
 Environmental details remain separate first-match `ambience.*` events with synthesized recovery. They occur 18–36 seconds apart and are suppressed in combat, boss encounters, title and game-over scenes. **Draft-only A5 behavior in [issue #709](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/709), [unmerged PR #711](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/711):** sparse night insects are retained in Greenwood Vale, and the Flooded Marches retains its water/night detail; the generic synthesized insect chirps are removed from Highlands, Ashen Frontier and Dark Crown exteriors. **This correction is implemented and narrowly tested on PR #711 only; the published game on `main` still uses the old rule until an expressly authorized merge and deployment.** No recordings or night soundtrack were replaced. These changes alone do not qualify the three regions as artistically complete. There are no added animal roars, dense bird choruses, crowds, weather events or continuous insect swarms. This pass adds broad location atmosphere; it does not introduce source-positioned waterfalls, individual nearby objects or distance/occlusion simulation.
 
+## #709 A5 occupied-interior routing candidate (draft only)
+
+The existing soundscape sent unfiltered open outdoor wind/air into two occupied side interiors. The unmerged [#711](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/711) correction instead reuses **existing** quiet interior sound assets, with their original conservative route levels:
+
+- **Old Signal Keep** (functioning Highlands signal reserve): `env-highland-wind` → `env-cellar` (sheltered timber air and an occasional quiet settling creak), keeping **0.22** gain. This suggests enclosure, **not** a newly authored Ogrelife or signaling recording.
+- **Ruined Shrine Barracks** (occupied Frontier barracks in a converted shrine): `env-frontier-air` → `env-retreat` (quiet stone-air space with distant drafts), keeping **0.23** gain. This adds neither invented religious ritual nor military machinery.
+
+These are **source/canon-grounded routing candidates, not genuinely heard artistic approvals**. They trade the exterior's local wind/grit signature for the spatial logic of an enclosed inhabited room. Both sites still need a rendered sound/context comparison, especially against the current music and warning mix. The broader 19-location identity and small-speaker balance risks remain **OPEN**. No MP3, authoring book, catalog ID, soundtrack, music gain, combat attenuation, new species, weather or foley was changed. The same 14 assets and 18 rules still cover 19 places; the live published build remains unchanged until owner-authorized merge and deployment.
+
+The separate [#647](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/647) listening-room correction remains deferred to soundtrack Phase 8. No interim owner audition is requested; environmental final acceptance and soundtrack Phase 9 first listening remain different gates.
+
 ## Author or replace a bed
 
 `assets/audio/manifest.json` remains the runtime authoring source. `director.environment` contains:
