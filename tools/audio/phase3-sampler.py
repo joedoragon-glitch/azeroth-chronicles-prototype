@@ -20,6 +20,16 @@ SAMPLES = (ROOT / "tools/audio/phase3-samples").resolve()
 
 
 class RecordedSampler:
+    STEREO = True
+
+    def pan(self, kind, midi=60):
+        """Moderate source-instrument stage placement, not generic fake width."""
+        if kind == "strings":
+            return -.34 if midi % 2 else .34
+        return {"piano": -.16, "flute": -.19, "harp": .32,
+                "guitar": .25, "dulcimer": .27, "bell": .33,
+                "horn": .16, "cello": -.14}.get(kind, 0)
+
     def __init__(self, original, ffmpeg):
         self.original = original
         # Offline score renders may use CD-quality 44.1 kHz; legacy drum

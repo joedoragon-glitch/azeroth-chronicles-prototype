@@ -48,13 +48,17 @@ jobs:
           assert len(r['tracks']) == 8 and r['crownFrozen'] == 18
           assert r['instrumentEngine'] == 'verified-CC0-samples-with-explicit-drums'
           assert r['sampleRateHz'] == 44100
-          assert r['encodedBitrate'] == '160k-mono-MP3'
+          assert r['encodedBitrate'] == '192k-stereo-MP3'
+          assert r['outputChannels'] == 2
           assert r['samplerEvidence']['recordedCalls'] > 120
           assert r['samplerEvidence']['uniqueSourceSamples'] >= 12
           assert r['samplerEvidence']['sourceFamilyCount'] == 2
           assert r['replacementProjectionBytes'] < 256 * 1024 * 1024
           for cue in r['tracks']:
               assert cue['recordedInstrumentNotes'] >= 12, cue
+              assert cue['channels'] == 2, cue
+              assert cue['stereoSideRms'] > .001, cue
+              assert cue['foldedMonoPeak'] < .98, cue
               assert 0.0 < cue['decodedPeak'] < .98, cue
               assert .005 < cue['decodedRms'] < .5, cue
               assert cue['loopEdgeDelta'] < .2, cue

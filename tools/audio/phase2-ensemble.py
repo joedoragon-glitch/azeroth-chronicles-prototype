@@ -13,7 +13,8 @@ def render_stem(family, part, original):
     rate = original.RATE
     beat = 60.0 / family["bpm"]
     n = round(family["bars"] * 4 * beat * rate)
-    signal = np.zeros(n, dtype=np.float64)
+    stereo = bool(getattr(original, "STEREO", False))
+    signal = np.zeros((n, 2) if stereo else n, dtype=np.float64)
     seed = hashlib.sha256((family["family"] + ":arranged:" + part).encode()).digest()
     rng = np.random.default_rng(int.from_bytes(seed[:8], "little"))
     plan = family["performance"]
@@ -25,7 +26,7 @@ def render_stem(family, part, original):
     lead = family.get("peaceLead", family["lead"]) if peace else family["lead"]
     energy = plan.get("peaceEnergy", plan["energy"]) if peace else plan["energy"]
 
-    def add(bar, pos, samples, gain, jitter=False):
+    def add(bar, pos, samples, gain, jitter=False, pan=0):
         # Frame-synchronized stems retain identical sample length. Humanized
         # microtiming is deterministic, and never changes the bar/loop clock.
         delta = float(rng.uniform(-.009, .009)) if jitter else 0.0
@@ -33,6 +34,10 @@ def render_stem(family, part, original):
         if len(samples) >= n:
             raise ValueError("An authored event exceeds its musical loop")
         wet = samples * gain * energy[bar]
+        if stereo:
+            pan = float(np.clip(pan, -.7, .7))
+            wet = np.stack((wet * np.sqrt((1-pan)/2),
+                            wet * np.sqrt((1+pan)/2)), axis=1)
         first = min(len(wet), n - start)
         signal[start:start + first] += wet[:first]
         if len(wet) > first:
@@ -52,7 +57,8 @@ def render_stem(family, part, original):
             sample *= .85 + .14 * np.sin(np.pi * np.minimum(t / max(length * beat, .01), 1))
         elif articulation == "soft":
             sample *= np.clip(t / .11, 0, 1)
-        add(bar, pos, sample, gain, jitter)
+        add(bar, pos, sample, gain, jitter,
+            original.pan(instrument, midi) if stereo else 0)
 
     def drum(bar, pos, kind, level):
         add(bar, pos, original.drum(kind, rng), level, jitter=True)
@@ -239,11 +245,14 @@ def render_stem(family, part, original):
 
     dry = signal.copy()
     for delay,gain in ((.047,.057),(.118,.028),(.241,.015)):
-        signal += np.roll(dry,round(delay*rate))*gain
+        signal += np.roll(dry,round(delay*rate),axis=0)*gain
+    if stereo:
+        signal[:,0] += np.roll(dry[:,1],round(.143*rate)) * .014
+        signal[:,1] += np.roll(dry[:,0],round(.167*rate)) * .016
     signal = sosfilt(butter(2,45,btype="highpass",fs=rate,output="sos"),
-                    np.tile(signal,2))[n:]
+                    np.concatenate((signal,signal),axis=0),axis=0)[n:]
     signal = sosfilt(butter(2,10900,btype="lowpass",fs=rate,output="sos"),
-                    np.tile(signal,2))[n:]
+                    np.concatenate((signal,signal),axis=0),axis=0)[n:]
     rms = float(np.sqrt(np.mean(signal**2)))
     target = .065 if additive else (.088 if peace else .092)
     peak = float(np.max(np.abs(signal)))

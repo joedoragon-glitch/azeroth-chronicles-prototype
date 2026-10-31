@@ -246,13 +246,16 @@ def encode_stem(out_dir, cue_id, signal, rate, ffmpeg, bitrate="96k"):
         raise ValueError("Unexpected isolated audio bitrate")
     import numpy as np
     guard = round(.15 * rate)
+    channels = 1 if signal.ndim == 1 else signal.shape[1]
+    if channels not in (1,2):
+        raise ValueError("Only mono/stereo audio PCM is supported")
     loop_samples = len(signal)
-    extended = np.concatenate((signal[-guard:], signal, signal[:guard]))
+    extended = np.concatenate((signal[-guard:], signal, signal[:guard]),axis=0)
     pcm = np.clip(np.rint(extended * 32767), -32768, 32767).astype("<i2")
     with tempfile.TemporaryDirectory(prefix="phase2-score-") as temporary:
         wav_path = Path(temporary) / "pilot.wav"
         with wave.open(str(wav_path), "wb") as wav:
-            wav.setnchannels(1)
+            wav.setnchannels(channels)
             wav.setsampwidth(2)
             wav.setframerate(rate)
             wav.writeframes(pcm.tobytes())
@@ -263,23 +266,27 @@ def encode_stem(out_dir, cue_id, signal, rate, ffmpeg, bitrate="96k"):
                         str(target)], check=True)
     raw = subprocess.check_output([ffmpeg, "-nostdin", "-hide_banner", "-loglevel",
                                    "error", "-i", str(target), "-f", "f32le",
-                                   "-ac", "1", "-ar", str(rate), "pipe:1"])
-    decoded = np.frombuffer(raw, dtype="<f4")
+                                   "-ac", str(channels), "-ar", str(rate), "pipe:1"])
+    decoded = np.frombuffer(raw, dtype="<f4").reshape(-1,channels)
     peak = float(np.max(np.abs(decoded)))
     rms = float(np.sqrt(np.mean(decoded ** 2)))
     if not np.isfinite(decoded).all() or peak >= .98 or rms <= .005:
         raise RuntimeError("Invalid decoded pilot: " + cue_id)
     if len(decoded) < guard + loop_samples:
         raise RuntimeError("Incomplete decoded MP3 loop: " + cue_id)
+    side_rms = float(np.sqrt(np.mean((decoded[:,0]-decoded[:,1])**2))/2) if channels==2 else 0.0
+    folded_peak = float(np.max(np.abs(np.mean(decoded,axis=1))))
     return {"cue": cue_id, "seconds": round(loop_samples / rate, 6),
+            "channels": channels, "stereoSideRms": round(side_rms,5),
+            "foldedMonoPeak": round(folded_peak,5),
             "decodedSamples": int(len(decoded)),
             "expectedSamples": int(len(extended)),
             "loop": {"start": guard / rate, "end": (guard + loop_samples) / rate},
             "encodedBytes": target.stat().st_size,
             "sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
             "decodedPeak": round(peak, 5), "decodedRms": round(rms, 5),
-            "loopEdgeDelta": round(float(abs(decoded[guard] -
-                    decoded[guard + loop_samples - 1])), 5)}
+            "loopEdgeDelta": round(float(np.max(np.abs(decoded[guard] -
+                    decoded[guard + loop_samples - 1]))), 5)}
 
 
 def main():

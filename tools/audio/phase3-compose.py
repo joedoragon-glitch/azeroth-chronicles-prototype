@@ -121,15 +121,20 @@ def render_new(t, renderer):
     beat = 60.0 / t["bpm"]
     rate = renderer.RATE
     n = round(t["bars"] * 4 * beat * rate)
-    mix = np.zeros(n, dtype=np.float64)
+    stereo = bool(getattr(renderer, "STEREO", False))
+    mix = np.zeros((n,2) if stereo else n, dtype=np.float64)
     seed = hashlib.sha256((t["id"] + ":phase3-master").encode()).digest()
     rng = np.random.default_rng(int.from_bytes(seed[:8], "little"))
 
-    def add(bar, at, sound, strength):
+    def add(bar, at, sound, strength, pan=0):
         start = round((bar * 4 + at) * beat * rate) % n
         if len(sound) >= n:
             raise ValueError(t["id"] + ": one note is longer than the whole loop")
         sound = sound * strength * t["energy"][bar]
+        if stereo:
+            pan = float(np.clip(pan, -.7, .7))
+            sound = np.stack((sound * np.sqrt((1-pan)/2),
+                              sound * np.sqrt((1+pan)/2)),axis=1)
         first = min(len(sound), n - start)
         mix[start:start + first] += sound[:first]
         if len(sound) > first:
@@ -144,7 +149,8 @@ def render_new(t, renderer):
         if inst in ("cello", "strings", "horn", "flute"):
             fade = min(len(wave), round(.043 * rate))
             if fade: wave[:fade] *= np.linspace(.05, 1., fade)
-        add(bar, at, wave, gain)
+        add(bar, at, wave, gain,
+            renderer.pan(inst, midi) if stereo else 0)
 
     for bar in range(t["bars"]):
         for at, pitch, length, instrument, gain, register in t["textures"][t["figures"][bar]]:
@@ -168,11 +174,14 @@ def render_new(t, renderer):
     # compositional loop, rather than an arbitrary cut through a reverb tail.
     dry = mix.copy()
     for delay, gain in ((.049, .055), (.115, .03), (.247, .013)):
-        mix += np.roll(dry, round(delay * rate)) * gain
+        mix += np.roll(dry, round(delay * rate), axis=0) * gain
+    if stereo:
+        mix[:,0] += np.roll(dry[:,1],round(.123*rate)) * .016
+        mix[:,1] += np.roll(dry[:,0],round(.155*rate)) * .018
     mix = sosfilt(butter(2, 45, btype="highpass", fs=rate, output="sos"),
-                  np.tile(mix, 2))[n:]
+                  np.concatenate((mix,mix),axis=0),axis=0)[n:]
     mix = sosfilt(butter(2, 10800, btype="lowpass", fs=rate, output="sos"),
-                  np.tile(mix, 2))[n:]
+                  np.concatenate((mix,mix),axis=0),axis=0)[n:]
     rms = float(np.sqrt(np.mean(mix ** 2)))
     peak = float(np.max(np.abs(mix)))
     if rms <= 1e-8 or not np.isfinite(mix).all():
@@ -222,7 +231,7 @@ def main():
         else:
             wave, rate = render_new(theme, renderer)
         result = original.encode_stem(out, theme["id"], wave, rate, encoder,
-                                      bitrate="160k")
+                                      bitrate="192k")
         if result["encodedBytes"] > PER_FILE_LIMIT_BYTES:
             raise RuntimeError(theme["id"] + ": exceeds 16 MiB per-file budget")
         if result["loopEdgeDelta"] >= .2:
@@ -243,7 +252,8 @@ def main():
         "musicRegistered": 83, "crownFrozen": len(freeze),
         "authored": descriptions,
         "tracks": reports, "sampleRateHz": renderer.RATE,
-        "encodedBitrate": "160k-mono-MP3",
+        "encodedBitrate": "192k-stereo-MP3",
+        "outputChannels": 2,
         "instrumentEngine": "verified-CC0-samples-with-explicit-drums",
         "samplerEvidence": renderer.snapshot(),
         "existingCatalogBytes": catalog_bytes,
