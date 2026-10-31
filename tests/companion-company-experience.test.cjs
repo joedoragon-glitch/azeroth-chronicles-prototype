@@ -96,17 +96,24 @@ assert(screen.actions.some((a) => a.label === 'Page' &&
   a.detail === '2/2'), 'Back restores trainer page 2');
 
 game.hero.gold = 100;
+// Exercise a fractional vitality multiplier where double-rounding diverges.
+game.s.companionVitalityRank = 3;
+game.syncCompanionLevelStats();
 const hpBefore = game.companionMaxHp(target);
+const hpAfter = game.companionMaxHp({...target, charmRingleaderTrained: true});
 const attackBefore = game.companionAttackDamage(target);
 const masteryBefore = target.masteryPoints;
 const skill2Before = game.companionSecondSkillUnlocked();
 selected.action();
+assert(screen.description.includes('HP ' + hpBefore + ' → ' + hpAfter),
+  'the preview must use the exact post-training HP calculation');
 const confirm = screen.actions.find((a) => a.label.startsWith('Confirm training'));
 assert(confirm && !confirm.disabled);
 confirm.action();
 assert.equal(game.hero.gold, 0, 'training charges exactly 100 once');
 assert.equal(target.charmRingleaderTrained, true, 'only selected individual promoted');
-assert.equal(target.maxHp, Math.round(hpBefore * Campaign.rules.ringleaderScaling.hp));
+assert.equal(target.maxHp, hpAfter,
+  'the actual training HP must match the player-facing preview');
 assert(Math.abs(game.companionAttackDamage(target) -
   attackBefore * Campaign.rules.ringleaderScaling.damage) < 0.0001);
 assert.equal(target.masteryPoints, masteryBefore, 'paid training must not award Mastery');

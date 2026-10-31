@@ -316,7 +316,10 @@
       }
       const beforeHp = g.companionMaxHp(u),
         beforeDamage = g.companionAttackDamage(u),
-        afterHp = Math.round(beforeHp * Campaign.rules.ringleaderScaling.hp),
+        // Ask the authoritative stat formula to preview a promoted copy.
+        // Rounding the already-rounded beforeHp * 2.5 can promise a different
+        // maximum HP from what the real training transaction grants.
+        afterHp = g.companionMaxHp({ ...u, charmRingleaderTrained: true }),
         afterDamage = beforeDamage * Campaign.rules.ringleaderScaling.damage;
       openMenu(
         'Ringleader Training · ' + companionIdentityLabel(u),
