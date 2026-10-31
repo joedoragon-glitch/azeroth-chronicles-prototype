@@ -73,8 +73,10 @@ def source_contract():
         for name, cell in t["cells"].items():
             assert name
             for event in cell:
-                assert len(event) == 3
-                at, pitch, duration = event
+                assert len(event) in (3, 4), (cue, name, event)
+                at, pitch, duration = event[:3]
+                alteration = event[3] if len(event) == 4 else 0
+                assert isinstance(alteration, int) and -2 <= alteration <= 2
                 assert 0 <= at < 4 and -4 <= pitch <= 8 and 0 < duration <= 4
                 distinct_rhythms.add((at, duration))
         assert len(distinct_rhythms) >= 9, cue + ": monotony risk"
@@ -121,8 +123,9 @@ def render_new(t, renderer):
         if len(sound) > first:
             mix[:len(sound) - first] += sound[first:]
 
-    def play(bar, at, degree, duration, inst, gain, register=0):
-        midi = t["root"] + renderer.degree(t["harmony"][bar] + degree, t["mode"]) + register
+    def play(bar, at, degree, duration, inst, gain, register=0, chromatic=0):
+        midi = (t["root"] + renderer.degree(t["harmony"][bar] + degree, t["mode"])
+                + register + chromatic)
         wave = renderer.instrument(midi, duration * beat, inst, rng)
         # A soft bow/woodwind entrance prevents a flat note-every-beat attack
         # without changing the exact shared clock.
@@ -135,10 +138,14 @@ def render_new(t, renderer):
         for at, pitch, length, instrument, gain, register in t["textures"][t["figures"][bar]]:
             play(bar, at, pitch, length, instrument, gain, register)
         phrase = t["cells"][t["phrases"][bar]]
-        for idx, (at, degree, duration) in enumerate(phrase):
-            # Phrase accents differ from the accompaniment's energy map.
+        for idx, event in enumerate(phrase):
+            at, degree, duration = event[:3]
+            accidental = event[3] if len(event) == 4 else 0
+            # A small intentional chromatic alteration preserves particular old
+            # hooks (e.g. March F# to F, Frontier C# to C) under the mode.
             emphasis = 1.05 if idx == 0 else .88 if idx == len(phrase)-1 else .96
-            play(bar, at, degree, duration, t["lead"], .114 * emphasis, 12)
+            play(bar, at, degree, duration, t["lead"], .114 * emphasis, 12,
+                 chromatic=accidental)
         for at, degree, duration, instrument, gain in t.get("counterpoint", {}).get(str(bar), []):
             play(bar, at, degree, duration, instrument, .058 * gain, 0)
 
