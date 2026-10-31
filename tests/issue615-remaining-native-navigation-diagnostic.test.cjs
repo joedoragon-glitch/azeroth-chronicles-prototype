@@ -195,6 +195,8 @@ function crown(seed=11){
   const stats=capture(g,'cinder-passive-authored-spawn',240,[boss,vera,...guards]);
   assert(stats.peak.probes<4000,'idle Cindermaw convoy must not retain 110k+ route bursts');
   assert.equal(stats.routes.calls,0,'passive Cindermaw convoy must use no synchronous routes');
+  assert(stats.firstMovementSeconds!==null && stats.firstMovementSeconds<=12,
+    'real authored-spawn Cindermaw convoy must depart within the original initial window');
   console.log('ISSUE615_CINDER_BASELINE '+JSON.stringify({
     inspection:!!boss.cinderDestination,stop:boss.cinderStop,forgeDistance:num(dist(boss,vera)),
     guardDistances:guards.map(u=>num(dist(u,boss))),routeCalls:stats.routes.calls}));
@@ -276,6 +278,8 @@ function crown(seed=11){
     'precomputed path must let Cindermaw depart during the existing inspection schedule');
   assert(stats.plans.breakdown['cinder-selection']?.calls>0,
     'inspection choice actually precomputed in existing pause');
+  assert.equal(stats.plans.breakdown['cinder-patrol']?.calls||0,0,
+    'inspection departure must reuse validated waypoints, not repeat full route planning');
   assert(dist(origin,boss)>15,
     'minister should start traveling within 10.5 seconds with entourage already together');
   console.log('ISSUE615_CINDER_PAUSE_PREFETCH '+JSON.stringify({
