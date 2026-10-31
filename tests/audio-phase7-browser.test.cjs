@@ -115,8 +115,24 @@ async function main() {
     }, {zone,boss});
     const first = await feed('vale');
     assert.equal(first.selector, 'place-vale');
-    await page.waitForFunction(() => Prototype.audio.recordedScore?.id==='place-vale',
-      null,{timeout:30000});
+    try {
+      await page.waitForFunction(() => Prototype.audio.recordedScore?.id==='place-vale',
+        null,{timeout:14000});
+    } catch (error) {
+      console.error('PHASE7_BROWSER_DIAG',await page.evaluate(()=>{
+        const a=Prototype.audio; return {
+          ctx:a.ctx?.state,paused:a.paused,production:a.production,
+          productionKey:a.productionKey,retry:a.productionRetry,
+          productionPending:!!a.productionPending,
+          scene:a.context,recordedScore:a.recordedScore?.id,
+          recordingError:a.recordingError,lastError:a.recordingAssets?.lastError,
+          cache:a.recordingAssets?.status(),
+          pendingAssetLoads:[...a.recordingAssets?.pending?.keys()||[]],
+          manifestLoaded:!!a.recordingManifest,environment:a.environmentVoice?.id,
+        };
+      }));
+      throw error;
+    }
     await page.waitForFunction(() => ![...Prototype.audio.voices].some(
       (v) => v.recordedScore?.id === 'title'),null,{timeout:8000});
     const normal = await feed('crypt',{family:'crypt',form:'normal'});
