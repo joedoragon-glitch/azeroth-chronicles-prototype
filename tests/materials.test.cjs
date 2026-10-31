@@ -245,7 +245,7 @@ const entry = (n) => ({
     const materialBytes = fs.readFileSync(path.join(checkout, materialFile));
     const fingerprint = require('node:crypto')
       .createHash('sha1')
-      .update('blob ' + materialBytes.length + '\\0')
+      .update('blob ' + materialBytes.length + '\0')
       .update(materialBytes)
       .digest('hex');
     const worker = fs
