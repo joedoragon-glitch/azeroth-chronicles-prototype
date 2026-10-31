@@ -184,5 +184,94 @@
     ],
     "correctionsPlanned": "Two interior source balance numbers revised here, bounded peak knee and stronger independent verification in the renderer. Re-encode and check exact SHA.",
     "warning": "No human hearing. Source pages describe ecology and licenses; they cannot prove timbral suitability."
+  },
+  "status": {
+    "sourceCurated": "DONE; original creator-license evidence reviewed for all four physical source files",
+    "physicalSourcesPinned": "PASS; all four original WAV/OGG checksums and byte sizes verified at no-deploy CI",
+    "separateScenesAuthored": "Four 72-second regional/occupied-space candidate renders authored; registered game masters unchanged",
+    "encodedOutputs": "PASS at exact audio-producing source 638071ab5e910493d7d14c38f82f711bc5d6a73c",
+    "independentDecodedAudit": "PASS; SHA-256 for all four retained MP3s, ffprobe mono 32kHz 128kbps, 72s active loop, decoded sample peaks/boundary envelope and 24s source-block correlations crosschecked",
+    "truePeakAndClip": "PASS at candidate source; all four actual EBU true peaks <= -12.56 dBTP",
+    "outdoorRealSourceProportion": "72.53% Highland and 56.04% Frontier pre-cross-term source energy; these are engineering contributions not perceptual scene richness",
+    "interiorRealSourceProportion": "27.61% Keep and 31.39% Shrine; risk still synthetic-dominant remaining room sound",
+    "artisticAcousticHearing": "UNVERIFIED: no actual headphone/physical speaker hearing available",
+    "ownerFinalAcceptance": "HOLD; first owner environmental hearing only after separately approved final published playable game/listening room",
+    "integratedMusicAndWarnings": "NOT TESTED for the four new unregistered candidate files; current published score signal comparisons only; must test if integrated",
+    "sourceInGame": "NO; all recorded source masters are CI-only artifacts and reproducible studios",
+    "merged": "NO",
+    "published": "NO",
+    "deviceVerified": "NO"
+  },
+  "finalRecordedOutputs": {
+    "producingHead": "638071ab5e910493d7d14c38f82f711bc5d6a73c",
+    "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41206964970",
+    "originalArtifactId": 13045400090,
+    "originalArtifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41206964970/artifacts/13045400090",
+    "originalSourceBytesTotal": 195365662,
+    "encodeCodec": "MP3 mono 32000 Hz /128kbps; each one has separate 72s active loop and source/encoded guards",
+    "decodedCacheIfFourResidentBytes": 36864000,
+    "sourceFilesDownloadedOnlyInStudio": true,
+    "candidateFiles": [
+      {
+        "id": "regional-ironroot-autumn",
+        "sha256": "145e9f6b121aa5df8425c98b0261c61b993bfb35a5cae73bb0948e100d3ec261",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -32.74,
+        "sourceReferenceLUFS": -31.16,
+        "truePeakDbTP": -12.56,
+        "decodedPeak": 0.233865,
+        "loopSampleDelta": 0.0030903,
+        "firstVsLast1SecDb": -1.47,
+        "realFieldEnergyShare": 0.72532,
+        "diagnosis": "corrected first-pass .502 sample isolated outlier via smooth limiter; physical autumn leaves dominate but potential mic/wildlife intrusion unverified"
+      },
+      {
+        "id": "regional-frontier-recovery",
+        "sha256": "cbb1bad2e2001de64010c651c398cdc85d2738c29f89d5ad6f3a216117053512",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -34.15,
+        "sourceReferenceLUFS": -33.17,
+        "truePeakDbTP": -14.14,
+        "decodedPeak": 0.195847,
+        "loopSampleDelta": 0.0036455,
+        "firstVsLast1SecDb": -2.437,
+        "realFieldEnergyShare": 0.56038,
+        "diagnosis": "real open-field gusts not authored fire or universal grit, no optional city/animal one-shots"
+      },
+      {
+        "id": "regional-signal-occupied",
+        "sha256": "04cd9a5345feea1dc5a912249a4c6adb80e12db39260a990b569518d62a4b3ca",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -35.02,
+        "sourceReferenceLUFS": -36.1,
+        "truePeakDbTP": -15.72,
+        "decodedPeak": 0.162584,
+        "loopSampleDelta": 0.000296,
+        "firstVsLast1SecDb": -0.217,
+        "realFieldEnergyShare": 0.27614,
+        "recordedObjectRelativeToBedDb": -4.57,
+        "diagnosis": "raises the physical ridge air from prior studio 7.7% to 27.6% with enclosed filtering; still not an accurate recording of occupied Ogre household, timber object source has casket provenance"
+      },
+      {
+        "id": "regional-shrine-occupied",
+        "sha256": "d2aed039e4c7dbcb1b1b3eda188565d2336d00ede4e32b86bc01db42e7f7e037",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -36.69,
+        "sourceReferenceLUFS": -35.8,
+        "truePeakDbTP": -16.09,
+        "decodedPeak": 0.156536,
+        "loopSampleDelta": 0.0006657,
+        "firstVsLast1SecDb": 4.011,
+        "realFieldEnergyShare": 0.31395,
+        "recordedObjectRelativeToBedDb": -10.19,
+        "diagnosis": "raises field source presence from 15.4 to 31.4%; first/last 1sec envelope ≈4.01dB borderline, 0.25dB natural-wind tolerance documented rather than falsely claiming audible seamlessness"
+      }
+    ],
+    "independentAudit": {
+      "method": "Downloaded exact artifact ZIP, verified all four SHA256s; independently ffprobe-decoded 32k mono 128kbps, measured 72x1sec envelopes, 24sec pair correlations, peak-second and sample seam. No human hearing.",
+      "sampleBlock24sMaxCorrelation": 0.02003,
+      "correlationsAreNotProofOfTimbre": true,
+      "studioFilesNotRuntimeRegistration": true
+    }
   }
 }
