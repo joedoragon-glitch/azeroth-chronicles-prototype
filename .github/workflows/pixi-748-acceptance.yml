@@ -1,4 +1,4 @@
-name: Pixi #748 composited visual parity acceptance
+name: 'Pixi #748 composited visual parity acceptance'
 
 # Narrow issue #748 browser acceptance. Never publishes Pages and does not
 # automatically run on ordinary gameplay or renderer source edits.
