@@ -5,6 +5,7 @@ name: Environmental audio 14-file signal QA (NO deploy)
 on:
   pull_request:
     paths:
+      - 'tests/environment-audio-inventory.test.cjs'
       - 'tests/environment-audio-phaseA2-acoustic-contrast.test.cjs'
       - 'tests/environment-audio-phaseA3-signal.test.cjs'
       - 'tests/environment-audio-phaseA4-levels.test.cjs'
@@ -43,6 +44,7 @@ jobs:
       - name: Verify corrected source-routing, generated worker and offline build
         run: |
           node tests/environment-audio-audit.test.cjs
+          node tests/environment-audio-inventory.test.cjs
           node tests/ci-focus-policy.test.cjs
           node tests/pwa-release-id.test.cjs
           node scripts/build.cjs --check
