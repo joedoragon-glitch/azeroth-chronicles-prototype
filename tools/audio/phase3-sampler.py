@@ -38,6 +38,8 @@ class RecordedSampler:
         self.used = set()
         self.shift_histogram = Counter()
         self.aliases = Counter()
+        self.outliers = Counter()
+        self.cue = "unassigned"
 
     def degree(self, n, mode):
         return self.original.degree(n, mode)
@@ -121,6 +123,8 @@ class RecordedSampler:
         kind, target = self._route(int(midi), kind)
         definition = self.instruments[kind]
         sample, shift = self._choose(kind, target, rng)
+        if abs(shift) >= 5:
+            self.outliers[(self.cue, kind, int(target), int(sample["midi"]), int(shift))] += 1
         raw = self._load(sample)
         key = (sample["file"], shift)
         if key not in self.pitched:
@@ -176,4 +180,9 @@ class RecordedSampler:
                 "shiftHistogram": dict(sorted(self.shift_histogram.items())),
                 "provisionalTimbreSubstitutions": dict(sorted(self.aliases.items())),
                 "sourceFamilyCount": len(self.bank["sources"]),
+                "largePitchShifts": [
+                    {"cue": cue, "instrument": inst, "requestedMidi": target,
+                     "sampleMidi": source, "semitones": shift, "notes": count}
+                    for (cue, inst, target, source, shift), count
+                    in sorted(self.outliers.items())],
                 "instrumentFamilies": sorted(self.instruments)}

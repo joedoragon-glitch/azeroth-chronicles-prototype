@@ -213,6 +213,7 @@ def main():
     spec.loader.exec_module(ensemble)
     reports = []
     for theme in themes:
+        renderer.cue = theme["id"]
         before_calls = renderer.calls
         if "pilotFamily" in theme:
             family = copy.deepcopy(pilots[theme["pilotFamily"]])
