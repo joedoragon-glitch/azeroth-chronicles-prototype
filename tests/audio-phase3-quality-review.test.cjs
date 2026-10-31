@@ -47,9 +47,9 @@ for (const theme of score) {
     }
   } else {
     for (let bar = 0; bar < 2; bar++) {
-      for (const [at, pitch] of theme.cells[theme.phrases[bar]]) {
+      for (const [at, pitch, , accidental = 0] of theme.cells[theme.phrases[bar]]) {
         performed.push([+(bar * 4 + at).toFixed(3),
-          degree(pitch + theme.harmony[bar], theme.mode)]);
+          degree(pitch + theme.harmony[bar], theme.mode) + accidental]);
       }
     }
   }
