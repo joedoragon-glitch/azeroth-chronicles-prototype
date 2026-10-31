@@ -1,5 +1,7 @@
 # Sound design and audio production — current game
 
+**#727 pending cache-headroom adjustment (PR #744, 31 October 2026):** A **128 MiB decoded recording cache default** is implemented in the environmental-audio integration draft to give the current dev.248 soundtrack and environment beds more crossfade room. The **192 MiB explicit override ceiling, lazy loading/eviction/voice priority and 16 MiB/file / 256 MiB encoded packaging limits** remain unchanged. This is draft-only; the published game still uses 96 MiB. Browser emulation cannot substitute for real phone memory verification. Earlier 96 MiB references in dated release sections are historical.
+
 ## Published 65-track soundtrack / deferred artistic audition (31 October 2026)
 
 **Verified release:** [PR #740](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/740) merged on [main@63b432e](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/63b432e02e81f1087c66f0f161a180d368e46e65). [Main workflow #41242493774](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242493774) passed both focused checks and Pages deployment of dev.248. All 65 authored replacements now occupy their exact established IDs; 18 untouched Crown originals and the entire 18 ambience / 30 effect recording library were retained. The creator has **deferred** musical listening; creative approval and installed-device confirmation have not been claimed.
