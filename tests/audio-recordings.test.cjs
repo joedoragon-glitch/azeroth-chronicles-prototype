@@ -12,6 +12,18 @@ const assert = require('node:assert/strict'),
     budget: 192 * 1024 * 1024 }).budget, 192 * 1024 * 1024);
   assert.throws(() => new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
     budget: 192 * 1024 * 1024 + 1 }), /decoded memory budget/);
+  // A 90-MiB currently pinned score/bed plus another 12-MiB
+  // resampled environment transition needs >96 MiB but fits in 128 MiB.
+  // These are accounting-only objects: no large PCM allocation in CI.
+  const headroom = new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch });
+  const MiB = 1024 * 1024;
+  headroom.cache.set('active-score-and-bed', { bytes: 90 * MiB, refs: 1 });
+  headroom.bytes = 90 * MiB;
+  assert.doesNotThrow(() => headroom.room(12 * MiB),
+    '128-MiB default must accommodate one extra 72-second mono environment crossfade');
+  assert.throws(() => headroom.room(40 * MiB), /Active recordings fill decoded memory budget/,
+    'The higher default must still reject exceeding 128 MiB of pinned buffers');
+  headroom.dispose();
   defaults.dispose();
   let calls = 0;
   const fetch = async (...args) => {
