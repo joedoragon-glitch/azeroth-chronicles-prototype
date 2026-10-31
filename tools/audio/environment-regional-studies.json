@@ -95,8 +95,8 @@
       "referenceBed": "env-cellar",
       "mainSource": "autumn-leaf-field",
       "fieldExcerptStart": 48,
-      "fieldGain": 0.055,
-      "windGain": 0.19,
+      "fieldGain": 0.105,
+      "windGain": 0.17,
       "highpassHz": 135,
       "lowpassHz": 1250,
       "routeGain": 0.22,
@@ -117,8 +117,8 @@
       "referenceBed": "env-retreat",
       "mainSource": "open-field-wind",
       "fieldExcerptStart": 41,
-      "fieldGain": 0.064,
-      "windGain": 0.15,
+      "fieldGain": 0.115,
+      "windGain": 0.17,
       "highpassHz": 145,
       "lowpassHz": 1150,
       "routeGain": 0.23,
@@ -172,5 +172,17 @@
   "provenancePilot": {
     "run": 41206105351,
     "verified": "Field WAVs downloaded independently and checked: autumn Commons 121316676 bytes SHA1 b10826f1c65d4c1bea131fc93592baf6e4829fe6; OGA wind 73960096 bytes SHA1 b518ae8ad9a5e83f6a1479d3f9190d962af52673. Initial exploratory job intentionally failed closed on unpinned wind; now pinned."
+  },
+  "adversarialQA": {
+    "baselineSourceSHA": "33153e917b2fb857ca9b96d675f04fdabd14a1d5",
+    "originalStudioRun": 41206233312,
+    "originalStudioArtifact": 13044274512,
+    "findings": [
+      "Highland true decoded sample peak .502 at second ~50 and .419 at ~52 despite integrated -32.73 LUFS; too much isolated transient headroom for restrained ambient bed. Apply monotone smooth-knee sample saturation only above .17 amplitude and re-measure encoded audio, not a global ambient bus change.",
+      "Interior recorded field fraction only 7.7% Keep and 15.4% Barracks; original procedural air still dominates while the claim is convincing environmental physical texture. Increase attenuated real field percentage to ~27-32% while leaving physical enclosure filters, route gains and music unchanged.",
+      "Original first/last 1sec RMS differences ~1.5–2.4 dB outdoors, ~0.14–2.29 indoors; source seam sample jumps .0005–.0035. Add decoded first/last RMS gate and sample-peak/true-peak evidence rather than assuming a numerically small boundary jump alone proves loop smoothness."
+    ],
+    "correctionsPlanned": "Two interior source balance numbers revised here, bounded peak knee and stronger independent verification in the renderer. Re-encode and check exact SHA.",
+    "warning": "No human hearing. Source pages describe ecology and licenses; they cannot prove timbral suitability."
   }
 }
