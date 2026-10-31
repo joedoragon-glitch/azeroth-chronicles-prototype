@@ -170,6 +170,35 @@
      graphic.ellipse(1*zoom,11*zoom,rx*zoom,ry*zoom)
        .fill({color:0x020906,alpha:0x66/255});
    }
+   // #708: raster-tree regrowth is retained native geometry, not a new texture.
+   // Match the unchanged Canvas frontierTreeShoots positions, leaf palette and
+   // identity-based optional third shoot; build paths only when identity changes.
+   function paintFrontierShoots(graphic, identity) {
+     graphic.clear();
+     const seed=String(identity||'tree').split('')
+       .reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7);
+     function shoot(x,y,side,size) {
+       graphic.moveTo(x,y)
+         .quadraticCurveTo(x+side*3,y-4,x+side*2,y-9)
+         .stroke({color:0x6f8050,width:1.1,cap:'round'});
+       for(let n=0;n<3;n++) {
+         const px=x+side*(n%2?4:0),py=y-3-n*2.7;
+         const rx=3.4*size,ry=1.65*size,rotation=side*(n%2?-0.5:0.6);
+         const cos=Math.cos(rotation),sin=Math.sin(rotation);
+         for(let i=0;i<24;i++) {
+           const angle=Math.PI*2*i/24;
+           const u=rx*Math.cos(angle),w=ry*Math.sin(angle);
+           const lx=px+u*cos-w*sin,ly=py+u*sin+w*cos;
+           if(i===0)graphic.moveTo(lx,ly);
+           else graphic.lineTo(lx,ly);
+         }
+         graphic.closePath().fill({color:n===2?0xb2c481:n===1?0x91ad64:0x718c50});
+       }
+     }
+     shoot(-10,-13,-1,0.95);
+     shoot(8,-10,1,0.85);
+     if(seed%3!==0)shoot(-2,7,-1,0.75);
+   }
    // Each actor moves/animates as a GPU sprite. Canvas never paints a frame.
    // A one-time procedural body bake is allowed as an explicitly counted source.
    function syncActors(list) {
@@ -190,6 +219,12 @@
          if(g.marker)assert(/^#[0-9a-f]{8}$/i.test(g.marker.color),
            'Canvas marker RGBA color required');
        }
+       if(item.frontierShoots){
+         const o=item.frontierShoots;
+         assert(typeof o.id==='string' &&
+           [o.x,o.y,o.zoom,o.visualScale].every(Number.isFinite) &&
+           o.zoom>0&&o.visualScale>0,'Frontier raster shoots need a finite anchor');
+       }
        if(item.sourceRect){
          const rect=item.sourceRect,texture=resources.get(item.textureId);
          assert(rect.length===4&&rect.every(Number.isFinite)&&
@@ -204,6 +239,7 @@
        if(!next.has(id)) {
          actorsStage.removeChild(old.sprite);
          if(old.ground){actorsStage.removeChild(old.ground);old.ground.destroy();}
+         if(old.shoots){actorsStage.removeChild(old.shoots);old.shoots.destroy();}
          old.sprite.destroy();actors.delete(id);discarded++;
        }
      }
@@ -246,6 +282,24 @@
          state.groundSignature=null;
        }
        actorsStage.addChild(state.sprite);
+       // Draw after its own raster but before the next depth-sorted actor.
+       if(item.frontierShoots){
+         const o=item.frontierShoots;
+         if(!state.shoots)state.shoots=new PIXI.Graphics();
+         if(state.shootsIdentity!==o.id){
+           paintFrontierShoots(state.shoots,o.id);
+           state.shootsIdentity=o.id;
+         }
+         const scale=o.zoom*o.visualScale;
+         state.shoots.position.set(o.x,o.y);
+         state.shoots.scale.set((o.flipX?-1:1)*scale,scale);
+         actorsStage.addChild(state.shoots);
+       }else if(state.shoots){
+         actorsStage.removeChild(state.shoots);
+         state.shoots.destroy();
+         state.shoots=null;
+         state.shootsIdentity=null;
+       }
        spritesUpdated++;
      }
      return {actors:actors.size,removed:discarded};
@@ -447,6 +501,7 @@
    function destroy(){
      for(const state of actors.values()){
        state.ground?.destroy();
+       state.shoots?.destroy();
        state.sprite.destroy();
      }
      for(const state of glowObjects.values())state.graphic.destroy();
