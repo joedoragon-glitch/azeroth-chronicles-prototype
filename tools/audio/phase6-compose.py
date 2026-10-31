@@ -71,8 +71,9 @@ def source_contract():
             assert isinstance(midi, int) and 36 <= midi <= 86
             assert 0 <= at < 4 and .2 <= length <= 3.1
             assert 0 < gain <= .12 and role in ("lead", "harmonic", "texture", "counter")
-            assert (bar, at) >= previous and (bar, at) != previous or (
-                (bar, at) == previous and role != "lead")
+            # A voiced chord and melody may legitimately arrive together.
+            # Duplicated lead events are checked separately below.
+            assert (bar, at) >= previous
             previous = bar, at
             # Reproduce actual sample routing *before* declaring the score playable.
             # Crucially, no per-note octave folding or uncaught bank over-stretch.
