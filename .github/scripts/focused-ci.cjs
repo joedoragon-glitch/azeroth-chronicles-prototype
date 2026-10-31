@@ -266,6 +266,12 @@ const groups = [
     tests: [TEST + 'environment-727-stage6-source.test.cjs'],
   },
   {
+    // #727 playable Sound Library entry HTML is a first-class audio player,
+    // not unrelated architecture. Native browser playback stays separately gated.
+    match: /^tools\/audio\/index\.html$/,
+    tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
     // #727 Stage 7 offline owner-audition scripts and template are source:
     // a syntax/content-focused preflight must own each changed path.
     match: /^tools\/audio\/environment-727-audition(?:-pack\.cjs|\/(?:player\.js|index\.html))$/,

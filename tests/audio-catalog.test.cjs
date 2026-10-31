@@ -22,9 +22,9 @@ const copy = (v) => structuredClone(v),
   const importedEnvironment = new Set([
     'env-highlands-autumn','env-frontier-recovery',
     'env-signal-occupied','env-shrine-occupied',
-    ...promotion.frozenSourceFiles.map(x => x.id),
+    ...promotion.recordings.map(x => x.id),
   ]);
-  assert.equal(promotion.frozenSourceFiles.length,16);
+  assert.equal(promotion.recordings.length,16);
   assert.equal(importedEnvironment.size,20);
   assert(
     Object.entries(production.assets).every(

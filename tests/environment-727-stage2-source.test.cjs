@@ -16,7 +16,7 @@ assert.equal(original.cues.length, 14, 'All 14 physical original beds remain pre
 assert.equal(
   Object.values(manifest.assets).filter((item) => item.kind === 'ambience').length,
   34,
-  '16 Stage2–5 new masters must be registered in the game's environment catalog',
+  "16 Stage2–5 new masters must be registered in the game's environment catalog",
 );
 assert.equal(manifest.director.environment.rules.length, 22);
 
