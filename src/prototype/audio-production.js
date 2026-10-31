@@ -332,6 +332,10 @@
               this.tone(93, now + 0.14, 0.075, 0.005, 'sine', 'ambience');
             }
           } else if (scene.night) {
+            // Preserve the established sparse insect detail for all other
+            // outdoor night regions (Vale, Highlands, Frontier, Crown).
+            // A region-specific replacement needs separate creative approval;
+            // lack of a new sound never justifies deleting the working one.
             if (!this.playSoundEvent('ambience.insects', scene))
               for (let i = 0; i < 3; i++)
                 this.tone(95, now + i * 0.11, 0.045, 0.003, 'sine', 'ambience', 0.006);
