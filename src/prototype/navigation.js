@@ -1597,6 +1597,21 @@
         );
         z.npcs = z.npcs.filter((n) => !remove.has(n.id));
       }
+      // Reuse an already completed, collision-validated route from another
+      // bounded planner (Cindermaw's ordered inspection-stop selection).
+      // This is transient actor-scoped state, never a saved path or second
+      // navigation solver. The ordinary follow() safety check still rejects
+      // the first leg if the actor was displaced before its next update.
+      adoptBudgetedRoute(entity, target, mode, path) {
+        if (!path?.length || !this.clearSegment(entity, path[0])) return false;
+        entity.path = path.slice();
+        entity.routeAge = R.navigationPlanning.routeRetrySeconds;
+        terrainTrips.set(entity, {
+          zone: this.s.zones[this.zoneId], kind: mode,
+          engagement: entity.fightStart, target: { x: target.x, y: target.y }, pending: null,
+        });
+        return true;
+      }
       follow(entity, target, speed, dt, stop = 45, planningMode = null) {
         if (this.s.party.includes(entity))
           return this.followCompanion(entity, target, speed, dt, stop);
@@ -1666,7 +1681,8 @@
         // An already-computed, still-clear path is not made obsolete by the
         // generic 1.3s retry timer. Replan only if its next leg is obstructed
         // or the original path has been consumed.
-        if ((thornRetreat || thornPatrol) && entity.routeAge <= 0 && entity.path?.length) {
+        if ((thornRetreat || thornPatrol || cinderPatrol) &&
+            entity.routeAge <= 0 && entity.path?.length) {
           if (this.clearSegment(entity, entity.path[0]))
             entity.routeAge = R.navigationPlanning.routeRetrySeconds;
           else entity.path = [];
