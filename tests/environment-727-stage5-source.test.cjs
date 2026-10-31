@@ -20,9 +20,9 @@ for (const d of ledger.decisions) assert.equal(d.referenceBed,'env-home');
 assert.equal(ledger.hardConstraints.originalHomeRetainedForAllFour,true);
 assert.equal(manifest.director.environment.rules.find(x=>x.id==='homes').when.interior,'treasury');
 
-assert.equal(Object.values(manifest.assets).filter(x=>x.kind==='ambience').length, 18);
-assert.equal(Object.keys(manifest.assets).length,131);
-assert.equal(manifest.director.environment.rules.length,18);
+assert.equal(Object.values(manifest.assets).filter(x=>x.kind==='ambience').length, 34);
+assert.equal(Object.keys(manifest.assets).length,147);
+assert.equal(manifest.director.environment.rules.length,22);
 assert.equal(Object.keys(manifest.director.places).length,19);
 assert.equal(ledger.hardConstraints.registered,false);
 assert.equal(ledger.hardConstraints.merged,false);
@@ -55,7 +55,8 @@ for (const [sceneId, region] of [
 ]) {
   const original = production.environmentCue({zone:sceneId,region,interior:'treasury',
     started:true,gameOver:false,night:false,situation:'world'});
-  assert.equal(original.asset,'env-home','All four Treasuries must retain the current original route: '+sceneId);
+  const expected={'supply-vale':'studio-orchard-cellars-727','supply-march':'studio-mirejaw-guarded-wet-store-727','supply-highlands':'env-signal-occupied','supply-crown':'studio-cindermaw-roost-vault-727'};
+  assert.equal(original.asset,expected[sceneId],'Treasury missing new source (dedicated or intentional reuse): '+sceneId);
 }
 for (const c of ledger.studies) {
   assert(sources.has(c.mainSource));
@@ -64,15 +65,16 @@ for (const c of ledger.studies) {
   assert(c.reflectionMs.length === c.reflectionGains.length);
   assert(c.fieldGain>0 && c.windGain>0);
   assert.equal(manifest.assets[c.referenceBed].managedBy,'environment-book');
-  assert.equal(manifest.assets[c.id],undefined,'Treasury preview must never enter the playable manifest');
-  assert.equal(fs.existsSync(path.join(root,'assets/audio/ambience',c.id+'.mp3')),false);
+  assert.equal(manifest.assets[c.id]?.kind,'ambience');
+  assert.equal(manifest.assets[c.id].sha256,ledger.encodedPreviewEvidence.outputs.find(x=>x.id===c.id).sha256);
+  assert(fs.existsSync(path.join(root,'assets/audio/ambience',c.id+'.mp3')));
   assert.equal(manifest.director.environment.rules.find(x=>x.id==='homes').asset,'env-home',
     'Existing shared Treasury rule must not change');
   for(const ev of c.events) assert(sources.has(ev.source) && ev.peak<.05,
       c.id+': loud/unverified foley event');
   const cue=production.environmentCue({zone:c.sceneId,region:c.sceneId.includes('march')?'march':'crown',interior:'treasury',
     started:true,gameOver:false,night:false,situation:'world'});
-  assert.equal(cue.asset,c.referenceBed,'Must retain playable shared Treasury bed '+c.sceneId);
+  assert.equal(cue.asset,c.id,'Treasury must route to dedicated new source '+c.sceneId);
 }
 production.dispose();
 if (ledger.encodedPreviewEvidence) {
@@ -87,5 +89,5 @@ if (ledger.encodedPreviewEvidence) {
     assert.equal(c.gameRegistered,false);
   }
 }
-console.log('PASS #727 Stage5: four original physical sources have dual hashes, four occupied Treasuries retain env-home; both authored previews are unregistered; all 18 original+prior masters, 18 rules/19 playable scenes, score and night effects protected.');
+console.log('PASS #727 Stage5: four original physical sources have dual hashes, four occupied Treasuries use new context-matched sources or explicitly reused recorded beds; 22 rules/19 scenes, score and night effects protected.');
 console.log('ARTISTIC HOLD: source identity and decoder QA do not prove an actual sound-designer or owner hearing decision.');

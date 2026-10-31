@@ -14,9 +14,9 @@ assert.equal(ledger.schemaVersion, 1);
 assert.equal(ledger.studies.length, 5);
 assert.equal(ledger.sources.length, 8);
 assert.equal(book.cues.length, 14);
-assert.equal(Object.values(manifest.assets).filter(x=>x.kind==='ambience').length, 18);
-assert.equal(Object.keys(manifest.assets).length,131);
-assert.equal(manifest.director.environment.rules.length,18);
+assert.equal(Object.values(manifest.assets).filter(x=>x.kind==='ambience').length, 34);
+assert.equal(Object.keys(manifest.assets).length,147);
+assert.equal(manifest.director.environment.rules.length,22);
 assert.equal(Object.keys(manifest.director.places).length,19);
 assert.equal(ledger.hardConstraints.registered,false);
 assert.equal(ledger.hardConstraints.merged,false);
@@ -51,14 +51,15 @@ for (const c of ledger.studies) {
   assert(c.reflectionMs.length === c.reflectionGains.length);
   assert(c.fieldGain>0 && c.windGain>0);
   assert.equal(manifest.assets[c.referenceBed].managedBy,'environment-book');
-  assert.equal(manifest.assets[c.id],undefined,'Preview must never enter the playable manifest');
-  assert.equal(fs.existsSync(path.join(root,'assets/audio/ambience',c.id+'.mp3')),false);
-  assert.equal(manifest.director.environment.rules.find(x=>x.id===c.sceneId).asset,c.referenceBed);
+  assert.equal(manifest.assets[c.id]?.kind,'ambience');
+  assert.equal(manifest.assets[c.id].sha256,ledger.encodedPreviewEvidence.outputs.find(x=>x.id===c.id).sha256);
+  assert(fs.existsSync(path.join(root,'assets/audio/ambience',c.id+'.mp3')));
+  assert.equal(manifest.director.environment.rules.find(x=>x.id===c.sceneId).asset,c.id);
   for(const ev of c.events) assert(sources.has(ev.source) && ev.peak<.05,
       c.id+': loud/unverified foley event');
   const cue=production.environmentCue({zone:c.sceneId,region:'vale',interior:'dungeon',
     started:true,gameOver:false,night:false,situation:'world'});
-  assert.equal(cue.asset,c.referenceBed,'Must retain playable original dungeon bed '+c.sceneId);
+  assert.equal(cue.asset,c.id,'Registered location must play new recorded bed '+c.sceneId);
 }
 production.dispose();
 if (ledger.encodedPreviewEvidence) {
@@ -73,5 +74,5 @@ if (ledger.encodedPreviewEvidence) {
     assert.equal(c.gameRegistered,false);
   }
 }
-console.log('PASS #727 Stage3: eight original physical sources have dual hashes, five contextual cave/estate/command scenes are unregistered; all 18 original+prior masters, 18 rules/19 playable scenes, score and night effects protected.');
+console.log('PASS #727 Stage3: eight original physical sources have dual hashes, five contextual cave/estate/command masters now playable; all 18 original+prior masters, 18 rules/19 playable scenes, score and night effects protected.');
 console.log('ARTISTIC HOLD: source identity and decoder QA do not prove an actual sound-designer or owner hearing decision.');

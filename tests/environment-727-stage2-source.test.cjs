@@ -15,10 +15,10 @@ assert.equal(book.studies.length, 2, 'Only two daytime field comparisons are aut
 assert.equal(original.cues.length, 14, 'All 14 physical original beds remain present');
 assert.equal(
   Object.values(manifest.assets).filter((item) => item.kind === 'ambience').length,
-  18,
-  'No Stage 2 preview can enter the catalog',
+  34,
+  '16 Stage2–5 new masters must be registered in the game's environment catalog',
 );
-assert.equal(manifest.director.environment.rules.length, 18);
+assert.equal(manifest.director.environment.rules.length, 22);
 
 const ids = new Set();
 for (const source of book.sources) {
@@ -53,28 +53,29 @@ for (const cue of book.studies) {
   assert(ids.has(cue.mainSource));
   assert(original.cues.some((source) => source.id === cue.referenceBed));
   assert(manifest.assets[cue.referenceBed]?.managedBy === 'environment-book');
-  assert.equal(manifest.director.environment.rules.find((r) => r.id === cue.region)?.asset, cue.referenceBed);
-  assert.equal(manifest.assets[cue.id], undefined, 'Preview must remain unregistered');
-  assert(!fs.existsSync(path.join(root, 'assets/audio/ambience', cue.id + '.mp3')));
+  assert.equal(manifest.director.environment.rules.find((r) => r.id === cue.region)?.asset, cue.id);
+  assert.equal(manifest.assets[cue.id]?.kind, 'ambience');
+  assert.equal(manifest.assets[cue.id].sha256,book.encodedPreviews.outputs.find(x=>x.id===cue.id).sha256);
+  assert(fs.existsSync(path.join(root,'assets/audio/ambience',cue.id+'.mp3')));
   assert(Array.isArray(cue.events) && cue.events.length === 0, 'No surprise permanent fauna/oneshots');
 }
 assert.equal(
   manifest.director.environment.rules.find((r) => r.id === 'vale-night').asset,
-  'env-woodland-night',
+  'study-vale-night-727',
   'Greenwood night bed and its event behavior remain protected',
 );
 assert.equal(
   manifest.director.environment.rules.find((r) => r.id === 'march-night').asset,
-  'env-marsh-night',
+  'study-march-night-727',
   'Marches night bed and its water details remain protected',
 );
 assert.equal(
   manifest.director.environment.rules.find((r) => r.id === 'crown').asset,
-  'env-crown-courtyard',
+  'study-crown-open-727',
   'Dark Crown remains protected until a suitable source exists',
 );
 assert.equal(book.constraints.registration, 'NO');
 assert.equal(book.constraints.merged, 'NO');
 assert.equal(book.constraints.deployed, 'NO');
-console.log('PASS #727 Stage 2 source contract: exact dual digests/bytes, 2 unregistered day trials, all 18 originals/new registered audio beds and 19 scenes unaffected; night and Crown preserved.');
+console.log('PASS #727 Stage 2 source contract: exact dual digests/bytes, 2 verified daytime source masters registered, all 14 original environmental recordings retained; night and Crown preserved.');
 console.log('ARTISTIC HOLD: file, codec and source declarations do not certify a human-heard source or game mix.');
