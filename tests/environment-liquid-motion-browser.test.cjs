@@ -94,6 +94,43 @@ async function main(){
     }
     await options();
     const rows=[];
+    // Original defect was observed at a stationary, actually visible channel.
+    // Scene entry and Pixi's asynchronous terrain preparation can briefly
+    // show the previous camera/texture. Under software WebGL, performance
+    // protection can delay a refresh by whole seconds. Sampling two different
+    // camera positions creates a false animation delta or a false zero-glints
+    // failure. Require the admitted game's camera/hero to settle first.
+    async function stableView(site, mode) {
+      let previous=null, consecutive=0, last=null;
+      for(let attempt=0;attempt<90;attempt++) {
+        await page.waitForTimeout(250);
+        const s=await page.evaluate(target=>{
+          const g=Prototype.game, r=Prototype.renderer, gpu=Prototype.experimentalGraphics;
+          return {
+            zone:g.zoneId, hero:{x:g.hero.x,y:g.hero.y},
+            projected:r.screen(target.hazard),
+            zoom:Prototype.platform.cameraZoom, renderer:gpu.mode,
+            effective:r.metrics().optimizationMode,
+            liquidStrokes:gpu.sceneMetrics?.liquidStrokes??0
+          };
+        },site);
+        last=s;
+        const p=s.projected;
+        const heroFixed=Math.abs(s.hero.x-site.hero.x)<1&&
+          Math.abs(s.hero.y-site.hero.y)<1;
+        const hazardVisible=p&&p.x>100&&p.x<1080&&p.y>95&&p.y<655;
+        const living=mode==='canvas2d'||
+          (s.renderer==='webgl2'&&s.liquidStrokes>0);
+        const sameCamera=previous&&
+          Math.hypot(p.x-previous.projected.x,p.y-previous.projected.y)<0.5;
+        consecutive=heroFixed&&hazardVisible&&living&&sameCamera&&
+          s.zone===site.zone?consecutive+1:0;
+        if(consecutive>=3)return s;
+        previous=s;
+      }
+      throw Error('Issue #708 ' + site.name +
+        ' did not stabilize at a visible liquid channel: '+JSON.stringify(last));
+    }
     async function sample(site,mode){
       const status=await page.evaluate(s=>{
         const g=Prototype.game;
@@ -104,11 +141,19 @@ async function main(){
         return {zone:g.zoneId,hero:{x:g.hero.x,y:g.hero.y},phase:g.daylightPhase().phase};
       },site);
       assert.equal(status.phase,'night');
-      const p=await page.evaluate(s=>Prototype.renderer.screen(s.hazard),site);
+      // Finish region entry before moving the scripted camera to its target.
+      // This avoids a pending region-enter reset after the first screenshot.
+      await page.waitForTimeout(900);
+      await page.evaluate(s=>{
+        const g=Prototype.game;
+        if(g.zoneId!==s.zone)throw Error('Region changed before camera positioning');
+        Object.assign(g.hero,s.hero);g.hero.order=null;g.hero.path=[];
+      },site);
+      const firstView=await stableView(site,mode);
+      const p=firstView.projected;
       const crop={x:Math.max(0,Math.min(1000,Math.round(p.x-90))),
         y:Math.max(0,Math.min(580,Math.round(p.y-85))),width:180,height:170};
       const surface=page.locator(mode==='canvas2d'?'#world':'#world-pixi-experimental');
-      await page.waitForTimeout(1100);
       const a=await surface.screenshot({path:path.join(out,site.name+'-'+mode+'-t0.png')});
       const first=await page.evaluate(()=>({
         renderer:Prototype.experimentalGraphics.mode,
@@ -117,6 +162,11 @@ async function main(){
         liquidStrokes:Prototype.experimentalGraphics.sceneMetrics?.liquidStrokes,
       }));
       await page.waitForTimeout(2500);
+      const lastView=await stableView(site,mode);
+      assert(Math.hypot(lastView.projected.x-p.x,lastView.projected.y-p.y)<1,
+        site.name+' scene moved while measuring time-dependent liquid: '+
+        JSON.stringify({firstView,lastView}));
+      assert.equal(lastView.zoom,firstView.zoom,'Camera zoom changed during sample');
       const b=await surface.screenshot({path:path.join(out,site.name+'-'+mode+'-t1.png')});
       const last=await page.evaluate(()=>({
         renderer:Prototype.experimentalGraphics.mode,
@@ -132,15 +182,24 @@ async function main(){
       if(mode==='webgl2'){
         assert.equal(first.pixiEffective,true);
         assert.equal(last.pixiEffective,true);
-        assert(last.liquidStrokes>0,'GPU scene omitted living liquid geometry');
+        assert(first.liquidStrokes>0&&last.liquidStrokes>0,
+          'GPU liquid glints must exist in both settled in-view samples');
       }
       assert(changed>0,'Native '+site.name+' must visibly animate in '+mode+
         ', unlike the independently reproduced original static Pixi baseline');
-      rows.push({site:site.name,mode,crop,changed,first,last});
+      rows.push({site:site.name,mode,crop,changed,first,last,firstView,lastView});
     }
     for(const site of sites) await sample(site,'canvas2d');
     await options('webgl2');
     for(const site of sites) await sample(site,'webgl2');
+    // Pre-merge functional re-entry: after both 150% regions have been drawn,
+    // switch to native 100% zoom and revisit each region without a restart.
+    assert.equal(await page.evaluate(()=>Prototype.platform.cameraZoom),1.5,
+      'Original-game camera default must be 150% for first acceptance pair');
+    await page.evaluate(()=>Prototype.platform.selectCameraZoom(1));
+    await page.waitForFunction(()=>Prototype.platform.cameraZoom===1);
+    for(const site of sites) await sample({...site,name:site.name+'-zoom100-reentry'},'webgl2');
+
     assert.deepEqual(errors,[],'No browser JS exceptions in actual rendered scenes');
     fs.writeFileSync(path.join(out,'liquid-motion-browser-result.json'),
       JSON.stringify({head:'issue 708 V-04 corrective candidate',rows,errors},null,2)+'\n');
