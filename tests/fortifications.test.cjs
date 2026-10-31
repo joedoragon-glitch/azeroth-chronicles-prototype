@@ -355,6 +355,36 @@ console.log(
   'PASS fixed landing point, dodge, short/long ticks, one ground impact and no continued arc flight',
 );
 
+// Real Goblin Slinger release exercises both the stone-only speed correction
+// and native fort preparation, not a manually fabricated projectile.
+{
+  const { g, e } = fixture();
+  Object.assign(e, {
+    species: 'goblin', ranged: true, hybrid: false,
+    shotSpeed: C.rules.rangedProfiles.goblin.shotSpeed,
+    projectileStyle: 'stone',
+  });
+  g.updateEnemies(0.01);
+  assert(e.rangedAim, 'fortified Goblin prepares an authentic ranged basic');
+  e.rangedAim.timer = 0;
+  g.updateEnemies(0.01);
+  const p = g.s.projectiles.find((shot) => shot.sourceId === e.id);
+  assert(p, 'fortified Goblin released a real stone');
+  const baseline = C.rules.rangedProfiles.goblin.shotSpeed *
+    C.rules.rangedEnemyCombat.projectileMultiplier;
+  const stonePace = C.rules.balance.goblinSlingerProjectileSpeedMultiplier;
+  const fortPace = C.rules.balance.fortifications.projectileSpeedMultiplier;
+  assert.equal(p.fortBaseSpeed, baseline * stonePace,
+    'hostile Goblin native stone launch speed includes the new boost');
+  assert.equal(p.speed, baseline * stonePace * fortPace,
+    'fort adds its separate 30% bonus exactly once');
+  assert(Math.abs(p.fortBaseSpeed * p.fortBaseLife -
+    C.rules.rangedProfiles.goblin.shotSpeed * 2.5) < 1e-8,
+    'Slinger native missed-shot travel budget is preserved');
+  assert(Math.abs(p.life * p.speed - p.fortDistance) < 1e-8,
+    'fixed fortified arc still lands at its original aim point');
+}
+
 // Fort launch speed improves accuracy without extending special-shot footprints.
 {
   const { g, e } = fixture();
