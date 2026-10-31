@@ -254,14 +254,9 @@
       }
     };
     if (raster) {
-      // Retained approved burned-tree sprites must never be re-scaled or redrawn
-      // simply to break repetition. Vary only anchored epicormic shoots within
-      // the original trunk/branch contact area, by stable tree identity.
-      const wiggle = (bit) => ((seed >>> bit) & 3) - 1.5;
-      shoot(-10 + wiggle(3), -13 + wiggle(5), -1, 0.8 + ((seed >>> 7) & 7) * 0.035);
-      shoot(8 + wiggle(10), -10 + wiggle(12), 1, 0.73 + ((seed >>> 14) & 7) * 0.04);
-      if (seed % 3 !== 0)
-        shoot(-2 + wiggle(17), 7 + wiggle(19), -1, 0.65 + ((seed >>> 21) & 7) * 0.033);
+      shoot(-10, -13, -1, 0.95);
+      shoot(8, -10, 1, 0.85);
+      if (seed % 3 !== 0) shoot(-2, 7, -1, 0.75);
     } else {
       shoot(-13, -25, -1, 1);
       shoot(14, -29, 1, 0.9);
