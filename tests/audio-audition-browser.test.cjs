@@ -79,7 +79,7 @@ const root = path.resolve(__dirname, '..'),
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
         assert.equal(await page.locator('#recording option').count(), 83);
-        assert((await page.locator('#catalog-count').textContent()).includes('127 registered'));
+        assert((await page.locator('#catalog-count').textContent()).includes('131 registered'));
         assert.equal(await page.locator('#advanced').getAttribute('open'), null);
         await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('diagnostic');

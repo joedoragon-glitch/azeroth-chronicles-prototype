@@ -174,12 +174,14 @@
     if (!manifest) return;
     const chosenKind = $('kind').value;
     const query = $('search').value.trim().toLowerCase();
-    const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [], ambience: [], effect: [] };
+    const bucket = { main: [], variations: [], bosses: [], interiors: [], special: [], legacy: [], ambience: [], effect: [] };
     for (const [id, entry] of Object.entries(manifest.assets)) {
       if (chosenKind !== 'all' && entry.kind !== chosenKind) continue;
       if (query && !(id + ' ' + soundTitle(id, entry)).toLowerCase().includes(query)) continue;
       const item = { id, name: soundTitle(id, entry) + ' · ' + id };
       if (entry.kind !== 'music') bucket[entry.kind].push(item);
+      else if (entry.creationMethod !== 'authored-recorded-source-score')
+        bucket.legacy.push(item);
       else if (id.startsWith('boss-')) bucket.bosses.push(item);
       else if (id.startsWith('interior-') || id.startsWith('peace-interior-'))
         bucket.interiors.push(item);
@@ -195,6 +197,7 @@
       ['bosses', 'Bosses and TRUE themes'],
       ['interiors', 'Treasuries and side interiors'],
       ['special', 'Title, defeat and finale'],
+      ['legacy', 'Original Dark Crown — preserved, not rebuilt in this soundtrack'],
       ['ambience', 'Environmental sound beds'],
       ['effect', 'Sound effects'],
     ]) group(label, bucket[key], target);
@@ -214,7 +217,11 @@
     if (entry) {
       const details = document.createElement('div');
       const labels = [
-        kindNames[entry.kind] || human(entry.kind),
+        entry.kind === 'music'
+          ? entry.creationMethod === 'authored-recorded-source-score'
+            ? 'Phase 3–6 recorded-source composition'
+            : 'Original Dark Crown recording — not rebuilt'
+          : kindNames[entry.kind] || human(entry.kind),
         entry.bpm ? entry.bpm + ' BPM' : null,
         entry.duration ? entry.duration.toFixed(1) + ' seconds' : null,
         id,
@@ -255,8 +262,10 @@
       ? "The recording's old descriptive text still uses the former development name. The official game and music title is So I Became the Dark Lord's Problem; do not reuse the old name in new creative work."
       : key
         ? 'Exact event implementation: src/prototype/audio-effects.js, audio-production.js and audio-catalog.js.'
-      : entry?.managedBy === 'score-book'
-        ? 'Original music recipe: tools/audio/score-book.json; renderer: render-score.py.'
+      : entry?.creationMethod === 'authored-recorded-source-score'
+        ? 'Exact Phase 3–6 recorded-instrument score: ' + entry.sourceScore + '. The historic score-book is not this master.'
+        : entry?.managedBy === 'score-book'
+          ? 'Original preserved Dark Crown music: tools/audio/score-book.json; renderer: render-score.py.'
         : entry?.managedBy === 'environment-book'
           ? 'Original environment recipe: tools/audio/environment-book.json; renderer: render-environment.py.'
           : entry?.managedBy === 'sfx-book'
@@ -300,7 +309,8 @@
       $('catalog-count').textContent =
         Object.keys(registry.assets).length + ' registered recordings: ' +
         count.music + ' music tracks, ' + count.ambience + ' environmental sounds and ' +
-        count.effect + ' effects. All are browseable here.';
+        count.effect + ' effects. All are browseable here. Candidate build: ' +
+        PrototypeBuild.version + '.';
     } else {
       $('catalog-count').textContent = 'The production catalog is unavailable; you can still try engineering test tones.';
     }

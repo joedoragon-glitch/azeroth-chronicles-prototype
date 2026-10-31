@@ -31,6 +31,11 @@ const auditionGraph = [
 ].map((m) => path.resolve(__dirname, '../tools/audio', m[1]));
 const auditionEngine = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/engine.js'));
 assert(auditionEngine > 0);
+const auditionGreenwood = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/greenwood.js'));
+assert(
+  auditionGreenwood > 0 && auditionGreenwood < auditionEngine,
+  'independent listening room must load Greenwood before Campaign',
+);
 for (const file of auditionGraph.slice(0, auditionEngine + 1))
   vm.runInContext(fs.readFileSync(file, 'utf8'), auditionContext, { filename: file });
 assert.equal(typeof auditionContext.Campaign.prototype.updateCinderRegularState, 'function');
