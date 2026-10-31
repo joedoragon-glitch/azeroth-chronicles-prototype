@@ -80,6 +80,58 @@ try {
     assert(g.hasSupportEffect(g.hero, 'health'), 'authored healer pet joins idle triage');
     assert.equal(pet.healCd, R.rangerSupport.cooldown);
   }
+  // The *same* Heal cooldown recovers faster between fights for the three
+  // eligible caster families. Threats near the hero or company restore
+  // ordinary combat-speed recovery; attacks and native skills are untouched.
+  {
+    const fixtures = [
+      () => {
+        const g = scene('paladin'), ally = g.unit('archer', 510, 500);
+        g.s.party.push(ally);
+        return { g, ally };
+      },
+      () => {
+        const g = scene(), ally = capture(g, 'goblin', true);
+        return { g, ally };
+      },
+      () => {
+        const g = scene();
+        g.s.normal.crypt = g.s.true.crypt = true;
+        const ally = g.unit('pet', 510, 500, 'crypt');
+        g.s.party.push(ally);
+        return { g, ally };
+      },
+    ];
+    for (const [index, fixture] of fixtures.entries()) {
+      const { g, ally } = fixture();
+      assert(g.healCompanionCasters().includes(ally), 'eligible healer ' + index);
+      const key = ally.charmOrigin ? 'charmSupportCd' : 'healCd';
+      ally[key] = R.rangerSupport.cooldown;
+      ally.cd = 1;
+      ally.skill1Cd = 3;
+      assert.equal(g.alliedHealCooldownRecoveryMultiplier(),
+        R.rangerSupport.idleHealCooldownRecoveryMultiplier);
+      g.tick(0.05);
+      assert(Math.abs(ally[key] - (10 - 0.05 *
+        R.rangerSupport.idleHealCooldownRecoveryMultiplier)) < 1e-6,
+        'idle Heal clock accelerates for caster ' + index);
+      assert(ally.cd > 0.9 && ally.skill1Cd > 2.9,
+        'idle recovery does not accelerate combat skills ' + index);
+      const foe = g.makeEnemy(
+        { species: 'goblin', name: 'Threat', level: 1,
+          hp: 2000, damage: 1, gold: 0, xp: 0 },
+        { x: 590, y: 500 },
+      );
+      foe.aggro = true;
+      g.zone().enemies = [foe];
+      assert.equal(g.alliedHealCooldownRecoveryMultiplier(), 1,
+        'engaged party never earns idle multiplier ' + index);
+      const before = ally[key];
+      g.tick(0.05);
+      assert(Math.abs(ally[key] - (before - 0.05)) < 1e-6,
+        'combat Heal recovery remains native ' + index);
+    }
+  }
   // While healing is on cooldown H queues one hero request and gives it
   // priority over automatic treatment of a wounded different-species ally.
   {
