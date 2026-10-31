@@ -7,6 +7,25 @@ const path = require('node:path');
 const http = require('node:http');
 const cp = require('node:child_process');
 const playwright = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const {createCanvas,loadImage}=require('@napi-rs/canvas');
+async function compareCrop(first,second,rect) {
+  const a=await loadImage(first),b=await loadImage(second);
+  assert.equal(a.width,b.width); assert.equal(a.height,b.height);
+  const c=createCanvas(rect.width,rect.height),ctx=c.getContext('2d');
+  ctx.drawImage(a,rect.x,rect.y,rect.width,rect.height,0,0,rect.width,rect.height);
+  const left=ctx.getImageData(0,0,rect.width,rect.height).data;
+  ctx.clearRect(0,0,rect.width,rect.height);
+  ctx.drawImage(b,rect.x,rect.y,rect.width,rect.height,0,0,rect.width,rect.height);
+  const right=ctx.getImageData(0,0,rect.width,rect.height).data;
+  let changed=0,blue=0;
+  for(let i=0;i<left.length;i+=4) {
+    if(Math.max(Math.abs(left[i]-right[i]),Math.abs(left[i+1]-right[i+1]),
+      Math.abs(left[i+2]-right[i+2]))>5)changed++;
+    if(left[i+2]>left[i]*1.08 && left[i+1]>left[i]*1.08)blue++;
+  }
+  return {changedPixels:changed,blueTintPixels:blue,regionPixels:rect.width*rect.height};
+}
+
 const root = path.resolve(__dirname, '..');
 const out = path.join(root, 'test-artifacts', 'environment-708');
 fs.mkdirSync(out, {recursive:true});
@@ -155,6 +174,57 @@ async function main(){
         ' to '+withoutWraith.motes+' motes; tier changed during software-GPU scene');
     }
     console.log('PASS #708 audit repro and screenshots; V-01 renderer parity remains FAILED on baseline main');
+
+    // V-04: prove or disprove the stationary Pixi cached-water case using
+    // actual GPU-presented and native Canvas frames. Keep the camera and
+    // current night phase fixed, with optional motes disabled in both paths.
+    await page.locator('#menu-button').click();
+    await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+    await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+    await page.locator('select[aria-label="Optimization Mode"]').selectOption('on');
+    await page.evaluate(()=>Prototype.closeMenu());
+    const waterSite=await page.evaluate(()=>{
+      const g=Prototype.game;
+      g.hero.x=1400;g.hero.y=1450;g.hero.order=null;g.hero.path=[];
+      g.s.clock=480;g.zone().enemies=[];g.s.party=[];g.zone().npcs=[];
+      return {region:g.zoneId,hero:{x:g.hero.x,y:g.hero.y},
+        water:{x:1700,y:1450},optimizationSetting:localStorage.getItem('azeroth-optimization-mode-v1')};
+    });
+    assert.equal(waterSite.region,'march');
+    assert.equal(waterSite.optimizationSetting,'on');
+    await page.waitForFunction(()=>Prototype.experimentalGraphics.backgroundOptimized===true);
+    await page.waitForTimeout(700);
+    const waterCrop={x:765,y:315,width:340,height:250};
+    const pixiA=await gpu.screenshot({path:path.join(out,'marches-stationary-water-pixi-t0.png')});
+    await page.waitForTimeout(1350);
+    const pixiB=await gpu.screenshot({path:path.join(out,'marches-stationary-water-pixi-t1.png')});
+    const pixiWater=await compareCrop(pixiA,pixiB,waterCrop);
+    // Switch the original renderer, not a mocked variant, without changing
+    // the admitted Campaign, hero position, lighting or Optimization tier.
+    await page.locator('#menu-button').click();
+    await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+    await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+    await page.locator('select[aria-label="Graphics renderer"]').selectOption('canvas2d');
+    await page.evaluate(()=>Prototype.closeMenu());
+    await page.waitForFunction(()=>Prototype.experimentalGraphics.mode==='canvas2d');
+    await page.waitForTimeout(250);
+    const canvasA=await canvas.screenshot({path:path.join(out,'marches-stationary-water-canvas-t0.png')});
+    await page.waitForTimeout(1350);
+    const canvasB=await canvas.screenshot({path:path.join(out,'marches-stationary-water-canvas-t1.png')});
+    const canvasWater=await compareCrop(canvasA,canvasB,waterCrop);
+    const waterResult={site:waterSite,clip:waterCrop,pixi:pixiWater,canvas:canvasWater,
+      context:'Same stationary region/camera with Opt On, night clock and ambient actors removed; native Canvas vs software WebGL2 screenshots; no device claim'};
+    fs.writeFileSync(path.join(out,'stationary-water-result.json'),
+      JSON.stringify(waterResult,null,2)+'\n');
+    console.log('ATMOSPHERE-708-STATIONARY-WATER-PIXELS '+JSON.stringify(waterResult));
+    assert(pixiWater.blueTintPixels>1000 && canvasWater.blueTintPixels>1000,
+      'V-04 screenshots must actually show the blue channel rather than an unrelated roadside');
+    assert(canvasWater.changedPixels>100,
+      'Original Canvas water should visibly animate in this real stable camera crop');
+    if(pixiWater.changedPixels===0)console.log(
+      'REPRODUCED V-04: stationary Pixi cached Marches water shows NO temporal change in actual WebGL pixels, while Canvas does; fix required, no water art polish');
+    else console.log('V-04 Pixi stationary water has '+pixiWater.changedPixels+
+      ' changed pixels; do not classify it as frozen without isolating sources');
     await context.close();
   }finally{
     await browser?.close();
