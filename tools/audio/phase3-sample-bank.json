@@ -1,0 +1,603 @@
+{
+  "schemaVersion": 1,
+  "status": "Experimental isolated recorded-instrument source bank; sonic quality UNVERIFIED; Phase 4 BLOCKED; no game-facing assets or release",
+  "source": "tiny-orchestra 0.2.0 (edited VSCO-2 CE CC0 recordings)",
+  "sourceRepository": "https://github.com/MarianBecher/tiny-orchestra",
+  "sourceCommit": "60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f",
+  "originalSamples": "VSCO-2 Community Edition, https://github.com/sgossner/VSCO-2-CE",
+  "license": "CC0-1.0",
+  "sourceCredits": "https://github.com/MarianBecher/tiny-orchestra/blob/60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f/CREDITS.md",
+  "sampleRate": 44100,
+  "format": "mp3 mono; 96 kbps; originals were already lossy",
+  "originalSourceFormat": {
+    "codec": "mp3",
+    "kbps": 96,
+    "kbpsLow": 80,
+    "sampleRate": 44100,
+    "channels": 1,
+    "loudnessTarget": -20
+  },
+  "qualityCaveat": "Real recorded performances are a major advance over one oscillator patch, but these are lossy compact source samples and pitch shifting/short sustain loops can introduce audible artifacts. They are not a professional master quality guarantee. No claim of actual listening or production approval.",
+  "instruments": {
+    "flute": {
+      "sustain": true,
+      "release": 0.2,
+      "gain": 0.9,
+      "range": [
+        60,
+        93
+      ],
+      "samples": [
+        {
+          "file": "flute/C4.mp3",
+          "midi": 60,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": -1,
+          "sourceGitBlob": "505ae205486104114b66f2cf3c9802f65f9a6e5a",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "flute/A4.mp3",
+          "midi": 69,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "b6eba88dc759bba1ee50049520d0b2fc8e2daf93",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "flute/C5.mp3",
+          "midi": 72,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "f67ac0764ecbf0654a65fb9bffe94632482bbe5f",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "flute/E5.mp3",
+          "midi": 76,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "c9a9bf65c8bec14b8bb338838977fff202b46df0",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "flute/A5.mp3",
+          "midi": 81,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.002,
+          "sourceGitBlob": "7dc00446a5b2bd50394ce3ea96580efedfcb73cd",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "flute/C6.mp3",
+          "midi": 84,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.002,
+          "sourceGitBlob": "8cffe0ddfc0319c6a16c208fb461297a9a07e994",
+          "sourceBytes": 38288
+        }
+      ]
+    },
+    "horn": {
+      "sustain": true,
+      "release": 0.3,
+      "gain": 0.9,
+      "range": [
+        33,
+        77
+      ],
+      "samples": [
+        {
+          "file": "horn/C4.mp3",
+          "midi": 60,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.001,
+          "tune": -2,
+          "sourceGitBlob": "a87d11232d760887548916d3f4f07917c85bca2b",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "horn/F3.mp3",
+          "midi": 53,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": -2,
+          "sourceGitBlob": "70dd1e95e093030e6d506da04819f7bb7dcf5186",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "horn/A3.mp3",
+          "midi": 57,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "782b1232467ab6b9cd79600612f492242e5e772a",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "horn/D5.mp3",
+          "midi": 74,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.002,
+          "tune": 5,
+          "sourceGitBlob": "8824ae9eb42669eeb50650545c707946da35bdb3",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "horn/As2.mp3",
+          "midi": 46,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": 1,
+          "sourceGitBlob": "a03d7470929593a2f17cf9bf32cc16178b1ff262",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "horn/D3.mp3",
+          "midi": 50,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": -4,
+          "sourceGitBlob": "985bb276e312d3824d3f8b92ae685ef524c882fc",
+          "sourceBytes": 31914
+        }
+      ]
+    },
+    "celli": {
+      "sustain": true,
+      "release": 0.4,
+      "gain": 1,
+      "range": [
+        36,
+        71
+      ],
+      "samples": [
+        {
+          "file": "celli/C4.mp3",
+          "midi": 60,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": -1,
+          "sourceGitBlob": "73f2e49eebb64d4bd11e4cfe4eea220be262eec7",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "celli/C2.mp3",
+          "midi": 36,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "482e7f4b9e2615b93a4feb86df150daf1c2670b4",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "celli/G2.mp3",
+          "midi": 43,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.001,
+          "sourceGitBlob": "b685aa9e68d726a198edfa0c3b24526bde2e70c4",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "celli/D3.mp3",
+          "midi": 50,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": -2,
+          "sourceGitBlob": "9e6a97fa6ff71ab46ed1a8ecb25e528128d4ae70",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "celli/A3.mp3",
+          "midi": 57,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": -3,
+          "sourceGitBlob": "84fcdaf562dd6c528e76d27ef447cea7ff7c6e2d",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "celli/E4.mp3",
+          "midi": 64,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "c6fef4c9721a2b871349f41a8cb45931a096685e",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "celli/G4.mp3",
+          "midi": 67,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": 1,
+          "sourceGitBlob": "59668896625854505e7afa193bd737453cd0a89a",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "celli/B4.mp3",
+          "midi": 71,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": 2,
+          "sourceGitBlob": "bf2e56954c7ae8759f49c3ac5756c201b06c29f2",
+          "sourceBytes": 31914
+        }
+      ]
+    },
+    "harp": {
+      "sustain": false,
+      "release": 0.3,
+      "gain": 1,
+      "range": [
+        28,
+        101
+      ],
+      "samples": [
+        {
+          "file": "harp/F2.mp3",
+          "midi": 41,
+          "vel": 1,
+          "offset": 0.01,
+          "duration": 3.51,
+          "mark": 0.005,
+          "tune": -7,
+          "sourceGitBlob": "913a1d654cdf1e657b1bbc0387e3a8134de71fe8",
+          "sourceBytes": 42990
+        },
+        {
+          "file": "harp/C3.mp3",
+          "midi": 48,
+          "vel": 1,
+          "offset": 0,
+          "duration": 3.5,
+          "mark": 0,
+          "tune": -2,
+          "sourceGitBlob": "c910fd42be6caf348d7b72e40c40d68ca4e13e68",
+          "sourceBytes": 42676
+        },
+        {
+          "file": "harp/G3.mp3",
+          "midi": 55,
+          "vel": 1,
+          "offset": 0.013,
+          "duration": 3.51,
+          "mark": 0.01,
+          "tune": -7,
+          "sourceGitBlob": "fcc26c5f665bd081e6c99b713dcf8391f41ef75c",
+          "sourceBytes": 42990
+        },
+        {
+          "file": "harp/D4.mp3",
+          "midi": 62,
+          "vel": 1,
+          "offset": 0.013,
+          "duration": 3.51,
+          "mark": 0.01,
+          "tune": -12,
+          "sourceGitBlob": "398724d83475ab5542975f2d94992dfd52558e34",
+          "sourceBytes": 42990
+        },
+        {
+          "file": "harp/A4.mp3",
+          "midi": 69,
+          "vel": 1,
+          "offset": 0.01,
+          "duration": 3.51,
+          "mark": 0.01,
+          "tune": -10,
+          "sourceGitBlob": "6af13e39d5a0affae9e5a1c04b50f3af6a4608e4",
+          "sourceBytes": 42990
+        },
+        {
+          "file": "harp/E5.mp3",
+          "midi": 76,
+          "vel": 1,
+          "offset": 0.012,
+          "duration": 3.51,
+          "mark": 0.01,
+          "tune": -11,
+          "sourceGitBlob": "be1bfa5506315af4cbe599a42fd12eab7ca5e2fa",
+          "sourceBytes": 42990
+        }
+      ]
+    },
+    "violins": {
+      "sustain": true,
+      "release": 0.35,
+      "gain": 1,
+      "range": [
+        55,
+        86
+      ],
+      "samples": [
+        {
+          "file": "violins/G3-f.mp3",
+          "midi": 55,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.001,
+          "sourceGitBlob": "52eab217eabcd40f748eabb97c3db220cf7d365f",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "violins/D4-f.mp3",
+          "midi": 62,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.009,
+          "tune": 1,
+          "sourceGitBlob": "da84ae6d9a1447e53ee1d028bcd2fb5cf65c7ac0",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "violins/A4-p.mp3",
+          "midi": 69,
+          "vel": 0.5502,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.007,
+          "tune": -1,
+          "sourceGitBlob": "756b32c512583a9eb80edfdbbaa5034f032b6a26",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "violins/C5-f.mp3",
+          "midi": 72,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "39725777a83e3abd50564465832d83d298814c7c",
+          "sourceBytes": 38288
+        },
+        {
+          "file": "violins/E5-f.mp3",
+          "midi": 76,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0.004,
+          "sourceGitBlob": "5e1c4e6ea559f7de1960b96c7255824499bfda73",
+          "sourceBytes": 38288
+        }
+      ]
+    },
+    "marimba": {
+      "sustain": false,
+      "release": 0.2,
+      "gain": 0.8,
+      "range": [
+        41,
+        96
+      ],
+      "samples": [
+        {
+          "file": "marimba/F2.mp3",
+          "midi": 41,
+          "vel": 1,
+          "offset": 0.001,
+          "duration": 2.5,
+          "mark": 0,
+          "tune": 2,
+          "sourceGitBlob": "0a238fda6f908e8c6cdd8147bda8bb5657a81f70",
+          "sourceBytes": 30765
+        },
+        {
+          "file": "marimba/C3.mp3",
+          "midi": 48,
+          "vel": 1,
+          "offset": 0.002,
+          "duration": 2.5,
+          "mark": 0,
+          "tune": 9,
+          "sourceGitBlob": "4fd98aa3c4e16b3ee8963f702f096955ad686cb6",
+          "sourceBytes": 30765
+        },
+        {
+          "file": "marimba/G3.mp3",
+          "midi": 55,
+          "vel": 1,
+          "offset": 0.002,
+          "duration": 2.5,
+          "mark": 0.002,
+          "tune": 2,
+          "sourceGitBlob": "d6a741ed377b708058c4144c914583f08979fcea",
+          "sourceBytes": 30765
+        },
+        {
+          "file": "marimba/B3.mp3",
+          "midi": 59,
+          "vel": 1,
+          "offset": 0.003,
+          "duration": 2.5,
+          "mark": 0.003,
+          "tune": 3,
+          "sourceGitBlob": "20e4c6f7be2885e4e40a2bc71fed0f4477f4c2c8",
+          "sourceBytes": 30765
+        },
+        {
+          "file": "marimba/F4.mp3",
+          "midi": 65,
+          "vel": 1,
+          "offset": 0.003,
+          "duration": 2.5,
+          "mark": 0.003,
+          "sourceGitBlob": "90b6e634dc5b47a969e4ffd95415f45716cfc467",
+          "sourceBytes": 30765
+        }
+      ]
+    },
+    "glockenspiel": {
+      "sustain": false,
+      "release": 0.3,
+      "gain": 0.55,
+      "range": [
+        79,
+        108
+      ],
+      "samples": [
+        {
+          "file": "glockenspiel/G5.mp3",
+          "midi": 79,
+          "vel": 1,
+          "offset": 0.004,
+          "duration": 3,
+          "mark": 0,
+          "tune": 8,
+          "sourceGitBlob": "72d032f2711c581de973dab67a68619c35908e9c",
+          "sourceBytes": 36720
+        },
+        {
+          "file": "glockenspiel/C6.mp3",
+          "midi": 84,
+          "vel": 1,
+          "offset": 0.004,
+          "duration": 3,
+          "mark": 0,
+          "tune": 12,
+          "sourceGitBlob": "1ef825420ee7d2be5ecf20c37c4f54e00a603551",
+          "sourceBytes": 36720
+        }
+      ]
+    },
+    "basses": {
+      "sustain": true,
+      "release": 0.4,
+      "gain": 1,
+      "range": [
+        28,
+        59
+      ],
+      "samples": [
+        {
+          "file": "basses/E1.mp3",
+          "midi": 28,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "71cd0480e35627691aefe6ded7ccd5901245b7e2",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "basses/Fs2.mp3",
+          "midi": 42,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "sourceGitBlob": "3247d6ddac6327a8a6415a6aef3fb0512c2e2ec7",
+          "sourceBytes": 31914
+        },
+        {
+          "file": "basses/Cs3.mp3",
+          "midi": 49,
+          "vel": 1,
+          "offset": 0.01,
+          "loopStart": 1.26,
+          "loopEnd": 2.86,
+          "duration": 3.11,
+          "mark": 0,
+          "tune": -1,
+          "sourceGitBlob": "778798697bc2594a71806607b576e0ccbf67e95c",
+          "sourceBytes": 31914
+        }
+      ]
+    }
+  }
+}
