@@ -67,5 +67,5 @@ console.log('AUDITION BOOTSTRAP ON THIS MAIN BASELINE = ' +
   (diagnosticReady ? 'ready' : 'requires Stage 4 reconciliation') +
   (missing.length ? '; missing script tags: ' + missing.join(', ') : '') +
   (!inOrder ? '; script order incomplete' : ''));
-console.log('PWA audio budget (unchanged) = ' + limits.total +
+console.log('PWA audio package ceiling (revised; no new assets published) = ' + limits.total +
   ' bytes total, ' + limits.perFile + ' bytes per file');

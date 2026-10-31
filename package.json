@@ -1,6 +1,6 @@
 {
   "name": "azeroth-chronicles-prototype",
-  "version": "0.9.1+snapshot.dev.241",
+  "version": "0.9.1+snapshot.dev.242",
   "private": true,
   "description": "Offline installable RPG prototype for Chromebook and mobile.",
   "scripts": {
