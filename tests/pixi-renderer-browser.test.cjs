@@ -458,6 +458,8 @@ async function run() {
         await inspectStatusCrowd(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
         if (mageGpu.mode === 'webgl2') {
+          // Confirm the authentic 15-second trial before the longer audit matrix.
+          await keepPixiTrial(beamPage, phone, 'status matrix graphics trial');
           await inspectMageBeamOverlay(beamPage, 'webgl2');
           await inspectStatusPixels(beamPage, 'webgl2');
           await inspectStatusCrowd(beamPage, 'webgl2');
