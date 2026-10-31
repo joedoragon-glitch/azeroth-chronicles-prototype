@@ -75,7 +75,7 @@ function capture(g,label,ticks,subject,{sourceStacks=false}={}){
     g[k]=function(...args){const prev=domain;domain=k;
       try{return original[k].apply(this,args)}finally{domain=prev}};
   }
-  const routesByTick=[],routes=[];
+  let routesByTick=[];
   g.blocked=function(...args){
     probes++;
     domainCounts[domain]=(domainCounts[domain]||0)+1;
@@ -221,6 +221,10 @@ function crown(seed=11){
   for(const [i,u] of guards.entries())Object.assign(u,g.safe(p.x+(i?70:-70),p.y+60));
   Object.assign(g.hero,g.safe(p.x+60,p.y),{hp:1e6,maxHp:1e6});
   assert.notEqual(g.engage(boss,true,false),false);
+  // The engagement anchor is at p; move the real actor to another legal
+  // position as scripted combat displacement would, so physical return has
+  // a genuine route and cannot finish immediately at its own anchor.
+  Object.assign(boss,g.safe(p.x+340,p.y+120));
   Object.assign(g.hero,g.safe(300,350));
   g.disengage(boss,dt);
   assert(boss.cinderReturn || boss.returning,'native Cindermaw return initiated');
