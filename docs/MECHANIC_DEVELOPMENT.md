@@ -68,6 +68,18 @@ The [normal workflow](../.github/workflows/focused-deploy.yml) selects focused c
 
 **Reuse valid evidence:** disconnection or a new chat does not invalidate tests on unchanged relevant inputs. Changes to code, tests, dependencies or build inputs can invalidate those results. A focused green run still cannot certify the full game or a physical device.
 
+### Phase gate triage: genuine blocker or independent follow-up?
+
+This is the **default for every multi-stage development plan**, not a soundtrack-only exception. Apply the [standing repository blocker/deferral policy](../AGENTS.md#multi-phase-execution-classify-blockers-defer-safely-keep-moving-31-october-2026) as soon as a failure or unexpected issue starts delaying a stage.
+
+**Triage the actual requirement, not the mere existence of an issue.** Identify the phase exit criteria and direct owner constraints; inspect the failed original test and exact SHA/base; determine whether failure is reproducible, newly introduced, critical to the deliverable, or independent. A real regression or significant unfulfilled quality requirement means **HOLD and fix**. Noncritical polish, a speculative risk or an explicitly later-stage review can be **GO with documented deferral**, provided no current requirement depends on it. Unknown relevant failures stay **HOLD** until bounded investigation establishes they are safe to defer. Never convert “not tested” into “passed.”
+
+**Deferral record (in existing tracker or a single scoped issue):** observation and proof/unknowns; affected scope; why independent of this stage; risk and mitigation; dedicated owner or draft PR if implementation is justified; **revisit-by dependency/phase**. Link the record from the active PR and later-phase checklist. Keep the open list intentionally small, consolidate duplicates and reassess when dependencies change. A separate draft PR is appropriate for an independent code fix; it is not permission to merge or ship. Do not use phase-finished labeling to suppress a relevant failed regression or make an accepted audiovisual design merely speculative.
+
+**Pragmatic AFK execution:** Move on to the next *authorized* phase when its genuine prerequisites pass, rather than waiting for the owner to arbitrate every low-level CI or integration question. Save tested commits, precisely scoped statuses and an actionable cross-chat resume checkpoint in GitHub. If the owner reserved a phase for another chat, stop at that boundary; work cannot continue in the background. Escalate only decisions that materially alter scope, quality risk, creative direction or controlled permissions.
+
+**Examples across the game:** An unobserved long-audio-cache transition concern is Phase 7 QA until real evidence proves a current blocker; an actual broken required score renderer blocks its pilot phase. A visual seam in Greenwood Vale intended as flagship polish may be a required visual blocker, while a noncritical aesthetic enhancement outside the approved stage can be a later issue. An unrelated historical CI failure should not stop a navigation phase if the current original navigation regressions pass and the independence is documented. These are classification examples, never advance waivers.
+
 ## 5. Keep the documentation and change together
 
 Per [AGENTS.md](../AGENTS.md#standing-documentation-ownership--part-of-every-change-28-october-2026), the implementer owns documentation **throughout development**, not during an unrelated future audit.
