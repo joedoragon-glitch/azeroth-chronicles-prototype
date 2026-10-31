@@ -119,10 +119,10 @@ try {
     g.s.gatheringTarget = null;
     g.s.expeditionRank = 1;
   }
-  assert.equal(g.charmedCompanionProfile(goblin).hp, 100);
+  assert.equal(g.charmedCompanionProfile(goblin).hp, 112);
   assert.equal(goblin.maxHp, g.companionMaxHp(goblin));
   assert.equal(goblin.hp, goblin.maxHp, 'captured at proper full friendly HP');
-  assert.equal(goblin.damage, 10, 'monster base, not Soldier base');
+  assert.equal(goblin.damage, 12, 'Greenwood Charmed base power, not Soldier base');
   assert.equal(g.companionCombatReach(goblin), 65);
   assert.equal(g.companionTrySkill(goblin, { x: 550, y: 500, hp: 100 }), false,
     'no inherited Soldier skill or fabricated target');
