@@ -170,6 +170,56 @@ const server=http.createServer((req,res)=>{
           profile:phone?'phone-emulated':'desktop',...attenuation,optimizationOff:off,
           resumed:await page.evaluate(()=>Prototype.audio.environmentVoice?.id)
         }));
+        // A4 post-compressor graph capture: independent of source-LUFS
+        // predictions. Analyze actual running WebAudio output in Chromium,
+        // both with current score and environment separately and combined.
+        // This is objective dBFS on a short browser window, NOT speaker or ear QA.
+        const renderedMix=await page.evaluate(async()=>{
+          const a=Prototype.audio,ctx=a.ctx;
+          const orig={music:a.settings.music,ambience:a.settings.ambience};
+          const analyser=ctx.createAnalyser();
+          analyser.fftSize=2048;
+          const stream=ctx.createMediaStreamDestination();
+          a.compressor.connect(analyser);analyser.connect(stream);
+          const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+          const capture=async()=>{
+            await delay(180); // allow the existing gain envelopes to settle
+            const samples=new Float32Array(analyser.fftSize);
+            let sum=0,count=0,peak=0,liveFrames=0;
+            for(let j=0;j<18;j++){
+              await delay(45);
+              analyser.getFloatTimeDomainData(samples);
+              let frameEnergy=0;
+              for(const x of samples){sum+=x*x;frameEnergy+=x*x;peak=Math.max(peak,Math.abs(x));count++;}
+              if(frameEnergy>1e-13)liveFrames++;
+            }
+            const rms=Math.sqrt(sum/count);
+            return {rmsDbfs:+(20*Math.log10(Math.max(rms,1e-10))).toFixed(2),
+              peakDbfs:+(20*Math.log10(Math.max(peak,1e-10))).toFixed(2),
+              liveFrames,frames:18};
+          };
+          try{
+            a.setSettings({music:0,ambience:orig.ambience});
+            const environmentOnly=await capture();
+            a.setSettings({music:orig.music,ambience:0});
+            const soundtrackOnly=await capture();
+            a.setSettings({music:orig.music,ambience:orig.ambience});
+            const combined=await capture();
+            return {environmentOnly,soundtrackOnly,combined,
+              soundtrackAboveEnvironmentDb:+(soundtrackOnly.rmsDbfs-environmentOnly.rmsDbfs).toFixed(2),
+              restored:{music:a.settings.music,ambience:a.settings.ambience}};
+          }finally{
+            a.setSettings(orig);
+            a.compressor.disconnect(analyser);
+            analyser.disconnect();stream.disconnect();
+          }
+        });
+        assert(renderedMix.environmentOnly.liveFrames>=12,'real live environment graph was not rendering');
+        assert(renderedMix.soundtrackOnly.liveFrames>=12,'real live music graph was not rendering');
+        assert(renderedMix.combined.liveFrames>=12,'combined audio graph was not rendering');
+        assert(renderedMix.combined.peakDbfs<0,'no digital clipping at sampled output frames');
+        assert(renderedMix.soundtrackAboveEnvironmentDb>0,'environment signal unexpectedly louder than score');
+        console.log('A4_GAME_CAPTURE '+JSON.stringify({profile:phone?'phone-emulated':'desktop',...renderedMix}));
         const mix=await page.evaluate(()=>{
           const a=Prototype.audio;
           const original={music:a.mixLevel('music'),ambience:a.mixLevel('ambience'),effects:a.mixLevel('effects')};
