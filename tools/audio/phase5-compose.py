@@ -29,9 +29,11 @@ def module(name, filename):
 
 def note_events(family, part):
     bars = family["leadBars"] if part == "base" else family["trueBars"]
-    register = family["register"] if part == "base" else 12
     return [
-        [4 * bar + float(at), family["root"] + register + int(pitch), float(length)]
+        [4 * bar + float(at), family["root"] + (
+            family.get("leadRegisterByBar", [family["register"]] * family["bars"])[bar]
+            if part == "base" else family.get("trueRegister", 12)
+        ) + int(pitch), float(length)]
         for bar, notes in enumerate(bars) for at, pitch, length in notes
     ]
 
@@ -68,6 +70,15 @@ def source_contract():
         assert 12 <= family["bars"] <= 20
         assert all(0.25 <= e <= 1.2 for e in family["energy"])
         assert max(family["energy"]) - min(family["energy"]) >= .4
+        offsets = family.get("leadRegisterByBar",
+                             [family["register"]] * family["bars"])
+        assert len(offsets) == family["bars"] and offsets[:4] == [
+            family["register"]] * 4
+        assert set(offsets) <= {0, 12}
+        assert family.get("trueRegister", 12) in (0, 12)
+        assert family.get("companionRegister", 12) in (0, 12)
+        assert family.get("pulseRegister", 0) in (-12, 0)
+        assert family.get("bassRegister", -12) in (-12, -7, -5)
         for part in ("leadBars", "trueBars"):
             for bar, notes in enumerate(family[part]):
                 assert len(notes) > 0, (cue, part, bar)
@@ -180,35 +191,38 @@ def render_part(family, part, shared, sampler):
         chord = family["harmony"][bar]
         if base:
             if bar % 4 != 3:
-                low = root - 12 + sampler.degree(chord, mode)
+                low = root + family.get("bassRegister", -12) + sampler.degree(chord, mode)
                 tone(bar, 0, low, 2.1, "cello", .047, soft=True)
             pattern = family["pulsePatterns"][(bar // 2 + bar % 3) % 2]
             if bar % 4 == 3:
                 pattern = pattern[:1]
             for at, degree, duration in pattern:
-                midi = root + sampler.degree(chord + degree, mode)
+                midi = (root + family.get("pulseRegister", 0) +
+                        sampler.degree(chord + degree, mode))
                 tone(bar, at, midi, duration, family["pulse"], .033,
                      jitter=True)
             if bar % 4 in (0, 2):
                 midi = root + sampler.degree(chord + 2, mode)
                 tone(bar, .08, midi, 2.8, "strings", .015, soft=True)
             for at, semitone, duration in family["leadBars"][bar]:
-                tone(bar, at, root + family["register"] + semitone,
+                register = family.get("leadRegisterByBar",
+                    [family["register"]] * bars)[bar]
+                tone(bar, at, root + register + semitone,
                      duration, family["lead"], .105, soft=family["lead"]
                      in ("horn", "cello"))
         else:
             # Each family supplies an independent written secondary gesture,
             # not the old parent lead played twice.
             for at, semitone, duration in family["trueBars"][bar]:
-                tone(bar, at, root + 12 + semitone, duration,
-                     family["response"], .051, soft=True)
+                tone(bar, at, root + family.get("trueRegister", 12) + semitone,
+                     duration, family["response"], .051, soft=True)
             if bar % 4 == 2:
                 tone(bar, .4, root - 12 + sampler.degree(chord, mode),
                      1.0, "cello", .017, soft=True)
             if family["companionBars"] and bar in family["companionBars"]:
                 for at, semitone, duration in shared["motif"]:
-                    tone(bar, at, root + 12 + semitone, duration, "horn",
-                         .012, soft=True)
+                    tone(bar, at, root + family.get("companionRegister", 12) + semitone,
+                         duration, "horn", .012, soft=True)
             # Deliberately sparse character-dependent accents, not a
             # universal loud TRUE drum beat.
             if family["key"] in ("thorn", "mire", "warlord") and bar % 4 == 1:

@@ -25,6 +25,12 @@ The four and only four former-companions encounters—Lifebinder, Drowned Keeper
 
 **Source risks to challenge during technical and later listening QA:** accidental horn/cello sample over-repitch; motif changes caused by register folding; whole-score repetition; TRUE sounding too weak or masking warning effects; audible MP3 loop clicks; performed recorded-note anomalies; stereo/mono collapse. An automated PASS cannot certify expressive timbre, memorable musical identity, emotional truth or two-loop fatigue. Where no reviewer has actually listened, **HEARD ACOUSTIC QUALITY = UNVERIFIED**.
 
+## Corrective sample-register audit (31 October 2026)
+
+The first exact-source CI `5cc8d3b` [#41207301304](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41207301304) passed 16/16 isolated encode/decodes and eight raw additive overlays, but inspection of the downloaded **actual recorded-source provenance artifact** showed **52 large (≥5 semitone) recorded-note shifts out of 1,139 instrument calls**, some 7-semitone shifts on exposed Ridge/Abyss horns and Lifebinder's TRUE horn. A green codec cannot certify that this range is natural. This is a real source risk discovered by the critical audit, not a reason to claim auditory quality.
+
+The revised Phase 5 source revoices **post-opening** Ridge and selected Abyss horn phrases down an octave while retaining every original 16-beat historical pitch/onset/duration. It lowers Lifebinder's distinct TRUE horn counterline and companion-memory fragment, corrects its workshop marimba register, and adjusts Ridge ledger mallet and selected Mine/Frontier bass voices toward available recorded samples. Veyrith's upper horn remains in two intentional high flight/authority climaxes. Requalified source evidence must be regenerated/retested on the corrected head; the first successful CI remains **historical for its original audio**, not proof for the revision. This change is scored deliberately, not silent sample-router interpolation or a claim of heard timbre.
+
 ## Technical verification ledger
 
 - Source: 8 individually authored boss bases and 8 separate TRUE response scores with all 16 registered stable IDs, **unregistered candidate score only**.

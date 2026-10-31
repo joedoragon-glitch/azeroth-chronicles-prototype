@@ -1230,7 +1230,10 @@
         null
       ],
       "motifDisposition": "transformed",
-      "motifRationale": "The original four-bar cello melody retains its complete interval, onset and duration sequence but is transposed down exactly one octave to the recorded cello register. The obsolete 16-bar Phase 2 workshop pilot is not reused; new winter-estate drama and an independent TRUE countermelody requalify both cues."
+      "motifRationale": "The original four-bar cello melody retains its complete interval, onset and duration sequence but is transposed down exactly one octave to the recorded cello register. The obsolete 16-bar Phase 2 workshop pilot is not reused; new winter-estate drama and an independent TRUE countermelody requalify both cues.",
+      "trueRegister": 0,
+      "companionRegister": 0,
+      "pulseRegister": -12
     },
     {
       "id": "boss-mire",
@@ -2810,7 +2813,26 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop."
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
+      "leadRegisterByBar": [
+        12,
+        12,
+        12,
+        12,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "pulseRegister": -12
     },
     {
       "id": "boss-mine",
@@ -3516,7 +3538,8 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop."
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
+      "bassRegister": -5
     },
     {
       "id": "boss-warlord",
@@ -4185,7 +4208,8 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop."
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
+      "bassRegister": -7
     },
     {
       "id": "boss-abyss",
@@ -4811,7 +4835,26 @@
         null
       ],
       "motifDisposition": "retained",
-      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop."
+      "motifRationale": "The legacy sixteen-beat opening retains every sounded note's beat, duration and absolute pitch; later phrases develop this individual's confrontation rather than cloning the original eight-bar loop.",
+      "leadRegisterByBar": [
+        12,
+        12,
+        12,
+        12,
+        0,
+        0,
+        0,
+        0,
+        0,
+        12,
+        0,
+        0,
+        0,
+        12,
+        0,
+        0
+      ],
+      "companionRegister": 0
     }
   ],
   "formerCompanions": {

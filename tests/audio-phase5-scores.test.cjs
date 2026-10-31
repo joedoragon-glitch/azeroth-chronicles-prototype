@@ -16,6 +16,10 @@ for(const [i,f] of s.families.entries()){
  assert.deepEqual(f.originalHook,original.melody);
  for(const k of ['harmony','energy','leadBars','trueBars'])assert.equal(f[k].length,f.bars);
  assert.notDeepEqual(f.leadBars,f.trueBars);
+ if(f.leadRegisterByBar){assert.equal(f.leadRegisterByBar.length,f.bars);assert.deepEqual(f.leadRegisterByBar.slice(0,4),[f.register,f.register,f.register,f.register]);}
+ if(f.key==='crypt') {assert.equal(f.trueRegister,0);assert.equal(f.pulseRegister,-12);}
+ if(f.key==='ridge') {assert.equal(f.pulseRegister,-12);assert.ok(f.leadRegisterByBar.slice(4).includes(0));}
+ if(f.key==='abyss') {assert.equal(f.companionRegister,0);assert.ok(f.leadRegisterByBar.slice(4).includes(0));}
  assert.ok(f.identity.length>=65 && f.truePsychology.length>=80);
  for(let t=0;t<16;t++){
   const match=f.leadBars[Math.floor(t/4)].find(x=>x[0]===t%4);
