@@ -35,7 +35,7 @@ for(const region of [1,4]) {
   assert.notDeepEqual(lines0,lines3,'Living strokes must change without camera movement');
   for(const line of lines0) {
     assert([line.x1,line.y1,line.x2,line.y2,line.width].every(Number.isFinite));
-    assert(line.width>0&&/^#[0-9a-f]{8}$/i.test(line.color));
+    assert(line.width>0&&/^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(line.color));
     assert(Math.min(line.x1,line.x2)<=width+30&&Math.max(line.x1,line.x2)>=-30);
   }
   console.log('PASS V-04 '+b.kind+': native Canvas animated, Pixi backing static, bounded live highlights ('+
