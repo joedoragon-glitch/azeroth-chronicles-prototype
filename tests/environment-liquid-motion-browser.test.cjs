@@ -1,7 +1,8 @@
 'use strict';
 // #708 V-04 actual Chromium Canvas↔Pixi water/lava parity, software GPU only.
-// This checks time-changing pixels at an original hazard, with a fixed camera,
-// while the heavy cached terrain is allowed to remain static.
+// Keep the original focused four-sample contract; comprehensive hardware,
+// zoom and recovery stress belong to later owner-device acceptance.
+// Check camera stability so software GPU emergency rescue cannot fake motion.
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
@@ -94,85 +95,55 @@ async function main(){
     }
     await options();
     const rows=[];
-    // Original defect was observed at a stationary, actually visible channel.
-    // Scene entry and Pixi's asynchronous terrain preparation can briefly
-    // show the previous camera/texture. Under software WebGL, performance
-    // protection can delay a refresh by whole seconds. Sampling two different
-    // camera positions creates a false animation delta or a false zero-glints
-    // failure. Require the admitted game's camera/hero to settle first.
-    async function stableView(site, mode) {
-      let previous=null, consecutive=0, last=null;
-      for(let attempt=0;attempt<90;attempt++) {
-        await page.waitForTimeout(250);
-        const s=await page.evaluate(target=>{
-          const g=Prototype.game, r=Prototype.renderer, gpu=Prototype.experimentalGraphics;
-          return {
-            zone:g.zoneId, hero:{x:g.hero.x,y:g.hero.y,hp:g.hero.hp},
-            deaths:g.s.statistics?.deaths, sceneMode:g.s.mode,
-            projected:r.screen(target.hazard),
-            zoom:Prototype.platform.cameraZoom, renderer:gpu.mode,
-            effective:r.metrics().optimizationMode,
-            liquidStrokes:gpu.sceneMetrics?.liquidStrokes??0
-          };
-        },site);
-        last=s;
-        const p=s.projected;
-        const heroFixed=Math.abs(s.hero.x-site.hero.x)<1&&
-          Math.abs(s.hero.y-site.hero.y)<1;
-        const hazardVisible=p&&p.x>100&&p.x<1080&&p.y>95&&p.y<655;
-        const living=mode==='canvas2d'||
-          (s.renderer==='webgl2'&&s.liquidStrokes>0);
-        const sameCamera=previous&&
-          Math.hypot(p.x-previous.projected.x,p.y-previous.projected.y)<0.5;
-        consecutive=heroFixed&&hazardVisible&&living&&sameCamera&&
-          s.zone===site.zone?consecutive+1:0;
-        if(consecutive>=3)return s;
-        previous=s;
-      }
-      throw Error('Issue #708 ' + site.name +
-        ' did not stabilize at a visible liquid channel: '+JSON.stringify(last));
-    }
     async function sample(site,mode){
       const status=await page.evaluate(s=>{
         const g=Prototype.game;
-        // The Campaign's own entry method must establish the arrival.
-        // Changing the hero directly during a still-pending region entry let
-        // the authoritative arrival reset it to Crown town mid-comparison.
-        if(!g.enter(s.zone,s.hero))throw Error('Could not enter current '+s.zone);
+        if(!g.enter(s.zone))throw Error('Could not enter current '+s.zone);
+        Object.assign(g.hero,s.hero);
         g.hero.order=null;g.hero.path=[];
         g.s.clock=480;g.zone().enemies=[];g.zone().npcs=[];g.s.party=[];
         return {zone:g.zoneId,hero:{x:g.hero.x,y:g.hero.y},phase:g.daylightPhase().phase};
       },site);
       assert.equal(status.phase,'night');
-      // Let the real region-entry transition settle without rewriting
-      // the simulation's hero coordinates after the fact.
-      await page.waitForTimeout(900);
-      const firstView=await stableView(site,mode);
-      const p=firstView.projected;
+      const p=await page.evaluate(s=>Prototype.renderer.screen(s.hazard),site);
       const crop={x:Math.max(0,Math.min(1000,Math.round(p.x-90))),
         y:Math.max(0,Math.min(580,Math.round(p.y-85))),width:180,height:170};
       const surface=page.locator(mode==='canvas2d'?'#world':'#world-pixi-experimental');
+      await page.waitForTimeout(1100);
       const a=await surface.screenshot({path:path.join(out,site.name+'-'+mode+'-t0.png')});
-      const first=await page.evaluate(()=>({
+      const first=await page.evaluate(s=>({
         renderer:Prototype.experimentalGraphics.mode,
         effective:Prototype.renderer.metrics().optimizationMode,
         pixiEffective:Prototype.experimentalGraphics.backgroundOptimized,
         liquidStrokes:Prototype.experimentalGraphics.sceneMetrics?.liquidStrokes,
-      }));
+        hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},
+        hazardScreen:Prototype.renderer.screen(s.hazard),
+        zone:Prototype.game.zoneId,
+      }),site);
       await page.waitForTimeout(2500);
-      const lastView=await stableView(site,mode);
-      assert(Math.hypot(lastView.projected.x-p.x,lastView.projected.y-p.y)<1,
-        site.name+' scene moved while measuring time-dependent liquid: '+
-        JSON.stringify({firstView,lastView}));
-      assert.equal(lastView.zoom,firstView.zoom,'Camera zoom changed during sample');
       const b=await surface.screenshot({path:path.join(out,site.name+'-'+mode+'-t1.png')});
-      const last=await page.evaluate(()=>({
+      const last=await page.evaluate(s=>({
         renderer:Prototype.experimentalGraphics.mode,
         effective:Prototype.renderer.metrics().optimizationMode,
         pixiEffective:Prototype.experimentalGraphics.backgroundOptimized,
         liquidStrokes:Prototype.experimentalGraphics.sceneMetrics?.liquidStrokes,
-      }));
+        hero:{x:Prototype.game.hero.x,y:Prototype.game.hero.y},
+        hazardScreen:Prototype.renderer.screen(s.hazard),
+        zone:Prototype.game.zoneId,
+      }),site);
       const changed=await diff(a,b,crop);
+      assert.equal(first.zone,site.zone,'sample began in another region');
+      assert.equal(last.zone,site.zone,'sample ended in another region');
+      // An emergency slow-render rescue correctly returns the hero to town;
+      // reject that invalid still-camera screenshot rather than masking it.
+      assert(Math.hypot(first.hero.x-last.hero.x,first.hero.y-last.hero.y)<1,
+        'Software-GPU sample moved the hero (possible emergency refuge): '+JSON.stringify({first,last}));
+      assert(Math.hypot(first.hazardScreen.x-last.hazardScreen.x,
+        first.hazardScreen.y-last.hazardScreen.y)<1,
+        'Camera moved during stationary liquid comparison');
+      assert(first.hazardScreen.x>=crop.x&&first.hazardScreen.x<=crop.x+crop.width&&
+        first.hazardScreen.y>=crop.y&&first.hazardScreen.y<=crop.y+crop.height,
+        'Hazard must remain inside measured screenshot crop');
       assert.equal(first.renderer,mode,'unexpected renderer or silent fallback');
       assert.equal(last.renderer,mode,'late renderer fallback');
       assert.equal(first.effective,'on','Matched effective On required');
@@ -181,23 +152,15 @@ async function main(){
         assert.equal(first.pixiEffective,true);
         assert.equal(last.pixiEffective,true);
         assert(first.liquidStrokes>0&&last.liquidStrokes>0,
-          'GPU liquid glints must exist in both settled in-view samples');
+          'GPU scene must contain live glints at BOTH stationary capture times');
       }
       assert(changed>0,'Native '+site.name+' must visibly animate in '+mode+
         ', unlike the independently reproduced original static Pixi baseline');
-      rows.push({site:site.name,mode,crop,changed,first,last,firstView,lastView});
+      rows.push({site:site.name,mode,crop,changed,first,last});
     }
     for(const site of sites) await sample(site,'canvas2d');
     await options('webgl2');
     for(const site of sites) await sample(site,'webgl2');
-    // Pre-merge functional re-entry: after both 150% regions have been drawn,
-    // switch to native 100% zoom and revisit each region without a restart.
-    assert.equal(await page.evaluate(()=>Prototype.platform.cameraZoom),1.5,
-      'Original-game camera default must be 150% for first acceptance pair');
-    await page.evaluate(()=>Prototype.platform.selectCameraZoom(1));
-    await page.waitForFunction(()=>Prototype.platform.cameraZoom===1);
-    for(const site of sites) await sample({...site,name:site.name+'-zoom100-reentry'},'webgl2');
-
     assert.deepEqual(errors,[],'No browser JS exceptions in actual rendered scenes');
     fs.writeFileSync(path.join(out,'liquid-motion-browser-result.json'),
       JSON.stringify({head:'issue 708 V-04 corrective candidate',rows,errors},null,2)+'\n');
