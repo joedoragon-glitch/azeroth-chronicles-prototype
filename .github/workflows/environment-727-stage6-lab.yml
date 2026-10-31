@@ -104,20 +104,27 @@ jobs:
             test-results/environment-727-stage6-upgrade.log
           if-no-files-found: warn
           retention-days: 14
-      - name: Freeze verified source-authored previews in review-only source archive (one-time draft branch commit)
+      - name: Freeze verified source-authored previews in review-only archive (one-time draft branch commit)
         if: github.event_name == 'push' && success()
         run: |
           set -euo pipefail
           mkdir -p tools/audio/frozen-preview
           cp tools/audio/.stage6-artifacts/*.mp3 tools/audio/frozen-preview/
-          # Source SHA/codec/size and all real-browser/offline gates already passed.
+          # Physical source, SHA, size, codec, browser and offline gates passed.
+          # Another writer can advance the branch during CI; stage the 16 MP3s
+          # in a CLEAN worktree at the latest branch head without rewriting it.
+          git fetch origin "refs/heads/$GITHUB_REF_NAME"
+          mkdir -p /tmp/environment727-archive
+          git worktree add --detach /tmp/environment727-archive "$(git rev-parse FETCH_HEAD)"
+          cp tools/audio/frozen-preview/*.mp3 /tmp/environment727-archive/tools/audio/frozen-preview/
+          cd /tmp/environment727-archive
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -f tools/audio/frozen-preview/*.mp3
           if git diff --cached --quiet; then
-            echo 'All 16 frozen studio previews already archived; no additional commit.'
+            echo 'All 16 source-frozen studio previews are already archived.'
           else
             test "$(git diff --cached --name-only | wc -l)" -eq 16
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -m 'audio(#727): pin 16 original-source preview files, unregistered and not playable'
+            git commit -m 'audio(#727): archive 16 exact source-frozen studio MP3s, unregistered'
             git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
           fi
