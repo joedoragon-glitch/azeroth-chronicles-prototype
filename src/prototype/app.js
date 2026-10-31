@@ -7533,9 +7533,10 @@
   const companionMonitorToggle = document.createElement('button');
   companionMonitorToggle.type = 'button';
   companionMonitorToggle.textContent = 'DEV · COMPANIONS';
-  companionMonitorToggle.setAttribute('aria-expanded', 'true');
+  companionMonitorToggle.setAttribute('aria-expanded', String(platform.mode !== 'phone'));
   const companionMonitorContent = document.createElement('div');
   companionMonitorContent.id = 'developer-companion-content';
+  companionMonitorContent.hidden = platform.mode === 'phone';
   companionMonitorToggle.onclick = () => {
     const collapsed = !companionMonitorContent.hidden;
     companionMonitorContent.hidden = collapsed;
