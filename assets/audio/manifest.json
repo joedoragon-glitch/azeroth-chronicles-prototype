@@ -3123,7 +3123,7 @@
           "when": {
             "zone": "side-highlands-signal"
           },
-          "asset": "env-cellar",
+          "asset": "env-highland-wind",
           "gain": 0.22,
           "fade": 2.5
         },
@@ -3132,7 +3132,7 @@
           "when": {
             "zone": "side-frontier-shrine"
           },
-          "asset": "env-retreat",
+          "asset": "env-frontier-air",
           "gain": 0.23,
           "fade": 2.5
         },
