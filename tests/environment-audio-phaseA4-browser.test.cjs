@@ -20,8 +20,8 @@ const cases=[
   {zone:'vale',mode:'night',score:'night-vale',bed:'env-woodland-night'},
   {zone:'march',mode:'exploration',score:'place-march',bed:'env-marsh-day'},
   {zone:'march',mode:'night',score:'night-march',bed:'env-marsh-night'},
-  {zone:'highlands',mode:'exploration',score:'place-highlands',bed:'env-highland-wind'},
-  {zone:'frontier',mode:'exploration',score:'place-frontier',bed:'env-frontier-air'},
+  {zone:'highlands',mode:'exploration',score:'place-highlands',bed:'env-highlands-autumn'},
+  {zone:'frontier',mode:'exploration',score:'place-frontier',bed:'env-frontier-recovery'},
   {zone:'crown',mode:'exploration',score:'place-crown',bed:'env-crown-courtyard'},
   {zone:'crypt',mode:'exploration',score:'place-crypt',bed:'env-retreat'},
   {zone:'archive',mode:'exploration',score:'place-archive',bed:'env-archive'},
@@ -34,8 +34,8 @@ const cases=[
   {zone:'supply-crown',mode:'exploration',score:'interior-supply-crown',bed:'env-home'},
   {zone:'side-vale-cellars',mode:'exploration',score:'interior-side-vale-cellars',bed:'env-cellar'},
   {zone:'side-march-watchhouse',mode:'exploration',score:'interior-side-march-watchhouse',bed:'env-archive'},
-  {zone:'side-highlands-signal',mode:'exploration',score:'interior-side-highlands-signal',bed:'env-cellar'},
-  {zone:'side-frontier-shrine',mode:'exploration',score:'interior-side-frontier-shrine',bed:'env-retreat'},
+  {zone:'side-highlands-signal',mode:'exploration',score:'interior-side-highlands-signal',bed:'env-signal-occupied'},
+  {zone:'side-frontier-shrine',mode:'exploration',score:'interior-side-frontier-shrine',bed:'env-shrine-occupied'},
   {zone:'side-crown-foundry',mode:'exploration',score:'interior-side-crown-foundry',bed:'env-mine'},
 ];
 const server=http.createServer((req,res)=>{
