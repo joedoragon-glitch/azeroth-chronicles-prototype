@@ -68,7 +68,6 @@ jobs:
         run: |
           set -o pipefail
           node tests/environment-727-stage6-browser.test.cjs | tee test-results/environment-727-stage6-browser.log
-            test-results/environment-727-stage6-offline.log
       - name: Verify fresh offline PWA install/reopen and all 16 SHA-verified source files
         run: |
           set -o pipefail
@@ -81,5 +80,6 @@ jobs:
           path: |
             test-results/environment-727-stage6-trial.json
             test-results/environment-727-stage6-browser.log
+            test-results/environment-727-stage6-offline.log
           if-no-files-found: warn
           retention-days: 14
