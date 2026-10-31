@@ -14,10 +14,13 @@ assert.equal(bank.schemaVersion, 1);
 assert.equal(bank.license, 'CC0-1.0');
 assert.equal(bank.sourceCommit.length, 40);
 assert.match(bank.sourceRepository, /^https:\/\/github\.com\//);
+assert.equal(bank.sources.length, 2);
+assert(bank.sources.every(s => s.license === 'CC0-1.0'));
+assert.equal(bank.instruments.piano.samples.filter(s => s.vel < 1).length, 2);
 assert.match(bank.status, /UNVERIFIED/);
 assert.match(bank.qualityCaveat, /not a professional master quality guarantee/i);
 assert.deepEqual(Object.keys(bank.instruments).sort(),
-  ['basses', 'celli', 'flute', 'glockenspiel', 'harp', 'horn', 'marimba', 'violins']);
+  ['basses', 'celli', 'flute', 'glockenspiel', 'harp', 'horn', 'marimba', 'piano', 'violins']);
 assert.equal(scores.phase4, 'BLOCKED');
 assert.equal(scores.sourceQuality, 'REVISE');
 assert.equal(scores.sonicQuality, 'UNVERIFIED');
@@ -32,7 +35,7 @@ for (const [instrument, def] of Object.entries(bank.instruments)) {
   const pitches = new Set();
   for (const s of def.samples) {
     assert(s.file.startsWith(instrument + '/'));
-    assert.match(s.file, /^[a-zA-Z]+\/[a-zA-Z0-9-]+\.mp3$/);
+    assert.match(s.file, /^[a-zA-Z]+\/[a-zA-Z0-9-]+\.(mp3|ogg)$/);
     assert(!sampleFiles.has(s.file), 'Duplicate source sample: ' + s.file);
     assert(Number.isInteger(s.midi) && s.midi >= def.range[0] && s.midi <= def.range[1],
       instrument + ': invalid recorded pitch ' + s.midi);
@@ -43,8 +46,9 @@ for (const [instrument, def] of Object.entries(bank.instruments)) {
       .update(Buffer.from('blob ' + data.length + '\0'))
       .update(data).digest('hex');
     assert.equal(calculated, s.sourceGitBlob, s.file + ': upstream binary changed');
-    assert(data.subarray(0, 3).toString('ascii') === 'ID3' ||
-      data[0] === 0xff, s.file + ': not plausibly MP3');
+    assert((s.file.endsWith('.ogg') && data.subarray(0,4).toString('ascii') === 'OggS') ||
+      (s.file.endsWith('.mp3') && (data.subarray(0,3).toString('ascii') === 'ID3' || data[0] === 0xff)),
+      s.file + ': not plausibly MP3/Ogg');
     if (def.sustain) {
       assert(s.loopStart > 0 && s.loopEnd > s.loopStart);
       assert(s.duration > s.loopEnd);
@@ -56,7 +60,7 @@ for (const [instrument, def] of Object.entries(bank.instruments)) {
   }
   assert(pitches.size >= 2, instrument + ': insufficient recorded pitch coverage');
 }
-assert.equal(count, 41);
+assert.equal(count, 49);
 const recorded = new Set(sampleFiles);
 function filesIn(dir, prefix='') {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap(e =>
@@ -64,7 +68,7 @@ function filesIn(dir, prefix='') {
     [prefix + e.name]);
 }
 for (const f of filesIn(fromRoot('tools/audio/phase3-samples'))) {
-  if (f.endsWith('.mp3')) assert(recorded.has(f), 'Unproven/unindexed MP3: ' + f);
+  if (/\.(mp3|ogg)$/.test(f)) assert(recorded.has(f), 'Unproven/unindexed sample: ' + f);
 }
 // A sampler must not pretend to play outside instrument ranges. Current score
 // exceeds some ranges; preserve as a pre-integration finding, not a quality pass.
@@ -92,7 +96,7 @@ for (const t of scores.themes.filter(t => !t.pilotFamily)) {
 }
 assert(missingOrOvershot.size > 0,
   'If all ranges become covered, update the bank-coverage review before changing status');
-console.log('PASS source/provenance ONLY: '+count+' pinned CC0 MP3 clips / '+
+console.log('PASS source/provenance ONLY: '+count+' pinned CC0 source recordings / '+
   bytes+' encoded bytes, all upstream Git blob hashes match');
 console.log('HOLD: '+missingOrOvershot.size+
   ' distinct uncovered pitch/patch uses in six authored themes. '+

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "Experimental isolated recorded-instrument source bank; sonic quality UNVERIFIED; Phase 4 BLOCKED; no game-facing assets or release",
+  "status": "49-file CC0 recorded palette, studio candidate; composer NOT yet wired, sonic quality UNVERIFIED, Phase 4 BLOCKED",
   "source": "tiny-orchestra 0.2.0 (edited VSCO-2 CE CC0 recordings)",
   "sourceRepository": "https://github.com/MarianBecher/tiny-orchestra",
   "sourceCommit": "60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f",
@@ -17,7 +17,7 @@
     "channels": 1,
     "loudnessTarget": -20
   },
-  "qualityCaveat": "Real recorded performances are a major advance over one oscillator patch, but these are lossy compact source samples and pitch shifting/short sustain loops can introduce audible artifacts. They are not a professional master quality guarantee. No claim of actual listening or production approval.",
+  "qualityCaveat": "Real recorded performances are a major advance over one oscillator patch, but these are lossy compact source samples and pitch shifting/short sustain loops can introduce audible artifacts. They are not a professional master quality guarantee. No claim of actual listening or production approval. The eight piano Ogg samples are a sparse CC0 subset and do not establish full-piano fidelity.",
   "instruments": {
     "flute": {
       "sustain": true,
@@ -598,6 +598,106 @@
           "sourceBytes": 31914
         }
       ]
+    },
+    "piano": {
+      "sustain": false,
+      "release": 0.28,
+      "gain": 0.85,
+      "range": [
+        53,
+        88
+      ],
+      "format": "ogg",
+      "sampleRate": 48000,
+      "source": "Meta Piano CC0",
+      "samples": [
+        {
+          "file": "piano/INSPiano_Vel02_F3_01.ogg",
+          "midi": 53,
+          "vel": 1,
+          "sourceGitBlob": "245eb2a594d69a46e8ea8b2fb5dd10d602daeac6",
+          "sourceBytes": 204479
+        },
+        {
+          "file": "piano/INSPiano_Vel02_C4_01.ogg",
+          "midi": 60,
+          "vel": 1,
+          "sourceGitBlob": "bbb0e05eae2d987bcff9c9b0c576325d635b9960",
+          "sourceBytes": 150476
+        },
+        {
+          "file": "piano/INSPiano_Vel02_G4_01.ogg",
+          "midi": 67,
+          "vel": 1,
+          "sourceGitBlob": "5e2a0e5866049d023b9119787d29e2969d126038",
+          "sourceBytes": 150807
+        },
+        {
+          "file": "piano/INSPiano_Vel02_D5_01.ogg",
+          "midi": 74,
+          "vel": 1,
+          "sourceGitBlob": "c78c5370303470572e29e19a4075d97b2dd44ebc",
+          "sourceBytes": 112216
+        },
+        {
+          "file": "piano/INSPiano_Vel02_A5_01.ogg",
+          "midi": 81,
+          "vel": 1,
+          "sourceGitBlob": "88c8d117976684b84fdce1e435e66840cfb35c3c",
+          "sourceBytes": 138519
+        },
+        {
+          "file": "piano/INSPiano_Vel02_E6_01.ogg",
+          "midi": 88,
+          "vel": 1,
+          "sourceGitBlob": "27203da922cbd6617da74934ccd4ea90ac3a9f72",
+          "sourceBytes": 67785
+        },
+        {
+          "file": "piano/INSPiano_Vel01_C4_01.ogg",
+          "midi": 60,
+          "vel": 0.55,
+          "sourceGitBlob": "c2fa9485671980ff892b11e2d82264f53adfeae5",
+          "sourceBytes": 104970
+        },
+        {
+          "file": "piano/INSPiano_Vel01_D5_01.ogg",
+          "midi": 74,
+          "vel": 0.55,
+          "sourceGitBlob": "20e7da18ba314381beb4fd1c3d869ca066eca236",
+          "sourceBytes": 96331
+        }
+      ]
     }
-  }
+  },
+  "sources": [
+    {
+      "project": "tiny-orchestra / VSCO-2 Community Edition",
+      "repo": "https://github.com/MarianBecher/tiny-orchestra",
+      "commit": "60f3d59d4a797e0b0815c8dbd23aaa3cd723eb6f",
+      "license": "CC0-1.0",
+      "instruments": [
+        "basses",
+        "celli",
+        "flute",
+        "glockenspiel",
+        "harp",
+        "horn",
+        "marimba",
+        "violins"
+      ],
+      "format": "mono 44.1 kHz MP3"
+    },
+    {
+      "project": "Meta Piano",
+      "repo": "https://github.com/facebookincubator/Meta-open-sound",
+      "commit": "251c0be57d5d1b3242b91f53e0cde62ab1cb42d9",
+      "license": "CC0-1.0",
+      "evidence": "https://github.com/facebookincubator/Meta-open-sound/blob/251c0be57d5d1b3242b91f53e0cde62ab1cb42d9/systems/instruments/meta-piano/LICENSE",
+      "instruments": [
+        "piano"
+      ],
+      "format": "mono 48 kHz Ogg Vorbis, from 24-bit stereo WAV"
+    }
+  ]
 }
