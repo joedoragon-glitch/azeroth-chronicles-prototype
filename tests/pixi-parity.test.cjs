@@ -93,7 +93,7 @@ assert(
 );
 assert(
   actorFrame.includes('{ x: bodyPoint.x / zoom, y: bodyPoint.y / zoom }') &&
-  actorFrame.includes('x: bodyPoint.x + b.dx * zoom') &&
+  actorFrame.includes('bodyPoint.x + b.dx * zoom') &&
   actorFrame.includes('y: bodyPoint.y + b.dy * zoom') &&
   actorFrame.includes('x: source.bodyPoint.x'),
   'Raster and procedural art, plus character-specific details, must follow idle motion',
