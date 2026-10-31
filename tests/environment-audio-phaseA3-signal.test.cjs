@@ -21,7 +21,26 @@ function tool(bin,args,opts={}) {
   return p;
 }
 function db(value){return value>0 ? +(20*Math.log10(value)).toFixed(2) : null}
+const binaries=['ffmpeg','ffprobe'];
+const missing=binaries.filter(bin=>{const check=cp.spawnSync(bin,['-version'],{encoding:'utf8',timeout:10000});return !!check.error||check.status!==0});
+if(missing.length&&process.env.REQUIRE_AUDIO_SIGNAL_DECODE==='1') {
+  throw Error('Strict A3 audio measurement requires real external decoders: missing '+missing.join(', '));
+}
 let totalBytes=0;
+if(missing.length) {
+  for(const [id,a] of jobs) {
+    const file=path.join(root,a.src.replace(/^\.\//,''));
+    assert(fs.existsSync(file),'missing real MP3 '+id);
+    const bytes=fs.readFileSync(file);
+    totalBytes+=bytes.length;
+    assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),
+      a.sha256,id+' real physical MP3 hash mismatch');
+    assert(a.loop.end<=a.duration,id+' manifest loop invalid');
+  }
+  console.log('PASS #709 A3 file integrity: 14/14 actual MP3 SHA-256 hashes and catalog loop bounds, '+totalBytes+' bytes');
+  console.log('A3_REAL_DECODE_NOT_RUN: '+missing.join(', ')+' missing on this runner. Strict decoder job (REQUIRE_AUDIO_SIGNAL_DECODE=1) is mandatory for decoded waveform/loudness acceptance.');
+  process.exit(0);
+}
 for(const [id,a] of jobs) {
   const file=path.join(root,a.src.replace(/^\.\//,''));
   assert(fs.existsSync(file),'missing physical MP3 '+id);
