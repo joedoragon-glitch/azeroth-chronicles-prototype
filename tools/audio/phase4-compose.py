@@ -72,6 +72,11 @@ def score_contract():
     context_ids = set(by_id) | set(INTERIORS)
     assert set(data["groovePalettes"]) == context_ids
     assert set(data["acousticPalettes"]) == context_ids
+    assert set(data["actionAccents"]) == set(by_id)
+    for parent, accents in data["actionAccents"].items():
+        assert len(accents) == 2
+        assert all(0 <= at < 4 and kind in ("frame", "tom", "shaker")
+                   and .015 <= gain <= .07 for at, kind, gain in accents)
     for context, figures in data["groovePalettes"].items():
         assert set(figures) == set("HAQR"), context
         for name, notes in figures.items():
@@ -179,7 +184,8 @@ def parse_room_cell(source):
             (piece.split(":") for piece in source.split())]
 
 
-def render_arrangement(cue, by_id, pilots, rooms, sampler):
+def render_arrangement(cue, by_id, pilots, rooms, sampler,
+                       grooves, acoustic_profiles, action_accents):
     import numpy as np
     from scipy.signal import butter, sosfilt
 
@@ -201,6 +207,8 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
         hashlib.sha256((cue["id"] + ":phase4-recorded").encode()).digest()[:8], "little"))
     role = cue["kind"]
     additive = role == "action"
+    groove = grooves[cue["groovePalette"]]
+    acoustic = acoustic_profiles[cue["spacePalette"]]
     # True stems are deliberately lighter than full arrangements; the music
     # director plays these *over* the base, not instead of it.
     target = {"action": .027, "peace": .071, "night": .063,
@@ -225,7 +233,8 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
             wave[:len(stereo)-end] += stereo[end:]
 
     def tone(bar, at, degree, duration, inst, amount,
-             absolute=False, chromatic=0, soft=False, register_shift=0):
+             absolute=False, chromatic=0, soft=False,
+             register_shift=0, bass_voice=False):
         pitch = degree if absolute else harmony[bar] + degree
         midi = (root + sampler.degree(pitch, mode) + REGISTERS[inst]
                 + chromatic + register_shift)
@@ -237,7 +246,7 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
         ranges = {"glockenspiel": (75, 88), "cello": (40, 71),
                   "horn": (46, 75), "guitar": (40, 64),
                   "strings": (55, 80), "flute": (60, 90)}
-        if inst in ranges:
+        if inst in ranges and not bass_voice:
             low, high = ranges[inst]
             while midi < low:
                 midi += 12
@@ -248,92 +257,97 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
             fade = min(round(.050 * rate), len(pcm))
             if fade:
                 pcm[:fade] *= np.linspace(.12, 1, fade)
-        add(bar, at, pcm, amount, sampler.pan(inst, midi), jitter=inst in
+        add(bar, at, pcm, amount,
+            sampler.pan(inst, midi) * acoustic["stageWidth"], jitter=inst in
             ("harp", "guitar", "marimba", "piano"))
 
     for bar in range(bars):
         phrase = cue["form"][bar]
         dynamic = cue["arc"][(4 * bar) // bars]
-        # Per-context accompaniment patterns reflect the real performance
-        # clock; exact loop frame count is NEVER stretched or copied from
-        # historical 8-bar pilot MP3 metadata.
-        if role == "action":
-            beats = ((0,0,.4),(1,2,.4),(2.25,4,.46),(3.22,2,.4))
-        elif role == "settlement":
-            beats = ((.18,0,.62),(1.45,2,.52),(2.8,4,.58))
-        elif role in ("night", "interior-peace"):
-            beats = ((0,0,1.25),(2.8,4,.65))
-        elif role == "peace":
-            beats = ((0,0,.95),(2.5,2,.8))
-        else:
-            beats = ((0,0,.8),(1.7,4,.65),(3.1,2,.52))
-        # R bars are intentionally sparse, not fully silent: the low harmonic
-        # bed survives while the hook rests.
-        if phrase == "R":
-            beats = beats[:1]
+        # The 15 approved scene identities each own a different scored
+        # rhythm language. They are transformed by dramatic role, but NOT
+        # replaced by one five-case role preset for all 38 recordings.
+        beats = groove[phrase]
+        if role in ("night", "peace", "interior-peace"):
+            # A longer breath and fewer attacks support uneasy quiet.
+            beats = beats[:2]
+        elif bar % 4 == 3 and phrase != "R":
+            # Hold a physical silence before the next four-bar answer; do
+            # not fill every corner with a metronomic accompaniment.
+            beats = beats[:-1]
         for at, degree, duration in beats:
-            tone(bar, at, degree, duration, cue["pulse"],
-                 .023 if additive else .027 if phrase == "R" else .039,
+            played_len = (duration * .74 if additive else
+                          duration * 1.12 if role in ("night", "peace", "interior-peace")
+                          else duration)
+            tone(bar, at, degree, played_len, cue["pulse"],
+                 .023 if additive else .022 if phrase == "R" else .038,
                  soft=role in ("night", "peace", "interior-peace"))
-        # Supporting bass stays deliberately quiet on action overlays.
-        if bar % 2 == 0 or phrase == "R":
-            tone(bar, 0, 0, 1.8 if role == "action" else 2.5,
-                 "cello", .018 if additive else .031, soft=True)
+        # A lower supporting voice, not a duplicated midrange cello melody.
+        # The original 'cello' sample router safely selects the bass bank
+        # when the actually scored pitch is in the genuine low register.
+        if (bar % 3 == 0 and phrase != "A") or phrase == "R":
+            tone(bar, 0, 0, 1.55 if additive else 2.35,
+                 "cello", .013 if additive else .027, soft=True,
+                 register_shift=-12, bass_voice=True)
         if phrase == "H":
-            if theme:
-                notes, absolute = heritage_notes(theme, bar, pilots)
+            if additive:
+                # The parent base theme is STILL PLAYING. An action stem
+                # cannot simply restate the complete lead at each attack.
+                # This cue's own answer cell plays a restrained counterline,
+                # preserving the audible original melody in the base.
+                notes = cue["answer"]
+                for at, degree, duration in notes:
+                    tone(bar, at, degree, min(duration, .7),
+                         cue["response"], .026, soft=True)
             else:
-                notes, absolute = parse_room_cell(room["motif"]), False
-            for idx, event in enumerate(notes):
-                at, degree, duration = event[:3]
-                accidental = event[3] if len(event) > 3 else 0
-                # A parent horn score's later -12 register decisions are
-                # actual orchestration, not a technical workaround. Apply
-                # them to heritage statements of the same phrase in every
-                # Phase 4 context; first two original motif bars stay exact.
-                inherited_register = (theme.get("leadRegisterByBar", [0] * bars)[bar]
-                                      if theme and theme.get("lead") == "horn"
-                                      and cue["lead"] == "horn" else 0)
-                tone(bar, at, degree, duration, cue["lead"],
-                     (.041 if additive else .073) * (1.06 if idx == 0 else .90),
-                     absolute=absolute, chromatic=accidental,
-                     soft=role in ("night", "peace", "interior-peace"),
-                     register_shift=inherited_register)
+                if theme:
+                    notes, absolute = heritage_notes(theme, bar, pilots)
+                else:
+                    notes, absolute = parse_room_cell(room["motif"]), False
+                for idx, event in enumerate(notes):
+                    at, degree, duration = event[:3]
+                    accidental = event[3] if len(event) > 3 else 0
+                    # Respect the Phase 3 later-bar low-horn rewrite on
+                    # compatible arrangements; first two bars retain pitch.
+                    inherited_register = (
+                        theme.get("leadRegisterByBar", [0] * bars)[bar]
+                        if theme and theme.get("lead") == "horn"
+                        and cue["lead"] == "horn" else 0)
+                    tone(bar, at, degree, duration, cue["lead"],
+                         .072 * (1.06 if idx == 0 else .89),
+                         absolute=absolute, chromatic=accidental,
+                         soft=role in ("night", "peace", "interior-peace"),
+                         register_shift=inherited_register)
         elif phrase == "A":
             notes = cue["answer"] if theme else parse_room_cell(room["reply"])
             for at, degree, duration in notes:
                 tone(bar, at, degree, duration, cue["response"],
-                     .039 if additive else .061, soft=True)
+                     .036 if additive else .059, soft=True)
         elif phrase == "Q":
             notes = cue["question"] if theme else parse_room_cell(room["question"])
             for at, degree, duration in notes:
                 tone(bar, at, degree, duration, cue["lead"],
-                     .033 if additive else .058, soft=True)
-        if additive and dynamic > .9 and bar % 4 in (1, 2):
-            # Distinct per-cue melodic/harmonic figures drive the escalation;
-            # percussion is a small articulator rather than the shared boss
-            # ostinato inherited from old scores.
-            add(bar, 0, sampler.drum("frame", rng), .055,
-                -.07, jitter=True)
-            add(bar, 2.8, sampler.drum("shaker", rng), .040,
-                .12, jitter=True)
+                     .031 if additive else .053, soft=True)
+        if additive and dynamic > .82 and bar % 4 in (1, 2):
+            # Actual location-specific accents: restrained percussion
+            # supports the rhythmic argument rather than a shared boss loop.
+            for at, kind, amount in action_accents[cue["parent"]]:
+                add(bar, at, sampler.drum(kind, rng), amount,
+                    -.12 if kind == "frame" else .10, jitter=True)
 
     dry = wave.copy()
     # A quiet bounded individual recording space; game-runtime mixing remains
     # Phase 7's separate unresolved integration gate.
-    profile = {
-        "action": ((.067,.035),(.181,.012)),
-        "peace": ((.091,.045),(.247,.016)),
-        "night": ((.119,.040),(.288,.019)),
-        "settlement": ((.054,.045),(.168,.018)),
-        "interior": ((.046,.031),(.143,.021)),
-        "interior-peace": ((.086,.042),(.196,.020)),
-    }[role]
-    for delay, gain in profile:
+    # Environment-specific recorded room profile inherited across a family:
+    # close domestic stores, airy ruined landscape, living archive, mine
+    # gallery and unfinished flight works have deliberately different tails.
+    for delay, gain in acoustic["earlyReflections"]:
         wave += np.roll(dry, round(delay * rate), axis=0) * gain
-    wave[:,0] += np.roll(dry[:,1], round(.119 * rate)) * .012
-    wave[:,1] += np.roll(dry[:,0], round(.139 * rate)) * .012
-    for cutoff, kind in ((44, "highpass"), (13000, "lowpass")):
+    feed = acoustic["crossfeed"]
+    wave[:,0] += np.roll(dry[:,1], round(.119 * rate)) * feed
+    wave[:,1] += np.roll(dry[:,0], round(.139 * rate)) * feed
+    for cutoff, kind in ((44, "highpass"),
+                         (acoustic["lowpassHz"], "lowpass")):
         sos = butter(2, cutoff, btype=kind, fs=rate, output="sos")
         wave = sosfilt(sos, np.concatenate((wave, wave), axis=0), axis=0)[n:]
     rms = float(np.sqrt(np.mean(wave ** 2)))
@@ -371,7 +385,10 @@ def main():
     for cue in data["arrangements"]:
         sampler.cue = cue["id"]
         before = sampler.calls
-        wave, rate = render_arrangement(cue, by_id, pilots, data["interiors"], sampler)
+        wave, rate = render_arrangement(
+            cue, by_id, pilots, data["interiors"], sampler,
+            data["groovePalettes"], data["acousticPalettes"],
+            data["actionAccents"])
         result = original.encode_stem(out, cue["id"], wave, rate, encoder, bitrate="192k")
         result["kind"] = cue["kind"]
         result["parent"] = cue["parent"]
