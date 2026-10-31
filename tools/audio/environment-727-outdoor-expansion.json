@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 2 continued — distinct Greenwood/Marches nighttime and two conservative Crown ambience candidates; NO game registration",
-  "status": "UNPINNED expansions; probe before actual render, signal and artistic acceptance HOLD",
+  "status": "ALL THREE original physical sources pinned from independent studio action #41228031724; 4 previews NOT yet produced; creative trial hold",
   "predecessorStudio": "tools/audio/environment-727-outdoor-studies.json",
   "authority": "Issue #727 Stage1 canon briefs; AGENTS.md; docs/AUDIO_ENVIRONMENT.md",
   "sources": [
@@ -13,11 +13,15 @@
       "evidence": "https://opengameart.org/content/park-ambiences",
       "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
       "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
-      "sha256": null,
+      "sha256": "5c381856745b4706e7eba55eb9271a61a530e90c05df8126adb2db89ecfa6c5a",
       "bytes": 73960096,
       "maxBytes": 85000000,
       "role": "Long real open air, time-of-day-neutral wind for quiet night and stone courtyard trials, different original segments rather than fabricated cricket chorus",
-      "cautions": "Recorded in Adelaide daytime/open park, not actually at night or at Crown; no claim of regional ecology or geology; wind gusts and microphone noise must be assessed."
+      "cautions": "Recorded in Adelaide daytime/open park, not actually at night or at Crown; no claim of regional ecology or geology; wind gusts and microphone noise must be assessed.",
+      "durationSeconds": 256.803333,
+      "codec": "pcm_s24le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228031724",
+      "sourceStatus": "Independent actual bytes, SHA-1, SHA-256, codec, duration VERIFIED; human source-content auditory suitability NOT verified"
     },
     {
       "id": "field-river-step",
@@ -31,7 +35,11 @@
       "bytes": 99072736,
       "maxBytes": 112000000,
       "role": "Very low-volume separate watery presence in Marches night, not constant stream/cascade",
-      "cautions": "Identifiable water step / frogs / birds risk. Reject if species or waterfall-like rhythm noticeable; original marsh-night already contains a water detail event."
+      "cautions": "Identifiable water step / frogs / birds risk. Reject if species or waterfall-like rhythm noticeable; original marsh-night already contains a water detail event.",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228031724",
+      "sourceStatus": "Independent actual bytes, SHA-1, SHA-256, codec, duration VERIFIED; human source-content auditory suitability NOT verified"
     },
     {
       "id": "building-howling-wind",
@@ -40,12 +48,16 @@
       "license": "CC0 1.0",
       "evidence": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
       "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Howling_wind.ogg",
-      "sha1": null,
-      "sha256": null,
-      "bytes": null,
+      "sha1": "90958205859310a279d03cd0d77e4d467f4805d5",
+      "sha256": "cc585200603027ca808ab68ab4b381d1a828c55d58f010222f5ff687929d084d",
+      "bytes": 1112243,
       "maxBytes": 2500000,
       "role": "ALTERNATE Crown stone-courtyard / built enclosure ambient-air source ONLY, not a lore claim about the kingdom",
-      "cautions": "Wind howls in an unspecified building; can sound excessively haunted or like a modern structure, and is not field evidence of Crown political or volcanic infrastructure. Keep separate from more credible wind-only trial; reject if uncanny."
+      "cautions": "Wind howls in an unspecified building; can sound excessively haunted or like a modern structure, and is not field evidence of Crown political or volcanic infrastructure. Keep separate from more credible wind-only trial; reject if uncanny.",
+      "durationSeconds": 128.306313,
+      "codec": "vorbis mono 16000Hz",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228031724",
+      "sourceStatus": "Independent actual bytes, SHA-1, SHA-256, codec, duration VERIFIED; human source-content auditory suitability NOT verified"
     }
   ],
   "studies": [
