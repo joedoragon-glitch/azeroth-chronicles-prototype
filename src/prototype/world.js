@@ -1670,7 +1670,11 @@
       }
       crownSceneComposition(z) {
         const cfg = R.crownSceneLayout;
-        if (z.id !== 'crown' || z.crownSceneVersion === cfg.version) return;
+        if (z.id !== 'crown') return;
+        if (z.crownSceneVersion === cfg.version) {
+          this.ashRefugeDomesticLife(z);
+          return;
+        }
         const oldZone = this.s.zone;
         this.s.zone = z.id;
         try {
@@ -1880,6 +1884,10 @@
         } finally {
           this.s.zone = oldZone;
         }
+        // Only the FINAL authored Crown positions have real home frontages.
+        // Applying household work before this composition pass finds the old
+        // placeholders, then incorrectly marks them finished with no objects.
+        this.ashRefugeDomesticLife(z);
       }
       settlementLayout(z) {
         if (
@@ -5405,7 +5413,6 @@
         this.creatureStrongholds(z);
         this.frontierOccupationLayout(z);
         this.darkCrownLayout(z);
-        this.ashRefugeDomesticLife(z);
         this.ordinaryMeleePopulation(z);
         this.ordinaryRangedPopulation(z);
         this.guardianPopulation(z);
