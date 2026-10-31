@@ -1895,7 +1895,7 @@
           () => {
             if (getGame() !== g || !g.s.party.includes(u)) return back();
             openMenu(name,
-              (locked ? 'Locked: ' + locked + '\\n\\n' : '') + description,
+              (locked ? 'Locked: ' + locked + '\n\n' : '') + description,
               [], () => barracksCompanionAbilities(id, back));
           },
           locked || description.split(' · ').slice(0, 2).join(' · '),
