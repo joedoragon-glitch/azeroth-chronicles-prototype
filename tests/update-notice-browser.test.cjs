@@ -21,12 +21,12 @@ const releaseFile = (relative) => {
     return source.replace('<nav aria-label="Main menu">',
       '<nav aria-label="Main menu" data-menu-revision="c">');
   if (relative === '/src/prototype/app.js')
-    return source + "\\ndocument.body.dataset.menuRevision = 'c';\\n";
+    return source + "\ndocument.body.dataset.menuRevision = 'c';\n";
   return source;
 };
 const gitBlobHash = (source) => {
   const bytes = Buffer.from(source);
-  return crypto.createHash('sha1').update('blob ' + bytes.length + '\\0').update(bytes).digest('hex');
+  return crypto.createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex');
 };
 const releaseWorker = (file) => {
   let worker = fs.readFileSync(file, 'utf8')
