@@ -114,11 +114,11 @@
           name: pose.name, elapsedMs: pose.elapsed,
           frameSource: frame?.src || null
         },
-        // The shipping sprite renderer may also draw an overlay and fresh
-        // frontier shoots: always flag those as outstanding fidelity layers.
+        // The shipping scene bridge now owns the native Frontier shoots.
+        // This standalone selector still flags other procedural overlays.
         additionalArt: {
           proceduralOverlaysNotYetPorted: true,
-          frontierTreeShootsNotYetPorted: region === 3 &&
+          frontierTreeShootsSceneOverlayRequired: region === 3 &&
             entity.renderKind === 'prop' && entity.structure === 'dead-tree'
         }
       };
