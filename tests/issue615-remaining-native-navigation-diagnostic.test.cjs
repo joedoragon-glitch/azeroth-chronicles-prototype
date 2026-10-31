@@ -251,6 +251,32 @@ function crown(seed=11){
     forgeDistance:num(dist(boss,vera)),guardDistances:guards.map(u=>num(dist(u,boss))),
     routeCalls:stats.routes.calls}));
 }
+// Representative no-combat Crown inspection with entourage already together.
+// Starting the finite reachability search during the *existing* 7-second
+// ministerial pause should prevent the old long synchronous spike AND avoid
+// adding a second 7-second-looking idle period before moving.
+{
+  const {g,boss,vera,guards}=crown(11);
+  const origin={x:boss.x,y:boss.y};
+  Object.assign(vera,g.safe(boss.x+20,boss.y+20));
+  for(const [i,u] of guards.entries())
+    Object.assign(u,g.safe(boss.x+(i===0?-65:65),boss.y+40));
+  assert(g.cinderEntourageTogether(boss),'test begins with intact native convoy');
+  boss.cinderInspectionPause=Campaign.rules.cinderInspection.pauseMin;
+  delete boss.cinderDestination;
+  const stats=capture(g,'cinder-inspection-authored-pause-prefetch',210,
+    [boss,vera,...guards]);
+  assert(stats.peak.probes<1800,'prefetch must remain bounded each whole tick');
+  assert.equal(stats.routes.calls,0,'prefetch must never call synchronous route');
+  assert(stats.plans.breakdown['cinder-selection']?.calls>0,
+    'inspection choice actually precomputed in existing pause');
+  assert(dist(origin,boss)>15,
+    'minister should start traveling within 10.5 seconds with entourage already together');
+  console.log('ISSUE615_CINDER_PAUSE_PREFETCH '+JSON.stringify({
+    elapsedSeconds:210*dt,originalPause:Campaign.rules.cinderInspection.pauseMin,
+    selected:boss.cinderDestination?.name||null,displacement:num(dist(origin,boss)),
+    peakTerrainProbes:stats.peak.probes}));
+}
 // Preserve the exact original native route for a long Crown inspection leg;
 // lower per-tick work may not alter walkable corners, final goal or target.
 {
