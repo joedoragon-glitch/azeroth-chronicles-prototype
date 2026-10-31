@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "purpose": "Isolated environmental quality studies, NOT game-registered ambience or artistic acceptance.",
-  "sonicContract": "Keep original 24-second loop bed regional color, replace repetitive sine-like 'detail' with sparse unpitched real micro-foley; no looping a whole short sample, voices, loud weather, new music, or system gain shifts.",
+  "sonicContract": "Second-pass prototype: independently generated 72-second periodic regional-air envelope (not 24 seconds tiled three times), one subtle genuine recorded physical detail at a non-boundary placement, restrained harmonically neutral room filtering. Preserve current 24-second production files as baseline for A/B; do not register previews until genuinely heard artistic approval.",
   "sourcePolicy": "Only same-host Wikimedia original audio with independently reviewed public-domain license; validate SHA-1 and exact recorded file size before decoding, pin every source before adoption. Sources never ship to the game or repo; temporary studio downloads only.",
   "sources": [
     {
@@ -37,26 +37,28 @@
       "place": "Old Signal Keep",
       "baseBed": "env-highland-wind",
       "physicalDetail": "wood-creak",
-      "eventAtSeconds": 13.2,
+      "eventAtSeconds": 39.1,
       "eventPeak": 0.019,
       "bedGain": 0.94,
       "highpassHz": 82,
       "lowpassHz": 3600,
       "routeGain": 0.22,
-      "notes": "Retain Highland midrange ridge air; attenuate exposed gusts as heard inside occupied timber-and-stone structures; no invented horn or whistle."
+      "notes": "Retain Highland midrange ridge air; attenuate exposed gusts as heard inside occupied timber-and-stone structures; no invented horn or whistle. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening.",
+      "loopSeconds": 72
     },
     {
       "id": "side-frontier-shrine-preview",
       "place": "Ruined Shrine Barracks",
       "baseBed": "env-frontier-air",
       "physicalDetail": "wood-utensils",
-      "eventAtSeconds": 17.3,
+      "eventAtSeconds": 51.7,
       "eventPeak": 0.018,
       "bedGain": 0.94,
       "highpassHz": 100,
       "lowpassHz": 3400,
       "routeGain": 0.23,
-      "notes": "Retain dry recovering Frontier presence through an occupied Orc barracks envelope; one tiny domestic movement rather than repeated military clanks or faux ceremony."
+      "notes": "Retain dry recovering Frontier presence through an occupied Orc barracks envelope; one tiny domestic movement rather than repeated military clanks or faux ceremony. Second-pass revision: 72-second independent regional texture avoids a fixed short one-shot every 24 seconds; real sound still requires listening.",
+      "loopSeconds": 72
     }
   ],
   "rejectedExploration": [
@@ -80,8 +82,8 @@
   "status": {
     "sourceReview": "done",
     "downloads": "exploratory physical-source downloads verified in no-deploy CI #41197469581; original source checksum now pinned in the book",
-    "rendered": "not attempted",
-    "signalChecked": "not attempted",
+    "rendered": "First-pass two 24-second MP3 isolated previews encoded in #41197495058; 72-second fatigue correction pending",
+    "signalChecked": "First pass signal metrics #41197495058; heard sound UNVERIFIED",
     "heard": "unverified",
     "accepted": "HOLD",
     "registered": "no",
