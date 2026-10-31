@@ -421,7 +421,9 @@ def main():
         result["recordedInstrumentNotes"] = sampler.calls - before
         assert result["encodedBytes"] < MAX_FILE
         assert result["channels"] == 2 and result["decodedPeak"] < .98
-        assert result["loopEdgeDelta"] < .2
+        assert result["stereoSideRms"] > .0008, cue["id"] + ": collapsed stereo stage"
+        assert result["foldedMonoPeak"] < .98, cue["id"] + ": unsafe mono sum"
+        assert result["loopEdgeDelta"] < .005, (cue["id"], "audible-risk loop discontinuity", result["loopEdgeDelta"])
         assert result["recordedInstrumentNotes"] >= 10
         reports.append(result)
         if cue["kind"] == "action":
