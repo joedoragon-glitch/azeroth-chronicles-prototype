@@ -64,14 +64,14 @@ jobs:
           du -sh _site assets/audio
       - name: Install pinned Chromium and dependencies
         run: npx playwright install --with-deps chromium
-      - name: Exercise 21 real Campaign scene/night routes with actual decoded candidate MP3s
-        run: |
-          set -o pipefail
-          node tests/environment-727-stage6-browser.test.cjs | tee test-results/environment-727-stage6-browser.log
       - name: Verify fresh offline PWA install/reopen and all 16 SHA-verified source files
         run: |
           set -o pipefail
           node tests/environment-727-stage6-offline-browser.test.cjs | tee test-results/environment-727-stage6-offline.log
+      - name: Exercise 21 real Campaign scene/night routes with actual decoded candidate MP3s
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-browser.test.cjs | tee test-results/environment-727-stage6-browser.log
       - name: Preserve only isolated QA receipts, never a deployable game artifact
         if: always()
         uses: actions/upload-artifact@v4

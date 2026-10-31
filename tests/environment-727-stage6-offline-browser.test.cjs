@@ -58,15 +58,25 @@ const server=http.createServer((req,res)=>{
         const online=await page.evaluate(async ids=>{
           const names=(await caches.keys()).filter(k=>k.startsWith('azeroth-app-v'));
           const store=await caches.open(names[0]);
-          const missing=[];
+          const missing=[],found=[];
           for(const id of ids){
-            const response=await store.match(new URL('./assets/audio/ambience/'+id+'.mp3',location.href));
+            const url=new URL('./assets/audio/ambience/'+id+'.mp3',location.href);
+            const response=await store.match(url);
             if(!response||!response.ok) missing.push(id);
+            else found.push({id,status:response.status});
           }
+          const keys=(await store.keys()).map(req=>req.url);
           const worker=await navigator.serviceWorker.ready;
-          return {cacheName:names[0],cachedCandidateCount:ids.length-missing.length,missing,
+          return {cacheName:names[0],allCacheNames:names,entryCount:keys.length,
+            cacheExamples:keys.filter(x=>x.includes('/assets/audio/')).slice(0,6),
+            cindermawMatch:await (async()=>{
+              const u=new URL('./assets/audio/ambience/studio-cindermaw-roost-vault-727.mp3',location.href);
+              const response=await store.match(u);
+              return {url:u.href,status:response?.status||null,exists:!!response};
+            })(),matched:found,cachedCandidateCount:ids.length-missing.length,missing,
             controlled:!!navigator.serviceWorker.controller,scope:worker.scope};
         },study.studies.map(s=>s.id));
+        console.log('STAGE6_OFFLINE_CACHE_DIAGNOSTICS '+JSON.stringify({profile:phone?'phone-emulated':'desktop',online}));
         assert.deepEqual(online.missing,[],'Incomplete fresh PWA install of frozen candidate MP3s');
         assert.equal(online.cachedCandidateCount,16);
         await context.setOffline(true);
