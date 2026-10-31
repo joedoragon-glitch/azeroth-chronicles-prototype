@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 4 of #727: three lore-specific side interiors source-authored ambient studio previews",
-  "status": "STAGE 4 STUDIO SIGNAL PASS: six original physical source SHA-1/SHA-256/bytes/codec verified at #41235061850, three real 72s mono MP3 previews encoded and decoded QA PASS at #41235332219 (artifact #13054214992). Repeat of frozen master hashes pending. No game routing, human hearing, cache/game playback, merge, publication or device approval.",
+  "status": "STAGE 4 COMPLETE at isolated studio gate: 6/6 source originals independently verified, three real 72s MP3 masters decoded QA PASS (Actions #41235332219), all three exact frozen SHA-256 + encoded bytes reproduced byte-for-byte at Action #41235484894 (artifact #13055386027). No human hearing, candidate in-game registration, real-browser candidate mix/cache/offline tests, owner signoff, merge, Pages publication or device verification.",
   "parent": "tools/audio/environment-727-dungeon-studies.json",
   "authority": "#727 Stage 1 canon and source palette; src/prototype/rules.js side-dungeon lore, docs/SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md (ideas NOT implemented), docs/AUDIO_ENVIRONMENT.md and AUDIO_AUTHORING.md",
   "hardConstraints": {
@@ -308,8 +308,12 @@
     "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235332219/artifacts/13054214992",
     "originalSourcesRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
     "productionHead": "079afdeb965aa22adc6cf0675f36539d798b1f08",
-    "reproduction": "PENDING frozen SHA/bytes repeat",
+    "reproduction": "PASS: three of three physical MP3 SHA-256 + exact 1,158,381-byte sizes reproduced on rerender from freshly downloaded pinned sources with strict measured QA unchanged.",
     "humanHeard": false,
-    "gameRegistered": false
+    "gameRegistered": false,
+    "reproductionRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235484894",
+    "reproductionHead": "0f2dc79a8ac2c550c2d5d4e341c5232adc56f2ce",
+    "reproductionArtifactId": 13055386027,
+    "reproductionArtifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235484894/artifacts/13055386027"
   }
 }
