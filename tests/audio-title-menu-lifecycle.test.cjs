@@ -9,6 +9,7 @@ assert(app.includes('if (!started && !sceneTransition && !startupUpdatePending &
 assert(app.includes('audio.update(game, !focused || document.hidden || recovering'));
 assert(app.includes('const entryUnlock = audio.unlock()'));
 assert(app.includes('return audio.productionPending || true'));
+assert(app.includes('if (!entryAudioAttempted && audio.ctx)'), 'no audio device must not delay Continue');
 const a = audio();
 a.enableProduction();
 a.ambient = () => {};

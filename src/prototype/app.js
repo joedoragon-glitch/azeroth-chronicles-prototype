@@ -3856,7 +3856,9 @@
           refreshTitleScreen();
           return;
         }
-        if (!entryAudioAttempted) {
+        // Without Web Audio (or in a non-browser test shell), enter normally.
+        // A missing audio device must never defer campaign activation.
+        if (!entryAudioAttempted && audio.ctx) {
           entryAudioAttempted = true;
           $('title-loading').textContent = language === 'es'
             ? 'Preparando la música…' : 'Preparing soundtrack…';
