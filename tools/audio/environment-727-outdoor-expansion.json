@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 2 continued — distinct Greenwood/Marches nighttime and two conservative Crown ambience candidates; NO game registration",
-  "status": "ALL THREE original physical sources pinned from independent studio action #41228031724; 4 previews NOT yet produced; creative trial hold",
+  "status": "FIRST EXPANSION STUDIES: night Vale/Marches signal PASS; two Crown candidates BLOCK at loop seam, local corrective rerender pending. No game audio changed.",
   "predecessorStudio": "tools/audio/environment-727-outdoor-studies.json",
   "authority": "Issue #727 Stage1 canon briefs; AGENTS.md; docs/AUDIO_ENVIRONMENT.md",
   "sources": [
@@ -109,7 +109,12 @@
       "lowpassHz": 1700,
       "routeGain": 0.33,
       "events": [],
-      "description": "Physical open air moving through sheltered civic stone road / courtyard, mostly negative space; no infernal blaze, modern industry, crowds or machinery."
+      "description": "Physical open air moving through sheltered civic stone road / courtyard, mostly negative space; no infernal blaze, modern industry, crowds or machinery.",
+      "codecEdgeDeclick": {
+        "windowMs": 18,
+        "edgeGain": 0.56,
+        "reason": "Pinned initial MP3 signal run #41228147556 measured decoded loop first/last sample jump 0.005662801 > 0.005 while 1s RMS delta -0.799 dB passed. Apply scene-local 18ms smooth-taper de-click; do not alter QA limits, game mixer, reference, or the accepted night trials. Re-encode and inspect actual MP3."
+      }
     },
     {
       "id": "study-crown-enclosed-727",
@@ -124,7 +129,12 @@
       "lowpassHz": 1450,
       "routeGain": 0.33,
       "events": [],
-      "description": "Strict A/B candidate to ask whether occupied buildings provide believable sheltered reflections; stronger risk of sounding vacant haunted/gusty, NOT an approved final candidate."
+      "description": "Strict A/B candidate to ask whether occupied buildings provide believable sheltered reflections; stronger risk of sounding vacant haunted/gusty, NOT an approved final candidate.",
+      "codecEdgeDeclick": {
+        "windowMs": 18,
+        "edgeGain": 0.56,
+        "reason": "Pinned initial MP3 signal run #41228147556 measured decoded loop first/last sample jump 0.006608364 > 0.005 while 1s RMS delta -0.744 dB passed. Apply scene-local 18ms smooth-taper de-click; do not alter QA limits, game mixer, reference, or the accepted night trials. Re-encode and inspect actual MP3."
+      }
     }
   ],
   "constraints": {
@@ -135,11 +145,12 @@
     "declaredCreativePolicy": "Night stems are time-of-day-neutral *air*, not falsely labelled night recordings. Crown trials are comparative, not invented civic labor audio.",
     "cacheRisk": "These add four more 72s buffers ~35.16MiB if all resident; across day and night candidates ~52.73MiB. Stage6 must check true cache residence; 96MiB default and 84.80MiB prior observed peak.",
     "registration": "NO",
-    "technicalPass": "HOLD",
+    "technicalPass": "Night Green/Marches pass initial; Crown A/B de-click correction pending decoded recheck",
     "artisticHearing": "NOT DONE",
     "merged": "NO",
     "deployed": "NO",
-    "deviceVerified": "NO"
+    "deviceVerified": "NO",
+    "initialCandidateRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228147556"
   },
   "decisions": [
     {
