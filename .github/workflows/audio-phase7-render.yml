@@ -1,0 +1,85 @@
+name: Soundtrack Phase 7 full catalog render and draft integration (NO DEPLOY)
+
+# Owner-authorized Phase 7 production. Scoped to this one draft branch.
+# Audio clips are committed to the draft ONLY after complete actual decode,
+# protected-Crown hash checks, asset budgets and focused runtime QA succeed.
+on:
+  push:
+    branches: [audio/phase7-integration-playback-20261031]
+    paths:
+      - '.github/workflows/audio-phase7-render.yml'
+      - 'tools/audio/phase7-integrate.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase7-render-catalog
+  cancel-in-progress: false
+
+jobs:
+  render-install-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout authorized exact draft branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          persist-credentials: true
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Recorded-source dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --quiet numpy==2.2.6 scipy==1.16.1 imageio-ffmpeg==0.6.0
+          npm ci --ignore-scripts
+      - name: Render and decode all 8 Phase 3 primary scenes
+        run: python tools/audio/phase3-compose.py --render "$RUNNER_TEMP/sibdlp-phase7/phase3"
+      - name: Render and decode all 38 Phase 4 contexts and additive overlays
+        run: python tools/audio/phase4-compose.py --render "$RUNNER_TEMP/sibdlp-phase7/phase4"
+      - name: Render and decode all 16 Phase 5 boss/TRUE recordings
+        run: python tools/audio/phase5-compose.py --render "$RUNNER_TEMP/sibdlp-phase7/phase5"
+      - name: Render and decode all 3 Phase 6 narrative songs
+        run: python tools/audio/phase6-compose.py --render "$RUNNER_TEMP/sibdlp-phase7/phase6"
+      - name: Install exactly 65 masters and audit source hashes, all 18 frozen Crown assets, 83 IDs and encoded limits
+        run: python tools/audio/phase7-integrate.py --render-root "$RUNNER_TEMP/sibdlp-phase7"
+      - name: Regenerate sound director and offline cache fingerprints (draft only)
+        run: node scripts/build.cjs
+      - name: Verify real integrated soundtrack catalog and focused playback regressions
+        run: |
+          node scripts/build.cjs --check
+          node tests/audio-phase7-narrative.test.cjs
+          node tests/audio-production.test.cjs
+          node tests/audio-recordings.test.cjs
+          node tests/audio-catalog.test.cjs
+          node tests/audio-assets.test.cjs
+      - name: Publish only validated changes to the same unmerged draft branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/audio/music assets/audio/manifest.json src/prototype/audio-library.js sw.js tools/audio/phase7-integration-evidence.json
+          git diff --cached --quiet && { echo 'No new catalog changes'; exit 0; }
+          git commit -m 'audio(phase7): install and verify 65 exact recorded-source soundtrack masters'
+          git push origin HEAD:audio/phase7-integration-playback-20261031
+      - name: Preserve codec/encoded budget and source evidence, not audition material
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase7-recording-metrics-no-listening
+          path: |
+            ${{ runner.temp }}/sibdlp-phase7/phase3/phase3-metrics.json
+            ${{ runner.temp }}/sibdlp-phase7/phase4/phase4-metrics.json
+            ${{ runner.temp }}/sibdlp-phase7/phase5/phase5-metrics.json
+            ${{ runner.temp }}/sibdlp-phase7/phase6/phase6-metrics.json
+            tools/audio/phase7-integration-evidence.json
+          if-no-files-found: ignore
+          retention-days: 30
