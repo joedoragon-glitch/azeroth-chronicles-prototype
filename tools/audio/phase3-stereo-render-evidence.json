@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-31",
-  "status": "exact source-revision isolated 44.1kHz/192-kbps stereo MP3 technical PASS; artistic REVISE, truly heard quality UNVERIFIED; Phase4 BLOCKED",
-  "sourceHeadSha": "214bd81958ab85913ef19558078010fbeb4f5fb0",
-  "workflowRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41184695666",
+  "status": "exact score-producing source 44.1-kHz/192-kbps stereo 8-preview technical PASS after score articulation and honest bank routing checks; musical REVISE, heard sound UNVERIFIED, Phase4 BLOCKED",
+  "sourceHeadSha": "5ac0687ef890ca25ddd497adb4754b017d9f2bf2",
+  "workflowRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41185790451",
   "codec": "192kbps stereo MP3",
   "sampleRateHz": 44100,
   "originalCatalogUnchanged": true,
@@ -15,8 +15,8 @@
       "cue": "place-vale",
       "seconds": 31.304354,
       "channels": 2,
-      "stereoSideRms": 0.00906,
-      "foldedMonoPeak": 0.45067,
+      "stereoSideRms": 0.009,
+      "foldedMonoPeak": 0.45089,
       "decodedSamples": 1393752,
       "expectedSamples": 1393752,
       "loop": {
@@ -24,18 +24,18 @@
         "end": 31.4543537414966
       },
       "encodedBytes": 759892,
-      "sha256": "d72afe5f7d48dee8e41270635de6d2781adbecdac3ac796c17be51009e654537",
-      "decodedPeak": 0.45977,
+      "sha256": "af15c10bb2fd3aa158bfd8d43ea21244f4627d815e22c1d6844c6f9e146297d6",
+      "decodedPeak": 0.45219,
       "decodedRms": 0.08911,
-      "loopEdgeDelta": 0.00109,
+      "loopEdgeDelta": 0.00108,
       "recordedInstrumentNotes": 98
     },
     {
       "cue": "place-march",
       "seconds": 40.975601,
       "channels": 2,
-      "stereoSideRms": 0.00533,
-      "foldedMonoPeak": 0.4995,
+      "stereoSideRms": 0.00523,
+      "foldedMonoPeak": 0.48838,
       "decodedSamples": 1820254,
       "expectedSamples": 1820254,
       "loop": {
@@ -43,18 +43,18 @@
         "end": 41.12560090702948
       },
       "encodedBytes": 992487,
-      "sha256": "bebe04c4c26502896d140e1ab1e8f7c3259dbf820341b3056cef6880d9d76463",
-      "decodedPeak": 0.52919,
-      "decodedRms": 0.0803,
-      "loopEdgeDelta": 0.00001,
+      "sha256": "4cc242149fc7cc5c77899c2f5e935aaec54ffbcf875efffd079293a60616e91e",
+      "decodedPeak": 0.51716,
+      "decodedRms": 0.08029,
+      "loopEdgeDelta": 0.00002,
       "recordedInstrumentNotes": 89
     },
     {
       "cue": "place-highlands",
       "seconds": 38.181814,
       "channels": 2,
-      "stereoSideRms": 0.00657,
-      "foldedMonoPeak": 0.48392,
+      "stereoSideRms": 0.00674,
+      "foldedMonoPeak": 0.47402,
       "decodedSamples": 1697048,
       "expectedSamples": 1697048,
       "loop": {
@@ -62,18 +62,18 @@
         "end": 38.331814058956915
       },
       "encodedBytes": 925404,
-      "sha256": "19eddba9e72e45e84228d0e9ab63693a0bb3ab869662552bd6d334e827503d3c",
-      "decodedPeak": 0.49838,
-      "decodedRms": 0.08745,
-      "loopEdgeDelta": 0.0001,
+      "sha256": "c40795ec34a6220c1fff2ca962e07d6a89226e92fac56a9f6131d891fd99df84",
+      "decodedPeak": 0.48271,
+      "decodedRms": 0.08746,
+      "loopEdgeDelta": 0,
       "recordedInstrumentNotes": 96
     },
     {
       "cue": "place-frontier",
       "seconds": 40,
       "channels": 2,
-      "stereoSideRms": 0.00591,
-      "foldedMonoPeak": 0.55617,
+      "stereoSideRms": 0.00593,
+      "foldedMonoPeak": 0.58581,
       "decodedSamples": 1777230,
       "expectedSamples": 1777230,
       "loop": {
@@ -81,8 +81,8 @@
         "end": 40.15
       },
       "encodedBytes": 968663,
-      "sha256": "78cb196669406afd724b7248c4c22ff669c8065d9fb5daede0f423c590a2175b",
-      "decodedPeak": 0.59672,
+      "sha256": "18837f8fd9b49efd9c1b99dff964d76176b1377b547fd93f2a0e87396e7a40a5",
+      "decodedPeak": 0.63209,
       "decodedRms": 0.08123,
       "loopEdgeDelta": 0.00001,
       "recordedInstrumentNotes": 104
@@ -92,7 +92,7 @@
       "seconds": 34.285714,
       "channels": 2,
       "stereoSideRms": 0.00502,
-      "foldedMonoPeak": 0.5124,
+      "foldedMonoPeak": 0.49852,
       "decodedSamples": 1525230,
       "expectedSamples": 1525230,
       "loop": {
@@ -100,18 +100,18 @@
         "end": 34.43571428571428
       },
       "encodedBytes": 831363,
-      "sha256": "bdf02dba67b50d81b90be7c0a165e373a7f49a5a34beddc50595ebdde3873a80",
-      "decodedPeak": 0.53903,
-      "decodedRms": 0.07833,
-      "loopEdgeDelta": 0.00002,
+      "sha256": "f6b177371b2b63694bbe08a41fba0305c6603db10b1ea54557ce7f08627eace7",
+      "decodedPeak": 0.53058,
+      "decodedRms": 0.07832,
+      "loopEdgeDelta": 0.00001,
       "recordedInstrumentNotes": 69
     },
     {
       "cue": "place-archive",
       "seconds": 44.651156,
       "channels": 2,
-      "stereoSideRms": 0.00781,
-      "foldedMonoPeak": 0.61213,
+      "stereoSideRms": 0.00729,
+      "foldedMonoPeak": 0.61167,
       "decodedSamples": 1982346,
       "expectedSamples": 1982346,
       "loop": {
@@ -119,18 +119,18 @@
         "end": 44.801156462585034
       },
       "encodedBytes": 1080258,
-      "sha256": "f316cf4415aa4bc8747890bfe2eae5bf7cef222101b5791407e990f516564d20",
-      "decodedPeak": 0.65995,
-      "decodedRms": 0.08812,
-      "loopEdgeDelta": 0.00004,
+      "sha256": "af36574734f751523bd29b74c417f6c9e7708ba9e4c3ad2ba66ca098d30402f7",
+      "decodedPeak": 0.65906,
+      "decodedRms": 0.08808,
+      "loopEdgeDelta": 0.00002,
       "recordedInstrumentNotes": 123
     },
     {
       "cue": "place-mine",
       "seconds": 35,
       "channels": 2,
-      "stereoSideRms": 0.0067,
-      "foldedMonoPeak": 0.51217,
+      "stereoSideRms": 0.00649,
+      "foldedMonoPeak": 0.51027,
       "decodedSamples": 1556730,
       "expectedSamples": 1556730,
       "loop": {
@@ -138,18 +138,18 @@
         "end": 35.15
       },
       "encodedBytes": 848918,
-      "sha256": "eef59a740d06a8d6dbc488050fe938cc6d253145cd8b62ee1523cec857e75f67",
-      "decodedPeak": 0.53332,
-      "decodedRms": 0.08823,
-      "loopEdgeDelta": 0.00017,
+      "sha256": "35ab6a12c54f0e3b472620578b77a6638220afaac019c16497efada9d12b2b08",
+      "decodedPeak": 0.53014,
+      "decodedRms": 0.08826,
+      "loopEdgeDelta": 0.00008,
       "recordedInstrumentNotes": 85
     },
     {
       "cue": "place-abyss",
       "seconds": 40,
       "channels": 2,
-      "stereoSideRms": 0.00992,
-      "foldedMonoPeak": 0.52382,
+      "stereoSideRms": 0.00937,
+      "foldedMonoPeak": 0.48891,
       "decodedSamples": 1777230,
       "expectedSamples": 1777230,
       "loop": {
@@ -157,10 +157,10 @@
         "end": 40.15
       },
       "encodedBytes": 968663,
-      "sha256": "a2f20dcb84b5fc006d8e0e5f2b2c36b867fc280cf552e06f00885d4059182117",
-      "decodedPeak": 0.58351,
-      "decodedRms": 0.08627,
-      "loopEdgeDelta": 0.00002,
+      "sha256": "d4d32b6ffada5bb190d1406bef09ad4fee60db0addfacb54b466939dfd09129b",
+      "decodedPeak": 0.51296,
+      "decodedRms": 0.08625,
+      "loopEdgeDelta": 0.00003,
       "recordedInstrumentNotes": 95
     }
   ],
@@ -383,8 +383,8 @@
         "cue": "place-vale",
         "seconds": 31.304354,
         "channels": 2,
-        "stereoSideRms": 0.00906,
-        "foldedMonoPeak": 0.45067,
+        "stereoSideRms": 0.009,
+        "foldedMonoPeak": 0.45089,
         "decodedSamples": 1393752,
         "expectedSamples": 1393752,
         "loop": {
@@ -392,18 +392,18 @@
           "end": 31.4543537414966
         },
         "encodedBytes": 759892,
-        "sha256": "d72afe5f7d48dee8e41270635de6d2781adbecdac3ac796c17be51009e654537",
-        "decodedPeak": 0.45977,
+        "sha256": "af15c10bb2fd3aa158bfd8d43ea21244f4627d815e22c1d6844c6f9e146297d6",
+        "decodedPeak": 0.45219,
         "decodedRms": 0.08911,
-        "loopEdgeDelta": 0.00109,
+        "loopEdgeDelta": 0.00108,
         "recordedInstrumentNotes": 98
       },
       {
         "cue": "place-march",
         "seconds": 40.975601,
         "channels": 2,
-        "stereoSideRms": 0.00533,
-        "foldedMonoPeak": 0.4995,
+        "stereoSideRms": 0.00523,
+        "foldedMonoPeak": 0.48838,
         "decodedSamples": 1820254,
         "expectedSamples": 1820254,
         "loop": {
@@ -411,18 +411,18 @@
           "end": 41.12560090702948
         },
         "encodedBytes": 992487,
-        "sha256": "bebe04c4c26502896d140e1ab1e8f7c3259dbf820341b3056cef6880d9d76463",
-        "decodedPeak": 0.52919,
-        "decodedRms": 0.0803,
-        "loopEdgeDelta": 0.00001,
+        "sha256": "4cc242149fc7cc5c77899c2f5e935aaec54ffbcf875efffd079293a60616e91e",
+        "decodedPeak": 0.51716,
+        "decodedRms": 0.08029,
+        "loopEdgeDelta": 0.00002,
         "recordedInstrumentNotes": 89
       },
       {
         "cue": "place-highlands",
         "seconds": 38.181814,
         "channels": 2,
-        "stereoSideRms": 0.00657,
-        "foldedMonoPeak": 0.48392,
+        "stereoSideRms": 0.00674,
+        "foldedMonoPeak": 0.47402,
         "decodedSamples": 1697048,
         "expectedSamples": 1697048,
         "loop": {
@@ -430,18 +430,18 @@
           "end": 38.331814058956915
         },
         "encodedBytes": 925404,
-        "sha256": "19eddba9e72e45e84228d0e9ab63693a0bb3ab869662552bd6d334e827503d3c",
-        "decodedPeak": 0.49838,
-        "decodedRms": 0.08745,
-        "loopEdgeDelta": 0.0001,
+        "sha256": "c40795ec34a6220c1fff2ca962e07d6a89226e92fac56a9f6131d891fd99df84",
+        "decodedPeak": 0.48271,
+        "decodedRms": 0.08746,
+        "loopEdgeDelta": 0,
         "recordedInstrumentNotes": 96
       },
       {
         "cue": "place-frontier",
         "seconds": 40,
         "channels": 2,
-        "stereoSideRms": 0.00591,
-        "foldedMonoPeak": 0.55617,
+        "stereoSideRms": 0.00593,
+        "foldedMonoPeak": 0.58581,
         "decodedSamples": 1777230,
         "expectedSamples": 1777230,
         "loop": {
@@ -449,8 +449,8 @@
           "end": 40.15
         },
         "encodedBytes": 968663,
-        "sha256": "78cb196669406afd724b7248c4c22ff669c8065d9fb5daede0f423c590a2175b",
-        "decodedPeak": 0.59672,
+        "sha256": "18837f8fd9b49efd9c1b99dff964d76176b1377b547fd93f2a0e87396e7a40a5",
+        "decodedPeak": 0.63209,
         "decodedRms": 0.08123,
         "loopEdgeDelta": 0.00001,
         "recordedInstrumentNotes": 104
@@ -460,7 +460,7 @@
         "seconds": 34.285714,
         "channels": 2,
         "stereoSideRms": 0.00502,
-        "foldedMonoPeak": 0.5124,
+        "foldedMonoPeak": 0.49852,
         "decodedSamples": 1525230,
         "expectedSamples": 1525230,
         "loop": {
@@ -468,18 +468,18 @@
           "end": 34.43571428571428
         },
         "encodedBytes": 831363,
-        "sha256": "bdf02dba67b50d81b90be7c0a165e373a7f49a5a34beddc50595ebdde3873a80",
-        "decodedPeak": 0.53903,
-        "decodedRms": 0.07833,
-        "loopEdgeDelta": 0.00002,
+        "sha256": "f6b177371b2b63694bbe08a41fba0305c6603db10b1ea54557ce7f08627eace7",
+        "decodedPeak": 0.53058,
+        "decodedRms": 0.07832,
+        "loopEdgeDelta": 0.00001,
         "recordedInstrumentNotes": 69
       },
       {
         "cue": "place-archive",
         "seconds": 44.651156,
         "channels": 2,
-        "stereoSideRms": 0.00781,
-        "foldedMonoPeak": 0.61213,
+        "stereoSideRms": 0.00729,
+        "foldedMonoPeak": 0.61167,
         "decodedSamples": 1982346,
         "expectedSamples": 1982346,
         "loop": {
@@ -487,18 +487,18 @@
           "end": 44.801156462585034
         },
         "encodedBytes": 1080258,
-        "sha256": "f316cf4415aa4bc8747890bfe2eae5bf7cef222101b5791407e990f516564d20",
-        "decodedPeak": 0.65995,
-        "decodedRms": 0.08812,
-        "loopEdgeDelta": 0.00004,
+        "sha256": "af36574734f751523bd29b74c417f6c9e7708ba9e4c3ad2ba66ca098d30402f7",
+        "decodedPeak": 0.65906,
+        "decodedRms": 0.08808,
+        "loopEdgeDelta": 0.00002,
         "recordedInstrumentNotes": 123
       },
       {
         "cue": "place-mine",
         "seconds": 35,
         "channels": 2,
-        "stereoSideRms": 0.0067,
-        "foldedMonoPeak": 0.51217,
+        "stereoSideRms": 0.00649,
+        "foldedMonoPeak": 0.51027,
         "decodedSamples": 1556730,
         "expectedSamples": 1556730,
         "loop": {
@@ -506,18 +506,18 @@
           "end": 35.15
         },
         "encodedBytes": 848918,
-        "sha256": "eef59a740d06a8d6dbc488050fe938cc6d253145cd8b62ee1523cec857e75f67",
-        "decodedPeak": 0.53332,
-        "decodedRms": 0.08823,
-        "loopEdgeDelta": 0.00017,
+        "sha256": "35ab6a12c54f0e3b472620578b77a6638220afaac019c16497efada9d12b2b08",
+        "decodedPeak": 0.53014,
+        "decodedRms": 0.08826,
+        "loopEdgeDelta": 0.00008,
         "recordedInstrumentNotes": 85
       },
       {
         "cue": "place-abyss",
         "seconds": 40,
         "channels": 2,
-        "stereoSideRms": 0.00992,
-        "foldedMonoPeak": 0.52382,
+        "stereoSideRms": 0.00937,
+        "foldedMonoPeak": 0.48891,
         "decodedSamples": 1777230,
         "expectedSamples": 1777230,
         "loop": {
@@ -525,10 +525,10 @@
           "end": 40.15
         },
         "encodedBytes": 968663,
-        "sha256": "a2f20dcb84b5fc006d8e0e5f2b2c36b867fc280cf552e06f00885d4059182117",
-        "decodedPeak": 0.58351,
-        "decodedRms": 0.08627,
-        "loopEdgeDelta": 0.00002,
+        "sha256": "d4d32b6ffada5bb190d1406bef09ad4fee60db0addfacb54b466939dfd09129b",
+        "decodedPeak": 0.51296,
+        "decodedRms": 0.08625,
+        "loopEdgeDelta": 0.00003,
         "recordedInstrumentNotes": 95
       }
     ],
@@ -866,13 +866,64 @@
     "deviceVerified": "NO"
   },
   "audibleRisks": [
-    "No independent real hearing of current 192-kbps stereo previews",
     "Several CC0 source samples originated in mono 96-kbps MP3; higher output bitrate does not recover source information",
     "55 performed notes shift 5–7 semitones from sample originals, 41 of these horn",
     "66 score-written dulcimer notes still played on recorded marimba; 20 bell notes on glockenspiel",
     "Six authored regions have differing reflection/tonal/width profiles by design; distinct parameters are not evidence they actually sound distinct",
     "Both v2 pilot base scores keep their older processing profile pending source-driven refinement and evaluation",
     "No full game/overlay/dialogue-warning masking, offline package install, iPhone or Chromebook audio verification",
-    "Older stacked PR has unrelated sprite-scope test failure; standalone studio PASS is not full-PR green"
+    "Older stacked PR has unrelated sprite-scope test failure; standalone studio PASS is not full-PR green",
+    "Actual headphone critical review remains absent; note expression and 6 source acoustic treatments are unverified by hearing.",
+    "This evidence is for score-producing commit 5ac0687ef890ca25ddd497adb4754b017d9f2bf2 only; a subsequent evidence-only commit does not itself create new render files."
+  ],
+  "expressionDesign": [
+    {
+      "id": "place-march",
+      "profile": {
+        "leadGate": 0.88,
+        "leadAttackMs": 14,
+        "textureJitterMs": 7
+      }
+    },
+    {
+      "id": "place-highlands",
+      "profile": {
+        "leadGate": 0.85,
+        "leadAttackMs": 75,
+        "textureJitterMs": 5
+      }
+    },
+    {
+      "id": "place-frontier",
+      "profile": {
+        "leadGate": 0.96,
+        "leadAttackMs": 102,
+        "textureJitterMs": 9
+      }
+    },
+    {
+      "id": "place-crypt",
+      "profile": {
+        "leadGate": 0.94,
+        "leadAttackMs": 118,
+        "textureJitterMs": 8
+      }
+    },
+    {
+      "id": "place-mine",
+      "profile": {
+        "leadGate": 0.78,
+        "leadAttackMs": 54,
+        "textureJitterMs": 4
+      }
+    },
+    {
+      "id": "place-abyss",
+      "profile": {
+        "leadGate": 0.92,
+        "leadAttackMs": 92,
+        "textureJitterMs": 5
+      }
+    }
   ]
 }
