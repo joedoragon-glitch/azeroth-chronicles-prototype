@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="description" content="Listen to the complete original game soundtrack, environmental recordings, and effects without starting a campaign." />
-    <title>So I Became the Dark Lord's Problem · Soundtrack listening room</title>
+    <title>So I Became the Dark Lord's Problem · Game sound library</title>
     <link rel="stylesheet" href="./audition.css" />
   </head>
   <body>
@@ -12,12 +12,17 @@
       <header class="intro">
         <a class="back-link" href="../../index.html">← Back to game</a>
         <p class="eyebrow">So I Became the Dark Lord's Problem</p>
-        <h1>Soundtrack listening room</h1>
-        <p class="lede">Listen to the game’s music and sound effects without playing a campaign. Choose a scene, or find a specific recording in the full library.</p>
+        <h1>Game sound library</h1>
+        <p class="lede">Explore the soundtrack, environmental soundscapes, recorded effects and generated game cues in one place. Listen to individual sounds or hear how the game mixes a scene.</p>
         <div class="intro-notes">
           <p><strong>No save data is accessed.</strong> This is a separate listening room. Audio starts only when you press Play.</p>
           <p id="catalog-count" aria-live="polite">Loading the current sound library…</p>
         </div>
+        <nav class="room-nav" aria-label="Listening room sections">
+          <a href="#library-section">Browse sounds</a>
+          <a href="#scene-section">Scene mixer</a>
+          <a href="#creative-section">Creative notes</a>
+        </nav>
       </header>
 
       <div class="player-bar" aria-label="Audio playback controls">
@@ -27,6 +32,8 @@
           <p id="message" role="status" aria-live="polite">Choose a scene or recording and press Play.</p>
         </div>
         <div class="player-actions">
+          <button type="button" id="prev" disabled>← Previous</button>
+          <button type="button" id="next" disabled>Next →</button>
           <button type="button" id="pause" disabled>Pause</button>
           <button type="button" id="stop" disabled>Stop audio</button>
         </div>
@@ -34,9 +41,9 @@
 
       <section id="scene-section" aria-labelledby="scenes">
         <div class="section-title">
-          <div><span class="step">1 · Recommended</span><h2 id="scenes">Hear the music as it plays in the game</h2></div>
+          <div><span class="step">02 · IN CONTEXT</span><h2 id="scenes">Preview a game scene</h2></div>
         </div>
-        <p>Choose a location and situation. The player combines the original music layers and environmental atmosphere just as the game does, without loading or changing a saved adventure.</p>
+        <p>Choose a location and situation to hear the actual routed recorded music and environmental bed together, without loading or changing a saved adventure.</p>
         <div class="controls scene-fields">
           <label for="place">Location <select id="place"></select></label>
           <label for="scene-mode">Situation
@@ -67,44 +74,70 @@
       </section>
 
       <section id="library-section" aria-labelledby="recordings">
-        <div class="section-title"><div><span class="step">2 · Complete library</span><h2 id="recordings">Browse individual recordings</h2></div></div>
-        <p>Every registered music track, environmental recording and sound effect can be selected below. Unlike a scene preview, a single recording lets you hear one file by itself.</p>
+        <div class="section-title"><div><span class="step">01 · EXPLORE</span><h2 id="recordings">Find your next sound</h2></div></div>
+        <p>Browse the game’s recorded music, atmospheric beds and effects. Tap Play on any card to hear it immediately; select a title for source notes, layer comparison and technical details. Generated cues are available in their own category.</p>
         <div class="controls library-filters">
-          <label for="kind">Show
+          <label for="kind">Type
             <select id="kind">
-              <option value="music">Music (83 tracks)</option>
-              <option value="ambience">Environment (14 beds)</option>
-              <option value="effect">Effects (30 sounds)</option>
               <option value="all">All recordings</option>
+              <option value="music">Music</option>
+              <option value="ambience">Environment</option>
+              <option value="effect">Recorded effects</option>
+              <option value="generated">Generated game cues</option>
             </select>
           </label>
-          <label for="search">Find a sound
-            <input id="search" type="search" placeholder="Name, place, or sound ID" autocomplete="off" />
+          <label for="collection">Collection
+            <select id="collection">
+              <option value="all">Every collection</option>
+              <option value="new-score">New authored soundtrack</option>
+              <option value="dark-crown">Preserved Dark Crown</option>
+              <option value="environment">Environmental recordings</option>
+              <option value="effects">Recorded sound effects</option>
+            </select>
+          </label>
+          <label for="sort">Sort
+            <select id="sort">
+              <option value="catalog">By game collection</option>
+              <option value="title">Name A–Z</option>
+              <option value="id">Audio ID</option>
+            </select>
+          </label>
+          <label for="search">Search by name, place or use
+            <input id="search" type="search" placeholder="Greenwood, boss, wet, holy…" autocomplete="off" />
           </label>
         </div>
-        <label for="recording" class="full-label">Recording
-          <select id="recording"></select>
-        </label>
-        <div id="recording-info" class="sound-info" aria-live="polite">Choose a recording to see its name, purpose and source.</div>
-        <div class="action-line">
-          <button type="button" id="record-play" class="primary">Play selected recording</button>
-          <button type="button" id="stem-play" disabled>Play with paired layer</button>
-        </div>
-        <div class="paired-control">
-          <label for="intensity">Paired-layer volume <output id="intensity-value" for="intensity">35%</output>
-            <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.35" disabled />
+        <div class="result-header"><p id="result-count" role="status" aria-live="polite">Loading the audio library…</p><button id="reset-library" class="quiet" type="button">Clear filters</button></div>
+        <div id="library-grid" class="recording-grid" role="list" aria-label="Game audio recordings"></div>
+        <div class="load-more"><button type="button" id="show-more" hidden>Show more recordings</button></div>
+        <div id="recorded-panel" class="selected-panel">
+          <p class="eyebrow">SELECTED SOUND</p>
+          <h3>Inspect &amp; listen</h3>
+          <label for="recording" class="full-label">Jump to an exact recording
+            <select id="recording"></select>
           </label>
-          <p class="hint" id="pair-help">Choose a main exploration theme or boss theme with a matching second layer to compare them together.</p>
+          <div id="recording-info" class="sound-info" aria-live="polite">Choose a sound to see details.</div>
+          <div class="action-line">
+            <button type="button" id="record-play" class="primary">Play selected recording</button>
+            <button type="button" id="stem-play" disabled>Play with paired layer</button>
+          </div>
+          <div class="paired-control">
+            <label for="intensity">Paired-layer volume <output id="intensity-value" for="intensity">35%</output>
+              <input id="intensity" type="range" min="0" max="1" step="0.01" value="0.35" disabled />
+            </label>
+            <p class="hint" id="pair-help">Choose a theme or boss piece to hear its synchronized second layer.</p>
+          </div>
         </div>
-        <details class="small-details">
-          <summary>Why would I play two layers?</summary>
-          <p>In combat, the game can keep the main melody playing while adding rhythmic action music. Bosses likewise use a synchronized TRUE layer. This lets you audition that combination and adjust how prominent the second part sounds.</p>
-        </details>
+        <div id="generated-panel" class="selected-panel" hidden>
+          <h3>Generated in real time by the game</h3>
+          <p>These previews use the game's real audio engine for narrative, interface, footsteps and representative combat actions. They are not extra MP3 files. Combat events use example actor/material settings: the exact sound can vary during play. Listening does not open saves.</p>
+          <div id="generated-grid" class="recording-grid" role="list" aria-label="Generated game cues"></div>
+        </div>
+        <p class="hint collection-note">Environmental soundscapes from the separate <a href="https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727">ongoing environment audio rework</a> will show up here only after they are integrated into the registered game catalog. Unmerged studio previews are not playable in this room yet.</p>
       </section>
 
       <section id="creative-section" aria-labelledby="creative-guide">
-        <div class="section-title"><div><span class="step">3 · For sound creation</span><h2 id="creative-guide">Understand or rework a sound</h2></div></div>
-        <p>Every production recording has a reusable creative brief. Select a track above to read its design instructions, then copy the brief if you want to discuss a replacement or give a composer a starting point. The brief describes the sound; it is not the original prompt used to create it.</p>
+        <div class="section-title"><div><span class="step">03 · REFERENCE</span><h2 id="creative-guide">Creative briefs and source notes</h2></div></div>
+        <p>Registered recordings carry production notes when available. Select a sound to review its intent and source; copying these notes does not modify any file.</p>
         <label for="guide-event" class="full-label">Creative brief
           <select id="guide-event"><option value="">Selected recording’s creative brief</option></select>
         </label>
@@ -178,9 +211,12 @@
     </main>
     <script src="../../src/sprint.js"></script>
     <script src="../../src/prototype/highlands.js"></script>
+    <script src="../../src/prototype/greenwood-landscape.js"></script>
+    <script src="../../src/prototype/greenwood-interiors.js"></script>
     <script src="../../src/prototype/data.js"></script>
     <script src="../../src/prototype/rules.js"></script>
     <script src="../../src/prototype/world.js"></script>
+    <script src="../../src/prototype/greenwood.js"></script>
     <script src="../../src/prototype/field-onboarding.js"></script>
     <script src="../../src/prototype/navigation.js"></script>
     <script src="../../src/prototype/fortifications.js"></script>

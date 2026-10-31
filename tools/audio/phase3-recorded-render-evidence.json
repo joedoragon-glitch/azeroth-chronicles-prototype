@@ -1,0 +1,375 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-31",
+  "type": "exact-head isolated recorded CC0 composer technical evidence; not artistic listening certification",
+  "workflow": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41184112356",
+  "headSha": "8c105e096d79484a08bfc8c3277b54efd4e1e037",
+  "studioSource": "tools/audio/phase3-compose.py",
+  "sourceBank": "tools/audio/phase3-sample-bank.json",
+  "reproduction": "python3 tools/audio/phase3-compose.py --check && python3 tools/audio/phase3-compose.py --render /tmp/sibdlp-phase3-preview",
+  "sourceMusicStatus": "REVISE; original opening pitches/onsets now exact in eight, whole musical form and harmony still review needed",
+  "renderTechnicalStatus": "PASS isolated recorded samples/MP3 decode/Crown SHA; not integrated full game",
+  "heardSonicStatus": "UNVERIFIED",
+  "phase4": "BLOCKED",
+  "qualityRisks": [
+    "Recordings are mono despite 160-kb/s output",
+    "Some VSCO samples are already compressed at 96-kb/s before final encoding",
+    "55 high pitch shift notes >=5 semitones; 16 at 7 semitones concentrated in horn, need improved source or audition",
+    "66 marimba substitutes for authored dulcimer, 20 glockenspiel substitutes for bell; not actual intended timbres",
+    "No tested long-loop actual listening, A/B owner comparison, gameplay warning masking, full stereo orchestra or device QA",
+    "Stacked PR has unrelated sprite-canon test failure; dedicated studio CI is not a full-PR release gate"
+  ],
+  "metrics": {
+    "schemaVersion": 3,
+    "scope": "Phase 3 eight unregistered primary base themes only",
+    "musicRegistered": 83,
+    "crownFrozen": 18,
+    "authored": [
+      [
+        "place-vale",
+        12,
+        92,
+        "Phase3 heritage opening / v2 body"
+      ],
+      [
+        "place-march",
+        14,
+        82,
+        "new-authored"
+      ],
+      [
+        "place-highlands",
+        14,
+        88,
+        "new-authored"
+      ],
+      [
+        "place-frontier",
+        16,
+        96,
+        "new-authored"
+      ],
+      [
+        "place-crypt",
+        12,
+        84,
+        "new-authored"
+      ],
+      [
+        "place-archive",
+        16,
+        86,
+        "Phase3 heritage opening / v2 body"
+      ],
+      [
+        "place-mine",
+        14,
+        96,
+        "new-authored"
+      ],
+      [
+        "place-abyss",
+        16,
+        96,
+        "new-authored"
+      ]
+    ],
+    "tracks": [
+      {
+        "cue": "place-vale",
+        "seconds": 31.304354,
+        "decodedSamples": 1393752,
+        "expectedSamples": 1393752,
+        "loop": {
+          "start": 0.15,
+          "end": 31.4543537414966
+        },
+        "encodedBytes": 633252,
+        "sha256": "e91b3f6175608c001b3b29480f7d2454b9e8c9d5b369d60ae3fcc0661b6a72ae",
+        "decodedPeak": 0.4434,
+        "decodedRms": 0.08728,
+        "loopEdgeDelta": 0.00086,
+        "recordedInstrumentNotes": 98
+      },
+      {
+        "cue": "place-march",
+        "seconds": 40.975601,
+        "decodedSamples": 1820254,
+        "expectedSamples": 1820254,
+        "loop": {
+          "start": 0.15,
+          "end": 41.12560090702948
+        },
+        "encodedBytes": 827080,
+        "sha256": "8cf0ca60522eef4fe6d8856ed0f9e42fb2bc2a3ce9a7886ae756e2acef4a3cce",
+        "decodedPeak": 0.54388,
+        "decodedRms": 0.08338,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 89
+      },
+      {
+        "cue": "place-highlands",
+        "seconds": 38.181814,
+        "decodedSamples": 1697048,
+        "expectedSamples": 1697048,
+        "loop": {
+          "start": 0.15,
+          "end": 38.331814058956915
+        },
+        "encodedBytes": 771178,
+        "sha256": "997dce478516373d6ace490eea3a1fd5ae8d7f19a3c085d4e05f8efbc1439f0f",
+        "decodedPeak": 0.46307,
+        "decodedRms": 0.08372,
+        "loopEdgeDelta": 0.00018,
+        "recordedInstrumentNotes": 96
+      },
+      {
+        "cue": "place-frontier",
+        "seconds": 40,
+        "decodedSamples": 1777230,
+        "expectedSamples": 1777230,
+        "loop": {
+          "start": 0.15,
+          "end": 40.15
+        },
+        "encodedBytes": 807227,
+        "sha256": "ebb270fe8bc869d3c0a85dcd5b6e17758e68fd9abfbe9455e9c39ef678245237",
+        "decodedPeak": 0.56877,
+        "decodedRms": 0.08334,
+        "loopEdgeDelta": 0,
+        "recordedInstrumentNotes": 104
+      },
+      {
+        "cue": "place-crypt",
+        "seconds": 34.285714,
+        "decodedSamples": 1525230,
+        "expectedSamples": 1525230,
+        "loop": {
+          "start": 0.15,
+          "end": 34.43571428571428
+        },
+        "encodedBytes": 692811,
+        "sha256": "0c6840bcb5e51781fc7910cb25b504cc63b358ed46261184165c4f2a0eaafd12",
+        "decodedPeak": 0.53153,
+        "decodedRms": 0.08334,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 69
+      },
+      {
+        "cue": "place-archive",
+        "seconds": 44.651156,
+        "decodedSamples": 1982346,
+        "expectedSamples": 1982346,
+        "loop": {
+          "start": 0.15,
+          "end": 44.801156462585034
+        },
+        "encodedBytes": 900223,
+        "sha256": "0f6cca3a5d6b5aad81df38502a4b6ee02e680df5f6435d8d09b0f168e2b5df0c",
+        "decodedPeak": 0.6114,
+        "decodedRms": 0.08745,
+        "loopEdgeDelta": 0,
+        "recordedInstrumentNotes": 123
+      },
+      {
+        "cue": "place-mine",
+        "seconds": 35,
+        "decodedSamples": 1556730,
+        "expectedSamples": 1556730,
+        "loop": {
+          "start": 0.15,
+          "end": 35.15
+        },
+        "encodedBytes": 707440,
+        "sha256": "ca0121c53c6481bb30f27aa8ecc3f67fc030e86d6cf664ade7cdf7f9394afc70",
+        "decodedPeak": 0.48171,
+        "decodedRms": 0.08356,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 85
+      },
+      {
+        "cue": "place-abyss",
+        "seconds": 40,
+        "decodedSamples": 1777230,
+        "expectedSamples": 1777230,
+        "loop": {
+          "start": 0.15,
+          "end": 40.15
+        },
+        "encodedBytes": 807227,
+        "sha256": "07cd3237cbb2228640900b95b7c73ff4534a83aa34d3593bf2022b5f46e71a35",
+        "decodedPeak": 0.49267,
+        "decodedRms": 0.08354,
+        "loopEdgeDelta": 0,
+        "recordedInstrumentNotes": 95
+      }
+    ],
+    "sampleRateHz": 44100,
+    "encodedBitrate": "160k-mono-MP3",
+    "instrumentEngine": "verified-CC0-samples-with-explicit-drums",
+    "samplerEvidence": {
+      "recordedCalls": 759,
+      "sampleFilesDecoded": 46,
+      "uniqueSourceSamples": 46,
+      "maxSemitonePitchShift": 7,
+      "shiftHistogram": {
+        "0": 230,
+        "1": 109,
+        "2": 225,
+        "3": 125,
+        "4": 15,
+        "5": 34,
+        "6": 5,
+        "7": 16
+      },
+      "provisionalTimbreSubstitutions": {
+        "bell → glockenspiel": 20,
+        "cello → basses": 20,
+        "cello → celli": 158,
+        "dulcimer → marimba": 66,
+        "strings → celli": 29,
+        "strings → violins": 31
+      },
+      "sourceFamilyCount": 2,
+      "largePitchShifts": [
+        {
+          "cue": "place-abyss",
+          "instrument": "horn",
+          "requestedMidi": 65,
+          "sampleMidi": 60,
+          "semitones": 5,
+          "notes": 4
+        },
+        {
+          "cue": "place-abyss",
+          "instrument": "horn",
+          "requestedMidi": 67,
+          "sampleMidi": 60,
+          "semitones": 7,
+          "notes": 6
+        },
+        {
+          "cue": "place-abyss",
+          "instrument": "horn",
+          "requestedMidi": 69,
+          "sampleMidi": 74,
+          "semitones": -5,
+          "notes": 2
+        },
+        {
+          "cue": "place-archive",
+          "instrument": "glockenspiel",
+          "requestedMidi": 89,
+          "sampleMidi": 84,
+          "semitones": 5,
+          "notes": 1
+        },
+        {
+          "cue": "place-crypt",
+          "instrument": "basses",
+          "requestedMidi": 33,
+          "sampleMidi": 28,
+          "semitones": 5,
+          "notes": 4
+        },
+        {
+          "cue": "place-frontier",
+          "instrument": "basses",
+          "requestedMidi": 33,
+          "sampleMidi": 28,
+          "semitones": 5,
+          "notes": 4
+        },
+        {
+          "cue": "place-frontier",
+          "instrument": "horn",
+          "requestedMidi": 69,
+          "sampleMidi": 74,
+          "semitones": -5,
+          "notes": 1
+        },
+        {
+          "cue": "place-highlands",
+          "instrument": "horn",
+          "requestedMidi": 65,
+          "sampleMidi": 60,
+          "semitones": 5,
+          "notes": 4
+        },
+        {
+          "cue": "place-highlands",
+          "instrument": "horn",
+          "requestedMidi": 67,
+          "sampleMidi": 60,
+          "semitones": 7,
+          "notes": 8
+        },
+        {
+          "cue": "place-highlands",
+          "instrument": "horn",
+          "requestedMidi": 69,
+          "sampleMidi": 74,
+          "semitones": -5,
+          "notes": 5
+        },
+        {
+          "cue": "place-march",
+          "instrument": "glockenspiel",
+          "requestedMidi": 89,
+          "sampleMidi": 84,
+          "semitones": 5,
+          "notes": 2
+        },
+        {
+          "cue": "place-mine",
+          "instrument": "basses",
+          "requestedMidi": 34,
+          "sampleMidi": 28,
+          "semitones": 6,
+          "notes": 3
+        },
+        {
+          "cue": "place-mine",
+          "instrument": "horn",
+          "requestedMidi": 65,
+          "sampleMidi": 60,
+          "semitones": 5,
+          "notes": 7
+        },
+        {
+          "cue": "place-mine",
+          "instrument": "horn",
+          "requestedMidi": 67,
+          "sampleMidi": 60,
+          "semitones": 7,
+          "notes": 2
+        },
+        {
+          "cue": "place-mine",
+          "instrument": "horn",
+          "requestedMidi": 68,
+          "sampleMidi": 74,
+          "semitones": -6,
+          "notes": 2
+        }
+      ],
+      "instrumentFamilies": [
+        "basses",
+        "celli",
+        "flute",
+        "glockenspiel",
+        "guitar",
+        "harp",
+        "horn",
+        "marimba",
+        "piano",
+        "violins"
+      ]
+    },
+    "existingCatalogBytes": 25654373,
+    "replacementProjectionBytes": 29707843,
+    "encodedCatalogLimitBytes": 268435456,
+    "headroomAfterEightOnlyBytes": 238727613,
+    "limitations": "Real CC0 sources are technically pinned, not perceptually reviewed; marimba-for-dulcimer and glockenspiel-for-bell remain provisional. Not Phase 4 variants or integrated music QA. No actual hearing, warning masking, audible timbre acceptance, in-game mixing or device verification."
+  }
+}

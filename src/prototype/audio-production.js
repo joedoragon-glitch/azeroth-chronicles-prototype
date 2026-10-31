@@ -65,7 +65,9 @@
           };
         };
         if (scene.started === false || scene.situation === 'title') return special('title');
-        if (scene.gameOver || scene.situation === 'game-over') return special('defeat');
+        if (scene.gameOver || scene.situation === 'game-over' ||
+            (scene.succession && this.ctx && this.ctx.currentTime < (this.defeatUntil || 0)))
+          return special('defeat');
         if (this.ctx && this.ctx.currentTime < this.finaleUntil && scene.peace)
           return special('finale');
         const boss = director.bosses[scene.boss?.family];
@@ -112,13 +114,25 @@
       }
       updateProduction(scene) {
         if (!this.production || !this.ctx || this.paused || this.ctx.state !== 'running') return;
-        const mix =
-          scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world';
+        // Do not attenuate a Succession loss to the routine 22% menu music mix.
+        // The successor picker is a narrative moment, not an ordinary settings menu.
+        const lossPlaying = (scene.gameOver || scene.succession &&
+          this.ctx.currentTime < (this.defeatUntil || 0)) && scene.started !== false;
+        // Title has its own mix. An in-game menu must not lower or restart
+        // the current score just because gameplay simulation is frozen.
+        const mix = scene.started === false || scene.situation === 'title'
+          ? 'title' : 'world';
         if (this.mixScene !== mix) this.setSceneMix(mix);
         this.updateEnvironment(scene);
         this.sceneDetails(scene);
         const now = this.ctx.currentTime;
-        if (scene.settlement) {
+        // A title-screen snapshot is not live exploration. Clearing the
+        // settlement hold avoids carrying the saved hero's nearby refuge into
+        // the next actual gameplay scene (and selecting settlement music).
+        if (scene.started === false || scene.situation === 'title') {
+          this.settlementUntil = 0;
+          this.settlementZone = null;
+        } else if (scene.settlement) {
           this.settlementUntil = now + 4;
           this.settlementZone = scene.zone;
         }
@@ -332,10 +346,6 @@
               this.tone(93, now + 0.14, 0.075, 0.005, 'sine', 'ambience');
             }
           } else if (scene.night) {
-            // Preserve the established sparse insect detail for all other
-            // outdoor night regions (Vale, Highlands, Frontier, Crown).
-            // A region-specific replacement needs separate creative approval;
-            // lack of a new sound never justifies deleting the working one.
             if (!this.playSoundEvent('ambience.insects', scene))
               for (let i = 0; i < 3; i++)
                 this.tone(95, now + i * 0.11, 0.045, 0.003, 'sine', 'ambience', 0.006);

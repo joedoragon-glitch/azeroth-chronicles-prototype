@@ -1616,18 +1616,14 @@
   // Existing menu/button unlocks remain the click/tap fallback for WebKit.
   function unlockSoundtrackOnGesture(event) {
     if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
-    if (audio.ctx?.state === 'running') {
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
-      return;
-    }
-    void audio.unlock().then((ready) => {
-      if (!ready) return;
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
-    });
+    if (audio.ctx?.state === 'running') return;
+    void audio.unlock();
   }
+  // Safari may recognize a completed tap rather than pointerdown. Keep
+  // listening so an interrupted audio context can resume on another gesture.
   addEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+  addEventListener('touchend', unlockSoundtrackOnGesture, true);
+  addEventListener('click', unlockSoundtrackOnGesture, true);
   addEventListener('keydown', unlockSoundtrackOnGesture, true);
   if (typeof PrototypeMaterials !== 'undefined')
     PrototypeMaterials.setOptimizationMode(optimizationMode);
@@ -3616,9 +3612,9 @@
     $('scene-loading').hidden = true;
     $('scene-loading-retry').hidden = true;
     // If the gameplay commit occurred, do not roll back or replay it.
-    // A hidden page is safely saved by the existing visibility/pagehide owner.
+    // Title and game menus may not suspend the soundtrack on travel cleanup.
     last = performance.now();
-    audio.setPaused(!started || !focused || document.hidden || paused);
+    audio.setPaused(!focused || document.hidden);
   }
   function revealSceneTransition(token) {
     const ticket = sceneTransition;
@@ -3794,7 +3790,8 @@
     started = false;
     paused = false;
     clearInput();
-    audio.setPaused(true);
+    // Title stops gameplay simulation, not its own theme's audio clock.
+    audio.setPaused(!focused || document.hidden);
     last = performance.now();
     if (menu) {
       menu = null;
@@ -3816,6 +3813,8 @@
   function enterPreparedScene() {
     if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
+    // Continue is already a browser gesture. Unlock before asynchronous warmup.
+    const entryUnlock = audio.unlock();
     titleLoading = true;
     titleImportNotice = false;
     const epoch = ++titleEpoch;
@@ -3834,6 +3833,7 @@
     refreshTitleScreen();
     clearInput();
     let campaign = game;
+    let entryAudioAttempted = false;
     const reveal = () => {
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
@@ -3851,9 +3851,29 @@
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
       const finish = () => {
-        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
           titleLoading = false;
           refreshTitleScreen();
+          return;
+        }
+        // Without Web Audio (or in a non-browser test shell), enter normally.
+        // A missing audio device must never defer campaign activation.
+        if (!entryAudioAttempted && audio.ctx) {
+          entryAudioAttempted = true;
+          $('title-loading').textContent = language === 'es'
+            ? 'Preparando la música…' : 'Preparing soundtrack…';
+          // Start the destination score before movement is enabled. Missing
+          // audio must not trap the player behind a permanent loading screen.
+          const ready = Promise.resolve(entryUnlock).then((unlocked) => {
+            if (!unlocked || epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
+                campaign !== game || !titleLoading) return false;
+            audio.update(game, false, {
+              started: true, menu: false, paused: false, backgrounded: false,
+            });
+            return audio.productionPending || true;
+          }).catch(() => false);
+          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))])
+            .then(() => requestAnimationFrame(finish));
           return;
         }
         titleLoading = false;
@@ -8210,6 +8230,12 @@
   }
   function frame(now) {
     if (!started || sceneTransition) {
+      // Idle title runs its music director without simulating a campaign.
+      if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
+        audio.update(game, !focused || document.hidden, {
+          started: false, menu: !!menu, backgrounded: !focused || document.hidden,
+          paused: false,
+        });
       last = now;
       clearEmergencyEscalation();
       frameSkip.suspend();
@@ -8309,7 +8335,8 @@
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
-    audio.update(game, paused || !focused || document.hidden || recovering, {
+    // An in-game menu or manual pause freezes simulation, not audio playback.
+    audio.update(game, !focused || document.hidden || recovering, {
       menu: !!menu,
       backgrounded: !focused || document.hidden,
       paused: paused || recovering,

@@ -1,0 +1,42 @@
+name: Phase 5 Boss and TRUE Isolated Studio
+on:
+  pull_request:
+    branches: [audio/phase4-contextual-arrangements-20261031]
+    paths:
+      - 'tools/audio/phase5-*'
+      - 'tests/audio-phase5-*'
+      - 'tools/audio/score-quality-controls.py'
+      - 'tests/audio-score-quality-controls.test.py'
+      - '.github/workflows/audio-phase5-studio.yml'
+  workflow_dispatch:
+jobs:
+  isolated-audio:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Isolated recorded-source dependencies
+        run: python -m pip install numpy scipy imageio-ffmpeg
+      - name: Permanent shared and Phase 5 negative regressions
+        run: |
+          python tests/audio-score-quality-controls.test.py
+          node tests/audio-phase5-scores.test.cjs
+          python tests/audio-phase5-quality.test.py
+      - name: Encode and decode all 16 isolated recordings
+        run: python tools/audio/phase5-compose.py --render "$RUNNER_TEMP/phase5-isolated"
+      - name: Independent encoded roster, eight overlays and technical checks
+        run: |
+          python tools/audio/score-quality-controls.py "$RUNNER_TEMP/phase5-isolated/phase5-metrics.json" --expected-count 16 --layer-count 8 --expected-source tools/audio/phase5-scores.json --expected-list-key cues
+          python tests/audio-phase5-quality.test.py "$RUNNER_TEMP/phase5-isolated/phase5-metrics.json"
+          cp "$RUNNER_TEMP/phase5-isolated/phase5-metrics.json" phase5-metrics.json
+      - name: Save metrics only; no listening or publishing
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase5-isolated-metrics-not-acoustic-acceptance
+          path: phase5-metrics.json
+          retention-days: 14

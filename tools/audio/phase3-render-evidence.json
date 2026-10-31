@@ -1,0 +1,419 @@
+{
+  "schemaVersion": 3,
+  "status": "REVISED SIX SOURCE INTRO HOOKS: ISOLATED EIGHT-CUE CODEC PASS on exact score-producing commit; CREATIVE SOURCE REVISE; audible quality UNVERIFIED; Phase 4 BLOCKED. Previous evidence retained below for history.",
+  "evidenceSource": {
+    "ciRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41175260693",
+    "testedCommit": "cc69e2aa4747a94ccbfffad91b80a0a2d143da95",
+    "jobId": 124461391040,
+    "source": "PHASE3_INTERNAL_METRICS from successful focused GitHub Actions log",
+    "notes": "These metrics and MP3 hashes apply ONLY to score source cc69e2aa, superseded by six corrected heritage motifs on 31 Oct 2026. Never use these hashes as current candidate proof; a separately captured corrected CI render is required."
+  },
+  "scope": {
+    "basePrimaryThemes": 8,
+    "newAuthored": 6,
+    "correctedV2Reused": 2,
+    "registeredMusicUnchanged": 83,
+    "inScopeCurrentCycle": 65,
+    "frozenCrownCount": 18,
+    "contextualLayersDeferred": "Phase 4 (42 IDs)",
+    "ownerFirstListening": "Phase 9"
+  },
+  "measured": {
+    "schemaVersion": 3,
+    "scope": "Phase 3 eight unregistered primary base themes only",
+    "musicRegistered": 83,
+    "crownFrozen": 18,
+    "authored": [
+      [
+        "place-vale",
+        12,
+        92,
+        "v2-continuity"
+      ],
+      [
+        "place-march",
+        14,
+        82,
+        "new-authored"
+      ],
+      [
+        "place-highlands",
+        14,
+        88,
+        "new-authored"
+      ],
+      [
+        "place-frontier",
+        16,
+        96,
+        "new-authored"
+      ],
+      [
+        "place-crypt",
+        12,
+        84,
+        "new-authored"
+      ],
+      [
+        "place-archive",
+        16,
+        86,
+        "v2-continuity"
+      ],
+      [
+        "place-mine",
+        14,
+        96,
+        "new-authored"
+      ],
+      [
+        "place-abyss",
+        16,
+        96,
+        "new-authored"
+      ]
+    ],
+    "tracks": [
+      {
+        "cue": "place-vale",
+        "seconds": 31.304344,
+        "decodedSamples": 1011339,
+        "expectedSamples": 1011339,
+        "loop": {
+          "start": 0.15,
+          "end": 31.45434375
+        },
+        "encodedBytes": 380204,
+        "sha256": "e8df5f898c21334e5aa9cc549c4b97f34835f4b886cc2f2d36cb23a884877088",
+        "decodedPeak": 0.42862,
+        "decodedRms": 0.08723,
+        "loopEdgeDelta": 0.00001
+      },
+      {
+        "cue": "place-march",
+        "seconds": 40.975625,
+        "decodedSamples": 1320820,
+        "expectedSamples": 1320820,
+        "loop": {
+          "start": 0.15,
+          "end": 41.125625
+        },
+        "encodedBytes": 496412,
+        "sha256": "96a3c9206a5f67e88fb0c58d6c0935d933b2b9068eeda6ae747529fcaeabbf22",
+        "decodedPeak": 0.42133,
+        "decodedRms": 0.08351,
+        "loopEdgeDelta": 0.00047
+      },
+      {
+        "cue": "place-highlands",
+        "seconds": 38.181812,
+        "decodedSamples": 1231418,
+        "expectedSamples": 1231418,
+        "loop": {
+          "start": 0.15,
+          "end": 38.3318125
+        },
+        "encodedBytes": 462716,
+        "sha256": "52ba9571858fa5597951a6a5bcc8bbe525ef246c75f99af43f08373a2de8d05c",
+        "decodedPeak": 0.42683,
+        "decodedRms": 0.08352,
+        "loopEdgeDelta": 0.00046
+      },
+      {
+        "cue": "place-frontier",
+        "seconds": 40,
+        "decodedSamples": 1289600,
+        "expectedSamples": 1289600,
+        "loop": {
+          "start": 0.15,
+          "end": 40.15
+        },
+        "encodedBytes": 484748,
+        "sha256": "b3afad8c5e0e5ea511470902847fcb112e2059fbfa0aa3dae494838ead67a2e5",
+        "decodedPeak": 0.61066,
+        "decodedRms": 0.08338,
+        "loopEdgeDelta": 0.00001
+      },
+      {
+        "cue": "place-crypt",
+        "seconds": 34.285719,
+        "decodedSamples": 1106743,
+        "expectedSamples": 1106743,
+        "loop": {
+          "start": 0.15,
+          "end": 34.43571875
+        },
+        "encodedBytes": 416060,
+        "sha256": "b4290a3838321a0b2c3da5162aaa15f748a63a427f84212235ef1b433b340815",
+        "decodedPeak": 0.45247,
+        "decodedRms": 0.08341,
+        "loopEdgeDelta": 0.00036
+      },
+      {
+        "cue": "place-archive",
+        "seconds": 44.651156,
+        "decodedSamples": 1438437,
+        "expectedSamples": 1438437,
+        "loop": {
+          "start": 0.15,
+          "end": 44.80115625
+        },
+        "encodedBytes": 540476,
+        "sha256": "a7568d2dfbe5cec511f3d956bb7047995c9fe0440d77b97a8f8f0bf3cd29dd81",
+        "decodedPeak": 0.52024,
+        "decodedRms": 0.08733,
+        "loopEdgeDelta": 0.00008
+      },
+      {
+        "cue": "place-mine",
+        "seconds": 35,
+        "decodedSamples": 1129600,
+        "expectedSamples": 1129600,
+        "loop": {
+          "start": 0.15,
+          "end": 35.15
+        },
+        "encodedBytes": 424700,
+        "sha256": "c163fbaeff78bbfd5411f06c47ecb78a7e67ff99528f070d36139e2ce914ea5a",
+        "decodedPeak": 0.45348,
+        "decodedRms": 0.08343,
+        "loopEdgeDelta": 0.0003
+      },
+      {
+        "cue": "place-abyss",
+        "seconds": 40,
+        "decodedSamples": 1289600,
+        "expectedSamples": 1289600,
+        "loop": {
+          "start": 0.15,
+          "end": 40.15
+        },
+        "encodedBytes": 484748,
+        "sha256": "32870b723ed778ac4efa33371b14a4c8048b7839c9eff8ee5a36e07d093c4be0",
+        "decodedPeak": 0.4345,
+        "decodedRms": 0.0834,
+        "loopEdgeDelta": 0.00001
+      }
+    ],
+    "existingCatalogBytes": 25654373,
+    "replacementProjectionBytes": 27251469,
+    "encodedCatalogLimitBytes": 33554432,
+    "headroomAfterEightOnlyBytes": 6302963,
+    "limitations": "Not Phase 4 variants or Phase 7 integrated music QA. No real listening, warning masking, audible timbre acceptance, in-game mixing or device verification.",
+    "maximumDecodedPeak": 0.61066,
+    "maximumLoopEdgeDelta": 0.00047,
+    "totalEightPreviewBytes": 3690064
+  },
+  "review": {
+    "sourceDesign": "SUPERSEDED / REVISE: first-generation source-quality GO withdrawn; six opening score identities now modified and all eight still require critical musical/source/timbral review",
+    "isolatedTechnical": "HISTORICALLY PASSED: eight old-source MP3s; this does not validate the revised six-source render, and the 32 MiB projection is historical after live dev.242 #712",
+    "audibleQuality": "UNVERIFIED: no real timbre, phrase, warning masking or fatigue audition; Phase 4 BLOCKED",
+    "runtimeIntegration": "NOT TESTED: no production manifest edits, browser crossfade/cache (#699 in Phase 7), devices or PWA",
+    "mergeAndDeployment": "NOT PERFORMED: PR remains draft"
+  },
+  "correctedCandidate": {
+    "evidenceSource": {
+      "ciRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41181754588",
+      "jobId": 124480420651,
+      "scoreProducingCommit": "1b7dcffdde14b8e103c1166c62b2ca0be77c3fa9",
+      "sourceCompositionCommit": "b4a8926ec2dad8870307a56c538a316be36a24cf",
+      "logMarker": "PHASE3_INTERNAL_METRICS",
+      "audioSpecificChecks": "PASS: tests/audio-phase3-quality-review.test.cjs and tests/audio-phase3-themes.test.cjs; eight actual MP3s synthesized, FFmpeg-decoded and loop/peak/hashes checked",
+      "overallCI": "FAIL: unrelated historical sprite-scope expected-evidence mismatch on older stacked branch. The PR-wide gate is NOT green.",
+      "productionStatus": "Unregistered isolated preview, not merged or published"
+    },
+    "measured": {
+      "schemaVersion": 3,
+      "scope": "Phase 3 eight unregistered primary base themes only",
+      "musicRegistered": 83,
+      "crownFrozen": 18,
+      "authored": [
+        [
+          "place-vale",
+          12,
+          92,
+          "v2-continuity"
+        ],
+        [
+          "place-march",
+          14,
+          82,
+          "new-authored"
+        ],
+        [
+          "place-highlands",
+          14,
+          88,
+          "new-authored"
+        ],
+        [
+          "place-frontier",
+          16,
+          96,
+          "new-authored"
+        ],
+        [
+          "place-crypt",
+          12,
+          84,
+          "new-authored"
+        ],
+        [
+          "place-archive",
+          16,
+          86,
+          "v2-continuity"
+        ],
+        [
+          "place-mine",
+          14,
+          96,
+          "new-authored"
+        ],
+        [
+          "place-abyss",
+          16,
+          96,
+          "new-authored"
+        ]
+      ],
+      "tracks": [
+        {
+          "cue": "place-vale",
+          "seconds": 31.304344,
+          "decodedSamples": 1011339,
+          "expectedSamples": 1011339,
+          "loop": {
+            "start": 0.15,
+            "end": 31.45434375
+          },
+          "encodedBytes": 380204,
+          "sha256": "e8df5f898c21334e5aa9cc549c4b97f34835f4b886cc2f2d36cb23a884877088",
+          "decodedPeak": 0.42862,
+          "decodedRms": 0.08723,
+          "loopEdgeDelta": 0.00001
+        },
+        {
+          "cue": "place-march",
+          "seconds": 40.975625,
+          "decodedSamples": 1320820,
+          "expectedSamples": 1320820,
+          "loop": {
+            "start": 0.15,
+            "end": 41.125625
+          },
+          "encodedBytes": 496412,
+          "sha256": "f38eec395cc309ba30c3a5685654097061c7bbf89b75fb53c2a56793b7213380",
+          "decodedPeak": 0.42153,
+          "decodedRms": 0.0835,
+          "loopEdgeDelta": 0.00048
+        },
+        {
+          "cue": "place-highlands",
+          "seconds": 38.181812,
+          "decodedSamples": 1231418,
+          "expectedSamples": 1231418,
+          "loop": {
+            "start": 0.15,
+            "end": 38.3318125
+          },
+          "encodedBytes": 462716,
+          "sha256": "7b4b0e9b84f54a94d0b5a578d176d6eb062f682c5f9c2978498834882a249f52",
+          "decodedPeak": 0.43217,
+          "decodedRms": 0.08352,
+          "loopEdgeDelta": 0.00049
+        },
+        {
+          "cue": "place-frontier",
+          "seconds": 40,
+          "decodedSamples": 1289600,
+          "expectedSamples": 1289600,
+          "loop": {
+            "start": 0.15,
+            "end": 40.15
+          },
+          "encodedBytes": 484748,
+          "sha256": "860dc79ce209aa5626378166f3ad1f6e78625cf0c4aa9138d7c80e71be98703d",
+          "decodedPeak": 0.60932,
+          "decodedRms": 0.08338,
+          "loopEdgeDelta": 0.00001
+        },
+        {
+          "cue": "place-crypt",
+          "seconds": 34.285719,
+          "decodedSamples": 1106743,
+          "expectedSamples": 1106743,
+          "loop": {
+            "start": 0.15,
+            "end": 34.43571875
+          },
+          "encodedBytes": 416060,
+          "sha256": "36aadb55d2332151647e285e2df58c46ad6d7259b77f72228542f788c86749aa",
+          "decodedPeak": 0.45914,
+          "decodedRms": 0.08341,
+          "loopEdgeDelta": 0.00037
+        },
+        {
+          "cue": "place-archive",
+          "seconds": 44.651156,
+          "decodedSamples": 1438437,
+          "expectedSamples": 1438437,
+          "loop": {
+            "start": 0.15,
+            "end": 44.80115625
+          },
+          "encodedBytes": 540476,
+          "sha256": "a7568d2dfbe5cec511f3d956bb7047995c9fe0440d77b97a8f8f0bf3cd29dd81",
+          "decodedPeak": 0.52024,
+          "decodedRms": 0.08733,
+          "loopEdgeDelta": 0.00008
+        },
+        {
+          "cue": "place-mine",
+          "seconds": 35,
+          "decodedSamples": 1129600,
+          "expectedSamples": 1129600,
+          "loop": {
+            "start": 0.15,
+            "end": 35.15
+          },
+          "encodedBytes": 424700,
+          "sha256": "8d0579afaf2995c8c1c855b7f83307bd3035e5c5a052adf75623d2ea316c205c",
+          "decodedPeak": 0.46241,
+          "decodedRms": 0.08344,
+          "loopEdgeDelta": 0.00029
+        },
+        {
+          "cue": "place-abyss",
+          "seconds": 40,
+          "decodedSamples": 1289600,
+          "expectedSamples": 1289600,
+          "loop": {
+            "start": 0.15,
+            "end": 40.15
+          },
+          "encodedBytes": 484748,
+          "sha256": "c040a14cd7cbbdfc1dd9df8f8c086e2dd31c439de4caebf65943c5a510f9e8ac",
+          "decodedPeak": 0.43138,
+          "decodedRms": 0.0834,
+          "loopEdgeDelta": 0.00001
+        }
+      ],
+      "existingCatalogBytes": 25654373,
+      "replacementProjectionBytes": 27251469,
+      "encodedCatalogLimitBytes": 33554432,
+      "headroomAfterEightOnlyBytes": 6302963,
+      "limitations": "Not Phase 4 variants or Phase 7 integrated music QA. No real listening, warning masking, audible timbre acceptance, in-game mixing or device verification.",
+      "encodedCatalogLimitBytesAtTest": 33554432,
+      "publishedNewCatalogLimitBytes": 268435456,
+      "headroomAfterEightOnlyAtNewPublishedLimitBytes": 241183987,
+      "nonComplianceNote": "The helper reports its historical 32-MiB limit from pre-#712 stacked source; published main dev.242 now authorizes 256 MiB unique packaged audio and 16 MiB per file. These eight alone are not a full 65-cue budget acceptance."
+    },
+    "review": {
+      "sourceMotif": "Six newly authored source openings intentionally restored old note onsets and pitches; both reused v2 base themes still require independent continuity/harmonic review. Source quality remains REVISE.",
+      "audioEngineering": "ISOLATED TECHNICAL PASS for these exact eight SHA-256 preview MP3s only; no production registration/in-game crossfade/cache tests.",
+      "audibleTimbre": "UNVERIFIED; still same oscillator-based patch engine and mastering, no evidence of convincing sound or long-loop fatigue.",
+      "phase4": "BLOCKED"
+    }
+  }
+}
