@@ -16,6 +16,11 @@ if (!fs.existsSync(path.join(root,'assets/vendor/pixi-8.22.0.min.js')))
     {cwd:root,stdio:'inherit'});
 const engine = process.env.BROWSER_ENGINE || 'chromium';
 const requireWebGL = process.env.REQUIRE_WEBGL2 === '1';
+// Normal manual execution covers both form factors. Focused CI splits them
+// into independent processes so full-region Pixi preparation does not make
+// the combined four-journey smoke exceed one six-minute process deadline.
+const deviceCases = process.env.PIXI_BROWSER_DEVICE === 'desktop' ? [false]
+  : process.env.PIXI_BROWSER_DEVICE === 'phone' ? [true] : [false, true];
 // Use the runner's Chromium if available, including its software WebGL2
 // implementation. This is a functionality check, never a hardware FPS claim.
 function installedChromium() {
@@ -256,7 +261,7 @@ async function run() {
     // the separate generic WebGL recovery journey must not prevent recording
     // whether Mage Skill 1 itself draws on Canvas and the Pixi combat overlay.
     // The original recovery journey below remains unchanged and is not waived.
-    for (const phone of [false, true]) {
+    for (const phone of deviceCases) {
       // Separate graphics acceptance context: exercising synthetic beam
       // geometry must never contaminate the renderer recovery journey above.
       const beamContext = await browser.newContext({
@@ -280,7 +285,7 @@ async function run() {
         await beamContext.close();
       }
     }
-    for (const phone of [false, true]) {
+    for (const phone of deviceCases) {
       const context = await browser.newContext({
         viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
         isMobile: phone, hasTouch: phone, acceptDownloads: true,

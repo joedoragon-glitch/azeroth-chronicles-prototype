@@ -339,6 +339,7 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
     // browser smoke. Never select an entire browser matrix by subsystem.
     if (
       file === TEST + 'pixi-renderer-browser.test.cjs' ||
+      file === TEST + 'pixi-renderer-phone-browser.test.cjs' ||
       file === TEST + 'status-renderer-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs'
@@ -401,7 +402,8 @@ function diffPaths(base, head = 'HEAD') {
 function run(
   paths,
   invoke = (file) => {
-    const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs';
+    const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs' ||
+      file === TEST + 'pixi-renderer-phone-browser.test.cjs';
     const statusBrowser = file === TEST + 'status-renderer-browser.test.cjs';
     const narrowBrowser =
       pixiBrowser || statusBrowser ||
@@ -417,6 +419,10 @@ function run(
         ? {
             ...process.env,
             BROWSER_ENGINE: 'chromium',
+            ...(pixiBrowser ? {
+              PIXI_BROWSER_DEVICE: file === TEST + 'pixi-renderer-phone-browser.test.cjs'
+                ? 'phone' : 'desktop',
+            } : {}),
             ...(pixiBrowser || statusBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
           }
         : process.env,
