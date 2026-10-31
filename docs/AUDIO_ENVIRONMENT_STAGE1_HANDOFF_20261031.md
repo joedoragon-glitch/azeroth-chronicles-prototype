@@ -1,5 +1,5 @@
 # #709 — Environmental finishing pass: four-scene source integration and artistic handoff
-**31 October 2026 · SIBDLP · draft PR #711 · not merged / not deployed**
+**31 October 2026 · SIBDLP · PR #711 engineering approval snapshot (check [PR status](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/711) and [release state](DEVELOPMENT_STATE.md) for actual merge/deploy)**
 
 ## What changed in the game (exact source-backed inventory)
 
@@ -29,7 +29,7 @@ All four have source/codec-corrected, guarded MP3s, 32kHz mono 128 kbps, measure
 
 The repeatable [promotion script](../tools/audio/integrate-regional-candidates.cjs) verifies every original MP3 SHA and byte size, preserves the old catalog and asset files, registers the four independent new IDs, updates their four precise rules, and records source/copyright metadata. [Isolated integration Action #41212681223](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41212681223) **SUCCESS**: real FFmpeg/FFprobe/EBU decoder integrity and gain analysis, original-preservation/regression tests, 19-zone native routing, stereo-context-simulated transport, generated audio-library + offline worker checks, byte budgets, and strict allowlist; it committed only four MP3s, manifest/route, generated runtime library, PWA worker fingerprint and source-status ledger on the **draft branch**. This is the **source-integrated** state, not final owner-audition authorization.
 
-## Merge / net-improvement gate (owner requirement)
+## Merge decision and future combined artistic audit (owner requirement)
 
 The goal is **a better-sounding game, not a replacement count or green test**. Keep older sound whenever an alternative cannot be demonstrated better; existing-recording reuse is welcome if it gives a stronger aesthetic/contextual result. Maintain a separate per-location comparison of **original vs reused vs newly recorded** where applicable and disclose drawbacks.
 
@@ -39,11 +39,11 @@ The goal is **a better-sounding game, not a replacement count or green test**. K
 
 **Runtime/memory caution:** Four 72-second 32kHz mono float32 sources would consume ~36.86 MB at their native rate if all decoded at once; browser AudioContext often resamples to 44.1 kHz or 48 kHz (approximately 50.8–55.3 MB for four concurrent decoded buffers), before music and effects, against the existing 96 MiB recording-cache target. Unlike MP3 storage, this is RAM. The actual Chromium 42-scene desktop and phone-*emulated* traversal passed budget and transport tests (peak 84.80 / 96 MiB cached; no more than two ambient voices), but headroom is limited and actual iPhone thermal/memory/output performance, real sound quality and warning *audibility* remain separate acceptance gates.
 
-**Scope closeout:** Once source/real-browser routing, cache, audible risk logging, focused checks and documentation have been reconciled, this *bounded four-place finishing pass* can be handed back for a final **combined** artistic sound+score audition after soundtrack #673's independent planned work. Later improvements to the *other* 15 locations and generic night detail belong to **future explicitly authorized environmental audio work**, not the current PR. Do not merge, deploy, ask owner for interim debugging/listening, or claim physical device verification without explicit owner approval.
+**Scope and authorization closeout (31 October 2026):** Source/real-browser routing, cache, warnings-control, focused checks and original-sound preservation have been verified. Strict 18-MP3 real decoder CI #41213983719, desktop and phone-emulated Chromium audio #41213983723, browser offline PWA #41213983712, and focused checks #41213983816 all passed on the source-only branch; the publishing job was **skipped**. The owner subsequently **authorized merging when technically/documentationally ready**. The four-place implementation may therefore be merged after final PR review without pretending it was heard or device-verified; any release outcome must be verified separately. The **final combined artistic sound+score audition** remains planned after soundtrack #673, with all concerns above retained as open listening issues. Future work on the other 15 locations and generic nocturnal detail is expressly **out of scope** for this pass. Do not ask the owner for interim debugging/listening or claim actual speaker approval.
 
 ## Historical evidence and quality standards
 
 - [Full original 14 + six retained studio identities + 19-location critical inventory](AUDIO_ENVIRONMENT_PRODUCTION_INVENTORY_20261031.md) — original source/recordings, prior failed/rejected studio variants, corrected QA findings, scene matrix
 - [Environmental quality standard and all stage audit lessons](AUDIO_ENVIRONMENT.md) — rights, meaningful natural texture, unique location identity, loop/true-peak/combined mix, artifacts, memory, regression honesty, preservation of existing details
 - [Production authoring rules](AUDIO_AUTHORING.md) and [soundtrack creative reference](AUDIO_SOUND_PASS.md), kept as distinct workstreams
-- [Issue #709](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/709) and [draft PR #711](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/711) — current technical findings, non-merge policy, final owner acceptance
+- [Issue #709](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/709) and [PR #711](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/711) — technical acceptance and owner-authorized merge, with later artistic/device review explicitly outstanding
