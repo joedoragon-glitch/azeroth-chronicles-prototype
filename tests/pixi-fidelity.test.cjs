@@ -349,6 +349,56 @@ const gpu=runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(gpu.status().loadedTextures,1,'canonical original sprite remains warmed');
   gpu.release();
   assert.equal(prepareRegistrations,1,'repeated Pixi preparations reuse the registered plugin');
+  // Issue #481: model the first westward approach from Millhaven as a cold
+  // crowd, not merely one offscreen prop. This is a deterministic Pixi/Canvas
+  // mock contract test; actual iPhone frame pacing remains device acceptance.
+  resources.clear();currentActorTextures.clear();
+  const coldStart={...game.hero};
+  game.zoneId='vale';game.inDungeon=false;game.zoneSize=()=>2000;
+  game.hero.x=1500;game.hero.y=1200;
+  game.props=Array.from({length:24},(_,i)=>({
+    id:'cold-west-prop-'+i,x:870+(i%12)*18,
+    y:1200+Math.floor(i/12)*18,decorative:true,structure:'cart'
+  }));
+  game.enemies=Array.from({length:24},(_,i)=>({
+    id:'cold-west-orc-'+i,x:880+(i%12)*14,
+    y:1240+Math.floor(i/12)*18,species:'orc',type:'mob',
+    renderKind:'enemy',hp:20,maxHp:20
+  }));
+  const unmodifiedColdCampaign=JSON.stringify({hero:game.hero,props:game.props,
+    enemies:game.enemies,state:game.s});
+  const coldCrowdGpu=runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await coldCrowdGpu.prepare(),true,
+    'the admitted region must be ready before the crowded west approach');
+  assert.equal(JSON.stringify({hero:game.hero,props:game.props,
+    enemies:game.enemies,state:game.s}),unmodifiedColdCampaign,
+    'crowd preparation must not advance or alter campaign state');
+  const coldReady=coldCrowdGpu.status();
+  assert.equal(coldReady.proceduralBakes,48,
+    'all 24 westward props and 24 westward enemies are pre-baked');
+  assert.equal(coldReady.proceduralGpuPrepared,48,
+    'all 48 fresh procedural sources are offered to Pixi GPU preparation');
+  assert(coldReady.cachedTerrainZones.includes('vale'),
+    'terrain is also cached before the scene is revealed');
+  coldCrowdGpu.activate();
+  game.hero.x-=625;
+  coldCrowdGpu.draw();
+  assert.equal(frames.at(-1).filter(item=>item.key.startsWith('prop:cold-west-')).length,24);
+  assert.equal(frames.at(-1).filter(item=>item.key.startsWith('enemy:cold-west-')).length,24);
+  assert.equal(coldCrowdGpu.status().proceduralBakes,48,
+    'first crowded entry must reuse prepared art instead of baking during combat');
+  game.hero.x+=625;
+  coldCrowdGpu.draw();
+  game.hero.x-=625;
+  coldCrowdGpu.draw();
+  assert.equal(coldCrowdGpu.status().proceduralBakes,48,
+    'warm revisit must retain all admitted procedural art');
+  assert(coldCrowdGpu.status().proceduralCacheHits>48,
+    'cold and warm visible draws must hit the prepared texture cache');
+  coldCrowdGpu.release();
+  game.hero.x=coldStart.x;game.hero.y=coldStart.y;
+  game.enemies=[];game.props=[];game.zoneSize=()=>200;
+  resources.clear();currentActorTextures.clear();
   // Confirm *authored draw instructions*, not just common structure labels,
   // remain identical for the tiny explicit shared-decoration allowlist.
   function visualCommands(entity,region) {
