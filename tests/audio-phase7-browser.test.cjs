@@ -236,6 +236,60 @@ async function main() {
       finaleWindow:ending.window,warning,final,heard:false,
       deviceVerified:false}));
     await context.close();
+
+    // Separate focused offline run in the *same* Chromium process. This uses
+    // the actual new 131-asset PWA service worker and a completely fresh
+    // browser cache: no mocked network or synthetic audio fixtures.
+    const offlineContext = await browser.newContext({viewport:{width:1024,height:800},
+      serviceWorkers:'allow'});
+    const offlinePage = await offlineContext.newPage();
+    await offlinePage.goto(url);
+    await offlinePage.evaluate(async () => {
+      await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((_,reject)=>setTimeout(
+          ()=>reject(Error('Phase 7 audio cache worker did not install')),100000))
+      ]);
+    });
+    await offlinePage.waitForFunction(() => !!navigator.serviceWorker.controller,
+      null,{timeout:30000});
+    const cachedAudio = await offlinePage.evaluate(async () => {
+      const keys=await caches.keys();
+      const cachesForRelease=keys.filter(k=>k.startsWith('azeroth-app-v'));
+      if(cachesForRelease.length!==1)throw Error('Ambiguous service worker audio cache');
+      const cache=await caches.open(cachesForRelease[0]);
+      const resources=await cache.keys();
+      return {version:cachesForRelease[0],
+        audio:resources.filter(r=>new URL(r.url).pathname.includes('/assets/audio/') &&
+          /\\.(mp3|json)$/.test(new URL(r.url).pathname)).length,
+        complete:resources.length};
+    });
+    assert.equal(cachedAudio.audio,132, 'all 131 recordings plus manifest should be cached');
+    assert(cachedAudio.complete>180,'game must have its offline scripts/assets as well');
+    await offlineContext.setOffline(true);
+    await offlinePage.reload({waitUntil:'domcontentloaded',timeout:30000});
+    await offlinePage.waitForFunction(()=>!!window.Prototype?.audio &&
+      !!document.querySelector('#title-screen:not([hidden])'),
+      null,{timeout:30000});
+    await offlinePage.locator('#title-heading').click();
+    await offlinePage.waitForFunction(()=>Prototype.audio.ctx?.state==='running' &&
+      Prototype.audio.recordedScore?.id==='title',null,{timeout:30000});
+    const off = await offlinePage.evaluate(async () => {
+      const a=Prototype.audio,store=await a.assetsForRecordings();
+      const ids=['place-vale','boss-crypt','finale','env-highlands-autumn'];
+      const out={};
+      for(const id of ids){
+        const item=await store.load(id);
+        out[id]={channels:item.buffer.numberOfChannels,duration:item.buffer.duration};
+      }
+      return {loaded:out,cache:store.status(),audioError:a.recordingError};
+    });
+    assert(Object.values(off.loaded).every(x=>x.duration>20 && x.channels>=1));
+    assert(off.cache.decodedBytes<=off.cache.decodedBudget);
+    assert.equal(off.audioError,null);
+    console.log('PASS Phase7 single-Chromium offline real PWA: 131 cached MP3s + manifest, offline reload, Title playback and representative new music/ambience hash+decode; no network');
+    console.log(JSON.stringify({cachedAudio,offline:off,heard:false,deviceVerified:false}));
+    await offlineContext.close();
   } finally {
     if (browser) await browser.close();
     await new Promise((resolve)=>server.close(resolve));
