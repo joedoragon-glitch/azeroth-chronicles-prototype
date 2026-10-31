@@ -20,6 +20,10 @@ if (!fs.existsSync(path.join(root,'assets/vendor/pixi-8.22.0.min.js')))
     {cwd:root,stdio:'inherit'});
 const engine = process.env.BROWSER_ENGINE || 'chromium';
 const requireWebGL = process.env.REQUIRE_WEBGL2 === '1';
+// The dedicated CI workflow runs desktop and phone independently. A direct
+// local invocation still exercises both, with the same real title/UI actions.
+const deviceCases = process.env.PIXI_BROWSER_DEVICE === 'desktop' ? [false]
+  : process.env.PIXI_BROWSER_DEVICE === 'phone' ? [true] : [false, true];
 // Use the runner's Chromium if available, including its software WebGL2
 // implementation. This is a functionality check, never a hardware FPS claim.
 function installedChromium() {
@@ -156,7 +160,7 @@ async function run() {
 
     // Exercise both form factors through current title/new/continue preparation.
     // A previous Canvas choice is superseded only on the first migrated boot.
-    for (const phone of [false, true]) {
+    for (const phone of deviceCases) {
       const migrationContext = await browser.newContext({
         viewport: phone ? {width:393,height:852} : {width:1280,height:800},
         isMobile: phone, hasTouch: phone,
