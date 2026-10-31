@@ -12,29 +12,45 @@ const root = path.resolve(__dirname, '..');
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'azeroth-preparation-'));
   try {
     const catalog = pipeline.catalog();
-    assert.equal(catalog.length, 296);
-    assert.equal(catalog.filter((item) => item.status === 'generate').length, 280);
+    assert.equal(catalog.length, 297);
+    assert.equal(catalog.filter((item) => item.status === 'generate').length, 281);
     assert.equal(catalog.filter((item) => item.status === 'procedural').length, 16);
     const sourceText = fs.readFileSync(
       path.join(root, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),
       'utf8',
     );
     const extended =
-      sourceText.replace('"entries":296,"generate":280', '"entries":297,"generate":281') +
-      '\n### 297 — Reviewed future asset\n\n**Canonical cues:** Current exact source.\n\n**Image-generation prompt:**\n\n> One asset.\n';
+      sourceText.replace('"entries":297,"generate":281', '"entries":298,"generate":282') +
+      '\n### 298 — Reviewed future asset\n\n**Canonical cues:** Current exact source.\n\n**Image-generation prompt:**\n\n> One asset.\n';
     assert.equal(
       pipeline.parseCatalog(extended).length,
-      297,
+      298,
       'reviewed additions are not blocked by a historic fixed count',
     );
     assert.throws(
       () =>
         pipeline.parseCatalog(
           sourceText +
-            '\n### 297 — Unreconciled asset\n\n**Image-generation prompt:**\n\n> One asset.\n',
+            '\n### 298 — Unreconciled asset\n\n**Image-generation prompt:**\n\n> One asset.\n',
         ),
       /totals changed/,
       'unreviewed count changes still reject',
+    );
+    assert.equal(
+      catalog.find((entry) => entry.id === '297')?.name,
+      'Hero — Rogue (Pícara)',
+    );
+    assert.equal(catalog.find((entry) => entry.id === '297')?.declaredKey, 'hero:rogue', 'Rogue future art key must be machine-readable');
+    assert(!catalog.some((entry) => entry.prompt?.includes('Azeroth Chronicles')));
+    assert.throws(
+      () => pipeline.parseCatalog(
+        sourceText.replace(
+          'Render the Paladin exactly as described.',
+          'Render the Paladin exactly as described for Azeroth Chronicles.',
+        ),
+      ),
+      /Retired public title/,
+      'reject retired name from live generation prompts',
     );
     console.log('PASS reviewed open catalog partition');
     const contracts = pipeline.contracts();
@@ -286,7 +302,8 @@ const root = path.resolve(__dirname, '..');
       {
         cwd: checkout,
         encoding: 'utf8',
-        env: { ...process.env, GITHUB_SHA: 'isolated-sprite-preparation' },
+        // A site build now requires a full 40-character commit SHA even in isolated fixtures.
+        env: { ...process.env, GITHUB_SHA: '0123456789abcdef0123456789abcdef01234567' },
       },
     );
     assert.equal(packageResult.status, 0, packageResult.stderr);
@@ -374,8 +391,8 @@ const root = path.resolve(__dirname, '..');
     );
     fs.writeFileSync(
       path.join(checkout, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'),
-      originalCatalog.replace('"entries":296,"generate":280', '"entries":297,"generate":281') +
-        '\n### 297 — Future object\n\n**Image-generation prompt:**\n\n> One object.\n',
+      originalCatalog.replace('"entries":297,"generate":281', '"entries":298,"generate":282') +
+        '\n### 298 — Future object\n\n**Image-generation prompt:**\n\n> One object.\n',
     );
     success('check');
     fs.writeFileSync(path.join(checkout, 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md'), originalCatalog);
