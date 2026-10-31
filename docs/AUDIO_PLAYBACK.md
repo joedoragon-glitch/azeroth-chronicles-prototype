@@ -8,6 +8,10 @@
 
 **Status distinction for the new artistic palette:** The [curated-source production guide](ARTISTIC_ASSET_WORKFLOW.md) and [Phase 3 recorded-instrument bank](../tools/audio/phase3-sample-bank.json) belong to the unmerged studio-work draft. They are now connected to an **isolated studio rendering candidate** only; they do **not** add music to the live game or prove heard quality. The published original sound catalog remains in place.
 
+## Soundtrack source milestone versus currently playable audio (31 October 2026)
+
+**Phase 4 of the separate 65-cue soundtrack rebuild is complete for source-authoring and isolated encoded-preview QA only**, following the independent [38-cue critique](AUDIO_PHASE4_CRITICAL_REVIEW.md) and [exact Phase 4 CI #41197094516](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41197094516). The permanent [music quality controls](../tools/audio/score-quality-controls.py) catch false inherited notes, complete copied additive leads, cloned score templates and decoded loop seams. The owner's final hearing stays in Phase 9; there has been no genuine audible QC, integrated playback, merge, deployment or device verification of the candidates. **This page's 83/127 registered-audio and current listening-room descriptions refer to the existing live game assets, not to Phase 3/4 draft compositions.** Do not imply the 38 new MP3 previews are playable in the game. Next comes the **16-boss/TRUE-cue Phase 5**, staged as a new draft on top of [#716](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/716), with 18 original Crown music files frozen.
+
 ## What the game sounds like
 
 The score is **original, warm-fantasy instrumental music**, composed and rendered from the project's own recipes. Flutes, plucked strings, piano, cello, horns, bells, bowed layers and restrained percussion distinguish locations without burying combat and interface sounds. These aren't licensed commercial soundtrack recordings or live orchestral performances.
