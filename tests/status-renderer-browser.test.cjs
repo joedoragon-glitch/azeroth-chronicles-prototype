@@ -177,6 +177,16 @@ async function inspectStatusCrowd(page, expectedMode) {
       delete enemies[24].type;
       g.s.heroTarget = enemies[24].id;
       const selected = paint(enemies);
+      g.s.heroTarget = null;
+      g.manualHeroTargetZone = g.zoneId;
+      g.manualHeroTargetId = enemies[24].id;
+      const heldTarget = paint(enemies);
+      g.manualHeroTargetId = null;
+      enemies[24].captain = true;
+      const captain = paint(enemies);
+      enemies[24].captain = false;
+      enemies[24].x = g.hero.x + 50000;
+      const offscreen = paint(enemies);
       let visible = 0;
       for (let i = 3; i < twentyFour.length; i += 4)
         if (twentyFour[i]) visible++;
@@ -186,6 +196,10 @@ async function inspectStatusCrowd(page, expectedMode) {
         ordinaryDelta: diff(twentyFour, twentyFive),
         bossDelta: diff(twentyFour, boss),
         selectedDelta: diff(twentyFour, selected),
+        heldTargetDelta: diff(twentyFour, heldTarget),
+        captainDelta: diff(twentyFour, captain),
+        offscreenDelta: diff(twentyFour, offscreen),
+        repeatedOffscreenDelta: diff(offscreen, paint(enemies)),
       };
     } finally {
       art.statuses = original;
@@ -203,6 +217,10 @@ async function inspectStatusCrowd(page, expectedMode) {
   assert.equal(result.ordinaryDelta, 0, 'Ordinary 25th enemy may not exceed 24-slot budget');
   assert(result.bossDelta > 0, 'Late boss must displace an ordinary status in actual pixels');
   assert(result.selectedDelta > 0, 'Late selected target must displace in actual pixels');
+  assert(result.heldTargetDelta > 0, 'Held target must displace ordinary status');
+  assert(result.captainDelta > 0, 'Captain must displace ordinary status');
+  assert.equal(result.offscreenDelta, 0, 'Offscreen 25th enemy must be culled');
+  assert.equal(result.repeatedOffscreenDelta, 0, 'Same crowded status state must rasterize identically');
   console.log('PASS real status crowd priority ' + expectedMode + ': ' +
     JSON.stringify(result));
 }
