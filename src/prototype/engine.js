@@ -7728,7 +7728,7 @@
           this.follow(
             e,
             target,
-            (e.type === 'boss' ? 145 : 175) *
+            (e.type === 'boss' ? 145 : R.balance.enemyOrdinaryMeleePursuitSpeed) *
               this.mountedMovementFactor(e) *
               (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
               (e.captainPhaseMove || 1) *
