@@ -1,6 +1,12 @@
 # Soundtrack and sound identity — living creative reference
 
-## Current Phase 7 recorded-source integration — draft #729 (31 October 2026)
+## Published soundtrack and ongoing creative authority (31 October 2026)
+
+The 26-family musical design and 83 stable music IDs remain the creative authority. [PR #740](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/740) integrated and [published](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242493774) **65 new performed/source-authored tracks** from Phases 3–6, without rewriting any of the **18 original Dark Crown recordings**. The complete playable sound library is **83 music + 18 ambience + 30 recorded effects = 131** assets. All new music was structurally, codec, routing, real-browser and offline tested; [focused Chromium acceptance #41242212837](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242212837) passed. The solo owner expressly chose to **defer** first personal listening, so **none of the new recordings has an owner by-ear Keep/Revise verdict**. That future creative opportunity is independent of the completed merge/release and of physical iPhone/Chromebook verification. The seven reserved Crown families are still a *future* focused creative extension, not part of the released replacements.
+
+**Historical status notice:** Phase 2–7 checkpoint sections below preserve their own evidence, source defects, sequencing and provisional decisions. They must not be mistaken for live dev.248 status or new blocked-to-do items. For released integration and menu playback behavior read [Audio playback](AUDIO_PLAYBACK.md), [current development state](DEVELOPMENT_STATE.md) and [first-listening index](AUDIO_PHASE9_FIRST_LISTEN.md).
+
+## Historical Phase 7 recorded-source integration — draft #729 before publication (31 October 2026)
 
 The owner authorized integration, **not an artistic re-composition or a release**. [Phase 7 draft PR #729](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/729) now installs all **65** independently authored recorded-source soundtrack cues (Phase 3: 8, Phase 4: 38, Phase 5: 16, Phase 6: 3) under their existing stable IDs, with the remaining **18 original Dark Crown recordings physically unchanged** and the complete **83-ID music contract** preserved. The real installed [recording evidence](../tools/audio/phase7-integration-evidence.json) contains the individual SHA-256s, codec-decoded lengths, 0.15-second loop guards, written source score families and signal checks. All **131** live audio assets total **70,885,110 encoded bytes (67.6 MiB)**; the largest is **1,160,506 bytes**. Policies remain 256 MiB total / 16 MiB each, 96 MiB decoded by default / 192 MiB maximum. Four current-main source-authored environmental recordings remain present and distinct from this 65-cue soundtrack.
 
@@ -15,12 +21,12 @@ After source-and-render criticism and a further exploratory review, the owner ju
 
 For scope, source heads, exact checks and future test owners see [Phase 7 integration handoff](AUDIO_PHASE7_HANDOFF.md), [master #673](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/673) and cache-specific [#699](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/699). Phase 8 listening-room certification and first owner audition/acceptance in Phase 9 are separate. No 65-cue game registration, merge or deployment has occurred.
 
-## Current narrative-cue composition status — Phase 6 isolated draft (31 October 2026)
+## Historical Phase 6 narrative-cue isolated source status (31 October 2026)
 
 Phase 6 source authoring was completed in [draft PR #724](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/724), stacked directly on audited Phase 5 draft #721. The three **stable IDs** (`title`, `defeat`, `finale`) now have individually written and isolated-rendered recorded-instrument candidates. Source inspection corrected full harmonic frames and preserved the approved Q12 **title-to-finale transformation** and Q11 **relief with uncertainty**. [Phase 6 critical review](AUDIO_PHASE6_CRITICAL_REVIEW.md) records note-level decisions, independently caught defects, exact measured render evidence and open acoustic concerns. **Source-level GO and actual isolated technical PASS** are evidenced at audio-producing `8f40d6c` ([focused CI #41213053417](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41213053417)); all 3 MP3 encodes/decodes succeeded, 215 sampler notes used 22 pinned clips with no ≥5-semitone shifts, and [recording hashes](../tools/audio/phase6-render-evidence.json) are preserved. **Heard acoustic quality is UNVERIFIED/HOLD**, not a musical-by-ear approval. All 18 Crown original music files and 83 registered game IDs remain intact; no game assets are replaced. The older Phase 5 audit below is source/isolated evidence for that phase, not today's remaining cue list. Phase 7 integration, Phase 8 room and first owner audition/acceptance in Phase 9 remain separate.
 
 
-## Current Phase 5 audit outcome — verified source/isolated technical milestone; unheard
+## Historical Phase 5 audit outcome — source/isolated technical milestone; unheard
 
 **Final owner-directed Phase 5 adversarial audit closeout (31 October 2026):** The corrected source at [`75208bb`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/75208bbd8bc22ec8ce3c971c58257861a950a386) passed [focused isolated CI #41211142252](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41211142252): **16/16** actual recorded-source MP3 encodes/decodes, **eight** synchronized TRUE overlays, all **18** physical Dark Crown SHA-256 hashes, exact full-form source-to-recorded-sampler note comparisons on **16** lead/TRUE voices, independent 60 authored TRUE chord-accent anchors, deliberately broken negative regressions, and protected CC0 sample provenance. Previous first-pass musical defects were real: six original opening harmonic contexts drifted, glock/cello notes could silently octave-fold, chime-range fixes initially created 29 large sampler repitches, and several TRUE downbeats conflicted with their backing chords. All identified source faults were corrected and tested. The remaining **nine** ≥5-semitone recorded-source shifts are only in preserved Ridge/Abyss opening horn notes; none remain in new TRUE or chime phrasing. Mirejaw's four independently scored cello undercurrents improved isolated TRUE/base RMS difference from about **−15.3 dB to −10.9 dB** without increasing overall music gain. The [tracked evidence](../tools/audio/phase5-render-evidence.json) contains all 16 final SHA-256s, 13,679,228 encoded bytes, maximum decoded peak 0.52373, maximum real decoded seam 0.00001, and maximum raw combined overlay peak 0.59585. The separate technical signal result is **PASS; source-level composition/identified structural correction is GO for its authorized scope**. It is **NOT a heard artistic GO**: no one actually listened, so timbre, fatigue, emotional execution and game-warning masking remain **UNVERIFIED**; Phase 7 integration #699, Phase 8 room and Phase 9 first owner listening remain pending. No live game audio change, merge, publication or device verification.
 
@@ -59,7 +65,7 @@ The system treats music as a *family*: exploration/base, synchronized encounter 
 
 **Source-palette quality policy:** See [curated artistic source and sample-palette workflow](ARTISTIC_ASSET_WORKFLOW.md) and the [CC0 Phase 3 sample bank](../tools/audio/phase3-sample-bank.json). Selected recorded instrument clips are ingredients for a candidate renderer, **not** an accepted score, and draft Phase 3's revised studio renderer now attempts to use this bank, but actual rendered results, musical suitability and listening acceptance are still separate unpassed gates.
 
-## Current soundtrack source-production sequence (31 October 2026)
+## Historical soundtrack source-production sequence (31 October 2026)
 
 **Phase 4 has been CLOSED at the explicitly scoped authored-source and isolated-studio technical gate**, on the owner's authorization: **38** existing cue IDs, revised after a substantive adversarial audit; see [full Phase 4 critique](AUDIO_PHASE4_CRITICAL_REVIEW.md), [permanent quality-control implementation](../tools/audio/score-quality-controls.py), [negative regression fixtures](../tests/audio-score-quality-controls.test.py), and [passing exact CI #41197631496](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41197631496). New score source and recorded previews are **not in the published game**. No one has actually heard and assessed the produced soundtrack; professional acoustics, fatigue, gameplay warnings and owner acceptance remain **UNVERIFIED** until the approved later gates. The original 18 Dark Crown recordings remain frozen; draft Phase 4 [#716](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/716) and Phase 3 [#704](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/704) are unmerged.
 
@@ -269,9 +275,9 @@ The titles and instrument/tempo fields are factual catalog entries. The last col
 | Defeat | `defeat` — **The Road Remains** | 84 BPM · minor · cello + piano; calm, reflective rather than a punishing fanfare |
 | Finale | `finale` — **A Country Wakes** | 88 BPM · major · flute + harp; a gentler, released sense of arrival |
 
-**Catalog note (verified 28 October):** the score book gives the title cue the official game name. The current manifest's *descriptive title field and generationGuide* for the same `title` asset still contain the retired development name. That is **legacy creative metadata**, not authorization to rename the game or assume the player-facing UI still uses it. A separate scoped asset-metadata correction can resolve this when approved; this documentation-only edit does not modify source sound files, code or routing.
+**Historic metadata note (28 October baseline, now superseded):** the `title` asset formerly used a development-era descriptive name. The live published manifest names the authored title theme **The Unfinished Road**, while the game's public name remains **So I Became the Dark Lord's Problem**. The rendered music and gameplay ID remain `title`.
 
-## Environmental sound: 14 background beds
+## Environmental sound: 18 registered background beds
 
 Environmental recordings are **not music cues**. They build a restrained sense of place below the soundtrack. The [environment book](../tools/audio/environment-book.json) holds the actual per-bed guide and deterministic synthesis recipe. The current catalog has these identities:
 
@@ -291,6 +297,10 @@ Environmental recordings are **not music cues**. They build a restrained sense o
 | `env-dragon-hall` | Abyss — high vaulted air |
 | `env-citadel` | Citadel — restrained machinery |
 | `env-cellar` | Cellars — sheltered timber room |
+| `env-highlands-autumn` | Ironroot Highlands — autumn hardwood air |
+| `env-frontier-recovery` | Ashen Frontier — recovering open fields |
+| `env-signal-occupied` | Old Signal Keep — occupied timber refuge |
+| `env-shrine-occupied` | Ruined Shrine Barracks — lived-in shelter |
 
 Preserve the **low-density, spacious** environmental character: quiet woodland air, marsh movement, ridge wind, frontier dryness, sheltered courtyards, interiors, water/stone work and distant machinery as appropriate. These textures intentionally avoid a wildlife spectacle, constant storms, loud animal calls, crowded villages or intrusive rhythmic events. Sparse details may punctuate silence; sound should not cover warning effects. The game currently lowers environmental gain during combat and bosses, and uses a separate audio owner so music changes do not constantly restart it.
 
@@ -308,7 +318,7 @@ The catalog already stores a `generationGuide` for each recorded asset. **Copy t
 
 This is a **future-facing brief template**, not a recovered original AI prompt. If exact reproduction is wanted, use the source score and synthesis recipe rather than prose alone. The generation guide describes intent but does not encode every note, timbre or mastering parameter.
 
-## Phase 3 source-quality correction and blocked expansion — 31 October 2026
+## Historical Phase 3 source-quality correction and initially blocked expansion — 31 October 2026
 
 The completed **eight isolated sound files** described in [draft PR #704](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/704) are *technical composition candidates*, **not approved artistic assets**. The previous source GO was withdrawn after an exact note-level comparison found substantial gaps between several original hooks and the currently played new ones; the corrections must consider the recycled Greenwood and Archive v2 bases as well as six new themes. [`phase3-quality-review.json`](../tools/audio/phase3-quality-review.json) identifies the actual pitches/rhythms and per-area questions, with a regression test to prevent future source changes from making the critique stale. Its interval matches are diagnostic prompts rather than numerical creative grades.
 
@@ -318,13 +328,13 @@ All six new songs use the same inherited oscillator instrument synthesis/masteri
 
 ## Listening, revision and acceptance
 
-1. **Identify the actual cue** by stable ID and current game context in the source-backed 26-family sound bible. Developers may use independent proven playback for technical/critical music QC. **Do not ask the owner to listen to work in progress.** The owner first listens in Phase 9 through the Phase 8 certified standalone room, comparing base/action/global-peace or boss/TRUE **as a set** without playing a campaign.
+1. **Identify the actual cue** by stable ID and current game context in the source-backed 26-family sound bible. Developers may use independent proven playback for technical/critical music QC. **Do not require the owner to audition work in progress.** The now-published game sound library is available for voluntary listening whenever the solo owner wishes; compare base/action/global-peace or boss/TRUE **as a set** without playing a campaign. No timed acceptance appointment or unperformed hearing verdict is implied.
 2. **State the creative problem first:** melody, harmony, instrumentation, atmosphere, repetition, mix level, transition, event routing or a missing sound are different tasks. Record what should be preserved alongside what should change.
 3. **Read the source metadata:** `tools/audio/score-book.json` for notes and musical recipe; `assets/audio/manifest.json` for the current asset title, generation brief, credits, hash and routing; the environment/SFX books for those sound types.
 4. **Implement only approved changes** through [Audio authoring](AUDIO_AUTHORING.md). Keep IDs and routing stable unless a deliberate design change requires a migration. Re-render dependent synchronized layers together if harmony, tempo or loop length changes. Updating only prose does not create audio.
 5. **Validate technically and musically inside production:** run the affected checks (including `npm run audio:check` where relevant), verify looping/crossfades/offline packaging, and independently verify warning clarity, headphone/speaker comfort, combat transitions and sustained replay where feasible. **Record unperformed physical-device checks explicitly**, never replace them with a source audit or force the owner to listen before Phase 9. Automated checks prove file and playback properties, **not** artistic success.
 
-**Current source inventory (not creative completion):** 83 registered music + 14 environmental + 30 recorded effect assets = **127 total**; 65 songs are this cycle's creative work and 18 direct Crown music files are deliberately deferred. The soundtrack and related playback are implemented, but this guide makes **no claim** of a newly completed headphone/iPhone/Chromebook listening review, full-game regression suite or publication of fresh audio.
+**Published source inventory (technical completion, not artistic approval):** **83 music + 18 environmental + 30 recorded effects = 131 assets**. Exactly 65 new authored music recordings are published under stable IDs, and the 18 original Crown tracks remain unchanged. The [dev.248 release #41242493774](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41242493774) succeeded with full targeted offline/audio browser QA; this does **not** certify owner hearing, physical iPhone/Chromebook playback or a comprehensive campaign suite.
 
 ## Version history, not current work orders
 
