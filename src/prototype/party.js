@@ -1207,8 +1207,7 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
           if (this.s.mode === 'developer')
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -1453,8 +1452,7 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
           if (this.s.mode === 'developer')
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -2392,8 +2390,7 @@
             dx: (target.x - u.x) / shot, dy: (target.y - u.y) / shot,
             target: target.id, source: u.id, damage: base,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
             slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
               R.balance.companions.mastery.slowSecondsPerTier,
           });
@@ -3995,8 +3992,7 @@
               damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
               source: u.id,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-              speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-              style: this.charmedCompanionProfile(u)?.style || 'arrow',
+              ...this.charmedProjectileFlight(u),
             });
             if (this.s.mode === 'developer')
               this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -4362,8 +4358,7 @@
                     damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
                     source: u.id,
                     ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-                    speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-                    style: this.charmedCompanionProfile(u)?.style || 'arrow',
+                    ...this.charmedProjectileFlight(u),
                   });
                   if (this.s.mode === 'developer')
                     this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
