@@ -9,4 +9,5 @@ test('Volumes clamp independently, mute preserves preferences and no context sta
 
 test('New profiles use the approved 33% Master and 100% channel starting levels',()=>{const a=new Audio();assert.equal(a.ctx,null);assert.deepEqual(a.settings,{master:.33,music:1,ambience:1,effects:1,interface:1,muted:false});});
 test('Stored player audio levels still override the new fresh-profile defaults',()=>{const saved={master:.65,music:.21,ambience:.52,effects:.72,interface:.70,muted:false};const a=new Audio(saved);assert.deepEqual(a.settings,saved);a.setSettings({muted:true});assert.deepEqual({...a.settings,muted:false},saved);});
+test('Distant aggro does not count as nearby combat for music or ambience',()=>{const c=new Campaign(),a=new Audio();const e=c.zone().enemies.find(e=>e.hp>0&&!e.neutral);assert(e);e.aggro=true;e.x=c.hero.x+2000;e.y=c.hero.y;let scene=a.describe(c,{started:true});assert(scene.engaged>=1);assert.equal(scene.nearbyEngaged,0);e.x=c.hero.x+200;scene=a.describe(c,{started:true});assert(scene.nearbyEngaged>=1);});
 console.log('\n'+passed+' soundtrack selection checks passed.');
