@@ -98,6 +98,52 @@ try {
       { speed: 450, style: 'arrow' }, 'ordinary Archer unchanged');
   }
 
+  // A level-1/2 Greenwood Rogue starts without inheritance, so both native
+  // species must contribute more HP and basic power than ordinary local wilds.
+  // This is a real Charm capture, not a fabricated unit with borrowed stats.
+  {
+    const opening = {
+      'goblin:melee': [112, 12],
+      'goblin:ranged': [100, 13],
+      'skeleton:melee': [126, 14],
+      'skeleton:ranged': [114, 14],
+    };
+    for (const level of [1, 2])
+      for (const species of ['goblin', 'skeleton'])
+        for (const ranged of [false, true]) {
+          const game = fresh();
+          game.hero.level = level;
+          const ally = capture(game, species, ranged);
+          const role = ranged ? 'ranged' : 'melee',
+            profile = game.charmedCompanionProfile(ally),
+            [nativeHp, nativePower] = opening[species + ':' + role],
+            fieldScale = ranged ? R.ordinaryRangedScaling[0] : R.ordinaryMeleeScaling[0],
+            fieldHp = Math.round(65 * fieldScale.hp),
+            fieldDamage = Math.round(7 * fieldScale.damage);
+          assert.equal(profile.hp, nativeHp, species + '/' + role + ': Greenwood HP');
+          assert.equal(profile.damage, nativePower, species + '/' + role + ': Greenwood power');
+          assert.equal(game.companionInheritedHpBonus(), 0);
+          assert.equal(game.companionInheritedDamageBonus(), 0);
+          assert(game.companionMaxHp(ally) >= fieldHp,
+            species + '/' + role + ': early HP at or above wild counterpart');
+          assert(game.companionAttackDamage(ally) >= fieldDamage,
+            species + '/' + role + ': early basic power at or above wild counterpart');
+          assert(game.companionRallyMoveSpeed(ally, 230) >=
+            R.balance.enemyOrdinaryMeleePursuitSpeed,
+            species + '/' + role + ': combat pursuit no slower than wild baseline');
+        }
+    for (const species of ['goblin', 'skeleton', 'mireling', 'reedbeast',
+      'wolf', 'ogre', 'orc', 'archer', 'ashbeast', 'crownguard', 'stalker']) {
+      const game = fresh();
+      const ally = capture(game, species, false);
+      assert(game.companionBasicInterval(ally) <= R.balance.enemyOrdinaryMeleeBasicInterval,
+        species + ': ordinary melee cadence at least native hostile cadence');
+      assert(game.companionRallyMoveSpeed(ally, 230) >=
+        R.balance.enemyOrdinaryMeleePursuitSpeed,
+        species + ': ordinary combat movement at least hostile ground pursuit');
+    }
+  }
+
   // No Rogue constructor privilege or conventional hiring; the first builder
   // is a genuinely captured ordinary monster with a matching save ledger.
   const g = fresh();
