@@ -105,4 +105,40 @@ function paint(g) {
   assert(g.applySlow(enemy, 2));
   assert.equal(enemy.hybridSelfHealCd, 0, 'ready hybrid self-heal stays ready');
 }
-console.log('PASS live status effects: Rogue Hush/Wither pixels and expiry, Slow debt/stack/ally visibility');
+{
+  const {g,enemy} = fresh();
+  enemy.ranged = true;
+  const ally = g.makeEnemy({
+    species:'goblin', name:'Wounded target', level:1,
+    hp:10000, damage:0, xp:0, gold:0,
+  }, {x:enemy.x + 35,y:enemy.y});
+  ally.hp = ally.maxHp * 0.4;
+  ally.neutral = false;
+  g.zone().enemies.push(ally);
+  enemy.supportHealCd = 0;
+  g.applyRogueEnemySilence(enemy, 3);
+  assert.equal(g.enemySupportHeal(enemy), false, 'Hush blocks new ordinary support cast');
+  assert.equal(enemy.supportHealCd, 0, 'Hush does not consume denied heal cooldown');
+  g.s.time += 4;
+  assert.equal(g.enemySupportHeal(enemy), true, 'support healing resumes after Hush');
+}
+{
+  const {g,enemy} = fresh();
+  enemy.nightOnly = true;
+  enemy.species = 'wraith';
+  enemy.ranged = true;
+  enemy.cd = enemy.specialCd = 0;
+  let startedNight = 0;
+  g.startNightSkill = () => { startedNight++; return true; };
+  g.applyRogueEnemySilence(enemy, 3);
+  assert.equal(g.enemyWithdrawalAction(enemy, g.hero), true,
+    'ordinary covering basic remains available while Hushed');
+  assert.equal(startedNight, 0, 'retreat cannot start a Wraith special during Hush');
+  g.s.time += 4;
+  enemy.cd = enemy.specialCd = 0;
+  enemy.rangedAim = null;
+  assert.equal(g.enemyWithdrawalAction(enemy, g.hero), true,
+    'legal retreat special resumes after Hush expires');
+  assert.equal(startedNight, 1, 'night special starts exactly once after Hush');
+}
+console.log('PASS live status effects: Rogue Hush/Wither pixels and expiry, Slow debt/stack/ally visibility, support/withdrawal gates');

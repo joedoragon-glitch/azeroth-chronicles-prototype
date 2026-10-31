@@ -43,9 +43,9 @@ existing `+N` count for the conditions hidden beyond the first two. The
 shoves, projectiles or other non-status events are retained.
 
 Rogue Hush prevents new eligible non-boss special starts, including ordinary
-support and hybrid self-recovery. Existing warnings, tactical repositioning,
-normal basic attacks, already committed effects and protected boss phases
-continue under their original rules.
+support, hybrid self-recovery and a Wraith's retreat-cast path. Existing
+warnings, tactical repositioning and covering basic attacks, already committed
+effects and protected boss phases continue under their original rules.
 Its independent temporary producer remains in an unsaved WeakMap. Test pixels
 on actual phones before claiming device readability.
 
