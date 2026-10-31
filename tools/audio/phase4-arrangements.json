@@ -1,0 +1,1921 @@
+{
+  "schemaVersion": 1,
+  "status": "Phase 4 DRAFT source arrangements; not sound-by-ear or owner accepted",
+  "inheritance": "Phase 3 exact music clock and corrected pilot heritage; all old Phase 2 MP3s are prototypes only",
+  "peaceActivation": "global ending PLUS throne conditions, never merely a local boss defeat",
+  "scope": {
+    "musicIds": 83,
+    "inScope": 65,
+    "crownProtected": 18,
+    "phase3Bases": 8,
+    "phase4Arrangements": 38,
+    "phase5Bosses": 16,
+    "phase6Narrative": 3
+  },
+  "interiors": {
+    "supply-vale": {
+      "scene": "Scornfang's functional stores, not Thornfang's hunting ground",
+      "root": 60,
+      "mode": "major",
+      "bpm": 92,
+      "harmony": [
+        0,
+        3,
+        4,
+        0,
+        5,
+        3,
+        4,
+        0,
+        2,
+        5,
+        4,
+        0
+      ],
+      "motif": "0:0:.82 1.4:2:.55 2.55:4:.78",
+      "reply": "0.35:3:.74 1.8:2:.57 3:0:.9",
+      "question": "0:4:.6 2.05:3:.8"
+    },
+    "supply-march": {
+      "scene": "Mirejaw's sheltered hoard amid exposed crossings",
+      "root": 62,
+      "mode": "dorian",
+      "bpm": 82,
+      "harmony": [
+        0,
+        5,
+        3,
+        0,
+        4,
+        2,
+        3,
+        5,
+        0,
+        2,
+        4,
+        0
+      ],
+      "motif": "0:0:.6 .85:1:.45 2.6:3:.86",
+      "reply": ".35:2:.55 1.7:4:.8 3.1:1:.47",
+      "question": "0:2:.85 2.4:1:.6"
+    },
+    "supply-highlands": {
+      "scene": "Ridge Tyrant's off-duty stores and the price of labor",
+      "root": 55,
+      "mode": "mixolydian",
+      "bpm": 88,
+      "harmony": [
+        0,
+        4,
+        5,
+        3,
+        0,
+        2,
+        5,
+        4,
+        3,
+        4,
+        0,
+        0
+      ],
+      "motif": "0:0:.72 1.1:2:.48 2.7:4:.75",
+      "reply": "0:3:.6 1.6:2:.63 3:0:.8",
+      "question": ".4:4:.8 2.25:1:.77"
+    },
+    "side-vale-cellars": {
+      "scene": "Old Orchard Cellars: domestic routine under goblin occupation; Phase 2 prototype requalified",
+      "root": 55,
+      "mode": "minor",
+      "bpm": 92,
+      "harmony": [
+        0,
+        3,
+        4,
+        0,
+        5,
+        2,
+        4,
+        0,
+        3,
+        5,
+        4,
+        0
+      ],
+      "motif": "0:0:.7 .8:2:.58 2.5:1:.98",
+      "reply": ".25:4:.5 1.75:3:.67 3.1:0:.8",
+      "question": "0:2:.9 2.55:1:.64"
+    },
+    "side-march-watchhouse": {
+      "scene": "Drowned Watchhouse: vacant watch-post with water in the stones",
+      "root": 62,
+      "mode": "dorian",
+      "bpm": 82,
+      "harmony": [
+        0,
+        3,
+        5,
+        0,
+        4,
+        2,
+        5,
+        3,
+        0,
+        5,
+        2,
+        0
+      ],
+      "motif": ".5:0:.95 2.35:2:.68",
+      "reply": "0:3:.68 1.3:2:.45 3.2:0:.78",
+      "question": "0:4:1.2 2.8:1:.5"
+    },
+    "side-highlands-signal": {
+      "scene": "Old Signal Keep: isolated watch, stone and measured unanswered calls",
+      "root": 55,
+      "mode": "mixolydian",
+      "bpm": 88,
+      "harmony": [
+        0,
+        4,
+        3,
+        5,
+        0,
+        2,
+        4,
+        3,
+        5,
+        4,
+        2,
+        0
+      ],
+      "motif": "0:0:1.15 2.25:4:.73",
+      "reply": ".3:2:.65 1.85:1:.7 3.1:0:.58",
+      "question": ".65:4:.9 2.7:3:.7"
+    },
+    "side-frontier-shrine": {
+      "scene": "Ruined Shrine: fragile private memory among damaged homes",
+      "root": 57,
+      "mode": "dorian",
+      "bpm": 96,
+      "harmony": [
+        0,
+        3,
+        5,
+        0,
+        4,
+        2,
+        3,
+        5,
+        0,
+        4,
+        5,
+        0
+      ],
+      "motif": "0:0:1 .9:2:.55 2.8:1:.9",
+      "reply": ".4:3:.6 2.2:4:.7 3.25:2:.48",
+      "question": "0:2:1.4 2.75:0:.85"
+    }
+  },
+  "arrangements": [
+    {
+      "id": "action-vale",
+      "parent": "place-vale",
+      "kind": "action",
+      "sceneIntent": "Orchard paths become dangerous; restrained pursuit, not a universal war drum",
+      "lead": "flute",
+      "response": "cello",
+      "pulse": "harp",
+      "form": "HHAQHRAHHHQR",
+      "answer": [
+        [
+          0,
+          2,
+          0.55
+        ],
+        [
+          1.1,
+          4,
+          0.45
+        ],
+        [
+          2.45,
+          3,
+          0.72
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.56
+        ],
+        [
+          1.8,
+          2,
+          0.7
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "action-march",
+      "parent": "place-march",
+      "kind": "action",
+      "sceneIntent": "Sudden danger crossing wet reeds; fragile trade pulse remains recognizable",
+      "lead": "piano",
+      "response": "cello",
+      "pulse": "glockenspiel",
+      "form": "HHAQHRAHQHAQHR",
+      "answer": [
+        [
+          0,
+          1,
+          0.56
+        ],
+        [
+          0.9,
+          3,
+          0.48
+        ],
+        [
+          2.2,
+          5,
+          0.7
+        ]
+      ],
+      "question": [
+        [
+          0,
+          3,
+          0.8
+        ],
+        [
+          2.8,
+          2,
+          0.5
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 14,
+      "bpm": 82
+    },
+    {
+      "id": "action-highlands",
+      "parent": "place-highlands",
+      "kind": "action",
+      "sceneIntent": "Work cadence hardens into disciplined resistance, not generic combat horns",
+      "lead": "horn",
+      "response": "marimba",
+      "pulse": "cello",
+      "form": "HHAHHRAQHHAQHR",
+      "answer": [
+        [
+          0,
+          4,
+          0.62
+        ],
+        [
+          1.3,
+          2,
+          0.55
+        ],
+        [
+          2.9,
+          0,
+          0.72
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.7
+        ],
+        [
+          2.4,
+          4,
+          0.55
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 14,
+      "bpm": 88
+    },
+    {
+      "id": "action-frontier",
+      "parent": "place-frontier",
+      "kind": "action",
+      "sceneIntent": "Resilience under attack: physical string attack and wounded chromatic space",
+      "lead": "cello",
+      "response": "guitar",
+      "pulse": "marimba",
+      "form": "HHAQHRAQHHAQRHAQ",
+      "answer": [
+        [
+          0,
+          3,
+          0.85
+        ],
+        [
+          1.5,
+          2,
+          0.55
+        ],
+        [
+          3,
+          0,
+          0.63
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.78
+        ],
+        [
+          2.65,
+          2,
+          0.5
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 16,
+      "bpm": 96
+    },
+    {
+      "id": "action-crypt",
+      "parent": "place-crypt",
+      "kind": "action",
+      "sceneIntent": "Winter estate construction interrupted; measured tools rather than horror percussion",
+      "lead": "cello",
+      "response": "harp",
+      "pulse": "strings",
+      "form": "HHAQHRAQHHAR",
+      "answer": [
+        [
+          0,
+          2,
+          0.7
+        ],
+        [
+          1.8,
+          4,
+          0.65
+        ],
+        [
+          3.05,
+          1,
+          0.56
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          1
+        ],
+        [
+          2.85,
+          0,
+          0.58
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 12,
+      "bpm": 84
+    },
+    {
+      "id": "action-archive",
+      "parent": "place-archive",
+      "kind": "action",
+      "sceneIntent": "Saving books under pressure: hurried hands and breaks for breath",
+      "lead": "piano",
+      "response": "flute",
+      "pulse": "harp",
+      "form": "HHAQHRAQHHAQHRAQ",
+      "answer": [
+        [
+          0,
+          4,
+          0.48
+        ],
+        [
+          1,
+          2,
+          0.5
+        ],
+        [
+          2.05,
+          1,
+          0.6
+        ],
+        [
+          3.1,
+          0,
+          0.53
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.65
+        ],
+        [
+          2.7,
+          3,
+          0.54
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 16,
+      "bpm": 86
+    },
+    {
+      "id": "action-mine",
+      "parent": "place-mine",
+      "kind": "action",
+      "sceneIntent": "Garun's weight and quarry oath; chisel pulse distinct from ridge wage rhythm",
+      "lead": "horn",
+      "response": "marimba",
+      "pulse": "cello",
+      "form": "HHAQHRAHHHAQHR",
+      "answer": [
+        [
+          0,
+          2,
+          0.65
+        ],
+        [
+          1.3,
+          4,
+          0.57
+        ],
+        [
+          2.75,
+          1,
+          0.62
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.66
+        ],
+        [
+          2.6,
+          0,
+          0.6
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 14,
+      "bpm": 96
+    },
+    {
+      "id": "action-abyss",
+      "parent": "place-abyss",
+      "kind": "action",
+      "sceneIntent": "Unfinished purple-dragon flight project; climbing urgency, no Crown motif",
+      "lead": "horn",
+      "response": "strings",
+      "pulse": "harp",
+      "form": "HHAQHRAQHHAQRHAQ",
+      "answer": [
+        [
+          0,
+          4,
+          0.9
+        ],
+        [
+          1.9,
+          2,
+          0.65
+        ],
+        [
+          3.15,
+          3,
+          0.53
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          2.7,
+          4,
+          0.46
+        ]
+      ],
+      "arc": [
+        0.78,
+        0.96,
+        1.12,
+        0.83
+      ],
+      "bars": 16,
+      "bpm": 96
+    },
+    {
+      "id": "peace-vale",
+      "parent": "place-vale",
+      "kind": "peace",
+      "sceneIntent": "Global fragile peace; familiar farm warmth holds a question",
+      "lead": "flute",
+      "response": "harp",
+      "pulse": "guitar",
+      "form": "HHAQHRAQHHAR",
+      "answer": [
+        [
+          0,
+          2,
+          1.2
+        ],
+        [
+          2.5,
+          0,
+          0.95
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.85
+        ],
+        [
+          2.7,
+          2,
+          0.8
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "peace-march",
+      "parent": "place-march",
+      "kind": "peace",
+      "sceneIntent": "Flooded paths are safer after the throne, not magically dry",
+      "lead": "piano",
+      "response": "flute",
+      "pulse": "harp",
+      "form": "HHAQHRAQHHAQHR",
+      "answer": [
+        [
+          0,
+          3,
+          0.88
+        ],
+        [
+          1.8,
+          1,
+          0.7
+        ],
+        [
+          3.2,
+          0,
+          0.67
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          1.1
+        ],
+        [
+          2.9,
+          2,
+          0.5
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 14,
+      "bpm": 82
+    },
+    {
+      "id": "peace-highlands",
+      "parent": "place-highlands",
+      "kind": "peace",
+      "sceneIntent": "Relief without instant freedom from old economic habits",
+      "lead": "horn",
+      "response": "harp",
+      "pulse": "marimba",
+      "form": "HHAQRHAQHHAQHR",
+      "answer": [
+        [
+          0,
+          2,
+          0.92
+        ],
+        [
+          2.4,
+          0,
+          0.85
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.83
+        ],
+        [
+          2.2,
+          3,
+          0.7
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 14,
+      "bpm": 88
+    },
+    {
+      "id": "peace-frontier",
+      "parent": "place-frontier",
+      "kind": "peace",
+      "sceneIntent": "Rebuilt lives still carry the scars in a gentle cello return",
+      "lead": "cello",
+      "response": "flute",
+      "pulse": "guitar",
+      "form": "HHAQHRAQHHARHRAQ",
+      "answer": [
+        [
+          0,
+          4,
+          1.25
+        ],
+        [
+          2.5,
+          2,
+          0.55
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.7
+        ],
+        [
+          2.6,
+          1,
+          0.85
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 16,
+      "bpm": 96
+    },
+    {
+      "id": "peace-crypt",
+      "parent": "place-crypt",
+      "kind": "peace",
+      "sceneIntent": "Unfinished winter retreat finds quiet rather than false triumph",
+      "lead": "cello",
+      "response": "harp",
+      "pulse": "strings",
+      "form": "HHAQHRAQHHAR",
+      "answer": [
+        [
+          0,
+          2,
+          0.9
+        ],
+        [
+          2.45,
+          0,
+          0.9
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.85
+        ],
+        [
+          2.65,
+          1,
+          0.75
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 84
+    },
+    {
+      "id": "peace-archive",
+      "parent": "place-archive",
+      "kind": "peace",
+      "sceneIntent": "Shelved knowledge saved imperfectly; a delicate answer remains unresolved",
+      "lead": "piano",
+      "response": "harp",
+      "pulse": "flute",
+      "form": "HHAQHRAQHHAQHRAQ",
+      "answer": [
+        [
+          0,
+          4,
+          1.15
+        ],
+        [
+          2.7,
+          2,
+          0.7
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.88
+        ],
+        [
+          2.8,
+          0,
+          0.66
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 16,
+      "bpm": 86
+    },
+    {
+      "id": "peace-mine",
+      "parent": "place-mine",
+      "kind": "peace",
+      "sceneIntent": "After the old companion's defeat, labor and memory still have weight",
+      "lead": "horn",
+      "response": "harp",
+      "pulse": "marimba",
+      "form": "HHAQHRAQHHAQHR",
+      "answer": [
+        [
+          0,
+          3,
+          1.15
+        ],
+        [
+          2.5,
+          1,
+          0.7
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.88
+        ],
+        [
+          2.7,
+          0,
+          0.65
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 14,
+      "bpm": 96
+    },
+    {
+      "id": "peace-abyss",
+      "parent": "place-abyss",
+      "kind": "peace",
+      "sceneIntent": "A colossal unfinished dream quiets, without inventing Crown's future",
+      "lead": "horn",
+      "response": "flute",
+      "pulse": "harp",
+      "form": "HHAQHRAQHHARHRAQ",
+      "answer": [
+        [
+          0,
+          2,
+          1.15
+        ],
+        [
+          2.75,
+          4,
+          0.65
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.9
+        ],
+        [
+          2.5,
+          1,
+          0.8
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 16,
+      "bpm": 96
+    },
+    {
+      "id": "night-vale",
+      "parent": "place-vale",
+      "kind": "night",
+      "sceneIntent": "Home lanterns and the guarded orchard after dusk",
+      "lead": "flute",
+      "response": "cello",
+      "pulse": "harp",
+      "form": "HRAQHRAQHHAR",
+      "answer": [
+        [
+          0,
+          3,
+          0.9
+        ],
+        [
+          2.7,
+          1,
+          0.7
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          1.15
+        ],
+        [
+          3,
+          2,
+          0.65
+        ]
+      ],
+      "arc": [
+        0.45,
+        0.6,
+        0.7,
+        0.42
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "night-march",
+      "parent": "place-march",
+      "kind": "night",
+      "sceneIntent": "Sympathetic Wraith history in long reed-water breaths",
+      "lead": "cello",
+      "response": "flute",
+      "pulse": "piano",
+      "form": "HRAQHRAHHRAQHR",
+      "answer": [
+        [
+          0,
+          2,
+          1.1
+        ],
+        [
+          2.75,
+          0,
+          0.95
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.9
+        ],
+        [
+          3,
+          2,
+          0.65
+        ]
+      ],
+      "arc": [
+        0.45,
+        0.6,
+        0.7,
+        0.42
+      ],
+      "bars": 14,
+      "bpm": 82
+    },
+    {
+      "id": "night-highlands",
+      "parent": "place-highlands",
+      "kind": "night",
+      "sceneIntent": "Night watch across exhausted, still inhabited ridge works",
+      "lead": "horn",
+      "response": "cello",
+      "pulse": "marimba",
+      "form": "HRAQHRAQHHARHR",
+      "answer": [
+        [
+          0,
+          3,
+          1.1
+        ],
+        [
+          2.9,
+          1,
+          0.65
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.82
+        ],
+        [
+          2.7,
+          2,
+          0.7
+        ]
+      ],
+      "arc": [
+        0.45,
+        0.6,
+        0.7,
+        0.42
+      ],
+      "bars": 14,
+      "bpm": 88
+    },
+    {
+      "id": "night-frontier",
+      "parent": "place-frontier",
+      "kind": "night",
+      "sceneIntent": "A few hearths in the ruins; warm but never fully safe",
+      "lead": "cello",
+      "response": "flute",
+      "pulse": "harp",
+      "form": "HRAQHRAQHHARHRAQ",
+      "answer": [
+        [
+          0,
+          2,
+          0.85
+        ],
+        [
+          2.3,
+          0,
+          1.2
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.75
+        ],
+        [
+          2.65,
+          1,
+          0.77
+        ]
+      ],
+      "arc": [
+        0.45,
+        0.6,
+        0.7,
+        0.42
+      ],
+      "bars": 16,
+      "bpm": 96
+    },
+    {
+      "id": "settlement-vale",
+      "parent": "place-vale",
+      "kind": "settlement",
+      "sceneIntent": "Millhaven and orchard households; lived-in daily work",
+      "lead": "guitar",
+      "response": "flute",
+      "pulse": "harp",
+      "form": "HHAHHRAQHHAQ",
+      "answer": [
+        [
+          0,
+          2,
+          0.57
+        ],
+        [
+          1,
+          4,
+          0.68
+        ],
+        [
+          2.45,
+          0,
+          0.82
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.58
+        ],
+        [
+          2.25,
+          2,
+          0.65
+        ]
+      ],
+      "arc": [
+        0.82,
+        0.94,
+        1.02,
+        0.68
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "settlement-march",
+      "parent": "place-march",
+      "kind": "settlement",
+      "sceneIntent": "Fishers, trade and shelter, distinct from perilous open crossings",
+      "lead": "piano",
+      "response": "flute",
+      "pulse": "harp",
+      "form": "HHAQHHARHHAQHR",
+      "answer": [
+        [
+          0,
+          4,
+          0.48
+        ],
+        [
+          1.5,
+          3,
+          0.6
+        ],
+        [
+          3,
+          0,
+          0.78
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.78
+        ],
+        [
+          2.25,
+          4,
+          0.6
+        ]
+      ],
+      "arc": [
+        0.82,
+        0.94,
+        1.02,
+        0.68
+      ],
+      "bars": 14,
+      "bpm": 82
+    },
+    {
+      "id": "settlement-highlands",
+      "parent": "place-highlands",
+      "kind": "settlement",
+      "sceneIntent": "Cash, craft and human rhythms beneath Highland control",
+      "lead": "marimba",
+      "response": "horn",
+      "pulse": "cello",
+      "form": "HHAQHHARHHAQHR",
+      "answer": [
+        [
+          0,
+          0,
+          0.5
+        ],
+        [
+          1,
+          2,
+          0.46
+        ],
+        [
+          2,
+          4,
+          0.55
+        ],
+        [
+          3,
+          2,
+          0.44
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.67
+        ],
+        [
+          2.5,
+          1,
+          0.7
+        ]
+      ],
+      "arc": [
+        0.82,
+        0.94,
+        1.02,
+        0.68
+      ],
+      "bars": 14,
+      "bpm": 88
+    },
+    {
+      "id": "settlement-frontier",
+      "parent": "place-frontier",
+      "kind": "settlement",
+      "sceneIntent": "Rebuilding and ordinary conversation in scorched settlements",
+      "lead": "guitar",
+      "response": "cello",
+      "pulse": "harp",
+      "form": "HHAQHRAQHHAQRHAQ",
+      "answer": [
+        [
+          0,
+          2,
+          0.68
+        ],
+        [
+          1.7,
+          4,
+          0.5
+        ],
+        [
+          2.7,
+          0,
+          0.85
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.73
+        ],
+        [
+          2.6,
+          2,
+          0.65
+        ]
+      ],
+      "arc": [
+        0.82,
+        0.94,
+        1.02,
+        0.68
+      ],
+      "bars": 16,
+      "bpm": 96
+    },
+    {
+      "id": "interior-supply-vale",
+      "parent": "supply-vale",
+      "kind": "interior",
+      "sceneIntent": "Scornfang's functional stores, not Thornfang's hunting ground; intimate spatial and melodic character",
+      "lead": "harp",
+      "response": "flute",
+      "pulse": "guitar",
+      "form": "HHAQHRHAHHAR",
+      "answer": [
+        [
+          0.35,
+          3,
+          0.74
+        ],
+        [
+          1.8,
+          2,
+          0.57
+        ],
+        [
+          3,
+          0,
+          0.9
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.6
+        ],
+        [
+          2.05,
+          3,
+          0.8
+        ]
+      ],
+      "arc": [
+        0.66,
+        0.88,
+        0.98,
+        0.57
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "peace-interior-supply-vale",
+      "parent": "supply-vale",
+      "kind": "interior-peace",
+      "sceneIntent": "Scornfang's functional stores, not Thornfang's hunting ground; global-after-throne relief with residual uncertainty",
+      "lead": "harp",
+      "response": "cello",
+      "pulse": "guitar",
+      "form": "HRAQHHARHHAQ",
+      "answer": [
+        [
+          0.35,
+          3,
+          0.74
+        ],
+        [
+          1.8,
+          2,
+          0.57
+        ],
+        [
+          3,
+          0,
+          0.9
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          0.6
+        ],
+        [
+          2.05,
+          3,
+          0.8
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "interior-supply-march",
+      "parent": "supply-march",
+      "kind": "interior",
+      "sceneIntent": "Mirejaw's sheltered hoard amid exposed crossings; intimate spatial and melodic character",
+      "lead": "piano",
+      "response": "cello",
+      "pulse": "harp",
+      "form": "HRAQHHAQHHAR",
+      "answer": [
+        [
+          0.35,
+          2,
+          0.55
+        ],
+        [
+          1.7,
+          4,
+          0.8
+        ],
+        [
+          3.1,
+          1,
+          0.47
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.85
+        ],
+        [
+          2.4,
+          1,
+          0.6
+        ]
+      ],
+      "arc": [
+        0.66,
+        0.88,
+        0.98,
+        0.57
+      ],
+      "bars": 12,
+      "bpm": 82
+    },
+    {
+      "id": "peace-interior-supply-march",
+      "parent": "supply-march",
+      "kind": "interior-peace",
+      "sceneIntent": "Mirejaw's sheltered hoard amid exposed crossings; global-after-throne relief with residual uncertainty",
+      "lead": "flute",
+      "response": "piano",
+      "pulse": "harp",
+      "form": "HHAQHRAQHHAR",
+      "answer": [
+        [
+          0.35,
+          2,
+          0.55
+        ],
+        [
+          1.7,
+          4,
+          0.8
+        ],
+        [
+          3.1,
+          1,
+          0.47
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.85
+        ],
+        [
+          2.4,
+          1,
+          0.6
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 82
+    },
+    {
+      "id": "interior-supply-highlands",
+      "parent": "supply-highlands",
+      "kind": "interior",
+      "sceneIntent": "Ridge Tyrant's off-duty stores and the price of labor; intimate spatial and melodic character",
+      "lead": "marimba",
+      "response": "horn",
+      "pulse": "cello",
+      "form": "HHAQHRAHHHAQ",
+      "answer": [
+        [
+          0,
+          3,
+          0.6
+        ],
+        [
+          1.6,
+          2,
+          0.63
+        ],
+        [
+          3,
+          0,
+          0.8
+        ]
+      ],
+      "question": [
+        [
+          0.4,
+          4,
+          0.8
+        ],
+        [
+          2.25,
+          1,
+          0.77
+        ]
+      ],
+      "arc": [
+        0.66,
+        0.88,
+        0.98,
+        0.57
+      ],
+      "bars": 12,
+      "bpm": 88
+    },
+    {
+      "id": "peace-interior-supply-highlands",
+      "parent": "supply-highlands",
+      "kind": "interior-peace",
+      "sceneIntent": "Ridge Tyrant's off-duty stores and the price of labor; global-after-throne relief with residual uncertainty",
+      "lead": "harp",
+      "response": "horn",
+      "pulse": "marimba",
+      "form": "HRAQHRAQHHAR",
+      "answer": [
+        [
+          0,
+          3,
+          0.6
+        ],
+        [
+          1.6,
+          2,
+          0.63
+        ],
+        [
+          3,
+          0,
+          0.8
+        ]
+      ],
+      "question": [
+        [
+          0.4,
+          4,
+          0.8
+        ],
+        [
+          2.25,
+          1,
+          0.77
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 88
+    },
+    {
+      "id": "interior-side-vale-cellars",
+      "parent": "side-vale-cellars",
+      "kind": "interior",
+      "sceneIntent": "Old Orchard Cellars: domestic routine under goblin occupation; Phase 2 prototype requalified; intimate spatial and melodic character",
+      "lead": "cello",
+      "response": "guitar",
+      "pulse": "harp",
+      "form": "HHAQHRHAHHAQ",
+      "answer": [
+        [
+          0.25,
+          4,
+          0.5
+        ],
+        [
+          1.75,
+          3,
+          0.67
+        ],
+        [
+          3.1,
+          0,
+          0.8
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.9
+        ],
+        [
+          2.55,
+          1,
+          0.64
+        ]
+      ],
+      "arc": [
+        0.66,
+        0.88,
+        0.98,
+        0.57
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "peace-interior-side-vale-cellars",
+      "parent": "side-vale-cellars",
+      "kind": "interior-peace",
+      "sceneIntent": "Old Orchard Cellars: domestic routine under goblin occupation; Phase 2 prototype requalified; global-after-throne relief with residual uncertainty",
+      "lead": "flute",
+      "response": "harp",
+      "pulse": "guitar",
+      "form": "HRAQHRAQHHAR",
+      "answer": [
+        [
+          0.25,
+          4,
+          0.5
+        ],
+        [
+          1.75,
+          3,
+          0.67
+        ],
+        [
+          3.1,
+          0,
+          0.8
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          0.9
+        ],
+        [
+          2.55,
+          1,
+          0.64
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 92
+    },
+    {
+      "id": "interior-side-march-watchhouse",
+      "parent": "side-march-watchhouse",
+      "kind": "interior",
+      "sceneIntent": "Drowned Watchhouse: vacant watch-post with water in the stones; intimate spatial and melodic character",
+      "lead": "cello",
+      "response": "piano",
+      "pulse": "harp",
+      "form": "HRAQHRAQHHAR",
+      "answer": [
+        [
+          0,
+          3,
+          0.68
+        ],
+        [
+          1.3,
+          2,
+          0.45
+        ],
+        [
+          3.2,
+          0,
+          0.78
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          1.2
+        ],
+        [
+          2.8,
+          1,
+          0.5
+        ]
+      ],
+      "arc": [
+        0.66,
+        0.88,
+        0.98,
+        0.57
+      ],
+      "bars": 12,
+      "bpm": 82
+    },
+    {
+      "id": "peace-interior-side-march-watchhouse",
+      "parent": "side-march-watchhouse",
+      "kind": "interior-peace",
+      "sceneIntent": "Drowned Watchhouse: vacant watch-post with water in the stones; global-after-throne relief with residual uncertainty",
+      "lead": "flute",
+      "response": "cello",
+      "pulse": "harp",
+      "form": "HHAQHRAQHHAR",
+      "answer": [
+        [
+          0,
+          3,
+          0.68
+        ],
+        [
+          1.3,
+          2,
+          0.45
+        ],
+        [
+          3.2,
+          0,
+          0.78
+        ]
+      ],
+      "question": [
+        [
+          0,
+          4,
+          1.2
+        ],
+        [
+          2.8,
+          1,
+          0.5
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 82
+    },
+    {
+      "id": "interior-side-highlands-signal",
+      "parent": "side-highlands-signal",
+      "kind": "interior",
+      "sceneIntent": "Old Signal Keep: isolated watch, stone and measured unanswered calls; intimate spatial and melodic character",
+      "lead": "horn",
+      "response": "marimba",
+      "pulse": "cello",
+      "form": "HRAQHHAQHHAR",
+      "answer": [
+        [
+          0.3,
+          2,
+          0.65
+        ],
+        [
+          1.85,
+          1,
+          0.7
+        ],
+        [
+          3.1,
+          0,
+          0.58
+        ]
+      ],
+      "question": [
+        [
+          0.65,
+          4,
+          0.9
+        ],
+        [
+          2.7,
+          3,
+          0.7
+        ]
+      ],
+      "arc": [
+        0.66,
+        0.88,
+        0.98,
+        0.57
+      ],
+      "bars": 12,
+      "bpm": 88
+    },
+    {
+      "id": "peace-interior-side-highlands-signal",
+      "parent": "side-highlands-signal",
+      "kind": "interior-peace",
+      "sceneIntent": "Old Signal Keep: isolated watch, stone and measured unanswered calls; global-after-throne relief with residual uncertainty",
+      "lead": "horn",
+      "response": "harp",
+      "pulse": "cello",
+      "form": "HRAQHRAHHHAQ",
+      "answer": [
+        [
+          0.3,
+          2,
+          0.65
+        ],
+        [
+          1.85,
+          1,
+          0.7
+        ],
+        [
+          3.1,
+          0,
+          0.58
+        ]
+      ],
+      "question": [
+        [
+          0.65,
+          4,
+          0.9
+        ],
+        [
+          2.7,
+          3,
+          0.7
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 88
+    },
+    {
+      "id": "interior-side-frontier-shrine",
+      "parent": "side-frontier-shrine",
+      "kind": "interior",
+      "sceneIntent": "Ruined Shrine: fragile private memory among damaged homes; intimate spatial and melodic character",
+      "lead": "cello",
+      "response": "harp",
+      "pulse": "guitar",
+      "form": "HRAQHRAQHHAR",
+      "answer": [
+        [
+          0.4,
+          3,
+          0.6
+        ],
+        [
+          2.2,
+          4,
+          0.7
+        ],
+        [
+          3.25,
+          2,
+          0.48
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          1.4
+        ],
+        [
+          2.75,
+          0,
+          0.85
+        ]
+      ],
+      "arc": [
+        0.66,
+        0.88,
+        0.98,
+        0.57
+      ],
+      "bars": 12,
+      "bpm": 96
+    },
+    {
+      "id": "peace-interior-side-frontier-shrine",
+      "parent": "side-frontier-shrine",
+      "kind": "interior-peace",
+      "sceneIntent": "Ruined Shrine: fragile private memory among damaged homes; global-after-throne relief with residual uncertainty",
+      "lead": "flute",
+      "response": "harp",
+      "pulse": "cello",
+      "form": "HHAQHRAQHHAR",
+      "answer": [
+        [
+          0.4,
+          3,
+          0.6
+        ],
+        [
+          2.2,
+          4,
+          0.7
+        ],
+        [
+          3.25,
+          2,
+          0.48
+        ]
+      ],
+      "question": [
+        [
+          0,
+          2,
+          1.4
+        ],
+        [
+          2.75,
+          0,
+          0.85
+        ]
+      ],
+      "arc": [
+        0.67,
+        0.85,
+        0.74,
+        0.59
+      ],
+      "bars": 12,
+      "bpm": 96
+    }
+  ]
+}
