@@ -21,7 +21,7 @@ assert.equal(Object.keys(manifest.director.places).length,19);
 assert.equal(ledger.hardConstraints.registered,false);
 assert.equal(ledger.hardConstraints.merged,false);
 assert.equal(ledger.hardConstraints.deployed,false);
-assert.match(ledger.hardConstraints.inGamePlayback, /^NOT TESTED(?:\\b|$)/, 'Candidate has never played in the game; explanatory detail is allowed');
+assert.match(ledger.hardConstraints.inGamePlayback, /^NOT TESTED(?:\b|$)/, 'Candidate has never played in the game; explanatory detail is allowed');
 const sources = new Set();
 for (const s of ledger.sources) {
   assert(!sources.has(s.id),'Original source identity duplicated');
