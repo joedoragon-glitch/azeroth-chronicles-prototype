@@ -319,7 +319,9 @@ test('high-DPI Pixi backdrop retains the same logical geometry as Canvas',()=>{
   const scene=Bridge.create({PIXI,app,width:912,height:420});
   const backing=picture('high-density-ground',2028,1290);
   scene.setBackground(backing,-220,-220,1352,860);
-  const node=app.stage.children[0].children[1];
+  // The background is inserted at root index zero, before the live liquid,
+  // actors and atmosphere layers; test the actual backing Sprite.
+  const node=app.stage.children[0].children[0];
   assert.equal(node.position.x,-220);
   assert.equal(node.position.y,-220);
   assert.equal(node.width,1352,'logical terrain width must not inherit 1.5x bitmap width');
