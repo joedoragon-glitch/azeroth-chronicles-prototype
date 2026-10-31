@@ -24,6 +24,11 @@ The fifth playable class, provisionally called **Strategist**, is to be represen
 5. **Functional loadout rather than prop overload.** A few legible alchemical identifiers, restrained asymmetry, reliable sheaths and a coherent working silhouette are preferable to dozens of tiny bottles, impractical hanging weapons or straps that obscure anatomy. Maintain believable freedom of arm and torso motion.
 6. **An Ogre's strength applied differently.** Preserve mass, reach and weight as visual characteristics; communicate that he survives by foresight and movement rather than defaulting to a tank, giant weapon bruiser or another form of Garun's Stone Colossus.
 
+
+### Frontline gameplay constraints for later art translation (31 October 2026)
+
+The owner now specifies a **90-world-unit basic melee reach**, short-range and small-area skills, and a quick dual-dagger three-hit chain ending in a **small acid-bottle splash**. Show the vial as a readable compact combat action, not a giant long-range bomb or a replacement weapon. The chance-based response to enemy basic attacks and the deliberate, party-protecting telegraph reversal are **two distinct motions/effects**. Final animation timing and hitboxes belong to the gameplay source, not this visual brief. The proposed **Field Lab** is a **separate regional building**, eventually in five region-appropriate designs, not a reason to overload the Ogre with large laboratory machinery. Its upgrade adds a visible windmill. All of these remain **design instructions, not approved rendered assets or implemented game features**; see [parent Strategist #674](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/674) and the maintained [hero design decisions](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/docs/strategist-ogre-visual-principles-20261030/docs/DECISIONS.md#strategist-fifth-class--frontline-alchemy-and-field-lab-31-october-2026-owner-direction-unimplemented).
+
 ## Production translation and acceptance checks (future work)
 
 - Begin from the **actual current Ogre renderer/body and accepted design references**, then create a distinct **hero-class visual variant**, not new world-species anatomy. Avoid modifying enemy Ogre art while producing the hero.
