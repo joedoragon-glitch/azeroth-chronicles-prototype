@@ -106,6 +106,13 @@ const server=http.createServer((req,res)=>{
           try {
             await page.waitForFunction(({bed,score})=>{
               const a=Prototype.audio;
+              // The test freezes Campaign updates, but a real running game
+              // still ticks its audio production retry owner. Pump only that
+              // native audio policy while preserving scene and save state.
+              if(a.ctx?.state==='running'&&a.context){
+                a.updateProduction(a.context);
+                a.updateEnvironment(a.context);
+              }
               return a.ctx?.state==='running'&&a.environmentVoice?.id===bed &&
                 a.recordedScore?.id===score;
             },{bed:x.bed,score:x.score},{timeout:14000});
