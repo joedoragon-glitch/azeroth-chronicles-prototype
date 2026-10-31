@@ -96,12 +96,22 @@ assert(screen.actions.some((a) => a.label === 'Page' &&
   a.detail === '2/2'), 'Back restores trainer page 2');
 
 game.hero.gold = 100;
+const hpBefore = game.companionMaxHp(target);
+const attackBefore = game.companionAttackDamage(target);
+const masteryBefore = target.masteryPoints;
+const skill2Before = game.companionSecondSkillUnlocked();
 selected.action();
 const confirm = screen.actions.find((a) => a.label.startsWith('Confirm training'));
 assert(confirm && !confirm.disabled);
 confirm.action();
 assert.equal(game.hero.gold, 0, 'training charges exactly 100 once');
 assert.equal(target.charmRingleaderTrained, true, 'only selected individual promoted');
+assert.equal(target.maxHp, Math.round(hpBefore * Campaign.rules.ringleaderScaling.hp));
+assert(Math.abs(game.companionAttackDamage(target) -
+  attackBefore * Campaign.rules.ringleaderScaling.damage) < 0.0001);
+assert.equal(target.masteryPoints, masteryBefore, 'paid training must not award Mastery');
+assert.equal(game.companionSecondSkillUnlocked(), skill2Before,
+  'paid training must not bypass the locked hero Skill 2');
 assert.equal(captures.filter((u) => u.charmRingleaderTrained).length, 1);
 
 // Already trained must remain inspectable, but cannot purchase again.
