@@ -128,7 +128,7 @@ async function main() {
       benchmarks = [];
     for (const fixture of (
       process.env.PARITY_FIXTURES ||
-      'warlord,ridge,regalia,cover,registered,wildlife,lamp,flight,bundle,keeper,pursuit'
+      'warlord,ridge,regalia,cover,registered,wildlife,lamp,flight,bundle,keeper,pursuit,idle'
     ).split(',')) {
       await page.evaluate((name) => {
         const family = name === 'ridge' ? 'ridge' : 'warlord';
@@ -250,6 +250,18 @@ async function main() {
           room.npcs = [keeper];
           if (!g.visibleNPCs().includes(keeper)) throw Error('Keeper fixture eligibility failed');
         }
+        if (name === 'idle') {
+          // Only a stationary hero remains: presentation motion is visible
+          // while the actual world position and gameplay clock stay unchanged.
+          g.enter('archive');
+          const room = g.zone();
+          room.props = [];
+          room.buildings = [];
+          room.npcs = [];
+          room.enemies = [];
+          room.escort = null;
+          Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
+        }
         if (name === 'pursuit') {
           g.enter('vale');
           const room = g.zone(),
@@ -367,6 +379,23 @@ async function main() {
           pixi[1].status.gpu.sceneMetrics.textureSources,
           'Stable GPU texture count',
         );
+        if (fixture === 'idle') {
+          const crop = {
+            x: Math.round(viewport.width * 0.5 - 75),
+            y: Math.round(viewport.height * 0.55 - 105),
+            width: 150,
+            height: 120,
+          };
+          for (const mode of ['canvas', 'pixi']) {
+            const n = await changedPixels(
+              path.join(out, fixture + '-' + mode + '-0.png'),
+              path.join(out, fixture + '-' + mode + '-7000.png'),
+              crop,
+            );
+            assert(n > 15, mode + ' idle body must visibly move without simulation or texture rebake');
+            lifecycle.push({ fixture, mode, changedPixels: n, crop });
+          }
+        }
         if (fixture === 'wildlife') {
           const crop = {
             x: Math.round(viewport.width * 0.5 - 55),
