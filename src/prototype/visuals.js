@@ -18301,6 +18301,10 @@
       const t = 1 - d2;
       cover = Math.max(cover, z.strength * t * t * (3 - 2 * t));
     }
+    // Recovery is a connected landscape, not individual circular patches.
+    // Settled western country gradually yields to the active eastern front.
+    const westernSoil = Math.max(0, Math.min(1, (1900 - a) / 1700));
+    cover = Math.max(cover, westernSoil * (0.28 + 0.025 * Math.sin(y / 360 + x / 690)));
     // Neither the interior of the ravine nor its raw eroded banks recover.
     const [left, right] = R.channelBanks(3, y),
       distance = Math.max(left - x, x - right),
@@ -18927,6 +18931,20 @@
     if (region === 3) {
       // The country is recovering in selected cool-earth districts, not
       // uniformly greening. Roads, ravine, pools and buildings paint later.
+      // A single restrained, west-to-east soil wash connects the old siege
+      // verge and inhabited woodland. The local site washes supply variation,
+      // rather than looking like unrelated green stamps on an ash background.
+      const start = screen({ x: 0, y: 0 });
+      ctx.save();
+      ctx.transform(0.76, 0.27, -0.76, 0.27, start.x, start.y);
+      const settledSoil = ctx.createLinearGradient(0, 0, 2000, 0);
+      settledSoil.addColorStop(0, 'rgba(99,125,78,0.31)');
+      settledSoil.addColorStop(0.45, 'rgba(101,123,81,0.21)');
+      settledSoil.addColorStop(0.8, 'rgba(103,118,83,0.06)');
+      settledSoil.addColorStop(1, 'rgba(103,118,83,0)');
+      ctx.fillStyle = settledSoil;
+      ctx.fillRect(0, 0, size, size);
+      ctx.restore();
       for (const z of frontierGroundZones) {
         const p = screen({ x: z.x, y: z.y }),
           radius = (z.rx + z.ry) * 0.76;
@@ -18937,9 +18955,9 @@
         ctx.transform(0.76, 0.27, -0.76, 0.27, 0, 0);
         ctx.scale(z.rx, z.ry);
         const wash = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
-        wash.addColorStop(0, `rgba(${z.rgb},${(z.strength * 0.74).toFixed(3)})`);
-        wash.addColorStop(0.46, `rgba(${z.rgb},${(z.strength * 0.44).toFixed(3)})`);
-        wash.addColorStop(0.85, `rgba(${z.rgb},${(z.strength * 0.1).toFixed(3)})`);
+        wash.addColorStop(0, `rgba(${z.rgb},${(z.strength * 0.33).toFixed(3)})`);
+        wash.addColorStop(0.46, `rgba(${z.rgb},${(z.strength * 0.22).toFixed(3)})`);
+        wash.addColorStop(0.85, `rgba(${z.rgb},${(z.strength * 0.06).toFixed(3)})`);
         wash.addColorStop(1, `rgba(${z.rgb},0)`);
         ctx.fillStyle = wash;
         ctx.beginPath();
