@@ -319,10 +319,13 @@
      liquidGraphic.clear();
      for(const line of lines) {
        assert(line&&[line.x1,line.y1,line.x2,line.y2,line.width].every(Number.isFinite)&&
-         line.width>0&&/^#[0-9a-f]{8}$/i.test(line.color),
+         line.width>0&&/^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(line.color),
          'Invalid native water/lava highlight');
+       // The original lava streaks are six-digit opaque colors; water is
+       // eight-digit translucent. Preserve both exactly.
        const color=Number.parseInt(line.color.slice(1,7),16),
-         alpha=Number.parseInt(line.color.slice(7,9),16)/255;
+         alpha=line.color.length===9
+           ? Number.parseInt(line.color.slice(7,9),16)/255 : 1;
        liquidGraphic.moveTo(line.x1,line.y1).lineTo(line.x2,line.y2)
          .stroke({color,alpha,width:line.width*zoom,cap:'round'});
      }
