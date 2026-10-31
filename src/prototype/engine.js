@@ -8438,7 +8438,9 @@
     // No active registry mutation is allowed before validation completes.
     classes[id] = Object.freeze({ icon, ...stats });
     talentProfiles[id] = Object.freeze({ ...talents });
-    R.movementBasicClasses[id] = true;
+    // Moving automatic attacks are a separate authored capability, not
+    // something every newly admitted class automatically inherits.
+    if (definition.movementBasic === true) R.movementBasicClasses[id] = true;
     return true;
   };
   // The already-playable Rogue continues through its original opt-in.
@@ -8448,6 +8450,7 @@
       icon: 'jingle-bell',
       stats: R.rogueHeroFoundation.stats,
       talents: R.rogueHeroFoundation.talents,
+      movementBasic: true,
     });
   };
   Campaign.rules = R;
