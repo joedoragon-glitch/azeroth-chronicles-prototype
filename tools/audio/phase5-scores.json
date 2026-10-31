@@ -1298,7 +1298,7 @@
       "character": "Mirejaw",
       "title": "Teeth Beneath the Reeds",
       "identity": "Patient swamp predator and owner of guarded wetland stores; predatory opportunism, not a Wraith plot",
-      "truePsychology": "TRUE snaps from muffled reed pulses into sudden chimes and bowed feints, leaving meaningful submerged rests",
+      "truePsychology": "TRUE snaps from muffled reed pulses into sudden chimes and bowed feints, leaving meaningful submerged rests Four authored low cello undercurrents join the chimes only at selected stalking/strike bars, intensifying close underwater pressure without a universal marching drum or a large automatic gain increase.",
       "originalTitle": "Teeth Beneath the Reeds",
       "root": 50,
       "mode": "dorian",
@@ -1714,7 +1714,7 @@
       "harmonicReview": {
         "tension": "The approach remains unsettled against an upper chord on bar 8; the predator's longer withheld gesture closes back on tonic in bar 12.",
         "cadence": "TRUE's unresolved minor-seven at the loop end deliberately spills forward into the next stalking entry, not an accidental unreviewed cadence.",
-        "registerAndTrue": "The complete Mirejaw TRUE glockenspiel line transposes as a single interval-preserving phrase into MIDI 75–82 near the actual G5/C6 recorded sources, without per-note octave folding or distant sample stretching. Intentionally voiced whole-bar TRUE responses follow their changing harmonies at documented accented anchor bars; nonchord responses outside those anchors remain deliberate interrogations, not arbitrary total quantization."
+        "registerAndTrue": "The complete Mirejaw TRUE glockenspiel line transposes as a single interval-preserving phrase into MIDI 75–82 near the actual G5/C6 recorded sources, without per-note octave folding or distant sample stretching. Intentionally voiced whole-bar TRUE responses follow their changing harmonies at documented accented anchor bars; nonchord responses outside those anchors remain deliberate interrogations, not arbitrary total quantization. Four separate soft cello undercurrent attacks use the current bar's diatonic harmony and a controlled low register, not another top-register bell doubling."
       },
       "trueRegister": 24,
       "trueChordAnchors": [
@@ -1730,6 +1730,32 @@
         "6": 1,
         "9": -1,
         "10": 1
+      },
+      "trueLowUndercurrent": {
+        "2": [
+          1.65,
+          0,
+          1.3,
+          0.04
+        ],
+        "5": [
+          0.95,
+          0,
+          1.45,
+          0.037
+        ],
+        "8": [
+          1.85,
+          0,
+          1.35,
+          0.038
+        ],
+        "10": [
+          1.2,
+          0,
+          1.5,
+          0.039
+        ]
       }
     },
     {

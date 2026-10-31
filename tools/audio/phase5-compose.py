@@ -136,6 +136,16 @@ def source_contract():
             cue + ": no returning tonic in completed boss base")
         verify_true_register(family)
         verify_true_chord_anchors(family)
+        undercurrent = family.get("trueLowUndercurrent", {})
+        if key == "mire":
+            assert set(undercurrent) == {"2", "5", "8", "10"}, (
+                cue + ": missing individually scored wetland TRUE undercurrent")
+            for item in undercurrent.values():
+                at, degree, duration, gain = item
+                assert 0 <= at < 4 and degree == 0
+                assert 1.0 <= duration <= 2.0 and .025 <= gain <= .05
+        else:
+            assert not undercurrent, cue + ": unreviewed copied TRUE undercurrent"
         assert len(family["identity"]) >= 65 and len(family["truePsychology"]) >= 80
         assert len(family["harmony"]) == family["bars"] == len(family["energy"])
         assert len(family["leadBars"]) == len(family["trueBars"]) == family["bars"]
@@ -301,6 +311,13 @@ def render_part(family, part, shared, sampler, played_notes=None):
                 tone(bar, at, root + family.get("trueRegister", 12) + semitone,
                      duration, family["response"], .051, soft=True,
                      performed_role="true")
+            # Mirejaw has only four specific dark-water cello replies,
+            # not a shared universal TRUE oscillator/drum preset.
+            under = family.get("trueLowUndercurrent", {}).get(str(bar))
+            if under is not None:
+                at, degree, length, gain = under
+                midi = root - 5 + sampler.degree(chord + degree, mode)
+                tone(bar, at, midi, length, "cello", gain, soft=True)
             if bar % 4 == 2:
                 tone(bar, .4, root + family.get("bassRegister", -12) +
                      sampler.degree(chord, mode),
@@ -397,6 +414,9 @@ def main():
             assert result["foldedMonoPeak"] < .98
             assert result["loopEdgeDelta"] < .005, (cue, result["loopEdgeDelta"])
             assert result["recordedInstrumentNotes"] >= 10, cue
+            if family["key"] == "mire" and part == "true":
+                assert result["recordedInstrumentNotes"] >= 27, (
+                    cue + ": missing authored cello pressure responses")
             reports.append(result)
             rendered[part] = wave
             print("Phase 5 encoded+decoded", cue, result["seconds"], flush=True)

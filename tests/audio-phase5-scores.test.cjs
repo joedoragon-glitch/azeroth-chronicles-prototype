@@ -37,7 +37,11 @@ for(const [i,f] of s.families.entries()){
  if(f.leadRegisterByBar){assert.equal(f.leadRegisterByBar.length,f.bars);assert.deepEqual(f.leadRegisterByBar.slice(0,4),[f.register,f.register,f.register,f.register]);}
  if(f.key==='crypt') {assert.equal(f.trueRegister,0);assert.equal(f.pulseRegister,-12);}
  if(f.key==='ridge') {assert.equal(f.pulseRegister,-12);assert.ok(f.leadRegisterByBar.slice(4).includes(0));assert.equal(f.trueRegister,0);}
- if(f.key==='mire') assert.equal(f.trueRegister,24,'Mire TRUE chime requires a coherent scored register');
+ if(f.key==='mire') {
+   assert.equal(f.trueRegister,24,'Mire TRUE chime requires a coherent scored register');
+   assert.deepEqual(Object.keys(f.trueLowUndercurrent),['2','5','8','10']);
+   assert.ok(Object.values(f.trueLowUndercurrent).every(e=>e.length===4&&e[3]>=.025&&e[3]<=.05));
+ }else assert.equal(f.trueLowUndercurrent,undefined,'No generic copied wetland TRUE pulses');
  if(f.key==='archive') assert.equal(f.trueRegister,12,'Keeper TRUE chime requires a coherent scored register');
  if(f.key==='warlord') assert.equal(f.trueRegister,0,'Warlord TRUE orders must occupy natural lower horn samples');
  if(f.key==='abyss') {assert.equal(f.companionRegister,0);assert.ok(f.leadRegisterByBar.slice(4).includes(0));}
