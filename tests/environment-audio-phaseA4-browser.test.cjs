@@ -34,8 +34,8 @@ const cases=[
   {zone:'supply-crown',mode:'exploration',score:'interior-supply-crown',bed:'env-home'},
   {zone:'side-vale-cellars',mode:'exploration',score:'interior-side-vale-cellars',bed:'env-cellar'},
   {zone:'side-march-watchhouse',mode:'exploration',score:'interior-side-march-watchhouse',bed:'env-archive'},
-  {zone:'side-highlands-signal',mode:'exploration',score:'interior-side-highlands-signal',bed:'env-highland-wind'},
-  {zone:'side-frontier-shrine',mode:'exploration',score:'interior-side-frontier-shrine',bed:'env-frontier-air'},
+  {zone:'side-highlands-signal',mode:'exploration',score:'interior-side-highlands-signal',bed:'env-cellar'},
+  {zone:'side-frontier-shrine',mode:'exploration',score:'interior-side-frontier-shrine',bed:'env-retreat'},
   {zone:'side-crown-foundry',mode:'exploration',score:'interior-side-crown-foundry',bed:'env-mine'},
 ];
 const server=http.createServer((req,res)=>{
