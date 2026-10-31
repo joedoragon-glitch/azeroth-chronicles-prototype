@@ -25,8 +25,8 @@
       "license": "Public domain (author dedication)",
       "licenseEvidence": "https://commons.wikimedia.org/wiki/File:Wood_and_cutlery.ogg",
       "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Wood_and_cutlery.ogg",
-      "sha1": null,
-      "bytes": null,
+      "sha1": "9ca9ab8edadd4671cd67f36ea6ae37365db6d26e",
+      "bytes": 57274,
       "role": "infrequent muted domestic equipment movement in occupied barracks",
       "risks": "Original metallic cutlery may be too modern/prominent; source checksum must be verified/pinned before any catalog inclusion."
     }
@@ -79,7 +79,7 @@
   ],
   "status": {
     "sourceReview": "done",
-    "downloads": "not attempted",
+    "downloads": "exploratory physical-source downloads verified in no-deploy CI #41197469581; original source checksum now pinned in the book",
     "rendered": "not attempted",
     "signalChecked": "not attempted",
     "heard": "unverified",
