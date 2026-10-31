@@ -108,6 +108,39 @@ assert.equal(steps, 1);
 a.setSceneMix('menu');
 a.enableProduction(false);
 assert.equal(a.mixScene, 'menu');
+// #709 A5: The original else-if(scene.night) turned the same synthesized
+// insects on in every outdoor night, including barren ridges, the recovering
+// Frontier and Crown streets. Respect region-specific ecology instead of
+// inventing a generic nocturnal identity where no authored source exists.
+const detailsAudio = audio();
+detailsAudio.enableProduction();
+detailsAudio.cue = { id: 'vale' };
+let detailEvents = [], detailTones = [];
+detailsAudio.playSoundEvent = (name) => { detailEvents.push(name); return true; };
+detailsAudio.tone = (...args) => { detailTones.push(args); };
+detailsAudio.noiseBurst = () => { throw Error('Unexpected fallback detail'); };
+const expectedDetails = {
+  vale: 'ambience.insects',
+  march: 'ambience.water',
+  highlands: null,
+  frontier: null,
+  crown: null,
+};
+for (const [region, expected] of Object.entries(expectedDetails)) {
+  detailsAudio.ctx.currentTime += 41;
+  detailsAudio.nextSceneDetail = 0;
+  detailEvents = [];
+  detailTones = [];
+  detailsAudio.sceneDetails({
+    zone: region, region, interior: 'outdoors', night: true, peace: false,
+    engaged: 0, boss: null, settlement: null, started: true, situation: 'exploration',
+  });
+  assert.deepEqual(detailEvents, expected ? [expected] : [],
+    region + ' night must not inherit another region\\'s detail');
+  if (!expected) assert.equal(detailTones.length, 0,
+    region + ' night must not emit generic chirps');
+}
+detailsAudio.dispose();
 console.log(
   'PASS 19 place identities, night/refuges/peace, 11 boss/TRUE pairs, synchronized loops, transport-preserving intensity and movement-only footsteps',
 );
