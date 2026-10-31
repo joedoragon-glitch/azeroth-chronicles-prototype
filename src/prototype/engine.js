@@ -7783,7 +7783,7 @@
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
-        this.event('reset');
+        this.event('reset', { x: e.x, y: e.y, zone: this.zoneId });
       }
       if (resetPoint) this.beginFieldBossReturn(e, resetPoint);
       const mobilityReturn = this.advanceFieldBossReturn(e, dt);
@@ -7835,8 +7835,18 @@
           !resume &&
           !mobilityReturn &&
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
-        )
+        ) {
+          // The original one-second anti-kiting reset still wins immediately.
+          // Capture the source of a visible home snap for paint-only feedback;
+          // never create a movement path, extend the reset or change protection.
+          const fromX = e.x, fromY = e.y,
+            visibleSnap = dist(e, e.home) > 28;
           Object.assign(e, e.home);
+          if (visibleSnap)
+            this.event('resetArrival', {
+              zone: this.zoneId, x: e.x, y: e.y, fromX, fromY,
+            });
+        }
         this.finishDisengage(e);
       }
     }
