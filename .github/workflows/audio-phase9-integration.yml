@@ -49,6 +49,15 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts
+      # The full offline worker references a pinned, locally generated PixiJS
+      # bundle. A clean Chromium checkout MUST prepare that file before install;
+      # otherwise the service-worker install can never finish successfully.
+      - name: Prepare the actual offline candidate including pinned PixiJS
+        run: |
+          node scripts/build.cjs
+          node scripts/build.cjs --check
       - run: npx playwright install --with-deps chromium
-      - name: Actual soundtrack entry and fresh offline PWA test
+      - name: Real title, Continue, in-game settings and Return-to-title lifecycle
+        run: node tests/audio-phase9-lifecycle-browser.test.cjs
+      - name: Actual 65-score playback and fresh offline PWA installation
         run: node tests/audio-phase7-browser.test.cjs

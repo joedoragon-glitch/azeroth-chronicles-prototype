@@ -5,7 +5,7 @@ const path = require('node:path');
 const Campaign = require('../src/prototype/engine.js');
 const { audio } = require('./helpers/audio-context.cjs');
 const app = fs.readFileSync(path.resolve(__dirname, '../src/prototype/app.js'), 'utf8');
-assert(app.includes('if (!started && !sceneTransition && !startupUpdatePending)'));
+assert(app.includes('if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)'));
 assert(app.includes('audio.update(game, !focused || document.hidden || recovering'));
 assert(app.includes('const entryUnlock = audio.unlock()'));
 assert(app.includes('return audio.productionPending || true'));

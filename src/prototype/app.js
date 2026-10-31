@@ -8229,7 +8229,7 @@
   function frame(now) {
     if (!started || sceneTransition) {
       // Idle title runs its music director without simulating a campaign.
-      if (!started && !sceneTransition && !startupUpdatePending)
+      if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
         audio.update(game, !focused || document.hidden, {
           started: false, menu: !!menu, backgrounded: !focused || document.hidden,
           paused: false,
