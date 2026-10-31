@@ -51,6 +51,8 @@ foundation.startingCompanions.push('archer');
 assert.deepEqual(dormant.startingCompanions, ['soldier', 'archer'], 'no caller mutation leaks');
 assert.throws(() => Campaign.defineClassFoundation('fifth-fixture', foundation), /duplicate/);
 assert.equal(Campaign.classes['fifth-fixture'], undefined);
+assert.equal(Campaign.rules.movementBasicClasses['fifth-fixture'], undefined,
+  'dormant classes may not inherit moving autoattacks');
 assert.deepEqual(Object.keys(classes), origin, 'foundation is not playable admission');
 assert.throws(() => new Campaign('normal', 'fifth-fixture'), /Unknown mode or class/);
 assert.throws(() => new Campaign('normal', 'constructor'), /Unknown mode or class/);
@@ -111,6 +113,8 @@ assert.deepEqual(Campaign.classAdmissionIssues('rogue', {
 assert.equal(Campaign.enableRoguePlaytest(), true);
 assert.equal(Campaign.enableRoguePlaytest(), false);
 assert.deepEqual(Object.keys(classes), [...origin, 'rogue']);
+assert.equal(Campaign.rules.movementBasicClasses.rogue, true,
+  'existing Rogue movement basic behavior preserved explicitly');
 const rogue = new Campaign('normal', 'rogue', () => 0.9);
 assert.deepEqual(rogue.s.party, []);
 assert.equal(rogue.heroBasicAttackApproachRange(), 220);
