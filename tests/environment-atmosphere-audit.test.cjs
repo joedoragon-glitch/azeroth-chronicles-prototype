@@ -70,3 +70,33 @@ for(let region=0;region<5;region++) {
 }
 console.log('PASS issue #708: '+moteCases+' deterministic/optimization/indoor particle checks; '+
   canvasCases+' real Canvas atmosphere phase x region x optimization draws; finite gradients');
+
+
+const Campaign=require('../src/prototype/engine.js');
+for(const zone of ['vale','march','highlands','frontier','crown']) {
+  const g=new Campaign('normal','paladin',()=>0.73);
+  g.enter(zone);
+  const z=g.zone();
+  const prop=(z.props||[]).filter(p=>Campaign.rules.ambientLife[p.structure||p.id]);
+  const actors=(g.visibleNPCs?.()||[]).filter(p=>Campaign.rules.ambientLife[p.structure||p.id]);
+  const counts={};
+  for(const p of [...prop,...actors]) {
+    const key=p.structure||p.id;
+    counts[key]=(counts[key]||0)+1;
+  }
+  console.log('AMBIENT-LIFE-CENSUS '+zone+' '+JSON.stringify(counts));
+}
+const {execFileSync}=require('node:child_process');
+for(const file of [
+  'tests/daylight-cycle.test.cjs',
+  'tests/ambient-life.test.cjs',
+  'tests/optimization-mode.test.cjs',
+  'tests/pixi-fidelity.test.cjs',
+  'tools/webgl-pilot/pixi-scene-bridge.test.cjs',
+  'tests/ground-cache.test.cjs'
+]) {
+  console.log('AUDIT-EXISTING-TEST '+file);
+  execFileSync(process.execPath,[file],{cwd:require('node:path').resolve(__dirname,'..'),
+    stdio:'inherit',timeout:180000});
+}
+console.log('PASS issue #708 independent historical regression replay');
