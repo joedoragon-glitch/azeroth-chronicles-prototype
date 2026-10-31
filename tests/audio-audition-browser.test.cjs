@@ -181,6 +181,12 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#recording').selectOption('place-vale');
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
+        assert.equal(await page.locator('#next').isDisabled(), false);
+        await press('#next');
+        assert.notEqual(await page.locator('#recording').inputValue(), 'place-vale');
+        await press('#prev');
+        assert.equal(await page.locator('#recording').inputValue(), 'place-vale');
+        assert((await page.locator('#guide-recipe').textContent()).includes('phase3-themes.json'));
         assert((await page.locator('#message').textContent()).includes('Playing place-vale'));
         assert((await page.locator('#guide-text').inputValue()).includes('phase3'));
         assert((await page.locator('#guide-recipe').textContent()).includes('phase3-themes.json'));

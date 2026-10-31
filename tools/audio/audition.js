@@ -71,9 +71,9 @@
     return String(text).replace(/[._-]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   }
   function soundTitle(id, entry) {
-    // A legacy catalog display label survives for this asset; the score-book
-    // and the playable game's official title are the source of current naming.
-    if (id === 'title') return "So I Became the Dark Lord's Problem";
+    // The recording's real title belongs in the listening room. Legacy
+    // metadata using the retired prototype name must never become a new label.
+    if (entry?.title === 'Azeroth Chronicles') return "So I Became the Dark Lord's Problem";
     return entry?.title || human(id);
   }
   function catalogCounts(manifest) {
@@ -259,6 +259,21 @@
     $('recording').value = id;
     showRecording();
   }
+  function syncNavigation() {
+    const index = visibleRecordings.findIndex((item) => item.id === $('recording').value);
+    const enabled = $('kind').value !== 'generated' && index >= 0 && visibleRecordings.length > 1;
+    $('prev').disabled = !enabled;
+    $('next').disabled = !enabled;
+  }
+  async function navigateRecording(direction) {
+    const index = visibleRecordings.findIndex((item) => item.id === $('recording').value);
+    if (index < 0 || visibleRecordings.length < 2) return;
+    const nextIndex = (index + direction + visibleRecordings.length) % visibleRecordings.length;
+    visibleLimit = Math.max(visibleLimit, Math.ceil((nextIndex + 1) / 24) * 24);
+    renderCards();
+    selectRecording(visibleRecordings[nextIndex].id);
+    await playRecording();
+  }
   function renderCards() {
     $('library-grid').replaceChildren(...visibleRecordings.slice(0, visibleLimit).map(cardFor));
     $('show-more').hidden = visibleLimit >= visibleRecordings.length;
@@ -295,6 +310,7 @@
     $('recorded-panel').hidden = true;
     $('generated-panel').hidden = false;
     $('show-more').hidden = true;
+    syncNavigation();
   }
   async function playGenerated(id, title) {
     const token = ++action;
@@ -385,11 +401,12 @@
     if (entry) {
       const details = document.createElement('div');
       const labels = [
-        entry.kind === 'music'
-          ? entry.creationMethod === 'authored-recorded-source-score'
-            ? 'Phase 3–6 recorded-source composition'
-            : 'Original Dark Crown recording — not rebuilt'
-          : kindNames[entry.kind] || human(entry.kind),
+        source === 'diagnostic' ? 'Engineering test recording'
+          : entry.kind === 'music'
+            ? entry.creationMethod === 'authored-recorded-source-score'
+              ? 'Phase 3–6 recorded-source composition'
+              : 'Original Dark Crown recording — not rebuilt'
+            : kindNames[entry.kind] || human(entry.kind),
         entry.bpm ? entry.bpm + ' BPM' : null,
         entry.duration ? entry.duration.toFixed(1) + ' seconds' : null,
         id,
@@ -409,6 +426,7 @@
     }
     for (const card of $('library-grid').children)
       card.dataset.selected = String(card.dataset.id === id);
+    syncNavigation();
     const pair = pairFor(id);
     $('record-play').disabled = !entry;
     $('stem-play').disabled = !pair &&
@@ -434,10 +452,8 @@
         'Azeroth Chronicles',
         "So I Became the Dark Lord's Problem",
       );
-    $('guide-recipe').textContent = !key && $('recording').value === 'title'
-      ? "The recording's old descriptive text still uses the former development name. The official game and music title is So I Became the Dark Lord's Problem; do not reuse the old name in new creative work."
-      : key
-        ? 'Exact event implementation: src/prototype/audio-effects.js, audio-production.js and audio-catalog.js.'
+    $('guide-recipe').textContent = key
+      ? 'Exact event implementation: src/prototype/audio-effects.js, audio-production.js and audio-catalog.js.'
       : entry?.creationMethod === 'authored-recorded-source-score'
         ? 'Exact Phase 3–6 recorded-instrument score: ' + entry.sourceScore + '. The historic score-book is not this master.'
         : entry?.managedBy === 'score-book'
@@ -746,14 +762,26 @@
     syncScene();
   });
   $('form').addEventListener('change', syncScene);
-  $('kind').addEventListener('change', () => { visibleLimit = 24; fillLibrary(); });
-  $('collection').addEventListener('change', () => { visibleLimit = 24; fillLibrary(); });
+  $('kind').addEventListener('change', () => {
+    $('collection').value = 'all';
+    $('collection').disabled = $('kind').value === 'generated';
+    visibleLimit = 24;
+    fillLibrary();
+  });
+  $('collection').addEventListener('change', () => {
+    if ($('collection').value !== 'all') $('kind').value = 'all';
+    visibleLimit = 24;
+    fillLibrary();
+  });
   $('sort').addEventListener('change', () => fillLibrary());
   $('search').addEventListener('input', () => { visibleLimit = 24; fillLibrary(); });
   $('show-more').addEventListener('click', () => { visibleLimit += 24; renderCards(); });
+  $('prev').addEventListener('click', run(() => navigateRecording(-1)));
+  $('next').addEventListener('click', run(() => navigateRecording(1)));
   $('reset-library').addEventListener('click', () => {
     $('kind').value = 'all';
     $('collection').value = 'all';
+    $('collection').disabled = false;
     $('sort').value = 'catalog';
     $('search').value = '';
     visibleLimit = 24;

@@ -128,3 +128,9 @@ button.quiet { color: #d8eae7; background: transparent; border-color: #688386; m
   .selected-panel { padding: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .sound-card { transition: none; } }
+
+/* Compact next/previous controls stay reachable on narrow phones. */
+@media (max-width: 580px) {
+  .player-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .player-actions button { min-width: 0; padding: 9px 7px; }
+}
