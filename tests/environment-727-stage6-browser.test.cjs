@@ -9,6 +9,8 @@ const http = require('node:http');
 const path = require('node:path');
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname,'..');
+const forcedRate=Number(process.env.ENV727_FORCE_SAMPLE_RATE||0);
+if(forcedRate && forcedRate!==48000)throw Error('Only 48000 Hz alternate browser test is supported');
 const prefix='/azeroth-chronicles-prototype/';
 const type = {'.js':'text/javascript','.json':'application/json','.html':'text/html',
   '.css':'text/css','.mp3':'audio/mpeg','.wav':'audio/wav','.png':'image/png','.svg':'image/svg+xml'};
@@ -38,6 +40,7 @@ const cases=[
   {zone:'side-frontier-shrine',mode:'exploration',score:'interior-side-frontier-shrine',bed:'env-shrine-occupied'},
   {zone:'side-crown-foundry',mode:'exploration',score:'interior-side-crown-foundry',bed:'studio-ruined-foundry-727'},
 ];
+const sampledCases=forcedRate ? cases.filter(x=>['vale','march','highlands','crypt','mine','supply-march','supply-crown','side-crown-foundry'].includes(x.zone)) : cases;
 const server=http.createServer((req,res)=>{
   const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
   const rel=name.startsWith(prefix)?name.slice(prefix.length):null;
@@ -66,6 +69,13 @@ const server=http.createServer((req,res)=>{
       const page=await context.newPage(),errors=[];
       page.on('pageerror',e=>errors.push(e.message));
       await page.addInitScript(()=>localStorage.setItem('audio-audit-709-sentinel','untouched'));
+      if(forcedRate)await page.addInitScript(rate=>{
+        const Native=globalThis.AudioContext || globalThis.webkitAudioContext;
+        class AudioContext extends Native {
+          constructor(options={}) { super({...options,sampleRate:rate}); }
+        }
+        globalThis.AudioContext=AudioContext;
+      },forcedRate);
       try{
         await page.goto('http://127.0.0.1:'+server.address().port+prefix+(phone?'phone.html':'index.html'));
         await page.waitForFunction(()=>!!window.Prototype?.audio && !!window.Campaign &&
@@ -85,7 +95,7 @@ const server=http.createServer((req,res)=>{
           a.enableProduction(true);
           a.setMixProfile(phone?'phone':'reference');
         },phone);
-        for(const x of cases){
+        for(const x of sampledCases){
           const description=await page.evaluate(({zone,mode})=>{
             const a=Prototype.audio;
             const g=new Campaign('normal','paladin',()=>0.73);
@@ -136,6 +146,10 @@ const server=http.createServer((req,res)=>{
           assert.equal(result.bed,x.bed);
           assert.equal(result.score,x.score);
           assert.equal(result.context,'running');
+          if(forcedRate){
+            assert.equal(result.envRate,forcedRate,'Ambient buffer must actually decode at forced 48 kHz');
+            assert.equal(result.musicRate,forcedRate,'Current dev248 score must actually decode at forced 48 kHz');
+          }
           assert(result.envDuration>24 && result.peak>0.001,'real decoded bed non-silence');
           assert(result.recordingCache && result.recordingCache.decodedBudget===96*1024*1024,
             'real cache must retain its established 96MiB decoded recording budget');
@@ -271,7 +285,7 @@ const server=http.createServer((req,res)=>{
         assert.deepEqual(errors,[],'game browser runtime page errors');
         assert.equal(await page.evaluate(()=>localStorage.getItem('audio-audit-709-sentinel')),'untouched');
         console.log('PASS #727 STAGE6 GAME '+(phone?'phone-emulated':'desktop')+
-          ': 21 real Campaign scenes (19 unique zones + 2 night routes) + decoded MP3 beds, pause/resume, warning duck, combat/boss/peace, optimization, mute, cleanup');
+          ': '+sampledCases.length+' real Campaign scenes at '+(forcedRate||'device-default')+' Hz + decoded MP3 beds, pause/resume, warning duck, combat/boss/peace, optimization, mute, cleanup');
       }catch(error){
         console.error('A4 failed profile '+(phone?'phone-emulated':'desktop'),errors);
         console.error('game title',await page.locator('#title-heading').textContent().catch(()=>null));
