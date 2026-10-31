@@ -4,218 +4,242 @@
     "place-vale": {
       "kind": "music",
       "src": "./assets/audio/music/place-vale.mp3",
-      "duration": 21.1695625,
-      "sha256": "6d04c690b498b66714bf65e7d872714e498e40c7c57e7317848c1aeaf12dbf17",
+      "duration": 31.604353741,
+      "sha256": "af15c10bb2fd3aa158bfd8d43ea21244f4627d815e22c1d6844c6f9e146297d6",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Orchard Roads",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads\". Exploration music with space for combat and interface sounds. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-vale."
+      "generationGuide": "Source-authoritative phase3 primary theme, 92 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-vale": {
       "kind": "music",
       "src": "./assets/audio/music/action-vale.mp3",
-      "duration": 21.1695625,
-      "sha256": "f4cd716563ad44358602aa82a31903b03d4fee1f18eef3469365eeb9cdbb90be",
+      "duration": 31.604353741,
+      "sha256": "948f723e0127bc2959d66cf8dfd4f3d52fd4c81fc3e22fdb2338342570b6e658",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Orchard Roads — encounter",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — encounter\". Create an additive combat layer for place-vale. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-vale."
+      "generationGuide": "Source-authoritative phase4 action, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-vale": {
       "kind": "music",
       "src": "./assets/audio/music/peace-vale.mp3",
-      "duration": 21.1695625,
-      "sha256": "b1ab8a2f178c6a4daac27c92d0e9c65ea709ca16ab581727c83cec76f1bb25fc",
+      "duration": 31.604353741,
+      "sha256": "c819e200fdc60c4eedc1bfa133959a2b6bfa8b4f269f4990c3d8f4feaade8045",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Orchard Roads — after liberation",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-vale."
+      "generationGuide": "Source-authoritative phase4 peace, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-march": {
       "kind": "music",
       "src": "./assets/audio/music/place-march.mp3",
-      "duration": 23.714625,
-      "sha256": "54899cda7729f92ea0de7dd6f821baa320b377d52eacf6bc8ec4a0f7bf189fed",
+      "duration": 41.275600907,
+      "sha256": "25f770ffa86a2761bbf2ed9e5885839823cee18786dfe8a0c83e80c7d8684665",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 41.12560090702948
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Reedwater",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater\". Exploration music with space for combat and interface sounds. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-march."
+      "generationGuide": "Source-authoritative phase3 primary theme, 82 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-march": {
       "kind": "music",
       "src": "./assets/audio/music/action-march.mp3",
-      "duration": 23.714625,
-      "sha256": "b0721310ce0a8b39794a7fbc4fe18f442da4fa589d7a43cc44872b871aa51a90",
+      "duration": 41.275600907,
+      "sha256": "a5778d459a96e1f0431d8c0a66c30be08aeffa01dc1e6efe29ec4a48c69ce350",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 41.12560090702948
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Reedwater — encounter",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — encounter\". Create an additive combat layer for place-march. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-march."
+      "generationGuide": "Source-authoritative phase4 action, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-march": {
       "kind": "music",
       "src": "./assets/audio/music/peace-march.mp3",
-      "duration": 23.714625,
-      "sha256": "1a0dbb9a9f9603e9c962e1308d35f27f6ffd26fa5b5ea3b2fac2532102b14a93",
+      "duration": 41.275600907,
+      "sha256": "c87cb9ab444dff44767666f1f5881fadd0911b4c5db55e6e2c6937b312c54e08",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 41.12560090702948
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Reedwater — after liberation",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-march."
+      "generationGuide": "Source-authoritative phase4 peace, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-highlands": {
       "kind": "music",
       "src": "./assets/audio/music/place-highlands.mp3",
-      "duration": 22.1181875,
-      "sha256": "2bf93d9c242190cef584408b77e6cfa0f0cb950edb7f698e8b6b688772b15ea8",
+      "duration": 38.481814059,
+      "sha256": "2512881864d4592e70d750dbc5dc12ede09db3074ae9407807157f69410397a7",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 38.331814058956915
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Payday on the Ridge",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge\". Exploration music with space for combat and interface sounds. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-highlands."
+      "generationGuide": "Source-authoritative phase3 primary theme, 88 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-highlands": {
       "kind": "music",
       "src": "./assets/audio/music/action-highlands.mp3",
-      "duration": 22.1181875,
-      "sha256": "1ade63bbb0974c8dbaffc5d3b5b8f032cfb8436605e306cfd9217d3f490d4e29",
+      "duration": 38.481814059,
+      "sha256": "ce7ef46122f5f969a33287061c89c5ba9a8eb401fd8a532f474d5f13346776c9",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 38.331814058956915
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Payday on the Ridge — encounter",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — encounter\". Create an additive combat layer for place-highlands. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-highlands."
+      "generationGuide": "Source-authoritative phase4 action, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-highlands": {
       "kind": "music",
       "src": "./assets/audio/music/peace-highlands.mp3",
-      "duration": 22.1181875,
-      "sha256": "9603795b38402e51fb2520559c79c2060d0f404b08dd454661d84632a69cd211",
+      "duration": 38.481814059,
+      "sha256": "76f722ac2ac00bbb4b0b842160d99b896b9699e1d08dc8a70d861ed9ec056a25",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 38.331814058956915
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Payday on the Ridge — after liberation",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-highlands."
+      "generationGuide": "Source-authoritative phase4 peace, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-frontier": {
       "kind": "music",
       "src": "./assets/audio/music/place-frontier.mp3",
-      "duration": 20.3,
-      "sha256": "d99a34fb2db65f9cdaa52b34964044778732434a31b82527fc69a29408b2554c",
+      "duration": 40.3,
+      "sha256": "41ca99c16dd3994873d825e5b10c067b5ffe3dc267be100ab4bcd55a3d2a16db",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Embers Still Warm",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm\". Exploration music with space for combat and interface sounds. Use cello lead, guitar arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-frontier."
+      "generationGuide": "Source-authoritative phase3 primary theme, 96 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-frontier": {
       "kind": "music",
       "src": "./assets/audio/music/action-frontier.mp3",
-      "duration": 20.3,
-      "sha256": "8870b47b015563168ad1d86a9d0b48164d7f272546962229ac615f9b79dd3bd5",
+      "duration": 40.3,
+      "sha256": "64d7e6c1edebc8da4d6171252d00279ce7ee761f17b9f245cb119458a2f45f9b",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Embers Still Warm — encounter",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — encounter\". Create an additive combat layer for place-frontier. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use guitar rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-frontier."
+      "generationGuide": "Source-authoritative phase4 action, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-frontier": {
       "kind": "music",
       "src": "./assets/audio/music/peace-frontier.mp3",
-      "duration": 20.3,
-      "sha256": "30a580fe2729a07f62c789d4fdc63866d598a6a7284eb975ae9de93d182d4cda",
+      "duration": 40.3,
+      "sha256": "3c95025cb803e8ddb6b04905c41d326691e12ba505d5c9d9c5eadc2ed0b7fb69",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Embers Still Warm — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-frontier."
+      "generationGuide": "Source-authoritative phase4 peace, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-crown": {
       "kind": "music",
@@ -274,218 +298,242 @@
     "place-crypt": {
       "kind": "music",
       "src": "./assets/audio/music/place-crypt.mp3",
-      "duration": 23.15715625,
-      "sha256": "37bec396188ea330ec3035d65262d85167793cbde57121ce68357dad8ab28adf",
+      "duration": 34.585714286,
+      "sha256": "b35987c904e03c1c808346b169a85eac4edd8dd9a8ae3795b27c33f382cea937",
       "loop": {
         "start": 0.15,
-        "end": 23.00715625
+        "end": 34.43571428571428
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Unfinished Retreat",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat\". Exploration music with space for combat and interface sounds. Use cello lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-crypt."
+      "generationGuide": "Source-authoritative phase3 primary theme, 84 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-crypt": {
       "kind": "music",
       "src": "./assets/audio/music/action-crypt.mp3",
-      "duration": 23.15715625,
-      "sha256": "5d80b26969b85b6804cd5bfc7992b5e732ccc46e9c66517aa2e5d2e5e011e44e",
+      "duration": 34.585714286,
+      "sha256": "0035e257548f85f363c06caa36e62c2e73a84cf602614813e34c8ca6c53047e4",
       "loop": {
         "start": 0.15,
-        "end": 23.00715625
+        "end": 34.43571428571428
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Unfinished Retreat — encounter",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat — encounter\". Create an additive combat layer for place-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 84 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-crypt."
+      "generationGuide": "Source-authoritative phase4 action, 84 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-crypt": {
       "kind": "music",
       "src": "./assets/audio/music/peace-crypt.mp3",
-      "duration": 23.15715625,
-      "sha256": "780050aa4b5104fb5ef76dc522ac401578aa61caa19c5ba701b342f4d0f05390",
+      "duration": 34.585714286,
+      "sha256": "40181e5fcc31aa850f4c7fc9b683452f89b288fa07076aa6baf9448770ac579b",
       "loop": {
         "start": 0.15,
-        "end": 23.00715625
+        "end": 34.43571428571428
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Unfinished Retreat — after liberation",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-crypt."
+      "generationGuide": "Source-authoritative phase4 peace, 84 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-archive": {
       "kind": "music",
       "src": "./assets/audio/music/place-archive.mp3",
-      "duration": 22.62559375,
-      "sha256": "228da5927dda783edb071902bebc9d2dfee1f5a46bccf68657b32a82b81e1b63",
+      "duration": 44.951156463,
+      "sha256": "fab0aa683be52455e42cac2ad6e26c8f2004aee25d3ba68321e5bae6c66e59be",
       "loop": {
         "start": 0.15,
-        "end": 22.47559375
+        "end": 44.801156462585034
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Restoration After Rain",
       "bpm": 86,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain\". Exploration music with space for combat and interface sounds. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 86 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-archive."
+      "generationGuide": "Source-authoritative phase3 primary theme, 86 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-archive": {
       "kind": "music",
       "src": "./assets/audio/music/action-archive.mp3",
-      "duration": 22.62559375,
-      "sha256": "d7a0c4f792659799f8e5362888b39e72abfa1e4965a7b926a313d79ff5108dd4",
+      "duration": 44.951156463,
+      "sha256": "247db6bef09092af4278bdb7654f802c1f09d46e3a86b13118bd96947a580757",
       "loop": {
         "start": 0.15,
-        "end": 22.47559375
+        "end": 44.801156462585034
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Restoration After Rain — encounter",
       "bpm": 86,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain — encounter\". Create an additive combat layer for place-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 86 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-archive."
+      "generationGuide": "Source-authoritative phase4 action, 86 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-archive": {
       "kind": "music",
       "src": "./assets/audio/music/peace-archive.mp3",
-      "duration": 22.62559375,
-      "sha256": "75d564cb8ad5ce6d023e0a16bf0568ba75b064092f45cee5ca18a355d389b2e2",
+      "duration": 44.951156463,
+      "sha256": "5f437297474b63c1a10423e7a98991de2388635c591a34f529204d07870b5b20",
       "loop": {
         "start": 0.15,
-        "end": 22.47559375
+        "end": 44.801156462585034
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Restoration After Rain — after liberation",
       "bpm": 86,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 86 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-archive."
+      "generationGuide": "Source-authoritative phase4 peace, 86 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-mine": {
       "kind": "music",
       "src": "./assets/audio/music/place-mine.mp3",
-      "duration": 20.3,
-      "sha256": "39587fb7f13dcce789f50dbb3d0b2c2e86813237ba2c9b65f00fc96d09c8945c",
+      "duration": 35.3,
+      "sha256": "ce5f4f3297b01a42eb0935d2f90fd26543d5fd02355a18c62a200191e180a1da",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 35.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Veins and Old Stone",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone\". Exploration music with space for combat and interface sounds. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-mine."
+      "generationGuide": "Source-authoritative phase3 primary theme, 96 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-mine": {
       "kind": "music",
       "src": "./assets/audio/music/action-mine.mp3",
-      "duration": 20.3,
-      "sha256": "456a5eb4f0f99b44f54e2f262c41d8c2fadd817c04e84b55a8d2e7660f77c1ba",
+      "duration": 35.3,
+      "sha256": "1d4a9611e08720779b77766e9e7c72279c8531102eb985c49b63eefb8a726f71",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 35.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Veins and Old Stone — encounter",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone — encounter\". Create an additive combat layer for place-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-mine."
+      "generationGuide": "Source-authoritative phase4 action, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-mine": {
       "kind": "music",
       "src": "./assets/audio/music/peace-mine.mp3",
-      "duration": 20.3,
-      "sha256": "20dc02cfa815478fe9cd490cf128fcbe66f671fa97d0f04092023102bf83038f",
+      "duration": 35.3,
+      "sha256": "f1be5fbc0fdca02c30924eac0c1f4431335ba48f1efe8b3b371c55faf6b45099",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 35.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Veins and Old Stone — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-mine."
+      "generationGuide": "Source-authoritative phase4 peace, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-abyss": {
       "kind": "music",
       "src": "./assets/audio/music/place-abyss.mp3",
-      "duration": 20.3,
-      "sha256": "977f6b6194e63d595b64465880e024500e1d004d246802b27cbed4b4887c4cae",
+      "duration": 40.3,
+      "sha256": "eaeb49da37bd0fa8448f7c709f9a5a834fdd226994bbf02d55382f7b6c5925be",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Purple Wings",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings\". Exploration music with space for combat and interface sounds. Use horn lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for place-abyss."
+      "generationGuide": "Source-authoritative phase3 primary theme, 96 BPM, authored in tools/audio/phase3-themes.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase3-themes.json"
     },
     "action-abyss": {
       "kind": "music",
       "src": "./assets/audio/music/action-abyss.mp3",
-      "duration": 20.3,
-      "sha256": "172e03c3c0d3038548f871c3e369fa70dafba0d0e6176513e3895d0362743120",
+      "duration": 40.3,
+      "sha256": "fec47b03bffeca231f31a83b5cf6fd10c948934090a9537f9a58127582a63e24",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Purple Wings — encounter",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings — encounter\". Create an additive combat layer for place-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-abyss."
+      "generationGuide": "Source-authoritative phase4 action, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-abyss": {
       "kind": "music",
       "src": "./assets/audio/music/peace-abyss.mp3",
-      "duration": 20.3,
-      "sha256": "21e52d02e87cb50a6ab9079d92a90905bf273ba0d30c2c47c1d6b8bfa8ddcb14",
+      "duration": 40.3,
+      "sha256": "b3031730c7b876d48a1d01f286c51ea1a0719ed86ea382c3ec2b107b4cfa2f77",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Purple Wings — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-abyss."
+      "generationGuide": "Source-authoritative phase4 peace, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "place-citadel": {
       "kind": "music",
@@ -544,56 +592,62 @@
     "interior-supply-vale": {
       "kind": "music",
       "src": "./assets/audio/music/interior-supply-vale.mp3",
-      "duration": 21.1695625,
-      "sha256": "670f0148f3d4655c6dd17e253b5456e2100785ff65c1a7089e8674a172a237a1",
+      "duration": 31.604353741,
+      "sha256": "237a0aae20ba9f2680a83954dd2ef8d7300233a410dc366d6329614459bec852",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Scornfang's Treasury",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Scornfang's Treasury\". A calm resting arrangement. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-vale."
+      "generationGuide": "Source-authoritative phase4 interior, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "interior-supply-march": {
       "kind": "music",
       "src": "./assets/audio/music/interior-supply-march.mp3",
-      "duration": 23.714625,
-      "sha256": "6bce7111b8e922ee0530947fd76ba49ca0920583fb519fa19543c6558fc7a723",
+      "duration": 35.421950113,
+      "sha256": "0037a99b7690fb8632249f7dfba63fafdfa6d9e69d50c01a124935b2b48dd339",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 35.271950113378686
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Mirejaw's Treasury",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Mirejaw's Treasury\". A calm resting arrangement. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, G tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-march."
+      "generationGuide": "Source-authoritative phase4 interior, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "interior-supply-highlands": {
       "kind": "music",
       "src": "./assets/audio/music/interior-supply-highlands.mp3",
-      "duration": 22.1181875,
-      "sha256": "7f2165a88bd12073e3d5219ef80437d141dd4f2ce581e0636ffa3afcd60eb3e6",
+      "duration": 33.027278912,
+      "sha256": "6abcf0cd069b12b640db06e43cbf9221b95ee297e13b93cc3f80152c7dcf2cb9",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 32.87727891156462
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Ridge Tyrant's Treasury",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ridge Tyrant's Treasury\". A calm resting arrangement. Use piano lead, dulcimer arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-supply-highlands."
+      "generationGuide": "Source-authoritative phase4 interior, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "interior-supply-crown": {
       "kind": "music",
@@ -616,74 +670,82 @@
     "interior-side-vale-cellars": {
       "kind": "music",
       "src": "./assets/audio/music/interior-side-vale-cellars.mp3",
-      "duration": 21.1695625,
-      "sha256": "5dbc7ff12caecd56407ed963b369052bcfe25d4a16a7647f0eaff64a27652a38",
+      "duration": 31.604353741,
+      "sha256": "3b6aceabf5b94e90467c43820585ad3fcc860bbf192a8aee7f184578a8677425",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Old Orchard Cellars",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Orchard Cellars\". Intimate interior music with restrained dynamics. Use cello lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-vale-cellars."
+      "generationGuide": "Source-authoritative phase4 interior, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "interior-side-march-watchhouse": {
       "kind": "music",
       "src": "./assets/audio/music/interior-side-march-watchhouse.mp3",
-      "duration": 23.714625,
-      "sha256": "684632e502431e92cde1d6560814373e8b0323077d56a3d1a025bbb883f45a41",
+      "duration": 35.421950113,
+      "sha256": "0e6644514788eb5999e644f2120b3724400ffcc4eb26d823a3d62171d403209d",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 35.271950113378686
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Drowned Watchhouse",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Drowned Watchhouse\". Intimate interior music with restrained dynamics. Use cello lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-march-watchhouse."
+      "generationGuide": "Source-authoritative phase4 interior, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "interior-side-highlands-signal": {
       "kind": "music",
       "src": "./assets/audio/music/interior-side-highlands-signal.mp3",
-      "duration": 22.1181875,
-      "sha256": "aac8df1a96c9c48cecdecf088313331ed8fe0d5a878636a16b9e01d22c760a7c",
+      "duration": 33.027278912,
+      "sha256": "65fa4554667efd7f44f77e826ae2d611ea63f5e1011ee22d94b20fee957d64ed",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 32.87727891156462
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Old Signal Keep",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Signal Keep\". Intimate interior music with restrained dynamics. Use cello lead, dulcimer arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-highlands-signal."
+      "generationGuide": "Source-authoritative phase4 interior, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "interior-side-frontier-shrine": {
       "kind": "music",
       "src": "./assets/audio/music/interior-side-frontier-shrine.mp3",
-      "duration": 20.3,
-      "sha256": "1896d473e111a97d218eaf287b302c9cc31ed75a47d45b171f3a4f9c63a3b856",
+      "duration": 30.3,
+      "sha256": "caa8514f5c7f3c74fe0e438b6752a7d54fcaeb3203754bc3352ef71cd2281b3c",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 30.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Ruined Shrine",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Shrine\". Intimate interior music with restrained dynamics. Use cello lead, guitar arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, E tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for interior-side-frontier-shrine."
+      "generationGuide": "Source-authoritative phase4 interior, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "interior-side-crown-foundry": {
       "kind": "music",
@@ -706,290 +768,322 @@
     "boss-thorn": {
       "kind": "music",
       "src": "./assets/audio/music/boss-thorn.mp3",
-      "duration": 16.85171875,
-      "sha256": "d460a68943936cff99696e41420a6aa8521e5fa812353fdb6360b82ffb37fbd8",
+      "duration": 33.403446712,
+      "sha256": "df0ccf89bf218fa2aef1aa46cec8f2ed5e4f1c49342f091afc496444af595821",
       "loop": {
         "start": 0.15,
-        "end": 16.70171875
+        "end": 33.25344671201814
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Thorn Underfoot",
       "bpm": 116,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thorn Underfoot\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use flute lead, guitar arpeggios, soft bowed strings and cello bass. 116 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-thorn."
+      "generationGuide": "Source-authoritative phase5 boss, 116 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-thorn-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-thorn-true.mp3",
-      "duration": 16.85171875,
-      "sha256": "48737224a70afc5753f3e3fb633c34bfa73c8948569d5413103b6702a2a9021c",
+      "duration": 33.403446712,
+      "sha256": "fa1d3793889f0f239a68fb3b68103c34fc730fba19a5a4c8e8138f2714f93742",
       "loop": {
         "start": 0.15,
-        "end": 16.70171875
+        "end": 33.25344671201814
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Thorn Underfoot — TRUE",
       "bpm": 116,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thorn Underfoot — TRUE\". Create an additive combat layer for boss-thorn. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 116 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-thorn-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 116 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-crypt": {
       "kind": "music",
       "src": "./assets/audio/music/boss-crypt.mp3",
-      "duration": 18.76153125,
-      "sha256": "d3dd66b31d5969ed6bd199c075e0bada6738451b18f91328066e622fa061323e",
+      "duration": 37.2230839,
+      "sha256": "d32b414745c1d79dbeb4b5164ace52d375929a854be731a182c9928250403c89",
       "loop": {
         "start": 0.15,
-        "end": 18.61153125
+        "end": 37.073083900226756
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
-      "title": "Keeper of the Summer Keys",
+      "title": "Keeper of the Winter Works",
       "bpm": 104,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Keeper of the Summer Keys\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use cello lead, harp arpeggios, soft bowed strings and cello bass. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-crypt."
+      "generationGuide": "Source-authoritative phase5 boss, 104 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-crypt-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-crypt-true.mp3",
-      "duration": 18.76153125,
-      "sha256": "110dc20df97f10debac25795f803c5e84fca10aa3d283a1a333fab8297951b18",
+      "duration": 37.2230839,
+      "sha256": "b5cc10f9f14c945967a346702dcb6c1d89972f1283a5b993501133b9348b7e5b",
       "loop": {
         "start": 0.15,
-        "end": 18.61153125
+        "end": 37.073083900226756
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
-      "title": "Keeper of the Summer Keys — TRUE",
+      "title": "Keeper of the Winter Works — TRUE",
       "bpm": 104,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Keeper of the Summer Keys — TRUE\". Create an additive combat layer for boss-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-crypt-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 104 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-mire": {
       "kind": "music",
       "src": "./assets/audio/music/boss-mire.mp3",
-      "duration": 18.07778125,
-      "sha256": "dbdf65a9ba2e4ea4b449f9a3816958fe8282316cda32ad88b20469f6c513d7d7",
+      "duration": 26.966666667,
+      "sha256": "75fa15dff02e1b88672f53e0e825b6d4b8276ca413a44203a63b3840d7882499",
       "loop": {
         "start": 0.15,
-        "end": 17.92778125
+        "end": 26.816666666666666
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Teeth Beneath the Reeds",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Teeth Beneath the Reeds\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use cello lead, bell arpeggios, soft bowed strings and cello bass. 108 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mire."
+      "generationGuide": "Source-authoritative phase5 boss, 108 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-mire-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-mire-true.mp3",
-      "duration": 18.07778125,
-      "sha256": "8504681ecd70dc7dbbe742c1bbe5d1b46456380768803fa45395a3dfe7e4b0e6",
+      "duration": 26.966666667,
+      "sha256": "266f0ab9d5edb89d40322551555d32d3457f101e64226bfc36057e693eac6b5a",
       "loop": {
         "start": 0.15,
-        "end": 17.92778125
+        "end": 26.816666666666666
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Teeth Beneath the Reeds — TRUE",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Teeth Beneath the Reeds — TRUE\". Create an additive combat layer for boss-mire. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mire-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 108 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-archive": {
       "kind": "music",
       "src": "./assets/audio/music/boss-archive.mp3",
-      "duration": 18.07778125,
-      "sha256": "71be1e76d8e00444537f5fe4687bd375d5da160168f155be03996e170fef2a2d",
+      "duration": 35.855555556,
+      "sha256": "818157827f3b302e503b6021e2a229e4fbbe3780fc6b0b7d6129b0f356758d33",
       "loop": {
         "start": 0.15,
-        "end": 17.92778125
+        "end": 35.705555555555556
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Scholar's Hook",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Scholar's Hook\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 108 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-archive."
+      "generationGuide": "Source-authoritative phase5 boss, 108 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-archive-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-archive-true.mp3",
-      "duration": 18.07778125,
-      "sha256": "51417380434bca7de2dd0223de4224867d4cdb37fb504d652ab09d0f0c71a33e",
+      "duration": 35.855555556,
+      "sha256": "a3652d08ceac0fdfe5a5e52c9ff831eb85e3d978ffcaf26f79c735ee1dc508c2",
       "loop": {
         "start": 0.15,
-        "end": 17.92778125
+        "end": 35.705555555555556
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Scholar's Hook — TRUE",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Scholar's Hook — TRUE\". Create an additive combat layer for boss-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-archive-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 108 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-ridge": {
       "kind": "music",
       "src": "./assets/audio/music/boss-ridge.mp3",
-      "duration": 18.07778125,
-      "sha256": "8dbb6206948aaffa47c8fcb9556bf55a6d5ec47735bb047bfcd6ddaadbb06e34",
+      "duration": 35.855555556,
+      "sha256": "815a04b6f81a82b2c4a0c67ba838849ad05fbc827eb6dbff26ea8cb243ec1a5e",
       "loop": {
         "start": 0.15,
-        "end": 17.92778125
+        "end": 35.705555555555556
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Master of Coin",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Master of Coin\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 108 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-ridge."
+      "generationGuide": "Source-authoritative phase5 boss, 108 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-ridge-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-ridge-true.mp3",
-      "duration": 18.07778125,
-      "sha256": "a048c8f69fba6b20fb97beaf25fe2bc2be0bd3c394296aa9214cda0d96f2e91a",
+      "duration": 35.855555556,
+      "sha256": "8ed86e384f408d060fd147e5f1c3fad5c9de80892c0c7b171ec43ae11160ec1c",
       "loop": {
         "start": 0.15,
-        "end": 17.92778125
+        "end": 35.705555555555556
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Master of Coin — TRUE",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Master of Coin — TRUE\". Create an additive combat layer for boss-ridge. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-ridge-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 108 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-mine": {
       "kind": "music",
       "src": "./assets/audio/music/boss-mine.mp3",
-      "duration": 19.5,
-      "sha256": "7b23de2bee6cf8b2c98e3c7a030c082f06b921a8d71057805fd90f487084d785",
+      "duration": 48.3,
+      "sha256": "1ca22cdbb53795fb1ebc2f61bc8ffbed3290afad9e9afd453e4f7d3957b635e0",
       "loop": {
         "start": 0.15,
-        "end": 19.35
+        "end": 48.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Mountain Remembers",
       "bpm": 100,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Mountain Remembers\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, dulcimer arpeggios, soft bowed strings and cello bass. 100 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mine."
+      "generationGuide": "Source-authoritative phase5 boss, 100 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-mine-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-mine-true.mp3",
-      "duration": 19.5,
-      "sha256": "bc269fb0c916facade7f96e86b6ab98f89e0e7beedbf6f653cd82d5432809ce8",
+      "duration": 48.3,
+      "sha256": "954384be0e4485588eadbd8d4bdea733e7cf8a24753a1fee6d557cf2223f9dc7",
       "loop": {
         "start": 0.15,
-        "end": 19.35
+        "end": 48.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Mountain Remembers — TRUE",
       "bpm": 100,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Mountain Remembers — TRUE\". Create an additive combat layer for boss-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 100 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mine-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 100 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-warlord": {
       "kind": "music",
       "src": "./assets/audio/music/boss-warlord.mp3",
-      "duration": 16.3,
-      "sha256": "c8a179510485f91b551f5f5b05d0971bb5f51c034adb9c1b4cf21808bf9f59f0",
+      "duration": 32.3,
+      "sha256": "8c015c8d4b6aafcfb02600939fc9b79a1805b2ce7bd0974c49e603ed75b4173c",
       "loop": {
         "start": 0.15,
-        "end": 16.15
+        "end": 32.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Orders in the Ash",
       "bpm": 120,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orders in the Ash\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, guitar arpeggios, soft bowed strings and cello bass. 120 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-warlord."
+      "generationGuide": "Source-authoritative phase5 boss, 120 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-warlord-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-warlord-true.mp3",
-      "duration": 16.3,
-      "sha256": "41b559b0b7b49fe748785d977101e5f62e066130d8cf3ade462268f45366b08b",
+      "duration": 32.3,
+      "sha256": "42924cbe71366d107fcc25afdbd3b971f5f7acee75b0806c57ded89c8bb0ebdd",
       "loop": {
         "start": 0.15,
-        "end": 16.15
+        "end": 32.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Orders in the Ash — TRUE",
       "bpm": 120,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orders in the Ash — TRUE\". Create an additive combat layer for boss-warlord. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 120 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-warlord-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 120 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-abyss": {
       "kind": "music",
       "src": "./assets/audio/music/boss-abyss.mp3",
-      "duration": 17.44284375,
-      "sha256": "3a0fcdaaf88889a52067562637fbb736353e660b93dc4fa5f8bc0a041c51efda",
+      "duration": 34.585714286,
+      "sha256": "ea7af8b2eb7143484c4a1c372297a0ff6edab32807661ed7ac5fa7f8552bed99",
       "loop": {
         "start": 0.15,
-        "end": 17.29284375
+        "end": 34.43571428571428
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "His Majesty's Wings",
       "bpm": 112,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"His Majesty's Wings\". A distinct boss encounter theme with firm low strings and restrained tom/frame percussion. Use horn lead, harp arpeggios, soft bowed strings and cello bass. 112 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-abyss."
+      "generationGuide": "Source-authoritative phase5 boss, 112 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-abyss-true": {
       "kind": "music",
       "src": "./assets/audio/music/boss-abyss-true.mp3",
-      "duration": 17.44284375,
-      "sha256": "aa5e1f930a7e0ec99d84b3c195481dc8e453e583867efcbf7e734eb4760e918f",
+      "duration": 34.585714286,
+      "sha256": "f38ede18f69edd4b559d6f3a10ecdc068a60476c5a3d3ca5b0ed9ceddd78c147",
       "loop": {
         "start": 0.15,
-        "end": 17.29284375
+        "end": 34.43571428571428
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "His Majesty's Wings — TRUE",
       "bpm": 112,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"His Majesty's Wings — TRUE\". Create an additive combat layer for boss-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 112 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-abyss-true."
+      "generationGuide": "Source-authoritative phase5 TRUE additive, 112 BPM, authored in tools/audio/phase5-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase5-scores.json"
     },
     "boss-citadel": {
       "kind": "music",
@@ -1102,110 +1196,122 @@
     "title": {
       "kind": "music",
       "src": "./assets/audio/music/title.mp3",
-      "duration": 22.1181875,
-      "sha256": "6d01955ec56706aa5ac774bbbe9751e2666af4d28786fc3c73ca4d402ddd3f09",
+      "duration": 42.039138322,
+      "sha256": "cd6dcd7070252960896e1b243d159bdb5c7ecbd70477a70216d0f78519865370",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 41.88913832199547
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
-      "title": "Azeroth Chronicles",
-      "bpm": 88,
+      "title": "The Unfinished Road",
+      "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Azeroth Chronicles\". A warm fantasy title theme with a clear rising motif. Use horn lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for title."
+      "generationGuide": "Source-authoritative phase6 narrative, 92 BPM, authored in tools/audio/phase6-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase6-scores.json"
     },
     "finale": {
       "kind": "music",
       "src": "./assets/audio/music/finale.mp3",
-      "duration": 22.1181875,
-      "sha256": "9ad80f054bf86f280730f065dbfb1afd5f50be678ed01ea690ade646e5183c70",
+      "duration": 48.3,
+      "sha256": "82738818e7775900f59994a3384e4dc4de4926ac8ca991dd09c57ae0c9ee6396",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 48.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
-      "title": "A Country Wakes",
-      "bpm": 88,
+      "title": "A Road Still Open",
+      "bpm": 80,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"A Country Wakes\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for finale."
+      "generationGuide": "Source-authoritative phase6 narrative, 80 BPM, authored in tools/audio/phase6-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase6-scores.json"
     },
     "defeat": {
       "kind": "music",
       "src": "./assets/audio/music/defeat.mp3",
-      "duration": 23.15715625,
-      "sha256": "efb7e1d3045a59b6c4e3116c79ae1834e9db757ae74e1d45e8bde6bd232fb04e",
+      "duration": 25.563151927,
+      "sha256": "6bf504dab6dba85d4ec32f5fc2177504b90a8130959795f09d0adc35d71b50a2",
       "loop": {
         "start": 0.15,
-        "end": 23.00715625
+        "end": 25.413151927437642
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "The Road Remains",
-      "bpm": 84,
+      "bpm": 76,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Road Remains\". A calm resting arrangement. Use cello lead, piano arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for defeat."
+      "generationGuide": "Source-authoritative phase6 narrative, 76 BPM, authored in tools/audio/phase6-scores.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase6-scores.json"
     },
     "peace-interior-supply-vale": {
       "kind": "music",
       "src": "./assets/audio/music/peace-interior-supply-vale.mp3",
-      "duration": 21.1695625,
-      "sha256": "46f1a9573cadbedb15e66ce891cff38d1baafeafcc6db165f03058893a25d55f",
+      "duration": 31.604353741,
+      "sha256": "b5bc9a97f587f2bb8f9e16777db75376ce59ba66249fc92e2f5f3e757d8daee4",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Scornfang's Treasury — after liberation",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Scornfang's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-vale."
+      "generationGuide": "Source-authoritative phase4 interior-peace, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-interior-supply-march": {
       "kind": "music",
       "src": "./assets/audio/music/peace-interior-supply-march.mp3",
-      "duration": 23.714625,
-      "sha256": "b64c2ec298933c51d70de13e8dfcd8a6dd1f638d38d35c1a1458d16d4b94f4a7",
+      "duration": 35.421950113,
+      "sha256": "466882dd1065583e79069985439c6d71ed977e6a9cb5d5b2716bada975727806",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 35.271950113378686
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Mirejaw's Treasury — after liberation",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Mirejaw's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-march."
+      "generationGuide": "Source-authoritative phase4 interior-peace, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-interior-supply-highlands": {
       "kind": "music",
       "src": "./assets/audio/music/peace-interior-supply-highlands.mp3",
-      "duration": 22.1181875,
-      "sha256": "c4def0d983b5a458186530628fdc303da90de9e11ac29ed555c0a87a2ad9d55b",
+      "duration": 33.027278912,
+      "sha256": "aa2020c317ac608b33e75b45414fe57b6f1c3b6dda2ef87ee277d4215d3b106f",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 32.87727891156462
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Ridge Tyrant's Treasury — after liberation",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ridge Tyrant's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-highlands."
+      "generationGuide": "Source-authoritative phase4 interior-peace, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-interior-supply-crown": {
       "kind": "music",
@@ -1228,74 +1334,82 @@
     "peace-interior-side-vale-cellars": {
       "kind": "music",
       "src": "./assets/audio/music/peace-interior-side-vale-cellars.mp3",
-      "duration": 21.1695625,
-      "sha256": "5db7e4cceba27792faf45959ba06bcdcf8580de1d4b5143c01bba716db904ac2",
+      "duration": 31.604353741,
+      "sha256": "f7c6593febe95628d73d8f50036406f857f01682996a3c4a049ea8d795a65dfb",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Old Orchard Cellars — after liberation",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Orchard Cellars — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-vale-cellars."
+      "generationGuide": "Source-authoritative phase4 interior-peace, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-interior-side-march-watchhouse": {
       "kind": "music",
       "src": "./assets/audio/music/peace-interior-side-march-watchhouse.mp3",
-      "duration": 23.714625,
-      "sha256": "e5cf885697db55fb4712f36cfadc8bbbe369b9779b78417c41cd26b1512628e9",
+      "duration": 35.421950113,
+      "sha256": "1e6c7ed236c2df850c38821e28c42ab30c19575476f22c6ac8832ea7307d677c",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 35.271950113378686
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Drowned Watchhouse — after liberation",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Drowned Watchhouse — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-march-watchhouse."
+      "generationGuide": "Source-authoritative phase4 interior-peace, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-interior-side-highlands-signal": {
       "kind": "music",
       "src": "./assets/audio/music/peace-interior-side-highlands-signal.mp3",
-      "duration": 22.1181875,
-      "sha256": "2fee5bad40c797042ecd0250e2f9101b4a4a76aa6dc032901edb292d4fc98da8",
+      "duration": 33.027278912,
+      "sha256": "6beacda64a4e3fc836b0a976e1e51b01312cb2e92319f98852f7165506cca71a",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 32.87727891156462
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Old Signal Keep — after liberation",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Signal Keep — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-highlands-signal."
+      "generationGuide": "Source-authoritative phase4 interior-peace, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-interior-side-frontier-shrine": {
       "kind": "music",
       "src": "./assets/audio/music/peace-interior-side-frontier-shrine.mp3",
-      "duration": 20.3,
-      "sha256": "927d9c76d9e97113dfc9f355a92224ee45c548207286fcfdc434adc1025335e8",
+      "duration": 30.3,
+      "sha256": "8d84d0d0e7a95f2404eda0f89b188074e8bcbf0e0b89fe933d33a52b99ef2786",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 30.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Ruined Shrine — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Shrine — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, E tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-frontier-shrine."
+      "generationGuide": "Source-authoritative phase4 interior-peace, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "peace-interior-side-crown-foundry": {
       "kind": "music",
@@ -1318,146 +1432,162 @@
     "settlement-vale": {
       "kind": "music",
       "src": "./assets/audio/music/settlement-vale.mp3",
-      "duration": 21.1695625,
-      "sha256": "3485cd97dd0e48208db0d823bf8aa47c4143476b59b0681f0c15947959d89b31",
+      "duration": 31.604353741,
+      "sha256": "aaffe6217d5983afdd9eb70fe9b4908335f18d54d8167230e143d7acc353c8ac",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Orchard Roads — hearths and neighbors",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-vale."
+      "generationGuide": "Source-authoritative phase4 settlement, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "night-vale": {
       "kind": "music",
       "src": "./assets/audio/music/night-vale.mp3",
-      "duration": 21.1695625,
-      "sha256": "3c1ce21fafcf55869a11e47618ca66bd97bdd01ee9c57b370216e1c939213aec",
+      "duration": 31.604353741,
+      "sha256": "01f8b720a082b7322ca2075a687f719ce77b414c333f731b8d491bd0cbb2e700",
       "loop": {
         "start": 0.15,
-        "end": 21.0195625
+        "end": 31.4543537414966
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Orchard Roads — nightfall",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-vale."
+      "generationGuide": "Source-authoritative phase4 night, 92 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "settlement-march": {
       "kind": "music",
       "src": "./assets/audio/music/settlement-march.mp3",
-      "duration": 23.714625,
-      "sha256": "45f32b11aa202ed2d314ca470ff334c95f36ae47fe62c74f6b1ac227ad5a381c",
+      "duration": 41.275600907,
+      "sha256": "f36978728fd704a0777e751c7ee638288b1b8c3fa47bce659dcac7f6ac59158b",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 41.12560090702948
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Reedwater — hearths and neighbors",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-march."
+      "generationGuide": "Source-authoritative phase4 settlement, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "night-march": {
       "kind": "music",
       "src": "./assets/audio/music/night-march.mp3",
-      "duration": 23.714625,
-      "sha256": "9d115e279c0a79b25578b5a13a09aab861b0aadb99c7426690b1eed647a79f9d",
+      "duration": 41.275600907,
+      "sha256": "b0c09bb67c608e98fa2bcaccecdccd29891fb9ef812fc0786374638490d2a02d",
       "loop": {
         "start": 0.15,
-        "end": 23.564625
+        "end": 41.12560090702948
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Reedwater — nightfall",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-march."
+      "generationGuide": "Source-authoritative phase4 night, 82 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "settlement-highlands": {
       "kind": "music",
       "src": "./assets/audio/music/settlement-highlands.mp3",
-      "duration": 22.1181875,
-      "sha256": "65a4f5e306a79b430cae10d9dfe301e255ed2982db78da0d3fb5bc144c7830cc",
+      "duration": 38.481814059,
+      "sha256": "65d6b5e8801334fe7a388d8b5ac41578b5aee62111ece9bc086869b7f3b783eb",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 38.331814058956915
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Payday on the Ridge — hearths and neighbors",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-highlands."
+      "generationGuide": "Source-authoritative phase4 settlement, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "night-highlands": {
       "kind": "music",
       "src": "./assets/audio/music/night-highlands.mp3",
-      "duration": 22.1181875,
-      "sha256": "77de858afc9eaaf301a8c428e97aea87b59beb314573420f6b6f3a1a7cc3872f",
+      "duration": 38.481814059,
+      "sha256": "ad9fdf98aabc7fc71b743995160bc545d2fe13965e604ca55d58ebdcdaf200a9",
       "loop": {
         "start": 0.15,
-        "end": 21.9681875
+        "end": 38.331814058956915
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Payday on the Ridge — nightfall",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-highlands."
+      "generationGuide": "Source-authoritative phase4 night, 88 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "settlement-frontier": {
       "kind": "music",
       "src": "./assets/audio/music/settlement-frontier.mp3",
-      "duration": 20.3,
-      "sha256": "4e3a3461bf91676adb31a9fd2eefd88eec881522bd3f6e9e3b572a9452643814",
+      "duration": 40.3,
+      "sha256": "e8878851ab4faa869606feda0fb63a28e2800d4278869e21ebc1956ba941507d",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Embers Still Warm — hearths and neighbors",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-frontier."
+      "generationGuide": "Source-authoritative phase4 settlement, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "night-frontier": {
       "kind": "music",
       "src": "./assets/audio/music/night-frontier.mp3",
-      "duration": 20.3,
-      "sha256": "17f2ae2b58efaf5e1267e241b516d0719ae1810b792d82008226f044b42bd7a7",
+      "duration": 40.3,
+      "sha256": "6c48b48028789ed94a38b71bf700d239977d6c3404b28093ca4f7d4c16bdc2c6",
       "loop": {
         "start": 0.15,
-        "end": 20.15
+        "end": 40.15
       },
       "credits": {
-        "author": "Azeroth Chronicles original score, composed and rendered for Joel",
+        "author": "Original SIBDLP composition performed using verified CC0 recorded instrument samples; refer to source scores and pinned sample bank",
         "license": "CC0-1.0"
       },
       "title": "Embers Still Warm — nightfall",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-frontier."
+      "generationGuide": "Source-authoritative phase4 night, 96 BPM, authored in tools/audio/phase4-arrangements.json; verified CC0 recorded instrument samples. Do not use the original procedural score-book melody for this recorded master.",
+      "creationMethod": "authored-recorded-source-score",
+      "sourceScore": "tools/audio/phase4-arrangements.json"
     },
     "settlement-crown": {
       "kind": "music",
