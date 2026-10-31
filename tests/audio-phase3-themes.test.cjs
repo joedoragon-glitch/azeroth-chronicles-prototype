@@ -48,6 +48,26 @@ for (const t of score.themes) {
 assert.equal(newCount, 6, 'Do not quietly replace the approved v2 pilot material');
 assert.equal(harmonies.size, 6, 'Six new scenes must not copy a single harmony sequence');
 assert.equal(phraseForms.size, 6, 'Six new scenes must not copy the same phrase form');
+// Source-level phrase review: an accidental octave-plus switch is not
+// an approved form of dramatic contrast. Explicitly review such leaps instead.
+const scales = {
+  major: [0, 2, 4, 5, 7, 9, 11], minor: [0, 2, 3, 5, 7, 8, 10],
+  dorian: [0, 2, 3, 5, 7, 9, 10], mixolydian: [0, 2, 4, 5, 7, 9, 10],
+};
+const degree = (n, mode) => Math.floor(n / 7) * 12 + scales[mode][((n % 7) + 7) % 7];
+for (const t of score.themes.filter((s) => !s.pilotFamily)) {
+  const notes = [];
+  for (let bar = 0; bar < t.bars; bar++) {
+    for (const [beat, pitch] of t.cells[t.phrases[bar]]) {
+      notes.push({ when: bar * 4 + beat,
+        midi: t.root + 12 + degree(t.harmony[bar] + pitch, t.mode) });
+    }
+  }
+  notes.sort((a, b) => a.when - b.when);
+  const maxLeap = Math.max(...notes.slice(1).map((n, i) => Math.abs(n.midi - notes[i].midi)));
+  assert(maxLeap <= 12, t.id + ': unexpectedly large melodic register change; review the score');
+}
+
 const run = (exe, args, timeout) => {
   const result = cp.spawnSync(exe, args, {
     cwd: root, encoding: 'utf8', timeout, maxBuffer: 20 * 1024 * 1024,
