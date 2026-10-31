@@ -63,7 +63,13 @@ def source_contract():
                     assert isinstance(item[1], int) and -8 <= item[1] <= 10
                     assert 0 < item[2] <= 4
                     assert len(item) == 3 or (isinstance(item[3], int) and -2 <= item[3] <= 2)
-            descriptions.append((cue, source["bars"], source["bpm"], "Phase3 heritage opening / v2 body"))
+            assert len(t.get("fullScoreDecision", "")) >= 160, cue
+            for bar, figure in t.get("pilotFigureOverrides", {}).items():
+                assert int(bar) >= 0 and int(bar) < source["bars"]
+                assert str(int(bar)) == bar, cue
+                assert figure in set(source["performance"]["figures"]), cue
+            descriptions.append((cue, source["bars"], source["bpm"],
+                                 "Phase3 heritage opening / critically reviewed v2 body"))
             continue
         assert len(t["identity"]) >= 100 and len(t["motifDecision"]) >= 90
         assert len(t["oldMotif"]) >= 10 and len(t["scenes"]) == 4
@@ -265,6 +271,8 @@ def main():
         if "pilotFamily" in theme:
             family = copy.deepcopy(pilots[theme["pilotFamily"]])
             family["performance"]["leadOverrides"].update(theme["pilotLeadOverrides"])
+            for bar, figure in theme.get("pilotFigureOverrides", {}).items():
+                family["performance"]["figures"][int(bar)] = figure
             wave, rate = ensemble.render_stem(family, "base", renderer)
         else:
             wave, rate = render_new(theme, renderer)

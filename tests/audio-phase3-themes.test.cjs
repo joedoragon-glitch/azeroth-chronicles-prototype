@@ -30,6 +30,12 @@ for (const t of score.themes) {
     const source = pilots.families.find((p) => p.family === t.pilotFamily);
     assert(source, t.id + ' must reuse an existing corrected pilot');
     assert.equal(source.cues[0].id, t.id);
+    assert(t.fullScoreDecision.length >= 160,
+      'Pilot bodies must be critically reassessed, not grandfathered');
+    if (t.id === 'place-archive') {
+      assert.deepEqual(t.pilotFigureOverrides, {'0':'breath'},
+        'Archive opening must not double F natural/F sharp against restored melody');
+    }
   } else {
     newCount += 1;
     assert.equal(t.harmony.length, t.bars);

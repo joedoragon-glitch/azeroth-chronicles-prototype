@@ -54,7 +54,8 @@
             0.72
           ]
         ]
-      }
+      },
+      "fullScoreDecision": "Twelve bars are reviewed as arrival, porch conversation, orchard lane, uneasy patrol and a sparse home return. The theme has clear recurring question/answer cells and dominant-to-tonic loop recovery; preserve the existing v2 body unless an actual aural comparison reveals fatigue or displaced emphasis. Opening notes are Phase 3-corrected. This is a source-level retain decision, not a final pilot exemption."
     },
     {
       "id": "place-march",
@@ -1840,7 +1841,11 @@
             0.57
           ]
         ]
-      }
+      },
+      "pilotFigureOverrides": {
+        "0": "breath"
+      },
+      "fullScoreDecision": "Sixteen bars contrast fragile scholarship, hurried salvage, missing records and incomplete rescue. Phase 3's F-sharp heritage note previously overlapped the old F-natural piano arpeggio in the opening Dorian accompaniment. Replace ONLY that first-bar busy figure with its established sparse D-pedal breath figure, letting the original D–F-sharp–A opening resolve without an unintentional F/F-sharp collision. Later borrowed chromatic responses remain intentional uncertainty, pending real listening."
     },
     {
       "id": "place-mine",
