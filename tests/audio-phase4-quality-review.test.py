@@ -16,6 +16,10 @@ spec = importlib.util.spec_from_file_location("phase4_source_under_test", script
 phase4 = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(phase4)
 phase3, original, catalog, frozen, bases, pilots, data = phase4.score_contract()
+shared_spec = importlib.util.spec_from_file_location(
+    "cross_phase_score_quality", ROOT / "tools/audio/score-quality-controls.py")
+quality = importlib.util.module_from_spec(shared_spec)
+shared_spec.loader.exec_module(quality)
 
 PILOT_HERITAGE = ("place-vale", "place-archive")
 original_renderer = original.load_renderer()
@@ -49,7 +53,9 @@ for name in PILOT_HERITAGE:
         # bars: same sounding pitch and same onset as the original producer.
         mode = pilot["mode"]
         root = pilot["root"]
-        for (at, deg, _, chromatic), ev in zip(actual, original_events):
+        original_performed = []
+        candidate_performed = []
+        for (at, deg, duration, chromatic), ev in zip(actual, original_events):
             expected_pitch = (root + 12 +
                               original_renderer.degree(
                                   harmony + ev[1], mode) +
@@ -57,6 +63,10 @@ for name in PILOT_HERITAGE:
             played_pitch = root + 12 + original_renderer.degree(
                 deg, mode) + chromatic
             assert played_pitch == expected_pitch and at == ev[0]
+            original_performed.append((ev[0], expected_pitch, ev[2]))
+            candidate_performed.append((at, played_pitch, duration))
+        quality.verify_heritage(original_performed, candidate_performed,
+                                cue=name + ":bar" + str(bar))
 
 for cue in data["arrangements"]:
     theme = bases.get(cue["parent"])
@@ -70,8 +80,24 @@ for cue in data["arrangements"]:
             assert kind == "counterline" and notes == cue["answer"]
             # The earlier score redundantly retriggered every base melody
             # attack and was wrongly called a proper additive arrangement.
-            original_notes, _ = phase4.heritage_notes(theme, bar, pilots)
+            original_notes, parent_absolute = phase4.heritage_notes(
+                theme, bar, pilots)
             assert notes != original_notes, (cue["id"], bar)
+            if len(original_notes) >= 2:
+                parent = (pilots[theme["pilotFamily"]]
+                          if "pilotFamily" in theme else theme)
+                harmony_degree = parent["harmony"][bar]
+                base_sounded = [
+                    (at, original_renderer.degree(
+                        deg if parent_absolute else harmony_degree + deg,
+                        parent["mode"]), duration)
+                    for at, deg, duration, *_ in original_notes]
+                action_sounded = [
+                    (at, original_renderer.degree(harmony_degree + deg,
+                                                  parent["mode"]), duration)
+                    for at, deg, duration in notes]
+                quality.guard_unexplained_full_layer_copy(
+                    base_sounded, action_sounded, cue=cue["id"])
             action_counterline_bars += 1
         elif cue["form"][bar] == "H":
             assert kind in ("heritage", "interior-heritage")
