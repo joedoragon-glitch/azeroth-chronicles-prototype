@@ -2504,6 +2504,294 @@
       },
       "generationGuide": "72-second enclosed occupied shrine/barracks: Frontier wind filtered through structure, one rare actual wood-and-cutlery recording (possible recognizable utensil risk). Sources: Thimras and thore; SHA-1 b518ae8ad9a5e83f6a1479d3f9190d962af52673 and 9ca9ab8edadd4671cd67f36ea6ae37365db6d26e. First/last 1s RMS boundary about 4.011 dB; listening HOLD.",
       "creativeSource": "Licensed real field recordings, pinned in tools/audio/environment-regional-studies.json; authored mix/encode by environmental studio."
+    },
+    "study-vale-day-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/study-vale-day-727.mp3",
+      "duration": 72.36,
+      "sha256": "6f3578366881b4f9dd675d0401085992be4d1546aff6cb9480fad9a6f0f0af00",
+      "credits": {
+        "author": "Thimras (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Greenwood Vale — daylight woodland air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-outdoor-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename study-vale-day-727.mp3; encoded SHA-256 6f3578366881b4f9dd675d0401085992be4d1546aff6cb9480fad9a6f0f0af00"
+    },
+    "study-march-day-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/study-march-day-727.mp3",
+      "duration": 72.36,
+      "sha256": "642eab06bd673948540120a85c1f50440d24bd107c0d8c000756b040b7346dcc",
+      "credits": {
+        "author": "Thimras (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Flooded Marches — daytime reedland air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-outdoor-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename study-march-day-727.mp3; encoded SHA-256 642eab06bd673948540120a85c1f50440d24bd107c0d8c000756b040b7346dcc"
+    },
+    "study-vale-night-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/study-vale-night-727.mp3",
+      "duration": 72.36,
+      "sha256": "5e120622b07ecf8c9d20e525f19d1347d31c2375e9a4cd85eca14c7e43882c8a",
+      "credits": {
+        "author": "Thimras (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Greenwood Vale — quiet woodland night",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-outdoor-expansion.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename study-vale-night-727.mp3; encoded SHA-256 5e120622b07ecf8c9d20e525f19d1347d31c2375e9a4cd85eca14c7e43882c8a"
+    },
+    "study-march-night-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/study-march-night-727.mp3",
+      "duration": 72.36,
+      "sha256": "2302494e225089870d7cb545524e08eaff4d5a831302ad709aeaec9587c17968",
+      "credits": {
+        "author": "Thimras (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Flooded Marches — subdued nocturnal reed air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-outdoor-expansion.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename study-march-night-727.mp3; encoded SHA-256 2302494e225089870d7cb545524e08eaff4d5a831302ad709aeaec9587c17968"
+    },
+    "study-crown-open-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/study-crown-open-727.mp3",
+      "duration": 72.36,
+      "sha256": "2848c6c82e226463ea02f20c3034d520b9ea8449e0d8d4514abac39b5c95fa37",
+      "credits": {
+        "author": "Thimras (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Dark Crown — open courtyard air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-outdoor-expansion.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename study-crown-open-727.mp3; encoded SHA-256 2848c6c82e226463ea02f20c3034d520b9ea8449e0d8d4514abac39b5c95fa37"
+    },
+    "study-crown-enclosed-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/study-crown-enclosed-727.mp3",
+      "duration": 72.36,
+      "sha256": "1a9599e51aec1baf268d30d95be70f07ae6731c39c75537e5ffbfe520af51481",
+      "credits": {
+        "author": "Tvabutzku1234 (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Dark Crown — enclosed wind alternate (not routed)",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-outdoor-expansion.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename study-crown-enclosed-727.mp3; encoded SHA-256 1a9599e51aec1baf268d30d95be70f07ae6731c39c75537e5ffbfe520af51481"
+    },
+    "studio-crypt-winter-estate-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-crypt-winter-estate-727.mp3",
+      "duration": 72.36,
+      "sha256": "9d7ab96c06266fd953fc1c739703e0bdb261e2b272bcd596789e15c6c328d7be",
+      "credits": {
+        "author": "Thimras; chocoholic (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Forest Crypt — occupied winter estate air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-dungeon-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-crypt-winter-estate-727.mp3; encoded SHA-256 9d7ab96c06266fd953fc1c739703e0bdb261e2b272bcd596789e15c6c328d7be"
+    },
+    "studio-archive-restoration-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-archive-restoration-727.mp3",
+      "duration": 72.36,
+      "sha256": "7eb6cdba92d83c3a729c44dd214cbde16b9409a0e9a1ff57c2a122ada054b14e",
+      "credits": {
+        "author": "Thimras; stephan (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Sunken Archive — restoration halls",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-dungeon-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-archive-restoration-727.mp3; encoded SHA-256 7eb6cdba92d83c3a729c44dd214cbde16b9409a0e9a1ff57c2a122ada054b14e"
+    },
+    "studio-colossus-mine-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-colossus-mine-727.mp3",
+      "duration": 72.36,
+      "sha256": "cf183389f9b5ff7b3378876c87ac043a878a455215bdb1d2ee549bef3ae4ca42",
+      "credits": {
+        "author": "Thimras; VishwaJai (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Colossus Mine — worked cavern air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-dungeon-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-colossus-mine-727.mp3; encoded SHA-256 cf183389f9b5ff7b3378876c87ac043a878a455215bdb1d2ee549bef3ae4ca42"
+    },
+    "studio-abyss-flight-hall-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-abyss-flight-hall-727.mp3",
+      "duration": 72.36,
+      "sha256": "79cafbd90349eae5efcb17bea436e994e6bf12a7b6e1b5b4f9b9d2ed2a4bbecc",
+      "credits": {
+        "author": "Thimras; Tvabutzku1234; BMacZero (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Abyss Bastion — soaring unfinished hall air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-dungeon-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-abyss-flight-hall-727.mp3; encoded SHA-256 79cafbd90349eae5efcb17bea436e994e6bf12a7b6e1b5b4f9b9d2ed2a4bbecc"
+    },
+    "studio-citadel-command-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-citadel-command-727.mp3",
+      "duration": 72.36,
+      "sha256": "618155910983eb3794129b148288d26ae35c511f06659083249ce4cbcf81ca00",
+      "credits": {
+        "author": "Thimras; stephan; BMacZero (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Citadel of Ashes — functioning command halls",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-dungeon-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-citadel-command-727.mp3; encoded SHA-256 618155910983eb3794129b148288d26ae35c511f06659083249ce4cbcf81ca00"
+    },
+    "studio-orchard-cellars-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-orchard-cellars-727.mp3",
+      "duration": 72.36,
+      "sha256": "39ede621eba96ecd38fa2abb1d3d1a0a4f2af1734060712e7daf841dde3c1383",
+      "credits": {
+        "author": "Thimras; thore (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Old Orchard Cellars — occupied domestic cellar",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-side-interiors.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-orchard-cellars-727.mp3; encoded SHA-256 39ede621eba96ecd38fa2abb1d3d1a0a4f2af1734060712e7daf841dde3c1383"
+    },
+    "studio-drowned-watchhouse-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-drowned-watchhouse-727.mp3",
+      "duration": 72.36,
+      "sha256": "163f14796e966a1d83301a83ed1eb77ce5d0b18ae44aba05f28dff5ffdae22f7",
+      "credits": {
+        "author": "Thimras; Ksd5 / Siddharth Patil (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Drowned Watchhouse — enclosed wetland refuge",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-side-interiors.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-drowned-watchhouse-727.mp3; encoded SHA-256 163f14796e966a1d83301a83ed1eb77ce5d0b18ae44aba05f28dff5ffdae22f7"
+    },
+    "studio-ruined-foundry-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-ruined-foundry-727.mp3",
+      "duration": 72.36,
+      "sha256": "abb44187a12a635644a6c5bd9aa72b55dfaf2805e38d7808d717792124a860e1",
+      "credits": {
+        "author": "Thimras; VishwaJai; BMacZero (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Ruined Foundry — occupied Crown repair shop",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-side-interiors.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-ruined-foundry-727.mp3; encoded SHA-256 abb44187a12a635644a6c5bd9aa72b55dfaf2805e38d7808d717792124a860e1"
+    },
+    "studio-mirejaw-guarded-wet-store-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-mirejaw-guarded-wet-store-727.mp3",
+      "duration": 72.36,
+      "sha256": "7009fb80f4571a41debb72367753f320c2318de6f0fdcfac95644f088cc09c14",
+      "credits": {
+        "author": "Thimras; Ksd5 / Siddharth Patil (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Mirejaw Treasury — guarded wetland stores",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-treasury-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-mirejaw-guarded-wet-store-727.mp3; encoded SHA-256 7009fb80f4571a41debb72367753f320c2318de6f0fdcfac95644f088cc09c14"
+    },
+    "studio-cindermaw-roost-vault-727": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/studio-cindermaw-roost-vault-727.mp3",
+      "duration": 72.36,
+      "sha256": "e6618901d4ad427ab1e60c85697ea19bacc9e55b139d7e21815c453d012b6ead",
+      "credits": {
+        "author": "Thimras; BMacZero (CC0/public domain original recordings); SIBDLP environmental studio",
+        "license": "CC0-1.0 / public domain source recordings"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Cindermaw Treasury — sheltered ash roost",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second source-authored guarded mono environmental master. Original field/foley source licenses, authors, SHA-1/SHA-256 and creative constraints: tools/audio/environment-727-treasury-studies.json. Human aesthetic approval and native-device hearing not yet performed.",
+      "creativeSource": "Original field/foley source, SHA-frozen Stage 2–5 #727 studio. Filename studio-cindermaw-roost-vault-727.mp3; encoded SHA-256 e6618901d4ad427ab1e60c85697ea19bacc9e55b139d7e21815c453d012b6ead"
     }
   },
   "director": {
@@ -3262,7 +3550,7 @@
           "when": {
             "zone": "crypt"
           },
-          "asset": "env-retreat",
+          "asset": "studio-crypt-winter-estate-727",
           "gain": 0.3,
           "fade": 2.5
         },
@@ -3271,7 +3559,7 @@
           "when": {
             "zone": "archive"
           },
-          "asset": "env-archive",
+          "asset": "studio-archive-restoration-727",
           "gain": 0.33,
           "fade": 2.5
         },
@@ -3280,7 +3568,7 @@
           "when": {
             "zone": "mine"
           },
-          "asset": "env-mine",
+          "asset": "studio-colossus-mine-727",
           "gain": 0.32,
           "fade": 2.5
         },
@@ -3289,7 +3577,7 @@
           "when": {
             "zone": "abyss"
           },
-          "asset": "env-dragon-hall",
+          "asset": "studio-abyss-flight-hall-727",
           "gain": 0.29,
           "fade": 2.5
         },
@@ -3298,7 +3586,7 @@
           "when": {
             "zone": "citadel"
           },
-          "asset": "env-citadel",
+          "asset": "studio-citadel-command-727",
           "gain": 0.3,
           "fade": 2.5
         },
@@ -3307,7 +3595,7 @@
           "when": {
             "zone": "side-vale-cellars"
           },
-          "asset": "env-cellar",
+          "asset": "studio-orchard-cellars-727",
           "gain": 0.3,
           "fade": 2.5
         },
@@ -3316,7 +3604,7 @@
           "when": {
             "zone": "side-march-watchhouse"
           },
-          "asset": "env-archive",
+          "asset": "studio-drowned-watchhouse-727",
           "gain": 0.28,
           "fade": 2.5
         },
@@ -3343,7 +3631,43 @@
           "when": {
             "zone": "side-crown-foundry"
           },
-          "asset": "env-mine",
+          "asset": "studio-ruined-foundry-727",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "supply-vale",
+          "when": {
+            "zone": "supply-vale"
+          },
+          "asset": "studio-orchard-cellars-727",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "supply-march",
+          "when": {
+            "zone": "supply-march"
+          },
+          "asset": "studio-mirejaw-guarded-wet-store-727",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "supply-highlands",
+          "when": {
+            "zone": "supply-highlands"
+          },
+          "asset": "env-signal-occupied",
+          "gain": 0.3,
+          "fade": 2.5
+        },
+        {
+          "id": "supply-crown",
+          "when": {
+            "zone": "supply-crown"
+          },
+          "asset": "studio-cindermaw-roost-vault-727",
           "gain": 0.3,
           "fade": 2.5
         },
@@ -3363,7 +3687,7 @@
             "interior": "outdoors",
             "night": true
           },
-          "asset": "env-woodland-night",
+          "asset": "study-vale-night-727",
           "gain": 0.33,
           "fade": 2.5
         },
@@ -3374,7 +3698,7 @@
             "interior": "outdoors",
             "night": true
           },
-          "asset": "env-marsh-night",
+          "asset": "study-march-night-727",
           "gain": 0.33,
           "fade": 2.5
         },
@@ -3384,7 +3708,7 @@
             "region": "vale",
             "interior": "outdoors"
           },
-          "asset": "env-woodland-day",
+          "asset": "study-vale-day-727",
           "gain": 0.36,
           "fade": 2.5
         },
@@ -3394,7 +3718,7 @@
             "region": "march",
             "interior": "outdoors"
           },
-          "asset": "env-marsh-day",
+          "asset": "study-march-day-727",
           "gain": 0.36,
           "fade": 2.5
         },
@@ -3424,7 +3748,7 @@
             "region": "crown",
             "interior": "outdoors"
           },
-          "asset": "env-crown-courtyard",
+          "asset": "study-crown-open-727",
           "gain": 0.36,
           "fade": 2.5
         }

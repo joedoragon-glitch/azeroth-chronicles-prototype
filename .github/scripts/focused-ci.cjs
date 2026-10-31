@@ -125,6 +125,7 @@ const groups = [
       /(?:^|\/)(?:pixi-experimental\.js|pixi-scene-bridge\.js|native-sprite-adapter\.js|renderer-switch-guard\.js|native-webgl2-core\.js)$|^tests\/pixi-|^tools\/webgl-pilot\//,
     tests: [
       TEST + 'pixi-fidelity.test.cjs',
+      TEST + 'pixi-parity.test.cjs',
       TEST + 'pixi-step3-source.test.cjs',
       PILOT + 'pixi-scene-bridge.test.cjs',
       PILOT + 'renderer-switch-guard.test.cjs',
@@ -140,7 +141,11 @@ const groups = [
   },
   {
     match: /^src\/prototype\/(?:visuals|hero-presentation)\.js$/,
-    tests: [TEST + 'world-proportions.test.cjs', TEST + 'sprites.test.cjs'],
+    tests: [
+      TEST + 'world-proportions.test.cjs',
+      TEST + 'sprites.test.cjs',
+      TEST + 'pixi-parity.test.cjs',
+    ],
   },
   {
     match: /^src\/prototype\/engine\.js$|^src\/game\.js$/,
@@ -259,6 +264,25 @@ const groups = [
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-audio-inventory.test.cjs'],
   },
   {
+    // #727 Stage 2–6 source ledgers are the production truth for the isolated
+    // preview importer; its own source preflight must not fall through to a
+    // generic architecture test.
+    match: /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
+    tests: [TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
+    // #727 playable Sound Library entry HTML is a first-class audio player,
+    // not unrelated architecture. Native browser playback stays separately gated.
+    match: /^tools\/audio\/index\.html$/,
+    tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
+    // #727 Stage 7 offline owner-audition scripts and template are source:
+    // a syntax/content-focused preflight must own each changed path.
+    match: /^tools\/audio\/environment-727-audition(?:-pack\.cjs|\/(?:player\.js|index\.html))$/,
+    tests: [TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
     match: /^src\/prototype\/(?:audio[^/]*\.js)$|^assets\/audio\//,
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },
@@ -295,9 +319,12 @@ const groups = [
     // Individual mastery and Orin training touch authoritative quest payment,
     // levels, actual deaths, barracks recovery, companion skills and v4 saves.
     // Keep their regression suite selected whenever any of those change.
-    match: /^src\/prototype\/(?:rewards|progression|party|party-pets|engine|rules|save|menus|hero-combat)\.js$/,
-    tests: [TEST + 'companion-mastery-rewards.test.cjs',
-      TEST + 'charmed-ringleader-training.test.cjs'],
+    match:
+      /^src\/prototype\/(?:rewards|progression|party|party-pets|engine|rules|save|menus|hero-combat)\.js$/,
+    tests: [
+      TEST + 'companion-mastery-rewards.test.cjs',
+      TEST + 'charmed-ringleader-training.test.cjs',
+    ],
   },
   {
     // Phase 4 must be retested when any source owning capture, creature growth,
@@ -410,11 +437,13 @@ function diffPaths(base, head = 'HEAD') {
 function run(
   paths,
   invoke = (file) => {
-    const pixiBrowser = file === TEST + 'pixi-renderer-browser.test.cjs' ||
+    const pixiBrowser =
+      file === TEST + 'pixi-renderer-browser.test.cjs' ||
       file === TEST + 'pixi-renderer-phone-browser.test.cjs';
     const statusBrowser = file === TEST + 'status-renderer-browser.test.cjs';
     const narrowBrowser =
-      pixiBrowser || statusBrowser ||
+      pixiBrowser ||
+      statusBrowser ||
       file === TEST + 'environment-atmosphere-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
@@ -428,10 +457,12 @@ function run(
         ? {
             ...process.env,
             BROWSER_ENGINE: 'chromium',
-            ...(pixiBrowser ? {
-              PIXI_BROWSER_DEVICE: file === TEST + 'pixi-renderer-phone-browser.test.cjs'
-                ? 'phone' : 'desktop',
-            } : {}),
+            ...(pixiBrowser
+              ? {
+                  PIXI_BROWSER_DEVICE:
+                    file === TEST + 'pixi-renderer-phone-browser.test.cjs' ? 'phone' : 'desktop',
+                }
+              : {}),
             ...(pixiBrowser || statusBrowser ? { REQUIRE_WEBGL2: '1' } : {}),
           }
         : process.env,
@@ -487,11 +518,14 @@ function run(
   for (const file of manualBrowser)
     console.warn('::warning::Manual browser acceptance not run under ordinary CI: ' + file);
   const checks = [];
+  // This source is a build template with {{PLACEHOLDER}} tokens, not runnable JS.
+  // Its generated sw.js is syntax-checked separately and by the build check.
   for (const file of paths)
-    // This source is a build template with {{PLACEHOLDER}} tokens, not runnable JS.
-    // Its generated sw.js is syntax-checked separately and by the build check.
-    if (file !== 'templates/service-worker.js' &&
-        /\.(?:js|cjs|mjs)$/.test(file) && fs.existsSync(path.join(root, file))) {
+    if (
+      file !== 'templates/service-worker.js' &&
+      /\.(?:js|cjs|mjs)$/.test(file) &&
+      fs.existsSync(path.join(root, file))
+    ) {
       const began = Date.now();
       const result = cp.spawnSync(process.execPath, ['--check', path.join(root, file)], {
         stdio: 'inherit',

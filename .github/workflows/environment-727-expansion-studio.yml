@@ -1,0 +1,70 @@
+# #727 Stage 2 nocturnal environments and Dark Crown comparative physical-source studio.
+# Never edits manifest, creates in-game audio assets, or deploys.
+name: Environment 727 night and Crown sound studio (NO deploy)
+
+on:
+  push:
+    branches:
+      - 'audio/environment-727-stage2-*'
+    paths:
+      - 'tools/audio/environment-727-outdoor-expansion.json'
+      - 'tools/audio/environment-727-outdoor-expansion.py'
+      - 'tests/environment-727-stage2-expansion.test.cjs'
+      - '.github/workflows/environment-727-expansion-studio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  acoustic-studio:
+    name: Provenance, night and Crown physical-source MP3 audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install fixed FFmpeg and signal dependencies
+        run: |
+          python -m pip install --disable-pip-version-check numpy==2.3.5
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+      - name: Prevent previews altering any published audio or routing
+        run: |
+          node tests/environment-audio-inventory.test.cjs
+          node tests/environment-727-stage2-source.test.cjs
+          node tests/audio-production.test.cjs
+      - name: Original identity probe or, only after full SHA pinning, actual encoded preview audit
+        run: |
+          set -eu
+          if python - <<'PY'
+          import json,sys
+          b=json.load(open('tools/audio/environment-727-outdoor-expansion.json'))
+          assert len(b['sources'])==3 and len(b['studies'])==4, 'Scope changed without review'
+          pinned=all(isinstance(s.get('sha1'),str) and len(s['sha1'])==40 and
+                     isinstance(s.get('sha256'),str) and len(s['sha256'])==64 and
+                     isinstance(s.get('bytes'),int) and s['bytes']>1000 for s in b['sources'])
+          sys.exit(0 if pinned else 1)
+          PY
+          then
+            node tests/environment-727-stage2-expansion.test.cjs
+            python tools/audio/environment-727-outdoor-expansion.py
+          else
+            echo 'Original WAV/OGG not fully pinned: fingerprint originals; NO MP3 render'
+            python tools/audio/environment-727-outdoor-expansion.py --probe-sources
+          fi
+      - name: Preserve source probe or true previews and measured failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-727-night-crown-provenance-and-candidates
+          path: tools/audio/.environment-727-expansion-preview/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14

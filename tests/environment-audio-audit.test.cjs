@@ -6,11 +6,11 @@ const {validateCatalog}=require('../src/prototype/audio-contract.js');
 const manifest=require('../assets/audio/manifest.json');
 const book=require('../tools/audio/environment-book.json');
 const director=manifest.director;
-assert.equal(Object.keys(manifest.assets).length,131);
+assert.equal(Object.keys(manifest.assets).length,147);
 const assets=Object.entries(manifest.assets).filter(([,x])=>x.kind==='ambience');
-assert.equal(assets.length,18,'all 14 preserved original + 4 recorded environment candidates');
+assert.equal(assets.length,34,'14 original preserved + 4 Stage1 + sixteen newly source-registered ambience masters');
 assert.equal(Object.keys(director.places).length,19,'exact mapped music/scene places');
-assert.equal(director.environment.rules.length,18,'first-match location rule inventory');
+assert.equal(director.environment.rules.length,22,'first-match location routing including four individually accounted-for Treasuries');
 assert.equal(book.seconds,24);
 assert.equal(book.cues.length,14);
 assert.deepEqual(new Set(assets.filter(([,a])=>a.managedBy==='environment-book').map(([id])=>id)),new Set(book.cues.map(c=>c.id)),
@@ -47,8 +47,8 @@ for(const region of ['vale','march','highlands','frontier','crown']) {
   for(const night of [false,true]) {
     const rule=a.environmentCue({...base,region,zone:region,night});
     assert(rule && rule.when.interior==='outdoors',region);
-    if(region==='vale') assert.equal(rule.asset,night?'env-woodland-night':'env-woodland-day');
-    if(region==='march') assert.equal(rule.asset,night?'env-marsh-night':'env-marsh-day');
+    if(region==='vale') assert.equal(rule.asset,night?'study-vale-night-727':'study-vale-day-727');
+    if(region==='march') assert.equal(rule.asset,night?'study-march-night-727':'study-march-day-727');
   }
 }
 // #709 A5: indoor Signal Keep and occupied converted Shrine do not use
@@ -73,7 +73,7 @@ assert.equal(a.optimizationMode,true);
 assert.equal(a.setOptimizationMode(false),true);
 assert.equal(a.optimizationMode,false);
 a.dispose();
-console.log('PASS issue #709: 131 assets/18 ambience (14 preserved+4 new)/18 routing rules, '+
+console.log('PASS issue #709: 147 assets/34 ambience (14 old+4 Stage1+16 new)/22 routing rules, '+
  routeCases+' real director place-night-peace policy checks, authoring parity, title gating, optimization');
 
 

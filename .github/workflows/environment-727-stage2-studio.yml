@@ -1,0 +1,69 @@
+# Issue #727 Stage 2 outdoor sound-source and candidate studio only.
+# Runs without Pages, catalog registration, merge, or writes to the repository.
+name: Environment 727 Stage 2 physical-source studio (NO deploy)
+
+on:
+  push:
+    branches:
+      - 'audio/environment-727-stage2-*'
+    paths:
+      - 'tools/audio/environment-727-outdoor-studies.json'
+      - 'tools/audio/environment-727-stage2-studio.py'
+      - '.github/workflows/environment-727-stage2-studio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  provenance-and-candidates:
+    name: Original-source SHA verification and guarded preview studio
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install fixed audio-analysis dependency and actual FFmpeg
+        run: |
+          python -m pip install --disable-pip-version-check numpy==2.3.5
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+      - name: Protect original 14, four new audio masters and all nineteen scene routes
+        run: |
+          node tests/environment-audio-inventory.test.cjs
+          node tests/environment-727-stage2-source.test.cjs
+          node tests/audio-production.test.cjs
+      - name: Acquire independently checkable original physical recordings
+        run: |
+          set -eu
+          if python - <<'PY'
+          import json,sys
+          b=json.load(open('tools/audio/environment-727-outdoor-studies.json'))
+          if len(b['sources'])!=2 or len(b['studies'])!=2:
+              sys.exit('Unexpected production scope')
+          pins=all(isinstance(s.get('sha1'),str) and len(s['sha1'])==40 and
+                   isinstance(s.get('bytes'),int) and s['bytes']>1000 for s in b['sources'])
+          sys.exit(0 if pins else 1)
+          PY
+          then
+            echo 'Ledger is pinned: download/verify original SHA and render separately mastered candidates.'
+            python tools/audio/environment-727-stage2-studio.py
+          else
+            echo 'Source publisher metadata not independently pinned: source-probe ONLY; no preview or promotion.'
+            python tools/audio/environment-727-stage2-studio.py --probe-sources
+          fi
+      - name: Preserve actual probe report or true decoded candidate preview files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-727-stage2-source-provenance-and-candidate-studies
+          path: tools/audio/.environment-727-preview/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14

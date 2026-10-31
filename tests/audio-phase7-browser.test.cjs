@@ -93,14 +93,14 @@ async function main() {
         let power = 0;
         for (let k=0; k<samples.length; k+=997) power += samples[k]*samples[k];
         if (!(power > .00001)) throw Error('MP3 decoded silence: ' + id);
-        if (assets.bytes > assets.budget) throw Error('Decoded cache over 96-MiB budget');
+        if (assets.bytes > assets.budget) throw Error('Decoded cache over 128-MiB budget');
         peakBytes = Math.max(peakBytes, assets.bytes);
         count++;
       }
       return {count, peakBytes, budget:assets.budget};
     }, ids);
     assert.equal(decoded.count, 65, 'all 65 real MP3s decoded and hash verified in Chromium');
-    assert.equal(decoded.budget, 96*1024*1024);
+    assert.equal(decoded.budget, 128*1024*1024);
 
     const feed = async (zone, boss = null) => page.evaluate(({zone, boss}) => {
       const a = Prototype.audio, c = new Campaign('normal', 'paladin', () => .43);
@@ -231,14 +231,14 @@ async function main() {
     assert(final.bytes<=final.budget && final.voices<=64);
     assert.equal(final.recordingError,null);
     assert.deepEqual(errors,[],errors.join('\n'));
-    console.log('PASS Phase7 one real Chromium game entrypoint: 65 real encoded MP3 hash/decode, title gesture and exit, boss TRUE sync, Succession loss, warning duck, 48s Finale→peace, 96MiB cache');
+    console.log('PASS Phase7 one real Chromium game entrypoint: 65 real encoded MP3 hash/decode, title gesture and exit, boss TRUE sync, Succession loss, warning duck, 48s Finale→peace, 128MiB cache');
     console.log(JSON.stringify({decoded, title,normalMix,trueMix,succession,
       finaleWindow:ending.window,warning,final,heard:false,
       deviceVerified:false}));
     await context.close();
 
     // Separate focused offline run in the *same* Chromium process. This uses
-    // the actual new 131-asset PWA service worker and a completely fresh
+    // the actual new 147-asset PWA service worker and a completely fresh
     // browser cache: no mocked network or synthetic audio fixtures.
     const offlineContext = await browser.newContext({viewport:{width:1024,height:800},
       serviceWorkers:'allow'});
@@ -288,7 +288,7 @@ async function main() {
     });
     assert.equal(cachedAudio.version,'azeroth-app-v'+require('../package.json').version,
       'the offline soundtrack must belong to this exact draft build');
-    assert.equal(cachedAudio.audio,132, 'all 131 recordings plus manifest should be cached');
+    assert.equal(cachedAudio.audio,148, 'all 147 recordings plus manifest must be cached');
     assert(cachedAudio.complete>180,'game must have its offline scripts/assets as well');
     await offlineContext.setOffline(true);
     await offlinePage.reload({waitUntil:'domcontentloaded',timeout:30000});
@@ -311,7 +311,7 @@ async function main() {
     assert(Object.values(off.loaded).every(x=>x.duration>20 && x.channels>=1));
     assert(off.cache.decodedBytes<=off.cache.decodedBudget);
     assert.equal(off.audioError,null);
-    console.log('PASS Phase7 single-Chromium offline real PWA: 131 cached MP3s + manifest, offline reload, Title playback and representative new music/ambience hash+decode; no network');
+    console.log('PASS Phase7 single-Chromium offline real PWA: 147 cached recorded assets + manifest, offline reload, Title playback and representative new music/ambience hash+decode; no network');
     console.log(JSON.stringify({cachedAudio,offline:off,heard:false,deviceVerified:false}));
     await offlineContext.close();
   } finally {

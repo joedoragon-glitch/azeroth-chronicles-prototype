@@ -1,0 +1,139 @@
+# Issue #727 Stage 6: ephemeral source-locked integration, never deploy or merge.
+name: Environmental Stage 6 isolated A/B game audio (NO deploy)
+
+on:
+  push:
+    branches:
+      - 'audio/environment-727-stage6-*'
+    paths:
+      - 'tools/audio/environment-727-stage6-lab.cjs'
+      - 'tests/environment-727-stage6-*.test.cjs'
+      - '.github/workflows/environment-727-stage6-lab.yml'
+      - 'docs/AUDIO_ENVIRONMENT.md'
+      - 'tools/audio/environment-727-audition-pack.cjs'
+      - 'tools/audio/environment-727-audition/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  integrated-audio:
+    name: Frozen previews, disposable PWA and real Chromium WebAudio (NO deploy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked test dependencies and actual decoder
+        run: |
+          npm ci
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg unzip
+      - name: Baseline studio and 19-place original route protection
+        run: |
+          node tests/environment-727-stage6-source.test.cjs
+          node tests/environment-727-stage5-source.test.cjs
+          node tests/environment-audio-inventory.test.cjs
+      - name: Build actual released dev248 main as baseline for honest PWA-upgrade test
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin main
+          git worktree add --detach ../environment727-baseline-checkout FETCH_HEAD
+          ln -s "$GITHUB_WORKSPACE/node_modules" ../environment727-baseline-checkout/node_modules
+          (cd ../environment727-baseline-checkout && node scripts/build.cjs --site)
+          mv ../environment727-baseline-checkout/_site _site-env727-baseline
+          test -s _site-env727-baseline/sw.js
+          node -e "const m=require('./_site-env727-baseline/assets/audio/manifest.json');if(Object.keys(m.assets).length!==131)throw Error('Expected actual released dev248 baseline')"
+
+      - name: Obtain physically authored frozen MP3s (disposable checkout only)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p tools/audio/.stage6-artifacts
+          if test -d tools/audio/frozen-preview && test "$(find tools/audio/frozen-preview -name '*.mp3' | wc -l)" -eq 16; then
+            cp tools/audio/frozen-preview/*.mp3 tools/audio/.stage6-artifacts/
+          else
+          for id in 13052069308 13053145958 13053643629 13056115086 13055459714; do
+            curl --retry 2 --fail --silent --show-error --location \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/artifacts/$id/zip" \
+              -o "/tmp/stage6-$id.zip"
+            unzip -o -j -q "/tmp/stage6-$id.zip" '*.mp3' -d tools/audio/.stage6-artifacts
+          done
+          fi
+          test "$(find tools/audio/.stage6-artifacts -name '*.mp3' | wc -l)" -eq 16
+      - name: Prove current physical game registration against frozen source masters without mutation
+        run: |
+          node tools/audio/environment-727-stage6-lab.cjs --materialize
+          node scripts/audio-library.cjs check
+          node scripts/build.cjs --check
+      - name: Build real registered dev249 PWA (still NO deploy) and inspect offline assets
+        run: |
+          node scripts/build.cjs --site
+          test -s _site/sw.js
+          node -e "const fs=require('fs');const s=fs.readFileSync('sw.js','utf8');for(const id of ['study-vale-day-727.mp3','studio-cindermaw-roost-vault-727.mp3'])if(!s.includes(id))throw Error('Offline asset list missing '+id);console.log('STAGE6_OFFLINE_STATIC: registered source paths appear in generated worker; installation/update remains a separate gate');"
+          du -sh _site assets/audio
+      - name: Install pinned Chromium and dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Verify fresh offline PWA install/reopen and all 16 SHA-verified source files
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-offline-browser.test.cjs | tee test-results/environment-727-stage6-offline.log
+      - name: Exercise 21 real Campaign scene/night routes with actual decoded candidate MP3s
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-browser.test.cjs | tee test-results/environment-727-stage6-browser.log
+      - name: Probe 48-kHz high-pressure game/music/ambient cache on real Chromium
+        env:
+          ENV727_FORCE_SAMPLE_RATE: '48000'
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-browser.test.cjs | tee test-results/environment-727-stage6-48khz.log
+      - name: Verify all 147 recorded sounds and 19 scene routes in standalone Game Sound Library (desktop and phone emulated)
+        run: |
+          set -o pipefail
+          node tests/audio-audition-browser.test.cjs | tee test-results/environment-727-game-sound-library.log
+      - name: Check actual dev248 131-asset PWA upgrade to registered dev249 147 assets then offline reopen
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-upgrade-browser.test.cjs | tee test-results/environment-727-stage6-upgrade.log
+      - name: Build owner-only offline old-versus-preview listening room (16 verified candidates)
+        run: |
+          node --check tools/audio/environment-727-audition-pack.cjs
+          node --check tools/audio/environment-727-audition/player.js
+          node tools/audio/environment-727-audition-pack.cjs
+          test -s test-results/environment-727-listening-room/index.html
+          test -s test-results/environment-727-listening-room/data.js
+      - name: Smoke-test owner-only offline A/B playback, score, retention and decision export
+        run: |
+          set -o pipefail
+          node tests/environment-727-stage6-audition-browser.test.cjs | tee test-results/environment-727-stage7-owner-ui.log
+      - name: Archive self-contained listening packet for owner creative review (NOT a game build)
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-727-Stage7-owner-listening-packet-NOT-DEPLOYED
+          path: test-results/environment-727-listening-room/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve only isolated QA receipts, never a deployable game artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-727-stage6-isolated-audio-QA
+          path: |
+            test-results/environment-727-stage6-trial.json
+            test-results/environment-727-stage6-browser.log
+            test-results/environment-727-stage6-offline.log
+            test-results/environment-727-stage6-48khz.log
+            test-results/environment-727-stage6-upgrade.log
+            test-results/environment-727-game-sound-library.log
+            test-results/environment-727-stage7-owner-ui.log
+          if-no-files-found: warn
+          retention-days: 14

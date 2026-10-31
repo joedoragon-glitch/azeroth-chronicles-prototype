@@ -16,27 +16,27 @@ const type = {'.js':'text/javascript','.json':'application/json','.html':'text/h
 // day/night environmental alternatives (Vale and Marches): 21 scenes per
 // profile. Explicit expected IDs catch accidental route/content regressions.
 const cases=[
-  {zone:'vale',mode:'exploration',score:'place-vale',bed:'env-woodland-day'},
-  {zone:'vale',mode:'night',score:'night-vale',bed:'env-woodland-night'},
-  {zone:'march',mode:'exploration',score:'place-march',bed:'env-marsh-day'},
-  {zone:'march',mode:'night',score:'night-march',bed:'env-marsh-night'},
+  {zone:'vale',mode:'exploration',score:'place-vale',bed:'study-vale-day-727'},
+  {zone:'vale',mode:'night',score:'night-vale',bed:'study-vale-night-727'},
+  {zone:'march',mode:'exploration',score:'place-march',bed:'study-march-day-727'},
+  {zone:'march',mode:'night',score:'night-march',bed:'study-march-night-727'},
   {zone:'highlands',mode:'exploration',score:'place-highlands',bed:'env-highlands-autumn'},
   {zone:'frontier',mode:'exploration',score:'place-frontier',bed:'env-frontier-recovery'},
-  {zone:'crown',mode:'exploration',score:'place-crown',bed:'env-crown-courtyard'},
-  {zone:'crypt',mode:'exploration',score:'place-crypt',bed:'env-retreat'},
-  {zone:'archive',mode:'exploration',score:'place-archive',bed:'env-archive'},
-  {zone:'mine',mode:'exploration',score:'place-mine',bed:'env-mine'},
-  {zone:'abyss',mode:'exploration',score:'place-abyss',bed:'env-dragon-hall'},
-  {zone:'citadel',mode:'exploration',score:'place-citadel',bed:'env-citadel'},
-  {zone:'supply-vale',mode:'exploration',score:'interior-supply-vale',bed:'env-home'},
-  {zone:'supply-march',mode:'exploration',score:'interior-supply-march',bed:'env-home'},
-  {zone:'supply-highlands',mode:'exploration',score:'interior-supply-highlands',bed:'env-home'},
-  {zone:'supply-crown',mode:'exploration',score:'interior-supply-crown',bed:'env-home'},
-  {zone:'side-vale-cellars',mode:'exploration',score:'interior-side-vale-cellars',bed:'env-cellar'},
-  {zone:'side-march-watchhouse',mode:'exploration',score:'interior-side-march-watchhouse',bed:'env-archive'},
+  {zone:'crown',mode:'exploration',score:'place-crown',bed:'study-crown-open-727'},
+  {zone:'crypt',mode:'exploration',score:'place-crypt',bed:'studio-crypt-winter-estate-727'},
+  {zone:'archive',mode:'exploration',score:'place-archive',bed:'studio-archive-restoration-727'},
+  {zone:'mine',mode:'exploration',score:'place-mine',bed:'studio-colossus-mine-727'},
+  {zone:'abyss',mode:'exploration',score:'place-abyss',bed:'studio-abyss-flight-hall-727'},
+  {zone:'citadel',mode:'exploration',score:'place-citadel',bed:'studio-citadel-command-727'},
+  {zone:'supply-vale',mode:'exploration',score:'interior-supply-vale',bed:'studio-orchard-cellars-727'},
+  {zone:'supply-march',mode:'exploration',score:'interior-supply-march',bed:'studio-mirejaw-guarded-wet-store-727'},
+  {zone:'supply-highlands',mode:'exploration',score:'interior-supply-highlands',bed:'env-signal-occupied'},
+  {zone:'supply-crown',mode:'exploration',score:'interior-supply-crown',bed:'studio-cindermaw-roost-vault-727'},
+  {zone:'side-vale-cellars',mode:'exploration',score:'interior-side-vale-cellars',bed:'studio-orchard-cellars-727'},
+  {zone:'side-march-watchhouse',mode:'exploration',score:'interior-side-march-watchhouse',bed:'studio-drowned-watchhouse-727'},
   {zone:'side-highlands-signal',mode:'exploration',score:'interior-side-highlands-signal',bed:'env-signal-occupied'},
   {zone:'side-frontier-shrine',mode:'exploration',score:'interior-side-frontier-shrine',bed:'env-shrine-occupied'},
-  {zone:'side-crown-foundry',mode:'exploration',score:'interior-side-crown-foundry',bed:'env-mine'},
+  {zone:'side-crown-foundry',mode:'exploration',score:'interior-side-crown-foundry',bed:'studio-ruined-foundry-727'},
 ];
 const server=http.createServer((req,res)=>{
   const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
@@ -106,6 +106,13 @@ const server=http.createServer((req,res)=>{
           try {
             await page.waitForFunction(({bed,score})=>{
               const a=Prototype.audio;
+              // The test freezes Campaign updates, but a real running game
+              // still ticks its audio production retry owner. Pump only that
+              // native audio policy while preserving scene and save state.
+              if(a.ctx?.state==='running'&&a.context){
+                a.updateProduction(a.context);
+                a.updateEnvironment(a.context);
+              }
               return a.ctx?.state==='running'&&a.environmentVoice?.id===bed &&
                 a.recordedScore?.id===score;
             },{bed:x.bed,score:x.score},{timeout:14000});
@@ -148,15 +155,17 @@ const server=http.createServer((req,res)=>{
           assert.equal(result.score,x.score);
           assert.equal(result.context,'running');
           assert(result.envDuration>24 && result.peak>0.001,'real decoded bed non-silence');
-          assert(result.recordingCache && result.recordingCache.decodedBudget===96*1024*1024,
-            'real cache must retain its established 96MiB decoded recording budget');
+          assert(result.recordingCache && result.recordingCache.decodedBudget===128*1024*1024,
+            'real cache must retain its updated 128MiB decoded recording budget');
+          assert.equal(result.recordingCache.retentionBudget,96*1024*1024,
+            'registered game score and ambience must trim to the 96-MiB retention target');
           assert(result.recordingCache.decodedBytes<=result.recordingCache.decodedBudget,
             'real decoded music and environmental buffers exceed bounded cache');
           assert(result.recordingCache.pinned<=result.recordingCache.cached,
             'recording cache reports inconsistent active resource pins');
           assert(result.envRate>=32000 && result.musicRate>=32000);
           assert.equal(result.loop,true);
-          const newRecording=['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(x.bed);
+          const newRecording=['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(x.bed) || x.bed.startsWith('study-') || x.bed.startsWith('studio-');
           const expectedEnd=newRecording ? 72.15 : 24.15;
           if(newRecording)assert(result.envDecodedBytes>8*1024*1024 && result.envDecodedBytes<16*1024*1024,
             'real 72-second environmental MP3 must decode to an expected bounded mono PCM buffer');
