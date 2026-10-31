@@ -24,7 +24,11 @@ for (let i = 0; i < Campaign.data.regions.length; i++) {
     ...plan.habitats.map((h) => [
       h.id, 'habitat', h.center, region === 'crown' && h.id === 'dark-fortress-court' ? 480 : 245,
       'inhabited-home',
-      h.props.map((p) => p[2]),
+      // Crown intentionally supersedes the old generic fortress camp with
+      // the authored fortress-logistics district (not a missing old forge).
+      region === 'crown' && h.id === 'fortress-work-camp'
+        ? Campaign.rules.crownDistricts.find((d) => d.id === 'fortress-logistics').props.map((p) => p[2])
+        : h.props.map((p) => p[2]),
     ]),
     ['everyday-work', 'work', plan.civilian[0].slice(0,2), 245, 'civilian-work'],
     ['local-supplies', 'work', plan.civilian[1].slice(0,2), 245, 'civilian-work'],
@@ -109,7 +113,12 @@ for (const [region, locations] of Object.entries(localities)) {
       buildingsWithin430: buildings.length,
       npcsWithin430: npcs.length,
       declaredHouseholdKinds: [...new Set(expectedKinds)],
-      absentDeclaredKindsWithin430: missing,
+      absentDeclaredKindsWithin430: missing, // visual-review leads, NOT automatic defects
+      nearbyProps: props
+        .map((p) => ({ id:p.id, kind:p.structure || null,
+          x: Math.round(p.x), y: Math.round(p.y),
+          radius: Math.round(Math.hypot(p.x-x,p.y-y)) }))
+        .sort((a,b) => a.radius - b.radius).slice(0,24),
       realizedStructures: structureTotals,
       occupiedSceneTags: [...new Set(props.flatMap((p) => [
         p.worldLifeHabitat ? 'habitat:' + p.worldLifeHabitat : null,
