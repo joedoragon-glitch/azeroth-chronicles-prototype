@@ -1,11 +1,11 @@
 'use strict';
-// The #727 five-dungeon study has no authority to alter published audio.
+// The #727 Stage 5 four-Treasury comparison has no authority to alter published audio.
 // Only add observations based on original recordings and keep exact hashes.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(__dirname, '..');
-const ledger = require('../tools/audio/environment-727-treasurys.json');
+const ledger = require('../tools/audio/environment-727-treasury-studies.json');
 const manifest = require('../assets/audio/manifest.json');
 const book = require('../tools/audio/environment-book.json');
 const {audio} = require('./helpers/audio-context.cjs');
@@ -54,7 +54,7 @@ for (const c of ledger.studies) {
   assert(c.reflectionMs.length === c.reflectionGains.length);
   assert(c.fieldGain>0 && c.windGain>0);
   assert.equal(manifest.assets[c.referenceBed].managedBy,'environment-book');
-  assert.equal(manifest.assets[c.id],undefined,'Side-interior preview must never enter the playable manifest');
+  assert.equal(manifest.assets[c.id],undefined,'Treasury preview must never enter the playable manifest');
   assert.equal(fs.existsSync(path.join(root,'assets/audio/ambience',c.id+'.mp3')),false);
   assert.equal(manifest.director.environment.rules.find(x=>x.id==='homes').asset,'env-home',
     'Existing shared Treasury rule must not change');
@@ -62,7 +62,7 @@ for (const c of ledger.studies) {
       c.id+': loud/unverified foley event');
   const cue=production.environmentCue({zone:c.sceneId,region:c.sceneId.includes('march')?'march':'crown',interior:'treasury',
     started:true,gameOver:false,night:false,situation:'world'});
-  assert.equal(cue.asset,c.referenceBed,'Must retain playable original dungeon bed '+c.sceneId);
+  assert.equal(cue.asset,c.referenceBed,'Must retain playable shared Treasury bed '+c.sceneId);
 }
 production.dispose();
 if (ledger.encodedPreviewEvidence) {
