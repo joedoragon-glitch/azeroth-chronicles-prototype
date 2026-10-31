@@ -60,9 +60,64 @@ for(let i=0;i<Campaign.data.regions.length;i++){
   assert(game.enter(dungeon.id),'Could not enter existing '+dungeon.id);
   capture(game,region+'-dungeon-night',1,false);
 }
+// V2 locality supplement: these are current authored geographic anchors, not
+// invented environmental recipes, relocated game props or a new art direction.
+// Multiple views are essential: one generic settlement screenshot cannot prove
+// what ash/sparks/dust look like in a separately authored district.
+const localitySites = [
+  {region:'vale',sites:[
+    ['orchard-hamlet',550,1750,345,'Greenwood current rebuilt Orchard Hamlet'],
+    ['winter-estate-approach',2830,2850,480,'Forest Crypt unfinished winter-estate approach'],
+    ['woodland-den',920,2880,480,'Thornfang territory / occupied Greenwood'],
+  ]},
+  {region:'march',sites:[
+    ['archive-banks',500,2350,345,'Sunken Archive receiving/restoration bank'],
+    ['lantern-shore',1880,2600,480,'Lantern Wraith shore and ferry'],
+    ['mirejaw-wetland',2180,1120,345,'Mirejaw wetland'],
+  ]},
+  {region:'highlands',sites:[
+    ['silver-ore-road',650,390,345,'Stonecross silver working; dust plausibly local'],
+    ['autumn-wolf-hollow',480,1010,345,'Autumn hardwood wolf habitat'],
+    ['ogre-hearth',940,3010,480,'Ogre household, not a lifeless quarry'],
+  ]},
+  {region:'frontier',sites:[
+    ['recovering-poppy-ground',920,2120,345,'Frontier recovering poppy/young-tree ground'],
+    ['burned-crossing',1450,2160,345,'Burned forest crossing with actual scars'],
+    ['occupied-checkpoint',2600,1650,480,'Warlord occupied checkpoint'],
+  ]},
+  {region:'crown',sites:[
+    ['labor-quarter',720,900,345,'Crownwatch inhabited worker district'],
+    ['thermal-services',2030,2640,480,'Authored recovery-heat / industrial services'],
+    ['ruined-foundry',1850,2700,345,'Ruined Foundry industrial hazard area'],
+  ]},
+];
+for (const item of localitySites) {
+  const game = new Campaign('normal','paladin',()=>.73);
+  assert(game.enter(item.region),'Could not inspect locality in '+item.region);
+  for (const [id,x,y,clock,context] of item.sites) {
+    // Reposition ONLY this isolated test Campaign camera. No world/save edit
+    // and no inference that the selected coordinate is a walkable player route.
+    game.s.clock=clock;
+    Object.assign(game.hero,{x,y});
+    const point={x,y};
+    const nearby=(objects)=> (objects||[])
+      .filter(o=>Number.isFinite(o.x)&&Number.isFinite(o.y))
+      .map(o=>({id:String(o.id||''),name:String(o.name||''),
+        kind:String(o.kind||''),structure:String(o.structure||''),
+        role:String(o.sceneRole||''),distance:Math.round(Math.hypot(o.x-x,o.y-y))}))
+      .filter(o=>o.distance<=450).sort((a,b)=>a.distance-b.distance).slice(0,12);
+    capture(game,item.region+'-local-'+id,1,false);
+    scenarios[scenarios.length-1].authoredLocality={
+      context,source:'current src/prototype/rules.js, data.js and current regional landscape',
+      cameraTarget:point,nearbyProps:nearby(game.zone().props),
+      nearbyNPCs:nearby(game.zone().npcs),
+      interpretation:'Visual locality evidence only; no aesthetic approval or renderer parity claim',
+    };
+  }
+}
 fs.writeFileSync(path.join(out,'scene-index.json'),JSON.stringify({
   purpose:'Issue #708 native Canvas current-site comparison; not GPU or device verification',
   count:scenarios.length,scenes:scenarios,
 },null,2)+'\n');
-assert.equal(scenarios.length,20);
-console.log('PASS #708 20 native Canvas screenshots: 5 regions x (civic twilight/optimization Off-On, field night at 150%, canonical dungeon night); saved state unchanged');
+assert.equal(scenarios.length,35);
+console.log('PASS #708 35 native Canvas screenshots: original 20 plus 15 site-specific current-canon localities, with proximity evidence; saved state unchanged');
