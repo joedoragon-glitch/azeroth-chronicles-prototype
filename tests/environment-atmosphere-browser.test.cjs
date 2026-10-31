@@ -234,6 +234,104 @@ async function main(){
     else console.log('V-04 OPTIMIZATION-ON OBSERVATION: Canvas changed '+canvasWater.changedPixels+
       ' pixels; Pixi changed '+pixiWater.changedPixels+
       '. Inspect artifacts and actual effective tier before making a defect claim');
+    // V-04 follow-up. The earlier stationary water capture was explicitly
+    // Optimization On and static in BOTH renderers. Make a controlled attempt
+    // at effective Off on two original channels before proposing any cache fix.
+    // Under software-WebGL load an emergency override can still force On:
+    // record that fact instead of asserting that a saved Off preference won.
+    const offSites=[
+      {region:'crown',name:'crown-lava',hero:{x:1050,y:1700},hazard:{x:1350,y:1700}},
+      {region:'march',name:'marches-water',hero:{x:1080,y:1690},hazard:{x:1420,y:1690}},
+    ];
+    async function setAuditSite(site){
+      const result=await page.evaluate((s)=>{
+        const g=Prototype.game;
+        if(!g.enter(s.region)) throw Error('Failed current-region entry '+s.region);
+        g.s.clock=480;
+        Object.assign(g.hero,s.hero);
+        g.hero.order=null;
+        g.hero.path=[];
+        g.zone().enemies=[];
+        g.zone().npcs=[];
+        g.s.party=[];
+        return {zone:g.zoneId,phase:g.daylightPhase().phase,
+          hero:{x:g.hero.x,y:g.hero.y},clock:g.s.clock};
+      },site);
+      assert.equal(result.zone,site.region,'Unexpected V-04 location');
+      assert.equal(result.phase,'night','V-04 night must stay away from twilight');
+      return result;
+    }
+    async function sampleOff(site,engine){
+      const world=await setAuditSite(site);
+      const rect=await page.evaluate((s)=>{
+        // Native Canvas and Pixi have a shared screen projection. Follow the
+        // authored water/lava coordinate, not a guessed fixed screen crop.
+        const p=Prototype.renderer.screen(s.hazard);
+        const width=180,height=170;
+        return {x:Math.max(0,Math.min(1180-width,Math.round(p.x-width/2))),
+          y:Math.max(0,Math.min(750-height,Math.round(p.y-height/2))),
+          width,height,projected:p};
+      },site);
+      const crop={x:rect.x,y:rect.y,width:rect.width,height:rect.height};
+      const control={...crop,x:Math.max(0,Math.min(1180-crop.width,crop.x-215))};
+      const surface=engine==='canvas2d'?canvas:gpu;
+      await page.waitForTimeout(1300);
+      const first=await surface.screenshot({path:path.join(out,site.name+'-'+engine+'-off-attempt-t0.png')});
+      const initial=await page.evaluate(()=>({
+        mode:Prototype.experimentalGraphics.mode,
+        savedPreference:localStorage.getItem('azeroth-optimization-mode-v1'),
+        canvasEffective:Prototype.renderer.metrics().optimizationMode,
+        pixiEffectiveOptimized:Prototype.experimentalGraphics.backgroundOptimized,
+        clock:Prototype.game.s.clock,
+      }));
+      await page.waitForTimeout(2600);
+      const second=await surface.screenshot({path:path.join(out,site.name+'-'+engine+'-off-attempt-t1.png')});
+      const final=await page.evaluate(()=>({
+        mode:Prototype.experimentalGraphics.mode,
+        savedPreference:localStorage.getItem('azeroth-optimization-mode-v1'),
+        canvasEffective:Prototype.renderer.metrics().optimizationMode,
+        pixiEffectiveOptimized:Prototype.experimentalGraphics.backgroundOptimized,
+        clock:Prototype.game.s.clock,
+      }));
+      assert.equal(initial.mode,engine,'Renderer silently changed during V-04');
+      assert.equal(final.mode,engine,'Renderer silently fell back during V-04');
+      return {site:site.name,world,crop,control,
+        hazardDiff:await compareCrop(first,second,crop),
+        controlDiff:await compareCrop(first,second,control),initial,final,
+        interpretation:'A rendered screenshot difference alone can contain moving atmospheric motes, not just liquid shimmer; inspect pixels and effective optimization before diagnosing terrain.'};
+    }
+    // The current mode is Canvas after the earlier Optimization-On pair.
+    await page.locator('#menu-button').click();
+    await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+    await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+    await page.locator('select[aria-label="Optimization Mode"]').selectOption('off');
+    await page.evaluate(()=>Prototype.closeMenu());
+    const offEvidence=[];
+    for(const site of offSites) offEvidence.push(await sampleOff(site,'canvas2d'));
+    await page.locator('#menu-button').click();
+    await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+    await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+    await page.locator('select[aria-label="Graphics renderer"]').selectOption('webgl2');
+    await page.waitForFunction(()=>{
+      const r=Prototype.experimentalGraphics;
+      return r.mode==='webgl2' && (r.phase==='trial'||r.phase==='confirmed') ||
+        r.phase==='canvas' && !!r.lastError;
+    },null,{timeout:240000});
+    if( (await page.evaluate(()=>Prototype.experimentalGraphics.phase))==='trial'){
+      await page.locator('#gpu-renderer-trial button').first().click({timeout:8000});
+      await page.waitForFunction(()=>Prototype.experimentalGraphics.phase==='confirmed');
+    }
+    await page.evaluate(()=>Prototype.closeMenu());
+    for(const site of [offSites[1],offSites[0]])
+      offEvidence.push(await sampleOff(site,'webgl2'));
+    const v04={
+      scope:'Actual game, same authored Marches water and Crown lava site per renderer; saved Optimization Off requested. Does not claim effective Off if emergency override intervenes.',
+      views:offEvidence,errors,
+    };
+    fs.writeFileSync(path.join(out,'stationary-liquid-off-attempt-result.json'),
+      JSON.stringify(v04,null,2)+'\\n');
+    console.log('ATMOSPHERE-708-V04-EFFECTIVE-OFF-ATTEMPT '+JSON.stringify(v04));
+    assert.deepEqual(errors,[],'No page errors during V-04 real browser attempts');
     await context.close();
   }finally{
     await browser?.close();
