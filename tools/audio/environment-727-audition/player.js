@@ -24,12 +24,12 @@
    silence();current=i;mode='old';
    const r=d.rows[i],f=feedback[r.rule]||{};
    $('label').textContent=r.title;
-   $('identity').textContent='Scene: '+r.zone+' | Existing: '+r.old.id+' | Candidate: '+
+   $('identity').textContent='Scene: '+r.zone+' | Existing: '+r.old.id+' | New draft game route: '+
      (r.proposal?.id||'none — retain original')+' | In-game environment gain '+r.gain;
    $('music-identity').textContent='Published soundtrack: '+r.music.id;
-   $('creative').textContent=r.keep?'Retention decision: no new recording was necessary.':
+   $('creative').textContent=r.reused?'Previously unfilled Treasury: the game now reuses a region-matched NEW recording, not the old home bed.':
      r.alternative?'Unselected Crown alternate: compare but do not assume improvement.':
-     'Unapproved new source: compare against the currently registered sound, not against silence.';
+     'Promoted in the unmerged playable game; compare against the previously registered original, not silence.';
    decision.value=f.choice||'undecided';notes.value=f.notes||'';
    $('candidate').disabled=!r.proposal;
    $('candidate').textContent=r.proposal?'Play preview':'No new preview';
@@ -73,7 +73,7 @@
    store();
    const lines=['SIBDLP #727 Stage 7 — human listening notes',
      'This is a manually supplied preference record; not a merged/deployed/device-verified result.',
-     'Current published score; independent preview room, not game compressor.', ''];
+     'Current registered score; independent A/B player, not actual game compressor.', ''];
    for(const r of d.rows){
      const v=feedback[r.rule]||{};
      lines.push(r.title+' | old '+r.old.id+' | preview '+(r.proposal?.id||'none')+

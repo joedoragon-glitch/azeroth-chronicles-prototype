@@ -28,7 +28,7 @@ const index=pathToFileURL(entry).href;
           return {rows:d.rows.length,candidates:d.rows.filter(x=>x.proposal).length,
             keeps:d.rows.filter(x=>x.keep).length,originals:d.rows.every(x=>x.old?.src&&x.music?.src)};
         });
-        assert.deepEqual(study,{rows:18,candidates:16,keeps:2,originals:true});
+        assert.deepEqual(study,{rows:18,candidates:18,keeps:0,originals:true});
         assert.equal(await page.locator('#scene option').count(),18);
         assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),
           'Listening panel must fit chosen device viewport');
@@ -70,7 +70,7 @@ const index=pathToFileURL(entry).href;
         assert.equal(selected,'study-crown-enclosed-727');
         for(const i of [16,17]){
           await page.locator('#scene').selectOption(String(i));
-          assert(await page.locator('#candidate').isDisabled(),'Retained Treasury has no new recording');
+          assert.equal(await page.locator('#candidate').isDisabled(),false,'Previously missing Treasury now has new reused recording');
           assert.equal(await page.locator('#decision').inputValue(),'undecided');
         }
         await page.locator('#scene').selectOption(String(valeIndex));
@@ -93,7 +93,7 @@ const index=pathToFileURL(entry).href;
         assert.deepEqual(errors,[],'Local listening room has no runtime errors');
         console.log('PASS STAGE7_OFFLINE_LISTENING_UI '+JSON.stringify({
           profile:phone?'phone-emulated':'desktop',study,originalPlayed:first.playing,
-          previewAndDev248MusicPlayed:true,alternateAndTwoKeeps:true,exportedRows:18,
+          previewAndDev248MusicPlayed:true,alternateAndTwoReuses:true,exportedRows:18,
           ownerCreativeApproval:false,actualHeadphonesAudition:false,gameMixer:true===false
         }));
       }finally{await context.close();}

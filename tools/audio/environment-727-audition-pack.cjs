@@ -54,8 +54,8 @@ const labels={
  'crypt':'Forest Crypt','archive':'Sunken Archive','mine':'Colossus Mine',
  'abyss':'Abyss Bastion','citadel':'Citadel of Ashes',
  'side-vale-cellars':'Old Orchard Cellars','side-march-watchhouse':'Drowned Watchhouse',
- 'side-crown-foundry':'Ruined Foundry','supply-vale':'Scornfang Treasury — retain original',
- 'supply-march':'Mirejaw Treasury','supply-highlands':'Ridge Tyrant Treasury — retain original',
+ 'side-crown-foundry':'Ruined Foundry','supply-vale':'Scornfang Treasury — reused Vale interior',
+ 'supply-march':'Mirejaw Treasury','supply-highlands':'Ridge Tyrant Treasury — reused Highland interior',
  'supply-crown':'Cindermaw Treasury'};
 function zoneFor(rule){return rule==='crown-alt'?'crown':
     rule.startsWith('stage6-')?rule.slice(7):rule.endsWith('-night')?rule.slice(0,-6):rule;}
@@ -64,10 +64,11 @@ function soundtrack(zone,rule){
   assert(dir,'Unknown current-game music scene '+zone);
   return addAsset(rule.endsWith('-night') ? dir.night : dir.base,'music');
 }
-function row({rule,original:oldId,trial,gain,keep=false,alternative=false}){
+function row({rule,original:oldId,trial,reuse,gain,keep=false,alternative=false}){
   const zone=zoneFor(rule);
   return {rule,zone,title:labels[rule]||labels[zone]||zone,old:addAsset(oldId,'original'),
-    proposal:trial?addTrial(trial):null,
+    proposal:trial?addTrial(trial):reuse?(trials.has(reuse)?addTrial(reuse):addAsset(reuse,'original')):null,
+    reused:!!reuse,
     music:soundtrack(zone,rule),
     gain,keep,alternative};
 }
@@ -75,12 +76,15 @@ const rows=report.trialsSelected.map(t=>row(t));
 rows.push(row({rule:'crown-alt',original:'env-crown-courtyard',trial:'study-crown-enclosed-727',
   gain:report.originalRouting.find(r=>r.id==='crown').gain,alternative:true}));
 for(const zone of report.retainedTreasuries){
-  assert(['supply-vale','supply-highlands'].includes(zone),'Unexpected keep choice');
-  rows.push(row({rule:zone,original:'env-home',gain:report.originalRouting.find(r=>r.id==='homes').gain,keep:true}));
+  assert(['supply-vale','supply-highlands'].includes(zone),'Unexpected original-only Stage5 choice');
+  const reuse=report.reusedTreasuries?.[zone]?.source;
+  assert(reuse,'The promoted game must resolve the previously missing Treasury sound '+zone);
+  rows.push(row({rule:zone,original:'env-home',reuse,
+    gain:report.originalRouting.find(r=>r.id==='homes').gain}));
 }
 // Present by geographical/creative task order, NOT by internal environment
 // rule priority (which starts with dungeons). This also keeps the two
-// intentional Treasury retains at the end for a simpler owner-only verdict.
+// two explicitly reused Treasury choices at the end for a simpler verdict.
 const presentationOrder=[
   'vale','vale-night','march','march-night','crown','crown-alt',
   'crypt','archive','mine','abyss','citadel',
@@ -92,8 +96,9 @@ assert(rows.every(r=>presentationOrder.includes(r.rule)),'Unexpected source-stud
 rows.sort((a,b)=>presentationOrder.indexOf(a.rule)-presentationOrder.indexOf(b.rule));
 assert.deepEqual(rows.map(r=>r.rule),presentationOrder);
 assert.equal(rows.length,18);
-assert.equal(rows.filter(r=>r.proposal).length,16);
-assert.equal(new Set(rows.filter(r=>r.proposal).map(r=>r.proposal.id)).size,16);
+assert.equal(rows.filter(r=>r.proposal).length,18);
+assert.equal(rows.filter(r=>r.reused).length,2);
+assert.equal(new Set(rows.filter(r=>r.proposal).map(r=>r.proposal.id)).size,17);
 const critical=addAsset('sfx-critical-warning','effects');
 const metadata={
  title:'So I Became the Dark Lord’s Problem — Environmental Sound Stage 7',
@@ -112,14 +117,14 @@ fs.writeFileSync(path.join(target,'README.txt'),
   'SIBDLP / #727 ENVIRONMENTAL LISTENING ROOM — OWNER-ONLY CREATIVE COMPARISON\n\n'+
   'Open index.html in a desktop browser after downloading and extracting the entire artifact.\n'+
   'Select each room, switch Old / Preview, listen through long loops, then optionally enable the current soundtrack.\n'+
-  'Two Treasuries intentionally have no candidate; the second Crown exterior is an unselected alternate.\n'+
+  'Both formerly missing Treasuries now reuse appropriate newly authored room recordings in the proposed game; the second Crown exterior is an unselected registered alternative.\n'+
   'The page is fully local. It does not update the game, save data, use network services, or prove real game mixer levels.\n'+
   'Choose Keep / Prefer preview / Undecided and Export notes to return one compact creative verdict.\n'+
   'Do not mistake the in-page warning sample for an in-game combat warning test.\n'+
   'Source provenance: issue #727, staged drafts #731 #734 #741 #743 #744; all 16 MP3s SHA-verified against frozen stage ledgers.\n'+
-  'No stage source has been approved, registered as playable, merged into the game catalog, or device-verified by this bundle.\n');
+  'New environmental masters are REGISTERED in the proposed game branch but NOT merged/deployed, owner-heard or device-verified by this bundle.\n');
 const stats=[...copied.values()].reduce((x,y)=>x+y,0);
 assert(stats<256*1024*1024);
 console.log('PASS #727 Stage7 isolated OWNER listening packet: 18 comparisons, 16 source-verified preview MP3s, '+
-  '2 retained originals, '+copied.size+' unique original/preview/music/warning files, '+
-  (stats/1048576).toFixed(2)+' MiB encoded. ZERO playable audio registrations.');
+  '2 explicit Treasury reuse choices, '+copied.size+' unique original/preview/music/warning files, '+
+  (stats/1048576).toFixed(2)+' MiB encoded. Game source registered in unmerged PR; NO deployment.');
