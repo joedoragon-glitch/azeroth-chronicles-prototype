@@ -1,5 +1,5 @@
 'use strict';
-// #709 Phase A3: analyze the real 14 MP3 recordings on the CI runner.
+// #709 Phase A3: analyze the real 18 MP3 recordings on the CI runner.
 // Objective signal statistics do NOT certify that a soundscape sounds good,
 // expresses regional lore or is audible on speakers/iPhone in gameplay.
 const assert=require('node:assert/strict');
@@ -10,7 +10,7 @@ const cp=require('node:child_process');
 const manifest=require('../assets/audio/manifest.json');
 const root=path.resolve(__dirname,'..');
 const jobs=Object.entries(manifest.assets).filter(([,a])=>a.kind==='ambience');
-assert.equal(jobs.length,14);
+assert.equal(jobs.length,18);
 function tool(bin,args,opts={}) {
   const p=cp.spawnSync(bin,args,{
     cwd:root,encoding:opts.binary?null:'utf8',
@@ -37,7 +37,7 @@ if(missing.length) {
       a.sha256,id+' real physical MP3 hash mismatch');
     assert(a.loop.end<=a.duration,id+' manifest loop invalid');
   }
-  console.log('PASS #709 A3 file integrity: 14/14 actual MP3 SHA-256 hashes and catalog loop bounds, '+totalBytes+' bytes');
+  console.log('PASS #709 A3 file integrity: 18/18 actual MP3 SHA-256 hashes and catalog loop bounds, '+totalBytes+' bytes');
   console.log('A3_REAL_DECODE_NOT_RUN: '+missing.join(', ')+' missing on this runner. Strict decoder job (REQUIRE_AUDIO_SIGNAL_DECODE=1) is mandatory for decoded waveform/loudness acceptance.');
   process.exit(0);
 }
@@ -110,6 +110,6 @@ for(const [id,a] of jobs) {
     activeFraction:+(active/frames).toFixed(5)
   }));
 }
-console.log('PASS #709 A3: 14/14 real MP3 physical hashes, mono decoding and loop endpoints; '+
+console.log('PASS #709 A3: 18/18 real MP3 physical hashes, mono decoding and loop endpoints; '+
   totalBytes+' encoded bytes; logged EBU R128 loudness, true peak, RMS, seam and active signal');
 console.log('A3_LIMIT numerical integrity != perceptual seam quality, in-game mix, headphone or device verdict');
