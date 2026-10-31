@@ -217,7 +217,8 @@ def main():
     original.check_contract()  # recheck every frozen Crown disk SHA after rendering
     if projection > original.LIMIT_BYTES:
         raise RuntimeError("Even eight-only encoded catalog projection breaches 32 MiB")
-    print("PASS Phase 3: eight actual MP3s encoded/decoded, seams checked; Crown hashes intact")
+    print("PASS Phase 3 ENCODING ONLY: eight MP3s decoded and seams measured; "
+          "Crown hashes intact. Musical-source/sonic acceptance is NOT implied.")
     print("PHASE3_INTERNAL_METRICS=" + json.dumps(report), flush=True)
 
 
