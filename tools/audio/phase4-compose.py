@@ -69,6 +69,27 @@ def score_contract():
     assert len(set(by_id) | set(names)) == 46
     assert len(allowed - set(by_id) - set(names)) == 19, "Exactly 16 bosses and 3 narrative cues remain"
     assert set(data["interiors"]) == set(INTERIORS)
+    context_ids = set(by_id) | set(INTERIORS)
+    assert set(data["groovePalettes"]) == context_ids
+    assert set(data["acousticPalettes"]) == context_ids
+    for context, figures in data["groovePalettes"].items():
+        assert set(figures) == set("HAQR"), context
+        for name, notes in figures.items():
+            assert 1 <= len(notes) <= 4, (context, name)
+            for at, degree, duration in notes:
+                assert 0 <= at < 4 and 0 <= degree <= 6
+                assert .2 <= duration <= 2.25
+    assert len({json.dumps(v, sort_keys=True) for v in
+                data["groovePalettes"].values()}) == 15
+    for context, profile in data["acousticPalettes"].items():
+        assert len(profile["earlyReflections"]) == 2
+        assert all(.02 <= d <= .4 and .005 <= gain <= .08
+                   for d, gain in profile["earlyReflections"])
+        assert 9000 <= profile["lowpassHz"] <= 14000
+        assert 0 < profile["crossfeed"] < .04
+        assert .75 <= profile["stageWidth"] <= 1.2
+    assert len({json.dumps(v, sort_keys=True) for v in
+                data["acousticPalettes"].values()}) == 15
     for name, room in data["interiors"].items():
         assert 11 <= len(room["harmony"]) <= 16 and len(room["scene"]) >= 24
         assert room["mode"] in ("major", "minor", "dorian", "mixolydian")
@@ -85,6 +106,8 @@ def score_contract():
         assert "A" in cue["form"] and "R" in cue["form"]
         assert len(cue["arc"]) == 4 and all(.3 <= a <= 1.25 for a in cue["arc"])
         assert cue["parent"] in by_id or cue["parent"] in data["interiors"]
+        assert cue["groovePalette"] == cue["parent"]
+        assert cue["spacePalette"] == cue["parent"]
         if cue["parent"] in by_id:
             base = by_id[cue["parent"]]
             if "pilotFamily" in base:
@@ -135,7 +158,18 @@ def heritage_notes(theme, bar, pilots):
         if notes is None:
             notes = [[at, pitch + plan["leadShifts"][bar], length]
                      for at, pitch, length in phrase]
-        return notes, True
+        # In Phase 2's actual ensemble the inherited phrase degree is
+        # RELATIVE TO THIS BAR'S HARMONY, including an override. Returning
+        # an unadjusted 'absolute' degree here silently changes the hook.
+        # Fold the chord degree in while preserving source onsets, durations
+        # and any authored chromatic accidental.
+        chord_degree = source["harmony"][bar]
+        played = []
+        for event in notes:
+            at, degree, duration = event[:3]
+            accidental = event[3] if len(event) == 4 else 0
+            played.append([at, chord_degree + degree, duration, accidental])
+        return played, True
     return theme["cells"][theme["phrases"][bar]], False
 
 
