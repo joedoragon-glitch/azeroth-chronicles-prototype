@@ -39,11 +39,17 @@ jobs:
           node tests/environment-727-stage6-source.test.cjs
           node tests/environment-727-stage5-source.test.cjs
           node tests/environment-audio-inventory.test.cjs
-      - name: Package unchanged dev248 current-main PWA as update baseline
+      - name: Build actual released dev248 main as baseline for honest PWA-upgrade test
         run: |
-          node scripts/build.cjs --site
-          mv _site _site-env727-baseline
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin main
+          git worktree add --detach ../environment727-baseline-checkout FETCH_HEAD
+          ln -s "$GITHUB_WORKSPACE/node_modules" ../environment727-baseline-checkout/node_modules
+          (cd ../environment727-baseline-checkout && node scripts/build.cjs --site)
+          mv ../environment727-baseline-checkout/_site _site-env727-baseline
           test -s _site-env727-baseline/sw.js
+          node -e "const m=require('./_site-env727-baseline/assets/audio/manifest.json');if(Object.keys(m.assets).length!==131)throw Error('Expected actual released dev248 baseline')"
+
       - name: Obtain physically authored frozen MP3s (disposable checkout only)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -63,15 +69,16 @@ jobs:
           done
           fi
           test "$(find tools/audio/.stage6-artifacts -name '*.mp3' | wc -l)" -eq 16
-      - name: Assert exact SHA-256 and format, then create throwaway route overlay
+      - name: Prove current physical game registration against frozen source masters without mutation
         run: |
           node tools/audio/environment-727-stage6-lab.cjs --materialize
           node scripts/audio-library.cjs check
-      - name: Build isolated PWA for browser QA and inspect offline package
+          node scripts/build.cjs --check
+      - name: Build real registered dev249 PWA (still NO deploy) and inspect offline assets
         run: |
           node scripts/build.cjs --site
           test -s _site/sw.js
-          node -e "const fs=require('fs');const s=fs.readFileSync('sw.js','utf8');for(const id of ['study-vale-day-727.mp3','studio-cindermaw-roost-vault-727.mp3'])if(!s.includes(id))throw Error('Offline asset list missing '+id);console.log('STAGE6_OFFLINE_STATIC: candidate paths appear in generated worker; installation/update remains a separate gate');"
+          node -e "const fs=require('fs');const s=fs.readFileSync('sw.js','utf8');for(const id of ['study-vale-day-727.mp3','studio-cindermaw-roost-vault-727.mp3'])if(!s.includes(id))throw Error('Offline asset list missing '+id);console.log('STAGE6_OFFLINE_STATIC: registered source paths appear in generated worker; installation/update remains a separate gate');"
           du -sh _site assets/audio
       - name: Install pinned Chromium and dependencies
         run: npx playwright install --with-deps chromium
@@ -89,7 +96,7 @@ jobs:
         run: |
           set -o pipefail
           node tests/environment-727-stage6-browser.test.cjs | tee test-results/environment-727-stage6-48khz.log
-      - name: Check existing 131-asset PWA upgrade to 147 candidate comparison assets then offline reopen
+      - name: Check actual dev248 131-asset PWA upgrade to registered dev249 147 assets then offline reopen
         run: |
           set -o pipefail
           node tests/environment-727-stage6-upgrade-browser.test.cjs | tee test-results/environment-727-stage6-upgrade.log
