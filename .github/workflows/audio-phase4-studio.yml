@@ -7,6 +7,7 @@ on:
       - ".github/workflows/audio-phase4-studio.yml"
       - "tools/audio/**"
       - "tests/audio-phase4*.test.cjs"
+      - "tests/audio-phase4*.test.py"
       - "docs/AUDIO_*.md"
   pull_request:
     branches:
@@ -43,6 +44,7 @@ jobs:
           node tests/audio-phase3-sample-bank.test.cjs
           node tests/audio-phase3-quality-review.test.cjs
           node tests/audio-phase4-arrangements.test.cjs
+          python tests/audio-phase4-quality-review.test.py
           python tests/audio-phase3-sampler.test.py
       - name: Encode and decode 38 Phase 4 candidates outside the repo
         run: python tools/audio/phase4-compose.py --render "$RUNNER_TEMP/sibdlp-phase4"
