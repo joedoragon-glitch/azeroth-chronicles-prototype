@@ -14,7 +14,10 @@ assert.equal(jobs.length,18);
 function tool(bin,args,opts={}) {
   const p=cp.spawnSync(bin,args,{
     cwd:root,encoding:opts.binary?null:'utf8',
-    maxBuffer:12*1024*1024,timeout:90000
+    // A real 72s source decoded at 44.1k mono float32 requires ~12.8 MiB;
+    // the previous 12 MiB subprocess output buffer failed with ENOBUFS,
+    // which is an incomplete test harness, not a failed recorded sound.
+    maxBuffer:24*1024*1024,timeout:90000
   });
   if(p.error) throw Error(bin+' unavailable or timed out: '+p.error.message);
   if(p.status!==0) throw Error(bin+' exited '+p.status+': '+String(p.stderr).slice(-1400));
