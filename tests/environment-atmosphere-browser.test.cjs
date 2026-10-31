@@ -147,7 +147,16 @@ async function main(){
     // confusing a genuine emergency tier transition with missing lighting.
     await setOptimizationMode(page,'on');
     await page.waitForFunction(()=>Prototype.experimentalGraphics.backgroundOptimized===true);
-    await page.waitForTimeout(180);
+    // This source test must isolate ONE fixed living lantern; otherwise
+    // ordinary Marches Wraith spawns while the software GPU is preparing can
+    // replace the removed light and make a correct renderer look broken.
+    await page.evaluate(()=>{
+      const g=Prototype.game, id=window.__environment708Wraith.id;
+      const carried=g.zone().enemies.find(e=>e.id===id);
+      if(!carried || carried.hp<=0)throw Error('Injected Wraith vanished');
+      g.zone().enemies=[carried];
+    });
+    await page.waitForTimeout(1200);
     const withWraithOn=await page.evaluate(()=>({
       lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
       motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
@@ -160,7 +169,13 @@ async function main(){
       const g=Prototype.game, id=window.__environment708Wraith.id;
       g.zone().enemies=g.zone().enemies.filter(e=>e.id!==id);
     });
-    await page.waitForTimeout(240);
+    // Wait for the actual GPU scene to consume the changed Wraith list.
+    // A 240ms wall-clock sleep was flaky under software WebGL2 + adaptive
+    // frame skipping; an observed light-count transition is the real gate.
+    await page.waitForFunction((expected)=>
+      Prototype.experimentalGraphics.mode==='webgl2' &&
+      Prototype.experimentalGraphics.sceneMetrics?.lights===expected,
+      withWraithOn.lights-2,{timeout:30000, polling:250});
     const withoutWraith=await page.evaluate(()=>({
       mode:Prototype.experimentalGraphics.mode,
       zone:Prototype.game.zoneId,
@@ -183,8 +198,10 @@ async function main(){
     assert.equal(withWraithOn.optimized,true);
     assert.equal(withoutWraith.optimizationSetting,'on','Same On preference must persist after Wraith removal');
     assert.equal(withoutWraith.optimized,true,'No emergency state transition across compared frames');
-    assert.equal(withWraithOn.wraithCount,withoutWraith.sourceCount+1,
-      'Only the one injected Wraith is removed, leaving native Marches Wraiths intact');
+    assert.equal(withWraithOn.wraithCount,1,
+      'Matched-source comparison must contain only one injected living Wraith');
+    assert.equal(withoutWraith.sourceCount,0,
+      'All Wraiths must be absent in the paired no-lamp screenshot');
     assert.equal(withWraithOn.lights,withoutWraith.lights+2,
       'V-01: Pixi must add one radius-64 Wraith lantern glow and one glass light in matched Optimization On frames');
     assert.equal(withWraithOn.motes,0);
