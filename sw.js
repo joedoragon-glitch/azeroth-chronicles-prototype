@@ -310,7 +310,11 @@ self.addEventListener('fetch', event => {
     if (request.method !== 'GET' || url.origin !== scope.origin || !url.pathname.startsWith(scope.pathname)) return;
     // The optional graphics demo is a separate real webpage, not a game route.
     // Do not turn its navigation into the cached campaign homepage.
-    if (url.pathname.startsWith(appURL('./tools/webgl-pilot/').replace(scope.origin, ''))) return;
+    // The standalone demo's HTML navigation must not route to the RPG home page.
+    // Four scripts in this directory are also core RPG scripts and MUST remain
+    // cache-controlled, including offline and incremental updates.
+    if (request.mode === 'navigate' &&
+        url.pathname.startsWith(appURL('./tools/webgl-pilot/').replace(scope.origin, ''))) return;
     const key = url; key.search = ''; key.hash = '';
     const isNavigation = request.mode === 'navigate';
     const navigationKey = isNavigation ? appFiles.has(key.href) && key.pathname.endsWith('.html') ? key.href : key.pathname.endsWith('/phone.html') ? navigationURLs.phone : key.pathname.endsWith('/legacy.html') ? navigationURLs.legacy : key.pathname.endsWith('/prototype.html') ? navigationURLs.prototype : key.pathname === rtsPath ? navigationURLs.rts : navigationURLs.index : null;
