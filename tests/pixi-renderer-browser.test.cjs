@@ -117,6 +117,111 @@ async function keepPixiTrial(page, phone, checkpoint) {
 }
 // One narrowly scoped, real Chromium drawing check on BOTH the Canvas path
 // and the PixiJS Canvas-combat overlay. Simulation timing is tested separately.
+// Audit-only real renderer-path status test. Both paths use the real world
+// canvas: opaque full Canvas versus Pixi's transparent Canvas cue overlay.
+async function inspectStatusPixels(page, expectedMode) {
+  const result = await page.evaluate(() => {
+    const g = Prototype.game, r = Prototype.renderer, z = g.zone();
+    const surface = document.getElementById('world');
+    const ctx = surface.getContext('2d');
+    const before = {
+      enemies: z.enemies, target: g.s.heroTarget, time: g.s.time,
+      field: g.hero.silenceField, manual: g.manualHeroTargetId,
+      manualZone: g.manualHeroTargetZone,
+    };
+    const e = g.makeEnemy({
+      species: 'goblin', name: 'Status visibility verification',
+      level: 1, hp: 100000, damage: 0, gold: 0, xp: 0,
+    }, { x: g.hero.x + 43, y: g.hero.y + 23 });
+    const writtenText = [], originalText = ctx.fillText;
+    const observedMode = Prototype.experimentalGraphics.mode;
+    const gpu = document.getElementById('world-pixi-experimental');
+    const actualWebGL = !!gpu && getComputedStyle(gpu).display !== 'none';
+    const keys = ['silence', 'taunt', 'slow', 'fracture', 'weaken'];
+    function set(keysOn) {
+      e.tauntUntil = 0; e.slow = 0; e.fractureUntil = 0; e.weakenUntil = 0;
+      delete e.slowStacks;
+      g.hero.silenceField = null;
+      if (keysOn.includes('silence')) g.hero.silenceField = {
+        x: e.x, y: e.y, radius: 50, zone: g.zoneId, until: g.s.time + 5,
+      };
+      if (keysOn.includes('taunt')) e.tauntUntil = g.s.time + 5;
+      if (keysOn.includes('slow')) g.applySlow(e, 3);
+      if (keysOn.includes('fracture')) g.fractureEnemy(e, 0.2, 5);
+      if (keysOn.includes('weaken')) g.weakenEnemy(e, 1);
+    }
+    function paint(keysOn) {
+      set(keysOn);
+      writtenText.length = 0;
+      r.draw();
+      return {
+        pixels: new Uint8ClampedArray(ctx.getImageData(
+          0, 0, surface.width, surface.height).data),
+        labels: [...writtenText],
+      };
+    }
+    function delta(a, b) {
+      let count = 0;
+      for (let i = 0; i < a.length; i += 4)
+        if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) +
+          Math.abs(a[i + 2] - b[i + 2]) + Math.abs(a[i + 3] - b[i + 3]) > 24)
+          count++;
+      return count;
+    }
+    try {
+      z.enemies = [e]; e.neutral = false; e.returning = 0;
+      g.s.time = 120;
+      g.s.heroTarget = e.id;
+      g.manualHeroTargetId = null;
+      ctx.fillText = function (message, ...args) {
+        if (/^\+\d+$/.test(String(message))) writtenText.push(String(message));
+        return originalText.call(this, message, ...args);
+      };
+      const empty = paint([]);
+      const unique = keys.map(key => ({
+        key, changed: delta(empty.pixels, paint([key]).pixels),
+      }));
+      const three = paint(keys.slice(0, 3));
+      const four = paint(keys.slice(0, 4));
+      const five = paint(keys);
+      const repeatFive = paint(keys);
+      return {
+        mode: observedMode, webglVisible: actualWebGL,
+        unique, threeLabels: three.labels, fourLabels: four.labels,
+        fiveLabels: five.labels,
+        threeToFourPixels: delta(three.pixels, four.pixels),
+        fourToFivePixels: delta(four.pixels, five.pixels),
+        repeatFivePixels: delta(five.pixels, repeatFive.pixels),
+        screen: r.screen(e), width: surface.width, height: surface.height,
+      };
+    } finally {
+      ctx.fillText = originalText;
+      z.enemies = before.enemies;
+      g.s.heroTarget = before.target;
+      g.hero.silenceField = before.field;
+      g.s.time = before.time;
+      g.manualHeroTargetId = before.manual;
+      g.manualHeroTargetZone = before.manualZone;
+      r.draw();
+    }
+  });
+  assert.equal(result.mode, expectedMode, 'Audit must use the selected real renderer');
+  if (expectedMode === 'webgl2')
+    assert(result.webglVisible, 'Pixi GPU surface must coexist with real Canvas status overlay');
+  assert(result.unique.every(x => x.changed > 0),
+    'Every isolated status must alter real ' + expectedMode + ' pixels: ' +
+      JSON.stringify(result.unique));
+  assert.deepEqual(result.threeLabels, []);
+  assert.deepEqual(result.fourLabels, ['+2']);
+  assert.deepEqual(result.fiveLabels, ['+3']);
+  assert(result.threeToFourPixels > 0 && result.fourToFivePixels > 0,
+    'Both overflow transitions must change actual output pixels: ' + JSON.stringify(result));
+  assert.equal(result.repeatFivePixels, 0, 'Fixed status state must paint identical pixels');
+  console.log('PASS real status/overflow pixels ' + expectedMode + ': ' +
+    JSON.stringify({unique:result.unique, four:result.threeToFourPixels,
+      five:result.fourToFivePixels}));
+}
+
 async function inspectMageBeamOverlay(page, expectedMode) {
   const result = await page.evaluate(() => {
     const game = Prototype.game, renderer = Prototype.renderer,
@@ -261,9 +366,11 @@ async function run() {
         await enterPlayableGame(beamPage);
         await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
         await inspectMageBeamOverlay(beamPage, 'canvas2d');
+        await inspectStatusPixels(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
         if (mageGpu.mode === 'webgl2')
           await inspectMageBeamOverlay(beamPage, 'webgl2');
+          await inspectStatusPixels(beamPage, 'webgl2');
         else
           assert(!requireWebGL, 'Mage beam overlay needs the required WebGL2 scene');
       } finally {
