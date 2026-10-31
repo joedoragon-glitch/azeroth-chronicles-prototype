@@ -23,7 +23,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - name: Verify default levels, Greenwood routing and audio mixer regressions
         run: |
-          node tests/audio.test.cjs
+          node tests/audio-owner-defaults.test.cjs
           node tests/audio-production.test.cjs
           node tests/audio-stage4-mix-matrix.test.cjs
           node tests/audio-environment.test.cjs
