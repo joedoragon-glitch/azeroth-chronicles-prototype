@@ -105,6 +105,11 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
     zoneId: 'vale',
     s: { time: 0, statistics: {deaths:0}, rescued: {}, projectiles: [], loot: [], party: [] },
     mageSilenceActive: () => false,
+    // Real Canvas's status overlay now queries both Rogue status predicates.
+    // Keep this synthetic occlusion fixture contract-complete; it never
+    // grants or changes any actual combat status.
+    rogueEnemySilenced: () => false,
+    rogueEnemyWithered: () => false,
     regionIndex: () => 0,
     zone: () => ({ props: [obstacle], buildings: [], enemies: actorKind === 'enemy' ? [actor] : [], roads: [] }),
     supplyRoom: () => null,
