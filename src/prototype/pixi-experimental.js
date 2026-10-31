@@ -1365,7 +1365,12 @@
           detachedForEviction = true;
         }
       };
-      for (const { entity, visual, point, key } of visible) {
+      for (const item of visible) {
+        const { entity, visual, point, key } = item;
+        // Share Canvas's presentation-only idle/busy movement for artwork.
+        // Ground shadows, hit positions and saved world coordinates do not move.
+        const bodyPoint = canvasRenderer.visualPositionFor?.(visual) || point;
+        item.bodyPoint = bodyPoint;
         // The approved Canvas feet treatment is independent of sprite art.
         // Pixi draws it below each body at the same depth in world space.
         const ground =
@@ -1384,7 +1389,7 @@
         const facing = canvasRenderer.facingFor?.(painted) ?? 1;
         const chosen = adapter.commandFor(
           painted,
-          { x: point.x / zoom, y: point.y / zoom },
+          { x: bodyPoint.x / zoom, y: bodyPoint.y / zoom },
           { region: current.regionIndex(), rescued: !!current.s.rescued[entity.family], facing },
         );
         if (chosen.supported) {
@@ -1396,8 +1401,8 @@
             nextSilhouettes.set(entity, {
               image,
               sourceRect: c.sourceRect,
-              dx: c.x - point.x / zoom,
-              dy: c.y - point.y / zoom,
+              dx: c.x - bodyPoint.x / zoom,
+              dy: c.y - bodyPoint.y / zoom,
               width: c.width,
               height: c.height,
               flipX: c.flipX,
@@ -1421,8 +1426,8 @@
             spriteAccessories: chosen.additionalArt?.spriteAccessories
               ? {
                   ...chosen.additionalArt.spriteAccessories,
-                  x: point.x,
-                  y: point.y,
+                  x: bodyPoint.x,
+                  y: bodyPoint.y,
                   zoom,
                   flipX: facing < 0,
                 }
@@ -1432,8 +1437,8 @@
             frontierShoots: frontierTree
               ? {
                   id: String(painted.id || 'tree'),
-                  x: point.x,
-                  y: point.y,
+                  x: bodyPoint.x,
+                  y: bodyPoint.y,
                   zoom,
                   visualScale:
                     Number.isFinite(painted.visualScale) && painted.visualScale > 0
@@ -1471,8 +1476,8 @@
             key,
             textureId: b.id,
             // Reflect procedural bodies about the foot anchor, not crop center.
-            x: facing < 0 ? point.x - (b.dx + b.logicalWidth) * zoom : point.x + b.dx * zoom,
-            y: point.y + b.dy * zoom,
+            x: facing < 0 ? bodyPoint.x - (b.dx + b.logicalWidth) * zoom : bodyPoint.x + b.dx * zoom,
+            y: bodyPoint.y + b.dy * zoom,
             width: b.logicalWidth * zoom,
             height: b.logicalHeight * zoom,
             opacity: 1,
@@ -1506,11 +1511,11 @@
               key: key + ':ambient:' + part.index,
               textureId: body.id,
               x:
-                point.x +
+                bodyPoint.x +
                 (motion.x * scale +
                   (motion.facing < 0 ? 2 * homeX - body.dx - body.logicalWidth : body.dx)) *
                   zoom,
-              y: point.y + (body.dy + motion.y * scale) * zoom,
+              y: bodyPoint.y + (body.dy + motion.y * scale) * zoom,
               width: body.logicalWidth * zoom,
               height: body.logicalHeight * zoom,
               opacity: 1,
@@ -1529,8 +1534,8 @@
         if (details)
           record.details = {
             ...details,
-            x: source.point.x,
-            y: source.point.y,
+            x: source.bodyPoint.x,
+            y: source.bodyPoint.y,
             zoom,
             paint: canvasRenderer.paintActorDetails,
           };
