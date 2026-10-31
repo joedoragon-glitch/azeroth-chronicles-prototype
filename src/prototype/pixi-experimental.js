@@ -376,6 +376,7 @@
         ctx: bgContext,
         platform: bgPlatform,
         renderLayer: 'background',
+        omitTerrainMotion: true,
       });
       basePosition = null;
     }
@@ -533,6 +534,7 @@
         ...getRendererOptions(), canvas: viewportTile, ctx,
         platform: tilePlatform, renderLayer: 'background',
         staticTerrainTimeSeconds: measureNow() / 1000,
+        omitTerrainMotion: true,
       });
       painter.setGroundReuse?.(false);
       painter.setOptimizationMode(!!options.getOptimizationMode());
@@ -671,6 +673,7 @@
         ...getRendererOptions(),
         canvas: { width, height }, ctx, platform: platformAhead,
         renderLayer: 'background',
+        omitTerrainMotion: true,
       });
       // Keep the native ground cache only; the second CPU canvas fits in a
       // combined 64 MiB two-window cap without another ground cache.
@@ -1134,6 +1137,19 @@
       // Only a real emergency hard-budget allocation needs LRU retirement;
       // that path protects all currently visible texture identities.
     }
+    // #708: keep the native water/lava glints live while retaining immutable
+    // regional terrain tiles. Work is viewport-culled, not a full repaint.
+    function syncLiquidMotion() {
+      const current=game();
+      if (current.s.mode==='arena'||current.isDungeon()||current.supplyRoom()) {
+        scene.syncLiquidMotion([]);
+        return;
+      }
+      const lines=root.PrototypeVisuals.terrainMotionLines(
+        current.regionIndex(),(point)=>canvasRenderer.screen(point),
+        viewport,measureNow()/1000);
+      scene.syncLiquidMotion(lines,platform.cameraZoom||1);
+    }
     function syncAtmosphere() {
       const current = game(),
         region = current.regionIndex(),
@@ -1342,6 +1358,7 @@
         const firstSceneStarted = measureNow();
         drawBackground();
         actorFrame();
+        syncLiquidMotion();
         syncAtmosphere();
         scene.draw();
         startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
@@ -1395,6 +1412,7 @@
         stage = 'actors';
         actorFrame();
         if (record) record('actors');
+        syncLiquidMotion();
         stage = 'atmosphere';
         syncAtmosphere();
         if (record) record('atmosphere');
