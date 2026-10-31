@@ -80,16 +80,20 @@
    assert(app?.stage && app?.renderer && width>0 && height>0,
      'GPU application and viewport required');
    const rootStage=new PIXI.Container();
+   // Original liquid highlights sit above the baked terrain yet below
+   // scenery/actors and the existing atmospheric grade.
+   const liquidGraphic=new PIXI.Graphics();
    const actorsStage=new PIXI.Container();
    const effectsStage=new PIXI.Container();
    app.stage.addChild(rootStage);
+   rootStage.addChild(liquidGraphic);
    rootStage.addChild(actorsStage);
    rootStage.addChild(effectsStage);
    const actors=new Map(), glowObjects=new Map(), gradients=new Map(), frameTextures=new Map();
    let background=null,grade=null, gradeGradients=[],atmosphereSignature=null,
      vignette=null,vignetteGradient=null,vignetteSignature=null,
      spritesUpdated=0, resources=new Map();
-   let backdropTexture=null, discarded=0, moteGraphic=null, moteCount=0;
+   let backdropTexture=null, discarded=0, moteGraphic=null, moteCount=0, liquidCount=0;
    const keyOf=entity=>String(entity.key);
    function setBackground(texture,x,y,width,height) {
      if(!background) {
@@ -309,6 +313,24 @@
      // Original order: atmosphere grade, lights, motes, vignette.
      if(vignette)effectsStage.addChild(vignette);
    }
+   function syncLiquidMotion(lines,zoom=1) {
+     assert(Array.isArray(lines)&&lines.length<=320&&Number.isFinite(zoom)&&zoom>0,
+       'Bounded authored liquid-highlight geometry required');
+     liquidGraphic.clear();
+     for(const line of lines) {
+       assert(line&&[line.x1,line.y1,line.x2,line.y2,line.width].every(Number.isFinite)&&
+         line.width>0&&/^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(line.color),
+         'Invalid native water/lava highlight');
+       // The original lava streaks are six-digit opaque colors; water is
+       // eight-digit translucent. Preserve both exactly.
+       const color=Number.parseInt(line.color.slice(1,7),16),
+         alpha=line.color.length===9
+           ? Number.parseInt(line.color.slice(7,9),16)/255 : 1;
+       liquidGraphic.moveTo(line.x1,line.y1).lineTo(line.x2,line.y2)
+         .stroke({color,alpha,width:line.width*zoom,cap:'round'});
+     }
+     liquidCount=lines.length;
+   }
    function setAtmosphere(spec) {
      const description=atmosphereLayers(spec);
      const signature=JSON.stringify(description);
@@ -403,22 +425,22 @@
    }
    // Outside timed frames: capture only the retained real terrain/roads texture.
    async function captureBackgroundOnly() {
-     const a=actorsStage.visible,e=effectsStage.visible;
-     actorsStage.visible=false;effectsStage.visible=false;
+     const a=actorsStage.visible,e=effectsStage.visible,l=liquidGraphic.visible;
+     actorsStage.visible=false;effectsStage.visible=false;liquidGraphic.visible=false;
      try {
        const raw=await app.renderer.extract.pixels({
          target:app.stage,frame:new PIXI.Rectangle(0,0,width,height)
        });
        return raw?.pixels||raw;
      } finally {
-       actorsStage.visible=a;effectsStage.visible=e;
+       actorsStage.visible=a;effectsStage.visible=e;liquidGraphic.visible=l;
        app.render();
      }
    }
    function draw() {app.render();}
    function metrics(){return{
      actors:actors.size,lights:glowObjects.size,vignetteActive:!!vignette,
-     atmosphereMotes:moteCount,
+     atmosphereMotes:moteCount,liquidStrokes:liquidCount,
      textureSources:resources.size,lampGradients:gradients.size,
      spriteUpdates:spritesUpdated,discarded
    };}
@@ -432,6 +454,7 @@
      if(vignette)vignette.destroy();
      if(moteGraphic){moteGraphic.destroy();moteGraphic=null;}
      if(vignetteGradient)vignetteGradient.destroy?.();
+     liquidGraphic.destroy();
      if(background)background.destroy();
      for(const texture of frameTextures.values())texture.destroy?.(false);
      for(const gradient of gradients.values())gradient.destroy?.();
@@ -442,7 +465,7 @@
    }
    return Object.freeze({
      setBackground,setSolidBackground,moveBackground,registerTexture,hasTexture,unregisterTexture,
-     syncActors,syncLamps,setAtmosphere,clearAtmosphere,syncMotes,setVignette,
+     syncActors,syncLamps,setAtmosphere,clearAtmosphere,syncMotes,syncLiquidMotion,setVignette,
      captureBackgroundOnly,captureLightingOnly,draw,metrics,destroy
    });
  }

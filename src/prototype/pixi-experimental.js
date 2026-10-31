@@ -376,6 +376,7 @@
         ctx: bgContext,
         platform: bgPlatform,
         renderLayer: 'background',
+        omitTerrainMotion: true,
       });
       basePosition = null;
     }
@@ -533,6 +534,7 @@
         ...getRendererOptions(), canvas: viewportTile, ctx,
         platform: tilePlatform, renderLayer: 'background',
         staticTerrainTimeSeconds: measureNow() / 1000,
+        omitTerrainMotion: true,
       });
       painter.setGroundReuse?.(false);
       painter.setOptimizationMode(!!options.getOptimizationMode());
@@ -671,6 +673,7 @@
         ...getRendererOptions(),
         canvas: { width, height }, ctx, platform: platformAhead,
         renderLayer: 'background',
+        omitTerrainMotion: true,
       });
       // Keep the native ground cache only; the second CPU canvas fits in a
       // combined 64 MiB two-window cap without another ground cache.
@@ -1134,6 +1137,19 @@
       // Only a real emergency hard-budget allocation needs LRU retirement;
       // that path protects all currently visible texture identities.
     }
+    // #708: keep the native water/lava glints live while retaining immutable
+    // regional terrain tiles. Work is viewport-culled, not a full repaint.
+    function syncLiquidMotion() {
+      const current=game();
+      if (current.s.mode==='arena'||current.isDungeon()||current.supplyRoom()) {
+        scene.syncLiquidMotion([]);
+        return;
+      }
+      const lines=root.PrototypeVisuals.terrainMotionLines(
+        current.regionIndex(),(point)=>canvasRenderer.screen(point),
+        viewport,measureNow()/1000);
+      scene.syncLiquidMotion(lines,platform.cameraZoom||1);
+    }
     function syncAtmosphere() {
       const current = game(),
         region = current.regionIndex(),
@@ -1177,20 +1193,40 @@
           )
             lights.push({ ...project(n), kind: 'lantern', id: n.id });
       }
-      const local = lights
-        .filter(
-          (p) =>
-            p.x > -140 * zoom &&
-            p.x < viewport.width + 140 * zoom &&
-            p.y > -160 * zoom &&
-            p.y < viewport.height + 140 * zoom,
-        )
-        .sort(
-          (a, b) =>
-            (a.x - viewport.width / 2) ** 2 +
-            (a.y - viewport.height / 2) ** 2 -
-            ((b.x - viewport.width / 2) ** 2 + (b.y - viewport.height / 2) ** 2),
-        )
+      // Canvas already lights the glass actually carried by living, nonboss
+      // Wraiths. Reuse its facing and idle presentation rather than inventing
+      // a disconnected floor lantern at the creature's collision anchor.
+      const carriedLanterns = [];
+      for (const e of z.enemies) {
+        if (e.species !== 'wraith' || e.type === 'boss' || e.hp <= 0) continue;
+        const visual = canvasRenderer.presentEntity(e, 'enemy');
+        const p = canvasRenderer.visualPositionFor(visual);
+        const facing = canvasRenderer.facingFor(visual);
+        const scale = e.captain || e.roomCaptain ? visual.visualScale || 1.18 : 1;
+        carriedLanterns.push({
+          x: p.x + facing * 22.5 * scale * zoom,
+          y: p.y + 1.5 * scale * zoom,
+          kind: 'carried-lantern',
+          id: e.id,
+        });
+      }
+      const nearby = (p) =>
+        p.x > -140 * zoom &&
+        p.x < viewport.width + 140 * zoom &&
+        p.y > -160 * zoom &&
+        p.y < viewport.height + 140 * zoom;
+      const byDistance = (a, b) =>
+        (a.x - viewport.width / 2) ** 2 +
+        (a.y - viewport.height / 2) ** 2 -
+        ((b.x - viewport.width / 2) ** 2 + (b.y - viewport.height / 2) ** 2) ||
+        String(a.id).localeCompare(String(b.id));
+      // Match Canvas source priority: at most eight carried lights followed
+      // by the nearest authored civic lights, within the existing 36-light
+      // GPU command budget. Daylight keeps only Wraith glass's tiny bloom.
+      const local = [
+        ...carriedLanterns.filter(nearby).sort(byDistance).slice(0, 8),
+        ...lights.filter(nearby).sort(byDistance).slice(0, 44),
+      ]
         .slice(0, 36)
         .map((p) => ({ ...p, x: p.x / zoom, y: p.y / zoom }));
       const hero = project(current.hero);
@@ -1342,6 +1378,7 @@
         const firstSceneStarted = measureNow();
         drawBackground();
         actorFrame();
+        syncLiquidMotion();
         syncAtmosphere();
         scene.draw();
         startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
@@ -1395,6 +1432,7 @@
         stage = 'actors';
         actorFrame();
         if (record) record('actors');
+        syncLiquidMotion();
         stage = 'atmosphere';
         syncAtmosphere();
         if (record) record('atmosphere');

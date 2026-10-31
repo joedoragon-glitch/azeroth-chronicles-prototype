@@ -1,7 +1,7 @@
 {
   "catalog": {
-    "entries": 296,
-    "generate": 280,
+    "entries": 297,
+    "generate": 281,
     "alias": 0,
     "procedural": 16
   },
@@ -1166,12 +1166,12 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "e7a6127ff1810f8eeeff461babec32b5b3c2ece987e731b9db267d6660695da8",
+    "src/prototype/visuals.js": "e3ac6ce4c55ecafe0bde99eab8df40e4fc88e2b39108000bc21ed492a2de36d5",
     "src/prototype/world.js": "c4859c3d11d77d027c87aaa5a3776b7940b234df777d1d8c77e26e94522c6ada",
     "src/prototype/rules.js": "bc2bab1fe55f59f543b267b7522244a74dd06b3903e3e2ebd45c5ed5ffdc18f7",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "95d6df1a2e23675b18a4302b0824fe69516caa79c6238f829cbf468982e30807",
-    "src/prototype/renderer.js": "66a78a71f90bc04afc5d9f1076a352a346f3b38cf0c68c52e93ca26b4f1394d9"
+    "src/prototype/renderer.js": "d6490693098abd08dfd69b6efbc54e9d32b8daab94479c828d61c78b74656e2b"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }

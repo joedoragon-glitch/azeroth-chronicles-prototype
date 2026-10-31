@@ -105,6 +105,9 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
     zoneId: 'vale',
     s: { time: 0, statistics: {deaths:0}, rescued: {}, projectiles: [], loot: [], party: [] },
     mageSilenceActive: () => false,
+    // The original renderer's read-only Rogue status contract is present in the real Campaign.
+    rogueEnemySilenced: () => false,
+    rogueEnemyWithered: () => false,
     regionIndex: () => 0,
     zone: () => ({ props: [obstacle], buildings: [], enemies: actorKind === 'enemy' ? [actor] : [], roads: [] }),
     supplyRoom: () => null,
