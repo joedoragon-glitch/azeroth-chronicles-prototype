@@ -18510,7 +18510,26 @@
       }
     } else if (region === 3) {
       const recovery = frontierGroundRecoveryAt(worldX, worldY);
-      if (recovery > 0.16 && seed % 23 < recovery * 20) {
+      // Uniform color washes erase the dusty grain that once came from T004.
+      // Put weathered, sub-pixel ash/soil sediment back in world-seeded detail:
+      // warm mineral flecks in war scars, cooler earth around regrowth.
+      const settled = recovery > 0.23;
+      for (let j = 0; j < 3; j++) {
+        const shift = j * 7,
+          nx = x + ((seed >>> shift) % 25) - 12,
+          ny = y + ((seed >>> (shift + 3)) % 13) - 3;
+        dot(
+          nx,
+          ny,
+          0.8 + ((seed >>> (shift + 2)) % 3) * 0.32,
+          settled
+            ? ['#817b60', '#6d7056', '#9a8a6b'][j]
+            : ['#8d7662', '#685d55', '#a08b72'][j],
+        );
+      }
+      if (seed % 11 === 4)
+        line(x - 10, y + 6, x - 2, y + 3, settled ? '#76765c99' : '#8b6d5899', 0.7);
+      if (recovery > 0.16 && seed % 23 < recovery * 14) {
         // New pioneer stems appear among, not instead of, charcoal and grit.
         for (const offset of [-5, 0, 5]) {
           const height = 4 + ((seed + offset + 20) % 5);
@@ -18973,12 +18992,14 @@
               (Math.imul(Math.floor(x / 135) + 17, 73856093) ^
                 Math.imul(Math.floor(y / 135) + 29, 19349663)) >>> 0,
             wx = x + (seed % 35) - 17,
-            wy = y + ((seed >>> 8) % 39) - 19,
-            recovery = frontierGroundRecoveryAt(wx, wy);
-          if (recovery < 0.24 || (seed % 101) / 101 > recovery * 0.8) continue;
+            wy = y + ((seed >>> 8) % 39) - 19;
+          // Viewport check before the heavier lore-surface lookup. These tufts
+          // are static cached terrain, not part of per-frame actor drawing.
           const p = screen({ x: wx, y: wy });
           if (p.x < -20 || p.y < -20 || p.x > bounds.width + 20 || p.y > bounds.height + 20)
             continue;
+          const recovery = frontierGroundRecoveryAt(wx, wy);
+          if (recovery < 0.24 || (seed % 101) / 101 > recovery * 0.8) continue;
           ctx.save();
           ctx.strokeStyle = seed % 3 ? '#879875' : '#a1a77a';
           ctx.lineWidth = 0.95;

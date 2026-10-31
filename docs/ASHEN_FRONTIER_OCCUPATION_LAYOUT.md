@@ -11,7 +11,7 @@ The Frontier is a recovering occupied province, not uniformly scorched. Its curr
 young trees, poppies, repaired gardens and cool soil among charred ruins. The older
 T004 uniform ash raster is therefore retired from active registration, preserving
 its original and approval record as rollback history. The draft renderer adds
-one restrained west-to-east cool-soil transition, feathered local moss-earth washes and sparse rooted growth in those named
+one restrained west-to-east cool-soil transition, feathered local moss-earth washes, fine mixed ash/sediment grain, and sparse rooted growth in those named
 locations, with damage and military infrastructure still visible. The original
 ravine, pools, roads, existing props and gameplay/collision geometry are untouched.
 
