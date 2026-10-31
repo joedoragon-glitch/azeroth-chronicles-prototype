@@ -180,6 +180,31 @@ const root = path.resolve(__dirname, '..'),
             AudioAudition.audio.recordingManifest &&
             Object.keys(AudioAudition.audio.recordingManifest.assets).length === 147,
         );
+        // Both previous Treasury gaps must play their selected modern bed
+        // *in the normal standalone Sound Library scene mixer*, alongside
+        // the correct 65-cue replacement soundtrack. No Campaign save is read.
+        await page.locator('#boss').selectOption('');
+        await page.locator('#new-score').check();
+        for(const [zone,bed,score] of [
+          ['supply-vale','studio-orchard-cellars-727','interior-supply-vale'],
+          ['supply-highlands','env-signal-occupied','interior-supply-highlands'],
+        ]){
+          await page.locator('#place').selectOption(zone);
+          await page.locator('#scene-mode').selectOption('exploration');
+          await press('#scene-play');
+          await page.waitForFunction(({bed,score})=>
+            AudioAudition.audio.environmentVoice?.id===bed &&
+            AudioAudition.audio.recordedScore?.id===score,
+            {bed,score},{timeout:30000});
+          const found=await page.evaluate(()=>({
+            bed:AudioAudition.audio.environmentVoice?.id,
+            score:AudioAudition.audio.recordedScore?.id,
+            cached:AudioAudition.audio.recordingAssets?.status(),
+          }));
+          assert.equal(found.bed,bed);
+          assert.equal(found.score,score);
+          assert(found.cached.decodedBytes<=found.cached.decodedBudget);
+        }
         await page.locator('#kind').selectOption('music');
         await page.locator('#recording').selectOption('place-vale');
         await press('#record-play');
