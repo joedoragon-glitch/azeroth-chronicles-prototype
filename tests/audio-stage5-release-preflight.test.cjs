@@ -27,8 +27,8 @@ for (const asset of Object.values(manifest.assets)) {
   assert(Object.hasOwn(kinds, asset.kind));
   kinds[asset.kind]++;
 }
-assert.deepEqual(kinds, { music: 83, ambience: 18, effect: 30 },
-  '14 legacy environmental files preserved plus 4 newly registered masters; no music or SFX change');
+assert.deepEqual(kinds, { music: 83, ambience: 34, effect: 30 },
+  '14 original, 4 Stage1 and 16 Stage2–5 source-recorded environmental masters; 83 music and 30 effect recordings unchanged');
 assert.equal(manifest.schemaVersion, 1);
 assert.equal(registered.length, new Set(registered).size, 'duplicate audio package path');
 assert.equal(app.scope, './');
