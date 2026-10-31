@@ -198,6 +198,10 @@ Scaling, targeting permission, damage windows, boss mechanics, warning geometry,
 
 **Decision intent at a glance:** Actual attack geometry, targeting permission, boss warnings, night scaling and recovery follow approved rules, not visual approximations. The latest recorded ringleader compression decision here is 0.145/0.240; consult the later 20 October section before using the 9 October table.
 
+#### 31 October 2026 — quick anti-exploit pursuit reset presentation (draft candidate)
+
+The owner requires enemy disengagement to remain **fast** and to prevent off-territory kiting, while looking deliberate rather than like a rendering glitch. The implementation candidate leaves native reset timing (the ordinary one-second return), HP/aggro cleanup, target immunity during return, encounter/leash boundaries and all special physical roaming-boss returns unchanged. A short, unobtrusive dust/ground ring marks initial disengagement; where the native ordinary return actually snaps an enemy home over a visible distance, a paired departure/arrival dust cue explains the relocation. It uses existing capped, low-priority presentation effects shared by Canvas and the Pixi overlay, with no new animation delay, physics, save field or gameplay resource. Only transitions in the current zone receive visual cues. This is **implemented on a draft branch**, not merged, deployed or device-verified; success of focused automated tests must be recorded separately. The existing independent damage/chase mismatch in [issue #510](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/510) is not resolved or changed by this presentation work.
+
 ### Foundation rules (original baseline wording retained)
 
 #### Outdoor ranged enemy stat scaling
