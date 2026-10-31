@@ -79,6 +79,39 @@ assert(g.developerCompanions.moves.get(busy.id).length <= 48,
 assert.equal(g.developerCompanionSnapshot()[0].last.length, 3);
 assert(!JSON.stringify(g.snapshot()).includes('developerCompanions'),
   'developer-only telemetry never enters version-4 saves');
+// Integration: the real encounter damage resolver, not manually inserted hits,
+// must attribute settled post-mitigation HP and cap an overkill to remaining HP.
+const live = new Campaign('developer', 'paladin', () => 0.9);
+live.s.time = 4;
+live.s.mercyTime = 0;
+live.s.valeFieldAwakened = true;
+const zone = live.zone();
+const enemy = zone.enemies.find((e) => e.type === 'mob' && !e.guard && !e.captain);
+assert(enemy, 'real Greenwood hostile is available for attribution');
+zone.props = [];
+zone.buildings = [];
+Object.assign(enemy, { x: 600, y: 1000, home: { x: 600, y: 1000 },
+  hp: 50, maxHp: 50, baseHp: 50 });
+Object.assign(live.hero, { x: 530, y: 1000 });
+const attacker = live.s.party[0];
+Object.assign(attacker, { x: 575, y: 1000 });
+zone.enemies = [enemy];
+assert(live.damage(enemy, 1, 'hero'), 'hero establishes valid engagement');
+const prior = enemy.hp;
+assert(live.developerCompanionDamage(attacker, 'Basic attack', enemy, 12),
+  'real companion hit reaches the authoritative damage resolver');
+const settled = prior - enemy.hp;
+const liveRow = live.developerCompanionSnapshot().find((row) => row.id === attacker.id);
+assert.equal(liveRow.last[0].damage, settled);
+assert.equal(liveRow.dps, settled / 4);
+assert.equal(live.developerCombatSnapshot().outgoing.dps, 1 / 4,
+  'hero DPS excludes companion real hits');
+enemy.hp = 1;
+assert(live.developerCompanionDamage(attacker, 'Basic attack', enemy, 500));
+const overkill = live.developerCompanionSnapshot().find((row) => row.id === attacker.id);
+assert.equal(overkill.last[0].damage, 1, 'overkill counts only the remaining HP');
+assert.equal(overkill.dps, (settled + 1) / 4, 'rolling DPS uses landed HP only');
+
 const ordinary = new Campaign('normal', 'paladin', () => 0.9);
 assert.equal(ordinary.developerCompanions, undefined);
 assert.equal(ordinary.developerCompanionSnapshot(), null);
