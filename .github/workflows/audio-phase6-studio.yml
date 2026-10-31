@@ -31,6 +31,7 @@ jobs:
       - name: Independently validate decoded technical evidence
         run: |
           python tools/audio/score-quality-controls.py "$RUNNER_TEMP/phase6-isolated/phase6-metrics.json" --expected-count 3 --layer-count 0 --expected-source tools/audio/phase6-scores.json --expected-list-key cues
+          python tests/audio-phase6-quality.test.py "$RUNNER_TEMP/phase6-isolated/phase6-metrics.json"
           cp "$RUNNER_TEMP/phase6-isolated/phase6-metrics.json" phase6-metrics.json
       - name: Preserve metrics only; no playable MP3s or publication
         uses: actions/upload-artifact@v4
