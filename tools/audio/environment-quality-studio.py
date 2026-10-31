@@ -175,6 +175,9 @@ def main():
             point = round(cue['eventAtSeconds'] * RATE)
             if point + len(clip) > LENGTH - RATE or point < RATE:
                 raise ValueError('Event too close to loop seam')
+            bed_event_rms = float(np.sqrt(np.mean(candidate[point:point + len(clip)] ** 2)))
+            recording_event_rms = float(np.sqrt(np.mean(clip ** 2)))
+            dry_event_ratio_db = 20 * math.log10(recording_event_rms / max(bed_event_rms, 1e-12))
             candidate[point:point + len(clip)] += clip
             if float(np.max(np.abs(candidate))) > .7:
                 raise ValueError('Candidate has a surprising high peak')
@@ -198,7 +201,8 @@ def main():
                       'decodedPeak': float(np.max(np.abs(encoded_loop))),
                       'originalSpectralBands': band_fractions(base),
                       'candidateSpectralBands': band_fractions(encoded_loop),
-                      'physicalSource': cue['physicalDetail'], 'routeGainUnchanged': cue['routeGain'],
+                      'physicalSource': cue['physicalDetail'], 'eventVsBedDbBeforeCodec': round(dry_event_ratio_db, 3),
+                      'routeGainUnchanged': cue['routeGain'],
                       'isolateOnly': True, 'heard': False, 'artAccepted': False}
             reports.append(report)
             print('PILOT', json.dumps(report))
