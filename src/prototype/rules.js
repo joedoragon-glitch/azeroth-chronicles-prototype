@@ -6178,6 +6178,9 @@
     healThreshold: 0.5,
     manaThreshold: 0.35,
     cooldown: 10,
+    // Allied Heal cooldowns recover twice as fast only while the party is safe.
+    // This applies to Ranger, lawful Charmed ranged and ally-healing pets.
+    idleHealCooldownRecoveryMultiplier: 2,
     duration: 5,
     healAmounts: [60, 150],
     manaAmounts: [40, 100],
