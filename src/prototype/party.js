@@ -1631,9 +1631,13 @@
         const rally = this.rangerRallyActive(u)
           ? Math.min(0.25, u.rangerRallyMovement || 0) : 0;
         const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
-        return this.companionMoveSpeed(base) *
-          (this.charmedCompanionProfile(u)?.speed || 1) *
-          (1 + rally + quickstep);
+        const profile = this.charmedCompanionProfile(u);
+        const speed = this.companionMoveSpeed(base) * (profile?.speed || 1);
+        // Ordinary pursuit should never be slower than a wild monster's
+        // 175-unit baseline. Explicit short defensive moves keep their pace.
+        const nativeFloor = profile && base >= 230
+          ? R.balance.enemyOrdinaryMeleePursuitSpeed : 0;
+        return Math.max(speed, nativeFloor) * (1 + rally + quickstep);
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
@@ -1705,7 +1709,12 @@
         return now < burst.until ? cfg.burstMultiplier : 1;
       }
       companionBasicInterval(u) {
-        const base = this.charmedCompanionProfile(u)?.interval || 0.85;
+        const profile = this.charmedCompanionProfile(u);
+        // Keep all existing quicker allied attacks, but prevent future Charm
+        // profiles from swinging slower than the native ordinary hostile.
+        const base = profile
+          ? Math.min(profile.interval || 0.85, R.balance.enemyOrdinaryMeleeBasicInterval)
+          : 0.85;
         return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
           ? base * R.ringleaderScaling.frenzyCooldown : base;
