@@ -194,14 +194,18 @@ def render_arrangement(cue, by_id, pilots, rooms, sampler):
              absolute=False, chromatic=0, soft=False):
         pitch = degree if absolute else harmony[bar] + degree
         midi = root + sampler.degree(pitch, mode) + REGISTERS[inst] + chromatic
-        if inst == "glockenspiel":
-            # Chime is an accompaniment, not the heroic lead. Voice it in
-            # a playable G5-C6 neighborhood instead of octave-stretching
-            # sparse G5/C6 recordings into an implausibly shrill attack.
-            # Transposition is by full octaves, preserving pitch class.
-            while midi < 75:
+        # Explicit orchestration ranges, preserving pitch class across
+        # octave revoicings. These are score-level choices for the actual
+        # recorded palette, NOT silent pitch-shift compensation or a fallback
+        # to synthetic instruments. Upper cello answers belong in its warm
+        # singing register; short chimes should not pierce above C6.
+        ranges = {"glockenspiel": (75, 88), "cello": (40, 71),
+                  "horn": (46, 75), "guitar": (40, 64)}
+        if inst in ranges:
+            low, high = ranges[inst]
+            while midi < low:
                 midi += 12
-            while midi > 88:
+            while midi > high:
                 midi -= 12
         pcm = sampler.instrument(midi, duration * beat, inst, rng)
         if soft:
