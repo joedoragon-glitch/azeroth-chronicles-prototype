@@ -11,6 +11,7 @@ on:
       - 'src/prototype/audio-production.js'
       - 'src/prototype/audio-effects.js'
       - 'assets/audio/manifest.json'
+      - 'templates/service-worker.js'
       - '.github/workflows/audio-phase7-refresh.yml'
 
 permissions:
