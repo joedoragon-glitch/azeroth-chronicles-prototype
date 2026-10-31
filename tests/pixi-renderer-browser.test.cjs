@@ -222,6 +222,9 @@ async function inspectStatusPixels(page, expectedMode) {
       level: 1, hp: 100000, damage: 0, gold: 0, xp: 0,
     }, { x: g.hero.x + 43, y: g.hero.y + 23 });
     const writtenText = [], originalText = ctx.fillText;
+    const statusArt = window.PrototypeHeroPresentation;
+    const originalStatuses = statusArt.statuses;
+    let latestStatusLayer = null;
     const observedMode = Prototype.experimentalGraphics.mode;
     const gpu = document.getElementById('world-pixi-experimental');
     const actualWebGL = !!gpu && getComputedStyle(gpu).display !== 'none';
@@ -241,8 +244,11 @@ async function inspectStatusPixels(page, expectedMode) {
     function paint(keysOn) {
       set(keysOn);
       writtenText.length = 0;
+      latestStatusLayer = null;
       r.draw();
+      if (!latestStatusLayer) throw Error('Actual renderer skipped its status paint');
       return {
+        statusLayer: latestStatusLayer,
         pixels: new Uint8ClampedArray(ctx.getImageData(
           0, 0, surface.width, surface.height).data),
         labels: [...writtenText],
@@ -261,6 +267,15 @@ async function inspectStatusPixels(page, expectedMode) {
       g.s.time = 120;
       g.s.heroTarget = e.id;
       g.manualHeroTargetId = null;
+      statusArt.statuses = function (target, project, game, width, height) {
+        const scratch = document.createElement('canvas');
+        scratch.width = Math.ceil(width); scratch.height = Math.ceil(height);
+        const layerCtx = scratch.getContext('2d');
+        originalStatuses.call(this, layerCtx, project, game, width, height);
+        latestStatusLayer = new Uint8ClampedArray(layerCtx.getImageData(
+          0, 0, scratch.width, scratch.height).data);
+        return originalStatuses.call(this, target, project, game, width, height);
+      };
       ctx.fillText = function (message, ...args) {
         if (/^\+\d+$/.test(String(message))) writtenText.push(String(message));
         return originalText.call(this, message, ...args);
@@ -279,10 +294,11 @@ async function inspectStatusPixels(page, expectedMode) {
         fiveLabels: five.labels,
         threeToFourPixels: delta(three.pixels, four.pixels),
         fourToFivePixels: delta(four.pixels, five.pixels),
-        repeatFivePixels: delta(five.pixels, repeatFive.pixels),
+        repeatFivePixels: delta(five.statusLayer, repeatFive.statusLayer),
         screen: r.screen(e), width: surface.width, height: surface.height,
       };
     } finally {
+      statusArt.statuses = originalStatuses;
       ctx.fillText = originalText;
       z.enemies = before.enemies;
       g.s.heroTarget = before.target;
