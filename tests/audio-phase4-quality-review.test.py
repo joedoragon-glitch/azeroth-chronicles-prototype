@@ -75,7 +75,9 @@ for cue in data["arrangements"]:
             action_counterline_bars += 1
         elif cue["form"][bar] == "H":
             assert kind in ("heritage", "interior-heritage")
-            assert notes and not (theme and kind != "heritage")
+            # An inherited authored rest can legitimately have no lead
+            # notes even when the arrangement preserves its H slot.
+            assert not (theme and kind != "heritage")
             heritage_bars += 1
         elif cue["form"][bar] == "R":
             assert not notes and kind == "rest"
