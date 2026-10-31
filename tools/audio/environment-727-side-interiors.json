@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 4 of #727: three lore-specific side interiors source-authored ambient studio previews",
-  "status": "SOURCE PROBE IN PROGRESS: existing four physical sources independently pinned in Stage 3; two newly selected originals still require actual SHA-256/probe. PREVIEWS NOT YET RENDERED/TESTED. No game registration, listening acceptance, merge, publication or device verification.",
+  "status": "SOURCE PROBE PASS 6/6 including two newly verified originals (Action #41235061850); 3 authored 72s encoded previews and strict decoded QA PENDING. No game registration, listening, merge, publication or device verification.",
   "parent": "tools/audio/environment-727-dungeon-studies.json",
   "authority": "#727 Stage 1 canon and source palette; src/prototype/rules.js side-dungeon lore, docs/SIDE_DUNGEON_DESIGN_DISCUSSION_20261021.md (ideas NOT implemented), docs/AUDIO_ENVIRONMENT.md and AUDIO_AUTHORING.md",
   "hardConstraints": {
@@ -28,8 +28,8 @@
       "cautions": "Original is an Adelaide outdoor field, not a castle/estate/mineshaft. Distinct sound by enclosure processing and sparse physical occupational cues; if all rooms still sound like the same wind reject/rework.",
       "durationSeconds": 256.803333,
       "codec": "pcm_s24le/48000Hz/stereo",
-      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
-      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
     },
     {
       "id": "interior-low-river",
@@ -46,8 +46,8 @@
       "cautions": "Original has actual river step and frogs/birds; avoid invented archival flood cause, loud waterfall, repeating fauna. Keep original two existing water details.",
       "durationSeconds": 516,
       "codec": "pcm_s16le/48000Hz/stereo",
-      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
-      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
     },
     {
       "id": "mine-workshop-anvil",
@@ -64,8 +64,8 @@
       "cautions": "Real anvil is not rock pick. Keep short, quiet, infrequent; context remains mine/architecture rather than industrial machinery.",
       "durationSeconds": 0.5,
       "codec": "pcm_f32le/44100Hz/mono",
-      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
-      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
     },
     {
       "id": "citadel-equipment-clunk",
@@ -82,8 +82,8 @@
       "cautions": "Metal handling can be too close-mic/modern, must be deeply muted and human-vetted.",
       "durationSeconds": 0.371519,
       "codec": "pcm_s16le/44100Hz/mono",
-      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
-      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
     },
     {
       "id": "cellar-domestic-handling",
@@ -93,11 +93,13 @@
       "evidence": "https://commons.wikimedia.org/wiki/File:Wood_and_cutlery.ogg",
       "url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Wood_and_cutlery.ogg",
       "sha1": "9ca9ab8edadd4671cd67f36ea6ae37365db6d26e",
-      "sha256": null,
+      "sha256": "2af0dfc1e3aeb3334c58c0db73126fa992509bde15902d21efee6485979edbf8",
       "bytes": 57274,
       "maxBytes": 70000,
       "role": "One sparse muted domestic work gesture in occupied Goblin family cellar",
-      "cautions": "Original is contemporary cutlery/object handling, not a sealed jar. Reject if recognizable as modern tableware or too conspicuous. First pin actual original SHA-256 by independent studio."
+      "cautions": "Original is contemporary cutlery/object handling, not a sealed jar. Reject if recognizable as modern tableware or too conspicuous. First pin actual original SHA-256 by independent studio.",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
     },
     {
       "id": "watchhouse-wetland-swale",
@@ -107,11 +109,13 @@
       "evidence": "https://commons.wikimedia.org/wiki/File:Swale.ogg",
       "url": "https://upload.wikimedia.org/wikipedia/commons/8/84/Swale.ogg",
       "sha1": "4f97748c715d90fda6357073f14a12e68f294d73",
-      "sha256": null,
+      "sha256": "b71def4798508e588229a5f801fefaed9ac51c5dbad224274123c92e6d183fff",
       "bytes": 1092440,
       "maxBytes": 1400000,
       "role": "One short infrequent local water movement at partially flooded Reed Beast dwelling, not a world-wide river bed",
-      "cautions": "31-second original; only one nonrepeating excerpt. Presence of running stream might imply more flow than interior's standing water; reject if too constant/loud."
+      "cautions": "31-second original; only one nonrepeating excerpt. Presence of running stream might imply more flow than interior's standing water; reject if too constant/loud.",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
     }
   ],
   "studies": [
