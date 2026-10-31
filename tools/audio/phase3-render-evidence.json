@@ -1,12 +1,12 @@
 {
   "schemaVersion": 3,
-  "status": "Source/isolated-codec GO; actual audible quality UNVERIFIED; unmerged draft, no live registration",
+  "status": "HISTORICAL: earlier Phase 3 scores' isolated codec validation only; new motif-corrected six-source candidate render not covered by these metrics; musical source REVISE, heard quality UNVERIFIED, Phase 4 BLOCKED",
   "evidenceSource": {
     "ciRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41175260693",
     "testedCommit": "cc69e2aa4747a94ccbfffad91b80a0a2d143da95",
     "jobId": 124461391040,
     "source": "PHASE3_INTERNAL_METRICS from successful focused GitHub Actions log",
-    "notes": "This archive records the exact passed source-producing commit. Subsequent docs/evidence commits must pass their own CI separately."
+    "notes": "These metrics and MP3 hashes apply ONLY to score source cc69e2aa, superseded by six corrected heritage motifs on 31 Oct 2026. Never use these hashes as current candidate proof; a separately captured corrected CI render is required."
   },
   "scope": {
     "basePrimaryThemes": 8,
@@ -205,9 +205,9 @@
     "totalEightPreviewBytes": 3690064
   },
   "review": {
-    "sourceDesign": "GO: every base cue canonical context, deliberate original-hook mapping, written distinct harmony/phrases/textures, source melodic leap safeguard",
-    "isolatedTechnical": "GO: eight MP3s actually synthesized/decoded, valid loop samples/no clipping/per-file sizes/32 MiB eight-only projection, Crown disk hashes unchanged",
-    "audibleQuality": "UNVERIFIED: no actual aural comparison, timbre approval, warning masking, two-loop fatigue, in-game listener judgement",
+    "sourceDesign": "SUPERSEDED / REVISE: first-generation source-quality GO withdrawn; six opening score identities now modified and all eight still require critical musical/source/timbral review",
+    "isolatedTechnical": "HISTORICALLY PASSED: eight old-source MP3s; this does not validate the revised six-source render, and the 32 MiB projection is historical after live dev.242 #712",
+    "audibleQuality": "UNVERIFIED: no real timbre, phrase, warning masking or fatigue audition; Phase 4 BLOCKED",
     "runtimeIntegration": "NOT TESTED: no production manifest edits, browser crossfade/cache (#699 in Phase 7), devices or PWA",
     "mergeAndDeployment": "NOT PERFORMED: PR remains draft"
   }
