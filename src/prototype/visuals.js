@@ -17199,7 +17199,16 @@
         craftedDefense();
       } else if (e.structure === 'pillar') {
         if (e.householdPartition) {
-          // Worn masonry and a low return wall describe an alcove, not another temple colonnade.
+          // Side-dungeon alcoves share stable, nonblocking pillar geometry,
+          // but material, wear and surface repair reveal who uses them now.
+          const finishes = {
+            cellar: ['#8d7965', '#bba185', '#57493d', '#725e4e'],
+            flooded: ['#6c8882', '#9cb3a6', '#405f5b', '#58756f'],
+            keep: ['#828378', '#b5b4a3', '#50534c', '#66685e'],
+            shrine: ['#816b62', '#b49a87', '#58433c', '#71574d'],
+            foundry: ['#5b555c', '#858087', '#34323c', '#48434a'],
+          };
+          const finish = finishes[e.householdPartition] || finishes.keep;
           softPoly(
             [
               [-23, 11],
@@ -17209,7 +17218,7 @@
               [22, -6],
               [22, 14],
             ],
-            '#8a8f7f',
+            finish[0],
             5,
           );
           softPoly(
@@ -17219,7 +17228,7 @@
               [14, -23],
               [7, -12],
             ],
-            '#a7ae97',
+            finish[1],
             4,
           );
           line(
@@ -17228,10 +17237,21 @@
               [-10, 6],
               [9, 10],
             ],
-            '#626c60',
+            finish[2],
             1.5,
           );
-          oval(0, 14, 26, 5, '#777d69');
+          // A single old seam or use-mark; keep the silhouette clean at 150%.
+          if (e.householdPartition === 'cellar')
+            line([[-13, -6], [0, -4], [12, -6]], '#c6a07a', 1.2);
+          else if (e.householdPartition === 'flooded')
+            line([[-14, 4], [0, 6], [13, 3]], '#95ada2', 1.5);
+          else if (e.householdPartition === 'keep')
+            line([[-13, -7], [1, -5], [14, -6]], '#444c49', 1.3);
+          else if (e.householdPartition === 'shrine')
+            line([[-11, -7], [-2, -2], [9, -3]], '#cab49d', 1.2);
+          else if (e.householdPartition === 'foundry')
+            line([[-14, -4], [12, -6]], '#393740', 2);
+          oval(0, 14, 26, 5, finish[3]);
         } else {
           rect(-13, -44, 26, 58, '#9ca49a');
           poly(
@@ -18324,6 +18344,13 @@
     mine: ['#44433b', '#524f43', '#39382f', '#ada88c'],
     abyss: ['#44373b', '#544349', '#382f34', '#c09a89'],
     citadel: ['#3b414b', '#494f59', '#303640', '#abb3b5'],
+    // Five inhabited side interiors use deliberately distinct local materials.
+    // These palettes do not change collision, lighting or game-world state.
+    'side-vale-cellars': ['#5b5144', '#665847', '#484139', '#c9ac7c'],
+    'side-march-watchhouse': ['#455c5b', '#506765', '#384d4e', '#a6c1b6'],
+    'side-highlands-signal': ['#68665b', '#767467', '#55534c', '#c4b99e'],
+    'side-frontier-shrine': ['#594943', '#68554d', '#493b39', '#c3a08a'],
+    'side-crown-foundry': ['#3e3b44', '#4a444b', '#302e36', '#9c8b83'],
   };
   const treasuryFloors = {
     'supply-vale': ['#514735', '#5e523c', '#433b2e', '#bca978'],
@@ -18356,6 +18383,57 @@
       ctx.fill();
     };
     if (room || dungeonId) {
+      // Worn material marks, not symbols or invented history. Each texture
+      // follows a known use: cellar stone/wood, tidal masonry, dry signal
+      // keep, maintained old shrine and working soot-darkened foundry.
+      // The small marks sit under actors and hazard telegraphs on 80px tiles.
+      if (String(dungeonId).startsWith('side-')) {
+        ctx.globalAlpha = 0.68;
+        if (dungeonId === 'side-vale-cellars') {
+          if (k < 4) {
+            line(x - 13, y - 2, x - 5, y - 4, '#c6a57a', 1.2);
+            line(x - 4, y - 4, x + 11, y - 2, '#372e2b', 1);
+          } else {
+            dot(x - 3, y, 1.5, '#8c6a4c');
+            dot(x + 5, y + 1, 1.1, '#c1a179');
+          }
+        } else if (dungeonId === 'side-march-watchhouse') {
+          if (k < 5) {
+            line(x - 12, y + 3, x - 4, y + 1, '#779790', 1);
+            line(x - 4, y + 1, x + 6, y + 3, '#b0c5b4', 1);
+            line(x + 7, y + 3, x + 13, y + 2, '#627f7a', 0.8);
+          } else {
+            dot(x - 6, y, 1.6, '#7c9991');
+            dot(x + 4, y + 3, 1.2, '#9eb7ab');
+          }
+        } else if (dungeonId === 'side-highlands-signal') {
+          if (k < 4) {
+            line(x - 11, y + 4, x - 2, y, '#a39a80', 1.3);
+            line(x - 2, y, x + 12, y + 1, '#44443e', 1.1);
+          } else {
+            dot(x - 5, y + 2, 1.5, '#a7a391');
+            dot(x + 6, y - 1, 1.2, '#4f5246');
+          }
+        } else if (dungeonId === 'side-frontier-shrine') {
+          if (k < 4) {
+            line(x - 12, y + 3, x + 2, y, '#a68d75', 1.15);
+            line(x + 2, y, x + 10, y + 2, '#443630', 0.9);
+          } else {
+            dot(x - 5, y + 1, 1.3, '#9b7868');
+            dot(x + 5, y - 1, 1.1, '#bd9c89');
+          }
+        } else if (dungeonId === 'side-crown-foundry') {
+          if (k < 5) {
+            line(x - 12, y + 3, x - 2, y - 2, '#777078', 1.4);
+            line(x - 2, y - 2, x + 9, y + 1, '#25252d', 1.2);
+          } else {
+            dot(x - 4, y, 1.5, '#a17e68');
+            dot(x + 5, y + 2, 1.1, '#4b4145');
+          }
+        }
+        ctx.restore();
+        return;
+      }
       if (dungeonId === 'supply-crown') {
         if (k < 3) {
           line(x - 10, y + 2, x - 2, y - 4, '#1f1d2455', 1.2);
@@ -18700,7 +18778,7 @@
         ctx.stroke();
       }
     }
-    if (!blocked) groundDetail(ctx, p, seed, region, room, dungeonId, colors, x + 40, y + 40);
+    if (!blocked && (!materials || String(dungeonId).startsWith('side-'))) groundDetail(ctx, p, seed, region, room, dungeonId, colors, x + 40, y + 40);
   }
   // Culling uses logical viewport units, not backing-store pixels.
   function outsideScreen(points, viewport, margin = 0) {
