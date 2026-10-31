@@ -31,6 +31,18 @@ const auditionGraph = [
 ].map((m) => path.resolve(__dirname, '../tools/audio', m[1]));
 const auditionEngine = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/engine.js'));
 assert(auditionEngine > 0);
+const canonicalEngine = inventory.scripts.indexOf('src/prototype/engine.js');
+assert(canonicalEngine >= 0, 'authoritative campaign script inventory must include engine');
+const expectedEntryGraph = inventory.scripts.slice(0, canonicalEngine + 1)
+  .map((file) => path.resolve(__dirname, '..', file));
+// The standalone page must use the identical complete browser graph, not a
+// hand-maintained subset. This detects omitted/duplicate/misordered scripts
+// before any campaign/audio test attempts playback.
+assert.deepEqual(
+  auditionGraph.slice(0, auditionEngine + 1),
+  expectedEntryGraph,
+  'independent listening-room script graph must exactly match the game before Campaign',
+);
 const auditionGreenwood = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/greenwood.js'));
 assert(
   auditionGreenwood > 0 && auditionGreenwood < auditionEngine,

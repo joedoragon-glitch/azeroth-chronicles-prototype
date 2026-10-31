@@ -2,7 +2,7 @@
 
 ## Phase 8 scope audit correction — complete game sound library (31 October 2026)
 
-**Critical dependency defect found and corrected:** the previous minimal standalone Greenwood fix still omitted two newer engine-owned modules (Greenwood Landscape and Greenwood Interiors) and Enemy VFX Events. The redesigned room now loads all three in the same source order as the canonical game entrypoint; its existing campaign-domain VM regression checks this order and executes the entire room graph through Campaign construction. This was an actual source defect, not an assumption of successful browser execution.
+**Critical dependency defect found and corrected:** the previous minimal standalone Greenwood fix still omitted two newer engine-owned modules (Greenwood Landscape and Greenwood Interiors) and Enemy VFX Events. The redesigned room now loads all three in the same source order as the canonical game entrypoint; its existing campaign-domain VM regression now checks **exact parity** with the canonical pre-engine script inventory, rejecting missing, duplicated or reordered scripts, and executes the room graph through Campaign construction. The previous duplicate `enemy-vfx-events.js` script inclusion has also been removed. This was an actual source defect, not an assumption of successful browser execution.
 
 **The initial draft #737 was insufficient:** fixing its standalone script graph and source labels did not deliver proper discovery of the full audio experience. The owner requires music, environmental beds, recorded effects and generated game cues, with a deliberate interface design.
 
