@@ -14,17 +14,31 @@ const copy = (v) => structuredClone(v),
 (async () => {
   validateCatalog(production);
   assert(!runtimeCatalog(production).director.eventGuides);
+  // Four independently recorded, CC0/PD source-proven ambience masters
+  // legitimately are NOT owned by the original procedural source renderer.
+  // This remains a strict catalog provenance check, not a relaxed assertion.
+  const importedEnvironment=new Set([
+    'env-highlands-autumn','env-frontier-recovery',
+    'env-signal-occupied','env-shrine-occupied',
+  ]);
+  assert.equal(importedEnvironment.size,4);
   assert(
-    Object.values(production.assets).every(
-      (a) =>
+    Object.entries(production.assets).every(
+      ([id,a]) =>
         a.generationGuide &&
-        a.managedBy ===
-          (a.kind === 'ambience'
-            ? 'environment-book'
-            : a.kind === 'effect'
-              ? 'sfx-book'
-              : 'score-book'),
+        (importedEnvironment.has(id)
+          ? a.kind==='ambience' && a.creationMethod==='imported-recording' &&
+            a.managedBy===undefined &&
+            a.credits?.author?.includes('SIBDLP') &&
+            a.credits?.license?.includes('CC0')
+          : a.managedBy ===
+              (a.kind === 'ambience'
+                ? 'environment-book'
+                : a.kind === 'effect'
+                  ? 'sfx-book'
+                  : 'score-book')),
     ),
+    'Preserve provenance of all procedural originals plus four source-authored recorded sounds',
   );
   assert(
     Object.keys(production.director.events).every((key) => production.director.eventGuides[key]),
