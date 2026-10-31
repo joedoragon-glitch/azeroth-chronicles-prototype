@@ -322,7 +322,9 @@
       "bars": 14,
       "bpm": 88,
       "groovePalette": "place-highlands",
-      "spacePalette": "place-highlands"
+      "spacePalette": "place-highlands",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "action-frontier",
@@ -523,7 +525,9 @@
       "bars": 14,
       "bpm": 96,
       "groovePalette": "place-mine",
-      "spacePalette": "place-mine"
+      "spacePalette": "place-mine",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "action-abyss",
@@ -572,7 +576,9 @@
       "bars": 16,
       "bpm": 96,
       "groovePalette": "place-abyss",
-      "spacePalette": "place-abyss"
+      "spacePalette": "place-abyss",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "peace-vale",
@@ -709,7 +715,9 @@
       "bars": 14,
       "bpm": 88,
       "groovePalette": "place-highlands",
-      "spacePalette": "place-highlands"
+      "spacePalette": "place-highlands",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "peace-frontier",
@@ -885,7 +893,9 @@
       "bars": 14,
       "bpm": 96,
       "groovePalette": "place-mine",
-      "spacePalette": "place-mine"
+      "spacePalette": "place-mine",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "peace-abyss",
@@ -929,7 +939,9 @@
       "bars": 16,
       "bpm": 96,
       "groovePalette": "place-abyss",
-      "spacePalette": "place-abyss"
+      "spacePalette": "place-abyss",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "night-vale",
@@ -1061,7 +1073,9 @@
       "bars": 14,
       "bpm": 88,
       "groovePalette": "place-highlands",
-      "spacePalette": "place-highlands"
+      "spacePalette": "place-highlands",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "night-frontier",
@@ -1257,7 +1271,9 @@
       "bars": 14,
       "bpm": 88,
       "groovePalette": "place-highlands",
-      "spacePalette": "place-highlands"
+      "spacePalette": "place-highlands",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "settlement-frontier",
@@ -1551,7 +1567,9 @@
       "bars": 12,
       "bpm": 88,
       "groovePalette": "supply-highlands",
-      "spacePalette": "supply-highlands"
+      "spacePalette": "supply-highlands",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "peace-interior-supply-highlands",
@@ -1600,7 +1618,9 @@
       "bars": 12,
       "bpm": 88,
       "groovePalette": "supply-highlands",
-      "spacePalette": "supply-highlands"
+      "spacePalette": "supply-highlands",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "interior-side-vale-cellars",
@@ -1845,7 +1865,9 @@
       "bars": 12,
       "bpm": 88,
       "groovePalette": "side-highlands-signal",
-      "spacePalette": "side-highlands-signal"
+      "spacePalette": "side-highlands-signal",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "peace-interior-side-highlands-signal",
@@ -1894,7 +1916,9 @@
       "bars": 12,
       "bpm": 88,
       "groovePalette": "side-highlands-signal",
-      "spacePalette": "side-highlands-signal"
+      "spacePalette": "side-highlands-signal",
+      "secondaryHornOctave": -12,
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
     },
     {
       "id": "interior-side-frontier-shrine",
@@ -3019,7 +3043,7 @@
       "stageWidth": 0.82
     }
   },
-  "auditNote": "Phase 4 rhythmic gestures and recorded room spaces are composed per regional/interior parent rather than fixed by role; role dynamics retain base-clock compatibility. This is not a hearing claim. Action percussion accents differ by actual region; the base melody is a foreground voice and must not be re-doubled into its additive action layer.",
+  "auditNote": "Phase 4 rhythmic gestures and recorded room spaces are composed per regional/interior parent rather than fixed by role; role dynamics retain base-clock compatibility. This is not a hearing claim. Action percussion accents differ by actual region; the base melody is a foreground voice and must not be re-doubled into its additive action layer. Newly authored, non-heritage horn counterlines in twelve selected regional/interior variants are set a full octave lower as an orchestration choice, rather than stretching sparse high CC0 horn clips five–seven semitones. The parent historic lead does not change.",
   "actionAccents": {
     "place-vale": [
       [
