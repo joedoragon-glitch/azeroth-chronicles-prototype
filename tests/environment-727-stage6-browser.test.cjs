@@ -179,11 +179,11 @@ const server=http.createServer((req,res)=>{
         const attenuation=await page.evaluate(()=>{
           const a=Prototype.audio,s=a.environmentScene,rule=a.environmentCue(s);
           const original=a.environmentVoice.targetGain;
-          a.updateEnvironment({...s,engaged:3,boss:null,peace:false});
+          a.updateEnvironment({...s,engaged:3,nearbyEngaged:3,boss:null,peace:false});
           const combat=a.environmentVoice.targetGain;
-          a.updateEnvironment({...s,engaged:0,boss:{family:'citadel',form:'normal'},peace:false});
+          a.updateEnvironment({...s,engaged:0,nearbyEngaged:0,boss:{family:'citadel',form:'normal'},peace:false});
           const boss=a.environmentVoice.targetGain;
-          a.updateEnvironment({...s,engaged:0,boss:null,peace:true});
+          a.updateEnvironment({...s,engaged:0,nearbyEngaged:0,boss:null,peace:true});
           const peace=a.environmentVoice.targetGain;
           return {bed:a.environmentVoice.id,rule:rule.id,original,combat,boss,peace,
             activeRecordedAmbient:[...a.voices].filter(v=>v.recorded&&v.bus==='ambience').length};
