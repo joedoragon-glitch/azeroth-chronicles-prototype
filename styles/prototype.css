@@ -924,6 +924,7 @@ body.menu-open::before {
   pointer-events: none;
 }
 #developer-companion-monitor {
+  pointer-events: none;
   position: fixed;
   right: 12px;
   top: 35%;
@@ -937,6 +938,7 @@ body.menu-open::before {
   font: 12px/1.5 ui-monospace, monospace;
 }
 #developer-companion-monitor > button {
+  pointer-events: auto;
   display: block;
   width: 100%;
   padding: 8px 10px;

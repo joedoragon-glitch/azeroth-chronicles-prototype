@@ -7636,10 +7636,10 @@
         telemetry.outgoing.dps.toFixed(1);
       const companionRows = game.developerCompanionSnapshot() || [];
       const body = companionRows.length
-        ? companionRows.map((row) => row.name + ' [' + row.type + ' · ' + row.id + ']\\n' +
+        ? companionRows.map((row) => row.name + ' [' + row.type + ' · ' + row.id + ']\n' +
             'Moves: ' + (row.last.map((m) =>
               m.name + ' ' + Math.round(m.damage)).join(' / ') || '—') +
-            '\\n5s DPS: ' + row.dps.toFixed(1)).join('\\n\\n')
+            '\n5s DPS: ' + row.dps.toFixed(1)).join('\n\n')
         : 'No active companions.';
       if (companionMonitorContent.textContent !== body) {
         const previousScroll = companionMonitorContent.scrollTop;

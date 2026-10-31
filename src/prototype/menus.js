@@ -1815,9 +1815,9 @@
       openMenu(
         'Companion · ' + companionIdentityLabel(u),
         role + ' · ' + charmedStatus(u) +
-          '\\nHealth ' + Math.ceil(Math.max(0, u.hp)) + '/' + u.maxHp +
+          '\nHealth ' + Math.ceil(Math.max(0, u.hp)) + '/' + u.maxHp +
           ' · ' + companionMasteryDisplay(u) +
-          '\\nIndividual ID ' + u.id,
+          '\nIndividual ID ' + u.id,
         [
           action('Abilities & mastery', () => {
             if (getGame() !== g || !g.s.party.includes(u)) return back();
@@ -1946,10 +1946,10 @@
       }
       openMenu(
         'Abilities · ' + companionIdentityLabel(u),
-        companionMasteryDisplay(u) + '\\n' +
+        companionMasteryDisplay(u) + '\n' +
           (nextThreshold ? 'Next Mastery at ' + nextThreshold + ' total points.' :
             'Tier III is the maximum.') +
-          '\\nValues are pre-critical estimates. Defenses, buffs and current combat conditions can change actual damage.',
+          '\nValues are pre-critical estimates. Defenses, buffs and current combat conditions can change actual damage.',
         rows.length ? rows : [action('No authored combat abilities', () => {},
           'This individual has no available skill record.', true)],
         back,
