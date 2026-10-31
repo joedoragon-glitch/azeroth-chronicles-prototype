@@ -4,7 +4,7 @@
 
 The owner authorized implementation and merging when ready on 31 October 2026. The original source assessment remains in #748; it was not browser certification. The reproduction base is `5c132a1685feb5a1be1caaa1db5f5f94003cf7e7`, which includes environmental PR #747 after the assessment's earlier #746 baseline.
 
-**Candidate status:** implemented; focused native checks and initial real-composite Chromium samples passed. Final acceptance, integration and publication remain pending. Physical iPhone/Chromebook verification is separate. No gameplay, balance, collision, v4 schema or approved base artwork is replaced.
+**Release status (31 October 2026):** **implemented, tested, merged and published** as `0.9.1+snapshot.dev.250`: [PR #749](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/749), [merged main@5aeee166](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/5aeee166ddc101e0862c0ad36013ff394f6f4f45), [successful Pages deployment #41253804981](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41253804981). The exact PR head `d59ea612950aefc7de1e06f4e4647f584569d554` passed [focused/native regression and offline build #41253446472](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41253446472), [Chromium PWA update/offline #41253446462](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41253446462) and [three-composition Chromium visual acceptance #41253446511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41253446511). Physical iPhone/Chromebook observation and subjective/actual hardware performance are **not device-verified**. No gameplay, balance, collision, v4 save schema or approved base artwork was replaced.
 
 ## Original draw ownership and regression contract
 
@@ -51,7 +51,7 @@ Presentation times are explicit, camera/state/viewport/DPR/zoom are held constan
 
 Focused acceptance consists of the affected original native suites, the bridge/geometry/wildlife regressions, representative composited scenes at 100/150/175% and day/night/effective optimization states, a real application default/fallback smoke, save immutability and reproducible offline packaging. This is a bounded repair acceptance, not a full-game/browser matrix. Unknown future appearance predicates and new Canvas drawing layers must extend this ledger and their owning tests.
 
-**Remaining gate:** finish final-candidate browser/source/performance/build results and source/diff review; merge only after relevant checks pass. Physical-device quality/performance remains unverified until tested on those devices.
+**Gate result:** Final exact-head browser/source/performance/offline-build checks **PASSED**. The 100%-zoom desktop, 175%-zoom phone layout, and 150%-zoom desktop with bounded 1/8/24/48-actor software-GPU probe all passed [the same composited run #41253446511](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41253446511). [Merged-main validation and publication #41253804981](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41253804981) **PASSED**. Recorded browser screenshots/metrics are automated evidence, not physical-device appearance acceptance. The owner's real iPhone/Chromebook observation remains separate.
 
 ## Reviewed source-only fingerprint delta
 
