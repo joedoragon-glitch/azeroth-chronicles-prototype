@@ -25,11 +25,12 @@ const copied=new Map();
 function addAsset(id,folder){
   const item=original.assets[id];
   assert(item && ['music','ambience','effect'].includes(item.kind),'Missing current-game asset '+id);
-  const src=item.src.slice(2);
-  assert(item.src.startsWith('./assets/audio/')&& !src.split('/').includes('..') && /\.mp3$/.test(src));
+  const src=item.src.slice(2),ext=path.extname(src);
+  assert(item.src.startsWith('./assets/audio/') && !src.split('/').includes('..') &&
+    ['.mp3','.wav','.ogg'].includes(ext),'Unexpected original encoded format: '+id);
   const bytes=fs.readFileSync(path.join(root,src));
   assert.equal(SHA(bytes),item.sha256,'Published-reference hash changed: '+id);
-  const rel='audio/'+folder+'/'+id+'.mp3';
+  const rel='audio/'+folder+'/'+id+ext;
   if(!copied.has(rel)){fs.mkdirSync(path.dirname(path.join(target,rel)),{recursive:true});fs.writeFileSync(path.join(target,rel),bytes);copied.set(rel,bytes.length);}
   return {id,src:rel,title:item.title||id,sha256:item.sha256,bytes:bytes.length};
 }
