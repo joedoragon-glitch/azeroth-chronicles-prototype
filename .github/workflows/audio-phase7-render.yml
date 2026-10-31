@@ -61,6 +61,7 @@ jobs:
           node tests/audio-recordings.test.cjs
           node tests/audio-catalog.test.cjs
           node tests/audio-assets.test.cjs
+          node --check tests/audio-phase7-browser.test.cjs
       - name: Publish only validated changes to the same unmerged draft branch
         shell: bash
         run: |
