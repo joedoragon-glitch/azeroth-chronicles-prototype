@@ -87,5 +87,59 @@ class Phase6SourceQuality(unittest.TestCase):
         self.assertIn("unresolved",self.data["commonMotif"]["description"].lower())
 
 
+def verify_exact_render_evidence(metrics, proof):
+    """Independent final-output hashes and decoded facts; reject stale receipts."""
+    tracks = {item["cue"]: item for item in metrics["tracks"]}
+    expected = proof["tracks"]
+    assert set(tracks) == {x["id"] for x in expected} == {"title","defeat","finale"}
+    assert proof["totalPreviewEncodedBytes"] == sum(
+        x["encodedBytes"] for x in tracks.values())
+    assert proof["recordedNoteCalls"] == sum(
+        x["recordedInstrumentNotes"] for x in tracks.values())
+    for item in expected:
+        real = tracks[item["id"]]
+        for left,right in (
+            ("sha256","sha256"), ("bytes","encodedBytes"),
+            ("seconds","seconds"), ("decodedPeak","decodedPeak"),
+            ("decodedRms","decodedRms"), ("decodedSeam","loopEdgeDelta"),
+            ("recordedCalls","recordedInstrumentNotes"),
+            ("allPerformedNotesSha256","performedAllNotesSha256")):
+            assert item[left] == real[right], (
+                item["id"], left, "stale or falsified observed rendering")
+    source = metrics["recordedSourceProvenance"]
+    assert proof["uniqueActualSourceClips"] == source["uniqueSourceSamples"]
+    assert proof["largestAbsoluteSourcePitchShiftSemitones"] == (
+        source["maxSemitonePitchShift"])
+    assert proof["largeFiveOrMoreSemitoneShifts"] == sum(
+        x.get("notes", 0) for x in source["largePitchShifts"])
+    assert proof["currentMusicIdsUnchanged"] == metrics["musicRegistered"]
+    assert proof["frozenCrownPhysicalAssetsVerified"] == metrics["crownFrozen"]
+    assert proof["phase6OnlyReplacementProjectionBytes"] == (
+        metrics["candidateCatalogProjectionBytes"])
+    assert proof["originalCatalogEncodedBytes"] == metrics["currentCatalogBytes"]
+    assert proof["catalogBudgetLimitBytes"] == metrics["budgetCeilingBytes"]
+    assert metrics["heardListeningStatus"].startswith("UNVERIFIED")
+    assert metrics["ownerAcceptance"] == "PHASE 9 ONLY"
+    return True
+
+
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    import sys
+    if len(sys.argv) == 2:
+        metrics = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+        reference = json.loads((ROOT/"tools/audio/phase6-render-evidence.json")
+                              .read_text(encoding="utf-8"))
+        assert verify_exact_render_evidence(metrics, reference)
+        # Deliberately changed independent evidence MUST fail.
+        broken = copy.deepcopy(reference)
+        broken["tracks"][0]["sha256"] = "0" * 64
+        try:
+            verify_exact_render_evidence(metrics, broken)
+        except AssertionError:
+            pass
+        else:
+            raise AssertionError("Stale render-evidence negative fixture passed")
+        print("PASS Phase 6 independent exact MP3 SHA-256, decoded metrics,"
+              " performed full-note hashes and physical Crown provenance")
+    else:
+        unittest.main(verbosity=2)
