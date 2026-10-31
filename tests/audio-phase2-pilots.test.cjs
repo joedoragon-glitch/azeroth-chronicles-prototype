@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const cp = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const read = (p) => JSON.parse(fs.readFileSync(path.join(root, p), 'utf8'));
 const manifest = read('assets/audio/manifest.json');
@@ -76,4 +77,13 @@ for (const family of pilot.families) {
 }
 assert.equal(seen.size, 8);
 assert.equal(structuralSignatures.size, 4);
+// The Python --check path is intentionally stdlib-only: actual Crown disk hashes,
+// recipe schema and Python syntax are exercised by the focused Node test.
+const pythonResult = cp.spawnSync('python3', ['tools/audio/phase2-composer.py', '--check'],
+  { cwd: root, encoding: 'utf8', timeout: 120000 });
+if (pythonResult.error) throw pythonResult.error;
+assert.equal(pythonResult.status, 0,
+  'Python pilot contract check failed: ' + pythonResult.stdout + pythonResult.stderr);
+assert.match(pythonResult.stdout, /83 live IDs, 65 allowed, 18 Crown hashes verified/);
+console.log('PASS Python isolated composer preflight and frozen Crown disk hashes');
 console.log('PASS Phase 2: 4 contrasting structured pilots / 8 stems, 65-ID allowlist, 83 current music IDs, 18 actual frozen Crown recordings + hashes');
