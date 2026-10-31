@@ -52,6 +52,13 @@ async function enterGame(page){
     null,{timeout:180000});
   await page.waitForFunction(()=>document.querySelector('#modal')?.hidden===true);
 }
+async function setOptimizationMode(page,mode) {
+  await page.locator('#menu-button').click();
+  await page.getByRole('button',{name:'Game and settings',exact:true}).click();
+  await page.getByRole('button',{name:'Screen and performance',exact:true}).click();
+  await page.locator('select[aria-label="Optimization Mode"]').selectOption(mode);
+  await page.evaluate(()=>Prototype.closeMenu());
+}
 async function switchPixi(page){
   await page.locator('#menu-button').click();
   await page.getByRole('button',{name:'Game and settings',exact:true}).click();
@@ -134,9 +141,24 @@ async function main(){
     assert.equal(withWraith.phase,'night','Wraith scene must be night');
     const gpu=page.locator('#world-pixi-experimental');
     assert((await gpu.screenshot({path:path.join(out,'marches-wraith-pixi.png')})).length>1024);
+    // The emergency graphics override intentionally enables Optimization
+    // under critical software-GPU load even when Off is the saved preference.
+    // Compare Wraith contribution in one STABLE effective state instead of
+    // confusing a genuine emergency tier transition with missing lighting.
+    await setOptimizationMode(page,'on');
+    await page.waitForFunction(()=>Prototype.experimentalGraphics.backgroundOptimized===true);
+    await page.waitForTimeout(180);
+    const withWraithOn=await page.evaluate(()=>({
+      lights:Prototype.experimentalGraphics.sceneMetrics?.lights,
+      motes:Prototype.experimentalGraphics.sceneMetrics?.atmosphereMotes,
+      optimized:Prototype.experimentalGraphics.backgroundOptimized,
+      optimizationSetting:localStorage.getItem('azeroth-optimization-mode-v1'),
+      wraithCount:Prototype.game.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length
+    }));
+    assert((await gpu.screenshot({path:path.join(out,'marches-wraith-pixi-opt-on.png')})).length>1024);
     await page.evaluate(()=>{
-      const g=Prototype.game;
-      g.zone().enemies=g.zone().enemies.filter(e=>e!==window.__environment708Wraith);
+      const g=Prototype.game, id=window.__environment708Wraith.id;
+      g.zone().enemies=g.zone().enemies.filter(e=>e.id!==id);
     });
     await page.waitForTimeout(240);
     const withoutWraith=await page.evaluate(()=>({
@@ -149,19 +171,25 @@ async function main(){
       sourceCount:Prototype.game.zone().enemies.filter(e=>e.species==='wraith'&&e.hp>0).length
     }));
     assert((await gpu.screenshot({path:path.join(out,'marches-no-wraith-pixi.png')})).length>1024);
-    const result={scene,withWraith,withoutWraith,errors};
+    const result={scene,withWraithOff:withWraith,withWraithOn,withoutWraithOn:withoutWraith,errors};
     fs.writeFileSync(path.join(out,'wraith-lamp-result.json'),JSON.stringify(result,null,2)+'\n');
     console.log('ATMOSPHERE-708-WRAITH-PIXELS '+JSON.stringify(result));
     assert.equal(withoutWraith.mode,'webgl2');
     assert.deepEqual(errors,[], 'No page errors during actual atmosphere painting');
     assert.equal(withWraith.gameSame,true,'GPU transition replaced the live campaign');
     assert.equal(withWraith.wraithAlive,true,'Wraith must still exist before computing GPU light parity');
-    assert.equal(withWraith.optimizationSetting,'off','Off user preference must remain selected');
-    assert.equal(withoutWraith.optimizationSetting,'off','Off preference must persist after Wraith removal');
-    assert.equal(withWraith.lights,withoutWraith.lights+2,
-      'V-01: Pixi must add one radius-64 carried lantern glow and one glass light for a visible Wraith');
-    assert.equal(withWraith.motes,withoutWraith.motes,
-      'The carried lamp must not alter bounded atmospheric motes');
+    assert.equal(withWraith.optimizationSetting,'off','Initial Off preference must be selected');
+    assert.equal(withWraithOn.optimizationSetting,'on','Controlled On preference must persist');
+    assert.equal(withWraithOn.optimized,true);
+    assert.equal(withoutWraith.optimizationSetting,'on','Same On preference must persist after Wraith removal');
+    assert.equal(withoutWraith.optimized,true,'No emergency state transition across compared frames');
+    assert.equal(withWraithOn.wraithCount,withoutWraith.sourceCount+1,
+      'Only the one injected Wraith is removed, leaving native Marches Wraiths intact');
+    assert.equal(withWraithOn.lights,withoutWraith.lights+2,
+      'V-01: Pixi must add one radius-64 Wraith lantern glow and one glass light in matched Optimization On frames');
+    assert.equal(withWraithOn.motes,0);
+    assert.equal(withoutWraith.motes,0,
+      'Optimization On intentionally suppresses optional motes, not carried lamps');
     console.log('PASS #708 actual game Canvas/Pixi Wraith-night screenshot and two GPU lamp nodes');
     await context.close();
   }finally{
