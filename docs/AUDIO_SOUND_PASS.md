@@ -96,6 +96,12 @@ The future Crown work reuses the motif/production vocabulary, reproducible autho
 
 ---
 
+## Phase 2 working contrast, not accepted replacement audio
+
+The new isolated composition source studies four deliberately different contexts before production moves to all 65 included recordings: Greenwood's welcoming outdoor household scale; the Sunken Archive's fragile, urgent knowledge rescue; the inhabited Old Orchard Cellars' domestic refuge under threat; and the Lifebinder's winter-estate craft/old-companion encounter with an independently articulated TRUE escalation. The pilot profiles differ in **form, rests, pulse, chord sequence, instrument interplay, countermelody and melodic-cell transformation**, and use distinct 12- or 16-bar phrasing rather than the former uniform eight bars. The preview score data and compiler are in `tools/audio/phase2-pilots.json` and `tools/audio/phase2-composer.py`, with their safeguard and measurement instructions in [Audio authoring](AUDIO_AUTHORING.md).
+
+**Status:** Phase 2 creative source and toolkit candidate on a separate draft branch; until real preview rendering/decoding and independent acoustic evaluation are recorded, the new arrangements are *not* certified finished music. The current 83 registered tracks are unchanged; the seven future Crown symphonic families (18 existing IDs) remain deferred. Internal studies may use temporary files, but there is no owner listening before Phase 9 and no standalone-room acceptance before Phase 8.
+
 ## The ten principal place identities
 
 **Historical catalog metadata — not the new 65-cue composition mandate.** The Crown/Citadel rows are the 18-ID deferred family and remain playable placeholders. Each row gives the actual **base** cue, its source-derived musical palette, and an earlier creative idea to interpret only where consistent with the 26-family sound bible above. All ten places have separate base/encounter/after-liberation recordings at the same BPM; the related cue IDs are in the next section.
