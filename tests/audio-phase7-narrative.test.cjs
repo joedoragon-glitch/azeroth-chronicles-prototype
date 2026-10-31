@@ -9,6 +9,9 @@ const makeAudio = (campaign) => {
   const a = audio();
   a.enableProduction();
   a.context = a.describe(campaign);
+  a.updateEnvironment = () => {};
+  a.sceneDetails = () => {};
+  a.setRecordedScore = async () => false; // No audio downloads in routing-only regression.
   return a;
 };
 const deliver = (a, campaign) => {
