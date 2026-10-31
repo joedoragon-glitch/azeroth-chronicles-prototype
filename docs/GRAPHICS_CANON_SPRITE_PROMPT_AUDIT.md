@@ -1,3 +1,5 @@
+> **31 October 2026 inventory reconciliation:** The following 231-entry Phase 2A audit is historical. The maintained [sprite catalog](GRAPHICS_CANON_SPRITE_PROMPTS.md) now contains 297 stable decisions (281 potential image prompts, 16 procedural), with the playable fourth hero Rogue/Pícara and all unused/historical sprite identities retained. New image requests follow [official brand identity](BRAND_IDENTITY.md). No artwork generation or activation was authorized by this documentation update.
+
 > **Historical specification — 19 October 2026:** This catalog/plan records an earlier source census or requirement. It is not a present production queue or proof of current coverage. Later decisions and [current reconciliation](NEXT_UPDATE_RECONCILIATION_20261018.md) govern future scope; development is paused. Preserve stable IDs and provenance.
 
 # Current scope supersession

@@ -1,15 +1,19 @@
 /* Recorded audio: verified local fetch, lazy decode and bounded LRU ownership. */
 (function (root) {
   'use strict';
-  const encodedLimit = 8 * 1024 * 1024;
+  // Match scripts/audio-assets.cjs per-file validation; the full package is offline-cached,
+  // while this loader only keeps a bounded window of decoded recordings in RAM.
+  const encodedLimit = 16 * 1024 * 1024;
+  const defaultDecodedBudget = 96 * 1024 * 1024;
+  const maxDecodedBudget = 192 * 1024 * 1024;
   class Assets {
     constructor(ctx, manifest, options = {}) {
       this.ctx = ctx;
       this.manifest = JSON.parse(JSON.stringify(manifest));
       this.fetch = options.fetch || root.fetch.bind(root);
       this.base = new URL(options.baseUrl || './', root.location?.href || 'https://localhost/');
-      this.budget = options.budget ?? 32 * 1024 * 1024;
-      if (!Number.isFinite(this.budget) || this.budget < 1024 || this.budget > 64 * 1024 * 1024)
+      this.budget = options.budget ?? defaultDecodedBudget;
+      if (!Number.isFinite(this.budget) || this.budget < 1024 || this.budget > maxDecodedBudget)
         throw Error('Invalid decoded memory budget');
       this.cache = new Map();
       this.pending = new Map();
