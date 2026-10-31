@@ -171,6 +171,24 @@
           ] || null
         );
       }
+      // A legitimately Charmed ranged monster launches at its unfortified
+      // hostile archetype's effective speed, not its older friendly base speed.
+      // Use live hostile profiles so later balance tuning cannot split them.
+      charmedProjectileFlight(unit) {
+        const profile = this.charmedCompanionProfile(unit);
+        if (!profile || unit.type !== 'archer') return { speed: 450, style: 'arrow' };
+        const species = unit.charmOrigin.species;
+        const nativeSpeed = R.rangedProfiles[species]?.shotSpeed || 260;
+        const stonePace = species === 'goblin' && profile.style === 'stone'
+          ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
+        const speed = nativeSpeed * R.rangedEnemyCombat.projectileMultiplier * stonePace;
+        return {
+          speed,
+          // Preserve each friendly projectile's previous maximum travel budget.
+          life: R.balance.friendlyProjectiles.lifeSeconds * (profile.shotSpeed || nativeSpeed) / speed,
+          style: profile.style || 'arrow',
+        };
+      }
       companionMaxHp(type, level = this.hero.level) {
         const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;
         const base =
