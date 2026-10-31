@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "phase": "Stage 3 of #727: five canon-specific main dungeon recorded-source ambience production studio",
+  "status": "PLANNED SOURCE PROBE; original byte/source SHA pins for several unverified originals; no renders or game registration until real download pinning",
+  "parent": "tools/audio/environment-727-outdoor-expansion.json",
+  "authority": "Issue #727 Stage1 creative brief; docs/AUDIO_ENVIRONMENT.md; docs/ABYSS_AIR_SUPERIORITY_CANON.md and src/prototype rules/data; current manifest",
+  "sources": [
+    {
+      "id": "interior-open-field-wind",
+      "creator": "Thimras",
+      "title": "Park ambiences — genuine open-field wind",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
+      "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
+      "sha256": "5c381856745b4706e7eba55eb9271a61a530e90c05df8126adb2db89ecfa6c5a",
+      "bytes": 73960096,
+      "maxBytes": 85000000,
+      "role": "Authentic physical air for restrained architectural attenuation; never claim recorded inside a dungeon",
+      "cautions": "Original is an Adelaide outdoor field, not a castle/estate/mineshaft. Distinct sound by enclosure processing and sparse physical occupational cues; if all rooms still sound like the same wind reject/rework."
+    },
+    {
+      "id": "interior-low-river",
+      "creator": "Thimras",
+      "title": "Park ambiences — low river over step",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
+      "sha1": "4bd89af752ae34f5d50d52a87de3416afa6e71a9",
+      "sha256": "da0c0c9b1249a83a1611cc116d5737b0864a8db9f45f1ae8dcc079d0f7c0bbbf",
+      "bytes": 99072736,
+      "maxBytes": 112000000,
+      "role": "Distant damp stone/water air for active Sunken Archive, not globally rushing water",
+      "cautions": "Original has actual river step and frogs/birds; avoid invented archival flood cause, loud waterfall, repeating fauna. Keep original two existing water details."
+    },
+    {
+      "id": "old-oak-chair-flex",
+      "creator": "chocoholic",
+      "title": "Creaky wooden swivel chair (old oak)",
+      "license": "public domain — PDSounds original record 544",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Creaky_wooden_swivel_chair.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Creaky_wooden_swivel_chair.ogg",
+      "sha1": null,
+      "sha256": null,
+      "bytes": null,
+      "maxBytes": 125000,
+      "role": "Very rare real timber/furniture handling under occupied unfinished Forest Crypt winter estate",
+      "cautions": "Original is a chair, NOT a timber roof or crypt coffin; reject if it sounds modern or is too recognizable."
+    },
+    {
+      "id": "archival-paper",
+      "creator": "stephan",
+      "title": "Book paper pages assorted — recorded paper handling",
+      "license": "public domain — PDSounds original record 231",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Book_paper_pages_assorted.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/Book_paper_pages_assorted.ogg",
+      "sha1": "cdd0f8c62a767f43d9acbeba9ae214492921bf2f",
+      "sha256": null,
+      "bytes": 2474211,
+      "maxBytes": 2700000,
+      "role": "Sparse rare working paper gestures in Archive and restrained Citadel paperwork",
+      "cautions": "Contains assorted book browsing, crumpling, tearing and ripping; only short suitable physically coherent excerpts allowed; do not imply records being deliberately torn."
+    },
+    {
+      "id": "mine-workshop-anvil",
+      "creator": "VishwaJai",
+      "title": "Blacksmith's Hammer — anvil repair strike",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/blacksmiths-hammer",
+      "url": "https://opengameart.org/sites/default/files/blacksmithhammer.wav",
+      "sha1": null,
+      "sha256": null,
+      "bytes": null,
+      "maxBytes": 200000,
+      "role": "One distant credible metal-repair note for Garun's mine workshop, not a permanently active forge or a Crown Foundry soundscape",
+      "cautions": "Real anvil is not rock pick. Keep short, quiet, infrequent; context remains mine/architecture rather than industrial machinery."
+    },
+    {
+      "id": "aerie-equipment-clank",
+      "creator": "BMacZero (Brian MacIntosh)",
+      "title": "Mechanical Sounds — clank1.wav",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/mechanical-sounds",
+      "url": "https://opengameart.org/sites/default/files/clank1.wav",
+      "sha1": null,
+      "sha256": null,
+      "bytes": null,
+      "maxBytes": 130000,
+      "role": "Rare muted material handling in incomplete dragon-flight equipment workshop; do not imply dragon fleet is deployed",
+      "cautions": "Original physical vs constructed recording method not guaranteed; artist license and original upload must be confirmed. Avoid loud steel modern factory ring."
+    },
+    {
+      "id": "citadel-equipment-clunk",
+      "creator": "BMacZero (Brian MacIntosh)",
+      "title": "Mechanical Sounds — lightclunk1.wav",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/mechanical-sounds",
+      "url": "https://opengameart.org/sites/default/files/lightclunk1.wav",
+      "sha1": null,
+      "sha256": null,
+      "bytes": null,
+      "maxBytes": 110000,
+      "role": "Rare small formal-room equipment movement, not modern industry",
+      "cautions": "Metal handling can be too close-mic/modern, must be deeply muted and human-vetted."
+    },
+    {
+      "id": "bastion-wind-through-building",
+      "creator": "Tvabutzku1234",
+      "title": "Howling wind (source: wind in building)",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Howling_wind.ogg",
+      "sha1": "90958205859310a279d03cd0d77e4d467f4805d5",
+      "sha256": "cc585200603027ca808ab68ab4b381d1a828c55d58f010222f5ff687929d084d",
+      "bytes": 1112243,
+      "maxBytes": 2500000,
+      "role": "Very quiet secondary source of genuinely building-shaped wind for broad vaulted Abyss Bastion",
+      "cautions": "Prior Crown experiment judged potentially haunted. In Bastion too, if air whistles supernaturally or suggests modern HVAC, reject instead of promoting; no dragon noises."
+    }
+  ],
+  "studies": [
+    {
+      "id": "studio-crypt-winter-estate-727",
+      "zone": "Forest Crypt — unfinished occupied winter estate",
+      "sceneId": "crypt",
+      "referenceBed": "env-retreat",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 2,
+      "fieldGain": 0.3,
+      "windGain": 0.23,
+      "highpassHz": 175,
+      "lowpassHz": 1250,
+      "routeGain": 0.3,
+      "room": "sheltered timber and unfinished pale stone",
+      "reflectionMs": [
+        31,
+        73,
+        151
+      ],
+      "reflectionGains": [
+        0.16,
+        0.09,
+        0.035
+      ],
+      "events": [
+        {
+          "source": "old-oak-chair-flex",
+          "at": 47.7,
+          "start": 1.1,
+          "duration": 0.9,
+          "peak": 0.038,
+          "lowpassHz": 1200,
+          "highpassHz": 170
+        }
+      ],
+      "description": "Not a deserted haunted crypt: quiet winter estate construction and the Lifebinder caretaker's inhabited private rooms; short quiet physical wood/furniture gesture once, never a coffin or haunted architectural groan.",
+      "negative": "no ghosts, coffins, permanent crow calls, inhabited crowd, modern machinery"
+    },
+    {
+      "id": "studio-archive-restoration-727",
+      "zone": "Sunken Archive — active preservation effort",
+      "sceneId": "archive",
+      "referenceBed": "env-archive",
+      "mainSource": "interior-low-river",
+      "fieldExcerptStart": 174,
+      "fieldGain": 0.28,
+      "windGain": 0.23,
+      "highpassHz": 185,
+      "lowpassHz": 1500,
+      "routeGain": 0.33,
+      "room": "damp masonry with shallow intermittent wet presence",
+      "reflectionMs": [
+        54,
+        119,
+        235
+      ],
+      "reflectionGains": [
+        0.13,
+        0.07,
+        0.025
+      ],
+      "events": [
+        {
+          "source": "archival-paper",
+          "at": 43.3,
+          "start": 4.1,
+          "duration": 0.58,
+          "peak": 0.026,
+          "lowpassHz": 1550,
+          "highpassHz": 210
+        }
+      ],
+      "description": "Active effort to save books/records amid water, physically enclosed; one distant paper touch that should not sound like ripping or shredding; existing subtle water director details preserved. Do not invent flood cause.",
+      "negative": "no permanent waterfall, frenzy of pages, ghosts or unspecified past flood cause"
+    },
+    {
+      "id": "studio-colossus-mine-727",
+      "zone": "Colossus Mine — extraction, architecture workshop and guarded refuge",
+      "sceneId": "mine",
+      "referenceBed": "env-mine",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 83,
+      "fieldGain": 0.34,
+      "windGain": 0.25,
+      "highpassHz": 145,
+      "lowpassHz": 1850,
+      "routeGain": 0.32,
+      "room": "carved rock tunnel ventilation and distant craft bench",
+      "reflectionMs": [
+        77,
+        184,
+        320
+      ],
+      "reflectionGains": [
+        0.14,
+        0.095,
+        0.05
+      ],
+      "events": [
+        {
+          "source": "mine-workshop-anvil",
+          "at": 39.4,
+          "start": 0.13,
+          "duration": 0.48,
+          "peak": 0.029,
+          "lowpassHz": 1750,
+          "highpassHz": 190
+        }
+      ],
+      "description": "Actual silver/copper extraction + Garun architectural gallery/workshop, with guards and wolf kennels as implied rooms but NO wolf barking; occasional subtle human repair material, no industrial work beat.",
+      "negative": "no pneumatic drilling, permanent strikes, factory loop, ghost shouts or wolves"
+    },
+    {
+      "id": "studio-abyss-flight-hall-727",
+      "zone": "Abyss Bastion — unfinished dragon air-force logistics",
+      "sceneId": "abyss",
+      "referenceBed": "env-dragon-hall",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 164,
+      "fieldGain": 0.33,
+      "windGain": 0.2,
+      "highpassHz": 190,
+      "lowpassHz": 1730,
+      "routeGain": 0.29,
+      "room": "high vaulted bastion, ramp/aerie wind",
+      "reflectionMs": [
+        87,
+        207,
+        405
+      ],
+      "reflectionGains": [
+        0.17,
+        0.1,
+        0.06
+      ],
+      "secondarySource": "bastion-wind-through-building",
+      "secondaryExcerptStart": 26,
+      "secondaryGain": 0.1,
+      "secondaryHighpassHz": 190,
+      "secondaryLowpassHz": 950,
+      "events": [
+        {
+          "source": "aerie-equipment-clank",
+          "at": 54.2,
+          "start": 0,
+          "duration": 0.42,
+          "peak": 0.024,
+          "lowpassHz": 1250,
+          "highpassHz": 240
+        }
+      ],
+      "description": "Open-air flight prep leaks into large unfinished stone hall and supplies/aerie logistics. Distinct from mines; no dragons roaring or already-deployed air force.",
+      "negative": "no dragon roars, wings, rituals, factory motors, heroic score timbres"
+    },
+    {
+      "id": "studio-citadel-command-727",
+      "zone": "Citadel of Ashes — functioning formal administration/command",
+      "sceneId": "citadel",
+      "referenceBed": "env-citadel",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 49,
+      "fieldGain": 0.28,
+      "windGain": 0.26,
+      "highpassHz": 220,
+      "lowpassHz": 1730,
+      "routeGain": 0.3,
+      "room": "inward formal masonry room and sparse administrative work",
+      "reflectionMs": [
+        61,
+        137,
+        298
+      ],
+      "reflectionGains": [
+        0.11,
+        0.075,
+        0.025
+      ],
+      "events": [
+        {
+          "source": "archival-paper",
+          "at": 25.2,
+          "start": 27.4,
+          "duration": 0.43,
+          "peak": 0.021,
+          "lowpassHz": 1320,
+          "highpassHz": 250
+        },
+        {
+          "source": "citadel-equipment-clunk",
+          "at": 59.4,
+          "start": 0,
+          "duration": 0.28,
+          "peak": 0.018,
+          "lowpassHz": 1350,
+          "highpassHz": 250
+        }
+      ],
+      "description": "Command/administration, organized material, restrained stone architecture; less bass-dominant than original without global volume change, occasional distant paper/equipment only.",
+      "negative": "no ominous machinery rhythm, permanent wrenches, voice/crowd, lava roar"
+    }
+  ],
+  "hardConstraints": {
+    "seconds": 72,
+    "sampleRate": 32000,
+    "codec": "guarded 128k mono MP3 0.15s boundary guards",
+    "license": "verified original CC0/public domain only; SHA1+SHA256+bytes pinned from actual files before render",
+    "registered": false,
+    "gameplayChanged": false,
+    "artisticApproval": "HOLD",
+    "inGamePlayback": "NOT TESTED",
+    "merged": false,
+    "deployed": false,
+    "deviceVerified": false,
+    "plannedFileDecodedBytesIfAllFiveResident": 46080000,
+    "sceneRouting": "Original 18 rules, 19 locations, 14 original and 4 #711 MP3s unchanged",
+    "regressionScope": "exact five native routes and night/SFX/music preservation; max 5 source-authored studio previews; no runtime registration",
+    "notes": "This is an offline comparative studio, never automatically a shipped replacement. 5x 72s float32 mono buffers ~43.95MiB if all resident, currently 96MiB cache with earlier observed 84.80MiB peak; Stage6 must explicitly solve caching/eviction."
+  },
+  "rejected": [
+    "Generic horror dungeon music or dark drones",
+    "Mystery source of Archive flood",
+    "Permanent dragon roars or deployed flights",
+    "Loud continuous blacksmith/pick/wood work loops",
+    "Modern office/industrial object close-mic timbre in old fantasy structures",
+    "Claimed physical spatialization when game has only scene-level environmental audio"
+  ]
+}
