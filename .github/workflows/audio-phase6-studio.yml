@@ -1,0 +1,40 @@
+name: Phase 6 Narrative Cues Isolated Studio
+on:
+  pull_request:
+    branches: [audio/phase5-boss-true-scores-20261031]
+    paths:
+      - 'tools/audio/phase6-*'
+      - 'tests/audio-phase6-*'
+      - 'docs/AUDIO_PHASE6_CRITICAL_REVIEW.md'
+      - '.github/workflows/audio-phase6-studio.yml'
+  workflow_dispatch:
+jobs:
+  narrative-isolated:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Isolated recorded-source dependencies
+        run: python -m pip install numpy scipy imageio-ffmpeg
+      - name: Shared and Phase 6 negative regressions
+        run: |
+          python tests/audio-score-quality-controls.test.py
+          python tests/audio-phase6-quality.test.py
+          python tools/audio/phase6-compose.py --check
+      - name: Render all three genuinely recorded-source candidates outside repository
+        run: python tools/audio/phase6-compose.py --render "$RUNNER_TEMP/phase6-isolated"
+      - name: Independently validate decoded technical evidence
+        run: |
+          python tools/audio/score-quality-controls.py "$RUNNER_TEMP/phase6-isolated/phase6-metrics.json" --expected-count 3 --layer-count 0 --expected-source tools/audio/phase6-scores.json --expected-list-key cues
+          cp "$RUNNER_TEMP/phase6-isolated/phase6-metrics.json" phase6-metrics.json
+      - name: Preserve metrics only; no playable MP3s or publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase6-isolated-metrics-not-acoustic-acceptance
+          path: phase6-metrics.json
+          retention-days: 14
