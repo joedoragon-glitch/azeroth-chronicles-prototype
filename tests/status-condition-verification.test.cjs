@@ -3,6 +3,11 @@
 const assert = require('node:assert/strict');
 const { createCanvas } = require('@napi-rs/canvas');
 const Campaign = require('../src/prototype/engine.js');
+// Isolated native fixtures must install Rogue as the normal app launcher does.
+if (!Campaign.classes.rogue) {
+  Campaign.classes.rogue = { ...Campaign.rules.rogueHeroFoundation.stats, icon: '🔔' };
+  Campaign.talentProfiles.rogue = { ...Campaign.rules.rogueHeroFoundation.talents };
+}
 const Art = require('../src/prototype/hero-presentation.js');
 
 const WIDTH = 700, HEIGHT = 530;
