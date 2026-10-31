@@ -105,6 +105,13 @@ const server=http.createServer((req,res)=>{
           assert.equal(description.score,x.score);
           await page.waitForFunction(({bed,score})=>{
             const a=Prototype.audio;
+            // In the real game the production/environment schedulers retry
+            // failed transient decodes each frame; continue pumping them while
+            // this test keeps Campaign state deliberately frozen.
+            if(a.ctx?.state==='running'&&a.context){
+              a.updateProduction(a.context);
+              a.updateEnvironment(a.context);
+            }
             return a.ctx?.state==='running'&&a.environmentVoice?.id===bed &&
               a.recordedScore?.id===score;
           },{bed:x.bed,score:x.score},{timeout:35000});
