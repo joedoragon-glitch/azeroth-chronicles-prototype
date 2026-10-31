@@ -227,6 +227,8 @@
             launchX: u.x,
             launchY: u.y,
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, def.name, this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -430,6 +432,8 @@
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -544,6 +548,8 @@
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',

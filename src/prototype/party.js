@@ -1210,6 +1210,8 @@
             speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           return true;
         }
         const hit = this.damage(
@@ -1453,6 +1455,8 @@
             speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
         } else if (this.damage(e, this.troopCriticalDamage(
           criticalReceipt, this.companionBasicAttackDamage(u),
         ), u.id))
@@ -1831,6 +1835,8 @@
               ? { slow: R.companionSkills.veteran.coveringSlow }
               : {}),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Triple Shot', this.s.projectiles.at(-1));
         this.event('projectileLaunch', {
           actor: 'companion',
           role: 'archer',
@@ -1947,6 +1953,8 @@
               companionSkill: 'piercing-volley',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             });
+            if (this.s.mode === 'developer')
+              this.developerCompanionTrackProjectile(u, 'Piercing Volley', this.s.projectiles.at(-1));
             hits++;
           }
         } else {
@@ -2377,6 +2385,8 @@
             slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
               R.balance.companions.mastery.slowSecondsPerTier,
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion', role: 'archer', source: u.id,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
@@ -3973,6 +3983,8 @@
               speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
               style: this.charmedCompanionProfile(u)?.style || 'arrow',
             });
+            if (this.s.mode === 'developer')
+              this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
             this.event('projectileLaunch', {
               actor: 'companion',
               role: 'archer',
@@ -4338,6 +4350,8 @@
                     speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
                     style: this.charmedCompanionProfile(u)?.style || 'arrow',
                   });
+                  if (this.s.mode === 'developer')
+                    this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
                 } else if (this.damage(pursuer, this.troopCriticalDamage(
                   criticalReceipt, this.companionBasicAttackDamage(u),
                 ), u.id))
