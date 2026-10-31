@@ -286,6 +286,8 @@ async function main() {
           /\.(mp3|json)$/.test(new URL(r.url).pathname)).length,
         complete:resources.length};
     });
+    assert.equal(cachedAudio.version,'azeroth-app-v'+require('../package.json').version,
+      'the offline soundtrack must belong to this exact draft build');
     assert.equal(cachedAudio.audio,132, 'all 131 recordings plus manifest should be cached');
     assert(cachedAudio.complete>180,'game must have its offline scripts/assets as well');
     await offlineContext.setOffline(true);
