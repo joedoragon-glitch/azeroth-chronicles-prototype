@@ -116,7 +116,7 @@ def source_contract():
         "performedRhythm": [[round(e[0],3),round(e[2],3)] for e in lead_notes(c)],
         "form": " / ".join(c["arc"]),
         "energy": c["energy"],
-        "harmony": [e[:3] for e in c["events"] if e[6] == "harmonic"]
+        "harmony": [tuple(chord) for chord in c["chords"]]
     } for c in cues]
     assert ctl.guard_not_cloned_contexts(contexts) == 3
     return original, catalog, frozen, data, ctl
