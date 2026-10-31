@@ -1,5 +1,29 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
+## 30 October 2026 — startup update gate
+
+Latest design supersedes the manual update-first launch policy. A simple,
+opaque, noninteractive preflight checks the existing service worker and its
+already-installed waiting build, then checks for updates online. Completed
+updates activate automatically before the main menu, using one silent browser
+refresh to load a coherent version of HTML, JavaScript, styles, and translations.
+Mixing old menu code with newly downloaded assets is not supported.
+
+Only after the preflight is complete does the bilingual title menu become
+interactive. Continue/New Game alone starts scene-specific sprite/material/GPU
+preparation; nothing simulates or overwrites a campaign during update checks.
+The complete previous cached release remains available until installation
+succeeds. An offline device is told that it could not check for updates and
+can play the last installed version. Network failures show a separate message,
+not a false offline claim. A fully cached waiting update can activate offline.
+A bounded timeout cannot lock a player out of the installed version.
+
+The manual update menu action remains available for versions discovered
+during active play; automatic startup activation must never interrupt combat.
+Automated CI evidence, merge, deployment and real-device verification remain
+distinct, with build-generated entry pages and service workers kept in sync.
+
+
 ## 28 October 2026 — background-session title contract, PR #576 (implementation candidate)
 
 **Newer owner decision, superseding this document's historical in-place background-resume requirement:** when the game is actually hidden/minimized while playing, save the validated live campaign and show the existing bilingual title screen. A simple window blur without a hidden document remains an in-place pause. Returning to a visible tab **does not automatically resume combat**; **Continue Adventure / Continuar aventura** explicitly starts sprite/terrain/GPU preparation, validates the ready scene, and only then activates the game. Reuse any surviving GPU textures; if the WebGL context was lost, use Canvas fallback and rebuild behind the loading state. If the tab is hidden during Continue loading, cancel the pending activation instead of launching it on foreground return. A failed save keeps the game paused in memory rather than abandoning progress.
