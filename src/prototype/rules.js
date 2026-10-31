@@ -6930,6 +6930,9 @@
     // Slinger stones should launch decisively without changing attack cadence
     // or the maximum distance a missed hostile shot can travel.
     goblinSlingerProjectileSpeedMultiplier: 2,
+    // Hostile ground baseline also bounds Charmed melee cadence/pursuit parity.
+    enemyOrdinaryMeleeBasicInterval: 1.4,
+    enemyOrdinaryMeleePursuitSpeed: 175,
     // Melee/ordinary enemy awareness keeps its separate historical tuning.
     enemyAcquisitionRangeMultiplier: 1.1,
     // All ordinary and elite basic reach comes from meleeReachTuning.
@@ -7122,12 +7125,14 @@
       // These values do not inherit hostile region/night/elite scaling.
       charmed: {
         goblin: {
-          melee: { hp: 100, damage: 10, armor: 3, speed: 1.14, interval: 0.78, reach: 65 },
-          ranged: { hp: 88, damage: 11, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 240 },
+          // The starting Rogue has no inherited company bonuses in Greenwood.
+          // Modest native HP/power improves early boss contribution.
+          melee: { hp: 112, damage: 12, armor: 3, speed: 1.14, interval: 0.78, reach: 65 },
+          ranged: { hp: 100, damage: 13, armor: 2, speed: 1.1, interval: 1.03, reach: 240, retreat: 120, style: 'stone', shotSpeed: 240 },
         },
         skeleton: {
-          melee: { hp: 114, damage: 12, armor: 5, speed: 0.98, interval: 0.88, reach: 70 },
-          ranged: { hp: 102, damage: 12, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 280 },
+          melee: { hp: 126, damage: 14, armor: 5, speed: 0.98, interval: 0.88, reach: 70 },
+          ranged: { hp: 114, damage: 14, armor: 4, speed: 1, interval: 1, reach: 290, retreat: 155, style: 'arrow', shotSpeed: 280 },
         },
         mireling: {
           melee: { hp: 122, damage: 12, armor: 6, speed: 0.95, interval: 0.96, reach: 72 },
