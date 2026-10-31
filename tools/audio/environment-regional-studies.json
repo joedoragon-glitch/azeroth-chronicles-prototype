@@ -138,7 +138,7 @@
     "sampleRate": 32000,
     "codec": "mono MP3 128kbps guarded 0.15s",
     "audition": "owner final only",
-    "registered": false,
+    "registered": true,
     "artisticAcceptance": "HOLD",
     "merge": false,
     "deploy": false
@@ -197,10 +197,12 @@
     "artisticAcousticHearing": "UNVERIFIED: no actual headphone/physical speaker hearing available",
     "ownerFinalAcceptance": "HOLD; first owner environmental hearing only after separately approved final published playable game/listening room",
     "integratedMusicAndWarnings": "NOT TESTED for the four new unregistered candidate files; current published score signal comparisons only; must test if integrated",
-    "sourceInGame": "NO; all recorded source masters are CI-only artifacts and reproducible studios",
+    "sourceInGame": "YES; four exact MP3 candidates installed as additional independent scene-specific environment IDs on unmerged draft; all 14 original bed files retained",
     "merged": "NO",
     "published": "NO",
-    "deviceVerified": "NO"
+    "deviceVerified": "NO",
+    "playableSourceTesting": "PENDING at integration; CI real-game tests must independently confirm",
+    "integratedSourceHead": "determined by GitHub merge/CI run; script does not claim final acceptance"
   },
   "finalRecordedOutputs": {
     "producingHead": "638071ab5e910493d7d14c38f82f711bc5d6a73c",
