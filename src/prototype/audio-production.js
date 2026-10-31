@@ -204,12 +204,15 @@
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;
         if (spec.custom) return;
-        if (scene.engaged && !scene.peace) this.combatUntil = now + 2.5;
+        // Only nearby combat should raise the secondary action stem. Older
+        // synthetic scene fixtures without proximity still use engaged.
+        const audibleEngaged = scene.nearbyEngaged ?? scene.engaged;
+        if (audibleEngaged && !scene.peace) this.combatUntil = now + 2.5;
         const combat = !scene.peace && now < (this.combatUntil || 0);
         const intensity = scene.boss
           ? spec.stems[1]?.gain || 0
           : combat
-            ? Math.min(0.55, 0.28 + scene.engaged * 0.045)
+            ? Math.min(0.55, 0.28 + audibleEngaged * 0.045)
             : 0;
         const baseGain = spec.stems[0].gain;
         const key = [intensity, baseGain].join(':');
