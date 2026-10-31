@@ -126,6 +126,13 @@ try {
       g.zone().enemies = [foe];
       assert.equal(g.alliedHealCooldownRecoveryMultiplier(), 1,
         'engaged party never earns idle multiplier ' + index);
+      const hostileShot = { source: 'enemy' };
+      g.zone().enemies = [];
+      g.s.projectiles.push(hostileShot);
+      assert.equal(g.alliedHealCooldownRecoveryMultiplier(), 1,
+        'in-flight hostile shot prevents premature idle recovery ' + index);
+      g.s.projectiles.pop();
+      g.zone().enemies = [foe];
       const before = ally[key];
       g.tick(0.05);
       assert(Math.abs(ally[key] - (before - 0.05)) < 1e-6,

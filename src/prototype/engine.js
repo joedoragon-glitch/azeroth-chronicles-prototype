@@ -4459,10 +4459,14 @@
         if (!h.rogueSlow) delete h.rogueSlow;
       }
       const idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier();
+      // Only active, lawful Heal casters receive the idle bonus. A Soldier's
+      // dormant healCd (or any other non-healer's) keeps native Slow recovery.
+      const idleHealers = idleHealRecovery > 1
+        ? new Set(this.healCompanionCasters()) : null;
       for (const u of this.s.party) {
         const recovery = this.cooldownRecoveryElapsed(u, dt);
         if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) -
-          recovery * idleHealRecovery);
+          recovery * (idleHealers?.has(u) ? idleHealRecovery : 1));
         u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
         u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
