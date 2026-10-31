@@ -6,6 +6,13 @@ const assert = require('node:assert/strict'),
 (async () => {
   const f = await fixtures.create(),
     baseUrl = 'https://example.test/game/';
+  const defaults = new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch });
+  assert.equal(defaults.budget, 96 * 1024 * 1024, 'default RAM cache must support larger crossfade layers');
+  assert.equal(new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
+    budget: 192 * 1024 * 1024 }).budget, 192 * 1024 * 1024);
+  assert.throws(() => new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
+    budget: 192 * 1024 * 1024 + 1 }), /decoded memory budget/);
+  defaults.dispose();
   let calls = 0;
   const fetch = async (...args) => {
     calls++;
@@ -78,10 +85,17 @@ const assert = require('node:assert/strict'),
   await assert.rejects(tiny.load('diagnostic-a'), /memory budget/);
   const oversized = new Assets(context(), f.manifest, {
     baseUrl,
-    fetch: async () => new Response('small', { headers: { 'content-length': '9000000' } }),
+    fetch: async () => new Response('small', { headers: { 'content-length': '17000000' } }),
   });
   await assert.rejects(oversized.load('diagnostic-a'), /Encoded/);
-  console.log('PASS hashes, codec retry, local paths, actual duration and encoded/decoded budgets');
+  const expandedHeader = new Assets(context(), f.manifest, {
+    baseUrl,
+    fetch: async () => new Response('small', { headers: { 'content-length': '12582912' } }),
+  });
+  await assert.rejects(expandedHeader.load('diagnostic-a'), /hash mismatch/,
+    '12 MiB recorded file must pass the raised 16 MiB size guard before SHA validation');
+  expandedHeader.dispose();
+  console.log('PASS hashes, codec retry, local paths, actual duration and expanded encoded/decoded budgets');
 
   const a = audio();
   a.cue = { id: 'vale' };
