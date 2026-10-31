@@ -9,18 +9,12 @@ on:
       - 'tools/audio/environment-regional-studies.json'
       - 'tools/audio/environment-regional-studio.py'
       - '.github/workflows/environment-regional-studio.yml'
-  pull_request:
-    paths:
-      - 'tools/audio/environment-regional-studies.json'
-      - 'tools/audio/environment-regional-studio.py'
-      - '.github/workflows/environment-regional-studio.yml'
-
 permissions:
   contents: read
 
 jobs:
   regional-source-studio:
-    name: Physical source provenance and four decoded 72s region/interior previews
+    name: Physical source provenance and four encoded 72s candidate previews
     runs-on: ubuntu-latest
     timeout-minutes: 22
     steps:
@@ -40,7 +34,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: environment-709-four-regional-studio-masters
+          name: environment-709-four-regional-candidate-previews
           path: tools/audio/.environment-regional-preview/
           if-no-files-found: error
           include-hidden-files: true
