@@ -26,6 +26,33 @@ function positionNear(g,e,d=95) {
   }
   throw Error('No legal, native visible attack lane near '+e.name);
 }
+// Authored reachable obstruction, no synthetic walls: reuse the precise
+// collision and route acceptance of the real Campaign. Reconstructed actor
+// positions are labeled; the NPCs, walls, roads and solver remain untouched.
+function reachableObstruction(g,e){
+  const size=g.zoneSize(),origin={x:e.x,y:e.y};
+  const valid=(a,b)=>{
+    if(distance(a,b)<100||distance(a,b)>420||g.blocked(a.x,a.y)||
+       g.blocked(b.x,b.y)||g.clearSegment(a,b))return null;
+    const route=g.route(a,b);
+    return route.length?{a,b,waypoints:route.length}:null;
+  };
+  for(const radius of [180,260,360])for(let n=0;n<24;n++){
+    const t=n*Math.PI/12;
+    const b={x:origin.x+Math.cos(t)*radius,y:origin.y+Math.sin(t)*radius};
+    const v=valid(origin,b);if(v)return v;
+  }
+  let searched=0;
+  for(let y=220;y<size-230;y+=140)for(let x=220;x<size-440;x+=140){
+    for(const [dx,dy] of [[240,0],[0,240],[240,160],[-240,160]]){
+      const a={x,y},b={x:x+dx,y:y+dy};
+      if(g.blocked(a.x,a.y)||g.blocked(b.x,b.y)||g.clearSegment(a,b))continue;
+      if(++searched>24)return null;
+      const v=valid(a,b);if(v)return v;
+    }
+  }
+  return null;
+}
 function observe(g,e,ticks) {
   let probes=0,peak=0,routeCalls=0,elitePlans=0,peakPlanner=0;
   let warn=0,releases=0,maxFollowMotion=0,illegalLegs=0;
@@ -117,8 +144,23 @@ function observe(g,e,ticks) {
   assert.equal(same.hp,trueBoss.hp,'TRUE HP persists across save/restore');
   restored.enter('vale');
   assert.equal(restored.zoneId,'vale','travel retires active navigation context');
+  // The same genuine TRUE actor must navigate while obstructed, not merely
+  // perform close-range attacks in an unobstructed combat lane.
+  g.disengage(trueBoss,1.1);
+  z.enemies=[trueBoss];
+  const obstruction=reachableObstruction(g,trueBoss);
+  assert(obstruction,'TRUE Ridge actor needs a reachable authored obstacle lane');
+  Object.assign(trueBoss,obstruction.a);
+  trueBoss.home={...obstruction.a};
+  Object.assign(g.hero,obstruction.b,{hp:1000000,maxHp:1000000});
+  assert(!g.clearSegment(trueBoss,g.hero),'TRUE pursuit should need terrain routing');
+  assert.notEqual(g.engage(trueBoss,true,false),false);
+  const pursuit=observe(g,trueBoss,120);
+  assert(pursuit.elitePlans>0,'TRUE active boss must use the finite elite planner');
+  assert.equal(pursuit.routeCalls,0,'TRUE active boss must not route synchronously');
   console.log('ISSUE615_TRUE_BOSS '+JSON.stringify({family:'ridge',form:trueBoss.form,
-    nativePending:true,summoned:true,observed:first,v4Restored:true,travel:true}));
+    nativePending:true,summoned:true,observed:first,obstructedPursuit:pursuit,
+    v4Restored:true,travel:true}));
 }
 // Source-authored Treasury and Frontier captains. Cross the real phase
 // thresholds, resolve a warned attack, reset phase and restart a new fight.
@@ -150,8 +192,17 @@ for(const [zone,match,expectedPhase] of [
   restored.hp=restored.maxHp*(profile.phase.threshold-.06);
   assert.notEqual(again.engage(restored,true,false),false);
   assert(again.triggerCaptainPhase(restored),'fresh restored encounter may phase once');
+  const obstacle=reachableObstruction(again,restored);
+  assert(obstacle,zone+' phased captain needs a reachable authored obstacle lane');
+  Object.assign(restored,obstacle.a);
+  restored.home={...obstacle.a};
+  Object.assign(again.hero,obstacle.b,{hp:1000000,maxHp:1000000});
+  assert(!again.clearSegment(restored,again.hero),'phase pursuit must be obstructed');
+  const phasePursuit=observe(again,restored,120);
+  assert(phasePursuit.elitePlans>0,zone+' phased captain must use bounded routing');
+  assert.equal(phasePursuit.routeCalls,0,'no synchronous phase-specific captain route');
   console.log('ISSUE615_CAPTAIN_PHASE '+JSON.stringify({zone,phase:expectedPhase,
-    measured:first,reset:true,v4Restored:true,reengagement:true}));
+    measured:first,obstructedPursuit:phasePursuit,reset:true,v4Restored:true,reengagement:true}));
 }
 // Synthetic sealed ring is an explicit negative geometry, not a claimed
 // authored obstacle. It forces a genuinely unreachable hero using native
