@@ -119,6 +119,94 @@ async function keepPixiTrial(page, phone, checkpoint) {
 // and the PixiJS Canvas-combat overlay. Simulation timing is tested separately.
 // Audit-only real renderer-path status test. Both paths use the real world
 // canvas: opaque full Canvas versus Pixi's transparent Canvas cue overlay.
+// Capture the status-only raster from the real renderer callback, not the
+// ordinary enemy sprites beneath it. This measures 24/25 priority and offscreen
+// selection in BOTH full Canvas and the Pixi Canvas-overlay draw branches.
+async function inspectStatusCrowd(page, expectedMode) {
+  const result = await page.evaluate(() => {
+    const g = Prototype.game, z = g.zone(), r = Prototype.renderer;
+    const art = window.PrototypeHeroPresentation;
+    const before = {
+      enemies: z.enemies, target: g.s.heroTarget,
+      manual: g.manualHeroTargetId, zone: g.manualHeroTargetZone,
+      order: g.hero.order, time: g.s.time,
+    };
+    const original = art.statuses;
+    let raster = null;
+    function diff(a, b) {
+      if (a.length !== b.length) return Infinity;
+      let count = 0;
+      for (let i = 0; i < a.length; i += 4)
+        if (a[i] !== b[i] || a[i + 1] !== b[i + 1] ||
+            a[i + 2] !== b[i + 2] || a[i + 3] !== b[i + 3]) count++;
+      return count;
+    }
+    try {
+      g.s.time = 120; g.s.heroTarget = null;
+      g.manualHeroTargetId = null; g.manualHeroTargetZone = null;
+      g.hero.order = null;
+      const enemies = Array.from({ length: 25 }, (_, i) => {
+        const e = g.makeEnemy({
+          species: 'goblin', name: 'Crowd priority audit', level: 1,
+          hp: 1000, damage: 0, gold: 0, xp: 0,
+        }, {
+          x: g.hero.x + ((i % 5) - 2) * 30,
+          y: g.hero.y + (Math.floor(i / 5) - 2) * 30,
+        });
+        e.returning = 0; e.neutral = false; e.weakenUntil = 125;
+        return e;
+      });
+      art.statuses = function (ctx, project, game, width, height) {
+        const scratch = document.createElement('canvas');
+        scratch.width = Math.ceil(width); scratch.height = Math.ceil(height);
+        const sc = scratch.getContext('2d');
+        original.call(this, sc, project, game, width, height);
+        raster = new Uint8ClampedArray(sc.getImageData(
+          0, 0, scratch.width, scratch.height).data);
+        return original.call(this, ctx, project, game, width, height);
+      };
+      const paint = (members) => {
+        z.enemies = members; raster = null; r.draw();
+        if (!raster) throw Error('Real renderer skipped status callback');
+        return raster;
+      };
+      const twentyFour = paint(enemies.slice(0, 24));
+      const twentyFive = paint(enemies);
+      enemies[24].type = 'boss';
+      const boss = paint(enemies);
+      delete enemies[24].type;
+      g.s.heroTarget = enemies[24].id;
+      const selected = paint(enemies);
+      let visible = 0;
+      for (let i = 3; i < twentyFour.length; i += 4)
+        if (twentyFour[i]) visible++;
+      return {
+        mode: Prototype.experimentalGraphics.mode,
+        visible,
+        ordinaryDelta: diff(twentyFour, twentyFive),
+        bossDelta: diff(twentyFour, boss),
+        selectedDelta: diff(twentyFour, selected),
+      };
+    } finally {
+      art.statuses = original;
+      z.enemies = before.enemies;
+      g.s.heroTarget = before.target;
+      g.manualHeroTargetId = before.manual;
+      g.manualHeroTargetZone = before.zone;
+      g.hero.order = before.order;
+      g.s.time = before.time;
+      r.draw();
+    }
+  });
+  assert.equal(result.mode, expectedMode);
+  assert(result.visible > 0, '24 active statuses must produce real pixels');
+  assert.equal(result.ordinaryDelta, 0, 'Ordinary 25th enemy may not exceed 24-slot budget');
+  assert(result.bossDelta > 0, 'Late boss must displace an ordinary status in actual pixels');
+  assert(result.selectedDelta > 0, 'Late selected target must displace in actual pixels');
+  console.log('PASS real status crowd priority ' + expectedMode + ': ' +
+    JSON.stringify(result));
+}
+
 async function inspectStatusPixels(page, expectedMode) {
   const result = await page.evaluate(() => {
     const g = Prototype.game, r = Prototype.renderer, z = g.zone();
@@ -367,10 +455,12 @@ async function run() {
         await beamPage.waitForFunction(() => document.querySelector('#modal').hidden);
         await inspectMageBeamOverlay(beamPage, 'canvas2d');
         await inspectStatusPixels(beamPage, 'canvas2d');
+        await inspectStatusCrowd(beamPage, 'canvas2d');
         const mageGpu = await selectPixi(beamPage);
         if (mageGpu.mode === 'webgl2') {
           await inspectMageBeamOverlay(beamPage, 'webgl2');
           await inspectStatusPixels(beamPage, 'webgl2');
+          await inspectStatusCrowd(beamPage, 'webgl2');
         } else
           assert(!requireWebGL, 'Mage beam overlay needs the required WebGL2 scene');
       } finally {
