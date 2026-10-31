@@ -339,6 +339,7 @@ function selectTests(changed, exists = (file) => fs.existsSync(path.join(root, f
     // browser smoke. Never select an entire browser matrix by subsystem.
     if (
       file === TEST + 'pixi-renderer-browser.test.cjs' ||
+      file === TEST + 'environment-atmosphere-browser.test.cjs' ||
       file === TEST + 'environment-liquid-motion-browser.test.cjs' ||
       file === TEST + 'status-renderer-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
@@ -406,6 +407,7 @@ function run(
     const statusBrowser = file === TEST + 'status-renderer-browser.test.cjs';
     const narrowBrowser =
       pixiBrowser || statusBrowser ||
+      file === TEST + 'environment-atmosphere-browser.test.cjs' ||
       file === TEST + 'environment-liquid-motion-browser.test.cjs' ||
       file === TEST + 'frame-rate-browser.test.cjs' ||
       file === TEST + 'effect-diagnostics-stage5-browser.test.cjs';
