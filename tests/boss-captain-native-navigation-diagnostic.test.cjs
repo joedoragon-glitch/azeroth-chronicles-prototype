@@ -79,9 +79,9 @@ function measure(label,zone,kind) {
   Object.assign(g.hero,way.b,{hp:100000,maxHp:100000});
   const started=g.engage(e,true,false);
   assert.notEqual(started,false,'native engage must accept '+label);
-  const orig={blocked:g.blocked,route:g.route,follow:g.follow};
+  const orig={blocked:g.blocked,route:g.route,follow:g.follow,advance:g.advanceBudgetedRoute};
   let tickIndex=0,probes=0,inRoute=false;
-  const calls=[],follows=[],ticks=[],states=[];
+  const calls=[],follows=[],ticks=[],states=[],budgeted=[];
   g.blocked=function(...args){probes++;return orig.blocked.apply(this,args)};
   g.route=function(source,target,...rest){
     const before=probes,start=performance.now(),stack=(new Error()).stack?.split('\n').slice(2,7).map(x=>x.trim());
@@ -96,6 +96,13 @@ function measure(label,zone,kind) {
       return path;
     } finally {inRoute=prev;}
   };
+  g.advanceBudgetedRoute=function(a,b,mode,...rest){
+    const before=probes;
+    const result=orig.advance.call(this,a,b,mode,...rest);
+    budgeted.push({tick:tickIndex,mode,probes:probes-before,
+      pending:!!result.pending,pathLength:result.path?.length||0});
+    return result;
+  };
   g.follow=function(actor,target,speed,elapsed,stop,mode){
     if(actor===e)follows.push({tick:tickIndex,phase:tickIndex<120?'active':'return',
       target:xy(target),from:xy(actor),stop,aggro:!!actor.aggro,returning:!!actor.returning,
@@ -104,9 +111,14 @@ function measure(label,zone,kind) {
   };
   const posStart={x:e.x,y:e.y};
   function step() {
-    const before=probes,previous={x:e.x,y:e.y},start=performance.now();
+    const before=probes,previous={x:e.x,y:e.y},
+      patrolIndex=e.captainPatrolIndex,start=performance.now();
     g.tick(dt,{x:0,y:0});
     const used=probes-before;
+    // An incremental frontier is not a failed inspection checkpoint.
+    if(budgeted.some(v=>v.tick===tickIndex&&v.mode==='captain-patrol'&&v.pending))
+      assert.equal(e.captainPatrolIndex,patrolIndex,
+        'field captain may not skip its authored checkpoint while planning');
     ticks.push({index:tickIndex,phase:tickIndex<120?'active':'return',probes:used,
       ms:round(performance.now()-start),moved:round(d(previous,e))});
     states.push({aggro:!!e.aggro,returning:!!e.returning,telegraph:!!e.telegraph,
@@ -147,13 +159,31 @@ function measure(label,zone,kind) {
       returning:states.filter(s=>s.returning).length
     },
     firstRouteTicks:calls.map(v=>v.tick).slice(0,18),
+    budgeted:{calls:budgeted.length,
+      modes:Object.fromEntries([...new Set(budgeted.map(v=>v.mode))].map(mode=>{
+        const items=budgeted.filter(v=>v.mode===mode);
+        return [mode,{calls:items.length,pending:items.filter(v=>v.pending).length,
+          completed:items.filter(v=>!v.pending).length,
+          totalProbes:items.reduce((s,v)=>s+v.probes,0),
+          peakCallProbes:Math.max(...items.map(v=>v.probes))}];
+      }))},
   };
   // Wrappers were observers, not replacement physics.
   assert.equal(ticks.length,240);
   assert.equal(g.zone(),z,'no unexpected zone change');
   assert(states.every(s=>Number.isFinite(s.health)));
+  assert(follows.some(v=>v.aggro),label+' never exercised native active follow');
+  assert(summary.attackStateTicks.telegraph>0,label+' did not exercise native special warnings');
+  // This test is run on the fix candidate. The baseline CI output predates
+  // these assertions and remains the immutable comparison receipt.
+  assert.equal(calls.filter(v=>v.actorId===e.id).length,0,
+    label+' must not invoke an unbounded synchronous route for its actor');
+  assert(budgeted.some(v=>v.mode==='elite-pursuit'),
+    label+' must exercise the independent bounded elite pool');
+  assert(summary.probes.peakTick.probes<4500,
+    label+' retained a multi-thousand-probe route burst');
   console.log('ISSUE615_NATIVE_ACTIVE_TRACE '+JSON.stringify(summary));
-  delete g.route;delete g.blocked;delete g.follow;
+  delete g.route;delete g.blocked;delete g.follow;delete g.advanceBudgetedRoute;
   return summary;
 }
 const results=[
