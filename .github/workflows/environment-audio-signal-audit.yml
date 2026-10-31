@@ -1,0 +1,58 @@
+# Issue #709: isolated physical environmental MP3 integrity/signal QA.
+# This is a draft-branch test workflow ONLY. Never publishes game, music or assets.
+name: Environmental audio 18-file signal QA (NO deploy)
+
+on:
+  pull_request:
+    paths:
+      - 'tests/environment-audio-inventory.test.cjs'
+      - 'tests/environment-audio-phaseA2-acoustic-contrast.test.cjs'
+      - 'tests/environment-audio-phaseA3-signal.test.cjs'
+      - 'tests/environment-audio-phaseA4-levels.test.cjs'
+      - '.github/workflows/environment-audio-signal-audit.yml'
+  push:
+    branches:
+      - 'audit/environment-709-evidence-*'
+    paths:
+      - 'tests/environment-audio-phaseA2-acoustic-contrast.test.cjs'
+      - 'tests/environment-audio-phaseA3-signal.test.cjs'
+      - 'tests/environment-audio-phaseA4-levels.test.cjs'
+      - '.github/workflows/environment-audio-signal-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-mp3-signal:
+    name: Strict 18-MP3 FFmpeg decoding and loudness QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Provide FFmpeg and FFprobe on isolated audio runner
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+          ffprobe -version | head -n 1
+      - name: Install locked tools for focused PWA and routing regressions
+        run: npm ci --ignore-scripts
+      - name: Verify corrected source-routing, generated worker and offline build
+        run: |
+          node tests/environment-audio-audit.test.cjs
+          node tests/environment-audio-inventory.test.cjs
+          node tests/ci-focus-policy.test.cjs
+          node tests/pwa-release-id.test.cjs
+          node scripts/build.cjs --check
+      - name: Analyze all 14 real catalog MP3s (strict, never skip decode)
+        env:
+          REQUIRE_AUDIO_SIGNAL_DECODE: '1'
+        run: node tests/environment-audio-phaseA3-signal.test.cjs
+      - name: Compare actual current music and environmental levels at default game settings
+        run: node tests/environment-audio-phaseA4-levels.test.cjs
+      - name: Compare real beds for spectral homogeneity and temporal variation (not an artistic GO)
+        run: node tests/environment-audio-phaseA2-acoustic-contrast.test.cjs

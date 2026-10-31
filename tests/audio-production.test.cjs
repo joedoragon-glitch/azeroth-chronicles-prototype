@@ -50,7 +50,7 @@ for (const boss of data.bosses) {
 }
 assert.equal(data.bosses.length, 11);
 assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'music').length, 83);
-assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'ambience').length, 14);
+assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'ambience').length, 18);
 for (const zone of Object.keys(production.places)) {
   const interior = zone.startsWith('supply-')
     ? 'treasury'
@@ -108,6 +108,56 @@ assert.equal(steps, 1);
 a.setSceneMix('menu');
 a.enableProduction(false);
 assert.equal(a.mixScene, 'menu');
+// #709 authorial preservation: original sparse night-insect events remain
+// in Vale, Highlands, Frontier and Crown until a *new approved recording*
+// supersedes them. Marches keep their distinct water/night detail. A generic
+// existing cue is a review item, not authorization to erase audible content.
+const detailsAudio = audio();
+detailsAudio.enableProduction();
+detailsAudio.cue = { id: 'vale' };
+let detailEvents = [], detailTones = [];
+detailsAudio.playSoundEvent = (name) => { detailEvents.push(name); return true; };
+detailsAudio.tone = (...args) => { detailTones.push(args); };
+detailsAudio.noiseBurst = () => { throw Error('Unexpected fallback detail'); };
+const expectedDetails = {
+  vale: 'ambience.insects',
+  march: 'ambience.water',
+  highlands: 'ambience.insects',
+  frontier: 'ambience.insects',
+  crown: 'ambience.insects',
+};
+for (const [region, expected] of Object.entries(expectedDetails)) {
+  detailsAudio.ctx.currentTime += 41;
+  detailsAudio.nextSceneDetail = 0;
+  detailEvents = [];
+  detailTones = [];
+  detailsAudio.sceneDetails({
+    zone: region, region, interior: 'outdoors', night: true, peace: false,
+    engaged: 0, boss: null, settlement: null, started: true, situation: 'exploration',
+  });
+  assert.deepEqual(detailEvents, [expected],
+    region + ' nighttime behavior must survive sound-quality work');
+  assert.equal(detailTones.length, region === 'march' ? 1 : 0,
+    region + ' night must retain only its intended detail');
+}
+// No registered insect recording currently exists. Exercise the real
+// three-tone procedural fallback, not only the successful-event stub above.
+detailsAudio.playSoundEvent = (name) => { detailEvents.push(name); return false; };
+for (const region of ['vale', 'highlands', 'frontier', 'crown']) {
+  detailsAudio.ctx.currentTime += 41;
+  detailsAudio.nextSceneDetail = 0;
+  detailEvents = [];
+  detailTones = [];
+  detailsAudio.sceneDetails({
+    zone: region, region, interior: 'outdoors', night: true, peace: false,
+    engaged: 0, boss: null, settlement: null, started: true, situation: 'exploration',
+  });
+  assert.deepEqual(detailEvents, ['ambience.insects'],
+    region + ' original night insect binding must remain available');
+  assert.equal(detailTones.length, 3,
+    region + ' original three sparse chirps must remain as an audible fallback');
+}
+detailsAudio.dispose();
 console.log(
   'PASS 19 place identities, night/refuges/peace, 11 boss/TRUE pairs, synchronized loops, transport-preserving intensity and movement-only footsteps',
 );

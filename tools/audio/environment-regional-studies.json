@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "phase": "regional and inhabited interiors — isolated authoring / owner final hearing deferred",
+  "intent": "Four source-distinct 72-second MP3 studies: Highlands late-autumn natural hardwood ridge; Frontier recoverable open-air grassland with exposed quieter spaces; working Ogre signal shelter; converted Orc barracks. Preserve old 14 MP3 game catalog, 18 environment rules and soundtrack.",
+  "review": "Owner quality benchmark = curated provenance, physical source timbre, scene-specific authorship, adverse decoded-output review, non-overbearing gameplay role, no invented iconic ecology, no unverified hearing approval.",
+  "sources": [
+    {
+      "id": "autumn-leaf-field",
+      "creator": "Wilfredor",
+      "title": "Leaves falling from the trees during autumn in the forest",
+      "license": "CC0 1.0 author dedication",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Leaves_falling_from_the_trees_during_autumn_in_the_forest.wav",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/1/1b/Leaves_falling_from_the_trees_during_autumn_in_the_forest.wav",
+      "sha1": "b10826f1c65d4c1bea131fc93592baf6e4829fe6",
+      "bytes": 121316676,
+      "maxBytes": 123000000,
+      "role": "Continuous genuine temperate autumn forest leaves, highland only, no invented local species",
+      "cautions": "Very large studio source; audible traffic/wind-mic/isolated calls unknown without listening. Do not turn into shared generic all-region bird bed."
+    },
+    {
+      "id": "open-field-wind",
+      "creator": "Thimras",
+      "title": "Park Ambiences — open field, wind",
+      "license": "CC0 as explicitly declared by original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
+      "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
+      "bytes": 73960096,
+      "maxBytes": 85000000,
+      "role": "Real open-field gusts for recovering Frontier, distinct from hardwood",
+      "cautions": "Source address, checksum, portability and acoustic suitability need real studio download before accepting; do not silently use fake fallback."
+    },
+    {
+      "id": "signal-timber",
+      "creator": "stephan",
+      "title": "Creaky Wooden Casket (short object creak)",
+      "license": "Public domain author dedication",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Creaky_wooden_casket.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Creaky_wooden_casket.ogg",
+      "sha1": "d0fcb9a572c27ddf16892c6bd65a52156d1ad0a1",
+      "bytes": 31616,
+      "maxBytes": 40000,
+      "role": "One rare isolated timber-flex reference for Keep",
+      "cautions": "Casket object microphone is not architecture; foreground recognizability would disqualify."
+    },
+    {
+      "id": "barracks-wood",
+      "creator": "thore",
+      "title": "Wood and Cutlery (short domestic material)",
+      "license": "Public domain author dedication",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Wood_and_cutlery.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Wood_and_cutlery.ogg",
+      "sha1": "9ca9ab8edadd4671cd67f36ea6ae37365db6d26e",
+      "bytes": 57274,
+      "maxBytes": 70000,
+      "role": "One quiet inhabited wooden-surface gesture in an occupied barracks",
+      "cautions": "Cutlery clang may sound like a modern kitchen. Reject if timbre too recognizable."
+    }
+  ],
+  "studies": [
+    {
+      "id": "regional-ironroot-autumn",
+      "zone": "Ironroot Highlands outdoors",
+      "region": "highlands",
+      "referenceBed": "env-highland-wind",
+      "mainSource": "autumn-leaf-field",
+      "fieldExcerptStart": 34,
+      "fieldGain": 0.39,
+      "windGain": 0.24,
+      "highpassHz": 110,
+      "lowpassHz": 3400,
+      "routeGain": 0.36,
+      "events": [],
+      "description": "Wind threaded through autumn hardwood canopy: real wood-leaf microtexture; open space not harsh icy barren summit; restrained no coin-clank or bird show."
+    },
+    {
+      "id": "regional-frontier-recovery",
+      "zone": "Ashen Frontier outdoors",
+      "region": "frontier",
+      "referenceBed": "env-frontier-air",
+      "mainSource": "open-field-wind",
+      "fieldExcerptStart": 26,
+      "fieldGain": 0.35,
+      "windGain": 0.31,
+      "highpassHz": 135,
+      "lowpassHz": 2900,
+      "routeGain": 0.36,
+      "events": [],
+      "description": "Dry open fields gradually recovering, quiet wind through grasses, sound of air not eternal smoke/fire, no generic jungle insects."
+    },
+    {
+      "id": "regional-signal-occupied",
+      "zone": "Old Signal Keep interior",
+      "region": "highlands",
+      "referenceBed": "env-cellar",
+      "mainSource": "autumn-leaf-field",
+      "fieldExcerptStart": 48,
+      "fieldGain": 0.105,
+      "windGain": 0.17,
+      "highpassHz": 135,
+      "lowpassHz": 1250,
+      "routeGain": 0.22,
+      "events": [
+        {
+          "source": "signal-timber",
+          "at": 39.1,
+          "peak": 0.056,
+          "lowpassHz": 2400
+        }
+      ],
+      "description": "Genuinely enclosed working Ogre/Crown signal shelter, attenuated recognizable ridge foliage plus sparse soft timber flex, no invented horn/crowd or acoustic emptiness."
+    },
+    {
+      "id": "regional-shrine-occupied",
+      "zone": "Ruined Shrine Barracks interior",
+      "region": "frontier",
+      "referenceBed": "env-retreat",
+      "mainSource": "open-field-wind",
+      "fieldExcerptStart": 41,
+      "fieldGain": 0.115,
+      "windGain": 0.17,
+      "highpassHz": 145,
+      "lowpassHz": 1150,
+      "routeGain": 0.23,
+      "events": [
+        {
+          "source": "barracks-wood",
+          "at": 51.7,
+          "peak": 0.062,
+          "lowpassHz": 2700
+        }
+      ],
+      "description": "Inhabited Orc barracks workspace with outer recovering Frontier air softened by walls, one muted lived-in wooden handling gesture, no invented ritual/army drill loop."
+    }
+  ],
+  "constraints": {
+    "seconds": 72,
+    "sampleRate": 32000,
+    "codec": "mono MP3 128kbps guarded 0.15s",
+    "audition": "owner final only",
+    "registered": true,
+    "artisticAcceptance": "HOLD",
+    "merge": false,
+    "deploy": false
+  },
+  "rejected": [
+    {
+      "name": "Older generic ambient source-wide procedural noise only",
+      "why": "two band-limited noise layers are not a rich believable regional bed"
+    },
+    {
+      "name": "Dry grass burning in a fireplace",
+      "why": "not a general outdoor grass wind, would imply perpetual conflagration in recovering Frontier"
+    },
+    {
+      "name": "Forest footsteps and leaf walks",
+      "why": "could double the player's existing footsteps and imply unseen nearby walker"
+    },
+    {
+      "name": "Modern power tools/mowers",
+      "why": "period and lore mismatch for Ogre mint/Orc barracks"
+    },
+    {
+      "name": "Freesound gated downloads",
+      "why": "source originals require login; not silently scraping authenticated downloads"
+    },
+    {
+      "name": "Rain, crows, crickets, wolves",
+      "why": "no approved permanent fauna/weather additions and can obscure score/warnings"
+    }
+  ],
+  "provenancePilot": {
+    "run": 41206105351,
+    "verified": "Field WAVs downloaded independently and checked: autumn Commons 121316676 bytes SHA1 b10826f1c65d4c1bea131fc93592baf6e4829fe6; OGA wind 73960096 bytes SHA1 b518ae8ad9a5e83f6a1479d3f9190d962af52673. Initial exploratory job intentionally failed closed on unpinned wind; now pinned."
+  },
+  "adversarialQA": {
+    "baselineSourceSHA": "33153e917b2fb857ca9b96d675f04fdabd14a1d5",
+    "originalStudioRun": 41206233312,
+    "originalStudioArtifact": 13044274512,
+    "findings": [
+      "Highland true decoded sample peak .502 at second ~50 and .419 at ~52 despite integrated -32.73 LUFS; too much isolated transient headroom for restrained ambient bed. Apply monotone smooth-knee sample saturation only above .17 amplitude and re-measure encoded audio, not a global ambient bus change.",
+      "Interior recorded field fraction only 7.7% Keep and 15.4% Barracks; original procedural air still dominates while the claim is convincing environmental physical texture. Increase attenuated real field percentage to ~27-32% while leaving physical enclosure filters, route gains and music unchanged.",
+      "Original first/last 1sec RMS differences ~1.5–2.4 dB outdoors, ~0.14–2.29 indoors; source seam sample jumps .0005–.0035. Add decoded first/last RMS gate and sample-peak/true-peak evidence rather than assuming a numerically small boundary jump alone proves loop smoothness."
+    ],
+    "correctionsPlanned": "Two interior source balance numbers revised here, bounded peak knee and stronger independent verification in the renderer. Re-encode and check exact SHA.",
+    "warning": "No human hearing. Source pages describe ecology and licenses; they cannot prove timbral suitability."
+  },
+  "status": {
+    "sourceCurated": "DONE; original creator-license evidence reviewed for all four physical source files",
+    "physicalSourcesPinned": "PASS; all four original WAV/OGG checksums and byte sizes verified at no-deploy CI",
+    "separateScenesAuthored": "Four 72-second regional/occupied-space candidate renders authored; registered game masters unchanged",
+    "encodedOutputs": "PASS at exact audio-producing source 638071ab5e910493d7d14c38f82f711bc5d6a73c",
+    "independentDecodedAudit": "PASS; SHA-256 for all four retained MP3s, ffprobe mono 32kHz 128kbps, 72s active loop, decoded sample peaks/boundary envelope and 24s source-block correlations crosschecked",
+    "truePeakAndClip": "PASS at candidate source; all four actual EBU true peaks <= -12.56 dBTP",
+    "outdoorRealSourceProportion": "72.53% Highland and 56.04% Frontier pre-cross-term source energy; these are engineering contributions not perceptual scene richness",
+    "interiorRealSourceProportion": "27.61% Keep and 31.39% Shrine; risk still synthetic-dominant remaining room sound",
+    "artisticAcousticHearing": "UNVERIFIED: no actual headphone/physical speaker hearing available",
+    "ownerFinalAcceptance": "HOLD; first owner environmental hearing only after separately approved final published playable game/listening room",
+    "integratedMusicAndWarnings": "NOT TESTED for the four new unregistered candidate files; current published score signal comparisons only; must test if integrated",
+    "sourceInGame": "YES; four exact MP3 candidates installed as additional independent scene-specific environment IDs on unmerged draft; all 14 original bed files retained",
+    "merged": "NO",
+    "published": "NO",
+    "deviceVerified": "NO",
+    "playableSourceTesting": "PENDING at integration; CI real-game tests must independently confirm",
+    "integratedSourceHead": "determined by GitHub merge/CI run; script does not claim final acceptance"
+  },
+  "finalRecordedOutputs": {
+    "producingHead": "638071ab5e910493d7d14c38f82f711bc5d6a73c",
+    "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41206964970",
+    "originalArtifactId": 13045400090,
+    "originalArtifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41206964970/artifacts/13045400090",
+    "originalSourceBytesTotal": 195365662,
+    "encodeCodec": "MP3 mono 32000 Hz /128kbps; each one has separate 72s active loop and source/encoded guards",
+    "decodedCacheIfFourResidentBytes": 36864000,
+    "sourceFilesDownloadedOnlyInStudio": true,
+    "candidateFiles": [
+      {
+        "id": "regional-ironroot-autumn",
+        "sha256": "145e9f6b121aa5df8425c98b0261c61b993bfb35a5cae73bb0948e100d3ec261",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -32.74,
+        "sourceReferenceLUFS": -31.16,
+        "truePeakDbTP": -12.56,
+        "decodedPeak": 0.233865,
+        "loopSampleDelta": 0.0030903,
+        "firstVsLast1SecDb": -1.47,
+        "realFieldEnergyShare": 0.72532,
+        "diagnosis": "corrected first-pass .502 sample isolated outlier via smooth limiter; physical autumn leaves dominate but potential mic/wildlife intrusion unverified"
+      },
+      {
+        "id": "regional-frontier-recovery",
+        "sha256": "cbb1bad2e2001de64010c651c398cdc85d2738c29f89d5ad6f3a216117053512",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -34.15,
+        "sourceReferenceLUFS": -33.17,
+        "truePeakDbTP": -14.14,
+        "decodedPeak": 0.195847,
+        "loopSampleDelta": 0.0036455,
+        "firstVsLast1SecDb": -2.437,
+        "realFieldEnergyShare": 0.56038,
+        "diagnosis": "real open-field gusts not authored fire or universal grit, no optional city/animal one-shots"
+      },
+      {
+        "id": "regional-signal-occupied",
+        "sha256": "04cd9a5345feea1dc5a912249a4c6adb80e12db39260a990b569518d62a4b3ca",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -35.02,
+        "sourceReferenceLUFS": -36.1,
+        "truePeakDbTP": -15.72,
+        "decodedPeak": 0.162584,
+        "loopSampleDelta": 0.000296,
+        "firstVsLast1SecDb": -0.217,
+        "realFieldEnergyShare": 0.27614,
+        "recordedObjectRelativeToBedDb": -4.57,
+        "diagnosis": "raises the physical ridge air from prior studio 7.7% to 27.6% with enclosed filtering; still not an accurate recording of occupied Ogre household, timber object source has casket provenance"
+      },
+      {
+        "id": "regional-shrine-occupied",
+        "sha256": "d2aed039e4c7dbcb1b1b3eda188565d2336d00ede4e32b86bc01db42e7f7e037",
+        "bytes": 1158381,
+        "ebuIntegratedLUFS": -36.69,
+        "sourceReferenceLUFS": -35.8,
+        "truePeakDbTP": -16.09,
+        "decodedPeak": 0.156536,
+        "loopSampleDelta": 0.0006657,
+        "firstVsLast1SecDb": 4.011,
+        "realFieldEnergyShare": 0.31395,
+        "recordedObjectRelativeToBedDb": -10.19,
+        "diagnosis": "raises field source presence from 15.4 to 31.4%; first/last 1sec envelope ≈4.01dB borderline, 0.25dB natural-wind tolerance documented rather than falsely claiming audible seamlessness"
+      }
+    ],
+    "independentAudit": {
+      "method": "Downloaded exact artifact ZIP, verified all four SHA256s; independently ffprobe-decoded 32k mono 128kbps, measured 72x1sec envelopes, 24sec pair correlations, peak-second and sample seam. No human hearing.",
+      "sampleBlock24sMaxCorrelation": 0.02003,
+      "correlationsAreNotProofOfTimbre": true,
+      "studioFilesNotRuntimeRegistration": true
+    }
+  }
+}

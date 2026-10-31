@@ -32,10 +32,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 encounter",
+      "title": "Orchard Roads — encounter",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads \u2014 encounter\". Create an additive combat layer for place-vale. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-vale."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — encounter\". Create an additive combat layer for place-vale. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-vale."
     },
     "peace-vale": {
       "kind": "music",
@@ -50,10 +50,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 after liberation",
+      "title": "Orchard Roads — after liberation",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-vale."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-vale."
     },
     "place-march": {
       "kind": "music",
@@ -86,10 +86,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 encounter",
+      "title": "Reedwater — encounter",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater \u2014 encounter\". Create an additive combat layer for place-march. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-march."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — encounter\". Create an additive combat layer for place-march. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-march."
     },
     "peace-march": {
       "kind": "music",
@@ -104,10 +104,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 after liberation",
+      "title": "Reedwater — after liberation",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-march."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-march."
     },
     "place-highlands": {
       "kind": "music",
@@ -140,10 +140,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 encounter",
+      "title": "Payday on the Ridge — encounter",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge \u2014 encounter\". Create an additive combat layer for place-highlands. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-highlands."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — encounter\". Create an additive combat layer for place-highlands. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-highlands."
     },
     "peace-highlands": {
       "kind": "music",
@@ -158,10 +158,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 after liberation",
+      "title": "Payday on the Ridge — after liberation",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-highlands."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-highlands."
     },
     "place-frontier": {
       "kind": "music",
@@ -194,10 +194,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 encounter",
+      "title": "Embers Still Warm — encounter",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm \u2014 encounter\". Create an additive combat layer for place-frontier. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use guitar rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-frontier."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — encounter\". Create an additive combat layer for place-frontier. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use guitar rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-frontier."
     },
     "peace-frontier": {
       "kind": "music",
@@ -212,10 +212,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 after liberation",
+      "title": "Embers Still Warm — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-frontier."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-frontier."
     },
     "place-crown": {
       "kind": "music",
@@ -248,10 +248,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 encounter",
+      "title": "Roads Beneath the Banner — encounter",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner \u2014 encounter\". Create an additive combat layer for place-crown. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use piano rhythmic figures, shaker, tom and frame percussion. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-crown."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — encounter\". Create an additive combat layer for place-crown. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use piano rhythmic figures, shaker, tom and frame percussion. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-crown."
     },
     "peace-crown": {
       "kind": "music",
@@ -266,10 +266,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 after liberation",
+      "title": "Roads Beneath the Banner — after liberation",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-crown."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-crown."
     },
     "place-crypt": {
       "kind": "music",
@@ -302,10 +302,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Unfinished Retreat \u2014 encounter",
+      "title": "The Unfinished Retreat — encounter",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat \u2014 encounter\". Create an additive combat layer for place-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 84 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-crypt."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat — encounter\". Create an additive combat layer for place-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 84 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-crypt."
     },
     "peace-crypt": {
       "kind": "music",
@@ -320,10 +320,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Unfinished Retreat \u2014 after liberation",
+      "title": "The Unfinished Retreat — after liberation",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-crypt."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Unfinished Retreat — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-crypt."
     },
     "place-archive": {
       "kind": "music",
@@ -356,10 +356,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Restoration After Rain \u2014 encounter",
+      "title": "Restoration After Rain — encounter",
       "bpm": 86,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain \u2014 encounter\". Create an additive combat layer for place-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 86 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-archive."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain — encounter\". Create an additive combat layer for place-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use bell rhythmic figures, shaker, tom and frame percussion. 86 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-archive."
     },
     "peace-archive": {
       "kind": "music",
@@ -374,10 +374,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Restoration After Rain \u2014 after liberation",
+      "title": "Restoration After Rain — after liberation",
       "bpm": 86,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 86 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-archive."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Restoration After Rain — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 86 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-archive."
     },
     "place-mine": {
       "kind": "music",
@@ -410,10 +410,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Veins and Old Stone \u2014 encounter",
+      "title": "Veins and Old Stone — encounter",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone \u2014 encounter\". Create an additive combat layer for place-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-mine."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone — encounter\". Create an additive combat layer for place-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use dulcimer rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-mine."
     },
     "peace-mine": {
       "kind": "music",
@@ -428,10 +428,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Veins and Old Stone \u2014 after liberation",
+      "title": "Veins and Old Stone — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-mine."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Veins and Old Stone — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-mine."
     },
     "place-abyss": {
       "kind": "music",
@@ -464,10 +464,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Purple Wings \u2014 encounter",
+      "title": "Purple Wings — encounter",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings \u2014 encounter\". Create an additive combat layer for place-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-abyss."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings — encounter\". Create an additive combat layer for place-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use harp rhythmic figures, shaker, tom and frame percussion. 96 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-abyss."
     },
     "peace-abyss": {
       "kind": "music",
@@ -482,10 +482,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Purple Wings \u2014 after liberation",
+      "title": "Purple Wings — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-abyss."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Purple Wings — after liberation\". A gentler peaceful arrangement with less tension. Use flute lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-abyss."
     },
     "place-citadel": {
       "kind": "music",
@@ -518,10 +518,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Machinery of Rule \u2014 encounter",
+      "title": "The Machinery of Rule — encounter",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Machinery of Rule \u2014 encounter\". Create an additive combat layer for place-citadel. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use piano rhythmic figures, shaker, tom and frame percussion. 88 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-citadel."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Machinery of Rule — encounter\". Create an additive combat layer for place-citadel. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use piano rhythmic figures, shaker, tom and frame percussion. 88 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for action-citadel."
     },
     "peace-citadel": {
       "kind": "music",
@@ -536,10 +536,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Machinery of Rule \u2014 after liberation",
+      "title": "The Machinery of Rule — after liberation",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Machinery of Rule \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-citadel."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Machinery of Rule — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-citadel."
     },
     "interior-supply-vale": {
       "kind": "music",
@@ -734,10 +734,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Thorn Underfoot \u2014 TRUE",
+      "title": "Thorn Underfoot — TRUE",
       "bpm": 116,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thorn Underfoot \u2014 TRUE\". Create an additive combat layer for boss-thorn. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 116 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-thorn-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Thorn Underfoot — TRUE\". Create an additive combat layer for boss-thorn. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 116 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-thorn-true."
     },
     "boss-crypt": {
       "kind": "music",
@@ -770,10 +770,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Keeper of the Summer Keys \u2014 TRUE",
+      "title": "Keeper of the Summer Keys — TRUE",
       "bpm": 104,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Keeper of the Summer Keys \u2014 TRUE\". Create an additive combat layer for boss-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-crypt-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Keeper of the Summer Keys — TRUE\". Create an additive combat layer for boss-crypt. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-crypt-true."
     },
     "boss-mire": {
       "kind": "music",
@@ -806,10 +806,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Teeth Beneath the Reeds \u2014 TRUE",
+      "title": "Teeth Beneath the Reeds — TRUE",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Teeth Beneath the Reeds \u2014 TRUE\". Create an additive combat layer for boss-mire. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mire-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Teeth Beneath the Reeds — TRUE\". Create an additive combat layer for boss-mire. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mire-true."
     },
     "boss-archive": {
       "kind": "music",
@@ -842,10 +842,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Scholar's Hook \u2014 TRUE",
+      "title": "The Scholar's Hook — TRUE",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Scholar's Hook \u2014 TRUE\". Create an additive combat layer for boss-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-archive-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Scholar's Hook — TRUE\". Create an additive combat layer for boss-archive. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, D tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-archive-true."
     },
     "boss-ridge": {
       "kind": "music",
@@ -878,10 +878,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Master of Coin \u2014 TRUE",
+      "title": "Master of Coin — TRUE",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Master of Coin \u2014 TRUE\". Create an additive combat layer for boss-ridge. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-ridge-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Master of Coin — TRUE\". Create an additive combat layer for boss-ridge. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-ridge-true."
     },
     "boss-mine": {
       "kind": "music",
@@ -914,10 +914,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Mountain Remembers \u2014 TRUE",
+      "title": "The Mountain Remembers — TRUE",
       "bpm": 100,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Mountain Remembers \u2014 TRUE\". Create an additive combat layer for boss-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 100 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mine-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Mountain Remembers — TRUE\". Create an additive combat layer for boss-mine. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 100 BPM, 4/4, F tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-mine-true."
     },
     "boss-warlord": {
       "kind": "music",
@@ -950,10 +950,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orders in the Ash \u2014 TRUE",
+      "title": "Orders in the Ash — TRUE",
       "bpm": 120,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orders in the Ash \u2014 TRUE\". Create an additive combat layer for boss-warlord. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 120 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-warlord-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orders in the Ash — TRUE\". Create an additive combat layer for boss-warlord. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 120 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-warlord-true."
     },
     "boss-abyss": {
       "kind": "music",
@@ -986,10 +986,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "His Majesty's Wings \u2014 TRUE",
+      "title": "His Majesty's Wings — TRUE",
       "bpm": 112,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"His Majesty's Wings \u2014 TRUE\". Create an additive combat layer for boss-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 112 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-abyss-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"His Majesty's Wings — TRUE\". Create an additive combat layer for boss-abyss. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 112 BPM, 4/4, G tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-abyss-true."
     },
     "boss-citadel": {
       "kind": "music",
@@ -1022,10 +1022,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Last Watch \u2014 TRUE",
+      "title": "The Last Watch — TRUE",
       "bpm": 108,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Last Watch \u2014 TRUE\". Create an additive combat layer for boss-citadel. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-citadel-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Last Watch — TRUE\". Create an additive combat layer for boss-citadel. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 108 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-citadel-true."
     },
     "boss-cindermaw": {
       "kind": "music",
@@ -1058,10 +1058,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "The Ember Maw \u2014 TRUE",
+      "title": "The Ember Maw — TRUE",
       "bpm": 118,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Ember Maw \u2014 TRUE\". Create an additive combat layer for boss-cindermaw. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 118 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-cindermaw-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"The Ember Maw — TRUE\". Create an additive combat layer for boss-cindermaw. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 118 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-cindermaw-true."
     },
     "boss-darklord": {
       "kind": "music",
@@ -1094,10 +1094,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Crown Without Horizon \u2014 TRUE",
+      "title": "Crown Without Horizon — TRUE",
       "bpm": 104,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Crown Without Horizon \u2014 TRUE\". Create an additive combat layer for boss-darklord. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-darklord-true."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Crown Without Horizon — TRUE\". Create an additive combat layer for boss-darklord. Preserve its tempo, tonal center and chord timing; leave space for the base melody. Use low cello figures and short horn accents, shaker, tom and frame percussion. 104 BPM, 4/4, A tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for boss-darklord-true."
     },
     "title": {
       "kind": "music",
@@ -1166,10 +1166,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Scornfang's Treasury \u2014 after liberation",
+      "title": "Scornfang's Treasury — after liberation",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Scornfang's Treasury \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-vale."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Scornfang's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-vale."
     },
     "peace-interior-supply-march": {
       "kind": "music",
@@ -1184,10 +1184,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Mirejaw's Treasury \u2014 after liberation",
+      "title": "Mirejaw's Treasury — after liberation",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Mirejaw's Treasury \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-march."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Mirejaw's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-march."
     },
     "peace-interior-supply-highlands": {
       "kind": "music",
@@ -1202,10 +1202,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Ridge Tyrant's Treasury \u2014 after liberation",
+      "title": "Ridge Tyrant's Treasury — after liberation",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ridge Tyrant's Treasury \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-highlands."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ridge Tyrant's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-highlands."
     },
     "peace-interior-supply-crown": {
       "kind": "music",
@@ -1220,10 +1220,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Cindermaw's Treasury \u2014 after liberation",
+      "title": "Cindermaw's Treasury — after liberation",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Cindermaw's Treasury \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-crown."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Cindermaw's Treasury — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, F tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-supply-crown."
     },
     "peace-interior-side-vale-cellars": {
       "kind": "music",
@@ -1238,10 +1238,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Old Orchard Cellars \u2014 after liberation",
+      "title": "Old Orchard Cellars — after liberation",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Orchard Cellars \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-vale-cellars."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Orchard Cellars — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-vale-cellars."
     },
     "peace-interior-side-march-watchhouse": {
       "kind": "music",
@@ -1256,10 +1256,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Drowned Watchhouse \u2014 after liberation",
+      "title": "Drowned Watchhouse — after liberation",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Drowned Watchhouse \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-march-watchhouse."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Drowned Watchhouse — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-march-watchhouse."
     },
     "peace-interior-side-highlands-signal": {
       "kind": "music",
@@ -1274,10 +1274,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Old Signal Keep \u2014 after liberation",
+      "title": "Old Signal Keep — after liberation",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Signal Keep \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-highlands-signal."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Old Signal Keep — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-highlands-signal."
     },
     "peace-interior-side-frontier-shrine": {
       "kind": "music",
@@ -1292,10 +1292,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Ruined Shrine \u2014 after liberation",
+      "title": "Ruined Shrine — after liberation",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Shrine \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, E tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-frontier-shrine."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Shrine — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, E tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-frontier-shrine."
     },
     "peace-interior-side-crown-foundry": {
       "kind": "music",
@@ -1310,10 +1310,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Ruined Foundry \u2014 after liberation",
+      "title": "Ruined Foundry — after liberation",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Foundry \u2014 after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-crown-foundry."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Ruined Foundry — after liberation\". A gentler peaceful arrangement with less tension. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for peace-interior-side-crown-foundry."
     },
     "settlement-vale": {
       "kind": "music",
@@ -1328,10 +1328,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 hearths and neighbors",
+      "title": "Orchard Roads — hearths and neighbors",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads \u2014 hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-vale."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-vale."
     },
     "night-vale": {
       "kind": "music",
@@ -1346,10 +1346,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Orchard Roads \u2014 nightfall",
+      "title": "Orchard Roads — nightfall",
       "bpm": 92,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads \u2014 nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-vale."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Orchard Roads — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 92 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-vale."
     },
     "settlement-march": {
       "kind": "music",
@@ -1364,10 +1364,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 hearths and neighbors",
+      "title": "Reedwater — hearths and neighbors",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater \u2014 hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-march."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-march."
     },
     "night-march": {
       "kind": "music",
@@ -1382,10 +1382,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Reedwater \u2014 nightfall",
+      "title": "Reedwater — nightfall",
       "bpm": 82,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater \u2014 nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-march."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Reedwater — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 82 BPM, 4/4, D tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-march."
     },
     "settlement-highlands": {
       "kind": "music",
@@ -1400,10 +1400,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 hearths and neighbors",
+      "title": "Payday on the Ridge — hearths and neighbors",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge \u2014 hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-highlands."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-highlands."
     },
     "night-highlands": {
       "kind": "music",
@@ -1418,10 +1418,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Payday on the Ridge \u2014 nightfall",
+      "title": "Payday on the Ridge — nightfall",
       "bpm": 88,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge \u2014 nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-highlands."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Payday on the Ridge — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 88 BPM, 4/4, G tonal center with mixolydian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-highlands."
     },
     "settlement-frontier": {
       "kind": "music",
@@ -1436,10 +1436,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 hearths and neighbors",
+      "title": "Embers Still Warm — hearths and neighbors",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm \u2014 hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-frontier."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-frontier."
     },
     "night-frontier": {
       "kind": "music",
@@ -1454,10 +1454,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Embers Still Warm \u2014 nightfall",
+      "title": "Embers Still Warm — nightfall",
       "bpm": 96,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm \u2014 nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-frontier."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Embers Still Warm — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 96 BPM, 4/4, A tonal center with dorian harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-frontier."
     },
     "settlement-crown": {
       "kind": "music",
@@ -1472,10 +1472,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 hearths and neighbors",
+      "title": "Roads Beneath the Banner — hearths and neighbors",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner \u2014 hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-crown."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — hearths and neighbors\". A refuge among hearths and neighbors: relaxed piano phrases and plucked accompaniment. Use piano lead, harp arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with major harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for settlement-crown."
     },
     "night-crown": {
       "kind": "music",
@@ -1490,10 +1490,10 @@
         "author": "Azeroth Chronicles original score, composed and rendered for Joel",
         "license": "CC0-1.0"
       },
-      "title": "Roads Beneath the Banner \u2014 nightfall",
+      "title": "Roads Beneath the Banner — nightfall",
       "bpm": 84,
       "managedBy": "score-book",
-      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner \u2014 nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-crown."
+      "generationGuide": "Create an original instrumental fantasy RPG cue titled \"Roads Beneath the Banner — nightfall\". Night exploration: sparse piano phrases, bell arpeggios and quiet string/cello support. Use piano lead, bell arpeggios, soft bowed strings and cello bass. 84 BPM, 4/4, C tonal center with minor harmony. Make a seamless 8-bar musical loop, with a developed phrase, a reply and a returning cadence. Keep dynamics controlled and the mix clear; no vocals. For an exact adjustment, use the melody and harmony recipe in score-book.json for night-crown."
     },
     "env-woodland-day": {
       "kind": "ambience",
@@ -1508,7 +1508,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Woodland \u2014 gentle leaf air",
+      "title": "Woodland — gentle leaf air",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: light wind passing through broad leaves, gently varying air; quiet temperate woodland, without jungle chatter. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1525,7 +1525,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Woodland \u2014 still night air",
+      "title": "Woodland — still night air",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: still woodland night, a soft cool breeze and long quiet spaces. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1542,7 +1542,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Marches \u2014 shallow water and reeds",
+      "title": "Marches — shallow water and reeds",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: gentle shallow water lapping beside reeds, a little airy reed movement; no constant splashing. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1559,7 +1559,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Marches \u2014 quiet night water",
+      "title": "Marches — quiet night water",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: very soft slow marsh water at night, sheltered cool air. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1576,7 +1576,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Highlands \u2014 open mountain air",
+      "title": "Highlands — open mountain air",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: broad gentle mountain wind with slow rises and falls, no storm or harsh whistle. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1593,7 +1593,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Frontier \u2014 dry open air",
+      "title": "Frontier — dry open air",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: dry, spacious frontier air and distant fine grit moving lightly over open ground. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1610,7 +1610,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Crown \u2014 sheltered courtyard",
+      "title": "Crown — sheltered courtyard",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: sheltered air around stone streets and courtyards, faint distant movement without voices or crowd noise. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1627,7 +1627,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Residences \u2014 quiet room",
+      "title": "Residences — quiet room",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: warm quiet interior room air with one barely audible settling timber; no people, furniture clatter or fire without a visible source. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1644,7 +1644,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Crypt \u2014 secluded stone retreat",
+      "title": "Crypt — secluded stone retreat",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: a secluded unfinished private stone retreat, still room air and distant light drafts, no horror drones. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1661,7 +1661,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Archive \u2014 restoration hall water",
+      "title": "Archive — restoration hall water",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: quiet damp stone restoration hall, gentle residual water movement and widely spaced distant tiny drops. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1678,7 +1678,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Mine and foundry \u2014 distant works",
+      "title": "Mine and foundry — distant works",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: sheltered mine ventilation with very faint irregular work vibrations in the distance, no heavy machinery rhythm or loud picks. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1695,7 +1695,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Abyss \u2014 high vaulted air",
+      "title": "Abyss — high vaulted air",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: air moving quietly through a spacious vaulted flight-project hall, without dragon roars, wing flaps or ominous musical tones. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1712,7 +1712,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Citadel \u2014 restrained machinery",
+      "title": "Citadel — restrained machinery",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: low distant irregular mechanical vibration inside a large stone citadel, soft ventilation, no engine drone or clanking loop. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -1729,7 +1729,7 @@
         "author": "Azeroth Chronicles original procedural sound design",
         "license": "CC0-1.0"
       },
-      "title": "Cellars \u2014 sheltered timber room",
+      "title": "Cellars — sheltered timber room",
       "managedBy": "environment-book",
       "generationGuide": "Create a restrained seamless 24-second fantasy environmental bed: quiet cool timber cellar air with an isolated distant gentle wood creak. Soft, distant and spacious; no music, voices, roars, prominent wildlife, rhythmic pulse, thunder or sudden loud events. Leave room for soundtrack, footsteps and combat warnings. Mono-compatible; low peak level, natural loop boundary. This is a reusable creative brief; the original was procedurally synthesized, not generated from a model prompt."
     },
@@ -2302,6 +2302,78 @@
         "id": "sfx-piercing-volley",
         "renderer": "tools/audio/render-sfx.py"
       }
+    },
+    "env-highlands-autumn": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-highlands-autumn.mp3",
+      "duration": 72.36,
+      "sha256": "145e9f6b121aa5df8425c98b0261c61b993bfb35a5cae73bb0948e100d3ec261",
+      "credits": {
+        "author": "Wilfredor (CC0 original field recording); SIBDLP environmental sound design",
+        "license": "CC0-1.0 / public domain"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Ironroot Highlands — autumn hardwood air",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second recorded autumn forest air and hardwood leaves with subdued spatial texture. Original source: Wilfredor, Commons CC0, SHA-1 b10826f1c65d4c1bea131fc93592baf6e4829fe6. Guarded mono MP3, not heard-approved. Keep music, footsteps and warnings legible.",
+      "creativeSource": "Licensed real field recordings, pinned in tools/audio/environment-regional-studies.json; authored mix/encode by environmental studio."
+    },
+    "env-frontier-recovery": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-frontier-recovery.mp3",
+      "duration": 72.36,
+      "sha256": "cbb1bad2e2001de64010c651c398cdc85d2738c29f89d5ad6f3a216117053512",
+      "credits": {
+        "author": "Thimras (CC0 original wind recording); SIBDLP environmental sound design",
+        "license": "CC0-1.0 / public domain"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Ashen Frontier — recovering open fields",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second independently sourced open-field wind in recovering Frontier. Original source: Thimras OpenGameArt CC0, SHA-1 b518ae8ad9a5e83f6a1479d3f9190d962af52673. Not generic constant fire. Guarded mono MP3, not heard-approved.",
+      "creativeSource": "Licensed real field recordings, pinned in tools/audio/environment-regional-studies.json; authored mix/encode by environmental studio."
+    },
+    "env-signal-occupied": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-signal-occupied.mp3",
+      "duration": 72.36,
+      "sha256": "04cd9a5345feea1dc5a912249a4c6adb80e12db39260a990b569518d62a4b3ca",
+      "credits": {
+        "author": "Wilfredor (CC0 forest); stephan (public-domain timber recording); SIBDLP sound design",
+        "license": "CC0-1.0 / public domain"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Old Signal Keep — occupied timber refuge",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second enclosed Old Signal Keep: highland field air filtered as exterior leakage with one rare physical timber object creak. Sources: Wilfredor and stephan; Commons SHA-1 b10826f1c65d4c1bea131fc93592baf6e4829fe6 and d0fcb9a572c27ddf16892c6bd65a52156d1ad0a1. Object origin casket, timbral fit UNHEARD.",
+      "creativeSource": "Licensed real field recordings, pinned in tools/audio/environment-regional-studies.json; authored mix/encode by environmental studio."
+    },
+    "env-shrine-occupied": {
+      "kind": "ambience",
+      "src": "./assets/audio/ambience/env-shrine-occupied.mp3",
+      "duration": 72.36,
+      "sha256": "d2aed039e4c7dbcb1b1b3eda188565d2336d00ede4e32b86bc01db42e7f7e037",
+      "credits": {
+        "author": "Thimras (CC0 field); thore (public-domain wood); SIBDLP sound design",
+        "license": "CC0-1.0 / public domain"
+      },
+      "creationMethod": "imported-recording",
+      "title": "Ruined Shrine Barracks — lived-in shelter",
+      "loop": {
+        "start": 0.15,
+        "end": 72.15
+      },
+      "generationGuide": "72-second enclosed occupied shrine/barracks: Frontier wind filtered through structure, one rare actual wood-and-cutlery recording (possible recognizable utensil risk). Sources: Thimras and thore; SHA-1 b518ae8ad9a5e83f6a1479d3f9190d962af52673 and 9ca9ab8edadd4671cd67f36ea6ae37365db6d26e. First/last 1s RMS boundary about 4.011 dB; listening HOLD.",
+      "creativeSource": "Licensed real field recordings, pinned in tools/audio/environment-regional-studies.json; authored mix/encode by environmental studio."
     }
   },
   "director": {
@@ -3123,7 +3195,7 @@
           "when": {
             "zone": "side-highlands-signal"
           },
-          "asset": "env-highland-wind",
+          "asset": "env-signal-occupied",
           "gain": 0.22,
           "fade": 2.5
         },
@@ -3132,7 +3204,7 @@
           "when": {
             "zone": "side-frontier-shrine"
           },
-          "asset": "env-frontier-air",
+          "asset": "env-shrine-occupied",
           "gain": 0.23,
           "fade": 2.5
         },
@@ -3202,7 +3274,7 @@
             "region": "highlands",
             "interior": "outdoors"
           },
-          "asset": "env-highland-wind",
+          "asset": "env-highlands-autumn",
           "gain": 0.36,
           "fade": 2.5
         },
@@ -3212,7 +3284,7 @@
             "region": "frontier",
             "interior": "outdoors"
           },
-          "asset": "env-frontier-air",
+          "asset": "env-frontier-recovery",
           "gain": 0.36,
           "fade": 2.5
         },
