@@ -43,6 +43,7 @@ jobs:
       - name: Verify corrected source-routing, generated worker and offline build
         run: |
           node tests/environment-audio-audit.test.cjs
+          node tests/ci-focus-policy.test.cjs
           node tests/pwa-release-id.test.cjs
           node scripts/build.cjs --check
       - name: Analyze all 14 real catalog MP3s (strict, never skip decode)
