@@ -154,5 +154,38 @@ verify('Hybrid enemy heal cooldown receives the ordinary Slow hit-time debt', ()
   assert(Math.abs(e.hybridSelfHealCd - expected) < 1e-9,
     'KNOWN DEFECT: hybridSelfHealCd ' + e.hybridSelfHealCd + ' versus expected ' + expected);
 });
+
+// The focused CI entry point must also execute the already established
+// regression contracts. This deliberately leaves production test files untouched.
+const childProcess = require('node:child_process');
+const path = require('node:path');
+const establishedSuites = [
+  'slow-cooldown',
+  'combat-conditions',
+  'combat-trap-sources',
+  'effect-diagnostics-stage3',
+  'effect-diagnostics-stage3-party',
+  'effect-quality-protected-cues',
+  'effect-warning-crowd-fps',
+  'player-conditions-reference',
+  'rogue-all-skills-stacking',
+  'rogue-bard-phase5-repertoire',
+  'rogue-bard-critical-temporal',
+  'pixi-fidelity',
+];
+for (const suite of establishedSuites) verify('existing ' + suite + ' regression', () => {
+  const script = path.join(__dirname, suite + '.test.cjs');
+  const result = childProcess.spawnSync(process.execPath, [script], {
+    cwd: path.resolve(__dirname, '..'),
+    encoding: 'utf8',
+    maxBuffer: 8 * 1024 * 1024,
+    timeout: 180000,
+  });
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
+  assert.equal(result.status, 0, suite + ' failed: ' +
+    (result.error?.message || result.stderr || result.stdout || result.signal));
+});
+
 console.log('STATUS AUDIT RESULT: ' + JSON.stringify(cases));
 if (cases.some(c => c.result === 'FAIL')) process.exitCode = 1;
