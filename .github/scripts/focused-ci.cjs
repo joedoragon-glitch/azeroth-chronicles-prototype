@@ -262,7 +262,7 @@ const groups = [
     // #727 Stage 2–6 source ledgers are the production truth for the isolated
     // preview importer; its own source preflight must not fall through to a
     // generic architecture test.
-    match: /^tools\/audio\/environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies)\.json)$/,
+    match: /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
     tests: [TEST + 'environment-727-stage6-source.test.cjs'],
   },
   {
