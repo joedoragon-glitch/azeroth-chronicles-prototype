@@ -55,6 +55,17 @@ assert(expressions.every(e => e && e.leadGate >= .72 && e.leadGate <= 1 &&
   e.textureJitterMs >= 0 && e.textureJitterMs <= 12));
 assert.equal(new Set(expressions.map(e => JSON.stringify(e))).size, 6,
   'Each new score needs scene-specific expression, not cloned attack/gate timing');
+const explicitScoring = score.themes.filter(t=>!t.pilotFamily);
+assert(explicitScoring.every(t => Object.values(t.textures).flat().every(e =>
+  !['dulcimer','bell'].includes(e[3]))),
+  'Six current regional themes must explicitly select real recorded plucks/chimes');
+for (const t of explicitScoring.filter(t=>t.lead==='horn')) {
+  assert.equal(t.leadRegisterByBar.length,t.bars);
+  assert.deepEqual(t.leadRegisterByBar.slice(0,2),[0,0],
+    'Original heritage opening retains its actual register');
+  assert(t.leadRegisterByBar.some(v=>v===-12) && t.registerRationale.length>90,
+    'Later horn orchestration needs an authored register choice');
+}
 const spaces = score.themes.filter(t=>!t.pilotFamily).map(t=>t.production);
 assert.equal(spaces.length, 6);
 assert.equal(new Set(spaces.map(p=>JSON.stringify(p.earlyReflections))).size, 6,
@@ -72,7 +83,9 @@ for (const t of score.themes.filter((s) => !s.pilotFamily)) {
   for (let bar = 0; bar < t.bars; bar++) {
     for (const [beat, pitch, , accidental = 0] of t.cells[t.phrases[bar]]) {
       notes.push({ when: bar * 4 + beat,
-        midi: t.root + 12 + degree(t.harmony[bar] + pitch, t.mode) + accidental });
+        midi: t.root + (t.lead==='horn'||t.lead==='cello'?0:12) +
+          (t.leadRegisterByBar?.[bar] || 0) +
+          degree(t.harmony[bar] + pitch, t.mode) + accidental });
     }
   }
   notes.sort((a, b) => a.when - b.when);

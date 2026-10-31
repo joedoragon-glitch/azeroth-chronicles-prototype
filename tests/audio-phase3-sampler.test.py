@@ -40,7 +40,8 @@ cases = [
     ("flute", 72), ("horn", 67), ("cello", 69), ("cello", 31),
     ("harp", 55), ("piano", 74), ("guitar", 59),
     ("strings", 62), ("strings", 43), ("dulcimer", 53),
-    ("bell", 69), ("cello", 75), ("horn", 53),
+    ("bell", 69), ("glockenspiel", 69), ("marimba", 53),
+    ("cello", 75), ("horn", 53),
 ]
 rng = np.random.default_rng(20261031)
 for kind, midi in cases:

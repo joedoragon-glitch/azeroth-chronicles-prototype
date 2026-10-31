@@ -92,7 +92,7 @@ function inspect(t, instrument, midi, role, bar) {
     instrument = midi >= 55 ? 'violins' : midi >= 36 ? 'celli' : 'basses';
   else if (instrument === 'dulcimer')
     instrument = 'marimba';
-  else if (instrument === 'bell') {
+  else if (instrument === 'bell' || instrument === 'glockenspiel') {
     instrument = 'glockenspiel';
     while (midi < 79) midi += 12;
   } else if (instrument === 'cello')
@@ -113,7 +113,8 @@ function inspect(t, instrument, midi, role, bar) {
 for (const t of scores.themes.filter(t => !t.pilotFamily)) {
   for (let bar=0; bar<t.bars; bar++) {
     for (const [,d,,alt=0] of t.cells[t.phrases[bar]]) {
-      const register = ['horn','cello'].includes(t.lead) ? 0 : 12;
+      const register = (['horn','cello'].includes(t.lead) ? 0 : 12) +
+        (t.leadRegisterByBar?.[bar] || 0);
       inspect(t, t.lead,
         t.root+register+degree(t.harmony[bar]+d,t.mode)+alt,
         'lead',bar);
@@ -131,8 +132,12 @@ for (const t of scores.themes.filter(t => !t.pilotFamily)) {
 const largeShifts = routedNotes.filter(x=>x.smallestSemitoneShift>=5);
 assert(largeShifts.length > 0,
   'Do not silently convert an outlier-heavy bank into a certified palette');
-assert(aliases.get('dulcimer → marimba') > 0);
-assert(aliases.get('bell → glockenspiel') > 0);
+assert(!aliases.has('dulcimer → marimba'),
+  'The six new scores must own their actual marimba/harp instrument choice');
+assert(!aliases.has('bell → glockenspiel'),
+  'The six new scores must own their actual chime/harp instrument choice');
+assert(routedNotes.some(x=>x.instrument==='marimba'));
+assert(routedNotes.some(x=>x.instrument==='glockenspiel'));
 console.log('PASS source/provenance ONLY: '+count+' pinned CC0 source recordings / '+
   bytes+' encoded bytes, all upstream Git blob hashes match');
 console.log('HOLD: '+routedNotes.length+' six-theme tonal notes checked against the '+

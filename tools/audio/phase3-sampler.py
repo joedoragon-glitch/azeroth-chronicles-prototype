@@ -68,9 +68,10 @@ class RecordedSampler:
         elif kind == "dulcimer":
             # Temporary marimba surrogate, explicitly disclosed in metrics.
             kind = "marimba"
-        elif kind == "bell":
-            # Recorded glockenspiel lives in a higher register than old bell
-            # placeholders. This timbral/octave reinterpretation needs listening.
+        elif kind in ("bell", "glockenspiel"):
+            # Explicit score glockenspiel is written in sounding chime register.
+            # Older bell pilot aliases retain the same octave mapping; no pilot
+            # recordings are modified here.
             kind = "glockenspiel"
             while midi < 79:
                 midi += 12

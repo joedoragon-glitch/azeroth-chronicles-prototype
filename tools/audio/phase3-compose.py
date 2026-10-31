@@ -28,7 +28,7 @@ IDS = (
 PILOT_IDS = {"place-vale": "greenwood-outdoors",
              "place-archive": "archive-rescue"}
 INSTRUMENTS = {"piano", "flute", "harp", "guitar", "dulcimer",
-               "bell", "horn", "cello", "strings"}
+               "bell", "horn", "cello", "strings", "marimba", "glockenspiel"}
 
 
 def source_contract():
@@ -74,6 +74,12 @@ def source_contract():
         bars = t["bars"]
         for k in ("harmony", "phrases", "figures", "energy"):
             assert len(t[k]) == bars, (cue, k)
+        if t["lead"] == "horn":
+            offsets = t.get("leadRegisterByBar")
+            assert offsets and len(offsets) == bars, cue
+            assert offsets[:2] == [0, 0], cue + ": heritage opening must retain its register"
+            assert set(offsets) <= {0, -12}, cue
+            assert len(t.get("registerRationale", "")) >= 90, cue
         assert len(set(t["figures"])) >= 4 and len(t["cells"]) >= 6
         assert max(t["energy"]) - min(t["energy"]) >= .5
         assert all(.25 <= e <= 1.3 for e in t["energy"])
@@ -192,7 +198,8 @@ def render_new(t, renderer):
             emphasis = 1.05 if idx == 0 else .88 if idx == len(phrase)-1 else .96
             # Horn/cello register is actually playable (and sampleable),
             # not an oscillator pretending that brass/cello reaches D6.
-            lead_register = 0 if t["lead"] in ("horn", "cello") else 12
+            lead_register = (0 if t["lead"] in ("horn", "cello") else 12) + (
+                t.get("leadRegisterByBar", [0] * t["bars"])[bar])
             play(bar, at, degree, duration, t["lead"], .114 * emphasis,
                  lead_register, chromatic=accidental, role="lead")
         for at, degree, duration, instrument, gain in t.get("counterpoint", {}).get(str(bar), []):
