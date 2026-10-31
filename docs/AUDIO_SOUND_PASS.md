@@ -1,5 +1,10 @@
 # Soundtrack and sound identity — living creative reference
 
+## Phase 5 authoring update (31 October 2026)
+
+The eight named boss/TRUE families are being newly authored as 16 unregistered source-level candidate cues in `tools/audio/phase5-scores.json` on the Phase 5 branch stacked on #716. [The Phase 5 character-specific critical review](AUDIO_PHASE5_CRITICAL_REVIEW.md) records the substantive score choices, original motifs, a requalified Lifebinder pilot, Q10/13/14, eight additive TRUE roles, and unverified listening risks. The new draft working title for Lifebinder is **Keeper of the Winter Works**; the old published catalog metadata **has not** been renamed. No new acoustic, integration, merge or publication acceptance is claimed by source composition. The 18 Dark Crown recordings stay untouched.
+
+
 > **Current Phase 4 corrective quality checkpoint (31 October 2026):** After the owner challenged the initial codec-only GO, the first 38-track production was independently source-audited. Real defects in pilot harmonic inheritance, duplicate action leads, one-size rhythm/room templates, inhabited-interior lore and a visible Ridge Treasury loop seam were corrected. See the [38-cue Phase 4 critical review](AUDIO_PHASE4_CRITICAL_REVIEW.md). The exact revised *audio-producing* SHA `a9f588c` passed [isolated stereo recording CI #41195837083](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41195837083); 38/38 MP3s decoded, eight additive pairs stayed synchronous, original 18 Dark Crown hashes remained untouched and maximum loop-edge delta fell to 0.00002. This does **not** establish genuinely heard acoustic beauty, long-loop listener fatigue, masking in combat or owner acceptance; those stay UNVERIFIED/Phase 7–9 as appropriate. All audio work remains draft/unmerged/unregistered/unpublished. Earlier Phase 3/4 `BLOCKED` and quick Phase 4 `GO` assertions are historical, superseded source-quality verdicts, not current release permissions.
 
 

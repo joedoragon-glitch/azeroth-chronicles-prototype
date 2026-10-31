@@ -1,0 +1,35 @@
+# Phase 5 — adversarial boss/TRUE source review
+
+**Status:** Authored 16 score candidates on a new Phase 5 draft stacked on the Phase 4 closing head. No rendered or decoded Phase 5 evidence was available at this initial source checkpoint. No listening, source-quality final GO, game registration, merge, deployment or phone certification.
+
+**Contract:** [sound bible](AUDIO_SOUND_PASS.md), [audio authoring](AUDIO_AUTHORING.md), [master issue #673](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/673), and the [Phase 4 corrective review](AUDIO_PHASE4_CRITICAL_REVIEW.md) govern this score. Source is `tools/audio/phase5-scores.json`; isolated renderer is `tools/audio/phase5-compose.py`; negative tests are in `tests/audio-phase5-quality.test.py` and the permanent Phase 4 controls. These are *not* new recorded production assets.
+
+## Character-by-character source critique
+
+| Cue pair | Authored musical argument | TRUE as a character response, not duplicate lead | Open critical listening question |
+| --- | --- | --- | --- |
+| `boss-thorn` / `boss-thorn-true` | Recognizable four-bar original flute hunt followed by staggered stalk, lunge, and deliberate silences with dry guitar. | Cello pursuit answers displace the flute rhythm; soft frame accents only at selected attacks. | Do the flute and bass retain animal menace without becoming cheerful woodland action? |
+| `boss-crypt` / `boss-crypt-true` | Original cello hook is transposed *exactly down one octave* for recorded range. The subsequent 16-bar winter workshop composition is **not the Phase 2 pilot**: craft, ethical dispute, silence and unfinished work. Working title **Keeper of the Winter Works** replaces the obsolete summer title *in draft source only*. | Separate interrogating horn fragments and a low, subtle former-companion idea; not a copy of the old pilot TRUE tom pattern. | Do real sampled strings and marimba evoke skilled, morally complicated labor rather than synthetic spooky music? |
+| `boss-mire` / `boss-mire-true` | Dorian cello motif, wet pauses, withheld arrivals, a sudden predator snap over spaced harp movement. Mirejaw is not the Wraith mastermind. | Isolated high chime responses and much quieter displaced emphasis. | Will chime treble pierce the reeds/compete with combat warning cues? |
+| `boss-archive` / `boss-archive-true` | Piano-led old Scholar's Hook survives; written questions, contradiction, erasure and returning argument avoid empty haunted-crypt clichés. | Glinting bell rebuttals rather than an exact second piano line; one old-companion fragment. | Is the bell response too sharp or too exposed over piano in the actual audio? |
+| `boss-ridge` / `boss-ridge-true` | Horn-led ledger pulse and marimba counting shift through wage, demand and decision; wealth administration is not comic greed. | Uneven cello tally becomes an aggressive payment demand with selected very low percussion. | Does the busy tally remain musically coherent under two-loop repetition? |
+| `boss-mine` / `boss-mine-true` | 20-bar quarry architecture and oath: horn spans measured, fractured and returning phrases, with workmanlike marimba. Garun is deliberate and sincere. | Low cello testifies against large horn forms; the old-party phrase remains understated. | Does the bass register muddy the quarry and does the 20-bar sequence move convincingly? |
+| `boss-warlord` / `boss-warlord-true` | Clipped horn orders and dry guitar drill, counterbalanced with inspections and abrupt halts. Depicts an occupied functioning frontier, not a burning wasteland. | A tighter secondary horn command sequence and limited dry frame strikes, with pauses. | Are two brass lines too similar or overly martial at the expense of Lyss's human stakes? |
+| `boss-abyss` / `boss-abyss-true` | Rising horn launch and air-banking intervals over harp, followed by loyalty/return. Veyrith is the proud loyal Air Marshal, not a captive dragon. | Flute air-response rises and falls separately from base, with restrained party memory. | Does the wide room sound convey unfinished ambition without inventing a completed royal fleet? |
+
+## Inherited originals and separate acceptance gates
+
+The original 16-beat opening motifs for **seven** cue bases are deliberately kept at exact sounded MIDI pitch/onset/duration. Lifebinder's opening retains **every onset, duration and contour**, with one intentional **−12-semitone** register change; a separate assertion requires that exact transformation. All subsequent written phrases are recomposed. The old `boss-crypt`/TRUE Phase 2 pilot is **not grandfathered** into the 16 new source designs. New original-to-performed comparisons operate on flattened absolute MIDI events, not an assertion in a title or score description.
+
+The four and only four former-companions encounters—Lifebinder, Drowned Keeper, Garun, Veyrith—contain a **small** shared 3-note memory fragment at a few designated bars. The Dark Lord, all 18 protected Dark Crown recordings, the remaining Phase 6 story cues and live music registration are outside this change. Eight TRUE stems match their own base's BPM, key, harmony, bar count and *sample-frame count*, not the original game's old eight-bar rendering; Phase 7 must still review actual playback/crossfades/cache/warnings.
+
+**Source risks to challenge during technical and later listening QA:** accidental horn/cello sample over-repitch; motif changes caused by register folding; whole-score repetition; TRUE sounding too weak or masking warning effects; audible MP3 loop clicks; performed recorded-note anomalies; stereo/mono collapse. An automated PASS cannot certify expressive timbre, memorable musical identity, emotional truth or two-loop fatigue. Where no reviewer has actually listened, **HEARD ACOUSTIC QUALITY = UNVERIFIED**.
+
+## Technical verification ledger
+
+- Source: 8 individually authored boss bases and 8 separate TRUE response scores with all 16 registered stable IDs, **unregistered candidate score only**.
+- Planned focused checks: original source motif comparison, intentional Lifebinder octave requalification, original-Crown physical hash protection, full layer anti-copy, eight structural anti-clone checks, upstream CC0 sample hash/provenance, 16 independent MP3 encode/decode reports and 8 raw additive pairs.
+- **Before workflow completion:** isolated render PASS **not yet established**. Never edit this to a GO based on a run belonging to a previous branch.
+- **Heard acoustic review:** UNVERIFIED; no actual audition performed.
+- **In-game/Phase 7 QA:** NOT STARTED on this draft; #699 remains separate.
+- **Owner listening/acceptance:** Phase 9 ONLY. No merge, deploy, browser room certification or device verification in Phase 5.
