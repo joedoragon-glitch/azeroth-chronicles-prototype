@@ -118,11 +118,13 @@ function capture(g,label,ticks,subject,{sourceStacks=false}={}){
     }finally{activeFollow=prev;}
   };
   const positions=actors.map(a=>({x:a.x,y:a.y}));
+  let firstMovementTick=null;
   try{
     for(let i=0;i<ticks;i++){
       currentTick=i;domainCounts.updateEnemies=0;domainCounts.updateElites=0;domainCounts.updatePacks=0;domainCounts.other=0;
       stackCounts=new Map();routesByTick=[];const before=probes,start=performance.now();
       g.tick(dt,{x:0,y:0});
+      if(firstMovementTick===null && dist(actors[0],positions[0])>1) firstMovementTick=i;
       const count=probes-before,cpuMs=num(performance.now()-start);
       const row={tick:i,probes:count,cpuMs,domains:{...domainCounts},
         routes:routesByTick.map(r=>({actor:r.actor,probes:r.probes,stack:r.stack.slice(0,4)}))};
@@ -140,7 +142,9 @@ function capture(g,label,ticks,subject,{sourceStacks=false}={}){
   const topFollows=followCalls.slice().sort((a,b)=>b.probes-a.probes).slice(0,12);
   const stats={label,ticks,zone:g.zoneId,actors:actors.map(a=>({id:a.id||a.name,
     kind:a.family||a.veraEscort&&'escort-guard'||'npc'})),
-    totalProbes:probes,peak,medianTickProbes:median(tickRows.map(z=>z.probes)),
+    totalProbes:probes,peak,firstMovementTick,
+    firstMovementSeconds:firstMovementTick===null?null:num((firstMovementTick+1)*dt),
+    medianTickProbes:median(tickRows.map(z=>z.probes)),
     p95TickProbes:tickRows.map(z=>z.probes).sort((a,b)=>a-b)[Math.floor(ticks*.95)],
     routes:{calls:routeCalls.length,probes:routeCalls.reduce((x,r)=>x+r.probes,0),
       peak:topRoutes[0]||null,top:topRoutes},
@@ -268,6 +272,8 @@ function crown(seed=11){
     [boss,vera,...guards]);
   assert(stats.peak.probes<1800,'prefetch must remain bounded each whole tick');
   assert.equal(stats.routes.calls,0,'prefetch must never call synchronous route');
+  assert(stats.firstMovementTick!==null && stats.firstMovementSeconds<=10.5,
+    'precomputed path must let Cindermaw depart during the existing inspection schedule');
   assert(stats.plans.breakdown['cinder-selection']?.calls>0,
     'inspection choice actually precomputed in existing pause');
   assert(dist(origin,boss)>15,
@@ -275,6 +281,8 @@ function crown(seed=11){
   console.log('ISSUE615_CINDER_PAUSE_PREFETCH '+JSON.stringify({
     elapsedSeconds:210*dt,originalPause:Campaign.rules.cinderInspection.pauseMin,
     selected:boss.cinderDestination?.name||null,displacement:num(dist(origin,boss)),
+    firstMovementSeconds:stats.firstMovementSeconds,
+    patrolPlanCalls:stats.plans.breakdown['cinder-patrol']?.calls||0,
     peakTerrainProbes:stats.peak.probes}));
 }
 // Preserve the exact original native route for a long Crown inspection leg;
