@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "Stage 5 of environmental #727: four Treasury retention/reuse/new source comparison, two trial masters only",
-  "status": "STAGE 5 STARTED — source-grounded retention/reuse assessment and two optional trial recipes authored; physically rendered previews / decoded QA NOT YET TESTED. Prior exact source originals already pinned, but Stage 5 re-fetch required. No registration, hearing, merge, deployment or device testing.",
+  "status": "STAGE 5 two optional physical source 72s MP3 trials rendered with strict decoded technical QA PASS 2/2 at #41237685020; 4/4 Treasury baseline comparison authored. Re-render of exact frozen SHA-256/size pending; not game-registered, artistically heard, merged, published or device-tested.",
   "parent": "tools/audio/environment-727-side-interiors.json",
   "authority": "Live src/prototype/rules.js treasuryArchitectures/Decor and manifest env-home; issue #727 Stage 1 signed sound design; AUDIO_ENVIRONMENT.md, AUDIO_AUTHORING.md",
   "decisions": [
@@ -218,5 +218,44 @@
       "reason": "No new exact fauna profile approved; original daytime/night and water detail remains separate."
     }
   ],
-  "encodedPreviewEvidence": null
+  "encodedPreviewEvidence": {
+    "outputs": [
+      {
+        "id": "studio-mirejaw-guarded-wet-store-727",
+        "sha256": "7009fb80f4571a41debb72367753f320c2318de6f0fdcfac95644f088cc09c14",
+        "bytes": 1158381,
+        "lufs": -37.94,
+        "truePeakDbTP": -23.17,
+        "loopSampleJump": 0.0031029190868139267,
+        "loopOneSecondEnvelopeDb": -0.8945628732708657,
+        "mid250to2000": 0.7344938426606726,
+        "realSourceShare": 0.5827586206896552,
+        "technicalSignal": "PASS",
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-cindermaw-roost-vault-727",
+        "sha256": "e6618901d4ad427ab1e60c85697ea19bacc9e55b139d7e21815c453d012b6ead",
+        "bytes": 1158381,
+        "lufs": -37.83,
+        "truePeakDbTP": -20.4,
+        "loopSampleJump": 0.002358616329729557,
+        "loopOneSecondEnvelopeDb": -0.5914150974397447,
+        "mid250to2000": 0.770846491021505,
+        "realSourceShare": 0.6854493580599144,
+        "technicalSignal": "PASS",
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      }
+    ],
+    "renderRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237685020",
+    "artifactId": 13055562993,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237685020/artifacts/13055562993",
+    "reproduction": "PENDING exact frozen rerender",
+    "humanHeard": false,
+    "gameRegistered": false
+  }
 }
