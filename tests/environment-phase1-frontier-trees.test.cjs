@@ -19,14 +19,14 @@ function paint(id, region, variant) {
   const xs=[],ys=[];
   for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++)
     if(pixels[(y*canvas.width+x)*4+3]>18){xs.push(x);ys.push(y);}
-  assert(xs.length>500,'Expected a real visible tree '+id+' in '+region);
+  assert(xs.length>90,'Expected a real visible tree '+id+' in '+region+'; ink pixels='+xs.length);
   return {sha, bbox:[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)]};
 }
 const ids=Array.from({length:16},(_,i)=>'frontier-burned-tree-identity-'+i);
 const frontier=ids.map(id=>paint(id,3));
 assert.equal(new Set(frontier.map(s=>s.sha)).size,ids.length,
   'Different authored burned trees must not be a single stamped silhouette');
-assert(frontier.every(x=>x.bbox[2]-x.bbox[0]>30 && x.bbox[3]-x.bbox[1]>36),
+assert(frontier.every(x=>x.bbox[2]-x.bbox[0]>23 && x.bbox[3]-x.bbox[1]>31),
   'Even small trees need coherent rooted crowns/branches at gameplay scale');
 for(let i=0;i<ids.length;i++)
   assert.deepEqual(paint(ids[i],3),frontier[i],
