@@ -7337,8 +7337,7 @@
         )
           continue;
         // Native pursuit and existing Rogue tactics retain their own cadence.
-        if (!this.mageSilenceActive(e) && !this.rogueEnemySilenced(e) &&
-            this.tacticalAutoRogue(e, target)) continue;
+        if (!this.mageSilenceActive(e) && this.tacticalAutoRogue(e, target)) continue;
         const covering = !!(e.telegraph?.withdrawal || e.rangedAim?.withdrawal),
           regroup = this.tacticalRogueRegroup(e),
           extendedCover = regroup?.phase === 'extended' && !!e.telegraph?.rogueMove,
@@ -7366,10 +7365,9 @@
             continue;
           }
         }
-        if (e.telegraph &&
-            (this.mageSilenceActive(e) || this.rogueEnemySilenced(e))) {
-          // Mage Silence and eligible ordinary Rogue Hush hold warned
-          // specials. Boss scripted phases retain their original sequence.
+        if (e.telegraph && this.mageSilenceActive(e)) {
+          // Mage's field can hold warned specials. Rogue Hush only blocks
+          // NEW eligible special starts, not a committed action in progress.
           e.noProgress = 0;
           continue;
         }

@@ -33,7 +33,8 @@ Verification PR #700 and issue #702 found that active Rogue Hush and Wither
 were missing their enemy-world status cues. The separate implementation
 candidate reads the actual per-enemy WeakMap producer and expiry rather than
 synthesizing a save field. Hush governs eligible new non-boss special
-starts; bosses, basic attacks, independently timed overlapping song effects,
+starts; committed warnings and tactical movement continue. Bosses, basics,
+independently timed overlapping song effects,
 rank upgrades and critical rolls retain their existing contracts.
 No merge, publication or physical-device acceptance is claimed here.
 
