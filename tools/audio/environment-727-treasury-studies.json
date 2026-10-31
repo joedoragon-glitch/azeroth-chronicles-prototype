@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "phase": "Stage 5 of environmental #727: four Treasury retention/reuse/new source comparison, two trial masters only",
+  "status": "STAGE 5 source-authored studio COMPLETE: 4/4 Treasury comparisons (two retained env-home, two optional physical-source 72s MP3 A/B studies), initial strict decoded QA PASS 2/2 at #41237685020 and independent frozen SHA-256/byte-for-byte reproduction PASS 2/2 at #41237842801. No game registration, human hearing, integration/browser, merge, deployment or device acceptance.",
+  "parent": "tools/audio/environment-727-side-interiors.json",
+  "authority": "Live src/prototype/rules.js treasuryArchitectures/Decor and manifest env-home; issue #727 Stage 1 signed sound design; AUDIO_ENVIRONMENT.md, AUDIO_AUTHORING.md",
+  "decisions": [
+    {
+      "sceneId": "supply-vale",
+      "name": "Scornfang's Treasury",
+      "referenceBed": "env-home",
+      "choice": "RETAIN original baseline for now; no bespoke source-authored master justified before heard A/B",
+      "reason": "Original quiet home room matches an occupied Goblin salvage/reclamation office with bunks, game table and scribe desk. New money clinks, stealing sounds, screaming pups or loud paperwork would be inventions. Prior Stage4 cellar domestic source risks modern cutlery and should not be borrowed merely to fill a slot.",
+      "requiresHumanHearing": true
+    },
+    {
+      "sceneId": "supply-march",
+      "name": "Mirejaw's Treasury",
+      "referenceBed": "env-home",
+      "choice": "OPTIONAL studio A/B comparison, not game replacement",
+      "reason": "Partly wet marsh store has a physical interior pool, nets/reed nests and guarded households; a genuinely damp and restrained mix may improve shared low-frequency-heavy home bed. Must avoid waterfall and wildlife ecology. Comparable previous Archive and Watchhouse candidates are not registered.",
+      "requiresHumanHearing": true,
+      "trial": "studio-mirejaw-guarded-wet-store-727"
+    },
+    {
+      "sceneId": "supply-highlands",
+      "name": "Ridge Tyrant's Treasury",
+      "referenceBed": "env-home",
+      "choice": "RETAIN original baseline for now; no source-authored master required simply for diversity",
+      "reason": "This is an inhabited guarded household/office with hearth, accounts, direwolf rider bunks and coin vault; the actual mint belongs to Stonecross, not this hall. Invented rhythmic coin strikes, animal snorts and industrial mint noises would be false.",
+      "requiresHumanHearing": true
+    },
+    {
+      "sceneId": "supply-crown",
+      "name": "Cindermaw's Treasury",
+      "referenceBed": "env-home",
+      "choice": "OPTIONAL studio A/B comparison, not game replacement",
+      "reason": "Actual game architecture is a volcanic/ash den plus roost, hoard, inner vault and Dreadmaw agriculture store; not a simple mansion and not all roaring lava. Distinct sheltered mineral acoustics are worth testing, without fictitious dragon voice/fire recording.",
+      "requiresHumanHearing": true,
+      "trial": "studio-cindermaw-roost-vault-727"
+    }
+  ],
+  "sources": [
+    {
+      "id": "interior-open-field-wind",
+      "creator": "Thimras",
+      "title": "Park ambiences — genuine open-field wind",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
+      "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
+      "sha256": "5c381856745b4706e7eba55eb9271a61a530e90c05df8126adb2db89ecfa6c5a",
+      "bytes": 73960096,
+      "maxBytes": 85000000,
+      "role": "Authentic physical air for restrained architectural attenuation; never claim recorded inside a dungeon",
+      "cautions": "Original is an Adelaide outdoor field, not a castle/estate/mineshaft. Distinct sound by enclosure processing and sparse physical occupational cues; if all rooms still sound like the same wind reject/rework.",
+      "durationSeconds": 256.803333,
+      "codec": "pcm_s24le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
+    },
+    {
+      "id": "interior-low-river",
+      "creator": "Thimras",
+      "title": "Park ambiences — low river over step",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
+      "sha1": "4bd89af752ae34f5d50d52a87de3416afa6e71a9",
+      "sha256": "da0c0c9b1249a83a1611cc116d5737b0864a8db9f45f1ae8dcc079d0f7c0bbbf",
+      "bytes": 99072736,
+      "maxBytes": 112000000,
+      "role": "Distant damp stone/water air for active Sunken Archive, not globally rushing water",
+      "cautions": "Original has actual river step and frogs/birds; avoid invented archival flood cause, loud waterfall, repeating fauna. Keep original two existing water details.",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
+    },
+    {
+      "id": "citadel-equipment-clunk",
+      "creator": "BMacZero (Brian MacIntosh)",
+      "title": "Mechanical Sounds — lightclunk1.wav",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/mechanical-sounds",
+      "url": "https://opengameart.org/sites/default/files/lightclunk1.wav",
+      "sha1": "fb868b44b5a0ca069003229deffac6607e6d4f3f",
+      "sha256": "d5a2aa8764c02924f6ed6fbaad0c650ab2d57ec57a626cee9e6645f941dbc8fa",
+      "bytes": 32812,
+      "maxBytes": 110000,
+      "role": "Rare small formal-room equipment movement, not modern industry",
+      "cautions": "Metal handling can be too close-mic/modern, must be deeply muted and human-vetted.",
+      "durationSeconds": 0.371519,
+      "codec": "pcm_s16le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
+    },
+    {
+      "id": "watchhouse-wetland-swale",
+      "creator": "Ksd5 / Siddharth Patil",
+      "title": "Swale trickling into stream — own recorded shallow flowing water",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Swale.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/84/Swale.ogg",
+      "sha1": "4f97748c715d90fda6357073f14a12e68f294d73",
+      "sha256": "b71def4798508e588229a5f801fefaed9ac51c5dbad224274123c92e6d183fff",
+      "bytes": 1092440,
+      "maxBytes": 1400000,
+      "role": "One short infrequent local water movement at partially flooded Reed Beast dwelling, not a world-wide river bed",
+      "cautions": "31-second original; only one nonrepeating excerpt. Presence of running stream might imply more flow than interior's standing water; reject if too constant/loud.",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41235061850",
+      "sourceStatus": "Original public license/creator page reviewed; actual source bytes/sha1/sha256/ffprobe verified; creative timbre not yet heard"
+    }
+  ],
+  "studies": [
+    {
+      "id": "studio-mirejaw-guarded-wet-store-727",
+      "sceneId": "supply-march",
+      "referenceBed": "env-home",
+      "zone": "Mirejaw's Treasury — guarded inhabited Marches stores and shallow muddy sleeping area",
+      "mainSource": "interior-low-river",
+      "fieldExcerptStart": 388,
+      "fieldGain": 0.26,
+      "windGain": 0.22,
+      "highpassHz": 190,
+      "lowpassHz": 1520,
+      "routeGain": 0.28,
+      "room": "partly enclosed shallow-wet store with divider and raised sleeping space, NOT an open river",
+      "reflectionMs": [
+        33,
+        85,
+        154
+      ],
+      "reflectionGains": [
+        0.125,
+        0.068,
+        0.021
+      ],
+      "events": [
+        {
+          "source": "watchhouse-wetland-swale",
+          "at": 55.1,
+          "start": 17.2,
+          "duration": 1.05,
+          "peak": 0.026,
+          "lowpassHz": 1120,
+          "highpassHz": 235
+        }
+      ],
+      "description": "Reference against the same env-home shared by every Treasury. Damped wet air and a rare localized water movement near Mirejaw's existing pool, not floodwaters everywhere, never the Keeper Archive or a horror swamp.",
+      "negative": "no frogs, monster voice, unsupported new flood cause, constant river, campaign warning masker"
+    },
+    {
+      "id": "studio-cindermaw-roost-vault-727",
+      "sceneId": "supply-crown",
+      "referenceBed": "env-home",
+      "zone": "Cindermaw's Treasury — volcanic roost, hoard, heated inner vault and Dreadmaw working supply administration",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 174,
+      "fieldGain": 0.31,
+      "windGain": 0.21,
+      "highpassHz": 215,
+      "lowpassHz": 1780,
+      "routeGain": 0.3,
+      "room": "high sheltered mineral/ash-den chambers with vaulted vault and domestic/administrative stores",
+      "reflectionMs": [
+        61,
+        155,
+        317
+      ],
+      "reflectionGains": [
+        0.135,
+        0.076,
+        0.026
+      ],
+      "events": [
+        {
+          "source": "citadel-equipment-clunk",
+          "at": 39.2,
+          "start": 0,
+          "duration": 0.3,
+          "peak": 0.023,
+          "lowpassHz": 1200,
+          "highpassHz": 240
+        }
+      ],
+      "description": "A restrained ash/stone enclosure and rare physical handled equipment in a lived-in guarded roost with Dreadmaw's supply duties. Sound study deliberately does NOT fake a constant lava/fire source without actual provenance.",
+      "negative": "no dragon roaring, fire blasting, volcanic motorway, machinery, militaristic march, invented ceremonies, Crown score editing"
+    }
+  ],
+  "hardConstraints": {
+    "registered": false,
+    "merged": false,
+    "deployed": false,
+    "inGamePlayback": "NOT TESTED — studio-only",
+    "humanHearing": false,
+    "soundtrackModified": false,
+    "originalHomeRetainedForAllFour": true,
+    "expectedMusicIds": 83,
+    "expectedEnvironmentRules": 18,
+    "expectedPlayablePlaces": 19
+  },
+  "rejectedOrHeld": [
+    {
+      "proposal": "Four new masters for four Treasuries by default",
+      "reason": "Documented retain/reuse/new mandate requires net sound improvement, not file count."
+    },
+    {
+      "proposal": "Audible Stonecross mint inside Ridge Treasury",
+      "reason": "Mint is established in Stonecross; Treasury counts or stores Crown coins."
+    },
+    {
+      "proposal": "Cindermaw permanent lava roar, dragon scream, incessant flame",
+      "reason": "Volcanic roost is inhabited with administration and agriculture, not a constant open lava pool."
+    },
+    {
+      "proposal": "Mirejaw frogs/night wildlife from generic river source",
+      "reason": "No new exact fauna profile approved; original daytime/night and water detail remains separate."
+    }
+  ],
+  "encodedPreviewEvidence": {
+    "outputs": [
+      {
+        "id": "studio-mirejaw-guarded-wet-store-727",
+        "sha256": "7009fb80f4571a41debb72367753f320c2318de6f0fdcfac95644f088cc09c14",
+        "bytes": 1158381,
+        "lufs": -37.94,
+        "truePeakDbTP": -23.17,
+        "loopSampleJump": 0.0031029190868139267,
+        "loopOneSecondEnvelopeDb": -0.8945628732708657,
+        "mid250to2000": 0.7344938426606726,
+        "realSourceShare": 0.5827586206896552,
+        "technicalSignal": "PASS",
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-cindermaw-roost-vault-727",
+        "sha256": "e6618901d4ad427ab1e60c85697ea19bacc9e55b139d7e21815c453d012b6ead",
+        "bytes": 1158381,
+        "lufs": -37.83,
+        "truePeakDbTP": -20.4,
+        "loopSampleJump": 0.002358616329729557,
+        "loopOneSecondEnvelopeDb": -0.5914150974397447,
+        "mid250to2000": 0.770846491021505,
+        "realSourceShare": 0.6854493580599144,
+        "technicalSignal": "PASS",
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      }
+    ],
+    "renderRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237685020",
+    "artifactId": 13055562993,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237685020/artifacts/13055562993",
+    "reproduction": "PASS 2/2 independent original-source re-fetch, SHA-1/SHA-256/bytes verification, exact frozen MP3 SHA-256 and 1,158,381-byte size for both, strict encoded/decoded QA unchanged",
+    "reproductionRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237842801",
+    "reproductionArtifactId": 13055689661,
+    "reproductionArtifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41237842801/artifacts/13055689661",
+    "humanHeard": false,
+    "gameRegistered": false
+  }
+}

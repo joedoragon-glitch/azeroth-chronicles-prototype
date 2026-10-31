@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "phase": "Stage 2 / #727 — outdoors source-verified studio; unregistered preview only",
+  "status": "STAGE 2 DAYLIGHT AUTHORS COMPLETE; both verified guarded 72s MP3s frozen at #41227391733; all SIX across day+night+Crown source-led technical studio studies finished at #41228571725. Gameplay sound replacement/audio selection NOT done. Human ear and game QA HOLD.",
+  "authority": "Stage 1 issue #727 comments 6546812555 and 6546828387; docs/AUDIO_ENVIRONMENT.md; AGENTS.md",
+  "preservation": "DO NOT edit the 18 existing ambience MP3s, 18 scene rules, 14 original book cues, night events, 18 Dark Crown masters, or soundtrack #673.",
+  "sources": [
+    {
+      "id": "vale-copse-field",
+      "creator": "Thimras",
+      "title": "Park ambiences — copse before rain, South Australia, winter",
+      "license": "CC0 1.0",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_birds.wav",
+      "sha1": "8b5ece9217e9855c5d1dbde4c7e4819f93320127",
+      "bytes": 86190432,
+      "maxBytes": 99000000,
+      "role": "Field-recorded tree air and subtle foliage for Greenwood daylight, contingent on source intervals free from prominent bird chorus or imminent rain",
+      "cautions": "Adelaide public park species not Greenwood canon; birds may be too identifiable, with a pre-rain transition. No night reuse. Reject if foreground wildlife, rain or microphone noise survives mix.",
+      "sha256": "dc1a5ac34b89cab7f8f261b53a23da7c1c5e3cc895aae4cb6fb4a1a04001b2af",
+      "durationSeconds": 448.904667,
+      "codec": "pcm_s16le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226542323",
+      "status": "Original file independently downloaded and digest/format measured; acoustic material suitability still unapproved"
+    },
+    {
+      "id": "march-low-river-field",
+      "creator": "Thimras",
+      "title": "Park ambiences — low river step with fauna, South Australia, winter",
+      "license": "CC0 1.0",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
+      "sha1": "4bd89af752ae34f5d50d52a87de3416afa6e71a9",
+      "bytes": 99072736,
+      "maxBytes": 112000000,
+      "role": "Genuine low moving water as an optional ingredient of daytime Flooded Marches",
+      "cautions": "Recording includes waterfall-over-step, birds, frogs. It can easily be too loud and species/location-inappropriate for diffuse shallow marsh; reject if audible as continuous cascade or repetitive identifiable wildlife.",
+      "sha256": "da0c0c9b1249a83a1611cc116d5737b0864a8db9f45f1ae8dcc079d0f7c0bbbf",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226542323",
+      "status": "Original file independently downloaded and digest/format measured; acoustic material suitability still unapproved"
+    }
+  ],
+  "studies": [
+    {
+      "id": "study-vale-day-727",
+      "zone": "Greenwood Vale day",
+      "region": "vale",
+      "referenceBed": "env-woodland-day",
+      "mainSource": "vale-copse-field",
+      "fieldExcerptStart": 22,
+      "fieldGain": 0.42,
+      "windGain": 0.26,
+      "highpassHz": 145,
+      "lowpassHz": 3050,
+      "routeGain": 0.36,
+      "events": [],
+      "description": "A restrained productive Piedmont-inspired wooded-river countryside, without constant labor/bird calls or a forest-dungeon drone. Compare against original woodland day; preserve separate night bed and sparse bird detail.",
+      "codecEdgeDeclick": {
+        "windowMs": 18,
+        "edgeGain": 0.56,
+        "reason": "Actual decoded MP3 seam on initial pinned studio run exceeded 0.005 sample jump (0.00688785); first/last 1-second RMS passed (-0.973 dB). Localized matched sub-20-ms de-click, no threshold relaxation or global gain. Require re-encode and exact decoded gate."
+      }
+    },
+    {
+      "id": "study-march-day-727",
+      "zone": "Flooded Marches day",
+      "region": "march",
+      "referenceBed": "env-marsh-day",
+      "mainSource": "march-low-river-field",
+      "fieldExcerptStart": 29,
+      "fieldGain": 0.4,
+      "windGain": 0.27,
+      "highpassHz": 130,
+      "lowpassHz": 2200,
+      "routeGain": 0.36,
+      "events": [],
+      "description": "Shallow reedland and low water movement for working wetlands; never river-cascade wallpaper or frog chorus. Compare against original marsh day; preserve original marsh night/water events."
+    }
+  ],
+  "deferred": [
+    {
+      "scene": "Greenwood Vale night",
+      "reason": "The shortlisted public-park daylight wildlife recording is not an acceptable nighttime woodland identity. Retain env-woodland-night until a different physically credible night air source is vetted."
+    },
+    {
+      "scene": "Flooded Marches night",
+      "reason": "Do not globally transplant daytime birds/frogs or repeating river-step audio into nocturnal wetlands. Retain env-marsh-night and original water/night tone pending night-specific proof."
+    },
+    {
+      "scene": "Dark Crown outdoors",
+      "reason": "No credible, subdued long-form outdoor stone/civic/mineral field source is yet selected. Preserve env-crown-courtyard and night insects rather than invent lava/machinery wallpaper."
+    }
+  ],
+  "constraints": {
+    "sourcePolicy": "Use CC0 or genuinely public-domain original source pages, record original URL/author/license, recheck bytes and SHA before render; do not silently substitute.",
+    "seconds": 72,
+    "sampleRate": 32000,
+    "codec": "mono 128kbps MP3 guarded 0.15 seconds",
+    "sourceLocation": "GitHub isolated runner temp only",
+    "testGates": [
+      "Independently downloaded original SHA1/bytes match pinned ledger",
+      "Real FFmpeg decode; finite samples",
+      "Exact original game master SHA matches manifest; no runtime registration",
+      "Decoded MP3 loudness and actual true peak",
+      "Clip/sample peak and per-second crests",
+      "Loop sample discontinuity and first/last 1s RMS contrast",
+      "Nonrepeated 24s blocks",
+      "Two candidate cross-correlations and acoustic spectral distribution",
+      "Unmerged no-deploy artifact accessible with provenance"
+    ],
+    "sourceApproval": "PASS source identity and published CC0 claims; waveform and fit not yet heard",
+    "technicalApproval": "PASS actual original source identity / real encoded MP3 decoded signal, SHA256/bytes and exact reproducible daylight studio runs #41227391733. Six-scene Stage2 studio complete in night/Crown ledger #41228571725. No playable-source game mix test.",
+    "listeningApproval": "HOLD: nobody has yet approved by hearing the actual output in context; recognizable birds/frogs and low-step water remain risks",
+    "registration": "NO",
+    "merged": "NO",
+    "deployed": "NO",
+    "deviceVerified": "NO",
+    "artifactId": 13052285283,
+    "firstCandidateSignalRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41226930949",
+    "firstCandidateDiagnosis": "Vale decoded jump 0.00688785 BLOCK; March decoded jump 0.00067574 PASS. Both envelope deltas within 4.25 dB. Repair only Vale; no acceptance yet.",
+    "browserPlayback": "NOT TESTED with these candidate recordings, which are unregistered",
+    "cacheBudget": "PENDING: two 72s decoded mono float32 PCM buffers consume 18,432,000 bytes (~17.58 MiB) if both resident. Previous browser peak 84.80 MiB /96MiB; adding both without intelligent eviction could exceed cap. Evaluate during Stage 6 before registration.",
+    "stage2Exit": "Authoring/standalone audio signal-production complete (6 previews across two ledgers); not registered, not merge/deploy, artwork and ecology/hearing hold. Stage6 gameplay/music/offline/cache and Stage7 human ear required before audio acceptance.",
+    "artisticHearing": "NOT DONE; original small park birds before rain and low-river-step with frogs/birds may not fit Greenwood or the Marches, review actual preview before any promotion."
+  },
+  "encodedPreviews": {
+    "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41227145631",
+    "artifactId": 13052069308,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41227145631/artifacts/13052069308",
+    "producingHead": "32607d8639e2f923c149a8bd483564b5b1674d69",
+    "codec": "MP3 mono 32000Hz 128kbps; each active 72 seconds guarded by 0.15 seconds",
+    "fileBytesTotal": 2316762,
+    "decodedIfBothResidentBytes": 18432000,
+    "actualArtifactsOnly": true,
+    "status": "TECHNICAL SIGNAL PASS / CREATIVE AND PLAYABLE QA HOLD",
+    "outputs": [
+      {
+        "id": "study-vale-day-727",
+        "bytes": 1158381,
+        "sha256": "6f3578366881b4f9dd675d0401085992be4d1546aff6cb9480fad9a6f0f0af00",
+        "lufs": -33.04,
+        "truePeakDbTP": -19.01,
+        "decodedLoopSampleJump": 0.003744665998965502,
+        "loopFirstLast1sDb": -0.967,
+        "fieldEnergyFraction": 0.7229508196721312,
+        "mid250to2000Fraction": 0.7910179996449633,
+        "maxOneSecondCrestDb": 13.887,
+        "signalGate": "PASS",
+        "creativeApproval": "HOLD"
+      },
+      {
+        "id": "study-march-day-727",
+        "bytes": 1158381,
+        "sha256": "642eab06bd673948540120a85c1f50440d24bd107c0d8c000756b040b7346dcc",
+        "lufs": -33.1,
+        "truePeakDbTP": -14.68,
+        "decodedLoopSampleJump": 0.0006757387891411781,
+        "loopFirstLast1sDb": -0.879,
+        "fieldEnergyFraction": 0.6869901245169601,
+        "mid250to2000Fraction": 0.8777921881649492,
+        "maxOneSecondCrestDb": 18.471,
+        "signalGate": "PASS",
+        "creativeApproval": "HOLD"
+      }
+    ]
+  }
+}

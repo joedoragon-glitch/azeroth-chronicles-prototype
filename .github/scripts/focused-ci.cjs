@@ -259,6 +259,25 @@ const groups = [
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-audio-inventory.test.cjs'],
   },
   {
+    // #727 Stage 2–6 source ledgers are the production truth for the isolated
+    // preview importer; its own source preflight must not fall through to a
+    // generic architecture test.
+    match: /^tools\/audio\/(?:environment-727-(?:stage6-lab\.cjs|(?:outdoor-studies|outdoor-expansion|dungeon-studies|side-interiors|treasury-studies|production-routing)\.json)|frozen-preview\/(?:study|studio)-[a-z0-9-]+-727\.mp3)$/,
+    tests: [TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
+    // #727 playable Sound Library entry HTML is a first-class audio player,
+    // not unrelated architecture. Native browser playback stays separately gated.
+    match: /^tools\/audio\/index\.html$/,
+    tests: [TEST + 'audio-catalog.test.cjs', TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
+    // #727 Stage 7 offline owner-audition scripts and template are source:
+    // a syntax/content-focused preflight must own each changed path.
+    match: /^tools\/audio\/environment-727-audition(?:-pack\.cjs|\/(?:player\.js|index\.html))$/,
+    tests: [TEST + 'environment-727-stage6-source.test.cjs'],
+  },
+  {
     match: /^src\/prototype\/(?:audio[^/]*\.js)$|^assets\/audio\//,
     tests: [TEST + 'audio-catalog.test.cjs', TEST + 'audio-scheduler.test.cjs'],
   },

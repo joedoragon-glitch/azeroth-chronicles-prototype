@@ -1,0 +1,70 @@
+# #727 Stage 3 dungeon real-source production and measured preview-only study.
+# This workflow cannot register audio, merge, deploy or alter the existing soundtrack.
+name: Environmental Stage 3 five-dungeon studio (NO deploy)
+
+on:
+  push:
+    branches:
+      - 'audio/environment-727-stage3-*'
+    paths:
+      - 'tools/audio/environment-727-dungeon-studies.json'
+      - 'tools/audio/environment-727-dungeon-studio.py'
+      - 'tests/environment-727-stage3-source.test.cjs'
+      - '.github/workflows/environment-727-stage3-studio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  original-source-studio:
+    name: Source SHA provenance, five authored MP3s and strict decoded signal QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install fixed production decoder and audio math dependencies
+        run: |
+          python -m pip install --disable-pip-version-check numpy==2.3.5
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+      - name: Protect original catalog, game score, scene identity, and existing night events
+        run: |
+          node tests/environment-audio-inventory.test.cjs
+          node tests/audio-production.test.cjs
+      - name: Obtain original source bytes, or render only when every original has two pinned digests
+        run: |
+          set -eu
+          if python - <<'PY'
+          import json,sys
+          b=json.load(open('tools/audio/environment-727-dungeon-studies.json'))
+          if len(b['studies'])!=5 or len(b['sources'])!=8:
+              sys.exit('Scope violation: five dungeon studies, eight licensed sources required')
+          pinned=all(isinstance(s.get('sha1'),str) and len(s['sha1'])==40 and
+                     isinstance(s.get('sha256'),str) and len(s['sha256'])==64 and
+                     isinstance(s.get('bytes'),int) and s['bytes']>500 for s in b['sources'])
+          sys.exit(0 if pinned else 1)
+          PY
+          then
+            node tests/environment-727-stage3-source.test.cjs
+            python tools/audio/environment-727-dungeon-studio.py
+          else
+            echo 'SOURCE PROBE: author sources not yet pinned; only measure original bytes/codec and exact SHA fingerprints, no previews'
+            python tools/audio/environment-727-dungeon-studio.py --probe-sources
+          fi
+      - name: Retain real original-source receipts or encoded MP3s with decoded QA (no game changes)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-727-five-dungeon-original-source-and-MP3-studies
+          path: tools/audio/.environment-727-dungeon-preview/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
