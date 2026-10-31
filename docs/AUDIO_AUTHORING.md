@@ -6,6 +6,8 @@
 
 **Curated sample-palette and source provenance standard:** Follow [Artistic asset workflow](ARTISTIC_ASSET_WORKFLOW.md) for future music and visual commissions. The experimental [Phase 3 CC0 instrument bank](../tools/audio/phase3-sample-bank.json) now includes 55 pinned CC0 recorded source samples and is **implemented as a separate build-time sampler for isolated Phase 3 previews**, not the live game; its rendering tests and actual listening remain distinct acceptance gates. Its existence is not evidence that revised candidate themes have real orchestral instrumentation.
 
+**Current Phase 3 corrective evidence:** [critical per-cue creative/production review](AUDIO_PHASE3_CRITICAL_REVIEW.md) and [measured 44.1-kHz CC0 render report](../tools/audio/phase3-recorded-render-evidence.json). They describe actual source and isolated encoder facts, not a sonic-quality GO.
+
 ## Phase 3 — eight primary-area themes (draft #704; 31 October 2026)
 
 **PHASE 3 QUALITY HOLD: Musical-source design REVISE; the original eight isolated MP3 previews passed encoding/decoding on an older candidate, but the six new melodies have since been corrected and require re-rendering; heard sound quality remains UNVERIFIED. Phase 4 is BLOCKED.** The Phase 2 v2 pilot source/technical GO is unchanged, and the final Phase 2 documentation CI [#41173555460](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41173555460) has completed successfully. This Phase 3 draft [#704](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/704) stacks on [#692](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/692) and [#687](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/687); all remain unmerged.
