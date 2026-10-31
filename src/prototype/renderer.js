@@ -495,6 +495,7 @@
     PrototypeMaterials,
     renderLayer = 'full',
     staticTerrainTimeSeconds = null,
+    omitTerrainMotion = false,
     PrototypeGroundCache = root.PrototypeGroundCache ||
       (typeof require === 'function' ? require('./ground-cache.js') : null),
     now = () => performance.now(),
@@ -2719,6 +2720,7 @@
           i === 2 ? { width: canvas.width, height: canvas.height } : null,
           z.crownInheritedDecks || [],
           staticTerrainTimeSeconds,
+          omitTerrainMotion,
         );
       PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
       PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
