@@ -14,8 +14,9 @@ assert.equal(Object.keys(original.assets).length,131,'Reference must be the publ
 assert.equal(report.studies.length,16);
 assert.equal(report.trialsSelected.length,15);
 assert.equal(report.retainedTreasuries.length,2);
-const archive=fs.existsSync(path.join(root,'tools/audio/frozen-preview'))
-  ?path.join(root,'tools/audio/frozen-preview'):path.join(root,'tools/audio/.stage6-artifacts');
+const pinned=path.join(root,'tools/audio/frozen-preview');
+const archive=fs.existsSync(pinned) && fs.readdirSync(pinned).filter(x=>x.endsWith('.mp3')).length===16
+  ?pinned:path.join(root,'tools/audio/.stage6-artifacts');
 const target=path.join(root,'test-results/environment-727-listening-room');
 fs.rmSync(target,{recursive:true,force:true});
 fs.mkdirSync(target,{recursive:true});
@@ -55,8 +56,8 @@ const labels={
  'side-crown-foundry':'Ruined Foundry','supply-vale':'Scornfang Treasury — retain original',
  'supply-march':'Mirejaw Treasury','supply-highlands':'Ridge Tyrant Treasury — retain original',
  'supply-crown':'Cindermaw Treasury'};
-function zoneFor(rule){return rule.startsWith('stage6-')?rule.slice(7):
-    rule.endsWith('-night')?rule.slice(0,-6):rule;}
+function zoneFor(rule){return rule==='crown-alt'?'crown':
+    rule.startsWith('stage6-')?rule.slice(7):rule.endsWith('-night')?rule.slice(0,-6):rule;}
 function soundtrack(zone,rule){
   const dir=original.director.places[zone];
   assert(dir,'Unknown current-game music scene '+zone);

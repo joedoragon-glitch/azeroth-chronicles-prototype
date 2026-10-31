@@ -10,6 +10,8 @@ on:
       - 'tests/environment-727-stage6-*.test.cjs'
       - '.github/workflows/environment-727-stage6-lab.yml'
       - 'docs/AUDIO_ENVIRONMENT.md'
+      - 'tools/audio/environment-727-audition-pack.cjs'
+      - 'tools/audio/environment-727-audition/**'
   workflow_dispatch:
 
 permissions:
@@ -91,6 +93,20 @@ jobs:
         run: |
           set -o pipefail
           node tests/environment-727-stage6-upgrade-browser.test.cjs | tee test-results/environment-727-stage6-upgrade.log
+      - name: Build owner-only offline old-versus-preview listening room (16 verified candidates)
+        run: |
+          node --check tools/audio/environment-727-audition-pack.cjs
+          node --check tools/audio/environment-727-audition/player.js
+          node tools/audio/environment-727-audition-pack.cjs
+          test -s test-results/environment-727-listening-room/index.html
+          test -s test-results/environment-727-listening-room/data.js
+      - name: Archive self-contained listening packet for owner creative review (NOT a game build)
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-727-Stage7-owner-listening-packet-NOT-DEPLOYED
+          path: test-results/environment-727-listening-room/
+          if-no-files-found: error
+          retention-days: 14
       - name: Preserve only isolated QA receipts, never a deployable game artifact
         if: always()
         uses: actions/upload-artifact@v4
