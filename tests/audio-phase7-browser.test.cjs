@@ -45,12 +45,14 @@ async function main() {
     page.on('pageerror', (error) => errors.push(error.message));
     const url = 'http://127.0.0.1:' + server.address().port + prefix;
     await page.goto(url);
-    await page.waitForFunction((hash) => {
-      const a = window.Prototype?.audio;
-      return a && a.recordingManifest?.assets?.title?.sha256 === hash &&
-        document.querySelector('#title-screen:not([hidden])') &&
+    await page.waitForFunction(() => {
+      // Actual recordingManifest is fetched lazily *after* the first browser
+      // audio-unlock gesture. Before it, the built-in catalog is available but
+      // the manifest must not be assumed to have loaded already.
+      return !!window.Prototype?.audio &&
+        !!document.querySelector('#title-screen:not([hidden])') &&
         !document.querySelector('#startup-update:not([hidden])');
-    }, manifest.assets.title.sha256, {timeout:30000});
+    }, null, {timeout:30000});
     assert.equal(await page.evaluate(() => Prototype.audio.ctx), null,
       'first title music obeys browser gesture gate');
     await page.locator('#title-heading').click();
