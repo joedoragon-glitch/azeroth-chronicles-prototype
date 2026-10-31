@@ -1528,7 +1528,7 @@
       "lead": "marimba",
       "response": "horn",
       "pulse": "cello",
-      "form": "HHAQHRAHHHAQ",
+      "form": "HHAQHRAHHHAR",
       "answer": [
         [
           0,
@@ -1569,7 +1569,8 @@
       "groovePalette": "supply-highlands",
       "spacePalette": "supply-highlands",
       "secondaryHornOctave": -12,
-      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches."
+      "secondaryHornDecision": "Lower newly written horn answers and interjections into the real, naturally sampled mid/low horn register; the inherited primary lead retains its own Phase 3 authored register and pitches.",
+      "cadenceDecision": "The last question cell in the Ridge Tyrant's inhabited treasury previously cut across the loop return; an intentionally sparse breath/cadence now sets up the familiar opening domestic pulse rather than forcing another urgent lead into bar twelve."
     },
     {
       "id": "peace-interior-supply-highlands",
