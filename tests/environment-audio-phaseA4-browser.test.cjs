@@ -12,12 +12,31 @@ const root = path.resolve(__dirname,'..');
 const prefix='/azeroth-chronicles-prototype/';
 const type = {'.js':'text/javascript','.json':'application/json','.html':'text/html',
   '.css':'text/css','.mp3':'audio/mpeg','.wav':'audio/wav','.png':'image/png','.svg':'image/svg+xml'};
+// 19 independently entered playable Campaign zones + the two registered
+// day/night environmental alternatives (Vale and Marches): 21 scenes per
+// profile. Explicit expected IDs catch accidental route/content regressions.
 const cases=[
   {zone:'vale',mode:'exploration',score:'place-vale',bed:'env-woodland-day'},
+  {zone:'vale',mode:'night',score:'night-vale',bed:'env-woodland-night'},
+  {zone:'march',mode:'exploration',score:'place-march',bed:'env-marsh-day'},
   {zone:'march',mode:'night',score:'night-march',bed:'env-marsh-night'},
+  {zone:'highlands',mode:'exploration',score:'place-highlands',bed:'env-highland-wind'},
+  {zone:'frontier',mode:'exploration',score:'place-frontier',bed:'env-frontier-air'},
+  {zone:'crown',mode:'exploration',score:'place-crown',bed:'env-crown-courtyard'},
+  {zone:'crypt',mode:'exploration',score:'place-crypt',bed:'env-retreat'},
+  {zone:'archive',mode:'exploration',score:'place-archive',bed:'env-archive'},
+  {zone:'mine',mode:'exploration',score:'place-mine',bed:'env-mine'},
+  {zone:'abyss',mode:'exploration',score:'place-abyss',bed:'env-dragon-hall'},
+  {zone:'citadel',mode:'exploration',score:'place-citadel',bed:'env-citadel'},
+  {zone:'supply-vale',mode:'exploration',score:'interior-supply-vale',bed:'env-home'},
+  {zone:'supply-march',mode:'exploration',score:'interior-supply-march',bed:'env-home'},
+  {zone:'supply-highlands',mode:'exploration',score:'interior-supply-highlands',bed:'env-home'},
+  {zone:'supply-crown',mode:'exploration',score:'interior-supply-crown',bed:'env-home'},
+  {zone:'side-vale-cellars',mode:'exploration',score:'interior-side-vale-cellars',bed:'env-cellar'},
+  {zone:'side-march-watchhouse',mode:'exploration',score:'interior-side-march-watchhouse',bed:'env-archive'},
   {zone:'side-highlands-signal',mode:'exploration',score:'interior-side-highlands-signal',bed:'env-highland-wind'},
   {zone:'side-frontier-shrine',mode:'exploration',score:'interior-side-frontier-shrine',bed:'env-frontier-air'},
-  {zone:'crown',mode:'exploration',score:'place-crown',bed:'env-crown-courtyard'},
+  {zone:'side-crown-foundry',mode:'exploration',score:'interior-side-crown-foundry',bed:'env-mine'},
 ];
 const server=http.createServer((req,res)=>{
   const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
@@ -146,7 +165,7 @@ const server=http.createServer((req,res)=>{
         assert.deepEqual(errors,[],'game browser runtime page errors');
         assert.equal(await page.evaluate(()=>localStorage.getItem('audio-audit-709-sentinel')),'untouched');
         console.log('PASS #709 A4 GAME '+(phone?'phone-emulated':'desktop')+
-          ': five real Campaign scene scores + recorded ambient beds, pause/resume, warning duck, mute, cleanup');
+          ': 21 real Campaign scenes (19 unique zones + 2 night routes) + decoded MP3 beds, pause/resume, warning duck, mute, cleanup');
       }catch(error){
         console.error('A4 failed profile '+(phone?'phone-emulated':'desktop'),errors);
         console.error('game title',await page.locator('#title-heading').textContent().catch(()=>null));
