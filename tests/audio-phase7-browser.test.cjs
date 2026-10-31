@@ -243,14 +243,36 @@ async function main() {
     const offlineContext = await browser.newContext({viewport:{width:1024,height:800},
       serviceWorkers:'allow'});
     const offlinePage = await offlineContext.newPage();
-    await offlinePage.goto(url);
-    await offlinePage.evaluate(async () => {
-      await Promise.race([
-        navigator.serviceWorker.ready,
-        new Promise((_,reject)=>setTimeout(
-          ()=>reject(Error('Phase 7 audio cache worker did not install')),100000))
-      ]);
+    const failures=[];
+    offlinePage.on('response',r=>{
+      if(r.status()>=400)failures.push({status:r.status(),url:r.url()});
     });
+    offlinePage.on('requestfailed',r=>failures.push({
+      status:'network failure',url:r.url(),reason:r.failure()?.errorText
+    }));
+    await offlinePage.goto(url);
+    try {
+      await offlinePage.evaluate(async () => {
+        await Promise.race([
+          navigator.serviceWorker.ready,
+          new Promise((_,reject)=>setTimeout(
+            ()=>reject(Error('Phase 7 audio cache worker did not install')),40000))
+        ]);
+      });
+    } catch(error) {
+      const snapshot=await offlinePage.evaluate(async () => {
+        const reg=await navigator.serviceWorker.getRegistration('./');
+        const keys=await caches.keys();
+        const counts={};
+        for (const k of keys) counts[k]=(await(await caches.open(k)).keys()).length;
+        return {installed:!!reg,installing:reg?.installing?.state,
+          waiting:reg?.waiting?.state,active:reg?.active?.state,
+          controller:!!navigator.serviceWorker.controller,cacheCounts:counts,
+          quota:await navigator.storage.estimate(),online:navigator.onLine};
+      });
+      console.error('PHASE7_OFFLINE_INSTALL_DIAG',JSON.stringify({snapshot,failures:failures.slice(0,30)}));
+      throw error;
+    }
     await offlinePage.waitForFunction(() => !!navigator.serviceWorker.controller,
       null,{timeout:30000});
     const cachedAudio = await offlinePage.evaluate(async () => {
