@@ -7585,14 +7585,17 @@
               // ranged shot launches; collision, dodges and armor stay native.
               const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
+              const stonePace = e.species === 'goblin' && style === 'stone'
+                ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
                 x: e.x,
                 y: e.y,
                 dx: Math.cos(angle),
                 dy: Math.sin(angle),
-                speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
-                life: 2.5 / pace.projectileMultiplier,
+                speed: (e.shotSpeed || 260) * pace.projectileMultiplier * stonePace,
+                // Keep the original travel budget: faster stones do not fly farther.
+                life: 2.5 / pace.projectileMultiplier / stonePace,
                 damage: this.worldCriticalDamage(
                   criticalReceipt,
                   this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
