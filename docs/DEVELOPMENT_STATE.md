@@ -94,7 +94,7 @@ Owner-directed narrow save-system revision: keep the existing v4 primary snapsho
 | Gate | Audited state | Evidence and boundary |
 | --- | --- | --- |
 | Source | **Published main dev.247; draft Phase 3 dev.248** | All merged combat/reset code preserved; five side-interior surface candidates need final-image sign-off. |
-| Build/cache version | **Draft `0.9.1+snapshot.dev.248`; published main dev.247** | Candidate version, lockfile, build-info and worker reconciled; not deployed. |
+| Build/cache version | **`0.9.1+snapshot.dev.248`** — draft, not published; main dev.247 is published | Candidate version, lockfile, build-info and worker reconciled; not deployed. |
 | Focused automation | **Exact Phase 3 dev.248 source-head validation pending** | Original 42-view pre-material PASS. Do not reuse earlier red or unrelated main green as Phase 3 proof. |
 | GitHub Pages publication | **Main dev.247 published; Phase 3 not published** | [Exact-main focused and Pages PASS #41238705746](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41238705746); Phase 3 remains unmerged draft. |
 | An individual's open browser / installed PWA | **Local uptake unverified** | A browser/PWA can retain an older service worker; confirm the version on that device after accepting the update. |
