@@ -49,10 +49,16 @@ const server=http.createServer((req,res)=>{
       await page.addInitScript(()=>localStorage.setItem('audio-audit-709-sentinel','untouched'));
       try{
         await page.goto('http://127.0.0.1:'+server.address().port+prefix+(phone?'phone.html':'index.html'));
-        await page.waitForFunction(()=>!!window.Prototype?.audio && !!window.Campaign && !!document.querySelector('#modal-title'),null,{timeout:18000});
+        await page.waitForFunction(()=>!!window.Prototype?.audio && !!window.Campaign &&
+          !!document.querySelector('#title-screen:not([hidden])') &&
+          !document.querySelector('#startup-update:not([hidden])'),null,{timeout:30000});
         assert.equal(await page.evaluate(()=>Prototype.audio.ctx),null,'no auto-play before gesture');
-        if(phone)await page.locator('#modal-title').tap();
-        else await page.locator('#modal-title').click();
+        // The game intentionally pauses audio at the title screen. Release only
+        // that pause in this isolated browser test, then supply a real pointer
+        // gesture on the VISIBLE title heading without starting/saving a game.
+        await page.evaluate(()=>Prototype.audio.setPaused(false));
+        if(phone)await page.locator('#title-heading').tap();
+        else await page.locator('#title-heading').click();
         await page.waitForFunction(()=>Prototype.audio.ctx?.state==='running',null,{timeout:18000});
         await page.evaluate(phone=>{
           const a=Prototype.audio;
@@ -143,7 +149,7 @@ const server=http.createServer((req,res)=>{
           ': five real Campaign scene scores + recorded ambient beds, pause/resume, warning duck, mute, cleanup');
       }catch(error){
         console.error('A4 failed profile '+(phone?'phone-emulated':'desktop'),errors);
-        console.error('game title',await page.locator('#modal-title').textContent().catch(()=>null));
+        console.error('game title',await page.locator('#title-heading').textContent().catch(()=>null));
         throw error;
       }finally{await context.close();}
     }
