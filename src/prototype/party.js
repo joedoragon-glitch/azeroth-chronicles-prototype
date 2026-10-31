@@ -2119,7 +2119,7 @@
       }
       // A Charmed ranged healer uses the same automatic HP recovery as a
       // conventional Ranger: the Neri-trained amount, five-second pulses,
-      // ten-second cooldown and idle/combat triage thresholds. Unlike the
+      // ten-second combat cooldown (faster idle recovery) and idle/combat triage. Unlike the
       // original hostile healer, it must support the friendly party while idle.
       // Keep this separate from Ranger mana and offensive skill ownership.
       charmedRangedSupport(u, living = this.activeLivingParty()) {
@@ -2792,6 +2792,17 @@
       }
       companionHealCooldown(u) {
         return u.charmOrigin ? u.charmSupportCd || 0 : u.healCd || 0;
+      }
+      alliedHealCooldownRecoveryMultiplier() {
+        // Idle recovery belongs only to allied Heal. Keep every attack,
+        // native pet special and ordinary combat cooldown at its native pace.
+        if (this.manaCombatActive() ||
+            this.s.projectiles.some((p) => p.source === 'enemy')) return 1;
+        const living = this.activeLivingParty();
+        if (this.zone().enemies.some((e) => e.hp > 0 && e.aggro &&
+            !e.neutral && !e.returning && living.some((u) => dist(e, u) < 700)))
+          return 1;
+        return R.rangerSupport.idleHealCooldownRecoveryMultiplier;
       }
       availablePartyHealers() {
         return this.healCompanionCasters().filter((u) => this.companionHealCooldown(u) <= 0);
@@ -4045,7 +4056,8 @@
         const z = this.zone(),
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
-          claimed = new Set();
+          claimed = new Set(),
+          idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier();
         const returningLabor = this._gatherRecallResume;
         if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
           this._gatherRecallResume = null;
@@ -4113,7 +4125,8 @@
           u.skillNightCd = Math.max(0, (u.skillNightCd || 0) - specialRecovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
-            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
+            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) -
+              specialRecovery * idleHealRecovery);
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
