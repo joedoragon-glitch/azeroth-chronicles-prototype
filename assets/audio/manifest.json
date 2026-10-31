@@ -3433,9 +3433,18 @@
   },
   "creativeSource": {
     "music": {
-      "method": "Original procedural composition and virtual-instrument rendering",
+      "method": "65 original authored, recorded-CC0-instrument-sample performances (Phases 3–6), plus 18 physically frozen original procedural Dark Crown recordings",
+      "scoreSources": [
+        "tools/audio/phase3-themes.json",
+        "tools/audio/phase4-arrangements.json",
+        "tools/audio/phase5-scores.json",
+        "tools/audio/phase6-scores.json"
+      ],
+      "pinnedSampleBank": "tools/audio/phase3-sample-bank.json",
+      "integrationReceipt": "tools/audio/phase7-integration-evidence.json",
       "recipe": "tools/audio/score-book.json",
-      "renderer": "tools/audio/render-score.py"
+      "renderer": "tools/audio/render-score.py",
+      "originalRecipeScope": "Historical procedural sources for the 18 protected Dark Crown masters only; the 65 newly installed MP3s use the exact phase-specific recorded-source scores"
     },
     "effects": {
       "method": "Runtime synthesis",
@@ -3445,11 +3454,18 @@
         "src/prototype/audio-catalog.js"
       ]
     },
-    "guides": "Reusable generation briefs written after the sounds were created; these are not historical model prompts. Exact musical notes and synthesis parameters remain in the recipes.",
+    "guides": "Historic procedural generation briefs are preserved for original recordings; the 65 new recorded-source scores and pinned instrumental bank are authoritative for their exact notes and samples. The four curated environmental beds have independent source receipts. Do not infer provenance from legacy filenames.",
     "environment": {
-      "method": "Original procedural spectral textures and physical-style transients; no imported recordings or audio-generation model",
+      "method": "14 original procedural environmental beds, plus four individually recorded/provenance-verified curated CC0/PD source beds (not procedurally synthesized)",
       "recipe": "tools/audio/environment-book.json",
-      "renderer": "tools/audio/render-environment.py"
+      "renderer": "tools/audio/render-environment.py",
+      "curatedRecordedIds": [
+        "env-highlands-autumn",
+        "env-frontier-recovery",
+        "env-signal-occupied",
+        "env-shrine-occupied"
+      ],
+      "originalRecipeScope": "tools/audio/environment-book.json and tools/audio/render-environment.py govern only the 14 original procedural beds"
     }
   }
 }
