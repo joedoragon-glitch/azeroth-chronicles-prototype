@@ -188,6 +188,18 @@ const groups = [
     ],
   },
   {
+    // #615: source-only changes to native routing or Cindermaw's ministerial
+    // circuit must retain full convoy/save/return acceptance, not only the
+    // short performance diagnostics. Keep this focused to the owning files.
+    match: /^src\/prototype\/(?:navigation|cindermaw-combat)\.js$/,
+    tests: [
+      TEST + 'boss-captain-native-navigation-diagnostic.test.cjs',
+      TEST + 'boss-captain-navigation-lifecycle.test.cjs',
+      TEST + 'issue615-remaining-native-navigation-diagnostic.test.cjs',
+      TEST + 'snapshot-vera-inspection.test.cjs',
+    ],
+  },
+  {
     match: /^src\/prototype\/navigation\.js$/,
     tests: [
       TEST + 'navigation-route-stage4.test.cjs',

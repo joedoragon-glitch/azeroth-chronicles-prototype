@@ -740,16 +740,20 @@
             dist(e, u) <= cfg.range + 210,
         )
         .sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp || this.idOrder(a, b))[0];
-      if (!ally || !this.route(e, ally).length) return false;
+      // The previous full-route feasibility check duplicated follow()'s
+      // route, causing the measured Treasury healer frame spike.
+      // A pending bounded path is not a failed support attempt.
+      if (!ally) return false;
       const before = { x: e.x, y: e.y };
-      this.follow(
+      const advancing = this.follow(
         e,
         ally,
         160 * this.slowMovementFactor(e) * this.mountedMovementFactor(e) * this.nightTempo(),
         dt,
         cfg.range - 25,
+        'support-approach',
       );
-      if (dist(before, e) <= 0.1) return false;
+      if (dist(before, e) <= 0.1) return advancing;
       e.noProgress = 0;
       return true;
     }
@@ -4679,7 +4683,7 @@
         return true;
       }
       if (
-        !this.follow(e, target, (profile.patrolSpeed || 82) * this.mountedMovementFactor(e), dt, 20)
+        !this.follow(e, target, (profile.patrolSpeed || 82) * this.mountedMovementFactor(e), dt, 20, 'captain-patrol')
       ) {
         e.captainPatrolIndex = (index + 1) % patrol.length;
         e.captainPatrolWait = 0.5;
@@ -7802,7 +7806,7 @@
         e.aggro = false;
         const together = this.cinderEntourageTogether(e);
         const goal = resume?.point || e.home;
-        if (together) this.follow(e, goal, R.cinderInspection.speed, dt, 0);
+        if (together) this.follow(e, goal, R.cinderInspection.speed, dt, 0, 'cinder-return');
         if (dist(e, goal) > 1e-7 || !together) return;
         e.returning = 0;
         delete e.cinderReturn;
@@ -7817,7 +7821,7 @@
             this.zone().enemies.find((u) => this.cinderPatroller(u) && u.hp > 0 && !u.neutral),
           goal = minister || e.home,
           stop = minister ? 65 : 0;
-        this.follow(e, goal, R.cinderInspection.guardSpeed, dt, stop);
+        this.follow(e, goal, R.cinderInspection.guardSpeed, dt, stop, 'cinder-guard');
         if (dist(e, goal) > stop + 1e-7) return;
         e.returning = 0;
       } else e.returning -= dt;
