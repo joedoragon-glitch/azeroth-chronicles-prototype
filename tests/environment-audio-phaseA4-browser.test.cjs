@@ -170,6 +170,9 @@ const server=http.createServer((req,res)=>{
           profile:phone?'phone-emulated':'desktop',...attenuation,optimizationOff:off,
           resumed:await page.evaluate(()=>Prototype.audio.environmentVoice?.id)
         }));
+        // Let the just-restarted environment and soundtrack finish their
+        // authored entry crossfades before measuring steady-state output.
+        await page.waitForTimeout(4200);
         // A4 post-compressor graph capture: independent of source-LUFS
         // predictions. Analyze actual running WebAudio output in Chromium,
         // both with current score and environment separately and combined.
