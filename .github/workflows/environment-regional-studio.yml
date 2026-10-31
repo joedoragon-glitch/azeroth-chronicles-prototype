@@ -1,0 +1,47 @@
+# Strict no-deploy recorded-field studio for #709; never registers audio assets.
+name: Environmental regional field-recording studio (NO deploy)
+
+on:
+  push:
+    branches:
+      - 'audit/environment-709-evidence-*'
+    paths:
+      - 'tools/audio/environment-regional-studies.json'
+      - 'tools/audio/environment-regional-studio.py'
+      - '.github/workflows/environment-regional-studio.yml'
+  pull_request:
+    paths:
+      - 'tools/audio/environment-regional-studies.json'
+      - 'tools/audio/environment-regional-studio.py'
+      - '.github/workflows/environment-regional-studio.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  regional-source-studio:
+    name: Physical source provenance and four decoded 72s region/interior previews
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install studio analysis tools (no deployment)
+        run: |
+          python -m pip install --disable-pip-version-check numpy==2.3.5
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+      - name: Fetch pinned authentic field sources, render encoded candidate masters and inspect
+        run: python tools/audio/environment-regional-studio.py
+      - name: Preserve real previews and source/gain/seam contrasts or fail closed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-709-four-regional-studio-masters
+          path: tools/audio/.environment-regional-preview/
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 14
