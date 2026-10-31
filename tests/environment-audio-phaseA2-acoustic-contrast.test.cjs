@@ -8,11 +8,12 @@ const cp=require('node:child_process');
 const assert=require('node:assert/strict');
 const manifest=require('../assets/audio/manifest.json');
 const book=require('../tools/audio/environment-book.json');
+const regional=require('../tools/audio/environment-regional-studies.json');
 const root=path.resolve(__dirname,'..');
 const sampleRate=16000,fftSize=2048;
 const bands=[0,125,250,500,1000,2000,4000,8000];
 const jobs=Object.entries(manifest.assets).filter(([,a])=>a.kind==='ambience');
-assert.equal(jobs.length,14);
+assert.equal(jobs.length,18);
 assert.equal(book.cues.length,14);
 const data=[];
 function fftPowerFromPcm(pcm,start){
@@ -49,8 +50,16 @@ function std(values){
   return Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/values.length);
 }
 for(const [id,a] of jobs){
-  const bookEntry=book.cues.find(b=>b.id===id);
-  assert(bookEntry,id+' absent from source book');
+  const registeredStudio = {
+    'env-highlands-autumn':'regional-ironroot-autumn',
+    'env-frontier-recovery':'regional-frontier-recovery',
+    'env-signal-occupied':'regional-signal-occupied',
+    'env-shrine-occupied':'regional-shrine-occupied',
+  };
+  const study=regional.studies.find(b=>b.id===registeredStudio[id]);
+  const bookEntry=book.cues.find(b=>b.id===id) ||
+    (study && {layers:[{recordedField:true},{proceduralAir:true}],details:study.events});
+  assert(bookEntry,id+' lacks both original source book and recorded-source study');
   const file=path.join(root,a.src.replace(/^\.\//,''));
   const proc=cp.spawnSync('ffmpeg',['-nostdin','-hide_banner','-loglevel','error',
     '-i',file,'-vn','-ac','1','-ar',String(sampleRate),'-f','f32le','pipe:1'],
@@ -114,5 +123,5 @@ for(let i=0;i<data.length;i++)for(let j=i+1;j<data.length;j++){
 }
 similarities.sort((a,b)=>b.spectralBandCosine-a.spectralBandCosine);
 console.log('A2_MOST_SPECTRALLY_SIMILAR '+JSON.stringify(similarities.slice(0,12)));
-console.log('PASS #709 A2 physical-source spectral engineering: 14/14 MP3 time envelopes, frequency-band fingerprints, 91 pairwise broad-band contrasts');
-console.log('A2_LIMIT averaged broad frequency bands and 1-second envelope cannot determine sound identity, timbral plausibility, synthetic/codec artifacts by ear, or aesthetic acceptance; high cosine is only a homogeneity INVESTIGATION FLAG');
+console.log('PASS #709 A2 physical-source spectral engineering: 18/18 real MP3s (14 original+4 new), 24-second comparable analysis windows, 153 pairwise broad-band contrasts');
+console.log('A2_LIMIT the four 72-second sources are sampled only over their first 24 seconds here; averaged broad frequency bands and 1-second envelope cannot determine sound identity, timbral plausibility, synthetic/codec artifacts by ear, or aesthetic acceptance; high cosine is only a homogeneity INVESTIGATION FLAG');
