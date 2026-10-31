@@ -80,14 +80,49 @@
     }
   ],
   "status": {
-    "sourceReview": "done",
-    "downloads": "exploratory physical-source downloads verified in no-deploy CI #41197469581; original source checksum now pinned in the book",
-    "rendered": "First-pass two 24-second MP3 isolated previews encoded in #41197495058; 72-second fatigue correction pending",
-    "signalChecked": "72s source/codec/seams/24s-nonrepeat verified #41197968518; independent decoded A/B found recorded event -21 to -24 dB below its own bed, requiring selective event-balance revision",
-    "heard": "unverified",
-    "accepted": "HOLD",
-    "registered": "no",
-    "merged": "no",
-    "deployed": "no"
+    "sourceReview": "two PDSounds author-public-domain recordings reviewed against Commons license pages; access verified",
+    "downloads": "real original OGGs SHA-1 and byte lengths pinned and rechecked",
+    "rendered": "two 72.0-second independently varied MP3 studio previews encoded at 32kHz mono 128kbps with 150ms guards",
+    "signalChecked": "SUCCESS isolated no-deploy source SHA e0a0582d34d92f50dfc5bbb8a06e63324494811d, Actions run 41198262753; artifact file 13040829187",
+    "retrospectiveQA": "first 24-second version rejected for fixed-event fatigue; first 72-second preview corrected because a physically recorded detail was buried around 21-24dB below background; physical preview ZIP initially not retained due hidden folder and uploader now fails closed",
+    "decodedIndependentReview": "Final actual MP3s were downloaded from prior 72-second successful artifact and decoded independently; 24-second block correlations magnitude <0.02; revised output EBU R128/physical-spectral/seam checked by real decoder in CI; not a human audition.",
+    "heard": "UNVERIFIED (no genuine audio hearing performed)",
+    "accepted": "ARTISTIC HOLD — continuous bed still procedural; two very short recorded details do not prove inhabited locale, scene-specific exterior identity or score/warning mix; no production integration",
+    "registered": "NO",
+    "merged": "NO",
+    "deployed": "NO",
+    "deviceVerified": "NO"
+  },
+  "evidence": {
+    "sourceHead": "e0a0582d34d92f50dfc5bbb8a06e63324494811d",
+    "runUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41198262753",
+    "artifactId": 13040829187,
+    "outputs": [
+      {
+        "id": "side-highlands-signal-preview",
+        "sha256": "754e57e4063a7633d74ea2f564702a0101d04fb7967fa4886b0697fc0841c7a4",
+        "encodedBytes": 1158381,
+        "integratedLUFS": -31.97,
+        "referenceRegisteredLUFS": -31.16,
+        "decodedPeak": 0.17706974,
+        "loopEndSampleDelta": 0.0016399,
+        "midBandEnergy250to2000": 0.817478,
+        "physicalEventToBedDbBeforeCodec": -13.155
+      },
+      {
+        "id": "side-frontier-shrine-preview",
+        "sha256": "0b40e333ba7b1637ca9e84e83bbd7ff3d508e5468abf5669bbf46152c4f14bae",
+        "encodedBytes": 1158381,
+        "integratedLUFS": -33.78,
+        "referenceRegisteredLUFS": -33.17,
+        "decodedPeak": 0.13858923,
+        "loopEndSampleDelta": 0.000083877,
+        "midBandEnergy250to2000": 0.923717,
+        "physicalEventToBedDbBeforeCodec": -17.6
+      }
+    ],
+    "encodedAdditionalTotalBytes": 2316762,
+    "twoCandidateDecodedPcmBytes": 18432000,
+    "note": "Source/gain/spectrum and output-artefact proof only. Do not certify timbral authenticity, actual audibility over music, warning priority, loop fatigue as heard, or iPhone playback."
   }
 }
