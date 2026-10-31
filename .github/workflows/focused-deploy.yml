@@ -4,8 +4,7 @@ name: Focused checks and deploy
 # Comprehensive certification lives in pages.yml and requires manual opt-in.
 on:
   push:
-    # Isolated environmental-audio draft: focused validation only, never Pages.
-    branches: [main, 'audit/environment-709-evidence-*']
+    branches: [main]
   pull_request:
     # Stacked Archive drafts need checks without retargeting them onto main.
     branches: [main, 'archive/**', 'narrative/**']
