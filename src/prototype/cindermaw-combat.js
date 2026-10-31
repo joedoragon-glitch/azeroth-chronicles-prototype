@@ -95,7 +95,6 @@
         if (!this.cinderEntourageTogether(e)) return true;
         const cfg = R.cinderInspection;
         e.cinderInspectionPause = Math.max(0, (e.cinderInspectionPause ?? cfg.pauseMin) - dt);
-        if (e.cinderInspectionPause > 0) return true;
         if (!e.cinderDestination) {
           const last = Number.isInteger(e.cinderStop) ? e.cinderStop : 0;
           let search = inspectionPlans.get(e);
@@ -128,6 +127,10 @@
             if (result.path.length) search.choices.push(stop);
             search.index++;
           }
+          // Plan during the already-authored inspection pause. The boss
+          // still selects its next facility only when that pause expires;
+          // no extra random draw or earlier movement is introduced.
+          if (e.cinderInspectionPause > 0) return true;
           inspectionPlans.delete(e);
           if (!search.choices.length) {
             e.cinderInspectionPause = cfg.pauseMin;
@@ -139,6 +142,7 @@
           e.cinderDestination = { x: p.x, y: p.y, name: p.name, i: p.i };
           delete e.path;
         }
+        if (e.cinderInspectionPause > 0) return true;
         const p = e.cinderDestination;
         this.follow(e, p, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival, 'cinder-patrol');
         if (dist(e, p) <= cfg.arrival + 1e-7) {
