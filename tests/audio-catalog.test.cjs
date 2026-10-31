@@ -14,14 +14,18 @@ const copy = (v) => structuredClone(v),
 (async () => {
   validateCatalog(production);
   assert(!runtimeCatalog(production).director.eventGuides);
-  // Four independently recorded, CC0/PD source-proven ambience masters
-  // legitimately are NOT owned by the original procedural source renderer.
-  // This remains a strict catalog provenance check, not a relaxed assertion.
-  const importedEnvironment=new Set([
+  // Four existing source-recorded Stage1 beds and sixteen #727 frozen masters
+  // are deliberately not owned by the old procedural environment renderer.
+  // Derive the promoted IDs from the versioned source ledger, then require
+  // their exact manifest provenance rather than loosening the assertion.
+  const promotion = require('../tools/audio/environment-727-production-routing.json');
+  const importedEnvironment = new Set([
     'env-highlands-autumn','env-frontier-recovery',
     'env-signal-occupied','env-shrine-occupied',
+    ...promotion.frozenSourceFiles.map(x => x.id),
   ]);
-  assert.equal(importedEnvironment.size,4);
+  assert.equal(promotion.frozenSourceFiles.length,16);
+  assert.equal(importedEnvironment.size,20);
   assert(
     Object.entries(production.assets).every(
       ([id,a]) =>
@@ -38,7 +42,7 @@ const copy = (v) => structuredClone(v),
                   ? 'sfx-book'
                   : 'score-book')),
     ),
-    'Preserve provenance of all procedural originals plus four source-authored recorded sounds',
+    'Preserve provenance for original generated sounds and all 20 source-authored environmental recordings',
   );
   assert(
     Object.keys(production.director.events).every((key) => production.director.eventGuides[key]),
