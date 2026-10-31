@@ -101,6 +101,25 @@ if len(sys.argv)>1:
             wanted=hashlib.sha256(json.dumps(raw,separators=(',',':')).encode()).hexdigest()
             assert listed[key]['soundedLeadSha256']==wanted,(key,'actual MIDI note drift')
             assert listed[key]['soundedLeadEvents']==len(raw)
-    print('PASS actual MIDI instrument-boundary snapshots for all 16 full-form parts')
+    # Compare tracked final hashes to the ACTUAL output, not guessed source
+    # bytes, so future source edits cannot leave old preview claims green.
+    evidence=json.loads((root/'tools/audio/phase5-render-evidence.json').read_text())
+    assert len(evidence['tracks'])==16
+    assert evidence['metricsArtifactSha256']
+    recorded={t['cue']:t for t in report['tracks']}
+    def checked_evidence(records):
+        assert set(x['id'] for x in records)==set(recorded)
+        for x in records:
+            t=recorded[x['id']]
+            for field in ('sha256','encodedBytes','decodedPeak',
+                          'decodedRms','soundedLeadEvents','recordedInstrumentNotes'):
+                assert x[field]==t[field],(x['id'],field,'stale final hash/metric')
+    checked_evidence(evidence['tracks'])
+    broken=copy.deepcopy(evidence['tracks'])
+    broken[0]['sha256']='0'*64
+    reject(lambda:checked_evidence(broken),'stale final hash/metric')
+    assert evidence['encodedBytesTotal']==sum(t['encodedBytes'] for t in report['tracks'])
+    assert evidence['sourceRecordedCalls']==report['recordedSourceProvenance']['recordedCalls']
+    print('PASS actual MIDI instrument-boundary snapshots plus tracked 16-MP3 hashes/metrics')
 
 print('PASS Phase 5 adversarial mutations: full-form performed MIDI, original chords, chime/cello octave, clone/copy, protected scenes')

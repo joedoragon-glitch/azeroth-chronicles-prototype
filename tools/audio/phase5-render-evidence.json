@@ -1,125 +1,184 @@
 {
   "schemaVersion": 1,
-  "scope": "16 isolated Phase 5 recorded-source stereo previews; metrics checkpoint only",
-  "testedAudioProducingCommit": "229065ff7d284d05952838e983aeca165bdad926",
-  "isolatedCIRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41207846367",
-  "candidateStatus": "DRAFT / UNREGISTERED / UNMERGED / UNPUBLISHED",
-  "heardAcousticQuality": "UNVERIFIED; no genuine hearing",
+  "scope": "16 isolated source-composition and corrected exact recorded-source Phase 5 MP3 previews; not an audition or integrated release",
+  "testedAudioProducingCommit": "75208bbd8bc22ec8ce3c971c58257861a950a386",
+  "isolatedCIRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41211142252",
+  "candidateStatus": "SOURCE/ISOLATED TECHNICALLY VERIFIED; OPEN DRAFT / UNREGISTERED / UNMERGED / UNPUBLISHED",
+  "heardAcousticQuality": "UNVERIFIED; no genuine listening, not source-quality acceptance by ear",
   "ownerAcceptance": "PHASE 9 ONLY",
   "musicIdsInOriginalCatalog": 83,
   "crownOriginalPhysicalHashCount": 18,
   "tracks": [
     {
       "id": "boss-thorn",
-      "sha256": "6420d43055205478ec31ac4844c155960340b6f9829973a9607c5a027cc65a9c",
+      "sha256": "df0ccf89bf218fa2aef1aa46cec8f2ed5e4f1c49342f091afc496444af595821",
       "encodedBytes": 803151,
-      "decodedPeak": 0.41727
+      "decodedPeak": 0.41632,
+      "decodedRms": 0.07256,
+      "soundedLeadEvents": 47,
+      "recordedInstrumentNotes": 101
     },
     {
       "id": "boss-thorn-true",
-      "sha256": "78de6f91b529df89d8ee30474fb65f1302c7dfb8c00c440925702bbb076d5c24",
+      "sha256": "fa1d3793889f0f239a68fb3b68103c34fc730fba19a5a4c8e8138f2714f93742",
       "encodedBytes": 803151,
-      "decodedPeak": 0.22365
+      "decodedPeak": 0.22345,
+      "decodedRms": 0.02319,
+      "soundedLeadEvents": 32,
+      "recordedInstrumentNotes": 36
     },
     {
       "id": "boss-crypt",
-      "sha256": "83402b687f6725a68e10a6139525dcc0b21cf39381f3d3215ca1d276b863a7d9",
+      "sha256": "d32b414745c1d79dbeb4b5164ace52d375929a854be731a182c9928250403c89",
       "encodedBytes": 894684,
-      "decodedPeak": 0.42894
+      "decodedPeak": 0.42982,
+      "decodedRms": 0.07254,
+      "soundedLeadEvents": 45,
+      "recordedInstrumentNotes": 99
     },
     {
       "id": "boss-crypt-true",
-      "sha256": "dddf0303c9e322b5d545594720c417306a2708339d5dd9394daf661251f89318",
+      "sha256": "b5cc10f9f14c945967a346702dcb6c1d89972f1283a5b993501133b9348b7e5b",
       "encodedBytes": 894684,
-      "decodedPeak": 0.16566
+      "decodedPeak": 0.17655,
+      "decodedRms": 0.02512,
+      "soundedLeadEvents": 31,
+      "recordedInstrumentNotes": 41
     },
     {
       "id": "boss-mire",
       "sha256": "75fa15dff02e1b88672f53e0e825b6d4b8276ca413a44203a63b3840d7882499",
       "encodedBytes": 648924,
-      "decodedPeak": 0.46094
+      "decodedPeak": 0.46094,
+      "decodedRms": 0.07254,
+      "soundedLeadEvents": 31,
+      "recordedInstrumentNotes": 67
     },
     {
       "id": "boss-mire-true",
-      "sha256": "a6e539d943af3c6ed008585182163f56511066ba7df1cf578887d7d764bcbb73",
+      "sha256": "266f0ab9d5edb89d40322551555d32d3457f101e64226bfc36057e693eac6b5a",
       "encodedBytes": 648924,
-      "decodedPeak": 0.22308
+      "decodedPeak": 0.223,
+      "decodedRms": 0.02065,
+      "soundedLeadEvents": 20,
+      "recordedInstrumentNotes": 27
     },
     {
       "id": "boss-archive",
-      "sha256": "2218ecf6e7998d55f5b8e8c7918e04e89f4503ee86442c1caeeffeba753d1e76",
+      "sha256": "818157827f3b302e503b6021e2a229e4fbbe3780fc6b0b7d6129b0f356758d33",
       "encodedBytes": 862083,
-      "decodedPeak": 0.52342
+      "decodedPeak": 0.52342,
+      "decodedRms": 0.0727,
+      "soundedLeadEvents": 43,
+      "recordedInstrumentNotes": 103
     },
     {
       "id": "boss-archive-true",
-      "sha256": "226768f981d4e5d1ff9abb7aabba695ac947b9889f482230c5a92a6d22e5b6c4",
+      "sha256": "a3652d08ceac0fdfe5a5e52c9ff831eb85e3d978ffcaf26f79c735ee1dc508c2",
       "encodedBytes": 862083,
-      "decodedPeak": 0.22243
+      "decodedPeak": 0.22353,
+      "decodedRms": 0.01887,
+      "soundedLeadEvents": 29,
+      "recordedInstrumentNotes": 36
     },
     {
       "id": "boss-ridge",
-      "sha256": "9efe348e11eaf0cbd1e7a283cab002d774150b19965702783febf4f4e4068a65",
+      "sha256": "815a04b6f81a82b2c4a0c67ba838849ad05fbc827eb6dbff26ea8cb243ec1a5e",
       "encodedBytes": 862083,
-      "decodedPeak": 0.4986
+      "decodedPeak": 0.4991,
+      "decodedRms": 0.07258,
+      "soundedLeadEvents": 47,
+      "recordedInstrumentNotes": 107
     },
     {
       "id": "boss-ridge-true",
-      "sha256": "1f99587f8e55fe706c9dfb8ec4f619927150b322676015ec9cc5f178a005ba96",
+      "sha256": "8ed86e384f408d060fd147e5f1c3fad5c9de80892c0c7b171ec43ae11160ec1c",
       "encodedBytes": 862083,
-      "decodedPeak": 0.21862
+      "decodedPeak": 0.22321,
+      "decodedRms": 0.02466,
+      "soundedLeadEvents": 36,
+      "recordedInstrumentNotes": 40
     },
     {
       "id": "boss-mine",
       "sha256": "1ca22cdbb53795fb1ebc2f61bc8ffbed3290afad9e9afd453e4f7d3957b635e0",
       "encodedBytes": 1160506,
-      "decodedPeak": 0.42953
+      "decodedPeak": 0.42953,
+      "decodedRms": 0.07266,
+      "soundedLeadEvents": 58,
+      "recordedInstrumentNotes": 125
     },
     {
       "id": "boss-mine-true",
-      "sha256": "65969f85dcd3630b6b7696b91f54b1a0e8cc94cec3bcab2d7e124d7cc73e9258",
+      "sha256": "954384be0e4485588eadbd8d4bdea733e7cf8a24753a1fee6d557cf2223f9dc7",
       "encodedBytes": 1160506,
-      "decodedPeak": 0.22325
+      "decodedPeak": 0.223,
+      "decodedRms": 0.02385,
+      "soundedLeadEvents": 40,
+      "recordedInstrumentNotes": 51
     },
     {
       "id": "boss-warlord",
-      "sha256": "35df032dc2535b8cc0fb6198d112db47bddc0d67dee6d4236012d436bd8a3145",
+      "sha256": "8c015c8d4b6aafcfb02600939fc9b79a1805b2ce7bd0974c49e603ed75b4173c",
       "encodedBytes": 776820,
-      "decodedPeak": 0.35478
+      "decodedPeak": 0.3544,
+      "decodedRms": 0.07256,
+      "soundedLeadEvents": 51,
+      "recordedInstrumentNotes": 111
     },
     {
       "id": "boss-warlord-true",
-      "sha256": "61998e977e400980995dbddfcb09628912b08b6ea1b5f3a0ad053f354442886b",
+      "sha256": "42924cbe71366d107fcc25afdbd3b971f5f7acee75b0806c57ded89c8bb0ebdd",
       "encodedBytes": 776820,
-      "decodedPeak": 0.20182
+      "decodedPeak": 0.20519,
+      "decodedRms": 0.02517,
+      "soundedLeadEvents": 44,
+      "recordedInstrumentNotes": 48
     },
     {
       "id": "boss-abyss",
-      "sha256": "ebb643be3f0d9a17f60f27c92078a233bcd6a9a8a32ed2bfab2e8e03507ba14c",
+      "sha256": "ea7af8b2eb7143484c4a1c372297a0ff6edab32807661ed7ac5fa7f8552bed99",
       "encodedBytes": 831363,
-      "decodedPeak": 0.52379
+      "decodedPeak": 0.52373,
+      "decodedRms": 0.07029,
+      "soundedLeadEvents": 51,
+      "recordedInstrumentNotes": 105
     },
     {
       "id": "boss-abyss-true",
-      "sha256": "f020dccbbd7cf3b0489c980de19e1643d85c75684de6880c367f5bb11aa1a685",
+      "sha256": "f38ede18f69edd4b559d6f3a10ecdc068a60476c5a3d3ca5b0ed9ceddd78c147",
       "encodedBytes": 831363,
-      "decodedPeak": 0.11646
+      "decodedPeak": 0.12332,
+      "decodedRms": 0.02511,
+      "soundedLeadEvents": 36,
+      "recordedInstrumentNotes": 46
     }
   ],
   "encodedBytesTotal": 13679228,
   "codec": "192-kbps MP3",
   "sampleRateHz": 44100,
   "channels": 2,
-  "sourceRecordedCalls": 1139,
+  "sourceRecordedCalls": 1143,
   "recordedUniqueSourceSamples": 42,
   "recordedSourceFamilies": 2,
   "largeRecordedSampleShiftCount": 9,
-  "largeRecordedSampleShifts": "Five source-transposition groups within original exposed horn opening motifs: two Ridge, three Abyss; 9 note events total. Exactly 7 legacy opening motifs retained pitch/onset/duration; Lifebinder requalified with -12-semitone cello transformation.",
+  "largeRecordedSampleShifts": "9 note events across 5 original opening-horn target/source groups: Ridge 5 notes, Abyss 4 notes; no ≥5-semitone TRUE, lower cello, or glock shifts. Original source preservation trade-off, audition later.",
   "maxDecodedLoopEdgeDelta": 0.00001,
-  "maxDecodedPeak": 0.52379,
+  "maxDecodedPeak": 0.52373,
   "rawPairsChecked": 8,
-  "maxCombinedRawPairPeak": 0.581755638548519,
+  "maxCombinedRawPairPeak": 0.5958486875746417,
   "phase5OnlyCatalogProjectionBytes": 35880337,
   "encodedCatalogBudgetBytes": 268435456,
-  "provenanceNotes": "The exact tested 16-track metrics including full sample sources, pitch histograms, normal/TRUE overlay frame counts, mono/stereo measures and performed-note comparisons are stored in the corresponding CI artifact. The instrument bank pins upstream CC0 recordings by SHA. This tracked file preserves exact MP3 hashes but is NOT equivalent to listening, a complete catalog budget projection, or integrated game delivery."
+  "provenanceNotes": "At exact 75208bb music-producing SHA, CI #41211142252 encoded/decoded all 16 isolated 44.1kHz 192kbps stereo candidate MP3s; independently compared all 16 full-form instrument-boundary note streams, eight raw additive clocks and protected all 18 physical Crown SHA-256s. 55 licensed CC0 bank clips pinned; 42 actually used from two source families. Temporary CI metric artifact SHA-256 recorded here. Neither the individual MP3s nor full new soundtrack are registered in the game; audible quality and warning intelligibility unverified.",
+  "metricsArtifactSha256": "f0cd99ad008e0b0acefc2a6398dfc26d7855e8b5f82c3a12d4eacacac560ba09",
+  "sourceCorrectionAudit": {
+    "legacyHarmony": "All eight opening progressions restored to old source's first four chord degrees; six had changed without justification",
+    "playedMIDI": "16 full-form recorded-sampler-boundary lead and TRUE event hashes verified independently against authored MIDI, with negative mutations",
+    "trueRegister": "Mire and Archive coherent chimes, Ridge cello and Warlord horn explicitly register scored; closest-source shift ≤4 for TRUE chimes; no per-note octave folding",
+    "harmonicResponse": "Eight character-specific TRUE countermelodies adapted at 60 individually approved chord-accent bars, not blind all-note triad quantization; retained deliberate suspensions",
+    "lifebinder": "Provisional winter-workshop pilot source independently requalified and its original first four harmonies corrected; former-companion memory subtle",
+    "mireTrue": "Four soft cello undercurrents verified as four additional source calls; isolated TRUE/base RMS gap reduced from about 15.3dB to 10.9dB without overall gain normalization",
+    "crown": "18 protected original Dark Crown MP3 physical hashes validated unchanged"
+  },
+  "final65CatalogBudgetStatus": "NOT YET TESTED (3 Phase 6 cues and full integrated 65-cue registration outstanding)"
 }
