@@ -45,16 +45,18 @@ const server=http.createServer((req,res)=>{
           const registration=await navigator.serviceWorker.register('./sw.js',{scope:'./'});
           if(registration.waiting) registration.waiting.postMessage({type:'SKIP_WAITING'});
         });
-        // Install waits for all catalog MP3s, generated code and PWA art. Don't
-        // fake acceptance by fetching only the test candidates over the network.
-        await page.waitForFunction(async()=>{
-          if(!navigator.serviceWorker.controller) return false;
-          const names=(await caches.keys()).filter(k=>k.startsWith('azeroth-app-v'));
-          if(names.length!==1)return false;
-          const store=await caches.open(names[0]);
-          const url=new URL('./assets/audio/ambience/studio-cindermaw-roost-vault-727.mp3',location.href);
-          return !!await store.match(url);
-        },null,{timeout:120000,polling:800});
+        // The cache's install event first writes its manifest, then completes
+        // the full addAll. A partially populated cache is NOT an installed PWA.
+        // Wait synchronously for SW control, which follows successful install +
+        // activation + clients.claim(). Do not use an async waitForFunction
+        // predicate: an unresolved Promise can be observed before activation.
+        await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller),
+          null,{timeout:120000,polling:800});
+        await page.evaluate(async()=>{
+          const registration=await navigator.serviceWorker.ready;
+          if(!registration.active||!navigator.serviceWorker.controller)
+            throw Error('Service worker not actively controlling freshly installed game');
+        });
         const online=await page.evaluate(async ids=>{
           const names=(await caches.keys()).filter(k=>k.startsWith('azeroth-app-v'));
           const store=await caches.open(names[0]);
@@ -77,6 +79,7 @@ const server=http.createServer((req,res)=>{
             controlled:!!navigator.serviceWorker.controller,scope:worker.scope};
         },study.studies.map(s=>s.id));
         console.log('STAGE6_OFFLINE_CACHE_DIAGNOSTICS '+JSON.stringify({profile:phone?'phone-emulated':'desktop',online}));
+        assert.equal(online.controlled,true,'PWA install must actively control the game before an offline claim');
         assert.deepEqual(online.missing,[],'Incomplete fresh PWA install of frozen candidate MP3s');
         assert.equal(online.cachedCandidateCount,16);
         await context.setOffline(true);
