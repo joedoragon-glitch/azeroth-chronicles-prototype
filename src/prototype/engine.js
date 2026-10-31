@@ -7783,7 +7783,10 @@
         e.returning = 1;
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
-        this.event('reset', { x: e.x, y: e.y, zone: this.zoneId });
+        this.event('reset');
+        // A paint-only receipt: do not add coordinates or a new event type
+        // to persisted gameplay statistics for an ordinary enemy reset.
+        this.effects.push({ type: 'resetCue', zone: this.zoneId, x: e.x, y: e.y });
       }
       if (resetPoint) this.beginFieldBossReturn(e, resetPoint);
       const mobilityReturn = this.advanceFieldBossReturn(e, dt);
@@ -7843,8 +7846,9 @@
             visibleSnap = dist(e, e.home) > 28;
           Object.assign(e, e.home);
           if (visibleSnap)
-            this.event('resetArrival', {
-              zone: this.zoneId, x: e.x, y: e.y, fromX, fromY,
+            this.effects.push({
+              type: 'resetArrival', zone: this.zoneId,
+              x: e.x, y: e.y, fromX, fromY,
             });
         }
         this.finishDisengage(e);
