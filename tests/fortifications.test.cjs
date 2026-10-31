@@ -136,7 +136,14 @@ for (const id of [
       areas.some((f) => f.id === plan.id),
       plan.id,
     );
-  if (!g.isDungeon() && !g.sideDungeon()) assert(areas.some((f) => f.id.startsWith('field-')));
+  // Layouts need not invent a field- prefixed fort. Register every real
+  // authored field mini-site that has defensive walls, by its stable ID.
+  const builtFieldMinis = (g.zone().minis || []).filter((mini) =>
+    mini.type === 'field' && g.zone().props.some((p) =>
+      p.mini === mini.id && String(p.id).startsWith('mini-wall-') && !p.decorative));
+  for (const mini of builtFieldMinis)
+    assert(areas.some((fort) => fort.id === mini.id),
+      id + ': real walled field fort ' + mini.id);
   const restored = C.restore(g.snapshot(), () => 0.9);
   assert.deepEqual(
     restored.fortAreas().map((f) => f.id),
