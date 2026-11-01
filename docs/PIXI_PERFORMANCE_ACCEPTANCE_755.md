@@ -45,6 +45,21 @@ node tests/pixi-parity-browser.test.cjs
 
 One run produces diagnostic `evidence.json` and screenshots; **one run is not a passing paired performance acceptance**. The workflow's comparator uses four runs, matched in one runner, and writes `decision.json`. A native local check is `node tests/pixi-755-acceptance.test.cjs`. Do not compare local developer hardware timings with hosted CI evidence.
 
+## Measured acceptance receipt — 1 November 2026
+
+**Result: GO for *relative synthetic draw-time regression* only.** The dedicated [paired acceptance run #41362229300](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41362229300) completed successfully and retained the [`pixi-755-paired-composite` artifact (screenshots, four run receipts and `decision.json`)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41362229300/artifacts/13105973926). The same-branch [focused native verification #41362229273](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41362229273) passed. The acceptance artifact's **tested source baseline** is `789f9d80bb11d99016bed8d816d2bf5d8e27f5f6`; **tested candidate** is GitHub's PR check-merge tree `3ea913c2997db49d013e2b873bbe141420b48271` (not a deployed build). The browser is Chromium `151.0.7922.34`, with ANGLE SwiftShader, at 912×600 DPR=1 and 150% zoom.
+
+| Number of actors | Steady p50 baseline → candidate (ms) | Steady p95 baseline → candidate (ms) | Comparator |
+| ---: | ---: | ---: | --- |
+| 1 | 1.9 → 1.9 | 3.9 → 2.9 | GO |
+| 8 | 3.3 → 3.5 | 8.7 → 7.6 | GO |
+| 24 | 8.4 → 10.2 | 456.3 → 446.2 | GO |
+| 48 | 13.3 → 12.1 | 573.4 → 568.0 | GO |
+
+Each score is the median of two independent run percentiles; each run uses 16 warmup draws and 96 timed combined Pixi+Canvas draw calls. No comparator material-regression or excessive baseline-noise condition fired (`problems: []`). The native comparator's deliberately slowed positive control and the synthetic Auto/adaptive controller regression passed. Additional DPR=3 synthetic-browser smoke passed in **390×844 portrait** and **844×390 landscape**, each with real composited cover and registered actor fixtures.
+
+**Important acceptance boundary:** Software-rendered p95 in the hundreds of milliseconds is not evidence of smooth gameplay, device-ready frame pacing or a threshold the game should meet. It shows substantial *software* fixture tail cost in both unchanged and candidate trees. The relative GO answers only “Did this candidate add a detectable material synchronous draw-time regression under these fixed conditions?” It does **not** answer “Is the engine fast enough on iPhone/Chromebook?” or “Has #481 been fixed?” No optimization fix, physical-device test, merge or deployment is claimed. Do not close the device-acceptance portion of #755 merely because the regression detector passed. The full receipts are a retained GitHub Actions artifact with limited retention; the key quantified results and tested SHAs are preserved here.
+
 ## Interpretation and unresolved device boundary
 
 The steady probe measures **synchronous JavaScript calls to the composited renderer**; it cannot measure GPU command completion, real presentation pacing, thermal throttling, battery, input latency or resident GPU memory. It runs frozen authored visuals, not active 48-monster AI combat. Its first-fixture draw is useful for tracking one-time work/caching but does not isolate cold browser startup, downloaded assets or first real combat entry. The run records texture-source and bake deltas, not comprehensive GPU residency. Unexpected source pressure and first-visit spikes are **investigation signals**, not proof of #481's cause.
