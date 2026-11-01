@@ -2819,6 +2819,7 @@
           } else {
             this.engage(target);
             const count = this.hero.class === 'ranger' && slot === 2 ? 2 : 1;
+            const evasionActionId = count > 1 ? 'ranger-double:' + this.s.nextId : null;
             for (let j = 0; j < count; j++) {
               const d = Math.max(1, dist(this.hero, target));
               this.s.projectiles.push({
@@ -2830,6 +2831,7 @@
                 target: target.id,
                 damage: count === 2 ? power * 1.2 * scale : dmg,
                 source: 'hero',
+                ...(evasionActionId ? { evasionActionId } : {}),
                 speed: 550,
                 delay: j * 0.12,
                 ...(this.hero.class === 'ranger' && j > 0
