@@ -887,6 +887,19 @@ test('#756 deterministic canonical detail rebuild profile (source-clock only)', 
     });
   }
   assert.equal(report.length, variants.length);
+  assert.deepEqual(
+    Object.fromEntries(report.map((r) => [r.variant, r.vectorClears])),
+    {
+      'true-boss': 60,
+      'true-nonboss': 1,
+      ringleader: 60,
+      frenzy: 60,
+      'true-boss-ledger': 61,
+      'keeper-cage': 1,
+      'pursuit-streak': 1,
+    },
+    'only truly animated geometry is invalidated for each presentation tick',
+  );
   assert.equal(report[0].newGradients, 2, 'canonical boss uses two stable gradient recipes');
   assert.equal(report[0].newAtlasFrames, 1, 'original body frame reuses a texture');
   console.log('PIXI_DETAIL_756_PROFILE ' + JSON.stringify(report));
@@ -894,4 +907,158 @@ test('#756 deterministic canonical detail rebuild profile (source-clock only)', 
   assert.equal(scene.metrics().actorUnderlays, 0);
   assert.equal(scene.metrics().actorOverlays, 0);
   scene.destroy();
+});
+
+
+test('#756 animated detail and static overlay retain exact separate lifecycles', () => {
+  const Renderer = require('../../src/prototype/renderer.js');
+  const { PIXI, app, calls } = pixiFixture();
+  let time = 0;
+  let reduced = false;
+  const clears = new WeakMap();
+  let destroyed = 0;
+  const origClear = PIXI.Graphics.prototype.clear;
+  const origDestroy = PIXI.Graphics.prototype.destroy;
+  PIXI.Graphics.prototype.clear = function () {
+    clears.set(this, (clears.get(this) || 0) + 1);
+    return origClear.call(this);
+  };
+  PIXI.Graphics.prototype.destroy = function (...args) {
+    destroyed++;
+    return origDestroy.apply(this, args);
+  };
+  const game = {
+    hero: { x: 100, y: 100 },
+    s: { rescued: {}, statistics: { deaths: 0 } },
+    regionIndex: () => 0,
+    supplyRoom: () => false,
+    bundleCollected: () => false,
+  };
+  const priorMatchMedia = globalThis.matchMedia;
+  globalThis.matchMedia = () => ({ get matches() { return reduced; } });
+  try {
+    const painter = Renderer.create({
+      canvas: { width: 640, height: 360 },
+      ctx: {},
+      getGame: () => game,
+      platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 320, y: 180 }) },
+      chargePresentation: () => null,
+      isPaused: () => false,
+      Campaign: { rules: { ambientLife: {}, harbors: {} } },
+      PrototypeVisuals: { height: () => 100 },
+      PrototypeSprites: { height: () => 100 },
+      PrototypeCombatVisuals: {},
+      PrototypeEnemyVfxArt: null,
+      PrototypeGroundCache: null,
+      now: () => time,
+    });
+    const scene = Bridge.create({ PIXI, app, width: 640, height: 360 });
+    scene.registerTexture('hero.png', picture());
+    const stage = app.stage.children[0].children[1];
+    const command = actor('details');
+    function update(e, zoom = 1.5) {
+      const details = painter.actorDetailsFor(e);
+      command.details = details
+        ? { ...details, x: 240 + time / 1000, y: 150, zoom, paint: painter.paintActorDetails }
+        : null;
+      scene.syncActors([command]);
+      return details;
+    }
+    const boss = {
+      id: 'ridge-true',
+      renderKind: 'enemy',
+      family: 'ridge',
+      type: 'boss',
+      form: 'true',
+      ledgerOpen: true,
+      hp: 300,
+      x: 120,
+      y: 140,
+    };
+    time = 0;
+    update(boss, 1);
+    const [aura, body, book] = stage.children;
+    assert(aura instanceof PIXI.Graphics && book instanceof PIXI.Graphics);
+    const initial = JSON.stringify([aura.curves, aura.lines, aura.ellipses]);
+    assert.equal(clears.get(aura), 1);
+    assert.equal(clears.get(book), 1);
+    time = 7000;
+    update(boss, 1.5);
+    assert.equal(stage.children[0], aura, 'retained original aura GPU geometry object');
+    assert.equal(stage.children[1], body, 'body sprite untouched by details');
+    assert.equal(stage.children[2], book, 'retained canonical ledger book');
+    assert.notEqual(
+      JSON.stringify([aura.curves, aura.lines, aura.ellipses]),
+      initial,
+      'TRUE strands, arcs and motes still animate at t7000',
+    );
+    assert.equal(clears.get(aura), 2, 'animated underlay re-recorded');
+    assert.equal(clears.get(book), 1, 'unchanged book never re-recorded');
+    assert.equal(book.scale.x, 1.5, 'overlay zoom uses transform rather than rebuild');
+    update(boss, 1.75);
+    assert.equal(clears.get(aura), 2, 'unchanged time does not rebuild for zoom');
+    assert.equal(clears.get(book), 1);
+    assert.equal(book.scale.x, 1.75);
+    assert.equal(book.position.x, 247);
+
+    reduced = true;
+    time = 9000;
+    update(boss);
+    assert.equal(clears.get(aura), 3, 'reduced-motion preference changes the aura recipe');
+    assert.equal(clears.get(book), 1);
+    time = 16000;
+    update(boss);
+    assert.equal(clears.get(aura), 3, 'reduced-motion TRUE boss holds stationary geometry');
+    reduced = false;
+    update(boss);
+    assert.equal(clears.get(aura), 4, 'normal TRUE animation resumes with preference');
+    assert.equal(calls.gradients, 2, 'animated updates share original gradient resources');
+    assert.equal(calls.images, 1, 'no body texture source is replaced');
+
+    boss.ledgerOpen = false;
+    update(boss);
+    assert.equal(scene.metrics().actorOverlays, 0, 'closing the ledger removes its book');
+    boss.form = 'normal';
+    update(boss);
+    assert.equal(scene.metrics().actorUnderlays, 0, 'TRUE to normal removes gold radiance');
+    boss.frenzy = true;
+    update(boss);
+    assert.equal(scene.metrics().actorUnderlays, 1);
+    boss.frenzy = false;
+    update(boss);
+    assert.equal(scene.metrics().actorUnderlays, 0, 'frenzy expiry clears native geometry');
+
+    const keeper = { id: 'keeper', renderKind: 'npc', kind: 'keeper', x: 120, y: 140 };
+    update(keeper);
+    assert.equal(scene.metrics().actorOverlays, 1);
+    keeper.kind = 'plain';
+    update(keeper);
+    assert.equal(scene.metrics().actorOverlays, 0, 'cage disappears if keeper detail is lost');
+
+    const flight = {
+      id: 'veyrith',
+      renderKind: 'enemy',
+      family: 'abyss',
+      type: 'boss',
+      form: 'normal',
+      hp: 300,
+      x: 120,
+      y: 140,
+      motion: { aerial: true, flightPath: [{ x: 240, y: 250 }] },
+    };
+    const flightA = update(flight).underlaySignature;
+    flight.x += 45;
+    const flightB = update(flight).underlaySignature;
+    assert.notEqual(flightA, flightB, 'changing actor-to-waypoint vector updates flight strokes');
+    flight.motion = { aerial: false, flightPath: [] };
+    update(flight);
+    assert.equal(scene.metrics().actorUnderlays, 0, 'flight end releases its strokes');
+    assert(destroyed >= 4, 'retired underlays/overlays destroy the native Graphics objects');
+    scene.syncActors([]);
+    assert.equal(scene.metrics().actors, 0, 'boss death/removal leaves no retained actors');
+    scene.destroy();
+  } finally {
+    if (priorMatchMedia === undefined) delete globalThis.matchMedia;
+    else globalThis.matchMedia = priorMatchMedia;
+  }
 });
