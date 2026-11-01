@@ -2576,6 +2576,7 @@
         }
         if (a.kind === 'ring') {
           this.s.hazards.push({
+            skillShape: 'area',
             ...a,
             family: e.family,
             species: e.species,
@@ -2800,6 +2801,7 @@
             // critical strike. Do not persist its parent's release receipt.
             if (p.criticalExecution) delete p.criticalExecution;
             this.s.hazards.push({
+            skillShape: 'area',
               ...p,
               family: e.family,
               species: e.species,
