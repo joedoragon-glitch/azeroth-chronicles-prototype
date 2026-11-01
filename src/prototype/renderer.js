@@ -607,7 +607,7 @@
       dodgeCues = [],
       origin = null;
     // Skipped first paint is allowed, but off-screen markers have a hard deadline.
-    const criticalCueMaxAgeMs = 1800;
+    const criticalCueMaxAgeMs = 1800, dodgeCueMaxAgeMs = 1400;
     let effectRecorder = null;
     let retainedEffectRecorder = null;
     const heroArt =
@@ -1634,6 +1634,7 @@
         effectRecorder?.sceneReset(visualFx);
         visualFx = [];
         criticalCues = [];
+        dodgeCues = [];
         visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
       }
       if (effectRecorder && game.s.mode !== 'developer') effectRecorder = null;
@@ -1642,6 +1643,14 @@
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx, effectRecorder);
       effectRecorder?.filtered(previous, visualFx);
       for (const event of events) {
+        if (event.type === 'skillEvaded' && event.target &&
+            event.zone === game.zoneId && event.deaths === game.s.statistics.deaths) {
+          dodgeCues = dodgeCues.filter((c) => c.target !== event.target);
+          dodgeCues.push({ target: event.target, life: 0.65,
+            drawn: false, expiresAt: now() + dodgeCueMaxAgeMs });
+          if (dodgeCues.length > 8) dodgeCues.shift();
+          continue;
+        }
         if (
           event.type !== 'criticalExecutionRelease' ||
           !event.source ||
@@ -3672,6 +3681,7 @@
         optimizationMode: optimized ? 'on' : 'off',
         transientEffects: visualFx.length,
         criticalCues: criticalCues.length,
+        dodgeCues: dodgeCues.length,
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
         groundCache: groundCache?.status() || null,
         outlineBuffers: {
