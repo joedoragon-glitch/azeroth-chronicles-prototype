@@ -258,6 +258,14 @@ a brief local **Miss** over the defender. Probability values reside in
 The detailed acceptance boundaries are in
 [SKILL_EVASION_OWNER_CONTRACT_20261101.md](SKILL_EVASION_OWNER_CONTRACT_20261101.md).
 
+**Sprite-scope source review:** PR #760 edits `rules.js` only to add a
+skill-evasion balance table, and `renderer.js` only to add a bounded combat
+`Miss` overlay cue. Neither change adds or renames a sprite, art family,
+palette, asset key or loadout. The independently enumerated sprite-scope
+catalog and visual identities remain unchanged; only the two current
+source-file fingerprints in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json`
+are refreshed. Historical sprite approvals and receipts remain intact.
+
 **Status:** These are proposed PR #760 branch rules subject to focused tests,
 review, explicit merge approval, publication and device verification. This
 section is not evidence that the current public game already uses evasion.
