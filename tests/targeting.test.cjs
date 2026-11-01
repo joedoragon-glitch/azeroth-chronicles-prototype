@@ -619,3 +619,46 @@ for (const [heroClass, reach] of [
     heroClass + ' current passive basic Recall behavior (Rogue discrepancy under investigation)',
   );
 }
+
+
+// Investigation #684 latest-main follow-up: legacy pursuit, Rogue manual song and Recall gate.
+// Current behavior only: do not preserve these bugs as approved requirements.
+{
+  // At 385 units the Mage may already fire a lawful 400-unit passive basic.
+  // A synthetic old attack order nonetheless drives the hero toward 350.
+  const { game, enemies } = heroAutoInvestigation('mage', [385]);
+  const enemy = enemies[0], before = { x: game.hero.x, y: game.hero.y };
+  game.hero.order = { type: 'attack', id: enemy.id };
+  game.tick(0.05, { x: 0, y: 0 });
+  assert(game.hero.x > before.x,
+    'legacy attack order causes needless approach inside lawful Mage basic range');
+  assert.equal(game.hero.order?.type, 'attack');
+  assert(game.castMovementBasic(), 'Mage passive basic can fire while old order persists');
+  assert(game.hero.basicCd > 0);
+  assert.equal(game.hero.cd[0], 0, 'old order has not yet reached manual Tap threshold');
+}
+{
+  // For the Rogue, an old hero attack order activates her *song* rather than
+  // the singer-centered automatic bell basic and its separate recovery.
+  const { game, enemies } = heroAutoInvestigation('rogue', [205]);
+  game.hero.order = { type: 'attack', id: enemies[0].id };
+  game.tick(0.05, { x: 0, y: 0 });
+  assert(game.hero.cd[0] > 0, 'legacy Rogue order spends manual song cooldown');
+  assert.equal(game.hero.basicCd, 0, 'old Rogue order is not a bell basic');
+  assert(game.effects.some((e) => e.type === 'rogueBellSkill1'),
+    'legacy Rogue order released manually activated singer-centered Skill 1');
+}
+{
+  // releaseRecallForCombat() prevents cancellation during actual travel,
+  // but Rogue automatic basic clears the standing order after arrival.
+  const { game } = heroAutoInvestigation('rogue', [160]);
+  const companion = game.unit('soldier', game.hero.x + 350, game.hero.y);
+  game.s.party = [companion];
+  game.s.recallActive = true;
+  assert(game.recallInProgress(), 'a companion is still traveling to the hero');
+  assert(game.castMovementBasic(), 'Rogue defends while companion returns');
+  assert.equal(game.s.recallActive, true,
+    'Rogue autoattack cannot release an unfinished Recall');
+  // Compare with the existing nearby-companion witness, which confirms the
+  // *same* automatic strike releases Recall once all allies have arrived.
+}
