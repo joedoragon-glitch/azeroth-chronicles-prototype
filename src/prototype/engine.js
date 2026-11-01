@@ -390,7 +390,11 @@
     // immutable preview copies), never a name or an arbitrary monster flag.
     isOwnedMonster(actor) {
       return !!actor && !!this.s.party?.some((u) =>
-        u.id === actor.id && u.type === actor.type) &&
+        u.id === actor.id && u.type === actor.type &&
+        (actor.type === 'pet'
+          ? u.petFamily === actor.petFamily
+          : u.charmOrigin?.sourceEnemyId === actor.charmOrigin?.sourceEnemyId &&
+            !!u.charmOrigin)) &&
         (actor.type === 'pet'
           ? !!this.petDefinition(actor) && this.petUnlocked(actor.petFamily)
           : !!actor.charmOrigin && this.isCharmedCompanion(actor));
