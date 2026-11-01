@@ -1771,6 +1771,7 @@
           if (!this.developerCompanionDamage(
             u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
               this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
+            { skillShape: 'single', criticalExecution: criticalReceipt },
           )) return false;
           const veteran = R.companionSkills.veteran;
           if (
