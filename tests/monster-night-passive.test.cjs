@@ -154,6 +154,27 @@ for (const unit of [hostile, pet, goblin])
 if (originalEvasion === undefined) delete R.skillEvasion;
 else R.skillEvasion = originalEvasion;
 
+// Barracks recovery reconstructs a temporary unit before restoring its
+// original pet/capture ID. It must receive the same night maximum immediately.
+game.s.mercyTime = 0;
+game.hero.gold = 100000;
+game.zone().enemies = [];
+game.zone().buildings.push({
+  id: 'night-recovery-base', kind: 'barracks',
+  x: game.hero.x, y: game.hero.y, progress: 4,
+  queue: 0, queueType: null, full: true,
+});
+for (const unit of [pet, goblin]) {
+  const expected = game.companionMaxHp(unit);
+  unit.hp = 0;
+  game.syncMonsterNightStats(unit);
+  assert.equal(unit.hp, 0, 'passive cannot resurrect a fallen monster');
+  assert(game.recover(unit.id), 'recover original monster with lawful Barracks action');
+  assert.equal(unit.maxHp, expected, 'recovered monster uses nighttime maximum');
+  assert.equal(unit.hp, expected, 'recovered monster is fully healed to nighttime max');
+  assert(game.isOwnedMonster(unit), 'recovery retains exact pet/capture provenance');
+}
+
 const fake = game.unit('soldier', 1000, 1000);
 fake.charmOrigin = { ...goblin.charmOrigin };
 fake.charmOrigin.sourceEnemyId = 'enemy-99999';
