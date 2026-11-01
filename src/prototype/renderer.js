@@ -604,6 +604,7 @@
       // A separate tiny queue: critical cues must not evict 40 existing combat
       // effects or disappear unseen during normal renderer frame skipping.
       criticalCues = [],
+      dodgeCues = [],
       origin = null;
     // Skipped first paint is allowed, but off-screen markers have a hard deadline.
     const criticalCueMaxAgeMs = 1800;
