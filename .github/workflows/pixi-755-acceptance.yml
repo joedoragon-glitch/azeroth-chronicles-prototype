@@ -54,6 +54,12 @@ jobs:
           cp tests/pixi-parity-browser.test.cjs "$RUNNER_TEMP/pixi-755-base/tests/pixi-parity-browser.test.cjs"
           ln -s "$GITHUB_WORKSPACE/node_modules" "$RUNNER_TEMP/pixi-755-base/node_modules"
           printf '%s\n' "Baseline $(git -C "$RUNNER_TEMP/pixi-755-base" rev-parse HEAD)" "Candidate $(git rev-parse HEAD)"
+      - name: Prepare SHA-verified local PixiJS in BOTH source trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/vendor-pixi.cjs --ensure
+          (cd "$RUNNER_TEMP/pixi-755-base" && node scripts/vendor-pixi.cjs --ensure)
       - name: Measure baseline / candidate / candidate / baseline, same runner and fixture
         shell: bash
         run: |
