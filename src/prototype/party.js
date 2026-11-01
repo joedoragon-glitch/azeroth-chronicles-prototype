@@ -1640,7 +1640,10 @@
         return Math.max(speed, nativeFloor) * (1 + rally + quickstep);
       }
       companionRallyAttackSpeed(u) {
-        return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+        const rally = this.rangerRallyActive(u)
+          ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+        // One passive applies to ordinary pet and Charmed basic attack cycles.
+        return rally * this.monsterNightBonuses(u).tempo;
       }
       rogueCompanionSpecialDamage(u, amount) {
         // All ordinary Soldier/Ranger active specials grow gently with
@@ -1664,7 +1667,8 @@
         // One full elite multiplier at the common attack source: specials,
         // native basics and heritage inherit it without stacking a second time.
         return baseline * (u?.charmRingleaderTrained === true &&
-          this.isCharmedCompanion(u) ? R.ringleaderScaling.damage : 1);
+          this.isCharmedCompanion(u) ? R.ringleaderScaling.damage : 1) *
+          this.monsterNightBonuses(u).damage;
       }
       // Different Rogue song families stack additively for ordinary basics.
       // Each remains independently timed and capped; specials are unaffected.
@@ -3455,6 +3459,10 @@
           dead.maxHp = this.companionMaxHp(dead);
           dead.hp = dead.maxHp;
         }
+        // Recovery rebuilds a temporary, unregistered unit. Re-evaluate after
+        // its original registered identity has been restored so a nighttime
+        // pet or Charmed survivor returns with the live monster passive.
+        this.syncMonsterNightStats(dead);
         delete dead.slowStacks;
         delete dead.rogueSlow;
         this.say('Companion recovered.');
@@ -3935,7 +3943,10 @@
       companionFight(u, e, living, dt) {
         this._tacticalPartyTargets.set(u.id, e.id);
         const monster = this.charmedCompanionProfile(u),
-          eliteMove = this.charmedCombatMoveFactor(u);
+          // Night tempo only modifies combat movement, not paid labor routes
+          // or scripted positioning. This is the same rate the enemy AI uses.
+          eliteMove = this.charmedCombatMoveFactor(u) *
+            this.monsterNightBonuses(u).tempo;
         if (u.type === 'pet') {
           this.updatePetCombat(u, e, living, dt);
           return;

@@ -1681,6 +1681,9 @@
         this.s.party.push(u);
         this.s.charmCaptures ??= {};
         this.s.charmCaptures[u.id] = { ...profile };
+        // The lawful receipt now exists. Capture at night gets the same live
+        // passive immediately; the bonus expires at dawn without saved flags.
+        this.syncMonsterNightStats(u);
         if (this.s.heroTarget === primary.id) this.s.heroTarget = null;
         this.resetBasicCombo();
         this.event('rogueCharm', {

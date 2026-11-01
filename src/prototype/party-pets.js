@@ -72,6 +72,8 @@
         const u = this.unit('pet', p.x, p.y, family);
         u.active = this.activeParty().length < this.barracksFieldCap(b);
         this.s.party.push(u);
+        // A pet recruited after sunset immediately receives its live passive.
+        this.syncMonsterNightStats(u);
         this.say(u.name + (u.active ? ' joins your group.' : ' waits in reserve.'));
         return true;
       }
@@ -491,6 +493,7 @@
         if (!ranged && visible && this.companionTrySkill(u, target)) return;
         const speed =
           this.companionRallyMoveSpeed(u, 255) *
+          this.monsterNightBonuses(u).tempo *
           this.slowMovementFactor(u) *
           this.mireBogMovementFactor(u) *
           this.ashMovementFactor(u);

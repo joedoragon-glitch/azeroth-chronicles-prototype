@@ -386,19 +386,60 @@
         ? count(this.s.victories)
         : count(this.s.normal) + count(this.s.true);
     }
+    // Validation uses the saved individual identity (including legitimate
+    // immutable preview copies), never a name or an arbitrary monster flag.
+    isOwnedMonster(actor) {
+      return !!actor && !!this.s.party?.some((u) =>
+        u.id === actor.id && u.type === actor.type &&
+        (actor.type === 'pet'
+          ? u.petFamily === actor.petFamily
+          : u.charmOrigin?.sourceEnemyId === actor.charmOrigin?.sourceEnemyId &&
+            !!u.charmOrigin)) &&
+        (actor.type === 'pet'
+          ? !!this.petDefinition(actor) && this.petUnlocked(actor.petFamily)
+          : !!actor.charmOrigin && this.isCharmedCompanion(actor));
+    }
+    // One authoritative, live monster-night profile. Allegiance does not
+    // change a creature's biology. Hostiles use the default; owned boss pets
+    // and lawful Charm captures read the same values, never copied constants.
+    monsterNightBonuses(actor = null) {
+      const eligible = actor === null ||
+        (actor !== this.hero && (this.isOwnedMonster(actor) ||
+          ((!this.s.party?.some((u) => u.id === actor.id)) &&
+            (actor.type === 'mob' || actor.type === 'boss'))));
+      if (!eligible || !this.night() || this.peace)
+        return { hp: 1, damage: 1, tempo: 1, dodge: 0 };
+      const n = this.nightPoints(), cfg = R.balance.nightTempo;
+      return {
+        hp: 1.1 + 0.03 * n,
+        damage: 1.15 + 0.02 * n,
+        tempo: 1 + Math.min(cfg.maxBonus, cfg.baseBonus + cfg.perVictoryBonus * n),
+        // The unmerged skill-evasion feature owns this percentage. When it is
+        // integrated, both hostile and friendly monsters read the SAME knob.
+        dodge: R.skillEvasion?.nightEnemyBonus || 0,
+      };
+    }
+    // Recompute on a day/night transition or a new night victory point, and
+    // after recruitment/Charm. HP adjusts by the change in maximum, preserving
+    // existing wounds and fallen status. Never save a separate night flag.
+    syncMonsterNightStats(unit = null) {
+      for (const u of unit ? [unit] : (this.s.party || [])) {
+        if (!this.isOwnedMonster(u)) continue;
+        const next = this.companionMaxHp(u), gain = next - u.maxHp;
+        if (!gain) continue;
+        u.maxHp = next;
+        if (u.hp > 0) u.hp = Math.max(1, Math.min(next, u.hp + gain));
+      }
+    }
     multipliers() {
-      const n = this.nightPoints();
-      return this.night() && !this.peace
-        ? { hp: 1.1 + 0.03 * n, damage: 1.15 + 0.02 * n }
-        : { hp: 1, damage: 1 };
+      const { hp, damage } = this.monsterNightBonuses();
+      return { hp, damage };
     }
     mountedMovementFactor(e) {
       return e.mountedCrownRider ? R.balance.mountedMovementMultiplier : 1;
     }
     nightTempo() {
-      if (!this.night() || this.peace) return 1;
-      const cfg = R.balance.nightTempo;
-      return 1 + Math.min(cfg.maxBonus, cfg.baseBonus + cfg.perVictoryBonus * this.nightPoints());
+      return this.monsterNightBonuses().tempo;
     }
     // Authoritative enemy support healing. Only actual ranged ordinary roles,
     // authored ranged-aligned captains and the explicitly selected bosses qualify.
@@ -4404,6 +4445,14 @@
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
       this.s.restCooldown = Math.max(0, (this.s.restCooldown || 0) - dt);
       this.advanceDaylight(dt);
+      // Reconcile maxima when sunset, sunrise or earned night points change,
+      // before combat and healing. Unchanged frames never rescan the company.
+      const monsterNight = this.night() && !this.peace;
+      const monsterNightPoints = monsterNight ? this.nightPoints() : -1;
+      if (this._friendlyMonsterNightPoints !== monsterNightPoints) {
+        this._friendlyMonsterNightPoints = monsterNightPoints;
+        this.syncMonsterNightStats();
+      }
       const h = this.hero,
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };
