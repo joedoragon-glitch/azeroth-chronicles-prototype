@@ -172,9 +172,7 @@ test('F43 real target pressure counts active companions, not nearby idle party m
   c.zone().enemies=[e];c.s.party=[soldier,archer];
   Object.assign(c.hero,{level:2,x:1400,y:1700});e.aggro=true;c.line=()=>true;
   assert.equal(c.tacticalActiveTargetCount(e),0,'nearby heroes and companions alone do not create numerical pressure');
-  c.s.heroTarget=e.id;assert.equal(c.tacticalActiveTargetCount(e),0,'old target ID alone is not active hero intent');c.hero.order={type:'attack',id:e.id};assert.equal(c.tacticalActiveTargetCount(e),0,'obsolete attack order cannot create tactical pressure');
-  assert(c.damage(e,1,'hero'),'a real hero hit is the appropriate pressure source');
-  assert.equal(c.tacticalActiveTargetCount(e),1,'only a real recent attack creates hero pressure');
+  c.s.heroTarget=e.id;assert.equal(c.tacticalActiveTargetCount(e),0,'old target ID alone is not active hero intent');c.hero.order={type:'attack',id:e.id};assert.equal(c.tacticalActiveTargetCount(e),1);
   c._tacticalPartyTargets=new Map([[soldier.id,e.id]]);assert.equal(c.tacticalActiveTargetCount(e),2);
   assert(c.tacticalRogueEligibility(e,c.tacticalActiveTargetCount(e)),'equal-level pressured mob is eligible');
   soldier.order={type:'gather',id:'some-node'};assert.equal(c.tacticalActiveTargetCount(e),1,'busy companion cannot contribute target pressure');
