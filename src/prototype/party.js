@@ -1822,6 +1822,7 @@
         const shot = Math.max(1, dist(u, target));
         const volleyMove = this.s.mode === 'developer'
           ? this.developerCompanionNewMove(u.id, 'Triple Shot') : null;
+        const evasionActionId = 'companion-triple:' + this.s.nextId;
         for (let j = 0; j < 3; j++) {
           this.s.projectiles.push({
             id: 'projectile-' + this.s.nextId++,
@@ -1840,6 +1841,7 @@
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
             rapid: true,
             companionSkill: 'triple-shot',
+            evasionActionId,
             ...(j === 0 &&
             (this.s.expeditionRank || 1) >= R.companionSkills.veteran.expeditionRank &&
             dist(u, target) < R.companionSkills.veteran.coveringRange
