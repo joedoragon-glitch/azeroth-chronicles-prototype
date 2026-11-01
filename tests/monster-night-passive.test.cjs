@@ -139,6 +139,21 @@ game.tick(0.1);
 assert.equal(pet.maxHp, Math.round(dawnMaximum * game.monsterNightBonuses().hp),
   'repeat sunset starts from natural baseline');
 
+// Simulate the pending evasion rules table without importing unfinished
+// dodge code. A SINGLE tuning edit must immediately reach enemy and owned
+// monster recipients; the resolver's per-hit integration stays in that PR.
+const originalEvasion = R.skillEvasion;
+R.skillEvasion = { ...(originalEvasion || {}), nightEnemyBonus: 0.05 };
+const hostile = { type: 'mob', id: 'enemy-888888' };
+for (const unit of [hostile, pet, reservePet, goblin, wraith])
+  close(game.monsterNightBonuses(unit).dodge, 0.05, 'one future night dodge knob');
+close(game.monsterNightBonuses(soldier).dodge, 0, 'ordinary troop never gains night dodge');
+R.skillEvasion.nightEnemyBonus = 0.07;
+for (const unit of [hostile, pet, goblin])
+  close(game.monsterNightBonuses(unit).dodge, 0.07, 'future knob retuning follows allegiance');
+if (originalEvasion === undefined) delete R.skillEvasion;
+else R.skillEvasion = originalEvasion;
+
 const fake = game.unit('soldier', 1000, 1000);
 fake.charmOrigin = { ...goblin.charmOrigin };
 fake.charmOrigin.sourceEnemyId = 'enemy-99999';
