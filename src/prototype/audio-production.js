@@ -92,9 +92,26 @@
           director.places[director.fallbackPlace];
         let base = scene.peace && p.peace ? p.peace : p.base;
         if (!scene.peace && scene.interior === 'outdoors') {
-          if (scene.settlement && p.settlement) base = p.settlement;
-          else if (scene.night && p.night) base = p.night;
+          if (scene.zone === 'vale') {
+            // Millhaven and its surrounding roads return to the original
+            // Greenwood exploration recording. The former town arrangement
+            // now belongs to the Forest Crypt's unfinished estate approaches.
+            // Real nearby fighting (and its brief release tail) takes priority.
+            const nearbyEngaged = scene.nearbyEngaged ?? scene.engaged ?? 0;
+            const fighting = nearbyEngaged > 0 ||
+              (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
+            if (scene.estateApproach && !fighting && p.settlement) base = p.settlement;
+            else if (scene.night && !scene.settlement && p.night) base = p.night;
+          } else {
+            if (scene.settlement && p.settlement) base = p.settlement;
+            else if (scene.night && p.night) base = p.night;
+          }
         }
+        const authoredGain = scene.zone === 'vale'
+          ? base === p.settlement ? (p.settlementGain ?? 0.62)
+            : base === p.night ? (p.nightGain ?? 0.58) : (p.gain ?? 0.74)
+          : scene.night ? (p.nightGain ?? 0.58)
+            : scene.settlement ? (p.settlementGain ?? 0.62) : (p.gain ?? 0.74);
         return {
           id: base,
           bpm: tempos[base],
@@ -102,11 +119,7 @@
           stems: [
             {
               id: base,
-              gain: scene.night
-                ? (p.nightGain ?? 0.58)
-                : scene.settlement
-                  ? (p.settlementGain ?? 0.62)
-                  : (p.gain ?? 0.74),
+              gain: authoredGain,
             },
             ...(p.action && !scene.peace ? [{ id: p.action, gain: 0 }] : []),
           ],
@@ -125,6 +138,11 @@
         if (this.mixScene !== mix) this.setSceneMix(mix);
         this.updateEnvironment(scene);
         this.sceneDetails(scene);
+        // The next frame's proximity band uses the previous selection, giving
+        // a stable 200-unit exit margin without touching campaign/save data.
+        this.estateApproachActive = !!scene.estateApproach &&
+          scene.started !== false && scene.zone === 'vale' &&
+          scene.interior === 'outdoors';
         const now = this.ctx.currentTime;
         // A title-screen snapshot is not live exploration. Clearing the
         // settlement hold avoids carrying the saved hero's nearby refuge into
