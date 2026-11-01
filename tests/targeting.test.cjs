@@ -317,8 +317,8 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
   assert.equal(game.cast(1), true, 'a new deliberate attack after arrival is allowed');
   assert.equal(
     game.s.recallActive,
-    false,
-    'deliberate offense resumes squad engagement after every companion arrives',
+    true,
+    'deliberate offense cannot silently cancel a player-timed Recall after arrival',
   );
   game.hero.cd[0] = 0;
   b.x = game.hero.x + game.heroSkillRange(1) + 40;
@@ -615,8 +615,8 @@ for (const [heroClass, reach] of [
   assert(recalled.castMovementBasic(), heroClass + ' can defend during Recall');
   assert.equal(
     recalled.s.recallActive,
-    heroClass !== 'rogue',
-    heroClass + ' current passive basic Recall behavior (Rogue discrepancy under investigation)',
+    true,
+    heroClass + ' passive basic always preserves the active Recall order',
   );
 }
 
@@ -661,4 +661,53 @@ for (const [heroClass, reach] of [
     'Rogue autoattack cannot release an unfinished Recall');
   // Compare with the existing nearby-companion witness, which confirms the
   // *same* automatic strike releases Recall once all allies have arrived.
+}
+
+
+// #684 owner contract: Recall is a five-second game-time toggle, independent of attacks.
+{
+  const g = new Campaign('normal', 'paladin', () => 0.9);
+  g.s.party = [g.unit('soldier', g.hero.x + 10, g.hero.y)];
+  const start = g.s.time;
+  assert(g.recallParty(), 'Recall activates');
+  assert.equal(g.s.recallActive, true);
+  assert.equal(g.s.recallExpiresAt, start + 5);
+  assert.equal(g.recallSecondsRemaining(), 5);
+  assert(g.recallParty(), 'second button action toggles Recall OFF');
+  assert.equal(g.s.recallActive, false);
+  assert.equal(g.recallSecondsRemaining(), 0);
+  assert(!('recallExpiresAt' in g.s), 'cancelled Recall timer is removed');
+  assert(g.recallParty(), 'Recall can be activated again');
+  assert.equal(g.recallSecondsRemaining(), 5);
+  for (let i = 0; i < 20; i++) g.tick(0.1);
+  assert(g.s.recallActive, 'two game seconds do not finish Recall');
+  const stored = g.snapshot();
+  assert(Math.abs(stored.recallExpiresAt - (start + 5)) < 1e-5);
+  const restored = Campaign.restore(stored, () => 0.9);
+  assert(restored.s.recallActive, 'active timed Recall survives v4 save');
+  assert(Math.abs(restored.recallSecondsRemaining() - 3) < 1e-5,
+    'restore preserves remaining five-second budget');
+  for (let i = 0; i < 31; i++) restored.tick(0.1);
+  assert.equal(restored.s.recallActive, false, 'Recall expires after 5s of simulation');
+  assert.equal(restored.recallSecondsRemaining(), 0);
+  const legacy = structuredClone(stored);
+  delete legacy.recallExpiresAt;
+  const imported = Campaign.restore(legacy, () => 0.9);
+  assert(imported.s.recallActive);
+  assert.equal(imported.recallSecondsRemaining(), 5,
+    'older v4 saves receive a bounded Recall timer on import');
+  const invalid = structuredClone(stored);
+  invalid.recallExpiresAt = invalid.time + 5000;
+  assert.throws(() => Campaign.validate(invalid), /Invalid Recall timer/,
+    'malformed imports cannot grant an unbounded defensive command');
+  const noRecall = structuredClone(stored);
+  noRecall.recallActive = false;
+  assert.equal(Campaign.validate(noRecall).recallExpiresAt, undefined,
+    'inactive Recall never preserves a stale timer');
+
+  g.recallParty(); // after 2s, the second press ends the standing command
+  assert.equal(g.s.recallActive, false);
+  g.recallParty(); // restart
+  assert.equal(g.gather('not-a-site'), false, 'labor is refused during Recall');
+  assert.equal(g.s.recallActive, true, 'labor refusal cannot cancel Recall');
 }
