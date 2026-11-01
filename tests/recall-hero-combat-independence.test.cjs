@@ -60,4 +60,32 @@ for (const heroClass of ['paladin', 'mage', 'ranger', 'rogue']) {
   assert.equal(g.s.recallActive, false, 'only game-time expiry ends the untouched Recall');
   assert.equal(g.s.recallExpiresAt, undefined, 'timer cleaned up after expiry');
 }
+// The inverse matters too: auto/basic and performance abilities must not
+// *activate* Recall when the player has not used Recall.
+{
+  const rogue = new Campaign('normal', 'rogue', () => 0.9);
+  Object.assign(rogue.hero, { x: 500, y: 500, order: null, basicCd: 0 });
+  rogue.s.mercyTime = 0;
+  rogue.s.valeFieldAwakened = true;
+  rogue.s.thornHeroInitiated = true;
+  rogue.zone().props = [];
+  rogue.zone().buildings = [];
+  const enemy = rogue.makeEnemy(
+    { species: 'goblin', name: 'Normal Rogue attack witness',
+      level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 },
+    { x: 590, y: 500 },
+  );
+  rogue.zone().enemies = [enemy];
+  rogue.line = () => true;
+  rogue.hero.skills[1] = 1;
+  assert.equal(rogue.s.recallActive, false);
+  assert(rogue.castMovementBasic(), 'bell basic is legal without Recall');
+  assert(rogue.cast(1, enemy.id), 'manual bell performance legal without Recall');
+  assert(rogue.cast(2, enemy.id), 'separate Rogue song legal without Recall');
+  assert.equal(rogue.s.recallActive, false,
+    'Rogue offense never invents an unrequested Recall');
+  assert.equal(rogue.s.recallExpiresAt, undefined,
+    'no Recall timer appears as a combat side effect');
+}
+
 console.log('PASS four-class covering fire and Skill 1 during squad Recall, Rogue manual song, timer independence and normal expiry');
