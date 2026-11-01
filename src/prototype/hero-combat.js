@@ -170,7 +170,7 @@
       }
       // Ranger ultimates distribute real arrows across a bounded number of
       // enemies rather than recreating the former shared immunity attack.
-      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null, criticalReceipt = null) {
+      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null, criticalReceipt = null, evasionActionId = null) {
         const hero = this.hero,
           distance = Math.max(1, dist(hero, enemy));
         this.s.projectiles.push({
@@ -183,6 +183,7 @@
           damage,
           source: 'hero',
           slot: 8,
+          ...(evasionActionId ? { evasionActionId } : {}),
           ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           style: 'arrow',
           speed: 650,
@@ -239,6 +240,7 @@
           if (
             this.damage(enemy, this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'), 'hero', {
               area: true,
+              skillAttack: true, criticalExecution: criticalReceipt,
               ...(receipt ? { encountersAtStart: receipt } : {}),
             })
           ) {
@@ -283,6 +285,7 @@
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
         let hits = 0;
         if (hero.class === 'ranger') {
+          const evasionActionId = 'ranger-hunt:' + this.s.nextId;
           const foes = this.huntTargets(target, radius, cfg.targets);
           // The hunt stays a crowd skill. Against a truly isolated enemy it
           // gains only one extra non-piercing arrow, still less efficient
@@ -297,6 +300,7 @@
                 index * 0.04 + n * 0.1,
                 receipt,
                 criticalReceipt,
+                evasionActionId,
               );
               hits++;
             }
@@ -333,6 +337,7 @@
             if (
               !this.damage(foe, this.criticalHeroValue(hero.class === 'mage' && !charged ? criticalReceipt : null, power * coefficient * scale, 'damage'), 'hero', {
                 area: true,
+                skillAttack: true, criticalExecution: criticalReceipt,
                 ...(receipt ? { encountersAtStart: receipt } : {}),
               })
             )
@@ -438,7 +443,7 @@
           : [];
         const deal = (enemy, amount, area = false, piercing = false) =>
           this.damage(enemy, amount, 'hero', {
-            area,
+            area, skillAttack: true, criticalExecution: criticalReceipt,
             ...(piercing ? { piercing: true } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
           });
@@ -457,6 +462,7 @@
             fromY: hero.y,
             hits,
           });
+        const evasionActionId = 'advanced-skill:' + this.s.nextId;
         const launch = (enemy, damage, style, extra = {}) => {
           const d = Math.max(1, dist(hero, enemy));
           this.s.projectiles.push({
@@ -472,6 +478,7 @@
             speed: style === 'beam' ? 1000 : 620,
             style,
             charged: true,
+            evasionActionId,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             ...(style === 'beam' ? { originX: hero.x, originY: hero.y } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
@@ -638,7 +645,7 @@
           )
           .sort((a, b) => this.idOrder(a, b))) {
           if (
-            this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true })
+            this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true, automaticBasic: true })
           )
             hits++;
         }
@@ -1123,7 +1130,8 @@
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
             const landed = this.damage(target, f.damage * cfg.damage, 'hero', {
-              encountersAtStart: f.encountersAtStart,
+              encountersAtStart: f.encountersAtStart, skillAttack: true,
+              criticalExecution: f.criticalExecution,
             });
             const interrupted =
               landed && retreat
@@ -2074,6 +2082,7 @@
               target: target.id,
             });
           } else if (this.hero.class === 'ranger') {
+            const evasionActionId = 'ranger-triple:' + this.s.nextId;
             for (let j = 0; j < 3; j++)
               this.s.projectiles.push({
                 id: 'projectile-' + this.s.nextId++,
@@ -2090,6 +2099,7 @@
                 style: 'arrow',
                 slot,
                 charged: false,
+                evasionActionId,
                 ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
@@ -2290,7 +2300,8 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
+            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart,
+                criticalExecution: criticalReceipt })) {
               hits++;
               if (def.slow)
                 this.applySlow(e, this.criticalHeroValue(
@@ -2374,7 +2385,7 @@
                     enemy,
                     power * cfg.bash.damage * scale * (elite ? cfg.bash.eliteDamage : 1),
                     'hero',
-                    { area: true, encountersAtStart },
+                    { area: true, encountersAtStart, criticalExecution: criticalReceipt },
                   )
                 ) {
                   if (enemy.hp > 0) this.shieldPush(enemy, push);
@@ -2580,7 +2591,8 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, skillAttack: true, encountersAtStart,
+                criticalExecution: criticalReceipt })) {
                 // Captains and bosses keep their authored scripted specials;
                 // boss basic-target provocation is deliberately short-lived.
                 const tauntDuration =
@@ -2647,7 +2659,8 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, skillAttack: true, encountersAtStart,
+                criticalExecution: criticalReceipt })) {
                 this.fractureEnemy(
                   enemy,
                   advanced.fraction + steps * advanced.fractionStep,
@@ -2723,7 +2736,7 @@
               this.hero.class !== 'mage' ? criticalReceipt : null,
               (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
             ), 'hero', {
-              area: true,
+              area: true, criticalExecution: criticalReceipt,
             });
             if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 && e.hp > 0)
@@ -2764,7 +2777,8 @@
               target,
               dmg,
               'hero',
-              automatic ? { automaticBasic: true } : null,
+              automatic ? { automaticBasic: true } :
+                { skillAttack: true, criticalExecution: criticalReceipt },
             );
             if (landed) {
               if (slot === 2) this.weakenEnemy(target, rank, criticalReceipt);
@@ -2805,6 +2819,7 @@
           } else {
             this.engage(target);
             const count = this.hero.class === 'ranger' && slot === 2 ? 2 : 1;
+            const evasionActionId = count > 1 ? 'ranger-double:' + this.s.nextId : null;
             for (let j = 0; j < count; j++) {
               const d = Math.max(1, dist(this.hero, target));
               this.s.projectiles.push({
@@ -2816,6 +2831,7 @@
                 target: target.id,
                 damage: count === 2 ? power * 1.2 * scale : dmg,
                 source: 'hero',
+                ...(evasionActionId ? { evasionActionId } : {}),
                 speed: 550,
                 delay: j * 0.12,
                 ...(this.hero.class === 'ranger' && j > 0

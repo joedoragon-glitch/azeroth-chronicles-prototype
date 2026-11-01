@@ -6710,6 +6710,8 @@
               ),
               0,
               e.family === 'cindermaw' ? e.id : undefined,
+              false, { skillAttack: true, area: true,
+                criticalExecution: move.criticalExecution || criticalReceipt },
             );
             if (
               this.hero !== hero ||
@@ -6756,6 +6758,8 @@
               ),
               0,
               e.id,
+              false, { skillAttack: true, area: !move.mobileRogueCast,
+                criticalExecution: move.criticalExecution || criticalReceipt },
             )
           )
             continue;
@@ -6836,6 +6840,8 @@
             ),
             0,
             e.family === 'cindermaw' ? e.id : undefined,
+            false, { skillAttack: true, area: true,
+              criticalExecution: move.criticalExecution || criticalReceipt },
           )
         )
           continue;

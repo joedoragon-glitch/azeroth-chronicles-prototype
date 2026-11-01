@@ -1157,6 +1157,8 @@
         push(e, 'resetArrival', 0.28, 2);
       else if (e.type === 'chargeInterrupted' && (!e.zone || e.zone === game.zoneId))
         push(e, 'chargeInterrupted', 0.45, 5);
+      else if (e.type === 'skillEvaded' && Number.isFinite(e.x) && Number.isFinite(e.y))
+        push(e, 'skillEvaded', 0.42, 2);
       else if (e.type === 'hurt' && Number.isFinite(e.x)) push(e, 'hurt', 0.25, 2);
       else if (e.type === 'heal') {
         const target =

@@ -1984,6 +1984,17 @@
           ctx.stroke();
         } else if (f.type === 'chargeInterrupted') {
           PrototypeCombatVisuals.chargeInterrupted?.(ctx, screen, f);
+        } else if (f.type === 'skillEvaded') {
+          // Small world-space label, shared by Canvas and the Pixi overlay.
+          ctx.font = 'bold 10px system-ui';
+          ctx.textAlign = 'center';
+          ctx.strokeStyle = '#172d31';
+          ctx.lineWidth = 2.4;
+          ctx.fillStyle = '#c5eee5';
+          const label = 'DODGE';
+          const y = p.y - 30 - grow * 12;
+          ctx.strokeText(label, p.x, y);
+          ctx.fillText(label, p.x, y);
         } else if (f.type === 'heal') {
           if (f.actor === 'enemy' && f.resource !== 'mana') {
             const recipient = game
