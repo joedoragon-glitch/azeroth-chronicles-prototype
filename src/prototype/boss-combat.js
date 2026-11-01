@@ -2350,9 +2350,15 @@
             victims.find((u) => u.type === 'archer') || victims.find((u) => u === this.hero);
           if (victim) {
             if (victim.type === 'archer') {
-              this.worldBossRelease(e, a);
-              victim.healCd = (victim.healCd || 0) +
-                this.worldBossEffect(a, 3, 'cooldownDebt');
+              const criticalReceipt = this.worldBossRelease(e, a);
+              // The Archive's targeted sabotage is a real status-only skill.
+              // A dodging healer keeps her cooldown; a critical cannot miss.
+              if (!this.skillEvades(victim, 'single', {
+                source: e.id, criticalExecution: criticalReceipt,
+              })) {
+                victim.healCd = (victim.healCd || 0) +
+                  this.worldBossEffect(a, 3, 'cooldownDebt');
+              }
             } else {
               const choices = victim.cd
                 .map((time, i) => ({ time, i }))
