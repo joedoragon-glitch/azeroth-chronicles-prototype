@@ -754,3 +754,34 @@ for (const [heroClass, reach] of [
   assert.equal(game.s.recallExpiresAt, undefined,
     'region transition must not leave a stale timer for later emergency withdrawal');
 }
+
+
+// #684: Rogue manual songs and bell covering fire never release companion Recall.
+for (const companionDistance of [350, 15]) {
+  const { game, enemies } = heroAutoInvestigation('rogue', [150]);
+  const foe = enemies[0];
+  // Disable random Charm here; this case isolates the hero's attack contract.
+  game.rogueCharmAttempt = () => false;
+  game.hero.skills[0] = 1;
+  game.hero.skills[1] = 1;
+  game.s.party = [game.unit('soldier', game.hero.x + companionDistance, game.hero.y)];
+  assert.equal(game.recallParty(), true, 'Recall activates before covering fire');
+  const timer = game.s.recallExpiresAt;
+  assert.equal(game.s.recallActive, true);
+  assert(game.cast(1, foe.id), 'Rogue can manually perform Skill 1 while recalling');
+  assert.equal(game.s.recallActive, true,
+    'manual Rogue Skill 1 cannot cancel a player or safety-activated Recall');
+  assert.equal(game.s.recallExpiresAt, timer, 'manual song cannot extend or shorten Recall');
+  assert(game.cast(2, foe.id), 'Rogue can manually perform Skill 2 while recalling');
+  assert.equal(game.s.recallActive, true,
+    'manual Rogue Skill 2 cannot cancel companion withdrawal');
+  assert.equal(game.s.recallExpiresAt, timer, 'second song cannot reset Recall duration');
+  game.hero.basicCd = 0;
+  assert(game.castMovementBasic(), 'automatic Rogue bell can cover the withdrawal');
+  assert.equal(game.s.recallActive, true,
+    'Rogue automatic basic cannot release Recall while covering retreat');
+  assert.equal(game.s.recallExpiresAt, timer,
+    'automatic bell never modifies the Recall expiration');
+  assert(game.hero.cd[0] > 0 && game.hero.cd[1] > 0 && game.hero.basicCd > 0,
+    'two manual song cooldowns and automatic basic recovery stay independent');
+}
