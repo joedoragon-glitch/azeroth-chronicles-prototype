@@ -72,7 +72,13 @@
           succession: !!campaign.s.challenge.succession,
         };
       }
-      choose(campaign) {
+      choose(campaign, activity = {}) {
+        // The title is not the hero's saved zone. Before the recorded title
+        // has decoded, use a quiet, non-regional fallback instead of playing
+        // Greenwood's procedural melody behind the title recording.
+        if (activity.started === false) return {
+          id: 'title-fallback', peace: false, night: false, region: null,
+        };
         if (campaign.peace && this.ctx && this.ctx.currentTime < this.finaleUntil)
           return {
             id: 'finale',
@@ -104,7 +110,7 @@
         this.setPaused(paused);
         // Metadata is available for later authored cue rules; current cue selection is preserved.
         this.context = this.describe(campaign, activity);
-        const selected = this.choose(campaign),
+        const selected = this.choose(campaign, this.context),
           key = JSON.stringify(selected);
         this.updateRecordedCue(this.context);
         this.updateProduction(this.context);
@@ -163,8 +169,24 @@
         if (!this.ctx || this.paused || this.ctx.state !== 'running' || !this.cue) return;
         for (const s of [...this.scores]) if (s.until <= this.ctx.currentTime) this.retireScore(s);
         if (this.recordedScore && this.ctx.currentTime >= this.recordedScore.at) return;
-        const cue = this.cue,
-          theme = themes.find((t) => t.id === cue.id) || themes[0],
+        const cue = this.cue;
+        if (cue.id === 'title-fallback') {
+          // Intentionally restrained rather than a second melody competing
+          // with the dedicated title recording while it loads or crossfades.
+          // A failed recording retains a subtle, independently titled pad,
+          // never the active saved zone's music or its ambience events.
+          if (this.next < this.ctx.currentTime - 0.2) this.next = this.ctx.currentTime + 0.05;
+          while (this.next < Math.min(this.ctx.currentTime + 0.14, this.recordedScore?.at ?? Infinity)) {
+            const at = this.next;
+            if (this.step++ % 8 === 0) {
+              this.tone(48, at, 2.4, 0.012, 'sine', 'music', 0.15);
+              this.tone(55, at + 0.09, 2.3, 0.007, 'sine', 'music', 0.15);
+            }
+            this.next += 0.5;
+          }
+          return;
+        }
+        const theme = themes.find((t) => t.id === cue.id) || themes[0],
           peace = cue.peace || cue.id === 'finale',
           bpm = peace ? Math.max(64, theme.bpm - 10) : theme.bpm,
           beat = 60 / bpm;

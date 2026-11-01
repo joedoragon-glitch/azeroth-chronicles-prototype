@@ -11,7 +11,7 @@ permissions:
   contents: read
 jobs:
   owner-audio:
-    if: startsWith(github.head_ref, 'audio/')
+    if: startsWith(github.head_ref, 'audio/') || startsWith(github.head_ref, 'fix/title-')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
