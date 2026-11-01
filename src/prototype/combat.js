@@ -54,6 +54,49 @@
     // Weak keys also keep dead/despawned monsters from accumulating alert records.
     const underFireAlerts = new WeakMap();
     class Combat {
+      // Separate, persisted v4 stream: skill evasion must not consume World or Crit RNG.
+      rollSkillEvasion() {
+        let state = this.s.skillEvasionRngState;
+        if (state === undefined) {
+          state = (Math.imul(this.s.nextId || 1, 0x9e3779b1) ^
+            Math.floor((this.s.clock || 0) * 1000) ^ 0x6d2b79f5) >>> 0;
+          if (!state) state = 0xa341316c;
+        }
+        if (!Number.isInteger(state) || state < 1 || state > 0xffffffff)
+          throw Error('Invalid skill evasion RNG state');
+        state ^= state << 13;
+        state ^= state >>> 17;
+        state ^= state << 5;
+        this.s.skillEvasionRngState = state >>> 0 || 0xa341316c;
+        return this.s.skillEvasionRngState / 0x100000000;
+      }
+      skillEvades(defender, shape, { source = null, criticalExecution = null } = {}) {
+        if (!['single', 'area'].includes(shape) || !defender || defender.hp <= 0 ||
+            criticalExecution?.critical === true || defender === this.hero) return false;
+        const cfg = R.skillEvasion;
+        if (!cfg) return false;
+        const companion = this.s.party.includes(defender) &&
+          defender.active !== false &&
+          ['soldier', 'archer', 'pet'].includes(defender.type) &&
+          (!defender.charmOrigin || this.isCharmedCompanion(defender));
+        const enemy = !companion && this.zone().enemies.includes(defender) && !defender.neutral;
+        if (!enemy && !companion) return false;
+        // Rogue performances cannot be evaded; basic bell attacks are excluded elsewhere.
+        if (enemy && source === 'hero' && this.hero.class === 'rogue') return false;
+        const ranger = enemy && source === 'hero' && this.hero.class === 'ranger';
+        const base = companion
+          ? cfg[shape === 'area' ? 'companionArea' : 'companionSingle']
+          : ranger
+            ? cfg[shape === 'area' ? 'rangerArea' : 'rangerSingle']
+            : cfg[shape === 'area' ? 'enemyArea' : 'enemySingle'];
+        const chance = clamp(base + (enemy && this.night() ? cfg.nightEnemyBonus : 0), 0, 1);
+        if (!(chance > 0) || this.rollSkillEvasion() >= chance) return false;
+        this.event('skillEvaded', {
+          target: defender.id, source, x: defender.x, y: defender.y,
+          zone: this.zoneId, deaths: this.s.statistics.deaths,
+        });
+        return true;
+      }
       combatTargets() {
         const z = this.s.zones[this.s.zone];
         return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
@@ -755,6 +798,9 @@
         this.interruptPatrolReturn(e);
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
+        if (!options?.automaticBasic && this.skillEvades(e, options?.skillShape, {
+          source, criticalExecution: options?.criticalExecution,
+        })) return false;
         // Ash abrades eyes: attacks issued by a party member inside or recently
         // outside Choking Ash have a 35% miss chance, without extra damage.
         if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
@@ -908,8 +954,12 @@
         if (reflected > 0 && origin.hp > 0) this.hitParty(origin, reflected, 0, null, true);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false,
+        skillEvasion = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
+        if (skillEvasion && this.skillEvades(u, skillEvasion.shape, {
+          source: rangedSourceId, criticalExecution: skillEvasion.criticalExecution,
+        })) return false;
         // Real two-second Endure window, class-only and never granted to pets.
         if (u === this.hero && u.class === 'rogue' && (u.rogueEndureUntil || 0) > this.s.time)
           return false;
@@ -1119,7 +1169,10 @@
             }
             if (victim) {
               hostileTargets = null;
-              const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
+              const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId,
+                false, p.skillShape
+                  ? { shape: p.skillShape, criticalExecution: p.criticalExecution }
+                  : null);
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (landed && p.slow) this.applySlow(victim, p.slow);
@@ -1332,6 +1385,12 @@
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
             if (this.s.mode === 'developer')
               this._developerCompanionProjectileInFlight = p.id;
+            // Real physical collision comes first; shape is authored per skill.
+            const skillShape = p.skillShape ||
+              (!p.automaticBasic &&
+                ((p.source === 'hero' && (p.slot > 1 || (p.slot === 1 && p.charged))) ||
+                  p.companionSkill || p.petSkillSlot)
+                ? (p.area ? 'area' : 'single') : null);
             const landed =
               p.effect === 'interrupt'
                 ? this.interruptEnemyAction(victim, p.interruptAction, p.criticalExecution)
@@ -1339,7 +1398,8 @@
                     victim,
                     p.damage,
                     p.source,
-                    p.encountersAtStart || p.area || p.piercing || p.automaticBasic
+                    p.encountersAtStart || p.area || p.piercing || p.automaticBasic ||
+                    skillShape || p.criticalExecution
                       ? {
                           ...(p.encountersAtStart
                             ? { encountersAtStart: p.encountersAtStart }
@@ -1347,6 +1407,9 @@
                           ...(p.area ? { area: true } : {}),
                           ...(p.piercing ? { piercing: true } : {}),
                           ...(p.automaticBasic ? { automaticBasic: true } : {}),
+                          ...(skillShape ? { skillShape } : {}),
+                          ...(p.criticalExecution
+                            ? { criticalExecution: p.criticalExecution } : {}),
                         }
                       : null,
                   );
@@ -1448,7 +1511,10 @@
                 a.hit.push(id);
                 if (a.slowOnly) this.applySlow(u, a.slowDuration);
                 else {
-                  const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                  const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null,
+                  false, a.skillShape
+                    ? { shape: a.skillShape, criticalExecution: a.criticalExecution }
+                    : null);
                   if (
                     this.hero !== hero ||
                     this.zoneId !== zone ||
@@ -1466,7 +1532,10 @@
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null,
+                  false, a.skillShape
+                    ? { shape: a.skillShape, criticalExecution: a.criticalExecution }
+                    : null);
                 if (
                   this.hero !== hero ||
                   this.zoneId !== zone ||
