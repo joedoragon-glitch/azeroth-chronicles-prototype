@@ -8088,6 +8088,11 @@
       recallButton = $('recall-button'),
       recallActive = !!game.s.recallActive,
       recallRemaining = recallActive ? Math.ceil(game.recallSecondsRemaining()) : 0;
+    // On phones the default shortcut <small> is hidden. The main label
+    // also says ON while active, so the state remains visible at a glance.
+    recallButton.firstChild.textContent = recallActive
+      ? (language === 'es' ? 'Reagrupar ON ' : 'Recall ON ')
+      : (language === 'es' ? 'Reagrupar ' : 'Recall squad ');
     recallButton.classList.toggle('tutorial-highlight', practicingRecall);
     recallButton.classList.toggle('recall-active', recallActive);
     recallButton.setAttribute('aria-pressed', recallActive ? 'true' : 'false');
