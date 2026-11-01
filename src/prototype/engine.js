@@ -415,9 +415,9 @@
         dodge: R.skillEvasion?.nightEnemyBonus || 0,
       };
     }
-    // Recompute only on a day/night transition, save restore, recruitment or
-    // Charm. HP is adjusted by the maximum's delta, preserving existing wounds
-    // and fallen status. There is no per-frame roster scan or saved night flag.
+    // Recompute on a day/night transition or a new night victory point, and
+    // after recruitment/Charm. HP adjusts by the change in maximum, preserving
+    // existing wounds and fallen status. Never save a separate night flag.
     syncMonsterNightStats(unit = null) {
       for (const u of unit ? [unit] : (this.s.party || [])) {
         if (!this.isOwnedMonster(u)) continue;
@@ -4441,11 +4441,12 @@
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
       this.s.restCooldown = Math.max(0, (this.s.restCooldown || 0) - dt);
       this.advanceDaylight(dt);
-      // Reconcile maxima once at dusk/dawn, before any combat or healing.
-      // Nothing about the passive is stored in v4 saves or recalculated each frame.
+      // Reconcile maxima when sunset, sunrise or earned night points change,
+      // before combat and healing. Unchanged frames never rescan the company.
       const monsterNight = this.night() && !this.peace;
-      if (this._friendlyMonsterNightActive !== monsterNight) {
-        this._friendlyMonsterNightActive = monsterNight;
+      const monsterNightPoints = monsterNight ? this.nightPoints() : -1;
+      if (this._friendlyMonsterNightPoints !== monsterNightPoints) {
+        this._friendlyMonsterNightPoints = monsterNightPoints;
         this.syncMonsterNightStats();
       }
       const h = this.hero,
