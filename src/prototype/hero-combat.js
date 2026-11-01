@@ -238,7 +238,7 @@
                 : cfg.tertiaryDamage || cfg.extraDamage;
           if (
             this.damage(enemy, this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'), 'hero', {
-              area: true,
+              area: true, skillShape: 'area', criticalExecution: criticalReceipt,
               ...(receipt ? { encountersAtStart: receipt } : {}),
             })
           ) {
@@ -332,7 +332,7 @@
                   : cfg.splashDamage;
             if (
               !this.damage(foe, this.criticalHeroValue(hero.class === 'mage' && !charged ? criticalReceipt : null, power * coefficient * scale, 'damage'), 'hero', {
-                area: true,
+                area: true, skillShape: 'area', criticalExecution: criticalReceipt,
                 ...(receipt ? { encountersAtStart: receipt } : {}),
               })
             )
@@ -438,7 +438,8 @@
           : [];
         const deal = (enemy, amount, area = false, piercing = false) =>
           this.damage(enemy, amount, 'hero', {
-            area,
+            area, skillShape: area ? 'area' : 'single',
+            criticalExecution: criticalReceipt,
             ...(piercing ? { piercing: true } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
           });
