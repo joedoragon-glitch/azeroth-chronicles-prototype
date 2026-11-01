@@ -161,6 +161,12 @@ body[data-experience='phone'] #recall-button small,
 body[data-experience='phone'] #target-button small {
   display: none;
 }
+/* A timed Recall must expose its remaining hold even on the compact phone HUD. */
+body[data-experience='phone'] #recall-button.recall-active small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.05;
+}
 body[data-experience='phone'] #squad-button {
   position: fixed;
   left: max(8px, env(safe-area-inset-left));
