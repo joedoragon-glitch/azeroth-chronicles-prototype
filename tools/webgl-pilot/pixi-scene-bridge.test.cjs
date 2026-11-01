@@ -829,7 +829,7 @@ test('#756 deterministic canonical detail rebuild profile (source-clock only)', 
   };
   const game = {
     hero: { x: 100, y: 100 },
-    s: { rescued: {} },
+    s: { rescued: {}, statistics: { deaths: 0 } },
     regionIndex: () => 0,
     supplyRoom: () => false,
     bundleCollected: () => false,
