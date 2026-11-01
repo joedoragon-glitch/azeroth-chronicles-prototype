@@ -7797,6 +7797,13 @@
     ]),
   );
   const R = {
+    // Probability points, not damage multipliers. Tune here after playtesting.
+    skillEvasion: {
+      enemy: { single: 0.20, area: 0.30 },
+      enemyVsRanger: { single: 0.15, area: 0.25 },
+      companion: { single: 0.20, area: 0.30 },
+      enemyNightBonus: 0.05,
+    },
     meleeReachTuning,
     meleeReach,
     resourceMode,
