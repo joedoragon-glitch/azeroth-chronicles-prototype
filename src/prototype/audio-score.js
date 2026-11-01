@@ -36,11 +36,24 @@
         const refuge =
           interior === 'outdoors' &&
           zone.npcs.find((n) => n.kind === 'rest' && Math.hypot(n.x - hero.x, n.y - hero.y) < 260);
+        // Anchor the estate approach to the live Forest Crypt entrance rather
+        // than legacy map coordinates. This survives Greenwood layout migration
+        // and older saved campaigns without changing their geometry.
+        const estate = interior === 'outdoors' && campaign.zoneId === 'vale' &&
+          zone.npcs.find((n) => n.kind === 'dungeon' && n.family === 'crypt' &&
+            !n.sideDungeon && !n.treasury);
+        const estateDistance = estate ? Math.hypot(estate.x - hero.x, estate.y - hero.y) : null;
+        // Audio-only hysteresis: enter the estate's influence within 950 world
+        // units, and leave after 1150. Do not flicker tracks at the edge.
+        const estateApproach = activity.started !== false && !campaign.peace &&
+          estateDistance !== null &&
+          estateDistance < (this.estateApproachActive ? 1150 : 950);
         return {
           region: region.id,
           zone: campaign.zoneId,
           interior,
           settlement: refuge?.id || null,
+          estateApproach,
           situation: activity.backgrounded
             ? 'background'
             : activity.menu

@@ -65,7 +65,8 @@ const server = http.createServer((req, res) => {
         started: Prototype.started, state: Prototype.audio.ctx.state,
         zone: Prototype.game.zoneId, time: Prototype.game.s.time,
       }));
-      assert(loaded.id.startsWith('place-') || loaded.id.startsWith('settlement-'), 'correct Greenwood arrival score');
+      assert.equal(loaded.id, 'place-vale',
+        'real new-game Millhaven arrival uses the original Greenwood recording, not the estate cue');
       const peacefulMix = await page.evaluate(() => {
         const a = Prototype.audio, spec = a.productionCue(a.context);
         return { engaged: a.context.engaged, id: a.recordedScore?.id,
@@ -99,6 +100,63 @@ const server = http.createServer((req, res) => {
       assert.equal(settings.at, loaded.at);
       assert(settings.now > menu.now, 'audio clock continues during settings');
       assert.equal(settings.time, menu.time, 'simulation must stay frozen in menus');
+
+      // Exercise real MP3 handoff at the live Forest Crypt entrance while the
+      // game menu safely freezes simulation. This is still a real WebAudio
+      // transition, not merely a mocked cue-selection assertion.
+      const estate = await page.evaluate(() => {
+        const c = Prototype.game;
+        const entrance = c.zone().npcs.find((n) =>
+          n.kind === 'dungeon' && n.family === 'crypt' && !n.sideDungeon);
+        if (!entrance) return null;
+        const home = { x: c.hero.x, y: c.hero.y };
+        c.hero.x = entrance.x - 940;
+        c.hero.y = entrance.y;
+        Prototype.audio.update(c, false, { started: true, menu: true });
+        return { home, entrance: { x: entrance.x, y: entrance.y } };
+      });
+      assert(estate, 'live Forest Crypt entrance is required for audio routing');
+      await page.waitForFunction(() => {
+        const a = Prototype.audio, v = a.recordedScore?.voices[0];
+        return a.recordedScore?.id === 'settlement-vale' &&
+          a.context?.estateApproach && !!v?.osc?.buffer && v.targetGain > 0;
+      }, null, { timeout: 18000 });
+      const approachStart = await page.evaluate(() => ({
+        id: Prototype.audio.recordedScore.id, at: Prototype.audio.recordedScore.at,
+      }));
+      await page.evaluate((e) => {
+        const c = Prototype.game;
+        c.hero.x = e.x - 1080;
+        c.hero.y = e.y;
+        Prototype.audio.update(c, false, { started: true, menu: true });
+      }, estate.entrance);
+      const approachHold = await page.evaluate(() => ({
+        id: Prototype.audio.recordedScore?.id, at: Prototype.audio.recordedScore?.at,
+        approaching: Prototype.audio.context?.estateApproach,
+      }));
+      assert.equal(approachHold.id, 'settlement-vale');
+      assert.equal(approachHold.at, approachStart.at,
+        'the estate melody must not restart inside the hysteresis exit band');
+      assert.equal(approachHold.approaching, true);
+      await page.evaluate((e) => {
+        const c = Prototype.game;
+        c.hero.x = e.x - 1160;
+        c.hero.y = e.y;
+        Prototype.audio.update(c, false, { started: true, menu: true });
+      }, estate.entrance);
+      await page.waitForFunction(() =>
+        Prototype.audio.recordedScore?.id === 'place-vale' &&
+        !Prototype.audio.context?.estateApproach,
+        null, { timeout: 18000 });
+      await page.evaluate((home) => {
+        const c = Prototype.game;
+        c.hero.x = home.x;
+        c.hero.y = home.y;
+        Prototype.audio.update(c, false, { started: true, menu: true });
+      }, estate.home);
+      assert.equal(await page.evaluate(() => Prototype.audio.recordedScore?.id),
+        'place-vale', 'restoring the real Millhaven position resumes original music');
+
       await page.evaluate(() => Prototype.closeMenu());
       await page.locator('#menu-button').click();
       await page.getByRole('button', { name: 'Return to Main Menu' }).click();
