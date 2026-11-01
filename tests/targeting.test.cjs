@@ -746,3 +746,16 @@ for (const [heroClass, reach] of [
     'Rogue auto basic still prefers unreachable held foe over a near Charm candidate');
   assert.equal(near.hp, near.maxHp);
 }
+
+
+// #684: region transition drops both Recall hold and stale expiry.
+{
+  const game = new Campaign('normal', 'paladin', () => 0.9);
+  assert(game.recallParty());
+  assert.equal(game.s.recallActive, true);
+  assert(Number.isFinite(game.s.recallExpiresAt));
+  game.enter('march');
+  assert.equal(game.s.recallActive, false, 'region transition cancels the prior Recall');
+  assert.equal(game.s.recallExpiresAt, undefined,
+    'region transition must not leave a stale timer for later emergency withdrawal');
+}
