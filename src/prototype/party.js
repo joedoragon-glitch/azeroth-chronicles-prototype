@@ -1974,7 +1974,7 @@
           }
         } else {
           const previousDirect = this.developerCompanionBeginDirect(u, def.name);
-          for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+          for (const e of targets) if (this.damage(e, damage, u.id, { area: true, skillShape: 'area', criticalExecution: criticalReceipt })) hits++;
           this.developerCompanionEndDirect(previousDirect);
         }
         if (!hits) return false;
