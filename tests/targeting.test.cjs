@@ -562,15 +562,14 @@ for (const [heroClass, expectedRange] of [
   }
 }
 
-// The old order is an independent live instruction, unlike pointer move and
-// targeted skill-approach. Verify the source behavior without changing rules.
+// Historical hero 'attack' is now inert: no Skill 1, basic or chase authority.
 {
   const { game, enemies } = heroAutoInvestigation('ranger', [345]);
   game.hero.order = { type: 'attack', id: enemies[0].id };
   game.tick(0.05, { x: 0, y: 0 });
-  assert(game.hero.cd[0] > 0, 'legacy attack order automatically invokes manual Skill 1');
-  assert.equal(game.hero.basicCd, 0, 'legacy order did not fire the passive basic');
-  assert.equal(game.hero.order?.type, 'attack', 'legacy command remains active after its cast');
+  assert.equal(game.hero.cd[0], 0, 'old attack order cannot activate Skill 1');
+  assert.equal(game.hero.basicCd, 0, 'old order cannot fire an automatic basic');
+  assert.equal(game.hero.order, null, 'old command is dropped on native tick');
 }
 {
   const game = new Campaign('normal', 'mage', () => 0.9);
@@ -627,36 +626,33 @@ for (const [heroClass, reach] of [
 }
 
 
-// Investigation #684 latest-main follow-up: legacy pursuit, Rogue manual song and Recall gate.
-// Current behavior only: do not preserve these bugs as approved requirements.
+// Investigation #684: inert old-order regression and independent Recall gates.
 {
-  // At 385 units the Mage may already fire a lawful 400-unit passive basic.
-  // A synthetic old attack order nonetheless drives the hero toward 350.
+  // The Mage can fire at 385 (inside 400); an old order cannot impose 350.
   const { game, enemies } = heroAutoInvestigation('mage', [385]);
   const enemy = enemies[0], before = { x: game.hero.x, y: game.hero.y };
   game.hero.order = { type: 'attack', id: enemy.id };
   game.tick(0.05, { x: 0, y: 0 });
-  assert(game.hero.x > before.x,
-    'legacy attack order causes needless approach inside lawful Mage basic range');
-  assert.equal(game.hero.order?.type, 'attack');
-  assert(game.castMovementBasic(), 'Mage passive basic can fire while old order persists');
+  assert.equal(game.hero.x, before.x,
+    'legacy order cannot cause needless approach inside lawful Mage basic range');
+  assert.equal(game.hero.order, null);
+  assert(game.castMovementBasic(), 'Mage passive basic fires at its full legal range');
   assert(game.hero.basicCd > 0);
-  assert.equal(game.hero.cd[0], 0, 'old order has not yet reached manual Tap threshold');
+  assert.equal(game.hero.cd[0], 0, 'old order cannot change manual Skill 1');
 }
 {
-  // For the Rogue, an old hero attack order activates her *song* rather than
-  // the singer-centered automatic bell basic and its separate recovery.
+  // Legacy instructions must not substitute manual song for an auto bell.
   const { game, enemies } = heroAutoInvestigation('rogue', [205]);
   game.hero.order = { type: 'attack', id: enemies[0].id };
   game.tick(0.05, { x: 0, y: 0 });
-  assert(game.hero.cd[0] > 0, 'legacy Rogue order spends manual song cooldown');
-  assert.equal(game.hero.basicCd, 0, 'old Rogue order is not a bell basic');
-  assert(game.effects.some((e) => e.type === 'rogueBellSkill1'),
-    'legacy Rogue order released manually activated singer-centered Skill 1');
+  assert.equal(game.hero.cd[0], 0, 'old Rogue order cannot activate manual song');
+  assert.equal(game.hero.basicCd, 0, 'old Rogue order cannot release auto bell');
+  assert.equal(game.hero.order, null);
+  assert(!game.effects.some((e) => e.type === 'rogueBellSkill1'),
+    'no old-command-generated singer-centered Skill 1 effect');
 }
 {
-  // releaseRecallForCombat() prevents cancellation during actual travel,
-  // but Rogue automatic basic clears the standing order after arrival.
+  // Rogue automatic basics remain independent from timed Recall.
   const { game } = heroAutoInvestigation('rogue', [160]);
   const companion = game.unit('soldier', game.hero.x + 350, game.hero.y);
   game.s.party = [companion];
@@ -665,8 +661,7 @@ for (const [heroClass, reach] of [
   assert(game.castMovementBasic(), 'Rogue defends while companion returns');
   assert.equal(game.s.recallActive, true,
     'Rogue autoattack cannot release an unfinished Recall');
-  // Compare with the existing nearby-companion witness, which confirms the
-  // *same* automatic strike releases Recall once all allies have arrived.
+  // Nearby-companion noncancellation is covered by the four-class witness.
 }
 
 
