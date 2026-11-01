@@ -10,6 +10,7 @@
           hero = campaign.hero,
           enemies = zone.enemies;
         let engaged = 0,
+          nearbyEngaged = 0,
           boss;
         for (let i = 0; i < enemies.length; i++) {
           // Read-only audio observation; retain array order and skip sparse slots like filter.
@@ -17,6 +18,11 @@
           const enemy = enemies[i];
           if (enemy.hp > 0 && enemy.aggro && !enemy.neutral) {
             engaged++;
+            // A distant hostile in the same large zone must not start
+            // encounter music or duck the ambience inside Millhaven.
+            // This is an audio observation only; gameplay aggro is untouched.
+            if (Math.hypot(enemy.x - hero.x, enemy.y - hero.y) <= 700)
+              nearbyEngaged++;
             if (!boss && enemy.type === 'boss') boss = enemy;
           }
         }
@@ -58,6 +64,7 @@
           peace: campaign.peace,
           boss: boss ? { family: boss.family, form: boss.form, name: boss.name } : null,
           engaged,
+          nearbyEngaged,
           lowHealth: hero.hp > 0 && hero.hp / hero.maxHp <= 0.25,
           started: activity.started !== false,
           gameOver: !!campaign.s.challenge.gameOver,

@@ -72,6 +72,16 @@ for (const zone of Object.keys(production.places)) {
 }
 a.updateEnvironment = () => {};
 assert.equal(a.productionCue({ ...scene, started: false }).id, 'title');
+const idleVale = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
+  settlement: null, engaged: 0 });
+assert.deepEqual(idleVale.stems.map(s => s.id), ['place-vale', 'action-vale']);
+assert.equal(idleVale.stems[1].gain, 0,
+  'Greenwood encounter layer must start silent in exploration');
+const millhaven = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
+  settlement: 'millhaven', engaged: 0 });
+assert.deepEqual(millhaven.stems.map(s => s.id), ['settlement-vale', 'action-vale']);
+assert.equal(millhaven.stems[1].gain, 0,
+  'Millhaven encounter music must be loaded silently until nearby combat');
 assert.equal(a.productionCue({ ...scene, gameOver: true }).id, 'defeat');
 a.finaleUntil = 3;
 assert.equal(a.productionCue({ ...scene, peace: true }).id, 'finale');
@@ -88,9 +98,13 @@ a.updateProduction(scene);
 a.updateProduction({ ...scene, engaged: 2 });
 assert.equal(starts, 1);
 assert(gains.some((g) => g[0] === 1 && g[1] > 0));
+assert(gains.at(-2)[1] < 0.74, 'Greenwood base music must duck as action enters');
+assert.equal(gains.at(-2)[2], gains.at(-1)[2],
+  'entering combat must crossmix both stems at the same rate');
 a.ctx.currentTime = 5;
 a.updateProduction(scene);
 assert.equal(gains.at(-1)[1], 0);
+assert.equal(gains.at(-2)[1], 0.74, 'exploration restores authored base gain');
 // Regression: a loaded hero may stand beside a refuge while the game is
 // showing its inactive title. That snapshot must NOT retain a settlement
 // hold and replace the first true outdoor track with settlement music.
@@ -108,6 +122,25 @@ a.updateProduction({ ...scene, started: true, situation: 'pause' });
 assert.equal(a.mixScene, 'world', 'manual pause preserves music level');
 a.updateProduction({ ...scene, started: false, situation: 'menu' });
 assert.equal(a.mixScene, 'title', 'main title settings still use title mix');
+a.combatUntil = 0;
+a.ctx.currentTime = 25;
+a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 2, nearbyEngaged: 0 });
+assert.equal(gains.at(-1)[1], 0,
+  'distant aggro must not turn on encounter music in Millhaven');
+assert.equal(gains.at(-2)[1], 0.62,
+  'Millhaven settlement theme retains its normal level without nearby combat');
+a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 2, nearbyEngaged: 2 });
+assert(gains.at(-1)[1] > 0, 'nearby combat should still raise the encounter stem');
+assert(gains.at(-2)[1] < 0.62, 'encounter must reduce settlement theme gain');
+a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 8, nearbyEngaged: 8 });
+assert(gains.at(-2)[1] < gains.at(-1)[1],
+  'at high combat intensity, encounter music must dominate the base theme');
+a.ctx.currentTime = 30;
+a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 0, nearbyEngaged: 0 });
+assert.equal(gains.at(-2)[1], 0.62,
+  'settlement theme returns to full authored level after combat');
+assert.equal(gains.at(-1)[1], 0,
+  'encounter melody fades away after combat');
 let steps = 0;
 a.noiseBurst = () => {
   steps++;

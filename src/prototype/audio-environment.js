@@ -50,7 +50,9 @@
       environmentGain(rule, scene) {
         const now = this.ctx.currentTime,
           policy = this.soundCatalog().director.environment;
-        if (scene.engaged && !scene.peace) this.environmentCombatUntil = now + 2.5;
+        // Faraway aggro in the same zone must not mask a peaceful town's bed.
+        const audibleEngaged = scene.nearbyEngaged ?? scene.engaged;
+        if (audibleEngaged && !scene.peace) this.environmentCombatUntil = now + 2.5;
         return (
           rule.gain *
           (scene.boss && !scene.peace

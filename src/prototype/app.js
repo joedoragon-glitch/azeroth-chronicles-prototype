@@ -1614,10 +1614,27 @@
   // Browsers require a user gesture before audible playback. Unlock on that
   // gesture itself, not on the first movement, attack or skill receipt.
   // Existing menu/button unlocks remain the click/tap fallback for WebKit.
+  function updateTitleSoundtrack() {
+    // This selects music only: opening the title must never advance the game.
+    // A completed gesture or a manual Return can run before the next frame.
+    if (started || titleLoading || sceneTransition || startupUpdatePending ||
+        !focused || document.hidden || !game || audio.ctx?.state !== 'running') return;
+    audio.update(game, false, {
+      started: false, menu: !!menu, paused: false, backgrounded: false,
+    });
+  }
   function unlockSoundtrackOnGesture(event) {
     if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
-    if (audio.ctx?.state === 'running') return;
-    void audio.unlock();
+    if (audio.ctx?.state === 'running') {
+      updateTitleSoundtrack();
+      return;
+    }
+    // On iOS, the actual gesture must initiate AudioContext resume; after
+    // that asynchronous resume finishes, select the title immediately rather
+    // than relying on a later (possibly throttled) animation frame.
+    void audio.unlock().then((unlocked) => {
+      if (unlocked) updateTitleSoundtrack();
+    });
   }
   // Safari may recognize a completed tap rather than pointerdown. Keep
   // listening so an interrupted audio context can resume on another gesture.
@@ -3808,6 +3825,9 @@
     if (!startupUpdatePending) {
       const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
       primary.focus?.({ preventScroll: true });
+      // Returning from gameplay must change the score in this same
+      // transition, even when the next requestAnimationFrame is delayed.
+      updateTitleSoundtrack();
     }
   }
   function enterPreparedScene() {
@@ -3946,6 +3966,12 @@
     }
     if (!crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     showTitleScreen();
+    // Return to Main Menu is an explicit user gesture. Resume an interrupted
+    // audio context and reselect title after Safari finishes the resume.
+    if (!document.hidden && focused && audio.ctx?.state !== 'running')
+      void audio.unlock().then((unlocked) => {
+        if (unlocked) updateTitleSoundtrack();
+      });
   }
   function selectSavedMode(mode) {
     if (!writerGuard.canWrite()) return savedRunConflictMenu();

@@ -33,6 +33,16 @@ const server = http.createServer((req, res) => {
       assert.equal(await page.evaluate(() => Prototype.audio.ctx), null, 'no forbidden silent autoplay override');
       await page.locator('#title-heading').click();
       await page.waitForFunction(() => Prototype.audio.recordedScore?.id === 'title' && Prototype.audio.ctx?.state === 'running', null, { timeout: 30000 });
+      const titlePlayback = await page.evaluate(() => {
+        const a = Prototype.audio, v = a.recordedScore?.voices[0];
+        return { id: a.recordedScore?.id, voice: v?.id,
+          gain: v?.targetGain, music: a.mixLevel('music'), master: a.mixLevel('master'),
+          started: !!v?.osc?.buffer, paused: a.paused };
+      });
+      assert.equal(titlePlayback.voice, 'title');
+      assert(titlePlayback.gain > 0 && titlePlayback.music > 0 &&
+        titlePlayback.master > 0 && titlePlayback.started && !titlePlayback.paused,
+        'title must have an active nonzero recorded output, not just a selected ID');
       await page.locator('#title-new').click();
       await page.getByRole('button', { name: 'New Normal game' }).click();
       await page.getByRole('button', { name: /^English(?: ✓)?$/ }).click();
@@ -56,6 +66,16 @@ const server = http.createServer((req, res) => {
         zone: Prototype.game.zoneId, time: Prototype.game.s.time,
       }));
       assert(loaded.id.startsWith('place-') || loaded.id.startsWith('settlement-'), 'correct Greenwood arrival score');
+      const peacefulMix = await page.evaluate(() => {
+        const a = Prototype.audio, spec = a.productionCue(a.context);
+        return { engaged: a.context.engaged, id: a.recordedScore?.id,
+          expected: spec.id, voices: a.recordedScore?.voices.map(v =>
+            ({ id: v.id, gain: v.targetGain })) };
+      });
+      assert.equal(peacefulMix.id, peacefulMix.expected);
+      if (!peacefulMix.engaged && peacefulMix.voices.length > 1)
+        assert.equal(peacefulMix.voices[1].gain, 0,
+          'peaceful Greenwood must not leak the separate encounter layer');
       await page.locator('#menu-button').click();
       await page.waitForFunction(() => document.querySelector('#modal-title')?.textContent === 'Adventure menu');
       await page.waitForTimeout(160);
@@ -87,6 +107,14 @@ const server = http.createServer((req, res) => {
         Prototype.audio.recordedScore?.id === 'title',
         null, { timeout: 20000 });
       assert.equal(await page.evaluate(() => Prototype.audio.ctx.state), 'running');
+      const returnedTitle = await page.evaluate(() => {
+        const a = Prototype.audio;
+        return { id: a.recordedScore?.id, active:
+          a.recordedScore?.voices.some(v => v.id === 'title' && v.targetGain > 0 &&
+          !!v.osc.buffer), music: a.mixLevel('music'), master: a.mixLevel('master') };
+      });
+      assert(returnedTitle.active && returnedTitle.music > 0 && returnedTitle.master > 0,
+        'returning to Main Menu must restore the audible title voice');
       await page.locator('#title-continue').click();
       await page.waitForFunction(() => Prototype.started && Prototype.audio.recordedScore?.id !== 'title', null, { timeout: 60000 });
       const again = await page.evaluate(() => ({
