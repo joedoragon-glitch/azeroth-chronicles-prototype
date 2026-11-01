@@ -1,0 +1,61 @@
+name: 'Pixi #752 Highlands ferry composition acceptance'
+
+# Focused PR-only ferry browser check; does not publish or run the full game.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pixi-ferry-752.yml'
+      - 'src/prototype/pixi-experimental.js'
+      - 'tests/pixi-parity-browser.test.cjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixi-ferry-752-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ferries:
+    name: Ferry visual / ${{ matrix.label }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: desktop-100
+            zoom: '1'
+            phone: '0'
+          - label: phone-landscape-175
+            zoom: '1.75'
+            phone: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install chromium --with-deps
+      - name: Validate deployable source fingerprints
+        run: node scripts/build.cjs --check
+      - name: Compare original Highlands ferry artwork with Pixi composite
+        env:
+          PARITY_FIXTURES: ferry
+          PARITY_ZOOM: ${{ matrix.zoom }}
+          PARITY_PHONE: ${{ matrix.phone }}
+          PARITY_PERF: '0'
+          PARITY_OPTIMIZED: '0'
+          PARITY_OUT: test-artifacts/pixi-ferry-${{ matrix.label }}
+        run: node tests/pixi-parity-browser.test.cjs
+      - name: Retain paired Canvas, Pixi, and ferry-free evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixi-ferry-752-${{ matrix.label }}
+          path: test-artifacts/pixi-ferry-${{ matrix.label }}/
+          retention-days: 30
+          if-no-files-found: ignore
