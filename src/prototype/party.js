@@ -1771,6 +1771,7 @@
           if (!this.developerCompanionDamage(
             u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
               this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
+            { skillAttack: true, criticalExecution: criticalReceipt },
           )) return false;
           const veteran = R.companionSkills.veteran;
           if (
@@ -1974,7 +1975,8 @@
           }
         } else {
           const previousDirect = this.developerCompanionBeginDirect(u, def.name);
-          for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+          for (const e of targets) if (this.damage(e, damage, u.id,
+            { area: true, criticalExecution: criticalReceipt })) hits++;
           this.developerCompanionEndDirect(previousDirect);
         }
         if (!hits) return false;
@@ -2238,7 +2240,10 @@
         const previousDirect = this.developerCompanionBeginDirect(u, def.name);
         for (const e of victims) {
           const hp = e.hp;
-          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
+          if (!this.damage(e, damage, u.id, {
+            skillAttack: true, area: def.shape !== 'single',
+            criticalExecution: receipt,
+          }))
             continue;
           landed++;
           actualDamage += Math.max(0, hp - e.hp);
@@ -2415,7 +2420,9 @@
           const previousDirect = this.developerCompanionBeginDirect(
             u, profile.name || 'Native maneuver');
           for (const enemy of victims) {
-            if (!this.damage(enemy, base, u.id, { area: elite })) continue;
+            if (!this.damage(enemy, base, u.id, {
+              skillAttack: true, area: elite, criticalExecution: criticalReceipt,
+            })) continue;
             committed = true;
             if (enemy.hp <= 0) continue;
             if (elite && ['scatter', 'sweep'].includes(profile.effect)) {
