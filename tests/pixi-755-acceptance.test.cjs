@@ -24,19 +24,19 @@ const bad = inspect(base, slowed);
 assert.equal(bad.decision, 'HOLD', 'deliberately slowed CPU fixture must be rejected');
 assert(bad.details.every(d => d.p50.decision === 'HOLD' && d.p95.decision === 'HOLD'),
   'the slowed positive control must be detected for all crowd sizes');
-assert.throws(() => inspect(base, [fixture(7, 'head', { deviceScaleFactor: 3 }), slowed]),
+assert.throws(() => inspect(base, [fixture(7, 'head', { deviceScaleFactor: 3 }), slowed[1]]),
   /mismatch/, 'DPR mismatch cannot be compared');
-assert.throws(() => inspect(base, [fixture(7, 'head', { viewport: { width: 390, height: 844 } }), slowed]),
+assert.throws(() => inspect(base, [fixture(7, 'head', { viewport: { width: 390, height: 844 } }), slowed[1]]),
   /mismatch/, 'portrait and landscape measurements cannot be compared');
-assert.throws(() => inspect(base, [fixture(7, 'head', { engine: 'Other Chromium' }), slowed]),
+assert.throws(() => inspect(base, [fixture(7, 'head', { engine: 'Other Chromium' }), slowed[1]]),
   /mismatch/, 'different browser engines must not be treated as one');
 const rebaked = fixture(7, 'head');
 rebaked.benchmarks[2].bakesDelta = 1;
-assert.throws(() => inspect(base, [rebaked, slowed]), /Invalid steady/,
+assert.throws(() => inspect(base, [rebaked, slowed[1]]), /Invalid steady/,
   'a rerasterizing crowd must not be accepted as steady');
 const tooFew = fixture(7, 'head');
 tooFew.benchmarks[2].sampleCount = 10;
-assert.throws(() => inspect(base, [tooFew, slowed]), /Invalid steady/,
+assert.throws(() => inspect(base, [tooFew, slowed[1]]), /Invalid steady/,
   'small samples must not masquerade as stable percentile evidence');
 assert.throws(() => inspect(base, [slowed]), /at least two/,
   'one candidate trial must not count as reproducible performance evidence');
