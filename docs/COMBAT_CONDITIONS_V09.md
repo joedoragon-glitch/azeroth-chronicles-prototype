@@ -237,3 +237,27 @@ The new `tests/combat-conditions.test.cjs` covers Slow/immunity interaction acro
 Before claiming **v0.9 certified**, run the exact-head format/build/check/test gates, then desktop Chromium, phone Chromium/WebKit, old-v4-save reload/import, PWA upgrade/offline, and a manual representative Normal/Nightmare/TRUE encounter pass: Mage frost/Silence/Fracture, Ranger Haste/Rally, Paladin stance/ward/Weaken/taunt, Soldier guard, spitter projectiles, Wraith siphon, boss slow patches, Goblin dust, knockback/scatter near walls, and trap seals. Verify hostile/status feedback remains legible at gameplay scale and on phone. Automated tests are evidence, not a substitute for practical control and clarity checks.
 
 **Not currently authored as generalized conditions:** stun, mind control, hard root, fear or universal stealth. Silence and Paladin enemy taunt are now explicitly authored above; ordinary slowing seals still do not silence or hard-root. Do not promise testers these effects solely because an attack name implies them. New conditions should first define target types, application eligibility, timer/stack rules, immunity interaction, UI/audio notice, save lifecycle and regression coverage.
+
+## Skill evasion — draft implementation (PR #760; not yet released)
+
+The separately proposed skill-evasion system does **not** change ordinary basic
+attacks, autoattack combo finishers, physical projectile collision, ground
+warning geometry, line-of-sight eligibility, immunity or Reversal. A legal
+single-target hero/companion skill grants an enemy a configurable 20% evasion
+chance; a legal area skill grants **each** affected enemy its own independent
+30% check. Ranger hero skills use 15%/25%, and Rogue Bard performances bypass
+the skill-avoidance check. No existing playable hero receives this passive Dodge.
+
+Hostile enemies gain **five percentage points** during game night; active,
+legitimate friendly companions (Soldier, Archer, pet and Charmed monster) instead
+receive 20%/30% independent defenses against eligible enemy skills, including
+Rogue maneuvers. Critical execution receipts bypass Dodge before sampling it.
+A successful Dodge rejects the hit and its linked on-hit statuses, displaying
+a brief local **Miss** over the defender. Probability values reside in
+`R.skillEvasion`; the extra RNG stream is separate and save-v4 compatible.
+The detailed acceptance boundaries are in
+[SKILL_EVASION_OWNER_CONTRACT_20261101.md](SKILL_EVASION_OWNER_CONTRACT_20261101.md).
+
+**Status:** These are proposed PR #760 branch rules subject to focused tests,
+review, explicit merge approval, publication and device verification. This
+section is not evidence that the current public game already uses evasion.
