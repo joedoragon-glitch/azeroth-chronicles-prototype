@@ -1,5 +1,15 @@
 # Combat conditions and secondary effects · current consolidated source
 
+> **1 November 2026 — skill evasion draft, [PR #759](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/759) (unmerged):**
+> An implementation candidate introduces adjustable enemy skill evasion (20% single/30% AoE,
+> 15%/25% against the hero Ranger), friendly companion skill evasion (20%/30%), and
+> five percentage points of hostile-enemy nighttime evasion. Area skills roll separately
+> for each recipient; Rogue Bard music and critical executions bypass dodge; basic
+> attacks and their combo finishers remain unchanged. Read
+> [the draft skill evasion contract](SKILL_EVASION_FIRST_DRAFT_20261101.md).
+> These changes are **not** part of the published combat rules until reviewed, tested
+> and separately merged/deployed. The existing PT-007 geometry contract below remains intact.
+
 > **28 October 2026 — PT-007 ground-AoE implementation contract (PR #571):**
 > Ordinary boss/captain circular ground blasts and parallel non-projectile ground lanes keep
 > their authored, target-centered warning and damage footprints even when terrain or scenery
