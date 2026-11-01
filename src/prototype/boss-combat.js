@@ -2349,6 +2349,7 @@
           const victim =
             victims.find((u) => u.type === 'archer') || victims.find((u) => u === this.hero);
           if (victim) {
+            let sabotageHit = false;
             if (victim.type === 'archer') {
               const criticalReceipt = this.worldBossRelease(e, a);
               // The Archive's targeted sabotage is a real status-only skill.
@@ -2358,6 +2359,7 @@
               })) {
                 victim.healCd = (victim.healCd || 0) +
                   this.worldBossEffect(a, 3, 'cooldownDebt');
+                sabotageHit = true;
               }
             } else {
               const choices = victim.cd
@@ -2367,9 +2369,11 @@
               if (choices.length) {
                 this.worldBossRelease(e, a);
                 victim.cd[choices[0].i] += this.worldBossEffect(a, 3, 'cooldownDebt');
+                sabotageHit = true;
               }
             }
-            this.event('warning', { family: 'archive', cooldownSabotageHit: true });
+            if (sabotageHit)
+              this.event('warning', { family: 'archive', cooldownSabotageHit: true });
           }
           return;
         }
