@@ -3794,7 +3794,8 @@
           : null;
         this.s.recallActive = true;
         this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
-        if (this.hero.order?.type !== 'move') this.hero.order = null;
+        // Do not erase hero skill-approach or navigation. Recall belongs to
+        // companion control; deliberate hero actions remain player-owned.
         this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
           this.clearCompanionJudgment(u);

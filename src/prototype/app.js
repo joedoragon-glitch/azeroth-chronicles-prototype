@@ -5481,12 +5481,8 @@
   }
   function recallSquad() {
     const activating = !game.s.recallActive;
-    if (activating) {
-      if (queuedCharges.size)
-        status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
-      queuedCharges.clear();
-      if (charge?.autoRelease) cancelCharge();
-    }
+    // Recall commands companions, not the hero's prepared skills. Retain
+    // charged releases and queued actions while the squad withdraws.
     const recalled = game.recallParty();
     if (recalled && activating && recallPractice?.owner === game && game.activeLivingParty().length) {
       const complete = recallPractice.complete;
