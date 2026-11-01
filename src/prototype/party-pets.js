@@ -73,7 +73,7 @@
         u.active = this.activeParty().length < this.barracksFieldCap(b);
         this.s.party.push(u);
         // A pet recruited after sunset immediately receives its live passive.
-        this.syncCompanionLevelStats();
+        this.syncMonsterNightStats(u);
         this.say(u.name + (u.active ? ' joins your group.' : ' waits in reserve.'));
         return true;
       }
