@@ -707,6 +707,41 @@
         return amount;
       }
 
+      // One defensive roll for each eligible recipient. The caller identifies
+      // a skill, not a basic hit, and may supply an action ID so multishot or
+      // multipulse activations reuse the target's first result.
+      skillEvaded(target, defender, area, source, criticalExecution = null, actionId = null) {
+        if (!target || target.hp <= 0 || criticalExecution?.critical) return false;
+        if (defender === 'companion' && (target === this.hero ||
+            !['soldier', 'archer', 'pet'].includes(target.type))) return false;
+        if (defender === 'enemy' && source === 'hero' && this.hero.class === 'rogue')
+          return false; // Performances and music are explicitly unavoidable.
+        const cfg = R.skillEvasion;
+        const rates = defender === 'companion' ? cfg.companion
+          : source === 'hero' && this.hero.class === 'ranger'
+            ? cfg.enemyVsRanger : cfg.enemy;
+        const chance = Math.min(1, Math.max(0,
+          rates[area ? 'area' : 'single'] +
+          (defender === 'enemy' && this.night() ? cfg.enemyNightBonus : 0)));
+        if (!chance) return false;
+        const key = actionId === null || actionId === undefined ? null
+          : this.zoneId + ':' + String(actionId) + ':' + String(target.id || 'hero');
+        const decisions = this._skillEvasionDecisions ||= new Map();
+        if (key !== null && decisions.has(key)) return decisions.get(key);
+        // Skill evasion never advances campaign/world RNG or critical RNG.
+        const random = typeof this.skillEvasionRandom === 'function'
+          ? this.skillEvasionRandom() : Math.random();
+        const evaded = random < chance;
+        if (key !== null) {
+          decisions.set(key, evaded);
+          if (decisions.size > 512) decisions.delete(decisions.keys().next().value);
+        }
+        if (evaded) this.event('skillEvaded', {
+          target: defender === 'enemy' ? target.id : target.id || 'companion',
+          defender, source, area: !!area, x: target.x, y: target.y,
+        });
+        return evaded;
+      }
       damage(e, amount, source = 'hero', options = null) {
         if (
           !e ||
@@ -758,6 +793,13 @@
         // Ash abrades eyes: attacks issued by a party member inside or recently
         // outside Choking Ash have a 35% miss chance, without extra damage.
         if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
+        // Skills, but never ordinary basics or their combo finishers, can be
+        // evaded. Geometry and encounter admission have already succeeded.
+        const isSkill = options?.skillAttack === true ||
+          (options?.area === true && options?.automaticBasic !== true);
+        if (isSkill && options?.automaticBasic !== true &&
+            this.skillEvaded(e, 'enemy', !!options?.area, source,
+              options?.criticalExecution, options?.evasionActionId)) return false;
         // Piercing bypasses defensive mitigation, not terrain, range or Ash misses.
         const piercing = source === 'hero' && options?.piercing === true;
         if (!piercing && this.enemyFort(e)) amount *= R.balance.fortifications.incomingMultiplier;
@@ -908,8 +950,11 @@
         if (reflected > 0 && origin.hp > 0) this.hitParty(origin, reflected, 0, null, true);
         return true;
       }
-      hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false) {
+      hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false, attack = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
+        if (attack?.skillAttack && !alreadyMitigated &&
+            this.skillEvaded(u, 'companion', !!attack.area, rangedSourceId,
+              attack.criticalExecution, attack.evasionActionId)) return false;
         // Real two-second Endure window, class-only and never granted to pets.
         if (u === this.hero && u.class === 'rogue' && (u.rogueEndureUntil || 0) > this.s.time)
           return false;
@@ -1119,7 +1164,9 @@
             }
             if (victim) {
               hostileTargets = null;
-              const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId);
+              const landed = this.hitParty(victim, p.damage, p.manaDrain || 0, p.sourceId, false,
+                { skillAttack: p.skillAttack === true, area: p.skillArea === true,
+                  criticalExecution: p.criticalExecution, evasionActionId: p.evasionActionId });
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
               if (landed && p.slow) this.applySlow(victim, p.slow);
@@ -1339,7 +1386,9 @@
                     victim,
                     p.damage,
                     p.source,
-                    p.encountersAtStart || p.area || p.piercing || p.automaticBasic
+                    p.encountersAtStart || p.area || p.piercing || p.automaticBasic ||
+                    (p.source === 'hero' && Number.isInteger(p.slot)) || p.companionSkill ||
+                    p.petSkillSlot || p.skillAttack || p.criticalExecution || p.evasionActionId
                       ? {
                           ...(p.encountersAtStart
                             ? { encountersAtStart: p.encountersAtStart }
@@ -1347,6 +1396,11 @@
                           ...(p.area ? { area: true } : {}),
                           ...(p.piercing ? { piercing: true } : {}),
                           ...(p.automaticBasic ? { automaticBasic: true } : {}),
+                          ...((p.source === 'hero' && Number.isInteger(p.slot) && !p.automaticBasic) ||
+                            p.companionSkill || p.petSkillSlot || p.skillAttack
+                            ? { skillAttack: true } : {}),
+                          ...(p.criticalExecution ? { criticalExecution: p.criticalExecution } : {}),
+                          ...(p.evasionActionId ? { evasionActionId: p.evasionActionId } : {}),
                         }
                       : null,
                   );
@@ -1448,7 +1502,10 @@
                 a.hit.push(id);
                 if (a.slowOnly) this.applySlow(u, a.slowDuration);
                 else {
-                  const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                  const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null, false,
+                    { skillAttack: a.skillAttack === true, area: true,
+                      criticalExecution: a.criticalExecution,
+                      evasionActionId: a.evasionActionId });
                   if (
                     this.hero !== hero ||
                     this.zoneId !== zone ||
@@ -1466,7 +1523,10 @@
             a.tick = 1;
             for (const u of this.combatTargets())
               if (dist(u, a) < a.radius && this.line({ x: a.fromX ?? a.x, y: a.fromY ?? a.y }, u)) {
-                const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null);
+                const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null, false,
+                    { skillAttack: a.skillAttack === true, area: true,
+                      criticalExecution: a.criticalExecution,
+                      evasionActionId: a.evasionActionId });
                 if (
                   this.hero !== hero ||
                   this.zoneId !== zone ||
