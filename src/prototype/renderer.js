@@ -1715,6 +1715,42 @@
       for (const cue of criticalCues) if (cue.drawn) cue.life -= Math.max(0, dt);
       const timestamp = now();
       criticalCues = criticalCues.filter((c) => c.life > 0 && timestamp < c.expiresAt);
+      for (const cue of dodgeCues) if (cue.drawn) cue.life -= Math.max(0, dt);
+      dodgeCues = dodgeCues.filter((c) => c.life > 0 && timestamp < c.expiresAt);
+    }
+    function drawDodgeCues() {
+      if (!dodgeCues.length) return;
+      dodgeCues = dodgeCues.filter((c) => c.life > 0 && now() < c.expiresAt);
+      const enemies = game.zone().enemies, party = game.s.party;
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.lineJoin = 'round';
+      for (const cue of dodgeCues) {
+        const actor = cue.target === 'hero' ? game.hero :
+          party.find((u) => u.id === cue.target) ||
+          enemies.find((u) => u.id === cue.target);
+        if (!actor || actor.hp <= 0 || actor.active === false) {
+          cue.life = 0;
+          continue;
+        }
+        const pos = screen(actor);
+        if (pos.x < -35 || pos.x > canvas.width + 35 ||
+            pos.y < -80 || pos.y > canvas.height + 80) continue;
+        const rise = reducedMotion() ? 0 : (0.65 - cue.life) * 9,
+          x = Math.max(22, Math.min(canvas.width - 22, pos.x)),
+          y = Math.max(22, Math.min(canvas.height - 24,
+            pos.y - spriteHeight(actor) - 18 - rise));
+        ctx.globalAlpha = Math.min(1, cue.life / 0.22);
+        ctx.font = 'bold 11px system-ui';
+        ctx.lineWidth = 2.4;
+        ctx.strokeStyle = '#172b2a';
+        ctx.fillStyle = '#e0e9eb';
+        ctx.strokeText('Miss', x, y);
+        ctx.fillText('Miss', x, y);
+        cue.drawn = true;
+      }
+      ctx.restore();
+      dodgeCues = dodgeCues.filter((c) => c.life > 0);
     }
     function drawCriticalCues() {
       if (!criticalCues.length) return;
@@ -3051,6 +3087,7 @@
         PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
         PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
         drawCriticalCues();
+      drawDodgeCues();
         targetGuidance();
         drawNavigationRoute();
         drawPausePresentation();
@@ -3533,6 +3570,7 @@
       PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
       PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
       drawCriticalCues();
+      drawDodgeCues();
       targetGuidance();
       drawNavigationRoute();
       drawPausePresentation();
