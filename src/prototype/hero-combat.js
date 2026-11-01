@@ -170,7 +170,7 @@
       }
       // Ranger ultimates distribute real arrows across a bounded number of
       // enemies rather than recreating the former shared immunity attack.
-      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null, criticalReceipt = null) {
+      launchHuntArrow(enemy, damage, charged = false, delay = 0, receipt = null, criticalReceipt = null, evasionActionId = null) {
         const hero = this.hero,
           distance = Math.max(1, dist(hero, enemy));
         this.s.projectiles.push({
@@ -183,6 +183,7 @@
           damage,
           source: 'hero',
           slot: 8,
+          ...(evasionActionId ? { evasionActionId } : {}),
           ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           style: 'arrow',
           speed: 650,
@@ -284,6 +285,7 @@
         const radius = cfg.radius + (cfg.radiusStep || 0) * steps;
         let hits = 0;
         if (hero.class === 'ranger') {
+          const evasionActionId = 'ranger-hunt:' + this.s.nextId;
           const foes = this.huntTargets(target, radius, cfg.targets);
           // The hunt stays a crowd skill. Against a truly isolated enemy it
           // gains only one extra non-piercing arrow, still less efficient
@@ -298,6 +300,7 @@
                 index * 0.04 + n * 0.1,
                 receipt,
                 criticalReceipt,
+                evasionActionId,
               );
               hits++;
             }
@@ -459,6 +462,7 @@
             fromY: hero.y,
             hits,
           });
+        const evasionActionId = 'advanced-skill:' + this.s.nextId;
         const launch = (enemy, damage, style, extra = {}) => {
           const d = Math.max(1, dist(hero, enemy));
           this.s.projectiles.push({
@@ -474,6 +478,7 @@
             speed: style === 'beam' ? 1000 : 620,
             style,
             charged: true,
+            evasionActionId,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             ...(style === 'beam' ? { originX: hero.x, originY: hero.y } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
@@ -2077,6 +2082,7 @@
               target: target.id,
             });
           } else if (this.hero.class === 'ranger') {
+            const evasionActionId = 'ranger-triple:' + this.s.nextId;
             for (let j = 0; j < 3; j++)
               this.s.projectiles.push({
                 id: 'projectile-' + this.s.nextId++,
@@ -2093,6 +2099,7 @@
                 style: 'arrow',
                 slot,
                 charged: false,
+                evasionActionId,
                 ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
