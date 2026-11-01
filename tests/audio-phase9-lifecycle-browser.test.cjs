@@ -65,7 +65,8 @@ const server = http.createServer((req, res) => {
         started: Prototype.started, state: Prototype.audio.ctx.state,
         zone: Prototype.game.zoneId, time: Prototype.game.s.time,
       }));
-      assert(loaded.id.startsWith('place-') || loaded.id.startsWith('settlement-'), 'correct Greenwood arrival score');
+      assert.equal(loaded.id, 'place-vale',
+        'real new-game Millhaven arrival uses the original Greenwood recording, not the estate cue');
       const peacefulMix = await page.evaluate(() => {
         const a = Prototype.audio, spec = a.productionCue(a.context);
         return { engaged: a.context.engaged, id: a.recordedScore?.id,
