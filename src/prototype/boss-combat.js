@@ -1014,6 +1014,9 @@
               continue;
             const landed = this.hitParty(
               u, this.worldBossEffect(b, this.weakenedEnemyDamage(e), 'damage'), 0, e.id,
+              false, { skillAttack: true, area: true,
+                criticalExecution: b.criticalExecution,
+                evasionActionId: 'board:' + e.id + ':' + this.s.time },
             );
             if (
               this.hero !== hero ||
@@ -2218,6 +2221,9 @@
                 this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e) * a.coefficient),
                 a.manaDrain || 0,
                 e.id,
+                false, { skillAttack: true, area: true,
+                  criticalExecution: criticalReceipt,
+                  evasionActionId: 'wraith-drain:' + e.id + ':' + this.s.time },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -2326,6 +2332,7 @@
             sourceId: e.id,
             species: 'cargo',
             style: 'cargo',
+            skillAttack: true, skillArea: false,
           });
           this.event('projectileLaunch', {
             actor: 'enemy',
@@ -2407,6 +2414,7 @@
               sourceId: e.id,
               species: e.species,
               style: 'stone',
+              skillAttack: true, skillArea: true,
             });
           }
           this.event('projectileLaunch', {
@@ -2519,6 +2527,7 @@
             sourceId: e.id,
             species: e.species,
             style: 'stone',
+            skillAttack: true, skillArea: false,
           });
           this.event('projectileLaunch', {
             actor: 'enemy',
@@ -2548,6 +2557,7 @@
               sourceId: e.id,
               species: e.species,
               style,
+              skillAttack: true, skillArea: true,
               delay:
                 e.family === 'crypt' && a.index === 1
                   ? i * (e.form === 'true' ? a.trueShotInterval : a.normalShotInterval)
@@ -2571,6 +2581,7 @@
         if (a.kind === 'ring') {
           this.s.hazards.push({
             ...a,
+            skillAttack: true,
             family: e.family,
             species: e.species,
             sourceId: e.id,
@@ -2621,6 +2632,8 @@
         }
       }
       resolveArea(e, a) {
+        // One independent decision per target for a committed area skill.
+        a.evasionActionId ||= 'world-area:' + e.id + ':' + this.s.time + ':' + a.index;
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
@@ -2697,6 +2710,9 @@
                         : this.weakenedEnemyDamage(e) * a.coefficient,
                     a.manaDrain || 0,
                     e.id,
+                    false, { skillAttack: true, area: true,
+                      criticalExecution: a.criticalExecution,
+                      evasionActionId: a.evasionActionId },
                   );
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
@@ -2792,6 +2808,7 @@
             if (p.criticalExecution) delete p.criticalExecution;
             this.s.hazards.push({
               ...p,
+              skillAttack: true,
               family: e.family,
               species: e.species,
               sourceId: e.id,
@@ -2833,6 +2850,9 @@
                     : this.weakenedEnemyDamage(e) * a.coefficient,
                 a.manaDrain || 0,
                 e.id,
+                false, { skillAttack: true, area: true,
+                  criticalExecution: a.criticalExecution,
+                  evasionActionId: a.evasionActionId },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -2893,6 +2913,8 @@
                 this.weakenedEnemyDamage(e) * move.coefficient,
                 0,
                 e.id,
+                false, { skillAttack: true, area: false,
+                  criticalExecution: move.criticalExecution },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
