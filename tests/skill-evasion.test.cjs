@@ -66,6 +66,7 @@ rolls = [];
 assert(!game.skillEvades(game.hero, 'area', { source: enemy.id }),
   'current hero classes do not receive passive Dodge');
 
+delete game.rollSkillEvasion;
 // The fourth RNG stream must never sample Campaign.random or shift critical streams.
 let worldCalls = 0;
 game.random = () => { worldCalls++; return 0.01; };
