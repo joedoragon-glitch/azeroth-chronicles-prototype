@@ -717,3 +717,32 @@ for (const [heroClass, reach] of [
   assert.equal(g.gather('not-a-site'), false, 'labor is refused during Recall');
   assert.equal(g.s.recallActive, true, 'labor refusal cannot cancel Recall');
 }
+
+
+// #684 diagnostic only: quick-selected cover and held distant target both block auto fallback.
+{
+  const { game, enemies } = heroAutoInvestigation('ranger', [150, 330]);
+  const [near, obscured] = enemies;
+  assert.equal(game.cycleHeroTarget(() => true)?.id, near.id);
+  assert.equal(game.cycleHeroTarget(() => true)?.id, obscured.id);
+  assert.equal(game.manualHeroTargetLocked, false, 'quick selection is not a hold lock');
+  const originalLine = game.line.bind(game);
+  game.line = (from, to) => to === obscured ? false : originalLine(from, to);
+  assert.equal(game.selectedHeroTarget()?.id, obscured.id,
+    'selection remains despite lost line of sight');
+  assert(originalLine(game.hero, near));
+  assert.equal(game.castMovementBasic(), false,
+    'quick-selected obscured foe presently suppresses firing at clear near foe');
+}
+{
+  const { game, enemies } = heroAutoInvestigation('rogue', [150, 600]);
+  const [near, held] = enemies;
+  assert.equal(game.holdHeroTarget(() => true, held.id)?.id, held.id);
+  assert.equal(game.manualHeroTargetLocked, true);
+  held.x = game.hero.x + 900;
+  assert.equal(game.selectedHeroTarget()?.id, held.id,
+    'held target remains selected beyond the 680-unit quick-cycle limit');
+  assert.equal(game.castMovementBasic(), false,
+    'Rogue auto basic still prefers unreachable held foe over a near Charm candidate');
+  assert.equal(near.hp, near.maxHp);
+}
