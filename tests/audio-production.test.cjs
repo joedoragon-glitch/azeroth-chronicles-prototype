@@ -79,9 +79,62 @@ assert.equal(idleVale.stems[1].gain, 0,
   'Greenwood encounter layer must start silent in exploration');
 const millhaven = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
   settlement: 'millhaven', engaged: 0 });
-assert.deepEqual(millhaven.stems.map(s => s.id), ['settlement-vale', 'action-vale']);
+assert.deepEqual(millhaven.stems.map(s => s.id), ['place-vale', 'action-vale']);
+assert.equal(millhaven.stems[0].gain, 0.74,
+  'Millhaven restores the original Greenwood exploration recording at its normal level');
 assert.equal(millhaven.stems[1].gain, 0,
   'Millhaven encounter music must be loaded silently until nearby combat');
+const cryptApproach = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
+  settlement: null, estateApproach: true, nearbyEngaged: 0 });
+assert.equal(cryptApproach.id, 'settlement-vale',
+  'former settlement recording now marks the Dark Lord estate approach');
+assert.equal(cryptApproach.stems[0].gain, 0.62);
+assert.equal(a.productionCue({ ...scene, estateApproach: true,
+  nearbyEngaged: 2 }).id, 'place-vale',
+'nearby combat replaces the Crypt approach cue with the normal regional action mix');
+assert.equal(a.productionCue({ ...scene, estateApproach: true,
+  peace: true }).id, 'peace-vale',
+'global peace takes precedence over the unfinished-estate approach');
+assert.equal(a.productionCue({ ...scene, estateApproach: true,
+  started: false }).id, 'title', 'title soundtrack remains exclusive');
+assert.equal(a.productionCue({ ...scene, region: 'vale', zone: 'vale',
+  settlement: 'millhaven', night: true }).id, 'place-vale',
+  'Millhaven does not change to the former town cue at night');
+
+// Geometry-driven observation: the actual Forest Crypt entrance is the anchor.
+// The approach starts 950 units out and persists until 1150 units on exit.
+const Campaign = require('../src/prototype/engine.js');
+const liveVale = new Campaign();
+const forestCrypt = liveVale.zone().npcs.find((n) =>
+  n.kind === 'dungeon' && n.family === 'crypt' && !n.sideDungeon);
+assert(forestCrypt, 'real Greenwood must retain its Forest Crypt entrance');
+const approachObserver = audio();
+approachObserver.enableProduction();
+approachObserver.updateEnvironment = () => {};
+approachObserver.sceneDetails = () => {};
+approachObserver.setRecordedScore = async () => true;
+function observeEstate(distance, started = true) {
+  liveVale.hero.x = forestCrypt.x - distance;
+  liveVale.hero.y = forestCrypt.y;
+  const actualScene = approachObserver.describe(liveVale, { started });
+  approachObserver.updateProduction(actualScene);
+  return { scene: actualScene, cue: approachObserver.productionCue(actualScene).id };
+}
+assert.equal(observeEstate(1350).cue, 'place-vale',
+  'no cue switch on normal roads outside the estate influence');
+assert.equal(observeEstate(940).cue, 'settlement-vale',
+  'entering the 950-unit estate perimeter selects the new approach theme');
+assert.equal(observeEstate(1080).cue, 'settlement-vale',
+  'retreating partway does not rapidly restart regional and estate tracks');
+assert.equal(observeEstate(1160).cue, 'place-vale',
+  'leaving the 1150-unit outer perimeter restores the original theme');
+assert.equal(observeEstate(1050).cue, 'place-vale',
+  're-entry must reach the inner threshold instead of flickering');
+assert.equal(observeEstate(930).cue, 'settlement-vale');
+assert.equal(observeEstate(930, false).cue, 'title',
+  'inactive title must not retain estate scoring');
+assert.equal(observeEstate(1080).cue, 'place-vale',
+  'title resets approach hysteresis for a resumed game');
 assert.equal(a.productionCue({ ...scene, gameOver: true }).id, 'defeat');
 a.finaleUntil = 3;
 assert.equal(a.productionCue({ ...scene, peace: true }).id, 'finale');
@@ -109,7 +162,7 @@ assert.equal(gains.at(-2)[1], 0.74, 'exploration restores authored base gain');
 // showing its inactive title. That snapshot must NOT retain a settlement
 // hold and replace the first true outdoor track with settlement music.
 a.updateProduction({ ...scene, settlement: 'vale-refuge' });
-assert.equal(a.productionKey && JSON.parse(a.productionKey)[0], 'settlement-vale');
+assert.equal(a.productionKey && JSON.parse(a.productionKey)[0], 'place-vale');
 a.updateProduction({ ...scene, settlement: 'vale-refuge', started: false, situation: 'title' });
 assert.equal(a.settlementZone, null);
 assert.equal(a.settlementUntil, 0);
@@ -127,18 +180,18 @@ a.ctx.currentTime = 25;
 a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 2, nearbyEngaged: 0 });
 assert.equal(gains.at(-1)[1], 0,
   'distant aggro must not turn on encounter music in Millhaven');
-assert.equal(gains.at(-2)[1], 0.62,
-  'Millhaven settlement theme retains its normal level without nearby combat');
+assert.equal(gains.at(-2)[1], 0.74,
+  'restored Millhaven music retains its normal level without nearby combat');
 a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 2, nearbyEngaged: 2 });
 assert(gains.at(-1)[1] > 0, 'nearby combat should still raise the encounter stem');
-assert(gains.at(-2)[1] < 0.62, 'encounter must reduce settlement theme gain');
+assert(gains.at(-2)[1] < 0.74, 'encounter must reduce the original regional music');
 a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 8, nearbyEngaged: 8 });
 assert(gains.at(-2)[1] < gains.at(-1)[1],
   'at high combat intensity, encounter music must dominate the base theme');
 a.ctx.currentTime = 30;
 a.updateProduction({ ...scene, settlement: 'millhaven', engaged: 0, nearbyEngaged: 0 });
-assert.equal(gains.at(-2)[1], 0.62,
-  'settlement theme returns to full authored level after combat');
+assert.equal(gains.at(-2)[1], 0.74,
+  'original Millhaven theme returns to full authored level after combat');
 assert.equal(gains.at(-1)[1], 0,
   'encounter melody fades away after combat');
 let steps = 0;
