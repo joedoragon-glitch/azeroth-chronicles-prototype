@@ -578,9 +578,15 @@ for (const [heroClass, expectedRange] of [
   assert(enemy, 'real enemy for persisted-order characterization');
   game.hero.order = { type: 'attack', id: enemy.id };
   const snapshot = game.snapshot();
-  assert.equal(snapshot.hero.order?.type, 'attack', 'legacy attack order enters v4 snapshot');
+  assert.equal(snapshot.hero.order, null, 'legacy attack order cannot enter a v4 snapshot');
   const restored = Campaign.restore(snapshot, () => 0.9);
-  assert.equal(restored.hero.order?.type, 'attack', 'legacy attack order survives v4 restore');
+  assert.equal(restored.hero.order, null, 'sanitized snapshot has no chase intent');
+  const imported = structuredClone(game.s);
+  imported.hero.order = { type: 'attack', id: enemy.id };
+  assert.equal(Campaign.validate(imported).hero.order, null,
+    'historical v4 imports discard legacy attack orders before restoration');
+  assert.equal(Campaign.restore(imported, () => 0.9).hero.order, null,
+    'historical v4 import cannot reactivate old manual Skill 1');
 }
 
 
