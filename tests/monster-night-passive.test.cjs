@@ -46,6 +46,9 @@ game.zone().enemies = [];
 game.zone().props = [];
 const soldier = game.unit('soldier', game.hero.x + 25, game.hero.y);
 const archer = game.unit('archer', game.hero.x + 55, game.hero.y);
+// The starting two-active-party cap remains authoritative in v4 saves.
+soldier.active = false;
+archer.active = false;
 const pet = game.unit('pet', game.hero.x + 45, game.hero.y, 'thorn');
 const reservePet = game.unit('pet', game.hero.x + 80, game.hero.y, 'crypt');
 assert(game.petDefinition(pet));
