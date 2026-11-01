@@ -183,6 +183,8 @@
           damage,
           source: 'hero',
           slot: 8,
+          // An Ultimate hunt is area coverage even when a shaft has one target.
+          skillShape: 'area',
           ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           style: 'arrow',
           speed: 650,
