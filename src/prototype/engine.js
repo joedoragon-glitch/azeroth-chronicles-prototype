@@ -3207,6 +3207,7 @@
       }
       this.syncDungeonMasterStation();
       this.s.recallActive = false;
+      delete this.s.recallExpiresAt; // Region entry ends its previous defensive window.
       this.s.squadEngagement = null;
       this.s.squadBoss = false;
       this.s.squadDoctrine = this.squadDefaultDoctrine();

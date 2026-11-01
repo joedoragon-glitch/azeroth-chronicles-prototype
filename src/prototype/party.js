@@ -293,6 +293,9 @@
       // Existing Recall logic continues the protected withdrawal after
       // normal simulation safely resumes.
       this.s.recallActive = true;
+      // Exceptional critical-freeze withdrawal is independent of the Recall
+      // button, but must not inherit a stale prior manual Recall deadline.
+      this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
       this.hero.order = null;
       // Give living companions a physical, terrain-safe withdrawal goal behind
       // the hero, opposite the nearest engaged enemy. Never teleport them.
