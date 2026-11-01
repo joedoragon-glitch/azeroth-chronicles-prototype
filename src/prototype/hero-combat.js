@@ -239,6 +239,7 @@
           if (
             this.damage(enemy, this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'), 'hero', {
               area: true,
+              skillAttack: true, criticalExecution: criticalReceipt,
               ...(receipt ? { encountersAtStart: receipt } : {}),
             })
           ) {
@@ -333,6 +334,7 @@
             if (
               !this.damage(foe, this.criticalHeroValue(hero.class === 'mage' && !charged ? criticalReceipt : null, power * coefficient * scale, 'damage'), 'hero', {
                 area: true,
+                skillAttack: true, criticalExecution: criticalReceipt,
                 ...(receipt ? { encountersAtStart: receipt } : {}),
               })
             )
@@ -438,7 +440,7 @@
           : [];
         const deal = (enemy, amount, area = false, piercing = false) =>
           this.damage(enemy, amount, 'hero', {
-            area,
+            area, skillAttack: true, criticalExecution: criticalReceipt,
             ...(piercing ? { piercing: true } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
           });
@@ -638,7 +640,7 @@
           )
           .sort((a, b) => this.idOrder(a, b))) {
           if (
-            this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true })
+            this.damage(e, baseDamage * (cfg.secondaryMultiplier || 0.55), source, { area: true, automaticBasic: true })
           )
             hits++;
         }
@@ -1123,7 +1125,8 @@
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
             const landed = this.damage(target, f.damage * cfg.damage, 'hero', {
-              encountersAtStart: f.encountersAtStart,
+              encountersAtStart: f.encountersAtStart, skillAttack: true,
+              criticalExecution: f.criticalExecution,
             });
             const interrupted =
               landed && retreat
@@ -2290,7 +2293,8 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
+            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart,
+                criticalExecution: criticalReceipt })) {
               hits++;
               if (def.slow)
                 this.applySlow(e, this.criticalHeroValue(
@@ -2374,7 +2378,7 @@
                     enemy,
                     power * cfg.bash.damage * scale * (elite ? cfg.bash.eliteDamage : 1),
                     'hero',
-                    { area: true, encountersAtStart },
+                    { area: true, encountersAtStart, criticalExecution: criticalReceipt },
                   )
                 ) {
                   if (enemy.hp > 0) this.shieldPush(enemy, push);
@@ -2580,7 +2584,8 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, skillAttack: true, encountersAtStart,
+                criticalExecution: criticalReceipt })) {
                 // Captains and bosses keep their authored scripted specials;
                 // boss basic-target provocation is deliberately short-lived.
                 const tauntDuration =
@@ -2647,7 +2652,8 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, skillAttack: true, encountersAtStart,
+                criticalExecution: criticalReceipt })) {
                 this.fractureEnemy(
                   enemy,
                   advanced.fraction + steps * advanced.fractionStep,
@@ -2723,7 +2729,7 @@
               this.hero.class !== 'mage' ? criticalReceipt : null,
               (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
             ), 'hero', {
-              area: true,
+              area: true, criticalExecution: criticalReceipt,
             });
             if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 && e.hp > 0)
@@ -2764,7 +2770,8 @@
               target,
               dmg,
               'hero',
-              automatic ? { automaticBasic: true } : null,
+              automatic ? { automaticBasic: true } :
+                { skillAttack: true, criticalExecution: criticalReceipt },
             );
             if (landed) {
               if (slot === 2) this.weakenEnemy(target, rank, criticalReceipt);
