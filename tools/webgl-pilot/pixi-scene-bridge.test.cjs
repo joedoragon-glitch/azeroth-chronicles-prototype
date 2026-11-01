@@ -815,3 +815,83 @@ test('#748 canonical TRUE aura changes paths with bounded retained gradients', (
   assert.equal(scene.metrics().actorUnderlays, 0);
   scene.destroy();
 });
+
+
+test('#756 deterministic canonical detail rebuild profile (source-clock only)', () => {
+  const Renderer = require('../../src/prototype/renderer.js');
+  const { PIXI, app, calls } = pixiFixture();
+  let clock = 0;
+  let clears = 0;
+  const originalClear = PIXI.Graphics.prototype.clear;
+  PIXI.Graphics.prototype.clear = function () {
+    clears++;
+    return originalClear.call(this);
+  };
+  const game = {
+    hero: { x: 100, y: 100 },
+    s: { rescued: {} },
+    regionIndex: () => 0,
+    supplyRoom: () => false,
+    bundleCollected: () => false,
+  };
+  const renderer = Renderer.create({
+    canvas: { width: 640, height: 360 },
+    ctx: {},
+    getGame: () => game,
+    platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 320, y: 180 }) },
+    chargePresentation: () => null,
+    isPaused: () => false,
+    Campaign: { rules: { ambientLife: {}, harbors: {} } },
+    PrototypeVisuals: { height: () => 100 },
+    PrototypeSprites: { height: () => 100 },
+    PrototypeCombatVisuals: {},
+    PrototypeEnemyVfxArt: null,
+    PrototypeGroundCache: null,
+    now: () => clock,
+  });
+  const scene = Bridge.create({ PIXI, app, width: 640, height: 360 });
+  scene.registerTexture('hero.png', picture());
+  const variants = [
+    ['true-boss', { renderKind: 'enemy', form: 'true', type: 'boss', family: 'citadel' }],
+    ['true-nonboss', { renderKind: 'enemy', form: 'true', type: 'mob', family: 'goblin' }],
+    ['ringleader', { renderKind: 'enemy', form: 'ringleader', type: 'mob', family: 'goblin' }],
+    ['frenzy', { renderKind: 'enemy', form: 'normal', frenzy: true, type: 'mob', family: 'goblin' }],
+    ['true-boss-ledger', { renderKind: 'enemy', form: 'true', type: 'boss', family: 'ridge', ledgerOpen: true }],
+    ['keeper-cage', { renderKind: 'npc', kind: 'keeper' }],
+    ['pursuit-streak', { renderKind: 'enemy', form: 'normal', type: 'mob', pursuitBurst: 1 }],
+  ];
+  const report = [];
+  for (const [label, fields] of variants) {
+    scene.syncActors([]);
+    const visual = { id: label, x: 120, y: 140, hp: 100, ...fields };
+    const command = actor(label);
+    const first = clears;
+    const gradBefore = calls.gradients;
+    const textureBefore = calls.images;
+    const begin = performance.now();
+    for (let i = 0; i < 60; i++) {
+      clock = i * (1000 / 60);
+      const details = renderer.actorDetailsFor(visual);
+      command.details = details
+        ? { ...details, x: 200, y: 160, zoom: 1.5, paint: renderer.paintActorDetails }
+        : null;
+      scene.syncActors([command]);
+    }
+    report.push({
+      variant: label,
+      frames: 60,
+      vectorClears: clears - first,
+      newGradients: calls.gradients - gradBefore,
+      newAtlasFrames: calls.images - textureBefore,
+      simulatedCpuMs: Number((performance.now() - begin).toFixed(3)),
+    });
+  }
+  assert.equal(report.length, variants.length);
+  assert.equal(report[0].newGradients, 2, 'canonical boss uses two stable gradient recipes');
+  assert.equal(report[0].newAtlasFrames, 1, 'original body frame reuses a texture');
+  console.log('PIXI_DETAIL_756_PROFILE ' + JSON.stringify(report));
+  scene.syncActors([]);
+  assert.equal(scene.metrics().actorUnderlays, 0);
+  assert.equal(scene.metrics().actorOverlays, 0);
+  scene.destroy();
+});
