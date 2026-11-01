@@ -2394,9 +2394,10 @@
               (1 + this.companionMasteryTier(u) *
                 R.balance.companions.mastery.nativeDamagePerTier)),
         );
-        // A melee maneuver with a lawful recipient is committed at release,
-        // not only on HP damage. Dodge must not enable free instant recasts.
-        let committed = !ranged && victims.length > 0;
+        // Direct melee or elite ranged maneuvers commit at legal release,
+        // not only on HP damage. Only the ordinary ranged branch needs to
+        // create its projectile before it can count as committed.
+        let committed = !(ranged && !elite);
         if (ranged && !elite) {
           // Physical creature projectile: status applies only on contact.
           const shot = Math.max(1, distance);
