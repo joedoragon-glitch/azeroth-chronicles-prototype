@@ -105,7 +105,7 @@ function fixture(heroClass = 'mage') {
 {
   const { game, targets: [e] } = fixture('mage');
   const ally = game.unit('soldier', game.hero.x + 15, game.hero.y);
-  const pet = game.unit('pet', game.hero.x + 20, game.hero.y);
+  const pet = game.unit('pet', game.hero.x + 20, game.hero.y, 'crypt');
   game.s.party = [ally, pet];
   ally.hp = ally.maxHp;
   pet.hp = pet.maxHp;
