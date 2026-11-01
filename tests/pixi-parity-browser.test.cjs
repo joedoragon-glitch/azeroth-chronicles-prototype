@@ -76,9 +76,14 @@ async function main() {
         '--enable-unsafe-swiftshader',
       ],
     });
-    const viewport =
-      process.env.PARITY_PHONE === '1' ? { width: 844, height: 390 } : { width: 912, height: 600 };
-    const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+    const viewportText =
+      process.env.PARITY_VIEWPORT || (process.env.PARITY_PHONE === '1' ? '844x390' : '912x600');
+    const [width, height] = viewportText.split('x').map(Number);
+    const deviceScaleFactor = Number(process.env.PARITY_DPR || 1);
+    if (![width, height, deviceScaleFactor].every((v) => Number.isFinite(v) && v > 0))
+      throw Error('Invalid PARITY_VIEWPORT or PARITY_DPR');
+    const viewport = { width, height };
+    const page = await browser.newPage({ viewport, deviceScaleFactor });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto('http://127.0.0.1:' + server.address().port + '/');
@@ -448,50 +453,80 @@ async function main() {
         }
       }
       if (fixture === 'cover' && process.env.PARITY_PERF === '1') {
-        benchmarks.push(
-          ...(await page.evaluate(() => {
-            const room = g.zone(),
-              base = structuredClone(g.hero),
-              result = [];
-            for (const count of [1, 8, 24, 48]) {
-              room.enemies = Array.from({ length: count - 1 }, (_, i) => ({
-                ...base,
-                id: 'benchmark-' + i,
-                renderKind: 'enemy',
-                species: 'goblin',
-                type: 'mob',
-                form: 'normal',
-                x: 1000 + (i % 6) * 3,
-                y: 1000 + Math.floor(i / 6) * 3,
-                neutral: false,
-              }));
+        const perfSamples = Number(process.env.PARITY_PERF_SAMPLES || 96);
+        const perfWarmup = Number(process.env.PARITY_PERF_WARMUP || 16);
+        const injectedDelayMs = Number(process.env.PARITY_PERF_DELAY_MS || 0);
+        if (!Number.isInteger(perfSamples) || perfSamples < 64 ||
+            !Number.isInteger(perfWarmup) || perfWarmup < 12 ||
+            !Number.isFinite(injectedDelayMs) || injectedDelayMs < 0)
+          throw Error('Invalid paired performance sampling parameters');
+        benchmarks.push(...(await page.evaluate(({ perfSamples, perfWarmup, injectedDelayMs }) => {
+          const room = g.zone(),
+            base = structuredClone(g.hero),
+            result = [];
+          const quantile = (sorted, q) => sorted[Math.ceil(q * sorted.length) - 1];
+          for (const count of [1, 8, 24, 48]) {
+            room.enemies = Array.from({ length: count - 1 }, (_, i) => ({
+              ...base,
+              id: 'benchmark-' + i,
+              renderKind: 'enemy',
+              species: 'goblin',
+              type: 'mob',
+              form: 'normal',
+              x: 1000 + (i % 6) * 3,
+              y: 1000 + Math.floor(i / 6) * 3,
+              neutral: false,
+            }));
+            // First fixture draw is separate from prepared steady measurements.
+            // It is NOT a cold application start or a real-device first encounter.
+            const initial = gpu.status();
+            const firstStart = performance.now();
+            gpu.draw();
+            painter.draw();
+            const firstFixtureDrawMs = performance.now() - firstStart;
+            const afterFirst = gpu.status();
+            for (let j = 0; j < perfWarmup; j++) {
               gpu.draw();
               painter.draw();
-              const before = gpu.status(),
-                samples = [];
-              for (let j = 0; j < 24; j++) {
-                const start = performance.now();
-                gpu.draw();
-                painter.draw();
-                samples.push(performance.now() - start);
-              }
-              samples.sort((a, b) => a - b);
-              const after = gpu.status();
-              if (after.proceduralBakes !== before.proceduralBakes)
-                throw Error('Steady crowd rerasterized bodies');
-              result.push({
-                count,
-                p50: samples[12],
-                p95: samples[22],
-                outline: painter.metrics().outlineBuffers,
-                masks: painter.metrics().outlineMasks,
-                before,
-                after,
-              });
             }
-            return result;
-          })),
-        );
+            const before = gpu.status(), samples = [];
+            for (let j = 0; j < perfSamples; j++) {
+              const start = performance.now();
+              gpu.draw();
+              painter.draw();
+              // Test-only injection verifies that the timing guard detects a
+              // deliberately slow fixture; never used in acceptance samples.
+              if (injectedDelayMs) {
+                const until = performance.now() + injectedDelayMs;
+                while (performance.now() < until) {}
+              }
+              samples.push(performance.now() - start);
+            }
+            samples.sort((x, y) => x - y);
+            const after = gpu.status();
+            const bakesDelta = after.proceduralBakes - before.proceduralBakes;
+            if (!after.active || after.lastError) throw Error('Pixi fallback in steady crowd');
+            if (bakesDelta !== 0) throw Error('Steady crowd rerasterized bodies');
+            result.push({
+              count,
+              sampleCount: samples.length,
+              warmupDraws: perfWarmup,
+              firstFixtureDrawMs,
+              firstFixtureBakes: afterFirst.proceduralBakes - initial.proceduralBakes,
+              firstFixtureTextureSources: afterFirst.sceneMetrics?.textureSources ?? null,
+              p50: quantile(samples, 0.5),
+              p95: quantile(samples, 0.95),
+              minMs: samples[0],
+              maxMs: samples.at(-1),
+              bakesDelta,
+              active: after.active && !after.lastError,
+              outline: painter.metrics().outlineBuffers,
+              masks: painter.metrics().outlineMasks,
+              before, after,
+            });
+          }
+          return result;
+        }, { perfSamples, perfWarmup, injectedDelayMs })));
       }
       await page.evaluate(() => gpu.dispose());
       console.log('CAPTURED ' + fixture);
@@ -510,8 +545,15 @@ async function main() {
             .trim(),
           engine: await browser.version(),
           viewport,
-          zoom: process.env.PARITY_ZOOM || 1.5,
+          deviceScaleFactor,
+          zoom: Number(process.env.PARITY_ZOOM || 1.5),
           optimized: process.env.PARITY_OPTIMIZED !== '0',
+          benchmarkVersion: 'pixi-755-steady-v1',
+          perfSamples: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_SAMPLES || 96) : null,
+          perfWarmup: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_WARMUP || 16) : null,
+          runner: { platform: process.platform, arch: process.arch, node: process.version,
+            imageOS: process.env.ImageOS || null, imageVersion: process.env.ImageVersion || null,
+            chromiumMode: 'ANGLE SwiftShader (software WebGL)' },
           rows,
           lifecycle,
           benchmarks,
