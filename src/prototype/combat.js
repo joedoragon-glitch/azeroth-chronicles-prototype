@@ -362,8 +362,7 @@
           this.hero.hp > 0 &&
           dist(this.hero, e) <= 520 &&
           this.line(this.hero, e) &&
-          ((this.hero.order?.type === 'attack' && this.hero.order.id === e.id) ||
-            (this.basicComboTargetId === e.id && now - this.basicComboAt <= 2.2) ||
+          ((this.basicComboTargetId === e.id && now - this.basicComboAt <= 2.2) ||
             recent.some((entry) => entry.source === 'hero' && now - entry.lastHit <= 2.2));
         let count = attackingHero ? 1 : 0;
         for (const u of this.activeLivingParty()) {
