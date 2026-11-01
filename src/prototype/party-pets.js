@@ -281,8 +281,6 @@
         this.petSkillEvent(u, target, slot, 0, 'release');
         if (!projectile && hits)
           this.petSkillContact(u, target, slot, hits, criticalReceipt);
-        else if (!projectile)
-          this.petSkillEvent(u, target, slot, 0, 'impact');
         return true;
       }
       // The fifth argument is the frozen critical receipt; the sixth belongs
