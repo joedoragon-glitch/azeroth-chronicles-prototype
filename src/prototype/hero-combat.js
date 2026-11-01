@@ -2292,7 +2292,8 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
+            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart,
+              skillShape: 'area', criticalExecution: criticalReceipt })) {
               hits++;
               if (def.slow)
                 this.applySlow(e, this.criticalHeroValue(
@@ -2376,7 +2377,8 @@
                     enemy,
                     power * cfg.bash.damage * scale * (elite ? cfg.bash.eliteDamage : 1),
                     'hero',
-                    { area: true, encountersAtStart },
+                    { area: true, encountersAtStart,
+                      skillShape: 'area', criticalExecution: criticalReceipt },
                   )
                 ) {
                   if (enemy.hp > 0) this.shieldPush(enemy, push);
@@ -2582,7 +2584,9 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart,
+                skillShape: isCharged ? 'area' : 'single',
+                criticalExecution: criticalReceipt })) {
                 // Captains and bosses keep their authored scripted specials;
                 // boss basic-target provocation is deliberately short-lived.
                 const tauntDuration =
@@ -2649,7 +2653,9 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart,
+                skillShape: isCharged ? 'area' : 'single',
+                criticalExecution: criticalReceipt })) {
                 this.fractureEnemy(
                   enemy,
                   advanced.fraction + steps * advanced.fractionStep,
@@ -2725,7 +2731,7 @@
               this.hero.class !== 'mage' ? criticalReceipt : null,
               (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
             ), 'hero', {
-              area: true,
+              area: true, skillShape: 'area', criticalExecution: criticalReceipt,
             });
             if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 && e.hp > 0)
@@ -2766,7 +2772,9 @@
               target,
               dmg,
               'hero',
-              automatic ? { automaticBasic: true } : null,
+              automatic ? { automaticBasic: true } :
+                slot === 1 ? null :
+                  { skillShape: 'single', criticalExecution: criticalReceipt },
             );
             if (landed) {
               if (slot === 2) this.weakenEnemy(target, rank, criticalReceipt);
