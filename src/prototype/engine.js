@@ -8166,7 +8166,10 @@
       retain(this.s.heroTarget);
       for (const u of [this.hero, ...this.s.party, ...z.enemies]) {
         retain(u.owner);
-        retain(u.order?.id);
+        // A discarded pre-modern hero attack order cannot pin dead enemies
+        // in memory. Only actual deliberate skill approach owns a hero ID.
+        if (u !== this.hero || u.order?.type === 'skill-approach')
+          retain(u.order?.id);
         retain(u.targetId);
         retain(u.supportHeal?.source);
         retain(u.telegraph?.targetId);
