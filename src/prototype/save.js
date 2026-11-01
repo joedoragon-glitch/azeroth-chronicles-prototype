@@ -116,7 +116,9 @@
         out.heroTarget = null;
         // Movement paths and queued skill approaches are live instructions, not
         // saved permission to resume an invisible autopilot after loading.
-        if (['skill-approach', 'move'].includes(out.hero.order?.type)) out.hero.order = null;
+        // Legacy hero attack orders are also transient: keep their code available
+        // for explicit developer simulation, never resume one from a save.
+        if (['skill-approach', 'move', 'attack'].includes(out.hero.order?.type)) out.hero.order = null;
         delete out.hero.path;
         delete out.holdFire;
         out.projectiles = [];
@@ -579,7 +581,7 @@
         finite(s.hero.basicCd, 0, 1e9);
         // Strip transient fields from historical or interrupted exports.
         // Existing learned ranks and charged cooldowns remain in v4.
-        if (['skill-approach', 'move'].includes(s.hero.order?.type)) s.hero.order = null;
+        if (['skill-approach', 'move', 'attack'].includes(s.hero.order?.type)) s.hero.order = null;
         delete s.hero.path;
         if ((s.hero.shieldStance || 0) > 0)
           s.hero.cd[2] = Math.max(
