@@ -3021,7 +3021,6 @@
         this.say('An idle gatherer and an unexhausted tribute site are required.');
         return false;
       }
-      this.s.recallActive = false;
       this.s.gatheringTarget = { zone: this.zoneId, id: n.id };
       for (const u of labor) {
         this.clearPartyCharge(u);
