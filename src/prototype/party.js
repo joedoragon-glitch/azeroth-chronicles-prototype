@@ -2417,7 +2417,7 @@
           const previousDirect = this.developerCompanionBeginDirect(
             u, profile.name || 'Native maneuver');
           for (const enemy of victims) {
-            if (!this.damage(enemy, base, u.id, { area: elite })) continue;
+            if (!this.damage(enemy, base, u.id, { area: elite, skillShape: elite ? 'area' : 'single', criticalExecution: criticalReceipt })) continue;
             committed = true;
             if (enemy.hp <= 0) continue;
             if (elite && ['scatter', 'sweep'].includes(profile.effect)) {
