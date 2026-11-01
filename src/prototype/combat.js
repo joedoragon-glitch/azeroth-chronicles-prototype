@@ -1395,7 +1395,13 @@
                 ? (p.area ? 'area' : 'single') : null);
             const landed =
               p.effect === 'interrupt'
-                ? this.interruptEnemyAction(victim, p.interruptAction, p.criticalExecution)
+                ? ((victim.telegraph || victim.rangedAim) &&
+                  (!p.interruptAction || victim.telegraph === p.interruptAction ||
+                    victim.rangedAim === p.interruptAction) &&
+                  !this.skillEvades(victim, skillShape || 'single', {
+                    source: p.source, criticalExecution: p.criticalExecution,
+                  }) &&
+                  this.interruptEnemyAction(victim, p.interruptAction, p.criticalExecution))
                 : this.damage(
                     victim,
                     p.damage,
