@@ -2689,7 +2689,7 @@
       openMenu(
         'Meet your company',
         practiced
-          ? 'Recalled!\nOrders cancelled. Companions stay close and defend without chasing.\nGive a new order to send them out again.\n\nNext: build your first Barracks for FREE.'
+          ? 'Recalled!\nOrders cancelled. Companions stay close and defend without chasing for up to five seconds.\nPress Recall again to cancel early; the button shows when it is active.\n\nNext: build your first Barracks for FREE.'
           : 'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.',
         [
           ...(practiced
