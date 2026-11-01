@@ -1768,13 +1768,14 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
-          if (!this.developerCompanionDamage(
+          const landed = this.developerCompanionDamage(
             u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
               this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
             { skillShape: 'single', criticalExecution: criticalReceipt },
-          )) return false;
+          );
           const veteran = R.companionSkills.veteran;
           if (
+            landed &&
             (this.s.expeditionRank || 1) >= veteran.expeditionRank &&
             ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= veteran.soldierWard)
           ) {
@@ -1784,7 +1785,9 @@
           u.skill1Cd = cfg.cooldown;
           u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
           u.cd = Math.max(u.cd, 0.4);
-          this.event('melee', {
+          // A dodged Power Strike still spends its cooldown and shows the
+          // swing, but must not emit a landed melee impact or grant its ward.
+          if (landed) this.event('melee', {
             actor: 'companion',
             role: 'soldier',
             source: u.id,
@@ -1811,6 +1814,7 @@
             unitType: u.type,
             skill: 'power-strike',
             targetId: target.id,
+            hits: landed ? 1 : 0,
           });
           return true;
         }
