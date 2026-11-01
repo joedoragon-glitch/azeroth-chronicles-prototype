@@ -52,6 +52,15 @@ assert(game.hitParty(soldier, 40, 0, boss.id, false, {
 }), 'hostile critical bypasses companion dodge');
 assert(soldier.hp < start, 'hostile critical still harms Soldier');
 assert.equal(samples, 2, 'no extra Dodge roll on a critical');
+// Legal Soldier specials must not retry for free when the defender dodges.
+game.companionSurvivalMode = () => false;
+soldier.skill1Cd = 0;
+const beforeStrike = boss.hp;
+assert(game.companionUseFirstSkill(soldier, boss),
+  'Power Strike is committed even if its opponent dodges');
+assert(soldier.skill1Cd > 0, 'missed Power Strike still spends cooldown');
+assert.equal(boss.hp, beforeStrike, 'dodged Power Strike deals no damage');
+assert.equal(samples, 3, 'Power Strike samples evasion exactly once');
 soldier.hp = soldier.maxHp;
 samples = 0;
 const values = [0, 0.99];
