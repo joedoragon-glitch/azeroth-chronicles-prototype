@@ -239,6 +239,12 @@
           )
         )
           throw Error('Invalid critical Codex claims');
+        // Legacy v4 campaigns gain an isolated Dodge RNG on first eligible skill.
+        // Reject hostile edited state rather than consuming combat/world RNG.
+        if (s.skillEvasionRngState !== undefined &&
+            (!Number.isInteger(s.skillEvasionRngState) ||
+              s.skillEvasionRngState < 1 || s.skillEvasionRngState > 0xffffffff))
+          throw Error('Invalid skill evasion RNG state');
         // Independent Party and World streams are optional until opt-in.
         // Saving a game mid-combat stores RNG state, not transient receipts.
         if (s.criticalStreams !== undefined) {
