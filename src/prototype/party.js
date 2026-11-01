@@ -1987,7 +1987,9 @@
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.5);
-        this.event(
+        // A fully evaded Cleave still released and spent its cooldown, but
+        // no landed melee contact should be drawn on the dodging enemies.
+        if (u.type !== 'soldier' || hits) this.event(
           u.type === 'soldier' ? 'melee' : 'spell',
           u.type === 'soldier'
             ? {
