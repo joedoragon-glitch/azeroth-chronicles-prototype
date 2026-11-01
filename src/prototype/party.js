@@ -2238,7 +2238,9 @@
         const previousDirect = this.developerCompanionBeginDirect(u, def.name);
         for (const e of victims) {
           const hp = e.hp;
-          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
+          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single',
+            skillShape: def.shape === 'single' ? 'single' : 'area',
+            criticalExecution: receipt }))
             continue;
           landed++;
           actualDamage += Math.max(0, hp - e.hp);
