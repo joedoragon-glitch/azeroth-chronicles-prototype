@@ -45,7 +45,7 @@ titleDirector.ambient = () => {};
 titleDirector.setRecordedScore = () => new Promise(() => {}); // pending title load
 titleDirector.update(campaign, false, { started: false });
 assert.equal(titleDirector.cue.id, 'title-fallback',
-  'the title's procedural fallback must not select the saved region');
+  "the title fallback must not select the saved region");
 assert.equal(titleDirector.productionCue(titleDirector.context).id, 'title',
   'the authored title recording must remain the actual production choice');
 const tones = [];
