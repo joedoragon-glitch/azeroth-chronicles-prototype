@@ -34,18 +34,22 @@ function captured(game, species, role, active = true) {
 const game = new Campaign('normal', 'paladin', () => 0.9);
 game.s.party = [];
 game.s.charmCaptures = {};
-game.s.true.thorn = true; // Real boss-pet unlock (also one legitimate TRUE night point).
+// Two historical boss-form victories authorize the pet collection in a v4 save.
+for (const id of ['thorn', 'crypt']) {
+  game.s.normal[id] = true;
+  game.s.true[id] = true;
+  game.s.victories[id + ':normal'] = true;
+  game.s.victories[id + ':true'] = true;
+}
 game.s.clock = 100;
 game.zone().enemies = [];
 game.zone().props = [];
 const soldier = game.unit('soldier', game.hero.x + 25, game.hero.y);
 const archer = game.unit('archer', game.hero.x + 55, game.hero.y);
 const pet = game.unit('pet', game.hero.x + 45, game.hero.y, 'thorn');
-const reservePet = game.unit('pet', game.hero.x + 80, game.hero.y, 'lifebinder');
+const reservePet = game.unit('pet', game.hero.x + 80, game.hero.y, 'crypt');
 assert(game.petDefinition(pet));
 assert(game.petDefinition(reservePet));
-// A second legitimate pet unlock allows the reserve path to be exercised.
-game.s.true.lifebinder = true;
 reservePet.active = false;
 game.s.party.push(soldier, archer, pet, reservePet);
 const goblin = captured(game, 'goblin', 'soldier');
@@ -91,7 +95,8 @@ assert(reservePet.maxHp > before.get(reservePet.id).max, 'resting boss pet also 
 
 // Genuine victory progress changes the same curve without requiring another nightfall.
 const beforeVictory = pet.maxHp, firstPoints = game.nightPoints();
-game.s.normal.crypt = true;
+game.s.normal.mire = true;
+game.s.victories['mire:normal'] = true;
 assert.equal(game.nightPoints(), firstPoints + 1);
 game.tick(0.1);
 assert(pet.maxHp > beforeVictory, 'live night victory scaling updates friendly maximum');
@@ -138,8 +143,8 @@ game.s.party.push(fake);
 assert(!game.isOwnedMonster(fake), 'forged/unrecorded Charm is never eligible');
 assert.equal(game.monsterNightBonuses(fake).hp, 1);
 game.s.party.pop();
-const spoof = { ...pet, petFamily: 'darklord' };
-assert(!game.isOwnedMonster(spoof), 'another pet family cannot borrow the owned ID');
+const spoof = { ...pet, petFamily: 'crypt' };
+assert(!game.isOwnedMonster(spoof), 'another unlocked pet family cannot borrow the owned ID');
 
 // Existing mode gates stay authoritative; no duplicate rules.
 game.s.mode = 'nightmare';
@@ -149,7 +154,7 @@ game.s.nightmareIntroRemaining = 0;
 assert(game.monsterNightBonuses(goblin).hp > 1, 'Nightmare active night follows same curve');
 game.s.phase = 'peace';
 assert.equal(game.monsterNightBonuses(goblin).hp, 1, 'peace removes night passive');
-game.s.phase = 'normal';
+game.s.phase = 'adventure';
 game.s.mode = 'arena';
 assert.equal(game.monsterNightBonuses(pet).tempo, 1, 'arena cannot inherit night passive');
 console.log('PASS monster night shared source, pets/Charm, sunset/sunrise, victory progression, reserves, integrity, v4 restore and modes');
