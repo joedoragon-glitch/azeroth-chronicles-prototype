@@ -386,18 +386,23 @@
         ? count(this.s.victories)
         : count(this.s.normal) + count(this.s.true);
     }
+    // Validation uses the saved individual identity (including legitimate
+    // immutable preview copies), never a name or an arbitrary monster flag.
+    isOwnedMonster(actor) {
+      return !!actor && !!this.s.party?.some((u) =>
+        u.id === actor.id && u.type === actor.type) &&
+        (actor.type === 'pet'
+          ? !!this.petDefinition(actor) && this.petUnlocked(actor.petFamily)
+          : !!actor.charmOrigin && this.isCharmedCompanion(actor));
+    }
     // One authoritative, live monster-night profile. Allegiance does not
-    // change a creature's biology. Hostiles use the default; a friendly actor
-    // must be an owned boss pet or a capture with its genuine Charm receipt.
-    // Ordinary troops and the hero never inherit these numbers.
+    // change a creature's biology. Hostiles use the default; owned boss pets
+    // and lawful Charm captures read the same values, never copied constants.
     monsterNightBonuses(actor = null) {
-      const friendly = actor && this.s.party.includes(actor);
       const eligible = actor === null ||
-        (actor !== this.hero && (friendly
-          ? (actor.type === 'pet'
-              ? !!this.petDefinition(actor) && this.petUnlocked(actor.petFamily)
-              : !!actor.charmOrigin && this.isCharmedCompanion(actor))
-          : actor.type === 'mob' || actor.type === 'boss'));
+        (actor !== this.hero && (this.isOwnedMonster(actor) ||
+          ((!this.s.party?.some((u) => u.id === actor.id)) &&
+            (actor.type === 'mob' || actor.type === 'boss'))));
       if (!eligible || !this.night() || this.peace)
         return { hp: 1, damage: 1, tempo: 1, dodge: 0 };
       const n = this.nightPoints(), cfg = R.balance.nightTempo;
@@ -409,6 +414,18 @@
         // integrated, both hostile and friendly monsters read the SAME knob.
         dodge: R.skillEvasion?.nightEnemyBonus || 0,
       };
+    }
+    // Recompute only on a day/night transition, save restore, recruitment or
+    // Charm. HP is adjusted by the maximum's delta, preserving existing wounds
+    // and fallen status. There is no per-frame roster scan or saved night flag.
+    syncMonsterNightStats(unit = null) {
+      for (const u of unit ? [unit] : (this.s.party || [])) {
+        if (!this.isOwnedMonster(u)) continue;
+        const next = this.companionMaxHp(u), gain = next - u.maxHp;
+        if (!gain) continue;
+        u.maxHp = next;
+        if (u.hp > 0) u.hp = Math.max(1, Math.min(next, u.hp + gain));
+      }
     }
     multipliers() {
       const { hp, damage } = this.monsterNightBonuses();
@@ -4429,7 +4446,7 @@
       const monsterNight = this.night() && !this.peace;
       if (this._friendlyMonsterNightActive !== monsterNight) {
         this._friendlyMonsterNightActive = monsterNight;
-        this.syncCompanionLevelStats();
+        this.syncMonsterNightStats();
       }
       const h = this.hero,
         z = this.zone(),
