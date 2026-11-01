@@ -9,6 +9,10 @@ const R = Campaign.rules;
 function game() {
   const c = new Campaign('normal', 'paladin', () => 0.9);
   c.s.mercyTime = 0;
+  // This fixture tests post-onboarding combat; the first scripted Vale hero
+  // attack intentionally protects enemies from companion-only opening hits.
+  c.s.valeFieldAwakened = true;
+  c.s.thornHeroInitiated = true;
   c.line = () => true;
   return c;
 }
