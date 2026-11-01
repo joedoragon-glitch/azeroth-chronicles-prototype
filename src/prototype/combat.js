@@ -798,12 +798,14 @@
         this.interruptPatrolReturn(e);
         this.engage(e, true);
         if (source === 'hero') e.heroParticipated = true;
+        // Ash abrades eyes: attacks issued by a party member inside or recently
+        // outside Choking Ash have a 35% miss chance, without extra damage.
+        // Preserve the existing world-RNG ash check before the independent
+        // skill-evasion stream so missed ash contacts do not consume Dodge.
+        if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
         if (!options?.automaticBasic && this.skillEvades(e, options?.skillShape, {
           source, criticalExecution: options?.criticalExecution,
         })) return false;
-        // Ash abrades eyes: attacks issued by a party member inside or recently
-        // outside Choking Ash have a 35% miss chance, without extra damage.
-        if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
         // Piercing bypasses defensive mitigation, not terrain, range or Ash misses.
         const piercing = source === 'hero' && options?.piercing === true;
         if (!piercing && this.enemyFort(e)) amount *= R.balance.fortifications.incomingMultiplier;
@@ -1509,7 +1511,13 @@
                 this.line(a, u)
               ) {
                 a.hit.push(id);
-                if (a.slowOnly) this.applySlow(u, a.slowDuration);
+                if (a.slowOnly) {
+                  // This authored warning can be avoided just like a damaging
+                  // boss area hit; ordinary field/environmental Slows are separate.
+                  if (!this.skillEvades(u, 'area', {
+                    source: a.sourceId, criticalExecution: a.criticalExecution,
+                  })) this.applySlow(u, a.slowDuration);
+                }
                 else {
                   const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null,
                   false, a.skillShape
