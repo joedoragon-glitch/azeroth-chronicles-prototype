@@ -254,7 +254,9 @@
                   'damage',
                 ),
                 u.id,
-                { area: def.shape !== 'target' },
+                { area: def.shape !== 'target',
+                  skillShape: def.shape === 'target' ? 'single' : 'area',
+                  criticalExecution: criticalReceipt },
               )
             )
               continue;
