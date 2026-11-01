@@ -3459,6 +3459,10 @@
           dead.maxHp = this.companionMaxHp(dead);
           dead.hp = dead.maxHp;
         }
+        // Recovery rebuilds a temporary, unregistered unit. Re-evaluate after
+        // its original registered identity has been restored so a nighttime
+        // pet or Charmed survivor returns with the live monster passive.
+        this.syncMonsterNightStats(dead);
         delete dead.slowStacks;
         delete dead.rogueSlow;
         this.say('Companion recovered.');
