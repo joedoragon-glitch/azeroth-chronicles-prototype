@@ -361,7 +361,7 @@ function geometry(K) {
     if (ref === 'target-projectile') g.s.projectiles.push({ target: e.id });
     if (ref === 'hazard') g.s.hazards.push({ sourceId: e.id });
     if (ref === 'pending') g.s.pending.probe = { base: { id: e.id } };
-    if (ref === 'order') g.hero.order = { type: 'attack', id: e.id };
+    if (ref === 'order') g.hero.order = { type: 'skill-approach', id: e.id };
     if (ref === 'healing') g.hero.supportHeal = { source: e.id };
     g.retireSpentReinforcements(z);
     assert(z.enemies.includes(e), ref + ' retention');
@@ -369,8 +369,13 @@ function geometry(K) {
   g.s.projectiles = [];
   g.s.hazards = [];
   g.s.pending = {};
-  g.hero.order = null;
+  g.hero.order = { type: 'attack', id: e.id };
   delete g.hero.supportHeal;
+  g.retireSpentReinforcements(z);
+  assert(!z.enemies.includes(e),
+    'injected obsolete hero attack command does not pin expired reinforcement bodies');
+  z.enemies.push(e); // Restore the exact fixture for unrelated retention exclusions.
+  g.hero.order = null;
   for (const [key, value] of Object.entries({
     reinforcement: false,
     guard: false,
