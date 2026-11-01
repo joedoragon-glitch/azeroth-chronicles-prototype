@@ -2060,6 +2060,7 @@
               style: 'beam',
               slot,
               charged: false,
+              skillShape: 'single',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
@@ -2092,6 +2093,7 @@
                 style: 'arrow',
                 slot,
                 charged: false,
+                skillShape: 'single',
                 ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
@@ -2127,6 +2129,7 @@
               style: 'holy',
               slot,
               charged: false,
+              skillShape: 'single',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
