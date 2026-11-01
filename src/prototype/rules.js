@@ -8062,6 +8062,17 @@
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
+    // Skill evasion is balance data, not movement AI or basic-attack accuracy.
+    // Percentage points; every area recipient makes its own independent check.
+    skillEvasion: Object.freeze({
+      enemySingle: 0.20,
+      enemyArea: 0.30,
+      rangerSingle: 0.15,
+      rangerArea: 0.25,
+      companionSingle: 0.20,
+      companionArea: 0.30,
+      nightEnemyBonus: 0.05,
+    }),
     dayCycle: { seconds: 600, nightAt: 360, twilightSeconds: 30 },
     // First-pass outdoor movement only. Undefined types keep their existing contract.
     sceneryTraversal: {
