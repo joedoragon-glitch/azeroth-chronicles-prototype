@@ -1014,6 +1014,7 @@
               continue;
             const landed = this.hitParty(
               u, this.worldBossEffect(b, this.weakenedEnemyDamage(e), 'damage'), 0, e.id,
+              false, { shape: 'area', criticalExecution: b.criticalExecution },
             );
             if (
               this.hero !== hero ||
@@ -2682,7 +2683,9 @@
             // ticks instead of being applied once now and a second time later.
             const landed =
               u === jawVictim
-                ? true
+                ? !this.skillEvades(u, 'single', {
+                    source: e.id, criticalExecution: a.criticalExecution,
+                  })
                 : this.hitParty(
                     u,
                     a.criticalExecution?.key?.startsWith('world/boss/')
@@ -2697,6 +2700,7 @@
                         : this.weakenedEnemyDamage(e) * a.coefficient,
                     a.manaDrain || 0,
                     e.id,
+                    false, { shape: 'area', criticalExecution: a.criticalExecution },
                   );
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
