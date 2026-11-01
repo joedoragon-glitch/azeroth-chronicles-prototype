@@ -105,6 +105,11 @@
       snapshot() {
         const out = clone(this.s);
         out.recallActive = !!this.s.recallActive;
+        if (out.recallActive)
+          out.recallExpiresAt = Number.isFinite(this.s.recallExpiresAt)
+            ? this.s.recallExpiresAt
+            : this.s.time + R.companionRecall.durationSeconds;
+        else delete out.recallExpiresAt;
         out.squadDoctrine = this.squadDefaultDoctrine();
         out.squadEngagement = null;
         out.squadBoss = false;
@@ -213,6 +218,16 @@
           throw Error('Invalid save');
         if (s.recallActive === undefined) s.recallActive = false;
         if (typeof s.recallActive !== 'boolean') throw Error('Invalid Recall order');
+        if (s.recallActive) {
+          // v4 legacy saves did not store a duration. Grant a fresh five
+          // in-game seconds on restore rather than cancel a player's order.
+          s.recallExpiresAt ??= s.time + R.companionRecall.durationSeconds;
+          if (!Number.isFinite(s.recallExpiresAt) ||
+              s.recallExpiresAt > s.time + R.companionRecall.durationSeconds + 1e-6)
+            throw Error('Invalid Recall timer');
+          if (s.recallExpiresAt <= s.time) s.recallActive = false;
+        }
+        if (!s.recallActive) delete s.recallExpiresAt;
         const validateName = (value) => {
           if (
             value !== undefined &&

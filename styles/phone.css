@@ -851,7 +851,7 @@ body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hu
   box-shadow: 0 0 0 1px #d5c88870;
 }
 body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-recall='quiet']
-  #recall-button:not(.tutorial-highlight):not(:focus-visible),
+  #recall-button:not(.tutorial-highlight):not(.recall-active):not(:focus-visible),
 body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-target='quiet']
   #target-button:not(.has-target):not(.target-locked):not(.target-pressing):not(:focus-visible),
 body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-pressure='quiet']

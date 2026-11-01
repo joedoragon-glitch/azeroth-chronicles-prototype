@@ -1389,7 +1389,7 @@
         const allies = this.activeLivingParty().filter((u) =>
           u.hp > 0 && u.active !== false &&
           dist(u, h) <= form.radius && this.line(h, u));
-        this.releaseRecallForCombat();
+        // Recall remains under player/timer control during all offense.
         this.engage(primary);
         h.cd[0] = this.skillCooldown(1, false);
         if (charged) h.chargedCd[0] = this.skillCooldown(1, true);
@@ -1454,7 +1454,7 @@
         const allies = this.activeLivingParty().filter((u) =>
           u.hp > 0 && u.active !== false &&
           dist(u, h) <= form.radius && this.line(h, u));
-        this.releaseRecallForCombat();
+        // Recall remains under player/timer control during all offense.
         this.engage(primary);
         h.cd[slot - 1] = this.skillCooldown(slot, false);
         if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
@@ -1716,7 +1716,7 @@
             (locked ? null : eligible.sort((a, b) =>
               dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
         if (!primary) return false;
-        this.releaseRecallForCombat();
+        // Recall remains under player/timer control during all offense.
         this.engage(primary);
         const combo = this.nextBasicCombo(primary.id),
           rank = this.hero.skills[0],
@@ -1960,16 +1960,8 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
-        // The hero may defend the retreat without cancelling an unfinished
-        // Recall. Deliberate offense releases the defensive hold after arrival.
-        const offensive =
-          (requiresTarget && !!target) ||
-          slot === 5 ||
-          (slot === 8 && this.hero.class === 'paladin') ||
-          (slot === 3 &&
-            (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
-        // Passive covering fire is not a new squad engagement order.
-        if (offensive && !automatic) this.releaseRecallForCombat();
+        // Manual skills and automatic basics have no authority to toggle
+        // the player's timed Recall command; each retains its own cooldown.
         if (automatic && slot === 1) {
           this.hero.basicCd = this.basicSkillCooldown();
         } else if (slot === 3 && this.hero.class === 'paladin' && !isCharged) {

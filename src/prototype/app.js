@@ -5480,12 +5480,15 @@
     $('recall-button').focus?.({ preventScroll: true });
   }
   function recallSquad() {
-    if (queuedCharges.size)
-      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
-    queuedCharges.clear();
-    if (charge?.autoRelease) cancelCharge();
+    const activating = !game.s.recallActive;
+    if (activating) {
+      if (queuedCharges.size)
+        status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
+      queuedCharges.clear();
+      if (charge?.autoRelease) cancelCharge();
+    }
     const recalled = game.recallParty();
-    if (recalled && recallPractice?.owner === game && game.activeLivingParty().length) {
+    if (recalled && activating && recallPractice?.owner === game && game.activeLivingParty().length) {
       const complete = recallPractice.complete;
       recallPractice = null;
       complete();
@@ -8081,17 +8084,24 @@
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
     if (recallPractice && recallPractice.owner !== game) recallPractice = null;
-    const practicingRecall = !!recallPractice;
-    $('recall-button').classList.toggle('tutorial-highlight', practicingRecall);
-    $('recall-button').setAttribute(
-      'aria-label',
-      tr(practicingRecall ? 'Try Recall now' : 'Recall squad'),
-    );
-    if ($('recall-button').querySelector('small'))
-      $('recall-button').querySelector('small').textContent =
-        (practicingRecall ? tr('Try it now') + ' · ' : '') +
-        input.key('recall') +
-        (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
+    const practicingRecall = !!recallPractice,
+      recallButton = $('recall-button'),
+      recallActive = !!game.s.recallActive,
+      recallRemaining = recallActive ? Math.ceil(game.recallSecondsRemaining()) : 0;
+    recallButton.classList.toggle('tutorial-highlight', practicingRecall);
+    recallButton.classList.toggle('recall-active', recallActive);
+    recallButton.setAttribute('aria-pressed', recallActive ? 'true' : 'false');
+    recallButton.setAttribute('aria-label', recallActive
+      ? (language === 'es' ? 'Reagrupar activo. Pulsa para cancelar.' : 'Recall active. Press to cancel.')
+      : tr(practicingRecall ? 'Try Recall now' : 'Recall squad'));
+    recallButton.title = recallActive
+      ? (language === 'es' ? 'Reagrupar activo · pulsa otra vez para cancelar' : 'Recall active · press again to cancel')
+      : (language === 'es' ? 'Reagrupar durante 5 segundos' : 'Recall squad for 5 seconds');
+    if (recallButton.querySelector('small'))
+      recallButton.querySelector('small').textContent = recallActive
+        ? 'ON · ' + recallRemaining + 's'
+        : (practicingRecall ? tr('Try it now') + ' · ' : '') +
+          input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);

@@ -2855,7 +2855,7 @@
     }
 
     build(anchor = this.hero) {
-      if (this.isDungeon()) return false;
+      if (this.isDungeon() || this.recallLaborBlocked()) return false;
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
       if (!builder) return false;
@@ -2886,7 +2886,7 @@
         return false;
       }
       if (!this.spend(cost)) return false;
-      this.s.recallActive = false;
+
       const b = {
         id: 'barracks-' + this.s.nextId++,
         ...p,
@@ -2907,18 +2907,20 @@
       return true;
     }
     assignBuilder(id) {
+      if (this.recallLaborBlocked()) return false;
       const b = this.zone().buildings.find((b) => b.id === id && b.progress < 4),
         already = this.activeLivingParty().some(
           (u) => u.order?.type === 'build' && u.order.id === id,
         ),
         builder = this.availableLabor()[0];
       if (!b || already || !builder) return false;
-      this.s.recallActive = false;
+
       builder.order = { type: 'build', id: b.id };
       this.say(this.companionDisplayName(builder) + ' assigned to resume construction.');
       return true;
     }
     upgradeBarracks(id) {
+      if (this.recallLaborBlocked()) return false;
       const b = this.zone().buildings.find((b) => b.id === id && b.progress >= 4 && !b.full),
         already = this.activeLivingParty().some(
           (u) => u.order?.type === 'upgrade' && u.order.id === id,
@@ -2930,7 +2932,7 @@
         b.upgradePaid = true;
         b.upgradeProgress = b.upgradeProgress || 0;
       }
-      this.s.recallActive = false;
+
       builder.order = { type: 'upgrade', id: b.id };
       this.say(this.companionDisplayName(builder) + ' assigned to upgrade the barracks.');
       return true;
@@ -2992,6 +2994,7 @@
       return true;
     }
     gather(nodeId, options = null) {
+      if (this.recallLaborBlocked()) return false;
       if ((this.s.expeditionRank || 1) < 2) {
         this.say(
           'Resource gathering unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.',
@@ -4399,6 +4402,11 @@
       this.advancePartyChargeClock(dt);
       dt = Math.min(dt, 0.1);
       this.s.time += dt;
+      if (this.s.recallActive) {
+        if (!Number.isFinite(this.s.recallExpiresAt))
+          this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
+        if (this.s.time >= this.s.recallExpiresAt) this.endRecall('expired');
+      }
       this.advanceResourceExpeditions();
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
