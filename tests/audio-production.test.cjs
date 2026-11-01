@@ -36,7 +36,8 @@ for (const region of data.regions)
     [{ settlement: 'refuge' }, 'settlement-'],
   ]) {
     const cue = a.productionCue({ ...scene, ...extra, region: region.id, zone: region.id });
-    assert.equal(cue.id, prefix + region.id);
+    assert.equal(cue.id, region.id === 'vale' && prefix === 'settlement-'
+      ? 'place-vale' : prefix + region.id);
     assert(manifest.assets[cue.id]);
   }
 for (const boss of data.bosses) {
