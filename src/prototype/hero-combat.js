@@ -884,7 +884,7 @@
           }
           if (
             this.damage(e, f.damage * cfg.damagePerPulse, 'hero', {
-              area: true,
+              area: true, skillShape: 'area', criticalExecution: f.criticalExecution,
               encountersAtStart: f.encountersAtStart,
             })
           )
@@ -1024,7 +1024,7 @@
               f.hitIds.push(e.id);
               if (
                 this.damage(e, f.damage * R.chargedSkills.first.mage.damage, 'hero', {
-                  area: true,
+                  area: true, skillShape: 'area', criticalExecution: f.criticalExecution,
                   encountersAtStart: f.encountersAtStart,
                 })
               )
@@ -1124,6 +1124,7 @@
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
             const landed = this.damage(target, f.damage * cfg.damage, 'hero', {
+              skillShape: 'single', criticalExecution: f.criticalExecution,
               encountersAtStart: f.encountersAtStart,
             });
             const interrupted =
