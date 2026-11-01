@@ -22,20 +22,41 @@ const civilian = obj('npc', 110, 110, { kind: 'teacher', sx: 161, sy: 163 });
 
 assert(majorOccluder(house), 'houses are foreground obstacles');
 assert(majorOccluder(tree), 'full-sized trees can hide characters');
-assert(majorOccluder(obj('prop', 0, 0, { id: 'forest-0-0', r: 24, icon: '🌲' })), 'Greenwood forests count as cover');
-assert(majorOccluder(obj('prop', 0, 0, { id: 'forest-2-7', r: 24, icon: '🌳' })), 'regional full-sized trees count as cover');
-assert(!majorOccluder(obj('prop', 0, 0, { r: 10, icon: '🌲' })), 'small tree-like clutter remains excluded');
+assert(
+  majorOccluder(obj('prop', 0, 0, { id: 'forest-0-0', r: 24, icon: '🌲' })),
+  'Greenwood forests count as cover',
+);
+assert(
+  majorOccluder(obj('prop', 0, 0, { id: 'forest-2-7', r: 24, icon: '🌳' })),
+  'regional full-sized trees count as cover',
+);
+assert(
+  !majorOccluder(obj('prop', 0, 0, { r: 10, icon: '🌲' })),
+  'small tree-like clutter remains excluded',
+);
 assert(majorOccluder(obj('prop', 0, 0, { structure: 'vale-cottage', decorative: true })));
-for (const structure of ['highland-wall', 'crown-wall', 'highland-smithy', 'watchpost', 'command-tent']) {
+for (const structure of [
+  'highland-wall',
+  'crown-wall',
+  'highland-smithy',
+  'watchpost',
+  'command-tent',
+]) {
   assert(majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), structure);
 }
 for (const structure of ['rock-cluster', 'mangrove']) {
-  assert(majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), 'substantial natural cover: ' + structure);
+  assert(
+    majorOccluder(obj('prop', 0, 0, { structure, decorative: true })),
+    'substantial natural cover: ' + structure,
+  );
 }
 assert(majorOccluder(obj('building', 0, 0, { kind: 'barracks' })));
 assert(majorOccluder(obj('npc', 0, 0, { kind: 'supplier' })), 'service building counts as cover');
 for (const structure of ['sapling', 'pine-sapling', 'regrowth-birch', 'regrowth-willow']) {
-  assert(majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), 'authored tree canopy: ' + structure);
+  assert(
+    majorOccluder(obj('prop', 0, 0, { structure, decorative: true })),
+    'authored tree canopy: ' + structure,
+  );
 }
 for (const structure of ['grass', 'stump', 'barrel', 'market']) {
   assert(!majorOccluder(obj('prop', 0, 0, { structure, decorative: true })), structure);
@@ -44,7 +65,11 @@ assert(!majorOccluder(obj('npc', 0, 0, { kind: 'quests' })), 'quest board is not
 assert(!majorOccluder({ ...house, interactionOnly: true }));
 
 assert.equal(occlusionPairs([hero, house], project, height).length, 1, 'hero concealed by house');
-assert.equal(occlusionPairs([house, hero], project, height).length, 0, 'no contour when hero draws in front');
+assert.equal(
+  occlusionPairs([house, hero], project, height).length,
+  0,
+  'no contour when hero draws in front',
+);
 assert.equal(occlusionPairs([hero, tree], project, height).length, 1, 'trees are supported');
 assert.equal(occlusionPairs([hero, civilian], project, height).length, 0, 'NPC is not outlined');
 assert.equal(
@@ -58,7 +83,11 @@ assert.equal(
   'distant foreground objects do not make outlines',
 );
 assert.equal(occlusionPairs([civilian, house], project, height).length, 0, 'NPCs never outlined');
-assert.equal(occlusionPairs([enemy, house], project, height).length, 1, 'enemies get their own contour');
+assert.equal(
+  occlusionPairs([enemy, house], project, height).length,
+  1,
+  'enemies get their own contour',
+);
 assert.equal(
   occlusionPairs([{ ...enemy, neutral: true }, house], project, height).length,
   0,
@@ -76,17 +105,24 @@ const renderer = fs.readFileSync(path.join(__dirname, '../src/prototype/renderer
 const sprites = fs.readFileSync(path.join(__dirname, '../src/prototype/sprites.js'), 'utf8');
 assert(renderer.includes("edge.globalCompositeOperation = 'destination-out'"));
 assert(renderer.includes("edge.globalCompositeOperation = 'destination-in'"));
-assert(renderer.includes("ctx.globalAlpha = 0.46"), 'a soft translucent rim, not a neon marker');
+assert(renderer.includes('ctx.globalAlpha = 0.46'), 'a soft translucent rim, not a neon marker');
 assert(renderer.includes('drawOcclusionOutlines(entities);'));
 assert(sprites.includes('if (!options?.silhouette) overlay(ctx, e, p, entry, scale);'));
 
-console.log('PASS Soft occlusion contours are depth-gated, alpha-clipped and limited to major cover.');
+console.log(
+  'PASS Soft occlusion contours are depth-gated, alpha-clipped and limited to major cover.',
+);
 
 // Pixel-level integration audit: exercise the real renderer with painted alpha
 // masks, then compare its result to the exact same scene with the helper off.
 const { createCanvas } = require('@napi-rs/canvas');
 const Renderer = require('../src/prototype/renderer.js');
-function rasterScene({ actorKind = 'hero', structure = 'house', foreground = true } = {}) {
+function rasterScene({
+  actorKind = 'hero',
+  structure = 'house',
+  foreground = true,
+  renderLayer = 'full',
+} = {}) {
   const surface = createCanvas(400, 330);
   const actor = obj(actorKind, 200, 200, {
     id: 'test-actor',
@@ -101,25 +137,36 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
     decorative: true,
   });
   const game = {
-    hero: actorKind === 'hero' ? actor : obj('hero', 350, 350, { id: 'camera-hero', hp: 100, maxHp: 100 }),
+    hero:
+      actorKind === 'hero'
+        ? actor
+        : obj('hero', 350, 350, { id: 'camera-hero', hp: 100, maxHp: 100 }),
     zoneId: 'vale',
-    s: { time: 0, statistics: {deaths:0}, rescued: {}, projectiles: [], loot: [], party: [] },
+    s: { time: 0, statistics: { deaths: 0 }, rescued: {}, projectiles: [], loot: [], party: [] },
     mageSilenceActive: () => false,
+    // The original renderer's read-only Rogue status contract is present in the real Campaign.
+    rogueEnemySilenced: () => false,
+    rogueEnemyWithered: () => false,
     regionIndex: () => 0,
-    zone: () => ({ props: [obstacle], buildings: [], enemies: actorKind === 'enemy' ? [actor] : [], roads: [] }),
+    zone: () => ({
+      props: [obstacle],
+      buildings: [],
+      enemies: actorKind === 'enemy' ? [actor] : [],
+      roads: [],
+    }),
     supplyRoom: () => null,
     isDungeon: () => false,
     zoneSize: () => 450,
-    visibleNPCs: () => actorKind === 'npc' ? [actor] : [],
+    visibleNPCs: () => (actorKind === 'npc' ? [actor] : []),
     visibleResourceNodes: () => [],
-    activeLivingParty: () => actorKind === 'ally' ? [actor] : [],
+    activeLivingParty: () => (actorKind === 'ally' ? [actor] : []),
     night: () => false,
     manaCombatActive: () => false,
     selectedHeroTarget: () => null,
     peace: false,
   };
   const visuals = {
-    height: (e) => e.renderKind === 'prop' ? 85 : 65,
+    height: (e) => (e.renderKind === 'prop' ? 85 : 65),
     draw(ctx, e, p) {
       ctx.save();
       if (e.renderKind === 'prop') {
@@ -133,9 +180,15 @@ function rasterScene({ actorKind = 'hero', structure = 'house', foreground = tru
       }
       ctx.restore();
     },
-    floor() {}, terrain() {}, roads() {}, footpaths() {}, bridges() {}, atmosphere() {},
+    floor() {},
+    terrain() {},
+    roads() {},
+    footpaths() {},
+    bridges() {},
+    atmosphere() {},
   };
   const painter = Renderer.create({
+    renderLayer,
     canvas: surface,
     ctx: surface.getContext('2d'),
     getGame: () => game,
@@ -167,9 +220,11 @@ function pixelsWithAndWithoutHelper(sceneOptions) {
     for (let i = 0; i < out.length; i += 4) {
       if (
         Math.abs(out[i] - untouched[i]) +
-        Math.abs(out[i + 1] - untouched[i + 1]) +
-        Math.abs(out[i + 2] - untouched[i + 2]) > 8
-      ) changed++;
+          Math.abs(out[i + 1] - untouched[i + 1]) +
+          Math.abs(out[i + 2] - untouched[i + 2]) >
+        8
+      )
+        changed++;
     }
     return changed;
   } finally {
@@ -177,8 +232,10 @@ function pixelsWithAndWithoutHelper(sceneOptions) {
     else global.document = previousDocument;
   }
 }
-assert(pixelsWithAndWithoutHelper({ actorKind: 'hero', structure: 'sapling' }) > 25,
-  'a character behind an authored tree canopy receives the bounded contour');
+assert(
+  pixelsWithAndWithoutHelper({ actorKind: 'hero', structure: 'sapling' }) > 25,
+  'a character behind an authored tree canopy receives the bounded contour',
+);
 const behindHouse = pixelsWithAndWithoutHelper({ actorKind: 'hero' });
 assert(behindHouse > 25, 'actual painted hero contour must be visible behind a house');
 assert(behindHouse < 650, 'outline may touch edges but must not fill the character');
@@ -201,4 +258,15 @@ assert.equal(
   0,
   'cover behind the hero in painter order must never trigger the helper',
 );
-console.log('PASS Painted masks reveal only bounded contour pixels behind genuine foreground cover.');
+console.log(
+  'PASS Painted masks reveal only bounded contour pixels behind genuine foreground cover.',
+);
+
+for (const renderLayer of ['full', 'overlay']) {
+  assert(pixelsWithAndWithoutHelper({ renderLayer, actorKind: 'hero' }) > 25);
+  assert.equal(pixelsWithAndWithoutHelper({ renderLayer, foreground: false }), 0);
+  assert.equal(pixelsWithAndWithoutHelper({ renderLayer, actorKind: 'npc' }), 0);
+}
+console.log(
+  'PASS identical cover eligibility and real alpha contours on full Canvas and Pixi cue overlay',
+);

@@ -1,7 +1,8 @@
 'use strict';
 const fs = require('node:fs'),
   path = require('node:path'),
-  cp = require('node:child_process');
+  cp = require('node:child_process'),
+  crypto = require('node:crypto');
 const SpriteFormat = require('../src/prototype/sprite-format.js');
 const root = path.resolve(__dirname, '..'),
   { scripts, core, legacy } = require('./site-assets.cjs'),
@@ -31,12 +32,30 @@ generated.set(
   'src/prototype/build-info.js',
   `/* Generated from package.json. Run npm run build after a version change. */\n(function(root){'use strict';const api=Object.freeze({version:${JSON.stringify(pkg.version)}});if(typeof module!=='undefined')module.exports=api;else root.PrototypeBuild=api;})(typeof window!=='undefined'?window:globalThis);\n`,
 );
+// Every published core asset has a content fingerprint, independent of the release ID.
+// The two dynamic manifests are always refreshed; they determine audio/sprite reuse.
+// Git blob hashes mirror committed source identities. The pinned, build-generated
+// PixiJS vendor is checked against its own SHA-256 digest.
+const appFingerprints = Object.fromEntries(
+  ['./', ...core.map((file) => './' + file)]
+    .filter((url) => !['./assets/audio/manifest.json', './assets/sprites/manifest.json'].includes(url))
+    .map((url) => {
+      const file = url === './' ? 'index.html' : url.slice(2);
+      const bytes = Buffer.from(generated.get(file) ?? fs.readFileSync(path.join(root, file)));
+      const hash =
+        file === 'assets/vendor/pixi-8.22.0.min.js'
+          ? 'sha256:' + crypto.createHash('sha256').update(bytes).digest('hex')
+          : crypto.createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex');
+      return [url, hash];
+    }),
+);
 generated.set(
   'sw.js',
   read('templates/service-worker.js')
     .replace('{{SPRITE_FORMAT}}', read('src/prototype/sprite-format.js'))
     .replace('{{CACHE_VERSION}}', JSON.stringify('azeroth-app-v' + pkg.version))
     .replace('{{APP_FILES}}', JSON.stringify(['./', ...core.map((p) => './' + p)]))
+    .replace('{{APP_FINGERPRINTS}}', JSON.stringify(appFingerprints))
     .replace('{{LEGACY_FILES}}', JSON.stringify(legacy.map((p) => './' + p))),
 );
 for (const [file, content] of generated) {

@@ -65,7 +65,9 @@
           };
         };
         if (scene.started === false || scene.situation === 'title') return special('title');
-        if (scene.gameOver || scene.situation === 'game-over') return special('defeat');
+        if (scene.gameOver || scene.situation === 'game-over' ||
+            (scene.succession && this.ctx && this.ctx.currentTime < (this.defeatUntil || 0)))
+          return special('defeat');
         if (this.ctx && this.ctx.currentTime < this.finaleUntil && scene.peace)
           return special('finale');
         const boss = director.bosses[scene.boss?.family];
@@ -112,13 +114,25 @@
       }
       updateProduction(scene) {
         if (!this.production || !this.ctx || this.paused || this.ctx.state !== 'running') return;
-        const mix =
-          scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world';
+        // Do not attenuate a Succession loss to the routine 22% menu music mix.
+        // The successor picker is a narrative moment, not an ordinary settings menu.
+        const lossPlaying = (scene.gameOver || scene.succession &&
+          this.ctx.currentTime < (this.defeatUntil || 0)) && scene.started !== false;
+        // Title has its own mix. An in-game menu must not lower or restart
+        // the current score just because gameplay simulation is frozen.
+        const mix = scene.started === false || scene.situation === 'title'
+          ? 'title' : 'world';
         if (this.mixScene !== mix) this.setSceneMix(mix);
         this.updateEnvironment(scene);
         this.sceneDetails(scene);
         const now = this.ctx.currentTime;
-        if (scene.settlement) {
+        // A title-screen snapshot is not live exploration. Clearing the
+        // settlement hold avoids carrying the saved hero's nearby refuge into
+        // the next actual gameplay scene (and selecting settlement music).
+        if (scene.started === false || scene.situation === 'title') {
+          this.settlementUntil = 0;
+          this.settlementZone = null;
+        } else if (scene.settlement) {
           this.settlementUntil = now + 4;
           this.settlementZone = scene.zone;
         }
@@ -190,18 +204,32 @@
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;
         if (spec.custom) return;
-        if (scene.engaged && !scene.peace) this.combatUntil = now + 2.5;
+        // Only nearby combat should raise the secondary action stem. Older
+        // synthetic scene fixtures without proximity still use engaged.
+        const audibleEngaged = scene.nearbyEngaged ?? scene.engaged;
+        if (audibleEngaged && !scene.peace) this.combatUntil = now + 2.5;
         const combat = !scene.peace && now < (this.combatUntil || 0);
         const intensity = scene.boss
           ? spec.stems[1]?.gain || 0
           : combat
-            ? Math.min(0.55, 0.28 + scene.engaged * 0.045)
+            ? Math.min(0.55, 0.28 + audibleEngaged * 0.045)
             : 0;
         const baseGain = spec.stems[0].gain;
-        const key = [intensity, baseGain].join(':');
+        // Action recordings are additive in structure but may carry distinct
+        // melodies. Keep the calmer theme beneath combat instead of letting
+        // two full-strength melodies compete. This changes the musical stems,
+        // not the shared player Music slider or other sound categories.
+        const hasActionStem = !scene.boss && group.voices.length > 1;
+        const actionBlend = hasActionStem ? Math.min(1, intensity / 0.55) : 0;
+        const baseTarget = baseGain * (1 - actionBlend * 0.65);
+        const key = [intensity, baseTarget].join(':');
         if (key !== this.productionIntensity) {
-          this.setStemGain(0, baseGain, 1.2);
-          if (group.voices.length > 1) this.setStemGain(1, intensity, intensity ? 0.25 : 2.2);
+          // Fade both stems in tandem: a rapid action entry and a gentler
+          // restoration on exit. Avoid a momentary full-volume overlap.
+          const restoring = hasActionStem &&
+            group.voices[0].targetGain < baseGain - 0.001 && !intensity;
+          this.setStemGain(0, baseTarget, actionBlend ? 0.5 : restoring ? 2.2 : 1.2);
+          if (group.voices.length > 1) this.setStemGain(1, intensity, intensity ? 0.5 : 2.2);
           this.productionIntensity = key;
         }
       }

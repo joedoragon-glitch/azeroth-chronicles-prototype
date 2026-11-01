@@ -1,0 +1,32 @@
+name: Soundtrack Phase 7 focused integration (no deploy)
+
+# Target only this draft stack. No full-game or browser/device matrices.
+on:
+  pull_request:
+    branches:
+      - audio/phase6-narrative-cues-20261031
+    paths:
+      - 'src/prototype/audio-*.js'
+      - 'tests/audio-phase7-*.test.cjs'
+      - '.github/workflows/audio-phase7-integration.yml'
+      - 'docs/AUDIO_*.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  focused-audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Validate actual campaign transitions into the soundtrack director
+        run: node tests/audio-phase7-narrative.test.cjs
+      - name: Protect existing contextual music routing
+        run: node tests/audio-production.test.cjs

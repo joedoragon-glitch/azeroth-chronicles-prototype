@@ -1207,13 +1207,15 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           return true;
         }
-        const hit = this.damage(
-          e, this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)), u.id,
+        const hit = this.developerCompanionDamage(
+          u, 'Basic attack', e,
+          this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
         );
         if (hit)
           this.event('melee', {
@@ -1450,12 +1452,13 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
-        } else if (this.damage(e, this.troopCriticalDamage(
-          criticalReceipt, this.companionBasicAttackDamage(u),
-        ), u.id))
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
+        } else if (this.developerCompanionDamage(u, 'Basic attack', e, this.troopCriticalDamage(
+            criticalReceipt, this.companionBasicAttackDamage(u),
+          )))
           this.event('melee', {
             actor: 'companion',
             role: 'soldier',
@@ -1628,9 +1631,13 @@
         const rally = this.rangerRallyActive(u)
           ? Math.min(0.25, u.rangerRallyMovement || 0) : 0;
         const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
-        return this.companionMoveSpeed(base) *
-          (this.charmedCompanionProfile(u)?.speed || 1) *
-          (1 + rally + quickstep);
+        const profile = this.charmedCompanionProfile(u);
+        const speed = this.companionMoveSpeed(base) * (profile?.speed || 1);
+        // Ordinary pursuit should never be slower than a wild monster's
+        // 175-unit baseline. Explicit short defensive moves keep their pace.
+        const nativeFloor = profile && base >= 230
+          ? R.balance.enemyOrdinaryMeleePursuitSpeed : 0;
+        return Math.max(speed, nativeFloor) * (1 + rally + quickstep);
       }
       companionRallyAttackSpeed(u) {
         return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
@@ -1702,7 +1709,12 @@
         return now < burst.until ? cfg.burstMultiplier : 1;
       }
       companionBasicInterval(u) {
-        const base = this.charmedCompanionProfile(u)?.interval || 0.85;
+        const profile = this.charmedCompanionProfile(u);
+        // Keep all existing quicker allied attacks, but prevent future Charm
+        // profiles from swinging slower than the native ordinary hostile.
+        const base = profile
+          ? Math.min(profile.interval || 0.85, R.balance.enemyOrdinaryMeleeBasicInterval)
+          : 0.85;
         return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
           ? base * R.ringleaderScaling.frenzyCooldown : base;
@@ -1756,9 +1768,9 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
-          if (!this.damage(
-            target, this.troopCriticalDamage(criticalReceipt,
-              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)), u.id,
+          if (!this.developerCompanionDamage(
+            u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
+              this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
           )) return false;
           const veteran = R.companionSkills.veteran;
           if (
@@ -1807,7 +1819,9 @@
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.4);
         const shot = Math.max(1, dist(u, target));
-        for (let j = 0; j < 3; j++)
+        const volleyMove = this.s.mode === 'developer'
+          ? this.developerCompanionNewMove(u.id, 'Triple Shot') : null;
+        for (let j = 0; j < 3; j++) {
           this.s.projectiles.push({
             id: 'projectile-' + this.s.nextId++,
             x: u.x,
@@ -1831,6 +1845,10 @@
               ? { slow: R.companionSkills.veteran.coveringSlow }
               : {}),
           });
+          if (volleyMove)
+            this.developerCompanionTrackProjectile(u, 'Triple Shot',
+              this.s.projectiles.at(-1), volleyMove);
+        }
         this.event('projectileLaunch', {
           actor: 'companion',
           role: 'archer',
@@ -1927,6 +1945,8 @@
           angle = Math.atan2(target.y - u.y, target.x - u.x);
         let hits = 0;
         if (u.type === 'archer') {
+          const volleyMove = this.s.mode === 'developer'
+            ? this.developerCompanionNewMove(u.id, 'Piercing Volley') : null;
           // #464: the original selected targets receive real physical arrows.
           // A single committed critical receipt is shared across all shafts;
           // no damage/status occurs until the native projectile contact.
@@ -1947,10 +1967,15 @@
               companionSkill: 'piercing-volley',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             });
+            if (volleyMove)
+              this.developerCompanionTrackProjectile(u, 'Piercing Volley',
+                this.s.projectiles.at(-1), volleyMove);
             hits++;
           }
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(u, def.name);
           for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!hits) return false;
         u.skill2Cd = cfg.cooldown;
@@ -2103,7 +2128,7 @@
       }
       // A Charmed ranged healer uses the same automatic HP recovery as a
       // conventional Ranger: the Neri-trained amount, five-second pulses,
-      // ten-second cooldown and idle/combat triage thresholds. Unlike the
+      // ten-second combat cooldown (faster idle recovery) and idle/combat triage. Unlike the
       // original hostile healer, it must support the friendly party while idle.
       // Keep this separate from Ranger mana and offensive skill ownership.
       charmedRangedSupport(u, living = this.activeLivingParty()) {
@@ -2210,6 +2235,7 @@
               (1 + tier * damageGrowth)),
           damage = enhance(base, 'damage');
         let landed = 0, actualDamage = 0;
+        const previousDirect = this.developerCompanionBeginDirect(u, def.name);
         for (const e of victims) {
           const hp = e.hp;
           if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
@@ -2229,6 +2255,7 @@
             if (this.clearSegment(e, point, 12)) this.move(e, point, 210, 0.2);
           }
         }
+        this.developerCompanionEndDirect(previousDirect);
         if (!landed) return false;
         // Siphon is based on actual post-mitigation lost HP, never theoretical
         // damage. No overheal or duplicate support-heal critical roll.
@@ -2372,11 +2399,12 @@
             dx: (target.x - u.x) / shot, dy: (target.y - u.y) / shot,
             target: target.id, source: u.id, damage: base,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
             slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
               R.balance.companions.mastery.slowSecondsPerTier,
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion', role: 'archer', source: u.id,
             style: this.charmedCompanionProfile(u)?.style || 'arrow',
@@ -2384,6 +2412,8 @@
           });
           committed = true;
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(
+            u, profile.name || 'Native maneuver');
           for (const enemy of victims) {
             if (!this.damage(enemy, base, u.id, { area: elite })) continue;
             committed = true;
@@ -2415,6 +2445,7 @@
                 this.companionMasteryTier(u) *
                   R.balance.companions.mastery.slowSecondsPerTier);
           }
+          this.developerCompanionEndDirect(previousDirect);
         }
         if (!committed) return false;
         if (profile.style === 'dash' && !elite &&
@@ -2770,6 +2801,17 @@
       }
       companionHealCooldown(u) {
         return u.charmOrigin ? u.charmSupportCd || 0 : u.healCd || 0;
+      }
+      alliedHealCooldownRecoveryMultiplier() {
+        // Idle recovery belongs only to allied Heal. Keep every attack,
+        // native pet special and ordinary combat cooldown at its native pace.
+        if (this.manaCombatActive() ||
+            this.s.projectiles.some((p) => p.source === 'enemy')) return 1;
+        const living = this.activeLivingParty();
+        if (this.zone().enemies.some((e) => e.hp > 0 && e.aggro &&
+            !e.neutral && !e.returning && living.some((u) => dist(e, u) < 700)))
+          return 1;
+        return R.rangerSupport.idleHealCooldownRecoveryMultiplier;
       }
       availablePartyHealers() {
         return this.healCompanionCasters().filter((u) => this.companionHealCooldown(u) <= 0);
@@ -3745,7 +3787,7 @@
         return true;
       }
       partyFormationOffset(u, living = this.activeLivingParty()) {
-        const rangedHero = ['mage', 'ranger', 'rogue'].includes(this.hero.class);
+        const rangedHero = Campaign.classFoundationFor(this.hero.class)?.formationRole === 'ranged';
         if (u.type === 'pet') {
           // Keep distinct mixed-pet lanes: melee pets screen a ranged hero and
           // flank behind a Paladin; ranged pets remain behind either hero role.
@@ -3970,9 +4012,10 @@
               damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
               source: u.id,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-              speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-              style: this.charmedCompanionProfile(u)?.style || 'arrow',
+              ...this.charmedProjectileFlight(u),
             });
+            if (this.s.mode === 'developer')
+              this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
             this.event('projectileLaunch', {
               actor: 'companion',
               role: 'archer',
@@ -4002,9 +4045,9 @@
         else if (u.cd <= 0) {
           u.cd = this.companionBasicInterval(u) / this.companionRallyAttackSpeed(u);
           const criticalReceipt = this.troopCriticalRelease(u, 'basic');
-          if (this.damage(e, this.troopCriticalDamage(
+          if (this.developerCompanionDamage(u, 'Basic attack', e, this.troopCriticalDamage(
             criticalReceipt, this.companionBasicAttackDamage(u),
-          ), u.id))
+          )))
             this.event('melee', {
               actor: 'companion',
               role: 'soldier',
@@ -4022,7 +4065,12 @@
         const z = this.zone(),
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
-          claimed = new Set();
+          claimed = new Set(),
+          idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier(),
+          // A working, reserved or forged Charmed unit cannot exploit the
+          // idle Heal clock; only authenticated active ranged healers qualify.
+          idleCharmHealers = idleHealRecovery > 1
+            ? new Set(this.healCompanionCasters().filter((u) => !!u.charmOrigin)) : null;
         const returningLabor = this._gatherRecallResume;
         if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
           this._gatherRecallResume = null;
@@ -4090,7 +4138,8 @@
           u.skillNightCd = Math.max(0, (u.skillNightCd || 0) - specialRecovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
-            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
+            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) -
+              specialRecovery * (idleCharmHealers?.has(u) ? idleHealRecovery : 1));
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
@@ -4335,12 +4384,13 @@
                     damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
                     source: u.id,
                     ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-                    speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-                    style: this.charmedCompanionProfile(u)?.style || 'arrow',
+                    ...this.charmedProjectileFlight(u),
                   });
-                } else if (this.damage(pursuer, this.troopCriticalDamage(
-                  criticalReceipt, this.companionBasicAttackDamage(u),
-                ), u.id))
+                  if (this.s.mode === 'developer')
+                    this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
+                } else if (this.developerCompanionDamage(u, 'Basic attack', pursuer, this.troopCriticalDamage(
+            criticalReceipt, this.companionBasicAttackDamage(u),
+          )))
                   this.event('melee', {
                     actor: 'companion',
                     role: 'soldier',

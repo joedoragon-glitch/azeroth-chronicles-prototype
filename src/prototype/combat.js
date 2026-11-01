@@ -14,6 +14,7 @@
       'skillNightCd',
       'skillGlobalCd',
       'healCd',
+      'charmSupportCd', // Existing Charmed ranged-healer timer.
       'manaCd',
       'survivalCd',
     ];
@@ -23,6 +24,7 @@
       'summonCd',
       'healCd',
       'supportHealCd',
+      'hybridSelfHealCd', // Existing independent hybrid self-heal timer.
       'anastylosisCd',
       'sabotageCd',
     ];
@@ -896,6 +898,8 @@
         if (actualDamage > 0 && e.hp > 0)
           this.noteEnemyUnderFire(e, source, origin, actualDamage);
         if (source === 'hero') this.recordDeveloperDamage('outgoing', actualDamage);
+        else if (this.s.mode === 'developer')
+          this.recordDeveloperCompanionDamage(source, actualDamage);
         this.effects.push({ type: 'hit', x: e.x, y: e.y, amount });
         if (e.hp === 0) {
           this.clearEnemyUnderFire(e);
@@ -1326,6 +1330,8 @@
             const victim = guard || e;
             const contactPoint = { x: victim.x, y: victim.y };
             if (guard) e.royalPrerogativeReadyAt = this.s.time + 18;
+            if (this.s.mode === 'developer')
+              this._developerCompanionProjectileInFlight = p.id;
             const landed =
               p.effect === 'interrupt'
                 ? this.interruptEnemyAction(victim, p.interruptAction, p.criticalExecution)
@@ -1344,6 +1350,8 @@
                         }
                       : null,
                   );
+            if (this.s.mode === 'developer')
+              this._developerCompanionProjectileInFlight = null;
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
             if (p.cancelledChargedOpener) continue;

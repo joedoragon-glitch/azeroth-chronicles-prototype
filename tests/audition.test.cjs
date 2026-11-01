@@ -15,7 +15,7 @@ const counts = names.reduce((result, [, entry]) => {
   result[entry.kind] = (result[entry.kind] || 0) + 1;
   return result;
 }, {});
-assert.deepEqual(counts, { music: 83, ambience: 14, effect: 30 });
+assert.deepEqual(counts, { music: 83, ambience: 18, effect: 30 });
 assert.equal(Object.keys(manifest.director.places).length, 19);
 assert.equal(Object.keys(manifest.director.bosses).length, 11);
 
@@ -47,8 +47,10 @@ for (const phrase of [
 ]) assert(code.includes(phrase), 'Missing audition integration: ' + phrase);
 assert(!page.includes('The production registry is empty'));
 assert(!page.includes('Audio audition</h1>'));
-assert(page.includes('Complete library'));
+assert(page.includes('Game sound library'));
+assert(page.includes('Generated in real time by the game'));
+assert(page.includes('New authored soundtrack'));
 assert(page.includes('Advanced listening tools'));
 assert(page.includes('No save data is accessed.'));
 assert(!/\blocalStorage\b|\bsessionStorage\b/.test(code), 'Listening room must never access saves');
-console.log('PASS audition source contract: 127 real assets, 19 places, 11 bosses, 3 specials, complete UI controls and save isolation');
+console.log('PASS audition source contract: 131 real assets, 19 places, 11 bosses, 3 specials, complete UI controls and save isolation');

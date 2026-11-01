@@ -4,6 +4,45 @@
   // Crowns are portrait-stamped coinage from Ironroot, not generic gold discs.
   // This is intentionally paint-only: older loot objects still use the
   // historical 'gold' amount key, pickup radius, rewards and save schema.
+  // Shared presentation-only contracts. Gameplay remains authoritative.
+  function ashCloudPresentation(game, project, scale = 1) {
+    const clouds = [];
+    for (const e of game.zone().enemies)
+      if (
+        e.type === 'boss' &&
+        e.family === 'warlord' &&
+        e.aggro &&
+        e.hp > 0 &&
+        e.ashCloud &&
+        e.ashCloud.expires > game.s.time
+      ) {
+        const center = project(e.ashCloud);
+        const edge = project({ x: e.ashCloud.x + 180, y: e.ashCloud.y });
+        const span = Math.max(35 * scale, Math.abs(edge.x - center.x));
+        clouds.push({
+          x: center.x,
+          y: center.y,
+          rx: span,
+          ry: span * 0.48,
+          lineWidth: 2.5 * scale,
+        });
+      }
+    return clouds;
+  }
+  function ledgerMarked(game, actor) {
+    return (
+      ['hero', 'ally'].includes(actor.renderKind) &&
+      game
+        .zone()
+        .enemies.some(
+          (b) =>
+            b.family === 'ridge' &&
+            b.hp > 0 &&
+            b.ledgerMarkUntil > game.s.time &&
+            b.ledgerMarkedId === (actor.renderKind === 'hero' ? 'hero' : actor.id),
+        )
+    );
+  }
   function drawCrownLoot(ctx, p) {
     ctx.save();
     ctx.translate(p.x, p.y - 3);
@@ -326,7 +365,6 @@
       .slice(0, 24);
   }
 
-
   // Constructed ONLY when the developer explicitly enables effect recording.
   // Regular players have no recorder, sampling loops, timers or report storage.
   function createEffectDiagnostics() {
@@ -336,17 +374,28 @@
     const receipts = Object.create(null);
     const decisions = { eligibleDraws: 0, fpsLimited: 0, adaptiveSkipped: 0 };
     const stateDraws = { projectiles: 0, telegraphs: 0, motions: 0, hazards: 0, charges: 0 };
-    const frames = [], callbacks = [];
-    let drawNumber = 0, eventsSeen = 0, excessIdentityRecords = 0, sceneResets = 0;
+    const frames = [],
+      callbacks = [];
+    let drawNumber = 0,
+      eventsSeen = 0,
+      excessIdentityRecords = 0,
+      sceneResets = 0;
     function key(f) {
       if (f.type === 'enemyVfx')
         return (f.skillId || f.identity?.id || 'enemy/unknown') + ':' + (f.stage || 'unknown');
       if (f.type === 'heroSkill')
-        return 'hero/' + (f.class || '?') + '/' + (f.slot || '?') + '/' +
-          (f.charged ? 'charged' : 'normal') + ':' + (f.stage || 'cast');
+        return (
+          'hero/' +
+          (f.class || '?') +
+          '/' +
+          (f.slot || '?') +
+          '/' +
+          (f.charged ? 'charged' : 'normal') +
+          ':' +
+          (f.stage || 'cast')
+        );
       if (f.type === 'petSkill')
-        return 'pet/' + (f.petFamily || '?') + '/' + (f.slot || '?') + ':' +
-          (f.stage || 'release');
+        return 'pet/' + (f.petFamily || '?') + '/' + (f.slot || '?') + ':' + (f.stage || 'release');
       if (f.companion) return 'companion/' + (f.role || '?') + ':' + f.type;
       return f.type + (f.actor ? ':' + f.actor : '') + (f.slot ? ':' + f.slot : '');
     }
@@ -358,13 +407,27 @@
           excessIdentityRecords++;
           row = rows.get('[additional-identities]');
           if (!row) {
-            row = { id: '[additional-identities]', queued: 0, overflowDropped: 0,
-              filtered: 0, expiredWithoutDraw: 0, painted: 0, drawnFrames: 0 };
+            row = {
+              id: '[additional-identities]',
+              queued: 0,
+              overflowDropped: 0,
+              filtered: 0,
+              expiredWithoutDraw: 0,
+              painted: 0,
+              drawnFrames: 0,
+            };
             rows.set(row.id, row);
           }
         } else {
-          row = { id, queued: 0, overflowDropped: 0, filtered: 0,
-            expiredWithoutDraw: 0, painted: 0, drawnFrames: 0 };
+          row = {
+            id,
+            queued: 0,
+            overflowDropped: 0,
+            filtered: 0,
+            expiredWithoutDraw: 0,
+            painted: 0,
+            drawnFrames: 0,
+          };
           rows.set(id, row);
         }
       }
@@ -381,10 +444,26 @@
     return {
       receipts(events) {
         // Only known feedback events; not the entire general gameplay log.
-        const types = ['heroSkillCast', 'heroHawk', 'heroSkillArea', 'heroProjectileFlight',
-          'enemyVfx', 'petSkill', 'companionSkill', 'projectileLaunch',
-          'projectileImpact', 'chargedArea', 'chargedImpact', 'chargeInterrupted',
-          'hit', 'hurt', 'heal', 'spell', 'swing', 'basicComboFinisher'];
+        const types = [
+          'heroSkillCast',
+          'heroHawk',
+          'heroSkillArea',
+          'heroProjectileFlight',
+          'enemyVfx',
+          'petSkill',
+          'companionSkill',
+          'projectileLaunch',
+          'projectileImpact',
+          'chargedArea',
+          'chargedImpact',
+          'chargeInterrupted',
+          'hit',
+          'hurt',
+          'heal',
+          'spell',
+          'swing',
+          'basicComboFinisher',
+        ];
         for (const e of events) {
           if (!types.includes(e.type)) continue;
           eventsSeen++;
@@ -401,12 +480,16 @@
           tracked.set(f, { row, drawn: false, retired: false });
         }
       },
-      overflow(f) { finish(f, 'overflow'); },
+      overflow(f) {
+        finish(f, 'overflow');
+      },
       filtered(previous, next) {
         const retained = new Set(next);
         for (const f of previous) if (!retained.has(f)) finish(f, 'filtered');
       },
-      expiry(f) { finish(f, 'expiry'); },
+      expiry(f) {
+        finish(f, 'expiry');
+      },
       painted(f) {
         const meta = tracked.get(f);
         if (!meta || meta.retired) return;
@@ -461,16 +544,21 @@
       },
       report(recording) {
         return {
-          version: 1, recording,
+          version: 1,
+          recording,
           scope: 'Developer Mode opt-in, in-memory, no campaign-save changes',
           proof: 'Painter calls; not nontransparent pixels or player visibility',
           interpretation: 'Direct-state counts are not independently queued effects',
           limits: { identities: limit, recentDrawFrames: 120, recentCallbacks: 120 },
-          drawFrames: drawNumber, eventsSeen,
-          receipts: { ...receipts }, drawDecisions: { ...decisions },
+          drawFrames: drawNumber,
+          eventsSeen,
+          receipts: { ...receipts },
+          drawDecisions: { ...decisions },
           directStateAtDraw: { ...stateDraws },
-          recentDrawFrames: frames.slice(), recentCallbacks: callbacks.slice(),
-          sceneResets, excessIdentityRecords,
+          recentDrawFrames: frames.slice(),
+          recentCallbacks: callbacks.slice(),
+          sceneResets,
+          excessIdentityRecords,
           identities: [...rows.values()].map((row) => ({ ...row })),
         };
       },
@@ -495,6 +583,7 @@
     PrototypeMaterials,
     renderLayer = 'full',
     staticTerrainTimeSeconds = null,
+    omitTerrainMotion = false,
     PrototypeGroundCache = root.PrototypeGroundCache ||
       (typeof require === 'function' ? require('./ground-cache.js') : null),
     now = () => performance.now(),
@@ -602,8 +691,7 @@
     function worldLabelWidth(name, e) {
       return Math.min(
         canvas.width - 20,
-        Math.max(62, name.length * (namedCompanion(e) ? 8.1 : 6.7) +
-          (namedCompanion(e) ? 18 : 10)),
+        Math.max(62, name.length * (namedCompanion(e) ? 8.1 : 6.7) + (namedCompanion(e) ? 18 : 10)),
       );
     }
     function drawNamedCompanionLabel(name, slot) {
@@ -756,6 +844,29 @@
       return side;
     }
     function sprite(e, p, target = ctx, bodyOnly = false) {
+      const retained = bodyOnly && silhouetteFrames?.get(e.spriteIdentity || e);
+      if (retained) {
+        // Use the exact currently composited GPU pose, including frame/pivot.
+        // Resident CPU images only: no GPU readback or mask texture upload.
+        target.save();
+        target.translate(
+          p.x + retained.dx + (retained.flipX ? retained.width : 0),
+          p.y + retained.dy,
+        );
+        if (retained.flipX) target.scale(-1, 1);
+        if (retained.sourceRect)
+          target.drawImage(
+            retained.image,
+            ...retained.sourceRect,
+            0,
+            0,
+            retained.width,
+            retained.height,
+          );
+        else target.drawImage(retained.image, 0, 0, retained.width, retained.height);
+        target.restore();
+        return;
+      }
       const q = visualPosition(e, p),
         rescued = !!game.s.rescued[e.family];
       const facing = paintedFacing(e);
@@ -799,6 +910,7 @@
     // Four reused transparent canvases avoid readback, bright halos, filled
     // ghosts and per-actor allocations. No change to hitboxes or AI visibility.
     const outlineLayers = new Map();
+    let silhouetteFrames = null;
     let compactOutlines = true;
     function outlineSize(e) {
       if (!compactOutlines || e.type === 'boss' || e.captain || e.roomCaptain) return 384;
@@ -963,21 +1075,31 @@
       rx *= scale;
       ry *= scale;
       const type = e.renderKind,
-        important = type === 'hero' || e.type === 'boss' ||
-          e.captain || e.roomCaptain || e.kind === 'quests';
+        important =
+          type === 'hero' || e.type === 'boss' || e.captain || e.roomCaptain || e.kind === 'quests';
       const marker = ['hero', 'ally', 'enemy', 'npc', 'node'].includes(type)
         ? {
-            color: type === 'hero' ? '#f5d992bb'
-              : type === 'ally' ? '#a7d3a77d'
-              : type === 'enemy'
-                ? e.neutral ? '#b9d8b177' : e.type === 'boss' ? '#ec8b76aa' : '#b8786870'
-                : e.kind === 'quests' ? '#f5d18cbb' : '#d5ca9b66',
+            color:
+              type === 'hero'
+                ? '#f5d992bb'
+                : type === 'ally'
+                  ? '#a7d3a77d'
+                  : type === 'enemy'
+                    ? e.neutral
+                      ? '#b9d8b177'
+                      : e.type === 'boss'
+                        ? '#ec8b76aa'
+                        : '#b8786870'
+                    : e.kind === 'quests'
+                      ? '#f5d18cbb'
+                      : '#d5ca9b66',
             important,
-          } : null;
-      return {rx, ry, marker};
+          }
+        : null;
+      return { rx, ry, marker };
     }
     function entityShadow(e, p) {
-      const {rx, ry} = groundPresentation(e);
+      const { rx, ry } = groundPresentation(e);
       ctx.save();
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
@@ -990,9 +1112,9 @@
       ctx.restore();
     }
     function groundMarker(e, p) {
-      const {marker} = groundPresentation(e);
+      const { marker } = groundPresentation(e);
       if (!marker) return;
-      const {important} = marker;
+      const { important } = marker;
       ctx.strokeStyle = marker.color;
       ctx.lineWidth = important ? 2 : 1;
       ctx.beginPath();
@@ -1005,38 +1127,38 @@
         ctx.stroke();
       }
     }
-    function entityAura(e, p) {
+    function entityAura(e, p, brush = ctx) {
       if (e.renderKind !== 'enemy' || (!['true', 'ringleader'].includes(e.form) && !e.frenzy))
         return;
       const t = now() / 1000,
         pulse = 0.5 + 0.5 * Math.sin(t * 3.1 + visualPhase(e));
-      ctx.save();
+      brush.save();
       if (e.form === 'true') {
-        if (e.type === 'boss') drawTrueAura(ctx, e, p, spriteHeight(e), t, reducedMotion());
+        if (e.type === 'boss') drawTrueAura(brush, e, p, spriteHeight(e), t, reducedMotion());
         else {
-          ctx.strokeStyle = '#f8dfa059';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.ellipse(p.x, p.y + 8, 26, 8, 0, 0, Math.PI * 2);
-          ctx.stroke();
+          brush.strokeStyle = '#f8dfa059';
+          brush.lineWidth = 1;
+          brush.beginPath();
+          brush.ellipse(p.x, p.y + 8, 26, 8, 0, 0, Math.PI * 2);
+          brush.stroke();
         }
       } else {
-        ctx.globalAlpha = e.frenzy ? 0.65 : 0.4;
-        ctx.strokeStyle = e.frenzy ? '#ef8b63' : '#d8b66f';
-        ctx.lineWidth = e.frenzy ? 2.4 : 1.5;
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y + 8, 25 + pulse * 5, 8 + pulse * 2, 0, 0, Math.PI * 2);
-        ctx.stroke();
+        brush.globalAlpha = e.frenzy ? 0.65 : 0.4;
+        brush.strokeStyle = e.frenzy ? '#ef8b63' : '#d8b66f';
+        brush.lineWidth = e.frenzy ? 2.4 : 1.5;
+        brush.beginPath();
+        brush.ellipse(p.x, p.y + 8, 25 + pulse * 5, 8 + pulse * 2, 0, 0, Math.PI * 2);
+        brush.stroke();
         if (e.frenzy)
           for (let j = 0; j < 3; j++) {
             const a = t * 2 + j * 2.09;
-            ctx.fillStyle = '#ffb075';
-            ctx.beginPath();
-            ctx.arc(p.x + Math.cos(a) * 25, p.y - 12 + Math.sin(a) * 9, 1.8, 0, Math.PI * 2);
-            ctx.fill();
+            brush.fillStyle = '#ffb075';
+            brush.beginPath();
+            brush.arc(p.x + Math.cos(a) * 25, p.y - 12 + Math.sin(a) * 9, 1.8, 0, Math.PI * 2);
+            brush.fill();
           }
       }
-      ctx.restore();
+      brush.restore();
     }
     function healthPlate(e, p) {
       const y = p.y - spriteHeight(e),
@@ -1519,14 +1641,20 @@
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx, effectRecorder);
       effectRecorder?.filtered(previous, visualFx);
       for (const event of events) {
-        if (event.type !== 'criticalExecutionRelease' ||
-            !event.source || event.zone !== game.zoneId ||
-            event.deaths !== game.s.statistics.deaths) continue;
+        if (
+          event.type !== 'criticalExecutionRelease' ||
+          !event.source ||
+          event.zone !== game.zoneId ||
+          event.deaths !== game.s.statistics.deaths
+        )
+          continue;
         // At most ten simultaneous actor cues; retain newest commitments.
         // In-flight source IDs follow the actor instead of locking a cast point.
         criticalCues = criticalCues.filter((c) => c.source !== event.source);
         criticalCues.push({
-          source: event.source, life: 0.7, drawn: false,
+          source: event.source,
+          life: 0.7,
+          drawn: false,
           expiresAt: now() + criticalCueMaxAgeMs,
         });
         if (criticalCues.length > 10) criticalCues.shift();
@@ -1540,9 +1668,11 @@
     function firstPaintEssential(f) {
       if (f.type !== 'heroSkill') return false;
       if (f.stage === 'cast')
-        return f.charged ||
+        return (
+          f.charged ||
           (f.class === 'paladin' && [1, 2, 6].includes(f.slot)) ||
-          (['mage', 'ranger'].includes(f.class) && [3, 4].includes(f.slot));
+          (['mage', 'ranger'].includes(f.class) && [3, 4].includes(f.slot))
+        );
       return ['area', 'impact', 'chain', 'cancel', 'displace', 'skill1-cross'].includes(f.stage);
     }
     const firstPaintGraceSeconds = 0.12;
@@ -1553,12 +1683,16 @@
           // The drawn cue receives no post-paint extension. Time spent waiting
           // for a permitted draw is bounded by simulated time, even at 20 FPS.
           f._firstPaintOvertime += dt;
-          f.life = !f._firstPaintPresented && f._firstPaintOvertime < firstPaintGraceSeconds
-            ? Math.min(f.max, firstPaintMinimumLife)
-            : 0;
+          f.life =
+            !f._firstPaintPresented && f._firstPaintOvertime < firstPaintGraceSeconds
+              ? Math.min(f.max, firstPaintMinimumLife)
+              : 0;
         } else if (
-          dt > 0 && f.life - dt <= 0 && !f._firstPaintPresented &&
-          firstPaintEssential(f) && dt - f.life < firstPaintGraceSeconds
+          dt > 0 &&
+          f.life - dt <= 0 &&
+          !f._firstPaintPresented &&
+          firstPaintEssential(f) &&
+          dt - f.life < firstPaintGraceSeconds
         ) {
           f._firstPaintOvertime = Math.max(0, dt - f.life);
           f.life = Math.min(f.max, firstPaintMinimumLife);
@@ -1568,39 +1702,34 @@
       visualFx = visualFx.filter((f) => f.life > 0);
       // A cue remains pending until it has actually been painted once.
       // This does not force rendering or add a recurring simulation timer.
-      for (const cue of criticalCues)
-        if (cue.drawn) cue.life -= Math.max(0, dt);
+      for (const cue of criticalCues) if (cue.drawn) cue.life -= Math.max(0, dt);
       const timestamp = now();
-      criticalCues = criticalCues.filter(
-        (c) => c.life > 0 && timestamp < c.expiresAt,
-      );
+      criticalCues = criticalCues.filter((c) => c.life > 0 && timestamp < c.expiresAt);
     }
     function drawCriticalCues() {
       if (!criticalCues.length) return;
       // Also expire on paint after an idle/paused simulation.
       const timestamp = now();
-      criticalCues = criticalCues.filter(
-        (c) => c.life > 0 && timestamp < c.expiresAt,
-      );
+      criticalCues = criticalCues.filter((c) => c.life > 0 && timestamp < c.expiresAt);
       if (!criticalCues.length) return;
       const enemies = game.zone().enemies;
       const party = game.s.party;
       ctx.save();
       ctx.textAlign = 'center';
       for (const cue of criticalCues) {
-        const actor = cue.source === 'hero' ? game.hero
-          : party.find((u) => u.id === cue.source) ||
-            enemies.find((u) => u.id === cue.source);
+        const actor =
+          cue.source === 'hero'
+            ? game.hero
+            : party.find((u) => u.id === cue.source) || enemies.find((u) => u.id === cue.source);
         if (!actor || actor.hp <= 0 || actor.active === false) {
           cue.life = 0;
           continue;
         }
         const pos = screen(actor);
-        if (pos.x < -28 || pos.x > canvas.width + 28 ||
-            pos.y < -80 || pos.y > canvas.height + 80) continue;
+        if (pos.x < -28 || pos.x > canvas.width + 28 || pos.y < -80 || pos.y > canvas.height + 80)
+          continue;
         const x = Math.max(16, Math.min(canvas.width - 16, pos.x)),
-          y = Math.max(30, Math.min(canvas.height - 30,
-            pos.y - spriteHeight(actor) - 33));
+          y = Math.max(30, Math.min(canvas.height - 30, pos.y - spriteHeight(actor) - 33));
         ctx.globalAlpha = Math.min(1, cue.life / 0.25);
         ctx.fillStyle = '#172b2a';
         ctx.strokeStyle = '#fff2b1';
@@ -1723,15 +1852,51 @@
         }
         ctx.save();
         ctx.globalAlpha = a;
-        if (f.type === 'charmHeritage') {
+        if (f.type === 'resetCue' || f.type === 'resetArrival') {
+          // A restrained ground-level break/settle, not a teleport spell.
+          // Both renderers use this same overlay; no simulation or reset clock
+          // depends on whether the effect is drawn (including frame skipping).
+          const dust = (q, arrival) => {
+            ctx.globalAlpha = a * (arrival ? 0.82 : 0.58);
+            ctx.strokeStyle = arrival ? '#d4c5a4' : '#aeb4a0';
+            ctx.lineWidth = arrival ? 1.8 : 1.3;
+            ctx.beginPath();
+            ctx.ellipse(
+              q.x,
+              q.y + 9,
+              14 + grow * (arrival ? 13 : 8),
+              5 + grow * 3,
+              0,
+              0,
+              Math.PI * 2,
+            );
+            ctx.stroke();
+            ctx.strokeStyle = '#ded1b4';
+            ctx.lineWidth = 1;
+            for (const side of [-1, 1]) {
+              const drift = reducedMotion() ? 0 : grow * 7;
+              ctx.beginPath();
+              ctx.moveTo(q.x + side * (7 + drift), q.y - 2 - drift);
+              ctx.lineTo(q.x + side * (11 + drift), q.y - 6 - drift);
+              ctx.stroke();
+            }
+          };
+          dust(p, f.type === 'resetArrival');
+          if (f.type === 'resetArrival') dust(screen({ x: f.fromX, y: f.fromY }), false);
+        } else if (f.type === 'charmHeritage') {
           // Every visible contour uses the EXACT committed gameplay geometry.
           // Only one bounded 0.6s afterimage; no independent search or damage.
           const source = screen({ x: f.fromX, y: f.fromY }),
-            hue = f.species === 'wraith' ? '#bbb6ff' :
-              f.species === 'stalker' ? '#a88fe5' :
-              f.species === 'ashbeast' ? '#ffad72' :
-              ['reedbeast', 'mireling', 'goblin'].includes(f.species)
-                ? '#a9d6a1' : '#e5d0a7',
+            hue =
+              f.species === 'wraith'
+                ? '#bbb6ff'
+                : f.species === 'stalker'
+                  ? '#a88fe5'
+                  : f.species === 'ashbeast'
+                    ? '#ffad72'
+                    : ['reedbeast', 'mireling', 'goblin'].includes(f.species)
+                      ? '#a9d6a1'
+                      : '#e5d0a7',
             heading = Math.atan2(f.y - f.fromY, f.x - f.fromX);
           ctx.strokeStyle = hue;
           ctx.fillStyle = hue;
@@ -1740,25 +1905,27 @@
           if (f.shape === 'circle') {
             const radius = Math.abs(screen({ x: f.x + f.radius, y: f.y }).x - p.x);
             ctx.beginPath();
-            ctx.arc(p.x, p.y, Math.max(2, radius * (0.85 + grow * 0.15)),
-              0, Math.PI * 2);
+            ctx.arc(p.x, p.y, Math.max(2, radius * (0.85 + grow * 0.15)), 0, Math.PI * 2);
             ctx.stroke();
           } else if (f.shape === 'cone') {
             ctx.beginPath();
             ctx.moveTo(source.x, source.y);
             for (let j = 0; j <= 12; j++) {
-              const angle = heading - f.halfAngle + j * f.halfAngle / 6,
-                edge = screen({ x: f.fromX + Math.cos(angle) * f.range,
-                  y: f.fromY + Math.sin(angle) * f.range });
+              const angle = heading - f.halfAngle + (j * f.halfAngle) / 6,
+                edge = screen({
+                  x: f.fromX + Math.cos(angle) * f.range,
+                  y: f.fromY + Math.sin(angle) * f.range,
+                });
               ctx.lineTo(edge.x, edge.y);
             }
             ctx.closePath();
             ctx.stroke();
           } else if (f.shape === 'line') {
-            const end = { x: f.fromX + Math.cos(heading) * f.range,
-              y: f.fromY + Math.sin(heading) * f.range },
-              offset = { x: -Math.sin(heading) * f.halfWidth,
-                y: Math.cos(heading) * f.halfWidth },
+            const end = {
+                x: f.fromX + Math.cos(heading) * f.range,
+                y: f.fromY + Math.sin(heading) * f.range,
+              },
+              offset = { x: -Math.sin(heading) * f.halfWidth, y: Math.cos(heading) * f.halfWidth },
               corners = [
                 { x: f.fromX + offset.x, y: f.fromY + offset.y },
                 { x: end.x + offset.x, y: end.y + offset.y },
@@ -1766,7 +1933,7 @@
                 { x: f.fromX - offset.x, y: f.fromY - offset.y },
               ].map(screen);
             ctx.beginPath();
-            corners.forEach((q, j) => j ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y));
+            corners.forEach((q, j) => (j ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)));
             ctx.closePath();
             ctx.stroke();
           } else {
@@ -2422,7 +2589,9 @@
           : {}),
       };
       const registered = PrototypeSprites?.definitionFor?.(
-        visual, game.regionIndex(), !!game.s.rescued[e.family],
+        visual,
+        game.regionIndex(),
+        !!game.s.rescued[e.family],
       );
       if ((PrototypeVisuals.featureScale?.(visual) || 1) > 1)
         visual.visualScale = PrototypeVisuals.assetSafeScale(visual, registered?.entry);
@@ -2430,8 +2599,220 @@
     }
     // Pixi paints sprites while Canvas retains readable in-world names and
     // interaction symbols. Use the same asset-safe height and zoom contract.
+    function drawCarriedBook(ctx, e, p) {
+      if (e.renderKind === 'enemy' && e.family === 'ridge' && e.ledgerOpen) {
+        // The Ledger of Losses remains visibly carried throughout the fight.
+        ctx.save();
+        ctx.fillStyle = '#49312c';
+        ctx.strokeStyle = '#dcba80';
+        ctx.lineWidth = 2;
+        ctx.fillRect(p.x + 16, p.y - 53, 23, 28);
+        ctx.strokeRect(p.x + 16, p.y - 53, 23, 28);
+        ctx.strokeStyle = '#be9674';
+        for (let k = 0; k < 3; k++) {
+          ctx.beginPath();
+          ctx.moveTo(p.x + 21, p.y - 46 + 7 * k);
+          ctx.lineTo(p.x + 34, p.y - 46 + 7 * k);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+    }
+    function drawKeeperCage(ctx, e, p) {
+      if (e.renderKind === 'npc' && e.kind === 'keeper') {
+        // A roomy iron cage, drawn around the visible captive, not a tiny icon.
+        ctx.strokeStyle = '#d4bea0';
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(p.x - 55, p.y - 112, 110, 144);
+        for (let x = -44; x <= 44; x += 22) {
+          ctx.beginPath();
+          ctx.moveTo(p.x + x, p.y - 112);
+          ctx.lineTo(p.x + x, p.y + 32);
+          ctx.stroke();
+        }
+      }
+    }
+    function drawPursuitCue(ctx, e, p) {
+      if (e.renderKind === 'enemy' && e.pursuitBurst > 0) {
+        ctx.strokeStyle = '#e9d3a8b0';
+        ctx.lineWidth = 2;
+        for (const dy of [-1, 6, 13]) {
+          ctx.beginPath();
+          ctx.moveTo(p.x - 32, p.y + dy);
+          ctx.lineTo(p.x - 22, p.y + dy - 3);
+          ctx.stroke();
+        }
+      }
+    }
+    function drawBundleCue(ctx, e, p) {
+      if (
+        e.renderKind === 'npc' &&
+        e.kind === 'bundle' &&
+        (game.supplyRoom() || e.treasuryRecovery) &&
+        !game.bundleCollected(e)
+      ) {
+        ctx.save();
+        ctx.strokeStyle = '#e7d59aa8';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + 2, 18, 6, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - 43);
+        ctx.lineTo(p.x + 4, p.y - 38);
+        ctx.lineTo(p.x, p.y - 33);
+        ctx.lineTo(p.x - 4, p.y - 38);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+    function collectVisibleEntities() {
+      const z = game.zone();
+      const entities = [];
+      function add(list, renderKind) {
+        for (const e of list) {
+          stats.entitiesConsidered++;
+          if (renderKind === 'enemy' && e.hp <= 0) continue;
+          // Keep culling cheap; resolve and scale sprite artwork only for
+          // visible entities, just as the original Canvas renderer did.
+          const vessel =
+              renderKind === 'npc' && e.harbor && e.kind === 'transport'
+                ? Campaign.rules?.harbors?.[game.zoneId]?.vessel
+                : null,
+            p = screen(vessel ? { ...e, ...vessel } : e),
+            margin = e.harbor ? Math.max(180, 240 * zoom()) : 180;
+          if (
+            p.x < -margin ||
+            p.x > canvas.width + margin ||
+            p.y < -margin ||
+            p.y > canvas.height + margin
+          )
+            continue;
+          // Keep the normal draw eligibility for actors, blockers, resources,
+          // buildings and all other interactive or identity-bearing objects.
+          if (
+            optimized &&
+            renderKind === 'prop' &&
+            optimizationClutter(e) &&
+            (p.x < -20 || p.x > canvas.width + 20 || p.y < -40 || p.y > canvas.height + 30)
+          )
+            continue;
+          entities.push(presentEntity(e, renderKind));
+        }
+      }
+      add(z.props, 'prop');
+      // Authored civic terrain has one fixed, depth-sorted body; no saved duplicate prop.
+      if (
+        game.s.mode !== 'arena' &&
+        !game.isDungeon() &&
+        !game.supplyRoom?.(game.zoneId) &&
+        !game.sideDungeon?.(game.zoneId)
+      )
+        add(
+          (Campaign.rules.terrain[game.regionIndex()] || [])
+            .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
+            .map((p) => ({
+              id:
+                p.kind === 'orrery'
+                  ? 'crown-orrery'
+                  : p.kind === 'grain-silo'
+                    ? 'frontier-grain-silo'
+                    : 'frontier-civic-fountain',
+              x: p.x,
+              y: p.y,
+              r: p.r,
+              structure:
+                p.kind === 'orrery'
+                  ? 'crown-orrery'
+                  : p.kind === 'grain-silo'
+                    ? 'frontier-grain-silo'
+                    : 'frontier-civic-fountain',
+              decorative: true,
+            })),
+          'prop',
+        );
+      add(game.visibleNPCs(), 'npc');
+      add(game.visibleResourceNodes(), 'node');
+      if (game.s.mode !== 'arena') add(z.buildings, 'building');
+      add(z.enemies, 'enemy');
+      add(game.activeLivingParty(), 'ally');
+      add([game.hero], 'hero');
+      if (z.escort) add([{ ...z.escort, icon: '🧑‍🌾', name: 'Supply escort' }], 'ally');
+      entities.sort((a, b) => a.x + a.y - b.x - b.y);
+      stats.entitiesDrawn = entities.length;
+      return entities;
+    }
+    function drawCombatName(ctx, e, p, slot) {
+      const isTrueBoss = e.renderKind === 'enemy' && e.type === 'boss' && e.form === 'true',
+        isCaptain = e.renderKind === 'enemy' && (e.captain || e.roomCaptain);
+      ctx.font = charmedCompanion(e)
+        ? 'bold 10px system-ui'
+        : isTrueBoss
+          ? 'bold 12px system-ui'
+          : e.type === 'boss' || isCaptain
+            ? 'bold 11px system-ui'
+            : '10px system-ui';
+      ctx.fillStyle = charmedCompanion(e)
+        ? '#99efcf'
+        : isTrueBoss
+          ? '#ffe08a'
+          : e.type === 'boss'
+            ? '#ead58c'
+            : isCaptain
+              ? '#d9b981'
+              : e.form === 'ringleader'
+                ? '#d7bd9b'
+                : e.renderKind === 'enemy'
+                  ? '#f8cebd'
+                  : '#dcebcf';
+      ctx.shadowColor = '#091510';
+      ctx.shadowBlur = isTrueBoss ? 5 : isCaptain ? 4 : 3;
+      const label =
+        e.renderKind === 'enemy'
+          ? isTrueBoss
+            ? (e.family === 'crypt'
+                ? 'Lifebinder TRUE'
+                : 'TRUE · ' + e.name.replace(/^TRUE\s+|\s+TRUE$/g, '')) +
+              ' · Lv ' +
+              e.level
+            : (e.estateAttendant
+                ? (e.trueSummon ? 'TRUE ' : '') +
+                  'Attendant' +
+                  (e.trueSummonRole === 'captain' ? ' Ringleader' : '')
+                : e.name) +
+              ' · Lv ' +
+              e.level
+          : e.renderKind === 'ally'
+            ? companionWorldLabel(e)
+            : '';
+      if (slot && namedCompanion(e)) {
+        drawNamedCompanionLabel(label, slot);
+      } else if (slot) {
+        if (e.renderKind === 'enemy' && (e.type === 'boss' || isCaptain)) {
+          ctx.fillStyle = e.type === 'boss' ? '#302915c9' : '#382b20b8';
+          ctx.fillRect(slot.x - slot.width / 2 - 3, slot.y - 12, slot.width + 6, 16);
+          ctx.fillStyle = e.type === 'boss' ? '#ead58c' : '#d9b981';
+        }
+        ctx.fillText(label, slot.x, slot.y, slot.width);
+      }
+      if (isTrueBoss) {
+        const w = ctx.measureText('TRUE').width + 12,
+          y = p.y - spriteHeight(e) - 25;
+        ctx.fillStyle = '#3a2d12dd';
+        ctx.fillRect(p.x - w / 2, y - 11, w, 15);
+        ctx.strokeStyle = '#ffe08a';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(p.x - w / 2, y - 11, w, 15);
+        ctx.fillStyle = '#fff1b4';
+        ctx.font = 'bold 9px system-ui';
+        ctx.fillText('TRUE', p.x, y);
+      }
+      ctx.shadowBlur = 0;
+    }
     function drawPixiNameplates() {
-      const zone = game.zone(), records = [];
+      const zone = game.zone(),
+        records = [];
       const add = (list, kind) => {
         for (const entity of list || []) {
           if (entity.interactionOnly || (kind === 'enemy' && entity.hp <= 0)) continue;
@@ -2440,13 +2821,29 @@
           const p = screen(e);
           if (p.x < -40 || p.x > canvas.width + 40 || p.y < -100 || p.y > canvas.height + 100)
             continue;
-          const name = kind === 'npc'
-            ? e.presentation === 'mobile-captive' ? 'Mira · captive'
-              : e.presentation === 'mobile-forge' ? 'Vera · captive field engineer'
-              : e.name || ''
-            : kind === 'ally' ? companionWorldLabel(e)
-              : kind === 'building' ? e.name || 'Barracks'
-              : kind === 'node' ? 'Dark Lord Tribute' : e.name || '';
+          const name =
+            kind === 'npc'
+              ? e.kind === 'mini'
+                ? e.name +
+                  (game.peace
+                    ? ' · Peaceful'
+                    : game.miniCleared(e.mini)
+                      ? ' · Cleared'
+                      : ' · Guardians')
+                : e.presentation === 'mobile-captive'
+                  ? 'Mira · captive'
+                  : e.presentation === 'mobile-forge'
+                    ? e.veraRepairUntil > game.s.time
+                      ? 'Vera · repairing defenses'
+                      : 'Vera · captive field engineer'
+                    : e.name || ''
+              : kind === 'ally'
+                ? companionWorldLabel(e)
+                : kind === 'building'
+                  ? e.name || 'Barracks'
+                  : kind === 'node'
+                    ? 'Dark Lord Tribute'
+                    : e.name || '';
           records.push({ e, kind, p, name });
         }
       };
@@ -2455,17 +2852,26 @@
       add(zone.buildings, 'building');
       add(zone.enemies, 'enemy');
       add(game.activeLivingParty(), 'ally');
-      const priority = (r) => r.kind === 'npc' ? 0
-        : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain) ? 1
-          : r.kind === 'ally' && namedCompanion(r.e) ? 1.5
-            : r.kind === 'ally' ? 2 : r.kind === 'enemy' ? 3
-            : r.kind === 'building' ? 4 : 5;
+      const priority = (r) =>
+        r.kind === 'npc'
+          ? 0
+          : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
+            ? 1
+            : r.kind === 'ally' && namedCompanion(r.e)
+              ? 1.5
+              : r.kind === 'ally'
+                ? 2
+                : r.kind === 'enemy'
+                  ? 3
+                  : r.kind === 'building'
+                    ? 4
+                    : 5;
       const claimed = [];
       ctx.save();
       ctx.textAlign = 'center';
-      for (const { e, kind, p, name } of records.sort((a, b) => priority(a)-priority(b))) {
+      for (const { e, kind, p, name } of records.sort((a, b) => priority(a) - priority(b))) {
         const width = worldLabelWidth(name, e);
-        const baseY = kind === 'node' ? p.y-25 : p.y-spriteHeight(e)-5;
+        const baseY = kind === 'node' ? p.y - 25 : p.y - spriteHeight(e) - 5;
         let slot = null;
         if (name && charmedCompanion(e)) {
           // The nickname follows its creature exactly. Never search alternate
@@ -2474,32 +2880,45 @@
           if (baseY >= 18 && baseY <= canvas.height - 8) {
             slot = { x, y: baseY, width };
             claimed.push({
-              l: x - width / 2 - 3, r: x + width / 2 + 3,
-              t: baseY - 17, b: baseY + 3,
+              l: x - width / 2 - 3,
+              r: x + width / 2 + 3,
+              t: baseY - 17,
+              b: baseY + 3,
             });
           }
-        } else if (name) for (const dy of [0,-20,-40,-60,-80,20,40,60,-100]) {
-          for (const dx of [0,-42,42,-84,84]) {
-            const x = Math.max(width/2+6,Math.min(canvas.width-width/2-6,p.x+dx)),
-              y = baseY+dy, box = { l:x-width/2-3,r:x+width/2+3,t:y-17,b:y+3 };
-            if (y<18 || y>canvas.height-8 ||
-                claimed.some(q => box.l<q.r && box.r>q.l && box.t<q.b && box.b>q.t)) continue;
-            slot={x,y,width};claimed.push(box);break;
+        } else if (name)
+          for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
+            for (const dx of [0, -42, 42, -84, 84]) {
+              const x = Math.max(width / 2 + 6, Math.min(canvas.width - width / 2 - 6, p.x + dx)),
+                y = baseY + dy,
+                box = { l: x - width / 2 - 3, r: x + width / 2 + 3, t: y - 17, b: y + 3 };
+              if (
+                y < 18 ||
+                y > canvas.height - 8 ||
+                claimed.some((q) => box.l < q.r && box.r > q.l && box.t < q.b && box.b > q.t)
+              )
+                continue;
+              slot = { x, y, width };
+              claimed.push(box);
+              break;
+            }
+            if (slot) break;
           }
-          if (slot) break;
-        }
         if (slot) {
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = kind === 'enemy' ? 3 : 4;
           if (kind === 'npc') {
-            ctx.font='bold 11px system-ui';ctx.fillStyle='#ffe4a2';
-            ctx.fillText(name,slot.x,slot.y,slot.width);
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = '#ffe4a2';
+            ctx.fillText(name, slot.x, slot.y, slot.width);
           } else if (kind === 'building') {
-            ctx.font='bold 10px system-ui';ctx.fillStyle='#e8ddb8';
-            ctx.fillText(name,slot.x,slot.y,slot.width);
+            ctx.font = 'bold 10px system-ui';
+            ctx.fillStyle = '#e8ddb8';
+            ctx.fillText(name, slot.x, slot.y, slot.width);
           } else if (kind === 'node') {
-            ctx.font='10px system-ui';ctx.fillStyle='#f5e7b8';
-            ctx.fillText(name,slot.x,slot.y,slot.width);
+            ctx.font = '10px system-ui';
+            ctx.fillStyle = '#f5e7b8';
+            ctx.fillText(name, slot.x, slot.y, slot.width);
           } else if (kind === 'ally') {
             if (namedCompanion(e)) drawNamedCompanionLabel(name, slot);
             else {
@@ -2508,20 +2927,28 @@
               ctx.fillText(name, slot.x, slot.y, slot.width);
             }
           } else if (kind === 'enemy') {
-            ctx.font=e.type==='boss'?'bold 11px system-ui':'10px system-ui';
-            ctx.fillStyle=e.type==='boss'?'#ead58c':'#f8cebd';
-            ctx.fillText(name+' · Lv '+e.level,slot.x,slot.y,slot.width);
+            drawCombatName(ctx, e, p, slot);
           }
-          ctx.shadowBlur=0;
+          ctx.shadowBlur = 0;
         }
+        if (kind === 'enemy' && !slot) drawCombatName(ctx, e, p, null);
         // The Millhaven captain's recruitment prompt was previously missing.
-        if (kind === 'npc' && e.kind === 'recruiter' && game.zoneId === 'vale' &&
-            game.s.party.length <= 2) {
-          ctx.fillStyle='#f9ce72';
-          ctx.beginPath();ctx.arc(p.x,p.y-80,16,0,Math.PI*2);ctx.fill();
-          ctx.strokeStyle='#fff1b4';ctx.lineWidth=2;ctx.stroke();
-          ctx.fillStyle='#19291e';ctx.font='bold 23px system-ui';
-          ctx.fillText('!',p.x,p.y-72);
+        if (
+          kind === 'npc' &&
+          e.kind === 'recruiter' &&
+          game.zoneId === 'vale' &&
+          game.s.party.length <= 2
+        ) {
+          ctx.fillStyle = '#f9ce72';
+          ctx.beginPath();
+          ctx.arc(p.x, p.y - 80, 16, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#fff1b4';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.fillStyle = '#19291e';
+          ctx.font = 'bold 23px system-ui';
+          ctx.fillText('!', p.x, p.y - 72);
         }
       }
       ctx.restore();
@@ -2533,8 +2960,10 @@
       // These four edges exactly match Navigation.blocked's 40px inset.
       const far = game.zoneSize() - 40,
         corners = [
-          { x: 40, y: 40 }, { x: far, y: 40 },
-          { x: far, y: far }, { x: 40, y: far },
+          { x: 40, y: 40 },
+          { x: far, y: 40 },
+          { x: far, y: far },
+          { x: 40, y: far },
         ].map(screen);
       ctx.save();
       ctx.strokeStyle = '#9dc9df';
@@ -2580,7 +3009,14 @@
         drawArenaBoundary();
         const z = game.zone();
         PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000, warningFrameShapes);
-        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time, warningFrameShapes);
+        PrototypeCombatVisuals.ground(
+          ctx,
+          screen,
+          game,
+          'underlay-cue',
+          game.s.time,
+          warningFrameShapes,
+        );
         PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
         for (const e of [
           ...z.enemies.filter((u) => u.hp > 0),
@@ -2594,6 +3030,8 @@
             healthPlate(e, p);
         }
         drawPixiNameplates();
+        // Reuse the bounded alpha-mask painter: no GPU readback or new texture.
+        drawOcclusionOutlines(collectVisibleEntities());
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
         drawVisualFx();
@@ -2620,110 +3058,117 @@
           Campaign.dungeonIds.includes(game.zoneId) ||
           !!Campaign.rules?.treasuryArchitecture?.[game.zoneId];
       if (game.s.mode !== 'arena') {
-      ctx.save();
-      if (authoredFloor) {
-        PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
-        ctx.clip();
-      } else if (!dungeon && !room && ['highlands', 'frontier', 'crown'].includes(game.zoneId)) {
-        // Edge tiles straddle their anchors. Clip them to the same map boundary
-        // as the channel, so a final half-tile cannot cap its open mouth.
-        ctx.beginPath();
-        for (const [j, q] of [
-          { x: 0, y: 0 },
-          { x: size, y: 0 },
-          { x: size, y: size },
-          { x: 0, y: size },
-        ].entries()) {
-          const p = screen(q);
-          if (j) ctx.lineTo(p.x, p.y);
-          else ctx.moveTo(p.x, p.y);
+        ctx.save();
+        if (authoredFloor) {
+          PrototypeVisuals.dungeonFloorPath(ctx, screen, game.zoneId, size);
+          ctx.clip();
+        } else if (!dungeon && !room && ['highlands', 'frontier', 'crown'].includes(game.zoneId)) {
+          // Edge tiles straddle their anchors. Clip them to the same map boundary
+          // as the channel, so a final half-tile cannot cap its open mouth.
+          ctx.beginPath();
+          for (const [j, q] of [
+            { x: 0, y: 0 },
+            { x: size, y: 0 },
+            { x: size, y: size },
+            { x: 0, y: size },
+          ].entries()) {
+            const p = screen(q);
+            if (j) ctx.lineTo(p.x, p.y);
+            else ctx.moveTo(p.x, p.y);
+          }
+          ctx.closePath();
+          ctx.clip();
         }
-        ctx.closePath();
-        ctx.clip();
-      }
-      const bounds = tileBounds(size);
-      const paintFloor = (target, o, width, height) => {
-        const b = tileBounds(size, width, height, o);
-        for (let x = b.x1; x <= b.x2; x += 80)
-          for (let y = b.y1; y <= b.y2; y += 80) {
-            const p = iso(x, y);
-            p.x += o.x;
-            p.y += o.y;
-            if (p.x < -160 || p.x > width + 160 || p.y < -100 || p.y > height + 100) continue;
+        const bounds = tileBounds(size);
+        const paintFloor = (target, o, width, height) => {
+          const b = tileBounds(size, width, height, o);
+          for (let x = b.x1; x <= b.x2; x += 80)
+            for (let y = b.y1; y <= b.y2; y += 80) {
+              const p = iso(x, y);
+              p.x += o.x;
+              p.y += o.y;
+              if (p.x < -160 || p.x > width + 160 || p.y < -100 || p.y > height + 100) continue;
+              PrototypeVisuals.floor(
+                target,
+                p,
+                x,
+                y,
+                i,
+                false,
+                '',
+                false,
+                optimized ? null : PrototypeMaterials,
+              );
+              stats.floorTilesPainted++;
+            }
+        };
+        let reused = false;
+        if (cacheGround && !dungeon && !room && groundCache) {
+          const key = 'terrain:ground:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][i];
+          reused = groundCache.draw(ctx, {
+            width: canvas.width,
+            height: canvas.height,
+            origin,
+            scene: z,
+            revision: optimized
+              ? 'optimization-procedural-v1'
+              : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
+            paint: paintFloor,
+          });
+        } else groundCache?.clear();
+        for (let x = bounds.x1; x <= bounds.x2; x += 80)
+          for (let y = bounds.y1; y <= bounds.y2; y += 80) {
+            stats.tileCandidates++;
+            const p = screen({ x, y });
+            if (p.x < -160 || p.x > canvas.width + 160 || p.y < -100 || p.y > canvas.height + 100)
+              continue;
+            const blocked =
+              dungeon &&
+              !authoredFloor &&
+              game.blocked(x + 40, y + 40, game.zoneId, 0) &&
+              !z.props.some((q) => Math.hypot(x + 40 - q.x, y + 40 - q.y) < q.r);
+            stats.tilesDrawn++;
+            if (reused) continue;
+            stats.floorTilesPainted++;
             PrototypeVisuals.floor(
-              target,
+              ctx,
               p,
               x,
               y,
               i,
-              false,
-              '',
-              false,
+              room,
+              room ? game.zoneId : dungeon ? game.zoneId : '',
+              blocked,
               optimized ? null : PrototypeMaterials,
             );
-            stats.floorTilesPainted++;
           }
-      };
-      let reused = false;
-      if (cacheGround && !dungeon && !room && groundCache) {
-        const key = 'terrain:ground:' + ['vale', 'march', 'highlands', 'frontier', 'crown'][i];
-        reused = groundCache.draw(ctx, {
-          width: canvas.width,
-          height: canvas.height,
-          origin,
-          scene: z,
-          revision: optimized
-            ? 'optimization-procedural-v1'
-            : PrototypeMaterials?.surfaceRevision?.(key) || 'procedural',
-          paint: paintFloor,
-        });
-      } else groundCache?.clear();
-      for (let x = bounds.x1; x <= bounds.x2; x += 80)
-        for (let y = bounds.y1; y <= bounds.y2; y += 80) {
-          stats.tileCandidates++;
-          const p = screen({ x, y });
-          if (p.x < -160 || p.x > canvas.width + 160 || p.y < -100 || p.y > canvas.height + 100)
-            continue;
-          const blocked =
-            dungeon &&
-            !authoredFloor &&
-            game.blocked(x + 40, y + 40, game.zoneId, 0) &&
-            !z.props.some((q) => Math.hypot(x + 40 - q.x, y + 40 - q.y) < q.r);
-          stats.tilesDrawn++;
-          if (reused) continue;
-          stats.floorTilesPainted++;
-          PrototypeVisuals.floor(
+        ctx.restore();
+        finishPhase('floor');
+        if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
+        // Optional #294 viewport integration is disabled: exact art parity was
+        // restored, but paired controls did not establish a reliable speed gain.
+        if (!game.isDungeon())
+          PrototypeVisuals.terrain(
             ctx,
-            p,
-            x,
-            y,
+            screen,
             i,
-            room,
-            room ? game.zoneId : dungeon ? game.zoneId : '',
-            blocked,
+            size,
             optimized ? null : PrototypeMaterials,
+            i === 2 ? { width: canvas.width, height: canvas.height } : null,
+            z.crownInheritedDecks || [],
+            staticTerrainTimeSeconds,
+            omitTerrainMotion,
           );
-        }
-      ctx.restore();
-      finishPhase('floor');
-      if (authoredFloor) PrototypeVisuals.dungeonArchitecture(ctx, screen, game.zoneId, size);
-      // Optional #294 viewport integration is disabled: exact art parity was
-      // restored, but paired controls did not establish a reliable speed gain.
-      if (!game.isDungeon())
-        PrototypeVisuals.terrain(
+        PrototypeVisuals.roads(
           ctx,
+          z.roads || [],
           screen,
           i,
-          size,
           optimized ? null : PrototypeMaterials,
-          i === 2 ? { width: canvas.width, height: canvas.height } : null,
-          z.crownInheritedDecks || [],
-          staticTerrainTimeSeconds,
         );
-      PrototypeVisuals.roads(ctx, z.roads || [], screen, i, optimized ? null : PrototypeMaterials);
-      PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
-      if (!game.isDungeon())
-        PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
+        PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
+        if (!game.isDungeon())
+          PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       } else {
         // No tile iteration, terrain sprites, road rasterization or scenery compositing.
         groundCache?.clear();
@@ -2734,79 +3179,20 @@
       // Their real, current state is drawn by the transparent 2D cue overlay.
       if (renderLayer !== 'background') {
         PrototypeCombatVisuals.ground(ctx, screen, game, 'fill', now() / 1000, warningFrameShapes);
-        PrototypeCombatVisuals.ground(ctx, screen, game, 'underlay-cue', game.s.time, warningFrameShapes);
+        PrototypeCombatVisuals.ground(
+          ctx,
+          screen,
+          game,
+          'underlay-cue',
+          game.s.time,
+          warningFrameShapes,
+        );
       }
       finishPhase('terrain');
       if (renderLayer === 'background') return;
       const boardCue = null,
         captainCue = game.zoneId === 'vale' && game.s.party.length <= 2;
-      const entities = [];
-      function add(list, renderKind) {
-        for (const e of list) {
-          stats.entitiesConsidered++;
-          if (renderKind === 'enemy' && e.hp <= 0) continue;
-          // Keep culling cheap; resolve and scale sprite artwork only for
-          // visible entities, just as the original Canvas renderer did.
-          const vessel =
-              renderKind === 'npc' && e.harbor && e.kind === 'transport'
-                ? Campaign.rules?.harbors?.[game.zoneId]?.vessel
-                : null,
-            p = screen(vessel ? { ...e, ...vessel } : e),
-            margin = e.harbor ? Math.max(180, 240 * zoom()) : 180;
-          if (
-            p.x < -margin ||
-            p.x > canvas.width + margin ||
-            p.y < -margin ||
-            p.y > canvas.height + margin
-          )
-            continue;
-          // Keep the normal draw eligibility for actors, blockers, resources,
-          // buildings and all other interactive or identity-bearing objects.
-          if (
-            optimized &&
-            renderKind === 'prop' &&
-            optimizationClutter(e) &&
-            (p.x < -20 || p.x > canvas.width + 20 || p.y < -40 || p.y > canvas.height + 30)
-          )
-            continue;
-          entities.push(presentEntity(e, renderKind));
-        }
-      }
-      add(z.props, 'prop');
-      // Authored civic terrain has one fixed, depth-sorted body; no saved duplicate prop.
-      if (game.s.mode !== 'arena' && !game.isDungeon() && !game.supplyRoom?.(game.zoneId) && !game.sideDungeon?.(game.zoneId))
-        add(
-          (Campaign.rules.terrain[game.regionIndex()] || [])
-            .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
-            .map((p) => ({
-              id:
-                p.kind === 'orrery'
-                  ? 'crown-orrery'
-                  : p.kind === 'grain-silo'
-                    ? 'frontier-grain-silo'
-                    : 'frontier-civic-fountain',
-              x: p.x,
-              y: p.y,
-              r: p.r,
-              structure:
-                p.kind === 'orrery'
-                  ? 'crown-orrery'
-                  : p.kind === 'grain-silo'
-                    ? 'frontier-grain-silo'
-                    : 'frontier-civic-fountain',
-              decorative: true,
-            })),
-          'prop',
-        );
-      add(game.visibleNPCs(), 'npc');
-      add(game.visibleResourceNodes(), 'node');
-      if (game.s.mode !== 'arena') add(z.buildings, 'building');
-      add(z.enemies, 'enemy');
-      add(game.activeLivingParty(), 'ally');
-      add([game.hero], 'hero');
-      if (z.escort) add([{ ...z.escort, icon: '🧑‍🌾', name: 'Supply escort' }], 'ally');
-      entities.sort((a, b) => a.x + a.y - b.x - b.y);
-      stats.entitiesDrawn = entities.length;
+      const entities = collectVisibleEntities();
       // Reserve nameplates once in screen space, with interactable NPCs and
       // bosses first. Entity draw/depth order must not decide which nearby
       // title wins when two names would occupy the same pixels.
@@ -2837,10 +3223,10 @@
                 : e.renderKind === 'ally'
                   ? 2
                   : e.renderKind === 'enemy'
-                  ? 3
-                  : e.renderKind === 'building'
-                    ? 4
-                    : 5;
+                    ? 3
+                    : e.renderKind === 'building'
+                      ? 4
+                      : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
           !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
@@ -2869,24 +3255,29 @@
           if (baseY >= 18 && baseY <= canvas.height - 8) {
             slot = { x, y: baseY, width: w };
             claimedLabels.push({
-              l: x - w / 2 - 3, r: x + w / 2 + 3,
-              t: baseY - h, b: baseY + 3,
+              l: x - w / 2 - 3,
+              r: x + w / 2 + 3,
+              t: baseY - h,
+              b: baseY + 3,
             });
           }
-        } else for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
-          for (const dx of [0, -42, 42, -84, 84]) {
-            const x = Math.max(w / 2 + 6, Math.min(canvas.width - w / 2 - 6, anchor.x + dx));
-            const y = baseY + dy;
-            if (y < 18 || y > canvas.height - 8) continue;
-            const box = { l: x - w / 2 - 3, r: x + w / 2 + 3, t: y - h, b: y + 3 };
-            if (claimedLabels.some((q) => box.l < q.r && box.r > q.l && box.t < q.b && box.b > q.t))
-              continue;
-            slot = { x, y, width: w };
-            claimedLabels.push(box);
-            break;
+        } else
+          for (const dy of [0, -20, -40, -60, -80, 20, 40, 60, -100]) {
+            for (const dx of [0, -42, 42, -84, 84]) {
+              const x = Math.max(w / 2 + 6, Math.min(canvas.width - w / 2 - 6, anchor.x + dx));
+              const y = baseY + dy;
+              if (y < 18 || y > canvas.height - 8) continue;
+              const box = { l: x - w / 2 - 3, r: x + w / 2 + 3, t: y - h, b: y + 3 };
+              if (
+                claimedLabels.some((q) => box.l < q.r && box.r > q.l && box.t < q.b && box.b > q.t)
+              )
+                continue;
+              slot = { x, y, width: w };
+              claimedLabels.push(box);
+              break;
+            }
+            if (slot) break;
           }
-          if (slot) break;
-        }
         if (slot) labelSlots.set(e, slot);
       }
 
@@ -2899,27 +3290,7 @@
         if (p.x < -180 || p.x > canvas.width + 180 || p.y < -180 || p.y > canvas.height + 180)
           continue;
         if (!e.interactionOnly) {
-          if (
-            e.renderKind === 'npc' &&
-            e.kind === 'bundle' &&
-            (game.supplyRoom() || e.treasuryRecovery) &&
-            !game.bundleCollected(e)
-          ) {
-            ctx.save();
-            ctx.strokeStyle = '#e7d59aa8';
-            ctx.lineWidth = 1.4;
-            ctx.beginPath();
-            ctx.ellipse(p.x, p.y + 2, 18, 6, 0, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y - 43);
-            ctx.lineTo(p.x + 4, p.y - 38);
-            ctx.lineTo(p.x, p.y - 33);
-            ctx.lineTo(p.x - 4, p.y - 38);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.restore();
-          }
+          drawBundleCue(ctx, e, p);
           if (e.kind !== 'critical-codex') {
             groundMarker(e, p);
             entityShadow(e, p);
@@ -2929,16 +3300,7 @@
         }
         ctx.font = (e.renderKind === 'prop' ? 34 : 30) + 'px system-ui';
         ctx.textAlign = 'center';
-        if (e.renderKind === 'enemy' && e.pursuitBurst > 0) {
-          ctx.strokeStyle = '#e9d3a8b0';
-          ctx.lineWidth = 2;
-          for (const dy of [-1, 6, 13]) {
-            ctx.beginPath();
-            ctx.moveTo(p.x - 32, p.y + dy);
-            ctx.lineTo(p.x - 22, p.y + dy - 3);
-            ctx.stroke();
-          }
-        }
+        drawPursuitCue(ctx, e, p);
         if (!e.interactionOnly)
           sprite(
             e.kind === 'archive-record'
@@ -2954,33 +3316,8 @@
                 : e,
             p,
           );
-        if (e.renderKind === 'enemy' && e.family === 'ridge' && e.ledgerOpen) {
-          // The Ledger of Losses remains visibly carried throughout the fight.
-          ctx.save();
-          ctx.fillStyle = '#49312c';
-          ctx.strokeStyle = '#dcba80';
-          ctx.lineWidth = 2;
-          ctx.fillRect(p.x + 16, p.y - 53, 23, 28);
-          ctx.strokeRect(p.x + 16, p.y - 53, 23, 28);
-          ctx.strokeStyle = '#be9674';
-          for (let k = 0; k < 3; k++) {
-            ctx.beginPath();
-            ctx.moveTo(p.x + 21, p.y - 46 + 7 * k);
-            ctx.lineTo(p.x + 34, p.y - 46 + 7 * k);
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-        if (
-          ['hero', 'ally'].includes(e.renderKind) &&
-          z.enemies.some(
-            (b) =>
-              b.family === 'ridge' &&
-              b.hp > 0 &&
-              b.ledgerMarkUntil > game.s.time &&
-              b.ledgerMarkedId === (e.renderKind === 'hero' ? 'hero' : e.id),
-          )
-        ) {
+        drawCarriedBook(ctx, e, p);
+        if (ledgerMarked(game, e)) {
           ctx.save();
           ctx.strokeStyle = '#ebc479';
           ctx.lineWidth = 2;
@@ -2989,88 +3326,12 @@
           ctx.stroke();
           ctx.restore();
         }
-        if (e.renderKind === 'npc' && e.kind === 'keeper') {
-          // A roomy iron cage, drawn around the visible captive, not a tiny icon.
-          ctx.strokeStyle = '#d4bea0';
-          ctx.lineWidth = 2.5;
-          ctx.strokeRect(p.x - 55, p.y - 112, 110, 144);
-          for (let x = -44; x <= 44; x += 22) {
-            ctx.beginPath();
-            ctx.moveTo(p.x + x, p.y - 112);
-            ctx.lineTo(p.x + x, p.y + 32);
-            ctx.stroke();
-          }
-        }
+        drawKeeperCage(ctx, e, p);
         if (['enemy', 'ally', 'hero'].includes(e.renderKind)) {
           const visibleCombat = e.renderKind !== 'enemy' || worldLabelVisible(e);
           if (visibleCombat && !e.neutral) healthPlate(e, p);
           if (visibleCombat) {
-            const isTrueBoss = e.renderKind === 'enemy' && e.type === 'boss' && e.form === 'true',
-              isCaptain = e.renderKind === 'enemy' && (e.captain || e.roomCaptain);
-            ctx.font = charmedCompanion(e)
-              ? 'bold 10px system-ui'
-              : isTrueBoss
-                ? 'bold 12px system-ui'
-              : e.type === 'boss' || isCaptain
-                ? 'bold 11px system-ui'
-                : '10px system-ui';
-            ctx.fillStyle = charmedCompanion(e)
-              ? '#99efcf'
-              : isTrueBoss
-                ? '#ffe08a'
-              : e.type === 'boss'
-                ? '#ead58c'
-                : isCaptain
-                  ? '#d9b981'
-                  : e.form === 'ringleader'
-                    ? '#d7bd9b'
-                    : e.renderKind === 'enemy'
-                      ? '#f8cebd'
-                      : '#dcebcf';
-            ctx.shadowColor = '#091510';
-            ctx.shadowBlur = isTrueBoss ? 5 : isCaptain ? 4 : 3;
-            const label =
-              e.renderKind === 'enemy'
-                ? isTrueBoss
-                  ? (e.family === 'crypt'
-                      ? 'Lifebinder TRUE'
-                      : 'TRUE · ' + e.name.replace(/^TRUE\s+|\s+TRUE$/g, '')) +
-                    ' · Lv ' +
-                    e.level
-                  : (e.estateAttendant
-                      ? (e.trueSummon ? 'TRUE ' : '') +
-                        'Attendant' +
-                        (e.trueSummonRole === 'captain' ? ' Ringleader' : '')
-                      : e.name) +
-                    ' · Lv ' +
-                    e.level
-                : e.renderKind === 'ally'
-                  ? companionWorldLabel(e)
-                  : '';
-            const slot = labelSlots.get(e);
-            if (slot && namedCompanion(e)) {
-              drawNamedCompanionLabel(label, slot);
-            } else if (slot) {
-              if (e.renderKind === 'enemy' && (e.type === 'boss' || isCaptain)) {
-                ctx.fillStyle = e.type === 'boss' ? '#302915c9' : '#382b20b8';
-                ctx.fillRect(slot.x - slot.width / 2 - 3, slot.y - 12, slot.width + 6, 16);
-                ctx.fillStyle = e.type === 'boss' ? '#ead58c' : '#d9b981';
-              }
-              ctx.fillText(label, slot.x, slot.y, slot.width);
-            }
-            if (isTrueBoss) {
-              const w = ctx.measureText('TRUE').width + 12,
-                y = p.y - spriteHeight(e) - 25;
-              ctx.fillStyle = '#3a2d12dd';
-              ctx.fillRect(p.x - w / 2, y - 11, w, 15);
-              ctx.strokeStyle = '#ffe08a';
-              ctx.lineWidth = 1.5;
-              ctx.strokeRect(p.x - w / 2, y - 11, w, 15);
-              ctx.fillStyle = '#fff1b4';
-              ctx.font = 'bold 9px system-ui';
-              ctx.fillText('TRUE', p.x, y);
-            }
-            ctx.shadowBlur = 0;
+            drawCombatName(ctx, e, p, labelSlots.get(e));
           }
         }
         if (e.renderKind === 'npc') {
@@ -3238,29 +3499,18 @@
         hero: screen(game.hero),
         lights: [...carriedLanterns, ...nightSources],
       });
-      // Choking Ash is intentionally visible and remains fixed where cast.
-      for (const e of z.enemies)
-        if (
-          e.type === 'boss' &&
-          e.family === 'warlord' &&
-          e.aggro &&
-          e.hp > 0 &&
-          e.ashCloud &&
-          e.ashCloud.expires > game.s.time
-        ) {
-          const center = screen(e.ashCloud);
-          const edge = screen({ x: e.ashCloud.x + 180, y: e.ashCloud.y });
-          const span = Math.max(35, Math.abs(edge.x - center.x));
-          ctx.save();
-          ctx.fillStyle = '#786d64a0';
-          ctx.strokeStyle = '#d4bba088';
-          ctx.lineWidth = 2.5;
-          ctx.beginPath();
-          ctx.ellipse(center.x, center.y, span, span * 0.48, 0, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.stroke();
-          ctx.restore();
-        }
+      // Original Canvas composition retained; GPU places this field below actors.
+      for (const cloud of ashCloudPresentation(game, screen)) {
+        ctx.save();
+        ctx.fillStyle = '#786d64a0';
+        ctx.strokeStyle = '#d4bba088';
+        ctx.lineWidth = cloud.lineWidth;
+        ctx.beginPath();
+        ctx.ellipse(cloud.x, cloud.y, cloud.rx, cloud.ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
       PrototypeEnemyVfxArt?.ground(ctx, screen, game, visualFx, effectRecorder);
       drawOcclusionOutlines(entities);
       // Critical outlines and transient effects retain contrast through the night grade.
@@ -3292,9 +3542,10 @@
         effectRecorder = null;
         retainedEffectRecorder = null;
       },
-      effectDiagnosticsReport: () => retainedEffectRecorder
-        ? retainedEffectRecorder.report(!!effectRecorder)
-        : { version: 1, recording: false, captured: false, identities: [] },
+      effectDiagnosticsReport: () =>
+        retainedEffectRecorder
+          ? retainedEffectRecorder.report(!!effectRecorder)
+          : { version: 1, recording: false, captured: false, identities: [] },
       noteEffectDrawDecision(eligible, skipped) {
         effectRecorder?.decision(eligible, skipped);
       },
@@ -3302,11 +3553,80 @@
         effectRecorder?.callback(row, visualFx.length);
       },
       presentEntity,
+      setSilhouetteFrames: (frames) => {
+        silhouetteFrames = frames;
+      },
       facingFor: (visual) => {
         game = getGame();
         return paintedFacing(visual);
       },
+      // Keep carried Wraith lanterns attached to the same idle/bob position
+      // Canvas paints. Pixi needs the live presentation point, not just the
+      // collision/foot anchor, and the result is in screen pixels.
+      visualPositionFor: (visual) => {
+        game = getGame();
+        const p = visualPosition(visual, screen(visual));
+        return { x: p.x * zoom(), y: p.y * zoom() };
+      },
+      actorDetailsFor: (e) => {
+        game = getGame();
+        const aura =
+          e.renderKind === 'enemy' && (['true', 'ringleader'].includes(e.form) || e.frenzy);
+        const flight =
+          e.family === 'abyss' && e.motion && (e.motion.flightPath?.length || e.motion.aerial);
+        const bundle =
+          e.renderKind === 'npc' &&
+          e.kind === 'bundle' &&
+          (game.supplyRoom() || e.treasuryRecovery) &&
+          !game.bundleCollected(e);
+        const underlay = !!(aura || flight || bundle || e.pursuitBurst > 0);
+        const overlay = !!((e.family === 'ridge' && e.ledgerOpen) || e.kind === 'keeper');
+        if (!underlay && !overlay) return null;
+        return {
+          underlay,
+          overlay,
+          visual: e,
+          signature: JSON.stringify([
+            e.form,
+            !!e.frenzy,
+            !!e.ledgerOpen,
+            bundle,
+            e.pursuitBurst > 0,
+            flight ? e.motion.flightPath?.[0] || e.motion.target : null,
+            aura ? now() : 0,
+            spriteHeight(e),
+            reducedMotion(),
+          ]),
+        };
+      },
+      paintActorDetails: (brush, e, layer) => {
+        game = getGame();
+        const p = { x: 0, y: 0 };
+        if (layer === 'underlay') {
+          drawBundleCue(brush, e, p);
+          if (!e.interactionOnly && e.kind !== 'critical-codex') entityAura(e, p, brush);
+          const base = screen(e);
+          drawAbyssFlightCues(brush, e, p, (point) => {
+            const q = screen(point);
+            return { x: q.x - base.x, y: q.y - base.y };
+          });
+          drawPursuitCue(brush, e, p);
+        } else {
+          drawCarriedBook(brush, e, p);
+          drawKeeperCage(brush, e, p);
+        }
+      },
       groundPresentation,
+      ledgerMarked: (actor) => ledgerMarked(getGame(), actor),
+      ashCloudPresentation: () =>
+        ashCloudPresentation(
+          getGame(),
+          (p) => {
+            const point = screen(p);
+            return { x: point.x * zoom(), y: point.y * zoom() };
+          },
+          zoom(),
+        ),
       // Presentation-only layer split for the opt-in PixiJS experiment.
       setRenderLayer: (layer) => {
         if (layer !== 'full' && layer !== 'overlay' && layer !== 'background')
@@ -3363,6 +3683,8 @@
   }
   const api = {
     create,
+    ashCloudPresentation,
+    ledgerMarked,
     createEffectDiagnostics,
     nightLightKind,
     bodyFacingSide,

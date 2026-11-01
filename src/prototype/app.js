@@ -915,10 +915,11 @@
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
-    'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.':
-      'Canvas 2D es la opción predeterminada segura. PixiJS WebGL2 es experimental; puedes volver a Canvas cuando quieras.',
-    'Canvas 2D · Default': 'Canvas 2D · Predeterminado',
-    'PixiJS WebGL2 · Experimental': 'PixiJS WebGL2 · Experimental',
+    'PixiJS WebGL2 is the default. Canvas 2D remains available as a backup.':
+      'PixiJS WebGL2 es el motor predeterminado. Canvas 2D sigue disponible como respaldo.',
+    'Canvas 2D · Backup': 'Canvas 2D · Respaldo',
+    'PixiJS WebGL2 · Default': 'PixiJS WebGL2 · Predeterminado',
+    'PixiJS WebGL2 · 15-second trial': 'PixiJS WebGL2 · Prueba de 15 segundos',
     'Keep WebGL2': 'Conservar WebGL2',
     'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
@@ -1613,20 +1614,33 @@
   // Browsers require a user gesture before audible playback. Unlock on that
   // gesture itself, not on the first movement, attack or skill receipt.
   // Existing menu/button unlocks remain the click/tap fallback for WebKit.
+  function updateTitleSoundtrack() {
+    // This selects music only: opening the title must never advance the game.
+    // A completed gesture or a manual Return can run before the next frame.
+    if (started || titleLoading || sceneTransition || startupUpdatePending ||
+        !focused || document.hidden || !game || audio.ctx?.state !== 'running') return;
+    audio.update(game, false, {
+      started: false, menu: !!menu, paused: false, backgrounded: false,
+    });
+  }
   function unlockSoundtrackOnGesture(event) {
     if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
     if (audio.ctx?.state === 'running') {
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+      updateTitleSoundtrack();
       return;
     }
-    void audio.unlock().then((ready) => {
-      if (!ready) return;
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+    // On iOS, the actual gesture must initiate AudioContext resume; after
+    // that asynchronous resume finishes, select the title immediately rather
+    // than relying on a later (possibly throttled) animation frame.
+    void audio.unlock().then((unlocked) => {
+      if (unlocked) updateTitleSoundtrack();
     });
   }
+  // Safari may recognize a completed tap rather than pointerdown. Keep
+  // listening so an interrupted audio context can resume on another gesture.
   addEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+  addEventListener('touchend', unlockSoundtrackOnGesture, true);
+  addEventListener('click', unlockSoundtrackOnGesture, true);
   addEventListener('keydown', unlockSoundtrackOnGesture, true);
   if (typeof PrototypeMaterials !== 'undefined')
     PrototypeMaterials.setOptimizationMode(optimizationMode);
@@ -1644,12 +1658,14 @@
     appControllerReloaded = false,
     appUpdateCheck = null,
     appUpdateBusy = false,
-    appLastUpdateCheck = -Infinity;
+    appLastUpdateCheck = -Infinity,
+    startupUpdatePending = true,
+    startupUpdateNotice = null;
   let hadServiceWorkerController = !!navigator.serviceWorker?.controller;
   function refreshUpdateNotice() {
     appUpdateReady = !!appRegistration?.waiting;
     const button = $('update-button');
-    button.hidden = !appUpdateReady;
+    button.hidden = startupUpdatePending || !appUpdateReady;
     button.textContent = tr('Update available');
     button.setAttribute('aria-label', tr('Install available game update'));
     button.disabled = appUpdateBusy || appReloadRequested;
@@ -1671,7 +1687,7 @@
     return appUpdateCheck;
   }
   async function updateApp() {
-    if (!appRegistration || appUpdateBusy || appReloadRequested) return;
+    if (startupUpdatePending || !appRegistration || appUpdateBusy || appReloadRequested) return;
     let activationPause = null;
     appUpdateBusy = true;
     refreshUpdateNotice();
@@ -1730,6 +1746,149 @@
     }
   }
   $('update-button').onclick = updateApp;
+
+  // The startup gate runs before the title becomes visible or graphics are
+  // prepared. Service-worker installation is atomic: an incomplete download
+  // never replaces the previous offline game or its save storage.
+  function refreshStartupUpdateNotice() {
+    const notice = $('startup-update-notice');
+    notice.hidden = !startupUpdateNotice;
+    notice.textContent = startupUpdateNotice === 'offline'
+      ? (language === 'es'
+        ? 'Sin conexión. No se pudieron buscar actualizaciones; jugarás con la última versión instalada.'
+        : 'You are offline. Could not check for updates; playing the last installed version.')
+      : startupUpdateNotice === 'unavailable'
+        ? (language === 'es'
+          ? 'No se pudieron buscar actualizaciones. Puedes jugar con la última versión instalada.'
+          : 'Could not check for updates. You can play the last installed version.')
+        : '';
+  }
+  function startupUpdateText(english, spanish) {
+    $('startup-update-text').textContent = language === 'es' ? spanish : english;
+  }
+  function startupBound(promise, milliseconds) {
+    return new Promise((resolve) => {
+      const timer = setTimeout(() => resolve(false), milliseconds);
+      Promise.resolve(promise).then(
+        (value) => { clearTimeout(timer); resolve(value); },
+        () => { clearTimeout(timer); resolve(false); },
+      );
+    });
+  }
+  // Browsers can serve an offline page from a service-worker cache while
+  // navigator.onLine still reports true. Probe a HEAD request that our worker
+  // explicitly does not intercept before claiming an online update check.
+  async function startupNetworkAvailable() {
+    if (navigator.onLine === false) return false;
+    if (typeof fetch !== 'function') return true; // non-browser test shell
+    try {
+      return !!(await startupBound(
+        fetch(new URL('./sw.js?network-probe=' + Date.now(), location.href), {
+          method: 'HEAD', cache: 'no-store',
+        }).then(() => true, () => false),
+        4000,
+      ));
+    } catch (_) { return false; }
+  }
+  function waitForWorkerInstall(worker) {
+    if (!worker || ['installed', 'activated', 'redundant'].includes(worker.state))
+      return Promise.resolve(true);
+    return new Promise((resolve) => {
+      const done = () => {
+        if (!['installed', 'activated', 'redundant'].includes(worker.state)) return;
+        worker.removeEventListener('statechange', done);
+        resolve(true);
+      };
+      worker.addEventListener('statechange', done);
+      done();
+    });
+  }
+  function finishStartupUpdate() {
+    if (!startupUpdatePending) return;
+    startupUpdatePending = false;
+    $('startup-update').hidden = true;
+    refreshUpdateNotice();
+    showTitleScreen();
+  }
+  async function initializeStartupUpdate() {
+    const supported = 'serviceWorker' in navigator &&
+      (location.protocol === 'https:' || location.hostname === 'localhost' ||
+       location.hostname === '127.0.0.1');
+    if (!supported) {
+      startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
+      return finishStartupUpdate();
+    }
+    const serviceWorker = navigator.serviceWorker;
+    try {
+      startupUpdateText('Checking for updates…', 'Buscando actualizaciones…');
+      const reg = await startupBound(
+        serviceWorker.getRegistration('./').then(
+          (existing) => existing || serviceWorker.register('./sw.js'),
+        ),
+        12000,
+      );
+      if (!reg) {
+        startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
+        return finishStartupUpdate();
+      }
+      appRegistration = reg;
+      const watchWorker = () => {
+        refreshUpdateNotice();
+        reg.installing?.addEventListener('statechange', refreshUpdateNotice);
+      };
+      reg.addEventListener('updatefound', watchWorker);
+      watchWorker();
+
+      // A fully downloaded waiting update also works offline. Otherwise do
+      // one explicit freshness check, before any menu or game-scene preparation.
+      if (!reg.waiting && serviceWorker.controller) {
+        if (!await startupNetworkAvailable()) startupUpdateNotice = 'offline';
+        else {
+          // A rejected or timed-out check is not an update: keep the complete
+          // installed version playable and explain what could not be verified.
+          const checked = await startupBound(
+            checkAppUpdate(true).then(() => true, () => false), 12000);
+          if (!checked)
+            startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
+          if (reg.installing) {
+            startupUpdateText('Downloading update…', 'Descargando actualización…');
+            const installed = await startupBound(waitForWorkerInstall(reg.installing), 25000);
+            if (!installed && !reg.waiting) startupUpdateNotice = 'unavailable';
+          }
+        }
+      } else if (navigator.onLine === false && !reg.waiting) {
+        startupUpdateNotice = 'offline';
+      }
+      if (reg.waiting && serviceWorker.controller) {
+        startupUpdateText('Applying update…', 'Aplicando actualización…');
+        appReloadRequested = true;
+        // controllerchange performs the one silent reload required to load
+        // the new HTML, JavaScript, CSS and translations as one coherent build.
+        reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        setTimeout(() => {
+          // An activation that never completes must not trap offline players.
+          if (startupUpdatePending && !appControllerReloaded) {
+            appReloadRequested = false;
+            finishStartupUpdate();
+          }
+        }, 12000);
+        return;
+      }
+      finishStartupUpdate();
+      // Ongoing checks may discover an update while playing, but must never
+      // automatically replace the code of an active campaign.
+      setInterval(() => {
+        if (!document.hidden && navigator.onLine !== false)
+          checkAppUpdate().catch(() => {});
+      }, 300000);
+    } catch (_) {
+      // Network, registration and storage failures preserve the old game.
+      appReloadRequested = false;
+      startupUpdateNotice = navigator.onLine === false ? 'offline' : 'unavailable';
+      finishStartupUpdate();
+    }
+  }
+
   function runningAsApp() {
     return (
       (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
@@ -1966,7 +2125,7 @@
     return true;
   }
 
-  // Opt-in renderer pilot; one live Campaign, no saved graphics state.
+  // PixiJS primary renderer; one live Campaign, no saved graphics state.
   // Canvas is retained as an independent, always-available presentation surface.
   const gpuTrialPanel = document.createElement('section');
   gpuTrialPanel.id = 'gpu-renderer-trial';
@@ -2083,7 +2242,7 @@
       return;
     }
     gpuTrialMessage.textContent =
-      tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
+      tr('PixiJS WebGL2 · 15-second trial') + ' · ' + snapshot.secondsRemaining + 's';
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
@@ -3470,9 +3629,9 @@
     $('scene-loading').hidden = true;
     $('scene-loading-retry').hidden = true;
     // If the gameplay commit occurred, do not roll back or replay it.
-    // A hidden page is safely saved by the existing visibility/pagehide owner.
+    // Title and game menus may not suspend the soundtrack on travel cleanup.
     last = performance.now();
-    audio.setPaused(!started || !focused || document.hidden || paused);
+    audio.setPaused(!focused || document.hidden);
   }
   function revealSceneTransition(token) {
     const ticket = sceneTransition;
@@ -3624,11 +3783,12 @@
     $('title-saves').textContent = t('Saved Games & Backups', 'Partidas y copias de seguridad');
     $('title-settings').textContent = t('Settings', 'Ajustes');
     $('title-help').textContent = t('Help & Credits', 'Ayuda y créditos');
-    $('title-continue').disabled = titleLoading || !valid ||
+    refreshStartupUpdateNotice();
+    $('title-continue').disabled = startupUpdatePending || titleLoading || !valid ||
       !writerGuard.canWrite() || persistence.conflicted(game.s.mode) ||
       !!game.s.challenge?.gameOver;
     for (const id of ['title-new', 'title-saves', 'title-settings', 'title-help'])
-      $(id).disabled = titleLoading;
+      $(id).disabled = startupUpdatePending || titleLoading;
     titleCanvasContinue.hidden = !titleLoading || !!titleSkipGraphics?.skipped;
     titleCanvasContinue.textContent = language === 'es'
       ? 'Continuar con Canvas' : 'Continue with Canvas';
@@ -3647,7 +3807,8 @@
     started = false;
     paused = false;
     clearInput();
-    audio.setPaused(true);
+    // Title stops gameplay simulation, not its own theme's audio clock.
+    audio.setPaused(!focused || document.hidden);
     last = performance.now();
     if (menu) {
       menu = null;
@@ -3655,22 +3816,31 @@
       $('modal').hidden = true;
       document.body.classList.remove('menu-open');
     }
-    titleScreen.hidden = false;
+    titleScreen.hidden = startupUpdatePending;
+    $('startup-update').hidden = !startupUpdatePending;
     document.body.classList.add('title-active');
-    // Prepare only the *loaded* arrival view, never an unentered zone.
-    titleWarmup = loaded
-      ? warmScene(game.zoneId, true)
-      : null;
+    // No sprite, material or GPU warmup until Continue/New Game is chosen.
+    titleWarmup = null;
     refreshTitleScreen();
-    const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
-    primary.focus?.({ preventScroll: true });
+    if (!startupUpdatePending) {
+      const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
+      primary.focus?.({ preventScroll: true });
+      // Returning from gameplay must change the score in this same
+      // transition, even when the next requestAnimationFrame is delayed.
+      updateTitleSoundtrack();
+    }
   }
   function enterPreparedScene() {
-    if (titleLoading || started || !loaded || !writerGuard.canWrite()) return;
+    if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
+    // Continue is already a browser gesture. Unlock before asynchronous warmup.
+    const entryUnlock = audio.unlock();
     titleLoading = true;
     titleImportNotice = false;
     const epoch = ++titleEpoch;
+    // First-scene resources belong to this explicit entry, not idle title.
+    if (typeof PrototypeMaterials !== 'undefined') void PrototypeMaterials.load();
+    titleWarmup = warmScene(game.zoneId, true);
     let resolveSkip;
     const skipPromise = new Promise((resolve) => { resolveSkip = resolve; });
     titleSkipGraphics = { skipped: false, resolve: resolveSkip };
@@ -3683,6 +3853,7 @@
     refreshTitleScreen();
     clearInput();
     let campaign = game;
+    let entryAudioAttempted = false;
     const reveal = () => {
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
@@ -3700,9 +3871,29 @@
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
       const finish = () => {
-        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
           titleLoading = false;
           refreshTitleScreen();
+          return;
+        }
+        // Without Web Audio (or in a non-browser test shell), enter normally.
+        // A missing audio device must never defer campaign activation.
+        if (!entryAudioAttempted && audio.ctx) {
+          entryAudioAttempted = true;
+          $('title-loading').textContent = language === 'es'
+            ? 'Preparando la música…' : 'Preparing soundtrack…';
+          // Start the destination score before movement is enabled. Missing
+          // audio must not trap the player behind a permanent loading screen.
+          const ready = Promise.resolve(entryUnlock).then((unlocked) => {
+            if (!unlocked || epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
+                campaign !== game || !titleLoading) return false;
+            audio.update(game, false, {
+              started: true, menu: false, paused: false, backgrounded: false,
+            });
+            return audio.productionPending || true;
+          }).catch(() => false);
+          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))])
+            .then(() => requestAnimationFrame(finish));
           return;
         }
         titleLoading = false;
@@ -3775,6 +3966,12 @@
     }
     if (!crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     showTitleScreen();
+    // Return to Main Menu is an explicit user gesture. Resume an interrupted
+    // audio context and reselect title after Safari finishes the resume.
+    if (!document.hidden && focused && audio.ctx?.state !== 'running')
+      void audio.unlock().then((unlocked) => {
+        if (unlocked) updateTitleSoundtrack();
+      });
   }
   function selectSavedMode(mode) {
     if (!writerGuard.canWrite()) return savedRunConflictMenu();
@@ -4047,9 +4244,11 @@
         : 'Agility · Each level: +' + p.ranger.speedPerLevel +
             ' speed and +' + Math.round(p.ranger.cooldownReductionPerLevel * 100) +
             '% cooldown reduction.';
-    return es
+    if (heroClass === 'mage') return es
       ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
       : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
+    // Unknown classes never inherit an invented Mage growth description.
+    return '';
   }
   // Owner-approved Option A: pale-gold spherical jingle bell, taken from
   // the simple line-art reference. Horizontal equator seam and ONE bottom
@@ -4092,7 +4291,7 @@
   }
   function playableClassCountWord() {
     const count = Object.keys(Campaign.classes).length;
-    return { 3: 'three', 4: 'four' }[count] || String(count);
+    return { 3: 'three', 4: 'four', 5: 'five' }[count] || String(count);
   }
   function chooseClass(mode, succession) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
@@ -4679,8 +4878,8 @@
         'Graphics renderer',
         graphicsController.status().preferredRenderer || graphicsController.status().mode,
         choices([
-          ['canvas2d', 'Canvas 2D · Default'],
-          ['webgl2', 'PixiJS WebGL2 · Experimental'],
+          ['canvas2d', 'Canvas 2D · Backup'],
+          ['webgl2', 'PixiJS WebGL2 · Default'],
         ]),
         (value) => {
           if (value === 'canvas2d') {
@@ -4699,7 +4898,7 @@
         graphicsController.status().preferredRenderer === 'webgl2' &&
           graphicsController.status().mode === 'canvas2d'
           ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
-          : 'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
+          : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused
         ? [action('Retry PixiJS WebGL2', () => {
@@ -6870,7 +7069,7 @@
         pointer !== null || worldPointer !== null) return false;
     const obstacles = [
       '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
-      '#skills', '#quick-items', '#developer-summon', '#cancel-navigation-button',
+      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#cancel-navigation-button',
       '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
     ].flatMap((selector) => {
       const el = document.querySelector(selector);
@@ -7038,7 +7237,18 @@
     if (started && !paused && !document.hidden) restartGuard.arm(game);
     checkAppUpdate().catch(() => {});
   });
-  addEventListener('online', () => checkAppUpdate(true).catch(() => {}));
+  addEventListener('online', () => {
+    if (startupUpdateNotice === 'offline') {
+      startupUpdateNotice = null;
+      refreshStartupUpdateNotice();
+    }
+    checkAppUpdate(true).catch(() => {
+      if (!started) {
+        startupUpdateNotice = 'unavailable';
+        refreshStartupUpdateNotice();
+      }
+    });
+  });
   document.addEventListener('visibilitychange', () => {
     clearInput();
     last = performance.now();
@@ -7352,11 +7562,35 @@
   developerSummonButton.setAttribute('aria-label', 'Summon a regional boss or captain');
   developerSummonButton.hidden = true;
   document.body.append(developerSummonButton);
+  const developerFinisherButton = document.createElement('button');
+  developerFinisherButton.id = 'developer-finisher';
+  developerFinisherButton.textContent = 'Finish';
+  developerFinisherButton.setAttribute('aria-label', 'Developer finisher and nearby sweep');
+  developerFinisherButton.hidden = true;
+  document.body.append(developerFinisherButton);
   const developerCombatMonitor = document.createElement('aside');
   developerCombatMonitor.id = 'developer-combat-monitor';
   developerCombatMonitor.setAttribute('aria-label', 'Developer combat monitor');
   developerCombatMonitor.hidden = true;
   document.body.append(developerCombatMonitor);
+  const developerCompanionMonitor = document.createElement('aside');
+  developerCompanionMonitor.id = 'developer-companion-monitor';
+  developerCompanionMonitor.setAttribute('aria-label', 'Developer companion damage monitor');
+  developerCompanionMonitor.hidden = true;
+  const companionMonitorToggle = document.createElement('button');
+  companionMonitorToggle.type = 'button';
+  companionMonitorToggle.textContent = 'DEV · COMPANIONS';
+  companionMonitorToggle.setAttribute('aria-expanded', String(platform.mode !== 'phone'));
+  const companionMonitorContent = document.createElement('div');
+  companionMonitorContent.id = 'developer-companion-content';
+  companionMonitorContent.hidden = platform.mode === 'phone';
+  companionMonitorToggle.onclick = () => {
+    const collapsed = !companionMonitorContent.hidden;
+    companionMonitorContent.hidden = collapsed;
+    companionMonitorToggle.setAttribute('aria-expanded', String(!collapsed));
+  };
+  developerCompanionMonitor.append(companionMonitorToggle, companionMonitorContent);
+  document.body.append(developerCompanionMonitor);
   function openDeveloperSummonMenu() {
     if (!activePlay() || game.s.mode !== 'developer') return;
     openMenu(
@@ -7373,6 +7607,31 @@
     );
   }
   developerSummonButton.onclick = openDeveloperSummonMenu;
+  function runDeveloperFinisher(sweep) {
+    closeMenu();
+    if (!started || game.s.mode !== 'developer') return;
+    const result = game.developerFinisher(null, sweep);
+    status(
+      result.kills
+        ? 'Developer finisher · ' + result.kills + (result.kills === 1 ? ' enemy defeated.' : ' enemies defeated.')
+        : 'No eligible enemy hit. Select a target or move into range and line of sight.',
+    );
+    if (result.kills) save();
+    updateHUD();
+  }
+  developerFinisherButton.onclick = () => {
+    if (!activePlay() || game.s.mode !== 'developer') return;
+    openMenu(
+      'Developer · Finisher',
+      'Extreme damage through normal enemy deaths. Real enemies drop real loot and advance progress; developer summons do not.',
+      [
+        action('Finish selected or nearest enemy', () => runDeveloperFinisher(false)),
+        action('Sweep nearby enemies (up to 8)', () => runDeveloperFinisher(true)),
+      ],
+      closeMenu,
+    );
+  };
+
   // Reuse the original portrait-stamped Crown loot painter for the HUD.
   // Rasterize it ONCE at 2x for the tiny UI badge. No separate generic
   // currency drawing, asset manifest, or recurring canvas work per HUD tick.
@@ -7403,7 +7662,9 @@
     if (navigationGuide && navigationGuide.campaign !== game) navigationGuide = null;
     const devActive = started && game.s.mode === 'developer';
     developerSummonButton.hidden = !devActive;
+    developerFinisherButton.hidden = !devActive;
     developerCombatMonitor.hidden = !devActive;
+    developerCompanionMonitor.hidden = !devActive;
     if (devActive) {
       const telemetry = game.developerCombatSnapshot(),
         recent = (hits) => hits.map((hit) => Math.round(hit)).join(' / ') || '—';
@@ -7420,6 +7681,19 @@
         '\n' +
         'Outgoing DPS: ' +
         telemetry.outgoing.dps.toFixed(1);
+      const companionRows = game.developerCompanionSnapshot() || [];
+      companionMonitorToggle.textContent = 'DEV · COMPANIONS (' + companionRows.length + ')';
+      const body = companionRows.length
+        ? companionRows.map((row) => row.name + ' [' + row.type + ' · ' + row.id + ']\n' +
+            'Moves: ' + (row.last.map((m) =>
+              m.name + ' ' + Math.round(m.damage)).join(' / ') || '—') +
+            '\n5s DPS: ' + row.dps.toFixed(1)).join('\n\n')
+        : 'No active companions.';
+      if (companionMonitorContent.textContent !== body) {
+        const previousScroll = companionMonitorContent.scrollTop;
+        companionMonitorContent.textContent = body;
+        companionMonitorContent.scrollTop = previousScroll;
+      }
     }
     const h = game.hero,
       hp = Math.max(0, Math.min(100, (h.hp / h.maxHp) * 100)),
@@ -7982,6 +8256,12 @@
   }
   function frame(now) {
     if (!started || sceneTransition) {
+      // Idle title runs its music director without simulating a campaign.
+      if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
+        audio.update(game, !focused || document.hidden, {
+          started: false, menu: !!menu, backgrounded: !focused || document.hidden,
+          paused: false,
+        });
       last = now;
       clearEmergencyEscalation();
       frameSkip.suspend();
@@ -8081,7 +8361,8 @@
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
-    audio.update(game, paused || !focused || document.hidden || recovering, {
+    // An in-game menu or manual pause freezes simulation, not audio playback.
+    audio.update(game, !focused || document.hidden || recovering, {
       menu: !!menu,
       backgrounded: !focused || document.hidden,
       paused: paused || recovering,
@@ -8459,48 +8740,22 @@
     installPrompt = null;
     status('Game installed. Open it from your home screen.');
   });
-  if (
-    location.protocol === 'https:' ||
-    location.hostname === 'localhost' ||
-    location.hostname === '127.0.0.1'
-  ) {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (appControllerReloaded) return;
-        if (hadServiceWorkerController) {
-          appReloadRequested = false;
-          appControllerReloaded = true;
-          if (started && writerGuard.canWrite() && !save()) {
-            appControllerReloaded = false;
-            status('Saving failed. Export your run before closing.');
-            return;
-          }
-          location.reload();
-        } else hadServiceWorkerController = true;
-      });
-      navigator.serviceWorker
-        .getRegistration('./')
-        .then((reg) => reg || navigator.serviceWorker.register('./sw.js'))
-        .then((reg) => {
-          appRegistration = reg;
-          function check() {
-            refreshUpdateNotice();
-          }
-          check();
-          function watchWorker() {
-            const worker = reg.installing;
-            if (worker) worker.addEventListener('statechange', check);
-          }
-          reg.addEventListener('updatefound', watchWorker);
-          watchWorker();
-          checkAppUpdate(true).catch(() => {});
-          setInterval(() => {
-            if (!document.hidden && navigator.onLine !== false) checkAppUpdate().catch(() => {});
-          }, 300000);
-        })
-        .catch(() => {});
-    }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (appControllerReloaded) return;
+      if (hadServiceWorkerController) {
+        appReloadRequested = false;
+        appControllerReloaded = true;
+        if (started && writerGuard.canWrite() && !save()) {
+          appControllerReloaded = false;
+          status('Saving failed. Export your run before closing.');
+          return;
+        }
+        location.reload();
+      } else hadServiceWorkerController = true;
+    });
   }
+  // This is the sole entry to the interactive title. The preflight finishes
+  // first; a pending update silently reloads into its own complete new shell.
+  void initializeStartupUpdate();
 })();
-
-if (typeof PrototypeMaterials !== 'undefined') void PrototypeMaterials.load();

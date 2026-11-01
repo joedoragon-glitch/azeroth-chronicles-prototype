@@ -78,8 +78,29 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
+        assert.equal(await page.locator('#recording option').count(), 147);
+        assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
+        assert((await page.locator('#result-count').textContent()).includes('147 matching'));
+        await page.locator('#kind').selectOption('ambience');
+        assert.equal(await page.locator('#recording option').count(), 34);
+        assert.equal(await page.locator('#library-grid .sound-card').count(), 24);
+        assert.equal(await page.locator('#show-more').isVisible(),true);
+        await press('#show-more');
+        assert.equal(await page.locator('#library-grid .sound-card').count(),34);
+        await page.locator('#search').fill('Old Signal Keep');
+        assert((await page.locator('#recording option').count()) >= 1);
+        await press('#reset-library');
+        await page.locator('#kind').selectOption('generated');
+        assert((await page.locator('#generated-grid .sound-card').count()) > 35);
+        assert.equal(await page.locator('#recorded-panel').isVisible(), false);
+        await page.locator('#kind').selectOption('music');
         assert.equal(await page.locator('#recording option').count(), 83);
-        assert((await page.locator('#catalog-count').textContent()).includes('127 registered'));
+        await page.locator('#collection').selectOption('dark-crown');
+        assert.equal(await page.locator('#recording option').count(), 18);
+        await page.locator('#collection').selectOption('new-score');
+        assert.equal(await page.locator('#recording option').count(), 65);
+        await press('#reset-library');
+        assert((await page.locator('#catalog-count').textContent()).includes('147 registered'));
         assert.equal(await page.locator('#advanced').getAttribute('open'), null);
         await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('diagnostic');
@@ -148,7 +169,7 @@ const root = path.resolve(__dirname, '..'),
         assert.equal(bossStarts.length, 2);
         assert.equal(bossStarts[0], bossStarts[1]);
         await page.waitForFunction(
-          () => AudioAudition.audio.environmentVoice?.id === 'env-crown-courtyard',
+          () => AudioAudition.audio.environmentVoice?.id === 'study-crown-open-727',
         );
         assert(
           await page.evaluate(() => AudioAudition.audio.environmentVoice.targetGain <= 0.36 * 0.25),
@@ -157,14 +178,46 @@ const root = path.resolve(__dirname, '..'),
         await page.waitForFunction(
           () =>
             AudioAudition.audio.recordingManifest &&
-            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 127,
+            Object.keys(AudioAudition.audio.recordingManifest.assets).length === 147,
         );
+        // Both previous Treasury gaps must play their selected modern bed
+        // *in the normal standalone Sound Library scene mixer*, alongside
+        // the correct 65-cue replacement soundtrack. No Campaign save is read.
+        await page.locator('#boss').selectOption('');
+        await page.locator('#new-score').check();
+        for(const [zone,bed,score] of [
+          ['supply-vale','studio-orchard-cellars-727','interior-supply-vale'],
+          ['supply-highlands','env-signal-occupied','interior-supply-highlands'],
+        ]){
+          await page.locator('#place').selectOption(zone);
+          await page.locator('#scene-mode').selectOption('exploration');
+          await press('#scene-play');
+          await page.waitForFunction(({bed,score})=>
+            AudioAudition.audio.environmentVoice?.id===bed &&
+            AudioAudition.audio.recordedScore?.id===score,
+            {bed,score},{timeout:30000});
+          const found=await page.evaluate(()=>({
+            bed:AudioAudition.audio.environmentVoice?.id,
+            score:AudioAudition.audio.recordedScore?.id,
+            cached:AudioAudition.audio.recordingAssets?.status(),
+          }));
+          assert.equal(found.bed,bed);
+          assert.equal(found.score,score);
+          assert(found.cached.decodedBytes<=found.cached.decodedBudget);
+        }
         await page.locator('#kind').selectOption('music');
+        await page.locator('#recording').selectOption('place-vale');
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore?.id === 'place-vale');
+        assert.equal(await page.locator('#next').isDisabled(), false);
+        await press('#next');
+        assert.notEqual(await page.locator('#recording').inputValue(), 'place-vale');
+        await press('#prev');
+        assert.equal(await page.locator('#recording').inputValue(), 'place-vale');
+        assert((await page.locator('#guide-recipe').textContent()).includes('phase3-themes.json'));
         assert((await page.locator('#message').textContent()).includes('Playing place-vale'));
-        assert((await page.locator('#guide-text').inputValue()).includes('Orchard Roads'));
-        assert((await page.locator('#guide-recipe').textContent()).includes('score-book.json'));
+        assert((await page.locator('#guide-text').inputValue()).includes('phase3'));
+        assert((await page.locator('#guide-recipe').textContent()).includes('phase3-themes.json'));
         assert.equal(
           await page.locator('#guide-event option').count(),
           Object.keys(require('../assets/audio/manifest.json').director.eventGuides).length + 1,
@@ -174,7 +227,7 @@ const root = path.resolve(__dirname, '..'),
         await page.locator('#guide-event').selectOption('');
 
         if (!phone) {
-          console.log('Audition browser: decoding all 127 production recordings');
+          console.log('Audition browser: decoding all 147 production recordings');
           const decoded = await page.evaluate(async () => {
             const a = AudioAudition.audio,
               output = [];
@@ -204,11 +257,21 @@ const root = path.resolve(__dirname, '..'),
           );
           for (const item of decoded) {
             assert(item.peak < 0.98 && item.rms > 0.005, item.id);
-            assert(item.bytes <= 32 * 1024 * 1024, item.id);
+            assert(item.bytes <= 128 * 1024 * 1024, item.id);
           }
         }
 
         await page.locator('#kind').selectOption('ambience');
+        // A source-verified new bed must play independently in the Game Sound Library.
+        assert.equal(await page.locator('#recording option').count(),34);
+        await page.locator('#recording').selectOption('study-march-day-727');
+        assert((await page.locator('#recording-info').textContent()).includes('Flooded Marches'));
+        await press('#record-play');
+        await page.waitForFunction(()=>[...AudioAudition.audio.voices].some(v=>
+          v.id==='study-march-day-727'&&v.recorded&&v.bus==='ambience'));
+        const ambienceSeconds=await page.evaluate(()=>[...AudioAudition.audio.voices].find(v=>
+          v.id==='study-march-day-727')?.item.buffer.duration);
+        assert(ambienceSeconds>72,'New 72-second environmental recording must truly decode in Sound Library');
         await page.locator('#recording').selectOption('env-marsh-day');
         assert((await page.locator('#guide-text').inputValue()).includes('shallow water'));
         assert(
@@ -227,6 +290,18 @@ const root = path.resolve(__dirname, '..'),
           ),
           1,
         );
+
+        // Generated cues are engine-driven and deliberately not counted as MP3 recordings.
+        await page.locator('#kind').selectOption('generated');
+        await page.locator('#search').fill('Menu · Confirm');
+        assert.equal(await page.locator('#generated-grid .sound-card').count(), 1);
+        await press('#generated-grid .quick-play');
+        await page.waitForFunction(() => document.querySelector('#message')?.textContent.includes('Played Menu · Confirm'));
+        await page.locator('#search').fill('Paladin sword strike');
+        assert.equal(await page.locator('#generated-grid .sound-card').count(), 1);
+        await press('#generated-grid .quick-play');
+        await page.waitForFunction(() => document.querySelector('#message')?.textContent.includes('Played Paladin sword strike'));
+        await press('#reset-library');
 
         // Actual decode + OfflineAudioContext render: synchronized samples remain finite, audible and below clipping.
         const output = await page.evaluate(async () => {
@@ -284,7 +359,7 @@ const root = path.resolve(__dirname, '..'),
         console.log('Audition browser: offline reload on ' + (phone ? 'phone' : 'desktop'));
         await page.reload();
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
-        assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Soundtrack listening room");
+        assert.equal(await page.title(), "So I Became the Dark Lord's Problem · Game sound library");
         assert.equal(outageRequests, 0);
         await page.locator('#advanced').evaluate((el) => { el.open = true; });
         await page.locator('#source').selectOption('production');

@@ -1,0 +1,70 @@
+name: 'Pixi #748 composited visual parity acceptance'
+
+# Narrow issue #748 browser acceptance. Never publishes Pages and does not
+# automatically run on ordinary gameplay or renderer source edits.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pixi-748-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixi-748-parity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity:
+    name: Composited parity / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: desktop-150-optimized
+            zoom: '1.5'
+            phone: '0'
+            optimized: '1'
+            perf: '1'
+          - name: desktop-100-unoptimized
+            zoom: '1'
+            phone: '0'
+            optimized: '0'
+            perf: '0'
+          - name: phone-layout-175
+            zoom: '1.75'
+            phone: '1'
+            optimized: '1'
+            perf: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked development dependencies
+        run: npm ci --ignore-scripts
+      - name: Install real Chromium software-WebGL runner
+        run: npx playwright install chromium --with-deps
+      - name: Verify site and generated game resources
+        run: node scripts/build.cjs --check
+      - name: Verify composited Canvas/Pixi scenes, live motion and cache invariants
+        env:
+          PARITY_ZOOM: ${{ matrix.zoom }}
+          PARITY_PHONE: ${{ matrix.phone }}
+          PARITY_OPTIMIZED: ${{ matrix.optimized }}
+          PARITY_PERF: ${{ matrix.perf }}
+          PARITY_OUT: test-artifacts/parity-748-${{ matrix.name }}
+        run: node tests/pixi-parity-browser.test.cjs
+      - name: Preserve exact-renderer screenshots, result and performance receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixi-748-${{ matrix.name }}
+          path: test-artifacts/parity-748-${{ matrix.name }}/
+          if-no-files-found: ignore
+          retention-days: 30

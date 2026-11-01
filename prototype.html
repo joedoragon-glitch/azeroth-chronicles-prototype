@@ -1,6 +1,12 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#102319"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Lord’s Problem"><link rel="apple-touch-icon" href="./icons/icon-192.png"><title>So I Became the Dark Lord's Problem</title><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon-192.png"><link rel="stylesheet" href="./styles/prototype.css"><link rel="stylesheet" href="./styles/desktop.css"><link rel="stylesheet" href="./styles/phone.css"></head>
 <body data-entry="auto"><canvas id="world" aria-label="Isometric adventure world"></canvas>
+<section id="startup-update" aria-labelledby="startup-update-heading" aria-live="polite" aria-busy="true">
+  <div class="startup-update-panel">
+    <h2 id="startup-update-heading">So I Became the Dark Lord's Problem</h2>
+    <p id="startup-update-text" role="status">Checking for updates…</p>
+  </div>
+</section>
 <button id="update-button" type="button" hidden aria-label="Install available game update">Update available</button>
 <aside id="hud"><button id="menu-button" aria-label="Open game menu">☰ Menu <small>Esc</small></button><h1>So I Became the Dark Lord's Problem</h1><div id="hero-stats"></div><div id="location"></div><div id="objective"></div><div id="status" role="status"></div><button id="talent-button" aria-label="Open discipline training">Training · <span id="talent-count">0</span> <small>C</small></button><button id="squad-button" hidden>Squad doctrine <small>Tab</small></button><button id="recall-button">Recall squad <small>` / Q</small></button><button id="target-button" aria-label="Cycle hero target">Target <small>E</small></button></aside>
 <div id="message" role="status" aria-live="polite" aria-atomic="true"></div><div id="stamina-status" hidden></div><button id="sprint-button" hidden>Sprint · Q</button><div id="skills" aria-label="Skills"></div>
@@ -27,6 +33,7 @@
       <button type="button" id="title-settings">Settings</button>
       <button type="button" id="title-help">Help &amp; Credits</button>
     </nav>
+    <p id="startup-update-notice" role="status" aria-live="polite" hidden></p>
     <p id="title-loading" role="status" aria-live="polite" hidden></p>
   </div>
 </section>

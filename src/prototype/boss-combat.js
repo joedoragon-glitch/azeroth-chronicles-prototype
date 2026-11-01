@@ -1197,7 +1197,11 @@
         const gap = dist(e, target),
           visible = this.line(e, target);
         let skill = false;
-        if (!this.mageSilenceActive(e) && visible && e.cd <= 0) {
+        // Rogue Hush blocks NEW ordinary specials, including a Wraith's
+        // withdrawal cast. Neither Silence stops the normal covering basic
+        // selected below this block.
+        if (!this.mageSilenceActive(e) && !this.rogueEnemySilenced(e) &&
+            visible && e.cd <= 0) {
           if (
             (e.captain || e.roomCaptain) &&
             e.specialCd <= 0 &&
@@ -1295,7 +1299,8 @@
       enemyStartBasic(e, target, ranged) {
         const nightTempo = this.nightTempo();
         e.cd =
-          ((e.type === 'boss' ? R.bossCadence.basicCooldown : 1.4) *
+          ((e.type === 'boss' ? R.bossCadence.basicCooldown :
+            ranged ? 1.4 : R.balance.enemyOrdinaryMeleeBasicInterval) *
             (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
             (e.captainAttackRate || 1) *
             (e.quotaOvertime > 0 ? 0.75 : 1)) /

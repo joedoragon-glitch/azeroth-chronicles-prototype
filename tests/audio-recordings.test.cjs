@@ -6,6 +6,48 @@ const assert = require('node:assert/strict'),
 (async () => {
   const f = await fixtures.create(),
     baseUrl = 'https://example.test/game/';
+  const defaults = new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch });
+  assert.equal(defaults.budget, 128 * 1024 * 1024, 'default RAM cache must support larger crossfade layers');
+  assert.equal(defaults.retentionBudget, 96 * 1024 * 1024,
+    'released recordings must return toward the previous 96-MiB retention target');
+  assert.equal(new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
+    budget: 192 * 1024 * 1024 }).budget, 192 * 1024 * 1024);
+  assert.throws(() => new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
+    budget: 192 * 1024 * 1024 + 1 }), /decoded memory budget/);
+  // A 90-MiB currently pinned score/bed plus another 12-MiB
+  // resampled environment transition needs >96 MiB but fits in 128 MiB.
+  // These are accounting-only objects: no large PCM allocation in CI.
+  const headroom = new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch });
+  const MiB = 1024 * 1024;
+  headroom.cache.set('active-score-and-bed', { bytes: 90 * MiB, refs: 1 });
+  headroom.bytes = 90 * MiB;
+  assert.doesNotThrow(() => headroom.room(12 * MiB),
+    '128-MiB default must accommodate one extra 72-second mono environment crossfade');
+  assert.throws(() => headroom.room(40 * MiB), /Active recordings fill decoded memory budget/,
+    'The higher default must still reject exceeding 128 MiB of pinned buffers');
+  // A pinned outgoing score plus the incoming source may temporarily exceed
+  // 96 MiB; the old source must only become reclaimable after its release.
+  headroom.cache.clear();
+  headroom.bytes = 0;
+  const outgoing = { bytes: 90 * MiB, refs: 1 };
+  const incoming = { bytes: 12 * MiB, refs: 1 };
+  headroom.cache.set('outgoing-score', outgoing);
+  headroom.cache.set('incoming-bed', incoming);
+  headroom.bytes = outgoing.bytes + incoming.bytes;
+  assert.equal(headroom.cache.size, 2);
+  headroom.trimReleased();
+  assert.equal(headroom.bytes, 102 * MiB, 'Never evict the pinned outgoing crossfade');
+  headroom.release(outgoing);
+  assert.equal(headroom.cache.has('outgoing-score'), false,
+    'Fade completion must reclaim the old buffer below the retention target');
+  assert.equal(headroom.cache.has('incoming-bed'), true,
+    'The new live bed must remain pinned and uninterrupted');
+  assert.equal(headroom.bytes, 12 * MiB);
+  assert.equal(headroom.status().retentionBudget, 96 * MiB);
+  assert.throws(() => new Assets(context(), f.manifest, { baseUrl, fetch: f.fetch,
+    retentionBudget: 129 * MiB }), /retained memory budget/);
+  headroom.dispose();
+  defaults.dispose();
   let calls = 0;
   const fetch = async (...args) => {
     calls++;
@@ -78,10 +120,17 @@ const assert = require('node:assert/strict'),
   await assert.rejects(tiny.load('diagnostic-a'), /memory budget/);
   const oversized = new Assets(context(), f.manifest, {
     baseUrl,
-    fetch: async () => new Response('small', { headers: { 'content-length': '9000000' } }),
+    fetch: async () => new Response('small', { headers: { 'content-length': '17000000' } }),
   });
   await assert.rejects(oversized.load('diagnostic-a'), /Encoded/);
-  console.log('PASS hashes, codec retry, local paths, actual duration and encoded/decoded budgets');
+  const expandedHeader = new Assets(context(), f.manifest, {
+    baseUrl,
+    fetch: async () => new Response('small', { headers: { 'content-length': '12582912' } }),
+  });
+  await assert.rejects(expandedHeader.load('diagnostic-a'), /hash mismatch/,
+    '12 MiB recorded file must pass the raised 16 MiB size guard before SHA validation');
+  expandedHeader.dispose();
+  console.log('PASS hashes, codec retry, local paths, actual duration and expanded encoded/decoded budgets');
 
   const a = audio();
   a.cue = { id: 'vale' };

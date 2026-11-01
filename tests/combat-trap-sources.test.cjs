@@ -57,8 +57,10 @@ for (const mode of ['normal', 'nightmare'])
     game.updateTraps(0.1);
     assert(hero.hp < 1000, kind + ' hits a vulnerable hero in ' + mode);
     assert(companion.hp < 1000, kind + ' hits a living companion in ' + mode);
-    const expectedSlow = kind === 'seal' ? trap.slowSeconds :
+    const baseSlow = kind === 'seal' ? trap.slowSeconds :
       kind === 'spikes' ? trap.slowSeconds * 0.35 : 0;
+    const expectedSlow = baseSlow
+      ? baseSlow + R.cooldownBalance.slowDurationBonusSeconds : 0;
     assert.equal(hero.slow, expectedSlow,
       kind + ' applies only its authored timed condition');
     assert.equal(companion.slow, expectedSlow,

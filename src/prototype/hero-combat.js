@@ -681,7 +681,9 @@
             : !R.resourceMode.manaEnabled && charged
               ? R.cooldownBalance.chargedSeconds[slot] || cooldowns[slot]
               : cooldowns[slot];
-        return base * (1 - this.heroCooldownReduction());
+        return Number.isFinite(base) && base > 0
+          ? base * (1 - this.heroCooldownReduction())
+          : Infinity;
       }
       basicSkillCooldown() {
         return R.chargedSkills.first.basicSeconds * (1 - this.heroCooldownReduction());
@@ -1248,6 +1250,13 @@
               this.damage(e, (this.power() + 8) * field.pulseDamage, 'hero', { area: true });
           }
         }
+      }
+      // Read independently timed Wither without altering or persisting its WeakMap.
+      rogueEnemyWithered(e) {
+        const state = rogueEnemyWithers.get(e);
+        return this.hero.class === 'rogue' && e?.hp > 0 &&
+          state?.zone === this.zoneId &&
+          state.effects.some(effect => effect.until > this.s.time);
       }
       rogueEnemyHealingFactor(e) {
         const state = rogueEnemyWithers.get(e);
@@ -2870,6 +2879,8 @@
         return true;
       }
     }
+    // Only genuinely implemented combat owners may admit a playable class.
+    Campaign.heroCombatSupports = (id) => implementedHeroCombatClasses.has(id) || id === 'rogue';
     for (const name of Object.getOwnPropertyNames(HeroCombat.prototype))
       if (name !== 'constructor')
         Object.defineProperty(

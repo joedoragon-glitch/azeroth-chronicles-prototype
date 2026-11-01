@@ -264,7 +264,36 @@
     }
     ctx.restore();
   }
-  function draw(ctx, e, p, region = 0, rescued = false) {
+  function draw(ctx, e, p, region = 0, rescued = false, ambientLayer = null) {
+    // Optional bake-time separation of original animal pixels from their home.
+    // The normal Canvas artist takes the unchanged direct path.
+    let paintingAmbient = false;
+    if (ambientLayer?.mode === 'part') {
+      const target = ctx;
+      const paintMethods = new Set([
+        'fill',
+        'stroke',
+        'fillRect',
+        'strokeRect',
+        'drawImage',
+        'fillText',
+        'strokeText',
+      ]);
+      ctx = new Proxy(target, {
+        get(object, key) {
+          const value = object[key];
+          if (paintMethods.has(key))
+            return (...args) => {
+              if (paintingAmbient) return value.apply(object, args);
+            };
+          return typeof value === 'function' ? value.bind(object) : value;
+        },
+        set(object, key, value) {
+          object[key] = value;
+          return true;
+        },
+      });
+    }
     if (region === 0 && e.renderKind === 'prop' && e.greenwoodInteriorAsset) {
       GreenwoodInteriors.draw(ctx, e, p);
       return;
@@ -10525,12 +10554,25 @@
     }
 
     function ambientAt(x, y, scale, index, paint) {
-      const motion = ambientAnimalPose(e, index, e.ambientTime || 0);
+      ambientLayer?.onPart?.({ index, x, y });
+      if (
+        ambientLayer?.mode === 'static' ||
+        (ambientLayer?.mode === 'part' && ambientLayer.index !== index)
+      )
+        return;
+      const motion = ambientLayer
+        ? { x: 0, y: 0, facing: 1 }
+        : ambientAnimalPose(e, index, e.ambientTime || 0);
       ctx.save();
       ctx.translate(x + motion.x, y + motion.y);
       ctx.scale(scale * motion.facing, scale);
-      paint();
-      ctx.restore();
+      paintingAmbient = true;
+      try {
+        paint();
+      } finally {
+        paintingAmbient = false;
+        ctx.restore();
+      }
     }
     function craftAt(x, y, scale, paint) {
       ctx.save();
@@ -17199,7 +17241,16 @@
         craftedDefense();
       } else if (e.structure === 'pillar') {
         if (e.householdPartition) {
-          // Worn masonry and a low return wall describe an alcove, not another temple colonnade.
+          // Side-dungeon alcoves share stable, nonblocking pillar geometry,
+          // but material, wear and surface repair reveal who uses them now.
+          const finishes = {
+            cellar: ['#8d7965', '#bba185', '#57493d', '#725e4e'],
+            flooded: ['#6c8882', '#9cb3a6', '#405f5b', '#58756f'],
+            keep: ['#828378', '#b5b4a3', '#50534c', '#66685e'],
+            shrine: ['#816b62', '#b49a87', '#58433c', '#71574d'],
+            foundry: ['#5b555c', '#858087', '#34323c', '#48434a'],
+          };
+          const finish = finishes[e.householdPartition] || finishes.keep;
           softPoly(
             [
               [-23, 11],
@@ -17209,7 +17260,7 @@
               [22, -6],
               [22, 14],
             ],
-            '#8a8f7f',
+            finish[0],
             5,
           );
           softPoly(
@@ -17219,7 +17270,7 @@
               [14, -23],
               [7, -12],
             ],
-            '#a7ae97',
+            finish[1],
             4,
           );
           line(
@@ -17228,10 +17279,60 @@
               [-10, 6],
               [9, 10],
             ],
-            '#626c60',
+            finish[2],
             1.5,
           );
-          oval(0, 14, 26, 5, '#777d69');
+          // A single old seam or use-mark; keep the silhouette clean at 150%.
+          if (e.householdPartition === 'cellar')
+            line(
+              [
+                [-13, -6],
+                [0, -4],
+                [12, -6],
+              ],
+              '#c6a07a',
+              1.2,
+            );
+          else if (e.householdPartition === 'flooded')
+            line(
+              [
+                [-14, 4],
+                [0, 6],
+                [13, 3],
+              ],
+              '#95ada2',
+              1.5,
+            );
+          else if (e.householdPartition === 'keep')
+            line(
+              [
+                [-13, -7],
+                [1, -5],
+                [14, -6],
+              ],
+              '#444c49',
+              1.3,
+            );
+          else if (e.householdPartition === 'shrine')
+            line(
+              [
+                [-11, -7],
+                [-2, -2],
+                [9, -3],
+              ],
+              '#cab49d',
+              1.2,
+            );
+          else if (e.householdPartition === 'foundry')
+            line(
+              [
+                [-14, -4],
+                [12, -6],
+              ],
+              '#393740',
+              2,
+            );
+          oval(0, 14, 26, 5, finish[3]);
         } else {
           rect(-13, -44, 26, 58, '#9ca49a');
           poly(
@@ -18262,6 +18363,55 @@
         : 1;
     return unscaledHeight(e) * scale;
   }
+
+  // Lore-driven recovery zones derive from the named Frontier scenery anchors.
+  // Rendered ground is presentation only; no geometry or save changes.
+  const frontierGroundProfiles = [
+    ['old-siege-margin', 460, 340, 0.86, '105,128,78'],
+    ['hamlet-approach', 455, 345, 0.85, '100,122,76'],
+    ['burned-hamlet', 370, 330, 0.73, '118,124,80'],
+    ['lower-recovered-slope', 500, 435, 0.85, '100,122,76'],
+    ['western-woodland', 510, 515, 0.92, '91,123,78'],
+    ['old-char', 565, 370, 0.61, '115,125,83'],
+    ['repaired-supply-road', 405, 315, 0.47, '116,122,84'],
+    ['bastion-outskirts', 365, 300, 0.35, '122,124,89'],
+    ['ravine-safe-bank', 355, 300, 0.5, '111,124,89'],
+    ['east-flank', 355, 575, 0.52, '108,122,85'],
+    ['fortified-road', 370, 310, 0.36, '112,119,82'],
+  ];
+  const frontierGroundZones = frontierGroundProfiles
+    .map(([name, rx, ry, strength, rgb]) => {
+      const sites = R.frontierRecoveryScenes.filter((row) => row[3] === name);
+      if (!sites.length) return null;
+      const x = sites.reduce((sum, row) => sum + row[0], 0) / sites.length,
+        y = sites.reduce((sum, row) => sum + row[1], 0) / sites.length;
+      return { name, x, y, rx, ry, strength, rgb };
+    })
+    .filter(Boolean);
+  function frontierGroundRecoveryAt(x, y) {
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return 0;
+    // Slowly warped ellipse edges avoid stamped circles and tile boundaries.
+    const a = x + 35 * Math.sin(y / 205 + x / 510),
+      b = y + 28 * Math.cos(x / 225 - y / 480);
+    let cover = 0;
+    for (const z of frontierGroundZones) {
+      const dx = (a - z.x) / z.rx,
+        dy = (b - z.y) / z.ry,
+        d2 = dx * dx + dy * dy;
+      if (d2 >= 1) continue;
+      const t = 1 - d2;
+      cover = Math.max(cover, z.strength * t * t * (3 - 2 * t));
+    }
+    // Recovery is a connected landscape, not individual circular patches.
+    // Settled western country gradually yields to the active eastern front.
+    const westernSoil = Math.max(0, Math.min(1, (1900 - a) / 1700));
+    cover = Math.max(cover, westernSoil * (0.28 + 0.025 * Math.sin(y / 360 + x / 690)));
+    // Neither the interior of the ravine nor its raw eroded banks recover.
+    const [left, right] = R.channelBanks(3, y),
+      distance = Math.max(left - x, x - right),
+      bankFade = Math.max(0, Math.min(1, (distance - 25) / 140));
+    return cover * bankFade;
+  }
   const floorPalettes = [
     ['#294b36', '#31583e', '#203e30', '#95ad80'],
     ['#3e5544', '#4b614b', '#30483c', '#a2b48e'],
@@ -18275,6 +18425,13 @@
     mine: ['#44433b', '#524f43', '#39382f', '#ada88c'],
     abyss: ['#44373b', '#544349', '#382f34', '#c09a89'],
     citadel: ['#3b414b', '#494f59', '#303640', '#abb3b5'],
+    // Five inhabited side interiors use deliberately distinct local materials.
+    // These palettes do not change collision, lighting or game-world state.
+    'side-vale-cellars': ['#5b5144', '#665847', '#484139', '#c9ac7c'],
+    'side-march-watchhouse': ['#455c5b', '#506765', '#384d4e', '#a6c1b6'],
+    'side-highlands-signal': ['#68665b', '#767467', '#55534c', '#c4b99e'],
+    'side-frontier-shrine': ['#594943', '#68554d', '#493b39', '#c3a08a'],
+    'side-crown-foundry': ['#3e3b44', '#4a444b', '#302e36', '#9c8b83'],
   };
   const treasuryFloors = {
     'supply-vale': ['#514735', '#5e523c', '#433b2e', '#bca978'],
@@ -18282,7 +18439,7 @@
     'supply-highlands': ['#55534b', '#636056', '#46443e', '#b9ae91'],
     'supply-crown': ['#44404b', '#514b59', '#37343e', '#aa96b0'],
   };
-  function groundDetail(ctx, p, seed, region, room, dungeonId, colors) {
+  function groundDetail(ctx, p, seed, region, room, dungeonId, colors, worldX = 0, worldY = 0) {
     if (seed % 3 === 0) return;
     const dx = (seed % 35) - 17,
       dy = ((seed >>> 5) % 15) + 12,
@@ -18307,6 +18464,57 @@
       ctx.fill();
     };
     if (room || dungeonId) {
+      // Worn material marks, not symbols or invented history. Each texture
+      // follows a known use: cellar stone/wood, tidal masonry, dry signal
+      // keep, maintained old shrine and working soot-darkened foundry.
+      // The small marks sit under actors and hazard telegraphs on 80px tiles.
+      if (String(dungeonId).startsWith('side-')) {
+        ctx.globalAlpha = 0.68;
+        if (dungeonId === 'side-vale-cellars') {
+          if (k < 4) {
+            line(x - 13, y - 2, x - 5, y - 4, '#c6a57a', 1.2);
+            line(x - 4, y - 4, x + 11, y - 2, '#372e2b', 1);
+          } else {
+            dot(x - 3, y, 1.5, '#8c6a4c');
+            dot(x + 5, y + 1, 1.1, '#c1a179');
+          }
+        } else if (dungeonId === 'side-march-watchhouse') {
+          if (k < 5) {
+            line(x - 12, y + 3, x - 4, y + 1, '#779790', 1);
+            line(x - 4, y + 1, x + 6, y + 3, '#b0c5b4', 1);
+            line(x + 7, y + 3, x + 13, y + 2, '#627f7a', 0.8);
+          } else {
+            dot(x - 6, y, 1.6, '#7c9991');
+            dot(x + 4, y + 3, 1.2, '#9eb7ab');
+          }
+        } else if (dungeonId === 'side-highlands-signal') {
+          if (k < 4) {
+            line(x - 11, y + 4, x - 2, y, '#a39a80', 1.3);
+            line(x - 2, y, x + 12, y + 1, '#44443e', 1.1);
+          } else {
+            dot(x - 5, y + 2, 1.5, '#a7a391');
+            dot(x + 6, y - 1, 1.2, '#4f5246');
+          }
+        } else if (dungeonId === 'side-frontier-shrine') {
+          if (k < 4) {
+            line(x - 12, y + 3, x + 2, y, '#a68d75', 1.15);
+            line(x + 2, y, x + 10, y + 2, '#443630', 0.9);
+          } else {
+            dot(x - 5, y + 1, 1.3, '#9b7868');
+            dot(x + 5, y - 1, 1.1, '#bd9c89');
+          }
+        } else if (dungeonId === 'side-crown-foundry') {
+          if (k < 5) {
+            line(x - 12, y + 3, x - 2, y - 2, '#777078', 1.4);
+            line(x - 2, y - 2, x + 9, y + 1, '#25252d', 1.2);
+          } else {
+            dot(x - 4, y, 1.5, '#a17e68');
+            dot(x + 5, y + 2, 1.1, '#4b4145');
+          }
+        }
+        ctx.restore();
+        return;
+      }
       if (dungeonId === 'supply-crown') {
         if (k < 3) {
           line(x - 10, y + 2, x - 2, y - 4, '#1f1d2455', 1.2);
@@ -18460,7 +18668,39 @@
         dot(x + 3, y + 1, 1.8, '#75826b');
       }
     } else if (region === 3) {
-      if (k < 3) {
+      const recovery = frontierGroundRecoveryAt(worldX, worldY);
+      // Uniform color washes erase the dusty grain that once came from T004.
+      // Put weathered, sub-pixel ash/soil sediment back in world-seeded detail:
+      // warm mineral flecks in war scars, cooler earth around regrowth.
+      const settled = recovery > 0.23;
+      for (let j = 0; j < 3; j++) {
+        const shift = j * 7,
+          nx = x + ((seed >>> shift) % 25) - 12,
+          ny = y + ((seed >>> (shift + 3)) % 13) - 3;
+        dot(
+          nx,
+          ny,
+          0.8 + ((seed >>> (shift + 2)) % 3) * 0.32,
+          settled ? ['#817b60', '#6d7056', '#9a8a6b'][j] : ['#8d7662', '#685d55', '#a08b72'][j],
+        );
+      }
+      if (seed % 11 === 4)
+        line(x - 10, y + 6, x - 2, y + 3, settled ? '#76765c99' : '#8b6d5899', 0.7);
+      if (recovery > 0.16 && seed % 23 < recovery * 14) {
+        // New pioneer stems appear among, not instead of, charcoal and grit.
+        for (const offset of [-5, 0, 5]) {
+          const height = 4 + ((seed + offset + 20) % 5);
+          line(
+            x + offset,
+            y + 3,
+            x + offset + (offset < 0 ? -2 : 2),
+            y + 3 - height,
+            offset ? '#87946e' : '#9aab7c',
+            0.9,
+          );
+        }
+        dot(x + 1, y + 1, 1.7, '#6c7958');
+      } else if (k < 3) {
         line(x - 7, y + 3, x - 1, y - 6, '#72594b', 1.5);
         line(x - 1, y - 6, x + 5, y + 2, '#72594b', 1.5);
       } else if (k === 3) {
@@ -18556,7 +18796,10 @@
     if (
       !blocked &&
       materials &&
-      !(outdoor && (region === 2 || (region === 0 && R.greenwoodLayout?.version === 2))) &&
+      !(
+        outdoor &&
+        ([2, 3].includes(region) || (region === 0 && R.greenwoodLayout?.version === 2))
+      ) &&
       dungeonId !== 'supply-highlands'
     ) {
       const regionName = ['vale', 'march', 'highlands', 'frontier', 'crown'][region];
@@ -18574,7 +18817,7 @@
         { x, y: y + 80 },
       ]);
     }
-    if (!materials && !blocked) {
+    if ((!materials || (outdoor && region === 3)) && !blocked) {
       ctx.save();
       ctx.globalAlpha = outdoor ? 0.055 : 0.035;
       ctx.fillStyle = colors[1];
@@ -18623,7 +18866,8 @@
         ctx.stroke();
       }
     }
-    if (!blocked) groundDetail(ctx, p, seed, region, room, dungeonId, colors);
+    if (!blocked && (!materials || String(dungeonId).startsWith('side-')))
+      groundDetail(ctx, p, seed, region, room, dungeonId, colors, x + 40, y + 40);
   }
   // Culling uses logical viewport units, not backing-store pixels.
   function outsideScreen(points, viewport, margin = 0) {
@@ -18635,6 +18879,101 @@
     );
   }
   // World-space surfaces avoid losing narrow barriers between coarse tile samples.
+  // Original water/lava motion as a small, read-only list of screen-space
+  // strokes. Pixi's immutable 512px terrain tiles must omit ONLY these strokes,
+  // then draw the same authored ripples over the cached background.
+  // No new animation family, biome, palette or saved/gameplay state.
+  function terrainMotionLines(region, screen, viewport, time) {
+    if (
+      !Number.isInteger(region) ||
+      region < 0 ||
+      region >= R.barriers.length ||
+      typeof screen !== 'function' ||
+      !Number.isFinite(time)
+    )
+      return [];
+    const bounds = viewport || { width: 10000, height: 10000 },
+      lines = [];
+    const visible = (q) => {
+      const p = screen(q);
+      return p.x > -150 && p.x < bounds.width + 150 && p.y > -150 && p.y < bounds.height + 150;
+    };
+    const line = (from, to, color, width) => {
+      const a = screen(from),
+        b = screen(to);
+      if (![a.x, a.y, b.x, b.y].every(Number.isFinite)) return;
+      if (
+        Math.max(a.x, b.x) < -30 ||
+        Math.min(a.x, b.x) > bounds.width + 30 ||
+        Math.max(a.y, b.y) < -30 ||
+        Math.min(a.y, b.y) > bounds.height + 30
+      )
+        return;
+      lines.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, color, width });
+    };
+    const strip = (kind, x1, x2, y1, y2, banks = null) => {
+      if (!['water', 'lava'].includes(kind) || y2 <= y1) return;
+      const water = kind === 'water';
+      for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
+        // Original bridge decks cover the channel in these authored gaps.
+        // The new live GPU layer sits above the retained ground raster, so
+        // avoid exposing highlights through a solid crossing.
+        if (banks && R.barriers[region].gaps.some(([lo, hi]) => y >= lo - 18 && y <= hi + 18))
+          continue;
+        const [lo, hi] = banks ? banks(y) : [x1, x2];
+        const localWidth = hi - lo,
+          center = { x: (lo + hi) / 2, y };
+        if (!visible(center)) continue;
+        const phase = Math.sin(time * (water ? 0.9 : 1.3) + y * 0.035),
+          seed = Math.abs(Math.floor(y * 13 + region * 47));
+        if (water) {
+          const x = lo + localWidth * (0.28 + (seed % 4) * 0.1),
+            span = Math.min(55, localWidth * 0.38);
+          line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+        } else {
+          const mid = lo + localWidth * (0.4 + (seed % 3) * 0.08);
+          line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
+          line({ x: mid + 8, y: y + 11 + phase * 3 }, { x: mid - 4, y: y + 27 }, '#ed963f', 1.5);
+        }
+      }
+    };
+    const barrier = R.barriers[region];
+    strip(barrier.kind, ...barrier.bounds, (y) => R.channelBanks(region, y));
+    const harbor = R.harbors?.[['vale', 'march', 'highlands', 'frontier', 'crown'][region]];
+    if (harbor?.water && !harbor.water.points) {
+      const w = harbor.water;
+      strip('water', w.x1, w.x2, w.y1, w.y2);
+    }
+    for (const p of R.terrain[region] || []) {
+      const kind = p.kind || 'cliff';
+      if (kind === 'rain-pools') {
+        for (const pool of p.pools)
+          for (const offset of [-0.35, 0.15, 0.48]) {
+            const y = pool.y + pool.ry * offset,
+              x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
+            line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
+          }
+        continue;
+      }
+      if (p.r) {
+        if (kind === 'water')
+          for (let j = 0; j < 4; j++) {
+            const y = p.y + (j - 1.5) * p.r * 0.3,
+              x = p.x - p.r * 0.25 + Math.sin(time * 0.8 + j) * 5;
+            line({ x, y }, { x: x + p.r * 0.45, y: y + 5 }, '#b4d4c388', 1);
+          }
+      } else if (kind === 'water' || kind === 'lava') {
+        let at = p.y1;
+        for (const [lo, hi] of p.gaps || []) {
+          strip(kind, p.x1, p.x2, at, lo);
+          at = hi;
+        }
+        strip(kind, p.x1, p.x2, at, p.y2);
+      }
+    }
+    return lines;
+  }
+
   function terrain(
     ctx,
     screen,
@@ -18644,6 +18983,7 @@
     viewport = null,
     inheritedDecks = [],
     staticTerrainTimeSeconds = null,
+    omitTerrainMotion = false,
   ) {
     const bounds = viewport || {
       width: ctx.canvas?.width || 10000,
@@ -18779,7 +19119,8 @@
         if (water) {
           const x = localX1 + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+          if (!omitTerrainMotion)
+            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
           line(
             { x: x + span * 0.15, y: y + 12 },
             { x: x + span * 0.65, y: y + 14 },
@@ -18788,8 +19129,10 @@
           );
         } else if (lava) {
           const mid = localX1 + localWidth * (0.4 + (seed % 3) * 0.08);
-          line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
-          line({ x: mid + 8, y: y + 11 + phase * 3 }, { x: mid - 4, y: y + 27 }, '#ed963f', 1.5);
+          if (!omitTerrainMotion) {
+            line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
+            line({ x: mid + 8, y: y + 11 + phase * 3 }, { x: mid - 4, y: y + 27 }, '#ed963f', 1.5);
+          }
           poly(
             [
               { x: x1 + width * 0.24, y: y + 28 },
@@ -18869,6 +19212,84 @@
         ctx.fillRect(-rx, -rx, rx * 2, rx * 2);
         ctx.restore();
       }
+
+    if (region === 3) {
+      // The country is recovering in selected cool-earth districts, not
+      // uniformly greening. Roads, ravine, pools and buildings paint later.
+      // A single restrained, west-to-east soil wash connects the old siege
+      // verge and inhabited woodland. The local site washes supply variation,
+      // rather than looking like unrelated green stamps on an ash background.
+      const start = screen({ x: 0, y: 0 });
+      ctx.save();
+      ctx.transform(0.76, 0.27, -0.76, 0.27, start.x, start.y);
+      const settledSoil = ctx.createLinearGradient(0, 0, 2000, 0);
+      settledSoil.addColorStop(0, 'rgba(99,125,78,0.31)');
+      settledSoil.addColorStop(0.45, 'rgba(101,123,81,0.21)');
+      settledSoil.addColorStop(0.8, 'rgba(103,118,83,0.06)');
+      settledSoil.addColorStop(1, 'rgba(103,118,83,0)');
+      ctx.fillStyle = settledSoil;
+      ctx.fillRect(0, 0, size, size);
+      ctx.restore();
+      for (const z of frontierGroundZones) {
+        const p = screen({ x: z.x, y: z.y }),
+          radius = (z.rx + z.ry) * 0.76;
+        if (
+          p.x < -radius - 100 ||
+          p.x > bounds.width + radius + 100 ||
+          p.y < -radius - 100 ||
+          p.y > bounds.height + radius + 100
+        )
+          continue;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.transform(0.76, 0.27, -0.76, 0.27, 0, 0);
+        ctx.scale(z.rx, z.ry);
+        const wash = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+        wash.addColorStop(0, `rgba(${z.rgb},${(z.strength * 0.33).toFixed(3)})`);
+        wash.addColorStop(0.46, `rgba(${z.rgb},${(z.strength * 0.22).toFixed(3)})`);
+        wash.addColorStop(0.85, `rgba(${z.rgb},${(z.strength * 0.06).toFixed(3)})`);
+        wash.addColorStop(1, `rgba(${z.rgb},0)`);
+        ctx.fillStyle = wash;
+        ctx.beginPath();
+        ctx.arc(0, 0, 1, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+      // Sparse rooted grass in world coordinates: no checkerboard tiling.
+      // All static and viewport-culled, including Canvas and Pixi backgrounds.
+      for (let x = 65; x < size; x += 135)
+        for (let y = 80; y < size; y += 135) {
+          const seed =
+              (Math.imul(Math.floor(x / 135) + 17, 73856093) ^
+                Math.imul(Math.floor(y / 135) + 29, 19349663)) >>>
+              0,
+            wx = x + (seed % 35) - 17,
+            wy = y + ((seed >>> 8) % 39) - 19;
+          // Viewport check before the heavier lore-surface lookup. These tufts
+          // are static cached terrain, not part of per-frame actor drawing.
+          const p = screen({ x: wx, y: wy });
+          if (p.x < -20 || p.y < -20 || p.x > bounds.width + 20 || p.y > bounds.height + 20)
+            continue;
+          const recovery = frontierGroundRecoveryAt(wx, wy);
+          if (recovery < 0.24 || (seed % 101) / 101 > recovery * 0.8) continue;
+          ctx.save();
+          ctx.strokeStyle = seed % 3 ? '#879875' : '#a1a77a';
+          ctx.lineWidth = 0.95;
+          for (const offset of [-5, 0, 5]) {
+            const height = 5 + ((seed + offset + 30) % 6);
+            ctx.beginPath();
+            ctx.moveTo(p.x + offset, p.y + 2);
+            ctx.quadraticCurveTo(
+              p.x + offset + 1,
+              p.y - height * 0.55,
+              p.x + offset + (offset < 0 ? -2 : 3),
+              p.y - height,
+            );
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+    }
     ctx.restore();
     if (region === 0 && R.greenwoodLayout?.version === 2)
       GreenwoodLandscape.drawGround(ctx, screen, R.greenwoodLayout, bounds);
@@ -19161,11 +19582,12 @@
               ctx.stroke();
             }
           }
-          for (const offset of [-0.35, 0.15, 0.48]) {
-            const y = pool.y + pool.ry * offset,
-              x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
-            line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
-          }
+          if (!omitTerrainMotion)
+            for (const offset of [-0.35, 0.15, 0.48]) {
+              const y = pool.y + pool.ry * offset,
+                x = pool.x - 13 + Math.sin(time * 0.7 + offset) * 3;
+              line({ x, y }, { x: x + 23, y: y + 3 }, '#a4c2b688', 1);
+            }
         }
         continue;
       }
@@ -19217,7 +19639,7 @@
             water ? '#65796a88' : kind === 'obsidian' ? '#82709266' : '#aba18a77',
           );
         }
-        if (water)
+        if (water && !omitTerrainMotion)
           for (let j = 0; j < 4; j++) {
             const y = p.y + (j - 1.5) * p.r * 0.3,
               x = p.x - p.r * 0.25 + Math.sin(time * 0.8 + j) * 5;
@@ -19472,21 +19894,22 @@
   function dungeonArchitecture(ctx, screen, dungeonId = '', size) {
     const layout = dungeonLayout(dungeonId, size);
     if (!layout) return;
-    const greenwoodInterior = R.greenwoodLayout?.version === 2 && ['crypt', 'supply-vale'].includes(dungeonId);
+    const greenwoodInterior =
+      R.greenwoodLayout?.version === 2 && ['crypt', 'supply-vale'].includes(dungeonId);
     const palette =
       dungeonId === 'supply-highlands'
         ? { top: '#979a86', side: '#626658', edge: '#c7c4a4' }
         : dungeonId === 'supply-vale' && greenwoodInterior
           ? { top: '#9b987c', side: '#696e58', edge: '#c5bb92' }
-        : dungeonId === 'abyss'
-          ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
-          : dungeonId === 'crypt'
-            ? { top: '#69565d', side: '#41343f', edge: '#bf9870' }
-            : dungeonId === 'archive'
-              ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
-              : dungeonId === 'mine'
-                ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
-                : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
+          : dungeonId === 'abyss'
+            ? { top: '#6f5b5d', side: '#463b3d', edge: '#a77a6b' }
+            : dungeonId === 'crypt'
+              ? { top: '#69565d', side: '#41343f', edge: '#bf9870' }
+              : dungeonId === 'archive'
+                ? { top: '#697978', side: '#3e5458', edge: '#9eb2ac' }
+                : dungeonId === 'mine'
+                  ? { top: '#797567', side: '#4b4a42', edge: '#a7a187' }
+                  : { top: '#667078', side: '#3f484e', edge: '#9ba7aa' };
     const poly = (pts, fill, stroke, width = 1) => {
       ctx.fillStyle = fill;
       ctx.beginPath();
@@ -19501,7 +19924,13 @@
     };
     const block = (x1, x2, y1, y2) => {
       const rise =
-          dungeonId === 'supply-highlands' ? (Math.max(x2 - x1, y2 - y1) <= 45 ? 44 : 30) : greenwoodInterior ? 24 : 0,
+          dungeonId === 'supply-highlands'
+            ? Math.max(x2 - x1, y2 - y1) <= 45
+              ? 44
+              : 30
+            : greenwoodInterior
+              ? 24
+              : 0,
         top = [
           { x: x1, y: y1 },
           { x: x2, y: y1 },
@@ -20025,6 +20454,52 @@
     });
   }
 
+  function drawLightFixtures(ctx, renderedLights) {
+    for (const p of renderedLights) {
+      if (p.kind === 'window') {
+        ctx.fillStyle = '#483d31';
+        ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
+        ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
+        ctx.fillStyle = '#f2cb81';
+        ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
+        ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
+        ctx.strokeStyle = '#8d6543';
+        ctx.lineWidth = 1.3;
+        ctx.beginPath();
+        for (const x of [p.x - 9, p.x + 12]) {
+          ctx.moveTo(x, p.y - 42);
+          ctx.lineTo(x, p.y - 32);
+        }
+        ctx.stroke();
+      } else if (p.kind === 'lantern' && p.fixture === 'post') {
+        // Illuminate the glass already painted on the actual post. Do not
+        // manufacture a second floating service lantern beside it.
+        ctx.fillStyle = '#f4c57e';
+        ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
+      } else if (p.kind === 'lantern') {
+        // A modest iron hook and glazed hanging lamp by the service stand.
+        const x = p.x + 19,
+          y = p.y - 22;
+        ctx.strokeStyle = '#817c69';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(x - 7, y + 17);
+        ctx.lineTo(x - 7, y - 14);
+        ctx.lineTo(x + 1, y - 14);
+        ctx.lineTo(x + 1, y - 9);
+        ctx.stroke();
+        ctx.fillStyle = '#574b40';
+        ctx.fillRect(x - 6, y - 9, 14, 4);
+        ctx.fillStyle = '#f4c57e';
+        ctx.fillRect(x - 5, y - 5, 12, 12);
+        ctx.strokeStyle = '#635a4b';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(x - 5, y - 5, 12, 12);
+        ctx.fillStyle = '#7a6450';
+        ctx.fillRect(x - 6, y + 7, 14, 3);
+      }
+    }
+  }
   function atmosphere(ctx, canvas, region = 0, opts = {}) {
     const night = !!opts.night,
       peace = !!opts.peace,
@@ -20092,50 +20567,7 @@
       ctx.globalCompositeOperation = 'source-over';
       // Luminous windows and sheltered lantern glass are localized light
       // sources, not new scenery obstacles. Fires already have drawn flames.
-      for (const p of renderedLights) {
-        if (p.kind === 'window') {
-          ctx.fillStyle = '#483d31';
-          ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
-          ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
-          ctx.fillStyle = '#f2cb81';
-          ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
-          ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
-          ctx.strokeStyle = '#8d6543';
-          ctx.lineWidth = 1.3;
-          ctx.beginPath();
-          for (const x of [p.x - 9, p.x + 12]) {
-            ctx.moveTo(x, p.y - 42);
-            ctx.lineTo(x, p.y - 32);
-          }
-          ctx.stroke();
-        } else if (p.kind === 'lantern' && p.fixture === 'post') {
-          // Illuminate the glass already painted on the actual post. Do not
-          // manufacture a second floating service lantern beside it.
-          ctx.fillStyle = '#f4c57e';
-          ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
-        } else if (p.kind === 'lantern') {
-          // A modest iron hook and glazed hanging lamp by the service stand.
-          const x = p.x + 19,
-            y = p.y - 22;
-          ctx.strokeStyle = '#817c69';
-          ctx.lineWidth = 2.2;
-          ctx.beginPath();
-          ctx.moveTo(x - 7, y + 17);
-          ctx.lineTo(x - 7, y - 14);
-          ctx.lineTo(x + 1, y - 14);
-          ctx.lineTo(x + 1, y - 9);
-          ctx.stroke();
-          ctx.fillStyle = '#574b40';
-          ctx.fillRect(x - 6, y - 9, 14, 4);
-          ctx.fillStyle = '#f4c57e';
-          ctx.fillRect(x - 5, y - 5, 12, 12);
-          ctx.strokeStyle = '#635a4b';
-          ctx.lineWidth = 2;
-          ctx.strokeRect(x - 5, y - 5, 12, 12);
-          ctx.fillStyle = '#7a6450';
-          ctx.fillRect(x - 6, y + 7, 14, 3);
-        }
-      }
+      drawLightFixtures(ctx, renderedLights);
     }
     if (darkness < 1) {
       ctx.globalAlpha = 1 - darkness;
@@ -20238,6 +20670,7 @@
   root.PrototypeVisuals = {
     draw,
     frontierTreeShoots,
+    frontierGroundRecoveryAt,
     height,
     floor,
     dungeonFloorPath,
@@ -20247,8 +20680,10 @@
     roads,
     footpaths,
     terrain,
+    terrainMotionLines,
     bridges,
     atmosphere,
+    drawLightFixtures,
     atmosphereMotes,
     allyBodyKind,
     enemyBodyKind,

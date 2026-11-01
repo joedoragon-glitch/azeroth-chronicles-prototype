@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "source": "GitHub Actions Phase 6 isolated studio, run 41213053417",
+  "runUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41213053417",
+  "runHead": "8f40d6c93cff8cc01e1d9b0f7b9e29dcbab2e6c6",
+  "artifactId": 13047226742,
+  "artifactName": "phase6-isolated-metrics-not-acoustic-acceptance",
+  "scope": "three recorded-source isolated preview candidates, not production assets",
+  "encoding": "MP3, 44.1kHz, stereo, 192kbps",
+  "tracks": [
+    {
+      "id": "title",
+      "seconds": 41.739138,
+      "bytes": 1010668,
+      "sha256": "cd6dcd7070252960896e1b243d159bdb5c7ecbd70477a70216d0f78519865370",
+      "decodedPeak": 0.36993,
+      "decodedRms": 0.06784,
+      "decodedSeam": 0,
+      "recordedCalls": 100,
+      "allPerformedNotesSha256": "784fbc77ca148b6b6c3e7bf8ed4d4dbbfa31d215448b540d500bfadfda93f813"
+    },
+    {
+      "id": "defeat",
+      "seconds": 25.263152,
+      "bytes": 615070,
+      "sha256": "6bf504dab6dba85d4ec32f5fc2177504b90a8130959795f09d0adc35d71b50a2",
+      "decodedPeak": 0.2435,
+      "decodedRms": 0.03898,
+      "decodedSeam": 0,
+      "recordedCalls": 32,
+      "allPerformedNotesSha256": "753b8ae9f3cd94971bc843af40a54f72902973d288c53f7c9e3f21cfd44b9ae5"
+    },
+    {
+      "id": "finale",
+      "seconds": 48,
+      "bytes": 1160506,
+      "sha256": "82738818e7775900f59994a3384e4dc4de4926ac8ca991dd09c57ae0c9ee6396",
+      "decodedPeak": 0.42462,
+      "decodedRms": 0.0678,
+      "decodedSeam": 0.00001,
+      "recordedCalls": 83,
+      "allPerformedNotesSha256": "db022b96b1f54632a32f2335da747d2eb0ff89a9ab5e4ce61147bd296a7f9569"
+    }
+  ],
+  "totalPreviewEncodedBytes": 2786244,
+  "maxDecodedPeak": 0.42462,
+  "maxDecodedSeam": 0.00001,
+  "recordedNoteCalls": 215,
+  "uniqueActualSourceClips": 22,
+  "largestAbsoluteSourcePitchShiftSemitones": 3,
+  "largeFiveOrMoreSemitoneShifts": 0,
+  "originalCatalogEncodedBytes": 25654373,
+  "phase6OnlyReplacementProjectionBytes": 27628322,
+  "catalogBudgetLimitBytes": 268435456,
+  "frozenCrownPhysicalAssetsVerified": 18,
+  "currentMusicIdsUnchanged": 83,
+  "scopeOfApproval": "source-only GO and exact-run isolated technical PASS; NOT sound-by-ear or user acceptance",
+  "heardStatus": "UNVERIFIED: no reviewer actually listened",
+  "integrationStatus": "UNREGISTERED, DRAFT, UNMERGED, UNPUBLISHED, NOT DEVICE VERIFIED",
+  "phase7Requirement": "Full 65 replacement cue collection integrated and measured; do not extrapolate Phase 6-only budget projection",
+  "ownerFirstListening": "PHASE 9 ONLY"
+}

@@ -83,7 +83,7 @@ const root = path.resolve(__dirname, '..'),
       await page.evaluate(() => Prototype.openMenu('Audio housekeeping check', '', []));
       await page.waitForFunction(() => {
         const a = Prototype.audio;
-        return a.mixScene === 'menu' && a.recordedScore?.selectionKey === a.productionKey;
+        return a.mixScene === 'world' && a.recordedScore?.selectionKey === a.productionKey;
       });
       const replaced = await page.evaluate(() => {
         const a = Prototype.audio,
@@ -95,7 +95,7 @@ const root = path.resolve(__dirname, '..'),
       assert((await page.evaluate(() => Prototype.audio.recordedScore.at)) > replaced.at);
       await page.evaluate(() => Prototype.openMenu('Audio housekeeping check', '', []));
       await page.waitForFunction(
-        () => Prototype.audio.ctx.state === 'running' && Prototype.audio.mixScene === 'menu',
+        () => Prototype.audio.ctx.state === 'running' && Prototype.audio.mixScene === 'world',
       );
       await page.waitForFunction(() => !!Prototype.audio.environmentVoice);
       const environmentalStart = await page.evaluate(() => Prototype.audio.environmentVoice.at);

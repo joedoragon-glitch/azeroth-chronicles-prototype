@@ -72,12 +72,26 @@ function parseCatalog(text, file = 'docs/GRAPHICS_CANON_SPRITE_PROMPTS.md') {
       name: heading[2],
       status: states[0] ? 'generate' : states[1] ? 'alias' : 'procedural',
       source: file,
-      sourceHash: hash(Buffer.from(section.trim())),
+      // IDs 001-296 predate the official-title correction. Normalize that
+      // one naming edit for their immutable approval hashes only; newer IDs
+      // use the actual prompt bytes and all design changes still invalidate.
+      sourceHash: hash(
+        Buffer.from(
+          Number(heading[1]) <= 296
+            ? section.trim().replaceAll("So I Became the Dark Lord's Problem", 'Azeroth Chronicles')
+            : section.trim(),
+        ),
+      ),
       cues: section.match(/\*\*Canonical cues:\*\* ([^\n]+)/)?.[1] || '',
       prompt: section.match(/\*\*Image-generation prompt:\*\*\s*\n\s*> ([^\n]+)/)?.[1] || null,
       declaredKey: section.match(/\*\*Runtime sprite key:\*\* `([^`]+)`/)?.[1] || null,
     };
   });
+  for (const item of entries)
+    fail(
+      !item.prompt || !item.prompt.includes('Azeroth Chronicles'),
+      'Retired public title in sprite image prompt: ' + item.id,
+    );
   for (const state of ['generate', 'alias', 'procedural'])
     fail(
       entries.filter((e) => e.status === state).length === expected[state],
@@ -1391,6 +1405,7 @@ async function generationRequest(key, destination) {
     Math.round(body.height) +
     ' CSS pixels. Simplify tiny details to read at that size. Keep the full reference-frame proportions and root; do not fill transparent padding with a larger actor. Use enough source pixels for a 576 × 576 processed frame. Preserve identity, equipment and major silhouette; avoid fine texture that becomes noise.';
   fail(!/\b(undefined|null)\b/.test(prompt), 'Malformed assembled generation prompt');
+  fail(!prompt.includes('Azeroth Chronicles'), 'Retired title in assembled image request');
   const request = {
     version: 1,
     key,

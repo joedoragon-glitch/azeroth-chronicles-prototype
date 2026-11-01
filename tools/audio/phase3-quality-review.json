@@ -1,0 +1,646 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-31",
+  "status": "All eight first two-bar melody pitch/onset sources now match originals; broader harmony, timbre, form and audio acceptance still REVISE/HOLD",
+  "sources": [
+    "tools/audio/score-book.json",
+    "tools/audio/phase2-pilots-v2.json",
+    "tools/audio/phase3-themes.json",
+    "tools/audio/phase2-ensemble.py",
+    "tools/audio/phase3-compose.py",
+    "tools/audio/render-score.py"
+  ],
+  "method": "Exact first-two-bar melodic pitch/rhythm from authored score as played by present renderers (for pilot use source family shifts). Semitone intervals include actual bar-to-bar transposition and are compared to the first two original bars. The count of matching positions is a diagnostic, never an artistic ranking or rejection threshold. Does not listen to sound.",
+  "gate": {
+    "sourceComposition": "REVISE",
+    "renderedTechnical": "PENDING: previous eight MP3 render evidence is obsolete after source changes; re-encode/decode corrected candidate",
+    "heardSound": "UNVERIFIED",
+    "phase4": "BLOCKED"
+  },
+  "rootCause": "Previous checks counted different harmony/phrase arrays and safe encodes as source-quality GO without demonstrating performed motif continuity, expressive instrument realism, meaningful form or critical internal listening. Six new hooks now restored at the note level, but this does not pass timbral/orchestral quality, and the reused v2 pilot bases still deviate from historical openings.",
+  "cues": [
+    {
+      "id": "place-vale",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          7,
+          2
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          0
+        ],
+        [
+          7,
+          2
+        ]
+      ],
+      "originalOpeningIntervals": [
+        2,
+        2,
+        3,
+        -3,
+        -2,
+        -2,
+        2
+      ],
+      "candidateOpeningIntervals": [
+        2,
+        2,
+        3,
+        -3,
+        -2,
+        -2,
+        2
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Original Orchard Roads' first two bars now reappear by intentional Phase 3-only pilot lead overrides; natural flute articulation and bar-three transition remain unverified by hearing.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    },
+    {
+      "id": "place-march",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "originalOpeningIntervals": [
+        4,
+        -1,
+        -1,
+        4,
+        -2
+      ],
+      "candidateOpeningIntervals": [
+        4,
+        -1,
+        -1,
+        4,
+        -2
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: first two bars now directly retain D–F#–F then E–G#–F# with original rests; note identity restored but chromatic overtones, chord approach and piano/reed timbre require internal A/B.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    },
+    {
+      "id": "place-highlands",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          7
+        ],
+        [
+          5,
+          7
+        ],
+        [
+          6,
+          5
+        ],
+        [
+          7,
+          4
+        ]
+      ],
+      "originalOpeningIntervals": [
+        0,
+        4,
+        3,
+        0,
+        -2,
+        -1
+      ],
+      "candidateOpeningIntervals": [
+        0,
+        4,
+        3,
+        0,
+        -2,
+        -1
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: original G–G–B–(rest) | D–D–C–B work call and plateau restored; assess industrial weight versus excessive repetitive hammer figure or synthetic horn attack.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    },
+    {
+      "id": "place-frontier",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      "originalOpeningIntervals": [
+        2,
+        -2,
+        4,
+        -1,
+        -1,
+        -2
+      ],
+      "candidateOpeningIntervals": [
+        2,
+        -2,
+        4,
+        -1,
+        -1,
+        -2
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: original A–B–A–C# | C–(rest)–B–A and intentional major/minor-third contradiction restored; test whether exposed chromatic interplay resolves expressively in cello, not just note-level.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    },
+    {
+      "id": "place-crypt",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      "originalOpeningIntervals": [
+        4,
+        -1,
+        -1,
+        -2
+      ],
+      "candidateOpeningIntervals": [
+        4,
+        -1,
+        -1,
+        -2
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: unfinished estate's A–(rest)–C#–(rest) | C–B–(rest)–A retained; sustained A tonic under borrowed major-to-minor motion intended. Inspect register, low-frequency mud, and quiet skeletal labor pulse.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    },
+    {
+      "id": "place-archive",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          3,
+          7
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          6,
+          4
+        ],
+        [
+          7,
+          3
+        ]
+      ],
+      "originalOpeningIntervals": [
+        4,
+        3,
+        -1,
+        -2,
+        -1
+      ],
+      "candidateOpeningIntervals": [
+        4,
+        3,
+        -1,
+        -2,
+        -1
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Original Restoration After Rain two-bar D–F#–A then G#–F#–F hook now reappears through chromatic Phase 3-only pilot lead overrides; Dorian chord clash and piano timbre require critical review and actual listening.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    },
+    {
+      "id": "place-mine",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          4
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          6,
+          4
+        ]
+      ],
+      "originalOpeningIntervals": [
+        0,
+        3,
+        -3,
+        2,
+        2
+      ],
+      "candidateOpeningIntervals": [
+        0,
+        3,
+        -3,
+        2,
+        2
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: F–F–(rest)–Ab | F–G–A–(rest) restored; original raised-third ambiguity needs critical harmonic/articulation resolution under stone chisel rather than bare loud horn.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    },
+    {
+      "id": "place-abyss",
+      "originalFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      "currentlyPerformedFirstTwoBars": [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          5,
+          3
+        ],
+        [
+          6,
+          2
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      "originalOpeningIntervals": [
+        2,
+        1,
+        1,
+        -1,
+        -1,
+        -2
+      ],
+      "candidateOpeningIntervals": [
+        2,
+        1,
+        1,
+        -1,
+        -1,
+        -2
+      ],
+      "firstFourExactIntervalPositions": 4,
+      "review": "Source amended: G–A–Bb–(rest) | B–Bb–A–G retained; chromatic yearning deliberate, but upper register brass, flight rhythm and fatigue must be audibly inspected.",
+      "sound": "UNVERIFIED — shared oscillator-based instrument engine; no actual audio audition"
+    }
+  ],
+  "returnToGo": [
+    "Eight original opening identities restored at note level, but musical harmonic integration and realism remain unverified and source gate REVISE.",
+    "Independently review harmony/voice-leading, phrase resolution, density, purposeful silence, distinct acoustic behavior of actual timbral engine, and comparable long-loop energy; do not certify from descriptive prose",
+    "Make and decode exact corrected previews; retain Crown hash checks and honest integrated resource projections after PR #712",
+    "Use real internal audition and A/B comparison where possible; log exact source/format/headphones and perceived problems; owner first listens only at Phase 9",
+    "No Phase 4 generation while material source design failures exist; mark audible qualities UNVERIFIED until genuinely heard"
+  ]
+}
