@@ -785,3 +785,25 @@ for (const companionDistance of [350, 15]) {
   assert(game.hero.cd[0] > 0 && game.hero.cd[1] > 0 && game.hero.basicCd > 0,
     'two manual song cooldowns and automatic basic recovery stay independent');
 }
+
+
+// #684: Recall never cancels an already authorized hero skill-approach order.
+{
+  const { game, enemies } = heroAutoInvestigation('mage', [460]);
+  const enemy = enemies[0];
+  assert(game.cast(1, enemy.id),
+    'manual out-of-range Mage Skill 1 creates its normal approach request');
+  const pending = game.hero.order;
+  assert.equal(pending?.type, 'skill-approach');
+  game.s.party = [game.unit('soldier', game.hero.x + 300, game.hero.y + 25)];
+  assert(game.recallParty(), 'squad can be recalled while hero Skill 1 is approaching');
+  assert.equal(game.hero.order, pending,
+    'Recall cannot erase a player-authorized hero Skill 1 approach');
+  assert.equal(game.s.recallActive, true);
+  const oldX = game.hero.x;
+  game.tick(0.05, { x: 0, y: 0 });
+  assert(game.hero.x >= oldX,
+    'hero is still permitted to approach and cover the retreat during Recall');
+  assert.equal(game.s.recallActive, true,
+    'hero's ongoing approach neither cancels nor extends companion Recall');
+}
