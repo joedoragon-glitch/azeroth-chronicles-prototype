@@ -2219,6 +2219,7 @@
                 this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e) * a.coefficient),
                 a.manaDrain || 0,
                 e.id,
+                false, { shape: 'area', criticalExecution: criticalReceipt },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -2837,6 +2838,7 @@
                     : this.weakenedEnemyDamage(e) * a.coefficient,
                 a.manaDrain || 0,
                 e.id,
+                false, { shape: 'area', criticalExecution: a.criticalExecution },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -2897,6 +2899,7 @@
                 this.weakenedEnemyDamage(e) * move.coefficient,
                 0,
                 e.id,
+                false, { shape: 'single', criticalExecution: a.criticalExecution },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
