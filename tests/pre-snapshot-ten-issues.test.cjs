@@ -51,8 +51,9 @@ function mob(c, species, x, y, options = {}) {
   c.updateParty(0.05);
   assert.equal(c.s.recallActive, true, 'reaching formation never resets Recall');
   const e = mob(c, 'goblin', c.hero.x + 75, c.hero.y);
-  assert(c.cast(1, e.id), 'explicit attack is a new engagement order');
-  assert.equal(c.s.recallActive, false);
+  assert(c.cast(1, e.id), 'manual Skill 1 remains available while Recall is active');
+  assert.equal(c.s.recallActive, true,
+    'explicit Skill 1 cannot override Recall; only the button or timeout can');
 }
 // Community + #311 intersection: Recall uses pet-specific stationary basics,
 // not the Soldier fallback; no pet spell, charge or re-engagement is authorized.
