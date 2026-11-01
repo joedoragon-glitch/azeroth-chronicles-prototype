@@ -79,6 +79,8 @@ async function main() {
     const viewport =
       process.env.PARITY_PHONE === '1' ? { width: 844, height: 390 } : { width: 912, height: 600 };
     const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+    if (process.env.PARITY_REDUCED_MOTION === '1')
+      await page.emulateMedia({ reducedMotion: 'reduce' });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto('http://127.0.0.1:' + server.address().port + '/');
