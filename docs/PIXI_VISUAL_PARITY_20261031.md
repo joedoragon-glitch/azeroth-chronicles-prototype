@@ -62,3 +62,15 @@ The original sprite-scope assertion required review of the following source chan
 | `src/prototype/visuals.js` | `a78b518e6907e34da1e1a245f69ef5ca391e11befed26859e3b7f79779d424a7` | `fffbdb9df981754bb596c8b5894d92ef50aa7de544481cbbfd7b8f9fbf4a9967` |
 | `src/prototype/sprites.js` | `95d6df1a2e23675b18a4302b0824fe69516caa79c6238f829cbf468982e30807` | `a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43` |
 | `src/prototype/renderer.js` | `fedfcc2a00fff830cf84045174871e94fc1bd17e769c6e1e76821c8c3192a420` | `0d1e0319f71eda2a8191d0b71ff85081ee165d6effc99c2cb2a11199b544801f` |
+
+## 1 November 2026 follow-up — issue #756 detail invalidation (draft PR #762)
+
+This is a **separate, unmerged and undeployed performance investigation**; it does not revise the published #748 acceptance record.
+
+**Source baseline:** main `789f9d80bb11d99016bed8d816d2bf5d8e27f5f6`. The original Canvas `entityAura`, `drawTrueAura`, book, cage, flight and pursuit paint recipes are unchanged. In the prior Pixi source, one detail signature included `now()` for every TRUE/Ringleader/frenzy actor, including the static TRUE nonboss ring and any unrelated Ledger overlay. Both underlay and overlay therefore re-recorded vector paths when only an aura clock changed.
+
+**Deterministic baseline:** [focused CI #41361747280](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41361747280) at `3ac175a`. Seven actual renderer/bridge fixtures, each with 60 presentation clocks: TRUE boss 60 geometry clears; static TRUE nonboss 60; Ringleader 60; frenzy 60; TRUE Ridge boss with Ledger 120; Keeper cage 1; pursuit streak 1. **Total 362, with 118 unnecessary clears** for static TRUE and the unchanged book. The TRUE boss used two stable gradient recipes per actor, not a new gradient per tick, and body atlas frames were reused. Counts and wall times were obtained from simulated Pixi Graphics on Node 22: **not real GPU times, FPS or device certification**.
+
+**Minimal candidate:** layer-specific `underlaySignature` / `overlaySignature`, with historical shared `signature` accepted by the bridge for old pilot fixtures. Time is included only for actual moving geometry: TRUE boss in normal motion and Ringleader/frenzy pulses. Static TRUE rings, reduced-motion TRUE bosses, book and cage details remain geometrically retained. Flight banking must continue to update against the moving actor-to-waypoint vector. The original colors, alpha, gradient recipes, raster bodies, rendering order, timing, gameplay, preferences and saves are not altered.
+
+**Gate:** focused native tests including t0/t7000 animated motion and preference/expiry cleanup; same-Campaign composited Chromium comparisons at zoom 100/150/175%, optimization On/Off, reduced motion On/Off and day/night; exact-head offline/reproducible build. No merge or deployment before owner approval.
