@@ -165,7 +165,7 @@ async function main() {
             b.rangedAim = true;
           }
         }
-        if (name === 'registered') {
+        if (['registered', 'ringleader'].includes(name)) {
           g.enter('vale');
           Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
           const v = g.zone();
@@ -180,7 +180,7 @@ async function main() {
           Object.assign(e, {
             x: 1080,
             y: 960,
-            form: 'true',
+            form: name === 'ringleader' ? 'ringleader' : 'true',
             rangedAim: { x: 1000, y: 1000 },
             frenzy: true,
           });
@@ -351,7 +351,8 @@ async function main() {
             const m = status.gpu.sceneMetrics;
             if (fixture === 'warlord') assert.equal(m.worldIndicators, 1);
             if (fixture === 'ridge') assert.equal(m.groundMarks, 1);
-            if (fixture === 'registered') assert.equal(m.accessoryActors, 1);
+            if (['registered', 'ringleader'].includes(fixture))
+              assert.equal(m.accessoryActors, 1);
             if (fixture === 'cover')
               assert(
                 status.canvas.outlineMasks > 0,
@@ -415,10 +416,10 @@ async function main() {
             lifecycle.push({ fixture, mode, changedPixels: n, crop });
           }
         }
-        if (['warlord', 'ridge', 'registered', 'lamp'].includes(fixture)) {
+        if (['warlord', 'ridge', 'registered', 'ringleader', 'lamp'].includes(fixture)) {
           const negative = await page.evaluate((name) => {
             if (name === 'lamp') g.s.clock = 120;
-            else if (name === 'registered')
+            else if (['registered', 'ringleader'].includes(name))
               Object.assign(g.zone().enemies[0], {
                 form: 'normal',
                 frenzy: false,
@@ -433,7 +434,7 @@ async function main() {
             assert.equal(negative.sceneMetrics.worldIndicators, 0, 'Ash expires at exact boundary');
           if (fixture === 'ridge')
             assert.equal(negative.sceneMetrics.groundMarks, 0, 'Mark expires at exact boundary');
-          if (fixture === 'registered')
+          if (['registered', 'ringleader'].includes(fixture))
             assert.equal(
               negative.sceneMetrics.accessoryActors,
               0,
