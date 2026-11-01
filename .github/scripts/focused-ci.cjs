@@ -17,7 +17,7 @@ const PILOT = 'tools/webgl-pilot/';
 const groups = [
   // #755: future comparator edits must exercise the positive-control guard.
   {
-    match: /^scripts\\/pixi-755-compare\\.cjs$|^tests\\/pixi-755-acceptance\\.test\\.cjs$/,
+    match: /^scripts\/pixi-755-compare\.cjs$|^tests\/pixi-755-acceptance\.test\.cjs$/,
     tests: [TEST + 'pixi-755-acceptance.test.cjs'],
   },
   {
