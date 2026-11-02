@@ -1768,12 +1768,14 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
-          if (!this.developerCompanionDamage(
+          const landed = this.developerCompanionDamage(
             u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
               this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
-          )) return false;
+            { skillShape: 'single', criticalExecution: criticalReceipt },
+          );
           const veteran = R.companionSkills.veteran;
           if (
+            landed &&
             (this.s.expeditionRank || 1) >= veteran.expeditionRank &&
             ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= veteran.soldierWard)
           ) {
@@ -1783,7 +1785,9 @@
           u.skill1Cd = cfg.cooldown;
           u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
           u.cd = Math.max(u.cd, 0.4);
-          this.event('melee', {
+          // A dodged Power Strike still spends its cooldown and shows the
+          // swing, but must not emit a landed melee impact or grant its ward.
+          if (landed) this.event('melee', {
             actor: 'companion',
             role: 'soldier',
             source: u.id,
@@ -1810,6 +1814,7 @@
             unitType: u.type,
             skill: 'power-strike',
             targetId: target.id,
+            hits: landed ? 1 : 0,
           });
           return true;
         }
@@ -1974,14 +1979,17 @@
           }
         } else {
           const previousDirect = this.developerCompanionBeginDirect(u, def.name);
-          for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+          for (const e of targets) if (this.damage(e, damage, u.id, { area: true, skillShape: 'area', criticalExecution: criticalReceipt })) hits++;
           this.developerCompanionEndDirect(previousDirect);
         }
-        if (!hits) return false;
+        // The legal skill release spends its cooldown even if every target
+        // evades; otherwise the AI retries for free until Dodge is defeated.
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.5);
-        this.event(
+        // A fully evaded Cleave still released and spent its cooldown, but
+        // no landed melee contact should be drawn on the dodging enemies.
+        if (u.type !== 'soldier' || hits) this.event(
           u.type === 'soldier' ? 'melee' : 'spell',
           u.type === 'soldier'
             ? {
@@ -2238,7 +2246,9 @@
         const previousDirect = this.developerCompanionBeginDirect(u, def.name);
         for (const e of victims) {
           const hp = e.hp;
-          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
+          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single',
+            skillShape: def.shape === 'single' ? 'single' : 'area',
+            criticalExecution: receipt }))
             continue;
           landed++;
           actualDamage += Math.max(0, hp - e.hp);
@@ -2256,7 +2266,8 @@
           }
         }
         this.developerCompanionEndDirect(previousDirect);
-        if (!landed) return false;
+        // Even zero landed contacts spend a valid cast's cooldown. Attached
+        // damage, Slow and Siphon stay gated by genuine landed contacts.
         // Siphon is based on actual post-mitigation lost HP, never theoretical
         // damage. No overheal or duplicate support-heal critical roll.
         if (def.siphon && u.hp > 0 && u.hp < u.maxHp) {
@@ -2270,7 +2281,7 @@
         }
         // Flank Command is a lateral *reposition* after contact, not a second
         // damage event; moving is blocked by the same real terrain collision.
-        if (def.dash && !native && species !== 'mireling') {
+        if (landed && def.dash && !native && species !== 'mireling') {
           const angle = Math.atan2(target.y - u.y, target.x - u.x),
             flank = { x: u.x - Math.sin(angle) * def.dash,
               y: u.y + Math.cos(angle) * def.dash };
@@ -2389,7 +2400,10 @@
               (1 + this.companionMasteryTier(u) *
                 R.balance.companions.mastery.nativeDamagePerTier)),
         );
-        let committed = false;
+        // Direct melee or elite ranged maneuvers commit at legal release,
+        // not only on HP damage. Only the ordinary ranged branch needs to
+        // create its projectile before it can count as committed.
+        let committed = !(ranged && !elite);
         if (ranged && !elite) {
           // Physical creature projectile: status applies only on contact.
           const shot = Math.max(1, distance);
@@ -2398,6 +2412,7 @@
             x: u.x, y: u.y,
             dx: (target.x - u.x) / shot, dy: (target.y - u.y) / shot,
             target: target.id, source: u.id, damage: base,
+            skillShape: 'single',
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
             ...this.charmedProjectileFlight(u),
             slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
@@ -2415,7 +2430,7 @@
           const previousDirect = this.developerCompanionBeginDirect(
             u, profile.name || 'Native maneuver');
           for (const enemy of victims) {
-            if (!this.damage(enemy, base, u.id, { area: elite })) continue;
+            if (!this.damage(enemy, base, u.id, { area: elite, skillShape: elite ? 'area' : 'single', criticalExecution: criticalReceipt })) continue;
             committed = true;
             if (enemy.hp <= 0) continue;
             if (elite && ['scatter', 'sweep'].includes(profile.effect)) {

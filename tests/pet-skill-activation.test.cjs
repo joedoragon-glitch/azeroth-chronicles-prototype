@@ -1,4 +1,7 @@
 'use strict';
+// This suite checks authored hits independently of skill evasion. Dedicated
+// skill-evasion suites verify the new probability and missed-contact rules.
+require('./helpers/legacy-skill-evasion.cjs')();
 const assert = require('node:assert/strict');
 const { completeFieldOpening } = require('./helpers/field-opening.cjs');
 const C = require('../src/prototype/engine');

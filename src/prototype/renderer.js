@@ -604,9 +604,10 @@
       // A separate tiny queue: critical cues must not evict 40 existing combat
       // effects or disappear unseen during normal renderer frame skipping.
       criticalCues = [],
+      dodgeCues = [],
       origin = null;
     // Skipped first paint is allowed, but off-screen markers have a hard deadline.
-    const criticalCueMaxAgeMs = 1800;
+    const criticalCueMaxAgeMs = 1800, dodgeCueMaxAgeMs = 1400;
     let effectRecorder = null;
     let retainedEffectRecorder = null;
     const heroArt =
@@ -1633,6 +1634,7 @@
         effectRecorder?.sceneReset(visualFx);
         visualFx = [];
         criticalCues = [];
+        dodgeCues = [];
         visualScene = { game, zone: game.zoneId, deaths: game.s.statistics.deaths };
       }
       if (effectRecorder && game.s.mode !== 'developer') effectRecorder = null;
@@ -1641,6 +1643,14 @@
       visualFx = PrototypeCombatVisuals.queue(events, game, visualFx, effectRecorder);
       effectRecorder?.filtered(previous, visualFx);
       for (const event of events) {
+        if (event.type === 'skillEvaded' && event.target &&
+            event.zone === game.zoneId && event.deaths === game.s.statistics.deaths) {
+          dodgeCues = dodgeCues.filter((c) => c.target !== event.target);
+          dodgeCues.push({ target: event.target, life: 0.65,
+            drawn: false, expiresAt: now() + dodgeCueMaxAgeMs });
+          if (dodgeCues.length > 8) dodgeCues.shift();
+          continue;
+        }
         if (
           event.type !== 'criticalExecutionRelease' ||
           !event.source ||
@@ -1705,6 +1715,42 @@
       for (const cue of criticalCues) if (cue.drawn) cue.life -= Math.max(0, dt);
       const timestamp = now();
       criticalCues = criticalCues.filter((c) => c.life > 0 && timestamp < c.expiresAt);
+      for (const cue of dodgeCues) if (cue.drawn) cue.life -= Math.max(0, dt);
+      dodgeCues = dodgeCues.filter((c) => c.life > 0 && timestamp < c.expiresAt);
+    }
+    function drawDodgeCues() {
+      if (!dodgeCues.length) return;
+      dodgeCues = dodgeCues.filter((c) => c.life > 0 && now() < c.expiresAt);
+      const enemies = game.zone().enemies, party = game.s.party;
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.lineJoin = 'round';
+      for (const cue of dodgeCues) {
+        const actor = cue.target === 'hero' ? game.hero :
+          party.find((u) => u.id === cue.target) ||
+          enemies.find((u) => u.id === cue.target);
+        if (!actor || actor.hp <= 0 || actor.active === false) {
+          cue.life = 0;
+          continue;
+        }
+        const pos = screen(actor);
+        if (pos.x < -35 || pos.x > canvas.width + 35 ||
+            pos.y < -80 || pos.y > canvas.height + 80) continue;
+        const rise = reducedMotion() ? 0 : (0.65 - cue.life) * 9,
+          x = Math.max(22, Math.min(canvas.width - 22, pos.x)),
+          y = Math.max(22, Math.min(canvas.height - 24,
+            pos.y - spriteHeight(actor) - 18 - rise));
+        ctx.globalAlpha = Math.min(1, cue.life / 0.22);
+        ctx.font = 'bold 11px system-ui';
+        ctx.lineWidth = 2.4;
+        ctx.strokeStyle = '#172b2a';
+        ctx.fillStyle = '#e0e9eb';
+        ctx.strokeText('Miss', x, y);
+        ctx.fillText('Miss', x, y);
+        cue.drawn = true;
+      }
+      ctx.restore();
+      dodgeCues = dodgeCues.filter((c) => c.life > 0);
     }
     function drawCriticalCues() {
       if (!criticalCues.length) return;
@@ -3041,6 +3087,7 @@
         PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
         PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
         drawCriticalCues();
+      drawDodgeCues();
         targetGuidance();
         drawNavigationRoute();
         drawPausePresentation();
@@ -3523,6 +3570,7 @@
       PrototypeCombatVisuals.enemySupportStatus?.(ctx, screen, game);
       PrototypeCombatVisuals.actorCues?.(ctx, screen, game, spriteHeight);
       drawCriticalCues();
+      drawDodgeCues();
       targetGuidance();
       drawNavigationRoute();
       drawPausePresentation();
@@ -3671,6 +3719,7 @@
         optimizationMode: optimized ? 'on' : 'off',
         transientEffects: visualFx.length,
         criticalCues: criticalCues.length,
+        dodgeCues: dodgeCues.length,
         enemyVfxEffects: visualFx.filter((f) => f.type === 'enemyVfx').length,
         groundCache: groundCache?.status() || null,
         outlineBuffers: {
