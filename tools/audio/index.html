@@ -13,6 +13,15 @@
         <a class="back-link" href="../../index.html">← Back to game</a>
         <p class="eyebrow">So I Became the Dark Lord's Problem</p>
         <h1>Game sound library</h1>
+        <div id="shared-listening" class="selected-panel" hidden>
+          <p class="eyebrow">DIRECT SOUNDTRACK LINK</p>
+          <h2 id="shared-title">Selected soundtrack</h2>
+          <p id="shared-description">Preparing this game soundtrack…</p>
+          <div class="action-line">
+            <button type="button" id="shared-play" class="primary" disabled>Play this soundtrack</button>
+            <span class="hint">Audio starts when you tap Play, as required on iPhone and other browsers.</span>
+          </div>
+        </div>
         <p class="lede">Explore the soundtrack, environmental soundscapes, recorded effects and generated game cues in one place. Listen to individual sounds or hear how the game mixes a scene.</p>
         <div class="intro-notes">
           <p><strong>No save data is accessed.</strong> This is a separate listening room. Audio starts only when you press Play.</p>
@@ -65,6 +74,7 @@
         <p id="scene-help" class="hint">Each location has its own theme. Some situations are only available outdoors.</p>
         <div class="action-line">
           <button type="button" id="scene-play" class="primary">Play this scene</button>
+          <button type="button" id="copy-original-link">Copy original synthesized music link</button>
           <span class="hint" id="scene-description" aria-live="polite">The selected theme and its layers will appear here.</span>
         </div>
         <details class="small-details">
@@ -118,6 +128,7 @@
           <div id="recording-info" class="sound-info" aria-live="polite">Choose a sound to see details.</div>
           <div class="action-line">
             <button type="button" id="record-play" class="primary">Play selected recording</button>
+            <button type="button" id="copy-recording-link">Copy listening-room link</button>
             <button type="button" id="stem-play" disabled>Play with paired layer</button>
           </div>
           <div class="paired-control">
