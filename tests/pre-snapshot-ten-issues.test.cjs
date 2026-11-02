@@ -9,10 +9,6 @@ const R = Campaign.rules;
 function game() {
   const c = new Campaign('normal', 'paladin', () => 0.9);
   c.s.mercyTime = 0;
-  // This fixture tests post-onboarding combat; the first scripted Vale hero
-  // attack intentionally protects enemies from companion-only opening hits.
-  c.s.valeFieldAwakened = true;
-  c.s.thornHeroInitiated = true;
   c.line = () => true;
   return c;
 }
@@ -55,9 +51,8 @@ function mob(c, species, x, y, options = {}) {
   c.updateParty(0.05);
   assert.equal(c.s.recallActive, true, 'reaching formation never resets Recall');
   const e = mob(c, 'goblin', c.hero.x + 75, c.hero.y);
-  assert(c.cast(1, e.id), 'manual Skill 1 remains available while Recall is active');
-  assert.equal(c.s.recallActive, true,
-    'explicit Skill 1 cannot override Recall; only the button or timeout can');
+  assert(c.cast(1, e.id), 'explicit attack is a new engagement order');
+  assert.equal(c.s.recallActive, false);
 }
 // Community + #311 intersection: Recall uses pet-specific stationary basics,
 // not the Soldier fallback; no pet spell, charge or re-engagement is authorized.
