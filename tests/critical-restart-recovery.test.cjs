@@ -34,7 +34,16 @@ function fixture(succession = false) {
   const { g, e, hero, ally } = fixture();
   const hp = [hero.hp, ally.hp], gold = hero.gold, deaths = g.s.statistics.deaths;
   const alive = g.zone().enemies.length;
+  // #684: critical-performance withdrawal activates the SAME timed Recall
+  // as the player button, replacing any previous nearly expired deadline.
+  g.s.recallActive = true;
+  g.s.recallExpiresAt = g.s.time + 0.1;
   assert.equal(g.emergencyResetEncounter(), true);
+  assert.equal(g.s.recallActive, true, 'emergency path activates the shared Recall state');
+  const emergencyExpiry = g.s.recallExpiresAt;
+  assert.equal(emergencyExpiry, g.s.time + C.rules.companionRecall.durationSeconds,
+    'emergency recovery starts a fresh five-second Recall, never inherits stale expiry');
+  assert.equal(g.recallSecondsRemaining(), 5, 'emergency Recall exposes the shared countdown');
   assert.deepEqual([e.x, e.y], [800, 900], 'Enemy returns to its authoritative home');
   assert(!e.aggro && !e.telegraph && !e.motion && !e.returning);
   assert.equal(g.zone().enemies.length, alive);
@@ -54,6 +63,14 @@ function fixture(succession = false) {
   assert(Math.hypot(ally.x - start.x, ally.y - start.y) > 0,
     'Protected withdrawal advances real movement and collision');
   assert.deepEqual([hero.hp, ally.hp], hp);
+  assert.equal(g.s.recallExpiresAt, emergencyExpiry,
+    'emergency withdrawal travel does not reset the Recall deadline');
+  assert(g.recallSecondsRemaining() < 5 && g.recallSecondsRemaining() > 3.8,
+    'emergency countdown follows simulation time');
+  g.s.time = emergencyExpiry - 0.02;
+  g.tick(0.05, { x: 0, y: 0 });
+  assert.equal(g.s.recallActive, false, 'emergency-activated Recall expires on game time');
+  assert.equal(g.s.recallExpiresAt, undefined, 'emergency timer cleans up at expiry');
   assert.equal(g.emergencyResetEncounter(), false, 'Once reset, no repeated reset');
 }
 {
@@ -159,6 +176,15 @@ function fixture(succession = false) {
   app.frame(700);
   for (let now = 900; now <= 6300; now += 200) app.frame(now);
   assert.equal(resetCalls, 1, 'First sustained episode already reset the encounter');
+  assert.equal(running.s.recallActive, true, 'critical recovery enables the same visible Recall');
+  app.scope.Prototype.updateHUD();
+  const emergencyRecallButton = app.elements.get('recall-button');
+  assert(emergencyRecallButton.classList.contains('recall-active'),
+    'critical-recovery Recall receives the active button styling');
+  assert(emergencyRecallButton.firstChild.textContent.includes('Recall ON'),
+    'the emergency Recall uses the same visible ON label');
+  assert.equal(emergencyRecallButton.getAttribute('aria-pressed'), 'true',
+    'critical-recovery Recall exposes its pressed state to assistive input');
   app.elements.get('menu-button').click();
   app.frame(30000);
   assert.equal(relocations, 0, 'Time spent in menu is not an active freeze');
