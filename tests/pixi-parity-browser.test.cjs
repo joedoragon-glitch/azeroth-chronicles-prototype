@@ -183,7 +183,7 @@ async function main() {
             frenzy: true,
           });
         }
-        if (name === 'cover')
+        if (name === 'cover' || name === 'occlusion-idle')
           z.props = [
             {
               id: 'parity-cover',
@@ -319,12 +319,28 @@ async function main() {
         }, mode);
         for (const time of [0, 7000]) {
           const status = await page.evaluate(
-            ({ mode, time }) => {
+            ({ mode, time, fixture }) => {
               window.clock = time;
               // Time changes presentation only; gameplay expiration is a separate state fixture.
               const saved = JSON.stringify(g.s);
               if (mode === 'pixi') gpu.draw();
-              painter.draw();
+              // Record the authentic retained actor alpha-mask translation
+              // while drawing the actual Pixi+Canvas composite. No added
+              // production diagnostics, GPU readback or mocked geometry.
+              const watchMask = fixture === 'occlusion-idle' && mode === 'pixi';
+              const maskMoves = [];
+              const originalTranslate = CanvasRenderingContext2D.prototype.translate;
+              if (watchMask)
+                CanvasRenderingContext2D.prototype.translate = function (x, y) {
+                  if (this.canvas.width === 256 || this.canvas.width === 384)
+                    maskMoves.push({ x, y, canvasWidth: this.canvas.width });
+                  return originalTranslate.call(this, x, y);
+                };
+              try {
+                painter.draw();
+              } finally {
+                if (watchMask) CanvasRenderingContext2D.prototype.translate = originalTranslate;
+              }
               if (g !== originalCampaign || JSON.stringify(g.s) !== saved)
                 throw Error('Rendering mutated Campaign state');
               return {
@@ -336,9 +352,17 @@ async function main() {
                 renderer: mode,
                 gpu: gpu.status(),
                 canvas: painter.metrics(),
+                occlusion: watchMask
+                  ? {
+                      mask: maskMoves[0] || null,
+                      maskCount: maskMoves.length,
+                      ground: painter.screen(g.hero),
+                      body: painter.visualPositionFor(g.hero),
+                    }
+                  : null,
               };
             },
-            { mode, time },
+            { mode, time, fixture },
           );
           if (mode === 'pixi')
             assert(status.gpu.active && !status.gpu.lastError, 'No GPU fallback');
@@ -350,10 +374,15 @@ async function main() {
             if (fixture === 'warlord') assert.equal(m.worldIndicators, 1);
             if (fixture === 'ridge') assert.equal(m.groundMarks, 1);
             if (fixture === 'registered') assert.equal(m.accessoryActors, 1);
-            if (fixture === 'cover')
+            if (fixture === 'cover' || fixture === 'occlusion-idle')
               assert(
                 status.canvas.outlineMasks > 0,
                 'Concealed hero receives an alpha-clipped contour',
+              );
+            if (fixture === 'occlusion-idle')
+              assert(
+                status.occlusion?.mask,
+                'Real Pixi overlay draws a retained moving body mask behind cover',
               );
             if (fixture === 'lamp')
               assert(m.lightFixtures > 0, 'Night fixtures are painted separately from glows');
@@ -379,6 +408,37 @@ async function main() {
           pixi[1].status.gpu.sceneMetrics.textureSources,
           'Stable GPU texture count',
         );
+        if (fixture === 'occlusion-idle') {
+          const [a, b] = pixi.map((r) => r.status.occlusion);
+          const zoom = Number(process.env.PARITY_ZOOM || 1.5);
+          assert.equal(a.mask.canvasWidth, b.mask.canvasWidth, 'retained mask buffer reused');
+          const expectedX = ((b.body.x - b.ground.x) - (a.body.x - a.ground.x)) / zoom,
+            expectedY = ((b.body.y - b.ground.y) - (a.body.y - a.ground.y)) / zoom;
+          assert(
+            Math.abs(b.mask.x - a.mask.x - expectedX) < 0.001 &&
+            Math.abs(b.mask.y - a.mask.y - expectedY) < 0.001,
+            'real Pixi contour must inherit the exact Canvas body idle offset',
+          );
+          assert(
+            Math.hypot(expectedX, expectedY) > 0.1,
+            'the two frozen times actually exercise different idle poses',
+          );
+          const crop = {
+            x: Math.max(0, Math.round(viewport.width * 0.5 - 105)),
+            y: Math.max(0, Math.round(viewport.height * 0.55 - 125)),
+            width: 210,
+            height: 180,
+          };
+          for (const mode of ['canvas', 'pixi']) {
+            const pixels = await changedPixels(
+              path.join(out, fixture + '-' + mode + '-0.png'),
+              path.join(out, fixture + '-' + mode + '-7000.png'),
+              crop,
+            );
+            assert(pixels > 5, mode + ' retains real visible idle motion behind cover');
+            lifecycle.push({ fixture, mode, pixels, crop, maskShift: mode === 'pixi' ? { x: expectedX, y: expectedY } : null });
+          }
+        }
         if (fixture === 'idle') {
           const crop = {
             x: Math.round(viewport.width * 0.5 - 75),

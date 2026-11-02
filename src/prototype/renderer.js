@@ -1008,7 +1008,23 @@
           layer.brush.globalAlpha = 1;
           layer.brush.clearRect(0, 0, size, size);
         }
-        sprite(pair.actor, { x: centerX, y: footY }, actorLayer.brush, true);
+        // Pixi keeps its world/shadow foot still, but moves the retained
+        // raster body by Canvas's identity-phase idle/busy animation. The
+        // mask must track that same presentation-only delta. Cover, broad
+        // phase, collision and the final on-screen contour origin stay at
+        // their original world points. Unretained Canvas bodies already
+        // apply visualPosition inside sprite(), so never offset them twice.
+        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
+        const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        sprite(
+          pair.actor,
+          {
+            x: centerX + shown.x - pair.position.x,
+            y: footY + shown.y - pair.position.y,
+          },
+          actorLayer.brush,
+          true,
+        );
 
         // Color the real actor alpha, not a rectangle or an ellipse.
         const tint = tintLayer.brush;
