@@ -27,22 +27,22 @@ function queueBlock(target = 'foe') {
     zone: game.zoneId, deaths: game.s.statistics.deaths }]);
 }
 queueBlock();
-assert.equal(renderer.metrics().dodgeCues, 1);
+assert.equal(renderer.metrics().blockCues, 1);
 renderer.queue([{ type: 'criticalExecutionRelease', source: 'hero',
   zone: game.zoneId, deaths: game.s.statistics.deaths }]);
-assert.equal(renderer.metrics().dodgeCues, 1, 'critical cue is independent');
+assert.equal(renderer.metrics().blockCues, 1, 'critical cue is independent');
 now += 450;
 renderer.update(0);
-assert.equal(renderer.metrics().dodgeCues, 1, 'skipped paint preserves pending cue');
+assert.equal(renderer.metrics().blockCues, 1, 'skipped paint preserves pending cue');
 queueBlock();
-assert.equal(renderer.metrics().dodgeCues, 1, 'same target refreshes');
+assert.equal(renderer.metrics().blockCues, 1, 'same target refreshes');
 for (let i = 0; i < 12; i++) queueBlock('enemy-' + i);
-assert(renderer.metrics().dodgeCues <= 8, 'crowd cap is enforced');
+assert(renderer.metrics().blockCues <= 8, 'crowd cap is enforced');
 now += 1500;
 renderer.update(0);
-assert.equal(renderer.metrics().dodgeCues, 0, 'unpainted cues expire by wall clock');
+assert.equal(renderer.metrics().blockCues, 0, 'unpainted cues expire by wall clock');
 queueBlock();
 game.zoneId = 'march';
 renderer.queue([]);
-assert.equal(renderer.metrics().dodgeCues, 0, 'zone transitions clear pending labels');
+assert.equal(renderer.metrics().blockCues, 0, 'zone transitions clear pending labels');
 console.log('PASS skill block overlay duplicate, frame skip, bound and scene reset');
