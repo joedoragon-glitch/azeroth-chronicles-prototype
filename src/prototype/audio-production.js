@@ -86,6 +86,17 @@
             ],
           };
         }
+        // The owner's original synthesized Greenwood melody belongs inside
+        // the current Millhaven civic footprint, not on the orchard roads.
+        // A null recording request deliberately hands music back to the
+        // existing live synthesizer; no synthesized MP3 or new score is made.
+        // Nearby combat and its short release tail retain priority.
+        const nearby = scene.nearbyEngaged ?? scene.engaged ?? 0;
+        const fighting = nearby > 0 ||
+          (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
+        if (scene.millhavenTown && scene.zone === 'vale' &&
+          scene.interior === 'outdoors' && !scene.peace &&
+          !scene.estateApproach && !fighting) return null;
         const p =
           director.places[scene.zone] ||
           director.places[scene.region] ||
@@ -143,6 +154,9 @@
         this.estateApproachActive = !!scene.estateApproach &&
           scene.started !== false && scene.zone === 'vale' &&
           scene.interior === 'outdoors';
+        this.millhavenTownActive = !!scene.millhavenTown &&
+          scene.started !== false && scene.zone === 'vale' &&
+          scene.interior === 'outdoors';
         const now = this.ctx.currentTime;
         // A title-screen snapshot is not live exploration. Clearing the
         // settlement hold avoids carrying the saved hero's nearby refuge into
@@ -160,8 +174,28 @@
           now < (this.settlementUntil || 0)
             ? { ...scene, settlement: scene.settlement || 'nearby-refuge' }
             : scene;
+        // Mark nearby engagement *before* selecting the score, including
+        // when the district was previously using only the synthesizer.
+        if ((scene.nearbyEngaged ?? scene.engaged ?? 0) > 0 && !scene.peace)
+          this.combatUntil = now + 2.5;
         const spec = this.productionCue(observed);
-        if (!spec) return;
+        if (!spec) {
+          if (this.productionKey !== 'synth:millhaven') {
+            this.productionKey = 'synth:millhaven';
+            this.productionRetry = null;
+            this.productionIntensity = null;
+            this.stopRecordedScore(1.2);
+            // The recorded mix retired the previous synth gain node; simply
+            // scheduling new notes on that dead node would be inaudible.
+            // A region-to-region change later in Audio.update handles itself.
+            if (this.cue?.id === 'vale') {
+              this.transitionScore(this.cue);
+              this.step = 0;
+              this.next = now + 0.06;
+            }
+          }
+          return;
+        }
         const selectionKey = JSON.stringify([
           spec.id,
           spec.stems.map((s) => s.id),
