@@ -399,6 +399,13 @@ const root = path.resolve(__dirname, '..'),
             new Promise((_, reject) => setTimeout(() => reject(Error('Offline service worker did not become ready within 90 seconds')), 90000)),
           ]);
         });
+        // An activated worker may not control its first client until the next
+        // navigation. Reopen under the installed worker before cutting the
+        // network; don't mistake activation for established offline control.
+        if (!(await page.evaluate(() => !!navigator.serviceWorker.controller))) {
+          await page.reload();
+          await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
+        }
         await page.waitForFunction(() => !!navigator.serviceWorker.controller);
         outage = true;
         // WebKit's setOffline + service-worker reload can raise an internal browser error.
