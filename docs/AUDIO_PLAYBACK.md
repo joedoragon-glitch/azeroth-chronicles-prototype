@@ -1,5 +1,17 @@
 # Sound design and audio production — current game
 
+
+## Shareable soundtrack links — mobile player handoff (candidate)
+
+The dedicated [Game Sound Library](../tools/audio/index.html) is the canonical player for sharing an individual game track. Send a link to the **room**, not a `raw.githubusercontent.com` MP3 URL: iOS browsers may present the raw URL as a file attachment or suggest a video app instead of playing audio.
+
+- **Recorded music**: `tools/audio/index.html?track=place-vale` (Millhaven current recording); `?track=settlement-vale` (relocated Forest Crypt approach recording). Any registered music ID is supported. The room resolves the exact manifest entry, selects the recording, shows a prominent Play button and never starts sound automatically.
+- **Original synthesized location music**: `tools/audio/index.html?legacy=vale`. The room configures the original procedural score with the recording toggle off; this is not an MP3 download. Other valid location IDs can use the same `legacy=` parameter.
+- The listening room has **Copy listening-room link** for recorded music and **Copy original synthesized music link** in the scene mixer. Invalid or ambiguous links present an error instead of silently selecting unrelated audio. The user must tap **Play** once on iPhone to unlock Web Audio.
+
+**Development state:** This section describes the isolated PR candidate, not a deployed feature until the PR is merged and the Pages workflow succeeds. Browser CI and physical-iPhone acceptance must be reported separately; no audio files, gameplay music routing, or saved data change.
+
+
 **Live catalog at dev.250 (31 October 2026):** [PR #744](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/744) merged the environmental catalog expansion. The game and Game Sound Library now register **83 music + 34 ambience + 30 effects = 147 recordings**. The current decoded cache has a 128 MiB hard ceiling and a 96 MiB unused-buffer retention target; real-device/acoustic mastering is not certified. [Sound patch #751](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/751) changes neither the recorded assets nor environmental routing. The following #727 *unmerged* descriptions are preserved as the **historical pre-merge candidate checkpoints**, not as today's release status.
 
 **Historical #727 pre-merge technical acceptance checkpoint (dev.249):** [full no-deploy 147-sound game+Sound Library, 44.1/48-kHz, offline and owner A/B integration #41249125642](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41249125642) and four focused/Chromium/signal/PWA checks linked from [current development state](DEVELOPMENT_STATE.md) passed at source head `0b7abec7`. All 16 registered new beds are auditionable alone and in the standalone Game Sound Library's current scene mixer; 19 locations and two explicit Treasury reuses are covered. Owner by-ear and physical-device acceptance remain unverified, and this does not merge, publish or re-master anything.
