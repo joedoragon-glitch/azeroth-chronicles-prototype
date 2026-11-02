@@ -68,9 +68,15 @@ assert.throws(() => inspect(base, [fixture(7, 'base'), fixture(7.2, 'base')]), /
 // gate on SwiftShader. Keep 1-actor p50 and all crowd metrics checked.
 const noisyTailA = fixture(4, 'base');
 const noisyTailB = fixture(4.05, 'base');
-noisyTailA.benchmarks[0].p95 = 1.3 + noisyTailA.benchmarks[0].p50;
-noisyTailB.benchmarks[0].p95 = 4.3 + noisyTailB.benchmarks[0].p50;
-const noisyTail = inspect([noisyTailA, noisyTailB], stable);
+const ordinaryTailA = fixture(4.09, 'head');
+const ordinaryTailB = fixture(4.11, 'head');
+for (const run of [noisyTailA, noisyTailB, ordinaryTailA, ordinaryTailB])
+  run.benchmarks[0].p50 = 1;
+noisyTailA.benchmarks[0].p95 = 1.3;
+noisyTailB.benchmarks[0].p95 = 4.3;
+ordinaryTailA.benchmarks[0].p95 = 1.8;
+ordinaryTailB.benchmarks[0].p95 = 2.3;
+const noisyTail = inspect([noisyTailA, noisyTailB], [ordinaryTailA, ordinaryTailB]);
 assert.equal(noisyTail.decision, 'GO');
 assert.equal(noisyTail.details[0].p95.decision, 'WATCH');
 assert(noisyTail.warnings.some(w => w.includes('unstable baseline tail')));
