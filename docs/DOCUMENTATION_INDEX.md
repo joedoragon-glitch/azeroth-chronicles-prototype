@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **448 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 1 November 2026 · **448 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -18,7 +18,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (49)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
-- [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (46)
+- [Rendering, optimization, performance and WebGL](#rendering-optimization-performance-and-webgl) (46)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
 - [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (13)
 - [Save data, backup and recovery](#save-data-backup-and-recovery) (6)
@@ -365,14 +365,16 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Snapshot Vale Cottage Original Export 20261014](SNAPSHOT_VALE_COTTAGE_ORIGINAL_EXPORT_20261014.md) — *Dated record.* Describes snapshot vale cottage original export decisions, constraints or engineering observations from its original development checkpoint.
 - **[Terrain Texture Pipeline](TERRAIN_TEXTURE_PIPELINE.md)** — **Reference.** Describes terrain texture pipeline decisions, constraints or engineering observations from its original development checkpoint.
 
-## Rendering, optimization, performance and WebGL experiments
+## Rendering, optimization, performance and WebGL
+
+**Current runtime:** PixiJS WebGL2 is the published default world renderer; Canvas 2D remains selectable as an independent fallback and supplies shared gameplay-cue overlays. See [Architecture](ARCHITECTURE.md) for source ownership, [Development state](DEVELOPMENT_STATE.md) for merge/publication receipts and unverified device acceptance, and the parity contract below for the tested visual scope. The retained `pixi-experimental.js` and `tools/webgl-pilot/` paths are historical filenames, not current feature-status labels.
 
 - **[Canvas–Pixi visual parity](PIXI_VISUAL_PARITY_20261031.md)** — **Feature contract.** Original draw-layer ownership, animation/cache rules, matched-composite acceptance and #748 repair evidence.
 
 - **[Chromebook Graphics Preparation Cache Policy](CHROMEBOOK_GRAPHICS_PREPARATION_CACHE_POLICY_20261028.md)** — **Design reference.** Prepared arrivals, voluntary Canvas bypass and graphics cache retention; source/release status is separately evidenced.
 
 
-### Experimental PixiJS, GPU and WebGL
+### Historical PixiJS and WebGL pilot experiments
 
 - [PIXI Twilight Glow Failure 20261026](PIXI_TWILIGHT_GLOW_FAILURE_20261026.md) — *Dated record.* Describes PIXI twilight glow failure decisions, constraints or engineering observations from its original development checkpoint.
 - [PIXIJS Playtest Step2 20261022](PIXIJS_PLAYTEST_STEP2_20261022.md) — *Dated record.* Records tests or acceptance criteria for PIXIJS playtest at its original checkpoint.

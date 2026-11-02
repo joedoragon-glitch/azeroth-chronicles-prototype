@@ -1,6 +1,7 @@
-/* STAGING ONLY: translate authentic PrototypeSprites resource choices into
-   GPU-native texture commands. Never paints a Canvas or changes game state.
-   Unsupported procedural bodies are EXPLICIT blockers, never invisible skips. */
+/* Live PixiJS sprite adapter for the playable PWA: translate authentic
+   PrototypeSprites selections into GPU-native texture commands.
+   No Canvas painting or gameplay mutation; unsupported procedural bodies
+   explicitly request the established artwork path, never invisible skips. */
 (function (root) {
   'use strict';
   function create({

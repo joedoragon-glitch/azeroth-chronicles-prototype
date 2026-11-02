@@ -1,7 +1,7 @@
-/* STAGING ONLY — genuine WebGL2 drawing primitives, not a game renderer.
-   Not included in the playable PWA's scripts or offline inventory.
-   Input commands are pixels/projected world art and original asset images.
-   No Canvas draw calls are made by any frame or lamp command. */
+/* Live WebGL2 drawing primitives used by the primary PixiJS compositor.
+   Loaded in the playable PWA; not a standalone renderer.
+   Inputs are projected world art and original asset images.
+   Frame and lamp GPU commands do not use Canvas 2D drawing calls. */
 (function (root) {
   'use strict';
   const DEFAULT_CLEAR = Object.freeze([12 / 255, 25 / 255, 19 / 255, 1]);
