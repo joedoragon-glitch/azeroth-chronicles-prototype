@@ -68,6 +68,18 @@ jobs:
           set -euo pipefail
           node scripts/vendor-pixi.cjs --ensure
           (cd "$RUNNER_TEMP/pixi-755-base" && node scripts/vendor-pixi.cjs --ensure)
+      - name: High-DPI portrait and landscape synthetic browser smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          for shape in portrait landscape; do
+            if [ "$shape" = portrait ]; then viewport='390x844'; else viewport='844x390'; fi
+            env PARITY_FIXTURES=cover,registered PARITY_PERF=0 \
+              PARITY_VIEWPORT="$viewport" PARITY_DPR=3 PARITY_BACKING_RATIO=1.5 \
+              PARITY_ZOOM=1.75 PARITY_OPTIMIZED=0 \
+              PARITY_OUT="$RUNNER_TEMP/pixi-755-results/dpr3-$shape" \
+              node tests/pixi-parity-browser.test.cjs
+          done
       - name: Measure baseline / candidate / candidate / baseline, same runner and fixture
         shell: bash
         run: |
@@ -87,18 +99,6 @@ jobs:
               PARITY_OUT="$RUNNER_TEMP/pixi-755-results/$slot" \
               node tests/pixi-parity-browser.test.cjs)
             echo "::endgroup::"
-          done
-      - name: High-DPI portrait and landscape synthetic browser smoke
-        shell: bash
-        run: |
-          set -euo pipefail
-          for shape in portrait landscape; do
-            if [ "$shape" = portrait ]; then viewport='390x844'; else viewport='844x390'; fi
-            env PARITY_FIXTURES=cover,registered PARITY_PERF=0 \
-              PARITY_VIEWPORT="$viewport" PARITY_DPR=3 PARITY_BACKING_RATIO=1.5 \
-              PARITY_ZOOM=1.75 PARITY_OPTIMIZED=0 \
-              PARITY_OUT="$RUNNER_TEMP/pixi-755-results/dpr3-$shape" \
-              node tests/pixi-parity-browser.test.cjs
           done
       - name: Score material paired regression and preserve explicit GO/HOLD
         shell: bash
