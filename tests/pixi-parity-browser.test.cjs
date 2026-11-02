@@ -357,7 +357,7 @@ async function main() {
                       mask: maskMoves[0] || null,
                       maskCount: maskMoves.length,
                       ground: painter.screen(g.hero),
-                      body: painter.visualPositionFor(g.hero),
+                      body: painter.visualPositionFor(painter.presentEntity(g.hero, 'hero')),
                     }
                   : null,
               };
