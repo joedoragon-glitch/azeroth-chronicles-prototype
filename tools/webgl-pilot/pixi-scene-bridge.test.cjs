@@ -1118,7 +1118,7 @@ test('#756 retained multi-actor geometry matches forced canonical repaint at eve
       { id: 'treasury-bundle', renderKind: 'npc', kind: 'bundle', treasuryRecovery: true },
     ].map((e, i) => ({ ...e, x: 120 + 5 * i, y: 140 + 4 * i, hp: 100 }));
 
-    function commands(frame, force) {
+    function commands(frame, force, frameIndex) {
       return entities.map((entity, i) => {
         const details = painter.actorDetailsFor(entity);
         return {
@@ -1128,7 +1128,7 @@ test('#756 retained multi-actor geometry matches forced canonical repaint at eve
                 ...details,
                 ...(force
                   ? { underlaySignature: undefined, overlaySignature: undefined,
-                      signature: 'fresh:' + frame }
+                      signature: 'fresh:' + frameIndex }
                   : {}),
                 x: 170 + i * 12,
                 y: 180 + i * 8,
@@ -1180,8 +1180,8 @@ test('#756 retained multi-actor geometry matches forced canonical repaint at eve
         entities[3].frenzy = true;
         entities[6].motion = { aerial: false, flightPath: [] };
       }
-      optimizedScene.syncActors(commands(state, false));
-      forcedScene.syncActors(commands(state, true));
+      optimizedScene.syncActors(commands(state, false, i));
+      forcedScene.syncActors(commands(state, true, i));
       assert.deepEqual(
         snapshot(cached), snapshot(reference),
         'frame ' + i + ': retained details equal a fresh replay of every authored Canvas recipe',
