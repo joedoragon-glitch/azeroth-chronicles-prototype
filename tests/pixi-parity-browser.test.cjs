@@ -291,7 +291,9 @@ async function main() {
       await page.evaluate(async () => {
         window.gpu = PrototypePixiExperimental.create({
           worldCanvas: opts.canvas,
-          viewport: opts.canvas,
+          // Logical CSS viewport is distinct from high-DPI Canvas backing.
+          // Using the backing canvas here would force effectiveRatio() to 1x.
+          viewport: { width: innerWidth, height: innerHeight },
           platform,
           getGame: () => g,
           canvasRenderer: painter,
@@ -353,7 +355,8 @@ async function main() {
           if (mode === 'pixi') {
             assert(status.gpu.active && !status.gpu.lastError, 'No GPU fallback');
             assert(Math.abs(status.gpu.pixelRatio - backingRatio) < 0.01,
-              'Pixi effective backing ratio must match measured Canvas backing');
+              'Pixi effective backing ratio ' + status.gpu.pixelRatio +
+              ' must match Canvas ratio ' + backingRatio);
           }
           const name = fixture + '-' + mode + '-' + time + '.png';
           await page.screenshot({ path: path.join(out, name) });
