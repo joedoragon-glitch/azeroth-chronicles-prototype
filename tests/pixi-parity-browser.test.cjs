@@ -78,7 +78,7 @@ async function main() {
     });
     const viewportText =
       process.env.PARITY_VIEWPORT || (process.env.PARITY_PHONE === '1' ? '844x390' : '912x600');
-    if (!/^\\d+x\\d+$/.test(viewportText)) throw Error('Invalid PARITY_VIEWPORT: '+viewportText);
+    if (!/^\d+x\d+$/.test(viewportText)) throw Error('Invalid PARITY_VIEWPORT: '+viewportText);
     const [width, height] = viewportText.split('x').map(Number);
     const deviceScaleFactor = Number(process.env.PARITY_DPR || 1);
     if (![width, height, deviceScaleFactor].every((v) => Number.isFinite(v) && v > 0))
