@@ -1,5 +1,5 @@
 'use strict';
-// A genuine skill contact can be evaded, but basics and criticals still resolve.
+// A genuine skill contact can be blocked, but basics and criticals still resolve.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');
 
@@ -15,23 +15,23 @@ game.hero.y = boss.y;
 game.hero.immune = 15;
 game.hero.maxHp = game.hero.hp = 1000;
 let samples = 0;
-game.rollSkillEvasion = () => { samples++; return 0; };
+game.rollSkillBlock = () => { samples++; return 0; };
 const original = boss.hp;
 assert.equal(game.damage(boss, 8, 'hero', { skillShape: 'single' }), false,
   'legal single-target skill can be avoided');
 assert.equal(boss.hp, original, 'avoided skill does not deal damage');
 assert.equal(samples, 1, 'one legal skill contact samples once');
-assert.equal(game.effects.filter((e) => e.type === 'skillEvaded' && e.target === boss.id).length, 1,
-  'only a genuine dodge emits a Miss receipt');
+assert.equal(game.effects.filter((e) => e.type === 'skillBlocked' && e.target === boss.id).length, 1,
+  'only a genuine block emits a Blocked! receipt');
 assert(game.damage(boss, 8, 'hero', { automaticBasic: true, skillShape: 'single' }),
-  'a basic attack never inherits a skill dodge');
+  'a basic attack never inherits a skill block');
 assert.equal(samples, 1, 'automatic basic does not sample');
 const afterBasic = boss.hp;
 assert(game.damage(boss, 8, 'hero', {
   skillShape: 'single', criticalExecution: { critical: true },
-}), 'critical skill bypasses Dodge');
+}), 'critical skill bypasses Block');
 assert(boss.hp < afterBasic, 'critical skill dealt real damage');
-assert.equal(samples, 1, 'critical hit does not sample evasion');
+assert.equal(samples, 1, 'critical hit does not sample block');
 
 const soldier = game.unit('soldier', game.hero.x, game.hero.y);
 const archer = game.unit('archer', game.hero.x + 5, game.hero.y + 5);
@@ -49,22 +49,22 @@ assert.equal(soldier.hp, start, 'no damage to dodging Soldier');
 assert.equal(samples, 2, 'one roll for the Soldier');
 assert(game.hitParty(soldier, 40, 0, boss.id, false, {
   shape: 'single', criticalExecution: { critical: true },
-}), 'hostile critical bypasses companion dodge');
+}), 'hostile critical bypasses companion block');
 assert(soldier.hp < start, 'hostile critical still harms Soldier');
-assert.equal(samples, 2, 'no extra Dodge roll on a critical');
+assert.equal(samples, 2, 'no extra Block roll on a critical');
 // Legal Soldier specials must not retry for free when the defender dodges.
 game.companionSurvivalMode = () => false;
 soldier.skill1Cd = 0;
 const beforeStrike = boss.hp;
 assert(game.companionUseFirstSkill(soldier, boss),
   'Power Strike is committed even if its opponent dodges');
-assert(soldier.skill1Cd > 0, 'missed Power Strike still spends cooldown');
+assert(soldier.skill1Cd > 0, 'blocked Power Strike still spends cooldown');
 assert.equal(boss.hp, beforeStrike, 'dodged Power Strike deals no damage');
-assert.equal(samples, 3, 'Power Strike samples evasion exactly once');
+assert.equal(samples, 3, 'Power Strike samples block exactly once');
 soldier.hp = soldier.maxHp;
 samples = 0;
 const values = [0, 0.99];
-game.rollSkillEvasion = () => { samples++; return values.shift(); };
+game.rollSkillBlock = () => { samples++; return values.shift(); };
 const area = {
   kind: 'circle', count: 1,
   x: soldier.x, y: soldier.y,
@@ -77,7 +77,7 @@ assert.equal(samples, 2, 'same boss AoE samples once per eligible companion');
 assert.equal(soldier.hp, sHp, 'first target independently dodged the blast');
 assert(archer.hp < aHp, 'second target independently took its blast hit');
 // Real Mage area owner: the charged traveling beam must keep its authored
-// footprint, but resolve a separate Dodge roll at every enemy contact.
+// footprint, but resolve a separate Block roll at every enemy contact.
 {
   const { completeFieldOpening } = require('./helpers/field-opening.cjs');
   const mage = new Campaign('normal', 'mage', () => 0.9);
@@ -93,15 +93,15 @@ assert(archer.hp < aHp, 'second target independently took its blast hit');
   mage.hero.chargedCd.fill(0);
   const foes = Array.from({ length: 3 }, (_, i) =>
     mage.makeEnemy({
-      species: 'goblin', name: 'Area evasion target', level: 1,
+      species: 'goblin', name: 'Area block target', level: 1,
       hp: 100000, damage: 0, gold: 0, xp: 0,
     }, { x: 580 + i * 8, y: 500 }));
   mage.zone().enemies = foes;
   for (const foe of foes) assert(mage.damage(foe, 1, 'hero'), 'engage beam fixture');
   const before = foes.map(e => e.hp);
   const values = [0.05, 0.85, 0.1];
-  mage.rollSkillEvasion = () => {
-    assert(values.length, 'one area Dodge roll per contact, not each frame');
+  mage.rollSkillBlock = () => {
+    assert(values.length, 'one area Block roll per contact, not each frame');
     return values.shift();
   };
   assert(mage.cast(1, foes[0].id, true), 'charged Mage beam releases');
@@ -114,4 +114,4 @@ assert(archer.hp < aHp, 'second target independently took its blast hit');
   assert(foes[1].hp < before[1], 'second enemy independently took damage');
   assert.equal(foes[2].hp, before[2], 'third enemy independently dodged');
 }
-console.log('PASS skill evasion integrated damage, critical, basic and boss and Mage AoE contacts');
+console.log('PASS skill block integrated damage, critical, basic and boss and Mage AoE contacts');

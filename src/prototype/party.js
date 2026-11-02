@@ -1785,7 +1785,7 @@
           u.skill1Cd = cfg.cooldown;
           u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
           u.cd = Math.max(u.cd, 0.4);
-          // A dodged Power Strike still spends its cooldown and shows the
+          // A blocked Power Strike still spends its cooldown and shows the
           // swing, but must not emit a landed melee impact or grant its ward.
           if (landed) this.event('melee', {
             actor: 'companion',
@@ -1983,12 +1983,12 @@
           this.developerCompanionEndDirect(previousDirect);
         }
         // The legal skill release spends its cooldown even if every target
-        // evades; otherwise the AI retries for free until Dodge is defeated.
+        // blocks; otherwise the AI retries for free until a skill lands.
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.5);
-        // A fully evaded Cleave still released and spent its cooldown, but
-        // no landed melee contact should be drawn on the dodging enemies.
+        // A fully blocked Cleave still released and spent its cooldown, but
+        // no landed melee contact should be drawn on the blocking enemies.
         if (u.type !== 'soldier' || hits) this.event(
           u.type === 'soldier' ? 'melee' : 'spell',
           u.type === 'soldier'

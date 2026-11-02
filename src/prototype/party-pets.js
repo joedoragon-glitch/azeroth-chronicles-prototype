@@ -95,7 +95,7 @@
         return (
           geometry +
           (def.shape === 'target' && this.petDefinition(family).role === 'ranged'
-            ? ' · dodgeable shot; effects require contact'
+            ? ' · blockable shot; effects require contact'
             : '') +
           ' · ' +
           def.multiplier +
@@ -270,8 +270,8 @@
           }
           this.developerCompanionEndDirect(previousDirect);
         }
-        // Valid releases pay cooldown even when every enemy dodges. Do not
-        // award the on-contact self-heal/ward after a completely evaded skill.
+        // Valid releases pay cooldown even when every enemy blocks. Do not
+        // award the on-contact self-heal/ward after a completely blocked skill.
         u[key] =
           slot === 1
             ? R.balance.companions.petFirstCooldown

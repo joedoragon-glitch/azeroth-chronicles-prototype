@@ -8062,9 +8062,9 @@
     travelArrivals,
     dungeonWorkstations,
     regionalHandoffScenes,
-    // Skill evasion is balance data, not movement AI or basic-attack accuracy.
+    // Skill block is balance data, not movement AI or basic-attack accuracy.
     // Percentage points; every area recipient makes its own independent check.
-    skillEvasion: Object.freeze({
+    skillBlock: Object.freeze({
       enemySingle: 0.20,
       enemyArea: 0.30,
       rangerSingle: 0.15,

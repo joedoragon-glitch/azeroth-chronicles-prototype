@@ -2353,8 +2353,8 @@
             if (victim.type === 'archer') {
               const criticalReceipt = this.worldBossRelease(e, a);
               // The Archive's targeted sabotage is a real status-only skill.
-              // A dodging healer keeps her cooldown; a critical cannot miss.
-              if (!this.skillEvades(victim, 'single', {
+              // A healer who blocks the skill keeps her cooldown; a critical is unblockable.
+              if (!this.skillBlocks(victim, 'single', {
                 source: e.id, criticalExecution: criticalReceipt,
               })) {
                 victim.healCd = (victim.healCd || 0) +
@@ -2699,7 +2699,7 @@
             // ticks instead of being applied once now and a second time later.
             const landed =
               u === jawVictim
-                ? !this.skillEvades(u, 'single', {
+                ? !this.skillBlocks(u, 'single', {
                     source: e.id, criticalExecution: a.criticalExecution,
                   })
                 : this.hitParty(

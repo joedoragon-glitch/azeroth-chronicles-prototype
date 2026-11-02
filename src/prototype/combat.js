@@ -54,26 +54,26 @@
     // Weak keys also keep dead/despawned monsters from accumulating alert records.
     const underFireAlerts = new WeakMap();
     class Combat {
-      // Separate, persisted v4 stream: skill evasion must not consume World or Crit RNG.
-      rollSkillEvasion() {
-        let state = this.s.skillEvasionRngState;
+      // Separate, persisted v4 stream: skill block must not consume World or Crit RNG.
+      rollSkillBlock() {
+        let state = this.s.skillBlockRngState;
         if (state === undefined) {
           state = (Math.imul(this.s.nextId || 1, 0x9e3779b1) ^
             Math.floor((this.s.clock || 0) * 1000) ^ 0x6d2b79f5) >>> 0;
           if (!state) state = 0xa341316c;
         }
         if (!Number.isInteger(state) || state < 1 || state > 0xffffffff)
-          throw Error('Invalid skill evasion RNG state');
+          throw Error('Invalid skill block RNG state');
         state ^= state << 13;
         state ^= state >>> 17;
         state ^= state << 5;
-        this.s.skillEvasionRngState = state >>> 0 || 0xa341316c;
-        return this.s.skillEvasionRngState / 0x100000000;
+        this.s.skillBlockRngState = state >>> 0 || 0xa341316c;
+        return this.s.skillBlockRngState / 0x100000000;
       }
-      skillEvades(defender, shape, { source = null, criticalExecution = null } = {}) {
+      skillBlocks(defender, shape, { source = null, criticalExecution = null } = {}) {
         if (!['single', 'area'].includes(shape) || !defender || defender.hp <= 0 ||
             criticalExecution?.critical === true || defender === this.hero) return false;
-        const cfg = R.skillEvasion;
+        const cfg = R.skillBlock;
         if (!cfg) return false;
         const companion = this.s.party.includes(defender) &&
           defender.active !== false &&
@@ -81,7 +81,7 @@
           (!defender.charmOrigin || this.isCharmedCompanion(defender));
         const enemy = !companion && this.zone().enemies.includes(defender) && !defender.neutral;
         if (!enemy && !companion) return false;
-        // Rogue performances cannot be evaded; basic bell attacks are excluded elsewhere.
+        // Rogue performances cannot be blocked; basic bell attacks are excluded elsewhere.
         if (enemy && source === 'hero' && this.hero.class === 'rogue') return false;
         const ranger = enemy && source === 'hero' && this.hero.class === 'ranger';
         const base = companion
@@ -90,8 +90,8 @@
             ? cfg[shape === 'area' ? 'rangerArea' : 'rangerSingle']
             : cfg[shape === 'area' ? 'enemyArea' : 'enemySingle'];
         const chance = clamp(base + (enemy && this.night() ? cfg.nightEnemyBonus : 0), 0, 1);
-        if (!(chance > 0) || this.rollSkillEvasion() >= chance) return false;
-        this.event('skillEvaded', {
+        if (!(chance > 0) || this.rollSkillBlock() >= chance) return false;
+        this.event('skillBlocked', {
           target: defender.id, source, x: defender.x, y: defender.y,
           zone: this.zoneId, deaths: this.s.statistics.deaths,
         });
@@ -803,7 +803,7 @@
         // Preserve the existing world-RNG ash check before the independent
         // skill-evasion stream so missed ash contacts do not consume Dodge.
         if (this.ashMovementFactor(origin) < 1 && this.random() < 0.35) return false;
-        if (!options?.automaticBasic && this.skillEvades(e, options?.skillShape, {
+        if (!options?.automaticBasic && this.skillBlocks(e, options?.skillShape, {
           source, criticalExecution: options?.criticalExecution,
         })) return false;
         // Piercing bypasses defensive mitigation, not terrain, range or Ash misses.
@@ -957,10 +957,10 @@
         return true;
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false,
-        skillEvasion = null) {
+        skillBlock = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
-        if (skillEvasion && this.skillEvades(u, skillEvasion.shape, {
-          source: rangedSourceId, criticalExecution: skillEvasion.criticalExecution,
+        if (skillBlock && this.skillBlocks(u, skillBlock.shape, {
+          source: rangedSourceId, criticalExecution: skillBlock.criticalExecution,
         })) return false;
         // Real two-second Endure window, class-only and never granted to pets.
         if (u === this.hero && u.class === 'rogue' && (u.rogueEndureUntil || 0) > this.s.time)
@@ -1398,7 +1398,7 @@
                 ? ((victim.telegraph || victim.rangedAim) &&
                   (!p.interruptAction || victim.telegraph === p.interruptAction ||
                     victim.rangedAim === p.interruptAction) &&
-                  !this.skillEvades(victim, skillShape || 'single', {
+                  !this.skillBlocks(victim, skillShape || 'single', {
                     source: p.source, criticalExecution: p.criticalExecution,
                   }) &&
                   this.interruptEnemyAction(victim, p.interruptAction, p.criticalExecution))
@@ -1520,7 +1520,7 @@
                 if (a.slowOnly) {
                   // This authored warning can be avoided just like a damaging
                   // boss area hit; ordinary field/environmental Slows are separate.
-                  if (!this.skillEvades(u, 'area', {
+                  if (!this.skillBlocks(u, 'area', {
                     source: a.sourceId, criticalExecution: a.criticalExecution,
                   })) this.applySlow(u, a.slowDuration);
                 }

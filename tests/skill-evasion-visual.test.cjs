@@ -1,7 +1,11 @@
 'use strict';
-// Native overlay owns a bounded, transient Dodge label even when Pixi draws the world.
+// Native overlay owns a bounded, transient Block label even when Pixi draws the world.
 const assert = require('node:assert/strict');
 const Renderer = require('../src/prototype/renderer.js');
+const fs = require('node:fs');
+const rendererSource = fs.readFileSync(require('node:path').join(__dirname, '../src/prototype/renderer.js'), 'utf8');
+assert.match(rendererSource, /ctx\.strokeText\('Blocked!', x, y\)/, 'combat cue outline uses Blocked!');
+assert.match(rendererSource, /ctx\.fillText\('Blocked!', x, y\)/, 'combat cue text uses Blocked!');
 let now = 1000;
 const game = {
   zoneId: 'vale',
@@ -18,11 +22,11 @@ const renderer = Renderer.create({
   PrototypeGroundCache: null, PrototypeEnemyVfxArt: null,
   renderLayer: 'overlay', now: () => now,
 });
-function avoid(target = 'foe') {
-  renderer.queue([{ type: 'skillEvaded', target,
+function queueBlock(target = 'foe') {
+  renderer.queue([{ type: 'skillBlocked', target,
     zone: game.zoneId, deaths: game.s.statistics.deaths }]);
 }
-avoid();
+queueBlock();
 assert.equal(renderer.metrics().dodgeCues, 1);
 renderer.queue([{ type: 'criticalExecutionRelease', source: 'hero',
   zone: game.zoneId, deaths: game.s.statistics.deaths }]);
@@ -30,15 +34,15 @@ assert.equal(renderer.metrics().dodgeCues, 1, 'critical cue is independent');
 now += 450;
 renderer.update(0);
 assert.equal(renderer.metrics().dodgeCues, 1, 'skipped paint preserves pending cue');
-avoid();
+queueBlock();
 assert.equal(renderer.metrics().dodgeCues, 1, 'same target refreshes');
-for (let i = 0; i < 12; i++) avoid('enemy-' + i);
+for (let i = 0; i < 12; i++) queueBlock('enemy-' + i);
 assert(renderer.metrics().dodgeCues <= 8, 'crowd cap is enforced');
 now += 1500;
 renderer.update(0);
 assert.equal(renderer.metrics().dodgeCues, 0, 'unpainted cues expire by wall clock');
-avoid();
+queueBlock();
 game.zoneId = 'march';
 renderer.queue([]);
 assert.equal(renderer.metrics().dodgeCues, 0, 'zone transitions clear pending labels');
-console.log('PASS skill evasion overlay duplicate, frame skip, bound and scene reset');
+console.log('PASS skill block overlay duplicate, frame skip, bound and scene reset');
