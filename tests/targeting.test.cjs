@@ -270,13 +270,15 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
   game.manualHeroTargetId = b.id;
   game.manualHeroTargetZone = game.zoneId;
   game.s.heroTarget = b.id;
+  const heroOrderBeforeRecall = game.hero.order;
   game.recallParty();
   assert.equal(
     game.castMovementBasic(),
     false,
     'a retained distant target cannot restart pursuit after Recall',
   );
-  assert.equal(game.hero.order, null);
+  assert.equal(game.hero.order, heroOrderBeforeRecall,
+    'Recall and passive fire must preserve existing hero intent, including no order');
   const retreat = { type: 'move', x: 400, y: 500 };
   game.hero.order = retreat;
   const hp = b.hp,
