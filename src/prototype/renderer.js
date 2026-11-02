@@ -3582,21 +3582,36 @@
         const underlay = !!(aura || flight || bundle || e.pursuitBurst > 0);
         const overlay = !!((e.family === 'ridge' && e.ledgerOpen) || e.kind === 'keeper');
         if (!underlay && !overlay) return null;
+        // Stable details must not inherit the aura's changing clock. Only
+        // TRUE bosses have animated TRUE geometry; ordinary TRUE enemies have
+        // a static ring. Ringleader/frenzy pulses intentionally keep moving.
+        const trueBoss = aura && e.form === 'true' && e.type === 'boss';
+        const stillTrueBoss = trueBoss && reducedMotion();
+        const animatedAura = aura && (e.form !== 'true' || (trueBoss && !stillTrueBoss));
         return {
           underlay,
           overlay,
           visual: e,
-          signature: JSON.stringify([
-            e.form,
-            !!e.frenzy,
-            !!e.ledgerOpen,
-            bundle,
-            e.pursuitBurst > 0,
-            flight ? e.motion.flightPath?.[0] || e.motion.target : null,
-            aura ? now() : 0,
-            spriteHeight(e),
-            reducedMotion(),
-          ]),
+          underlaySignature: underlay
+            ? JSON.stringify([
+                e.form,
+                e.type,
+                !!e.frenzy,
+                bundle,
+                e.pursuitBurst > 0,
+                // Flight streaks depend on the actor-to-waypoint vector, not
+                // just the next waypoint. Keep them attached as the boss moves.
+                flight ? [e.x, e.y, e.motion.flightPath?.[0] || e.motion.target] : null,
+                animatedAura ? now() : 0,
+                trueBoss ? spriteHeight(e) : 0,
+                stillTrueBoss,
+              ])
+            : null,
+          // The Ridge book and Keeper cage are fixed local geometry; their
+          // position/zoom is handled by the retained Pixi Graphics transform.
+          overlaySignature: overlay
+            ? JSON.stringify([e.family === 'ridge' && !!e.ledgerOpen, e.kind === 'keeper'])
+            : null,
         };
       },
       paintActorDetails: (brush, e, layer) => {
