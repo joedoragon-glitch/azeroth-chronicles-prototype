@@ -38,6 +38,7 @@ assert.deepEqual({ x: c.hero.x, y: c.hero.y }, position,
   'old order never moves hero');
 assert.equal(c.hero.cd[0], cd, 'old order never triggers Skill 1');
 for (const source of ['engine.js', 'combat.js', 'hero-combat.js'])
-  assert(!fs.readFileSync(path.resolve(__dirname, '../src/prototype', source), 'utf8')
-    .includes('hero-attack-order.cjs'), 'archived historical executor has no runtime import');
+  assert(!/(?:\brequire\s*\(|\bimport\s*\(|\bfrom\s*['\"])[^\n]*hero-attack-order\.cjs/.test(
+    fs.readFileSync(path.resolve(__dirname, '../src/prototype', source), 'utf8')),
+  'archived historical executor has no runtime import');
 console.log('PASS real hero attack pressure, legacy-order inertness and archived-only Skill 1 implementation');

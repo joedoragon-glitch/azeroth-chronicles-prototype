@@ -805,5 +805,5 @@ for (const companionDistance of [350, 15]) {
   assert(game.hero.x >= oldX,
     'hero is still permitted to approach and cover the retreat during Recall');
   assert.equal(game.s.recallActive, true,
-    'hero's ongoing approach neither cancels nor extends companion Recall');
+    "hero's ongoing approach neither cancels nor extends companion Recall");
 }

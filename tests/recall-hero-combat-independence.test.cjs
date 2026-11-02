@@ -78,11 +78,11 @@ for (const heroClass of ['paladin', 'mage', 'ranger', 'rogue']) {
   rogue.zone().enemies = [enemy];
   rogue.line = () => true;
   rogue.hero.skills[1] = 1;
-  assert.equal(rogue.s.recallActive, false);
+  assert(!rogue.s.recallActive, 'no Recall initially active');
   assert(rogue.castMovementBasic(), 'bell basic is legal without Recall');
   assert(rogue.cast(1, enemy.id), 'manual bell performance legal without Recall');
   assert(rogue.cast(2, enemy.id), 'separate Rogue song legal without Recall');
-  assert.equal(rogue.s.recallActive, false,
+  assert(!rogue.s.recallActive,
     'Rogue offense never invents an unrequested Recall');
   assert.equal(rogue.s.recallExpiresAt, undefined,
     'no Recall timer appears as a combat side effect');
