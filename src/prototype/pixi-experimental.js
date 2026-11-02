@@ -1,6 +1,7 @@
-/* Experimental PixiJS presentation for the LIVE Campaign.
- * The normal Canvas renderer owns input projection and critical 2D cue overlays.
- * Do not label this a complete or faster WebGL implementation before review.
+/* Primary PixiJS/WebGL2 world presentation for the live Campaign.
+ * The original Canvas renderer supplies critical gameplay-cue overlays and
+ * remains an independent selectable fallback; gameplay state is unchanged.
+ * Default selection does not prove higher FPS or physical-device acceptance.
  */
 (function (root) {
   'use strict';

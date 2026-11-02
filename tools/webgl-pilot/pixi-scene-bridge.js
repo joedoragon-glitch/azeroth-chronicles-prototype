@@ -1,6 +1,7 @@
-/* PRE-INTEGRATION: PixiJS scene bridge. Actual sprite/terrain textures, actors
-   and lamp positions come from the real Azeroth pilot, not manufactured geometry.
-   Never loaded by the playable PWA. */
+/* Live PixiJS scene bridge loaded by the playable PWA.
+   Composes the game's real terrain, actors, sprites and lamp positions,
+   alongside the retained Canvas cue overlay and independent Canvas fallback.
+   The webgl-pilot directory name is preserved for historical compatibility. */
 (function (root) {
   'use strict';
   const assert = (x, msg) => {
