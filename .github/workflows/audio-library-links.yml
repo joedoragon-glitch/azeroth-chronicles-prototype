@@ -1,0 +1,48 @@
+name: Game Sound Library shareable links (one browser, no deploy)
+
+# Focused one-engine playback regression for URL handoff and its phone viewport.
+# This is not the expensive full-game/Chromium/WebKit certification matrix.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/audio/audition.js'
+      - 'tools/audio/index.html'
+      - 'tools/audio/audition.css'
+      - 'tests/audio-audition-browser.test.cjs'
+      - 'tests/audition.test.cjs'
+      - '.github/workflows/audio-library-links.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: library-links-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  soundtrack-handoff:
+    name: Recorded and original one-tap player links (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Build complete offline assets without publishing
+        run: node scripts/build.cjs
+      - name: Prepare pinned browser
+        run: npx playwright install --with-deps chromium
+      - name: Exercise live audio, raw-file-free URL routing and phone layout
+        run: node tests/audio-audition-browser.test.cjs
+      - name: Preserve failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sound-library-links-failure
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
