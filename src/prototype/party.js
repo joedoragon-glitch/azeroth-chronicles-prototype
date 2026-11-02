@@ -293,6 +293,9 @@
       // Existing Recall logic continues the protected withdrawal after
       // normal simulation safely resumes.
       this.s.recallActive = true;
+      // Exceptional critical-freeze withdrawal is independent of the Recall
+      // button, but must not inherit a stale prior manual Recall deadline.
+      this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
       this.hero.order = null;
       // Give living companions a physical, terrain-safe withdrawal goal behind
       // the hero, opposite the nearest engaged enemy. Never teleport them.
@@ -363,8 +366,30 @@
           this.activeLivingParty().some((u) => dist(u, this.hero) > R.companionRecall.arrivalRadius)
         );
       }
-      releaseRecallForCombat() {
-        if (!this.recallInProgress()) this.s.recallActive = false;
+      recallSecondsRemaining() {
+        if (!this.s.recallActive) return 0;
+        const until = this.s.recallExpiresAt;
+        return Number.isFinite(until)
+          ? Math.max(0, until - this.s.time)
+          : R.companionRecall.durationSeconds;
+      }
+      endRecall(reason = 'expired') {
+        if (!this.s.recallActive) return false;
+        this.s.recallActive = false;
+        delete this.s.recallExpiresAt;
+        this._gatherRecallResume = null;
+        this.say(reason === 'manual'
+          ? 'Squad Recall cancelled.'
+          : 'Squad Recall ended after five seconds.');
+        this.notice(reason === 'manual'
+          ? 'Recall OFF · companions resume normal orders.'
+          : 'Recall expired · companions resume normal orders.', 2.5, '', 'feedback');
+        return true;
+      }
+      recallLaborBlocked() {
+        if (!this.s.recallActive) return false;
+        this.say('Recall active. Tap Recall again or wait for the five-second hold before assigning work.');
+        return true;
       }
       companionSurvivalMode(u) {
         if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
@@ -3734,9 +3759,8 @@
         if ((this.s.expeditionRank || 1) < 3) return false;
         const context = this.syncSquadDoctrine();
         if (!context.engaged) return false;
-        // An explicit combat-doctrine switch during an ongoing encounter is
-        // a new engagement order; Recall itself remains defensive until then.
-        this.releaseRecallForCombat();
+        // Doctrine changes can be selected during Recall but cannot turn off
+        // the player's defensive order; only the button or timer can do that.
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
         this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
         return true;
@@ -3757,21 +3781,21 @@
         };
       }
       recallParty() {
+        // Recall is an explicit, bounded defensive command. Pressing its
+        // button/key a second time cancels; no combat event can cancel it.
+        if (this.s.recallActive) return this.endRecall('manual');
         const tutorial = this.s.quests['quest-barracks'];
         if (tutorial && !tutorial.paid && this.activeLivingParty().length)
           tutorial.recallPracticed = true;
         this.cancelRangerHealRequest();
-        if (
-          this.s.recallActive &&
-          this.activeLivingParty().every((u) => !u.order && !this.partyChargeState(u))
-        )
-          return true;
         const gathering = this.activeLivingParty().filter((u) => this.gatheringUnit(u));
         this._gatherRecallResume = gathering.length
           ? { zone: this.zoneId, ids: gathering.map((u) => u.id) }
           : null;
         this.s.recallActive = true;
-        if (this.hero.order?.type !== 'move') this.hero.order = null;
+        this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
+        // Do not erase hero skill-approach or navigation. Recall belongs to
+        // companion control; deliberate hero actions remain player-owned.
         this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
           this.clearCompanionJudgment(u);
@@ -3781,8 +3805,8 @@
           u.path = [];
           u.routeAge = 0;
         }
-        this.say('Squad recalled. Companions are regrouping on the hero.');
-        this.notice('Companions recalled · retreat protection active.', 2.8, '', 'feedback');
+        this.say('Squad Recall ON for five seconds. Press Recall again to cancel.');
+        this.notice('Recall ON · 5s defensive hold · tap again to cancel.', 2.8, '', 'feedback');
         this.event('squadRecall');
         return true;
       }
@@ -4075,7 +4099,8 @@
         if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
           this._gatherRecallResume = null;
         else if (returningLabor && !this.recallInProgress()) {
-          this.s.recallActive = false;
+          // Formation arrival never cancels a timed Recall, including one
+          // which interrupted active gathering.
           this._gatherRecallResume = null;
         }
         // Pending casts cannot survive removal, a zone change, death or benching.

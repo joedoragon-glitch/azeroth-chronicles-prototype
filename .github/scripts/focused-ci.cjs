@@ -34,6 +34,15 @@ const groups = [
     ],
   },
   {
+    // #684 isolated design tools must have behavior owners, not architecture fallback.
+    match: /^tools\/experimental\/squad-command-planner\.cjs$/,
+    tests: [TEST + 'squad-command-planner-dormant.test.cjs'],
+  },
+  {
+    match: /^tools\/legacy\/hero-attack-order\.cjs$/,
+    tests: [TEST + 'legacy-hero-order-isolation.test.cjs'],
+  },
+  {
     match: /^tools\/greenwood-layout\//,
     tests: [TEST + 'greenwood-layout-measurement.test.cjs'],
   },

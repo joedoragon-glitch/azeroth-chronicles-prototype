@@ -30,15 +30,15 @@ for (const heroClass of Object.keys(classes)) {
 // A future class can be announced in the registry without inheriting a
 // Ranger projectile or charged Skill 1. The current classes' ranges remain.
 {
-  const expected = { paladin: 105, mage: 350, ranger: 350 };
-  for (const [id, reach] of Object.entries(expected)) {
+  for (const id of ['paladin', 'mage', 'ranger']) {
     const c = new Campaign('normal', id, () => 0.9);
-    assert.equal(c.heroBasicAttackApproachRange(), reach);
+    assert.equal(Object.hasOwn(Campaign.classFoundationFor(id), 'basicAttackApproachRange'), false);
+    assert.equal(typeof c.heroBasicAttackApproachRange, 'undefined');
     assert(c.heroSkillRange(1) > 0);
   }
   const c = new Campaign('normal', 'mage', () => 0.9);
   c.hero.class = 'rogue'; // Dormant only, no playable class registered.
-  assert.equal(c.heroBasicAttackApproachRange(), 220);
+  assert.equal(typeof c.heroBasicAttackApproachRange, 'undefined');
   assert.equal(c.heroSkillRange(1), 225);
   assert.equal(c.heroSkillRange(1, true), 290);
   const snapshot = c.snapshot();

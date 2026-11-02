@@ -615,8 +615,8 @@
       'Ranger en cola de reclutamiento. Toca la misma opción para cancelar.',
     'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.':
       'Soldado: combate cercano.\nRanger: ataques a distancia + curación.\nTe siguen y luchan automáticamente.\n\nReagrupar los trae de vuelta.',
-    'Recalled!\nOrders cancelled. Companions stay close and defend without chasing.\nGive a new order to send them out again.\n\nNext: build your first Barracks for FREE.':
-      '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se quedan cerca y se defienden sin perseguir.\nDales una nueva orden para enviarlos de nuevo.\n\nDespués: construye tu primer cuartel GRATIS.',
+    'Recalled!\nOrders cancelled. Companions stay close and defend without chasing for up to five seconds.\nPress Recall again to cancel early; the button shows when it is active.\n\nNext: build your first Barracks for FREE.':
+      '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se mantienen cerca y se defienden sin perseguir durante un máximo de cinco segundos.\nPulsa Reagrupar otra vez para cancelar antes; el botón muestra cuándo está activo.\n\nDespués: construye tu primer cuartel GRATIS.',
     'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.':
       'Recluta compañeros o recupera tu compañía.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
     'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.':
@@ -681,6 +681,16 @@
       'Terreno abierto fuera del camino. Un compañero lo construye. Al terminar, Curar heridas restaura la salud del grupo por 30 coronas.',
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
+  });
+  // #684: Match the authored timed-Recall feedback and bilingual tutorial.
+  Object.assign(spanishText, {
+    'Squad Recall cancelled.': 'Reagrupación cancelada.',
+    'Squad Recall ended after five seconds.': 'La reagrupación terminó después de cinco segundos.',
+    'Recall OFF · companions resume normal orders.': 'Reagrupar OFF · los compañeros retoman sus órdenes normales.',
+    'Recall expired · companions resume normal orders.': 'Reagrupar terminó · los compañeros retoman sus órdenes normales.',
+    'Recall active. Tap Recall again or wait for the five-second hold before assigning work.': 'Reagrupar está activo. Pulsa Reagrupar otra vez o espera a que pasen los cinco segundos antes de asignar tareas.',
+    'Squad Recall ON for five seconds. Press Recall again to cancel.': 'Reagrupar ON durante cinco segundos. Pulsa Reagrupar otra vez para cancelar.',
+    'Recall ON · 5s defensive hold · tap again to cancel.': 'Reagrupar ON · defensa durante 5 s · pulsa otra vez para cancelar.',
   });
   Object.assign(spanishText, {
     'Restore living wounded companions to full health.':
@@ -5480,12 +5490,11 @@
     $('recall-button').focus?.({ preventScroll: true });
   }
   function recallSquad() {
-    if (queuedCharges.size)
-      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
-    queuedCharges.clear();
-    if (charge?.autoRelease) cancelCharge();
+    const activating = !game.s.recallActive;
+    // Recall commands companions, not the hero's prepared skills. Retain
+    // charged releases and queued actions while the squad withdraws.
     const recalled = game.recallParty();
-    if (recalled && recallPractice?.owner === game && game.activeLivingParty().length) {
+    if (recalled && activating && recallPractice?.owner === game && game.activeLivingParty().length) {
       const complete = recallPractice.complete;
       recallPractice = null;
       complete();
@@ -8081,17 +8090,29 @@
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
     if (recallPractice && recallPractice.owner !== game) recallPractice = null;
-    const practicingRecall = !!recallPractice;
-    $('recall-button').classList.toggle('tutorial-highlight', practicingRecall);
-    $('recall-button').setAttribute(
-      'aria-label',
-      tr(practicingRecall ? 'Try Recall now' : 'Recall squad'),
-    );
-    if ($('recall-button').querySelector('small'))
-      $('recall-button').querySelector('small').textContent =
-        (practicingRecall ? tr('Try it now') + ' · ' : '') +
-        input.key('recall') +
-        (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
+    const practicingRecall = !!recallPractice,
+      recallButton = $('recall-button'),
+      recallActive = !!game.s.recallActive,
+      recallRemaining = recallActive ? Math.ceil(game.recallSecondsRemaining()) : 0;
+    // On phones the default shortcut <small> is hidden. The main label
+    // also says ON while active, so the state remains visible at a glance.
+    recallButton.firstChild.textContent = recallActive
+      ? (language === 'es' ? 'Reagrupar ON ' : 'Recall ON ')
+      : (language === 'es' ? 'Reagrupar ' : 'Recall squad ');
+    recallButton.classList.toggle('tutorial-highlight', practicingRecall);
+    recallButton.classList.toggle('recall-active', recallActive);
+    recallButton.setAttribute('aria-pressed', recallActive ? 'true' : 'false');
+    recallButton.setAttribute('aria-label', recallActive
+      ? (language === 'es' ? 'Reagrupar activo. Pulsa para cancelar.' : 'Recall active. Press to cancel.')
+      : tr(practicingRecall ? 'Try Recall now' : 'Recall squad'));
+    recallButton.title = recallActive
+      ? (language === 'es' ? 'Reagrupar activo · pulsa otra vez para cancelar' : 'Recall active · press again to cancel')
+      : (language === 'es' ? 'Reagrupar durante 5 segundos' : 'Recall squad for 5 seconds');
+    if (recallButton.querySelector('small'))
+      recallButton.querySelector('small').textContent = recallActive
+        ? 'ON · ' + recallRemaining + 's'
+        : (practicingRecall ? tr('Try it now') + ' · ' : '') +
+          input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);

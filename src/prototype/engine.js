@@ -18,34 +18,31 @@
     if (typeof id !== 'string' || !/^[a-z][a-z0-9-]{1,31}$/.test(id) ||
         Object.hasOwn(classFoundations, id) || Object.hasOwn(Object.prototype, id))
       throw Error('Invalid or duplicate hero class foundation');
-    const { startingCompanions, basicAttackApproachRange, formationRole } = profile || {};
+    const { startingCompanions, formationRole } = profile || {};
     if (!Array.isArray(startingCompanions) || startingCompanions.length > 4 ||
         !startingCompanions.every((kind) => ['soldier', 'archer'].includes(kind)) ||
-        !Number.isFinite(basicAttackApproachRange) ||
-        basicAttackApproachRange <= 0 || basicAttackApproachRange > 1000 ||
         !['melee', 'ranged'].includes(formationRole))
       throw Error('Incomplete hero class foundation');
     const saved = Object.freeze({
       startingCompanions: Object.freeze([...startingCompanions]),
-      basicAttackApproachRange,
       formationRole,
     });
     classFoundations[id] = saved;
     return saved;
   }
   defineClassFoundation('paladin', {
-    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 105, formationRole: 'melee',
+    startingCompanions: ['soldier', 'archer'], formationRole: 'melee',
   });
   defineClassFoundation('mage', {
-    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+    startingCompanions: ['soldier', 'archer'], formationRole: 'ranged',
   });
   defineClassFoundation('ranger', {
-    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+    startingCompanions: ['soldier', 'archer'], formationRole: 'ranged',
   });
   // Rogue's foundation exists in legacy headless fixtures before its
   // explicit admission; this alone grants no Charm, skills or class slot.
   defineClassFoundation('rogue', {
-    startingCompanions: [], basicAttackApproachRange: R.rogueHeroFoundation.basic.range,
+    startingCompanions: [],
     formationRole: 'ranged',
   });
 
@@ -2855,7 +2852,7 @@
     }
 
     build(anchor = this.hero) {
-      if (this.isDungeon()) return false;
+      if (this.isDungeon() || this.recallLaborBlocked()) return false;
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
       if (!builder) return false;
@@ -2886,7 +2883,7 @@
         return false;
       }
       if (!this.spend(cost)) return false;
-      this.s.recallActive = false;
+
       const b = {
         id: 'barracks-' + this.s.nextId++,
         ...p,
@@ -2907,18 +2904,20 @@
       return true;
     }
     assignBuilder(id) {
+      if (this.recallLaborBlocked()) return false;
       const b = this.zone().buildings.find((b) => b.id === id && b.progress < 4),
         already = this.activeLivingParty().some(
           (u) => u.order?.type === 'build' && u.order.id === id,
         ),
         builder = this.availableLabor()[0];
       if (!b || already || !builder) return false;
-      this.s.recallActive = false;
+
       builder.order = { type: 'build', id: b.id };
       this.say(this.companionDisplayName(builder) + ' assigned to resume construction.');
       return true;
     }
     upgradeBarracks(id) {
+      if (this.recallLaborBlocked()) return false;
       const b = this.zone().buildings.find((b) => b.id === id && b.progress >= 4 && !b.full),
         already = this.activeLivingParty().some(
           (u) => u.order?.type === 'upgrade' && u.order.id === id,
@@ -2930,7 +2929,7 @@
         b.upgradePaid = true;
         b.upgradeProgress = b.upgradeProgress || 0;
       }
-      this.s.recallActive = false;
+
       builder.order = { type: 'upgrade', id: b.id };
       this.say(this.companionDisplayName(builder) + ' assigned to upgrade the barracks.');
       return true;
@@ -2992,6 +2991,7 @@
       return true;
     }
     gather(nodeId, options = null) {
+      if (this.recallLaborBlocked()) return false;
       if ((this.s.expeditionRank || 1) < 2) {
         this.say(
           'Resource gathering unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.',
@@ -3018,7 +3018,6 @@
         this.say('An idle gatherer and an unexhausted tribute site are required.');
         return false;
       }
-      this.s.recallActive = false;
       this.s.gatheringTarget = { zone: this.zoneId, id: n.id };
       for (const u of labor) {
         this.clearPartyCharge(u);
@@ -3205,6 +3204,7 @@
       }
       this.syncDungeonMasterStation();
       this.s.recallActive = false;
+      delete this.s.recallExpiresAt; // Region entry ends its previous defensive window.
       this.s.squadEngagement = null;
       this.s.squadBoss = false;
       this.s.squadDoctrine = this.squadDefaultDoctrine();
@@ -3874,11 +3874,6 @@
         'warning',
       );
     }
-    heroBasicAttackApproachRange() {
-      const reach = classFoundations[this.hero.class]?.basicAttackApproachRange;
-      if (!Number.isFinite(reach)) throw Error('Missing basic attack approach range');
-      return reach;
-    }
     // Called only when class changes: preserve every owned companion, but
     // never permit an inherited larger army to violate the successor's save.
     normalizeSuccessorCompany() {
@@ -4399,6 +4394,11 @@
       this.advancePartyChargeClock(dt);
       dt = Math.min(dt, 0.1);
       this.s.time += dt;
+      if (this.s.recallActive) {
+        if (!Number.isFinite(this.s.recallExpiresAt))
+          this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
+        if (this.s.time >= this.s.recallExpiresAt) this.endRecall('expired');
+      }
       this.advanceResourceExpeditions();
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
@@ -4527,34 +4527,27 @@
               if (pendingSkill.stalled >= 2) h.order = null;
             }
           }
-        } else {
-          const target =
-            h.order.type === 'attack'
-              ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
-              : h.order;
-          if (
-            target &&
-            !target.neutral &&
-            (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
-          ) {
-            if (
-              dist(h, target) >
-              (h.order.type === 'attack' ? this.heroBasicAttackApproachRange() : 25)
-            )
+        } else if (h.order.type === 'move') {
+          // Current map navigation only. Legacy hero 'attack' never enters
+          // the active manual Skill 1 or passive-basic combat pathways.
+          const target = h.order;
+          if (Number.isFinite(target.x) && Number.isFinite(target.y) && !target.neutral) {
+            if (dist(h, target) > 25)
               this.follow(
-                h,
-                target,
+                h, target,
                 this.heroMoveSpeed() *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
                   this.ashMovementFactor(h),
-                dt,
-                20,
+                dt, 20,
               );
-            else if (h.order.type === 'attack') this.cast(1, target.id);
             else h.order = null;
           } else h.order = null;
+        } else {
+          // Unknown or historical hero orders are inert; archive retained in
+          // tools/legacy/hero-attack-order.cjs, not in the runtime import graph.
+          h.order = null;
         }
       }
       const formationDx = h.x - formationStart.x,
@@ -8173,7 +8166,10 @@
       retain(this.s.heroTarget);
       for (const u of [this.hero, ...this.s.party, ...z.enemies]) {
         retain(u.owner);
-        retain(u.order?.id);
+        // A discarded pre-modern hero attack order cannot pin dead enemies
+        // in memory. Only actual deliberate skill approach owns a hero ID.
+        if (u !== this.hero || u.order?.type === 'skill-approach')
+          retain(u.order?.id);
         retain(u.targetId);
         retain(u.supportHeal?.source);
         retain(u.telegraph?.targetId);
