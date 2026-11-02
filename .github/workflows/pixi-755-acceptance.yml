@@ -82,7 +82,7 @@ jobs:
             (cd "$dir" && env \
               PARITY_FIXTURES=cover PARITY_PERF=1 \
               PARITY_PERF_SAMPLES=96 PARITY_PERF_WARMUP=16 \
-              PARITY_ZOOM=1.5 PARITY_OPTIMIZED=1 PARITY_DPR=1 \
+              PARITY_ZOOM=1.5 PARITY_OPTIMIZED=1 PARITY_DPR=1 PARITY_BACKING_RATIO=1 \
               PARITY_PERF_DELAY_MS=0 \
               PARITY_OUT="$RUNNER_TEMP/pixi-755-results/$slot" \
               node tests/pixi-parity-browser.test.cjs)
@@ -95,8 +95,8 @@ jobs:
           for shape in portrait landscape; do
             if [ "$shape" = portrait ]; then viewport='390x844'; else viewport='844x390'; fi
             env PARITY_FIXTURES=cover,registered PARITY_PERF=0 \
-              PARITY_VIEWPORT="$viewport" PARITY_DPR=3 \
-              PARITY_ZOOM=1.75 PARITY_OPTIMIZED=1 \
+              PARITY_VIEWPORT="$viewport" PARITY_DPR=3 PARITY_BACKING_RATIO=1.5 \
+              PARITY_ZOOM=1.75 PARITY_OPTIMIZED=0 \
               PARITY_OUT="$RUNNER_TEMP/pixi-755-results/dpr3-$shape" \
               node tests/pixi-parity-browser.test.cjs
           done
