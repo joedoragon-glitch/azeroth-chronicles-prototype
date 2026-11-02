@@ -45,7 +45,7 @@ const groups = [
   {
     match: /^tools\/greenwood-layout\//,
     tests: [TEST + 'greenwood-layout-measurement.test.cjs'],
-  }
+  },
   {
     match: /^src\/prototype\/world\.js$/,
     tests: [
