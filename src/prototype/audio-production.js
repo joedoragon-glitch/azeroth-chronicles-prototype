@@ -104,9 +104,10 @@
         let base = scene.peace && p.peace ? p.peace : p.base;
         if (!scene.peace && scene.interior === 'outdoors') {
           if (scene.zone === 'vale') {
-            // Millhaven and its surrounding roads return to the original
-            // Greenwood exploration recording. The former town arrangement
-            // now belongs to the Forest Crypt's unfinished estate approaches.
+            // The roads and fields beyond Millhaven use the recorded
+            // Greenwood exploration track. Within the expanded town,
+            // productionCue returned control to the original synthesizer.
+            // The former town recording belongs to the winter-retreat approach.
             // Real nearby fighting (and its brief release tail) takes priority.
             const nearbyEngaged = scene.nearbyEngaged ?? scene.engaged ?? 0;
             const fighting = nearbyEngaged > 0 ||
