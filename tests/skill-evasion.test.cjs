@@ -77,4 +77,30 @@ game.s.skillEvasionRngState = 0x12345678;
 assert.equal(game.rollSkillEvasion(), a, 'restored state yields deterministic roll');
 assert.equal(game.s.skillEvasionRngState, state, 'state persists reproducibly');
 assert.equal(worldCalls, 0, 'no world RNG used');
-console.log('PASS skill evasion base/ranger/night/rogue/critical/companion/AoE/RNG rules');
+// Critical AoE casts carry one frozen critical receipt. None of their
+// recipients should consume a Dodge roll or show a false Miss.
+rolls = [];
+assert(recipients.every((e) => !game.skillEvades(e, 'area', {
+  source: 'hero', criticalExecution: { critical: true },
+})), 'critical AoE bypasses evasion for all recipients');
+
+// Existing v4 saves without the optional stream remain legal, while a seeded
+// stream resumes exactly and edited/invalid RNG state is rejected.
+{
+  const savedGame = new Campaign('normal', 'paladin', () => 0.9);
+  savedGame.s.skillEvasionRngState = 0x12345678;
+  const save = savedGame.snapshot();
+  assert.equal(Campaign.restore(save).s.skillEvasionRngState, 0x12345678,
+    'evasion stream survives save/reload without re-seeding');
+  const oldSave = structuredClone(save);
+  delete oldSave.skillEvasionRngState;
+  assert.equal(Campaign.restore(oldSave).s.skillEvasionRngState, undefined,
+    'legacy v4 saves remain compatible with lazy stream creation');
+  for (const invalid of [0, -1, NaN, 2 ** 32, 'malformed']) {
+    const corrupted = structuredClone(save);
+    corrupted.skillEvasionRngState = invalid;
+    assert.throws(() => Campaign.restore(corrupted), /Invalid skill evasion RNG state/,
+      'reject invalid saved evasion RNG state: ' + String(invalid));
+  }
+}
+console.log('PASS skill evasion base/ranger/night/rogue/critical/companion/AoE/RNG/save rules');
