@@ -9,6 +9,10 @@ on:
       - 'tests/pixi-parity-browser.test.cjs'
       - 'tests/pixi-755-acceptance.test.cjs'
       - 'scripts/pixi-755-compare.cjs'
+      - 'src/prototype/pixi-experimental.js'
+      - 'src/prototype/renderer.js'
+      - 'tools/webgl-pilot/pixi-scene-bridge.js'
+      - 'tools/webgl-pilot/native-sprite-adapter.js'
   workflow_dispatch:
     inputs:
       baseline_sha:
@@ -52,6 +56,10 @@ jobs:
           git rev-parse "$BASE_SHA^{commit}"
           git worktree add --detach "$RUNNER_TEMP/pixi-755-base" "$BASE_SHA"
           cp tests/pixi-parity-browser.test.cjs "$RUNNER_TEMP/pixi-755-base/tests/pixi-parity-browser.test.cjs"
+          cmp package-lock.json "$RUNNER_TEMP/pixi-755-base/package-lock.json" || {
+            echo "::error::Different locked dependencies invalidate a paired comparison"
+            exit 1
+          }
           ln -s "$GITHUB_WORKSPACE/node_modules" "$RUNNER_TEMP/pixi-755-base/node_modules"
           printf '%s\n' "Baseline $(git -C "$RUNNER_TEMP/pixi-755-base" rev-parse HEAD)" "Candidate $(git rev-parse HEAD)"
       - name: Prepare SHA-verified local PixiJS in BOTH source trees
@@ -75,6 +83,7 @@ jobs:
               PARITY_FIXTURES=cover PARITY_PERF=1 \
               PARITY_PERF_SAMPLES=96 PARITY_PERF_WARMUP=16 \
               PARITY_ZOOM=1.5 PARITY_OPTIMIZED=1 PARITY_DPR=1 \
+              PARITY_PERF_DELAY_MS=0 \
               PARITY_OUT="$RUNNER_TEMP/pixi-755-results/$slot" \
               node tests/pixi-parity-browser.test.cjs)
             echo "::endgroup::"
