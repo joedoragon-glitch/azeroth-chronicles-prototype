@@ -426,6 +426,25 @@ const root = path.resolve(__dirname, '..'),
         await press('#record-play');
         await page.waitForFunction(() => AudioAudition.audio.recordedScore);
         assert.equal(await page.evaluate(() => JSON.stringify(localStorage)), saved);
+        // A shared URL must also survive an installed offline PWA. Query
+        // parameters identify the selection but must not change cache lookup.
+        await page.goto(room + '?track=settlement-vale');
+        await page.waitForFunction(() =>
+          window.AudioAudition?.audio.recordingManifest &&
+          !document.querySelector('#shared-play').disabled);
+        assert.equal(await page.locator('#recording').inputValue(), 'settlement-vale');
+        await press('#shared-play');
+        await page.waitForFunction(() =>
+          AudioAudition.audio.recordedScore?.id === 'settlement-vale');
+        assert.equal(outageRequests, 0, 'recorded deep link must open and play offline');
+        await page.goto(room + '?legacy=vale');
+        await page.waitForFunction(() =>
+          window.AudioAudition?.audio.recordingManifest &&
+          !document.querySelector('#shared-play').disabled);
+        await press('#shared-play');
+        await page.waitForFunction(() => AudioAudition.audio.cue?.id === 'vale');
+        assert.equal(outageRequests, 0, 'procedural deep link must open and play offline');
+        assert.equal(await page.evaluate(() => JSON.stringify(localStorage)), saved);
         assert.deepEqual(errors, []);
         fs.mkdirSync(path.join(root, 'test-results'), { recursive: true });
         await page.screenshot({
