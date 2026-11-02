@@ -8,7 +8,7 @@ const runner = {
 };
 const fixture = (ms, head, overrides = {}) => ({
   head, engine: 'Chromium synthetic',
-  viewport: { width: 912, height: 600 }, deviceScaleFactor: 1,
+  viewport: { width: 912, height: 600 }, deviceScaleFactor: 1, backingRatio: 1,
   zoom: 1.5, optimized: true, benchmarkVersion: BENCHMARK_VERSION,
   perfSamples: 96, perfWarmup: 16, injectedDelayMs: 0, runner, errors: [],
   benchmarks: [1, 8, 24, 48].map(count => ({
@@ -42,6 +42,7 @@ assert(transient.details.some(d => d.p95.decision === 'WATCH'));
 const testInvalid = (sample, regex) =>
   assert.throws(() => inspect(base, [sample, slowed[1]]), regex);
 testInvalid(fixture(7, 'head', { deviceScaleFactor: 3 }), /mismatch/);
+testInvalid(fixture(7, 'head', { backingRatio: 1.5 }), /mismatch/);
 testInvalid(fixture(7, 'head', { viewport: { width: 390, height: 844 } }), /mismatch/);
 testInvalid(fixture(7, 'head', { engine: 'Other Chromium' }), /mismatch/);
 testInvalid(fixture(7, 'head', { runner: { ...runner, imageVersion: 'other' } }), /mismatch/);
