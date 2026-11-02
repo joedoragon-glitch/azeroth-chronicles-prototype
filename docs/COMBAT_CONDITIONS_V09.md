@@ -246,7 +246,7 @@ warning geometry, line-of-sight eligibility, immunity or Reversal. A legal
 single-target hero/companion skill grants an enemy a configurable 20% block
 chance; a legal area skill grants **each** affected enemy its own independent
 30% check. Ranger hero skills use 15%/25%, and Rogue Bard performances bypass
-the Skill Block check. No existing playable hero receives this passive Skill Block.
+the Skill Block check. No existing playable hero gains Skill Block; future Strategist Dodge remains separate.
 
 Hostile enemies gain **five percentage points** during game night; active,
 legitimate friendly companions (Soldier, Archer, pet and Charmed monster) instead
