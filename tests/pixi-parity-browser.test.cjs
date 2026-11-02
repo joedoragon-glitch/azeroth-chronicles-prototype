@@ -81,8 +81,9 @@ async function main() {
     if (!/^\d+x\d+$/.test(viewportText)) throw Error('Invalid PARITY_VIEWPORT: '+viewportText);
     const [width, height] = viewportText.split('x').map(Number);
     const deviceScaleFactor = Number(process.env.PARITY_DPR || 1);
-    if (![width, height, deviceScaleFactor].every((v) => Number.isFinite(v) && v > 0))
-      throw Error('Invalid PARITY_VIEWPORT or PARITY_DPR');
+    const backingRatio = Number(process.env.PARITY_BACKING_RATIO || 1);
+    if (![width, height, deviceScaleFactor, backingRatio].every((v) => Number.isFinite(v) && v > 0))
+      throw Error('Invalid PARITY_VIEWPORT, PARITY_DPR or PARITY_BACKING_RATIO');
     const viewport = { width, height };
     const page = await browser.newPage({ viewport, deviceScaleFactor });
     const errors = [];
@@ -96,15 +97,17 @@ async function main() {
         PrototypeSprites.timeMs = () => window.clock;
         window.originalCampaign = g;
         const canvas = document.querySelector('#world');
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
+        canvas.width = Math.round(innerWidth * config.backingRatio);
+        canvas.height = Math.round(innerHeight * config.backingRatio);
+        const paintContext = canvas.getContext('2d');
+        paintContext.setTransform(config.backingRatio, 0, 0, config.backingRatio, 0, 0);
         window.platform = {
           cameraZoom: config.zoom,
           cameraAnchor: () => ({ x: innerWidth * 0.5, y: innerHeight * 0.55 }),
         };
         window.opts = {
           canvas,
-          ctx: canvas.getContext('2d'),
+          ctx: paintContext,
           getGame: () => g,
           platform,
           chargePresentation: () => null,
@@ -127,6 +130,7 @@ async function main() {
       {
         zoom: Number(process.env.PARITY_ZOOM || 1.5),
         optimized: process.env.PARITY_OPTIMIZED !== '0',
+        backingRatio,
       },
     );
     const rows = [],
@@ -346,8 +350,11 @@ async function main() {
             },
             { mode, time },
           );
-          if (mode === 'pixi')
+          if (mode === 'pixi') {
             assert(status.gpu.active && !status.gpu.lastError, 'No GPU fallback');
+            assert(Math.abs(status.gpu.pixelRatio - backingRatio) < 0.01,
+              'Pixi effective backing ratio must match measured Canvas backing');
+          }
           const name = fixture + '-' + mode + '-' + time + '.png';
           await page.screenshot({ path: path.join(out, name) });
           rows.push({ fixture, mode, time, file: name, status });
@@ -549,6 +556,7 @@ async function main() {
           engine: await browser.version(),
           viewport,
           deviceScaleFactor,
+          backingRatio,
           zoom: Number(process.env.PARITY_ZOOM || 1.5),
           optimized: process.env.PARITY_OPTIMIZED !== '0',
           benchmarkVersion: 'pixi-755-steady-v2',
