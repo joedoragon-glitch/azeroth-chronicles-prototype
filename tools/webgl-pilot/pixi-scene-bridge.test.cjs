@@ -1062,3 +1062,143 @@ test('#756 animated detail and static overlay retain exact separate lifecycles',
     else globalThis.matchMedia = priorMatchMedia;
   }
 });
+
+
+test('#756 retained multi-actor geometry matches forced canonical repaint at every phase', () => {
+  const Renderer = require('../../src/prototype/renderer.js');
+  const cached = pixiFixture(), reference = pixiFixture();
+  const game = {
+    hero: { x: 100, y: 100 },
+    s: { rescued: {}, statistics: { deaths: 0 } },
+    regionIndex: () => 0,
+    supplyRoom: () => false,
+    bundleCollected: () => false,
+  };
+  let clock = 0, reduced = false;
+  const previousMatchMedia = globalThis.matchMedia;
+  globalThis.matchMedia = () => ({ get matches() { return reduced; } });
+  try {
+    const painter = Renderer.create({
+      canvas: { width: 640, height: 360 },
+      ctx: {},
+      getGame: () => game,
+      platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 320, y: 180 }) },
+      chargePresentation: () => null,
+      isPaused: () => false,
+      Campaign: { rules: { ambientLife: {}, harbors: {} } },
+      PrototypeVisuals: { height: () => 100 },
+      PrototypeSprites: { height: () => 100 },
+      PrototypeCombatVisuals: {},
+      PrototypeEnemyVfxArt: null,
+      PrototypeGroundCache: null,
+      now: () => clock,
+    });
+    const optimizedScene = Bridge.create({
+      PIXI: cached.PIXI, app: cached.app, width: 640, height: 360,
+    });
+    const forcedScene = Bridge.create({
+      PIXI: reference.PIXI, app: reference.app, width: 640, height: 360,
+    });
+    optimizedScene.registerTexture('hero.png', picture());
+    forcedScene.registerTexture('hero.png', picture());
+    const entities = [
+      { id: 'radiant-ledger', renderKind: 'enemy', family: 'ridge', type: 'boss',
+        form: 'true', ledgerOpen: true },
+      { id: 'ordinary-true', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'true' },
+      { id: 'ringleader', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'ringleader' },
+      { id: 'frenzy', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'normal', frenzy: true },
+      { id: 'cage', renderKind: 'npc', kind: 'keeper' },
+      { id: 'pursuit', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'normal', pursuitBurst: 2 },
+      { id: 'flight', renderKind: 'enemy', family: 'abyss', type: 'boss',
+        form: 'normal', motion: { aerial: true, flightPath: [{ x: 250, y: 190 }] } },
+      { id: 'treasury-bundle', renderKind: 'npc', kind: 'bundle', treasuryRecovery: true },
+    ].map((e, i) => ({ ...e, x: 120 + 5 * i, y: 140 + 4 * i, hp: 100 }));
+
+    function commands(frame, force) {
+      return entities.map((entity, i) => {
+        const details = painter.actorDetailsFor(entity);
+        return {
+          ...actor(entity.id, 50 + 25 * i, i),
+          details: details
+            ? {
+                ...details,
+                ...(force
+                  ? { underlaySignature: undefined, overlaySignature: undefined,
+                      signature: 'fresh:' + frame }
+                  : {}),
+                x: 170 + i * 12,
+                y: 180 + i * 8,
+                zoom: frame.zoom,
+                paint: painter.paintActorDetails,
+              }
+            : null,
+        };
+      });
+    }
+    // Capture all visible geometry/style commands and transforms, not only
+    // clear counts or the number of Pixi Graphics objects.
+    function snapshot(fixture) {
+      const stage = fixture.app.stage.children[0].children[1];
+      return JSON.parse(JSON.stringify(stage.children.map((node) => {
+        if (!(node instanceof fixture.PIXI.Graphics))
+          return { kind: 'sprite', x: node.position.x, y: node.position.y };
+        return {
+          kind: 'detail', x: node.position.x, y: node.position.y,
+          scaleX: node.scale.x, scaleY: node.scale.y,
+          ellipses: node.ellipses, circles: node.circles, rects: node.rects,
+          curves: node.curves, lines: node.lines, closed: node.closed,
+          strokes: node.strokes, fills: node.fills,
+        };
+      })));
+    }
+    const states = [
+      { time: 0, zoom: 1, reduced: false },
+      { time: 16.67, zoom: 1, reduced: false },
+      { time: 7000, zoom: 1.5, reduced: false },
+      { time: 7000, zoom: 1.75, reduced: true },
+      { time: 12000, zoom: 1.75, reduced: true },
+      { time: 12000, zoom: 1.5, reduced: false },
+      { time: 16000, zoom: 1, reduced: false },
+    ];
+    for (const [i, state] of states.entries()) {
+      clock = state.time;
+      reduced = state.reduced;
+      // Exercise independent actor-state invalidation while other ranked
+      // enemies remain in the same depth-sorted scene.
+      if (i === 5) {
+        entities[0].ledgerOpen = false;
+        entities[3].frenzy = false;
+        entities[6].x += 30;
+        entities[6].motion.flightPath[0].x += 20;
+      }
+      if (i === 6) {
+        entities[0].ledgerOpen = true;
+        entities[3].frenzy = true;
+        entities[6].motion = { aerial: false, flightPath: [] };
+      }
+      optimizedScene.syncActors(commands(state, false));
+      forcedScene.syncActors(commands(state, true));
+      assert.deepEqual(
+        snapshot(cached), snapshot(reference),
+        'frame ' + i + ': retained details equal a fresh replay of every authored Canvas recipe',
+      );
+    }
+    assert.equal(optimizedScene.metrics().actorUnderlays, forcedScene.metrics().actorUnderlays);
+    assert.equal(optimizedScene.metrics().actorOverlays, forcedScene.metrics().actorOverlays);
+    assert.equal(cached.calls.images, reference.calls.images,
+      'geometry retention never changes body atlas allocations');
+    optimizedScene.syncActors([]);
+    forcedScene.syncActors([]);
+    assert.equal(optimizedScene.metrics().actorUnderlays, 0);
+    assert.equal(forcedScene.metrics().actorOverlays, 0);
+    optimizedScene.destroy();
+    forcedScene.destroy();
+  } finally {
+    if (previousMatchMedia === undefined) delete globalThis.matchMedia;
+    else globalThis.matchMedia = previousMatchMedia;
+  }
+});
