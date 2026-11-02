@@ -80,6 +80,15 @@ const noisyTail = inspect([noisyTailA, noisyTailB], [ordinaryTailA, ordinaryTail
 assert.equal(noisyTail.decision, 'GO');
 assert.equal(noisyTail.details[0].p95.decision, 'WATCH');
 assert(noisyTail.warnings.some(w => w.includes('unstable baseline tail')));
+// A genuinely huge repeated candidate slowdown still HOLDs even if the
+// one-actor baseline tail is noisy; the diagnostic carve-out is not a waiver.
+const verySlowTailA = fixture(4.09, 'head');
+const verySlowTailB = fixture(4.11, 'head');
+for (const run of [verySlowTailA, verySlowTailB]) {
+  run.benchmarks[0].p50 = 1;
+  run.benchmarks[0].p95 = 25;
+}
+assert.equal(inspect([noisyTailA, noisyTailB], [verySlowTailA, verySlowTailB]).decision, 'HOLD');
 
 const noisy = inspect([fixture(4, 'base'), fixture(8, 'base')], stable);
 assert.equal(noisy.decision, 'HOLD', 'unreliable baseline must remain blocking');
