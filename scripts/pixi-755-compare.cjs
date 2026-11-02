@@ -52,7 +52,9 @@ function validateRun(run, expectedEnvironment) {
         row.bakesDelta !== 0 || row.active !== true ||
         !Number.isInteger(row.textureSourcesBefore) || row.textureSourcesBefore < 0 ||
         row.textureSourcesAfter !== row.textureSourcesBefore ||
-        !Number.isFinite(row.outline) || !Number.isFinite(row.masks))
+        !row.outline || !Number.isInteger(row.outline.surfaces) ||
+        row.outline.surfaces < 0 || !Number.isInteger(row.outline.bytes) ||
+        row.outline.bytes < 0 || !Number.isInteger(row.masks) || row.masks < 0)
       throw Error('Invalid steady/cached sample for ' + row.count + ' actors');
   }
 }
