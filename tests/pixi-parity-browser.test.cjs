@@ -78,6 +78,7 @@ async function main() {
     });
     const viewportText =
       process.env.PARITY_VIEWPORT || (process.env.PARITY_PHONE === '1' ? '844x390' : '912x600');
+    if (!/^\\d+x\\d+$/.test(viewportText)) throw Error('Invalid PARITY_VIEWPORT: '+viewportText);
     const [width, height] = viewportText.split('x').map(Number);
     const deviceScaleFactor = Number(process.env.PARITY_DPR || 1);
     if (![width, height, deviceScaleFactor].every((v) => Number.isFinite(v) && v > 0))
@@ -519,6 +520,8 @@ async function main() {
               minMs: samples[0],
               maxMs: samples.at(-1),
               bakesDelta,
+              textureSourcesBefore: before.sceneMetrics?.textureSources ?? null,
+              textureSourcesAfter: after.sceneMetrics?.textureSources ?? null,
               active: after.active && !after.lastError,
               outline: painter.metrics().outlineBuffers,
               masks: painter.metrics().outlineMasks,
@@ -548,7 +551,8 @@ async function main() {
           deviceScaleFactor,
           zoom: Number(process.env.PARITY_ZOOM || 1.5),
           optimized: process.env.PARITY_OPTIMIZED !== '0',
-          benchmarkVersion: 'pixi-755-steady-v1',
+          benchmarkVersion: 'pixi-755-steady-v2',
+          injectedDelayMs: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_DELAY_MS || 0) : 0,
           perfSamples: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_SAMPLES || 96) : null,
           perfWarmup: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_WARMUP || 16) : null,
           runner: { platform: process.platform, arch: process.arch, node: process.version,
