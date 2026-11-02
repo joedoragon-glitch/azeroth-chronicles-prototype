@@ -72,10 +72,58 @@ const root = path.resolve(__dirname, '..'),
         await page.addInitScript(() => {
           localStorage.setItem('azeroth-save-sentinel', '{"keep":"original"}');
         });
-        await page.goto(
-          'http://127.0.0.1:' + server.address().port + prefix + 'tools/audio/index.html',
-        );
+        // A phone-friendly soundtrack link must open the sound library, never
+        // the browser's raw MP3 file handler. Audio remains gesture-locked.
+        const room = 'http://127.0.0.1:' + server.address().port +
+          prefix + 'tools/audio/index.html';
+        for (const [id,title] of [
+          ['place-vale','Orchard Roads'],
+          ['settlement-vale','Orchard Roads'],
+        ]) {
+          await page.goto(room + '?track=' + id);
+          await page.waitForFunction(() =>
+            window.AudioAudition?.audio.recordingManifest &&
+            !document.querySelector('#shared-play').disabled);
+          assert.equal(await page.locator('#shared-listening').isVisible(), true);
+          assert((await page.locator('#shared-title').textContent()).includes(title));
+          assert.equal(await page.locator('#recording').inputValue(), id);
+          assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null,
+            'deep link must not autoplay without a phone tap');
+          await press('#shared-play');
+          await page.waitForFunction((expected) =>
+            AudioAudition.audio.recordedScore?.id === expected, id);
+          assert((await page.locator('#message').textContent()).includes('Playing ' + id));
+          const created = await page.evaluate((expected) =>
+            AudioAudition.listeningUrl('track', expected), id);
+          assert.equal(new URL(created).searchParams.get('track'), id);
+          assert(!created.includes('raw.githubusercontent.com'));
+        }
+        await page.goto(room + '?legacy=vale');
+        await page.waitForFunction(() =>
+          window.AudioAudition?.audio.recordingManifest &&
+          !document.querySelector('#shared-play').disabled);
+        assert.equal(await page.locator('#place').inputValue(), 'vale');
+        assert.equal(await page.locator('#new-score').isChecked(), false);
+        assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
+        await press('#shared-play');
+        await page.waitForFunction(() =>
+          AudioAudition.audio.cue?.id === 'vale' &&
+          AudioAudition.audio.ctx?.state === 'running');
+        assert((await page.locator('#now-playing').textContent())
+          .includes('Original synthesized game music'));
+        assert.equal(await page.evaluate(() => AudioAudition.audio.recordedScore), null,
+          'legacy original is generated, not a recorded replacement');
+        await page.goto(room + '?track=missing-soundtrack');
+        await page.waitForFunction(() =>
+          window.AudioAudition?.audio.recordingManifest &&
+          !document.querySelector('#shared-listening').hidden);
+        assert.equal(await page.locator('#shared-play').isDisabled(), true,
+          'invalid IDs must never silently play the wrong track');
+        assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
+
+        await page.goto(room);
         await page.waitForFunction(() => window.AudioAudition?.audio.recordingManifest);
+        assert.equal(await page.locator('#shared-listening').isVisible(), false);
         assert.equal(await page.evaluate(() => AudioAudition.audio.ctx), null);
         assert.equal(await page.locator('#boss option').count(), 12);
         assert.equal(await page.locator('#recording option').count(), 147);
