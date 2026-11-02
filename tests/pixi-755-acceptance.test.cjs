@@ -16,7 +16,7 @@ const fixture = (ms, head, overrides = {}) => ({
     firstFixtureBakes: count, textureSourcesBefore: count * 2,
     textureSourcesAfter: count * 2,
     p50: ms + count * .02, p95: (ms + count * .02) * 1.1,
-    bakesDelta: 0, active: true, outline: 4, masks: 1,
+    bakesDelta: 0, active: true, outline: { surfaces: 4, bytes: 1048576 }, masks: 1,
   })),
   ...overrides,
 });
@@ -56,6 +56,8 @@ const invalidRow = (index, change) => {
 testInvalid(invalidRow(2, row => { row.bakesDelta = 1; }), /Invalid steady/);
 testInvalid(invalidRow(2, row => { row.sampleCount = 10; }), /Invalid steady/);
 testInvalid(invalidRow(2, row => { row.textureSourcesAfter += 1; }), /Invalid steady/);
+testInvalid(invalidRow(1, row => { row.outline = 4; }), /Invalid steady/);
+testInvalid(invalidRow(1, row => { row.outline.bytes = -1; }), /Invalid steady/);
 testInvalid(invalidRow(2, row => { row.active = false; }), /Invalid steady/);
 testInvalid(invalidRow(2, row => { row.count = 8; }), /duplicated actor/);
 assert.throws(() => inspect(base, [slowed[0]]), /at least two/);
