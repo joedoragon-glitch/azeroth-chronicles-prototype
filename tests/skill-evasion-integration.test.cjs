@@ -76,4 +76,42 @@ game.resolveArea(boss, area);
 assert.equal(samples, 2, 'same boss AoE samples once per eligible companion');
 assert.equal(soldier.hp, sHp, 'first target independently dodged the blast');
 assert(archer.hp < aHp, 'second target independently took its blast hit');
-console.log('PASS skill evasion integrated damage, critical, basic and boss AoE contacts');
+// Real Mage area owner: the charged traveling beam must keep its authored
+// footprint, but resolve a separate Dodge roll at every enemy contact.
+{
+  const { completeFieldOpening } = require('./helpers/field-opening.cjs');
+  const mage = new Campaign('normal', 'mage', () => 0.9);
+  completeFieldOpening(mage);
+  mage.s.mercyTime = 0;
+  mage.zone().props = [];
+  mage.zone().buildings = [];
+  mage.zone().npcs = [];
+  mage.s.party = [];
+  Object.assign(mage.hero, { x: 500, y: 500, order: null });
+  mage.hero.skills.fill(1);
+  mage.hero.cd.fill(0);
+  mage.hero.chargedCd.fill(0);
+  const foes = Array.from({ length: 3 }, (_, i) =>
+    mage.makeEnemy({
+      species: 'goblin', name: 'Area evasion target', level: 1,
+      hp: 100000, damage: 0, gold: 0, xp: 0,
+    }, { x: 580 + i * 8, y: 500 }));
+  mage.zone().enemies = foes;
+  for (const foe of foes) assert(mage.damage(foe, 1, 'hero'), 'engage beam fixture');
+  const before = foes.map(e => e.hp);
+  const values = [0.05, 0.85, 0.1];
+  mage.rollSkillEvasion = () => {
+    assert(values.length, 'one area Dodge roll per contact, not each frame');
+    return values.shift();
+  };
+  assert(mage.cast(1, foes[0].id, true), 'charged Mage beam releases');
+  for (let step = 0; step < 10 && mage._heroSkillEffects.length; step++) {
+    mage.s.time += 0.1;
+    mage.advanceHeroSkillEffects(0.1);
+  }
+  assert.equal(values.length, 0, 'all three legitimate AoE contacts rolled');
+  assert.equal(foes[0].hp, before[0], 'first enemy independently dodged');
+  assert(foes[1].hp < before[1], 'second enemy independently took damage');
+  assert.equal(foes[2].hp, before[2], 'third enemy independently dodged');
+}
+console.log('PASS skill evasion integrated damage, critical, basic and boss and Mage AoE contacts');
