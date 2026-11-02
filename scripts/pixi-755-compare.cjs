@@ -95,7 +95,7 @@ function inspect(baseline, candidate) {
       // baseline tails can vary severalfold with no source changes. Retain the
       // measurement, but never mistake its unreliable baseline for a demonstrated
       // regression. The single-actor p50 and every crowded metric stay gated.
-      const lowLoadTailNoise = unreliable && count === 1 && key === 'p95';
+      const lowLoadTailNoise = unreliable && count === 1 && key === 'p95' && !repeatedRegression;
       const decision = lowLoadTailNoise ? 'WATCH' :
         unreliable ? 'INCONCLUSIVE' :
         repeatedRegression ? 'HOLD' : singleRunSpike ? 'WATCH' : 'GO';
