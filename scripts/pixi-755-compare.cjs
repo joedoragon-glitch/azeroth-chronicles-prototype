@@ -15,7 +15,7 @@ function median(values) {
 function environment(run) {
   const runner = run.runner || {};
   return JSON.stringify([
-    run.engine, run.viewport, run.deviceScaleFactor, run.zoom,
+    run.engine, run.viewport, run.deviceScaleFactor, run.backingRatio, run.zoom,
     run.optimized, run.benchmarkVersion, run.perfSamples, run.perfWarmup,
     runner.platform, runner.arch, runner.node, runner.imageOS,
     runner.imageVersion, runner.chromiumMode,
@@ -29,7 +29,7 @@ function validateRun(run, expectedEnvironment) {
       !Number.isInteger(run.perfSamples) || run.perfSamples < 64 ||
       !Number.isInteger(run.perfWarmup) || run.perfWarmup < 12 ||
       !run.runner || !run.runner.chromiumMode || !run.runner.node ||
-      !Number.isFinite(run.deviceScaleFactor))
+      !Number.isFinite(run.deviceScaleFactor) || !Number.isFinite(run.backingRatio) || run.backingRatio <= 0)
     throw Error('Missing or incompatible benchmark metadata: ' + run.head);
   if (run.injectedDelayMs !== 0)
     throw Error('Test-injected delay is forbidden in acceptance evidence: ' + run.head);
@@ -123,6 +123,7 @@ function inspect(baseline, candidate) {
     referenceShas: [sourceSha], candidateShas: [headSha],
     engine: baseline[0].engine, runner: baseline[0].runner,
     viewport: baseline[0].viewport, deviceScaleFactor: baseline[0].deviceScaleFactor,
+    backingRatio: baseline[0].backingRatio,
     zoom: baseline[0].zoom, optimized: baseline[0].optimized,
     perfSamples: baseline[0].perfSamples, perfWarmup: baseline[0].perfWarmup,
     details, problems, warnings,
