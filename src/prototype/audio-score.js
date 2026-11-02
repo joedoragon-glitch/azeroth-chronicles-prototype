@@ -1,6 +1,53 @@
 /* Audio owner: score. Keep campaign rules outside this module. */
 (function (root) {
   'use strict';
+
+  // Millhaven outgrew its first small circular footprint. Use the live,
+  // regenerated major-town houses and civic / home / carpenter parcels,
+  // excluding the independently authored Orchard Hamlet and rural fields.
+  // This is audio-only geometry: it never mutates terrain or saved buildings.
+  function withinMillhaven(hero, props, wasInside = false) {
+    if (!hero || !Array.isArray(props)) return false;
+    const points = props
+      .filter((p) => /^(settlement-major-\d+|greenwood-(civic|homes|carpenter)-\d+)$/
+        .test(String(p.id || '')) && Number.isFinite(p.x) && Number.isFinite(p.y))
+      .map((p) => ({ x: p.x, y: p.y }))
+      .sort((a, b) => a.x - b.x || a.y - b.y);
+    if (points.length < 3) return false;
+    const cross = (a, b, p) => (b.x - a.x) * (p.y - a.y) -
+      (b.y - a.y) * (p.x - a.x);
+    const lower = [], upper = [];
+    for (const p of points) {
+      while (lower.length > 1 &&
+        cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0)
+        lower.pop();
+      lower.push(p);
+    }
+    for (let i = points.length - 1; i >= 0; i--) {
+      const p = points[i];
+      while (upper.length > 1 &&
+        cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0)
+        upper.pop();
+      upper.push(p);
+    }
+    const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];
+    if (hull.length < 3) return false;
+    // Positive half-planes enclose the clockwise-free convex parcel hull.
+    if (hull.every((p, i) => cross(p, hull[(i + 1) % hull.length], hero) >= 0))
+      return true;
+    // An 80-unit hysteresis band avoids music flicker near the streets' edge.
+    // These are margins around live parcel geometry, never legacy town radii.
+    const margin = wasInside ? 260 : 180;
+    return hull.some((p, i) => {
+      const q = hull[(i + 1) % hull.length],
+        dx = q.x - p.x, dy = q.y - p.y,
+        t = Math.max(0, Math.min(1, ((hero.x - p.x) * dx +
+          (hero.y - p.y) * dy) / (dx * dx + dy * dy || 1))),
+        x = p.x + t * dx, y = p.y + t * dy;
+      return Math.hypot(hero.x - x, hero.y - y) <= margin;
+    });
+  }
+
   function install(Audio, catalog) {
     const { themes, colors, pitch } = catalog;
     class Owner {
@@ -36,6 +83,9 @@
         const refuge =
           interior === 'outdoors' &&
           zone.npcs.find((n) => n.kind === 'rest' && Math.hypot(n.x - hero.x, n.y - hero.y) < 260);
+        const millhavenTown = activity.started !== false && !campaign.peace &&
+          interior === 'outdoors' && campaign.zoneId === 'vale' &&
+          withinMillhaven(hero, zone.props, this.millhavenTownActive);
         // Anchor the estate approach to the live Forest Crypt entrance rather
         // than legacy map coordinates. This survives Greenwood layout migration
         // and older saved campaigns without changing their geometry.
@@ -53,6 +103,7 @@
           zone: campaign.zoneId,
           interior,
           settlement: refuge?.id || null,
+          millhavenTown,
           estateApproach,
           situation: activity.backgrounded
             ? 'background'
