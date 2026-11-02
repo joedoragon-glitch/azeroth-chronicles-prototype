@@ -64,6 +64,17 @@ assert.throws(() => inspect(base, [slowed[0]]), /at least two/);
 assert.throws(() => inspect(base, [fixture(7, 'base'), slowed[1]]), /Source SHA mismatch/);
 assert.throws(() => inspect(base, [fixture(7, 'base'), fixture(7.2, 'base')]), /Source SHA mismatch/);
 
+// Only the one-actor p95 tail is too noisy to use as an unconditional
+// gate on SwiftShader. Keep 1-actor p50 and all crowd metrics checked.
+const noisyTailA = fixture(4, 'base');
+const noisyTailB = fixture(4.05, 'base');
+noisyTailA.benchmarks[0].p95 = 1.3 + noisyTailA.benchmarks[0].p50;
+noisyTailB.benchmarks[0].p95 = 4.3 + noisyTailB.benchmarks[0].p50;
+const noisyTail = inspect([noisyTailA, noisyTailB], stable);
+assert.equal(noisyTail.decision, 'GO');
+assert.equal(noisyTail.details[0].p95.decision, 'WATCH');
+assert(noisyTail.warnings.some(w => w.includes('unstable baseline tail')));
+
 const noisy = inspect([fixture(4, 'base'), fixture(8, 'base')], stable);
 assert.equal(noisy.decision, 'HOLD', 'unreliable baseline must remain blocking');
 assert(noisy.problems.some(p => p.includes('dispersion')));
