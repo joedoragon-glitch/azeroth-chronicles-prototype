@@ -122,6 +122,7 @@ function rasterScene({
   structure = 'house',
   foreground = true,
   renderLayer = 'full',
+  nowMs = 1000,
 } = {}) {
   const surface = createCanvas(400, 330);
   const actor = obj(actorKind, 200, 200, {
@@ -200,9 +201,10 @@ function rasterScene({
     PrototypeCombatVisuals: { ground() {} },
     PrototypeSprites: null,
     PrototypeMaterials: null,
-    now: () => 1000,
+    now: () => nowMs,
   });
-  return { surface, painter };
+  return { surface, painter, actor };
+
 }
 function pixelsWithAndWithoutHelper(sceneOptions) {
   const previousDocument = global.document;
@@ -261,6 +263,84 @@ assert.equal(
 console.log(
   'PASS Painted masks reveal only bounded contour pixels behind genuine foreground cover.',
 );
+
+
+
+// #763 — retained Pixi silhouettes must follow the body's canonical visual
+// position, rather than the still world/shadow foot. Record the exact 2D
+// translate of the first mask canvas (the actor) without GPU readbacks.
+function retainedMaskPlacement(nowMs, flipX = false, sourceRect = null) {
+  const scene = rasterScene({ renderLayer: 'overlay', nowMs });
+  const image = createCanvas(32, 48),
+    brush = image.getContext('2d');
+  brush.fillStyle = '#fff';
+  brush.fillRect(4, 5, 24, 40);
+  const retained = {
+    image,
+    dx: -16,
+    dy: -48,
+    width: 32,
+    height: 48,
+    flipX,
+    ...(sourceRect ? { sourceRect } : {}),
+  };
+  scene.painter.setSilhouetteFrames(new WeakMap([[scene.actor, retained]]));
+  const priorDocument = global.document,
+    translations = [];
+  let firstMask = true;
+  try {
+    global.document = {
+      createElement() {
+        const surface = createCanvas(384, 384),
+          getContext = surface.getContext.bind(surface);
+        surface.getContext = (...args) => {
+          const ctx = getContext(...args);
+          if (firstMask) {
+            firstMask = false;
+            const translate = ctx.translate.bind(ctx);
+            ctx.translate = (x, y) => {
+              translations.push({ x, y, size: surface.width });
+              return translate(x, y);
+            };
+          }
+          return ctx;
+        };
+        return surface;
+      },
+    };
+    scene.painter.draw();
+  } finally {
+    if (priorDocument === undefined) delete global.document;
+    else global.document = priorDocument;
+  }
+  assert.equal(scene.painter.metrics().outlineMasks, 1, 'real foreground cover engages mask path');
+  assert.equal(translations.length, 1, 'one retained actor placement, not a re-bake or duplicate');
+  const ground = scene.painter.screen(scene.actor),
+    body = scene.painter.visualPositionFor(scene.actor);
+  return { position: translations[0], retained, ground, body };
+}
+const poseA = retainedMaskPlacement(1000),
+  poseB = retainedMaskPlacement(7000),
+  flipped = retainedMaskPlacement(7000, true, [0, 0, 32, 48]);
+for (const pose of [poseA, poseB, flipped]) {
+  const dx = pose.body.x - pose.ground.x,
+    dy = pose.body.y - pose.ground.y;
+  const expectedX = pose.position.size / 2 + pose.retained.dx + dx +
+    (pose.retained.flipX ? pose.retained.width : 0);
+  const expectedY = (pose.position.size === 384 ? 260 : 192) + pose.retained.dy + dy;
+  assert(
+    Math.abs(pose.position.x - expectedX) < 0.00001 &&
+    Math.abs(pose.position.y - expectedY) < 0.00001,
+    'Pixi silhouette mask must follow live bobbing body pose, including flip/crop: ' +
+      JSON.stringify({ position: pose.position, expectedX, expectedY, body: pose.body, ground: pose.ground }),
+  );
+}
+assert(
+  Math.abs(poseA.position.y - poseB.position.y) > 0.1,
+  'frozen-world mask must move across idle presentation phases without moving gameplay feet',
+);
+assert.deepEqual(poseA.ground, poseB.ground, 'ground and interaction anchor stay fixed');
+console.log('PASS retained Pixi occlusion masks follow original actor idle pose, facing and crop.');
 
 for (const renderLayer of ['full', 'overlay']) {
   assert(pixelsWithAndWithoutHelper({ renderLayer, actorKind: 'hero' }) > 25);

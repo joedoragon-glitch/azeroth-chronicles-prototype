@@ -1,0 +1,61 @@
+name: 'Pixi #763 retained contour composition acceptance'
+
+# Opt-in/small PR scope. Two controlled real Chromium shots; no Pages publish.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pixi-763-acceptance.yml'
+      - 'src/prototype/renderer.js'
+      - 'tests/pixi-parity-browser.test.cjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixi-763-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contour:
+    name: Idle mask composition / ${{ matrix.label }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: desktop-100
+            zoom: '1'
+            phone: '0'
+          - label: phone-layout-175
+            zoom: '1.75'
+            phone: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install chromium --with-deps
+      - name: Verify deployable sources and service-worker fingerprints
+        run: node scripts/build.cjs --check
+      - name: Compare real Canvas and Pixi moving masked actors at two frozen phases
+        env:
+          PARITY_FIXTURES: occlusion-idle
+          PARITY_ZOOM: ${{ matrix.zoom }}
+          PARITY_PHONE: ${{ matrix.phone }}
+          PARITY_OPTIMIZED: '0'
+          PARITY_PERF: '0'
+          PARITY_OUT: test-artifacts/pixi-763-${{ matrix.label }}
+        run: node tests/pixi-parity-browser.test.cjs
+      - name: Preserve exact-composite images and mask-delta receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixi-763-${{ matrix.label }}
+          path: test-artifacts/pixi-763-${{ matrix.label }}/
+          retention-days: 30
+          if-no-files-found: ignore
