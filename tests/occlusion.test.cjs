@@ -299,7 +299,7 @@ function retainedMaskPlacement(nowMs, flipX = false, sourceRect = null) {
             firstMask = false;
             const translate = ctx.translate.bind(ctx);
             ctx.translate = (x, y) => {
-              translations.push({ x, y });
+              translations.push({ x, y, size: surface.width });
               return translate(x, y);
             };
           }
@@ -325,13 +325,14 @@ const poseA = retainedMaskPlacement(1000),
 for (const pose of [poseA, poseB, flipped]) {
   const dx = pose.body.x - pose.ground.x,
     dy = pose.body.y - pose.ground.y;
-  const expectedX = 384 / 2 + pose.retained.dx + dx +
+  const expectedX = pose.position.size / 2 + pose.retained.dx + dx +
     (pose.retained.flipX ? pose.retained.width : 0);
-  const expectedY = 260 + pose.retained.dy + dy;
+  const expectedY = (pose.position.size === 384 ? 260 : 192) + pose.retained.dy + dy;
   assert(
     Math.abs(pose.position.x - expectedX) < 0.00001 &&
     Math.abs(pose.position.y - expectedY) < 0.00001,
-    'Pixi silhouette mask must follow exactly the live bobbing body pose, including flip/crop',
+    'Pixi silhouette mask must follow live bobbing body pose, including flip/crop: ' +
+      JSON.stringify({ position: pose.position, expectedX, expectedY, body: pose.body, ground: pose.ground }),
   );
 }
 assert(

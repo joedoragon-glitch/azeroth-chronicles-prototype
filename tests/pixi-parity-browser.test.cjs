@@ -417,7 +417,8 @@ async function main() {
           assert(
             Math.abs(b.mask.x - a.mask.x - expectedX) < 0.001 &&
             Math.abs(b.mask.y - a.mask.y - expectedY) < 0.001,
-            'real Pixi contour must inherit the exact Canvas body idle offset',
+            'real Pixi contour must inherit the exact Canvas body idle offset: ' +
+              JSON.stringify({ a, b, expectedX, expectedY, measuredX: b.mask.x - a.mask.x, measuredY: b.mask.y - a.mask.y }),
           );
           assert(
             Math.hypot(expectedX, expectedY) > 0.1,
