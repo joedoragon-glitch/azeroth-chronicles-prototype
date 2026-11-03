@@ -86,17 +86,21 @@
             ],
           };
         }
-        // The owner's original synthesized Greenwood melody belongs inside
-        // the current Millhaven civic footprint, not on the orchard roads.
-        // A null recording request deliberately hands music back to the
-        // existing live synthesizer; no synthesized MP3 or new score is made.
+        // The owner's approved Candidate B plays only within Millhaven's
+        // live civic footprint. The original Vale synthesizer remains source
+        // and failure fallback; roads, estate, combat and bosses are distinct.
         // Nearby combat and its short release tail retain priority.
         const nearby = scene.nearbyEngaged ?? scene.engaged ?? 0;
         const fighting = nearby > 0 ||
           (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
         if (scene.millhavenTown && scene.zone === 'vale' &&
           scene.interior === 'outdoors' && !scene.peace &&
-          !scene.estateApproach && !fighting) return null;
+          !scene.estateApproach && !fighting) return {
+            id: 'millhaven-chamber',
+            bpm: 92,
+            fade: 1.2,
+            stems: [{ id: 'millhaven-chamber', gain: 0.7 }],
+          };
         const p =
           director.places[scene.zone] ||
           director.places[scene.region] ||
@@ -253,6 +257,21 @@
               return false;
             },
           );
+        }
+        // A missing/corrupt town recording must never strand the previous
+        // road score over Millhaven. Exhaust bounded retries once, then
+        // restore the preserved original synth. A later route change resets
+        // retry identity and permits another attempt.
+        if (spec.id === 'millhaven-chamber' && retry &&
+            retry.attempts >= 3 && !retry.pending && !retry.fallback &&
+            this.recordedScore?.id !== spec.id) {
+          retry.fallback = true;
+          this.stopRecordedScore(1.2);
+          if (this.cue?.id === 'vale') {
+            this.transitionScore(this.cue);
+            this.step = 0;
+            this.next = now + 0.06;
+          }
         }
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;
