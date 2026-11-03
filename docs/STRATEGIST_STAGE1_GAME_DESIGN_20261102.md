@@ -1,5 +1,7 @@
 # So I Became the Dark Lord's Problem — Ogre Strategist, Stage 1 design
 
+**Strategist design record v1.6 — 3 November 2026: FULL-SKILL CONCEPTION AUDIT = REVISE / HOLD for gameplay skill implementation.** The owner's original five-phase Stage 1 design PROCESS is historically complete, and the eight-slot materials/owner decisions remain, but **the latest independent audit below rejects the current 16 proposed ACTION CARDS as an engineering-ready roster**. Do **not** use the earlier Stage 1 v1.5 starter cards or Stage 2 v2 five-lesson effects as directly authorized implementations. First read [the full-roster conception and execution-quality audit](#3-november-2026--independent-full-roster-conception-and-execution-quality-audit-owner-directed-superseding-design-readiness-claims), which identifies all sixteen forms' strengths, actual Mage/Rogue/Paladin/Ranger overlap and correction priorities. Design review does not disturb separately authorized true material-source groundwork, implementation permission gates or any owner-ratified canon.
+
 **Stage 1 design specification v1.5 — 3 November 2026 (five-phase design assignment remains complete; owner-requested focused corrections to starter forms 1–3; future stages preserved).** The owner has explicitly declared **the Stage 1 design task completed**. Its five creative-review phases are **complete as the agreed working baseline**, not five gameplay implementation stages or certification of specific unapproved tuning values. Authentic source rules, Ogre identity and owner-approved Mineral option A remain binding; exact cooldowns, stock counts, damage and other labeled tuning candidates are left for source-grounded engineering and playable balance acceptance. **Design completion is not gameplay implementation, engineering test authorization, merge, deployment, or physical-device verification.**
 
 ## Start here in a new chat — complete independent resume instructions
@@ -51,6 +53,8 @@ The Ogre is a **battlefield engineer** and environmental opportunist, not an ele
 Principal exclusions: generic Slow, knockback, Stun, Silence, Weaken/Fracture, persistent burn damage-over-time, generic shield/immunity, huge AoE, free elemental casts, artificial terrain, RTS-style orders or new narrative companions. These are originality safeguards **for the new Strategist design only**, not requests to revise existing gameplay.
 
 Natural source **eligibility is authoritative world data**, never painted graphics, arbitrary grass/dirt, decorative splashes, ash/sunset or a source behind impassable terrain. The Ogre uses real world opportunities and accepts that some fights lack them. Empty-area baseline remains daggers, Soldier, Archer, finite Acid Bottles, Dodge, retaliation and legitimate Reversal.
+
+> **CURRENT QUALITY STATUS — HOLD:** The six actions immediately below are *historical designer proposals*, not approved implementation cards. The latest full-roster quality audit further down the document explicitly recommends keeping some mechanics, reworking others and replacing most. The owner's settled material identities and two-sided no-reflection Mineral rule remain valid.
 
 ## Phase 2 — three starting material skills / six proposed action forms
 
@@ -301,6 +305,8 @@ A discovered conflict that would make a fake source, false reflection, arbitrary
 **Scope and honest status:** **Design and documentation only** in the Stage 2 chat. No implementation of skill behavior, new gameplay tests, CI suites, independent art/audio production, merges, deployments or device-verification claims. Design-completed ≠ source-implemented ≠ tested ≠ merged ≠ released. Coordinate only source-backed feasibility constraints with the independent developer via existing PRs if necessary. The current owner request to *begin Stage 2 design* is **not authorization** to expose new skills in the playable game.
 
 **Copy-ready short chat starter:** “Start Stage 2 **game design** for the five later Neri-taught Strategist skills (slots 4–8) in *So I Became the Dark Lord’s Problem*. Use the Stage 2 independent new-chat brief in `docs/STRATEGIST_STAGE1_GAME_DESIGN_20261102.md` on draft PR #697, plus `docs/DECISIONS.md#strategist-fifth-class` and issue #674. Stage 1 design is complete; do not repeat it. Design all five normal/charged action pairs, genuine materials/consumables, combos, unlock order and integration handoff. Keep engineering and regional branches separate, update existing design records, and do **design/documentation only**—no gameplay code, tests, merge or deploy. Ask me only for consequential creative decisions.” 
+
+> **CURRENT QUALITY STATUS — HOLD:** The ten advanced actions immediately below are *historical Stage 2 v2 proposals*, not accepted engineering-ready gameplay. The full-roster conception audit below supersedes claims that every pair has demonstrated class distinctiveness. Five individual Neri lessons and authentic material rules remain the design constraints; specific action effects need revision.
 
 ## Stage 2 — five advanced Neri lessons: complete designer-owned working specification (3 November 2026)
 
