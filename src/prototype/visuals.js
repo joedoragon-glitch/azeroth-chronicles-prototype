@@ -13210,6 +13210,74 @@
               1.5,
             );
           break;
+        // Crownwatch's civic court is made by residents and craftspeople:
+        // maintained ceramic paving, useful stone seating and sheltered
+        // greenery. These props are visual only, never water/heat sources.
+        case 'crown-civic-tilecourt':
+          softPoly(
+            [[-49, 2], [0, -17], [49, 2], [0, 20]],
+            '#98929d',
+            1.6,
+          );
+          softPoly(
+            [[-39, 2], [0, -12], [39, 2], [0, 15]],
+            '#6f737f',
+            1,
+          );
+          for (const k of [-24, -12, 0, 12, 24]) {
+            line([[k - 9, 2], [k, -9], [k + 9, 2]], '#bbb4ad', 0.9);
+            line([[k - 9, 2], [k, 11], [k + 9, 2]], '#a9afb5', 0.9);
+          }
+          softPoly(
+            [[-8, 2], [0, -4], [8, 2], [0, 8]],
+            '#b6c1ba',
+            0.7,
+          );
+          break;
+        case 'crown-sheltered-planter':
+          fillOval(0, 13, 35, 11, '#1e202b', 0.22);
+          softPoly(
+            [[-34, 2], [0, -13], [34, 2], [0, 18]],
+            '#aaa6a6',
+            2,
+          );
+          softPoly(
+            [[-34, 2], [0, 18], [0, 24], [-34, 8]],
+            '#625f6a',
+            1.3,
+          );
+          softPoly(
+            [[0, 18], [34, 2], [34, 8], [0, 24]],
+            '#77727a',
+            1.3,
+          );
+          softPoly(
+            [[-25, 1], [0, -9], [25, 1], [0, 12]],
+            '#514f50',
+            1,
+          );
+          // Low protected planting, not an implausible volcanic forest.
+          for (const [x, y, w] of [
+            [-15, 0, 5], [-4, -3, 7], [9, 1, 6], [19, 1, 4],
+          ]) {
+            foliage(x, y, w, w + 2, '#66856d');
+            line([[x - 2, y + 2], [x + 2, y - 3]], '#b5b7a1', 0.8);
+          }
+          for (const x of [-18, 0, 18])
+            line([[x - 4, 12], [x + 4, 12]], '#c0b5af', 1);
+          break;
+        case 'crown-ceramic-bench':
+          fillOval(0, 13, 30, 9, '#1f1d2a', 0.18);
+          for (const x of [-22, 17]) {
+            blockwork(x, -4, 6, 20, '#898a95', 2);
+            softRect(x - 2, 9, 11, 5, '#aca9ae', 1);
+          }
+          blockwork(-28, -8, 56, 12, '#9a9ba3', 3);
+          softRect(-25, -11, 50, 6, '#c2bbb7', 1.4);
+          for (const x of [-19, -7, 5, 17])
+            softRect(x - 3, -10, 6, 3, x === 5 ? '#8caea9' : '#b9a9a2', 0.5);
+          line([[-26, -4], [26, -4]], '#656372', 1.3);
+          break;
         case 'stone-seat':
           blockwork(-23, -27, 46, 28, '#969e8c', 9);
           softRect(-24, -1, 48, 9, '#b3baa1', 2);
