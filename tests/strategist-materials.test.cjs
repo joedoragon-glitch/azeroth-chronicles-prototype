@@ -106,7 +106,10 @@ const worker = { x: 110, y: 100, id: 'trusted-worker' };
 const lab = { zone: 'vale', id: 'field-lab' };
 game.hero.x = 100;
 game.hero.y = 100;
-const gatherZone = { id: 'vale', props: [{ id: 'log', structure: 'fallen-log', x: 150, y: 100, r: 0, decorative: true }], buildings: [] };
+const gatherZone = { id: 'vale', props: [
+  { id: 'log', structure: 'fallen-log', x: 150, y: 100, r: 0, decorative: true },
+  { id: 'well', structure: 'well', x: 190, y: 100, r: 0, decorative: true },
+], buildings: [] };
 const baseline = { zone: gatherZone, rules: R, worker, lab, range: 120 };
 assert.equal(M.forGather(game, 'wood', baseline), null, 'unauthenticated Lab cannot gather');
 assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => false, route: () => [worker] }), null);
