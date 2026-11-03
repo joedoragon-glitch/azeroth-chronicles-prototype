@@ -5,15 +5,15 @@ const { rng } = require('../tools/greenwood-layout/fixtures.cjs');
 const C = require('../src/prototype/engine.js');
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const expected = {
-  'greenwood-homes-9': 'poultry-yard',
-  'greenwood-homes-10': 'wildflowers',
-  'greenwood-hamlet-7': 'animal-pen',
-  'greenwood-orchard-10': 'wildflowers',
-  'greenwood-mill-3': 'reeds',
-  'greenwood-mill-4': 'reeds',
-  'greenwood-den-7': 'thorn-bed',
+  'greenwood-refinement-millhaven-poultry': 'poultry-yard',
+  'greenwood-refinement-millhaven-flowers': 'wildflowers',
+  'greenwood-refinement-hamlet-pen': 'animal-pen',
+  'greenwood-refinement-orchard-flowers': 'wildflowers',
+  'greenwood-refinement-pond-reeds-west': 'reeds',
+  'greenwood-refinement-pond-reeds-east': 'reeds',
+  'greenwood-refinement-den-thorn-bed': 'thorn-bed',
 };
-assert.equal(C.rules.greenwoodLayout.sceneVersion, 6);
+assert.equal(C.rules.greenwoodLayout.sceneVersion, 5);
 assert.equal(C.data.regions[0].enemy_count, 32);
 assert.equal(C.rules.thornPatrol.startLeg, 7);
 assert.equal(C.rules.thornPatrol.direction, -1);
@@ -21,7 +21,8 @@ assert.equal(C.rules.thornPatrol.route.length, 8);
 assert.equal(C.rules.thornPatrol.speed, 82);
 for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
-  assert.equal(z.greenwoodRedesignScene, 6);
+  assert.equal(z.greenwoodRedesignScene, 5);
+  assert.equal(z.greenwoodRefinementVersion, 1, 'overlay applied once');
   assert.equal(g.zoneSize(), 3200);
   assert.equal(z.enemies.filter((e) => e.type === 'mob' && !e.summon).length, 32,
     'no ordinary monster count changes');
@@ -49,9 +50,9 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
     Object.keys(expected).length, 'no duplicate art on reload');
   // Simulate a release-5 save and preserve a player-owned custom prop.
   const old = JSON.parse(serialized), oldZone = old.zones.vale;
-  oldZone.greenwoodRedesignScene = 5;
-  oldZone.greenwoodSceneVersion = 5;
-  oldZone.greenwoodAttemptVersion = 5;
+  // Recreate a legitimate old scene-5 save that predates the overlay.
+  delete oldZone.greenwoodRefinementVersion;
+  delete oldZone.greenwoodRefinementAudit;
   oldZone.props = oldZone.props.filter((p) => !expected[p.id]);
   oldZone.props.push({ id: 'player-custom-greenwood-679', structure: 'barrel',
     playerOwned: true, x: 2900, y: 3100, r: 0, decorative: true });
@@ -60,7 +61,7 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const newProps = migrated.zone().props;
   for (const id of Object.keys(expected))
     assert.equal(newProps.filter((p) => p.id === id).length, 1,
-      'version 5 adds only missing authored scenery: ' + id);
+      'old scene-5 save gains a single additive candidate: ' + id);
   assert(newProps.some((p) => p.id === 'player-custom-greenwood-679' && p.playerOwned),
     'owned objects survive the scenery regeneration');
   assert.equal(migrated.zone().enemies.filter((e) => e.type === 'mob' && !e.summon).length, 32);

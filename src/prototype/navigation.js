@@ -1366,6 +1366,19 @@
       thornCaptiveFollowing() {
         return !this.peace && !this.s.rescued.thorn && !this.s.keys.thorn;
       }
+      // Existing v4 saves with a completed scene skip the full authored
+      // migration. Keep only their map/witness captions current, once.
+      greenwoodTrailLabels(z) {
+        if (z?.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
+            z.greenwoodTrailTextVersion === 1) return;
+        for (let i = 0; i < R.thornPatrol.route.length; i++) {
+          const n = z.npcs.find((p) => p.id === 'thorn-trailhead-' + i);
+          if (n) n.name = 'Scout tracks · ' + R.thornPatrol.names[i];
+        }
+        const witness = z.npcs.find((p) => p.id === 'thorn-local-report');
+        if (witness) witness.name = 'Western road observer';
+        z.greenwoodTrailTextVersion = 1;
+      }
       migrateThornPatrol(z) {
         if (z.id !== 'vale') return;
         for (const e of z.enemies)
