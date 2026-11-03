@@ -1743,10 +1743,27 @@
             const start = approach(from),
               end = approach(to);
             if (!start || !end) continue;
-            const path = this.route(start, end);
-            if (!path?.length || path.length > 160 ||
-                dist(path[path.length - 1], end) > 55) continue;
-            const walk = [start, ...path];
+            // Avoid unbounded breadth-first pathfinding while generating
+            // scenery. Try a direct unobstructed aisle, then four local
+            // two-segment bends, using the game's actual collision geometry.
+            let walk = this.clearSegment(start, end, 15) ? [start, end] : null;
+            if (!walk) {
+              const dx = end.x - start.x,
+                dy = end.y - start.y,
+                span = Math.max(1, Math.hypot(dx, dy)),
+                mx = (start.x + end.x) / 2,
+                my = (start.y + end.y) / 2;
+              for (const offset of [80, -80, 145, -145]) {
+                const bend = { x: mx - (dy / span) * offset,
+                  y: my + (dx / span) * offset };
+                if (this.blocked(bend.x, bend.y, z.id, 15, true) ||
+                    !this.clearSegment(start, bend, 15) ||
+                    !this.clearSegment(bend, end, 15)) continue;
+                walk = [start, bend, end];
+                break;
+              }
+            }
+            if (!walk) continue;
             let length = 0;
             for (let i = 1; i < walk.length; i++)
               length += dist(walk[i - 1], walk[i]);
@@ -1758,10 +1775,8 @@
             const road = this.nearestRoadPoint(z, start);
             let roadConnected = this.distanceToRoad(z, start) <= 52;
             if (!roadConnected && road && dist(road, start) <= 240) {
-              const access = this.route(road, start);
-              if (access?.length && access.length < 80 &&
-                  dist(access[access.length - 1], start) < 55) {
-                z.footpaths.push([road, ...access]);
+              if (this.clearSegment(road, start, 15)) {
+                z.footpaths.push([road, start]);
                 roadConnected = true;
               }
             }
