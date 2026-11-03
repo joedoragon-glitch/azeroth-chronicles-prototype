@@ -62,7 +62,7 @@ const troops = [soldier, archer];
 for (const u of monsters) assert(game.isOwnedMonster(u), 'owned monster eligibility');
 for (const u of troops) assert(!game.isOwnedMonster(u), 'ordinary troop has no monster heritage');
 assert.equal(game.monsterNightBonuses(game.hero).tempo, 1, 'hero cannot inherit night passive');
-assert.deepEqual(game.monsterNightBonuses(pet), { hp: 1, damage: 1, tempo: 1, dodge: 0 });
+assert.deepEqual(game.monsterNightBonuses(pet), { hp: 1, damage: 1, tempo: 1, skillBlock: 0 });
 const before = new Map([...monsters, ...troops].map((u) =>
   [u.id, { max: u.maxHp, hp: u.hp, damage: game.companionAttackDamage(u),
     tempo: game.companionRallyAttackSpeed(u) }]));
@@ -87,7 +87,7 @@ for (const u of monsters) {
     'friendly monster basic tempo inherits hostile factor');
 }
 for (const u of troops) {
-  assert.deepEqual(game.monsterNightBonuses(u), { hp: 1, damage: 1, tempo: 1, dodge: 0 });
+  assert.deepEqual(game.monsterNightBonuses(u), { hp: 1, damage: 1, tempo: 1, skillBlock: 0 });
   assert.equal(u.maxHp, before.get(u.id).max, 'troop HP untouched');
   close(game.companionAttackDamage(u), before.get(u.id).damage, 'troop damage untouched');
   close(game.companionRallyAttackSpeed(u), before.get(u.id).tempo, 'troop tempo untouched');
@@ -139,20 +139,74 @@ game.tick(0.1);
 assert.equal(pet.maxHp, Math.round(dawnMaximum * game.monsterNightBonuses().hp),
   'repeat sunset starts from natural baseline');
 
-// Simulate the pending evasion rules table without importing unfinished
-// dodge code. A SINGLE tuning edit must immediately reach enemy and owned
-// monster recipients; the resolver's per-hit integration stays in that PR.
-const originalEvasion = R.skillEvasion;
-R.skillEvasion = { ...(originalEvasion || {}), nightEnemyBonus: 0.05 };
-const hostile = { type: 'mob', id: 'enemy-888888' };
+// Skill Block is merged in PR #760. The shared night setting affects
+// only eligible skill defenses. Its basic-attack and critical exclusions stay
+// with the existing Combat.skillBlocks gate, not a new companion resolver.
+const hostile = {
+  type: 'mob', id: 'enemy-888888', neutral: false, hp: 100,
+  x: game.hero.x + 130, y: game.hero.y,
+};
+game.zone().enemies.push(hostile);
+close(game.monsterNightBonuses(hostile).skillBlock, R.skillBlock.nightEnemyBonus,
+  'wild monster receives merged Skill Block night setting');
+for (const unit of monsters)
+  close(game.monsterNightBonuses(unit).skillBlock, R.skillBlock.nightEnemyBonus,
+    'owned pet or Charm inherits merged Skill Block setting');
+close(game.monsterNightBonuses(soldier).skillBlock, 0, 'troops have no monster night addition');
+
+// A deterministic roll near 20% and 30% daytime thresholds proves
+// the same +5 percentage points at night, separately per actual recipient.
+function block(defender, shape, roll, options = {}) {
+  const original = game.rollSkillBlock;
+  let rolls = 0;
+  game.rollSkillBlock = () => { rolls++; return roll; };
+  try {
+    return { blocked: game.skillBlocks(defender, shape, { source: hostile.id, ...options }), rolls };
+  } finally { game.rollSkillBlock = original; }
+}
+assert.deepEqual(block(pet, 'single', 0.22), { blocked: true, rolls: 1 },
+  'boss pet blocks a nighttime single-target hostile skill');
+assert.deepEqual(block(goblin, 'area', 0.32), { blocked: true, rolls: 1 },
+  'Charmed monster blocks nighttime area skill');
+assert.deepEqual(block(hostile, 'single', 0.22, { source: 'hero' }),
+  { blocked: true, rolls: 1 }, 'hostile Skill Block retains current +5%');
+assert.deepEqual(block(wraith, 'single', 0.01), { blocked: false, rolls: 0 },
+  'reserve monster cannot roll against attacks');
+soldier.active = true;
+assert.deepEqual(block(soldier, 'single', 0.22), { blocked: false, rolls: 1 },
+  'ordinary Soldier stays on standard 20% Skill Block');
+soldier.active = false;
+assert.deepEqual(block(pet, 'area', 0.01, { criticalExecution: { critical: true } }),
+  { blocked: false, rolls: 0 }, 'critical skill remains unblockable');
+const heroClass = game.hero.class;
+game.hero.class = 'ranger';
+assert.deepEqual(block(hostile, 'single', 0.18, { source: 'hero' }),
+  { blocked: true, rolls: 1 }, 'Ranger retains its special night percentage');
+game.hero.class = 'rogue';
+assert.deepEqual(block(hostile, 'area', 0, { source: 'hero' }),
+  { blocked: false, rolls: 0 }, 'Rogue Bard performances remain unblockable');
+game.hero.class = heroClass;
+
+// One tuning knob, no second pet/Charm table, no additional RNG stream.
+const originalBlock = R.skillBlock;
+R.skillBlock = Object.freeze({ ...originalBlock, nightEnemyBonus: 0.07 });
 for (const unit of [hostile, pet, reservePet, goblin, wraith])
-  close(game.monsterNightBonuses(unit).dodge, 0.05, 'one future night dodge knob');
-close(game.monsterNightBonuses(soldier).dodge, 0, 'ordinary troop never gains night dodge');
-R.skillEvasion.nightEnemyBonus = 0.07;
-for (const unit of [hostile, pet, goblin])
-  close(game.monsterNightBonuses(unit).dodge, 0.07, 'future knob retuning follows allegiance');
-if (originalEvasion === undefined) delete R.skillEvasion;
-else R.skillEvasion = originalEvasion;
+  close(game.monsterNightBonuses(unit).skillBlock, 0.07,
+    'one Skill Block tuning edit updates all monster allegiances');
+R.skillBlock = originalBlock;
+const nightClock = game.s.clock;
+game.s.clock = 100;
+assert.deepEqual(block(pet, 'single', 0.22), { blocked: false, rolls: 1 },
+  'daylight pet Skill Block is ordinary 20%');
+assert.deepEqual(block(hostile, 'single', 0.22, { source: 'hero' }),
+  { blocked: false, rolls: 1 }, 'daylight wild monster loses the +5%');
+game.s.clock = nightClock;
+
+// Existing basic attacks use no Skill Block shape and must not roll.
+const originalRoll = game.rollSkillBlock;
+game.rollSkillBlock = () => { throw Error('basic attacks must not roll Skill Block'); };
+try { game.hitParty(pet, 1); } finally { game.rollSkillBlock = originalRoll; }
+game.zone().enemies = [];
 
 // Barracks recovery reconstructs a temporary unit before restoring its
 // original pet/capture ID. It must receive the same night maximum immediately.

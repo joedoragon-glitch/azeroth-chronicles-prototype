@@ -10,12 +10,12 @@ A creature remains a monster regardless of allegiance. At night, wild monsters, 
 
 ## Current shared mechanics
 
-The campaign’s `monsterNightBonuses(actor)` derives its nighttime profile from the existing `night()`, `nightPoints()` and `rules.balance.nightTempo`. It returns `{ hp, damage, tempo, dodge }`:
+The campaign’s `monsterNightBonuses(actor)` derives its nighttime profile from the existing `night()`, `nightPoints()` and `rules.balance.nightTempo`. It returns `{ hp, damage, tempo, skillBlock }`:
 
 - Max HP: `1.10 + 0.03 × qualifying night points` at night, otherwise 1.
 - Attack damage: `1.15 + 0.02 × qualifying night points` at night, otherwise 1.
 - Combat movement and ordinary/basic attack rate: existing `rules.balance.nightTempo` curve, 1.10× up to 1.25× at night, otherwise 1.
-- Future Dodge: reads the **same** `rules.skillEvasion.nightEnemyBonus` property when that unmerged feature is integrated. Current `main` does **not** contain skill evasion, so Dodge remains zero on this independent branch. The pending skill-evasion contract's “hostile only” night wording is superseded by the owner’s newer **regardless-of-allegiance** decision. Its evasion resolver must use `monsterNightBonuses(defender).dodge` rather than `enemy && night()`. Do not invent a new companion dodge number or silently import unfinished skill-evasion code.
+- **Merged Skill Block:** the existing `rules.skillBlock.nightEnemyBonus` value (+5 percentage points) is the **single** night Block setting for wild monsters and legitimately owned Charmed monsters/boss pets. Its older name is retained to avoid rewriting current skill balance/tests. The merged `Combat.skillBlocks` resolver applies the bonus only to eligible **skills**, per recipient. Ordinary automatic/basic attacks and combo finishers do not invoke Skill Block. Critical skills continue to bypass it. Normal Soldiers/Archers retain their standard daytime Block rates.
 
 Existing hostile `multipliers()` (HP/damage) and `nightTempo()` now delegate to that one profile. Friendly action paths read those same values rather than independent copies. Pet and Charmed base stats, individual mastery, Orin promotions, attack identity and normal partner Rally/Quickstep composition remain intact.
 
@@ -32,6 +32,6 @@ Existing hostile `multipliers()` (HP/damage) and `nightTempo()` now delegate to 
 
 Automated regression `tests/monster-night-passive.test.cjs` covers genuine and reserve pets/Charmed allies, troop exclusion, sunset/sunrise, non-stacking, night-progress changes, damage/basic tempo, wounds, bogus identities, version-4 save restore, Normal/Nightmare/peace/arena rules. Existing native night-tempo and Charm/pet combat tests remain required before merging.
 
-The separate skill-evasion branches `feat/skill-evasion-target-rolls-20261101` and `feature/per-target-skill-evasion-20261101` are **unmerged**. Integration must preserve their native per-recipient skill checks, critical precedence, separate RNG, actual collision, basic exclusions and verification, while replacing hostile-only night evasion with the shared monster profile for *both* sides. Do not merge partial evasions into the night-passive PR.
+**Integration with merged PR #760:** Skill Block is implemented on `main`, with existing per-target rolls, critical priority, collision checks, Blocked! feedback and a separate saved v4 RNG stream. This draft PR changes **only** the night bonus eligibility for legally owned monsters by reusing `monsterNightBonuses(defender).skillBlock` in that existing resolver. It does not extend Skill Block to autoattacks, create any new Block roll/ability, or change normal companion/block balance. The separate player-learning UI design in draft PR #772 is outside this implementation.
 
 **Publication boundary:** Branch implementation and CI results do not constitute physical iPhone/Chromebook acceptance or a deployed game. Merge and deployment require the owner's later review.

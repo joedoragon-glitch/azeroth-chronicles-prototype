@@ -8,7 +8,7 @@
 
 **Draft only, not part of the published PR #608:** [PR #761](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/761) implements a shared monster-night passive for legally Charmed creatures **and** unlocked boss pets. Their night maximum HP, attack damage and combat-only movement/basic tempo come from the *same live monster-night rules as hostiles*, rather than separate friendly percentages. Sunset applies and sunrise removes the bonuses automatically, including reserves and night-victory progression; ordinary Soldiers/Rangers and the hero do not inherit it. Charmed Wraith/Soul Drain and Stalker/Shadow Pounce retain their independent skill identities after daylight returns.
 
-The future +5-percentage-point skill-Dodge addition is being developed separately and is **not yet enabled by #761**. Its integration must give legitimate owned monsters the same night Dodge addition from the single monster-night rules as wild monsters; the older hostile-only wording in the unmerged evasion proposal is superseded by the owner's new rule. See [full contract and test boundaries](MONSTER_NIGHT_PASSIVE_20261101.md). Nothing in this addendum changes the already-published PR #608 evidence above.
+The **merged Skill Block mechanic (PR #760)** gives hostile monsters +5 percentage points against eligible skills at night. Draft PR #761 extends this **same existing configuration** to legally Charmed monsters and unlocked boss pets; normal Soldiers/Archers keep their unchanged Block chances. Autoattacks/basic-combo finishers are never Skill Block checks, and critical skills remain unblockable. This is a change in *which monsters receive the shared night bonus*, not another defensive system.
 
 ## What changes in play
 

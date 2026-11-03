@@ -408,15 +408,15 @@
           ((!this.s.party?.some((u) => u.id === actor.id)) &&
             (actor.type === 'mob' || actor.type === 'boss'))));
       if (!eligible || !this.night() || this.peace)
-        return { hp: 1, damage: 1, tempo: 1, dodge: 0 };
+        return { hp: 1, damage: 1, tempo: 1, skillBlock: 0 };
       const n = this.nightPoints(), cfg = R.balance.nightTempo;
       return {
         hp: 1.1 + 0.03 * n,
         damage: 1.15 + 0.02 * n,
         tempo: 1 + Math.min(cfg.maxBonus, cfg.baseBonus + cfg.perVictoryBonus * n),
-        // The unmerged skill-evasion feature owns this percentage. When it is
-        // integrated, both hostile and friendly monsters read the SAME knob.
-        dodge: R.skillEvasion?.nightEnemyBonus || 0,
+        // The merged Skill Block table owns one night percentage point bonus.
+        // Its combat resolver, not this passive, excludes all basic attacks.
+        skillBlock: R.skillBlock?.nightEnemyBonus ?? 0,
       };
     }
     // Recompute on a day/night transition or a new night victory point, and
@@ -6759,6 +6759,7 @@
               ),
               0,
               e.family === 'cindermaw' ? e.id : undefined,
+              false, { shape: 'area', criticalExecution: criticalReceipt },
             );
             if (
               this.hero !== hero ||
@@ -6805,6 +6806,10 @@
               ),
               0,
               e.id,
+              false, {
+                shape: move.mobileRogueCast ? 'single' : 'area',
+                criticalExecution: criticalReceipt,
+              },
             )
           )
             continue;
@@ -6885,6 +6890,7 @@
             ),
             0,
             e.family === 'cindermaw' ? e.id : undefined,
+            false, { shape: 'area', criticalExecution: criticalReceipt },
           )
         )
           continue;
