@@ -56,6 +56,10 @@ Use the current repository's focused CI (continuous integration: automated check
 
 ## Budget-conscious division of labor and GitHub-native delegation (owner direction, 3 November 2026)
 
+**3 November 2026 active-chat override:** The owner has no available Work allowance and explicitly directs the same workflow through **one ordinary Chat acting as lead engineer** and separately launched ordinary Chat helpers. Wherever the text below says “Work,” read it as the **active lead implementation Chat** until the owner explicitly changes the arrangement. The lead retains sole integration-write/architecture/adversarial responsibility, and each supporting Chat remains bound by the existing `DC-CHAT-###` GitHub task/receipt and read-only default. This is a staffing change only: no new permission for full suites, merges, deployment, background execution, invented creative choices or device-verified claims. The owner manually launches helpers, and leads resume only in active sessions.
+
+
+
 **Primary objective:** conserve the owner's ChatGPT Work allowance **without lowering the design or engineering acceptance standards**. Work performs integration-heavy implementation and substantive adversarial review. Regular Chat sessions perform small, verifiable support tasks; the owner only opens a Chat using a short prompt supplied by Work. Work **cannot open new Chat sessions itself** and must not imply it can. Cross-session coordination happens in GitHub, **not through the owner copying Chat responses back to Work**.
 
 ### Responsibility and escalation
