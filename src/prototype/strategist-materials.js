@@ -11,6 +11,7 @@
   const MAX_SIGHT_PROBES = 32;
   const MAX_ROUTE_PROBES = 24;
   const MAX_ZONE_INDEXES = 6;
+  const MAX_ACTIVE_HAZARD_PROBES = 64;
   const OVERWORLD = Object.freeze(['vale', 'march', 'highlands', 'frontier', 'crown']);
   const MATERIALS = Object.freeze(['water', 'mineral', 'wood', 'fire']);
   const propKinds = Object.freeze({
@@ -350,6 +351,14 @@
     if (zoneId === undefined) cache.clear();
     else cache.delete(zoneId);
   }
+  function authenticCombatFire(h) {
+    // Actual combat owns timed hazards in s.hazards, not z.props. The Abyss
+    // delayed-flame patch is an already authored physical fire. Other/new
+    // effects must opt in with explicit combat-owned material metadata.
+    return isFinitePoint(h) && h.life > 0 && h.kind === 'circle' &&
+      ((h.family === 'abyss' && h.name === 'Delayed flame patch' && h.persistent === true) ||
+        (h.authoritativeCombatFire === true && h.material === 'fire'));
+  }
   function findSource(game, material, options = {}) {
     if (!MATERIALS.includes(material) || !isFinitePoint(options.at)) return null;
     const zone = options.zone, rules = options.rules;
@@ -366,6 +375,24 @@
       if (!point) continue;
       const d = distance(options.at, point);
       if (d <= options.range) nearby.push({ source, point, d });
+    }
+    // Combat effects are not saved props and must not enter the long-lived
+    // index. Inspect this tiny, bounded volatile list on actual Strategist
+    // Fire checks only. Workers never harvest hostile temporary flame patches.
+    if (!options.access && options.sight && material === 'fire' &&
+        game?.s?.zone === zone.id) {
+      const active = game.s.hazards || [];
+      for (let i = 0; i < active.length && i < MAX_ACTIVE_HAZARD_PROBES; i++) {
+        const h = active[i];
+        if (!authenticCombatFire(h)) continue;
+        const source = {
+          id: 'combat-fire-' + i, kind: 'hazard', material: 'fire',
+          shape: { x: h.x, y: h.y, r: Number.isFinite(h.radius) ? h.radius : 0 },
+        };
+        const point = sourcePoint(options.at, source, rules);
+        const d = point ? distance(options.at, point) : Infinity;
+        if (d <= options.range) nearby.push({ source, point, d });
+      }
     }
     // Deterministic nearest-first selection: a Lab does not repeatedly pathfind
     // to every source in a region when nearby candidates are unreachable.
