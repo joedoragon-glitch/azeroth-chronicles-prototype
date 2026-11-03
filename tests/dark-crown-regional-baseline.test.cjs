@@ -95,6 +95,74 @@ assert.deepEqual(courtSnapshot(restoredCivic.zone().props), originalCourt,
 assert.equal(JSON.stringify(restoredCivic.zone().roads), originalRoads,
   'v4 restore must not change approved road geometry due to new civic art');
 
+// Phase 3-4: local footpaths must preserve the historic roads/crossings.
+assert.equal(civic.zone().crownIndustrialVersion, 1,
+  'Industrial circulation is generated once, after the original Crown layout');
+const industrial = civic.zone().crownIndustrialRoutes || [];
+assert(industrial.length <= rules.crownIndustrialLinks.length,
+  'Only authored, validated local service links may be added');
+assert(industrial.every(link => link.from.startsWith('recovery-heat-crown-') &&
+  link.to.startsWith('recovery-heat-crown-')),
+  'Freight paths reference actual existing heatwork props, never invented intakes');
+const originalIndustrialPaths = JSON.stringify(civic.zone().footpaths);
+civic.crownIndustrialCirculation(civic.zone());
+assert.equal(JSON.stringify(civic.zone().footpaths), originalIndustrialPaths,
+  'Repeat generation cannot add industrial route duplicates');
+assert.equal(JSON.stringify(civic.zone().roads), originalRoads,
+  'Connecting industry cannot revise original roads or lava bridges');
+
+// The Foundry's civilian labor must remain scenery separate from every
+// original hostile actor and four real traps; no invented product or quest.
+const workRoom = new Campaign('normal', 'paladin', () => 0.73);
+assert(workRoom.enter('side-crown-foundry'));
+const factory = workRoom.zone();
+const workers = factory.props.filter(p => p.crownFoundryWorker);
+assert.equal(factory.crownFoundryProductionVersion, 1,
+  'Foundry workstations have their own once-only migration');
+assert(workers.length >= 3 && workers.length <= rules.crownFoundryStations.length,
+  'A productive floor needs multiple actually generated safe work stations');
+assert(workers.every(p => p.decorative && p.r === 0 &&
+  p.id.startsWith('crown-foundry-work-')),
+  'Worker scenes cannot become new collision obstacles or enemy actors');
+const trapLocations = foundry.traps.map(([x, y]) => ({ x, y }));
+assert(workers.every(p => trapLocations.every(t => Math.hypot(p.x - t.x, p.y - t.y) >= 105)),
+  'Workers cannot stand inside preserved trap clearance');
+const foundryPositions = () => factory.props.filter(p => p.crownFoundryWorker)
+  .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));
+const firstShift = foundryPositions();
+const guardSnapshot = factory.enemies.map(e => [e.id, e.x, e.y, e.hp]).sort();
+const columnSnapshot = factory.props.filter(p => p.id.startsWith('side-wall-'))
+  .map(p => [p.id, p.x, p.y, p.r]).sort();
+const originalTraps = JSON.stringify(foundry.traps);
+workRoom.crownFoundryProduction(factory);
+assert.deepEqual(foundryPositions(), firstShift,
+  'Repeated Foundry work migration cannot move or duplicate workers');
+assert.deepEqual(factory.enemies.map(e => [e.id, e.x, e.y, e.hp]).sort(), guardSnapshot,
+  'Workers must never replace an enemy or change a hostile spawn');
+assert.deepEqual(factory.props.filter(p => p.id.startsWith('side-wall-'))
+  .map(p => [p.id, p.x, p.y, p.r]).sort(), columnSnapshot);
+assert.equal(JSON.stringify(foundry.traps), originalTraps);
+const restoredWork = Campaign.restore(workRoom.snapshot());
+assert(restoredWork.enter('side-crown-foundry'));
+assert.deepEqual(restoredWork.zone().props.filter(p => p.crownFoundryWorker)
+  .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0])),
+  firstShift, 'Old v4 save schema retains production identities and coordinates');
+assert.deepEqual(restoredWork.zone().enemies.map(e => [e.id, e.x, e.y, e.hp]).sort(),
+  guardSnapshot, 'All hostile entities survive Foundry save/restore');
+
+// Directly draw one of the actual placed production stations twice at two
+// presentation times; a sprite's very existence is not evidence of work.
+const station = workers.find(p => p.structure === 'crown-foundry-forming') || workers[0];
+function workerFrame(time) {
+  const c = createCanvas(200, 170);
+  Visuals.draw(c.getContext('2d'), { ...station, renderKind: 'prop',
+    ambientTime: time }, { x: 96, y: 125 }, 4);
+  return c.toBuffer('image/png');
+}
+assert.notEqual(crypto.createHash('sha256').update(workerFrame(0)).digest('hex'),
+  crypto.createHash('sha256').update(workerFrame(1.1)).digest('hex'),
+  'Worker/tool pose must visibly change between two render instants');
+
 const candidates = [
   // First-visit city, home, heat, freight, geology, crossings and regime.
   ['arrival', 'crown', 690, 430, 245],
@@ -121,6 +189,10 @@ const candidates = [
   // Interior production and circulation are not yet aesthetically accepted.
   ['foundry-entry', 'side-crown-foundry', 330, 260, 245],
   ['foundry-workfloor', 'side-crown-foundry', 745, 755, 245],
+  ['foundry-receiving', 'side-crown-foundry', 285, 200, 245],
+  ['foundry-forming', 'side-crown-foundry', 595, 260, 245],
+  ['foundry-finishing', 'side-crown-foundry', 915, 515, 245],
+  ['foundry-dispatch', 'side-crown-foundry', 895, 875, 245],
   ['citadel-academy', 'citadel', 630, 955, 245],
   ['cindermaw-treasury', 'supply-crown', 535, 350, 245],
 ];
