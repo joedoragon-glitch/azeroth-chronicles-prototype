@@ -89,7 +89,9 @@
           : ranger
             ? cfg[shape === 'area' ? 'rangerArea' : 'rangerSingle']
             : cfg[shape === 'area' ? 'enemyArea' : 'enemySingle'];
-        const chance = clamp(base + (enemy && this.night() ? cfg.nightEnemyBonus : 0), 0, 1);
+        // The same night Skill Block bonus follows a monster after lawful
+        // Charm or pet recruitment. Basic attacks never reach this resolver.
+        const chance = clamp(base + this.monsterNightBonuses(defender).skillBlock, 0, 1);
         if (!(chance > 0) || this.rollSkillBlock() >= chance) return false;
         this.event('skillBlocked', {
           target: defender.id, source, x: defender.x, y: defender.y,

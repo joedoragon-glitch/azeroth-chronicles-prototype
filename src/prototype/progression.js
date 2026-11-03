@@ -203,8 +203,12 @@
         const ringleader = typeof type === 'object' &&
           type.charmRingleaderTrained === true &&
           this.isCharmedCompanion(type);
+        // A passive, reversible night maximum: no saved additive bonus and
+        // no multiplication of already-boosted HP on repeated transitions.
+        const nightHp = typeof type === 'object'
+          ? this.monsterNightBonuses(type).hp : 1;
         return Math.round(raw * (1 + this.companionVitalityFraction()) *
-          (ringleader ? R.ringleaderScaling.hp : 1));
+          (ringleader ? R.ringleaderScaling.hp : 1) * nightHp);
       }
       companionArmor(type) {
         const profile = typeof type === 'object' ? this.charmedCompanionProfile(type) : null;

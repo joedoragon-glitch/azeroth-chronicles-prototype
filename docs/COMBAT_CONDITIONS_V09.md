@@ -250,10 +250,14 @@ chance; a legal area skill grants **each** affected enemy its own independent
 30% check. Ranger hero skills use 15%/25%, and Rogue Bard performances bypass
 the Skill Block check. No existing playable hero gains Skill Block; future Strategist Dodge remains separate.
 
-Hostile enemies gain **five percentage points** during game night; active,
-legitimate friendly companions (Soldier, Archer, pet and Charmed monster) instead
-receive 20%/30% independent defenses against eligible enemy skills, including
-Rogue maneuvers. Critical execution receipts bypass Skill Block before sampling it.
+Hostile monsters gain **five percentage points** during game night. The draft
+[monster-night passive PR #761](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/761)
+extends that **same source value** to legally Charmed monsters and unlocked boss pets
+while they defend against eligible enemy skills (25% single-target / 35% area at current
+tuning). Ordinary Soldiers and Archers retain their 20%/30% companion defenses, including
+against eligible enemy Rogue maneuvers, without the night bonus. Critical execution
+receipts bypass Skill Block before sampling it. This companion-night extension is
+**implemented and tested in the draft PR, not yet merged or published**.
 A successful Skill Block fully negates damage and linked on-hit statuses, displaying
 a brief local **Blocked!** over the defender. Probability values reside in
 `R.skillBlock`; the extra RNG stream is separate and save-v4 compatible.
@@ -268,4 +272,8 @@ catalog and visual identities remain unchanged; only the two current
 source-file fingerprints in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json`
 are refreshed. Historical sprite approvals and receipts remain intact.
 
-**Status:** Skill Block was implemented in [PR #760](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/760), merged into `main` on 3 November 2026 at `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`, and passed the exact-merge [focused validation and GitHub Pages publication](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41637089826). This is technical publishing evidence, **not** proof that a physical device received or validated the update. Its **player-learning copy remains unimplemented**; the owner-approved [Skill Block player learning design](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md) specifies the existing reference paths, EN/ES feedback, optional figures and engineering handoff. That separate draft is documentation/design only.
+**Status:** Skill Block was implemented in [PR #760](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/760), merged into `main` on 3 November 2026 at `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`, and passed the exact-merge [focused validation and GitHub Pages publication](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41637089826). This is technical publishing evidence, **not** proof that a physical device received or validated the update. Its player-learning UI, English/Spanish feedback and optional Keeper figures were
+subsequently merged through [PR #772](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/772).
+The owner-approved [Skill Block player learning design](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md)
+records that work's original baseline; draft PR #761 updates its night-bonus
+copy to recognize legally owned monsters without expanding Block to basic attacks.
