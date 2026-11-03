@@ -95,6 +95,12 @@ const blockZone = { id: 'vale', props: [
 ], buildings: [] };
 assert.equal(M.hasSight({ x: 30, y: 20 }, { x: 130, y: 20 }, null, blockZone, R), false);
 assert.equal(M.hasSight({ x: 30, y: 80 }, { x: 130, y: 80 }, null, blockZone, R), true);
+assert.equal(M.hasSight({ x: 30, y: 20 }, { x: 130, y: 20 }, null,
+  { id: 'side-vale-cellars', props: [
+    { id: 'side-wall-1', structure: 'cellar-pier', x: 75, y: 20,
+      r: 28, decorative: false },
+  ], buildings: [] }, R), false,
+  'native cellar pillars are actual sight blockers, even outside generic wall names');
 const greenwoodWall = { id: 'saved-wall', structure: 'fence', r: 0, decorative: true,
   greenwoodWall: { a: { x: 75, y: 0 }, b: { x: 75, y: 60 } } };
 assert.equal(M.hasSight({ x: 30, y: 20 }, { x: 130, y: 20 }, null,
