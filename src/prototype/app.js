@@ -184,6 +184,17 @@
     'Save run': 'Guardar partida',
     'Export save': 'Exportar partida',
     'Import save': 'Importar partida',
+    'Request persistent storage': 'Solicitar almacenamiento persistente',
+    'Download requested. Keep the JSON file outside browser site data.':
+      'Se solicitó la descarga. Guarda el archivo JSON fuera de los datos del navegador.',
+    'Export failed. No backup file was created.':
+      'Falló la exportación. No se creó una copia de seguridad.',
+    'Browser storage persistence granted. External backups are still necessary.':
+      'Se concedió almacenamiento persistente. Aun así, necesitas copias externas.',
+    'Persistent storage was not granted. Local saves still work; export backups.':
+      'No se concedió almacenamiento persistente. El guardado local funciona; exporta copias.',
+    'Persistent storage request unavailable. Export backups regularly.':
+      'No se pudo solicitar almacenamiento persistente. Exporta copias con regularidad.',
     'Export playtest report': 'Exportar informe',
     'New Normal game': 'Nueva partida normal',
     'New game in Nightmare Mode': 'Nueva partida en modo Nightmare',
@@ -3519,6 +3530,73 @@
     }
     menu?.back();
   };
+  const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: localStorage });
+  let storageProtectionState = 'unknown';
+  const storageApi = navigator.storage;
+  if (typeof storageApi?.persisted === 'function') {
+    try {
+      Promise.resolve(storageApi.persisted()).then(
+        (granted) => { storageProtectionState = granted ? 'granted' : 'best-effort'; },
+        () => { storageProtectionState = 'unknown'; },
+      );
+    } catch (_) {}
+  } else storageProtectionState = 'unsupported';
+  function storageProtectionCopy() {
+    if (language === 'es')
+      return storageProtectionState === 'granted'
+        ? 'El navegador concedió protección contra la eliminación automática. Borrar datos o perder el dispositivo aún elimina la partida.'
+        : 'El almacenamiento local puede borrarse. La protección persistente no sustituye una copia externa.';
+    return storageProtectionState === 'granted'
+      ? 'Browser eviction protection is granted. Clearing site data or losing the device still deletes saves.'
+      : 'Browser-local saves can be removed. Persistent storage does not replace an external backup.';
+  }
+  function requestStorageProtection(reopen) {
+    if (typeof storageApi?.persist !== 'function') {
+      status('Persistent storage request unavailable. Export backups regularly.');
+      return;
+    }
+    // Keep the request inside the user's click gesture; never at startup.
+    let request;
+    try { request = storageApi.persist(); }
+    catch (_) {
+      status('Persistent storage request unavailable. Export backups regularly.');
+      return;
+    }
+    Promise.resolve(request).then(
+      (granted) => {
+        storageProtectionState = granted ? 'granted' : 'best-effort';
+        status(granted
+          ? 'Browser storage persistence granted. External backups are still necessary.'
+          : 'Persistent storage was not granted. Local saves still work; export backups.');
+        reopen();
+      },
+      () => {
+        storageProtectionState = 'unknown';
+        status('Persistent storage request unavailable. Export backups regularly.');
+        reopen();
+      },
+    );
+  }
+  function backupReminder(mode, level) {
+    if (!backupAdvisor.due(mode, level)) return '';
+    backupAdvisor.shown(mode, level);
+    return language === 'es'
+      ? 'Conviene exportar una copia externa de esta partida. No basta con el punto de recuperación local.'
+      : 'Time for an external backup. The local recovery checkpoint cannot survive cleared browser data.';
+  }
+  function exportCampaign(candidate) {
+    try {
+      const prepared = PrototypePersistence.prepareExternalExport(candidate, Campaign);
+      exportSaveText(prepared.text, prepared.filename);
+      // A download started; no browser API proves the file was retained.
+      backupAdvisor.downloadStarted(prepared.mode, prepared.level);
+      status('Download requested. Keep the JSON file outside browser site data.');
+      return true;
+    } catch (_) {
+      status('Export failed. No backup file was created.');
+      return false;
+    }
+  }
   function exportJSON(data, name) {
     exportSaveText(JSON.stringify(data, null, 2), name);
   }
