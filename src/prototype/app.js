@@ -4080,11 +4080,13 @@
     const modes = ['normal', 'nightmare',
       ...(developerEnabled ? ['developer'] : []),
       ...(combatDiagnosticsEnabled ? ['arena'] : [])];
+    const reminder = loaded ? backupReminder(game.s.mode, game.hero.level) : '';
     openMenu(
       'Saved Games & Backups',
-      language === 'es'
+      (language === 'es'
         ? 'Elige una partida, recupera una copia o exporta tus datos antes de reemplazarlos.'
-        : 'Choose a campaign, recover a checkpoint, or export a backup.',
+        : 'Choose a campaign, recover a checkpoint, or export a backup.') +
+        '\n' + storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
       [
         ...modes.map((mode) => {
           const candidate = persistence.load(mode);
@@ -4113,11 +4115,21 @@
         ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
           label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
           action: () => {
-            const raw = localStorage.getItem(PrototypePersistence.saveKey(mode));
-            if (raw) exportSaveText(raw, 'Azeroth_Original_' + mode + '.json');
+            try {
+              const candidate = persistence.load(mode);
+              if (!candidate) throw Error('Invalid primary');
+              exportCampaign(candidate);
+            } catch (_) {
+              status('Export failed. No backup file was created.');
+            }
           },
         })),
         { kind: 'file', label: 'Import save' },
+        ...(typeof storageApi?.persist === 'function' &&
+           storageProtectionState !== 'granted'
+          ? [action('Request persistent storage',
+              () => requestStorageProtection(titleSaveMenu))]
+          : []),
       ],
       showTitleScreen,
       { view: 'title-saves' },
@@ -4284,7 +4296,7 @@
       [
         {
           label: 'Export save',
-          action: () => exportJSON(game.snapshot(), 'Azeroth_Unsaved_Run.json'),
+          action: () => exportCampaign(game),
         },
         { label: 'Reload this window', action: () => location.reload() },
       ],
@@ -4810,14 +4822,19 @@
     );
   }
   function saveBackupMenu() {
+    const reminder = backupReminder(game.s.mode, game.hero.level);
     openMenu(
       'Save backups',
-      'Export a backup before replacing a run.',
+      'Export a backup before replacing a run.\n' +
+        storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
       [
-        action('Export save', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
-        ),
+        action('Export save', () => exportCampaign(game)),
         { kind: 'file', label: 'Import save' },
+        ...(typeof storageApi?.persist === 'function' &&
+           storageProtectionState !== 'granted'
+          ? [action('Request persistent storage',
+              () => requestStorageProtection(saveBackupMenu))]
+          : []),
       ],
       saveMenu,
     );
@@ -5292,9 +5309,7 @@
         playableClassCountWord() +
         ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
-        action('Export final run', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Succession_Game_Over.json'),
-        ),
+        action('Export final run', () => exportCampaign(game)),
         action('Start a new Normal run', () => chooseLanguage('normal')),
         action(
           'Start a new Nightmare run',
@@ -5308,21 +5323,55 @@
   $('import-file').onchange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Selecting a file only opens a validated preview, never a write.
+    const back = started ? saveBackupMenu : titleSaveMenu;
     try {
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
-      const data = JSON.parse(await file.text()),
-        candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      const data = JSON.parse(await file.text());
+      const candidate = data.version === 2
+        ? Campaign.migrate(data) : Campaign.restore(data);
+      Campaign.validate(candidate.snapshot());
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
         throw Error('Combat Diagnostics import requires the playtest link');
-      persistence.writeCandidate(candidate);
-      resumeSavedRun(candidate, { imported: true });
-      status('Imported successfully.');
+      const summary = tr('Level') + ' ' + candidate.hero.level + ' · ' +
+        heroClassLabel(candidate.hero.class) + ' · ' + candidate.s.mode +
+        ' · ' + candidate.zoneId;
+      const existing = persistence.exists(candidate.s.mode);
+      openMenu(
+        language === 'es' ? 'Revisar archivo importado' : 'Review imported backup',
+        summary + '\n' + (language === 'es'
+          ? (existing
+              ? 'Esta acción reemplazará la partida de ese modo. El punto de recuperación local no es una copia externa. Confirma solo si quieres reemplazarla.'
+              : 'Se creará una partida en este modo. Confirma para importar el archivo.')
+          : (existing
+              ? 'This will replace the saved run in that mode. A local recovery checkpoint is not an external backup. Confirm only if you want to replace it.'
+              : 'This will create a run in this mode. Confirm to import the file.')),
+        [
+          action(language === 'es' ? 'Confirmar importación' : 'Confirm import',
+            () => {
+              try {
+                // Writer ownership, stale bytes and original preservation
+                // are checked again at the exact moment of replacement.
+                persistence.writeCandidate(candidate);
+                resumeSavedRun(candidate, { imported: true });
+                status('Imported successfully.');
+              } catch (_) {
+                status('Invalid import. Your current run was kept intact.');
+                back();
+                if ($('modal-description'))
+                  $('modal-description').textContent = language === 'es'
+                    ? 'No se pudo importar. Tu partida actual se conservó.'
+                    : 'Import failed. Your current run was kept intact.';
+              }
+            }),
+        ],
+        back,
+        { view: 'save-import-preview' },
+      );
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
-      // The normal status bar is hidden by the title screen. Keep failures
-      // visible in the current save dialog without replacing any campaign.
       if (menu && $('modal-description')) $('modal-description').textContent =
         language === 'es'
           ? 'No se pudo importar el archivo. Tu partida actual se conservó.'
