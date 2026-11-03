@@ -1,82 +1,49 @@
-# Ranger normal/charged identity — eight-skill source audit and focused redesign
+# Ranger normal/charged skill assessment — 3 November 2026
 
-**So I Became the Dark Lord's Problem** · 3 November 2026 · **Read-only gameplay audit + proposed design; no gameplay implementation or approval of exact tuning.**
+**So I Became the Dark Lord's Problem** · **Owner decision: preserve the current Ranger kit for the v0.9.2 update.** This is a source-informed assessment, **not** a request, approval, specification or implementation plan for redesign.
 
-## Why this review exists
+> **3 November owner supersession of this document's earlier draft:** The charged-form replacements, candidate names, damage values, movement, interruption and coordinated-hunt mechanics previously proposed for Ranger Skills 5–8 are **withdrawn from the active plan**. They remain discoverable only in prior Git history as abandoned brainstorming, **not accepted design**. No Ranger skill changes are authorized by this audit, and no skill changes were made in this documentation PR.
 
-The owner observed that some advanced **Strategist** proposals mistakenly treated charged actions as higher levels of normal actions. That is **not** a universal design law in this game. Normal and charged forms may perform markedly different tactical jobs while sharing a slot and learned rank. This prompted an independent fact-check of **Ranger skills 1–8**; the observation is a hypothesis to test, not a verdict imposed on the Ranger.
+## Purpose and assessment standard
 
-This review uses the live `main` combat owners `src/prototype/hero-combat.js`, `src/prototype/rules.js`, and the player description owner `src/prototype/skill-reference.js`. Historical design context: `docs/HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md` and `docs/HERO_SKILLS_COOLDOWN_ROTATION_DAMAGE_AUDIT_20261015.md`. The separate Strategist draft #697 is **not** authority to rewrite this class.
+The concern arose because some Strategist designs treated Charged as little more than a more powerful version of Tap, whereas this RPG has no universal rule requiring that relationship. The owner's request was to **reassess** existing class skills and distinguish those worth preserving, refining or potentially redesigning—not to invent replacements before playtesting.
 
-### Decision test
+The source-only review inspected `src/prototype/hero-combat.js`, `src/prototype/rules.js`, `src/prototype/skill-reference.js`, and historical class/skill records. **This assessment does not substitute for an end-to-end Ranger playthrough.** Two actions may share a damage/control theme but still serve a real use case; conversely, different-looking mechanics may prove redundant in actual campaign play. Neither a source observation nor a provisional classification establishes that a change is necessary.
 
-A shared bow/arrow theme, training rank, or cooldown button does **not** itself make a pair redundant. The relevant question is whether the charged action provides a **different tactical decision**—different target, timing, position, cooperation, or counterplay—or merely improves the same release's damage, coverage and duration. A slower cooldown alone does not supply a different mechanical identity. Nor is the converse mandatory: **we should not force every healthy pair to become unrelated moves**.
+## Ranger Skill 1–8 — current behavior and provisional assessment
 
-## Confirmed current source behavior
+| Skill | Current Tap | Current Charged | Source-based assessment | Decision for v0.9.2 |
+| --- | --- | --- | --- | --- |
+| **1** | **Rapid Arrows:** three staggered physical arrows at one foe, dividing an ordinary tap damage budget | **Hawk Interception:** traveling hawk tracks a foe and can interrupt a retreat on actual contact | **Preserve.** Direct focused attack versus autonomous anti-retreat pursuit are distinct tactics. | **Keep both unchanged** |
+| **2** | **Pinning Shot:** two slowing physical arrows aimed at one foe | **Pinning Volley:** slowing physical projectiles through an aimed enemy line | **Preserve for now; reassess only if play reveals overlap.** Single-target control versus line/formation control differs, even though both Slow. | **Keep both unchanged** |
+| **3** | **Self-Heal:** restores the wounded Ranger, not castable at full hero HP | **Party Heal:** heals every wounded, living, eligible active party member, including Ranger; no revival | **Preserve.** Personal sustain versus broad party rescue. | **Keep both unchanged** |
+| **4** | **Movement Haste:** increases Ranger movement | **Companion Rally:** nearby eligible living companions gain movement and ordinary basic-attack speed, not special-skill recovery | **Preserve.** Different beneficiaries and practical combat decisions. | **Keep both unchanged** |
+| **5** | **Arrow Volley:** immediate arrows at up to six nearby enemies | **Arrow Rain:** immediate arrows at up to eight within a slightly larger radius, with more damage and Slow | **Reassess after play.** Charged chiefly strengthens the same area-damage approach and adds control. This is a possible design-overlap observation, **not a demonstrated gameplay deficiency**. | **Keep both unchanged** |
+| **6** | **Repelling Shot:** single physical arrow with knockback | **Repelling Volley:** three staggered arrows at the same foe, with stronger total damage and final knockback | **Reassess after play.** Similar displacement purpose; numerical upgrades may or may not justify their gameplay cost and timing. | **Keep both unchanged** |
+| **7** | **Piercing Arrow:** powerful defense-piercing single-target hit | **Charged Piercing Arrow:** stronger defense-piercing hit plus Slow | **Reassess after play.** Stronger strike plus Slow; its practical usefulness against campaign armor/boss pressures is not yet evaluated. | **Keep both unchanged** |
+| **8** | **Hunter's Salvo:** immediate attacks distributed across up to three foes (more arrows when isolated) | **Grand Hunt:** more arrows across up to five foes (more when isolated) | **Reassess after play.** Shared distributed-burst role with enhanced coverage and strike count; whether that is unsatisfying requires actual campaign evidence. | **Keep both unchanged** |
 
-| Skill | Normal / charged, as implemented today | Disposition |
-| --- | --- | --- |
-| **1** | **Rapid Arrows:** three staggered physical arrows directed at one foe, splitting one ordinary tap damage budget. **Hawk Interception:** autonomous moving hawk seeks a foe and, on real contact, can stop an active retreat; it is not a three-arrow upgrade. | **Preserve.** Distinct offense and anti-retreat pursuit. |
-| **2** | **Pinning Shot:** two staggered physical arrows with Slow against one foe. **Pinning Volley:** physical projectiles to enemies inside an aimed line, applying Slow on lawful contact. | **Preserve provisionally.** Different single-foe versus formation-interception geometry; shared Slow is intentional. This is a *borderline family resemblance*, not evidence demanding change now. |
-| **3** | **Self-Heal:** heals the hero only, unavailable when hero HP is full. **Party Heal:** same per-recipient healing to all wounded living active party members **including hero**; unavailable when nobody needs healing. | **Preserve.** Personal sustain versus team rescue and a longer charged recovery; cannot revive the fallen. Charged includes the hero but is not a universally preferable cast. |
-| **4** | **Movement Haste:** hero movement boost. **Companion Rally:** movement and ordinary-basic attack-speed boost for eligible nearby living companions; invalid without a recipient, no boost to their special recovery. | **Preserve.** Source-proven clear difference in who benefits and why. |
-| **5** | **Arrow Volley:** immediate physical arrows to up to six nearby foes, roughly 350-unit radius, 2.3×Power per enemy before rank scaling. **Arrow Rain:** immediate arrows to up to eight foes within roughly 370+ radius, 2.9×Power plus Slow. | **Redesign proposed.** Same area-hit tactic with more damage/coverage and an added Slow; overlaps Skill 2's crowd control. |
-| **6** | **Repelling Shot:** one physical hit, (1.8×Power+20), pushes 45+ units on impact. **Repelling Volley:** three arrows aimed at the same enemy, 4.2×Power total, last arrow pushes 65+ units. | **Redesign proposed.** Same damage-and-push tactic at larger numerical strength. |
-| **7** | **Piercing Arrow:** one high-damage (10×Power) defense-piercing arrow. **Charged Piercing Arrow:** one 12×Power defense-piercing arrow with Slow. | **Redesign proposed.** Same precision strike improved by damage plus Slow; slow also overlaps Skill 2. |
-| **8** | **Hunter's Salvo:** multi-foe immediate arrows, up to three selected eligible foes, one 5×Power arrow each (two when isolated). **Grand Hunt:** up to five foes, two 4×Power arrows each (three when isolated). Both non-piercing. | **Redesign proposed.** Most direct example of a bigger, stronger copy of the same distributed burst. |
+This table describes the reviewed source behavior, not an empirical rating of skill quality or a claim that Skills 5–8 are defective. Damage, rank scaling, critical intensity, cooldowns, charged holds, hit legality, projectiles, target geometry, enemy defenses and existing skill names are **unchanged**. No damage miscalculation or projectile-contact bug was established by this audit.
 
-Rank-1 coefficients above are before rank multiplier, protections, projectile misses and defensive reductions. Both forms use the existing eight-rank investment and action-specific readiness. **No recorded bug in damage calculation or projectile contact is being claimed.** The issue is tactical design redundancy, not missing execution.
+For reference, the current Level-1 Critical Execution *effect type* by slot, Tap / Charged, remains: **1 damage/damage; 2 Slow-duration/Slow-duration; 3 healing/healing; 4 Haste-duration/Haste-duration; 5 damage/Slow-duration; 6 push-distance/push-distance; 7 damage/Slow-duration; 8 damage/damage.** These are current source registry associations, not new critical designs. Higher-level intensity follows `src/prototype/critical-levels.js` and its existing live rules.
 
-The other classes demonstrate why no universal “charged = upgrade” rule exists: Paladin Skill 3 **Shield Stance** versus **Shield Bash**, and Mage Skill 3 **Spell Interrupt** versus **Silence Field**. The Ranger's own Haste/Rally pair is an even clearer example.
+The broader project already contains non-upgrade pairs (e.g., Paladin Shield Stance / Shield Bash, Mage Spell Interrupt / Silence Field, and Ranger Haste / Rally). It is not a universal design requirement that every Charged action must diverge entirely from Tap, or that similarity is automatically bad.
 
-## Charged-form alternatives — working candidates, NOT final owner-approved canon
+## Owner-approved development direction
 
-Keep the **normal** versions of Skills 5–8, their lesson slots and rank investment. Replace only the *charged* action where the tactical difference is inadequate. These concepts deliberately avoid stronger normal copies and generic 'one more arrow + longer Slow' solutions. New names, numbers and additional mechanics below are **designer candidates**, not code facts or locked balance.
+1. **For the v0.9.2 update:** keep all Ranger skill mechanics as-is. This review **does not authorize** redesigns, renames, tuning, new critical outcomes, or runtime changes; it is also not a release blocker. Normal bug fixes, if separately discovered and approved, are a different matter.
+2. **For later versions:** evaluate each playable class **through actual campaign play**, ideally a full playthrough per class. Observe progression, enemy groups, bosses, surviving companions and the situations where a skill helps, feels redundant or fails to solve a real problem. The owner will decide what to preserve, refine or redesign in light of that experience.
+3. **Do not turn a source-only shortlist into a redesign backlog.** Skills 5–8 are candidates for observation, not tickets requiring four replacement abilities. Skills 1–4 are also open to revision if gameplay eventually provides a concrete reason. Class-by-class assessments must not preempt the owner's eventual experience with Paladin, Mage, Rogue, Ranger or Strategist.
+4. **When a future change is considered:** capture the encountered gameplay situation and intended tactical role before selecting mechanics. Then review trade-offs, balance, critical effects, existing rank/cooldown rules and implementation/test needs. Obtain fresh owner design/implementation permission rather than resurrecting the withdrawn candidates.
 
-### Skill 5 — Arrow Volley / Arrow Rain: burst versus holding ground
+A useful lightweight playthrough note is: *class and progression stage; encounter and actual problem; skill form used and why; observed outcome; what decision or capability felt missing; preserve/refine/redesign judgment after comparison with the rest of the kit*. This is guidance for later analysis, **not** an obligatory checklist or new certification gate for v0.9.2.
 
-- **Tap (unchanged): Arrow Volley.** Immediate spread of real arrows at enemies presently around the Ranger. Ideal for a pack already in range.
-- **Charged (proposed): Arrow Rain becomes a placed, short-lived rain zone** centered on the Ranger's position at release. After a brief visible onset, arrows continue falling for approximately **3–4 active-game seconds**. An enemy already inside when rain begins or entering later can be struck **once per zone** (provisional cap **6 distinct victims**) at lower damage per victim than the existing immediate charged volley. Additional enemies arriving during the effect are its particular advantage.
-- **Why this is different:** Tap cashes out damage *now*; charge is a **commitment to holding a location / punishing an advancing wave**. The player may reposition while the rain stays behind. It does **not** grant a larger instant hit or automatically apply Slow—the latter belongs more naturally to Skill 2.
-- **Implementation boundaries:** world-space location fixed after release, not tethered to moving hero; actual collision/line-of-sight checks at lawful contact; bounded one active zone per Ranger and one hit per enemy per zone; no after-death, zone-change or save-restore ghosts. Presentation must show where falling arrows can actually hit; no decorative persistent hazard with invisible damage.
+## Evidence and status
 
-### Skill 6 — Repelling Shot / Rearguard Volley: drive one foe back versus disengage yourself
+- **Assessed:** Current Ranger Tap/Charged source behavior for all eight slots and their current critical-effect registry; source-only overlap observations, not complete playtesting.
+- **Owner decision:** No skill changes for the present v0.9.2 scope based on this audit; class-by-class gameplay-led reconsideration deferred to later versions.
+- **Withdrawn:** This branch's earlier charged-form alternatives and exact candidate tuning. Do **not** use old PR descriptions/commits as implementation authority.
+- **Implemented:** **Documentation revision only** in this draft; no gameplay code, player-facing names or balance edits.
+- **Not evidenced by this documentation task:** gameplay test runs, full class playthroughs, CI certification, merge, publication or device verification. Those are separate statuses with separate gates.
 
-- **Tap (unchanged): Repelling Shot.** One precisely aimed collision-safe knockback to remove a nearby threat from a vulnerable ally or the Ranger.
-- **Charged (proposed): Rearguard Volley.** A **collision-checked backward step** (provisionally up to **80–100 world units**, opposite the aimed enemy), accompanied by up to **three modest arrows at distinct pursuers** in a narrow covering fan. No automatic knockback and no three-arrow focus-fire multiplier on a single enemy.
-- **Why this is different:** Tap changes **enemy** position while preserving the Ranger's own position; charge changes **Ranger** position and buys a lane of escape, useful against converging melee threats. It is not a stronger push.
-- **Implementation boundaries:** never leap through walls, hazards or forbidden boss boundaries, teleport across closed paths, grant immunity, cancel Recall by accident or defeat existing movement orders. If no safe backward destination exists, refuse the charged action **before** consuming cooldown; report the understandable reason. Existing boss attack selection/timings are not touched. The candidate action name replaces the misleading “Repelling Volley” label only if adopted.
-
-### Skill 7 — Piercing Arrow / Severing Shot: armor penetration versus timed interruption
-
-- **Tap (unchanged): Piercing Arrow.** High-value, direct, defense-piercing damage against a single armored enemy; retains its specialized solo-boss role.
-- **Charged (proposed): Severing Shot.** A **lower-damage physical arrow** (candidate around **3×Power** before rank scaling), without guaranteed defense bypass. If and only if it **actually hits while its victim is preparing one eligible warned/aimed attack**, it cancels **that one pending release**; an ordinary hit without an eligible current warning only deals modest damage.
-- **Why this is different:** Tap is dependable armor damage. Charged rewards **observing a dangerous tell and timing a projectile before release**. It is a real defensive answer, not a more powerful Piercing Arrow plus Slow.
-- **Implementation boundaries:** reuse the existing single-action interruption eligibility/cancellation semantics where appropriate; projectile may miss or arrive too late. Do not erase a boss's queued future stages, cancel irreversible attacks, pre-apply status at launch, create blanket boss immunity, or confuse enemy threat/targeting. Display a clear readiness/timing description. The Mage's instant-style interrupt differs because the Ranger must land a physical shot.
-
-### Skill 8 — Hunter's Salvo / Grand Hunt: pack burst versus coordinated quarry
-
-- **Tap (unchanged): Hunter's Salvo.** Direct immediate arrows distributed among up to three enemies; retains the existing isolated-foe fallback.
-- **Charged (proposed):** Grand Hunt becomes a **single-target coordinated hunt**. A modest physical **marking arrow** must genuinely land on one selected foe. For a short **~5–6-second hunting window**, the first **ordinary basic-attack hit** on that marked foe from each distinct eligible active actor (Ranger included) calls one **additional physical Ranger follow-up arrow**. Provisional limit: **four follow-ups in total**, each with bounded damage, line-of-sight and real projectile flight. It does not deliver the old five-target burst.
-- **Why this is different:** Tap answers **multiple enemies immediately**; charge rewards **keeping the squad focused on one quarry** and spacing genuine basic hits. With no companions, it still has a small hero-only benefit but is deliberately less compelling than a solo tap. Unlike Companion Rally, it grants **no generalized attack-speed increase or special-cooldown acceleration**.
-- **Implementation boundaries:** one marked foe at a time; no per-hit recursive follow-ups, no trigger from skills, support ticks, damage-over-time, misses or follow-up arrows themselves; one trigger per eligible actor, total cap and finite window. Mark and triggers clear on target death, returning/protection, zone change, hero death and restoration. Proper provenance for pets or Charmed allies; no enemy AI command override or fake extra companions. A single critical-execution roll at original release, never a new roll per follow-up.
-
-## Rank growth, balance and engineering acceptance (proposal)
-
-- Preserve shared **Rank 1–8**, existing training/instructor costs, **0.65-second charged hold**, **asymmetric normal and charged cooldowns**, global recovery and the established cooldown training/passives. Any coefficient/duration changes require a deliberate balance pass. In particular, independent charged cooldown does **not** imply free use during a normal cooldown.
-- Preserve normal Skills **1–8** and charged Skills **1–4** unless a **new source-backed defect** is demonstrated. No blanket repair of Paladin, Mage, Rogue or Strategist. No automatic Skill 2/3 redesign simply because their effects share a theme.
-- The rank multiplier `1 + 0.15 × (rank - 1)` should remain meaningful for attacks. For new timed/positional forms, even-rank improvements can modestly grow duration, geometry or capacity, but every paid rank must grant an actual measurable benefit. Avoid scaling target caps or proc chains into unrestricted crowd damage.
-- Test the real **input → admission → release → physical contact/effect → recovery** path. Include target loss/blocked sight, interrupted preparation, no-safe-backstep, no living party, entering/leaving Rain, late interrupt, multi-arrow impact accounting, one-time mark triggers, damage reduction and boss phase scripts.
-- Assert one critical roll per valid charged cast; no rolls per Rain tick or Grand Hunt follow-up, no double use of the same critical enhancement. Compare performance in crowded fights, capped effect counts, event/audio ownership and Canvas/Pixi presentation before claiming acceptance.
-- Preserve **v4 saves**, regional transition and death cleanup, pause semantics, old trained-skill ranks, basic attacks, existing normal/charged UI/touch controls, and English/Spanish skill descriptions. Transient fields should not accidentally persist; old saves should load without migration.
-- Do **not** rebalance the hero or other classes globally to make these designs fit. Keep individual tests focused; full suites, merges, publication and physical-device claims remain separate permission/verification gates.
-
-## Status and handoff
-
-**Verified in source:** the actual eight current tap/charged behaviors and the finding that Skills 5–8 substantially rely on numerical superiority. Skills 1–4 are retained after audit.
-
-**Designed, not implemented:** four distinct charged alternatives, candidate names/numbers, and an explicit acceptance contract. They are **not approved final skill mechanics**, and the existing game descriptions remain correct until an implementation is separately approved and shipped.
-
-**Not performed:** code edits, native gameplay tests, balance simulation, build, automated CI certification, merge, deployment, mobile/Chromebook verification. Documentation-only changes in a draft branch are a design checkpoint, not a player-facing release.
-
-**Next engineering action if the owner accepts this direction:** implement these charged changes as one coordinated Ranger feature using `hero-combat.js`, `rules.js`, existing combat and party event owners, `skill-reference.js` and relevant tests, then reconcile this document as implemented and verify the exact head. Do not transplant the separate Strategist proposals or reopen healthy Ranger skills.
+See the [maintained owner design decisions](DECISIONS.md) for the overarching preserve-now, playthrough-first direction.
