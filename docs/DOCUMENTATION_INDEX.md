@@ -14,7 +14,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (23)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (127)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (128)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (49)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
