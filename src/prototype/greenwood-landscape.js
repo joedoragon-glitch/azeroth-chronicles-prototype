@@ -219,6 +219,20 @@
         y2: 2320 * scale,
       },
     ];
+    // The north-west crossing to Goblin perimeter leg used to cut through
+    // Millhaven's domestic edge. This scout-only chain stays on the western
+    // woodland rim; it does not draw roads, add NPCs or change public routes.
+    // Each original patrol index (and all historical thornLeg values) is kept.
+    R.thornPatrol.westernWoodlandGuide = [
+      [1410, 550],
+      [1080, 260],
+      [460, 220],
+      [120, 690],
+      [310, 1000],
+      [255, 1450],
+      [155, 1900],
+      [150, 2590],
+    ].map(([x, y]) => [x * s, y * s]);
     R.thornPatrol.route = [
       a.den,
       q([350, 2450]),

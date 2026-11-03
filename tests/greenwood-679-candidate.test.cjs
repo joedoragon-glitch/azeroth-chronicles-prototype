@@ -19,6 +19,7 @@ assert.equal(C.rules.thornPatrol.startLeg, 7);
 assert.equal(C.rules.thornPatrol.direction, -1);
 assert.equal(C.rules.thornPatrol.route.length, 8);
 assert.equal(C.rules.thornPatrol.speed, 82);
+assert.equal(C.rules.thornPatrol.westernWoodlandGuide.length, 8);
 for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
   assert.equal(z.greenwoodRedesignScene, 5);
@@ -83,7 +84,7 @@ for (let step = 0; step < 18000; step++) {
   g.updateThornPatrol(e, 0.1);
   g.updateThornCaptive(0.1);
   const leg = e.thornLeg;
-  if (leg !== prevLeg) {
+  if (leg !== prevLeg && Number.isInteger(leg)) {
     order.push(leg);
     visited.push({ leg, x: e.x, y: e.y, second: Math.round(g.s.time) });
     if (prevLeg === 0 && leg === 7) homecoming = true;

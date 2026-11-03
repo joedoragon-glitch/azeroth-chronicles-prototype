@@ -1487,14 +1487,34 @@
           Number.isInteger(e.thornLeg) && e.thornLeg >= 0 && e.thornLeg < cfg.route.length
             ? e.thornLeg
             : cfg.startLeg;
-        const [x, y] = cfg.route[i];
+        // Only the existing 2 -> 1 northern-crossing-to-Goblin leg uses
+        // private woodland guidepoints. Historical thornLeg values stay 0..7.
+        // A saved mid-leg actor without a guide index completes its *existing*
+        // destination; never rewind or teleport an old campaign mid-patrol.
+        const guide = i === 1 ? (cfg.westernWoodlandGuide || []) : [];
+        if (i !== 1) delete e.thornGuideStep;
+        if (guide.length && !Number.isInteger(e.thornGuideStep))
+          e.thornGuideStep = dist(e, { x: cfg.route[2][0], y: cfg.route[2][1] }) < 95 ? 0 : -1;
+        if (guide.length && (e.thornGuideStep < -1 || e.thornGuideStep > guide.length))
+          e.thornGuideStep = -1;
+        const guided = guide.length && e.thornGuideStep >= 0 && e.thornGuideStep < guide.length;
+        const [x, y] = guided ? guide[e.thornGuideStep] : cfg.route[i];
         const before = { x: e.x, y: e.y };
         this.follow(e, { x, y }, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival, 'thorn-patrol');
         if (dist(before, e) > 0) this.recordThornTracks(e, before);
         if (dist(e, { x, y }) <= cfg.arrival + 1e-7) {
-          e.thornLeg = (i + cfg.direction + cfg.route.length) % cfg.route.length;
-          e.thornPause = cfg.pause;
-          delete e.path;
+          if (guided) {
+            // Continue along the same saved leg, without an extra two-second
+            // patrol pause at each hidden navigation guidepoint.
+            e.thornGuideStep++;
+            e.path = [];
+            e.routeAge = 0;
+          } else {
+            e.thornLeg = (i + cfg.direction + cfg.route.length) % cfg.route.length;
+            e.thornPause = cfg.pause;
+            delete e.thornGuideStep;
+            delete e.path;
+          }
         } else e.thornLeg = i;
         return true;
       }
