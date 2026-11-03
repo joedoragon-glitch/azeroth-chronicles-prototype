@@ -120,7 +120,8 @@ const gatherZone = { id: 'vale', props: [
   { id: 'log', structure: 'fallen-log', x: 150, y: 100, r: 0, decorative: true },
   { id: 'well', structure: 'well', x: 190, y: 100, r: 0, decorative: true },
 ], buildings: [] };
-const baseline = { zone: gatherZone, rules: R, worker, lab, range: 120 };
+const baseline = { zone: gatherZone, rules: R, worker, lab, range: 120,
+  passable: (_a, _b, _zone) => true };
 assert.equal(M.forGather(game, 'wood', baseline), null, 'unauthenticated Lab cannot gather');
 assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => false, route: () => [worker] }), null);
 assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => true, route: () => [] }), null);
@@ -132,6 +133,7 @@ const remote = { id: 'highlands', props: [
 ], buildings: [] };
 assert.equal(M.forGather(game, 'wood', { zone: remote, rules: R, worker,
   lab: { zone: 'highlands' }, range: 3300, authorize: () => true,
+  passable: () => true,
   route: (_from, to) => [{ x: to.x, y: to.y }] })?.id, 'quarry-log',
   'a staffed Lab may plan a region-scale journey without a global frame scan');
 assert.equal(M.forGather(game, 'water', { ...baseline, authorize: () => true,
@@ -148,6 +150,25 @@ assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => true,
 assert.equal(M.findSource(game, 'earth', { zone: gatherZone, rules: R, at: worker, range: 120 }), null);
 assert.equal(M.forCombat(game, 'water', { zone: dryZone, rules: R, range: 999999 }), null);
 
+
+// The parent overworld's rivers/lava cannot supply nonexistent dungeon sources.
+for (const [id, parent] of [
+  ['crypt', 0], ['archive', 1], ['mine', 2], ['abyss', 3], ['citadel', 4],
+  ['supply-vale', 0], ['side-vale-cellars', 0],
+]) {
+  assert.deepEqual(M.terrainSources(R, id, parent), [],
+    'never leak regional terrain or harbors into an interior: ' + id);
+}
+assert.equal(M.forGather(game, 'wood', {
+  zone: { id: 'mine', props: [{ x: 110, y: 120, structure: 'woodpile' }], buildings: [] },
+  rules: R, worker: { x: 100, y: 100 }, lab: { zone: 'mine' },
+  range: 150, authorize: () => true,
+  route: (_from, to) => [to], passable: () => true,
+}), null, 'Field Labs belong to overworld regions, not dungeons');
+assert.equal(M.forGather(game, 'wood', {
+  ...baseline, authorize: () => true, route: (_from, to) => [to],
+  passable: () => false,
+}), null, 'an endpoint does not validate a physically blocked worker segment');
 
 // Source-catalog audit regressions from actual authored zone and dungeon owners.
 assert.equal(M.propMaterial({
@@ -257,7 +278,8 @@ const impossibleLab = { id: 'vale', props: wallBlocked, buildings: [] };
 assert.equal(M.forGather(game, 'wood', {
   zone: impossibleLab, rules: sightRules, range: 500,
   worker: { x: 100, y: 100 }, lab: { id: 'lab', zone: 'vale' },
-  authorize: () => true, route: () => { routeAttempts++; return []; },
+  authorize: () => true, passable: () => true,
+  route: () => { routeAttempts++; return []; },
 }), null);
 assert.equal(routeAttempts, 24, 'at most 24 actual route probes per Lab query');
 
