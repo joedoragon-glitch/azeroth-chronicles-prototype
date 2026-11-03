@@ -233,7 +233,7 @@
     R.millhavenOnboarding.orchardTrail = [a.town, q([650, 1550]), a.hamlet];
     const cfg = {
       version: 2,
-      sceneVersion: 5,
+      sceneVersion: 6,
       size,
       scale,
       anchors: a,
@@ -606,6 +606,9 @@
               ['furrow-plot', 230, 1300],
               ['furrow-plot', 340, 1300],
               ['farm-tool-rack', 400, 1370],
+              // One household yard and its sunny edge, not a new livestock system.
+              ['poultry-yard', 430, 1170],
+              ['wildflowers', 470, 1140],
             ],
             hamlet: [
               ['well', 780, 1710],
@@ -615,6 +618,8 @@
               ['hay-rick', 220, 2240],
               ['pasture-sheep', 200, 2330],
               ['feed-trough', 330, 2280],
+              // Existing sheep, fodder and this single pen read as one smallhold.
+              ['animal-pen', 175, 2375],
             ],
             orchard: [
               ['fruit-tree', 620, 2140],
@@ -627,11 +632,15 @@
               ['drying-rack', 960, 2330],
               ['farm-tool-rack', 600, 1960],
               ['crate', 1280, 2140],
+              ['wildflowers', 1035, 2380],
             ],
             mill: [
               ['cart', 1340, 1780],
               ['supply-stack', 1350, 1640],
               ['barrel', 1310, 1500],
+              // Pond-margin reeds only: no reed stems in the powered mill channels.
+              ['reeds', 770, 1210],
+              ['reeds', 1035, 1200],
             ],
             wagon: [
               ['cart', 2790, 260],
@@ -665,6 +674,8 @@
               ['root-table', 780, 3010],
               ['fang-trophy', 1100, 2990],
               ['training-dummy', 1120, 2850],
+              // A sheltered den edge, not a collision hazard or extra boss nest.
+              ['thorn-bed', 1190, 3080],
             ],
             pasture: [
               ['pasture-sheep', 2700, 1500],
