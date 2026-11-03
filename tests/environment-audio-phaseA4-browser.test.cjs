@@ -90,6 +90,17 @@ const server=http.createServer((req,res)=>{
             const a=Prototype.audio;
             const g=new Campaign('normal','paladin',()=>0.73);
             g.enter(zone);
+            // Vale's real starting point is now the expanded Millhaven town,
+            // where the approved original *synthesized* score plays. This
+            // A4 suite intentionally verifies recorded MP3 stems, so move
+            // the read-only fixture to the actual fields beyond the outer
+            // eastern town workshop before inspecting its recorded cue.
+            if(zone==='vale'){
+              const east=g.zone().props.find(p=>p.id==='settlement-major-6');
+              if(!east)throw Error('Current Millhaven eastern civic house missing');
+              g.hero.x=east.x+390;
+              g.hero.y=east.y;
+            }
             const before=JSON.stringify(g.s);
             const original=a.describe(g,{started:true});
             if(JSON.stringify(g.s)!==before)throw Error('Audio description mutated campaign');

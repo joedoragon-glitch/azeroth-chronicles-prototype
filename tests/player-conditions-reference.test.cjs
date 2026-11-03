@@ -3,6 +3,7 @@
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const Archive = require('../src/prototype/archive.js');
+const fs = require('node:fs');
 const Menus = require('../src/prototype/menus.js');
 for (const cls of ['paladin', 'mage', 'ranger']) {
   const g = new C('normal', cls, () => 0.9);
@@ -13,6 +14,15 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
     (s) => s.title === 'Conditions and recovery',
   );
   assert.deepEqual(shelf.topics, topics, 'Archive and short reference use the same definitions');
+  const block = topics.find((t) => t[0] === 'Skill Block');
+  assert.equal(topics.filter((t) => t[0] === 'Skill Block').length, 1);
+  assert(block[1].includes('Each target in an area attack checks separately'));
+  assert(block[1].includes('Critical skill hits cannot be blocked'));
+  assert(!block[1].includes('20%'), 'short guide never forces advanced figures');
+  for (const part of ['20%', '30%', '15%', '25%', '0%', '+5', '25% / 35%', '20% / 30%'])
+    assert(block[2].includes(part), 'Keeper figures include ' + part);
+  assert(block[2].includes('The hero has no general Skill Block'));
+  assert(block[2].includes('Casting still spends its cooldown'));
   const slow = topics.find((t) => t[0] === 'Slow');
   assert(slow[1].includes('skill cooldowns') &&
     slow[1].includes('Repeated Slow hits') &&
@@ -63,6 +73,30 @@ for (const cls of ['paladin', 'mage', 'ranger']) {
   assert.equal(opened.title, 'Skill journal', 'Back returns to the actual parent');
   assert.deepEqual(g.snapshot(), before);
   assert.equal(JSON.stringify(g.effects), effects, 'learning never produces combat events');
+  // The actual Keeper menu retains its original pact gate and two-step reading.
+  if (cls === 'paladin') {
+    const oldAvailable = g.keeperAvailable;
+    g.keeperAvailable = () => true;
+    g.s.keeperPact = false;
+    menus.keeper();
+    assert.notEqual(opened.title, 'The Keeper’s shelves', 'no pact grants no shelves');
+    g.s.keeperPact = true;
+    menus.keeper();
+    assert.equal(opened.title, 'The Keeper’s shelves');
+    opened.actions.find((a) => a.label === 'Conditions and recovery').action();
+    assert.equal(opened.title, 'Conditions and recovery');
+    opened.actions.find((a) => a.label === 'Skill Block').action();
+    assert.equal(opened.title, 'Skill Block');
+    assert.equal(opened.description, block[1]);
+    opened.actions.find((a) => a.label === 'Show me the figures').action();
+    assert.equal(opened.description, block[2]);
+    opened.back();
+    assert.equal(opened.description, block[1], 'figures Back returns to answer');
+    opened.back();
+    assert.equal(opened.title, 'Conditions and recovery', 'answer Back returns to shelf');
+    g.s.keeperPact = false;
+    g.keeperAvailable = oldAvailable;
+  }
 }
 const alteredRules = {
   ...C.rules,
@@ -72,8 +106,25 @@ const alteredRules = {
     enemySlowRecoveryMultiplier: 0.75,
   },
 };
+alteredRules.skillBlock = {
+  ...C.rules.skillBlock,
+  enemySingle: 0.1775,
+  enemyArea: 0.3125,
+  rangerSingle: 0.125,
+  rangerArea: 0.225,
+  companionSingle: 0.23,
+  companionArea: 0.34,
+  nightEnemyBonus: 0.075,
+};
+const dynamicBlock = Archive.conditionTopics(alteredRules).find((t) => t[0] === 'Skill Block')[2];
+for (const figure of ['17.75%', '31.25%', '12.5%', '22.5%', '+7.5', '25.25% / 38.75%', '20% / 30%', '23%', '34%'])
+  assert(dynamicBlock.includes(figure), 'Skill Block figures derive from live rules: ' + figure);
 const figures = Archive.conditionTopics(alteredRules).find((t) => t[0] === 'Slow')[2];
 assert(figures.includes('50%') && figures.includes('75%'), 'figures read live rules');
+const appHelp = fs.readFileSync(require.resolve('../src/prototype/app.js'), 'utf8');
+assert(appHelp.includes('red means an obstructed shot, not Skill Block'));
+assert(appHelp.includes('rojo indica un disparo obstruido, no bloqueo de habilidades'));
+assert(appHelp.includes("menu?.title === 'Skill Block'"), 'quick topic uses Archive localization');
 console.log(
   'PASS concise shared condition guide, optional Archive detail, live rules and read-only navigation',
 );
