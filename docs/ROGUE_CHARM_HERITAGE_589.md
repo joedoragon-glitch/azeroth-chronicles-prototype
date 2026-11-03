@@ -4,6 +4,12 @@
 
 *So I Became the Dark Lord's Problem* — Rogue / Charmed monster progression.
 
+## In-progress nighttime creature passive — 1 November 2026
+
+**Draft only, not part of the published PR #608:** [PR #761](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/761) implements a shared monster-night passive for legally Charmed creatures **and** unlocked boss pets. Their night maximum HP, attack damage and combat-only movement/basic tempo come from the *same live monster-night rules as hostiles*, rather than separate friendly percentages. Sunset applies and sunrise removes the bonuses automatically, including reserves and night-victory progression; ordinary Soldiers/Rangers and the hero do not inherit it. Charmed Wraith/Soul Drain and Stalker/Shadow Pounce retain their independent skill identities after daylight returns.
+
+The **merged Skill Block mechanic (PR #760)** gives hostile monsters +5 percentage points against eligible skills at night. Draft PR #761 extends this **same existing configuration** to legally Charmed monsters and unlocked boss pets; normal Soldiers/Archers keep their unchanged Block chances. Autoattacks/basic-combo finishers are never Skill Block checks, and critical skills remain unblockable. This is a change in *which monsters receive the shared night bonus*, not another defensive system.
+
 ## What changes in play
 
 When the Rogue charms an ordinary eligible monster, that creature remains an individual Soldier- or Ranger-role companion with its own name, capture identity, friendly HP, gear-compatible stats, and basic attacks. Each already has a **native species Rogue maneuver** (12-second cooldown); after learning **Skill 2**, it gains a **Ringleader tactical skill** (22-second cooldown), an improved combat pursuit profile, and native low-health frenzy. Neither existing ability is replaced.
