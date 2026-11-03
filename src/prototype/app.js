@@ -1967,7 +1967,10 @@
     return persistence.saveProfile(profile);
   }
   function save() {
-    return started && persistence.save(game, profile);
+    if (!started) return false;
+    const saved = persistence.save(game, profile);
+    if (saved) backupAdvisor.due(game.s.mode, game.hero.level);
+    return saved;
   }
   // Live game shell only. Standalone Campaign fixtures remain independent.
   // Bind once after each actual playable Campaign has been created/restored.
