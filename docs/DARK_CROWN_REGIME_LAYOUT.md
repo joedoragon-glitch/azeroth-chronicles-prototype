@@ -1,5 +1,9 @@
 > **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
 
+## 3 November 2026 — ministry footprint correction after focused CI (draft only)
+
+The first ministry candidate did not pass native placement because an additional building could not fit beside the preserved rest/board/road geometry. The corrected source instead reuses the original safely placed Crownwatch `settlement-major-2` building as public administrative frontage without moving, resizing, duplicating or replacing its saved ID; the original small court decorations remain. This is source-authoring pending revised exact-head CI and visual review, not a second town-service or a new state. Other district/freight plans remain separate. Parent dev.254 focused CI #41689838008 failed this exact ministry-availability assertion; no art acceptance or release is claimed.
+
 ## 3 November 2026 — civil administration and real-site workyards (draft only)
 
 This Crown candidate adds an identifiable public ministry facade near the existing rest-hall precinct and collision-safe receiving/cooling/shipping scenery at real generated eastern/southern heatwork coordinates. Foundry workers retain their identities and locations with clearer generic material handling. These are all saved nonblocking environmental elements, not new ministers, interactions, goods, water sources, loot, craft mechanics or volcanic crossings. Source code is a draft candidate; actual placement, captures, animation parity and artistic success still require current-head checks.

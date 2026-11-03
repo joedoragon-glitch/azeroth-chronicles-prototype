@@ -79,12 +79,13 @@ assert.equal(civic.zone().crownCivicForecourtVersion, 2,
 assert(court.length > 0 && court.length <= rules.crownCivicForecourt.length,
   'At least one authored forecourt detail must fit safely beside the real service');
 assert(court.every(p => p.decorative && p.r === 0 &&
-  Math.hypot(p.x - rest.x, p.y - rest.y) <
-    (p.structure === 'crown-ministry-frontage' ? 460 : 240)),
+  Math.hypot(p.x - rest.x, p.y - rest.y) < 240),
   'No civic detail can create a blocking prop or scatter outside the local forecourt');
-const ministry = court.find(p => p.structure === 'crown-ministry-frontage');
-assert(ministry && ministry.civicSceneRole === 'civil-administration',
-  'The ministry camera requires a genuinely placed public-admin frontage');
+const ministry = civic.zone().props.find(p => p.id === 'settlement-major-2');
+assert(ministry && ministry.structure === 'crown-ministry-frontage' &&
+  ministry.crownPublicMinistry,
+  'The public ministry must reuse the actual historic Crownwatch building');
+const originalMinistry = [ministry.id, ministry.x, ministry.y, ministry.r];
 const courtSnapshot = objects => objects.filter(p => p.crownCivicForecourt)
   .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));
 const originalCourt = courtSnapshot(civic.zone().props);
@@ -96,6 +97,13 @@ assert.equal(JSON.stringify(civic.zone().roads), originalRoads,
   'Civic art must not alter established lava crossing approaches or local road geometry');
 assert.deepEqual(courtSnapshot(restoredCivic.zone().props), originalCourt,
   'v4 save/restore must preserve exact authored civic scenery IDs and placements');
+const restoredMinistry = restoredCivic.zone().props.find(p => p.id === 'settlement-major-2');
+assert(restoredMinistry && restoredMinistry.structure === 'crown-ministry-frontage' &&
+  restoredMinistry.crownPublicMinistry,
+  'Old v4 saves retain the repurposed original ministry building identity');
+assert.deepEqual(
+  [restoredMinistry.id, restoredMinistry.x, restoredMinistry.y, restoredMinistry.r],
+  originalMinistry, 'The actual public-office foundation must never move or resize on restore');
 assert.equal(JSON.stringify(restoredCivic.zone().roads), originalRoads,
   'v4 restore must not change approved road geometry due to new civic art');
 
@@ -243,7 +251,7 @@ const candidates = [
 const cameraAnchors = new Map([
   ['civic-hall-frontage', ['npcs', 'rest', 0, 0, true]],
   ['ridge-skyline', ['npcs', 'rest', 210, -90, true]],
-  ['cindermaw-ministry', ['props', 'crown-civic-forecourt-5', 60, 55, true]],
+  ['cindermaw-ministry', ['props', 'settlement-major-2', 60, 55, true]],
   ['ash-refuge', ['npcs', 'minor', 0, 0, true]],
   ['east-heat-intake', ['props', 'recovery-heat-crown-0', 65, 60, false]],
   ['west-glassworks', ['props', 'recovery-heat-crown-7', 65, 60, false]],

@@ -1864,11 +1864,10 @@
           const approach = { roads: [...(z.roads || []), ...(z.footpaths || [])] };
           const valid = (p, structure) => {
             const paving = structure === 'crown-civic-tilecourt';
-            const ministry = structure === 'crown-ministry-frontage';
-            const margin = paving ? 30 : ministry ? 90 : 74;
+            const margin = paving ? 30 : 74;
             return (
               p.x > 70 && p.y > 70 && p.x < 3730 && p.y < 3730 &&
-              dist(p, rest) < (ministry ? 460 : 240) &&
+              dist(p, rest) < 240 &&
               !this.blocked(p.x, p.y, z.id, 18, true) &&
               this.distanceToRoad(approach, p) >= margin &&
               !z.npcs.some((n) => dist(n, p) < (paving ? 80 : 94)) &&
@@ -1887,8 +1886,7 @@
             let chosen = null;
             // Small authored adjustments only; do not scatter into another
             // district just to satisfy an object-count assertion.
-            for (const radius of structure === 'crown-ministry-frontage'
-              ? [0, 32, 64, 96, 128, 168] : [0, 32, 64]) {
+            for (const radius of [0, 32, 64]) {
               for (let k = 0; k < (radius ? 12 : 1); k++) {
                 const theta = (k * Math.PI) / 6;
                 const p = { x: rest.x + dx + Math.cos(theta) * radius,
@@ -1902,6 +1900,15 @@
               id, ...chosen, r: 0, decorative: true, structure,
               crownCivicForecourt: true, civicSceneRole: sceneRole,
             });
+          }
+          // The actual Crownwatch ministry occupies an existing, already
+          // collision-checked building. Preserve its ID, saved coordinates
+          // and original footprint rather than forcing another structure
+          // into a crowded plaza or displacing the surrounding streets.
+          const office = z.props.find((p) => p.id === 'settlement-major-2');
+          if (office) {
+            office.structure = 'crown-ministry-frontage';
+            office.crownPublicMinistry = true;
           }
           z.crownCivicForecourtVersion = 2;
         } finally {

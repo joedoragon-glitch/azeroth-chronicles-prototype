@@ -1495,8 +1495,6 @@
     Object.freeze([117, 107, 'crown-sheltered-planter', 'sheltered-greenery']),
     Object.freeze([-133, 165, 'crown-ceramic-bench', 'civic-rest']),
     Object.freeze([133, 165, 'crown-ceramic-bench', 'civic-rest']),
-    // Public ministry frontage; not a new interactable minister or service.
-    Object.freeze([295, -120, 'crown-ministry-frontage', 'civil-administration']),
   ]);
   const crownDistricts = [
     {
