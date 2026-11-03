@@ -1,5 +1,8 @@
 # Sound design and audio production — current game
 
+**Owner's Millhaven soundtrack placement correction (2 November 2026 — implementation PR, NOT YET MERGED/PUBLISHED):** The **classic original live-synthesized Greenwood theme** belongs only within the current expanded Millhaven civic/residential footprint. Existing recorded **`place-vale` — *Orchard Roads*** begins when the hero leaves that real town footprint for ordinary fields and rural roads. The already relocated recorded **`settlement-vale` — *Orchard Roads — hearths and neighbors*** remains restricted to the separate Forest Crypt/winter-retreat approach. The town's sound perimeter is calculated read-only from the current `settlement-major-*` civic homes and `greenwood-civic/homes/carpenter-*` parcels, not an obsolete radius from its tiny first version; Orchard Hamlet is excluded. Enter/exit margins around the live parcel hull prevent track flicker. Nearby combat, boss cues, title, global peace, other zones, master volume, and all saved campaigns keep their own precedence. The original synthesizer remains the game engine's existing source, not an exported or newly composed MP3. The game and listening room audio files are not rewritten. **CI/browser/real-phone checks and any merge or deployment must be recorded separately, never inferred from implementation.**
+
+
 
 ## Shareable soundtrack links — mobile player handoff (candidate)
 
