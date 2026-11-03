@@ -2591,6 +2591,28 @@
     },
   ];
 
+  // A maintained industrial process inside the existing side dungeon.
+  // Generic input/output is intentional: no unapproved product, recipes,
+  // crafting economy, renamed site, added enemy or worker dialogue.
+  const crownFoundryStations = [
+    ['receiving', 285, 200, 'crown-foundry-receiving', 'stock-in'],
+    ['furnace', 175, 375, 'crown-foundry-furnace', 'heat-tending'],
+    ['forming', 595, 260, 'crown-foundry-forming', 'hot-forming'],
+    ['finishing', 915, 515, 'crown-foundry-finishing', 'cool-and-inspect'],
+    ['dispatch', 895, 875, 'crown-foundry-dispatch', 'stock-out'],
+  ];
+  // Both courts use their REAL placed heatwork props for pedestrian/freight
+  // circulation, never nominal static coordinates or new lava crossings.
+  // These local links join existing works and roads, not isolated regions.
+  const crownIndustrialLinks = [
+    ['east-intake-to-glass', 0, 1],
+    ['east-glass-to-distribution', 1, 4],
+    ['south-intake-to-glass', 6, 7],
+    ['south-glass-to-drying', 7, 9],
+    ['south-drying-to-kiln', 9, 10],
+    ['south-kiln-to-distribution', 10, 11],
+    ['washhouse-service', 13, 14],
+  ];
   // N1a: inspectable evidence belongs to real scene positions, not generic
   // dungeon entrances. IDs do not replace quests, loot or mechanical triggers.
   const narrativeSceneInspections = {
@@ -8103,6 +8125,8 @@
     greenwoodRuralScenes,
     frontierRecoveryScenes,
     crownThermalWorksScenes,
+    crownIndustrialLinks,
+    crownFoundryStations,
     dungeonWalls,
     dungeonArchitecture,
     frontierEdgeLayout,
