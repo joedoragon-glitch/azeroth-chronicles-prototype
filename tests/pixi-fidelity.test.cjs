@@ -11,7 +11,7 @@ const game = {
   zoneId: 'vale',
   s: { rescued: {}, loot: [], projectiles: [], throneClaimed: false, statistics: { deaths: 0 } },
   zone: () => ({ props: game.props || [], enemies: game.enemies || [], buildings: [] }),
-  visibleNPCs: () => [],
+  visibleNPCs: () => game.npcs || [],
   visibleResourceNodes: () => [],
   activeLivingParty: () => [],
   regionIndex: () => (game.zoneId === 'frontier' ? 3 : game.zoneId === 'highlands' ? 1 : 0),
@@ -44,7 +44,12 @@ const painter = Renderer.create({
   platform,
   chargePresentation: () => null,
   isPaused: () => false,
-  Campaign: { rules: { ambientLife: {}, harbors: {} } },
+  Campaign: {
+    rules: {
+      ambientLife: {},
+      harbors: { highlands: { vessel: { x: 260, y: 2020 } } },
+    },
+  },
   PrototypeVisuals: Visuals,
   PrototypeSprites: sprites,
   PrototypeCombatVisuals: {},
@@ -1191,6 +1196,57 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'procedural art never receives a duplicate overlay',
   );
   game.props = [];
+  game.zoneId = 'vale';
+  // #752 Highlands ferry: world boarding coordinates must remain reachable
+  // while the original hull's visual location owns both body and ground.
+  const originalHeroPosition = { x: game.hero.x, y: game.hero.y };
+  const ferry = { id: 'return', kind: 'transport', harbor: true, x: 300, y: 1995 };
+  game.zoneId = 'highlands';
+  game.hero.x = ferry.x;
+  game.hero.y = ferry.y;
+  game.npcs = [ferry];
+  parityGpu.draw();
+  const ferryVisual = painter.presentEntity(ferry, 'npc');
+  const ferryPoint = gpuOptions.canvasRenderer.screen(ferryVisual);
+  const boardingPoint = gpuOptions.canvasRenderer.screen(ferry);
+  const ferryRecord = frames.at(-1).find((actor) => actor.key === 'npc:return');
+  assert(ferryRecord, 'visible ferry has a native actor record');
+  assert.equal(ferryRecord.ground.x, ferryPoint.x, 'ferry shadow follows the hull X, not boarding');
+  assert.equal(ferryRecord.ground.y, ferryPoint.y, 'ferry shadow follows the hull Y');
+  assert.equal(ferryRecord.x, ferryPoint.x, 'registered ferry body and shadow share an anchor');
+  assert.equal(ferryRecord.depth, 260 + 2020, 'ferry depth matches its displayed hull, not boarding');
+  // A neighboring dock NPC between the two depth positions must be in front
+  // of the hull; sorting by the boarding point reverses the original Canvas order.
+  game.npcs = [ferry, { id: 'pier-hand', kind: 'service', x: 280, y: 2006 }];
+  parityGpu.draw();
+  const pierOrder = frames.at(-1).map((actor) => actor.key);
+  assert(
+    pierOrder.indexOf('npc:return') < pierOrder.indexOf('npc:pier-hand'),
+    'native ferry and dock NPC use original Canvas visual-depth order',
+  );
+  game.npcs = [ferry];
+  assert.notEqual(ferryRecord.ground.x, boardingPoint.x, 'boarding remains a separate world point');
+  assert.deepEqual([ferry.x, ferry.y], [300, 1995], 'rendering cannot move ferry interaction');
+  // At this camera position the boarding point is beyond Pixi's ordinary
+  // +270px fringe but the actual hull is still eligible to be rendered.
+  game.hero.x = -220;
+  parityGpu.draw();
+  assert(
+    frames.at(-1).some((actor) => actor.key === 'npc:return'),
+    'visual hull remains eligible at camera edge even if boarding point is outside fringe',
+  );
+  game.hero.x = ferry.x;
+  game.npcs = [{ ...ferry, id: 'ordinary', harbor: false }];
+  parityGpu.draw();
+  const ordinary = frames.at(-1).find((actor) => actor.key === 'npc:ordinary');
+  assert.equal(
+    ordinary.ground.x,
+    gpuOptions.canvasRenderer.screen(game.npcs[0]).x,
+    'normal transport still uses its own unmodified world anchor',
+  );
+  game.npcs = [];
+  game.hero.x = originalHeroPosition.x;
+  game.hero.y = originalHeroPosition.y;
   game.zoneId = 'vale';
   // Profiling must be bounded and exclusive to developer mode. The same
   // native Pixi draw() and already-verified texture/facing logic executes.
