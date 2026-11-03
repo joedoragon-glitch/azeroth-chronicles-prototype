@@ -1246,6 +1246,14 @@
   // Fixed explanatory fragments flank numbers derived at runtime. Translate
   // the clauses around those numbers; never copy a cached combat value.
   const technicalClauses = [
+    // Repair inherited missing translations for the current healing formula.
+    [' Ordinary ranged enemies restore all missing HP of an eligible ordinary monster over ', ' Los enemigos ordinarios a distancia restauran todos los PV que le faltan a un monstruo ordinario que cumpla las condiciones durante '],
+    [' seconds on a ', ' segundos, con una recuperación de '],
+    ['s cooldown, whenever the ordinary patient is wounded. This is a full heal measured from wounds present when treatment begins; fresh damage requires further treatment. They can still heal captains and bosses, but those leaders receive the original ', ' s, siempre que el paciente ordinario esté herido. La curación completa se calcula según las heridas presentes al empezar; el daño posterior requiere otro tratamiento. También pueden curar a capitanes y jefes, pero estos líderes reciben la curación original del '],
+    ['% over ', '% durante '],
+    [' seconds, with a ', ' segundos, con un intervalo de '],
+    ['s per-healer leader interval. Captains and bosses retain their own original healing strength and cooldowns. Encounter scaling still applies to leader healing. Treatment begins at ', ' s por sanador y líder. Los capitanes y jefes conservan su propia potencia de curación y sus recuperaciones originales. El ajuste por encuentro sigue aplicándose a la curación de líderes. El tratamiento comienza al '],
+    ['% HP or less for leaders and leader-sourced treatment. Allies arriving to regroup can receive care at ', '% de PV o menos para los líderes y las curaciones realizadas por líderes. Los aliados que acuden a reagruparse pueden recibir atención al '],
     ['Hostile enemies block ordinary eligible skills: ', 'Los enemigos bloquean habilidades válidas ordinarias con una probabilidad de '],
     ['% against one target, or ', '% contra un objetivo, o '],
     ['% per target in an area attack.\n', '% por objetivo en un ataque de área.\n'],
