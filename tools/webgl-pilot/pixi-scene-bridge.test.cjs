@@ -815,3 +815,390 @@ test('#748 canonical TRUE aura changes paths with bounded retained gradients', (
   assert.equal(scene.metrics().actorUnderlays, 0);
   scene.destroy();
 });
+
+
+test('#756 deterministic canonical detail rebuild profile (source-clock only)', () => {
+  const Renderer = require('../../src/prototype/renderer.js');
+  const { PIXI, app, calls } = pixiFixture();
+  let clock = 0;
+  let clears = 0;
+  const originalClear = PIXI.Graphics.prototype.clear;
+  PIXI.Graphics.prototype.clear = function () {
+    clears++;
+    return originalClear.call(this);
+  };
+  const game = {
+    hero: { x: 100, y: 100 },
+    s: { rescued: {}, statistics: { deaths: 0 } },
+    regionIndex: () => 0,
+    supplyRoom: () => false,
+    bundleCollected: () => false,
+  };
+  const renderer = Renderer.create({
+    canvas: { width: 640, height: 360 },
+    ctx: {},
+    getGame: () => game,
+    platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 320, y: 180 }) },
+    chargePresentation: () => null,
+    isPaused: () => false,
+    Campaign: { rules: { ambientLife: {}, harbors: {} } },
+    PrototypeVisuals: { height: () => 100 },
+    PrototypeSprites: { height: () => 100 },
+    PrototypeCombatVisuals: {},
+    PrototypeEnemyVfxArt: null,
+    PrototypeGroundCache: null,
+    now: () => clock,
+  });
+  const scene = Bridge.create({ PIXI, app, width: 640, height: 360 });
+  scene.registerTexture('hero.png', picture());
+  const variants = [
+    ['true-boss', { renderKind: 'enemy', form: 'true', type: 'boss', family: 'citadel' }],
+    ['true-nonboss', { renderKind: 'enemy', form: 'true', type: 'mob', family: 'goblin' }],
+    ['ringleader', { renderKind: 'enemy', form: 'ringleader', type: 'mob', family: 'goblin' }],
+    ['frenzy', { renderKind: 'enemy', form: 'normal', frenzy: true, type: 'mob', family: 'goblin' }],
+    ['true-boss-ledger', { renderKind: 'enemy', form: 'true', type: 'boss', family: 'ridge', ledgerOpen: true }],
+    ['keeper-cage', { renderKind: 'npc', kind: 'keeper' }],
+    ['pursuit-streak', { renderKind: 'enemy', form: 'normal', type: 'mob', pursuitBurst: 1 }],
+  ];
+  const report = [];
+  for (const [label, fields] of variants) {
+    scene.syncActors([]);
+    const visual = { id: label, x: 120, y: 140, hp: 100, ...fields };
+    const command = actor(label);
+    const first = clears;
+    const gradBefore = calls.gradients;
+    const textureBefore = calls.images;
+    const begin = performance.now();
+    for (let i = 0; i < 60; i++) {
+      clock = i * (1000 / 60);
+      const details = renderer.actorDetailsFor(visual);
+      command.details = details
+        ? { ...details, x: 200, y: 160, zoom: 1.5, paint: renderer.paintActorDetails }
+        : null;
+      scene.syncActors([command]);
+    }
+    report.push({
+      variant: label,
+      frames: 60,
+      vectorClears: clears - first,
+      newGradients: calls.gradients - gradBefore,
+      newAtlasFrames: calls.images - textureBefore,
+      simulatedCpuMs: Number((performance.now() - begin).toFixed(3)),
+    });
+  }
+  assert.equal(report.length, variants.length);
+  assert.deepEqual(
+    Object.fromEntries(report.map((r) => [r.variant, r.vectorClears])),
+    {
+      'true-boss': 60,
+      'true-nonboss': 1,
+      ringleader: 60,
+      frenzy: 60,
+      'true-boss-ledger': 61,
+      'keeper-cage': 1,
+      'pursuit-streak': 1,
+    },
+    'only truly animated geometry is invalidated for each presentation tick',
+  );
+  assert.equal(report[0].newGradients, 2, 'canonical boss uses two stable gradient recipes');
+  assert.equal(report[0].newAtlasFrames, 1, 'original body frame reuses a texture');
+  console.log('PIXI_DETAIL_756_PROFILE ' + JSON.stringify(report));
+  scene.syncActors([]);
+  assert.equal(scene.metrics().actorUnderlays, 0);
+  assert.equal(scene.metrics().actorOverlays, 0);
+  scene.destroy();
+});
+
+
+test('#756 animated detail and static overlay retain exact separate lifecycles', () => {
+  const Renderer = require('../../src/prototype/renderer.js');
+  const { PIXI, app, calls } = pixiFixture();
+  let time = 0;
+  let reduced = false;
+  const clears = new WeakMap();
+  let destroyed = 0;
+  const origClear = PIXI.Graphics.prototype.clear;
+  const origDestroy = PIXI.Graphics.prototype.destroy;
+  PIXI.Graphics.prototype.clear = function () {
+    clears.set(this, (clears.get(this) || 0) + 1);
+    return origClear.call(this);
+  };
+  PIXI.Graphics.prototype.destroy = function (...args) {
+    destroyed++;
+    return origDestroy.apply(this, args);
+  };
+  const game = {
+    hero: { x: 100, y: 100 },
+    s: { rescued: {}, statistics: { deaths: 0 } },
+    regionIndex: () => 0,
+    supplyRoom: () => false,
+    bundleCollected: () => false,
+  };
+  const priorMatchMedia = globalThis.matchMedia;
+  globalThis.matchMedia = () => ({ get matches() { return reduced; } });
+  try {
+    const painter = Renderer.create({
+      canvas: { width: 640, height: 360 },
+      ctx: {},
+      getGame: () => game,
+      platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 320, y: 180 }) },
+      chargePresentation: () => null,
+      isPaused: () => false,
+      Campaign: { rules: { ambientLife: {}, harbors: {} } },
+      PrototypeVisuals: { height: () => 100 },
+      PrototypeSprites: { height: () => 100 },
+      PrototypeCombatVisuals: {},
+      PrototypeEnemyVfxArt: null,
+      PrototypeGroundCache: null,
+      now: () => time,
+    });
+    const scene = Bridge.create({ PIXI, app, width: 640, height: 360 });
+    scene.registerTexture('hero.png', picture());
+    const stage = app.stage.children[0].children[1];
+    const command = actor('details');
+    function update(e, zoom = 1.5) {
+      const details = painter.actorDetailsFor(e);
+      command.details = details
+        ? { ...details, x: 240 + time / 1000, y: 150, zoom, paint: painter.paintActorDetails }
+        : null;
+      scene.syncActors([command]);
+      return details;
+    }
+    const boss = {
+      id: 'ridge-true',
+      renderKind: 'enemy',
+      family: 'ridge',
+      type: 'boss',
+      form: 'true',
+      ledgerOpen: true,
+      hp: 300,
+      x: 120,
+      y: 140,
+    };
+    time = 0;
+    update(boss, 1);
+    const [aura, body, book] = stage.children;
+    assert(aura instanceof PIXI.Graphics && book instanceof PIXI.Graphics);
+    const initial = JSON.stringify([aura.curves, aura.lines, aura.ellipses]);
+    assert.equal(clears.get(aura), 1);
+    assert.equal(clears.get(book), 1);
+    time = 7000;
+    update(boss, 1.5);
+    assert.equal(stage.children[0], aura, 'retained original aura GPU geometry object');
+    assert.equal(stage.children[1], body, 'body sprite untouched by details');
+    assert.equal(stage.children[2], book, 'retained canonical ledger book');
+    assert.notEqual(
+      JSON.stringify([aura.curves, aura.lines, aura.ellipses]),
+      initial,
+      'TRUE strands, arcs and motes still animate at t7000',
+    );
+    assert.equal(clears.get(aura), 2, 'animated underlay re-recorded');
+    assert.equal(clears.get(book), 1, 'unchanged book never re-recorded');
+    assert.equal(book.scale.x, 1.5, 'overlay zoom uses transform rather than rebuild');
+    update(boss, 1.75);
+    assert.equal(clears.get(aura), 2, 'unchanged time does not rebuild for zoom');
+    assert.equal(clears.get(book), 1);
+    assert.equal(book.scale.x, 1.75);
+    assert.equal(book.position.x, 247);
+
+    reduced = true;
+    time = 9000;
+    update(boss);
+    assert.equal(clears.get(aura), 3, 'reduced-motion preference changes the aura recipe');
+    assert.equal(clears.get(book), 1);
+    time = 16000;
+    update(boss);
+    assert.equal(clears.get(aura), 3, 'reduced-motion TRUE boss holds stationary geometry');
+    reduced = false;
+    update(boss);
+    assert.equal(clears.get(aura), 4, 'normal TRUE animation resumes with preference');
+    assert.equal(calls.gradients, 2, 'animated updates share original gradient resources');
+    assert.equal(calls.images, 1, 'no body texture source is replaced');
+
+    boss.ledgerOpen = false;
+    update(boss);
+    assert.equal(scene.metrics().actorOverlays, 0, 'closing the ledger removes its book');
+    boss.form = 'normal';
+    update(boss);
+    assert.equal(scene.metrics().actorUnderlays, 0, 'TRUE to normal removes gold radiance');
+    boss.frenzy = true;
+    update(boss);
+    assert.equal(scene.metrics().actorUnderlays, 1);
+    boss.frenzy = false;
+    update(boss);
+    assert.equal(scene.metrics().actorUnderlays, 0, 'frenzy expiry clears native geometry');
+
+    const keeper = { id: 'keeper', renderKind: 'npc', kind: 'keeper', x: 120, y: 140 };
+    update(keeper);
+    assert.equal(scene.metrics().actorOverlays, 1);
+    keeper.kind = 'plain';
+    update(keeper);
+    assert.equal(scene.metrics().actorOverlays, 0, 'cage disappears if keeper detail is lost');
+
+    const flight = {
+      id: 'veyrith',
+      renderKind: 'enemy',
+      family: 'abyss',
+      type: 'boss',
+      form: 'normal',
+      hp: 300,
+      x: 120,
+      y: 140,
+      motion: { aerial: true, flightPath: [{ x: 240, y: 250 }] },
+    };
+    const flightA = update(flight).underlaySignature;
+    flight.x += 45;
+    const flightB = update(flight).underlaySignature;
+    assert.notEqual(flightA, flightB, 'changing actor-to-waypoint vector updates flight strokes');
+    flight.motion = { aerial: false, flightPath: [] };
+    update(flight);
+    assert.equal(scene.metrics().actorUnderlays, 0, 'flight end releases its strokes');
+    assert(destroyed >= 4, 'retired underlays/overlays destroy the native Graphics objects');
+    scene.syncActors([]);
+    assert.equal(scene.metrics().actors, 0, 'boss death/removal leaves no retained actors');
+    scene.destroy();
+  } finally {
+    if (priorMatchMedia === undefined) delete globalThis.matchMedia;
+    else globalThis.matchMedia = priorMatchMedia;
+  }
+});
+
+
+test('#756 retained multi-actor geometry matches forced canonical repaint at every phase', () => {
+  const Renderer = require('../../src/prototype/renderer.js');
+  const cached = pixiFixture(), reference = pixiFixture();
+  const game = {
+    hero: { x: 100, y: 100 },
+    s: { rescued: {}, statistics: { deaths: 0 } },
+    regionIndex: () => 0,
+    supplyRoom: () => false,
+    bundleCollected: () => false,
+  };
+  let clock = 0, reduced = false;
+  const previousMatchMedia = globalThis.matchMedia;
+  globalThis.matchMedia = () => ({ get matches() { return reduced; } });
+  try {
+    const painter = Renderer.create({
+      canvas: { width: 640, height: 360 },
+      ctx: {},
+      getGame: () => game,
+      platform: { cameraZoom: 1.5, cameraAnchor: () => ({ x: 320, y: 180 }) },
+      chargePresentation: () => null,
+      isPaused: () => false,
+      Campaign: { rules: { ambientLife: {}, harbors: {} } },
+      PrototypeVisuals: { height: () => 100 },
+      PrototypeSprites: { height: () => 100 },
+      PrototypeCombatVisuals: {},
+      PrototypeEnemyVfxArt: null,
+      PrototypeGroundCache: null,
+      now: () => clock,
+    });
+    const optimizedScene = Bridge.create({
+      PIXI: cached.PIXI, app: cached.app, width: 640, height: 360,
+    });
+    const forcedScene = Bridge.create({
+      PIXI: reference.PIXI, app: reference.app, width: 640, height: 360,
+    });
+    optimizedScene.registerTexture('hero.png', picture());
+    forcedScene.registerTexture('hero.png', picture());
+    const entities = [
+      { id: 'radiant-ledger', renderKind: 'enemy', family: 'ridge', type: 'boss',
+        form: 'true', ledgerOpen: true },
+      { id: 'ordinary-true', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'true' },
+      { id: 'ringleader', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'ringleader' },
+      { id: 'frenzy', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'normal', frenzy: true },
+      { id: 'cage', renderKind: 'npc', kind: 'keeper' },
+      { id: 'pursuit', renderKind: 'enemy', family: 'goblin', type: 'mob',
+        form: 'normal', pursuitBurst: 2 },
+      { id: 'flight', renderKind: 'enemy', family: 'abyss', type: 'boss',
+        form: 'normal', motion: { aerial: true, flightPath: [{ x: 250, y: 190 }] } },
+      { id: 'treasury-bundle', renderKind: 'npc', kind: 'bundle', treasuryRecovery: true },
+    ].map((e, i) => ({ ...e, x: 120 + 5 * i, y: 140 + 4 * i, hp: 100 }));
+
+    function commands(frame, force, frameIndex) {
+      return entities.map((entity, i) => {
+        const details = painter.actorDetailsFor(entity);
+        return {
+          ...actor(entity.id, 50 + 25 * i, i),
+          details: details
+            ? {
+                ...details,
+                ...(force
+                  ? { underlaySignature: undefined, overlaySignature: undefined,
+                      signature: 'fresh:' + frameIndex }
+                  : {}),
+                x: 170 + i * 12,
+                y: 180 + i * 8,
+                zoom: frame.zoom,
+                paint: painter.paintActorDetails,
+              }
+            : null,
+        };
+      });
+    }
+    // Capture all visible geometry/style commands and transforms, not only
+    // clear counts or the number of Pixi Graphics objects.
+    function snapshot(fixture) {
+      const stage = fixture.app.stage.children[0].children[1];
+      return JSON.parse(JSON.stringify(stage.children.map((node) => {
+        if (!(node instanceof fixture.PIXI.Graphics))
+          return { kind: 'sprite', x: node.position.x, y: node.position.y };
+        return {
+          kind: 'detail', x: node.position.x, y: node.position.y,
+          scaleX: node.scale.x, scaleY: node.scale.y,
+          ellipses: node.ellipses, circles: node.circles, rects: node.rects,
+          curves: node.curves, lines: node.lines, closed: node.closed,
+          strokes: node.strokes, fills: node.fills,
+        };
+      })));
+    }
+    const states = [
+      { time: 0, zoom: 1, reduced: false },
+      { time: 16.67, zoom: 1, reduced: false },
+      { time: 7000, zoom: 1.5, reduced: false },
+      { time: 7000, zoom: 1.75, reduced: true },
+      { time: 12000, zoom: 1.75, reduced: true },
+      { time: 12000, zoom: 1.5, reduced: false },
+      { time: 16000, zoom: 1, reduced: false },
+    ];
+    for (const [i, state] of states.entries()) {
+      clock = state.time;
+      reduced = state.reduced;
+      // Exercise independent actor-state invalidation while other ranked
+      // enemies remain in the same depth-sorted scene.
+      if (i === 5) {
+        entities[0].ledgerOpen = false;
+        entities[3].frenzy = false;
+        entities[6].x += 30;
+        entities[6].motion.flightPath[0].x += 20;
+      }
+      if (i === 6) {
+        entities[0].ledgerOpen = true;
+        entities[3].frenzy = true;
+        entities[6].motion = { aerial: false, flightPath: [] };
+      }
+      optimizedScene.syncActors(commands(state, false, i));
+      forcedScene.syncActors(commands(state, true, i));
+      assert.deepEqual(
+        snapshot(cached), snapshot(reference),
+        'frame ' + i + ': retained details equal a fresh replay of every authored Canvas recipe',
+      );
+    }
+    assert.equal(optimizedScene.metrics().actorUnderlays, forcedScene.metrics().actorUnderlays);
+    assert.equal(optimizedScene.metrics().actorOverlays, forcedScene.metrics().actorOverlays);
+    assert.equal(cached.calls.images, reference.calls.images,
+      'geometry retention never changes body atlas allocations');
+    optimizedScene.syncActors([]);
+    forcedScene.syncActors([]);
+    assert.equal(optimizedScene.metrics().actorUnderlays, 0);
+    assert.equal(forcedScene.metrics().actorOverlays, 0);
+    optimizedScene.destroy();
+    forcedScene.destroy();
+  } finally {
+    if (previousMatchMedia === undefined) delete globalThis.matchMedia;
+    else globalThis.matchMedia = previousMatchMedia;
+  }
+});

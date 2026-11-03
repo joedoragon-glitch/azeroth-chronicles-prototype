@@ -536,13 +536,16 @@
       if (details?.[layer]) {
         state.detailGradients ||= new Map();
         if (!state[key]) state[key] = new PIXI.Graphics();
-        if (state[key + 'Signature'] !== details.signature) {
+        // Animation and static accessories have independent identities.
+        // Retain the legacy shared signature for older pilot/test callers.
+        const signature = details[key + 'Signature'] ?? details.signature;
+        if (state[key + 'Signature'] !== signature) {
           paintOriginalPaths(
             state[key],
             (ctx) => details.paint(ctx, details.visual, layer),
             state.detailGradients,
           );
-          state[key + 'Signature'] = details.signature;
+          state[key + 'Signature'] = signature;
         }
         state[key].position.set(details.x, details.y);
         state[key].scale.set(details.zoom, details.zoom);
