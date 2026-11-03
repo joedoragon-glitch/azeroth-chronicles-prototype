@@ -159,7 +159,7 @@
       rules?.treasuryWalls?.[zone.id] || [];
     if (partitions.some((wall) => intersectsRectangle(hero, target, wall))) return false;
     for (const p of zone.props || []) {
-      if (p === source.prop || p.decorative || !(p.r > 0) || !isFinitePoint(p)) continue;
+      if (p === source?.prop || p.decorative || !(p.r > 0) || !isFinitePoint(p)) continue;
       const structure = String(p.structure || '');
       if (!/wall|stockade|palisade|gate|fortress|watchpost|house|tower/.test(structure)) continue;
       if (segmentDistance(p, hero, target) < p.r) return false;
