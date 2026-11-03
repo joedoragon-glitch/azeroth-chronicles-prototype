@@ -95,7 +95,7 @@
         return (
           geometry +
           (def.shape === 'target' && this.petDefinition(family).role === 'ranged'
-            ? ' · dodgeable shot; effects require contact'
+            ? ' · blockable shot; effects require contact'
             : '') +
           ' · ' +
           def.multiplier +
@@ -254,7 +254,9 @@
                   'damage',
                 ),
                 u.id,
-                { area: def.shape !== 'target' },
+                { area: def.shape !== 'target',
+                  skillShape: def.shape === 'target' ? 'single' : 'area',
+                  criticalExecution: criticalReceipt },
               )
             )
               continue;
@@ -268,7 +270,8 @@
           }
           this.developerCompanionEndDirect(previousDirect);
         }
-        if (!projectile && !hits) return false;
+        // Valid releases pay cooldown even when every enemy blocks. Do not
+        // award the on-contact self-heal/ward after a completely blocked skill.
         u[key] =
           slot === 1
             ? R.balance.companions.petFirstCooldown
@@ -276,7 +279,8 @@
         u.skillGlobalCd = R.companionSkills.globalCooldown;
         u.cd = Math.max(u.cd, 0.5);
         this.petSkillEvent(u, target, slot, 0, 'release');
-        if (!projectile) this.petSkillContact(u, target, slot, hits, criticalReceipt);
+        if (!projectile && hits)
+          this.petSkillContact(u, target, slot, hits, criticalReceipt);
         return true;
       }
       // The fifth argument is the frozen critical receipt; the sixth belongs
