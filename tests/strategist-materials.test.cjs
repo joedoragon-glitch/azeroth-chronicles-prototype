@@ -210,6 +210,20 @@ assert.equal(M.propMaterial({
   id: 'settlement-major-2', x: 100, y: 100, structure: 'crown-wall',
 }), null, 'a town-owned stone wall is not a free mineral resource');
 
+assert.deepEqual(M.closestToShape({ x: 10, y: 50 }, {
+  x1: 0, x2: 20, y1: 0, y2: 100, gaps: [[40, 60]],
+}), { x: 10, y: 39 },
+'crossing gaps are not lava even though they lie inside the lava rectangle');
+const crownBarrier = R.barriers[4];
+const sampleBank = R.channelBanks(4, 1000)[0];
+game.hero.class = 'strategist';
+game.hero.x = sampleBank - 28;
+game.hero.y = 1000;
+assert.equal(M.forCombat(game, 'fire', {
+  zone: { id: 'crown', props: [], buildings: [] }, rules: R, range: 250,
+})?.id, 'regional-channel',
+'a real lava bank beyond a dry crossing should be considered using gap edges');
+
 assert.deepEqual(M.closestToShape({ x: 5, y: 10 }, {
   points: [[0, 0], [0, 20], [20, 20], [20, 0]],
 }), { x: 0, y: 10 }, 'tuple-encoded March harbor shore geometry must be recognized');
