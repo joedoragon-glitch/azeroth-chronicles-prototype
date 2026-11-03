@@ -119,6 +119,11 @@
     'crown-ash-house',
     'crown-forgehouse',
   ]);
+  // A deliberately small inhabited roofline, using THREE existing Crownwatch
+  // houses. No settlement props, collision radii, road routes or save IDs move.
+  const crownUpperResidenceIds = new Set([
+    'settlement-major-0', 'settlement-major-3', 'settlement-major-7',
+  ]);
   function contourRadius(e) {
     if (organicContours.has(e.structure)) return 3.5;
     if (wornContours.has(e.structure)) return 2.8;
@@ -8557,6 +8562,9 @@
                 : region;
       const workshop = /workshop|smithy|forgehouse/.test(kind),
         boat = kind === 'march-boathouse';
+      // Existing west and eastern-street homes get modest occupied upper
+      // rooms. No random stacks of towers, no new props or extra hot spots.
+      const upperResidence = r === 4 && !workshop && crownUpperResidenceIds.has(e.id);
       const woods = ['#876849', '#7b7659', '#78725d', '#78604e', '#5d5e6b'];
       if (r === 1) {
         for (const x of [-25, -8, 9, 25]) {
@@ -8693,20 +8701,37 @@
           '#b49ab6',
         );
       }
-      craftedRoof(36, -21, -51, r);
-      if (r === 4)
-        poly(
-          [
-            [0, -40],
-            [5, -34],
-            [0, -28],
-            [-5, -34],
-          ],
-          '#b49ab6',
-        );
+      if (upperResidence) {
+        // The original ash-stone ground floor remains visible at its real
+        // door and footprint. A single glazed upper level changes the
+        // neighborhood silhouette without adding another building.
+        blockwork(-27, -61, 54, 41, '#82818e', 6);
+        for (const x of [-18, 7]) {
+          softRect(x - 1, -54, 14, 22, '#526f79', 2);
+          line([[x + 6, -53], [x + 6, -33]], '#c7c9bb', 1.3);
+          line([[x, -42], [x + 12, -42]], '#bfc6b7', 1.1);
+          softRect(x - 3, -31, 18, 4, '#beb8b2', 1);
+        }
+        line([[-24, -24], [24, -24]], '#c4bcb6', 1.6);
+        craftedRoof(32, -61, -84, 4);
+        softPoly([[-5, -70], [0, -76], [5, -70], [0, -65]], '#a8beb9', 1);
+      } else {
+        craftedRoof(36, -21, -51, r);
+        if (r === 4)
+          poly(
+            [
+              [0, -40],
+              [5, -34],
+              [0, -28],
+              [-5, -34],
+            ],
+            '#b49ab6',
+          );
+      }
       if (!boat) {
-        blockwork(20, -43, 9, 23, r === 4 ? '#707782' : '#949987', 6);
-        fillOval(24, -44, 5, 2, '#354c41', 0.4);
+        const chimneyTop = upperResidence ? -76 : -43;
+        blockwork(20, chimneyTop, 9, 23, r === 4 ? '#707782' : '#949987', 6);
+        fillOval(24, chimneyTop - 1, 5, 2, '#354c41', 0.4);
       }
       if (r === 1) {
         timber([-26, 15], [28, 15], 4, woods[r]);
@@ -18682,6 +18707,8 @@
     if (e.miningFacility) return 90;
     if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
+    if (e.renderKind === 'prop' && e.structure === 'crown-ash-house' &&
+        crownUpperResidenceIds.has(e.id)) return 94;
     if (e.structure === 'watchpost') return 95;
     if (e.structure === 'frontier-grain-silo') return 165;
     if (e.structure === 'frontier-civic-fountain') return 110;

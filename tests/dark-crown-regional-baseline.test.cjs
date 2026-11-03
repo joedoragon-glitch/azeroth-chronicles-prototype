@@ -94,6 +94,37 @@ Visuals.draw(ministryCtx, { ...ministry, renderKind: 'prop' },
 const ministryTower = ministryCtx.getImageData(110, 82, 40, 30).data;
 assert(ministryTower.some((v, i) => i % 4 === 3 && v > 0),
   'The active ministry scene must render its elevated glazed civic frontage');
+// The skyline changes only existing Crownwatch house artwork, never its
+// foundation, save identity or road collision. Check actual zone residences
+// and actual Canvas roofline pixels; a drawing code case alone is not proof.
+const upperHouseIds = ['settlement-major-0', 'settlement-major-3', 'settlement-major-7'];
+const upperHouses = upperHouseIds.map(id => civic.zone().props.find(p => p.id === id))
+  .filter(Boolean);
+assert(upperHouses.length >= 2,
+  'At least two of the three selected real Crownwatch houses must exist');
+assert(upperHouses.every(p => p.structure === 'crown-ash-house' && p.r === 32 &&
+  p.roadBlocker && !p.decorative),
+  'Occupied upper homes must preserve original collidable house definitions');
+const roofSample = entity => {
+  const canvas = createCanvas(240, 230);
+  const ctx = canvas.getContext('2d');
+  Visuals.draw(ctx, { ...entity, renderKind: 'prop' }, { x: 120, y: 200 }, 4);
+  const pixels = ctx.getImageData(111, 117, 18, 13).data;
+  return pixels.some((v, i) => i % 4 === 3 && v > 0);
+};
+const ordinaryHome = civic.zone().props.find(p => p.id === 'settlement-major-1');
+assert(ordinaryHome && ordinaryHome.structure === 'crown-ash-house',
+  'A neighboring conventional single-level home remains in Crownwatch');
+assert(!roofSample(ordinaryHome),
+  'Civic upper floors must not spread indiscriminately to every residence');
+for (const home of upperHouses) {
+  assert(roofSample(home), home.id + ' must paint a clearly taller inhabited roof');
+  const savedHome = restoredCivic.zone().props.find(p => p.id === home.id);
+  assert(savedHome && savedHome.structure === home.structure,
+    home.id + ' survives old v4 save/restore with same normal house identity');
+  assert.deepEqual([savedHome.x, savedHome.y, savedHome.r],
+    [home.x, home.y, home.r], home.id + ' cannot move or grow its collision footprint');
+}
 const originalMinistry = [ministry.id, ministry.x, ministry.y, ministry.r];
 const courtSnapshot = objects => objects.filter(p => p.crownCivicForecourt)
   .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));

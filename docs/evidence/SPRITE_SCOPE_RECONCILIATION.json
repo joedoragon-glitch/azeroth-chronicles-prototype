@@ -1180,7 +1180,7 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "970ecd8540bb44b47ccaa56ce7320e657875f92d3cfb55c571c664842f74adf0",
+    "src/prototype/visuals.js": "23297a2814119f6bd48d922bc83389181e18ebd673e2582b05fd1e1c52b9cc88",
     "src/prototype/world.js": "0874d023d41cb17fc9abd13c3eda66cab4a855a76c28f56d43ebef59b818477b",
     "src/prototype/rules.js": "0fd1081aacdb5f1b6907c23f8582ab909291dc9d819953493d23868af893ccaf",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
