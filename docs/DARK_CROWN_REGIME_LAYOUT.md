@@ -1,5 +1,13 @@
 > **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
 
+## 3 November 2026 — active owner-directed regional overhaul (draft PR #769)
+
+The older regime-layout pass above is **historical**; its opening development-pause notice does not pause the newer, separately authorized Dark Crown overhaul. The [authoritative creative contract in PR #707](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707) governs this latest work, while the [live engineering handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md) and [baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md) track implemented source and exact acceptance gates.
+
+The ongoing branch preserves the original region and Foundry identity, roads, two lava crossings, actors, traps, service coordinates and v4 saves. Its new Crownwatch civic-hall and residential treatments are procedural architectural art; the forecourt is explicitly nonblocking. Its added local freight aisles depend on real placed service stations, rather than redrawing old crossing roads. The original Foundry now has candidate noncombat animated receiving, furnace, forming, finishing and dispatch visual stations; these do **not** add a crafting economy, a replacement guard faction, or claims of approved potable-water supply or geothermal distribution. Existing civilian and enemy logic remains authoritative.
+
+**Acceptance boundary:** The current stage is an unmerged candidate, not a fully accepted region. Native Campaign/Canvas screenshots, historical-save and collision paths, Pixi animated-worker presentation, industrial route usability, software-GPU performance and owner subjective artwork approval remain distinct checks. An old code-only check or image filename alone is not proof that the corresponding landmark is actually visible. Do not merge or deploy PR #769, or launch a comprehensive test suite, without the owner's explicit authorization.
+
 # Dark Crown regime-layout pass
 
 This pass gives Dark Crown a dedicated procedural layout layer. It does not introduce sprites, change combat balance, alter boss progression, or add rewards.

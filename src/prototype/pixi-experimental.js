@@ -540,10 +540,39 @@
       bakeZone = null;
       if (!keepLoaded) loaded.clear();
     }
+    // Crown Foundry's productive workers are animated by the Canvas artist,
+    // but Pixi caches procedural art. Cache a bounded set of 8 phase frames
+    // instead of freezing the first pose or rasterizing a unique texture on
+    // every display frame. Only the five authored work stations and the real
+    // shipping attendant qualify; static fixtures stay on their old keys.
+    function crownWorkPhase(visual) {
+      const worker = visual.renderKind === 'prop' && visual.crownFoundryWorker === true;
+      const shipping =
+        visual.renderKind === 'prop' &&
+        visual.crownFoundryExterior === true &&
+        visual.structure === 'crown-foundry-yard-shipping';
+      if (!worker && !shipping) return null;
+      const frequency = worker ? 3.3 : 2.8;
+      const seconds = Number.isFinite(visual.ambientTime)
+        ? Math.max(0, visual.ambientTime)
+        : 0;
+      const cycle = (seconds * frequency) % (2 * Math.PI);
+      const frame = Math.min(7, Math.floor((cycle / (2 * Math.PI)) * 8));
+      return { frame, frequency };
+    }
+    function crownBakedPose(visual) {
+      const phase = crownWorkPhase(visual);
+      if (!phase) return visual;
+      return {
+        ...visual,
+        ambientTime: ((phase.frame + 0.5) * Math.PI * 2) / (8 * phase.frequency),
+      };
+    }
     function revisionFor(entity, visual, key, current, zoom) {
       const shared = sharedDecorationKey(visual);
       if (shared !== null)
         return backingRatio + ':' + zoom + ':shared-decor:' + shared + ':' + current.zoneId;
+      const crownFrame = crownWorkPhase(visual);
       return (
         backingRatio +
         ':' +
@@ -563,7 +592,8 @@
         ':' +
         !!visual.rangedAim +
         ':' +
-        !!visual.frenzy
+        !!visual.frenzy +
+        (crownFrame ? ':crown-work-phase:' + crownFrame.frame : '')
       );
     }
     function evictUnused(protectedRevisions, bytesNeeded) {
@@ -1056,7 +1086,7 @@
         return baked.get(revision);
       }
       const started = measureNow();
-      const body = bake(painted, current, backingRatio * zoom);
+      const body = bake(crownBakedPose(painted), current, backingRatio * zoom);
       if (!body) return null;
       const bytes = body.image.width * body.image.height * 4;
       if (imageBytes + bytes > proceduralBudget && detach) {
