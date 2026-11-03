@@ -35,7 +35,13 @@ const copy = (v) => structuredClone(v),
             a.managedBy===undefined &&
             a.credits?.author?.includes('SIBDLP') &&
             a.credits?.license?.includes('CC0')
-          : a.managedBy ===
+          : id === 'millhaven-chamber'
+            ? a.kind === 'music' &&
+              a.managedBy === 'millhaven-owner-approved-candidate-b' &&
+              a.creationMethod === 'original-theme-source-derived-synthesized-recording' &&
+              a.sourceScore === 'src/prototype/audio-catalog.js' &&
+              a.sha256 === '11a6aeb67001e5d1deb2b4aa0c04af39f6a922d5ce104c0edf88990d73e3373d'
+            : a.managedBy ===
               (a.kind === 'ambience'
                 ? 'environment-book'
                 : a.kind === 'effect'

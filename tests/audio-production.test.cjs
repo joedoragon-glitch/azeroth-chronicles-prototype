@@ -50,7 +50,7 @@ for (const boss of data.bosses) {
   }
 }
 assert.equal(data.bosses.length, 11);
-assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'music').length, 83);
+assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'music').length, 84);
 assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'ambience').length, 34);
 for (const zone of Object.keys(production.places)) {
   const interior = zone.startsWith('supply-')
@@ -80,10 +80,11 @@ assert.equal(idleVale.stems[1].gain, 0,
   'Greenwood encounter layer must start silent in exploration');
 const millhaven = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
   settlement: 'millhaven', millhavenTown: true, engaged: 0 });
-assert.equal(millhaven, null,
-  'peaceful current Millhaven district must play the original live-synthesized score');
-assert.equal(a.productionCue({ ...scene, millhavenTown: true, night: true }), null,
-  'original Millhaven theme remains the town theme at night');
+assert.equal(millhaven.id, 'millhaven-chamber',
+  'peaceful Millhaven must play the owner-approved Candidate B recording');
+assert.deepEqual(millhaven.stems, [{ id: 'millhaven-chamber', gain: 0.7 }]);
+assert.equal(a.productionCue({ ...scene, millhavenTown: true, night: true }).id,
+  'millhaven-chamber', 'night retains Candidate B while ambience remains separate');
 assert.equal(a.productionCue({ ...scene, millhavenTown: true, nearbyEngaged: 2 }).id, 'place-vale',
   'nearby combat takes recorded action precedence even inside Millhaven');
 assert.equal(a.productionCue({ ...scene, millhavenTown: true, peace: true }).id, 'peace-vale',
@@ -106,8 +107,8 @@ assert.equal(a.productionCue({ ...scene, estateApproach: true,
 assert.equal(a.productionCue({ ...scene, estateApproach: true,
   started: false }).id, 'title', 'title soundtrack remains exclusive');
 assert.equal(a.productionCue({ ...scene, region: 'vale', zone: 'vale',
-  settlement: 'millhaven', night: true, millhavenTown: true }), null,
-  'Millhaven keeps its original synthesized identity instead of the former town recording');
+  settlement: 'millhaven', night: true, millhavenTown: true }).id,
+  'millhaven-chamber', 'Millhaven uses Candidate B, not the former town recording');
 
 // Geometry-driven observation: the actual Forest Crypt entrance is the anchor.
 // The approach starts 950 units out and persists until 1150 units on exit.
@@ -135,23 +136,23 @@ function observeTown(x, y, started = true) {
   return { inside: observed.millhavenTown,
     cue: townAudio.productionCue(observed)?.id || 'synth:vale' };
 }
-assert.equal(observeTown(newGamePosition.x, newGamePosition.y).cue, 'synth:vale',
-  'new game at live Millhaven spawn plays the original synth');
-assert.equal(observeTown(easternHouse.x, easternHouse.y).cue, 'synth:vale',
+assert.equal(observeTown(newGamePosition.x, newGamePosition.y).cue, 'millhaven-chamber',
+  'new game at live Millhaven spawn plays the owner-approved chamber recording');
+assert.equal(observeTown(easternHouse.x, easternHouse.y).cue, 'millhaven-chamber',
   'the extended eastern workshop is still inside the real town');
-assert.equal(observeTown(southernHouse.x, southernHouse.y).cue, 'synth:vale',
+assert.equal(observeTown(southernHouse.x, southernHouse.y).cue, 'millhaven-chamber',
   'the extended southern residential streets are still Millhaven');
 assert.equal(observeTown(easternHouse.x + 390, easternHouse.y).cue, 'place-vale',
   'farther from the final eastern homes is an Orchard Roads field');
-assert.equal(observeTown(easternHouse.x + 110, easternHouse.y).cue, 'synth:vale',
+assert.equal(observeTown(easternHouse.x + 110, easternHouse.y).cue, 'millhaven-chamber',
   'entering from the eastern fields recognizes the expanded civic edge');
-assert.equal(observeTown(easternHouse.x + 215, easternHouse.y).cue, 'synth:vale',
-  '80-unit exit hysteresis retains the original town theme');
+assert.equal(observeTown(easternHouse.x + 215, easternHouse.y).cue, 'millhaven-chamber',
+  '80-unit exit hysteresis retains the approved town recording');
 assert.equal(observeTown(easternHouse.x + 390, easternHouse.y).cue, 'place-vale',
   'beyond the exit margin, Orchard Roads resumes');
 assert.equal(observeTown(easternHouse.x + 215, easternHouse.y).cue, 'place-vale',
   're-entry cannot flicker inside the outer exit band');
-assert.equal(observeTown(easternHouse.x + 110, easternHouse.y).cue, 'synth:vale');
+assert.equal(observeTown(easternHouse.x + 110, easternHouse.y).cue, 'millhaven-chamber');
 assert.equal(observeTown(easternHouse.x, easternHouse.y, false).cue, 'title',
   'a title snapshot never plays the old town soundtrack');
 assert.equal(observeTown(easternHouse.x + 215, easternHouse.y).cue, 'place-vale',
