@@ -147,6 +147,8 @@ assert.deepEqual(restored.zone().props.filter(p => p.id.startsWith('side-wall-')
 fs.writeFileSync(path.join(root, 'scene-index.json'), JSON.stringify({
   source: 'Dark Crown PR #707; actual game Campaign and Canvas2D code',
   status: 'Unverified candidate viewpoints for BEFORE-state reconnaissance; not final design boards or composition coverage proof',
+  pixelDeterminismVerified: false,
+  pngSha256Meaning: 'per-run evidence integrity only; do not use as a cross-run pixel equality assertion',
   provenance: {
     githubCheckoutSha: process.env.GITHUB_SHA || null,
     githubPrHeadSha: prHeadSha,
@@ -154,9 +156,9 @@ fs.writeFileSync(path.join(root, 'scene-index.json'), JSON.stringify({
     githubWorkflowRunId: process.env.GITHUB_RUN_ID || null,
     localRunWithoutCiMetadata: !process.env.GITHUB_SHA,
   },
-  captureMethod: 'collision-safe hero teleport, fixed RNG and clock, Canvas2D, custom 150% camera anchor, optimization mode disabled; no player traversal, Pixi, image-content assertion or physical phone',
+  captureMethod: 'collision-safe hero teleport, fixed initial RNG and clock, Canvas2D, custom 150% camera anchor, optimization mode disabled; no cross-run pixel identity, player traversal, Pixi, image-content assertion or physical phone',
   regionSourceId: 'crown', foundrySourceId: 'side-crown-foundry',
   scenes: candidates.length, captures: records.length, records,
 }, null, 2) + '\n');
 console.log('PASS Dark Crown Stage 0: ' + candidates.length +
-  ' native geographic scene viewpoints x 2 viewports, Foundry ID/walls/enemies preserved');
+  ' Canvas2D candidate camera positions x 2 viewports, Foundry ID/walls/enemies preserved');
