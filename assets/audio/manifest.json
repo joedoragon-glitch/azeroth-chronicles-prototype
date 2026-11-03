@@ -18,6 +18,7 @@
       "bpm": 92,
       "managedBy": "millhaven-owner-approved-candidate-b",
       "creationMethod": "original-theme-source-derived-synthesized-recording",
+      "generationGuide": "Owner listened to Candidate B and approved its exact synthesized MP3. Reuses the original 92 BPM 32-bar Millhaven source melody, not phase3 score-book or CC0 sample bank. Preserve the specific approved file and source SHA-256.",
       "sourceScore": "src/prototype/audio-catalog.js"
     },
     "place-vale": {
