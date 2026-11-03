@@ -1449,7 +1449,7 @@
         piece.endsWith(thornLore))
       return spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
         ' ' + spanishText[thornLore];
-    const miraWaiting = /^Thornfang was defeated\\. Mira waits near (.+)\\. Your journal can guide you to her last known waiting place\\.$/.exec(piece);
+    const miraWaiting = /^Thornfang was defeated\. Mira waits near (.+)\. Your journal can guide you to her last known waiting place\.$/.exec(piece);
     if (miraWaiting)
       return 'Thornfang ha sido derrotado. Mira espera cerca de ' +
         (spanishText[miraWaiting[1]] || miraWaiting[1]) +
