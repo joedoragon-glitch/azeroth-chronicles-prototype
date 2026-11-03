@@ -80,6 +80,15 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
     }
 }
 assert.deepEqual([...untranslated], [], 'Untranslated Archive technical fragments (all combinations)');
+const nightHelp = A.conditionTopics(C.rules).find((topic) => topic[0] === 'Monsters after dark');
+assert.equal(A.translateArchive(nightHelp[0]), 'Monstruos después del anochecer');
+assert(A.translateArchive(nightHelp[1]).includes('Los monstruos encantados legítimamente'),
+  'the new short reference is naturally translated into Spanish');
+const nightFiguresEs = A.translateArchive(nightHelp[2]);
+assert(nightFiguresEs.includes('Los monstruos encantados y las mascotas de jefes activos'),
+  'Keeper night figures localize owned monster eligibility');
+assert(!/Nighttime monster|Skill Block|Resting monsters/.test(nightFiguresEs),
+  'new detailed night reference contains no leaked English technical prose');
 for (const pair of Object.values(approved)) {
   assert.equal(A.translateArchive(pair.en), pair.es);
   assert.equal(A.translateArchive(pair.es), pair.es);
@@ -154,7 +163,11 @@ const blockReference = A.conditionTopics(C.rules).find(([name]) => name === 'Ski
 assert.equal(A.translateArchiveLabel(blockReference[0]), 'Bloqueo de habilidades');
 assert.equal(A.translateArchive(blockReference[1]),
   'Una habilidad puede alcanzar a su objetivo y aun así ser bloqueada. Un impacto bloqueado no causa daño ni aplica efectos ligados a ese impacto. Cada objetivo de un ataque de área puede bloquearlo por separado. Los impactos críticos de habilidades no se pueden bloquear.');
-assert(A.translateArchive(blockReference[2]).includes('Los compañeros no reciben bonificación nocturna'));
+const blockSpanish = A.translateArchive(blockReference[2]);
+assert(blockSpanish.includes('Los monstruos encantados legítimamente y las mascotas de jefes reciben esa misma bonificación nocturna'),
+  'merged player reference acknowledges lawfully owned monsters at night');
+assert(blockSpanish.includes('Los soldados y arqueros no la reciben'),
+  'ordinary companions are specifically excluded from monster-night Block');
 assert(A.translateArchive(blockReference[2]).includes('El héroe no tiene bloqueo general de habilidades'));
 const variedBlock = A.conditionTopics({
   ...C.rules, skillBlock: { ...C.rules.skillBlock, enemySingle: 0.1775, nightEnemyBonus: 0.075 },

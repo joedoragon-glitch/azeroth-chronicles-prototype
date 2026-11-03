@@ -6,6 +6,16 @@
 **Source baseline:** `main` at `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`, containing merged Skill Block PR [#760](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/760). The exact merge completed the focused checks and automatic Pages publication in [run 41637089826](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41637089826); real-device visual/learning acceptance remains unverified.  
 **Scope:** Teach an already implemented combat mechanic through existing, bilingual player-learning surfaces. No combat design, numerical tuning, story rewrite, or new tutorial framework.
 
+> **3 November 2026 integration addendum — draft PR #761:** This document was approved
+> against the earlier hostile-only Skill Block baseline. The owner subsequently directed
+> that legitimately Charmed monsters and unlocked boss pets inherit the same +5
+> percentage-point monster-night bonus while defending against eligible skills. Draft
+> [PR #761](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/761)
+> implements and tests that extension without changing the exclusion of basic attacks,
+> the critical bypass, or ordinary Soldier/Archer Block. Later implementation notes in
+> this document describing "no companion night bonus" are historical baseline text,
+> **superseded by this explicit owner decision**.
+
 > **Independent-session entrypoint:** The next developer should implement this contract on this same draft PR. Read this document, the PR body, current `main`, `AGENTS.md`, `docs/MECHANIC_DEVELOPMENT.md`, `docs/KEEPER_REFERENCE_WRITING.md`, `docs/COMBAT_CONDITIONS_V09.md`, and the original [Skill Block owner contract](SKILL_EVASION_OWNER_CONTRACT_20261101.md). Do not rely on any ChatGPT conversation to recover the task. The owner has approved the design and asks the next session to own engineering, focused checks and documentation; **merge/publication and comprehensive game testing remain separately controlled**.
 
 ## 1. Game-design problem: explain the event without interrupting combat

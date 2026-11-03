@@ -184,6 +184,17 @@
     'Save run': 'Guardar partida',
     'Export save': 'Exportar partida',
     'Import save': 'Importar partida',
+    'Request persistent storage': 'Solicitar almacenamiento persistente',
+    'Download requested. Keep the JSON file outside browser site data.':
+      'Se solicitó la descarga. Guarda el archivo JSON fuera de los datos del navegador.',
+    'Export failed. No backup file was created.':
+      'Falló la exportación. No se creó una copia de seguridad.',
+    'Browser storage persistence granted. External backups are still necessary.':
+      'Se concedió almacenamiento persistente. Aun así, necesitas copias externas.',
+    'Persistent storage was not granted. Local saves still work; export backups.':
+      'No se concedió almacenamiento persistente. El guardado local funciona; exporta copias.',
+    'Persistent storage request unavailable. Export backups regularly.':
+      'No se pudo solicitar almacenamiento persistente. Exporta copias con regularidad.',
     'Export playtest report': 'Exportar informe',
     'New Normal game': 'Nueva partida normal',
     'New game in Nightmare Mode': 'Nueva partida en modo Nightmare',
@@ -1986,7 +1997,10 @@
     return persistence.saveProfile(profile);
   }
   function save() {
-    return started && persistence.save(game, profile);
+    if (!started) return false;
+    const saved = persistence.save(game, profile);
+    if (saved) backupAdvisor.due(game.s.mode, game.hero.level);
+    return saved;
   }
   // Live game shell only. Standalone Campaign fixtures remain independent.
   // Bind once after each actual playable Campaign has been created/restored.
@@ -3549,6 +3563,76 @@
     }
     menu?.back();
   };
+  const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: localStorage });
+  let titleBackupNotice = null;
+  let storageProtectionState = 'unknown';
+  const storageApi = navigator.storage;
+  if (typeof storageApi?.persisted === 'function') {
+    try {
+      Promise.resolve(storageApi.persisted()).then(
+        (granted) => { storageProtectionState = granted ? 'granted' : 'best-effort'; },
+        () => { storageProtectionState = 'unknown'; },
+      );
+    } catch (_) {}
+  } else storageProtectionState = 'unsupported';
+  function storageProtectionCopy() {
+    if (language === 'es')
+      return storageProtectionState === 'granted'
+        ? 'El navegador concedió protección contra la eliminación automática. Borrar datos o perder el dispositivo aún elimina la partida.'
+        : 'El almacenamiento local puede borrarse. La protección persistente no sustituye una copia externa.';
+    return storageProtectionState === 'granted'
+      ? 'Browser eviction protection is granted. Clearing site data or losing the device still deletes saves.'
+      : 'Browser-local saves can be removed. Persistent storage does not replace an external backup.';
+  }
+  function requestStorageProtection(reopen) {
+    if (typeof storageApi?.persist !== 'function') {
+      status('Persistent storage request unavailable. Export backups regularly.');
+      return;
+    }
+    // Keep the request inside the user's click gesture; never at startup.
+    let request;
+    try { request = storageApi.persist(); }
+    catch (_) {
+      status('Persistent storage request unavailable. Export backups regularly.');
+      return;
+    }
+    Promise.resolve(request).then(
+      (granted) => {
+        storageProtectionState = granted ? 'granted' : 'best-effort';
+        status(granted
+          ? 'Browser storage persistence granted. External backups are still necessary.'
+          : 'Persistent storage was not granted. Local saves still work; export backups.');
+        reopen();
+      },
+      () => {
+        storageProtectionState = 'unknown';
+        status('Persistent storage request unavailable. Export backups regularly.');
+        reopen();
+      },
+    );
+  }
+  function backupReminder(mode, level) {
+    if (!backupAdvisor.due(mode, level)) return '';
+    backupAdvisor.shown(mode, level);
+    return language === 'es'
+      ? 'Conviene exportar una copia externa de esta partida. No basta con el punto de recuperación local.'
+      : 'Time for an external backup. The local recovery checkpoint cannot survive cleared browser data.';
+  }
+  function exportCampaign(candidate) {
+    try {
+      const prepared = PrototypePersistence.prepareExternalExport(candidate, Campaign);
+      exportSaveText(prepared.text, prepared.filename);
+      // A download started; no browser API proves the file was retained.
+      backupAdvisor.downloadStarted(prepared.mode, prepared.level);
+      titleBackupNotice = null;
+      if (!started) refreshTitleScreen();
+      status('Download requested. Keep the JSON file outside browser site data.');
+      return true;
+    } catch (_) {
+      status('Export failed. No backup file was created.');
+      return false;
+    }
+  }
   function exportJSON(data, name) {
     exportSaveText(JSON.stringify(data, null, 2), name);
   }
@@ -3806,10 +3890,20 @@
       ? D.regions.find((region) => region.id === game.zoneId)?.name ||
         D.bosses.find((boss) => boss.id === game.zoneId)?.place || game.zoneId
       : '';
+    // Remind on the paused title, not in combat and not as a modal.
+    if (valid && !titleLoading && !startupUpdatePending && !titleScreen.hidden &&
+        !titleBackupNotice && backupAdvisor.due(game.s.mode, game.hero.level)) {
+      titleBackupNotice = { mode: game.s.mode };
+      backupAdvisor.shown(game.s.mode, game.hero.level);
+    }
+    const titleReminder = valid && !titleLoading &&
+      titleBackupNotice?.mode === game.s.mode
+      ? t(' · Consider an external backup', ' · Conviene exportar una copia externa')
+      : '';
     $('title-preview').textContent = valid
       ? t('Saved adventure', 'Aventura guardada') + ' · ' +
         (game.hero.name || game.hero.class) + ' · ' +
-        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place
+        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place + titleReminder
       : persistence.loadFailed(profile.activeMode)
         ? t('Saved adventure needs recovery', 'La partida requiere recuperación')
         : t('Your adventure awaits', 'Tu aventura te espera');
@@ -3839,6 +3933,7 @@
     }
   }
   function showTitleScreen() {
+    titleBackupNotice = null;
     stopRendererRecording();
     ++titleEpoch;
     titleSkipGraphics?.resolve(false);
@@ -4032,11 +4127,13 @@
     const modes = ['normal', 'nightmare',
       ...(developerEnabled ? ['developer'] : []),
       ...(combatDiagnosticsEnabled ? ['arena'] : [])];
+    const reminder = loaded ? backupReminder(game.s.mode, game.hero.level) : '';
     openMenu(
       'Saved Games & Backups',
-      language === 'es'
+      (language === 'es'
         ? 'Elige una partida, recupera una copia o exporta tus datos antes de reemplazarlos.'
-        : 'Choose a campaign, recover a checkpoint, or export a backup.',
+        : 'Choose a campaign, recover a checkpoint, or export a backup.') +
+        '\n' + storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
       [
         ...modes.map((mode) => {
           const candidate = persistence.load(mode);
@@ -4065,11 +4162,21 @@
         ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
           label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
           action: () => {
-            const raw = localStorage.getItem(PrototypePersistence.saveKey(mode));
-            if (raw) exportSaveText(raw, 'Azeroth_Original_' + mode + '.json');
+            try {
+              const candidate = persistence.load(mode);
+              if (!candidate) throw Error('Invalid primary');
+              exportCampaign(candidate);
+            } catch (_) {
+              status('Export failed. No backup file was created.');
+            }
           },
         })),
         { kind: 'file', label: 'Import save' },
+        ...(typeof storageApi?.persist === 'function' &&
+           storageProtectionState !== 'granted'
+          ? [action('Request persistent storage',
+              () => requestStorageProtection(titleSaveMenu))]
+          : []),
       ],
       showTitleScreen,
       { view: 'title-saves' },
@@ -4236,7 +4343,7 @@
       [
         {
           label: 'Export save',
-          action: () => exportJSON(game.snapshot(), 'Azeroth_Unsaved_Run.json'),
+          action: () => exportCampaign(game),
         },
         { label: 'Reload this window', action: () => location.reload() },
       ],
@@ -4762,14 +4869,19 @@
     );
   }
   function saveBackupMenu() {
+    const reminder = backupReminder(game.s.mode, game.hero.level);
     openMenu(
       'Save backups',
-      'Export a backup before replacing a run.',
+      'Export a backup before replacing a run.\n' +
+        storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
       [
-        action('Export save', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
-        ),
+        action('Export save', () => exportCampaign(game)),
         { kind: 'file', label: 'Import save' },
+        ...(typeof storageApi?.persist === 'function' &&
+           storageProtectionState !== 'granted'
+          ? [action('Request persistent storage',
+              () => requestStorageProtection(saveBackupMenu))]
+          : []),
       ],
       saveMenu,
     );
@@ -5244,9 +5356,7 @@
         playableClassCountWord() +
         ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
-        action('Export final run', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Succession_Game_Over.json'),
-        ),
+        action('Export final run', () => exportCampaign(game)),
         action('Start a new Normal run', () => chooseLanguage('normal')),
         action(
           'Start a new Nightmare run',
@@ -5260,21 +5370,55 @@
   $('import-file').onchange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Selecting a file only opens a validated preview, never a write.
+    const back = started ? saveBackupMenu : titleSaveMenu;
     try {
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
-      const data = JSON.parse(await file.text()),
-        candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      const data = JSON.parse(await file.text());
+      const candidate = data.version === 2
+        ? Campaign.migrate(data) : Campaign.restore(data);
+      Campaign.validate(candidate.snapshot());
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
         throw Error('Combat Diagnostics import requires the playtest link');
-      persistence.writeCandidate(candidate);
-      resumeSavedRun(candidate, { imported: true });
-      status('Imported successfully.');
+      const summary = tr('Level') + ' ' + candidate.hero.level + ' · ' +
+        heroClassLabel(candidate.hero.class) + ' · ' + candidate.s.mode +
+        ' · ' + candidate.zoneId;
+      const existing = persistence.exists(candidate.s.mode);
+      openMenu(
+        language === 'es' ? 'Revisar archivo importado' : 'Review imported backup',
+        summary + '\n' + (language === 'es'
+          ? (existing
+              ? 'Esta acción reemplazará la partida de ese modo. El punto de recuperación local no es una copia externa. Confirma solo si quieres reemplazarla.'
+              : 'Se creará una partida en este modo. Confirma para importar el archivo.')
+          : (existing
+              ? 'This will replace the saved run in that mode. A local recovery checkpoint is not an external backup. Confirm only if you want to replace it.'
+              : 'This will create a run in this mode. Confirm to import the file.')),
+        [
+          action(language === 'es' ? 'Confirmar importación' : 'Confirm import',
+            () => {
+              try {
+                // Writer ownership, stale bytes and original preservation
+                // are checked again at the exact moment of replacement.
+                persistence.writeCandidate(candidate);
+                resumeSavedRun(candidate, { imported: true });
+                status('Imported successfully.');
+              } catch (_) {
+                status('Invalid import. Your current run was kept intact.');
+                back();
+                if ($('modal-description'))
+                  $('modal-description').textContent = language === 'es'
+                    ? 'No se pudo importar. Tu partida actual se conservó.'
+                    : 'Import failed. Your current run was kept intact.';
+              }
+            }),
+        ],
+        back,
+        { view: 'save-import-preview' },
+      );
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
-      // The normal status bar is hidden by the title screen. Keep failures
-      // visible in the current save dialog without replacing any campaign.
       if (menu && $('modal-description')) $('modal-description').textContent =
         language === 'es'
           ? 'No se pudo importar el archivo. Tu partida actual se conservó.'
