@@ -1,5 +1,11 @@
 > **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
 
+## 3 November 2026 — civic elevation and native lava-bridge traversal (draft only)
+
+The current candidate strengthens the **existing** Crownwatch rest-service hall into a recognizable civic silhouette with narrow glazed masonry towers and a high clerestory. The tower work is purely presentation on the same service ID/position: no new building collision, road, royal claim, water supply, heat source, or interactable has been introduced. The vertical silhouette avoids extending over the adjacent quest-board lane; actual desktop/narrow and Pixi art acceptance must still be inspected.
+
+A focused native Campaign route regression now requires both **original** Crown lava gaps to be crossable in each direction (Normal/Nightmare), Crownwatch-to-north-bridge access, south-bridge-to-Foundry access, and v4 bridge/road restoration. The route test uses actual collision and segment checks, not painted-road names or camera teleports. For its exact execution status consult PR #769's run receipts; **committing a test is not claiming it passed**.
+
 ## 3 November 2026 — active owner-directed regional overhaul (draft PR #769)
 
 The older regime-layout pass above is **historical**; its opening development-pause notice does not pause the newer, separately authorized Dark Crown overhaul. The [authoritative creative contract in PR #707](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707) governs this latest work, while the [live engineering handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md) and [baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md) track implemented source and exact acceptance gates.

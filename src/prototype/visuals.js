@@ -8991,6 +8991,36 @@
           // Architecture only; the original NPC, paths and save ID are intact.
           // Do not imply a verified geothermal or water connection.
           fillOval(0, 15, 48, 14, '#1e1b2a', 0.22);
+          // Civic dignity comes from a visible, narrow vertical skyline,
+          // not sprawling over the still-interactive quest-board frontage.
+          // These glazed survey lanterns are architectural, not magic or
+          // proof of a city-wide heat / water distribution system.
+          for (const towerX of [-29, 29]) {
+            blockwork(towerX - 11, -86, 22, 70, '#757684', 6);
+            softRect(towerX - 7, -82, 14, 39, '#c1b9b5', 2);
+            softRect(towerX - 5, -80, 10, 35, '#4e7580', 1.5);
+            line([[towerX, -79], [towerX, -46]], '#d3d4c6', 1.2);
+            for (const y of [-70, -57])
+              line([[towerX - 5, y], [towerX + 5, y]], '#d3d4c6', 1.1);
+            blockwork(towerX - 13, -91, 26, 7, '#c2b9b0', 4);
+            softPoly(
+              [[towerX - 15, -91], [towerX, -105], [towerX + 15, -91]],
+              '#777183', 2,
+            );
+            line([[towerX - 12, -91], [towerX, -99], [towerX + 12, -91]],
+              '#c9c0b0', 1.3);
+          }
+          // High public lantern: an ordinary glazed clerestory above the
+          // hall entry. It advertises the city's craft without new lore.
+          blockwork(-13, -110, 26, 60, '#a49da2', 5);
+          softRect(-9, -106, 18, 37, '#4c7078', 2.4);
+          for (const x of [-4, 4])
+            line([[x, -102], [x, -70]], '#d4cebb', 1.1);
+          line([[-9, -85], [9, -85]], '#d4cebb', 1.5);
+          blockwork(-17, -112, 34, 6, '#c3b7af', 4);
+          softPoly([[-19, -112], [0, -131], [19, -112]], '#666879', 2);
+          line([[-15, -112], [0, -127], [15, -112]], '#d2c2aa', 1.6);
+          poly([[-5, -131], [0, -137], [5, -131], [0, -126]], '#d0dbd0');
           blockwork(-39, -24, 78, 42, '#797889', 9);
           softPoly([[39, -22], [48, -15], [48, 12], [39, 17]], '#525566', 1.4);
           for (const x of [-28, 28]) {
