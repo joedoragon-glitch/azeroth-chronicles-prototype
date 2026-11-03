@@ -99,11 +99,15 @@ assert.equal(JSON.stringify(restoredCivic.zone().roads), originalRoads,
 assert.equal(civic.zone().crownIndustrialVersion, 1,
   'Industrial circulation is generated once, after the original Crown layout');
 const industrial = civic.zone().crownIndustrialRoutes || [];
+assert(industrial.length >= 1,
+  'At least one real industrial aisle must be reachable; no data-only completion');
 assert(industrial.length <= rules.crownIndustrialLinks.length,
   'Only authored, validated local service links may be added');
 assert(industrial.every(link => link.from.startsWith('recovery-heat-crown-') &&
   link.to.startsWith('recovery-heat-crown-')),
   'Freight paths reference actual existing heatwork props, never invented intakes');
+assert(industrial.some(link => link.roadConnected),
+  'At least one local industry corridor must tie into an original carriageway');
 const originalIndustrialPaths = JSON.stringify(civic.zone().footpaths);
 civic.crownIndustrialCirculation(civic.zone());
 assert.equal(JSON.stringify(civic.zone().footpaths), originalIndustrialPaths,
@@ -113,6 +117,9 @@ assert.equal(JSON.stringify(civic.zone().roads), originalRoads,
 
 // The Foundry's civilian labor must remain scenery separate from every
 // original hostile actor and four real traps; no invented product or quest.
+assert.deepEqual(foundry.decor.slice(7, 9).map(p => p[2]),
+  ['crown-foundry-cooling-rack', 'crown-foundry-stock-bay'],
+  'Historical roost and bone dressing now function as maintained facilities');
 const workRoom = new Campaign('normal', 'paladin', () => 0.73);
 assert(workRoom.enter('side-crown-foundry'));
 const factory = workRoom.zone();
