@@ -17589,7 +17589,7 @@
     } else if (type === 'prop') {
       if (['vale-working-mill', 'fruit-cellar'].includes(e.structure)) decoration(e.structure);
       else if (e.treasuryBoss) decoration(e.structure);
-      else if (e.decorative) decoration(e.structure);
+      else if (e.decorative || e.crownPublicMinistry) decoration(e.structure);
       else if (/^(vale-|march-|highland-|frontier-|crown-)/.test(e.structure || '')) {
         settlementBuilding(e.structure);
       } else if (e.structure === 'fence') {

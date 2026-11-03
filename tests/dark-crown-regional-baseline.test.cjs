@@ -83,8 +83,17 @@ assert(court.every(p => p.decorative && p.r === 0 &&
   'No civic detail can create a blocking prop or scatter outside the local forecourt');
 const ministry = civic.zone().props.find(p => p.id === 'settlement-major-2');
 assert(ministry && ministry.structure === 'crown-ministry-frontage' &&
-  ministry.crownPublicMinistry,
-  'The public ministry must reuse the actual historic Crownwatch building');
+  ministry.crownPublicMinistry && !ministry.decorative,
+  'The public ministry must reuse the actual historic nondecorative Crownwatch building');
+// Data-only identity is not visual proof. The upper glazed office tower must
+// paint in the real prop dispatch path, above the original house roofline.
+const ministryCanvas = createCanvas(260, 220);
+const ministryCtx = ministryCanvas.getContext('2d');
+Visuals.draw(ministryCtx, { ...ministry, renderKind: 'prop' },
+  { x: 130, y: 190 }, 4);
+const ministryTower = ministryCtx.getImageData(110, 82, 40, 30).data;
+assert(ministryTower.some((v, i) => i % 4 === 3 && v > 0),
+  'The active ministry scene must render its elevated glazed civic frontage');
 const originalMinistry = [ministry.id, ministry.x, ministry.y, ministry.r];
 const courtSnapshot = objects => objects.filter(p => p.crownCivicForecourt)
   .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));
