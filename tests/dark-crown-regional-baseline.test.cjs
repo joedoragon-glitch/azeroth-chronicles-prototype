@@ -13,6 +13,26 @@ const Combat = require('../src/prototype/combat-visuals.js');
 
 const root = path.join(__dirname, '..', 'test-artifacts', 'environment-708', 'dark-crown-707');
 fs.mkdirSync(root, { recursive: true });
+// Dedicated generated-evidence directory: never retain stale frames in a
+// local rerun's new scene index or screenshot archive.
+for (const filename of fs.readdirSync(root)) {
+  if (filename.endsWith('.png') || filename === 'scene-index.json') {
+    fs.unlinkSync(path.join(root, filename));
+  }
+}
+// GitHub Actions often tests PRs at a synthetic merge SHA; record the actual
+// feature-branch and base heads independently when the event file is present.
+let prHeadSha = null;
+let prBaseSha = null;
+try {
+  if (process.env.GITHUB_EVENT_PATH) {
+    const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+    prHeadSha = event.pull_request?.head?.sha || null;
+    prBaseSha = event.pull_request?.base?.sha || null;
+  }
+} catch (error) {
+  console.warn('Dark Crown provenance: event metadata unreadable:', error.message);
+}
 const rules = Campaign.rules;
 assert.equal(Campaign.data.regions[4].id, 'crown', 'Keep the original fifth-region ID');
 const crownSites = rules.sites[4];
@@ -64,6 +84,8 @@ for (const [label, zoneId, x, y, clock] of candidates) {
   assert(game.enter(zoneId), 'Existing zone is enterable: ' + zoneId);
   const zone = game.zone();
   game.s.clock = clock;
+  // Collision-safe teleport for CAMERA RECONNAISSANCE only. It does not
+  // demonstrate that a player can reach this point through normal gameplay.
   const safe = game.safe(x, y, zoneId);
   assert(safe && Number.isFinite(safe.x) && Number.isFinite(safe.y),
     'Native collision-safe photographic camera point: ' + label);
@@ -95,6 +117,8 @@ for (const [label, zoneId, x, y, clock] of candidates) {
     records.push({
       label, zoneId, viewport, width, height, zoom: 1.5, clock,
       requestedFocus: [x, y], actualCamera: [safe.x, safe.y],
+      viewNameIsIntentNotVerifiedLandmark: true,
+      traversedToView: false, compositionReviewedByTest: false,
       focusDisplacement: Math.round(Math.hypot(x - safe.x, y - safe.y)),
       nearbyProps: nearby(zone.props).length,
       nearbyNpcs: nearby(zone.npcs).map(n => n.id),
@@ -121,8 +145,16 @@ assert.deepEqual(restored.zone().props.filter(p => p.id.startsWith('side-wall-')
   .map(p => p.id).sort(), wallIds, 'Original Foundry obstacles survive save/restore');
 
 fs.writeFileSync(path.join(root, 'scene-index.json'), JSON.stringify({
-  source: 'Dark Crown PR #707, actual current Campaign/Canvas source',
-  status: 'Stage 0 reference only, not accepted art or finished infrastructure',
+  source: 'Dark Crown PR #707; actual game Campaign and Canvas2D code',
+  status: 'Unverified candidate viewpoints for BEFORE-state reconnaissance; not final design boards or composition coverage proof',
+  provenance: {
+    githubCheckoutSha: process.env.GITHUB_SHA || null,
+    githubPrHeadSha: prHeadSha,
+    githubPrBaseSha: prBaseSha,
+    githubWorkflowRunId: process.env.GITHUB_RUN_ID || null,
+    localRunWithoutCiMetadata: !process.env.GITHUB_SHA,
+  },
+  captureMethod: 'collision-safe hero teleport, fixed RNG and clock, Canvas2D, custom 150% camera anchor, optimization mode disabled; no player traversal, Pixi, image-content assertion or physical phone',
   regionSourceId: 'crown', foundrySourceId: 'side-crown-foundry',
   scenes: candidates.length, captures: records.length, records,
 }, null, 2) + '\n');
