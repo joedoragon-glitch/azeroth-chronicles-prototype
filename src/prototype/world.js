@@ -1670,6 +1670,45 @@
       }
       // Independent one-time civic scene. Never bump the established
       // crownSceneLayout version or displace roads, services or old scenery.
+      // Local industrial footpaths join the REAL heatwork placements,
+      // not nominal coordinates. No original roads or lava gaps change.
+      crownIndustrialCirculation(z) {
+        if (z.id !== 'crown' || z.crownIndustrialVersion === 1) return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const find = (index) =>
+            z.props.find((p) => p.id === 'recovery-heat-crown-' + index);
+          const routes = [];
+          for (const [id, first, last] of R.crownIndustrialLinks || []) {
+            const from = find(first),
+              to = find(last);
+            if (!from || !to || dist(from, to) > 700) continue;
+            const approach = (p) => {
+              const q = this.safe(p.x + 64, p.y + 66, z.id);
+              return dist(q, p) <= 125 ? q : null;
+            };
+            const start = approach(from),
+              end = approach(to);
+            if (!start || !end) continue;
+            const path = this.route(start, end);
+            if (!path?.length || path.length > 160 ||
+                dist(path[path.length - 1], end) > 55) continue;
+            const walk = [start, ...path];
+            let length = 0;
+            for (let i = 1; i < walk.length; i++)
+              length += dist(walk[i - 1], walk[i]);
+            if (length > dist(start, end) * 2.6 + 180) continue;
+            z.footpaths = z.footpaths || [];
+            z.footpaths.push(walk);
+            routes.push({ id, from: from.id, to: to.id });
+          }
+          z.crownIndustrialRoutes = routes;
+          z.crownIndustrialVersion = 1;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
       crownCivicForecourt(z) {
         if (z.id !== 'crown' || z.crownCivicForecourtVersion === 1) return;
         const rest = z.npcs.find((n) => n.id === 'rest' && n.kind === 'rest');
@@ -3677,6 +3716,7 @@
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
+          this.crownIndustrialCirculation(z);
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
@@ -4109,6 +4149,7 @@
         this.frontierEdgeRedistribution(z);
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
+        this.crownIndustrialCirculation(z);
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);
