@@ -16,16 +16,17 @@
   const propKinds = Object.freeze({
     water: new Set(['well', 'fountain', 'mill-pond', 'pond', 'water', 'cistern', 'water-trough']),
     mineral: new Set([
-      'rock-cluster', 'highland-rock', 'black-rock', 'mossy-basalt', 'obsidian',
+      'rock', 'boulder', 'rock-cluster', 'highland-rock', 'black-rock', 'mossy-basalt', 'obsidian',
       'crystal-cluster', 'silver-ore-face', 'copper-ore-face', 'ore-face',
       'crystal', 'ore-cart', 'appalachian-silver-workings', 'appalachian-copper-workings',
-      'stonewall', 'crown-wall', 'stone-marker',
+      'stonewall', 'crown-wall', 'highland-wall', 'stone-marker',
     ]),
     wood: new Set([
       'tree', 'fruit-tree', 'dead-tree', 'sapling', 'pine-sapling', 'stump',
       'charred-stump', 'fallen-log', 'burned-log', 'driftwood', 'woodpile',
       'palisade', 'stockade', 'regrowth-birch', 'regrowth-willow',
       'appalachian-tree', 'appalachian-fallen-log', 'stacked-lumber', 'mangrove',
+      'willow', 'fence', 'patched-fence', 'vale-fence', 'frontier-palisade', 'march-boardwalk',
     ]),
     fire: new Set([
       'torch', 'cookfire', 'campfire', 'bonfire', 'warm-brazier', 'dark-brazier',
