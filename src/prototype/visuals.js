@@ -13234,6 +13234,48 @@
         // Crownwatch's civic court is made by residents and craftspeople:
         // maintained ceramic paving, useful stone seating and sheltered
         // greenery. These props are visual only, never water/heat sources.
+        // Source-identical exterior props at the existing Foundry gate.
+        // These are working receiving/shipping/exhaust features, not extra
+        // entrances or claims of a completed city-wide heat network.
+        case 'crown-foundry-yard-loading':
+          blockwork(-39, 8, 78, 12, '#797780', 4);
+          for (const x of [-34, 34]) {
+            line([[x, 8], [x, -27]], '#a3a6a4', 4);
+            softRect(x - 4, -29, 8, 6, '#c4b8ab', 1.4);
+          }
+          softPoly([[-42, -27], [0, -44], [42, -27], [0, -15]],
+            '#5e5f71', 2);
+          line([[-39, -26], [0, -40], [38, -26]], '#b5a79e', 1.6);
+          crateBody(-24, 10, 0.54);
+          crateBody(21, 12, 0.48);
+          break;
+        case 'crown-foundry-yard-flue':
+          blockwork(-32, 6, 64, 15, '#7a777c', 6);
+          blockwork(-19, -41, 23, 51, '#777e80', 6);
+          softRect(-17, -44, 21, 8, '#b0b3ae', 2);
+          oval(-7, -47, 12, 5, '#55545b');
+          line([[-19, -7], [25, -7]], '#a6a89d', 6);
+          softRect(17, -12, 9, 13, '#787d77', 2);
+          oval(23, -12, 5, 5, '#b8aa90');
+          line([[23, -12], [25, -15]], '#60564d', 1);
+          for (const y of [-30, -17])
+            line([[-15, y], [-2, y]], '#c4b2a3', 1.5);
+          break;
+        case 'crown-foundry-yard-shipping': {
+          const motion = Math.sin(Math.max(0, e.ambientTime || 0) * 2.8);
+          blockwork(-37, 8, 74, 12, '#85818a', 5);
+          crateBody(18, 4, 0.62);
+          crateBody(-12, 7, 0.53);
+          // A loading attendant performs a bounded lift, distinct from
+          // the armed sentries of the same entrance.
+          softRect(-28, -18, 13, 24, '#78857f', 3);
+          oval(-21, -26, 9, 9, '#c6a083');
+          softPoly([[-31, -31], [-22, -39], [-11, -33]], '#b6b3a8', 2);
+          const gripY = -13 - 7 * (motion + 1);
+          line([[-16, -14], [-7, gripY]], '#be987a', 3.5);
+          softRect(-6, gripY - 5, 17, 6, '#c2a98a', 1);
+          break;
+        }
         // Historical side-decor IDs now represent useful maintained
         // facilities. Cooling is air-assisted, NOT unexplained water supply.
         case 'crown-foundry-cooling-rack':
