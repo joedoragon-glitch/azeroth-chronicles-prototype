@@ -342,7 +342,21 @@
     'Specialists rescued · Defeat the Dark Lord': 'Especialistas rescatados · Derrota al Dark Lord',
     'Dungeon exit': 'Salida de la mazmorra',
     'Regional transport': 'Transporte regional',
-    'Mira · ask the Orchard trail witness': 'Mira · habla con el testigo del camino del huerto',
+    'Mira · ask the Western road observer': 'Mira · pregunta al observador del camino occidental',
+    'Western road observer': 'Observador del camino occidental',
+    'Scout tracks': 'Huellas del explorador',
+    'Northern freight crossing, west bank': 'Paso comercial del norte, orilla occidental',
+    'Northern freight crossing, east bank': 'Paso comercial del norte, orilla oriental',
+    'Goblin perimeter': 'Perímetro goblin',
+    'Skeleton watch perimeter': 'Perímetro del puesto de vigilancia esqueleto',
+    'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.':
+      'No hay avistamientos recientes desde el camino occidental. Busca huellas del explorador en el bosque del sur y junto a ambos pasos.',
+    'Recent pawprints were found by the western road. They may already be old; follow the tracks.':
+      'Se encontraron huellas recientes junto al camino occidental. Puede que ya sean antiguas; sigue el rastro.',
+    'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.':
+      'Thornfang fue explorador de los territorios salvajes de la Corona. Lleva a Mira desde su guarida temporal del sur por el puente peatonal meridional, el perímetro de la Cripta del Bosque, la vigilancia esqueleto, el paso comercial del norte y el territorio goblin. Evitan Millhaven. Mira realiza inspecciones obligatorias aunque recibe un salario. Cuando termine la finca de invierno y sus habitantes puedan protegerla, Thornfang piensa volver a su lejano hogar.',
+    'Fresh pawprints mark this nearby path. Follow their direction.':
+      'Hay huellas frescas en este camino cercano. Sigue su dirección.',
     'Complete · field base established': 'Completada · base de campo construida',
     'Complete · reward delivered': 'Completada · recompensa entregada',
     'Construction in progress · keep one companion assigned until complete':
@@ -1424,6 +1438,11 @@
     if (/^Inspired by /.test(piece)) return piece.replace('Inspired by ', 'Inspirado en ');
 
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
+    const thornLore = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
+    if (piece.startsWith('Fresh pawprints mark this nearby path. Follow their direction. ') &&
+        piece.endsWith(thornLore))
+      return spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
+        ' ' + spanishText[thornLore];
     if (/^One available companion goes away for /.test(piece))
       return piece
         .replace(
@@ -7895,7 +7914,7 @@
             ' is roaming ' +
             game.definition().name +
             (liveFieldTrue.family === 'thorn'
-              ? ' · Scout tracks / Orchard trail witness'
+              ? ' · Scout tracks / Western road observer'
               : ' · Map: Z')
           : pendingField && !pendingField[1].active
             ? 'TRUE BOSS · ' +
