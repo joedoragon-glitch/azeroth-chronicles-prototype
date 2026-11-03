@@ -148,4 +148,118 @@ assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => true,
 assert.equal(M.findSource(game, 'earth', { zone: gatherZone, rules: R, at: worker, range: 120 }), null);
 assert.equal(M.forCombat(game, 'water', { zone: dryZone, rules: R, range: 999999 }), null);
 
+
+// Source-catalog audit regressions from actual authored zone and dungeon owners.
+assert.equal(M.propMaterial({
+  id: 'greenwood-nature-43', x: 100, y: 100, structure: null,
+  greenwoodAuthored: true, greenwoodNature: 'tree',
+}), 'wood', 'Greenwood original forest trees do not have structure identifiers');
+assert.equal(M.propMaterial({
+  id: 'greenwood-nature-51', x: 100, y: 100, structure: null,
+  greenwoodAuthored: true, greenwoodNature: 'fallen-log', decorative: true,
+}), 'wood', 'real Greenwood woodland logs are not excluded for being decorative');
+assert.equal(M.propMaterial({
+  id: 'unverified-nature', x: 100, y: 100, structure: null,
+  greenwoodAuthored: true, greenwoodNature: 'tree',
+}), null, 'arbitrary metadata must not invent Greenwood sources');
+for (const structure of ['stacked-lumber', 'mangrove']) {
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure }), 'wood', structure);
+}
+for (const structure of ['ore-cart', 'crystal', 'appalachian-silver-workings']) {
+  assert.equal(M.propMaterial({
+    x: 100, y: 100, structure, miningFacility: true,
+  }), 'mineral', 'real source: ' + structure);
+}
+assert.equal(M.propMaterial({
+  x: 100, y: 100, structure: 'crystal', sceneRole: 'art-object',
+}), null, 'the Mine art gallery is not an exposed geological crystal source');
+assert.equal(M.propMaterial({
+  x: 100, y: 100, structure: 'appalachian-silver-workings',
+}), null, 'a mining facility must have real authored mining provenance');
+for (const structure of ['ember', 'ogre-hearth']) {
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure }), 'fire', structure);
+}
+assert.equal(M.propMaterial({
+  id: 'settlement-major-2', x: 100, y: 100, structure: 'crown-wall',
+}), null, 'a town-owned stone wall is not a free mineral resource');
+
+assert.deepEqual(M.closestToShape({ x: 5, y: 10 }, {
+  points: [[0, 0], [0, 20], [20, 20], [20, 0]],
+}), { x: 0, y: 10 }, 'tuple-encoded March harbor shore geometry must be recognized');
+assert(M.terrainSources(R, 'march', 1).some((source) => source.id === 'march-drainage'),
+  'actual walkable March drainage is a Water source, not a terrain barrier');
+const drain = M.terrainSources(R, 'march', 1).find((source) => source.id === 'march-drainage');
+game.hero.class = 'strategist';
+game.hero.x = 600;
+game.hero.y = R.drainageBanks(600).y;
+assert(M.forCombat(game, 'water', { zone: { id: 'march', props: [], buildings: [] },
+  rules: R, range: 50 })?.material === 'water',
+'active shallow March drainage must be usable without inventing a wall');
+
+// Deterministic cost guards: after a lazy two-pass build, repeated combat
+// queries must not enumerate all thousands of authored props again.
+let fullPropPasses = 0;
+const many = [];
+for (let i = 0; i < 2500; i++) many.push({
+  id: 'cosmetic-' + i, x: 1400 + (i % 70) * 23,
+  y: 600 + Math.floor(i / 70) * 20,
+  structure: 'dry-scrub', decorative: true, r: 0,
+});
+many.push({ id: 'valid-nearby-stump', x: 125, y: 105,
+  structure: 'stump', decorative: true, r: 0 });
+const watched = new Proxy(many, {
+  get(target, key, receiver) {
+    if (key === Symbol.iterator) {
+      fullPropPasses++;
+      return target[Symbol.iterator].bind(target);
+    }
+    return Reflect.get(target, key, receiver);
+  },
+});
+const denseZone = { id: 'vale', props: watched, buildings: [] };
+game.hero.x = 100; game.hero.y = 100;
+assert.equal(M.forCombat(game, 'wood', { zone: denseZone, rules: R, range: 130 })?.id,
+  'valid-nearby-stump');
+const builtPasses = fullPropPasses;
+assert(builtPasses <= 3, 'first lookup should build only a few lazy indexes');
+for (let i = 0; i < 80; i++) {
+  assert.equal(M.forCombat(game, 'wood', { zone: denseZone, rules: R, range: 130 })?.id,
+    'valid-nearby-stump');
+}
+assert.equal(fullPropPasses, builtPasses,
+  '80 combat lookups must reuse spatial+occluder grids, not enumerate 2500 props per cast');
+
+// Worst-case denied visibility and worker routes are capped, so a deliberately
+// adversarial battlefield cannot trigger unbounded LOS/route work.
+const wallBlocked = [{ id: 'occluder', x: 120, y: 100, r: 13,
+  structure: 'stonewall', decorative: false }];
+for (let i = 0; i < 200; i++) wallBlocked.push({
+  id: 'wood-behind-' + i, x: 150 + (i % 4),
+  y: 100 + (i % 5), r: 0, decorative: true, structure: 'fallen-log',
+});
+let sightAttempts = 0;
+const sightRules = {
+  terrain: [[], [], [], [], []], barriers: [], harbors: {},
+  dungeonArchitecture: { vale: {
+    partitions: {
+      some() { sightAttempts++; return false; },
+    },
+  } },
+};
+assert.equal(M.forCombat(game, 'wood', {
+  zone: { id: 'vale', props: wallBlocked, buildings: [] },
+  rules: sightRules, range: 180,
+}), null);
+assert(sightAttempts > 0 && sightAttempts <= 32,
+  'no more than 32 line-of-sight probes per Strategist combat lookup');
+let routeAttempts = 0;
+const impossibleLab = { id: 'vale', props: wallBlocked, buildings: [] };
+assert.equal(M.forGather(game, 'wood', {
+  zone: impossibleLab, rules: sightRules, range: 500,
+  worker: { x: 100, y: 100 }, lab: { id: 'lab', zone: 'vale' },
+  authorize: () => true, route: () => { routeAttempts++; return []; },
+}), null);
+assert.equal(routeAttempts, 24, 'at most 24 actual route probes per Lab query');
+
+
 console.log('PASS Strategist source truth, line of sight, class isolation and authenticated gathering');
