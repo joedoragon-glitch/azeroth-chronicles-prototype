@@ -22,6 +22,10 @@ The project owner authorized the provisional **environmental and Thornfang/Mira 
 
 **Merged / Deployed / Device-verified:** **No / No / No.** Main and production must remain untouched.
 
+## Validation and review-build boundary
+
+This PR update permits GitHub's **existing, automatically scheduled focused PR checks** and the dedicated PR-only preview job to run. Neither is a manual workflow dispatch or a comprehensive game certification. Their results must be read and recorded by exact SHA before describing the candidate as tested or preview-ready. The preview artifact is a local-use site package, not a deployment.
+
 ## Preserved recovery material
 
 - [Original PR #680 staging document at its preimplementation commit](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/864b70635a195bf8e43389ca878ab78f89e8a583/docs/GREENWOOD_679_REFINEMENT_PATCH_STAGING.md)
