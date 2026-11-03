@@ -1724,6 +1724,25 @@
           this.s.zone = before;
         }
       }
+      // Re-purpose only this side dungeon's original exterior decorations.
+      // Same IDs and world coordinates, including old v4 campaign saves.
+      crownFoundryExterior(z) {
+        if (z.id !== 'crown' || z.crownFoundryExteriorVersion === 1) return;
+        const themes = [
+          'crown-foundry-yard-loading',
+          'crown-foundry-yard-flue',
+          'crown-foundry-yard-shipping',
+        ];
+        for (const [i, structure] of themes.entries()) {
+          const p = z.props.find((q) =>
+            q.id === 'side-entrance-side-crown-foundry-' + i);
+          if (!p) continue;
+          p.structure = structure;
+          p.crownFoundryExterior = true;
+          p.decorative = true;
+        }
+        z.crownFoundryExteriorVersion = 1;
+      }
       crownIndustrialCirculation(z) {
         if (z.id !== 'crown' || z.crownIndustrialVersion === 1) return;
         const oldZone = this.s.zone;
@@ -3799,6 +3818,7 @@
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
           this.crownIndustrialCirculation(z);
+          this.crownFoundryExterior(z);
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
@@ -4233,6 +4253,7 @@
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
         this.crownIndustrialCirculation(z);
+        this.crownFoundryExterior(z);
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);
