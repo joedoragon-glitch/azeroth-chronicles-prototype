@@ -1,6 +1,25 @@
 {
   "schemaVersion": 1,
   "assets": {
+    "millhaven-chamber": {
+      "kind": "music",
+      "src": "./assets/audio/music/millhaven-chamber.mp3",
+      "duration": 85.629388,
+      "sha256": "11a6aeb67001e5d1deb2b4aa0c04af39f6a922d5ce104c0edf88990d73e3373d",
+      "loop": {
+        "start": 0,
+        "end": 83.47826086956522
+      },
+      "credits": {
+        "author": "Original SIBDLP Millhaven theme; owner-approved Candidate B synthesized chamber arrangement",
+        "license": "Original project-owned composition"
+      },
+      "title": "Millhaven Chamber",
+      "bpm": 92,
+      "managedBy": "millhaven-owner-approved-candidate-b",
+      "creationMethod": "original-theme-source-derived-synthesized-recording",
+      "sourceScore": "src/prototype/audio-catalog.js"
+    },
     "place-vale": {
       "kind": "music",
       "src": "./assets/audio/music/place-vale.mp3",
