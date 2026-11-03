@@ -61,6 +61,8 @@ does not certify a fresh whole-game audit. The historical v0.9 findings
 below retain their original context; the current table supersedes older hero
 immunity, Haste and missing-Silence statements.
 
+**Skill Block player-learning candidate (draft PR [#772](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/772), 3 November 2026):** The existing quick Combat conditions guide gains one shared Skill Block explanation without requiring the Keeper. A pact-qualified Keeper can optionally reveal live single/area, Ranger, Rogue, night and allied companion figures through **Show me the figures**; Controls distinguishes obstructed red aim from on-impact Skill Block. The Canvas/Pixi overlay uses **Blocked! / ¡Bloqueado!** from the active language. These learning additions **passed the exact implementation-head focused CI (#41644175055) and targeted PWA/Pixi browser checks** but remain **unmerged, unpublished and device-unverified** pending owner authorization; #760's original block probabilities and combat resolver are unchanged.
+
 Players can use **Hero skills → Combat conditions** (Adventure, either Barracks,
 or a teacher's Review hero skills), or **Controls → Combat conditions**. That
 reference offers one short explanation per selected effect. The Drowned Keeper's
@@ -238,9 +240,9 @@ Before claiming **v0.9 certified**, run the exact-head format/build/check/test g
 
 **Not currently authored as generalized conditions:** stun, mind control, hard root, fear or universal stealth. Silence and Paladin enemy taunt are now explicitly authored above; ordinary slowing seals still do not silence or hard-root. Do not promise testers these effects solely because an attack name implies them. New conditions should first define target types, application eligibility, timer/stack rules, immunity interaction, UI/audio notice, save lifecycle and regression coverage.
 
-## Skill Block — draft implementation (PR #760; not yet released)
+## Skill Block — merged and published source (PR #760; device verification pending)
 
-The draft Skill Block system does **not** change ordinary basic
+The merged Skill Block system does **not** change ordinary basic
 attacks, autoattack combo finishers, physical projectile collision, ground
 warning geometry, line-of-sight eligibility, immunity or Reversal. A legal
 single-target hero/companion skill grants an enemy a configurable 20% block
@@ -266,6 +268,4 @@ catalog and visual identities remain unchanged; only the two current
 source-file fingerprints in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json`
 are refreshed. Historical sprite approvals and receipts remain intact.
 
-**Status:** These are proposed PR #760 branch rules subject to focused tests,
-review, explicit merge approval, publication and device verification. This
-section is not evidence that the current public game already uses Skill Block.
+**Status:** Skill Block was implemented in [PR #760](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/760), merged into `main` on 3 November 2026 at `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`, and passed the exact-merge [focused validation and GitHub Pages publication](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41637089826). This is technical publishing evidence, **not** proof that a physical device received or validated the update. Its **player-learning copy remains unimplemented**; the owner-approved [Skill Block player learning design](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md) specifies the existing reference paths, EN/ES feedback, optional figures and engineering handoff. That separate draft is documentation/design only.

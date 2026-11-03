@@ -587,6 +587,7 @@
     PrototypeGroundCache = root.PrototypeGroundCache ||
       (typeof require === 'function' ? require('./ground-cache.js') : null),
     now = () => performance.now(),
+    getBlockLabel = () => 'Blocked!',
   }) {
     // Draw in unzoomed presentation units, preserving one transform for the
     // world, artwork and effects. Public coordinates remain CSS pixels.
@@ -1009,7 +1010,23 @@
           layer.brush.globalAlpha = 1;
           layer.brush.clearRect(0, 0, size, size);
         }
-        sprite(pair.actor, { x: centerX, y: footY }, actorLayer.brush, true);
+        // Pixi keeps its world/shadow foot still, but moves the retained
+        // raster body by Canvas's identity-phase idle/busy animation. The
+        // mask must track that same presentation-only delta. Cover, broad
+        // phase, collision and the final on-screen contour origin stay at
+        // their original world points. Unretained Canvas bodies already
+        // apply visualPosition inside sprite(), so never offset them twice.
+        const retained = silhouetteFrames?.get(pair.actor.spriteIdentity || pair.actor);
+        const shown = retained ? visualPosition(pair.actor, pair.position) : pair.position;
+        sprite(
+          pair.actor,
+          {
+            x: centerX + shown.x - pair.position.x,
+            y: footY + shown.y - pair.position.y,
+          },
+          actorLayer.brush,
+          true,
+        );
 
         // Color the real actor alpha, not a rectangle or an ellipse.
         const tint = tintLayer.brush;
@@ -1737,16 +1754,20 @@
         if (pos.x < -35 || pos.x > canvas.width + 35 ||
             pos.y < -80 || pos.y > canvas.height + 80) continue;
         const rise = reducedMotion() ? 0 : (0.65 - cue.life) * 9,
-          x = Math.max(32, Math.min(canvas.width - 32, pos.x)),
+          label = getBlockLabel(),
           y = Math.max(22, Math.min(canvas.height - 24,
             pos.y - spriteHeight(actor) - 18 - rise));
         ctx.globalAlpha = Math.min(1, cue.life / 0.22);
         ctx.font = 'bold 11px system-ui';
+        // Respect the longer Spanish label without enlarging the cue or queue.
+        const edge = Math.min(canvas.width / 2,
+          Math.max(32, Math.ceil(ctx.measureText(label).width / 2) + 3)),
+          x = Math.max(edge, Math.min(canvas.width - edge, pos.x));
         ctx.lineWidth = 2.4;
         ctx.strokeStyle = '#172b2a';
         ctx.fillStyle = '#e0e9eb';
-        ctx.strokeText('Blocked!', x, y);
-        ctx.fillText('Blocked!', x, y);
+        ctx.strokeText(label, x, y);
+        ctx.fillText(label, x, y);
         cue.drawn = true;
       }
       ctx.restore();
@@ -3630,21 +3651,36 @@
         const underlay = !!(aura || flight || bundle || e.pursuitBurst > 0);
         const overlay = !!((e.family === 'ridge' && e.ledgerOpen) || e.kind === 'keeper');
         if (!underlay && !overlay) return null;
+        // Stable details must not inherit the aura's changing clock. Only
+        // TRUE bosses have animated TRUE geometry; ordinary TRUE enemies have
+        // a static ring. Ringleader/frenzy pulses intentionally keep moving.
+        const trueBoss = aura && e.form === 'true' && e.type === 'boss';
+        const stillTrueBoss = trueBoss && reducedMotion();
+        const animatedAura = aura && (e.form !== 'true' || (trueBoss && !stillTrueBoss));
         return {
           underlay,
           overlay,
           visual: e,
-          signature: JSON.stringify([
-            e.form,
-            !!e.frenzy,
-            !!e.ledgerOpen,
-            bundle,
-            e.pursuitBurst > 0,
-            flight ? e.motion.flightPath?.[0] || e.motion.target : null,
-            aura ? now() : 0,
-            spriteHeight(e),
-            reducedMotion(),
-          ]),
+          underlaySignature: underlay
+            ? JSON.stringify([
+                e.form,
+                e.type,
+                !!e.frenzy,
+                bundle,
+                e.pursuitBurst > 0,
+                // Flight streaks depend on the actor-to-waypoint vector, not
+                // just the next waypoint. Keep them attached as the boss moves.
+                flight ? [e.x, e.y, e.motion.flightPath?.[0] || e.motion.target] : null,
+                animatedAura ? now() : 0,
+                trueBoss ? spriteHeight(e) : 0,
+                stillTrueBoss,
+              ])
+            : null,
+          // The Ridge book and Keeper cage are fixed local geometry; their
+          // position/zoom is handled by the retained Pixi Graphics transform.
+          overlaySignature: overlay
+            ? JSON.stringify([e.family === 'ridge' && !!e.ledgerOpen, e.kind === 'keeper'])
+            : null,
         };
       },
       paintActorDetails: (brush, e, layer) => {

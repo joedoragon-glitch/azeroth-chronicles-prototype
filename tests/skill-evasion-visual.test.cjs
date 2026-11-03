@@ -4,8 +4,9 @@ const assert = require('node:assert/strict');
 const Renderer = require('../src/prototype/renderer.js');
 const fs = require('node:fs');
 const rendererSource = fs.readFileSync(require('node:path').join(__dirname, '../src/prototype/renderer.js'), 'utf8');
-assert.match(rendererSource, /ctx\.strokeText\('Blocked!', x, y\)/, 'combat cue outline uses Blocked!');
-assert.match(rendererSource, /ctx\.fillText\('Blocked!', x, y\)/, 'combat cue text uses Blocked!');
+assert.match(rendererSource, /ctx\.strokeText\(label, x, y\)/, 'cue outline uses injected locale');
+assert.match(rendererSource, /ctx\.fillText\(label, x, y\)/, 'cue text uses injected locale');
+assert.match(rendererSource, /getBlockLabel = \(\) => 'Blocked!'/, 'English defaults without app shell');
 let now = 1000;
 const game = {
   zoneId: 'vale',
@@ -45,4 +46,35 @@ queueBlock();
 game.zoneId = 'march';
 renderer.queue([]);
 assert.equal(renderer.metrics().blockCues, 0, 'zone transitions clear pending labels');
-console.log('PASS skill block overlay duplicate, frame skip, bound and scene reset');
+// Exercise the actual native painter with a tiny Canvas context. No GPU or game
+// mutation is required to verify a mid-session display-language switch.
+const blockPainter = rendererSource.match(/    function drawBlockCues\(\) \{[\s\S]*?\n    \}\n    function drawCriticalCues/);
+assert(blockPainter, 'native block painter stays present in both overlay paths');
+const painterFactory = new Function('blockCues', 'game', 'ctx', 'now', 'screen',
+  'canvas', 'reducedMotion', 'spriteHeight', 'getBlockLabel',
+  blockPainter[0].replace(/\n    function drawCriticalCues$/, '') + '\nreturn drawBlockCues;');
+let language = 'en';
+const paints = [];
+const context = {
+  save() {}, restore() {},
+  measureText(text) { return { width: text.length * 7 }; },
+  strokeText(text, x) { paints.push({ text, x, mode: 'outline' }); },
+  fillText(text, x) { paints.push({ text, x, mode: 'fill' }); },
+};
+const paintingGame = {
+  ...game, zoneId: 'vale',
+  zone() { return { enemies: [{ id: 'foe', hp: 100, x: 3, y: 60 }] }; },
+};
+const painter = painterFactory(
+  [{ target: 'foe', life: 0.65, drawn: false, expiresAt: 2000 }],
+  paintingGame, context, () => 1000, (actor) => actor, { width: 100, height: 100 },
+  () => false, () => 12, () => language === 'es' ? '¡Bloqueado!' : 'Blocked!',
+);
+painter();
+assert(paints.some((p) => p.mode === 'fill' && p.text === 'Blocked!'));
+language = 'es';
+painter();
+assert(paints.some((p) => p.mode === 'fill' && p.text === '¡Bloqueado!'));
+const spanishCue = paints.find((p) => p.mode === 'fill' && p.text === '¡Bloqueado!');
+assert(spanishCue.x >= 40 && spanishCue.x <= 60, 'Spanish cue is clamped within narrow viewport');
+console.log('PASS localized Skill Block Canvas/Pixi overlay, switch, bounds and expiry');
