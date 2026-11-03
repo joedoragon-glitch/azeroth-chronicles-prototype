@@ -66,7 +66,7 @@ const scripts = [
     'ground-cache',
     'renderer',
   ].map((name) => 'src/prototype/' + name + '.js'),
-  // GPU helpers must initialize BEFORE the experimental adapter and app.
+  // Live GPU primitives, sprite adapter, bridge and guard load before Pixi and app.
   'tools/webgl-pilot/native-webgl2-core.js',
   'tools/webgl-pilot/native-sprite-adapter.js',
   'tools/webgl-pilot/pixi-scene-bridge.js',
