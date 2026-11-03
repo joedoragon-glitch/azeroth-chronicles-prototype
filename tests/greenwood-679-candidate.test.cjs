@@ -19,7 +19,7 @@ assert.equal(C.rules.thornPatrol.startLeg, 7);
 assert.equal(C.rules.thornPatrol.direction, -1);
 assert.equal(C.rules.thornPatrol.route.length, 8);
 assert.equal(C.rules.thornPatrol.speed, 82);
-assert.equal(C.rules.thornPatrol.westernWoodlandGuide.length, 8);
+assert.equal(C.rules.thornPatrol.westernWoodlandGuide.length, 9);
 for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
   assert.equal(z.greenwoodRedesignScene, 5);
