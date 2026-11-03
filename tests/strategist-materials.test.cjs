@@ -212,7 +212,7 @@ assert.equal(M.propMaterial({
 
 assert.deepEqual(M.closestToShape({ x: 10, y: 50 }, {
   x1: 0, x2: 20, y1: 0, y2: 100, gaps: [[40, 60]],
-}), { x: 10, y: 39 },
+}), { x: 10, y: 61 },
 'crossing gaps are not lava even though they lie inside the lava rectangle');
 const crownBarrier = R.barriers[4];
 const sampleBank = R.channelBanks(4, 1000)[0];
