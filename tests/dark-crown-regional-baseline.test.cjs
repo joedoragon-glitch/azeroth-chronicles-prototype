@@ -50,11 +50,32 @@ assert.equal(foundry.enemyCount, 14, 'Record current combat configuration; not w
 assert.equal(rules.crownThermalWorksScenes.length, 15,
   'Existing heatworks are fifteen authored objects, not a proved pipe network');
 
+// The Civic public hall must paint using the actual regional service, not a
+// disconnected test-only art object. This verifies only a small Canvas gate.
+const civic = new Campaign('normal', 'paladin', () => 0.73);
+assert(civic.enter('crown'));
+const rest = civic.zone().npcs.find(n => n.id === 'rest');
+assert(rest && rest.kind === 'rest', 'The preexisting Crownwatch rest service remains interactive');
+const hall = createCanvas(210, 180);
+const savedBefore = JSON.stringify(civic.s);
+Visuals.draw(hall.getContext('2d'), { ...rest, renderKind: 'npc' }, { x: 105, y: 142 }, 4);
+const roof = hall.getContext('2d').getImageData(93, 76, 24, 22).data;
+assert(roof.some((v, i) => i % 4 === 3 && v > 0),
+  'Crownwatch civic-hall roof is painted above the former cottage silhouette');
+assert.equal(JSON.stringify(civic.s), savedBefore, 'Painting a hall must not change game state');
+const restoredCivic = Campaign.restore(civic.snapshot());
+assert(restoredCivic.enter('crown'));
+const restoredRest = restoredCivic.zone().npcs.find(n => n.id === 'rest');
+assert(restoredRest);
+assert.deepEqual([restoredRest.x, restoredRest.y], [rest.x, rest.y],
+  'Original rest location and saved service identity must survive v4 restore');
+
 const candidates = [
   // First-visit city, home, heat, freight, geology, crossings and regime.
   ['arrival', 'crown', 690, 430, 245],
   ['ridge-skyline', 'crown', 1040, 240, 245],
   ['civic-court', 'crown', 600, 700, 245],
+  ['civic-hall-frontage', 'crown', 600, 550, 245],
   ['courtyard-housing-baseline', 'crown', 720, 900, 245],
   ['ash-refuge', 'crown', 1030, 1840, 245],
   ['east-heat-intake', 'crown', 2770, 710, 245],
