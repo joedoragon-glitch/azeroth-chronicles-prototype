@@ -2584,7 +2584,8 @@
         ...presentation,
         renderKind,
         ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
-        ...(Campaign.rules?.ambientLife?.[e.structure || e.id] || e.crownFoundryWorker
+        ...(Campaign.rules?.ambientLife?.[e.structure || e.id] ||
+          e.crownFoundryWorker || e.crownFoundryExterior
           ? { ambientTime: reducedMotion() ? 0 : (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
           : {}),
       };
