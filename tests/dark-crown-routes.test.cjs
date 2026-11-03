@@ -93,6 +93,24 @@ for (const mode of ['normal', 'nightmare']) {
     walk(bridge.west, bridge.east, bridge.id + ' west-to-east');
     walk(bridge.east, bridge.west, bridge.id + ' east-to-west');
   }
+  // The generated footpath ledger also needs actual in-game connectivity,
+  // not just successful placement of two endpoints in source metadata.
+  // These are short, authored local freight links, NOT new roads or lava spans.
+  if (mode === 'normal') {
+    const foundryLinks = zone.crownIndustrialRoutes || [];
+    assert(foundryLinks.length > 0, 'At least one real industry connector exists');
+    for (const link of foundryLinks) {
+      const from = zone.props.find(p => p.id === link.from);
+      const to = link.to === 'foundry' ? foundryGate
+        : zone.props.find(p => p.id === link.to);
+      assert(from && to, 'Industrial ledger links actual placed fixtures: ' + link.id);
+      walk({ x: from.x + 64, y: from.y + 66 },
+        { x: to.x + 64, y: to.y + 66 },
+        'actual industrial link ' + link.id);
+    }
+    console.log('PASS normal: ' + foundryLinks.length +
+      ' realized industrial links are collision-reachable in the playable field');
+  }
   // A complete route is a stronger assertion than a decorative painted road.
   // Keep expensive long-distance trips bounded to one pass per game mode.
   walk(rest, bridges[0].west, 'Crownwatch civic hall to north crossing');

@@ -217,6 +217,25 @@ const candidates = [
   ['citadel-academy', 'citadel', 630, 955, 245],
   ['cindermaw-treasury', 'supply-crown', 535, 350, 245],
 ];
+// Bind camera reconnaissance to the REAL saved/generation identities where
+// they exist. Nominal master-plan coordinates can miss the safely displaced
+// actual industrial yard; a filename must never masquerade as visual proof.
+// Offset the player camera from workers/props so the hero does not hide them.
+const cameraAnchors = new Map([
+  ['civic-hall-frontage', ['npcs', 'rest', 0, 0, true]],
+  ['ash-refuge', ['npcs', 'minor', 0, 0, true]],
+  ['east-heat-intake', ['props', 'recovery-heat-crown-0', 65, 60, false]],
+  ['west-glassworks', ['props', 'recovery-heat-crown-7', 65, 60, false]],
+  ['bridge-north', ['npcs', 'bridge-north', 0, 0, true]],
+  ['bridge-south', ['npcs', 'bridge-south', 0, 0, true]],
+  ['foundry-exterior', ['npcs', 'foundry', 65, 55, true]],
+  ['crystal-dispatch', ['nodes', 'tribute-crown-crystal-shipment', 65, 55, false]],
+  ['heatworks-night', ['props', 'recovery-heat-crown-0', 65, 60, false]],
+  ['foundry-receiving', ['props', 'crown-foundry-work-receiving', 65, 45, true]],
+  ['foundry-forming', ['props', 'crown-foundry-work-forming', 65, 45, true]],
+  ['foundry-finishing', ['props', 'crown-foundry-work-finishing', 65, 45, true]],
+  ['foundry-dispatch', ['props', 'crown-foundry-work-dispatch', 65, 45, true]],
+]);
 const records = [];
 for (const [label, zoneId, x, y, clock] of candidates) {
   const game = new Campaign('normal', 'paladin', () => 0.73);
@@ -225,9 +244,20 @@ for (const [label, zoneId, x, y, clock] of candidates) {
   game.s.clock = clock;
   // Collision-safe teleport for CAMERA RECONNAISSANCE only. It does not
   // demonstrate that a player can reach this point through normal gameplay.
-  const safe = game.safe(x, y, zoneId);
+  const spec = cameraAnchors.get(label);
+  const anchored = spec && zone[spec[0]]?.find(entity => entity.id === spec[1]);
+  if (spec?.[4])
+    assert(anchored, 'Required actual visual landmark is missing: ' + label);
+  if (spec && !anchored)
+    console.warn('UNPLACED camera subject: ' + label + ' (' + spec[1] + ')');
+  const cameraTarget = anchored
+    ? { x: anchored.x + spec[2], y: anchored.y + spec[3] } : { x, y };
+  const safe = game.safe(cameraTarget.x, cameraTarget.y, zoneId);
   assert(safe && Number.isFinite(safe.x) && Number.isFinite(safe.y),
     'Native collision-safe photographic camera point: ' + label);
+  if (anchored)
+    assert(Math.hypot(safe.x - anchored.x, safe.y - anchored.y) <= 240,
+      'A grounded landmark cannot be outside its own camera neighborhood: ' + label);
   Object.assign(game.hero, safe);
   for (const [viewport, width, height] of [['desktop', 880, 560], ['narrow', 390, 680]]) {
     const canvas = createCanvas(width, height);
@@ -256,6 +286,12 @@ for (const [label, zoneId, x, y, clock] of candidates) {
     records.push({
       label, zoneId, viewport, width, height, zoom: 1.5, clock,
       requestedFocus: [x, y], actualCamera: [safe.x, safe.y],
+      actualFeatureAnchorId: anchored?.id || null,
+      actualFeatureAnchor: anchored ? [anchored.x, anchored.y] : null,
+      requestedFeatureAnchorId: spec?.[1] || null,
+      plannedFeatureMissing: !!spec && !anchored,
+      featureDistanceFromCamera: anchored
+        ? Math.round(Math.hypot(anchored.x - safe.x, anchored.y - safe.y)) : null,
       viewNameIsIntentNotVerifiedLandmark: true,
       traversedToView: false, compositionReviewedByTest: false,
       focusDisplacement: Math.round(Math.hypot(x - safe.x, y - safe.y)),
@@ -285,7 +321,7 @@ assert.deepEqual(restored.zone().props.filter(p => p.id.startsWith('side-wall-')
 
 fs.writeFileSync(path.join(root, 'scene-index.json'), JSON.stringify({
   source: 'Dark Crown PR #707; actual game Campaign and Canvas2D code',
-  status: 'Unverified candidate viewpoints for BEFORE-state reconnaissance; not final design boards or composition coverage proof',
+  status: 'Unverified current-draft scene viewpoints. Real feature IDs ground selected cameras; neither proximity nor a filename certifies visible composition or final art approval',
   pixelDeterminismVerified: false,
   pngSha256Meaning: 'per-run evidence integrity only; do not use as a cross-run pixel equality assertion',
   provenance: {
@@ -295,7 +331,7 @@ fs.writeFileSync(path.join(root, 'scene-index.json'), JSON.stringify({
     githubWorkflowRunId: process.env.GITHUB_RUN_ID || null,
     localRunWithoutCiMetadata: !process.env.GITHUB_SHA,
   },
-  captureMethod: 'collision-safe hero teleport, fixed initial RNG and clock, Canvas2D, custom 150% camera anchor, optimization mode disabled; no cross-run pixel identity, player traversal, Pixi, image-content assertion or physical phone',
+  captureMethod: 'collision-safe subject-relative hero camera where authorial feature ID exists, fallback to nominal survey where missing; fixed RNG and clock, native Canvas2D at 150%, no pixel identity, player traversal, Pixi, image-content assertion or physical phone',
   regionSourceId: 'crown', foundrySourceId: 'side-crown-foundry',
   scenes: candidates.length, captures: records.length, records,
 }, null, 2) + '\n');
