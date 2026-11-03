@@ -498,7 +498,110 @@
     }
     return { arm, clean, recover, read };
   }
+
+  // Only small advice metadata lives in origin storage, never save copies.
+  const externalReminderKey = 'azeroth-external-backup-advice-v1';
+  function createBackupAdvisor({ storage, now = Date.now } = {}) {
+    const memory = new Map();
+    const modes = ['normal', 'nightmare', 'developer', 'arena'];
+    function write(mode, record) {
+      try {
+        storage?.setItem(externalReminderKey + '-' + mode, JSON.stringify(record));
+      } catch (_) {
+        // A blocked metadata write must never affect saving or exporting.
+      }
+    }
+    function read(mode, level) {
+      if (!modes.includes(mode)) return null;
+      if (memory.has(mode)) return memory.get(mode);
+      let record = null;
+      try {
+        const raw = storage?.getItem(externalReminderKey + '-' + mode);
+        if (raw && raw.length <= 512) {
+          const value = JSON.parse(raw);
+          if (value?.version === 1 && Number.isFinite(value.firstSeenAt) &&
+              Number.isInteger(value.firstSeenLevel) &&
+              Number.isFinite(value.downloadStartedAt) &&
+              Number.isInteger(value.downloadLevel) &&
+              Number.isFinite(value.lastShownAt))
+            record = value;
+        }
+      } catch (_) {}
+      if (!record) {
+        record = {
+          version: 1,
+          firstSeenAt: now(),
+          firstSeenLevel: level,
+          downloadStartedAt: 0,
+          downloadLevel: level,
+          lastShownAt: 0,
+        };
+        write(mode, record);
+      }
+      memory.set(mode, record);
+      return record;
+    }
+    function elapsed(since, at) {
+      return Number.isFinite(since) && since > 0 && at >= since ? at - since : 0;
+    }
+    return {
+      due(mode, level) {
+        if (!Number.isInteger(level) || level < 1) return false;
+        const record = read(mode, level);
+        if (!record) return false;
+        const time = now();
+        if (record.lastShownAt && elapsed(record.lastShownAt, time) < 86400000)
+          return false;
+        const anchor = record.downloadStartedAt || record.firstSeenAt;
+        const anchorLevel = record.downloadStartedAt
+          ? record.downloadLevel : record.firstSeenLevel;
+        return elapsed(anchor, time) >= 7200000 || level - anchorLevel >= 5;
+      },
+      shown(mode, level) {
+        const record = read(mode, level);
+        if (!record) return;
+        record.lastShownAt = now();
+        write(mode, record);
+      },
+      downloadStarted(mode, level) {
+        const record = read(mode, level);
+        if (!record) return;
+        record.downloadStartedAt = now();
+        record.downloadLevel = level;
+        record.lastShownAt = 0;
+        write(mode, record);
+      },
+    };
+  }
+  // A manual export must be a reloadable v4 file, not just plausible JSON.
+  function prepareExternalExport(game, Campaign, date = new Date()) {
+    if (!game?.snapshot || !Campaign?.validate || !Campaign?.restore)
+      throw Error('Campaign export unavailable');
+    const snapshot = game.snapshot();
+    Campaign.validate(snapshot);
+    if (snapshot.version !== 4) throw Error('Unsupported export version');
+    const text = JSON.stringify(snapshot, null, 2);
+    const verified = Campaign.restore(JSON.parse(text));
+    if (verified.s.mode !== game.s.mode ||
+        verified.hero.class !== game.hero.class ||
+        verified.hero.level !== game.hero.level)
+      throw Error('Export round-trip mismatch');
+    Campaign.validate(verified.snapshot());
+    const safe = (value) => String(value).replace(/[^a-z0-9_-]/gi, '').slice(0, 30);
+    const stamp = date.toISOString().slice(0, 16).replace(/[T:]/g, '-');
+    return {
+      text,
+      mode: verified.s.mode,
+      heroClass: verified.hero.class,
+      level: verified.hero.level,
+      filename: 'SIBDLP_' + safe(verified.s.mode) + '_' +
+        safe(verified.hero.class) + '_L' + verified.hero.level + '_' + stamp + '.json',
+    };
+  }
   const api = {
+    createBackupAdvisor,
+    prepareExternalExport,
+    externalReminderKey,
     create,
     createWriterGuard,
     createRestartGuard,
