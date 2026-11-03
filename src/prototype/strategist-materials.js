@@ -32,6 +32,8 @@
       'torch', 'cookfire', 'campfire', 'bonfire', 'warm-brazier', 'dark-brazier',
       'ridge-hearth', 'estate-hearth', 'cellar-hearth', 'forge', 'ember-pit',
       'silver-refining-hearth', 'furnace', 'field-kitchen', 'ember', 'ogre-hearth',
+      'citadel-forge-bay', 'geothermal-heat-intake', 'fumarole',
+      'roadside-lantern', 'grave-lamp',
     ]),
   });
   const isFinitePoint = (p) => !!p && Number.isFinite(p.x) && Number.isFinite(p.y);
