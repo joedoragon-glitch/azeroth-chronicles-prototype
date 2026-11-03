@@ -4,6 +4,9 @@ const assert = require('node:assert/strict');
 const { rng } = require('../tools/greenwood-layout/fixtures.cjs');
 const C = require('../src/prototype/engine.js');
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const enemyPositions = (z) => z.enemies.map((e) => [
+  e.id, e.family, e.type, e.x, e.y, e.home?.x, e.home?.y,
+]);
 const expected = {
   'greenwood-refinement-millhaven-poultry': 'poultry-yard',
   'greenwood-refinement-millhaven-flowers': 'wildflowers',
@@ -49,6 +52,8 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   assert.equal(JSON.stringify(input), serialized, 'restore must not mutate submitted save');
   assert.equal(restored.zone().props.filter((p) => expected[p.id]).length,
     Object.keys(expected).length, 'no duplicate art on reload');
+  assert.deepEqual(enemyPositions(restored.zone()), enemyPositions(z),
+    'reload retains every saved monster ID, coordinate and home without relocation');
   // Simulate a release-5 save and preserve a player-owned custom prop.
   const old = JSON.parse(serialized), oldZone = old.zones.vale;
   // Recreate a legitimate old scene-5 save that predates the overlay.
@@ -66,6 +71,8 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   assert(newProps.some((p) => p.id === 'player-custom-greenwood-679' && p.playerOwned),
     'owned objects survive the scenery regeneration');
   assert.equal(migrated.zone().enemies.filter((e) => e.type === 'mob' && !e.summon).length, 32);
+  assert.deepEqual(enemyPositions(migrated.zone()), enemyPositions(oldZone),
+    'scene-5 cosmetic migration cannot change existing monster placements');
   assert.equal(migrated.zone().nodes.reduce((n, p) => n + p.amount, 0), 640);
 }
 console.log('PASS #679 authored micro-scenes, owned props, source preservation and four seeded v4 saves');
