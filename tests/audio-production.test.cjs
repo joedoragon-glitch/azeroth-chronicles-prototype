@@ -50,7 +50,7 @@ for (const boss of data.bosses) {
   }
 }
 assert.equal(data.bosses.length, 11);
-assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'music').length, 83);
+assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'music').length, 84);
 assert.equal(Object.values(manifest.assets).filter((a) => a.kind === 'ambience').length, 34);
 for (const zone of Object.keys(production.places)) {
   const interior = zone.startsWith('supply-')
@@ -79,12 +79,20 @@ assert.deepEqual(idleVale.stems.map(s => s.id), ['place-vale', 'action-vale']);
 assert.equal(idleVale.stems[1].gain, 0,
   'Greenwood encounter layer must start silent in exploration');
 const millhaven = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
-  settlement: 'millhaven', engaged: 0 });
-assert.deepEqual(millhaven.stems.map(s => s.id), ['place-vale', 'action-vale']);
-assert.equal(millhaven.stems[0].gain, 0.74,
-  'Millhaven restores the original Greenwood exploration recording at its normal level');
-assert.equal(millhaven.stems[1].gain, 0,
-  'Millhaven encounter music must be loaded silently until nearby combat');
+  settlement: 'millhaven', millhavenTown: true, engaged: 0 });
+assert.equal(millhaven.id, 'millhaven-chamber',
+  'peaceful Millhaven must play the owner-approved Candidate B recording');
+assert.deepEqual(millhaven.stems, [{ id: 'millhaven-chamber', gain: 0.7 }]);
+assert.equal(a.productionCue({ ...scene, millhavenTown: true, night: true }).id,
+  'millhaven-chamber', 'night retains Candidate B while ambience remains separate');
+assert.equal(a.productionCue({ ...scene, millhavenTown: true, nearbyEngaged: 2 }).id, 'place-vale',
+  'nearby combat takes recorded action precedence even inside Millhaven');
+assert.equal(a.productionCue({ ...scene, millhavenTown: true, peace: true }).id, 'peace-vale',
+  'global liberation retains authored recorded precedence');
+assert.equal(a.productionCue({ ...scene, millhavenTown: true, started: false }).id, 'title',
+  'saved Millhaven state never replaces title-screen music');
+assert.equal(a.productionCue({ ...scene, millhavenTown: false }).id, 'place-vale',
+  'Orchard Roads belongs to Greenwood roads and fields beyond the town');
 const cryptApproach = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
   settlement: null, estateApproach: true, nearbyEngaged: 0 });
 assert.equal(cryptApproach.id, 'settlement-vale',
@@ -99,13 +107,59 @@ assert.equal(a.productionCue({ ...scene, estateApproach: true,
 assert.equal(a.productionCue({ ...scene, estateApproach: true,
   started: false }).id, 'title', 'title soundtrack remains exclusive');
 assert.equal(a.productionCue({ ...scene, region: 'vale', zone: 'vale',
-  settlement: 'millhaven', night: true }).id, 'place-vale',
-  'Millhaven does not change to the former town cue at night');
+  settlement: 'millhaven', night: true, millhavenTown: true }).id,
+  'millhaven-chamber', 'Millhaven uses Candidate B, not the former town recording');
 
 // Geometry-driven observation: the actual Forest Crypt entrance is the anchor.
 // The approach starts 950 units out and persists until 1150 units on exit.
 const Campaign = require('../src/prototype/engine.js');
 const liveVale = new Campaign();
+const activeTownProps = liveVale.zone().props.filter((p) =>
+  /^settlement-major-\d+$/.test(String(p.id || '')));
+assert(activeTownProps.length >= 7,
+  'expanded live Millhaven must supply its current residential footprint');
+const easternHouse = activeTownProps.find((p) => p.id === 'settlement-major-6');
+const southernHouse = activeTownProps.find((p) => p.id === 'settlement-major-4');
+assert(easternHouse && southernHouse,
+  'music district must be driven by expanded east and south civic houses');
+const townAudio = audio();
+townAudio.enableProduction();
+townAudio.updateEnvironment = () => {};
+townAudio.sceneDetails = () => {};
+townAudio.setRecordedScore = async () => true;
+const newGamePosition = { x: liveVale.hero.x, y: liveVale.hero.y };
+function observeTown(x, y, started = true) {
+  liveVale.hero.x = x;
+  liveVale.hero.y = y;
+  const observed = townAudio.describe(liveVale, { started });
+  townAudio.updateProduction(observed);
+  return { inside: observed.millhavenTown,
+    cue: townAudio.productionCue(observed)?.id || 'synth:vale' };
+}
+assert.equal(observeTown(newGamePosition.x, newGamePosition.y).cue, 'millhaven-chamber',
+  'new game at live Millhaven spawn plays the owner-approved chamber recording');
+assert.equal(observeTown(easternHouse.x, easternHouse.y).cue, 'millhaven-chamber',
+  'the extended eastern workshop is still inside the real town');
+assert.equal(observeTown(southernHouse.x, southernHouse.y).cue, 'millhaven-chamber',
+  'the extended southern residential streets are still Millhaven');
+assert.equal(observeTown(easternHouse.x + 390, easternHouse.y).cue, 'place-vale',
+  'farther from the final eastern homes is an Orchard Roads field');
+assert.equal(observeTown(easternHouse.x + 110, easternHouse.y).cue, 'millhaven-chamber',
+  'entering from the eastern fields recognizes the expanded civic edge');
+assert.equal(observeTown(easternHouse.x + 215, easternHouse.y).cue, 'millhaven-chamber',
+  '80-unit exit hysteresis retains the approved town recording');
+assert.equal(observeTown(easternHouse.x + 390, easternHouse.y).cue, 'place-vale',
+  'beyond the exit margin, Orchard Roads resumes');
+assert.equal(observeTown(easternHouse.x + 215, easternHouse.y).cue, 'place-vale',
+  're-entry cannot flicker inside the outer exit band');
+assert.equal(observeTown(easternHouse.x + 110, easternHouse.y).cue, 'millhaven-chamber');
+assert.equal(observeTown(easternHouse.x, easternHouse.y, false).cue, 'title',
+  'a title snapshot never plays the old town soundtrack');
+assert.equal(observeTown(easternHouse.x + 215, easternHouse.y).cue, 'place-vale',
+  'title navigation resets the town hysteresis state');
+assert.equal(observeTown(550, 1850).cue, 'place-vale',
+  'Orchard Hamlet remains outside the Millhaven civic music footprint');
+Object.assign(liveVale.hero, newGamePosition);
 const forestCrypt = liveVale.zone().npcs.find((n) =>
   n.kind === 'dungeon' && n.family === 'crypt' && !n.sideDungeon);
 assert(forestCrypt, 'real Greenwood must retain its Forest Crypt entrance');

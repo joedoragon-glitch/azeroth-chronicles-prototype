@@ -86,6 +86,21 @@
             ],
           };
         }
+        // The owner's approved Candidate B plays only within Millhaven's
+        // live civic footprint. The original Vale synthesizer remains source
+        // and failure fallback; roads, estate, combat and bosses are distinct.
+        // Nearby combat and its short release tail retain priority.
+        const nearby = scene.nearbyEngaged ?? scene.engaged ?? 0;
+        const fighting = nearby > 0 ||
+          (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
+        if (scene.millhavenTown && scene.zone === 'vale' &&
+          scene.interior === 'outdoors' && !scene.peace &&
+          !scene.estateApproach && !fighting) return {
+            id: 'millhaven-chamber',
+            bpm: 92,
+            fade: 1.2,
+            stems: [{ id: 'millhaven-chamber', gain: 0.7 }],
+          };
         const p =
           director.places[scene.zone] ||
           director.places[scene.region] ||
@@ -93,9 +108,10 @@
         let base = scene.peace && p.peace ? p.peace : p.base;
         if (!scene.peace && scene.interior === 'outdoors') {
           if (scene.zone === 'vale') {
-            // Millhaven and its surrounding roads return to the original
-            // Greenwood exploration recording. The former town arrangement
-            // now belongs to the Forest Crypt's unfinished estate approaches.
+            // The roads and fields beyond Millhaven use the recorded
+            // Greenwood exploration track. Within the expanded town,
+            // productionCue returned control to the original synthesizer.
+            // The former town recording belongs to the winter-retreat approach.
             // Real nearby fighting (and its brief release tail) takes priority.
             const nearbyEngaged = scene.nearbyEngaged ?? scene.engaged ?? 0;
             const fighting = nearbyEngaged > 0 ||
@@ -143,6 +159,9 @@
         this.estateApproachActive = !!scene.estateApproach &&
           scene.started !== false && scene.zone === 'vale' &&
           scene.interior === 'outdoors';
+        this.millhavenTownActive = !!scene.millhavenTown &&
+          scene.started !== false && scene.zone === 'vale' &&
+          scene.interior === 'outdoors';
         const now = this.ctx.currentTime;
         // A title-screen snapshot is not live exploration. Clearing the
         // settlement hold avoids carrying the saved hero's nearby refuge into
@@ -160,8 +179,28 @@
           now < (this.settlementUntil || 0)
             ? { ...scene, settlement: scene.settlement || 'nearby-refuge' }
             : scene;
+        // Mark nearby engagement *before* selecting the score, including
+        // when the district was previously using only the synthesizer.
+        if ((scene.nearbyEngaged ?? scene.engaged ?? 0) > 0 && !scene.peace)
+          this.combatUntil = now + 2.5;
         const spec = this.productionCue(observed);
-        if (!spec) return;
+        if (!spec) {
+          if (this.productionKey !== 'synth:millhaven') {
+            this.productionKey = 'synth:millhaven';
+            this.productionRetry = null;
+            this.productionIntensity = null;
+            this.stopRecordedScore(1.2);
+            // The recorded mix retired the previous synth gain node; simply
+            // scheduling new notes on that dead node would be inaudible.
+            // A region-to-region change later in Audio.update handles itself.
+            if (this.cue?.id === 'vale') {
+              this.transitionScore(this.cue);
+              this.step = 0;
+              this.next = now + 0.06;
+            }
+          }
+          return;
+        }
         const selectionKey = JSON.stringify([
           spec.id,
           spec.stems.map((s) => s.id),
@@ -218,6 +257,21 @@
               return false;
             },
           );
+        }
+        // A missing/corrupt town recording must never strand the previous
+        // road score over Millhaven. Exhaust bounded retries once, then
+        // restore the preserved original synth. A later route change resets
+        // retry identity and permits another attempt.
+        if (spec.id === 'millhaven-chamber' && retry &&
+            retry.attempts >= 3 && !retry.pending && !retry.fallback &&
+            this.recordedScore?.id !== spec.id) {
+          retry.fallback = true;
+          this.stopRecordedScore(1.2);
+          if (this.cue?.id === 'vale') {
+            this.transitionScore(this.cue);
+            this.step = 0;
+            this.next = now + 0.06;
+          }
         }
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;

@@ -1,0 +1,120 @@
+name: 'Pixi #755 paired performance acceptance (focused)'
+# Only this issue's acceptance changes start the extra software-WebGL checks.
+# No Pages job, full-game suite, or physical-device claims.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pixi-755-acceptance.yml'
+      - 'tests/pixi-parity-browser.test.cjs'
+      - 'tests/pixi-755-acceptance.test.cjs'
+      - 'scripts/pixi-755-compare.cjs'
+      - 'src/prototype/pixi-experimental.js'
+      - 'src/prototype/renderer.js'
+      - 'tools/webgl-pilot/pixi-scene-bridge.js'
+      - 'tools/webgl-pilot/native-sprite-adapter.js'
+  workflow_dispatch:
+    inputs:
+      baseline_sha:
+        description: 'Exact unchanged baseline commit to compare with workflow head'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+concurrency:
+  group: pixi-755-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  measured-browser:
+    name: Paired CPU draws + high-DPI browser smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies and software-WebGL Chromium
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install chromium --with-deps
+      - name: Comparator positive control and existing synthetic Auto transitions
+        run: |
+          node tests/pixi-755-acceptance.test.cjs
+          node tests/auto-fps-adaptive-coupling.test.cjs
+      - name: Prepare exact unchanged baseline with identical measurement harness
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || inputs.baseline_sha }}
+        run: |
+          set -euo pipefail
+          test -n "$BASE_SHA"
+          git rev-parse "$BASE_SHA^{commit}"
+          git worktree add --detach "$RUNNER_TEMP/pixi-755-base" "$BASE_SHA"
+          cp tests/pixi-parity-browser.test.cjs "$RUNNER_TEMP/pixi-755-base/tests/pixi-parity-browser.test.cjs"
+          cmp package-lock.json "$RUNNER_TEMP/pixi-755-base/package-lock.json" || {
+            echo "::error::Different locked dependencies invalidate a paired comparison"
+            exit 1
+          }
+          ln -s "$GITHUB_WORKSPACE/node_modules" "$RUNNER_TEMP/pixi-755-base/node_modules"
+          printf '%s\n' "Baseline $(git -C "$RUNNER_TEMP/pixi-755-base" rev-parse HEAD)" "Candidate $(git rev-parse HEAD)"
+      - name: Prepare SHA-verified local PixiJS in BOTH source trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/vendor-pixi.cjs --ensure
+          (cd "$RUNNER_TEMP/pixi-755-base" && node scripts/vendor-pixi.cjs --ensure)
+      - name: High-DPI portrait and landscape synthetic browser smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          for shape in portrait landscape; do
+            if [ "$shape" = portrait ]; then viewport='390x844'; else viewport='844x390'; fi
+            env PARITY_FIXTURES=cover,registered PARITY_PERF=0 \
+              PARITY_VIEWPORT="$viewport" PARITY_DPR=3 PARITY_BACKING_RATIO=1.5 \
+              PARITY_ZOOM=1.75 PARITY_OPTIMIZED=0 \
+              PARITY_OUT="$RUNNER_TEMP/pixi-755-results/dpr3-$shape" \
+              node tests/pixi-parity-browser.test.cjs
+          done
+      - name: Measure baseline / candidate / candidate / baseline, same runner and fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/pixi-755-results"
+          for slot in base-1 head-1 head-2 base-2; do
+            case "$slot" in
+              base-*) dir="$RUNNER_TEMP/pixi-755-base" ;;
+              *) dir="$GITHUB_WORKSPACE" ;;
+            esac
+            echo "::group::Measured $slot"
+            (cd "$dir" && env \
+              PARITY_FIXTURES=cover PARITY_PERF=1 \
+              PARITY_PERF_SAMPLES=96 PARITY_PERF_WARMUP=16 \
+              PARITY_ZOOM=1.5 PARITY_OPTIMIZED=1 PARITY_DPR=1 PARITY_BACKING_RATIO=1 \
+              PARITY_PERF_DELAY_MS=0 \
+              PARITY_OUT="$RUNNER_TEMP/pixi-755-results/$slot" \
+              node tests/pixi-parity-browser.test.cjs)
+            echo "::endgroup::"
+          done
+      - name: Score material paired regression and preserve explicit GO/HOLD
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/pixi-755-compare.cjs \
+            --baseline "$RUNNER_TEMP/pixi-755-results/base-1/evidence.json" \
+            --baseline "$RUNNER_TEMP/pixi-755-results/base-2/evidence.json" \
+            --candidate "$RUNNER_TEMP/pixi-755-results/head-1/evidence.json" \
+            --candidate "$RUNNER_TEMP/pixi-755-results/head-2/evidence.json" \
+            --out "$RUNNER_TEMP/pixi-755-results/decision.json"
+      - name: Upload exact-SHA timing, scene screenshots and smoke artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixi-755-paired-composite
+          path: ${{ runner.temp }}/pixi-755-results/
+          if-no-files-found: ignore
+          retention-days: 30

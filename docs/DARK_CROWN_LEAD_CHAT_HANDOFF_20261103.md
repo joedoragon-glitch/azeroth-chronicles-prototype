@@ -45,3 +45,8 @@ PR #769 draft branch currently includes: a native procedural Crownwatch rest-ser
 ## Closeout definition for the next lead Chat
 
 Write a GitHub PR #769 status note with: new head SHA, main integration/conflict result, list of **executed** checks/commands and links or artifacts, defects discovered and fixes with exact SHAs, visual scene issues addressed, release docs/PWA verification, distinction between **implemented**, **tested**, **merged**, **deployed**, **device verified**, and **owner approved**, and any remaining hard blockers. Publish a **short playable owner checklist** only when the candidate genuinely reaches engineering GO. If any engineering gate is still blocked by unavailable tooling, report **NO-GO/PENDING** honestly with next corrective action. **Never merge or deploy without explicit owner approval.**
+
+
+## Lead integration checkpoint — 3 November 2026, pending exact-head acceptance
+
+This draft has been prepared for reconciliation onto latest audited `main@d7038e00ebcf0baa4c5bc16db7d332305d6b8126` (including the owner-approved #775 save-durability merge). Source-level hunk matching found all existing Dark Crown changes applicable to current `world.js`, `visuals.js`, `renderer.js` and `rules.js` without dropping newer shared-module code. Candidate source version advances to `0.9.1+snapshot.dev.253`, branch-only; the service-worker catalog retains upstream audio/assets and updates changed-source Git blob fingerprints. This is a prepared integration, **not** proof of an executed native Campaign, original Crown test, Pixi, traversal, old-save or visual acceptance. Exact resulting commit and focused CI receipt belong in PR #769. No main push, PR merge or publication is authorized.

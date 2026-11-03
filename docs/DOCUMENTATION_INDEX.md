@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 (Dark Crown draft workstream) · **450 Markdown documents indexed on this branch**. (The separate draft PR #707 design contract is linked below but not counted as a file in this branch.)
+**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 · **452 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -14,9 +14,9 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (23)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (127)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
-- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (51)
+- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (52)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
 - [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (46)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
@@ -188,6 +188,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - **[Combat Arena Low Spec](COMBAT_ARENA_LOW_SPEC.md)** — **Reference.** Combat-space readability and technical constraints for lower-performance devices.
 - [Combat Conditions V09](COMBAT_CONDITIONS_V09.md) — *Dated record.* Meaning and presentation of status conditions in combat.
+- [Skill Block Player Learning Design 20261103](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md) — *Approved design and cross-chat engineering handoff.* Existing player learning paths, bilingual text, live-rule figures, quiet feedback and phased acceptance for Skill Block.
 - [Combat Flow And Menus DEV126](COMBAT_FLOW_AND_MENUS_DEV126.md) — *Dated record.* Explains combat flow and menus player interaction or interface readability choices.
 - [Combat Four Domain Workload Audit 20261029](COMBAT_FOUR_DOMAIN_WORKLOAD_AUDIT_20261029.md) — *Dated record.* Native dev.224 combat-workload measurements, later merged micro-optimizations and unresolved follow-up investigations.
 - **[Combat Party Housekeeping](COMBAT_PARTY_HOUSEKEEPING.md)** — **Reference.** Describes combat party housekeeping decisions, constraints or engineering observations from its original development checkpoint.
@@ -296,9 +297,10 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ### Other geographic and narrative records
 
 - **[Dark Crown Regime Layout](DARK_CROWN_REGIME_LAYOUT.md)** — **Reference.** Describes dark crown regime layout decisions, constraints or engineering observations from its original development checkpoint.
-- **[Dark Crown Autonomous Implementation and Adversarial Audit Mandate](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md)** — **Active draft workstream policy, PR #769.** Cross-session implementation, evidence, corrective audit, consent and session-resume requirements; not an approval to merge or deploy.
-- **[Dark Crown Regional Implementation Baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md)** — **Active draft workstream evidence, PR #769.** Verified source/screenshot baseline, visual mismatches, engineering phase ownership and remaining acceptance gates; not a completed overhaul.
-- **[Dark Crown Authorial Contract (separate draft PR #707)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707)** — **Owner's authoritative creative direction; unmerged separate branch, not indexed as a local Markdown file.** Read its complete contract on the source branch, especially sections 10–14.
+- **[Dark Crown Authorial Contract (PR #707)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707)** — **External owner creative authority.** Separate draft design branch; not counted among local documents.
+- **[Dark Crown Autonomous Implementation and Adversarial Audit Mandate](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md)** — **Active PR #769 draft engineering policy.** Scope, evidence, focused testing and no-publication consent gates.
+- **[Dark Crown Regional Implementation Baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md)** — **Active PR #769 engineering evidence.** Source-grounded design and acceptance shortcomings; not completed or deployed.
+- **[Dark Crown Lead Chat Handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md)** — **Active PR #769 task handoff.** Exact source checkpoints and independent engineering acceptance ownership.
 - [Snapshot Crown Economy Audit 20261015](SNAPSHOT_CROWN_ECONOMY_AUDIT_20261015.md) — *Dated record.* Examines snapshot crown economy for source or design inconsistencies, recording dated findings and limits.
 
 ## Sprite art, textures and visual design

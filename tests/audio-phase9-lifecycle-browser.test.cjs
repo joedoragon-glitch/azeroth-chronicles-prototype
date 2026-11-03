@@ -51,8 +51,9 @@ const server = http.createServer((req, res) => {
       await page.waitForFunction(() => window.Prototype?.started && !document.querySelector('#title-screen:not([hidden])'), null, { timeout: 60000 });
       await page.waitForFunction(() => {
         const a = Prototype.audio;
-        return a.ctx?.state === 'running' && a.recordedScore && a.recordedScore.id !== 'title' &&
-          a.recordedScore.id === a.productionCue(a.context)?.id;
+        return a.ctx?.state === 'running' && a.context?.millhavenTown &&
+          a.cue?.id === 'vale' && a.recordedScore?.id === 'millhaven-chamber' &&
+          a.recordedScore?.voices[0]?.targetGain > 0;
       }, null, { timeout: 15000 });
       // The entry transition may briefly suspend/resume Web Audio while the
       // first graphics frame commits. It must settle into running playback,
@@ -61,27 +62,28 @@ const server = http.createServer((req, res) => {
       await page.waitForFunction(() => Prototype.audio.ctx?.state === 'running' && !Prototype.audio.paused,
         null, { timeout: 8000 });
       const loaded = await page.evaluate(() => ({
-        id: Prototype.audio.recordedScore.id, at: Prototype.audio.recordedScore.at,
+        id: Prototype.audio.recordedScore?.id || 'synth:vale',
+        at: Prototype.audio.recordedScore?.at,
         started: Prototype.started, state: Prototype.audio.ctx.state,
         zone: Prototype.game.zoneId, time: Prototype.game.s.time,
       }));
-      assert.equal(loaded.id, 'place-vale',
-        'real new-game Millhaven arrival uses the original Greenwood recording, not the estate cue');
+      assert.equal(loaded.id, 'millhaven-chamber',
+        'new game inside expanded Millhaven plays the approved chamber recording');
       const peacefulMix = await page.evaluate(() => {
         const a = Prototype.audio, spec = a.productionCue(a.context);
-        return { engaged: a.context.engaged, id: a.recordedScore?.id,
-          expected: spec.id, voices: a.recordedScore?.voices.map(v =>
-            ({ id: v.id, gain: v.targetGain })) };
+        return { engaged: a.context.engaged, town: a.context.millhavenTown,
+          id: a.recordedScore?.id || 'synth:vale', expected: spec?.id || 'synth:vale',
+          voiceGain: a.recordedScore?.voices[0]?.targetGain || 0 };
       });
       assert.equal(peacefulMix.id, peacefulMix.expected);
-      if (!peacefulMix.engaged && peacefulMix.voices.length > 1)
-        assert.equal(peacefulMix.voices[1].gain, 0,
-          'peaceful Greenwood must not leak the separate encounter layer');
+      assert(peacefulMix.town && peacefulMix.voiceGain > 0,
+        'peaceful Millhaven must have audible recorded Candidate B output');
       await page.locator('#menu-button').click();
       await page.waitForFunction(() => document.querySelector('#modal-title')?.textContent === 'Adventure menu');
       await page.waitForTimeout(160);
       const menu = await page.evaluate(() => ({
-        id: Prototype.audio.recordedScore?.id, at: Prototype.audio.recordedScore?.at,
+        id: Prototype.audio.recordedScore?.id || 'synth:vale',
+        at: Prototype.audio.recordedScore?.at,
         now: Prototype.audio.ctx.currentTime, time: Prototype.game.s.time,
         state: Prototype.audio.ctx.state, scene: Prototype.audio.mixScene,
       }));
@@ -93,13 +95,45 @@ const server = http.createServer((req, res) => {
       await page.waitForFunction(() => document.querySelector('#modal-title')?.textContent === 'Game and settings');
       await page.waitForTimeout(200);
       const settings = await page.evaluate(() => ({
-        id: Prototype.audio.recordedScore.id, at: Prototype.audio.recordedScore.at,
+        id: Prototype.audio.recordedScore?.id || 'synth:vale',
+        at: Prototype.audio.recordedScore?.at,
         now: Prototype.audio.ctx.currentTime, time: Prototype.game.s.time,
       }));
       assert.equal(settings.id, loaded.id);
       assert.equal(settings.at, loaded.at);
       assert(settings.now > menu.now, 'audio clock continues during settings');
       assert.equal(settings.time, menu.time, 'simulation must stay frozen in menus');
+
+      // Millhaven's current eastern workshop, not the old village radius,
+      // determines when the chamber recording hands off to Orchard Roads.
+      const roadside = await page.evaluate(() => {
+        const campaign = Prototype.game;
+        const outer = campaign.zone().props.find((p) => p.id === 'settlement-major-6');
+        if (!outer) return null;
+        const home = { x: campaign.hero.x, y: campaign.hero.y };
+        campaign.hero.x = outer.x + 390;
+        campaign.hero.y = outer.y;
+        Prototype.audio.update(campaign, false, { started: true, menu: true });
+        return home;
+      });
+      assert(roadside, 'expanded Millhaven eastern workshop is required');
+      await page.waitForFunction(() =>
+        !Prototype.audio.context?.millhavenTown &&
+        Prototype.audio.recordedScore?.id === 'place-vale',
+        null, { timeout: 20000 });
+      assert(await page.evaluate(() =>
+        Prototype.audio.recordedScore?.voices[0]?.targetGain > 0),
+        'Orchard Roads recording must be audible in the outside fields');
+      await page.evaluate((home) => {
+        const campaign = Prototype.game;
+        Object.assign(campaign.hero, home);
+        Prototype.audio.update(campaign, false, { started: true, menu: true });
+      }, roadside);
+      await page.waitForFunction(() => {
+        const a = Prototype.audio;
+        return a.context?.millhavenTown && a.recordedScore?.id === 'millhaven-chamber' &&
+          a.cue?.id === 'vale' && a.recordedScore?.voices[0]?.targetGain > 0;
+      }, null, { timeout: 20000 });
 
       // Exercise real MP3 handoff at the live Forest Crypt entrance while the
       // game menu safely freezes simulation. This is still a real WebAudio
@@ -154,8 +188,13 @@ const server = http.createServer((req, res) => {
         c.hero.y = home.y;
         Prototype.audio.update(c, false, { started: true, menu: true });
       }, estate.home);
-      assert.equal(await page.evaluate(() => Prototype.audio.recordedScore?.id),
-        'place-vale', 'restoring the real Millhaven position resumes original music');
+      await page.waitForFunction(() => {
+        const a = Prototype.audio;
+        return a.context?.millhavenTown && a.recordedScore?.id === 'millhaven-chamber' &&
+          a.cue?.id === 'vale' && a.recordedScore?.voices[0]?.targetGain > 0;
+      }, null, { timeout: 20000 });
+      assert.equal(await page.evaluate(() => Prototype.audio.productionCue(Prototype.audio.context)?.id),
+        'millhaven-chamber', 'returning to real Millhaven resumes Candidate B');
 
       await page.evaluate(() => Prototype.closeMenu());
       await page.locator('#menu-button').click();
@@ -174,9 +213,14 @@ const server = http.createServer((req, res) => {
       assert(returnedTitle.active && returnedTitle.music > 0 && returnedTitle.master > 0,
         'returning to Main Menu must restore the audible title voice');
       await page.locator('#title-continue').click();
-      await page.waitForFunction(() => Prototype.started && Prototype.audio.recordedScore?.id !== 'title', null, { timeout: 60000 });
+      await page.waitForFunction(() => {
+        const a = Prototype.audio;
+        return Prototype.started && a.context?.millhavenTown &&
+          a.cue?.id === 'vale' && a.recordedScore?.id === 'millhaven-chamber';
+      }, null, { timeout: 60000 });
       const again = await page.evaluate(() => ({
-        id: Prototype.audio.recordedScore?.id, expected: Prototype.audio.productionCue(Prototype.audio.context)?.id,
+        id: Prototype.audio.recordedScore?.id || 'synth:vale',
+        expected: Prototype.audio.productionCue(Prototype.audio.context)?.id || 'synth:vale',
         state: Prototype.audio.ctx?.state, zone: Prototype.game.zoneId,
       }));
       assert.equal(again.id, again.expected);

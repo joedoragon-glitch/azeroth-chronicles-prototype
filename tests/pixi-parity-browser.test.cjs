@@ -76,9 +76,18 @@ async function main() {
         '--enable-unsafe-swiftshader',
       ],
     });
-    const viewport =
-      process.env.PARITY_PHONE === '1' ? { width: 844, height: 390 } : { width: 912, height: 600 };
-    const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+    const viewportText =
+      process.env.PARITY_VIEWPORT || (process.env.PARITY_PHONE === '1' ? '844x390' : '912x600');
+    if (!/^\d+x\d+$/.test(viewportText)) throw Error('Invalid PARITY_VIEWPORT: '+viewportText);
+    const [width, height] = viewportText.split('x').map(Number);
+    const deviceScaleFactor = Number(process.env.PARITY_DPR || 1);
+    const backingRatio = Number(process.env.PARITY_BACKING_RATIO || 1);
+    if (![width, height, deviceScaleFactor, backingRatio].every((v) => Number.isFinite(v) && v > 0))
+      throw Error('Invalid PARITY_VIEWPORT, PARITY_DPR or PARITY_BACKING_RATIO');
+    const viewport = { width, height };
+    const page = await browser.newPage({ viewport, deviceScaleFactor });
+    if (process.env.PARITY_REDUCED_MOTION === '1')
+      await page.emulateMedia({ reducedMotion: 'reduce' });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto('http://127.0.0.1:' + server.address().port + '/');
@@ -90,15 +99,17 @@ async function main() {
         PrototypeSprites.timeMs = () => window.clock;
         window.originalCampaign = g;
         const canvas = document.querySelector('#world');
-        canvas.width = innerWidth;
-        canvas.height = innerHeight;
+        canvas.width = Math.round(innerWidth * config.backingRatio);
+        canvas.height = Math.round(innerHeight * config.backingRatio);
+        const paintContext = canvas.getContext('2d');
+        paintContext.setTransform(config.backingRatio, 0, 0, config.backingRatio, 0, 0);
         window.platform = {
           cameraZoom: config.zoom,
           cameraAnchor: () => ({ x: innerWidth * 0.5, y: innerHeight * 0.55 }),
         };
         window.opts = {
           canvas,
-          ctx: canvas.getContext('2d'),
+          ctx: paintContext,
           getGame: () => g,
           platform,
           chargePresentation: () => null,
@@ -121,6 +132,7 @@ async function main() {
       {
         zoom: Number(process.env.PARITY_ZOOM || 1.5),
         optimized: process.env.PARITY_OPTIMIZED !== '0',
+        backingRatio,
       },
     );
     const rows = [],
@@ -163,7 +175,7 @@ async function main() {
             b.rangedAim = true;
           }
         }
-        if (name === 'registered') {
+        if (['registered', 'ringleader'].includes(name)) {
           g.enter('vale');
           Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
           const v = g.zone();
@@ -178,12 +190,12 @@ async function main() {
           Object.assign(e, {
             x: 1080,
             y: 960,
-            form: 'true',
+            form: name === 'ringleader' ? 'ringleader' : 'true',
             rangedAim: { x: 1000, y: 1000 },
             frenzy: true,
           });
         }
-        if (name === 'cover')
+        if (name === 'cover' || name === 'occlusion-idle')
           z.props = [
             {
               id: 'parity-cover',
@@ -250,6 +262,27 @@ async function main() {
           room.npcs = [keeper];
           if (!g.visibleNPCs().includes(keeper)) throw Error('Keeper fixture eligibility failed');
         }
+        if (name === 'ferry') {
+          // The real Highlands ferry is reachable at its boarding point
+          // but painted at the separately authored hull position.
+          g.enter('highlands');
+          const harbor = Campaign.rules.harbors.highlands;
+          const room = g.zone();
+          const ferry = room.npcs.find((n) => n.id === 'return' && n.harbor);
+          if (!ferry || !harbor?.vessel) throw Error('Native Highlands ferry not admitted');
+          window.parityFerry = ferry;
+          Object.assign(g.hero, {
+            x: ferry.x + 145,
+            y: ferry.y + 35,
+            path: [],
+            order: null,
+          });
+          room.props = [];
+          room.buildings = [];
+          room.enemies = [];
+          room.npcs = [ferry];
+          room.escort = null;
+        }
         if (name === 'idle') {
           // Only a stationary hero remains: presentation motion is visible
           // while the actual world position and gameplay clock stay unchanged.
@@ -281,7 +314,9 @@ async function main() {
       await page.evaluate(async () => {
         window.gpu = PrototypePixiExperimental.create({
           worldCanvas: opts.canvas,
-          viewport: opts.canvas,
+          // Logical CSS viewport is distinct from high-DPI Canvas backing.
+          // Using the backing canvas here would force effectiveRatio() to 1x.
+          viewport: { width: innerWidth, height: innerHeight },
           platform,
           getGame: () => g,
           canvasRenderer: painter,
@@ -319,12 +354,27 @@ async function main() {
         }, mode);
         for (const time of [0, 7000]) {
           const status = await page.evaluate(
-            ({ mode, time }) => {
+            ({ mode, time, fixture }) => {
               window.clock = time;
               // Time changes presentation only; gameplay expiration is a separate state fixture.
               const saved = JSON.stringify(g.s);
               if (mode === 'pixi') gpu.draw();
-              painter.draw();
+              // Intercept the real retained-mask canvas translation in this
+              // deterministic Pixi+Canvas composite, not the production path.
+              const watchMask = fixture === 'occlusion-idle' && mode === 'pixi';
+              const maskMoves = [];
+              const originalTranslate = CanvasRenderingContext2D.prototype.translate;
+              if (watchMask)
+                CanvasRenderingContext2D.prototype.translate = function (x, y) {
+                  if (this.canvas.width === 256 || this.canvas.width === 384)
+                    maskMoves.push({ x, y, canvasWidth: this.canvas.width });
+                  return originalTranslate.call(this, x, y);
+                };
+              try {
+                painter.draw();
+              } finally {
+                if (watchMask) CanvasRenderingContext2D.prototype.translate = originalTranslate;
+              }
               if (g !== originalCampaign || JSON.stringify(g.s) !== saved)
                 throw Error('Rendering mutated Campaign state');
               return {
@@ -336,24 +386,44 @@ async function main() {
                 renderer: mode,
                 gpu: gpu.status(),
                 canvas: painter.metrics(),
+                occlusion: watchMask
+                  ? {
+                      mask: maskMoves[0] || null,
+                      maskCount: maskMoves.length,
+                      ground: painter.screen(g.hero),
+                      body: painter.visualPositionFor(painter.presentEntity(g.hero, 'hero')),
+                    }
+                  : null,
               };
             },
-            { mode, time },
+            { mode, time, fixture },
           );
-          if (mode === 'pixi')
+          if (mode === 'pixi') {
             assert(status.gpu.active && !status.gpu.lastError, 'No GPU fallback');
+            assert(Math.abs(status.gpu.pixelRatio - backingRatio) < 0.01,
+              'Pixi effective backing ratio ' + status.gpu.pixelRatio +
+              ' must match Canvas ratio ' + backingRatio);
+          }
           const name = fixture + '-' + mode + '-' + time + '.png';
           await page.screenshot({ path: path.join(out, name) });
           rows.push({ fixture, mode, time, file: name, status });
           if (mode === 'pixi' && process.env.PARITY_ASSERT !== '0') {
             const m = status.gpu.sceneMetrics;
+            if (fixture === 'ferry')
+              assert(m.actors >= 2, 'Pixi includes the original ferry hull beside the hero');
             if (fixture === 'warlord') assert.equal(m.worldIndicators, 1);
             if (fixture === 'ridge') assert.equal(m.groundMarks, 1);
-            if (fixture === 'registered') assert.equal(m.accessoryActors, 1);
-            if (fixture === 'cover')
+            if (['registered', 'ringleader'].includes(fixture))
+              assert.equal(m.accessoryActors, 1);
+            if (fixture === 'cover' || fixture === 'occlusion-idle')
               assert(
                 status.canvas.outlineMasks > 0,
                 'Concealed hero receives an alpha-clipped contour',
+              );
+            if (fixture === 'occlusion-idle')
+              assert(
+                status.occlusion?.mask,
+                'Real Pixi overlay draws a retained moving body mask behind cover',
               );
             if (fixture === 'lamp')
               assert(m.lightFixtures > 0, 'Night fixtures are painted separately from glows');
@@ -379,6 +449,92 @@ async function main() {
           pixi[1].status.gpu.sceneMetrics.textureSources,
           'Stable GPU texture count',
         );
+        if (fixture === 'ferry') {
+          const projected = await page.evaluate(() => {
+            const ferry = window.parityFerry;
+            const visual = painter.presentEntity(ferry, 'npc');
+            const point = painter.screen(visual);
+            const boarding = painter.screen(ferry);
+            return {
+              point,
+              boarding,
+              world: [ferry.x, ferry.y],
+              vessel: [visual.x, visual.y],
+            };
+          });
+          assert.deepEqual(projected.world, [300, 1995], 'Ferry boarding coordinates are unchanged');
+          assert.deepEqual(projected.vessel, [260, 2020], 'Ferry uses authored Highlands vessel');
+          assert(
+            Math.abs(projected.point.x - projected.boarding.x) > 30,
+            'The fixture actually exercises distinct ferry render and boarding coordinates',
+          );
+          const crop = {
+            x: Math.max(0, Math.round(projected.point.x - 125)),
+            y: Math.max(0, Math.round(projected.point.y - 160)),
+            width: 250,
+            height: 175,
+          };
+          for (const mode of ['canvas', 'pixi']) {
+            await page.evaluate((mode) => {
+              if (mode === 'canvas') {
+                gpu.deactivate();
+                painter.setRenderLayer('full');
+              } else {
+                gpu.activate();
+                painter.setRenderLayer('overlay');
+              }
+              g.zone().npcs = [];
+              if (mode === 'pixi') gpu.draw();
+              painter.draw();
+            }, mode);
+            const absent = path.join(out, 'ferry-' + mode + '-absent.png');
+            await page.screenshot({ path: absent });
+            await page.evaluate((mode) => {
+              g.zone().npcs = [window.parityFerry];
+              if (mode === 'pixi') gpu.draw();
+              painter.draw();
+            }, mode);
+            const changed = await changedPixels(
+              path.join(out, 'ferry-' + mode + '-0.png'),
+              absent,
+              crop,
+            );
+            assert(changed > 200, mode + ' visible ferry must paint at authored hull position');
+            lifecycle.push({ fixture, mode, changedPixels: changed, crop });
+          }
+        }
+        if (fixture === 'occlusion-idle') {
+          const [a, b] = pixi.map((r) => r.status.occlusion);
+          const zoom = Number(process.env.PARITY_ZOOM || 1.5);
+          assert.equal(a.mask.canvasWidth, b.mask.canvasWidth, 'retained mask buffer reused');
+          const expectedX = ((b.body.x - b.ground.x) - (a.body.x - a.ground.x)) / zoom,
+            expectedY = ((b.body.y - b.ground.y) - (a.body.y - a.ground.y)) / zoom;
+          assert(
+            Math.abs(b.mask.x - a.mask.x - expectedX) < 0.001 &&
+            Math.abs(b.mask.y - a.mask.y - expectedY) < 0.001,
+            'real Pixi contour must inherit the exact Canvas body idle offset: ' +
+              JSON.stringify({ a, b, expectedX, expectedY, measuredX: b.mask.x - a.mask.x, measuredY: b.mask.y - a.mask.y }),
+          );
+          assert(
+            Math.hypot(expectedX, expectedY) > 0.1,
+            'the two frozen times actually exercise different idle poses',
+          );
+          const crop = {
+            x: Math.max(0, Math.round(viewport.width * 0.5 - 105)),
+            y: Math.max(0, Math.round(viewport.height * 0.55 - 125)),
+            width: 210,
+            height: 180,
+          };
+          for (const mode of ['canvas', 'pixi']) {
+            const pixels = await changedPixels(
+              path.join(out, fixture + '-' + mode + '-0.png'),
+              path.join(out, fixture + '-' + mode + '-7000.png'),
+              crop,
+            );
+            assert(pixels > 5, mode + ' retains real visible idle motion behind cover');
+            lifecycle.push({ fixture, mode, pixels, crop, maskShift: mode === 'pixi' ? { x: expectedX, y: expectedY } : null });
+          }
+        }
         if (fixture === 'idle') {
           const crop = {
             x: Math.round(viewport.width * 0.5 - 75),
@@ -413,10 +569,10 @@ async function main() {
             lifecycle.push({ fixture, mode, changedPixels: n, crop });
           }
         }
-        if (['warlord', 'ridge', 'registered', 'lamp'].includes(fixture)) {
+        if (['warlord', 'ridge', 'registered', 'ringleader', 'lamp'].includes(fixture)) {
           const negative = await page.evaluate((name) => {
             if (name === 'lamp') g.s.clock = 120;
-            else if (name === 'registered')
+            else if (['registered', 'ringleader'].includes(name))
               Object.assign(g.zone().enemies[0], {
                 form: 'normal',
                 frenzy: false,
@@ -431,7 +587,7 @@ async function main() {
             assert.equal(negative.sceneMetrics.worldIndicators, 0, 'Ash expires at exact boundary');
           if (fixture === 'ridge')
             assert.equal(negative.sceneMetrics.groundMarks, 0, 'Mark expires at exact boundary');
-          if (fixture === 'registered')
+          if (['registered', 'ringleader'].includes(fixture))
             assert.equal(
               negative.sceneMetrics.accessoryActors,
               0,
@@ -448,50 +604,82 @@ async function main() {
         }
       }
       if (fixture === 'cover' && process.env.PARITY_PERF === '1') {
-        benchmarks.push(
-          ...(await page.evaluate(() => {
-            const room = g.zone(),
-              base = structuredClone(g.hero),
-              result = [];
-            for (const count of [1, 8, 24, 48]) {
-              room.enemies = Array.from({ length: count - 1 }, (_, i) => ({
-                ...base,
-                id: 'benchmark-' + i,
-                renderKind: 'enemy',
-                species: 'goblin',
-                type: 'mob',
-                form: 'normal',
-                x: 1000 + (i % 6) * 3,
-                y: 1000 + Math.floor(i / 6) * 3,
-                neutral: false,
-              }));
+        const perfSamples = Number(process.env.PARITY_PERF_SAMPLES || 96);
+        const perfWarmup = Number(process.env.PARITY_PERF_WARMUP || 16);
+        const injectedDelayMs = Number(process.env.PARITY_PERF_DELAY_MS || 0);
+        if (!Number.isInteger(perfSamples) || perfSamples < 64 ||
+            !Number.isInteger(perfWarmup) || perfWarmup < 12 ||
+            !Number.isFinite(injectedDelayMs) || injectedDelayMs < 0)
+          throw Error('Invalid paired performance sampling parameters');
+        benchmarks.push(...(await page.evaluate(({ perfSamples, perfWarmup, injectedDelayMs }) => {
+          const room = g.zone(),
+            base = structuredClone(g.hero),
+            result = [];
+          const quantile = (sorted, q) => sorted[Math.ceil(q * sorted.length) - 1];
+          for (const count of [1, 8, 24, 48]) {
+            room.enemies = Array.from({ length: count - 1 }, (_, i) => ({
+              ...base,
+              id: 'benchmark-' + i,
+              renderKind: 'enemy',
+              species: 'goblin',
+              type: 'mob',
+              form: 'normal',
+              x: 1000 + (i % 6) * 3,
+              y: 1000 + Math.floor(i / 6) * 3,
+              neutral: false,
+            }));
+            // First fixture draw is separate from prepared steady measurements.
+            // It is NOT a cold application start or a real-device first encounter.
+            const initial = gpu.status();
+            const firstStart = performance.now();
+            gpu.draw();
+            painter.draw();
+            const firstFixtureDrawMs = performance.now() - firstStart;
+            const afterFirst = gpu.status();
+            for (let j = 0; j < perfWarmup; j++) {
               gpu.draw();
               painter.draw();
-              const before = gpu.status(),
-                samples = [];
-              for (let j = 0; j < 24; j++) {
-                const start = performance.now();
-                gpu.draw();
-                painter.draw();
-                samples.push(performance.now() - start);
-              }
-              samples.sort((a, b) => a - b);
-              const after = gpu.status();
-              if (after.proceduralBakes !== before.proceduralBakes)
-                throw Error('Steady crowd rerasterized bodies');
-              result.push({
-                count,
-                p50: samples[12],
-                p95: samples[22],
-                outline: painter.metrics().outlineBuffers,
-                masks: painter.metrics().outlineMasks,
-                before,
-                after,
-              });
             }
-            return result;
-          })),
-        );
+            const before = gpu.status(), samples = [];
+            for (let j = 0; j < perfSamples; j++) {
+              const start = performance.now();
+              gpu.draw();
+              painter.draw();
+              // Test-only injection verifies that the timing guard detects a
+              // deliberately slow fixture; never used in acceptance samples.
+              if (injectedDelayMs) {
+                const until = performance.now() + injectedDelayMs;
+                while (performance.now() < until) {}
+              }
+              samples.push(performance.now() - start);
+            }
+            samples.sort((x, y) => x - y);
+            const after = gpu.status();
+            const bakesDelta = after.proceduralBakes - before.proceduralBakes;
+            if (!after.active || after.lastError) throw Error('Pixi fallback in steady crowd');
+            if (bakesDelta !== 0) throw Error('Steady crowd rerasterized bodies');
+            result.push({
+              count,
+              sampleCount: samples.length,
+              warmupDraws: perfWarmup,
+              firstFixtureDrawMs,
+              firstFixtureBakes: afterFirst.proceduralBakes - initial.proceduralBakes,
+              firstFixtureTextureSources: afterFirst.sceneMetrics?.textureSources ?? null,
+              p50: quantile(samples, 0.5),
+              p95: quantile(samples, 0.95),
+              minMs: samples[0],
+              maxMs: samples.at(-1),
+              bakesDelta,
+              textureSourcesBefore: before.sceneMetrics?.textureSources ?? null,
+              textureSourcesAfter: after.sceneMetrics?.textureSources ?? null,
+              active: after.active && !after.lastError,
+              outline: painter.metrics().outlineBuffers,
+              masks: painter.metrics().outlineMasks,
+              before, after,
+            });
+          }
+          return result;
+        }, { perfSamples, perfWarmup, injectedDelayMs })));
       }
       await page.evaluate(() => gpu.dispose());
       console.log('CAPTURED ' + fixture);
@@ -510,8 +698,17 @@ async function main() {
             .trim(),
           engine: await browser.version(),
           viewport,
-          zoom: process.env.PARITY_ZOOM || 1.5,
+          deviceScaleFactor,
+          backingRatio,
+          zoom: Number(process.env.PARITY_ZOOM || 1.5),
           optimized: process.env.PARITY_OPTIMIZED !== '0',
+          benchmarkVersion: 'pixi-755-steady-v2',
+          injectedDelayMs: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_DELAY_MS || 0) : 0,
+          perfSamples: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_SAMPLES || 96) : null,
+          perfWarmup: process.env.PARITY_PERF === '1' ? Number(process.env.PARITY_PERF_WARMUP || 16) : null,
+          runner: { platform: process.platform, arch: process.arch, node: process.version,
+            imageOS: process.env.ImageOS || null, imageVersion: process.env.ImageVersion || null,
+            chromiumMode: 'ANGLE SwiftShader (software WebGL)' },
           rows,
           lifecycle,
           benchmarks,
