@@ -1672,6 +1672,58 @@
       // crownSceneLayout version or displace roads, services or old scenery.
       // Local industrial footpaths join the REAL heatwork placements,
       // not nominal coordinates. No original roads or lava gaps change.
+      // Environmental civilian work scenes, never replacement enemies.
+      // New sites have their own versioned IDs; old side-decor, loot, traps,
+      // guards and entry/exit keep their exact historical identities.
+      crownFoundryProduction(z) {
+        if (z.id !== 'side-crown-foundry' || z.crownFoundryProductionVersion === 1) return;
+        const cfg = R.sideDungeons.find((s) => s.id === z.id);
+        if (!cfg) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const [role, x, y, structure, action] of R.crownFoundryStations || []) {
+            const id = 'crown-foundry-work-' + role;
+            if (z.props.some((p) => p.id === id)) continue;
+            let chosen = null;
+            for (const radius of [0, 32, 64, 90]) {
+              for (let j = 0; j < (radius ? 12 : 1); j++) {
+                const angle = (j * Math.PI) / 6,
+                  p = { x: x + Math.cos(angle) * radius,
+                    y: y + Math.sin(angle) * radius };
+                if (
+                  p.x < 95 || p.y < 100 ||
+                  p.x > cfg.size - 90 || p.y > cfg.size - 90 ||
+                  this.blocked(p.x, p.y, z.id, 16, true) ||
+                  cfg.traps.some(([tx, ty]) =>
+                    dist(p, { x: tx, y: ty }) < 105) ||
+                  z.npcs.some((n) => dist(n, p) < 95) ||
+                  z.props.some((q) => q.r > 0 && dist(q, p) < q.r + 45) ||
+                  z.props.some((q) => q.crownFoundryWorker && dist(q, p) < 110) ||
+                  z.enemies.some((e) => e.hp > 0 &&
+                    dist(e.home || e, p) < 46)
+                ) continue;
+                chosen = p;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (!chosen) continue;
+            z.props.push({
+              id,
+              ...chosen,
+              r: 0,
+              decorative: true,
+              structure,
+              crownFoundryWorker: true,
+              crownFoundryRole: action,
+            });
+          }
+          z.crownFoundryProductionVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
       crownIndustrialCirculation(z) {
         if (z.id !== 'crown' || z.crownIndustrialVersion === 1) return;
         const oldZone = this.s.zone;
@@ -3712,6 +3764,7 @@
           this.millhavenOnboardingLayout(z);
           this.greenwoodOnboardingClearance(z);
           this.interiorCoherence(z);
+          this.crownFoundryProduction(z);
           this.defenderEncounterLayout(z);
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
@@ -3908,6 +3961,7 @@
           }
           z.sideDungeonVersion = 1;
           this.interiorCoherence(z);
+          this.crownFoundryProduction(z);
           this.defenderEncounterLayout(z);
           return z;
         }
