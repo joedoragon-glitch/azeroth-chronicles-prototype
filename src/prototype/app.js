@@ -344,6 +344,12 @@
     'Regional transport': 'Transporte regional',
     'Mira · ask the Western road observer': 'Mira · pregunta al observador del camino occidental',
     'Western road observer': 'Observador del camino occidental',
+    'Scout tracks / Western road observer': 'Huellas del explorador / observador del camino occidental',
+    'Mira is free. Find her teaching in Millhaven.': 'Mira está libre. Búscala enseñando en Millhaven.',
+    'temporary den': 'guarida temporal',
+    'Forest Crypt perimeter': 'Perímetro de la Cripta del Bosque',
+    'Southern crossing, west bank': 'Paso del sur, orilla occidental',
+    'Southern crossing, east bank': 'Paso del sur, orilla oriental',
     'Scout tracks': 'Huellas del explorador',
     'Northern freight crossing, west bank': 'Paso comercial del norte, orilla occidental',
     'Northern freight crossing, east bank': 'Paso comercial del norte, orilla oriental',
@@ -1443,6 +1449,11 @@
         piece.endsWith(thornLore))
       return spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
         ' ' + spanishText[thornLore];
+    const miraWaiting = /^Thornfang was defeated\\. Mira waits near (.+)\\. Your journal can guide you to her last known waiting place\\.$/.exec(piece);
+    if (miraWaiting)
+      return 'Thornfang ha sido derrotado. Mira espera cerca de ' +
+        (spanishText[miraWaiting[1]] || miraWaiting[1]) +
+        '. Tu diario te guiará a su última ubicación conocida.';
     if (/^One available companion goes away for /.test(piece))
       return piece
         .replace(
