@@ -16,7 +16,7 @@ The project owner authorized the provisional **environmental and Thornfang/Mira 
 
 ## Status and acceptance
 
-**Implemented:** source patches and focused test definitions exist on this draft branch; see [candidate acceptance and scene-card document](GREENWOOD_680_CANDIDATE_ACCEPTANCE.md).
+**Implemented:** source patches and focused test definitions exist on this draft branch; see the [candidate acceptance and scene-card document](GREENWOOD_680_CANDIDATE_ACCEPTANCE.md) and the [adversarial engineering audit](GREENWOOD_680_ENGINEERING_AUDIT.md).
 
 **Tested:** source-level patches and assertions are not execution evidence. Check the linked nonproduction preview workflow for exact-commit test and packaging outcomes; separately verify actual browser/device behavior before approval.
 
