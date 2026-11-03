@@ -13234,6 +13234,90 @@
         // Crownwatch's civic court is made by residents and craftspeople:
         // maintained ceramic paving, useful stone seating and sheltered
         // greenery. These props are visual only, never water/heat sources.
+        // Five working stages occupy the original side-crown-foundry.
+        // Each stage contains a distinct workstation and a real animated
+        // labor gesture. These are noncombat environmental figures; no new
+        // crafting transaction or named finished product is implied.
+        case 'crown-foundry-receiving':
+        case 'crown-foundry-furnace':
+        case 'crown-foundry-forming':
+        case 'crown-foundry-finishing':
+        case 'crown-foundry-dispatch': {
+          const time = Math.max(0, e.ambientTime || 0);
+          const motion = Math.sin(time * 3.3 + (variant % 7));
+          const lift = (motion + 1) * 0.5;
+          const stage = kind.slice('crown-foundry-'.length);
+          fillOval(0, 14, 36, 10, '#221f26', 0.24);
+          // Utilitarian, swept masonry floors, not damaged ruin floor tiles.
+          softPoly([[-38, 5], [0, -10], [38, 5], [0, 21]], '#68666c', 2);
+          for (const x of [-22, -7, 8, 23])
+            line([[x - 7, 6], [x + 6, 11]], '#8d8685', 0.8);
+          if (stage === 'receiving') {
+            crateBody(34, 5, 0.53);
+            softRect(-28, -7, 19, 13, '#857c71', 2);
+            for (const x of [-24, -19, -14])
+              line([[x, -5], [x, 4]], '#c6b9a1', 1);
+          } else if (stage === 'furnace') {
+            blockwork(3, -26, 34, 36, '#8b807a', 5);
+            softRect(9, -19, 23, 21, '#39353a', 2);
+            softRect(12, -14, 17, 14, '#c47a47', 2);
+            for (const x of [15, 22, 27])
+              glint(x, -11 + lift * 3, '#efc27b', 1.5);
+            line([[30, -26], [30, -45]], '#afb1a5', 3);
+          } else if (stage === 'forming') {
+            blockwork(1, 1, 36, 12, '#7b7a82', 3);
+            softRect(6, -7, 27, 9, '#a8a9ab', 2);
+            softPoly([[7, -10], [27, -10], [33, -5], [5, -5]], '#c6ab86', 1);
+            for (const x of [5, 30])
+              softRect(x, 9, 4, 10, '#747177', 1);
+          } else if (stage === 'finishing') {
+            softRect(2, -11, 34, 12, '#a1a4a3', 3);
+            softRect(5, -8, 28, 5, '#697b80', 1.5);
+            line([[4, 4], [34, 4]], '#b3b5ae', 3);
+            for (const x of [9, 18, 27])
+              oval(x, 3, 3, 2, '#b6a497');
+          } else {
+            crateBody(34, 9, 0.56);
+            line([[3, 3], [3, -22], [32, -22]], '#aaa79c', 2.5);
+            softRect(7, -26, 18, 6, '#bdad92', 1.4);
+          }
+          // Unarmed artisan silhouette, deliberately unlike Crown guards:
+          // linen headwrap, work apron and two hands with an active task.
+          softPoly([[-27, 10], [-22, -8], [-10, -9], [-4, 11]],
+            '#4b4c58', 2);
+          softPoly([[-23, -14], [-19, -25], [-8, -25], [-5, -12], [-7, 9], [-21, 9]],
+            '#7b8581', 3);
+          softRect(-18, -12, 8, 18, '#c2aa8c', 2);
+          oval(-14, -30, 9, 10, '#c49d82');
+          softPoly([[-24, -34], [-17, -42], [-7, -39], [-5, -32], [-17, -36]],
+            '#c6b7a7', 2);
+          line([[-17, -29], [-15, -29]], '#3b3434', 1.1);
+          if (stage === 'receiving' || stage === 'dispatch') {
+            const armY = -10 - lift * 10;
+            line([[-8, -18], [4, armY]], '#bd9c80', 4.2);
+            oval(4, armY, 4, 3.5, '#d4af8d');
+            // A handled, lifted item makes actual loading legible.
+            softRect(1, armY - 7, 16, 7, '#b9a48b', 1.3);
+          } else if (stage === 'furnace') {
+            line([[-8, -17], [8, -11 + motion * 4]], '#cba486', 4);
+            line([[8, -11 + motion * 4], [24, -16 + motion * 5]],
+              '#838586', 2.6);
+            oval(25, -16 + motion * 5, 3, 4, '#b8afa1');
+          } else if (stage === 'forming') {
+            const hand = -29 - lift * 17;
+            line([[-8, -17], [3, hand]], '#cba486', 4);
+            line([[3, hand], [23, -9 - lift * 7]], '#797d80', 3.5);
+            softRect(21, -17 - lift * 7, 12, 6, '#bcc0b9', 1.2);
+            if (lift < 0.16) glint(24, -10, '#e5ad64', 2.2);
+          } else {
+            const hand = -16 + motion * 4;
+            line([[-8, -17], [16, hand]], '#cba486', 4);
+            softRect(14, hand - 4, 11, 5, '#d5c7ac', 1.1);
+            if (stage === 'finishing')
+              line([[19, hand - 4], [26, -4]], '#e3d7bc', 1.5);
+          }
+          break;
+        }
         case 'crown-civic-tilecourt':
           softPoly(
             [[-49, 2], [0, -17], [49, 2], [0, 20]],
