@@ -104,8 +104,8 @@ assert(industrial.length >= 1,
 assert(industrial.length <= rules.crownIndustrialLinks.length,
   'Only authored, validated local service links may be added');
 assert(industrial.every(link => link.from.startsWith('recovery-heat-crown-') &&
-  link.to.startsWith('recovery-heat-crown-')),
-  'Freight paths reference actual existing heatwork props, never invented intakes');
+  (link.to.startsWith('recovery-heat-crown-') || link.to === 'foundry')),
+  'Freight paths reference only actual heatwork props and the original Foundry entrance');
 assert(industrial.some(link => link.roadConnected),
   'At least one local industry corridor must tie into an original carriageway');
 const originalIndustrialPaths = JSON.stringify(civic.zone().footpaths);
