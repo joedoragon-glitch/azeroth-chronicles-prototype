@@ -13234,6 +13234,31 @@
         // Crownwatch's civic court is made by residents and craftspeople:
         // maintained ceramic paving, useful stone seating and sheltered
         // greenery. These props are visual only, never water/heat sources.
+        // Historical side-decor IDs now represent useful maintained
+        // facilities. Cooling is air-assisted, NOT unexplained water supply.
+        case 'crown-foundry-cooling-rack':
+          blockwork(-35, 9, 70, 10, '#81818a', 4);
+          for (const x of [-28, -9, 9, 28]) {
+            line([[x, 10], [x, -25]], '#a8abb0', 4);
+            oval(x, -27, 4, 3, '#c0bdb4');
+          }
+          line([[-33, -23], [33, -23]], '#b1b4b3', 3);
+          for (const x of [-20, 0, 20]) {
+            softRect(x - 6, -20, 13, 8, '#9a968f', 1.5);
+            line([[x - 4, -17], [x + 5, -17]], '#c8bdac', 1);
+          }
+          for (const x of [-21, 22])
+            line([[x - 5, 3], [x + 5, -1]], '#a4a6a4', 1.3);
+          break;
+        case 'crown-foundry-stock-bay':
+          blockwork(-38, 9, 76, 10, '#747783', 5);
+          crateBody(-17, 0, 0.69);
+          crateBody(16, 2, 0.58);
+          softRect(5, -22, 24, 5, '#b5afa3', 1);
+          line([[6, -19], [28, -19]], '#6f7476', 1.4);
+          for (const x of [-30, 30])
+            softRect(x - 3, -13, 6, 25, '#9e9c9a', 1.5);
+          break;
         // Five working stages occupy the original side-crown-foundry.
         // Each stage contains a distinct workstation and a real animated
         // labor gesture. These are noncombat environmental figures; no new
