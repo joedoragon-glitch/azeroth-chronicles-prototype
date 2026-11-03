@@ -115,8 +115,18 @@
       if ((shape.gaps || []).some(([lo, hi]) => y > lo && y < hi)) return null;
       return { x: clamp(p.x, x1, x2), y };
     }
-    if (Number.isFinite(shape.x1) && Number.isFinite(shape.x2))
-      return { x: clamp(p.x, shape.x1, shape.x2), y: clamp(p.y, shape.y1, shape.y2) };
+    if (Number.isFinite(shape.x1) && Number.isFinite(shape.x2)) {
+      let y = clamp(p.y, shape.y1, shape.y2);
+      for (const [lo, hi] of shape.gaps || [])
+        if (y >= lo && y <= hi) {
+          // Industrial lava channels have deliberately dry bridge openings.
+          // The closest actual lava is at a channel edge, not in that gap.
+          const below = clamp(lo - 1, shape.y1, shape.y2);
+          const above = clamp(hi + 1, shape.y1, shape.y2);
+          y = Math.abs(p.y - below) < Math.abs(p.y - above) ? below : above;
+        }
+      return { x: clamp(p.x, shape.x1, shape.x2), y };
+    }
     return isFinitePoint(shape) ? { x: shape.x, y: shape.y } : null;
   }
 
@@ -174,7 +184,11 @@
     if (source.kind !== 'channel') return closestToShape(hero, source.shape || source.prop);
     const b = source.shape, [, , y1, y2] = b.bounds || [];
     if (![y1, y2].every(Number.isFinite) || typeof rules?.channelBanks !== 'function') return null;
-    const possible = [clamp(hero.y, y1, y2), clamp(hero.y - 48, y1, y2), clamp(hero.y + 48, y1, y2)];
+    const possible = [clamp(hero.y, y1, y2), clamp(hero.y - 48, y1, y2),
+      clamp(hero.y + 48, y1, y2)];
+    for (const [lo, hi] of b.gaps || [])
+      if (hero.y >= lo - MAX_CAST_RANGE && hero.y <= hi + MAX_CAST_RANGE)
+        possible.push(clamp(lo - 1, y1, y2), clamp(hi + 1, y1, y2));
     let closest = null, best = Infinity;
     for (const y of possible) {
       if ((b.gaps || []).some(([lo, hi]) => y >= lo && y <= hi)) continue;
