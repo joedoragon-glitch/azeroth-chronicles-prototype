@@ -2609,6 +2609,7 @@
     ['east-glass-to-distribution', 1, 4],
     ['south-intake-to-glass', 6, 7],
     ['south-glass-to-drying', 7, 9],
+    ['south-drying-to-foundry', 9, 'foundry'],
     ['south-drying-to-kiln', 9, 10],
     ['south-kiln-to-distribution', 10, 11],
     ['washhouse-service', 13, 14],
