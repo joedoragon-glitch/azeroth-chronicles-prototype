@@ -167,6 +167,10 @@ Class advancement, specialist prerequisites, input forms, ability targeting, cha
 
 **Decision intent at a glance:** Hero growth and Discipline Training are different from combat input; normal and charged skill forms share their real cooldowns, with explicit hold/cancel/target rules. Later queue-form decisions modify how inputs behave while cooling down. Sprint remains deliberately unavailable.
 
+#### 3 November 2026 — skills stay unchanged for v0.9.2; playthrough-led design afterward
+
+**Owner decision (applies across playable hero classes):** The current Tap/Charged reassessments are **audits only**, not approval to create replacement abilities, alter critical effects or rebalance skills for the v0.9.2 update. Existing skills are acceptable for this development stage. The owner plans to play each class through a complete campaign and use the actual problems, missing tools, progression experience and strengths observed during play to decide which individual pairs to **preserve**, **refine** or **redesign** in later versions. An upgrade-like Charged variant is not automatically a design failure; the comparison must serve practical gameplay. No redesign concept, number of changes or delivery schedule is preapproved. Do not turn AI-suggested speculative spells into future work orders. The dated [Mage Tap/Charged source audit](MAGE_TAP_CHARGED_DESIGN_AUDIT_20261103.md) illustrates the provisional triage, not an implementation plan. Comparable audits of other classes remain observational until separately authorized.
+
 ### Foundation rules (original baseline wording retained)
 
 #### Specialist rescue and training gates
