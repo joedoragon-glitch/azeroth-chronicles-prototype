@@ -79,6 +79,7 @@ assert(e && mira && mira.id === 'cage-thorn');
 const order = [], visited = [], path = [];
 let prevLeg = null, maxGap = 0, minMillhaven = Infinity, homecoming = false;
 let midGuideSnapshot = null, minHamlet = Infinity, minMill = Infinity, minOrchard = Infinity;
+let closestTownPoint = null;
 for (let step = 0; step < 18000; step++) {
   const before = { x: e.x, y: e.y }, beforeMira = { x: mira.x, y: mira.y };
   g.s.time += 0.1;
@@ -93,7 +94,12 @@ for (let step = 0; step < 18000; step++) {
   }
   if (step % 20 === 0) path.push([Math.round(e.x), Math.round(e.y)]);
   maxGap = Math.max(maxGap, dist(e, mira));
-  minMillhaven = Math.min(minMillhaven, dist(e, { x: 650, y: 600 }));
+  const toTown = dist(e, { x: 650, y: 600 });
+  if (toTown < minMillhaven) {
+    minMillhaven = toTown;
+    closestTownPoint = { x: Math.round(e.x), y: Math.round(e.y),
+      leg: e.thornLeg, guideStep: e.thornGuideStep, second: Math.round(g.s.time) };
+  }
   if (leg === 1 && e.thornGuideStep >= 0) {
     minHamlet = Math.min(minHamlet, dist(e, { x: 550, y: 1750 }));
     minMill = Math.min(minMill, dist(e, { x: 1200, y: 1400 }));
@@ -108,6 +114,7 @@ for (let step = 0; step < 18000; step++) {
 console.log('GREENWOOD_679_PATROL_OBSERVATION ' + JSON.stringify({
   order, visited, homecoming,
   maxCaptiveGap: Math.round(maxGap), minMillhaven: Math.round(minMillhaven),
+  closestTownPoint,
   minHamlet: Math.round(minHamlet), minMill: Math.round(minMill),
   minOrchard: Math.round(minOrchard),
   sampledPath: path.filter((_, i) => i % 5 === 0),

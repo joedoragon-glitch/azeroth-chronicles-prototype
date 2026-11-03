@@ -225,8 +225,8 @@
     // Each original patrol index (and all historical thornLeg values) is kept.
     R.thornPatrol.westernWoodlandGuide = [
       [1410, 550],
-      [1080, 260],
-      [460, 220],
+      [1080, 150],
+      [460, 150],
       [120, 430],
       [120, 690],
       [310, 1000],
