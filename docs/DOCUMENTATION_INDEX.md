@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **448 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 (Dark Crown draft workstream) · **450 Markdown documents indexed on this branch**. (The separate draft PR #707 design contract is linked below but not counted as a file in this branch.)
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -16,7 +16,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (23)
 - [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
-- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (49)
+- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (51)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
 - [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (46)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
@@ -296,6 +296,9 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ### Other geographic and narrative records
 
 - **[Dark Crown Regime Layout](DARK_CROWN_REGIME_LAYOUT.md)** — **Reference.** Describes dark crown regime layout decisions, constraints or engineering observations from its original development checkpoint.
+- **[Dark Crown Autonomous Implementation and Adversarial Audit Mandate](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md)** — **Active draft workstream policy, PR #769.** Cross-session implementation, evidence, corrective audit, consent and session-resume requirements; not an approval to merge or deploy.
+- **[Dark Crown Regional Implementation Baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md)** — **Active draft workstream evidence, PR #769.** Verified source/screenshot baseline, visual mismatches, engineering phase ownership and remaining acceptance gates; not a completed overhaul.
+- **[Dark Crown Authorial Contract (separate draft PR #707)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707)** — **Owner's authoritative creative direction; unmerged separate branch, not indexed as a local Markdown file.** Read its complete contract on the source branch, especially sections 10–14.
 - [Snapshot Crown Economy Audit 20261015](SNAPSHOT_CROWN_ECONOMY_AUDIT_20261015.md) — *Dated record.* Examines snapshot crown economy for source or design inconsistencies, recording dated findings and limits.
 
 ## Sprite art, textures and visual design
