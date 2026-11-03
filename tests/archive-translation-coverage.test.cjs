@@ -34,6 +34,7 @@ const gapsFor = (text, names) => {
 };
 const numbers = (text) => text.match(/\d+(?:\.\d+)?/g) || [];
 let checked = 0;
+const untranslated = new Set();
 for (const heroClass of ['paladin', 'mage', 'ranger']) {
   const g = new C('normal', heroClass, () => 0.93);
   for (const boss of C.data.bosses) {
@@ -66,7 +67,7 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
         for (const s of sections)
           for (const text of [s.title, s.intro, ...s.topics.flat()]) {
             const es = A.translateArchive(text, names);
-            assert.deepEqual(gapsFor(text, names), [], 'Untranslated Archive prose: ' + text);
+            for (const gap of gapsFor(text, names)) untranslated.add(gap);
             assert.deepEqual(numbers(es), numbers(text), 'Exact numeric tokens and order: ' + text);
             for (const pair of Object.values(approved))
               if (text.includes(pair.en))
@@ -78,6 +79,7 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
       }
     }
 }
+assert.deepEqual([...untranslated], [], 'Untranslated Archive technical fragments (all combinations)');
 for (const pair of Object.values(approved)) {
   assert.equal(A.translateArchive(pair.en), pair.es);
   assert.equal(A.translateArchive(pair.es), pair.es);

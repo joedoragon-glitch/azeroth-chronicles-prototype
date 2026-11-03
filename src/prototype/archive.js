@@ -1246,6 +1246,7 @@
   // Fixed explanatory fragments flank numbers derived at runtime. Translate
   // the clauses around those numbers; never copy a cached combat value.
   const technicalClauses = [
+    ['Damage per arrow: ', 'Daño por flecha: '],
     ['blockable shot; effects require contact', 'disparo bloqueable; los efectos requieren contacto'],
     // Repair inherited missing translations for the current healing formula.
     [' Ordinary ranged enemies restore all missing HP of an eligible ordinary monster over ', ' Los enemigos ordinarios a distancia restauran todos los PV que le faltan a un monstruo ordinario que cumpla las condiciones durante '],
