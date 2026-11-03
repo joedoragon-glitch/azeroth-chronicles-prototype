@@ -161,3 +161,26 @@ recovery. Large save sizes are ultimately bounded by browser quota and the
 existing five-megabyte import limit, with UTF-16 key/value accounting varying
 by engine. Production migration and complete real-device certification remain
 separate consent gates.
+
+## 3 November 2026 — IndexedDB and storage standards references
+
+The immutable, historical v0.8.118 beta regression manifest
+(`docs/evidence/beta-v09/historical.json`) documents six **synthetic**
+late-campaign exports: 354,522–354,527 uncompressed bytes per file.
+These are not actual player saves, current version measurements, or a
+worst-case bound. A present-game fresh save, advanced current-game save,
+near-quota usage and save p95/p99 write timings still need measured
+device evidence before an IndexedDB migration GO decision. The current
+5 MiB import cap is a separate file-import guard, not a guarantee that
+the origin has 5 MiB free or that every possible export is importable.
+
+Technical references (reviewed 3 November 2026):
+
+- [MDN browser storage quotas and eviction](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria) — origin-level eviction, private mode, best-effort vs persistent storage, and estimates.
+- [WebKit Storage Policy](https://webkit.org/blog/14403/updates-to-storage-policy/) — iOS 17+/Safari Storage API, persistence heuristics, and approximate quota behavior.
+- [MDN IndexedDB transactions and upgrade contention](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB) — transaction rollback on failure, blocked schema upgrades with other tabs and shutdown limitations.
+
+These references support **persistent storage as an opt-in risk reduction**,
+not indefinite data retention. IndexedDB has no advantage against
+origin-wide deletion or lost hardware. No new permission, storage amount,
+migration or test certification is implied by these references.
