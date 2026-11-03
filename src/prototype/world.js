@@ -1795,7 +1795,7 @@
             // old west/east bridge routes remain the sole region crossings.
             const road = this.nearestRoadPoint(z, start);
             let roadConnected = this.distanceToRoad(z, start) <= 52;
-            if (!roadConnected && road && dist(road, start) <= 240) {
+            if (!roadConnected && road && dist(road, start) <= 410) {
               if (this.clearSegment(road, start, 15)) {
                 z.footpaths.push([road, start]);
                 roadConnected = true;
