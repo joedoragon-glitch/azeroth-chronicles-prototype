@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **448 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **449 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -14,7 +14,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (23)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (127)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (49)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
@@ -188,6 +188,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - **[Combat Arena Low Spec](COMBAT_ARENA_LOW_SPEC.md)** — **Reference.** Combat-space readability and technical constraints for lower-performance devices.
 - [Combat Conditions V09](COMBAT_CONDITIONS_V09.md) — *Dated record.* Meaning and presentation of status conditions in combat.
+- [Skill Block Player Learning Design 20261103](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md) — *Approved design and cross-chat engineering handoff.* Existing player learning paths, bilingual text, live-rule figures, quiet feedback and phased acceptance for Skill Block.
 - [Combat Flow And Menus DEV126](COMBAT_FLOW_AND_MENUS_DEV126.md) — *Dated record.* Explains combat flow and menus player interaction or interface readability choices.
 - [Combat Four Domain Workload Audit 20261029](COMBAT_FOUR_DOMAIN_WORKLOAD_AUDIT_20261029.md) — *Dated record.* Native dev.224 combat-workload measurements, later merged micro-optimizations and unresolved follow-up investigations.
 - **[Combat Party Housekeeping](COMBAT_PARTY_HOUSEKEEPING.md)** — **Reference.** Describes combat party housekeeping decisions, constraints or engineering observations from its original development checkpoint.

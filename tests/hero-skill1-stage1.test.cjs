@@ -1,4 +1,7 @@
 'use strict';
+// This suite checks authored hit geometry independently of Skill Block. Dedicated
+// Skill Block suites verify the new probability and blocked-contact rules.
+require('./helpers/legacy-skill-evasion.cjs')();
 // Area 1 focused native gameplay checks; no browser, presentation or audio dependency.
 const assert = require('node:assert/strict');
 const Campaign = require('../src/prototype/engine.js');

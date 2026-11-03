@@ -15,7 +15,7 @@ const counts = names.reduce((result, [, entry]) => {
   result[entry.kind] = (result[entry.kind] || 0) + 1;
   return result;
 }, {});
-assert.deepEqual(counts, { music: 83, ambience: 18, effect: 30 });
+assert.deepEqual(counts, { music: 83, ambience: 34, effect: 30 });
 assert.equal(Object.keys(manifest.director.places).length, 19);
 assert.equal(Object.keys(manifest.director.bosses).length, 11);
 
@@ -24,6 +24,8 @@ for (const id of [
   'recording', 'record-play', 'stem-play', 'intensity', 'guide-event',
   'guide-text', 'copy-guide', 'profile', 'mix-scene', 'volumes', 'mute',
   'source', 'grid', 'warning', 'ui-play', 'pause', 'stop', 'report',
+  'shared-listening', 'shared-play', 'shared-title', 'shared-description',
+  'copy-recording-link', 'copy-original-link',
   'waveform', 'measurement', 'status', 'message', 'now-playing',
 ]) {
   assert.equal((page.match(new RegExp('id="' + id + '"', 'g')) || []).length, 1, id);
@@ -44,6 +46,9 @@ for (const phrase of [
   'audio.updateEnvironment(scene)', 'audio.setRecordedScore({',
   'audio.playRecording(id,', 'navigator.clipboard.writeText',
   "registry?.director?.places?.", 'document.hidden || userPaused',
+  "requestedLink.get('track')", "requestedLink.get('legacy')",
+  'function listeningUrl(key, id)', 'function prepareSharedLink()',
+  'function playSharedLink()',
 ]) assert(code.includes(phrase), 'Missing audition integration: ' + phrase);
 assert(!page.includes('The production registry is empty'));
 assert(!page.includes('Audio audition</h1>'));
@@ -53,4 +58,4 @@ assert(page.includes('New authored soundtrack'));
 assert(page.includes('Advanced listening tools'));
 assert(page.includes('No save data is accessed.'));
 assert(!/\blocalStorage\b|\bsessionStorage\b/.test(code), 'Listening room must never access saves');
-console.log('PASS audition source contract: 131 real assets, 19 places, 11 bosses, 3 specials, complete UI controls and save isolation');
+console.log('PASS audition source contract: 147 real assets, 19 places, 11 bosses, 3 specials, complete UI controls and save isolation');

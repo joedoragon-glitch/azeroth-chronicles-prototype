@@ -96,6 +96,7 @@
     presentEntity,
     margin = 270,
     preloadEncounters = false,
+    cameraZoom = 1,
   ) {
     const zone = game.zone();
     const result = [],
@@ -112,12 +113,23 @@
     function add(entities, kind) {
       for (const entity of entities || []) {
         if (kind === 'enemy' && entity.hp <= 0) continue;
-        const point = project(entity);
+        // A ferry's reachable boarding point is not its displayed hull.
+        // Use the canonical Canvas presentation for visual culling/grounding
+        // but never change transport coordinates, interactions or save state.
+        const harborVessel =
+          kind === 'npc' && entity.kind === 'transport' && entity.harbor;
+        const harborVisual = harborVessel ? presentEntity(entity, kind) : null;
+        const point = project(harborVisual || entity);
+        // Canvas grants full-size harbor artwork an enlarged logical fringe.
+        // Convert that to the CSS-pixel projection used by this GPU stage.
+        const edge = harborVessel
+          ? Math.max(margin, Math.max(180, 240 * cameraZoom) * cameraZoom)
+          : margin;
         const inCameraFringe =
-          point.x >= -margin &&
-          point.x <= width + margin &&
-          point.y >= -margin &&
-          point.y <= height + margin;
+          point.x >= -edge &&
+          point.x <= width + edge &&
+          point.y >= -edge &&
+          point.y <= height + edge;
         const encounterActor = preloadEncounters && kind === 'enemy';
         const bossTerritory =
           preloadEncounters &&
@@ -131,7 +143,7 @@
         const stem = kind + ':' + identity;
         const count = used.get(stem) || 0;
         used.set(stem, count + 1);
-        const visual = presentEntity(entity, kind);
+        const visual = harborVisual || presentEntity(entity, kind);
         result.push({ entity, visual, kind, point, key: count ? stem + '#' + count : stem });
       }
     }
@@ -173,7 +185,8 @@
     add(game.activeLivingParty(), 'ally');
     add([game.hero], 'hero');
     if (zone.escort) add([{ ...zone.escort, icon: '🧑‍🌾', name: 'Supply escort' }], 'ally');
-    return result.sort((a, b) => a.entity.x + a.entity.y - (b.entity.x + b.entity.y));
+    // Canvas sorts the presented body, not a ferry's separate boarding location.
+    return result.sort((a, b) => a.visual.x + a.visual.y - (b.visual.x + b.visual.y));
   }
   function bake(visual, game, density = 1) {
     // The procedural artist draws vectors. Bake at the same final display
@@ -1105,6 +1118,7 @@
         canvasRenderer.presentEntity,
         arrival ? Infinity : heading ? 4000 : 900,
         arrival || !!heading,
+        platform.cameraZoom || 1,
       )
         .filter(
           ({ entity, point }) =>
@@ -1341,6 +1355,9 @@
         viewport.width,
         viewport.height,
         canvasRenderer.presentEntity,
+        270,
+        false,
+        zoom,
       ).filter(
         ({ entity }) =>
           !entity.interactionOnly &&
@@ -1447,7 +1464,7 @@
                   flipX: facing < 0,
                 }
               : null,
-            depth: entity.x + entity.y,
+            depth: visual.x + visual.y,
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
           const revision = revisionFor(entity, visual, key, current, zoom);
@@ -1483,7 +1500,7 @@
             opacity: 1,
             flipX: facing < 0,
             ground,
-            depth: entity.x + entity.y,
+            depth: visual.x + visual.y,
           });
           // Move each retained original animal, never rerasterize its scenery.
           for (const part of b.ambientParts || []) {
@@ -1520,7 +1537,7 @@
               height: body.logicalHeight * zoom,
               opacity: 1,
               flipX: motion.facing < 0,
-              depth: entity.x + entity.y,
+              depth: visual.x + visual.y,
             });
           }
         } else throw Error('Missing original game artwork: ' + key);
