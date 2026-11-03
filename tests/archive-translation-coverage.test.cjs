@@ -163,7 +163,11 @@ const blockReference = A.conditionTopics(C.rules).find(([name]) => name === 'Ski
 assert.equal(A.translateArchiveLabel(blockReference[0]), 'Bloqueo de habilidades');
 assert.equal(A.translateArchive(blockReference[1]),
   'Una habilidad puede alcanzar a su objetivo y aun así ser bloqueada. Un impacto bloqueado no causa daño ni aplica efectos ligados a ese impacto. Cada objetivo de un ataque de área puede bloquearlo por separado. Los impactos críticos de habilidades no se pueden bloquear.');
-assert(A.translateArchive(blockReference[2]).includes('Los compañeros no reciben bonificación nocturna'));
+const blockSpanish = A.translateArchive(blockReference[2]);
+assert(blockSpanish.includes('Los monstruos encantados legítimamente y las mascotas de jefes reciben esa misma bonificación nocturna'),
+  'merged player reference acknowledges lawfully owned monsters at night');
+assert(blockSpanish.includes('Los soldados y arqueros no la reciben'),
+  'ordinary companions are specifically excluded from monster-night Block');
 assert(A.translateArchive(blockReference[2]).includes('El héroe no tiene bloqueo general de habilidades'));
 const variedBlock = A.conditionTopics({
   ...C.rules, skillBlock: { ...C.rules.skillBlock, enemySingle: 0.1775, nightEnemyBonus: 0.075 },
