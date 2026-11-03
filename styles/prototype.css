@@ -223,6 +223,12 @@ body.menu-open #skills {
 #recall-button {
   color: #e7e2c3;
 }
+#recall-button.recall-active {
+  color: #fff2bd;
+  background: linear-gradient(160deg, #514122, #3b3e29);
+  border-color: #ffe294;
+  box-shadow: inset 0 1px #fff3c044, 0 0 0 2px #ffe29499;
+}
 #recall-button.tutorial-highlight,
 #modal-actions button.tutorial-highlight {
   color: #fff2bd;

@@ -219,6 +219,33 @@
         y2: 2320 * scale,
       },
     ];
+    // The north-west crossing to Goblin perimeter leg used to cut through
+    // Millhaven's domestic edge. This scout-only chain stays on the western
+    // woodland rim; it does not draw roads, add NPCs or change public routes.
+    // Each original patrol index (and all historical thornLeg values) is kept.
+    // Revised captions belong to the 3200-unit Greenwood reconstruction.
+    // Legacy 2700-unit campaigns and rollback fixtures keep their names.
+    R.thornPatrol.names = [
+      'temporary den',
+      'Goblin perimeter',
+      'Northern freight crossing, west bank',
+      'Northern freight crossing, east bank',
+      'Skeleton watch perimeter',
+      'Forest Crypt perimeter',
+      'Southern crossing, east bank',
+      'Southern crossing, west bank',
+    ];
+    R.thornPatrol.westernWoodlandGuide = [
+      [1410, 550],
+      [1080, 150],
+      [460, 150],
+      [120, 430],
+      [120, 690],
+      [310, 1000],
+      [255, 1450],
+      [155, 1900],
+      [150, 2590],
+    ].map(([x, y]) => [x * scale, y * scale]);
     R.thornPatrol.route = [
       a.den,
       q([350, 2450]),
@@ -255,6 +282,50 @@
   }
   function install(C, { D, R }) {
     class Landscape {
+      // GV-679 is an additive, nonblocking scene overlay. Never re-run the
+      // layout's destructive scene generator or its enemy/home corrections to
+      // deliver cosmetic refinements to an existing v4 campaign.
+      greenwoodRefinementScene(z) {
+        if (z.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
+            z.greenwoodRefinementVersion === 1 || z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion)
+          return;
+        const scale = R.greenwoodLayout.scale;
+        const cards = [
+          ['millhaven-poultry', 'poultry-yard', 520, 1170, 'working household yard'],
+          ['millhaven-flowers', 'wildflowers', 470, 1140, 'dry domestic verge'],
+          ['hamlet-pen', 'animal-pen', 175, 2375, 'sheep / fodder smallhold'],
+          ['orchard-flowers', 'wildflowers', 1035, 2380, 'cultivated dry margin'],
+          ['pond-reeds-west', 'reeds', 770, 1210, 'slow pond shoreline'],
+          ['pond-reeds-east', 'reeds', 1035, 1200, 'slow pond shoreline'],
+          ['den-thorn-bed', 'thorn-bed', 1190, 3080, 'sheltered scout den edge'],
+        ];
+        const audit = [];
+        for (const [key, structure, x, y, reason] of cards) {
+          const id = 'greenwood-refinement-' + key;
+          const point = { x: x * scale, y: y * scale };
+          if (z.props.some((p) => p.id === id)) {
+            audit.push({ id, placed: true, reason: 'existing candidate retained' });
+            continue;
+          }
+          const conflict = this.blocked(point.x, point.y, 'vale', 0, true) ||
+            this.distanceToRoad(z, point) < 45 ||
+            this.distanceToRoad({ roads: z.footpaths || [] }, point) < 35 ||
+            z.buildings.some((b) => distance(b, point) < 135) ||
+            z.props.some((p) => (p.owned || p.playerOwned || p.custom) && distance(p, point) < 85) ||
+            z.npcs.some((n) => distance(n.servicePoint || n, point) < 65) ||
+            z.nodes.some((n) => distance(n, point) < 35) ||
+            z.enemies.some((e) => e.hp > 0 && distance(e.home || e, point) < 60);
+          if (conflict) {
+            audit.push({ id, placed: false, reason: 'protected road, water, owner, service or actor clearance' });
+            continue;
+          }
+          z.props.push({ id, structure, ...point, r: 0, decorative: true,
+            greenwoodAuthored: true, greenwoodRefinement: 1 });
+          audit.push({ id, placed: true, reason });
+        }
+        z.greenwoodRefinementAudit = audit;
+        z.greenwoodRefinementVersion = 1;
+      }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 || z.greenwoodSourceVersion === 2) return;
@@ -956,6 +1027,7 @@
                 Object.assign(p, this.safe(p.x, p.y, 'vale'));
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
+          this.greenwoodRefinementScene(z);
         } finally {
           this.s.zone = previous;
         }

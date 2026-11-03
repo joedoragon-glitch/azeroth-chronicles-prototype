@@ -69,6 +69,8 @@ Los siguientes son los **atajos predeterminados** del teclado. Puedes cambiarlos
 
 **Combate:** tu héroe puede realizar ataques básicos automáticos. Una pulsación corta de habilidad ejecuta su forma normal; algunas habilidades ofrecen una forma cargada al mantener el botón. Cada acción tiene un tiempo de espera antes de reutilizarse. Si mantienes **Objetivo** unos **0,55 segundos**, puedes fijar un enemigo; pulsarlo brevemente cambia de objetivo.
 
+**Reagrupar (Recall):** pulsa una vez para ordenar a tus compañeros que regresen y permanezcan a la defensiva durante **cinco segundos de juego**. El botón indica que está activo y muestra la cuenta atrás. Pulsa otra vez para cancelar antes; de lo contrario, termina solo al cumplirse los cinco segundos. Tus ataques automáticos o habilidades manuales no lo cancelan. El tiempo no avanza mientras el juego está en pausa, y no puedes asignar nuevas tareas a compañeros durante esos cinco segundos.
+
 **En el teléfono:** puedes usar la palanca o tocar el suelo para desplazarte. Los controles táctiles tienen una disposición para dos pulgares y una alternativa para zurdos. Abrir un menú o volver a manejar la palanca interrumpe el desplazamiento automático.
 
 Si necesitas ayuda mientras juegas, abre el menú de **Controles** o **Ayuda y créditos**. En las pantallas del propio juego encontrarás las descripciones más actualizadas de las habilidades.

@@ -353,7 +353,27 @@
     'Specialists rescued · Defeat the Dark Lord': 'Especialistas rescatados · Derrota al Dark Lord',
     'Dungeon exit': 'Salida de la mazmorra',
     'Regional transport': 'Transporte regional',
-    'Mira · ask the Orchard trail witness': 'Mira · habla con el testigo del camino del huerto',
+    'Mira · ask the Western road observer': 'Mira · pregunta al observador del camino occidental',
+    'Western road observer': 'Observador del camino occidental',
+    'Scout tracks / Western road observer': 'Huellas del explorador / observador del camino occidental',
+    'Mira is free. Find her teaching in Millhaven.': 'Mira está libre. Búscala enseñando en Millhaven.',
+    'temporary den': 'guarida temporal',
+    'Forest Crypt perimeter': 'Perímetro de la Cripta del Bosque',
+    'Southern crossing, west bank': 'Paso del sur, orilla occidental',
+    'Southern crossing, east bank': 'Paso del sur, orilla oriental',
+    'Scout tracks': 'Huellas del explorador',
+    'Northern freight crossing, west bank': 'Paso comercial del norte, orilla occidental',
+    'Northern freight crossing, east bank': 'Paso comercial del norte, orilla oriental',
+    'Goblin perimeter': 'Perímetro goblin',
+    'Skeleton watch perimeter': 'Perímetro del puesto de vigilancia esqueleto',
+    'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.':
+      'No hay avistamientos recientes desde el camino occidental. Busca huellas del explorador en el bosque del sur y junto a ambos pasos.',
+    'Recent pawprints were found by the western road. They may already be old; follow the tracks.':
+      'Se encontraron huellas recientes junto al camino occidental. Puede que ya sean antiguas; sigue el rastro.',
+    'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.':
+      'Thornfang fue explorador de los territorios salvajes de la Corona. Lleva a Mira desde su guarida temporal del sur por el puente peatonal meridional, el perímetro de la Cripta del Bosque, la vigilancia esqueleto, el paso comercial del norte y el territorio goblin. Evitan Millhaven. Mira realiza inspecciones obligatorias aunque recibe un salario. Cuando termine la finca de invierno y sus habitantes puedan protegerla, Thornfang piensa volver a su lejano hogar.',
+    'Fresh pawprints mark this nearby path. Follow their direction.':
+      'Hay huellas frescas en este camino cercano. Sigue su dirección.',
     'Complete · field base established': 'Completada · base de campo construida',
     'Complete · reward delivered': 'Completada · recompensa entregada',
     'Construction in progress · keep one companion assigned until complete':
@@ -626,8 +646,8 @@
       'Ranger en cola de reclutamiento. Toca la misma opción para cancelar.',
     'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.':
       'Soldado: combate cercano.\nRanger: ataques a distancia + curación.\nTe siguen y luchan automáticamente.\n\nReagrupar los trae de vuelta.',
-    'Recalled!\nOrders cancelled. Companions stay close and defend without chasing.\nGive a new order to send them out again.\n\nNext: build your first Barracks for FREE.':
-      '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se quedan cerca y se defienden sin perseguir.\nDales una nueva orden para enviarlos de nuevo.\n\nDespués: construye tu primer cuartel GRATIS.',
+    'Recalled!\nOrders cancelled. Companions stay close and defend without chasing for up to five seconds.\nPress Recall again to cancel early; the button shows when it is active.\n\nNext: build your first Barracks for FREE.':
+      '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se mantienen cerca y se defienden sin perseguir durante un máximo de cinco segundos.\nPulsa Reagrupar otra vez para cancelar antes; el botón muestra cuándo está activo.\n\nDespués: construye tu primer cuartel GRATIS.',
     'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.':
       'Recluta compañeros o recupera tu compañía.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
     'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.':
@@ -692,6 +712,16 @@
       'Terreno abierto fuera del camino. Un compañero lo construye. Al terminar, Curar heridas restaura la salud del grupo por 30 coronas.',
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
+  });
+  // #684: Match the authored timed-Recall feedback and bilingual tutorial.
+  Object.assign(spanishText, {
+    'Squad Recall cancelled.': 'Reagrupación cancelada.',
+    'Squad Recall ended after five seconds.': 'La reagrupación terminó después de cinco segundos.',
+    'Recall OFF · companions resume normal orders.': 'Reagrupar OFF · los compañeros retoman sus órdenes normales.',
+    'Recall expired · companions resume normal orders.': 'Reagrupar terminó · los compañeros retoman sus órdenes normales.',
+    'Recall active. Tap Recall again or wait for the five-second hold before assigning work.': 'Reagrupar está activo. Pulsa Reagrupar otra vez o espera a que pasen los cinco segundos antes de asignar tareas.',
+    'Squad Recall ON for five seconds. Press Recall again to cancel.': 'Reagrupar ON durante cinco segundos. Pulsa Reagrupar otra vez para cancelar.',
+    'Recall ON · 5s defensive hold · tap again to cancel.': 'Reagrupar ON · defensa durante 5 s · pulsa otra vez para cancelar.',
   });
   Object.assign(spanishText, {
     'Restore living wounded companions to full health.':
@@ -1435,6 +1465,16 @@
     if (/^Inspired by /.test(piece)) return piece.replace('Inspired by ', 'Inspirado en ');
 
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
+    const thornLore = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
+    if (piece.startsWith('Fresh pawprints mark this nearby path. Follow their direction. ') &&
+        piece.endsWith(thornLore))
+      return spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
+        ' ' + spanishText[thornLore];
+    const miraWaiting = /^Thornfang was defeated\. Mira waits near (.+)\. Your journal can guide you to her last known waiting place\.$/.exec(piece);
+    if (miraWaiting)
+      return 'Thornfang ha sido derrotado. Mira espera cerca de ' +
+        (spanishText[miraWaiting[1]] || miraWaiting[1]) +
+        '. Tu diario te guiará a su última ubicación conocida.';
     if (/^One available companion goes away for /.test(piece))
       return piece
         .replace(
@@ -5635,12 +5675,11 @@
     $('recall-button').focus?.({ preventScroll: true });
   }
   function recallSquad() {
-    if (queuedCharges.size)
-      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
-    queuedCharges.clear();
-    if (charge?.autoRelease) cancelCharge();
+    const activating = !game.s.recallActive;
+    // Recall commands companions, not the hero's prepared skills. Retain
+    // charged releases and queued actions while the squad withdraws.
     const recalled = game.recallParty();
-    if (recalled && recallPractice?.owner === game && game.activeLivingParty().length) {
+    if (recalled && activating && recallPractice?.owner === game && game.activeLivingParty().length) {
       const complete = recallPractice.complete;
       recallPractice = null;
       complete();
@@ -8039,7 +8078,7 @@
             ' is roaming ' +
             game.definition().name +
             (liveFieldTrue.family === 'thorn'
-              ? ' · Scout tracks / Orchard trail witness'
+              ? ' · Scout tracks / Western road observer'
               : ' · Map: Z')
           : pendingField && !pendingField[1].active
             ? 'TRUE BOSS · ' +
@@ -8236,17 +8275,29 @@
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
     if (recallPractice && recallPractice.owner !== game) recallPractice = null;
-    const practicingRecall = !!recallPractice;
-    $('recall-button').classList.toggle('tutorial-highlight', practicingRecall);
-    $('recall-button').setAttribute(
-      'aria-label',
-      tr(practicingRecall ? 'Try Recall now' : 'Recall squad'),
-    );
-    if ($('recall-button').querySelector('small'))
-      $('recall-button').querySelector('small').textContent =
-        (practicingRecall ? tr('Try it now') + ' · ' : '') +
-        input.key('recall') +
-        (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
+    const practicingRecall = !!recallPractice,
+      recallButton = $('recall-button'),
+      recallActive = !!game.s.recallActive,
+      recallRemaining = recallActive ? Math.ceil(game.recallSecondsRemaining()) : 0;
+    // On phones the default shortcut <small> is hidden. The main label
+    // also says ON while active, so the state remains visible at a glance.
+    recallButton.firstChild.textContent = recallActive
+      ? (language === 'es' ? 'Reagrupar ON ' : 'Recall ON ')
+      : (language === 'es' ? 'Reagrupar ' : 'Recall squad ');
+    recallButton.classList.toggle('tutorial-highlight', practicingRecall);
+    recallButton.classList.toggle('recall-active', recallActive);
+    recallButton.setAttribute('aria-pressed', recallActive ? 'true' : 'false');
+    recallButton.setAttribute('aria-label', recallActive
+      ? (language === 'es' ? 'Reagrupar activo. Pulsa para cancelar.' : 'Recall active. Press to cancel.')
+      : tr(practicingRecall ? 'Try Recall now' : 'Recall squad'));
+    recallButton.title = recallActive
+      ? (language === 'es' ? 'Reagrupar activo · pulsa otra vez para cancelar' : 'Recall active · press again to cancel')
+      : (language === 'es' ? 'Reagrupar durante 5 segundos' : 'Recall squad for 5 seconds');
+    if (recallButton.querySelector('small'))
+      recallButton.querySelector('small').textContent = recallActive
+        ? 'ON · ' + recallRemaining + 's'
+        : (practicingRecall ? tr('Try it now') + ' · ' : '') +
+          input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);
