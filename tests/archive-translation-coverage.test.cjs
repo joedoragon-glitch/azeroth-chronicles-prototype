@@ -80,6 +80,15 @@ for (const heroClass of ['paladin', 'mage', 'ranger']) {
     }
 }
 assert.deepEqual([...untranslated], [], 'Untranslated Archive technical fragments (all combinations)');
+const nightHelp = A.conditionTopics(C.rules).find((topic) => topic[0] === 'Monsters after dark');
+assert.equal(A.translateArchive(nightHelp[0]), 'Monstruos después del anochecer');
+assert(A.translateArchive(nightHelp[1]).includes('Los monstruos encantados legítimamente'),
+  'the new short reference is naturally translated into Spanish');
+const nightFiguresEs = A.translateArchive(nightHelp[2]);
+assert(nightFiguresEs.includes('Los monstruos encantados y las mascotas de jefes activos'),
+  'Keeper night figures localize owned monster eligibility');
+assert(!/Nighttime monster|Skill Block|Resting monsters/.test(nightFiguresEs),
+  'new detailed night reference contains no leaked English technical prose');
 for (const pair of Object.values(approved)) {
   assert.equal(A.translateArchive(pair.en), pair.es);
   assert.equal(A.translateArchive(pair.es), pair.es);

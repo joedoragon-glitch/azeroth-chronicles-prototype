@@ -90,6 +90,24 @@
           'Obstructed aim, misses, physical dodges, armor, wards and immunity are different from Skill Block.',
       ],
       [
+        'Monsters after dark',
+        'At night, wild monsters have more health, strike harder and fight faster. Legally Charmed monsters and unlocked boss pets keep that natural strength after recruitment, even while resting. The bonuses fade at dawn; ordinary Soldiers, Archers and heroes do not inherit them.',
+        'Nighttime monster health and attack damage grow with qualifying boss victories.\n' +
+          'Combat movement and ordinary attack speed begin at +' +
+          percent(R.balance.nightTempo.baseBonus) + '%, rise by ' +
+          percent(R.balance.nightTempo.perVictoryBonus) +
+          ' percentage points per victory and cap at +' +
+          percent(R.balance.nightTempo.maxBonus) + '%.\n' +
+          'Against eligible skills, monster Skill Block gains +' +
+          percent(R.skillBlock.nightEnemyBonus) +
+          ' percentage points. Active Charmed monsters and boss pets block single-target enemy skills at ' +
+          percent(Math.min(1, R.skillBlock.companionSingle + R.skillBlock.nightEnemyBonus)) +
+          '% and area skills at ' +
+          percent(Math.min(1, R.skillBlock.companionArea + R.skillBlock.nightEnemyBonus)) +
+          '% per defender.\n' +
+          'Basic automatic attacks and combo finishers are not Skill Block candidates; critical skill hits bypass it. Resting monsters keep boosted statistics but cannot block attacks until active. Ordinary troops never gain monster-night power.',
+      ],
+      [
         'Fortified enemies and covering fire',
         'Enemies sheltered inside a defended fort take ' +
           percent(1 - R.balance.fortifications.incomingMultiplier) +
@@ -705,7 +723,7 @@
         ],
         [
           'TRUE boss pets',
-          'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Each pet replaces a normal companion slot; pets do not summon. Little Treasurer alone can gather tribute and join resource expeditions; other pets do not perform labor.',
+          'Each TRUE boss victory permanently unlocks a miniature companion in Barracks → Company → Boss pet collection. Each pet replaces a normal companion slot; pets do not summon. Little Treasurer alone can gather tribute and join resource expeditions; other pets do not perform labor. Their natural monster-night strength remains after recruitment and fades at dawn.',
           'Recruitment is free, with one individual per boss. Resting and fallen pets remain in your company, retaining their health. Treat or recover them with the normal Barracks services; recruiting the same pet again cannot replace treatment. Pets inherit hero-level health, Companion Vitality and Expedition bonuses like troops. Ranged pets keep their distance when space permits and can attack while repositioning. Attacks need a clear line. Their first skill needs no further lessons. Learning your second hero skill from Mira in Millhaven also unlocks their charged second skill. Charge preparation, interruption, Slow and Silence affect them as they affect other companions. Pets share your company’s field limit.',
         ],
         ...game
@@ -1016,6 +1034,9 @@
   // narrative. Never translate or paraphrase the locked manuscript in this map.
   const spanishReference = Object.freeze({
     'Skill Block': 'Bloqueo de habilidades',
+    'Monsters after dark': 'Monstruos después del anochecer',
+    'At night, wild monsters have more health, strike harder and fight faster. Legally Charmed monsters and unlocked boss pets keep that natural strength after recruitment, even while resting. The bonuses fade at dawn; ordinary Soldiers, Archers and heroes do not inherit them.':
+      'De noche, los monstruos salvajes tienen más salud, causan más daño y combaten más rápido. Los monstruos encantados legítimamente y las mascotas de jefes conservan esa fuerza natural tras unirse a tu compañía, incluso en reserva. Las bonificaciones desaparecen al amanecer; los soldados, arqueros y héroes no las heredan.',
     'A skill can reach its target and still be blocked. A blocked hit deals no damage and applies no effects caused by that hit. Each target in an area attack checks separately. Critical skill hits cannot be blocked.':
       'Una habilidad puede alcanzar a su objetivo y aun así ser bloqueada. Un impacto bloqueado no causa daño ni aplica efectos ligados a ese impacto. Cada objetivo de un ataque de área puede bloquearlo por separado. Los impactos críticos de habilidades no se pueden bloquear.',
     'A wounded or outmatched foe may use rogue tactics: withdraw toward allies, slow a pursuer, shove attackers away or rally defenders. Chase blindly and you may gather a larger fight. Ordinary foes still show their marked Rogue warning. Guardians, ringleaders, captains and bosses instead show a moving cast bar: use real cover, or break pursuit if they draw in more enemies. Goblin dust breaks direct targeting, but area attacks can still reach the goblin.':
@@ -1259,6 +1280,16 @@
     [' seconds, with a ', ' segundos, con un intervalo de '],
     ['s per-healer leader interval. Captains and bosses retain their own original healing strength and cooldowns. Encounter scaling still applies to leader healing. Treatment begins at ', ' s por sanador y líder. Los capitanes y jefes conservan su propia potencia de curación y sus recuperaciones originales. El ajuste por encuentro sigue aplicándose a la curación de líderes. El tratamiento comienza al '],
     ['% HP or less for leaders and leader-sourced treatment. Allies arriving to regroup can receive care at ', '% de PV o menos para los líderes y las curaciones realizadas por líderes. Los aliados que acuden a reagruparse pueden recibir atención al '],
+    ['Nighttime monster health and attack damage grow with qualifying boss victories.\n', 'La salud y el daño de los monstruos nocturnos aumentan con las victorias válidas contra jefes.\n'],
+    ['Combat movement and ordinary attack speed begin at +', 'El movimiento en combate y la velocidad de los ataques normales comienzan con un +'],
+    ['%, rise by ', ' %, aumentan '],
+    [' percentage points per victory and cap at +', ' puntos porcentuales por victoria, hasta un máximo de +'],
+    ['%.\nAgainst eligible skills, monster Skill Block gains +', ' %.\nContra las habilidades válidas, el bloqueo de habilidades de los monstruos aumenta '],
+    [' percentage points. Active Charmed monsters and boss pets block single-target enemy skills at ', ' puntos porcentuales. Los monstruos encantados y las mascotas de jefes activos bloquean habilidades enemigas de un solo objetivo con un '],
+    ['% and area skills at ', ' % y las habilidades de área con un '],
+    ['% per defender.\n', ' % por defensor.\n'],
+    ['Basic automatic attacks and combo finishers are not Skill Block candidates; critical skill hits bypass it. Resting monsters keep boosted statistics but cannot block attacks until active. Ordinary troops never gain monster-night power.', 'Los ataques básicos automáticos y los remates de combo no pueden bloquearse con esta mecánica; los impactos críticos de habilidades la eluden. Los monstruos en reserva conservan sus atributos mejorados, pero no bloquean ataques hasta volver al grupo activo. Las tropas ordinarias nunca reciben el poder nocturno de los monstruos.'],
+    [' Their natural monster-night strength remains after recruitment and fades at dawn.', ' Su fuerza natural nocturna permanece tras reclutarlos y desaparece al amanecer.'],
     ['Hostile enemies block ordinary eligible skills: ', 'Los enemigos bloquean habilidades válidas ordinarias con una probabilidad de '],
     ['% against one target, or ', '% contra un objetivo, o '],
     ['% per target in an area attack.\n', '% por objetivo en un ataque de área.\n'],
