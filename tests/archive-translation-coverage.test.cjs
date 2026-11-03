@@ -145,6 +145,9 @@ for (const lang of ['en', 'es']) {
 }
 // Main has moved independently (#429/#431). Translate its exact Slow copy
 // already, without importing or reverting those mechanics on this stacked PR.
+assert.equal(A.translateArchive('blockable shot; effects require contact'),
+  'disparo bloqueable; los efectos requieren contacto',
+  'pet Skill Block wording is localized without changing its mechanics');
 const blockReference = A.conditionTopics(C.rules).find(([name]) => name === 'Skill Block');
 assert.equal(A.translateArchiveLabel(blockReference[0]), 'Bloqueo de habilidades');
 assert.equal(A.translateArchive(blockReference[1]),
