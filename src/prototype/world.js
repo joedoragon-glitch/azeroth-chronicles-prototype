@@ -1753,7 +1753,19 @@
             if (length > dist(start, end) * 2.6 + 180) continue;
             z.footpaths = z.footpaths || [];
             z.footpaths.push(walk);
-            routes.push({ id, from: from.id, to: to.id });
+            // Extend only a short lawful apron to the existing carriageway;
+            // old west/east bridge routes remain the sole region crossings.
+            const road = this.nearestRoadPoint(z, start);
+            let roadConnected = this.distanceToRoad(z, start) <= 52;
+            if (!roadConnected && road && dist(road, start) <= 240) {
+              const access = this.route(road, start);
+              if (access?.length && access.length < 80 &&
+                  dist(access[access.length - 1], start) < 55) {
+                z.footpaths.push([road, ...access]);
+                roadConnected = true;
+              }
+            }
+            routes.push({ id, from: from.id, to: to.id, roadConnected });
           }
           z.crownIndustrialRoutes = routes;
           z.crownIndustrialVersion = 1;
