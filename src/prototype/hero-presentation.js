@@ -1151,7 +1151,8 @@
     // can mutate stale selection and must not run as a rendering side effect.
     const selectedId =
       (game.manualHeroTargetZone === game.zoneId && game.manualHeroTargetId) ||
-      game.s.heroTarget || game.hero.order?.id || null;
+      game.s.heroTarget ||
+      (game.hero.order?.type === 'skill-approach' ? game.hero.order.id : null);
     const chosen = [];
     const limit = 24;
     for (const e of game.zone().enemies) {
