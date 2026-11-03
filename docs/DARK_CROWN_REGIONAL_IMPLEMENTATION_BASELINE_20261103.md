@@ -1,5 +1,7 @@
 # Dark Crown regional overhaul — engineering baseline and phase ownership
 
+**Cross-session execution authority:** [Autonomous implementation and adversarial audit mandate](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md) (PR #769 branch only). New chats and Work sessions must read it and the complete owner contract in #707 before continuing. This baseline tracks implementation evidence; the mandate defines execution/audit obligations; #707 remains creative authority.
+
 **3 November 2026 · Active implementation workstream, source-audited baseline only.** This document records implementation evidence and technical dependencies; it does **not** replace the owner's 52-question artistic contract in [draft PR #707](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707), especially sections 10–14. The contract is still unmerged on `design/dark-crown-capital-identity-20261031`; 50 selections are binding, while PC03 and LA01 remain formally unselected with binding written instructions.
 
 **Starting source:** `main@90d92b1eabb1a223db6a6129402c0a232e407d12` (checked 3 November). This draft branch is not a release. **No merge, Pages publication, physical-device test, native Pixi screenshot, or owner visual acceptance is authorized or claimed.** Any later main drift must be reconciled before modifying source.
