@@ -81,9 +81,14 @@ assert.equal(cast('wood'), null, 'a moved prop is no longer usable after invalid
 // Ordinary inland water cannot be confused with passable ground; the shoreline
 // point can be seen from dry land. Barriers are not opaque sight occluders.
 const dryZone = { id: 'vale', props: [], buildings: [] };
-game.hero.x = 630;
-game.hero.y = 1320 - 125 - 32;
-assert(M.forCombat(game, 'water', { zone: dryZone, rules: R, range: 60 }));
+const actualPond = M.terrainSources(R, 'vale', 0).find(
+  (s) => s.material === 'water' && Number.isFinite(s.shape?.r),
+);
+assert(actualPond, 'the active Greenwood geometry must contain an authentic water circle');
+game.hero.x = actualPond.shape.x;
+game.hero.y = actualPond.shape.y - actualPond.shape.r - 32;
+assert(M.forCombat(game, 'water', { zone: dryZone, rules: R, range: 60 }),
+  'the active authored source, not an older Greenwood coordinate, is usable');
 assert.equal(M.hasSight({ x: 30, y: 20 }, { x: 130, y: 20 }, null, dryZone, R), true);
 const blockZone = { id: 'vale', props: [
   { id: 'wall', structure: 'stonewall', x: 75, y: 20, r: 16, decorative: false },
