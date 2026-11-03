@@ -56,10 +56,25 @@ jobs:
           git rev-parse "$BASE_SHA^{commit}"
           git worktree add --detach "$RUNNER_TEMP/pixi-755-base" "$BASE_SHA"
           cp tests/pixi-parity-browser.test.cjs "$RUNNER_TEMP/pixi-755-base/tests/pixi-parity-browser.test.cjs"
-          cmp package-lock.json "$RUNNER_TEMP/pixi-755-base/package-lock.json" || {
-            echo "::error::Different locked dependencies invalidate a paired comparison"
-            exit 1
+          # A development version bump changes only the root lockfile
+          # version fields. Compare the complete dependency graph, including
+          # resolved packages and integrity hashes, not that release label.
+          node - "$RUNNER_TEMP/pixi-755-base/package-lock.json" <<'NODE'
+          const fs = require('node:fs');
+          const assert = require('node:assert/strict');
+          const normalize = path => {
+            const lock = JSON.parse(fs.readFileSync(path, 'utf8'));
+            delete lock.version;
+            if (lock.packages?.['']) delete lock.packages[''].version;
+            return lock;
+          };
+          try {
+            assert.deepStrictEqual(normalize('package-lock.json'), normalize(process.argv[2]));
+          } catch (_) {
+            console.error('::error::Different locked dependencies invalidate a paired comparison');
+            process.exitCode = 1;
           }
+          NODE
           ln -s "$GITHUB_WORKSPACE/node_modules" "$RUNNER_TEMP/pixi-755-base/node_modules"
           printf '%s\n' "Baseline $(git -C "$RUNNER_TEMP/pixi-755-base" rev-parse HEAD)" "Candidate $(git rev-parse HEAD)"
       - name: Prepare SHA-verified local PixiJS in BOTH source trees

@@ -226,6 +226,19 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `crown-ceramic-kiln` | PROCEDURAL — pottery kiln and contained heat |
 | `heat-distribution-post` | PROCEDURAL — Crown public works heat junction |
 | `heated-drying-shed` | PROCEDURAL — thermal clothes and material drying workplace |
+| `crown-foundry-yard-loading` | PROCEDURAL — same Crown Foundry exterior cargo props and working entrance footprint; no new warehouse service |
+| `crown-foundry-yard-flue` | PROCEDURAL — retained exterior heat-exhaust structure and regional atmosphere |
+| `crown-foundry-yard-shipping` | PROCEDURAL — existing entrance prop hosting a bounded, timed shipping gesture; no extra NPC |
+| `crown-foundry-cooling-rack` | PROCEDURAL — existing Foundry floor cooling station, not a loot or recipe object |
+| `crown-foundry-stock-bay` | PROCEDURAL — existing Foundry floor material-storage composition |
+| `crown-foundry-receiving` | PROCEDURAL — generated interior receiving worker/tool pose, noncombat and nonblocking |
+| `crown-foundry-furnace` | PROCEDURAL — generated interior furnace tender pose with existing heat source |
+| `crown-foundry-forming` | PROCEDURAL — generated interior material-forming worker gesture |
+| `crown-foundry-finishing` | PROCEDURAL — generated interior finishing/inspection worker pose |
+| `crown-foundry-dispatch` | PROCEDURAL — generated interior stock-dispatch worker gesture, no invented trade economy |
+| `crown-civic-tilecourt` | PROCEDURAL — nonblocking ground-integrated Crownwatch civic court tiles |
+| `crown-sheltered-planter` | PROCEDURAL — small civic planter with same regional palette; nonblocking |
+| `crown-ceramic-bench` | PROCEDURAL — civic seating and maintained local craft material; nonblocking |
 | `heated-washhouse` | PROCEDURAL — civic hot-water facility |
 | `hay-rick` | PROCEDURAL — small-scale woodland-country farm storage |
 | `furrow-plot` | PROCEDURAL — short seeded crop rows integrated with traversable ground |
@@ -233,6 +246,8 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `poultry-yard` | PROCEDURAL — smallhold poultry activity |
 | `feed-trough` | PROCEDURAL — livestock feeding structure |
 | `farm-tool-rack` | PROCEDURAL — country farm maintenance tools |
+
+**3 November 2026 Crown regional draft scope:** The thirteen source cases above are classified as PROCEDURAL because they are living gestures or grounded repeated architecture. This is an inventory/classification decision, **not** owner approval of final art or permission to generate/replace the associated images. PR #707 remains the creative authority; the 3 November branch is draft and unmerged.
 
 ## `landmark()` coverage
 

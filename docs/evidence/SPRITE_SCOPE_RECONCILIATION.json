@@ -82,6 +82,19 @@
       "weapon-rack",
       "tool-rack",
       "farm-tool-rack",
+      "crown-foundry-yard-loading",
+      "crown-foundry-yard-flue",
+      "crown-foundry-yard-shipping",
+      "crown-foundry-cooling-rack",
+      "crown-foundry-stock-bay",
+      "crown-foundry-receiving",
+      "crown-foundry-furnace",
+      "crown-foundry-forming",
+      "crown-foundry-finishing",
+      "crown-foundry-dispatch",
+      "crown-civic-tilecourt",
+      "crown-sheltered-planter",
+      "crown-ceramic-bench",
       "stone-seat",
       "dark-throne",
       "war-table",
@@ -1166,12 +1179,12 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "fffbdb9df981754bb596c8b5894d92ef50aa7de544481cbbfd7b8f9fbf4a9967",
-    "src/prototype/world.js": "3c8e07c5a9c116f43691b231f82e29e04bef3cc238975f011418bf4812e9f911",
-    "src/prototype/rules.js": "036ff8ae82dbf06a22b7f5eb8269edc46e46291c5f2f5b3613d626549fdc99ab",
+    "src/prototype/visuals.js": "d3a38818e466ab6a4fa548b41770d64cabd4d23ebfb2f1eaeb390fa78facc884",
+    "src/prototype/world.js": "288bba3009aa4ef11d7236e9dd8da9737605d288fddcd94f14ec91194502aaec",
+    "src/prototype/rules.js": "5fad753d39b869297636a00cef30dbc907432d023e54e649ed0a147096736a26",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43",
-    "src/prototype/renderer.js": "dcd4145421a8b2495ab9b897296f79f72f98e70ad5c5c1a7ae07da7deae02e49"
+    "src/prototype/renderer.js": "f758b0c589f5f5c9200a8f27353a62d928f2eddf3253e2677f56bb71a70c4ff4"
   },
   "limits": "Deterministic normal/Nightmare world samples support source-case classification; every actual art job still requires its exact current state/reference. Future summon/night/seed additions are not inferred from these samples."
 }
