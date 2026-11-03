@@ -39,6 +39,12 @@ The owner now specifies a **90-world-unit basic melee reach**, short-range and s
 
 The [five-phase Stage 1 Strategist working specification](STRATEGIST_STAGE1_GAME_DESIGN_20261102.md) now proposes **Water cleansing**, **directional Mineral interception** and **prepared Fire reactions** as genuinely different starting ability roles. This is **provisional game design, not approved art or finalized skill effects**. In particular, do not draw permanent walls, water sources, flames, status effects or attack telegraphs that the game will not actually create. Earlier notes saying no individual move had been proposed describe the 31 October checkpoint; there is now a candidate to review, not a finished production animation or sprite assignment.
 
+### 3 November owner Mineral decision — gameplay governs visual footprint
+
+The owner has selected **Angular Interception (option A)** for the Stage 1 Mineral action: a **short, oriented piece of real stone/ore** that intercepts eligible traveling **friendly or enemy** projectiles from **either** approach direction. This confirms the **mechanic's identity**, not the names, final shape/width, animation or rendered sprite. Show direction/remaining real interceptions clearly with a minimal existing-renderer treatment; do not depict an impenetrable wall, magical ward, persistent landscape alteration, bulletproof character aura or selective friendly-pass visual. Charged use may display two short plates as a **single bounded construct**; do not animate or search the entire world every frame just to support the effect.
+
+**Performance is a design acceptance condition:** the visual is presentation-only, while the eventual engineering implementation must use cheap no-active-plate exits and bounded projectile-motion collision checks, followed by **measured CPU and frame-time acceptance** before an authorized merge/release. No artwork or effect pass proves gameplay collisions or device efficiency. See [Stage 1 v1.2](STRATEGIST_STAGE1_GAME_DESIGN_20261102.md) and [Decisions](DECISIONS.md#strategist-fifth-class). All art production, implementation and runtime performance testing remain unapproved future work.
+
 ## Production translation and acceptance checks (future work)
 
 - Begin from the **actual current Ogre renderer/body and accepted design references**, then create a distinct **hero-class visual variant**, not new world-species anatomy. Avoid modifying enemy Ogre art while producing the hero.
