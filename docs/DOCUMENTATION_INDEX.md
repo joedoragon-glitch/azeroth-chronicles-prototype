@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **450 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 · **450 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -68,7 +68,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Hero abilities, combat, enemies and bosses
 
-- [Mage Tap Charged Design Audit 20261103](MAGE_TAP_CHARGED_DESIGN_AUDIT_20261103.md) — *Dated source audit and provisional skill design.* Compares all eight playable Mage normal/charged pairs and proposes distinct tactical alternatives; no gameplay change or owner approval is implied.
+- [Mage Tap Charged Design Audit 20261103](MAGE_TAP_CHARGED_DESIGN_AUDIT_20261103.md) — *Dated read-only source audit and owner scope decision.* Classifies all eight playable Mage normal/charged pairs for future playthrough-led evaluation; previous speculative replacements are withdrawn and v0.9.2 skills stay unchanged.
 
 - **[Target Centered Boss Ground AoE](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md)** — **Design reference.** Committed boss damage footprints, warning parity and terrain/line-of-sight boundaries.
 - **[Rogue Charm Heritage](ROGUE_CHARM_HERITAGE_589.md)** — **Reference.** Charmed heritage abilities, nighttime species, published implementation evidence and pending balance review.
