@@ -70,6 +70,27 @@ assert.equal(cast('fire')?.id, flame.id);
 flame.extinguished = true;
 assert.equal(cast('fire'), null, 'an extinguished source is refused even with a warm cache');
 
+// The engine stores temporary flame patches in s.hazards, not zone.props.
+game.s.hazards = [
+  { x: 145, y: 100, kind: 'circle', radius: 25, life: 4,
+    family: 'abyss', persistent: true, name: 'Delayed flame patch' },
+];
+assert.equal(cast('fire')?.id, 'combat-fire-0',
+  'real timed Abyss flame patches qualify while active');
+game.s.hazards[0].life = 0;
+assert.equal(cast('fire'), null, 'expired combat fire cannot supply a skill');
+game.s.hazards[0] = {
+  x: 145, y: 100, kind: 'circle', radius: 15, life: 3, family: 'mire',
+  name: 'Mud patch', persistent: true,
+};
+assert.equal(cast('fire'), null, 'unrelated mud hazards do not magically become fire');
+game.s.hazards[0] = {
+  x: 145, y: 100, kind: 'circle', radius: 15, life: 3,
+  authoritativeCombatFire: true, material: 'fire',
+};
+assert.equal(cast('fire')?.id, 'combat-fire-0', 'future owned live fire may opt in');
+game.s.hazards = [];
+
 const wood = put('real-stump', 'stump', 145, 120);
 assert.equal(cast('wood')?.id, wood.id);
 assert.equal(cast('mineral')?.id, ore.id, 'materials coexist without shared lockout');
