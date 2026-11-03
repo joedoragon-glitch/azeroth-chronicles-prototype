@@ -2584,10 +2584,11 @@
         ...presentation,
         renderKind,
         ...(renderKind === 'hero' && game.s.throneClaimed ? { crowned: true } : {}),
-        ...(Campaign.rules?.ambientLife?.[e.structure || e.id] ||
-          e.crownFoundryWorker || e.crownFoundryExterior
-          ? { ambientTime: reducedMotion() ? 0 : (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
-          : {}),
+        ...(Campaign.rules?.ambientLife?.[e.structure || e.id]
+          ? { ambientTime: (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
+          : e.crownFoundryWorker || e.crownFoundryExterior
+            ? { ambientTime: reducedMotion() ? 0 : (PrototypeSprites?.timeMs?.() ?? now()) / 1000 }
+            : {}),
       };
       const registered = PrototypeSprites?.definitionFor?.(
         visual,
