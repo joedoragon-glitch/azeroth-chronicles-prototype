@@ -54,19 +54,66 @@ Follow AGENTS.md's **BLOCK NOW / INVESTIGATE BRIEFLY / DEFER WITH OWNERSHIP** cl
 
 Use the current repository's focused CI (continuous integration: automated checks on code changes), not a full suite by default. GitHub Actions screenshot uploads have limited retention; if expired, regenerate from the committed test rather than treating missing images as reviewed. The current screenshot smoke test checks painting and save nonmutation, **not composition, actor productivity, route reachability, industrial function, Pixi parity, or cross-run pixel identity**. PNG SHA-256 fields prove each index entry corresponds to that run's PNG; they are **not approved golden-image expectations**. A post-hoc comparison across two CI archives found small pixel differences in all 46 frames despite otherwise matching scene metadata; do not claim pixel determinism or silently normalize these differences. Record exact tested CI checkout/merge SHA **and** PR head where different, commands/check URLs, result, actual screenshot provenance and what was **not** checked. Performance claims require actual comparable measurements; artistic acceptance requires genuine perceptual review; phone-sized Canvas/Pixi rendering is not device verification.
 
+## Budget-conscious division of labor and GitHub-native delegation (owner direction, 3 November 2026)
+
+**Primary objective:** conserve the owner's ChatGPT Work allowance **without lowering the design or engineering acceptance standards**. Work performs integration-heavy implementation and substantive adversarial review. Regular Chat sessions perform small, verifiable support tasks; the owner only opens a Chat using a short prompt supplied by Work. Work **cannot open new Chat sessions itself** and must not imply it can. Cross-session coordination happens in GitHub, **not through the owner copying Chat responses back to Work**.
+
+### Responsibility and escalation
+
+| Work owns (heavy lifting) | Ordinary Chat handles when useful (lightweight) |
+| --- | --- |
+| Cross-system architecture, source-grounded physical feasibility, art direction implementation, world/Foundry scene construction, Pixi/Canvas integration, source changes with coupled gameplay impact | Read-only GitHub PR/branch/status inspection, targeted CI run and log follow-up, minimal existing focused-test execution when tools permit, branch/base drift checks, docs/link consistency checks, evidence summaries |
+| Revisions to the integrated implementation, visual experience judgment, major performance diagnosis, game/save/navigation regressions requiring substantial edits, final corrective adversarial assessment against PR #707 | Narrow evidence review, screenshot provenance/comparison, single failing-check triage, contract-to-implementation gap identification, isolated regression test analysis and scoped investigative tasks |
+| Review and integration of any helper's proposed changes; phase exit decision; consistency of PR #769's main baseline/handoff | Report factual findings and actionable recommendations to GitHub; optionally make a tightly scoped change on a **separate branch/PR** only when explicitly delegated, without modifying Work's branch |
+
+Use normal Chat for bounded tasks **when it genuinely reduces Work effort**; do not force every tiny check into a new Chat (which requires the owner to launch it), duplicate investigations across sessions, or create needless test/CI reruns. Don't use Work simply to poll an already-running CI. If a Chat task reveals complex/high-risk changes or insufficient authority, record **BLOCKED / NEEDS WORK REVIEW** on GitHub rather than guessing or making a broad patch. Work retains accountability for implementation, integrated correctness and ultimate audit quality.
+
+### GitHub as the task mailbox and return channel
+
+**Default location:** the Conversation comments of [draft implementation PR #769](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/769). Use one clearly labeled **`DC-CHAT-###`** top-level GitHub PR comment for each meaningful delegated task. This is a *task record*, not a new feature document/issue or a change to creative authority. Do not write task instructions only into a Work-chat message.
+
+**Work prepares the task record first**, including:
+- **ID and status:** e.g. `DC-CHAT-001 | OPEN`, with goal, owner ("ordinary Chat"), phase and priority.
+- **Exact source pointers:** PR #769, authoritative PR #707 when relevant, branch and observed source head; relevant CI run URL/log, file paths, existing test command, artifact URL or review comment. A recorded SHA is a snapshot: the receiving Chat must check the live head before trusting it.
+- **Bounded scope and done definition:** specific question or test/failure to investigate, expected evidence, checks to run, what constitutes PASS/BLOCKED, maximum reasonable scope, and any files it may modify. **Default is read-only**.
+- **Permission limits:** no unapproved full suite/browser matrix, new deployment, main push, merge, creative decisions or unsanctioned feature-branch writes. If the task is code-writing, isolate it on a separate branch/PR and let Work own integration.
+- **Return destination:** the same PR #769 Conversation thread. Include the task ID in every result comment; do not rely on copying a response back into Work.
+
+**Work then gives the owner a short copy/paste prompt, preferably containing the specific PR-comment URL**, such as:
+
+> In `joedoragon-glitch/azeroth-chronicles-prototype`, open Dark Crown PR #769 and its delegation comment **DC-CHAT-001**. Read that GitHub task record and the current branch/CI state, then execute the scoped routine task. Post your evidence, outcome and next-action recommendation as a new comment on PR #769 referencing DC-CHAT-001. Do not merge, deploy or edit the implementation branch unless the task expressly authorizes it.
+
+The owner simply opens a **new ordinary Chat** and pastes the prompt. The receiving Chat reads the **actual task body from GitHub**, not a paraphrase from the original Work session. It reads only what the task needs. Do not automatically consume context by re-reading the entire 52-choice art contract or all repository documentation for a basic CI-status check; read those when artistic or gameplay facts are material.
+
+**Ordinary Chat completes the round trip inside GitHub:** post a concise new PR #769 comment:
+`DC-CHAT-001 | DONE / BLOCKED / NEEDS WORK REVIEW`; the observed PR head and exact CI/tested SHA (different when GitHub checks a synthetic merge); links to checks and evidence; concrete findings, changes if any, remaining concerns, and **one** recommended next action. Do not mark PASS for an unrun check. If direct GitHub-comment permission is absent, clearly tell the owner that the result was **not recorded**; offer the shortest possible fallback text, rather than claiming Work can see it.
+
+**Work's next active session** fetches PR #769 comments, reconciles each `DC-CHAT-###` request with its latest matching `DONE/BLOCKED` receipt, verifies anything material against current source and CI, and incorporates accepted findings in the existing engineering baseline and implementation plan. Work may close or supersede a delegated task **in a new PR comment** with the same ID. A completion comment is **evidence**, not automatic acceptance of a patch or artistic result. Avoid unnecessary recopying of long findings into multiple documents.
+
+### Concurrency, cost and continuity safeguards
+
+- **One integration writer.** Work owns the active implementation branch by default; Chat helpers investigate **read-only** unless Work explicitly hands off exclusive file scope or a separate PR. Avoid same-file concurrent writes, automatic rebases, force pushes and blindly applying stale patches. Re-fetch current head and use lease-protected ref updates when committing. `main` can advance while a helper is checking CI; a changed base must be noted rather than silently overwritten.
+- **No invisible sessions.** Work does not launch chats, monitor GitHub continuously, or resume itself after the user leaves. The owner triggers each chat/Work session. The workflow supports back-and-forth **across separate active sessions**, not a background coordinator.
+- **Right-sized evidence.** Routine CI checks should inspect existing runs before causing fresh ones; existing relevant focused validation beats repeating successful unchanged tests. Follow `AGENTS.md` for real blockers versus bounded deferrals. Preserve the owner-required independent adversarial audit and no-merge/no-deploy gates.
+- **Minimal owner involvement.** Work provides the launch prompt. Chat writes the return receipt to GitHub. The owner need not relay Chat output manually. If posting to GitHub fails or a creative/consent decision is required, say precisely what single intervention is needed.
+
+**Task states** are simple labels in PR comments (`OPEN`, `DONE`, `BLOCKED`, `NEEDS WORK REVIEW`, `SUPERSEDED`), not a new ticketing system. PR #769 and the baseline remain the persistent implementation record; #707 remains the immutable creative reference until owner-authorized change.
+
 ## Session-resume protocol (mandatory)
 
-At the start of **every** new chat/Work session:
-- Read this mandate, PR #707's full contract, PR #769, the implementation baseline and AGENTS.md.
+At the start of **every new Work implementation session**:
+- Read this mandate, PR #707's full contract, PR #769, the implementation baseline, AGENTS.md, and unresolved delegated task comments. **For a supporting ordinary Chat, the bounded GitHub task record governs its necessary reads; do not make it re-ingest unrelated creative contracts and engineering documents.**
 - Fetch live `main`, branch heads, open PR changes, relevant CI runs and any outstanding review comments; never assume a previous chat's SHA is current.
 - Identify the last **verified** phase, current blockers/deferrals, pending checks, active unmerged edits and **one next useful implementation step**.
 - Compare candidate screenshot filenames with *visible* source landmarks; maintain contract-scene coverage by actual focal object, route, desktop/narrow evidence and explicit accepted/unverified status. A screenshot existing does not mean the corresponding scene requirement is met.
 - Continue actual work, not another redundant planning cycle.
 
-Before ending **every** session, update the **existing** PR #769 and baseline with what was implemented, the **last actually tested SHA** and its evidence, what remains, findings, next action and unresolved approvals. After committing documentation, use the live PR head/commit URL as the authoritative **latest source SHA**. A document cannot embed its own eventual commit hash; never mislabel a preceding SHA as the document's head or claim docs-only CI proved runtime implementation. Reconcile other feature documentation affected by code changes. Do not create competing handoff documents or claim work will continue invisibly after the session ends.
+Before ending **each substantive Work implementation session**, update the **existing** PR #769 and baseline with what was implemented, the **last actually tested SHA** and its evidence, what remains, findings, next action and unresolved approvals. After committing documentation, use the live PR head/commit URL as the authoritative **latest source SHA**. A document cannot embed its own eventual commit hash; never mislabel a preceding SHA as the document's head or claim docs-only CI proved runtime implementation. Reconcile other feature documentation affected by code changes. Do not create competing handoff documents or claim work will continue invisibly after the session ends.
 
 ## Definition of review-ready (not merge permission)
 
 All implementable #707 requirements have traceable outcomes or explicit genuine blockers; the real game displays a credible volcanic civilization and working Foundry; original gameplay and v4 saves survive relevant checks; actual scenes have been inspected; bounded performance and renderer risks are tested or honestly disclosed; adversarial findings are corrected or explicitly owned; documentation and draft PR evidence are current. A green CI alone is insufficient. Before any authorized merge, reconcile branch-specific links and ensure #707's design contract remains reliably retrievable; an unmerged source branch might later be deleted. **Only the owner authorizes merge and deployment.**
+
+**Work/Chat allocation:** Use the GitHub-native `DC-CHAT-###` delegation protocol above to outsource bounded routine checks to ordinary Chat, with each Chat posting results directly to PR #769. The owner should only need to copy Work's short launch prompt, not the helper's findings.
 
 **Shortest restart instruction:** “Continue Dark Crown PR #769 under `docs/DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md`. Read PR #707 and live GitHub state; implement and audit the next phase. Do not merge or deploy.”
