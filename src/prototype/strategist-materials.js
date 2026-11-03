@@ -8,24 +8,27 @@
   const CELL = 192;
   const MAX_CAST_RANGE = 320;
   const MAX_GATHER_RANGE = 3800;
+  const MAX_SIGHT_PROBES = 32;
+  const MAX_ROUTE_PROBES = 24;
   const MATERIALS = Object.freeze(['water', 'mineral', 'wood', 'fire']);
   const propKinds = Object.freeze({
     water: new Set(['well', 'fountain', 'mill-pond', 'pond', 'water', 'cistern', 'water-trough']),
     mineral: new Set([
       'rock-cluster', 'highland-rock', 'black-rock', 'mossy-basalt', 'obsidian',
       'crystal-cluster', 'silver-ore-face', 'copper-ore-face', 'ore-face',
+      'crystal', 'ore-cart', 'appalachian-silver-workings', 'appalachian-copper-workings',
       'stonewall', 'crown-wall', 'stone-marker',
     ]),
     wood: new Set([
       'tree', 'fruit-tree', 'dead-tree', 'sapling', 'pine-sapling', 'stump',
       'charred-stump', 'fallen-log', 'burned-log', 'driftwood', 'woodpile',
       'palisade', 'stockade', 'regrowth-birch', 'regrowth-willow',
-      'appalachian-tree', 'appalachian-fallen-log',
+      'appalachian-tree', 'appalachian-fallen-log', 'stacked-lumber', 'mangrove',
     ]),
     fire: new Set([
       'torch', 'cookfire', 'campfire', 'bonfire', 'warm-brazier', 'dark-brazier',
       'ridge-hearth', 'estate-hearth', 'cellar-hearth', 'forge', 'ember-pit',
-      'silver-refining-hearth', 'furnace', 'field-kitchen',
+      'silver-refining-hearth', 'furnace', 'field-kitchen', 'ember', 'ogre-hearth',
     ]),
   });
   const isFinitePoint = (p) => !!p && Number.isFinite(p.x) && Number.isFinite(p.y);
@@ -38,18 +41,30 @@
   // identities and the world rules below establish that a source really exists.
   function protectedHome(p) {
     const name = String(p?.structure || '').toLowerCase();
-    return p?.protectedHome === true ||
+    // Settlement props are reserved town infrastructure, even if a wall or
+    // woodpile would otherwise be a recognized material identity.
+    const id = String(p?.id || '');
+    return p?.protectedHome === true || id.startsWith('settlement-') ||
+      p?.civilianResidence === true ||
       /(?:^|[-_])(house|home|cottage|dwelling|residence|barracks|inn|living-quarters)(?:$|[-_])/.test(name) ||
       ['house', 'cottage', 'barracks', 'home', 'residence'].includes(p?.kind);
   }
   function propMaterial(p, gameTime = 0) {
     if (!isFinitePoint(p) || protectedHome(p) || p?.destroyed === true) return null;
     const kind = String(p.structure || '');
+    // Greenwood's authored forest deliberately stores nature in a separate
+    // property, often with structure:null. These are real trees and fallen logs.
+    if (p.greenwoodAuthored === true && p.greenwoodNature === 'tree') return 'wood';
+    if (p.greenwoodAuthored === true && p.greenwoodNature === 'fallen-log') return 'wood';
+    if (kind === 'crystal' && p.sceneRole === 'art-object') return null;
     // Containers require actual authored contents. Never assume every barrel is water.
     if (['barrel', 'bucket', 'jar', 'container', 'water-container'].includes(kind))
       return p.containsWater === true && p.empty !== true ? 'water' : null;
     if (propKinds.water.has(kind)) return p.dry !== true ? 'water' : null;
-    if (propKinds.mineral.has(kind)) return 'mineral';
+    if (propKinds.mineral.has(kind)) {
+      if (kind.startsWith('appalachian-') && p.miningFacility !== true) return null;
+      return 'mineral';
+    }
     if (propKinds.wood.has(kind)) return 'wood';
     if (propKinds.fire.has(kind))
       return p.lit === false || p.active === false || p.extinguished === true ||
@@ -71,7 +86,11 @@
     if (!Array.isArray(vertices) || vertices.length < 2) return null;
     let best = null, bestD = Infinity;
     for (let i = 0; i < vertices.length; i++) {
-      const a = vertices[i], b = vertices[(i + 1) % vertices.length];
+      const rawA = vertices[i], rawB = vertices[(i + 1) % vertices.length];
+      // March's authored harbor polygon uses [x,y] tuples; most wetland and
+      // Highland polygons use {x,y}. Support both, never ignore a real coast.
+      const a = Array.isArray(rawA) ? { x: rawA[0], y: rawA[1] } : rawA;
+      const b = Array.isArray(rawB) ? { x: rawB[0], y: rawB[1] } : rawB;
       if (!isFinitePoint(a) || !isFinitePoint(b)) continue;
       const vx = b.x - a.x, vy = b.y - a.y, n = vx * vx + vy * vy;
       const t = n ? clamp(((p.x - a.x) * vx + (p.y - a.y) * vy) / n, 0, 1) : 0;
@@ -182,12 +201,11 @@
     return true;
   }
   function sourceIndex(zone, rules, regionIndex, time) {
-    const grid = new Map(), items = [];
+    const grid = new Map();
     for (const prop of zone.props || []) {
       const material = propMaterial(prop, time);
       if (!material) continue;
       const source = { id: prop.id, kind: 'prop', material, prop };
-      items.push(source);
       const key = cellKey(prop.x, prop.y);
       if (!grid.has(key)) grid.set(key, []);
       grid.get(key).push(source);
@@ -252,11 +270,14 @@
     // Deterministic nearest-first selection: a Lab does not repeatedly pathfind
     // to every source in a region when nearby candidates are unreachable.
     nearby.sort((a, b) => a.d - b.d || String(a.source.id).localeCompare(String(b.source.id)));
-    let routeProbes = 0;
+    let routeProbes = 0, sightProbes = 0;
     for (const { source, point, d } of nearby) {
-      if (options.sight && !hasSight(options.at, point, source, zone, rules)) continue;
+      if (options.sight) {
+        if (++sightProbes > MAX_SIGHT_PROBES) break;
+        if (!hasSight(options.at, point, source, zone, rules, index)) continue;
+      }
       if (options.access) {
-        if (++routeProbes > 24) break;
+        if (++routeProbes > MAX_ROUTE_PROBES) break;
         if (!options.access(source, point, zone)) continue;
       }
       return { id: source.id, material, point, distance: d, source: source.prop || source.shape };
