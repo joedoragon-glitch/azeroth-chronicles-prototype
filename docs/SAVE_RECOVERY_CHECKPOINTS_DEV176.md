@@ -87,3 +87,76 @@ publication approval. Reproduce after checking out the branch:
 CI_BASE_SHA=e4e8234b5f784ddc9492fe79d956fd0a696b12af node .github/scripts/focused-ci.cjs
 node scripts/build.cjs --check
 ```
+
+## 3 November 2026 — Issue #773: external save durability (draft)
+
+This extension leaves the active **v4 localStorage schema and keys**, one
+authoritative primary plus **one** checkpoint per mode, 60-second checkpoint
+cadence and 2,000,000-character encoded checkpoint cap untouched. The older
+three-entry/500,000-character dev.176 configuration above is historical.
+
+**External backup:** User-initiated download only. Serialize and validate the
+actual v4 campaign, re-restore its serialized JSON through the canonical
+validator, then name it with mode, class, level and UTC minute. The download
+API confirms only that the browser was asked to begin a download. No telemetry,
+cloud upload, extra origin-local save or automatic backup file is created.
+Unreadable originals can still be exported **verbatim as evidence**, not
+misidentified as validated backups.
+
+**Import:** v4 files and supported v2 migrations are validated before a
+read-only preview identifies mode, hero class, level and location. File
+selection, cancellation or failed validation writes nothing. Only explicit
+confirmation calls the existing writer-fenced `writeCandidate`, preserving
+unreadable originals and rejecting competing-tab/stale-byte replacements.
+
+**Reminder:** opening the existing backup menus can display a quiet suggestion
+after two hours since first observation/download attempt or after five levels
+of additional progress. Showing a reminder suppresses another for 24 hours;
+the last initiated download restarts the baseline but is never claimed to be
+a verified off-device file. The small per-mode metadata has no save bytes and
+can fail to write without affecting game saves or the reminder's in-memory
+session fallback. No notification or gameplay interruption occurs in combat.
+
+**Persistent storage:** `navigator.storage.persisted()` is checked when
+available. `persist()` is invoked only from the player's menu click and may
+grant, deny, throw or be unsupported. Saving, loading and offline play never
+depend on it. The API can reduce *automatic* eviction, not protect against
+site-data deletion, app uninstall, operating-system removal or lost hardware.
+`navigator.storage.estimate()` is suitable only for approximate usage/quota
+diagnostics, not a guaranteed space forecast; no such numerical promise is
+shown in the game. iOS/Safari, private mode and some embedded/portable
+contexts may restrict these APIs.
+
+**IndexedDB recommendation — DEFER production migration.** IDB supports
+asynchronous, transactional writing and may reduce main-thread stalls and
+expand practical storage capacity for large saves, but IndexedDB shares
+origin-eviction risk and adds cross-tab transaction and migration failure
+modes. Current game saves are a bounded small number of keys, with existing
+single-key atomic writes, validated checkpoints and writer lock. No evidence
+yet establishes that the present synchronous snapshot writer causes a
+meaningful player-facing stall or that IndexedDB would prevent existing
+observed data loss. A migration now increases risk without a demonstrated
+benefit. The correct GO gate is real-device p95/p99 save serialization/write
+latency, representative and near-quota storage sizes, repeatable observed
+problems and a separately reviewed non-destructive prototype.
+
+A separately authorized migration must validate the v4 primary and checkpoint
+without deleting them, write the candidate in one IndexedDB transaction,
+read back and validate content/checksum, set an explicit durable cutover marker
+only after commit and promote one authoritative store, not dual-write
+indefinitely. A crash before cutover continues using original localStorage;
+repeated migration is idempotent; rollback keeps original bytes. Verify
+quota-aborted transactions, versionchange/tab contention, cross-window locking,
+offline PWA update, denied/private browsing, iOS/Safari, Chromium/Chromebook
+and exported JSON compatibility. **No live IDB code, migration or second
+campaign authority is authorized under #773.**
+
+**Failure boundaries:** Invalid JSON never becomes a new primary. A failed
+localStorage `setItem` preserves the prior value of that key; on quota, the
+optional checkpoint may already have been discarded to protect the primary.
+All local entries can be lost together during origin clear, eviction,
+uninstall or device loss. Only an externally retained file provides independent
+recovery. Large save sizes are ultimately bounded by browser quota and the
+existing five-megabyte import limit, with UTF-16 key/value accounting varying
+by engine. Production migration and complete real-device certification remain
+separate consent gates.
