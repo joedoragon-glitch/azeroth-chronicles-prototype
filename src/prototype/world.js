@@ -1809,8 +1809,53 @@
           this.s.zone = oldZone;
         }
       }
+      // Nonblocking staging at genuine placed industrial facilities, not
+      // arbitrary map coordinates or a new freight/crafting economy.
+      crownIndustrialFreight(z) {
+        if (z.id !== 'crown' || z.crownIndustrialFreightVersion === 1) return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const [role, heatIndex, dx, dy, structure] of R.crownIndustrialFreight || []) {
+            const id = 'crown-industrial-freight-' + role;
+            if (z.props.some(p => p.id === id)) continue;
+            const source = z.props.find(p => p.id === 'recovery-heat-crown-' + heatIndex);
+            if (!source) continue;
+            let chosen = null;
+            for (const radius of [0, 36, 72, 110, 148]) {
+              for (let j = 0; j < (radius ? 12 : 1); j++) {
+                const theta = (j * Math.PI) / 6,
+                  p = { x: source.x + dx + Math.cos(theta) * radius,
+                    y: source.y + dy + Math.sin(theta) * radius };
+                if (p.x < 85 || p.y < 85 || p.x > 3715 || p.y > 3715 ||
+                    dist(p, source) > 320 ||
+                    this.blocked(p.x, p.y, z.id, 15, true) ||
+                    this.distanceToRoad(z, p) < 52 ||
+                    z.npcs.some(n => dist(n, p) < 105) ||
+                    z.nodes.some(n => dist(n, p) < 95) ||
+                    z.buildings.some(n => dist(n, p) < 130) ||
+                    z.enemies.some(e => e.hp > 0 && dist(e.home || e, p) < 115) ||
+                    z.props.some(q => dist(q, p) < (q.r || 0) + 82))
+                  continue;
+                chosen = p;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (!chosen) continue;
+            z.props.push({
+              id, ...chosen, r: 0, decorative: true, structure,
+              crownIndustrialFreight: true, industrialRole: role,
+              crownFoundryExterior: structure === 'crown-foundry-yard-shipping',
+            });
+          }
+          z.crownIndustrialFreightVersion = 1;
+        } finally {
+          this.s.zone = previous;
+        }
+      }
       crownCivicForecourt(z) {
-        if (z.id !== 'crown' || z.crownCivicForecourtVersion === 1) return;
+        if (z.id !== 'crown' || z.crownCivicForecourtVersion === 2) return;
         const rest = z.npcs.find((n) => n.id === 'rest' && n.kind === 'rest');
         if (!rest) return;
         const before = this.s.zone;
@@ -1819,10 +1864,11 @@
           const approach = { roads: [...(z.roads || []), ...(z.footpaths || [])] };
           const valid = (p, structure) => {
             const paving = structure === 'crown-civic-tilecourt';
-            const margin = paving ? 30 : 74;
+            const ministry = structure === 'crown-ministry-frontage';
+            const margin = paving ? 30 : ministry ? 90 : 74;
             return (
               p.x > 70 && p.y > 70 && p.x < 3730 && p.y < 3730 &&
-              dist(p, rest) < 240 &&
+              dist(p, rest) < (ministry ? 460 : 240) &&
               !this.blocked(p.x, p.y, z.id, 18, true) &&
               this.distanceToRoad(approach, p) >= margin &&
               !z.npcs.some((n) => dist(n, p) < (paving ? 80 : 94)) &&
@@ -1841,7 +1887,8 @@
             let chosen = null;
             // Small authored adjustments only; do not scatter into another
             // district just to satisfy an object-count assertion.
-            for (const radius of [0, 32, 64]) {
+            for (const radius of structure === 'crown-ministry-frontage'
+              ? [0, 32, 64, 96, 128, 168] : [0, 32, 64]) {
               for (let k = 0; k < (radius ? 12 : 1); k++) {
                 const theta = (k * Math.PI) / 6;
                 const p = { x: rest.x + dx + Math.cos(theta) * radius,
@@ -1856,7 +1903,7 @@
               crownCivicForecourt: true, civicSceneRole: sceneRole,
             });
           }
-          z.crownCivicForecourtVersion = 1;
+          z.crownCivicForecourtVersion = 2;
         } finally {
           this.s.zone = before;
         }
@@ -3821,6 +3868,7 @@
           this.crownSceneComposition(z);
           this.crownIndustrialCirculation(z);
           this.crownFoundryExterior(z);
+          this.crownIndustrialFreight(z);
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
@@ -4256,6 +4304,7 @@
         this.crownSceneComposition(z);
         this.crownIndustrialCirculation(z);
         this.crownFoundryExterior(z);
+        this.crownIndustrialFreight(z);
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);

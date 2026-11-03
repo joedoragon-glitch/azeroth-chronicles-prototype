@@ -74,13 +74,17 @@ assert.deepEqual([restoredRest.x, restoredRest.y], [rest.x, rest.y],
 // actual world, not just in a disconnected graphics fixture. Saved IDs and
 // road polylines must remain stable on repeat generation and v4 restore.
 const court = civic.zone().props.filter(p => p.crownCivicForecourt);
-assert.equal(civic.zone().crownCivicForecourtVersion, 1,
+assert.equal(civic.zone().crownCivicForecourtVersion, 2,
   'Crown civic scenery has its own migration guard; original town layout is not bumped');
 assert(court.length > 0 && court.length <= rules.crownCivicForecourt.length,
   'At least one authored forecourt detail must fit safely beside the real service');
 assert(court.every(p => p.decorative && p.r === 0 &&
-  Math.hypot(p.x - rest.x, p.y - rest.y) < 240),
+  Math.hypot(p.x - rest.x, p.y - rest.y) <
+    (p.structure === 'crown-ministry-frontage' ? 460 : 240)),
   'No civic detail can create a blocking prop or scatter outside the local forecourt');
+const ministry = court.find(p => p.structure === 'crown-ministry-frontage');
+assert(ministry && ministry.civicSceneRole === 'civil-administration',
+  'The ministry camera requires a genuinely placed public-admin frontage');
 const courtSnapshot = objects => objects.filter(p => p.crownCivicForecourt)
   .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));
 const originalCourt = courtSnapshot(civic.zone().props);
@@ -108,6 +112,21 @@ assert(industrial.every(link => link.from.startsWith('recovery-heat-crown-') &&
   'Freight paths reference only actual heatwork props and the original Foundry entrance');
 assert(industrial.some(link => link.roadConnected),
   'At least one local industry corridor must tie into an original carriageway');
+const freight = civic.zone().props.filter(p => p.crownIndustrialFreight);
+assert.equal(civic.zone().crownIndustrialFreightVersion, 1,
+  'Industrial staging has a separate once-only v4 migration guard');
+assert(freight.length >= 1 && freight.length <= rules.crownIndustrialFreight.length,
+  'Real heatwork sites must stage at least one visible receiving/cooling/dispatch scene');
+assert(freight.every(p => p.r === 0 && p.decorative &&
+  p.id.startsWith('crown-industrial-freight-') &&
+  rules.crownIndustrialFreight.some(([role, heatIndex]) => role === p.industrialRole &&
+    civic.zone().props.some(q => q.id === 'recovery-heat-crown-' + heatIndex &&
+      Math.hypot(q.x - p.x, q.y - p.y) < 320))),
+  'Real-site freight must remain nonblocking and anchored to placed production props');
+const freightPositions = c => c.zone().props.filter(p => p.crownIndustrialFreight)
+  .map(p => [p.id, p.structure, p.x, p.y]).sort((a,b) => a[0].localeCompare(b[0]));
+assert.deepEqual(freightPositions(restoredCivic), freightPositions(civic),
+  'v4 saves preserve industrial staging identity and positions');
 // Existing Foundry approach decorations are re-used in situ. Keep site
 // and historical side-entrance-N IDs; never create a second dungeon gate.
 const foundryGate = civic.zone().npcs.find(n => n.id === 'foundry');
@@ -223,6 +242,8 @@ const candidates = [
 // Offset the player camera from workers/props so the hero does not hide them.
 const cameraAnchors = new Map([
   ['civic-hall-frontage', ['npcs', 'rest', 0, 0, true]],
+  ['ridge-skyline', ['npcs', 'rest', 210, -90, true]],
+  ['cindermaw-ministry', ['props', 'crown-civic-forecourt-5', 60, 55, true]],
   ['ash-refuge', ['npcs', 'minor', 0, 0, true]],
   ['east-heat-intake', ['props', 'recovery-heat-crown-0', 65, 60, false]],
   ['west-glassworks', ['props', 'recovery-heat-crown-7', 65, 60, false]],

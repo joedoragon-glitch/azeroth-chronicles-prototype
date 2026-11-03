@@ -1495,6 +1495,8 @@
     Object.freeze([117, 107, 'crown-sheltered-planter', 'sheltered-greenery']),
     Object.freeze([-133, 165, 'crown-ceramic-bench', 'civic-rest']),
     Object.freeze([133, 165, 'crown-ceramic-bench', 'civic-rest']),
+    // Public ministry frontage; not a new interactable minister or service.
+    Object.freeze([295, -120, 'crown-ministry-frontage', 'civil-administration']),
   ]);
   const crownDistricts = [
     {
@@ -2614,6 +2616,15 @@
     ['south-kiln-to-distribution', 10, 11],
     ['washhouse-service', 13, 14],
   ];
+  // Freight, cooling and stock dressing follows REAL placed heatwork props.
+  // These environmental objects are not resources, recipes or new economy.
+  const crownIndustrialFreight = Object.freeze([
+    Object.freeze(['east-receiving', 1, -110, 95, 'crown-foundry-yard-loading']),
+    Object.freeze(['east-cooling', 3, 115, 100, 'crown-foundry-cooling-rack']),
+    Object.freeze(['south-receiving', 7, 110, -95, 'crown-foundry-yard-loading']),
+    Object.freeze(['south-shipping', 9, 115, 100, 'crown-foundry-yard-shipping']),
+    Object.freeze(['south-protected-stock', 10, 145, -85, 'crown-foundry-stock-bay']),
+  ]);
   // N1a: inspectable evidence belongs to real scene positions, not generic
   // dungeon entrances. IDs do not replace quests, loot or mechanical triggers.
   const narrativeSceneInspections = {
@@ -8138,6 +8149,7 @@
     frontierRecoveryScenes,
     crownThermalWorksScenes,
     crownIndustrialLinks,
+    crownIndustrialFreight,
     crownFoundryStations,
     dungeonWalls,
     dungeonArchitecture,

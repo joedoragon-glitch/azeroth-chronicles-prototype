@@ -236,6 +236,7 @@ Many broad procedural systems are classified here rather than receiving pointles
 | `crown-foundry-forming` | PROCEDURAL — generated interior material-forming worker gesture |
 | `crown-foundry-finishing` | PROCEDURAL — generated interior finishing/inspection worker pose |
 | `crown-foundry-dispatch` | PROCEDURAL — generated interior stock-dispatch worker gesture, no invented trade economy |
+| `crown-ministry-frontage` | PROCEDURAL — nonblocking glazed masonry public administrative frontage, without a new minister NPC or service |
 | `crown-civic-tilecourt` | PROCEDURAL — nonblocking ground-integrated Crownwatch civic court tiles |
 | `crown-sheltered-planter` | PROCEDURAL — small civic planter with same regional palette; nonblocking |
 | `crown-ceramic-bench` | PROCEDURAL — civic seating and maintained local craft material; nonblocking |

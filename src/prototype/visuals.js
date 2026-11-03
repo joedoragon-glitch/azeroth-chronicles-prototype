@@ -13378,6 +13378,25 @@
             line([[3, 3], [3, -22], [32, -22]], '#aaa79c', 2.5);
             softRect(7, -26, 18, 6, '#bdad92', 1.4);
           }
+          // Generic, intentionally unnamed material stock runs from
+          // receiving through hot work and inspection toward dispatch.
+          // Visual work stages do not simulate crafting or inventory.
+          if (stage === 'receiving' || stage === 'dispatch') {
+            line([[-39, 14], [41, 14]], '#c3b7a5', 2.2);
+            for (const x of [-33, 34]) oval(x, 14, 4, 3, '#6d7378');
+            softRect(18, -5, 25, 6, '#aaa398', 1.5);
+            for (const x of [23, 31, 39])
+              line([[x, -5], [x, -1]], '#c3bcb0', 1);
+          } else if (stage === 'furnace' || stage === 'forming') {
+            for (const x of [5, 14, 23])
+              softRect(x, 6, 7, 4,
+                stage === 'furnace' ? '#d8a36a' : '#b6aaa0', 1);
+            line([[2, 12], [34, 12]], '#626775', 2.3);
+          } else {
+            softRect(13, 10, 27, 4, '#b8b5b0', 1);
+            for (const x of [18, 27, 36])
+              oval(x, 7, 3, 2, '#d2c9b3');
+          }
           // Unarmed artisan silhouette, deliberately unlike Crown guards:
           // linen headwrap, work apron and two hands with an active task.
           softPoly([[-27, 10], [-22, -8], [-10, -9], [-4, 11]],
@@ -13415,6 +13434,43 @@
           }
           break;
         }
+        case 'crown-ministry-frontage':
+          // Distinct public administrative offices: civic craftsmanship,
+          // not a new official NPC, military gate or magic landmark.
+          fillOval(0, 16, 54, 16, '#211f2c', 0.25);
+          blockwork(-47, -43, 94, 61, '#7b7d87', 9);
+          softPoly([[-51, -44], [0, -60], [51, -44], [0, -30]],
+            '#a19ca2', 2);
+          for (const x of [-35, 35]) {
+            blockwork(x - 7, -68, 14, 74, '#9794a1', 4);
+            softRect(x - 5, -66, 10, 41, '#52747c', 1.6);
+            line([[x, -64], [x, -26]], '#c5c3b7', 1);
+            for (const y of [-52, -39])
+              line([[x - 5, y], [x + 5, y]], '#c5c3b7', 1);
+          }
+          blockwork(-24, -84, 48, 35, '#b2aaa9', 6);
+          softPoly([[-28, -84], [0, -103], [28, -84]],
+            '#666976', 2);
+          softRect(-17, -75, 34, 15, '#526e79', 2);
+          for (const x of [-9, 0, 9])
+            line([[x, -73], [x, -61]], '#c4c6b7', 1.4);
+          for (const x of [-30, 30]) {
+            softRect(x - 7, -31, 14, 18, '#51727c', 2);
+            line([[x, -30], [x, -14]], '#c2c7b9', 1);
+            line([[x - 7, -23], [x + 7, -23]], '#c2c7b9', 1);
+          }
+          softRect(-12, -20, 24, 38, '#b4aca9', 3);
+          softRect(-8, -15, 16, 32, '#373d4b', 2);
+          line([[0, -13], [0, 16]], '#a1aeaf', 1.6);
+          softPoly([[-23, -47], [0, -54], [23, -47], [0, -39]],
+            '#c1ada4', 1.1);
+          for (const x of [-17, 17]) {
+            line([[x, -9], [x, 15]], '#bbb8b1', 3);
+            softRect(x - 4, 12, 8, 5, '#bcb4ae', 1);
+          }
+          softRect(8, -11, 13, 7, '#c1ad82', 1);
+          line([[11, -8], [18, -8]], '#665b4a', 1);
+          break;
         case 'crown-civic-tilecourt':
           softPoly(
             [[-49, 2], [0, -17], [49, 2], [0, 20]],

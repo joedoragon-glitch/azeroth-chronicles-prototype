@@ -1,5 +1,9 @@
 > **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
 
+## 3 November 2026 — civil administration and real-site workyards (draft only)
+
+This Crown candidate adds an identifiable public ministry facade near the existing rest-hall precinct and collision-safe receiving/cooling/shipping scenery at real generated eastern/southern heatwork coordinates. Foundry workers retain their identities and locations with clearer generic material handling. These are all saved nonblocking environmental elements, not new ministers, interactions, goods, water sources, loot, craft mechanics or volcanic crossings. Source code is a draft candidate; actual placement, captures, animation parity and artistic success still require current-head checks.
+
 ## 3 November 2026 — civic elevation and native lava-bridge traversal (draft only)
 
 The current candidate strengthens the **existing** Crownwatch rest-service hall into a recognizable civic silhouette with narrow glazed masonry towers and a high clerestory. The tower work is purely presentation on the same service ID/position: no new building collision, road, royal claim, water supply, heat source, or interactable has been introduced. The vertical silhouette avoids extending over the adjacent quest-board lane; actual desktop/narrow and Pixi art acceptance must still be inspected.
