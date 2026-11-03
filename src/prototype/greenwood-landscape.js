@@ -233,7 +233,7 @@
     R.millhavenOnboarding.orchardTrail = [a.town, q([650, 1550]), a.hamlet];
     const cfg = {
       version: 2,
-      sceneVersion: 6,
+      sceneVersion: 5,
       size,
       scale,
       anchors: a,
@@ -255,6 +255,50 @@
   }
   function install(C, { D, R }) {
     class Landscape {
+      // GV-679 is an additive, nonblocking scene overlay. Never re-run the
+      // layout's destructive scene generator or its enemy/home corrections to
+      // deliver cosmetic refinements to an existing v4 campaign.
+      greenwoodRefinementScene(z) {
+        if (z.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
+            z.greenwoodRefinementVersion === 1 || z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion)
+          return;
+        const scale = R.greenwoodLayout.scale;
+        const cards = [
+          ['millhaven-poultry', 'poultry-yard', 520, 1170, 'working household yard'],
+          ['millhaven-flowers', 'wildflowers', 470, 1140, 'dry domestic verge'],
+          ['hamlet-pen', 'animal-pen', 175, 2375, 'sheep / fodder smallhold'],
+          ['orchard-flowers', 'wildflowers', 1035, 2380, 'cultivated dry margin'],
+          ['pond-reeds-west', 'reeds', 770, 1210, 'slow pond shoreline'],
+          ['pond-reeds-east', 'reeds', 1035, 1200, 'slow pond shoreline'],
+          ['den-thorn-bed', 'thorn-bed', 1190, 3080, 'sheltered scout den edge'],
+        ];
+        const audit = [];
+        for (const [key, structure, x, y, reason] of cards) {
+          const id = 'greenwood-refinement-' + key;
+          const point = { x: x * scale, y: y * scale };
+          if (z.props.some((p) => p.id === id)) {
+            audit.push({ id, placed: true, reason: 'existing candidate retained' });
+            continue;
+          }
+          const conflict = this.blocked(point.x, point.y, 'vale', 0, true) ||
+            this.distanceToRoad(z, point) < 45 ||
+            this.distanceToRoad({ roads: z.footpaths || [] }, point) < 35 ||
+            z.buildings.some((b) => distance(b, point) < 135) ||
+            z.props.some((p) => (p.owned || p.playerOwned || p.custom) && distance(p, point) < 85) ||
+            z.npcs.some((n) => distance(n.servicePoint || n, point) < 65) ||
+            z.nodes.some((n) => distance(n, point) < 35) ||
+            z.enemies.some((e) => e.hp > 0 && distance(e.home || e, point) < 60);
+          if (conflict) {
+            audit.push({ id, placed: false, reason: 'protected road, water, owner, service or actor clearance' });
+            continue;
+          }
+          z.props.push({ id, structure, ...point, r: 0, decorative: true,
+            greenwoodAuthored: true, greenwoodRefinement: 1 });
+          audit.push({ id, placed: true, reason });
+        }
+        z.greenwoodRefinementAudit = audit;
+        z.greenwoodRefinementVersion = 1;
+      }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 || z.greenwoodSourceVersion === 2) return;
@@ -606,9 +650,6 @@
               ['furrow-plot', 230, 1300],
               ['furrow-plot', 340, 1300],
               ['farm-tool-rack', 400, 1370],
-              // One household yard and its sunny edge, not a new livestock system.
-              ['poultry-yard', 430, 1170],
-              ['wildflowers', 470, 1140],
             ],
             hamlet: [
               ['well', 780, 1710],
@@ -618,8 +659,6 @@
               ['hay-rick', 220, 2240],
               ['pasture-sheep', 200, 2330],
               ['feed-trough', 330, 2280],
-              // Existing sheep, fodder and this single pen read as one smallhold.
-              ['animal-pen', 175, 2375],
             ],
             orchard: [
               ['fruit-tree', 620, 2140],
@@ -632,15 +671,11 @@
               ['drying-rack', 960, 2330],
               ['farm-tool-rack', 600, 1960],
               ['crate', 1280, 2140],
-              ['wildflowers', 1035, 2380],
             ],
             mill: [
               ['cart', 1340, 1780],
               ['supply-stack', 1350, 1640],
               ['barrel', 1310, 1500],
-              // Pond-margin reeds only: no reed stems in the powered mill channels.
-              ['reeds', 770, 1210],
-              ['reeds', 1035, 1200],
             ],
             wagon: [
               ['cart', 2790, 260],
@@ -674,8 +709,6 @@
               ['root-table', 780, 3010],
               ['fang-trophy', 1100, 2990],
               ['training-dummy', 1120, 2850],
-              // A sheltered den edge, not a collision hazard or extra boss nest.
-              ['thorn-bed', 1190, 3080],
             ],
             pasture: [
               ['pasture-sheep', 2700, 1500],
@@ -967,6 +1000,7 @@
                 Object.assign(p, this.safe(p.x, p.y, 'vale'));
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
+          this.greenwoodRefinementScene(z);
         } finally {
           this.s.zone = previous;
         }
