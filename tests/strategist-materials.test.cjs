@@ -54,7 +54,7 @@ assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'well' }), 'water');
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'forge', lit: false }), null);
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'ember-pit', active: true }), 'fire');
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'forge', heatActive: false }), null);
-assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'fumarole' }), null);
+assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'fumarole' }), 'fire');
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'wet-grass' }), null);
 assert.equal(M.propMaterial({
   x: 100, y: 100, structure: 'flame-glow', authoritativeCombatFire: true,
@@ -203,7 +203,8 @@ assert.equal(M.propMaterial({
 assert.equal(M.propMaterial({
   x: 100, y: 100, structure: 'appalachian-silver-workings',
 }), null, 'a mining facility must have real authored mining provenance');
-for (const structure of ['ember', 'ogre-hearth']) {
+for (const structure of ['ember', 'ogre-hearth', 'citadel-forge-bay',
+  'geothermal-heat-intake', 'roadside-lantern', 'grave-lamp']) {
   assert.equal(M.propMaterial({ x: 100, y: 100, structure }), 'fire', structure);
 }
 assert.equal(M.propMaterial({
