@@ -284,4 +284,23 @@ assert.equal(M.forGather(game, 'wood', {
 assert.equal(routeAttempts, 24, 'at most 24 actual route probes per Lab query');
 
 
+
+// Generated-world inventory smoke. This is not a playable Strategist test;
+// it is a bounded audit of real placed props and authentic water/lava terrain.
+const survey = new Campaign('developer', 'paladin', () => 0.5);
+const worldInventory = [];
+for (const region of Campaign.data.regions) {
+  assert.equal(survey.enter(region.id), true);
+  const loaded = survey.zone();
+  const counts = Object.fromEntries(M.MATERIALS.map((m) => [m, 0]));
+  for (const p of loaded.props) {
+    const material = M.propMaterial(p);
+    if (material) counts[material]++;
+  }
+  for (const source of M.terrainSources(R, region.id, survey.regionIndex(region.id)))
+    counts[source.material]++;
+  worldInventory.push({ zone: region.id, totalProps: loaded.props.length, sources: counts });
+}
+console.log('Strategist authored generated-world inventory: ' + JSON.stringify(worldInventory));
+
 console.log('PASS Strategist source truth, line of sight, class isolation and authenticated gathering');
