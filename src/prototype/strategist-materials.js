@@ -10,6 +10,8 @@
   const MAX_GATHER_RANGE = 3800;
   const MAX_SIGHT_PROBES = 32;
   const MAX_ROUTE_PROBES = 24;
+  const MAX_ZONE_INDEXES = 6;
+  const OVERWORLD = Object.freeze(['vale', 'march', 'highlands', 'frontier', 'crown']);
   const MATERIALS = Object.freeze(['water', 'mineral', 'wood', 'fire']);
   const propKinds = Object.freeze({
     water: new Set(['well', 'fountain', 'mill-pond', 'pond', 'water', 'cistern', 'water-trough']),
@@ -119,7 +121,9 @@
   }
 
   function terrainSources(rules, zoneId, regionIndex) {
-    if (!Number.isInteger(regionIndex) || regionIndex < 0 || regionIndex > 4) return [];
+    // Parent-region indices also apply to dungeons. Outdoor water/lava must
+    // NEVER leak into an interior through its containing region number.
+    if (!Number.isInteger(regionIndex) || OVERWORLD[regionIndex] !== zoneId) return [];
     const result = [];
     (rules?.terrain?.[regionIndex] || []).forEach((shape, i) => {
       const material = shape.kind === 'water' || shape.kind === 'fountain' ||
@@ -314,7 +318,11 @@
         old.buildLength !== (zone.buildings?.length || 0) ||
         old.rulesTerrain !== rules?.terrain?.[regionIndex]) {
       const created = sourceIndex(zone, rules, regionIndex, game.s?.time || 0);
+      // Keep only a small working set in RAM; old regions are reconstructed on
+      // demand rather than keeping every visited dungeon's index forever.
+      if (session.has(zone.id)) session.delete(zone.id);
       session.set(zone.id, created);
+      while (session.size > MAX_ZONE_INDEXES) session.delete(session.keys().next().value);
       return created;
     }
     return old;
@@ -377,7 +385,7 @@
         options.authorize(game, options.lab, options.worker) !== true ||
         typeof options.route !== 'function' || !isFinitePoint(options.worker)) return null;
     const zone = options.zone || game?.s?.zones?.[options.lab?.zone];
-    if (!zone || zone.id !== options.lab?.zone) return null;
+    if (!zone || zone.id !== options.lab?.zone || !OVERWORLD.includes(zone.id)) return null;
     return findSource(game, material, {
       at: options.worker, zone, rules: options.rules || game.constructor?.rules,
       range: options.range,
