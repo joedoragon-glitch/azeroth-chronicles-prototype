@@ -108,6 +108,20 @@ assert(industrial.every(link => link.from.startsWith('recovery-heat-crown-') &&
   'Freight paths reference only actual heatwork props and the original Foundry entrance');
 assert(industrial.some(link => link.roadConnected),
   'At least one local industry corridor must tie into an original carriageway');
+// Existing Foundry approach decorations are re-used in situ. Keep site
+// and historical side-entrance-N IDs; never create a second dungeon gate.
+const foundryGate = civic.zone().npcs.find(n => n.id === 'foundry');
+assert(foundryGate && foundryGate.kind === 'dungeon');
+const exterior = civic.zone().props.filter(p => p.crownFoundryExterior)
+  .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));
+assert(exterior.length > 0 && exterior.length <= 3,
+  'Real old Foundry entrance props must show maintained production logistics');
+assert(exterior.every(p => p[0].startsWith('side-entrance-side-crown-foundry-')),
+  'Original Foundry exterior prop IDs survive the art upgrade');
+assert.deepEqual(restoredCivic.zone().props.filter(p => p.crownFoundryExterior)
+  .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0])),
+  exterior, 'Historical v4 exterior positions survive the factory facade migration');
+
 const originalIndustrialPaths = JSON.stringify(civic.zone().footpaths);
 civic.crownIndustrialCirculation(civic.zone());
 assert.equal(JSON.stringify(civic.zone().footpaths), originalIndustrialPaths,
