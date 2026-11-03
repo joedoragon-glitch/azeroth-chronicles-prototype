@@ -383,7 +383,8 @@
     // actual route. This module never invents workers, teleportation or labor.
     if (typeof options.authorize !== 'function' ||
         options.authorize(game, options.lab, options.worker) !== true ||
-        typeof options.route !== 'function' || !isFinitePoint(options.worker)) return null;
+        typeof options.route !== 'function' || typeof options.passable !== 'function' ||
+        !isFinitePoint(options.worker)) return null;
     const zone = options.zone || game?.s?.zones?.[options.lab?.zone];
     if (!zone || zone.id !== options.lab?.zone || !OVERWORLD.includes(zone.id)) return null;
     return findSource(game, material, {
@@ -391,9 +392,17 @@
       range: options.range,
       access: (source, point) => {
         const route = options.route(options.worker, point, zone);
-        return Array.isArray(route) && route.length > 0 &&
-          route.every(isFinitePoint) && isFinitePoint(route[route.length - 1]) &&
-          distance(route[route.length - 1], point) <= 24;
+        if (!Array.isArray(route) || !route.length || route.length > 128 ||
+            !route.every(isFinitePoint) ||
+            distance(route[route.length - 1], point) > 24) return false;
+        // The last waypoint being near the source is NOT evidence that a
+        // worker can reach it. Each step must pass authoritative navigation.
+        let previous = options.worker;
+        for (const waypoint of route) {
+          if (options.passable(previous, waypoint, zone) !== true) return false;
+          previous = waypoint;
+        }
+        return true;
       },
     });
   }
