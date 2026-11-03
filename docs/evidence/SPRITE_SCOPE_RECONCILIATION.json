@@ -1167,7 +1167,7 @@
   ],
   "sources": {
     "src/prototype/visuals.js": "fffbdb9df981754bb596c8b5894d92ef50aa7de544481cbbfd7b8f9fbf4a9967",
-    "src/prototype/world.js": "3c8e07c5a9c116f43691b231f82e29e04bef3cc238975f011418bf4812e9f911",
+    "src/prototype/world.js": "897b8162ceae1aee1936ded336b88c0a00e8abc1e3d4ec76641e5652b48a8974",
     "src/prototype/rules.js": "036ff8ae82dbf06a22b7f5eb8269edc46e46291c5f2f5b3613d626549fdc99ab",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43",
