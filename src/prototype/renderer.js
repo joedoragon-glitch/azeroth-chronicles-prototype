@@ -587,6 +587,7 @@
     PrototypeGroundCache = root.PrototypeGroundCache ||
       (typeof require === 'function' ? require('./ground-cache.js') : null),
     now = () => performance.now(),
+    getBlockLabel = () => 'Blocked!',
   }) {
     // Draw in unzoomed presentation units, preserving one transform for the
     // world, artwork and effects. Public coordinates remain CSS pixels.
@@ -1737,16 +1738,20 @@
         if (pos.x < -35 || pos.x > canvas.width + 35 ||
             pos.y < -80 || pos.y > canvas.height + 80) continue;
         const rise = reducedMotion() ? 0 : (0.65 - cue.life) * 9,
-          x = Math.max(32, Math.min(canvas.width - 32, pos.x)),
+          label = getBlockLabel(),
           y = Math.max(22, Math.min(canvas.height - 24,
             pos.y - spriteHeight(actor) - 18 - rise));
         ctx.globalAlpha = Math.min(1, cue.life / 0.22);
         ctx.font = 'bold 11px system-ui';
+        // Respect the longer Spanish label without enlarging the cue or queue.
+        const edge = Math.min(canvas.width / 2,
+          Math.max(32, Math.ceil(ctx.measureText(label).width / 2) + 3)),
+          x = Math.max(edge, Math.min(canvas.width - edge, pos.x));
         ctx.lineWidth = 2.4;
         ctx.strokeStyle = '#172b2a';
         ctx.fillStyle = '#e0e9eb';
-        ctx.strokeText('Blocked!', x, y);
-        ctx.fillText('Blocked!', x, y);
+        ctx.strokeText(label, x, y);
+        ctx.fillText(label, x, y);
         cue.drawn = true;
       }
       ctx.restore();
