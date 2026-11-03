@@ -88,7 +88,7 @@ CI_BASE_SHA=e4e8234b5f784ddc9492fe79d956fd0a696b12af node .github/scripts/focuse
 node scripts/build.cjs --check
 ```
 
-## 3 November 2026 — Issue #773: external save durability (draft)
+## 3 November 2026 — Issue #773: external save durability implementation
 
 This extension leaves the active **v4 localStorage schema and keys**, one
 authoritative primary plus **one** checkpoint per mode, 60-second checkpoint
