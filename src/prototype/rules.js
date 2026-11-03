@@ -1485,6 +1485,17 @@
       ],
     ],
   };
+  // Dark Crown owner contract CV01/CV04: a civic court centered on the
+  // existing, interactable Crownwatch rest service. Offsets are relative to
+  // that service's ACTUAL collision-safe position, not an assumed map point.
+  // Flat paving, seating and planters do not create gameplay water/heat sources.
+  const crownCivicForecourt = Object.freeze([
+    Object.freeze([0, 115, 'crown-civic-tilecourt', 'public-circulation']),
+    Object.freeze([-117, 107, 'crown-sheltered-planter', 'sheltered-greenery']),
+    Object.freeze([117, 107, 'crown-sheltered-planter', 'sheltered-greenery']),
+    Object.freeze([-133, 165, 'crown-ceramic-bench', 'civic-rest']),
+    Object.freeze([133, 165, 'crown-ceramic-bench', 'civic-rest']),
+  ]);
   const crownDistricts = [
     {
       id: 'labor-quarter',
@@ -8022,6 +8033,7 @@
     frontierDistricts,
     crownRoutes,
     crownSceneLayout,
+    crownCivicForecourt,
     crownDistricts,
     teachers,
     expeditionSupportSkills,
