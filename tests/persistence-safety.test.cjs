@@ -281,3 +281,37 @@ console.log(
   assert.equal(app.elements.get('modal')?.hidden ?? true, true,
     'Autosaving must not create or open a backup modal');
 }
+
+// An aged reminder appears on the paused title, never as a combat interruption,
+// and disappears after initiating a download without pretending it was retained.
+for (const language of ['en', 'es']) {
+  const savedGame = new C('normal', 'mage', () => 0.5);
+  const storage = new Map([
+    [P.saveKey('normal'), JSON.stringify(savedGame.snapshot())],
+    [P.externalReminderKey + '-normal', JSON.stringify({
+      version: 1,
+      firstSeenAt: Date.now() - 3 * 3600000,
+      firstSeenLevel: 1,
+      downloadStartedAt: 0,
+      downloadLevel: 1,
+      lastShownAt: 0,
+    })],
+  ]);
+  const app = shell(language, 'mage', { storage, stayOnTitle: true });
+  assert.match(
+    app.elements.get('title-preview').textContent,
+    language === 'en' ? /external backup/ : /copia externa/,
+    'Due reminder is visible while the campaign is paused at the title',
+  );
+  app.elements.get('title-saves').click();
+  const exportAction = app.elements.get('modal-actions').children.find(
+    (item) => item.textContent ===
+      (language === 'en' ? 'Export normal' : 'Exportar normal'),
+  );
+  assert(exportAction, 'The title exposes a direct mode-specific export action');
+  exportAction.click();
+  const metadata = JSON.parse(storage.get(P.externalReminderKey + '-normal'));
+  assert(metadata.downloadStartedAt > 0);
+  assert.doesNotMatch(app.elements.get('title-preview').textContent,
+    language === 'en' ? /external backup/ : /copia externa/);
+}

@@ -3534,6 +3534,7 @@
     menu?.back();
   };
   const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: localStorage });
+  let titleBackupNotice = null;
   let storageProtectionState = 'unknown';
   const storageApi = navigator.storage;
   if (typeof storageApi?.persisted === 'function') {
@@ -3593,6 +3594,8 @@
       exportSaveText(prepared.text, prepared.filename);
       // A download started; no browser API proves the file was retained.
       backupAdvisor.downloadStarted(prepared.mode, prepared.level);
+      titleBackupNotice = null;
+      if (!started) refreshTitleScreen();
       status('Download requested. Keep the JSON file outside browser site data.');
       return true;
     } catch (_) {
@@ -3857,10 +3860,20 @@
       ? D.regions.find((region) => region.id === game.zoneId)?.name ||
         D.bosses.find((boss) => boss.id === game.zoneId)?.place || game.zoneId
       : '';
+    // Remind on the paused title, not in combat and not as a modal.
+    if (valid && !titleLoading && !startupUpdatePending && !titleScreen.hidden &&
+        !titleBackupNotice && backupAdvisor.due(game.s.mode, game.hero.level)) {
+      titleBackupNotice = { mode: game.s.mode };
+      backupAdvisor.shown(game.s.mode, game.hero.level);
+    }
+    const titleReminder = valid && !titleLoading &&
+      titleBackupNotice?.mode === game.s.mode
+      ? t(' · Consider an external backup', ' · Conviene exportar una copia externa')
+      : '';
     $('title-preview').textContent = valid
       ? t('Saved adventure', 'Aventura guardada') + ' · ' +
         (game.hero.name || game.hero.class) + ' · ' +
-        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place
+        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place + titleReminder
       : persistence.loadFailed(profile.activeMode)
         ? t('Saved adventure needs recovery', 'La partida requiere recuperación')
         : t('Your adventure awaits', 'Tu aventura te espera');
@@ -3890,6 +3903,7 @@
     }
   }
   function showTitleScreen() {
+    titleBackupNotice = null;
     stopRendererRecording();
     ++titleEpoch;
     titleSkipGraphics?.resolve(false);

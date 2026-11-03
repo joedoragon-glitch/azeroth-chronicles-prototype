@@ -109,7 +109,8 @@ selection, cancellation or failed validation writes nothing. Only explicit
 confirmation calls the existing writer-fenced `writeCandidate`, preserving
 unreadable originals and rejecting competing-tab/stale-byte replacements.
 
-**Reminder:** opening the existing backup menus can display a quiet suggestion
+**Reminder:** the paused title can display a single discreet suggestion when due;
+opening the existing backup menus can display the same guidance
 after two hours since first observation/download attempt or after five levels
 of additional progress. Showing a reminder suppresses another for 24 hours;
 the last initiated download restarts the baseline but is never claimed to be
