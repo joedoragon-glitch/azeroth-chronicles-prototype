@@ -256,6 +256,20 @@
           )
         )
           throw Error('Invalid critical Codex claims');
+        // Existing v4 and prior draft saves retain the same isolated RNG sequence.
+        // Validate both field names and reject conflicting dual fields.
+        const validBlockRng = (state) => Number.isInteger(state) &&
+          state >= 1 && state <= 0xffffffff;
+        if (s.skillEvasionRngState !== undefined) {
+          if (!validBlockRng(s.skillEvasionRngState) ||
+              (s.skillBlockRngState !== undefined &&
+                s.skillBlockRngState !== s.skillEvasionRngState))
+            throw Error('Invalid skill block RNG state');
+          s.skillBlockRngState = s.skillEvasionRngState;
+          delete s.skillEvasionRngState;
+        }
+        if (s.skillBlockRngState !== undefined && !validBlockRng(s.skillBlockRngState))
+          throw Error('Invalid skill block RNG state');
         // Independent Party and World streams are optional until opt-in.
         // Saving a game mid-combat stores RNG state, not transient receipts.
         if (s.criticalStreams !== undefined) {

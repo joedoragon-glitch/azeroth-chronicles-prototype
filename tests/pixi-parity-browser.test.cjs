@@ -79,6 +79,8 @@ async function main() {
     const viewport =
       process.env.PARITY_PHONE === '1' ? { width: 844, height: 390 } : { width: 912, height: 600 };
     const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
+    if (process.env.PARITY_REDUCED_MOTION === '1')
+      await page.emulateMedia({ reducedMotion: 'reduce' });
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
     await page.goto('http://127.0.0.1:' + server.address().port + '/');
@@ -163,7 +165,7 @@ async function main() {
             b.rangedAim = true;
           }
         }
-        if (name === 'registered') {
+        if (['registered', 'ringleader'].includes(name)) {
           g.enter('vale');
           Object.assign(g.hero, { x: 1000, y: 1000, path: [], order: null });
           const v = g.zone();
@@ -178,7 +180,7 @@ async function main() {
           Object.assign(e, {
             x: 1080,
             y: 960,
-            form: 'true',
+            form: name === 'ringleader' ? 'ringleader' : 'true',
             rangedAim: { x: 1000, y: 1000 },
             frenzy: true,
           });
@@ -249,6 +251,27 @@ async function main() {
           room.buildings = [];
           room.npcs = [keeper];
           if (!g.visibleNPCs().includes(keeper)) throw Error('Keeper fixture eligibility failed');
+        }
+        if (name === 'ferry') {
+          // The real Highlands ferry is reachable at its boarding point
+          // but painted at the separately authored hull position.
+          g.enter('highlands');
+          const harbor = Campaign.rules.harbors.highlands;
+          const room = g.zone();
+          const ferry = room.npcs.find((n) => n.id === 'return' && n.harbor);
+          if (!ferry || !harbor?.vessel) throw Error('Native Highlands ferry not admitted');
+          window.parityFerry = ferry;
+          Object.assign(g.hero, {
+            x: ferry.x + 145,
+            y: ferry.y + 35,
+            path: [],
+            order: null,
+          });
+          room.props = [];
+          room.buildings = [];
+          room.enemies = [];
+          room.npcs = [ferry];
+          room.escort = null;
         }
         if (name === 'idle') {
           // Only a stationary hero remains: presentation motion is visible
@@ -347,9 +370,12 @@ async function main() {
           rows.push({ fixture, mode, time, file: name, status });
           if (mode === 'pixi' && process.env.PARITY_ASSERT !== '0') {
             const m = status.gpu.sceneMetrics;
+            if (fixture === 'ferry')
+              assert(m.actors >= 2, 'Pixi includes the original ferry hull beside the hero');
             if (fixture === 'warlord') assert.equal(m.worldIndicators, 1);
             if (fixture === 'ridge') assert.equal(m.groundMarks, 1);
-            if (fixture === 'registered') assert.equal(m.accessoryActors, 1);
+            if (['registered', 'ringleader'].includes(fixture))
+              assert.equal(m.accessoryActors, 1);
             if (fixture === 'cover')
               assert(
                 status.canvas.outlineMasks > 0,
@@ -379,6 +405,60 @@ async function main() {
           pixi[1].status.gpu.sceneMetrics.textureSources,
           'Stable GPU texture count',
         );
+        if (fixture === 'ferry') {
+          const projected = await page.evaluate(() => {
+            const ferry = window.parityFerry;
+            const visual = painter.presentEntity(ferry, 'npc');
+            const point = painter.screen(visual);
+            const boarding = painter.screen(ferry);
+            return {
+              point,
+              boarding,
+              world: [ferry.x, ferry.y],
+              vessel: [visual.x, visual.y],
+            };
+          });
+          assert.deepEqual(projected.world, [300, 1995], 'Ferry boarding coordinates are unchanged');
+          assert.deepEqual(projected.vessel, [260, 2020], 'Ferry uses authored Highlands vessel');
+          assert(
+            Math.abs(projected.point.x - projected.boarding.x) > 30,
+            'The fixture actually exercises distinct ferry render and boarding coordinates',
+          );
+          const crop = {
+            x: Math.max(0, Math.round(projected.point.x - 125)),
+            y: Math.max(0, Math.round(projected.point.y - 160)),
+            width: 250,
+            height: 175,
+          };
+          for (const mode of ['canvas', 'pixi']) {
+            await page.evaluate((mode) => {
+              if (mode === 'canvas') {
+                gpu.deactivate();
+                painter.setRenderLayer('full');
+              } else {
+                gpu.activate();
+                painter.setRenderLayer('overlay');
+              }
+              g.zone().npcs = [];
+              if (mode === 'pixi') gpu.draw();
+              painter.draw();
+            }, mode);
+            const absent = path.join(out, 'ferry-' + mode + '-absent.png');
+            await page.screenshot({ path: absent });
+            await page.evaluate((mode) => {
+              g.zone().npcs = [window.parityFerry];
+              if (mode === 'pixi') gpu.draw();
+              painter.draw();
+            }, mode);
+            const changed = await changedPixels(
+              path.join(out, 'ferry-' + mode + '-0.png'),
+              absent,
+              crop,
+            );
+            assert(changed > 200, mode + ' visible ferry must paint at authored hull position');
+            lifecycle.push({ fixture, mode, changedPixels: changed, crop });
+          }
+        }
         if (fixture === 'idle') {
           const crop = {
             x: Math.round(viewport.width * 0.5 - 75),
@@ -413,10 +493,10 @@ async function main() {
             lifecycle.push({ fixture, mode, changedPixels: n, crop });
           }
         }
-        if (['warlord', 'ridge', 'registered', 'lamp'].includes(fixture)) {
+        if (['warlord', 'ridge', 'registered', 'ringleader', 'lamp'].includes(fixture)) {
           const negative = await page.evaluate((name) => {
             if (name === 'lamp') g.s.clock = 120;
-            else if (name === 'registered')
+            else if (['registered', 'ringleader'].includes(name))
               Object.assign(g.zone().enemies[0], {
                 form: 'normal',
                 frenzy: false,
@@ -431,7 +511,7 @@ async function main() {
             assert.equal(negative.sceneMetrics.worldIndicators, 0, 'Ash expires at exact boundary');
           if (fixture === 'ridge')
             assert.equal(negative.sceneMetrics.groundMarks, 0, 'Mark expires at exact boundary');
-          if (fixture === 'registered')
+          if (['registered', 'ringleader'].includes(fixture))
             assert.equal(
               negative.sceneMetrics.accessoryActors,
               0,

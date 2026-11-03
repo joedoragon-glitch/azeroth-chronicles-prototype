@@ -6703,6 +6703,7 @@
               ),
               0,
               e.family === 'cindermaw' ? e.id : undefined,
+              false, { shape: 'area', criticalExecution: criticalReceipt },
             );
             if (
               this.hero !== hero ||
@@ -6749,6 +6750,10 @@
               ),
               0,
               e.id,
+              false, {
+                shape: move.mobileRogueCast ? 'single' : 'area',
+                criticalExecution: criticalReceipt,
+              },
             )
           )
             continue;
@@ -6829,6 +6834,7 @@
             ),
             0,
             e.family === 'cindermaw' ? e.id : undefined,
+            false, { shape: 'area', criticalExecution: criticalReceipt },
           )
         )
           continue;

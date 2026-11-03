@@ -1,0 +1,70 @@
+name: 'Pixi #756 aura composited parity (draft PR only)'
+
+# Focused software-WebGL acceptance. Never publishes Pages or claims phone hardware certification.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pixi-756-aura-acceptance.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixi-756-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity:
+    name: Composited source parity / ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: desktop-100-unoptimized
+            zoom: '1'
+            phone: '0'
+            optimized: '0'
+            reduced: '0'
+          - name: desktop-150-optimized
+            zoom: '1.5'
+            phone: '0'
+            optimized: '1'
+            reduced: '0'
+          - name: phone-layout-175-reduced
+            zoom: '1.75'
+            phone: '1'
+            optimized: '1'
+            reduced: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked development dependencies
+        run: npm ci --ignore-scripts
+      - name: Install real Chromium software-WebGL runner
+        run: npx playwright install chromium --with-deps
+      - name: Check reproducible game sources and offline build
+        run: node scripts/build.cjs --check
+      - name: Compare real composited Canvas/Pixi scenes at two animation clocks
+        env:
+          PARITY_ZOOM: ${{ matrix.zoom }}
+          PARITY_PHONE: ${{ matrix.phone }}
+          PARITY_OPTIMIZED: ${{ matrix.optimized }}
+          PARITY_REDUCED_MOTION: ${{ matrix.reduced }}
+          PARITY_FIXTURES: 'ridge,regalia,registered,ringleader,flight,keeper,pursuit,lamp'
+          PARITY_OUT: test-artifacts/parity-756-${{ matrix.name }}
+        run: node tests/pixi-parity-browser.test.cjs
+      - name: Retain exact-head PNGs, scene status and texture reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixi-756-${{ matrix.name }}
+          path: test-artifacts/parity-756-${{ matrix.name }}/
+          if-no-files-found: ignore
+          retention-days: 30

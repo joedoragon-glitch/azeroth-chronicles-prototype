@@ -2109,6 +2109,8 @@
     PrototypeCombatVisuals,
     PrototypeSprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites,
     PrototypeMaterials: typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials,
+    // Read the current presentation language at paint time, not at event receipt.
+    getBlockLabel: () => language === 'es' ? '¡Bloqueado!' : 'Blocked!',
   };
   const renderer = PrototypeRenderer.create({ ...rendererSetup, canvas: viewport, ctx });
   renderer.setOptimizationMode(optimizationMode);
@@ -2654,10 +2656,10 @@
             'Targeting and dodging',
             'Target: ' +
               input.key('target') +
-              '. Tap to cycle; hold to lock.\nAim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.',
+              '. Tap to cycle; hold to lock.\nAim: gold is clear, amber is too far, red means an obstructed shot, not Skill Block. Only a legal skill impact can show Blocked! Dodge marked attacks.',
             'Objetivo: ' +
               input.key('target') +
-              '. Toca para cambiar; mantén para fijar.\nPuntería: dorado, despejada; ámbar, lejos; rojo, bloqueada. Esquiva ataques marcados.',
+              '. Toca para cambiar; mantén para fijar.\nPuntería: dorado, despejada; ámbar, lejos; rojo indica un disparo obstruido, no bloqueo de habilidades. ¡Bloqueado! solo aparece tras el impacto válido de una habilidad. Esquiva ataques marcados.',
           ),
         ),
         action('Combat conditions', () => combatConditions(returnHere)),
@@ -2992,6 +2994,15 @@
         value,
         PrototypeArchive.translationNames(game, { D, R: Campaign.rules }),
       );
+    }
+    if (
+      language === 'es' &&
+      typeof PrototypeArchive !== 'undefined' &&
+      (menu?.title === 'Skill Block' || value === 'Skill Block')
+    ) {
+      // The ungated quick guide shares Archive's exact technical copy.
+      const label = PrototypeArchive.translateArchiveLabel(value);
+      return label !== value ? label : PrototypeArchive.translateArchive(value);
     }
     return tr(value);
   }
