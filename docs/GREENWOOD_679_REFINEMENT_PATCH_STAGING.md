@@ -33,3 +33,7 @@ This PR update permits GitHub's **existing, automatically scheduled focused PR c
 - [PR #680](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/680), including engineering handoff and ongoing implementation/audit receipts.
 
 **Owner's acceptance gate:** review the actual playable candidate, request any adjustments, and then explicitly authorize final integration if desired. The PR remains a draft.
+
+## Updated authorization — live owner playtest (2026-11-03)
+
+The owner now explicitly authorizes **merging PR #680 into main and publishing the live playable game** once the previously failing focused regressions and the current build checks are green. The owner is the game's sole developer and active player; final creative approval will be decided from the live game after publication. This supersedes earlier draft-only/no-merge/no-deployment text above; the permanent prohibitions on altering monster spawns, density, enemy placements, encounter rates, and combat balance remain in force. No comprehensive/manual CI run was authorized or requested.

@@ -57,3 +57,7 @@ Record the exact workflow SHA, job result, screenshot/device observations, test 
 5. **Unverified until workflow/device:** focus tests, browser render and nonproduction playable review. All claims of *tested* must identify an observed exact run and commit.
 
 **Release gate:** Keep PR #680 **Draft** and **unmerged**. Do not deploy, manually trigger CI, start a comprehensive test suite or claim physical device verification without separate authorization.
+
+## Owner-approved live review path (2026-11-03)
+
+Owner requests a live release for hands-on solo testing, replacing the earlier artifact-only review plan. PR #680 may be marked ready and merged **after** focused test and generated build checks succeed, then published using the existing main-branch GitHub Pages workflow. Creative signoff on appearance and feel is *not* implied by engineering readiness. The temporary PR-only review-artifact workflow will be retired before merge; its previous downloadable artifact stays associated with historical Actions runs.
