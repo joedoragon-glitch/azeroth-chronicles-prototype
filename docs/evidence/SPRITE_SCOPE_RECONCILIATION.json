@@ -1181,7 +1181,7 @@
   ],
   "sources": {
     "src/prototype/visuals.js": "5be6a33f1b83cd5aeb54d22ff62bbac98a569e193057655aed46272ec5f43ce4",
-    "src/prototype/world.js": "f3b0758114bc28ad326c4b344312a02f8d8a354368993b3d50b6d9be84851b1c",
+    "src/prototype/world.js": "0874d023d41cb17fc9abd13c3eda66cab4a855a76c28f56d43ebef59b818477b",
     "src/prototype/rules.js": "0fd1081aacdb5f1b6907c23f8582ab909291dc9d819953493d23868af893ccaf",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43",

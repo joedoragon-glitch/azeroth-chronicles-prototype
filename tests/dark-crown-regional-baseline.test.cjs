@@ -125,6 +125,8 @@ assert.equal(civic.zone().crownIndustrialFreightVersion, 1,
   'Industrial staging has a separate once-only v4 migration guard');
 assert(freight.length >= 1 && freight.length <= rules.crownIndustrialFreight.length,
   'Real heatwork sites must stage at least one visible receiving/cooling/dispatch scene');
+assert(freight.every(p => p.crownFoundryExterior !== true),
+  'Regional freight dressing must not impersonate the three original Foundry gate props');
 assert(freight.every(p => p.r === 0 && p.decorative &&
   p.id.startsWith('crown-industrial-freight-') &&
   rules.crownIndustrialFreight.some(([role, heatIndex]) => role === p.industrialRole &&

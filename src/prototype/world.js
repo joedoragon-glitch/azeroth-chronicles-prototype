@@ -1846,7 +1846,8 @@
             z.props.push({
               id, ...chosen, r: 0, decorative: true, structure,
               crownIndustrialFreight: true, industrialRole: role,
-              crownFoundryExterior: structure === 'crown-foundry-yard-shipping',
+              // Only the three original gate props carry
+              // crownFoundryExterior; workyard stock is a separate family.
             });
           }
           z.crownIndustrialFreightVersion = 1;
