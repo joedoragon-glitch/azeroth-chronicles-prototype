@@ -1,0 +1,42 @@
+name: Greenwood 680 — nonproduction playable preview
+
+# Draft PR #680 only. Upload an artifact; NEVER publish, merge or deploy.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  greenwood-playable:
+    if: github.event.pull_request.number == 680 && github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked development dependencies
+        run: npm ci --ignore-scripts
+      - name: Focused Greenwood witness and scenery/patrol native checks
+        run: |
+          node tests/thorn-witness.test.cjs
+          node tests/greenwood-679-candidate.test.cjs
+      - name: Prepare complete review-only site
+        run: |
+          node scripts/build.cjs --check
+          node scripts/build.cjs --site
+          printf 'Greenwood #680 DRAFT candidate; source PR head %s; not a public release.\n' "${{ github.event.pull_request.head.sha }}" > _site/GREENWOOD_REVIEW_BUILD.txt
+      - name: Preserve downloadable playable candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: greenwood-680-playable-${{ github.event.pull_request.head.sha }}
+          path: _site/
+          if-no-files-found: error
+          retention-days: 14
