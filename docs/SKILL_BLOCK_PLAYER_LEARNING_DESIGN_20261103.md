@@ -2,7 +2,7 @@
 
 **Game:** So I Became the Dark Lord's Problem (SIBDLP)  
 **Owner approval:** 3 November 2026 — game-design direction and phased implementation approach approved.  
-**Status:** Approved design / engineering implementation **not begun** in this PR.  
+**Status:** Approved design; **implementation candidate added to the same draft PR**, pending focused CI and owner-controlled acceptance. This is not merged, deployed or device-verified.  
 **Source baseline:** `main` at `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`, containing merged Skill Block PR [#760](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/760). The exact merge completed the focused checks and automatic Pages publication in [run 41637089826](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41637089826); real-device visual/learning acceptance remains unverified.  
 **Scope:** Teach an already implemented combat mechanic through existing, bilingual player-learning surfaces. No combat design, numerical tuning, story rewrite, or new tutorial framework.
 
@@ -166,3 +166,11 @@ The detailed text should reveal, in reader-friendly order:
 **Owner authorization today:** Create a solid **design/documentation-only** draft PR that a new chat can implement. The owner approved the described game-design approach and phase order. **Do not implement gameplay/UI in this design session; do not merge, deploy, run comprehensive tests or claim device verification.** The next session owns the engineering phases, normal focused validation, proportional triage and documentation updates, without asking the owner to repeat the design. Merge/publication and comprehensive certification remain distinct decisions.
 
 **Status at design PR creation:** Original Skill Block merged and published, real-device verification unperformed; this new teaching system is **planned**, not implemented or tested. Design review is source-level only. Continue on the same PR rather than opening phase-specific competing drafts.
+
+## 9. Implementation candidate — 3 November 2026
+
+**Phase 0:** PR #772 was compared against `main` (zero commits behind at source checkpoint `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`). Skill Block #760 was already merged and published. The current quick-guide, gated Keeper, Controls, localization and shared Canvas/Pixi overlay paths were inspected before editing.
+
+**Phases 1–2 — implemented on this draft candidate:** One shared Skill Block topic with the approved concise English/Spanish definition and optional Keeper figures derived from all seven `R.skillBlock` values; Spanish translation through the existing Archive catalog; Controls red-aim clarification; read-only live-language overlay label with Spanish-safe horizontal placement and the original eight-cue, expiry, reduced-motion and fade rules. Combat resolver, rules, saves, and approved `narration.js` were not edited.
+
+**Phase 3 — verification boundary:** Existing reference, translation and visual-cue regressions were extended with altered-rule fixtures, pact/Back, English/Spanish and paint-level checks. Exact-head focused CI and reproducible build outcomes must be attached after the workflow completes. Physical iPhone/Chromebook readability, real-player learning, cross-browser certification and owner signoff remain **unverified and not authorized in this PR**. Keep draft; do not merge or deploy.

@@ -145,6 +145,17 @@ for (const lang of ['en', 'es']) {
 }
 // Main has moved independently (#429/#431). Translate its exact Slow copy
 // already, without importing or reverting those mechanics on this stacked PR.
+const blockReference = A.conditionTopics(C.rules).find(([name]) => name === 'Skill Block');
+assert.equal(A.translateArchiveLabel(blockReference[0]), 'Bloqueo de habilidades');
+assert.equal(A.translateArchive(blockReference[1]),
+  'Una habilidad puede alcanzar a su objetivo y aun así ser bloqueada. Un impacto bloqueado no causa daño ni aplica efectos ligados a ese impacto. Cada objetivo de un ataque de área puede bloquearlo por separado. Los impactos críticos de habilidades no se pueden bloquear.');
+assert(A.translateArchive(blockReference[2]).includes('Los compañeros no reciben bonificación nocturna'));
+assert(A.translateArchive(blockReference[2]).includes('El héroe no tiene bloqueo general de habilidades'));
+const variedBlock = A.conditionTopics({
+  ...C.rules, skillBlock: { ...C.rules.skillBlock, enemySingle: 0.1775, nightEnemyBonus: 0.075 },
+}).find(([name]) => name === 'Skill Block');
+assert.deepEqual(numbers(A.translateArchive(variedBlock[2])), numbers(variedBlock[2]),
+  'modified rules keep exact figure order in Spanish');
 const currentSlow = require('./fixtures/archive-slow-main-20261024.json');
 for (const text of currentSlow.topic) {
   assert.deepEqual(gapsFor(text, []), [], 'New main Slow copy has complete technical translation');

@@ -61,6 +61,8 @@ does not certify a fresh whole-game audit. The historical v0.9 findings
 below retain their original context; the current table supersedes older hero
 immunity, Haste and missing-Silence statements.
 
+**Skill Block player-learning candidate (draft PR [#772](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/772), 3 November 2026):** The existing quick Combat conditions guide gains one shared Skill Block explanation without requiring the Keeper. A pact-qualified Keeper can optionally reveal live single/area, Ranger, Rogue, night and allied companion figures through **Show me the figures**; Controls distinguishes obstructed red aim from on-impact Skill Block. The Canvas/Pixi overlay uses **Blocked! / ¡Bloqueado!** from the active language. These learning additions are **unmerged and unpublished** pending focused verification and authorization; #760's original block probabilities and combat resolver are unchanged.
+
 Players can use **Hero skills → Combat conditions** (Adventure, either Barracks,
 or a teacher's Review hero skills), or **Controls → Combat conditions**. That
 reference offers one short explanation per selected effect. The Drowned Keeper's
