@@ -34,6 +34,12 @@ Focused native checks: `node tests/thorn-witness.test.cjs`, `node tests/greenwoo
 
 **Visual review still required:** normal/phone zoom and day/night on Millhaven household, Hamlet sheep pen, orchard verge, the actual two millpond shores, den, witness and both bridges; Canvas 2D and optional PixiJS; line-of-sight to services, telegraphs and compounds; owned/custom property coexistence; no render-time explosions. Automated tests cannot certify device feel or final composition.
 
+## Executed focused test receipts (do not confuse with final acceptance)
+
+- **Initial automatic PR run [41652282443](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41652282443)**, source PR head `6a343357469f90e172e1de40c537997256ad68bc`: witness/local-footprint/native save assertions **passed**; four seeded scenery/owned-property/source-count assertions **passed**. Full patrol path diagnostic reported successful physical den-to-den travel, Mira within 96 units and **minimum distance to Millhaven 257 units**, despite completing all eight legs in order. This is a real creative/geographic defect exposed by a new adversarial test, not a claimed acceptance pass. The first assertion also exposed an initial undefined `thornLeg` sentinel before the first patrol update; the test now filters that valid transitional state.
+- **Correction:** the new temporary private `westernWoodlandGuide` is used only on 2→1, keeping the established eight indexed legs and all old saves. Mid-leg save/restore and old in-flight no-guide fallback now have explicit checks. The corrective commit is not certified by the initial run.
+- **Still required:** a new exact-head focused native pass, native public-path and captive compatibility, review-site packaging, and real gameplay camera comparison. Failure in any check is a blocker, not a reason to weaken a safety threshold.
+
 ## Nonproduction playable review
 
 The PR-only GitHub Actions workflow `.github/workflows/greenwood-680-preview.yml` is intentionally limited to **draft PR #680**. It automatically runs just the focused candidate tests and builds a ZIP artifact containing the full ordinary site (`index.html`, scripts, styles, audio, sprites and service worker). It does **not** publish GitHub Pages, deploy, merge, or manually dispatch a comprehensive suite.
