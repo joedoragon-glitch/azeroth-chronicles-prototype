@@ -78,6 +78,7 @@ const mira = g.thornCaptive();
 assert(e && mira && mira.id === 'cage-thorn');
 const order = [], visited = [], path = [];
 let prevLeg = null, maxGap = 0, minMillhaven = Infinity, homecoming = false;
+let midGuideSnapshot = null, minHamlet = Infinity, minMill = Infinity, minOrchard = Infinity;
 for (let step = 0; step < 18000; step++) {
   const before = { x: e.x, y: e.y }, beforeMira = { x: mira.x, y: mira.y };
   g.s.time += 0.1;
@@ -93,6 +94,13 @@ for (let step = 0; step < 18000; step++) {
   if (step % 20 === 0) path.push([Math.round(e.x), Math.round(e.y)]);
   maxGap = Math.max(maxGap, dist(e, mira));
   minMillhaven = Math.min(minMillhaven, dist(e, { x: 650, y: 600 }));
+  if (leg === 1 && e.thornGuideStep >= 0) {
+    minHamlet = Math.min(minHamlet, dist(e, { x: 550, y: 1750 }));
+    minMill = Math.min(minMill, dist(e, { x: 1200, y: 1400 }));
+    minOrchard = Math.min(minOrchard, dist(e, { x: 780, y: 2100 }));
+    if (!midGuideSnapshot && e.thornGuideStep === 3)
+      midGuideSnapshot = g.snapshot();
+  }
   assert(dist(before, e) <= C.rules.thornPatrol.speed * 0.1 + 0.1, 'no boss teleport');
   assert(dist(beforeMira, mira) <= C.rules.thornPatrol.captiveSpeed * 0.1 + 0.1, 'no Mira teleport');
   if (homecoming) break;
@@ -100,6 +108,8 @@ for (let step = 0; step < 18000; step++) {
 console.log('GREENWOOD_679_PATROL_OBSERVATION ' + JSON.stringify({
   order, visited, homecoming,
   maxCaptiveGap: Math.round(maxGap), minMillhaven: Math.round(minMillhaven),
+  minHamlet: Math.round(minHamlet), minMill: Math.round(minMill),
+  minOrchard: Math.round(minOrchard),
   sampledPath: path.filter((_, i) => i % 5 === 0),
 }));
 assert.deepEqual(order, [7, 6, 5, 4, 3, 2, 1, 0, 7],
@@ -107,4 +117,24 @@ assert.deepEqual(order, [7, 6, 5, 4, 3, 2, 1, 0, 7],
 assert(homecoming);
 assert(maxGap <= C.rules.thornPatrol.waitForCaptive + 25, 'captive travels with the scout');
 assert(minMillhaven > 360, 'patrol does not enter Millhaven');
-console.log('PASS #679 full eight-leg den-to-den native patrol, captive continuity and town exclusion');
+assert(minHamlet > 300 && minMill > 250 && minOrchard > 260,
+  'woodland leg avoids the settled hamlet, mill and cultivated orchard');
+assert(midGuideSnapshot, 'a full circuit actually traverses the hidden woodland guide');
+const saved = C.restore(midGuideSnapshot, rng(0x47564101));
+const savedScout = saved.zone().enemies.find((u) => u.id === e.id);
+assert.equal(savedScout.thornLeg, 1);
+assert.equal(savedScout.thornGuideStep, 3, 'mid-leg guide index survives v4 restore');
+assert(Math.hypot(savedScout.x - midGuideSnapshot.zones.vale.enemies.find((u) => u.id === e.id).x,
+  savedScout.y - midGuideSnapshot.zones.vale.enemies.find((u) => u.id === e.id).y) < 1,
+  'restoring an active guide cannot teleport Thornfang');
+const legacy = structuredClone(midGuideSnapshot);
+delete legacy.zones.vale.enemies.find((u) => u.id === e.id).thornGuideStep;
+const restoredOld = C.restore(legacy, rng(0x47564101));
+const oldScout = restoredOld.zone().enemies.find((u) => u.id === e.id);
+const beforeOld = { x: oldScout.x, y: oldScout.y };
+restoredOld.s.time += 0.1;
+restoredOld.updateThornPatrol(oldScout, 0.1);
+assert.equal(oldScout.thornGuideStep, -1,
+  'pre-guide in-flight save finishes its old waypoint without a reverse detour');
+assert(dist(oldScout, beforeOld) <= C.rules.thornPatrol.speed * 0.1 + 0.1);
+console.log('PASS #679 eight-leg complete scout loop, protected farm/town corridor and old/new saved mid-leg behavior');
