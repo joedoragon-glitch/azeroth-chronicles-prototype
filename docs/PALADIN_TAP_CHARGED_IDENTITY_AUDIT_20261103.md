@@ -1,70 +1,59 @@
-# Paladin normal / charged skill identity audit — 3 November 2026
+# Paladin Tap / Charged skill reassessment — 3 November 2026
 
-> **Status:** Design-only, source-verified audit and exploratory replacement directions. **No gameplay, balancing, player text, asset, test, save, release or deployment change.** Working proposals below are not approved Paladin mechanics. The owner requested a neutral check after the same design concern was raised for the Strategist: **charged is not required to be a superior level of tap**. That criterion must not be weaponized to redesign already differentiated skills.
+> **Owner decision (3 November 2026): retain the existing Paladin skill kit for the v0.9.2 development effort.** This is an evidence-based **classification**, not approval for a redesign, balance pass or implementation. The owner explicitly withdrew all rapid-fire proposed replacements for Tap, Charged and critical effects. Future skill authoring is to follow **actual class-by-class, preferably full-campaign playthroughs** and the specific problems and unmet tactical needs those playthroughs reveal. Do not automatically turn audit observations into a work queue.
 
-## Sources / authority
+**Scope and status:** Documentation-only source review of Paladin Skills 1–8, both forms, and comparisons with other implemented classes. Existing gameplay is provisionally acceptable for the present release goal. **No skill mechanics, critical effects, progression, cooldowns, controls, UI, VFX, audio, saves or player-facing descriptions are changed by this review.** No new executable tests or hands-on Paladin campaign playthrough were performed as part of this audit.
 
-- Current `main` read of [`src/prototype/hero-combat.js`](../src/prototype/hero-combat.js): cast routing, effects, positional prerequisites, real targeting.
-- Current `main` read of [`src/prototype/rules.js`](../src/prototype/rules.js): `chargedSkills`, `heroTactics`, `advancedCharges`, `classUltimates`, target caps.
-- Current `main` read of [`src/prototype/skill-reference.js`](../src/prototype/skill-reference.js): player-facing form descriptions and numerical preview.
-- [Historical hero skill design/owner decisions](HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md), not evidence that every individual effect remains a permanent requirement. Existing playable designs were deliberately chosen and must be preserved until a new design is actually selected.
-- [Strategist Stage 2 working design PR #697](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/697): later class explores greater tap/charged functional asymmetry; it is **not** proof of a mandatory universal pattern.
+## Why this review happened
 
-## The actual finding
+The owner raised a concern during Strategist design: **a charged skill does not have to be a strictly stronger version of Tap**. The game's existing design permits creative divergence, not a mandatory power ladder. Equally, it does **not** require every Tap/Charged pair to be mechanically unrelated. Different footprint, timing or battlefield purpose can create meaningful choice even when they share a status effect.
 
-The strong version of the allegation ("Paladin Skills 4–8 are the same move, just stronger") is **overstated**. They are not byte-for-byte or mechanically identical: there are new target shapes, weaker or stronger crowd control, positioning, and new secondary effects. However, several charged skills are still **predominantly enhancements of the same tactical job**; the Paladin's two area-attack slots also significantly overlap with each other. This is a legitimate design concern, **not an established gameplay bug**, and is not a mandate to discard a useful working skill.
+The source-verified judgment is more nuanced than “Skills 4–8 are just the same move upgraded.” Distinct target geometry, displacement and control scopes already exist. Several pairs nevertheless share most of their tactical purpose, and the area-attack overlap between **Skills 5 and 7** warrants later attention. These are **design observations**, not confirmed defects or permission to change shipped mechanics.
 
-| Slot | Tap in current game | Charged in current game | Source-level assessment |
-| --- | --- | --- | --- |
-| **1 — Radiant Strike** | One aimed, traveling holy projectile; automatic sword combo runs separately | **Radiant Cross**: two location-anchored pulses across four arms | **Keep.** Different geometry, timing, and positional use. |
-| **2 — Sundering Strike** | Melee damage + Weaken on one foe | **Holy Cleave**: frontal cone damage + Weaken on several foes | **Review.** Broadly the same strike/debuff job expanded from single to group. It has positional differences, but remains upgrade-shaped. |
-| **3 — Shield Stance** | Long self-protection stance; lowers on second tap; outgoing tradeoff; Skill 1 restricted | **Shield Bash**: immediate short frontal damage and collision-safe knockback | **Keep.** Defensive commitment versus offensive displacement. |
-| **4 — Judgment** | Targeted holy projectile + single-enemy Taunt | **Grand Judgment**: target-centered burst + group Taunt | **Review, moderate.** Group control matters, but remains amplified Taunt with added splash. Not intrinsically defective. |
-| **5 — Holy Area** | Instant self-centered area damage; six-target cap | **Consecrated Wave**: slightly wider area hit, higher damage, eight-target cap + Weaken | **Strong overlap.** Predominantly larger burst with extra debuff. |
-| **6 — Vanguard Rush** | Close the gap to one enemy, then strike | **Vanguard Impact**: same approach with an area push wave at landing | **Borderline / preserve provisionally.** The push can be a genuine *peel* (creating space) rather than merely more damage. Test whether players use it differently before replacing. |
-| **7 — Holy Assault** | Self-centered area damage, larger/heavier than Skill 5 normal; six-target cap | **Oath Strike**: self-centered area damage + Weaken, eight-target cap | **Strong overlap.** Repeats charged Skill 5's area damage + Weaken identity at greater reach/damage. |
-| **8 — Sanctuary Oath** | Party ward + Paladin self-heal + self-centered holy blast | **Last Bastion**: larger blast, stronger self-heal/ward, more targets + Weaken | **Strong overlap.** Broadly the same mixed damage/heal/mitigation package upgraded. |
+## Classification: preserve, possibly refine, or reassess for redesign **later**
 
-**Cross-slot concern:** Skills 5 and 7 use the same kind of nearby area-attack operation, and charged 5 and 7 both apply the Paladin's existing Weaken. Their radius/damage/caps differ, but this is not an especially distinctive choice even *between separate skill slots*. The added Weaken on charged Skill 8 compounds the recurrence.
+The descriptions below record **what is currently implemented**. “Future review” marks a question for the owner to evaluate after play, not a selected replacement.
 
-**Peer-class counterexamples to a universal upgrade rule:** Paladin Skill 3 is guard versus bash; Ranger Skill 4 is *personal movement* versus *companion movement/attack rally*; Mage Skill 3 is *single warned attack interrupt* versus *bilateral silence field*. Other class slots also have bigger charged analogues, so **there is neither a mandatory upgrade rule nor a mandatory requirement for all charged pairs to be different genres**.
+| Slot | Current Tap | Current Charged | Decision for v0.9.2 | Future observation to validate through play |
+| --- | --- | --- | --- | --- |
+| **1 — Radiant Strike** | Aimed holy projectile; automatic sword combo operates separately | **Radiant Cross:** two location-anchored, cross-shaped pulses | **Preserve** | Geometry and timing already create separate tactical choices. |
+| **2 — Sundering Strike** | Single-target hit + Weaken | **Holy Cleave:** frontal cone hit + multi-target Weaken | **Preserve now; possible refinement later** | Does the single-target/cone distinction remain useful, or is Charged only a better Weaken delivery? |
+| **3 — Shield Stance** | Defensive stance with offensive tradeoffs; tap again to lower | **Shield Bash:** immediate frontal strike + collision-safe knockback | **Preserve** | Strong guard-versus-displacement distinction already exists. |
+| **4 — Judgment** | Holy projectile + single-target Taunt | **Grand Judgment:** area damage + group Taunt | **Preserve now; possible refinement later** | Does solo-threat versus group-threat control create meaningful choices in actual encounters? Boss scripted attacks remain protected. |
+| **5 — Holy Area** | Immediate nearby holy area attack; six-target cap | **Consecrated Wave:** wider, stronger area damage, up to eight targets, plus Weaken | **Preserve now; future redesign *candidate* only** | The pair is primarily area burst versus enhanced area burst. Observe crowd-fighting needs and overlap with Skill 7. |
+| **6 — Vanguard Rush** | Enemy-directed rush + strike | **Vanguard Impact:** approach + landing push wave | **Preserve** | The Charged push may enable genuine defensive crowd peeling, distinct from closing distance; verify by playing. |
+| **7 — Holy Assault** | Strong nearby area attack; six-target cap | **Oath Strike:** larger area attack, eight-target cap, plus Weaken | **Preserve now; future redesign *candidate* only** | Strong Tap/Charged overlap; especially assess why a player would choose Skill 7 over Skill 5 in different situations. |
+| **8 — Sanctuary Oath** | Holy blast + Paladin self-heal + nearby party ward | **Last Bastion:** larger blast, more healing/protection/targets and Weaken | **Preserve now; future redesign *candidate* only** | The Charged form extends the same offense/recovery/ward package; assess whether late-game party crises reveal a genuinely missing role. |
 
-## Recommended disposition
+**Classification is not a priority mandate.** Skills 1/3/6 have credible identities worth preserving; 2/4 may justify refinement after experience; 5/7/8 present the strongest structural questions. The owner might ultimately keep any of them unchanged. In particular, target-count or radius differences are not automatically bad design.
 
-- **Preserve Skills 1 and 3.** Do not introduce gratuitous redesigns.
-- **Prioritize original alternatives for 5, 7, and 8**, including resolving the normal 5/7 cross-slot overlap.
-- **Consider redesigning Skill 2** because its Weaken cone is the same effect spread across enemies, but retain its frontal-cleave positional identity if it proves tactically interesting.
-- **Review Skill 4 rather than assume it's wrong.** Single-threat control versus group-threat control may already be meaningful against different encounters.
-- **Protect Skill 6 unless practical evidence says its displacement is merely a statistically superior Rush.** A rush to engage one enemy and a rush to scatter several can be two real decisions.
+**Cross-slot observation:** Normal Skills 5 and 7 both deliver self-centered area damage, and both Charged versions add Weaken. Charged 8 also applies Weaken. This may feel repetitive, but only encounter experience can establish whether it causes actual player-facing redundancy.
 
-## Working redesign directions — **NOT chosen or authorized implementations**
+**Comparison baseline:** Paladin Skill 3 already shows different forms can do different jobs; Ranger Skill 4 and Mage Skill 3 also demonstrate creative form divergence. Other classes do use expanded charged variants, so neither a universal “Charged = stronger Tap” rule nor a universal “each form must be a new genre” rule is supported.
 
-These are *contrast tests* to reveal possible distinct player decisions, not replacements to silently install. Numerical values, names, unlocks, critical behavior and artwork are undecided.
+## Owner-approved decision and release boundary
 
-| Slot | Retain / candidate tap purpose | Candidate charged purpose | Why a player would choose one over the other |
-| --- | --- | --- | --- |
-| **2** | Retain focused **Weaken** against the most dangerous enemy | **Timed holy counter**: brief post-release parry window, mitigating one incoming direct strike and retaliating once on valid contact; not a longer Shield Stance | Proactive enemy damage suppression versus anticipating one incoming attack. Must not trivialize bosses or duplicate Shield Bash. |
-| **4** | Retain targeted projectile **Taunt** to deliberately pull one enemy onto Paladin | **Judgment of Accountability**: place a brief mark on one foe that punishes an actual attack against an ally, without mass-Taunting every nearby foe | Immediate threat redirection versus punishing a foe for ignoring the defender. Requires controlled trigger and no infinite retaliation. |
-| **5** | Retain instant, finite nearby **holy burst** | **Consecrated Vigil**: establish a short-lived fixed-location sanctuary for gradual allied recovery or protection, **without upfront blast** | Clear the immediate space versus choose a place worth holding. Must not reproduce Slot 8's instant party ward. |
-| **6** | Retain enemy-directed **Vanguard Rush** | **First preference: keep existing landing push** if tests show genuine crowd-peel use. Optional *Guardian Intercept*: dash to endangered ally to guard an incoming hit rather than dash toward the enemy | Offensive engagement versus protection of position or an ally. Ally targeting, solo play, collision and movement would need a separate design. |
-| **7** | Retain **Holy Assault** as high-impact crowd clear, but adjust overlap with 5 if necessary | **Oath Strike** as a *focused* single-target commitment/finisher, trading area coverage for bounded pressure on a priority foe | Fighting a pack versus committing to a dangerous elite. Must not create boss-execution shortcuts. |
-| **8** | Retain **Sanctuary Oath** as offensive recovery plus short party ward | **Last Bastion** as a finite *defensive emergency stand*: limited party damage-sharing/absorption budget that taxes Paladin's position/survivability, **without bigger blast or guaranteed immunity** | Stabilize while still attacking versus sacrifice offense to keep a threatened party alive. Respect Shield Stance mitigation nonstacking and no revival or invulnerability. |
+1. **For the v0.9.2 effort: no redesign, retuning, replacement, critical-effect rewrite or other Paladin skill change is authorized by this audit.** Existing mechanics remain the source of truth. This does not bar independently evidenced bug fixes separately approved through normal development.
+2. **Withdraw the earlier suggested replacements.** Examples such as a parry/counter for Skill 2, punishment mark for 4, stationary healing sanctuary for 5, ally intercept for 6, focused finisher for 7 or damage-sharing stand for 8 are **not a design backlog or agreed future direction**. The previous brainstorm is superseded, not pending implementation. Do not quietly reintroduce these ideas as if accepted.
+3. **Leave critical executions unchanged.** The existing per-action critical identities, chances, enhancement levers, three intensity levels, single-roll rules and protections remain governed by current source. No new critical behavior for hypothetical redesigned skills is approved.
+4. **Future, post-v0.9.2 evaluation is experiential.** The owner intends to play each class through a complete campaign where practical, observe how its kit behaves at each progression stage and against different encounters, then identify *specific problems a skill change should solve*. Only after those observations should a future version decide whether to preserve, refine or redesign a particular form.
+5. **No prescriptive development task now.** Do not open gameplay implementation work or alter class skills merely because this assessment flags overlap. Reopen skill design only with owner-led playthrough evidence and explicit later decisions. Keep other classes' reassessments independent; do not apply Paladin suggestions wholesale to Rogue, Ranger, Mage or Strategist.
 
-Alternatives are intentionally theme-consistent but not automatically endorsed. Do **not** import the Strategist's environmental intercept, Reversal or other signature abilities. Do **not** assume every proposed mechanic is feasible or balanced.
+## When future skill design is reopened
 
-## Engineering and acceptance boundaries before any gameplay revision
+Capture reproducible in-game examples, not abstract symmetry preferences: character level/rank and region, encounter composition or boss, party layout, Tap-versus-Charged opportunities, what problem the existing kit failed to address, what alternative use was expected, and whether cooldown/targeting/geometry made one form meaningfully preferable.
 
-1. **Define one-sentence tactical contrast** for every chosen normal/charged pair; preserve the class as a tank/protector/front-line fighter, not an arbitrary spell catalog. Check distinctiveness **across slots**, especially 2/4/5/7/8.
-2. **Seek owner creative selection before implementation.** Explicitly document what existing authored behavior is superseded, including historical decisions, rather than quietly rewriting approved skills.
-3. Keep eight slots, shared trained rank 1–8, separate tap/charge cooldowns, 0.65-second hold, current input/queue protections and normal automatic Skill 1 cadence unless separately changed with evidence.
-4. Audit targeting/LOS, melee/dash clearance, boss telegraphs and scripting, critical execution receipts, Skill Block, damage/taunt/ward mitigation, rank scaling, target caps, no revivals/immunity, and arena Normal/TRUE encounters.
-5. Update `rules.js` and `hero-combat.js` **together** with truthful skill journal/instructor previews, bilingual strings, combat VFX/audio, Keeper Archive, and guidance. Preserve historical saves and avoid unbounded per-frame or per-enemy work.
-6. Add focused tests proving that *each form performs its distinct authored job*, that both remain useful rather than one dominating, and that original Paladin/Ranger/Mage/Rogue/Strategist boundaries are respected. Test input and game performance as appropriate; actual-device acceptance is separate.
-7. Review, merge and publish only after explicit later approval. **No existing game code is changed by this audit.**
+Then review identities **within a skill and across all eight slots**, including skill-journal clarity, ordinary/TRUE boss rules, critical effects, progression, solo/party use, challenge and survival, performance, legacy saves, bilingual guidance, audio/visual signaling, and actual device feel. A proposed redesign would require a separate design review, explicit selection, implementation, regression testing, and release acceptance; none is pre-authorized here.
 
-## Status
+## References and verification
 
-**Audited:** Paladin 1–8, both forms and core live combat routes on current `main`.  
-**Evidence:** Source descriptions, rules and branches inspected; no new executable tests or player playthrough performed.  
-**Planned:** Owner-led creative decision for problematic or borderline pairs.  
-**Implemented / tested / merged / deployed / device-verified:** **None for this proposed redesign.**
+- [Live combat owner](../src/prototype/hero-combat.js): cast routing, targeting, movement, area effects and mitigation.
+- [Game rules](../src/prototype/rules.js): skill forms, scaling, target caps and cooldown contracts.
+- [Player-facing skill reference](../src/prototype/skill-reference.js): current Tap/Charged summaries.
+- [Existing critical intensity/action registry](../src/prototype/critical-levels.js): current critical effects; not changed.
+- [Historical class-skill decisions](HERO_CLASS_SKILLS_2_8_CONSOLIDATED_REVIEW_20261015.md): prior authoring and balance evidence; not authorization for a new rewrite.
+- [Strategist working design PR #697](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/697): context for the owner's original concern, not an imposed universal standard.
+
+**Audited:** Source behavior for all eight Paladin Tap/Charged pairs and relevant peer-class patterns.  
+**Owner decision recorded:** Keep current skills for v0.9.2; defer design reconsideration until playthrough-led findings.  
+**Skill redesign implemented / skill redesign tested / skill redesign merged / skill redesign deployed / device-verified:** **None.** This document makes no claim that game balance or future design directions have been playtested or approved.
