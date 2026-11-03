@@ -177,26 +177,69 @@
     // Collinear tangencies do not block a deliberately exposed source point.
     return abC * abD < 0 && cdA * cdB < 0;
   }
-  function hasSight(hero, target, source, zone, rules) {
+  function opaqueProps(zone) {
+    const obstructions = [];
+    for (const p of zone.props || []) {
+      if (p?.greenwoodWall?.a && p.greenwoodWall.b) {
+        obstructions.push({ kind: 'wall-segment', prop: p, a: p.greenwoodWall.a, b: p.greenwoodWall.b });
+      }
+      if (p.decorative || !(p.r > 0) || !isFinitePoint(p)) continue;
+      if (/wall|stockade|palisade|gate|fortress|watchpost|house|tower/.test(String(p.structure || '')))
+        obstructions.push({ kind: 'circle', prop: p, center: p, radius: p.r });
+    }
+    for (const p of zone.buildings || []) {
+      if (!isFinitePoint(p)) continue;
+      obstructions.push({
+        kind: 'circle', prop: p, center: p,
+        radius: Number.isFinite(p.r) ? p.r : 30,
+      });
+    }
+    return obstructions;
+  }
+  function indexObstructions(zone) {
+    const grid = new Map();
+    for (const obstruction of opaqueProps(zone)) {
+      const a = obstruction.kind === 'circle' ? obstruction.center : obstruction.a;
+      const b = obstruction.kind === 'circle' ? obstruction.center : obstruction.b;
+      const r = obstruction.kind === 'circle' ? obstruction.radius : 1;
+      if (!isFinitePoint(a) || !isFinitePoint(b)) continue;
+      const x1 = Math.floor((Math.min(a.x, b.x) - r) / CELL);
+      const x2 = Math.floor((Math.max(a.x, b.x) + r) / CELL);
+      const y1 = Math.floor((Math.min(a.y, b.y) - r) / CELL);
+      const y2 = Math.floor((Math.max(a.y, b.y) + r) / CELL);
+      for (let x = x1; x <= x2; x++)
+        for (let y = y1; y <= y2; y++) {
+          const key = x + ':' + y;
+          if (!grid.has(key)) grid.set(key, []);
+          grid.get(key).push(obstruction);
+        }
+    }
+    return grid;
+  }
+  function nearbyObstructions(grid, a, b) {
+    const found = new Set();
+    const minX = Math.floor((Math.min(a.x, b.x) - 1) / CELL);
+    const maxX = Math.floor((Math.max(a.x, b.x) + 1) / CELL);
+    const minY = Math.floor((Math.min(a.y, b.y) - 1) / CELL);
+    const maxY = Math.floor((Math.max(a.y, b.y) + 1) / CELL);
+    for (let x = minX; x <= maxX; x++)
+      for (let y = minY; y <= maxY; y++)
+        for (const obstruction of grid.get(x + ':' + y) || []) found.add(obstruction);
+    return found;
+  }
+  function hasSight(hero, target, source, zone, rules, index = null) {
     // Deliberately NOT Campaign.line/clearSegment: they reject water, ravines and lava.
-    // Only actual opaque structures should obstruct manipulation.
+    // A lazily indexed obstacle catalog avoids an all-prop scan per nearby source.
     const partitions = rules?.dungeonArchitecture?.[zone.id]?.partitions ||
       rules?.treasuryArchitecture?.[zone.id]?.partitions ||
       rules?.treasuryWalls?.[zone.id] || [];
     if (partitions.some((wall) => intersectsRectangle(hero, target, wall))) return false;
-    for (const p of zone.props || []) {
-      if (p === source?.prop) continue;
-      if (p?.greenwoodWall?.a && p.greenwoodWall.b &&
-          segmentsCross(hero, target, p.greenwoodWall.a, p.greenwoodWall.b)) return false;
-      if (p.decorative || !(p.r > 0) || !isFinitePoint(p)) continue;
-      const structure = String(p.structure || '');
-      if (!/wall|stockade|palisade|gate|fortress|watchpost|house|tower/.test(structure)) continue;
-      if (segmentDistance(p, hero, target) < p.r) return false;
-    }
-    for (const building of zone.buildings || []) {
-      if (!isFinitePoint(building)) continue;
-      const r = Number.isFinite(building.r) ? building.r : 30;
-      if (segmentDistance(building, hero, target) < r) return false;
+    const obstructions = nearbyObstructions(index?.obstructions || indexObstructions(zone), hero, target);
+    for (const o of obstructions) {
+      if (o.prop === source?.prop) continue;
+      if (o.kind === 'wall-segment') {
+        if (segmentsCross(hero, target, o.a, o.b)) return false;
+      } else if (segmentDistance(o.center, hero, target) < o.radius) return false;
     }
     return true;
   }
@@ -214,7 +257,8 @@
       zone, props: zone.props, length: zone.props?.length || 0,
       buildings: zone.buildings, buildLength: zone.buildings?.length || 0,
       rulesTerrain: rules?.terrain?.[regionIndex],
-      grid, terrain: terrainSources(rules, zone.id, regionIndex),
+      grid, obstructions: indexObstructions(zone),
+      terrain: terrainSources(rules, zone.id, regionIndex),
     };
   }
   function candidates(index, point, radius, material) {
