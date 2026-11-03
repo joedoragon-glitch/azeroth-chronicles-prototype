@@ -2961,7 +2961,7 @@
                       findNpc((n) => n.kind === 'cage' && n.family === boss.id);
             return guideAction(
               boss.id === 'thorn' && !game.s.keys.thorn
-                ? 'Mira · ask the Orchard trail witness'
+                ? 'Mira · ask the Western road observer'
                 : boss.captive.split(' the ')[0] + ' · ' + boss.place,
               destination,
             );

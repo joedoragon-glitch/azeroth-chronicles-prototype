@@ -3591,6 +3591,8 @@
           ) {
             this.syncThornArrival(z);
             this.setSceneryTraversal(z);
+            this.greenwoodRefinementScene?.(z);
+            this.greenwoodTrailLabels?.(z);
             return z;
           }
           this.rollbackDev233GlobalStreets(z);

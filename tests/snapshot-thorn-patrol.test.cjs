@@ -23,7 +23,10 @@ function frame(c, e, n) {
   assert(c.clearSegment(before, e), 'real traversable boss movement');
   assert(c.clearSegment(nb, n), 'real traversable Mira movement');
   assert(!c.blocked(n.x, n.y), 'Mira must remain interactable outside walls');
-  assert(dist(e, { x: 300, y: 350 }) > 320, 'circuit avoids Millhaven');
+  // The old 2700-unit town was near (300,350); the reconstructed
+  // Millhaven moved. Guard the actual 3200-unit town with a wider buffer.
+  assert(dist(e, C.rules.greenwoodLayout.anchors.town) > 360,
+    'circuit avoids the present Millhaven settlement');
 }
 // The initial circuit must reach the southern/remote sites before the opening
 // Goblin territory. Exercise real movement, then preserve an in-flight saved leg.

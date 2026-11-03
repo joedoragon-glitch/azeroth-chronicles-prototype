@@ -8161,7 +8161,7 @@
               ' TRUE has appeared elsewhere in ' +
               this.definition().name +
               (key === 'thorn'
-                ? ' · Follow scout tracks and ask at the Orchard trail witness'
+                ? ' · Follow scout tracks and ask the Western road observer'
                 : ' · Map: Z'),
             6.5,
             '',
