@@ -232,7 +232,7 @@
       [255, 1450],
       [155, 1900],
       [150, 2590],
-    ].map(([x, y]) => [x * s, y * s]);
+    ].map(([x, y]) => [x * scale, y * scale]);
     R.thornPatrol.route = [
       a.den,
       q([350, 2450]),
