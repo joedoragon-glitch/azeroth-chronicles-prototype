@@ -267,3 +267,17 @@ console.log(
   console.error(error);
   process.exitCode = 1;
 });
+
+// Campaign autosaves establish reminder age without opening a disruptive dialog.
+{
+  const app = shell('en', 'paladin');
+  assert.equal(app.scope.Prototype.started, true);
+  assert.equal(app.scope.Prototype.save(), true);
+  const metadata = app.storage.get(P.externalReminderKey + '-normal');
+  assert(metadata, 'First successful save anchors the advisory interval');
+  const saved = JSON.parse(metadata);
+  assert.equal(saved.version, 1);
+  assert.equal(saved.firstSeenLevel, 1);
+  assert.equal(app.elements.get('modal').hidden, true,
+    'Autosaving must not open a backup modal');
+}
