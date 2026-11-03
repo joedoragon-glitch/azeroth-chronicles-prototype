@@ -223,6 +223,18 @@
     // Millhaven's domestic edge. This scout-only chain stays on the western
     // woodland rim; it does not draw roads, add NPCs or change public routes.
     // Each original patrol index (and all historical thornLeg values) is kept.
+    // Revised captions belong to the 3200-unit Greenwood reconstruction.
+    // Legacy 2700-unit campaigns and rollback fixtures keep their names.
+    R.thornPatrol.names = [
+      'temporary den',
+      'Goblin perimeter',
+      'Northern freight crossing, west bank',
+      'Northern freight crossing, east bank',
+      'Skeleton watch perimeter',
+      'Forest Crypt perimeter',
+      'Southern crossing, east bank',
+      'Southern crossing, west bank',
+    ];
     R.thornPatrol.westernWoodlandGuide = [
       [1410, 550],
       [1080, 150],
