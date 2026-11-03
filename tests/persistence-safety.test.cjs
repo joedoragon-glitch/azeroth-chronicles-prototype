@@ -130,14 +130,18 @@ console.log(
     value: 'import',
   };
   await app.elements.get('import-file').onchange({ target: input });
+  assert.equal(app.scope.Prototype.game, before, 'File selection cannot overwrite a save');
+  click('Confirm import');
   assert.equal(
     app.scope.Prototype.game,
     before,
-    'A failed import write also preserves the live run',
+    'A failed confirmed import write preserves the live run',
   );
   assert.equal(app.storage.get(P.saveKey('normal')), original);
   app.scope.localStorage.setItem = setItem;
   await app.elements.get('import-file').onchange({ target: input });
+  assert.equal(app.scope.Prototype.game, before, 'Selection still needs confirmation');
+  click('Confirm import');
   assert.equal(app.scope.Prototype.game.hero.gold, 321);
   assert.equal(app.storage.get(P.saveKey('normal') + '-unreadable-backup'), original);
   assert.equal(app.elements.get('title-screen').hidden, false,
@@ -168,7 +172,16 @@ console.log(
       files: [{ size: 100, text: async () => JSON.stringify(candidate.snapshot()) }],
       value: 'import',
     };
+    const original = app.storage.get(P.saveKey('normal'));
     await input.onchange({ target: selection });
+    assert.equal(app.storage.get(P.saveKey('normal')), original,
+      'Validated preview cannot change the stored primary');
+    const confirm = app.elements.get('modal-actions').children.find(
+      (item) => item.textContent ===
+        (language === 'es' ? 'Confirmar importación' : 'Confirm import'),
+    );
+    assert(confirm, 'Import preview requires a bilingual confirmation action');
+    confirm.click();
     assert.equal(app.scope.Prototype.game.hero.gold, 777);
     assert.equal(app.elements.get('title-screen').hidden, false);
     assert.equal(app.elements.get('title-import-feedback').hidden, false);
@@ -191,3 +204,114 @@ console.log(
   console.error(error);
   process.exitCode = 1;
 });
+
+// External exports are validated v4 round trips with meaningful filenames.
+{
+  const game = new C('nightmare', 'mage', () => 0.5);
+  const prepared = P.prepareExternalExport(game, C, new Date('2026-11-03T12:34:00Z'));
+  assert.match(prepared.filename, /^SIBDLP_nightmare_mage_L1_2026-11-03-12-34.json$/);
+  assert.equal(C.restore(JSON.parse(prepared.text)).hero.class, 'mage');
+  game.hero.cd[0] = Infinity;
+  assert.throws(() => P.prepareExternalExport(game, C));
+}
+// Backup reminders store only bounded per-mode metadata, and survive denied
+// metadata writes without creating additional local save copies.
+{
+  let clock = 1700000000000;
+  const stored = new Map();
+  const adapter = {
+    getItem: (key) => stored.get(key) ?? null,
+    setItem: (key, value) => stored.set(key, value),
+  };
+  const advisor = P.createBackupAdvisor({ storage: adapter, now: () => clock });
+  assert.equal(advisor.due('normal', 1), false);
+  assert.equal(advisor.due('normal', 6), true, 'Five new levels merit a reminder');
+  advisor.shown('normal', 6);
+  assert.equal(advisor.due('normal', 6), false, 'Reminder is dismissible/rate-limited');
+  clock += 25 * 60 * 60 * 1000;
+  advisor.downloadStarted('normal', 6);
+  assert.equal(advisor.due('normal', 6), false);
+  assert.equal(advisor.due('normal', 11), true);
+  assert([...stored.keys()].every((key) => key.startsWith(P.externalReminderKey)));
+  const blocked = P.createBackupAdvisor({
+    storage: { getItem() { throw Error('denied'); }, setItem() { throw Error('quota'); } },
+    now: () => clock,
+  });
+  assert.equal(blocked.due('normal', 1), false);
+  assert.equal(blocked.due('normal', 6), true);
+}
+// Persistent-storage requests happen only in an explicit click handler.
+(async () => {
+  for (const granted of [true, false]) {
+    let requests = 0;
+    const app = shell('en', 'mage', {
+      stayOnTitle: true,
+      navigator: { storage: {
+        persisted: async () => false,
+        persist: async () => { requests++; return granted; },
+      } },
+    });
+    assert.equal(requests, 0, 'Startup cannot request persistence');
+    app.elements.get('title-saves').click();
+    const button = app.elements.get('modal-actions').children.find(
+      (item) => item.textContent === 'Request persistent storage',
+    );
+    assert(button, 'Only supported browsers offer an explicit persistence request');
+    button.click();
+    await Promise.resolve();
+    await Promise.resolve();
+    assert.equal(requests, 1);
+    assert.equal(app.storage.has('azeroth-v4-normal'), true);
+  }
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
+
+// Campaign autosaves establish reminder age without opening a disruptive dialog.
+{
+  const app = shell('en', 'paladin');
+  assert.equal(app.scope.Prototype.started, true);
+  assert.equal(app.scope.Prototype.save(), true);
+  const metadata = app.storage.get(P.externalReminderKey + '-normal');
+  assert(metadata, 'First successful save anchors the advisory interval');
+  const saved = JSON.parse(metadata);
+  assert.equal(saved.version, 1);
+  assert.equal(saved.firstSeenLevel, 1);
+  assert.equal(app.elements.get('modal')?.hidden ?? true, true,
+    'Autosaving must not create or open a backup modal');
+}
+
+// An aged reminder appears on the paused title, never as a combat interruption,
+// and disappears after initiating a download without pretending it was retained.
+for (const language of ['en', 'es']) {
+  const savedGame = new C('normal', 'mage', () => 0.5);
+  const storage = new Map([
+    [P.saveKey('normal'), JSON.stringify(savedGame.snapshot())],
+    [P.externalReminderKey + '-normal', JSON.stringify({
+      version: 1,
+      firstSeenAt: Date.now() - 3 * 3600000,
+      firstSeenLevel: 1,
+      downloadStartedAt: 0,
+      downloadLevel: 1,
+      lastShownAt: 0,
+    })],
+  ]);
+  const app = shell(language, 'mage', { storage, stayOnTitle: true });
+  assert.match(
+    app.elements.get('title-preview').textContent,
+    language === 'en' ? /external backup/ : /copia externa/,
+    'Due reminder is visible while the campaign is paused at the title',
+  );
+  app.elements.get('title-saves').click();
+  const exportAction = app.elements.get('modal-actions').children.find(
+    (item) => item.textContent ===
+      (language === 'en' ? 'Export normal' : 'Exportar normal'),
+  );
+  assert(exportAction, 'The title exposes a direct mode-specific export action');
+  exportAction.click();
+  const metadata = JSON.parse(storage.get(P.externalReminderKey + '-normal'));
+  assert(metadata.downloadStartedAt > 0);
+  assert.doesNotMatch(app.elements.get('title-preview').textContent,
+    language === 'en' ? /external backup/ : /copia externa/);
+}
