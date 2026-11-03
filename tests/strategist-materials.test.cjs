@@ -51,6 +51,53 @@ assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'barrel' }), null);
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'barrel', containsWater: true }), 'water');
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'barrel', containsWater: true, empty: true }), null);
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'well' }), 'water');
+for (const kind of ['cistern', 'water-trough']) {
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure: kind }), null,
+    kind + ' needs actual water state, not a container-shaped visual');
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure: kind, containsWater: true }),
+    'water');
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure: kind, containsWater: true, empty: true }),
+    null);
+}
+assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'ore-cart' }), null);
+assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'ore-cart', containsOre: true }), 'mineral');
+assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'ore-cart', containsOre: true, empty: true }), null);
+for (const kind of ['forge', 'furnace', 'silver-refining-hearth',
+  'citadel-forge-bay', 'geothermal-heat-intake']) {
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure: kind }), null,
+    kind + ' cannot assume heat from its artwork');
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure: kind, heatActive: true }),
+    'fire', kind + ' with live heat is usable');
+  assert.equal(M.propMaterial({ x: 100, y: 100, structure: kind, heatActive: false }), null);
+}
+// Source identity is not sufficient when an entire authored family is
+// explicitly noninteractive. All identities here come from the live PR deltas.
+for (const [id, structure] of [
+  ['millhaven-poultry', 'poultry-yard'], ['millhaven-flowers', 'wildflowers'],
+  ['hamlet-pen', 'animal-pen'], ['orchard-flowers', 'wildflowers'],
+  ['pond-reeds-west', 'reeds'], ['pond-reeds-east', 'reeds'],
+  ['den-thorn-bed', 'thorn-bed'],
+]) assert.equal(M.propMaterial({
+  id: 'greenwood-refinement-' + id, x: 100, y: 100, structure,
+  decorative: true, r: 0, greenwoodAuthored: true, greenwoodRefinement: 1,
+}), null, 'decorative Greenwood overlay never supplies material: ' + id);
+for (const [id, structure, tag] of [
+  ['crown-civic-forecourt-0', 'crown-civic-tilecourt', 'crownCivicForecourt'],
+  ['crown-foundry-work-furnace', 'crown-foundry-furnace', 'crownFoundryWorker'],
+  ['side-entrance-side-crown-foundry-1', 'crown-foundry-yard-flue', 'crownFoundryExterior'],
+]) assert.equal(M.propMaterial({
+  id, structure, x: 100, y: 100, decorative: true, r: 0, [tag]: true,
+}), null, 'Crown presentation scene is not a material: ' + id);
+for (const [tag, structure] of [
+  ['greenwoodRefinement', 'fallen-log'], ['crownCivicForecourt', 'stone-marker'],
+  ['crownFoundryWorker', 'forge'], ['crownFoundryExterior', 'woodpile'],
+]) assert.equal(M.propMaterial({
+  x: 100, y: 100, structure, [tag]: tag === 'greenwoodRefinement' ? 1 : true,
+  heatActive: true,
+}), null, 'scene role must override reused material-looking artwork: ' + tag);
+assert.equal(M.propMaterial({
+  id: 'crown-layout-citadel-command-0', x: 100, y: 100, structure: 'crown-wall',
+}), null, 'state/civic compound property is protected');
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'forge', lit: false }), null);
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'ember-pit', active: true }), 'fire');
 assert.equal(M.propMaterial({ x: 100, y: 100, structure: 'forge', heatActive: false }), null);
@@ -91,6 +138,13 @@ game.s.hazards[0] = {
 assert.equal(cast('fire')?.id, 'combat-fire-0', 'future owned live fire may opt in');
 game.s.hazards = [];
 
+const inactiveIntake = put('cold-thermal-intake', 'geothermal-heat-intake', 151, 103);
+assert.equal(cast('fire'), null, 'unverified equipment is not active by depiction alone');
+inactiveIntake.heatActive = true;
+M.invalidate(game, zone.id); // A newly activated source requires a fresh spatial index.
+assert.equal(cast('fire')?.id, inactiveIntake.id);
+inactiveIntake.heatActive = false;
+assert.equal(cast('fire'), null, 'lost heat is rejected even before cache invalidation');
 const wood = put('real-stump', 'stump', 145, 120);
 assert.equal(cast('wood')?.id, wood.id);
 assert.equal(cast('mineral')?.id, ore.id, 'materials coexist without shared lockout');
@@ -215,7 +269,7 @@ for (const structure of ['stacked-lumber', 'mangrove']) {
 }
 for (const structure of ['ore-cart', 'crystal', 'appalachian-silver-workings']) {
   assert.equal(M.propMaterial({
-    x: 100, y: 100, structure, miningFacility: true,
+    x: 100, y: 100, structure, miningFacility: true, containsOre: true,
   }), 'mineral', 'real source: ' + structure);
 }
 assert.equal(M.propMaterial({
@@ -224,8 +278,7 @@ assert.equal(M.propMaterial({
 assert.equal(M.propMaterial({
   x: 100, y: 100, structure: 'appalachian-silver-workings',
 }), null, 'a mining facility must have real authored mining provenance');
-for (const structure of ['ember', 'ogre-hearth', 'citadel-forge-bay',
-  'geothermal-heat-intake', 'roadside-lantern', 'grave-lamp']) {
+for (const structure of ['ember', 'ogre-hearth', 'roadside-lantern', 'grave-lamp']) {
   assert.equal(M.propMaterial({ x: 100, y: 100, structure }), 'fire', structure);
 }
 assert.equal(M.propMaterial({

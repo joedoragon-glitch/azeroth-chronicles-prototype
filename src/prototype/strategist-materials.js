@@ -37,6 +37,15 @@
       'roadside-lantern', 'grave-lamp',
     ]),
   });
+  // State-dependent identities are not proof that the pictured container is
+  // full, the ore wagon is loaded or the industrial fixture is producing heat.
+  // The authoring owner must supply a durable, authoritative live-state flag.
+  const storedWaterKinds = new Set(['cistern', 'water-trough']);
+  const storedOreKinds = new Set(['ore-cart']);
+  const operatingHeatKinds = new Set([
+    'forge', 'furnace', 'silver-refining-hearth', 'citadel-forge-bay',
+    'geothermal-heat-intake',
+  ]);
   const isFinitePoint = (p) => !!p && Number.isFinite(p.x) && Number.isFinite(p.y);
   const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
   const cellKey = (x, y) => Math.floor(x / CELL) + ':' + Math.floor(y / CELL);
@@ -50,13 +59,17 @@
     // Settlement props are reserved town infrastructure, even if a wall or
     // woodpile would otherwise be a recognized material identity.
     const id = String(p?.id || '');
-    return p?.protectedHome === true || id.startsWith('settlement-') ||
+    return p?.protectedHome === true || id.startsWith('settlement-') || id.startsWith('crown-layout-') ||
       p?.civilianResidence === true ||
       /(?:^|[-_])(house|home|cottage|dwelling|residence|barracks|inn|living-quarters)(?:$|[-_])/.test(name) ||
       ['house', 'cottage', 'barracks', 'home', 'residence'].includes(p?.kind);
   }
   function propMaterial(p, gameTime = 0) {
     if (!isFinitePoint(p) || protectedHome(p) || p?.destroyed === true) return null;
+    // These specific regional overlays are expressly scenery-only. Do not
+    // promote a reused visual identity to gameplay without new authored state.
+    if (p.greenwoodRefinement === 1 || p.crownCivicForecourt === true ||
+        p.crownFoundryWorker === true || p.crownFoundryExterior === true) return null;
     const kind = String(p.structure || '');
     // Greenwood's authored forest deliberately stores nature in a separate
     // property, often with structure:null. These are real trees and fallen logs.
@@ -66,15 +79,23 @@
     // Containers require actual authored contents. Never assume every barrel is water.
     if (['barrel', 'bucket', 'jar', 'container', 'water-container'].includes(kind))
       return p.containsWater === true && p.empty !== true ? 'water' : null;
-    if (propKinds.water.has(kind)) return p.dry !== true ? 'water' : null;
+    if (propKinds.water.has(kind))
+      return p.dry !== true &&
+        (!storedWaterKinds.has(kind) || (p.containsWater === true && p.empty !== true))
+        ? 'water' : null;
     if (propKinds.mineral.has(kind)) {
       if (kind.startsWith('appalachian-') && p.miningFacility !== true) return null;
+      if (storedOreKinds.has(kind) && (p.containsOre !== true || p.empty === true)) return null;
       return 'mineral';
     }
     if (propKinds.wood.has(kind)) return 'wood';
-    if (propKinds.fire.has(kind))
-      return p.lit === false || p.active === false || p.extinguished === true ||
-        p.heatActive === false ? null : 'fire';
+    if (propKinds.fire.has(kind)) {
+      if (p.lit === false || p.active === false || p.extinguished === true ||
+          p.heatActive === false) return null;
+      if (operatingHeatKinds.has(kind) &&
+          p.lit !== true && p.active !== true && p.heatActive !== true) return null;
+      return 'fire';
+    }
     // A real temporary combat hazard must be supplied by its combat owner.
     // It is never inferred from a visual particle or a cosmetic flame prop.
     if (p.authoritativeCombatFire === true && p.kind === 'active-fire-hazard' &&
