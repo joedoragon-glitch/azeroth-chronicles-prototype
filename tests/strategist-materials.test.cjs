@@ -90,6 +90,11 @@ const blockZone = { id: 'vale', props: [
 ], buildings: [] };
 assert.equal(M.hasSight({ x: 30, y: 20 }, { x: 130, y: 20 }, null, blockZone, R), false);
 assert.equal(M.hasSight({ x: 30, y: 80 }, { x: 130, y: 80 }, null, blockZone, R), true);
+const greenwoodWall = { id: 'saved-wall', structure: 'fence', r: 0, decorative: true,
+  greenwoodWall: { a: { x: 75, y: 0 }, b: { x: 75, y: 60 } } };
+assert.equal(M.hasSight({ x: 30, y: 20 }, { x: 130, y: 20 }, null,
+  { id: 'vale', props: [greenwoodWall], buildings: [] }, R), false,
+  'authored linear walls block sight even when stored as zero-radius props');
 
 for (const [region, material, expected] of [
   [0, 'water', true], [1, 'water', true], [2, 'mineral', false],
@@ -117,6 +122,13 @@ assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => true, rou
 assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => true, route: () => [{ x: 900, y: 900 }] }), null);
 assert.equal(M.forGather(game, 'wood', { ...baseline, authorize: () => true,
   route: (_from, to) => [{ x: to.x, y: to.y }] })?.id, 'log');
+const remote = { id: 'highlands', props: [
+  { id: 'quarry-log', x: 3000, y: 100, structure: 'fallen-log', r: 0, decorative: true },
+], buildings: [] };
+assert.equal(M.forGather(game, 'wood', { zone: remote, rules: R, worker,
+  lab: { zone: 'highlands' }, range: 3300, authorize: () => true,
+  route: (_from, to) => [{ x: to.x, y: to.y }] })?.id, 'quarry-log',
+  'a staffed Lab may plan a region-scale journey without a global frame scan');
 assert.equal(M.forGather(game, 'water', { ...baseline, authorize: () => true,
   route: (_from, to) => [{ x: to.x, y: to.y }] })?.material, 'water',
   'regional real water can be selected if actual worker route succeeds');
