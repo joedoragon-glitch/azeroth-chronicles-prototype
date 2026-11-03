@@ -70,6 +70,31 @@ assert(restoredRest);
 assert.deepEqual([restoredRest.x, restoredRest.y], [rest.x, rest.y],
   'Original rest location and saved service identity must survive v4 restore');
 
+// One reversible, service-relative civic composition is generated in the
+// actual world, not just in a disconnected graphics fixture. Saved IDs and
+// road polylines must remain stable on repeat generation and v4 restore.
+const court = civic.zone().props.filter(p => p.crownCivicForecourt);
+assert.equal(civic.zone().crownCivicForecourtVersion, 1,
+  'Crown civic scenery has its own migration guard; original town layout is not bumped');
+assert(court.length > 0 && court.length <= rules.crownCivicForecourt.length,
+  'At least one authored forecourt detail must fit safely beside the real service');
+assert(court.every(p => p.decorative && p.r === 0 &&
+  Math.hypot(p.x - rest.x, p.y - rest.y) < 240),
+  'No civic detail can create a blocking prop or scatter outside the local forecourt');
+const courtSnapshot = objects => objects.filter(p => p.crownCivicForecourt)
+  .map(p => [p.id, p.structure, p.x, p.y]).sort((a, b) => a[0].localeCompare(b[0]));
+const originalCourt = courtSnapshot(civic.zone().props);
+const originalRoads = JSON.stringify(civic.zone().roads);
+civic.crownCivicForecourt(civic.zone());
+assert.deepEqual(courtSnapshot(civic.zone().props), originalCourt,
+  'Civic one-time composition must not duplicate or move scenery');
+assert.equal(JSON.stringify(civic.zone().roads), originalRoads,
+  'Civic art must not alter established lava crossing approaches or local road geometry');
+assert.deepEqual(courtSnapshot(restoredCivic.zone().props), originalCourt,
+  'v4 save/restore must preserve exact authored civic scenery IDs and placements');
+assert.equal(JSON.stringify(restoredCivic.zone().roads), originalRoads,
+  'v4 restore must not change approved road geometry due to new civic art');
+
 const candidates = [
   // First-visit city, home, heat, freight, geology, crossings and regime.
   ['arrival', 'crown', 690, 430, 245],
