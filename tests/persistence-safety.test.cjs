@@ -278,6 +278,6 @@ console.log(
   const saved = JSON.parse(metadata);
   assert.equal(saved.version, 1);
   assert.equal(saved.firstSeenLevel, 1);
-  assert.equal(app.elements.get('modal').hidden, true,
-    'Autosaving must not open a backup modal');
+  assert.equal(app.elements.get('modal')?.hidden ?? true, true,
+    'Autosaving must not create or open a backup modal');
 }
