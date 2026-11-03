@@ -8965,6 +8965,39 @@
         return true;
       }
       if (kind === 'rest') {
+        if (region === 4) {
+          // Crownwatch's existing, interactable rest service: civic hall.
+          // Architecture only; the original NPC, paths and save ID are intact.
+          // Do not imply a verified geothermal or water connection.
+          fillOval(0, 15, 48, 14, '#1e1b2a', 0.22);
+          blockwork(-39, -24, 78, 42, '#797889', 9);
+          softPoly([[39, -22], [48, -15], [48, 12], [39, 17]], '#525566', 1.4);
+          for (const x of [-28, 28]) {
+            softRect(x - 7, -16, 14, 23, '#a9a2a5', 3);
+            softRect(x - 5, -14, 10, 18, '#516d77', 2);
+            line([[x - 4, -11], [x + 3, -11]], '#9db8b3', 1.2);
+            line([[x, -13], [x, 4]], '#b9b2a6', 1);
+            blockwork(x - 8, 7, 16, 10, '#b5afb0', 3);
+          }
+          softRect(-15, -18, 30, 37, '#b9b0ac', 4);
+          shaped('#323d47', () => {
+            ctx.moveTo(-12, 17);
+            ctx.lineTo(-12, -3);
+            ctx.quadraticCurveTo(-12, -18, 0, -20);
+            ctx.quadraticCurveTo(12, -18, 12, -3);
+            ctx.lineTo(12, 17);
+          });
+          softPoly([[-20, 17], [19, 17], [27, 23], [-27, 23]], '#aaa4aa', 2);
+          for (const x of [-35, 35]) {
+            blockwork(x - 3, -27, 6, 38, '#a9a6a9', 4);
+            softRect(x - 5, -29, 10, 5, '#c5beb8', 1.6);
+          }
+          craftedRoof(47, -27, -63, 4);
+          for (const x of [-23, 0, 23])
+            line([[x - 5, -37], [x + 5, -37]], '#c2b3aa', 1.3);
+          poly([[-5, -45], [0, -51], [5, -45], [0, -40]], '#b0c1b8');
+          return true;
+        }
         craftedHouse(
           [
             'vale-cottage',
