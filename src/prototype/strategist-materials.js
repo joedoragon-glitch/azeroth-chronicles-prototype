@@ -7,7 +7,7 @@
 
   const CELL = 192;
   const MAX_CAST_RANGE = 320;
-  const MAX_GATHER_RANGE = 320;
+  const MAX_GATHER_RANGE = 3800;
   const MATERIALS = Object.freeze(['water', 'mineral', 'wood', 'fire']);
   const propKinds = Object.freeze({
     water: new Set(['well', 'fountain', 'mill-pond', 'pond', 'water', 'cistern', 'water-trough']),
@@ -151,6 +151,13 @@
     }
     return false;
   }
+  function segmentsCross(a, b, c, d) {
+    const orient = (p, q, r) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+    const abC = orient(a, b, c), abD = orient(a, b, d);
+    const cdA = orient(c, d, a), cdB = orient(c, d, b);
+    // Collinear tangencies do not block a deliberately exposed source point.
+    return abC * abD < 0 && cdA * cdB < 0;
+  }
   function hasSight(hero, target, source, zone, rules) {
     // Deliberately NOT Campaign.line/clearSegment: they reject water, ravines and lava.
     // Only actual opaque structures should obstruct manipulation.
@@ -159,7 +166,10 @@
       rules?.treasuryWalls?.[zone.id] || [];
     if (partitions.some((wall) => intersectsRectangle(hero, target, wall))) return false;
     for (const p of zone.props || []) {
-      if (p === source?.prop || p.decorative || !(p.r > 0) || !isFinitePoint(p)) continue;
+      if (p === source?.prop) continue;
+      if (p?.greenwoodWall?.a && p.greenwoodWall.b &&
+          segmentsCross(hero, target, p.greenwoodWall.a, p.greenwoodWall.b)) return false;
+      if (p.decorative || !(p.r > 0) || !isFinitePoint(p)) continue;
       const structure = String(p.structure || '');
       if (!/wall|stockade|palisade|gate|fortress|watchpost|house|tower/.test(structure)) continue;
       if (segmentDistance(p, hero, target) < p.r) return false;
@@ -225,24 +235,33 @@
   function findSource(game, material, options = {}) {
     if (!MATERIALS.includes(material) || !isFinitePoint(options.at)) return null;
     const zone = options.zone, rules = options.rules;
+    const maxRange = options.access ? MAX_GATHER_RANGE : MAX_CAST_RANGE;
     if (!zone || !rules || !Number.isFinite(options.range) ||
-        options.range < 0 || options.range > MAX_CAST_RANGE) return null;
+        options.range < 0 || options.range > maxRange) return null;
     const index = state(game, zone, rules);
     if (!index) return null;
-    let best = null, bestD = Infinity;
+    const nearby = [];
     for (const source of candidates(index, options.at, options.range + 36, material)) {
       // Live conditions are checked again, so extinguishing a fire never waits for a cache reset.
       if (source.prop && propMaterial(source.prop, game.s?.time || 0) !== material) continue;
       const point = sourcePoint(options.at, source, rules);
       if (!point) continue;
       const d = distance(options.at, point);
-      if (d > options.range || d >= bestD) continue;
-      if (options.sight && !hasSight(options.at, point, source, zone, rules)) continue;
-      if (options.access && !options.access(source, point, zone)) continue;
-      best = { id: source.id, material, point, distance: d, source: source.prop || source.shape };
-      bestD = d;
+      if (d <= options.range) nearby.push({ source, point, d });
     }
-    return best;
+    // Deterministic nearest-first selection: a Lab does not repeatedly pathfind
+    // to every source in a region when nearby candidates are unreachable.
+    nearby.sort((a, b) => a.d - b.d || String(a.source.id).localeCompare(String(b.source.id)));
+    let routeProbes = 0;
+    for (const { source, point, d } of nearby) {
+      if (options.sight && !hasSight(options.at, point, source, zone, rules)) continue;
+      if (options.access) {
+        if (++routeProbes > 24) break;
+        if (!options.access(source, point, zone)) continue;
+      }
+      return { id: source.id, material, point, distance: d, source: source.prop || source.shape };
+    }
+    return null;
   }
   function forCombat(game, material, options = {}) {
     // Fast fail BEFORE reading zones, iterating props or allocating a session.
