@@ -208,7 +208,7 @@
           s.version !== 4 ||
           !['normal', 'nightmare', 'developer', 'arena'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
-          !classes[s.hero?.class]
+          !Object.hasOwn(classes, s.hero?.class)
         )
           throw Error('Invalid save');
         if (s.recallActive === undefined) s.recallActive = false;
@@ -239,6 +239,20 @@
           )
         )
           throw Error('Invalid critical Codex claims');
+        // Existing v4 and prior draft saves retain the same isolated RNG sequence.
+        // Validate both field names and reject conflicting dual fields.
+        const validBlockRng = (state) => Number.isInteger(state) &&
+          state >= 1 && state <= 0xffffffff;
+        if (s.skillEvasionRngState !== undefined) {
+          if (!validBlockRng(s.skillEvasionRngState) ||
+              (s.skillBlockRngState !== undefined &&
+                s.skillBlockRngState !== s.skillEvasionRngState))
+            throw Error('Invalid skill block RNG state');
+          s.skillBlockRngState = s.skillEvasionRngState;
+          delete s.skillEvasionRngState;
+        }
+        if (s.skillBlockRngState !== undefined && !validBlockRng(s.skillBlockRngState))
+          throw Error('Invalid skill block RNG state');
         // Independent Party and World streams are optional until opt-in.
         // Saving a game mid-combat stores RNG state, not transient receipts.
         if (s.criticalStreams !== undefined) {
@@ -806,7 +820,7 @@
           !Array.isArray(ch.fallen) ||
           ch.fallen.length > classCount ||
           new Set(ch.fallen).size !== ch.fallen.length ||
-          ch.fallen.some((id) => !classes[id])
+          ch.fallen.some((id) => !Object.hasOwn(classes, id))
         )
           throw Error('Invalid succession');
         if (
@@ -1617,7 +1631,7 @@
         this.s.legacyRescueAuditVersion = 1;
       }
       static migrate(old, random = Math.random) {
-        if (old?.version !== 2 || !old.player || !classes[old.player.heroClass || 'paladin'])
+        if (old?.version !== 2 || !old.player || !Object.hasOwn(classes, old.player.heroClass || 'paladin'))
           throw Error('Unknown legacy save');
         const c = new Campaign('normal', old.player.heroClass || 'paladin', random),
           p = old.player,

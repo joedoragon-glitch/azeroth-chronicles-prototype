@@ -32,17 +32,37 @@
   // Variable carts, wildlife, poppies, enemies, heroes and living props retain
   // their original per-entity keys. Unknown appearance fields opt OUT.
   const shareableDecorations = new Set([
-    'crate', 'barrel', 'woodpile', 'stacked-lumber', 'scroll-stack',
+    'crate',
+    'barrel',
+    'woodpile',
+    'stacked-lumber',
+    'scroll-stack',
   ]);
   const inertDecorationFields = new Set([
-    'id', 'name', 'x', 'y', 'r', 'renderKind', 'structure', 'decorative',
-    'spriteIdentity', 'visualScale', 'group', 'sceneRole', 'roadTrace',
-    'frontierDistrict', 'crownDistrict',
+    'id',
+    'name',
+    'x',
+    'y',
+    'r',
+    'renderKind',
+    'structure',
+    'decorative',
+    'spriteIdentity',
+    'visualScale',
+    'group',
+    'sceneRole',
+    'roadTrace',
+    'frontierDistrict',
+    'crownDistrict',
   ]);
   function sharedDecorationKey(visual) {
-    if (visual.renderKind !== 'prop' || visual.decorative !== true ||
-        !shareableDecorations.has(visual.structure) ||
-        Object.keys(visual).some((field) => !inertDecorationFields.has(field))) return null;
+    if (
+      visual.renderKind !== 'prop' ||
+      visual.decorative !== true ||
+      !shareableDecorations.has(visual.structure) ||
+      Object.keys(visual).some((field) => !inertDecorationFields.has(field))
+    )
+      return null;
     const scale = visual.visualScale == null ? 1 : visual.visualScale;
     if (!Number.isFinite(scale) || scale <= 0) return null;
     return visual.structure + ':' + scale;
@@ -68,28 +88,40 @@
     }
     return libraryRequest;
   }
-  function candidates(game, project, width, height, presentEntity, margin = 270,
-    preloadEncounters = false) {
+  function candidates(
+    game,
+    project,
+    width,
+    height,
+    presentEntity,
+    margin = 270,
+    preloadEncounters = false,
+  ) {
     const zone = game.zone();
     const result = [],
       used = new Map();
     // Only already admitted enemies are inspected. Never trigger an unentered
     // zone or roll future spawns just to manufacture a preload candidate.
-    const knownEnemies = preloadEncounters ? (zone.enemies || []).filter(
-      (e) => e.hp > 0 && Number.isFinite(e.x) && Number.isFinite(e.y)) : [];
-    const hotSpots = knownEnemies.filter(
-      (e) => e.type === 'boss' || e.fieldCaptain || e.roomCaptain || e.captain)
-      .flatMap((e) => [e, e.home].filter(
-        (p) => p && Number.isFinite(p.x) && Number.isFinite(p.y)))
+    const knownEnemies = preloadEncounters
+      ? (zone.enemies || []).filter((e) => e.hp > 0 && Number.isFinite(e.x) && Number.isFinite(e.y))
+      : [];
+    const hotSpots = knownEnemies
+      .filter((e) => e.type === 'boss' || e.fieldCaptain || e.roomCaptain || e.captain)
+      .flatMap((e) => [e, e.home].filter((p) => p && Number.isFinite(p.x) && Number.isFinite(p.y)))
       .map(project);
     function add(entities, kind) {
       for (const entity of entities || []) {
         if (kind === 'enemy' && entity.hp <= 0) continue;
         const point = project(entity);
-        const inCameraFringe = point.x >= -margin && point.x <= width + margin &&
-          point.y >= -margin && point.y <= height + margin;
+        const inCameraFringe =
+          point.x >= -margin &&
+          point.x <= width + margin &&
+          point.y >= -margin &&
+          point.y <= height + margin;
         const encounterActor = preloadEncounters && kind === 'enemy';
-        const bossTerritory = preloadEncounters && kind === 'prop' &&
+        const bossTerritory =
+          preloadEncounters &&
+          kind === 'prop' &&
           hotSpots.some((p) => Math.hypot(point.x - p.x, point.y - p.y) <= 1600);
         if (!inCameraFringe && !encounterActor && !bossTerritory) continue;
         const identity =
@@ -105,18 +137,35 @@
     }
     if (game.s.mode !== 'arena') add(zone.props, 'prop');
     // Same permanent civic features included by the Canvas depth sorter.
-    if (game.s.mode !== 'arena' && !game.isDungeon() && !game.supplyRoom?.(game.zoneId) &&
-        !game.sideDungeon?.(game.zoneId))
-      add((root.Campaign?.rules?.terrain?.[game.regionIndex()] || [])
-        .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
-        .map((p) => ({
-          id: p.kind === 'orrery' ? 'crown-orrery'
-            : p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
-          x: p.x, y: p.y, r: p.r,
-          structure: p.kind === 'orrery' ? 'crown-orrery'
-            : p.kind === 'grain-silo' ? 'frontier-grain-silo' : 'frontier-civic-fountain',
-          decorative: true,
-        })), 'prop');
+    if (
+      game.s.mode !== 'arena' &&
+      !game.isDungeon() &&
+      !game.supplyRoom?.(game.zoneId) &&
+      !game.sideDungeon?.(game.zoneId)
+    )
+      add(
+        (root.Campaign?.rules?.terrain?.[game.regionIndex()] || [])
+          .filter((p) => ['fountain', 'grain-silo', 'orrery'].includes(p.kind))
+          .map((p) => ({
+            id:
+              p.kind === 'orrery'
+                ? 'crown-orrery'
+                : p.kind === 'grain-silo'
+                  ? 'frontier-grain-silo'
+                  : 'frontier-civic-fountain',
+            x: p.x,
+            y: p.y,
+            r: p.r,
+            structure:
+              p.kind === 'orrery'
+                ? 'crown-orrery'
+                : p.kind === 'grain-silo'
+                  ? 'frontier-grain-silo'
+                  : 'frontier-civic-fountain',
+            decorative: true,
+          })),
+        'prop',
+      );
     add(game.visibleNPCs(), 'npc');
     add(game.visibleResourceNodes(), 'node');
     if (game.s.mode !== 'arena') add(zone.buildings, 'building');
@@ -135,12 +184,19 @@
     requireValue(c, 'Original procedural artist is unavailable');
     c.setTransform(density, 0, 0, density, 0, 0);
     const center = { x: 288, y: 460 };
+    const ambientParts = [];
+    const ambient = root.Campaign?.rules?.ambientLife?.[visual.structure || visual.id];
     root.PrototypeVisuals.draw(
       c,
       visual,
       center,
       game.regionIndex(),
       !!game.s.rescued[visual.family],
+      ambient
+        ? Number.isInteger(visual._ambientPart)
+          ? { mode: 'part', index: visual._ambientPart }
+          : { mode: 'static', onPart: (part) => ambientParts.push(part) }
+        : null,
     );
     const { data } = c.getImageData(0, 0, work.width, work.height);
     let left = width,
@@ -156,7 +212,18 @@
           bottom = Math.max(bottom, y);
         }
       }
-    if (right < left || bottom < top) return null;
+    if (right < left || bottom < top) {
+      if (!ambientParts.length) return null;
+      // Animal-only groups still need a tiny, transparent retained home node.
+      return {
+        image: makeCanvas(1, 1),
+        dx: 0,
+        dy: 0,
+        logicalWidth: 1 / density,
+        logicalHeight: 1 / density,
+        ambientParts,
+      };
+    }
     left = Math.max(0, left - 2);
     top = Math.max(0, top - 2);
     right = Math.min(width - 1, right + 2);
@@ -171,6 +238,7 @@
       dy: top / density - center.y,
       logicalWidth: image.width / density,
       logicalHeight: image.height / density,
+      ambientParts,
     };
   }
   function create(options) {
@@ -203,6 +271,7 @@
       active = false,
       lastError = null,
       lastFailure = null;
+    let silhouetteFrames = null;
     const baked = new Map(),
       loaded = new Set();
     // Prefer retained graphics over repeated CPU bakes during play.
@@ -228,8 +297,14 @@
       backgroundLookaheadPromotions = 0,
       backgroundLookaheadMisses = 0,
       backgroundLookaheadFailures = 0,
-      backgroundLookaheadSkips = { idleUnavailable: 0, memoryBudget: 0,
-        combat: 0, excluded: 0, hidden: 0, invalidated: 0 },
+      backgroundLookaheadSkips = {
+        idleUnavailable: 0,
+        memoryBudget: 0,
+        combat: 0,
+        excluded: 0,
+        hidden: 0,
+        invalidated: 0,
+      },
       backgroundLookaheadPaintMs = 0,
       backgroundLookaheadPromoteMs = 0,
       maxBackgroundLookaheadPromoteMs = 0,
@@ -251,8 +326,7 @@
     const crownLootTextureId = 'pixi-world-crown-loot';
     let crownLootTexture = null,
       crownLootDensity = 0;
-    const measureNow = () =>
-      typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const measureNow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
     // Opt-in developer-mode CPU stage timings. A JS draw() completion means
     // commands were submitted, not that GPU rendering/presentation finished.
     // Never allocate a sample or read a clock during ordinary player frames.
@@ -268,10 +342,12 @@
       return {
         sampleEvery: drawCpuSampleEvery,
         sampledFrames: drawCpuSamples.length,
-        phases: Object.fromEntries(names.map(name => {
-          const values = drawCpuSamples.map(row => row[name]);
-          return [name, { p50Ms: quantile(values, 0.5), p95Ms: quantile(values, 0.95) }];
-        })),
+        phases: Object.fromEntries(
+          names.map((name) => {
+            const values = drawCpuSamples.map((row) => row[name]);
+            return [name, { p50Ms: quantile(values, 0.5), p95Ms: quantile(values, 0.95) }];
+          }),
+        ),
         note: 'Developer-only JavaScript submission cost, not GPU time, frame pacing or device FPS.',
       };
     }
@@ -313,7 +389,10 @@
       lastError = message;
       // Capture counts BEFORE Canvas fallback disposes the GPU scene.
       lastFailure = Object.freeze({
-        type, stage, message, timestampMs: Date.now(),
+        type,
+        stage,
+        message,
+        timestampMs: Date.now(),
         resources: {
           loadedTextures: loaded.size,
           proceduralTextures: baked.size,
@@ -376,6 +455,7 @@
         ctx: bgContext,
         platform: bgPlatform,
         renderLayer: 'background',
+        omitTerrainMotion: true,
       });
       basePosition = null;
     }
@@ -420,7 +500,10 @@
       app.renderer.resize(viewport.width, viewport.height, ratio);
       backingRatio = ratio;
       scene = root.AzerothPixiSceneBridge.create({
-        PIXI: root.PIXI, app, width: viewport.width, height: viewport.height,
+        PIXI: root.PIXI,
+        app,
+        width: viewport.width,
+        height: viewport.height,
       });
       for (const [src, texture] of originals) scene.registerTexture(src, texture);
       for (const body of baked.values()) scene.registerTexture(body.id, body.texture);
@@ -446,13 +529,28 @@
     }
     function revisionFor(entity, visual, key, current, zoom) {
       const shared = sharedDecorationKey(visual);
-      if (shared !== null) return (
-        backingRatio + ':' + zoom + ':shared-decor:' + shared + ':' + current.zoneId
-      );
+      if (shared !== null)
+        return backingRatio + ':' + zoom + ':shared-decor:' + shared + ':' + current.zoneId;
       return (
-        backingRatio + ':' + zoom + ':' + key + ':' + current.zoneId + ':' +
-        !!current.s.rescued[entity.family] + ':' + (entity.form || '') + ':' +
-        (entity.presentation || '') + ':' + !!visual.crowned
+        backingRatio +
+        ':' +
+        zoom +
+        ':' +
+        key +
+        ':' +
+        current.zoneId +
+        ':' +
+        !!current.s.rescued[entity.family] +
+        ':' +
+        (entity.form || '') +
+        ':' +
+        (entity.presentation || '') +
+        ':' +
+        !!visual.crowned +
+        ':' +
+        !!visual.rangedAim +
+        ':' +
+        !!visual.frenzy
       );
     }
     function evictUnused(protectedRevisions, bytesNeeded) {
@@ -479,8 +577,10 @@
     // Pre-render exactly one major region and its visited interiors in 512px
     // tiles, with no mutation of the live hero or a hidden dungeon admission.
     function parentRegion(current) {
-      return root.Campaign?.data?.regions?.[current.regionIndex()]?.id ||
-        (current.isDungeon() ? null : current.zoneId);
+      return (
+        root.Campaign?.data?.regions?.[current.regionIndex()]?.id ||
+        (current.isDungeon() ? null : current.zoneId)
+      );
     }
     function terrainSignature(current) {
       // Hot-path cache checks must not repeatedly rebuild the authored zone
@@ -488,13 +588,22 @@
       // The admitted layout owns stable revision/count metadata. Camera
       // quality/zoom changes still invalidate the appropriate raster scale.
       const zone = current.s.zones?.[current.zoneId];
-      return [current.zoneId, platform.cameraZoom, backingRatio,
-        !!options.getOptimizationMode(), current.zoneSize?.(),
-        zone?.roads?.length || 0, zone?.footpaths?.length || 0,
+      return [
+        current.zoneId,
+        platform.cameraZoom,
+        backingRatio,
+        !!options.getOptimizationMode(),
+        current.zoneSize?.(),
+        zone?.roads?.length || 0,
+        zone?.footpaths?.length || 0,
         zone?.crownInheritedDecks?.length || 0,
-        zone?.roadNetworkVersion || 0, zone?.destinationLayoutVersion || 0,
-        zone?.dungeonSpaceVersion || 0, zone?.highlandsLandscapeVersion || 0,
-        zone?.frontierSceneVersion || 0, zone?.crownSceneVersion || 0].join('|');
+        zone?.roadNetworkVersion || 0,
+        zone?.destinationLayoutVersion || 0,
+        zone?.dungeonSpaceVersion || 0,
+        zone?.highlandsLandscapeVersion || 0,
+        zone?.frontierSceneVersion || 0,
+        zone?.crownSceneVersion || 0,
+      ].join('|');
     }
     function tileCache(current) {
       if (!terrainAtlas || terrainAtlas.region !== parentRegion(current)) return null;
@@ -506,77 +615,105 @@
       if (current.s.mode === 'arena' || !current.zoneSize?.()) return true;
       const region = parentRegion(current);
       if (!region) return true;
-      if (terrainAtlas?.region !== region)
-        terrainAtlas = { region, zones: new Map() };
+      if (terrainAtlas?.region !== region) terrainAtlas = { region, zones: new Map() };
       if (tileCache(current)) return true;
-      const signature = terrainSignature(current), zoneId = current.zoneId,
-        zoom = platform.cameraZoom || 1, ratio = backingRatio,
-        size = current.zoneSize(), gutter = 320 * zoom;
+      const signature = terrainSignature(current),
+        zoneId = current.zoneId,
+        zoom = platform.cameraZoom || 1,
+        ratio = backingRatio,
+        size = current.zoneSize(),
+        gutter = 320 * zoom;
       const minX = -size * 0.76 * zoom - gutter,
         minY = -gutter,
         columns = Math.ceil((size * 1.52 * zoom + 2 * gutter) / REGION_TILE),
         rows = Math.ceil((size * 0.54 * zoom + 2 * gutter) / REGION_TILE);
-      const tiles = new Map(), viewportTile = { width: REGION_TILE, height: REGION_TILE };
-      let tileX = minX, tileY = minY;
+      const tiles = new Map(),
+        viewportTile = { width: REGION_TILE, height: REGION_TILE };
+      let tileX = minX,
+        tileY = minY;
       const tilePlatform = {
-        get cameraZoom() { return platform.cameraZoom; },
+        get cameraZoom() {
+          return platform.cameraZoom;
+        },
         cameraAnchor() {
           const hero = iso(current.hero);
           return { x: hero.x * zoom - tileX, y: hero.y * zoom - tileY };
         },
       };
-      const canvas = makeCanvas(Math.round(REGION_TILE * ratio),
-        Math.round(REGION_TILE * ratio));
+      const canvas = makeCanvas(Math.round(REGION_TILE * ratio), Math.round(REGION_TILE * ratio));
       const ctx = requireValue(canvas.getContext('2d'), 'Terrain cache unavailable');
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
       const painter = root.PrototypeRenderer.create({
-        ...getRendererOptions(), canvas: viewportTile, ctx,
-        platform: tilePlatform, renderLayer: 'background',
+        ...getRendererOptions(),
+        canvas: viewportTile,
+        ctx,
+        platform: tilePlatform,
+        renderLayer: 'background',
         staticTerrainTimeSeconds: measureNow() / 1000,
+        omitTerrainMotion: true,
       });
       painter.setGroundReuse?.(false);
       painter.setOptimizationMode(!!options.getOptimizationMode());
-      for (let y = 0; y < rows; y++) for (let x = 0; x < columns; x++) {
-        if (epoch !== contextEpoch || current !== game() ||
-            current.zoneId !== zoneId || root.document?.hidden ||
-            platform.cameraZoom !== zoom || backingRatio !== ratio) return false;
-        tileX = minX + x * REGION_TILE;
-        tileY = minY + y * REGION_TILE;
-        painter.draw();
-        const tile = makeCanvas(canvas.width, canvas.height);
-        requireValue(tile.getContext('2d'), 'Terrain tile unavailable')
-          .drawImage(canvas, 0, 0);
-        const finished = y * columns + x + 1;
-        tiles.set(finished - 1, tile);
-        if (finished === 1 || finished === rows * columns ||
-            finished % 4 === 0)
-          options.onPreparationProgress?.({ zone: zoneId, stage: 'terrain',
-            prepared: finished, total: rows * columns });
-        if ((x + columns * y) % 2 === 1 &&
-            typeof requestAnimationFrame === 'function')
-          await new Promise((done) => requestAnimationFrame(done));
-      }
-      if (epoch !== contextEpoch || current.zoneId !== zoneId ||
-          current !== game()) return false;
-      terrainAtlas.zones.set(zoneId,
-        { signature, minX, minY, columns, rows, tiles, tileWidth: REGION_TILE });
+      for (let y = 0; y < rows; y++)
+        for (let x = 0; x < columns; x++) {
+          if (
+            epoch !== contextEpoch ||
+            current !== game() ||
+            current.zoneId !== zoneId ||
+            root.document?.hidden ||
+            platform.cameraZoom !== zoom ||
+            backingRatio !== ratio
+          )
+            return false;
+          tileX = minX + x * REGION_TILE;
+          tileY = minY + y * REGION_TILE;
+          painter.draw();
+          const tile = makeCanvas(canvas.width, canvas.height);
+          requireValue(tile.getContext('2d'), 'Terrain tile unavailable').drawImage(canvas, 0, 0);
+          const finished = y * columns + x + 1;
+          tiles.set(finished - 1, tile);
+          if (finished === 1 || finished === rows * columns || finished % 4 === 0)
+            options.onPreparationProgress?.({
+              zone: zoneId,
+              stage: 'terrain',
+              prepared: finished,
+              total: rows * columns,
+            });
+          if ((x + columns * y) % 2 === 1 && typeof requestAnimationFrame === 'function')
+            await new Promise((done) => requestAnimationFrame(done));
+        }
+      if (epoch !== contextEpoch || current.zoneId !== zoneId || current !== game()) return false;
+      terrainAtlas.zones.set(zoneId, {
+        signature,
+        minX,
+        minY,
+        columns,
+        rows,
+        tiles,
+        tileWidth: REGION_TILE,
+      });
       terrainTilesPrepared += tiles.size;
       return true;
     }
     function paintFromTiles(current, cache) {
       const ctx = backdrop?.getContext('2d');
       if (!ctx?.drawImage || !ctx?.clearRect) return false;
-      const zoom = platform.cameraZoom || 1, ratio = backingRatio,
+      const zoom = platform.cameraZoom || 1,
+        ratio = backingRatio,
         anchor = platform.cameraAnchor(viewport.width, viewport.height),
         hero = iso(current.hero),
         left = hero.x * zoom - anchor.x - BG_MARGIN,
         top = hero.y * zoom - anchor.y - BG_MARGIN,
         c1 = Math.max(0, Math.floor((left - cache.minX) / REGION_TILE)),
-        c2 = Math.min(cache.columns - 1,
-          Math.floor((left + viewport.width + BG_MARGIN * 2 - cache.minX) / REGION_TILE)),
+        c2 = Math.min(
+          cache.columns - 1,
+          Math.floor((left + viewport.width + BG_MARGIN * 2 - cache.minX) / REGION_TILE),
+        ),
         r1 = Math.max(0, Math.floor((top - cache.minY) / REGION_TILE)),
-        r2 = Math.min(cache.rows - 1,
-          Math.floor((top + viewport.height + BG_MARGIN * 2 - cache.minY) / REGION_TILE));
+        r2 = Math.min(
+          cache.rows - 1,
+          Math.floor((top + viewport.height + BG_MARGIN * 2 - cache.minY) / REGION_TILE),
+        );
       if (c1 > c2 || r1 > r2) return false;
       ctx.save?.();
       try {
@@ -586,13 +723,19 @@
         // background, never a transparent hole around the tile atlas.
         ctx.fillStyle = '#0c1913';
         ctx.fillRect?.(0, 0, backdrop.width, backdrop.height);
-        for (let y = r1; y <= r2; y++) for (let x = c1; x <= c2; x++) {
-          const tile = cache.tiles.get(y * cache.columns + x);
-          if (!tile) return false;
-          ctx.drawImage(tile, Math.round((cache.minX + x * REGION_TILE - left) * ratio),
-            Math.round((cache.minY + y * REGION_TILE - top) * ratio));
-        }
-      } finally { ctx.restore?.(); }
+        for (let y = r1; y <= r2; y++)
+          for (let x = c1; x <= c2; x++) {
+            const tile = cache.tiles.get(y * cache.columns + x);
+            if (!tile) return false;
+            ctx.drawImage(
+              tile,
+              Math.round((cache.minX + x * REGION_TILE - left) * ratio),
+              Math.round((cache.minY + y * REGION_TILE - top) * ratio),
+            );
+          }
+      } finally {
+        ctx.restore?.();
+      }
       terrainTileReuses++;
       return true;
     }
@@ -627,13 +770,23 @@
       }
       if (backing) {
         backing.source.update?.();
-        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
-          viewport.height + BG_MARGIN * 2);
+        scene.setBackground(
+          backing,
+          -BG_MARGIN,
+          -BG_MARGIN,
+          viewport.width + BG_MARGIN * 2,
+          viewport.height + BG_MARGIN * 2,
+        );
       } else {
         backing = root.PIXI.Texture.from(backdrop);
         backing.source.scaleMode = 'nearest';
-        scene.setBackground(backing, -BG_MARGIN, -BG_MARGIN, viewport.width + BG_MARGIN * 2,
-          viewport.height + BG_MARGIN * 2);
+        scene.setBackground(
+          backing,
+          -BG_MARGIN,
+          -BG_MARGIN,
+          viewport.width + BG_MARGIN * 2,
+          viewport.height + BG_MARGIN * 2,
+        );
       }
       recordBackgroundPaint(started);
     }
@@ -656,10 +809,13 @@
       }
       ctx.setTransform(backingRatio, 0, 0, backingRatio, 0, 0);
       const platformAhead = {
-        get cameraZoom() { return platform.cameraZoom; },
+        get cameraZoom() {
+          return platform.cameraZoom;
+        },
         cameraAnchor() {
           const anchor = platform.cameraAnchor(viewport.width, viewport.height),
-            heroIso = iso(game().hero), targetIso = iso(aheadTarget || game().hero),
+            heroIso = iso(game().hero),
+            targetIso = iso(aheadTarget || game().hero),
             zoom = platform.cameraZoom || 1;
           return {
             x: anchor.x + BG_MARGIN + (heroIso.x - targetIso.x) * zoom,
@@ -669,8 +825,11 @@
       };
       aheadRenderer = root.PrototypeRenderer.create({
         ...getRendererOptions(),
-        canvas: { width, height }, ctx, platform: platformAhead,
+        canvas: { width, height },
+        ctx,
+        platform: platformAhead,
         renderLayer: 'background',
+        omitTerrainMotion: true,
       });
       // Keep the native ground cache only; the second CPU canvas fits in a
       // combined 64 MiB two-window cap without another ground cache.
@@ -680,21 +839,38 @@
     // Read-only current-zone threat check: never generate a destination.
     // Optional work can wait; mandatory drawing and hard resource limits cannot.
     function nearActiveFight(current) {
-      return !!current.s.projectiles?.length ||
-        (current.zone()?.enemies || []).some((enemy) =>
-          enemy.hp > 0 && Math.hypot(enemy.x - current.hero.x,
-            enemy.y - current.hero.y) <= 420);
+      return (
+        !!current.s.projectiles?.length ||
+        (current.zone()?.enemies || []).some(
+          (enemy) =>
+            enemy.hp > 0 && Math.hypot(enemy.x - current.hero.x, enemy.y - current.hero.y) <= 420,
+        )
+      );
     }
     function canPrepareLookahead(current) {
-      if (!active || !scene || !backing || !backdrop || root.document?.hidden ||
-          current.s.mode === 'arena' || current.isDungeon() || current.supplyRoom?.() ||
-          current.sideDungeon?.(current.zoneId)) return false;
+      if (
+        !active ||
+        !scene ||
+        !backing ||
+        !backdrop ||
+        root.document?.hidden ||
+        current.s.mode === 'arena' ||
+        current.isDungeon() ||
+        current.supplyRoom?.() ||
+        current.sideDungeon?.(current.zoneId)
+      )
+        return false;
       return !nearActiveFight(current);
     }
     function queueBackgroundLookahead(current, dx, dy) {
       // Only count blockers after the camera actually asks for lookahead.
-      if (aheadReady || aheadIdle != null || !backdrop ||
-          Math.max(Math.abs(dx), Math.abs(dy)) < BG_PREFETCH_TRIGGER) return;
+      if (
+        aheadReady ||
+        aheadIdle != null ||
+        !backdrop ||
+        Math.max(Math.abs(dx), Math.abs(dy)) < BG_PREFETCH_TRIGGER
+      )
+        return;
       if (backdrop.width * backdrop.height * 8 > BG_TWO_WINDOW_BUDGET) {
         backgroundLookaheadSkips.memoryBudget++;
         return;
@@ -715,13 +891,21 @@
         backgroundLookaheadSkips.excluded++;
         return;
       }
-      const epoch = aheadEpoch, zone = current.zoneId, zoom = platform.cameraZoom || 1,
-        optimization = !!options.getOptimizationMode(), ratio = backingRatio;
+      const epoch = aheadEpoch,
+        zone = current.zoneId,
+        zoom = platform.cameraZoom || 1,
+        optimization = !!options.getOptimizationMode(),
+        ratio = backingRatio;
       aheadIdle = root.requestIdleCallback(() => {
         aheadIdle = null;
-        if (epoch !== aheadEpoch || game() !== current || current.zoneId !== zone ||
-            (platform.cameraZoom || 1) !== zoom ||
-            !!options.getOptimizationMode() !== optimization || backingRatio !== ratio) {
+        if (
+          epoch !== aheadEpoch ||
+          game() !== current ||
+          current.zoneId !== zone ||
+          (platform.cameraZoom || 1) !== zoom ||
+          !!options.getOptimizationMode() !== optimization ||
+          backingRatio !== ratio
+        ) {
           backgroundLookaheadSkips.invalidated++;
           return;
         }
@@ -748,25 +932,41 @@
     }
     function promoteBackgroundLookahead(current, zoom) {
       const candidate = aheadReady,
-        displacement = candidate && iso({
-          x: current.hero.x - candidate.point.x, y: current.hero.y - candidate.point.y,
-        });
-      if (!candidate || candidate.game !== current ||
-          candidate.zone !== current.zoneId || candidate.zoom !== zoom ||
-          candidate.ratio !== backingRatio ||
-          candidate.optimization !== !!options.getOptimizationMode() ||
-          Math.max(Math.abs(displacement.x * zoom), Math.abs(displacement.y * zoom)) > BG_SHIFT)
+        displacement =
+          candidate &&
+          iso({
+            x: current.hero.x - candidate.point.x,
+            y: current.hero.y - candidate.point.y,
+          });
+      if (
+        !candidate ||
+        candidate.game !== current ||
+        candidate.zone !== current.zoneId ||
+        candidate.zoom !== zoom ||
+        candidate.ratio !== backingRatio ||
+        candidate.optimization !== !!options.getOptimizationMode() ||
+        Math.max(Math.abs(displacement.x * zoom), Math.abs(displacement.y * zoom)) > BG_SHIFT
+      )
         return false;
       const ctx = backdrop?.getContext('2d');
-      if (!ctx?.save || !ctx.restore || !ctx.setTransform || !ctx.drawImage ||
-          !ctx.clearRect || !aheadCanvas) return false;
+      if (
+        !ctx?.save ||
+        !ctx.restore ||
+        !ctx.setTransform ||
+        !ctx.drawImage ||
+        !ctx.clearRect ||
+        !aheadCanvas
+      )
+        return false;
       const started = measureNow();
       ctx.save();
       try {
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.clearRect(0, 0, backdrop.width, backdrop.height);
         ctx.drawImage(aheadCanvas, 0, 0);
-      } finally { ctx.restore(); }
+      } finally {
+        ctx.restore();
+      }
       // Retain the SAME source and GPU allocation; only its pixel content changes.
       backing.source.update?.();
       basePosition = { ...candidate.point };
@@ -788,8 +988,13 @@
       if (current.s.mode === 'arena') return; // No scrolling or rebaking black.
       // A presentation-quality transition must invalidate the retained
       // background even when the hero has not moved or changed zoom.
-      if (!basePosition || baseZone !== current.zoneId || baseZoom !== zoom ||
-          baseOptimization !== !!options.getOptimizationMode()) drawBackground();
+      if (
+        !basePosition ||
+        baseZone !== current.zoneId ||
+        baseZoom !== zoom ||
+        baseOptimization !== !!options.getOptimizationMode()
+      )
+        drawBackground();
       const d = iso({ x: current.hero.x - basePosition.x, y: current.hero.y - basePosition.y });
       let dx = -d.x * zoom,
         dy = -d.y * zoom;
@@ -810,8 +1015,13 @@
     }
     function paintedVisual(visual) {
       return visual.kind === 'archive-record'
-        ? { ...visual, renderKind: 'prop', structure: 'scroll-stack',
-            decorative: true, sceneRole: 'dry-stacks' }
+        ? {
+            ...visual,
+            renderKind: 'prop',
+            structure: 'scroll-stack',
+            decorative: true,
+            sceneRole: 'dry-stacks',
+          }
         : visual.kind === 'keeper'
           ? { ...visual, renderKind: 'enemy', type: 'boss', family: 'archive', form: 'normal' }
           : visual;
@@ -819,8 +1029,14 @@
     // First-time procedural art is drawn on a temporary 2D bitmap before
     // being usable as a Pixi texture. A bounded prewarm cannot evict current
     // onscreen sprites; only the live actor pass may trim scene resources.
-    function ensureProcedural(painted, revision, current, zoom,
-                              protectedRevisions = null, detach = null) {
+    function ensureProcedural(
+      painted,
+      revision,
+      current,
+      zoom,
+      protectedRevisions = null,
+      detach = null,
+    ) {
       if (baked.has(revision)) {
         proceduralCacheHits++;
         if (revision.includes(':shared-decor:')) sharedProceduralHits++;
@@ -848,6 +1064,18 @@
       const elapsed = Math.max(0, measureNow() - started);
       syncProceduralBakeMs += elapsed;
       maxProceduralBakeMs = Math.max(maxProceduralBakeMs, elapsed);
+      for (const part of body.ambientParts || []) {
+        const partRevision = revision + ':ambient:' + part.index;
+        protectedRevisions?.add(partRevision);
+        ensureProcedural(
+          { ...painted, _ambientPart: part.index },
+          partRevision,
+          current,
+          zoom,
+          protectedRevisions,
+          detach,
+        );
+      }
       return baked.get(revision);
     }
     // On switching to Pixi, the existing live view is loaded first. Then,
@@ -856,109 +1084,168 @@
     // Yield between batches while simulation is held. Finish the selected
     // neighborhood rather than abandoning bakes after a time/count quota.
     async function warmNeighborhood(epoch, arrival = false, heading = null) {
-      const started = (typeof performance !== 'undefined' ? performance.now() : Date.now());
-      const current = game(), zoom = platform.cameraZoom || 1;
-      const originZone = current.zoneId, origin = project(current.hero);
+      const started = typeof performance !== 'undefined' ? performance.now() : Date.now();
+      const current = game(),
+        zoom = platform.cameraZoom || 1;
+      const originZone = current.zoneId,
+        origin = project(current.hero);
       const ahead = heading ? iso(heading) : null;
       const headingLength = ahead ? Math.hypot(ahead.x, ahead.y) || 1 : 1;
-      const width = viewport.width, height = viewport.height;
+      const width = viewport.width,
+        height = viewport.height;
       // Prepare the WHOLE admitted zone before revealing gameplay: every
       // outdoor actor/scenery record in the active region, or every actor and
       // prop in the bounded dungeon. Keep these bakes across interior visits.
-      const dungeon = current.isDungeon() || !!current.supplyRoom?.() ||
-        !!current.sideDungeon?.();
-      const fringe = candidates(current, project, width, height,
-        canvasRenderer.presentEntity, arrival ? Infinity :
-          heading ? 4000 : 900, arrival || !!heading)
-        .filter(({entity,point}) =>
-          !entity.interactionOnly &&
-          !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
-          (arrival || point.x < -270 || point.x > width + 270 ||
-            point.y < -270 || point.y > height + 270) &&
-          (!ahead || (point.x - origin.x) * ahead.x / headingLength +
-            (point.y - origin.y) * ahead.y / headingLength >= -250))
-        .sort((a,b) => {
+      const dungeon = current.isDungeon() || !!current.supplyRoom?.() || !!current.sideDungeon?.();
+      const fringe = candidates(
+        current,
+        project,
+        width,
+        height,
+        canvasRenderer.presentEntity,
+        arrival ? Infinity : heading ? 4000 : 900,
+        arrival || !!heading,
+      )
+        .filter(
+          ({ entity, point }) =>
+            !entity.interactionOnly &&
+            !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')) &&
+            (arrival ||
+              point.x < -270 ||
+              point.x > width + 270 ||
+              point.y < -270 ||
+              point.y > height + 270) &&
+            (!ahead ||
+              ((point.x - origin.x) * ahead.x) / headingLength +
+                ((point.y - origin.y) * ahead.y) / headingLength >=
+                -250),
+        )
+        .sort((a, b) => {
           if (arrival) {
             const priority = (item) =>
-              item.kind === 'enemy' && (item.entity.type === 'boss' ||
-                item.entity.fieldCaptain || item.entity.roomCaptain ||
-                item.entity.captain) ? 0 :
-              item.kind === 'enemy' && item.entity.hp > 0 ? 1 :
-              item.kind === 'hero' || item.kind === 'ally' ? 2 : 3;
-            const dist = (item) => Math.hypot(
-              item.entity.x-current.hero.x,item.entity.y-current.hero.y);
-            return priority(a)-priority(b) || dist(a)-dist(b);
+              item.kind === 'enemy' &&
+              (item.entity.type === 'boss' ||
+                item.entity.fieldCaptain ||
+                item.entity.roomCaptain ||
+                item.entity.captain)
+                ? 0
+                : item.kind === 'enemy' && item.entity.hp > 0
+                  ? 1
+                  : item.kind === 'hero' || item.kind === 'ally'
+                    ? 2
+                    : 3;
+            const dist = (item) =>
+              Math.hypot(item.entity.x - current.hero.x, item.entity.y - current.hero.y);
+            return priority(a) - priority(b) || dist(a) - dist(b);
           }
-          const distance = (p) => Math.hypot(
-            Math.max(0,-p.x,p.x-width),Math.max(0,-p.y,p.y-height));
+          const distance = (p) =>
+            Math.hypot(Math.max(0, -p.x, p.x - width), Math.max(0, -p.y, p.y - height));
           if (ahead) {
-            const threat = (item) => item.kind === 'enemy' &&
-              (item.entity.type === 'boss' || item.entity.fieldCaptain) ? 0 :
-              item.kind === 'enemy' ? 1 : 2;
-            return threat(a) - threat(b) || distance(a.point)-distance(b.point);
+            const threat = (item) =>
+              item.kind === 'enemy' && (item.entity.type === 'boss' || item.entity.fieldCaptain)
+                ? 0
+                : item.kind === 'enemy'
+                  ? 1
+                  : 2;
+            return threat(a) - threat(b) || distance(a.point) - distance(b.point);
           }
-          return distance(a.point)-distance(b.point);
+          return distance(a.point) - distance(b.point);
         });
-      let prepared = 0,steps=0;
-      for(const {entity,visual,point,key} of fringe) {
-        if(epoch!==contextEpoch || !scene || !app || game()!==current ||
-           current.zoneId!==originZone || platform.cameraZoom!==zoom ||
-           root.document?.hidden) return false;
+      let prepared = 0,
+        steps = 0;
+      for (const { entity, visual, point, key } of fringe) {
+        if (
+          epoch !== contextEpoch ||
+          !scene ||
+          !app ||
+          game() !== current ||
+          current.zoneId !== originZone ||
+          platform.cameraZoom !== zoom ||
+          root.document?.hidden
+        )
+          return false;
         // Actual loss of the GPU context cancels above; there is no deadline.
         // The emergency byte guard still prevents a failed allocation loop.
-        if(imageBytes>=trimAt) break;
-        const painted=paintedVisual(visual);
-        const chosen=adapter.commandFor(painted,
-          {x:point.x/zoom,y:point.y/zoom},
-          {region:current.regionIndex(),rescued:!!current.s.rescued[entity.family]});
-        if(chosen.supported)continue; // Canonical sprites already preloaded.
-        if(chosen.reason!=='original-game-procedural-art')continue;
-        const revision=revisionFor(entity,visual,key,current,zoom);
-        if(baked.has(revision))continue;
+        if (imageBytes >= trimAt) break;
+        const painted = paintedVisual(visual);
+        const chosen = adapter.commandFor(
+          painted,
+          { x: point.x / zoom, y: point.y / zoom },
+          { region: current.regionIndex(), rescued: !!current.s.rescued[entity.family] },
+        );
+        if (chosen.supported) continue; // Canonical sprites already preloaded.
+        if (chosen.reason !== 'original-game-procedural-art') continue;
+        const revision = revisionFor(entity, visual, key, current, zoom);
+        if (baked.has(revision)) continue;
         // The warm-up never evicts current-frame art to make room.
-        const cached=ensureProcedural(painted,revision,current,zoom);
-        if(!cached)continue;
+        const cached = ensureProcedural(painted, revision, current, zoom);
+        if (!cached) continue;
         prepared++;
-        if(++steps%2===0 && typeof requestAnimationFrame==='function')
-          await new Promise(resolve=>requestAnimationFrame(resolve));
+        if (++steps % 2 === 0 && typeof requestAnimationFrame === 'function')
+          await new Promise((resolve) => requestAnimationFrame(resolve));
       }
       neighborhoodPrepared += prepared;
       neighborhoodWarmupMs +=
-        (typeof performance !== 'undefined' ? performance.now() : Date.now())-started;
-      return epoch===contextEpoch && current.zoneId===originZone;
+        (typeof performance !== 'undefined' ? performance.now() : Date.now()) - started;
+      return epoch === contextEpoch && current.zoneId === originZone;
     }
     // Outdoor predictive graphics work is strictly opportunistic and uses
     // browser idle time. It never changes enemies, campaign state, RNG or the
     // game clock. Move the lookahead toward the player's actual direction and
     // upload fresh procedural textures before they appear in the viewport.
     function queuePredictiveWarm(current) {
-      if (!active || !app || !scene || !root.requestIdleCallback ||
-          root.document?.hidden || current.s.mode === 'arena' ||
-          current.isDungeon() || nearActiveFight(current)) return;
-      const pose = { x: current.hero.x, y: current.hero.y, zone: current.zoneId,
-        zoom: platform.cameraZoom || 1 };
-      if (!predictionAnchor || predictionAnchor.zone !== pose.zone ||
-          predictionAnchor.zoom !== pose.zoom) {
+      if (
+        !active ||
+        !app ||
+        !scene ||
+        !root.requestIdleCallback ||
+        root.document?.hidden ||
+        current.s.mode === 'arena' ||
+        current.isDungeon() ||
+        nearActiveFight(current)
+      )
+        return;
+      const pose = {
+        x: current.hero.x,
+        y: current.hero.y,
+        zone: current.zoneId,
+        zoom: platform.cameraZoom || 1,
+      };
+      if (
+        !predictionAnchor ||
+        predictionAnchor.zone !== pose.zone ||
+        predictionAnchor.zoom !== pose.zoom
+      ) {
         predictionAnchor = pose;
         return;
       }
-      const heading = { x: pose.x - predictionAnchor.x,
-        y: pose.y - predictionAnchor.y };
-      if (Math.hypot(heading.x, heading.y) < 180 ||
-          predictiveIdle !== null || predictiveRunning) return;
+      const heading = { x: pose.x - predictionAnchor.x, y: pose.y - predictionAnchor.y };
+      if (Math.hypot(heading.x, heading.y) < 180 || predictiveIdle !== null || predictiveRunning)
+        return;
       predictionAnchor = pose;
       const epoch = contextEpoch;
       predictiveIdle = root.requestIdleCallback(async () => {
         predictiveIdle = null;
-        if (epoch !== contextEpoch || !active || game() !== current ||
-            current.zoneId !== pose.zone || nearActiveFight(current)) return;
+        if (
+          epoch !== contextEpoch ||
+          !active ||
+          game() !== current ||
+          current.zoneId !== pose.zone ||
+          nearActiveFight(current)
+        )
+          return;
         predictiveRunning = true;
         try {
           const before = new Set(baked.keys());
-          if (!await warmNeighborhood(epoch, false, heading) ||
-              epoch !== contextEpoch || current.zoneId !== pose.zone ||
-              nearActiveFight(current)) return;
-          const fresh = [...baked].filter(([key]) => !before.has(key))
+          if (
+            !(await warmNeighborhood(epoch, false, heading)) ||
+            epoch !== contextEpoch ||
+            current.zoneId !== pose.zone ||
+            nearActiveFight(current)
+          )
+            return;
+          const fresh = [...baked]
+            .filter(([key]) => !before.has(key))
             .map(([, body]) => body.texture);
           await prepareGpuTextures(epoch, fresh, 'procedural');
         } catch (_) {
@@ -971,15 +1258,17 @@
     }
     async function warmArrival() {
       if (!active || !scene || !app || root.document?.hidden) return false;
-      const epoch = contextEpoch, current = game();
+      const epoch = contextEpoch,
+        current = game();
       const before = new Set(baked.keys());
       try {
-        if (!await prepareTerrainTiles(epoch)) return false;
-        if (!await warmNeighborhood(epoch, true)) return false;
+        if (!(await prepareTerrainTiles(epoch))) return false;
+        if (!(await warmNeighborhood(epoch, true))) return false;
         if (epoch !== contextEpoch || current !== game() || !active) return false;
         // CPU procedural bakes alone do not make near-enemy WebGL frames ready.
         // Upload only the fresh textures; existing GPU sources remain reusable.
-        const fresh = [...baked].filter(([key]) => !before.has(key))
+        const fresh = [...baked]
+          .filter(([key]) => !before.has(key))
           .map(([, body]) => body.texture);
         return await prepareGpuTextures(epoch, fresh, 'procedural');
       } catch (error) {
@@ -989,11 +1278,13 @@
     }
     function ensureCrownLootTexture(zoom) {
       const density = Math.max(1, backingRatio * zoom);
-      if (crownLootTexture && crownLootDensity === density &&
-          scene.hasTexture(crownLootTextureId)) return crownLootTextureId;
+      if (crownLootTexture && crownLootDensity === density && scene.hasTexture(crownLootTextureId))
+        return crownLootTextureId;
       releaseCrownLootTexture();
-      const painter = requireValue(root.PrototypeRenderer?.drawCrownLoot,
-        'Original Crown coin painter unavailable');
+      const painter = requireValue(
+        root.PrototypeRenderer?.drawCrownLoot,
+        'Original Crown coin painter unavailable',
+      );
       const stamp = makeCanvas(Math.round(40 * density), Math.round(40 * density));
       const ctx = requireValue(stamp.getContext('2d'), 'Crown coin canvas unavailable');
       ctx.setTransform(density, 0, 0, density, 0, 0);
@@ -1009,11 +1300,16 @@
       let ordinal = 0;
       for (const loot of current.s.loot || []) {
         ordinal++;
-        if (loot.zone !== current.zoneId ||
-            !Number.isFinite(loot.x) || !Number.isFinite(loot.y)) continue;
+        if (loot.zone !== current.zoneId || !Number.isFinite(loot.x) || !Number.isFinite(loot.y))
+          continue;
         const point = project(loot);
-        if (point.x < -40 * zoom || point.x > viewport.width + 40 * zoom ||
-            point.y < -40 * zoom || point.y > viewport.height + 40 * zoom) continue;
+        if (
+          point.x < -40 * zoom ||
+          point.x > viewport.width + 40 * zoom ||
+          point.y < -40 * zoom ||
+          point.y > viewport.height + 40 * zoom
+        )
+          continue;
         records.push({
           key: 'crown-loot:' + (loot.id == null ? ordinal : loot.id),
           textureId: ensureCrownLootTexture(zoom),
@@ -1045,28 +1341,46 @@
         viewport.width,
         viewport.height,
         canvasRenderer.presentEntity,
-      ).filter(({ entity }) =>
-        !entity.interactionOnly &&
-        !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')),
+      ).filter(
+        ({ entity }) =>
+          !entity.interactionOnly &&
+          !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')),
       );
       // Protect ALL current-frame identities, including entries encountered
       // later in the loop, from accidental eviction during a capacity trim.
-      const protectedRevisions = new Set(
-        visible.map(({ entity, visual, key }) =>
-          revisionFor(entity, visual, key, current, zoom),
-        ),
-      );
+      const protectedRevisions = new Set();
+      for (const { entity, visual, key } of visible) {
+        const revision = revisionFor(entity, visual, key, current, zoom);
+        protectedRevisions.add(revision);
+        for (const part of baked.get(revision)?.ambientParts || [])
+          protectedRevisions.add(revision + ':ambient:' + part.index);
+      }
+      scene.syncWorldIndicators?.(canvasRenderer.ashCloudPresentation?.() || []);
       const records = [];
+      const nextSilhouettes = new WeakMap();
       let detachedForEviction = false;
-      for (const { entity, visual, point, key } of visible) {
+      const detachForEviction = () => {
+        if (!detachedForEviction) {
+          scene.syncActors([]);
+          detachedForEviction = true;
+        }
+      };
+      for (const item of visible) {
+        const { entity, visual, point, key } = item;
+        // Share Canvas's presentation-only idle/busy movement for artwork.
+        // Ground shadows, hit positions and saved world coordinates do not move.
+        const bodyPoint = canvasRenderer.visualPositionFor?.(visual) || point;
+        item.bodyPoint = bodyPoint;
         // The approved Canvas feet treatment is independent of sprite art.
         // Pixi draws it below each body at the same depth in world space.
         const ground =
           visual.presentation === 'scout-tracks' || visual.kind === 'critical-codex'
             ? null
             : {
-                x: point.x, y: point.y,
+                x: point.x,
+                y: point.y,
                 scale: zoom,
+                ledgerMarked: !!canvasRenderer.ledgerMarked?.(visual),
                 ...canvasRenderer.groundPresentation(visual),
               };
         // Canvas repaints these identities as their actual in-world objects.
@@ -1075,14 +1389,29 @@
         const facing = canvasRenderer.facingFor?.(painted) ?? 1;
         const chosen = adapter.commandFor(
           painted,
-          { x: point.x / zoom, y: point.y / zoom },
-          { region: current.regionIndex(),
-            rescued: !!current.s.rescued[entity.family], facing },
+          { x: bodyPoint.x / zoom, y: bodyPoint.y / zoom },
+          { region: current.regionIndex(), rescued: !!current.s.rescued[entity.family], facing },
         );
         if (chosen.supported) {
           if (!scene.hasTexture(chosen.texture.src))
             throw Error('New sprite needs Pixi preload: ' + chosen.texture.src);
           const c = chosen.command;
+          const image = root.PIXI.Assets.get?.(chosen.texture.src)?.source?.resource;
+          if (image)
+            nextSilhouettes.set(entity, {
+              image,
+              sourceRect: c.sourceRect,
+              dx: c.x - bodyPoint.x / zoom,
+              dy: c.y - bodyPoint.y / zoom,
+              width: c.width,
+              height: c.height,
+              flipX: c.flipX,
+            });
+          const frontierTree =
+            current.regionIndex() === 3 &&
+            painted.renderKind === 'prop' &&
+            (painted.structure === 'dead-tree' ||
+              (!painted.structure && /🌲|🌳/.test(painted.icon || '')));
           records.push({
             key,
             textureId: chosen.texture.src,
@@ -1094,31 +1423,61 @@
             opacity: c.opacity,
             flipX: c.flipX,
             ground,
+            spriteAccessories: chosen.additionalArt?.spriteAccessories
+              ? {
+                  ...chosen.additionalArt.spriteAccessories,
+                  x: bodyPoint.x,
+                  y: bodyPoint.y,
+                  zoom,
+                  flipX: facing < 0,
+                }
+              : null,
+            // Original Canvas overlays these on the registered raster only.
+            // Procedural fallback textures already include their own leaves.
+            frontierShoots: frontierTree
+              ? {
+                  id: String(painted.id || 'tree'),
+                  x: bodyPoint.x,
+                  y: bodyPoint.y,
+                  zoom,
+                  visualScale:
+                    Number.isFinite(painted.visualScale) && painted.visualScale > 0
+                      ? painted.visualScale
+                      : 1,
+                  flipX: facing < 0,
+                }
+              : null,
             depth: entity.x + entity.y,
           });
         } else if (chosen.reason === 'original-game-procedural-art') {
           const revision = revisionFor(entity, visual, key, current, zoom);
-          const b = ensureProcedural(painted, revision, current, zoom,
-            protectedRevisions, () => {
-              // Old actors must release retired textures before a budget trim.
-              if (!detachedForEviction) {
-                scene.syncActors([]);
-                detachedForEviction = true;
-              }
-            });
+          const b = ensureProcedural(
+            painted,
+            revision,
+            current,
+            zoom,
+            protectedRevisions,
+            detachForEviction,
+          );
           if (!b) {
             if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
             throw Error('Unrendered procedural entity: ' + key);
           }
           b.lastUsedFrame = actorFrameNumber;
+          nextSilhouettes.set(entity, {
+            image: b.image,
+            dx: facing < 0 ? -(b.dx + b.logicalWidth) : b.dx,
+            dy: b.dy,
+            width: b.logicalWidth,
+            height: b.logicalHeight,
+            flipX: facing < 0,
+          });
           records.push({
             key,
             textureId: b.id,
             // Reflect procedural bodies about the foot anchor, not crop center.
-            x: facing < 0
-              ? point.x - (b.dx + b.logicalWidth) * zoom
-              : point.x + b.dx * zoom,
-            y: point.y + b.dy * zoom,
+            x: facing < 0 ? bodyPoint.x - (b.dx + b.logicalWidth) * zoom : bodyPoint.x + b.dx * zoom,
+            y: bodyPoint.y + b.dy * zoom,
             width: b.logicalWidth * zoom,
             height: b.logicalHeight * zoom,
             opacity: 1,
@@ -1126,13 +1485,84 @@
             ground,
             depth: entity.x + entity.y,
           });
+          // Move each retained original animal, never rerasterize its scenery.
+          for (const part of b.ambientParts || []) {
+            const partRevision = revision + ':ambient:' + part.index;
+            protectedRevisions.add(partRevision);
+            const body = ensureProcedural(
+              { ...painted, _ambientPart: part.index },
+              partRevision,
+              current,
+              zoom,
+              protectedRevisions,
+              detachForEviction,
+            );
+            requireValue(body, 'Missing original ambient animal: ' + partRevision);
+            body.lastUsedFrame = actorFrameNumber;
+            const motion = root.PrototypeVisuals.ambientAnimalPose(
+              painted,
+              part.index,
+              painted.ambientTime || 0,
+            );
+            const scale =
+              root.PrototypeVisuals.featureScale(painted) > 1 ? painted.visualScale || 1 : 1;
+            const homeX = part.x * scale;
+            records.push({
+              key: key + ':ambient:' + part.index,
+              textureId: body.id,
+              x:
+                bodyPoint.x +
+                (motion.x * scale +
+                  (motion.facing < 0 ? 2 * homeX - body.dx - body.logicalWidth : body.dx)) *
+                  zoom,
+              y: bodyPoint.y + (body.dy + motion.y * scale) * zoom,
+              width: body.logicalWidth * zoom,
+              height: body.logicalHeight * zoom,
+              opacity: 1,
+              flipX: motion.facing < 0,
+              depth: entity.x + entity.y,
+            });
+          }
         } else throw Error('Missing original game artwork: ' + key);
       }
       appendCrownLoot(records, current, zoom);
+      const visibleByKey = new Map(visible.map((item) => [item.key, item]));
+      for (const record of records) {
+        const source = visibleByKey.get(record.key);
+        if (!source) continue;
+        const details = canvasRenderer.actorDetailsFor?.(source.visual);
+        if (details)
+          record.details = {
+            ...details,
+            x: source.bodyPoint.x,
+            y: source.bodyPoint.y,
+            zoom,
+            paint: canvasRenderer.paintActorDetails,
+          };
+        if (source.visual.presentation === 'scout-tracks') record.depth = -Number.MAX_SAFE_INTEGER;
+      }
       scene.syncActors(records);
+      silhouetteFrames = nextSilhouettes;
+      if (active) canvasRenderer.setSilhouetteFrames?.(silhouetteFrames);
       // Keep offscreen and previously visited artwork resident for reuse.
       // Only a real emergency hard-budget allocation needs LRU retirement;
       // that path protects all currently visible texture identities.
+    }
+    // #708: keep the native water/lava glints live while retaining immutable
+    // regional terrain tiles. Work is viewport-culled, not a full repaint.
+    function syncLiquidMotion() {
+      const current = game();
+      if (current.s.mode === 'arena' || current.isDungeon() || current.supplyRoom()) {
+        scene.syncLiquidMotion([]);
+        return;
+      }
+      const lines = root.PrototypeVisuals.terrainMotionLines(
+        current.regionIndex(),
+        (point) => canvasRenderer.screen(point),
+        viewport,
+        measureNow() / 1000,
+      );
+      scene.syncLiquidMotion(lines, platform.cameraZoom || 1);
     }
     function syncAtmosphere() {
       const current = game(),
@@ -1141,6 +1571,7 @@
       const zoom = platform.cameraZoom || 1;
       if (current.s.mode === 'arena') {
         scene.syncLamps([]);
+        scene.syncLightFixtures?.([], zoom, 0);
         scene.syncMotes([], zoom);
         scene.clearAtmosphere();
         return;
@@ -1156,7 +1587,13 @@
       if (darkness > 0) {
         for (const p of z.props) {
           const kind = root.PrototypeRenderer.nightLightKind(String(p.structure || ''));
-          if (kind) lights.push({ ...project(p), kind, id: p.id });
+          if (kind)
+            lights.push({
+              ...project(p),
+              kind,
+              id: p.id,
+              ...(p.structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
+            });
         }
         for (const b of z.buildings)
           if (b.progress >= 4) lights.push({ ...project(b), kind: 'window', id: b.id });
@@ -1177,20 +1614,40 @@
           )
             lights.push({ ...project(n), kind: 'lantern', id: n.id });
       }
-      const local = lights
-        .filter(
-          (p) =>
-            p.x > -140 * zoom &&
-            p.x < viewport.width + 140 * zoom &&
-            p.y > -160 * zoom &&
-            p.y < viewport.height + 140 * zoom,
-        )
-        .sort(
-          (a, b) =>
-            (a.x - viewport.width / 2) ** 2 +
-            (a.y - viewport.height / 2) ** 2 -
-            ((b.x - viewport.width / 2) ** 2 + (b.y - viewport.height / 2) ** 2),
-        )
+      // Canvas already lights the glass actually carried by living, nonboss
+      // Wraiths. Reuse its facing and idle presentation rather than inventing
+      // a disconnected floor lantern at the creature's collision anchor.
+      const carriedLanterns = [];
+      for (const e of z.enemies) {
+        if (e.species !== 'wraith' || e.type === 'boss' || e.hp <= 0) continue;
+        const visual = canvasRenderer.presentEntity(e, 'enemy');
+        const p = canvasRenderer.visualPositionFor(visual);
+        const facing = canvasRenderer.facingFor(visual);
+        const scale = e.captain || e.roomCaptain ? visual.visualScale || 1.18 : 1;
+        carriedLanterns.push({
+          x: p.x + facing * 22.5 * scale * zoom,
+          y: p.y + 1.5 * scale * zoom,
+          kind: 'carried-lantern',
+          id: e.id,
+        });
+      }
+      const nearby = (p) =>
+        p.x > -140 * zoom &&
+        p.x < viewport.width + 140 * zoom &&
+        p.y > -160 * zoom &&
+        p.y < viewport.height + 140 * zoom;
+      const byDistance = (a, b) =>
+        (a.x - viewport.width / 2) ** 2 +
+          (a.y - viewport.height / 2) ** 2 -
+          ((b.x - viewport.width / 2) ** 2 + (b.y - viewport.height / 2) ** 2) ||
+        String(a.id).localeCompare(String(b.id));
+      // Match Canvas source priority: at most eight carried lights followed
+      // by the nearest authored civic lights, within the existing 36-light
+      // GPU command budget. Daylight keeps only Wraith glass's tiny bloom.
+      const local = [
+        ...carriedLanterns.filter(nearby).sort(byDistance).slice(0, 8),
+        ...lights.filter(nearby).sort(byDistance).slice(0, 44),
+      ]
         .slice(0, 36)
         .map((p) => ({ ...p, x: p.x / zoom, y: p.y / zoom }));
       const hero = project(current.hero);
@@ -1199,6 +1656,7 @@
         hero: { x: hero.x / zoom, y: hero.y / zoom },
       }).map((p) => ({ ...p, x: p.x * zoom, y: p.y * zoom, radius: p.radius * zoom }));
       scene.syncLamps(lamps);
+      scene.syncLightFixtures?.(local, zoom, darkness);
       scene.setAtmosphere({
         region,
         darkness,
@@ -1217,8 +1675,12 @@
       const zoomedWidth = viewport.width / zoom,
         zoomedHeight = viewport.height / zoom;
       const motes = root.PrototypeVisuals.atmosphereMotes({
-        width: zoomedWidth, height: zoomedHeight, region, darkness,
-        dungeon: !!current.isDungeon(), room: !!current.supplyRoom(),
+        width: zoomedWidth,
+        height: zoomedHeight,
+        region,
+        darkness,
+        dungeon: !!current.isDungeon(),
+        room: !!current.supplyRoom(),
         optimized: !!options.getOptimizationMode(),
         time: (typeof performance !== 'undefined' ? performance.now() : 0) / 1000,
       });
@@ -1237,8 +1699,10 @@
       try {
         const PIXI = await loadPixi();
         stage = 'prepare-plugin';
-        requireValue(PIXI.PrepareSystem && PIXI.extensions?.add,
-          'PixiJS GPU preparation extension unavailable');
+        requireValue(
+          PIXI.PrepareSystem && PIXI.extensions?.add,
+          'PixiJS GPU preparation extension unavailable',
+        );
         // The pinned non-module Pixi bundle exports PrepareSystem, but unlike
         // `import pixi.js/prepare` it does not install the optional system.
         if (prepareExtensionLibrary !== PIXI) {
@@ -1266,8 +1730,10 @@
         });
         stage = 'webgl2-context';
         requireValue(app.canvas.getContext('webgl2'), 'WebGL2 context not available');
-        requireValue(typeof app.renderer.prepare?.upload === 'function',
-          'PixiJS GPU preparation system not installed');
+        requireValue(
+          typeof app.renderer.prepare?.upload === 'function',
+          'PixiJS GPU preparation system not installed',
+        );
         app.canvas.id = 'world-pixi-experimental';
         app.canvas.setAttribute('aria-hidden', 'true');
         app.canvas.style.cssText =
@@ -1337,11 +1803,12 @@
         );
         startupSpritePreloadMs = Math.max(0, measureNow() - preloadStarted);
         stage = 'gpu-approved-upload';
-        if (!await prepareGpuTextures(thisEpoch, approvedTextures, 'approved')) return false;
+        if (!(await prepareGpuTextures(thisEpoch, approvedTextures, 'approved'))) return false;
         stage = 'first-scene';
         const firstSceneStarted = measureNow();
         drawBackground();
         actorFrame();
+        syncLiquidMotion();
         syncAtmosphere();
         scene.draw();
         startupFirstSceneMs = Math.max(0, measureNow() - firstSceneStarted);
@@ -1350,17 +1817,26 @@
         // guard still presents its preparation panel. warmArrival() reuses
         // these same tiles rather than painting a second copy on Continue.
         stage = 'region-terrain-preparation';
-        if (!await prepareTerrainTiles(thisEpoch)) return false;
+        if (!(await prepareTerrainTiles(thisEpoch))) return false;
         stage = 'region-art-preparation';
-        if (!await warmNeighborhood(thisEpoch, true)) return false;
+        if (!(await warmNeighborhood(thisEpoch, true))) return false;
         stage = 'gpu-procedural-upload';
-        if (!await prepareGpuTextures(thisEpoch, [...baked.values()].map((body) => body.texture),
-          'procedural')) return false;
-        if(thisEpoch!==contextEpoch)return false;
+        if (
+          !(await prepareGpuTextures(
+            thisEpoch,
+            [...baked.values()].map((body) => body.texture),
+            'procedural',
+          ))
+        )
+          return false;
+        if (thisEpoch !== contextEpoch) return false;
         return true;
       } catch (error) {
-        noteFailure(stage === 'webgl2-context' ? 'context-unavailable' : 'preparation-failed',
-          stage, error);
+        noteFailure(
+          stage === 'webgl2-context' ? 'context-unavailable' : 'preparation-failed',
+          stage,
+          error,
+        );
         disposeResources();
         return false;
       }
@@ -1373,16 +1849,18 @@
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
         // Sampling is silent outside explicitly selected developer mode.
-        const observe = game()?.s?.mode === 'developer' &&
-          ++developerDrawFrames % drawCpuSampleEvery === 0;
+        const observe =
+          game()?.s?.mode === 'developer' && ++developerDrawFrames % drawCpuSampleEvery === 0;
         const row = observe ? {} : null;
         let stamp = observe ? measureNow() : 0;
         // Ordinary frames must not allocate a recording callback.
-        const record = row ? (name) => {
-          const next = measureNow();
-          row[name] = Math.max(0, next - stamp);
-          stamp = next;
-        } : null;
+        const record = row
+          ? (name) => {
+              const next = measureNow();
+              row[name] = Math.max(0, next - stamp);
+              stamp = next;
+            }
+          : null;
         stage = 'viewport-check';
         syncViewport();
         if (record) record('viewport');
@@ -1395,6 +1873,7 @@
         stage = 'actors';
         actorFrame();
         if (record) record('actors');
+        syncLiquidMotion();
         stage = 'atmosphere';
         syncAtmosphere();
         if (record) record('atmosphere');
@@ -1430,10 +1909,13 @@
       requireValue(app?.canvas && scene, 'PixiJS scene not prepared');
       app.canvas.style.display = 'block';
       active = true;
+      canvasRenderer.setSilhouetteFrames?.(silhouetteFrames);
       predictionAnchor = null;
     }
     function deactivate() {
       active = false;
+      canvasRenderer.setSilhouetteFrames?.(null);
+      silhouetteFrames = null;
       if (app?.canvas) app.canvas.style.display = 'none';
     }
     function disposeResources() {

@@ -14,17 +14,35 @@ const copy = (v) => structuredClone(v),
 (async () => {
   validateCatalog(production);
   assert(!runtimeCatalog(production).director.eventGuides);
+  // Four existing source-recorded Stage1 beds and sixteen #727 frozen masters
+  // are deliberately not owned by the old procedural environment renderer.
+  // Derive the promoted IDs from the versioned source ledger, then require
+  // their exact manifest provenance rather than loosening the assertion.
+  const promotion = require('../tools/audio/environment-727-production-routing.json');
+  const importedEnvironment = new Set([
+    'env-highlands-autumn','env-frontier-recovery',
+    'env-signal-occupied','env-shrine-occupied',
+    ...promotion.recordings.map(x => x.id),
+  ]);
+  assert.equal(promotion.recordings.length,16);
+  assert.equal(importedEnvironment.size,20);
   assert(
-    Object.values(production.assets).every(
-      (a) =>
+    Object.entries(production.assets).every(
+      ([id,a]) =>
         a.generationGuide &&
-        a.managedBy ===
-          (a.kind === 'ambience'
-            ? 'environment-book'
-            : a.kind === 'effect'
-              ? 'sfx-book'
-              : 'score-book'),
+        (importedEnvironment.has(id)
+          ? a.kind==='ambience' && a.creationMethod==='imported-recording' &&
+            a.managedBy===undefined &&
+            a.credits?.author?.includes('SIBDLP') &&
+            a.credits?.license?.includes('CC0')
+          : a.managedBy ===
+              (a.kind === 'ambience'
+                ? 'environment-book'
+                : a.kind === 'effect'
+                  ? 'sfx-book'
+                  : 'score-book')),
     ),
+    'Preserve provenance for original generated sounds and all 20 source-authored environmental recordings',
   );
   assert(
     Object.keys(production.director.events).every((key) => production.director.eventGuides[key]),
@@ -172,7 +190,7 @@ const copy = (v) => structuredClone(v),
   a.effect('warning');
   assert.equal(ducks, 1);
   a.effect('peace');
-  assert.equal(a.finaleUntil, a.ctx.currentTime + 12);
+  assert.equal(a.finaleUntil, a.ctx.currentTime + 48); // Synthetic fixture has no Finale; actual manifest uses its loop span.
   a.interfaceSound('confirm');
   assert([...a.voices].some((v) => v.id === 'diagnostic-click' && v.bus === 'interface'));
   a.stepDistance = 0;

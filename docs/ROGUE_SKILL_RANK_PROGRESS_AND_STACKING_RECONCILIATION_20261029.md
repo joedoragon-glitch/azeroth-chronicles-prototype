@@ -27,6 +27,17 @@ All eight skills use **one saved Rank 1–8 per slot**. Rank 1 remains byte-for-
 
 These are initial bounded tuning values, **not a claim of owner-tested balance**. No cooldown, radius, maximum-target, Charm eligibility, critical-roll frequency, boss phase protection, or skill-training costs are changed. Current normal/charged separation and earned overlapping performance windows remain intact.
 
+## 31 October 2026 condition-icon follow-up
+
+Verification PR #700 and issue #702 found that active Rogue Hush and Wither
+were missing their enemy-world status cues. The separate implementation
+candidate reads the actual per-enemy WeakMap producer and expiry rather than
+synthesizing a save field. Hush governs eligible new non-boss special
+starts; committed warnings and tactical movement continue. Bosses, basics,
+independently timed overlapping song effects,
+rank upgrades and critical rolls retain their existing contracts.
+No merge, publication or physical-device acceptance is claimed here.
+
 ## Implementation ownership
 
 - `hero-combat.js::roguePerformanceAtRank` resolves rank-aware source data on demand, without mutating frozen `R.roguePerformances`. `rogueSkill1Config` similarly resolves both basic-buff forms; actual legally released songs retain the independent per-cast stacking from #606.

@@ -33,4 +33,45 @@ assert(
   read('sw.js').includes("const CACHE_PREFIX = 'azeroth-app-';"),
   'old cache prefix stays for safe cleanup',
 );
+// Current copy-ready image prompts must never inherit the retired title.
+const catalog = read('docs/GRAPHICS_CANON_SPRITE_PROMPTS.md');
+const prompts = [
+  ...catalog.matchAll(/\*\*Image-generation prompt:\*\*\s*\n\s*> ([^\n]+)/g),
+].map((match) => match[1]);
+assert.equal(prompts.length, 281, 'Rogue added without losing unused sprite entries');
+assert(
+  prompts.every((prompt) => !prompt.includes('Azeroth Chronicles')),
+  'retired public title cannot enter current image prompts',
+);
+assert.equal(
+  prompts.filter((prompt) => prompt.includes('for ' + title + '.')).length,
+  279,
+  'title-bearing prompts use official game name; two asset-specific prompts remain title-free',
+);
+const registry = JSON.parse(read('tools/sprites/approved.json'));
+const spriteManifest = JSON.parse(read('assets/sprites/manifest.json'));
+const bindings = new Map(
+  JSON.parse(read('tools/sprites/specifications.json')).assets.map((entry) => [
+    entry.key,
+    entry.catalogId,
+  ]),
+);
+const retained = new Set([
+  ...Object.keys(spriteManifest.sprites),
+  ...Object.keys(registry.assets),
+  ...Object.keys(registry.history || {}),
+]);
+assert(Object.keys(spriteManifest.sprites).length >= 33, 'registered art identities cannot silently shrink');
+assert(Object.keys(registry.history || {}).length >= 34, 'unused art history cannot silently shrink');
+for (const key of retained) {
+  const id = bindings.get(key);
+  assert(id, 'retained art needs an exact catalog identity: ' + key);
+  const tick = String.fromCharCode(96);
+  assert(
+    catalog.includes('| ' + tick + id + tick + ' | ' + tick + key + tick + ' |'),
+    'crosswalk must retain registered or unused sprite: ' + key,
+  );
+}
+assert(catalog.includes('### 297 — Hero — Rogue (Pícara)'), 'Rogue must be catalogued');
+assert(!spriteManifest.sprites['hero:rogue'], 'do not fabricate a Rogue raster sprite');
 console.log('PASS official branding, PWA identity and legacy cache compatibility');

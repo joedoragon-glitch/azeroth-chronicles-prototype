@@ -1,0 +1,45 @@
+name: PixiJS default migration acceptance (targeted PR only)
+
+# PR #574: isolated first-install/upgrade and Canvas rescue browser journey.
+# Not a full browser/game matrix; never builds or deploys Pages.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/prototype/app.js'
+      - 'tools/webgl-pilot/renderer-switch-guard.js'
+      - 'tests/pixi-default-browser.test.cjs'
+      - '.github/workflows/pixi-default-acceptance.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pixi-default-migration-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  migration:
+    name: Default migration / ${{ matrix.device }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [desktop, phone]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked browser tools
+        run: npm ci --ignore-scripts
+      - name: Prepare pinned local PixiJS
+        run: node scripts/vendor-pixi.cjs --ensure
+      - name: Exercise real title, one-time migration, fallback and Canvas opt-out
+        env:
+          BROWSER_ENGINE: chromium
+          REQUIRE_WEBGL2: '1'
+          PIXI_BROWSER_DEVICE: ${{ matrix.device }}
+        run: node tests/pixi-default-browser.test.cjs

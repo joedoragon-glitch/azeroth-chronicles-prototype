@@ -1,0 +1,69 @@
+# #727 Stage 4 three inhabited side interiors. Studio only: no game registrations or publication.
+name: Environmental Stage 4 three-side-interior source studio (NO deploy)
+
+on:
+  push:
+    branches:
+      - 'audio/environment-727-stage4-*'
+    paths:
+      - 'tools/audio/environment-727-side-interiors.json'
+      - 'tools/audio/environment-727-side-studio.py'
+      - 'tests/environment-727-stage4-source.test.cjs'
+      - '.github/workflows/environment-727-stage4-studio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-verified-studio:
+    name: Source originals, three authored MP3 previews, strict decoded QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install existing audio math and production decoder tools
+        run: |
+          python -m pip install --disable-pip-version-check numpy==2.3.5
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          ffmpeg -version | head -n 1
+      - name: Protect original catalog, sound events and all existing routing
+        run: |
+          node tests/environment-audio-inventory.test.cjs
+          node tests/audio-production.test.cjs
+      - name: Strict source-probe or encode the three previews when originals pinned
+        run: |
+          set -eu
+          if python - <<'PY'
+          import json,sys
+          b=json.load(open('tools/audio/environment-727-side-interiors.json'))
+          if len(b['studies'])!=3 or len(b['sources'])!=6:
+              sys.exit('Scope violation: three authored side interiors and six original source records required')
+          pinned=all(isinstance(s.get('sha1'),str) and len(s['sha1'])==40 and
+                     isinstance(s.get('sha256'),str) and len(s['sha256'])==64 and
+                     isinstance(s.get('bytes'),int) and s['bytes']>500 for s in b['sources'])
+          sys.exit(0 if pinned else 1)
+          PY
+          then
+            node tests/environment-727-stage4-source.test.cjs
+            python tools/audio/environment-727-side-studio.py
+          else
+            echo 'SOURCE PROBE: two unpinned originals; independently report real SHA, bytes and codec, NO MP3 claims'
+            python tools/audio/environment-727-side-studio.py --probe-sources
+          fi
+      - name: Retain original source receipts or three physical MP3 previews with decoded QA
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environmental-stage4-three-interiors-original-source-and-MP3-studies
+          path: tools/audio/.environment-727-side-preview/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

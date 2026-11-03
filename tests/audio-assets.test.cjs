@@ -169,6 +169,8 @@ async function offlineContract(checkout) {
     const manifestFile = path.join(checkout, 'assets/audio/manifest.json'),
       write = (value) => fs.writeFileSync(manifestFile, JSON.stringify(value));
     write(manifest);
+    assert.equal(limits.total, 256 * 1024 * 1024, 'new offline package ceiling');
+    assert.equal(limits.perFile, 16 * 1024 * 1024, 'new single-recording ceiling');
     assert.deepEqual(publishedFiles(checkout), [
       'assets/audio/manifest.json',
       'assets/audio/fixture.wav',
@@ -215,6 +217,16 @@ async function offlineContract(checkout) {
     fs.symlinkSync(path.join(temp, 'outside.wav'), path.join(checkout, 'assets/audio/outside.wav'));
     write({ schemaVersion: 1, assets: { bad: { ...entry, src: './assets/audio/outside.wav' } } });
     assert.throws(() => publishedFiles(checkout), /escaping symlink/);
+    const largerRecording = Buffer.alloc(9 * 1024 * 1024);
+    wav.copy(largerRecording);
+    fs.writeFileSync(fixture, largerRecording);
+    write({ schemaVersion: 1, assets: { large: {
+      ...entry,
+      sha256: crypto.createHash('sha256').update(largerRecording).digest('hex'),
+    } } });
+    assert.deepEqual(publishedFiles(checkout), [
+      'assets/audio/manifest.json', 'assets/audio/fixture.wav',
+    ], 'a registered recording above the old 8 MiB limit is now accepted');
     fs.writeFileSync(fixture, Buffer.alloc(limits.perFile + 1));
     write(manifest);
     assert.throws(() => publishedFiles(checkout), /size budget/);

@@ -45,6 +45,21 @@ jobs:
         run: |
           node tests/docs-release-consistency.test.cjs
           node scripts/docs-release-consistency.cjs
+      # The ordinary focused runner intentionally omits audio tooling by default.
+      # Install true MP3 decoders only when an audio-affecting PR selects
+      # acoustic/signal tests. Never weaken those tests to synthetic/no-op passes.
+      - name: Provide FFmpeg/FFprobe for impacted physical-audio tests
+        env:
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        shell: bash
+        run: |
+          if git diff --name-only "$CI_BASE_SHA" HEAD |
+             grep -Eq '^(assets/audio/|tools/audio/|src/prototype/audio-|tests/(audio-|environment-audio-)|docs/AUDIO_)'; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq ffmpeg
+            command -v ffmpeg
+            command -v ffprobe
+          fi
       - name: Check only impacted subsystems
         env:
           CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
@@ -57,6 +72,22 @@ jobs:
           path: ${{ runner.temp }}/azeroth-focused-ci-report.json
           if-no-files-found: ignore
           retention-days: 30
+      - name: Preserve issue 708 liquid-motion browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-708-liquid-real-render
+          path: test-artifacts/environment-708-liquid/
+          if-no-files-found: ignore
+          retention-days: 30
+      - name: Preserve #708 combined Wraith and region evidence
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: environment-708-wraith-and-regions
+          path: test-artifacts/environment-708/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Verify reproducible, offline-ready build
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then

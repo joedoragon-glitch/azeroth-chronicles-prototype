@@ -1,0 +1,485 @@
+{
+  "schemaVersion": 1,
+  "phase": "Stage 3 of #727: five canon-specific main dungeon recorded-source ambience production studio",
+  "status": "STAGE 3 STUDIO PREPRODUCTION COMPLETE: 8/8 real source SHA1/SHA256/bytes/codec verified, 5/5 independently encoded 72s MP3 previews decoded QA PASS, and all five source-to-output SHA256 identities byte-reproduced in #41231633052. No game registration, hearing acceptance, merge, publication or device verification.",
+  "parent": "tools/audio/environment-727-outdoor-expansion.json",
+  "authority": "Issue #727 Stage1 creative brief; docs/AUDIO_ENVIRONMENT.md; docs/ABYSS_AIR_SUPERIORITY_CANON.md and src/prototype rules/data; current manifest",
+  "sources": [
+    {
+      "id": "interior-open-field-wind",
+      "creator": "Thimras",
+      "title": "Park ambiences — genuine open-field wind",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
+      "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
+      "sha256": "5c381856745b4706e7eba55eb9271a61a530e90c05df8126adb2db89ecfa6c5a",
+      "bytes": 73960096,
+      "maxBytes": 85000000,
+      "role": "Authentic physical air for restrained architectural attenuation; never claim recorded inside a dungeon",
+      "cautions": "Original is an Adelaide outdoor field, not a castle/estate/mineshaft. Distinct sound by enclosure processing and sparse physical occupational cues; if all rooms still sound like the same wind reject/rework.",
+      "durationSeconds": 256.803333,
+      "codec": "pcm_s24le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "interior-low-river",
+      "creator": "Thimras",
+      "title": "Park ambiences — low river over step",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
+      "sha1": "4bd89af752ae34f5d50d52a87de3416afa6e71a9",
+      "sha256": "da0c0c9b1249a83a1611cc116d5737b0864a8db9f45f1ae8dcc079d0f7c0bbbf",
+      "bytes": 99072736,
+      "maxBytes": 112000000,
+      "role": "Distant damp stone/water air for active Sunken Archive, not globally rushing water",
+      "cautions": "Original has actual river step and frogs/birds; avoid invented archival flood cause, loud waterfall, repeating fauna. Keep original two existing water details.",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le/48000Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "old-oak-chair-flex",
+      "creator": "chocoholic",
+      "title": "Creaky wooden swivel chair (old oak)",
+      "license": "public domain — PDSounds original record 544",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Creaky_wooden_swivel_chair.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Creaky_wooden_swivel_chair.ogg",
+      "sha1": "4820aaac68fcced1bc31ee896987845f1b573b16",
+      "sha256": "4593efa9c75a66a66771a5ea4c8b706940cd43d653923cd342de48755b50d54a",
+      "bytes": 90505,
+      "maxBytes": 125000,
+      "role": "Very rare real timber/furniture handling under occupied unfinished Forest Crypt winter estate",
+      "cautions": "Original is a chair, NOT a timber roof or crypt coffin; reject if it sounds modern or is too recognizable.",
+      "durationSeconds": 6.556735,
+      "codec": "vorbis/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "archival-paper",
+      "creator": "stephan",
+      "title": "Book paper pages assorted — recorded paper handling",
+      "license": "public domain — PDSounds original record 231",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Book_paper_pages_assorted.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/Book_paper_pages_assorted.ogg",
+      "sha1": "cdd0f8c62a767f43d9acbeba9ae214492921bf2f",
+      "sha256": "7725928b65296676cff33f2d2c6f1489e810acf27c1a48a9c452263c26fd2a08",
+      "bytes": 2474211,
+      "maxBytes": 2700000,
+      "role": "Sparse rare working paper gestures in Archive and restrained Citadel paperwork",
+      "cautions": "Contains assorted book browsing, crumpling, tearing and ripping; only short suitable physically coherent excerpts allowed; do not imply records being deliberately torn.",
+      "durationSeconds": 77.949388,
+      "codec": "vorbis/44100Hz/stereo",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "mine-workshop-anvil",
+      "creator": "VishwaJai",
+      "title": "Blacksmith's Hammer — anvil repair strike",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/blacksmiths-hammer",
+      "url": "https://opengameart.org/sites/default/files/blacksmithhammer.wav",
+      "sha1": "c9e482acec2b75c464f0319ea3794be9323ec6fe",
+      "sha256": "a26c2e964e468fb7e68c8adf2b1c1d6e6778fe6e5ef4842463ae211e55ec7ae2",
+      "bytes": 88588,
+      "maxBytes": 200000,
+      "role": "One distant credible metal-repair note for Garun's mine workshop, not a permanently active forge or a Crown Foundry soundscape",
+      "cautions": "Real anvil is not rock pick. Keep short, quiet, infrequent; context remains mine/architecture rather than industrial machinery.",
+      "durationSeconds": 0.5,
+      "codec": "pcm_f32le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "aerie-equipment-clank",
+      "creator": "BMacZero (Brian MacIntosh)",
+      "title": "Mechanical Sounds — clank1.wav",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/mechanical-sounds",
+      "url": "https://opengameart.org/sites/default/files/clank1.wav",
+      "sha1": "7bb575823a0f10913cb622f8f4ae4a4059a6a1ad",
+      "sha256": "899a46a8423fa0ca349b3c70a07a422d1eaa3a58695ce6facfbae074dd70226f",
+      "bytes": 59436,
+      "maxBytes": 130000,
+      "role": "Rare muted material handling in incomplete dragon-flight equipment workshop; do not imply dragon fleet is deployed",
+      "cautions": "Original physical vs constructed recording method not guaranteed; artist license and original upload must be confirmed. Avoid loud steel modern factory ring.",
+      "durationSeconds": 0.673379,
+      "codec": "pcm_s16le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "citadel-equipment-clunk",
+      "creator": "BMacZero (Brian MacIntosh)",
+      "title": "Mechanical Sounds — lightclunk1.wav",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://opengameart.org/content/mechanical-sounds",
+      "url": "https://opengameart.org/sites/default/files/lightclunk1.wav",
+      "sha1": "fb868b44b5a0ca069003229deffac6607e6d4f3f",
+      "sha256": "d5a2aa8764c02924f6ed6fbaad0c650ab2d57ec57a626cee9e6645f941dbc8fa",
+      "bytes": 32812,
+      "maxBytes": 110000,
+      "role": "Rare small formal-room equipment movement, not modern industry",
+      "cautions": "Metal handling can be too close-mic/modern, must be deeply muted and human-vetted.",
+      "durationSeconds": 0.371519,
+      "codec": "pcm_s16le/44100Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    },
+    {
+      "id": "bastion-wind-through-building",
+      "creator": "Tvabutzku1234",
+      "title": "Howling wind (source: wind in building)",
+      "license": "CC0 1.0 original uploader",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Howling_wind.ogg",
+      "sha1": "90958205859310a279d03cd0d77e4d467f4805d5",
+      "sha256": "cc585200603027ca808ab68ab4b381d1a828c55d58f010222f5ff687929d084d",
+      "bytes": 1112243,
+      "maxBytes": 2500000,
+      "role": "Very quiet secondary source of genuinely building-shaped wind for broad vaulted Abyss Bastion",
+      "cautions": "Prior Crown experiment judged potentially haunted. In Bastion too, if air whistles supernaturally or suggests modern HVAC, reject instead of promoting; no dragon noises.",
+      "durationSeconds": 128.306313,
+      "codec": "vorbis/16000Hz/mono",
+      "verifiedAt": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41230940635",
+      "sourceStatus": "Actual original file checksum and codec verified; artistic physical sound source fitness remains HOLD"
+    }
+  ],
+  "studies": [
+    {
+      "id": "studio-crypt-winter-estate-727",
+      "zone": "Forest Crypt — unfinished occupied winter estate",
+      "sceneId": "crypt",
+      "referenceBed": "env-retreat",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 2,
+      "fieldGain": 0.3,
+      "windGain": 0.23,
+      "highpassHz": 175,
+      "lowpassHz": 1250,
+      "routeGain": 0.3,
+      "room": "sheltered timber and unfinished pale stone",
+      "reflectionMs": [
+        31,
+        73,
+        151
+      ],
+      "reflectionGains": [
+        0.16,
+        0.09,
+        0.035
+      ],
+      "events": [
+        {
+          "source": "old-oak-chair-flex",
+          "at": 47.7,
+          "start": 1.1,
+          "duration": 0.9,
+          "peak": 0.038,
+          "lowpassHz": 1200,
+          "highpassHz": 170
+        }
+      ],
+      "description": "Not a deserted haunted crypt: quiet winter estate construction and the Lifebinder caretaker's inhabited private rooms; short quiet physical wood/furniture gesture once, never a coffin or haunted architectural groan.",
+      "negative": "no ghosts, coffins, permanent crow calls, inhabited crowd, modern machinery"
+    },
+    {
+      "id": "studio-archive-restoration-727",
+      "zone": "Sunken Archive — active preservation effort",
+      "sceneId": "archive",
+      "referenceBed": "env-archive",
+      "mainSource": "interior-low-river",
+      "fieldExcerptStart": 174,
+      "fieldGain": 0.28,
+      "windGain": 0.23,
+      "highpassHz": 185,
+      "lowpassHz": 1500,
+      "routeGain": 0.33,
+      "room": "damp masonry with shallow intermittent wet presence",
+      "reflectionMs": [
+        54,
+        119,
+        235
+      ],
+      "reflectionGains": [
+        0.13,
+        0.07,
+        0.025
+      ],
+      "events": [
+        {
+          "source": "archival-paper",
+          "at": 43.3,
+          "start": 4.1,
+          "duration": 0.58,
+          "peak": 0.046,
+          "lowpassHz": 1550,
+          "highpassHz": 210,
+          "reason": "Recorded book handling originally -17.49dB vs bed and likely buried. Conservative local increase to keep physically purposeful, but still requires source-interval ear judgment for potential paper tearing."
+        }
+      ],
+      "description": "Active effort to save books/records amid water, physically enclosed; one distant paper touch that should not sound like ripping or shredding; existing subtle water director details preserved. Do not invent flood cause.",
+      "negative": "no permanent waterfall, frenzy of pages, ghosts or unspecified past flood cause"
+    },
+    {
+      "id": "studio-colossus-mine-727",
+      "zone": "Colossus Mine — extraction, architecture workshop and guarded refuge",
+      "sceneId": "mine",
+      "referenceBed": "env-mine",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 83,
+      "fieldGain": 0.34,
+      "windGain": 0.25,
+      "highpassHz": 145,
+      "lowpassHz": 1850,
+      "routeGain": 0.32,
+      "room": "carved rock tunnel ventilation and distant craft bench",
+      "reflectionMs": [
+        77,
+        184,
+        320
+      ],
+      "reflectionGains": [
+        0.14,
+        0.095,
+        0.05
+      ],
+      "events": [
+        {
+          "source": "mine-workshop-anvil",
+          "at": 39.4,
+          "start": 0.035,
+          "duration": 0.35,
+          "peak": 0.029,
+          "lowpassHz": 1750,
+          "highpassHz": 190,
+          "sourceExcerptReason": "Actual PCM anvil original was 0.500s (FFprobe), so use 0.035-0.385s; no source stretching/repeating"
+        }
+      ],
+      "description": "Actual silver/copper extraction + Garun architectural gallery/workshop, with guards and wolf kennels as implied rooms but NO wolf barking; occasional subtle human repair material, no industrial work beat.",
+      "negative": "no pneumatic drilling, permanent strikes, factory loop, ghost shouts or wolves"
+    },
+    {
+      "id": "studio-abyss-flight-hall-727",
+      "zone": "Abyss Bastion — unfinished dragon air-force logistics",
+      "sceneId": "abyss",
+      "referenceBed": "env-dragon-hall",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 164,
+      "fieldGain": 0.33,
+      "windGain": 0.2,
+      "highpassHz": 190,
+      "lowpassHz": 1730,
+      "routeGain": 0.29,
+      "room": "high vaulted bastion, ramp/aerie wind",
+      "reflectionMs": [
+        87,
+        207,
+        405
+      ],
+      "reflectionGains": [
+        0.17,
+        0.1,
+        0.06
+      ],
+      "secondarySource": "bastion-wind-through-building",
+      "secondaryExcerptStart": 26,
+      "secondaryGain": 0.1,
+      "secondaryHighpassHz": 190,
+      "secondaryLowpassHz": 950,
+      "events": [
+        {
+          "source": "aerie-equipment-clank",
+          "at": 54.2,
+          "start": 0,
+          "duration": 0.42,
+          "peak": 0.024,
+          "lowpassHz": 1250,
+          "highpassHz": 240
+        }
+      ],
+      "description": "Open-air flight prep leaks into large unfinished stone hall and supplies/aerie logistics. Distinct from mines; no dragons roaring or already-deployed air force.",
+      "negative": "no dragon roars, wings, rituals, factory motors, heroic score timbres"
+    },
+    {
+      "id": "studio-citadel-command-727",
+      "zone": "Citadel of Ashes — functioning formal administration/command",
+      "sceneId": "citadel",
+      "referenceBed": "env-citadel",
+      "mainSource": "interior-open-field-wind",
+      "fieldExcerptStart": 49,
+      "fieldGain": 0.28,
+      "windGain": 0.26,
+      "highpassHz": 220,
+      "lowpassHz": 1730,
+      "routeGain": 0.3,
+      "room": "inward formal masonry room and sparse administrative work",
+      "reflectionMs": [
+        61,
+        137,
+        298
+      ],
+      "reflectionGains": [
+        0.11,
+        0.075,
+        0.025
+      ],
+      "events": [
+        {
+          "source": "archival-paper",
+          "at": 25.2,
+          "start": 27.4,
+          "duration": 0.43,
+          "peak": 0.021,
+          "lowpassHz": 1320,
+          "highpassHz": 250
+        },
+        {
+          "source": "citadel-equipment-clunk",
+          "at": 59.4,
+          "start": 0,
+          "duration": 0.28,
+          "peak": 0.029,
+          "lowpassHz": 1350,
+          "highpassHz": 250,
+          "reason": "Sparse material gesture was ~15.52dB beneath unmastered bed; raise only this object's recorded excerpt; never boost the global ambience mix."
+        }
+      ],
+      "description": "Command/administration, organized material, restrained stone architecture; less bass-dominant than original without global volume change, occasional distant paper/equipment only.",
+      "negative": "no ominous machinery rhythm, permanent wrenches, voice/crowd, lava roar",
+      "envelopeEdgeMatch": {
+        "windowSeconds": 3.5,
+        "targetFirstLast1sDb": 3.3,
+        "maxCompensationDb": 1.8,
+        "reason": "Decoded Citadel initial firstLast1s=-4.6318dB FAIL vs unchanged ±4.25dB limit, despite clean sample join 0.00077; bounded scene-local gradual edge energy adjustment only."
+      }
+    }
+  ],
+  "hardConstraints": {
+    "seconds": 72,
+    "sampleRate": 32000,
+    "codec": "guarded 128k mono MP3 0.15s boundary guards",
+    "license": "verified original CC0/public domain only; SHA1+SHA256+bytes pinned from actual files before render",
+    "registered": false,
+    "gameplayChanged": false,
+    "artisticApproval": "HOLD: Real outdoor wind was deliberately filtered as interior air; it was NOT an actual recording of these fictional indoor spaces. Paper sources include ripping, anvil is workshop and chair is furniture; only human listening can determine timbral plausibility and music/warning masks.",
+    "inGamePlayback": "NOT TESTED candidate; current published game tests if run are old registered sounds only",
+    "merged": false,
+    "deployed": false,
+    "deviceVerified": false,
+    "plannedFileDecodedBytesIfAllFiveResident": 46080000,
+    "sceneRouting": "Original 18 rules, 19 locations, 14 original and 4 #711 MP3s unchanged",
+    "regressionScope": "exact five native routes and night/SFX/music preservation; max 5 source-authored studio previews; no runtime registration",
+    "notes": "This is an offline comparative studio, never automatically a shipped replacement. 5x 72s float32 mono buffers ~43.95MiB if all resident, currently 96MiB cache with earlier observed 84.80MiB peak; Stage6 must explicitly solve caching/eviction.",
+    "sourceAuthenticity": "PASS all original 8 SHA-1/SHA-256/bytes/FFprobe in GH Actions #41230940635; all licenses from original creator/public-domain pages, hearing unverified",
+    "initialStudioRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231085791",
+    "technicalStudio": "PASS: all eight original source SHA1/SHA256/bytes/codec #41230940635; five real encoded MP3 decoder, loop, loudness, true peak, crest, midband, repetition and scene distinctness #41231321540; exact all five decoded master SHA256 and byte-size rerender #41231633052 at source head e01077a69795c3fb1c01e6ac81aca895d9a0c8a3. This does not certify physical listener perceptions or playable integration.",
+    "nextGates": "Stage6 integrate only selected, artistically viable masters after actual cache residency/eviction, WebAudio crossfade, music/warnings, offline PWA, phone emulated; Stage7 actual by-ear and owner final acceptance.",
+    "stage3Go": "GO — five physical-source ambience studies authored, provenance pinned and technical studio source-to-output frozen. Creative/actual game acceptance HOLD; Stage 4 side interiors NEXT, Stage 6 integration/optimizations, Stage 7 real audition/owner approval."
+  },
+  "rejected": [
+    "Generic horror dungeon music or dark drones",
+    "Mystery source of Archive flood",
+    "Permanent dragon roars or deployed flights",
+    "Loud continuous blacksmith/pick/wood work loops",
+    "Modern office/industrial object close-mic timbre in old fantasy structures",
+    "Claimed physical spatialization when game has only scene-level environmental audio"
+  ],
+  "encodedPreviewEvidence": {
+    "producingHead": "07ac3c372cd82a1ad508b04811eb5d5226321a7c",
+    "producingRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231321540",
+    "artifactId": 13053543356,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231321540/artifacts/13053543356",
+    "codec": "guarded mono 32kHz 128kbps MP3; 0.15s guards + 72s active loop",
+    "encodedBytesTotal": 5791905,
+    "decodedIfAllFiveResidentBytes": 46080000,
+    "sourceStudyAcceptance": "TECHNICAL SOURCE+ACTUAL MP3 SIGNAL PASS; not proof of perceptual authenticity or player hearing",
+    "outputs": [
+      {
+        "id": "studio-crypt-winter-estate-727",
+        "sha256": "9d7ab96c06266fd953fc1c739703e0bdb261e2b272bcd596789e15c6c328d7be",
+        "bytes": 1158381,
+        "lufs": -37.17,
+        "truePeakDbTP": -18.35,
+        "decodedLoopSampleJump": 0.000800823443569243,
+        "firstVsLast1SecDb": -0.22828484401933807,
+        "physicalSourceFraction": 0.629811056682995,
+        "midbandFraction": 0.7222823330719771,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-archive-restoration-727",
+        "sha256": "7eb6cdba92d83c3a729c44dd214cbde16b9409a0e9a1ff57c2a122ada054b14e",
+        "bytes": 1158381,
+        "lufs": -35.91,
+        "truePeakDbTP": -21.21,
+        "decodedLoopSampleJump": 0.0006488868966698647,
+        "firstVsLast1SecDb": -0.9481357537662254,
+        "physicalSourceFraction": 0.5971058644325972,
+        "midbandFraction": 0.8958747255061793,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-colossus-mine-727",
+        "sha256": "cf183389f9b5ff7b3378876c87ac043a878a455215bdb1d2ee549bef3ae4ca42",
+        "bytes": 1158381,
+        "lufs": -35.1,
+        "truePeakDbTP": -15.77,
+        "decodedLoopSampleJump": 0.00036216527223587036,
+        "firstVsLast1SecDb": 1.0299894407826233,
+        "physicalSourceFraction": 0.6490735541830435,
+        "midbandFraction": 0.5218782830666848,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-abyss-flight-hall-727",
+        "sha256": "79cafbd90349eae5efcb17bea436e994e6bf12a7b6e1b5b4f9b9d2ed2a4bbecc",
+        "bytes": 1158381,
+        "lufs": -35.44,
+        "truePeakDbTP": -17.83,
+        "decodedLoopSampleJump": 0.002213355153799057,
+        "firstVsLast1SecDb": -1.3503376445067645,
+        "physicalSourceFraction": 0.7482693517935809,
+        "midbandFraction": 0.8442516234138141,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "studio-citadel-command-727",
+        "sha256": "618155910983eb3794129b148288d26ae35c511f06659083249ce4cbcf81ca00",
+        "bytes": 1158381,
+        "lufs": -34.72,
+        "truePeakDbTP": -15.14,
+        "decodedLoopSampleJump": 0.00016883178614079952,
+        "firstVsLast1SecDb": -3.396418321552509,
+        "physicalSourceFraction": 0.5369863013698629,
+        "midbandFraction": 0.7155875653729955,
+        "techSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      }
+    ],
+    "reproducibility": {
+      "status": "PASS exact 5/5 SHA256 byte-match and source re-download, not runtime registration",
+      "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231633052",
+      "artifactId": 13053643629,
+      "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41231633052/artifacts/13053643629",
+      "sourceHead": "e01077a69795c3fb1c01e6ac81aca895d9a0c8a3",
+      "checkedAgainst": "encodedPreviewEvidence.outputs[0..4] SHA-256/bytes",
+      "humanHearing": "NOT DONE",
+      "playableCandidateIntegration": "NOT DONE"
+    }
+  }
+}

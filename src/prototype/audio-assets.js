@@ -1,16 +1,27 @@
 /* Recorded audio: verified local fetch, lazy decode and bounded LRU ownership. */
 (function (root) {
   'use strict';
-  const encodedLimit = 8 * 1024 * 1024;
+  // Match scripts/audio-assets.cjs per-file validation; the full package is offline-cached,
+  // while this loader only keeps a bounded window of decoded recordings in RAM.
+  const encodedLimit = 16 * 1024 * 1024;
+  const defaultDecodedBudget = 128 * 1024 * 1024;
+  // Transition-only headroom: released recordings should not sit at 128 MiB
+  // indefinitely on memory-constrained phones. This is NOT a second hard cap.
+  const defaultRetentionBudget = 96 * 1024 * 1024;
+  const maxDecodedBudget = 192 * 1024 * 1024;
   class Assets {
     constructor(ctx, manifest, options = {}) {
       this.ctx = ctx;
       this.manifest = JSON.parse(JSON.stringify(manifest));
       this.fetch = options.fetch || root.fetch.bind(root);
       this.base = new URL(options.baseUrl || './', root.location?.href || 'https://localhost/');
-      this.budget = options.budget ?? 32 * 1024 * 1024;
-      if (!Number.isFinite(this.budget) || this.budget < 1024 || this.budget > 64 * 1024 * 1024)
+      this.budget = options.budget ?? defaultDecodedBudget;
+      if (!Number.isFinite(this.budget) || this.budget < 1024 || this.budget > maxDecodedBudget)
         throw Error('Invalid decoded memory budget');
+      this.retentionBudget = options.retentionBudget ?? Math.min(defaultRetentionBudget, this.budget);
+      if (!Number.isFinite(this.retentionBudget) || this.retentionBudget < 1024 ||
+          this.retentionBudget > this.budget)
+        throw Error('Invalid retained memory budget');
       this.cache = new Map();
       this.pending = new Map();
       this.controllers = new Set();
@@ -74,6 +85,19 @@
       }
       if (this.bytes + size > this.budget)
         throw Error('Active recordings fill decoded memory budget');
+    }
+    trimReleased() {
+      // A crossfade may transiently need >96 MiB while its outgoing buffers
+      // are pinned. Once a recorded voice ends, reclaim the oldest unpinned
+      // buffers toward 96 MiB; never evict an active or still-loading item.
+      if (this.bytes <= this.retentionBudget) return;
+      for (const [id, item] of this.cache) {
+        if (this.bytes <= this.retentionBudget) break;
+        if (!item.refs && !this.pending.has(id)) {
+          this.cache.delete(id);
+          this.bytes -= item.bytes;
+        }
+      }
     }
     async bytesFor(candidate) {
       const controller = new AbortController();
@@ -188,11 +212,13 @@
     }
     release(item) {
       item.refs = Math.max(0, item.refs - 1);
+      this.trimReleased();
     }
     status() {
       return {
         decodedBytes: this.bytes,
         decodedBudget: this.budget,
+        retentionBudget: this.retentionBudget,
         cached: this.cache.size,
         pending: this.pending.size,
         pinned: [...this.cache.values()].filter((i) => i.refs).length,

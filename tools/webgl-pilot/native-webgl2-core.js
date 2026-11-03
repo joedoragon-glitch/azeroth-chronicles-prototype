@@ -60,7 +60,16 @@
   // re-painted screenshots. The gameplay supplies projected light coordinates.
   function lampGlowCommands(lights, region, { darkness = 1, hero = null } = {}) {
     const cmds = [];
-    if (darkness <= 0) return cmds;
+    // Canvas keeps the tiny carried-glass glow visible by daylight, even
+    // though its broad night light pools disappear. Do not add daytime
+    // civic lamps or change world visibility/combat rules.
+    if (darkness <= 0) return lights
+      .filter((lamp) => lamp.kind === 'carried-lantern')
+      .slice(0, 8)
+      .map((lamp) => ({
+        kind: 'screenGlow', x: lamp.x, y: lamp.y, radius: 22,
+        rgb: [255, 221, 150], alpha: 0.12,
+      }));
     if (hero) cmds.push({
       kind: 'screenGlow', x: hero.x, y: hero.y, radius: 145,
       rgb: region === 4 ? [215, 191, 231] : [235, 221, 184],
@@ -80,10 +89,17 @@
           region === 4 ? [247, 194, 147] : [255, 207, 132],
         alpha: (window ? 0.27 : fire ? 0.30 : 0.25) * clamp(darkness, 0, 1)
       });
-      if (carried) cmds.push({
-        kind: 'screenGlow', x: lamp.x, y, radius: 10,
-        rgb: [255, 221, 150], alpha: 0.5 * clamp(darkness, 0, 1)
-      });
+      if (carried) {
+        cmds.push({
+          kind: 'screenGlow', x: lamp.x, y, radius: 10,
+          rgb: [255, 221, 150], alpha: 0.5 * clamp(darkness, 0, 1)
+        });
+        // Corresponds to Canvas's separate 22px daylight glass bloom.
+        if (darkness < 1) cmds.push({
+          kind: 'screenGlow', x: lamp.x, y, radius: 22,
+          rgb: [255, 221, 150], alpha: 0.12 * (1 - clamp(darkness, 0, 1))
+        });
+      }
     }
     return cmds;
   }

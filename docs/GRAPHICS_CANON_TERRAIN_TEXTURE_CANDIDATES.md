@@ -57,6 +57,8 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 > Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #294b36, #31583e, #203e30, #95ad80. Muted woodland-green ground with subtle brown soil, sparse fine grass and leaf-grain detail. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
 
+**Current status (30 October 2026, draft reconciliation):** T001 is superseded by Greenwood's authored procedural v2 landscape, whose `floor()` branch already bypasses image-ground painting. Its approved original and active revision are preserved under rollback history; remove only the redundant live registration, not the historical raster. This is a candidate change until merged/published.
+
 ### T002 — Flooded Marches ground
 
 **Resource key:** `terrain:ground:march`
@@ -89,6 +91,8 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 **Current status:** The earlier T003 material is retained in rollback history because its palette predates the current Highlands ground owner. The live material registration is retired pending a genuinely current-canon texture and native/wrap review; until then ground uses the procedural source. This changes the visible layer, not map geometry, gameplay or collisions.
 
+**Regional-review distinction:** The earlier March and Highlands ground materials remain historical, not active. No automatic restoration is authorized.
+
 ### T004 — Ashen Frontier ground
 
 **Resource key:** `terrain:ground:frontier`
@@ -103,6 +107,8 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 
 > Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #50413b, #5d4b42, #423732, #b9987b. Muted warm gray-brown ash/char earth with subdued grit and dry weathering. No embers. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
 
+**Current status (30 October 2026, PR #698 candidate):** T004 is superseded by the authored recovery landscape. The old uniformly ashen ground grain cannot represent the approved coexistence of cooled soil, pioneer vegetation and visible battle scars. Its original, approved image and provenance remain in rollback history. The new surface uses restrained procedural soil and rooted ground cover aligned with the named recovery scenes, preserving ravine, ruins and occupation. Release and native visual verification remain pending.
+
 ### T005 — Dark Crown ground
 
 **Resource key:** `terrain:ground:crown`
@@ -116,6 +122,8 @@ Generate exactly one opaque, seamless square material texture per call, flat top
 **Image-generation prompt:**
 
 > Create exactly one opaque seamless square 2D game material texture for Azeroth Chronicles, flat top-down, neutral unlit material, no baked perspective or shadows. Preserve the current procedural reference and these palette relationships: #343644, #414351, #2c2f3c, #a09b9e. Muted slate-violet earth with restrained fine mineral/obsidian grain. No purple glow. Add only restrained fine material detail with small-gameplay-scale readability. Tile continuously on both axes. No labels, UI, scene, objects, hard borders, repeated emblem or map geometry.
+
+**Current status:** T005 remains active. Crown's procedural district and fortress work does not automatically supersede the base mineral/obsidian floor grain. Retain until current terrain composition establishes a replacement.
 
 ### T006 — Greenwood Vale road material
 

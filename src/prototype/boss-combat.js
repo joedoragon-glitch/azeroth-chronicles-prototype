@@ -1014,6 +1014,7 @@
               continue;
             const landed = this.hitParty(
               u, this.worldBossEffect(b, this.weakenedEnemyDamage(e), 'damage'), 0, e.id,
+              false, { shape: 'area', criticalExecution: b.criticalExecution },
             );
             if (
               this.hero !== hero ||
@@ -1197,7 +1198,11 @@
         const gap = dist(e, target),
           visible = this.line(e, target);
         let skill = false;
-        if (!this.mageSilenceActive(e) && visible && e.cd <= 0) {
+        // Rogue Hush blocks NEW ordinary specials, including a Wraith's
+        // withdrawal cast. Neither Silence stops the normal covering basic
+        // selected below this block.
+        if (!this.mageSilenceActive(e) && !this.rogueEnemySilenced(e) &&
+            visible && e.cd <= 0) {
           if (
             (e.captain || e.roomCaptain) &&
             e.specialCd <= 0 &&
@@ -1295,7 +1300,8 @@
       enemyStartBasic(e, target, ranged) {
         const nightTempo = this.nightTempo();
         e.cd =
-          ((e.type === 'boss' ? R.bossCadence.basicCooldown : 1.4) *
+          ((e.type === 'boss' ? R.bossCadence.basicCooldown :
+            ranged ? 1.4 : R.balance.enemyOrdinaryMeleeBasicInterval) *
             (e.frenzy ? R.ringleaderScaling.frenzyCooldown : 1) *
             (e.captainAttackRate || 1) *
             (e.quotaOvertime > 0 ? 0.75 : 1)) /
@@ -2213,6 +2219,7 @@
                 this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e) * a.coefficient),
                 a.manaDrain || 0,
                 e.id,
+                false, { shape: 'area', criticalExecution: criticalReceipt },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -2318,6 +2325,7 @@
             ),
             ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
             source: 'enemy',
+            skillShape: ['volley', 'canister'].includes(a.kind) ? 'area' : 'single',
             sourceId: e.id,
             species: 'cargo',
             style: 'cargo',
@@ -2341,10 +2349,18 @@
           const victim =
             victims.find((u) => u.type === 'archer') || victims.find((u) => u === this.hero);
           if (victim) {
+            let sabotageHit = false;
             if (victim.type === 'archer') {
-              this.worldBossRelease(e, a);
-              victim.healCd = (victim.healCd || 0) +
-                this.worldBossEffect(a, 3, 'cooldownDebt');
+              const criticalReceipt = this.worldBossRelease(e, a);
+              // The Archive's targeted sabotage is a real status-only skill.
+              // A healer who blocks the skill keeps her cooldown; a critical is unblockable.
+              if (!this.skillBlocks(victim, 'single', {
+                source: e.id, criticalExecution: criticalReceipt,
+              })) {
+                victim.healCd = (victim.healCd || 0) +
+                  this.worldBossEffect(a, 3, 'cooldownDebt');
+                sabotageHit = true;
+              }
             } else {
               const choices = victim.cd
                 .map((time, i) => ({ time, i }))
@@ -2353,9 +2369,11 @@
               if (choices.length) {
                 this.worldBossRelease(e, a);
                 victim.cd[choices[0].i] += this.worldBossEffect(a, 3, 'cooldownDebt');
+                sabotageHit = true;
               }
             }
-            this.event('warning', { family: 'archive', cooldownSabotageHit: true });
+            if (sabotageHit)
+              this.event('warning', { family: 'archive', cooldownSabotageHit: true });
           }
           return;
         }
@@ -2399,6 +2417,7 @@
               ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
               manaDrain: 0,
               source: 'enemy',
+              skillShape: ['volley', 'canister'].includes(a.kind) ? 'area' : 'single',
               sourceId: e.id,
               species: e.species,
               style: 'stone',
@@ -2511,6 +2530,7 @@
             ),
             ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
             source: 'enemy',
+            skillShape: ['volley', 'canister'].includes(a.kind) ? 'area' : 'single',
             sourceId: e.id,
             species: e.species,
             style: 'stone',
@@ -2540,6 +2560,7 @@
               ...(a.criticalExecution ? { criticalExecution: a.criticalExecution } : {}),
               manaDrain: a.manaDrain || 0,
               source: 'enemy',
+              skillShape: ['volley', 'canister'].includes(a.kind) ? 'area' : 'single',
               sourceId: e.id,
               species: e.species,
               style,
@@ -2565,6 +2586,7 @@
         }
         if (a.kind === 'ring') {
           this.s.hazards.push({
+            skillShape: 'area',
             ...a,
             family: e.family,
             species: e.species,
@@ -2677,7 +2699,9 @@
             // ticks instead of being applied once now and a second time later.
             const landed =
               u === jawVictim
-                ? true
+                ? !this.skillBlocks(u, 'single', {
+                    source: e.id, criticalExecution: a.criticalExecution,
+                  })
                 : this.hitParty(
                     u,
                     a.criticalExecution?.key?.startsWith('world/boss/')
@@ -2692,6 +2716,7 @@
                         : this.weakenedEnemyDamage(e) * a.coefficient,
                     a.manaDrain || 0,
                     e.id,
+                    false, { shape: 'area', criticalExecution: a.criticalExecution },
                   );
             if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
               return;
@@ -2786,6 +2811,7 @@
             // critical strike. Do not persist its parent's release receipt.
             if (p.criticalExecution) delete p.criticalExecution;
             this.s.hazards.push({
+            skillShape: 'area',
               ...p,
               family: e.family,
               species: e.species,
@@ -2828,6 +2854,7 @@
                     : this.weakenedEnemyDamage(e) * a.coefficient,
                 a.manaDrain || 0,
                 e.id,
+                false, { shape: 'area', criticalExecution: a.criticalExecution },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;
@@ -2888,6 +2915,7 @@
                 this.weakenedEnemyDamage(e) * move.coefficient,
                 0,
                 e.id,
+                false, { shape: 'single', criticalExecution: a.criticalExecution },
               );
               if (this.hero !== hero || this.zoneId !== zone || this.s.statistics.deaths !== deaths)
                 return;

@@ -1,5 +1,5 @@
 'use strict';
-// Focused real-browser acceptance for the optional PixiJS presentation.
+// Focused real-browser acceptance for manual PixiJS selection and Canvas recovery.
 // A software browser may lack WebGL2; in that case Canvas fallback is required.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -16,6 +16,11 @@ if (!fs.existsSync(path.join(root,'assets/vendor/pixi-8.22.0.min.js')))
     {cwd:root,stdio:'inherit'});
 const engine = process.env.BROWSER_ENGINE || 'chromium';
 const requireWebGL = process.env.REQUIRE_WEBGL2 === '1';
+// Normal manual execution covers both form factors. Focused CI splits them
+// into independent processes so full-region Pixi preparation does not make
+// the combined four-journey smoke exceed one six-minute process deadline.
+const deviceCases = process.env.PIXI_BROWSER_DEVICE === 'desktop' ? [false]
+  : process.env.PIXI_BROWSER_DEVICE === 'phone' ? [true] : [false, true];
 // Use the runner's Chromium if available, including its software WebGL2
 // implementation. This is a functionality check, never a hardware FPS claim.
 function installedChromium() {
@@ -243,11 +248,20 @@ async function run() {
     const host = process.env.PLAYTEST_URL
       ? process.env.PLAYTEST_URL.replace(/\/?$/, '/')
       : 'http://127.0.0.1:' + server.address().port + '/';
+
+    // The rollout migration has its own short browser test; keep this
+    // established manual renderer trial/recovery suite as an independent gate.
+    const startCanvasManualTrial = () => {
+      if (localStorage.getItem('azeroth-renderer-webgl-primary-v1') !== 'applied') {
+        localStorage.setItem('azeroth-renderer-webgl-primary-v1','applied');
+        localStorage.setItem('azeroth-renderer-choice-v1','canvas2d');
+      }
+    };
     // Complete Mage-specific desktop and phone presentation first. A failure in
     // the separate generic WebGL recovery journey must not prevent recording
     // whether Mage Skill 1 itself draws on Canvas and the Pixi combat overlay.
     // The original recovery journey below remains unchanged and is not waived.
-    for (const phone of [false, true]) {
+    for (const phone of deviceCases) {
       // Separate graphics acceptance context: exercising synthetic beam
       // geometry must never contaminate the renderer recovery journey above.
       const beamContext = await browser.newContext({
@@ -255,6 +269,7 @@ async function run() {
         isMobile: phone, hasTouch: phone,
       });
       try {
+        await beamContext.addInitScript(startCanvasManualTrial);
         const beamPage = await beamContext.newPage();
         await beamPage.goto(host + (phone ? 'phone.html' : 'index.html'));
         await beamPage.waitForFunction(() => !!window.Prototype?.renderer);
@@ -270,11 +285,12 @@ async function run() {
         await beamContext.close();
       }
     }
-    for (const phone of [false, true]) {
+    for (const phone of deviceCases) {
       const context = await browser.newContext({
         viewport: phone ? {width: 393, height: 852} : {width: 1280, height: 800},
         isMobile: phone, hasTouch: phone, acceptDownloads: true,
       });
+      await context.addInitScript(startCanvasManualTrial);
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
 

@@ -505,7 +505,8 @@
       i = ((degree % 7) + 7) % 7;
     return s[i] + 12 * oct;
   };
-  const defaults = { master: 0.65, music: 0.4, ambience: 0.25, effects: 0.7, muted: false };
+  // Owner-approved fresh-profile starting levels. Saved audio preferences take precedence.
+  const defaults = { master: 0.33, music: 1, ambience: 1, effects: 1, interface: 1, muted: false };
   const eventNotes = {
     purchase: [75, 79],
     successor: [60, 64, 72],

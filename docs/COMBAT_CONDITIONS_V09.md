@@ -10,7 +10,7 @@
 > This is a gameplay targeting clarification, not a redefinition of Slow, immunity or saves. Refer to [release state](DEVELOPMENT_STATE.md) for live version evidence.
 > See [the bounded design and validation contract](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md).
 
-> **Current-use boundary — 19 October 2026:** Apply this contract with [current development state](DEVELOPMENT_STATE.md). Dated verification/rollout sections retain their historical scope; they do not authorize work during the break.
+> **Historical boundary — 19 October 2026:** The pause instruction below applied to that earlier release checkpoint. Apply this mechanical register with [current development state](DEVELOPMENT_STATE.md) and the owner's current authorizations; older verification/rollout notes never authorize new work by themselves.
 
 **Scope:** player skills, companion specials/support, ordinary and ranged monsters,
 night threats, ringleaders, captains, normal/TRUE bosses, traps, hazards and tactical
@@ -19,8 +19,36 @@ skills or a combat rebalance. The runtime contract comes from `rules.js` and the
 actual owners; skill names, descriptions, sounds and visual cues do not grant effects.
 
 The supported GitHub Pages/PWA game is multi-file. The version-4 save model and
-existing procedural/sprite graphics remain canonical. Development is paused under
-[current state](DEVELOPMENT_STATE.md); no new stabilization or testing cycle starts here.
+existing procedural/sprite graphics remain canonical. The current implementation,
+verification and publication state is recorded in [Development state](DEVELOPMENT_STATE.md).
+This historical register does not independently authorize a new testing cycle.
+
+## Status-effects completion candidate · 31 October 2026
+
+The implementation follow-up to [audit PR #700](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/700)
+and [issue #702](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/702)
+makes Charmed ranged-support `charmSupportCd` and hybrid enemy `hybridSelfHealCd`
+eligible for the **existing** Slow hit-time cooldown debt. Their already-slowed
+per-tick recovery remains unchanged. Ready actions never gain debt; no saved
+state or tuning value is introduced. This is an **unmerged, unpublished candidate**
+until verified otherwise.
+
+The shared Canvas status layer (also used above PixiJS/WebGL2) presents Mage
+and Rogue Hush Silence, Slow with finite/compact stack-number display, Taunt,
+Rogue Wither, Fracture and Weaken. Hero and living active companions receive
+world Slow cues, complementing the existing HUD duration. Fracture and Weaken
+have deliberately different silhouettes. At four or more enemy conditions,
+the first two rows prioritize Silence and Slow, while the third remains the
+existing `+N` count for the conditions hidden beyond the first two. The
+24-enemy budget, target/boss priority, and absence of icons for instant
+shoves, projectiles or other non-status events are retained.
+
+Rogue Hush prevents new eligible non-boss special starts, including ordinary
+support, hybrid self-recovery and a Wraith's retreat-cast path. Existing
+warnings, tactical repositioning and covering basic attacks, already committed
+effects and protected boss phases continue under their original rules.
+Its independent temporary producer remains in an unsaved WeakMap. Test pixels
+on actual phones before claiming device readability.
 
 ## Current update and where players learn it · 15 October 2026
 
@@ -32,6 +60,8 @@ Community Snapshot additions and limited hotfixes have separate evidence in the
 does not certify a fresh whole-game audit. The historical v0.9 findings
 below retain their original context; the current table supersedes older hero
 immunity, Haste and missing-Silence statements.
+
+**Skill Block player-learning candidate (draft PR [#772](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/772), 3 November 2026):** The existing quick Combat conditions guide gains one shared Skill Block explanation without requiring the Keeper. A pact-qualified Keeper can optionally reveal live single/area, Ranger, Rogue, night and allied companion figures through **Show me the figures**; Controls distinguishes obstructed red aim from on-impact Skill Block. The Canvas/Pixi overlay uses **Blocked! / ¡Bloqueado!** from the active language. These learning additions **passed the exact implementation-head focused CI (#41644175055) and targeted PWA/Pixi browser checks** but remain **unmerged, unpublished and device-unverified** pending owner authorization; #760's original block probabilities and combat resolver are unchanged.
 
 Players can use **Hero skills → Combat conditions** (Adventure, either Barracks,
 or a teacher's Review hero skills), or **Controls → Combat conditions**. That
@@ -209,3 +239,33 @@ The new `tests/combat-conditions.test.cjs` covers Slow/immunity interaction acro
 Before claiming **v0.9 certified**, run the exact-head format/build/check/test gates, then desktop Chromium, phone Chromium/WebKit, old-v4-save reload/import, PWA upgrade/offline, and a manual representative Normal/Nightmare/TRUE encounter pass: Mage frost/Silence/Fracture, Ranger Haste/Rally, Paladin stance/ward/Weaken/taunt, Soldier guard, spitter projectiles, Wraith siphon, boss slow patches, Goblin dust, knockback/scatter near walls, and trap seals. Verify hostile/status feedback remains legible at gameplay scale and on phone. Automated tests are evidence, not a substitute for practical control and clarity checks.
 
 **Not currently authored as generalized conditions:** stun, mind control, hard root, fear or universal stealth. Silence and Paladin enemy taunt are now explicitly authored above; ordinary slowing seals still do not silence or hard-root. Do not promise testers these effects solely because an attack name implies them. New conditions should first define target types, application eligibility, timer/stack rules, immunity interaction, UI/audio notice, save lifecycle and regression coverage.
+
+## Skill Block — merged and published source (PR #760; device verification pending)
+
+The merged Skill Block system does **not** change ordinary basic
+attacks, autoattack combo finishers, physical projectile collision, ground
+warning geometry, line-of-sight eligibility, immunity or Reversal. A legal
+single-target hero/companion skill grants an enemy a configurable 20% block
+chance; a legal area skill grants **each** affected enemy its own independent
+30% check. Ranger hero skills use 15%/25%, and Rogue Bard performances bypass
+the Skill Block check. No existing playable hero gains Skill Block; future Strategist Dodge remains separate.
+
+Hostile enemies gain **five percentage points** during game night; active,
+legitimate friendly companions (Soldier, Archer, pet and Charmed monster) instead
+receive 20%/30% independent defenses against eligible enemy skills, including
+Rogue maneuvers. Critical execution receipts bypass Skill Block before sampling it.
+A successful Skill Block fully negates damage and linked on-hit statuses, displaying
+a brief local **Blocked!** over the defender. Probability values reside in
+`R.skillBlock`; the extra RNG stream is separate and save-v4 compatible.
+The detailed acceptance boundaries are in
+[SKILL_EVASION_OWNER_CONTRACT_20261101.md](SKILL_EVASION_OWNER_CONTRACT_20261101.md).
+
+**Sprite-scope source review:** PR #760 edits `rules.js` only to add a
+skill-block balance table, and `renderer.js` only to add a bounded combat
+`Blocked!` overlay cue. Neither change adds or renames a sprite, art family,
+palette, asset key or loadout. The independently enumerated sprite-scope
+catalog and visual identities remain unchanged; only the two current
+source-file fingerprints in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json`
+are refreshed. Historical sprite approvals and receipts remain intact.
+
+**Status:** Skill Block was implemented in [PR #760](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/760), merged into `main` on 3 November 2026 at `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`, and passed the exact-merge [focused validation and GitHub Pages publication](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41637089826). This is technical publishing evidence, **not** proof that a physical device received or validated the update. Its **player-learning copy remains unimplemented**; the owner-approved [Skill Block player learning design](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md) specifies the existing reference paths, EN/ES feedback, optional figures and engineering handoff. That separate draft is documentation/design only.

@@ -90,4 +90,21 @@ assert.deepEqual(inspect(publishedData()), []);
 { const b = publishedData(); b.state = b.state.replace('| GitHub Pages publication | **Published dev.209', '| GitHub Pages publication | **Published dev.208');
   rejects(b, 'GitHub Pages publication published checkpoint'); }
 
+{ // A published release must not still be described as an unmerged draft.
+  const b = publishedData();
+  b.state = b.state.replace('**Current code/build version:** ' + tick + v + tick,
+    '**Current code/build version:** ' + tick + v + tick + ' — draft #654, unmerged/unpublished');
+  rejects(b, 'current published build still marked draft');
+}
+{ // Latest hosted release must follow the published status, not an earlier source.
+  const b = publishedData();
+  b.state += '\n**Latest verified playable update — 30 October 2026:** Dev.209 hosted.';
+  assert.deepEqual(inspect(b), []);
+}
+{
+  const b = publishedData();
+  b.state += '\n**Latest verified playable update — 30 October 2026:** Dev.208 hosted.';
+  rejects(b, 'latest playable release is stale');
+}
+
 console.log('PASS release/docs consistency positive and negative scenarios');

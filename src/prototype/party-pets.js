@@ -95,7 +95,7 @@
         return (
           geometry +
           (def.shape === 'target' && this.petDefinition(family).role === 'ranged'
-            ? ' · dodgeable shot; effects require contact'
+            ? ' · blockable shot; effects require contact'
             : '') +
           ' · ' +
           def.multiplier +
@@ -227,6 +227,8 @@
             launchX: u.x,
             launchY: u.y,
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, def.name, this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -237,6 +239,7 @@
             target: target.id,
           });
         } else {
+          const previousDirect = this.developerCompanionBeginDirect(u, def.name);
           for (const e of targets) {
             if (u.hp <= 0) break;
             const woundedBonus =
@@ -251,7 +254,9 @@
                   'damage',
                 ),
                 u.id,
-                { area: def.shape !== 'target' },
+                { area: def.shape !== 'target',
+                  skillShape: def.shape === 'target' ? 'single' : 'area',
+                  criticalExecution: criticalReceipt },
               )
             )
               continue;
@@ -263,8 +268,10 @@
                   Math.min(2.5, def.slow + slowMastery), 'slowDuration'),
               );
           }
+          this.developerCompanionEndDirect(previousDirect);
         }
-        if (!projectile && !hits) return false;
+        // Valid releases pay cooldown even when every enemy blocks. Do not
+        // award the on-contact self-heal/ward after a completely blocked skill.
         u[key] =
           slot === 1
             ? R.balance.companions.petFirstCooldown
@@ -272,7 +279,8 @@
         u.skillGlobalCd = R.companionSkills.globalCooldown;
         u.cd = Math.max(u.cd, 0.5);
         this.petSkillEvent(u, target, slot, 0, 'release');
-        if (!projectile) this.petSkillContact(u, target, slot, hits, criticalReceipt);
+        if (!projectile && hits)
+          this.petSkillContact(u, target, slot, hits, criticalReceipt);
         return true;
       }
       // The fifth argument is the frozen critical receipt; the sixth belongs
@@ -430,6 +438,8 @@
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -440,10 +450,9 @@
             target: target.id,
           });
         } else if (
-          this.damage(
-            target,
+          this.developerCompanionDamage(
+            u, 'Basic attack', target,
             this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
-            u.id,
           )
         ) {
           this.event('melee', {
@@ -544,6 +553,8 @@
             petFamily: u.petFamily,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           });
+          if (this.s.mode === 'developer')
+            this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
           this.event('projectileLaunch', {
             actor: 'companion',
             role: 'pet',
@@ -554,10 +565,9 @@
             target: target.id,
           });
         } else if (
-          this.damage(
-            target,
+          this.developerCompanionDamage(
+            u, 'Basic attack', target,
             this.petCriticalConsequence(criticalReceipt, this.companionAttackDamage(u), 'damage'),
-            u.id,
           )
         ) {
           this.event('melee', {

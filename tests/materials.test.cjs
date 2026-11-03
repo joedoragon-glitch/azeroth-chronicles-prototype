@@ -152,6 +152,41 @@ const entry = (n) => ({
     assert(!stored.assets['terrain:ground:march'], 'obsolete March palette is not published');
     assert(!stored.assets['terrain:ground:highlands'], 'superseded Highlands texture is not reapproved');
     assert(
+      !stored.assets['terrain:ground:vale'],
+      'reconstructed Greenwood uses procedural ground',
+    );
+    assert(
+      !stored.assets['terrain:ground:frontier'] &&
+        !require('../assets/materials/manifest.json').materials['terrain:ground:frontier'],
+      'reconstructed Frontier soil is fully procedural',
+    );
+    assert(
+      stored.history['terrain:ground:frontier'].some(
+        (r) =>
+          r.revision === '75b4324a6eab58666e1150da6e88e9ced01eecddf2f2beac3f27aaab144ee776' && r.review?.status === 'approved',
+      ),
+      'approved T004 survives intact in reversible history',
+    );
+    assert(
+      !require('../assets/materials/manifest.json').materials['terrain:ground:vale'],
+      'retired Greenwood texture is not loaded',
+    );
+    assert(
+      stored.history['terrain:ground:vale'].some(
+        (r) =>
+          r.revision === 'b8bbf9f365d240dad6bb42ac87b2e3fdc96b639fd0366fcfe8b87bf6f5166556' &&
+          r.review?.status === 'approved',
+      ),
+      'approved T001 raster remains in rollback history',
+    );
+    for (const key of [
+      'terrain:ground:crown',
+      'terrain:road:vale',
+      'terrain:road:highlands',
+    ])
+      assert(stored.assets[key], 'unreviewed material stays active: ' + key);
+
+    assert(
       stored.history['terrain:ground:highlands'].some((r) => r.review?.status === 'approved'),
       'the earlier Highlands texture and its review remain historically available',
     );
@@ -204,6 +239,15 @@ const entry = (n) => ({
     const { core } = require(path.join(checkout, 'scripts/site-assets.cjs'));
     const materialFile = 'assets/materials/' + record.output.hash + '.png';
     assert(core.includes(materialFile), 'active material is enumerated for deployment/offline');
+    // Mirror the build worker's per-file fingerprint contract in this isolated
+    // material fixture. The legacy test omitted this newer required template
+    // variable and consequently failed before exercising offline material safety.
+    const materialBytes = fs.readFileSync(path.join(checkout, materialFile));
+    const fingerprint = require('node:crypto')
+      .createHash('sha1')
+      .update('blob ' + materialBytes.length + '\0')
+      .update(materialBytes)
+      .digest('hex');
     const worker = fs
       .readFileSync(path.join(root, 'templates/service-worker.js'), 'utf8')
       .replace(
@@ -212,6 +256,7 @@ const entry = (n) => ({
       )
       .replace('{{CACHE_VERSION}}', '"azeroth-app-material-fixture"')
       .replace('{{APP_FILES}}', JSON.stringify(core.map((f) => './' + f)))
+      .replace('{{APP_FINGERPRINTS}}', JSON.stringify({ ['./' + materialFile]: fingerprint }))
       .replace('{{LEGACY_FILES}}', '[]');
     const offline = (missing) => {
       const handlers = {},

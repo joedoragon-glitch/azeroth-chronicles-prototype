@@ -43,6 +43,17 @@ function inspect(b, ctx = {}) {
       errors.push('Development state latest verified published version missing or stale');
     }
     const currentDev = version.match(/\.dev\.(\d+)$/)[1];
+    const currentLine = stateLines.find(line => line.startsWith('**Current code/build version:**')) || '';
+    // Publication and an unmerged/draft label in the same release ledger
+    // cannot both be true, even when the version marker itself is correct.
+    if (/\b(?:unmerged|unpublished|draft)\b/i.test(currentLine)) {
+      errors.push('Development state current published build still marked draft or unmerged');
+    }
+    const playableLine = stateLines.find(line => /^\*\*Latest verified playable update\b/i.test(line));
+    const playableDev = playableLine?.match(/\bdev\.(\d+)\b/i)?.[1];
+    if (playableLine && playableDev !== currentDev) {
+      errors.push('Development state latest playable release is stale');
+    }
     for (const label of ['Source', 'Focused automation', 'GitHub Pages publication']) {
       const row = stateLines.find(line => line.startsWith('| ' + label + ' |'));
       const statusCell = row?.split('|')[2] || '';

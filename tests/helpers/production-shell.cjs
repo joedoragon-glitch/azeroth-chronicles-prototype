@@ -97,6 +97,8 @@ function shell(language, heroClass = 'paladin', options = {}) {
       nextFrame = fn;
     },
     setTimeout() {},
+    clearTimeout() {},
+    setInterval() {},
     Blob,
     URL: { createObjectURL: () => '', revokeObjectURL() {} },
     confirm: () => true,

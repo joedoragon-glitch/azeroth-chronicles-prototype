@@ -65,7 +65,9 @@
           };
         };
         if (scene.started === false || scene.situation === 'title') return special('title');
-        if (scene.gameOver || scene.situation === 'game-over') return special('defeat');
+        if (scene.gameOver || scene.situation === 'game-over' ||
+            (scene.succession && this.ctx && this.ctx.currentTime < (this.defeatUntil || 0)))
+          return special('defeat');
         if (this.ctx && this.ctx.currentTime < this.finaleUntil && scene.peace)
           return special('finale');
         const boss = director.bosses[scene.boss?.family];
@@ -84,15 +86,44 @@
             ],
           };
         }
+        // The owner's original synthesized Greenwood melody belongs inside
+        // the current Millhaven civic footprint, not on the orchard roads.
+        // A null recording request deliberately hands music back to the
+        // existing live synthesizer; no synthesized MP3 or new score is made.
+        // Nearby combat and its short release tail retain priority.
+        const nearby = scene.nearbyEngaged ?? scene.engaged ?? 0;
+        const fighting = nearby > 0 ||
+          (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
+        if (scene.millhavenTown && scene.zone === 'vale' &&
+          scene.interior === 'outdoors' && !scene.peace &&
+          !scene.estateApproach && !fighting) return null;
         const p =
           director.places[scene.zone] ||
           director.places[scene.region] ||
           director.places[director.fallbackPlace];
         let base = scene.peace && p.peace ? p.peace : p.base;
         if (!scene.peace && scene.interior === 'outdoors') {
-          if (scene.settlement && p.settlement) base = p.settlement;
-          else if (scene.night && p.night) base = p.night;
+          if (scene.zone === 'vale') {
+            // The roads and fields beyond Millhaven use the recorded
+            // Greenwood exploration track. Within the expanded town,
+            // productionCue returned control to the original synthesizer.
+            // The former town recording belongs to the winter-retreat approach.
+            // Real nearby fighting (and its brief release tail) takes priority.
+            const nearbyEngaged = scene.nearbyEngaged ?? scene.engaged ?? 0;
+            const fighting = nearbyEngaged > 0 ||
+              (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
+            if (scene.estateApproach && !fighting && p.settlement) base = p.settlement;
+            else if (scene.night && !scene.settlement && p.night) base = p.night;
+          } else {
+            if (scene.settlement && p.settlement) base = p.settlement;
+            else if (scene.night && p.night) base = p.night;
+          }
         }
+        const authoredGain = scene.zone === 'vale'
+          ? base === p.settlement ? (p.settlementGain ?? 0.62)
+            : base === p.night ? (p.nightGain ?? 0.58) : (p.gain ?? 0.74)
+          : scene.night ? (p.nightGain ?? 0.58)
+            : scene.settlement ? (p.settlementGain ?? 0.62) : (p.gain ?? 0.74);
         return {
           id: base,
           bpm: tempos[base],
@@ -100,11 +131,7 @@
           stems: [
             {
               id: base,
-              gain: scene.night
-                ? (p.nightGain ?? 0.58)
-                : scene.settlement
-                  ? (p.settlementGain ?? 0.62)
-                  : (p.gain ?? 0.74),
+              gain: authoredGain,
             },
             ...(p.action && !scene.peace ? [{ id: p.action, gain: 0 }] : []),
           ],
@@ -112,13 +139,33 @@
       }
       updateProduction(scene) {
         if (!this.production || !this.ctx || this.paused || this.ctx.state !== 'running') return;
-        const mix =
-          scene.situation === 'menu' ? 'menu' : scene.situation === 'title' ? 'title' : 'world';
+        // Do not attenuate a Succession loss to the routine 22% menu music mix.
+        // The successor picker is a narrative moment, not an ordinary settings menu.
+        const lossPlaying = (scene.gameOver || scene.succession &&
+          this.ctx.currentTime < (this.defeatUntil || 0)) && scene.started !== false;
+        // Title has its own mix. An in-game menu must not lower or restart
+        // the current score just because gameplay simulation is frozen.
+        const mix = scene.started === false || scene.situation === 'title'
+          ? 'title' : 'world';
         if (this.mixScene !== mix) this.setSceneMix(mix);
         this.updateEnvironment(scene);
         this.sceneDetails(scene);
+        // The next frame's proximity band uses the previous selection, giving
+        // a stable 200-unit exit margin without touching campaign/save data.
+        this.estateApproachActive = !!scene.estateApproach &&
+          scene.started !== false && scene.zone === 'vale' &&
+          scene.interior === 'outdoors';
+        this.millhavenTownActive = !!scene.millhavenTown &&
+          scene.started !== false && scene.zone === 'vale' &&
+          scene.interior === 'outdoors';
         const now = this.ctx.currentTime;
-        if (scene.settlement) {
+        // A title-screen snapshot is not live exploration. Clearing the
+        // settlement hold avoids carrying the saved hero's nearby refuge into
+        // the next actual gameplay scene (and selecting settlement music).
+        if (scene.started === false || scene.situation === 'title') {
+          this.settlementUntil = 0;
+          this.settlementZone = null;
+        } else if (scene.settlement) {
           this.settlementUntil = now + 4;
           this.settlementZone = scene.zone;
         }
@@ -128,8 +175,28 @@
           now < (this.settlementUntil || 0)
             ? { ...scene, settlement: scene.settlement || 'nearby-refuge' }
             : scene;
+        // Mark nearby engagement *before* selecting the score, including
+        // when the district was previously using only the synthesizer.
+        if ((scene.nearbyEngaged ?? scene.engaged ?? 0) > 0 && !scene.peace)
+          this.combatUntil = now + 2.5;
         const spec = this.productionCue(observed);
-        if (!spec) return;
+        if (!spec) {
+          if (this.productionKey !== 'synth:millhaven') {
+            this.productionKey = 'synth:millhaven';
+            this.productionRetry = null;
+            this.productionIntensity = null;
+            this.stopRecordedScore(1.2);
+            // The recorded mix retired the previous synth gain node; simply
+            // scheduling new notes on that dead node would be inaudible.
+            // A region-to-region change later in Audio.update handles itself.
+            if (this.cue?.id === 'vale') {
+              this.transitionScore(this.cue);
+              this.step = 0;
+              this.next = now + 0.06;
+            }
+          }
+          return;
+        }
         const selectionKey = JSON.stringify([
           spec.id,
           spec.stems.map((s) => s.id),
@@ -190,18 +257,32 @@
         const group = this.recordedScore;
         if (!group || group.id !== spec.id) return;
         if (spec.custom) return;
-        if (scene.engaged && !scene.peace) this.combatUntil = now + 2.5;
+        // Only nearby combat should raise the secondary action stem. Older
+        // synthetic scene fixtures without proximity still use engaged.
+        const audibleEngaged = scene.nearbyEngaged ?? scene.engaged;
+        if (audibleEngaged && !scene.peace) this.combatUntil = now + 2.5;
         const combat = !scene.peace && now < (this.combatUntil || 0);
         const intensity = scene.boss
           ? spec.stems[1]?.gain || 0
           : combat
-            ? Math.min(0.55, 0.28 + scene.engaged * 0.045)
+            ? Math.min(0.55, 0.28 + audibleEngaged * 0.045)
             : 0;
         const baseGain = spec.stems[0].gain;
-        const key = [intensity, baseGain].join(':');
+        // Action recordings are additive in structure but may carry distinct
+        // melodies. Keep the calmer theme beneath combat instead of letting
+        // two full-strength melodies compete. This changes the musical stems,
+        // not the shared player Music slider or other sound categories.
+        const hasActionStem = !scene.boss && group.voices.length > 1;
+        const actionBlend = hasActionStem ? Math.min(1, intensity / 0.55) : 0;
+        const baseTarget = baseGain * (1 - actionBlend * 0.65);
+        const key = [intensity, baseTarget].join(':');
         if (key !== this.productionIntensity) {
-          this.setStemGain(0, baseGain, 1.2);
-          if (group.voices.length > 1) this.setStemGain(1, intensity, intensity ? 0.25 : 2.2);
+          // Fade both stems in tandem: a rapid action entry and a gentler
+          // restoration on exit. Avoid a momentary full-volume overlap.
+          const restoring = hasActionStem &&
+            group.voices[0].targetGain < baseGain - 0.001 && !intensity;
+          this.setStemGain(0, baseTarget, actionBlend ? 0.5 : restoring ? 2.2 : 1.2);
+          if (group.voices.length > 1) this.setStemGain(1, intensity, intensity ? 0.5 : 2.2);
           this.productionIntensity = key;
         }
       }

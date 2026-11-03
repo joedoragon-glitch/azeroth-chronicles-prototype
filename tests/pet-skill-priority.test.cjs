@@ -8,12 +8,14 @@ function scene(family, count = 2) {
   completeFieldOpening(g);
   const z = g.zone();
   for (const key of ['props', 'npcs', 'nodes', 'buildings', 'enemies']) z[key] = [];
-  Object.assign(g.hero, { x: 1380, y: 1700 });
+  // Verified clear, walkable ground: old (1400,1700) crosses Vale LOS
+  // geometry and makes both attacks falsely unreachable in this test.
+  Object.assign(g.hero, { x: 630, y: 500 });
   g.s.mercyTime = 0;
   g.s.time = 30;
   g.s.companionCombatTraining = 2;
   g.s.normal[family] = g.s.true[family] = true;
-  const u = g.unit('pet', 1400, 1700, family);
+  const u = g.unit('pet', 650, 500, family);
   g.s.party = [u];
   const enemies = Array.from({ length: count }, (_, i) =>
     g.makeEnemy(
@@ -23,6 +25,8 @@ function scene(family, count = 2) {
   );
   z.enemies = enemies;
   g.engage(enemies[0]);
+  assert(enemies.every((enemy) => g.line(u, enemy)),
+    'skill-priority fixture requires both targets to be visible');
   return { g, u, e: enemies[0], enemies };
 }
 

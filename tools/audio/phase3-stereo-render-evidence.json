@@ -1,0 +1,862 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-31",
+  "status": "exact source head isolated 44.1-kHz/192-kbps stereo eight-track codec PASS after selective lower-horn reorchestration, explicit instrument selection and original-pilot full-score correction; source candidate critically reviewed but no ear-certified musical GO; heard UNVERIFIED, Phase4 BLOCKED",
+  "sourceHeadSha": "e013fe9b3990d96216266f7382f3603db94aaa55",
+  "workflowRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41186994520",
+  "codec": "192kbps stereo MP3",
+  "sampleRateHz": 44100,
+  "originalCatalogUnchanged": true,
+  "originalMusicCount": 83,
+  "crownFrozen": 18,
+  "registeredInGame": false,
+  "tracks": [
+    {
+      "cue": "place-vale",
+      "seconds": 31.304354,
+      "channels": 2,
+      "stereoSideRms": 0.009,
+      "foldedMonoPeak": 0.45089,
+      "decodedSamples": 1393752,
+      "expectedSamples": 1393752,
+      "loop": {
+        "start": 0.15,
+        "end": 31.4543537414966
+      },
+      "encodedBytes": 759892,
+      "sha256": "af15c10bb2fd3aa158bfd8d43ea21244f4627d815e22c1d6844c6f9e146297d6",
+      "decodedPeak": 0.45219,
+      "decodedRms": 0.08911,
+      "loopEdgeDelta": 0.00108,
+      "recordedInstrumentNotes": 98
+    },
+    {
+      "cue": "place-march",
+      "seconds": 40.975601,
+      "channels": 2,
+      "stereoSideRms": 0.00521,
+      "foldedMonoPeak": 0.48826,
+      "decodedSamples": 1820254,
+      "expectedSamples": 1820254,
+      "loop": {
+        "start": 0.15,
+        "end": 41.12560090702948
+      },
+      "encodedBytes": 992487,
+      "sha256": "25f770ffa86a2761bbf2ed9e5885839823cee18786dfe8a0c83e80c7d8684665",
+      "decodedPeak": 0.51706,
+      "decodedRms": 0.08029,
+      "loopEdgeDelta": 0.00001,
+      "recordedInstrumentNotes": 89
+    },
+    {
+      "cue": "place-highlands",
+      "seconds": 38.181814,
+      "channels": 2,
+      "stereoSideRms": 0.0064,
+      "foldedMonoPeak": 0.45714,
+      "decodedSamples": 1697048,
+      "expectedSamples": 1697048,
+      "loop": {
+        "start": 0.15,
+        "end": 38.331814058956915
+      },
+      "encodedBytes": 925404,
+      "sha256": "2512881864d4592e70d750dbc5dc12ede09db3074ae9407807157f69410397a7",
+      "decodedPeak": 0.48514,
+      "decodedRms": 0.08733,
+      "loopEdgeDelta": 0.00001,
+      "recordedInstrumentNotes": 96
+    },
+    {
+      "cue": "place-frontier",
+      "seconds": 40,
+      "channels": 2,
+      "stereoSideRms": 0.00592,
+      "foldedMonoPeak": 0.58745,
+      "decodedSamples": 1777230,
+      "expectedSamples": 1777230,
+      "loop": {
+        "start": 0.15,
+        "end": 40.15
+      },
+      "encodedBytes": 968663,
+      "sha256": "41ca99c16dd3994873d825e5b10c067b5ffe3dc267be100ab4bcd55a3d2a16db",
+      "decodedPeak": 0.63349,
+      "decodedRms": 0.08123,
+      "loopEdgeDelta": 0.00002,
+      "recordedInstrumentNotes": 104
+    },
+    {
+      "cue": "place-crypt",
+      "seconds": 34.285714,
+      "channels": 2,
+      "stereoSideRms": 0.00513,
+      "foldedMonoPeak": 0.52564,
+      "decodedSamples": 1525230,
+      "expectedSamples": 1525230,
+      "loop": {
+        "start": 0.15,
+        "end": 34.43571428571428
+      },
+      "encodedBytes": 831363,
+      "sha256": "b35987c904e03c1c808346b169a85eac4edd8dd9a8ae3795b27c33f382cea937",
+      "decodedPeak": 0.55714,
+      "decodedRms": 0.07832,
+      "loopEdgeDelta": 0.00001,
+      "recordedInstrumentNotes": 69
+    },
+    {
+      "cue": "place-archive",
+      "seconds": 44.651156,
+      "channels": 2,
+      "stereoSideRms": 0.00699,
+      "foldedMonoPeak": 0.61305,
+      "decodedSamples": 1982346,
+      "expectedSamples": 1982346,
+      "loop": {
+        "start": 0.15,
+        "end": 44.801156462585034
+      },
+      "encodedBytes": 1080258,
+      "sha256": "fab0aa683be52455e42cac2ad6e26c8f2004aee25d3ba68321e5bae6c66e59be",
+      "decodedPeak": 0.65899,
+      "decodedRms": 0.08442,
+      "loopEdgeDelta": 0.00001,
+      "recordedInstrumentNotes": 119
+    },
+    {
+      "cue": "place-mine",
+      "seconds": 35,
+      "channels": 2,
+      "stereoSideRms": 0.00649,
+      "foldedMonoPeak": 0.61839,
+      "decodedSamples": 1556730,
+      "expectedSamples": 1556730,
+      "loop": {
+        "start": 0.15,
+        "end": 35.15
+      },
+      "encodedBytes": 848918,
+      "sha256": "ce5f4f3297b01a42eb0935d2f90fd26543d5fd02355a18c62a200191e180a1da",
+      "decodedPeak": 0.62578,
+      "decodedRms": 0.0882,
+      "loopEdgeDelta": 0.00008,
+      "recordedInstrumentNotes": 85
+    },
+    {
+      "cue": "place-abyss",
+      "seconds": 40,
+      "channels": 2,
+      "stereoSideRms": 0.00907,
+      "foldedMonoPeak": 0.60497,
+      "decodedSamples": 1777230,
+      "expectedSamples": 1777230,
+      "loop": {
+        "start": 0.15,
+        "end": 40.15
+      },
+      "encodedBytes": 968663,
+      "sha256": "eaeb49da37bd0fa8448f7c709f9a5a834fdd226994bbf02d55382f7b6c5925be",
+      "decodedPeak": 0.63775,
+      "decodedRms": 0.08622,
+      "loopEdgeDelta": 0.00005,
+      "recordedInstrumentNotes": 95
+    }
+  ],
+  "sourceSampleSnapshot": {
+    "recordedCalls": 755,
+    "sampleFilesDecoded": 46,
+    "uniqueSourceSamples": 46,
+    "maxSemitonePitchShift": 6,
+    "shiftHistogram": {
+      "0": 254,
+      "1": 127,
+      "2": 244,
+      "3": 116,
+      "4": 3,
+      "5": 8,
+      "6": 3
+    },
+    "provisionalTimbreSubstitutions": {
+      "bell → glockenspiel": 2,
+      "cello → basses": 20,
+      "cello → celli": 157,
+      "strings → celli": 28,
+      "strings → violins": 31
+    },
+    "sourceFamilyCount": 2,
+    "largePitchShifts": [
+      {
+        "cue": "place-crypt",
+        "instrument": "basses",
+        "requestedMidi": 33,
+        "sampleMidi": 28,
+        "semitones": 5,
+        "notes": 4
+      },
+      {
+        "cue": "place-frontier",
+        "instrument": "basses",
+        "requestedMidi": 33,
+        "sampleMidi": 28,
+        "semitones": 5,
+        "notes": 4
+      },
+      {
+        "cue": "place-mine",
+        "instrument": "basses",
+        "requestedMidi": 34,
+        "sampleMidi": 28,
+        "semitones": 6,
+        "notes": 3
+      }
+    ],
+    "instrumentFamilies": [
+      "basses",
+      "celli",
+      "flute",
+      "glockenspiel",
+      "guitar",
+      "harp",
+      "horn",
+      "marimba",
+      "piano",
+      "violins"
+    ]
+  },
+  "fullMetrics": {
+    "schemaVersion": 3,
+    "scope": "Phase 3 eight unregistered primary base themes only",
+    "musicRegistered": 83,
+    "crownFrozen": 18,
+    "authored": [
+      [
+        "place-vale",
+        12,
+        92,
+        "Phase3 heritage opening / critically reviewed v2 body"
+      ],
+      [
+        "place-march",
+        14,
+        82,
+        "new-authored"
+      ],
+      [
+        "place-highlands",
+        14,
+        88,
+        "new-authored"
+      ],
+      [
+        "place-frontier",
+        16,
+        96,
+        "new-authored"
+      ],
+      [
+        "place-crypt",
+        12,
+        84,
+        "new-authored"
+      ],
+      [
+        "place-archive",
+        16,
+        86,
+        "Phase3 heritage opening / critically reviewed v2 body"
+      ],
+      [
+        "place-mine",
+        14,
+        96,
+        "new-authored"
+      ],
+      [
+        "place-abyss",
+        16,
+        96,
+        "new-authored"
+      ]
+    ],
+    "tracks": [
+      {
+        "cue": "place-vale",
+        "seconds": 31.304354,
+        "channels": 2,
+        "stereoSideRms": 0.009,
+        "foldedMonoPeak": 0.45089,
+        "decodedSamples": 1393752,
+        "expectedSamples": 1393752,
+        "loop": {
+          "start": 0.15,
+          "end": 31.4543537414966
+        },
+        "encodedBytes": 759892,
+        "sha256": "af15c10bb2fd3aa158bfd8d43ea21244f4627d815e22c1d6844c6f9e146297d6",
+        "decodedPeak": 0.45219,
+        "decodedRms": 0.08911,
+        "loopEdgeDelta": 0.00108,
+        "recordedInstrumentNotes": 98
+      },
+      {
+        "cue": "place-march",
+        "seconds": 40.975601,
+        "channels": 2,
+        "stereoSideRms": 0.00521,
+        "foldedMonoPeak": 0.48826,
+        "decodedSamples": 1820254,
+        "expectedSamples": 1820254,
+        "loop": {
+          "start": 0.15,
+          "end": 41.12560090702948
+        },
+        "encodedBytes": 992487,
+        "sha256": "25f770ffa86a2761bbf2ed9e5885839823cee18786dfe8a0c83e80c7d8684665",
+        "decodedPeak": 0.51706,
+        "decodedRms": 0.08029,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 89
+      },
+      {
+        "cue": "place-highlands",
+        "seconds": 38.181814,
+        "channels": 2,
+        "stereoSideRms": 0.0064,
+        "foldedMonoPeak": 0.45714,
+        "decodedSamples": 1697048,
+        "expectedSamples": 1697048,
+        "loop": {
+          "start": 0.15,
+          "end": 38.331814058956915
+        },
+        "encodedBytes": 925404,
+        "sha256": "2512881864d4592e70d750dbc5dc12ede09db3074ae9407807157f69410397a7",
+        "decodedPeak": 0.48514,
+        "decodedRms": 0.08733,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 96
+      },
+      {
+        "cue": "place-frontier",
+        "seconds": 40,
+        "channels": 2,
+        "stereoSideRms": 0.00592,
+        "foldedMonoPeak": 0.58745,
+        "decodedSamples": 1777230,
+        "expectedSamples": 1777230,
+        "loop": {
+          "start": 0.15,
+          "end": 40.15
+        },
+        "encodedBytes": 968663,
+        "sha256": "41ca99c16dd3994873d825e5b10c067b5ffe3dc267be100ab4bcd55a3d2a16db",
+        "decodedPeak": 0.63349,
+        "decodedRms": 0.08123,
+        "loopEdgeDelta": 0.00002,
+        "recordedInstrumentNotes": 104
+      },
+      {
+        "cue": "place-crypt",
+        "seconds": 34.285714,
+        "channels": 2,
+        "stereoSideRms": 0.00513,
+        "foldedMonoPeak": 0.52564,
+        "decodedSamples": 1525230,
+        "expectedSamples": 1525230,
+        "loop": {
+          "start": 0.15,
+          "end": 34.43571428571428
+        },
+        "encodedBytes": 831363,
+        "sha256": "b35987c904e03c1c808346b169a85eac4edd8dd9a8ae3795b27c33f382cea937",
+        "decodedPeak": 0.55714,
+        "decodedRms": 0.07832,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 69
+      },
+      {
+        "cue": "place-archive",
+        "seconds": 44.651156,
+        "channels": 2,
+        "stereoSideRms": 0.00699,
+        "foldedMonoPeak": 0.61305,
+        "decodedSamples": 1982346,
+        "expectedSamples": 1982346,
+        "loop": {
+          "start": 0.15,
+          "end": 44.801156462585034
+        },
+        "encodedBytes": 1080258,
+        "sha256": "fab0aa683be52455e42cac2ad6e26c8f2004aee25d3ba68321e5bae6c66e59be",
+        "decodedPeak": 0.65899,
+        "decodedRms": 0.08442,
+        "loopEdgeDelta": 0.00001,
+        "recordedInstrumentNotes": 119
+      },
+      {
+        "cue": "place-mine",
+        "seconds": 35,
+        "channels": 2,
+        "stereoSideRms": 0.00649,
+        "foldedMonoPeak": 0.61839,
+        "decodedSamples": 1556730,
+        "expectedSamples": 1556730,
+        "loop": {
+          "start": 0.15,
+          "end": 35.15
+        },
+        "encodedBytes": 848918,
+        "sha256": "ce5f4f3297b01a42eb0935d2f90fd26543d5fd02355a18c62a200191e180a1da",
+        "decodedPeak": 0.62578,
+        "decodedRms": 0.0882,
+        "loopEdgeDelta": 0.00008,
+        "recordedInstrumentNotes": 85
+      },
+      {
+        "cue": "place-abyss",
+        "seconds": 40,
+        "channels": 2,
+        "stereoSideRms": 0.00907,
+        "foldedMonoPeak": 0.60497,
+        "decodedSamples": 1777230,
+        "expectedSamples": 1777230,
+        "loop": {
+          "start": 0.15,
+          "end": 40.15
+        },
+        "encodedBytes": 968663,
+        "sha256": "eaeb49da37bd0fa8448f7c709f9a5a834fdd226994bbf02d55382f7b6c5925be",
+        "decodedPeak": 0.63775,
+        "decodedRms": 0.08622,
+        "loopEdgeDelta": 0.00005,
+        "recordedInstrumentNotes": 95
+      }
+    ],
+    "sampleRateHz": 44100,
+    "encodedBitrate": "192k-stereo-MP3",
+    "outputChannels": 2,
+    "instrumentEngine": "verified-CC0-samples-with-explicit-drums",
+    "samplerEvidence": {
+      "recordedCalls": 755,
+      "sampleFilesDecoded": 46,
+      "uniqueSourceSamples": 46,
+      "maxSemitonePitchShift": 6,
+      "shiftHistogram": {
+        "0": 254,
+        "1": 127,
+        "2": 244,
+        "3": 116,
+        "4": 3,
+        "5": 8,
+        "6": 3
+      },
+      "provisionalTimbreSubstitutions": {
+        "bell → glockenspiel": 2,
+        "cello → basses": 20,
+        "cello → celli": 157,
+        "strings → celli": 28,
+        "strings → violins": 31
+      },
+      "sourceFamilyCount": 2,
+      "largePitchShifts": [
+        {
+          "cue": "place-crypt",
+          "instrument": "basses",
+          "requestedMidi": 33,
+          "sampleMidi": 28,
+          "semitones": 5,
+          "notes": 4
+        },
+        {
+          "cue": "place-frontier",
+          "instrument": "basses",
+          "requestedMidi": 33,
+          "sampleMidi": 28,
+          "semitones": 5,
+          "notes": 4
+        },
+        {
+          "cue": "place-mine",
+          "instrument": "basses",
+          "requestedMidi": 34,
+          "sampleMidi": 28,
+          "semitones": 6,
+          "notes": 3
+        }
+      ],
+      "instrumentFamilies": [
+        "basses",
+        "celli",
+        "flute",
+        "glockenspiel",
+        "guitar",
+        "harp",
+        "horn",
+        "marimba",
+        "piano",
+        "violins"
+      ]
+    },
+    "existingCatalogBytes": 25654373,
+    "replacementProjectionBytes": 30937053,
+    "encodedCatalogLimitBytes": 268435456,
+    "headroomAfterEightOnlyBytes": 237498403,
+    "limitations": "Real CC0 sources are technically pinned, not perceptually reviewed; marimba-for-dulcimer and glockenspiel-for-bell remain provisional. Not Phase 4 variants or integrated music QA. No actual hearing, warning masking, audible timbre acceptance, in-game mixing or device verification."
+  },
+  "acousticDesign": [
+    {
+      "id": "place-march",
+      "profile": {
+        "space": "open wetland with wooden moorings and breathable reed-space reflections",
+        "earlyReflections": [
+          [
+            0.061,
+            0.046
+          ],
+          [
+            0.133,
+            0.024
+          ],
+          [
+            0.273,
+            0.011
+          ]
+        ],
+        "highpassHz": 48,
+        "lowpassHz": 9950,
+        "targetRms": 0.083,
+        "stageWidth": 0.82,
+        "crossfeed": 0.013
+      }
+    },
+    {
+      "id": "place-highlands",
+      "profile": {
+        "space": "open stone ridge with dry working-horn clarity",
+        "earlyReflections": [
+          [
+            0.036,
+            0.032
+          ],
+          [
+            0.093,
+            0.019
+          ],
+          [
+            0.219,
+            0.008
+          ]
+        ],
+        "highpassHz": 56,
+        "lowpassHz": 12400,
+        "targetRms": 0.09,
+        "stageWidth": 0.9,
+        "crossfeed": 0.011
+      }
+    },
+    {
+      "id": "place-frontier",
+      "profile": {
+        "space": "ashened open recovery ground, warm distant enclosure",
+        "earlyReflections": [
+          [
+            0.079,
+            0.054
+          ],
+          [
+            0.166,
+            0.029
+          ],
+          [
+            0.337,
+            0.015
+          ]
+        ],
+        "highpassHz": 43,
+        "lowpassHz": 10600,
+        "targetRms": 0.084,
+        "stageWidth": 1,
+        "crossfeed": 0.017
+      }
+    },
+    {
+      "id": "place-crypt",
+      "profile": {
+        "space": "unfinished cold estate with small stone-work reflections",
+        "earlyReflections": [
+          [
+            0.106,
+            0.043
+          ],
+          [
+            0.217,
+            0.032
+          ],
+          [
+            0.461,
+            0.014
+          ]
+        ],
+        "highpassHz": 47,
+        "lowpassHz": 9050,
+        "targetRms": 0.081,
+        "stageWidth": 0.83,
+        "crossfeed": 0.012
+      }
+    },
+    {
+      "id": "place-mine",
+      "profile": {
+        "space": "deep gallery with discrete chisel returns, not a blanket cave wash",
+        "earlyReflections": [
+          [
+            0.087,
+            0.065
+          ],
+          [
+            0.228,
+            0.039
+          ],
+          [
+            0.493,
+            0.016
+          ]
+        ],
+        "highpassHz": 39,
+        "lowpassHz": 10300,
+        "targetRms": 0.091,
+        "stageWidth": 0.88,
+        "crossfeed": 0.018
+      }
+    },
+    {
+      "id": "place-abyss",
+      "profile": {
+        "space": "lofty dragon-flight platform with high open-air reflections",
+        "earlyReflections": [
+          [
+            0.069,
+            0.052
+          ],
+          [
+            0.189,
+            0.035
+          ],
+          [
+            0.383,
+            0.016
+          ]
+        ],
+        "highpassHz": 42,
+        "lowpassHz": 11700,
+        "targetRms": 0.089,
+        "stageWidth": 1.08,
+        "crossfeed": 0.015
+      }
+    }
+  ],
+  "acceptance": {
+    "motifFirstTwoBars": "SOURCE-TESTED 8/8: pitches and beat onsets against historical score; no extended-form quality claim",
+    "recordedSourceProvenance": "SOURCE-TESTED 55 files, 2 CC0 origin families; 46 files used in eight preview renders",
+    "technicalEncodeDecode": "PASS exact score-producing source e013fe9b3990d96216266f7382f3603db94aaa55",
+    "technicalIsolation": "PASS",
+    "musicalComposition": "REVISED CANDIDATE / NO SOURCE CREATIVE GO WITHOUT EAR COMPARISON",
+    "heardQuality": "UNVERIFIED",
+    "phase4": "BLOCKED",
+    "merge": "NOT MERGED",
+    "deploy": "NOT DEPLOYED",
+    "deviceVerified": "NO"
+  },
+  "audibleRisks": [
+    "No genuine internal/owner headphone A/B listening or playback-fatigue evaluation has occurred; source design and MP3 decode alone are not an artistic acceptance.",
+    "11 recorded low-bass events shift 5–6 semitones from sparse sources (Crypt 4, Frontier 4, Mine 3); no upper horn now has a >=5-semitone source transposition.",
+    "Vale/Archive pilot material remains subject to the same final by-ear and mix qualification as all six new scenes; Archive Phase3 first-bar accompaniment correction cannot be called heard quality.",
+    "Recorded CC0 sample source includes 96-kbit/s mono upstream clips; final 192-kbit/s stereo encoding does not restore lost source fidelity.",
+    "Distinct recorded timbres/score registers and acoustic profiles need real comparison for emotional character, instrumentation balance and fatigue.",
+    "Integrated gameplay warnings/action stem masking, PWA offline audio, iOS/Chromebook and real-device acceptance remain future gated work.",
+    "The older stacked PR still has unrelated main merge conflict and sprite-scope test mismatch; isolated studio CI is not whole-PR green."
+  ],
+  "expressionDesign": [
+    {
+      "id": "place-march",
+      "profile": {
+        "leadGate": 0.88,
+        "leadAttackMs": 14,
+        "textureJitterMs": 7
+      }
+    },
+    {
+      "id": "place-highlands",
+      "profile": {
+        "leadGate": 0.85,
+        "leadAttackMs": 75,
+        "textureJitterMs": 5
+      }
+    },
+    {
+      "id": "place-frontier",
+      "profile": {
+        "leadGate": 0.96,
+        "leadAttackMs": 102,
+        "textureJitterMs": 9
+      }
+    },
+    {
+      "id": "place-crypt",
+      "profile": {
+        "leadGate": 0.94,
+        "leadAttackMs": 118,
+        "textureJitterMs": 8
+      }
+    },
+    {
+      "id": "place-mine",
+      "profile": {
+        "leadGate": 0.78,
+        "leadAttackMs": 54,
+        "textureJitterMs": 4
+      }
+    },
+    {
+      "id": "place-abyss",
+      "profile": {
+        "leadGate": 0.92,
+        "leadAttackMs": 92,
+        "textureJitterMs": 5
+      }
+    }
+  ],
+  "authoredOrchestration": [
+    {
+      "cue": "place-vale",
+      "revision": "Twelve bars are reviewed as arrival, porch conversation, orchard lane, uneasy patrol and a sparse home return. The theme has clear recurring question/answer cells and dominant-to-tonic loop recovery; preserve the existing v2 body unless an actual aural comparison reveals fatigue or displaced emphasis. Opening notes are Phase 3-corrected. This is a source-level retain decision, not a final pilot exemption.",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": null
+    },
+    {
+      "cue": "place-march",
+      "revision": "Scene-specific scored arrangement",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "glockenspiel",
+        "harp",
+        "piano",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-highlands",
+      "revision": "First two heritage bars stay at the original pitch. Later working-horn calls intentionally occupy a warmer lower octave; recorded marimba represents the dry mallet/labor pulse instead of pretending to be a dulcimer.",
+      "hornRegisterByBar": [
+        0,
+        0,
+        -12,
+        -12,
+        0,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        -12,
+        0
+      ],
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "harp",
+        "horn",
+        "marimba",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-frontier",
+      "revision": "Scene-specific scored arrangement",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "guitar",
+        "harp",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-crypt",
+      "revision": "Scene-specific scored arrangement",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "glockenspiel",
+        "harp",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-archive",
+      "revision": "Sixteen bars contrast fragile scholarship, hurried salvage, missing records and incomplete rescue. Phase 3's F-sharp heritage note previously overlapped the old F-natural piano arpeggio in the opening Dorian accompaniment. Replace ONLY that first-bar busy figure with its established sparse D-pedal breath figure, letting the original D–F-sharp–A opening resolve without an unintentional F/F-sharp collision. Later borrowed chromatic responses remain intentional uncertainty, pending real listening.",
+      "hornRegisterByBar": null,
+      "explicitSampledInstrumentRoles": null
+    },
+    {
+      "cue": "place-mine",
+      "revision": "Two-bar stone-worker reply stays untouched. Lower horn phrases and softened wooden mallet strikes support heavy craft without exaggerated upper-brass repitching.",
+      "hornRegisterByBar": [
+        0,
+        0,
+        -12,
+        -12,
+        0,
+        0,
+        -12,
+        -12,
+        -12,
+        0,
+        -12,
+        -12,
+        -12,
+        0
+      ],
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "glockenspiel",
+        "horn",
+        "marimba",
+        "strings"
+      ]
+    },
+    {
+      "cue": "place-abyss",
+      "revision": "First two dragon-flight heritage bars stay at original pitch. Later proud horn replies use its more authentic middle register, letting the written flute/strings provide aerial height; harp replaces unrelated dulcimer color.",
+      "hornRegisterByBar": [
+        0,
+        0,
+        -12,
+        -12,
+        0,
+        0,
+        -12,
+        -12,
+        -12,
+        -12,
+        0,
+        -12,
+        0,
+        -12,
+        -12,
+        0
+      ],
+      "explicitSampledInstrumentRoles": [
+        "cello",
+        "flute",
+        "harp",
+        "horn",
+        "strings"
+      ]
+    }
+  ]
+}

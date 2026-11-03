@@ -338,11 +338,27 @@
       ctx.lineTo(x, y + size);
       ctx.moveTo(x - size * 0.5, y - size * 0.5);
       ctx.lineTo(x + size * 0.5, y + size * 0.5);
-    } else if (['fracture', 'sunder'].includes(motif)) {
+    } else if (motif === 'fracture') {
+      // Jagged break: greater incoming damage.
       ctx.moveTo(x - size * 0.6, y - size);
       ctx.lineTo(x + 1, y - 2);
       ctx.lineTo(x - 3, y + 2);
       ctx.lineTo(x + size * 0.6, y + size);
+    } else if (motif === 'sunder') {
+      // Three descending bars: reduced outgoing damage.
+      ctx.moveTo(x - size, y - size * 0.7);
+      ctx.lineTo(x + size, y - size * 0.7);
+      ctx.moveTo(x - size * 0.7, y);
+      ctx.lineTo(x + size * 0.7, y);
+      ctx.moveTo(x - size * 0.35, y + size * 0.7);
+      ctx.lineTo(x + size * 0.35, y + size * 0.7);
+    } else if (motif === 'wither') {
+      // Broken leaf and stem: sustained harm / healing suppression.
+      ctx.moveTo(x, y + size);
+      ctx.quadraticCurveTo(x - size * 1.2, y, x - size * 0.4, y - size);
+      ctx.quadraticCurveTo(x + size, y - size * 0.6, x, y + size);
+      ctx.moveTo(x - size * 0.6, y + size);
+      ctx.lineTo(x + size * 0.6, y - size);
     } else if (motif === 'interrupt' || motif === 'silence') {
       ctx.arc(x, y, size, 0.3, 2.8);
       ctx.moveTo(x - size, y - size);
@@ -1148,10 +1164,12 @@
       const p = screen(e);
       if (p.x < -35 || p.x > width + 35 || p.y < -70 || p.y > height + 35) continue;
       const marks = [];
-      // Control effects must not be hidden behind older debuff glyphs.
-      if (game.mageSilenceActive(e)) marks.push(['silence', palettes.arcane[0]]);
+      // Silence and Slow stay in the first two rows under overflow.
+      if (game.mageSilenceActive(e) || game.rogueEnemySilenced(e))
+        marks.push(['silence', palettes.arcane[0]]);
+      if (e.slow > 0) marks.push(['ice', palettes.frost[0], e.slowStacks || 1]);
       if ((e.tauntUntil || 0) > now) marks.push(['judgment', palettes.holy[0]]);
-      if (e.slow > 0) marks.push(['ice', palettes.frost[0]]);
+      if (game.rogueEnemyWithered(e)) marks.push(['wither', palettes.jingle[0]]);
       if ((e.fractureUntil || 0) > now) marks.push(['fracture', palettes.arcane[0]]);
       if ((e.weakenUntil || 0) > now) marks.push(['sunder', palettes.holy[0]]);
       if (!marks.length) continue;
@@ -1170,7 +1188,7 @@
     for (const { p, marks } of chosen) {
       const visible = marks.length > 3 ? 2 : marks.length;
       for (let i = 0; i < visible; i++) {
-        const [motif, color] = marks[i],
+        const [motif, color, stacks] = marks[i],
           x = p.x + 25,
           y = p.y - 17 + i * 13;
         ctx.strokeStyle = '#17242b';
@@ -1179,6 +1197,15 @@
         ctx.strokeStyle = color;
         ctx.lineWidth = 1.5;
         glyph(ctx, x, y, motif, 4);
+        if (motif === 'ice' && stacks > 1) {
+          ctx.fillStyle = '#17242be8';
+          ctx.fillRect(x + 6, y - 5, 21, 10);
+          ctx.fillStyle = '#e2fbff';
+          ctx.font = 'bold 9px system-ui';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('×' + Math.min(9, Math.floor(stacks)) + (stacks > 9 ? '+' : ''), x + 16, y);
+        }
       }
       if (marks.length > 3) {
         // One overflow marker replaces the third full-size glyph. No extra
@@ -1195,6 +1222,8 @@
     }
     for (const ally of [game.hero, ...game.activeLivingParty()]) {
       const p = screen(ally);
+      if (p.x < -35 || p.x > width + 35 || p.y < -70 || p.y > height + 35)
+        continue;
       if ((ally.wardUntil || 0) > now) {
         ctx.strokeStyle = palettes.holy[0];
         glyph(ctx, p.x + 22, p.y - 24, 'shield', 6);
@@ -1206,6 +1235,24 @@
       if (game.mageSilenceActive(ally)) {
         ctx.strokeStyle = palettes.arcane[0];
         glyph(ctx, p.x - 22, p.y - 20, 'silence', 5);
+      }
+      if (ally.slow > 0) {
+        ctx.strokeStyle = '#17242b';
+        ctx.lineWidth = 3.2;
+        glyph(ctx, p.x - 22, p.y - 7, 'ice', 5);
+        ctx.strokeStyle = palettes.frost[0];
+        ctx.lineWidth = 1.7;
+        glyph(ctx, p.x - 22, p.y - 7, 'ice', 5);
+        const stacks = ally.slowStacks || 1;
+        if (stacks > 1) {
+          ctx.fillStyle = '#17242be8';
+          ctx.fillRect(p.x - 13, p.y - 12, 18, 10);
+          ctx.fillStyle = '#e2fbff';
+          ctx.font = 'bold 9px system-ui';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('×' + Math.min(9, Math.floor(stacks)), p.x - 4, p.y - 7);
+        }
       }
     }
     ctx.restore();

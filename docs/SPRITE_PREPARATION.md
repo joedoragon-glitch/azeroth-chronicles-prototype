@@ -1,3 +1,5 @@
+> **31 October 2026 inventory/title reconciliation:** The maintained [sprite prompt catalog](GRAPHICS_CANON_SPRITE_PROMPTS.md) now lists 297 stable decisions (281 potential image-generation prompts, 16 procedural) including playable Rogue/Pícara. All 33 registered sprite identities and revisions of 34 historical identities, including unused images and original masters, remain protected. Current procedural/raster selections and later owner art decisions govern future work. Read [brand identity](BRAND_IDENTITY.md) before generating. Older quantities below are dated production records, not an active queue.
+
 > **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
 
 # Sprite production preparation

@@ -1,0 +1,87 @@
+name: Phase 4 isolated recorded-source studio (draft, NO deploy)
+on:
+  push:
+    branches:
+      - audio/phase4-contextual-arrangements-20261031
+    paths:
+      - ".github/workflows/audio-phase4-studio.yml"
+      - "tools/audio/**"
+      - "tests/audio-phase4*.test.cjs"
+      - "tests/audio-phase4*.test.py"
+      - "tests/audio-score-quality-controls.test.py"
+      - "docs/AUDIO_*.md"
+  pull_request:
+    branches:
+      - audio/phase3-primary-themes-20261031
+    paths:
+      - "tools/audio/**"
+      - "tests/audio-phase4*.test.cjs"
+      - "tests/audio-phase4*.test.py"
+      - "tests/audio-score-quality-controls.test.py"
+      - "docs/AUDIO_*.md"
+      - ".github/workflows/audio-phase4-studio.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  phase4-source-and-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout exact draft source
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact isolated encoder and sampler dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --quiet numpy==2.2.6 scipy==1.16.1 imageio-ffmpeg==0.6.0
+          ffmpeg -version | head -n 2
+      - name: Validate authored score, sample provenance, Crown and Phase 3
+        run: |
+          node tests/audio-phase3-sample-bank.test.cjs
+          node tests/audio-phase3-quality-review.test.cjs
+          node tests/audio-phase4-arrangements.test.cjs
+          python tests/audio-score-quality-controls.test.py
+          python tests/audio-phase4-quality-review.test.py
+          python tests/audio-phase3-sampler.test.py
+      - name: Encode and decode 38 Phase 4 candidates outside the repo
+        run: python tools/audio/phase4-compose.py --render "$RUNNER_TEMP/sibdlp-phase4"
+      - name: Verify exact recordings, eight overlays and budget
+        shell: bash
+        run: |
+          python - "$RUNNER_TEMP/sibdlp-phase4/phase4-metrics.json" <<'PY'
+          import json, pathlib, sys
+          r = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          assert len(r["tracks"]) == 38
+          assert len({t["cue"] for t in r["tracks"]}) == 38
+          assert r["musicRegistered"] == 83 and r["crownFrozen"] == 18
+          assert r["sampleRateHz"] == 44100 and r["bitrate"] == "192k-stereo-MP3"
+          assert r["recordedSourceProvenance"]["recordedCalls"] >= 380
+          assert r["recordedSourceProvenance"]["sourceFamilyCount"] == 2
+          assert len(r["actionOverlayChecks"]) == 8
+          assert r["phase4OnlyReplacementProjectionBytes"] < 256 * 1024 * 1024
+          for t in r["tracks"]:
+              assert t["channels"] == 2 and t["decodedPeak"] < .98, t["cue"]
+              assert .004 < t["decodedRms"] < .5, t["cue"]
+              assert t["loopEdgeDelta"] < .005, t["cue"]
+              assert t["stereoSideRms"] > .0008 and t["foldedMonoPeak"] < .98, t["cue"]
+              assert t["recordedInstrumentNotes"] >= 10, t["cue"]
+              assert t["encodedBytes"] < 16 * 1024 * 1024, t["cue"]
+          assert r["heardListeningStatus"].startswith("UNVERIFIED")
+          print("PASS: 38 recorded-source encodes and eight additive checks")
+          print("NOT: audition, integrated catalog, acceptance or gameplay QA")
+          PY
+          python tools/audio/score-quality-controls.py "$RUNNER_TEMP/sibdlp-phase4/phase4-metrics.json" --expected-count 38 --layer-count 8 --expected-source tools/audio/phase4-arrangements.json
+      - name: Preserve metrics without publishing music
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase4-isolated-studio-metrics
+          path: ${{ runner.temp }}/sibdlp-phase4/phase4-metrics.json
+          if-no-files-found: ignore

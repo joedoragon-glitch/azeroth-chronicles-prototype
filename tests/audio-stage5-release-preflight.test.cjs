@@ -27,7 +27,8 @@ for (const asset of Object.values(manifest.assets)) {
   assert(Object.hasOwn(kinds, asset.kind));
   kinds[asset.kind]++;
 }
-assert.deepEqual(kinds, { music: 83, ambience: 14, effect: 30 });
+assert.deepEqual(kinds, { music: 83, ambience: 34, effect: 30 },
+  '14 original, 4 Stage1 and 16 Stage2–5 source-recorded environmental masters; 83 music and 30 effect recordings unchanged');
 assert.equal(manifest.schemaVersion, 1);
 assert.equal(registered.length, new Set(registered).size, 'duplicate audio package path');
 assert.equal(app.scope, './');
@@ -67,5 +68,5 @@ console.log('AUDITION BOOTSTRAP ON THIS MAIN BASELINE = ' +
   (diagnosticReady ? 'ready' : 'requires Stage 4 reconciliation') +
   (missing.length ? '; missing script tags: ' + missing.join(', ') : '') +
   (!inOrder ? '; script order incomplete' : ''));
-console.log('PWA audio budget (unchanged) = ' + limits.total +
+console.log('PWA audio package ceiling (revised; registered files validated) = ' + limits.total +
   ' bytes total, ' + limits.perFile + ' bytes per file');

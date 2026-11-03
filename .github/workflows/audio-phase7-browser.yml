@@ -1,0 +1,32 @@
+name: Phase 7 one-browser real recorded soundtrack playback (NO deploy)
+
+# Single Chromium only, no phone/device matrix and no owner listening.
+on:
+  pull_request:
+    branches: [audio/phase6-narrative-cues-20261031]
+    paths:
+      - 'assets/audio/music/**'
+      - 'assets/audio/manifest.json'
+      - 'tools/audio/phase7-integration-evidence.json'
+      - 'tests/audio-phase7-browser.test.cjs'
+      - 'src/prototype/app.js'
+      - '.github/workflows/audio-phase7-browser.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  recorded-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Install one Chromium, without a browser matrix
+        run: npx playwright install --with-deps chromium
+      - name: Exercise actual recorded MP3s and campaign music in the playable game
+        run: node tests/audio-phase7-browser.test.cjs

@@ -1,0 +1,44 @@
+# #709 targeted browser audio audit only: no broad browser matrix or Pages deploy.
+name: Environmental audio Chromium mix QA (NO deploy)
+
+on:
+  pull_request:
+    paths:
+      - 'src/prototype/audio-production.js'
+      - 'tests/audio-production.test.cjs'
+      - 'docs/AUDIO_ENVIRONMENT.md'
+      - 'tests/environment-audio-phaseA4-browser.test.cjs'
+      - '.github/workflows/environment-audio-browser-audit.yml'
+  push:
+    branches:
+      - 'audit/environment-709-evidence-*'
+    paths:
+      - 'src/prototype/audio-production.js'
+      - 'tests/audio-production.test.cjs'
+      - 'docs/AUDIO_ENVIRONMENT.md'
+      - 'tests/environment-audio-phaseA4-browser.test.cjs'
+      - '.github/workflows/environment-audio-browser-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-browser-environment:
+    name: Real Chromium WebAudio; desktop + phone emulation only
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install locked test dependencies
+        run: npm ci
+      - name: Install pinned Chromium and required system libraries
+        run: npx playwright install --with-deps chromium
+      - name: Check night ecology and recorded production selection without a browser
+        run: node tests/audio-production.test.cjs
+      - name: Run playable-game actual-MP3 environmental and soundtrack mixer scenarios
+        run: node tests/environment-audio-phaseA4-browser.test.cjs

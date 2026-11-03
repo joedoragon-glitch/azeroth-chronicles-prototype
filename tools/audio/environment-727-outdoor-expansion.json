@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "phase": "Stage 2 continued — distinct Greenwood/Marches nighttime and two conservative Crown ambience candidates; NO game registration",
+  "status": "STAGE 2 STUDIO SOURCE-AUTHORING & ENCODED SIGNAL QA COMPLETE: 6/6 full outdoor studies across both ledgers, four night/Crown frozen byte-identical outputs reproduced at #41228571725. Creative hearing, game runtime, merge/deploy DEVICE QA HOLD.",
+  "predecessorStudio": "tools/audio/environment-727-outdoor-studies.json",
+  "authority": "Issue #727 Stage1 canon briefs; AGENTS.md; docs/AUDIO_ENVIRONMENT.md",
+  "sources": [
+    {
+      "id": "field-quiet-wind",
+      "creator": "Thimras",
+      "title": "Park ambiences — open-field wind, Adelaide winter",
+      "license": "CC0 1.0",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_wind.wav",
+      "sha1": "b518ae8ad9a5e83f6a1479d3f9190d962af52673",
+      "sha256": "5c381856745b4706e7eba55eb9271a61a530e90c05df8126adb2db89ecfa6c5a",
+      "bytes": 73960096,
+      "maxBytes": 85000000,
+      "role": "Long real open air, time-of-day-neutral wind for quiet night and stone courtyard trials, different original segments rather than fabricated cricket chorus",
+      "cautions": "Recorded in Adelaide daytime/open park, not actually at night or at Crown; no claim of regional ecology or geology; wind gusts and microphone noise must be assessed.",
+      "durationSeconds": 256.803333,
+      "codec": "pcm_s24le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228031724",
+      "sourceStatus": "Independent actual bytes, SHA-1, SHA-256, codec, duration VERIFIED; human source-content auditory suitability NOT verified"
+    },
+    {
+      "id": "field-river-step",
+      "creator": "Thimras",
+      "title": "Park ambiences — river over low step with frogs/birds",
+      "license": "CC0 1.0",
+      "evidence": "https://opengameart.org/content/park-ambiences",
+      "url": "https://opengameart.org/sites/default/files/park_ambience_river.wav",
+      "sha1": "4bd89af752ae34f5d50d52a87de3416afa6e71a9",
+      "sha256": "da0c0c9b1249a83a1611cc116d5737b0864a8db9f45f1ae8dcc079d0f7c0bbbf",
+      "bytes": 99072736,
+      "maxBytes": 112000000,
+      "role": "Very low-volume separate watery presence in Marches night, not constant stream/cascade",
+      "cautions": "Identifiable water step / frogs / birds risk. Reject if species or waterfall-like rhythm noticeable; original marsh-night already contains a water detail event.",
+      "durationSeconds": 516,
+      "codec": "pcm_s16le 48000Hz stereo",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228031724",
+      "sourceStatus": "Independent actual bytes, SHA-1, SHA-256, codec, duration VERIFIED; human source-content auditory suitability NOT verified"
+    },
+    {
+      "id": "building-howling-wind",
+      "creator": "Tvabutzku1234",
+      "title": "Howling wind.ogg — wind heard in a building",
+      "license": "CC0 1.0",
+      "evidence": "https://commons.wikimedia.org/wiki/File:Howling_wind.ogg",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Howling_wind.ogg",
+      "sha1": "90958205859310a279d03cd0d77e4d467f4805d5",
+      "sha256": "cc585200603027ca808ab68ab4b381d1a828c55d58f010222f5ff687929d084d",
+      "bytes": 1112243,
+      "maxBytes": 2500000,
+      "role": "ALTERNATE Crown stone-courtyard / built enclosure ambient-air source ONLY, not a lore claim about the kingdom",
+      "cautions": "Wind howls in an unspecified building; can sound excessively haunted or like a modern structure, and is not field evidence of Crown political or volcanic infrastructure. Keep separate from more credible wind-only trial; reject if uncanny.",
+      "durationSeconds": 128.306313,
+      "codec": "vorbis mono 16000Hz",
+      "pinnedBy": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228031724",
+      "sourceStatus": "Independent actual bytes, SHA-1, SHA-256, codec, duration VERIFIED; human source-content auditory suitability NOT verified"
+    }
+  ],
+  "studies": [
+    {
+      "id": "study-vale-night-727",
+      "zone": "Greenwood Vale night",
+      "region": "vale",
+      "referenceBed": "env-woodland-night",
+      "mainSource": "field-quiet-wind",
+      "fieldExcerptStart": 9,
+      "fieldGain": 0.34,
+      "windGain": 0.26,
+      "highpassHz": 125,
+      "lowpassHz": 1750,
+      "routeGain": 0.33,
+      "events": [],
+      "description": "Actual outdoor air with long quieter rests and warmer shelter; no day birds, no added nighttime fauna; preserve independent existing sparse insects and original fallback."
+    },
+    {
+      "id": "study-march-night-727",
+      "zone": "Flooded Marches night",
+      "region": "march",
+      "referenceBed": "env-marsh-night",
+      "mainSource": "field-quiet-wind",
+      "fieldExcerptStart": 96,
+      "fieldGain": 0.3,
+      "windGain": 0.25,
+      "highpassHz": 145,
+      "lowpassHz": 1620,
+      "routeGain": 0.33,
+      "secondarySource": "field-river-step",
+      "secondaryExcerptStart": 120,
+      "secondaryGain": 0.075,
+      "secondaryHighpassHz": 170,
+      "secondaryLowpassHz": 1150,
+      "events": [],
+      "description": "Subdued nocturnal reed-air / distant shallow water, not a frog or waterfall show; existing independent water/night tone preserved."
+    },
+    {
+      "id": "study-crown-open-727",
+      "zone": "Dark Crown outdoors: open courtyard trial",
+      "region": "crown",
+      "referenceBed": "env-crown-courtyard",
+      "mainSource": "field-quiet-wind",
+      "fieldExcerptStart": 173,
+      "fieldGain": 0.32,
+      "windGain": 0.3,
+      "highpassHz": 165,
+      "lowpassHz": 1700,
+      "routeGain": 0.33,
+      "events": [],
+      "description": "Physical open air moving through sheltered civic stone road / courtyard, mostly negative space; no infernal blaze, modern industry, crowds or machinery.",
+      "codecEdgeDeclick": {
+        "windowMs": 18,
+        "edgeGain": 0.56,
+        "reason": "Pinned initial MP3 signal run #41228147556 measured decoded loop first/last sample jump 0.005662801 > 0.005 while 1s RMS delta -0.799 dB passed. Apply scene-local 18ms smooth-taper de-click; do not alter QA limits, game mixer, reference, or the accepted night trials. Re-encode and inspect actual MP3."
+      }
+    },
+    {
+      "id": "study-crown-enclosed-727",
+      "zone": "Dark Crown outdoors: built-wind alternative",
+      "region": "crown",
+      "referenceBed": "env-crown-courtyard",
+      "mainSource": "building-howling-wind",
+      "fieldExcerptStart": 12,
+      "fieldGain": 0.24,
+      "windGain": 0.3,
+      "highpassHz": 185,
+      "lowpassHz": 1450,
+      "routeGain": 0.33,
+      "events": [],
+      "description": "Strict A/B candidate to ask whether occupied buildings provide believable sheltered reflections; stronger risk of sounding vacant haunted/gusty, NOT an approved final candidate.",
+      "codecEdgeDeclick": {
+        "windowMs": 18,
+        "edgeGain": 0.56,
+        "reason": "Pinned initial MP3 signal run #41228147556 measured decoded loop first/last sample jump 0.006608364 > 0.005 while 1s RMS delta -0.744 dB passed. Apply scene-local 18ms smooth-taper de-click; do not alter QA limits, game mixer, reference, or the accepted night trials. Re-encode and inspect actual MP3."
+      }
+    }
+  ],
+  "constraints": {
+    "seconds": 72,
+    "sampleRate": 32000,
+    "codec": "mono MP3 128kbps with 0.15s guard",
+    "license": "Original source page CC0 / actual source fingerprint must match ledger",
+    "declaredCreativePolicy": "Night stems are time-of-day-neutral *air*, not falsely labelled night recordings. Crown trials are comparative, not invented civic labor audio.",
+    "cacheRisk": "Six 72s 32kHz mono float32 candidate buffers across day+night/Crown A/B total 55,296,000 bytes (~52.73MiB) if cached simultaneously, in previous 84.80MiB/96MiB default system; none registered, Stage6 genuine memory QA mandatory before choosing.",
+    "registration": "NO",
+    "technicalPass": "PASS actual source SHA1/SHA256/byte/codec, 4 encoded MP3 decoder/seam/peak/spectrum gates at #41228315630 and EXACT reproduced frozen original output SHA256/bytes at #41228571725 (tested script+source head bebf02c68a5d0e23c7b65174fe78ce2b97e08c66).",
+    "artisticHearing": "HOLD; nighttime source is daytime open-field wind and may require alternatives, Crown built-wind likely too howling, river source may contain frogs/birds; no direct listening",
+    "merged": "NO",
+    "deployed": "NO",
+    "deviceVerified": "NO",
+    "initialCandidateRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228147556"
+  },
+  "decisions": [
+    {
+      "scene": "Greenwood night",
+      "disposition": "COMPARE recorded physical air to original env-woodland-night, retain sparse ambient insects independent; no new permanent crickets"
+    },
+    {
+      "scene": "Marches night",
+      "disposition": "COMPARE distinct subdued air and water to original env-marsh-night; source fauna remains HIGH RISK; existing water/night detail intact"
+    },
+    {
+      "scene": "Dark Crown outdoors",
+      "disposition": "A/B field-wind court vs enclosed-building-wind court and original env-crown-courtyard. Explicit RETAIN original if neither sounds like lived-in realm; source license/signal alone cannot override."
+    }
+  ],
+  "encodedPreviewEvidence": {
+    "productionHead": "f7fd0676e53516e44a8fb7cf834872aa97d0b0e5",
+    "signalRun": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228315630",
+    "artifactId": 13052218548,
+    "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228315630/artifacts/13052218548",
+    "activeLoopSeconds": 72,
+    "codec": "32kHz 128kbps mono MP3 with 0.15s guards",
+    "encodedTotalBytes": 4633524,
+    "decodedIfAllFourResidentBytes": 36864000,
+    "qualityResult": "SOURCE SHA+BYTES+CODEC+DECODE+LUFS+TRUEPEAK+PEAK+SEAM+SPECTRUM+REPETITION PASS; human hearing and game playback NOT DONE",
+    "outputs": [
+      {
+        "id": "study-vale-night-727",
+        "sha256": "5e120622b07ecf8c9d20e525f19d1347d31c2375e9a4cd85eca14c7e43882c8a",
+        "bytes": 1158381,
+        "lufs": -35.11,
+        "truePeakDbTP": -16.55,
+        "loopEdgeDelta": 0.0011615827679634094,
+        "firstVsLast1SecDb": -0.138,
+        "realFieldShare": 0.631004366812227,
+        "technicalSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "study-march-night-727",
+        "sha256": "2302494e225089870d7cb545524e08eaff4d5a831302ad709aeaec9587c17968",
+        "bytes": 1158381,
+        "lufs": -35.79,
+        "truePeakDbTP": -16.11,
+        "loopEdgeDelta": 0.003249378118198365,
+        "firstVsLast1SecDb": -0.221,
+        "realFieldShare": 0.6047430830039525,
+        "technicalSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "study-crown-open-727",
+        "sha256": "2848c6c82e226463ea02f20c3034d520b9ea8449e0d8d4514abac39b5c95fa37",
+        "bytes": 1158381,
+        "lufs": -35.01,
+        "truePeakDbTP": -16.87,
+        "loopEdgeDelta": 0.0031571025028824806,
+        "firstVsLast1SecDb": -0.812,
+        "realFieldShare": 0.5322245322245324,
+        "technicalSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      },
+      {
+        "id": "study-crown-enclosed-727",
+        "sha256": "1a9599e51aec1baf268d30d95be70f07ae6731c39c75537e5ffbfe520af51481",
+        "bytes": 1158381,
+        "lufs": -35.1,
+        "truePeakDbTP": -19.92,
+        "loopEdgeDelta": 0.0036919789854437113,
+        "firstVsLast1SecDb": -0.787,
+        "realFieldShare": 0.39024390243902446,
+        "technicalSignal": "PASS",
+        "heard": false,
+        "gameRegistered": false
+      }
+    ],
+    "reproduction": {
+      "run": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228571725",
+      "artifactId": 13053145958,
+      "artifactUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41228571725/artifacts/13053145958",
+      "producingSha": "bebf02c68a5d0e23c7b65174fe78ce2b97e08c66",
+      "outputDigestsMatched": "4 of 4 SHA-256 and byte-for-byte verified by the strict renderer",
+      "status": "PASS; source/decoded preview only; no actual in-game playback of candidates"
+    }
+  },
+  "selectedCreativeDirection": {
+    "valeNight": "STUDIO CANDIDATE: quiet field wind plus existing separate insect detail; compare by ear vs original bed, retain original until demonstrated superior",
+    "marchNight": "STUDIO CANDIDATE: restrained wet air with distant water; source fauna/geography risk; compare vs original and independent water detail",
+    "crown": "PRELIMINARY preference for open-courtyard-air alternative over howling-through-building; BOTH HOLD, existing env-crown-courtyard remains current and may win. No source here establishes actual Crown civic activity."
+  }
+}
