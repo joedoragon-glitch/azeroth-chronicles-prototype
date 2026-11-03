@@ -162,6 +162,25 @@ existing five-megabyte import limit, with UTF-16 key/value accounting varying
 by engine. Production migration and complete real-device certification remain
 separate consent gates.
 
+## Owner decision — 3 November 2026: defer IndexedDB and revisit
+
+The project owner **accepted the DEFER recommendation** for issue #773.
+The tested external-backup, import-confirmation, backup-reminder and browser
+persistent-storage improvements in draft PR #775 may be merged when ready.
+**No production IndexedDB migration is approved.** This is a reversible
+architecture decision, not a declaration that IndexedDB will never be useful.
+
+Reopen this comparison during a **future substantive persistence stage**,
+before a packaged/native app changes save ownership, before a significant save
+growth or slot expansion, or when measured save latency/quota/data-loss issues
+make a new backend a real candidate. That stage must compare fresh device
+benchmarks and a safe, non-destructive single-authority prototype against
+the then-current browser save system, document a GO/DEFER/NO-GO recommendation
+and request separate approval for any production cutover. There is **no
+automatic migration or background job** attached to this decision. The
+responsible developer should consult [the accepted design decision](DECISIONS.md#3-november-2026--indexeddb-migration-deferred-revisit-at-future-development-stages)
+before that dependent stage rather than relying on an arbitrary date.
+
 ## 3 November 2026 — IndexedDB and storage standards references
 
 The immutable, historical v0.8.118 beta regression manifest
