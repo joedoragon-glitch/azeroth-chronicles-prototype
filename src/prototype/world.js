@@ -1730,7 +1730,9 @@
         this.s.zone = z.id;
         try {
           const find = (index) =>
-            z.props.find((p) => p.id === 'recovery-heat-crown-' + index);
+            index === 'foundry'
+              ? z.npcs.find((n) => n.id === 'foundry' && n.kind === 'dungeon')
+              : z.props.find((p) => p.id === 'recovery-heat-crown-' + index);
           const routes = [];
           for (const [id, first, last] of R.crownIndustrialLinks || []) {
             const from = find(first),
