@@ -1,6 +1,6 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **449 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 31 October 2026 · **450 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
@@ -14,7 +14,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
 - [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (23)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (127)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (128)
 - [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (21)
 - [World, geography, travel and narrative](#world-geography-travel-and-narrative) (49)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
@@ -163,6 +163,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Mage Beam Travel And Hero Projectile Audit 20261025](MAGE_BEAM_TRAVEL_AND_HERO_PROJECTILE_AUDIT_20261025.md) — *Dated record.* Examines mage beam travel and hero projectile for source or design inconsistencies, recording dated findings and limits.
 - [Mounted Roster Skills 20261020](MOUNTED_ROSTER_SKILLS_20261020.md) — *Dated record.* Reference structure or catalog for mounted roster skills, with its original assumptions and scope.
 - [Pet Skill Scheduling DEV180](PET_SKILL_SCHEDULING_DEV180.md) — *Dated record.* Describes pet skill scheduling decisions, constraints or engineering observations from its original development checkpoint.
+- [Ranger Tap Charged Distinction 20261103](RANGER_TAP_CHARGED_DISTINCTION_20261103.md) — *Dated source assessment and owner decision.* Preserves all eight skills for v0.9.2, withdraws speculative charged redesigns, and defers possible refinements until full class playthroughs.
 - [Ranger Support Feedback 20261020](RANGER_SUPPORT_FEEDBACK_20261020.md) — *Dated record.* Describes ranger support feedback decisions, constraints or engineering observations from its original development checkpoint.
 - [Skill Journal DEV159](SKILL_JOURNAL_DEV159.md) — *Dated record.* Describes skill journal decisions, constraints or engineering observations from its original development checkpoint.
 - [Skill Queue Forms DEV139](SKILL_QUEUE_FORMS_DEV139.md) — *Dated record.* Describes skill queue forms decisions, constraints or engineering observations from its original development checkpoint.

@@ -191,6 +191,14 @@ Class advancement, specialist prerequisites, input forms, ability targeting, cha
 
 ### Dated decisions and later revisions
 
+#### 3 November 2026 — skill design reassessment deferred until real class playthroughs
+
+**Current owner decision:** In preparation for **v0.9.2**, preserve existing hero skill mechanics rather than executing speculative Tap/Charged redesigns from a quick source audit. Similarity between a normal and charged skill is **not**, by itself, a design defect: the game has no universal rule that Charged must be either a superior tier or an entirely unrelated ability. Distinguish **preserve**, **refine**, and **redesign** only after considering how a class actually plays.
+
+For future versions, the owner intends to play **each class through a full campaign** and then evaluate the obstacles encountered during progression, combat, bosses and party management. Design improvements should address those experienced needs, class by class, rather than create elaborate replacements from theoretical scrutiny. This intention is **not a v0.9.2 acceptance requirement**, a scheduled implementation project or authorization to modify other classes.
+
+The [3 November Ranger source assessment](RANGER_TAP_CHARGED_DISTINCTION_20261103.md) records differentiated Skills **1–4** and observed normal/charged role overlap in Skills **5–8**. It authorizes **no changes to any of the eight**, nor any new critical effects. Earlier Ranger charged-form candidate redesigns in the draft PR's Git history are **withdrawn**, not approved canon or a pending engineering backlog. A later gameplay-driven decision may preserve, refine or redesign any individual skill; obtain fresh owner authorization before editing mechanics.
+
 #### Player-directed input reset v0.8.82
 
 Joel's current direction supersedes historical contributor requests that forced left-hand exclusivity. Keyboard-only play remains possible; menus, HUD and skills also accept mouse and touch. Bindings are customizable and persist outside the campaign save. The phone defaults to two-thumb controls with an alternate left-hand layout. Optional touch tap-to-move defaults on; optional mouse click-to-move defaults off. Manual directional input takes over immediately, and menus/pause/focus loss cancel travel. Existing navigation and class Skill 1 rules govern pointer movement and autoattack. Squad doctrine, specialist rescue, autoattack, economy and death penalties remain in place. This is a design-attribution correction, not a legal ownership finding.
