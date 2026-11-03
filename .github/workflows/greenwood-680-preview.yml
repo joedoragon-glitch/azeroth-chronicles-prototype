@@ -30,6 +30,9 @@ jobs:
           node tests/greenwood-679-candidate.test.cjs
       - name: Prepare complete review-only site
         run: |
+          # Build in this disposable runner: source changes intentionally make
+          # the checked-in worker fingerprint stale until generation occurs.
+          node scripts/build.cjs
           node scripts/build.cjs --check
           node scripts/build.cjs --site
           printf 'Greenwood #680 DRAFT candidate; source PR head %s; not a public release.\n' "${{ github.event.pull_request.head.sha }}" > _site/GREENWOOD_REVIEW_BUILD.txt
