@@ -1668,11 +1668,66 @@
           if (n) Object.assign(n, { x: xy[0], y: xy[1] });
         }
       }
+      // Independent one-time civic scene. Never bump the established
+      // crownSceneLayout version or displace roads, services or old scenery.
+      crownCivicForecourt(z) {
+        if (z.id !== 'crown' || z.crownCivicForecourtVersion === 1) return;
+        const rest = z.npcs.find((n) => n.id === 'rest' && n.kind === 'rest');
+        if (!rest) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const approach = { roads: [...(z.roads || []), ...(z.footpaths || [])] };
+          const valid = (p, structure) => {
+            const paving = structure === 'crown-civic-tilecourt';
+            const margin = paving ? 30 : 74;
+            return (
+              p.x > 70 && p.y > 70 && p.x < 3730 && p.y < 3730 &&
+              dist(p, rest) < 240 &&
+              !this.blocked(p.x, p.y, z.id, 18, true) &&
+              this.distanceToRoad(approach, p) >= margin &&
+              !z.npcs.some((n) => dist(n, p) < (paving ? 80 : 94)) &&
+              !z.nodes.some((n) => dist(n, p) < 82) &&
+              !z.buildings.some((b) => dist(b, p) < 130) &&
+              !z.enemies.some((e) => e.hp > 0 &&
+                (dist(e.home || e, p) < 128 || dist(e, p) < 90)) &&
+              !z.props.some((other) =>
+                dist(other, p) < (other.r || 0) + (paving ? 60 : 76))
+            );
+          };
+          for (const [j, [dx, dy, structure, sceneRole]] of
+            (R.crownCivicForecourt || []).entries()) {
+            const id = 'crown-civic-forecourt-' + j;
+            if (z.props.some((p) => p.id === id)) continue;
+            let chosen = null;
+            // Small authored adjustments only; do not scatter into another
+            // district just to satisfy an object-count assertion.
+            for (const radius of [0, 32, 64]) {
+              for (let k = 0; k < (radius ? 12 : 1); k++) {
+                const theta = (k * Math.PI) / 6;
+                const p = { x: rest.x + dx + Math.cos(theta) * radius,
+                  y: rest.y + dy + Math.sin(theta) * radius };
+                if (valid(p, structure)) { chosen = p; break; }
+              }
+              if (chosen) break;
+            }
+            if (!chosen) continue;
+            z.props.push({
+              id, ...chosen, r: 0, decorative: true, structure,
+              crownCivicForecourt: true, civicSceneRole: sceneRole,
+            });
+          }
+          z.crownCivicForecourtVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
       crownSceneComposition(z) {
         const cfg = R.crownSceneLayout;
         if (z.id !== 'crown') return;
         if (z.crownSceneVersion === cfg.version) {
           this.ashRefugeDomesticLife(z);
+          this.crownCivicForecourt(z);
           return;
         }
         const oldZone = this.s.zone;
@@ -1888,6 +1943,7 @@
         // Applying household work before this composition pass finds the old
         // placeholders, then incorrectly marks them finished with no objects.
         this.ashRefugeDomesticLife(z);
+        this.crownCivicForecourt(z);
       }
       settlementLayout(z) {
         if (
