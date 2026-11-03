@@ -10,16 +10,16 @@ assert.deepEqual(origin, ['paladin', 'mage', 'ranger']);
 assert.equal(Campaign.classFoundationFor('strategist'), null);
 assert.equal(classes.strategist, undefined);
 
-// Existing four-class foundation values are identical to the originals.
-for (const [id, party, reach, role] of [
-  ['paladin', ['soldier', 'archer'], 105, 'melee'],
-  ['mage', ['soldier', 'archer'], 350, 'ranged'],
-  ['ranger', ['soldier', 'archer'], 350, 'ranged'],
-  ['rogue', [], 220, 'ranged'],
+// Live class foundations no longer carry obsolete auto-approach geometry.
+for (const [id, party, role] of [
+  ['paladin', ['soldier', 'archer'], 'melee'],
+  ['mage', ['soldier', 'archer'], 'ranged'],
+  ['ranger', ['soldier', 'archer'], 'ranged'],
+  ['rogue', [], 'ranged'],
 ]) {
   const foundation = Campaign.classFoundationFor(id);
   assert.deepEqual(foundation.startingCompanions, party);
-  assert.equal(foundation.basicAttackApproachRange, reach);
+  assert.equal(Object.hasOwn(foundation, 'basicAttackApproachRange'), false);
   assert.equal(foundation.formationRole, role);
   assert(Object.isFrozen(foundation));
   assert(Object.isFrozen(foundation.startingCompanions));
@@ -32,13 +32,11 @@ assert.doesNotThrow(() => Campaign.validate(copy(priorSave)));
 // No fifth-class script, menu button, save admission or Succession participant.
 const foundation = {
   startingCompanions: ['soldier', 'archer'],
-  basicAttackApproachRange: 240,
   formationRole: 'ranged',
 };
 for (const [id, value] of [
   ['__proto__', foundation],
   ['constructor', foundation],
-  ['fifth', { ...foundation, basicAttackApproachRange: NaN }],
   ['fifth', { ...foundation, startingCompanions: ['dragon'] }],
   ['fifth', { ...foundation, formationRole: 'wizard' }],
   ['fifth', { ...foundation, startingCompanions: null }],
@@ -93,7 +91,7 @@ assert(Campaign.classAdmissionIssues('fifth-fixture', {
 // No silent Mage/Ranger combat or undefined charged timer for a dormant id.
 const probe = new Campaign('normal', 'mage', () => 0.9);
 probe.hero.class = 'fifth-fixture'; // Diagnostic only; this invalid save is NOT accepted.
-assert.equal(probe.heroBasicAttackApproachRange(), 240);
+assert.equal(typeof probe.heroBasicAttackApproachRange, 'undefined');
 assert.equal(probe.skillCooldown(1, true), Infinity);
 const beforeCast = probe.snapshot();
 assert.equal(probe.cast(1), false);
@@ -117,7 +115,7 @@ assert.equal(Campaign.rules.movementBasicClasses.rogue, true,
   'existing Rogue movement basic behavior preserved explicitly');
 const rogue = new Campaign('normal', 'rogue', () => 0.9);
 assert.deepEqual(rogue.s.party, []);
-assert.equal(rogue.heroBasicAttackApproachRange(), 220);
+assert.equal(typeof rogue.heroBasicAttackApproachRange, 'undefined');
 assert.equal(rogue.skillCooldown(1, true), 8);
 assert.doesNotThrow(() => Campaign.validate(rogue.snapshot()));
 assert.equal(Campaign.restore(rogue.snapshot(), () => 0.9).hero.class, 'rogue');

@@ -6244,7 +6244,7 @@
   });
   // Boss telegraphs stay readable, but idle gaps are short and basic attacks only interrupt sustained special pressure occasionally.
   // Sustained loss of fighting room is distinct from idle attack recovery.
-  const companionRecall = { arrivalRadius: 100, formationRadius: 55, retreatDamageMultiplier: 0.5 };
+  const companionRecall = { arrivalRadius: 100, formationRadius: 55, retreatDamageMultiplier: 0.5, durationSeconds: 5 };
   const companionJudgment = {
     assessSeconds: 0.4,
     supportRadius: 260,
