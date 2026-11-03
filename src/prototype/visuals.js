@@ -8662,6 +8662,27 @@
             0.8,
           );
         }
+        // Shared civic/residential ceramic grammar: restrained glazes and
+        // pale mineral courses unify houses without flattening the district
+        // into one repeated fortress frontage. Stone walls remain unchanged.
+        for (const y of [-15, 10]) {
+          line([[-23, y], [-18, y]], '#c3b8b1', 1.4);
+          line([[19, y], [24, y]], '#c3b8b1', 1.4);
+        }
+        if (workshop) {
+          // A visibly serviceable craft frontage with glazed transom and
+          // sound masonry, not a royal insignia or an invented new product.
+          softRect(-22, -19, 44, 4, '#acaeb2', 1);
+          for (const x of [-17, -7, 3, 13])
+            softRect(x, -18, 7, 2.4, '#9bb9b1', 0.4);
+          softRect(-23, 12, 46, 3, '#8e8d94', 1);
+        } else {
+          // Everyday domestic glazing and a carefully maintained sill.
+          softRect(11, -14, 12, 13, '#617e86', 1);
+          line([[17, -13], [17, -2]], '#b6c0b7', 1.1);
+          line([[12, -7], [23, -7]], '#bac2ba', 1);
+          softRect(9, -1, 16, 3, '#c2b4ab', 1);
+        }
         poly(
           [
             [0, -23],
