@@ -219,7 +219,7 @@
         obstructions.push({ kind: 'wall-segment', prop: p, a: p.greenwoodWall.a, b: p.greenwoodWall.b });
       }
       if (p.decorative || !(p.r > 0) || !isFinitePoint(p)) continue;
-      if (/wall|stockade|palisade|gate|fortress|watchpost|house|tower/.test(String(p.structure || '')))
+      if (/wall|stockade|palisade|gate|fortress|watchpost|house|tower|pillar|cellar-pier/.test(String(p.structure || '')))
         obstructions.push({ kind: 'circle', prop: p, center: p, radius: p.r });
     }
     for (const p of zone.buildings || []) {
