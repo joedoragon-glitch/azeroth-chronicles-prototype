@@ -54,8 +54,8 @@
     const kind = String(p.structure || '');
     // Greenwood's authored forest deliberately stores nature in a separate
     // property, often with structure:null. These are real trees and fallen logs.
-    if (p.greenwoodAuthored === true && p.greenwoodNature === 'tree') return 'wood';
-    if (p.greenwoodAuthored === true && p.greenwoodNature === 'fallen-log') return 'wood';
+    if (p.greenwoodAuthored === true && String(p.id || '').startsWith('greenwood-nature-') && p.greenwoodNature === 'tree') return 'wood';
+    if (p.greenwoodAuthored === true && String(p.id || '').startsWith('greenwood-nature-') && p.greenwoodNature === 'fallen-log') return 'wood';
     if (kind === 'crystal' && p.sceneRole === 'art-object') return null;
     // Containers require actual authored contents. Never assume every barrel is water.
     if (['barrel', 'bucket', 'jar', 'container', 'water-container'].includes(kind))
@@ -131,6 +131,11 @@
         }));
       } else result.push({ id: 'terrain-' + i, material, kind: 'geometry', shape });
     });
+    // March's shallow drainage is explicitly water despite being walkable.
+    // Wet-grass and generic damp-colored landforms are not equivalent sources.
+    if (zoneId === 'march' && Array.isArray(rules?.wetlandDrainage))
+      result.push({ id: 'march-drainage', material: 'water', kind: 'drainage',
+        shape: rules.wetlandDrainage });
     const harbor = rules?.harbors?.[zoneId]?.water;
     if (harbor) result.push({ id: 'harbor-water', material: 'water', kind: 'geometry', shape: harbor });
     const barrier = rules?.barriers?.[regionIndex];
@@ -141,6 +146,27 @@
     return result;
   }
   function sourcePoint(hero, source, rules) {
+    if (source.kind === 'drainage') {
+      let point = null, best = Infinity;
+      const pieces = source.shape;
+      for (let i = 1; i < pieces.length; i++) {
+        const a = { x: pieces[i - 1][0], y: pieces[i - 1][1] },
+          b = { x: pieces[i][0], y: pieces[i][1] },
+          vx = b.x - a.x, vy = b.y - a.y,
+          n = vx * vx + vy * vy;
+        const t = n ? clamp(((hero.x - a.x) * vx + (hero.y - a.y) * vy) / n, 0, 1) : 0,
+          center = { x: a.x + vx * t, y: a.y + vy * t },
+          d = distance(hero, center),
+          width = pieces[i - 1][2] + (pieces[i][2] - pieces[i - 1][2]) * t;
+        const edge = d <= width ? { x: hero.x, y: hero.y } : {
+          x: center.x + (hero.x - center.x) * width / Math.max(0.001, d),
+          y: center.y + (hero.y - center.y) * width / Math.max(0.001, d),
+        };
+        const gap = distance(hero, edge);
+        if (gap < best) { point = edge; best = gap; }
+      }
+      return point;
+    }
     if (source.kind !== 'channel') return closestToShape(hero, source.shape || source.prop);
     const b = source.shape, [, , y1, y2] = b.bounds || [];
     if (![y1, y2].every(Number.isFinite) || typeof rules?.channelBanks !== 'function') return null;
@@ -158,7 +184,12 @@
   }
 
   function intersectsRectangle(a, b, rect) {
-    // Sample only authoritative indoor partitions at a 12-unit interval.
+    // Fast-reject partitions nowhere near the segment before sampling.
+    const left = rect.x1 ?? rect.bounds?.[0], right = rect.x2 ?? rect.bounds?.[1],
+      top = rect.y1 ?? rect.bounds?.[2], bottom = rect.y2 ?? rect.bounds?.[3];
+    if (![left, right, top, bottom].every(Number.isFinite) ||
+        Math.max(a.x, b.x) <= left || Math.min(a.x, b.x) >= right ||
+        Math.max(a.y, b.y) <= top || Math.min(a.y, b.y) >= bottom) return false;
     const n = Math.max(1, Math.ceil(distance(a, b) / 12));
     for (let i = 1; i < n; i++) {
       const p = { x: a.x + (b.x - a.x) * i / n, y: a.y + (b.y - a.y) * i / n };
