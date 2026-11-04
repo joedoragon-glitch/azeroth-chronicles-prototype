@@ -54,8 +54,8 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(Number.isFinite(slowdowns.records.at(-1).location.heroX));
     assert(Number.isFinite(slowdowns.records.at(-1).location.gridX));
     assert(slowdowns.records.at(-1).location.nearbyEnemyKinds);
-    assert(slowdowns.records.at(-1).previous,
-      'previous completed frame helps distinguish stalls from expensive work');
+    assert(slowdowns.records.some((incident) => incident.previous),
+      'bounded incident ledger retains prior-frame context even after emergency resets short samples');
     assert(!('campaign' in slowdowns.records.at(-1)),
       'slowdown capture is bounded context, not a copied save');
     assert(report.performance.graphicsRenderer, 'export retains renderer status');
