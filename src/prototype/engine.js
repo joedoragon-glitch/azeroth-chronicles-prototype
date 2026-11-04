@@ -3242,6 +3242,10 @@
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       this.clearEncounterUnits();
+      // A return trip to the same zone must never resume a pre-travel
+      // Strategist's unsaved third-dagger rhythm. Other classes are untouched.
+      if (zone !== previousZone && this.hero.class === 'strategist')
+        this.resetBasicCombo();
       if (zone !== this.zoneId) this.resetDungeonDefenders();
       for (const oldZone of Object.values(this.s.zones))
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
