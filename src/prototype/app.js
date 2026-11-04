@@ -5233,6 +5233,10 @@
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add the game to the home screen')]
           : []),
+        // Automatic checks own discovery; this appears only when installation is ready.
+        ...(appRegistration && appUpdateReady
+          ? [action('Install available game update', updateApp)]
+          : []),
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
