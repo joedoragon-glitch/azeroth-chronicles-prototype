@@ -40,12 +40,30 @@ assert(!/ogreBody\s*\(/.test(art), 'no repaint of stock Ogre anatomy masqueradin
 // Keep recognizable Ogre hide and paired tusks, but own eyes, jaw, crest,
 // torso/leg stance and actual clothing shapes in this hero's procedural code.
 for (const part of [
-  "const hide = '#b2a684'", "const hideFold",
-  "ctx.moveTo(-15, -43)", "ctx.moveTo(-7, -24)",
-  "ctx.moveTo(9, -23)", "ctx.moveTo(-13, -8)",
-  "ctx.moveTo(-18, -31)", "ctx.moveTo(-19, -34)",
-  "ctx.moveTo(-7, -55)",
-]) assert(art.includes(part), 'missing distinct Ogre anatomical / silhouette owner: ' + part);
+  "const hide = '#b2a684'",
+  "const tunic = '#635747', trousers = '#555044'",
+  "ctx.moveTo(13, -31)",  // separate cape behind body
+  "ctx.moveTo(-18, -7)",  // anatomically separate near trouser
+  "ctx.moveTo(0, -8)",  // far trouser, independent hem
+  "ctx.moveTo(-25, 29)",  // near boot
+  "ctx.moveTo(8, 33)",  // far boot
+  "ctx.moveTo(-20, -30)",  // closed chest tunic
+  "ctx.moveTo(-20, -29)",  // attached near shoulder/arm
+  "ctx.moveTo(11, -29)",  // far shoulder/arm
+  "ctx.moveTo(-16, -44)",  // preserved Ogre face
+  "ctx.moveTo(4, -55)",  // curved bound-hair knot
+]) assert(art.includes(part), 'missing independently authored anatomy: ' + part);
+assert(!art.includes('ctx.scale(0.88, 0.88)'), 'avoid face-only size tricks breaking joined neck silhouette');
+// Explicit editorial intent: real hair coil and continuous garment owners.
+assert(art.includes('ctx.bezierCurveTo(0, -65, 12, -65, 13, -59)'),
+  'historical tied coil must be organic hair, not a stick or flag');
+assert(!art.includes('ctx.moveTo(-7, -55)') && !art.includes("poly([[9, -57]"),
+  'old hat-and-banner silhouette must not return');
+assert(art.includes('ctx.moveTo(-22, -1)') && art.includes('ctx.lineTo(18, 6)'),
+  'belt must wrap the full waist');
+assert(art.includes('ctx.quadraticCurveTo(-20, 43, -34, 41)') &&
+  art.includes('ctx.quadraticCurveTo(12, 45, -3, 43)'),
+  'both boot toes point left in the same three-quarter stance');
 
 for (const c of ['#b2a684', '#8b8063', '#c8bb96'])
   assert(paints(hero).includes(c) && paints(enemy).includes(c),
@@ -64,15 +82,17 @@ assert.notDeepEqual(contour(hero), contour(enemy),
   'Strategist must have independently drawn anatomy and silhouette');
 assert(contour(hero).length > contour(enemy).length,
   'new hero owns more facial and costume geometry than a stock Ogre');
-assert(art.includes('ctx.scale(0.88, 0.88)'), 'head-to-torso proportion correction');
-assert(art.includes('ctx.lineTo(-24, 32)') && art.includes('ctx.lineTo(21, 35)'),
- 'both thighs extend into independently drawn calves, not straight into boots');
-assert(art.includes('ctx.translate(0, -19)'), 'raised pose allows articulated shins and boots');
-assert(art.includes('ctx.moveTo(-24, 29)') && art.includes('ctx.moveTo(11, 32)'),
-  'both lower legs have distinct grounded boots');
+// Keep the hero three-quarter direction and tool layout separate from
+// the enemy; both fists and daggers have their own geometric paths.
+assert(art.includes('oval(-30, 9, 5.3, 4.6, hide)') &&
+  art.includes('oval(23, 8, 4.7, 4, shadow)'),
+  'both forearms must terminate in visible anatomically joined hands');
+assert(art.includes('poly([[-41, -3], [-52, -17]') &&
+  art.includes('poly([[17, 16], [-4, 26]'),
+  'daggers must point coherently left, matching feet and gaze');
 assert(trace({ renderKind: 'hero', class: 'strategist' }).some((x) =>
-  x[0] === 'scale' && x[1] === 0.88 && x[2] === 0.88),
-  'the existing Canvas renderer must see the corrected head proportions');
+  x[0] === 'translate' && x[1] === 0 && x[2] === -19),
+  'existing native Canvas painter must see the entire left-facing character');
 
 assert(paints(crown).includes('#c7ad71'), 'Crowned presentation remains distinct');
 assert.deepEqual(trace(originalEnemy), enemy, 'Enemy Ogre deterministic and unchanged');
@@ -88,4 +108,4 @@ assert.equal(C.classes.strategist, undefined, 'visual-only Gate 0 cannot expose 
 const sprites = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/sprites/manifest.json'), 'utf8'));
 assert(!Object.hasOwn(sprites.sprites, 'hero:strategist'),
   'unapproved raster must not override procedural candidate');
-console.log('PASS Gate 0 independently drawn Ogre character, distinct face/silhouette/posture, deterministic Canvas and four-class isolation');
+console.log('PASS Gate 0 corrected left-facing Ogre pose, dressed torso, bound hair, coherent boots/daggers, Canvas determinism, public class isolation');
