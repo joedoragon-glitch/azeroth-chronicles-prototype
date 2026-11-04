@@ -43,6 +43,30 @@ lineup.forEach(([label, entity, scale], i) => {
   ctx.textAlign = 'center'; ctx.fillText(label, x, 399);
 });
 write('01-real-procedural-lineup.png', sheet);
+// A large, independently rasterized vector close-up makes the actual facial
+// anatomy, joints, boots and clothing legible on a phone. NOT pixel-stretched
+// concept art: paint the existing procedural function at eightfold scale.
+const portrait = createCanvas(1050, 1050), detail = portrait.getContext('2d');
+detail.fillStyle = '#354e40';
+detail.fillRect(0, 0, portrait.width, portrait.height);
+detail.save();
+detail.translate(525, 740);
+detail.scale(8, 8);
+detail.fillStyle = 'rgba(19,31,24,.38)';
+detail.beginPath();
+detail.ellipse(0, 17, 26, 7, 0, 0, Math.PI * 2);
+detail.fill();
+Visuals.draw(detail, { id: 'gate0-editorial-proportions', renderKind: 'hero',
+  class: 'strategist' }, { x: 0, y: 0 }, 0);
+detail.restore();
+detail.fillStyle = '#eee1be';
+detail.textAlign = 'center';
+detail.font = '28px sans-serif';
+detail.fillText('Ogre Strategist — actual procedural drawing, 8×', 525, 65);
+detail.font = '19px sans-serif';
+detail.fillText('Proportion review · no gameplay, sprite or anatomy replacement', 525, 1021);
+write('05-strategist-8x-anatomy-review.png', portrait);
+
 // This scene uses the real native Greenwood map, objects, projection and
 // renderer. A diagnostic class override only changes what the painter sees;
 // the class is intentionally *not* admitted or saved at Gate 0.
