@@ -5,6 +5,10 @@
     Campaign,
     { D, R, classes, talentProfiles, talentMaxRanks, expeditionCeilings, dungeonIds },
   ) {
+    const labSave =
+      typeof PrototypeStrategistLabSave !== 'undefined'
+        ? PrototypeStrategistLabSave
+        : (typeof require === 'function' ? require('./strategist-lab-save.js') : null);
     const clone = (x) => JSON.parse(JSON.stringify(x)),
       clamp = (n, a, b) => Math.max(a, Math.min(b, n)),
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -101,6 +105,15 @@
           : {}),
       };
     };
+    // Only a matching existing Lab job may preserve its work order. Unrelated
+    // imported orders stay subject to the previous native stripping rules.
+    const fieldLabWorkOrder = (u, s) => {
+      const job = s.strategistLabEconomy?.jobs?.[u.id];
+      if (!job || u.fieldLabJob !== job.labId || u.active !== false ||
+          u.order?.type !== 'strategist-field-lab' ||
+          u.order?.id !== job.labId) return null;
+      return { type: 'strategist-field-lab', id: job.labId };
+    };
     class Save {
       snapshot() {
         const out = clone(this.s);
@@ -150,7 +163,8 @@
         this.clearEncounterUnits([out.hero, ...out.party]);
         out.party.forEach((u) => {
           delete u.path;
-          u.order = gatheringOrder(u, out) || barracksWorkOrder(u, out);
+          u.order = gatheringOrder(u, out) || barracksWorkOrder(u, out) ||
+            fieldLabWorkOrder(u, out);
         });
         for (const z of Object.values(out.zones)) {
           z.props = z.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -985,7 +999,8 @@
           } else if (u.charmSupportCd !== undefined) {
             throw Error('Invalid Charmed recovery cooldown');
           }
-          u.order = gatheringOrder(u, s) || barracksWorkOrder(u, s);
+          u.order = gatheringOrder(u, s) || barracksWorkOrder(u, s) ||
+            fieldLabWorkOrder(u, s);
           validateName(u.customName);
           if (u.type === 'pet') {
             if (
@@ -998,7 +1013,8 @@
             petFamilies.add(u.petFamily);
             u.name = R.petCompanions[u.petFamily].name;
             u.damage = R.balance.companions.petDamage;
-            if (u.petFamily !== R.gatheringTravel.petWorkerFamily) {
+            if (u.petFamily !== R.gatheringTravel.petWorkerFamily &&
+                u.order?.type !== 'strategist-field-lab') {
               u.order = null;
               u.carry = 0;
             }
@@ -1315,6 +1331,12 @@
         let reservations = s.party.length + (s.recruitmentRequest ? 1 : 0);
         for (const z of Object.values(s.zones)) {
           for (const b of z.buildings) {
+            // Lab structures have their own strict shape; never apply
+            // Barracks-only queue, Full upgrade or recovery defaults to them.
+            if (b.kind === 'strategist-field-lab') {
+              if (!labSave) throw Error('Unregistered Field Lab save adapter');
+              continue;
+            }
             if (b.full === undefined) b.full = true;
             if (b.upgradeProgress === undefined) b.upgradeProgress = b.full ? 4 : 0;
             if (b.upgradePaid === undefined) b.upgradePaid = !!b.full;
@@ -1414,6 +1436,20 @@
           )
             ? { zone: s.zone, id: gathering.id }
             : null;
+        if (s.strategistLabEconomy !== undefined ||
+            s.party.some(u => u.fieldLabTrained !== undefined ||
+              u.fieldLabJob !== undefined ||
+              u.strategistLabRest !== undefined ||
+              u.order?.type === 'strategist-field-lab') ||
+            Object.values(s.zones).some(z =>
+              z.buildings.some(b => b.kind === 'strategist-field-lab'))) {
+          if (!labSave) throw Error('Unregistered Field Lab save adapter');
+          labSave.validate(s, {
+            zoneSize: (zone) => D.regions.find(r => r.id === zone)?.size || 5000,
+            ...(R.strategistBasicFoundation?.maxBottles !== undefined
+              ? { maxBottles: R.strategistBasicFoundation.maxBottles } : {}),
+          });
+        }
         return s;
       }
       static restore(data, random = Math.random) {
@@ -1617,8 +1653,12 @@
         c.checkQuests();
         c.restoreWeaponSelection();
         c.syncCompanionLevelStats();
-        for (const u of [c.hero, ...c.s.party])
+        for (const u of [c.hero, ...c.s.party]) {
+          // Off-region Lab workers own validated physical coordinates in
+          // their assigned region, not the hero's current collision map.
+          if (u.fieldLabJob) continue;
           if (c.blocked(u.x, u.y)) Object.assign(u, c.safe(u.x, u.y));
+        }
         if (c.s.phase === 'awakening') c.activatePending();
         c.syncTreasuryRecovery(c.zone());
         c.advanceResourceExpeditions();

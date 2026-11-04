@@ -1297,7 +1297,7 @@
         }
         return receipt;
       }
-      enemyStartBasic(e, target, ranged) {
+      enemyStartBasic(e, target, ranged, sourceContext = null) {
         const nightTempo = this.nightTempo();
         e.cd =
           ((e.type === 'boss' ? R.bossCadence.basicCooldown :
@@ -1321,7 +1321,7 @@
         } else {
           const criticalReceipt = this.worldCriticalRelease(e, 'melee');
           const equipment = R.enemyMeleeEquipment(e);
-          this.event('swing', {
+          if (!sourceContext) this.event('swing', {
             actor: 'enemy',
             source: e.id,
             species: e.species,
@@ -1336,7 +1336,8 @@
             this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e)),
             0,
             e.id,
-          ))
+            false, null, sourceContext,
+          ) && !sourceContext)
             this.event('melee', {
               actor: 'enemy',
               source: e.id,

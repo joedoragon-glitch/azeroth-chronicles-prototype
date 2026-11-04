@@ -3626,6 +3626,8 @@
         const u = this.s.party.find((u) => u.id === id);
         this.clearPartyCharge(u);
         this.clearCompanionJudgment(u);
+        // Exact native Rest action owns reserve zone and saved point.
+        this.captureLabReserveLocation?.(u);
         u.active = false;
         u.order = null;
         u.path = [];
@@ -3671,6 +3673,7 @@
         this.clearCompanionJudgment(u);
         Object.assign(u, this.safe(b.x + 45, b.y + 45));
         u.order = null;
+        delete u.strategistLabRest; // Native Barracks activation replaces origin.
         return true;
       }
       dismissCompanion(id) {
