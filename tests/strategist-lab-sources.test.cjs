@@ -242,3 +242,44 @@ test('exact-ID Lab receipt reaches a large native solid even when its center is 
   assert.equal(bridge.verifySource(g, 'vale', 'mineral', source.id,
     source.point), false, 'ambiguous duplicate physical IDs are rejected');
 });
+
+
+test('actual versioned dungeon-world migration bumps only one runtime source revision', () => {
+  const World = require('../src/prototype/world.js');
+  class FixtureCampaign {
+    constructor() {
+      this.s = { zone: 'mine', time: 0, loot: [], pending: {} };
+      this.hero = { class: 'strategist', x: 90, y: 90 };
+    }
+    activeParty() { return []; }
+    regionIndex() { return -1; }
+  }
+  const migrationRules = {
+    terrain: [[], [], [], [], []], barriers: [], harbors: {},
+    dungeonSpace: { mine: { version: 2, scale: 2 } },
+  };
+  World.install(FixtureCampaign, {
+    D: {}, R: migrationRules, dungeonIds: ['mine'], classes: {},
+  });
+  const game = new FixtureCampaign();
+  const wood = { id: 'real-moved-log', structure: 'fallen-log',
+    x: 100, y: 100, r: 0, decorative: true };
+  const z = { id: 'mine', props: [wood], enemies: [], npcs: [],
+    nodes: [], buildings: [], dungeonSpaceVersion: 1 };
+  const probe = () => M.forCombat(game, 'wood', {
+    zone: z, rules: migrationRules, range: 70,
+  });
+  assert.equal(probe()?.id, wood.id, 'native pre-migration source exists');
+  game.dungeonSpaceLayout(z);
+  assert.equal(wood.x, 200, 'real native migration moved the physical log');
+  assert.equal(game.hero.x, 180, 'native migration also moves present hero');
+  assert.equal(probe()?.id, wood.id, 'revision reindexes post-migration location');
+  const version = z.environmentSourceRevision;
+  assert.ok(version >= 1, 'source-change event was emitted from a real migration');
+  game.dungeonSpaceLayout(z);
+  assert.equal(z.environmentSourceRevision, version,
+    'already-completed scene is not re-signaled on repeated zone use');
+  assert.equal(wood.x, 200, 'one-time migration never doubles the same source');
+  assert.equal(JSON.stringify(z).includes('environmentSourceRevision'), false,
+    'ephemeral event cannot alter the v4 saved-zone payload');
+});
