@@ -138,6 +138,39 @@ try {
     const {g, primary, events} = make(1);
     assert(hit(g, primary));
     assert(hit(g, primary));
+    assert(g.enter('march'), 'ordinary travel leaves the prior zone');
+    assert(g.enter('vale'), 'returning to the old zone succeeds');
+    g.s.mercyTime = 0;
+    g.zone().props = [];
+    g.zone().buildings = [];
+    Object.assign(g.hero, { x: 500, y: 500, order: null });
+    const returned = g.zone().enemies.find((e) => e.id === primary.id);
+    assert(returned && returned.hp > 0, 'same native foe still belongs to zone');
+    Object.assign(returned, { x: 560, y: 500, aggro: true, returning: false });
+    assert(hit(g, returned));
+    assert.equal(events.filter((e) => e.type === 'strategistDaggerLanded').at(-1).step, 1,
+      'travel out and back cannot finish a pre-travel third-contact rhythm');
+  }
+  {
+    const {g, primary, events} = make(1);
+    assert(hit(g, primary));
+    primary.hp = 1;
+    assert(hit(g, primary), 'native lethal contact');
+    assert.equal(primary.hp, 0);
+    const returned = g.makeEnemy({
+      species: 'goblin', name: 'Reused identity', level: 1,
+      hp: 10000, damage: 0, gold: 0, xp: 0,
+    }, {x: 560, y: 500});
+    Object.assign(returned, { id: primary.id, aggro: true, returning: false });
+    g.zone().enemies = [returned];
+    assert(hit(g, returned));
+    assert.equal(events.filter((e) => e.type === 'strategistDaggerLanded').at(-1).step, 1,
+      'newly alive same-ID enemy is not the previously killed dagger target');
+  }
+  {
+    const {g, primary, events} = make(1);
+    assert(hit(g, primary));
+    assert(hit(g, primary));
     const saved = g.snapshot();
     assert.equal(saved.strategistAcidBottles, 1, 'stock persists, cadence does not');
     const restored = C.restore(saved, () => 0.9);
