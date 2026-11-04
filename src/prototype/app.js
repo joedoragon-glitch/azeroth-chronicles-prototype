@@ -2649,63 +2649,18 @@
       !game.s.challenge.gameOver
     );
   }
+  // Settings owns remapping. How-to-play guidance lives under title Help & Credits.
   function help(back = closeMenu) {
-    const returnHere = () => help(back);
-    openMenu(
-      'Controls',
-      'Choose a topic or adjust your inputs.',
-      [
-        action('Customize keyboard', () => keyboardMenu(back)),
-        action('Touch and mouse options', () => pointerMenu(back)),
-        action('Movement and menus', () => {
-          const keys = ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/');
-          openMenu(
-            'Movement and menus',
-            language === 'es'
-              ? 'Moverse: ' +
-                  keys +
-                  ' o palanca táctil. Interactuar: ' +
-                  input.key('confirm') +
-                  '. Mapa: ' +
-                  mapKeyHint() +
-                  '.\nMenú: Esc. Flechas para elegir, ' +
-                  input.key('confirm') +
-                  '/Enter para confirmar y Esc para volver.'
-              : 'Move: ' +
-                  keys +
-                  ' or joystick. Interact: ' +
-                  input.key('confirm') +
-                  '. Map: ' +
-                  mapKeyHint() +
-                  '.\nMenu: Esc. Arrows select, ' +
-                  input.key('confirm') +
-                  '/Enter confirms, Esc returns.',
-            [],
-            returnHere,
-          );
-        }),
-        action('Skills and targeting', () => combatHelp(returnHere)),
-        action('Companion commands', () =>
-          openMenu(
-            'Companion commands',
-            language === 'es'
-              ? 'Reagrupar: ' +
-                  input.key('recall') +
-                  '. Tus compañeros vuelven contigo.\nCuración Ranger: ' +
-                  input.key('heal') +
-                  '. En recuperación, toca para poner tu curación en cola.\nRecupera a los caídos con un capitán o cuartel.'
-              : 'Recall: ' +
-                  input.key('recall') +
-                  '. Companions return to you.\nCompanion Heal: ' +
-                  input.key('heal') +
-                  '. During cooldown, tap to queue hero healing.\nRecover fallen companions at a Captain or Barracks.',
-            [],
-            returnHere,
-          ),
-        ),
-      ],
-      back,
-    );
+    openMenu('Controls', '', [
+      action('Customize keyboard', () => keyboardMenu(back),
+        language === 'es'
+          ? 'Movimiento, interacción, menú, habilidades y otras teclas.'
+          : 'Movement, interaction, menu, skills and other keys.'),
+      action('Touch and mouse options', () => pointerMenu(back),
+        language === 'es'
+          ? 'Ajusta la palanca, el diseño táctil y el ratón.'
+          : 'Adjust joystick, touch layout and mouse input.'),
+    ], back);
   }
   function combatHelp(back) {
     const returnHere = () => combatHelp(back);
@@ -2773,7 +2728,7 @@
     {
       id: 'movement',
       title: 'Movement and menu keys',
-      ids: ['up', 'down', 'left', 'right', 'confirm'],
+      ids: ['up', 'down', 'left', 'right', 'confirm', 'menu'],
     },
     {
       id: 'combat',
@@ -7322,7 +7277,7 @@
     const actionId = input.actionFor(code);
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
-    if (code === 'Escape') {
+    if (code === 'Escape' || actionId === 'menu') {
       if (menu) {
         audio.interfaceSound('back');
         menu.back();
