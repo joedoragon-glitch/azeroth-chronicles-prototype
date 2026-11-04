@@ -1,5 +1,21 @@
 # Dark Crown natural landscape — parallel workstream, source ownership and integration gate
 
+## Current owner priority and design-review gate — 4 November 2026
+
+**LATEST OWNER PRIORITY OVERRIDE.** The owner is now prioritizing **the version 0.9.2 release**, the **portrait-versus-landscape / new-default orientation work** and improvements to the **first game regions, including UI and menus**. These are collectively higher priority than the broader Dark Crown regional overhaul. Do not pull attention or source/build/deployment resources away from those release-critical efforts, infer a new release schedule, or suggest Dark Crown is a prerequisite for 0.9.2. Existing PR #769 remains a separate ongoing but subordinate regional overhaul; do not impose a new stop order on unrelated chats beyond respecting this explicit priority.
+
+**This natural-landscape chat's active mode is now DESIGN REVIEW, not further engineering integration.** Keep its existing draft [PR #794](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/794) and isolated code foundation intact, but **do not start additional renderer, material-manifest, terrain placement, city/road, shared-source, generated-bundle or deployment edits** just because a prior work plan lists them. The owner's immediate purpose is to make a comprehensive batch of **authorial visual/environmental decisions** efficiently, then leave them ready for later implementation when priorities permit. The owner has **not** approved integrating #794 into #769, merging to `main`, releasing, full test matrices or changing any already accepted #707 architecture.
+
+**Authorial decision workflow approved by the owner:** one question at a time, **exactly four thoughtfully distinct choices** (A–D), optional freeform feedback and Previous/Next navigation; at the end show all answers for review and **one explicit Submit** action. Unanswered/partial answers must remain visibly unresolved rather than be assigned a hidden default. On submission, treat the chosen options **plus freeform comments** as the owner's decisions; if a note modifies or contradicts the selected letter, preserve the note and flag that conflict for reconciliation instead of silently discarding it. Then record the exact answer set, timestamp/decision authority and any genuinely unresolved choices in the current #794 workstream and notify #707/#769 as appropriate. **Before submission, choices and recommendations in the questionnaire are proposals, not accepted art canon.** A submitted survey is design input, not permission to resume engineering, merge or deploy.
+
+**Survey boundaries:** Do not revisit the already accepted Craters of the Moon (primary) + Newberry (secondary) North American geological inspiration, the existing civilization's independent fantasy architectural identity, the fictionally molten original lava barrier and two bridges, the planned retirement of only the active outdoor Crown T005 ground texture with asset rollback retained, the broad vegetated-island ecology requirement, or existing world/quest/hero/save constraints. The questionnaire is about *how* to execute the natural design, not whether to reverse these settled decisions or assert a literal US biome/species canon.
+
+**Sixteen design decision axes for this review** (all remain unanswered until user submission): NL01 first overall natural impression; NL02 major flow orientation/composition; NL03 nonblocking volcanic ridges/relief presentation; NL04 mineral color balance; NL05 visible rock/ash/flow-border transitions; NL06 major vegetated-island number/scale; NL07 islands' dominant spatial placement; NL08 vegetation character; NL09 rare tree silhouettes; NL10 fine geological signature; NL11 Crownwatch natural-to-crafted edge; NL12 Ash Refuge perimeter ecology; NL13 industrial/Foundry wildland margin; NL14 Cindermaw and Ash-beast habitat edge; NL15 atmosphere/day-night natural setting; NL16 open-space versus detail-density and route readability. Four-option cards and optional remarks are presented in the active chat with a final review/submit step.
+
+**Truthful current phase status:** Stage 0 isolated deterministic field model/test already implemented in #794; the test body passed an isolated V8 Node-compatibility shim, but **not original Node, CI, playable Canvas/Pixi, real timing, device or artistic acceptance**. **All substantive island geography, natural painter, main-map integration and T005 deactivation remain NOT IMPLEMENTED.** #794 remains draft/unmerged/unpublished. Design questionnaire completion will not by itself satisfy gameplay/renderer verification.
+
+---
+
 **Game:** So I Became the Dark Lord's Problem (SIBDLP)  
 **Established:** 4 November 2026  
 **Dedicated branch:** `feat/dark-crown-natural-landscape-20261104`  
@@ -51,9 +67,9 @@ This isolated model is a starting engine, **not a finished landscape system**. T
 5. **Focused native QA:** test original walkable crossings, heat works, services and visual telegraphs; Canvas/Pixi at desktop and 800×375/844×390 landscape camera, day/night; old-v4-save restore, deterministic reload and camera seams, CPU/GPU budgets and PWA completeness. Save actual screenshots, counts, source SHA and failures. No broad suites, merge or publication without new approval.
 6. **Lead handoff:** present final bounded changes, exact source/testing receipts, image comparisons, conflict report, remaining limitations and recommended safe integration order; PR #769 lead is final integrator. Do not independently mark the complete 0–6 overhaul finished.
 
-## First concrete next action
+## Later engineering restart action (on hold while 0.9.2 and early-region work take precedence)
 
-**Begin the actual native-camera/geographical survey** and candidate flow/island map, then implement the macro terrain **drawing** inside the new isolated module against representative camera views. Do not jump to removing the production material manifest just to get a misleading green test; first prove a compelling landscape in actual game scenes, then coordinate the single shared runtime integration with the PR #769 lead.
+**After design submission and a later explicit engineering restart, begin the actual native-camera/geographical survey** and candidate flow/island map, then implement the macro terrain **drawing** inside the new isolated module against representative camera views. Do not jump to removing the production material manifest just to get a misleading green test; first prove a compelling landscape in actual game scenes, then coordinate the single shared runtime integration with the PR #769 lead.
 
 ## Status gate (do not overclaim)
 
@@ -64,4 +80,4 @@ This isolated model is a starting engine, **not a finished landscape system**. T
 - **Deployed:** NO.
 - **Device-verified:** NO.
 
-This document is the single development handoff for this separate natural-landscape workstream. The authoritative regional phase board remains in PR #769; the owner art canon remains in PR #707.
+This document is the single development handoff for this separate natural-landscape workstream. As of the 4 November priority override, design choices are the active work, while code integration remains intentionally on hold. The authoritative regional phase board remains in PR #769; the owner art canon remains in PR #707.
