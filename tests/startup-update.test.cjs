@@ -145,6 +145,21 @@ function startup({ online = true, controller = true, waiting = false,
     assert.equal(storage.get('azeroth-v4-normal'), saved, 'language does not rewrite save');
     assert.equal(welcome.hidden, true);
     assert.equal(a.elements.get('title-screen').hidden, false);
+    a.elements.get('title-help').click();
+    const credits = a.elements.get('modal-actions').children.find(
+      (item) => item.textContent.startsWith('Créditos y contacto'),
+    );
+    assert(credits, 'Spanish Help contains creator credits, not control customization');
+    credits.click();
+    assert(a.elements.get('modal-description').textContent.includes('joedoragon@gmail.com'),
+      'owner-approved public email appears in localized Credits');
+    assert(a.elements.get('modal-description').textContent.includes('fcuba.net/members/282-nomura'),
+      'verified forum profile appears in localized Credits');
+    assert(a.elements.get('modal-actions').children.some(
+      (item) => item.textContent.startsWith('Escribir al creador')),
+      'Credits offers a user-initiated email action');
+    a.elements.get('close-button').click();
+    a.elements.get('close-button').click();
     a.elements.get('title-new').click();
     assert.notEqual(a.elements.get('modal-title').textContent, 'Choose your language');
   }
