@@ -428,6 +428,8 @@ wall.x = 1700; semanticZone.environmentSourceRevision++;
 assert.equal(semanticCast('water')?.id, 'art-v2',
   'moving wall updates occlusion only after event/revision');
 semanticZone.props[0] = { ...identified, id: 'art-v3' };
+assert.equal(semanticCast('water'), null,
+  'same-length prop replacement cannot return the removed cached source');
 semanticZone.environmentSourceRevision++;
 assert.equal(semanticCast('water')?.id, 'art-v3',
   'same-length array replacement updates via zone revision');
@@ -450,6 +452,10 @@ semanticZone.props[0].heatActive = false;
 assert.equal(semanticCast('fire'), null, 'live extinguish denies existing cached Fire');
 semanticZone.props.splice(0, 1);
 assert.equal(semanticCast('fire'), null, 'removed asset is never a ghost source');
+assert.equal(M.materialForProp({ id: 'test-water', x: 1, y: 1, dry: true },
+  game.s.time, 'vale', { environmentalSources: { vale: {
+    'test-water': { material: 'water', requires: 'permanent' },
+  } } }), null, 'even permanent water must honor real dry state');
 for (const requires of ['invalid', 'permanent', 'containsWater', 'containsOre']) {
   assert.equal(M.materialForProp({
     id: 'test-fire', materialSourceKey: 'vale-work-heat',

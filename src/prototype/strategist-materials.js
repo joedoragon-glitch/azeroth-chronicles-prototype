@@ -78,8 +78,12 @@
     if (declaration !== undefined) {
       if (!declaration || !MATERIALS.includes(declaration.material)) return null;
       const requirement = declaration.requires;
-      if (requirement === 'permanent')
-        return declaration.material === 'fire' ? null : declaration.material;
+      if (requirement === 'permanent') {
+        if (declaration.material === 'fire' ||
+            (declaration.material === 'water' &&
+              (p.dry === true || p.empty === true))) return null;
+        return declaration.material;
+      }
       if (requirement === 'containsWater')
         return declaration.material === 'water' && p.containsWater === true &&
           p.empty !== true && p.dry !== true ? 'water' : null;
@@ -353,13 +357,15 @@
   }
   function sourceIndex(zone, rules, regionIndex, time) {
     const grid = new Map();
+    let propIndex = 0;
     for (const prop of zone.props || []) {
+      const position = propIndex++;
       const material = materialForProp(prop, time, zone.id, rules);
       if (!material) continue;
       const indexedCell = cellKey(prop.x, prop.y);
       const source = {
         id: prop.id, key: prop.materialSourceKey || prop.id,
-        indexedCell, kind: 'prop', material, prop,
+        indexedCell, position, kind: 'prop', material, prop,
       };
       if (!grid.has(indexedCell)) grid.set(indexedCell, []);
       grid.get(indexedCell).push(source);
@@ -382,7 +388,8 @@
       for (let y = loY; y <= hiY; y++)
         for (const source of index.grid.get(x + ':' + y) || [])
           if (source.material === material &&
-              (!source.prop || (source.id === source.prop.id &&
+              (!source.prop || (index.zone.props?.[source.position] === source.prop &&
+                source.id === source.prop.id &&
                 source.key === (source.prop.materialSourceKey || source.prop.id) &&
                 source.indexedCell === cellKey(source.prop.x, source.prop.y))))
             found.push(source);
