@@ -89,6 +89,14 @@ async function main() {
         assert.equal(await page.locator('[data-owner-destination]').count(),2);
         await page.locator('#crown-review-search').fill('');
         await page.locator('[data-owner-category=industry]').click();
+        const categoryDiagnostic = await page.evaluate(() => ({
+          active: [...document.querySelectorAll('[data-owner-category]')].map(el =>
+            [el.dataset.ownerCategory, el.getAttribute('aria-pressed')]),
+          groups: [...document.querySelectorAll('.crown-review-group-title')].map(el => el.textContent),
+          cards: document.querySelectorAll('[data-owner-destination]').length,
+          body: document.body.className
+        }));
+        console.log('CATEGORY DIAGNOSTIC', JSON.stringify(categoryDiagnostic));
         assert.equal(await page.locator('[data-owner-destination]').count(),4);
         await page.locator('[data-owner-category=all]').click();
         assert.equal(await page.locator('[data-owner-destination]').count(),16);
