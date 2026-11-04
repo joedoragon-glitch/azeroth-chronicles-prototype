@@ -94,14 +94,18 @@
       cells = (p) => {
         const baseX = Math.floor(p.x / STEP), baseY = Math.floor(p.y / STEP);
         const out = [];
-        for (let dy = -2; dy <= 2; dy++)
-          for (let dx = -2; dx <= 2; dx++) {
-            const x = baseX + dx, y = baseY + dy;
-            if (x < 0 || y < 0 || x >= count || y >= count) continue;
-            const id = gridKey(x, y), point = gridPoint(id);
-            if (passable(g, zoneId, p, point, token)) out.push(id);
-            if (token.exhausted) return out;
-          }
+        // Nine close anchors max, nearest first. Avoid exhausting the shared
+        // budget on 50 anchor rays before actual A* exploration starts.
+        const offsets = [[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
+        const ranked = offsets.map(([dx,dy]) => {
+          const x = baseX + dx, y = baseY + dy;
+          return { x,y, id: gridKey(x,y), p: gridPoint(gridKey(x,y)) };
+        }).filter(({x,y}) => x >= 0 && y >= 0 && x < count && y < count)
+          .sort((a,b) => distance(a.p,p) - distance(b.p,p));
+        for (const cell of ranked) {
+          if (passable(g, zoneId, p, cell.p, token)) out.push(cell.id);
+          if (token.exhausted || out.length >= 3) break;
+        }
         return out;
       };
     const starts = cells(start), goals = new Set(cells(end));
