@@ -1,0 +1,44 @@
+name: Dark Crown owner preview smoke (NO deploy)
+on:
+  push:
+    branches: ['feat/dark-crown-regional-overhaul-20261103']
+    paths:
+      - 'dark-crown-owner-preview.html'
+      - 'tools/dark-crown-owner-preview.js'
+      - 'tests/dark-crown-owner-preview-browser.test.cjs'
+      - '.github/workflows/dark-crown-owner-preview.yml'
+permissions:
+  contents: read
+jobs:
+  preview:
+    name: Focused desktop/narrow game and immutable review URL
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Verify existing unmodified game package
+        run: node scripts/build.cjs --check
+      - name: Install Chromium for focused smoke only
+        run: npx playwright install --with-deps chromium
+      - name: Run real native review walkthrough, desktop and narrow
+        run: node tests/dark-crown-owner-preview-browser.test.cjs
+      - name: Verify separate immutable HTTPS preview URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://rawcdn.githack.com/joedoragon-glitch/azeroth-chronicles-prototype/$GITHUB_SHA/dark-crown-owner-preview.html"
+          for attempt in 1 2 3 4 5; do
+            if curl -fsSL --connect-timeout 10 --max-time 35 "$url" -o "$RUNNER_TEMP/crown-preview.html" \
+               && grep -q 'dark-crown-owner-preview.js' "$RUNNER_TEMP/crown-preview.html"; then
+              echo "Verified preview address: $url" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "CDN not verified; do not claim external playability." >&2
+          exit 1
