@@ -72,7 +72,7 @@ for (const c of ['#679c9a', '#be8c5b', '#70583e'])
   assert(paints(hero).includes(c), 'Hero needs restrained material-kit identity: ' + c);
 assert(!paints(enemy).includes('#679c9a'), 'Enemy Ogre stays unchanged');
 // New direction must read from major forms, not the previous copied body.
-for (const swatch of ['#394c42', '#35332e', '#46574b', '#b4a079', '#aeb9b3'])
+for (const swatch of ['#394c42', '#35332e', '#46574b', '#635747', '#555044', '#aeb9b3'])
   assert(paints(hero).includes(swatch), 'New silhouette/face/equipment color absent: ' + swatch);
 for (const swatch of ['#394c42', '#35332e', '#46574b'])
   assert(!paints(enemy).includes(swatch), 'Original Ogre inherited Strategist outfit: ' + swatch);
