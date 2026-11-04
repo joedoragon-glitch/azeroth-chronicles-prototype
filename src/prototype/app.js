@@ -5087,22 +5087,22 @@
       'New game',
       'Choose a mode. Export a backup to keep your current run.',
       [
-        action('New Normal game', () => chooseLanguage('normal')),
+        action('New Normal game', () => chooseClass('normal')),
         ...(combatDiagnosticsEnabled
           ? [
               action(
                 'New Combat Diagnostics run',
-                () => chooseLanguage('arena'),
+                () => chooseClass('arena'),
                 'Unlisted low-spec playtest · black battlefield · authentic combat',
               ),
             ]
           : []),
         ...(developerEnabled
-          ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
+          ? [action('New Developer Mode run', () => chooseClass('developer'))]
           : []),
         action(
           'New game in Nightmare Mode',
-          () => chooseLanguage('nightmare'),
+          () => chooseClass('nightmare'),
           'Unlocked by the peaceful ending',
           !profile.nightmareUnlocked,
         ),
@@ -9043,29 +9043,48 @@
   languageWelcome.id = 'language-welcome';
   languageWelcome.hidden = true;
   languageWelcome.setAttribute('aria-label', 'Choose your language / Elige tu idioma');
-  languageWelcome.innerHTML = `
-    <div class="language-welcome-card">
-      <p class="language-welcome-eyebrow">So I Became the Dark Lord's Problem</p>
-      <h1>Welcome <span aria-hidden="true">·</span> Bienvenido</h1>
-      <p class="language-welcome-intro">Choose your language / Elige tu idioma</p>
-      <div class="language-welcome-choices">
-        <button type="button" data-language="en" lang="en">
-          <strong>English</strong><span>Continue in English</span>
-        </button>
-        <button type="button" data-language="es" lang="es">
-          <strong>Español</strong><span>Continuar en español</span>
-        </button>
-      </div>
-      <p class="language-welcome-note">You can change this later in Settings.<br>Podrás cambiarlo después en Ajustes.</p>
-    </div>`;
-  document.body.append(languageWelcome);
-  for (const button of languageWelcome.querySelectorAll('[data-language]')) {
+  const welcomeCard = document.createElement('div');
+  welcomeCard.className = 'language-welcome-card';
+  const welcomeText = (tag, className, content) => {
+    const element = document.createElement(tag);
+    element.className = className;
+    element.textContent = content;
+    return element;
+  };
+  welcomeCard.append(
+    welcomeText('p', 'language-welcome-eyebrow', "So I Became the Dark Lord's Problem"),
+    welcomeText('h1', '', 'Welcome · Bienvenido'),
+    welcomeText('p', 'language-welcome-intro', 'Choose your language / Elige tu idioma'),
+  );
+  const welcomeChoices = document.createElement('div');
+  welcomeChoices.className = 'language-welcome-choices';
+  for (const [code, label, subtitle] of [
+    ['en', 'English', 'Continue in English'],
+    ['es', 'Español', 'Continuar en español'],
+  ]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.dataset.language = code;
+    button.lang = code;
+    const heading = document.createElement('strong');
+    heading.textContent = label;
+    const hint = document.createElement('span');
+    hint.textContent = subtitle;
+    button.append(heading, hint);
     button.onclick = () => {
       if (startupUpdatePending) return;
-      setLanguage(button.dataset.language);
+      setLanguage(code);
       showTitleScreen();
     };
+    welcomeChoices.append(button);
   }
+  welcomeCard.append(
+    welcomeChoices,
+    welcomeText('p', 'language-welcome-note',
+      'You can change this later in Settings. / Podrás cambiarlo después en Ajustes.'),
+  );
+  languageWelcome.append(welcomeCard);
+  document.body.append(languageWelcome);
   const titleCanvasContinue = document.createElement('button');
   titleCanvasContinue.type = 'button';
   titleCanvasContinue.hidden = true;
