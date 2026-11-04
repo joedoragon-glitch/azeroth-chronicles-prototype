@@ -47,6 +47,7 @@
         let bank = this.s.strategistLabEconomy;
         if (!bank && create && this.hero?.class === 'strategist') {
           bank = {
+            foundedByStrategist: true,
             alchemyRank: 0,
             samples: { water: 0, wood: 0, mineral: 0, fire: 0 },
             products: { waterReagent: 0, woodEssence: 0, mineralCatalyst: 0, fireElixir: 0 },
@@ -183,7 +184,10 @@
         if (worker && worker.fieldLabJob === job.labId) {
           worker.x = job.position.x; worker.y = job.position.y;
           worker.order = null; delete worker.fieldLabJob;
-          // Do not reactivate or move the reserve to the hero's region.
+          // Restore a voluntarily assigned active worker only in their actual
+          // region with an open native party slot, never teleport on remote recall.
+          worker.active = job.wasActive === true && job.zoneId === this.s.zone &&
+            this.activeParty?.().length < this.expeditionPartyCap?.();
         }
         delete bank.jobs[workerId];
         return true;
@@ -292,7 +296,7 @@
       }
       fieldLabMakeProduct(job, lab, dt) {
         const bank = this.fieldLabNetwork();
-        if (job.phase !== 'idle' || !bank || this.fieldLabStockCount() >= this.fieldLabStorageLimit())
+        if (job.phase !== 'idle' || !bank)
           return false;
         lab.processSeconds = (lab.processSeconds || 0) + dt *
           (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency);
@@ -358,8 +362,8 @@
               job.phase = 'sampling'; job.sampleLeft = CANDIDATE.sampleSeconds;
             } else this.fieldLabDeliver(job, worker);
           } else if (job.phase === 'sampling') {
-            job.sampleLeft -= dt * (job.zoneId === this.s.zone ? 1 :
-              CANDIDATE.remoteEfficiency);
+            job.sampleLeft = Math.max(0, job.sampleLeft -
+              dt * (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency));
             if (job.sampleLeft > 0) continue;
             if (!verifySource(this, job.zoneId, job.material, job.sourceId, job.target)) {
               job.phase = 'idle'; job.carries = false; job.path = [];
