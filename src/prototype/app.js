@@ -14,6 +14,9 @@
   // Quiet fourth-class release. Register before profile/load/save validation,
   // New Game and Succession; v4 storage keys and original classes stay intact.
   Campaign.enableRoguePlaytest();
+  // A preview link is not authentication. The engine/save layers still forbid
+  // an Ogre in every public mode even while this one browser registry exists.
+  if (developerEnabled) Campaign.enableStrategistDeveloperTest();
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -4512,6 +4515,11 @@
       en: 'Ranger', es: 'Explorador',
       detail: 'Ranged bow, healing and mobility', detailEs: 'Arco a distancia, curación y movilidad',
     },
+    strategist: {
+      en: 'Strategist (Playtest)', es: 'Estratega (pruebas)',
+      detail: 'Developer-only Ogre: twin daggers, real Water/Mineral/Fire sources, Soldier and Archer',
+      detailEs: 'Ogro solo de desarrollo: dos dagas, fuentes reales de agua/mineral/fuego, soldado y arquero',
+    },
     rogue: {
       en: 'Rogue', es: 'Pícara',
       detail: 'Charmed companions, musical disruption and survival tricks. Start alone; automatic basic hits may Charm surviving eligible monsters, who can then build Barracks.', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia. Empiezas sola; los ataques básicos automáticos pueden encantar a monstruos aptos que sobreviven, y luego ellos pueden construir cuarteles.',
@@ -6358,7 +6366,8 @@
   const canChargeSlot = (slot) => chargeableSlots.has(slot);
   // Ranger Skill 4 charges a companion rally: no enemy aim/lock required.
   const chargeNeedsTarget = (slot) =>
-    [1, 2, 6, 7].includes(slot) ||
+    (game.hero.class === 'strategist' && [1, 2, 3].includes(slot))
+      ? false : [1, 2, 6, 7].includes(slot) ||
     (slot === 8 && game.hero.class !== 'paladin') ||
     (slot === 4 && game.hero.class !== 'ranger');
   const skillLabel = (slot) => {
@@ -6392,6 +6401,11 @@
         6: 'Repelling Shot / Volley',
         7: 'Piercing Arrow',
         8: 'Hunters Salvo / Grand Hunt',
+      },
+      strategist: {
+        1: language === 'es' ? 'Corte de lavado / Corriente limpia' : 'Rinsing Cut / Clear Current',
+        2: language === 'es' ? 'Faceta de piedra / Faceta ranurada' : 'Stone Facet / Notched Facet',
+        3: language === 'es' ? 'Templado rápido / Intercambio de horno' : 'Flash Temper / Furnace Exchange',
       },
       rogue: {
         1: 'Ding and Sting / Raise a Racket',
@@ -7148,6 +7162,31 @@
     };
     quickItems.append(b);
   }
+  // This independent Field Order is deliberately NOT mapped to skill slots.
+  // It is never visible or active in the four ordinary classes.
+  const developerReversalButton = document.createElement('button');
+  developerReversalButton.id = 'developer-reversal';
+  developerReversalButton.className = 'potion-button';
+  developerReversalButton.hidden = true;
+  developerReversalButton.type = 'button';
+  developerReversalButton.setAttribute('aria-label', 'Strategist Reversal');
+  developerReversalButton.textContent = 'REVERSAL';
+  developerReversalButton.title = 'Developer-only Reversal · T when the key is unbound';
+  function commandStrategistReversal() {
+    if (!developerEnabled || !activePlay() ||
+        game?.s.mode !== 'developer' || game.hero.class !== 'strategist') return false;
+    const success = game.attemptStrategistReversalCommand();
+    if (success) { updateHUD(); save(); }
+    else status(language === 'es'
+      ? 'Reversión: se necesita una advertencia física admisible bajo el ogro.'
+      : 'Reversal needs a supported active physical warning beneath the Ogre.');
+    return success;
+  }
+  developerReversalButton.onclick = () => {
+    audio.unlock();
+    commandStrategistReversal();
+  };
+  quickItems.append(developerReversalButton);
   $('skills').append(quickItems);
   addEventListener('keydown', (e) => {
     if (
@@ -7211,6 +7250,14 @@
     )
       return;
     const actionId = input.actionFor(code);
+    // Do not steal a custom binding: T is a fallback only when unassigned.
+    if (code === 'KeyT' && !actionId && !menu && !e.repeat &&
+        started && !paused && focused && !document.hidden &&
+        game?.s.mode === 'developer' && game.hero.class === 'strategist') {
+      e.preventDefault();
+      commandStrategistReversal();
+      return;
+    }
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
     if (code === 'Escape' || actionId === 'menu') {
@@ -7331,7 +7378,7 @@
         pointer !== null || worldPointer !== null) return false;
     const obstacles = [
       '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
-      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#cancel-navigation-button',
+      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#developer-reversal', '#cancel-navigation-button',
       '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
     ].flatMap((selector) => {
       const el = document.querySelector(selector);
@@ -7925,6 +7972,7 @@
     const devActive = started && game.s.mode === 'developer';
     developerSummonButton.hidden = !devActive;
     developerFinisherButton.hidden = !devActive;
+    developerReversalButton.hidden = !(devActive && game.hero.class === 'strategist');
     developerCombatMonitor.hidden = !devActive;
     developerCompanionMonitor.hidden = !devActive;
     if (devActive) {
@@ -8273,6 +8321,7 @@
             paladin: { 2: 'SUN', 3: 'SHLD', 4: 'JUDGE' },
             mage: { 2: 'FROST', 3: 'STOP', 4: 'ARC' },
             ranger: { 2: 'PIN', 3: 'HEAL', 4: 'HASTE' },
+            strategist: { 1: 'WATER', 2: 'STONE', 3: 'FIRE' },
           }[h.class]?.[slot] || icons[i];
       b.querySelector('small').textContent = b.disabled
         ? 'OFF'

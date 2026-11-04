@@ -3104,7 +3104,12 @@
       }
     }
     // Only genuinely implemented combat owners may admit a playable class.
-    Campaign.heroCombatSupports = (id) => implementedHeroCombatClasses.has(id) || id === 'rogue';
+    Campaign.heroCombatSupports = (id) => implementedHeroCombatClasses.has(id) ||
+      id === 'rogue' || (id === 'strategist' &&
+        [1, 2, 3].every((slot) => !!R.strategistStarterSkills?.[slot]) &&
+        typeof Campaign.prototype.placeStrategistFacet === 'function' &&
+        typeof Campaign.prototype.strategistInterceptPhysicalProjectile === 'function' &&
+        typeof HeroCombat.prototype.castStrategistStarter === 'function');
     for (const name of Object.getOwnPropertyNames(HeroCombat.prototype))
       if (name !== 'constructor')
         Object.defineProperty(

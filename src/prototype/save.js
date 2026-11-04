@@ -843,7 +843,9 @@
         if (!s.challenge)
           s.challenge = { succession: false, fallen: [], pending: false, gameOver: false };
         const ch = s.challenge;
-        const classCount = Object.keys(classes).length;
+        // The developer-only preview is not an heir in any public challenge.
+        const publicClasses = Object.keys(classes).filter(id => id !== 'strategist');
+        const classCount = publicClasses.length;
         if (
           typeof ch.succession !== 'boolean' ||
           typeof ch.pending !== 'boolean' ||
@@ -851,7 +853,7 @@
           !Array.isArray(ch.fallen) ||
           ch.fallen.length > classCount ||
           new Set(ch.fallen).size !== ch.fallen.length ||
-          ch.fallen.some((id) => !Object.hasOwn(classes, id))
+          ch.fallen.some((id) => !publicClasses.includes(id))
         )
           throw Error('Invalid succession');
         if (

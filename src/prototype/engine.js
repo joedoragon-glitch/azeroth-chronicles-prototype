@@ -3889,7 +3889,8 @@
         if (!challenge.fallen.includes(this.hero.class)) challenge.fallen.push(this.hero.class);
         this.hero.hp = 0;
         challenge.pending = true;
-        const remaining = Object.keys(classes).filter((id) => !challenge.fallen.includes(id));
+        const remaining = Object.keys(classes).filter((id) =>
+          id !== 'strategist' && !challenge.fallen.includes(id));
         if (!remaining.length) {
           challenge.pending = false;
           challenge.gameOver = true;
@@ -8695,7 +8696,9 @@
     if (!Campaign.heroCombatSupports?.(id)) issues.push('missing authored combat owner');
     // Rogue's first charged performance has a separate authored cooldown.
     // Other classes require a real value, never a NaN timer or Ranger fallback.
-    if (id !== 'rogue' && !(R.chargedSkills.first.chargedSeconds[id] > 0))
+    if (id !== 'rogue' && !(id === 'strategist'
+      ? R.strategistStarterSkills?.[1]?.chargedCooldown > 0
+      : R.chargedSkills.first.chargedSeconds[id] > 0))
       issues.push('missing charged Skill 1 cooldown');
     return issues;
   };
@@ -8710,6 +8713,21 @@
     // something every newly admitted class automatically inherits.
     if (definition.movementBasic === true) R.movementBasicClasses[id] = true;
     return true;
+  };
+  // Only the browser's explicit ?developer=1 entry may call this. The
+  // existing constructor and save layer reject any non-Developer Ogre run;
+  // normal Succession never enumerates the preview class as an heir.
+  Campaign.enableStrategistDeveloperTest = () => {
+    if (classes.strategist) return false;
+    return Campaign.registerPlayableClass('strategist', {
+      icon: '⚗',
+      stats: {
+        ...classes.paladin,
+        ...R.strategistHeroFoundation.stats,
+      },
+      talents: R.strategistHeroFoundation.talents,
+      movementBasic: false,
+    });
   };
   // The already-playable Rogue continues through its original opt-in.
   Campaign.enableRoguePlaytest = () => {

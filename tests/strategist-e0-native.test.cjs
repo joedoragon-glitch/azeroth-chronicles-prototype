@@ -5,10 +5,12 @@ const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const R = C.rules;
 assert.equal(C.classes.strategist, undefined);
-assert.equal(C.heroCombatSupports('strategist'), false);
-assert(C.classAdmissionIssues('strategist', {
+assert.equal(C.heroCombatSupports('strategist'), true,
+  'all six native startup forms now have a separate class-owned combat path');
+assert.equal(C.classAdmissionIssues('strategist', {
   icon: 'test', stats: C.classes.paladin, talents: C.talentProfiles.paladin,
-}).includes('missing authored combat owner'));
+}).includes('missing authored combat owner'), false,
+  'starter combat owner exists but public class still lacks registration');
 assert.throws(() => new C('normal', 'strategist'), /Unknown mode or class/);
 const originals = Object.keys(C.classes);
 // The E0 fixture must now use the only permitted preview mode; public

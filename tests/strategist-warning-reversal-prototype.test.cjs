@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 
 function scene(family) {
-  const g = new C('normal', 'paladin', () => 0.9);
+  const g = new C('developer', 'paladin', () => 0.9);
   g.enter(family);
   g.s.mercyTime = 0;
   const z = g.zone();

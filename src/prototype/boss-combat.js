@@ -2163,7 +2163,8 @@
       // a player must meet every separate attack's live footprint and deadline.
       attemptStrategistReversal(enemyId) {
         const h = this.hero;
-        if (h.class !== 'strategist' || h.hp <= 0 || !(h.skills?.[0] > 0) ||
+        if (this.s.mode !== 'developer' ||
+            h.class !== 'strategist' || h.hp <= 0 || !(h.skills?.[0] > 0) ||
             this.peace || this.s.challenge?.pending || this.s.challenge?.gameOver ||
             this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld)
           return false;
@@ -2183,6 +2184,22 @@
           x: h.x, y: h.y, remaining: a.timer,
         });
         return true;
+      }
+      // A separate manual order, never an eighth or auto-triggered skill.
+      // Prefer a selected *eligible* warning, otherwise the nearest deadline.
+      attemptStrategistReversalCommand() {
+        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist') return false;
+        const selected = this.selectedHeroTarget?.();
+        const warnings = this.zone().enemies.filter(e =>
+          this.strategistReversalSupported(e, e.telegraph) &&
+          e.telegraph?.timer > 0 && e.telegraph?.total >= e.telegraph.timer &&
+          !e.telegraph.strategistReversal
+        ).sort((a, b) =>
+          (Number(b.id === selected?.id) - Number(a.id === selected?.id)) ||
+          a.telegraph.timer - b.telegraph.timer || String(a.id).localeCompare(String(b.id)));
+        for (const enemy of warnings)
+          if (this.attemptStrategistReversal(enemy.id)) return true;
+        return false;
       }
       strategistResolveReversal(e, a) {
         if (!a?.strategistReversal || !this.strategistReversalSupported(e, a))

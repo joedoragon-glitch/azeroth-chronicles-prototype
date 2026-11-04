@@ -6661,6 +6661,13 @@
     meleeRetaliationChance: 0.10,
     meleeRetaliationPowerMultiplier: 0.35,
   });
+  // v3.2 exploratory Ogre stat proposal, NOT owner-approved public balance.
+  // Paladin's existing MP stat is reused until the Ogre receives an
+  // independent, specified resource profile. No new gameplay meter.
+  const strategistHeroFoundation = Object.freeze({
+    stats: Object.freeze({ hp: 135, power: 17, armor: 9, speed: 290 }),
+    talents: Object.freeze({ power: 6, mana: 2, hp: 35, speed: 37 }),
+  });
   // Provisional source-true Stage 1A tuning; these are NOT released skills.
   const strategistStarterSkills = Object.freeze({
     1: Object.freeze({ material: 'water', sourceRange: 160, range: 90,
@@ -7891,6 +7898,7 @@
     strategistOgreDefense,
     strategistStarterSkills,
     strategistFacet,
+    strategistHeroFoundation,
     rogueHeroFoundation,
     rogueCharmNicknames,
     companionSkills,
