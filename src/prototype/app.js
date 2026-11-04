@@ -3357,7 +3357,8 @@
     }
     const back = $('close-button');
     back.hidden = false;
-    back.innerHTML = tr('Back') + ' <small>' + input.key('confirm') + ' / Esc</small>';
+    back.innerHTML = tr('Back') + ' <small>' + input.key('confirm') + ' / ' +
+      input.key('menu') + (input.key('menu') === 'Esc' ? '' : ' / Esc') + '</small>';
     buttons.push(back);
     menuKeys.push('__back__');
     highlight();
