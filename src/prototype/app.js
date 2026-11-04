@@ -4478,7 +4478,8 @@
     return heroClassPresentation[id]?.[language === 'es' ? 'detailEs' : 'detail'] || 'Class skills require authored rules';
   }
   function playableClassCountWord() {
-    const count = Object.keys(Campaign.classes).length;
+    // A developer-preview class never increases the public Succession limit.
+    const count = Object.keys(Campaign.classes).filter((id) => id !== 'strategist').length;
     return { 3: 'three', 4: 'four', 5: 'five' }[count] || String(count);
   }
   function chooseClass(mode, succession) {
@@ -4507,7 +4508,9 @@
         : language === 'es'
           ? 'Elige quién liderará la resistencia. Cada clase recibe su ventaja innata desde el nivel 1. Rescata especialistas para aprender más habilidades y conseguir equipo.'
           : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
-      Object.entries(Campaign.classes).map(([id, c]) =>
+      Object.entries(Campaign.classes)
+        .filter(([id]) => id !== 'strategist' || (mode === 'developer' && developerEnabled))
+        .map(([id, c]) =>
         action(
           (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
           () => {
@@ -5431,7 +5434,7 @@
         game.hero.class +
         ' has fallen permanently. Succession carries no crown penalty; all crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
       Object.entries(Campaign.classes)
-        .filter(([id]) => !game.s.challenge.fallen.includes(id))
+        .filter(([id]) => id !== 'strategist' && !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
           action((id === 'rogue' ? '' : c.icon + ' ') +
             heroClassLabel(id, false) + ' successor', () => {
