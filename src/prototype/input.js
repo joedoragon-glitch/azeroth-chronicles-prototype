@@ -16,6 +16,7 @@
       ['KeyJ', 'KeyK', 'KeyL', 'KeyU', 'KeyI', 'Space', 'KeyO', 'KeyN'][i],
     ]),
     ['confirm', 'Confirm / interact', 'KeyF'],
+    ['menu', 'Open menu / back', 'Escape'],
     ['doctrine', 'Squad doctrine', 'Tab'],
     ['recall', 'Recall squad', 'Backquote'],
     ['target', 'Cycle hero target', 'KeyE'],
@@ -61,12 +62,13 @@
   const aliases = { KeyV: 'pause', KeyQ: 'recall' };
   const validCode = (code) =>
     typeof code === 'string' &&
-    /^(Key[A-Z]|Digit[0-9]|Space|ShiftLeft|ShiftRight|Tab|Backquote|Minus|Equal|BracketLeft|BracketRight|Backslash|Semicolon|Quote|Comma|Period|Slash|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Home|End|PageUp|PageDown|F[1-4]|F[6-9]|F10)$/.test(
+    /^(Key[A-Z]|Digit[0-9]|Space|ShiftLeft|ShiftRight|Tab|Backquote|Minus|Equal|BracketLeft|BracketRight|Backslash|Semicolon|Quote|Comma|Period|Slash|ArrowUp|ArrowDown|ArrowLeft|ArrowRight|Home|End|PageUp|PageDown|F[1-4]|F[6-9]|F10|Escape)$/.test(
       code,
     );
   function label(code) {
     const names = {
       Space: 'Space',
+      Escape: 'Esc',
       ShiftLeft: 'Left Shift',
       ShiftRight: 'Right Shift',
       Backquote: '`',
@@ -167,6 +169,8 @@
         return alias && preferences.bindings[alias] === defaults[alias] ? alias : null;
       },
       rebind(id, code) {
+        if (code === 'Escape' && id !== 'menu')
+          return 'Esc is reserved for opening and leaving menus.';
         if (!Object.hasOwn(defaults, id) || !validCode(code))
           return 'Choose a letter, number, arrow or supported action key. Esc cancels; Enter remains a menu fallback.';
         const conflict = actions.find(
