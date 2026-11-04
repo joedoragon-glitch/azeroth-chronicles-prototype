@@ -29,7 +29,7 @@ const groups = [
     // The stable-source registry is a gameplay contract, not a renderer asset
     // manifest. Re-run its real source and native Lab receipt regressions when
     // future owner branches change the implementation without touching tests.
-    match: /^src\\/prototype\\/strategist-(?:materials|lab-sources)\\.js$/,
+    match: /^src\/prototype\/strategist-(?:materials|lab-sources)\.js$/,
     tests: [
       TEST + 'strategist-materials.test.cjs',
       TEST + 'strategist-lab-sources.test.cjs',
