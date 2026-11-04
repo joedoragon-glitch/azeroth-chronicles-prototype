@@ -93,13 +93,14 @@
         const nearby = scene.nearbyEngaged ?? scene.engaged ?? 0;
         const fighting = nearby > 0 ||
           (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
-        // Within Greenwood's outdoor travel chain, the short default
-        // crossfade reads as an abrupt song cut between town, roads and
-        // the Crypt approach. Keep combat responsive but let ordinary
-        // exploration transitions resolve over a longer musical handoff.
-        // These seconds affect only gain automation, not spatial routing.
-        const valeTravelFade = scene.zone === 'vale' &&
-          scene.interior === 'outdoors' && !scene.peace
+        // Each of the five region-level outdoor directors has an action
+        // stem. Use that existing catalog fact (not a duplicate region list)
+        // to soften ordinary settlement/day/night/exploration handoffs.
+        // Leave dungeon, treasury, boss, peace and narrative fades authored.
+        // Combat remains faster; effects and warnings use separate buses.
+        const outdoorTravelFade = scene.interior === 'outdoors' &&
+          scene.zone === scene.region && !scene.peace &&
+          !!director.places[scene.zone]?.action
             ? (fighting ? 2 : 3.2)
             : null;
         if (scene.millhavenTown && scene.zone === 'vale' &&
@@ -107,7 +108,7 @@
           !scene.estateApproach && !fighting) return {
             id: 'millhaven-chamber',
             bpm: 92,
-            fade: valeTravelFade,
+            fade: outdoorTravelFade,
             stems: [{ id: 'millhaven-chamber', gain: 0.7 }],
           };
         const p =
@@ -140,7 +141,7 @@
         return {
           id: base,
           bpm: tempos[base],
-          fade: valeTravelFade ?? p.fade ?? 1.2,
+          fade: outdoorTravelFade ?? p.fade ?? 1.2,
           stems: [
             {
               id: base,
