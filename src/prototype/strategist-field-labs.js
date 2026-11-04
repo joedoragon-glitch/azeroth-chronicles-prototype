@@ -230,11 +230,16 @@
         let left = CANDIDATE.travelSpeed * dt;
         while (left > 0 && job.waypoint < job.path.length) {
           const to = job.path[job.waypoint], d = distance(job.position, to);
-          if (!navigation.passable(this, job.zoneId, job.position, to)) return false;
           if (d <= 0.001) { job.waypoint++; continue; }
           const step = Math.min(left, d);
-          job.position.x += (to.x - job.position.x) * step / d;
-          job.position.y += (to.y - job.position.y) * step / d;
+          const next = { x: job.position.x + (to.x - job.position.x) * step / d,
+            y: job.position.y + (to.y - job.position.y) * step / d };
+          // Per-frame collision only along the actual tiny movement this tick,
+          // not the entire long waypoint line. Never clip through a changed wall.
+          if (!navigation.passable(this, job.zoneId, job.position, next)) {
+            job.blocked = true; return false;
+          }
+          job.position = next; job.blocked = false;
           left -= step;
           if (step >= d - 0.001) job.waypoint++;
         }
@@ -248,6 +253,8 @@
         // decision event, not a scan on each simulation/render frame.
         // The route/passable functions MUST work for the specified region.
         let approvedPath = null;
+        // One decision budget shared across up to 24 authentic material candidates.
+        const decisionBudget = navigation.newDecisionBudget?.();
         const source = materials.forGather(this, job.material, {
           lab: { zone: job.zoneId, id: lab.id }, worker: clone(job.position),
           range: CANDIDATE.maximumSourceRange,
@@ -257,7 +264,7 @@
           zone: this.s.zones[job.zoneId],
           rules: adapters.rules,
           route: (from, point, zone) => {
-            const candidate = navigation.route(this, zone.id, from, point);
+            const candidate = navigation.route(this, zone.id, from, point, decisionBudget);
             approvedPath = points(candidate) ? candidate : null;
             return candidate;
           },
@@ -333,14 +340,14 @@
               !finitePoint(job.position) || !safeFromThreat(this, job.zoneId, job.position, worker))
             continue; // No invented safe progress through an enemy encounter.
           if (job.phase === 'station' || job.phase === 'outbound' || job.phase === 'return') {
-            const waypoint = job.path?.[job.waypoint];
-            if (waypoint && !navigation.passable(this, job.zoneId, job.position, waypoint)) {
+            if (job.blocked) {
               if ((this.s.time || 0) >= job.retryAt) {
                 job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
                 const destination = job.phase === 'outbound' ? job.target : lab;
                 const replanned = navigation.route(this, job.zoneId, job.position, destination);
                 if (this.fieldLabValidRoute(job.zoneId, job.position, replanned, destination)) {
                   job.path = replanned.map(clone); job.waypoint = 0;
+                  job.blocked = false;
                 }
               }
               continue;
