@@ -1640,5 +1640,6 @@ body.title-active #modal { z-index: 11; }
     width: min(720px, calc(100vw - 16px - env(safe-area-inset-left) - env(safe-area-inset-right)));
     margin-inline: auto;
     max-height: none;
+    transform: none;
   }
 }
