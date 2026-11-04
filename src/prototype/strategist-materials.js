@@ -64,12 +64,39 @@
       /(?:^|[-_])(house|home|cottage|dwelling|residence|barracks|inn|living-quarters)(?:$|[-_])/.test(name) ||
       ['house', 'cottage', 'barracks', 'home', 'residence'].includes(p?.kind);
   }
-  function propMaterial(p, gameTime = 0) {
+  function propMaterial(p, gameTime = 0, declaration) {
     if (!isFinitePoint(p) || protectedHome(p) || p?.destroyed === true) return null;
     // These specific regional overlays are expressly scenery-only. Do not
     // promote a reused visual identity to gameplay without new authored state.
     if (p.greenwoodRefinement === 1 || p.crownCivicForecourt === true ||
         p.crownFoundryWorker === true || p.crownFoundryExterior === true) return null;
+    // Region-owned stable gameplay keys are independent of visual asset names.
+    // Unregistered aliases cannot grant material from untrusted saved props.
+    if (p.materialSourceKey !== undefined &&
+        (typeof p.materialSourceKey !== 'string' || !p.materialSourceKey ||
+          declaration === undefined)) return null;
+    if (declaration !== undefined) {
+      if (!declaration || !MATERIALS.includes(declaration.material)) return null;
+      const requirement = declaration.requires;
+      if (requirement === 'permanent') {
+        if (declaration.material === 'fire' ||
+            (declaration.material === 'water' &&
+              (p.dry === true || p.empty === true))) return null;
+        return declaration.material;
+      }
+      if (requirement === 'containsWater')
+        return declaration.material === 'water' && p.containsWater === true &&
+          p.empty !== true && p.dry !== true ? 'water' : null;
+      if (requirement === 'containsOre')
+        return declaration.material === 'mineral' && p.containsOre === true &&
+          p.empty !== true ? 'mineral' : null;
+      if (requirement === 'activeHeat')
+        return declaration.material === 'fire' && p.extinguished !== true &&
+          p.lit !== false && p.active !== false && p.heatActive !== false &&
+          (p.lit === true || p.active === true || p.heatActive === true)
+          ? 'fire' : null;
+      return null;
+    }
     const kind = String(p.structure || '');
     // Greenwood's authored forest deliberately stores nature in a separate
     // property, often with structure:null. These are real trees and fallen logs.
@@ -101,6 +128,17 @@
     if (p.authoritativeCombatFire === true && p.kind === 'active-fire-hazard' &&
         Number.isFinite(p.expiresAt) && p.expiresAt > gameTime) return 'fire';
     return null;
+  }
+
+  // The live prop carries its physical position. Only definitions from the
+  // active zone's rule table can authorize a new source identity.
+  function materialForProp(p, time, zoneId, rules) {
+    const declarations = rules?.environmentalSources?.[zoneId];
+    const key = p?.materialSourceKey ?? p?.id;
+    const definition = typeof key === 'string' && declarations &&
+      Object.prototype.hasOwnProperty.call(declarations, key)
+      ? declarations[key] : undefined;
+    return propMaterial(p, time, definition);
   }
 
   function segmentDistance(p, a, b) {
@@ -318,31 +356,70 @@
     return true;
   }
   function sourceIndex(zone, rules, regionIndex, time) {
-    const grid = new Map();
+    const grid = new Map(), byId = new Map();
+    const maxSourceRadius = { water: 0, mineral: 0, wood: 0, fire: 0 };
+    let propIndex = 0;
     for (const prop of zone.props || []) {
-      const material = propMaterial(prop, time);
+      const position = propIndex++;
+      const material = materialForProp(prop, time, zone.id, rules);
       if (!material) continue;
-      const source = { id: prop.id, kind: 'prop', material, prop };
-      const key = cellKey(prop.x, prop.y);
-      if (!grid.has(key)) grid.set(key, []);
-      grid.get(key).push(source);
+      const indexedCell = cellKey(prop.x, prop.y);
+      const source = {
+        id: prop.id, key: prop.materialSourceKey || prop.id,
+        indexedCell, position, kind: 'prop', material, prop,
+      };
+      // Gatherers can reach a solid's actual perimeter well before its center.
+      // Keep a single grid entry per prop; widen queries by the largest
+      // physically-authored radius of that material, without per-frame scans.
+      const physicalRadius = Number.isFinite(prop.r) && prop.r > 0 ? prop.r : 0;
+      maxSourceRadius[material] = Math.max(maxSourceRadius[material],
+        Math.min(MAX_GATHER_RANGE, physicalRadius));
+      if (!grid.has(indexedCell)) grid.set(indexedCell, []);
+      grid.get(indexedCell).push(source);
+      if (typeof source.id === 'string' && source.id) {
+        // Duplicate native IDs are ambiguous and must never validate a receipt.
+        byId.set(source.id, byId.has(source.id) ? null : source);
+      }
+    }
+    const terrain = terrainSources(rules, zone.id, regionIndex);
+    for (const source of terrain) {
+      if (typeof source.id === 'string' && source.id)
+        byId.set(source.id, byId.has(source.id) ? null : source);
     }
     return {
       zone, props: zone.props, length: zone.props?.length || 0,
       buildings: zone.buildings, buildLength: zone.buildings?.length || 0,
+      sourceRevision: zone.environmentSourceRevision,
+      declarations: rules?.environmentalSources?.[zone.id],
       rulesTerrain: rules?.terrain?.[regionIndex],
-      grid, obstructions: indexObstructions(zone),
-      terrain: terrainSources(rules, zone.id, regionIndex),
+      grid, byId, maxSourceRadius, obstructions: indexObstructions(zone),
+      terrain,
     };
   }
-  function candidates(index, point, radius, material) {
+  function sourceStillIndexed(index, source) {
+    return !source.prop || (index.zone.props?.[source.position] === source.prop &&
+      source.id === source.prop.id &&
+      source.key === (source.prop.materialSourceKey || source.prop.id) &&
+      source.indexedCell === cellKey(source.prop.x, source.prop.y));
+  }
+  function candidates(index, point, radius, material, expectedId = null) {
+    // A Field Lab receipt targets EXACTLY one previously sampled native ID.
+    // A large solid's actual perimeter may be in another grid cell from its
+    // center; authoritative by-ID lookup avoids missing that real source.
+    if (expectedId !== null) {
+      const one = index.byId.get(expectedId);
+      const matching = one && one.material === material && sourceStillIndexed(index, one)
+        ? [one] : [];
+      return matching;
+    }
     const found = [];
     const loX = Math.floor((point.x - radius) / CELL), hiX = Math.floor((point.x + radius) / CELL);
     const loY = Math.floor((point.y - radius) / CELL), hiY = Math.floor((point.y + radius) / CELL);
     for (let x = loX; x <= hiX; x++)
       for (let y = loY; y <= hiY; y++)
         for (const source of index.grid.get(x + ':' + y) || [])
-          if (source.material === material) found.push(source);
+          if (source.material === material && sourceStillIndexed(index, source))
+            found.push(source);
     return found.concat(index.terrain.filter((source) => source.material === material));
   }
 
@@ -355,6 +432,8 @@
     if (!old || old.zone !== zone || old.props !== zone.props ||
         old.length !== (zone.props?.length || 0) || old.buildings !== zone.buildings ||
         old.buildLength !== (zone.buildings?.length || 0) ||
+        old.sourceRevision !== zone.environmentSourceRevision ||
+        old.declarations !== rules?.environmentalSources?.[zone.id] ||
         old.rulesTerrain !== rules?.terrain?.[regionIndex]) {
       const created = sourceIndex(zone, rules, regionIndex, game.s?.time || 0);
       // Keep only a small working set in RAM; old regions are reconstructed on
@@ -388,12 +467,21 @@
         options.range < 0 || options.range > maxRange) return null;
     const index = state(game, zone, rules);
     if (!index) return null;
+    if (options.expectedSourceId !== undefined &&
+        (typeof options.expectedSourceId !== 'string' || !options.expectedSourceId)) return null;
     const nearby = [];
-    for (const source of candidates(index, options.at, options.range + 36, material)) {
+    // A source's collision-safe edge can be close while its center sits far
+    // outside the worker's nominal range; broadening the *cell lookup only*
+    // preserves exact distance and route limits below.
+    const discoveryReach = options.range + 36 + (options.access &&
+        options.expectedSourceId === undefined ? index.maxSourceRadius[material] : 0);
+    for (const source of candidates(index, options.at, discoveryReach, material,
+        options.expectedSourceId ?? null)) {
       // Live conditions are checked again, so extinguishing a fire never waits for a cache reset.
-      if (source.prop && propMaterial(source.prop, game.s?.time || 0) !== material) continue;
-      // Gatherers touch an authored solid at its actual outer surface.
-      // Combat casting retains #770's original optical lookup.
+      if (source.prop && materialForProp(source.prop, game.s?.time || 0,
+          zone.id, rules) !== material) continue;
+      // Field Labs approach a solid's boundary, not its unwalkable center.
+      // Ordinary combat still casts at the authentic elemental source point.
       const point = options.access && source.kind === 'prop' &&
           Number.isFinite(source.prop?.r) && source.prop.r > 0
         ? closestToShape(options.at, source.prop)
@@ -477,7 +565,7 @@
     });
   }
   const api = Object.freeze({
-    MATERIALS, propMaterial, protectedHome, terrainSources, closestToShape,
+    MATERIALS, propMaterial, materialForProp, protectedHome, terrainSources, closestToShape,
     hasSight, findSource, forCombat, forGather, invalidate,
   });
   if (typeof module !== 'undefined') module.exports = api;

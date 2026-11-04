@@ -1104,6 +1104,19 @@
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
       originalDepartureRegion = (id) => ['vale', 'highlands', 'frontier'].includes(id);
     class World {
+      // Explicit versioned source/occlusion change event. No per-frame scene
+      // enumeration: zone() is on the game's hot combat/render path.
+      // Keep this marker runtime-only so the v4 save schema is unchanged.
+      noteEnvironmentalSourcesChanged(z) {
+        if (!z || typeof z !== 'object') return false;
+        const old = z.environmentSourceRevision;
+        const next = Number.isSafeInteger(old) && old >= 0 &&
+          old < Number.MAX_SAFE_INTEGER ? old + 1 : 1;
+        Object.defineProperty(z, 'environmentSourceRevision', {
+          configurable: true, enumerable: false, writable: true, value: next,
+        });
+        return true;
+      }
       ensureCriticalCodex(z) {
         // Historical v4 rooms may already exist before this mechanic.
         // Reconcile only the missing authored book; never rebuild the room.
@@ -1150,6 +1163,7 @@
           if (id === z.id && pending.base) move(pending.base);
         if (this.s.zone === z.id) for (const p of [this.hero, ...this.activeParty()]) move(p);
         z.dungeonSpaceVersion = space.version;
+          this.noteEnvironmentalSourcesChanged(z); // dungeon geometry relocation
       }
       dungeonBossHome(id = this.s.zone) {
         return (
@@ -1330,6 +1344,7 @@
             if (road.length) z.roads.push(road);
           }
           z.frontierEdgeVersion = cfg.version;
+          this.noteEnvironmentalSourcesChanged(z); // frontier edge relocation
         } finally {
           z.props = originalProps;
           this.blocked = blocked;
@@ -1392,6 +1407,7 @@
             }
           }
           z.frontierVisualVersion = cfg.version;
+          this.noteEnvironmentalSourcesChanged(z); // frontier scene clearance
         } finally {
           this.blocked = blocked;
           this.s.zone = oldZone;
@@ -1590,6 +1606,7 @@
             z.frontierTownPlacements[id] = [target.x, target.y];
           }
           z.frontierSceneVersion = cfg.version;
+          this.noteEnvironmentalSourcesChanged(z); // frontier source movement
           this.frontierTownServices(z);
           z.footpaths ||= [];
           const doors = [
@@ -1832,6 +1849,7 @@
             if (q) Object.assign(n, q);
           }
           z.crownSceneVersion = cfg.version;
+          this.noteEnvironmentalSourcesChanged(z); // crown layout movement
           this.crownTownServices(z);
           // Keep service use points and all original identities; connect the
           // visible front (+x,+y), not the back wall, to a public street.
@@ -2303,6 +2321,7 @@
             }
           }
           z.interiorCoherenceVersion = 3;
+          this.noteEnvironmentalSourcesChanged(z); // physical side-room wall relocation
         } finally {
           this.s.zone = previous;
         }
@@ -2474,6 +2493,7 @@
           if (z.id === 'march') this.marchBankEcology(z);
           // Stable metadata is a migration receipt, not a successful rendered-world review.
           z.environmentCoherenceVersion = 2;
+          this.noteEnvironmentalSourcesChanged(z); // barrier-safe source / prop relocation
         } finally {
           this.s.zone = previous;
         }
@@ -2865,6 +2885,7 @@
             }
           }
           z.townVisualClearanceVersion = 3;
+          this.noteEnvironmentalSourcesChanged(z); // town obstruction clearance
         } finally {
           this.s.zone = previousZone;
         }
@@ -2907,6 +2928,7 @@
           ));
         }
         z.regionalStreetRollbackVersion = 1;
+        this.noteEnvironmentalSourcesChanged(z); // reverted legacy street source positions
       }
       distanceToRoad(z, point) {
         let nearest = Infinity;
@@ -3091,6 +3113,7 @@
         };
         orchard.servicePoint = { ...cfg.orchardDoor };
         z.millhavenOnboardingVersion = cfg.version;
+        this.noteEnvironmentalSourcesChanged(z); // Millhaven physical frontage placement
         if (this.s.refugeSite?.zone === z.id) {
           const site = by(this.s.refugeSite.id);
           if (site?.kind === 'rest')
@@ -3260,6 +3283,7 @@
         const recruiter = z.npcs.find((n) => n.id === 'recruiter');
         if (recruiter) Object.assign(recruiter, { x: 650, y: 800 });
         z.reedportRefugeSpacingVersion = 1;
+        this.noteEnvironmentalSourcesChanged(z); // Reedport scenic relocation
       }
       // Combat-only low-spec world. The campaign terrain generator never runs here.
       arenaStages() {
@@ -4586,6 +4610,7 @@
             });
           }
           z.recoveryAndHeatVersion = 1;
+          this.noteEnvironmentalSourcesChanged(z); // thermal recovery staging
         } finally {
           this.s.zone = oldZone;
         }
@@ -5600,6 +5625,7 @@
           Object.assign(item, relocated);
         }
         z.marchCoastalRoadClearanceVersion = 1;
+        this.noteEnvironmentalSourcesChanged(z); // coastal source relocation
       }
       marchCoastalLayout(z) {
         if (z.id !== 'march' || z.coastalSwampVersion === 1) return;
@@ -5880,6 +5906,7 @@
           ])
             add(x, y, kind);
           z.coastalSwampVersion = 1;
+          this.noteEnvironmentalSourcesChanged(z); // native March wetland source changes
         } finally {
           this.s.zone = before;
         }

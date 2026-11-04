@@ -380,6 +380,91 @@ assert.equal(routeAttempts, 24, 'at most 24 actual route probes per Lab query');
 
 
 
+// Revisioned semantic-source contract: visuals and coordinates may change,
+// but only a code-owned, zone-scoped source definition may authorize a material.
+const semanticRules = Object.create(R);
+semanticRules.environmentalSources = { vale: {
+  'vale-public-water': { material: 'water', requires: 'containsWater' },
+  'vale-work-heat': { material: 'fire', requires: 'activeHeat' },
+  'vale-owned-tree': { material: 'wood', requires: 'permanent' },
+} };
+const identified = {
+  id: 'art-v1', materialSourceKey: 'vale-public-water', x: 158, y: 100,
+  structure: 'decorative-modern-vessel', containsWater: true, decorative: true, r: 0,
+};
+const semanticZone = { id: 'vale', props: [identified], buildings: [], environmentSourceRevision: 0 };
+game.hero.class = 'strategist';
+game.hero.x = 100; game.hero.y = 100;
+const semanticCast = material => M.forCombat(game, material, {
+  zone: semanticZone, rules: semanticRules, range: 100,
+});
+assert.equal(semanticCast('water')?.id, 'art-v1', 'stable proof independent of artwork');
+assert.equal(M.materialForProp(identified, game.s.time, 'vale', R), null,
+  'saved alias without current regional authoring cannot invent sources');
+assert.equal(M.propMaterial(identified, game.s.time), null, 'raw metadata not enough');
+assert.equal(M.materialForProp({
+  ...identified, materialSourceKey: 'unlisted', structure: 'woodpile',
+}, game.s.time, 'vale', semanticRules), null, 'unknown key cannot fall back to material-looking art');
+assert.equal(M.materialForProp(identified, game.s.time, 'crown', semanticRules), null,
+  'another region cannot borrow the Vale key');
+identified.x = 1500; identified.y = 1500;
+assert.equal(semanticCast('water'), null, 'cached moved object cannot haunt its old cell');
+semanticZone.environmentSourceRevision++;
+assert.equal(semanticCast('water'), null, 'revision refreshes relocated index');
+identified.x = 152; identified.y = 105; identified.id = 'art-v2';
+identified.structure = 'replacement-sprite';
+semanticZone.environmentSourceRevision++;
+assert.equal(semanticCast('water')?.id, 'art-v2',
+  'replacement art keeps stable gameplay key with actual new position');
+identified.containsWater = false;
+assert.equal(semanticCast('water'), null, 'empty is immediately denied');
+identified.containsWater = true;
+assert.equal(semanticCast('water')?.id, 'art-v2', 'live state is consulted again');
+const wall = { id: 'mutable-wall', x: 126, y: 100, structure: 'stonewall',
+  r: 14, decorative: false };
+semanticZone.props.push(wall);
+assert.equal(semanticCast('water'), null, 'new wall blocks optical sight');
+wall.x = 1700; semanticZone.environmentSourceRevision++;
+assert.equal(semanticCast('water')?.id, 'art-v2',
+  'moving wall updates occlusion only after event/revision');
+semanticZone.props[0] = { ...identified, id: 'art-v3' };
+assert.equal(semanticCast('water'), null,
+  'same-length prop replacement cannot return the removed cached source');
+semanticZone.environmentSourceRevision++;
+assert.equal(semanticCast('water')?.id, 'art-v3',
+  'same-length array replacement updates via zone revision');
+semanticZone.props[0] = {
+  ...identified, id: 'residential-tree', materialSourceKey: 'vale-owned-tree',
+  structure: 'tree', protectedHome: true,
+};
+semanticZone.environmentSourceRevision++;
+assert.equal(semanticCast('wood'), null, 'property protection outranks definitions');
+semanticZone.props[0] = {
+  id: 'replaced-heat', materialSourceKey: 'vale-work-heat',
+  x: 152, y: 105, structure: 'painted-furnace', heatActive: false,
+};
+semanticZone.environmentSourceRevision++;
+assert.equal(semanticCast('fire'), null, 'art alone is not an operating furnace');
+semanticZone.props[0].heatActive = true;
+semanticZone.environmentSourceRevision++;
+assert.equal(semanticCast('fire')?.id, 'replaced-heat', 'heat needs live proof');
+semanticZone.props[0].heatActive = false;
+assert.equal(semanticCast('fire'), null, 'live extinguish denies existing cached Fire');
+semanticZone.props.splice(0, 1);
+assert.equal(semanticCast('fire'), null, 'removed asset is never a ghost source');
+assert.equal(M.materialForProp({ id: 'test-water', x: 1, y: 1, dry: true },
+  game.s.time, 'vale', { environmentalSources: { vale: {
+    'test-water': { material: 'water', requires: 'permanent' },
+  } } }), null, 'even permanent water must honor real dry state');
+for (const requires of ['invalid', 'permanent', 'containsWater', 'containsOre']) {
+  assert.equal(M.materialForProp({
+    id: 'test-fire', materialSourceKey: 'vale-work-heat',
+    x: 152, y: 105, heatActive: true,
+  }, game.s.time, 'vale', { environmentalSources: { vale: {
+    'vale-work-heat': { material: 'fire', requires },
+  } } }), null, 'fire declaration must require heat: ' + requires);
+}
+
 // Audited catalog inventory across the five regions. This is intentionally
 // source-derived rather than a heavy, full-campaign world-generation sweep:
 // actual placed-zone and phone pathing coverage belongs to integration QA.
