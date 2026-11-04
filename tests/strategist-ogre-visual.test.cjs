@@ -59,6 +59,10 @@ assert(art.includes('ctx.bezierCurveTo(0, -65, 12, -65, 13, -59)'),
   'historical tied coil must be organic hair, not a stick or flag');
 assert(!art.includes('ctx.moveTo(-7, -55)') && !art.includes("poly([[9, -57]"),
   'old hat-and-banner silhouette must not return');
+assert(art.includes('ctx.moveTo(12, -30)') && art.includes('ctx.lineTo(27, -14)'),
+  'far shoulder must be dressed in joined tunic sleeve, not a bare round mass');
+assert(art.includes("[-11, 4]], '#332c28', 4.6"),
+  'joined harness must be a restrained cross-body strap, not a wide unrelated sash');
 assert(art.includes('ctx.moveTo(-22, -1)') && art.includes('ctx.lineTo(18, 6)'),
   'belt must wrap the full waist');
 assert(art.includes('ctx.quadraticCurveTo(-20, 43, -34, 41)') &&
