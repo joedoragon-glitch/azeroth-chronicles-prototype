@@ -1,0 +1,30 @@
+name: Strategist Gate 3 native defence (draft only)
+# One narrow developer-only combat evidence job. Never publishes or deploys.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/prototype/rules.js'
+      - 'src/prototype/combat.js'
+      - 'src/prototype/boss-combat.js'
+      - 'tests/strategist-e0-native.test.cjs'
+      - 'tests/strategist-developer-isolation.test.cjs'
+      - '.github/workflows/strategist-gate3-native.yml'
+permissions:
+  contents: read
+jobs:
+  ogre-native-defence:
+    if: github.head_ref == 'feat/strategist-developer-playtest-20261104'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Source-verified Ogre defense and existing dagger/Acid regression
+        run: node tests/strategist-e0-native.test.cjs
+      - name: Guard developer-only access to unadmitted class
+        run: node tests/strategist-developer-isolation.test.cjs
