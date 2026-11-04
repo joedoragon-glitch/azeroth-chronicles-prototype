@@ -92,6 +92,9 @@ const messages = [],
   store = Store.create({ storage, Campaign: C, status: (s) => messages.push(s) }),
   game = new C('normal', 'mage', () => 0.9),
   profile = { activeMode: 'normal', nightmareUnlocked: false, audio: {} };
+// Existing v4 restore applies the one-time Greenwood trail-label migration.
+// Normalize the comparison fixture as well, preserving full snapshot equality.
+game.greenwoodTrailLabels(game.zone());
 game.hero.gold = 317;
 store.save(game, profile);
 const restored = store.load('normal');
