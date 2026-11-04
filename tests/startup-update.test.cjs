@@ -114,6 +114,40 @@ function startup({ online = true, controller = true, waiting = false,
       'already downloaded version activates offline');
     assert.equal(a.elements.get('title-screen').hidden, true);
   }
+  // On a true first launch, pick a language only after the update gate.
+  // The display preference must not be written just to construct the app.
+  {
+    const storage = new Map();
+    const originalSet = storage.set;
+    let suppressInitialLanguageSeed = true;
+    storage.set = function (key, value) {
+      if (key === 'azeroth-display-language-v1' && suppressInitialLanguageSeed) {
+        suppressInitialLanguageSeed = false;
+        return this;
+      }
+      return originalSet.call(this, key, value);
+    };
+    const a = shell('en', 'paladin', { storage, stayOnTitle: true });
+    await flush();
+    assert.equal(storage.has('azeroth-display-language-v1'), false);
+    assert.equal(a.elements.get('title-screen').hidden, true);
+    const welcome = a.scope.document.body.children.find(
+      (element) => element.id === 'language-welcome',
+    );
+    assert(welcome && !welcome.hidden, 'first-time welcome visible after update');
+    const choices = welcome.children[0].children.find(
+      (element) => element.className === 'language-welcome-choices',
+    );
+    assert.equal(choices.children.length, 2);
+    const saved = storage.get('azeroth-v4-normal');
+    choices.children[1].click();
+    assert.equal(storage.get('azeroth-display-language-v1'), 'es');
+    assert.equal(storage.get('azeroth-v4-normal'), saved, 'language does not rewrite save');
+    assert.equal(welcome.hidden, true);
+    assert.equal(a.elements.get('title-screen').hidden, false);
+    a.elements.get('title-new').click();
+    assert.notEqual(a.elements.get('modal-title').textContent, 'Choose your language');
+  }
   // The original local/portable presentation stays available without SW.
   {
     const a = shell('es', 'paladin', { stayOnTitle: true, seedSave: false });
