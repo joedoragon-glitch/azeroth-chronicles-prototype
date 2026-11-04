@@ -108,7 +108,12 @@ test('Landscape Stage 2 reuses the merged title and protects wide phone menus', 
   assert.match(landscape, /#modal:has\(\.menu-setting\) #modal-actions \{\s*grid-template-columns: minmax\(0, 1fr\)/,
     'inline sliders and selects remain in their own rows');
   assert(!landscape.includes('display: none'), 'no existing landscape actions are hidden');
-  assert(!landscape.includes('transform: rotate'), 'no fake sideways portrait canvas');
+  assert.match(phone, /body\[data-experience='phone'\]\[data-landscape-rotated='true'\] \{[\s\S]*?transform: rotate\(90deg\)/,
+    'physical portrait falls back to one fixed landscape presentation surface');
+  assert.match(read('manifest.webmanifest'), /"orientation": "landscape"/,
+    'installed app prefers a native landscape orientation');
+  assert.match(app, /phoneLandscape\.point\(e\.clientX, e\.clientY\)/,
+    'pointer interactions use logical landscape touch coordinates');
 });
 
 test('Option B targeted real-shell captures (desktop and two landscape sizes)', () => {
