@@ -46,9 +46,13 @@
       if (!count(bank.samples[key], capacity)) fail('sample count');
     for (const key of PRODUCTS)
       if (!count(bank.products[key], capacity)) fail('product count');
-    if (!count(s.strategistAcidBottles, capacity)) fail('canonical Acid stock');
+    // E0 owns carried Acid (provisional 1,000); the Lab warehouse does NOT
+    // own a second bottle cap. The caller supplies E0's exact max on admission.
+    const e0Cap = options.maxBottles ?? 1000;
+    if (!count(e0Cap, 100000) || e0Cap === 0 ||
+        !count(s.strategistAcidBottles, e0Cap)) fail('canonical Acid stock');
     const total = [...MATERIALS.map(k=>bank.samples[k]),
-      ...PRODUCTS.map(k=>bank.products[k]), s.strategistAcidBottles]
+      ...PRODUCTS.map(k=>bank.products[k])]
       .reduce((a,b)=>a+b,0);
     if (total > capacity) fail('storage overflow');
     if (labs.length < 1 || labs.length > REGIONS.length ||
