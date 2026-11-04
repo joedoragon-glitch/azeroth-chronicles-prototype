@@ -28,7 +28,7 @@
     // qualification just by loading, and no four-class author is admitted.
     if (bank === undefined) {
       if (labs.length || s.party.some(u => u.fieldLabTrained !== undefined ||
-          u.fieldLabJob !== undefined ||
+          u.fieldLabJob !== undefined || u.strategistLabRest !== undefined ||
           u.order?.type === 'strategist-field-lab')) fail('orphan data');
       return false;
     }
@@ -90,6 +90,15 @@
       roster.set(u.id,u);
       if (u.fieldLabTrained !== undefined && u.fieldLabTrained !== true)
         fail('worker qualification');
+      const rest=u.strategistLabRest;
+      if(rest!==undefined&&(!only(rest,['zoneId','x','y'])||
+         u.fieldLabTrained!==true||u.active!==false||
+         (u.order!==null&&u.order!==undefined)||u.fieldLabJob!==undefined||
+         !REGIONS.includes(rest.zoneId)||
+         s.zones[rest.zoneId]?.id!==rest.zoneId||
+         !point(rest,options.zoneSize?.(rest.zoneId)??5000)||
+         !point(u,options.zoneSize?.(rest.zoneId)??5000)||
+         !close(rest,u)))fail('reserve provenance');
       const job = bank.jobs[u.id];
       if (u.fieldLabJob !== undefined && (!job || u.fieldLabJob !== job.labId))
         fail('orphan job');
@@ -101,7 +110,8 @@
       if (!only(job, ['zoneId','labId','workerId','material','position','phase',
           'path','waypoint','sampleLeft','carries','retryAt','target','sourceId',
           'wasActive','blocked','threatId']) ||
-          !u || u.fieldLabTrained !== true || u.fieldLabJob !== job.labId ||
+          !u || u.fieldLabTrained !== true ||
+          u.strategistLabRest !== undefined || u.fieldLabJob !== job.labId ||
           u.order?.type !== 'strategist-field-lab' ||
           u.order.id !== job.labId || u.active !== false ||
           !(u.hp > 0) || u.expeditionId ||

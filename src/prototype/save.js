@@ -1439,6 +1439,7 @@
         if (s.strategistLabEconomy !== undefined ||
             s.party.some(u => u.fieldLabTrained !== undefined ||
               u.fieldLabJob !== undefined ||
+              u.strategistLabRest !== undefined ||
               u.order?.type === 'strategist-field-lab') ||
             Object.values(s.zones).some(z =>
               z.buildings.some(b => b.kind === 'strategist-field-lab'))) {

@@ -148,7 +148,9 @@
         if (u.charmOrigin && (typeof this.isCharmedCompanion !== 'function' ||
             !this.isCharmedCompanion(u))) return false;
         if (u.type === 'pet' && (typeof this.petDefinition !== 'function' ||
-            !this.petDefinition(u.petFamily))) return false;
+            !this.petDefinition(u) ||
+            (typeof this.petUnlocked === 'function' &&
+              !this.petUnlocked(u.petFamily)))) return false;
         if (u.expeditionId || u.keeperHeld || u.deathRollHeld ||
             u.order || u.fieldLabJob || this._companionCharges?.has(u.id)) return false;
         // Assignment is an explicit owner action. Either an idle active
@@ -183,6 +185,7 @@
         job.wasActive = worker.active !== false;
         worker.active = false; // Native active-party exclusion during paid labor.
         worker.order = { type: 'strategist-field-lab', id: lab.id };
+        delete worker.strategistLabRest; // Physical job owns the current point.
         worker.fieldLabJob = lab.id;
         bank.jobs[workerId] = job;
         return true;
@@ -199,6 +202,11 @@
           // region with an open native party slot, never teleport on remote recall.
           worker.active = job.wasActive === true && job.zoneId === this.s.zone &&
             this.activeParty?.().length < this.expeditionPartyCap?.();
+          if (!worker.active && worker.hp > 0)
+            worker.strategistLabRest = {
+              zoneId: job.zoneId, x: job.position.x, y: job.position.y,
+            }; // Authenticated physical job endpoint, not guessed XY.
+          else delete worker.strategistLabRest;
         }
         delete bank.jobs[workerId];
         return true;
