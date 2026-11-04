@@ -58,6 +58,14 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     paladin.click();
     const g = h.scope.Prototype.game;
     assert.equal(g.s.mode, 'developer', 'Developer Mode campaign must actually be created');
+    // New Game performs asynchronous first-scene preparation behind the title.
+    // Drive the actual scheduled shell frames before opening in-game Settings.
+    for (let i = 0; i < 60 && !h.scope.Prototype.started; i++) {
+      await Promise.resolve();
+      h.h.frame(16 * (i + 1));
+    }
+    assert(h.scope.Prototype.started,
+      'Developer campaign must finish first-scene preparation before diagnostics');
     h.elements.get('menu-button').click();
     h.click('Game and settings');
     h.click('Screen and performance');
