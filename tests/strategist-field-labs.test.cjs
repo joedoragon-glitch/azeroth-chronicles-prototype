@@ -164,6 +164,14 @@ test('one-time training persists and reserves require verified location', () => 
   assert.equal(u.active, false);
   assert.equal(u.order.type, 'strategist-field-lab');
   assert.equal(g.assignFieldLabWorker('vale', 'vale', u.id, 'water'), false);
+  assert.equal(g.unassignFieldLabWorker('vale', u.id), false,
+    'remote unassignment must not cancel a worker while still walking');
+  run(g, 2); // Native-rate physical arrival before reserve status is allowed.
+  assert.equal(g.fieldLabNetwork().jobs[u.id].phase, 'idle');
+  g.unsafe = true;
+  assert.equal(g.unassignFieldLabWorker('vale', u.id), false,
+    'danger cannot be escaped by remotely unassigning a worker');
+  g.unsafe = false;
   assert.equal(g.unassignFieldLabWorker('vale', u.id), true);
   assert.equal(g.fieldLabNetwork().jobs[u.id], undefined);
   assert.equal(u.fieldLabTrained, true);

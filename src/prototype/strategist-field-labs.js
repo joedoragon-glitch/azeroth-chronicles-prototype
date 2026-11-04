@@ -237,7 +237,22 @@
         const bank = this.fieldLabNetwork(), job = bank?.jobs[workerId];
         if (!job) return false;
         const worker = this.s.party.find((u) => u.id === workerId);
-        if (worker && worker.fieldLabJob === job.labId) {
+        const lab = this.fieldLab(job.zoneId);
+        // Remote management cannot erase a worker mid-trip or make an
+        // endangered worker invulnerable by turning them into a reserve.
+        // They must finish the authentic physical station return first.
+        if (!lab || lab.id !== job.labId || !worker ||
+            worker.fieldLabJob !== lab.id ||
+            worker.order?.type !== 'strategist-field-lab' ||
+            worker.order.id !== lab.id || worker.active !== false ||
+            !(worker.hp > 0) || worker.expeditionId ||
+            job.phase !== 'idle' || job.carries !== false || job.blocked ||
+            !finitePoint(job.position) || !finitePoint(worker) ||
+            distance(job.position, worker) > 0.02 ||
+            distance(job.position, lab) > 24 ||
+            !safeFromThreat(this, job.zoneId, job.position, worker))
+          return false;
+        if (worker.fieldLabJob === job.labId) {
           worker.x = job.position.x; worker.y = job.position.y;
           worker.order = null; delete worker.fieldLabJob;
           // Restore a voluntarily assigned active worker only in their actual
