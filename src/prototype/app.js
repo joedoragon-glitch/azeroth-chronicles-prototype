@@ -184,6 +184,17 @@
     'Save run': 'Guardar partida',
     'Export save': 'Exportar partida',
     'Import save': 'Importar partida',
+    'Request persistent storage': 'Solicitar almacenamiento persistente',
+    'Download requested. Keep the JSON file outside browser site data.':
+      'Se solicitó la descarga. Guarda el archivo JSON fuera de los datos del navegador.',
+    'Export failed. No backup file was created.':
+      'Falló la exportación. No se creó una copia de seguridad.',
+    'Browser storage persistence granted. External backups are still necessary.':
+      'Se concedió almacenamiento persistente. Aun así, necesitas copias externas.',
+    'Persistent storage was not granted. Local saves still work; export backups.':
+      'No se concedió almacenamiento persistente. El guardado local funciona; exporta copias.',
+    'Persistent storage request unavailable. Export backups regularly.':
+      'No se pudo solicitar almacenamiento persistente. Exporta copias con regularidad.',
     'Export playtest report': 'Exportar informe',
     'New Normal game': 'Nueva partida normal',
     'New game in Nightmare Mode': 'Nueva partida en modo Nightmare',
@@ -342,7 +353,27 @@
     'Specialists rescued · Defeat the Dark Lord': 'Especialistas rescatados · Derrota al Dark Lord',
     'Dungeon exit': 'Salida de la mazmorra',
     'Regional transport': 'Transporte regional',
-    'Mira · ask the Orchard trail witness': 'Mira · habla con el testigo del camino del huerto',
+    'Mira · ask the Western road observer': 'Mira · pregunta al observador del camino occidental',
+    'Western road observer': 'Observador del camino occidental',
+    'Scout tracks / Western road observer': 'Huellas del explorador / observador del camino occidental',
+    'Mira is free. Find her teaching in Millhaven.': 'Mira está libre. Búscala enseñando en Millhaven.',
+    'temporary den': 'guarida temporal',
+    'Forest Crypt perimeter': 'Perímetro de la Cripta del Bosque',
+    'Southern crossing, west bank': 'Paso del sur, orilla occidental',
+    'Southern crossing, east bank': 'Paso del sur, orilla oriental',
+    'Scout tracks': 'Huellas del explorador',
+    'Northern freight crossing, west bank': 'Paso comercial del norte, orilla occidental',
+    'Northern freight crossing, east bank': 'Paso comercial del norte, orilla oriental',
+    'Goblin perimeter': 'Perímetro goblin',
+    'Skeleton watch perimeter': 'Perímetro del puesto de vigilancia esqueleto',
+    'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.':
+      'No hay avistamientos recientes desde el camino occidental. Busca huellas del explorador en el bosque del sur y junto a ambos pasos.',
+    'Recent pawprints were found by the western road. They may already be old; follow the tracks.':
+      'Se encontraron huellas recientes junto al camino occidental. Puede que ya sean antiguas; sigue el rastro.',
+    'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.':
+      'Thornfang fue explorador de los territorios salvajes de la Corona. Lleva a Mira desde su guarida temporal del sur por el puente peatonal meridional, el perímetro de la Cripta del Bosque, la vigilancia esqueleto, el paso comercial del norte y el territorio goblin. Evitan Millhaven. Mira realiza inspecciones obligatorias aunque recibe un salario. Cuando termine la finca de invierno y sus habitantes puedan protegerla, Thornfang piensa volver a su lejano hogar.',
+    'Fresh pawprints mark this nearby path. Follow their direction.':
+      'Hay huellas frescas en este camino cercano. Sigue su dirección.',
     'Complete · field base established': 'Completada · base de campo construida',
     'Complete · reward delivered': 'Completada · recompensa entregada',
     'Construction in progress · keep one companion assigned until complete':
@@ -615,8 +646,8 @@
       'Ranger en cola de reclutamiento. Toca la misma opción para cancelar.',
     'Soldier: close combat.\nRanger: ranged attacks + healing.\nThey follow and fight automatically.\n\nRecall brings them back to you.':
       'Soldado: combate cercano.\nRanger: ataques a distancia + curación.\nTe siguen y luchan automáticamente.\n\nReagrupar los trae de vuelta.',
-    'Recalled!\nOrders cancelled. Companions stay close and defend without chasing.\nGive a new order to send them out again.\n\nNext: build your first Barracks for FREE.':
-      '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se quedan cerca y se defienden sin perseguir.\nDales una nueva orden para enviarlos de nuevo.\n\nDespués: construye tu primer cuartel GRATIS.',
+    'Recalled!\nOrders cancelled. Companions stay close and defend without chasing for up to five seconds.\nPress Recall again to cancel early; the button shows when it is active.\n\nNext: build your first Barracks for FREE.':
+      '¡Reagrupados!\nÓrdenes canceladas. Tus compañeros se mantienen cerca y se defienden sin perseguir durante un máximo de cinco segundos.\nPulsa Reagrupar otra vez para cancelar antes; el botón muestra cuándo está activo.\n\nDespués: construye tu primer cuartel GRATIS.',
     'Recruit companions or restore your company.\nShort on crowns? Tap an available service to queue it.':
       'Recluta compañeros o recupera tu compañía.\n¿Te faltan coronas? Toca un servicio disponible para dejarlo en cola.',
     'Recruit companions, treat party wounds for 30 crowns, or recover the fallen.\nShort on crowns? Tap an available service to queue it.':
@@ -681,6 +712,16 @@
       'Terreno abierto fuera del camino. Un compañero lo construye. Al terminar, Curar heridas restaura la salud del grupo por 30 coronas.',
     'Try Recall now': 'Prueba Reagrupar ahora',
     'Try it now': 'Pruébalo ahora',
+  });
+  // #684: Match the authored timed-Recall feedback and bilingual tutorial.
+  Object.assign(spanishText, {
+    'Squad Recall cancelled.': 'Reagrupación cancelada.',
+    'Squad Recall ended after five seconds.': 'La reagrupación terminó después de cinco segundos.',
+    'Recall OFF · companions resume normal orders.': 'Reagrupar OFF · los compañeros retoman sus órdenes normales.',
+    'Recall expired · companions resume normal orders.': 'Reagrupar terminó · los compañeros retoman sus órdenes normales.',
+    'Recall active. Tap Recall again or wait for the five-second hold before assigning work.': 'Reagrupar está activo. Pulsa Reagrupar otra vez o espera a que pasen los cinco segundos antes de asignar tareas.',
+    'Squad Recall ON for five seconds. Press Recall again to cancel.': 'Reagrupar ON durante cinco segundos. Pulsa Reagrupar otra vez para cancelar.',
+    'Recall ON · 5s defensive hold · tap again to cancel.': 'Reagrupar ON · defensa durante 5 s · pulsa otra vez para cancelar.',
   });
   Object.assign(spanishText, {
     'Restore living wounded companions to full health.':
@@ -915,10 +956,11 @@
     'Camera zoom': 'Zoom de cámara',
     'Graphics quality': 'Calidad gráfica',
     'Graphics renderer': 'Motor gráfico',
-    'Canvas 2D is the safe default. PixiJS WebGL2 is experimental; you can revert at any time.':
-      'Canvas 2D es la opción predeterminada segura. PixiJS WebGL2 es experimental; puedes volver a Canvas cuando quieras.',
-    'Canvas 2D · Default': 'Canvas 2D · Predeterminado',
-    'PixiJS WebGL2 · Experimental': 'PixiJS WebGL2 · Experimental',
+    'PixiJS WebGL2 is the default. Canvas 2D remains available as a backup.':
+      'PixiJS WebGL2 es el motor predeterminado. Canvas 2D sigue disponible como respaldo.',
+    'Canvas 2D · Backup': 'Canvas 2D · Respaldo',
+    'PixiJS WebGL2 · Default': 'PixiJS WebGL2 · Predeterminado',
+    'PixiJS WebGL2 · 15-second trial': 'PixiJS WebGL2 · Prueba de 15 segundos',
     'Keep WebGL2': 'Conservar WebGL2',
     'Revert to Canvas': 'Volver a Canvas',
     'Frame rate': 'Fotogramas por segundo',
@@ -1423,6 +1465,16 @@
     if (/^Inspired by /.test(piece)) return piece.replace('Inspired by ', 'Inspirado en ');
 
     if (Object.prototype.hasOwnProperty.call(spanishText, piece)) return spanishText[piece];
+    const thornLore = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
+    if (piece.startsWith('Fresh pawprints mark this nearby path. Follow their direction. ') &&
+        piece.endsWith(thornLore))
+      return spanishText['Fresh pawprints mark this nearby path. Follow their direction.'] +
+        ' ' + spanishText[thornLore];
+    const miraWaiting = /^Thornfang was defeated\. Mira waits near (.+)\. Your journal can guide you to her last known waiting place\.$/.exec(piece);
+    if (miraWaiting)
+      return 'Thornfang ha sido derrotado. Mira espera cerca de ' +
+        (spanishText[miraWaiting[1]] || miraWaiting[1]) +
+        '. Tu diario te guiará a su última ubicación conocida.';
     if (/^One available companion goes away for /.test(piece))
       return piece
         .replace(
@@ -1613,20 +1665,33 @@
   // Browsers require a user gesture before audible playback. Unlock on that
   // gesture itself, not on the first movement, attack or skill receipt.
   // Existing menu/button unlocks remain the click/tap fallback for WebKit.
+  function updateTitleSoundtrack() {
+    // This selects music only: opening the title must never advance the game.
+    // A completed gesture or a manual Return can run before the next frame.
+    if (started || titleLoading || sceneTransition || startupUpdatePending ||
+        !focused || document.hidden || !game || audio.ctx?.state !== 'running') return;
+    audio.update(game, false, {
+      started: false, menu: !!menu, paused: false, backgrounded: false,
+    });
+  }
   function unlockSoundtrackOnGesture(event) {
     if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
     if (audio.ctx?.state === 'running') {
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+      updateTitleSoundtrack();
       return;
     }
-    void audio.unlock().then((ready) => {
-      if (!ready) return;
-      removeEventListener('pointerdown', unlockSoundtrackOnGesture, true);
-      removeEventListener('keydown', unlockSoundtrackOnGesture, true);
+    // On iOS, the actual gesture must initiate AudioContext resume; after
+    // that asynchronous resume finishes, select the title immediately rather
+    // than relying on a later (possibly throttled) animation frame.
+    void audio.unlock().then((unlocked) => {
+      if (unlocked) updateTitleSoundtrack();
     });
   }
+  // Safari may recognize a completed tap rather than pointerdown. Keep
+  // listening so an interrupted audio context can resume on another gesture.
   addEventListener('pointerdown', unlockSoundtrackOnGesture, true);
+  addEventListener('touchend', unlockSoundtrackOnGesture, true);
+  addEventListener('click', unlockSoundtrackOnGesture, true);
   addEventListener('keydown', unlockSoundtrackOnGesture, true);
   if (typeof PrototypeMaterials !== 'undefined')
     PrototypeMaterials.setOptimizationMode(optimizationMode);
@@ -1942,7 +2007,10 @@
     return persistence.saveProfile(profile);
   }
   function save() {
-    return started && persistence.save(game, profile);
+    if (!started) return false;
+    const saved = persistence.save(game, profile);
+    if (saved) backupAdvisor.due(game.s.mode, game.hero.level);
+    return saved;
   }
   // Live game shell only. Standalone Campaign fixtures remain independent.
   // Bind once after each actual playable Campaign has been created/restored.
@@ -2085,6 +2153,8 @@
     PrototypeCombatVisuals,
     PrototypeSprites: typeof PrototypeSprites === 'undefined' ? null : PrototypeSprites,
     PrototypeMaterials: typeof PrototypeMaterials === 'undefined' ? null : PrototypeMaterials,
+    // Read the current presentation language at paint time, not at event receipt.
+    getBlockLabel: () => language === 'es' ? '¡Bloqueado!' : 'Blocked!',
   };
   const renderer = PrototypeRenderer.create({ ...rendererSetup, canvas: viewport, ctx });
   renderer.setOptimizationMode(optimizationMode);
@@ -2111,7 +2181,7 @@
     return true;
   }
 
-  // Opt-in renderer pilot; one live Campaign, no saved graphics state.
+  // PixiJS primary renderer; one live Campaign, no saved graphics state.
   // Canvas is retained as an independent, always-available presentation surface.
   const gpuTrialPanel = document.createElement('section');
   gpuTrialPanel.id = 'gpu-renderer-trial';
@@ -2228,7 +2298,7 @@
       return;
     }
     gpuTrialMessage.textContent =
-      tr('PixiJS WebGL2 · Experimental') + ' · ' + snapshot.secondsRemaining + 's';
+      tr('PixiJS WebGL2 · 15-second trial') + ' · ' + snapshot.secondsRemaining + 's';
     gpuKeep.textContent = tr('Keep WebGL2');
     gpuRevert.textContent = tr('Revert to Canvas');
   }
@@ -2630,10 +2700,10 @@
             'Targeting and dodging',
             'Target: ' +
               input.key('target') +
-              '. Tap to cycle; hold to lock.\nAim: gold is clear, amber is too far, red is blocked. Dodge marked attacks.',
+              '. Tap to cycle; hold to lock.\nAim: gold is clear, amber is too far, red means an obstructed shot, not Skill Block. Only a legal skill impact can show Blocked! Dodge marked attacks.',
             'Objetivo: ' +
               input.key('target') +
-              '. Toca para cambiar; mantén para fijar.\nPuntería: dorado, despejada; ámbar, lejos; rojo, bloqueada. Esquiva ataques marcados.',
+              '. Toca para cambiar; mantén para fijar.\nPuntería: dorado, despejada; ámbar, lejos; rojo indica un disparo obstruido, no bloqueo de habilidades. ¡Bloqueado! solo aparece tras el impacto válido de una habilidad. Esquiva ataques marcados.',
           ),
         ),
         action('Combat conditions', () => combatConditions(returnHere)),
@@ -2968,6 +3038,15 @@
         value,
         PrototypeArchive.translationNames(game, { D, R: Campaign.rules }),
       );
+    }
+    if (
+      language === 'es' &&
+      typeof PrototypeArchive !== 'undefined' &&
+      (menu?.title === 'Skill Block' || value === 'Skill Block')
+    ) {
+      // The ungated quick guide shares Archive's exact technical copy.
+      const label = PrototypeArchive.translateArchiveLabel(value);
+      return label !== value ? label : PrototypeArchive.translateArchive(value);
     }
     return tr(value);
   }
@@ -3494,6 +3573,76 @@
     }
     menu?.back();
   };
+  const backupAdvisor = PrototypePersistence.createBackupAdvisor({ storage: localStorage });
+  let titleBackupNotice = null;
+  let storageProtectionState = 'unknown';
+  const storageApi = navigator.storage;
+  if (typeof storageApi?.persisted === 'function') {
+    try {
+      Promise.resolve(storageApi.persisted()).then(
+        (granted) => { storageProtectionState = granted ? 'granted' : 'best-effort'; },
+        () => { storageProtectionState = 'unknown'; },
+      );
+    } catch (_) {}
+  } else storageProtectionState = 'unsupported';
+  function storageProtectionCopy() {
+    if (language === 'es')
+      return storageProtectionState === 'granted'
+        ? 'El navegador concedió protección contra la eliminación automática. Borrar datos o perder el dispositivo aún elimina la partida.'
+        : 'El almacenamiento local puede borrarse. La protección persistente no sustituye una copia externa.';
+    return storageProtectionState === 'granted'
+      ? 'Browser eviction protection is granted. Clearing site data or losing the device still deletes saves.'
+      : 'Browser-local saves can be removed. Persistent storage does not replace an external backup.';
+  }
+  function requestStorageProtection(reopen) {
+    if (typeof storageApi?.persist !== 'function') {
+      status('Persistent storage request unavailable. Export backups regularly.');
+      return;
+    }
+    // Keep the request inside the user's click gesture; never at startup.
+    let request;
+    try { request = storageApi.persist(); }
+    catch (_) {
+      status('Persistent storage request unavailable. Export backups regularly.');
+      return;
+    }
+    Promise.resolve(request).then(
+      (granted) => {
+        storageProtectionState = granted ? 'granted' : 'best-effort';
+        status(granted
+          ? 'Browser storage persistence granted. External backups are still necessary.'
+          : 'Persistent storage was not granted. Local saves still work; export backups.');
+        reopen();
+      },
+      () => {
+        storageProtectionState = 'unknown';
+        status('Persistent storage request unavailable. Export backups regularly.');
+        reopen();
+      },
+    );
+  }
+  function backupReminder(mode, level) {
+    if (!backupAdvisor.due(mode, level)) return '';
+    backupAdvisor.shown(mode, level);
+    return language === 'es'
+      ? 'Conviene exportar una copia externa de esta partida. No basta con el punto de recuperación local.'
+      : 'Time for an external backup. The local recovery checkpoint cannot survive cleared browser data.';
+  }
+  function exportCampaign(candidate) {
+    try {
+      const prepared = PrototypePersistence.prepareExternalExport(candidate, Campaign);
+      exportSaveText(prepared.text, prepared.filename);
+      // A download started; no browser API proves the file was retained.
+      backupAdvisor.downloadStarted(prepared.mode, prepared.level);
+      titleBackupNotice = null;
+      if (!started) refreshTitleScreen();
+      status('Download requested. Keep the JSON file outside browser site data.');
+      return true;
+    } catch (_) {
+      status('Export failed. No backup file was created.');
+      return false;
+    }
+  }
   function exportJSON(data, name) {
     exportSaveText(JSON.stringify(data, null, 2), name);
   }
@@ -3615,9 +3764,9 @@
     $('scene-loading').hidden = true;
     $('scene-loading-retry').hidden = true;
     // If the gameplay commit occurred, do not roll back or replay it.
-    // A hidden page is safely saved by the existing visibility/pagehide owner.
+    // Title and game menus may not suspend the soundtrack on travel cleanup.
     last = performance.now();
-    audio.setPaused(!started || !focused || document.hidden || paused);
+    audio.setPaused(!focused || document.hidden);
   }
   function revealSceneTransition(token) {
     const ticket = sceneTransition;
@@ -3751,10 +3900,20 @@
       ? D.regions.find((region) => region.id === game.zoneId)?.name ||
         D.bosses.find((boss) => boss.id === game.zoneId)?.place || game.zoneId
       : '';
+    // Remind on the paused title, not in combat and not as a modal.
+    if (valid && !titleLoading && !startupUpdatePending && !titleScreen.hidden &&
+        !titleBackupNotice && backupAdvisor.due(game.s.mode, game.hero.level)) {
+      titleBackupNotice = { mode: game.s.mode };
+      backupAdvisor.shown(game.s.mode, game.hero.level);
+    }
+    const titleReminder = valid && !titleLoading &&
+      titleBackupNotice?.mode === game.s.mode
+      ? t(' · Consider an external backup', ' · Conviene exportar una copia externa')
+      : '';
     $('title-preview').textContent = valid
       ? t('Saved adventure', 'Aventura guardada') + ' · ' +
         (game.hero.name || game.hero.class) + ' · ' +
-        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place
+        t('Level ', 'Nivel ') + game.hero.level + ' · ' + place + titleReminder
       : persistence.loadFailed(profile.activeMode)
         ? t('Saved adventure needs recovery', 'La partida requiere recuperación')
         : t('Your adventure awaits', 'Tu aventura te espera');
@@ -3784,6 +3943,7 @@
     }
   }
   function showTitleScreen() {
+    titleBackupNotice = null;
     stopRendererRecording();
     ++titleEpoch;
     titleSkipGraphics?.resolve(false);
@@ -3793,7 +3953,8 @@
     started = false;
     paused = false;
     clearInput();
-    audio.setPaused(true);
+    // Title stops gameplay simulation, not its own theme's audio clock.
+    audio.setPaused(!focused || document.hidden);
     last = performance.now();
     if (menu) {
       menu = null;
@@ -3810,11 +3971,16 @@
     if (!startupUpdatePending) {
       const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
       primary.focus?.({ preventScroll: true });
+      // Returning from gameplay must change the score in this same
+      // transition, even when the next requestAnimationFrame is delayed.
+      updateTitleSoundtrack();
     }
   }
   function enterPreparedScene() {
     if (startupUpdatePending || titleLoading || started || !loaded || !writerGuard.canWrite()) return;
     if (persistence.conflicted(game.s.mode)) return savedRunConflictMenu();
+    // Continue is already a browser gesture. Unlock before asynchronous warmup.
+    const entryUnlock = audio.unlock();
     titleLoading = true;
     titleImportNotice = false;
     const epoch = ++titleEpoch;
@@ -3833,6 +3999,7 @@
     refreshTitleScreen();
     clearInput();
     let campaign = game;
+    let entryAudioAttempted = false;
     const reveal = () => {
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
@@ -3850,9 +4017,29 @@
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
       const finish = () => {
-        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite()) {
+        if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
           titleLoading = false;
           refreshTitleScreen();
+          return;
+        }
+        // Without Web Audio (or in a non-browser test shell), enter normally.
+        // A missing audio device must never defer campaign activation.
+        if (!entryAudioAttempted && audio.ctx) {
+          entryAudioAttempted = true;
+          $('title-loading').textContent = language === 'es'
+            ? 'Preparando la música…' : 'Preparing soundtrack…';
+          // Start the destination score before movement is enabled. Missing
+          // audio must not trap the player behind a permanent loading screen.
+          const ready = Promise.resolve(entryUnlock).then((unlocked) => {
+            if (!unlocked || epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
+                campaign !== game || !titleLoading) return false;
+            audio.update(game, false, {
+              started: true, menu: false, paused: false, backgrounded: false,
+            });
+            return audio.productionPending || true;
+          }).catch(() => false);
+          void Promise.race([ready, new Promise((resolve) => setTimeout(resolve, 5000))])
+            .then(() => requestAnimationFrame(finish));
           return;
         }
         titleLoading = false;
@@ -3925,6 +4112,12 @@
     }
     if (!crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     showTitleScreen();
+    // Return to Main Menu is an explicit user gesture. Resume an interrupted
+    // audio context and reselect title after Safari finishes the resume.
+    if (!document.hidden && focused && audio.ctx?.state !== 'running')
+      void audio.unlock().then((unlocked) => {
+        if (unlocked) updateTitleSoundtrack();
+      });
   }
   function selectSavedMode(mode) {
     if (!writerGuard.canWrite()) return savedRunConflictMenu();
@@ -3944,11 +4137,13 @@
     const modes = ['normal', 'nightmare',
       ...(developerEnabled ? ['developer'] : []),
       ...(combatDiagnosticsEnabled ? ['arena'] : [])];
+    const reminder = loaded ? backupReminder(game.s.mode, game.hero.level) : '';
     openMenu(
       'Saved Games & Backups',
-      language === 'es'
+      (language === 'es'
         ? 'Elige una partida, recupera una copia o exporta tus datos antes de reemplazarlos.'
-        : 'Choose a campaign, recover a checkpoint, or export a backup.',
+        : 'Choose a campaign, recover a checkpoint, or export a backup.') +
+        '\n' + storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
       [
         ...modes.map((mode) => {
           const candidate = persistence.load(mode);
@@ -3977,11 +4172,21 @@
         ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
           label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
           action: () => {
-            const raw = localStorage.getItem(PrototypePersistence.saveKey(mode));
-            if (raw) exportSaveText(raw, 'Azeroth_Original_' + mode + '.json');
+            try {
+              const candidate = persistence.load(mode);
+              if (!candidate) throw Error('Invalid primary');
+              exportCampaign(candidate);
+            } catch (_) {
+              status('Export failed. No backup file was created.');
+            }
           },
         })),
         { kind: 'file', label: 'Import save' },
+        ...(typeof storageApi?.persist === 'function' &&
+           storageProtectionState !== 'granted'
+          ? [action('Request persistent storage',
+              () => requestStorageProtection(titleSaveMenu))]
+          : []),
       ],
       showTitleScreen,
       { view: 'title-saves' },
@@ -4148,7 +4353,7 @@
       [
         {
           label: 'Export save',
-          action: () => exportJSON(game.snapshot(), 'Azeroth_Unsaved_Run.json'),
+          action: () => exportCampaign(game),
         },
         { label: 'Reload this window', action: () => location.reload() },
       ],
@@ -4674,14 +4879,19 @@
     );
   }
   function saveBackupMenu() {
+    const reminder = backupReminder(game.s.mode, game.hero.level);
     openMenu(
       'Save backups',
-      'Export a backup before replacing a run.',
+      'Export a backup before replacing a run.\n' +
+        storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
       [
-        action('Export save', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Chronicles_' + game.s.mode + '.json'),
-        ),
+        action('Export save', () => exportCampaign(game)),
         { kind: 'file', label: 'Import save' },
+        ...(typeof storageApi?.persist === 'function' &&
+           storageProtectionState !== 'granted'
+          ? [action('Request persistent storage',
+              () => requestStorageProtection(saveBackupMenu))]
+          : []),
       ],
       saveMenu,
     );
@@ -4831,8 +5041,8 @@
         'Graphics renderer',
         graphicsController.status().preferredRenderer || graphicsController.status().mode,
         choices([
-          ['canvas2d', 'Canvas 2D · Default'],
-          ['webgl2', 'PixiJS WebGL2 · Experimental'],
+          ['canvas2d', 'Canvas 2D · Backup'],
+          ['webgl2', 'PixiJS WebGL2 · Default'],
         ]),
         (value) => {
           if (value === 'canvas2d') {
@@ -4851,7 +5061,7 @@
         graphicsController.status().preferredRenderer === 'webgl2' &&
           graphicsController.status().mode === 'canvas2d'
           ? 'WebGL2 remains your choice; Canvas backup is active. Recovery tries when safe.'
-          : 'WebGL2 may run faster on some devices. Try it for 15 seconds; keep it or return to Canvas.',
+          : 'PixiJS WebGL2 is the default renderer. Canvas 2D is the backup and can be selected anytime.',
       ),
       ...(graphicsController.status().recoveryPaused
         ? [action('Retry PixiJS WebGL2', () => {
@@ -5156,9 +5366,7 @@
         playableClassCountWord() +
         ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
-        action('Export final run', () =>
-          exportJSON(game.snapshot(), 'Azeroth_Succession_Game_Over.json'),
-        ),
+        action('Export final run', () => exportCampaign(game)),
         action('Start a new Normal run', () => chooseLanguage('normal')),
         action(
           'Start a new Nightmare run',
@@ -5172,21 +5380,55 @@
   $('import-file').onchange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Selecting a file only opens a validated preview, never a write.
+    const back = started ? saveBackupMenu : titleSaveMenu;
     try {
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
-      const data = JSON.parse(await file.text()),
-        candidate = data.version === 2 ? Campaign.migrate(data) : Campaign.restore(data);
+      const data = JSON.parse(await file.text());
+      const candidate = data.version === 2
+        ? Campaign.migrate(data) : Campaign.restore(data);
+      Campaign.validate(candidate.snapshot());
       if (candidate.s.mode === 'developer' && !developerEnabled)
         throw Error('Developer import disabled');
       if (candidate.s.mode === 'arena' && !combatDiagnosticsEnabled)
         throw Error('Combat Diagnostics import requires the playtest link');
-      persistence.writeCandidate(candidate);
-      resumeSavedRun(candidate, { imported: true });
-      status('Imported successfully.');
+      const summary = tr('Level') + ' ' + candidate.hero.level + ' · ' +
+        heroClassLabel(candidate.hero.class) + ' · ' + candidate.s.mode +
+        ' · ' + candidate.zoneId;
+      const existing = persistence.exists(candidate.s.mode);
+      openMenu(
+        language === 'es' ? 'Revisar archivo importado' : 'Review imported backup',
+        summary + '\n' + (language === 'es'
+          ? (existing
+              ? 'Esta acción reemplazará la partida de ese modo. El punto de recuperación local no es una copia externa. Confirma solo si quieres reemplazarla.'
+              : 'Se creará una partida en este modo. Confirma para importar el archivo.')
+          : (existing
+              ? 'This will replace the saved run in that mode. A local recovery checkpoint is not an external backup. Confirm only if you want to replace it.'
+              : 'This will create a run in this mode. Confirm to import the file.')),
+        [
+          action(language === 'es' ? 'Confirmar importación' : 'Confirm import',
+            () => {
+              try {
+                // Writer ownership, stale bytes and original preservation
+                // are checked again at the exact moment of replacement.
+                persistence.writeCandidate(candidate);
+                resumeSavedRun(candidate, { imported: true });
+                status('Imported successfully.');
+              } catch (_) {
+                status('Invalid import. Your current run was kept intact.');
+                back();
+                if ($('modal-description'))
+                  $('modal-description').textContent = language === 'es'
+                    ? 'No se pudo importar. Tu partida actual se conservó.'
+                    : 'Import failed. Your current run was kept intact.';
+              }
+            }),
+        ],
+        back,
+        { view: 'save-import-preview' },
+      );
     } catch (_) {
       status('Invalid import. Your current run was kept intact.');
-      // The normal status bar is hidden by the title screen. Keep failures
-      // visible in the current save dialog without replacing any campaign.
       if (menu && $('modal-description')) $('modal-description').textContent =
         language === 'es'
           ? 'No se pudo importar el archivo. Tu partida actual se conservó.'
@@ -5433,12 +5675,11 @@
     $('recall-button').focus?.({ preventScroll: true });
   }
   function recallSquad() {
-    if (queuedCharges.size)
-      status(language === 'es' ? 'Cola de habilidades cancelada.' : 'Skill queue cancelled.');
-    queuedCharges.clear();
-    if (charge?.autoRelease) cancelCharge();
+    const activating = !game.s.recallActive;
+    // Recall commands companions, not the hero's prepared skills. Retain
+    // charged releases and queued actions while the squad withdraws.
     const recalled = game.recallParty();
-    if (recalled && recallPractice?.owner === game && game.activeLivingParty().length) {
+    if (recalled && activating && recallPractice?.owner === game && game.activeLivingParty().length) {
       const complete = recallPractice.complete;
       recallPractice = null;
       complete();
@@ -7837,7 +8078,7 @@
             ' is roaming ' +
             game.definition().name +
             (liveFieldTrue.family === 'thorn'
-              ? ' · Scout tracks / Orchard trail witness'
+              ? ' · Scout tracks / Western road observer'
               : ' · Map: Z')
           : pendingField && !pendingField[1].active
             ? 'TRUE BOSS · ' +
@@ -8034,17 +8275,29 @@
     if ($('squad-button').querySelector('small'))
       $('squad-button').querySelector('small').textContent = input.key('doctrine');
     if (recallPractice && recallPractice.owner !== game) recallPractice = null;
-    const practicingRecall = !!recallPractice;
-    $('recall-button').classList.toggle('tutorial-highlight', practicingRecall);
-    $('recall-button').setAttribute(
-      'aria-label',
-      tr(practicingRecall ? 'Try Recall now' : 'Recall squad'),
-    );
-    if ($('recall-button').querySelector('small'))
-      $('recall-button').querySelector('small').textContent =
-        (practicingRecall ? tr('Try it now') + ' · ' : '') +
-        input.key('recall') +
-        (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
+    const practicingRecall = !!recallPractice,
+      recallButton = $('recall-button'),
+      recallActive = !!game.s.recallActive,
+      recallRemaining = recallActive ? Math.ceil(game.recallSecondsRemaining()) : 0;
+    // On phones the default shortcut <small> is hidden. The main label
+    // also says ON while active, so the state remains visible at a glance.
+    recallButton.firstChild.textContent = recallActive
+      ? (language === 'es' ? 'Reagrupar ON ' : 'Recall ON ')
+      : (language === 'es' ? 'Reagrupar ' : 'Recall squad ');
+    recallButton.classList.toggle('tutorial-highlight', practicingRecall);
+    recallButton.classList.toggle('recall-active', recallActive);
+    recallButton.setAttribute('aria-pressed', recallActive ? 'true' : 'false');
+    recallButton.setAttribute('aria-label', recallActive
+      ? (language === 'es' ? 'Reagrupar activo. Pulsa para cancelar.' : 'Recall active. Press to cancel.')
+      : tr(practicingRecall ? 'Try Recall now' : 'Recall squad'));
+    recallButton.title = recallActive
+      ? (language === 'es' ? 'Reagrupar activo · pulsa otra vez para cancelar' : 'Recall active · press again to cancel')
+      : (language === 'es' ? 'Reagrupar durante 5 segundos' : 'Recall squad for 5 seconds');
+    if (recallButton.querySelector('small'))
+      recallButton.querySelector('small').textContent = recallActive
+        ? 'ON · ' + recallRemaining + 's'
+        : (practicingRecall ? tr('Try it now') + ' · ' : '') +
+          input.key('recall') + (input.actionFor('KeyQ') === 'recall' ? ' / Q' : '');
     const selected = game.selectedHeroTarget(),
       targetButton = $('target-button');
     targetButton.classList.toggle('has-target', !!selected);
@@ -8209,6 +8462,12 @@
   }
   function frame(now) {
     if (!started || sceneTransition) {
+      // Idle title runs its music director without simulating a campaign.
+      if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
+        audio.update(game, !focused || document.hidden, {
+          started: false, menu: !!menu, backgrounded: !focused || document.hidden,
+          paused: false,
+        });
       last = now;
       clearEmergencyEscalation();
       frameSkip.suspend();
@@ -8308,7 +8567,8 @@
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
-    audio.update(game, paused || !focused || document.hidden || recovering, {
+    // An in-game menu or manual pause freezes simulation, not audio playback.
+    audio.update(game, !focused || document.hidden || recovering, {
       menu: !!menu,
       backgrounded: !focused || document.hidden,
       paused: paused || recovering,

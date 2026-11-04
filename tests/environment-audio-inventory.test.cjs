@@ -24,8 +24,8 @@ function sha(buffer) {
 }
 const registered = Object.entries(manifest.assets).filter(([,a]) => a.kind === 'ambience');
 const registeredIds = registered.map(([id]) => id);
-assert.equal(registered.length, 18, 'Preserve 14 original beds and register exactly four new ones');
-assert.equal(Object.keys(manifest.assets).length, 131, 'Other music/effect catalog identities must remain untouched');
+assert.equal(registered.length, 34, 'Four Stage1 + sixteen promoted Stage2–5 recordings coexist with 14 preserved originals');
+assert.equal(Object.keys(manifest.assets).length, 147, '83 music and 30 recorded effects plus 34 environmental beds');
 assert.equal(book.cues.length, 14);
 equalSets(registered.filter(([,a])=>a.managedBy==='environment-book').map(([id])=>id),
   book.cues.map(c=>c.id), 'Every original bed preserved and source-book-owned');
@@ -45,31 +45,31 @@ for (const [id,asset] of registered) {
   assert(asset.credits?.license && asset.credits?.author,id+' credits absent');
 }
 assert(publishedFiles(root).includes('assets/audio/manifest.json'));
-assert.equal(manifest.director.environment.rules.length,18);
+assert.equal(manifest.director.environment.rules.length,22);
 assert.equal(Object.keys(manifest.director.places).length,19);
 
 // Explicit complete 19-place reconciliation. Note that one shared sound
 // serves four Treasuries: 19 scene contexts != 19 unique authored tracks.
 const scenes = [
-  ['vale','vale','outdoors','env-woodland-day'],
-  ['march','march','outdoors','env-marsh-day'],
+  ['vale','vale','outdoors','study-vale-day-727'],
+  ['march','march','outdoors','study-march-day-727'],
   ['highlands','highlands','outdoors','env-highlands-autumn'],
   ['frontier','frontier','outdoors','env-frontier-recovery'],
-  ['crown','crown','outdoors','env-crown-courtyard'],
-  ['crypt','vale','dungeon','env-retreat'],
-  ['archive','march','dungeon','env-archive'],
-  ['mine','highlands','dungeon','env-mine'],
-  ['abyss','frontier','dungeon','env-dragon-hall'],
-  ['citadel','crown','dungeon','env-citadel'],
-  ['supply-vale','vale','treasury','env-home'],
-  ['supply-march','march','treasury','env-home'],
-  ['supply-highlands','highlands','treasury','env-home'],
-  ['supply-crown','crown','treasury','env-home'],
-  ['side-vale-cellars','vale','side-dungeon','env-cellar'],
-  ['side-march-watchhouse','march','side-dungeon','env-archive'],
+  ['crown','crown','outdoors','study-crown-open-727'],
+  ['crypt','vale','dungeon','studio-crypt-winter-estate-727'],
+  ['archive','march','dungeon','studio-archive-restoration-727'],
+  ['mine','highlands','dungeon','studio-colossus-mine-727'],
+  ['abyss','frontier','dungeon','studio-abyss-flight-hall-727'],
+  ['citadel','crown','dungeon','studio-citadel-command-727'],
+  ['supply-vale','vale','treasury','studio-orchard-cellars-727'],
+  ['supply-march','march','treasury','studio-mirejaw-guarded-wet-store-727'],
+  ['supply-highlands','highlands','treasury','env-signal-occupied'],
+  ['supply-crown','crown','treasury','studio-cindermaw-roost-vault-727'],
+  ['side-vale-cellars','vale','side-dungeon','studio-orchard-cellars-727'],
+  ['side-march-watchhouse','march','side-dungeon','studio-drowned-watchhouse-727'],
   ['side-highlands-signal','highlands','side-dungeon','env-signal-occupied'],
   ['side-frontier-shrine','frontier','side-dungeon','env-shrine-occupied'],
-  ['side-crown-foundry','crown','side-dungeon','env-mine'],
+  ['side-crown-foundry','crown','side-dungeon','studio-ruined-foundry-727'],
 ];
 equalSets(scenes.map(s=>s[0]),Object.keys(manifest.director.places),'All authored playable scenes represented');
 const a=audio();
@@ -80,9 +80,9 @@ for(const [zone,region,interior,expected] of scenes) {
   assert(route,zone+' has no playable ambient route');
   assert.equal(route.asset,expected,'PLAYABLE route changed without audit update: '+zone);
   assert(registeredIds.includes(route.asset),zone+' references a missing audio master');
-  console.log('INVENTORY_SCENE '+JSON.stringify({zone,bed:route.asset,status: ['env-highlands-autumn','env-frontier-recovery','env-signal-occupied','env-shrine-occupied'].includes(route.asset) ? 'registered-new':'registered-original'}));
+  console.log('INVENTORY_SCENE '+JSON.stringify({zone,bed:route.asset,status: manifest.assets[route.asset].creationMethod==='imported-recording' ? 'registered-new':'registered-original'}));
 }
-for(const [region,id] of [['vale','env-woodland-night'],['march','env-marsh-night']]){
+for(const [region,id] of [['vale','study-vale-night-727'],['march','study-march-night-727']]){
   assert.equal(a.environmentCue({zone:region,region,interior:'outdoors',night:true,
     started:true,situation:'world'}).asset,id,'separate night recording route');
 }
@@ -139,8 +139,8 @@ assert.equal(regional.status.ownerFinalAcceptance.startsWith('HOLD'),true);
 assert.equal(regional.status.merged,'NO');
 assert.equal(regional.status.published,'NO');
 assert.equal(regional.finalRecordedOutputs.candidateFiles.length,4);
-console.log('PASS #709 completeness audit: 18/18 playable MP3 hashes (14 original + 4 new), zero orphan files; '+
-  '19/19 scene contexts, all 18 selection rules, both night routes; two superseded masters archived, '+
-  'four current masters registered with exact studio SHA256, old recordings preserved.');
+console.log('PASS #709 completeness audit: 34/34 catalog MP3 hashes (14 original + 4 Stage1 + 16 new), zero orphan files; '+
+  '19/19 scene contexts, all 22 selection rules, both night routes; two superseded masters archived, '+
+  'all 16 promoted source-authored masters SHA-verified; four earlier masters unchanged, old recordings preserved.');
 console.log('ARTISTIC HOLD #709: 4/4 source-integrated in draft, final actual heard '+
   'score/ambience/warning acceptance, physical phone and owner sign-off remain pending; no merge/deploy.');

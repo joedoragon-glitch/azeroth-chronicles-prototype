@@ -1414,6 +1414,19 @@
       thornCaptiveFollowing() {
         return !this.peace && !this.s.rescued.thorn && !this.s.keys.thorn;
       }
+      // Existing v4 saves with a completed scene skip the full authored
+      // migration. Keep only their map/witness captions current, once.
+      greenwoodTrailLabels(z) {
+        if (z?.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
+            z.greenwoodTrailTextVersion === 1) return;
+        for (let i = 0; i < R.thornPatrol.route.length; i++) {
+          const n = z.npcs.find((p) => p.id === 'thorn-trailhead-' + i);
+          if (n) n.name = 'Scout tracks · ' + R.thornPatrol.names[i];
+        }
+        const witness = z.npcs.find((p) => p.id === 'thorn-local-report');
+        if (witness) witness.name = 'Western road observer';
+        z.greenwoodTrailTextVersion = 1;
+      }
       migrateThornPatrol(z) {
         if (z.id !== 'vale') return;
         for (const e of z.enemies)
@@ -1430,17 +1443,22 @@
         // physical clues, never destinations derived from the boss’s live position.
         for (const [i, [x, y]] of R.thornPatrol.route.entries()) {
           const id = 'thorn-trailhead-' + i;
-          if (!z.npcs.some((n) => n.id === id))
-            z.npcs.push({
+          let trailhead = z.npcs.find((n) => n.id === id);
+          if (!trailhead) {
+            trailhead = {
               id,
               kind: 'landmark',
-              name: 'Scout tracks · ' + R.thornPatrol.names[i],
               x,
               y,
               icon: '🐾',
               presentation: 'scout-tracks',
               thornTrail: i,
-            });
+            };
+            z.npcs.push(trailhead);
+          }
+          // Old v4 exports can retain outdated bridge captions. Keep the same
+          // landmark identity and saved progress while refreshing only its name.
+          trailhead.name = 'Scout tracks · ' + R.thornPatrol.names[i];
         }
         let witness = z.npcs.find((n) => n.id === 'thorn-local-report');
         if (!witness) {
@@ -1456,6 +1474,9 @@
         }
         // Open western road shoulder: clear of the hamlet roofs and lantern.
         // Reposition the same resident on old saves as well as fresh campaigns.
+        witness.name = R.greenwoodLayout?.version === 2
+          ? 'Western road observer'
+          : 'Orchard trail witness';
         Object.assign(
           witness,
           R.greenwoodLayout?.version === 2
@@ -1466,77 +1487,29 @@
       thornReport(concise = false) {
         if (this.s.rescued.thorn) return 'Mira is free. Find her teaching in Millhaven.';
         if (this.s.keys.thorn) {
-          const n = this.thornCaptive(),
-            cfg = R.thornPatrol;
+          const n = this.thornCaptive(), cfg = R.thornPatrol;
           const i = n
-            ? cfg.route
-                .map(([x, y], i) => ({ i, d: dist(n, { x, y }) }))
+            ? cfg.route.map(([x, y], i) => ({ i, d: dist(n, { x, y }) }))
                 .sort((a, b) => a.d - b.d)[0].i
             : 0;
-          return (
-            'Thornfang was defeated. Mira waits near ' +
-            cfg.names[i] +
-            '. Your journal can guide you to her last known waiting place.'
-          );
+          return 'Thornfang was defeated. Mira waits near ' + cfg.names[i] +
+            '. Your journal can guide you to her last known waiting place.';
         }
-        const z = this.s.zones.vale,
-          cfg = R.thornPatrol,
-          scout = z?.enemies.find(
-            (e) => e.family === 'thorn' && e.type === 'boss' && e.hp > 0 && !e.neutral,
-          ),
-          fresh = z?.npcs
-            .filter((n) => n.thornFootprint && n.expires > this.s.time)
-            .sort((a, b) => b.expires - a.expires)[0];
-        let clue = '';
-        if (scout) {
-          const nearest = cfg.route
-            .map(([x, y], i) => ({ i, d: dist(scout, { x, y }) }))
-            .sort((a, b) => a.d - b.d)[0].i;
-          const leg =
-            Number.isInteger(scout.thornLeg) &&
-            scout.thornLeg >= 0 &&
-            scout.thornLeg < cfg.route.length
-              ? scout.thornLeg
-              : cfg.startLeg;
-          clue =
-            scout.returning || scout.thornReturn
-              ? 'The patrol is returning to the temporary den. The tracks loop back there. '
-              : scout.aggro
-                ? 'There is fighting near ' +
-                  cfg.names[nearest] +
-                  '. Approach carefully; Mira is still with the patrol. '
-                : 'The latest trail report puts the patrol near ' +
-                  cfg.names[nearest] +
-                  ', heading toward ' +
-                  cfg.names[leg] +
-                  '. ';
-        }
-        if (concise) {
-          if (!scout) return 'No fresh sighting. Follow the pawprints from the temporary den.';
-          if (scout.returning || scout.thornReturn)
-            return 'Thornfang is returning to the temporary den with Mira.';
-          const nearest = cfg.route
-            .map(([x, y], i) => ({ i, d: dist(scout, { x, y }) }))
-            .sort((a, b) => a.d - b.d)[0].i;
-          const leg =
-            Number.isInteger(scout.thornLeg) &&
-            scout.thornLeg >= 0 &&
-            scout.thornLeg < cfg.route.length
-              ? scout.thornLeg
-              : cfg.startLeg;
-          return scout.aggro
-            ? 'Fighting near ' + cfg.names[nearest] + '. Mira is still with Thornfang.'
-            : 'Last sighting: ' +
-                cfg.names[nearest] +
-                ', heading for ' +
-                cfg.names[leg] +
-                '. Mira is with him.';
-        }
-        if (fresh) clue += 'Fresh pawprints mark the route; follow their direction. ';
-        return (
-          clue +
-          'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary den through the Southern crossing, the Forest Crypt perimeter, Skeleton territory, the Mill crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.'
-        );
+        // Never turn a static roadside witness into a global GPS receiver.
+        // Track evidence expires, and only pawprints actually near the observer
+        // or the investigating player can support a recent local claim.
+        const z = this.s.zones.vale;
+        const observer = z?.npcs.find((n) => n.id === 'thorn-local-report');
+        const origin = concise ? (observer || this.hero) : this.hero;
+        const fresh = z?.npcs.some((n) => n.thornFootprint &&
+          n.expires > this.s.time && Number.isFinite(n.x) && Number.isFinite(n.y) &&
+          dist(n, origin) <= 230);
+        if (concise)
+          return fresh
+            ? 'Recent pawprints were found by the western road. They may already be old; follow the tracks.'
+            : 'No recent sighting from the western road. Search for scout tracks near the southern woods and both crossings.';
+        const context = 'Thornfang once served as a Crown wilderness scout. He takes Mira from his temporary southern den through the southern footbridge, the Forest Crypt perimeter, Skeleton watch, the northern freight crossing and Goblin territory. They avoid Millhaven. Mira performs paid but compulsory inspections. When the winter estate is finished and its inhabitants can keep it secure, he intends to return to his distant home.';
+        return (fresh ? 'Fresh pawprints mark this nearby path. Follow their direction. ' : '') + context;
       }
       updateThornCaptive(dt) {
         if (this.zoneId !== 'vale') return;
@@ -1562,14 +1535,34 @@
           Number.isInteger(e.thornLeg) && e.thornLeg >= 0 && e.thornLeg < cfg.route.length
             ? e.thornLeg
             : cfg.startLeg;
-        const [x, y] = cfg.route[i];
+        // Only the existing 2 -> 1 northern-crossing-to-Goblin leg uses
+        // private woodland guidepoints. Historical thornLeg values stay 0..7.
+        // A saved mid-leg actor without a guide index completes its *existing*
+        // destination; never rewind or teleport an old campaign mid-patrol.
+        const guide = i === 1 ? (cfg.westernWoodlandGuide || []) : [];
+        if (i !== 1) delete e.thornGuideStep;
+        if (guide.length && !Number.isInteger(e.thornGuideStep))
+          e.thornGuideStep = dist(e, { x: cfg.route[2][0], y: cfg.route[2][1] }) < 95 ? 0 : -1;
+        if (guide.length && (e.thornGuideStep < -1 || e.thornGuideStep > guide.length))
+          e.thornGuideStep = -1;
+        const guided = guide.length && e.thornGuideStep >= 0 && e.thornGuideStep < guide.length;
+        const [x, y] = guided ? guide[e.thornGuideStep] : cfg.route[i];
         const before = { x: e.x, y: e.y };
         this.follow(e, { x, y }, cfg.speed * (e.slow > 0 ? 0.5 : 1), dt, cfg.arrival, 'thorn-patrol');
         if (dist(before, e) > 0) this.recordThornTracks(e, before);
         if (dist(e, { x, y }) <= cfg.arrival + 1e-7) {
-          e.thornLeg = (i + cfg.direction + cfg.route.length) % cfg.route.length;
-          e.thornPause = cfg.pause;
-          delete e.path;
+          if (guided) {
+            // Continue along the same saved leg, without an extra two-second
+            // patrol pause at each hidden navigation guidepoint.
+            e.thornGuideStep++;
+            e.path = [];
+            e.routeAge = 0;
+          } else {
+            e.thornLeg = (i + cfg.direction + cfg.route.length) % cfg.route.length;
+            e.thornPause = cfg.pause;
+            delete e.thornGuideStep;
+            delete e.path;
+          }
         } else e.thornLeg = i;
         return true;
       }

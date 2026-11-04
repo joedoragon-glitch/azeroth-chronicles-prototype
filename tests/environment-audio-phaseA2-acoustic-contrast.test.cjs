@@ -13,7 +13,16 @@ const root=path.resolve(__dirname,'..');
 const sampleRate=16000,fftSize=2048;
 const bands=[0,125,250,500,1000,2000,4000,8000];
 const jobs=Object.entries(manifest.assets).filter(([,a])=>a.kind==='ambience');
-assert.equal(jobs.length,18);
+assert.equal(jobs.length,34);
+const sourceLedgers=[
+ 'environment-727-outdoor-studies.json',
+ 'environment-727-outdoor-expansion.json',
+ 'environment-727-dungeon-studies.json',
+ 'environment-727-side-interiors.json',
+ 'environment-727-treasury-studies.json',
+].map(file=>require('../tools/audio/'+file));
+const promoted=new Map(sourceLedgers.flatMap(ledger=>ledger.studies)
+ .map(study=>[study.id,study]));
 assert.equal(book.cues.length,14);
 const data=[];
 function fftPowerFromPcm(pcm,start){
@@ -57,9 +66,13 @@ for(const [id,a] of jobs){
     'env-shrine-occupied':'regional-shrine-occupied',
   };
   const study=regional.studies.find(b=>b.id===registeredStudio[id]);
+  const candidate=promoted.get(id);
   const bookEntry=book.cues.find(b=>b.id===id) ||
-    (study && {layers:[{recordedField:true},{proceduralAir:true}],details:study.events});
-  assert(bookEntry,id+' lacks both original source book and recorded-source study');
+    (study && {layers:[{recordedField:true},{proceduralAir:true}],details:study.events}) ||
+    (candidate && {layers:[{recordedField:true},{proceduralAir:true},
+       ...(candidate.secondarySource?[{secondaryField:true}]:[])],
+       details:candidate.events || []});
+  assert(bookEntry,id+' lacks original source book or verified environmental source ledger');
   const file=path.join(root,a.src.replace(/^\.\//,''));
   const proc=cp.spawnSync('ffmpeg',['-nostdin','-hide_banner','-loglevel','error',
     '-i',file,'-vn','-ac','1','-ar',String(sampleRate),'-f','f32le','pipe:1'],
@@ -123,5 +136,5 @@ for(let i=0;i<data.length;i++)for(let j=i+1;j<data.length;j++){
 }
 similarities.sort((a,b)=>b.spectralBandCosine-a.spectralBandCosine);
 console.log('A2_MOST_SPECTRALLY_SIMILAR '+JSON.stringify(similarities.slice(0,12)));
-console.log('PASS #709 A2 physical-source spectral engineering: 18/18 real MP3s (14 original+4 new), 24-second comparable analysis windows, 153 pairwise broad-band contrasts');
-console.log('A2_LIMIT the four 72-second sources are sampled only over their first 24 seconds here; averaged broad frequency bands and 1-second envelope cannot determine sound identity, timbral plausibility, synthetic/codec artifacts by ear, or aesthetic acceptance; high cosine is only a homogeneity INVESTIGATION FLAG');
+console.log('PASS #709 A2 physical-source spectral engineering: 34/34 real MP3s (14 original + 4 Stage1 + 16 promoted new), 24-second comparable analysis windows, 561 pairwise broad-band contrasts');
+console.log('A2_LIMIT all 20 newer 72-second sources are sampled only over their first 24 seconds here; averaged broad frequency bands and 1-second envelope cannot determine sound identity, timbral plausibility, synthetic/codec artifacts by ear, or aesthetic acceptance; high cosine is only a homogeneity INVESTIGATION FLAG');

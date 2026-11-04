@@ -1,6 +1,53 @@
 /* Audio owner: score. Keep campaign rules outside this module. */
 (function (root) {
   'use strict';
+
+  // Millhaven outgrew its first small circular footprint. Use the live,
+  // regenerated major-town houses and civic / home / carpenter parcels,
+  // excluding the independently authored Orchard Hamlet and rural fields.
+  // This is audio-only geometry: it never mutates terrain or saved buildings.
+  function withinMillhaven(hero, props, wasInside = false) {
+    if (!hero || !Array.isArray(props)) return false;
+    const points = props
+      .filter((p) => /^(settlement-major-\d+|greenwood-(civic|homes|carpenter)-\d+)$/
+        .test(String(p.id || '')) && Number.isFinite(p.x) && Number.isFinite(p.y))
+      .map((p) => ({ x: p.x, y: p.y }))
+      .sort((a, b) => a.x - b.x || a.y - b.y);
+    if (points.length < 3) return false;
+    const cross = (a, b, p) => (b.x - a.x) * (p.y - a.y) -
+      (b.y - a.y) * (p.x - a.x);
+    const lower = [], upper = [];
+    for (const p of points) {
+      while (lower.length > 1 &&
+        cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0)
+        lower.pop();
+      lower.push(p);
+    }
+    for (let i = points.length - 1; i >= 0; i--) {
+      const p = points[i];
+      while (upper.length > 1 &&
+        cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0)
+        upper.pop();
+      upper.push(p);
+    }
+    const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];
+    if (hull.length < 3) return false;
+    // Positive half-planes enclose the clockwise-free convex parcel hull.
+    if (hull.every((p, i) => cross(p, hull[(i + 1) % hull.length], hero) >= 0))
+      return true;
+    // An 80-unit hysteresis band avoids music flicker near the streets' edge.
+    // These are margins around live parcel geometry, never legacy town radii.
+    const margin = wasInside ? 260 : 180;
+    return hull.some((p, i) => {
+      const q = hull[(i + 1) % hull.length],
+        dx = q.x - p.x, dy = q.y - p.y,
+        t = Math.max(0, Math.min(1, ((hero.x - p.x) * dx +
+          (hero.y - p.y) * dy) / (dx * dx + dy * dy || 1))),
+        x = p.x + t * dx, y = p.y + t * dy;
+      return Math.hypot(hero.x - x, hero.y - y) <= margin;
+    });
+  }
+
   function install(Audio, catalog) {
     const { themes, colors, pitch } = catalog;
     class Owner {
@@ -10,6 +57,7 @@
           hero = campaign.hero,
           enemies = zone.enemies;
         let engaged = 0,
+          nearbyEngaged = 0,
           boss;
         for (let i = 0; i < enemies.length; i++) {
           // Read-only audio observation; retain array order and skip sparse slots like filter.
@@ -17,6 +65,11 @@
           const enemy = enemies[i];
           if (enemy.hp > 0 && enemy.aggro && !enemy.neutral) {
             engaged++;
+            // A distant hostile in the same large zone must not start
+            // encounter music or duck the ambience inside Millhaven.
+            // This is an audio observation only; gameplay aggro is untouched.
+            if (Math.hypot(enemy.x - hero.x, enemy.y - hero.y) <= 700)
+              nearbyEngaged++;
             if (!boss && enemy.type === 'boss') boss = enemy;
           }
         }
@@ -30,11 +83,28 @@
         const refuge =
           interior === 'outdoors' &&
           zone.npcs.find((n) => n.kind === 'rest' && Math.hypot(n.x - hero.x, n.y - hero.y) < 260);
+        const millhavenTown = activity.started !== false && !campaign.peace &&
+          interior === 'outdoors' && campaign.zoneId === 'vale' &&
+          withinMillhaven(hero, zone.props, this.millhavenTownActive);
+        // Anchor the estate approach to the live Forest Crypt entrance rather
+        // than legacy map coordinates. This survives Greenwood layout migration
+        // and older saved campaigns without changing their geometry.
+        const estate = interior === 'outdoors' && campaign.zoneId === 'vale' &&
+          zone.npcs.find((n) => n.kind === 'dungeon' && n.family === 'crypt' &&
+            !n.sideDungeon && !n.treasury);
+        const estateDistance = estate ? Math.hypot(estate.x - hero.x, estate.y - hero.y) : null;
+        // Audio-only hysteresis: enter the estate's influence within 950 world
+        // units, and leave after 1150. Do not flicker tracks at the edge.
+        const estateApproach = activity.started !== false && !campaign.peace &&
+          estateDistance !== null &&
+          estateDistance < (this.estateApproachActive ? 1150 : 950);
         return {
           region: region.id,
           zone: campaign.zoneId,
           interior,
           settlement: refuge?.id || null,
+          millhavenTown,
+          estateApproach,
           situation: activity.backgrounded
             ? 'background'
             : activity.menu
@@ -58,12 +128,21 @@
           peace: campaign.peace,
           boss: boss ? { family: boss.family, form: boss.form, name: boss.name } : null,
           engaged,
+          nearbyEngaged,
           lowHealth: hero.hp > 0 && hero.hp / hero.maxHp <= 0.25,
           started: activity.started !== false,
           gameOver: !!campaign.s.challenge.gameOver,
+          // Presentation-only Succession flag; the campaign owns death and successor rules.
+          succession: !!campaign.s.challenge.succession,
         };
       }
-      choose(campaign) {
+      choose(campaign, activity = {}) {
+        // The title is not the hero's saved zone. Before the recorded title
+        // has decoded, use a quiet, non-regional fallback instead of playing
+        // Greenwood's procedural melody behind the title recording.
+        if (activity.started === false) return {
+          id: 'title-fallback', peace: false, night: false, region: null,
+        };
         if (campaign.peace && this.ctx && this.ctx.currentTime < this.finaleUntil)
           return {
             id: 'finale',
@@ -95,7 +174,7 @@
         this.setPaused(paused);
         // Metadata is available for later authored cue rules; current cue selection is preserved.
         this.context = this.describe(campaign, activity);
-        const selected = this.choose(campaign),
+        const selected = this.choose(campaign, this.context),
           key = JSON.stringify(selected);
         this.updateRecordedCue(this.context);
         this.updateProduction(this.context);
@@ -154,8 +233,24 @@
         if (!this.ctx || this.paused || this.ctx.state !== 'running' || !this.cue) return;
         for (const s of [...this.scores]) if (s.until <= this.ctx.currentTime) this.retireScore(s);
         if (this.recordedScore && this.ctx.currentTime >= this.recordedScore.at) return;
-        const cue = this.cue,
-          theme = themes.find((t) => t.id === cue.id) || themes[0],
+        const cue = this.cue;
+        if (cue.id === 'title-fallback') {
+          // Intentionally restrained rather than a second melody competing
+          // with the dedicated title recording while it loads or crossfades.
+          // A failed recording retains a subtle, independently titled pad,
+          // never the active saved zone's music or its ambience events.
+          if (this.next < this.ctx.currentTime - 0.2) this.next = this.ctx.currentTime + 0.05;
+          while (this.next < Math.min(this.ctx.currentTime + 0.14, this.recordedScore?.at ?? Infinity)) {
+            const at = this.next;
+            if (this.step++ % 8 === 0) {
+              this.tone(48, at, 2.4, 0.012, 'sine', 'music', 0.15);
+              this.tone(55, at + 0.09, 2.3, 0.007, 'sine', 'music', 0.15);
+            }
+            this.next += 0.5;
+          }
+          return;
+        }
+        const theme = themes.find((t) => t.id === cue.id) || themes[0],
           peace = cue.peace || cue.id === 'finale',
           bpm = peace ? Math.max(64, theme.bpm - 10) : theme.bpm,
           beat = 60 / bpm;

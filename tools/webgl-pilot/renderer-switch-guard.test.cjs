@@ -31,14 +31,58 @@ function fixture({prepareWebGL=async()=>true,failReveal=false,brokenStorage=fals
  }
  return {run,values,storage,jobs,notifications,events,advance,get visible(){return visible}};
 }
-test('Canvas 2D default and a previously confirmed WebGL2 preference are distinct',()=>{
+test('PixiJS WebGL2 is the new default and a confirmed choice persists',()=>{
  const f=fixture();
  assert.deepEqual(Guard.startupChoice(f.storage),
-   {renderer:'canvas2d',reason:'canvas-default'});
+   {renderer:'webgl2',reason:'primary-default-migration'});
+ assert.equal(f.storage.getItem(Guard.PRIMARY_DEFAULT_MIGRATION_KEY),'applied');
  f.storage.setItem(Guard.PREFERENCE_KEY,'webgl2');
  assert.deepEqual(Guard.startupChoice(f.storage),
    {renderer:'webgl2',reason:'confirmed-preference'});
  f.storage.setItem(Guard.PREFERENCE_KEY,'hybrid');
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ f.run.dispose();
+});
+test('rollout replaces an existing Canvas setting once, then honors the next manual Canvas choice',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'canvas2d');
+ assert.deepEqual(Guard.startupChoice(f.storage),
+   {renderer:'webgl2',reason:'primary-default-migration'});
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'webgl2');
+ f.storage.setItem(Guard.PREFERENCE_KEY,'canvas2d');
+ assert.deepEqual(Guard.startupChoice(f.storage),
+   {renderer:'canvas2d',reason:'canvas-default'});
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'canvas2d');
+ f.run.dispose();
+});
+test('new primary mode resumes without a 15-second trial after a safe boot',async()=>{
+ const f=fixture();
+ assert.equal(Guard.startupChoice(f.storage).renderer,'webgl2');
+ assert.equal(await f.run.resumeConfirmedWebGL(),true);
+ assert.equal(f.run.status().mode,'webgl2');
+ assert.equal(f.run.status().phase,'confirmed');
+ assert.equal(f.storage.getItem(Guard.PENDING_KEY),null);
+ f.run.revert();
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ f.run.dispose();
+});
+test('rollout never bypasses a previously recorded GPU recovery hold',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'canvas2d');
+ f.storage.setItem(Guard.RECOVERY_HOLD_KEY,'repeated-failures');
+ assert.deepEqual(Guard.startupChoice(f.storage),
+   {renderer:'canvas2d',reason:'confirmed-recovery-quarantined'});
+ assert.equal(f.storage.getItem(Guard.PREFERENCE_KEY),'webgl2');
+ assert.equal(f.storage.getItem(Guard.RECOVERY_HOLD_KEY),'repeated-failures');
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ f.run.dispose();
+});
+test('interrupted GPU trial consumes the rollout without rearming unsafe automatic boot',()=>{
+ const f=fixture();
+ f.storage.setItem(Guard.PREFERENCE_KEY,'canvas2d');
+ f.storage.setItem(Guard.PENDING_KEY,'pending');
+ assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
+ assert.equal(f.storage.getItem(Guard.PRIMARY_DEFAULT_MIGRATION_KEY),'applied');
  assert.equal(Guard.startupChoice(f.storage).renderer,'canvas2d');
  f.run.dispose();
 });

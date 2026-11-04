@@ -1,5 +1,8 @@
 # Side-dungeon discussion — 21 October 2026
 
+> **Subsequent owner direction — 31 October 2026:** The creator **explicitly authorized and requires an aesthetic/environmental finishing pass for ALL FIVE existing side dungeons** under the broader environmental Phase 3. The 21 October decision below continues to protect **undecided future lore, quest/mechanics, purpose and extensive interior redesign**, but does **not** prohibit improving how each current established room visibly works and feels. [Draft Phase 3 #739](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/739) owns the narrow material/aesthetic candidate. No quest, new ritual/flood cause, founding faction, craft product, changed combat, new resident or promised future direction is authorized by this art pass. Source review and native images are evidence; draft changes are not merged/published/device-verified.
+
+
 ## Latest owner decision: leave unchanged, purpose undecided
 
 This records the discussion after dev.131. **Keep all five side dungeons as they currently are. No redesign, new quest, magical system, flooding solution or SIBDL connection is approved for implementation.** Time and future story/gameplay needs may reveal a useful purpose for an individual location. These possibilities are reference material, not an implementation backlog or instructions to resume work automatically.

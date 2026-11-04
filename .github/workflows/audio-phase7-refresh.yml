@@ -1,0 +1,54 @@
+name: Phase 7 regenerate draft offline artifacts (NO deploy)
+
+# Narrow build consistency after source/runtime/version changes, never a release.
+on:
+  push:
+    branches: [audio/phase7-integration-playback-20261031]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'src/prototype/app.js'
+      - 'src/prototype/audio-production.js'
+      - 'src/prototype/audio-effects.js'
+      - 'assets/audio/manifest.json'
+      - 'templates/service-worker.js'
+      - '.github/workflows/audio-phase7-refresh.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: phase7-generated-source
+  cancel-in-progress: false
+
+jobs:
+  draft-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Regenerate draft service worker, runtime library and build info
+        run: node scripts/build.cjs
+      - name: Verify exact generated source and snapshot documentation
+        run: |
+          node scripts/build.cjs --check
+          node scripts/docs-release-consistency.cjs
+          node tests/audio-phase7-narrative.test.cjs
+          node tests/audio-production.test.cjs
+          node tests/audio-stage5-release-preflight.test.cjs
+      - name: Commit only generated files to authorized unmerged draft branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/prototype/build-info.js src/prototype/audio-library.js sw.js
+          git diff --cached --quiet && { echo 'All generated files current'; exit 0; }
+          git commit -m 'build(audio phase7): regenerate unmerged offline cache and versioned artifacts'
+          git push origin HEAD:audio/phase7-integration-playback-20261031

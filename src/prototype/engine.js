@@ -18,34 +18,31 @@
     if (typeof id !== 'string' || !/^[a-z][a-z0-9-]{1,31}$/.test(id) ||
         Object.hasOwn(classFoundations, id) || Object.hasOwn(Object.prototype, id))
       throw Error('Invalid or duplicate hero class foundation');
-    const { startingCompanions, basicAttackApproachRange, formationRole } = profile || {};
+    const { startingCompanions, formationRole } = profile || {};
     if (!Array.isArray(startingCompanions) || startingCompanions.length > 4 ||
         !startingCompanions.every((kind) => ['soldier', 'archer'].includes(kind)) ||
-        !Number.isFinite(basicAttackApproachRange) ||
-        basicAttackApproachRange <= 0 || basicAttackApproachRange > 1000 ||
         !['melee', 'ranged'].includes(formationRole))
       throw Error('Incomplete hero class foundation');
     const saved = Object.freeze({
       startingCompanions: Object.freeze([...startingCompanions]),
-      basicAttackApproachRange,
       formationRole,
     });
     classFoundations[id] = saved;
     return saved;
   }
   defineClassFoundation('paladin', {
-    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 105, formationRole: 'melee',
+    startingCompanions: ['soldier', 'archer'], formationRole: 'melee',
   });
   defineClassFoundation('mage', {
-    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+    startingCompanions: ['soldier', 'archer'], formationRole: 'ranged',
   });
   defineClassFoundation('ranger', {
-    startingCompanions: ['soldier', 'archer'], basicAttackApproachRange: 350, formationRole: 'ranged',
+    startingCompanions: ['soldier', 'archer'], formationRole: 'ranged',
   });
   // Rogue's foundation exists in legacy headless fixtures before its
   // explicit admission; this alone grants no Charm, skills or class slot.
   defineClassFoundation('rogue', {
-    startingCompanions: [], basicAttackApproachRange: R.rogueHeroFoundation.basic.range,
+    startingCompanions: [],
     formationRole: 'ranged',
   });
 
@@ -386,19 +383,60 @@
         ? count(this.s.victories)
         : count(this.s.normal) + count(this.s.true);
     }
+    // Validation uses the saved individual identity (including legitimate
+    // immutable preview copies), never a name or an arbitrary monster flag.
+    isOwnedMonster(actor) {
+      return !!actor && !!this.s.party?.some((u) =>
+        u.id === actor.id && u.type === actor.type &&
+        (actor.type === 'pet'
+          ? u.petFamily === actor.petFamily
+          : u.charmOrigin?.sourceEnemyId === actor.charmOrigin?.sourceEnemyId &&
+            !!u.charmOrigin)) &&
+        (actor.type === 'pet'
+          ? !!this.petDefinition(actor) && this.petUnlocked(actor.petFamily)
+          : !!actor.charmOrigin && this.isCharmedCompanion(actor));
+    }
+    // One authoritative, live monster-night profile. Allegiance does not
+    // change a creature's biology. Hostiles use the default; owned boss pets
+    // and lawful Charm captures read the same values, never copied constants.
+    monsterNightBonuses(actor = null) {
+      const eligible = actor === null ||
+        (actor !== this.hero && (this.isOwnedMonster(actor) ||
+          ((!this.s.party?.some((u) => u.id === actor.id)) &&
+            (actor.type === 'mob' || actor.type === 'boss'))));
+      if (!eligible || !this.night() || this.peace)
+        return { hp: 1, damage: 1, tempo: 1, skillBlock: 0 };
+      const n = this.nightPoints(), cfg = R.balance.nightTempo;
+      return {
+        hp: 1.1 + 0.03 * n,
+        damage: 1.15 + 0.02 * n,
+        tempo: 1 + Math.min(cfg.maxBonus, cfg.baseBonus + cfg.perVictoryBonus * n),
+        // The merged Skill Block table owns one night percentage point bonus.
+        // Its combat resolver, not this passive, excludes all basic attacks.
+        skillBlock: R.skillBlock?.nightEnemyBonus ?? 0,
+      };
+    }
+    // Recompute on a day/night transition or a new night victory point, and
+    // after recruitment/Charm. HP adjusts by the change in maximum, preserving
+    // existing wounds and fallen status. Never save a separate night flag.
+    syncMonsterNightStats(unit = null) {
+      for (const u of unit ? [unit] : (this.s.party || [])) {
+        if (!this.isOwnedMonster(u)) continue;
+        const next = this.companionMaxHp(u), gain = next - u.maxHp;
+        if (!gain) continue;
+        u.maxHp = next;
+        if (u.hp > 0) u.hp = Math.max(1, Math.min(next, u.hp + gain));
+      }
+    }
     multipliers() {
-      const n = this.nightPoints();
-      return this.night() && !this.peace
-        ? { hp: 1.1 + 0.03 * n, damage: 1.15 + 0.02 * n }
-        : { hp: 1, damage: 1 };
+      const { hp, damage } = this.monsterNightBonuses();
+      return { hp, damage };
     }
     mountedMovementFactor(e) {
       return e.mountedCrownRider ? R.balance.mountedMovementMultiplier : 1;
     }
     nightTempo() {
-      if (!this.night() || this.peace) return 1;
-      const cfg = R.balance.nightTempo;
-      return 1 + Math.min(cfg.maxBonus, cfg.baseBonus + cfg.perVictoryBonus * this.nightPoints());
+      return this.monsterNightBonuses().tempo;
     }
     // Authoritative enemy support healing. Only actual ranged ordinary roles,
     // authored ranged-aligned captains and the explicitly selected bosses qualify.
@@ -2859,7 +2897,7 @@
     }
 
     build(anchor = this.hero) {
-      if (this.isDungeon()) return false;
+      if (this.isDungeon() || this.recallLaborBlocked()) return false;
       const builder = this.availableLabor()[0],
         cost = this.barracksBuildCost();
       if (!builder) return false;
@@ -2890,7 +2928,7 @@
         return false;
       }
       if (!this.spend(cost)) return false;
-      this.s.recallActive = false;
+
       const b = {
         id: 'barracks-' + this.s.nextId++,
         ...p,
@@ -2911,18 +2949,20 @@
       return true;
     }
     assignBuilder(id) {
+      if (this.recallLaborBlocked()) return false;
       const b = this.zone().buildings.find((b) => b.id === id && b.progress < 4),
         already = this.activeLivingParty().some(
           (u) => u.order?.type === 'build' && u.order.id === id,
         ),
         builder = this.availableLabor()[0];
       if (!b || already || !builder) return false;
-      this.s.recallActive = false;
+
       builder.order = { type: 'build', id: b.id };
       this.say(this.companionDisplayName(builder) + ' assigned to resume construction.');
       return true;
     }
     upgradeBarracks(id) {
+      if (this.recallLaborBlocked()) return false;
       const b = this.zone().buildings.find((b) => b.id === id && b.progress >= 4 && !b.full),
         already = this.activeLivingParty().some(
           (u) => u.order?.type === 'upgrade' && u.order.id === id,
@@ -2934,7 +2974,7 @@
         b.upgradePaid = true;
         b.upgradeProgress = b.upgradeProgress || 0;
       }
-      this.s.recallActive = false;
+
       builder.order = { type: 'upgrade', id: b.id };
       this.say(this.companionDisplayName(builder) + ' assigned to upgrade the barracks.');
       return true;
@@ -2996,6 +3036,7 @@
       return true;
     }
     gather(nodeId, options = null) {
+      if (this.recallLaborBlocked()) return false;
       if ((this.s.expeditionRank || 1) < 2) {
         this.say(
           'Resource gathering unlocks at Expedition 2. Rescue Mira and train the Expedition Skill.',
@@ -3022,7 +3063,6 @@
         this.say('An idle gatherer and an unexhausted tribute site are required.');
         return false;
       }
-      this.s.recallActive = false;
       this.s.gatheringTarget = { zone: this.zoneId, id: n.id };
       for (const u of labor) {
         this.clearPartyCharge(u);
@@ -3209,6 +3249,7 @@
       }
       this.syncDungeonMasterStation();
       this.s.recallActive = false;
+      delete this.s.recallExpiresAt; // Region entry ends its previous defensive window.
       this.s.squadEngagement = null;
       this.s.squadBoss = false;
       this.s.squadDoctrine = this.squadDefaultDoctrine();
@@ -3878,11 +3919,6 @@
         'warning',
       );
     }
-    heroBasicAttackApproachRange() {
-      const reach = classFoundations[this.hero.class]?.basicAttackApproachRange;
-      if (!Number.isFinite(reach)) throw Error('Missing basic attack approach range');
-      return reach;
-    }
     // Called only when class changes: preserve every owned companion, but
     // never permit an inherited larger army to violate the successor's save.
     normalizeSuccessorCompany() {
@@ -4403,11 +4439,24 @@
       this.advancePartyChargeClock(dt);
       dt = Math.min(dt, 0.1);
       this.s.time += dt;
+      if (this.s.recallActive) {
+        if (!Number.isFinite(this.s.recallExpiresAt))
+          this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
+        if (this.s.time >= this.s.recallExpiresAt) this.endRecall('expired');
+      }
       this.advanceResourceExpeditions();
       this.s.mercyTime = Math.max(0, (this.s.mercyTime || 0) - dt);
       if (this.s.mercyTime < 1e-9) this.s.mercyTime = 0;
       this.s.restCooldown = Math.max(0, (this.s.restCooldown || 0) - dt);
       this.advanceDaylight(dt);
+      // Reconcile maxima when sunset, sunrise or earned night points change,
+      // before combat and healing. Unchanged frames never rescan the company.
+      const monsterNight = this.night() && !this.peace;
+      const monsterNightPoints = monsterNight ? this.nightPoints() : -1;
+      if (this._friendlyMonsterNightPoints !== monsterNightPoints) {
+        this._friendlyMonsterNightPoints = monsterNightPoints;
+        this.syncMonsterNightStats();
+      }
       const h = this.hero,
         z = this.zone(),
         formationStart = { x: h.x, y: h.y };
@@ -4462,9 +4511,15 @@
         h.rogueSlow = Math.max(0, h.rogueSlow - dt);
         if (!h.rogueSlow) delete h.rogueSlow;
       }
+      const idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier();
+      // Only active, lawful Heal casters receive the idle bonus. A Soldier's
+      // dormant healCd (or any other non-healer's) keeps native Slow recovery.
+      const idleHealers = idleHealRecovery > 1
+        ? new Set(this.healCompanionCasters()) : null;
       for (const u of this.s.party) {
         const recovery = this.cooldownRecoveryElapsed(u, dt);
-        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) - recovery);
+        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) -
+          recovery * (idleHealers?.has(u) ? idleHealRecovery : 1));
         u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
         u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
@@ -4525,34 +4580,27 @@
               if (pendingSkill.stalled >= 2) h.order = null;
             }
           }
-        } else {
-          const target =
-            h.order.type === 'attack'
-              ? z.enemies.find((e) => e.id === h.order.id && this.tacticalDirectTargetable(e))
-              : h.order;
-          if (
-            target &&
-            !target.neutral &&
-            (h.order.type !== 'attack' || (target.hp > 0 && this.tacticalDirectTargetable(target)))
-          ) {
-            if (
-              dist(h, target) >
-              (h.order.type === 'attack' ? this.heroBasicAttackApproachRange() : 25)
-            )
+        } else if (h.order.type === 'move') {
+          // Current map navigation only. Legacy hero 'attack' never enters
+          // the active manual Skill 1 or passive-basic combat pathways.
+          const target = h.order;
+          if (Number.isFinite(target.x) && Number.isFinite(target.y) && !target.neutral) {
+            if (dist(h, target) > 25)
               this.follow(
-                h,
-                target,
+                h, target,
                 this.heroMoveSpeed() *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
                   this.ashMovementFactor(h),
-                dt,
-                20,
+                dt, 20,
               );
-            else if (h.order.type === 'attack') this.cast(1, target.id);
             else h.order = null;
           } else h.order = null;
+        } else {
+          // Unknown or historical hero orders are inert; archive retained in
+          // tools/legacy/hero-attack-order.cjs, not in the runtime import graph.
+          h.order = null;
         }
       }
       const formationDx = h.x - formationStart.x,
@@ -6708,6 +6756,7 @@
               ),
               0,
               e.family === 'cindermaw' ? e.id : undefined,
+              false, { shape: 'area', criticalExecution: criticalReceipt },
             );
             if (
               this.hero !== hero ||
@@ -6754,6 +6803,10 @@
               ),
               0,
               e.id,
+              false, {
+                shape: move.mobileRogueCast ? 'single' : 'area',
+                criticalExecution: criticalReceipt,
+              },
             )
           )
             continue;
@@ -6834,6 +6887,7 @@
             ),
             0,
             e.family === 'cindermaw' ? e.id : undefined,
+            false, { shape: 'area', criticalExecution: criticalReceipt },
           )
         )
           continue;
@@ -7589,14 +7643,17 @@
               // ranged shot launches; collision, dodges and armor stay native.
               const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
+              const stonePace = e.species === 'goblin' && style === 'stone'
+                ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
                 x: e.x,
                 y: e.y,
                 dx: Math.cos(angle),
                 dy: Math.sin(angle),
-                speed: (e.shotSpeed || 260) * pace.projectileMultiplier,
-                life: 2.5 / pace.projectileMultiplier,
+                speed: (e.shotSpeed || 260) * pace.projectileMultiplier * stonePace,
+                // Keep the original travel budget: faster stones do not fly farther.
+                life: 2.5 / pace.projectileMultiplier / stonePace,
                 damage: this.worldCriticalDamage(
                   criticalReceipt,
                   this.weakenedEnemyDamage(e) * (e.hybrid ? 0.85 : 1),
@@ -7727,7 +7784,7 @@
           this.follow(
             e,
             target,
-            (e.type === 'boss' ? 145 : 175) *
+            (e.type === 'boss' ? 145 : R.balance.enemyOrdinaryMeleePursuitSpeed) *
               this.mountedMovementFactor(e) *
               (e.form === 'ringleader' ? R.ringleaderScaling.pursuit : 1) *
               (e.captainPhaseMove || 1) *
@@ -7779,6 +7836,9 @@
         e.pursuitBurst = 0;
         this.say(e.name + ' disengages.');
         this.event('reset');
+        // A paint-only receipt: do not add coordinates or a new event type
+        // to persisted gameplay statistics for an ordinary enemy reset.
+        this.effects.push({ type: 'resetCue', zone: this.zoneId, x: e.x, y: e.y });
       }
       if (resetPoint) this.beginFieldBossReturn(e, resetPoint);
       const mobilityReturn = this.advanceFieldBossReturn(e, dt);
@@ -7830,8 +7890,19 @@
           !resume &&
           !mobilityReturn &&
           !(e.veraEscort && this.zoneId === 'crown' && this.veraHeld())
-        )
+        ) {
+          // The original one-second anti-kiting reset still wins immediately.
+          // Capture the source of a visible home snap for paint-only feedback;
+          // never create a movement path, extend the reset or change protection.
+          const fromX = e.x, fromY = e.y,
+            visibleSnap = dist(e, e.home) > 28;
           Object.assign(e, e.home);
+          if (visibleSnap)
+            this.effects.push({
+              type: 'resetArrival', zone: this.zoneId,
+              x: e.x, y: e.y, fromX, fromY,
+            });
+        }
         this.finishDisengage(e);
       }
     }
@@ -8094,7 +8165,7 @@
               ' TRUE has appeared elsewhere in ' +
               this.definition().name +
               (key === 'thorn'
-                ? ' · Follow scout tracks and ask at the Orchard trail witness'
+                ? ' · Follow scout tracks and ask the Western road observer'
                 : ' · Map: Z'),
             6.5,
             '',
@@ -8154,7 +8225,10 @@
       retain(this.s.heroTarget);
       for (const u of [this.hero, ...this.s.party, ...z.enemies]) {
         retain(u.owner);
-        retain(u.order?.id);
+        // A discarded pre-modern hero attack order cannot pin dead enemies
+        // in memory. Only actual deliberate skill approach owns a hero ID.
+        if (u !== this.hero || u.order?.type === 'skill-approach')
+          retain(u.order?.id);
         retain(u.targetId);
         retain(u.supportHeal?.source);
         retain(u.telegraph?.targetId);

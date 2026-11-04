@@ -285,6 +285,26 @@
         if (input?.type === 'enemyVfx') return this.enemyExpression(input);
         const previous = this.sourcePriority;
         const type = typeof input === 'string' ? input : input?.type;
+        // Narrative events are owned by the campaign. Observe them even if effect
+        // playback is muted or the sound effect has no synthesized note.
+        if (this.ctx && type === 'death' && this.context?.succession) {
+          const entry = this.recordingManifest?.assets?.defeat;
+          const seconds = entry?.loop ? entry.loop.end - entry.loop.start : 25.3;
+          this.defeatUntil = this.ctx.currentTime + Math.min(30, Math.max(4, seconds));
+        }
+        if (this.ctx && type === 'successor' && this.defeatUntil > this.ctx.currentTime) {
+          // Automatic succession can follow death in the same event batch. Give
+          // the cue time to load and establish itself before returning to place music.
+          this.defeatUntil = Math.min(this.defeatUntil, this.ctx.currentTime + 5);
+        }
+        if (this.ctx && type === 'peace') {
+          // The game emits peace only after its real TRUE/throne/dungeon gate.
+          // The new Finale is ~48s, not the older 12s effect-sting window.
+          const entry = this.recordingManifest?.assets?.finale;
+          const seconds = entry?.loop ? entry.loop.end - entry.loop.start : 48;
+          this.finaleUntil = this.ctx.currentTime + Math.max(12, Math.min(60, seconds));
+          this.key = null;
+        }
         this.sourcePriority = ['warning', 'death', 'gameOver'].includes(type)
           ? 3
           : input?.style === 'cargo'
@@ -348,10 +368,6 @@
           if (now - this.lastWarning < 0.35) return;
           this.lastWarning = now;
           this.duck();
-        }
-        if (type === 'peace') {
-          this.finaleUntil = now + 12;
-          this.key = null;
         }
         if (kind === 'chargeInterrupted') {
           if (!this.allowSfx('chargeInterrupted', now, 0.08)) return;

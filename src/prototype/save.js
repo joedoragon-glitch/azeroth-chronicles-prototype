@@ -105,13 +105,20 @@
       snapshot() {
         const out = clone(this.s);
         out.recallActive = !!this.s.recallActive;
+        if (out.recallActive)
+          out.recallExpiresAt = Number.isFinite(this.s.recallExpiresAt)
+            ? this.s.recallExpiresAt
+            : this.s.time + R.companionRecall.durationSeconds;
+        else delete out.recallExpiresAt;
         out.squadDoctrine = this.squadDefaultDoctrine();
         out.squadEngagement = null;
         out.squadBoss = false;
         out.heroTarget = null;
         // Movement paths and queued skill approaches are live instructions, not
         // saved permission to resume an invisible autopilot after loading.
-        if (['skill-approach', 'move'].includes(out.hero.order?.type)) out.hero.order = null;
+        // Legacy hero attack orders are also transient: keep their code available
+        // for explicit developer simulation, never resume one from a save.
+        if (['skill-approach', 'move', 'attack'].includes(out.hero.order?.type)) out.hero.order = null;
         delete out.hero.path;
         delete out.holdFire;
         out.projectiles = [];
@@ -213,6 +220,16 @@
           throw Error('Invalid save');
         if (s.recallActive === undefined) s.recallActive = false;
         if (typeof s.recallActive !== 'boolean') throw Error('Invalid Recall order');
+        if (s.recallActive) {
+          // v4 legacy saves did not store a duration. Grant a fresh five
+          // in-game seconds on restore rather than cancel a player's order.
+          s.recallExpiresAt ??= s.time + R.companionRecall.durationSeconds;
+          if (!Number.isFinite(s.recallExpiresAt) ||
+              s.recallExpiresAt > s.time + R.companionRecall.durationSeconds + 1e-6)
+            throw Error('Invalid Recall timer');
+          if (s.recallExpiresAt <= s.time) s.recallActive = false;
+        }
+        if (!s.recallActive) delete s.recallExpiresAt;
         const validateName = (value) => {
           if (
             value !== undefined &&
@@ -239,6 +256,20 @@
           )
         )
           throw Error('Invalid critical Codex claims');
+        // Existing v4 and prior draft saves retain the same isolated RNG sequence.
+        // Validate both field names and reject conflicting dual fields.
+        const validBlockRng = (state) => Number.isInteger(state) &&
+          state >= 1 && state <= 0xffffffff;
+        if (s.skillEvasionRngState !== undefined) {
+          if (!validBlockRng(s.skillEvasionRngState) ||
+              (s.skillBlockRngState !== undefined &&
+                s.skillBlockRngState !== s.skillEvasionRngState))
+            throw Error('Invalid skill block RNG state');
+          s.skillBlockRngState = s.skillEvasionRngState;
+          delete s.skillEvasionRngState;
+        }
+        if (s.skillBlockRngState !== undefined && !validBlockRng(s.skillBlockRngState))
+          throw Error('Invalid skill block RNG state');
         // Independent Party and World streams are optional until opt-in.
         // Saving a game mid-combat stores RNG state, not transient receipts.
         if (s.criticalStreams !== undefined) {
@@ -564,7 +595,7 @@
         finite(s.hero.basicCd, 0, 1e9);
         // Strip transient fields from historical or interrupted exports.
         // Existing learned ranks and charged cooldowns remain in v4.
-        if (['skill-approach', 'move'].includes(s.hero.order?.type)) s.hero.order = null;
+        if (['skill-approach', 'move', 'attack'].includes(s.hero.order?.type)) s.hero.order = null;
         delete s.hero.path;
         if ((s.hero.shieldStance || 0) > 0)
           s.hero.cd[2] = Math.max(

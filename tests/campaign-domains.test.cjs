@@ -31,6 +31,35 @@ const auditionGraph = [
 ].map((m) => path.resolve(__dirname, '../tools/audio', m[1]));
 const auditionEngine = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/engine.js'));
 assert(auditionEngine > 0);
+const canonicalEngine = inventory.scripts.indexOf('src/prototype/engine.js');
+assert(canonicalEngine >= 0, 'authoritative campaign script inventory must include engine');
+const expectedEntryGraph = inventory.scripts.slice(0, canonicalEngine + 1)
+  .map((file) => path.resolve(__dirname, '..', file));
+// The standalone page must use the identical complete browser graph, not a
+// hand-maintained subset. This detects omitted/duplicate/misordered scripts
+// before any campaign/audio test attempts playback.
+assert.deepEqual(
+  auditionGraph.slice(0, auditionEngine + 1),
+  expectedEntryGraph,
+  'independent listening-room script graph must exactly match the game before Campaign',
+);
+const auditionGreenwood = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/greenwood.js'));
+assert(
+  auditionGreenwood > 0 && auditionGreenwood < auditionEngine,
+  'independent listening room must load Greenwood before Campaign',
+);
+
+for (const [module, preceding] of [
+  ['greenwood-landscape', 'highlands'],
+  ['greenwood-interiors', 'greenwood-landscape'],
+  ['enemy-vfx-events', 'enemy-vfx'],
+]) {
+  const location = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/' + module + '.js'));
+  const owner = auditionGraph.indexOf(path.join(__dirname, '../src/prototype/' + preceding + '.js'));
+  assert(location > owner && location < auditionEngine,
+    'standalone listening room must load ' + module + ' in Campaign dependency order');
+}
+assert(auditionGreenwood > auditionGraph.indexOf(path.join(__dirname, '../src/prototype/greenwood-interiors.js')));
 for (const file of auditionGraph.slice(0, auditionEngine + 1))
   vm.runInContext(fs.readFileSync(file, 'utf8'), auditionContext, { filename: file });
 assert.equal(typeof auditionContext.Campaign.prototype.updateCinderRegularState, 'function');

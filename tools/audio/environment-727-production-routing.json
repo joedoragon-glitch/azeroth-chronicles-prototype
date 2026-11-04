@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "project": "So I Became the Dark Lord's Problem",
+  "issue": 727,
+  "releaseIntent": "MERGE CANDIDATE ONLY — no merge/deploy or human hearing",
+  "originalAssets": 131,
+  "proposedAssets": 147,
+  "originalRules": 18,
+  "proposedRules": 22,
+  "playablePlaces": 19,
+  "originalRuleAssets": {
+    "crypt": "env-retreat",
+    "archive": "env-archive",
+    "mine": "env-mine",
+    "abyss": "env-dragon-hall",
+    "citadel": "env-citadel",
+    "side-vale-cellars": "env-cellar",
+    "side-march-watchhouse": "env-archive",
+    "side-highlands-signal": "env-signal-occupied",
+    "side-frontier-shrine": "env-shrine-occupied",
+    "side-crown-foundry": "env-mine",
+    "homes": "env-home",
+    "vale-night": "env-woodland-night",
+    "march-night": "env-marsh-night",
+    "vale": "env-woodland-day",
+    "march": "env-marsh-day",
+    "highlands": "env-highlands-autumn",
+    "frontier": "env-frontier-recovery",
+    "crown": "env-crown-courtyard"
+  },
+  "existingRuleReplacements": {
+    "vale": "study-vale-day-727",
+    "vale-night": "study-vale-night-727",
+    "march": "study-march-day-727",
+    "march-night": "study-march-night-727",
+    "crown": "study-crown-open-727",
+    "crypt": "studio-crypt-winter-estate-727",
+    "archive": "studio-archive-restoration-727",
+    "mine": "studio-colossus-mine-727",
+    "abyss": "studio-abyss-flight-hall-727",
+    "citadel": "studio-citadel-command-727",
+    "side-vale-cellars": "studio-orchard-cellars-727",
+    "side-march-watchhouse": "studio-drowned-watchhouse-727",
+    "side-crown-foundry": "studio-ruined-foundry-727"
+  },
+  "treasurySpecificRules": {
+    "supply-vale": "studio-orchard-cellars-727",
+    "supply-march": "studio-mirejaw-guarded-wet-store-727",
+    "supply-highlands": "env-signal-occupied",
+    "supply-crown": "studio-cindermaw-roost-vault-727"
+  },
+  "treasuryReuse": {
+    "supply-vale": {
+      "source": "studio-orchard-cellars-727",
+      "also": "side-vale-cellars",
+      "note": "Deliberate same-region quiet occupied interior reuse; no new Goblin office master"
+    },
+    "supply-highlands": {
+      "source": "env-signal-occupied",
+      "also": "side-highlands-signal",
+      "note": "Deliberate Highland occupied timber/interior reuse; no invented mint noises"
+    }
+  },
+  "legacyFallback": {
+    "rule": "homes",
+    "asset": "env-home",
+    "note": "Unused by the four actual authored Treasury locations"
+  },
+  "crownAlt": "study-crown-enclosed-727",
+  "note": "Registered and audible in the sound library, but not chosen for outdoor world playback",
+  "recordings": [
+    {
+      "id": "study-vale-day-727",
+      "sha256": "6f3578366881b4f9dd675d0401085992be4d1546aff6cb9480fad9a6f0f0af00",
+      "bytes": 1158381,
+      "ledger": "environment-727-outdoor-studies.json"
+    },
+    {
+      "id": "study-march-day-727",
+      "sha256": "642eab06bd673948540120a85c1f50440d24bd107c0d8c000756b040b7346dcc",
+      "bytes": 1158381,
+      "ledger": "environment-727-outdoor-studies.json"
+    },
+    {
+      "id": "study-vale-night-727",
+      "sha256": "5e120622b07ecf8c9d20e525f19d1347d31c2375e9a4cd85eca14c7e43882c8a",
+      "bytes": 1158381,
+      "ledger": "environment-727-outdoor-expansion.json"
+    },
+    {
+      "id": "study-march-night-727",
+      "sha256": "2302494e225089870d7cb545524e08eaff4d5a831302ad709aeaec9587c17968",
+      "bytes": 1158381,
+      "ledger": "environment-727-outdoor-expansion.json"
+    },
+    {
+      "id": "study-crown-open-727",
+      "sha256": "2848c6c82e226463ea02f20c3034d520b9ea8449e0d8d4514abac39b5c95fa37",
+      "bytes": 1158381,
+      "ledger": "environment-727-outdoor-expansion.json"
+    },
+    {
+      "id": "study-crown-enclosed-727",
+      "sha256": "1a9599e51aec1baf268d30d95be70f07ae6731c39c75537e5ffbfe520af51481",
+      "bytes": 1158381,
+      "ledger": "environment-727-outdoor-expansion.json"
+    },
+    {
+      "id": "studio-crypt-winter-estate-727",
+      "sha256": "9d7ab96c06266fd953fc1c739703e0bdb261e2b272bcd596789e15c6c328d7be",
+      "bytes": 1158381,
+      "ledger": "environment-727-dungeon-studies.json"
+    },
+    {
+      "id": "studio-archive-restoration-727",
+      "sha256": "7eb6cdba92d83c3a729c44dd214cbde16b9409a0e9a1ff57c2a122ada054b14e",
+      "bytes": 1158381,
+      "ledger": "environment-727-dungeon-studies.json"
+    },
+    {
+      "id": "studio-colossus-mine-727",
+      "sha256": "cf183389f9b5ff7b3378876c87ac043a878a455215bdb1d2ee549bef3ae4ca42",
+      "bytes": 1158381,
+      "ledger": "environment-727-dungeon-studies.json"
+    },
+    {
+      "id": "studio-abyss-flight-hall-727",
+      "sha256": "79cafbd90349eae5efcb17bea436e994e6bf12a7b6e1b5b4f9b9d2ed2a4bbecc",
+      "bytes": 1158381,
+      "ledger": "environment-727-dungeon-studies.json"
+    },
+    {
+      "id": "studio-citadel-command-727",
+      "sha256": "618155910983eb3794129b148288d26ae35c511f06659083249ce4cbcf81ca00",
+      "bytes": 1158381,
+      "ledger": "environment-727-dungeon-studies.json"
+    },
+    {
+      "id": "studio-orchard-cellars-727",
+      "sha256": "39ede621eba96ecd38fa2abb1d3d1a0a4f2af1734060712e7daf841dde3c1383",
+      "bytes": 1158381,
+      "ledger": "environment-727-side-interiors.json"
+    },
+    {
+      "id": "studio-drowned-watchhouse-727",
+      "sha256": "163f14796e966a1d83301a83ed1eb77ce5d0b18ae44aba05f28dff5ffdae22f7",
+      "bytes": 1158381,
+      "ledger": "environment-727-side-interiors.json"
+    },
+    {
+      "id": "studio-ruined-foundry-727",
+      "sha256": "abb44187a12a635644a6c5bd9aa72b55dfaf2805e38d7808d717792124a860e1",
+      "bytes": 1158381,
+      "ledger": "environment-727-side-interiors.json"
+    },
+    {
+      "id": "studio-mirejaw-guarded-wet-store-727",
+      "sha256": "7009fb80f4571a41debb72367753f320c2318de6f0fdcfac95644f088cc09c14",
+      "bytes": 1158381,
+      "ledger": "environment-727-treasury-studies.json"
+    },
+    {
+      "id": "studio-cindermaw-roost-vault-727",
+      "sha256": "e6618901d4ad427ab1e60c85697ea19bacc9e55b139d7e21815c453d012b6ead",
+      "bytes": 1158381,
+      "ledger": "environment-727-treasury-studies.json"
+    }
+  ],
+  "gameWorldCoverage": "19/19 locations; Vale and Marches each day and night",
+  "humanListening": "not performed",
+  "deviceVerified": false,
+  "merged": false,
+  "deployed": false
+}

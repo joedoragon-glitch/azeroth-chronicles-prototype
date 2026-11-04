@@ -293,6 +293,9 @@
       // Existing Recall logic continues the protected withdrawal after
       // normal simulation safely resumes.
       this.s.recallActive = true;
+      // Exceptional critical-freeze withdrawal is independent of the Recall
+      // button, but must not inherit a stale prior manual Recall deadline.
+      this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
       this.hero.order = null;
       // Give living companions a physical, terrain-safe withdrawal goal behind
       // the hero, opposite the nearest engaged enemy. Never teleport them.
@@ -363,8 +366,30 @@
           this.activeLivingParty().some((u) => dist(u, this.hero) > R.companionRecall.arrivalRadius)
         );
       }
-      releaseRecallForCombat() {
-        if (!this.recallInProgress()) this.s.recallActive = false;
+      recallSecondsRemaining() {
+        if (!this.s.recallActive) return 0;
+        const until = this.s.recallExpiresAt;
+        return Number.isFinite(until)
+          ? Math.max(0, until - this.s.time)
+          : R.companionRecall.durationSeconds;
+      }
+      endRecall(reason = 'expired') {
+        if (!this.s.recallActive) return false;
+        this.s.recallActive = false;
+        delete this.s.recallExpiresAt;
+        this._gatherRecallResume = null;
+        this.say(reason === 'manual'
+          ? 'Squad Recall cancelled.'
+          : 'Squad Recall ended after five seconds.');
+        this.notice(reason === 'manual'
+          ? 'Recall OFF · companions resume normal orders.'
+          : 'Recall expired · companions resume normal orders.', 2.5, '', 'feedback');
+        return true;
+      }
+      recallLaborBlocked() {
+        if (!this.s.recallActive) return false;
+        this.say('Recall active. Tap Recall again or wait for the five-second hold before assigning work.');
+        return true;
       }
       companionSurvivalMode(u) {
         if (u === this.hero || u.hp <= 0 || u.active === false || !this.s.party.includes(u))
@@ -1207,8 +1232,7 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
           if (this.s.mode === 'developer')
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -1453,8 +1477,7 @@
             damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
             source: u.id,
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
           });
           if (this.s.mode === 'developer')
             this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -1633,12 +1656,19 @@
         const rally = this.rangerRallyActive(u)
           ? Math.min(0.25, u.rangerRallyMovement || 0) : 0;
         const quickstep = this.rogueSongBoon(u, 'quickstep')?.move || 0;
-        return this.companionMoveSpeed(base) *
-          (this.charmedCompanionProfile(u)?.speed || 1) *
-          (1 + rally + quickstep);
+        const profile = this.charmedCompanionProfile(u);
+        const speed = this.companionMoveSpeed(base) * (profile?.speed || 1);
+        // Ordinary pursuit should never be slower than a wild monster's
+        // 175-unit baseline. Explicit short defensive moves keep their pace.
+        const nativeFloor = profile && base >= 230
+          ? R.balance.enemyOrdinaryMeleePursuitSpeed : 0;
+        return Math.max(speed, nativeFloor) * (1 + rally + quickstep);
       }
       companionRallyAttackSpeed(u) {
-        return this.rangerRallyActive(u) ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+        const rally = this.rangerRallyActive(u)
+          ? 1 + Math.min(0.2, u.rangerRallyAttack || 0) : 1;
+        // One passive applies to ordinary pet and Charmed basic attack cycles.
+        return rally * this.monsterNightBonuses(u).tempo;
       }
       rogueCompanionSpecialDamage(u, amount) {
         // All ordinary Soldier/Ranger active specials grow gently with
@@ -1662,7 +1692,8 @@
         // One full elite multiplier at the common attack source: specials,
         // native basics and heritage inherit it without stacking a second time.
         return baseline * (u?.charmRingleaderTrained === true &&
-          this.isCharmedCompanion(u) ? R.ringleaderScaling.damage : 1);
+          this.isCharmedCompanion(u) ? R.ringleaderScaling.damage : 1) *
+          this.monsterNightBonuses(u).damage;
       }
       // Different Rogue song families stack additively for ordinary basics.
       // Each remains independently timed and capped; specials are unaffected.
@@ -1707,7 +1738,12 @@
         return now < burst.until ? cfg.burstMultiplier : 1;
       }
       companionBasicInterval(u) {
-        const base = this.charmedCompanionProfile(u)?.interval || 0.85;
+        const profile = this.charmedCompanionProfile(u);
+        // Keep all existing quicker allied attacks, but prevent future Charm
+        // profiles from swinging slower than the native ordinary hostile.
+        const base = profile
+          ? Math.min(profile.interval || 0.85, R.balance.enemyOrdinaryMeleeBasicInterval)
+          : 0.85;
         return this.charmedRingleaderCombatTraits(u) && u.hp > 0 &&
           u.hp <= u.maxHp * R.ringleaderScaling.frenzyThreshold
           ? base * R.ringleaderScaling.frenzyCooldown : base;
@@ -1761,12 +1797,14 @@
         if (u.type === 'soldier') {
           if (dist(u, target) > 80 || !this.line(u, target)) return false;
           const criticalReceipt = this.troopCriticalRelease(u, 'first');
-          if (!this.developerCompanionDamage(
+          const landed = this.developerCompanionDamage(
             u, 'Power Strike', target, this.troopCriticalDamage(criticalReceipt,
               this.rogueCompanionSpecialDamage(u, base * cfg.multiplier)),
-          )) return false;
+            { skillShape: 'single', criticalExecution: criticalReceipt },
+          );
           const veteran = R.companionSkills.veteran;
           if (
+            landed &&
             (this.s.expeditionRank || 1) >= veteran.expeditionRank &&
             ((u.wardUntil || 0) <= this.s.time || (u.wardReduction || 0) <= veteran.soldierWard)
           ) {
@@ -1776,7 +1814,9 @@
           u.skill1Cd = cfg.cooldown;
           u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
           u.cd = Math.max(u.cd, 0.4);
-          this.event('melee', {
+          // A blocked Power Strike still spends its cooldown and shows the
+          // swing, but must not emit a landed melee impact or grant its ward.
+          if (landed) this.event('melee', {
             actor: 'companion',
             role: 'soldier',
             source: u.id,
@@ -1803,6 +1843,7 @@
             unitType: u.type,
             skill: 'power-strike',
             targetId: target.id,
+            hits: landed ? 1 : 0,
           });
           return true;
         }
@@ -1967,14 +2008,17 @@
           }
         } else {
           const previousDirect = this.developerCompanionBeginDirect(u, def.name);
-          for (const e of targets) if (this.damage(e, damage, u.id, { area: true })) hits++;
+          for (const e of targets) if (this.damage(e, damage, u.id, { area: true, skillShape: 'area', criticalExecution: criticalReceipt })) hits++;
           this.developerCompanionEndDirect(previousDirect);
         }
-        if (!hits) return false;
+        // The legal skill release spends its cooldown even if every target
+        // blocks; otherwise the AI retries for free until a skill lands.
         u.skill2Cd = cfg.cooldown;
         u.skillGlobalCd = R.companionSkills.globalCooldown || 1.5;
         u.cd = Math.max(u.cd, 0.5);
-        this.event(
+        // A fully blocked Cleave still released and spent its cooldown, but
+        // no landed melee contact should be drawn on the blocking enemies.
+        if (u.type !== 'soldier' || hits) this.event(
           u.type === 'soldier' ? 'melee' : 'spell',
           u.type === 'soldier'
             ? {
@@ -2121,7 +2165,7 @@
       }
       // A Charmed ranged healer uses the same automatic HP recovery as a
       // conventional Ranger: the Neri-trained amount, five-second pulses,
-      // ten-second cooldown and idle/combat triage thresholds. Unlike the
+      // ten-second combat cooldown (faster idle recovery) and idle/combat triage. Unlike the
       // original hostile healer, it must support the friendly party while idle.
       // Keep this separate from Ranger mana and offensive skill ownership.
       charmedRangedSupport(u, living = this.activeLivingParty()) {
@@ -2231,7 +2275,9 @@
         const previousDirect = this.developerCompanionBeginDirect(u, def.name);
         for (const e of victims) {
           const hp = e.hp;
-          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single' }))
+          if (!this.damage(e, damage, u.id, { area: def.shape !== 'single',
+            skillShape: def.shape === 'single' ? 'single' : 'area',
+            criticalExecution: receipt }))
             continue;
           landed++;
           actualDamage += Math.max(0, hp - e.hp);
@@ -2249,7 +2295,8 @@
           }
         }
         this.developerCompanionEndDirect(previousDirect);
-        if (!landed) return false;
+        // Even zero landed contacts spend a valid cast's cooldown. Attached
+        // damage, Slow and Siphon stay gated by genuine landed contacts.
         // Siphon is based on actual post-mitigation lost HP, never theoretical
         // damage. No overheal or duplicate support-heal critical roll.
         if (def.siphon && u.hp > 0 && u.hp < u.maxHp) {
@@ -2263,7 +2310,7 @@
         }
         // Flank Command is a lateral *reposition* after contact, not a second
         // damage event; moving is blocked by the same real terrain collision.
-        if (def.dash && !native && species !== 'mireling') {
+        if (landed && def.dash && !native && species !== 'mireling') {
           const angle = Math.atan2(target.y - u.y, target.x - u.x),
             flank = { x: u.x - Math.sin(angle) * def.dash,
               y: u.y + Math.cos(angle) * def.dash };
@@ -2382,7 +2429,10 @@
               (1 + this.companionMasteryTier(u) *
                 R.balance.companions.mastery.nativeDamagePerTier)),
         );
-        let committed = false;
+        // Direct melee or elite ranged maneuvers commit at legal release,
+        // not only on HP damage. Only the ordinary ranged branch needs to
+        // create its projectile before it can count as committed.
+        let committed = !(ranged && !elite);
         if (ranged && !elite) {
           // Physical creature projectile: status applies only on contact.
           const shot = Math.max(1, distance);
@@ -2391,9 +2441,9 @@
             x: u.x, y: u.y,
             dx: (target.x - u.x) / shot, dy: (target.y - u.y) / shot,
             target: target.id, source: u.id, damage: base,
+            skillShape: 'single',
             ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-            speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-            style: this.charmedCompanionProfile(u)?.style || 'arrow',
+            ...this.charmedProjectileFlight(u),
             slow: cfg.basicSlowSeconds + this.companionMasteryTier(u) *
               R.balance.companions.mastery.slowSecondsPerTier,
           });
@@ -2409,7 +2459,7 @@
           const previousDirect = this.developerCompanionBeginDirect(
             u, profile.name || 'Native maneuver');
           for (const enemy of victims) {
-            if (!this.damage(enemy, base, u.id, { area: elite })) continue;
+            if (!this.damage(enemy, base, u.id, { area: elite, skillShape: elite ? 'area' : 'single', criticalExecution: criticalReceipt })) continue;
             committed = true;
             if (enemy.hp <= 0) continue;
             if (elite && ['scatter', 'sweep'].includes(profile.effect)) {
@@ -2795,6 +2845,17 @@
       }
       companionHealCooldown(u) {
         return u.charmOrigin ? u.charmSupportCd || 0 : u.healCd || 0;
+      }
+      alliedHealCooldownRecoveryMultiplier() {
+        // Idle recovery belongs only to allied Heal. Keep every attack,
+        // native pet special and ordinary combat cooldown at its native pace.
+        if (this.manaCombatActive() ||
+            this.s.projectiles.some((p) => p.source === 'enemy')) return 1;
+        const living = this.activeLivingParty();
+        if (this.zone().enemies.some((e) => e.hp > 0 && e.aggro &&
+            !e.neutral && !e.returning && living.some((u) => dist(e, u) < 700)))
+          return 1;
+        return R.rangerSupport.idleHealCooldownRecoveryMultiplier;
       }
       availablePartyHealers() {
         return this.healCompanionCasters().filter((u) => this.companionHealCooldown(u) <= 0);
@@ -3438,6 +3499,10 @@
           dead.maxHp = this.companionMaxHp(dead);
           dead.hp = dead.maxHp;
         }
+        // Recovery rebuilds a temporary, unregistered unit. Re-evaluate after
+        // its original registered identity has been restored so a nighttime
+        // pet or Charmed survivor returns with the live monster passive.
+        this.syncMonsterNightStats(dead);
         delete dead.slowStacks;
         delete dead.rogueSlow;
         this.say('Companion recovered.');
@@ -3717,9 +3782,8 @@
         if ((this.s.expeditionRank || 1) < 3) return false;
         const context = this.syncSquadDoctrine();
         if (!context.engaged) return false;
-        // An explicit combat-doctrine switch during an ongoing encounter is
-        // a new engagement order; Recall itself remains defensive until then.
-        this.releaseRecallForCombat();
+        // Doctrine changes can be selected during Recall but cannot turn off
+        // the player's defensive order; only the button or timer can do that.
         this.s.squadDoctrine = this.s.squadDoctrine === 'focus' ? 'guard' : 'focus';
         this.event('squadDoctrine', { mode: this.s.squadDoctrine, boss: context.boss });
         return true;
@@ -3740,21 +3804,21 @@
         };
       }
       recallParty() {
+        // Recall is an explicit, bounded defensive command. Pressing its
+        // button/key a second time cancels; no combat event can cancel it.
+        if (this.s.recallActive) return this.endRecall('manual');
         const tutorial = this.s.quests['quest-barracks'];
         if (tutorial && !tutorial.paid && this.activeLivingParty().length)
           tutorial.recallPracticed = true;
         this.cancelRangerHealRequest();
-        if (
-          this.s.recallActive &&
-          this.activeLivingParty().every((u) => !u.order && !this.partyChargeState(u))
-        )
-          return true;
         const gathering = this.activeLivingParty().filter((u) => this.gatheringUnit(u));
         this._gatherRecallResume = gathering.length
           ? { zone: this.zoneId, ids: gathering.map((u) => u.id) }
           : null;
         this.s.recallActive = true;
-        if (this.hero.order?.type !== 'move') this.hero.order = null;
+        this.s.recallExpiresAt = this.s.time + R.companionRecall.durationSeconds;
+        // Do not erase hero skill-approach or navigation. Recall belongs to
+        // companion control; deliberate hero actions remain player-owned.
         this._tacticalPartyTargets?.clear();
         for (const u of this.activeLivingParty()) {
           this.clearCompanionJudgment(u);
@@ -3764,8 +3828,8 @@
           u.path = [];
           u.routeAge = 0;
         }
-        this.say('Squad recalled. Companions are regrouping on the hero.');
-        this.notice('Companions recalled · retreat protection active.', 2.8, '', 'feedback');
+        this.say('Squad Recall ON for five seconds. Press Recall again to cancel.');
+        this.notice('Recall ON · 5s defensive hold · tap again to cancel.', 2.8, '', 'feedback');
         this.event('squadRecall');
         return true;
       }
@@ -3918,7 +3982,10 @@
       companionFight(u, e, living, dt) {
         this._tacticalPartyTargets.set(u.id, e.id);
         const monster = this.charmedCompanionProfile(u),
-          eliteMove = this.charmedCombatMoveFactor(u);
+          // Night tempo only modifies combat movement, not paid labor routes
+          // or scripted positioning. This is the same rate the enemy AI uses.
+          eliteMove = this.charmedCombatMoveFactor(u) *
+            this.monsterNightBonuses(u).tempo;
         if (u.type === 'pet') {
           this.updatePetCombat(u, e, living, dt);
           return;
@@ -3995,8 +4062,7 @@
               damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
               source: u.id,
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-              speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-              style: this.charmedCompanionProfile(u)?.style || 'arrow',
+              ...this.charmedProjectileFlight(u),
             });
             if (this.s.mode === 'developer')
               this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));
@@ -4049,12 +4115,18 @@
         const z = this.zone(),
           living = this.activeLivingParty(),
           context = this.syncSquadDoctrine(),
-          claimed = new Set();
+          claimed = new Set(),
+          idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier(),
+          // A working, reserved or forged Charmed unit cannot exploit the
+          // idle Heal clock; only authenticated active ranged healers qualify.
+          idleCharmHealers = idleHealRecovery > 1
+            ? new Set(this.healCompanionCasters().filter((u) => !!u.charmOrigin)) : null;
         const returningLabor = this._gatherRecallResume;
         if (returningLabor && (!this.s.recallActive || returningLabor.zone !== this.zoneId))
           this._gatherRecallResume = null;
         else if (returningLabor && !this.recallInProgress()) {
-          this.s.recallActive = false;
+          // Formation arrival never cancels a timed Recall, including one
+          // which interrupted active gathering.
           this._gatherRecallResume = null;
         }
         // Pending casts cannot survive removal, a zone change, death or benching.
@@ -4117,7 +4189,8 @@
           u.skillNightCd = Math.max(0, (u.skillNightCd || 0) - specialRecovery);
           u.skillGlobalCd = Math.max(0, (u.skillGlobalCd || 0) - specialRecovery);
           if (u.charmOrigin)
-            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) - specialRecovery);
+            u.charmSupportCd = Math.max(0, (u.charmSupportCd || 0) -
+              specialRecovery * (idleCharmHealers?.has(u) ? idleHealRecovery : 1));
           // Thornfang scatter overrides orders, doctrine and combat until
           // forced movement ends; then the unit resumes its normal assignment.
           if (u.deathRollHeld || u.keeperHeld || this.tacticalAdvanceScatter(u, dt)) {
@@ -4362,8 +4435,7 @@
                     damage: this.troopCriticalDamage(criticalReceipt, this.companionBasicAttackDamage(u)),
                     source: u.id,
                     ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
-                    speed: this.charmedCompanionProfile(u)?.shotSpeed || 450,
-                    style: this.charmedCompanionProfile(u)?.style || 'arrow',
+                    ...this.charmedProjectileFlight(u),
                   });
                   if (this.s.mode === 'developer')
                     this.developerCompanionTrackProjectile(u, 'Basic attack', this.s.projectiles.at(-1));

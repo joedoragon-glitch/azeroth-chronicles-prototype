@@ -42,11 +42,18 @@ for (const region of ['vale', 'march', 'highlands', 'frontier', 'crown']) {
     [{ night: true, settlement: 'town' }, 'settlement'],
   ]) {
     const cue = a.productionCue(scene({ region, zone: region, ...extra }));
-    assert.equal(cue.id, director.places[region][key], region + '/' + key);
+    const expected = region === 'vale' && key === 'settlement'
+      ? director.places.vale.base : director.places[region][key];
+    assert.equal(cue.id, expected, region + '/' + key);
     isMusic(cue.id);
     placeCases++;
   }
 }
+const estateCue = a.productionCue(scene({ region: 'vale', zone: 'vale',
+  estateApproach: true }));
+assert.equal(estateCue.id, director.places.vale.settlement,
+  'the former settlement track now marks only the peaceful Forest Crypt approach');
+assert.equal(estateCue.stems[0].gain, director.places.vale.settlementGain);
 for (const [family, spec] of Object.entries(director.bosses)) {
   for (const form of ['normal', 'true']) {
     const cue = a.productionCue(scene({ boss: { family, form }, engaged: 1 }));

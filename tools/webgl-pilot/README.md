@@ -1,5 +1,9 @@
 # GPU trial: real procedural objects and original sprites
 
+**Current-status routing (3 November 2026):** This is the older standalone GPU comparison, **not** the live renderer status. The game now defaults to PixiJS WebGL2 for world presentation, with independent Canvas 2D as a selectable fallback and critical-cue overlay. Active code retains historical `tools/webgl-pilot/` paths for compatibility. See [Architecture](../../docs/ARCHITECTURE.md), [Development state](../../docs/DEVELOPMENT_STATE.md), and [Canvas–Pixi visual parity](../../docs/PIXI_VISUAL_PARITY_20261031.md). Automated graphics checks are not physical-device FPS or visual acceptance.
+
+## Original standalone GPU diagnostic — historical text
+
 **Diagnostic only.** The live game keeps its Canvas renderer; no setting, graphics, gameplay, save, lamp or audio code is changed.
 
 The page compares three ways of drawing a deterministic selection of visible game entities: **Original Canvas** repaints their original procedural artwork each frame, **Cached Canvas** draws those same illustrations baked into image tiles, and **WebGL2** draws those same baked illustrations via GPU textures. Authored sprites are included alongside procedural objects. Both cached paths use the same source pixels and original isometric locations and depth ordering.

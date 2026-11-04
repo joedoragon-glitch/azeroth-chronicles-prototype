@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "scope": "unpublished internal Phase 2 pilot",
+  "crownFrozen": 18,
+  "musicRegistered": 83,
+  "pilotFamilies": 4,
+  "pilotStems": [
+    {
+      "cue": "place-vale",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "8973eaaccba2b489e2d23c7e2e5d9dba274865a2d9db1c8816feec6fb4bb448d",
+      "decodedPeak": 0.42421,
+      "decodedRms": 0.08914,
+      "loopEdgeDelta": 0.00026
+    },
+    {
+      "cue": "action-vale",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "0c497110b32bcdcb85cb3d0effe1ec6f6ffa52704430b9c22095eff29df9bb71",
+      "decodedPeak": 0.41224,
+      "decodedRms": 0.06486,
+      "loopEdgeDelta": 0.00026
+    },
+    {
+      "cue": "place-archive",
+      "seconds": 44.651156,
+      "decodedSamples": 1438437,
+      "expectedSamples": 1438437,
+      "loop": {
+        "start": 0.15,
+        "end": 44.80115625
+      },
+      "encodedBytes": 540476,
+      "sha256": "a6204d5bf544fc98e4a6f8cfd0955d51dcbd03838c76f03fd3696763fea35e8b",
+      "decodedPeak": 0.34967,
+      "decodedRms": 0.08926,
+      "loopEdgeDelta": 0.00124
+    },
+    {
+      "cue": "action-archive",
+      "seconds": 44.651156,
+      "decodedSamples": 1438437,
+      "expectedSamples": 1438437,
+      "loop": {
+        "start": 0.15,
+        "end": 44.80115625
+      },
+      "encodedBytes": 540476,
+      "sha256": "472ed99fad73b539722d7bc1706849e052bfeb75ee5fdc29e9808a1be9034f84",
+      "decodedPeak": 0.38765,
+      "decodedRms": 0.06472,
+      "loopEdgeDelta": 0.00138
+    },
+    {
+      "cue": "interior-side-vale-cellars",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "9dd1c48d257611313fbec08a3ae1c750aac430dee3fa7dc58fbbea6e91be2e0f",
+      "decodedPeak": 0.46168,
+      "decodedRms": 0.08895,
+      "loopEdgeDelta": 0.00187
+    },
+    {
+      "cue": "peace-interior-side-vale-cellars",
+      "seconds": 31.304344,
+      "decodedSamples": 1011339,
+      "expectedSamples": 1011339,
+      "loop": {
+        "start": 0.15,
+        "end": 31.45434375
+      },
+      "encodedBytes": 380204,
+      "sha256": "e5f53203b139d52971758b1741082e6024673ea52d139c9e67109732ac5f68b4",
+      "decodedPeak": 0.35341,
+      "decodedRms": 0.08073,
+      "loopEdgeDelta": 0.00096
+    },
+    {
+      "cue": "boss-crypt",
+      "seconds": 36.923063,
+      "decodedSamples": 1191138,
+      "expectedSamples": 1191138,
+      "loop": {
+        "start": 0.15,
+        "end": 37.0730625
+      },
+      "encodedBytes": 447596,
+      "sha256": "e090b87b708c14dff71b7d556ba0a20a911ccde70ff48480fcff818cad139542",
+      "decodedPeak": 0.44466,
+      "decodedRms": 0.08926,
+      "loopEdgeDelta": 0.00334
+    },
+    {
+      "cue": "boss-crypt-true",
+      "seconds": 36.923063,
+      "decodedSamples": 1191138,
+      "expectedSamples": 1191138,
+      "loop": {
+        "start": 0.15,
+        "end": 37.0730625
+      },
+      "encodedBytes": 447596,
+      "sha256": "347c02a2cada9b02c6c4d3be5f50479088c610db63115a24f254deb26927b263",
+      "decodedPeak": 0.46661,
+      "decodedRms": 0.06449,
+      "loopEdgeDelta": 0.00106
+    }
+  ],
+  "pilotPairOverlays": [
+    {
+      "family": "greenwood-outdoors",
+      "baseGain": 0.85,
+      "secondGain": 0.5,
+      "peak": 0.47466,
+      "rms": 0.09196
+    },
+    {
+      "family": "archive-rescue",
+      "baseGain": 0.85,
+      "secondGain": 0.5,
+      "peak": 0.38915,
+      "rms": 0.09154
+    },
+    {
+      "family": "orchard-cellars",
+      "mode": "alternate"
+    },
+    {
+      "family": "lifebinder-winter-works",
+      "baseGain": 0.85,
+      "secondGain": 0.55,
+      "peak": 0.52521,
+      "rms": 0.09386
+    }
+  ],
+  "encodedBudgetBytes": 33554432,
+  "originalCatalogBytes": 25654373,
+  "pilotReplacementProjectionBytes": 27131805,
+  "headroomAfterPilotProjectionBytes": 6422627,
+  "note": "Budget projection for eight pilots only, not approval to regenerate all 65.",
+  "provenance": {
+    "repository": "joedoragon-glitch/azeroth-chronicles-prototype",
+    "pr": 692,
+    "sourceHead": "0c183b502e3b3a26e9b0d5d6470a19682b039e65",
+    "runId": 41165770234,
+    "jobId": 124432882738,
+    "runUrl": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41165770234",
+    "runConclusion": "success",
+    "capture": "PHASE2_INTERNAL_RENDER_METRICS from completed focused workflow logs"
+  },
+  "calculatedReview": {
+    "oldPilotBytes": 2019528,
+    "newPilotBytes": 3496960,
+    "encodedGrowthBytes": 1477432,
+    "decodedAllEightAt32kMonoBytes": 37218024,
+    "estimatedDecodedAllEightAt48kMonoBytes": 55827036,
+    "measuredLoopEdgeMax": 0.00334,
+    "measuredOverlayPeakMax": 0.52521,
+    "musicListeningPerformed": false,
+    "gameIntegrationTested": false,
+    "ownerAccepted": false
+  },
+  "interpretation": "Passes isolated deterministic synthesis/MP3 decode/overlay/loop numeric checks, not creative listening or WebAudio device testing. Budget is an eight-pilot replacement projection only."
+}

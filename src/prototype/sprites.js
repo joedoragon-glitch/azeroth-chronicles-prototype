@@ -90,7 +90,9 @@
   function candidateKeys(e, region = 0, rescued = false) {
     if (
       !e ||
-      ['workstation', 'mobile-captive', 'mobile-forge', 'scout-tracks', 'critical-codex'].includes(e.presentation) ||
+      ['workstation', 'mobile-captive', 'mobile-forge', 'scout-tracks', 'critical-codex'].includes(
+        e.presentation,
+      ) ||
       e.kind === 'critical-codex' ||
       e.kind === 'patrol-report' ||
       e.sceneRole
@@ -109,11 +111,13 @@
     if (kind === 'hero') return e.crowned ? [] : ['hero:' + clean(e.class)];
     if (kind === 'ally') {
       if (e.charmOrigin)
-        return [enemyKey({
-          species: e.charmOrigin.species,
-          ranged: e.charmOrigin.role === 'archer',
-          type: 'mob',
-        })];
+        return [
+          enemyKey({
+            species: e.charmOrigin.species,
+            ranged: e.charmOrigin.role === 'archer',
+            type: 'mob',
+          }),
+        ];
       return e.type === 'pet' ? [] : ['ally:' + clean(e.class || e.type || 'worker')];
     }
     if (kind === 'enemy') {
@@ -777,6 +781,7 @@
     height,
     status,
     entityScale,
+    drawOverlay: overlay,
   };
   root.PrototypeSprites = api;
   if (typeof module !== 'undefined') module.exports = api;

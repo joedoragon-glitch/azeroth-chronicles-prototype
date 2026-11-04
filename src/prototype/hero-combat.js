@@ -183,6 +183,8 @@
           damage,
           source: 'hero',
           slot: 8,
+          // An Ultimate hunt is area coverage even when a shaft has one target.
+          skillShape: 'area',
           ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
           style: 'arrow',
           speed: 650,
@@ -238,7 +240,7 @@
                 : cfg.tertiaryDamage || cfg.extraDamage;
           if (
             this.damage(enemy, this.criticalHeroValue(criticalReceipt, power * coefficient * scale, 'damage'), 'hero', {
-              area: true,
+              area: true, skillShape: 'area', criticalExecution: criticalReceipt,
               ...(receipt ? { encountersAtStart: receipt } : {}),
             })
           ) {
@@ -332,7 +334,7 @@
                   : cfg.splashDamage;
             if (
               !this.damage(foe, this.criticalHeroValue(hero.class === 'mage' && !charged ? criticalReceipt : null, power * coefficient * scale, 'damage'), 'hero', {
-                area: true,
+                area: true, skillShape: 'area', criticalExecution: criticalReceipt,
                 ...(receipt ? { encountersAtStart: receipt } : {}),
               })
             )
@@ -438,7 +440,8 @@
           : [];
         const deal = (enemy, amount, area = false, piercing = false) =>
           this.damage(enemy, amount, 'hero', {
-            area,
+            area, skillShape: area ? 'area' : 'single',
+            criticalExecution: criticalReceipt,
             ...(piercing ? { piercing: true } : {}),
             ...(encountersAtStart ? { encountersAtStart } : {}),
           });
@@ -883,7 +886,7 @@
           }
           if (
             this.damage(e, f.damage * cfg.damagePerPulse, 'hero', {
-              area: true,
+              area: true, skillShape: 'area', criticalExecution: f.criticalExecution,
               encountersAtStart: f.encountersAtStart,
             })
           )
@@ -1023,7 +1026,7 @@
               f.hitIds.push(e.id);
               if (
                 this.damage(e, f.damage * R.chargedSkills.first.mage.damage, 'hero', {
-                  area: true,
+                  area: true, skillShape: 'area', criticalExecution: f.criticalExecution,
                   encountersAtStart: f.encountersAtStart,
                 })
               )
@@ -1123,6 +1126,7 @@
             // Check active retreat before damage mutates regroup and threat.
             const retreat = this.hawkRetreatKind(target);
             const landed = this.damage(target, f.damage * cfg.damage, 'hero', {
+              skillShape: 'single', criticalExecution: f.criticalExecution,
               encountersAtStart: f.encountersAtStart,
             });
             const interrupted =
@@ -1389,7 +1393,7 @@
         const allies = this.activeLivingParty().filter((u) =>
           u.hp > 0 && u.active !== false &&
           dist(u, h) <= form.radius && this.line(h, u));
-        this.releaseRecallForCombat();
+        // Recall remains under player/timer control during all offense.
         this.engage(primary);
         h.cd[0] = this.skillCooldown(1, false);
         if (charged) h.chargedCd[0] = this.skillCooldown(1, true);
@@ -1454,7 +1458,7 @@
         const allies = this.activeLivingParty().filter((u) =>
           u.hp > 0 && u.active !== false &&
           dist(u, h) <= form.radius && this.line(h, u));
-        this.releaseRecallForCombat();
+        // Recall remains under player/timer control during all offense.
         this.engage(primary);
         h.cd[slot - 1] = this.skillCooldown(slot, false);
         if (charged) h.chargedCd[slot - 1] = this.skillCooldown(slot, true);
@@ -1681,6 +1685,9 @@
         this.s.party.push(u);
         this.s.charmCaptures ??= {};
         this.s.charmCaptures[u.id] = { ...profile };
+        // The lawful receipt now exists. Capture at night gets the same live
+        // passive immediately; the bonus expires at dawn without saved flags.
+        this.syncMonsterNightStats(u);
         if (this.s.heroTarget === primary.id) this.s.heroTarget = null;
         this.resetBasicCombo();
         this.event('rogueCharm', {
@@ -1716,7 +1723,7 @@
             (locked ? null : eligible.sort((a, b) =>
               dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
         if (!primary) return false;
-        this.releaseRecallForCombat();
+        // Recall remains under player/timer control during all offense.
         this.engage(primary);
         const combo = this.nextBasicCombo(primary.id),
           rank = this.hero.skills[0],
@@ -1960,16 +1967,8 @@
         const cost = this.skillManaCost(slot, rank, isCharged);
         if (this.hero.mp < cost) return false;
         this.hero.mp -= cost;
-        // The hero may defend the retreat without cancelling an unfinished
-        // Recall. Deliberate offense releases the defensive hold after arrival.
-        const offensive =
-          (requiresTarget && !!target) ||
-          slot === 5 ||
-          (slot === 8 && this.hero.class === 'paladin') ||
-          (slot === 3 &&
-            (this.hero.class === 'mage' || (this.hero.class === 'paladin' && isCharged)));
-        // Passive covering fire is not a new squad engagement order.
-        if (offensive && !automatic) this.releaseRecallForCombat();
+        // Manual skills and automatic basics have no authority to toggle
+        // the player's timed Recall command; each retains its own cooldown.
         if (automatic && slot === 1) {
           this.hero.basicCd = this.basicSkillCooldown();
         } else if (slot === 3 && this.hero.class === 'paladin' && !isCharged) {
@@ -2058,6 +2057,7 @@
               style: 'beam',
               slot,
               charged: false,
+              skillShape: 'single',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
@@ -2090,6 +2090,7 @@
                 style: 'arrow',
                 slot,
                 charged: false,
+                skillShape: 'single',
                 ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
                 rapid: true,
@@ -2125,6 +2126,7 @@
               style: 'holy',
               slot,
               charged: false,
+              skillShape: 'single',
               ...(criticalReceipt ? { criticalExecution: criticalReceipt } : {}),
               ...(encountersAtStart ? { encountersAtStart } : {}),
             });
@@ -2290,7 +2292,8 @@
           for (const e of this.zone()
             .enemies.filter((e) => e.hp > 0 && !e.neutral && inside(e) && this.line(this.hero, e))
             .sort((a, b) => this.idOrder(a, b))) {
-            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart })) {
+            if (this.damage(e, damage, 'hero', { area: true, encountersAtStart,
+              skillShape: 'area', criticalExecution: criticalReceipt })) {
               hits++;
               if (def.slow)
                 this.applySlow(e, this.criticalHeroValue(
@@ -2374,7 +2377,8 @@
                     enemy,
                     power * cfg.bash.damage * scale * (elite ? cfg.bash.eliteDamage : 1),
                     'hero',
-                    { area: true, encountersAtStart },
+                    { area: true, encountersAtStart,
+                      skillShape: 'area', criticalExecution: criticalReceipt },
                   )
                 ) {
                   if (enemy.hp > 0) this.shieldPush(enemy, push);
@@ -2580,7 +2584,9 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart,
+                skillShape: isCharged ? 'area' : 'single',
+                criticalExecution: criticalReceipt })) {
                 // Captains and bosses keep their authored scripted specials;
                 // boss basic-target provocation is deliberately short-lived.
                 const tauntDuration =
@@ -2647,7 +2653,9 @@
                 });
                 continue;
               }
-              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart })) {
+              if (this.damage(enemy, damage, 'hero', { area: isCharged, encountersAtStart,
+                skillShape: isCharged ? 'area' : 'single',
+                criticalExecution: criticalReceipt })) {
                 this.fractureEnemy(
                   enemy,
                   advanced.fraction + steps * advanced.fractionStep,
@@ -2723,7 +2731,7 @@
               this.hero.class !== 'mage' ? criticalReceipt : null,
               (slot === 7 ? power * 6 : power * 2.3) * scale, 'damage',
             ), 'hero', {
-              area: true,
+              area: true, skillShape: 'area', criticalExecution: criticalReceipt,
             });
             if (landed) contacts.push({ x: e.x, y: e.y, target: e.id });
             if (landed && this.hero.class === 'mage' && slot === 5 && e.hp > 0)
@@ -2764,7 +2772,9 @@
               target,
               dmg,
               'hero',
-              automatic ? { automaticBasic: true } : null,
+              automatic ? { automaticBasic: true } :
+                slot === 1 ? null :
+                  { skillShape: 'single', criticalExecution: criticalReceipt },
             );
             if (landed) {
               if (slot === 2) this.weakenEnemy(target, rank, criticalReceipt);

@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "purpose": "83-ID catalog checkpoint; 18 Dark Crown music assets must remain unchanged in Phase 2 through Phase 9",
+  "frozen": {
+    "place-crown": {
+      "src": "./assets/audio/music/place-crown.mp3",
+      "sha256": "72cd7f217bf2c48bd5dd7b1f86ce110d2ecbce8ed0aac792d4309720093ca50f",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "action-crown": {
+      "src": "./assets/audio/music/action-crown.mp3",
+      "sha256": "69fb37bcad389e19d06dd2c37ed9bc326247f7f4bd7769115989645f64492c8c",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "peace-crown": {
+      "src": "./assets/audio/music/peace-crown.mp3",
+      "sha256": "b294152d59ae0d118b5f29bc60ccf7df1c16fd02a3bcee2ce06d47b798c19b7c",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "night-crown": {
+      "src": "./assets/audio/music/night-crown.mp3",
+      "sha256": "5799a78e3705fb3638aa5d7373fd61e5a731a73332dfe4788c6bbb1695f872bf",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "settlement-crown": {
+      "src": "./assets/audio/music/settlement-crown.mp3",
+      "sha256": "72c73d3af9583dafc30882ba07310009c9f43c83c5acd0869e5ed1612207e7a3",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "place-citadel": {
+      "src": "./assets/audio/music/place-citadel.mp3",
+      "sha256": "7ecf81ddd9a21580db9207b8f8c42f5ad57389ae98d7b1f50576c52af69f93f7",
+      "duration": 22.1181875,
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "bpm": 88,
+      "managedBy": "score-book"
+    },
+    "action-citadel": {
+      "src": "./assets/audio/music/action-citadel.mp3",
+      "sha256": "402baa365931e6aa555d45265aa0a04e9e7ae918514d2e250489adf8066e0e23",
+      "duration": 22.1181875,
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "bpm": 88,
+      "managedBy": "score-book"
+    },
+    "peace-citadel": {
+      "src": "./assets/audio/music/peace-citadel.mp3",
+      "sha256": "77b3625157ec3905a9d659829fe135e894fb62d18e457990c80b8f22b49d3f67",
+      "duration": 22.1181875,
+      "loop": {
+        "start": 0.15,
+        "end": 21.9681875
+      },
+      "bpm": 88,
+      "managedBy": "score-book"
+    },
+    "interior-supply-crown": {
+      "src": "./assets/audio/music/interior-supply-crown.mp3",
+      "sha256": "ac7ec304b81e27505a3630e3c0f9b1f62398ac57fdaf42472802c6199b9509bf",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "peace-interior-supply-crown": {
+      "src": "./assets/audio/music/peace-interior-supply-crown.mp3",
+      "sha256": "12d91b76948551021afd6c50fd5bf7ed14234919579c43467ab7f7f4ed5db085",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "interior-side-crown-foundry": {
+      "src": "./assets/audio/music/interior-side-crown-foundry.mp3",
+      "sha256": "c69d0c9e3dde82356cbc7bc795cba20e33f88d6e0ef8aa73346bad6c35f30606",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "peace-interior-side-crown-foundry": {
+      "src": "./assets/audio/music/peace-interior-side-crown-foundry.mp3",
+      "sha256": "b4026fabbd7b04e85f6b5d2b85fd687c820f1c4932e566a9e77a2dc3713b2f86",
+      "duration": 23.15715625,
+      "loop": {
+        "start": 0.15,
+        "end": 23.00715625
+      },
+      "bpm": 84,
+      "managedBy": "score-book"
+    },
+    "boss-citadel": {
+      "src": "./assets/audio/music/boss-citadel.mp3",
+      "sha256": "006f3f01397203516a09c3d58b22a5e7210b42732d223b3bc891ed8318c10d55",
+      "duration": 18.07778125,
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "bpm": 108,
+      "managedBy": "score-book"
+    },
+    "boss-citadel-true": {
+      "src": "./assets/audio/music/boss-citadel-true.mp3",
+      "sha256": "f5ebff1603c02bba71cec705057441c01994a976fcef658d8f8f17980f1b1d96",
+      "duration": 18.07778125,
+      "loop": {
+        "start": 0.15,
+        "end": 17.92778125
+      },
+      "bpm": 108,
+      "managedBy": "score-book"
+    },
+    "boss-cindermaw": {
+      "src": "./assets/audio/music/boss-cindermaw.mp3",
+      "sha256": "1342d6c1f90aa3ab94801c35480cc27cb8e82ad0682d52ef06564fbe4f2b33c7",
+      "duration": 16.5711875,
+      "loop": {
+        "start": 0.15,
+        "end": 16.4211875
+      },
+      "bpm": 118,
+      "managedBy": "score-book"
+    },
+    "boss-cindermaw-true": {
+      "src": "./assets/audio/music/boss-cindermaw-true.mp3",
+      "sha256": "ff71b31816de0a62d63715fbc6034c5c9928bc7bcc66b44cd800844a0d2f5280",
+      "duration": 16.5711875,
+      "loop": {
+        "start": 0.15,
+        "end": 16.4211875
+      },
+      "bpm": 118,
+      "managedBy": "score-book"
+    },
+    "boss-darklord": {
+      "src": "./assets/audio/music/boss-darklord.mp3",
+      "sha256": "7e7dca4f9fc9255a819875599b2865cfea56d945ff819b2641194bb0cb383995",
+      "duration": 18.76153125,
+      "loop": {
+        "start": 0.15,
+        "end": 18.61153125
+      },
+      "bpm": 104,
+      "managedBy": "score-book"
+    },
+    "boss-darklord-true": {
+      "src": "./assets/audio/music/boss-darklord-true.mp3",
+      "sha256": "3cd351dd88910bdf20499bf2c48f6d22253bddb57477057d27d993a38eb5746d",
+      "duration": 18.76153125,
+      "loop": {
+        "start": 0.15,
+        "end": 18.61153125
+      },
+      "bpm": 104,
+      "managedBy": "score-book"
+    }
+  }
+}

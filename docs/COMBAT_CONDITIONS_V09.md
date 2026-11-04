@@ -61,6 +61,8 @@ does not certify a fresh whole-game audit. The historical v0.9 findings
 below retain their original context; the current table supersedes older hero
 immunity, Haste and missing-Silence statements.
 
+**Skill Block player-learning candidate (draft PR [#772](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/772), 3 November 2026):** The existing quick Combat conditions guide gains one shared Skill Block explanation without requiring the Keeper. A pact-qualified Keeper can optionally reveal live single/area, Ranger, Rogue, night and allied companion figures through **Show me the figures**; Controls distinguishes obstructed red aim from on-impact Skill Block. The Canvas/Pixi overlay uses **Blocked! / ¡Bloqueado!** from the active language. These learning additions **passed the exact implementation-head focused CI (#41644175055) and targeted PWA/Pixi browser checks** but remain **unmerged, unpublished and device-unverified** pending owner authorization; #760's original block probabilities and combat resolver are unchanged.
+
 Players can use **Hero skills → Combat conditions** (Adventure, either Barracks,
 or a teacher's Review hero skills), or **Controls → Combat conditions**. That
 reference offers one short explanation per selected effect. The Drowned Keeper's
@@ -237,3 +239,41 @@ The new `tests/combat-conditions.test.cjs` covers Slow/immunity interaction acro
 Before claiming **v0.9 certified**, run the exact-head format/build/check/test gates, then desktop Chromium, phone Chromium/WebKit, old-v4-save reload/import, PWA upgrade/offline, and a manual representative Normal/Nightmare/TRUE encounter pass: Mage frost/Silence/Fracture, Ranger Haste/Rally, Paladin stance/ward/Weaken/taunt, Soldier guard, spitter projectiles, Wraith siphon, boss slow patches, Goblin dust, knockback/scatter near walls, and trap seals. Verify hostile/status feedback remains legible at gameplay scale and on phone. Automated tests are evidence, not a substitute for practical control and clarity checks.
 
 **Not currently authored as generalized conditions:** stun, mind control, hard root, fear or universal stealth. Silence and Paladin enemy taunt are now explicitly authored above; ordinary slowing seals still do not silence or hard-root. Do not promise testers these effects solely because an attack name implies them. New conditions should first define target types, application eligibility, timer/stack rules, immunity interaction, UI/audio notice, save lifecycle and regression coverage.
+
+## Skill Block — merged and published source (PR #760; device verification pending)
+
+The merged Skill Block system does **not** change ordinary basic
+attacks, autoattack combo finishers, physical projectile collision, ground
+warning geometry, line-of-sight eligibility, immunity or Reversal. A legal
+single-target hero/companion skill grants an enemy a configurable 20% block
+chance; a legal area skill grants **each** affected enemy its own independent
+30% check. Ranger hero skills use 15%/25%, and Rogue Bard performances bypass
+the Skill Block check. No existing playable hero gains Skill Block; future Strategist Dodge remains separate.
+
+Hostile monsters gain **five percentage points** during game night. The draft
+[monster-night passive PR #761](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/761)
+extends that **same source value** to legally Charmed monsters and unlocked boss pets
+while they defend against eligible enemy skills (25% single-target / 35% area at current
+tuning). Ordinary Soldiers and Archers retain their 20%/30% companion defenses, including
+against eligible enemy Rogue maneuvers, without the night bonus. Critical execution
+receipts bypass Skill Block before sampling it. This companion-night extension is
+**implemented and tested in the draft PR, not yet merged or published**.
+A successful Skill Block fully negates damage and linked on-hit statuses, displaying
+a brief local **Blocked!** over the defender. Probability values reside in
+`R.skillBlock`; the extra RNG stream is separate and save-v4 compatible.
+The detailed acceptance boundaries are in
+[SKILL_EVASION_OWNER_CONTRACT_20261101.md](SKILL_EVASION_OWNER_CONTRACT_20261101.md).
+
+**Sprite-scope source review:** PR #760 edits `rules.js` only to add a
+skill-block balance table, and `renderer.js` only to add a bounded combat
+`Blocked!` overlay cue. Neither change adds or renames a sprite, art family,
+palette, asset key or loadout. The independently enumerated sprite-scope
+catalog and visual identities remain unchanged; only the two current
+source-file fingerprints in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json`
+are refreshed. Historical sprite approvals and receipts remain intact.
+
+**Status:** Skill Block was implemented in [PR #760](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/760), merged into `main` on 3 November 2026 at `42bed35fd5dad6b68cc44a19bd453fb8a733f9ea`, and passed the exact-merge [focused validation and GitHub Pages publication](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41637089826). This is technical publishing evidence, **not** proof that a physical device received or validated the update. Its player-learning UI, English/Spanish feedback and optional Keeper figures were
+subsequently merged through [PR #772](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/772).
+The owner-approved [Skill Block player learning design](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md)
+records that work's original baseline; draft PR #761 updates its night-bonus
+copy to recognize legally owned monsters without expanding Block to basic attacks.

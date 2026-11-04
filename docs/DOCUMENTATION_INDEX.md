@@ -1,24 +1,24 @@
 # Documentation directory — what each document is for
 
-**So I Became the Dark Lord's Problem** · Maintained directory updated 29 October 2026 · **436 Markdown documents indexed**.
+**So I Became the Dark Lord's Problem** · Maintained directory updated 3 November 2026 · **459 Markdown documents indexed**.
 
 Every tracked Markdown document appears **once** below, grouped by subject, with a one-sentence purpose. **Bold document links identify maintained guides and references**; regular-weight links are dated historical records. This page helps you choose which file to open. It is **not** a release ledger, approval list, proof of implementation or invitation to resume an old task.
 
 **Read first:** [Development state](DEVELOPMENT_STATE.md) owns verified public-build and acceptance information; [Architecture](ARCHITECTURE.md) maps source owners; [Decisions](DECISIONS.md) gives design rules and supersessions; [AGENTS.md](../AGENTS.md) governs authorization; [Engineering workflow](MECHANIC_DEVELOPMENT.md) describes verification; [Brand identity](BRAND_IDENTITY.md) gives the official title and legacy exceptions.
 
-**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the source candidate, the latest verified Pages publication and outstanding device acceptance. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
+**Current release routing:** See [Development state](DEVELOPMENT_STATE.md) for the exact published build and outstanding device acceptance. The [65-song soundtrack](AUDIO_PHASE9_FIRST_LISTEN.md) is **integrated and published**; its independent [environmental redesign #727](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/727) remains separate. Greenwood and other releases must not be treated as installed or owner-accepted merely because code or documentation has merged.
 
 **Description caveat:** Core guides and representative historical files were checked against their contents. For other older files, these brief finding-aid descriptions use their titles, subjects and provisional registry classifications—not a claim that every historical body was independently audited. Labels such as *Dated record* describe source context, not a present work order.
 
 ## Jump to a subject
 
 - [Essential guides and active project policy](#essential-guides-and-active-project-policy) (11)
-- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (14)
-- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (126)
-- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (20)
-- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (48)
+- [Music, sound effects and audio production](#music-sound-effects-and-audio-production) (24)
+- [Hero abilities, combat, enemies and bosses](#hero-abilities-combat-enemies-and-bosses) (131)
+- [Companions, Barracks, pets and specialists](#companions-barracks-pets-and-specialists) (22)
+- [World, geography, travel and narrative](#world-geography-travel-and-narrative) (52)
 - [Sprite art, textures and visual design](#sprite-art-textures-and-visual-design) (55)
-- [Rendering, optimization, performance and WebGL experiments](#rendering-optimization-performance-and-webgl-experiments) (45)
+- [Rendering, optimization, performance and WebGL](#rendering-optimization-performance-and-webgl) (47)
 - [Navigation, maps and pathfinding](#navigation-maps-and-pathfinding) (6)
 - [Menus, controls, HUD and usability](#menus-controls-hud-and-usability) (13)
 - [Save data, backup and recovery](#save-data-backup-and-recovery) (6)
@@ -47,6 +47,16 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Audio Foundation](AUDIO_FOUNDATION.md)** — **Reference.** Reference structure or catalog for audio, with its original assumptions and scope.
 - **[Audio Playback](AUDIO_PLAYBACK.md)** — **Maintained guide.** Current audio engine, mixers, production scenes and standalone listening-room behavior.
 - **[Audio Sound Pass](AUDIO_SOUND_PASS.md)** — **Design reference.** Artistic identities of the soundtrack's 83 music cues and guidance for future composition.
+- [Audio Environment Production Inventory 20261031](AUDIO_ENVIRONMENT_PRODUCTION_INVENTORY_20261031.md) — *Dated production record.* Original environmental-bed inventory, protected routes, and source quality assessments distinct from soundtrack #740.
+- [Audio Environment Stage1 Handoff 20261031](AUDIO_ENVIRONMENT_STAGE1_HANDOFF_20261031.md) — *Dated production record.* Independent environmental-sound workflow and stage transition; not part of the published 65-song soundtrack.
+- [Audio Phase3 Critical Review](AUDIO_PHASE3_CRITICAL_REVIEW.md) — *Dated production record.* Source-note and orchestration audits underlying eight recorded primary music cues.
+- [Audio Phase4 Critical Review](AUDIO_PHASE4_CRITICAL_REVIEW.md) — *Dated production record.* Contextual and interior arrangement corrections underlying the Phase 4 recordings.
+- [Audio Phase5 Critical Review](AUDIO_PHASE5_CRITICAL_REVIEW.md) — *Dated production record.* Sixteen boss/TRUE overlays, source corrections and recorded-sample evidence.
+- [Audio Phase6 Critical Review](AUDIO_PHASE6_CRITICAL_REVIEW.md) — *Dated production record.* Title, defeat and finale score decisions and measured isolated source corrections.
+- [Audio Phase7 Handoff](AUDIO_PHASE7_HANDOFF.md) — *Closed phase handoff.* Former 65-cue integration plan and focused source checks; publication supersession is at the top.
+- **[Audio Phase9 First Listen](AUDIO_PHASE9_FIRST_LISTEN.md)** — **Optional listening reference.** All 65 released new songs and 18 protected Crown references by stable ID; personal creative review is deferred.
+- [Millhaven Remake Listening Studies](../tools/audio/MILLHAVEN_REMAKE_LISTENING_STUDIES.md) — *Dated production record.* Original listening-candidate source/hashes; selected Candidate B later merged via #771.
+- [Audio Sample Bank Source README](../tools/audio/phase3-samples/README.md) — *Dated source-provenance record.* Pinned CC0 source recordings and attribution used in authored soundtrack production.
 - [Audio Stage1 Coverage 20261025](AUDIO_STAGE1_COVERAGE_20261025.md) — *Dated record.* Development-only observer for tracing game event coverage by the audio layer.
 - [Audio Stage2 Recovery 20261025](AUDIO_STAGE2_RECOVERY_20261025.md) — *Dated record.* Dated stage for Web Audio startup, interruption recovery and fallback.
 - [Audio Stage3 Handoff 20261025](AUDIO_STAGE3_HANDOFF_20261025.md) — *Dated record.* Preserves audio context, known work and next-stage questions from a dated handoff.
@@ -60,6 +70,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 ## Hero abilities, combat, enemies and bosses
 
 - **[Target Centered Boss Ground AoE](PT007_TARGET_CENTERED_GROUND_AOE_20261028.md)** — **Design reference.** Committed boss damage footprints, warning parity and terrain/line-of-sight boundaries.
+- [Monster Night Passive](MONSTER_NIGHT_PASSIVE_20261101.md) — *Dated implementation record.* Shared nighttime power for hostile and legally owned monsters, subsequently merged via #761.
+- **[Skill Block Owner Contract](SKILL_EVASION_OWNER_CONTRACT_20261101.md)** — **Design reference.** Approved per-target Block odds and exclusions, implemented by #760; initial draft status is historical.
 - **[Rogue Charm Heritage](ROGUE_CHARM_HERITAGE_589.md)** — **Reference.** Charmed heritage abilities, nighttime species, published implementation evidence and pending balance review.
 - **[Rogue Rank and Stacking Reconciliation](ROGUE_SKILL_RANK_PROGRESS_AND_STACKING_RECONCILIATION_20261029.md)** — **Reference.** Current #606 stacking/rank integration versus earlier alternatives and instructor/journal verification.
 - **[Warning Effect Handoff](WARNING_EFFECT_HANDOFF_20261028.md)** — **Reference.** Native warning expiration at actual attack release across Canvas and the Pixi overlay.
@@ -153,8 +165,10 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Issue463 Hero Companion Projectile Audit 20261025](ISSUE463_HERO_COMPANION_PROJECTILE_AUDIT_20261025.md) — *Dated record.* Examines issue463 hero companion projectile for source or design inconsistencies, recording dated findings and limits.
 - [Mage Beam Travel And Hero Projectile Audit 20261025](MAGE_BEAM_TRAVEL_AND_HERO_PROJECTILE_AUDIT_20261025.md) — *Dated record.* Examines mage beam travel and hero projectile for source or design inconsistencies, recording dated findings and limits.
 - [Mounted Roster Skills 20261020](MOUNTED_ROSTER_SKILLS_20261020.md) — *Dated record.* Reference structure or catalog for mounted roster skills, with its original assumptions and scope.
+- **[Paladin Tap/Charged Skill Reassessment](PALADIN_TAP_CHARGED_IDENTITY_AUDIT_20261103.md)** — **Owner design decision.** Existing Skills 1–8 remain unchanged for the v0.9.2 development goal; future refinements require actual playthrough evidence.
 - [Pet Skill Scheduling DEV180](PET_SKILL_SCHEDULING_DEV180.md) — *Dated record.* Describes pet skill scheduling decisions, constraints or engineering observations from its original development checkpoint.
 - [Ranger Support Feedback 20261020](RANGER_SUPPORT_FEEDBACK_20261020.md) — *Dated record.* Describes ranger support feedback decisions, constraints or engineering observations from its original development checkpoint.
+- **[Rogue Tap/Charged Skill Identity](ROGUE_NORMAL_CHARGED_IDENTITY_AUDIT_20261103.md)** — **Owner design decision.** Preserve all current Rogue skills for the v0.9.2 goal; replacement proposals are withdrawn and not approved work.
 - [Skill Journal DEV159](SKILL_JOURNAL_DEV159.md) — *Dated record.* Describes skill journal decisions, constraints or engineering observations from its original development checkpoint.
 - [Skill Queue Forms DEV139](SKILL_QUEUE_FORMS_DEV139.md) — *Dated record.* Describes skill queue forms decisions, constraints or engineering observations from its original development checkpoint.
 - [Slow Cooldown Interaction 20261015](SLOW_COOLDOWN_INTERACTION_20261015.md) — *Dated record.* Describes slow cooldown interaction decisions, constraints or engineering observations from its original development checkpoint.
@@ -179,6 +193,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 - **[Combat Arena Low Spec](COMBAT_ARENA_LOW_SPEC.md)** — **Reference.** Combat-space readability and technical constraints for lower-performance devices.
 - [Combat Conditions V09](COMBAT_CONDITIONS_V09.md) — *Dated record.* Meaning and presentation of status conditions in combat.
+- [Skill Block Player Learning Design 20261103](SKILL_BLOCK_PLAYER_LEARNING_DESIGN_20261103.md) — *Approved design and cross-chat engineering handoff.* Existing player learning paths, bilingual text, live-rule figures, quiet feedback and phased acceptance for Skill Block.
 - [Combat Flow And Menus DEV126](COMBAT_FLOW_AND_MENUS_DEV126.md) — *Dated record.* Explains combat flow and menus player interaction or interface readability choices.
 - [Combat Four Domain Workload Audit 20261029](COMBAT_FOUR_DOMAIN_WORKLOAD_AUDIT_20261029.md) — *Dated record.* Native dev.224 combat-workload measurements, later merged micro-optimizations and unresolved follow-up investigations.
 - **[Combat Party Housekeeping](COMBAT_PARTY_HOUSEKEEPING.md)** — **Reference.** Describes combat party housekeeping decisions, constraints or engineering observations from its original development checkpoint.
@@ -204,6 +219,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## Companions, Barracks, pets and specialists
 
+- **[Companion Company Experience](COMPANION_COMPANY_EXPERIENCE_620.md)** — **Design and integration reference.** Individual Barracks profiles, real abilities, Orin selector and developer-only companion telemetry, with explicit visual-acceptance limits.
 - **[Companion Mastery and Charmed Training](COMPANION_MASTERY_AND_CHARMED_RINGLEADER_TRAINING_20261029.md)** — **Design reference.** Shared companion mastery, Orin Ringleader promotion, implemented scope and outstanding follow-up decisions.
 
 - [Barracks Build Copy DEV155](BARRACKS_BUILD_COPY_DEV155.md) — *Dated record.* Describes barracks build copy decisions, constraints or engineering observations from its original development checkpoint.
@@ -219,6 +235,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Gathering Escort DEV130](GATHERING_ESCORT_DEV130.md) — *Dated record.* Describes gathering escort decisions, constraints or engineering observations from its original development checkpoint.
 - [Pet Visual Identity 20261020](PET_VISUAL_IDENTITY_20261020.md) — *Dated record.* Describes pet visual identity decisions, constraints or engineering observations from its original development checkpoint.
 - [Queued Companion Care DEV149](QUEUED_COMPANION_CARE_DEV149.md) — *Dated record.* Describes queued companion care decisions, constraints or engineering observations from its original development checkpoint.
+- **[Dormant Squad Commands Design](SQUAD_COMMANDS_DORMANT_DESIGN.md)** — **Design reference.** The test-only command planner is not playable; timed Recall in #685 merged independently.
 - [Recall Highlight DEV153](RECALL_HIGHLIGHT_DEV153.md) — *Dated record.* Describes recall highlight decisions, constraints or engineering observations from its original development checkpoint.
 - [Recall Tutorial DEV152](RECALL_TUTORIAL_DEV152.md) — *Dated record.* Describes recall tutorial decisions, constraints or engineering observations from its original development checkpoint.
 - [Resource Gathering Flow Audit DEV129](RESOURCE_GATHERING_FLOW_AUDIT_DEV129.md) — *Dated record.* Examines resource gathering flow for source or design inconsistencies, recording dated findings and limits.
@@ -228,6 +245,9 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 
 ## World, geography, travel and narrative
 
+- [Greenwood #679 Refinement Staging](GREENWOOD_679_REFINEMENT_PATCH_STAGING.md) — *Dated candidate record.* Bounded scenery and Thornfang/Mira refinements, later merged in #680 without physical-device visual acceptance.
+- [Greenwood #680 Candidate Acceptance](GREENWOOD_680_CANDIDATE_ACCEPTANCE.md) — *Dated acceptance record.* Scene cards, protected monster placement and save constraints; final creative acceptance is separate.
+- [Greenwood #680 Engineering Audit](GREENWOOD_680_ENGINEERING_AUDIT.md) — *Dated engineering record.* Non-destructive scenic overlay, patrol compatibility and source/test receipts from the integrated candidate.
 - [Greenwood redesign masterplan comparison](GREENWOOD_REDESIGN_MASTERPLAN_20261029.md) — *Dated design evidence.* Two distinct regional plans, the implemented dev.238 replacement, all-50 execution-quality audit, interior extension and handoff under #644/#654. Owner first-hour acceptance remains pending.
 - **[Greenwood Flagship Work Handoff](GREENWOOD_FLAGSHIP_WORK_HANDOFF_20261028.md)** — **Maintained implementation handoff.** Historical dev.233 evidence with a current routing banner to #654; the new design record owns implementation/audit/handoff.
 - [Greenwood Geography and Livelihood Audit](GREENWOOD_VALE_GEOGRAPHY_SETTLEMENT_LIVELIHOOD_AUDIT_20261028.md) — *Dated record.* Preserved 2700 source inventory, deficiencies and evidence overlays; current status routes to the handoff.
@@ -355,12 +375,17 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Snapshot Vale Cottage Original Export 20261014](SNAPSHOT_VALE_COTTAGE_ORIGINAL_EXPORT_20261014.md) — *Dated record.* Describes snapshot vale cottage original export decisions, constraints or engineering observations from its original development checkpoint.
 - **[Terrain Texture Pipeline](TERRAIN_TEXTURE_PIPELINE.md)** — **Reference.** Describes terrain texture pipeline decisions, constraints or engineering observations from its original development checkpoint.
 
-## Rendering, optimization, performance and WebGL experiments
+## Rendering, optimization, performance and WebGL
+
+**Current renderer (3 November 2026):** PixiJS WebGL2 is the published default world presentation; independent Canvas 2D remains selectable and supplies critical gameplay-cue overlays. Ferry grounding (#758), boss aura optimization (#762), idle occlusion contours (#767) and paired-performance checks (#765) have merged. None proves physical iPhone/Chromebook visual acceptance or sustained FPS. [Architecture](ARCHITECTURE.md) owns source routing; [Development state](DEVELOPMENT_STATE.md) owns exact release status. Historical source filenames do not imply an experimental live renderer.
+
+- **[Pixi Performance Acceptance](PIXI_PERFORMANCE_ACCEPTANCE_755.md)** — **Acceptance reference.** Paired Chromium/source workload comparisons from merged #765, not verified hardware FPS.
+- **[Canvas–Pixi visual parity](PIXI_VISUAL_PARITY_20261031.md)** — **Feature contract.** Original draw-layer ownership, animation/cache rules, matched-composite acceptance and #748 repair evidence.
 
 - **[Chromebook Graphics Preparation Cache Policy](CHROMEBOOK_GRAPHICS_PREPARATION_CACHE_POLICY_20261028.md)** — **Design reference.** Prepared arrivals, voluntary Canvas bypass and graphics cache retention; source/release status is separately evidenced.
 
 
-### Experimental PixiJS, GPU and WebGL
+### Historical PixiJS and WebGL pilot experiments
 
 - [PIXI Twilight Glow Failure 20261026](PIXI_TWILIGHT_GLOW_FAILURE_20261026.md) — *Dated record.* Describes PIXI twilight glow failure decisions, constraints or engineering observations from its original development checkpoint.
 - [PIXIJS Playtest Step2 20261022](PIXIJS_PLAYTEST_STEP2_20261022.md) — *Dated record.* Records tests or acceptance criteria for PIXIJS playtest at its original checkpoint.
@@ -408,7 +433,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Perf Ws1 Terrain Road Rendering](perf-ws1-terrain-road-rendering.md)** — **Reference.** Describes perf ws1 terrain road rendering decisions, constraints or engineering observations from its original development checkpoint.
 - **[Perf Ws3 Interface Audio 20261010](perf-ws3-interface-audio-20261010.md)** — **Reference.** Describes perf ws3 interface audio 20261010 decisions, constraints or engineering observations from its original development checkpoint.
 - [PR518 Engineering Handoff 20261027](PR518_ENGINEERING_HANDOFF_20261027.md) — *Dated record.* Engineering context and outstanding acceptance for the title, Canvas and experimental Pixi work.
-- **[PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md)** — **Maintained guide.** Real-device acceptance plan for title/graphics and experimental Pixi presentation.
+- **[PR518 Target Device Acceptance 20261027](PR518_TARGET_DEVICE_ACCEPTANCE_20261027.md)** — **Maintained guide.** Historical Pixi opt-in protocol plus the updated #574 Pixi-default acceptance addendum: migration, Canvas recovery and Chromebook/phone performance remain unverified.
 - [Regional Graphics Preparation Title Screen 20261027](REGIONAL_GRAPHICS_PREPARATION_TITLE_SCREEN_20261027.md) — *Dated record.* Describes regional graphics preparation title screen decisions, constraints or engineering observations from its original development checkpoint.
 - [Runtime Workload DEV177 Audit](RUNTIME_WORKLOAD_DEV177_AUDIT.md) — *Dated record.* Examines runtime workload for source or design inconsistencies, recording dated findings and limits.
 - [Runtime Workload DEV177](RUNTIME_WORKLOAD_DEV177.md) — *Dated record.* Describes runtime workload decisions, constraints or engineering observations from its original development checkpoint.
