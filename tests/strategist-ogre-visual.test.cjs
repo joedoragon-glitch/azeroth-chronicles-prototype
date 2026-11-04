@@ -3,6 +3,7 @@
 const assert = require('node:assert/strict');
 const V = require('../src/prototype/visuals.js');
 const C = require('../src/prototype/engine.js');
+const visualSource = require('node:fs').readFileSync(require('node:path').join(__dirname, '../src/prototype/visuals.js'), 'utf8');
 const fs = require('node:fs');
 const path = require('node:path');
 function trace(e) {
@@ -32,13 +33,38 @@ const enemy = trace(originalEnemy);
 const hero = trace({ id: 'hero', renderKind: 'hero', class: 'strategist' });
 const crown = trace({ id: 'hero', renderKind: 'hero', class: 'strategist', crowned: true });
 const paints = (t) => t.filter((x) => x[0] === 'fillStyle').map((x) => x[1]);
+const art = visualSource.split('function strategistHero(crowned = false) {')[1]
+  ?.split('function hero(role) {')[0] || '';
+assert(art.length > 5000, 'hero needs independently authored anatomical and costume geometry');
+assert(!/ogreBody\s*\(/.test(art), 'no repaint of stock Ogre anatomy masquerading as a new class');
+// Keep recognizable Ogre hide and paired tusks, but own eyes, jaw, crest,
+// torso/leg stance and actual clothing shapes in this hero's procedural code.
+for (const part of [
+  "const hide = '#b2a684'", "const hideFold",
+  "ctx.moveTo(-15, -43)", "ctx.moveTo(-7, -24)",
+  "ctx.moveTo(9, -23)", "ctx.moveTo(-12, -7)",
+  "ctx.moveTo(-18, -31)", "ctx.moveTo(-18, -34)",
+  "ctx.moveTo(-2, -55)",
+]) assert(art.includes(part), 'missing distinct Ogre anatomical / silhouette owner: ' + part);
+
 for (const c of ['#b2a684', '#8b8063', '#c8bb96'])
   assert(paints(hero).includes(c) && paints(enemy).includes(c),
     'Strategist must inherit existing Ogre hide/anatomical palette: ' + c);
 for (const c of ['#679c9a', '#be8c5b', '#67523e'])
   assert(paints(hero).includes(c), 'Hero needs restrained material-kit identity: ' + c);
 assert(!paints(enemy).includes('#679c9a'), 'Enemy Ogre stays unchanged');
-assert(!paints(enemy).includes('#67523e'), 'No hero pouch on enemy Ogre');
+// New direction must read from major forms, not the previous copied body.
+for (const swatch of ['#394c42', '#35332e', '#46574b', '#b4a079', '#aeb9b3'])
+  assert(paints(hero).includes(swatch), 'New silhouette/face/equipment color absent: ' + swatch);
+for (const swatch of ['#394c42', '#35332e', '#46574b'])
+  assert(!paints(enemy).includes(swatch), 'Original Ogre inherited Strategist outfit: ' + swatch);
+const contour = (t) => t.filter((x) =>
+  ['moveTo', 'bezierCurveTo', 'quadraticCurveTo', 'lineTo'].includes(x[0]));
+assert.notDeepEqual(contour(hero), contour(enemy),
+  'Strategist must have independently drawn anatomy and silhouette');
+assert(contour(hero).length > contour(enemy).length,
+  'new hero owns more facial and costume geometry than a stock Ogre');
+
 assert(paints(crown).includes('#c7ad71'), 'Crowned presentation remains distinct');
 assert.deepEqual(trace(originalEnemy), enemy, 'Enemy Ogre deterministic and unchanged');
 assert.deepEqual(trace({ renderKind: 'hero', class: 'strategist' }),
@@ -53,4 +79,4 @@ assert.equal(C.classes.strategist, undefined, 'visual-only Gate 0 cannot expose 
 const sprites = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/sprites/manifest.json'), 'utf8'));
 assert(!Object.hasOwn(sprites.sprites, 'hero:strategist'),
   'unapproved raster must not override procedural candidate');
-console.log('PASS Gate 0 real Ogre anatomical reuse, separate dual-dagger art, deterministic Canvas and four-class isolation');
+console.log('PASS Gate 0 independently drawn Ogre character, distinct face/silhouette/posture, deterministic Canvas and four-class isolation');
