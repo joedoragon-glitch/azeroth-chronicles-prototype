@@ -111,3 +111,15 @@ test('native original four-class snapshot validation/restore unaffected by dorma
     assert.throws(()=>Campaign.validate(forged),/Invalid Field Lab save/);
   }
 });
+
+
+test('valid E0 stock of 999 and 1000 does not consume Lab warehouse capacity', () => {
+  for(const bottles of [999, 1000]) {
+    const s=field();
+    s.strategistAcidBottles=bottles;
+    assert.equal(codec.validate(s, { maxBottles: 1000 }), true);
+    assert.throws(() => codec.validate(s, { maxBottles: 36 }), /canonical Acid/);
+  }
+  const over=field();over.strategistAcidBottles=1001;
+  assert.throws(()=>codec.validate(over, { maxBottles: 1000 }), /canonical Acid/);
+});
