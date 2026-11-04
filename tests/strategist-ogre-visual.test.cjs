@@ -42,7 +42,7 @@ assert(!/ogreBody\s*\(/.test(art), 'no repaint of stock Ogre anatomy masqueradin
 for (const part of [
   "const hide = '#b2a684'", "const hideFold",
   "ctx.moveTo(-15, -43)", "ctx.moveTo(-7, -24)",
-  "ctx.moveTo(9, -23)", "ctx.moveTo(-12, -12)",
+  "ctx.moveTo(9, -23)", "ctx.moveTo(-13, -8)",
   "ctx.moveTo(-18, -31)", "ctx.moveTo(-19, -34)",
   "ctx.moveTo(-7, -55)",
 ]) assert(art.includes(part), 'missing distinct Ogre anatomical / silhouette owner: ' + part);
@@ -65,8 +65,10 @@ assert.notDeepEqual(contour(hero), contour(enemy),
 assert(contour(hero).length > contour(enemy).length,
   'new hero owns more facial and costume geometry than a stock Ogre');
 assert(art.includes('ctx.scale(0.88, 0.88)'), 'head-to-torso proportion correction');
-assert(art.includes('ctx.translate(0, -7)'), 'raised pose allows articulated shins and boots');
-assert(art.includes('ctx.moveTo(-21, 15)') && art.includes('ctx.moveTo(10, 16)'),
+assert(art.includes('ctx.lineTo(-24, 32)') && art.includes('ctx.lineTo(21, 35)'),
+ 'both thighs extend into independently drawn calves, not straight into boots');
+assert(art.includes('ctx.translate(0, -19)'), 'raised pose allows articulated shins and boots');
+assert(art.includes('ctx.moveTo(-24, 29)') && art.includes('ctx.moveTo(11, 32)'),
   'both lower legs have distinct grounded boots');
 assert(trace({ renderKind: 'hero', class: 'strategist' }).some((x) =>
   x[0] === 'scale' && x[1] === 0.88 && x[2] === 0.88),
@@ -80,7 +82,7 @@ for (const cls of ['paladin', 'mage', 'ranger', 'rogue']) {
   const existing = trace({ renderKind: 'hero', class: cls });
   assert(!paints(existing).includes('#679c9a'), cls + ' art remains separate');
 }
-assert.equal(V.height({ renderKind: 'hero', class: 'strategist' }), 70);
+assert.equal(V.height({ renderKind: 'hero', class: 'strategist' }), 88);
 assert.equal(V.height({ renderKind: 'hero', class: 'paladin' }), 54);
 assert.equal(C.classes.strategist, undefined, 'visual-only Gate 0 cannot expose fifth class');
 const sprites = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/sprites/manifest.json'), 'utf8'));
