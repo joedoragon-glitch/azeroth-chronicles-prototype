@@ -7,7 +7,9 @@ const copy = (o) => JSON.parse(JSON.stringify(o));
 const classes = Campaign.classes;
 const origin = Object.keys(classes);
 assert.deepEqual(origin, ['paladin', 'mage', 'ranger']);
-assert.equal(Campaign.classFoundationFor('strategist'), null);
+assert.deepEqual(Campaign.classFoundationFor('strategist')?.startingCompanions, ['soldier', 'archer']);
+assert.equal(Campaign.classFoundationFor('strategist')?.formationRole, 'melee');
+assert.throws(() => new Campaign('normal', 'strategist'), /Unknown mode or class/);
 assert.equal(classes.strategist, undefined);
 
 // Live class foundations no longer carry obsolete auto-approach geometry.
@@ -16,6 +18,7 @@ for (const [id, party, role] of [
   ['mage', ['soldier', 'archer'], 'ranged'],
   ['ranger', ['soldier', 'archer'], 'ranged'],
   ['rogue', [], 'ranged'],
+  ['strategist', ['soldier', 'archer'], 'melee'],
 ]) {
   const foundation = Campaign.classFoundationFor(id);
   assert.deepEqual(foundation.startingCompanions, party);
@@ -120,4 +123,6 @@ assert.equal(rogue.skillCooldown(1, true), 8);
 assert.doesNotThrow(() => Campaign.validate(rogue.snapshot()));
 assert.equal(Campaign.restore(rogue.snapshot(), () => 0.9).hero.class, 'rogue');
 assert.equal(classes['fifth-fixture'], undefined, 'no fifth hero was activated');
+assert.equal(classes.strategist, undefined, 'Ogre foundation never enters the playable registry');
+assert.equal(Campaign.heroCombatSupports('strategist'), false, 'E0 is not skill admission');
 console.log('PASS fifth-class dormant foundation, class admission, Rogue and v4 regression');
