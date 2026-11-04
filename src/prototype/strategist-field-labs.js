@@ -232,6 +232,7 @@
         // #770 authentic forGather API. One *scheduled* source query at a
         // decision event, not a scan on each simulation/render frame.
         // The route/passable functions MUST work for the specified region.
+        let approvedPath = null;
         const source = materials.forGather(this, job.material, {
           lab: { zone: job.zoneId, id: lab.id }, worker: clone(job.position),
           range: CANDIDATE.maximumSourceRange,
@@ -240,11 +241,16 @@
             job.phase === 'idle',
           zone: this.s.zones[job.zoneId],
           rules: adapters.rules,
-          route: (from, point, zone) => navigation.route(this, zone.id, from, point),
+          route: (from, point, zone) => {
+            const candidate = navigation.route(this, zone.id, from, point);
+            approvedPath = points(candidate) ? candidate : null;
+            return candidate;
+          },
           passable: (from, point, zone) => navigation.passable(this, zone.id, from, point),
         });
         if (!source || !finitePoint(source.point)) return false;
-        const path = navigation.route(this, job.zoneId, job.position, source.point);
+        // Reuse the path already authenticated by #770 instead of solving twice.
+        const path = approvedPath;
         if (!this.fieldLabValidRoute(job.zoneId, job.position, path, source.point))
           return false;
         job.sourceId = source.id; job.target = clone(source.point);
@@ -321,11 +327,21 @@
               CANDIDATE.remoteEfficiency);
             if (job.sampleLeft > 0) continue;
             if (!verifySource(this, job.zoneId, job.material, job.sourceId, job.target)) {
-              job.phase = 'idle'; job.carries = false; job.path = []; continue;
+              job.phase = 'idle'; job.carries = false; job.path = [];
+              job.sourceId = null; job.target = null;
+              job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
+              continue;
             }
+            // One bounded return replan per retry interval when a dynamic
+            // obstruction appears; never retry a region-scale route each frame.
+            if ((this.s.time || 0) < job.retryAt) continue;
             const back = navigation.route(this, job.zoneId, job.position, lab);
-            if (!this.fieldLabValidRoute(job.zoneId, job.position, back, lab)) continue;
+            if (!this.fieldLabValidRoute(job.zoneId, job.position, back, lab)) {
+              job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
+              continue;
+            }
             job.carries = true; job.phase = 'return';
+            job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
             job.path = back.map(clone); job.waypoint = 0;
           } else if (job.phase === 'idle') {
             if (job.carries) { // Storage was full when returning.
