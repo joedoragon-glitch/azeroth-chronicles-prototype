@@ -139,8 +139,10 @@
             !this.petDefinition(u.petFamily))) return false;
         if (u.expeditionId || u.keeperHeld || u.deathRollHeld ||
             u.order || u.fieldLabJob || this._companionCharges?.has(u.id)) return false;
-        if (forAssignment && (u.fieldLabTrained !== true ||
-            u.active !== false)) return false;
+        // Assignment is an explicit owner action. Either an idle active
+        // companion or a verified inactive reserve may be selected; never
+        // silently take the starting Soldier/Archer away from the hero.
+        if (forAssignment && u.fieldLabTrained !== true) return false;
         return true;
       }
       assignFieldLabWorker(fromZone, labZone, workerId, material) {
@@ -166,6 +168,8 @@
           sampleLeft: 0, carries: false, retryAt: this.s.time || 0,
           target: null, sourceId: null,
         };
+        job.wasActive = worker.active !== false;
+        worker.active = false; // Native active-party exclusion during paid labor.
         worker.order = { type: 'strategist-field-lab', id: lab.id };
         worker.fieldLabJob = lab.id;
         bank.jobs[workerId] = job;
