@@ -17,7 +17,13 @@
   <!-- The same-origin game frame stays mounted through every orientation
        change. Its viewport is always landscape, so Canvas/Pixi, UI breakpoints,
        DOM hit testing, menus, audio and v4 saves retain their native contract. -->
-  <iframe id="phone-game-frame" title="So I Became the Dark Lord's Problem" src="./phone-game.html"
+  <iframe id="phone-game-frame" title="So I Became the Dark Lord's Problem"
     allow="autoplay; fullscreen" scrolling="no"></iframe>
+  <script>
+    // Load once, forwarding supported developer/diagnostic query parameters
+    // and fragments without changing origin, game state or orientation.
+    document.getElementById('phone-game-frame').src =
+      './phone-game.html' + window.location.search + window.location.hash;
+  </script>
 </body>
 </html>
