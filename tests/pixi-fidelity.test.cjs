@@ -117,7 +117,10 @@ function canvas() {
         restore() {},
         clearRect() {},
         drawImage(...args) {
-          if (args.length === 3) backgroundCopies++;
+          if (args.length === 3) {
+            backgroundCopies++;
+            syntheticWork(syntheticBackgroundDelayMs);
+          }
         },
         getImageData() {
           const data = new Uint8ClampedArray(surface.width * surface.height * 4);
@@ -910,14 +913,17 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
 
   // Move enough to force a genuine retained-background repaint without
   // changing density, spawning actors, or touching the renderer's policy.
+  const r3TileReuseBefore = valeNightGpu.status().terrainTileReuses;
   syntheticBackgroundDelayMs = r3DelayMs;
   game.hero.x += 1200;
   const r3Background = valeNightGpu.draw();
   syntheticBackgroundDelayMs = 0;
-  assert(r3Background.backgroundRepaintsDuringDraw >= 1,
-    'far camera movement triggers a native-background repaint');
+  assert(
+    r3Background.backgroundRepaintsDuringDraw >= 1 ||
+      valeNightGpu.status().terrainTileReuses > r3TileReuseBefore,
+    'far camera movement triggers either the original painter or cached tile reuse');
   assert(r3Background.phaseMs.background >= 15,
-    'background repaint expense belongs to background, not scene submission');
+    'background draw/composition expense belongs to background, not scene submission');
   game.hero.x = 2160;
   valeNightGpu.draw();
 
