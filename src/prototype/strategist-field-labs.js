@@ -40,6 +40,14 @@
       typeof safeFromThreat === 'function' &&
       typeof authenticatedLocation === 'function' && typeof verifySource === 'function';
 
+    function revokeSource(job, time) {
+      // The sample never existed. Walk the actual return route before
+      // another source search or access to the staffed processing machine.
+      job.phase = 'station'; job.carries = false;
+      job.path = []; job.waypoint = 0; job.blocked = true;
+      job.sourceId = null; job.target = null; job.sampleLeft = 0;
+      job.retryAt = time + CANDIDATE.retrySeconds;
+    }
     class FieldLabs {
       fieldLabConfig() { return CANDIDATE; }
       fieldLabNetwork(create = false) {
@@ -254,7 +262,18 @@
         return job.waypoint >= job.path.length;
       }
       fieldLabPlanTrip(job, worker, lab) {
-        if (!validSetup || (this.s.time || 0) < job.retryAt) return false;
+        if (!validSetup || !job || !worker || !lab ||
+            this.fieldLab(job.zoneId) !== lab ||
+            this.fieldLabNetwork()?.jobs?.[job.workerId] !== job ||
+            !this.s.party?.includes(worker) || worker.id !== job.workerId ||
+            job.labId !== lab.id || job.phase !== 'idle' || job.carries !== false ||
+            worker.fieldLabTrained !== true || worker.fieldLabJob !== lab.id ||
+            worker.order?.type !== 'strategist-field-lab' ||
+            worker.order.id !== lab.id || worker.active !== false ||
+            !(worker.hp > 0) || worker.expeditionId || !finitePoint(worker) ||
+            !finitePoint(job.position) || distance(worker, job.position) > 0.02 ||
+            distance(job.position, lab) > 24 ||
+            (this.s.time || 0) < job.retryAt) return false;
         job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
         // #770 authentic forGather API. One *scheduled* source query at a
         // decision event, not a scan on each simulation/render frame.
@@ -265,9 +284,10 @@
         const source = materials.forGather(this, job.material, {
           lab: { zone: job.zoneId, id: lab.id }, worker: clone(job.position),
           range: CANDIDATE.maximumSourceRange,
-          authorize: (g, l) => g === this && l.id === lab.id &&
+          authorize: (g, l, at) => g === this && l.id === lab.id &&
             this.fieldLabNetwork()?.jobs[job.workerId] === job &&
-            job.phase === 'idle',
+            job.phase === 'idle' && finitePoint(at) &&
+            distance(at, job.position) <= 0.02,
           zone: this.s.zones[job.zoneId],
           rules: adapters.rules,
           route: (from, point, zone) => {
@@ -282,7 +302,9 @@
           passable: (from, point, zone) =>
             navigation.passable(this, zone.id, from, point, decisionBudget),
         });
-        if (!source || !finitePoint(source.point)) return false;
+        if (!source || typeof source.id !== 'string' || !source.id ||
+            source.id.length > 150 || source.material !== job.material ||
+            !finitePoint(source.point)) return false;
         // Reuse the path already authenticated by #770 instead of solving twice.
         const path = approvedPath;
         if (!this.fieldLabValidRoute(job.zoneId, job.position, path, source.point))
@@ -402,6 +424,12 @@
           if (job.phase === 'station' || job.phase === 'outbound' || job.phase === 'return') {
             if (job.blocked) {
               if ((this.s.time || 0) >= job.retryAt) {
+                if (job.phase === 'outbound' && !verifySource(this, job.zoneId,
+                    job.material, job.sourceId, job.target)) {
+                  materials.invalidate?.(this, job.zoneId);
+                  revokeSource(job, this.s.time || 0);
+                  continue;
+                }
                 job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
                 const destination = job.phase === 'outbound' ? job.target : lab;
                 const replanned = job.phase === 'outbound' &&
@@ -418,20 +446,23 @@
             if (!this.fieldLabMove(job, dt, worker)) continue;
             if (job.phase === 'station') { job.phase = 'idle'; job.path = []; }
             else if (job.phase === 'outbound') {
-              job.phase = 'sampling'; job.sampleLeft = CANDIDATE.sampleSeconds;
+              if (!verifySource(this, job.zoneId, job.material, job.sourceId,
+                  job.target, job.position)) {
+                materials.invalidate?.(this, job.zoneId);
+                revokeSource(job, this.s.time || 0);
+              } else {
+                job.phase = 'sampling'; job.sampleLeft = CANDIDATE.sampleSeconds;
+              }
             } else this.fieldLabDeliver(job, worker);
           } else if (job.phase === 'sampling') {
             job.sampleLeft = Math.max(0, job.sampleLeft -
               dt * (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency));
             if (job.sampleLeft > 0) continue;
-            if (!verifySource(this, job.zoneId, job.material, job.sourceId, job.target)) {
-              // Source revoked while sampling: the worker is still at the
-              // source. Return to the station before any new task or machine
-              // processing. Bounded retry owns the next physical route.
-              job.phase = 'station'; job.carries = false; job.path = [];
-              job.waypoint = 0; job.blocked = true;
-              job.sourceId = null; job.target = null;
-              job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
+            if (!verifySource(this, job.zoneId, job.material, job.sourceId,
+                job.target, job.position)) {
+              // A moved, removed or extinguished native source grants nothing.
+              materials.invalidate?.(this, job.zoneId);
+              revokeSource(job, this.s.time || 0);
               continue;
             }
             // One bounded return replan per retry interval when a dynamic
