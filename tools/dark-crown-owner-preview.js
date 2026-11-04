@@ -143,18 +143,26 @@
     if (game && !game.s) current.textContent = '';
   }
   function updateCategories() {
-    categories.replaceChildren();
-    for (const group of [{id:'all', en:'All places',es:'Todos'}, ...groups]) {
-      const button = node('button', 'crown-review-category', t(group.en, group.es));
-      button.type = 'button';
-      button.dataset.ownerCategory = group.id;
+    // Keep the original button DOM mounted while its click is being processed.
+    // Replacing a pressed chip during a touch/click can retry or retarget it.
+    const all = [{id:'all', en:'All places',es:'Todos'}, ...groups];
+    if (!categories.childElementCount) {
+      for (const group of all) {
+        const button = node('button', 'crown-review-category');
+        button.type = 'button';
+        button.dataset.ownerCategory = group.id;
+        button.addEventListener('click', () => {
+          category = group.id;
+          updateCategories();
+          updateResults();
+        });
+        categories.append(button);
+      }
+    }
+    for (let i = 0; i < all.length; i++) {
+      const button = categories.children[i], group = all[i];
+      button.textContent = t(group.en, group.es);
       button.setAttribute('aria-pressed', String(category === group.id));
-      button.addEventListener('click', () => {
-        category = group.id;
-        updateCategories();
-        updateResults();
-      });
-      categories.append(button);
     }
   }
   function updateResults() {
