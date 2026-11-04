@@ -93,6 +93,61 @@ test('Option B leaves the existing two-thumb, left-hand and full phone grid rule
   assert.match(phone, /#squad-button/);
 });
 
+
+test('Landscape Stage 2 reuses the merged title and protects wide phone menus', () => {
+  const landscape = phone.slice(phone.indexOf('/* Landscape phone Stage 2'));
+  assert(landscape.length > 1200, 'Stage 2 landscape override must remain in the phone stylesheet');
+  assert.match(landscape, /@media \(orientation: landscape\) and \(min-width: 560px\) and \(max-height: 560px\)/);
+  assert.match(landscape, /#title-screen nav button \{\s*min-height: 44px;/);
+  assert.match(landscape, /\.title-active #modal\[data-dialog-size\] \{[\s\S]*?width: min\(/);
+  assert.match(landscape, /#modal\[data-view='class-select'\] #modal-actions \{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(landscape, /#modal\[data-view='class-select'\] #modal-actions > \.character-name-field \{[\s\S]*?grid-column: 1 \/ -1;/);
+  for (const view of ['adventure', 'settings'])
+    assert(landscape.includes("#modal[data-view='" + view + "'] #modal-actions"),
+      'wide indexed menu must reuse existing view: ' + view);
+  assert.match(landscape, /#modal:has\(\.menu-setting\) #modal-actions \{\s*grid-template-columns: minmax\(0, 1fr\)/,
+    'inline sliders and selects remain in their own rows');
+  assert(!landscape.includes('display: none'), 'no existing landscape actions are hidden');
+  const frameCSS = read('styles/phone-frame.css');
+  const frameHTML = read('phone.html');
+  const gameHTML = read('phone-game.html');
+  assert.match(frameCSS, /@media \(orientation: portrait\)[\s\S]*?transform: rotate\(90deg\)/,
+    'physical portrait rotates the full landscape game iframe, not game internals');
+  assert.match(frameHTML, /id="phone-game-frame"/,
+    'public phone entry keeps one live same-origin game frame');
+  assert.match(frameHTML, /'\.\/phone-game\.html' \+ window\.location\.search \+ window\.location\.hash/,
+    'the public entry loads the game once and preserves diagnostic URL options');
+  assert.match(gameHTML, /data-entry="phone"/,
+    'the embedded game retains native phone rules and full viewport');
+  assert.match(read('manifest.webmanifest'), /"orientation": "landscape"/,
+    'installed app prefers native landscape when supported');
+});
+
+test('fixed-horizontal phone shell preserves one landscape game frame', () => {
+  const wrapper = read('phone.html');
+  const game = read('phone-game.html');
+  const framing = read('styles/phone-frame.css');
+  const manifest = JSON.parse(read('manifest.webmanifest'));
+  const assetInventory = read('scripts/site-assets.cjs');
+  assert.match(wrapper, /id="phone-game-frame"/);
+  assert.match(wrapper, /'\.\/phone-game\.html' \+ window\.location\.search \+ window\.location\.hash/,
+    'frame loads once with the original phone URL options');
+  assert.match(wrapper, /<link rel="stylesheet" href="\.\/styles\/phone-frame\.css">/);
+  assert.match(game, /<body data-entry="phone">/);
+  assert.match(game, /id="world"/);
+  assert.match(game, /src="\.\/src\/prototype\/app\.js"/);
+  assert.equal(manifest.start_url, './phone.html');
+  assert.equal(manifest.orientation, 'landscape');
+  assert.match(framing, /@media \(orientation: portrait\)/);
+  assert.match(framing, /transform: rotate\(90deg\)/);
+  assert.match(framing, /width: calc\(100dvh/);
+  assert.match(framing, /height: calc\(100dvw/);
+  assert.match(assetInventory, /'phone-game\.html'/);
+  assert.match(assetInventory, /'styles\/phone-frame\.css'/);
+  assert(!wrapper.includes('id="phone-orientation-prompt"'),
+    'physical portrait must show the live game, not a rotation warning');
+});
+
 test('Option B targeted real-shell captures (desktop and two landscape sizes)', () => {
   if (!process.env.GITHUB_ACTIONS) return;
   const { spawnSync } = require('node:child_process');

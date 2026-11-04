@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#102319">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Lord’s Problem">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <title>So I Became the Dark Lord's Problem</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles/phone-frame.css">
+</head>
+<body>
+  <!-- The same-origin game frame stays mounted through every orientation
+       change. Its viewport is always landscape, so Canvas/Pixi, UI breakpoints,
+       DOM hit testing, menus, audio and v4 saves retain their native contract. -->
+  <iframe id="phone-game-frame" title="So I Became the Dark Lord's Problem"
+    allow="autoplay; fullscreen" scrolling="no"></iframe>
+  <script>
+    // Load once, forwarding supported developer/diagnostic query parameters
+    // and fragments without changing origin, game state or orientation.
+    document.getElementById('phone-game-frame').src =
+      './phone-game.html' + window.location.search + window.location.hash;
+  </script>
+</body>
+</html>
