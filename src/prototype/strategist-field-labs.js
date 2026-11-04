@@ -290,8 +290,25 @@
         return true;
       }
       fieldLabDeliver(job, worker) {
-        const bank = this.fieldLabNetwork();
-        if (!bank || !job.carries || this.fieldLabStockCount() >= this.fieldLabStorageLimit())
+        const bank = this.fieldLabNetwork(), lab = this.fieldLab(job?.zoneId);
+        // Depositing a sample is a finite economic transaction. In particular,
+        // direct callers cannot bypass collection by passing a forged carrying
+        // object or a worker who does not belong to this particular Lab job.
+        if (!bank || !job || !worker || !lab ||
+            bank.jobs?.[job.workerId] !== job ||
+            !this.s.party?.includes(worker) || worker.id !== job.workerId ||
+            job.labId !== lab.id || lab.progress < 4 ||
+            !['return', 'idle'].includes(job.phase) || job.carries !== true ||
+            !MATERIALS.includes(job.material) ||
+            worker.fieldLabTrained !== true || worker.fieldLabJob !== lab.id ||
+            worker.order?.type !== 'strategist-field-lab' ||
+            worker.order.id !== lab.id || worker.active !== false ||
+            !(worker.hp > 0) || worker.expeditionId ||
+            !finitePoint(job.position) || !finitePoint(worker) ||
+            distance(worker, job.position) > 0.02 ||
+            distance(job.position, lab) > 24 ||
+            !finiteCount(bank.samples[job.material]) ||
+            this.fieldLabStockCount() >= this.fieldLabStorageLimit())
           return false;
         bank.samples[job.material]++;
         job.carries = false;
