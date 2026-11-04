@@ -380,24 +380,75 @@ async function main() {
               resolutionChanged: result.resolutionChanged,
             };
           };
+          // #783 R3C: inspect how the real *bake()* divides synchronous CPU
+          // cost among original vector drawing, Canvas pixel readback and
+          // remaining raster work (notably the full alpha-bounds scan).
+          // Patch only during the chosen diagnostic draw, restore in finally,
+          // and never alter the shipped renderer or ordinary parity pathway.
+          const readBakeCpu = (name) => {
+            const nativeVisualDraw = PrototypeVisuals.draw;
+            const nativeGetImageData = CanvasRenderingContext2D.prototype.getImageData;
+            const subs = { vectorDrawingMs: 0, pixelReadbackMs: 0,
+              vectorCalls: 0, readbackCalls: 0, readbackPixels: 0 };
+            PrototypeVisuals.draw = function (...args) {
+              const started = performance.now();
+              try { return nativeVisualDraw.apply(this, args); }
+              finally {
+                subs.vectorDrawingMs += performance.now() - started;
+                subs.vectorCalls++;
+              }
+            };
+            CanvasRenderingContext2D.prototype.getImageData = function (...args) {
+              const started = performance.now();
+              try { return nativeGetImageData.apply(this, args); }
+              finally {
+                subs.pixelReadbackMs += performance.now() - started;
+                subs.readbackCalls++;
+                subs.readbackPixels += Math.max(0, args[2] * args[3]);
+              }
+            };
+            let result;
+            try {
+              result = read(name);
+            } finally {
+              PrototypeVisuals.draw = nativeVisualDraw;
+              CanvasRenderingContext2D.prototype.getImageData = nativeGetImageData;
+            }
+            if (result.bakes > 0 && (!subs.readbackCalls || !subs.vectorCalls))
+              throw Error('R3C expected native procedural vector and pixel-readback calls');
+            const inclusiveRasterMs = result.phaseMs.proceduralRasterMs || 0;
+            return {
+              ...result,
+              bakeCpu: {
+                vectorDrawingMs: +subs.vectorDrawingMs.toFixed(2),
+                pixelReadbackMs: +subs.pixelReadbackMs.toFixed(2),
+                residualCpuMs: +Math.max(0,
+                  inclusiveRasterMs - subs.vectorDrawingMs - subs.pixelReadbackMs).toFixed(2),
+                vectorCalls: subs.vectorCalls,
+                readbackCalls: subs.readbackCalls,
+                readbackPixels: subs.readbackPixels,
+                scope: 'source-level production Canvas calls; residual includes alpha scan, allocation and crop',
+              },
+            };
+          };
           try {
             const warm = [read('baseline-warm-1'), read('baseline-warm-2')];
             room.props = [...original.props, {
               id: 'r3-native-new-crate', x: g.hero.x + 25,
               y: g.hero.y + 20, structure: 'crate', decorative: false,
             }];
-            const cold = read('cold-procedural');
+            const cold = readBakeCpu('cold-procedural');
             const reused = read('warm-procedural');
             room.props = original.props;
             read('after-prop-restore');
             if (reused.bakes !== 0) throw Error('R3B warmed art rebaked');
             g.hero.x += 600;
-            const camera = read('camera-shift');
+            const camera = readBakeCpu('camera-shift');
             g.hero.x = original.heroX;
             read('camera-return');
             opts.canvas.width = Math.round(innerWidth * 1.5);
             opts.canvas.height = Math.round(innerHeight * 1.5);
-            const densityUp = read('density-1.5x-cold');
+            const densityUp = readBakeCpu('density-1.5x-cold');
             opts.canvas.width = original.width;
             opts.canvas.height = original.height;
             const densityDown = read('density-return-1x');
