@@ -58,6 +58,9 @@ function setup() {
 test('cross-owner: native E0 save accepts one canonical Lab-produced Acid bottle',()=>{
   const {g,bank,lab}=setup();
   const worker=g.s.party[0];
+  // The staffed processor is a real machine, not remote alchemy at the
+  // starting position. Use the physically established Lab work station.
+  worker.x=lab.x;worker.y=lab.y;
   assert.equal(worker.type,'soldier');
   worker.fieldLabTrained=true;
   worker.fieldLabJob=lab.id;
@@ -96,6 +99,7 @@ test('cross-owner: native E0 save accepts one canonical Lab-produced Acid bottle
 test('cross-owner: E0 third actually-landed dagger consumes Stage 3 bottle once',()=>{
   const {g,bank,lab}=setup();
   const worker=g.s.party[0];
+  worker.x=lab.x;worker.y=lab.y;
   worker.fieldLabTrained=true;worker.fieldLabJob=lab.id;
   worker.active=false;worker.order={type:'strategist-field-lab',id:lab.id};
   const job={
