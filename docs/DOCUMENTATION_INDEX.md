@@ -399,6 +399,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Real World GPU Readme](../tools/webgl-pilot/REAL_WORLD_GPU_README.md)** — **Reference.** GPU pilot for drawing actual game scenes rather than simple synthetic geometry.
 - **[Strategy Lab Readme](../tools/webgl-pilot/STRATEGY_LAB_README.md)** — **Reference.** Experiments comparing alternative renderer strategies and their measurements.
 
+**Current cross-chat performance handoff (4 November 2026):** Before triaging any new owner slowdown screenshot or exported JSON, read the [active performance issue map and playtest intake protocol](DEVELOPMENT_STATE.md#active-performance-evidence-and-playtest-routing) and [R0–R3 final record in issue #783](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/783). [R2 diagnostics #784](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/784) are **merged but not published**, while [R3 test-only #789](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/789) is **tested but still draft**. This spans other open simulation, navigation, projectile, memory and hardware-acceptance problems; do not presume every stall has a Pixi cause.
+
 ### Frame rate, recovery, optimization and profiling
 
 - [Adaptive Frame Skip DEV166](ADAPTIVE_FRAME_SKIP_DEV166.md) — *Dated record.* Describes adaptive frame skip decisions, constraints or engineering observations from its original development checkpoint.
