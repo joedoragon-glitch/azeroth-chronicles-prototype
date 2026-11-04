@@ -255,27 +255,8 @@ for (const language of ['en', 'es']) {
   title('Game and settings', 'Juego y ajustes');
   click(t('Controls', 'Controles'));
   short();
-  assert.equal(e.get('modal-actions').children.length, 5);
-  click(t('Movement and menus', 'Movimiento y menús'));
-  short();
-  back();
-  click(t('Skills and targeting', 'Habilidades y objetivos'));
-  short();
-  for (const [en, es] of [
-    ['Using skills', 'Usar habilidades'],
-    ['Queued skills', 'Habilidades en cola'],
-    ['Targeting and dodging', 'Apuntar y esquivar'],
-  ]) {
-    click(t(en, es));
-    short();
-    back();
-  }
-  click(t('Combat conditions', 'Estados de combate'));
-  back();
-  back();
-  click(t('Companion commands', 'Órdenes de compañeros'));
-  short();
-  back();
+  assert.equal(e.get('modal-actions').children.length, 2,
+    'Settings Controls contains only customization, not duplicate help topics');
   click(t('Customize keyboard', 'Personalizar teclado'));
   title('Customize keyboard', 'Personalizar teclado');
   assert.equal(s.Prototype.input.preferences.preset, 'right');
@@ -285,7 +266,7 @@ for (const language of ['en', 'es']) {
   );
   const groupPaths = [
     ['Movement and menu keys', 'Teclas de movimiento y menú',
-      ['up', 'down', 'left', 'right', 'confirm']],
+      ['up', 'down', 'left', 'right', 'confirm', 'menu']],
     ['Skills and combat keys', 'Teclas de habilidades y combate',
       ['skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'skill7', 'skill8', 'target', 'heal', 'mana']],
     ['Companion and utility keys', 'Teclas de compañeros y utilidades',
