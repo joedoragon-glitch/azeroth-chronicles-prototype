@@ -290,8 +290,25 @@
         return true;
       }
       fieldLabDeliver(job, worker) {
-        const bank = this.fieldLabNetwork();
-        if (!bank || !job.carries || this.fieldLabStockCount() >= this.fieldLabStorageLimit())
+        const bank = this.fieldLabNetwork(), lab = this.fieldLab(job?.zoneId);
+        // Depositing a sample is a finite economic transaction. In particular,
+        // direct callers cannot bypass collection by passing a forged carrying
+        // object or a worker who does not belong to this particular Lab job.
+        if (!bank || !job || !worker || !lab ||
+            bank.jobs?.[job.workerId] !== job ||
+            !this.s.party?.includes(worker) || worker.id !== job.workerId ||
+            job.labId !== lab.id || lab.progress < 4 ||
+            !['return', 'idle'].includes(job.phase) || job.carries !== true ||
+            !MATERIALS.includes(job.material) ||
+            worker.fieldLabTrained !== true || worker.fieldLabJob !== lab.id ||
+            worker.order?.type !== 'strategist-field-lab' ||
+            worker.order.id !== lab.id || worker.active !== false ||
+            !(worker.hp > 0) || worker.expeditionId ||
+            !finitePoint(job.position) || !finitePoint(worker) ||
+            distance(worker, job.position) > 0.02 ||
+            distance(job.position, lab) > 24 ||
+            !finiteCount(bank.samples[job.material]) ||
+            this.fieldLabStockCount() >= this.fieldLabStorageLimit())
           return false;
         bank.samples[job.material]++;
         job.carries = false;
@@ -306,7 +323,10 @@
             !Number.isFinite(dt) || dt <= 0 || dt > CANDIDATE.maximumDt ||
             bank.jobs?.[job.workerId] !== job ||
             job.labId !== lab.id || job.zoneId !== lab.zoneId ||
-            lab.progress < 4) return false;
+            this.fieldLab(job.zoneId) !== lab ||
+            lab.progress < 4 || job.carries !== false ||
+            !MATERIALS.includes(job.material) || !finitePoint(job.position) ||
+            distance(job.position, lab) > 24) return false;
         // Even a direct domain call must prove native worker ownership and
         // staffing; the tick loop supplies the already-validated worker to
         // avoid another O(roster) lookup on every process tick.
@@ -316,7 +336,9 @@
             worker.fieldLabJob !== lab.id ||
             worker.order?.type !== 'strategist-field-lab' ||
             worker.order.id !== lab.id || worker.active !== false ||
-            !(worker.hp > 0)) return false;
+            !(worker.hp > 0) || worker.expeditionId ||
+            !this.s.party?.includes(worker) || !finitePoint(worker) ||
+            distance(worker, job.position) > 0.02) return false;
         lab.processSeconds = (lab.processSeconds || 0) + dt *
           (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency);
         if (lab.processSeconds < CANDIDATE.processingSeconds) return false;
@@ -398,7 +420,11 @@
               dt * (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency));
             if (job.sampleLeft > 0) continue;
             if (!verifySource(this, job.zoneId, job.material, job.sourceId, job.target)) {
-              job.phase = 'idle'; job.carries = false; job.path = [];
+              // Source revoked while sampling: the worker is still at the
+              // source. Return to the station before any new task or machine
+              // processing. Bounded retry owns the next physical route.
+              job.phase = 'station'; job.carries = false; job.path = [];
+              job.waypoint = 0; job.blocked = true;
               job.sourceId = null; job.target = null;
               job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
               continue;
