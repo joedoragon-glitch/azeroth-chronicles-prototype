@@ -85,10 +85,14 @@ function setup(region = 'vale', minDistance = 50) {
     id: 'barracks-' + g.s.nextId++, kind: 'barracks',
     x: lab.x + 200, y: lab.y, progress: 0,
   }, lab);
+  assert.ok(g.fieldLabNetwork(true),
+    'test-only placed facility still needs the one native Campaign-owned bank');
   worker.active = false;
   worker.testRegion = region; // Explicit fixture, never an old-v4 location guess.
   g.s.party.push(worker);
   assert.equal(g.trainFieldLabWorker(worker.id), true);
+  assert.equal(g.fieldLabCanManage(region), true);
+  assert.equal(g.fieldLabWorkerEligible(worker), true);
   assert.equal(g.assignFieldLabWorker(region, region, worker.id, site.material), true);
   return { g, worker, lab, site, bank: g.fieldLabNetwork(),
     job: g.fieldLabNetwork().jobs[worker.id] };
