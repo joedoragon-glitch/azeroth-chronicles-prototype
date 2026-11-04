@@ -55,6 +55,27 @@ routes succeed, or that workers survive real combat. Three focused route tests
 cover positive stand-off, blocked refusal, bounded budgets and direct destinations.
 Focused CI #41784087505 **PASSED** for source commit `91c842a6` (including the new stand-off tests). The native five-region walkable round-trip smoke and Field Lab route-adapter bridge on source/test commit `322b13c5` also **PASSED** in focused CI #41784816546. These tests verify local physical paths and the adapter seam; **full five-region real-source harvesting, live enemy danger and end-to-end production remain pending**. The `450666dd` tests are retained as historical evidence. No class activation, merge, deployment or device claim.
 
+### B2 continuation — authentic source provider and lifecycle (4 November 2026)
+
+The exact #770 source library as of `99e610e8` has been introduced to
+the **isolated #782 branch**, with the material owner's original conservative
+allowlist and tests retained. A minimal gather-only solid-perimeter correction
+does not alter combat casting. The new dormant `strategist-lab-sources.js`
+adapter checks actual source IDs, native region/terrain identity, current
+lit/active state, original sampling coordinates and the 24-unit worker reach.
+The existing Lab loop now revalidates source identity at arrival and after
+sampling; disappearance, movement or replacement revokes the receipt and
+requires a physical station return before any other work. Source-owner #770
+itself remains untouched; the integrated source fork needs explicit
+reconciliation before either source branch is merged.
+
+This is B2 **draft engineering**, not live class or native combat integration.
+A real-five-region source+route acceptance fixture and adversarial source
+lifecycle tests have been added to the draft; exact-head focused CI is
+required before recording their results. All other L2–L5 blockers remain
+untouched. The earlier `322b13c5` successful source tests are a separate
+checkpoint.
+
 ### Mandatory unfinished work — dependency order, not busywork
 
 1. **B1 / reconcile exact owners and define real acceptance fixtures.** Verify current heads, compare E0's `save.js`, #770's material approach API, native `party.js` labor/save/zone semantics and current main drift. Use existing Stage 3 branch #782 and its tests. Preserve a conflict map for files such as `save.js`; PR #787 is a proof reference, **not** a commit source to merge wholesale. Do not repeat already-green isolated tests without a relevant change.
