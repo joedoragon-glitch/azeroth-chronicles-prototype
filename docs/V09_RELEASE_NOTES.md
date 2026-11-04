@@ -2,7 +2,7 @@
 
 ## v0.9.2 — functional-completion release candidate (DRAFT; NOT PUBLISHED)
 
-**Status:** This is an unpublished release-note draft, not an announcement that v0.9.2 is playable. It is based on the four-class game and completed, integrated development. The navigation optimization in [PR #717](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/717) has merged; confirm its exact main-branch publishing receipt before removing this caveat. Formal v0.9.2 publication still requires the owner's separate approval.
+**Status:** This is an unpublished release-note draft, not an announcement that v0.9.2 is playable. It is based on the four-class game and completed, integrated development. The navigation optimization in [PR #717](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/717) has **merged and published** as `0.9.1+snapshot.dev.253`, verified by [main focused/Pages #41769596032](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41769596032). The draft release candidate `0.9.2+snapshot.dev.254` in [PR #781](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/781) passed [focused build #41769995354](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41769995354) and [Chromium PWA #41769995413](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41769995413). Formal v0.9.2 publication still requires the owner's separate approval.
 
 This update brings together the essentials that already exist rather than adding another class or starting a last-minute redesign. There is quite a lot to do in the game; the point of 0.9.2 is to make the systems work together reliably.
 
@@ -17,7 +17,7 @@ This update brings together the essentials that already exist rather than adding
 
 **What this update does not claim:** There is no playable Ogre Strategist, no completed Dark Crown capital overhaul, no redesign of the four existing classes, no cloud saves, and no complete Spanish translation. Physical-device Pixi performance/recovery and wider owner playthrough acceptance are deferred until after the live version is published. Serious reproduced save, stability or gameplay failures remain valid reasons for a targeted correction.
 
-The release build, date, version markers, final merged-main GitHub Pages receipt, and final owner approval remain **pending**. The canonical status source is [Development state](DEVELOPMENT_STATE.md).
+The release-candidate version and cache metadata are prepared, with focused build/PWA checks passed. **Release date, formal owner authorization, merge, and the new version's exact-main Pages publication remain pending.** The published dev.253 receipt does not verify v0.9.2 or real-device play. [Development state](DEVELOPMENT_STATE.md) is the live authority.
 
 ---
 
