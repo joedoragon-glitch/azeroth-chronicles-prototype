@@ -5,6 +5,14 @@
 
 ## Owner-approved separate playable preview — 4 November 2026
 
+### Owner preview usability revision — 4 November 2026 (DRAFT, new exact-head verification required)
+
+The owner wants the preview to be approachable on iPhone and desktop, and likes the possibility of later using the same review flow in other regions. The **review-only** helper has been redesigned from a tiny drop-down into an accessible full-screen-on-phone exploration guide: a floating Explore button, grouped 16 source-grounded places (city/neighborhoods, original crossings, industry/Foundry, power/landmarks), bilingual place descriptions, searchable cards, explicit combat-danger warnings, larger touch controls, Close/Continue, Escape/focus behavior and **Return to previous spot** using the real previous Campaign zone and coordinates. All shortcuts still use native Campaign.enter and developer-mode persistence; no Normal-mode gameplay or additional region has been enabled. Native Prototype.openMenu/closeMenu ownership is used while the guide is open to **pause active enemy simulation** while reading, then resume it when closing. Other regions are a possible later extension, NOT implemented in this revision.
+
+**Validation scope:** Focused Chromium desktop and 390px narrow tests now check title onboarding, language, accessible controls, native menu-based pause, search/filter count, 16 destinations, Crown landing, 14 original Foundry defenders, return shortcut, developer-only v4 save, plus focused UI screenshots. New CSS loads only with the standalone owner preview HTML and is scoped to the non-deploy workflow; normal game HTML, assets, service worker and package version are unchanged. Earlier immutable preview URL remains pinned to v1. New v2 URL requires the new exact implementation commit and independent checks before sharing; physical iOS Safari and artistic acceptance remain unverified.
+
+
+
 **VERIFIED PREVIEW CANDIDATE (4 November, exact source 6c6fba5):**
 [Owner review browser URL](https://rawcdn.githack.com/joedoragon-glitch/azeroth-chronicles-prototype/6c6fba54d3113e61f4899cde27b837fe7b91cfbe/dark-crown-owner-preview.html?developer=1) · [Focused proof https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41789911779](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41789911779).
 The GitHub Actions focused workflow PASSED: dev.258 reproducible offline build check, original game title -> Developer Mode -> Paladin flow, real Crownwatch arrival, Foundry interior entry with 14 original hostiles, return to fortress approach, v4 Developer save without Normal save mutation, in desktop 1200x800 and narrow 390x680 Chromium; immutable HTTPS CDN preview HTML responded successfully.
