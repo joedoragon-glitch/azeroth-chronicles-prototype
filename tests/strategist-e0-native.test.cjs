@@ -297,6 +297,75 @@ try {
     g.enemyStartBasic(primary, g.hero, false);
     assert.equal(events.filter((e) => e.type === 'strategistRetaliation').length, 0);
   }
+  {
+    // Gate 2 Water source and native Slow episode (not its past cooldown debt).
+    const { g, primary, events } = make(0);
+    g.applySlow(g.hero, 2);
+    const debt = g.hero.basicCd;
+    assert.equal(g.cast(1, primary.id), false, 'no Water source refuses manual cut');
+    assert(g.hero.slow > 0 && g.hero.cd[0] === 0);
+    const well = { id: 'genuine-well', structure: 'well', x: 515, y: 525, r: 15 };
+    g.zone().props = [well];
+    const hp = primary.hp;
+    assert.equal(g.cast(1, primary.id), true, 'visible real Water permits Rinsing Cut');
+    assert(primary.hp < hp, 'one native melee contact is real damage');
+    assert.equal(g.hero.slow, 0);
+    assert.equal(g.hero.slowStacks, 0);
+    assert.equal(g.hero.basicCd, debt, 'Slow cooldown debt is not refunded');
+    assert.equal(events.at(-1).cleansed, 1);
+    assert.equal(events.at(-1).sourceId, well.id);
+    assert(g.hero.cd[0] > 0 && !g.hero.chargedCd[0]);
+    assert.equal(g.cast(1, primary.id), false, 'tap starts shared slot recovery');
+  }
+  {
+    const { g, primary, events } = make(0);
+    const well = { id: 'natural-well', structure: 'well', x: 515, y: 525, r: 15 };
+    g.zone().props = [well];
+    const soldier = g.s.party.find((u) => u.type === 'soldier');
+    const archer = g.s.party.find((u) => u.type === 'archer');
+    for (const unit of [g.hero, soldier, archer]) g.applySlow(unit, 2);
+    const hp = primary.hp;
+    assert.equal(g.cast(1, null, true), true, 'charged genuine team cleanse');
+    assert.equal(primary.hp, hp, 'Clear Current never attacks');
+    for (const unit of [g.hero, soldier, archer]) assert.equal(unit.slow, 0);
+    assert.equal(events.at(-1).cleansed, 3);
+    assert(g.hero.cd[0] > 0 && g.hero.chargedCd[0] > 0);
+    g.hero.cd[0] = g.hero.chargedCd[0] = 0;
+    assert.equal(g.cast(1, null, true), false, 'no phantom Slow');
+    soldier.active = false;
+    g.applySlow(soldier, 2);
+    assert.equal(g.cast(1, null, true), false, 'inactive soldier cannot finance cure');
+    well.dry = true;
+    g.applySlow(g.hero, 2);
+    assert.equal(g.cast(1, null, true), false, 'dry authentic source loses eligibility');
+    assert(g.hero.slow > 0);
+  }
+  {
+    const { g, primary, nearby, distant, events } = make(0);
+    const fire = { id: 'actual-campfire', structure: 'campfire', x: 530, y: 525, r: 12, lit: true };
+    assert.equal(g.cast(3, primary.id), false, 'Fire missing');
+    g.zone().props = [fire];
+    assert.equal(g.cast(3, distant.id), false, 'Fire <=90 reach');
+    const hp = primary.hp;
+    assert.equal(g.cast(3, primary.id), true, 'native hot dagger');
+    assert(primary.hp < hp && g.hero.cd[2] > 0);
+    g.hero.cd[2] = 0;
+    g.formationHeading = { x: 1, y: 0 };
+    const behind = g.makeEnemy({ species: 'goblin', name: 'behind',
+      level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 }, { x: 460, y: 500 });
+    behind.id = 'behind'; behind.aggro = true; behind.returning = false;
+    g.zone().enemies.push(behind);
+    const before = [primary.hp, nearby.hp, behind.hp, distant.hp];
+    assert.equal(g.cast(3, null, true), true, 'one native two-contact front wedge');
+    assert(primary.hp < before[0] && nearby.hp < before[1]);
+    assert.equal(behind.hp, before[2], 'rear is excluded');
+    assert.equal(distant.hp, before[3], 'distant is excluded');
+    assert.equal(events.at(-1).targets.length, 2);
+    assert(g.hero.cd[2] > 0 && g.hero.chargedCd[2] > 0);
+    fire.lit = false;
+    g.hero.cd[2] = g.hero.chargedCd[2] = 0;
+    assert.equal(g.cast(3, primary.id), false, 'extinguished Fire is unavailable');
+  }
 } finally {
   delete C.classes.strategist;
   delete C.talentProfiles.strategist;

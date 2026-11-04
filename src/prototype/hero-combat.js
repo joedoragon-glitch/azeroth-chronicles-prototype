@@ -805,6 +805,7 @@
         if (this.hero.class === 'rogue')
           return slot === 1 ? this.rogueSkill1Config(charged).range :
             (R.roguePerformances[slot]?.[charged ? 'charged' : 'tap']?.range || 0);
+        if (this.hero.class === 'strategist') return R.strategistStarterSkills?.[slot]?.range || 0;
         if (!implementedHeroCombatClasses.has(this.hero.class)) return 0;
         const second = charged && slot === 2 ? R.chargedSkills.second?.[this.hero.class] : null,
           steps = this.tacticMilestones(this.hero.skills[slot - 1]);
@@ -1804,6 +1805,86 @@
         if (primary.hp <= 0) strategistDaggerStates.delete(this);
         return true;
       }
+      // Four genuine source-backed starter forms, dormant behind a developer Ogre.
+      // The fifth-class registry and browser controls are intentionally untouched.
+      castStrategistStarter(slot, targetId = null, charged = false) {
+        const h = this.hero, cfg = R.strategistStarterSkills?.[slot];
+        if (this.s.mode !== 'developer' || h.class !== 'strategist' ||
+            !cfg || !h.skills?.[slot - 1] || h.hp <= 0 ||
+            this.peace || this.s.challenge.pending || this.s.challenge.gameOver ||
+            this.tacticalScatterState(h) || h.deathRollHeld || h.keeperHeld ||
+            h.order?.type === 'skill-approach' || !this.skillReady(slot, charged) ||
+            (charged && this.partyChargeRecovery(h) > 0) ||
+            this.mageSilenceActive(h)) return false;
+        // This is a live world/line-of-sight lookup, never a visual approximation.
+        const materials = typeof PrototypeStrategistMaterials !== 'undefined'
+          ? PrototypeStrategistMaterials : typeof require === 'function'
+            ? require('./strategist-materials.js') : null;
+        const source = materials?.forCombat(this, cfg.material, { range: cfg.sourceRange, rules: R });
+        if (!source) return false;
+        const allies = slot === 1 ? this.activeLivingParty().filter((u) =>
+          u.hp > 0 && u.active !== false && (u.type === 'soldier' || u.type === 'archer')
+        ).sort((a, b) => (a.type === 'soldier' ? 0 : 1) -
+          (b.type === 'soldier' ? 0 : 1) || this.idOrder(a, b)) : [];
+        const slowed = slot === 1 ? [h, ...allies].filter((u) => u.slow > 0) : [];
+        const selected = this.selectedHeroTarget(),
+          preferred = targetId ?? selected?.id ?? this.s.heroTarget,
+          locked = targetId != null || !!selected;
+        const eligible = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+          dist(e, h) <= cfg.range && this.line(h, e)
+        ).sort((a, b) => dist(a, h) - dist(b, h) || this.idOrder(a, b));
+        const target = eligible.find((e) => e.id === preferred) ||
+          (locked ? null : eligible[0] || null);
+        let contacts = [];
+        if (slot === 1 && charged) {
+          if (!slowed.length) return false; // no phantom condition
+        } else if (slot === 1) {
+          if (!target && !slowed.length) return false;
+          if (target) contacts = [target];
+        } else if (!charged) {
+          if (!target) return false;
+          contacts = [target];
+        } else {
+          const heading = this.formationHeading || { x: 0, y: 1 };
+          const norm = Math.hypot(heading.x, heading.y) || 1,
+            cosine = Math.cos(cfg.halfAngle);
+          contacts = eligible.filter((e) => {
+            const d = dist(e, h) || 1;
+            return ((e.x - h.x) * heading.x + (e.y - h.y) * heading.y) /
+              (d * norm) >= cosine;
+          }).slice(0, cfg.maxTargets);
+          if (!contacts.length) return false;
+        }
+        const cost = this.skillManaCost(slot, h.skills[slot - 1], charged);
+        if (h.mp < cost) return false;
+        h.mp -= cost;
+        const recovery = 1 - this.heroCooldownReduction();
+        h.cd[slot - 1] = cfg.normalCooldown * recovery;
+        if (charged) h.chargedCd[slot - 1] = cfg.chargedCooldown * recovery;
+        for (const e of contacts) {
+          this.engage(e);
+          // One actual native damage resolution per eligible legal target.
+          this.damage(e, Math.max(1, this.power()) *
+            (charged ? cfg.chargedPower : cfg.normalPower), 'hero',
+            { skillShape: 'single' });
+        }
+        let cleansed = 0;
+        for (const u of (slot !== 1 ? [] : charged ? slowed : slowed.slice(0, 1))) {
+          // Preserve debt already added to normal/charged/basic cooldowns.
+          u.slow = 0;
+          u.slowStacks = 0;
+          u.rogueSlow = 0;
+          cleansed++;
+        }
+        this.event('strategistSkillCast', {
+          actor: 'hero', slot, charged: !!charged, material: cfg.material,
+          sourceId: source.id, targets: contacts.map((e) => e.id), cleansed,
+          x: h.x, y: h.y,
+        });
+        return true;
+      }
       // Rogue automatic basic: only the surviving primary may try Charm.
       castRogueBasic(targetId = null) {
         const cfg = R.rogueHeroFoundation.basic;
@@ -1889,10 +1970,11 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
-        // Dormant native E0 basics only. No manual skills or charged admission.
+        // The original E0 automatic dagger basic stays distinct from manual alchemy.
         if (this.hero.class === 'strategist')
           return slot === 1 && automatic && !charged
-            ? this.castStrategistBasic(targetId) : false;
+            ? this.castStrategistBasic(targetId)
+            : !automatic ? this.castStrategistStarter(slot, targetId, !!charged) : false;
         // The unlocked Rogue songs are staged under the same unregistered
         // class gate. Later performance families remain unavailable.
         if (this.hero.class === 'rogue') {

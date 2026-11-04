@@ -6661,6 +6661,14 @@
     meleeRetaliationChance: 0.10,
     meleeRetaliationPowerMultiplier: 0.35,
   });
+  // Provisional source-true Stage 1A tuning; these are NOT released skills.
+  const strategistStarterSkills = Object.freeze({
+    1: Object.freeze({ material: 'water', sourceRange: 160, range: 90,
+      normalCooldown: 6, chargedCooldown: 10, normalPower: 0.8, chargedPower: 0 }),
+    3: Object.freeze({ material: 'fire', sourceRange: 150, range: 90,
+      normalCooldown: 7, chargedCooldown: 12, normalPower: 1.05,
+      chargedPower: 0.8, halfAngle: 0.6, maxTargets: 2 }),
+  });
   const strategistBasicFoundation = Object.freeze({
     range: 90,
     resetSeconds: 4,
@@ -7873,6 +7881,7 @@
     basicAttackCombo,
     strategistBasicFoundation,
     strategistOgreDefense,
+    strategistStarterSkills,
     rogueHeroFoundation,
     rogueCharmNicknames,
     companionSkills,

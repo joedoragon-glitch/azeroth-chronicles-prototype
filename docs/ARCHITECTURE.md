@@ -8,6 +8,9 @@
 
 ## Strategist Developer Playtest — current draft integration (4 November 2026)
 
+**4 November draft Gate 2:** `hero-combat.js` now contains developer-only Water and Fire manual starter dispatch, true material lookup and native Slow/contact ownership, with focused tests pending. The public class roster is unchanged; the real Mineral physical face, player-facing controls, browser source registration and fully playable Strategist remain future gates.
+
+
 The [seven-gate integration ledger](STRATEGIST_DEVELOPER_PLAYTEST_GATES_20261104.md) now begins with a **standalone new-chat resume for existing draft PR #792**. The original copied Ogre silhouette was rejected; the current `visuals.js::strategistHero` has independently drawn anatomy, clothing, hair, arms and hand-grasped short daggers, with a recent right ankle/boot correction. Enemy `ogreBody(ranged)` and all public-class visuals remain unchanged. The owner approves the overall body direction but has **not yet visually approved the latest hand-and-weapon revision**, and no merge or deploy is authorized.
 
 This unmerged draft also stages E0 landed-dagger/finite-Acid ownership, authentic source classification, provisional Ogre-only Dodge and melee-basic retaliation, and limited two-warning Reversal groundwork. The real six Water/Mineral/Fire starter actions, full two-sided actual projectile-intercepting Mineral face, complete user-triggered Reversal, developer-only playable admission and end-to-end combat tests **remain unfinished**. The latest Gate 0/defense source must pass its own focused CI rather than inheriting earlier green runs. Independent Stage 3 Lab PR #782 is not a Stage 1A prerequisite. `?developer=1` is a preview link toggle, not authentication; do not expose an unready fifth class or loosen existing v4 saves.
