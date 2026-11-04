@@ -1,7 +1,6 @@
-/* Phone entry shell: preserve one real landscape-sized game viewport even
-   when iOS Safari declines the manifest orientation hint. Never remount the
-   same-origin game iframe when the viewport changes: the live Campaign,
-   browser input mappings, audio session and v4 storage remain untouched. */
+/* Phone shell is full-bleed. Safe areas protect controls in the inner game,
+   never crop the world, title background or the rotated iframe itself.
+   The same iframe remains mounted through physical orientation changes. */
 html,
 body {
   width: 100%;
@@ -13,16 +12,33 @@ body {
   background: #07130f;
 }
 
+/* Read the physical iPhone insets from the OUTER document. WebKit does not
+   reliably expose the same insets inside a transformed same-origin iframe. */
+#phone-safe-probe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  padding: env(safe-area-inset-top, 0px)
+    env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
+}
+
 #phone-game-frame {
   display: block;
   position: fixed;
   box-sizing: border-box;
-  top: env(safe-area-inset-top, 0px);
-  left: env(safe-area-inset-left, 0px);
-  width: calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-  height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  width: calc(100dvw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-  height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   border: 0;
   padding: 0;
   margin: 0;
@@ -33,16 +49,15 @@ body {
 
 @media (orientation: portrait) {
   #phone-game-frame {
-    /* Clockwise turn: [frame width=physical height, height=physical width].
-       The browser transforms hit testing with the frame, keeping native game
-       pointer coordinates correct without altering the renderer or rules. */
-    left: calc(100vw - env(safe-area-inset-right, 0px));
-    left: calc(100dvw - env(safe-area-inset-right, 0px));
-    top: env(safe-area-inset-top, 0px);
-    width: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    height: calc(100vw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
-    width: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    height: calc(100dvw - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+    /* Rotate the entire live landscape viewport, not its game world alone.
+       Local (x,y) maps to physical (screenWidth-y,x). */
+    left: 100vw;
+    left: 100dvw;
+    top: 0;
+    width: 100vh;
+    width: 100dvh;
+    height: 100vw;
+    height: 100dvw;
     transform: rotate(90deg);
   }
 }
