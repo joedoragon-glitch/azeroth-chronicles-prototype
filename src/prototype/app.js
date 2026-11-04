@@ -2965,6 +2965,72 @@
       worldPointer = null;
     else cancelTravel();
   }
+  // The physical viewport, not a rotated canvas or a persisted preference,
+  // decides whether the *phone experience* can accept input. Desktop and
+  // Chromebook never inherit this restriction from a narrow browser window.
+  function syncPhoneOrientation() {
+    const next = platform.mode === 'phone' && innerHeight >= innerWidth;
+    refreshPhoneOrientationText();
+    if (next === phoneOrientationBlocked) return;
+    phoneOrientationBlocked = next;
+    phoneOrientationPrompt.hidden = !next;
+    document.body.setAttribute('data-phone-orientation-blocked', next ? 'true' : 'false');
+    last = performance.now();
+    frameSkip.suspend();
+    autoOptimization.reset();
+    renderResolution.suspend();
+    runtime.suspend();
+    frameProfile.reset();
+    fps.suspend();
+    if (next) {
+      phoneOrientationPreviousFocus = document.activeElement;
+      clearInput();
+      audio.setPaused(true);
+      // Inert also removes underlying UI from keyboard and screen-reader
+      // traversal on supported Safari/PWAs. Keep each previous inert value.
+      for (const child of document.body.children || []) {
+        if (child === phoneOrientationPrompt) continue;
+        phoneOrientationPriorInert.set(child, !!child.inert);
+        child.inert = true;
+      }
+      $('phone-orientation-heading').focus?.({ preventScroll: true });
+      return;
+    }
+    for (const [child, previous] of phoneOrientationPriorInert) child.inert = previous;
+    phoneOrientationPriorInert.clear();
+    const focus = phoneOrientationPreviousFocus;
+    phoneOrientationPreviousFocus = null;
+    if (focus?.isConnected !== false) focus?.focus?.({ preventScroll: true });
+    audio.setPaused(
+      paused || !focused || document.hidden || !!sceneTransition ||
+      titleLoading || startupUpdatePending,
+    );
+    // Deferred arrival and title warmups retain their original tickets. Never
+    // commit a zone change or enter combat in portrait; resume that exact
+    // request only after returning to landscape.
+    if (sceneTransition?.pendingProceed) {
+      const proceed = sceneTransition.pendingProceed;
+      sceneTransition.pendingProceed = null;
+      requestAnimationFrame(proceed);
+    } else if (sceneTransition?.committed) {
+      const token = sceneTransition.token;
+      requestAnimationFrame(() => revealSceneTransition(token));
+    }
+    if (phoneOrientationPendingTitleResume) {
+      const resume = phoneOrientationPendingTitleResume;
+      phoneOrientationPendingTitleResume = null;
+      requestAnimationFrame(resume);
+    }
+    if (!started && !titleLoading && !startupUpdatePending) updateTitleSoundtrack();
+  }
+  // Even a retained hardware key must not activate an underlying menu, skill
+  // or save action while the rotate prompt is modal.
+  addEventListener('keydown', (event) => {
+    if (!phoneOrientationBlocked) return;
+    event.preventDefault?.();
+    event.stopImmediatePropagation?.();
+  }, true);
+
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
     section: (label, detail = '') => ({ kind: 'section', label, detail }),
