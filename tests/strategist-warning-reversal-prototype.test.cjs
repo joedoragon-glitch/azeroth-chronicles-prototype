@@ -131,6 +131,10 @@ for (const family of ['mine', 'archive']) {
   g.resolveAttack(boss);
   assert.equal(g.hero.hp, hp);
   assert.equal(soldier.hp, soldierHp);
+  // Preserve the independent warning's damage observation: current native
+  // companion Skill Block can independently avoid an area skill. Force its
+  // legitimate nonblocking RNG outcome; do not bypass combat or change source.
+  g.rollSkillBlock = () => 0.999999;
   another.telegraph.timer = 0;
   g.resolveAttack(another);
   assert(g.hero.hp < hp, 'uncountered overlapping warning still hurts hero');
@@ -164,6 +168,7 @@ other.boss.telegraph = other.g.buildBossAttack(other.boss, 4, other.g.hero, fals
 other.g.prepareGroundAttack(other.boss, other.boss.telegraph);
 assert.equal(other.g.attemptStrategistReversal(other.boss.id), false);
 assert.equal(C.classes.strategist, undefined, 'no fifth-class admission');
-assert.equal(C.classFoundationFor('strategist'), null, 'no hidden fifth-class foundation');
+assert.deepEqual(C.classFoundationFor('strategist')?.startingCompanions,
+  ['soldier', 'archer'], 'dormant E0 foundation exists without public class admission');
 assert.throws(() => new C('normal', 'strategist'), /Unknown mode or class/);
 console.log('PASS unsupported special excluded; no playable fifth class introduced');
