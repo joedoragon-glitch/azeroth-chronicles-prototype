@@ -1704,6 +1704,50 @@
     PrototypeMaterials.setOptimizationMode(optimizationMode);
   const platform = PrototypePlatform.init(window);
   audio.setMixProfile(platform.mode === 'phone' ? 'phone' : 'reference');
+  // A phone always uses landscape game coordinates. Where Safari cannot lock
+  // the actual display, rotate only this game's presentation as one surface.
+  // Browser touch events continue to arrive in physical screen coordinates.
+  const phoneLandscape = {
+    get rotated() {
+      return platform.mode === 'phone' && innerHeight > innerWidth;
+    },
+    size() {
+      return this.rotated
+        ? { width: innerHeight, height: innerWidth }
+        : { width: innerWidth, height: innerHeight };
+    },
+    point(clientX, clientY) {
+      return this.rotated
+        ? { x: clientY, y: innerWidth - clientX }
+        : { x: clientX, y: clientY };
+    },
+    rect(element) {
+      const rect = element.getBoundingClientRect();
+      return this.rotated
+        ? {
+            left: rect.top, top: innerWidth - rect.right,
+            right: rect.bottom, bottom: innerWidth - rect.left,
+            width: rect.height, height: rect.width,
+          }
+        : rect;
+    },
+    apply() {
+      document.body.setAttribute(
+        'data-landscape-rotated', this.rotated ? 'true' : 'false',
+      );
+    },
+  };
+  phoneLandscape.apply();
+  // Browsers with a real landscape lock use it; iOS falls back to the same
+  // landscape geometry rotated within the physically portrait viewport.
+  function requestPhoneLandscapeLock() {
+    if (platform.mode !== 'phone' || document.hidden ||
+        typeof screen?.orientation?.lock !== 'function') return;
+    try {
+      Promise.resolve(screen.orientation.lock('landscape')).catch(() => {});
+    } catch (_) {}
+  }
+  requestPhoneLandscapeLock();
   const input = PrototypeInput.create(localStorage, status);
   let bindingCapture = null;
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
@@ -2109,7 +2153,7 @@
     updateHUD();
   };
   document.body.append(cancelNavigationButton);
-  const viewport = { width: innerWidth, height: innerHeight };
+  const viewport = phoneLandscape.size();
   // Arrival is complete only after the navigation-owned move has stopped
   // (or the player manually reaches the same destination). A 55-unit visual
   // cutoff previously hid Cancel while the engine was still walking to 25.
@@ -2471,6 +2515,9 @@
     get sceneLoading() {
       return !!sceneTransition;
     },
+    get landscapePresentation() {
+      return { rotated: phoneLandscape.rotated, ...phoneLandscape.size() };
+    },
     audio,
     renderer,
     get experimentalGraphics() {
@@ -2553,7 +2600,8 @@
     // backgrounded iPhone PWA to resume after normal viewport changes.
     if (
       graphicsController?.status().phase === 'trial' &&
-      (viewport.width !== innerWidth || viewport.height !== innerHeight)
+      (viewport.width !== phoneLandscape.size().width ||
+        viewport.height !== phoneLandscape.size().height)
     ) {
       const gpu = pixiGame.status();
       graphicsController.webglFailed({
@@ -2567,17 +2615,18 @@
         },
       });
     }
-    viewport.width = innerWidth;
-    viewport.height = innerHeight;
+    phoneLandscape.apply();
+    const size = phoneLandscape.size();
+    viewport.width = size.width;
+    viewport.height = size.height;
     // Below the supported 375x800 portrait / 800x375 landscape layout,
     // proportionally fit controls instead of authoring a second smaller UI.
     // The Canvas continues to render at its actual viewport size.
-    const portrait = innerHeight >= innerWidth;
-    const referenceWidth = portrait ? 375 : 800;
-    const referenceHeight = portrait ? 800 : 375;
+    const referenceWidth = 800;
+    const referenceHeight = 375;
     const phoneUiFit =
       platform.mode === 'phone'
-        ? Math.max(0.8, Math.min(1, innerWidth / referenceWidth, innerHeight / referenceHeight))
+        ? Math.max(0.8, Math.min(1, size.width / referenceWidth, size.height / referenceHeight))
         : 1;
     document.body.style.setProperty?.('--phone-ui-fit', phoneUiFit.toFixed(3));
     const maximumRatio = optimizationMode
@@ -2587,14 +2636,14 @@
           Math.min(
             window.devicePixelRatio || 1,
             platform.mode === 'phone' ? 1.5 : 2,
-            Math.sqrt(3000000 / (innerWidth * innerHeight)),
+            Math.sqrt(3000000 / (size.width * size.height)),
           ),
         );
     renderResolution.configure(maximumRatio);
     // Arena only: hard-cap world pixels without saving a preference.
     const ratio = game?.s?.mode === 'arena' ? Math.min(renderResolution.ratio, 0.5) : renderResolution.ratio;
-    const backingWidth = Math.round(innerWidth * ratio),
-      backingHeight = Math.round(innerHeight * ratio),
+    const backingWidth = Math.round(size.width * ratio),
+      backingHeight = Math.round(size.height * ratio),
       widthChanged = canvas.width !== backingWidth,
       heightChanged = canvas.height !== backingHeight;
     canvasBackingDiagnostics.resizeRequests++;
@@ -2634,6 +2683,12 @@
   addEventListener('resize', () => {
     releaseJoystick();
     resize();
+    requestPhoneLandscapeLock();
+  });
+  addEventListener('orientationchange', () => {
+    releaseJoystick();
+    resize();
+    requestPhoneLandscapeLock();
   });
   function activePlay() {
     return (
@@ -8922,6 +8977,7 @@
   platform.onChange(() => {
     clearInput();
     resize();
+    requestPhoneLandscapeLock();
     runtime.reset();
     frameProfile.reset();
     fps.suspend();
