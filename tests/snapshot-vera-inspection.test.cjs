@@ -167,15 +167,30 @@ for (const mode of ['normal', 'nightmare'])
     c.updateVeraFieldwork(0.01);
     assert(g.veraEquipment);
     const equipment = g.veraEquipment,
-      max = equipment.max;
+      max = equipment.max,
+      // Defensive equipment absorbs 15% of the already-mitigated hit.
+      // An escort guard standing inside an authored fort also receives the
+      // existing fortification factor (0.6); fixed 25.5/4.5 assumptions
+      // silently ignored that real placement-dependent combat rule.
+      fortFactor = c.enemyFort(g) ? C.rules.balance.fortifications.incomingMultiplier : 1,
+      mitigatedHit = 30 * fortFactor,
+      shieldLoss = mitigatedHit * C.rules.cinderInspection.repairs.absorption;
     const hp = g.hp;
     assert(c.damage(g, 30));
-    assert(Math.abs(hp - g.hp - 25.5) < 1e-7);
-    assert(Math.abs(equipment.remaining - (max - 4.5)) < 1e-7);
-    const wounded = g.hp;
+    console.log('VERA_FORTIFICATION_EQUIPMENT '+JSON.stringify({
+      mode,form,fortified:!!c.enemyFort(g),species:g.species,type:g.type,
+      hpLost:hp-g.hp,equipmentLost:max-equipment.remaining,
+      expectedHpLost:mitigatedHit-shieldLoss,expectedEquipmentLoss:shieldLoss,
+    }));
+    assert(Math.abs(hp - g.hp - (mitigatedHit - shieldLoss)) < 1e-7,
+      'real fortified/ordinary HP damage is mitigated before Vera equipment');
+    assert(Math.abs(equipment.remaining - (max - shieldLoss)) < 1e-7,
+      'Vera absorbs the correct share of the real post-fortification hit');
+    const wounded = g.hp,
+      depleted = equipment.remaining;
     c.s.time += 4;
     c.updateVeraFieldwork(4);
-    assert(equipment.remaining > max - 4.5);
+    assert(equipment.remaining > depleted, 'Vera must actually restore spent equipment');
     assert(equipment.remaining <= max);
     assert.equal(g.hp, wounded);
     equipment.remaining = 0;
@@ -190,7 +205,8 @@ for (const mode of ['normal', 'nightmare'])
     assert(!g.veraEquipment);
     const before = g.hp;
     assert(c.damage(g, 20));
-    assert(Math.abs(before - g.hp - 20) < 1e-7, 'liberation ends defensive repair');
+    assert(Math.abs(before - g.hp - 20 * fortFactor) < 1e-7,
+      'liberation ends Vera equipment absorption but preserves native fortification defense');
   }
 console.log(
   'PASS four Normal/TRUE equipment depletion, bounded actual defense restoration, no HP healing, raw/save cleanup and liberation',
