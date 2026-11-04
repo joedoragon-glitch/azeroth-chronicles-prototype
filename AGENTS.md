@@ -1,5 +1,7 @@
 # Agent operating policy and dated repository context
 
+**Dark Crown cross-chat continuity — 3 November 2026:** New lead Chats must read [the self-contained Dark Crown handoff](docs/DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md) for the latest gameplay source commit, fully reconciled unfinished phase board (0–6), CI evidence, upstream drift and immediate work. **No previous Chat transcript is required.** The last gameplay change was dev.258 in draft PR #769 with focused/PWA/Pixi/performance checks passed; unfinished physical/visual feasibility and Foundry requirements are not magically closed by green tests. Read the live PR and main before editing. Do not merge, publish or run a comprehensive suite without owner approval.
+
 **Dark Crown active cross-session implementation mandate (3 November 2026, draft PR #769):** Before modifying the Dark Crown overhaul, read [Autonomous implementation and adversarial audit](docs/DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md), [owner art contract PR #707](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707), and the [current engineering baseline](docs/DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md). This pointer was added in **draft PR #769** and is present on that feature branch; check the live PR status instead of assuming it is already merged into `main`. Preserve owner merge/deploy consent and report exact verified status across sessions.
 
 

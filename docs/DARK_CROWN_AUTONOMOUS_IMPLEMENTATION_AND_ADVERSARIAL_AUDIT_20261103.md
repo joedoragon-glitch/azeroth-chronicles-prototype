@@ -103,6 +103,12 @@ The owner simply opens a **new ordinary Chat** and pastes the prompt. The receiv
 
 **Task states** are simple labels in PR comments (`OPEN`, `DONE`, `BLOCKED`, `NEEDS WORK REVIEW`, `SUPERSEDED`), not a new ticketing system. PR #769 and the baseline remain the persistent implementation record; #707 remains the immutable creative reference until owner-authorized change.
 
+## Current cross-chat continuity — active lead Chat, 3 November 2026
+
+The owner's latest execution model uses an **ordinary Chat as the integration lead**, not Work by default. The fully reconciled implementation/source/evidence checkpoint and **phase 0–6 status with one immediate workstream** are in [the self-contained lead handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md). Any new ordinary Chat can own the lead after reading the live records; **it should not require the user to provide this chat transcript**. The following Work-named steps apply equally to the lead Chat. Do not restart historical Phase 0 as if no real work had occurred; preserve exact-head CI and existing art decisions, but repeat narrowly relevant drift/audit checks when required. No two chats should write the same branch concurrently.
+
+**Owner interpretation of optimization:** balance meaningful creative ambition and engineering complexity; avoid both premature restraint and gratuitous systems/micro-optimizations. Aim for a credible, appealing capital and genuinely productive Foundry. Explicit authorial constraints, performance risks, and tangible test outcomes determine the scope of implementation.
+
 ## Session-resume protocol (mandatory)
 
 At the start of **every new Work implementation session**:

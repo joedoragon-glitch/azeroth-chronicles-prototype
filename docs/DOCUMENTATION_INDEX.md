@@ -299,8 +299,8 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Dark Crown Regime Layout](DARK_CROWN_REGIME_LAYOUT.md)** — **Reference.** Describes dark crown regime layout decisions, constraints or engineering observations from its original development checkpoint.
 - **[Dark Crown Authorial Contract (PR #707)](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707)** — **External owner creative authority.** Separate draft design branch; not counted among local documents.
 - **[Dark Crown Autonomous Implementation and Adversarial Audit Mandate](DARK_CROWN_AUTONOMOUS_IMPLEMENTATION_AND_ADVERSARIAL_AUDIT_20261103.md)** — **Active PR #769 draft engineering policy.** Scope, evidence, focused testing and no-publication consent gates.
-- **[Dark Crown Regional Implementation Baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md)** — **Active PR #769 engineering evidence.** Source-grounded design and acceptance shortcomings; not completed or deployed.
-- **[Dark Crown Lead Chat Handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md)** — **Active PR #769 task handoff.** Exact source checkpoints and independent engineering acceptance ownership.
+- **[Dark Crown Regional Implementation Baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md)** — **Active PR #769 engineering and phase ledger.** Exact-head source/Canvas/Pixi/performance results, earlier corrective commits and unfinished physical/logistical/visual design; draft and unpublished.
+- **[Dark Crown Lead Chat Handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md)** — **Authoritative standalone PR #769 cross-chat handoff.** Current source SHA, CI, phase 0–6 exit matrix, two-commit upstream drift, open design issues and next implementation step without a previous chat transcript.
 - [Snapshot Crown Economy Audit 20261015](SNAPSHOT_CROWN_ECONOMY_AUDIT_20261015.md) — *Dated record.* Examines snapshot crown economy for source or design inconsistencies, recording dated findings and limits.
 
 ## Sprite art, textures and visual design
