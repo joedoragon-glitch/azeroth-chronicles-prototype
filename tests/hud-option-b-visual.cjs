@@ -48,10 +48,34 @@ async function capture(page,label) {
         // The game now opens on a title screen. Enter a real new campaign:
         // merely dismissing two menus leaves skills hidden behind the title.
         await require('./helpers/language-browser.cjs').selectEnglish(page);
+        if (config.phone && config.width > config.height) {
+          const nav = page.locator('#title-screen nav button');
+          assert.equal(await nav.count(), 5, 'merged #791 keeps all five main-menu actions');
+          for (const button of await nav.all()) {
+            const rect = await button.boundingBox();
+            assert(rect && rect.height >= 44, config.name + ' title touch targets stay at least 44px');
+            assert(rect.y >= -1 && rect.y + rect.height <= config.height + 1,
+              config.name + ' title controls fit without scroll');
+          }
+          console.log('AZ_LANDSCAPE_MENU_STAGE2 title ' + config.name);
+        }
         await page.locator('#title-new').click();
+        if (config.phone && config.width > config.height) {
+          const titleDialog = await box(page, '#modal');
+          assert(titleDialog && titleDialog.width >= 500, config.name + ' title dialog uses landscape width');
+          assert(titleDialog.x >= 0 && titleDialog.x + titleDialog.width <= config.width + 1,
+            config.name + ' title dialog stays within screen');
+        }
         await page.getByRole('button',{name:'New Normal game',exact:true}).click();
         await page.getByRole('button',{name:config.spanish?/^Español(?: ✓)?$/:/^English(?: ✓)?$/}).click();
         await page.getByRole('button',{name:config.spanish?'Muerte normal y recuperación en refugio':'Standard death and refuge recovery',exact:true}).click();
+        if (config.phone && config.width > config.height) {
+          const columns = await page.locator('#modal[data-view="class-select"] #modal-actions')
+            .evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length);
+          assert.equal(columns, 2, config.name + ' four-class selection is two columns');
+          const choice = await page.getByRole('button',{name:/Palad[ií]n/i}).first().boundingBox();
+          assert(choice && choice.height >= 58, config.name + ' class choices remain finger-sized');
+        }
         await page.getByRole('button',{name:/Palad[ií]n/i}).first().click();
         await page.waitForFunction(()=>window.Prototype?.started &&
           document.querySelector('#title-screen')?.hidden &&
@@ -145,6 +169,15 @@ async function capture(page,label) {
         await capture(page,config.name);
         if(config.phone) await page.locator('#menu-button').tap(); else await page.locator('#menu-button').click();
         assert(await page.locator('#modal').isVisible(),config.name+' Menu opens');
+        if (config.phone && config.width > config.height) {
+          const wide = await box(page,'#modal');
+          assert(wide && wide.width >= 500, config.name+' Adventure index uses landscape width');
+          const columns = await page.locator('#modal[data-view="adventure"] #modal-actions')
+            .evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length);
+          assert.equal(columns,2,config.name+' Adventure actions use two columns');
+          const back=await box(page,'#close-button');
+          assert(back && back.height>=44,config.name+' Back is still a full touch target');
+        }
         if(!config.spanish) {
           assert(await page.getByRole('button',{name:'Quest journal',exact:true}).isVisible(),config.name+' quest journal in Menu');
           await page.getByRole('button',{name:'Quest journal',exact:true}).click();
