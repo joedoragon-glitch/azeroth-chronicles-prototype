@@ -96,7 +96,15 @@ async function main() {
           cards: document.querySelectorAll('[data-owner-destination]').length,
           body: document.body.className
         }));
-        console.log('CATEGORY DIAGNOSTIC', JSON.stringify(categoryDiagnostic));
+        console.log('CATEGORY DIAGNOSTIC', JSON.stringify(categoryDiagnostic), 'pageErrors', errors);
+        const domClickDiagnostic = await page.evaluate(() => {
+          const target = document.querySelector('[data-owner-category=industry]');
+          target.click();
+          return {active: [...document.querySelectorAll('[data-owner-category]')].map(el =>
+              [el.dataset.ownerCategory, el.getAttribute('aria-pressed')]),
+            cards:document.querySelectorAll('[data-owner-destination]').length};
+        });
+        console.log('CATEGORY AFTER DOM CLICK', JSON.stringify(domClickDiagnostic), 'pageErrors', errors);
         assert.equal(await page.locator('[data-owner-destination]').count(),4);
         await page.locator('[data-owner-category=all]').click();
         assert.equal(await page.locator('[data-owner-destination]').count(),16);
