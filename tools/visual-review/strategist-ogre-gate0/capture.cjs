@@ -50,14 +50,15 @@ const game = new Campaign('developer', 'mage', () => 0.9);
 game.enter('vale');
 game.s.clock = 120;
 Object.assign(game.hero, { x: 1470, y: 1700, class: 'strategist',
-  hp: 10000, maxHp: 10000 });
+  name: 'Strategist (visual preview)', hp: 10000, maxHp: 10000 });
 assert.equal(game.s.party.length, 2, 'actual Soldier and Archer from native campaign');
-game.s.party[0].x = 1425; game.s.party[0].y = 1735;
-game.s.party[1].x = 1515; game.s.party[1].y = 1735;
+// Stagger allies on the same real map: do not cover the Ogre's face or kit.
+game.s.party[0].x = 1340; game.s.party[0].y = 1710;
+game.s.party[1].x = 1530; game.s.party[1].y = 1800;
 const foe = game.makeEnemy(
   { species: 'ogre', name: 'Ogre (visual comparison)', level: 1,
     hp: 3000, damage: 10, gold: 0, xp: 0 },
-  { x: 1575, y: 1650 },
+  { x: 1730, y: 1740 },
 );
 game.zone().enemies = [foe]; // A staged comparison, not a Greenwood spawn claim.
 for (const [label, zoom, dx, dy] of [
