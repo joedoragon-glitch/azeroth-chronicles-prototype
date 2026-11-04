@@ -18,7 +18,7 @@ On the title screen:
 2. Use **Continue Adventure** to resume an eligible saved game. **Saved Games & Backups** provides recovery and file import/export.
 3. During play, open **Adventure → Quest journal** for the story, **Map and travel routes** for destinations, and **Hero skills** for your class's actions and training information.
 
-The title screen also contains **Settings** and **Help & Credits**. English and **partial** Spanish localization are available; some names and text remain in English.
+After the automatic startup update check, first-time visitors choose **English** or **Español** on a dedicated welcome screen. The choice is a browser preference separate from campaign saves and can later be changed in **Settings**; returning players skip the welcome screen. The title screen has **Settings**, **Saved Games & Backups**, and **Help & Credits**. Help now includes how to play, performance diagnostics, update and backup guidance, current installed-version information, development goals, and creator contact. English and **partial** Spanish localization are available; some names and text remain in English.
 
 ## The game
 
@@ -52,7 +52,7 @@ These are **default** desktop bindings. Keyboard presets and individual keys can
 
 Tap **Target** to cycle eligible enemies; hold it for roughly **0.55 seconds** to lock the current target for the encounter. **Recall** is a five-second defensive regroup: the button shows ON and remaining seconds; press it again to cancel. Both automatic and manually activated hero attacks leave Recall alone. The five seconds count active game time, so pausing does not consume them. Companion labor cannot be newly assigned during the brief Recall hold. Menu selection follows the movement keys; F, Enter or Space confirms. Skills can be queued while cooling down. The Classic number-key preset and a mirrored left-hand preset are available in Controls.
 
-On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. The controls and settings are described in more detail in **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** and the in-game Help / Controls menus.
+On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. Controls can be customized under **Settings → Controls**; basic play instructions and report/profiling explanations live in **Help & Credits**. The **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** gives additional guidance.
 
 ## Saves, updates and diagnostics
 
