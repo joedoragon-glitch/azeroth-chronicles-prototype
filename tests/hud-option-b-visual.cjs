@@ -43,7 +43,7 @@ async function capture(page,label) {
       const errors=[];
       page.on('pageerror',e=>errors.push(e.message));
       try {
-        await page.goto('http://127.0.0.1:'+server.address().port+(config.phone?'/phone.html':'/index.html'),{waitUntil:'domcontentloaded'});
+        await page.goto('http://127.0.0.1:'+server.address().port+(config.phone?'/phone-game.html':'/index.html'),{waitUntil:'domcontentloaded'});
         await page.waitForFunction(()=>window.Prototype?.game,{timeout:30000});
         // The game now opens on a title screen. Enter a real new campaign:
         // merely dismissing two menus leaves skills hidden behind the title.
@@ -233,5 +233,80 @@ async function capture(page,label) {
         console.log('PASS Option B rendered controls and menu access '+config.name);
       } finally {await page.close();}
     }
+    // Public phone.html wraps the native game in one persistent same-origin
+    // landscape viewport. Browser CSS rotates only that frame when physically
+    // upright; the game still receives landscape dimensions and natural input.
+    const outer=await browser.newPage({
+      viewport:{width:375,height:800},isMobile:true,hasTouch:true,
+    });
+    try {
+      await outer.goto('http://127.0.0.1:'+server.address().port+'/phone.html',
+        {waitUntil:'domcontentloaded'});
+      await outer.waitForFunction(() =>
+        document.querySelector('#phone-game-frame')?.contentWindow?.Prototype?.game,
+        {timeout:30000});
+      const inside=outer.frameLocator('#phone-game-frame');
+      const read=()=>outer.locator('#phone-game-frame').evaluate(el=>{
+        const box=el.getBoundingClientRect(),win=el.contentWindow;
+        return {physicalWidth:innerWidth,physicalHeight:innerHeight,
+          logicalWidth:win.innerWidth,logicalHeight:win.innerHeight,
+          portraitTransform:getComputedStyle(el).transform,
+          bounds:{x:box.x,y:box.y,width:box.width,height:box.height},
+          gameId:win.__orientationIdentity||null,
+          modalOpen:!win.document.getElementById('modal').hidden};
+      });
+      let state=await read();
+      assert(state.logicalWidth>state.logicalHeight,
+        'portrait phone must render a genuinely landscape game viewport');
+      assert(state.logicalWidth>=790&&state.logicalHeight>=365,
+        'portrait phone reuses the 800x375 landscape reference');
+      assert.notEqual(state.portraitTransform,'none',
+        'portrait phone must rotate the landscape frame');
+      assert(Math.abs(state.bounds.width-375)<=2&&Math.abs(state.bounds.height-800)<=2,
+        'rotated game covers the available physical screen');
+      await outer.waitForFunction(() => {
+        const doc=document.querySelector('#phone-game-frame')?.contentDocument;
+        return doc?.getElementById('startup-update')?.hidden &&
+          (!doc.getElementById('language-welcome')?.hidden ||
+            !doc.getElementById('title-screen')?.hidden);
+      });
+      if(await inside.locator('#language-welcome').isVisible())
+        await inside.locator('#language-welcome [data-language="en"]').tap();
+      await inside.locator('#title-saves').tap();
+      assert(await inside.locator('#modal').isVisible(),
+        'rotated real touch coordinates open title save dialog');
+      await outer.locator('#phone-game-frame').evaluate(el=>{
+        const win=el.contentWindow;
+        win.__orientationIdentity='same-campaign-frame';
+        win.__orientationCampaign=win.Prototype.game;
+      });
+      await outer.setViewportSize({width:844,height:390});
+      await outer.waitForFunction(() => {
+        const el=document.querySelector('#phone-game-frame');
+        return el?.contentWindow?.innerWidth===844 &&
+          el?.contentWindow?.innerHeight===390;
+      });
+      state=await read();
+      assert.equal(state.portraitTransform,'none',
+        'landscape physical viewport does not rotate the game');
+      assert.equal(state.gameId,'same-campaign-frame',
+        'orientation change must not reload the game frame');
+      assert(state.modalOpen,
+        'existing Save menu remains open across a phone rotation');
+      assert(await outer.locator('#phone-game-frame').evaluate(el=>
+        el.contentWindow.__orientationCampaign===el.contentWindow.Prototype.game),
+        'live Campaign object remains identical through rotation');
+      await outer.setViewportSize({width:375,height:800});
+      await outer.waitForFunction(() => {
+        const el=document.querySelector('#phone-game-frame');
+        return el?.contentWindow?.innerWidth>el?.contentWindow?.innerHeight &&
+          getComputedStyle(el).transform!=='none';
+      });
+      assert((await read()).modalOpen,'returning upright preserves the same menu');
+      await inside.locator('#close-button').tap();
+      assert(await inside.locator('#modal').isHidden(),
+        'rotated Back touch target closes the same dialog');
+      console.log('PASS fixed-horizontal phone iframe, rotated taps and session continuity');
+    } finally {await outer.close();}
   } finally {await browser?.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
