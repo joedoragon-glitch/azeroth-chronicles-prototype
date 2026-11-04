@@ -1445,6 +1445,8 @@
           if (!labSave) throw Error('Unregistered Field Lab save adapter');
           labSave.validate(s, {
             zoneSize: (zone) => D.regions.find(r => r.id === zone)?.size || 5000,
+            ...(R.strategistBasicFoundation?.maxBottles !== undefined
+              ? { maxBottles: R.strategistBasicFoundation.maxBottles } : {}),
           });
         }
         return s;
