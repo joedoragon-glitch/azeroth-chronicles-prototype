@@ -25,6 +25,17 @@ const groups = [
       TEST + 'strategist-lab-integration-native.test.cjs',
     ],
   },
+  {
+    // The stable-source registry is a gameplay contract, not a renderer asset
+    // manifest. Re-run its real source and native Lab receipt regressions when
+    // future owner branches change the implementation without touching tests.
+    match: /^src\\/prototype\\/strategist-(?:materials|lab-sources)\\.js$/,
+    tests: [
+      TEST + 'strategist-materials.test.cjs',
+      TEST + 'strategist-lab-sources.test.cjs',
+      TEST + 'strategist-lab-gathering-native.test.cjs',
+    ],
+  },
   // #755: future comparator edits must exercise the positive-control guard.
   {
     match: /^scripts\/pixi-755-compare\.cjs$|^tests\/pixi-755-acceptance\.test\.cjs$/,

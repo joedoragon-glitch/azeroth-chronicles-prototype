@@ -357,6 +357,7 @@
   }
   function sourceIndex(zone, rules, regionIndex, time) {
     const grid = new Map(), byId = new Map();
+    const maxSourceRadius = { water: 0, mineral: 0, wood: 0, fire: 0 };
     let propIndex = 0;
     for (const prop of zone.props || []) {
       const position = propIndex++;
@@ -367,6 +368,12 @@
         id: prop.id, key: prop.materialSourceKey || prop.id,
         indexedCell, position, kind: 'prop', material, prop,
       };
+      // Gatherers can reach a solid's actual perimeter well before its center.
+      // Keep a single grid entry per prop; widen queries by the largest
+      // physically-authored radius of that material, without per-frame scans.
+      const physicalRadius = Number.isFinite(prop.r) && prop.r > 0 ? prop.r : 0;
+      maxSourceRadius[material] = Math.max(maxSourceRadius[material],
+        Math.min(MAX_GATHER_RANGE, physicalRadius));
       if (!grid.has(indexedCell)) grid.set(indexedCell, []);
       grid.get(indexedCell).push(source);
       if (typeof source.id === 'string' && source.id) {
@@ -374,14 +381,19 @@
         byId.set(source.id, byId.has(source.id) ? null : source);
       }
     }
+    const terrain = terrainSources(rules, zone.id, regionIndex);
+    for (const source of terrain) {
+      if (typeof source.id === 'string' && source.id)
+        byId.set(source.id, byId.has(source.id) ? null : source);
+    }
     return {
       zone, props: zone.props, length: zone.props?.length || 0,
       buildings: zone.buildings, buildLength: zone.buildings?.length || 0,
       sourceRevision: zone.environmentSourceRevision,
       declarations: rules?.environmentalSources?.[zone.id],
       rulesTerrain: rules?.terrain?.[regionIndex],
-      grid, byId, obstructions: indexObstructions(zone),
-      terrain: terrainSources(rules, zone.id, regionIndex),
+      grid, byId, maxSourceRadius, obstructions: indexObstructions(zone),
+      terrain,
     };
   }
   function sourceStillIndexed(index, source) {
@@ -398,8 +410,7 @@
       const one = index.byId.get(expectedId);
       const matching = one && one.material === material && sourceStillIndexed(index, one)
         ? [one] : [];
-      return matching.concat(index.terrain.filter((source) =>
-        source.id === expectedId && source.material === material));
+      return matching;
     }
     const found = [];
     const loX = Math.floor((point.x - radius) / CELL), hiX = Math.floor((point.x + radius) / CELL);
@@ -459,7 +470,12 @@
     if (options.expectedSourceId !== undefined &&
         (typeof options.expectedSourceId !== 'string' || !options.expectedSourceId)) return null;
     const nearby = [];
-    for (const source of candidates(index, options.at, options.range + 36, material,
+    // A source's collision-safe edge can be close while its center sits far
+    // outside the worker's nominal range; broadening the *cell lookup only*
+    // preserves exact distance and route limits below.
+    const discoveryReach = options.range + 36 + (options.access &&
+        options.expectedSourceId === undefined ? index.maxSourceRadius[material] : 0);
+    for (const source of candidates(index, options.at, discoveryReach, material,
         options.expectedSourceId ?? null)) {
       // Live conditions are checked again, so extinguishing a fire never waits for a cache reset.
       if (source.prop && materialForProp(source.prop, game.s?.time || 0,

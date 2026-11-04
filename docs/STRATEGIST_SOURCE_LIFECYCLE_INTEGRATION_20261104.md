@@ -28,3 +28,40 @@ A valid sample on the outer edge of a large rock may lie in another spatial grid
 8. Focused CI and exact commit results are recorded only if actually executed. No full-suite, merge, publish or device claim.
 
 **Branch collisions / later gate:** #769 separately owns the unmerged Dark Crown overhaul and edits `world.js`. At the actual regional integration point, replay its final scene-mutation events through the single `noteEnvironmentalSourcesChanged` contract without copying pre-overhaul art IDs or overwriting Crown's source. #770 and #782 currently both edit `strategist-materials.js`; this branch supplies the combined implementation for review, not an independently accepted merge. Source changes must be reconciled with E0 #780 and save integration only when those owners are ready.
+
+## Focused validation hardening (4 November follow-up)
+
+The original lazy spatial grid recorded each prop at its center; that missed large
+solid resources when the **true walkable collection perimeter** was in range
+but the center was not. The merged resolver now keeps a per-material maximum
+real source radius *while constructing the lazy index* and expands only initial
+gatherer **candidate** cell lookup by that amount. Actual sampled distance,
+physical route, source identity, obstacle and worker-reach checks remain
+unchanged. No extra per-frame work and no duplicate grid insertion.
+
+The by-ID receipt index now covers both native props and authored terrain
+sources, and rejects ambiguous collisions between their IDs rather than
+accepting a different source at the same coordinates. Regression tests
+exercise source discovery with center outside range, large-rock receipt,
+moved rock revocation and duplicate terrain/prop ID rejection.
+
+One-time event signals additionally cover the existing versioned March coast
+and Reedport spacing, Millhaven frontage, town/Frontier visual clearance,
+interior wall alignment, environmental coherence and legacy street rollback.
+These additions close real in-place source/occluder relocation paths identified
+in the present repository. Newly authored migrations still own signaling at
+their actual mutation sites; no automatic global monkeypatching or hot-path
+scene polling was introduced.
+
+`.github/scripts/focused-ci.cjs` now associates changes to the shared
+material resolver or Lab receipt checker with the narrow material truth,
+native source and physical gathering test files. Normal world/Greenwood
+changed-file coverage stays under its existing focused CI policy.
+
+**CI strategy:** create a temporary `archive/**` branch at exactly the
+same commit as the Field Lab base (not a merge), and open a draft CI-only
+comparison to this alias. This triggers the *already approved focused workflow*
+without changing the actual Stage 3 owner branch or targeting `main`.
+Do not use the comprehensive `pages.yml` gate. Record actual check status,
+test failures and successful exact SHA checks; close the diagnostic PR when
+finished, leaving #796 as the canonical stacked integration owner.

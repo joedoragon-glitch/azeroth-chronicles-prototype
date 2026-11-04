@@ -283,3 +283,47 @@ test('actual versioned dungeon-world migration bumps only one runtime source rev
   assert.equal(JSON.stringify(z).includes('environmentSourceRevision'), false,
     'ephemeral event cannot alter the v4 saved-zone payload');
 });
+
+test('nearby large resource is discovered by its physical edge, not its distant center', () => {
+  const g = new Campaign('normal', 'paladin', () => 0.5);
+  const rock = { id: 'nearby-wide-geology', structure: 'boulder',
+    x: 392, y: 120, r: 170, decorative: false };
+  const z = { id: 'vale', props: [rock], buildings: [] };
+  g.s.zones.vale = z;
+  const worker = { x: 120, y: 120 };
+  // Worker-to-center = 272, but worker-to-edge = 102.
+  const picked = M.forGather(g, 'mineral', {
+    zone: z, worker, lab: { zone: 'vale' }, rules: R, range: 130,
+    authorize: () => true, route: (_a, p) => [p], passable: () => true,
+  });
+  assert.equal(picked?.id, rock.id);
+  assert.equal(picked.point.x, 222);
+  assert.equal(bridge.verifySource(g, 'vale', 'mineral', picked.id,
+    picked.point, picked.point), true);
+  rock.x += 120; // Still at same array index, but moved without a revision.
+  assert.equal(bridge.verifySource(g, 'vale', 'mineral', picked.id,
+    picked.point), false, 'moved native prop cannot revive stale source position');
+  g.noteEnvironmentalSourcesChanged(z);
+  assert.equal(M.forGather(g, 'mineral', {
+    zone: z, worker, lab: { zone: 'vale' }, rules: R, range: 130,
+    authorize: () => true, route: (_a, p) => [p], passable: () => true,
+  }), null, 'distant moved source no longer appears at its old boundary');
+});
+
+test('a physical source ID cannot collide with an authored terrain ID', () => {
+  const g = new Campaign('normal', 'paladin', () => 0.5);
+  const sameId = { id: 'terrain-0', structure: 'well', x: 110, y: 120, r: 0 };
+  const z = { id: 'vale', props: [sameId], buildings: [] };
+  g.s.zones.vale = z;
+  const localRules = { ...R, terrain: [...R.terrain] };
+  localRules.terrain[0] = [{ kind: 'water', x: 110, y: 120, r: 0 }];
+  const selected = M.forGather(g, 'water', {
+    zone: z, worker: { x: 90, y: 120 }, lab: { zone: 'vale' },
+    rules: localRules, range: 100, authorize: () => true,
+    route: (_a, p) => [p], passable: () => true,
+  });
+  assert.equal(selected?.id, 'terrain-0', 'discovery can still see a real prop');
+  assert.equal(Sources.create(M, localRules).verifySource(g, 'vale', 'water',
+    selected.id, selected.point), false,
+    'receipt must fail closed when the native prop and terrain share an ID');
+});
