@@ -231,6 +231,8 @@ for (const mode of ['normal', 'nightmare']) {
   // The exact visual footprint/placement must be rechecked in Phase 3 on
   // old saves and with real tower/bathhouse artwork before construction.
   const utilitySites = [
+    // Protected imported-water intake, filtering/valve and lift service.
+    ['west-levy-water-inlet-service', 315, 1710, 45],
     ['crownwatch-water-tower', 1150, 545, 48],
     ['ash-refuge-water-tower', 355, 2135, 45],
     ['east-service-water-tower', 2980, 2700, 48],
