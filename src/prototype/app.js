@@ -1742,9 +1742,9 @@
   // landscape geometry rotated within the physically portrait viewport.
   function requestPhoneLandscapeLock() {
     if (platform.mode !== 'phone' || document.hidden ||
-        typeof screen?.orientation?.lock !== 'function') return;
+        typeof window.screen?.orientation?.lock !== 'function') return;
     try {
-      Promise.resolve(screen.orientation.lock('landscape')).catch(() => {});
+      Promise.resolve(window.screen.orientation.lock('landscape')).catch(() => {});
     } catch (_) {}
   }
   requestPhoneLandscapeLock();
@@ -6278,10 +6278,11 @@
       const touch = touchMapContact ||
         event.pointerType === 'touch' || event.pointerType === 'pen';
       touchMapContact = false;
-      const rect = map.getBoundingClientRect();
+      const rect = phoneLandscape.rect(map);
       if (!rect.width || !rect.height || !Number.isFinite(event.clientX) ||
           !Number.isFinite(event.clientY)) return;
-      const x = event.clientX - rect.left, y = event.clientY - rect.top;
+      const position = phoneLandscape.point(event.clientX, event.clientY);
+      const x = position.x - rect.left, y = position.y - rect.top;
       if (x < 0 || y < 0 || x > rect.width || y > rect.height) return;
       const radius = touch ? 22 : 12;
       const nearby = destinations
@@ -7362,17 +7363,18 @@
     platform.mode === 'phone' && input.preferences.joystickMode === 'floating' && !menu;
   function joyUpdate(e) {
     if (floatingGameplay() && joystickStart) {
-      const r = joystick.getBoundingClientRect();
+      const r = phoneLandscape.rect(joystick);
       const wasStill = joy.x === 0 && joy.y === 0;
       joy = PrototypeInput.floatingJoystickVector(
-        joystickStart, { x: e.clientX, y: e.clientY }, r.width * 0.4,
+        joystickStart, phoneLandscape.point(e.clientX, e.clientY), r.width * 0.4,
       );
       // Merely placing a stationary thumb does not cancel a guided journey.
       if (wasStill && (joy.x || joy.y)) cancelTravel();
     } else {
-      const r = joystick.getBoundingClientRect(),
-        dx = (e.clientX - r.left - r.width / 2) / (r.width * 0.4),
-        dy = (e.clientY - r.top - r.height / 2) / (r.height * 0.4),
+      const r = phoneLandscape.rect(joystick),
+        point = phoneLandscape.point(e.clientX, e.clientY),
+        dx = (point.x - r.left - r.width / 2) / (r.width * 0.4),
+        dy = (point.y - r.top - r.height / 2) / (r.height * 0.4),
         n = Math.max(1, Math.hypot(dx, dy));
       joy = { x: dx / n, y: dy / n };
     }
@@ -7389,23 +7391,24 @@
       const el = document.querySelector(selector);
       if (!el || el.hidden || getComputedStyle(el).display === 'none' ||
           getComputedStyle(el).visibility === 'hidden') return [];
-      const rect = el.getBoundingClientRect();
+      const rect = phoneLandscape.rect(el);
       return [{ x: rect.left, y: rect.top, width: rect.width, height: rect.height }];
     });
+    const point = phoneLandscape.point(e.clientX, e.clientY);
     if (!PrototypeInput.floatingJoystickZone(
-      { x: e.clientX, y: e.clientY },
-      { width: window.innerWidth, height: window.innerHeight }, obstacles,
+      point,
+      phoneLandscape.size(), obstacles,
     )) return false;
     e.preventDefault();
     audio.unlock();
     pointer = e.pointerId;
     joystickTouchId = null;
-    joystickStart = { x: e.clientX, y: e.clientY };
+    joystickStart = point;
     joy = { x: 0, y: 0 };
     $('stick').style.transform = '';
-    const rect = joystick.getBoundingClientRect();
-    const left = Math.max(0, Math.min(window.innerWidth - rect.width, e.clientX - rect.width / 2));
-    const top = Math.max(0, Math.min(window.innerHeight - rect.height, e.clientY - rect.height / 2));
+    const rect = phoneLandscape.rect(joystick), size = phoneLandscape.size();
+    const left = Math.max(0, Math.min(size.width - rect.width, point.x - rect.width / 2));
+    const top = Math.max(0, Math.min(size.height - rect.height, point.y - rect.height / 2));
     joystick.style.setProperty('--floating-joystick-left', Math.round(left) + 'px');
     joystick.style.setProperty('--floating-joystick-top', Math.round(top) + 'px');
     document.body.classList.add('floating-joystick-active');
@@ -7425,7 +7428,7 @@
     audio.unlock();
     cancelTravel();
     pointer = e.pointerId;
-    joystickStart = { x: e.clientX, y: e.clientY };
+    joystickStart = phoneLandscape.point(e.clientX, e.clientY);
     joystick.setPointerCapture(pointer);
     joyUpdate(e);
   };
@@ -7447,7 +7450,10 @@
   const rememberJoystickTouch = (e) => {
     if (pointer === null || joystickTouchId !== null || !joystickStart) return;
     const contact = Array.from(e.changedTouches).find(
-      (touch) => Math.hypot(touch.clientX - joystickStart.x, touch.clientY - joystickStart.y) < 25,
+      (touch) => {
+        const position = phoneLandscape.point(touch.clientX, touch.clientY);
+        return Math.hypot(position.x - joystickStart.x, position.y - joystickStart.y) < 25;
+      },
     );
     if (contact) joystickTouchId = contact.identifier;
   };
@@ -7485,11 +7491,12 @@
     if (e.pointerType !== 'mouse' && !input.preferences.touchMove) return;
     if (worldPointer || pointer !== null) return;
     e.preventDefault();
+    const position = phoneLandscape.point(e.clientX, e.clientY);
     worldPointer = {
       id: e.pointerId,
-      x: e.clientX,
-      y: e.clientY,
-      target: world(e.clientX, e.clientY),
+      x: position.x,
+      y: position.y,
+      target: world(position.x, position.y),
       moved: false,
     };
     canvas.setPointerCapture?.(e.pointerId);
@@ -7499,9 +7506,10 @@
       joyUpdate(e);
       return;
     }
+    const position = phoneLandscape.point(e.clientX, e.clientY);
     if (
       worldPointer?.id === e.pointerId &&
-      Math.hypot(e.clientX - worldPointer.x, e.clientY - worldPointer.y) > 12
+      Math.hypot(position.x - worldPointer.x, position.y - worldPointer.y) > 12
     )
       worldPointer.moved = true;
   };
@@ -7517,7 +7525,8 @@
       keys.down ||
       keys.left ||
       keys.right ||
-      Math.hypot(e.clientX - tap.x, e.clientY - tap.y) > 12
+      Math.hypot(phoneLandscape.point(e.clientX, e.clientY).x - tap.x,
+        phoneLandscape.point(e.clientX, e.clientY).y - tap.y) > 12
     )
       return;
     // Intentional world movement takes over even when the tapped spot is blocked.
@@ -7760,8 +7769,8 @@
         until: now + (notice.duration || 5.5) * 1000,
       });
     }
-    const width = typeof window === 'undefined' ? 1280 : window.innerWidth,
-      height = typeof window === 'undefined' ? 800 : window.innerHeight,
+    const width = viewport.width,
+      height = viewport.height,
       shortPhone = platform.mode === 'phone' && width > height,
       layout = [platform.mode, width, height].join(':');
     if (layout !== state.layout) {
@@ -7769,7 +7778,7 @@
       const style = typeof getComputedStyle === 'undefined' ? null : getComputedStyle(host),
         safeLeft = Number.parseFloat(style?.getPropertyValue('--notice-safe-left')) || 0,
         safeRight = Number.parseFloat(style?.getPropertyValue('--notice-safe-right')) || 0;
-      const hud = $('hud').getBoundingClientRect(),
+      const hud = phoneLandscape.rect($('hud')),
         edge = Math.max(12, platform.mode === 'phone' ? safeLeft : 0),
         right =
           platform.mode === 'desktop'
@@ -7863,7 +7872,7 @@
       const deferRoutine = state.active.length > 0 && !urgent;
       shortStatus.classList.toggle('notice-deferred', deferRoutine);
       shortStatus.style.top = state.active.length && urgent
-        ? Math.ceil(host.getBoundingClientRect().bottom + 8) + 'px'
+        ? Math.ceil(phoneLandscape.rect(host).bottom + 8) + 'px'
         : '';
     } else {
       shortStatus.classList.remove('notice-deferred');
