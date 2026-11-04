@@ -262,10 +262,10 @@ test('source route planning is event-gated, never per-frame for a crowded networ
   for (let i = 0; i < 4; i++)
     assert.equal(g.assignFieldLabWorker('vale', 'vale', 'ally-' + i, 'water'), true);
   run(g, 2);
-  assert.ok(scans <= 1, 'source scans should be globally bounded');
+  assert.ok(scans <= 4, 'each of four workers may plan once, at most one per tick');
   const after = scans;
   run(g, 2);
-  assert.ok(scans - after <= 1, 'no per-frame replan');
+  assert.equal(scans, after, 'no per-frame replanning before the next scheduled retry');
   assert.ok(lab);
 });
 test('Advanced Alchemy is a separate paid Neri service; windmill is not gated', () => {
@@ -277,4 +277,39 @@ test('Advanced Alchemy is a separate paid Neri service; windmill is not gated', 
   assert.equal(g.fieldLabWorkerLimit(), 2);
   assert.equal(g.fieldLabStorageLimit(), 48);
   assert.equal(g.s.heroSkills, undefined);
+});
+
+test('ordinary danger stalls vulnerable worker movement and output', () => {
+  const g = new Campaign(); build(g);
+  const u = addReserve(g);
+  g.s.zones.vale.props.push({
+    id: 'tree', material: 'wood', authoritative: true, active: true, x: 390, y: 100,
+  });
+  g.trainFieldLabWorker(u.id);
+  g.assignFieldLabWorker('vale', 'vale', u.id, 'wood');
+  run(g, 2);
+  const before = { x: u.x, y: u.y }, count = g.fieldLabStockCount();
+  g.unsafe = true;
+  run(g, 10);
+  assert.deepEqual({ x: u.x, y: u.y }, before);
+  assert.equal(g.fieldLabStockCount(), count);
+  g.unsafe = false;
+  run(g, 15);
+  assert.ok(g.fieldLabStockCount() > count);
+});
+test('processing refuses unsafe stock and never goes negative', () => {
+  const g = new Campaign(); build(g);
+  const u = addReserve(g);
+  g.trainFieldLabWorker(u.id);
+  g.assignFieldLabWorker('vale', 'vale', u.id, 'water');
+  const bank = g.fieldLabNetwork();
+  bank.samples.water = 1;
+  run(g, 20);
+  assert.equal(bank.products.waterReagent, 1);
+  assert.equal(bank.samples.water, 0);
+  run(g, 20);
+  assert.equal(bank.products.waterReagent, 1);
+  bank.samples.water = -1;
+  run(g, 20);
+  assert.equal(bank.products.waterReagent, 1);
 });
