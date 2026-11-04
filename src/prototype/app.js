@@ -2162,19 +2162,25 @@
     worldLabelVisible = renderer.labelVisible;
   const runtime = PrototypeRuntime.create();
   const frameProfile = PrototypeRuntime.createFrameProfile();
+  // #783: disabled outside explicit renderer capture; ordinary draws remain untimed.
+  let rendererDiagnosticActive = false;
   const fps = PrototypeRuntime.createFrameRate(localStorage);
   const frameSkip = PrototypeRuntime.createFrameSkip(localStorage);
   const renderResolution = PrototypeRuntime.createResolution(localStorage);
   const autoOptimization = PrototypeRuntime.createAutoOptimization();
-  function setOptimizationActive(enabled) {
+  function setOptimizationActive(enabled, reason = 'unspecified') {
     const next = !!enabled;
     if (optimizationMode === next) return false;
+    if (rendererDiagnosticActive)
+      recordRendererTransition('optimization-change', {
+        reason, from: optimizationMode, to: next, emergency: frameSkip.emergency,
+      });
     optimizationMode = next;
     if (typeof PrototypeMaterials !== 'undefined')
       PrototypeMaterials.setOptimizationMode(next);
     audio.setOptimizationMode(next);
     renderer.setOptimizationMode(next);
-    resize();
+    resize(reason === 'emergency' ? 'emergency-optimization' : 'optimization-mode');
     runtime.reset();
     frameProfile.reset();
     fps.suspend();
@@ -2243,6 +2249,7 @@
           canvasRenderer: renderer,
           getRendererOptions: () => rendererSetup,
           getOptimizationMode: () => optimizationMode,
+          getDiagnosticRecording: () => rendererDiagnosticActive,
           onPreparationProgress: ({ prepared, total }) => {
             // One loading surface throughout decode, terrain tiles and GPU
             // uploads; the count shows actual completed terrain tiles.
@@ -2374,7 +2381,8 @@
       const startedAt = performance.now();
       timing.pixiAttempted = true;
       try {
-        pixiGame.draw();
+        if (rendererDiagnosticActive) timing.pixiDraw = pixiGame.draw();
+        else pixiGame.draw();
       } catch (error) {
         // Pixi normally reports an exact failure first; preserve it.
         // This catches only otherwise unhandled wrapper exceptions.
@@ -2406,6 +2414,8 @@
       stageTimes[key] += timing[key];
     for (const key of ['pixiAttempted', 'canvasOverlayDrawn', 'canvasWorldDrawn'])
       stageTimes[key] ||= timing[key];
+    if (stageTimes.pixiDraws && timing.pixiDraw)
+      stageTimes.pixiDraws.push(timing.pixiDraw);
   }
 
   const {
@@ -2521,7 +2531,15 @@
     avoidedResets: 0,
     lastReset: null,
   };
-  function resize() {
+  function resize(reason = 'external-or-settings') {
+    const diagnosticBefore = rendererDiagnosticActive
+      ? {
+          width: canvas.width, height: canvas.height,
+          viewportWidth: viewport.width, viewportHeight: viewport.height,
+          ratio: +(canvas.width / Math.max(1, viewport.width)).toFixed(3),
+        }
+      : null;
+    const resizeStarted = diagnosticBefore ? performance.now() : 0;
     // Keep the 15-second *unconfirmed* trial conservative: resizing during
     // the trial still safely reverts. A confirmed selection instead rebuilds
     // viewport-sized Pixi scene layers on the next draw. This allows a
@@ -2586,6 +2604,18 @@
     } else canvasBackingDiagnostics.avoidedResets++;
     // Restore presentation scale even when the existing bitmap is retained.
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if (diagnosticBefore)
+      recordRendererTransition('canvas-backing-resize', {
+        reason, reset: widthChanged || heightChanged,
+        before: diagnosticBefore,
+        after: {
+          width: canvas.width, height: canvas.height,
+          viewportWidth: viewport.width, viewportHeight: viewport.height,
+          ratio: +(canvas.width / Math.max(1, viewport.width)).toFixed(3),
+        },
+        optimizationMode, emergency: frameSkip.emergency,
+        durationMs: +(performance.now() - resizeStarted).toFixed(2),
+      });
   }
   resize();
   if (game.s.mode === 'arena') {
@@ -4632,6 +4662,8 @@
   // Opt-in, device-local, bounded samples. Never writes into campaign saves.
   let rendererRecording = null;
   let lastRendererRecording = null;
+  let rendererRecordingFrameId = null;
+  let rendererRecordingFrameEvents = null;
   const rendererDiagnosticCounters = [
     'proceduralBakes', 'proceduralCacheHits', 'sharedProceduralHits',
     'proceduralEvictions', 'proceduralCacheEvictions', 'backgroundRepaints',
@@ -4670,17 +4702,39 @@
     for (const [key, value] of Object.entries(pixi.backgroundLookaheadSkips || {}))
       counters['lookaheadSkip_' + key] = value;
     return { counters, renderer: graphicsController.status().mode,
-      zone: game.zoneId, proceduralBytes: pixi.proceduralBytes || 0 };
+      zone: game.zoneId, proceduralBytes: pixi.proceduralBytes || 0,
+      backingRatio: +(canvas.width / Math.max(1, viewport.width)).toFixed(3),
+      optimizationMode, emergency: frameSkip.emergency,
+      resolution: renderResolution.status() };
   }
   function beginRendererRecording() {
     rendererRecording = {
-      version: 1, startedAt: new Date().toISOString(),
+      version: 2, startedAt: new Date().toISOString(),
       startedClockMs: performance.now(), baseline: rendererDiagnosticSnapshot(),
       frames: 0, draws: 0, slowFrames: 0, worstFrames: [], events: [],
+      frameSequence: 0, graphicsTransitions: [], droppedGraphicsTransitions: 0,
       frameWorkHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
       callbackIntervalHistogram: Array(rendererHistogramBoundsMs.length + 1).fill(0),
     };
     lastRendererRecording = null;
+    rendererDiagnosticActive = true;
+  }
+  // Recent graphics-policy timeline, separate from the original arrival log.
+  // Retain at most 48 events and eight same-callback actions, never a save.
+  function recordRendererTransition(type, details = {}) {
+    const capture = rendererRecording;
+    if (!capture) return;
+    const event = {
+      type, elapsedMs: Math.round(performance.now() - capture.startedClockMs),
+      frameId: rendererRecordingFrameId, ...details,
+    };
+    if (capture.graphicsTransitions.length >= 48) {
+      capture.graphicsTransitions.shift();
+      capture.droppedGraphicsTransitions++;
+    }
+    capture.graphicsTransitions.push(event);
+    if (rendererRecordingFrameEvents && rendererRecordingFrameEvents.length < 8)
+      rendererRecordingFrameEvents.push(event);
   }
   function rendererEvent(type, destination) {
     if (rendererRecording && rendererRecording.events.length < 16)
@@ -4705,6 +4759,21 @@
       canvasOverlayMs: Math.round(stages.canvasOverlayMs * 10) / 10,
       canvasWorldMs: Math.round(stages.canvasWorldMs * 10) / 10,
       drawn: !!drawn, recovering: !!recovering, adaptiveSkipped: !!skipped,
+      frameId: rendererRecordingFrameId,
+      graphicsTransitions: rendererRecordingFrameEvents?.slice() || [],
+      pixiDraws: (stages.pixiDraws || []).slice(0, 2).map((trace) => ({
+        elapsedStartMs: +(trace.startedAtMs - capture.startedClockMs).toFixed(2),
+        totalMs: +trace.totalMs.toFixed(2),
+        phaseMs: Object.fromEntries(
+          Object.entries(trace.phaseMs || {}).map(([key, value]) =>
+            [key, +value.toFixed(2)])),
+        ratioBefore: trace.ratioBefore, ratioAfter: trace.ratioAfter,
+        viewportChanged: trace.viewportChanged,
+        resolutionChanged: trace.resolutionChanged,
+        bakesDuringDraw: trace.bakesDuringDraw,
+        proceduralBytesDelta: trace.proceduralBytesDelta,
+        backgroundRepaintsDuringDraw: trace.backgroundRepaintsDuringDraw,
+      })),
       zone: game.zoneId, renderer: graphicsController.status().mode };
     // Keep only the 32 highest-severity incidents, not an unbounded frame log.
     const severity = (p) => Math.max(p.workMs, p.intervalMs);
@@ -4738,6 +4807,17 @@
         performance.now()) - capture.startedClockMs)),
       initialRenderer: capture.baseline.renderer, finalRenderer: finish.renderer,
       initialZone: capture.baseline.zone, finalZone: finish.zone,
+      initialGraphics: {
+        backingRatio: capture.baseline.backingRatio,
+        optimizationMode: capture.baseline.optimizationMode,
+        emergency: capture.baseline.emergency, resolution: capture.baseline.resolution,
+      },
+      finalGraphics: {
+        backingRatio: finish.backingRatio, optimizationMode: finish.optimizationMode,
+        emergency: finish.emergency, resolution: finish.resolution,
+      },
+      graphicsTransitions: capture.graphicsTransitions,
+      droppedGraphicsTransitions: capture.droppedGraphicsTransitions,
       frames: capture.frames, draws: capture.draws, slowFrames: capture.slowFrames,
       slowThresholds: { workMs: 34, intervalMs: 50 },
       histograms: {
@@ -4758,7 +4838,7 @@
       counterResetKeys,
       initialProceduralBytes: capture.baseline.proceduralBytes,
       finalProceduralBytes: finish.proceduralBytes,
-      note: 'Bounded synchronous CPU samples, not GPU completion or displayed frames.',
+      note: 'Opt-in Pixi JavaScript stages and graphics-policy sequence, not GPU completion or display FPS. All timestamps are relative to capture start. Callback work excludes post-observe policy actions; backing resize duration is separately recorded.',
     };
   }
   function stopRendererRecording() {
@@ -4767,6 +4847,9 @@
     rendererRecording.finishedClockMs = performance.now();
     lastRendererRecording = rendererRecording;
     rendererRecording = null;
+    rendererDiagnosticActive = false;
+    rendererRecordingFrameId = null;
+    rendererRecordingFrameEvents = null;
   }
   function exportPlaytestReport() {
     exportJSON(
@@ -8492,6 +8575,13 @@
     // until a safe and bounded recovery succeeds.
     void graphicsController.maybeRecover?.();
     const frameStart = performance.now();
+    if (rendererRecording) {
+      rendererRecordingFrameId = ++rendererRecording.frameSequence;
+      rendererRecordingFrameEvents = [];
+    } else {
+      rendererRecordingFrameId = null;
+      rendererRecordingFrameEvents = null;
+    }
     const intervalMs = now - last;
     const dt = Math.min(0.1, Math.max(0, (now - last) / 1000));
     last = now;
@@ -8505,7 +8595,12 @@
       document.hidden ||
       game.s.challenge.pending ||
       game.s.challenge.gameOver;
+    const wasEmergency = frameSkip.emergency;
     const recovering = !frozen && frameSkip.beginFrame(now, intervalMs);
+    if (rendererDiagnosticActive && recovering && !wasEmergency)
+      recordRendererTransition('emergency-enter-before-draw', {
+        intervalMs: +intervalMs.toFixed(2),
+      });
     if (!frozen)
       game.partyDiagnosticsObserveEmergency(
         recovering, intervalMs, frameSkip.status().emergencyEntries,
@@ -8519,7 +8614,7 @@
           activePlay: true, emergency: true,
           preference: optimizationPreference, optimized: optimizationMode,
         });
-        if (override === true) setOptimizationActive(true);
+        if (override === true) setOptimizationActive(true, 'emergency');
       }
     }
     const simulating = !frozen && !recovering;
@@ -8564,6 +8659,7 @@
           pixiAttempted: false,
           canvasOverlayDrawn: false,
           canvasWorldDrawn: false,
+          pixiDraws: rendererDiagnosticActive ? [] : null,
         }
       : null;
     const audioAt = stageTimes ? performance.now() : 0;
@@ -8736,8 +8832,14 @@
         });
         stageTimes.renderMs += sample.renderMs;
         addRenderStageTimes(stageTimes, drawTiming);
+        const priorRatio = rendererDiagnosticActive ? renderResolution.ratio : null;
         if (renderResolution.observe(now, sample.renderMs, fps.target, sample.preRenderMs)) {
-          resize();
+          if (rendererDiagnosticActive)
+            recordRendererTransition('adaptive-resolution-change', {
+              fromRatio: priorRatio, toRatio: renderResolution.ratio,
+              firstDrawRenderMs: +sample.renderMs.toFixed(2),
+            });
+          resize('adaptive-resolution');
           const redrawAt = performance.now();
           const redrawTiming = drawWorld();
           stageTimes.renderMs += performance.now() - redrawAt;
@@ -8762,7 +8864,13 @@
           fpsLimited: !eligibleDraw,
           adaptiveSkipped,
         });
+      const wasEmergencyDuringDraw = frameSkip.emergency;
       frameSkip.observe(now, frameWorkMs, stageTimes.renderMs, draw);
+      if (rendererDiagnosticActive && wasEmergencyDuringDraw !== frameSkip.emergency)
+        recordRendererTransition(
+          frameSkip.emergency ? 'emergency-enter-after-draw' : 'emergency-exit-after-draw',
+          { frameWorkMs: +frameWorkMs.toFixed(2), renderMs: +stageTimes.renderMs.toFixed(2) },
+        );
       const optimizationDecision = autoOptimization.observe(now, {
         activePlay: simulating || recovering,
         emergency: recovering || frameSkip.emergency,
@@ -8771,7 +8879,8 @@
       });
       if (game.s.mode === 'arena') {
         if (!optimizationMode) setOptimizationActive(true);
-      } else if (optimizationDecision !== null) setOptimizationActive(optimizationDecision);
+      } else if (optimizationDecision !== null)
+        setOptimizationActive(optimizationDecision, 'auto-optimization');
       const otherSimulationMs = Math.max(
           0,
           stageTimes.simulationMs - stageTimes.companionAIMs - stageTimes.enemyAIMs,
@@ -8814,6 +8923,8 @@
     // Only a successfully completed ordinary simulation frame clears the
     // critical-recovery marker. Stale image probes alone cannot certify it.
     if (simulating) crashRecoveryPending = false;
+    rendererRecordingFrameId = null;
+    rendererRecordingFrameEvents = null;
     requestAnimationFrame(frame);
   }
   if (Sprint.enabled) {
