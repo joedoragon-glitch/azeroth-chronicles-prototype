@@ -6910,6 +6910,10 @@
       const hideFold = '#756d54', leather = '#574536';
       const charcoal = '#353e3a', fieldGreen = '#46574b';
       const canvasCloth = '#b4a079', boneShade = '#e4d7b3';
+      // Lift only the painted Ogre so the longer legs plant at the existing
+      // floor anchor; neither coordinates nor combat hitboxes are moved.
+      ctx.save();
+      ctx.translate(0, -7);
 
       // Backmost travelling mantle and distinctive long LEFT split-tail.
       // Its outline is a silhouette landmark even when the bottles disappear.
@@ -6923,41 +6927,46 @@
         ctx.quadraticCurveTo(-16, 1, -17, -32);
       });
       line([[-30, -23], [-33, -8], [-31, 7]], '#758271', 1.6);
-      // A planning figure stands in a diagonal, grounded braced step instead
-      // of the enemy's symmetrical slab-of-meat stance.
+      // Leg anatomy now connects visibly from the hips, through bent knees,
+      // to two planted feet. The earlier V2 looked like boots at the waist.
+      // Movement remains a nimble Ogre stride, not a wide-legged squat.
       shaped(shadow, () => {
-        ctx.moveTo(-12, -7);
-        ctx.lineTo(0, -6);
-        ctx.lineTo(-8, 10);
-        ctx.lineTo(-19, 15);
-        ctx.lineTo(-24, 11);
-        ctx.lineTo(-15, 2);
+        ctx.moveTo(-12, -12);
+        ctx.quadraticCurveTo(-3, -12, -4, -1);
+        ctx.lineTo(-10, 12);
+        ctx.lineTo(-19, 20);
+        ctx.lineTo(-26, 15);
+        ctx.lineTo(-19, 4);
+        ctx.quadraticCurveTo(-20, -7, -12, -12);
       });
       shaped(hide, () => {
-        ctx.moveTo(4, -8);
-        ctx.lineTo(17, -8);
-        ctx.quadraticCurveTo(22, 4, 21, 13);
-        ctx.lineTo(11, 16);
-        ctx.lineTo(8, 8);
-        ctx.lineTo(2, 0);
+        ctx.moveTo(5, -12);
+        ctx.quadraticCurveTo(15, -13, 18, -4);
+        ctx.lineTo(19, 9);
+        ctx.lineTo(18, 19);
+        ctx.lineTo(9, 20);
+        ctx.lineTo(7, 9);
+        ctx.lineTo(0, -1);
+        ctx.quadraticCurveTo(-1, -10, 5, -12);
       });
-      // Thick, turned-out boots and cloth ankle bindings.
-      shaped('#48473d', () => {
-        ctx.moveTo(-24, 9);
-        ctx.quadraticCurveTo(-28, 12, -27, 16);
-        ctx.lineTo(-16, 18);
-        ctx.lineTo(-12, 13);
-        ctx.lineTo(-18, 9);
+      // Clear shins/knees before the boot-cuffs: no inverted ankle geometry.
+      line([[-17, 9], [-15, 12]], hideFold, 1.6);
+      line([[15, 10], [16, 13]], hideFold, 1.6);
+      shaped('#49483e', () => {
+        ctx.moveTo(-21, 15);
+        ctx.lineTo(-11, 16);
+        ctx.lineTo(-11, 23);
+        ctx.quadraticCurveTo(-18, 27, -27, 23);
+        ctx.quadraticCurveTo(-28, 19, -21, 15);
       });
-      shaped('#4b4a40', () => {
-        ctx.moveTo(11, 10);
-        ctx.lineTo(22, 10);
-        ctx.quadraticCurveTo(30, 13, 27, 17);
-        ctx.lineTo(14, 19);
-        ctx.lineTo(10, 15);
+      shaped('#49483e', () => {
+        ctx.moveTo(10, 16);
+        ctx.lineTo(20, 15);
+        ctx.quadraticCurveTo(27, 19, 29, 23);
+        ctx.quadraticCurveTo(18, 27, 9, 23);
       });
-      for (const x of [-20, 17])
-        line([[x - 5, 10], [x + 5, 12]], canvasCloth, 2);
+      line([[-23, 16], [-13, 18]], canvasCloth, 2.1);
+      line([[11, 18], [22, 17]], canvasCloth, 2.1);
 
       // Real ogre volume: heavy upper torso, thick connected shoulders and
       // folds, but a forward-angled working stance and a narrower waist.
@@ -6991,23 +7000,22 @@
       });
       fillOval(21, -22, 3.5, 7, light, 0.22);
 
-      // The defining upper silhouette: ONE angled, reinforced shoulder mantle
-      // with a raised collar, opposed by an exposed right arm. No tank armor.
+      // Working shoulder mantle: reads asymmetric but follows the actual
+      // deltoid and does not sprout sideways into a detached shoulder spike.
       shaped(fieldGreen, () => {
-        ctx.moveTo(-18, -34);
-        ctx.lineTo(-30, -36);
-        ctx.lineTo(-40, -28);
-        ctx.lineTo(-33, -16);
-        ctx.lineTo(-23, -19);
+        ctx.moveTo(-19, -34);
+        ctx.quadraticCurveTo(-28, -35, -33, -27);
+        ctx.lineTo(-30, -17);
+        ctx.quadraticCurveTo(-23, -15, -18, -20);
         ctx.lineTo(-10, -31);
       });
-      poly([[-32, -31], [-37, -28], [-32, -22], [-21, -26]], '#71806b');
-      line([[-35, -24], [-23, -21]], '#b6a478', 1.4);
+      poly([[-28, -30], [-32, -25], [-25, -20], [-17, -27]], '#71806b');
+      line([[-31, -22], [-23, -20]], '#b6a478', 1.4);
       shaped(charcoal, () => {
-        ctx.moveTo(-19, -37);
-        ctx.lineTo(-27, -44);
-        ctx.lineTo(-10, -39);
-        ctx.lineTo(-8, -30);
+        ctx.moveTo(-17, -37);
+        ctx.lineTo(-23, -41);
+        ctx.quadraticCurveTo(-13, -43, -7, -34);
+        ctx.lineTo(-9, -29);
       });
       // Clothing has its own clear front silhouette, unlike the enemy's
       // simple belly-oval loincloth: crossing vest with a split hem.
@@ -7063,6 +7071,11 @@
       // broad skull, low nose, substantial jaw and paired tusks, but give
       // him a longer angular cheek/jaw, one skeptical raised brow and a
       // watchful three-quarter glance. Hair is tied, not a new horn/species.
+      // Moderately smaller head to balance the heavy torso and visible legs.
+      ctx.save();
+      ctx.translate(0, -38);
+      ctx.scale(0.88, 0.88);
+      ctx.translate(0, 38);
       oval(-13, -37, 5.5, 6.3, shadow);
       oval(18, -34, 5.2, 5.3, hide);
       shaped(shadow, () => {
@@ -7090,22 +7103,23 @@
         ctx.lineTo(5, -51);
         ctx.lineTo(-7, -52);
       });
+      // The old tall cylindrical bun read as a hat. A low bound crest
+      // gives this individual a signature without stealing the head's mass.
       shaped('#414039', () => {
-        ctx.moveTo(-2, -55);
-        ctx.quadraticCurveTo(-5, -65, 2, -66);
-        ctx.quadraticCurveTo(11, -68, 11, -57);
-        ctx.lineTo(7, -53);
+        ctx.moveTo(-7, -55);
+        ctx.quadraticCurveTo(-8, -62, 0, -61);
+        ctx.quadraticCurveTo(9, -61, 9, -55);
+        ctx.lineTo(4, -52);
       });
-      line([[6, -58], [12, -57]], '#b7a075', 2.5);
-      poly([[11, -57], [18, -55], [16, -42], [11, -46]], '#53614d');
-      line([[14, -53], [14, -45]], '#9b9b75', 1);
+      line([[3, -58], [9, -56]], '#b7a075', 2.3);
+      poly([[9, -57], [14, -55], [14, -47], [9, -50]], '#53614d');
       // Intent eyes: one eyebrow raised, opposite lowered; looking sideways.
       line([[-12, -42], [-5, -44], [0, -43]], '#514b39', 3.4);
       line([[5, -43], [11, -41], [15, -42]], '#514b39', 3.1);
-      oval(-5, -39, 3.8, 2.5, '#6b6a50');
-      oval(10, -38.5, 3.9, 2.5, '#6b6a50');
-      oval(-4, -39, 1.2, 1.6, '#e1ce92');
-      oval(11, -38.5, 1.2, 1.6, '#e1ce92');
+      oval(-5, -39, 3.0, 2.1, '#6b6a50');
+      oval(10, -38.5, 3.0, 2.1, '#6b6a50');
+      oval(-4, -39, 1.1, 1.3, '#e1ce92');
+      oval(11, -38.5, 1.1, 1.3, '#e1ce92');
       oval(-3.6, -39, 0.6, 1, '#2b342e');
       oval(11.4, -38.5, 0.6, 1, '#2b342e');
       shaped('#b8a883', () => {
@@ -7131,6 +7145,7 @@
       // A healed asymmetric cheek cut (not tattoos, runes or ancestry horns).
       line([[13, -31], [16, -29], [14, -27]], '#d2be97', 1.1);
 
+      ctx.restore(); // Face-only scale; do not scale the Ogre's weapon reach.
       // Opposed close-quarters grips, purposeful and short. The blades are
       // subordinate to head, stance and garment, not the whole class identity.
       oval(-24, 3, 5.1, 4.3, shadow);
@@ -7149,6 +7164,7 @@
         poly([[-4, -14], [1, -18], [5, -14], [1, -10]], '#c7ad71');
         oval(1, -14, 1.4, 1.5, '#66557e');
       }
+      ctx.restore(); // Entire local pose; preserve Canvas/Pixi caller state.
     }
 
     function hero(role) {
