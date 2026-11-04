@@ -356,7 +356,7 @@
     return true;
   }
   function sourceIndex(zone, rules, regionIndex, time) {
-    const grid = new Map();
+    const grid = new Map(), byId = new Map();
     let propIndex = 0;
     for (const prop of zone.props || []) {
       const position = propIndex++;
@@ -369,6 +369,10 @@
       };
       if (!grid.has(indexedCell)) grid.set(indexedCell, []);
       grid.get(indexedCell).push(source);
+      if (typeof source.id === 'string' && source.id) {
+        // Duplicate native IDs are ambiguous and must never validate a receipt.
+        byId.set(source.id, byId.has(source.id) ? null : source);
+      }
     }
     return {
       zone, props: zone.props, length: zone.props?.length || 0,
@@ -376,22 +380,34 @@
       sourceRevision: zone.environmentSourceRevision,
       declarations: rules?.environmentalSources?.[zone.id],
       rulesTerrain: rules?.terrain?.[regionIndex],
-      grid, obstructions: indexObstructions(zone),
+      grid, byId, obstructions: indexObstructions(zone),
       terrain: terrainSources(rules, zone.id, regionIndex),
     };
   }
-  function candidates(index, point, radius, material) {
+  function sourceStillIndexed(index, source) {
+    return !source.prop || (index.zone.props?.[source.position] === source.prop &&
+      source.id === source.prop.id &&
+      source.key === (source.prop.materialSourceKey || source.prop.id) &&
+      source.indexedCell === cellKey(source.prop.x, source.prop.y));
+  }
+  function candidates(index, point, radius, material, expectedId = null) {
+    // A Field Lab receipt targets EXACTLY one previously sampled native ID.
+    // A large solid's actual perimeter may be in another grid cell from its
+    // center; authoritative by-ID lookup avoids missing that real source.
+    if (expectedId !== null) {
+      const one = index.byId.get(expectedId);
+      const matching = one && one.material === material && sourceStillIndexed(index, one)
+        ? [one] : [];
+      return matching.concat(index.terrain.filter((source) =>
+        source.id === expectedId && source.material === material));
+    }
     const found = [];
     const loX = Math.floor((point.x - radius) / CELL), hiX = Math.floor((point.x + radius) / CELL);
     const loY = Math.floor((point.y - radius) / CELL), hiY = Math.floor((point.y + radius) / CELL);
     for (let x = loX; x <= hiX; x++)
       for (let y = loY; y <= hiY; y++)
         for (const source of index.grid.get(x + ':' + y) || [])
-          if (source.material === material &&
-              (!source.prop || (index.zone.props?.[source.position] === source.prop &&
-                source.id === source.prop.id &&
-                source.key === (source.prop.materialSourceKey || source.prop.id) &&
-                source.indexedCell === cellKey(source.prop.x, source.prop.y))))
+          if (source.material === material && sourceStillIndexed(index, source))
             found.push(source);
     return found.concat(index.terrain.filter((source) => source.material === material));
   }
@@ -440,8 +456,11 @@
         options.range < 0 || options.range > maxRange) return null;
     const index = state(game, zone, rules);
     if (!index) return null;
+    if (options.expectedSourceId !== undefined &&
+        (typeof options.expectedSourceId !== 'string' || !options.expectedSourceId)) return null;
     const nearby = [];
-    for (const source of candidates(index, options.at, options.range + 36, material)) {
+    for (const source of candidates(index, options.at, options.range + 36, material,
+        options.expectedSourceId ?? null)) {
       // Live conditions are checked again, so extinguishing a fire never waits for a cache reset.
       if (source.prop && materialForProp(source.prop, game.s?.time || 0,
           zone.id, rules) !== material) continue;

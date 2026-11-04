@@ -218,3 +218,27 @@ test('native world change notifications remain event-only and leave saves unchan
   assert.equal(JSON.stringify(z).includes('environmentSourceRevision'), false);
   assert.equal(g.noteEnvironmentalSourcesChanged(null), false);
 });
+
+test('exact-ID Lab receipt reaches a large native solid even when its center is in a different grid cell', () => {
+  const g = new Campaign('normal', 'paladin', () => 0.5);
+  const rock = { id: 'large-geological-rock', structure: 'boulder',
+    x: 392, y: 120, r: 170, decorative: false };
+  const z = { id: 'vale', props: [rock], buildings: [] };
+  g.s.zones.vale = z;
+  const worker = { x: 90, y: 120 };
+  const source = M.forGather(g, 'mineral', {
+    zone: z, worker, lab: { zone: 'vale' }, rules: R,
+    range: 320, authorize: () => true, route: (_from, p) => [p],
+    passable: () => true,
+  });
+  assert.equal(source?.id, rock.id);
+  assert.equal(source.point.x, 222, 'sampling touches the real outer perimeter');
+  assert.equal(dist(source.point, rock), 170);
+  assert.equal(bridge.verifySource(g, 'vale', 'mineral', source.id,
+    source.point, source.point), true,
+    'verified by exact native identity, not a scan only around the old source center');
+  z.props.push({ ...rock, x: 500, y: 120 });
+  g.noteEnvironmentalSourcesChanged(z);
+  assert.equal(bridge.verifySource(g, 'vale', 'mineral', source.id,
+    source.point), false, 'ambiguous duplicate physical IDs are rejected');
+});

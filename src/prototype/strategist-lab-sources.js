@@ -24,7 +24,7 @@
       // Re-query exactly the previous sample point. Other sources, stale
       // indexed props, revoked fire or scenic artwork cannot satisfy receipt.
       const found = materials.findSource(game, material, {
-        at: anchor, zone, rules, range: 0.1,
+        at: anchor, zone, rules, range: 0.1, expectedSourceId: id,
         access: (source, point) => {
           if (source.id !== id || !isPoint(point) || dist(point, anchor) > 0.1)
             return false;
