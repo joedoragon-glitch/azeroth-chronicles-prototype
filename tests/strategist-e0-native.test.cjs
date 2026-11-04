@@ -240,9 +240,66 @@ try {
       'save/reload cannot sneak a third-hit bottle spend');
     assert.equal(events.filter((e) => e.type === 'strategistAcidSplash').length, 0);
   }
+  {
+    // Gate 3 isolated preview: separate personal Dodge and melee retaliation.
+    // This fixture's class registry never reaches the playable app.
+    const { g, primary, events } = make(0);
+    primary.damage = primary.baseDamage = 32;
+    g.random = () => 0; // both independent provisional rolls succeed
+    const heroHp = g.hero.hp, foeHp = primary.hp;
+    g.enemyStartBasic(primary, g.hero, false);
+    assert.equal(g.hero.hp, heroHp,
+      'Ogre Dodge prevents its own true enemy melee basic hit');
+    assert.equal(events.filter((e) => e.type === 'strategistDodge').length, 1);
+    assert(primary.hp < foeHp,
+      'Ogre can independently retaliate on the same Dodged melee basic');
+    const counters = events.filter((e) => e.type === 'strategistRetaliation');
+    assert.equal(counters.length, 1, 'one and only one counter per melee basic');
+    assert.equal(counters[0].dodged, true);
+    const pastCounterHp = primary.hp;
+    g.random = () => 0.99;
+    g.enemyStartBasic(primary, g.hero, false);
+    assert(g.hero.hp < heroHp, 'ordinary hit still lands when Ogre Dodge fails');
+    assert.equal(primary.hp, pastCounterHp, 'retaliation remains chance-based');
+    assert.equal(events.filter((e) => e.type === 'strategistRetaliation').length, 1);
+  }
+  {
+    const { g, primary, events } = make(0);
+    primary.damage = primary.baseDamage = 32;
+    g.random = () => 0; // if eligible, Dodge always succeeds
+    const hp = g.hero.hp;
+    assert.equal(g.hitParty(g.hero, 32, 0, primary.id), false,
+      'source-verified enemy projectile/special contacts may Dodge personally');
+    assert.equal(g.hero.hp, hp);
+    assert.equal(events.filter((e) => e.type === 'strategistDodge').length, 1);
+    assert.equal(events.filter((e) => e.type === 'strategistRetaliation').length, 0,
+      'only a real melee basic can trigger retaliation');
+    assert.equal(g.hitParty(g.hero, 32, 0, null), true,
+      'ambient/reflected unowned damage cannot be Dodged');
+    assert(g.hero.hp < hp);
+    const before = g.s.party[0].hp;
+    assert.equal(g.hitParty(g.s.party[0], 32, 0, primary.id), true,
+      'Ogre Dodge never protects companions');
+    assert(g.s.party[0].hp < before);
+    assert.equal(events.filter((e) => e.type === 'strategistDodge').length, 1);
+  }
+  {
+    const { g, primary, events } = make(0);
+    primary.damage = primary.baseDamage = 32;
+    g.random = () => 0;
+    // A ranged basic starts an aim, not a close incoming melee contact.
+    g.enemyStartBasic(primary, g.hero, true);
+    assert(primary.rangedAim, 'original native ranged aim stays authoritative');
+    assert.equal(events.filter((e) => e.type === 'strategistRetaliation').length, 0);
+    // A nearby source-only hit from an already immune hero is refused,
+    // not turned into an offensive counter.
+    g.hero.immune = 1;
+    g.enemyStartBasic(primary, g.hero, false);
+    assert.equal(events.filter((e) => e.type === 'strategistRetaliation').length, 0);
+  }
 } finally {
   delete C.classes.strategist;
   delete C.talentProfiles.strategist;
 }
 assert.deepEqual(Object.keys(C.classes), originals, 'test-only admission never leaks');
-console.log('PASS Strategist E0 dormant native dagger, finite Acid, training and v4 contracts');
+console.log('PASS Strategist E0 dagger and bounded Gate 3 Ogre Dodge/retaliation native contracts');
