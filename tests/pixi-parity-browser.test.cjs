@@ -410,24 +410,15 @@ async function main() {
             if (!densityUp.resolutionChanged || !densityDown.resolutionChanged ||
                 !densityUpWarm.resolutionChanged || densityDown.bakes ||
                 densityUpWarm.bakes) throw Error('R3B density cache/resize path not isolated');
-            const hero = structuredClone(g.hero);
-            room.enemies = Array.from({ length: 16 }, (_, i) => ({
-              ...hero, id: 'r3-native-crowd-' + i,
-              renderKind: 'enemy', species: 'goblin', type: 'mob',
-              form: 'normal', hp: 30, maxHp: 30, neutral: false,
-              x: g.hero.x + (i % 4) * 15,
-              y: g.hero.y + Math.floor(i / 4) * 15,
-            }));
-            const crowdCold = read('crowd-16-cold');
-            const crowdWarm = read('crowd-16-warm');
-            if (crowdWarm.bakes) throw Error('R3B warmed actor crowd rebaked');
-            room.enemies = original.enemies;
-            read('crowd-restore');
+            // #755 already covers native 1/8/24/48 browser actor density.
+            // Do not inject synthetic enemy entities into this separate
+            // saved-Campaign invariance experiment: native zone admission may
+            // assign IDs when noncanonical enemies are inserted.
             return {
               environment: 'Chromium ANGLE SwiftShader real Pixi WebGL2',
               fixture: 'native cover',
               warm, cold, reused, camera, densityUp, densityDown,
-              densityUpWarm, crowdCold, crowdWarm,
+              densityUpWarm,
               limitation: 'JS submission only, not actual iOS Safari or GPU completion',
             };
           } finally {
@@ -435,10 +426,6 @@ async function main() {
             room.enemies = original.enemies;
             g.hero.x = original.heroX;
             g.hero.y = original.heroY;
-            // Test-only staging of native actors can advance the Campaign ID
-            // allocator. Every individual gpu.draw is separately asserted
-            // state-pure above. Undo staging's counter before the parity pass.
-            g.s.nextId = JSON.parse(original.saved).nextId;
             opts.canvas.width = original.width;
             opts.canvas.height = original.height;
             opts.ctx.setTransform(original.width / innerWidth, 0, 0,
