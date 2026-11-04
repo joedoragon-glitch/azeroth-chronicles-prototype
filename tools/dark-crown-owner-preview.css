@@ -34,7 +34,37 @@
   font: 14px/1.45 system-ui, sans-serif;
   color: #f5e8c9;
 }
-body.crown-review-open #modal { visibility: hidden; }
+/* Only while the owner guide occupies the native game pause menu:
+ * turn that menu into a transparent full-screen host. Pointer events on the
+ * guide remain INSIDE #modal, bypassing ordinary outside-menu dismissal. */
+body.crown-review-open #modal {
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  transform: none !important;
+  display: block !important;
+  z-index: 999 !important;
+}
+body.crown-review-open #modal > :not(#crown-review-backdrop) { display: none !important; }
+body.crown-review-open #modal #crown-review-title {
+  border: 0;
+  padding: 0;
+  letter-spacing: normal;
+  margin: 0 0 5px;
+  font-size: clamp(20px, 3.5vw, 26px);
+  color: #fff3d9;
+}
+
 .crown-review-dialog {
   display: flex;
   flex-direction: column;

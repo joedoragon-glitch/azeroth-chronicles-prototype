@@ -210,6 +210,8 @@
     document.body.classList.remove('crown-review-open');
     launcher.setAttribute('aria-expanded', 'false');
     if (menuOwned) {
+      // Return to the ordinary document BEFORE closing the native pause menu.
+      document.body.append(backdrop);
       menuOwned = false;
       root.Prototype?.closeMenu();
     }
@@ -227,6 +229,10 @@
       // Own the native menu for the exact lifetime of the guide: native app
       // freezes simulation, skill charges and audio just like any game menu.
       api.openMenu('Owner region review', '', [], close);
+      // The native game consumes outside-menu pointerdown events. Mounting
+      // this preview guide inside its own modal makes all touch/click targets
+      // legitimate menu descendants without changing any production handler.
+      $('modal').append(backdrop);
       menuOwned = true;
     }
     localize();
