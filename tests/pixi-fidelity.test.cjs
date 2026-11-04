@@ -90,7 +90,8 @@ let currentActorTextures = new Set(),
   destroyedProcedural = 0,
   lastApplicationCanvas = null,
   rejectWebGLContext = false,
-  failSceneDraw = false;
+  failSceneDraw = false,
+  syntheticSceneDelayMs = 0;
 function canvas() {
   const surface = {
     width: 0,
@@ -271,6 +272,10 @@ const runtime = {
       syncLiquidMotion() {},
       setVignette() {},
       draw() {
+        if (syntheticSceneDelayMs > 0) {
+          const until = Date.now() + syntheticSceneDelayMs;
+          while (Date.now() < until) {} // Deliberate short test-only stage delay.
+        }
         if (failSceneDraw)
           throw Error(
             failSceneDraw === 'context' ? 'WebGL context lost' : 'Synthetic Pixi scene draw error',
@@ -849,6 +854,13 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   assert(Number.isFinite(newTrace.phaseMs.proceduralRegisterMs));
   assert(Number.isFinite(newTrace.phaseMs.actorCandidatesMs));
   assert(Number.isFinite(newTrace.phaseMs.actorSubmitMs));
+  syntheticSceneDelayMs = 18;
+  const syntheticStall = valeNightGpu.draw();
+  syntheticSceneDelayMs = 0;
+  assert(syntheticStall.phaseMs.scene >= 15,
+    'opt-in timings expose a deliberate 18ms Pixi scene submission stall');
+  assert(syntheticStall.phaseMs.scene > syntheticStall.phaseMs.actors,
+    'scene delay is not falsely classified as actor rasterization');
   r783TraceActive = false;
   assert.equal(valeNightGpu.draw(), undefined, 'opt-out leaves ordinary draws untimed');
   assert.equal(valeNightGpu.status().drawCpuProfile.sampledFrames, 0,
