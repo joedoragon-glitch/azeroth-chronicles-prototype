@@ -156,11 +156,22 @@ const assert = require('node:assert/strict'),
       id: 'next',
       bpm: 120,
       quantizeBars: 1,
-      stems: [{ id: 'diagnostic-b' }],
+      fade: 3.2,
+      stems: [{ id: 'diagnostic-b', gain: 0.65 }],
     }),
   );
   assert.equal(a.recordedScore.at, old.at + 2);
-  assert(old.voices.every((v) => Number.isFinite(v.osc.stopped)));
+  const fadeEnd = a.recordedScore.at + 3.2;
+  assert.deepEqual(a.recordedScore.voices[0].gain.gain.calls.at(-1),
+    ['ramp', 0.65, fadeEnd],
+    'incoming source must ramp in for the complete authored transition');
+  assert(old.voices.every((v) => v.gain.gain.calls.some((call) =>
+    call[0] === 'ramp' && call[1] === 0 && Math.abs(call[2] - fadeEnd) < 0.00001)),
+    'outgoing sources must fade through the same end time');
+  assert(old.voices.every((v) => Number.isFinite(v.osc.stopped) &&
+    Math.abs(v.osc.stopped - (fadeEnd + 0.01)) < 0.00001),
+    'retired songs must remain playing until the crossfade completes');
+  assert.equal(a.voices.size, 3, 'the outgoing group is retained during the handoff');
   for (let i = 0; i < 20; i++)
     assert(
       await a.setRecordedScore({
