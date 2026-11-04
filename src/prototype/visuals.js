@@ -6913,7 +6913,7 @@
       // Lift only the painted Ogre so the longer legs plant at the existing
       // floor anchor; neither coordinates nor combat hitboxes are moved.
       ctx.save();
-      ctx.translate(0, -7);
+      ctx.translate(0, -19);
 
       // Backmost travelling mantle and distinctive long LEFT split-tail.
       // Its outline is a silhouette landmark even when the bottles disappear.
@@ -6927,46 +6927,52 @@
         ctx.quadraticCurveTo(-16, 1, -17, -32);
       });
       line([[-30, -23], [-33, -8], [-31, 7]], '#758271', 1.6);
-      // Leg anatomy now connects visibly from the hips, through bent knees,
-      // to two planted feet. The earlier V2 looked like boots at the waist.
-      // Movement remains a nimble Ogre stride, not a wide-legged squat.
+      // The legs are actual articulated anatomy, NOT two shoes beneath a
+      // tunic. Thighs begin at the hips, knees bend below the coat hem, and
+      // calf/ankle/boot joints remain visible at ordinary camera zoom.
       shaped(shadow, () => {
-        ctx.moveTo(-12, -12);
-        ctx.quadraticCurveTo(-3, -12, -4, -1);
-        ctx.lineTo(-10, 12);
-        ctx.lineTo(-19, 20);
-        ctx.lineTo(-26, 15);
-        ctx.lineTo(-19, 4);
-        ctx.quadraticCurveTo(-20, -7, -12, -12);
+        ctx.moveTo(-13, -8);
+        ctx.quadraticCurveTo(-4, -10, -4, 2);
+        ctx.lineTo(-10, 16);
+        ctx.quadraticCurveTo(-9, 21, -14, 25);
+        ctx.lineTo(-24, 32);
+        ctx.lineTo(-28, 26);
+        ctx.lineTo(-21, 14);
+        ctx.quadraticCurveTo(-20, 5, -18, -2);
+        ctx.lineTo(-13, -8);
       });
       shaped(hide, () => {
-        ctx.moveTo(5, -12);
-        ctx.quadraticCurveTo(15, -13, 18, -4);
-        ctx.lineTo(19, 9);
-        ctx.lineTo(18, 19);
-        ctx.lineTo(9, 20);
-        ctx.lineTo(7, 9);
-        ctx.lineTo(0, -1);
-        ctx.quadraticCurveTo(-1, -10, 5, -12);
+        ctx.moveTo(5, -8);
+        ctx.quadraticCurveTo(16, -11, 20, -1);
+        ctx.lineTo(19, 13);
+        ctx.quadraticCurveTo(21, 20, 20, 25);
+        ctx.lineTo(21, 35);
+        ctx.lineTo(11, 36);
+        ctx.lineTo(10, 27);
+        ctx.lineTo(7, 17);
+        ctx.lineTo(0, 0);
+        ctx.quadraticCurveTo(-1, -6, 5, -8);
       });
-      // Clear shins/knees before the boot-cuffs: no inverted ankle geometry.
-      line([[-17, 9], [-15, 12]], hideFold, 1.6);
-      line([[15, 10], [16, 13]], hideFold, 1.6);
+      // Knee and shin marks are anatomical landmarks, not garment stripes.
+      line([[-19, 16], [-13, 19], [-15, 23]], hideFold, 1.4);
+      line([[11, 19], [17, 20]], hideFold, 1.4);
+      fillOval(13, 27, 3, 5, light, 0.13);
       shaped('#49483e', () => {
-        ctx.moveTo(-21, 15);
-        ctx.lineTo(-11, 16);
-        ctx.lineTo(-11, 23);
-        ctx.quadraticCurveTo(-18, 27, -27, 23);
-        ctx.quadraticCurveTo(-28, 19, -21, 15);
+        ctx.moveTo(-24, 29);
+        ctx.lineTo(-13, 30);
+        ctx.lineTo(-11, 37);
+        ctx.quadraticCurveTo(-17, 43, -29, 40);
+        ctx.quadraticCurveTo(-32, 36, -24, 29);
       });
       shaped('#49483e', () => {
-        ctx.moveTo(10, 16);
-        ctx.lineTo(20, 15);
-        ctx.quadraticCurveTo(27, 19, 29, 23);
-        ctx.quadraticCurveTo(18, 27, 9, 23);
+        ctx.moveTo(11, 32);
+        ctx.lineTo(21, 31);
+        ctx.quadraticCurveTo(30, 35, 31, 40);
+        ctx.quadraticCurveTo(20, 45, 10, 40);
+        ctx.lineTo(11, 32);
       });
-      line([[-23, 16], [-13, 18]], canvasCloth, 2.1);
-      line([[11, 18], [22, 17]], canvasCloth, 2.1);
+      line([[-25, 30], [-13, 32]], canvasCloth, 2.1);
+      line([[12, 33], [23, 32]], canvasCloth, 2.1);
 
       // Real ogre volume: heavy upper torso, thick connected shoulders and
       // folds, but a forward-angled working stance and a narrower waist.
@@ -7034,12 +7040,12 @@
         ctx.lineTo(-15, -13);
       });
       shaped('#3e4a42', () => {
-        ctx.moveTo(-17, 3);
-        ctx.lineTo(5, 4);
-        ctx.lineTo(2, 16);
-        ctx.lineTo(-4, 12);
-        ctx.lineTo(-13, 18);
-        ctx.lineTo(-18, 12);
+        ctx.moveTo(-16, 3);
+        ctx.lineTo(7, 4);
+        ctx.lineTo(4, 12);
+        ctx.lineTo(-2, 9);
+        ctx.lineTo(-10, 13);
+        ctx.lineTo(-16, 9);
       });
       line([[-17, 3], [8, 4]], '#c7ae77', 2.4);
       rect(2, 1.5, 6, 5, '#bd9c63');
@@ -18618,7 +18624,7 @@
       ].includes(e.structure)
     )
       return 76;
-    if (e.renderKind === 'hero' && e.class === 'strategist') return 70;
+    if (e.renderKind === 'hero' && e.class === 'strategist') return 88;
     if ((e.renderKind === 'hero' && e.class === 'mage') || e.renderKind === 'prop') return 64;
     if (e.kind === 'transport') return e.icon === '🐉' ? 82 : e.icon === '⛵' ? 76 : 70;
     if (['dungeon', 'exit'].includes(e.kind)) return 64;
