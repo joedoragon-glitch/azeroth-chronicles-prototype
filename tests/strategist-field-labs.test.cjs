@@ -67,7 +67,7 @@ class Campaign {
 }
 fieldLabs.install(Campaign, {
   materials, navigation,
-  rules: { terrain: [] },
+  rules: { terrain: [], strategistBasicFoundation: { maxBottles: 1000 } },
   safeFromThreat(g) { return !g.unsafe; },
   authenticatedLocation(g, worker) {
     return worker.knownZone
@@ -342,4 +342,38 @@ test('Acid priority preserves raw surplus; manual reagent priority remains finit
   assert.ok(bank.samples.wood < 4);
   assert.equal(g.setFieldLabProductionPriority('vale', 'vale', 'acid'), true);
   assert.equal(g.setFieldLabProductionPriority('vale', 'vale', 'free-power'), false);
+});
+
+
+test('E0 carried Acid inventory is separate from finite Lab warehouse storage', () => {
+  const g = new Campaign(); build(g);
+  const bank = g.fieldLabNetwork();
+  bank.samples.water = 2;
+  bank.samples.wood = 2;
+  g.s.strategistAcidBottles = 999; // E0 accepts this legitimate stock.
+  assert.equal(g.fieldLabStockCount(), 4, 'Lab capacity counts samples, not hero bottles');
+  assert.equal(g.upgradeFieldLabWindmill('vale', 'vale'), true);
+  const worker = addReserve(g);
+  assert.equal(g.trainFieldLabWorker(worker.id), true);
+  assert.equal(g.assignFieldLabWorker('vale', 'vale', worker.id, 'mineral'), true);
+  run(g, 14);
+  assert.equal(g.s.strategistAcidBottles, 1000);
+  assert.equal(g.fieldLabStockCount(), 2);
+  run(g, 30);
+  assert.equal(g.s.strategistAcidBottles, 1000, 'never exceed E0 canonical cap');
+  assert.equal(bank.samples.water, 1);
+  assert.equal(bank.samples.wood, 1);
+});
+test('without the authentic E0 cap contract windmill cannot spend inputs', () => {
+  const g = new Campaign(); build(g);
+  g.constructor.rules = { strategistBasicFoundation: { maxBottles: 0 } };
+  const bank = g.fieldLabNetwork();
+  bank.samples.water = 3; bank.samples.wood = 3;
+  assert.equal(g.upgradeFieldLabWindmill('vale','vale'), true);
+  const u = addReserve(g); g.trainFieldLabWorker(u.id);
+  assert.equal(g.assignFieldLabWorker('vale','vale',u.id,'water'), true);
+  run(g, 18);
+  assert.equal(g.s.strategistAcidBottles, 0);
+  assert.equal(bank.samples.wood, 3);
+  delete g.constructor.rules;
 });
