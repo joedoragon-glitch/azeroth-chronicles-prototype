@@ -53,7 +53,7 @@ This is an **implemented but not yet accepted B2 correction**, not a proof
 that #770 is joined to the live script graph, that all five regional source
 routes succeed, or that workers survive real combat. Three focused route tests
 cover positive stand-off, blocked refusal, bounded budgets and direct destinations.
-**New exact-head CI and full actual-source route acceptance remain pending**.
+Focused CI #41784087505 **PASSED** for source commit `91c842a6` (including the new stand-off tests). An additional native five-region walkable round-trip smoke and Field Lab route-adapter bridge test are included in the next commit; **new exact-head CI and complete five-region actual-material acceptance remain pending**.
 The prior successful `450666dd` source run remains historical until newer
 checks succeed. No class activation, merge, deployment or device claim.
 

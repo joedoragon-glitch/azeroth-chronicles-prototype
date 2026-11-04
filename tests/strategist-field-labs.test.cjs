@@ -13,6 +13,12 @@ const navigation = {
     if (g.blockRoutes) return [];
     return [{ x: b.x, y: b.y }];
   },
+  routeToSource(g, zoneId, a, b) {
+    routes++;
+    if (g.blockRoutes) return [];
+    return g.blockedSource && distance(g.blockedSource, b) < 0.01 ?
+      [{ x: b.x - 23, y: b.y }] : [{ x: b.x, y: b.y }];
+  },
   passable(g, zoneId, a, b) {
     return !g.blockRoutes && (zoneId === 'vale' || zoneId === 'march') &&
       a.x >= 0 && b.x >= 0 && a.y >= 0 && b.y >= 0;
@@ -451,4 +457,26 @@ test('vanished source forces a real return before any alchemy can resume', () =>
   assert.equal(JSON.stringify(bank.samples),before);
   assert.equal(lab.processSeconds,timer,'cannot operate the windmill from a source');
   assert.equal(g.s.strategistAcidBottles,0);
+});
+
+test('Lab owns a physically approached source point without routing into blocked material', () => {
+  const g = new Campaign(), lab = build(g), worker = addReserve(g);
+  const source = {
+    id: 'actual-material-stand-off', x: 390, y: 100,
+    material: 'wood', authoritative: true, active: true,
+  };
+  g.blockedSource = source;
+  g.s.zones.vale.props.push(source);
+  assert.equal(g.trainFieldLabWorker(worker.id), true);
+  assert.equal(g.assignFieldLabWorker('vale', 'vale', worker.id, 'wood'), true);
+  run(g, 1.6);
+  const job = g.fieldLabNetwork().jobs[worker.id];
+  assert.equal(job.phase, 'outbound');
+  assert.deepEqual(job.target, { x: source.x, y: source.y },
+    'genuine source identity remains separate from the walkable destination');
+  assert.deepEqual(job.path.at(-1), { x: source.x - 23, y: source.y });
+  assert.equal(job.sourceId, source.id);
+  assert.ok(distance(job.path.at(-1), job.target) <= 24);
+  assert.equal(lab.zoneId, 'vale');
+  assert.equal(g.s.zone, 'vale');
 });

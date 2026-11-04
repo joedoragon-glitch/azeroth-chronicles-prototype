@@ -39,3 +39,31 @@ test('native Marches geometry can be queried remotely without changing hero zone
   // Discriminating enemy visibility is outside this pathfinder's remit.
   assert.equal(Campaign.classes.strategist,undefined);
 });
+
+test('all five native regions accept physical return paths without borrowing the hero zone', () => {
+  const g = new Campaign('normal', 'paladin', () => 0.57);
+  const home = g.zoneId;
+  for (const zoneId of ['vale', 'march', 'highlands', 'frontier', 'crown']) {
+    g.s.zone = zoneId;
+    g.zone(); // Authored regional generation only, not a route shortcut.
+    g.s.zone = home;
+    const size = g.zoneSize(zoneId);
+    let pair = null;
+    for (let y = 160; y < size - 160 && !pair; y += 160)
+      for (let x = 160; x < size - 240; x += 160) {
+        const from = { x, y }, to = { x: x + 60, y };
+        if (!g.blocked(from.x, from.y, zoneId, 15) &&
+            !g.blocked(to.x, to.y, zoneId, 15) &&
+            Native.passable(g, zoneId, from, to, Native.budget(0, 70))) {
+          pair = [from, to];
+          break;
+        }
+      }
+    assert.ok(pair, zoneId + ': native map must contain a collision-clear local trip');
+    const outward = Native.route(g, zoneId, pair[0], pair[1]);
+    const inward = Native.route(g, zoneId, pair[1], pair[0]);
+    assert.deepEqual(outward.at(-1), pair[1], zoneId + ': outward');
+    assert.deepEqual(inward.at(-1), pair[0], zoneId + ': return');
+    assert.equal(g.zoneId, home, zoneId + ': no hero-zone mutation');
+  }
+});
