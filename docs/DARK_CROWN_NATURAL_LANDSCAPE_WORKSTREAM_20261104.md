@@ -1,0 +1,67 @@
+# Dark Crown natural landscape — parallel workstream, source ownership and integration gate
+
+**Game:** So I Became the Dark Lord's Problem (SIBDLP)  
+**Established:** 4 November 2026  
+**Dedicated branch:** `feat/dark-crown-natural-landscape-20261104`  
+**Source baseline:** active Dark Crown [PR #769](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/769) head `8995548d0b372e28ff68dfd4a507eff451d36cf8` at branch creation. Target the **lead feature branch**, not `main`.  
+**Owner decisions:** [PR #707](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707), authorial design amendment commit `070b784c84525a19e6d1a7d819f325cccefce306`.  
+**Status:** bounded engineering **foundation implemented in isolation**; **not integrated into runtime**, no source-native render, visual acceptance, main merge, deployment or physical-device verification.
+
+## Objective and nonnegotiable design
+
+Reconstruct **all outdoor natural terrain and wild vegetation** of Dark Crown at serious regional scale. The primary natural-setting analogue is **Craters of the Moon, Idaho**, complemented by **Newberry volcanic terrain, Oregon**. Make legible cooled basalt flow histories, overlain lobes, fractured clinker, cinder/ash flats, oxidized rock, subdued obsidian, rocky rims, and true kīpuka-like older vegetated islands. Differentiate bare new flows, intermittent pioneers, older shrub-dominated ash, sheltered vegetal remnants and limited wind-shaped conifer-like silhouettes. Natural geology sets the environment **beneath** the fantasy civilization and does not transplant American buildings, settlement history or species canon. The continuously molten original lava channel remains an intentional fantasy extrapolation, not geologically representative of those North American sites.
+
+Keep the existing Dark Crown's distinct civic/artisan/military/industrial identity, Crownwatch, Ash Refuge, Foundry, Cindermaw, all two original main lava crossings, local dry gaps, buildings, roads, sprites, original 15 source-grounded thermal works, seven candidate municipal utility footprints, monster/quest/loot identities, four classes and v4 saves. No new natural collider or hidden simulation economy without separate native route/save review; preserve original scene asset IDs.
+
+**Approved material scope:** stop *actively painting* the T005 `terrain:ground:crown` PNG material over the outdoor region after integrated code/manifest/cache/offline adjustments. Preserve source PNG and historical approved/rollback record. This retirement does **not** remove road/paving, rock, magma crust, interior/Foundry textures or any other regional materials.
+
+## Current source findings — 4 November 2026
+
+- `src/prototype/visuals.js:floor()` fills outdoor region 4 with a flat `#343644` base and presently calls `PrototypeMaterials.paint(..., 'terrain:ground:crown', ...)` for every applicable world-anchored 80-unit diamond. `groundDetail()` uses small generic Crown rock/crystal marks when material fallback is absent.
+- `assets/materials/manifest.json` still registers the original 256px T005 PNG (`worldSpan:320`, opacity `0.28`). `tests/frontier-ground-lore.test.cjs` explicitly expects the Crown PNG to stay active; that test must be correctly revised **when** runtime retirement occurs, not preemptively.
+- `src/prototype/visuals.js:terrain()` already paints the actual lava strips, banks, canyon detail, authored water/lava motion and region structures. The new natural landform underlay must not redefine their collision or bridge geometry.
+- `src/prototype/rules.js:natureThemes[4]` weights black rock, crystal, ash, dead shrubs, fumaroles and obsidian. `src/prototype/world.js` places legacy nature props with saved IDs and clearance logic. Retain/migrate these deliberately instead of duplicating all scenery or breaking old saves.
+- `src/prototype/renderer.js` owns the Canvas floor cache, `src/prototype/pixi-experimental.js` caches a rendered background atlas. Static procedural geology must be anchored in **world coordinates**, not the camera or a random frame seed. Source-native Canvas and Pixi are both mandatory acceptance paths.
+- The already active #769 modifies `rules.js`, `world.js`, `visuals.js`, `renderer.js` and Pixi code. They are **shared integration surfaces**, not files for competing independent edits. Existing city/road design is live work in another chat; source geometry can move. Treat its scene board and installed site positions as authority rather than freezing guessed island coordinates now.
+
+## Exact parallel-work ownership
+
+**This workstream owns:** the new `src/prototype/dark-crown-landscape.js` pure geological and habitat-field module; its focused `tests/dark-crown-landscape-field.test.cjs`; authored natural flow/island plans once native scene survey is complete; necessary future natural art and focused visual measurements; this document and its feature PR.
+
+**PR #769 lead owns integration:** authoring the final shared-module load order, calling the model from `visuals.js` or a wrapper, cross-render paint/cache logic, material manifest and offline-bundle retirement, existing nature-prop migration, final site/road/utility/collision reconciliation, and combined Phase-2/3/5 signoff. These may be proposed here as reviewed patches but must **not overwrite concurrent edits**. Any separate landscape PR must target the #769 **feature branch**, never `main`; review the new lead SHA immediately before integration.
+
+**PR #707 owns design canon.** New landscape art alternatives may be discussed here; any meaningful owner art decision is recorded there. Existing city architecture, Foundry equipment-only correction (Phase 4), unrelated music, controls and phone orientation work are not appropriated by this stream. The separate landscape-phone PR #793 may affect final capture dimensions but is not a dependency for pure geology.
+
+**All participating chats should read this workstream file and #707's 4-November amendment before changing Crown natural terrain.** GitHub comments and branch links establish common instructions; they do not magically guarantee every independent conversation has read or accepted them. The active integration lead should acknowledge the source contract in its next session and reconcile any competing edits on the live PR, not rely on old transcript summaries.
+
+## Implemented first checkpoint (no runtime effect)
+
+`src/prototype/dark-crown-landscape.js` is a new independent, non-exported-to-game-browser / not-yet-script-loaded deterministic field model. It provides stable world-space gradient noise, authorable elliptical/coarse basalt-flow footprints, irregular vegetation-island masks and a `sample(x,y,options)` interface returning estimated ground age, flow presence, cinder, fracture, oxidization, island cover and potential pioneer/shrub/tree density. Optional author-supplied hazard/exclusion callbacks deliberately suppress plants on heat or constructed surfaces. All data are *rendering cues only*: the module does not load the world, draw pixels, generate collidable props, change the lava barrier, modify saved state or choose final authored island locations.
+
+This isolated model is a starting engine, **not a finished landscape system**. The actual shape, number and placement of flows/islands, site-specific heat/road exclusion inputs, aesthetic visual quality, painter, lighting, material retirement, runtime import, old-save nature reconciliation, CPU profiling and Pixi/Canvas parity remain unimplemented.
+
+**Focused checks at checkpoint:** model and new test files were fetched from the committed branch and the complete focused test body executed in an isolated JavaScript V8 runner with Node `assert` and timing shims: basic geology, island hierarchy, heat/built exclusions, repeat-world stability, sub-tile continuity, input immutability and 2,304 tile-coordinate samples **PASS in that harness**. A separate model smoke check also passed. **This is NOT original Node test execution, repo CI, full build, renderer verification or actual performance benchmarking.** A real `node tests/dark-crown-landscape-field.test.cjs` run on a repository checkout and relevant focused CI are the next verification steps. No reliable timing figure has been established.
+
+## Work breakdown for this chat (independent until final integration)
+
+1. **Natural-scene source survey:** inspect 150% actual game cameras across all sixteen owner-approved PR #707 composition categories (without duplicating the lead's full civic review), original western arrival, Ash Refuge, both lava bridges, thermal/Foundry complexes, Cindermaw and distant wilderness; map existing terrain, props, roads, collision, utility reservations and vegetation opportunities. Record which landscape is truly walkable, not just a teleported camera.
+2. **Geological macro-composition:** author meaningful cooling/age chronology and major basalt-flow/ash-scour shapes. Produce representative world-space footprints and human-reviewable native-camera visual comparisons; avoid grid/noise-only output and aesthetically monotonous near-black ground.
+3. **Habitat island composition:** author a few irregular old-land islands plus subordinate sheltered patches. Ensure vegetation type/density relates to cool soil and protection, not arbitrary sprite counts. Avoid monster roosts, molten boundaries, freight yards, civic avenues and unbuilt municipal tower sites. Respect existing natural props without dupes.
+4. **Shared integration proposal (joint with #769 lead):** plug in world-anchored procedural ground/dressing; retire active Crown ground PNG without deleting provenance; update material/hotload/cache/Pixi/offline manifests and revised affected original tests; retain untouched civilization/roads/actors/game-state behavior.
+5. **Focused native QA:** test original walkable crossings, heat works, services and visual telegraphs; Canvas/Pixi at desktop and 800×375/844×390 landscape camera, day/night; old-v4-save restore, deterministic reload and camera seams, CPU/GPU budgets and PWA completeness. Save actual screenshots, counts, source SHA and failures. No broad suites, merge or publication without new approval.
+6. **Lead handoff:** present final bounded changes, exact source/testing receipts, image comparisons, conflict report, remaining limitations and recommended safe integration order; PR #769 lead is final integrator. Do not independently mark the complete 0–6 overhaul finished.
+
+## First concrete next action
+
+**Begin the actual native-camera/geographical survey** and candidate flow/island map, then implement the macro terrain **drawing** inside the new isolated module against representative camera views. Do not jump to removing the production material manifest just to get a misleading green test; first prove a compelling landscape in actual game scenes, then coordinate the single shared runtime integration with the PR #769 lead.
+
+## Status gate (do not overclaim)
+
+- **Planned and owner approved:** complete outdoor geology/ecology visual reconstruction, site-aware wild vegetation, T005 active outdoor retirement.
+- **Implemented on this branch:** deterministic unconnected landscape-model foundation + isolated focused test + integration handoff.
+- **Tested:** focused test logic in V8 shim **only**, **not original Node/Actions**, no native rendered scenes.
+- **Merged to PR #769/main:** NO / NO.
+- **Deployed:** NO.
+- **Device-verified:** NO.
+
+This document is the single development handoff for this separate natural-landscape workstream. The authoritative regional phase board remains in PR #769; the owner art canon remains in PR #707.
