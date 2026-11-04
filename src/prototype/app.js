@@ -5385,12 +5385,12 @@
       action('New game · Normal Mode', () => {
         game.s.endingAck = true;
         save();
-        chooseLanguage('normal');
+        chooseClass('normal');
       }),
       action('New game · Nightmare Mode', () => {
         game.s.endingAck = true;
         save();
-        chooseLanguage('nightmare');
+        chooseClass('nightmare');
       }),
       action('Export completed run', () =>
         exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
