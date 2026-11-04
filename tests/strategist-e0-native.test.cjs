@@ -53,6 +53,8 @@ try {
     assert.deepEqual(g.hero.skills, [1, 1, 1, 0, 0, 0, 0, 0]);
     assert.equal(g.s.companionCombatTraining, 1,
       'Mineral starter does not unlock any companion skills');
+    assert.equal(g.companionSecondSkillUnlocked(), false,
+      'native companion AI must not treat Ogre starting Mineral as training');
     assert.equal(g.s.strategistAcidBottles, 0);
     assert.equal(C.validate(g.snapshot()).companionCombatTraining, 1);
     const withoutTraining = g.snapshot();
@@ -76,6 +78,11 @@ try {
     g.hero.gold = 100000;
     assert.equal(g.learn(2, lesson[4]), true);
     assert.equal(g.s.companionCombatTraining, 1);
+    assert.equal(g.companionSecondSkillUnlocked(), false,
+      'learning Mineral cannot unlock a Soldier/Archer second special');
+    g.s.companionCombatTraining = 2;
+    assert.equal(g.companionSecondSkillUnlocked(), true,
+      'an independently and lawfully earned companion-training flag still works');
   }
   {
     const {g, primary, nearby, distant, events} = make(1);
