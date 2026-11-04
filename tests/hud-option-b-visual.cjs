@@ -277,7 +277,41 @@ async function capture(page,label) {
       await inside.locator('#close-button').tap();
       assert(await inside.locator('#modal').isHidden(),
         'rotated Back touch target closes the same dialog');
-      console.log('PASS fixed-horizontal phone iframe, rotated taps and session continuity');
+      // Full campaign activation from a physically upright phone: game time
+      // must advance, and rotating must not remount or pause the Campaign.
+      await inside.locator('#title-new').tap();
+      await inside.getByRole('button',{name:/Normal/i}).first().tap();
+      await inside.getByRole('button',{
+        name:'Standard death and refuge recovery',exact:true,
+      }).tap();
+      await inside.getByRole('button',{name:/Palad[ií]n/i}).first().tap();
+      await outer.waitForFunction(() =>
+        document.querySelector('#phone-game-frame')?.contentWindow?.Prototype?.started,
+        null,{timeout:90000});
+      const startedTime=await outer.locator('#phone-game-frame').evaluate(el=>{
+        const win=el.contentWindow;
+        win.__orientationActiveCampaign=win.Prototype.game;
+        return win.Prototype.game.s.time;
+      });
+      await outer.waitForFunction(t=>{
+        const win=document.querySelector('#phone-game-frame')?.contentWindow;
+        return win?.Prototype?.started && win.Prototype.game.s.time>t+0.05;
+      },startedTime,{timeout:12000});
+      await outer.setViewportSize({width:844,height:390});
+      await outer.waitForFunction(()=>
+        document.querySelector('#phone-game-frame')?.contentWindow?.innerWidth===844);
+      await outer.setViewportSize({width:375,height:800});
+      await outer.waitForFunction(()=>
+        document.querySelector('#phone-game-frame')?.contentWindow?.innerWidth>
+        document.querySelector('#phone-game-frame')?.contentWindow?.innerHeight);
+      const survived=await outer.locator('#phone-game-frame').evaluate(el=>{
+        const win=el.contentWindow;
+        return {started:win.Prototype.started,unchanged:win.__orientationActiveCampaign===win.Prototype.game,
+          time:win.Prototype.game.s.time};
+      });
+      assert(survived.started&&survived.unchanged&&survived.time>startedTime,
+        'active landscape combat simulation survives portrait/landscape turns');
+      console.log('PASS fixed-horizontal phone iframe, rotated taps, campaign simulation and session continuity');
     } finally {await outer.close();}
   } finally {await browser?.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
