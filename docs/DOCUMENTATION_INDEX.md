@@ -528,7 +528,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - [Snapshot Monster Stronghold Case Audit 20261014](SNAPSHOT_MONSTER_STRONGHOLD_CASE_AUDIT_20261014.md) — *Dated record.* Examines snapshot monster stronghold case for source or design inconsistencies, recording dated findings and limits.
 - [Snapshot Precert Implementation Quality Audit 20261014](SNAPSHOT_PRECERT_IMPLEMENTATION_QUALITY_AUDIT_20261014.md) — *Dated record.* Examines snapshot precert for source or design inconsistencies, recording dated findings and limits.
 - [Update Notice 20261020](UPDATE_NOTICE_20261020.md) — *Dated record.* Describes update notice decisions, constraints or engineering observations from its original development checkpoint.
-- **[V09 Release Notes](V09_RELEASE_NOTES.md)** — **Reference.** October Community Snapshot release record, not an up-to-date release ledger.
+- **[V09 Release Notes](V09_RELEASE_NOTES.md)** — **Release history and draft.** Unpublished v0.9.2 release-note preparation plus the preserved October Community Snapshot; [Development state](DEVELOPMENT_STATE.md) remains the authoritative live publication ledger.
 - [Work Mode PR313 Handoff Verification 20261016](WORK_MODE_PR313_HANDOFF_VERIFICATION_20261016.md) — *Dated record.* Records tests or acceptance criteria for work mode at its original checkpoint.
 - [Work Mode Single Pr Handoff 20261016](WORK_MODE_SINGLE_PR_HANDOFF_20261016.md) — *Dated record.* Preserves work mode single pr context, known work and next-stage questions from a dated handoff.
 - [Work Mode Source Handoff Audit 20261016](WORK_MODE_SOURCE_HANDOFF_AUDIT_20261016.md) — *Dated record.* Examines work mode source for source or design inconsistencies, recording dated findings and limits.
