@@ -123,8 +123,10 @@
           (job.target !== null && !point(job.target,options.zoneSize?.(job.zoneId) ?? 5000)) ||
           (job.sourceId !== null && (typeof job.sourceId !== 'string' ||
             job.sourceId.length > 150)) ||
+          (job.phase === 'station' && (job.sourceId !== null || job.target !== null)) ||
+          (job.phase === 'idle' && (job.sourceId !== null || job.target !== null)) ||
           (job.phase === 'sampling' && (!job.target || !job.sourceId)) ||
-          (job.phase === 'outbound' && !job.target) ||
+          (job.phase === 'outbound' && (!job.target || !job.sourceId)) ||
           (job.phase === 'return' && job.carries !== true) ||
           (job.phase !== 'return' && job.phase !== 'idle' && job.carries))
         fail('assignment');
