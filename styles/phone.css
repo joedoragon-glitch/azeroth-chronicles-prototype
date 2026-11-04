@@ -1050,6 +1050,10 @@ body[data-experience='phone'] #message .notice-card.notice-feedback .notice-deta
     min-height: 58px;
     overflow-wrap: anywhere;
   }
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions > .character-name-field {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
 
   /* Routine Adventure and Game/settings indexes use the short screen
      horizontally. Maps, long Archive reading, and specialized forms retain
