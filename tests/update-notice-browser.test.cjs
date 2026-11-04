@@ -252,48 +252,25 @@ const server = http.createServer((req, res) => {
       await page.waitForFunction(() => window.Prototype?.started);
       failUpdateCheck = true;
       await page.locator('#menu-button').click();
-      await page
-        .locator('#modal-actions')
-        .getByRole('button', { name: phone ? 'Juego y ajustes' : 'Game and settings', exact: true })
-        .click();
-      await page
-        .locator('#modal-actions')
-        .getByRole('button', {
-          name: phone ? 'Buscar actualización' : 'Check for game update',
-          exact: true,
-        })
-        .click();
-      await page
-        .waitForFunction(
-          () =>
-            document
-              .getElementById('status')
-              .textContent.includes(
-                document.documentElement.lang === 'es-419'
-                  ? 'No se pudo actualizar'
-                  : 'Update unavailable',
-              ),
-          null,
-          { timeout: 5000 },
-        )
-        .catch(async () => {
-          throw Error(
-            'Failed-update status: ' +
-              (await page.evaluate(() =>
-                JSON.stringify({
-                  text: document.getElementById('status').textContent,
-                  paused: Prototype.paused,
-                  ready: !document.getElementById('update-button').hidden,
-                  language: document.documentElement.lang,
-                }),
-              )),
-          );
-        });
+      await page.locator('#modal-actions').getByRole('button', {
+        name: phone ? 'Juego y ajustes' : 'Game and settings', exact: true,
+      }).click();
+      assert.equal(await page.locator('#modal-actions').getByRole('button', {
+        name: phone ? 'Buscar actualización' : 'Check for game update',
+        exact: true,
+      }).count(), 0, 'Settings no longer duplicates the automatic update check');
+      // A rejected Service Worker check does not pause the current campaign.
+      // Failure is exercised at the original browser API boundary, not through
+      // a user control which no longer exists.
+      await page.evaluate(async () => {
+        try { await (await navigator.serviceWorker.getRegistration()).update(); }
+        catch (_) {}
+      });
       await page.evaluate(() => Prototype.closeMenu());
-      assert(
-        !(await page.evaluate(() => Prototype.paused)),
-        'failed network check does not freeze play',
-      );
+      assert(!(await page.evaluate(() => Prototype.paused)),
+        'failed network check does not freeze play');
+      assert.equal(await page.evaluate(() => Prototype.game.hero.gold), 42424,
+        'automatic update check failure cannot change campaign progress');
 
       // An ordinary next launch discovers another release automatically.
       // Changed HTML and JS must both be present before unlocking its menu.
