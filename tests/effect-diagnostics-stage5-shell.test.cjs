@@ -51,9 +51,9 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     h.click('Return to Main Menu');
     h.elements.get('title-new').click();
     h.click('New Developer Mode run');
-    h.click('Standard death and refuge recovery');
-    const paladin = h.elements.get('modal-actions').children.find((b) =>
-      b.textContent.includes('paladin'));
+    // Developer runs bypass the normal/succession choice, then show class selection.
+    const paladin = h.elements.get('modal-actions').children.find((button) =>
+      /paladin/i.test(button.textContent));
     assert(paladin, 'Developer hero selection not available');
     paladin.click();
     const g = h.scope.Prototype.game;
