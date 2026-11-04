@@ -300,8 +300,10 @@ vm.runInNewContext(
   { filename: 'pixi-experimental.js' },
 );
 const canvasSurface = { width: 1368, height: 630, parentNode: { insertBefore() {} } };
+let r783TraceActive = false;
 const gpuOptions = {
   worldCanvas: canvasSurface,
+  getDiagnosticRecording: () => r783TraceActive,
   viewport: view,
   platform,
   getGame: () => game,
@@ -744,10 +746,23 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'night-time graphics preparation must never mutate the campaign',
   );
   valeNightGpu.activate();
+  r783TraceActive = true;
+  let r783FirstTrace = null;
   for (const dx of [0, -30, -60, -30, 0]) {
     game.hero.x = 2160 + dx;
-    valeNightGpu.draw();
+    const trace = valeNightGpu.draw();
+    if (!r783FirstTrace) r783FirstTrace = trace;
   }
+  assert(r783FirstTrace, 'opt-in trace returns exact draw stages in normal mode');
+  assert.equal(r783FirstTrace.bakesDuringDraw, 0);
+  assert.equal(r783FirstTrace.ratioBefore, 1);
+  assert.equal(r783FirstTrace.ratioAfter, 1);
+  for (const stageName of [
+    'viewport', 'resolution', 'background', 'actors', 'liquid',
+    'atmosphere', 'scene', 'predictive',
+  ])
+    assert(Number.isFinite(r783FirstTrace.phaseMs[stageName]),
+      'opt-in capture measures synchronous Pixi stage: ' + stageName);
   const r783Cold = valeNightGpu.status();
   const r783Visible = frames.at(-1);
   assert.equal(r783Visible.filter((actor) => actor.key.startsWith('npc:r783-')).length, 15);
@@ -769,8 +784,11 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   // Pixi resolution-change path, without claiming to exercise app.js Auto policy.
   canvasSurface.width = 1368;
   canvasSurface.height = 630;
-  valeNightGpu.draw();
+  const r783SharperTrace = valeNightGpu.draw();
   const r783Sharper = valeNightGpu.status();
+  assert.equal(r783SharperTrace.resolutionChanged, true);
+  assert.equal(r783SharperTrace.ratioAfter, 1.5);
+  assert.equal(r783SharperTrace.bakesDuringDraw, 4);
   assert.equal(r783Sharper.pixelRatio, 1.5);
   assert(
     r783Sharper.proceduralBakes > r783BeforeRevisit,
@@ -778,8 +796,11 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   );
   canvasSurface.width = 912;
   canvasSurface.height = 420;
-  valeNightGpu.draw();
+  const r783ReturnedTrace = valeNightGpu.draw();
   const r783Returned = valeNightGpu.status();
+  assert.equal(r783ReturnedTrace.resolutionChanged, true);
+  assert.equal(r783ReturnedTrace.ratioAfter, 1);
+  assert.equal(r783ReturnedTrace.bakesDuringDraw, 0);
   assert.equal(r783Returned.pixelRatio, 1);
   assert.equal(
     r783Returned.proceduralBakes,
@@ -816,6 +837,22 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
         measurement: 'mock-only; no real GPU or iPhone frame timing',
       }),
   );
+  // One new cold procedural identity proves that the measured actor substage
+  // is emitted only on-demand, and never during subsequent ordinary draws.
+  game.props.push({
+    id: 'r783-unique-unprepared',
+    x: 2160, y: 2359, structure: 'lumber-pile',
+  });
+  const newTrace = valeNightGpu.draw();
+  assert.equal(newTrace.bakesDuringDraw, 1);
+  assert(Number.isFinite(newTrace.phaseMs.proceduralRasterMs));
+  assert(Number.isFinite(newTrace.phaseMs.proceduralRegisterMs));
+  assert(Number.isFinite(newTrace.phaseMs.actorCandidatesMs));
+  assert(Number.isFinite(newTrace.phaseMs.actorSubmitMs));
+  r783TraceActive = false;
+  assert.equal(valeNightGpu.draw(), undefined, 'opt-out leaves ordinary draws untimed');
+  assert.equal(valeNightGpu.status().drawCpuProfile.sampledFrames, 0,
+    'normal-mode capture must not contaminate sampled developer percentiles');
   valeNightGpu.release();
   game.night = previousNight;
   game.daylightPhase = previousDaylight;
