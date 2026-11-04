@@ -45,6 +45,12 @@
     startingCompanions: [],
     formationRole: 'ranged',
   });
+  // E0: metadata only. No stats registry, charged-skills admission, New Game
+  // entry or save acceptance until the complete fifth-class gate is satisfied.
+  defineClassFoundation('strategist', {
+    startingCompanions: ['soldier', 'archer'],
+    formationRole: 'melee',
+  });
 
   const talentMaxRanks = R.balance.disciplines.maxRanks;
   // Rounded from the level-1 class stat ratios: talent growth reinforces each class's natural strengths while keeping the old average power budget.
@@ -83,7 +89,8 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass))
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass) ||
+          (heroClass === 'strategist' && (mode !== 'developer' || !!options.succession)))
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -200,7 +207,11 @@
         power: c.power,
         armor: c.armor,
         speed: c.speed,
-        skills: [1, 0, 0, 0, 0, 0, 0, 0],
+        // Strategist starts with three learned alchemies, but class admission
+        // remains blocked until native starter actions and UI really exist.
+        skills: heroClass === 'strategist'
+          ? [1, 1, 1, 0, 0, 0, 0, 0]
+          : [1, 0, 0, 0, 0, 0, 0, 0],
         cd: Array(8).fill(0),
         chargedCd: Array(8).fill(0),
         basicCd: 0,
@@ -232,6 +243,9 @@
       this.s.party = starterTypes.map((type, i) =>
         this.unit(type, start.x + (i === 0 ? -40 : 50), start.y + (i === 0 ? 40 : 30)),
       );
+      // Real shared finite stock, never a synthesized casting resource.
+      // Zero is deliberately provisional pending the playable starter kit.
+      if (heroClass === 'strategist') this.s.strategistAcidBottles = 0;
       if (mode === 'arena') {
         this.s.arenaStage = 'hub';
         this.s.arenaRegion = 0;
@@ -3233,6 +3247,10 @@
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       this.clearEncounterUnits();
+      // A return trip to the same zone must never resume a pre-travel
+      // Strategist's unsaved third-dagger rhythm. Other classes are untouched.
+      if (zone !== previousZone && this.hero.class === 'strategist')
+        this.resetBasicCombo();
       if (zone !== this.zoneId) this.resetDungeonDefenders();
       for (const oldZone of Object.values(this.s.zones))
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -3938,6 +3956,8 @@
       return overflow;
     }
     successor(heroClass) {
+      // The Stage 1A preview is never an heir, even if its class becomes globally registered.
+      if (heroClass === 'strategist') return false;
       if (
         !this.s.challenge.succession ||
         !this.s.challenge.pending ||

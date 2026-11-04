@@ -10,6 +10,9 @@
     // At most two finite stationary performance circles per campaign.
     // Weakly owned, unsaved and automatically scoped to the active region.
     const rogueMusicStations = new WeakMap();
+    // Success-only Ogre dagger cadence. No saved timer/target, no effect on
+    // the existing attempt-based basic combo shared by four playable classes.
+    const strategistDaggerStates = new WeakMap();
     // One weak, unsaved, per-actor station-visibility cache. On-demand reads
     // are cheap even when combat asks several times per frame for every ally.
     const rogueStationChecks = new WeakMap();
@@ -609,6 +612,7 @@
         };
       }
       resetBasicCombo() {
+        strategistDaggerStates.delete(this);
         this.basicComboStep = 0;
         this.basicComboAt = -1e9;
         this.basicComboClass = this.hero.class;
@@ -747,6 +751,11 @@
         }
         if (!enemy) enemy = this.cycleHeroTarget(visible);
         if (!enemy) return null;
+        // Selecting a different manual target breaks the Ogre's consecutive
+        // actually-landed dagger rhythm even if no further attack occurs.
+        const priorDagger = strategistDaggerStates.get(this);
+        if (this.hero.class === 'strategist' && priorDagger && priorDagger.targetId !== enemy.id)
+          strategistDaggerStates.delete(this);
         this.manualHeroTargetId = enemy.id;
         this.manualHeroTargetZone = this.zoneId;
         this.manualHeroTargetLocked = true;
@@ -769,6 +778,8 @@
           )
           .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
         if (!enemies.length) {
+          // A deliberate no-target release also abandons an Ogre combo.
+          if (this.hero.class === 'strategist') strategistDaggerStates.delete(this);
           // A deliberate quick press releases a lock even offscreen, including
           // its legacy squad-focus target, so automatic combat can resume.
           if (this.s.heroTarget === this.manualHeroTargetId) this.s.heroTarget = null;
@@ -779,6 +790,9 @@
         }
         const index = enemies.findIndex((e) => e.id === current?.id);
         const target = enemies[(index + 1) % enemies.length];
+        const priorDagger = strategistDaggerStates.get(this);
+        if (this.hero.class === 'strategist' && priorDagger && priorDagger.targetId !== target.id)
+          strategistDaggerStates.delete(this);
         this.manualHeroTargetId = target.id;
         this.manualHeroTargetZone = this.zoneId;
         this.manualHeroTargetLocked = false; // A new manual choice releases an old lock.
@@ -1698,6 +1712,98 @@
           (u.active ? 'Joined the group.' : 'Group full; resting in reserve.'));
         return true;
       }
+      // E0: native Ogre-only ordinary dagger hit. This entrypoint can be
+      // exercised by isolated diagnostic fixtures, but cannot admit a class.
+      // A real HP loss, not damage()'s boolean or an attempted animation,
+      // authorizes one cadence contact. No separate critical-release roll.
+      castStrategistBasic(targetId = null) {
+        const cfg = R.strategistBasicFoundation;
+        if (
+          this.hero.class !== 'strategist' || this.peace ||
+          this.hero.hp <= 0 || !this.hero.skills[0] ||
+          (this.hero.basicCd || 0) > 0 ||
+          this.s.challenge.pending || this.s.challenge.gameOver ||
+          this.tacticalScatterState(this.hero) ||
+          this.hero.deathRollHeld || this.hero.keeperHeld ||
+          this.hero.order?.type === 'skill-approach'
+        ) return false;
+        const selected = this.selectedHeroTarget();
+        const preferred = targetId ?? selected?.id ?? this.s.heroTarget;
+        const candidates = this.zone().enemies.filter((e) =>
+          e.hp > 0 && !e.neutral && !e.returning &&
+          !this.awaitsHeroAttack(e) && !this.attackResetProtected(e) &&
+          this.tacticalDirectTargetable(e) &&
+          dist(e, this.hero) <= cfg.range && this.line(this.hero, e)
+        );
+        const locked = !!selected || (targetId !== null && targetId !== undefined);
+        const primary = candidates.find((e) => e.id === preferred) ||
+          (locked ? null : candidates.sort((a, b) =>
+            dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
+        if (!primary) return false;
+        // Switching the intended target breaks a consecutive-target rhythm
+        // even if the new dagger is blocked. A miss on the same target merely
+        // leaves the current landed-count unchanged.
+        const prior = strategistDaggerStates.get(this);
+        if (prior && prior.targetId !== primary.id)
+          strategistDaggerStates.delete(this);
+        this.engage(primary);
+        const beforeHp = primary.hp;
+        const contactZone = this.zoneId;
+        this.hero.basicCd = this.basicSkillCooldown();
+        const resolved = this.damage(primary,
+          Math.max(1, this.power()) * cfg.primaryMultiplier, 'hero',
+          { automaticBasic: true });
+        if (!resolved || !(beforeHp > primary.hp) || this.zoneId !== contactZone)
+          return true; // Attempt consumed recovery, not a successful contact.
+        const previous = strategistDaggerStates.get(this);
+        const deaths = this.s.statistics.deaths;
+        const continuing = previous &&
+          previous.hero === this.hero &&
+          previous.zone === this.zoneId &&
+          previous.deaths === deaths &&
+          previous.targetId === primary.id &&
+          this.s.time >= previous.at &&
+          this.s.time - previous.at <= cfg.resetSeconds;
+        const step = continuing ? (previous.step % 3) + 1 : 1;
+        strategistDaggerStates.set(this, {
+          hero: this.hero, zone: this.zoneId, deaths, targetId: primary.id,
+          step, at: this.s.time,
+        });
+        this.event('strategistDaggerLanded', {
+          actor: 'hero', targetId: primary.id, x: primary.x, y: primary.y,
+          step, weapon: 'twin-daggers',
+        });
+        // Exactly one shared Bottle on every stocked third landed basic.
+        // The Acid's native area damage is not another basic/critical receipt.
+        const stock = this.s.strategistAcidBottles;
+        if (step === 3 && Number.isInteger(stock) &&
+            stock > 0 && stock <= cfg.maxBottles) {
+          this.s.strategistAcidBottles = stock - 1;
+          let hits = 0;
+          const splash = this.zone().enemies.filter((e) =>
+            e.hp > 0 && !e.neutral && !e.returning &&
+            !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
+            dist(e, primary) <= cfg.acidSplashRadius &&
+            this.line(primary, e) && this.line(this.hero, e)
+          ).sort((a, b) =>
+            dist(a, primary) - dist(b, primary) || this.idOrder(a, b)
+          ).slice(0, cfg.acidSplashCap);
+          for (const e of splash) {
+            const hp = e.hp;
+            if (this.damage(e,
+              Math.max(1, this.power()) * cfg.acidSplashMultiplier,
+              'hero', { area: true }) && e.hp < hp) hits++;
+          }
+          this.event('strategistAcidSplash', {
+            actor: 'hero', targetId: primary.id, x: primary.x, y: primary.y,
+            radius: cfg.acidSplashRadius, hits, bottlesRemaining: stock - 1,
+          });
+        }
+        // A defeated foe's recycled ID must not continue an old contact
+        // sequence if its native respawn becomes targetable quickly.
+        if (primary.hp <= 0) strategistDaggerStates.delete(this);
+        return true;
+      }
       // Rogue automatic basic: only the surviving primary may try Charm.
       castRogueBasic(targetId = null) {
         const cfg = R.rogueHeroFoundation.basic;
@@ -1783,6 +1889,10 @@
         return this.cast(1, null, false, null, true);
       }
       cast(slot, targetId, charged = false, encountersAtStart = null, automatic = false) {
+        // Dormant native E0 basics only. No manual skills or charged admission.
+        if (this.hero.class === 'strategist')
+          return slot === 1 && automatic && !charged
+            ? this.castStrategistBasic(targetId) : false;
         // The unlocked Rogue songs are staged under the same unregistered
         // class gate. Later performance families remain unavailable.
         if (this.hero.class === 'rogue') {

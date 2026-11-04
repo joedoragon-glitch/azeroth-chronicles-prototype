@@ -6,6 +6,12 @@
 
 **Evidence limits:** The file locations and major boundaries were cross-checked against the published source, including the main gameplay, combat, persistence, graphics, audio and build owners. Selected numbers come from source/manifests; the older full Phase 4 integration inspection is historical evidence, **not** a claim that every internal function, historical balance number, full campaign, browser or physical-device behavior was re-tested today. For exact published build and pending acceptance, use [Development state](DEVELOPMENT_STATE.md); for permission and testing gates use [AGENTS.md](../AGENTS.md).
 
+## Strategist Developer Playtest — current draft integration (4 November 2026)
+
+The [seven-gate developer-playtest ledger](STRATEGIST_DEVELOPER_PLAYTEST_GATES_20261104.md) owns the current **unmerged** Stage 1A integration roadmap. This draft's first code change is **presentation only**: `visuals.js::strategistHero` reuses the canonical `ogreBody` anatomy without an enemy club, adding two short daggers and a compact reagent kit. The ordinary enemy Ogre's rendering and all actor hitboxes remain unchanged. True Canvas rendering is exercised by a focused native campaign capture; it does **not** admit the Strategist to the global class registry or certify combat actions, PixiJS, devices or release. Keep the current four-class registration and v4 validation intact until a separately validated Developer-only admission gate exists.
+
+Stage 1A next reconciles E0 physical dagger combat (#780), authentic environmental materials (#770) and Reversal (#696) **against current main** into one draft, with real starter skills and separate defensive mechanics. Field Labs (#782) are later and must not be imported wholesale as a playtest prerequisite. Diagnostic `?developer=1` is a link toggle, not authentication; public-mode refusal must be enforced by the engine and save validator as well as menus.
+
 ## The architecture in one minute
 
 The game is a **single, multi-file web application**: the browser shell collects player input and manages menus; one shared **`Campaign`** instance owns gameplay state; separate domain modules extend its behavior; rendering and audio observe the resulting state/events. The service worker caches the installable game for offline play. Desktop/Chromebook and phone use the **same simulation** with different control layouts.

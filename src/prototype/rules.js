@@ -6651,6 +6651,17 @@
     }),
     endure: Object.freeze({ duration: 2, floorHp: 1 }),
   });
+  // E0-only dormant Ogre basic; all damage coefficients are provisional and
+  // must be reviewed before fifth-class admission. No extra critical roll.
+  const strategistBasicFoundation = Object.freeze({
+    range: 90,
+    resetSeconds: 4,
+    primaryMultiplier: 1,
+    acidSplashRadius: 58,
+    acidSplashMultiplier: 0.4,
+    acidSplashCap: 3,
+    maxBottles: 1000,
+  });
   const basicAttackCombo = {
     steps: 3,
     resetSeconds: 4,
@@ -7852,6 +7863,7 @@
     heroAreaTargetCaps,
     classUltimates,
     basicAttackCombo,
+    strategistBasicFoundation,
     rogueHeroFoundation,
     rogueCharmNicknames,
     companionSkills,
