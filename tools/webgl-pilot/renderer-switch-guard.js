@@ -1,7 +1,8 @@
-/* Primary PixiJS/WebGL2 renderer controller. Keep the original Canvas safe.
- * The 15-second selection is a TRIAL until confirmed.
- * A dedicated Canvas surface must remain alive beneath/alongside WebGL2.
- * This module does NOT assert that a complete WebGL renderer exists.
+/* Primary PixiJS/WebGL2 renderer controller with independent Canvas fallback.
+ * Manual Canvas-to-WebGL2 selection has a 15-second Keep/Revert trial;
+ * default startup and recovery use separate guarded paths.
+ * A dedicated Canvas surface remains available alongside WebGL2.
+ * Renderer selection alone does not establish FPS or device acceptance.
  */
 (function(root){
   'use strict';

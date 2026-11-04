@@ -1,6 +1,6 @@
 # Runtime architecture — current system map
 
-**So I Became the Dark Lord's Problem** · Source owners reconciled against [main@323bb2a7](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/323bb2a75ceec9bafa8dfe9d567be057309a0115), **29 October 2026**. [Development state](DEVELOPMENT_STATE.md) owns current build/publication evidence.
+**So I Became the Dark Lord's Problem** · Source owners reconciled against [main@323bb2a7](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/323bb2a75ceec9bafa8dfe9d567be057309a0115), **29 October 2026**. [Development state](DEVELOPMENT_STATE.md) owns current build/publication evidence. **3 November 2026 scoped refresh:** renderer source ownership was rechecked against current published main; the original 29 October architecture review remains a dated baseline, not a claim of full-system recertification.
 
 **Purpose:** Help an owner, contributor or AI agent find the *actual owning code*, understand how systems interact, and make an approved change without creating a second game state, bypassing save compatibility or modifying gameplay from a rendering module. This document describes current source boundaries; it is **not** an authorization to implement or merge anything.
 
@@ -80,7 +80,7 @@ The table below is intentionally **current ownership reference**, rather than an
 | `visuals.js` / `combat-visuals.js` | Canonical procedural drawings, terrain, architecture and combat cues |
 | `sprite-format.js` / `sprites.js` | Shared static/variant/clip schema, bounded content-aware lazy loading, paused presentation clock, faithful sprite translation and procedural fallback |
 | `audio.js` / `audio-catalog.js` | Public audio facade and current compositions/event catalog |
-| `pixi-experimental.js` / `tools/webgl-pilot/*` | PixiJS-first software renderer with a one-time preference migration, bilingual Default/Backup labels and independent Canvas fallback from [#574](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/574); hardware acceptance remains open. The internal `pixi-experimental.js` filename remains historical, not a proposed UI label. |
+| `pixi-experimental.js` / `tools/webgl-pilot/*` | **Primary PixiJS WebGL2 GPU world compositor** with a one-time preference migration, bilingual Default/Backup labels, retained Canvas cue overlay and independent Canvas fallback from [#574](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/574). Newer ferry, aura and occlusion repairs are integrated; real-device rendering/FPS acceptance is not established. The internal filenames remain historical technical identifiers. |
 | `material-contract.js` / `materials.js` | Manifest-driven optional world textures, deterministic compatibility/fallback and bounded decoded/presentation residency |
 | `audio-score.js` | Source-derived score cue selection, contextual observation, scheduling and transitions; the environment/recordings owners handle their independent playback. |
 | `audio-runtime.js` / `audio-effects.js` | Context lifecycle, mixer/source cleanup/bounds, diagnostics and contextual effect recipes |
