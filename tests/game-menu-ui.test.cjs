@@ -424,32 +424,15 @@ for (const language of ['en', 'es']) {
   title('Controls', 'Controles');
   back();
   title('Game and settings', 'Juego y ajustes');
-  click(t('Save and game management', 'Partidas guardadas'));
-  short();
-  assert.equal(e.get('modal-actions').children.length, 4);
   assert(!e.get('modal-actions').children.some((node) =>
-    node.textContent.startsWith(t('Export playtest report', 'Exportar informe de prueba'))),
-    'save management no longer mixes in performance reports');
-  assert(
-    !e.get('modal-actions').children.some((node) => /Combat (Arena|Diagnostics)/i.test(node.textContent)),
-    'Normal visitors must not see the unlisted combat test save',
-  );
-  click(t('Save backups', 'Copias de seguridad'));
-  short();
-  assert.equal(e.get('modal-actions').children.length, 2);
-  back();
-  click(t('New game', 'Nueva partida'));
-  short();
-  assert(
-    e
-      .get('modal-actions')
-      .children.find((b) =>
-        b.textContent.startsWith(t('New game in Nightmare Mode', 'Nueva partida Pesadilla')),
-      ).disabled,
-  );
-  back();
-  back();
-  back();
+    node.textContent.includes('Save and game management') ||
+      node.textContent.includes('Partidas guardadas')),
+    'save and backups are no longer duplicated inside Settings');
+  assert(!e.get('modal-actions').children.some((node) =>
+    node.textContent.includes('Check for game update') ||
+      node.textContent.includes('Buscar actualización')),
+    'manual update checks are removed; startup checks remain');
+  back(); // Adventure menu
   assert.equal(
     JSON.stringify(g.snapshot()),
     initial,
@@ -519,10 +502,8 @@ console.log(
   assert.equal(playtest.elements.get('title-screen').hidden, false);
   playtest.elements.get('title-new').click();
   click('New Combat Diagnostics run');
-  assert.equal(playtest.elements.get('modal-title').textContent, 'Choose your language');
-  click('English');
   assert.equal(playtest.elements.get('modal-title').textContent,
-    'New Combat Diagnostics adventure');
+    'New Combat Diagnostics adventure', 'new runs reuse saved language');
   // The first child is the optional name input, not a hero choice.
   // Exercise the real button that starts the selected class.
   const heroButton = actions().find((node) => /paladin/i.test(node.textContent));
@@ -547,10 +528,15 @@ console.log(
   };
   normal.elements.get('menu-button').click();
   open('Game and settings');
-  open('Save and game management');
+  assert(!normalActions().some((item) => /Save and game management|Check for game update/.test(item.textContent)),
+    'settings do not duplicate save/update navigation');
+  normal.elements.get('close-button').click();
+  open('Return to Main Menu');
+  normal.elements.get('title-saves').click();
   assert(!normalActions().some((item) => /Combat (Arena|Diagnostics)/i.test(item.textContent)),
-    'regular Save menu stays free of diagnostic entries');
-  open('New game');
+    'regular Saved Games menu stays free of diagnostic entries');
+  normal.elements.get('close-button').click();
+  normal.elements.get('title-new').click();
   assert(!normalActions().some((item) => /Combat (Arena|Diagnostics)/i.test(item.textContent)),
     'regular New Game menu stays free of diagnostic entries');
   normal.elements.get('close-button').click();
@@ -565,12 +551,17 @@ console.log(
     button.click();
   };
   specialOpen('Game and settings');
-  specialOpen('Save and game management');
+  assert(!special.get('modal-actions').children.some((item) =>
+    /Save and game management|Check for game update/.test(item.textContent)));
+  special.get('close-button').click();
+  specialOpen('Return to Main Menu');
+  special.get('title-saves').click();
   assert(special.get('modal-actions').children.some((item) =>
-    item.textContent.startsWith('Load Combat Diagnostics run') && !item.disabled),
-    'playtest link exposes the separate existing arena save');
-  specialOpen('New game');
+    item.textContent.startsWith('Combat Diagnostics')),
+    'playtest link preserves its separate saved arena selection');
+  special.get('close-button').click();
+  special.get('title-new').click();
   assert(special.get('modal-actions').children.some((item) =>
     item.textContent.startsWith('New Combat Diagnostics run')),
-    'playtest link exposes the diagnostic start action');
+    'playtest link exposes diagnostic New Game only');
 }
