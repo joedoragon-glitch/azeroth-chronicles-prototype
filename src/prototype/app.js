@@ -9064,7 +9064,7 @@
   ]) {
     const button = document.createElement('button');
     button.type = 'button';
-    button.dataset.language = code;
+    button.setAttribute('data-language', code);
     button.lang = code;
     const heading = document.createElement('strong');
     heading.textContent = label;
