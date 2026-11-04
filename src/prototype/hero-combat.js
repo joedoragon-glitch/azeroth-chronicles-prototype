@@ -1730,6 +1730,12 @@
           (locked ? null : candidates.sort((a, b) =>
             dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b))[0]);
         if (!primary) return false;
+        // Switching the intended target breaks a consecutive-target rhythm
+        // even if the new dagger is blocked. A miss on the same target merely
+        // leaves the current landed-count unchanged.
+        const prior = strategistDaggerStates.get(this);
+        if (prior && prior.targetId !== primary.id)
+          strategistDaggerStates.delete(this);
         this.engage(primary);
         const beforeHp = primary.hp;
         const contactZone = this.zoneId;
