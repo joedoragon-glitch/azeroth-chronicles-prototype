@@ -122,9 +122,9 @@ const server = http.createServer((req, res) => {
         !document.getElementById('title-new').disabled);
       await page.locator('#title-new').click();
       await page.locator('#modal-actions').getByRole('button', { name: /Normal/i }).first().click();
-      await page.locator('#modal-actions').getByRole('button', {
-        name: /Standard death/i,
-      }).click();
+      // Standard/refuge option first, then the initial hero: no language re-prompt.
+      // Positional selection is deliberate here because the phone starts in Spanish.
+      await page.locator('#modal-actions').getByRole('button').first().click();
       await page.locator('#modal-actions').getByRole('button').first().click();
       await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
