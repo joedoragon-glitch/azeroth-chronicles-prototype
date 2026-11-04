@@ -183,7 +183,8 @@ test('genuine source trip traverses waypoints, returns, and adds one finite samp
   });
   assert.equal(g.trainFieldLabWorker(u.id), true);
   assert.equal(g.assignFieldLabWorker('vale', 'vale', u.id, 'wood'), true);
-  run(g, 1);
+  // Station is 100 world units away: at 90 units/s it cannot be reached in 1s.
+  run(g, 2);
   assert.notEqual(g.fieldLabNetwork().jobs[u.id].phase, 'station');
   const start = { x: u.x, y: u.y };
   run(g, 12);
