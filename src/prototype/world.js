@@ -1668,11 +1668,260 @@
           if (n) Object.assign(n, { x: xy[0], y: xy[1] });
         }
       }
+      // Independent one-time civic scene. Never bump the established
+      // crownSceneLayout version or displace roads, services or old scenery.
+      // Local industrial footpaths join the REAL heatwork placements,
+      // not nominal coordinates. No original roads or lava gaps change.
+      // Environmental civilian work scenes, never replacement enemies.
+      // New sites have their own versioned IDs; old side-decor, loot, traps,
+      // guards and entry/exit keep their exact historical identities.
+      crownFoundryProduction(z) {
+        if (z.id !== 'side-crown-foundry' || z.crownFoundryProductionVersion === 1) return;
+        const cfg = R.sideDungeons.find((s) => s.id === z.id);
+        if (!cfg) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const [role, x, y, structure, action] of R.crownFoundryStations || []) {
+            const id = 'crown-foundry-work-' + role;
+            if (z.props.some((p) => p.id === id)) continue;
+            let chosen = null;
+            for (const radius of [0, 32, 64, 90]) {
+              for (let j = 0; j < (radius ? 12 : 1); j++) {
+                const angle = (j * Math.PI) / 6,
+                  p = { x: x + Math.cos(angle) * radius,
+                    y: y + Math.sin(angle) * radius };
+                if (
+                  p.x < 95 || p.y < 100 ||
+                  p.x > cfg.size - 90 || p.y > cfg.size - 90 ||
+                  this.blocked(p.x, p.y, z.id, 16, true) ||
+                  cfg.traps.some(([tx, ty]) =>
+                    dist(p, { x: tx, y: ty }) < 105) ||
+                  z.npcs.some((n) => dist(n, p) < 95) ||
+                  z.props.some((q) => q.r > 0 && dist(q, p) < q.r + 45) ||
+                  z.props.some((q) => q.crownFoundryWorker && dist(q, p) < 110) ||
+                  z.enemies.some((e) => e.hp > 0 &&
+                    dist(e.home || e, p) < 46)
+                ) continue;
+                chosen = p;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (!chosen) continue;
+            z.props.push({
+              id,
+              ...chosen,
+              r: 0,
+              decorative: true,
+              structure,
+              crownFoundryWorker: true,
+              crownFoundryRole: action,
+            });
+          }
+          z.crownFoundryProductionVersion = 1;
+        } finally {
+          this.s.zone = before;
+        }
+      }
+      // Re-purpose only this side dungeon's original exterior decorations.
+      // Same IDs and world coordinates, including old v4 campaign saves.
+      crownFoundryExterior(z) {
+        if (z.id !== 'crown' || z.crownFoundryExteriorVersion === 1) return;
+        const themes = [
+          'crown-foundry-yard-loading',
+          'crown-foundry-yard-flue',
+          'crown-foundry-yard-shipping',
+        ];
+        for (const [i, structure] of themes.entries()) {
+          const p = z.props.find((q) =>
+            q.id === 'side-entrance-side-crown-foundry-' + i);
+          if (!p) continue;
+          p.structure = structure;
+          p.crownFoundryExterior = true;
+          p.decorative = true;
+        }
+        z.crownFoundryExteriorVersion = 1;
+      }
+      crownIndustrialCirculation(z) {
+        if (z.id !== 'crown' || z.crownIndustrialVersion === 1) return;
+        const oldZone = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const find = (index) =>
+            index === 'foundry'
+              ? z.npcs.find((n) => n.id === 'foundry' && n.kind === 'dungeon')
+              : z.props.find((p) => p.id === 'recovery-heat-crown-' + index);
+          const routes = [];
+          for (const [id, first, last] of R.crownIndustrialLinks || []) {
+            const from = find(first),
+              to = find(last);
+            if (!from || !to || dist(from, to) > 700) continue;
+            const approach = (p) => {
+              const q = this.safe(p.x + 64, p.y + 66, z.id);
+              return dist(q, p) <= 125 ? q : null;
+            };
+            const start = approach(from),
+              end = approach(to);
+            if (!start || !end) continue;
+            // Avoid unbounded breadth-first pathfinding while generating
+            // scenery. Try a direct unobstructed aisle, then four local
+            // two-segment bends, using the game's actual collision geometry.
+            let walk = this.clearSegment(start, end, 15) ? [start, end] : null;
+            if (!walk) {
+              const dx = end.x - start.x,
+                dy = end.y - start.y,
+                span = Math.max(1, Math.hypot(dx, dy)),
+                mx = (start.x + end.x) / 2,
+                my = (start.y + end.y) / 2;
+              for (const offset of [80, -80, 145, -145]) {
+                const bend = { x: mx - (dy / span) * offset,
+                  y: my + (dx / span) * offset };
+                if (this.blocked(bend.x, bend.y, z.id, 15, true) ||
+                    !this.clearSegment(start, bend, 15) ||
+                    !this.clearSegment(bend, end, 15)) continue;
+                walk = [start, bend, end];
+                break;
+              }
+            }
+            if (!walk) continue;
+            let length = 0;
+            for (let i = 1; i < walk.length; i++)
+              length += dist(walk[i - 1], walk[i]);
+            if (length > dist(start, end) * 2.6 + 180) continue;
+            z.footpaths = z.footpaths || [];
+            z.footpaths.push(walk);
+            // Extend only a short lawful apron to the existing carriageway;
+            // old west/east bridge routes remain the sole region crossings.
+            const road = this.nearestRoadPoint(z, start);
+            let roadConnected = this.distanceToRoad(z, start) <= 52;
+            if (!roadConnected && road && dist(road, start) <= 410) {
+              if (this.clearSegment(road, start, 15)) {
+                z.footpaths.push([road, start]);
+                roadConnected = true;
+              }
+            }
+            routes.push({ id, from: from.id, to: to.id, roadConnected });
+          }
+          z.crownIndustrialRoutes = routes;
+          z.crownIndustrialVersion = 1;
+        } finally {
+          this.s.zone = oldZone;
+        }
+      }
+      // Nonblocking staging at genuine placed industrial facilities, not
+      // arbitrary map coordinates or a new freight/crafting economy.
+      crownIndustrialFreight(z) {
+        if (z.id !== 'crown' || z.crownIndustrialFreightVersion === 1) return;
+        const previous = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          for (const [role, heatIndex, dx, dy, structure] of R.crownIndustrialFreight || []) {
+            const id = 'crown-industrial-freight-' + role;
+            if (z.props.some(p => p.id === id)) continue;
+            const source = z.props.find(p => p.id === 'recovery-heat-crown-' + heatIndex);
+            if (!source) continue;
+            let chosen = null;
+            for (const radius of [0, 36, 72, 110, 148]) {
+              for (let j = 0; j < (radius ? 12 : 1); j++) {
+                const theta = (j * Math.PI) / 6,
+                  p = { x: source.x + dx + Math.cos(theta) * radius,
+                    y: source.y + dy + Math.sin(theta) * radius };
+                if (p.x < 85 || p.y < 85 || p.x > 3715 || p.y > 3715 ||
+                    dist(p, source) > 320 ||
+                    this.blocked(p.x, p.y, z.id, 15, true) ||
+                    this.distanceToRoad(z, p) < 52 ||
+                    z.npcs.some(n => dist(n, p) < 105) ||
+                    z.nodes.some(n => dist(n, p) < 95) ||
+                    z.buildings.some(n => dist(n, p) < 130) ||
+                    z.enemies.some(e => e.hp > 0 && dist(e.home || e, p) < 115) ||
+                    z.props.some(q => dist(q, p) < (q.r || 0) + 82))
+                  continue;
+                chosen = p;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (!chosen) continue;
+            z.props.push({
+              id, ...chosen, r: 0, decorative: true, structure,
+              crownIndustrialFreight: true, industrialRole: role,
+              // Only the three original gate props carry
+              // crownFoundryExterior; workyard stock is a separate family.
+            });
+          }
+          z.crownIndustrialFreightVersion = 1;
+        } finally {
+          this.s.zone = previous;
+        }
+      }
+      crownCivicForecourt(z) {
+        if (z.id !== 'crown' || z.crownCivicForecourtVersion === 2) return;
+        const rest = z.npcs.find((n) => n.id === 'rest' && n.kind === 'rest');
+        if (!rest) return;
+        const before = this.s.zone;
+        this.s.zone = z.id;
+        try {
+          const approach = { roads: [...(z.roads || []), ...(z.footpaths || [])] };
+          const valid = (p, structure) => {
+            const paving = structure === 'crown-civic-tilecourt';
+            const margin = paving ? 30 : 74;
+            return (
+              p.x > 70 && p.y > 70 && p.x < 3730 && p.y < 3730 &&
+              dist(p, rest) < 240 &&
+              !this.blocked(p.x, p.y, z.id, 18, true) &&
+              this.distanceToRoad(approach, p) >= margin &&
+              !z.npcs.some((n) => dist(n, p) < (paving ? 80 : 94)) &&
+              !z.nodes.some((n) => dist(n, p) < 82) &&
+              !z.buildings.some((b) => dist(b, p) < 130) &&
+              !z.enemies.some((e) => e.hp > 0 &&
+                (dist(e.home || e, p) < 128 || dist(e, p) < 90)) &&
+              !z.props.some((other) =>
+                dist(other, p) < (other.r || 0) + (paving ? 60 : 76))
+            );
+          };
+          for (const [j, [dx, dy, structure, sceneRole]] of
+            (R.crownCivicForecourt || []).entries()) {
+            const id = 'crown-civic-forecourt-' + j;
+            if (z.props.some((p) => p.id === id)) continue;
+            let chosen = null;
+            // Small authored adjustments only; do not scatter into another
+            // district just to satisfy an object-count assertion.
+            for (const radius of [0, 32, 64]) {
+              for (let k = 0; k < (radius ? 12 : 1); k++) {
+                const theta = (k * Math.PI) / 6;
+                const p = { x: rest.x + dx + Math.cos(theta) * radius,
+                  y: rest.y + dy + Math.sin(theta) * radius };
+                if (valid(p, structure)) { chosen = p; break; }
+              }
+              if (chosen) break;
+            }
+            if (!chosen) continue;
+            z.props.push({
+              id, ...chosen, r: 0, decorative: true, structure,
+              crownCivicForecourt: true, civicSceneRole: sceneRole,
+            });
+          }
+          // The actual Crownwatch ministry occupies an existing, already
+          // collision-checked building. Preserve its ID, saved coordinates
+          // and original footprint rather than forcing another structure
+          // into a crowded plaza or displacing the surrounding streets.
+          const office = z.props.find((p) => p.id === 'settlement-major-2');
+          if (office) {
+            office.structure = 'crown-ministry-frontage';
+            office.crownPublicMinistry = true;
+          }
+          z.crownCivicForecourtVersion = 2;
+        } finally {
+          this.s.zone = before;
+        }
+      }
       crownSceneComposition(z) {
         const cfg = R.crownSceneLayout;
         if (z.id !== 'crown') return;
         if (z.crownSceneVersion === cfg.version) {
           this.ashRefugeDomesticLife(z);
+          this.crownCivicForecourt(z);
           return;
         }
         const oldZone = this.s.zone;
@@ -1888,6 +2137,7 @@
         // Applying household work before this composition pass finds the old
         // placeholders, then incorrectly marks them finished with no objects.
         this.ashRefugeDomesticLife(z);
+        this.crownCivicForecourt(z);
       }
       settlementLayout(z) {
         if (
@@ -3619,10 +3869,14 @@
           this.millhavenOnboardingLayout(z);
           this.greenwoodOnboardingClearance(z);
           this.interiorCoherence(z);
+          this.crownFoundryProduction(z);
           this.defenderEncounterLayout(z);
           this.frontierEdgeRedistribution(z);
           this.frontierSceneComposition(z);
           this.crownSceneComposition(z);
+          this.crownIndustrialCirculation(z);
+          this.crownFoundryExterior(z);
+          this.crownIndustrialFreight(z);
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
@@ -3814,6 +4068,7 @@
           }
           z.sideDungeonVersion = 1;
           this.interiorCoherence(z);
+          this.crownFoundryProduction(z);
           this.defenderEncounterLayout(z);
           return z;
         }
@@ -4055,6 +4310,9 @@
         this.frontierEdgeRedistribution(z);
         this.frontierSceneComposition(z);
         this.crownSceneComposition(z);
+        this.crownIndustrialCirculation(z);
+        this.crownFoundryExterior(z);
+        this.crownIndustrialFreight(z);
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);

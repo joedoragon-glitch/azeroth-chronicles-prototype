@@ -1,5 +1,37 @@
 > **Reference boundary — 19 October 2026:** Design/ownership rules below remain reference material where consistent with current source and later director decisions. Version numbers, asset counts, historical verification and next-stage instructions describe their own checkpoints. Development is paused; use [current state](DEVELOPMENT_STATE.md) and [the documentation index](DOCUMENTATION_INDEX.md) before any new work.
 
+## Cross-chat acceptance update — 3 November 2026, dev.258 tested candidate
+
+**This is the latest active status; dated entries below retain their original checkpoint meaning.** Actual draft source `9cfe284` passed [37 focused files, 56 native Canvas images and real two-bridge + Foundry routes #41741468330](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41741468330), [PWA #41741468355](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41741468355), [Pixi contour #41741468465](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41741468465), [ferry #41741468494](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41741468494), and [paired performance GO #41741468446](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41741468446). Native screenshots were compared with the previous head; three two-level homes visibly improve the residential roofline without displacing roads, the distinct ministry or the civic hall.
+
+The **unresolved** creative/technical task is still the true city-wide ridge/terrace/industrial composition, verified geothermal and water feasibility, authentic cargo/heat delivery and inhabited productive Foundry. Those require coherent site/actor engineering and full-view review, not more random props or repeated micro-optimization. The [standalone handoff and 0–6 phase matrix](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md) owns the remaining work; this document remains geographical/canon reference. PR #769 is DRAFT/unmerged/unpublished with no owner art/device acceptance.
+
+## 3 November 2026 — restrained Crownwatch roof-height variation (draft only)
+
+Dev.258 candidate: three **already present** civilian homes, `settlement-major-0`, `-3` and `-7`, receive single modest upper glazed residential levels in the original procedural drawing. Lower homes are left alone to provide varied massing near the hall and public office. The original house IDs, centers, collision radii, household use, movement routes and v4 save model do not change. This is a skyline and visual-legibility trial, not new residential area, towers, rental units, construction simulation or royalty iconography. Exact new-head Campaign/Canvas, Pixi and creative sightline review must pass before calling it an improvement. Performance optimization is intentionally unchanged after the passed dev.257 benchmark.
+
+## 3 November 2026 — ministry footprint correction after focused CI (draft only)
+
+The first ministry candidate did not pass native placement because an additional building could not fit beside the preserved rest/board/road geometry. The corrected source instead reuses the original safely placed Crownwatch `settlement-major-2` building as public administrative frontage without moving, resizing, duplicating or replacing its saved ID; the original small court decorations remain. This is source-authoring pending revised exact-head CI and visual review, not a second town-service or a new state. Other district/freight plans remain separate. Parent dev.254 focused CI #41689838008 failed this exact ministry-availability assertion; no art acceptance or release is claimed.
+
+## 3 November 2026 — civil administration and real-site workyards (draft only)
+
+This Crown candidate adds an identifiable public ministry facade near the existing rest-hall precinct and collision-safe receiving/cooling/shipping scenery at real generated eastern/southern heatwork coordinates. Foundry workers retain their identities and locations with clearer generic material handling. These are all saved nonblocking environmental elements, not new ministers, interactions, goods, water sources, loot, craft mechanics or volcanic crossings. Source code is a draft candidate; actual placement, captures, animation parity and artistic success still require current-head checks.
+
+## 3 November 2026 — civic elevation and native lava-bridge traversal (draft only)
+
+The current candidate strengthens the **existing** Crownwatch rest-service hall into a recognizable civic silhouette with narrow glazed masonry towers and a high clerestory. The tower work is purely presentation on the same service ID/position: no new building collision, road, royal claim, water supply, heat source, or interactable has been introduced. The vertical silhouette avoids extending over the adjacent quest-board lane; actual desktop/narrow and Pixi art acceptance must still be inspected.
+
+A focused native Campaign route regression now requires both **original** Crown lava gaps to be crossable in each direction (Normal/Nightmare), Crownwatch-to-north-bridge access, south-bridge-to-Foundry access, and v4 bridge/road restoration. The route test uses actual collision and segment checks, not painted-road names or camera teleports. For its exact execution status consult PR #769's run receipts; **committing a test is not claiming it passed**.
+
+## 3 November 2026 — active owner-directed regional overhaul (draft PR #769)
+
+The older regime-layout pass above is **historical**; its opening development-pause notice does not pause the newer, separately authorized Dark Crown overhaul. The [authoritative creative contract in PR #707](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/707) governs this latest work, while the [live engineering handoff](DARK_CROWN_LEAD_CHAT_HANDOFF_20261103.md) and [baseline](DARK_CROWN_REGIONAL_IMPLEMENTATION_BASELINE_20261103.md) track implemented source and exact acceptance gates.
+
+The ongoing branch preserves the original region and Foundry identity, roads, two lava crossings, actors, traps, service coordinates and v4 saves. Its new Crownwatch civic-hall and residential treatments are procedural architectural art; the forecourt is explicitly nonblocking. Its added local freight aisles depend on real placed service stations, rather than redrawing old crossing roads. The original Foundry now has candidate noncombat animated receiving, furnace, forming, finishing and dispatch visual stations; these do **not** add a crafting economy, a replacement guard faction, or claims of approved potable-water supply or geothermal distribution. Existing civilian and enemy logic remains authoritative.
+
+**Acceptance boundary:** The current stage is an unmerged candidate, not a fully accepted region. Native Campaign/Canvas screenshots, historical-save and collision paths, Pixi animated-worker presentation, industrial route usability, software-GPU performance and owner subjective artwork approval remain distinct checks. An old code-only check or image filename alone is not proof that the corresponding landmark is actually visible. Do not merge or deploy PR #769, or launch a comprehensive test suite, without the owner's explicit authorization.
+
 # Dark Crown regime-layout pass
 
 This pass gives Dark Crown a dedicated procedural layout layer. It does not introduce sprites, change combat balance, alter boss progression, or add rewards.

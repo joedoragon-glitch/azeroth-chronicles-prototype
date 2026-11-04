@@ -119,6 +119,11 @@
     'crown-ash-house',
     'crown-forgehouse',
   ]);
+  // A deliberately small inhabited roofline, using THREE existing Crownwatch
+  // houses. No settlement props, collision radii, road routes or save IDs move.
+  const crownUpperResidenceIds = new Set([
+    'settlement-major-0', 'settlement-major-3', 'settlement-major-7',
+  ]);
   function contourRadius(e) {
     if (organicContours.has(e.structure)) return 3.5;
     if (wornContours.has(e.structure)) return 2.8;
@@ -8557,6 +8562,9 @@
                 : region;
       const workshop = /workshop|smithy|forgehouse/.test(kind),
         boat = kind === 'march-boathouse';
+      // Existing west and eastern-street homes get modest occupied upper
+      // rooms. No random stacks of towers, no new props or extra hot spots.
+      const upperResidence = r === 4 && !workshop && crownUpperResidenceIds.has(e.id);
       const woods = ['#876849', '#7b7659', '#78725d', '#78604e', '#5d5e6b'];
       if (r === 1) {
         for (const x of [-25, -8, 9, 25]) {
@@ -8662,6 +8670,27 @@
             0.8,
           );
         }
+        // Shared civic/residential ceramic grammar: restrained glazes and
+        // pale mineral courses unify houses without flattening the district
+        // into one repeated fortress frontage. Stone walls remain unchanged.
+        for (const y of [-15, 10]) {
+          line([[-23, y], [-18, y]], '#c3b8b1', 1.4);
+          line([[19, y], [24, y]], '#c3b8b1', 1.4);
+        }
+        if (workshop) {
+          // A visibly serviceable craft frontage with glazed transom and
+          // sound masonry, not a royal insignia or an invented new product.
+          softRect(-22, -19, 44, 4, '#acaeb2', 1);
+          for (const x of [-17, -7, 3, 13])
+            softRect(x, -18, 7, 2.4, '#9bb9b1', 0.4);
+          softRect(-23, 12, 46, 3, '#8e8d94', 1);
+        } else {
+          // Everyday domestic glazing and a carefully maintained sill.
+          softRect(11, -14, 12, 13, '#617e86', 1);
+          line([[17, -13], [17, -2]], '#b6c0b7', 1.1);
+          line([[12, -7], [23, -7]], '#bac2ba', 1);
+          softRect(9, -1, 16, 3, '#c2b4ab', 1);
+        }
         poly(
           [
             [0, -23],
@@ -8672,20 +8701,37 @@
           '#b49ab6',
         );
       }
-      craftedRoof(36, -21, -51, r);
-      if (r === 4)
-        poly(
-          [
-            [0, -40],
-            [5, -34],
-            [0, -28],
-            [-5, -34],
-          ],
-          '#b49ab6',
-        );
+      if (upperResidence) {
+        // The original ash-stone ground floor remains visible at its real
+        // door and footprint. A single glazed upper level changes the
+        // neighborhood silhouette without adding another building.
+        blockwork(-27, -61, 54, 41, '#82818e', 6);
+        for (const x of [-18, 7]) {
+          softRect(x - 1, -54, 14, 22, '#526f79', 2);
+          line([[x + 6, -53], [x + 6, -33]], '#c7c9bb', 1.3);
+          line([[x, -42], [x + 12, -42]], '#bfc6b7', 1.1);
+          softRect(x - 3, -31, 18, 4, '#beb8b2', 1);
+        }
+        line([[-24, -24], [24, -24]], '#c4bcb6', 1.6);
+        craftedRoof(32, -61, -84, 4);
+        softPoly([[-5, -70], [0, -76], [5, -70], [0, -65]], '#a8beb9', 1);
+      } else {
+        craftedRoof(36, -21, -51, r);
+        if (r === 4)
+          poly(
+            [
+              [0, -40],
+              [5, -34],
+              [0, -28],
+              [-5, -34],
+            ],
+            '#b49ab6',
+          );
+      }
       if (!boat) {
-        blockwork(20, -43, 9, 23, r === 4 ? '#707782' : '#949987', 6);
-        fillOval(24, -44, 5, 2, '#354c41', 0.4);
+        const chimneyTop = upperResidence ? -76 : -43;
+        blockwork(20, chimneyTop, 9, 23, r === 4 ? '#707782' : '#949987', 6);
+        fillOval(24, chimneyTop - 1, 5, 2, '#354c41', 0.4);
       }
       if (r === 1) {
         timber([-26, 15], [28, 15], 4, woods[r]);
@@ -8965,6 +9011,69 @@
         return true;
       }
       if (kind === 'rest') {
+        if (region === 4) {
+          // Crownwatch's existing, interactable rest service: civic hall.
+          // Architecture only; the original NPC, paths and save ID are intact.
+          // Do not imply a verified geothermal or water connection.
+          fillOval(0, 15, 48, 14, '#1e1b2a', 0.22);
+          // Civic dignity comes from a visible, narrow vertical skyline,
+          // not sprawling over the still-interactive quest-board frontage.
+          // These glazed survey lanterns are architectural, not magic or
+          // proof of a city-wide heat / water distribution system.
+          for (const towerX of [-29, 29]) {
+            blockwork(towerX - 11, -86, 22, 70, '#757684', 6);
+            softRect(towerX - 7, -82, 14, 39, '#c1b9b5', 2);
+            softRect(towerX - 5, -80, 10, 35, '#4e7580', 1.5);
+            line([[towerX, -79], [towerX, -46]], '#d3d4c6', 1.2);
+            for (const y of [-70, -57])
+              line([[towerX - 5, y], [towerX + 5, y]], '#d3d4c6', 1.1);
+            blockwork(towerX - 13, -91, 26, 7, '#c2b9b0', 4);
+            softPoly(
+              [[towerX - 15, -91], [towerX, -105], [towerX + 15, -91]],
+              '#777183', 2,
+            );
+            line([[towerX - 12, -91], [towerX, -99], [towerX + 12, -91]],
+              '#c9c0b0', 1.3);
+          }
+          // High public lantern: an ordinary glazed clerestory above the
+          // hall entry. It advertises the city's craft without new lore.
+          blockwork(-13, -110, 26, 60, '#a49da2', 5);
+          softRect(-9, -106, 18, 37, '#4c7078', 2.4);
+          for (const x of [-4, 4])
+            line([[x, -102], [x, -70]], '#d4cebb', 1.1);
+          line([[-9, -85], [9, -85]], '#d4cebb', 1.5);
+          blockwork(-17, -112, 34, 6, '#c3b7af', 4);
+          softPoly([[-19, -112], [0, -131], [19, -112]], '#666879', 2);
+          line([[-15, -112], [0, -127], [15, -112]], '#d2c2aa', 1.6);
+          poly([[-5, -131], [0, -137], [5, -131], [0, -126]], '#d0dbd0');
+          blockwork(-39, -24, 78, 42, '#797889', 9);
+          softPoly([[39, -22], [48, -15], [48, 12], [39, 17]], '#525566', 1.4);
+          for (const x of [-28, 28]) {
+            softRect(x - 7, -16, 14, 23, '#a9a2a5', 3);
+            softRect(x - 5, -14, 10, 18, '#516d77', 2);
+            line([[x - 4, -11], [x + 3, -11]], '#9db8b3', 1.2);
+            line([[x, -13], [x, 4]], '#b9b2a6', 1);
+            blockwork(x - 8, 7, 16, 10, '#b5afb0', 3);
+          }
+          softRect(-15, -18, 30, 37, '#b9b0ac', 4);
+          shaped('#323d47', () => {
+            ctx.moveTo(-12, 17);
+            ctx.lineTo(-12, -3);
+            ctx.quadraticCurveTo(-12, -18, 0, -20);
+            ctx.quadraticCurveTo(12, -18, 12, -3);
+            ctx.lineTo(12, 17);
+          });
+          softPoly([[-20, 17], [19, 17], [27, 23], [-27, 23]], '#aaa4aa', 2);
+          for (const x of [-35, 35]) {
+            blockwork(x - 3, -27, 6, 38, '#a9a6a9', 4);
+            softRect(x - 5, -29, 10, 5, '#c5beb8', 1.6);
+          }
+          craftedRoof(47, -27, -63, 4);
+          for (const x of [-23, 0, 23])
+            line([[x - 5, -37], [x + 5, -37]], '#c2b3aa', 1.3);
+          poly([[-5, -45], [0, -51], [5, -45], [0, -40]], '#b0c1b8');
+          return true;
+        }
         craftedHouse(
           [
             'vale-cottage',
@@ -13177,6 +13286,281 @@
               1.5,
             );
           break;
+        // Crownwatch's civic court is made by residents and craftspeople:
+        // maintained ceramic paving, useful stone seating and sheltered
+        // greenery. These props are visual only, never water/heat sources.
+        // Source-identical exterior props at the existing Foundry gate.
+        // These are working receiving/shipping/exhaust features, not extra
+        // entrances or claims of a completed city-wide heat network.
+        case 'crown-foundry-yard-loading':
+          blockwork(-39, 8, 78, 12, '#797780', 4);
+          for (const x of [-34, 34]) {
+            line([[x, 8], [x, -27]], '#a3a6a4', 4);
+            softRect(x - 4, -29, 8, 6, '#c4b8ab', 1.4);
+          }
+          softPoly([[-42, -27], [0, -44], [42, -27], [0, -15]],
+            '#5e5f71', 2);
+          line([[-39, -26], [0, -40], [38, -26]], '#b5a79e', 1.6);
+          crateBody(-24, 10, 0.54);
+          crateBody(21, 12, 0.48);
+          break;
+        case 'crown-foundry-yard-flue':
+          blockwork(-32, 6, 64, 15, '#7a777c', 6);
+          blockwork(-19, -41, 23, 51, '#777e80', 6);
+          softRect(-17, -44, 21, 8, '#b0b3ae', 2);
+          oval(-7, -47, 12, 5, '#55545b');
+          line([[-19, -7], [25, -7]], '#a6a89d', 6);
+          softRect(17, -12, 9, 13, '#787d77', 2);
+          oval(23, -12, 5, 5, '#b8aa90');
+          line([[23, -12], [25, -15]], '#60564d', 1);
+          for (const y of [-30, -17])
+            line([[-15, y], [-2, y]], '#c4b2a3', 1.5);
+          break;
+        case 'crown-foundry-yard-shipping': {
+          const motion = Math.sin(Math.max(0, e.ambientTime || 0) * 2.8);
+          blockwork(-37, 8, 74, 12, '#85818a', 5);
+          crateBody(18, 4, 0.62);
+          crateBody(-12, 7, 0.53);
+          // A loading attendant performs a bounded lift, distinct from
+          // the armed sentries of the same entrance.
+          softRect(-28, -18, 13, 24, '#78857f', 3);
+          oval(-21, -26, 9, 9, '#c6a083');
+          softPoly([[-31, -31], [-22, -39], [-11, -33]], '#b6b3a8', 2);
+          const gripY = -13 - 7 * (motion + 1);
+          line([[-16, -14], [-7, gripY]], '#be987a', 3.5);
+          softRect(-6, gripY - 5, 17, 6, '#c2a98a', 1);
+          break;
+        }
+        // Historical side-decor IDs now represent useful maintained
+        // facilities. Cooling is air-assisted, NOT unexplained water supply.
+        case 'crown-foundry-cooling-rack':
+          blockwork(-35, 9, 70, 10, '#81818a', 4);
+          for (const x of [-28, -9, 9, 28]) {
+            line([[x, 10], [x, -25]], '#a8abb0', 4);
+            oval(x, -27, 4, 3, '#c0bdb4');
+          }
+          line([[-33, -23], [33, -23]], '#b1b4b3', 3);
+          for (const x of [-20, 0, 20]) {
+            softRect(x - 6, -20, 13, 8, '#9a968f', 1.5);
+            line([[x - 4, -17], [x + 5, -17]], '#c8bdac', 1);
+          }
+          for (const x of [-21, 22])
+            line([[x - 5, 3], [x + 5, -1]], '#a4a6a4', 1.3);
+          break;
+        case 'crown-foundry-stock-bay':
+          blockwork(-38, 9, 76, 10, '#747783', 5);
+          crateBody(-17, 0, 0.69);
+          crateBody(16, 2, 0.58);
+          softRect(5, -22, 24, 5, '#b5afa3', 1);
+          line([[6, -19], [28, -19]], '#6f7476', 1.4);
+          for (const x of [-30, 30])
+            softRect(x - 3, -13, 6, 25, '#9e9c9a', 1.5);
+          break;
+        // Five working stages occupy the original side-crown-foundry.
+        // Each stage contains a distinct workstation and a real animated
+        // labor gesture. These are noncombat environmental figures; no new
+        // crafting transaction or named finished product is implied.
+        case 'crown-foundry-receiving':
+        case 'crown-foundry-furnace':
+        case 'crown-foundry-forming':
+        case 'crown-foundry-finishing':
+        case 'crown-foundry-dispatch': {
+          const time = Math.max(0, e.ambientTime || 0);
+          const motion = Math.sin(time * 3.3 + (variant % 7));
+          const lift = (motion + 1) * 0.5;
+          const stage = kind.slice('crown-foundry-'.length);
+          fillOval(0, 14, 36, 10, '#221f26', 0.24);
+          // Utilitarian, swept masonry floors, not damaged ruin floor tiles.
+          softPoly([[-38, 5], [0, -10], [38, 5], [0, 21]], '#68666c', 2);
+          for (const x of [-22, -7, 8, 23])
+            line([[x - 7, 6], [x + 6, 11]], '#8d8685', 0.8);
+          if (stage === 'receiving') {
+            crateBody(34, 5, 0.53);
+            softRect(-28, -7, 19, 13, '#857c71', 2);
+            for (const x of [-24, -19, -14])
+              line([[x, -5], [x, 4]], '#c6b9a1', 1);
+          } else if (stage === 'furnace') {
+            blockwork(3, -26, 34, 36, '#8b807a', 5);
+            softRect(9, -19, 23, 21, '#39353a', 2);
+            softRect(12, -14, 17, 14, '#c47a47', 2);
+            for (const x of [15, 22, 27])
+              glint(x, -11 + lift * 3, '#efc27b', 1.5);
+            line([[30, -26], [30, -45]], '#afb1a5', 3);
+          } else if (stage === 'forming') {
+            blockwork(1, 1, 36, 12, '#7b7a82', 3);
+            softRect(6, -7, 27, 9, '#a8a9ab', 2);
+            softPoly([[7, -10], [27, -10], [33, -5], [5, -5]], '#c6ab86', 1);
+            for (const x of [5, 30])
+              softRect(x, 9, 4, 10, '#747177', 1);
+          } else if (stage === 'finishing') {
+            softRect(2, -11, 34, 12, '#a1a4a3', 3);
+            softRect(5, -8, 28, 5, '#697b80', 1.5);
+            line([[4, 4], [34, 4]], '#b3b5ae', 3);
+            for (const x of [9, 18, 27])
+              oval(x, 3, 3, 2, '#b6a497');
+          } else {
+            crateBody(34, 9, 0.56);
+            line([[3, 3], [3, -22], [32, -22]], '#aaa79c', 2.5);
+            softRect(7, -26, 18, 6, '#bdad92', 1.4);
+          }
+          // Generic, intentionally unnamed material stock runs from
+          // receiving through hot work and inspection toward dispatch.
+          // Visual work stages do not simulate crafting or inventory.
+          if (stage === 'receiving' || stage === 'dispatch') {
+            line([[-39, 14], [41, 14]], '#c3b7a5', 2.2);
+            for (const x of [-33, 34]) oval(x, 14, 4, 3, '#6d7378');
+            softRect(18, -5, 25, 6, '#aaa398', 1.5);
+            for (const x of [23, 31, 39])
+              line([[x, -5], [x, -1]], '#c3bcb0', 1);
+          } else if (stage === 'furnace' || stage === 'forming') {
+            for (const x of [5, 14, 23])
+              softRect(x, 6, 7, 4,
+                stage === 'furnace' ? '#d8a36a' : '#b6aaa0', 1);
+            line([[2, 12], [34, 12]], '#626775', 2.3);
+          } else {
+            softRect(13, 10, 27, 4, '#b8b5b0', 1);
+            for (const x of [18, 27, 36])
+              oval(x, 7, 3, 2, '#d2c9b3');
+          }
+          // Unarmed artisan silhouette, deliberately unlike Crown guards:
+          // linen headwrap, work apron and two hands with an active task.
+          softPoly([[-27, 10], [-22, -8], [-10, -9], [-4, 11]],
+            '#4b4c58', 2);
+          softPoly([[-23, -14], [-19, -25], [-8, -25], [-5, -12], [-7, 9], [-21, 9]],
+            '#7b8581', 3);
+          softRect(-18, -12, 8, 18, '#c2aa8c', 2);
+          oval(-14, -30, 9, 10, '#c49d82');
+          softPoly([[-24, -34], [-17, -42], [-7, -39], [-5, -32], [-17, -36]],
+            '#c6b7a7', 2);
+          line([[-17, -29], [-15, -29]], '#3b3434', 1.1);
+          if (stage === 'receiving' || stage === 'dispatch') {
+            const armY = -10 - lift * 10;
+            line([[-8, -18], [4, armY]], '#bd9c80', 4.2);
+            oval(4, armY, 4, 3.5, '#d4af8d');
+            // A handled, lifted item makes actual loading legible.
+            softRect(1, armY - 7, 16, 7, '#b9a48b', 1.3);
+          } else if (stage === 'furnace') {
+            line([[-8, -17], [8, -11 + motion * 4]], '#cba486', 4);
+            line([[8, -11 + motion * 4], [24, -16 + motion * 5]],
+              '#838586', 2.6);
+            oval(25, -16 + motion * 5, 3, 4, '#b8afa1');
+          } else if (stage === 'forming') {
+            const hand = -29 - lift * 17;
+            line([[-8, -17], [3, hand]], '#cba486', 4);
+            line([[3, hand], [23, -9 - lift * 7]], '#797d80', 3.5);
+            softRect(21, -17 - lift * 7, 12, 6, '#bcc0b9', 1.2);
+            if (lift < 0.16) glint(24, -10, '#e5ad64', 2.2);
+          } else {
+            const hand = -16 + motion * 4;
+            line([[-8, -17], [16, hand]], '#cba486', 4);
+            softRect(14, hand - 4, 11, 5, '#d5c7ac', 1.1);
+            if (stage === 'finishing')
+              line([[19, hand - 4], [26, -4]], '#e3d7bc', 1.5);
+          }
+          break;
+        }
+        case 'crown-ministry-frontage':
+          // Distinct public administrative offices: civic craftsmanship,
+          // not a new official NPC, military gate or magic landmark.
+          fillOval(0, 16, 54, 16, '#211f2c', 0.25);
+          blockwork(-47, -43, 94, 61, '#7b7d87', 9);
+          softPoly([[-51, -44], [0, -60], [51, -44], [0, -30]],
+            '#a19ca2', 2);
+          for (const x of [-35, 35]) {
+            blockwork(x - 7, -68, 14, 74, '#9794a1', 4);
+            softRect(x - 5, -66, 10, 41, '#52747c', 1.6);
+            line([[x, -64], [x, -26]], '#c5c3b7', 1);
+            for (const y of [-52, -39])
+              line([[x - 5, y], [x + 5, y]], '#c5c3b7', 1);
+          }
+          blockwork(-24, -84, 48, 35, '#b2aaa9', 6);
+          softPoly([[-28, -84], [0, -103], [28, -84]],
+            '#666976', 2);
+          softRect(-17, -75, 34, 15, '#526e79', 2);
+          for (const x of [-9, 0, 9])
+            line([[x, -73], [x, -61]], '#c4c6b7', 1.4);
+          for (const x of [-30, 30]) {
+            softRect(x - 7, -31, 14, 18, '#51727c', 2);
+            line([[x, -30], [x, -14]], '#c2c7b9', 1);
+            line([[x - 7, -23], [x + 7, -23]], '#c2c7b9', 1);
+          }
+          softRect(-12, -20, 24, 38, '#b4aca9', 3);
+          softRect(-8, -15, 16, 32, '#373d4b', 2);
+          line([[0, -13], [0, 16]], '#a1aeaf', 1.6);
+          softPoly([[-23, -47], [0, -54], [23, -47], [0, -39]],
+            '#c1ada4', 1.1);
+          for (const x of [-17, 17]) {
+            line([[x, -9], [x, 15]], '#bbb8b1', 3);
+            softRect(x - 4, 12, 8, 5, '#bcb4ae', 1);
+          }
+          softRect(8, -11, 13, 7, '#c1ad82', 1);
+          line([[11, -8], [18, -8]], '#665b4a', 1);
+          break;
+        case 'crown-civic-tilecourt':
+          softPoly(
+            [[-49, 2], [0, -17], [49, 2], [0, 20]],
+            '#98929d',
+            1.6,
+          );
+          softPoly(
+            [[-39, 2], [0, -12], [39, 2], [0, 15]],
+            '#6f737f',
+            1,
+          );
+          for (const k of [-24, -12, 0, 12, 24]) {
+            line([[k - 9, 2], [k, -9], [k + 9, 2]], '#bbb4ad', 0.9);
+            line([[k - 9, 2], [k, 11], [k + 9, 2]], '#a9afb5', 0.9);
+          }
+          softPoly(
+            [[-8, 2], [0, -4], [8, 2], [0, 8]],
+            '#b6c1ba',
+            0.7,
+          );
+          break;
+        case 'crown-sheltered-planter':
+          fillOval(0, 13, 35, 11, '#1e202b', 0.22);
+          softPoly(
+            [[-34, 2], [0, -13], [34, 2], [0, 18]],
+            '#aaa6a6',
+            2,
+          );
+          softPoly(
+            [[-34, 2], [0, 18], [0, 24], [-34, 8]],
+            '#625f6a',
+            1.3,
+          );
+          softPoly(
+            [[0, 18], [34, 2], [34, 8], [0, 24]],
+            '#77727a',
+            1.3,
+          );
+          softPoly(
+            [[-25, 1], [0, -9], [25, 1], [0, 12]],
+            '#514f50',
+            1,
+          );
+          // Low protected planting, not an implausible volcanic forest.
+          for (const [x, y, w] of [
+            [-15, 0, 5], [-4, -3, 7], [9, 1, 6], [19, 1, 4],
+          ]) {
+            foliage(x, y, w, w + 2, '#66856d');
+            line([[x - 2, y + 2], [x + 2, y - 3]], '#b5b7a1', 0.8);
+          }
+          for (const x of [-18, 0, 18])
+            line([[x - 4, 12], [x + 4, 12]], '#c0b5af', 1);
+          break;
+        case 'crown-ceramic-bench':
+          fillOval(0, 13, 30, 9, '#1f1d2a', 0.18);
+          for (const x of [-22, 17]) {
+            blockwork(x, -4, 6, 20, '#898a95', 2);
+            softRect(x - 2, 9, 11, 5, '#aca9ae', 1);
+          }
+          blockwork(-28, -8, 56, 12, '#9a9ba3', 3);
+          softRect(-25, -11, 50, 6, '#c2bbb7', 1.4);
+          for (const x of [-19, -7, 5, 17])
+            softRect(x - 3, -10, 6, 3, x === 5 ? '#8caea9' : '#b9a9a2', 0.5);
+          line([[-26, -4], [26, -4]], '#656372', 1.3);
+          break;
         case 'stone-seat':
           blockwork(-23, -27, 46, 28, '#969e8c', 9);
           softRect(-24, -1, 48, 9, '#b3baa1', 2);
@@ -17230,7 +17614,7 @@
     } else if (type === 'prop') {
       if (['vale-working-mill', 'fruit-cellar'].includes(e.structure)) decoration(e.structure);
       else if (e.treasuryBoss) decoration(e.structure);
-      else if (e.decorative) decoration(e.structure);
+      else if (e.decorative || e.crownPublicMinistry) decoration(e.structure);
       else if (/^(vale-|march-|highland-|frontier-|crown-)/.test(e.structure || '')) {
         settlementBuilding(e.structure);
       } else if (e.structure === 'fence') {
@@ -18323,6 +18707,8 @@
     if (e.miningFacility) return 90;
     if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
+    if (e.renderKind === 'prop' && e.structure === 'crown-ash-house' &&
+        crownUpperResidenceIds.has(e.id)) return 94;
     if (e.structure === 'watchpost') return 95;
     if (e.structure === 'frontier-grain-silo') return 165;
     if (e.structure === 'frontier-civic-fountain') return 110;

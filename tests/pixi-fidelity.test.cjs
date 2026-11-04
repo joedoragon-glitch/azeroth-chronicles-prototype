@@ -72,7 +72,8 @@ const inits = [],
   resources = new Set(),
   approvedTextures = new Map();
 const gpuUploadBatches = [],
-  worldIndicatorFrames = [];
+  worldIndicatorFrames = [],
+  crownWorkBakeCalls = [];
 let idleCallback = null,
   backgroundCopies = 0,
   textureUpdates = 0,
@@ -211,7 +212,10 @@ const runtime = {
   },
   PrototypeSprites: { timeMs: () => 1000 },
   PrototypeVisuals: {
-    draw() {},
+    draw(_ctx, visual) {
+      if (visual.crownFoundryWorker || visual.crownFoundryExterior)
+        crownWorkBakeCalls.push({ id: visual.id, t: visual.ambientTime });
+    },
     atmosphereMotes: Visuals.atmosphereMotes,
     terrainMotionLines: () => [],
   },
@@ -1153,6 +1157,54 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'procedural reflection uses the ground anchor',
   );
   assert.equal(coinStampPaints, priorCoinStamps + 1, 'steady frames reuse the coin stamp');
+  // The new native Crownwork gestures must visibly advance on Pixi too:
+  // one quantized procedural pose per small motion slice, not an immutable
+  // first-frame texture nor an unbounded texture for every animation tick.
+  const priorProps = game.props;
+  const originalTimeMs = sprites.timeMs;
+  let crownClockMs = 0;
+  sprites.timeMs = () => crownClockMs;
+  game.props = [
+    { id: 'crown-foundry-work-forming', x: game.hero.x + 20,
+      y: game.hero.y + 20, structure: 'crown-foundry-forming',
+      renderKind: 'prop', r: 0, decorative: true, crownFoundryWorker: true },
+    { id: 'side-entrance-side-crown-foundry-2', x: game.hero.x + 80,
+      y: game.hero.y + 30, structure: 'crown-foundry-yard-shipping',
+      renderKind: 'prop', r: 0, decorative: true, crownFoundryExterior: true },
+  ];
+  const crownFrame = (id) => {
+    const actor = frames.at(-1).find((item) => item.key === 'prop:' + id);
+    assert(actor, 'Crownwork figure must have a visible Pixi actor: ' + id);
+    return actor.textureId;
+  };
+  const workSnapshots = [];
+  const shippingSnapshots = [];
+  const firstBake = crownWorkBakeCalls.length;
+  for (let i = 0; i <= 28; i++) {
+    crownClockMs = i * 100;
+    parityGpu.draw();
+    workSnapshots.push(crownFrame('crown-foundry-work-forming'));
+    shippingSnapshots.push(crownFrame('side-entrance-side-crown-foundry-2'));
+  }
+  assert(new Set(workSnapshots).size > 1 && new Set(workSnapshots).size <= 8,
+    'Foundry artisan must animate using a bounded eight-frame Pixi texture cycle');
+  assert(new Set(shippingSnapshots).size > 1 && new Set(shippingSnapshots).size <= 8,
+    'Foundry freight attendant must animate without unlimited new textures');
+  const workBakes = crownWorkBakeCalls.slice(firstBake);
+  assert(workBakes.some((call) => call.id === 'crown-foundry-work-forming'));
+  assert(workBakes.some((call) => call.id === 'side-entrance-side-crown-foundry-2'));
+  assert(workBakes.every((call) => Number.isFinite(call.t) && call.t >= 0));
+  const seenAt = crownWorkBakeCalls.length;
+  crownClockMs = 0;
+  parityGpu.draw();
+  const repeatWork = crownFrame('crown-foundry-work-forming');
+  parityGpu.draw();
+  assert.equal(crownFrame('crown-foundry-work-forming'), repeatWork);
+  assert.equal(crownWorkBakeCalls.length, seenAt,
+    'Repeated Crownwork phase must reuse its baked texture, not rebake every frame');
+  game.props = priorProps;
+  sprites.timeMs = originalTimeMs;
+
   canvasSurface.width = 912;
   canvasSurface.height = 420;
   parityGpu.draw();
