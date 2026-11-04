@@ -50,7 +50,7 @@ for (const part of [
 for (const c of ['#b2a684', '#8b8063', '#c8bb96'])
   assert(paints(hero).includes(c) && paints(enemy).includes(c),
     'Strategist must inherit existing Ogre hide/anatomical palette: ' + c);
-for (const c of ['#679c9a', '#be8c5b', '#67523e'])
+for (const c of ['#679c9a', '#be8c5b', '#70583e'])
   assert(paints(hero).includes(c), 'Hero needs restrained material-kit identity: ' + c);
 assert(!paints(enemy).includes('#679c9a'), 'Enemy Ogre stays unchanged');
 // New direction must read from major forms, not the previous copied body.
