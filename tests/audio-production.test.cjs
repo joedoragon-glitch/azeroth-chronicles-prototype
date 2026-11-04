@@ -40,6 +40,54 @@ for (const region of data.regions)
       ? 'place-vale' : prefix + region.id);
     assert(manifest.assets[cue.id]);
   }
+// One recorded-score travel policy governs every outdoor region, not only Vale.
+// Verify cue identities independently of fade times, including non-Greenwood
+// settlements, night changes, nearby combat and protected nontravel scenes.
+assert.deepEqual(data.regions.map((r) => r.id).sort(),
+  ['crown', 'frontier', 'highlands', 'march', 'vale'],
+  'exercise all five currently playable outdoor regions');
+for (const region of data.regions) {
+  const place = manifest.director.places[region.id];
+  const outdoor = { ...scene, region: region.id, zone: region.id,
+    interior: 'outdoors', night: false, peace: false, settlement: null,
+    nearbyEngaged: 0, engaged: 0 };
+  const day = a.productionCue(outdoor);
+  assert.equal(day.id, place.base, region.id + ': exploration cue remains unchanged');
+  assert.equal(day.fade, 3.2, region.id + ': exploration fades over travel duration');
+  const settlement = a.productionCue({ ...outdoor, settlement: 'refuge' });
+  assert.equal(settlement.id, region.id === 'vale' ? place.base : place.settlement,
+    region.id + ': existing settlement placement remains authoritative');
+  assert.equal(settlement.fade, 3.2, region.id + ': settlement crossing is gradual');
+  const night = a.productionCue({ ...outdoor, night: true });
+  assert.equal(night.id, place.night, region.id + ': night theme retains precedence');
+  assert.equal(night.fade, 3.2, region.id + ': dusk/dawn crossing is gradual');
+  const fighting = a.productionCue({ ...outdoor, nearbyEngaged: 2 });
+  assert.equal(fighting.id, place.base, region.id + ': combat keeps the base score');
+  assert.equal(fighting.fade, 2, region.id + ': nearby combat reacts promptly');
+  const liberated = a.productionCue({ ...outdoor, peace: true });
+  assert.equal(liberated.id, place.peace, region.id + ': liberation theme unchanged');
+  assert.equal(liberated.fade, place.fade,
+    region.id + ': peace keeps its authored nontravel transition');
+  const indoor = a.productionCue({ ...outdoor, interior: 'dungeon' });
+  assert.equal(indoor.fade, place.fade,
+    region.id + ': indoor music is not assigned outdoor travel timing');
+}
+const crown = { ...scene, zone: 'crown', region: 'crown', interior: 'outdoors' };
+a.combatUntil = a.ctx.currentTime + 2.5;
+assert.equal(a.productionCue(crown).fade, 2,
+  'combat release tail retains responsive handoff after nearby enemy disengages');
+a.combatUntil = 0;
+assert.equal(a.productionCue(crown).fade, 3.2,
+  'normal outdoor handoff resumes after the release tail');
+assert.equal(a.productionCue({
+  ...crown, zone: 'citadel', interior: 'dungeon',
+}).fade, manifest.director.places.citadel.fade,
+  'Crown dungeon music retains its authored fade');
+assert.equal(a.productionCue({
+  ...crown, zone: 'supply-crown', interior: 'treasury',
+}).fade, manifest.director.places['supply-crown'].fade,
+  'treasury transitions remain outside regional outdoor policy');
+
 for (const boss of data.bosses) {
   for (const form of ['normal', 'true']) {
     const cue = a.productionCue({ ...scene, boss: { family: boss.id, form } });
