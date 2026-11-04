@@ -24,7 +24,7 @@
       let threat=null,nearest=Infinity;
       for(const enemy of zone.enemies||[]) {
         if(!enemy || !isPoint(enemy) || !(enemy.hp>0) ||
-           enemy.neutral || enemy.returning || enemy.summon) continue;
+           enemy.neutral || enemy.returning) continue;
         const radius=game.enemyAcquisitionRange(enemy);
         if(!Number.isFinite(radius)||radius<=0) {
           return {safe:false,threatId:null,reason:'unverified'};
