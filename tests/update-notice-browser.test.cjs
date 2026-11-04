@@ -295,6 +295,10 @@ const server = http.createServer((req, res) => {
         Number(sessionStorage.getItem('pwa-browser-boot-count') || 0) >= before + 2,
         bootsBefore, { timeout: 90000 });
       await page.waitForFunction(async () => {
+        // controllerchange triggers a genuine full-document navigation. The
+        // old/new document may briefly be visible before the production game
+        // scripts initialize; that is expected, not an update failure.
+        if (!window.PrototypeBuild?.version || !window.Prototype) return false;
         const name = 'azeroth-app-v' + window.PrototypeBuild.version + '-notice-c';
         if (!(await caches.keys()).includes(name)) return false;
         const cache = await caches.open(name);
