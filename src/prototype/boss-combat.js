@@ -1321,7 +1321,7 @@
         } else {
           const criticalReceipt = this.worldCriticalRelease(e, 'melee');
           const equipment = R.enemyMeleeEquipment(e);
-          this.event('swing', {
+          if (!sourceContext) this.event('swing', {
             actor: 'enemy',
             source: e.id,
             species: e.species,
@@ -1337,7 +1337,7 @@
             0,
             e.id,
             false, null, sourceContext,
-          ))
+          ) && !sourceContext)
             this.event('melee', {
               actor: 'enemy',
               source: e.id,

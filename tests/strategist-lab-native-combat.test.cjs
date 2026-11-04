@@ -79,9 +79,13 @@ test('native combatTargets includes valid current-region Lab workers but no remo
 test('real off-zone melee enemy damages the owned worker through native hitParty and native cooldown',()=>{
   const {g,u,enemy,bank,home}=setup();
   const initial=u.hp,enemyHp=enemy.hp,other=JSON.stringify(g.s.zones.march.enemies);
+  const events=[],originalEvent=g.event.bind(g);
+  g.event=(name,...args)=>{events.push(name);return originalEvent(name,...args);};
   tick(g);
   assert.ok(u.hp<initial,'real native authored hostile damaged the worker');
   assert.ok(enemy.cd>0,'the real enemyStartBasic owns its cooldown');
+  assert.equal(events.some(x=>['swing','hurt','melee'].includes(x)),false,
+    'remote danger must not emit local-region combat audiovisual cues');
   const after=u.hp;
   tick(g);
   assert.equal(u.hp,after,'ordinary cooldown blocks immediate second hit');
@@ -140,4 +144,15 @@ test('unsupported ranged/boss remote attacks remain suspended rather than instan
   tick(g,20);
   assert.equal(u.hp,hp,'unsupported boss specials do not invent effects');
   assert.equal(g.s.zone,'march');
+});
+
+test('off-region native safe settlement exclusion remains exact',()=>{
+  const {g,home,enemy}=setup();
+  const town=Campaign.data.towns[g.regionIndex(home)];
+  assert.ok(town);
+  assert.equal(Remote.withinNativeRefuge(g,home,{x:town[0],y:town[1]}),true);
+  assert.equal(Remote.withinNativeRefuge(g,home,{x:town[0]+169,y:town[1]}),true);
+  assert.equal(Remote.withinNativeRefuge(g,home,{x:town[0]+170,y:town[1]}),false);
+  assert.equal(Remote.withinNativeRefuge(g,'unrecognized',{x:town[0],y:town[1]}),false);
+  assert.ok(enemy.hp>0);
 });

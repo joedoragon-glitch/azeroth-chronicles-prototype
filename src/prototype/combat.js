@@ -1067,7 +1067,10 @@
             }
           }
         }
-        this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
+        // Native remote HP/death remains authoritative, but player-visible
+        // hurt effects belong only to the currently active region.
+        if (!sourceContext)
+          this.event('hurt', { x: u.x, y: u.y, target: u === this.hero ? 'hero' : u.id });
         if (u === this.hero && this.s.mode === 'developer' && u.hp === 0) {
           u.hp = u.maxHp;
           this.event('heal', { x: u.x, y: u.y, target: 'hero', amount: u.maxHp });

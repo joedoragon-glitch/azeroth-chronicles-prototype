@@ -12,12 +12,22 @@
   const SCAN_SECONDS=0.4, ROUTE_SECONDS=0.8, MAX_ACTORS=14;
   const point=p=>!!p&&Number.isFinite(p.x)&&Number.isFinite(p.y);
   const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  function withinNativeRefuge(game,zoneId,position){
+    if(!point(position)||typeof game?.regionIndex!=='function')return false;
+    const index=game.regionIndex(zoneId);
+    const town=game.constructor?.data?.towns?.[index];
+    return Array.isArray(town)&&town.length>=2 &&
+      Number.isFinite(town[0])&&Number.isFinite(town[1]) &&
+      dist(position,{x:town[0],y:town[1]})<170;
+  }
   function create({navigation,rules}={}){
     if(!navigation||typeof navigation.route!=='function'||
        typeof navigation.passable!=='function'||!rules?.balance)
       throw Error('Native zone-explicit movement and rules required');
     function eligible(g,e,zoneId){
+      // Ongoing native encounters retain their original AI owner.
       return e?.type==='mob'&&e.hp>0&&!e.neutral&&!e.returning&&
+        !e.aggro&&
         !e.captain&&!e.roomCaptain&&!e.fieldCaptain&&!e.summon&&
         !e.hybrid&&!e.rangedAim&&!e.telegraph&&!e.motion&&
         !e.deathRoll&&!e.owner&&!g.enemyRanged(e)&&
@@ -64,7 +74,8 @@
               if(!navigation.passable(game,zoneId,e,item.job.position,
                 navigation.budget?.(0,110)))continue;
               // Respect the native ordinary leash and actual home coordinate.
-              if(dist(item.job.position,e.home)>500)continue;
+              if(dist(item.job.position,e.home)>500||
+                 withinNativeRefuge(game,zoneId,item.job.position))continue;
               closest=item;distance=gap;
             }
             if(!closest)continue;
@@ -80,7 +91,8 @@
         for(const entry of token.encounters.values()){
           const e=entry.enemy;
           const item=group.find(x=>x.u.id===entry.target);
-          if(!item||!eligible(game,e,zoneId))continue;
+          if(!item||!eligible(game,e,zoneId)||
+             withinNativeRefuge(game,zoneId,item.job.position))continue;
           const u=item.u,reach=game.enemyMeleeBasicRange(e),
             gap=dist(e,u);
           const recovery=game.cooldownRecoveryElapsed(e,dt,true);
@@ -121,7 +133,9 @@
     function invalidate(game){sessions.delete(game);}
     return Object.freeze({advanceEnemyDanger,invalidate});
   }
-  const api=Object.freeze({create,SCAN_SECONDS,ROUTE_SECONDS,MAX_ACTORS});
+  const api=Object.freeze({
+    create,withinNativeRefuge,SCAN_SECONDS,ROUTE_SECONDS,MAX_ACTORS,
+  });
   if(typeof module!=='undefined')module.exports=api;
   else root.PrototypeStrategistLabCombat=api;
 })(typeof window!=='undefined'?window:globalThis);
