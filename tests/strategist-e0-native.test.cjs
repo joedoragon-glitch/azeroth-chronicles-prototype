@@ -112,6 +112,19 @@ try {
     const { g, primary, nearby, events } = make(2);
     assert(hit(g, primary));
     assert(hit(g, primary));
+    const nativeDamage = g.damage.bind(g);
+    g.damage = () => false;
+    assert(hit(g, nearby), 'legal different-target attempt may still be blocked');
+    g.damage = nativeDamage;
+    assert(hit(g, primary));
+    assert.equal(events.filter((e) => e.type === 'strategistDaggerLanded').at(-1).step, 1,
+      'a blocked attempted switch ends the prior target rhythm');
+    assert.equal(g.s.strategistAcidBottles, 2);
+  }
+  {
+    const { g, primary, nearby, events } = make(2);
+    assert(hit(g, primary));
+    assert(hit(g, primary));
     // Resolver true without HP change (e.g. all damage absorbed by a shield)
     // must not be mistaken for a landed dagger.
     const realDamage = g.damage.bind(g);
