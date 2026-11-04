@@ -6653,6 +6653,14 @@
   });
   // E0-only dormant Ogre basic; all damage coefficients are provisional and
   // must be reviewed before fifth-class admission. No extra critical roll.
+  // Bounded developer-only Ogre defence; balance rates are provisional.
+  // Dodge and melee retaliation make independent attack-instance decisions.
+  // This contract creates no public class, persistent meter or frame polling.
+  const strategistOgreDefense = Object.freeze({
+    dodgeChance: 0.05,
+    meleeRetaliationChance: 0.10,
+    meleeRetaliationPowerMultiplier: 0.35,
+  });
   const strategistBasicFoundation = Object.freeze({
     range: 90,
     resetSeconds: 4,
@@ -7864,6 +7872,7 @@
     classUltimates,
     basicAttackCombo,
     strategistBasicFoundation,
+    strategistOgreDefense,
     rogueHeroFoundation,
     rogueCharmNicknames,
     companionSkills,
