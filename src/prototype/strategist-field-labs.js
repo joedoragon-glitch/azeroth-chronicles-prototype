@@ -341,8 +341,16 @@
               worker.hp <= 0 || worker.fieldLabTrained !== true ||
               worker.fieldLabJob !== lab.id || worker.order?.type !== 'strategist-field-lab' ||
               worker.expeditionId || !MATERIALS.includes(job.material) ||
-              !finitePoint(job.position) || !safeFromThreat(this, job.zoneId, job.position, worker))
-            continue; // No invented safe progress through an enemy encounter.
+              !finitePoint(job.position))
+            continue;
+          if (!safeFromThreat(this, job.zoneId, job.position, worker)) {
+            // A remote zone has no active enemy simulation. Refuse work here,
+            // report the authentic hostile, never grant an invisible win.
+            const threat = adapters.inspectThreat?.(this, job.zoneId, job.position, worker);
+            job.threatId = threat?.threatId || 'unverified';
+            continue;
+          }
+          delete job.threatId;
           if (job.phase === 'station' || job.phase === 'outbound' || job.phase === 'return') {
             if (job.blocked) {
               if ((this.s.time || 0) >= job.retryAt) {
