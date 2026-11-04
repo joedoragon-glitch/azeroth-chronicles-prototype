@@ -377,3 +377,27 @@ test('without the authentic E0 cap contract windmill cannot spend inputs', () =>
   assert.equal(bank.samples.wood, 3);
   delete g.constructor.rules;
 });
+
+
+test('direct method callers cannot manufacture bottles without a real assigned worker', () => {
+  const g = new Campaign(); const lab = build(g);
+  const bank = g.fieldLabNetwork();
+  bank.samples.water = 3; bank.samples.wood = 3;
+  assert.equal(g.upgradeFieldLabWindmill('vale', 'vale'), true);
+  const fake = {
+    workerId: 'forged', labId: lab.id, zoneId: 'vale',
+    phase: 'idle', material: 'wood', position: { x: 100, y: 100 },
+  };
+  const before = JSON.stringify(bank.samples);
+  assert.equal(g.fieldLabMakeProduct(fake, lab, 0.1), false);
+  assert.equal(g.s.strategistAcidBottles, 0);
+  assert.equal(JSON.stringify(bank.samples), before);
+  const worker = addReserve(g); assert.equal(g.trainFieldLabWorker(worker.id), true);
+  assert.equal(g.assignFieldLabWorker('vale', 'vale', worker.id, 'mineral'), true);
+  const job = bank.jobs[worker.id];
+  job.phase = 'idle';
+  worker.fieldLabTrained = false;
+  assert.equal(g.fieldLabMakeProduct(job, lab, 0.1), false);
+  assert.equal(JSON.stringify(bank.samples), before);
+  assert.equal(g.s.strategistAcidBottles, 0);
+});
