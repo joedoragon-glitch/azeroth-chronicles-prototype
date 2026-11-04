@@ -15,6 +15,12 @@ const {
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  {
+    // The capture script runs the actual renderer in its dedicated, bounded
+    // Gate 0 workflow. Protect its native artist contract in focused CI too.
+    match: /^tools\/visual-review\/strategist-ogre-gate0\/capture\.cjs$/,
+    tests: [TEST + 'strategist-ogre-visual.test.cjs'],
+  },
   // #755: future comparator edits must exercise the positive-control guard.
   {
     match: /^scripts\/pixi-755-compare\.cjs$|^tests\/pixi-755-acceptance\.test\.cjs$/,
