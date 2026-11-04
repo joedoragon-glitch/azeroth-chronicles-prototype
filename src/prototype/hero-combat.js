@@ -1783,6 +1783,9 @@
             radius: cfg.acidSplashRadius, hits, bottlesRemaining: stock - 1,
           });
         }
+        // A defeated foe's recycled ID must not continue an old contact
+        // sequence if its native respawn becomes targetable quickly.
+        if (primary.hp <= 0) strategistDaggerStates.delete(this);
         return true;
       }
       // Rogue automatic basic: only the surviving primary may try Charm.
