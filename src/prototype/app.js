@@ -1588,13 +1588,13 @@
     language = value === 'es' ? 'es' : 'en';
     if (game) game.rogueNicknameLanguage = language;
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
-    refreshPhoneOrientationText();
     if (persist) {
       firstLanguageChoice = false;
       try {
         localStorage.setItem(languageKey, language);
       } catch (_) {}
     }
+    refreshPhoneOrientationText();
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
     refreshUpdateNotice();
     $('talent-button').firstChild.textContent =
@@ -2186,7 +2186,7 @@
     platform,
     chargePresentation,
     queuedChargePresentation,
-    isPaused: () => paused || !focused || document.hidden,
+    isPaused: () => paused || phoneOrientationBlocked || !focused || document.hidden,
     getGuideRoute: () =>
       navigationGuide
         ? visibleNavigationRoute()
@@ -2378,7 +2378,7 @@
         // could immediately engage. A recovery happens when the scene is
         // visible, idle and outside nearby danger.
         canRecover: () => {
-          if (!started || paused || menu || !focused || document.hidden ||
+          if (!started || paused || menu || phoneOrientationBlocked || !focused || document.hidden ||
               frameSkip.emergency || joy.x || joy.y || game.hero.order ||
               game.hero.path?.length || game.s.projectiles?.length ||
               keys.left || keys.right || keys.up || keys.down) return false;
@@ -2509,6 +2509,9 @@
     get sceneLoading() {
       return !!sceneTransition;
     },
+    get orientationBlocked() {
+      return phoneOrientationBlocked;
+    },
     audio,
     renderer,
     get experimentalGraphics() {
@@ -2562,7 +2565,7 @@
       return profile;
     },
     get paused() {
-      return paused || !!menu || !focused || document.hidden;
+      return paused || !!menu || phoneOrientationBlocked || !focused || document.hidden;
     },
   };
   // Bitmap dimension assignments erase every Canvas pixel, even when the
@@ -2670,9 +2673,12 @@
     resize();
   }
   addEventListener('resize', () => {
+    syncPhoneOrientation();
     releaseJoystick();
     resize();
   });
+  addEventListener('orientationchange', syncPhoneOrientation);
+  window.visualViewport?.addEventListener?.('resize', syncPhoneOrientation);
   function activePlay() {
     return (
       started &&
@@ -2680,6 +2686,7 @@
       !persistence.conflicted(game.s.mode) &&
       !paused &&
       !menu &&
+      !phoneOrientationBlocked &&
       !frameSkip.emergency &&
       focused &&
       !document.hidden &&
@@ -8630,6 +8637,18 @@
     };
   }
   function frame(now) {
+    if (phoneOrientationBlocked) {
+      // A portrait phone is neither a playable scene nor an idle render.
+      // Reset the clock every callback, including after mobile tab throttling,
+      // so turning back cannot generate a catch-up combat tick or FPS alarm.
+      last = now;
+      frameSkip.suspend();
+      renderResolution.suspend();
+      runtime.suspend();
+      fps.suspend();
+      requestAnimationFrame(frame);
+      return;
+    }
     if (!started || sceneTransition) {
       // Idle title runs its music director without simulating a campaign.
       if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
@@ -9024,6 +9043,7 @@
         () => Sprint.press('touch', false);
   }
   platform.onChange(() => {
+    syncPhoneOrientation();
     clearInput();
     resize();
     runtime.reset();
@@ -9114,6 +9134,7 @@
   updateHUD();
   setLanguage(language, false);
   showTitleScreen();
+  syncPhoneOrientation();
   if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
       performanceBaselineUpgraded
