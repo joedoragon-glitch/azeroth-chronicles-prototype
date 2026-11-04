@@ -96,7 +96,7 @@
       const u = roster.get(id);
       if (!only(job, ['zoneId','labId','workerId','material','position','phase',
           'path','waypoint','sampleLeft','carries','retryAt','target','sourceId',
-          'wasActive','blocked']) ||
+          'wasActive','blocked','threatId']) ||
           !u || u.fieldLabTrained !== true || u.fieldLabJob !== job.labId ||
           u.order?.type !== 'strategist-field-lab' ||
           u.order.id !== job.labId || u.active !== false ||
@@ -118,6 +118,8 @@
           job.retryAt > s.time + C.retrySeconds + 1 ||
           typeof job.wasActive !== 'boolean' ||
           (job.blocked !== undefined && typeof job.blocked !== 'boolean') ||
+          (job.threatId !== undefined &&
+            (typeof job.threatId !== 'string' || job.threatId.length > 150)) ||
           (job.target !== null && !point(job.target,options.zoneSize?.(job.zoneId) ?? 5000)) ||
           (job.sourceId !== null && (typeof job.sourceId !== 'string' ||
             job.sourceId.length > 150)) ||
