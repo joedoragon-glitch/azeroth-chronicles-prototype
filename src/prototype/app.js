@@ -2454,7 +2454,7 @@
     showMap,
     finaleMenu,
     storyNavigate,
-    chooseNewRun: (mode) => chooseLanguage(mode),
+    chooseNewRun: (mode) => chooseClass(mode),
     status,
     requestName,
     sceneTransitionTo,
@@ -4318,24 +4318,6 @@
     showTitleScreen();
     enterPreparedScene();
   }
-  function chooseLanguage(mode) {
-    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
-    openMenu(
-      'Choose your language',
-      'English / Español',
-      [
-        action('English' + (language === 'en' ? ' ✓' : ''), () => {
-          setLanguage('en');
-          chooseClass(mode);
-        }),
-        action('Español' + (language === 'es' ? ' ✓' : ''), () => {
-          setLanguage('es');
-          chooseClass(mode);
-        }),
-      ],
-      () => (started ? openMain() : newGameMenu()),
-    );
-  }
   function savedRunRecoveryMenu() {
     openMenu(
       'Saved run could not be opened',
@@ -4355,7 +4337,7 @@
           !persistence.original(profile.activeMode),
         ),
         { kind: 'file', label: 'Import save' },
-        action('Start a new Normal run', () => chooseLanguage('normal')),
+        action('Start a new Normal run', () => chooseClass('normal')),
       ],
       started ? savedRunRecoveryMenu : showTitleScreen,
       { view: 'save-recovery' },
@@ -4979,65 +4961,6 @@
             'Azeroth_Playtest_Report.json',
           )
   }
-  function saveMenu() {
-    openMenu(
-      'Save and game management',
-      'Save, back up, or choose another run.',
-      [
-        action('Save run', () => {
-          save();
-          closeMenu();
-        }),
-        action('Save backups', saveBackupMenu),
-        action('New game', newGameMenu),
-        ...(combatDiagnosticsEnabled
-          ? [
-              action(
-                'Load Combat Diagnostics run',
-                () => {
-                  if (load('arena')) {
-                    graphicsController.revert();
-                    setOptimizationActive(true);
-                    resize();
-                    save();
-                    closeMenu();
-                    updateHUD();
-                  }
-                },
-                'Continue your separate low-spec combat-testing save.',
-                !persistence.exists('arena'),
-              ),
-            ]
-          : []),
-        action('Load other mode run', () => {
-          const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
-          if (load(mode)) {
-            save();
-            closeMenu();
-          } else game.say('No saved ' + mode + ' run yet.');
-        }),
-      ],
-      systemMenu,
-    );
-  }
-  function saveBackupMenu() {
-    const reminder = backupReminder(game.s.mode, game.hero.level);
-    openMenu(
-      'Save backups',
-      'Export a backup before replacing a run.\n' +
-        storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
-      [
-        action('Export save', () => exportCampaign(game)),
-        { kind: 'file', label: 'Import save' },
-        ...(typeof storageApi?.persist === 'function' &&
-           storageProtectionState !== 'granted'
-          ? [action('Request persistent storage',
-              () => requestStorageProtection(saveBackupMenu))]
-          : []),
-      ],
-      saveMenu,
-    );
-  }
   function newGameMenu() {
     openMenu(
       'New game',
@@ -5063,7 +4986,7 @@
           !profile.nightmareUnlocked,
         ),
       ],
-      started ? saveMenu : showTitleScreen,
+      showTitleScreen,
     );
   }
   // Menu audit Step 2: one window for every display, renderer and frame option.
@@ -5500,10 +5423,10 @@
         ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
         action('Export final run', () => exportCampaign(game)),
-        action('Start a new Normal run', () => chooseLanguage('normal')),
+        action('Start a new Normal run', () => chooseClass('normal')),
         action(
           'Start a new Nightmare run',
-          () => chooseLanguage('nightmare'),
+          () => chooseClass('nightmare'),
           '',
           !profile.nightmareUnlocked,
         ),
@@ -5514,7 +5437,7 @@
     const file = e.target.files?.[0];
     if (!file) return;
     // Selecting a file only opens a validated preview, never a write.
-    const back = started ? saveBackupMenu : titleSaveMenu;
+    const back = titleSaveMenu;
     try {
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
       const data = JSON.parse(await file.text());
