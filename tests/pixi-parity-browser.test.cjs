@@ -436,8 +436,23 @@ async function main() {
             opts.ctx.setTransform(original.width / innerWidth, 0, 0,
               original.width / innerWidth, 0, 0);
             window.r3Trace = false;
-            if (JSON.stringify(g.s) !== original.saved)
-              throw Error('R3B altered native Campaign state');
+            if (JSON.stringify(g.s) !== original.saved) {
+              const findDifference = (before, after, prefix = 's', depth = 0) => {
+                if (JSON.stringify(before) === JSON.stringify(after)) return null;
+                if (depth >= 8 || before === null || after === null ||
+                    typeof before !== 'object' || typeof after !== 'object')
+                  return prefix + ': ' + JSON.stringify(before).slice(0, 60) +
+                    ' -> ' + JSON.stringify(after).slice(0, 60);
+                const keys = new Set([...Object.keys(before), ...Object.keys(after)]);
+                for (const key of keys) {
+                  if (JSON.stringify(before[key]) !== JSON.stringify(after[key]))
+                    return findDifference(before[key], after[key], prefix + '.' + key, depth + 1);
+                }
+                return prefix;
+              };
+              throw Error('R3B native Campaign mismatch at ' +
+                findDifference(JSON.parse(original.saved), g.s));
+            }
           }
         });
         r3Probes.push(trace);
