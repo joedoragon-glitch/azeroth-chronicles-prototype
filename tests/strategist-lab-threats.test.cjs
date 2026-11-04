@@ -54,3 +54,12 @@ test('missing native sources fail closed, not guaranteed worker immunity',()=>{
     {safe:false,threatId:null,reason:'unverified'});
   assert.equal(t.safeFromThreat(g,'march',{x:150,y:220},{id:'a'}),false);
 });
+
+test('hostile summoned enemy is not falsely ignored as safe for workers',()=>{
+  const g=game(), t=Threats.create({sight:()=>true});
+  const e=g.s.zones.march.enemies[0];
+  e.summon=true;
+  const result=t.inspect(g,'march',{x:150,y:220,workerId:'summon-case'});
+  assert.equal(result.safe,false);
+  assert.equal(result.threatId,e.id);
+});
