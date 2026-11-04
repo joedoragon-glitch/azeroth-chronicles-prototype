@@ -34,7 +34,7 @@ const lineup = [
 ];
 lineup.forEach(([label, entity, scale], i) => {
   const x = 108 + i * 208;
-  ctx.save(); ctx.translate(x, 240); ctx.scale(scale, scale);
+  ctx.save(); ctx.translate(x, 280); ctx.scale(scale, scale);
   ctx.fillStyle = 'rgba(19,31,24,.38)';
   ctx.beginPath(); ctx.ellipse(0, 16 / scale, 23, 7, 0, 0, Math.PI * 2); ctx.fill();
   Visuals.draw(ctx, { ...entity, id: 'gate0-' + i }, { x: 0, y: 0 }, 0);
@@ -50,7 +50,7 @@ const portrait = createCanvas(1050, 1050), detail = portrait.getContext('2d');
 detail.fillStyle = '#354e40';
 detail.fillRect(0, 0, portrait.width, portrait.height);
 detail.save();
-detail.translate(525, 740);
+detail.translate(525, 800);
 detail.scale(8, 8);
 detail.fillStyle = 'rgba(19,31,24,.38)';
 detail.beginPath();
