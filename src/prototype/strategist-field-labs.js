@@ -275,7 +275,10 @@
             approvedPath = points(candidate) ? candidate : null;
             return candidate;
           },
-          passable: (from, point, zone) => navigation.passable(this, zone.id, from, point),
+          // #770 validates every selected leg. Share the same finite probe
+          // budget across the path search AND its authenticated segment audit.
+          passable: (from, point, zone) =>
+            navigation.passable(this, zone.id, from, point, decisionBudget),
         });
         if (!source || !finitePoint(source.point)) return false;
         // Reuse the path already authenticated by #770 instead of solving twice.
