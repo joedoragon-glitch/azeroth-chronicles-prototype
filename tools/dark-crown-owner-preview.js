@@ -111,6 +111,68 @@
   backdrop.append(dialog);
   document.body.append(launcher, backdrop);
 
+  // Preview-scoped bridge to the landscape-only phone contract in draft #793.
+  // The main game's Stage 3 orientation guard is NOT merged yet. Do not try
+  // screen.orientation.lock() or rotate the Canvas: show a neutral blocker and
+  // own the native pause menu only when the game had no menu open already.
+  const rotate = node('section', 'crown-review-rotate');
+  rotate.id = 'crown-review-rotate';
+  rotate.hidden = true;
+  rotate.tabIndex = -1;
+  rotate.setAttribute('role', 'alertdialog');
+  rotate.setAttribute('aria-modal', 'true');
+  rotate.setAttribute('aria-labelledby', 'crown-review-rotate-title');
+  const rotateCard = node('div', 'crown-review-rotate-card');
+  const rotateIcon = node('span', 'crown-review-rotate-icon', '↻');
+  rotateIcon.setAttribute('aria-hidden', 'true');
+  const rotateHeading = node('h2', '', 'Rotate your phone / Gira tu teléfono');
+  rotateHeading.id = 'crown-review-rotate-title';
+  const rotateText = node('p', '',
+    'This review is designed for landscape. Turn your phone sideways to continue. ' +
+    'Esta vista está diseñada para horizontal. Gira el teléfono para continuar.');
+  rotateCard.append(rotateIcon, rotateHeading, rotateText);
+  rotate.append(rotateCard);
+  document.body.append(rotate);
+  let rotationOwnsMenu = false;
+  let rotationPreviousFocus = null;
+  function portraitPhone() {
+    // Device experience, not a narrow desktop window or virtual keyboard.
+    return root.Prototype?.platform?.mode === 'phone' &&
+      !!root.matchMedia?.('(orientation: portrait)').matches &&
+      root.innerHeight > root.innerWidth;
+  }
+  function syncPhoneOrientation() {
+    if (!portraitPhone()) {
+      if (rotate.hidden) return;
+      rotate.hidden = true;
+      document.body.classList.remove('crown-review-orientation-blocked');
+      document.body.append(rotate);
+      if (rotationOwnsMenu) {
+        rotationOwnsMenu = false;
+        root.Prototype?.closeMenu();
+      }
+      if (!backdrop.hidden) closeButton.focus({ preventScroll: true });
+      else if (rotationPreviousFocus?.isConnected) rotationPreviousFocus.focus({ preventScroll: true });
+      rotationPreviousFocus = null;
+      return;
+    }
+    if (!rotate.hidden) return;
+    rotationPreviousFocus = document.activeElement;
+    const api = root.Prototype;
+    const modal = $('modal');
+    if (api?.started && modal?.hidden && !menuOwned) {
+      api.openMenu('Owner preview · rotate phone', '', [], () => {});
+      rotationOwnsMenu = true;
+    }
+    // A guide, settings panel, or owned orientation pause all use the *real*
+    // native modal. Mount inside it so outside-tap dismissal cannot unpause.
+    if (modal && !modal.hidden) modal.append(rotate);
+    else document.body.append(rotate);
+    rotate.hidden = false;
+    document.body.classList.add('crown-review-orientation-blocked');
+    rotate.focus({ preventScroll: true });
+  }
+
   function available() {
     const api = root.Prototype;
     return !!(api?.started && !api.sceneLoading && api.game?.s.mode === 'developer');
@@ -218,7 +280,7 @@
     launcher.focus({ preventScroll: true });
   }
   function open() {
-    if (!backdrop.hidden) return;
+    if (!backdrop.hidden || !rotate.hidden) return;
     const api = root.Prototype;
     if (api?.started && !$('modal').hidden) {
       launcher.textContent = t('Close game menu first', 'Cierra primero el menú del juego');
@@ -248,6 +310,7 @@
     closeButton.focus({ preventScroll: true });
   }
   function jump(place, returning) {
+    if (!rotate.hidden) return;
     if (!available()) {
       feedback.textContent = t('Start a Developer Mode game first.', 'Primero inicia una partida en modo Desarrollador.');
       return;
@@ -318,5 +381,17 @@
       }
     }
   }, true);
+  // Block keyboard/game input during an upright phone review, independently
+  // of the unfinished orientation work on the main game branch.
+  document.addEventListener('keydown', (event) => {
+    if (rotate.hidden) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }, true);
+  root.addEventListener('resize', syncPhoneOrientation);
+  root.addEventListener('orientationchange', syncPhoneOrientation);
+  root.matchMedia?.('(orientation: portrait)')?.addEventListener?.('change', syncPhoneOrientation);
+  root.Prototype?.platform?.onChange?.(syncPhoneOrientation);
   localize();
+  syncPhoneOrientation();
 })(window);

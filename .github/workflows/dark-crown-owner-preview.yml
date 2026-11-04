@@ -12,7 +12,7 @@ permissions:
   contents: read
 jobs:
   preview:
-    name: Focused desktop/narrow game and immutable review URL
+    name: Focused desktop/phone LANDSCAPE and rotation safety; immutable review URL
     runs-on: ubuntu-latest
     timeout-minutes: 16
     steps:
@@ -26,7 +26,7 @@ jobs:
         run: node scripts/build.cjs --check
       - name: Install Chromium for focused smoke only
         run: npx playwright install --with-deps chromium
-      - name: Run real native review walkthrough, desktop and narrow
+      - name: Verify desktop, phone 800x375/844x390 and portrait rotation guard
         run: node tests/dark-crown-owner-preview-browser.test.cjs
       - name: Preserve owner guide visual evidence (two real browser layouts)
         if: always()
