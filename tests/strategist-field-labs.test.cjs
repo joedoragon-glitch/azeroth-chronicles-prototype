@@ -38,10 +38,10 @@ class Campaign {
       strategistAcidBottles: 0, party: [],
       zones: {
         vale: { id: 'vale', props: [], buildings: complete ? [{
-          id: 'b-1', kind: 'barracks', x: 10, y: 10, progress: 0,
+          id: 'barracks-1', kind: 'barracks', x: 10, y: 10, progress: 0,
         }] : [] },
         march: { id: 'march', props: [], buildings: [{
-          id: 'b-2', kind: 'barracks', x: 10, y: 10, progress: 4,
+          id: 'barracks-2', kind: 'barracks', x: 10, y: 10, progress: 4,
         }] },
         highlands: { id: 'highlands', props: [], buildings: [] },
         frontier: { id: 'frontier', props: [], buildings: [] },
@@ -136,7 +136,7 @@ test('placement/payment failures are atomic and do not create fake Labs', () => 
   const g = new Campaign('strategist', false);
   assert.equal(g.buildFieldLab('vale', { x: 200, y: 100 }), false);
   assert.equal(g.fieldLabNetwork(), null);
-  g.s.zones.vale.buildings.push({ id: 'b', kind: 'barracks', progress: 1 });
+  g.s.zones.vale.buildings.push({ id: 'barracks-old', kind: 'barracks', progress: 1 });
   g.blocked = () => true;
   assert.equal(g.buildFieldLab('vale', { x: 200, y: 100 }), false);
   g.blocked = () => false; g.hero.gold = 2;
@@ -313,4 +313,31 @@ test('processing refuses unsafe stock and never goes negative', () => {
   bank.samples.water = -1;
   run(g, 20);
   assert.equal(bank.products.waterReagent, 1);
+});
+
+test('town scenery Barracks IDs do not qualify as player-placed buildings', () => {
+  const g = new Campaign('strategist', false);
+  g.s.zones.vale.buildings.push({
+    id: 'crown-field-barracks', kind: 'barracks', x: 50, y: 50, progress: 4,
+  });
+  assert.equal(g.buildFieldLab('vale', { x: 200, y: 100 }), false);
+});
+test('Acid priority preserves raw surplus; manual reagent priority remains finite', () => {
+  const g = new Campaign(); build(g);
+  const u = addReserve(g);
+  g.trainFieldLabWorker(u.id);
+  g.assignFieldLabWorker('vale', 'vale', u.id, 'wood');
+  const bank = g.fieldLabNetwork();
+  g.upgradeFieldLabWindmill('vale', 'vale');
+  bank.samples.wood = 4;
+  run(g, 20);
+  assert.equal(bank.samples.wood, 4);
+  assert.equal(bank.products.woodEssence, 0);
+  assert.equal(g.s.strategistAcidBottles, 0);
+  assert.equal(g.setFieldLabProductionPriority('vale', 'vale', 'reagents'), true);
+  run(g, 7);
+  assert.ok(bank.products.woodEssence >= 1);
+  assert.ok(bank.samples.wood < 4);
+  assert.equal(g.setFieldLabProductionPriority('vale', 'vale', 'acid'), true);
+  assert.equal(g.setFieldLabProductionPriority('vale', 'vale', 'free-power'), false);
 });
