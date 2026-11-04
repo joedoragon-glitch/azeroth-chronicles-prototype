@@ -36,6 +36,9 @@ const { shell } = require('./helpers/production-shell.cjs');
     // A backing reset must carry cause, ratios and timing in an ordered event.
     scope.innerWidth = 411;
     for (const callback of app.events.resize || []) callback();
+    // One >650ms callback must activate the real existing emergency guard
+    // before the graphics Auto override, followed by an actual resize request.
+    app.frame(1300);
     openPerformance();
     click(label('Stop renderer profiling', 'Detener registro del renderizador'));
     click(label('Export playtest report', 'Exportar informe de prueba'));
@@ -75,6 +78,18 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(Number.isFinite(resized.elapsedMs));
     assert(Number.isFinite(capture.initialGraphics.backingRatio));
     assert(Number.isFinite(capture.finalGraphics.backingRatio));
+    const events = capture.graphicsTransitions;
+    const enteredAt = events.findIndex((event) => event.type === 'emergency-enter-before-draw');
+    const optimizedAt = events.findIndex((event) =>
+      event.type === 'optimization-change' && event.reason === 'emergency');
+    const emergencyResizeAt = events.findIndex((event) =>
+      event.type === 'canvas-backing-resize' && event.reason === 'emergency-optimization');
+    assert(enteredAt >= 0, 'critical callback enters emergency ahead of renderer work');
+    assert(optimizedAt > enteredAt, 'emergency optimizer fires after the guard');
+    assert(emergencyResizeAt > optimizedAt,
+      'backing reset request is caused by recovery policy, not the earlier stall');
+    assert.equal(events[optimizedAt].frameId, events[enteredAt].frameId);
+    assert.equal(events[emergencyResizeAt].frameId, events[enteredAt].frameId);
     assert(capture.frames > 0, 'only active gameplay frames are counted');
     assert(capture.slowFrames > 0, 'long callback intervals are captured');
     assert(capture.worstFrames.length <= 32, 'slow-frame capture stays bounded');
