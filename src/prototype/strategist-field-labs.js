@@ -79,8 +79,11 @@
       fieldLabStockCount() {
         const bank = this.fieldLabNetwork();
         if (!bank) return 0;
-        return [...Object.values(bank.samples), ...Object.values(bank.products),
-          this.s.strategistAcidBottles || 0].reduce((sum, n) => sum + (finiteCount(n) ? n : 0), 0);
+        // The Lab warehouse stores raw and processed reagents. Acid Bottles
+        // are carried in E0's ONE hero inventory, subject to its own cap.
+        // A legal E0 stock must never invalidate an otherwise valid Lab save.
+        return [...Object.values(bank.samples), ...Object.values(bank.products)]
+          .reduce((sum, n) => sum + (finiteCount(n) ? n : 0), 0);
       }
       fieldLabCanManage(zoneId) {
         // Any established Lab can be a remote network console; only the owner class
@@ -311,8 +314,13 @@
             bank.samples[key] >= 2).slice(0, 2);
           if (kinds.length === 2) {
             bank.samples[kinds[0]]--; bank.samples[kinds[1]]--;
-            if (!finiteCount(this.s.strategistAcidBottles)) {
-              // Imported unsafe stock is never silently overwritten.
+            const bottleCap = this.constructor.rules?.strategistBasicFoundation?.maxBottles ??
+              adapters.rules?.strategistBasicFoundation?.maxBottles;
+            if (!Number.isSafeInteger(bottleCap) || bottleCap < 1 ||
+                !finiteCount(this.s.strategistAcidBottles) ||
+                this.s.strategistAcidBottles >= bottleCap) {
+              // Missing E0 ownership or capped inventory is never
+              // a reason to consume genuine raw material.
               bank.samples[kinds[0]]++; bank.samples[kinds[1]]++;
               return false;
             }
