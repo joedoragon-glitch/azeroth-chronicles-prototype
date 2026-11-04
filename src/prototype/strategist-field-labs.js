@@ -323,7 +323,10 @@
             !Number.isFinite(dt) || dt <= 0 || dt > CANDIDATE.maximumDt ||
             bank.jobs?.[job.workerId] !== job ||
             job.labId !== lab.id || job.zoneId !== lab.zoneId ||
-            lab.progress < 4) return false;
+            this.fieldLab(job.zoneId) !== lab ||
+            lab.progress < 4 || job.carries !== false ||
+            !MATERIALS.includes(job.material) || !finitePoint(job.position) ||
+            distance(job.position, lab) > 24) return false;
         // Even a direct domain call must prove native worker ownership and
         // staffing; the tick loop supplies the already-validated worker to
         // avoid another O(roster) lookup on every process tick.
@@ -333,7 +336,9 @@
             worker.fieldLabJob !== lab.id ||
             worker.order?.type !== 'strategist-field-lab' ||
             worker.order.id !== lab.id || worker.active !== false ||
-            !(worker.hp > 0)) return false;
+            !(worker.hp > 0) || worker.expeditionId ||
+            !this.s.party?.includes(worker) || !finitePoint(worker) ||
+            distance(worker, job.position) > 0.02) return false;
         lab.processSeconds = (lab.processSeconds || 0) + dt *
           (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency);
         if (lab.processSeconds < CANDIDATE.processingSeconds) return false;
@@ -415,7 +420,11 @@
               dt * (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency));
             if (job.sampleLeft > 0) continue;
             if (!verifySource(this, job.zoneId, job.material, job.sourceId, job.target)) {
-              job.phase = 'idle'; job.carries = false; job.path = [];
+              // Source revoked while sampling: the worker is still at the
+              // source. Return to the station before any new task or machine
+              // processing. Bounded retry owns the next physical route.
+              job.phase = 'station'; job.carries = false; job.path = [];
+              job.waypoint = 0; job.blocked = true;
               job.sourceId = null; job.target = null;
               job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
               continue;
