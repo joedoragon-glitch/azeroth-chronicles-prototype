@@ -682,6 +682,144 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'cold and warm visible draws must hit the prepared texture cache',
   );
   coldCrowdGpu.release();
+  // #783 R1: reproduce the reported *scene shape* at night in Greenwood.
+  // This is a Pixi/Canvas mock, not a real Safari GPU/CPU timing benchmark.
+  // The historical #481 westward crowd above remains an independent control.
+  const previousNight = game.night;
+  const previousDaylight = game.daylightPhase;
+  const previousNpcs = game.npcs;
+  game.night = () => true;
+  game.daylightPhase = () => ({ phase: 'night', darkness: 1 });
+  game.zoneId = 'vale';
+  game.hero.x = 2160;
+  game.hero.y = 2359;
+  game.props = Array.from({ length: 4 }, (_, i) => ({
+    id: 'r783-vale-prop-' + i,
+    x: 2160 + (i - 2) * 26,
+    y: 2359 + (i % 2) * 24,
+    structure: 'cart',
+    decorative: true,
+  }));
+  game.npcs = Array.from({ length: 15 }, (_, i) => ({
+    id: 'r783-vale-npc-' + i,
+    kind: 'service',
+    x: 2160 + ((i % 5) - 2) * 22,
+    y: 2359 + (Math.floor(i / 5) - 1) * 20,
+  }));
+  game.enemies = Array.from({ length: 2 }, (_, i) => ({
+    id: 'r783-vale-skeleton-' + i,
+    species: 'skeleton',
+    type: 'mob',
+    hp: 20,
+    maxHp: 20,
+    x: 2250 + i * 24,
+    y: 2360 + i * 24,
+  }));
+  view.width = 912;
+  view.height = 420;
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  const r783State = JSON.stringify({
+    hero: game.hero,
+    props: game.props,
+    npcs: game.npcs,
+    enemies: game.enemies,
+    state: game.s,
+  });
+  const valeNightGpu = runtime.PrototypePixiExperimental.create(gpuOptions);
+  assert.equal(await valeNightGpu.prepare(), true, 'R783 night Vale scene must prepare');
+  const r783Prepared = valeNightGpu.status();
+  assert.equal(r783Prepared.pixelRatio, 1, 'reported optimized iPhone backing ratio is 1');
+  assert.equal(r783Prepared.proceduralBakes, 4, 'all four distinct Vale props are staged');
+  assert.equal(r783Prepared.proceduralGpuPrepared, 4, 'prepared prop sources are submitted for upload');
+  assert.equal(
+    JSON.stringify({
+      hero: game.hero,
+      props: game.props,
+      npcs: game.npcs,
+      enemies: game.enemies,
+      state: game.s,
+    }),
+    r783State,
+    'night-time graphics preparation must never mutate the campaign',
+  );
+  valeNightGpu.activate();
+  for (const dx of [0, -30, -60, -30, 0]) {
+    game.hero.x = 2160 + dx;
+    valeNightGpu.draw();
+  }
+  const r783Cold = valeNightGpu.status();
+  const r783Visible = frames.at(-1);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('npc:r783-')).length, 15);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('enemy:r783-')).length, 2);
+  assert.equal(r783Visible.filter((actor) => actor.key.startsWith('prop:r783-')).length, 4);
+  assert.equal(r783Cold.proceduralBakes, 4, 'camera motion at fixed quality reuses prepared art');
+  assert.equal(r783Cold.lastFailure, null, 'mocked night scene has no render exception');
+  const r783BeforeRevisit = r783Cold.proceduralBakes;
+  for (const dx of [-60, 0, -60, 0]) {
+    game.hero.x = 2160 + dx;
+    valeNightGpu.draw();
+  }
+  assert.equal(
+    valeNightGpu.status().proceduralBakes,
+    r783BeforeRevisit,
+    'warm Vale revisit must not create new procedural images',
+  );
+  // Manually vary the existing Canvas backing ratio to exercise the SAME
+  // Pixi resolution-change path, without claiming to exercise app.js Auto policy.
+  canvasSurface.width = 1368;
+  canvasSurface.height = 630;
+  valeNightGpu.draw();
+  const r783Sharper = valeNightGpu.status();
+  assert.equal(r783Sharper.pixelRatio, 1.5);
+  assert(
+    r783Sharper.proceduralBakes > r783BeforeRevisit,
+    'new backing density requires separate procedural revisions in native Pixi source',
+  );
+  canvasSurface.width = 912;
+  canvasSurface.height = 420;
+  valeNightGpu.draw();
+  const r783Returned = valeNightGpu.status();
+  assert.equal(r783Returned.pixelRatio, 1);
+  assert.equal(
+    r783Returned.proceduralBakes,
+    r783Sharper.proceduralBakes,
+    'returning to retained 1x density reuses its original textures',
+  );
+  assert.equal(r783Returned.proceduralEvictions, 0);
+  assert.equal(r783Returned.lastFailure, null);
+  game.hero.x = 2160;
+  assert.equal(
+    JSON.stringify({
+      hero: game.hero,
+      props: game.props,
+      npcs: game.npcs,
+      enemies: game.enemies,
+      state: game.s,
+    }),
+    r783State,
+    'cold/warm and resolution-only drawing must preserve simulation state',
+  );
+  console.log(
+    'PIXI_783_R1_JSON ' +
+      JSON.stringify({
+        scenario: 'mocked-vale-night-912x420-zoom1.5',
+        npcs: game.npcs.length,
+        skeletons: game.enemies.length,
+        props: game.props.length,
+        preparedBakes: r783Prepared.proceduralBakes,
+        coldBakes: r783Cold.proceduralBakes,
+        resolutionUpBakes: r783Sharper.proceduralBakes,
+        resolutionDownBakes: r783Returned.proceduralBakes,
+        texturesRetained: r783Returned.proceduralTextures,
+        failures: r783Returned.lastFailure,
+        measurement: 'mock-only; no real GPU or iPhone frame timing',
+      }),
+  );
+  valeNightGpu.release();
+  game.night = previousNight;
+  game.daylightPhase = previousDaylight;
+  game.npcs = previousNpcs;
   game.hero.x = coldStart.x;
   game.hero.y = coldStart.y;
   game.enemies = [];
