@@ -66,8 +66,11 @@ assert(art.includes("[-11, 4]], '#332c28', 4.6"),
 assert(art.includes('ctx.moveTo(-22, -1)') && art.includes('ctx.lineTo(18, 6)'),
   'belt must wrap the full waist');
 assert(art.includes('ctx.quadraticCurveTo(-20, 43, -34, 41)') &&
-  art.includes('ctx.quadraticCurveTo(12, 45, -3, 43)'),
+  art.includes('ctx.quadraticCurveTo(3, 47, -8, 43)'),
   'both boot toes point left in the same three-quarter stance');
+assert(art.includes('ctx.quadraticCurveTo(14, 32, 20, 34)') &&
+  art.includes('ctx.lineTo(6, 36)'),
+  'right shin must meet a tapered ankle and joined boot, not float over its shoe');
 
 for (const c of ['#b2a684', '#8b8063', '#c8bb96'])
   assert(paints(hero).includes(c) && paints(enemy).includes(c),
@@ -76,7 +79,7 @@ for (const c of ['#679c9a', '#be8c5b', '#70583e'])
   assert(paints(hero).includes(c), 'Hero needs restrained material-kit identity: ' + c);
 assert(!paints(enemy).includes('#679c9a'), 'Enemy Ogre stays unchanged');
 // New direction must read from major forms, not the previous copied body.
-for (const swatch of ['#394c42', '#35332e', '#46574b', '#635747', '#555044', '#aeb9b3'])
+for (const swatch of ['#394c42', '#35332e', '#46574b', '#635747', '#555044', '#acbab8'])
   assert(paints(hero).includes(swatch), 'New silhouette/face/equipment color absent: ' + swatch);
 for (const swatch of ['#394c42', '#35332e', '#46574b'])
   assert(!paints(enemy).includes(swatch), 'Original Ogre inherited Strategist outfit: ' + swatch);
@@ -86,14 +89,28 @@ assert.notDeepEqual(contour(hero), contour(enemy),
   'Strategist must have independently drawn anatomy and silhouette');
 assert(contour(hero).length > contour(enemy).length,
   'new hero owns more facial and costume geometry than a stock Ogre');
-// Keep the hero three-quarter direction and tool layout separate from
-// the enemy; both fists and daggers have their own geometric paths.
-assert(art.includes('oval(-30, 9, 5.3, 4.6, hide)') &&
-  art.includes('oval(23, 8, 4.7, 4, shadow)'),
-  'both forearms must terminate in visible anatomically joined hands');
-assert(art.includes('poly([[-41, -3], [-52, -17]') &&
-  art.includes('poly([[17, 16], [-4, 26]'),
-  'daggers must point coherently left, matching feet and gaze');
+// Regress the reported defect: hands must grasp the weapons, not have
+// exposed long sticks, detached blades, or an off-hand crossing the shin.
+const daggerOwner = art.slice(art.indexOf('function carriedDagger('),
+  art.indexOf('if (crowned) {'));
+assert(daggerOwner.includes('const gripEnd = p(4.8), pommel = p(-4.4)'),
+  'the entire dagger hilt must be a bounded, hand-sized grip');
+assert(daggerOwner.includes('poly([p(5.3, -2.1), p(7.8, -2.6)'),
+  'blade heel must share its centerline with the guard and hilt');
+assert(daggerOwner.includes('line([p(4.9, -4.1), p(4.9, 4.1)]'),
+  'guard must join the real metal heel with no floating gap');
+assert(daggerOwner.indexOf('line([p(4.9, -4.1)') <
+  daggerOwner.indexOf('poly([p(-4.2, -2.8)'),
+  'fist must paint over the dagger grip instead of behind a protruding stick');
+assert(daggerOwner.includes('carriedDagger(-30, 9, -0.65, -0.76, 16, hide)'),
+  'near fist must grasp an up-left dagger from its actual wrist');
+assert(daggerOwner.includes('carriedDagger(29, 8, 0.76, 0.65, 15, shadow)'),
+  'off-hand must grip a short reverse dagger clear of the shin');
+assert(art.includes('ctx.lineTo(31, 5)') && art.includes('ctx.quadraticCurveTo(32, 11, 26, 12)'),
+  'right forearm must connect into the new hand pivot');
+const heroOps = trace({ renderKind: 'hero', class: 'strategist' });
+assert(heroOps.filter((x) => x[0] === 'fillStyle' && x[1] === '#acbab8').length === 2,
+  'native artist must paint exactly two clearly attached steel blades');
 assert(trace({ renderKind: 'hero', class: 'strategist' }).some((x) =>
   x[0] === 'translate' && x[1] === 0 && x[2] === -19),
   'existing native Canvas painter must see the entire left-facing character');
@@ -112,4 +129,4 @@ assert.equal(C.classes.strategist, undefined, 'visual-only Gate 0 cannot expose 
 const sprites = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/sprites/manifest.json'), 'utf8'));
 assert(!Object.hasOwn(sprites.sprites, 'hero:strategist'),
   'unapproved raster must not override procedural candidate');
-console.log('PASS Gate 0 corrected left-facing Ogre pose, dressed torso, bound hair, coherent boots/daggers, Canvas determinism, public class isolation');
+console.log('PASS Gate 0 Ogre short wrapped dagger grips, connected blades, wrist continuity and ankle/boot alignment; Canvas/public class isolation');
