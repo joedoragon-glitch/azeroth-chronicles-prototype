@@ -18,7 +18,7 @@ On the title screen:
 2. Use **Continue Adventure** to resume an eligible saved game. **Saved Games & Backups** provides recovery and file import/export.
 3. During play, open **Adventure → Quest journal** for the story, **Map and travel routes** for destinations, and **Hero skills** for your class's actions and training information.
 
-The title screen also contains **Settings** and **Help & Credits**. English and **partial** Spanish localization are available; some names and text remain in English.
+After the automatic startup update check, first-time visitors choose **English** or **Español** on a dedicated welcome screen. The choice is a browser preference separate from campaign saves and can later be changed in **Settings**; returning players skip the welcome screen. The title screen has **Settings**, **Saved Games & Backups**, and **Help & Credits**. Help now includes how to play, performance diagnostics, update and backup guidance, current installed-version information, development goals, and creator contact. English and **partial** Spanish localization are available; some names and text remain in English.
 
 ## The game
 
@@ -34,7 +34,7 @@ Greenwood has a working mill and pond, cultivated orchards, a separate decorativ
 
 ## Controls
 
-These are **default** desktop bindings. Keyboard presets and individual keys can be changed under **Game and settings → Controls → Customize keyboard**; existing saved preferences are preserved. On phone, use the on-screen buttons and joystick or tap a reachable destination.
+These are **default** desktop bindings. Movement, interaction, menu/back, combat, and utility keys can all be changed under **Settings → Controls → Customize keyboard → Movement and menu keys** (or the other key groups). Escape remains a safety fallback for opening and leaving menus; Enter remains available for confirmation. On phone, use the on-screen buttons and joystick or tap a reachable destination.
 
 | Action | Desktop / Chromebook | Phone |
 | --- | --- | --- |
@@ -52,15 +52,15 @@ These are **default** desktop bindings. Keyboard presets and individual keys can
 
 Tap **Target** to cycle eligible enemies; hold it for roughly **0.55 seconds** to lock the current target for the encounter. **Recall** is a five-second defensive regroup: the button shows ON and remaining seconds; press it again to cancel. Both automatic and manually activated hero attacks leave Recall alone. The five seconds count active game time, so pausing does not consume them. Companion labor cannot be newly assigned during the brief Recall hold. Menu selection follows the movement keys; F, Enter or Space confirms. Skills can be queued while cooling down. The Classic number-key preset and a mirrored left-hand preset are available in Controls.
 
-On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. The controls and settings are described in more detail in **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** and the in-game Help / Controls menus.
+On a phone, tap-to-move is enabled by default; mouse click-to-move is optional and disabled by default. Manual input, opening a menu or pausing interrupts automatic travel. Controls can be customized under **Settings → Controls**; basic play instructions and report/profiling explanations live in **Help & Credits**. The **[Guía del juego (Español)](GUIA_EN_ESPANOL.md)** gives additional guidance.
 
 ## Saves, updates and diagnostics
 
 **Your campaigns are stored locally in the browser/device.** Before clearing browser data, reinstalling or moving devices, export a backup. Normal and Nightmare saves are independent, and the game maintains compatibility with its v4 save format.
 
-- **Save or restore:** **Game and settings → Save and game management → Save backups → Export save / Import save**. The title screen also has **Saved Games & Backups**. The [save-protection improvements from issue #773](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/773) provide validated manual exports that include mode/class/level/date, imports require a review and separate confirmation, the backup menus can gently suggest another external copy, and supported browsers offer an explicit persistent-storage request. See [development state](docs/DEVELOPMENT_STATE.md) and [PR #775](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/775) for the verified merge/publication status and check which version is installed. A started download is not proof of a retained file. Store the exported `.json` outside browser site data; neither the one local checkpoint nor persistence permission protects against clearing site data or losing the device.
-- **Check for updates:** **Game and settings → Check for game update**, then **Install available game update** when offered. A new deployment can still leave an existing browser or installed PWA using an older cached build.
-- **See the version actually running:** **Game and settings → Screen and performance → Export playtest report**. This downloads local JSON diagnostics, including the `version` field. **It is not a save backup**, and the game does not automatically send telemetry.
+- **Save or restore:** From the main title screen, open **Saved Games & Backups** to select Normal/Nightmare, recover a checkpoint, export a save, import a save or request supported storage protection. Each entry explains its action. The [save-protection improvements from issue #773](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/773) provide validated manual exports that include mode/class/level/date, imports require a review and separate confirmation, the backup menus can gently suggest another external copy, and supported browsers offer an explicit persistent-storage request. See [development state](docs/DEVELOPMENT_STATE.md) and [PR #775](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/775) for the verified merge/publication status and check which version is installed. A started download is not proof of a retained file. Store the exported `.json` outside browser site data; neither the one local checkpoint nor persistence permission protects against clearing site data or losing the device.
+- **Updates:** The game automatically checks for updates at startup and offers an installation action when an update becomes available during play. There is no separate manual Check button in Settings. An existing installed PWA can still temporarily show its earlier cached build.
+- **See the version actually running:** **Help & Credits → Version and development**, or **Settings → Screen and performance → Export playtest report** for a JSON with the same build version and diagnostics. **It is not a save backup**, and the game does not automatically send telemetry.
 
 **Distribution boundary:** This automatic/incremental update mechanism is for the current link-based browser game and optional PWA. A future packaged mobile or desktop app will require a fresh platform-specific update and save-compatibility review; it must not simply inherit the browser service-worker design. See the [recorded owner decision](docs/DECISIONS.md#31-october-2026--web-updater-is-transitional-native-application-delivery-requires-a-new-decision). No native updater or breaking-version policy enforcement is implemented by that decision.
 

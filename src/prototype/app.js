@@ -65,8 +65,11 @@
   // Presentation-only community localization; campaign IDs and names never change.
   const languageKey = 'azeroth-display-language-v1';
   let language = 'en';
+  let firstLanguageChoice = true;
   try {
-    language = localStorage.getItem(languageKey) === 'es' ? 'es' : 'en';
+    const savedLanguage = localStorage.getItem(languageKey);
+    firstLanguageChoice = savedLanguage !== 'en' && savedLanguage !== 'es';
+    language = savedLanguage === 'es' ? 'es' : 'en';
   } catch (_) {}
   document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
   const spanishText = {
@@ -1581,13 +1584,16 @@
       .map((line) => line.split(' · ').map(translateSegment).join(' · '))
       .join('\n');
   }
-  function setLanguage(value) {
+  function setLanguage(value, persist = true) {
     language = value === 'es' ? 'es' : 'en';
     if (game) game.rogueNicknameLanguage = language;
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
-    try {
-      localStorage.setItem(languageKey, language);
-    } catch (_) {}
+    if (persist) {
+      firstLanguageChoice = false;
+      try {
+        localStorage.setItem(languageKey, language);
+      } catch (_) {}
+    }
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
     refreshUpdateNotice();
     $('talent-button').firstChild.textContent =
@@ -1621,6 +1627,7 @@
     },
     game,
     titleScreen = null,
+    languageWelcome = null,
     titleLoading = false,
     titleImportNotice = false,
     titleEpoch = 0,
@@ -2447,7 +2454,7 @@
     showMap,
     finaleMenu,
     storyNavigate,
-    chooseNewRun: (mode) => chooseLanguage(mode),
+    chooseNewRun: (mode) => chooseClass(mode),
     status,
     requestName,
     sceneTransitionTo,
@@ -2642,63 +2649,18 @@
       !game.s.challenge.gameOver
     );
   }
+  // Settings owns remapping. How-to-play guidance lives under title Help & Credits.
   function help(back = closeMenu) {
-    const returnHere = () => help(back);
-    openMenu(
-      'Controls',
-      'Choose a topic or adjust your inputs.',
-      [
-        action('Customize keyboard', () => keyboardMenu(back)),
-        action('Touch and mouse options', () => pointerMenu(back)),
-        action('Movement and menus', () => {
-          const keys = ['up', 'left', 'down', 'right'].map((id) => input.key(id)).join('/');
-          openMenu(
-            'Movement and menus',
-            language === 'es'
-              ? 'Moverse: ' +
-                  keys +
-                  ' o palanca táctil. Interactuar: ' +
-                  input.key('confirm') +
-                  '. Mapa: ' +
-                  mapKeyHint() +
-                  '.\nMenú: Esc. Flechas para elegir, ' +
-                  input.key('confirm') +
-                  '/Enter para confirmar y Esc para volver.'
-              : 'Move: ' +
-                  keys +
-                  ' or joystick. Interact: ' +
-                  input.key('confirm') +
-                  '. Map: ' +
-                  mapKeyHint() +
-                  '.\nMenu: Esc. Arrows select, ' +
-                  input.key('confirm') +
-                  '/Enter confirms, Esc returns.',
-            [],
-            returnHere,
-          );
-        }),
-        action('Skills and targeting', () => combatHelp(returnHere)),
-        action('Companion commands', () =>
-          openMenu(
-            'Companion commands',
-            language === 'es'
-              ? 'Reagrupar: ' +
-                  input.key('recall') +
-                  '. Tus compañeros vuelven contigo.\nCuración Ranger: ' +
-                  input.key('heal') +
-                  '. En recuperación, toca para poner tu curación en cola.\nRecupera a los caídos con un capitán o cuartel.'
-              : 'Recall: ' +
-                  input.key('recall') +
-                  '. Companions return to you.\nCompanion Heal: ' +
-                  input.key('heal') +
-                  '. During cooldown, tap to queue hero healing.\nRecover fallen companions at a Captain or Barracks.',
-            [],
-            returnHere,
-          ),
-        ),
-      ],
-      back,
-    );
+    openMenu('Controls', '', [
+      action('Customize keyboard', () => keyboardMenu(back),
+        language === 'es'
+          ? 'Movimiento, interacción, menú, habilidades y otras teclas.'
+          : 'Movement, interaction, menu, skills and other keys.'),
+      action('Touch and mouse options', () => pointerMenu(back),
+        language === 'es'
+          ? 'Ajusta la palanca, el diseño táctil y el ratón.'
+          : 'Adjust joystick, touch layout and mouse input.'),
+    ], back);
   }
   function combatHelp(back) {
     const returnHere = () => combatHelp(back);
@@ -2766,7 +2728,7 @@
     {
       id: 'movement',
       title: 'Movement and menu keys',
-      ids: ['up', 'down', 'left', 'right', 'confirm'],
+      ids: ['up', 'down', 'left', 'right', 'confirm', 'menu'],
     },
     {
       id: 'combat',
@@ -3294,6 +3256,10 @@
         fileRow = document.createElement('label');
         fileRow.className = 'menu-import-picker';
         fileRow.textContent = tr(a.label);
+        if (a.detail) {
+          fileRow.classList.add('has-detail');
+          details(fileRow, a);
+        }
         fileRow.append(b);
       } else if (a.kind === 'toggle') {
         b = document.createElement('button');
@@ -3391,7 +3357,8 @@
     }
     const back = $('close-button');
     back.hidden = false;
-    back.innerHTML = tr('Back') + ' <small>' + input.key('confirm') + ' / Esc</small>';
+    back.innerHTML = tr('Back') + ' <small>' + input.key('confirm') + ' / ' +
+      input.key('menu') + (input.key('menu') === 'Esc' ? '' : ' / Esc') + '</small>';
     buttons.push(back);
     menuKeys.push('__back__');
     highlight();
@@ -3992,18 +3959,24 @@
       $('modal').hidden = true;
       document.body.classList.remove('menu-open');
     }
-    titleScreen.hidden = startupUpdatePending;
+    const showWelcome = !startupUpdatePending && firstLanguageChoice;
+    titleScreen.hidden = startupUpdatePending || showWelcome;
+    if (languageWelcome) languageWelcome.hidden = !showWelcome;
     $('startup-update').hidden = !startupUpdatePending;
     document.body.classList.add('title-active');
     // No sprite, material or GPU warmup until Continue/New Game is chosen.
     titleWarmup = null;
     refreshTitleScreen();
     if (!startupUpdatePending) {
-      const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
-      primary.focus?.({ preventScroll: true });
-      // Returning from gameplay must change the score in this same
-      // transition, even when the next requestAnimationFrame is delayed.
-      updateTitleSoundtrack();
+      if (showWelcome) {
+        languageWelcome?.querySelector('button')?.focus?.({ preventScroll: true });
+      } else {
+        const primary = $('title-continue').disabled ? $('title-new') : $('title-continue');
+        primary.focus?.({ preventScroll: true });
+        // Returning from gameplay must change the score in this same
+        // transition, even when the next requestAnimationFrame is delayed.
+        updateTitleSoundtrack();
+      }
     }
   }
   function enterPreparedScene() {
@@ -4168,12 +4141,11 @@
       ...(developerEnabled ? ['developer'] : []),
       ...(combatDiagnosticsEnabled ? ['arena'] : [])];
     const reminder = loaded ? backupReminder(game.s.mode, game.hero.level) : '';
+    const es = language === 'es';
+    const detail = (en, spanish) => es ? spanish : en;
     openMenu(
       'Saved Games & Backups',
-      (language === 'es'
-        ? 'Elige una partida, recupera una copia o exporta tus datos antes de reemplazarlos.'
-        : 'Choose a campaign, recover a checkpoint, or export a backup.') +
-        '\n' + storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
+      '',
       [
         ...modes.map((mode) => {
           const candidate = persistence.load(mode);
@@ -4181,26 +4153,44 @@
             mode === 'normal' ? 'Normal' : mode === 'nightmare' ? 'Nightmare' :
               mode === 'developer' ? 'Developer' : 'Combat Diagnostics',
             () => selectSavedMode(mode),
-            candidate ? (candidate.hero.name || candidate.hero.class) +
-              ' · ' + candidate.hero.level : (language === 'es' ? 'Sin partida válida' : 'No valid save'),
+            candidate
+              ? (candidate.hero.name || candidate.hero.class) + ' · ' +
+                (es ? 'Nivel ' : 'Level ') + candidate.hero.level + ' · ' +
+                detail('Select to continue this campaign.', 'Elige esta partida para continuar.')
+              : detail('No usable save found.', 'No hay ninguna partida válida.'),
             !candidate,
           );
         }),
-        action('Try recovery', () => {
-          if (loaded) profile.activeMode = game.s.mode;
-          savedRunRecoveryMenu();
-        }),
+        action(
+          'Try recovery',
+          () => {
+            if (loaded) profile.activeMode = game.s.mode;
+            savedRunRecoveryMenu();
+          },
+          detail('Restore a local checkpoint if a campaign cannot open.',
+            'Recupera un punto local si una partida no se puede abrir.'),
+        ),
         ...modes.filter((mode) => persistence.loadFailed(mode)).map((mode) =>
           action(
-            (language === 'es' ? 'Recuperar ' : 'Recover ') + mode,
+            (es ? 'Recuperar ' : 'Recover ') + mode,
             () => {
               profile.activeMode = mode;
               savedRunRecoveryMenu();
             },
+            detail('Review recovery options before replacing anything.',
+              'Revisa las opciones antes de reemplazar una partida.'),
           ),
         ),
         ...modes.filter((mode) => persistence.exists(mode)).map((mode) => ({
-          label: (language === 'es' ? 'Exportar ' : 'Export ') + mode,
+          label: (es ? 'Exportar ' : 'Export ') + mode,
+          detail: detail(
+            'Download a JSON backup outside this browser. ' +
+              (reminder ? 'An external backup is recommended now.' :
+                'Clearing site data can erase local saves.'),
+            'Descarga una copia JSON fuera del navegador. ' +
+              (reminder ? 'Conviene hacer una copia externa ahora.' :
+                'Borrar datos del sitio puede eliminar las partidas.'),
+          ),
           action: () => {
             try {
               const candidate = persistence.load(mode);
@@ -4211,11 +4201,20 @@
             }
           },
         })),
-        { kind: 'file', label: 'Import save' },
+        {
+          kind: 'file',
+          label: 'Import save',
+          detail: detail('Choose a JSON backup. You will review it before replacing a run.',
+            'Elige una copia JSON. Podrás revisarla antes de reemplazar una partida.'),
+        },
         ...(typeof storageApi?.persist === 'function' &&
            storageProtectionState !== 'granted'
-          ? [action('Request persistent storage',
-              () => requestStorageProtection(titleSaveMenu))]
+          ? [action(
+              'Request persistent storage',
+              () => requestStorageProtection(titleSaveMenu),
+              detail('Ask the browser to protect local saves. External backups are still needed.',
+                'Pide al navegador que proteja las partidas. Conserva también copias externas.'),
+            )]
           : []),
       ],
       showTitleScreen,
@@ -4223,12 +4222,77 @@
     );
   }
   function titleHelpMenu() {
-    openMenu('Help & Credits',
-      language === 'es'
-        ? "So I Became the Dark Lord's Problem. Una aventura de fantasía original. Consulta Controles para aprender a jugar."
-        : "So I Became the Dark Lord's Problem. An original fantasy adventure. Open Controls to review movement, skills and input options.",
-      [action('Controls', () => help(titleHelpMenu))],
-      showTitleScreen);
+    const es = language === 'es';
+    const choice = (en, spanish) => es ? spanish : en;
+    const topic = (nameEn, nameEs, bodyEn, bodyEs) =>
+      openMenu(choice(nameEn, nameEs), choice(bodyEn, bodyEs), [],
+        titleHelpMenu, { view: 'title-help-reading' });
+    const item = (nameEn, nameEs, onChoose, detailEn, detailEs) =>
+      action(choice(nameEn, nameEs), onChoose, choice(detailEn, detailEs));
+    openMenu(
+      'Help & Credits',
+      '',
+      [
+        item('How to play', 'Cómo jugar', () => topic(
+          'How to play', 'Cómo jugar',
+          'Choose a Paladin, Mage, Ranger or Rogue and explore Greenwood Vale. Follow your Quest journal, travel through marked routes, rescue specialists and grow your companion party.\n\nOn a phone, use the joystick or tap reachable ground. Tap a skill for its normal form; hold to prepare its charged form. Use Target and Recall to manage fights and companions. Your Skill journal explains each learned ability.\n\nFor layout, touch, movement and keyboard changes, go to Settings → Controls. Help explains how to play; controls are customized in Settings.',
+          'Elige Paladín, Mago, Explorador o Pícara y explora Greenwood Vale. Sigue el Diario de misiones, recorre las rutas señaladas, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. Toca una habilidad para usarla normalmente; mantén pulsado para preparar la versión cargada. Usa Objetivo y Reagrupar para dirigir los combates. El Diario de habilidades explica cada técnica.\n\nPara ajustar los controles táctiles, el movimiento o el teclado, entra en Ajustes → Controles.',
+        ), 'Movement, skills, quests and companions.',
+          'Movimiento, habilidades, misiones y compañeros.'),
+        item('Reporting problems', 'Informar de problemas', () => topic(
+          'Reporting problems', 'Informar de problemas',
+          'If something behaves unexpectedly, describe what you were doing, the region, your class, the device and what happened. A screenshot is often enough to begin investigating.\n\nIn Screen and performance → Diagnostics, choose Export playtest report. The downloaded JSON file records game and performance diagnostics that can help identify failures. It is not sent automatically: you decide when and whom to share it with. Review it first because it can contain gameplay and device details.\n\nContact the creator through Foros Cuba. Do not post private save backups publicly unless you intend to share your campaign.',
+          'Si algo falla, explica qué hacías, la región, tu clase, el dispositivo y qué ocurrió. Una captura de pantalla suele bastar para iniciar la investigación.\n\nEn Pantalla y rendimiento → Diagnósticos, elige Exportar informe de prueba. El archivo JSON descargado contiene datos del juego y de rendimiento que ayudan a encontrar fallos. No se envía automáticamente: tú decides cuándo y con quién compartirlo. Revísalo porque puede contener datos de la partida y del dispositivo.\n\nPuedes contactar al creador en Foros Cuba. No publiques copias privadas de partidas sin querer compartirlas.',
+        ), 'Screenshots, bug details and playtest reports.',
+          'Capturas, fallos e informes de prueba.'),
+        item('Renderer profiling', 'Medir el renderizado', () => topic(
+          'Renderer profiling', 'Medir el renderizado',
+          'To investigate a slowdown, open Settings → Screen and performance → Show performance details → Start renderer profiling. Close the menu, play through the problem, then return to Stop renderer profiling and Export playtest report.\n\nProfiling records bounded timing and graphics activity, including slow frames. These measurements help developers identify which stage may be expensive. They are not a direct measurement of GPU completion or the actual frames shown by your phone.\n\nNavigation profiling is a separate option for investigating crowded movement and pathfinding. Leave profiling off during ordinary play unless you are diagnosing a problem.',
+          'Para investigar una pausa, abre Ajustes → Pantalla y rendimiento → Mostrar detalles de rendimiento → Iniciar medición del renderizado. Cierra el menú, reproduce el problema y vuelve para detener la medición y exportar el informe de prueba.\n\nLa medición guarda tiempos y actividad gráfica limitados, incluidos fotogramas lentos. Ayuda a identificar qué parte consume recursos, pero no mide directamente cuándo termina la GPU ni los fotogramas reales de la pantalla.\n\nLa medición de navegación sirve para investigar el movimiento y las rutas con muchos personajes. Déjala desactivada durante el juego normal.',
+        ), 'When to record slow frames and export diagnostics.',
+          'Cómo registrar pausas y exportar diagnósticos.'),
+        item('Graphics and performance', 'Gráficos y rendimiento', () => topic(
+          'Graphics and performance', 'Gráficos y rendimiento',
+          'PixiJS WebGL2 is the main graphics renderer: it draws the world using the graphics processor where supported. Canvas 2D remains a backup for compatibility, troubleshooting and recovery if WebGL2 fails. Both share the same gameplay and saves.\n\nThe game uses prepared artwork, graphics caching, adaptive frame skipping, automatic resolution choices and emergency protection to reduce interruptions. These mechanisms can lower work during busy scenes; they cannot guarantee smooth performance on every device.\n\nIf play becomes sluggish, try Auto optimization, a lower rendering resolution, or Canvas 2D. Keep the phone cool and avoid other demanding apps. Change one setting at a time to see whether it helps.',
+          'PixiJS WebGL2 es el renderizador principal: dibuja el mundo con el procesador gráfico cuando está disponible. Canvas 2D sigue como respaldo por compatibilidad y para recuperarse de fallos de WebGL2. Ambos usan el mismo juego y las mismas partidas.\n\nEl juego prepara dibujos, reutiliza gráficos, omite algunos fotogramas cuando hace falta, ajusta la resolución y dispone de protección de emergencia. Estas medidas reducen trabajo en escenas complejas, pero no garantizan fluidez en todos los dispositivos.\n\nSi el juego va lento, prueba Optimización automática, una resolución menor o Canvas 2D. Evita que el teléfono se caliente demasiado y cierra otras aplicaciones exigentes. Cambia una opción cada vez.',
+        ), 'Why PixiJS and Canvas coexist; practical tips.',
+          'Por qué conviven PixiJS y Canvas; consejos útiles.'),
+        item('Updates and saved games', 'Actualizaciones y partidas', () => topic(
+          'Updates and saved games', 'Actualizaciones y partidas',
+          'The game checks for updates when it starts, before the main menu. A fully downloaded update can be applied during startup; an offline launch uses the installed game. If an update becomes available during play, an Install update prompt can appear so gameplay is not silently interrupted.\n\nCampaigns are saved on this device in your browser. Normal and Nightmare use separate slots. To export, import or recover a campaign, return to the Main Menu and open Saved Games & Backups. An exported JSON backup kept outside the browser is important: clearing browser data, reinstalling or losing the device can remove local saves.\n\nYour language and display preferences are separate from campaign save files.',
+          'El juego busca actualizaciones al iniciar, antes del menú principal. Puede aplicar una actualización descargada; sin conexión utiliza la versión instalada. Si aparece una actualización durante la partida, verás una opción para instalarla sin interrumpir el juego silenciosamente.\n\nLas partidas se guardan en este dispositivo, dentro del navegador. Normal y Nightmare tienen espacios distintos. Para exportar, importar o recuperar una partida, vuelve al Menú principal y abre Partidas y copias de seguridad. Conserva una copia JSON fuera del navegador: borrar datos, reinstalar o perder el dispositivo puede eliminar partidas locales.\n\nEl idioma y las preferencias de pantalla se guardan por separado de las partidas.',
+        ), 'Automatic updates, local saves and safe backups.',
+          'Actualizaciones automáticas y copias seguras.'),
+        item('Version and development', 'Versión y desarrollo', () => topic(
+          'Version and development', 'Versión y desarrollo',
+          'Installed game build: ' + PrototypeBuild.version + '\n\nThe current development goal is version 0.9.2: functional completion of essential gameplay and reliability before further polish. Work on additional systems may continue separately; being under development does not mean a feature is already in this installed build.\n\nArtwork, sound, balance and optional improvements continue over time. There is no promised date for the next publication. Your playtest observations help decide which issues matter first.',
+          'Versión instalada: ' + PrototypeBuild.version + '\n\nEl objetivo actual es la versión 0.9.2: completar la funcionalidad esencial y la fiabilidad antes de seguir puliendo. Otros sistemas pueden desarrollarse aparte; eso no significa que ya estén en esta versión instalada.\n\nEl arte, el sonido, el equilibrio y las mejoras opcionales avanzan con el tiempo. No hay una fecha de publicación prometida. Tus observaciones ayudan a decidir qué problemas atender primero.',
+        ), 'Your installed build and the next milestone.',
+          'Tu versión instalada y el próximo objetivo.'),
+        item('Credits and contact', 'Créditos y contacto', () => {
+          openMenu(
+            choice('Credits and contact', 'Créditos y contacto'),
+            choice(
+              "Created by Joel (Nomura).\n\nI don't use social media. The best way to reach me is by email or directly through Foros Cuba. My public email is joedoragon@gmail.com. You can also contact me directly through my Foros Cuba profile.\n\nForos Cuba: https://fcuba.net\nProfile: https://fcuba.net/members/282-nomura",
+              'Creado por Joel (Nomura).\n\nNo uso redes sociales. La mejor manera de contactarme es por correo electrónico o directamente en Foros Cuba. Mi correo público es joedoragon@gmail.com. También puedes escribirme directamente mediante mi perfil de Foros Cuba.\n\nForos Cuba: https://fcuba.net\nPerfil: https://fcuba.net/members/282-nomura',
+            ),
+            [
+              item('Email the creator', 'Escribir al creador',
+                () => { window.location.href = 'mailto:joedoragon@gmail.com'; },
+                'joedoragon@gmail.com', 'joedoragon@gmail.com'),
+              item('Visit Nomura on Foros Cuba', 'Visitar a Nomura en Foros Cuba',
+                () => window.open('https://fcuba.net/members/282-nomura', '_blank', 'noopener,noreferrer'),
+                'Open the creator’s public forum profile.', 'Abrir el perfil público del creador.'),
+            ],
+            titleHelpMenu,
+            { view: 'title-credits' },
+          );
+        }, 'Creator, forum and contact details.',
+          'Creador, foro y formas de contacto.'),
+      ],
+      showTitleScreen,
+      { view: 'title-help' },
+    );
   }
   function start(mode, heroClass, succession, heroName = null) {
     if (mode === 'arena' && !combatDiagnosticsEnabled) return;
@@ -4259,24 +4323,6 @@
     showTitleScreen();
     enterPreparedScene();
   }
-  function chooseLanguage(mode) {
-    if (mode === 'arena' && !combatDiagnosticsEnabled) return;
-    openMenu(
-      'Choose your language',
-      'English / Español',
-      [
-        action('English' + (language === 'en' ? ' ✓' : ''), () => {
-          setLanguage('en');
-          chooseClass(mode);
-        }),
-        action('Español' + (language === 'es' ? ' ✓' : ''), () => {
-          setLanguage('es');
-          chooseClass(mode);
-        }),
-      ],
-      () => (started ? openMain() : newGameMenu()),
-    );
-  }
   function savedRunRecoveryMenu() {
     openMenu(
       'Saved run could not be opened',
@@ -4296,7 +4342,7 @@
           !persistence.original(profile.activeMode),
         ),
         { kind: 'file', label: 'Import save' },
-        action('Start a new Normal run', () => chooseLanguage('normal')),
+        action('Start a new Normal run', () => chooseClass('normal')),
       ],
       started ? savedRunRecoveryMenu : showTitleScreen,
       { view: 'save-recovery' },
@@ -4920,91 +4966,32 @@
             'Azeroth_Playtest_Report.json',
           )
   }
-  function saveMenu() {
-    openMenu(
-      'Save and game management',
-      'Save, back up, or choose another run.',
-      [
-        action('Save run', () => {
-          save();
-          closeMenu();
-        }),
-        action('Save backups', saveBackupMenu),
-        action('New game', newGameMenu),
-        ...(combatDiagnosticsEnabled
-          ? [
-              action(
-                'Load Combat Diagnostics run',
-                () => {
-                  if (load('arena')) {
-                    graphicsController.revert();
-                    setOptimizationActive(true);
-                    resize();
-                    save();
-                    closeMenu();
-                    updateHUD();
-                  }
-                },
-                'Continue your separate low-spec combat-testing save.',
-                !persistence.exists('arena'),
-              ),
-            ]
-          : []),
-        action('Load other mode run', () => {
-          const mode = game.s.mode === 'normal' ? 'nightmare' : 'normal';
-          if (load(mode)) {
-            save();
-            closeMenu();
-          } else game.say('No saved ' + mode + ' run yet.');
-        }),
-      ],
-      systemMenu,
-    );
-  }
-  function saveBackupMenu() {
-    const reminder = backupReminder(game.s.mode, game.hero.level);
-    openMenu(
-      'Save backups',
-      'Export a backup before replacing a run.\n' +
-        storageProtectionCopy() + (reminder ? '\n' + reminder : ''),
-      [
-        action('Export save', () => exportCampaign(game)),
-        { kind: 'file', label: 'Import save' },
-        ...(typeof storageApi?.persist === 'function' &&
-           storageProtectionState !== 'granted'
-          ? [action('Request persistent storage',
-              () => requestStorageProtection(saveBackupMenu))]
-          : []),
-      ],
-      saveMenu,
-    );
-  }
   function newGameMenu() {
     openMenu(
       'New game',
       'Choose a mode. Export a backup to keep your current run.',
       [
-        action('New Normal game', () => chooseLanguage('normal')),
+        action('New Normal game', () => chooseClass('normal')),
         ...(combatDiagnosticsEnabled
           ? [
               action(
                 'New Combat Diagnostics run',
-                () => chooseLanguage('arena'),
+                () => chooseClass('arena'),
                 'Unlisted low-spec playtest · black battlefield · authentic combat',
               ),
             ]
           : []),
         ...(developerEnabled
-          ? [action('New Developer Mode run', () => chooseLanguage('developer'))]
+          ? [action('New Developer Mode run', () => chooseClass('developer'))]
           : []),
         action(
           'New game in Nightmare Mode',
-          () => chooseLanguage('nightmare'),
+          () => chooseClass('nightmare'),
           'Unlocked by the peaceful ending',
           !profile.nightmareUnlocked,
         ),
       ],
-      started ? saveMenu : showTitleScreen,
+      showTitleScreen,
     );
   }
   // Menu audit Step 2: one window for every display, renderer and frame option.
@@ -5251,18 +5238,13 @@
         ...(!runningAsApp() && platform.mode === 'phone'
           ? [action('Install on phone', installApp, 'Add the game to the home screen')]
           : []),
-        ...(appRegistration
-          ? [
-              action(
-                appUpdateReady ? 'Install available game update' : 'Check for game update',
-                updateApp,
-              ),
-            ]
+        // Automatic checks own discovery; this appears only when installation is ready.
+        ...(appRegistration && appUpdateReady
+          ? [action('Install available game update', updateApp)]
           : []),
         action('Screen and performance', () => platformMenu(systemMenu)),
         action('Controls', () => help(systemMenu)),
         action('Sound settings', () => soundMenu(systemMenu)),
-        action('Save and game management', saveMenu),
         action('Language · ' + (language === 'es' ? 'Español' : 'English'), () =>
           languageMenu(systemMenu),
         ),
@@ -5412,12 +5394,12 @@
       action('New game · Normal Mode', () => {
         game.s.endingAck = true;
         save();
-        chooseLanguage('normal');
+        chooseClass('normal');
       }),
       action('New game · Nightmare Mode', () => {
         game.s.endingAck = true;
         save();
-        chooseLanguage('nightmare');
+        chooseClass('nightmare');
       }),
       action('Export completed run', () =>
         exportJSON(game.snapshot(), 'Azeroth_Chronicles_Completed.json'),
@@ -5450,10 +5432,10 @@
         ' classes have fallen. This run is over. Its progress remains available for export; continuing it is disabled.',
       [
         action('Export final run', () => exportCampaign(game)),
-        action('Start a new Normal run', () => chooseLanguage('normal')),
+        action('Start a new Normal run', () => chooseClass('normal')),
         action(
           'Start a new Nightmare run',
-          () => chooseLanguage('nightmare'),
+          () => chooseClass('nightmare'),
           '',
           !profile.nightmareUnlocked,
         ),
@@ -5464,7 +5446,7 @@
     const file = e.target.files?.[0];
     if (!file) return;
     // Selecting a file only opens a validated preview, never a write.
-    const back = started ? saveBackupMenu : titleSaveMenu;
+    const back = titleSaveMenu;
     try {
       if (file.size > 5 * 1024 * 1024) throw Error('too large');
       const data = JSON.parse(await file.text());
@@ -7228,7 +7210,7 @@
     const actionId = input.actionFor(code);
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
-    if (code === 'Escape') {
+    if (code === 'Escape' || actionId === 'menu') {
       if (menu) {
         audio.interfaceSound('back');
         menu.back();
@@ -8945,6 +8927,52 @@
     fps.suspend();
   });
   titleScreen = $('title-screen');
+  languageWelcome = document.createElement('section');
+  languageWelcome.id = 'language-welcome';
+  languageWelcome.hidden = true;
+  languageWelcome.setAttribute('aria-label', 'Choose your language / Elige tu idioma');
+  const welcomeCard = document.createElement('div');
+  welcomeCard.className = 'language-welcome-card';
+  const welcomeText = (tag, className, content) => {
+    const element = document.createElement(tag);
+    element.className = className;
+    element.textContent = content;
+    return element;
+  };
+  welcomeCard.append(
+    welcomeText('p', 'language-welcome-eyebrow', "So I Became the Dark Lord's Problem"),
+    welcomeText('h1', '', 'Welcome · Bienvenido'),
+    welcomeText('p', 'language-welcome-intro', 'Choose your language / Elige tu idioma'),
+  );
+  const welcomeChoices = document.createElement('div');
+  welcomeChoices.className = 'language-welcome-choices';
+  for (const [code, label, subtitle] of [
+    ['en', 'English', 'Continue in English'],
+    ['es', 'Español', 'Continuar en español'],
+  ]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.setAttribute('data-language', code);
+    button.lang = code;
+    const heading = document.createElement('strong');
+    heading.textContent = label;
+    const hint = document.createElement('span');
+    hint.textContent = subtitle;
+    button.append(heading, hint);
+    button.onclick = () => {
+      if (startupUpdatePending) return;
+      setLanguage(code);
+      showTitleScreen();
+    };
+    welcomeChoices.append(button);
+  }
+  welcomeCard.append(
+    welcomeChoices,
+    welcomeText('p', 'language-welcome-note',
+      'You can change this later in Settings. / Podrás cambiarlo después en Ajustes.'),
+  );
+  languageWelcome.append(welcomeCard);
+  document.body.append(languageWelcome);
   const titleCanvasContinue = document.createElement('button');
   titleCanvasContinue.type = 'button';
   titleCanvasContinue.hidden = true;
@@ -8980,7 +9008,7 @@
       requestAnimationFrame(() => revealSceneTransition(ticket.token));
   };
   updateHUD();
-  setLanguage(language);
+  setLanguage(language, false);
   showTitleScreen();
   if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(

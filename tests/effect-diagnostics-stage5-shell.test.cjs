@@ -35,7 +35,7 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     return 'blob:effect-stage5-test';
   };
   const exportReport = async () => {
-    click('Save and game management');
+    click('Screen and performance');
     click('Export playtest report');
     assert(saved instanceof Blob, 'actual playtest export was not produced');
     return JSON.parse(await saved.text());
@@ -48,17 +48,24 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     // Enter the real Developer Mode creation flow. Directly seeding a raw save
     // bypasses the game's writer-ownership envelope and triggers protection.
     h.elements.get('menu-button').click();
-    h.click('Game and settings');
-    h.click('Save and game management');
-    h.click('New game');
+    h.click('Return to Main Menu');
+    h.elements.get('title-new').click();
     h.click('New Developer Mode run');
-    h.click('English');
-    const paladin = h.elements.get('modal-actions').children.find((b) =>
-      b.textContent.includes('paladin'));
+    // Developer runs bypass the normal/succession choice, then show class selection.
+    const paladin = h.elements.get('modal-actions').children.find((button) =>
+      /paladin/i.test(button.textContent));
     assert(paladin, 'Developer hero selection not available');
     paladin.click();
     const g = h.scope.Prototype.game;
     assert.equal(g.s.mode, 'developer', 'Developer Mode campaign must actually be created');
+    // New Game performs asynchronous first-scene preparation behind the title.
+    // Drive the actual scheduled shell frames before opening in-game Settings.
+    for (let i = 0; i < 60 && !h.scope.Prototype.started; i++) {
+      await Promise.resolve();
+      h.h.frame(16 * (i + 1));
+    }
+    assert(h.scope.Prototype.started,
+      'Developer campaign must finish first-scene preparation before diagnostics');
     h.elements.get('menu-button').click();
     h.click('Game and settings');
     h.click('Screen and performance');
