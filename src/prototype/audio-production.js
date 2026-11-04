@@ -93,12 +93,21 @@
         const nearby = scene.nearbyEngaged ?? scene.engaged ?? 0;
         const fighting = nearby > 0 ||
           (this.ctx && this.ctx.currentTime < (this.combatUntil || 0));
+        // Within Greenwood's outdoor travel chain, the short default
+        // crossfade reads as an abrupt song cut between town, roads and
+        // the Crypt approach. Keep combat responsive but let ordinary
+        // exploration transitions resolve over a longer musical handoff.
+        // These seconds affect only gain automation, not spatial routing.
+        const valeTravelFade = scene.zone === 'vale' &&
+          scene.interior === 'outdoors' && !scene.peace
+            ? (fighting ? 2 : 3.2)
+            : null;
         if (scene.millhavenTown && scene.zone === 'vale' &&
           scene.interior === 'outdoors' && !scene.peace &&
           !scene.estateApproach && !fighting) return {
             id: 'millhaven-chamber',
             bpm: 92,
-            fade: 1.2,
+            fade: valeTravelFade,
             stems: [{ id: 'millhaven-chamber', gain: 0.7 }],
           };
         const p =
@@ -131,7 +140,7 @@
         return {
           id: base,
           bpm: tempos[base],
-          fade: p.fade ?? 1.2,
+          fade: valeTravelFade ?? p.fade ?? 1.2,
           stems: [
             {
               id: base,
