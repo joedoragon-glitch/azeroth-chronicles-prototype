@@ -4442,7 +4442,7 @@
       );
     }
     // One organic species body for melee, thrower and guard variants.
-    function ogreBody(ranged) {
+    function ogreBody(ranged, strategist = false) {
       const hide = '#b2a684',
         shadow = '#8b8063',
         light = '#c8bb96';
@@ -4602,7 +4602,7 @@
           2,
         );
         oval(29, -32, 5, 4, '#85867f');
-      } else {
+      } else if (!strategist) {
         line(
           [
             [26, 2],
@@ -6902,7 +6902,51 @@
       grip(16.8, -1, complexion);
     }
 
+    // Gate 0: the existing species body, with a distinct playable field kit.
+    // Rendering only. The hero retains its own world position/hitbox and
+    // never borrows enemy Ogre combat or character-state properties.
+    function strategistHero(crowned = false) {
+      // Keep the approved heavy Ogre silhouette and face, but remove the
+      // enemy club. Compact dual daggers and tools distinguish his vocation.
+      ogreBody(false, true);
+      // Practical diagonal leather harness; no invented magical ornaments.
+      line([[-16, -20], [-6, -12], [11, -1]], '#594837', 4);
+      line([[-15, -20], [-5, -12], [11, -1]], '#b59a6d', 1.2);
+      // Protected field pouch, belt loops and three tiny reagent samples.
+      shaped('#67523e', () => {
+        ctx.moveTo(-20, 1);
+        ctx.quadraticCurveTo(-24, 5, -20, 12);
+        ctx.quadraticCurveTo(-12, 15, -9, 9);
+        ctx.lineTo(-10, 2);
+      });
+      line([[-19, 3], [-11, 4]], '#d0b47b', 1);
+      for (const [x, color] of [[-16, '#679c9a'], [-11, '#be8c5b']]) {
+        rect(x - 2, 4, 4, 6, '#524b3d');
+        rect(x - 1.3, 4.5, 2.6, 4, color);
+        line([[x - 1.8, 4], [x + 1.8, 4]], '#c5bca0', 1);
+      }
+      // Two physically carried short blades, not the enemy's heavy cudgel.
+      // Opposed grips make both weapons legible at ordinary camera zoom.
+      line([[-25, -3], [-30, -11]], '#543e2f', 4);
+      line([[-30, -10], [-35, -18], [-37, -25]], '#a8b7b8', 3.8);
+      line([[-34, -18], [-37, -25]], '#e6e1ca', 1.3);
+      line([[-34, -9], [-26, -12]], '#c7a36b', 2.6);
+      oval(-24, -2, 4.5, 4, '#a89a77');
+      line([[25, -3], [30, -10]], '#543e2f', 4);
+      line([[30, -9], [36, -17], [38, -24]], '#a8b7b8', 3.8);
+      line([[35, -17], [38, -24]], '#e6e1ca', 1.3);
+      line([[26, -11], [34, -8]], '#c7a36b', 2.6);
+      oval(25, -2, 4.5, 4, '#b2a684');
+      // A restrained affiliation mark only when the native crowned state is
+      // present; do not imply a new class skill or change an enemy Ogre.
+      if (crowned) {
+        poly([[-4, -11], [0, -15], [4, -11], [0, -7]], '#c7ad71');
+        oval(0, -11, 1.4, 1.4, '#66557e');
+      }
+    }
+
     function hero(role) {
+      if (role === 'strategist') return strategistHero(false);
       if (role === 'rogue') return rogueHero(false);
       const cape = role === 'paladin' ? '#785848' : role === 'mage' ? '#394f78' : '#355643';
       shaped(cape, () => {
@@ -6926,6 +6970,7 @@
     }
 
     function crownedHero(role, openFace = false) {
+      if (role === 'strategist') return strategistHero(true);
       if (role === 'rogue') return rogueHero(true);
       const purple = '#4c405e',
         trim = '#d9b978',
@@ -18351,6 +18396,7 @@
       ].includes(e.structure)
     )
       return 76;
+    if (e.renderKind === 'hero' && e.class === 'strategist') return 70;
     if ((e.renderKind === 'hero' && e.class === 'mage') || e.renderKind === 'prop') return 64;
     if (e.kind === 'transport') return e.icon === '🐉' ? 82 : e.icon === '⛵' ? 76 : 70;
     if (['dungeon', 'exit'].includes(e.kind)) return 64;
