@@ -85,7 +85,8 @@ async function capture(page,label) {
             .evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length);
           assert.equal(columns, 2, config.name + ' four-class selection is two columns');
           const nameField = await box(page, '#modal[data-view="class-select"] .character-name-field');
-          const firstClass = await box(page, '#modal[data-view="class-select"] #modal-actions button');
+          const firstClass = await page.locator('#modal[data-view="class-select"] #modal-actions button')
+            .first().boundingBox();
           assert(nameField && firstClass && nameField.width > firstClass.width * 1.8,
             config.name + ' hero-name field spans both class columns');
           const choice = await page.getByRole('button',{name:/Palad[ií]n/i}).first().boundingBox();
