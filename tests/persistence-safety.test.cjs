@@ -100,7 +100,7 @@ console.log(
   click('Export original save');
   assert.equal(await exported.text(), original, 'Export retains the exact unreadable bytes');
   click('Start a new Normal run');
-  click('English');
+  // The saved language is reused; a new campaign does not choose language again.
   click('Standard death');
   app.scope.confirm = () => false;
   click('🛡');
