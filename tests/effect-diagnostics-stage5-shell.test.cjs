@@ -35,7 +35,7 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     return 'blob:effect-stage5-test';
   };
   const exportReport = async () => {
-    click('Save and game management');
+    click('Screen and performance');
     click('Export playtest report');
     assert(saved instanceof Blob, 'actual playtest export was not produced');
     return JSON.parse(await saved.text());
@@ -48,11 +48,9 @@ function harness({ developerFlag = false, developerSave = false } = {}) {
     // Enter the real Developer Mode creation flow. Directly seeding a raw save
     // bypasses the game's writer-ownership envelope and triggers protection.
     h.elements.get('menu-button').click();
-    h.click('Game and settings');
-    h.click('Save and game management');
-    h.click('New game');
+    h.click('Return to Main Menu');
+    h.elements.get('title-new').click();
     h.click('New Developer Mode run');
-    h.click('English');
     const paladin = h.elements.get('modal-actions').children.find((b) =>
       b.textContent.includes('paladin'));
     assert(paladin, 'Developer hero selection not available');
