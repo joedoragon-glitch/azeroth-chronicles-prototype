@@ -42,9 +42,9 @@ assert(!/ogreBody\s*\(/.test(art), 'no repaint of stock Ogre anatomy masqueradin
 for (const part of [
   "const hide = '#b2a684'", "const hideFold",
   "ctx.moveTo(-15, -43)", "ctx.moveTo(-7, -24)",
-  "ctx.moveTo(9, -23)", "ctx.moveTo(-12, -7)",
-  "ctx.moveTo(-18, -31)", "ctx.moveTo(-18, -34)",
-  "ctx.moveTo(-2, -55)",
+  "ctx.moveTo(9, -23)", "ctx.moveTo(-12, -12)",
+  "ctx.moveTo(-18, -31)", "ctx.moveTo(-19, -34)",
+  "ctx.moveTo(-7, -55)",
 ]) assert(art.includes(part), 'missing distinct Ogre anatomical / silhouette owner: ' + part);
 
 for (const c of ['#b2a684', '#8b8063', '#c8bb96'])
@@ -64,6 +64,13 @@ assert.notDeepEqual(contour(hero), contour(enemy),
   'Strategist must have independently drawn anatomy and silhouette');
 assert(contour(hero).length > contour(enemy).length,
   'new hero owns more facial and costume geometry than a stock Ogre');
+assert(art.includes('ctx.scale(0.88, 0.88)'), 'head-to-torso proportion correction');
+assert(art.includes('ctx.translate(0, -7)'), 'raised pose allows articulated shins and boots');
+assert(art.includes('ctx.moveTo(-21, 15)') && art.includes('ctx.moveTo(10, 16)'),
+  'both lower legs have distinct grounded boots');
+assert(trace({ renderKind: 'hero', class: 'strategist' }).some((x) =>
+  x[0] === 'scale' && x[1] === 0.88 && x[2] === 0.88),
+  'the existing Canvas renderer must see the corrected head proportions');
 
 assert(paints(crown).includes('#c7ad71'), 'Crowned presentation remains distinct');
 assert.deepEqual(trace(originalEnemy), enemy, 'Enemy Ogre deterministic and unchanged');
