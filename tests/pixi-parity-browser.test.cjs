@@ -137,7 +137,8 @@ async function main() {
     );
     const rows = [],
       lifecycle = [],
-      benchmarks = [];
+      benchmarks = [],
+      r3Probes = [];
     for (const fixture of (
       process.env.PARITY_FIXTURES ||
       'warlord,ridge,regalia,cover,registered,wildlife,lamp,flight,bundle,keeper,pursuit,idle'
@@ -321,6 +322,7 @@ async function main() {
           getGame: () => g,
           canvasRenderer: painter,
           getOptimizationMode: () => optimized,
+          getDiagnosticRecording: () => window.r3Trace === true,
           getRendererOptions: () => opts,
           onFailure: (e) => {
             throw Error(JSON.stringify(e));
@@ -342,6 +344,105 @@ async function main() {
           );
         }
       });
+      // R3B is explicitly gated to one native Chromium/Pixi scene.
+      // It never runs in regular visual parity or the paired #755 fixture.
+      if (fixture === 'cover' && process.env.PARITY_R3_STAGE_AUDIT === '1') {
+        const trace = await page.evaluate(() => {
+          window.r3Trace = true;
+          gpu.activate();
+          const room = g.zone();
+          const original = {
+            heroX: g.hero.x, heroY: g.hero.y,
+            props: room.props, enemies: room.enemies,
+            width: opts.canvas.width, height: opts.canvas.height,
+            saved: JSON.stringify(g.s),
+          };
+          const read = (name) => {
+            const before = gpu.status();
+            const result = gpu.draw();
+            const after = gpu.status();
+            if (!result?.phaseMs || !after.active || after.lastError)
+              throw Error('R3B native Pixi draw failed: ' + name);
+            return {
+              name,
+              totalMs: +result.totalMs.toFixed(2),
+              phaseMs: Object.fromEntries(Object.entries(result.phaseMs)
+                .map(([key, value]) => [key, +value.toFixed(2)])),
+              bakes: result.bakesDuringDraw,
+              backgroundRepaints: result.backgroundRepaintsDuringDraw,
+              tileReuses: after.terrainTileReuses - before.terrainTileReuses,
+              ratioBefore: result.ratioBefore,
+              ratioAfter: result.ratioAfter,
+              resolutionChanged: result.resolutionChanged,
+            };
+          };
+          try {
+            const warm = [read('baseline-warm-1'), read('baseline-warm-2')];
+            room.props = [...original.props, {
+              id: 'r3-native-new-crate', x: g.hero.x + 25,
+              y: g.hero.y + 20, structure: 'crate', decorative: false,
+            }];
+            const cold = read('cold-procedural');
+            const reused = read('warm-procedural');
+            room.props = original.props;
+            read('after-prop-restore');
+            if (reused.bakes !== 0) throw Error('R3B warmed art rebaked');
+            g.hero.x += 600;
+            const camera = read('camera-shift');
+            g.hero.x = original.heroX;
+            read('camera-return');
+            opts.canvas.width = Math.round(innerWidth * 1.5);
+            opts.canvas.height = Math.round(innerHeight * 1.5);
+            const densityUp = read('density-1.5x-cold');
+            opts.canvas.width = original.width;
+            opts.canvas.height = original.height;
+            const densityDown = read('density-return-1x');
+            opts.canvas.width = Math.round(innerWidth * 1.5);
+            opts.canvas.height = Math.round(innerHeight * 1.5);
+            const densityUpWarm = read('density-1.5x-warm');
+            opts.canvas.width = original.width;
+            opts.canvas.height = original.height;
+            read('density-final-restore');
+            if (!densityUp.resolutionChanged || !densityDown.resolutionChanged ||
+                !densityUpWarm.resolutionChanged || densityDown.bakes ||
+                densityUpWarm.bakes) throw Error('R3B density cache/resize path not isolated');
+            const hero = structuredClone(g.hero);
+            room.enemies = Array.from({ length: 16 }, (_, i) => ({
+              ...hero, id: 'r3-native-crowd-' + i,
+              renderKind: 'enemy', species: 'goblin', type: 'mob',
+              form: 'normal', hp: 30, maxHp: 30, neutral: false,
+              x: g.hero.x + (i % 4) * 15,
+              y: g.hero.y + Math.floor(i / 4) * 15,
+            }));
+            const crowdCold = read('crowd-16-cold');
+            const crowdWarm = read('crowd-16-warm');
+            if (crowdWarm.bakes) throw Error('R3B warmed actor crowd rebaked');
+            room.enemies = original.enemies;
+            read('crowd-restore');
+            return {
+              environment: 'Chromium ANGLE SwiftShader real Pixi WebGL2',
+              fixture: 'native cover',
+              warm, cold, reused, camera, densityUp, densityDown,
+              densityUpWarm, crowdCold, crowdWarm,
+              limitation: 'JS submission only, not actual iOS Safari or GPU completion',
+            };
+          } finally {
+            room.props = original.props;
+            room.enemies = original.enemies;
+            g.hero.x = original.heroX;
+            g.hero.y = original.heroY;
+            opts.canvas.width = original.width;
+            opts.canvas.height = original.height;
+            opts.ctx.setTransform(original.width / innerWidth, 0, 0,
+              original.width / innerWidth, 0, 0);
+            window.r3Trace = false;
+            if (JSON.stringify(g.s) !== original.saved)
+              throw Error('R3B altered native Campaign state');
+          }
+        });
+        r3Probes.push(trace);
+        console.log('PIXI_783_R3_BROWSER_JSON ' + JSON.stringify(trace));
+      }
       for (const mode of ['canvas', 'pixi']) {
         await page.evaluate((mode) => {
           if (mode === 'canvas') {
@@ -685,7 +786,7 @@ async function main() {
       console.log('CAPTURED ' + fixture);
       fs.writeFileSync(
         path.join(out, 'checkpoint.json'),
-        JSON.stringify({ rows, lifecycle, benchmarks, errors }, null, 2),
+        JSON.stringify({ rows, lifecycle, benchmarks, r3Probes, errors }, null, 2),
       );
     }
     assert.deepEqual(errors, []);
@@ -712,6 +813,7 @@ async function main() {
           rows,
           lifecycle,
           benchmarks,
+          r3Probes,
           errors,
         },
         null,
