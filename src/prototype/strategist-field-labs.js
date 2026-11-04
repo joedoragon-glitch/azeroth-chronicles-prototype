@@ -271,7 +271,9 @@
           zone: this.s.zones[job.zoneId],
           rules: adapters.rules,
           route: (from, point, zone) => {
-            const candidate = navigation.route(this, zone.id, from, point, decisionBudget);
+            const candidate = typeof navigation.routeToSource === 'function' ?
+              navigation.routeToSource(this, zone.id, from, point, decisionBudget) :
+              navigation.route(this, zone.id, from, point, decisionBudget);
             approvedPath = points(candidate) ? candidate : null;
             return candidate;
           },
@@ -402,7 +404,10 @@
               if ((this.s.time || 0) >= job.retryAt) {
                 job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
                 const destination = job.phase === 'outbound' ? job.target : lab;
-                const replanned = navigation.route(this, job.zoneId, job.position, destination);
+                const replanned = job.phase === 'outbound' &&
+                  typeof navigation.routeToSource === 'function' ?
+                  navigation.routeToSource(this, job.zoneId, job.position, destination) :
+                  navigation.route(this, job.zoneId, job.position, destination);
                 if (this.fieldLabValidRoute(job.zoneId, job.position, replanned, destination)) {
                   job.path = replanned.map(clone); job.waypoint = 0;
                   job.blocked = false;

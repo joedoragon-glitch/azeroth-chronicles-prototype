@@ -157,14 +157,51 @@
     if (token.nodes <= 0 || token.probes <= 0) token.exhausted = true;
     return []; // Over-budget is unavailable, never a fabricated traversable route.
   }
+
+  // Native water, lava and ore source coordinates can be non-walkable.
+  // Only walk to collision-clear points within #770's 24-unit gather reach.
+  // A single shared token bounds every stand-off probe and route attempt.
+  function routeToSource(g, zoneId, start, sourcePoint, token = budget()) {
+    if (!isWorld(g, zoneId) || !isPoint(start) || !isPoint(sourcePoint) ||
+        !token || !Number.isFinite(token.nodes) || !Number.isFinite(token.probes) ||
+        distance(start, sourcePoint) > 4000) return [];
+    if (accessible(g, zoneId, sourcePoint.x, sourcePoint.y, token)) {
+      const direct = route(g, zoneId, start, sourcePoint, token);
+      if (direct.length || token.exhausted) return direct;
+    }
+    // Prefer the side facing the actual worker, then four bounded side steps.
+    // Never change the hero zone, manufacture source geometry or refresh budgets.
+    const dx = start.x - sourcePoint.x, dy = start.y - sourcePoint.y;
+    const length = Math.hypot(dx, dy);
+    if (length < 0.001) return [];
+    const ux = dx / length, uy = dy / length;
+    const angles = [0, Math.PI / 4, -Math.PI / 4, Math.PI / 2, -Math.PI / 2];
+    for (const angle of angles) {
+      if (token.nodes <= 0 || token.probes <= 0) {
+        token.exhausted = true;
+        break;
+      }
+      const c = Math.cos(angle), s = Math.sin(angle);
+      const destination = {
+        x: sourcePoint.x + 23 * (ux * c - uy * s),
+        y: sourcePoint.y + 23 * (ux * s + uy * c),
+      };
+      if (!accessible(g, zoneId, destination.x, destination.y, token)) continue;
+      const path = route(g, zoneId, start, destination, token);
+      if (path.length && distance(path[path.length - 1], sourcePoint) <= 24)
+        return path;
+      if (token.exhausted) break;
+    }
+    return [];
+  }
   function adapter() {
     return Object.freeze({
-      budget, passable, route,
+      budget, passable, route, routeToSource,
       // One shared budget across the at-most-24 source probes in #770.
       newDecisionBudget: () => budget(),
     });
   }
-  const api = Object.freeze({ adapter, budget, passable, route });
+  const api = Object.freeze({ adapter, budget, passable, route, routeToSource });
   if (typeof module !== 'undefined') module.exports = api;
   else root.PrototypeStrategistLabNavigation = api;
 })(typeof window !== 'undefined' ? window : globalThis);

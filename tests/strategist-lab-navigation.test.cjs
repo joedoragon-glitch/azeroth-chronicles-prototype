@@ -1,7 +1,7 @@
 'use strict';
 const assert = require('node:assert/strict');
 const test = require('node:test');
-const { route, passable, budget } = require('../src/prototype/strategist-lab-navigation.js');
+const { route, routeToSource, passable, budget } = require('../src/prototype/strategist-lab-navigation.js');
 
 function world() {
   return {
@@ -63,4 +63,44 @@ test('20-source batch shares one search budget rather than 20 full A* attempts',
     route(g, 'march', {x:220,y:400}, {x:850,y:410+i*5}, b);
   assert.ok(b.tested <= 1000);
   assert.ok(b.expanded <= 180);
+});
+
+test('blocked authentic shoreline point allows only a walked, collision-safe stand-off', () => {
+  const g = world(), original = g.blocked;
+  g.blocked = function(x, y, zone, radius) {
+    return original.call(this, x, y, zone, radius) ||
+      Math.hypot(x - 400, y - 400) <= 45 + radius;
+  };
+  const from = { x: 400, y: 240 }, shoreline = { x: 400, y: 350 };
+  assert.deepEqual(route(g, 'vale', from, shoreline), [],
+    'a blocked source is not a traversable destination');
+  const token = budget(), path = routeToSource(g, 'vale', from, shoreline, token);
+  assert.ok(path.length, 'physical approach is available from dry terrain');
+  assert.ok(Math.hypot(path.at(-1).x - shoreline.x, path.at(-1).y - shoreline.y) <= 24);
+  assert.notDeepEqual(path.at(-1), shoreline, 'worker stays outside the source');
+  let at = from;
+  for (const p of path) {
+    assert.equal(passable(g, 'vale', at, p), true);
+    at = p;
+  }
+  assert.ok(token.tested <= 2400 && token.expanded <= 300);
+  assert.equal(g.s.zone, 'vale');
+});
+test('blocked source without a real walkable sampling approach is refused', () => {
+  const g = world(), original = g.blocked;
+  g.blocked = function(x, y, zone, radius) {
+    return original.call(this, x, y, zone, radius) ||
+      Math.hypot(x - 400, y - 400) <= 85 + radius;
+  };
+  const from = { x: 400, y: 150 }, source = { x: 400, y: 400 };
+  assert.deepEqual(routeToSource(g, 'vale', from, source), []);
+  const token = budget(0, 4);
+  assert.deepEqual(routeToSource(g, 'vale', from, source, token), []);
+  assert.ok(token.tested <= 4 && token.expanded === 0,
+    'source stand-off never bypasses shared search limits');
+});
+test('walkable material point retains its exact physical destination', () => {
+  const g = world(), b = budget();
+  const source = { x: 300, y: 300 };
+  assert.deepEqual(routeToSource(g, 'vale', { x: 100, y: 300 }, source, b), [source]);
 });

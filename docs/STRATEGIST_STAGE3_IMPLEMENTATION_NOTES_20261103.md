@@ -40,6 +40,23 @@
 | **L4 — publication-safe browser/module integration** | **Intentionally NOT implemented.** Stage 3 modules not in site-assets/HTML script graph; no native `Campaign.tick` hook; Strategist not admitted, no player-facing Lab. | Integrate only when real class, #770 source, E0 save, threat, UI, rendering and performance prerequisites hold. No superficial feature flag that creates playable unfinished systems. |
 | **L5 — evidence, docs, QA and exact-head review** | **Draft-focused source exit PASSED** (#782 and #787, 27 selected files each); full historic failure causes documented. This resume record supersedes stale earlier checkpoint wording. | **Stage 3 overall NOT COMPLETE.** Requires authentic end-to-end boundaries, exact integrated focused regressions and quality evidence. Comprehensive/browser/device suites, merge, deployment and user/device acceptance remain separately consent-gated. |
 
+### 4 November 2026 continuation — B2 source stand-off, draft implementation only
+
+After reviewing the current #782/#770/#780 heads, the zone-explicit Lab router
+now offers an optional `routeToSource` method for actual material coordinates
+within native blocked terrain. It checks up to five walkable stand-offs inside
+#770's 24-unit sampling reach, sharing a strict budget for each path search
+and validating actual collision. Outbound obstruction replanning uses the same
+contract; no source, terrain, worker or active hero zone is fabricated.
+
+This is an **implemented but not yet accepted B2 correction**, not a proof
+that #770 is joined to the live script graph, that all five regional source
+routes succeed, or that workers survive real combat. Three focused route tests
+cover positive stand-off, blocked refusal, bounded budgets and direct destinations.
+**New exact-head CI and full actual-source route acceptance remain pending**.
+The prior successful `450666dd` source run remains historical until newer
+checks succeed. No class activation, merge, deployment or device claim.
+
 ### Mandatory unfinished work — dependency order, not busywork
 
 1. **B1 / reconcile exact owners and define real acceptance fixtures.** Verify current heads, compare E0's `save.js`, #770's material approach API, native `party.js` labor/save/zone semantics and current main drift. Use existing Stage 3 branch #782 and its tests. Preserve a conflict map for files such as `save.js`; PR #787 is a proof reference, **not** a commit source to merge wholesale. Do not repeat already-green isolated tests without a relevant change.
