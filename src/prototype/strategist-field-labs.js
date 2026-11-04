@@ -92,7 +92,8 @@
             this.s.mode === 'arena' || this.isDungeon?.()) return false;
         const zone = this.s.zones[zoneId];
         if (!zone || !Array.isArray(zone.buildings) ||
-            !zone.buildings.some((b) => b.kind === 'barracks' && typeof b.id === 'string'))
+            !zone.buildings.some((b) => b.kind === 'barracks' &&
+              typeof b.id === 'string' && b.id.startsWith('barracks-')))
           return false; // An unfinished placed Barracks qualifies.
         if (typeof this.blocked !== 'function' || this.blocked(site.x, site.y, zoneId, 42) ||
             typeof this.route !== 'function' || !this.route(this.hero, site).length ||
@@ -189,7 +190,17 @@
         if (!lab || lab.progress < 4 || lab.windmill ||
             !this.spend(CANDIDATE.windmillCrowns)) return false;
         lab.windmill = true; // Requires no Neri education.
+        lab.productionPriority = 'acid'; // Preserve surplus instead of auto-consuming it.
         return true;
+      }
+      setFieldLabProductionPriority(fromZone, labZone, priority) {
+        if (!this.fieldLabCanManage(fromZone) ||
+            !['acid', 'reagents', 'balanced'].includes(priority)) return false;
+        const lab = this.fieldLab(labZone);
+        if (!lab || lab.progress < 4 ||
+            (priority !== 'reagents' && !lab.windmill)) return false;
+        lab.productionPriority = priority;
+        return true; // No extra worker or invented source.
       }
       learnAdvancedLabAlchemy(fromZone) {
         if (!this.fieldLabCanManage(fromZone) ||
@@ -277,7 +288,7 @@
         if (lab.processSeconds < CANDIDATE.processingSeconds) return false;
         lab.processSeconds -= CANDIDATE.processingSeconds;
         const input = job.material, output = PRODUCTS[input];
-        if (lab.windmill) {
+        if (lab.windmill && lab.productionPriority !== 'reagents') {
           // A single authenticated idle worker operates the machine. The
           // recipe consumes two distinct SURPLUS genuine samples; each must
           // retain one sample for ordinary reagent preparation.
@@ -294,6 +305,7 @@
             return true;
           }
         }
+        if (lab.windmill && lab.productionPriority === 'acid') return false;
         if (!finiteCount(bank.samples[input]) || !finiteCount(bank.products[output]) ||
             bank.samples[input] < 1) return false;
         bank.samples[input]--; bank.products[output]++;
@@ -317,6 +329,18 @@
               !finitePoint(job.position) || !safeFromThreat(this, job.zoneId, job.position, worker))
             continue; // No invented safe progress through an enemy encounter.
           if (job.phase === 'station' || job.phase === 'outbound' || job.phase === 'return') {
+            const waypoint = job.path?.[job.waypoint];
+            if (waypoint && !navigation.passable(this, job.zoneId, job.position, waypoint)) {
+              if ((this.s.time || 0) >= job.retryAt) {
+                job.retryAt = (this.s.time || 0) + CANDIDATE.retrySeconds;
+                const destination = job.phase === 'outbound' ? job.target : lab;
+                const replanned = navigation.route(this, job.zoneId, job.position, destination);
+                if (this.fieldLabValidRoute(job.zoneId, job.position, replanned, destination)) {
+                  job.path = replanned.map(clone); job.waypoint = 0;
+                }
+              }
+              continue;
+            }
             if (!this.fieldLabMove(job, dt, worker)) continue;
             if (job.phase === 'station') { job.phase = 'idle'; job.path = []; }
             else if (job.phase === 'outbound') {
