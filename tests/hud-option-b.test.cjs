@@ -101,6 +101,7 @@ test('Landscape Stage 2 reuses the merged title and protects wide phone menus', 
   assert.match(landscape, /#title-screen nav button \{\s*min-height: 44px;/);
   assert.match(landscape, /\.title-active #modal\[data-dialog-size\] \{[\s\S]*?width: min\(/);
   assert.match(landscape, /#modal\[data-view='class-select'\] #modal-actions \{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(landscape, /#modal\[data-view='class-select'\] #modal-actions > \.character-name-field \{[\s\S]*?grid-column: 1 \/ -1;/);
   for (const view of ['adventure', 'settings'])
     assert(landscape.includes("#modal[data-view='" + view + "'] #modal-actions"),
       'wide indexed menu must reuse existing view: ' + view);
