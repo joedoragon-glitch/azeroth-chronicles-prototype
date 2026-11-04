@@ -389,7 +389,9 @@ test('direct method callers cannot manufacture bottles without a real assigned w
     phase: 'idle', material: 'wood', position: { x: 100, y: 100 },
   };
   const before = JSON.stringify(bank.samples);
+  lab.processSeconds = 5.999; // Work must be authorized even at the production threshold.
   assert.equal(g.fieldLabMakeProduct(fake, lab, 0.1), false);
+  assert.equal(lab.processSeconds, 5.999, 'an unstaffed call cannot advance machine time');
   assert.equal(g.s.strategistAcidBottles, 0);
   assert.equal(JSON.stringify(bank.samples), before);
   const worker = addReserve(g); assert.equal(g.trainFieldLabWorker(worker.id), true);
@@ -398,6 +400,7 @@ test('direct method callers cannot manufacture bottles without a real assigned w
   job.phase = 'idle';
   worker.fieldLabTrained = false;
   assert.equal(g.fieldLabMakeProduct(job, lab, 0.1), false);
+  assert.equal(lab.processSeconds, 5.999);
   assert.equal(JSON.stringify(bank.samples), before);
   assert.equal(g.s.strategistAcidBottles, 0);
 });
