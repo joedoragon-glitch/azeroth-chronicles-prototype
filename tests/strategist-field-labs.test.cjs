@@ -171,8 +171,10 @@ test('active or busy companions, forged Charm, missing pets cannot be used', () 
   const fakePet = addReserve(g, 'pet', 'pet'); fakePet.petFamily = 'unknown';
   for (const u of [active, busy, forged, fakePet]) {
     assert.equal(g.trainFieldLabWorker(u.id), u === active); // training is permanent, not assignment
-    assert.equal(g.assignFieldLabWorker('vale', 'vale', u.id, 'wood'), false);
+    assert.equal(g.assignFieldLabWorker('vale', 'vale', u.id, 'wood'), u === active);
   }
+  assert.equal(active.active, false, 'explicitly assigned active actor leaves the field party');
+  assert.equal(active.order.type, 'strategist-field-lab');
 });
 test('genuine source trip traverses waypoints, returns, and adds one finite sample', () => {
   const g = new Campaign(); build(g);
