@@ -409,6 +409,9 @@ Rendering-only boundaries, original sprite masters, camera framing, supported la
 
 **Acceptance for this Step 1:** The current authoritative design record and maintained camera/responsive references consistently distinguish the *new target* from the *still-dual-orientation runtime*, and #790/PR #791 are linked for follow-up. No code or device verification is claimed.
 
+**Stage 2 — landscape menu refinement, 4 November 2026 (draft implementation; pending CI/device verification):** Continuing this same draft workstream after the already-merged #791 title/menu changes, the phone-only landscape CSS now restores the intended broad title-owned modal widths regardless of legacy dialog-size selectors, raises all five title action targets to at least 44 CSS pixels, arranges the four class-selection cards in two columns, and gives the Adventure and Game/settings indices two columns where landscape permits. Inline graphics/sound settings retain one labeled control per row and a wider scrollable dialog. Existing maps, Archive reading, confirmation flows, title's language welcome, first-use consent, all four class choices, and older portrait runtime CSS remain intact until their separate stages. The scoped existing HUD tests now include source assertions and real-shell landscape geometry checks for the title, class selection and Adventure menu. **These are implemented in the draft branch, not yet merged, published or confirmed on physical iPhone; subsequent CI outcome must be recorded before any tested claim.** Stage 3 remains responsible for portrait rotation blocking and a safe paused/resumable session.
+
+
 **Decision intent at a glance:** The accepted 150% framing and original-master sprite workflow guide visual work; world collision, encounter rules and saves must not shift merely to match an image. Historical sprite counts do not describe today's installed manifest.
 
 ### Dated decisions and later revisions
