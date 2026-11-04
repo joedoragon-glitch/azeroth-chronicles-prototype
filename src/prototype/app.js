@@ -4273,12 +4273,17 @@
           openMenu(
             choice('Credits and contact', 'Créditos y contacto'),
             choice(
-              "Created by Joel (Nomura).\n\nI don't use social media. The best way to reach me is by email or directly through Foros Cuba. My public email address is not yet listed here; until then, please use my forum profile.\n\nForos Cuba: https://fcuba.net\nProfile: https://fcuba.net/members/282-nomura",
-              'Creado por Joel (Nomura).\n\nNo uso redes sociales. La mejor manera de contactarme es por correo electrónico o directamente en Foros Cuba. Mi dirección pública de correo todavía no aparece aquí; mientras tanto, puedes escribirme mediante mi perfil del foro.\n\nForos Cuba: https://fcuba.net\nPerfil: https://fcuba.net/members/282-nomura',
+              "Created by Joel (Nomura).\n\nI don't use social media. The best way to reach me is by email or directly through Foros Cuba. My public email is joedoragon@gmail.com. You can also contact me directly through my Foros Cuba profile.\n\nForos Cuba: https://fcuba.net\nProfile: https://fcuba.net/members/282-nomura",
+              'Creado por Joel (Nomura).\n\nNo uso redes sociales. La mejor manera de contactarme es por correo electrónico o directamente en Foros Cuba. Mi correo público es joedoragon@gmail.com. También puedes escribirme directamente mediante mi perfil de Foros Cuba.\n\nForos Cuba: https://fcuba.net\nPerfil: https://fcuba.net/members/282-nomura',
             ),
-            [item('Visit Nomura on Foros Cuba', 'Visitar a Nomura en Foros Cuba',
-              () => window.open('https://fcuba.net/members/282-nomura', '_blank', 'noopener,noreferrer'),
-              'Open the creator’s public forum profile.', 'Abrir el perfil público del creador.')],
+            [
+              item('Email the creator', 'Escribir al creador',
+                () => { window.location.href = 'mailto:joedoragon@gmail.com'; },
+                'joedoragon@gmail.com', 'joedoragon@gmail.com'),
+              item('Visit Nomura on Foros Cuba', 'Visitar a Nomura en Foros Cuba',
+                () => window.open('https://fcuba.net/members/282-nomura', '_blank', 'noopener,noreferrer'),
+                'Open the creator’s public forum profile.', 'Abrir el perfil público del creador.'),
+            ],
             titleHelpMenu,
             { view: 'title-credits' },
           );
