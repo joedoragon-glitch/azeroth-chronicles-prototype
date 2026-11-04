@@ -1166,7 +1166,7 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "d4394ae1d43e44af14843ffc2ca3efaf912cec486fe524a2e2879b35eb4f5197",
+    "src/prototype/visuals.js": "dbe1ed4730ee7188b08c11667adb66fe35eb9fadc6c2edcf096e6acc6632adcc",
     "src/prototype/world.js": "897b8162ceae1aee1936ded336b88c0a00e8abc1e3d4ec76641e5652b48a8974",
     "src/prototype/rules.js": "271a16c9d4ab3a5fab00499e40a566e496eddd1ff6766061a925147636e5680f",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
