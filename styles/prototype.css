@@ -1425,3 +1425,128 @@ body.title-active #modal { z-index: 11; }
   color: #fff0d1; cursor: pointer;
 }
 #scene-loading-retry:focus-visible { outline: 3px solid #f8dfa5; outline-offset: 3px; }
+
+/* First-run language choice, shown only after the automatic update gate. */
+#language-welcome[hidden] {
+  display: none !important;
+}
+#language-welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: max(20px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right))
+    max(20px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
+  background: radial-gradient(ellipse at 50% 28%, #294738, #10231b 67%, #081610);
+  overscroll-behavior: contain;
+}
+.language-welcome-card {
+  width: min(100%, 700px);
+  border: 1px solid #c7aa7299;
+  border-radius: 20px;
+  background: #14261fe8;
+  padding: clamp(20px, 4vw, 38px);
+  text-align: center;
+  box-shadow: 0 16px 50px #0009;
+}
+.language-welcome-eyebrow {
+  margin: 0 0 12px;
+  color: #cdb689;
+  font-size: clamp(11px, 2vw, 14px);
+  letter-spacing: 0.02em;
+}
+.language-welcome-card h1 {
+  color: #f1dfb5;
+  font-family: Georgia, serif;
+  font-size: clamp(28px, 5.2vw, 44px);
+  line-height: 1.13;
+  margin: 0 0 12px;
+}
+.language-welcome-card h1 span {
+  color: #b99d66;
+}
+.language-welcome-intro {
+  color: #d0ded1;
+  font-size: clamp(14px, 2.1vw, 17px);
+  margin: 0 0 24px;
+}
+.language-welcome-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.language-welcome-choices button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 82px;
+  border-radius: 12px;
+  padding: 14px 12px;
+  background: #2b493d;
+  border: 1px solid #a7bca088;
+  color: #f6edda;
+  text-align: center;
+  cursor: pointer;
+}
+.language-welcome-choices button strong {
+  font-family: Georgia, serif;
+  font-size: clamp(19px, 3vw, 25px);
+}
+.language-welcome-choices button span {
+  font-size: clamp(12px, 2vw, 14px);
+  color: #c4d8c9;
+}
+.language-welcome-choices button:focus-visible,
+.language-welcome-choices button:hover {
+  outline: 2px solid #e7c57a;
+  outline-offset: 2px;
+  border-color: #f1d695;
+  background: #3a5b4a;
+}
+.language-welcome-note {
+  color: #b7c7ba;
+  font-size: 12px;
+  line-height: 1.45;
+  margin: 22px 0 0;
+}
+#modal-actions .menu-import-picker.has-detail {
+  display: block;
+  padding-right: 12px;
+}
+#modal-actions .menu-import-picker.has-detail .detail {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: #b9c9c3;
+}
+@media (max-width: 520px) and (orientation: portrait) {
+  .language-welcome-choices {
+    grid-template-columns: 1fr;
+  }
+}
+@media (orientation: landscape) and (max-height: 460px) {
+  .language-welcome-card {
+    padding: 14px 20px;
+  }
+  .language-welcome-eyebrow,
+  .language-welcome-card h1,
+  .language-welcome-intro {
+    margin-bottom: 8px;
+  }
+  .language-welcome-intro {
+    margin-bottom: 12px;
+  }
+  .language-welcome-choices button {
+    min-height: 58px;
+    padding: 8px 10px;
+    gap: 2px;
+  }
+  .language-welcome-note {
+    margin-top: 10px;
+  }
+}
