@@ -13,7 +13,8 @@ for (const name of ['paladin', 'mage', 'ranger', 'rogue']) {
   const other = { hero: { class: name }, get s() { throw Error('Non-Strategist performed world work'); } };
   assert.equal(M.forCombat(other, 'wood', { range: 180 }), null);
 }
-assert.equal(Campaign.classFoundationFor('strategist'), null);
+assert.deepEqual(Campaign.classFoundationFor('strategist')?.startingCompanions, ['soldier', 'archer']);
+assert.equal(Campaign.classFoundationFor('strategist')?.formationRole, 'melee');
 assert.equal(Campaign.classes.strategist, undefined);
 
 const game = new Campaign('normal', 'paladin', () => 0.5);
