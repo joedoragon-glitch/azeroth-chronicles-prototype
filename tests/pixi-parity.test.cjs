@@ -81,7 +81,7 @@ console.log(
 const pixiSource = require('node:fs').readFileSync(
   require.resolve('../src/prototype/pixi-experimental.js'), 'utf8',
 );
-const actorFrame = pixiSource.split('function actorFrame() {')[1]?.split('// #708:')[0];
+const actorFrame = pixiSource.split(/function actorFrame\([^)]*\)\s*\{/)[1]?.split('// #708:')[0];
 assert(actorFrame, 'Pixi original actor submission exists');
 assert(
   actorFrame.includes('const bodyPoint = canvasRenderer.visualPositionFor?.(visual) || point;'),

@@ -341,14 +341,15 @@
     let crownLootTexture = null,
       crownLootDensity = 0;
     const measureNow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
-    // Opt-in developer-mode CPU stage timings. A JS draw() completion means
-    // commands were submitted, not that GPU rendering/presentation finished.
-    // Never allocate a sample or read a clock during ordinary player frames.
+    // Developer-mode percentiles remain sampled every 12th draw. #783 also
+    // captures EVERY stage on the existing opt-in player renderer recording;
+    // no extra timing clock or row allocation on ordinary normal-mode draws.
+    // JavaScript submission timings never measure GPU completion or presented FPS.
     const drawCpuSamples = [];
     let developerDrawFrames = 0;
     const drawCpuSampleEvery = 12;
     function drawCpuReport() {
-      const names = ['viewport', 'resolution', 'background', 'actors', 'atmosphere', 'scene'];
+      const names = ['viewport', 'resolution', 'background', 'actors', 'liquid', 'atmosphere', 'scene', 'predictive'];
       const quantile = (values, p) => {
         const list = values.slice().sort((a, b) => a - b);
         return +(list[Math.floor((list.length - 1) * p)] || 0).toFixed(2);
@@ -1050,6 +1051,7 @@
       zoom,
       protectedRevisions = null,
       detach = null,
+      trace = null,
     ) {
       if (baked.has(revision)) {
         proceduralCacheHits++;
@@ -1058,6 +1060,10 @@
       }
       const started = measureNow();
       const body = bake(painted, current, backingRatio * zoom);
+      if (trace) {
+        trace.proceduralRasterMs =
+          (trace.proceduralRasterMs || 0) + Math.max(0, measureNow() - started);
+      }
       if (!body) return null;
       const bytes = body.image.width * body.image.height * 4;
       if (imageBytes + bytes > proceduralBudget && detach) {
@@ -1069,9 +1075,13 @@
         throw Error('Visible procedural artwork exceeds Pixi image budget');
       }
       const id = 'pixi-procedural:' + revision;
+      const textureStarted = trace ? measureNow() : 0;
       const texture = root.PIXI.Texture.from(body.image);
       texture.source.scaleMode = 'nearest';
       scene.registerTexture(id, texture);
+      if (trace)
+        trace.proceduralRegisterMs =
+          (trace.proceduralRegisterMs || 0) + Math.max(0, measureNow() - textureStarted);
       imageBytes += bytes;
       baked.set(revision, { ...body, id, bytes, texture, lastUsedFrame: actorFrameNumber });
       proceduralBakes++;
@@ -1088,6 +1098,7 @@
           zoom,
           protectedRevisions,
           detach,
+          trace,
         );
       }
       return baked.get(revision);
@@ -1339,7 +1350,8 @@
         });
       }
     }
-    function actorFrame() {
+    function actorFrame(trace = null) {
+      const candidateStarted = trace ? measureNow() : 0;
       const current = game(),
         zoom = platform.cameraZoom || 1;
       // Keep already prepared outdoor and dungeon artwork resident across
@@ -1364,6 +1376,8 @@
           !entity.interactionOnly &&
           !(entity.kind === 'landmark' && String(entity.id || '').startsWith('bridge-')),
       );
+      if (trace)
+        trace.actorCandidatesMs = Math.max(0, measureNow() - candidateStarted);
       // Protect ALL current-frame identities, including entries encountered
       // later in the loop, from accidental eviction during a capacity trim.
       const protectedRevisions = new Set();
@@ -1476,6 +1490,7 @@
             zoom,
             protectedRevisions,
             detachForEviction,
+            trace,
           );
           if (!b) {
             if (entity.renderKind === 'landmark' || entity.kind === 'landmark') continue;
@@ -1514,6 +1529,7 @@
               zoom,
               protectedRevisions,
               detachForEviction,
+              trace,
             );
             requireValue(body, 'Missing original ambient animal: ' + partRevision);
             body.lastUsedFrame = actorFrameNumber;
@@ -1559,7 +1575,10 @@
           };
         if (source.visual.presentation === 'scout-tracks') record.depth = -Number.MAX_SAFE_INTEGER;
       }
+      const syncActorsStarted = trace ? measureNow() : 0;
       scene.syncActors(records);
+      if (trace)
+        trace.actorSubmitMs = Math.max(0, measureNow() - syncActorsStarted);
       silhouetteFrames = nextSilhouettes;
       if (active) canvasRenderer.setSilhouetteFrames?.(silhouetteFrames);
       // Keep offscreen and previously visited artwork resident for reuse.
@@ -1866,12 +1885,22 @@
       let stage = 'active-check';
       try {
         if (!active || !scene) throw Error('Inactive PixiJS renderer');
-        // Sampling is silent outside explicitly selected developer mode.
-        const observe =
+        // #783: the normal-mode recorder is explicitly opt-in. Keep the
+        // existing developer percentile cadence independent of that capture.
+        const capture = options.getDiagnosticRecording?.() === true;
+        const developerSample =
           game()?.s?.mode === 'developer' && ++developerDrawFrames % drawCpuSampleEvery === 0;
+        const observe = capture || developerSample;
         const row = observe ? {} : null;
         let stamp = observe ? measureNow() : 0;
-        // Ordinary frames must not allocate a recording callback.
+        const startedAtMs = stamp;
+        const bakesBefore = capture ? proceduralBakes : 0;
+        const bytesBefore = capture ? imageBytes : 0;
+        const paintsBefore = capture ? backgroundRepaints : 0;
+        const ratioBefore = backingRatio;
+        const viewportChanged =
+          app.screen.width !== viewport.width || app.screen.height !== viewport.height;
+        // Ordinary frames never create a profiler callback or read a clock.
         const record = row
           ? (name) => {
               const next = measureNow();
@@ -1889,20 +1918,41 @@
         syncBackground();
         if (record) record('background');
         stage = 'actors';
-        actorFrame();
+        actorFrame(capture ? row : null);
         if (record) record('actors');
+        stage = 'liquid';
         syncLiquidMotion();
+        if (record) record('liquid');
         stage = 'atmosphere';
         syncAtmosphere();
         if (record) record('atmosphere');
         stage = 'scene-render';
         scene.draw();
         if (record) record('scene');
-        if (row) {
+        stage = 'predictive-preparation';
+        queuePredictiveWarm(game());
+        if (record) record('predictive');
+        if (developerSample && row) {
           drawCpuSamples.push(row);
           if (drawCpuSamples.length > 120) drawCpuSamples.shift();
         }
-        queuePredictiveWarm(game());
+        if (capture) {
+          const finishedAtMs = measureNow();
+          return {
+            startedAtMs,
+            finishedAtMs,
+            totalMs: Math.max(0, finishedAtMs - startedAtMs),
+            phaseMs: row,
+            ratioBefore,
+            ratioAfter: backingRatio,
+            viewportChanged,
+            resolutionChanged: Math.abs(backingRatio - ratioBefore) >= 0.001,
+            bakesDuringDraw: proceduralBakes - bakesBefore,
+            proceduralBytesDelta: imageBytes - bytesBefore,
+            backgroundRepaintsDuringDraw: backgroundRepaints - paintsBefore,
+            note: 'Synchronous JavaScript draw and resource preparation, not GPU completion.',
+          };
+        }
       } catch (error) {
         // Pixi/ANGLE can signal context loss through its draw exception
         // BEFORE the browser fires webglcontextlost. Preserve that cause
