@@ -435,6 +435,10 @@ async function main() {
             room.enemies = original.enemies;
             g.hero.x = original.heroX;
             g.hero.y = original.heroY;
+            // Test-only staging of native actors can advance the Campaign ID
+            // allocator. Every individual gpu.draw is separately asserted
+            // state-pure above. Undo staging's counter before the parity pass.
+            g.s.nextId = JSON.parse(original.saved).nextId;
             opts.canvas.width = original.width;
             opts.canvas.height = original.height;
             opts.ctx.setTransform(original.width / innerWidth, 0, 0,
