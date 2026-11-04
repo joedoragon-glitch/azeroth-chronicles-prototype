@@ -1,5 +1,9 @@
 # SIBDLP — Ogre Strategist v3: independent new-chat engineering-feasibility handoff
 
+**AFTER THIS HANDOFF — 3 November 2026 current v3.1:** The owner ordered **complete replacements** for the four earlier v3 forms found deficient in the [source feasibility review](STRATEGIST_V3_ENGINEERING_FEASIBILITY_REVIEW_20261103.md): **Running Facet → Notched Facet; Set Fulcrum → Spring Pin; Current Escort → Crosswake Shear; Catch the Blow → Anvil Bite**. The [current v3.1 sixteen-action chapter](STRATEGIST_STAGE1_GAME_DESIGN_20261102.md#3-november-2026--current-strategist-v31-owner-directed-replacement-of-four-forms-design-only) now controls future discussion and planning. **The sixteen-form roster below and the original four focused questions are HISTORICAL v3 input**, not permission to revive those rejected designs. The original positive/negative source evidence still matters. All sixteen *current* v3.1 forms are conditionally source-plausible proposals, not playtested or individually accepted skills; no engine edits, tests, merges or deployment resulted from the design change.
+
+---
+
 **Date:** 3 November 2026, America/New_York.  
 **Official game:** So I Became the Dark Lord's Problem (SIBDLP). This is not SIBDL, a different project. The repository's azeroth-chronicles-prototype name is historical, not the game title.  
 **Owner instruction:** The owner accepted the adversarial design audit, authorized a full sixteen-action CREATIVE redesign and has now requested this SELF-CONTAINED handoff for a FOCUSED DESIGN ↔ ENGINEERING FEASIBILITY DISCUSSION in another chat. **Discussion and source research only; no new gameplay implementation, unapproved runtime tests, CI, merge, deployment, device claims or separate experimental engineering branch.** The next chat must not need the prior conversation.
