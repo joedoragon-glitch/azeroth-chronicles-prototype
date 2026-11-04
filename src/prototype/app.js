@@ -1588,6 +1588,7 @@
     language = value === 'es' ? 'es' : 'en';
     if (game) game.rogueNicknameLanguage = language;
     document.documentElement.lang = language === 'es' ? 'es-419' : 'en';
+    refreshPhoneOrientationText();
     if (persist) {
       firstLanguageChoice = false;
       try {
@@ -1647,6 +1648,9 @@
     adaptiveHudState = null,
     focused = true,
     paused = false,
+    phoneOrientationBlocked = false,
+    phoneOrientationPreviousFocus = null,
+    phoneOrientationPendingTitleResume = null,
     charge = null,
     queuedCharges = PrototypeInput.createSkillQueue(),
     chargeClockGame = null,
@@ -1676,12 +1680,14 @@
     // This selects music only: opening the title must never advance the game.
     // A completed gesture or a manual Return can run before the next frame.
     if (started || titleLoading || sceneTransition || startupUpdatePending ||
-        !focused || document.hidden || !game || audio.ctx?.state !== 'running') return;
+        phoneOrientationBlocked || !focused || document.hidden || !game ||
+        audio.ctx?.state !== 'running') return;
     audio.update(game, false, {
       started: false, menu: !!menu, paused: false, backgrounded: false,
     });
   }
   function unlockSoundtrackOnGesture(event) {
+    if (phoneOrientationBlocked) return;
     if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
     if (audio.ctx?.state === 'running') {
       updateTitleSoundtrack();
@@ -1704,6 +1710,38 @@
     PrototypeMaterials.setOptimizationMode(optimizationMode);
   const platform = PrototypePlatform.init(window);
   audio.setMixProfile(platform.mode === 'phone' ? 'phone' : 'reference');
+  // A phone browser may ignore the manifest's orientation hint. This opaque
+  // modal blocks play without rotating CSS, replacing Campaign state or
+  // assuming access to the restricted Screen Orientation lock API.
+  const phoneOrientationPrompt = document.createElement('section');
+  phoneOrientationPrompt.id = 'phone-orientation-prompt';
+  phoneOrientationPrompt.hidden = true;
+  phoneOrientationPrompt.setAttribute('role', 'dialog');
+  phoneOrientationPrompt.setAttribute('aria-modal', 'true');
+  phoneOrientationPrompt.setAttribute('aria-labelledby', 'phone-orientation-heading');
+  phoneOrientationPrompt.setAttribute('aria-describedby', 'phone-orientation-details');
+  phoneOrientationPrompt.innerHTML =
+    '<div class="phone-orientation-card">' +
+      '<span class="phone-orientation-device" aria-hidden="true"></span>' +
+      '<p class="phone-orientation-brand">So I Became the Dark Lord\'s Problem</p>' +
+      '<h2 id="phone-orientation-heading" tabindex="-1"></h2>' +
+      '<p id="phone-orientation-details"></p>' +
+    '</div>';
+  document.body.append(phoneOrientationPrompt);
+  const phoneOrientationPriorInert = new Map();
+  function refreshPhoneOrientationText() {
+    const bilingual = firstLanguageChoice;
+    $('phone-orientation-heading').textContent = bilingual
+      ? 'Turn your phone sideways / Gira tu teléfono'
+      : language === 'es'
+        ? 'Gira tu teléfono para jugar'
+        : 'Turn your phone sideways to play';
+    $('phone-orientation-details').textContent = bilingual
+      ? 'The adventure plays in landscape. / La aventura se juega en horizontal.'
+      : language === 'es'
+        ? 'La aventura continuará en horizontal, justo donde la dejaste.'
+        : 'Your adventure will resume in landscape where you left it.';
+  }
   const input = PrototypeInput.create(localStorage, status);
   let bindingCapture = null;
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
