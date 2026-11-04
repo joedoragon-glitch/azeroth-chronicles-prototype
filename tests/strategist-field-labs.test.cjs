@@ -404,3 +404,22 @@ test('direct method callers cannot manufacture bottles without a real assigned w
   assert.equal(JSON.stringify(bank.samples), before);
   assert.equal(g.s.strategistAcidBottles, 0);
 });
+
+test('Lab sample deposit checks job identity and completed physical return', () => {
+  const g = new Campaign(), lab = build(g), worker = addReserve(g);
+  assert.equal(g.trainFieldLabWorker(worker.id), true);
+  assert.equal(g.assignFieldLabWorker('vale', 'vale', worker.id, 'wood'), true);
+  const bank = g.fieldLabNetwork(), job = bank.jobs[worker.id];
+  job.phase = 'return'; job.carries = true;
+  job.position = { x: lab.x, y: lab.y };
+  worker.x = lab.x; worker.y = lab.y;
+  assert.equal(g.fieldLabDeliver({ ...job }, worker), false);
+  assert.equal(g.fieldLabDeliver(job, { ...worker }), false);
+  job.position.x += 40; worker.x += 40;
+  assert.equal(g.fieldLabDeliver(job, worker), false);
+  job.position.x = lab.x; worker.x = lab.x;
+  assert.equal(g.fieldLabDeliver(job, worker), true);
+  assert.equal(bank.samples.wood, 1);
+  assert.equal(g.fieldLabDeliver(job, worker), false);
+  assert.equal(bank.samples.wood, 1);
+});
