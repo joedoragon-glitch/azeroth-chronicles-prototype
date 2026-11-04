@@ -32,6 +32,10 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert(elements.get('modal').hidden, 'player can return to gameplay with recording active');
     for (const now of [20, 40, 110, 185, 225, 275, 355, 375, 550])
       app.frame(now);
+    // Exercise the real app resize callback while the opt-in recorder runs.
+    // A backing reset must carry cause, ratios and timing in an ordered event.
+    scope.innerWidth = 411;
+    for (const callback of app.events.resize || []) callback();
     openPerformance();
     click(label('Stop renderer profiling', 'Detener registro del renderizador'));
     click(label('Export playtest report', 'Exportar informe de prueba'));
@@ -56,9 +60,27 @@ const { shell } = require('./helpers/production-shell.cjs');
     assert.equal(capture.state, 'stopped');
     assert.equal(capture.initialRenderer, 'canvas2d');
     assert.equal(capture.finalRenderer, 'canvas2d');
+    assert.equal(capture.version, undefined, 'existing report shape has no public schema version');
+    assert(Array.isArray(capture.graphicsTransitions));
+    assert(capture.graphicsTransitions.length <= 48, 'graphics event chronology is bounded');
+    assert.equal(capture.droppedGraphicsTransitions, 0);
+    const resized = capture.graphicsTransitions.find(
+      (event) => event.type === 'canvas-backing-resize' && event.reset,
+    );
+    assert(resized, 'opt-in recording captures actual Canvas backing resets');
+    assert.equal(resized.reason, 'external-or-settings');
+    assert.equal(resized.before.viewportWidth, 393);
+    assert.equal(resized.after.viewportWidth, 411);
+    assert(resized.durationMs >= 0);
+    assert(Number.isFinite(resized.elapsedMs));
+    assert(Number.isFinite(capture.initialGraphics.backingRatio));
+    assert(Number.isFinite(capture.finalGraphics.backingRatio));
     assert(capture.frames > 0, 'only active gameplay frames are counted');
     assert(capture.slowFrames > 0, 'long callback intervals are captured');
     assert(capture.worstFrames.length <= 32, 'slow-frame capture stays bounded');
+    assert(capture.worstFrames.every((row) => Array.isArray(row.pixiDraws) &&
+      row.pixiDraws.length <= 2 && Array.isArray(row.graphicsTransitions)),
+      'every retained slow callback has bounded correlation fields');
     assert.equal(capture.histograms.frameWork.reduce((a, b) => a + b, 0),
       capture.frames, 'all captured work frames contribute to bounded percentiles');
     assert.equal(capture.histograms.callbackInterval.reduce((a, b) => a + b, 0),
