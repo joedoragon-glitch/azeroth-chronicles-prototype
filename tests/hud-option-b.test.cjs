@@ -108,12 +108,17 @@ test('Landscape Stage 2 reuses the merged title and protects wide phone menus', 
   assert.match(landscape, /#modal:has\(\.menu-setting\) #modal-actions \{\s*grid-template-columns: minmax\(0, 1fr\)/,
     'inline sliders and selects remain in their own rows');
   assert(!landscape.includes('display: none'), 'no existing landscape actions are hidden');
-  assert.match(phone, /body\[data-experience='phone'\]\[data-landscape-rotated='true'\] \{[\s\S]*?transform: rotate\(90deg\)/,
-    'physical portrait falls back to one fixed landscape presentation surface');
+  const frameCSS = read('styles/phone-frame.css');
+  const frameHTML = read('phone.html');
+  const gameHTML = read('phone-game.html');
+  assert.match(frameCSS, /@media \(orientation: portrait\)[\s\S]*?transform: rotate\(90deg\)/,
+    'physical portrait rotates the full landscape game iframe, not game internals');
+  assert.match(frameHTML, /id="phone-game-frame"[^>]*src="\.\/phone-game\.html"/,
+    'public phone entry keeps one live same-origin game frame');
+  assert.match(gameHTML, /data-entry="phone"/,
+    'the embedded game retains native phone rules and full viewport');
   assert.match(read('manifest.webmanifest'), /"orientation": "landscape"/,
-    'installed app prefers a native landscape orientation');
-  assert.match(app, /phoneLandscape\.point\(e\.clientX, e\.clientY\)/,
-    'pointer interactions use logical landscape touch coordinates');
+    'installed app prefers native landscape when supported');
 });
 
 test('Option B targeted real-shell captures (desktop and two landscape sizes)', () => {
