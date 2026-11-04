@@ -1331,12 +1331,14 @@
             x: e.x,
             y: e.y,
           });
-          if (this.hitParty(
+          const heroAtRelease = this.hero, zoneAtRelease = this.zoneId;
+          const landed = this.hitParty(
             target,
             this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e)),
             0,
             e.id,
-          ))
+          );
+          if (landed)
             this.event('melee', {
               actor: 'enemy',
               source: e.id,
@@ -1348,6 +1350,34 @@
               y: target.y,
               target: target === this.hero ? 'hero' : target.id,
             });
+          // Stage 1A: one independent response per real close melee basic.
+          // A Dodge still permits retaliation; ranged basics, boss specials,
+          // stray hazards and reflected hits do not enter this release owner.
+          if (
+            target === heroAtRelease && this.hero === heroAtRelease &&
+            this.s.mode === 'developer' && heroAtRelease.class === 'strategist' &&
+            heroAtRelease.hp > 0 && !(heroAtRelease.immune > 0) &&
+            this.zoneId === zoneAtRelease && !this.peace &&
+            e.hp > 0 && !e.neutral && !e.returning &&
+            this.zone().enemies.includes(e) &&
+            dist(e, heroAtRelease) <= this.enemyMeleeBasicRange(e) &&
+            this.line(e, heroAtRelease) &&
+            this.random() < R.strategistOgreDefense.meleeRetaliationChance
+          ) {
+            const beforeHp = e.hp;
+            const struck = this.damage(
+              e,
+              Math.max(1, this.power()) *
+                R.strategistOgreDefense.meleeRetaliationPowerMultiplier,
+              'hero', { automaticBasic: true },
+            );
+            if (struck && e.hp < beforeHp)
+              this.event('strategistRetaliation', {
+                actor: 'hero', source: e.id, targetId: e.id,
+                x: e.x, y: e.y, amount: beforeHp - e.hp,
+                dodged: !landed,
+              });
+          }
           if (e.form === 'ringleader') e.pursuitBurstUsed = false;
         }
         e.basicDue = false;
