@@ -6970,18 +6970,26 @@
         ctx.quadraticCurveTo(-20, 43, -34, 41);
         ctx.quadraticCurveTo(-37, 36, -25, 29);
       });
+      // The ankle comes directly out of the trouser cuff. A tapered heel
+      // and broad toe share one outline so the screen-right shoe is visibly
+      // JOINED to the shin, not a flat shape pasted beneath the trouser.
       shaped('#353b37', () => {
         ctx.moveTo(8, 33);
-        ctx.lineTo(20, 33);
-        ctx.lineTo(20, 40);
-        ctx.quadraticCurveTo(12, 45, -3, 43);
-        ctx.quadraticCurveTo(-3, 37, 8, 33);
+        ctx.quadraticCurveTo(14, 32, 20, 34);
+        ctx.lineTo(22, 39);
+        ctx.quadraticCurveTo(23, 43, 16, 44);
+        ctx.quadraticCurveTo(3, 47, -8, 43);
+        ctx.quadraticCurveTo(-10, 40, -3, 38);
+        ctx.lineTo(6, 36);
+        ctx.lineTo(8, 33);
       });
       // Directional toe caps point to the same side, no rotated shoes.
       line([[-32, 38], [-25, 40]], '#848274', 1.7);
-      line([[-1, 40], [6, 42]], '#848274', 1.7);
+      line([[-6, 41], [2, 43]], '#848274', 1.7);
       line([[-26, 30], [-14, 31]], trim, 2);
-      line([[9, 34], [20, 34]], trim, 2);
+      // The near-pant cuff flows into the raised ankle, not across the toe.
+      line([[9, 33], [20, 34]], trim, 2);
+      line([[9, 35], [19, 36]], '#79735d', 1.2);
 
       // Rear (character-left) arm is bent beside the body, not dislocated.
       // Its wrist remains outside the cape and above the low reverse dagger.
@@ -6989,8 +6997,9 @@
         ctx.moveTo(11, -29);
         ctx.quadraticCurveTo(23, -32, 27, -22);
         ctx.quadraticCurveTo(33, -13, 29, -5);
-        ctx.lineTo(26, 6);
-        ctx.quadraticCurveTo(22, 10, 17, 6);
+        ctx.lineTo(31, 5);
+        ctx.quadraticCurveTo(32, 11, 26, 12);
+        ctx.quadraticCurveTo(20, 11, 20, 5);
         ctx.lineTo(19, -8);
         ctx.quadraticCurveTo(12, -16, 11, -29);
       });
@@ -7092,12 +7101,12 @@
       });
       line([[-30, 0], [-22, -2]], trim, 1.5);
       shaped('#554c40', () => {
-        ctx.moveTo(19, -4);
-        ctx.lineTo(29, -3);
-        ctx.lineTo(27, 5);
-        ctx.lineTo(18, 5);
+        ctx.moveTo(20, -4);
+        ctx.lineTo(31, -3);
+        ctx.lineTo(32, 4);
+        ctx.lineTo(21, 6);
       });
-      line([[19, 1], [27, 2]], trim, 1.2);
+      line([[22, 1], [31, 2]], trim, 1.2);
 
       // A small strapped field pouch on the belt, not blocking leg joints.
       shaped('#70583e', () => {
@@ -7185,19 +7194,41 @@
       line([[6, -55], [11, -54]], '#ad9a70', 2.2);
       line([[-12, -50], [-5, -53], [1, -53]], '#625b4c', 1.1);
 
-      // Real ogre hands: near fist and far palm wrap around visible hilts.
-      oval(-30, 9, 5.3, 4.6, hide);
-      oval(23, 8, 4.7, 4, shadow);
-      // Forward dagger: blade projects LEFT, aligned with his intent/gaze.
-      line([[-31, 8], [-39, -1]], '#604630', 4.3);
-      line([[-38, -1], [-44, 0]], '#c6a875', 2.4);
-      poly([[-41, -3], [-52, -17], [-46, -12], [-37, -3]], '#aeb9b3');
-      line([[-48, -14], [-41, -5]], '#e9e4ca', 1);
-      // Off-hand dagger held low, point also faces LEFT, not the opposite way.
-      line([[23, 8], [20, 15]], '#604630', 4.2);
-      line([[17, 14], [24, 16]], '#c6a875', 2.4);
-      poly([[17, 16], [-4, 26], [0, 30], [20, 19]], '#aeb9b3');
-      line([[0, 27], [15, 20]], '#e9e4ca', 1);
+      // A dagger is ONE connected tool: pommel, short grip, crossguard,
+      // blade heel and tip are laid out on the same physical centerline.
+      // The knuckles are then painted OVER the grip; otherwise a long stick
+      // appears to grow out of the hand. All points are world-paint local.
+      function carriedDagger(handX, handY, dx, dy, bladeLength, handTone) {
+        const p = (forward, lateral = 0) => [
+          handX + dx * forward - dy * lateral,
+          handY + dy * forward + dx * lateral,
+        ];
+        const gripEnd = p(4.8), pommel = p(-4.4);
+        // Short enough to remain hidden by a genuine curled Ogre fist.
+        line([pommel, gripEnd], '#584432', 3.6);
+        line([p(-5.1), p(-3.7)], '#b9a070', 2.0);
+        // Full tang, guard and blade meet at p(5): no floating blade root.
+        poly([p(5.3, -2.1), p(7.8, -2.6),
+          p(6.5 + bladeLength, 0),
+          p(7.8, 2.6), p(5.3, 2.1)], '#acbab8');
+        line([p(8, 0), p(5.3 + bladeLength, 0)], '#e5e3d2', 0.85);
+        line([p(4.9, -4.1), p(4.9, 4.1)], '#c5a875', 2.4);
+        // Proportional hand mass deliberately encloses most of the hilt.
+        // A bevel at each finger suggests grip without individual claws.
+        poly([p(-4.2, -2.8), p(-3.2, -4.7), p(0.9, -5.1),
+          p(3.1, -3.3), p(3.7, 1.1), p(1.9, 4.3),
+          p(-2.7, 4.5), p(-4.6, 1.4)], handTone);
+        line([p(0.7, 3.7), p(2.8, 2.3)], '#867b60', 0.95);
+        line([p(-2.2, 3.7), p(-0.5, 3.2)], '#867b60', 0.8);
+        // Thumb pad closes around the grip in front of the handle.
+        oval(...p(1.2, -1.8), 2.4, 1.8, handTone);
+      }
+      // Screen-left near hand: an upward-forward cut with its hilt largely
+      // concealed by the fist and the blade extending beyond the forearm.
+      carriedDagger(-30, 9, -0.65, -0.76, 16, hide);
+      // Screen-right off-hand: REVERSE grip, compact guard at the wrist.
+      // The blade falls outside the right leg instead of crossing the shin.
+      carriedDagger(29, 8, 0.76, 0.65, 15, shadow);
 
       if (crowned) {
         poly([[-5, -17], [0, -21], [4, -17], [0, -13]], '#c7ad71');
