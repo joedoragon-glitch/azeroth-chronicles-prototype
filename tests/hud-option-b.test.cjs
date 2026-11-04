@@ -121,6 +121,29 @@ test('Landscape Stage 2 reuses the merged title and protects wide phone menus', 
     'installed app prefers native landscape when supported');
 });
 
+test('fixed-horizontal phone shell preserves one landscape game frame', () => {
+  const wrapper = read('phone.html');
+  const game = read('phone-game.html');
+  const framing = read('styles/phone-frame.css');
+  const manifest = JSON.parse(read('manifest.webmanifest'));
+  const assetInventory = read('scripts/site-assets.cjs');
+  assert.match(wrapper, /id="phone-game-frame"[^>]*src="\.\/phone-game\.html"/);
+  assert.match(wrapper, /<link rel="stylesheet" href="\.\/styles\/phone-frame\.css">/);
+  assert.match(game, /<body data-entry="phone">/);
+  assert.match(game, /id="world"/);
+  assert.match(game, /src="\.\/src\/prototype\/app\.js"/);
+  assert.equal(manifest.start_url, './phone.html');
+  assert.equal(manifest.orientation, 'landscape');
+  assert.match(framing, /@media \(orientation: portrait\)/);
+  assert.match(framing, /transform: rotate\(90deg\)/);
+  assert.match(framing, /width: calc\(100dvh/);
+  assert.match(framing, /height: calc\(100dvw/);
+  assert.match(assetInventory, /'phone-game\.html'/);
+  assert.match(assetInventory, /'styles\/phone-frame\.css'/);
+  assert(!wrapper.includes('id="phone-orientation-prompt"'),
+    'physical portrait must show the live game, not a rotation warning');
+});
+
 test('Option B targeted real-shell captures (desktop and two landscape sizes)', () => {
   if (!process.env.GITHUB_ACTIONS) return;
   const { spawnSync } = require('node:child_process');
