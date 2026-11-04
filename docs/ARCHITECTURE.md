@@ -304,3 +304,23 @@ Owner's dev.238 iPhone export recorded a five-spike ~1.3-second enemy-stage patt
 The merged dev.240 change routes the two **passive** scripted movement owners into the existing collision-validating incremental planner, via explicit modes `thorn-patrol` and `thorn-escort`. They each have separate 512-terrain-probe/160-node per-tick allowances, independent of ordinary enemy pursuit, companion plans, and the previously isolated 768-probe introductory retreat. Pending route search state remains unsaved. Native waypoints, terrain collision, legal actual motion, eventual completion, normal encounter interrupts, and v4 state require scoped regression evidence; they are not inferred from lower probe counts alone. Non-Vale boss/captain synchronous navigation and Chromebook Pixi renderer cost remain independent issues. **Implemented, focused-tested, merged and Pages-published** in [PR #689](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/689), [merge bc164728](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/bc16472828abe30f951aec97ebe649e1dc7710cc), [exact-merged-main CI and Pages #41160213705](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41160213705). Physical device performance/installation is **not verified**; remaining active boss/captain routes stay in [#615](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/615).
 
 **Matched before/after native evidence — 30 October:** [Full candidate focused CI #41157432225](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41157432225) passed 12 impacted test files, the release documentation gate, syntax checks, and the offline-ready build. Same fixture, original → candidate peak **whole-tick** native collision probes: Thorn 17,021 → **647** (96.2% lower); Mira-heavy scenario 16,476 → **656** (96.0% lower). Both original 1.3-second synchronous `route()` bursts are absent in the optimized trace. The candidate still performs full native collision validation across multiple updates instead of skipping it: Thorn's 16,959-probe path completed as the **same four waypoints** after 33 bounded route-planning updates; Mira's separately sampled route completed with the **same two waypoints** after 45 bounded updates. Planning phases never exceeded 512 native probes per update in these direct parity runs. Full live-script runs showed **668.8** units of Thorn displacement and **662.5** of Mira, with no greater than **4.1 units** of actor movement in any 50 ms simulation step and recorded total whole-tick peaks **647 / 668** probes. The original `snapshot-thorn-patrol.test.cjs` also passed **18 seeded class/mode scenarios** including physical patrol/captive return, encounter reset, save/travel, rescue, respawn and peace. This is reproducible hosted CI CPU/probe evidence—not an iPhone 96% FPS gain, nor universal boss/captain route coverage. The dev.240 change is merged and published, and remains integrated in later released dev.241/dev.242 source; only actual **device installation and performance acceptance** remains outstanding for this scoped optimization.
+
+
+### Temporary Stage 3 × E0 proof branch (NOT admission or integration acceptance)
+
+This documentation entry exists **only** in the draft cross-owner proof branch based on
+the exact E0 commit 63eac57f (PR #780). The branch stages Stage 3's separately
+authored Field Lab navigation/economy/strict save adapter and the exact dormant
+materials source provider from PR #770 without touching either owning branch.
+A carefully reconciled copy of E0 save.js plus Lab-specific v4 work-order and
+remote-position guards is exercised with a temporary test-process-only Strategist
+registry. In this proof, C.validate, C.restore and E0's actual third landed
+dagger must accept/spend the very same canonical s.strategistAcidBottles that
+the windmill produces. This staging branch is **never registered in the public
+browser graph**. A passing cross-owner Node test is not production admission,
+full off-screen enemy AI, Pixi integration or real-device verification. Do not
+merge/deploy it; its useful changes belong to their individual owners after
+final head-to-head reconciliation.
+
+
+The CI comparison base for this proof is the frozen `archive/strategist-e0-stage3-proof-base-20261103` ref at E0 commit `63eac57f`; that avoids unrelated moving-main changes and still uses the repository's focused pull-request workflow. It must not be used as a release or merge base.
