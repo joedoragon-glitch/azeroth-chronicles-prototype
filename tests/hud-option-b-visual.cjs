@@ -83,6 +83,10 @@ async function capture(page,label) {
           const columns = await page.locator('#modal[data-view="class-select"] #modal-actions')
             .evaluate(el => getComputedStyle(el).gridTemplateColumns.split(' ').length);
           assert.equal(columns, 2, config.name + ' four-class selection is two columns');
+          const nameField = await box(page, '#modal[data-view="class-select"] .character-name-field');
+          const firstClass = await box(page, '#modal[data-view="class-select"] #modal-actions button');
+          assert(nameField && firstClass && nameField.width > firstClass.width * 1.8,
+            config.name + ' hero-name field spans both class columns');
           const choice = await page.getByRole('button',{name:/Palad[ií]n/i}).first().boundingBox();
           assert(choice && choice.height >= 58, config.name + ' class choices remain finger-sized');
         }
