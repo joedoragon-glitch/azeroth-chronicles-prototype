@@ -127,7 +127,9 @@ test('fixed-horizontal phone shell preserves one landscape game frame', () => {
   const framing = read('styles/phone-frame.css');
   const manifest = JSON.parse(read('manifest.webmanifest'));
   const assetInventory = read('scripts/site-assets.cjs');
-  assert.match(wrapper, /id="phone-game-frame"[^>]*src="\.\/phone-game\.html"/);
+  assert.match(wrapper, /id="phone-game-frame"/);
+  assert.match(wrapper, /'\.\/phone-game\.html' \+ window\.location\.search \+ window\.location\.hash/,
+    'frame loads once with the original phone URL options');
   assert.match(wrapper, /<link rel="stylesheet" href="\.\/styles\/phone-frame\.css">/);
   assert.match(game, /<body data-entry="phone">/);
   assert.match(game, /id="world"/);
