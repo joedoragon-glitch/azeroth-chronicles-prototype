@@ -111,14 +111,20 @@ const server = http.createServer((req, res) => {
       // Create a real saved run before testing manual updates during gameplay.
       await page.waitForFunction(() =>
         document.getElementById('startup-update').hidden &&
+        (!document.getElementById('language-welcome').hidden ||
+          !document.getElementById('title-screen').hidden));
+      // A new browser chooses its language once, before the title screen.
+      // A previously configured phone bypasses this welcome entirely.
+      if (await page.locator('#language-welcome').isVisible())
+        await page.locator('#language-welcome [data-language="en"]').click();
+      await page.waitForFunction(() =>
         !document.getElementById('title-screen').hidden &&
         !document.getElementById('title-new').disabled);
       await page.locator('#title-new').click();
       await page.locator('#modal-actions').getByRole('button', { name: /Normal/i }).first().click();
       await page.locator('#modal-actions').getByRole('button', {
-        name: phone ? /^Español/ : /^English/,
+        name: /Standard death/i,
       }).click();
-      await page.locator('#modal-actions').getByRole('button').first().click();
       await page.locator('#modal-actions').getByRole('button').first().click();
       await page.waitForFunction(() => window.Prototype?.started, null, { timeout: 90000 });
       await page.evaluate(() => {
