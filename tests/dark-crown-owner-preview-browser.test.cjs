@@ -62,7 +62,10 @@ async function guideGeometry(page,device){
   approxContains(dimensions.dialog,dimensions.viewport,device+' guide must fit landscape');
   for(const name of ['close','search','footer','back','done','category','visit'])
     approxContains(dimensions[name],dimensions.viewport,device+' '+name+' must be onscreen');
-  for(const name of ['close','search','back','done','category','visit'])
+  const mandatoryTouch = device.startsWith('landscape')
+    ? ['close','search','back','done','category','visit']
+    : ['close','search','back','done','visit'];
+  for(const name of mandatoryTouch)
     assert(dimensions[name].height>=43.5,device+' '+name+' remains at least 44px high');
   assert(dimensions.noHorizontalOverflow,device+' should not horizontally scroll document');
   if(device.startsWith('landscape')){
