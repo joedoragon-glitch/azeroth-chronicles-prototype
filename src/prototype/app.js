@@ -1594,7 +1594,6 @@
         localStorage.setItem(languageKey, language);
       } catch (_) {}
     }
-    refreshPhoneOrientationText();
     $('menu-button').firstChild.textContent = language === 'es' ? '☰ Menú ' : '☰ Menu ';
     refreshUpdateNotice();
     $('talent-button').firstChild.textContent =
@@ -1648,9 +1647,6 @@
     adaptiveHudState = null,
     focused = true,
     paused = false,
-    phoneOrientationBlocked = false,
-    phoneOrientationPreviousFocus = null,
-    phoneOrientationPendingTitleResume = null,
     charge = null,
     queuedCharges = PrototypeInput.createSkillQueue(),
     chargeClockGame = null,
@@ -1680,14 +1676,12 @@
     // This selects music only: opening the title must never advance the game.
     // A completed gesture or a manual Return can run before the next frame.
     if (started || titleLoading || sceneTransition || startupUpdatePending ||
-        phoneOrientationBlocked || !focused || document.hidden || !game ||
-        audio.ctx?.state !== 'running') return;
+        !focused || document.hidden || !game || audio.ctx?.state !== 'running') return;
     audio.update(game, false, {
       started: false, menu: !!menu, paused: false, backgrounded: false,
     });
   }
   function unlockSoundtrackOnGesture(event) {
-    if (phoneOrientationBlocked) return;
     if (event.type === 'keydown' && (event.repeat || event.isComposing)) return;
     if (audio.ctx?.state === 'running') {
       updateTitleSoundtrack();
@@ -1710,38 +1704,6 @@
     PrototypeMaterials.setOptimizationMode(optimizationMode);
   const platform = PrototypePlatform.init(window);
   audio.setMixProfile(platform.mode === 'phone' ? 'phone' : 'reference');
-  // A phone browser may ignore the manifest's orientation hint. This opaque
-  // modal blocks play without rotating CSS, replacing Campaign state or
-  // assuming access to the restricted Screen Orientation lock API.
-  const phoneOrientationPrompt = document.createElement('section');
-  phoneOrientationPrompt.id = 'phone-orientation-prompt';
-  phoneOrientationPrompt.hidden = true;
-  phoneOrientationPrompt.setAttribute('role', 'dialog');
-  phoneOrientationPrompt.setAttribute('aria-modal', 'true');
-  phoneOrientationPrompt.setAttribute('aria-labelledby', 'phone-orientation-heading');
-  phoneOrientationPrompt.setAttribute('aria-describedby', 'phone-orientation-details');
-  phoneOrientationPrompt.innerHTML =
-    '<div class="phone-orientation-card">' +
-      '<span class="phone-orientation-device" aria-hidden="true"></span>' +
-      '<p class="phone-orientation-brand">So I Became the Dark Lord\'s Problem</p>' +
-      '<h2 id="phone-orientation-heading" tabindex="-1"></h2>' +
-      '<p id="phone-orientation-details"></p>' +
-    '</div>';
-  document.body.append(phoneOrientationPrompt);
-  const phoneOrientationPriorInert = new Map();
-  function refreshPhoneOrientationText() {
-    const bilingual = firstLanguageChoice;
-    $('phone-orientation-heading').textContent = bilingual
-      ? 'Turn your phone sideways / Gira tu teléfono'
-      : language === 'es'
-        ? 'Gira tu teléfono para jugar'
-        : 'Turn your phone sideways to play';
-    $('phone-orientation-details').textContent = bilingual
-      ? 'The adventure plays in landscape. / La aventura se juega en horizontal.'
-      : language === 'es'
-        ? 'La aventura continuará en horizontal, justo donde la dejaste.'
-        : 'Your adventure will resume in landscape where you left it.';
-  }
   const input = PrototypeInput.create(localStorage, status);
   let bindingCapture = null;
   document.body.setAttribute('data-phone-layout', input.preferences.phoneLayout);
@@ -1833,7 +1795,7 @@
       if (activationPause !== null) {
         appReloadRequested = false;
         paused = activationPause;
-        audio.setPaused(paused || phoneOrientationBlocked || !focused || document.hidden);
+        audio.setPaused(paused || !focused || document.hidden);
       }
       status('Update unavailable. Your saved run is safe.');
     } finally {
@@ -2186,7 +2148,7 @@
     platform,
     chargePresentation,
     queuedChargePresentation,
-    isPaused: () => paused || phoneOrientationBlocked || !focused || document.hidden,
+    isPaused: () => paused || !focused || document.hidden,
     getGuideRoute: () =>
       navigationGuide
         ? visibleNavigationRoute()
@@ -2378,7 +2340,7 @@
         // could immediately engage. A recovery happens when the scene is
         // visible, idle and outside nearby danger.
         canRecover: () => {
-          if (!started || paused || menu || phoneOrientationBlocked || !focused || document.hidden ||
+          if (!started || paused || menu || !focused || document.hidden ||
               frameSkip.emergency || joy.x || joy.y || game.hero.order ||
               game.hero.path?.length || game.s.projectiles?.length ||
               keys.left || keys.right || keys.up || keys.down) return false;
@@ -2509,9 +2471,6 @@
     get sceneLoading() {
       return !!sceneTransition;
     },
-    get orientationBlocked() {
-      return phoneOrientationBlocked;
-    },
     audio,
     renderer,
     get experimentalGraphics() {
@@ -2565,7 +2524,7 @@
       return profile;
     },
     get paused() {
-      return paused || !!menu || phoneOrientationBlocked || !focused || document.hidden;
+      return paused || !!menu || !focused || document.hidden;
     },
   };
   // Bitmap dimension assignments erase every Canvas pixel, even when the
@@ -2673,12 +2632,9 @@
     resize();
   }
   addEventListener('resize', () => {
-    syncPhoneOrientation();
     releaseJoystick();
     resize();
   });
-  addEventListener('orientationchange', syncPhoneOrientation);
-  window.visualViewport?.addEventListener?.('resize', syncPhoneOrientation);
   function activePlay() {
     return (
       started &&
@@ -2686,7 +2642,6 @@
       !persistence.conflicted(game.s.mode) &&
       !paused &&
       !menu &&
-      !phoneOrientationBlocked &&
       !frameSkip.emergency &&
       focused &&
       !document.hidden &&
@@ -2972,72 +2927,6 @@
       worldPointer = null;
     else cancelTravel();
   }
-  // The physical viewport, not a rotated canvas or a persisted preference,
-  // decides whether the *phone experience* can accept input. Desktop and
-  // Chromebook never inherit this restriction from a narrow browser window.
-  function syncPhoneOrientation() {
-    const next = platform.mode === 'phone' && innerHeight >= innerWidth;
-    refreshPhoneOrientationText();
-    if (next === phoneOrientationBlocked) return;
-    phoneOrientationBlocked = next;
-    phoneOrientationPrompt.hidden = !next;
-    document.body.setAttribute('data-phone-orientation-blocked', next ? 'true' : 'false');
-    last = performance.now();
-    frameSkip.suspend();
-    autoOptimization.reset();
-    renderResolution.suspend();
-    runtime.suspend();
-    frameProfile.reset();
-    fps.suspend();
-    if (next) {
-      phoneOrientationPreviousFocus = document.activeElement;
-      clearInput();
-      audio.setPaused(true);
-      // Inert also removes underlying UI from keyboard and screen-reader
-      // traversal on supported Safari/PWAs. Keep each previous inert value.
-      for (const child of document.body.children || []) {
-        if (child === phoneOrientationPrompt) continue;
-        phoneOrientationPriorInert.set(child, !!child.inert);
-        child.inert = true;
-      }
-      $('phone-orientation-heading').focus?.({ preventScroll: true });
-      return;
-    }
-    for (const [child, previous] of phoneOrientationPriorInert) child.inert = previous;
-    phoneOrientationPriorInert.clear();
-    const focus = phoneOrientationPreviousFocus;
-    phoneOrientationPreviousFocus = null;
-    if (focus?.isConnected !== false) focus?.focus?.({ preventScroll: true });
-    audio.setPaused(
-      paused || !focused || document.hidden || !!sceneTransition ||
-      titleLoading || startupUpdatePending,
-    );
-    // Deferred arrival and title warmups retain their original tickets. Never
-    // commit a zone change or enter combat in portrait; resume that exact
-    // request only after returning to landscape.
-    if (sceneTransition?.pendingProceed) {
-      const proceed = sceneTransition.pendingProceed;
-      sceneTransition.pendingProceed = null;
-      requestAnimationFrame(proceed);
-    } else if (sceneTransition?.committed) {
-      const token = sceneTransition.token;
-      requestAnimationFrame(() => revealSceneTransition(token));
-    }
-    if (phoneOrientationPendingTitleResume) {
-      const resume = phoneOrientationPendingTitleResume;
-      phoneOrientationPendingTitleResume = null;
-      requestAnimationFrame(resume);
-    }
-    if (!started && !titleLoading && !startupUpdatePending) updateTitleSoundtrack();
-  }
-  // Even a retained hardware key must not activate an underlying menu, skill
-  // or save action while the rotate prompt is modal.
-  addEventListener('keydown', (event) => {
-    if (!phoneOrientationBlocked) return;
-    event.preventDefault?.();
-    event.stopImmediatePropagation?.();
-  }, true);
-
   // Shared presentation controls. Gameplay menus still use action() unchanged.
   const menuControls = Object.freeze({
     section: (label, detail = '') => ({ kind: 'section', label, detail }),
@@ -3874,12 +3763,12 @@
     // If the gameplay commit occurred, do not roll back or replay it.
     // Title and game menus may not suspend the soundtrack on travel cleanup.
     last = performance.now();
-    audio.setPaused(phoneOrientationBlocked || !focused || document.hidden);
+    audio.setPaused(!focused || document.hidden);
   }
   function revealSceneTransition(token) {
     const ticket = sceneTransition;
     if (!ticket || ticket.token !== token || !ticket.committed) return;
-    if (phoneOrientationBlocked || document.hidden || !focused || !writerGuard.canWrite()) return;
+    if (document.hidden || !focused || !writerGuard.canWrite()) return;
     if (game !== ticket.campaign || game.zoneId !== ticket.destination) {
       cancelSceneTransition();
       return;
@@ -3925,7 +3814,7 @@
     $('menu-button').focus?.({ preventScroll: true });
   }
   function sceneTransitionTo(destination, label, commit) {
-    if (!started || sceneTransition || phoneOrientationBlocked || document.hidden || !focused ||
+    if (!started || sceneTransition || document.hidden || !focused ||
         !writerGuard.canWrite() || persistence.conflicted(game.s.mode))
       return false;
     const token = ++sceneTransitionEpoch;
@@ -3943,13 +3832,6 @@
     clearInput();
     audio.setPaused(true);
     const proceed = () => {
-      // A warmup may resolve while the phone is upright. Do not commit the
-      // destination or advance travel until the original request can resume.
-      if (sceneTransition?.token === token && phoneOrientationBlocked) {
-        sceneTransition.pendingProceed = proceed;
-        return;
-      }
-      if (sceneTransition?.token === token) sceneTransition.pendingProceed = null;
       if (sceneTransition?.token !== token || document.hidden || !focused ||
           !writerGuard.canWrite() || game !== campaign) {
         if (sceneTransition?.token === token) cancelSceneTransition();
@@ -4058,7 +3940,6 @@
     }
   }
   function showTitleScreen() {
-    phoneOrientationPendingTitleResume = null;
     titleBackupNotice = null;
     stopRendererRecording();
     ++titleEpoch;
@@ -4070,7 +3951,7 @@
     paused = false;
     clearInput();
     // Title stops gameplay simulation, not its own theme's audio clock.
-    audio.setPaused(phoneOrientationBlocked || !focused || document.hidden);
+    audio.setPaused(!focused || document.hidden);
     last = performance.now();
     if (menu) {
       menu = null;
@@ -4123,10 +4004,6 @@
     let campaign = game;
     let entryAudioAttempted = false;
     const reveal = () => {
-      if (epoch === titleEpoch && phoneOrientationBlocked) {
-        phoneOrientationPendingTitleResume = reveal;
-        return;
-      }
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
         titleLoading = false;
@@ -4143,10 +4020,6 @@
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
       const finish = () => {
-        if (epoch === titleEpoch && phoneOrientationBlocked) {
-          phoneOrientationPendingTitleResume = finish;
-          return;
-        }
         if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
           titleLoading = false;
           refreshTitleScreen();
@@ -4186,7 +4059,7 @@
         fps.suspend();
         restartGuard.arm(game);
         updateHUD();
-        audio.setPaused(phoneOrientationBlocked);
+        audio.setPaused(false);
         $('menu-button').focus?.({ preventScroll: true });
       };
       const paint = () => {
@@ -8653,18 +8526,6 @@
     };
   }
   function frame(now) {
-    if (phoneOrientationBlocked) {
-      // A portrait phone is neither a playable scene nor an idle render.
-      // Reset the clock every callback, including after mobile tab throttling,
-      // so turning back cannot generate a catch-up combat tick or FPS alarm.
-      last = now;
-      frameSkip.suspend();
-      renderResolution.suspend();
-      runtime.suspend();
-      fps.suspend();
-      requestAnimationFrame(frame);
-      return;
-    }
     if (!started || sceneTransition) {
       // Idle title runs its music director without simulating a campaign.
       if (!started && !sceneTransition && !startupUpdatePending && !titleLoading)
@@ -9059,7 +8920,6 @@
         () => Sprint.press('touch', false);
   }
   platform.onChange(() => {
-    syncPhoneOrientation();
     clearInput();
     resize();
     runtime.reset();
@@ -9150,7 +9010,6 @@
   updateHUD();
   setLanguage(language, false);
   showTitleScreen();
-  syncPhoneOrientation();
   if (loaded && (performanceBaselineUpgraded || optimizationAutoUpgraded) && !recoveredOnStartup)
     status(
       performanceBaselineUpgraded
