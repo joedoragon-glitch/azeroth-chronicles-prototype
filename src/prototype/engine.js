@@ -45,6 +45,12 @@
     startingCompanions: [],
     formationRole: 'ranged',
   });
+  // E0: metadata only. No stats registry, charged-skills admission, New Game
+  // entry or save acceptance until the complete fifth-class gate is satisfied.
+  defineClassFoundation('strategist', {
+    startingCompanions: ['soldier', 'archer'],
+    formationRole: 'melee',
+  });
 
   const talentMaxRanks = R.balance.disciplines.maxRanks;
   // Rounded from the level-1 class stat ratios: talent growth reinforces each class's natural strengths while keeping the old average power budget.
@@ -200,7 +206,11 @@
         power: c.power,
         armor: c.armor,
         speed: c.speed,
-        skills: [1, 0, 0, 0, 0, 0, 0, 0],
+        // Strategist starts with three learned alchemies, but class admission
+        // remains blocked until native starter actions and UI really exist.
+        skills: heroClass === 'strategist'
+          ? [1, 1, 1, 0, 0, 0, 0, 0]
+          : [1, 0, 0, 0, 0, 0, 0, 0],
         cd: Array(8).fill(0),
         chargedCd: Array(8).fill(0),
         basicCd: 0,
@@ -232,6 +242,9 @@
       this.s.party = starterTypes.map((type, i) =>
         this.unit(type, start.x + (i === 0 ? -40 : 50), start.y + (i === 0 ? 40 : 30)),
       );
+      // Real shared finite stock, never a synthesized casting resource.
+      // Zero is deliberately provisional pending the playable starter kit.
+      if (heroClass === 'strategist') this.s.strategistAcidBottles = 0;
       if (mode === 'arena') {
         this.s.arenaStage = 'hub';
         this.s.arenaRegion = 0;

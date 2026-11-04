@@ -99,6 +99,34 @@ The class-foundation contract consolidates starting company, basic-attack approa
 
 **Not implemented by the housekeeping:** Strategist gameplay, terrain skills, Field Orders, the eight authored normal/charged forms, instructor skill descriptions, controls, visual effects, localization, actual Fifth-class saves, real browser acceptance or device performance. The future class implementer must still supply a real combat owner and charged form and verify every active-system boundary; a foundation does not assert readiness. This is not a v4 migration, live class toggle or release.
 
+### Ogre Strategist E0 dormant combat foundation (3 November 2026; draft, not playable)
+
+E0 is isolated on the separate implementation draft branch, **not merged into main**.
+The native `engine.js` foundation declares melee formation and a real Soldier +
+Archer starter party, but `Campaign.registerPlayableClass('strategist')` still
+fails closed: no authored 16-form skill owner or charged Skill 1 timing exists.
+The actual New Game roster and four playable classes are untouched.
+
+`hero-combat.js::castStrategistBasic` is Ogre-only, 90 world units, an ordinary
+native damage transaction. A bounded WeakMap records **actual positive enemy
+HP loss** (not an attempt or a boolean resolver result). A valid landed third
+contact consumes one `s.strategistAcidBottles` and applies one compact native
+Acid splash, without recursion or a second critical roll. The stored cadence
+is deliberately transient: changing live target/zone/hero, timing out, death
+count changes and restoring a save restart at step 1. No frame scans are
+introduced. The stock is a single bounded integer with no synthesized source;
+zero is the provisional dormant starting value, not approved release balance.
+Damage and splash coefficients in `rules.js` are **E0 engineering candidates**.
+
+`progression.js::learn(2)` and both `save.js::validate` companion-training
+paths exempt Strategist from the old Skill-2 training entitlement. Future
+genuine Strategist new starts carry ranks 1–3 only; current four-class v4 saves
+are not modified by that dormant conditional. A valid fifth-class save,
+inventory purchasing, new UI, real assets/visuals, attacks/skills beyond the
+basic, Reversal, Field Labs, source lookup #770 and device verification remain
+**unimplemented**. The separate v3.2 design authority lives in draft PR #697;
+Reversal #696 and material resolver #770 are not pulled into E0.
+
 ### Canvas–Pixi presentation contract (#748)
 
 The [visual-parity ledger](PIXI_VISUAL_PARITY_20261031.md) maps original Canvas draw layers to their Pixi or shared-overlay owners. `renderer.js` retains canonical cue recipes and eligibility. The scene bridge translates small recipes into resident GPU paths at the correct actor depth; artwork stays unchanged. `sprites.js` supplies registered accessories. `visuals.js` can separate a wildlife home's static pixels from independently retained animals **during preparation only**. Animation moves those animal sprites; it does not rebake their bodies. Occlusion uses four pooled Canvas mask surfaces and the exact current GPU frame's resident CPU image, with no GPU readback or new mask texture upload. All these paths observe the same Campaign and do not own combat, timers or saves.

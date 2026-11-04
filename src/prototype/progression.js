@@ -309,11 +309,13 @@
           return false;
         }
         this.hero.skills[index] = 1;
-        if (slot === 2) this.s.companionCombatTraining = 2;
+        // Ogre's native Mineral is NOT the old companion training license.
+        if (slot === 2 && this.hero.class !== 'strategist')
+          this.s.companionCombatTraining = 2;
         this.say(
           def[1] +
             ' learned · Rank 1.' +
-            (slot === 2
+            (slot === 2 && this.hero.class !== 'strategist'
               ? ' Companion training advanced: Soldiers learned Holy Cleave; Archers learned Piercing Volley; pets unlocked charged second skills.'
               : ''),
         );
