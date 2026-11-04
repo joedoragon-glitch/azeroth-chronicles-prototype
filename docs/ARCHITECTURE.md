@@ -322,3 +322,5 @@ full off-screen enemy AI, Pixi integration or real-device verification. Do not
 merge/deploy it; its useful changes belong to their individual owners after
 final head-to-head reconciliation.
 
+
+The CI comparison base for this proof is the frozen `archive/strategist-e0-stage3-proof-base-20261103` ref at E0 commit `63eac57f`; that avoids unrelated moving-main changes and still uses the repository's focused pull-request workflow. It must not be used as a release or merge base.
