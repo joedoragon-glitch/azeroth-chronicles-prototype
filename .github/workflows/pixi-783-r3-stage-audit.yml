@@ -1,0 +1,52 @@
+name: 'Pixi #783 R3 native stage cause isolation (focused)'
+# A single source-faithful Chromium WebGL2 case, never a full browser matrix.
+# No Pages publishing, game source change, or real iPhone performance claim.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/pixi-783-r3-stage-audit.yml'
+      - 'tests/pixi-parity-browser.test.cjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: pixi-783-r3-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  controlled-browser:
+    name: Night Vale-style cold/warm, background, actor and quality stages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies and Chromium software WebGL2
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install chromium --with-deps
+          node scripts/vendor-pixi.cjs --ensure
+      - name: Execute single native Pixi stage experiment, not device benchmarking
+        env:
+          PARITY_FIXTURES: cover
+          PARITY_R3_STAGE_AUDIT: '1'
+          PARITY_VIEWPORT: 912x420
+          PARITY_DPR: '1'
+          PARITY_BACKING_RATIO: '1'
+          PARITY_ZOOM: '1.5'
+          PARITY_OPTIMIZED: '0'
+          PARITY_OUT: ${{ runner.temp }}/pixi-783-r3
+        run: node tests/pixi-parity-browser.test.cjs
+      - name: Preserve bounded stage samples and parity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pixi-783-r3-controlled-browser
+          path: ${{ runner.temp }}/pixi-783-r3/
+          if-no-files-found: ignore
+          retention-days: 30
