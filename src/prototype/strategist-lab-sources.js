@@ -9,7 +9,7 @@
     if (!materials || typeof materials.forGather !== 'function' ||
         typeof materials.findSource !== 'function' ||
         typeof materials.terrainSources !== 'function' ||
-        typeof materials.propMaterial !== 'function')
+        typeof materials.materialForProp !== 'function')
       throw Error('Authentic source provider required');
     function verifySource(game, zoneId, material, id, anchor, workerPosition = null) {
       if (!game?.s?.zones || !isPoint(anchor) || typeof id !== 'string' ||
@@ -31,7 +31,7 @@
           if (source.kind === 'prop')
             return Array.isArray(zone.props) &&
               zone.props.includes(source.prop) &&
-              materials.propMaterial(source.prop, game.s.time) === material;
+              materials.materialForProp(source.prop, game.s.time, zoneId, rules) === material;
           if (source.kind === 'hazard') return false;
           return authoredTerrain.some((s) =>
             s.id === id && s.material === material && s.shape === source.shape);

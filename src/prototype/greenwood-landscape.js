@@ -325,6 +325,7 @@
         }
         z.greenwoodRefinementAudit = audit;
         z.greenwoodRefinementVersion = 1;
+        this.noteEnvironmentalSourcesChanged(z); // one-time optional authored scene
       }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
@@ -1014,6 +1015,7 @@
           z.greenwoodSourceVersion = 2;
           z.greenwoodAttemptVersion = cfg.sceneVersion;
           z.greenwoodSceneVersion = cfg.sceneVersion;
+          this.noteEnvironmentalSourcesChanged(z); // migrated props, woods and occluders
           this.setSceneryTraversal(z);
           for (const node of z.nodes)
             if (this.blocked(node.x, node.y, 'vale'))

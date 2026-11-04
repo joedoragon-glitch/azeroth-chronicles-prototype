@@ -1104,6 +1104,19 @@
       dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y),
       originalDepartureRegion = (id) => ['vale', 'highlands', 'frontier'].includes(id);
     class World {
+      // Explicit versioned source/occlusion change event. No per-frame scene
+      // enumeration: zone() is on the game's hot combat/render path.
+      // Keep this marker runtime-only so the v4 save schema is unchanged.
+      noteEnvironmentalSourcesChanged(z) {
+        if (!z || typeof z !== 'object') return false;
+        const old = z.environmentSourceRevision;
+        const next = Number.isSafeInteger(old) && old >= 0 &&
+          old < Number.MAX_SAFE_INTEGER ? old + 1 : 1;
+        Object.defineProperty(z, 'environmentSourceRevision', {
+          configurable: true, enumerable: false, writable: true, value: next,
+        });
+        return true;
+      }
       ensureCriticalCodex(z) {
         // Historical v4 rooms may already exist before this mechanic.
         // Reconcile only the missing authored book; never rebuild the room.
@@ -1150,6 +1163,7 @@
           if (id === z.id && pending.base) move(pending.base);
         if (this.s.zone === z.id) for (const p of [this.hero, ...this.activeParty()]) move(p);
         z.dungeonSpaceVersion = space.version;
+          this.noteEnvironmentalSourcesChanged(z); // dungeon geometry relocation
       }
       dungeonBossHome(id = this.s.zone) {
         return (
@@ -1330,6 +1344,7 @@
             if (road.length) z.roads.push(road);
           }
           z.frontierEdgeVersion = cfg.version;
+          this.noteEnvironmentalSourcesChanged(z); // frontier edge relocation
         } finally {
           z.props = originalProps;
           this.blocked = blocked;
@@ -1590,6 +1605,7 @@
             z.frontierTownPlacements[id] = [target.x, target.y];
           }
           z.frontierSceneVersion = cfg.version;
+          this.noteEnvironmentalSourcesChanged(z); // frontier source movement
           this.frontierTownServices(z);
           z.footpaths ||= [];
           const doors = [
@@ -1832,6 +1848,7 @@
             if (q) Object.assign(n, q);
           }
           z.crownSceneVersion = cfg.version;
+          this.noteEnvironmentalSourcesChanged(z); // crown layout movement
           this.crownTownServices(z);
           // Keep service use points and all original identities; connect the
           // visible front (+x,+y), not the back wall, to a public street.
@@ -4586,6 +4603,7 @@
             });
           }
           z.recoveryAndHeatVersion = 1;
+          this.noteEnvironmentalSourcesChanged(z); // thermal recovery staging
         } finally {
           this.s.zone = oldZone;
         }
