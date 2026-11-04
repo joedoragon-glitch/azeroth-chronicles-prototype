@@ -423,3 +423,32 @@ test('Lab sample deposit checks job identity and completed physical return', () 
   assert.equal(g.fieldLabDeliver(job, worker), false);
   assert.equal(bank.samples.wood, 1);
 });
+
+
+test('vanished source forces a real return before any alchemy can resume', () => {
+  const g = new Campaign(), lab = build(g), worker = addReserve(g);
+  assert.equal(g.upgradeFieldLabWindmill('vale', 'vale'), true);
+  assert.equal(g.trainFieldLabWorker(worker.id), true);
+  const source = {
+    id: 'lost-mineral', material: 'mineral', authoritative: true,
+    active: true, x: 390, y: 100,
+  };
+  g.s.zones.vale.props.push(source);
+  const bank = g.fieldLabNetwork();
+  bank.samples.water = 3; bank.samples.wood = 3;
+  assert.equal(g.assignFieldLabWorker('vale', 'vale', worker.id, 'mineral'), true);
+  const job = bank.jobs[worker.id];
+  for(let i=0;i<130 && job.phase!=='sampling';i++) run(g,0.1);
+  assert.equal(job.phase,'sampling','real route reached the source');
+  source.active = false;
+  run(g,3);
+  assert.equal(job.phase,'station','a vanished source never marks a remote worker idle');
+  assert.ok(distance(job.position,lab)>24,'the worker is still physically away');
+  const before=JSON.stringify(bank.samples);
+  const timer=lab.processSeconds;
+  job.phase='idle'; // An invalid external phase change must not bypass proximity.
+  assert.equal(g.fieldLabMakeProduct(job,lab,0.1),false);
+  assert.equal(JSON.stringify(bank.samples),before);
+  assert.equal(lab.processSeconds,timer,'cannot operate the windmill from a source');
+  assert.equal(g.s.strategistAcidBottles,0);
+});
