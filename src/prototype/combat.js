@@ -971,6 +971,24 @@
         const attacker = rangedSourceId
           ? this.zone().enemies.find((e) => e.id === rangedSourceId)
           : null;
+        // Stage 1A Gate 3: one *genuine incoming hostile contact* can be
+        // Dodged by the living Ogre hero only. Use the attack's native enemy
+        // source, not arbitrary environment/reflection damage. Returning false
+        // also prevents the caller's attached status effects for that hit.
+        // Chance rolls happen per eligible hit, never per rendered frame.
+        if (
+          u === this.hero && u.class === 'strategist' &&
+          this.s.mode === 'developer' && attacker?.hp > 0 &&
+          !attacker.neutral && !attacker.returning &&
+          Number.isFinite(amount) && amount > 0 &&
+          this.random() < R.strategistOgreDefense.dodgeChance
+        ) {
+          this.event('strategistDodge', {
+            actor: 'hero', source: attacker.id,
+            x: u.x, y: u.y, kind: 'hostile-hit',
+          });
+          return false;
+        }
         if (!alreadyMitigated) amount *= this.snapshotPassiveOutgoingFactor(attacker);
         const armor =
           u === this.hero
