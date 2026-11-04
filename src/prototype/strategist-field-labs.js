@@ -300,10 +300,23 @@
         worker.x = job.position.x; worker.y = job.position.y;
         return true;
       }
-      fieldLabMakeProduct(job, lab, dt) {
+      fieldLabMakeProduct(job, lab, dt, verifiedWorker = null) {
         const bank = this.fieldLabNetwork();
-        if (job.phase !== 'idle' || !bank)
-          return false;
+        if (!job || !lab || job.phase !== 'idle' || !bank ||
+            !Number.isFinite(dt) || dt <= 0 || dt > CANDIDATE.maximumDt ||
+            bank.jobs?.[job.workerId] !== job ||
+            job.labId !== lab.id || job.zoneId !== lab.zoneId ||
+            lab.progress < 4) return false;
+        // Even a direct domain call must prove native worker ownership and
+        // staffing; the tick loop supplies the already-validated worker to
+        // avoid another O(roster) lookup on every process tick.
+        const worker = verifiedWorker ||
+          this.s.party?.find((u) => u.id === job.workerId);
+        if (!worker || worker.fieldLabTrained !== true ||
+            worker.fieldLabJob !== lab.id ||
+            worker.order?.type !== 'strategist-field-lab' ||
+            worker.order.id !== lab.id || worker.active !== false ||
+            !(worker.hp > 0)) return false;
         lab.processSeconds = (lab.processSeconds || 0) + dt *
           (job.zoneId === this.s.zone ? 1 : CANDIDATE.remoteEfficiency);
         if (lab.processSeconds < CANDIDATE.processingSeconds) return false;
@@ -405,7 +418,7 @@
             if (job.carries) { // Storage was full when returning.
               this.fieldLabDeliver(job, worker); continue;
             }
-            if (this.fieldLabMakeProduct(job, lab, dt)) continue;
+            if (this.fieldLabMakeProduct(job, lab, dt, worker)) continue;
             if (!planned && (this.s.time || 0) >= job.retryAt) {
               planned = true;
               this.fieldLabPlanTrip(job, worker, lab);
