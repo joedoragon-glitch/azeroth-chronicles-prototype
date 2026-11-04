@@ -65,3 +65,27 @@ without changing the actual Stage 3 owner branch or targeting `main`.
 Do not use the comprehensive `pages.yml` gate. Record actual check status,
 test failures and successful exact SHA checks; close the diagnostic PR when
 finished, leaving #796 as the canonical stacked integration owner.
+
+## Sprite-canon source-only evidence reconciliation
+
+The first exact-head focused run reached all 12 selected tests. Native
+Greenwood old-v4 reflow, five-region source material, physically routed Lab
+gathering, world streets, workload and the focused CI contracts passed.
+`tests/sprite-scope.test.cjs` alone rejected a **source SHA-256 fingerprint**
+change for `src/prototype/world.js`; it explicitly reported that the
+enumerated renderer/sprite families still match. The reviewed code delta adds
+runtime-only zone source-version notifications to existing versioned migration
+paths and does not change any Canvas drawing, Sprite choice/canon, palettes,
+assets or renderer family tables.
+
+To comply with the strict artwork provenance gate, only the **current**
+`docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` field
+`sources["src/prototype/world.js"]` is updated from
+`897b8162ceae1aee1936ded336b88c0a00e8abc1e3d4ec76641e5652b48a8974`
+to `37dfe205192ad174bd9ef16e24486a4c0e86e71de771112805216ec5b4e9af2f`.
+These are SHA-256 hashes of the exact UTF-8 world source before and after
+the reviewed change. The SHA-256 calculation was tested against the standard
+empty and `abc` vectors. All other fields and source fingerprints in the
+sprite evidence file remain byte-for-byte the same. Approved sprite canon,
+historical receipts and original guards are **not** changed or bypassed.
+The next exact-head CI run must confirm actual full scope parity.

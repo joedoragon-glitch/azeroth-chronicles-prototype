@@ -123,3 +123,37 @@ test('valid E0 stock of 999 and 1000 does not consume Lab warehouse capacity', (
   const over=field();over.strategistAcidBottles=1001;
   assert.throws(()=>codec.validate(over, { maxBottles: 1000 }), /canonical Acid/);
 });
+
+
+test('native v4 save keeps physical semantic-source keys, not transient cache revisions', () => {
+  const Materials = require('../src/prototype/strategist-materials.js');
+  Campaign.enableRoguePlaytest();
+  const authored = { environmentalSources: { vale: {
+    'saved-water-anchor': { material: 'water', requires: 'containsWater' },
+  } } };
+  for (const kind of ['paladin','mage','ranger','rogue']) {
+    const g = new Campaign('normal', kind, () => 0.57);
+    const zone = g.zone();
+    const source = {
+      id: 'native-saved-water-prop', structure: 'new-art-label',
+      materialSourceKey: 'saved-water-anchor', containsWater: true,
+      x: 115, y: 120, r: 0, decorative: true, playerOwned: true,
+    };
+    zone.props.push(source);
+    g.noteEnvironmentalSourcesChanged(zone);
+    const snapshot = g.snapshot();
+    assert.equal(snapshot.zones.vale.environmentSourceRevision, undefined,
+      'ephemeral material cache marker cannot enter a v4 save');
+    assert.equal(snapshot.zones.vale.props.find(p => p.id === source.id)?.materialSourceKey,
+      'saved-water-anchor', 'real semantic key persists with physical prop');
+    assert.equal(Campaign.validate(copy(snapshot)).hero.class, kind);
+    const restored = Campaign.restore(copy(snapshot), () => 0.57);
+    const prop = restored.s.zones.vale.props.find(p => p.id === source.id);
+    assert.equal(prop?.materialSourceKey, 'saved-water-anchor');
+    assert.equal(Materials.materialForProp(prop, restored.s.time, 'vale', authored), 'water');
+    assert.equal(Materials.materialForProp(prop, restored.s.time, 'march', authored), null);
+    assert.equal(restored.hero.class, kind);
+    assert.equal(restored.s.strategistLabEconomy, undefined,
+      'dormant source must not create a fifth-class wallet');
+  }
+});

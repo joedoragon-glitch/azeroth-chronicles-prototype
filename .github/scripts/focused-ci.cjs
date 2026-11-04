@@ -34,6 +34,7 @@ const groups = [
       TEST + 'strategist-materials.test.cjs',
       TEST + 'strategist-lab-sources.test.cjs',
       TEST + 'strategist-lab-gathering-native.test.cjs',
+      TEST + 'strategist-lab-save.test.cjs',
     ],
   },
   // #755: future comparator edits must exercise the positive-control guard.
