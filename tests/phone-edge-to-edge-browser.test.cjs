@@ -28,7 +28,7 @@ const innerFixture = `<!doctype html><html><head>
 <nav><button id="title-continue">Continue Adventure</button>
 <button>New Game</button><button>Saved Games &amp; Backups</button>
 <button>Settings</button><button>Help &amp; Credits</button></nav></div></section>
-<section id="modal" data-dialog-size="wide"><h2>Settings</h2><div id="modal-actions">
+<section id="modal" data-dialog-size="wide" style="pointer-events:none"><h2>Settings</h2><div id="modal-actions">
 <button>Graphics</button><button>Controls</button></div><button id="close-button">Back</button></section>
 <script>document.querySelector('#title-continue').addEventListener('click',()=>document.body.dataset.tapped='yes');</script>
 </body></html>`;
