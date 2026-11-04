@@ -754,7 +754,7 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
   assert.equal(r783Visible.filter((actor) => actor.key.startsWith('enemy:r783-')).length, 2);
   assert.equal(r783Visible.filter((actor) => actor.key.startsWith('prop:r783-')).length, 4);
   assert.equal(r783Cold.proceduralBakes, 4, 'camera motion at fixed quality reuses prepared art');
-  assert.equal(r783Cold.lastFailure, null, 'mocked night scene has no render exception');
+  assert.ok(!r783Cold.lastFailure, 'mocked night scene has no render exception');
   const r783BeforeRevisit = r783Cold.proceduralBakes;
   for (const dx of [-60, 0, -60, 0]) {
     game.hero.x = 2160 + dx;
@@ -787,7 +787,7 @@ const gpu = runtime.PrototypePixiExperimental.create(gpuOptions);
     'returning to retained 1x density reuses its original textures',
   );
   assert.equal(r783Returned.proceduralEvictions, 0);
-  assert.equal(r783Returned.lastFailure, null);
+  assert.ok(!r783Returned.lastFailure);
   game.hero.x = 2160;
   assert.equal(
     JSON.stringify({
