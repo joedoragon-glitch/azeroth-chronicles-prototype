@@ -157,6 +157,102 @@ for (const mode of ['normal', 'nightmare']) {
   assert(originalGate && originalGate.kind === 'dungeon',
     'Phase 1 ledger uses only the original Foundry exterior entrance');
   const gate = [Math.round(originalGate.x), Math.round(originalGate.y)];
+  // Phase-1 exit: the final design is grounded in the *generated* Crown,
+  // not only authored coordinates. These are read-only corridor/easement
+  // tests: they do NOT create pipes, turn on heat, move water or promise a
+  // running bathhouse. A Phase-3 construction may use a revised safe route
+  // only after explicitly revalidating it against the true world.
+  const actualHeat = (i) => {
+    const p = outside.props.find(q => q.id === 'recovery-heat-crown-' + i);
+    assert(p, 'Thermal role ' + i + ' must actually exist in this seed');
+    assert(!audit.blocked(p.x, p.y, 'crown', 15, true),
+      'Thermal role ' + i + ' must be on safe rock, not a lava channel');
+    return { x: p.x, y: p.y };
+  };
+  for (let i = 0; i < Campaign.rules.crownThermalWorksScenes.length; i++)
+    actualHeat(i);
+  const pt = (x, y) => ({ x, y });
+  const corridorCases = [
+    // The eastern industrial lava has its ORIGINAL dry gap y 980–1160.
+    ['east-collector-to-glass', [
+      actualHeat(0), pt(actualHeat(0).x, 1060),
+      pt(actualHeat(1).x, 1060), actualHeat(1),
+    ]],
+    ['east-collector-to-ceramics', [
+      actualHeat(0), pt(actualHeat(0).x, 1060),
+      pt(actualHeat(3).x, 1060), actualHeat(3),
+    ]],
+    ['east-collector-to-flue', [actualHeat(0), actualHeat(2)]],
+    ['east-flue-to-distributor', [actualHeat(2), actualHeat(4)]],
+    ['east-distributor-to-dryer', [actualHeat(4), actualHeat(5)]],
+    // The southern industrial lava retains its ORIGINAL dry gap y 2260–2520.
+    ['south-collector-to-glass', [
+      actualHeat(6), pt(actualHeat(6).x, 2390),
+      pt(actualHeat(7).x, 2390), actualHeat(7),
+    ]],
+    ['south-collector-to-flue-to-ceramics', [
+      actualHeat(6), actualHeat(8), actualHeat(10),
+    ]],
+    ['south-collector-to-washhouse', [
+      actualHeat(6), pt(actualHeat(6).x, 2390),
+      pt(actualHeat(13).x, 2390), actualHeat(13),
+    ]],
+    ['washhouse-to-exhaust', [actualHeat(13), actualHeat(14)]],
+    ['south-glass-to-drying', [actualHeat(7), actualHeat(9)]],
+    ['south-drying-to-distributor', [actualHeat(9), actualHeat(11)]],
+    ['south-collector-to-service-distributor', [
+      actualHeat(6), pt(actualHeat(6).x, 2390),
+      pt(actualHeat(12).x, 2390), actualHeat(12),
+    ]],
+    ['south-collector-to-foundry-exterior', [
+      actualHeat(6), actualHeat(8), pt(originalGate.x, originalGate.y),
+    ]],
+    ['dry-gap-freight-to-original-foundry-gate', [
+      actualHeat(9), pt(actualHeat(9).x, 2390),
+      pt(1980, 2390), pt(originalGate.x, originalGate.y),
+    ]],
+    // Water's east-bank utility chase uses the ORIGINAL south main bridge.
+    ['original-south-bridge-utility-deck', [
+      pt(1195, 2400), pt(1515, 2400),
+    ]],
+    // The main lava's cool WEST bank can support a *proposed* exchanger:
+    // not a third heat intake nor a currently operating west-side system.
+    ['proposed-west-geothermal-to-bath-and-civic-hall', [
+      pt(1155, 850), pt(950, 635), pt(600, 550),
+    ]],
+  ];
+  for (const [name, path] of corridorCases) {
+    for (let i = 1; i < path.length; i++)
+      assert(audit.clearSegment(path[i - 1], path[i], 15, true),
+        'Phase 1 ' + name + ' must avoid actual Crown collision at segment ' + i);
+  }
+
+  // These are *unoccupied reserved design envelopes*, not installed props.
+  // The exact visual footprint/placement must be rechecked in Phase 3 on
+  // old saves and with real tower/bathhouse artwork before construction.
+  const utilitySites = [
+    ['crownwatch-water-tower', 1150, 545, 48],
+    ['ash-refuge-water-tower', 355, 2135, 45],
+    ['east-service-water-tower', 2980, 2700, 48],
+    ['public-geothermal-bathhouse', 950, 635, 72],
+    ['cool-west-bank-heat-exchanger', 1155, 850, 25],
+    ['southwest-covered-wastewater-service', 450, 3225, 53],
+  ];
+  for (const [id, x, y, r] of utilitySites) {
+    assert(!audit.blocked(x, y, 'crown', r, true),
+      'Phase 1 ' + id + ' proposed footprint is free of native collision');
+    assert(audit.distanceToRoad(outside, pt(x, y)) > r + 15,
+      'Phase 1 ' + id + ' proposed footprint must not occupy an existing road');
+  }
+  for (let i = 0; i < utilitySites.length; i++)
+    for (let j = i + 1; j < utilitySites.length; j++) {
+      const a = utilitySites[i], b = utilitySites[j];
+      assert(Math.hypot(a[1] - b[1], a[2] - b[2]) > a[3] + b[3] + 24,
+        'Phase 1 waterworks design cannot overlap ' + a[0] + ' and ' + b[0]);
+    }
+  console.log('PASS Phase 1 native terrain: all 15 installed heatworks, ' +
+    corridorCases.length + ' collision-clear candidate corridor chains and ' +
+    utilitySites.length + ' unobstructed proposed utility footprints');
   assert(audit.enter('side-crown-foundry'),
     'Phase 1 ledger enters the existing Foundry side dungeon');
   const inside = audit.zone();
