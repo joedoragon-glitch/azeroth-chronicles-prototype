@@ -358,9 +358,13 @@ async function main() {
             saved: JSON.stringify(g.s),
           };
           const read = (name) => {
+            const savedBeforeDraw = JSON.stringify(g.s);
             const before = gpu.status();
             const result = gpu.draw();
             const after = gpu.status();
+            if (JSON.stringify(g.s) !== savedBeforeDraw)
+              throw Error('R3B native Campaign changed INSIDE draw ' + name +
+                ' (nextId: ' + JSON.parse(savedBeforeDraw).nextId + ' -> ' + g.s.nextId + ')');
             if (!result?.phaseMs || !after.active || after.lastError)
               throw Error('R3B native Pixi draw failed: ' + name);
             return {
