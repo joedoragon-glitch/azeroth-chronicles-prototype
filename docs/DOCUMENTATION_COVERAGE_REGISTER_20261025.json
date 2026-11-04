@@ -244,6 +244,22 @@
       ],
       "designStatus": "Owner-approved baseline preserved; proposed six Stage 1 actions and balance candidates remain provisional; no gameplay implemented, merged, deployed or tested",
       "branch": "docs/strategist-ogre-visual-principles-20261030"
+    },
+    "strategistEngineeringKickoff20261103": {
+      "scope": "Incremental design PR #697 engineering-kickoff addition and re-routing only; NOT a fresh whole-repository markdown census, runtime audit or published release. Historical rows/receipt baseline retained.",
+      "newPaths": [
+        "docs/STRATEGIST_V32_ENGINEERING_KICKOFF_20261103.md"
+      ],
+      "documentBlobSha": "dda141c0d2a6ea810f6944844f1d339e7cd04df2",
+      "updatedExistingPaths": [
+        "docs/STRATEGIST_STAGE1_GAME_DESIGN_20261102.md",
+        "docs/STRATEGIST_V3_ENGINEERING_FEASIBILITY_REVIEW_20261103.md",
+        "docs/STRATEGIST_V3_FEASIBILITY_CHAT_HANDOFF_20261103.md",
+        "docs/DECISIONS.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ],
+      "handoffStatus": "Self-contained future E0 coding prompt and native/source acceptance plan; no current gameplay implementation, tests, merge, deployment or device verification.",
+      "branch": "docs/strategist-ogre-visual-principles-20261030"
     }
   },
   "semantics": {
@@ -6530,6 +6546,20 @@
       "authority": "verify_with_current_source",
       "reviewDepth": "full_body_pr_disposition_checked",
       "reconciliationRole": "working design candidate",
+      "reconciliationRoleConfidence": "direct_content_review",
+      "reconciliationReview": "reviewed_scope_and_status"
+    },
+    {
+      "path": "docs/STRATEGIST_V32_ENGINEERING_KICKOFF_20261103.md",
+      "gitBlobSha": "dda141c0d2a6ea810f6944844f1d339e7cd04df2",
+      "location": "docs",
+      "censusSource": "post_oct19",
+      "directlyLinkedFromIndex": true,
+      "topic": "combat_and_survival",
+      "role": "engineering_handoff",
+      "authority": "verify_with_current_source",
+      "reviewDepth": "full_body_pr_disposition_checked",
+      "reconciliationRole": "current cross-chat engineering handoff",
       "reconciliationRoleConfidence": "direct_content_review",
       "reconciliationReview": "reviewed_scope_and_status"
     },
