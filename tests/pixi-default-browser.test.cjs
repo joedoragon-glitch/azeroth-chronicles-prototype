@@ -67,7 +67,10 @@ async function selectPixi(page) {
 // on automatic gameplay startup and could silently skip preloading entirely.
 async function enterPlayableGame(page) {
   await page.waitForFunction(() => !!window.Prototype?.renderer);
-  await require('./helpers/language-browser.cjs').selectEnglish(page);
+  // The first-use choice is above the title, after the automatic update gate.
+  await page.waitForFunction(() => document.querySelector('#startup-update')?.hidden);
+  if (await page.locator('#language-welcome').isVisible())
+    await page.locator('#language-welcome [data-language="en"]').click();
   const title = page.locator('#title-screen');
   if (await title.evaluate((el) => !el.hidden)) {
     if (!(await page.locator('#title-continue').isDisabled())) {
