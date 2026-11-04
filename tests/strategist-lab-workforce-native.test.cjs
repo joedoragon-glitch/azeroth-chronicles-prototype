@@ -76,7 +76,9 @@ test('reserve receipts must be exact v4 attestations, never orphaned or cross-re
   const copy=()=>JSON.parse(JSON.stringify(state));
   assert.equal(Codec.validate(copy()),true);
   for(const mutate of [
-    x=>x.party[0].strategistLabRest.zoneId='march',
+    // An otherwise valid zone ID is not cryptographic proof of a Rest action;
+    // native assignment confirms the physically recorded location instead.
+    x=>x.party[0].strategistLabRest.zoneId='unvisited-dungeon',
     x=>x.party[0].strategistLabRest.x+=30,
     x=>x.party[0].active=true,
     x=>x.party[0].order={type:'build',id:'barracks-2'},

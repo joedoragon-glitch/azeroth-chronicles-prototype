@@ -15,6 +15,16 @@ const {
 const TEST = 'tests/';
 const PILOT = 'tools/webgl-pilot/';
 const groups = [
+  {
+    // B3: new dormant workforce/combat adapters have focused native behavior
+    // owners; neither belongs in a broad browser or full-game matrix.
+    match: /^src\/prototype\/strategist-lab-(?:workforce|combat|integration)\.js$/,
+    tests: [
+      TEST + 'strategist-lab-workforce-native.test.cjs',
+      TEST + 'strategist-lab-native-combat.test.cjs',
+      TEST + 'strategist-lab-integration-native.test.cjs',
+    ],
+  },
   // #755: future comparator edits must exercise the positive-control guard.
   {
     match: /^scripts\/pixi-755-compare\.cjs$|^tests\/pixi-755-acceptance\.test\.cjs$/,

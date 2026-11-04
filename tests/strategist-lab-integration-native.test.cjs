@@ -1,0 +1,35 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict');
+const Campaign=require('../src/prototype/engine.js');
+const Composer=require('../src/prototype/strategist-lab-integration.js');
+test('dormant composer links native source, workforce and danger without activating Strategist',()=>{
+  const before=Object.keys(Campaign.classes),hasTick=!!Campaign.prototype.advanceFieldLabEconomy;
+  const system=Composer.install(Campaign);
+  assert.equal(system.readyForTrips,true);
+  assert.equal(system.readyForRemoteCombat,true);
+  assert.equal(typeof system.workforce.authenticatedLocation,'function');
+  assert.equal(typeof system.remote.advanceEnemyDanger,'function');
+  assert.deepEqual(Object.keys(Campaign.classes),before);
+  assert.equal(Campaign.classes.strategist,undefined);
+  assert.equal(typeof Campaign.prototype.advanceFieldLabEconomy,'function');
+  const g=new Campaign('normal','paladin',()=>0.57);
+  assert.equal(g.fieldLabNetwork(),null);
+  assert.equal(g.fieldLabCombatTargets(g.s.zone).length,0);
+  assert.equal(g.s.strategistLabEconomy,undefined);
+  assert.equal(g.s.party.every(u=>u.strategistLabRest===undefined),true);
+});
+test('unrecognized remote ranged or special danger suspends work and does not invent victories',()=>{
+  const sys=Composer.install(Campaign);
+  const g=new Campaign('normal','paladin',()=>0.57);
+  const home=g.zoneId;
+  g.s.zone='march';g.zone();g.s.zone=home;
+  const e=g.s.zones.march.enemies.find(e=>e.hp>0&&!e.neutral);
+  assert.ok(e);
+  const u=g.s.party[0];
+  const p={x:e.x+30,y:e.y};
+  const t=sys.threats.inspect(g,'march',{...p,workerId:u.id});
+  assert.equal(t.safe,false,'real hostile in acquisition range is a danger');
+  assert.equal(g.s.zone,home,'no remote zone borrowing');
+  assert.ok(e.hp>0,'threat detector does not deal phantom damage');
+  assert.equal(g.s.strategistLabEconomy,undefined);
+});

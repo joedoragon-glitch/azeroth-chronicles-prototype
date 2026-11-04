@@ -126,6 +126,10 @@ test('blocked native collision prevents remote melee damage and fake pursuit',()
 test('unsupported ranged/boss remote attacks remain suspended rather than instant phantom damage',()=>{
   const {g,u,enemy,home}=setup();
   const hp=u.hp;
+  // Isolate this authoritative enemy's unsupported stance. Other genuinely
+  // nearby melee enemies remain dangerous, so silence them in this fixture.
+  for(const other of g.s.zones[home].enemies)
+    if(other!==enemy)other.neutral=true;
   enemy.ranged=true;
   remote.invalidate(g);
   tick(g,20);
