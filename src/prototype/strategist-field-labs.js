@@ -76,6 +76,48 @@
         return this.fieldLabs().find((entry) => entry.zoneId === zoneId)?.lab || null;
       }
       fieldLabManaged() { return this.hero?.class === 'strategist'; }
+      // The active region's native enemy AI uses this same canonical combat
+      // target list. Working companions remain off the ordinary active party,
+      // but ARE visible as real vulnerable actors at their actual positions.
+      fieldLabCombatTargets(zoneId) {
+        if (!this.fieldLabManaged() || zoneId !== this.s.zone) return [];
+        const bank = this.fieldLabNetwork();
+        if (!bank) return [];
+        const targets = [];
+        for (const job of Object.values(bank.jobs)) {
+          if (job.zoneId !== zoneId || !finitePoint(job.position)) continue;
+          const worker = this.s.party?.find(u => u.id === job.workerId);
+          if (worker?.fieldLabJob !== job.labId || worker.hp <= 0 ||
+              worker.active !== false ||
+              worker.order?.type !== 'strategist-field-lab' ||
+              worker.order.id !== job.labId ||
+              !finitePoint(worker) || distance(worker, job.position) > 0.02)
+            continue;
+          targets.push(worker);
+        }
+        return targets;
+      }
+      // Native damage may kill a worker outside the Lab economy tick. Never
+      // persist an orphan job whose worker is dead, or credit its cargo.
+      fieldLabReleaseFallenWorkers() {
+        const bank = this.fieldLabNetwork();
+        if (!bank) return 0;
+        let lost = 0;
+        for (const [id, job] of Object.entries(bank.jobs)) {
+          const worker = this.s.party?.find(u => u.id === id);
+          if (!worker || worker.hp > 0) continue;
+          if (worker.fieldLabJob === job.labId) {
+            worker.x = job.position.x; worker.y = job.position.y;
+            worker.active = false;
+            worker.order = null;
+            delete worker.fieldLabJob;
+            delete worker.strategistLabRest;
+          }
+          delete bank.jobs[id];
+          lost++;
+        }
+        return lost;
+      }
       fieldLabStorageLimit() {
         return CANDIDATE.baseStorage +
           CANDIDATE.storagePerRank * (this.fieldLabNetwork()?.alchemyRank || 0);
@@ -410,6 +452,11 @@
         if (!Number.isFinite(dt) || dt <= 0 || dt > CANDIDATE.maximumDt) return;
         const bank = this.fieldLabNetwork();
         if (!bank || !validSetup) return;
+        // One authenticated off-zone enemy pass for all assigned workers,
+        // never one enemy cooldown per worker. Active-zone native AI is
+        // responsible for current-region workers via combatTargets().
+        adapters.advanceEnemyDanger?.(this, bank.jobs, dt);
+        this.fieldLabReleaseFallenWorkers();
         this.advanceFieldLabConstruction(dt);
         let planned = false; // At most one source-selection wake-up per tick.
         for (const [workerId, job] of Object.entries(bank.jobs)) {
@@ -501,7 +548,12 @@
       if (name !== 'constructor')
         Object.defineProperty(Campaign.prototype, name,
           Object.getOwnPropertyDescriptor(FieldLabs.prototype, name));
-    return Object.freeze({ readyForTrips: !!validSetup, config: CANDIDATE });
+    return Object.freeze({
+      readyForTrips: !!validSetup,
+      readyForRemoteCombat: !!validSetup &&
+        typeof adapters.advanceEnemyDanger === 'function',
+      config: CANDIDATE,
+    });
   }
   const api = Object.freeze({ install, MATERIALS, PRODUCTS, REGIONS, CANDIDATE });
   if (typeof module !== 'undefined') module.exports = api;

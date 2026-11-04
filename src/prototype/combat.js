@@ -101,7 +101,9 @@
       }
       combatTargets() {
         const z = this.s.zones[this.s.zone];
-        return [this.hero, ...this.activeLivingParty(), ...(z?.escort?.hp > 0 ? [z.escort] : [])];
+        return [this.hero, ...this.activeLivingParty(),
+          ...(this.fieldLabCombatTargets?.(this.s.zone) || []),
+          ...(z?.escort?.hp > 0 ? [z.escort] : [])];
       }
 
       // The hold receipt identifies enemies already engaged at charge start;
@@ -958,7 +960,7 @@
         return true;
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false,
-        skillBlock = null) {
+        skillBlock = null, sourceContext = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         if (skillBlock && this.skillBlocks(u, skillBlock.shape, {
           source: rangedSourceId, criticalExecution: skillBlock.criticalExecution,
@@ -968,9 +970,17 @@
           return false;
         // Real source IDs also cover melee now. Passive bonuses never apply to
         // environment hazards, reflected damage, or unrelated named species.
+        // The dormant Lab off-region caller supplies the exact enemy object
+        // from its real zone; never borrow the hero's active enemy roster.
         const attacker = rangedSourceId
-          ? this.zone().enemies.find((e) => e.id === rangedSourceId)
+          ? sourceContext
+            ? this.s.zones[sourceContext.zoneId]?.enemies?.includes(sourceContext.enemy) &&
+              sourceContext.enemy.id === rangedSourceId &&
+              sourceContext.zoneId !== this.s.zone
+              ? sourceContext.enemy : null
+            : this.zone().enemies.find((e) => e.id === rangedSourceId)
           : null;
+        if (sourceContext && !attacker) return false;
         if (!alreadyMitigated) amount *= this.snapshotPassiveOutgoingFactor(attacker);
         const armor =
           u === this.hero
@@ -1021,7 +1031,8 @@
           u.rogueEndureUntil = this.s.time + R.rogueHeroFoundation.endure.duration;
           this.event('rogueEndure', { actor: 'hero', class: 'rogue', duration: 2, hp: u.hp });
         }
-        if (oldHp > u.hp && attacker) this.noteGatheringAttack(u, attacker);
+        if (oldHp > u.hp && attacker && !sourceContext)
+          this.noteGatheringAttack(u, attacker);
         this.recordPartyChargeDamage(u, oldHp - u.hp);
         if (u === this.hero) this.recordDeveloperDamage('incoming', mitigated);
         if (R.resourceMode.manaEnabled && u === this.hero && manaDrain > 0)
@@ -1031,7 +1042,7 @@
         // percentage of the attacker's max HP as an artificial healing cap.
         // Previous mana-drain semantics remain available in legacy MP mode.
         if (!R.resourceMode.manaEnabled && rangedSourceId) {
-          const source = this.zone().enemies.find((e) => e.id === rangedSourceId);
+          const source = attacker;
           const cinder = source?.species === 'ashbeast' && source.projectileStyle === 'cinder';
           const spectral =
             manaDrain > 0 &&

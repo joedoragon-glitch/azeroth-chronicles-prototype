@@ -1297,7 +1297,7 @@
         }
         return receipt;
       }
-      enemyStartBasic(e, target, ranged) {
+      enemyStartBasic(e, target, ranged, sourceContext = null) {
         const nightTempo = this.nightTempo();
         e.cd =
           ((e.type === 'boss' ? R.bossCadence.basicCooldown :
@@ -1336,6 +1336,7 @@
             this.worldCriticalDamage(criticalReceipt, this.weakenedEnemyDamage(e)),
             0,
             e.id,
+            false, null, sourceContext,
           ))
             this.event('melee', {
               actor: 'enemy',
