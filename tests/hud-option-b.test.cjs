@@ -66,7 +66,7 @@ test('Crowns remain visible inside the existing HP row on PC and phone', () => {
 test('Phone has one visible native Menu control with a readable label', () => {
   const menu = finalRule(phone, "body[data-experience='phone'] #hud #menu-button");
   assert.match(menu, /position: fixed/);
-  assert.match(menu, /right: max\(8px, env\(safe-area-inset-right\)\)/);
+  assert.match(menu, /right: max\(8px, var\(--phone-safe-right, env\(safe-area-inset-right\)\)\)/);
   assert.match(menu, /width: 94px/);
   assert.match(menu, /min-height: 46px/);
   assert.match(menu, /font-size: 13px/);
@@ -78,8 +78,8 @@ test('Phone has one visible native Menu control with a readable label', () => {
 test('The phone Menu and update action use distinct positions', () => {
   const update = finalRule(phone, "body[data-experience='phone'] #update-button:not([hidden])");
   const landscape = phone.slice(phone.indexOf('/* Option B (phone)'));
-  assert.match(update, /top: max\(8px, env\(safe-area-inset-top\)\)/);
-  assert.match(update, /right: calc\(max\(8px, env\(safe-area-inset-right\)\) \+ 104px\)/);
+  assert.match(update, /top: max\(8px, var\(--phone-safe-top, env\(safe-area-inset-top\)\)\)/);
+  assert.match(update, /right: calc\(max\(8px, var\(--phone-safe-right, env\(safe-area-inset-right\)\)\) \+ 104px\)/);
   assert.match(landscape, /@media \(orientation: landscape\) and \(min-width: 601px\)/);
   assert.match(landscape, /top: calc\(max\(8px, env\(safe-area-inset-top\)\) \+ 54px\)/);
 });
@@ -140,8 +140,8 @@ test('fixed-horizontal phone shell preserves one landscape game frame', () => {
   assert.equal(manifest.orientation, 'landscape');
   assert.match(framing, /@media \(orientation: portrait\)/);
   assert.match(framing, /transform: rotate\(90deg\)/);
-  assert.match(framing, /width: calc\(100dvh/);
-  assert.match(framing, /height: calc\(100dvw/);
+  assert.match(framing, /width: 100dvh/);
+  assert.match(framing, /height: 100dvw/);
   assert.match(assetInventory, /'phone-game\.html'/);
   assert.match(assetInventory, /'styles\/phone-frame\.css'/);
   assert(!wrapper.includes('id="phone-orientation-prompt"'),
