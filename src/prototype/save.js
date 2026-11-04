@@ -215,7 +215,9 @@
           s.version !== 4 ||
           !['normal', 'nightmare', 'developer', 'arena'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
-          !Object.hasOwn(classes, s.hero?.class)
+          !Object.hasOwn(classes, s.hero?.class) ||
+          (s.hero?.class === 'strategist' &&
+            (s.mode !== 'developer' || s.challenge?.succession))
         )
           throw Error('Invalid save');
         // No extra field on historical four-class campaigns. Future Ogre v4
