@@ -1172,8 +1172,10 @@
         // Native enemy stones/arrows and actual Archer/Ranger physical shafts.
         // Never consume this face for beams, magic, hazards or warnings.
         const archerShot = this.s.party.some((u) =>
-          u.id === p.source && u.type === 'archer' && u.hp > 0 &&
-          u.active !== false && (p.style == null || p.style === 'arrow'));
+          u.id === p.source && u.type === 'archer' &&
+          (p.style == null || p.style === 'arrow'));
+        // A real arrow does not become magical or intangible merely because
+        // the Archer fell/retreated after its original physical release.
         const nativePhysical = ['arrow', 'stone', 'axe', 'spear', 'cargo'].includes(p.style);
         if (!nativePhysical && !archerShot) return false;
         const width = face.half, gap = face.notch, r = face.radius,

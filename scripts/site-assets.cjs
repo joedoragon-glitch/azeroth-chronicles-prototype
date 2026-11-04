@@ -8,6 +8,9 @@ const scripts = [
     'greenwood-interiors',
     'data',
     'rules',
+    // Dormant until Developer-only class admission, but browser combat must
+    // have the same truthful material resolver as Node.
+    'strategist-materials',
     'world',
     'greenwood',
     'field-onboarding',

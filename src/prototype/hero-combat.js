@@ -676,6 +676,13 @@
         return Math.ceil(costs[slot] * (1 + R.manaBalance.rankCostGrowth * Math.max(0, rank - 1)));
       }
       skillCooldown(slot, charged = false) {
+        // Every Ogre manual form's source and cooldown are class-owned;
+        // never inherit Ranger's or an undefined charged-skill timer.
+        if (this.hero.class === 'strategist') {
+          const cfg = R.strategistStarterSkills?.[slot];
+          return cfg ? cfg[charged ? 'chargedCooldown' : 'normalCooldown'] *
+            (1 - this.heroCooldownReduction()) : Infinity;
+        }
         // The Rogue's first charged performance has its own cooldown budget.
         if (slot === 1 && charged && this.hero.class === 'rogue')
           return 8 * (1 - this.heroCooldownReduction());

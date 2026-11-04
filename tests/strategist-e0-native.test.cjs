@@ -420,6 +420,16 @@ try {
       'real friendly Archer projectile hits the two-sided lip');
     assert(!g.s.projectiles.includes(lip), 'intercept removes actual in-flight shot');
     assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
+    // The face reacts to a projectile's real physical body, not whether its
+    // shooter happened to survive/keep active during flight.
+    g.hero.cd[1] = g.hero.chargedCd[1] = 0;
+    assert.equal(g.cast(2), true);
+    archer.hp = 0; archer.active = false;
+    const orphaned = makeArrow('orphaned-physical-arrow', 525);
+    g.s.projectiles.push(orphaned);
+    assert.equal(g.strategistInterceptPhysicalProjectile(
+      orphaned, { x: 600, y: 525 }, { x: 450, y: 525 }), true,
+      'already launched Archer projectile remains physical after shooter falls');
     g.hero.cd[1] = g.hero.chargedCd[1] = 0;
     assert.equal(g.cast(2), true, 'one new casting replaces the spent face');
     g.s.time += R.strategistFacet.seconds + 0.01;
