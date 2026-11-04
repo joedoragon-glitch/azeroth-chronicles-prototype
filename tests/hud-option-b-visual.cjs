@@ -54,7 +54,7 @@ async function capture(page,label) {
           (!document.querySelector('#language-welcome')?.hidden ||
             !document.querySelector('#title-screen')?.hidden), {timeout:30000});
         if (await page.locator('#language-welcome').isVisible())
-          await page.locator('#language-welcome [data-language="en"]').click();
+          await page.locator('#language-welcome [data-language="' + (config.spanish ? 'es' : 'en') + '"]').click();
         else await require('./helpers/language-browser.cjs').selectEnglish(page);
         await page.waitForFunction(() => !document.querySelector('#title-screen')?.hidden &&
           document.querySelector('#language-welcome')?.hidden, {timeout:30000});
@@ -76,8 +76,9 @@ async function capture(page,label) {
           assert(titleDialog.x >= 0 && titleDialog.x + titleDialog.width <= config.width + 1,
             config.name + ' title dialog stays within screen');
         }
-        await page.getByRole('button',{name:'New Normal game',exact:true}).click();
-        await page.getByRole('button',{name:config.spanish?/^Español(?: ✓)?$/:/^English(?: ✓)?$/}).click();
+        // The first-use welcome already selected EN/ES. New Game now proceeds
+        // directly from mode to challenge and class, with no repeated language menu.
+        await page.getByRole('button',{name:/Normal/i}).first().click();
         await page.getByRole('button',{name:config.spanish?'Muerte normal y recuperación en refugio':'Standard death and refuge recovery',exact:true}).click();
         if (config.phone && config.width > config.height) {
           const columns = await page.locator('#modal[data-view="class-select"] #modal-actions')
