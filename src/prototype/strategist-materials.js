@@ -64,12 +64,35 @@
       /(?:^|[-_])(house|home|cottage|dwelling|residence|barracks|inn|living-quarters)(?:$|[-_])/.test(name) ||
       ['house', 'cottage', 'barracks', 'home', 'residence'].includes(p?.kind);
   }
-  function propMaterial(p, gameTime = 0) {
+  function propMaterial(p, gameTime = 0, declaration) {
     if (!isFinitePoint(p) || protectedHome(p) || p?.destroyed === true) return null;
     // These specific regional overlays are expressly scenery-only. Do not
     // promote a reused visual identity to gameplay without new authored state.
     if (p.greenwoodRefinement === 1 || p.crownCivicForecourt === true ||
         p.crownFoundryWorker === true || p.crownFoundryExterior === true) return null;
+    // Region-owned stable gameplay keys are independent of visual asset names.
+    // Unregistered aliases cannot grant material from untrusted saved props.
+    if (p.materialSourceKey !== undefined &&
+        (typeof p.materialSourceKey !== 'string' || !p.materialSourceKey ||
+          declaration === undefined)) return null;
+    if (declaration !== undefined) {
+      if (!declaration || !MATERIALS.includes(declaration.material)) return null;
+      const requirement = declaration.requires;
+      if (requirement === 'permanent')
+        return declaration.material === 'fire' ? null : declaration.material;
+      if (requirement === 'containsWater')
+        return declaration.material === 'water' && p.containsWater === true &&
+          p.empty !== true && p.dry !== true ? 'water' : null;
+      if (requirement === 'containsOre')
+        return declaration.material === 'mineral' && p.containsOre === true &&
+          p.empty !== true ? 'mineral' : null;
+      if (requirement === 'activeHeat')
+        return declaration.material === 'fire' && p.extinguished !== true &&
+          p.lit !== false && p.active !== false && p.heatActive !== false &&
+          (p.lit === true || p.active === true || p.heatActive === true)
+          ? 'fire' : null;
+      return null;
+    }
     const kind = String(p.structure || '');
     // Greenwood's authored forest deliberately stores nature in a separate
     // property, often with structure:null. These are real trees and fallen logs.
@@ -101,6 +124,17 @@
     if (p.authoritativeCombatFire === true && p.kind === 'active-fire-hazard' &&
         Number.isFinite(p.expiresAt) && p.expiresAt > gameTime) return 'fire';
     return null;
+  }
+
+  // The live prop carries its physical position. Only definitions from the
+  // active zone's rule table can authorize a new source identity.
+  function materialForProp(p, time, zoneId, rules) {
+    const declarations = rules?.environmentalSources?.[zoneId];
+    const key = p?.materialSourceKey ?? p?.id;
+    const definition = typeof key === 'string' && declarations &&
+      Object.prototype.hasOwnProperty.call(declarations, key)
+      ? declarations[key] : undefined;
+    return propMaterial(p, time, definition);
   }
 
   function segmentDistance(p, a, b) {
@@ -320,16 +354,21 @@
   function sourceIndex(zone, rules, regionIndex, time) {
     const grid = new Map();
     for (const prop of zone.props || []) {
-      const material = propMaterial(prop, time);
+      const material = materialForProp(prop, time, zone.id, rules);
       if (!material) continue;
-      const source = { id: prop.id, kind: 'prop', material, prop };
-      const key = cellKey(prop.x, prop.y);
-      if (!grid.has(key)) grid.set(key, []);
-      grid.get(key).push(source);
+      const indexedCell = cellKey(prop.x, prop.y);
+      const source = {
+        id: prop.id, key: prop.materialSourceKey || prop.id,
+        indexedCell, kind: 'prop', material, prop,
+      };
+      if (!grid.has(indexedCell)) grid.set(indexedCell, []);
+      grid.get(indexedCell).push(source);
     }
     return {
       zone, props: zone.props, length: zone.props?.length || 0,
       buildings: zone.buildings, buildLength: zone.buildings?.length || 0,
+      sourceRevision: zone.environmentSourceRevision,
+      declarations: rules?.environmentalSources?.[zone.id],
       rulesTerrain: rules?.terrain?.[regionIndex],
       grid, obstructions: indexObstructions(zone),
       terrain: terrainSources(rules, zone.id, regionIndex),
@@ -342,7 +381,11 @@
     for (let x = loX; x <= hiX; x++)
       for (let y = loY; y <= hiY; y++)
         for (const source of index.grid.get(x + ':' + y) || [])
-          if (source.material === material) found.push(source);
+          if (source.material === material &&
+              (!source.prop || (source.id === source.prop.id &&
+                source.key === (source.prop.materialSourceKey || source.prop.id) &&
+                source.indexedCell === cellKey(source.prop.x, source.prop.y))))
+            found.push(source);
     return found.concat(index.terrain.filter((source) => source.material === material));
   }
 
@@ -355,6 +398,8 @@
     if (!old || old.zone !== zone || old.props !== zone.props ||
         old.length !== (zone.props?.length || 0) || old.buildings !== zone.buildings ||
         old.buildLength !== (zone.buildings?.length || 0) ||
+        old.sourceRevision !== zone.environmentSourceRevision ||
+        old.declarations !== rules?.environmentalSources?.[zone.id] ||
         old.rulesTerrain !== rules?.terrain?.[regionIndex]) {
       const created = sourceIndex(zone, rules, regionIndex, game.s?.time || 0);
       // Keep only a small working set in RAM; old regions are reconstructed on
@@ -391,7 +436,8 @@
     const nearby = [];
     for (const source of candidates(index, options.at, options.range + 36, material)) {
       // Live conditions are checked again, so extinguishing a fire never waits for a cache reset.
-      if (source.prop && propMaterial(source.prop, game.s?.time || 0) !== material) continue;
+      if (source.prop && materialForProp(source.prop, game.s?.time || 0,
+          zone.id, rules) !== material) continue;
       const point = sourcePoint(options.at, source, rules);
       if (!point) continue;
       const d = distance(options.at, point);
@@ -472,7 +518,7 @@
     });
   }
   const api = Object.freeze({
-    MATERIALS, propMaterial, protectedHome, terrainSources, closestToShape,
+    MATERIALS, propMaterial, materialForProp, protectedHome, terrainSources, closestToShape,
     hasSight, findSource, forCombat, forGather, invalidate,
   });
   if (typeof module !== 'undefined') module.exports = api;
