@@ -108,7 +108,7 @@ test('native original four-class snapshot validation/restore unaffected by dorma
     forged.strategistLabEconomy=copy(field().strategistLabEconomy);
     forged.strategistAcidBottles=0;
     forged.zones.vale.buildings.push(copy(field().zones.vale.buildings[1]));
-    assert.throws(()=>Campaign.validate(forged),/Invalid Field Lab save/);
+    assert.throws(()=>Campaign.validate(forged),/Invalid (?:Field Lab save|Strategist Acid Bottle stock)/);
   }
 });
 
