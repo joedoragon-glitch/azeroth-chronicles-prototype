@@ -366,6 +366,68 @@ try {
     g.hero.cd[2] = g.hero.chargedCd[2] = 0;
     assert.equal(g.cast(3, primary.id), false, 'extinguished Fire is unavailable');
   }
+  {
+    // Gate 2: one genuinely source-backed stone face, native swept hit.
+    const { g, primary, events } = make(0);
+    g.formationHeading = { x: 1, y: 0 };
+    assert.equal(g.cast(2), false, 'no real Mineral refuses placement');
+    g.zone().props = [{ id: 'real-boulder', structure: 'boulder',
+      x: 500, y: 535, r: 12 }];
+    assert.equal(g.cast(2), true, 'authentic boulder permits Stone Facet');
+    const physical = {
+      id: 'hostile-stone', source: 'enemy', sourceId: primary.id,
+      style: 'stone', x: 600, y: 500, dx: -1, dy: 0,
+      speed: 1000, life: 1, damage: 20,
+    };
+    g.s.projectiles.push(physical);
+    const hp = g.hero.hp;
+    g.updateProjectiles(0.2);
+    assert.equal(g.hero.hp, hp, 'prior face physically prevents hostile stone hit');
+    assert(!g.s.projectiles.includes(physical));
+    assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
+    const missed = {
+      id: 'second-stone', source: 'enemy', sourceId: primary.id, style: 'stone',
+      x: 600, y: 500, dx: -1, dy: 0, speed: 1000, life: 1, damage: 20,
+    };
+    assert.equal(g.strategistInterceptPhysicalProjectile(
+      missed, { x: 600, y: 500 }, { x: 450, y: 500 }), false,
+      'one real stop consumes the entire face');
+    assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
+  }
+  {
+    const { g, primary, events } = make(0);
+    g.formationHeading = { x: 1, y: 0 };
+    g.zone().props = [{ id: 'real-rock', structure: 'rock',
+      x: 500, y: 535, r: 12 }];
+    assert.equal(g.cast(2, null, true), true, 'genuine Notched Facet');
+    const archer = g.s.party.find(u => u.type === 'archer');
+    const makeArrow = (id, y) => ({
+      id, source: archer.id, style: 'arrow', x: 600, y,
+      dx: -1, dy: 0, speed: 1000, life: 1, damage: 20, target: primary.id,
+    });
+    const open = makeArrow('through-notch', 500);
+    assert.equal(g.strategistInterceptPhysicalProjectile(
+      open, { x: 600, y: 500 }, { x: 450, y: 500 }), false,
+      'center opening really lets a friendly arrow pass');
+    const magic = { ...makeArrow('magic', 525), source: 'enemy', style: 'beam' };
+    assert.equal(g.strategistInterceptPhysicalProjectile(
+      magic, { x: 600, y: 525 }, { x: 450, y: 525 }), false,
+      'nonphysical magic is never blocked');
+    const lip = makeArrow('friendly-lip', 525);
+    g.s.projectiles.push(lip);
+    assert.equal(g.strategistInterceptPhysicalProjectile(
+      lip, { x: 600, y: 525 }, { x: 450, y: 525 }), true,
+      'real friendly Archer projectile hits the two-sided lip');
+    assert(!g.s.projectiles.includes(lip), 'intercept removes actual in-flight shot');
+    assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
+    g.hero.cd[1] = g.hero.chargedCd[1] = 0;
+    assert.equal(g.cast(2), true, 'one new casting replaces the spent face');
+    g.s.time += R.strategistFacet.seconds + 0.01;
+    const expired = makeArrow('expired', 500);
+    assert.equal(g.strategistInterceptPhysicalProjectile(
+      expired, { x: 600, y: 500 }, { x: 450, y: 500 }), false,
+      'expired physical cover never survives combat time');
+  }
 } finally {
   delete C.classes.strategist;
   delete C.talentProfiles.strategist;

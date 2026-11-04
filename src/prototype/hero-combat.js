@@ -1822,6 +1822,21 @@
             ? require('./strategist-materials.js') : null;
         const source = materials?.forCombat(this, cfg.material, { range: cfg.sourceRange, rules: R });
         if (!source) return false;
+        // Mineral uses the real projectile owner's one stationary physical
+        // face, rather than a painted ward or fake projectile deletion.
+        if (slot === 2) {
+          const cost = this.skillManaCost(slot, h.skills[slot - 1], charged);
+          if (h.mp < cost || !this.placeStrategistFacet(charged)) return false;
+          h.mp -= cost;
+          const recovery = 1 - this.heroCooldownReduction();
+          h.cd[slot - 1] = cfg.normalCooldown * recovery;
+          if (charged) h.chargedCd[slot - 1] = cfg.chargedCooldown * recovery;
+          this.event('strategistSkillCast', {
+            actor: 'hero', slot, charged: !!charged, material: 'mineral',
+            sourceId: source.id, targets: [], cleansed: 0, x: h.x, y: h.y,
+          });
+          return true;
+        }
         const allies = slot === 1 ? this.activeLivingParty().filter((u) =>
           u.hp > 0 && u.active !== false && (u.type === 'soldier' || u.type === 'archer')
         ).sort((a, b) => (a.type === 'soldier' ? 0 : 1) -

@@ -6665,9 +6665,17 @@
   const strategistStarterSkills = Object.freeze({
     1: Object.freeze({ material: 'water', sourceRange: 160, range: 90,
       normalCooldown: 6, chargedCooldown: 10, normalPower: 0.8, chargedPower: 0 }),
+    2: Object.freeze({ material: 'mineral', sourceRange: 155, range: 90,
+      normalCooldown: 8, chargedCooldown: 13 }),
     3: Object.freeze({ material: 'fire', sourceRange: 150, range: 90,
       normalCooldown: 7, chargedCooldown: 12, normalPower: 1.05,
       chargedPower: 0.8, halfAngle: 0.6, maxTargets: 2 }),
+  });
+  // One facing, fixed-location, one-shot physical plate. The notch has two
+  // real lip segments; its center is geometrically open to small projectiles.
+  const strategistFacet = Object.freeze({
+    offset: 35, halfWidth: 44, notchHalfWidth: 13,
+    projectileRadius: 3, seconds: 4,
   });
   const strategistBasicFoundation = Object.freeze({
     range: 90,
@@ -7882,6 +7890,7 @@
     strategistBasicFoundation,
     strategistOgreDefense,
     strategistStarterSkills,
+    strategistFacet,
     rogueHeroFoundation,
     rogueCharmNicknames,
     companionSkills,

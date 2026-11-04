@@ -8,6 +8,9 @@
 
 ## Strategist Developer Playtest — current draft integration (4 November 2026)
 
+**Additional draft physical owner:** `combat.js` owns one transient, bounded Strategist Mineral face checked only on actual projectile flight, including friendly Archer arrows. The two-lip charged variant leaves a real center opening. Skills 1–3 now have six intended native forms in branch-only code, but no original exact-head full Campaign validation or legal user controls/admission; Gate 2 remains unaccepted.
+
+
 **4 November draft Gate 2:** `hero-combat.js` now contains developer-only Water and Fire manual starter dispatch, true material lookup and native Slow/contact ownership, with focused tests pending. The public class roster is unchanged; the real Mineral physical face, player-facing controls, browser source registration and fully playable Strategist remain future gates.
 
 
