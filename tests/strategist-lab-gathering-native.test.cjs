@@ -68,6 +68,9 @@ function setup(region = 'vale', minDistance = 50) {
   g.zone(); // Native authored geography, no painted/fake source.
   const site = findSite(g, region, minDistance);
   assert.ok(site, region + ': cannot locate a genuine prop and physical round trip');
+  // Construct the native companion while a registered class still owns its
+  // talent profile. The Strategist admission below is test-process-only.
+  const worker = g.unit('soldier', site.station.x, site.station.y);
   g.hero.class = 'strategist'; // Test process only: no class registration.
   g.hero.gold = 5000;
   g.s.strategistAcidBottles = 0;
@@ -82,7 +85,6 @@ function setup(region = 'vale', minDistance = 50) {
     id: 'barracks-' + g.s.nextId++, kind: 'barracks',
     x: lab.x + 200, y: lab.y, progress: 0,
   }, lab);
-  const worker = g.unit('soldier', site.station.x, site.station.y);
   worker.active = false;
   worker.testRegion = region; // Explicit fixture, never an old-v4 location guess.
   g.s.party.push(worker);
