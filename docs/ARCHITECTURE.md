@@ -118,8 +118,10 @@ introduced. The stock is a single bounded integer with no synthesized source;
 zero is the provisional dormant starting value, not approved release balance.
 Damage and splash coefficients in `rules.js` are **E0 engineering candidates**.
 
-`progression.js::learn(2)` and both `save.js::validate` companion-training
-paths exempt Strategist from the old Skill-2 training entitlement. Future
+`progression.js::learn(2)`, both `save.js::validate` companion-training
+paths and `party.js::companionSecondSkillUnlocked` exempt the Ogre's
+starting Mineral rank from the old Skill-2 training entitlement. An authentic
+separate companion-training flag still grants the actual upgrade. Future
 genuine Strategist new starts carry ranks 1–3 only; current four-class v4 saves
 are not modified by that dormant conditional. A valid fifth-class save,
 inventory purchasing, new UI, real assets/visuals, attacks/skills beyond the
