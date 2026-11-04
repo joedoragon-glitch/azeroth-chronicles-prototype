@@ -7004,6 +7004,16 @@
         ctx.quadraticCurveTo(-3, 10, -21, 4);
         ctx.quadraticCurveTo(-27, -14, -20, -30);
       });
+      // The far deltoid has a real tunic sleeve and shoulder seam, rather
+      // than an unexplained bare tan ball in the three-quarter silhouette.
+      shaped('#5a5143', () => {
+        ctx.moveTo(12, -30);
+        ctx.quadraticCurveTo(24, -31, 27, -24);
+        ctx.lineTo(27, -14);
+        ctx.lineTo(22, -12);
+        ctx.quadraticCurveTo(21, -23, 14, -24);
+      });
+      line([[19, -26], [26, -20]], '#94866f', 1.25);
       // Front lapels and a single folded over-vest are clothes, not skin.
       shaped('#83715a', () => {
         ctx.moveTo(-15, -27);
@@ -7038,8 +7048,8 @@
 
       // The field harness is a continuous shoulder-to-waist leather strap.
       // It starts at the far collar, crosses the actual vest and joins belt.
-      line([[12, -30], [8, -23], [-5, -5], [-11, 4]], '#332c28', 5.8);
-      line([[12, -30], [8, -23], [-5, -5], [-11, 4]], '#b09266', 2.3);
+      line([[12, -30], [8, -23], [-5, -5], [-11, 4]], '#332c28', 4.6);
+      line([[12, -30], [8, -23], [-5, -5], [-11, 4]], '#9d805b', 1.35);
       // Belt wraps visibly around both hips rather than floating at center.
       shaped('#3f332a', () => {
         ctx.moveTo(-22, -1);
