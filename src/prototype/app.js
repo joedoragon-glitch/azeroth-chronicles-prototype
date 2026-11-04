@@ -1833,7 +1833,7 @@
       if (activationPause !== null) {
         appReloadRequested = false;
         paused = activationPause;
-        audio.setPaused(paused || !focused || document.hidden);
+        audio.setPaused(paused || phoneOrientationBlocked || !focused || document.hidden);
       }
       status('Update unavailable. Your saved run is safe.');
     } finally {
@@ -3874,12 +3874,12 @@
     // If the gameplay commit occurred, do not roll back or replay it.
     // Title and game menus may not suspend the soundtrack on travel cleanup.
     last = performance.now();
-    audio.setPaused(!focused || document.hidden);
+    audio.setPaused(phoneOrientationBlocked || !focused || document.hidden);
   }
   function revealSceneTransition(token) {
     const ticket = sceneTransition;
     if (!ticket || ticket.token !== token || !ticket.committed) return;
-    if (document.hidden || !focused || !writerGuard.canWrite()) return;
+    if (phoneOrientationBlocked || document.hidden || !focused || !writerGuard.canWrite()) return;
     if (game !== ticket.campaign || game.zoneId !== ticket.destination) {
       cancelSceneTransition();
       return;
@@ -3925,7 +3925,7 @@
     $('menu-button').focus?.({ preventScroll: true });
   }
   function sceneTransitionTo(destination, label, commit) {
-    if (!started || sceneTransition || document.hidden || !focused ||
+    if (!started || sceneTransition || phoneOrientationBlocked || document.hidden || !focused ||
         !writerGuard.canWrite() || persistence.conflicted(game.s.mode))
       return false;
     const token = ++sceneTransitionEpoch;
@@ -3943,6 +3943,13 @@
     clearInput();
     audio.setPaused(true);
     const proceed = () => {
+      // A warmup may resolve while the phone is upright. Do not commit the
+      // destination or advance travel until the original request can resume.
+      if (sceneTransition?.token === token && phoneOrientationBlocked) {
+        sceneTransition.pendingProceed = proceed;
+        return;
+      }
+      if (sceneTransition?.token === token) sceneTransition.pendingProceed = null;
       if (sceneTransition?.token !== token || document.hidden || !focused ||
           !writerGuard.canWrite() || game !== campaign) {
         if (sceneTransition?.token === token) cancelSceneTransition();
@@ -4051,6 +4058,7 @@
     }
   }
   function showTitleScreen() {
+    phoneOrientationPendingTitleResume = null;
     titleBackupNotice = null;
     stopRendererRecording();
     ++titleEpoch;
@@ -4062,7 +4070,7 @@
     paused = false;
     clearInput();
     // Title stops gameplay simulation, not its own theme's audio clock.
-    audio.setPaused(!focused || document.hidden);
+    audio.setPaused(phoneOrientationBlocked || !focused || document.hidden);
     last = performance.now();
     if (menu) {
       menu = null;
@@ -4115,6 +4123,10 @@
     let campaign = game;
     let entryAudioAttempted = false;
     const reveal = () => {
+      if (epoch === titleEpoch && phoneOrientationBlocked) {
+        phoneOrientationPendingTitleResume = reveal;
+        return;
+      }
       if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() ||
           campaign !== game) {
         titleLoading = false;
@@ -4131,6 +4143,10 @@
       $('title-loading').textContent = language === 'es'
         ? 'Preparando la primera escena…' : 'Drawing first scene…';
       const finish = () => {
+        if (epoch === titleEpoch && phoneOrientationBlocked) {
+          phoneOrientationPendingTitleResume = finish;
+          return;
+        }
         if (epoch !== titleEpoch || document.hidden || !writerGuard.canWrite() || campaign !== game) {
           titleLoading = false;
           refreshTitleScreen();
@@ -4170,7 +4186,7 @@
         fps.suspend();
         restartGuard.arm(game);
         updateHUD();
-        audio.setPaused(false);
+        audio.setPaused(phoneOrientationBlocked);
         $('menu-button').focus?.({ preventScroll: true });
       };
       const paint = () => {
