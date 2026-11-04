@@ -93,6 +93,23 @@ test('Option B leaves the existing two-thumb, left-hand and full phone grid rule
   assert.match(phone, /#squad-button/);
 });
 
+
+test('Landscape Stage 2 reuses the merged title and protects wide phone menus', () => {
+  const landscape = phone.slice(phone.indexOf('/* Landscape phone Stage 2'));
+  assert(landscape.length > 1200, 'Stage 2 landscape override must remain in the phone stylesheet');
+  assert.match(landscape, /@media \(orientation: landscape\) and \(min-width: 560px\) and \(max-height: 560px\)/);
+  assert.match(landscape, /#title-screen nav button \{\s*min-height: 44px;/);
+  assert.match(landscape, /\.title-active #modal\[data-dialog-size\] \{[\s\S]*?width: min\(/);
+  assert.match(landscape, /#modal\[data-view='class-select'\] #modal-actions \{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  for (const view of ['adventure', 'settings'])
+    assert(landscape.includes("#modal[data-view='" + view + "'] #modal-actions"),
+      'wide indexed menu must reuse existing view: ' + view);
+  assert.match(landscape, /#modal:has\(\.menu-setting\) #modal-actions \{\s*grid-template-columns: minmax\(0, 1fr\)/,
+    'inline sliders and selects remain in their own rows');
+  assert(!landscape.includes('display: none'), 'no existing landscape actions are hidden');
+  assert(!landscape.includes('transform: rotate'), 'no fake sideways portrait canvas');
+});
+
 test('Option B targeted real-shell captures (desktop and two landscape sizes)', () => {
   if (!process.env.GITHUB_ACTIONS) return;
   const { spawnSync } = require('node:child_process');
