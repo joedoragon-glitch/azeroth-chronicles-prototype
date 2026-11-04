@@ -47,7 +47,17 @@ async function capture(page,label) {
         await page.waitForFunction(()=>window.Prototype?.game,{timeout:30000});
         // The game now opens on a title screen. Enter a real new campaign:
         // merely dismissing two menus leaves skills hidden behind the title.
-        await require('./helpers/language-browser.cjs').selectEnglish(page);
+        // PR #791 added a first-use language card *after* the automatic PWA
+        // preflight. Wait for the actual player choice instead of clicking
+        // New Game beneath that blocking welcome surface.
+        await page.waitForFunction(() => document.querySelector('#startup-update')?.hidden &&
+          (!document.querySelector('#language-welcome')?.hidden ||
+            !document.querySelector('#title-screen')?.hidden), {timeout:30000});
+        if (await page.locator('#language-welcome').isVisible())
+          await page.locator('#language-welcome [data-language="en"]').click();
+        else await require('./helpers/language-browser.cjs').selectEnglish(page);
+        await page.waitForFunction(() => !document.querySelector('#title-screen')?.hidden &&
+          document.querySelector('#language-welcome')?.hidden, {timeout:30000});
         if (config.phone && config.width > config.height) {
           const nav = page.locator('#title-screen nav button');
           assert.equal(await nav.count(), 5, 'merged #791 keeps all five main-menu actions');
