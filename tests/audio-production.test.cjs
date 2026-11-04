@@ -78,15 +78,21 @@ const idleVale = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
 assert.deepEqual(idleVale.stems.map(s => s.id), ['place-vale', 'action-vale']);
 assert.equal(idleVale.stems[1].gain, 0,
   'Greenwood encounter layer must start silent in exploration');
+assert.equal(idleVale.fade, 3.2,
+  'ordinary Greenwood field music must allow a gentle outdoor handoff');
 const millhaven = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
   settlement: 'millhaven', millhavenTown: true, engaged: 0 });
 assert.equal(millhaven.id, 'millhaven-chamber',
   'peaceful Millhaven must play the owner-approved Candidate B recording');
 assert.deepEqual(millhaven.stems, [{ id: 'millhaven-chamber', gain: 0.7 }]);
+assert.equal(millhaven.fade, 3.2,
+  'town return must be gradual without changing the approved recording');
 assert.equal(a.productionCue({ ...scene, millhavenTown: true, night: true }).id,
   'millhaven-chamber', 'night retains Candidate B while ambience remains separate');
 assert.equal(a.productionCue({ ...scene, millhavenTown: true, nearbyEngaged: 2 }).id, 'place-vale',
   'nearby combat takes recorded action precedence even inside Millhaven');
+assert.equal(a.productionCue({ ...scene, millhavenTown: true, nearbyEngaged: 2 }).fade, 2,
+  'Greenwood combat entry keeps a shorter, but non-abrupt, transition');
 assert.equal(a.productionCue({ ...scene, millhavenTown: true, peace: true }).id, 'peace-vale',
   'global liberation retains authored recorded precedence');
 assert.equal(a.productionCue({ ...scene, millhavenTown: true, started: false }).id, 'title',
@@ -98,9 +104,16 @@ const cryptApproach = a.productionCue({ ...scene, region: 'vale', zone: 'vale',
 assert.equal(cryptApproach.id, 'settlement-vale',
   'former settlement recording now marks the Dark Lord estate approach');
 assert.equal(cryptApproach.stems[0].gain, 0.62);
+assert.equal(cryptApproach.fade, 3.2,
+  'the road-to-Crypt approach must crossfade without an immediate music cut');
+assert.equal(a.productionCue({ ...scene, estateApproach: true, night: true }).fade, 3.2,
+  'nighttime Greenwood crossings use the same outdoor handoff');
 assert.equal(a.productionCue({ ...scene, estateApproach: true,
   nearbyEngaged: 2 }).id, 'place-vale',
 'nearby combat replaces the Crypt approach cue with the normal regional action mix');
+assert.equal(a.productionCue({ ...scene, estateApproach: true,
+  nearbyEngaged: 2 }).fade, 2,
+  'Crypt combat retains timely score response and warning priority');
 assert.equal(a.productionCue({ ...scene, estateApproach: true,
   peace: true }).id, 'peace-vale',
 'global peace takes precedence over the unfinished-estate approach');
