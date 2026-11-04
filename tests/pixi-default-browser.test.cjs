@@ -75,7 +75,7 @@ async function enterPlayableGame(page) {
     } else {
       await page.locator('#title-new').click();
       await page.getByRole('button', {name:'New Normal game', exact:true}).click();
-      await page.getByRole('button', {name:/^English(?: ✓)?$/}).click();
+      // Language was selected once at first launch; new campaigns reuse it.
       await page.getByRole('button',
         {name:'Standard death and refuge recovery', exact:true}).click();
       await page.getByRole('button', {name:/Paladin/}).first().click();
