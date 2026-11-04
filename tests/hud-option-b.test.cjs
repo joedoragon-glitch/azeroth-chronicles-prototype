@@ -81,7 +81,7 @@ test('The phone Menu and update action use distinct positions', () => {
   assert.match(update, /top: max\(8px, var\(--phone-safe-top, env\(safe-area-inset-top\)\)\)/);
   assert.match(update, /right: calc\(max\(8px, var\(--phone-safe-right, env\(safe-area-inset-right\)\)\) \+ 104px\)/);
   assert.match(landscape, /@media \(orientation: landscape\) and \(min-width: 601px\)/);
-  assert.match(landscape, /top: calc\(max\(8px, env\(safe-area-inset-top\)\) \+ 54px\)/);
+  assert.match(landscape, /top: calc\(max\(8px, var\(--phone-safe-top, env\(safe-area-inset-top\)\)\) \+ 54px\)/);
 });
 
 test('Option B leaves the existing two-thumb, left-hand and full phone grid rules intact', () => {
