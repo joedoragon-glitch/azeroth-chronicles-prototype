@@ -11,11 +11,13 @@ assert(C.classAdmissionIssues('strategist', {
 }).includes('missing authored combat owner'));
 assert.throws(() => new C('normal', 'strategist'), /Unknown mode or class/);
 const originals = Object.keys(C.classes);
+// The E0 fixture must now use the only permitted preview mode; public
+// Normal registration is correctly refused even in this diagnostic process.
 C.classes.strategist = { ...C.classes.paladin };
 C.talentProfiles.strategist = { ...C.talentProfiles.paladin };
 try {
   const make = (stock = 0) => {
-    const g = new C('normal', 'strategist', () => 0.9);
+    const g = new C('developer', 'strategist', () => 0.9);
     g.s.valeFieldAwakened = true;
     g.s.mercyTime = 0;
     g.s.strategistAcidBottles = stock;
@@ -48,7 +50,7 @@ try {
     return g.cast(1, target.id, false, null, true);
   };
   {
-    const g = new C('normal', 'strategist', () => 0.9);
+    const g = new C('developer', 'strategist', () => 0.9);
     assert.deepEqual(g.s.party.map((u) => u.type), ['soldier', 'archer']);
     assert.deepEqual(g.hero.skills, [1, 1, 1, 0, 0, 0, 0, 0]);
     assert.equal(g.s.companionCombatTraining, 1,
