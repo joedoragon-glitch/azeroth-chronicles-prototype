@@ -127,3 +127,61 @@ for (const mode of ['normal', 'nightmare']) {
   console.log('PASS ' + mode +
     ': both Crown lava bridges and civic-to-Foundry travel have collision-safe paths');
 }
+
+
+// Phase 1: audit the *resolved* geometry instead of mistaking rules.js's
+// requested anchors and eight optional freight links for a working network.
+// This is diagnostic-only evidence, not an assertion that geothermal pipes,
+// potable water, a bathhouse, cargo transfer or living worker AI exists.
+{
+  const audit = new Campaign('normal', 'paladin', () => 0.73);
+  assert(audit.enter('crown'), 'Phase 1 ledger enters the real Crown world');
+  const outside = audit.zone();
+  const thermal = Campaign.rules.crownThermalWorksScenes.map(
+    ([requestedX, requestedY, structure, purpose], index) => {
+      const p = outside.props.find(q => q.id === 'recovery-heat-crown-' + index);
+      return {
+        index, purpose, structure, requested: [requestedX, requestedY],
+        actual: p ? [Math.round(p.x), Math.round(p.y)] : null,
+      };
+    },
+  );
+  const links = (outside.crownIndustrialRoutes || []).map(l => ({
+    id: l.id, from: l.from, to: l.to, roadConnected: !!l.roadConnected,
+  }));
+  const freight = outside.props.filter(q => q.crownIndustrialFreight).map(q => ({
+    id: q.id, structure: q.structure,
+    actual: [Math.round(q.x), Math.round(q.y)],
+  })).sort((a, b) => a.id.localeCompare(b.id));
+  const originalGate = outside.npcs.find(n => n.id === 'foundry');
+  assert(originalGate && originalGate.kind === 'dungeon',
+    'Phase 1 ledger uses only the original Foundry exterior entrance');
+  const gate = [Math.round(originalGate.x), Math.round(originalGate.y)];
+  assert(audit.enter('side-crown-foundry'),
+    'Phase 1 ledger enters the existing Foundry side dungeon');
+  const inside = audit.zone();
+  const workers = inside.props.filter(q => q.crownFoundryWorker)
+    .map(q => ({
+      id: q.id, role: q.crownFoundryRole,
+      actual: [Math.round(q.x), Math.round(q.y)],
+    })).sort((a, b) => a.id.localeCompare(b.id));
+  const hostileHomes = inside.enemies.map(q => ({
+    id: q.id, home: [
+      Math.round((q.home || q).x),
+      Math.round((q.home || q).y),
+    ],
+  })).sort((a, b) => a.id.localeCompare(b.id));
+  const foundry = Campaign.rules.sideDungeons.find(s => s.id === 'side-crown-foundry');
+  // Do not call this a trap-free route audit. Ordinary route() checks
+  // collision, while trap footprints remain an independent safety gate.
+  console.log('PHASE1_SOURCE_LEDGER_JSON ' + JSON.stringify({
+    inspectedSource: 'actual Campaign constructor and generated normal-zone',
+    rng: 'constant callback 0.73', originalGate: gate,
+    thermal, authoredLinkCount: Campaign.rules.crownIndustrialLinks.length,
+    realizedLinks: links, freight, foundry: {
+      exit: [120, 150], size: foundry.size,
+      workers, hostileHomes, trapAnchors: foundry.traps,
+      pillarAnchors: foundry.walls,
+    },
+  }));
+}
