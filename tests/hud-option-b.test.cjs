@@ -113,8 +113,10 @@ test('Landscape Stage 2 reuses the merged title and protects wide phone menus', 
   const gameHTML = read('phone-game.html');
   assert.match(frameCSS, /@media \(orientation: portrait\)[\s\S]*?transform: rotate\(90deg\)/,
     'physical portrait rotates the full landscape game iframe, not game internals');
-  assert.match(frameHTML, /id="phone-game-frame"[^>]*src="\.\/phone-game\.html"/,
+  assert.match(frameHTML, /id="phone-game-frame"/,
     'public phone entry keeps one live same-origin game frame');
+  assert.match(frameHTML, /'\.\/phone-game\.html' \+ window\.location\.search \+ window\.location\.hash/,
+    'the public entry loads the game once and preserves diagnostic URL options');
   assert.match(gameHTML, /data-entry="phone"/,
     'the embedded game retains native phone rules and full viewport');
   assert.match(read('manifest.webmanifest'), /"orientation": "landscape"/,
