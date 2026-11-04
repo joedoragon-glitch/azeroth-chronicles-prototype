@@ -7,6 +7,8 @@ function ctx(){
   const surface=new Proxy({calls},{set(target,key,value){target[key]=value;calls.push([key,value]);return true;}});
   for(const method of ['save','restore','fillRect','beginPath','moveTo','lineTo','closePath','fill','stroke','arc','translate','rotate'])
     surface[method]=(...args)=>{calls.push([method,...args]);};
+  // Exclude the fixture's twelve method registrations from actual paint calls.
+  calls.length = 0;
   return surface;
 }
 test('five regions use different physically drawn Lab material palettes',()=>{
