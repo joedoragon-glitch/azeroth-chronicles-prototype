@@ -751,6 +751,11 @@
         }
         if (!enemy) enemy = this.cycleHeroTarget(visible);
         if (!enemy) return null;
+        // Selecting a different manual target breaks the Ogre's consecutive
+        // actually-landed dagger rhythm even if no further attack occurs.
+        const priorDagger = strategistDaggerStates.get(this);
+        if (this.hero.class === 'strategist' && priorDagger && priorDagger.targetId !== enemy.id)
+          strategistDaggerStates.delete(this);
         this.manualHeroTargetId = enemy.id;
         this.manualHeroTargetZone = this.zoneId;
         this.manualHeroTargetLocked = true;
@@ -773,6 +778,8 @@
           )
           .sort((a, b) => dist(a, this.hero) - dist(b, this.hero) || this.idOrder(a, b));
         if (!enemies.length) {
+          // A deliberate no-target release also abandons an Ogre combo.
+          if (this.hero.class === 'strategist') strategistDaggerStates.delete(this);
           // A deliberate quick press releases a lock even offscreen, including
           // its legacy squad-focus target, so automatic combat can resume.
           if (this.s.heroTarget === this.manualHeroTargetId) this.s.heroTarget = null;
@@ -783,6 +790,9 @@
         }
         const index = enemies.findIndex((e) => e.id === current?.id);
         const target = enemies[(index + 1) % enemies.length];
+        const priorDagger = strategistDaggerStates.get(this);
+        if (this.hero.class === 'strategist' && priorDagger && priorDagger.targetId !== target.id)
+          strategistDaggerStates.delete(this);
         this.manualHeroTargetId = target.id;
         this.manualHeroTargetZone = this.zoneId;
         this.manualHeroTargetLocked = false; // A new manual choice releases an old lock.

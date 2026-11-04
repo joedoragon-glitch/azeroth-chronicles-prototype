@@ -188,6 +188,30 @@ try {
       'newly alive same-ID enemy is not the previously killed dagger target');
   }
   {
+    // Target A -> B -> A without an intervening attack must not counterfeit
+    // a third *consecutive* landed dagger on A.
+    const {g, primary, nearby, distant, events} = make(1);
+    distant.neutral = true;
+    assert(hit(g, primary));
+    assert(hit(g, primary));
+    assert.equal(g.cycleHeroTarget()?.id, primary.id);
+    assert.equal(g.cycleHeroTarget()?.id, nearby.id);
+    assert.equal(g.cycleHeroTarget()?.id, primary.id);
+    assert(hit(g, primary));
+    assert.equal(events.filter((e) => e.type === 'strategistDaggerLanded').at(-1).step, 1);
+    assert.equal(g.s.strategistAcidBottles, 1, 'switching away prevents unintended Acid spend');
+  }
+  {
+    // A direct manual hold on another live foe is a target change too.
+    const {g, primary, nearby, events} = make(1);
+    assert(hit(g, primary));
+    assert(hit(g, primary));
+    assert.equal(g.holdHeroTarget(() => true, nearby.id)?.id, nearby.id);
+    assert(hit(g, primary));
+    assert.equal(events.filter((e) => e.type === 'strategistDaggerLanded').at(-1).step, 1);
+    assert.equal(g.s.strategistAcidBottles, 1);
+  }
+  {
     const {g, primary, events} = make(1);
     assert(hit(g, primary));
     assert(hit(g, primary));
