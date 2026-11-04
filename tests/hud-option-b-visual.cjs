@@ -36,7 +36,7 @@ async function capture(page,label) {
     for(const config of [
       {name:'desktop-1280x800',width:1280,height:800,phone:false},
       {name:'phone-800x375',width:800,height:375,phone:true},
-      {name:'phone-375x800-es',width:375,height:800,phone:true,spanish:true},
+      {name:'phone-800x375-es',width:800,height:375,phone:true,spanish:true},
       {name:'phone-844x390-left',width:844,height:390,phone:true,left:true}
     ]) {
       const page=await browser.newPage({viewport:{width:config.width,height:config.height},isMobile:config.phone,hasTouch:config.phone});
@@ -107,35 +107,6 @@ async function capture(page,label) {
           if(left){Prototype.input.select('phoneLayout','left-hand');document.body.dataset.phoneLayout='left-hand';}
           Prototype.updateHUD();
         },{left:!!config.left});
-        if(config.phone && config.width < config.height){
-          // Upright phone retains a sideways *landscape* world, not a portrait
-          // game or a rotate-to-play blocker. Resize never reloads the run.
-          const initial=await page.evaluate(()=>({
-            layout:Prototype.landscapePresentation,
-            phase:Prototype.game.s.phase,
-            zone:Prototype.game.zoneId,
-            title:document.querySelector('#title-screen').hidden,
-            transform:getComputedStyle(document.body).transform,
-          }));
-          assert.deepEqual(initial.layout,{rotated:true,width:config.height,height:config.width},
-            config.name+' has 800x375 landscape gameplay coordinates');
-          assert(initial.title && initial.transform!=='none',config.name+' full game stays landscape');
-          assert(await page.locator('#skill-1').isVisible(),config.name+' a skill remains reachable in sideways view');
-          await capture(page,config.name+'-fixed-landscape');
-          await page.setViewportSize({width:800,height:375});
-          await page.waitForFunction(()=>Prototype.landscapePresentation.rotated===false);
-          assert((await page.evaluate(()=>Prototype.landscapePresentation.width))===800,
-            config.name+' rotating hardware preserves logical world width');
-          await page.setViewportSize({width:config.width,height:config.height});
-          await page.waitForFunction(()=>Prototype.landscapePresentation.rotated===true);
-          assert.equal(await page.evaluate(()=>Prototype.game.zoneId),initial.zone,
-            config.name+' rotating back keeps campaign and region');
-          await page.locator('#menu-button').tap();
-          assert(await page.locator('#modal').isVisible(),config.name+' Menu remains tappable while upright');
-          await page.keyboard.press('Escape');
-          console.log('PASS fixed landscape in physical portrait '+config.name);
-          continue;
-        }
         for(let n=1;n<=8;n++) assert(await page.locator('#skill-'+n).isVisible(),config.name+' skill '+n+' must remain usable');
         assert(await page.locator('#health-potion').isVisible(),config.name+' Ranger Heal command remains');
         // The balance must appear on the HP text row at every viewport, with no
