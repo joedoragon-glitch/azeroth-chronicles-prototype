@@ -89,7 +89,8 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass))
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass) ||
+          (heroClass === 'strategist' && (mode !== 'developer' || !!options.succession)))
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -3955,6 +3956,8 @@
       return overflow;
     }
     successor(heroClass) {
+      // The Stage 1A preview is never an heir, even if its class becomes globally registered.
+      if (heroClass === 'strategist') return false;
       if (
         !this.s.challenge.succession ||
         !this.s.challenge.pending ||
