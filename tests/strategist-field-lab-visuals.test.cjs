@@ -32,8 +32,8 @@ test('windmill rotor changes on game simulation clock only',()=>{
   assert.equal(lab.rotorPhase,undefined,'renderer may not modify saved state');
 });
 test('unfinished Labs or non-Labs never render powered rotors',()=>{
-  const c=ctx();
+  const c=ctx(), baseline=c.calls.length;
   assert.equal(visual.rotor(c,{kind:'strategist-field-lab',zoneId:'march',progress:1,windmill:true},'march',10),false);
   assert.equal(visual.body(c,{kind:'barracks',zoneId:'march',progress:4},'march'),false);
-  assert.equal(c.calls.length,0);
+  assert.equal(c.calls.length,baseline,'rejected visuals issue no paint operations');
 });
