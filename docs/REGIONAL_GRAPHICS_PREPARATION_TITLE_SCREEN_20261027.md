@@ -28,10 +28,16 @@ defaults, cache and save behaviour are left intact.
 
 Follow-up on PR #818 is now limited to retaining existing Pixi vs Canvas
 timings within exceptional callback reports, avoiding new per-stage clocks on
-ordinary play. That is **diagnostic-only** and still requires its own focused
-validation. Original iPhone root-cause identification and a safe measurable
-remedy remain **open** in issue #783. Nothing from this draft is merged,
-published or device-verified.
+ordinary play. That is **diagnostic-only**, with eight impacted focused tests,
+documentation checks and reproducible build **PASS** in
+[run #41996910783](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996910783),
+and the focused browser offline-update check **PASS** in
+[run #41996910764](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996910764).
+An independent stale platform/save-test assertion was reconciled to the
+already-existing native Greenwood migration, without changing v4 saves.
+Original iPhone root-cause identification and a safe measurable speedup remain
+**open** in issue #783. Nothing from this draft is merged, published or
+device-verified.
 
 ## 30 October 2026 — incremental browser updates and offline cache audit
 
