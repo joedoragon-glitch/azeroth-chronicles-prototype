@@ -4348,8 +4348,8 @@
               openMenu(
                 say('Credits and contact', 'Créditos y contacto'),
                 say(
-                  'Created by Joel (Nomura). Contact the creator at joedoragon@gmail.com or through the Nomura profile on Foros Cuba.',
-                  'Creado por Joel (Nomura). Contacta al creador en joedoragon@gmail.com o mediante el perfil de Nomura en Foros Cuba.',
+                  'Created by Joel (Nomura). Email joedoragon@gmail.com or visit https://fcuba.net/members/282-nomura on Foros Cuba.',
+                  'Creado por Joel (Nomura). Escribe a joedoragon@gmail.com o visita https://fcuba.net/members/282-nomura en Foros Cuba.',
                 ),
                 [
                   link(
