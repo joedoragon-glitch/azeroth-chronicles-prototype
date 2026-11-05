@@ -9250,6 +9250,77 @@
         );
       return true;
     }
+    // The Forest Crypt is being absorbed into an unfinished winter residence.
+    // One bounded static facade: original stone heart, occupied timber additions,
+    // and visible roof framing. No new collision, gameplay state or animation.
+    function winterEstateGateway() {
+      fillOval(0, 17, 103, 14, '#2b4034', 0.22);
+      // A broad, finished-to-the-door forecourt connects the old burial entry
+      // to the newer household wings and the existing freight road.
+      poly([[-97, 14], [95, 14], [108, 23], [-107, 23]], '#948f79');
+      for (const y of [17, 21])
+        line([[-87, y], [89, y]], '#b4ae91', 1);
+      // The left wing is already weather-tight: re-used cool stone at the
+      // footing, fresh cladding and a properly glazed residential window.
+      blockwork(-97, -42, 56, 58, '#92988a', 9);
+      boards(-91, -37, 43, 48, '#8c7556', true);
+      timber([-91, -41], [-91, 13], 3);
+      timber([-47, -42], [-47, 13], 3);
+      // The old crypt remains recognizable in the middle, not as the
+      // silhouette of the whole structure.
+      blockwork(-43, -66, 86, 83, '#8a9486', 8);
+      for (const x of [-37, 37])
+        line([[x, -59], [x, 13]], '#c1bea4', 2);
+      // New residential wing: one cladded bay, with its outer roof and
+      // carpenter's framing intentionally unfinished.
+      blockwork(43, -45, 50, 62, '#8e9584', 9);
+      boards(47, -38, 43, 54, '#967955', true);
+      poly([[93, -44], [107, -54], [107, 8], [93, 17]], '#686e60');
+      for (const x of [-70, 68]) {
+        softRect(x - 11, -33, 22, 27, '#594d3d', 2);
+        softRect(x - 8, -30, 16, 21, '#d1b781', 1);
+        line([[x, -30], [x, -9]], '#765b43', 1.5);
+        line([[x - 8, -20], [x + 8, -20]], '#765b43', 1.5);
+        // House shutters, not bars or funerary tracery.
+        timber([x - 12, -30], [x - 12, -7], 2, '#a18b63');
+        timber([x + 12, -30], [x + 12, -7], 2, '#a18b63');
+      }
+      recessedDoor(0, -38, 39, 52, true);
+      // Keep the original crypt arch as an inset historical feature.
+      shaped('#a4a996', () => {
+        ctx.moveTo(-27, -39);
+        ctx.quadraticCurveTo(-28, -73, 0, -78);
+        ctx.quadraticCurveTo(28, -73, 27, -39);
+        ctx.lineTo(19, -39);
+        ctx.quadraticCurveTo(20, -63, 0, -66);
+        ctx.quadraticCurveTo(-20, -63, -19, -39);
+      });
+      // Opening remains dark and accessible after the old stone surround.
+      softRect(-19, -38, 38, 50, '#263a32', 0.8);
+      for (const x of [-23, -11, 0, 11, 23])
+        line([[x, -67 + Math.abs(x) * 0.35], [x * 0.82, -55 + Math.abs(x) * 0.32]], '#65766b', 0.8);
+      skull(0, -68, 3.2); // subdued retained keystone; no new burial symbolism
+      poly([[-28, 14], [28, 14], [38, 21], [-38, 21]], '#c0b69b');
+      line([[-34, 22], [35, 22]], '#797d6b', 2);
+      // New rooflines are visibly larger than the former tomb portal.
+      poly([[-101, -42], [-80, -68], [-48, -66], [-41, -42]], '#6f715f');
+      line([[-98, -42], [-80, -66], [-48, -65]], '#b3a487', 1.4);
+      poly([[-50, -65], [-27, -99], [12, -105], [51, -65], [49, -59], [-50, -59]], '#687064');
+      line([[-45, -64], [-26, -95], [12, -102], [47, -65]], '#b8b09a', 1.4);
+      for (const y of [-74, -82, -90])
+        line([[-23 + (Math.abs(y + 80) * 0.12), y], [19 - (Math.abs(y + 80) * 0.18), y - 1]], '#838778', 0.85);
+      poly([[44, -47], [64, -79], [92, -60], [95, -47]], '#786b56');
+      timber([46, -49], [64, -78], 3, '#a78c66');
+      timber([64, -78], [96, -52], 3, '#a78c66');
+      timber([54, -54], [54, 17], 3, '#ad936d');
+      timber([93, -51], [93, 18], 3, '#ad936d');
+      timber([54, -52], [94, -52], 3, '#ad936d');
+      timber([72, -68], [72, -52], 2, '#c6aa7d');
+      // A small maintained sill and a partly prepared wing tell the story
+      // without covering the approach with unrelated stacks of loot.
+      poly([[49, 13], [94, 13], [99, 19], [45, 19]], '#a7a38d');
+      line([[47, -3], [89, -3]], '#b9a07c', 1);
+    }
     function carvedGateway(family) {
       const side = R.sideDungeons?.find((d) => d.id === family),
         theme = side?.theme;
@@ -9258,6 +9329,12 @@
         mine = family === 'mine',
         military = family === 'abyss' || family === 'citadel';
       if (!side && !crypt && !archive && !mine && !military) return false;
+      if (crypt) {
+        // Interior exits stay ordinary doors; do not duplicate the estate indoors.
+        if (e.kind === 'exit') return false;
+        winterEstateGateway();
+        return true;
+      }
       if (family === 'abyss') {
         for (const side of [-1, 1]) {
           shaped('#5b4a50', () => {
@@ -9416,27 +9493,6 @@
           blockwork(-37, -43, 74, 8, '#a4b4a1', 8);
         }
         recessedDoor(0, -24, military ? 40 : 34, 38, true, dark ? 4 : 0);
-        if (crypt) {
-          shaped(stone, () => {
-            ctx.moveTo(-25, -23);
-            ctx.quadraticCurveTo(-27, -52, 0, -52);
-            ctx.quadraticCurveTo(28, -51, 26, -23);
-            ctx.lineTo(18, -23);
-            ctx.quadraticCurveTo(18, -40, 0, -41);
-            ctx.quadraticCurveTo(-18, -40, -18, -23);
-          });
-          for (const x of [-19, -10, 0, 10, 19])
-            line(
-              [
-                [x, -44 + Math.abs(x) * 0.25],
-                [x * 0.8, -34 + Math.abs(x) * 0.25],
-              ],
-              '#687e6c',
-              0.9,
-            );
-          skull(0, -39, 5);
-          foliage(-27, 11, 8, 6, '#738866');
-        }
         if (family === 'citadel')
           poly(
             [
@@ -9584,63 +9640,69 @@
         softPoly(
           [
             [-46, -48],
-            [-13, -81],
+            [-12, -76],
             [22, -34],
           ],
           '#9c7c56',
         );
+        // Two roof slopes use one front ridge and the same building-depth
+        // vector. Reusing their exact corners prevents a twisted roof seam.
+        const roofFrontLeft = [-53, -53],
+          roofFrontRidge = [-12, -82],
+          roofFrontRight = [29, -39],
+          roofRearLeft = [-13, -67],
+          roofRearRidge = [28, -96],
+          roofRearRight = [69, -53];
         softPoly(
-          [
-            [-54, -51],
-            [-13, -91],
-            [33, -106],
-            [-6, -67],
-          ],
+          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
           '#97714d',
         );
         softPoly(
-          [
-            [-13, -91],
-            [29, -36],
-            [73, -51],
-            [33, -106],
-          ],
+          [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
           '#604735',
         );
+        // A continuous front fascia closes both pitched planes onto the
+        // existing gable/wall. Keep the high grain hatch below the roof.
+        softPoly(
+          [roofFrontLeft, roofFrontRidge, [-12, -76], [-53, -47]],
+          '#4e3e30',
+        );
+        softPoly(
+          [roofFrontRidge, roofFrontRight, [29, -33], [-12, -76]],
+          '#493a2c',
+        );
         line(
-          [
-            [-54, -51],
-            [-13, -91],
-            [33, -106],
-            [73, -51],
-            [29, -36],
-          ],
+          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearRight, roofFrontRight],
           '#b5986e',
           3,
         );
-        softPoly(
-          [
-            [29, -36],
-            [73, -51],
-            [62, -48],
-            [22, -34],
-          ],
-          '#493c30',
-        );
+        line([roofFrontLeft, roofRearLeft], '#a78a66', 2);
         for (let j = 1; j < 5; j++) {
           const t = j / 5;
           line(
             [
-              [-53 + 40 * t, -51 - 40 * t],
-              [-6 + 39 * t, -67 - 39 * t],
+              [
+                roofFrontLeft[0] + (roofFrontRidge[0] - roofFrontLeft[0]) * t,
+                roofFrontLeft[1] + (roofFrontRidge[1] - roofFrontLeft[1]) * t,
+              ],
+              [
+                roofRearLeft[0] + (roofRearRidge[0] - roofRearLeft[0]) * t,
+                roofRearLeft[1] + (roofRearRidge[1] - roofRearLeft[1]) * t,
+              ],
             ],
             '#b19369',
             1,
           );
           line(
             [
-              [-13 + 42 * t, -91 + 55 * t],
-              [33 + 40 * t, -106 + 55 * t],
+              [
+                roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
+                roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t,
+              ],
+              [
+                roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
+                roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
+              ],
             ],
             '#8b6d4d',
             1,
@@ -9669,18 +9731,32 @@
             2,
           );
         mountedSconce(-35,-18,'workshop');
-        // Existing wooden receiving apron, ledgers and weighed/sorted goods.
+        // A shallow former loading apron with one clear doorway lane,
+        // flanked by secure goods and a modest records station.
         softPoly(
           [
-            [-40, 9],
-            [14, 21],
-            [43, 11],
-            [-12, -1],
+            [-49, 7],
+            [15, 21],
+            [46, 10],
+            [-18, -5],
           ],
-          '#8d7552',
+          '#82745a',
         );
-        craftAt(39, 8, 0.42, () => craftedDecoration('crate'));
-        craftAt(-36, 8, 0.38, () => craftedDecoration('scribe-desk'));
+        softPoly(
+          [
+            [-19, 8],
+            [8, 14],
+            [24, 7],
+            [-3, 0],
+          ],
+          '#b09970',
+        );
+        for (const x of [-10, 0, 10])
+          line([[x, 4], [x + 4, 12]], '#80694c', 1.2);
+        // The loose courtyard ledger and barrel now stand together outside;
+        // these small near-wall details keep the frontage from being empty.
+        craftAt(40, 7, 0.36, () => craftedDecoration('crate'));
+        craftAt(-38, 8, 0.31, () => craftedDecoration('scribe-desk'));
         return true;
       }
       const key =

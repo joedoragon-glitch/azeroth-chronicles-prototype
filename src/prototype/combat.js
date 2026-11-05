@@ -770,7 +770,8 @@
         // spawn. Allow damage near the retreat corridor/anchor; otherwise a
         // regrouper beyond its original home leash would become invulnerable.
         const inCombatArea = this.tacticalRogueLeashAllows(e, origin, normalDamageTerritory);
-        if (!this.line(origin, e) || !inCombatArea) return false;
+        if (!(options?.rangedImpact ? this.rangedLine(origin, e) : this.line(origin, e)) ||
+            !inCombatArea) return false;
         if (this.awaitsHeroAttack(e)) {
           if (source !== 'hero') {
             this.openingCompanionHit(e);
@@ -1109,13 +1110,13 @@
             p.y += p.dy * p.speed * elapsed;
             let terrainContact = null,
               terrainFraction = Infinity;
-            if (!(fort ? this.fortShotClear(before, p, fort) : this.clearSegment(before, p, 0))) {
+            if (!(fort ? this.fortShotClear(before, p, fort) : this.rangedSegment(before, p))) {
               // Report the actual first obstruction, rather than the previous frame's origin.
               const steps = Math.max(1, Math.ceil(dist(before, p) / 4));
               const blocked = (point) =>
                 fort
                   ? this.fortShotBlocked(point, fort)
-                  : this.blocked(point.x, point.y, this.zoneId, 0);
+                  : this.blocked(point.x, point.y, this.zoneId, 0, false, null, true);
               const pointAt = (t) => ({
                 x: before.x + (p.x - before.x) * t,
                 y: before.y + (p.y - before.y) * t,
@@ -1215,7 +1216,7 @@
                 y: p.y,
               });
             }
-            if (p.life <= 0 || (!fort && !this.line(before, p)) || this.peace)
+            if (p.life <= 0 || (!fort && !this.rangedLine(before, p)) || this.peace)
               this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             if (this.hero !== hero || this.s.challenge.pending || this.s.challenge.gameOver) return;
             continue;
@@ -1347,7 +1348,7 @@
               if (points.length > 64) points.splice(1, points.length - 64);
             }
           }
-          if (!this.clearSegment(before, p, 0)) {
+          if (!this.rangedSegment(before, p)) {
             if (p.source === 'hero')
               this.event('projectileImpact', {
                 actor: 'hero',
@@ -1410,6 +1411,7 @@
                     p.encountersAtStart || p.area || p.piercing || p.automaticBasic ||
                     skillShape || p.criticalExecution
                       ? {
+                          rangedImpact: true,
                           ...(p.encountersAtStart
                             ? { encountersAtStart: p.encountersAtStart }
                             : {}),
@@ -1420,7 +1422,7 @@
                           ...(p.criticalExecution
                             ? { criticalExecution: p.criticalExecution } : {}),
                         }
-                      : null,
+                      : { rangedImpact: true },
                   );
             if (this.s.mode === 'developer')
               this._developerCompanionProjectileInFlight = null;

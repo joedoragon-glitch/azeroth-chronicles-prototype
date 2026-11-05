@@ -1858,7 +1858,8 @@
               !this.attackResetProtected(e) &&
               this.tacticalDirectTargetable(e) &&
               dist(e, this.hero) <= range &&
-              this.line(this.hero, e),
+              (!isCharged && slot === 1
+                ? this.rangedLine(this.hero, e) : this.line(this.hero, e)),
           ),
           preferredTargetId =
             targetId ??

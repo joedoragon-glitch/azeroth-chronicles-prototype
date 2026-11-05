@@ -318,6 +318,7 @@
         const cfg = R.greenwoodLayout;
         if (cfg?.version === 2) {
           this.greenwoodRedesignFinish(z);
+          this.greenwoodEstateFacadeScene(z);
           return this.greenwoodRoadBridgeFinish(z);
         }
         const sceneVersion = cfg?.sceneVersion || cfg?.version;

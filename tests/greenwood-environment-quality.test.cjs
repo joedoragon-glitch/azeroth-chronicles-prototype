@@ -19,6 +19,21 @@ const shape = (zone) =>
     .filter((p) => p.greenwoodGoblinShelter || p.greenwoodWall || p.id.includes('thorn-homestead'))
     .map((p) => JSON.parse(JSON.stringify(p)));
 const original = shape(z);
+const yardIds = ['stronghold-treasury-yard-prop-2', 'stronghold-treasury-yard-prop-3'];
+const yardBefore = yardIds.map((id) => {
+  const p = z.props.find((x) => x.id === id);
+  return [p.id, p.x, p.y];
+});
+assert.equal(z.greenwoodTreasuryYardLayoutVersion, 1, 'Treasury work yard migration is one-time');
+assert.equal(z.greenwoodEstateFacadeVersion, 1, 'independent Forest Crypt work preserved');
+const estateEntry = z.npcs.find((n) => n.id === 'entrance' && n.family === 'crypt');
+assert.deepEqual([estateEntry?.x, estateEntry?.y], [2830, 2940],
+  'Forest Crypt remains at its newly authorized exterior site');
+for (const id of yardIds)
+  assert.equal(z.props.filter((p) => p.id === id).length, 1,
+    'Scornfang original yard object remains a singleton: ' + id);
+const restBay = z.props.find((p) => p.greenwoodFacility === 'thorn-rest-bay');
+assert(restBay?.roadBlocker && restBay?.r > 0, 'actual secondary shelter footprint preserved');
 for (let i = 0; i < 2; i++) {
   const restored = C.restore(g.snapshot(), rng(0x47564103));
   assert.deepEqual(
@@ -26,6 +41,17 @@ for (let i = 0; i < 2; i++) {
     original,
     'restore must not repeatedly enlarge walls or duplicate shelters/standard',
   );
+  assert.deepEqual(
+    yardIds.map((id) => {
+      const p = restored.zone().props.find((x) => x.id === id);
+      return [p.id, p.x, p.y];
+    }),
+    yardBefore,
+    'safe Treasury yard grouping must survive repeat v4 restore',
+  );
+  assert.equal(restored.zone().greenwoodTreasuryYardLayoutVersion, 1);
+  assert.equal(restored.zone().greenwoodEstateFacadeVersion, 1,
+    'parallel estate save marker survives combined old-v4 restore');
 }
 // Exact perpendicular protection boundary, not only widely separated probes.
 const defender = z.enemies.find((e) => e.stronghold === 'skeleton-watch');
@@ -79,6 +105,50 @@ fs.writeFileSync(
   'test-artifacts/greenwood-environment/native-compounds.png',
   canvas.toBuffer('image/png'),
 );
+
+// Stage 2–4 source safeguards supplement the original native render and save
+// smoke checks. No new world interaction or unreviewed sprite identity.
+const landscapeSource = fs.readFileSync('src/prototype/greenwood-landscape.js', 'utf8');
+const rendererSource = fs.readFileSync('src/prototype/renderer.js', 'utf8');
+assert(landscapeSource.includes("const restRoof = ["), 'single-pitch resting shelter defined');
+assert(landscapeSource.includes("z.greenwoodTreasuryYardLayoutVersion = 1"),
+  'old v4 worlds can group the existing nonowned desk and barrel once');
+assert(rendererSource.includes('e.greenwoodWall || flatGround || selfGrounded'),
+  'native Canvas/Pixi common shadow contract suppresses duplicate farmyard ovals');
+// Structural roof regression: test the projected geometry, not a screenshot
+// baseline. Both planes must use the same ridge and parallel depth offset.
+for (const path of [
+  'src/prototype/visuals.js',
+  'src/prototype/greenwood-landscape.js',
+]) {
+  const source = fs.readFileSync(path, 'utf8');
+  const point = (name) => {
+    const match = source.match(
+      new RegExp('(?:const|,)\\s*' + name + '\\s*=\\s*\\[(-?\\d+),\\s*(-?\\d+)\\]'),
+    );
+    assert(match, 'roof vertex exists: ' + path + ' / ' + name);
+    return [Number(match[1]), Number(match[2])];
+  };
+  const frontLeft = point('roofFrontLeft'),
+    frontRidge = point('roofFrontRidge'),
+    frontRight = point('roofFrontRight'),
+    rearLeft = point('roofRearLeft'),
+    rearRidge = point('roofRearRidge'),
+    rearRight = point('roofRearRight');
+  const delta = (a, b) => [b[0] - a[0], b[1] - a[1]];
+  assert.deepEqual(delta(frontLeft, rearLeft), delta(frontRidge, rearRidge),
+    path + ': left eave and ridge follow the same roof-depth axis');
+  assert.deepEqual(delta(frontRight, rearRight), delta(frontRidge, rearRidge),
+    path + ': right eave and ridge follow the same roof-depth axis');
+  assert(frontRidge[0] > frontLeft[0] && frontRidge[0] < frontRight[0],
+    path + ': ridge sits between the gable eaves');
+  assert(frontRidge[1] < frontLeft[1] && frontRidge[1] < frontRight[1],
+    path + ': roof slopes descend away from the ridge');
+  assert(source.includes('[roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft]'),
+    path + ': near slope uses the exact shared ridge');
+  assert(source.includes('[roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge]'),
+    path + ': far slope uses the exact shared ridge');
+}
 console.log(
-  'PASS native compounds, Crown standard, resized shelters, fixture anchor and repeat v4 restore',
+  'PASS native compounds, roof topology, Crown standard, fixture anchor and repeat v4 restore',
 );
