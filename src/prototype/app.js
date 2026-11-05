@@ -6403,8 +6403,8 @@
         8: 'Hunters Salvo / Grand Hunt',
       },
       strategist: {
-        1: language === 'es' ? 'Corte de lavado / Línea de desagüe' : 'Rinsing Cut / Sluice Line',
-        2: language === 'es' ? 'Faceta de piedra / Faceta móvil' : 'Stone Facet / Running Facet',
+        1: language === 'es' ? 'Corte de lavado / Corriente limpia' : 'Rinsing Cut / Clear Current',
+        2: language === 'es' ? 'Faceta de piedra / Faceta ranurada' : 'Stone Facet / Notched Facet',
         3: language === 'es' ? 'Templado rápido / Intercambio de horno' : 'Flash Temper / Furnace Exchange',
       },
       rogue: {

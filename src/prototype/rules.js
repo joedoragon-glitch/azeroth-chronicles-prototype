@@ -6671,21 +6671,18 @@
   // Provisional source-true Stage 1A tuning; these are NOT released skills.
   const strategistStarterSkills = Object.freeze({
     1: Object.freeze({ material: 'water', sourceRange: 160, range: 90,
-      normalCooldown: 6, chargedCooldown: 10, normalPower: 0.8,
-      chargedPower: 0.65, traceSeconds: 4, traceLength: 75,
-      sweepLength: 36, sweepHalfWidth: 14 }),
+      normalCooldown: 6, chargedCooldown: 10, normalPower: 0.8, chargedPower: 0 }),
     2: Object.freeze({ material: 'mineral', sourceRange: 155, range: 90,
       normalCooldown: 8, chargedCooldown: 13 }),
     3: Object.freeze({ material: 'fire', sourceRange: 150, range: 90,
       normalCooldown: 7, chargedCooldown: 12, normalPower: 1.05,
-      chargedPower: 0.8, seamSeconds: 3, seamPower: 0.35,
-      reactionHalfWidth: 18, reactionReach: 105 }),
+      chargedPower: 0.8, halfAngle: 0.6, maxTargets: 2 }),
   });
-  // One actual swept projectile, either side and either allegiance, per
-  // anchored 4s face or moving 0.9s face; no charged aperture/ricochet.
+  // One facing, fixed-location, one-shot physical plate. The notch has two
+  // real lip segments; its center is geometrically open to small projectiles.
   const strategistFacet = Object.freeze({
-    offset: 35, halfWidth: 44, mobileHalfWidth: 25,
-    projectileRadius: 3, seconds: 4, mobileSeconds: 0.9,
+    offset: 35, halfWidth: 44, notchHalfWidth: 13,
+    projectileRadius: 3, seconds: 4,
   });
   const strategistBasicFoundation = Object.freeze({
     range: 90,

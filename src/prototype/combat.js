@@ -1139,79 +1139,62 @@
           nx = heading.x / norm, ny = heading.y / norm,
           point = { x: this.hero.x + nx * cfg.offset,
             y: this.hero.y + ny * cfg.offset };
+        // The worked plate cannot be placed behind a wall or in solid terrain.
         if (!this.clearSegment(this.hero, point, 0) ||
             this.blocked(point.x, point.y, this.zoneId, 0)) return false;
         strategistFaces.set(this, {
-          x: point.x, y: point.y, fromX: point.x, fromY: point.y,
-          nx, ny, tx: -ny, ty: nx, offset: cfg.offset,
-          half: charged ? cfg.mobileHalfWidth : cfg.halfWidth,
-          radius: cfg.projectileRadius, mobile: !!charged, notch: 0,
-          zone: this.zoneId, owner: this.hero,
-          deaths: this.s.statistics.deaths,
-          until: this.s.time + (charged ? cfg.mobileSeconds : cfg.seconds),
+          x: point.x, y: point.y, nx, ny, tx: -ny, ty: nx,
+          half: cfg.halfWidth, notch: charged ? cfg.notchHalfWidth : 0,
+          radius: cfg.projectileRadius, zone: this.zoneId,
+          owner: this.hero, deaths: this.s.statistics.deaths,
+          until: this.s.time + cfg.seconds,
         });
         this.event('strategistFacetPlaced', {
           actor: 'hero', charged: !!charged, x: point.x, y: point.y,
-          nx, ny, length: (charged ? cfg.mobileHalfWidth : cfg.halfWidth) * 2,
-          opening: 0, moving: !!charged,
+          nx, ny, length: cfg.halfWidth * 2,
+          opening: charged ? cfg.notchHalfWidth * 2 : 0,
         });
         return true;
-      }
-      strategistFacetSnapshot() {
-        const face = strategistFaces.get(this);
-        if (!face) return null;
-        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist' ||
-            this.hero !== face.owner || this.hero.hp <= 0 || this.peace ||
-            this.zoneId !== face.zone ||
-            this.s.statistics.deaths !== face.deaths ||
-            this.s.time >= face.until) {
-          strategistFaces.delete(this);
-          return null;
-        }
-        if (face.mobile) return { ...face,
-          x: this.hero.x + face.nx * face.offset,
-          y: this.hero.y + face.ny * face.offset };
-        return face;
       }
       clearStrategistFacet() {
         strategistFaces.delete(this);
       }
-      strategistMoveFacetWithProjectiles() {
-        const face = strategistFaces.get(this);
-        if (!face?.mobile) return; // All existing classes: constant-time no-op.
-        face.fromX = face.x;
-        face.fromY = face.y;
-        face.x = this.hero.x + face.nx * face.offset;
-        face.y = this.hero.y + face.ny * face.offset;
-      }
       strategistInterceptPhysicalProjectile(p, from, to, maxFraction = 1) {
         const face = strategistFaces.get(this);
-        if (!face) return false; // No world scan, per-render frame or new AI.
-        if (!this.strategistFacetSnapshot()) return false;
-        // Actual native Arrow, stone, axe, spear and cargo bodies only.
+        if (!face) return false;
+        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist' ||
+            this.hero !== face.owner || this.hero.hp <= 0 ||
+            this.peace || this.zoneId !== face.zone ||
+            this.s.statistics.deaths !== face.deaths ||
+            this.s.time >= face.until) {
+          strategistFaces.delete(this);
+          return false;
+        }
+        // Native enemy stones/arrows and actual Archer/Ranger physical shafts.
+        // Never consume this face for beams, magic, hazards or warnings.
         const archerShot = this.s.party.some((u) =>
           u.id === p.source && u.type === 'archer' &&
           (p.style == null || p.style === 'arrow'));
+        // A real arrow does not become magical or intangible merely because
+        // the Archer fell/retreated after its original physical release.
         const nativePhysical = ['arrow', 'stone', 'axe', 'spear', 'cargo'].includes(p.style);
         if (!nativePhysical && !archerShot) return false;
-        // In moving mode subtract the Ogre-face displacement from the shot's
-        // physical sweep. Relative motion, NOT a destination-only shield.
-        const sweptFrom = face.mobile ? {
-          x: from.x + face.x - face.fromX,
-          y: from.y + face.y - face.fromY,
-        } : from;
-        const hit = facetLipEntry(sweptFrom, to, face, -face.half,
-          face.half, face.radius);
+        const width = face.half, gap = face.notch, r = face.radius,
+          hit = gap ? Math.min(
+            facetLipEntry(from, to, face, -width, -gap, r),
+            facetLipEntry(from, to, face, gap, width, r),
+          ) : facetLipEntry(from, to, face, -width, width, r);
         if (!(hit >= 0 && hit <= 1 && hit < maxFraction)) return false;
         const at = { x: from.x + (to.x - from.x) * hit,
           y: from.y + (to.y - from.y) * hit };
+        // Terrain takes precedence when the face lies behind a wall.
         if (!this.clearSegment(from, at, 0)) return false;
         strategistFaces.delete(this);
         const index = this.s.projectiles.indexOf(p);
         if (index >= 0) this.s.projectiles.splice(index, 1);
         this.event('strategistFacetIntercepted', {
           actor: 'hero', projectileId: p.id, source: p.source,
-          x: at.x, y: at.y, charged: face.mobile,
+          x: at.x, y: at.y, charged: gap > 0,
         });
         return true;
       }
@@ -1219,9 +1202,6 @@
         const hero = this.hero,
           zone = this.zoneId,
           deaths = this.s.statistics.deaths;
-        // Capture this one tick's real Ogre displacement once, shared by
-        // every projectile. No per-frame spatial scan or extra face allocation.
-        this.strategistMoveFacetWithProjectiles();
         // Live target references can be reused across missed hostile shots.
         // Any hit, impact callback or friendly shot invalidates the roster.
         let hostileTargets = null;
