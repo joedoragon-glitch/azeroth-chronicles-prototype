@@ -399,10 +399,15 @@
         else return; // Preserve an unknown hand-placed or future location.
         // The authoritative road/camera route and the separately serialized
         // movement arrays may not share object identity after a v4 restore.
+        // The real depot apron starts on the old road at (2500,2660).
+        // Moving the entrance must preserve this *physical* junction.
+        const depotJunction = {x: 2500 * cfg.scale, y: 2660 * cfg.scale};
         const reanchor = (path) => {
-          if (Array.isArray(path) && path.length > 1 &&
-              distance(path.at(-1), previous) < 2)
-            Object.assign(path.at(-1), next);
+          if (!Array.isArray(path) || path.length < 2 ||
+              distance(path.at(-1), previous) >= 2) return;
+          if (distance(path.at(-2), depotJunction) > 1)
+            path.splice(path.length - 1, 0, {...depotJunction});
+          Object.assign(path.at(-1), next);
         };
         for (const r of z.greenwoodRoutes || [])
           if (r.kind === 'farm') reanchor(r.points);
@@ -1279,7 +1284,7 @@
             ],
             [
               'farm',
-              [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], plan.crypt],
+              [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], [2500, 2660], plan.crypt],
             ],
             [
               'path',
