@@ -88,6 +88,14 @@ jobs:
           path: test-artifacts/environment-708/
           if-no-files-found: ignore
           retention-days: 14
+      - name: Preserve Greenwood mill and river native design review
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: greenwood-mill-river-native-views
+          path: test-artifacts/greenwood-mill-river/
+          if-no-files-found: ignore
+          retention-days: 30
       - name: Preserve Greenwood #809 aligned night-design previews
         if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4

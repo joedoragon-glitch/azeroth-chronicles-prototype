@@ -1,5 +1,7 @@
 # So I Became the Dark Lord's Problem — Greenwood Vale day/night visual design handoff
 
+> **Engineering integration note (5 November 2026):** The original design-only and draft statuses below are historical snapshots. The owner authorized technical merge once ready; newer main already contains published PR #821's accurate Millhaven lamp hardware, preserved by this PR. Earlier focused/PWA checks and the [Pixi paired benchmark](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996085675) passed on the pre-integration head. The new integrated head must have its own checks before merge. Owner will perform artistic acceptance by playing the published game, not by pre-approving screenshots. Unrelated future region reviews require their own palettes and source-grounded evidence.
+
 **Date:** 5 November 2026  
 **Scope:** Game-design authority and engineering acceptance contract. This document began as design-only; **the same PR #809 now also contains a bounded Greenwood presentation-code candidate and focused tests**. No gameplay rules, terrain geometry, audio, save format, merge, or deployment changes are authorized.  
 **Status:** Design analysis complete; **engineering candidate implemented on draft PR #809**. Code changes are not yet visually accepted from native before/after scene captures, merged, published, or device-verified.  
@@ -157,3 +159,6 @@ The desired scene must be substantially the same through Canvas 2D and PixiJS/We
 - This document owns **the Greenwood night/dusk visual-design brief** and its acceptance criteria only.
 
 **Handoff decision:** **Design complete; engineering color-grade candidate present on PR #809; final merge readiness HOLD pending focused checks and real in-game visual comparison**, with creative sign-off dependent on rendered evidence. No reason to block design handoff on separate #357 diagnosis or unrelated unfinished atmosphere systems, but implementation must avoid merge conflicts with #803 and cannot be called visually accepted until tested screenshots are reviewed.
+## Historical reference for the remaining regions
+
+This Greenwood change is the method, not the template palette: for each other region, capture matched day/sunset/night/sunrise in settlement, trail and wilderness, inspect real materials and installed light fixtures, define its own color atmosphere, validate Canvas/Pixi parity and relevant performance/offline behavior, then iterate against the owner's live playtest. The four other regions must not automatically inherit Greenwood's 39/47/67 moonlight, 0.76 sunset multiplier or lantern locations. Status words mean different things: implemented, tested, merged, published and device-verified.

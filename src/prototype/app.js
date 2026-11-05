@@ -3220,6 +3220,33 @@
         description.length <= 340 &&
         actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160));
     $('modal').setAttribute('data-dialog-size', compact ? 'compact' : regular ? 'regular' : 'wide');
+    // Select a layout from the menu's meaning and actual visible content.
+    // This is presentation-only: no actions are reordered, called or saved.
+    const visibleView = $('modal').getAttribute('data-view');
+    const actionable = actions.filter((entry) => entry.kind !== 'section');
+    const formControl = actions.some((entry) =>
+      ['slider', 'select', 'toggle', 'file'].includes(entry.kind),
+    );
+    const readingView =
+      structured ||
+      description.length > 620 ||
+      ['archive-reading', 'title-help-reading', 'title-credits', 'character', 'map'].includes(
+        visibleView,
+      );
+    const choiceGroup =
+      !readingView &&
+      !formControl &&
+      (['npc-service-catalog', 'archive-index', 'archive-shelf'].includes(visibleView) ||
+        (actionable.length >= 4 &&
+          actionable.length <= 12 &&
+          actionable.every(
+            (entry) => entry.label.length <= 85 && (entry.detail || '').length <= 190,
+          )));
+    $('modal').setAttribute(
+      'data-menu-layout',
+      options.layout || (readingView ? 'reading' : formControl ? 'form' : choiceGroup ? 'choices' : 'stack'),
+    );
+    $('modal').setAttribute('data-menu-count', String(actionable.length));
     audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
@@ -5173,6 +5200,11 @@
       return blankPlaytestJournal();
     }
   }
+  // Ephemeral document identity distinguishes title transitions from a new JS document.
+  // A new document is not itself proof of a process crash (reload/update also reboots it).
+  const playtestDocumentId = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+  const playtestNavigationType = String(performance.getEntriesByType?.('navigation')?.[0]?.type || 'unknown').slice(0, 24);
+  const playtestWasDiscarded = document.wasDiscarded === true;
   const playtestJournal = readPlaytestJournal();
   const resumeRendererCapture = playtestJournal.active;
   if (playtestJournal.frame) {
@@ -5192,6 +5224,9 @@
   }
   playtestJournal.events.push({
     kind: 'document-start', at: new Date().toISOString(),
+    documentId: playtestDocumentId,
+    navigationType: playtestNavigationType,
+    wasDiscarded: playtestWasDiscarded,
     resumedProfiling: resumeRendererCapture,
   });
   playtestJournal.events = playtestJournal.events.slice(-48);
@@ -5226,8 +5261,10 @@
   }
   function notePlaytestLifecycle(kind, details = {}) {
     playtestJournal.events.push({
-      kind, at: new Date().toISOString(), playing: started,
-      hidden: !!document.hidden, zone: game?.zoneId || null,
+      kind, at: new Date().toISOString(), documentId: playtestDocumentId,
+      playing: started, hidden: !!document.hidden,
+      visibilityState: String(document.visibilityState || (document.hidden ? 'hidden' : 'visible')).slice(0, 16),
+      zone: game?.zoneId || null,
       ...details,
     });
     if (playtestJournal.events.length > 48) playtestJournal.events.shift();
@@ -5534,6 +5571,9 @@
           frameProfile: frameProfile.report(),
           rendererDiagnostics: rendererRecordingReport(),
           diagnosticContinuity: {
+            documentId: playtestDocumentId,
+            navigationType: playtestNavigationType,
+            wasDiscarded: playtestWasDiscarded,
             events: playtestJournal.events,
             priorRendererSegments: playtestJournal.segments,
             priorFrameProfiles: playtestJournal.frameHistory,
@@ -8259,6 +8299,54 @@
   });
   // Make readouts explicit tap targets so touch adjustment cannot choose a nearby button.
   $('hero-stats').onclick = (e) => e?.stopPropagation?.();
+  // Keep a briefly hidden live game paused and saved without discarding its
+  // scene. A sustained interruption still enters the guarded title/Continue
+  // recovery path. Classify on visibility return: iOS suspends background
+  // timers, so a setTimeout while hidden cannot reliably enforce the gate.
+  const backgroundTitleGraceMs = 2500;
+  let pendingBackgroundReturn = null;
+  function settleBackgroundVisibility(source) {
+    const pending = pendingBackgroundReturn;
+    if (!pending || document.hidden) return;
+    pendingBackgroundReturn = null;
+    if (!started || game !== pending.campaign) return;
+    const hiddenDurationMs = Math.max(
+      0, Date.now() - pending.wallAt, performance.now() - pending.monotonicAt,
+    );
+    // A Home Screen return can report focus without a visibilitychange or
+    // pageshow callback. Keep the GPU guard in sync before making this choice.
+    graphicsController.visibilityChanged(false);
+    const graphics = graphicsController.status();
+    const needsGraphicsGate = !!sceneTransition ||
+      graphics.phase === 'preparing' ||
+      graphics.recoveryPending === true ||
+      (graphics.mode === 'webgl2' && !['confirmed', 'trial'].includes(graphics.phase));
+    const mustUseTitle = hiddenDurationMs >= backgroundTitleGraceMs || needsGraphicsGate;
+    const canResume = pending.saved && writerGuard.canWrite() &&
+      !persistence.conflicted(game.s.mode);
+    notePlaytestLifecycle('background-return-classified', {
+      source, hiddenDurationMs: Math.round(hiddenDurationMs),
+      decision: !canResume ? 'save-or-ownership-pause'
+        : mustUseTitle ? 'guarded-continue' : 'live-resume',
+      graphicsMode: graphics.mode, graphicsPhase: graphics.phase,
+      recoveryPending: graphics.recoveryPending === true,
+    });
+    if (!canResume) {
+      paused = true;
+      status('Saving failed or another session owns this save. Export your run before closing.');
+      return;
+    }
+    if (mustUseTitle) {
+      showTitleScreen(needsGraphicsGate
+        ? 'document-hidden-graphics-recovery' : 'document-hidden-sustained');
+      return;
+    }
+    // Short benign visibility glitches do not close a menu, change a campaign
+    // or reset the opted-in profiler. Preserve an intentional pre-hide pause.
+    paused = pending.wasPaused;
+    audio.setPaused(paused || !focused);
+    if (!paused && focused) restartGuard.arm(game);
+  }
   addEventListener('blur', () => {
     notePlaytestLifecycle('window-blur');
     focused = false;
@@ -8270,6 +8358,7 @@
     notePlaytestLifecycle('window-focus');
     focused = true;
     last = performance.now();
+    settleBackgroundVisibility('focus');
     if (sceneTransition?.committed) {
       const token = sceneTransition.token;
       requestAnimationFrame(() => revealSceneTransition(token));
@@ -8303,16 +8392,16 @@
       if (saved && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
       audio.setPaused(true);
       if (wasPlaying) {
-        if (saved && writerGuard.canWrite()) {
-          // warmScene explicitly skips hidden documents. Continue will perform
-          // the normal sprite/GPU arrival preparation behind the loading UI.
-          // Keep surviving GPU resources intact for a cheap warm return.
-          showTitleScreen('document-hidden');
-        } else {
-          // Match manual Return to Main Menu: do not abandon unsaved progress.
-          paused = true;
+        if (!pendingBackgroundReturn) {
+          pendingBackgroundReturn = {
+            campaign: game, wallAt: Date.now(), monotonicAt: performance.now(),
+            wasPaused: paused, saved: saved && writerGuard.canWrite(),
+          };
+          notePlaytestLifecycle('background-gameplay-suspended', { saved: pendingBackgroundReturn.saved });
+        } else pendingBackgroundReturn.saved &&= saved && writerGuard.canWrite();
+        paused = true;
+        if (!saved || !writerGuard.canWrite())
           status('Saving failed. Export your run before closing.');
-        }
       } else if (titleLoading) {
         // Invalidate an interrupted Continue. No pending promise or graphics
         // upload may silently activate gameplay when the page is reopened.
@@ -8320,6 +8409,7 @@
       }
     } else {
       notePlaytestLifecycle('document-visible');
+      settleBackgroundVisibility('visibilitychange');
       if (sceneTransition?.committed) {
         const token = sceneTransition.token;
         requestAnimationFrame(() => revealSceneTransition(token));
@@ -8328,8 +8418,8 @@
       checkAppUpdate().catch(() => {});
     }
   });
-  addEventListener('pagehide', () => {
-    notePlaytestLifecycle('pagehide');
+  addEventListener('pagehide', (event) => {
+    notePlaytestLifecycle('pagehide', { persisted: event?.persisted === true });
     clearInput();
     if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
     if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
@@ -8349,6 +8439,7 @@
     // visibilitychange. Re-arm recovery eligibility from the actual document
     // state instead of leaving the renderer controller marked backgrounded.
     graphicsController.visibilityChanged(document.hidden);
+    settleBackgroundVisibility('pageshow');
   });
   function updateCriticalNotice() {
     const host = $('message'),

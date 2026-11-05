@@ -179,6 +179,71 @@
   // A larger original-master export is required before an existing registered
   // sprite can use the world-size increase. Low-resolution runtime PNGs must
   // never be stretched to impersonate a high-density replacement.
+  // Lighting must address the actual glass already painted on a fixture.
+  // All coordinates below belong to existing procedural building/prop art;
+  // renderers supply only the projected world point. No save fields or
+  // nighttime-only surrogate windows are needed.
+  // One observation-only source of truth for the visible glass in each fixture.
+  // This describes where an already-painted lamp is, NOT an actor or save flag.
+  // No free-floating light sources are fabricated for unlit service characters.
+  function lightingFixtures(e, point, projectionScale = 1, region = 0) {
+    if (!e || !point || e.interactionOnly) return [];
+    const structure = String(e.structure || '');
+    const kind = String(e.kind || '');
+    let sites = [];
+    let visualScale = 1;
+    // Existing watermill facade houses this lamp; no independent light actor.
+    if (region === 0 && e.greenwoodFacility === 'mill')
+      sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
+    else if (structure === 'roadside-lantern')
+      sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
+    else if (structure === 'grave-lamp')
+      sites = [{ x: 0, y: -22, role: 'grave', radius: 66, alpha: 0.17 }];
+    else if (kind === 'rest') {
+      visualScale = featureScale({ ...e, renderKind: 'npc' });
+      sites = region === 0
+        ? [{ x: -25, y: -12, role: 'refuge', radius: 84, alpha: 0.27 }]
+        // Outside Greenwood, keep the historic dedicated entrance lantern.
+        : [{ x: -27, y: -9.5, role: 'refuge', radius: 76, alpha: 0.23 }];
+    } else if (structure === 'vale-cottage' || structure === 'vale-workshop') {
+      visualScale = featureScale({ ...e, renderKind: 'prop' });
+      if (structure === 'vale-cottage') {
+        // A sleeping village needs darkness between pools of practical light.
+        // The same saved id gets the same unlit/lit presentation every visit.
+        let hash = 2166136261;
+        for (const ch of String(e.id || e.structure))
+          hash = Math.imul(hash ^ ch.charCodeAt(0), 16777619) >>> 0;
+        sites = [{ x: -25, y: -12, role: 'home', radius: 48, alpha: 0.13,
+          lit: hash % 3 === 0 }];
+      } else
+        sites = [{ x: 27, y: -12, role: 'workshop', radius: 55, alpha: 0.16 }];
+    } else if (['quests', 'supplier', 'recruiter'].includes(kind)) {
+      sites = [{ x: 29, y: -20, role: 'stall', radius: 62, alpha: 0.20 }];
+    } else if (kind === 'transport' && !['⛵', '🐫', '🐉'].includes(e.icon)) {
+      // The wagon painter carries this physical lantern at craftAt(-58,3,.4).
+      visualScale = featureScale({ ...e, renderKind: 'npc' });
+      sites = [{ x: -58, y: -3.8, role: 'wagon', radius: 62, alpha: 0.17 }];
+    } else if (kind === 'barracks' && Number(e.progress) >= 4 && e.full === true) {
+      visualScale = featureScale({ ...e, renderKind: 'building' });
+      sites = [{ x: -59, y: -8.6, role: 'camp', radius: 60, alpha: 0.17 }];
+    }
+    if (!sites.length) return [];
+    if (Number.isFinite(e.visualScale) && e.visualScale > 0 && visualScale > 1)
+      visualScale = e.visualScale;
+    return sites.map((site, i) => ({
+      x: point.x + site.x * visualScale * projectionScale,
+      y: point.y + site.y * visualScale * projectionScale,
+      kind: 'lantern',
+      fixture: 'glass',
+      role: site.role,
+      lit: site.lit !== false,
+      radius: site.radius,
+      alpha: site.alpha,
+      scale: visualScale * (site.role === 'camp' ? 0.45 : site.role === 'wagon' ? 0.4 : 1),
+      id: String(e.id || kind || structure) + ':glass-' + i,
+    }));
+  }
+
   function assetSafeScale(e, entry) {
     const target = featureScale(e);
     if (target <= 1 || !entry) return target;
@@ -8543,6 +8608,51 @@
         '#a6a28a',
       );
     }
+    // Distinct, physically mounted lamps, all centered on their actual glass.
+    // These are always part of the facade; the night pass only lights the lens.
+    function mountedSconce(x, y, role = 'home') {
+      const refuge = role === 'refuge', workshop = role === 'workshop',
+        stall = role === 'stall';
+      const w = refuge ? 5.4 : workshop ? 4.6 : stall ? 4.2 : 3.8,
+        h = refuge ? 7.2 : workshop ? 5.8 : stall ? 5.5 : 5.3;
+      const iron = workshop ? '#464944' : refuge ? '#554f40' : '#51594f',
+        edge = workshop ? '#898172' : refuge ? '#b6a17a' : '#8b8c77',
+        glass = workshop ? '#8f8065' : refuge ? '#b19a6c' : '#96876a';
+      // Mounting plate and curved support follow the front wall/wooden post.
+      softRect(x - 11, y - 8, 4, 10, '#594b3b', 1);
+      for (const yy of [-6, -1]) oval(x - 9, y + yy, 0.75, 0.75, '#c0a77e');
+      line([[x - 9, y - 7], [x - 7, y - 11], [x - 2, y - 11]], iron, 2.2);
+      ctx.beginPath();
+      ctx.strokeStyle = edge;
+      ctx.lineWidth = 1.2;
+      ctx.moveTo(x - 5, y - 10.3);
+      ctx.quadraticCurveTo(x + 1, y - 12, x, y - h - 2.8);
+      ctx.stroke();
+      // Hood, shallow bevel, protected panes and lower iron catch tray.
+      softPoly([[x - w - 1.5, y - h + 1], [x, y - h - 3.2],
+        [x + w + 1, y - h + 1], [x + w + 0.5, y - h + 2.1],
+        [x - w - 0.9, y - h + 2.1]], iron, 0.8);
+      line([[x - w, y - h + 1], [x, y - h - 2.2], [x + w, y - h + 1]], edge, 0.85);
+      softPoly([[x - w, y - h + 2], [x + w, y - h + 2],
+        [x + w - 0.7, y + h - 1.4], [x - w + 0.8, y + h - 1.4]],
+        '#434940', 0.9);
+      softPoly([[x - w + 1.2, y - h + 3], [x + w - 1.2, y - h + 3],
+        [x + w - 1.5, y + h - 2.1], [x - w + 1.5, y + h - 2.1]],
+        glass, 0.65);
+      line([[x, y - h + 2.6], [x, y + h - 1.4]], iron, 0.95);
+      line([[x - w + 2.1, y - h + 4], [x - w + 2.1, y + h - 3.2]], '#cbb990', 0.8);
+      softPoly([[x - w - 0.5, y + h - 2], [x + w + 0.5, y + h - 2],
+        [x + w - 0.6, y + h + 0.4], [x - w + 0.6, y + h + 0.4]], iron, 0.85);
+      line([[x - w + 0.6, y + h - 1.2], [x + w - 0.6, y + h - 1.2]], edge, 0.85);
+      if (refuge) {
+        // Refuge identity: protected double hook and a welcoming brass collar.
+        oval(x, y - h - 4, 1.7, 1.3, '#b69a65');
+        line([[x - w - 1, y + h], [x + w + 1, y + h]], '#bbaa7a', 1.1);
+      } else if (workshop) {
+        // A durable hood with a soot-dark underside, not a glowing workbench.
+        line([[x - w + 1, y - h + 2.9], [x + w - 1, y - h + 2.9]], '#383f3a', 1.2);
+      }
+    }
     function craftedHouse(kind = 'house') {
       const r = kind.startsWith('vale')
         ? 0
@@ -8703,6 +8813,10 @@
           2,
         );
       }
+      // Corrected Greenwood design only. The five regional house palettes
+      // are not license to stamp identical hardware across every settlement.
+      if (r === 0) mountedSconce(workshop ? 27 : -25, -12,
+        workshop ? 'workshop' : e.kind === 'rest' ? 'refuge' : 'home');
     }
     function craftedFence(palisade = false) {
       for (const [x, h] of [
@@ -8974,7 +9088,9 @@
             'crown-ash-house',
           ][region],
         );
-        craftAt(-27, -1, 0.5, () => lantern());
+        // Other regional refuges keep their previous entrance lantern rather
+        // than inheriting the new Greenwood cottage sconce.
+        if (region !== 0) craftAt(-27, -1, 0.5, () => lantern());
         return true;
       }
       regionalServiceFooting();
@@ -9027,6 +9143,11 @@
         }
       }
       craftedRoof(34, -31, -48, region);
+      // The hook physically hangs from the pre-existing right stall post.
+      // Greenwood gets a refined sconce. Other regions retain their older
+      // sheltered lantern rather than losing the once-implied service light.
+      if (region === 0) mountedSconce(29, -20, 'stall');
+      else craftAt(29, -20, 0.48, () => lantern(0, 0));
       if (region === 4)
         poly(
           [
@@ -11366,34 +11487,39 @@
     }
     function lantern(x = 0, y = -20) {
       timber([x, y + 33], [x, y + 2], 3);
-      softRect(x - 7, y - 5, 14, 18, '#5d655b', 2);
-      softRect(x - 4, y - 2, 8, 11, '#dbbf75', 1);
-      line(
-        [
-          [x, y - 2],
-          [x, y + 9],
-        ],
-        '#777b65',
-        1,
-      );
-      poly(
-        [
-          [x - 9, y - 5],
-          [x, y - 11],
-          [x + 9, y - 5],
-        ],
-        '#7e8375',
-      );
-      line(
-        [
-          [x - 3, y - 11],
-          [x - 3, y - 16],
-          [x + 4, y - 16],
-        ],
-        '#666d61',
-        1.8,
-      );
-      fillOval(x - 1, y + 2, 2, 3, '#ffe2a0', 0.7);
+      // Recessed, tapered glass with a visible metal cage; daytime glass is
+      // unlit, while nighttime flame is painted inside this exact silhouette.
+      poly([[x - 7, y - 5], [x + 7, y - 5], [x + 6, y + 11], [x - 6, y + 11]], '#4b574e');
+      poly([[x - 4, y - 2], [x + 4, y - 2], [x + 3.5, y + 9], [x - 3.5, y + 9]], '#86785c');
+      line([[x, y - 2], [x, y + 9]], '#515749', 1);
+      line([[x - 6, y + 11], [x + 6, y + 11]], '#62685b', 2);
+      poly([[x - 9, y - 5], [x, y - 11], [x + 9, y - 5]], '#7e8375');
+      line([[x - 3, y - 11], [x - 3, y - 16], [x + 4, y - 16]], '#666d61', 1.8);
+      line([[x - 2.2, y - 1], [x - 1.2, y + 4]], '#b0a084', 0.6);
+    }
+    // Original roadside identity: the same tall weathered post and hooked
+    // cage, with readable panes/rim instead of the pasted rectangular flare.
+    function roadsideLamp() {
+      timber([0, 15], [0, -42], 4, '#75664e');
+      line([[-1.4, -6], [-1.4, -36]], '#a69370', 0.85);
+      line([[1.8, -15], [1.8, 3]], '#4b5144', 0.65);
+      for (const yy of [3, -14, -28]) oval(0.6, yy, 0.85, 1.2, '#4c4c3c');
+      line([[0, -45], [0, -58], [4.5, -62], [9, -62]], '#525a51', 2.4);
+      line([[1, -45], [1, -56], [5, -60]], '#ad9877', 0.65);
+      oval(9, -61, 1.5, 1.6, '#676f60');
+      // Slightly tapered ironwork; glass sits behind a metal crossbar.
+      softPoly([[-8, -48], [8, -48], [7.2, -33], [-7.2, -33]], '#3e4a43', 1);
+      softPoly([[-5.8, -46.4], [5.8, -46.4], [5.2, -34.8], [-5.2, -34.8]],
+        '#8b8169', 0.7);
+      line([[-4.7, -45], [-4.7, -36]], '#b2a387', 0.85);
+      line([[0, -47], [0, -34]], '#4b5249', 1.2);
+      line([[4.5, -45], [4.5, -36]], '#54594b', 0.6);
+      softPoly([[-9.5, -49], [0, -55], [9.5, -49], [8.8, -46.7],
+        [-8.8, -46.7]], '#606b5e', 1.2);
+      line([[-8.4, -49.3], [0, -53.8], [8.4, -49.3]], '#b6ae90', 1);
+      softPoly([[-8.2, -34.1], [8.2, -34.1], [6.2, -31.8],
+        [-6.2, -31.8]], '#4a544c', 0.9);
+      line([[-7.4, -34.8], [7.4, -34.8]], '#998f70', 1);
     }
     function pool(wet = true) {
       shaped(wet ? '#6c8378' : '#85765a', () => {
@@ -14069,10 +14195,11 @@
           );
           break;
         case 'grave-lamp':
+          lantern(0, -25);
+          rockPiece(0, 12, 11, 9);
+          break;
         case 'roadside-lantern':
-          lantern(0, kind === 'roadside-lantern' ? -45 : -25);
-          if (kind === 'roadside-lantern') timber([0, -12], [0, 15], 4, '#746c51');
-          if (kind === 'grave-lamp') rockPiece(0, 12, 11, 9);
+          roadsideLamp();
           break;
         case 'caretaker-table':
           table(45);
@@ -18929,7 +19056,18 @@
         if (water) {
           const x = lo + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+          if (region === 0 && R.greenwoodLayout?.version === 2 && banks) {
+            const a = banks(Math.max(y1, y - 14)),
+              b = banks(Math.min(y2, y + 14)),
+              dx = (b[0] + b[1] - a[0] - a[1]) * 0.38;
+            line(
+              { x: x - dx * 0.5, y: y - 11 + phase * 2 },
+              { x: x + dx * 0.5, y: y + 11 + phase * 2 },
+              '#9abeb772',
+              1,
+            );
+          } else
+            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
         } else {
           const mid = lo + localWidth * (0.4 + (seed % 3) * 0.08);
           line({ x: mid - 10, y }, { x: mid + 8, y: y + 11 + phase * 3 }, '#ffd076', 2);
@@ -19051,6 +19189,7 @@
       const water = kind === 'water',
         lava = kind === 'lava',
         cliff = kind === 'cliff',
+        greenwoodShore = water && region === 0 && R.greenwoodLayout?.version === 2,
         width = x2 - x1,
         bank = water ? (region === 1 ? '#677561' : '#64725a') : lava ? '#54413e' : '#726c5d';
       const ribbon = (inset, color, material = null) => {
@@ -19065,48 +19204,99 @@
         }
         poly([...left, ...right.reverse()], color, material);
       };
-      // Collision and the continuous curved bank use the same authored function.
-      ribbon(-8, bank);
-      ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
-      ribbon(
-        7,
-        water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
-        water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
-      );
-      for (let y = y1; y < y2; y += 58) {
-        const end = Math.min(y2, y + 58),
-          seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
-          tooth = 8 + (seed % 12);
-        for (const side of [-1, 1]) {
-          const local = banks ? banks(y) : [x1, x2],
-            edge = side < 0 ? local[0] : local[1],
-            inside = edge - side * Math.min(tooth, width * 0.25),
-            mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
-          poly(
-            [
-              { x: edge, y },
-              { x: inside, y: mid },
-              { x: edge - side * 6, y: end },
-              { x: edge, y: end },
-            ],
-            water
-              ? side < 0
-                ? '#536a57'
-                : '#6a7c64'
-              : lava
-                ? seed % 2
-                  ? '#423b3b'
-                  : '#574039'
-                : side < 0
-                  ? '#696b61'
-                  : '#4b514c',
-          );
-          if (!water && !lava)
-            line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
-          if (water)
-            line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
-          else if (lava)
-            line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+      // The bank contour is the *same* profile used by collision. Greenwood's
+      // graded material shoulders replace the old repetitive triangular teeth;
+      // all other region art is deliberately unchanged.
+      if (greenwoodShore) {
+        ribbon(-22, '#465a49');
+        ribbon(-15, '#61705a');
+        ribbon(-8, '#718066');
+        ribbon(-3, '#3d6064');
+        ribbon(0, '#285d70');
+        ribbon(7, '#397783');
+      } else {
+        ribbon(-8, bank);
+        ribbon(0, water ? '#285d70' : lava ? '#672f28' : cliff ? '#494b43' : '#222729');
+        ribbon(
+          7,
+          water ? '#397783' : lava ? '#b44e2c' : cliff ? '#616357' : '#30363a',
+          water ? null : lava ? 'terrain:lava:crust' : 'terrain:rock:cliff-ravine',
+        );
+      }
+      if (greenwoodShore) {
+        // Sparse dry-land patches rooted outside the legal river. Vary spacing,
+        // side, scale and hue without per-frame RNG or new collidable props.
+        for (let y = y1 + 43; y < y2 - 34; y += 91) {
+          if (R.barriers[region].gaps.some(([lo, hi]) => y >= lo - 65 && y <= hi + 65))
+            continue;
+          for (const side of [-1, 1]) {
+            const index = Math.floor(y / 91);
+            const seed =
+              (Math.imul(index + (side + 2) * 17, 73856093) ^ Math.imul(index + 37, 19349663)) >>>
+              0;
+            if (seed % 6 === 0) continue;
+            const [lo, hi] = banks ? banks(y) : [x1, x2],
+              edge = side < 0 ? lo : hi,
+              cx = edge + side * (26 + (seed % 17)),
+              cy = y + ((seed >>> 7) % 21) - 10,
+              rx = 9 + ((seed >>> 12) % 7),
+              ry = 10 + ((seed >>> 16) % 13);
+            if (!visible({ x: cx, y: cy })) continue;
+            poly(
+              Array.from({ length: 12 }, (_, j) => {
+                const a = (j * Math.PI) / 6,
+                  variation = 1 + Math.sin(a * 3 + (seed % 11)) * 0.09;
+                return { x: cx + Math.cos(a) * rx * variation, y: cy + Math.sin(a) * ry };
+              }),
+              seed % 3 === 0 ? '#596f4b99' : '#4c694d88',
+            );
+            // A few low temperate grass/fern strokes; not a Marches reed wall.
+            if (seed % 3 !== 1)
+              for (let j = -1; j <= 1; j++)
+                line(
+                  { x: cx + j * 5, y: cy + 2 },
+                  { x: cx + j * 4 + (seed % 5) - 2, y: cy - 8 - ((seed >>> (j + 3)) % 6) },
+                  '#879c6988',
+                  0.9,
+                );
+          }
+        }
+      } else {
+        for (let y = y1; y < y2; y += 58) {
+          const end = Math.min(y2, y + 58),
+            seed = Math.imul(Math.floor(y / 58) + region * 17, 73856093) >>> 0,
+            tooth = 8 + (seed % 12);
+          for (const side of [-1, 1]) {
+            const local = banks ? banks(y) : [x1, x2],
+              edge = side < 0 ? local[0] : local[1],
+              inside = edge - side * Math.min(tooth, width * 0.25),
+              mid = y + (end - y) * (0.3 + (seed % 4) * 0.1);
+            poly(
+              [
+                { x: edge, y },
+                { x: inside, y: mid },
+                { x: edge - side * 6, y: end },
+                { x: edge, y: end },
+              ],
+              water
+                ? side < 0
+                  ? '#536a57'
+                  : '#6a7c64'
+                : lava
+                  ? seed % 2
+                    ? '#423b3b'
+                    : '#574039'
+                  : side < 0
+                    ? '#696b61'
+                    : '#4b514c',
+            );
+            if (!water && !lava)
+              line({ x: edge - side * 3, y: y + 10 }, { x: inside, y: mid }, '#a3a18b77', 1);
+            if (water)
+              line({ x: edge - side * 2, y: y + 8 }, { x: inside, y: mid }, '#afc0a044', 1.3);
+            else if (lava)
+              line({ x: edge - side * 4, y: y + 12 }, { x: inside, y: mid }, '#b5917855', 1);
+          }
         }
       }
       for (let y = y1 + 24; y < y2 - 8; y += water ? 62 : 48) {
@@ -19119,14 +19309,30 @@
         if (water) {
           const x = localX1 + localWidth * (0.28 + (seed % 4) * 0.1),
             span = Math.min(55, localWidth * 0.38);
-          if (!omitTerrainMotion)
-            line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
-          line(
-            { x: x + span * 0.15, y: y + 12 },
-            { x: x + span * 0.65, y: y + 14 },
-            '#c0d6c044',
-            0.8,
-          );
+          if (greenwoodShore && banks) {
+            // Travel along the watercourse, not a fixed screen-horizontal dash.
+            const a = banks(Math.max(y1, y - 14)),
+              b = banks(Math.min(y2, y + 14)),
+              dx = (b[0] + b[1] - a[0] - a[1]) * 0.38,
+              drift = phase * 2;
+            if (!omitTerrainMotion)
+              line(
+                { x: x - dx * 0.5, y: y - 11 + drift },
+                { x: x + dx * 0.5, y: y + 11 + drift },
+                '#9abeb772',
+                1,
+              );
+            line({ x: x + 8, y: y - 4 }, { x: x + 8 + dx * 0.55, y: y + 8 }, '#c0d6c033', 0.8);
+          } else {
+            if (!omitTerrainMotion)
+              line({ x, y: y + phase * 3 }, { x: x + span, y: y + 5 + phase * 3 }, '#9abeb788', 1.2);
+            line(
+              { x: x + span * 0.15, y: y + 12 },
+              { x: x + span * 0.65, y: y + 14 },
+              '#c0d6c044',
+              0.8,
+            );
+          }
         } else if (lava) {
           const mid = localX1 + localWidth * (0.4 + (seed % 3) * 0.08);
           if (!omitTerrainMotion) {
@@ -19158,12 +19364,15 @@
           const end = Math.min(y2, y + 24),
             lo = banks ? banks(y)[side] : [x1, x2][side],
             hi = banks ? banks(end)[side] : [x1, x2][side];
-          line(
-            { x: lo, y },
-            { x: hi, y: end },
-            water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
-            1.5,
-          );
+          // Avoid drawing a hard continuous bright outline down both Greenwood banks.
+          const quiet = greenwoodShore && (Math.floor(y / 24) * 13 + side * 7) % 9 < 4;
+          if (!quiet)
+            line(
+              { x: lo, y },
+              { x: hi, y: end },
+              greenwoodShore ? '#99b49b4d' : water ? '#aec6a888' : lava ? '#d6956866' : '#ada88c99',
+              greenwoodShore ? 1.1 : 1.5,
+            );
         }
       }
     };
@@ -19532,6 +19741,51 @@
         continue;
       }
       if (kind === 'rain-pools') {
+        if (region === 0 && p.wetland && R.greenwoodLayout?.version === 2) {
+          // One hydraulic composition: paint *all* earth rims first, then all
+          // water surfaces. Per-shape rim/interior painting used to overdraw
+          // connected channels at the pond, wheel and river confluence.
+          for (let index = 0; index < p.pools.length; index++) {
+            const pool = p.pools[index],
+              rim = pool.points.map((q) => ({
+                x: pool.x + (q.x - pool.x) * 1.055,
+                y: pool.y + (q.y - pool.y) * 1.055,
+              }));
+            if (index === 3) {
+              // The tailrace is one continuous water surface with the river.
+              // Its earthy outer rim stops at the *real* western riverbank,
+              // instead of making a triangular wedge over the flowing river.
+              // Clip the visual rim only; the identical source water polygon
+              // continues to own navigation/collision at the confluence.
+              const lo = Math.max(0, pool.y - pool.ry - 30),
+                hi = Math.min(size, pool.y + pool.ry + 30),
+                land = [{ x: 0, y: lo }];
+              for (let y = lo; y < hi; y += 16)
+                land.push({ x: R.channelBanks(0, y)[0], y });
+              land.push({ x: R.channelBanks(0, hi)[0], y: hi }, { x: 0, y: hi });
+              ctx.save();
+              ctx.beginPath();
+              land.map(screen).forEach((v, j) =>
+                j ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y),
+              );
+              ctx.closePath();
+              ctx.clip();
+              poly(rim, '#68745b');
+              ctx.restore();
+            } else poly(rim, '#68745b');
+          }
+          for (const pool of p.pools) poly(pool.points, '#285d70');
+          for (const pool of p.pools) poly(pool.points, '#397783');
+          // Quiet pond reflections; directed channels stay unobstructed.
+          const pond = p.pools[0];
+          for (let j = -1; j <= 1; j++) {
+            const y = pond.y + j * pond.ry * 0.28,
+              x = pond.x - pond.rx * 0.24;
+            if (visible({ x, y }))
+              line({ x, y }, { x: x + pond.rx * 0.28, y: y + 4 }, '#a5bdb15c', 1);
+          }
+          continue;
+        }
         for (const pool of p.pools) {
           const rim = pool.points.map((q) => ({
             x: pool.x + (q.x - pool.x) * 1.075,
@@ -20455,49 +20709,31 @@
   }
 
   function drawLightFixtures(ctx, renderedLights) {
+    // Small flame inside the actual painted glass. No new pane, post or wall
+    // appears at night, and the effect cannot overpaint the physical frame.
     for (const p of renderedLights) {
-      if (p.kind === 'window') {
-        ctx.fillStyle = '#483d31';
-        ctx.fillRect(p.x - 15, p.y - 43, 10, 13);
-        ctx.fillRect(p.x + 6, p.y - 43, 10, 13);
-        ctx.fillStyle = '#f2cb81';
-        ctx.fillRect(p.x - 13, p.y - 41, 7, 9);
-        ctx.fillRect(p.x + 8, p.y - 41, 7, 9);
-        ctx.strokeStyle = '#8d6543';
-        ctx.lineWidth = 1.3;
-        ctx.beginPath();
-        for (const x of [p.x - 9, p.x + 12]) {
-          ctx.moveTo(x, p.y - 42);
-          ctx.lineTo(x, p.y - 32);
-        }
-        ctx.stroke();
-      } else if (p.kind === 'lantern' && p.fixture === 'post') {
-        // Illuminate the glass already painted on the actual post. Do not
-        // manufacture a second floating service lantern beside it.
-        ctx.fillStyle = '#f4c57e';
-        ctx.fillRect(p.x - 5, p.y - 50, 10, 9);
-      } else if (p.kind === 'lantern') {
-        // A modest iron hook and glazed hanging lamp by the service stand.
-        const x = p.x + 19,
-          y = p.y - 22;
-        ctx.strokeStyle = '#817c69';
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.moveTo(x - 7, y + 17);
-        ctx.lineTo(x - 7, y - 14);
-        ctx.lineTo(x + 1, y - 14);
-        ctx.lineTo(x + 1, y - 9);
-        ctx.stroke();
-        ctx.fillStyle = '#574b40';
-        ctx.fillRect(x - 6, y - 9, 14, 4);
-        ctx.fillStyle = '#f4c57e';
-        ctx.fillRect(x - 5, y - 5, 12, 12);
-        ctx.strokeStyle = '#635a4b';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(x - 5, y - 5, 12, 12);
-        ctx.fillStyle = '#7a6450';
-        ctx.fillRect(x - 6, y + 7, 14, 3);
-      }
+      if (p.kind !== 'lantern' || p.fixture !== 'glass' || p.lit === false) continue;
+      const scale = Math.max(0.2, Math.min(2.5, Number(p.scale) || 1));
+      const street = p.role === 'street', refuge = p.role === 'refuge';
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.scale(scale, scale);
+      // Restrained internal candle: curved silhouette, never a solid panel.
+      ctx.fillStyle = street ? 'rgba(237,181,98,.18)' : 'rgba(238,172,87,.15)';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, street ? 3.5 : 2.8, street ? 4.1 : 3.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = refuge ? '#eac282' : '#e1a864';
+      ctx.beginPath();
+      ctx.moveTo(0, -3.3);
+      ctx.bezierCurveTo(-2.2, -0.7, -1.6, 2.7, 0, 2.9);
+      ctx.bezierCurveTo(1.9, 2.2, 2.4, -0.8, 0, -3.3);
+      ctx.fill();
+      ctx.fillStyle = '#fff0bc';
+      ctx.beginPath();
+      ctx.ellipse(0, 0.6, 0.75, 1.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     }
   }
   function atmosphere(ctx, canvas, region = 0, opts = {}) {
@@ -20521,7 +20757,7 @@
       'rgba(166,146,196,.05)',
     ];
     const nightTints = [
-      'rgba(39,47,67,.64)', // Greenwood: slate-blue moonlight neutralizes olive grass without a blackout
+      'rgba(39,47,67,.64)', // Greenwood: moonlit slate-blue balances underlying olive grass
       'rgba(12,32,44,.48)', // Marches: wet blue reflections
       'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
       'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
@@ -20559,11 +20795,13 @@
         const carried = p.kind === 'carried-lantern',
           window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
-          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
+          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 :
+            p.fixture === 'glass' ? p.radius || 80 : 85,
+          y = carried || p.fixture === 'glass' ? p.y : p.y - (window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
-        glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
+        glow(source, radius, window ? 0.27 : fire ? 0.3 :
+          p.fixture === 'glass' ? p.alpha || 0.25 : 0.25, tint);
         if (carried) glow(source, 10, 0.5, '255,221,150');
       }
       ctx.globalCompositeOperation = 'source-over';
@@ -20686,6 +20924,7 @@
     bridges,
     atmosphere,
     drawLightFixtures,
+    lightingFixtures,
     atmosphereMotes,
     allyBodyKind,
     enemyBodyKind,

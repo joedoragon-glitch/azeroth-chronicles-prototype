@@ -10,7 +10,7 @@
   };
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const hex = (rgb) => (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
-  // Mirror PrototypeVisuals.atmosphere palettes exactly; Greenwood-only grading stays isolated to index 0.
+  // Original PrototypeVisuals.atmosphere palettes, unmodified.
   const NIGHT = [
     [39, 47, 67, 0.64],
     [12, 32, 44, 0.48],
@@ -745,7 +745,7 @@
     }
     function syncLightFixtures(lights, zoom = 1, darkness = 0) {
       const list =
-        darkness > 0 ? lights.filter((p) => p.kind === 'window' || p.kind === 'lantern') : [];
+        darkness > 0 ? lights.filter((p) => p.kind === 'lantern' && p.fixture === 'glass') : [];
       const anchor = list[0] || { x: 0, y: 0 };
       const relative = list.map((p) => ({ ...p, x: p.x - anchor.x, y: p.y - anchor.y }));
       const signature = JSON.stringify([relative, zoom]);
