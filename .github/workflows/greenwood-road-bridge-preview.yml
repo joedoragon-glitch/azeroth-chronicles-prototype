@@ -34,7 +34,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --ignore-scripts
-      - name: Verify roof topology, v4 open-yard migration and named arrival
+      - name: Verify roof topology, v4 open-yard migration and yellow world label
         if: matrix.mode == 'canvas'
         run: |
           node tests/greenwood-owner-architecture-feedback.test.cjs
