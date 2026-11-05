@@ -7997,6 +7997,9 @@
     developerReversalButton.textContent = language === 'es' ? 'REVERSIÓN' : 'REVERSAL';
     developerReversalButton.setAttribute('aria-label',
       language === 'es' ? 'Reversión del Estratega' : 'Strategist Reversal');
+    developerReversalButton.title = language === 'es'
+      ? 'Solo desarrollo · Reversión · T si está libre'
+      : 'Developer-only Reversal · T when unbound';
     developerCombatMonitor.hidden = !devActive;
     developerCompanionMonitor.hidden = !devActive;
     if (devActive) {
@@ -8122,7 +8125,11 @@
     }
     const rangers = game.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
     const healers = game.healCompanionCasters();
-    $('quick-items').classList.toggle('has-rangers', healers.length > 0 || rangers.length > 0);
+    // An independent Reversal command must stay reachable even if both
+    // starter companions fall. Desktop hides the quick-action dock otherwise.
+    $('quick-items').classList.toggle('has-rangers',
+      healers.length > 0 || rangers.length > 0 ||
+      (devActive && h.class === 'strategist'));
     for (const [type, label, key, cdKey, threshold] of manaEnabled
       ? [
           ['health', 'Heal', input.key('heal'), 'healCd', 50],
@@ -8304,14 +8311,16 @@
         (rank ? ' · Rank ' + rank : ' · Not learned') +
         chargeTip +
         (slot === 1
-          ? ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
+          ? h.class === 'strategist'
+            ? ' · Three landed same-target dagger basics; third spends one real Acid Bottle if stocked (40% power splash, up to three foes)'
+            : ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
           : '') +
         (i === 0 && PrototypeRules.movementBasicClasses[h.class]
           ? language === 'es'
             ? ' · Los ataques automáticos continúan durante la carga si el combate lo permite'
             : ' · Automatic basics continue during charge when combat allows'
           : '') +
-        (slot === 2 ? ' · Charged target locks when charging begins' : '') +
+        (slot === 2 && h.class !== 'strategist' ? ' · Charged target locks when charging begins' : '') +
         (backlogLabel ? ' · ' + backlogLabel : '') +
         (language === 'es' ? ' · Menú/Retirada: cancelar cola' : ' · Menu/Recall: clear queue');
       b.setAttribute(
