@@ -8294,14 +8294,16 @@
       graphics.recoveryPending === true ||
       (graphics.mode === 'webgl2' && !['confirmed', 'trial'].includes(graphics.phase));
     const mustUseTitle = hiddenDurationMs >= backgroundTitleGraceMs || needsGraphicsGate;
+    const canResume = pending.saved && writerGuard.canWrite() &&
+      !persistence.conflicted(game.s.mode);
     notePlaytestLifecycle('background-return-classified', {
       source, hiddenDurationMs: Math.round(hiddenDurationMs),
-      decision: !pending.saved ? 'save-failure-pause'
+      decision: !canResume ? 'save-or-ownership-pause'
         : mustUseTitle ? 'guarded-continue' : 'live-resume',
       graphicsMode: graphics.mode, graphicsPhase: graphics.phase,
       recoveryPending: graphics.recoveryPending === true,
     });
-    if (!pending.saved || !writerGuard.canWrite() || persistence.conflicted(game.s.mode)) {
+    if (!canResume) {
       paused = true;
       status('Saving failed or another session owns this save. Export your run before closing.');
       return;
