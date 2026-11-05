@@ -75,5 +75,5 @@ assert.equal(JSON.stringify(g.snapshot()), snapshot, 'art and lights never mutat
 const source = fs.readFileSync('src/prototype/visuals.js', 'utf8');
 assert.match(source, /if \(greenwoodShore\) \{/);
 assert.match(source, /ribbon\(-22, '#465a49'\)/);
-assert.match(source, /else \\{\\s*for \\(let y = y1; y < y2; y \\+= 58\\)/);
+assert.match(source, /else \{\s*for \(let y = y1; y < y2; y \+= 58\)/);
 console.log('PASS Greenwood mill/sluice, connected wetland, shared banks, deterministic native artwork and night lamp');
