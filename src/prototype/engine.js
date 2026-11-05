@@ -4686,6 +4686,37 @@
               this.announceLandmark(n);
             }
           }
+        // Thornfang's reused granary is a named inhabited homestead, not a
+        // quest marker. Announce it on approach like other authored sites,
+        // without inventing an interactable NPC or changing v4 discovery data.
+        // A cheap neighborhood gate avoids searching the props every tick
+        // elsewhere in Greenwood; hysteresis prevents boundary spam.
+        if (z.id === 'vale') {
+          const scale = R.greenwoodLayout.scale;
+          if (
+            h.x > 2350 * scale && h.x < 3100 * scale &&
+            h.y > 820 * scale && h.y < 1720 * scale
+          ) {
+            const lodge = z.props.find(
+              (p) => p.id === 'greenwood-thorn-homestead-lodge',
+            );
+            const away = lodge ? dist(h, lodge) : Infinity;
+            if (away < 225 * scale && !this.thornHomesteadNear) {
+              this.thornHomesteadNear = true;
+              this.notice("Thornfang's Homestead", 5, '', 'narration', {
+                scope: 'region',
+                region: 'vale',
+                textEs: 'Hogar de Thornfang',
+              });
+            } else if (away > 310 * scale) {
+              this.thornHomesteadNear = false;
+            }
+          } else {
+            this.thornHomesteadNear = false;
+          }
+        } else {
+          this.thornHomesteadNear = false;
+        }
         const [px, py] = D.ports[this.regionIndex()];
         if (dist(h, { x: px, y: py }) < 140) this.discover('port');
         const minor = this.minorRefugePoint();
