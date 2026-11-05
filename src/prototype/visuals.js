@@ -9302,31 +9302,40 @@
       skull(0, -68, 3.2); // subdued retained keystone; no new burial symbolism
       poly([[-28, 14], [28, 14], [38, 21], [-38, 21]], '#c0b69b');
       line([[-34, 22], [35, 22]], '#797d6b', 2);
-      // Three roof parts share deliberate gable/ridge geometry. The main
-      // house roof is a pair of true planar pitches, not a skewed pentagon.
+      // One calm, symmetrical slate hip roof sits squarely over the old
+      // masonry heart. A flat short upper ridge and matching eaves avoid
+      // twisted projected planes reaching into the adjacent wings.
       poly([[-101, -43], [-82, -69], [-59, -69], [-40, -43]], '#707361');
       line([[-99, -43], [-82, -67], [-59, -67]], '#b3a487', 1.3);
-      const roofFrontLeft = [-52, -65],
-        roofFrontRidge = [-12, -101],
-        roofFrontRight = [33, -65],
-        roofRearLeft = [-15, -81],
-        roofRearRidge = [25, -117],
-        roofRearRight = [70, -81];
-      poly([roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft], '#747b70');
-      poly([roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge], '#626b61');
-      // One uninterrupted gable and ridge, with subtle courses that follow
-      // the roof depth rather than drawing arbitrary horizontal stripes.
-      line([roofFrontLeft, roofFrontRidge, roofFrontRight], '#b8b09a', 2);
-      line([roofFrontRidge, roofRearRidge], '#b5b09d', 1.8);
-      line([roofFrontLeft, roofRearLeft], '#a0a699', 1.4);
-      line([roofFrontRight, roofRearRight], '#a0a699', 1.4);
-      for (const t of [0.33, 0.67]) {
-        line([
-          [roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
-            roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t],
-          [roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
-            roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t],
-        ], '#838f83', 0.8);
+      const roofHalfEave = 54,
+        roofHalfRidge = 23,
+        roofEaveY = -64,
+        roofRidgeY = -101;
+      poly([
+        [-roofHalfEave, roofEaveY],
+        [-roofHalfRidge, roofRidgeY],
+        [roofHalfRidge, roofRidgeY],
+        [roofHalfEave, roofEaveY],
+      ], '#707a70');
+      // Symmetrical front fascia hides the original flat stone-wall top.
+      poly([
+        [-roofHalfEave, roofEaveY],
+        [roofHalfEave, roofEaveY],
+        [roofHalfEave, roofEaveY + 5],
+        [-roofHalfEave, roofEaveY + 5],
+      ], '#526358');
+      line([
+        [-roofHalfEave, roofEaveY],
+        [-roofHalfRidge, roofRidgeY],
+        [roofHalfRidge, roofRidgeY],
+        [roofHalfEave, roofEaveY],
+      ], '#b8b7a8', 1.8);
+      line([[-roofHalfEave, roofEaveY + 5], [roofHalfEave, roofEaveY + 5]],
+        '#929a8e', 1.2);
+      for (const y of [-73, -82, -91]) {
+        const half = roofHalfEave -
+          (roofHalfEave - roofHalfRidge) * ((roofEaveY - y) / (roofEaveY - roofRidgeY));
+        line([[-half + 7, y], [half - 7, y]], '#869188', 0.8);
       }
       // The eastern addition stays visibly under construction: a centered
       // front roof frame, not an asymmetric extra closed roof volume.
