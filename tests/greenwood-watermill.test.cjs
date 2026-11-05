@@ -71,9 +71,14 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   assert.equal(g.clearSegment(bridge.from, bridge.to, 12),true,
     'whole bridge crossing, not only the center, is physically usable');
   assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12,true),
-    'the visible mill loading entrance has a dry player-sized approach');
-  assert(g.route(cfg.millServiceLane[0],cfg.millEntrance).length>0,
-    'the mill doorway landing can be reached from the connected farm road');
+    'the visible mill loading entrance has dry terrain');
+  assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12),
+    'the entrance also has a real body-clear landing outside mill scenery');
+  const approach=g.route(cfg.millServiceLane[0],cfg.millEntrance);
+  assert(approach.length>0 &&
+    Math.hypot(approach.at(-1).x-cfg.millEntrance.x,
+      approach.at(-1).y-cfg.millEntrance.y)<0.01,
+    'the real native route ends AT the entrance, not at a substituted safe point');
   for (let i=1;i<cfg.millDoorFootpath.length;i++)
     assert(g.clearSegment(cfg.millDoorFootpath[i-1],cfg.millDoorFootpath[i],12,true),
       'every footpath leg physically follows dry ground or the real timber deck: '+i);
