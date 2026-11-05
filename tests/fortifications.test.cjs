@@ -243,18 +243,20 @@ function fixture() {
   assert.equal(crownParcels, cfg.outdoorAreas.length, 'all Crown parcels checked');
 }
 {
-  const cfg = C.rules.balance.fortifications, g = world('vale');
+  const g = world('vale');
   const watch = g.fortAreas().find((area) => area.id === 'skeleton-watch');
   const defender = g.zone().enemies.find(
     (e) => e.hp > 0 && e.stronghold === 'skeleton-watch',
   );
   assert(watch && defender, 'real Skeleton Watch guard and live walls are present');
   const oldPosition = { x: defender.x, y: defender.y };
-  const [eastX, eastY] = watch.points[4];
-  const originalWallX = eastX - cfg.outdoorLeeway * 155 / Math.hypot(155, 20);
-  defender.x = eastX - 60;
-  defender.y = eastY;
-  assert(defender.x > originalWallX, 'pursuer has stepped outside the original wall ring');
+  const northWall = g.zone().props.find((p) =>
+    p.id === 'stronghold-skeleton-watch-wall-1');
+  assert(northWall?.greenwoodWall, 'physical north wall determines actual apron');
+  const originalWallY = northWall.greenwoodWall.a.y;
+  defender.x = (northWall.greenwoodWall.a.x + northWall.greenwoodWall.b.x) / 2;
+  defender.y = originalWallY - 100;
+  assert(defender.y < originalWallY, 'pursuer has stepped outside the physical wall');
   assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'protection persists in the apron');
   assert.equal(g.enemyRangedRange(defender), 416, 'position grants the fortified ranged basic value');
   // The natural Skeleton Watch guard in this fixture is melee. Its awareness
@@ -277,7 +279,7 @@ function fixture() {
   const restoredGuard = restored.zone().enemies.find((enemy) => enemy.id === defender.id);
   assert.equal(restored.enemyFort(restoredGuard)?.id, 'skeleton-watch',
     'restoring v4 save derives the same protection without saved timers');
-  defender.x = eastX + 30;
+  defender.y = originalWallY - 180;
   assert.equal(g.enemyFort(defender), null, 'leaving even the extended perimeter removes protection');
   assert.equal(g.enemyRangedRange(defender), 320, 'normal basic attack range returns');
   const outside = { source: 'enemy', sourceId: defender.id, x: defender.x, y: defender.y,
