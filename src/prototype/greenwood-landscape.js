@@ -201,10 +201,37 @@
         [875, 980],
         [930, 1090],
         [950, 1160],
-      ].map(q);
-    const waters = [pond, ribbon(stream, 16), ribbon(headrace, 12), ribbon(tailrace, 20)];
+      ].map(q),
+      // A shallow, walkable headwater reaches Greenwood's northern edge.
+      // Crossing it does not turn an existing freight road into a new barrier.
+      upperCreek = [
+        [1220, 0],
+        [1240, 180],
+        [1280, 350],
+        [1265, 515],
+        [1190, 680],
+        [1090, 780],
+        [940, 875],
+        [900, 880],
+      ].map(q),
+      shallowCreek = { ...ribbon(upperCreek, 12), shallow: true },
+      waters = [pond, ribbon(stream, 16), ribbon(headrace, 12), ribbon(tailrace, 20), shallowCreek],
+      // Source-owned crossings, not extra named river bridges or saved props.
+      millBridge = {
+        from: q([1138, 1583]),
+        to: q([1250, 1455]),
+        width: 62 * scale,
+        kind: 'timber',
+      },
+      creekCulvert = {
+        from: q([1070, 725]),
+        to: q([1145, 805]),
+        width: 76 * scale,
+        kind: 'stone-culvert',
+      },
+      millServiceLane = [[1200, 1660], [1138, 1583], [1250, 1455], [1320, 1465]].map(q);
     R.terrain[0] = [
-      { kind: 'rain-pools', wetland: true, pools: waters },
+      { kind: 'rain-pools', wetland: true, pools: waters, blockingPools: waters.filter((w) => !w.shallow) },
       { kind: 'water', x: 2720 * scale, y: 1320 * scale, r: 140 },
     ];
     R.forests[0] = []; // The authored stands below own nature, not circular forest stamps.
@@ -270,6 +297,10 @@
       waters,
       headrace,
       tailrace,
+      upperCreek,
+      millBridge,
+      creekCulvert,
+      millServiceLane,
       map,
       groups: [],
       pond: { ...a.pond, r: 140 },
@@ -471,6 +502,7 @@
                 [1200, 1660],
               ],
             ],
+            ['farm', [[1200, 1660], [1138, 1583], [1250, 1455], [1320, 1465]]],
             [
               'farm',
               [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], plan.crypt],
@@ -700,9 +732,9 @@
               ['crate', 1280, 2140],
             ],
             mill: [
-              ['cart', 1340, 1780],
-              ['supply-stack', 1350, 1640],
-              ['barrel', 1310, 1500],
+              ['cart', 1375, 1540],
+              ['supply-stack', 1390, 1485],
+              ['barrel', 1325, 1520],
             ],
             wagon: [
               ['cart', 2790, 260],
