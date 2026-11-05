@@ -1,3 +1,5 @@
+> **CURRENT ESTATE STATUS — 5 November 2026, `main@272330b8`.** The Forest Crypt unfinished-winter-residence frontage first merged and published via #833; after the owner's in-game rejection of its roof symmetry, the later gable/ridge/wing correction merged via [#837](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/837). The corrected work is part of successfully deployed [Pages run #42105321988](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42105321988). The “post-publication visual follow-up — draft only” record immediately below describes the **earlier** development state, not the present merge/publication state. The current roof has **not** been newly accepted by the owner on an installed device; original Crypt identity, doorway migration, quest and v4 saves remain protected. See [Greenwood owner-playtest reconciliation](GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md) for the cross-feature status and pending aesthetic review.
+
 
 ## Post-publication visual follow-up — 5 November 2026 (draft only)
 
