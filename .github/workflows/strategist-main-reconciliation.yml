@@ -35,6 +35,8 @@ jobs:
           node tests/strategist-developer-admission.test.cjs
           node tests/strategist-developer-isolation.test.cjs
           node tests/strategist-e0-native.test.cjs
+          node tests/strategist-materials.test.cjs
+          node tests/strategist-warning-reversal-prototype.test.cjs
           node tests/beta-historical.test.cjs
           node tests/persistence-safety.test.cjs
           node tests/save-recovery-checkpoints.test.cjs
