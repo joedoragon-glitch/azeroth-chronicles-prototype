@@ -1365,6 +1365,35 @@ body[data-experience='phone'] #modal-actions output {
     min-height: 64px;
   }
 
+  /* Class cards show a three-line cue (hero / role / growth) without
+     growing into full paragraphs. The optional name remains a real input,
+     aligned on one row so all four class choices fit on a short screen. */
+  body[data-experience='phone'] #modal[data-view='class-select'] .character-name-field {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: 6px;
+    margin: 2px 0;
+    font-size: 14px;
+  }
+  body[data-experience='phone'] #modal[data-view='class-select'] .character-name-field input {
+    min-width: 0;
+    min-height: 44px;
+    padding: 4px 8px;
+  }
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-role,
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-growth {
+    margin-top: 1px;
+    line-height: 1.2;
+  }
+  @media (max-height: 400px) {
+    /* The heading + visible four cards already explain this step.
+       The long introduction is available in other Help/class references. */
+    body[data-experience='phone'] #modal[data-view='class-select'] #modal-description {
+      display: none;
+    }
+  }
+
   /* Continuous reading remains a comfortable single column and can scroll;
      long lists, confirmations, Archive, and specialized forms are not forced
      into two columns simply to satisfy an arbitrary no-scroll rule. */
