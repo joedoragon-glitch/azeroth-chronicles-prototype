@@ -2387,8 +2387,7 @@
       if (foot) {
         const width = roadWidths.path * widthFactor;
         for (const run of fragments) {
-          for (let i = 1; i < run.length; i++)
-            appendRoadShape(ctx, screen, run[i - 1], run[i], width);
+          appendRoadRibbon(ctx, screen, run, width);
           // Only the true run ends need circular caps, not every sampled
           // subsection. This avoids thousands of redundant polygons per frame.
           appendRoadCap(ctx, screen, run[0], width);
