@@ -1226,3 +1226,16 @@ body[data-experience='phone'] #modal-actions .character-name-field {
   font-size: 15px;
   min-height: 44px;
 }
+
+body[data-experience='phone'] #title-preview,
+body[data-experience='phone'] #title-tagline,
+body[data-experience='phone'] .language-welcome-note,
+body[data-experience='phone'] .language-welcome-choices small {
+  font-size: 13px;
+}
+body[data-experience='phone'] #title-import-feedback,
+body[data-experience='phone'] #startup-update-notice,
+body[data-experience='phone'] .language-welcome-intro,
+body[data-experience='phone'] #modal-actions output {
+  font-size: 15px;
+}

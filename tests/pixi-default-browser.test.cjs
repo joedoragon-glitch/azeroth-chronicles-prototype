@@ -148,15 +148,9 @@ async function enterPlayableGame(page) {
         geometry.modal.left >= 0 && geometry.modal.right <= geometry.viewport.width,
         JSON.stringify(geometry),
       );
-      // The 15/13px reading minimum applies to short landscape phones.
-      // Existing desktop class-card density is independently preserved.
-      const labelFloor = phone ? 15 : 14;
-      const detailFloor = phone ? 13 : 12;
       for (const card of geometry.cards)
         assert(
-          card.font >= labelFloor &&
-            card.height >= 44 &&
-            card.details.every((n) => n >= detailFloor),
+          card.font >= 15 && card.height >= 44 && card.details.every((n) => n >= 13),
           JSON.stringify(card),
         );
       console.log('Stage 4 computed menu geometry ' + JSON.stringify(geometry));

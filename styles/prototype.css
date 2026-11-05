@@ -1951,3 +1951,11 @@ body.menu-open::before {
   color: var(--menu-quiet);
   background: var(--menu-raised);
 }
+
+#modal[data-view='class-select'] #modal-actions button {
+  font-size: 15px;
+}
+#modal[data-view='class-select'] #modal-actions .class-role,
+#modal[data-view='class-select'] #modal-actions .class-growth {
+  font-size: 13px;
+}
