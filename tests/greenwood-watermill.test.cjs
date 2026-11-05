@@ -61,6 +61,15 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
     'upper source is deliberately shallow, not an unmarked new strategic barrier');
   assert.equal(g.clearSegment(bridge.from, bridge.to, 12),true,
     'whole bridge crossing, not only the center, is physically usable');
+  const culvert = cfg.creekCulvert;
+  const streamPoint = crossMid(culvert);
+  assert.equal(g.blocked(streamPoint.x, streamPoint.y, 'vale', 12, true), false,
+    'northern freight road remains traversable over the shallow creek culvert');
+  assert.equal(g.clearSegment(culvert.from, culvert.to, 12), true,
+    'culvert road surface is passable end to end, not just at its midpoint');
+  assert.equal(g.blocked(cfg.millServiceLane[0].x,cfg.millServiceLane[0].y,'vale',12,true),
+    false,'farm route starts on dry, walkable ground');
+
   const snap = g.snapshot();
   const key = JSON.stringify([
     snap.zones.vale.nodes.map((p)=>[p.id,p.amount]),
