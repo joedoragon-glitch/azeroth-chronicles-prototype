@@ -19,6 +19,11 @@ const shape = (zone) =>
     .filter((p) => p.greenwoodGoblinShelter || p.greenwoodWall || p.id.includes('thorn-homestead'))
     .map((p) => JSON.parse(JSON.stringify(p)));
 const original = shape(z);
+const yardIds = ['stronghold-treasury-yard-prop-2', 'stronghold-treasury-yard-prop-3'];
+const yardBefore = yardIds.map((id) => {
+  const p = z.props.find((x) => x.id === id);
+  return [p.id, p.x, p.y];
+});
 assert.equal(z.greenwoodTreasuryYardLayoutVersion, 1, 'Treasury work yard migration is one-time');
 const treasuryYardIds = ['stronghold-treasury-yard-prop-2', 'stronghold-treasury-yard-prop-3'];
 for (const id of treasuryYardIds)
@@ -32,6 +37,14 @@ for (let i = 0; i < 2; i++) {
     shape(restored.zone()),
     original,
     'restore must not repeatedly enlarge walls or duplicate shelters/standard',
+  );
+  assert.deepEqual(
+    yardIds.map((id) => {
+      const p = restored.zone().props.find((x) => x.id === id);
+      return [p.id, p.x, p.y];
+    }),
+    yardBefore,
+    'safe Treasury yard grouping must survive repeat v4 restore',
   );
 }
 // Exact perpendicular protection boundary, not only widely separated probes.
