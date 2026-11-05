@@ -118,7 +118,8 @@ for (const [a, b] of [[0, 0.000001], [0.999999, 1]]) {
 }
 console.log('PASS Greenwood day/night Canvas+Pixi grades, sunset, motes, and 4 untouched regions');
 
-\n// Native real-Campaign review frames: preserve the pre-change main artist as
+
+// Native real-Campaign review frames: preserve the pre-change main artist as
 // an actual render reference, not a simulated color swatch or invented art.
 if (process.env.CI_BASE_SHA) {
   const fs = require('node:fs');
