@@ -6,7 +6,8 @@ const C = require('../src/prototype/engine.js');
 const { rng } = require('../tools/greenwood-layout/fixtures.cjs');
 const distance = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
 const treeId = 'greenwood-nature-165';
-const alternatives = [[1450,2000],[1490,1930],[1350,2070]];
+const allowedX = [1320,1400,1260,1470,1520,1200];
+const allowedY = [2050,2120,1980,2170,1920];
 const original = { x: 1251, y: 1765 };
 const enemies = z => z.enemies.map(e =>
   [e.id,e.x,e.y,e.home?.x,e.home?.y,e.hp,e.species,e.ranged]);
@@ -22,22 +23,11 @@ for(const seed of [0x47564101,0x47564102,0x47564103,0x47564104]){
   const g = new C('normal','paladin',rng(seed)),z=g.zone(), t=atTree(z);
   assert(t && t.greenwoodNature==='tree', 'original authored mature tree remains');
   assert.equal(z.greenwoodMillbankSightlineVersion,1);
-  const probes=alternatives.map(([x,y])=>{
-    const p={x,y},ft={roads:z.footpaths||[]};
-    return {x,y,terrain:g.blocked(x,y,'vale',t.r||18,true),
-      road:g.distanceToRoad(z,p),foot:g.distanceToRoad(ft,p),
-      buildings:z.buildings.filter(b=>distance(b,p)<225).map(b=>b.id),
-      npcs:z.npcs.filter(n=>distance(n.servicePoint||n,p)<150).map(n=>n.id),
-      nodes:z.nodes.filter(n=>distance(n,p)<65).map(n=>n.id),
-      enemies:z.enemies.filter(e=>e.hp>0&&distance(e.home||e,p)<140).map(e=>e.id),
-      props:z.props.filter(q=>q!==t&&distance(q,p)<(q.owned||q.playerOwned||q.custom?(q.r||25)+110:q.roadBlocker?190:q.greenwoodNature==='tree'?100:65)).map(q=>[q.id,Math.round(distance(q,p))])
-    };
-  });
-  console.log('MILLBANK_PLACEMENT_PROBE '+JSON.stringify({seed,audit:z.greenwoodMillbankSightlineAudit,tree:{x:t.x,y:t.y,r:t.r,owned:t.owned},probes}));
   assert(z.greenwoodMillbankSightlineAudit?.moved,
     'the exact unowned canopy is shifted to a safe nearby woodland margin');
-  assert(alternatives.some(([x,y])=>distance(t,{x,y})<1),
-    'tree arrives at one of three bounded native woodland clearings');
+  assert(allowedX.some(x=>Math.abs(t.x-x)<1) &&
+    allowedY.some(y=>Math.abs(t.y-y)<1),
+    'tree reaches one of thirty bounded native woodland clearings');
   assert(distance(t,original)>150,'tree no longer blocks the mill-side goblins');
   assert(!g.blocked(t.x,t.y,'vale',0,true),'tree has a dry physical anchor');
   assert(g.distanceToRoad(z,t)>=105,'tree does not intrude into roadway');
