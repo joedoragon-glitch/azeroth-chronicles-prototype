@@ -3227,6 +3227,11 @@
             staticTerrainTimeSeconds,
             omitTerrainMotion,
           );
+        // Greenwood's foot trails join the actual carriage surface instead
+        // of painting a second translucent strip over the middle of a road.
+        const greenwoodRoads = i === 0 && z.greenwoodCompositionVersion === 1;
+        if (greenwoodRoads)
+          PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen, i);
         PrototypeVisuals.roads(
           ctx,
           z.roads || [],
@@ -3234,7 +3239,8 @@
           i,
           optimized ? null : PrototypeMaterials,
         );
-        PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
+        if (!greenwoodRoads)
+          PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen, i);
         if (!game.isDungeon())
           PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       } else {
