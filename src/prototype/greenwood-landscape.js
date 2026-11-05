@@ -2390,7 +2390,20 @@
     appendRoadCap(ctx, screen, points.at(-1), width);
   }
   function prepareRoadPaint(roads, footpaths = [], kinds = []) {
-    const wide = (roads || []).map((points, i) => ({
+    // The wagon provides the actual transport transition. A visual cart-road
+    // tail continues from its standing point into the east map edge, but is
+    // not a new route/collision corridor (which would be impassable at x=3200).
+    const paved = (roads || []).map((points, i) => {
+      if (i !== 0 || !points.length || R.greenwoodLayout?.version !== 2) return points;
+      const last = points.at(-1),
+        scale = R.greenwoodLayout.scale;
+      if (distance(last, { x: plan.wagon[0] * scale, y: plan.wagon[1] * scale }) > 1)
+        return points;
+      return [...points,
+        { x: 3020 * scale, y: 195 * scale },
+        { x: 3198 * scale, y: 95 * scale }];
+    });
+    const wide = paved.map((points, i) => ({
       kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
       points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
     }));
