@@ -27,9 +27,9 @@ assert.equal(Math.round(z.footpaths[3][0].x / Campaign.rules.greenwoodLayout.sca
 assert.equal(z.greenwoodRoutes[8].points.length, 3, 'Treasury spur has no duplicated cart segment');
 
 const gaps = Campaign.rules.barriers[0].gaps;
-assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 56]);
+assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 80]);
 for (const [i, bridge] of z.bridgeApproaches.entries()) {
-  assert.equal(bridge.width, [100, 56][i], 'physical and documented deck widths agree');
+  assert.equal(bridge.width, [100, 80][i], 'physical and documented deck widths agree');
   const [lo, hi] = gaps[i];
   const mid = (lo + hi) / 2;
   const nearestGrid = Math.round((mid - 25) / 50) * 50 + 25;
