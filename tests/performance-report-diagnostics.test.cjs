@@ -85,6 +85,9 @@ const { shell } = require('./helpers/production-shell.cjs');
       row.kind === 'return-to-title' && row.reason === 'document-hidden'));
     assert(continuity.events.some((row) =>
       row.kind === 'return-to-title' && row.reason === 'manual-menu'));
+    assert(continuity.priorFrameProfiles.some((entry) => entry.runtimeWindow &&
+      Number.isFinite(entry.runtimeWindow.sampledWindowMs)),
+      'pre-title rolling runtime performance survives Continue reset');
     assert.equal(capture.initialRenderer, 'canvas2d');
     assert.equal(capture.finalRenderer, 'canvas2d');
     assert.equal(capture.version, undefined, 'existing report shape has no public schema version');
