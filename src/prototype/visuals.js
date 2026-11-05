@@ -9730,17 +9730,7 @@
           ],
           '#82745a',
         );
-        softPoly(
-          [
-            [-19, 8],
-            [8, 14],
-            [24, 7],
-            [-3, 0],
-          ],
-          '#b09970',
-        );
-        for (const x of [-10, 0, 10])
-          line([[x, 4], [x + 4, 12]], '#80694c', 1.2);
+        // No oversized loose pallet/mat painted into the same tiny apron.
         // Keep the actual exterior yard props; do not duplicate them on the
         // entrance apron where they crowd the loading threshold.
         return true;
