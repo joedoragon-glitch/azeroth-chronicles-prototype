@@ -1452,6 +1452,10 @@
       // planes, real eaves, stepped shingles and overlapping ridge caps.
       poly([[-110, -94], [-23, -163], [68, -190], [-18, -119]], '#9b704e');
       poly([[-23, -163], [58, -64], [149, -94], [68, -190]], '#604436');
+      // Closed front fascia bridges the 12-pixel eave-to-gable gap on both
+      // pitches. Without this, the green ground leaks through the roof seam.
+      poly([[-110, -94], [-23, -163], [-22, -151], [-98, -89]], '#49392e');
+      poly([[-23, -163], [58, -64], [53, -58], [-22, -151]], '#40352d');
       poly([[-112, -93], [-18, -119], [-18, -113], [-112, -88]], '#44382e');
       poly([[58, -64], [149, -94], [149, -87], [58, -57]], '#44362b');
       for (let j = 1; j <= 5; j++) {
