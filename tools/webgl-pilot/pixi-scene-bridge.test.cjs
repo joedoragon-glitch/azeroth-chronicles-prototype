@@ -601,7 +601,7 @@ test('Pixi atmosphere restores the same bounded daylight motes as Canvas, before
     1.5,
   );
   assert.equal(effects.children.at(-2), moteGraphic, 'motes reuse one GPU node during motion');
-  assert.equal(moteGraphic.fillStyle.color, 0xdcefa8, 'night palette preserved');
+  assert.equal(moteGraphic.fillStyle.color, 0xc5cbda, 'approved new Greenwood night palette');
   assert.equal(moteGraphic.fillStyle.alpha, 0.24, 'Canvas night alpha preserved');
   scene.syncMotes([], 1.5);
   assert.equal(moteGraphic.visible, false, 'active Optimization Mode suppresses GPU motes');
@@ -627,8 +627,8 @@ test('Canvas atmosphere mote contract preserves regional counts, deterministic m
   assert.deepEqual(march[0].rgb, [184, 216, 202]);
   assert.deepEqual(
     Visuals.atmosphereMotes({ ...options, region: 0, darkness: 1 })[0].rgb,
-    [220, 239, 168],
-    'approved night Vale tint remains unchanged',
+    [197, 203, 218],
+    'Greenwood night motes use the new cool-silver palette',
   );
 });
 
