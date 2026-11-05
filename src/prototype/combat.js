@@ -1159,6 +1159,22 @@
       clearStrategistFacet() {
         strategistFaces.delete(this);
       }
+      // Read-only projection of the exact active physical collision owner.
+      // No second register, render-frame projectile scan or save-v4 field.
+      strategistFacetPresentation() {
+        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist')
+          return null;
+        const face = strategistFaces.get(this);
+        if (!face || this.hero !== face.owner || this.hero.hp <= 0 ||
+            this.peace || this.zoneId !== face.zone ||
+            this.s.statistics.deaths !== face.deaths ||
+            this.s.time >= face.until) return null;
+        return {
+          x: face.x, y: face.y, tx: face.tx, ty: face.ty,
+          half: face.half, notch: face.notch, radius: face.radius,
+          remaining: face.until - this.s.time,
+        };
+      }
       strategistInterceptPhysicalProjectile(p, from, to, maxFraction = 1) {
         const face = strategistFaces.get(this);
         if (!face) return false;
