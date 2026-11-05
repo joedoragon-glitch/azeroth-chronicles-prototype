@@ -19802,12 +19802,21 @@
               ctx.clip();
               poly(rim, '#68745b');
               ctx.restore();
-            } else poly(rim, '#68745b');
+            } else poly(rim, pool.shallow ? '#71806a' : '#68745b');
           }
           for (const pool of p.pools)
             poly(pool.points, pool.shallow ? '#3c6b6d' : '#285d70');
           for (const pool of p.pools)
             poly(pool.points, pool.shallow ? '#4c7b79' : '#397783');
+          // A few subdued strokes distinguish the shallow woodland feeder
+          // from the deep, quiet millpond without permanent animation.
+          const feeder = R.greenwoodLayout.upperCreek || [];
+          for (let j = 1; j < feeder.length - 1; j += 2) {
+            const q = feeder[j];
+            if (visible(q))
+              line({ x:q.x-7, y:q.y+2 }, { x:q.x+6, y:q.y-1 },
+                '#b1c2ac70', 0.9);
+          }
           // Quiet pond reflections; directed channels stay unobstructed.
           const pond = p.pools[0];
           for (let j = -1; j <= 1; j++) {
@@ -20099,43 +20108,86 @@
         }
     }
     if (region === 0 && R.greenwoodLayout?.version === 2) {
-      // These are local service crossings; the two named river bridges above
-      // retain their original identities, exploration and solid-bank gaps.
+      // Mill service geometry is owned by the current region layout. The
+      // culvert is a dirt road over a creek, not another stone bridge.
+      // The timber crossing is much smaller than either named river bridge.
       for (const deck of [R.greenwoodLayout.creekCulvert, R.greenwoodLayout.millBridge]) {
         if (!deck) continue;
         const a = deck.from, b = deck.to,
           length = Math.hypot(b.x - a.x, b.y - a.y) || 1,
-          nx = -(b.y - a.y) / length, ny = (b.x - a.x) / length,
+          tx = (b.x - a.x) / length, ty = (b.y - a.y) / length,
+          nx = -ty, ny = tx,
           half = deck.width / 2,
-          stoneDeck = deck.kind === 'stone-culvert';
+          culvert = deck.kind === 'stone-culvert';
         if (viewport && outsideScreen([a,b].map(screen), viewport, 130)) continue;
         const corners = (w, ext = 0) => [
-          { x: a.x + nx*w - (b.x-a.x)*ext/length, y: a.y + ny*w - (b.y-a.y)*ext/length },
-          { x: b.x + nx*w + (b.x-a.x)*ext/length, y: b.y + ny*w + (b.y-a.y)*ext/length },
-          { x: b.x - nx*w + (b.x-a.x)*ext/length, y: b.y - ny*w + (b.y-a.y)*ext/length },
-          { x: a.x - nx*w - (b.x-a.x)*ext/length, y: a.y - ny*w - (b.y-a.y)*ext/length },
+          { x: a.x + nx*w - tx*ext, y: a.y + ny*w - ty*ext },
+          { x: b.x + nx*w + tx*ext, y: b.y + ny*w + ty*ext },
+          { x: b.x - nx*w + tx*ext, y: b.y - ny*w + ty*ext },
+          { x: a.x - nx*w - tx*ext, y: a.y - ny*w - ty*ext },
         ];
-        polygon(corners(half + 6, 2), stoneDeck ? '#777265' : '#584532');
-        polygon(corners(half), stoneDeck ? '#a59980' : '#aa8b60');
-        for (let t = 12; t < length - 8; t += stoneDeck ? 34 : 18) {
-          const x = a.x + (b.x-a.x)*t/length, y = a.y + (b.y-a.y)*t/length;
+        if (culvert) {
+          // A compacted roadbed continues across the shallow feeder. Only
+          // the two *banks* show masonry cheeks and dark water portals.
+          // Draw nothing that changes the authoritative walkable shallows.
+          polygon(corners(half + 5, 3), '#685f4b');
+          polygon(corners(half, 2), '#977d5c');
+          for (const track of [-0.42, 0.42]) {
+            line(
+              { x: a.x + nx*half*track, y: a.y + ny*half*track },
+              { x: b.x + nx*half*track, y: b.y + ny*half*track },
+              '#7d674d', 1.25,
+            );
+          }
+          const mid = { x: (a.x+b.x)/2, y: (a.y+b.y)/2 };
+          for (const side of [-1, 1]) {
+            const rim = {
+              x: mid.x + nx*(half+3)*side,
+              y: mid.y + ny*(half+3)*side,
+            };
+            const outer = {
+              x: rim.x + nx*9*side,
+              y: rim.y + ny*9*side,
+            };
+            // The mouth is a small water-darkened gap between stone cheeks,
+            // not a solid black stripe through the middle of the road.
+            const wing = (p, n) => ({ x:p.x + tx*n, y:p.y + ty*n });
+            polygon([wing(rim,-12),wing(rim,12),wing(outer,12),wing(outer,-12)],
+              '#354c4d');
+            line(wing(rim,-12), wing(outer,-12), '#b5a68a', 2.2);
+            line(wing(rim,12), wing(outer,12), '#b5a68a', 2.2);
+            line(wing(outer,-12), wing(outer,12), '#857c68', 1.5);
+          }
+          continue;
+        }
+        // A low timber deck with visible edges, plank rhythm and dry-bank
+        // abutments. The deep millrace remains impassable away from this deck.
+        polygon(corners(half + 6, 2), '#544331');
+        polygon(corners(half), '#a8895e');
+        for (let t = 10; t < length - 7; t += 17) {
+          const x = a.x + tx*t, y = a.y + ty*t;
           line(
-            { x: x + nx*(half-5), y: y + ny*(half-5) },
-            { x: x - nx*(half-5), y: y - ny*(half-5) },
-            stoneDeck ? '#89816d' : '#72583d',
-            stoneDeck ? 1.2 : 2,
+            { x:x+nx*(half-5), y:y+ny*(half-5) },
+            { x:x-nx*(half-5), y:y-ny*(half-5) },
+            '#71573e', 2,
           );
         }
         for (const side of [-1,1]) {
-          const edge = (p) => ({ x: p.x + nx*(half+2)*side, y: p.y + ny*(half+2)*side });
-          line(edge(a), edge(b), stoneDeck ? '#c3b99e' : '#d4bb90', 2.6);
-          if (!stoneDeck)
-            for (const t of [0.07,0.93]) {
-              const p = edge({ x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t });
-              const q=screen(p);
-              ctx.strokeStyle='#66513e';ctx.lineWidth=3;
-              ctx.beginPath();ctx.moveTo(q.x,q.y+2);ctx.lineTo(q.x,q.y-10);ctx.stroke();
-            }
+          const edge = (p) => ({
+            x: p.x + nx*(half+2)*side, y: p.y + ny*(half+2)*side,
+          });
+          line(edge(a), edge(b), '#c7a97e', 2.7);
+          for (const t of [0.07,0.93]) {
+            const p = edge({ x:a.x+tx*length*t, y:a.y+ty*length*t });
+            const q = screen(p);
+            ctx.strokeStyle='#65513b';ctx.lineWidth=3;
+            ctx.beginPath();ctx.moveTo(q.x,q.y+2);ctx.lineTo(q.x,q.y-10);ctx.stroke();
+          }
+        }
+        for (const bank of [a,b]) {
+          line({ x:bank.x+nx*(half+5), y:bank.y+ny*(half+5) },
+            { x:bank.x-nx*(half+5), y:bank.y-ny*(half+5) },
+            '#847a64', 2.4);
         }
       }
     }
