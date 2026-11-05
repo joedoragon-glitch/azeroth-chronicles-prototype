@@ -41,10 +41,25 @@ const intersects = (a, b) => a && b &&
       const context = await browser.newContext({
         viewport: { width: v.width, height: v.height },
         hasTouch: v.touch, isMobile: v.touch,
+        // No PWA update/reload acceptance in this two-viewport input test.
+        serviceWorkers: 'block',
       });
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
       await page.goto(base);
+      try {
+        await page.locator('#title-new').waitFor({ state: 'visible', timeout: 15000 });
+      } catch (error) {
+        console.error('Startup diagnosis', await page.evaluate(() => ({
+          prototype: typeof window.Prototype,
+          started: window.Prototype?.started,
+          titleHidden: document.querySelector('#title-screen')?.hidden,
+          loadingHidden: document.querySelector('#startup-update')?.hidden,
+          loadingText: document.querySelector('#startup-update-text')?.textContent,
+          pageLanguage: document.documentElement.lang,
+        })), errors);
+        throw error;
+      }
       await page.locator('#title-new').click();
       await page.locator('#modal-actions button').filter({ hasText: 'New Developer Mode run' }).click();
       await page.locator('#modal-actions button').filter({ hasText: 'Strategist (Playtest)' }).click();
