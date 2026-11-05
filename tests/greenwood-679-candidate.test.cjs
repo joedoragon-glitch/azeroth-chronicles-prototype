@@ -36,6 +36,14 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const home = z.props.filter((p) => p.id.startsWith('greenwood-thorn-homestead-'));
   assert(home.some((p) => p.greenwoodFacility === 'thorn-lodge' &&
     p.roadBlocker && p.r > 40), 'wolf-scale lodge is physical');
+
+  const wolfLodge = home.find((p) => p.greenwoodFacility === 'thorn-lodge');
+  const glass = require('../src/prototype/visuals.js').lightingFixtures(
+    wolfLodge, { x: 0, y: 0 }, 1, 0);
+  assert.equal(glass.length, 1, 'one actual mounted home lantern, not a fake glow sticker');
+  assert.deepEqual([glass[0].x, glass[0].y], [54, -41],
+    'night lighting source stays physically attached to the drawn porch lantern');
+  assert.equal(glass[0].lit, true);
   assert(home.some((p) => p.greenwoodFacility === 'thorn-rest-bay' && p.roadBlocker),
     'outdoor rest shelter is physical');
   for (const p of home) {

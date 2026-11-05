@@ -193,7 +193,9 @@
     let sites = [];
     let visualScale = 1;
     // Existing watermill facade houses this lamp; no independent light actor.
-    if (region === 0 && e.greenwoodFacility === 'mill')
+    if (region === 0 && e.greenwoodFacility === 'thorn-lodge')
+      sites = [{ x: 54, y: -41, role: 'home', radius: 64, alpha: 0.20 }];
+    else if (region === 0 && e.greenwoodFacility === 'mill')
       sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
     else if (structure === 'roadside-lantern')
       sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
