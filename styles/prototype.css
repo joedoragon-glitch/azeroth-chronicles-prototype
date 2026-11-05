@@ -1794,4 +1794,19 @@ body[data-experience='phone'].title-active #modal {
   background: var(--menu-picked);
   border-color: var(--menu-violet);
 }
-
+/* Primary action is explicit, but ordinary options remain visually calm. */
+#modal-actions button.menu-primary {
+  background: #46301e;
+  color: #fff4d6;
+  border-color: var(--menu-gold);
+  font-weight: 700;
+}
+#modal-actions button.menu-primary:hover:not(:disabled),
+#modal-actions button.menu-primary.selected,
+#modal-actions button.menu-primary:focus-visible {
+  background: #573a24;
+  border-color: var(--menu-gold);
+}
+body.menu-open::before {
+  background: #0c07159c;
+}
