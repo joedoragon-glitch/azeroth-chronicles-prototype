@@ -88,6 +88,14 @@ jobs:
           path: test-artifacts/environment-708/
           if-no-files-found: ignore
           retention-days: 14
+      - name: Preserve Greenwood #809 aligned night-design previews
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: greenwood-809-before-and-candidate
+          path: test-artifacts/greenwood-809/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Verify reproducible, offline-ready build
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
