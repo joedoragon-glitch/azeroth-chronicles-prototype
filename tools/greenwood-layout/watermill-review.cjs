@@ -35,6 +35,7 @@ const views = [
   ['race-bridge-day', bridge, 120],
   ['race-bridge-night', bridge, 500],
   ['headwater-culvert-day', culvert, 120],
+  ['mill-entrance-day', cfg.millEntrance, 120],
 ];
 // Sample screen center, not the label and browser frame; this catches a
 // duplicate/blank night or a camera missing the natural district altogether.
@@ -83,8 +84,14 @@ for (const [name, target, clock] of views) {
   renderer.draw();
   renderer.draw();
   const drawMs = Math.round((performance.now()-t0)*100)/100;
-  if (before !== JSON.stringify(g.snapshot()))
-    throw Error(name + ': rendering unexpectedly modified saved campaign');
+  const after = JSON.stringify(g.snapshot());
+  const snapshotUnchanged = before === after;
+  // Preserve the actual images even on a failing render, so an engineer can
+  // inspect the scene while the save-mutation defect remains a hard blocker.
+  const beforeState = JSON.parse(before), afterState = JSON.parse(after);
+  const changedFields = snapshotUnchanged ? [] :
+    Object.keys(afterState).filter((key) =>
+      JSON.stringify(beforeState[key]) !== JSON.stringify(afterState[key]));
   const metrics = centerLuma(ctx),
     bytes = canvas.toBuffer('image/png');
   if (bytes.length < 1024 || metrics.variations < 15)
@@ -99,7 +106,7 @@ for (const [name, target, clock] of views) {
     sha256:crypto.createHash('sha256').update(bytes).digest('hex'),
     sourceSha:process.env.GITHUB_SHA || null,
     rendering:'native software Canvas with procedural fallback; not Pixi/real-device acceptance',
-    snapshotUnchanged:true,
+    snapshotUnchanged, changedFields,
   });
   Object.assign(g.hero, originalHero);
   g.s.clock = originalClock;
@@ -138,5 +145,10 @@ fs.writeFileSync(path.join(out,'receipt.json'),JSON.stringify(report,null,2)+'\n
     background:'#e8e2d3'}})
     .composite(panels)
     .png().toFile(path.join(out,'watermill-day-night-contact-sheet.png'));
-  console.log('PASS 5 focused Greenwood watermill 150% native frames; paired day/night contrast and immutable saves. Human scene review pending.');
+  const changed = receipts.filter((view) => !view.snapshotUnchanged);
+  if (changed.length)
+    throw Error('Render changed saved campaign in '+JSON.stringify(changed.map((v)=>({
+      name:v.name,changedFields:v.changedFields,
+    }))));
+  console.log('PASS 6 focused Greenwood watermill 150% native frames; paired day/night contrast and immutable saves. Human scene review pending.');
 })().catch(e => { console.error(e); process.exitCode=1; });

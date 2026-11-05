@@ -2916,7 +2916,6 @@
         return nearest;
       }
       roadSetback(p) {
-        if (p.greenwoodFacility === 'mill') return 185;
         if (p.greenwoodWall) return 60; // Low line-built perimeter: cart half-width 31 + wall 5 + party 20, not a house roof.
         if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
         if (p.stronghold && p.r > 0) return 85;
@@ -3592,6 +3591,10 @@
           ) {
             this.syncThornArrival(z);
             this.setSceneryTraversal(z);
+            // Restore the final road footprint before either countryside overlay
+            // positions scenery; no scene-5 regeneration or unrelated map changes.
+            this.greenwoodRoadBridgeFinish?.(z);
+            this.greenwoodWatermillScene?.(z);
             this.greenwoodRefinementScene?.(z);
             this.greenwoodCompositionFinish?.(z);
             this.greenwoodTrailLabels?.(z);

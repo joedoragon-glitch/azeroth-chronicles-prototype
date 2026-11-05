@@ -61,6 +61,11 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
     'upper source is deliberately shallow, not an unmarked new strategic barrier');
   assert.equal(g.clearSegment(bridge.from, bridge.to, 12),true,
     'whole bridge crossing, not only the center, is physically usable');
+  assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12,true),
+    'the visible mill loading entrance has a dry player-sized approach');
+  assert(g.route(cfg.millServiceLane[0],cfg.millEntrance).length>0,
+    'the mill doorway landing can be reached from the service lane');
+
   const culvert = cfg.creekCulvert;
   const streamPoint = crossMid(culvert);
   assert.equal(g.blocked(streamPoint.x, streamPoint.y, 'vale', 12, true), false,
