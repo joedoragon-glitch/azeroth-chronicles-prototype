@@ -8290,7 +8290,8 @@
     // pageshow callback. Keep the GPU guard in sync before making this choice.
     graphicsController.visibilityChanged(false);
     const graphics = graphicsController.status();
-    const needsGraphicsGate = graphics.phase === 'preparing' ||
+    const needsGraphicsGate = !!sceneTransition ||
+      graphics.phase === 'preparing' ||
       graphics.recoveryPending === true ||
       (graphics.mode === 'webgl2' && !['confirmed', 'trial'].includes(graphics.phase));
     const mustUseTitle = hiddenDurationMs >= backgroundTitleGraceMs || needsGraphicsGate;

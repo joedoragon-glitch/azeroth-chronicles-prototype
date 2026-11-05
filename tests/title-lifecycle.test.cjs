@@ -188,6 +188,44 @@ for (const [language, resumeSource] of [
     event.reason === 'document-hidden-graphics-recovery'));
 }
 
+// A failed campaign save must not be mislabeled as a safe live return.
+// The previous durable save and the unsaved in-memory run must both survive.
+for (const language of ['en', 'es']) {
+  let clock = 0;
+  const { scope, elements, storage, documentEvents, frame } =
+    shell(language, 'ranger', { stayOnTitle: true, now: () => clock });
+  elements.get('title-continue').click();
+  frame(100);
+  assert.equal(scope.Prototype.started, true);
+  const live = scope.Prototype.game;
+  const primary = storage.get('azeroth-v4-normal');
+  const beforeTime = live.s.time;
+  const originalSet = storage.set.bind(storage);
+  storage.set = (key, value) => {
+    if (key === 'azeroth-v4-normal') throw Error('simulated save-storage failure');
+    return originalSet(key, value);
+  };
+  clock = 130;
+  scope.document.hidden = true;
+  for (const fn of documentEvents.visibilitychange || []) fn();
+  clock = 230;
+  scope.document.hidden = false;
+  for (const fn of documentEvents.visibilitychange || []) fn();
+  assert.equal(scope.Prototype.started, true,
+    'failed persistence cannot discard the unsaved live campaign');
+  assert.equal(scope.Prototype.game, live);
+  assert.equal(elements.get('title-screen').hidden, true);
+  assert.equal(storage.get('azeroth-v4-normal'), primary,
+    'the previous saved snapshot is not overwritten');
+  frame(300);
+  assert.equal(live.s.time, beforeTime, 'simulation stays paused after save failure');
+  const history = JSON.parse(storage.get('sibdlp-playtest-diagnostics-v1')).events;
+  assert(history.some((event) => event.kind === 'background-return-classified' &&
+    event.decision === 'save-or-ownership-pause'),
+    'failed save is classified as a safe paused state, never live-resume');
+  storage.set = originalSet;
+}
+
 // Confirmed WebGL loss in a session may restore behind Continue, but the
 // startup quarantine and repeated-failure hold must not be bypassed.
 for (const [label, launchRenderer, pending, recoveryPaused, expectedAttempts] of [
