@@ -20,7 +20,9 @@ jobs:
   focused:
     name: Focused validation
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # The selected native scene/route regressions can exceed 15 minutes together;
+    # preserve the existing focused suite instead of silently dropping tests.
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
         with:
