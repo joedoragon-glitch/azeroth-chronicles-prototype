@@ -768,6 +768,83 @@
         z.greenwoodRoadBridgeAudit = { snappedActors: affected };
         z.greenwoodRoadBridgeVersion = 1;
       }
+      // A non-destructive, separately versioned presentation pass for both
+      // fresh worlds and old v4 saves. No change to travel destinations,
+      // player-owned structures, enemy behavior or road collision.
+      greenwoodEnvironmentFinish(z) {
+        if (z.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
+            z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion) return;
+        const scale = R.greenwoodLayout.scale;
+        if (z.greenwoodTradeExitVersion !== 1) {
+          const mainRoad = z.roads?.[0],
+            last = mainRoad?.at(-1);
+          if (last && distance(last, { x: plan.wagon[0] * scale, y: plan.wagon[1] * scale }) < 2) {
+            // The merchant wagon stays at the existing departure point. The
+            // same navigable cart-road geometry visually exits the NE boundary.
+            const extension = [[3020, 195], [3198, 95]]
+              .map(([x, y]) => ({ x: x * scale, y: y * scale }));
+            mainRoad.push(...extension);
+            const route = z.greenwoodRoutes?.find((p) => p.kind === 'cart');
+            if (route && route.points !== mainRoad) route.points = mainRoad;
+          }
+          z.greenwoodTradeExitVersion = 1;
+        }
+        if (z.greenwoodPublicLightingVersion === 1) return;
+        const roadDistance = (point) => {
+          let best = Infinity;
+          for (const line of z.roads || [])
+            for (let j = 1; j < line.length; j++)
+              best = Math.min(best, distanceToRoadSegment(point, line[j - 1], line[j]));
+          return best;
+        };
+        const plans = [
+          ['millhaven-square', 650, 600],
+          ['millhaven-market', 950, 650],
+          ['millhaven-workshops', 1270, 820],
+          ['millhaven-south', 650, 1400],
+          ['orchard-hamlet', 550, 1750],
+          ['north-bridge', 1470, 990],
+          ['treasury-freight', 2320, 900],
+        ];
+        const audit = [];
+        for (const [name, x, y] of plans) {
+          const id = 'greenwood-public-light-' + name;
+          if (z.props.some((p) => p.id === id)) {
+            audit.push({ id, placed: true });
+            continue;
+          }
+          let found = null;
+          const anchor = { x: x * scale, y: y * scale };
+          for (const radius of [65, 85, 105, 125]) {
+            for (let k = 0; k < 12; k++) {
+              const angle = k * Math.PI / 6,
+                p = { x: anchor.x + Math.cos(angle) * radius * scale,
+                  y: anchor.y + Math.sin(angle) * radius * scale };
+              if (p.x < 90 || p.y < 90 || p.x > 3110 * scale || p.y > 3110 * scale)
+                continue;
+              const shoulder = roadDistance(p);
+              if (shoulder < 38 * scale || shoulder > 108 * scale ||
+                  z.npcs.some((q) => distance(p, q) < 58 * scale) ||
+                  z.buildings.some((q) => distance(p, q) < 85 * scale) ||
+                  z.props.some((q) => (q.structure === 'roadside-lantern' ||
+                    q.roadBlocker || q.r > 0) &&
+                    distance(p, q) < (q.r || 0) + 68 * scale))
+                continue;
+              found = p;
+              break;
+            }
+            if (found) break;
+          }
+          if (found) z.props.push({
+            id, ...found, r: 0, decorative: true,
+            structure: 'roadside-lantern', greenwoodPublicLight: true,
+            publicWorks: 'maintained-rural-crossroads',
+          });
+          audit.push({ id, placed: !!found });
+        }
+        z.greenwoodPublicLightingAudit = audit;
+        z.greenwoodPublicLightingVersion = 1;
+      }
       greenwoodRedesignFinish(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 || z.greenwoodRedesignScene === cfg.sceneVersion)
