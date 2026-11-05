@@ -49,10 +49,10 @@ for (const language of ['en', 'es']) {
     'Succession is visibly optional and off by default',
   );
   assert(
-    setupActions[successionIndex].textContent.includes(
-      es ? 'Recuperación habitual' : 'Standard recovery',
+    setupActions[successionIndex].children.some((span) =>
+      span.textContent.includes(es ? 'Recuperación habitual' : 'Standard recovery'),
     ),
-    'disabled Succession explains the active standard recovery rather than implying permanent loss',
+    'Succession Off explains the active standard recovery rather than implying permanent loss',
   );
   assert(
     elements
@@ -83,7 +83,9 @@ for (const language of ['en', 'es']) {
   const chosenSuccession = button(elements, es ? 'Sucesión · Activada' : 'Succession · On');
   assert.equal(chosenSuccession.getAttribute('aria-pressed'), 'true');
   assert(
-    chosenSuccession.textContent.includes(es ? 'Si caen las cuatro' : 'Lose all four'),
+    chosenSuccession.children.some((span) =>
+      span.textContent.includes(es ? 'Si caen las cuatro' : 'Lose all four'),
+    ),
     'the enabled challenge explains run-ending consequences before the class picker',
   );
   button(elements, es ? 'Elegir héroe' : 'Choose Hero').click();
