@@ -1,32 +1,37 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
-## 5 November 2026 — #783 readback experiment (draft only)
+## 5 November 2026 — #783 readback trial REJECTED by paired performance regression
 
-Owner iPhone Air dev.257 playtest found a 175ms synchronous-work incident (173ms rendering)
-while the hero was moving outside combat in Vale; another 58ms incident was also
-render-dominated. The report did not record Pixi substage samples, so neither
-background painting nor cold procedural baking is incident-proven. Lifetime maximum
-background-paint time (162ms) is **not** timestamp-linked to the incident.
+The owner’s dev.257 iPhone Air playtest recorded a 175ms game callback
+(173ms total synchronous rendering), without the optional Pixi substage trace.
+Controlled prior R3 Chromium experiments identified a potentially expensive
+full-bitmap `getImageData` operation during cold procedural sprite creation.
+However, that did not prove the specific iPhone event’s cause.
 
-The earlier controlled Chromium/SwiftShader R3 investigation (#789) identified
-`getImageData` full-bitmap readback as the dominant cost of cold Pixi procedural
-bakes. An isolated **R4 trial** on branch
-`perf/pixi-783-readback-candidate-20261105` requests
-`willReadFrequently: true` on **only** the short-lived procedural bake canvas,
-before the original draw and alpha-bounds scan. This is a browser context
-optimization hint, not a replacement art pipeline. It does not change sprite
-coordinates, cropping, cached images, zoom, resolution policy, game state,
-sound, or the Canvas fallback.
+A bounded R4 trial in [draft PR #818](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/818)
+requested `willReadFrequently: true` for the temporary Pixi procedural-bake
+canvas. The API hint kept the source artwork code intact but **severely
+regressed real browser crowd performance** in the paired, same-runner #755
+comparison ([run #41993913603](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41993913603)):
 
-**Status:** Implemented on the experimental branch, unmerged, unpublished.
-The scoped Pixi fidelity mock now checks that the existing full-pixel read
-is requested with the optimization hint. Browser and device improvement, as
-well as pixel-for-pixel fidelity, remain **unverified** until actual matched
-baseline/candidate cold/warm and 1×/1.5× browser comparisons pass. The hint
-may select a software-backed 2D canvas and could regress drawing or edge pixels;
-do not merge or call this an iPhone fix merely because a source assertion passes.
-Issue #783 retains the R4–R6 acceptance gate. No save schema or production
-settings change is proposed.
+| Native Chromium software-WebGL scenario | Unchanged main | Trial | Consequence |
+| --- | ---: | ---: | --- |
+| 24 actors p50 synchronous composited draw | 8.9ms | 444.3ms | ~50× slower |
+| 24 actors p95 draw | 445.35ms | 755.45ms | ~70% slower |
+| 48 actors p50 draw | 12.25ms | 444.2ms | ~36× slower |
+
+The trial is **rejected and removed** from the PR branch along with its
+test-only assertion and `sw.js` fingerprint change. This is a valid test
+failure, not a tolerable noise waiver or evidence of an iPhone performance
+improvement. The original procedural baking, cropped artwork, rendering
+defaults, cache and save behaviour are left intact.
+
+Follow-up on PR #818 is now limited to retaining existing Pixi vs Canvas
+timings within exceptional callback reports, avoiding new per-stage clocks on
+ordinary play. That is **diagnostic-only** and still requires its own focused
+validation. Original iPhone root-cause identification and a safe measurable
+remedy remain **open** in issue #783. Nothing from this draft is merged,
+published or device-verified.
 
 ## 30 October 2026 — incremental browser updates and offline cache audit
 
