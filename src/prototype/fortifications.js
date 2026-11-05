@@ -286,7 +286,7 @@
         return cover;
       }
       fortShotBlocked(p, fort) {
-        return this.blocked(p.x, p.y, this.zoneId, 0, false, fort);
+        return this.blocked(p.x, p.y, this.zoneId, 0, false, fort, true);
       }
       fortShotClear(a, b, fort) {
         const n = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 8));
@@ -320,7 +320,7 @@
         // warning reach rather than extending their range a second time.
         p.life = span / p.speed;
         const end = target || { x: p.x + (p.dx || 0) * span, y: p.y + (p.dy || 0) * span };
-        p.rangedArc = !!fort || !this.line(p, end);
+        p.rangedArc = !!fort || !this.rangedLine(p, end);
         p.fortDistance = Math.max(1, target ? Math.hypot(target.x - p.x, target.y - p.y) : span);
         // An arc has one fixed landing point. A dodged shot ends there rather
         // than skating along the floor for the remainder of its range budget.
