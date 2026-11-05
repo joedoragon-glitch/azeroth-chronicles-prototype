@@ -445,6 +445,119 @@
         z.greenwoodRefinementAudit = audit;
         z.greenwoodRefinementVersion = 1;
       }
+      // Non-destructive, versioned landscape composition: never replay the
+      // original scene-5 generator on an established v4 game. Keep stable
+      // gameplay/owner IDs and place only bounded, static regional decoration.
+      greenwoodCompositionFinish(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodCompositionVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        const at = (x, y) => ({ x: x * scale, y: y * scale });
+        const near = (a, b) => distance(a, b);
+        const audit = [];
+        // Road/bridge topology and physical deck spans are independently
+        // owned by the dedicated Greenwood infrastructure PR #824.
+        // This scenery pass observes routes but never edits their geometry.
+        if (z.greenwoodRoutes?.length !== 16) return;
+        const change = (id, expected, target, detail = {}) => {
+          const p = z.props.find((item) => item.id === id);
+          if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
+            audit.push({ id, placed: false, reason: 'missing, changed or owned scene object' });
+            return;
+          }
+          if (target) {
+            const desired = at(...target);
+            if (
+              this.blocked(desired.x, desired.y, 'vale', 4, true) ||
+              this.distanceToRoad(z, desired) < (detail.greenwoodField ? 125 : 55) ||
+              z.buildings.some((b) => near(b, desired) < 130)
+            ) {
+              audit.push({ id, placed: false, reason: 'target footprint conflicts; original retained' });
+              return;
+            }
+            Object.assign(p, desired);
+          }
+          Object.assign(p, detail);
+          audit.push({ id, placed: true, reason: 'existing scene identity retained' });
+        };
+        // The tiny shared garden/furrow icon is now an intentional household
+        // bed or a multi-row rural field, without resizing other regions.
+        for (const id of ['greenwood-homes-1', 'greenwood-homes-2', 'greenwood-homes-4', 'greenwood-hamlet-2'])
+          change(id, 'garden', null, { greenwoodKitchen: true });
+        for (const id of ['greenwood-homes-6', 'greenwood-homes-7'])
+          change(id, 'furrow-plot', null, { greenwoodField: true });
+        change('greenwood-orchard-6', 'furrow-plot', [510, 2080], { greenwoodField: true });
+        change('greenwood-refinement-den-thorn-bed', 'thorn-bed', [875, 3070], { greenwoodNest: true });
+        // Move the entire isolated pond flock to the Hamlet's smallhold, not
+        // one animal away from its feed. Avoid the bank and forest occlusion.
+        change('greenwood-pasture-0', 'pasture-sheep', [350, 2460]);
+        change('greenwood-pasture-1', 'feed-trough', [430, 2500]);
+        change('greenwood-pasture-2', 'hay-rick', [250, 2510]);
+        const orchard = z.npcs.find((n) => n.id === 'orchard');
+        if (orchard) {
+          const positions = [[1030, 2300], [1070, 2360], [1040, 2390]];
+          const chosen = positions.map(([x, y]) => at(x, y)).find((p) =>
+            !this.blocked(p.x, p.y, 'vale', 14, true) &&
+            this.distanceToRoad(z, p) > 88 &&
+            this.distanceToRoad({ roads: z.footpaths }, p) > 45 &&
+            !z.buildings.some((b) => near(b, p) < 130));
+          if (chosen) Object.assign(orchard, chosen);
+          audit.push({ id: 'orchard', placed: !!chosen, reason: chosen ? 'off-road planted site' : 'no legal marker location' });
+        }
+        const candidates = [
+          ['fruit', 510, 1835], ['fruit', 820, 1845], ['fruit', 425, 2490],
+          ['fruit', 760, 2380], ['fruit', 1050, 2410], ['fruit', 1090, 2110],
+          ['fruit', 330, 1930], ['fruit', 920, 2570], ['fruit', 950, 1940],
+          ['fruit', 1180, 2300], ['fruit', 670, 2550], ['fruit', 1100, 2600],
+          ['flowers', 490, 980], ['flowers', 730, 1150], ['flowers', 350, 1440],
+          ['flowers', 470, 1590], ['flowers', 1050, 1010], ['flowers', 300, 1880],
+          ['flowers', 920, 2430], ['flowers', 1070, 2630], ['flowers', 440, 2700],
+          ['flowers', 2210, 640], ['flowers', 2600, 790], ['flowers', 2900, 1700],
+          ['flowers', 2060, 2020], ['flowers', 2560, 2880], ['flowers', 850, 920],
+          ['flowers', 1140, 800], ['flowers', 340, 740], ['flowers', 2320, 2120],
+          ['bush', 1120, 1100], ['bush', 420, 1720], ['bush', 1130, 2700],
+          ['bush', 2440, 650], ['bush', 2850, 1800], ['bush', 530, 2750],
+        ];
+        let fruit = 0;
+        for (const [i, [kind, x, y]] of candidates.entries()) {
+          const id = 'greenwood-composition-' + kind + '-' + i;
+          if (z.props.some((p) => p.id === id)) continue;
+          const p = at(x, y), isTree = kind === 'fruit';
+          const limit = isTree ? 110 : kind === 'bush' ? 72 : 46;
+          const inUse =
+            this.blocked(p.x, p.y, 'vale', isTree ? 18 : 0, true) ||
+            this.distanceToRoad(z, p) < limit ||
+            this.distanceToRoad({ roads: z.footpaths }, p) < (isTree ? 70 : 28) ||
+            z.buildings.some((b) => near(b, p) < (isTree ? 175 : 130)) ||
+            z.npcs.some((n) => near(n.servicePoint || n, p) < (isTree ? 100 : 65)) ||
+            z.nodes.some((n) => near(n, p) < (isTree ? 65 : 32)) ||
+            z.props.some((q) =>
+              (q.owned || q.playerOwned || q.custom || q.roadBlocker) &&
+              near(q, p) < (isTree ? 155 : 85)) ||
+            (isTree && z.props.some((q) =>
+              (q.structure === 'fruit-tree' || q.greenwoodNature === 'tree') &&
+              near(q, p) < 105));
+          if (inUse || z.props.length >= 390) {
+            audit.push({ id, placed: false, reason: inUse ? 'protected clearance' : 'prop budget' });
+            continue;
+          }
+          z.props.push({
+            id, structure: isTree ? 'fruit-tree' : kind === 'flowers' ? 'wildflowers' : 'bush',
+            ...p, r: 0, decorative: true, greenwoodAuthored: true, greenwoodComposition: 1,
+          });
+          if (isTree) fruit++;
+          audit.push({ id, placed: true, reason: 'land-use-aware placement' });
+        }
+        z.greenwoodCompositionAudit = audit;
+        z.greenwoodCompositionFruitCount = fruit;
+        z.greenwoodCompositionVersion = 1;
+      }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 || z.greenwoodSourceVersion === 2) return;
@@ -1147,6 +1260,7 @@
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
           this.greenwoodRefinementScene(z);
+          this.greenwoodCompositionFinish(z);
         } finally {
           this.s.zone = previous;
         }
@@ -2045,6 +2159,28 @@
     }
     ctx.restore();
   }
+  // Stable unscaled meadow geometry is created once, outside the frame loop.
+  // No save fields, runtime noise or per-frame RNG state are involved.
+  const meadowSamples = [
+    [460, 970, 115, 85], [805, 910, 150, 110],
+    [345, 1390, 130, 100], [450, 1880, 135, 125],
+    [735, 2440, 125, 115], [1060, 2550, 135, 140],
+    [1140, 1010, 135, 95], [2250, 740, 190, 135],
+    [2420, 2040, 135, 100],
+    [2930, 1740, 110, 120], [500, 2750, 145, 110],
+  ].map(([cx, cy, rx, ry], index) => ({
+    cx, cy, flowers: Array.from({ length: 13 }, (_, j) => {
+      const h = hash('greenwood-meadow-' + index + '-' + j);
+      const a = j * 2.3999632297 + (h % 23) * 0.017;
+      const r = Math.sqrt(((h >>> 8) % 997) / 997);
+      const dandelion = j % 4 === 0;
+      return {
+        x: cx + Math.cos(a) * rx * r, y: cy + Math.sin(a) * ry * r, h,
+        dandelion, stem: dandelion ? 13 + (h % 4) : 8 + (h % 5),
+        lean: ((h >>> 5) % 7) - 3,
+      };
+    }),
+  }));
   function drawGround(ctx, screen, cfg, bounds) {
     const s = cfg.scale;
     const patches = [
@@ -2103,6 +2239,76 @@
     ctx.beginPath();
     dirt.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
     ctx.closePath();ctx.fill();
+    // These meadow samples are computed once and shared by every draw.
+    // A bounded number of batched Canvas paths replaces hundreds of
+    // per-flower strokes, fills and trig/hash calls on each painted scene.
+    const meadowVisible = [];
+    for (const patch of meadowSamples) {
+      const center = screen({ x: patch.cx * s, y: patch.cy * s });
+      if (
+        center.x < -240 || center.x > bounds.width + 240 ||
+        center.y < -160 || center.y > bounds.height + 160
+      ) continue;
+      for (const flower of patch.flowers) {
+        const p = screen({ x: flower.x * s, y: flower.y * s });
+        if (p.x < -18 || p.x > bounds.width + 18 || p.y < -26 || p.y > bounds.height + 18)
+          continue;
+        meadowVisible.push({ x: p.x, y: p.y, ...flower });
+      }
+    }
+    if (meadowVisible.length) {
+      ctx.strokeStyle = '#87a267cc';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      for (const f of meadowVisible) {
+        ctx.moveTo(f.x, f.y + 4);
+        ctx.quadraticCurveTo(f.x + f.lean * 0.2, f.y - f.stem * 0.4,
+          f.x + f.lean, f.y - f.stem);
+      }
+      ctx.stroke();
+      ctx.fillStyle = '#f1eadc33';
+      ctx.beginPath();
+      for (const f of meadowVisible) if (f.dandelion) {
+        ctx.moveTo(f.x + f.lean + 4.6, f.y - f.stem);
+        ctx.arc(f.x + f.lean, f.y - f.stem, 4.6, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      ctx.strokeStyle = '#eee9d4be';
+      ctx.lineWidth = 0.65;
+      ctx.beginPath();
+      for (const f of meadowVisible) if (f.dandelion)
+        for (let k = 0; k < 12; k++) {
+          const a = (Math.PI * 2 * k) / 12, r = 4.5 + (f.h % 3) * 0.2;
+          const x = f.x + f.lean, y = f.y - f.stem;
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        }
+      ctx.stroke();
+      const petalColors = ['#d4be9b', '#c8b0b4', '#b7bdd0', '#e1cc94'];
+      for (let color = 0; color < petalColors.length; color++) {
+        ctx.fillStyle = petalColors[color];
+        ctx.beginPath();
+        for (const f of meadowVisible) {
+          if (f.dandelion || ((f.h >>> 3) % petalColors.length) !== color) continue;
+          const x = f.x + f.lean, y = f.y - f.stem;
+          for (let k = 0; k < 5; k++) {
+            const a = (Math.PI * 2 * k) / 5,
+              px = x + Math.cos(a) * 2.2, py = y + Math.sin(a) * 2;
+            ctx.moveTo(px + 1.8, py);
+            ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+          }
+        }
+        ctx.fill();
+      }
+      ctx.fillStyle = '#9f9866';
+      ctx.beginPath();
+      for (const f of meadowVisible) if (!f.dandelion) {
+        const x = f.x + f.lean, y = f.y - f.stem;
+        ctx.moveTo(x + 1.05, y);
+        ctx.arc(x, y, 1.05, 0, Math.PI * 2);
+      }
+      ctx.fill();
+    }
     ctx.restore();
   }
   const api = {

@@ -12715,6 +12715,19 @@
           );
           break;
         case 'thorn-bed':
+          if (region === 0 && e.greenwoodNest) {
+            // Readable low bedding for Thornfang's woodland den: a dry leaf
+            // pallet, woven timber edges and a folded hide, not a stone ring.
+            oval(0, 10, 38, 12, '#253b2944');
+            for (const y of [-7, 4, 12])
+              line([[-29, y], [27, y + 3]], '#806b4c', 4);
+            softPoly([[-29, -3], [-15, -13], [15, -12], [29, 0], [13, 10], [-19, 7]], '#9d9066', 2);
+            softPoly([[-18, -7], [7, -12], [24, 0], [-10, 3]], '#b7a67f', 1.5);
+            line([[-16, 1], [6, 0], [22, 5]], '#746b4d', 1.1);
+            for (const x of [-27, -14, 6, 19, 30])
+              line([[x, 12], [x + 5, 7], [x + 3, 2]], '#667c4b', 1.5);
+            break;
+          }
           nest(0, 4, 1.2);
           for (const x of [-17, -5, 8, 18])
             craftAt(x, 2, 0.5, () => foliage(0, 0, 10, 7, '#6d8557'));
@@ -15035,6 +15048,33 @@
           break;
         case 'furrow-plot':
         case 'garden':
+          if (region === 0 && e.greenwoodField) {
+            // An occupied field reads as three cultivated strips, not a
+            // miniature soil token. Rows are rendered, never new crop nodes.
+            for (const [dx, dy] of [[-48, 9], [0, -7], [48, -23]]) {
+              softPoly(
+                [[dx - 32, dy + 1], [dx - 8, dy - 15], [dx + 34, dy - 5], [dx + 7, dy + 13]],
+                '#816b49', 2,
+              );
+              for (const v of [-6, 2, 10]) {
+                line([[dx - 24 + v, dy + v * 0.3], [dx + 25 + v, dy - 6 + v * 0.3]], '#5d593d', 1.4);
+              }
+              for (const [fx, fy] of [[-19, 2], [-7, -3], [9, 4], [21, -3]])
+                foliage(dx + fx, dy + fy, 4.5, 4.5, '#6e8d51');
+            }
+            break;
+          }
+          if (region === 0 && e.greenwoodKitchen) {
+            for (const dx of [-28, 27]) {
+              softPoly(
+                [[dx - 22, 1], [dx - 8, -17], [dx + 24, -8], [dx + 8, 11]], '#8a7752', 2,
+              );
+              for (const [x, y] of [[dx - 12, -2], [dx, -8], [dx + 13, 0]])
+                foliage(x, y, 5, 6, '#71915c');
+            }
+            line([[-52, 15], [52, 15]], '#b09b6e', 1.3);
+            break;
+          }
           softPoly(
             [
               [-32, 1],
@@ -18727,7 +18767,7 @@
           ctx.fill();
         }
         // Open filaments and little parachute tips, rather than a solid disc.
-        const radius = 3.5 + (seed % 2) * 0.5;
+        const radius = 4.8 + (seed % 2) * 0.6;
         dot(headX, headY, radius * 0.8, '#f1eed914');
         for (let j = 0; j < 16; j++) {
           const angle = (j / 16) * Math.PI * 2 + (seed % 7) * 0.14,
