@@ -1,0 +1,43 @@
+name: Save import live browser acceptance (focused)
+
+# Only the explicit acceptance test branch runs this browser check.
+# Do not turn normal pushes into a full Chromium/WebKit matrix.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - tests/live-save-import-browser.test.cjs
+      - .github/workflows/save-import-browser-acceptance.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: save-import-acceptance-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  browser-import:
+    if: github.event.pull_request.head.ref == 'test/live-save-import-acceptance-20261031'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked browser driver
+        run: npm ci --ignore-scripts
+      - name: Install focused Chromium browser
+        run: npx playwright install --with-deps chromium
+      - name: Play published Mage import and Continue in Chromium
+        run: node tests/live-save-import-browser.test.cjs
+      - name: Preserve failures for diagnosis
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: save-import-browser-failure
+          path: test-results/live-save-import/
+          if-no-files-found: ignore
+          retention-days: 7
