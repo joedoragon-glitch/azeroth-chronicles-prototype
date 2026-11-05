@@ -3058,7 +3058,34 @@
     }
     const fragments = [];
     for (const path of footpaths || []) {
-      const points = smoothRoad(path, 'path');
+      // Keep the actual saved route and its pedestrian classification intact.
+      // The southern crossing approaches a wider timber deck from a farm lane;
+      // presenting its continuation as a 24-unit stripe creates an abrupt pinch.
+      // Paint both banks at farm-lane breadth without altering collision, bridge
+      // clearance, navigation, or any historical save.
+      const scale = R.greenwoodLayout?.scale || 1;
+      const southCrossing =
+        path.length === 6 &&
+        distance(path[0], { x: 1560 * scale, y: 2280 * scale }) < 1 &&
+        distance(path[1], { x: 1740 * scale, y: 2280 * scale }) < 1 &&
+        distance(path[2], { x: 1950 * scale, y: 2280 * scale }) < 1;
+      if (southCrossing) {
+        wide.push({ kind: 'farm', points: smoothRoad(path, 'farm') });
+        continue;
+      }
+      // The northern woodland connector formerly doubled back parallel to
+      // the freight road just before its junction. A short, direct approach
+      // makes a proper Y-join without moving the source path or any actors.
+      const northernConnector =
+        path.length === 9 &&
+        distance(path[0], { x: 250 * scale, y: 600 * scale }) < 1 &&
+        distance(path.at(-1), { x: 1330 * scale, y: 1000 * scale }) < 1;
+      const paintedPath = northernConnector
+        ? [...path.slice(0, -2),
+          { x: 1510 * scale, y: 885 * scale },
+          { x: 1510 * scale, y: 1000 * scale }]
+        : path;
+      const points = smoothRoad(paintedPath, 'path');
       // Short village/service spurs are maintained roads, not moss-colored
       // trails. Include them in the same unioned earth paint as cart/farm
       // roads, retaining their narrower world-space footprint.
@@ -3088,7 +3115,10 @@
             road.points.some(
               (end, k) =>
                 k > 0 &&
-                distanceToRoadSegment(mid, road.points[k - 1], end) < roadWidths[road.kind] - 3,
+                // Carry the narrow track through the shoulder to the inner
+                // worn surface, avoiding a rounded, detached-looking cap.
+                distanceToRoadSegment(mid, road.points[k - 1], end) <
+                  roadWidths[road.kind] * 0.58,
             ),
           );
           if (withinRoad) {
@@ -3180,40 +3210,30 @@
         geometry: prepareRoadPaint(paths, footpaths, kinds),
       };
     const { wide, fragments } = roadPaintCache.geometry;
-    const paint = (widthFactor, color, foot = false) => {
+    const paint = (widthFactor, color) => {
       ctx.beginPath();
-      if (foot) {
-        const width = roadWidths.path * widthFactor;
-        for (const run of fragments) {
-          appendRoadRibbon(ctx, screen, run, width);
-          // Only the true run ends need circular caps, not every sampled
-          // subsection. This avoids thousands of redundant polygons per frame.
-          appendRoadCap(ctx, screen, run[0], width);
-          appendRoadCap(ctx, screen, run[run.length - 1], width);
-        }
-      } else {
-        for (const road of wide) {
-          const w = roadWidths[road.kind] * widthFactor;
-          // One continuous mitered ribbon replaces overlapping strips and
-          // a circular blob at every interpolation point. Only endpoints
-          // need caps; avoiding their repeated silhouette removes scallops.
-          appendRoadRibbon(ctx, screen, road.points, w);
-          appendRoadCap(ctx, screen, road.points[0], w);
-          appendRoadCap(ctx, screen, road.points.at(-1), w);
-        }
+      // All roads and narrow tracks contribute to ONE ground shape per
+      // material layer. Separate footpath painting used to lay one colored
+      // strip on top of another and left visible seams at T/Y junctions.
+      for (const road of wide) {
+        const w = roadWidths[road.kind] * widthFactor;
+        appendRoadRibbon(ctx, screen, road.points, w);
+        appendRoadCap(ctx, screen, road.points[0], w);
+        appendRoadCap(ctx, screen, road.points.at(-1), w);
+      }
+      const footWidth = roadWidths.path * widthFactor;
+      for (const run of fragments) {
+        appendRoadRibbon(ctx, screen, run, footWidth);
+        appendRoadCap(ctx, screen, run[0], footWidth);
+        appendRoadCap(ctx, screen, run[run.length - 1], footWidth);
       }
       ctx.fillStyle = color;
-      // A single fill per layer unions all its overlapping outlines. The old
-      // per-strip translucent polygons darkened every T and corner multiple times.
       ctx.fill();
     };
     ctx.save();
     paint(1.12, '#755e49');
     paint(1, '#a27a58');
     paint(0.63, '#b68d66');
-    paint(1.2, '#66734d', true);
-    paint(1, '#a27a58', true);
-    paint(0.7, '#b68d66', true);
     ctx.restore();
   }
   function drawWall(ctx, e, p) {
