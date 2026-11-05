@@ -1624,7 +1624,7 @@
       if (darkness > 0) {
         for (const p of z.props) {
           const projected = project(p);
-          const fixtures = root.PrototypeVisuals.lightingFixtures?.(p, projected) || [];
+          const fixtures = root.PrototypeVisuals.lightingFixtures?.(p, projected, zoom) || [];
           if (fixtures.length) {
             lights.push(...fixtures);
             continue;
@@ -1634,10 +1634,10 @@
         }
         for (const b of z.buildings)
           if (b.progress >= 4)
-            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(b, project(b)) || []));
+            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(b, project(b), zoom) || []));
         for (const n of current.visibleNPCs())
           if (!n.interactionOnly)
-            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(n, project(n)) || []));
+            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(n, project(n), zoom) || []));
       }
       // Canvas already lights the glass actually carried by living, nonboss
       // Wraiths. Reuse its facing and idle presentation rather than inventing
