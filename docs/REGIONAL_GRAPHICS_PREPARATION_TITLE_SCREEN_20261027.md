@@ -1,5 +1,33 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
+## 5 November 2026 — #783 readback experiment (draft only)
+
+Owner iPhone Air dev.257 playtest found a 175ms synchronous-work incident (173ms rendering)
+while the hero was moving outside combat in Vale; another 58ms incident was also
+render-dominated. The report did not record Pixi substage samples, so neither
+background painting nor cold procedural baking is incident-proven. Lifetime maximum
+background-paint time (162ms) is **not** timestamp-linked to the incident.
+
+The earlier controlled Chromium/SwiftShader R3 investigation (#789) identified
+`getImageData` full-bitmap readback as the dominant cost of cold Pixi procedural
+bakes. An isolated **R4 trial** on branch
+`perf/pixi-783-readback-candidate-20261105` requests
+`willReadFrequently: true` on **only** the short-lived procedural bake canvas,
+before the original draw and alpha-bounds scan. This is a browser context
+optimization hint, not a replacement art pipeline. It does not change sprite
+coordinates, cropping, cached images, zoom, resolution policy, game state,
+sound, or the Canvas fallback.
+
+**Status:** Implemented on the experimental branch, unmerged, unpublished.
+The scoped Pixi fidelity mock now checks that the existing full-pixel read
+is requested with the optimization hint. Browser and device improvement, as
+well as pixel-for-pixel fidelity, remain **unverified** until actual matched
+baseline/candidate cold/warm and 1×/1.5× browser comparisons pass. The hint
+may select a software-backed 2D canvas and could regress drawing or edge pixels;
+do not merge or call this an iPhone fix merely because a source assertion passes.
+Issue #783 retains the R4–R6 acceptance gate. No save schema or production
+settings change is proposed.
+
 ## 30 October 2026 — incremental browser updates and offline cache audit
 
 The current game is distributed by an HTTPS web link, **not as a native app**.
