@@ -289,6 +289,7 @@
   // The sorted draw order remains authoritative: an obstacle only hides an actor
   // when it is actually painted after that actor.
   function nightLightKind(structure) {
+    if (structure === 'vale-working-mill') return 'lantern';
     if (structure === 'active-signal-beacon') return 'work-fire';
     const domestic =
       /(?:^|[-_])(?:house|cottage|workshop|boathouse|smithy|forgehouse|watchhouse|hut|lodge|longhouse|dwelling)(?:$|[-_])/i;
@@ -3497,7 +3498,11 @@
                       ...screen(prop),
                       kind,
                       id: prop.id,
-                      ...(structure === 'roadside-lantern' ? { fixture: 'post' } : {}),
+                      ...(structure === 'roadside-lantern'
+                        ? { fixture: 'post' }
+                        : structure === 'vale-working-mill'
+                          ? { fixture: 'mill' }
+                          : {}),
                     },
                   ]
                 : [];
