@@ -709,9 +709,25 @@
       ctx.fillText(name, slot.x, slot.y, slot.width);
       ctx.restore();
     }
+    // Thornfang's homestead is a world prop rather than an NPC. It deserves
+    // the same nearby golden label as existing named locations, not a toast,
+    // discovery marker or new actor.
+    function sceneryPlaceName(e) {
+      return e.renderKind === 'prop' &&
+        e.id === 'greenwood-thorn-homestead-lodge' &&
+        e.greenwoodFacility === 'thorn-lodge'
+        ? "Thornfang's Homestead"
+        : '';
+    }
+    function labelHeight(e) {
+      // This long, pitched granary fills the upper native phone viewport.
+      // Place its name *on* the roof instead of pushing the label offscreen
+      // above the building. Canvas and Pixi use the same projected anchor.
+      return sceneryPlaceName(e) ? 82 : spriteHeight(e);
+    }
     function worldLabelVisible(e) {
       if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
-      if (e.renderKind === 'npc' || e.renderKind === 'building')
+      if (e.renderKind === 'npc' || e.renderKind === 'building' || sceneryPlaceName(e))
         return Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 220;
       return true;
     }
@@ -2916,8 +2932,10 @@
           if (p.x < -40 || p.x > canvas.width + 40 || p.y < -100 || p.y > canvas.height + 100)
             continue;
           const name =
-            kind === 'npc'
-              ? e.kind === 'mini'
+            kind === 'prop'
+              ? sceneryPlaceName(e)
+              : kind === 'npc'
+                ? e.kind === 'mini'
                 ? e.name +
                   (game.peace
                     ? ' · Peaceful'
@@ -2941,6 +2959,12 @@
           records.push({ e, kind, p, name });
         }
       };
+      // Add the single authored homestead label through the existing
+      // Canvas/Pixi nameplate pass, without turning the building into an NPC.
+      if (game.zoneId === 'vale') {
+        const home = zone.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
+        if (home) add([home], 'prop');
+      }
       add(game.visibleNPCs(), 'npc');
       add(game.visibleResourceNodes(), 'node');
       add(zone.buildings, 'building');
@@ -2949,7 +2973,9 @@
       const priority = (r) =>
         r.kind === 'npc'
           ? 0
-          : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
+          : r.kind === 'prop'
+            ? 0.5
+            : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
             ? 1
             : r.kind === 'ally' && namedCompanion(r.e)
               ? 1.5
@@ -2965,7 +2991,7 @@
       ctx.textAlign = 'center';
       for (const { e, kind, p, name } of records.sort((a, b) => priority(a) - priority(b))) {
         const width = worldLabelWidth(name, e);
-        const baseY = kind === 'node' ? p.y - 25 : p.y - spriteHeight(e) - 5;
+        const baseY = kind === 'node' ? p.y - 25 : p.y - labelHeight(e) - 5;
         let slot = null;
         if (name && charmedCompanion(e)) {
           // The nickname follows its creature exactly. Never search alternate
@@ -3001,7 +3027,7 @@
         if (slot) {
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = kind === 'enemy' ? 3 : 4;
-          if (kind === 'npc') {
+          if (kind === 'npc' || kind === 'prop') {
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = '#ffe4a2';
             ctx.fillText(name, slot.x, slot.y, slot.width);
@@ -3306,6 +3332,7 @@
       const labelSlots = new Map();
       const claimedLabels = [];
       const labelText = (e) => {
+        if (e.renderKind === 'prop') return sceneryPlaceName(e);
         if (e.renderKind === 'npc')
           return e.presentation === 'mobile-captive'
             ? 'Mira · captive'
@@ -3321,7 +3348,9 @@
       const labelPriority = (e) =>
         e.renderKind === 'npc'
           ? 0
-          : e.renderKind === 'enemy' && e.type === 'boss'
+          : sceneryPlaceName(e)
+            ? 0.5
+            : e.renderKind === 'enemy' && e.type === 'boss'
             ? 1
             : e.renderKind === 'enemy' && (e.captain || e.roomCaptain)
               ? 1.5
@@ -3336,7 +3365,8 @@
                       : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
-          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+          (!['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
+            !sceneryPlaceName(e)) ||
           e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
@@ -3353,7 +3383,7 @@
           continue;
         const w = worldLabelWidth(name, e);
         const h = namedCompanion(e) ? 20 : 17;
-        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - spriteHeight(e) - 5;
+        const baseY = e.renderKind === 'node' ? anchor.y - 25 : anchor.y - labelHeight(e) - 5;
         let slot = null;
         if (charmedCompanion(e)) {
           // A Charmed nickname stays above the actor, even in a crowd.
@@ -3491,6 +3521,17 @@
             ctx.fillStyle = '#19291e';
             ctx.font = 'bold 23px system-ui';
             ctx.fillText(cue, p.x, p.y - 72);
+          }
+        }
+        if (sceneryPlaceName(e) && worldLabelVisible(e)) {
+          const slot = labelSlots.get(e);
+          if (slot) {
+            ctx.font = 'bold 11px system-ui';
+            ctx.fillStyle = '#ffe4a2';
+            ctx.shadowColor = '#07140e';
+            ctx.shadowBlur = 4;
+            ctx.fillText(sceneryPlaceName(e), slot.x, slot.y, slot.width);
+            ctx.shadowBlur = 0;
           }
         }
         if (e.renderKind === 'building' && worldLabelVisible(e)) {

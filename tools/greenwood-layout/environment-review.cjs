@@ -29,7 +29,18 @@ for (const [name, x, y] of scenes)
     g.s.clock = clock;
     g.updateNight();
     const canvas = createCanvas(852, 393),
-      ctx = canvas.getContext('2d');
+      ctx = canvas.getContext('2d'),
+      nameplates = [];
+    // Verify the actual production draw (not merely renderer source wiring).
+    // At the standard phone framing, Thornfang's name must be on the
+    // building and visible, never clipped above the viewport.
+    if (name === 'homestead') {
+      const nativeFillText = ctx.fillText;
+      ctx.fillText = function (text, x, y, ...args) {
+        if (text === "Thornfang's Homestead") nameplates.push({ x, y });
+        return nativeFillText.call(this, text, x, y, ...args);
+      };
+    }
     const renderer = Renderer.create({
       canvas,
       ctx,
@@ -44,6 +55,12 @@ for (const [name, x, y] of scenes)
     });
     const before = JSON.stringify(g.snapshot());
     renderer.draw();
+    if (name === 'homestead') {
+      assert.equal(nameplates.length, 1,
+        'the real nearby golden homestead nameplate must paint exactly once');
+      assert(nameplates[0].y >= 18 && nameplates[0].y <= 393 / 1.5 - 8,
+        'nameplate is inside the unzoomed phone viewport, not clipped offscreen');
+    }
     assert.equal(JSON.stringify(g.snapshot()), before, 'render must not mutate settled save');
     const file = name + '-' + (clock === 120 ? 'day' : 'night') + '.png';
     fs.writeFileSync(out + '/' + file, canvas.toBuffer('image/png'));
@@ -55,6 +72,7 @@ for (const [name, x, y] of scenes)
       requested: [x, y],
       actual: [g.hero.x, g.hero.y],
       stateUnchanged: true,
+      ...(name === 'homestead' ? { inWorldNameplatePainted: nameplates.length === 1 } : {}),
     });
   }
 fs.writeFileSync(
