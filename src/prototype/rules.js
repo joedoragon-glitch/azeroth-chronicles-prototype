@@ -6944,6 +6944,8 @@
       rangeMultiplier: 1.3,
       projectileSpeedMultiplier: 1.3,
       compoundHalfSize: 190,
+      // Global outdoor garrison pursuit leeway, derived from position (no saved timer).
+      outdoorLeeway: 160,
       interiorZones: ['abyss', 'citadel', 'side-highlands-signal', ...supplyRooms.map((r) => r.id)],
       outdoorAreas: [
         {
