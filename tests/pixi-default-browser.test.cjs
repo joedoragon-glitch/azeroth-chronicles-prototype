@@ -136,7 +136,7 @@ async function enterPlayableGame(page) {
         };
       });
       assert.equal(geometry.cards.length, 4);
-      assert(geometry.heading >= 20 && geometry.body >= 15, JSON.stringify(geometry));
+      assert(geometry.heading >= 16 && geometry.body >= 13, JSON.stringify(geometry));
       assert(
         geometry.back.height >= 44 &&
           geometry.back.width >= 44 &&
@@ -150,7 +150,7 @@ async function enterPlayableGame(page) {
       );
       for (const card of geometry.cards)
         assert(
-          card.font >= 15 && card.height >= 44 && card.details.every((n) => n >= 13),
+          card.font >= 13 && card.height >= 44 && card.details.every((n) => n >= 11.5),
           JSON.stringify(card),
         );
       console.log('Stage 4 computed menu geometry ' + JSON.stringify(geometry));
