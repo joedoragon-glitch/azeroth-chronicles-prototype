@@ -52,7 +52,9 @@ const scenes = [
   ['mill', p('mill-pond')],
   ['north-bridge', p('bridge-north')],
   ['south-bridge', p('bridge-south')],
-  ['eastern-pond', C.rules.terrain[0][1]],
+  C.rules.greenwoodLayout?.version === 2
+    ? ['thorn-homestead', { x: 2720 * C.rules.greenwoodLayout.scale, y: 1320 * C.rules.greenwoodLayout.scale }]
+    : ['eastern-pond', C.rules.terrain[0][1]],
   ['cache', p('cache')],
   ['treasury', p('supply-entrance')],
   ['crypt', p('entrance')],
@@ -127,9 +129,12 @@ async function capture(name, target, width, height, clock) {
 }
 (async () => {
   fs.mkdirSync(out, { recursive: true });
-  for (const [name, target] of scenes) await capture(name, target, 1280, 800, 120);
-  for (const [name, target] of scenes.filter(([name]) =>
-    ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt'].includes(name),
+  const selected = process.argv.includes('--home-only')
+    ? scenes.filter(([name]) => name === 'thorn-homestead')
+    : scenes;
+  for (const [name, target] of selected) await capture(name, target, 1280, 800, 120);
+  for (const [name, target] of selected.filter(([name]) =>
+    ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt', 'thorn-homestead'].includes(name),
   )) {
     await capture(name, target, 393, 852, 120);
     await capture(name, target, 852, 393, 500);

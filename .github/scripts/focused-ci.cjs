@@ -22,7 +22,11 @@ const groups = [
   },
   {
     match: /^src\/prototype\/(?:greenwood|greenwood-landscape)\.js$/,
-    tests: [TEST + 'greenwood-flagship.test.cjs', TEST + 'town-street-audit.test.cjs'],
+    tests: [
+      TEST + 'greenwood-flagship.test.cjs',
+      TEST + 'greenwood-679-candidate.test.cjs',
+      TEST + 'town-street-audit.test.cjs',
+    ],
   },
   {
     match: /^src\/prototype\/narration\.js$/,
