@@ -65,7 +65,10 @@ click(preview, 'New Developer Mode run');
 const devOptions = preview.elements.get('modal-actions').children
   .map((a) => a.textContent);
 assert(devOptions.some((s) => s.includes('Strategist (Playtest)')));
-click(preview, 'Strategist (Playtest)');
+const strategistAction = preview.elements.get('modal-actions').children
+  .find((item) => item.textContent.includes('Strategist (Playtest)'));
+assert(strategistAction, 'Developer chooser has the actual Strategist preview action');
+strategistAction.click();
 const dev = preview.scope.Prototype.game;
 assert.equal(dev.hero.class, 'strategist');
 assert.equal(dev.s.mode, 'developer');
