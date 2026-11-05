@@ -5200,6 +5200,7 @@
       playtestJournal.frame = {
         at: new Date().toISOString(),
         report: frameProfile.report(),
+        runtimeWindow: runtime.report({}, platform.mode),
       };
     }
     if (rendererRecording || lastRendererRecording)
@@ -5231,6 +5232,14 @@
     });
     if (playtestJournal.events.length > 48) playtestJournal.events.shift();
     checkpointPlaytestJournal();
+    if (kind === 'return-to-title' && playtestJournal.frame) {
+      // Preserve the last pre-title rolling window before Continue resets
+      // normal runtime FPS sampling. This is a bounded separate observation.
+      playtestJournal.frameHistory.push(playtestJournal.frame);
+      playtestJournal.frameHistory = playtestJournal.frameHistory.slice(-3);
+      playtestJournal.frame = null;
+      checkpointPlaytestJournal(false);
+    }
   }
   let rendererRecording = null;
 
