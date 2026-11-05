@@ -1092,8 +1092,25 @@
         ry = 8;
       }
       const scale = (PrototypeVisuals.featureScale?.(e) || 1) > 1 ? e.visualScale || 1 : 1;
+      // Flat paint and low plants are not standing obstacles. A generic
+      // building-sized oval on a field, bridge marker or palisade segment
+      // reads as an unexplained black patch. Painted walls own a narrow,
+      // physically attached base contact in GreenwoodLandscape.drawWall().
+      const structure = String(e.structure || '');
+      const flatGround = !!(e.greenwoodField || e.greenwoodKitchen ||
+        (e.kind === 'landmark' && String(e.id || '').startsWith('bridge-')) ||
+        /^(?:furrow-plot|garden|meadow|floor|paving|rune|path|road|ash-patch)$/.test(structure));
+      const littlePlant = e.greenwoodNature === 'understory' ||
+        /(?:^|[-_])(?:wildflowers|flowers|grass|poppies|reeds|cattails|ferns|shrubs|bush)(?:$|[-_])/i.test(structure);
+      if (littlePlant) { rx = 7; ry = 2; }
       rx *= scale;
       ry *= scale;
+      // Keep only restrained contact darkness at night. Sun-cast ovals
+      // cannot remain at full daylight strength beneath moonlight/lanterns.
+      // Reading the existing daylight phase adds no saved state or new clock.
+      const darkness = !game.isDungeon?.() ? game.daylightPhase?.().darkness || 0 : 0;
+      const shadowOpacity = (e.greenwoodWall || flatGround ? 0 :
+        littlePlant ? 0.30 : 1) * (1 - 0.72 * darkness);
       const type = e.renderKind,
         important =
           type === 'hero' || e.type === 'boss' || e.captain || e.roomCaptain || e.kind === 'quests';
@@ -1116,11 +1133,13 @@
             important,
           }
         : null;
-      return { rx, ry, marker };
+      return { rx, ry, marker, shadowOpacity };
     }
     function entityShadow(e, p) {
-      const { rx, ry } = groundPresentation(e);
+      const { rx, ry, shadowOpacity } = groundPresentation(e);
+      if (shadowOpacity <= 0) return;
       ctx.save();
+      ctx.globalAlpha *= shadowOpacity;
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
       ctx.ellipse(p.x + 4, p.y + 13, rx * 1.18, ry * 1.35, -0.08, 0, Math.PI * 2);
