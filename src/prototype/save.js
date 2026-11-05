@@ -527,6 +527,13 @@
           s.hero.skills[0] < 1
         )
           throw Error('Invalid hero');
+        // The Developer-only Ogre currently owns only the three native
+        // v3.2 starters. Reject forged/misclassified advanced ranks and
+        // missing starters before the save can be restored or imported.
+        if (s.hero.class === 'strategist' &&
+            (s.hero.skills.slice(0, 3).some((rank) => rank < 1) ||
+             s.hero.skills.slice(3).some((rank) => rank !== 0)))
+          throw Error('Invalid Strategist skill progression');
         if (s.hero.rogueEndureUsed !== undefined && typeof s.hero.rogueEndureUsed !== 'boolean')
           throw Error('Invalid Rogue Endure state');
         if (s.hero.rogueEndureUntil !== undefined) throw Error('Invalid Rogue Endure timer');
