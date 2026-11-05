@@ -2916,6 +2916,10 @@
         return nearest;
       }
       roadSetback(p) {
+        // The watermill's dry loading apron is intentional access, not a
+        // public carriageway passing underneath a generic oversized roof.
+        // Reserve the actual 2-storey mill silhouette and working margin.
+        if (p.greenwoodFacility === 'mill') return 185;
         if (p.greenwoodWall) return 60; // Low line-built perimeter: cart half-width 31 + wall 5 + party 20, not a house roof.
         if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
         if (p.stronghold && p.r > 0) return 85;
