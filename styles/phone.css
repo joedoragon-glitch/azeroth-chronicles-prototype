@@ -1364,7 +1364,13 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'] #modal[data-view='npc-training-hub'] #modal-actions > button:nth-child(n + 5) {
     grid-column: 1 / -1;
   }
-  body[data-experience='phone'] #modal[data-view='npc-service-catalog'] {
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-dialog-size='compact'] {
+    width: min(440px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-dialog-size='regular'] {
+    width: min(540px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-dialog-size='wide'] {
     width: min(610px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
   }
   body[data-experience='phone'] #modal[data-view='npc-service-catalog'] #modal-actions,
