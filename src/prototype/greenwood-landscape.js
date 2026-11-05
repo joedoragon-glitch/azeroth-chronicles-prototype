@@ -1854,43 +1854,63 @@
     }
     ctx.restore();
   }
+  // Greenwood's road network is authored and immutable between scene passes.
+  // Cache its world-space ribbons by path identity; new/restored scenes receive
+  // new arrays, and WeakMap automatically releases the old geometry.
+  const roadRibbonCache = new WeakMap();
   function drawRoads(ctx, paths, screen) {
-    // Three continuous roadbed bands per whole corridor, not separate opaque
-    // quads and circles at every point. World-space miters stay bounded.
-    const ribbon = (points, half) => {
-      const left = [], right = [];
-      for (let i = 0; i < points.length; i++) {
-        const a = points[Math.max(0, i - 1)];
-        const b = points[Math.min(points.length - 1, i + 1)];
-        const dx = b.x - a.x, dy = b.y - a.y;
-        const len = Math.hypot(dx, dy) || 1;
-        const nx = (-dy / len) * half, ny = (dx / len) * half;
-        left.push({ x: points[i].x + nx, y: points[i].y + ny });
-        right.push({ x: points[i].x - nx, y: points[i].y - ny });
-      }
-      return [...left, ...right.reverse()];
+    const roadBands = (path, i) => {
+      const cached = roadRibbonCache.get(path);
+      if (cached) return cached;
+      const half = i === 0 ? 44 : 26;
+      const makeRibbon = (width) => {
+        const left = new Array(path.length), right = new Array(path.length);
+        for (let j = 0; j < path.length; j++) {
+          const a = path[Math.max(0, j - 1)],
+            b = path[Math.min(path.length - 1, j + 1)];
+          const dx = b.x - a.x, dy = b.y - a.y;
+          const multiplier = width / (Math.hypot(dx, dy) || 1);
+          const nx = -dy * multiplier, ny = dx * multiplier;
+          left[j] = { x: path[j].x + nx, y: path[j].y + ny };
+          right[j] = { x: path[j].x - nx, y: path[j].y - ny };
+        }
+        return left.concat(right.reverse());
+      };
+      const result = [makeRibbon(half + 5), makeRibbon(half),
+        makeRibbon(half * 0.57)];
+      roadRibbonCache.set(path, result);
+      return result;
     };
-    const paint = (points, color) => {
-      if (points.length < 3) return;
-      ctx.beginPath();
-      points.map(screen).forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y));
-      ctx.closePath();
-      ctx.fillStyle = color;
-      ctx.fill();
-    };
+    // Six batched fills (three surface bands × cart/farm material), rather
+    // than repeated fill calls and ribbon allocations for every route/frame.
+    const colors = [
+      ['#586249', '#586249'],
+      ['#9a7556', '#978365'],
+      ['#b18b61', '#b4a078'],
+    ];
     ctx.save();
-    for (let band = 0; band < 3; band++)
-      for (const [i, path] of (paths || []).entries()) {
-        if (path.length < 2) continue;
-        const trunk = i === 0, full = trunk ? 44 : 26;
-        const width = band === 0 ? full + 5 : band === 1 ? full : full * 0.57;
-        const color = band === 0
-          ? '#586249'
-          : band === 1
-            ? trunk ? '#9a7556' : '#978365'
-            : trunk ? '#b18b61' : '#b4a078';
-        paint(ribbon(path, width), color);
+    for (let band = 0; band < 3; band++) {
+      for (let kind = 0; kind < 2; kind++) {
+        ctx.beginPath();
+        let populated = false;
+        for (let i = 0; i < (paths || []).length; i++) {
+          const path = paths[i];
+          if (!path || path.length < 2 || (i === 0 ? 0 : 1) !== kind) continue;
+          const ribbon = roadBands(path, i)[band];
+          for (let j = 0; j < ribbon.length; j++) {
+            const p = screen(ribbon[j]);
+            if (j === 0) ctx.moveTo(p.x, p.y);
+            else ctx.lineTo(p.x, p.y);
+          }
+          ctx.closePath();
+          populated = true;
+        }
+        if (populated) {
+          ctx.fillStyle = colors[band][kind];
+          ctx.fill();
+        }
       }
+    }
     ctx.restore();
   }
   function drawWall(ctx, e, p) {
