@@ -9584,63 +9584,69 @@
         softPoly(
           [
             [-46, -48],
-            [-13, -81],
+            [-12, -76],
             [22, -34],
           ],
           '#9c7c56',
         );
+        // Two roof slopes use one front ridge and the same building-depth
+        // vector. Reusing their exact corners prevents a twisted roof seam.
+        const roofFrontLeft = [-53, -53],
+          roofFrontRidge = [-12, -82],
+          roofFrontRight = [29, -39],
+          roofRearLeft = [-13, -67],
+          roofRearRidge = [28, -96],
+          roofRearRight = [69, -53];
         softPoly(
-          [
-            [-54, -51],
-            [-13, -91],
-            [33, -106],
-            [-6, -67],
-          ],
+          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
           '#97714d',
         );
         softPoly(
-          [
-            [-13, -91],
-            [29, -36],
-            [73, -51],
-            [33, -106],
-          ],
+          [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
           '#604735',
         );
+        // A continuous front fascia closes both pitched planes onto the
+        // existing gable/wall. Keep the high grain hatch below the roof.
+        softPoly(
+          [roofFrontLeft, roofFrontRidge, [-12, -76], [-53, -47]],
+          '#4e3e30',
+        );
+        softPoly(
+          [roofFrontRidge, roofFrontRight, [29, -33], [-12, -76]],
+          '#493a2c',
+        );
         line(
-          [
-            [-54, -51],
-            [-13, -91],
-            [33, -106],
-            [73, -51],
-            [29, -36],
-          ],
+          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearRight, roofFrontRight],
           '#b5986e',
           3,
         );
-        softPoly(
-          [
-            [29, -36],
-            [73, -51],
-            [62, -48],
-            [22, -34],
-          ],
-          '#493c30',
-        );
+        line([roofFrontLeft, roofRearLeft], '#a78a66', 2);
         for (let j = 1; j < 5; j++) {
           const t = j / 5;
           line(
             [
-              [-53 + 40 * t, -51 - 40 * t],
-              [-6 + 39 * t, -67 - 39 * t],
+              [
+                roofFrontLeft[0] + (roofFrontRidge[0] - roofFrontLeft[0]) * t,
+                roofFrontLeft[1] + (roofFrontRidge[1] - roofFrontLeft[1]) * t,
+              ],
+              [
+                roofRearLeft[0] + (roofRearRidge[0] - roofRearLeft[0]) * t,
+                roofRearLeft[1] + (roofRearRidge[1] - roofRearLeft[1]) * t,
+              ],
             ],
             '#b19369',
             1,
           );
           line(
             [
-              [-13 + 42 * t, -91 + 55 * t],
-              [33 + 40 * t, -106 + 55 * t],
+              [
+                roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
+                roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t,
+              ],
+              [
+                roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
+                roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
+              ],
             ],
             '#8b6d4d',
             1,

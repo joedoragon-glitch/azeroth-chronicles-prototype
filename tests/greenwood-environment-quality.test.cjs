@@ -79,6 +79,41 @@ fs.writeFileSync(
   'test-artifacts/greenwood-environment/native-compounds.png',
   canvas.toBuffer('image/png'),
 );
+
+// Structural roof regression: test the projected geometry, not a screenshot
+// baseline. Both planes must use the same ridge and parallel depth offset.
+for (const path of [
+  'src/prototype/visuals.js',
+  'src/prototype/greenwood-landscape.js',
+]) {
+  const source = fs.readFileSync(path, 'utf8');
+  const point = (name) => {
+    const match = source.match(
+      new RegExp('(?:const|,)\\s*' + name + '\\s*=\\s*\\[(-?\\d+),\\s*(-?\\d+)\\]'),
+    );
+    assert(match, 'roof vertex exists: ' + path + ' / ' + name);
+    return [Number(match[1]), Number(match[2])];
+  };
+  const frontLeft = point('roofFrontLeft'),
+    frontRidge = point('roofFrontRidge'),
+    frontRight = point('roofFrontRight'),
+    rearLeft = point('roofRearLeft'),
+    rearRidge = point('roofRearRidge'),
+    rearRight = point('roofRearRight');
+  const delta = (a, b) => [b[0] - a[0], b[1] - a[1]];
+  assert.deepEqual(delta(frontLeft, rearLeft), delta(frontRidge, rearRidge),
+    path + ': left eave and ridge follow the same roof-depth axis');
+  assert.deepEqual(delta(frontRight, rearRight), delta(frontRidge, rearRidge),
+    path + ': right eave and ridge follow the same roof-depth axis');
+  assert(frontRidge[0] > frontLeft[0] && frontRidge[0] < frontRight[0],
+    path + ': ridge sits between the gable eaves');
+  assert(frontRidge[1] < frontLeft[1] && frontRidge[1] < frontRight[1],
+    path + ': roof slopes descend away from the ridge');
+  assert(source.includes('[roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft]'),
+    path + ': near slope uses the exact shared ridge');
+  assert(source.includes('[roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge]'),
+    path + ': far slope uses the exact shared ridge');
+}
 console.log(
-  'PASS native compounds, Crown standard, resized shelters, fixture anchor and repeat v4 restore',
+  'PASS native compounds, roof topology, Crown standard, fixture anchor and repeat v4 restore',
 );

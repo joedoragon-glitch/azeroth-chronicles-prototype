@@ -2119,7 +2119,7 @@
       poly(
         [
           [-60, -63],
-          [-16, -98],
+          [-15, -94],
           [31, -45],
         ],
         '#9b7b56',
@@ -2192,77 +2192,63 @@
           '#302d28',
           2,
         );
-      // Two closed roof planes, one ridge, supporting fascia.
+      // A single common ridge and parallel depth edges keep the farm-barn
+      // roof joined to its real gable rather than looking like folded panels.
+      const roofFrontLeft = [-67, -68],
+        roofFrontRidge = [-15, -100],
+        roofFrontRight = [38, -49],
+        roofRearLeft = [-15, -86],
+        roofRearRidge = [37, -118],
+        roofRearRight = [90, -67];
       poly(
-        [
-          [-69, -66],
-          [-16, -108],
-          [43, -127],
-          [-8, -85],
-        ],
+        [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
         '#94734f',
       );
       poly(
-        [
-          [-16, -108],
-          [38, -47],
-          [96, -66],
-          [43, -127],
-        ],
+        [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
         '#624c38',
       );
+      // Continuous paired fascia follows the actual wall/eave line.
       poly(
-        [
-          [-69, -66],
-          [-16, -108],
-          [-16, -98],
-          [-60, -63],
-        ],
+        [roofFrontLeft, roofFrontRidge, [-15, -94], [-67, -62]],
         '#4f3f30',
       );
       poly(
-        [
-          [-16, -108],
-          [38, -47],
-          [31, -45],
-          [-16, -98],
-        ],
+        [roofFrontRidge, roofFrontRight, [38, -43], [-15, -94]],
         '#47382d',
       );
-      poly(
-        [
-          [38, -47],
-          [96, -66],
-          [84, -63],
-          [31, -45],
-        ],
-        '#493c30',
-      );
       stroke(
-        [
-          [-69, -66],
-          [-16, -108],
-          [43, -127],
-          [96, -66],
-          [38, -47],
-        ],
+        [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearRight, roofFrontRight],
         edge,
         3,
       );
+      stroke([roofFrontLeft, roofRearLeft], edge, 2);
       for (let j = 1; j < 5; j++) {
         const t = j / 5;
         stroke(
           [
-            [-68 + 52 * t, -66 - 42 * t],
-            [-8 + 51 * t, -85 - 42 * t],
+            [
+              roofFrontLeft[0] + (roofFrontRidge[0] - roofFrontLeft[0]) * t,
+              roofFrontLeft[1] + (roofFrontRidge[1] - roofFrontLeft[1]) * t,
+            ],
+            [
+              roofRearLeft[0] + (roofRearRidge[0] - roofRearLeft[0]) * t,
+              roofRearLeft[1] + (roofRearRidge[1] - roofRearLeft[1]) * t,
+            ],
           ],
           '#b39367',
           1,
         );
         stroke(
           [
-            [-16 + 54 * t, -108 + 61 * t],
-            [43 + 53 * t, -127 + 61 * t],
+            [
+              roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
+              roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t,
+            ],
+            [
+              roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
+              roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
+            ],
           ],
           '#8f7151',
           1,

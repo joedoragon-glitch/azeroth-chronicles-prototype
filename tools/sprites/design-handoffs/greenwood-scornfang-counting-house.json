@@ -5,7 +5,7 @@
   "designId": "greenwood-scornfang-counting-house",
   "name": "Scornfang's appropriated farm storehouse Treasury",
   "kind": "structure",
-  "nextAction": "Complete focused browser/GPU and performance verification on PR #828; preserve the reviewed native candidate and owner feedback. No raster sprite generation, merge or release is requested by this record.",
+  "nextAction": "Roof topology Priority 1 is proposed on draft art/greenwood-treasury-homestead-roofs-20261105; run focused native review and await owner appearance acceptance. Secondary shelter and courtyard correction remain independent later priorities; no sprite production or release authorized.",
   "context": {
     "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
     "decisionSummary": "Owner explicitly directs that Scornfang took possession of an agricultural structure to establish his Treasury and workplace. Supersedes purpose-built counting-house direction; preserve agricultural origin beneath security/receiving/accounting adaptations.",
@@ -18,7 +18,7 @@
   },
   "decisions": {
     "conceptAcceptance": "Owner-selected appropriated agricultural structure; no unseen procedural/raster appearance acceptance.",
-    "proceduralDesignAcceptance": "Implemented and engineer-reviewed in native Canvas scenes; owner visual acceptance is not claimed. Browser/Pixi candidate review remains tracked in #828.",
+    "proceduralDesignAcceptance": "Existing procedural identity retained. New Priority 1 roof redraw is a draft implementation only; owner aesthetic acceptance and real-device rendering remain pending.",
     "spriteProductionAuthorization": "Not requested in this task.",
     "generatedAppearanceAcceptance": "None.",
     "pendingCorrections": [
@@ -95,7 +95,8 @@
   },
   "production": {
     "candidateRecords": [
-      "docs/evidence/greenwood-owner-environment-20261105/README.md"
+      "docs/evidence/greenwood-owner-environment-20261105/README.md",
+      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
     ],
     "approvedRecordKey": null,
     "activeContentRevision": null,
