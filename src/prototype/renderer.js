@@ -1116,11 +1116,43 @@
             important,
           }
         : null;
-      return { rx, ry, marker };
+      // A universal prop-sized ellipse misrepresents flowers, farmland,
+      // bridge decks and the tall posts of a palisade. These are visible art
+      // footprints, never navigation/collision or hidden combat markers.
+      const structure = String(e.structure || '').toLowerCase();
+      const flatSurface = e.renderKind === 'prop' &&
+        /(?:^|[-_])(?:garden|cultivated|vegetable|crop|crops|field|field-plot|farm-plot|furrow|furrows|tilled|seedbed|soil|puddle|pond|road|path|bridge|boardwalk|floor|pavement|flowerbed|petals|grain-patch)(?:[-_]|$)/.test(structure);
+      const bridgeMarker = e.renderKind === 'npc' && e.kind === 'landmark' &&
+        /bridge|crossing/i.test(String(e.id || '') + ' ' + String(e.name || ''));
+      const groundPlant = e.renderKind === 'prop' &&
+        /(?:^|[-_])(?:grass|wet-grass|wildflowers|flowers|flower|poppies|heather|cattails|reeds|fern|moss|clover|seedlings|groundcover)(?:[-_]|$)/.test(structure);
+      const bush = e.renderKind === 'prop' &&
+        /(?:^|[-_])(?:bush|shrub|brush|brushwood|pioneer-brush|marsh-bush)(?:[-_]|$)/.test(structure);
+      const fence = e.renderKind === 'prop' &&
+        /(?:^|[-_])(?:fence|stockade|palisade|stonewall|wall)(?:[-_]|$)/.test(structure);
+      let shadowStrength = 1;
+      if (flatSurface || bridgeMarker || groundPlant) shadowStrength = 0;
+      else if (bush) {
+        // Small rooted foliage gets a faint ground contact, not a tree shadow.
+        rx = 10;
+        ry = 2.5;
+        shadowStrength = 0.22;
+      } else if (fence) {
+        // Posts sit on a narrow grounding strip; no huge detached cast ellipse.
+        rx = 22;
+        ry = 2.4;
+        shadowStrength = 0.28;
+      }
+      // No daytime-strength cast shadows when the sun is down. This uses one
+      // inexpensive night check per object, with no extra render pass or saves.
+      if (game.night?.()) shadowStrength *= 0.3;
+      return { rx, ry, marker, shadowStrength };
     }
     function entityShadow(e, p) {
-      const { rx, ry } = groundPresentation(e);
+      const { rx, ry, shadowStrength } = groundPresentation(e);
+      if (!shadowStrength) return;
       ctx.save();
+      ctx.globalAlpha = shadowStrength;
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
       ctx.ellipse(p.x + 4, p.y + 13, rx * 1.18, ry * 1.35, -0.08, 0, Math.PI * 2);
