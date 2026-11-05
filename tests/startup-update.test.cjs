@@ -146,6 +146,11 @@ function startup({ online = true, controller = true, waiting = false,
     assert.equal(welcome.hidden, true);
     assert.equal(a.elements.get('title-screen').hidden, false);
     a.elements.get('title-help').click();
+    const about = a.elements.get('modal-actions').children.find(
+      (item) => item.textContent.startsWith('Acerca de, versión y créditos'),
+    );
+    assert(about, 'Spanish Help exposes its About and Credits section');
+    about.click();
     const credits = a.elements.get('modal-actions').children.find(
       (item) => item.textContent.startsWith('Créditos y contacto'),
     );
@@ -158,6 +163,7 @@ function startup({ online = true, controller = true, waiting = false,
     assert(a.elements.get('modal-actions').children.some(
       (item) => item.textContent.startsWith('Escribir al creador')),
       'Credits offers a user-initiated email action');
+    a.elements.get('close-button').click();
     a.elements.get('close-button').click();
     a.elements.get('close-button').click();
     a.elements.get('title-new').click();
