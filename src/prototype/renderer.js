@@ -1072,28 +1072,51 @@
     }
     // Shared Canvas/Pixi presentation geometry. A GPU actor uses these same
     // accepted feet/ground sizes rather than estimating shadows from sprites.
+    // Shadow geometry is physical artwork, not a universal prop-size ellipse.
+    // This same result is consumed by Canvas and Pixi: flat terrain carries no
+    // cast shadow, little plants have only contact shading, and Greenwood's
+    // authored walls/trees already paint their own feet.
     function groundPresentation(e) {
-      let rx = 18,
-        ry = 5.5;
+      let rx = 18, ry = 5.5, shadowStrength = 1, shadowY = 11;
+      const structure = String(e.structure || '');
+      const flatTerrain =
+        /(?:^|[-_])(?:garden|furrow|furrows|plot|soil|tilled|path|road|floor|puddle|ash-patch|poppies|petals|rune|meadow|field-patch|flower-bed)(?:$|[-_])/i;
+      const flowers =
+        /(?:^|[-_])(?:grass|wildflowers|flowers|flower|reeds?|mushrooms?|fern|heather|cattails)(?:$|[-_])/i;
+      const shrub = /(?:^|[-_])(?:bush|shrub|brush|hedge)(?:$|[-_])/i;
       if (e.type === 'boss') {
-        rx = 31;
-        ry = 9;
+        rx = 31; ry = 9;
       } else if (e.captain || e.roomCaptain) {
-        rx = 25;
-        ry = 7;
+        rx = 25; ry = 7;
       } else if (e.renderKind === 'building') {
-        rx = 33;
-        ry = 9;
+        rx = 33; ry = 9;
       } else if (e.renderKind === 'prop') {
-        rx = e.structure === 'house' || e.structure === 'workshop' ? 31 : 22;
-        ry = e.structure === 'house' || e.structure === 'workshop' ? 8 : 6;
+        rx = structure === 'house' || structure === 'workshop' ? 31 : 22;
+        ry = structure === 'house' || structure === 'workshop' ? 8 : 6;
+        if (e.greenwoodWall || e.greenwoodNature === 'tree' ||
+            e.greenwoodFacility === 'weir' || e.greenwoodFacility === 'new-planting' ||
+            flatTerrain.test(structure) || e.greenwoodField || e.greenwoodKitchen) {
+          shadowStrength = 0;
+        } else if (flowers.test(structure) || e.greenwoodNature === 'understory') {
+          rx = 5; ry = 1.6; shadowY = 8; shadowStrength = 0.16;
+        } else if (shrub.test(structure)) {
+          rx = 10; ry = 2.5; shadowY = 8; shadowStrength = 0.4;
+        } else if (['fence', 'stonewall', 'stockade', 'palisade'].includes(structure)) {
+          rx = 23; ry = 2.5; shadowY = 13; shadowStrength = 0.42;
+        }
       } else if (e.kind === 'transport') {
-        rx = 30;
-        ry = 8;
+        rx = 30; ry = 8;
       }
+      if (e.kind === 'landmark' && /^bridge-(?:north|south)$/.test(String(e.id || '')))
+        shadowStrength = 0; // The real deck owns its material, not an NPC oval.
       const scale = (PrototypeVisuals.featureScale?.(e) || 1) > 1 ? e.visualScale || 1 : 1;
       rx *= scale;
       ry *= scale;
+      // Quantize dusk into four transitions: Pixi only rebuilds this retained
+      // ground graphic when the lighting band changes, not every video frame.
+      const darkness = Number(game.daylightPhase?.()?.darkness || 0);
+      const nightBand = Math.round(Math.max(0, Math.min(1, darkness)) * 4) / 4;
+      shadowStrength *= 1 - nightBand * 0.65;
       const type = e.renderKind,
         important =
           type === 'hero' || e.type === 'boss' || e.captain || e.roomCaptain || e.kind === 'quests';
@@ -1116,18 +1139,20 @@
             important,
           }
         : null;
-      return { rx, ry, marker };
+      return { rx, ry, marker, shadowStrength, shadowY };
     }
     function entityShadow(e, p) {
-      const { rx, ry } = groundPresentation(e);
+      const { rx, ry, shadowStrength, shadowY } = groundPresentation(e);
+      if (shadowStrength <= 0) return;
       ctx.save();
+      ctx.globalAlpha *= shadowStrength;
       ctx.fillStyle = '#05100c38';
       ctx.beginPath();
-      ctx.ellipse(p.x + 4, p.y + 13, rx * 1.18, ry * 1.35, -0.08, 0, Math.PI * 2);
+      ctx.ellipse(p.x + 4, p.y + shadowY + 2, rx * 1.18, ry * 1.35, -0.08, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#02090666';
       ctx.beginPath();
-      ctx.ellipse(p.x + 1, p.y + 11, rx, ry, 0, 0, Math.PI * 2);
+      ctx.ellipse(p.x + 1, p.y + shadowY, rx, ry, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
