@@ -31,12 +31,21 @@ const seen = new Set();
 for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
   const bridge = cfg.millBridge;
-  assert(z.greenwoodWatermillVersion === 1, 'new scene repair marker set');
+  assert(z.greenwoodWatermillVersion === 2, 'new scene repair marker set');
   assert.equal(z.greenwoodHomesteadVersion,1,'current dry eastern homestead retained');
   assert(!C.rules.terrain[0].some((water)=>water.kind==='water' &&
     water.x===2720 && water.y===1320),'retired eastern pond stays absent');
   assert.equal(z.bridgeApproaches.length, 2);
   assert.equal(z.roads.filter((p) => isSame(p, cfg.millServiceLane)).length, 1);
+  assert.equal(z.footpaths.filter((p) => isSame(p, cfg.millDoorFootpath)).length, 1);
+  assert.equal(z.greenwoodRoutes.length,19,'17 #824 routes plus farm and narrow door path');
+  assert(z.roads.slice(0,4).some((road)=>road.some((point)=>
+    Math.hypot(point.x-cfg.millServiceLane[0].x,point.y-cfg.millServiceLane[0].y)<0.01)),
+    'the mill farm spur branches from an EXISTING road, not isolated terrain');
+  assert.deepEqual(cfg.millDoorFootpath[0],cfg.millServiceLane.at(-1),
+    'narrow path begins exactly where the service road meets the bridge exit');
+  assert.deepEqual(cfg.millDoorFootpath.at(-1),cfg.millEntrance,
+    'footpath reaches the actual mill entrance landing');
   assert.equal(z.props.filter((p) => p.id === 'greenwood-working-mill').length,1);
   assert.equal(z.props.filter((p) => p.id === 'greenwood-mill-sluice').length,1);
   assert.equal(z.enemies.filter((e) => e.type === 'mob' && !e.summon).length, 32);
@@ -64,7 +73,11 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   assert(!g.blocked(cfg.millEntrance.x,cfg.millEntrance.y,'vale',12,true),
     'the visible mill loading entrance has a dry player-sized approach');
   assert(g.route(cfg.millServiceLane[0],cfg.millEntrance).length>0,
-    'the mill doorway landing can be reached from the service lane');
+    'the mill doorway landing can be reached from the connected farm road');
+  assert(g.clearSegment(cfg.millDoorFootpath[0],cfg.millDoorFootpath[1],12,true),
+    'first mill door path leg stays above real land');
+  assert(g.clearSegment(cfg.millDoorFootpath[1],cfg.millEntrance,12,true),
+    'final approach remains dry and walkable');
 
   const culvert = cfg.creekCulvert;
   const streamPoint = crossMid(culvert);
@@ -83,16 +96,19 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   ]);
   delete snap.zones.vale.greenwoodWatermillVersion;
   snap.zones.vale.roads = snap.zones.vale.roads.filter((p)=>!isSame(p,cfg.millServiceLane));
+  snap.zones.vale.footpaths = snap.zones.vale.footpaths.filter((p)=>!isSame(p,cfg.millDoorFootpath));
   snap.zones.vale.greenwoodRoutes = (snap.zones.vale.greenwoodRoutes || []).filter(
     (r)=>!isSame(r.points,cfg.millServiceLane));
   const original = JSON.stringify(snap);
   const old = C.restore(snap,rng(seed)),oz=old.zone();
   assert.equal(JSON.stringify(snap),original,'no input save mutation');
-  assert.equal(oz.greenwoodWatermillVersion,1,'one-time additive upgrade applied');
+  assert.equal(oz.greenwoodWatermillVersion,2,'one-time additive connected upgrade applied');
   assert.equal(oz.roads.filter((p)=>isSame(p,cfg.millServiceLane)).length,1);
   const again=C.restore(old.snapshot(),rng(seed));
   assert.equal(again.zone().roads.filter((p)=>isSame(p,cfg.millServiceLane)).length,1,
     'repeat restoration never duplicates mill access');
+  assert.equal(again.zone().footpaths.filter((p)=>isSame(p,cfg.millDoorFootpath)).length,1,
+    'repeat restoration never duplicates a mill door path');
   assert.equal(JSON.stringify([
     again.zone().nodes.map((p)=>[p.id,p.amount]),
     again.zone().npcs.map((p)=>[p.id,p.x,p.y]),
