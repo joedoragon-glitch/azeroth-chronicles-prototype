@@ -1094,7 +1094,7 @@
                 x > d.x1 + radius && x < d.x2 - radius && y > d.y1 + radius && y < d.y2 - radius,
             );
           if (
-            !(rangedRay && ['water', 'lava'].includes(R.barriers[i].kind)) &&
+            !(rangedRay && (R.barriers[i].kind === 'water' || R.barriers[i].kind === 'lava')) &&
             !onInheritedDeck &&
             y > c - radius &&
             y < e + radius &&
