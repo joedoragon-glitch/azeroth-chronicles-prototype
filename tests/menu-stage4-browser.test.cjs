@@ -250,10 +250,41 @@ function contrast(item) {
         }).tap();
         const mapFit = await assertDialogGeometry(frame, 'In-game map');
         await frame.locator('#close-button').tap();
+        // Isolated *presentation* probes for the additional real game menu
+        // families; authoritative Barracks/NPC actions are exercised by the
+        // native menu tests, while Keeper prose retains its separate suite.
+        const familyFit = {};
+        for (const [view, count, columns] of [
+          ['barracks-hub', 6, 2],
+          ['npc-training-hub', 5, 2],
+          ['npc-service-catalog', 9, 1],
+          ['archive-index', 8, 1],
+          ['archive-reading', 3, 1],
+        ]) {
+          await frame.evaluate(({ view, count }) => {
+            const actions = Array.from({ length: count }, (_, i) => ({
+              label: 'Option ' + (i + 1),
+              detail: 'Explanatory text about requirements, effects and crowns.',
+              action() {},
+            }));
+            const description =
+              view === 'archive-reading'
+                ? Array(28).fill('A Keeper passage remains readable without altering or truncating its text.').join(' ')
+                : 'A complete description is retained when the panel is scrollable.';
+            window.Prototype.openMenu('Menu presentation probe', description, actions,
+              window.Prototype.closeMenu, { view });
+          }, { view, count });
+          familyFit[view] = await assertDialogGeometry(frame, view);
+          const trackCount = await frame.locator('#modal-actions').evaluate((node) =>
+            getComputedStyle(node).gridTemplateColumns.split(/\\s+/).filter(Boolean).length,
+          );
+          assert.equal(trackCount, columns, view + ': peer choice vs reading layout');
+          await frame.locator('#close-button').tap();
+        }
         assert.deepEqual(errors, []);
         fs.writeFileSync(
           path.join(output, language + '-measurements.json'),
-          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit }, null, 2),
+          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit, familyFit }, null, 2),
         );
         console.log(
           'PASS ' +
