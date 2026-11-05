@@ -5463,7 +5463,7 @@
       es ? 'Nueva aventura' : 'New Adventure',
       es
         ? 'Elige la dificultad y el desafío opcional antes de elegir a tu héroe.'
-        : 'Choose a difficulty and optional challenge before selecting your hero.',
+        : 'Choose difficulty and optional challenge before selecting your hero.',
       [
         primary,
         menuControls.section(es ? 'Dificultad' : 'Difficulty'),
