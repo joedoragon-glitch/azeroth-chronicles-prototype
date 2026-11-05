@@ -1565,9 +1565,10 @@
     const fragments = [];
     for (const path of footpaths || []) {
       const points = smoothRoad(path, 'path');
+      let run = [];
       for (let i = 1; i < points.length; i++) {
         const a = points[i - 1], b = points[i];
-        const len = distance(a, b), count = Math.max(1, Math.ceil(len / 10));
+        const len = distance(a, b), count = Math.max(1, Math.ceil(len / 16));
         for (let j = 0; j < count; j++) {
           const at = j / count, bt = (j + 1) / count;
           const p = { x: a.x * (1 - at) + b.x * at, y: a.y * (1 - at) + b.y * at };
@@ -1579,9 +1580,16 @@
               distanceToRoadSegment(mid, road.points[k - 1], end) < roadWidths[road.kind] - 3,
             ),
           );
-          if (!withinRoad) fragments.push([p, q]);
+          if (withinRoad) {
+            if (run.length > 1) fragments.push(run);
+            run = [];
+          } else {
+            if (!run.length) run.push(p);
+            run.push(q);
+          }
         }
       }
+      if (run.length > 1) fragments.push(run);
     }
     return { wide, fragments, widths: roadWidths };
   }
@@ -1622,10 +1630,14 @@
     const paint = (widthFactor, color, foot = false) => {
       ctx.beginPath();
       if (foot) {
-        for (const [a, b] of fragments) {
-          appendRoadShape(ctx, screen, a, b, roadWidths.path * widthFactor);
-          appendRoadCap(ctx, screen, a, roadWidths.path * widthFactor);
-          appendRoadCap(ctx, screen, b, roadWidths.path * widthFactor);
+        const width = roadWidths.path * widthFactor;
+        for (const run of fragments) {
+          for (let i = 1; i < run.length; i++)
+            appendRoadShape(ctx, screen, run[i - 1], run[i], width);
+          // Only the true run ends need circular caps, not every sampled
+          // subsection. This avoids thousands of redundant polygons per frame.
+          appendRoadCap(ctx, screen, run[0], width);
+          appendRoadCap(ctx, screen, run[run.length - 1], width);
         }
       } else {
         for (const road of wide) {
