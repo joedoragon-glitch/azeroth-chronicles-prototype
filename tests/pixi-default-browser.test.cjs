@@ -77,10 +77,8 @@ async function enterPlayableGame(page) {
       await page.locator('#title-continue').click();
     } else {
       await page.locator('#title-new').click();
-      await page.getByRole('button', {name:'New Normal game', exact:true}).click();
-      // Language was selected once at first launch; new campaigns reuse it.
-      await page.getByRole('button',
-        {name:'Standard death and refuge recovery', exact:true}).click();
+      await page.getByRole('button', {name:'Choose Hero', exact:false}).click();
+      // Normal and Standard stay the defaults until explicitly changed.
       await page.getByRole('button', {name:/Paladin/}).first().click();
     }
   }
@@ -175,8 +173,16 @@ async function run() {
         });
         const migrationPage = await migrationContext.newPage();
         await migrationPage.goto(host + (phone ? 'phone.html' : 'index.html'));
-        await migrationPage.waitForFunction(() => !!window.Prototype?.renderer);
-        const migrated = await migrationPage.evaluate(() => ({
+        // The public phone entry now hosts the same game in a persistent,
+        // always-horizontal same-origin frame (merged PR #793).
+        if (phone) await migrationPage.frameLocator('#phone-game-frame')
+          .locator('#title-screen').waitFor({state: 'attached'});
+        const gamePage = phone
+          ? migrationPage.frame({url: /phone-game\.html/})
+          : migrationPage;
+        assert(gamePage, 'real game document is mounted');
+        await gamePage.waitForFunction(() => !!window.Prototype?.renderer);
+        const migrated = await gamePage.evaluate(() => ({
           marker: localStorage.getItem('azeroth-renderer-webgl-primary-v1'),
           choice: localStorage.getItem('azeroth-renderer-choice-v1'),
           phase: Prototype.experimentalGraphics.phase,
@@ -185,8 +191,8 @@ async function run() {
         assert.equal(migrated.choice, 'webgl2');
         assert.equal(migrated.phase, 'canvas',
           'Title screen must not start expensive GPU preparation automatically');
-        await enterPlayableGame(migrationPage);
-        const active = await migrationPage.evaluate(() => Prototype.experimentalGraphics);
+        await enterPlayableGame(gamePage);
+        const active = await gamePage.evaluate(() => Prototype.experimentalGraphics);
         assert.equal(active.preferredRenderer, 'webgl2');
         if (active.mode === 'webgl2')
           assert.equal(active.phase, 'confirmed',
