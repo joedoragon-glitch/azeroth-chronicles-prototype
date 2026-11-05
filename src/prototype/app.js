@@ -3321,6 +3321,7 @@
       } else {
         b = document.createElement('button');
         b.textContent = translateMenu(a.label);
+        if (a.uiPrimary) b.classList.add('menu-primary');
         if (a.classId === 'rogue') {
           const symbol = document.createElement('span');
           symbol.setAttribute('aria-hidden', 'true');
@@ -3403,7 +3404,7 @@
     field.value = initialValue;
     field.placeholder = language === 'es' ? 'Déjalo vacío para decidir después' : 'Leave blank to decide later';
     label.append(field);
-    $('modal-actions').prepend(label);
+    $('modal-actions').append(label);
     return field;
   }
   function requestName({
@@ -4514,7 +4515,7 @@
     },
     rogue: {
       en: 'Rogue', es: 'Pícara',
-      detail: 'Charmed companions, musical disruption and survival tricks. Start alone; automatic basic hits may Charm surviving eligible monsters, who can then build Barracks.', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia. Empiezas sola; los ataques básicos automáticos pueden encantar a monstruos aptos que sobreviven, y luego ellos pueden construir cuarteles.',
+      detail: 'Charm surviving monsters, disrupt with music and survive', detailEs: 'Encanta monstruos supervivientes, usa música y resiste',
     },
   });
   function heroClassLabel(id, localized = language === 'es') {
@@ -4532,16 +4533,7 @@
     if (mode === 'developer' && !developerEnabled) return;
     if (mode === 'developer' || mode === 'arena') succession = false;
     if (succession === undefined) {
-      openMenu(
-        'Challenge condition',
-        'The Dark Lord rules the land. To keep heroes from becoming strong enough to challenge him, his forces have captured the specialists who teach skills, forge equipment and prepare adventurers. Free them, rebuild your strength and confront his rule.\n\nSuccession is optional. Each fallen class is lost for this run; after ' +
-          playableClassCountWord() +
-          ' class deaths the run ends.',
-        [
-          action('Standard death and refuge recovery', () => chooseClass(mode, false)),
-          action('Succession challenge', () => chooseClass(mode, true)),
-        ],
-      );
+      newGameMenu(mode);
       return;
     }
     openMenu(
@@ -4581,7 +4573,7 @@
           false, false, id,
         ),
       ),
-      () => started ? chooseClass(mode) : newGameMenu(),
+      () => newGameMenu(mode, true),
       { view: 'class-select' },
     );
     appendNameField();
@@ -4966,32 +4958,89 @@
             'Azeroth_Playtest_Report.json',
           )
   }
-  function newGameMenu() {
+  let newAdventureMode = 'normal';
+  let newAdventureSuccession = false;
+  function newAdventureBack() {
+    if (started) openMain();
+    else showTitleScreen();
+  }
+  function newGameMenu(preferredMode = 'normal', preserveChoice = false) {
+    const es = language === 'es';
+    if (!preserveChoice) {
+      newAdventureMode =
+        preferredMode === 'nightmare' && profile.nightmareUnlocked ? 'nightmare' : 'normal';
+      newAdventureSuccession = false;
+    }
+    const selected = (mode) => newAdventureMode === mode;
+    const refresh = () => newGameMenu(newAdventureMode, true);
+    const primary = action(
+      es ? 'Elegir héroe' : 'Choose Hero',
+      () => chooseClass(newAdventureMode, newAdventureSuccession),
+      es
+        ? 'Continúa con la clase y un nombre opcional.'
+        : 'Continue to your class and optional name.',
+    );
+    primary.uiPrimary = true;
     openMenu(
-      'New game',
-      'Choose a mode. Export a backup to keep your current run.',
+      es ? 'Nueva aventura' : 'New Adventure',
+      es
+        ? 'Normal y muerte estándar son las opciones iniciales. Cambia solo lo que quieras.'
+        : 'Normal difficulty and standard recovery are selected. Change only what you want.',
       [
-        action('New Normal game', () => chooseClass('normal')),
+        primary,
+        menuControls.section(es ? 'Dificultad' : 'Difficulty'),
+        action(
+          (es ? 'Normal · Recomendada' : 'Normal · Recommended') +
+            (selected('normal') ? ' ✓' : ''),
+          () => {
+            newAdventureMode = 'normal';
+            refresh();
+          },
+          es ? 'Para tu primera aventura.' : 'For your first adventure.',
+        ),
+        action(
+          (es ? 'Pesadilla' : 'Nightmare') + (selected('nightmare') ? ' ✓' : ''),
+          () => {
+            newAdventureMode = 'nightmare';
+            refresh();
+          },
+          profile.nightmareUnlocked
+            ? es
+              ? 'Un desafío más difícil.'
+              : 'A more demanding adventure.'
+            : es
+              ? 'Se desbloquea con el final pacífico.'
+              : 'Unlock by completing the peaceful ending.',
+          !profile.nightmareUnlocked,
+        ),
+        menuControls.section(es ? 'Desafío opcional' : 'Optional challenge'),
+        action(
+          (es ? 'Sucesión' : 'Succession') +
+            ' · ' +
+            (newAdventureSuccession ? (es ? 'Activada' : 'On') : (es ? 'Desactivada' : 'Off')),
+          () => {
+            newAdventureSuccession = !newAdventureSuccession;
+            refresh();
+          },
+          es
+            ? 'Cada clase caída se pierde en esta partida. Si caen las cuatro, termina.'
+            : 'A fallen class is lost for this run. Lose all four and the run ends.',
+        ),
         ...(combatDiagnosticsEnabled
           ? [
               action(
                 'New Combat Diagnostics run',
-                () => chooseClass('arena'),
-                'Unlisted low-spec playtest · black battlefield · authentic combat',
+                () => chooseClass('arena', false),
+                'Separate playtest mode and save.',
               ),
             ]
           : []),
         ...(developerEnabled
-          ? [action('New Developer Mode run', () => chooseClass('developer'))]
+          ? [action('New Developer Mode run', () => chooseClass('developer', false))]
           : []),
-        action(
-          'New game in Nightmare Mode',
-          () => chooseClass('nightmare'),
-          'Unlocked by the peaceful ending',
-          !profile.nightmareUnlocked,
-        ),
       ],
-      showTitleScreen,
+      newAdventureBack,
+      { view: 'new-adventure' },
     );
   }
   // Menu audit Step 2: one window for every display, renderer and frame option.
