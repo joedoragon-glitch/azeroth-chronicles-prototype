@@ -69,7 +69,7 @@ These are workflow results associated with the inspected source heads. Some work
 
 ## 3. Shadows: physical grounding with restrained cost
 
-Use one shared eligibility/strength policy across Canvas fallback and Pixi primary renderer.
+Use one shared eligibility/strength policy across Canvas fallback and Pixi primary renderer. E01-E04 apply to the affected shared object categories wherever they occur in the game, not only the supplied Greenwood views. Check representative instances in other regions/interiors when they use the same policy; this does not authorize restyling their regional architecture or palette. The owner's repeated fence example beside Thornfang's private homestead is an explicit acceptance scene alongside Goblin Fort, Treasury and Skeleton Watch.
 
 | Surface/object | Intended treatment | Reject |
 | --- | --- | --- |
@@ -87,7 +87,7 @@ Engineering first removes false shadows, then adds only geometry-supported footi
 
 **Visual brief:** an improvised but maintained timber stockade inhabited by working goblins. Two weathered canvas/timber shelters, each big enough for the adjacent goblin to use; low bedding, a shared cookfire, limited storage and a clear central work/social space. No human cottage substitutions or tiny tent icons beneath giant roofs.
 
-At the existing 150% camera, compare against an ordinary goblin's body excluding weapon, ears and nameplate. Initial art targets: shelter opening at least 1.2 body heights and 1.3 body widths; each shelter roughly 2.5-3.5 body widths across, with enough visible depth for bedding. These are designer starting ratios, not new collision dimensions or a claim current art meets them. Roofs remain below nearby mature-tree canopies. Use distinct wear/bed arrangements to avoid identical stamped shelters.
+At the existing 150% camera, compare against an ordinary goblin's body excluding weapon, ears and nameplate. Initial art targets: shelter opening at least 1.2 body heights and 1.3 body widths; each shelter roughly 2.5-3.5 body widths across, with enough visible depth for bedding. These are designer starting ratios, not new collision dimensions or a claim current art meets them. Also compare both shelters against the camp's canopy, work/game table, stored goods and palisade height at the same camera: correct their relative material thickness, roof height and footprint so the entire compound reads at one physical scale. A shelter that fits a goblin but still looks miniature beside its neighboring assets fails E05. Roofs remain below nearby mature-tree canopies. Use distinct wear/bed arrangements to avoid identical stamped shelters.
 
 **Composition:** keep the east entrance and approach recognizable. Put the shelters along the rear/north side with openings toward the courtyard. Place cookfire off the circulation line, provisions beside the sheltered wall, game/work table at a courtyard edge. Keep the tribute interaction clearly visible and reachable. The center must remain readable during a fight, not fill with barrels.
 
@@ -175,7 +175,7 @@ Preserve #824's established route identities/order, bridge geometry and usable c
 
 At bridges, earthen approaches meet abutments; do not paint road over the deck. Keep two canonical main-river crossings and the separate mill service crossing work. No decorative width increase can imply traversable room that collision denies.
 
-The wagon remains the region-transition interaction. Extend the **visible** road from it toward the eastern boundary with matching bearing/width and restrained wheel wear. A render-only extension is sufficient because the user requests connectivity/readability, not a walkable map exit. If any actual route extension is necessary, engineering must justify and migrate it separately; do not silently append/reorder saved routes or advertise walking into another region.
+The wagon remains the region-transition interaction. Extend the **visible** road from it all the way to the eastern rendered world boundary with matching bearing/width and restrained wheel wear. At the departure view it must read as continuing out of the region, with no grass strip, rounded dead-end cap or unpainted gap between the wagon and map edge; clipping at the world edge is appropriate. A render-only extension is sufficient because the user requests connectivity/readability, not a walkable map exit. If any actual route extension is necessary, engineering must justify and migrate it separately; do not silently append/reorder saved routes or advertise walking into another region.
 
 ### Procedural ground
 
@@ -244,13 +244,48 @@ Final engineering handoff must map each E ID to changed source, real evidence an
 
 ## 11. Design-stage closeout
 
-**Planned/design:** E01-E15 specified, scope reconciled, native source owners and known draft failures identified.
+**Planned/design:** E01-E16 specified, scope reconciled, native source owners and known draft failures identified.
 **Implemented this stage:** this documentation and design records only.
 **Existing runtime candidates:** remain unmerged drafts, with the mixed evidence above.
 **Tested this stage:** source/document reconciliation only; no game tests or visual candidate acceptance performed.
 **Merged / deployed / device-verified this stage:** none.
 
 **Next action for engineering:** start Phase A in #828, keeping this record as the one acceptance contract. No further chat reconstruction or owner-managed technical checklist is necessary.
+
+## 12. Owner-request completeness audit - 5 November 2026
+
+**Method:** reread every direct user message in all ten pages of the attached export and compare its individual requests against the controlling design, rather than accepting the previous assistant's summary. Include the current explicit homestead clarification; retain the separately recovered public-lamp request with its different provenance. Pages 4 and 10 primarily record assistant implementation/status claims, not additional owner requirements. The screenshots remain defect references, not proof that the new design works.
+
+**Finding:** every stated concern has a design response and an observable acceptance target. This audit tightened four ambiguities: the homestead-adjacent palisade is an explicit scene; Goblin shelters must be proportionate to other camp assets as well as actors; shared shadow corrections are not restricted to Greenwood; and the departure road must visibly reach the edge, not merely point toward it. The closeout's stale E01-E15 range is corrected to E01-E16.
+
+| Export source / later clarification | Requirement checked individually | Controlling design | What must demonstrate completion during engineering |
+| --- | --- | --- | --- |
+| pp.1-2 | Goblin palisade shadows match its actual structure | E01; section 3 | Segment/post footing, no unrelated dark ovals or upward fins |
+| pp.1-2 | Both tiny shelters resized or remade proportionately | E05; section 4 | Both shelters usable beside goblins and consistent with canopy, table, goods and walls |
+| p.2 | Enlarge fortress to make room for credible shelters | E05; section 4 | Joined expanded compound, usable courtyard/gate/tribute route; no forced squeeze or orphan collision |
+| p.2 | More outdoor traps where they have a defensive purpose | E06; section 5 | Native functional traps at justified approaches across audited defended sites; warnings and bypasses; no decorative-only substitute |
+| p.2 | Enemies need sensible night illumination | E07; section 6 | Physical sources illuminate occupied entry/work/living areas; allegiance does not imply darkness |
+| p.2 | Apply lighting review across all enemy locations, including inside | E07; section 6 | Complete five-region outdoor/interior site inventory with correction or justified adequate disposition; no Greenwood-only completion claim |
+| p.3 | Reconcile flowers and smaller plants with their shadows generally | E02; section 3 | Category-wide proportionate faint/root contact; not just a one-flower patch |
+| p.3 | Same nonsensical upward shadow on fence beside Thornfang's private place | E01; section 3 | Explicit homestead-adjacent fence comparison, not only Goblin/Treasury walls |
+| p.5 | Cultivated land should not cast detached shadows | E03; section 3 | Flat soil remains flush; raised crops/edging treated separately |
+| p.5 | Reconcile shadows with day/night cycle | E04; section 3 | Coherent day, dusk, full night and dawn grounding/cast strength in both renderers |
+| pp.5-6 | Audit/fix sawtooth road curves | E08; section 8 | Smooth outlines/joins/end caps at reported and other affected bends |
+| p.6 | Improve flat/artificial/metallic-looking terrain while retaining procedural engine | E10; section 8 | Three deliberate material layers supported by current cached painters; meadow/woodland/farm comparisons; actual execution and bounded cost |
+| p.7 | Redesign Scornfang's recycled-cottage Treasury but retain Greenwood architecture | E11; section 7 | Distinct counting/receiving/storage massing and guarded working yard in local materials; original gameplay/interior retained |
+| p.8 | Make thinner roads integrate with reddish main-road material | E09; section 8 | Related muted earth palette across maintained width hierarchy; no awkward pale seam at the shown junction |
+| p.8 | Connect merchant departure road visually to map edge | E12; section 8 | Continuous edge-reaching road with no visible grassy cutoff, preserving wagon transition |
+| p.8 | Audit whether regional trade is communicated; rural quiet remains appropriate | E13; section 8 | Review the existing production/market/freight/departure chain; improve weak scenes, retain adequate scenes; no compulsory busy bazaar or economy redesign |
+| p.9 | Is fortified territory actually reconciled to visible fortress? | E14; section 9 | Protected interior follows real wall/gate boundary rather than old generic center/ring |
+| p.9 | Is outward leeway measured from actual perimeter? | E14; section 9 | Existing 160-unit allowance measured once from actual walls; edge/corner checks and effect/shield agreement |
+| Recovered public-lamp message | More sensible public posts, without making rural Greenwood bright | E15; section 6 | Actual covered public anchors and dark intervals; attempted/failed placements alone do not pass |
+| Current takeover clarification | Thornfang's house oversized compared with other houses | E16; section 4a | Same-camera cottage/lodge comparison, reduced main mass with usable wolf opening |
+| Current takeover clarification | Develop courtyard/associated areas using space gained | E16; section 4a | Useful circulation, subordinate rest bay, work/service groups and coherent boundaries |
+| Current takeover clarification | Homestead looks unfinished and poorly implemented | E16; section 4a | Finished ridge/gables/roof joins, grounded supports, coherent perspective/frontage/rails and mounted lighting |
+
+**Design-coverage verdict: PASS after these clarifications.** This means the owner's concerns are accounted for in the specification; it does not mean their implementation or visual quality has passed. Exact placements, final measured proportions, the per-site lighting/trap inventory and actual native images remain engineering deliverables under the stated designs, not silently waived work. Existing numerical art targets are designer starting points, not owner-approved measurements.
+
+**Current boundary:** this request authorizes the completeness audit and design corrections only. No engineering phase is started by this audit, and no runtime, test, merge, deployment or device-verification claim is made.
 
 ---
 
