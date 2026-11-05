@@ -15,7 +15,7 @@
 
 ---
 
-> **Engineering phase authorized by the owner, 5 November 2026.** This design is the artistic acceptance contract for [separate implementation draft #815](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/815). Its original design-only completion/handoff notes below are historical; engineering can adjust provisional numerical width targets only when actual movement, visual and saved-game evidence requires it. Do not interpret a draft as verified, merged, published or approved artwork.
+> **Engineering phase authorized by the owner, 5 November 2026.** This design is the artistic acceptance contract for [separate implementation draft #815](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/822). Its original design-only completion/handoff notes below are historical; engineering can adjust provisional numerical width targets only when actual movement, visual and saved-game evidence requires it. Do not interpret a draft as verified, merged, published or approved artwork.
 
 # Greenwood Vale — roads, junctions and bridges: complete game-design specification
 
