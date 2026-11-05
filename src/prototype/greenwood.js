@@ -318,7 +318,8 @@
         const cfg = R.greenwoodLayout;
         if (cfg?.version === 2) {
           this.greenwoodRedesignFinish(z);
-          return this.greenwoodRoadBridgeFinish(z);
+          this.greenwoodRoadBridgeFinish(z);
+          return this.greenwoodEnvironmentFinish?.(z);
         }
         const sceneVersion = cfg?.sceneVersion || cfg?.version;
         if (z.id !== 'vale' || !cfg?.version || z.greenwoodAttemptVersion === sceneVersion) return;
