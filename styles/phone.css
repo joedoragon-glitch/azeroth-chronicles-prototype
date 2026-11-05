@@ -1,6 +1,12 @@
 /* Phone gameplay keeps the world visible and combat within thumb reach. */
 body[data-experience='phone'] #update-button {
-  width: min(105px, calc(100vw - 276px - var(--phone-safe-left, env(safe-area-inset-left)) - var(--phone-safe-right, env(safe-area-inset-right))));
+  width: min(
+    105px,
+    calc(
+      100vw - 276px - var(--phone-safe-left, env(safe-area-inset-left)) -
+        var(--phone-safe-right, env(safe-area-inset-right))
+    )
+  );
   padding: 5px;
   min-height: 44px;
   font-size: 11px;
@@ -211,7 +217,10 @@ body[data-experience='phone'].menu-open #movement {
 body[data-experience='phone'] #modal {
   top: max(8px, var(--phone-safe-top, env(safe-area-inset-top)));
   right: max(8px, var(--phone-safe-right, env(safe-area-inset-right)));
-  width: calc(100vw - max(8px, var(--phone-safe-left, env(safe-area-inset-left))) - max(8px, var(--phone-safe-right, env(safe-area-inset-right))));
+  width: calc(
+    100vw - max(8px, var(--phone-safe-left, env(safe-area-inset-left))) -
+      max(8px, var(--phone-safe-right, env(safe-area-inset-right)))
+  );
   bottom: 124px;
   padding: 12px;
 }
@@ -429,7 +438,11 @@ body[data-experience='phone'] #message {
 }
 /* Long reading uses the available width instead of a deep card over the hero. */
 body[data-experience='phone'] #message.wide-notice {
-  --notice-edge: max(8px, var(--phone-safe-left, env(safe-area-inset-left)), var(--phone-safe-right, env(safe-area-inset-right)));
+  --notice-edge: max(
+    8px,
+    var(--phone-safe-left, env(safe-area-inset-left)),
+    var(--phone-safe-right, env(safe-area-inset-right))
+  );
   width: min(250px, calc(100vw - 2 * var(--notice-edge)));
 }
 body[data-experience='phone'] #message.wide-notice .notice-card {
@@ -672,7 +685,6 @@ body[data-experience='phone'] #cancel-navigation-button {
   }
 }
 
-
 /* Option B (phone): the original Menu action stays one tap away. It is
    independently visible at the top right, not a second invented control.
    Movement, targeting, charged skills, and alternate handedness are untouched. */
@@ -802,7 +814,10 @@ body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .c
 body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference {
   font-size: 12px;
 }
-body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference section {
+body[data-experience='phone']
+  #modal[data-view='character']
+  #modal-description.skill-reference
+  section {
   padding: 9px 11px;
 }
 body[data-experience='phone'] #modal[data-view='character'] #modal-description.skill-reference dt,
@@ -831,7 +846,10 @@ body[data-experience='phone'][data-joystick-mode='floating']:not(.menu-open) #jo
   transform-origin: top left;
   transition: opacity 150ms ease;
 }
-body[data-experience='phone'][data-joystick-mode='floating'].floating-joystick-active:not(.menu-open) #joystick {
+body[data-experience='phone'][data-joystick-mode='floating'].floating-joystick-active:not(
+    .menu-open
+  )
+  #joystick {
   opacity: 0.88;
 }
 @media (prefers-reduced-motion: reduce) {
@@ -844,10 +862,13 @@ body[data-experience='phone'][data-joystick-mode='floating'].floating-joystick-a
    touch targets, positions, charges, queues, keyboard focus and click owners.
    Classic is the default and remains byte-for-byte unaffected by this gate. */
 body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-pressure='quiet']
-  #skills > button:not(.charging):not(.skill-queued):not(.tutorial-highlight):not(:focus-visible) {
+  #skills
+  > button:not(.charging):not(.skill-queued):not(.tutorial-highlight):not(:focus-visible) {
   background: linear-gradient(155deg, #314b55ae, #1c303bb5);
   border-color: #8ca4a48c;
-  box-shadow: inset 0 1px #dde6d51a, 0 2px 5px #07120d70;
+  box-shadow:
+    inset 0 1px #dde6d51a,
+    0 2px 5px #07120d70;
 }
 /* Proactive support remains legible; low-HP healing must never look inactive. */
 body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hud-low-hp='true']
@@ -869,10 +890,13 @@ body[data-experience='phone'][data-hud-style='adaptive']:not(.menu-open)[data-hu
 }
 body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true'] #hud {
   border-color: #d4a277;
-  box-shadow: inset 0 0 0 1px #d8a57c55, 0 3px 10px #07120d55;
+  box-shadow:
+    inset 0 0 0 1px #d8a57c55,
+    0 3px 10px #07120d55;
 }
 body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true']
-  #hero-stats .resource-line.health {
+  #hero-stats
+  .resource-line.health {
   position: relative;
 }
 body[data-experience='phone'][data-hud-style='adaptive'] #hero-stats .hud-low-health {
@@ -893,19 +917,20 @@ body[data-experience='phone'][data-hud-style='adaptive'] #hero-stats .hud-low-he
   pointer-events: none;
 }
 body[data-experience='phone'][data-hud-style='adaptive'][data-hud-low-hp='true']
-  #hero-stats .resource-line.health i {
+  #hero-stats
+  .resource-line.health
+  i {
   background: linear-gradient(to right, #ec9c70 var(--fill), #493a38 var(--fill));
   border-color: #e3b0919e;
 }
-body[data-experience='phone'][data-hud-style='adaptive']
-  #skills > button,
-body[data-experience='phone'][data-hud-style='adaptive']
-  #recall-button,
-body[data-experience='phone'][data-hud-style='adaptive']
-  #target-button,
-body[data-experience='phone'][data-hud-style='adaptive']
-  #squad-button {
-  transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+body[data-experience='phone'][data-hud-style='adaptive'] #skills > button,
+body[data-experience='phone'][data-hud-style='adaptive'] #recall-button,
+body[data-experience='phone'][data-hud-style='adaptive'] #target-button,
+body[data-experience='phone'][data-hud-style='adaptive'] #squad-button {
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 @media (prefers-reduced-motion: reduce) {
   body[data-experience='phone'][data-hud-style='adaptive'] #skills > button,
@@ -944,7 +969,9 @@ body[data-experience='phone'] #status[data-notice-tier='important'] {
   color: #fff1d4;
   background: #45291e;
   border-color: #ffc777;
-  box-shadow: 0 0 0 1px #ffc77755, 0 3px 12px #07120de0;
+  box-shadow:
+    0 0 0 1px #ffc77755,
+    0 3px 12px #07120de0;
   font-weight: 750;
 }
 body[data-experience='phone'] #status.notice-deferred {
@@ -953,7 +980,8 @@ body[data-experience='phone'] #status.notice-deferred {
 @media (orientation: landscape) and (min-width: 650px) {
   /* The top rail between the existing left HP dock and right Menu button
      keeps a routine receipt away from the player and NPCs at mid-screen. */
-  body[data-experience='phone'] #status:not([data-notice-tier='critical']):not([data-notice-tier='important']) {
+  body[data-experience='phone']
+    #status:not([data-notice-tier='critical']):not([data-notice-tier='important']) {
     top: max(8px, var(--phone-safe-top, env(safe-area-inset-top)));
     max-width: min(280px, calc(100vw - 410px));
   }
@@ -978,7 +1006,9 @@ body[data-experience='phone'] #message .notice-card.notice-warning {
   color: #30180c;
   background: #ffe0a7;
   border-color: #ffbe83;
-  box-shadow: 0 0 0 1px #b66e4b, 0 3px 12px #07120dd9;
+  box-shadow:
+    0 0 0 1px #b66e4b,
+    0 3px 12px #07120dd9;
 }
 body[data-experience='phone'] #message .notice-card.notice-warning .notice-detail {
   color: #3b2312;
@@ -1013,7 +1043,6 @@ body[data-experience='phone'] #message .notice-card.notice-feedback .notice-deta
   }
 }
 
-
 /* Landscape phone Stage 2 (4 Nov 2026): build on merged #791, not a new menu
    implementation. Portrait still uses the old rules until the Stage 3
    rotation-and-pause guard replaces portrait gameplay. */
@@ -1029,7 +1058,10 @@ body[data-experience='phone'] #message .notice-card.notice-feedback .notice-deta
   body[data-experience='phone'].title-active #modal[data-dialog-size] {
     width: min(
       700px,
-      calc(100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) - var(--phone-safe-right, env(safe-area-inset-right)))
+      calc(
+        100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) -
+          var(--phone-safe-right, env(safe-area-inset-right))
+      )
     );
   }
 
@@ -1038,7 +1070,10 @@ body[data-experience='phone'] #message .notice-card.notice-feedback .notice-deta
   body[data-experience='phone'] #modal[data-view='class-select'] {
     width: min(
       660px,
-      calc(100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) - var(--phone-safe-right, env(safe-area-inset-right)))
+      calc(
+        100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) -
+          var(--phone-safe-right, env(safe-area-inset-right))
+      )
     );
   }
   body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions {
@@ -1050,7 +1085,10 @@ body[data-experience='phone'] #message .notice-card.notice-feedback .notice-deta
     min-height: 58px;
     overflow-wrap: anywhere;
   }
-  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions > .character-name-field {
+  body[data-experience='phone']
+    #modal[data-view='class-select']
+    #modal-actions
+    > .character-name-field {
     grid-column: 1 / -1;
     min-width: 0;
   }
@@ -1062,7 +1100,10 @@ body[data-experience='phone'] #message .notice-card.notice-feedback .notice-deta
   body[data-experience='phone'] #modal[data-view='settings'] {
     width: min(
       600px,
-      calc(100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) - var(--phone-safe-right, env(safe-area-inset-right)))
+      calc(
+        100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) -
+          var(--phone-safe-right, env(safe-area-inset-right))
+      )
     );
   }
   body[data-experience='phone'] #modal[data-view='adventure'] #modal-actions,
@@ -1081,7 +1122,10 @@ body[data-experience='phone'] #message .notice-card.notice-feedback .notice-deta
   body[data-experience='phone'] #modal:has(.menu-setting) {
     width: min(
       640px,
-      calc(100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) - var(--phone-safe-right, env(safe-area-inset-right)))
+      calc(
+        100vw - 20px - var(--phone-safe-left, env(safe-area-inset-left)) -
+          var(--phone-safe-right, env(safe-area-inset-right))
+      )
     );
   }
   body[data-experience='phone'] #modal:has(.menu-setting) #modal-actions {
@@ -1149,7 +1193,10 @@ body[data-experience='phone'] #modal[data-view='archive-reading'] #modal-descrip
   body[data-experience='phone'] #modal[data-view='new-adventure'],
   body[data-experience='phone'] #modal[data-view='title-help'],
   body[data-experience='phone'] #modal[data-view='title-saves'] {
-    width: min(690px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+    width: min(
+      690px,
+      calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px))
+    );
   }
 }
 /* Direct touch is primary. Keyboard hints belong on keyboard-sized screens. */
@@ -1163,7 +1210,19 @@ body[data-experience='phone'] #close-button small {
   }
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-primary,
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-section,
-  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions button:nth-of-type(n + 4) {
+  body[data-experience='phone']
+    #modal[data-view='new-adventure']
+    #modal-actions
+    button:nth-of-type(n + 4) {
     grid-column: 1 / -1;
   }
+}
+
+/* Title actions and form labels share the readable menu scale. */
+body[data-experience='phone'] #title-screen nav button,
+body[data-experience='phone'] #modal-actions .menu-setting-label,
+body[data-experience='phone'] #modal-actions .menu-section,
+body[data-experience='phone'] #modal-actions .character-name-field {
+  font-size: 15px;
+  min-height: 44px;
 }

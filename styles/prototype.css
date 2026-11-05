@@ -227,7 +227,9 @@ body.menu-open #skills {
   color: #fff2bd;
   background: linear-gradient(160deg, #514122, #3b3e29);
   border-color: #ffe294;
-  box-shadow: inset 0 1px #fff3c044, 0 0 0 2px #ffe29499;
+  box-shadow:
+    inset 0 1px #fff3c044,
+    0 0 0 2px #ffe29499;
 }
 #recall-button.tutorial-highlight,
 #modal-actions button.tutorial-highlight {
@@ -941,7 +943,9 @@ body.menu-open::before {
   border-radius: 8px;
   background: #12241eed;
   color: #e7eacb;
-  font: 12px/1.5 ui-monospace, monospace;
+  font:
+    12px/1.5 ui-monospace,
+    monospace;
 }
 #developer-companion-monitor > button {
   pointer-events: auto;
@@ -1332,56 +1336,137 @@ body.menu-open #cancel-navigation-button {
 
 /* Startup preflight stays above the title and world until the installed
    application is coherent. No menu interaction or scene preparation beneath it. */
-#startup-update[hidden] { display: none !important; }
+#startup-update[hidden] {
+  display: none !important;
+}
 #startup-update {
-  position: fixed; inset: 0; z-index: 50;
-  display: grid; place-items: center; text-align: center;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  text-align: center;
   background: radial-gradient(ellipse at 50% 25%, #274337 0%, #14291f 52%, #07130f 100%);
   color: #f0ddb0;
-  padding: max(18px, var(--phone-safe-top, env(safe-area-inset-top))) 18px max(18px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
+  padding: max(18px, var(--phone-safe-top, env(safe-area-inset-top))) 18px
+    max(18px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
 }
 .startup-update-panel {
-  width: min(100%, 440px); border: 1px solid #b69a6380;
-  border-radius: 18px; padding: 30px 24px;
-  background: #14251edc; box-shadow: 0 12px 50px #0008;
+  width: min(100%, 440px);
+  border: 1px solid #b69a6380;
+  border-radius: 18px;
+  padding: 30px 24px;
+  background: #14251edc;
+  box-shadow: 0 12px 50px #0008;
 }
-#startup-update-heading { color: #f0ddb0; font: 600 clamp(22px, 5vw, 32px)/1.25 Georgia, serif; }
-#startup-update-text { color: #d3bc89; margin: 16px 0 0; line-height: 1.5; }
+#startup-update-heading {
+  color: #f0ddb0;
+  font:
+    600 clamp(22px, 5vw, 32px) / 1.25 Georgia,
+    serif;
+}
+#startup-update-text {
+  color: #d3bc89;
+  margin: 16px 0 0;
+  line-height: 1.5;
+}
 /* A separate opaque, responsive main-screen surface; menu dialogs overlay it. */
-#title-screen[hidden], #title-loading[hidden] { display: none !important; }
+#title-screen[hidden],
+#title-loading[hidden] {
+  display: none !important;
+}
 #title-screen {
-  position: fixed; inset: 0; z-index: 8;
+  position: fixed;
+  inset: 0;
+  z-index: 8;
   background: radial-gradient(ellipse at 50% 25%, #274337 0%, #14291f 52%, #07130f 100%);
-  display: grid; place-items: center; overflow-y: auto;
-  padding: max(18px, var(--phone-safe-top, env(safe-area-inset-top))) 18px max(18px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: max(18px, var(--phone-safe-top, env(safe-area-inset-top))) 18px
+    max(18px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
   overscroll-behavior: contain;
 }
 .title-panel {
-  width: min(100%, 480px); border: 1px solid #b69a6380;
-  border-radius: 18px; padding: clamp(22px, 5vw, 40px);
-  background: #14251edc; box-shadow: 0 12px 50px #0008; text-align: center;
+  width: min(100%, 480px);
+  border: 1px solid #b69a6380;
+  border-radius: 18px;
+  padding: clamp(22px, 5vw, 40px);
+  background: #14251edc;
+  box-shadow: 0 12px 50px #0008;
+  text-align: center;
 }
-#title-heading { color: #f0ddb0; font-family: Georgia, serif;
-  font-size: clamp(24px, 5.2vw, 38px); line-height: 1.15; margin: 8px 0 18px; }
-#title-tagline { color: #c3ad80; font-size: 12px; letter-spacing: .03em; margin: 0; }
-#title-preview { min-height: 34px; color: #c7d8cb; font-size: 13px; }
-#title-import-feedback[hidden] { display: none !important; }
-#title-import-feedback { color: #eed8a6; font-size: 14px; line-height: 1.4; margin: 8px 0; }
-#title-screen nav { display: grid; gap: 10px; margin-top: 16px; }
+#title-heading {
+  color: #f0ddb0;
+  font-family: Georgia, serif;
+  font-size: clamp(24px, 5.2vw, 38px);
+  line-height: 1.15;
+  margin: 8px 0 18px;
+}
+#title-tagline {
+  color: #c3ad80;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+#title-preview {
+  min-height: 34px;
+  color: #c7d8cb;
+  font-size: 13px;
+}
+#title-import-feedback[hidden] {
+  display: none !important;
+}
+#title-import-feedback {
+  color: #eed8a6;
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 8px 0;
+}
+#title-screen nav {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
 #title-screen nav button {
-  min-height: 48px; padding: 12px 16px; border: 1px solid #9bb39b60;
-  border-radius: 9px; background: #253e34; color: #f4e9ce;
-  font-size: 15px; cursor: pointer;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid #9bb39b60;
+  border-radius: 9px;
+  background: #253e34;
+  color: #f4e9ce;
+  font-size: 15px;
+  cursor: pointer;
 }
-#title-screen nav button:first-child:not(:disabled) { border-color: #d4b479; background: #375245; }
-#title-screen nav button:hover:not(:disabled), #title-screen nav button:focus-visible {
-  border-color: #f1d9a0; background: #416452;
-  outline: 2px solid #d4b479; outline-offset: 2px;
+#title-screen nav button:first-child:not(:disabled) {
+  border-color: #d4b479;
+  background: #375245;
 }
-#title-screen nav button:disabled { opacity: .45; cursor: not-allowed; }
-#startup-update-notice[hidden] { display: none !important; }
-#startup-update-notice { color: #e4c791; font-size: 13px; line-height: 1.5; margin: 16px 0 0; }
-#title-loading { color: #d3bc89; font-size: 13px; margin: 16px 0 0; }
+#title-screen nav button:hover:not(:disabled),
+#title-screen nav button:focus-visible {
+  border-color: #f1d9a0;
+  background: #416452;
+  outline: 2px solid #d4b479;
+  outline-offset: 2px;
+}
+#title-screen nav button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+#startup-update-notice[hidden] {
+  display: none !important;
+}
+#startup-update-notice {
+  color: #e4c791;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 16px 0 0;
+}
+#title-loading {
+  color: #d3bc89;
+  font-size: 13px;
+  margin: 16px 0 0;
+}
 body.title-active #world,
 body.title-active #hud,
 body.title-active #skills,
@@ -1390,19 +1475,26 @@ body.title-active #desktop-hints,
 body.title-active #message,
 body.title-active #stamina-status,
 body.title-active #sprint-button,
-body.title-active #cancel-navigation-button { visibility: hidden !important; }
-body.title-active #modal { z-index: 11; }
+body.title-active #cancel-navigation-button {
+  visibility: hidden !important;
+}
+body.title-active #modal {
+  z-index: 11;
+}
 
 /* Stage 5: opaque interlude while a committed arrival is rendered.
    Underlying HUD/menu and the previous scene remain inaccessible. */
-#scene-loading[hidden] { display: none !important; }
+#scene-loading[hidden] {
+  display: none !important;
+}
 #scene-loading {
   position: fixed;
   inset: 0;
   z-index: 30;
   display: grid;
   place-items: center;
-  padding: max(16px, var(--phone-safe-top, env(safe-area-inset-top))) 20px max(16px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
+  padding: max(16px, var(--phone-safe-top, env(safe-area-inset-top))) 20px
+    max(16px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
   background: radial-gradient(ellipse at 50% 30%, #263f34 0%, #0d2019 65%, #07130e 100%);
   color: #f3e6c8;
   text-align: center;
@@ -1415,16 +1507,34 @@ body.title-active #modal { z-index: 11; }
   background: #16281fdc;
   box-shadow: 0 16px 46px #0009;
 }
-#scene-loading-heading { color: #f0ddb0; font: 600 clamp(20px, 4vw, 28px)/1.25 Georgia, serif; }
-#scene-loading-text { margin: 14px 0 0; line-height: 1.5; }
-
-#scene-loading-retry[hidden] { display: none !important; }
-#scene-loading-retry {
-  margin-top: 18px; padding: 12px 20px; border-radius: 8px;
-  min-height: 48px; background: #385c4b; border: 1px solid #dfc78f;
-  color: #fff0d1; cursor: pointer;
+#scene-loading-heading {
+  color: #f0ddb0;
+  font:
+    600 clamp(20px, 4vw, 28px) / 1.25 Georgia,
+    serif;
 }
-#scene-loading-retry:focus-visible { outline: 3px solid #f8dfa5; outline-offset: 3px; }
+#scene-loading-text {
+  margin: 14px 0 0;
+  line-height: 1.5;
+}
+
+#scene-loading-retry[hidden] {
+  display: none !important;
+}
+#scene-loading-retry {
+  margin-top: 18px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  min-height: 48px;
+  background: #385c4b;
+  border: 1px solid #dfc78f;
+  color: #fff0d1;
+  cursor: pointer;
+}
+#scene-loading-retry:focus-visible {
+  outline: 3px solid #f8dfa5;
+  outline-offset: 3px;
+}
 
 /* First-run language choice, shown only after the automatic update gate. */
 #language-welcome[hidden] {
@@ -1437,8 +1547,10 @@ body.title-active #modal { z-index: 11; }
   display: grid;
   place-items: center;
   overflow-y: auto;
-  padding: max(20px, var(--phone-safe-top, env(safe-area-inset-top))) max(18px, var(--phone-safe-right, env(safe-area-inset-right)))
-    max(20px, var(--phone-safe-bottom, env(safe-area-inset-bottom))) max(18px, var(--phone-safe-left, env(safe-area-inset-left)));
+  padding: max(20px, var(--phone-safe-top, env(safe-area-inset-top)))
+    max(18px, var(--phone-safe-right, env(safe-area-inset-right)))
+    max(20px, var(--phone-safe-bottom, env(safe-area-inset-bottom)))
+    max(18px, var(--phone-safe-left, env(safe-area-inset-left)));
   background: radial-gradient(ellipse at 50% 28%, #294738, #10231b 67%, #081610);
   overscroll-behavior: contain;
 }
@@ -1557,12 +1669,17 @@ body[data-experience='phone'].title-active #modal {
   right: max(8px, var(--phone-safe-right, env(safe-area-inset-right)));
   bottom: max(8px, var(--phone-safe-bottom, env(safe-area-inset-bottom)));
   left: max(8px, var(--phone-safe-left, env(safe-area-inset-left)));
-  width: min(720px, calc(100vw - 16px - var(--phone-safe-left, env(safe-area-inset-left)) - var(--phone-safe-right, env(safe-area-inset-right))));
+  width: min(
+    720px,
+    calc(
+      100vw - 16px - var(--phone-safe-left, env(safe-area-inset-left)) -
+        var(--phone-safe-right, env(safe-area-inset-right))
+    )
+  );
   margin-inline: auto;
   max-height: none;
   transform: none;
 }
-
 
 /* Landscape phones need a side-by-side title and menu instead of a tall portrait card. */
 @media (orientation: landscape) and (min-width: 560px) and (max-height: 560px) {
@@ -1809,4 +1926,28 @@ body[data-experience='phone'].title-active #modal {
 }
 body.menu-open::before {
   background: #0c07159c;
+}
+
+/* Shared menu reading scale; phone refinements preserve these minimums. */
+#modal h2 {
+  font-size: 20px;
+}
+#modal-description {
+  font-size: 15px;
+}
+#modal-actions button,
+#close-button,
+.language-welcome-choices button {
+  font-size: 15px;
+  min-height: 44px;
+}
+#modal-actions .detail,
+#modal-actions .menu-section-detail {
+  font-size: 13px;
+}
+#title-screen nav button:disabled,
+#modal-actions button:disabled {
+  opacity: 1;
+  color: var(--menu-quiet);
+  background: var(--menu-raised);
 }
