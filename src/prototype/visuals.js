@@ -19745,14 +19745,35 @@
           // One hydraulic composition: paint *all* earth rims first, then all
           // water surfaces. Per-shape rim/interior painting used to overdraw
           // connected channels at the pond, wheel and river confluence.
-          for (const pool of p.pools)
-            poly(
-              pool.points.map((q) => ({
+          for (let index = 0; index < p.pools.length; index++) {
+            const pool = p.pools[index],
+              rim = pool.points.map((q) => ({
                 x: pool.x + (q.x - pool.x) * 1.055,
                 y: pool.y + (q.y - pool.y) * 1.055,
-              })),
-              '#68745b',
-            );
+              }));
+            if (index === 3) {
+              // The tailrace is one continuous water surface with the river.
+              // Its earthy outer rim stops at the *real* western riverbank,
+              // instead of making a triangular wedge over the flowing river.
+              // Clip the visual rim only; the identical source water polygon
+              // continues to own navigation/collision at the confluence.
+              const lo = Math.max(0, pool.y - pool.ry - 30),
+                hi = Math.min(size, pool.y + pool.ry + 30),
+                land = [{ x: 0, y: lo }];
+              for (let y = lo; y < hi; y += 16)
+                land.push({ x: R.channelBanks(0, y)[0], y });
+              land.push({ x: R.channelBanks(0, hi)[0], y: hi }, { x: 0, y: hi });
+              ctx.save();
+              ctx.beginPath();
+              land.map(screen).forEach((v, j) =>
+                j ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y),
+              );
+              ctx.closePath();
+              ctx.clip();
+              poly(rim, '#68745b');
+              ctx.restore();
+            } else poly(rim, '#68745b');
+          }
           for (const pool of p.pools) poly(pool.points, '#285d70');
           for (const pool of p.pools) poly(pool.points, '#397783');
           // Quiet pond reflections; directed channels stay unobstructed.
