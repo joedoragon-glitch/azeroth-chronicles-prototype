@@ -3595,6 +3595,7 @@
             // positions scenery; no scene-5 regeneration or unrelated map changes.
             this.greenwoodRoadBridgeFinish?.(z);
             this.greenwoodEnvironmentFinish?.(z);
+            this.outdoorMiniTrapCoverage(z);
             this.greenwoodRefinementScene?.(z);
             this.greenwoodCompositionFinish?.(z);
             this.greenwoodTrailLabels?.(z);
@@ -5338,6 +5339,48 @@
             n.name = room.name + ' cache ' + (n.index + 1);
         }
       }
+      // Fill obvious gaps in existing field-site defenses without adding
+      // another trap engine or changing trap damage/timing. Candidate sites
+      // are assessed once on zone entry, and appended to each mini's native
+      // saved trapPosts with stable per-mini indices.
+      outdoorMiniTrapCoverage(z) {
+        if (z.outdoorMiniTrapCoverageVersion === 1 || !R.outdoorMiniTrapKinds[z.id])
+          return;
+        const kinds = R.outdoorMiniTrapKinds[z.id];
+        for (const [mi, mini] of (z.minis || []).entries()) {
+          if (mini.type !== 'field' || mini.cleared || !Array.isArray(mini.trapPosts)) continue;
+          const existing = mini.trapPosts;
+          const distanceRoad = (p) =>
+            this.distanceToRoad(z, p);
+          for (const [j, seed] of [[1, 1], [2, -1]]) {
+            if (existing.some((p) => p.index === 500 + mi * 10 + j)) continue;
+            let chosen = null;
+            for (const radius of [85, 115, 145]) {
+              for (let k = 0; k < 12; k++) {
+                const angle = (k * Math.PI / 6) + seed * 0.3,
+                  p = { x: mini.x + radius * Math.cos(angle),
+                    y: mini.y + radius * Math.sin(angle) };
+                if (this.blocked(p.x, p.y, z.id, 18, true) ||
+                    distanceRoad(p) < 65 ||
+                    z.npcs.some((n) => dist(n, p) < 72) ||
+                    z.nodes.some((n) => dist(n, p) < 70) ||
+                    z.props.some((q) => !q.decorative && dist(q, p) < (q.r || 0) + 36) ||
+                    existing.some((q) => dist(q, p) < 110))
+                  continue;
+                chosen = p;
+                break;
+              }
+              if (chosen) break;
+            }
+            if (chosen) existing.push({
+              ...chosen,
+              kind: kinds[Math.min(j, kinds.length - 1)],
+              index: 500 + mi * 10 + j,
+            });
+          }
+        }
+        z.outdoorMiniTrapCoverageVersion = 1;
+      }
       authoredPlaces(z) {
         this.greenwoodTreasuryNames(z);
         if (this.supplyRoom(z.id)) {
@@ -5445,6 +5488,7 @@
         this.marchTownRoadLink(z);
         this.lanternShoreLayout(z);
         this.highlandsTributeLayout(z);
+        this.outdoorMiniTrapCoverage(z);
       }
       highlandsTributeLayout(z, finalLayout = false) {
         const cfg = R.highlandsTribute;
