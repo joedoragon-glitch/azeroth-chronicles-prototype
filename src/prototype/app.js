@@ -6854,6 +6854,35 @@
       manaStatus('Need ' + cost + ' MP.');
       return;
     }
+    // Refused material actions need an actionable explanation. This is a
+    // one-time source lookup after a failed release, never a HUD/frame poll.
+    if (game.s.mode === 'developer' && game.hero.class === 'strategist' &&
+        [1, 2, 3].includes(slot)) {
+      const cfg = PrototypeRules.strategistStarterSkills[slot];
+      const source = typeof PrototypeStrategistMaterials !== 'undefined'
+        ? PrototypeStrategistMaterials.forCombat(game, cfg.material,
+          { range: cfg.sourceRange, rules: PrototypeRules })
+        : null;
+      const es = language === 'es';
+      if (!source) {
+        const names = es
+          ? { water: 'agua', mineral: 'piedra o mineral', fire: 'fuego activo' }
+          : { water: 'Water', mineral: 'stone or ore', fire: 'active Fire' };
+        status((es ? 'Necesitas una fuente real, cercana y visible de ' :
+          'Needs a genuine nearby visible source of ') + names[cfg.material] + '.');
+      } else if (slot === 1) {
+        status(es
+          ? (charged ? 'No hay ralentizaciones activas que limpiar.' :
+            'Necesitas un enemigo cercano o un aliado ralentizado.')
+          : (charged ? 'No active party Slow to cleanse.' :
+            'Needs a nearby foe or a Slowed party member.'));
+      } else if (slot === 2) {
+        status(es ? 'No hay espacio despejado para colocar la faceta.' :
+          'No clear space to place the stone face.');
+      } else status(es ? 'No hay un enemigo alcanzable a corta distancia.' :
+        'No reachable foe in close range.');
+      return;
+    }
     if (chargeNeedsTarget(slot)) {
       status('No target in range.');
       return;
