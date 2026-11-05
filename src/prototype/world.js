@@ -3593,6 +3593,9 @@
             this.setSceneryTraversal(z);
             this.greenwoodRefinementScene?.(z);
             this.greenwoodCompositionFinish?.(z);
+            // Established v4 Greenwood scenes return through this branch.
+            // Apply the independent road migration once without rebuilding scenery.
+            this.greenwoodRoadBridgeFinish?.(z);
             this.greenwoodTrailLabels?.(z);
             this.greenwoodTributePlacement(z);
             this.greenwoodFreightDepot(z);
