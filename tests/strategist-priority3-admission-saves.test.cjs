@@ -82,10 +82,13 @@ assert(devBytes, 'real Developer New Game must write the dedicated v4 slot');
 assert.equal(JSON.parse(devBytes).hero.class, 'strategist');
 
 // An explicit Developer preview may not leak into the normal class chooser.
-preview.elements.get('title-new').click();
-click(preview, 'New Normal game');
-click(preview, 'Standard death');
-assert(!preview.elements.get('modal-actions').children.some((a) =>
+const publicWithPreviewRegistered = shell('en', 'paladin', {
+  stayOnTitle: true, seedSave: false, location: location('?developer=1'),
+});
+publicWithPreviewRegistered.elements.get('title-new').click();
+click(publicWithPreviewRegistered, 'New Normal game');
+click(publicWithPreviewRegistered, 'Standard death');
+assert(!publicWithPreviewRegistered.elements.get('modal-actions').children.some((a) =>
   a.textContent.includes('Strategist')));
 for (const mode of ['normal', 'nightmare', 'arena']) {
   assert.throws(() => new C(mode, 'strategist'), /Unknown mode or class/);
