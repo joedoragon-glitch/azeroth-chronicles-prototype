@@ -3233,8 +3233,11 @@
           screen,
           i,
           optimized ? null : PrototypeMaterials,
+          null,
+          z.footpaths || [],
+          z.greenwoodRoadKinds || [],
         );
-        PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen);
+        PrototypeVisuals.footpaths(ctx, z.footpaths || [], screen, i);
         if (!game.isDungeon())
           PrototypeVisuals.bridges(ctx, screen, i, optimized ? null : PrototypeMaterials);
       } else {
