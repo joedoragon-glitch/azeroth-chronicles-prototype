@@ -1,5 +1,7 @@
 # Canvas–Pixi visual parity contract
 
+**5 November 2026 — Greenwood moonlight correction (PR [#809](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/809)):** Region-0 slate-blue moonlit grading and softer sunset/cooler night motes have been integrated with published PR #821's physically mounted lanterns, not reverted to old facade geometry. Both Canvas/Pixi gradient values agree; other regions retain their palettes. Earlier [Pixi paired benchmark #41996085675](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996085675) and focused/PWA checks passed on the earlier exact head; subsequent integrated-head checks are separate. The owner accepts the look only in the released game. For future regions, reuse the art/engineering validation approach, not the literal Greenwood palette or fixture positions.
+
 **So I Became the Dark Lord's Problem** · [Issue #748](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/issues/748) · [implementation PR #749](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/749)
 
 The owner authorized implementation and merging when ready on 31 October 2026. The original source assessment remains in #748; it was not browser certification. The reproduction base is `5c132a1685feb5a1be1caaa1db5f5f94003cf7e7`, which includes environmental PR #747 after the assessment's earlier #746 baseline.

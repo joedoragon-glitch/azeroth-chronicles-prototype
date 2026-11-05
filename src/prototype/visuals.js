@@ -20686,7 +20686,7 @@
   } = {}) {
     if (optimized) return [];
     const dayMotes = ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
-      nightMotes = ['#dcefa8', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
+      nightMotes = ['#c5cbda', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
       count = dungeon || room ? 8 : region === 3 || region === 4 ? 18 : 14,
       fade = Math.max(0, Math.min(1, darkness)),
       day = dayMotes[region] || dayMotes[0],
@@ -20762,7 +20762,7 @@
       'rgba(166,146,196,.05)',
     ];
     const nightTints = [
-      'rgba(11,25,42,.48)', // Greenwood: moonlit blue-greens, not a blackout
+      'rgba(39,47,67,.64)', // Greenwood: moonlit slate-blue neutralizes olive grass
       'rgba(12,32,44,.48)', // Marches: wet blue reflections
       'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
       'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
@@ -20783,7 +20783,9 @@
       g.addColorStop(0, nightTints[region] || nightTints[0]);
       g.addColorStop(
         1,
-        `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
+        region === 0
+          ? `rgba(${31 - 9 * peaceBlend},${40 - 9 * peaceBlend},${60 - 11 * peaceBlend},${0.64 - 0.34 * peaceBlend})`
+          : `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
       );
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -20845,7 +20847,7 @@
         canvas.width,
         canvas.height * (sunset ? 0.9 : 0.1),
       );
-      const strength = daylight.warmth * (victory ? 1.25 : 1);
+      const strength = daylight.warmth * (victory ? 1.25 : 1) * (region === 0 && sunset ? 0.76 : 1);
       wash.addColorStop(
         0,
         sunset ? `rgba(244,139,70,${0.23 * strength})` : `rgba(248,185,177,${0.18 * strength})`,
