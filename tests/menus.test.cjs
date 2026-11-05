@@ -133,10 +133,10 @@ assert.equal(
   'reading specialist menus cannot mutate the campaign',
 );
 console.log('PASS Smith and Alchemist transaction categories remain available and read-only until chosen');
-const engineeringBarracks = game.zone().buildings.find((b) => b.id === 'design-audit-barracks');
-if (engineeringBarracks) {
-  engineeringBarracks.full = true;
-  catalog.barracksMenu(engineeringBarracks, back);
+const engineeringBarracks = { id: 'engineering-full-barracks', progress: 4, full: true };
+game.zone().buildings.push(engineeringBarracks);
+catalog.barracksMenu(engineeringBarracks, back);
+{
   assert.equal(opened.title, 'Full Barracks');
   assert.equal(opened.view, 'barracks-hub');
   assert.deepEqual(
