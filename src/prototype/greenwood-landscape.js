@@ -2242,6 +2242,32 @@
     }
     return false;
   }
+  // Continuous world-space ribbon normals replace tiny stamped quads and
+  // overlapping circles at every sampled curve vertex. Computed only when
+  // authored routes change, never once per frame.
+  function roadNormals(points) {
+    return points.map((point, i) => {
+      const a = points[Math.max(0, i - 1)],
+        b = points[Math.min(points.length - 1, i + 1)],
+        dx = b.x - a.x, dy = b.y - a.y,
+        length = Math.hypot(dx, dy) || 1;
+      return { x: -dy / length, y: dx / length };
+    });
+  }
+  function appendRoadRibbon(ctx, screen, points, normals, width) {
+    if (points.length < 2) return;
+    const emit = (i, side, first) => {
+      const p = points[i], n = normals[i],
+        q = screen({ x: p.x + n.x * width * side, y: p.y + n.y * width * side });
+      if (first) ctx.moveTo(q.x, q.y);
+      else ctx.lineTo(q.x, q.y);
+    };
+    for (let i = 0; i < points.length; i++) emit(i, 1, i === 0);
+    for (let i = points.length - 1; i >= 0; i--) emit(i, -1, false);
+    ctx.closePath();
+    appendRoadCap(ctx, screen, points[0], width);
+    appendRoadCap(ctx, screen, points.at(-1), width);
+  }
   function prepareRoadPaint(roads, footpaths = [], kinds = []) {
     const wide = (roads || []).map((points, i) => ({
       kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
@@ -2277,7 +2303,12 @@
       }
       if (run.length > 1) fragments.push(run);
     }
-    return { wide, fragments, widths: roadWidths };
+    return {
+      wide: wide.map((road) => ({ ...road, normals: roadNormals(road.points) })),
+      fragments,
+      fragmentNormals: fragments.map(roadNormals),
+      widths: roadWidths,
+    };
   }
   function appendRoadShape(ctx, screen, a, b, width) {
     const length = distance(a, b);
@@ -2334,39 +2365,31 @@
         kinds: [...kinds],
         geometry: prepareRoadPaint(paths, footpaths, kinds),
       };
-    const { wide, fragments } = roadPaintCache.geometry;
+    const { wide, fragments, fragmentNormals } = roadPaintCache.geometry;
     const paint = (widthFactor, color, foot = false) => {
       ctx.beginPath();
       if (foot) {
         const width = roadWidths.path * widthFactor;
-        for (const run of fragments) {
-          for (let i = 1; i < run.length; i++)
-            appendRoadShape(ctx, screen, run[i - 1], run[i], width);
-          // Only the true run ends need circular caps, not every sampled
-          // subsection. This avoids thousands of redundant polygons per frame.
-          appendRoadCap(ctx, screen, run[0], width);
-          appendRoadCap(ctx, screen, run[run.length - 1], width);
-        }
+        fragments.forEach((run, i) =>
+          appendRoadRibbon(ctx, screen, run, fragmentNormals[i], width));
       } else {
-        for (const road of wide) {
-          const w = roadWidths[road.kind] * widthFactor;
-          for (let i = 1; i < road.points.length; i++)
-            appendRoadShape(ctx, screen, road.points[i - 1], road.points[i], w);
-          for (const point of road.points) appendRoadCap(ctx, screen, point, w);
-        }
+        for (const road of wide)
+          appendRoadRibbon(ctx, screen, road.points, road.normals,
+            roadWidths[road.kind] * widthFactor);
       }
       ctx.fillStyle = color;
-      // A single fill per layer unions all its overlapping outlines. The old
-      // per-strip translucent polygons darkened every T and corner multiple times.
       ctx.fill();
     };
     ctx.save();
+    // A path and cart road are the same compacted local earth, distinguished
+    // by actual traveled width. Draw narrow paths beneath broad roadbeds so
+    // their rounded termination does not leave pale tongues in junctions.
+    paint(1.2, '#647051', true);
+    paint(1, '#997d59', true);
+    paint(0.7, '#ac8d66', true);
     paint(1.12, '#647051');
     paint(1, '#997d59');
     paint(0.63, '#ac8d66');
-    paint(1.2, '#66734d', true);
-    paint(1, '#978561', true);
-    paint(0.7, '#a69570', true);
     ctx.restore();
   }
   function drawWall(ctx, e, p) {
