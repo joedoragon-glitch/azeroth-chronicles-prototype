@@ -182,12 +182,12 @@
     b.bounds = [1500 * scale, 1800 * scale, 0, size];
     // The actual v2 authored river gaps ARE the walkable bridge widths.
     // Deck painting and pathfinding share this table: no invisible water floor.
-    // The south deck needs an 80-unit throat rather than the initial 56-unit
-    // art target: the existing 50-unit route grid and radius-15 actors require
-    // a legal grid row near y=2300. Narrowing further would strand travelers.
+    // Retain the compact south footbridge. Native pathfinding cells are
+    // centered at 25 + 50*n, NOT at 50*n; the legal crossing row is at
+    // y=2275 in the 3200-unit Vale. Tests verify both actual grid and routes.
     b.gaps = [
       [a.north.y - 50, a.north.y + 50],
-      [a.south.y - 40, a.south.y + 40],
+      [a.south.y - 28, a.south.y + 28],
     ];
     const pond = ellipse(a.pond.x, a.pond.y, 140, 120),
       headrace = [
@@ -477,7 +477,7 @@
         // describe one physical width. Existing art IDs and discoveries stay.
         if (Array.isArray(z.bridgeApproaches))
           z.bridgeApproaches.forEach((bridge, j) => {
-            bridge.width = j === 0 ? 100 : 80;
+            bridge.width = j === 0 ? 100 : 56;
           });
 
         // A save can place a traveling actor near the *old* broad bridge
