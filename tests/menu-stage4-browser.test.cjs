@@ -57,6 +57,41 @@ async function measure(frame, selector, { minFont = 15, targets = false } = {}) 
   }
   return items;
 }
+// A common geometry contract protects every menu family, not just the
+// five pictured title submenus. The dedicated title and gameplay DOM menu
+// surfaces share this CSS regardless of a menu's data-view.
+async function assertDialogGeometry(frame, label, { noScroll = false } = {}) {
+  const bounds = await frame.locator('#modal').evaluate((dialog) => {
+    const r = dialog.getBoundingClientRect(),
+      content = dialog.querySelector('#modal-content'),
+      back = dialog.querySelector('#close-button'),
+      c = content.getBoundingClientRect(),
+      b = back.getBoundingClientRect();
+    const controls = [...dialog.querySelectorAll('#modal-actions button, #modal-actions input, #modal-actions select')].filter(
+      (node) => node.getClientRects().length && !node.disabled,
+    );
+    return {
+      view: dialog.dataset.view,
+      viewport: [innerWidth, innerHeight],
+      modal: { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height },
+      content: { top: c.top, bottom: c.bottom, clientHeight: content.clientHeight, scrollHeight: content.scrollHeight },
+      back: { top: b.top, bottom: b.bottom, width: b.width, height: b.height },
+      targetMinimums: controls.every((node) => {
+        const x = node.getBoundingClientRect();
+        return x.height >= 44 && x.width >= 44;
+      }),
+    };
+  });
+  const { modal, content, back, viewport } = bounds;
+  assert(modal.left >= -1 && modal.top >= -1, label + ': ' + JSON.stringify(bounds));
+  assert(modal.right <= viewport[0] + 1 && modal.bottom <= viewport[1] + 1, label + ': ' + JSON.stringify(bounds));
+  assert(back.top >= content.bottom - 2 && back.bottom <= modal.bottom + 1, label + ': ' + JSON.stringify(bounds));
+  assert(back.width >= 44 && back.height >= 44, label + ': ' + JSON.stringify(bounds));
+  assert(bounds.targetMinimums, label + ': undersized action ' + JSON.stringify(bounds));
+  if (noScroll)
+    assert(content.scrollHeight <= content.clientHeight + 3, label + ': unnecessary scrolling ' + JSON.stringify(bounds));
+  return bounds;
+}
 const luminance = (rgb) =>
   rgb
     .slice(0, 3)
@@ -134,6 +169,7 @@ function contrast(item) {
         await measure(frame, '#modal-title', { minFont: 20 });
         await measure(frame, '#modal-description');
         await measure(frame, '#modal-actions .detail', { minFont: 13 });
+        const newGameFit = await assertDialogGeometry(frame, 'New Adventure', { noScroll: true });
         await frame
           .getByRole('button', { name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/ })
           .tap();
@@ -141,6 +177,7 @@ function contrast(item) {
         assert.equal(cards.length, 4);
         cards.forEach(contrast);
         await measure(frame, '#modal-actions .detail', { minFont: 13 });
+        const heroFit = await assertDialogGeometry(frame, 'Choose Hero', { noScroll: true });
         const back = await frame.locator('#close-button').boundingBox();
         assert(back.height >= 44 && back.y + back.height <= 365);
         assert.equal(
@@ -156,27 +193,125 @@ function contrast(item) {
         await frame.locator('#close-button').tap();
         assert(await frame.locator('#modal').isHidden());
         await frame.locator('#title-saves').tap();
+        const savesFit = await assertDialogGeometry(frame, 'Saved Games');
         assert.equal(await frame.locator('#import-file').getAttribute('type'), 'file');
         assert(await frame.locator('#import-file').isVisible());
         await frame.locator('#modal-content').evaluate((x) => (x.scrollTop = x.scrollHeight));
         const close = await frame.locator('#close-button').boundingBox();
         assert(close.y >= 8 && close.y + close.height <= 365);
         await frame.locator('#close-button').tap();
+        await frame.locator('#title-settings').tap();
+        const settingsFit = await assertDialogGeometry(frame, 'Settings', { noScroll: true });
+        await frame.getByRole('button', { name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/ }).tap();
+        const graphicsFit = await assertDialogGeometry(frame, 'Graphics settings');
+        await frame.locator('#close-button').tap();
+        await frame.locator('#close-button').tap();
         await frame.locator('#title-help').tap();
+        const helpFit = await assertDialogGeometry(frame, 'Help index', { noScroll: true });
         await frame
           .getByRole('button', { name: language === 'es' ? /^Primeros pasos/ : /^Quick Start/ })
           .tap();
         await measure(frame, '#modal-description');
+        const readingFit = await assertDialogGeometry(frame, 'Help reading');
         await page.screenshot({ path: path.join(output, language + '-help.png') });
         await page.keyboard.press('Escape');
         assert.equal(
           await frame.locator('#modal-title').textContent(),
           language === 'es' ? 'Ayuda y créditos' : 'Help & Credits',
         );
+        // The screenshots show title submenus, but the owner's acceptance
+        // scope also includes gameplay menus. Exercise the same shared
+        // surface after entering a real, non-diagnostic Paladin campaign.
+        await frame.locator('#close-button').tap();
+        await frame.locator('#title-new').tap();
+        await frame.getByRole('button', {
+          name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/,
+        }).tap();
+        await frame.getByRole('button', { name: /Palad/i }).tap();
+        await frame.waitForFunction(
+          () => !!window.Prototype?.started &&
+            document.querySelector('#title-screen')?.hidden &&
+            document.querySelector('#scene-loading')?.hidden !== false,
+          null,
+          { timeout: 90000 },
+        );
+        await frame.locator('#menu-button').tap();
+        const adventureFit = await assertDialogGeometry(frame, 'In-game Adventure index');
+        await frame.getByRole('button', { name: language === 'es' ? /Personaje/ : /^Character$/ }).tap();
+        const characterFit = await assertDialogGeometry(frame, 'In-game Character');
+        await frame.locator('#close-button').tap();
+        await frame.getByRole('button', {
+          name: language === 'es' ? /Juego y ajustes|Configuración|Ajustes/i : /Game and settings/,
+        }).tap();
+        const gameSettingsFit = await assertDialogGeometry(frame, 'In-game Settings', { noScroll: true });
+        await frame.locator('#close-button').tap();
+        await frame.getByRole('button', {
+          name: language === 'es' ? /Mapa|rutas/i : /Map and travel routes/,
+        }).tap();
+        const mapFit = await assertDialogGeometry(frame, 'In-game map');
+        await frame.locator('#close-button').tap();
+        // Isolated *presentation* probes for the additional real game menu
+        // families; authoritative Barracks/NPC actions are exercised by the
+        // native menu tests, while Keeper prose retains its separate suite.
+        const familyFit = {};
+        for (const [view, count, columns] of [
+          ['barracks-hub', 6, 2],
+          ['npc-training-hub', 5, 2],
+          ['npc-service-catalog', 9, 1],
+          ['archive-index', 8, 1],
+          ['archive-reading', 3, 1],
+        ]) {
+          await frame.evaluate(({ view, count }) => {
+            const actions = Array.from({ length: count }, (_, i) => ({
+              label: 'Option ' + (i + 1),
+              detail: 'Explanatory text about requirements, effects and crowns.',
+              action() {},
+            }));
+            const description =
+              view === 'archive-reading'
+                ? Array(28).fill('A Keeper passage remains readable without altering or truncating its text.').join(' ')
+                : 'A complete description is retained when the panel is scrollable.';
+            window.Prototype.openMenu('Menu presentation probe', description, actions,
+              window.Prototype.closeMenu, { view });
+          }, { view, count });
+          familyFit[view] = await assertDialogGeometry(frame, view);
+          const trackCount = await frame.locator('#modal-actions').evaluate((node) =>
+            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+          );
+          assert.equal(trackCount, columns, view + ': peer choice vs reading layout');
+          await frame.locator('#close-button').tap();
+        }
+        // Engineering edge case: shorter landscape and a long NPC catalog.
+        // The real phone frame still owns safe-area mapping and Back handling.
+        await page.setViewportSize({ width: 740, height: 340 });
+        await frame.waitForFunction(() => innerWidth >= 700 && innerHeight <= 350);
+        await frame.evaluate(() => {
+          const items = Array.from({ length: 20 }, (_, i) => ({
+            label: 'Service ' + (i + 1),
+            detail: 'Crowns, requirements and consequences stay readable.',
+            action() {},
+          }));
+          window.Prototype.openMenu(
+            'Specialist services',
+            'Choose a service; opening the catalog never purchases anything.',
+            items,
+            window.Prototype.closeMenu,
+            { view: 'npc-service-catalog' },
+          );
+        });
+        const shortLandscapeFit = await assertDialogGeometry(frame, 'short landscape specialist');
+        assert(
+          shortLandscapeFit.content.scrollHeight > shortLandscapeFit.content.clientHeight,
+          'long service lists must scroll instead of being clipped',
+        );
+        await frame.locator('#modal-content').evaluate((node) => { node.scrollTop = node.scrollHeight; });
+        const shortLandscapeScrolled = await assertDialogGeometry(frame, 'short landscape after scroll');
+        await frame.locator('#close-button').tap();
+        await page.setViewportSize({ width: 800, height: 375 });
         assert.deepEqual(errors, []);
         fs.writeFileSync(
           path.join(output, language + '-measurements.json'),
-          JSON.stringify({ title, cards, ratios, titleBounds }, null, 2),
+          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit, familyFit, shortLandscapeFit, shortLandscapeScrolled }, null, 2),
         );
         console.log(
           'PASS ' +

@@ -3454,6 +3454,11 @@
         b = document.createElement('button');
         b.textContent = translateMenu(a.label);
         if (a.uiPrimary) b.classList.add('menu-primary');
+        if (typeof a.uiChosen === 'boolean') {
+          b.classList.toggle('menu-choice-active', a.uiChosen);
+          b.setAttribute('aria-pressed', String(a.uiChosen));
+        }
+        if (a.uiWide) b.classList.add('menu-wide');
         if (a.classId === 'rogue') {
           const symbol = document.createElement('span');
           symbol.setAttribute('aria-hidden', 'true');
@@ -4372,6 +4377,10 @@
     const reminder = loaded ? backupReminder(game.s.mode, game.hero.level) : '';
     const es = language === 'es';
     const detail = (en, spanish) => (es ? spanish : en);
+    const wide = (entry) => {
+      entry.uiWide = true;
+      return entry;
+    };
     openMenu(
       'Saved Games & Backups',
       '',
@@ -4399,33 +4408,26 @@
             !candidate,
           );
         }),
-        menuControls.section(es ? 'Copias y recuperación' : 'Backups & recovery'),
-        action(
-          'Try recovery',
-          () => {
-            if (loaded) profile.activeMode = game.s.mode;
-            savedRunRecoveryMenu();
-          },
-          detail(
-            'Restore a local checkpoint if a campaign cannot open.',
-            'Recupera un punto local si una partida no se puede abrir.',
-          ),
-        ),
+        // A damaged primary save needs its recovery entry near its slot,
+        // not hidden below unrelated downloads and storage controls.
         ...modes
           .filter((mode) => persistence.loadFailed(mode))
           .map((mode) =>
-            action(
-              (es ? 'Recuperar ' : 'Recover ') + mode,
-              () => {
-                profile.activeMode = mode;
-                savedRunRecoveryMenu();
-              },
-              detail(
-                'Review recovery options before replacing anything.',
-                'Revisa las opciones antes de reemplazar una partida.',
+            wide(
+              action(
+                (es ? 'Recuperar ' : 'Recover ') + mode,
+                () => {
+                  profile.activeMode = mode;
+                  savedRunRecoveryMenu();
+                },
+                detail(
+                  'Review recovery options before replacing anything.',
+                  'Revisa las opciones antes de reemplazar una partida.',
+                ),
               ),
             ),
           ),
+        menuControls.section(es ? 'Copias de seguridad' : 'Backups'),
         ...modes
           .filter((mode) => persistence.exists(mode))
           .map((mode) => ({
@@ -4458,14 +4460,30 @@
             'Elige una copia JSON. Podrás revisarla antes de reemplazar una partida.',
           ),
         },
+        menuControls.section(es ? 'Recuperación y almacenamiento' : 'Recovery & storage'),
+        wide(
+          action(
+            'Try recovery',
+            () => {
+              if (loaded) profile.activeMode = game.s.mode;
+              savedRunRecoveryMenu();
+            },
+            detail(
+              'Restore a local checkpoint if a campaign cannot open.',
+              'Recupera un punto local si una partida no se puede abrir.',
+            ),
+          ),
+        ),
         ...(typeof storageApi?.persist === 'function' && storageProtectionState !== 'granted'
           ? [
-              action(
-                'Request persistent storage',
-                () => requestStorageProtection(titleSaveMenu),
-                detail(
-                  'Ask the browser to protect local saves. External backups are still needed.',
-                  'Pide al navegador que proteja las partidas. Conserva también copias externas.',
+              wide(
+                action(
+                  'Request persistent storage',
+                  () => requestStorageProtection(titleSaveMenu),
+                  detail(
+                    'Ask the browser to protect local saves. External backups are still needed.',
+                    'Pide al navegador que proteja las partidas. Conserva también copias externas.',
+                  ),
                 ),
               ),
             ]
@@ -4848,38 +4866,40 @@
   function classGrowthLine(heroClass) {
     const p = Campaign.rules.balance.classPassives;
     const es = language === 'es';
+    // The class picker needs a *cue*, not a full progression reference.
+    // Keep the actual numbers sourced from the combat balance registry.
     if (heroClass === 'rogue')
       return es
-        ? 'Travesura · Cada nivel: +2 puntos porcentuales de probabilidad crítica de la Pícara.'
-        : 'Mischief · Each level: +2 percentage points Rogue critical chance.';
+        ? 'Travesura · +2 puntos de prob. crítica por nivel'
+        : 'Mischief · +2 percentage points crit/level';
     if (heroClass === 'paladin')
       return es
-        ? 'Fortaleza · Cada nivel: +' +
+        ? 'Fortaleza · +' +
             p.paladin.hpPerLevel +
-            ' PV máximos y +' +
+            ' PV y +' +
             p.paladin.armorEffectivenessPerLevel.toFixed(2).replace('.', ',') +
-            ' de daño bloqueado por punto de armadura.'
-        : 'Fortitude · Each level: +' +
+            ' bloqueo/armadura por nivel'
+        : 'Fortitude · +' +
             p.paladin.hpPerLevel +
-            ' max HP and +' +
+            ' HP; +' +
             p.paladin.armorEffectivenessPerLevel.toFixed(2) +
-            ' damage blocked per Armor point.';
+            ' block/Armor per level';
     if (heroClass === 'ranger')
       return es
-        ? 'Agilidad · Cada nivel: +' +
+        ? 'Agilidad · +' +
             p.ranger.speedPerLevel +
-            ' de velocidad y +' +
+            ' velocidad; -' +
             Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% de reducción de recuperación.'
-        : 'Agility · Each level: +' +
+            '% recarga/nivel'
+        : 'Agility · +' +
             p.ranger.speedPerLevel +
-            ' speed and +' +
+            ' speed; -' +
             Math.round(p.ranger.cooldownReductionPerLevel * 100) +
-            '% cooldown reduction.';
+            '% cooldown/level';
     if (heroClass === 'mage')
       return es
-        ? 'Poder arcano · Cada nivel: +' + p.mage.powerPerLevel + ' de poder.'
-        : 'Arcane Power · Each level: +' + p.mage.powerPerLevel + ' Power.';
+        ? 'Poder arcano · +' + p.mage.powerPerLevel + ' poder/nivel'
+        : 'Arcane Power · +' + p.mage.powerPerLevel + ' Power/level';
     // Unknown classes never inherit an invented Mage growth description.
     return '';
   }
@@ -4958,8 +4978,8 @@
       mode === 'arena'
         ? 'Low-spec combat testing without the campaign. Begin with Basic Attack, learn other skills from hub instructors for free, and choose enemies with the Arena Guide.'
         : language === 'es'
-          ? 'Elige quién liderará la resistencia. Cada clase recibe su ventaja innata desde el nivel 1. Rescata especialistas para aprender más habilidades y conseguir equipo.'
-          : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
+          ? 'Elige a tu héroe. Rescata especialistas para aprender más habilidades y conseguir equipo.'
+          : 'Choose your hero. Rescue specialists to learn more skills and gain equipment.',
       Object.entries(Campaign.classes).map(([id, c]) =>
         action(
           (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
@@ -5451,57 +5471,74 @@
     }
     const selected = (mode) => newAdventureMode === mode;
     const refresh = () => newGameMenu(newAdventureMode, true);
+    // A checked difficulty and the keyboard-focused action are different
+    // concepts: expose the actual choice independently of menu navigation.
+    const chosen = (entry, isChosen) => {
+      entry.uiChosen = !!isChosen;
+      return entry;
+    };
     const primary = action(
       es ? 'Elegir héroe' : 'Choose Hero',
       () => chooseClass(newAdventureMode, newAdventureSuccession),
-      es
-        ? 'Continúa con la clase y un nombre opcional.'
-        : 'Continue to your class and optional name.',
+      es ? 'Continúa con la selección de clase.' : 'Continue to class selection.',
     );
     primary.uiPrimary = true;
     openMenu(
       es ? 'Nueva aventura' : 'New Adventure',
       es
-        ? 'Elige la dificultad y el desafío opcional. La recuperación estándar conserva sus penalizaciones.'
-        : 'Choose difficulty and an optional challenge. Standard recovery keeps its usual penalties.',
+        ? 'Elige la dificultad y el desafío opcional antes de elegir a tu héroe.'
+        : 'Choose difficulty and optional challenge before selecting your hero.',
       [
-        primary,
         menuControls.section(es ? 'Dificultad' : 'Difficulty'),
-        action(
-          (es ? 'Normal · Recomendada' : 'Normal · Recommended') + (selected('normal') ? ' ✓' : ''),
-          () => {
-            newAdventureMode = 'normal';
-            refresh();
-          },
-          es ? 'Para tu primera aventura.' : 'For your first adventure.',
+        chosen(
+          action(
+            (es ? 'Normal · Recomendada' : 'Normal · Recommended') +
+              (selected('normal') ? ' ✓' : ''),
+            () => {
+              newAdventureMode = 'normal';
+              refresh();
+            },
+            es ? 'Para tu primera aventura.' : 'For your first adventure.',
+          ),
+          selected('normal'),
         ),
-        action(
-          (es ? 'Pesadilla' : 'Nightmare') + (selected('nightmare') ? ' ✓' : ''),
-          () => {
-            newAdventureMode = 'nightmare';
-            refresh();
-          },
-          profile.nightmareUnlocked
-            ? es
-              ? 'Un desafío más difícil.'
-              : 'A more demanding adventure.'
-            : es
-              ? 'Se desbloquea con el final pacífico.'
-              : 'Unlock by completing the peaceful ending.',
-          !profile.nightmareUnlocked,
+        chosen(
+          action(
+            (es ? 'Pesadilla' : 'Nightmare') + (selected('nightmare') ? ' ✓' : ''),
+            () => {
+              newAdventureMode = 'nightmare';
+              refresh();
+            },
+            profile.nightmareUnlocked
+              ? es
+                ? 'Un desafío más difícil.'
+                : 'A more demanding adventure.'
+              : es
+                ? 'Se desbloquea con el final pacífico.'
+                : 'Unlock by completing the peaceful ending.',
+            !profile.nightmareUnlocked,
+          ),
+          selected('nightmare'),
         ),
         menuControls.section(es ? 'Desafío opcional' : 'Optional challenge'),
-        action(
-          (es ? 'Sucesión' : 'Succession') +
-            ' · ' +
-            (newAdventureSuccession ? (es ? 'Activada' : 'On') : es ? 'Desactivada' : 'Off'),
-          () => {
-            newAdventureSuccession = !newAdventureSuccession;
-            refresh();
-          },
-          es
-            ? 'Cada clase caída se pierde en esta partida. Si caen las cuatro, termina.'
-            : 'A fallen class is lost for this run. Lose all four and the run ends.',
+        chosen(
+          action(
+            (es ? 'Sucesión' : 'Succession') +
+              ' · ' +
+              (newAdventureSuccession ? (es ? 'Activada' : 'On') : es ? 'Desactivada' : 'Off'),
+            () => {
+              newAdventureSuccession = !newAdventureSuccession;
+              refresh();
+            },
+            newAdventureSuccession
+              ? es
+                ? 'Las clases caídas no regresan. Si caen las cuatro, termina la partida.'
+                : 'Fallen classes cannot return. Lose all four and the run ends.'
+              : es
+                ? 'Recuperación habitual con sus penalizaciones. Activarla hace perder las clases caídas.'
+                : 'Standard recovery keeps its penalties. Turning this on permanently loses fallen classes.',
+          ),
+          newAdventureSuccession,
         ),
         ...(combatDiagnosticsEnabled
           ? [
@@ -5515,6 +5552,9 @@
         ...(developerEnabled
           ? [action('New Developer Mode run', () => chooseClass('developer', false))]
           : []),
+        // The primary next-step action follows the decisions it commits, not
+        // the other way around. Players can still take the default path fast.
+        primary,
       ],
       newAdventureBack,
       { view: 'new-adventure' },

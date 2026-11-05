@@ -69,3 +69,16 @@ Consolidates global compact phone typography, spacing, button sizes and Back con
 
 
 **Release receipt:** PR #800 is merged and dev.256 is published by main run #41967773134. Earlier candidate checkpoints below/above retain their meaning at the time; owner iPhone approval remains pending.
+
+
+## 4 November 2026 — all-menu landscape fit follow-up (PR #801)
+
+Physical-iPhone screenshots of released dev.256 demonstrated that the improved landscape title composition was not matched by the deeper menus: oversized rows, unused panel height, narrow wrapped descriptions and ordinary choices below the fold. The six screenshots were examples, **not the complete scope**. The owner requires adaptive, viewport-aware presentation across title, setup, saves, settings, Help, Adventure, character, inventory, skills, quest/map, companion, Barracks/service and Archive submenus.
+
+The candidate PR applies a shared content-sized and safe-inset-bounded phone modal layout to every menu using `openMenu()`, broadens ordinary narrow gameplay panels, and gives peer title choices compact grids. It keeps Stage 4 text/touch minima and independent content scrolling for long catalogs, map/reference/Archive reading and recovery warnings. No game camera or backing-resolution change is involved. The acceptance matrix and remaining representative in-game/physical-iPhone validation are recorded in `docs/ADAPTIVE_LANDSCAPE_MENU_FIT_ALL_SUBMENUS_20261104.md`. **This entry documents a draft candidate; do not treat it as merged, published or hardware verified.**
+
+
+**5 November design-audit follow-up:** The original six screenshots are not the acceptance boundary: shared `openMenu()` also presents Barracks, trainer/Smith/Alchemist NPC menus, companion management, transport and refuge interactions, quests and the Keeper Archive. The candidate PR #801 now classifies Barracks and instructor category hubs for landscape two-column peer choices; retains single-column, scrollable transactional NPC catalogs and full companion/quest/recovery listings; and protects Archive shelf/reading widths and exact narration. New Adventure choices precede its primary next step, selected states are independent of focus, backups and recovery are distinct, and the Adventure/Settings headings return for reliable wayfinding. Full rationale and the engineering-audit acceptance handoff live in `docs/ADAPTIVE_LANDSCAPE_MENU_FIT_ALL_SUBMENUS_20261104.md`. **These are draft design corrections, not an approved phone experience, merge, publication or device verification.**
+
+
+**5 November PR #801 engineering preflight:** The previous game-design candidate retained dev.256 build and offline-cache metadata; that is a release blocker for an updated PWA. The proposed candidate advances package, lock, generated build-info, worker cache and current source documentation coherently to dev.257. Added focused short-landscape long-catalog geometry and Basic/Full Barracks parity checks, preserving native services, existing save compatibility, scrollable long menus and unmodified Archive writing. The new build is NOT yet published or physically accepted at this preflight.
