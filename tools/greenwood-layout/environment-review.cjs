@@ -15,6 +15,7 @@ const out = 'test-artifacts/greenwood-environment/scenes';
 fs.mkdirSync(out, { recursive: true });
 const scenes = [
   ['homestead', 2690, 1230],
+  ['estate', 2830, 2940],
   ['treasury', 2120, 1250],
   ['goblin', 350, 2820],
   ['market', 900, 650],
@@ -71,4 +72,4 @@ fs.writeFileSync(
     2,
   ),
 );
-console.log('PASS 14 production Canvas phone landscape environment frames, save-pure');
+console.log('PASS 16 production Canvas phone landscape environment frames, save-pure');
