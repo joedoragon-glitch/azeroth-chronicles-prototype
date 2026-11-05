@@ -38,3 +38,11 @@ Final focused checks all pass: the feature checks above, existing economy/target
 ## Publication
 
 PR #343 merged as `896d543cdad718c9ec5b3f2dffb4c3124d17a90a`. Package-only run 39430720594 succeeded; all 23 exact live entry/runtime/build/worker files match the prepared candidate. Normal workflow restored and temporary publisher removed. Receipt: `docs/evidence/FORTS_RANGER_PASSAGE_DEV109_PUBLICATION_20261020.json`. Owner live play/tuning follows; exact Veyra correction remains unapproved preview-only.
+
+## 5 November 2026 — PixiJS fortified health-plate parity (separate draft follow-up)
+
+Owner's Greenwood Vale screenshot reports no shield beside Skeleton Watch defenders and green hostile health bars in the PixiJS/WebGL mode. Current native fort ownership already includes `skeleton-watch` at the authored Vale compound (position-derived, never a permanent enemy flag). Existing combat rules still grant 40% incoming damage reduction, 30% ranged basic/detection reach and projectile speed only to live hostile actors physically inside a recognized fort. Outlying skeletons remain unfortified. The authored perimeter requires actual blocking stronghold walls; an apparently fenced but missing/destroyed layout is not grounds for inventing an always-on buff.
+
+Source diagnosis: the Pixi overlay passed raw `zone.enemies` objects to shared `renderer.js::healthPlate`; the latter checked `e.renderKind === 'enemy'`, which is populated for Canvas presented entities but not for those raw Pixi-overlay actors. This suppressed the shield and incorrectly painted hostile HP bars ally-green. The draft correction passes explicit enemy/ally/hero presentation kinds and leaves `Campaign.enemyFort`, damage, AI, navigation, collision, saves and world geometry intact. Canvas uses its unchanged default presentation kind.
+
+**Candidate only (draft branch `fix/pixi-fortified-health-indicator-20261105`):** source patch and focused source-wiring regression added; automatic CI and actual WebGL/iPhone visual acceptance must be verified separately before any merge/publication. No separate fort or stat increase is authorized or implemented.
