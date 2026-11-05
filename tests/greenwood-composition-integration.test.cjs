@@ -28,7 +28,7 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   assert.equal(z.greenwoodRoutes.length, 16, 'all historic corridors retained');
   assert.equal(z.roads.length, 4);
   assert.equal(z.footpaths.length, 12);
-  assert.equal(z.props.length <= 400, 'native per-region scenery budget');
+  assert(z.props.length <= 400, 'native per-region scenery budget');
   assert(z.props.some((p) => p.greenwoodKitchen), 'recognizable kitchen beds exist');
   assert(z.props.some((p) => p.greenwoodField), 'larger working field art exists');
   assert(z.greenwoodCompositionAudit?.length, 'actual placement audit available');
