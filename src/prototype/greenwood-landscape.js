@@ -21,7 +21,9 @@
     cellars: [1080, 2510],
     den: [920, 2880],
     treasury: [2120, 1250],
-    cache: [2420, 1690],
+    // Scornfang's construction-freight depot: sheltered beside the Crypt approach,
+    // not sitting on the eastern trunk road or mistaken for collectible tribute.
+    cache: [2600, 2610],
     watch: [2670, 2220],
     crypt: [2830, 2850],
     wagon: [2880, 280],
@@ -184,6 +186,7 @@
       s[2] = p.x;
       s[3] = p.y;
       if (s[0] === 'orchard') s[1] = 'Orchard expansion';
+      if (s[0] === 'cache') s[1] = "Scornfang's Supply Depot";
     }
     const camps = R.creatureStrongholds.filter((h) => h.region === 'vale');
     for (const h of camps) if (h.id === 'skeleton-watch') h.center = [a.watch.x, a.watch.y];
@@ -245,16 +248,15 @@
         [930, 1090],
         [950, 1160],
       ].map(q),
-      // Walkable shallow headwater crosses the upland freight track without
-      // creating an invisible fourth strategic water barrier.
+      // An upstream, walkable shallow tributary connects to the real millpond.
       upperCreek = [
         [1220, 0], [1240, 180], [1280, 350], [1265, 515],
         [1190, 680], [1090, 780], [940, 875], [900, 880],
       ].map(q),
       shallowCreek = { ...ribbon(upperCreek, 12, { subdivisions: 2 }), shallow: true },
       waters = [
-        pond, ribbon(stream, 16, { subdivisions: 2 }), ribbon(headrace, 12),
-        ribbon(tailrace, 20, { subdivisions: 3 }), shallowCreek,
+        pond, ribbon(stream, 16, { subdivisions: 2 }),
+        ribbon(headrace, 12), ribbon(tailrace, 20, { subdivisions: 3 }), shallowCreek,
       ],
       millBridge = {
         from: q([1290, 1600]), to: q([1350, 1530]),
@@ -268,7 +270,7 @@
     R.terrain[0] = [
       { kind: 'rain-pools', wetland: true, pools: waters,
         blockingPools: waters.filter((pool) => !pool.shallow) },
-      { kind: 'water', x: 2720 * scale, y: 1320 * scale, r: 140 },
+      // #806: isolated eastern blue disc retired for the dry wolf-scout homestead.
     ];
     R.forests[0] = []; // The authored stands below own nature, not circular forest stamps.
     R.landforms[0] = [
@@ -380,10 +382,85 @@
         }
         z.greenwoodWatermillVersion = 1;
       }
+      // #806: reconstruct the old eastern water circle as a coherent, dry
+      // wolf-scout homestead without re-running destructive regional generation.
+      greenwoodHomesteadScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion ||
+            z.greenwoodHomesteadVersion === 1) return;
+        const scale = cfg.scale;
+        const point = (x, y) => ({ x: x * scale, y: y * scale });
+        const clean = (p, clearance = 0) =>
+          !this.blocked(p.x, p.y, 'vale', clearance, true) &&
+          this.distanceToRoad(z, p) >= clearance + 42 &&
+          this.distanceToRoad({ roads: z.footpaths || [] }, p) >= clearance + 30 &&
+          !z.buildings.some((b) => distance(b, p) < clearance + 115) &&
+          !z.props.some((v) => (v.playerOwned || v.owned || v.custom) &&
+            distance(v, p) < clearance + (v.r || 25) + 45) &&
+          !z.npcs.some((n) => distance(n.servicePoint || n, p) < clearance + 80) &&
+          !z.nodes.some((n) => distance(n, p) < clearance + 50) &&
+          !z.enemies.some((e) => e.hp > 0 &&
+            distance(e.home || e, p) < clearance + 85);
+        const alternatives = [
+          [0, 0],
+          [-65, -25],
+          [45, -40],
+          [-50, 45],
+        ];
+        const layouts = [
+          ['lodge', 2690, 1170, 55],
+          ['rest-bay', 2830, 1245, 23],
+          ['gear', 2570, 1225, 0],
+          ['training', 2630, 1345, 0],
+          ['rear-rail', 2640, 1065, 0],
+          ['east-rail', 2885, 1340, 0],
+        ];
+        const chosen = alternatives.find(([dx, dy]) =>
+          layouts.slice(0, 2).every(([, x, y, radius]) =>
+            clean(point(x + dx, y + dy), radius)));
+        const audit = { dryPond: true, constructed: false, skipped: [], offsets: chosen || null };
+        // The plot belongs to saved players and existing residents first.
+        // An occupied custom parcel must not be bulldozed to paint a homestead.
+        if (!chosen) {
+          z.greenwoodHomesteadAudit = { ...audit, reason: 'owned, road or actor plot needs inspection' };
+          z.greenwoodHomesteadVersion = 1;
+          return;
+        }
+        const [dx, dy] = chosen;
+        const placements = layouts.filter(([kind, x, y, r], index) =>
+          index < 2 || clean(point(x + dx, y + dy), r));
+        // Remove only replaceable natural scatter from the immediate shelter
+        // footprints. No paid object, Quest NPC, beast or existing pasture asset.
+        const cleared = placements.filter(([kind]) => kind === 'lodge' || kind === 'rest-bay');
+        z.props = z.props.filter((p) =>
+          !(p.greenwoodNature && cleared.some(([, x, y, r]) =>
+            distance(p, point(x + dx, y + dy)) < r * scale + 60 * scale)));
+        for (const [kind, x, y, radius] of placements) {
+          const blocking = kind === 'lodge' || kind === 'rest-bay';
+          z.props.push({
+            id: 'greenwood-thorn-homestead-' + kind,
+            ...point(x + dx, y + dy),
+            structure: 'thorn-homestead-' + kind,
+            greenwoodFacility: 'thorn-' + kind,
+            greenwoodDistrict: 'thorn-personal-homestead',
+            greenwoodAuthored: true,
+            r: blocking ? radius * scale : 0,
+            decorative: !blocking,
+            roadBlocker: blocking,
+          });
+        }
+        audit.constructed = true;
+        audit.skipped = layouts.filter(([name]) => !placements.some(([kind]) => name === kind))
+          .map(([name]) => name);
+        z.greenwoodHomesteadAudit = audit;
+        z.greenwoodHomesteadVersion = 1;
+      }
       // GV-679 is an additive, nonblocking scene overlay. Never re-run the
       // layout's destructive scene generator or its enemy/home corrections to
       // deliver cosmetic refinements to an existing v4 campaign.
       greenwoodRefinementScene(z) {
+        this.greenwoodHomesteadScene(z);
         if (z.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
             z.greenwoodRefinementVersion === 1 || z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion)
           return;
@@ -423,6 +500,119 @@
         }
         z.greenwoodRefinementAudit = audit;
         z.greenwoodRefinementVersion = 1;
+      }
+      // Non-destructive, versioned landscape composition: never replay the
+      // original scene-5 generator on an established v4 game. Keep stable
+      // gameplay/owner IDs and place only bounded, static regional decoration.
+      greenwoodCompositionFinish(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodCompositionVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        const at = (x, y) => ({ x: x * scale, y: y * scale });
+        const near = (a, b) => distance(a, b);
+        const audit = [];
+        // Road/bridge topology and physical deck spans are independently
+        // owned by the dedicated Greenwood infrastructure PR #824.
+        // This scenery pass observes routes but never edits their geometry.
+        if (z.greenwoodRoutes?.length !== 16) return;
+        const change = (id, expected, target, detail = {}) => {
+          const p = z.props.find((item) => item.id === id);
+          if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
+            audit.push({ id, placed: false, reason: 'missing, changed or owned scene object' });
+            return;
+          }
+          if (target) {
+            const desired = at(...target);
+            if (
+              this.blocked(desired.x, desired.y, 'vale', 4, true) ||
+              this.distanceToRoad(z, desired) < (detail.greenwoodField ? 125 : 55) ||
+              z.buildings.some((b) => near(b, desired) < 130)
+            ) {
+              audit.push({ id, placed: false, reason: 'target footprint conflicts; original retained' });
+              return;
+            }
+            Object.assign(p, desired);
+          }
+          Object.assign(p, detail);
+          audit.push({ id, placed: true, reason: 'existing scene identity retained' });
+        };
+        // The tiny shared garden/furrow icon is now an intentional household
+        // bed or a multi-row rural field, without resizing other regions.
+        for (const id of ['greenwood-homes-1', 'greenwood-homes-2', 'greenwood-homes-4', 'greenwood-hamlet-2'])
+          change(id, 'garden', null, { greenwoodKitchen: true });
+        for (const id of ['greenwood-homes-6', 'greenwood-homes-7'])
+          change(id, 'furrow-plot', null, { greenwoodField: true });
+        change('greenwood-orchard-6', 'furrow-plot', [510, 2080], { greenwoodField: true });
+        change('greenwood-refinement-den-thorn-bed', 'thorn-bed', [875, 3070], { greenwoodNest: true });
+        // Move the entire isolated pond flock to the Hamlet's smallhold, not
+        // one animal away from its feed. Avoid the bank and forest occlusion.
+        change('greenwood-pasture-0', 'pasture-sheep', [350, 2460]);
+        change('greenwood-pasture-1', 'feed-trough', [430, 2500]);
+        change('greenwood-pasture-2', 'hay-rick', [250, 2510]);
+        const orchard = z.npcs.find((n) => n.id === 'orchard');
+        if (orchard) {
+          const positions = [[1030, 2300], [1070, 2360], [1040, 2390]];
+          const chosen = positions.map(([x, y]) => at(x, y)).find((p) =>
+            !this.blocked(p.x, p.y, 'vale', 14, true) &&
+            this.distanceToRoad(z, p) > 88 &&
+            this.distanceToRoad({ roads: z.footpaths }, p) > 45 &&
+            !z.buildings.some((b) => near(b, p) < 130));
+          if (chosen) Object.assign(orchard, chosen);
+          audit.push({ id: 'orchard', placed: !!chosen, reason: chosen ? 'off-road planted site' : 'no legal marker location' });
+        }
+        const candidates = [
+          ['fruit', 510, 1835], ['fruit', 820, 1845], ['fruit', 425, 2490],
+          ['fruit', 760, 2380], ['fruit', 1050, 2410], ['fruit', 1090, 2110],
+          ['fruit', 330, 1930], ['fruit', 920, 2570], ['fruit', 950, 1940],
+          ['fruit', 1180, 2300], ['fruit', 670, 2550], ['fruit', 1100, 2600],
+          ['flowers', 490, 980], ['flowers', 730, 1150], ['flowers', 350, 1440],
+          ['flowers', 470, 1590], ['flowers', 1050, 1010], ['flowers', 300, 1880],
+          ['flowers', 920, 2430], ['flowers', 1070, 2630], ['flowers', 440, 2700],
+          ['flowers', 2210, 640], ['flowers', 2600, 790], ['flowers', 2900, 1700],
+          ['flowers', 2060, 2020], ['flowers', 2560, 2880], ['flowers', 850, 920],
+          ['flowers', 1140, 800], ['flowers', 340, 740], ['flowers', 2320, 2120],
+          ['bush', 1120, 1100], ['bush', 420, 1720], ['bush', 1130, 2700],
+          ['bush', 2440, 650], ['bush', 2850, 1800], ['bush', 530, 2750],
+        ];
+        let fruit = 0;
+        for (const [i, [kind, x, y]] of candidates.entries()) {
+          const id = 'greenwood-composition-' + kind + '-' + i;
+          if (z.props.some((p) => p.id === id)) continue;
+          const p = at(x, y), isTree = kind === 'fruit';
+          const limit = isTree ? 110 : kind === 'bush' ? 72 : 46;
+          const inUse =
+            this.blocked(p.x, p.y, 'vale', isTree ? 18 : 0, true) ||
+            this.distanceToRoad(z, p) < limit ||
+            this.distanceToRoad({ roads: z.footpaths }, p) < (isTree ? 70 : 28) ||
+            z.buildings.some((b) => near(b, p) < (isTree ? 175 : 130)) ||
+            z.npcs.some((n) => near(n.servicePoint || n, p) < (isTree ? 100 : 65)) ||
+            z.nodes.some((n) => near(n, p) < (isTree ? 65 : 32)) ||
+            z.props.some((q) =>
+              (q.owned || q.playerOwned || q.custom || q.roadBlocker) &&
+              near(q, p) < (isTree ? 155 : 85)) ||
+            (isTree && z.props.some((q) =>
+              (q.structure === 'fruit-tree' || q.greenwoodNature === 'tree') &&
+              near(q, p) < 105));
+          if (inUse || z.props.length >= 390) {
+            audit.push({ id, placed: false, reason: inUse ? 'protected clearance' : 'prop budget' });
+            continue;
+          }
+          z.props.push({
+            id, structure: isTree ? 'fruit-tree' : kind === 'flowers' ? 'wildflowers' : 'bush',
+            ...p, r: 0, decorative: true, greenwoodAuthored: true, greenwoodComposition: 1,
+          });
+          if (isTree) fruit++;
+          audit.push({ id, placed: true, reason: 'land-use-aware placement' });
+        }
+        z.greenwoodCompositionAudit = audit;
+        z.greenwoodCompositionFruitCount = fruit;
+        z.greenwoodCompositionVersion = 1;
       }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
@@ -590,6 +780,8 @@
               ],
             ],
             ['path', [[650, 2640], [550, 2820], plan.goblin]],
+            // Short off-road freight apron from the existing Crypt approach.
+            ['path', [[2500, 2660], plan.cache]],
             [
               'path',
               [
@@ -811,9 +1003,10 @@
               ['crate', 3030, 290],
             ],
             cache: [
-              ['cart', 2540, 1980],
-              ['supply-stack', 2490, 1830],
-              ['scribe-desk', 2560, 1700],
+              ['cart', 2515, 2570],
+              ['supply-stack', 2670, 2570],
+              ['scribe-desk', 2600, 2500],
+              ['stacked-lumber', 2690, 2660],
             ],
             estate: [
               ['estate-scaffold', 2970, 2760],
@@ -1130,6 +1323,7 @@
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
           this.greenwoodRefinementScene(z);
           this.greenwoodWatermillScene(z);
+          this.greenwoodCompositionFinish(z);
         } finally {
           this.s.zone = previous;
         }
@@ -1351,7 +1545,195 @@
     }
     ctx.restore();
   }
+  // A single coherent native painter for the homestead's actual silhouettes.
+  // Shared isometric axes and a fixed palette avoid disconnected box art.
+  function drawThornHomestead(ctx, e, p) {
+    const kind = e.greenwoodFacility;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    const poly = (a, color) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      a.forEach(([x,y], i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y));
+      ctx.closePath();
+      ctx.fill();
+    };
+    const stroke = (a, color, width = 2) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      a.forEach(([x,y], i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y));
+      ctx.stroke();
+    };
+    const oval = (x,y,rx,ry,color) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);
+      ctx.fill();
+    };
+    const wood = '#76563d', beam = '#4d3c30', edge = '#b6956a';
+    const lantern = (x,y) => {
+      stroke([[x,y-19],[x,y-9]], beam, 2);
+      poly([[x-5,y-9],[x+5,y-9],[x+6,y+3],[x-6,y+3]], '#493e32');
+      poly([[x-3,y-6],[x+3,y-6],[x+4,y],[x-4,y]], '#e6b978');
+      stroke([[x-5,y+4],[x+5,y+4]], edge, 2);
+    };
+    if (kind === 'thorn-lodge') {
+      // The footprint, two elevations and both roof pitches share one
+      // isometric axis. The front stays openly accessible to a large wolf.
+      oval(8, 12, 111, 22, '#142a233d');
+      poly([[-104, -11], [50, 20], [145, -10], [-7, -44]], '#676858');
+      poly([[-100, -24], [52, 8], [52, 20], [-100, -11]], '#8d8a73');
+      poly([[52, 8], [137, -20], [137, -9], [52, 20]], '#626759');
+      for (const x of [-78, -47, -17, 18])
+        stroke([[x, -17 + (x + 78) * 0.21], [x + 17, -13 + (x + 78) * 0.21]],
+          '#b5aa88', 2.3);
+
+      // Timber front and right elevation; no implausible extra-facing walls.
+      poly([[-98, -24], [-98, -89], [53, -58], [53, 8]], '#947452');
+      poly([[53, -58], [139, -86], [139, -20], [53, 8]], '#65513d');
+      // The actual front gable is structural, below the joined roof slopes.
+      poly([[-98, -89], [-22, -151], [53, -58]], '#977753');
+      for (let j = 0; j < 8; j++) {
+        const x = -90 + j * 20;
+        stroke([[x, -40 + (x + 90) * 0.2],
+          [x, -82 + (x + 90) * 0.2]], '#7c6146', 1.5);
+      }
+      for (const [top, bottom] of [
+        [[-94, -85], [-94, -20]], [[49, -56], [49, 8]],
+        [[134, -83], [134, -22]]
+      ]) stroke([top, bottom], beam, 7);
+      stroke([[-98, -25], [52, 8], [139, -20]], '#b49467', 4);
+      stroke([[53, -57], [139, -86]], '#9d7b53', 3);
+
+      // Continuous wolf-high dark mouth, warm dry bedding and real supporting
+      // posts: a private shelter, not a human cottage with a fake closed door.
+      poly([[-40, -68], [21, -55], [21, 11], [-40, -2]], '#28332d');
+      poly([[-35, -63], [16, -52], [16, 6], [-35, -5]], '#354138');
+      oval(-9, 0, 29, 9, '#ad956e');
+      for (let j = 0; j < 7; j++)
+        stroke([[-32 + j * 9, -1], [-27 + j * 9, 4]], '#d7b987', 1.8);
+      stroke([[-44, 1], [-44, -70], [24, -56], [24, 13]], '#4a392b', 7);
+      stroke([[-44, -70], [24, -56]], '#c5a374', 3.5);
+      stroke([[-42, -65], [20, -53]], '#b78b5b', 3);
+      // A modest exterior sill and diagonal braces, not a second doorway.
+      stroke([[-94, -83], [-63, -67]], '#513f30', 5);
+      stroke([[49, -54], [71, -61]], '#513f30', 4);
+      for (const x of [-88, 39])
+        stroke([[x, -12 + (x + 88) * 0.21],
+          [x + 14, -35 + (x + 88) * 0.21]], '#b18c60', 3);
+
+      // One common roof ridge from front to rear, with two distinct material
+      // planes, real eaves, stepped shingles and overlapping ridge caps.
+      poly([[-110, -94], [-23, -163], [68, -190], [-18, -119]], '#9b704e');
+      poly([[-23, -163], [58, -64], [149, -94], [68, -190]], '#604436');
+      // Closed front fascia bridges the 12-pixel eave-to-gable gap on both
+      // pitches. Without this, the green ground leaks through the roof seam.
+      poly([[-110, -94], [-23, -163], [-22, -151], [-98, -89]], '#49392e');
+      poly([[-23, -163], [58, -64], [53, -58], [-22, -151]], '#40352d');
+      poly([[-112, -93], [-18, -119], [-18, -113], [-112, -88]], '#44382e');
+      poly([[58, -64], [149, -94], [149, -87], [58, -57]], '#44362b');
+      for (let j = 1; j <= 5; j++) {
+        const t = j / 6;
+        stroke([[-109 + t * 86, -94 - t * 69],
+          [-18 + t * 86, -119 - t * 71]], '#c09668', 1.5);
+        stroke([[-23 + t * 81, -163 + t * 99],
+          [68 + t * 81, -190 + t * 96]], '#856045', 1.6);
+      }
+      for (let j = 0; j < 8; j++) {
+        const t = (j + .25) / 8;
+        stroke([[-109 + 86 * t, -95 - 69 * t],
+          [-97 + 86 * t, -101 - 69 * t]], '#71533c', 1.5);
+      }
+      stroke([[-110, -94], [-23, -163], [68, -190], [149, -94]],
+        '#c19b70', 5);
+      stroke([[-112, -88], [-18, -113]], '#332f2b', 4);
+      stroke([[58, -57], [149, -87]], '#2e2c28', 4);
+      for (let j = 0; j < 6; j++) {
+        const t = j / 5;
+        poly([[-30 + 92*t, -164 - 27*t],
+          [-19 + 92*t, -160 - 27*t],
+          [-16 + 92*t, -154 - 27*t],
+          [-27 + 92*t, -158 - 27*t]], '#c4a078');
+      }
+
+      // Side shutters reveal internal warmth; no modern-looking windows or
+      // crowded ornamental emblems in the main wolf shelter.
+      poly([[81, -71], [104, -79], [104, -53], [81, -45]], '#2a322d');
+      poly([[84, -69], [101, -75], [101, -55], [84, -49]], '#d9a667');
+      stroke([[92, -72], [92, -52]], '#66503b', 2);
+      stroke([[81, -71], [104, -79], [104, -53], [81, -45], [81, -71]], beam, 3);
+      // Timber gear drying hook, bundled firewood and low working porch.
+      for (let j = 0; j < 4; j++)
+        stroke([[-84 + j * 11, -11], [-67 + j * 10, -18]],
+          j % 2 ? '#ad8658' : '#634e39', 7);
+      stroke([[99, -17], [124, -26]], '#af895d', 3);
+      lantern(54, -41);
+    } else if (kind === 'thorn-rest-bay') {
+      oval(0, 10, 67, 15, '#142a233b');
+      // Open-sided timber shelter. The real posts hold a single continuous
+      // sloping roof; the wolf bedding remains visible beneath the eaves.
+      poly([[-55, -6], [-14, 8], [59, -13], [15, -31]], '#706756');
+      poly([[-52, -14], [-52, -63], [18, -87], [18, -35]], '#66513e');
+      poly([[18, -35], [18, -87], [66, -70], [66, -22]], '#594938');
+      poly([[-42, -24], [16, -44], [50, -31], [-8, -8]], '#30392f');
+      oval(1, -5, 35, 10, '#b8a178');
+      for (let j = 0; j < 6; j++)
+        stroke([[-32 + j * 12, -10], [-26 + j * 12, -2]], '#d8c492', 2);
+      for (const [x, y, top] of [[-54, 2, -61], [16, -13, -83], [67, -23, -68]])
+        stroke([[x, y], [x, top]], beam, 7);
+      poly([[-66, -66], [11, -111], [79, -79], [1, -39]], '#855f41');
+      poly([[1, -39], [79, -79], [86, -72], [7, -32]], '#41372d');
+      stroke([[-66, -66], [11, -111], [79, -79], [1, -39]], '#c09a69', 4);
+      for (let j = 1; j <= 4; j++) {
+        const t = j / 5;
+        stroke([[-64 + t * 76, -67 - t * 44],
+          [4 + t * 75, -38 - t * 42]], '#ad8156', 1.5);
+      }
+      stroke([[-55, -56], [-55, -2]], '#44362c', 4);
+      stroke([[67, -67], [67, -18]], '#44362c', 4);
+      // Low rack and tether ring belong to the structure, not to a new NPC.
+      stroke([[50, -35], [69, -41]], '#af8e60', 2.3);
+      oval(52, -34, 3, 4, '#c6a36b');
+    } else if (kind === 'thorn-gear') {
+      oval(0,9,37,8,'#1d302839');
+      stroke([[-30,9],[-30,-48]], beam, 5);
+      stroke([[27,4],[27,-49]], beam, 5);
+      stroke([[-36,-52],[34,-56]], edge, 6);
+      poly([[-38,-49],[31,-54],[22,-65],[-28,-60]], '#71533c');
+      for(const x of [-15,2,18]) {
+        stroke([[x,-48],[x,-21]], '#4a4030', 2);
+        oval(x,-20,5,3,'#a68a59');
+      }
+      poly([[-26,-2],[4,-12],[25,-4],[-5,6]], '#615443');
+      for(let i=0;i<3;i++) stroke([[-20+i*13,0],[-14+i*13,-6]], '#b29b73', 1.5);
+    } else if (kind === 'thorn-training') {
+      oval(0,7,52,13,'#705f4247');
+      for(const [x,y] of [[-37,6],[0,-9],[36,5]]) {
+        stroke([[x,y+9],[x,y-32]], wood, 6);
+        stroke([[x-11,y-27],[x+10,y-27]], edge, 3);
+        poly([[x-7,y-30],[x+7,y-30],[x+9,y-16],[x-9,y-16]], '#958067');
+        stroke([[x-6,y-22],[x+6,y-22]], '#5b5142', 1.6);
+      }
+      stroke([[-36,6],[0,-9],[36,5]], '#8b785a', 1.4);
+    } else if (kind === 'thorn-rear-rail' || kind === 'thorn-east-rail') {
+      const lean = kind === 'thorn-rear-rail' ? -1 : 1;
+      const x1=-52,x2=52,y1=lean*11,y2=-lean*11;
+      stroke([[x1,y1-13],[x2,y2-13]], '#785e45', 5);
+      stroke([[x1,y1-27],[x2,y2-27]], '#a2825a', 4);
+      for(let i=0;i<4;i++){
+        const x=x1+i*34,y=y1+(y2-y1)*i/3;
+        stroke([[x,y+6],[x,y-38]], '#534435', 6);
+        stroke([[x - 4, y - 38], [x + 4, y - 38]], '#c2a47a', 3);
+      }
+    }
+    ctx.restore();
+  }
+
   function drawFacility(ctx, e, p) {
+    if (e.greenwoodFacility?.startsWith('thorn-')) return drawThornHomestead(ctx, e, p);
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.lineJoin = 'round';
@@ -1840,6 +2222,28 @@
     }
     ctx.restore();
   }
+  // Stable unscaled meadow geometry is created once, outside the frame loop.
+  // No save fields, runtime noise or per-frame RNG state are involved.
+  const meadowSamples = [
+    [460, 970, 115, 85], [805, 910, 150, 110],
+    [345, 1390, 130, 100], [450, 1880, 135, 125],
+    [735, 2440, 125, 115], [1060, 2550, 135, 140],
+    [1140, 1010, 135, 95], [2250, 740, 190, 135],
+    [2420, 2040, 135, 100],
+    [2930, 1740, 110, 120], [500, 2750, 145, 110],
+  ].map(([cx, cy, rx, ry], index) => ({
+    cx, cy, flowers: Array.from({ length: 13 }, (_, j) => {
+      const h = hash('greenwood-meadow-' + index + '-' + j);
+      const a = j * 2.3999632297 + (h % 23) * 0.017;
+      const r = Math.sqrt(((h >>> 8) % 997) / 997);
+      const dandelion = j % 4 === 0;
+      return {
+        x: cx + Math.cos(a) * rx * r, y: cy + Math.sin(a) * ry * r, h,
+        dandelion, stem: dandelion ? 13 + (h % 4) : 8 + (h % 5),
+        lean: ((h >>> 5) % 7) - 3,
+      };
+    }),
+  }));
   function drawGround(ctx, screen, cfg, bounds) {
     const s = cfg.scale;
     const patches = [
@@ -1854,7 +2258,7 @@
       [2020, 1780, 390, 370, '#34492e'],
       [650, 780, 500, 330, '#78894c'],
       [480, 1900, 420, 490, '#8d8250'],
-      [2780, 1320, 390, 320, '#84934f'],
+      [2790, 1310, 365, 295, '#7d8752'],
     ];
     ctx.save();
     for (const [x, y, rx, ry, color] of patches) {
@@ -1888,6 +2292,85 @@
         ctx.ellipse(q.x, q.y, 3 + (h % 3), 1.2, 0.3, 0, Math.PI * 2);
         ctx.fill();
       }
+    }
+    // Dry, asymmetric worn ground in the former east pond's actual footprint.
+    // Ground is cached with terrain; no added frame animation or water overlay.
+    const dirt = [[2560,1270],[2625,1165],[2780,1090],[2910,1180],
+      [2925,1295],[2820,1420],[2710,1460],[2590,1400]].map(([x,y])=>
+      screen({ x: x*s, y: y*s }));
+    ctx.fillStyle = '#88704a44';
+    ctx.beginPath();
+    dirt.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+    ctx.closePath();ctx.fill();
+    // These meadow samples are computed once and shared by every draw.
+    // A bounded number of batched Canvas paths replaces hundreds of
+    // per-flower strokes, fills and trig/hash calls on each painted scene.
+    const meadowVisible = [];
+    for (const patch of meadowSamples) {
+      const center = screen({ x: patch.cx * s, y: patch.cy * s });
+      if (
+        center.x < -240 || center.x > bounds.width + 240 ||
+        center.y < -160 || center.y > bounds.height + 160
+      ) continue;
+      for (const flower of patch.flowers) {
+        const p = screen({ x: flower.x * s, y: flower.y * s });
+        if (p.x < -18 || p.x > bounds.width + 18 || p.y < -26 || p.y > bounds.height + 18)
+          continue;
+        meadowVisible.push({ x: p.x, y: p.y, ...flower });
+      }
+    }
+    if (meadowVisible.length) {
+      ctx.strokeStyle = '#87a267cc';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      for (const f of meadowVisible) {
+        ctx.moveTo(f.x, f.y + 4);
+        ctx.quadraticCurveTo(f.x + f.lean * 0.2, f.y - f.stem * 0.4,
+          f.x + f.lean, f.y - f.stem);
+      }
+      ctx.stroke();
+      ctx.fillStyle = '#f1eadc33';
+      ctx.beginPath();
+      for (const f of meadowVisible) if (f.dandelion) {
+        ctx.moveTo(f.x + f.lean + 4.6, f.y - f.stem);
+        ctx.arc(f.x + f.lean, f.y - f.stem, 4.6, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      ctx.strokeStyle = '#eee9d4be';
+      ctx.lineWidth = 0.65;
+      ctx.beginPath();
+      for (const f of meadowVisible) if (f.dandelion)
+        for (let k = 0; k < 12; k++) {
+          const a = (Math.PI * 2 * k) / 12, r = 4.5 + (f.h % 3) * 0.2;
+          const x = f.x + f.lean, y = f.y - f.stem;
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        }
+      ctx.stroke();
+      const petalColors = ['#d4be9b', '#c8b0b4', '#b7bdd0', '#e1cc94'];
+      for (let color = 0; color < petalColors.length; color++) {
+        ctx.fillStyle = petalColors[color];
+        ctx.beginPath();
+        for (const f of meadowVisible) {
+          if (f.dandelion || ((f.h >>> 3) % petalColors.length) !== color) continue;
+          const x = f.x + f.lean, y = f.y - f.stem;
+          for (let k = 0; k < 5; k++) {
+            const a = (Math.PI * 2 * k) / 5,
+              px = x + Math.cos(a) * 2.2, py = y + Math.sin(a) * 2;
+            ctx.moveTo(px + 1.8, py);
+            ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+          }
+        }
+        ctx.fill();
+      }
+      ctx.fillStyle = '#9f9866';
+      ctx.beginPath();
+      for (const f of meadowVisible) if (!f.dandelion) {
+        const x = f.x + f.lean, y = f.y - f.stem;
+        ctx.moveTo(x + 1.05, y);
+        ctx.arc(x, y, 1.05, 0, Math.PI * 2);
+      }
+      ctx.fill();
     }
     ctx.restore();
   }

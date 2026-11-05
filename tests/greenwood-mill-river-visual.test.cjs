@@ -41,9 +41,9 @@ assert(
 const waters = C.rules.terrain[0][0];
 assert.equal(waters.kind, 'rain-pools');
 assert(waters.wetland && waters.pools.length === 5,
-  'one pond, connected upstream source, headrace and tailrace');
-assert.equal(waters.blockingPools.length, 4, 'only northern headwater is shallow');
-assert.equal(waters.pools[4].shallow, true, 'fifth water polygon is walkable upper creek');
+  'one pond, stream, headrace, tailrace, and northern shallow headwater');
+assert.equal(waters.blockingPools.length,4,'only the northern source is walkable');
+assert.equal(waters.pools[4].shallow,true);
 for (const pool of waters.pools) {
   assert(pool.points.length >= 4 && Number.isFinite(pool.x) && Number.isFinite(pool.y));
 }

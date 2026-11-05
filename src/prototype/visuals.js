@@ -193,7 +193,9 @@
     let sites = [];
     let visualScale = 1;
     // Existing watermill facade houses this lamp; no independent light actor.
-    if (region === 0 && e.greenwoodFacility === 'mill')
+    if (region === 0 && e.greenwoodFacility === 'thorn-lodge')
+      sites = [{ x: 54, y: -41, role: 'home', radius: 64, alpha: 0.20 }];
+    else if (region === 0 && e.greenwoodFacility === 'mill')
       sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
     else if (structure === 'roadside-lantern')
       sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
@@ -9539,18 +9541,20 @@
           craftAt(18, -2, 0.6, () => lantern());
           break;
         case 'cache':
-          chest(true, 0.9);
-          timber([22, 10], [31, -15], 3);
+          // Scornfang's Crypt-side freight station, not a loot/tribute chest.
+          // Reuse existing material primitives without creating a new sprite.
+          boards(-33, 7, 66, 12, '#806145', true);
+          timber([-29, 11], [-29, -27], 4);
+          timber([29, 11], [29, -27], 4);
           softPoly(
-            [
-              [25, -15],
-              [33, -13],
-              [34, -8],
-              [29, -6],
-            ],
-            '#8d9d91',
+            [[-34, -26], [-26, -39], [24, -39], [35, -26]],
+            '#6e745c',
             1,
           );
+          timber([-34, -26], [35, -26], 2);
+          craftAt(-16, 2, 0.58, () => craftedDecoration('supply-stack'));
+          craftAt(11, 3, 0.6, () => craftedDecoration('crate'));
+          paper(23, -9, 9);
           break;
         case 'wagon':
         case 'convoy':
@@ -12713,6 +12717,19 @@
           );
           break;
         case 'thorn-bed':
+          if (region === 0 && e.greenwoodNest) {
+            // Readable low bedding for Thornfang's woodland den: a dry leaf
+            // pallet, woven timber edges and a folded hide, not a stone ring.
+            oval(0, 10, 38, 12, '#253b2944');
+            for (const y of [-7, 4, 12])
+              line([[-29, y], [27, y + 3]], '#806b4c', 4);
+            softPoly([[-29, -3], [-15, -13], [15, -12], [29, 0], [13, 10], [-19, 7]], '#9d9066', 2);
+            softPoly([[-18, -7], [7, -12], [24, 0], [-10, 3]], '#b7a67f', 1.5);
+            line([[-16, 1], [6, 0], [22, 5]], '#746b4d', 1.1);
+            for (const x of [-27, -14, 6, 19, 30])
+              line([[x, 12], [x + 5, 7], [x + 3, 2]], '#667c4b', 1.5);
+            break;
+          }
           nest(0, 4, 1.2);
           for (const x of [-17, -5, 8, 18])
             craftAt(x, 2, 0.5, () => foliage(0, 0, 10, 7, '#6d8557'));
@@ -15033,6 +15050,33 @@
           break;
         case 'furrow-plot':
         case 'garden':
+          if (region === 0 && e.greenwoodField) {
+            // An occupied field reads as three cultivated strips, not a
+            // miniature soil token. Rows are rendered, never new crop nodes.
+            for (const [dx, dy] of [[-48, 9], [0, -7], [48, -23]]) {
+              softPoly(
+                [[dx - 32, dy + 1], [dx - 8, dy - 15], [dx + 34, dy - 5], [dx + 7, dy + 13]],
+                '#816b49', 2,
+              );
+              for (const v of [-6, 2, 10]) {
+                line([[dx - 24 + v, dy + v * 0.3], [dx + 25 + v, dy - 6 + v * 0.3]], '#5d593d', 1.4);
+              }
+              for (const [fx, fy] of [[-19, 2], [-7, -3], [9, 4], [21, -3]])
+                foliage(dx + fx, dy + fy, 4.5, 4.5, '#6e8d51');
+            }
+            break;
+          }
+          if (region === 0 && e.greenwoodKitchen) {
+            for (const dx of [-28, 27]) {
+              softPoly(
+                [[dx - 22, 1], [dx - 8, -17], [dx + 24, -8], [dx + 8, 11]], '#8a7752', 2,
+              );
+              for (const [x, y] of [[dx - 12, -2], [dx, -8], [dx + 13, 0]])
+                foliage(x, y, 5, 6, '#71915c');
+            }
+            line([[-52, 15], [52, 15]], '#b09b6e', 1.3);
+            break;
+          }
           softPoly(
             [
               [-32, 1],
@@ -15851,31 +15895,14 @@
           }
           break;
         case 'cache':
-          rect(-17, -12, 34, 25, '#8f704d');
-          line(
-            [
-              [-17, -12],
-              [17, 13],
-            ],
-            '#c1a170',
-            3,
-          );
-          line(
-            [
-              [17, -12],
-              [-17, 13],
-            ],
-            '#c1a170',
-            3,
-          );
-          line(
-            [
-              [-29, 10],
-              [-8, 2],
-            ],
-            '#75583f',
-            6,
-          );
+          // Simple fallback silhouette: timber depot platform, not a chest.
+          rect(-29, -4, 58, 15, '#8a6e51');
+          rect(-28, -29, 4, 35, '#684e3a');
+          rect(24, -29, 4, 35, '#684e3a');
+          poly([[-34, -26], [-25, -38], [25, -38], [34, -26]], '#737b60');
+          rect(-22, -14, 20, 12, '#96734f');
+          rect(5, -17, 16, 15, '#b3a07b');
+          line([[-30, -26], [30, -26]], '#b8a083', 2);
           break;
         case 'wagon':
         case 'convoy':
@@ -18447,6 +18474,9 @@
   function unscaledHeight(e) {
     if (e.greenwoodNature === 'tree') return 140;
     if (e.greenwoodFacility === 'mill') return 160;
+    if (e.greenwoodFacility === 'thorn-lodge') return 180;
+    if (e.greenwoodFacility === 'thorn-rest-bay') return 105;
+    if (e.greenwoodFacility?.startsWith('thorn-')) return 80;
     if (e.miningFacility) return 90;
     if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
@@ -18722,7 +18752,7 @@
           ctx.fill();
         }
         // Open filaments and little parachute tips, rather than a solid disc.
-        const radius = 3.5 + (seed % 2) * 0.5;
+        const radius = 4.8 + (seed % 2) * 0.6;
         dot(headX, headY, radius * 0.8, '#f1eed914');
         for (let j = 0; j < 16; j++) {
           const angle = (j / 16) * Math.PI * 2 + (seed % 7) * 0.14,
@@ -19774,8 +19804,6 @@
               ctx.restore();
             } else poly(rim, '#68745b');
           }
-          // The source-edge headwater is visibly shallower than the deep mill
-          // pond/race. Both passes share the same actual world-space polygon.
           for (const pool of p.pools)
             poly(pool.points, pool.shallow ? '#3c6b6d' : '#285d70');
           for (const pool of p.pools)
@@ -20726,7 +20754,7 @@
   } = {}) {
     if (optimized) return [];
     const dayMotes = ['#eadf9e', '#b8d8ca', '#dedcc7', '#b98569', '#aa8ec0'],
-      nightMotes = ['#dcefa8', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
+      nightMotes = ['#c5cbda', '#b7e2d5', '#dbe4df', '#e6a170', '#c7a4df'],
       count = dungeon || room ? 8 : region === 3 || region === 4 ? 18 : 14,
       fade = Math.max(0, Math.min(1, darkness)),
       day = dayMotes[region] || dayMotes[0],
@@ -20802,7 +20830,7 @@
       'rgba(166,146,196,.05)',
     ];
     const nightTints = [
-      'rgba(11,25,42,.48)', // Greenwood: moonlit blue-greens, not a blackout
+      'rgba(39,47,67,.64)', // Greenwood: moonlit slate-blue neutralizes olive grass
       'rgba(12,32,44,.48)', // Marches: wet blue reflections
       'rgba(19,29,42,.50)', // Ironroot: cool altitude, warm occupied windows
       'rgba(32,20,35,.52)', // Frontier: ash dusk with working checkpoints
@@ -20823,7 +20851,9 @@
       g.addColorStop(0, nightTints[region] || nightTints[0]);
       g.addColorStop(
         1,
-        `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
+        region === 0
+          ? `rgba(${31 - 9 * peaceBlend},${40 - 9 * peaceBlend},${60 - 11 * peaceBlend},${0.64 - 0.34 * peaceBlend})`
+          : `rgba(${9 + 13 * peaceBlend},${17 + 14 * peaceBlend},${30 + 19 * peaceBlend},${0.58 - 0.28 * peaceBlend})`,
       );
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -20885,7 +20915,7 @@
         canvas.width,
         canvas.height * (sunset ? 0.9 : 0.1),
       );
-      const strength = daylight.warmth * (victory ? 1.25 : 1);
+      const strength = daylight.warmth * (victory ? 1.25 : 1) * (region === 0 && sunset ? 0.76 : 1);
       wash.addColorStop(
         0,
         sunset ? `rgba(244,139,70,${0.23 * strength})` : `rgba(248,185,177,${0.18 * strength})`,

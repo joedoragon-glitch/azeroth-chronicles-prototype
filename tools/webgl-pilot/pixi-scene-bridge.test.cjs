@@ -342,12 +342,12 @@ test('scene orders real actors by original isometric depth and retains default G
   scene.destroy();
 });
 
-test('Pixi atmosphere mirrors original vertical night tints and bottom alpha', () => {
+test('Pixi atmosphere uses Greenwood moonlight without changing other regional grades', () => {
   const layers = Bridge.atmosphereLayers({ region: 0, darkness: 1, peaceBlend: 0 });
   assert.equal(layers.length, 1);
   assert.equal(layers[0].style, 'linear');
-  assert.equal(layers[0].colorStops[0].color, 'rgba(11,25,42,0.48)');
-  assert.equal(layers[0].colorStops[1].color, 'rgba(9,17,30,0.58)');
+  assert.equal(layers[0].colorStops[0].color, 'rgba(39,47,67,0.64)');
+  assert.equal(layers[0].colorStops[1].color, 'rgba(31,40,60,0.64)');
   assert.equal(layers[0].start.y, 0);
   assert.equal(layers[0].end.y, 1);
   const peaceful = Bridge.atmosphereLayers({ region: 4, darkness: 1, peaceBlend: 1 });
@@ -601,7 +601,7 @@ test('Pixi atmosphere restores the same bounded daylight motes as Canvas, before
     1.5,
   );
   assert.equal(effects.children.at(-2), moteGraphic, 'motes reuse one GPU node during motion');
-  assert.equal(moteGraphic.fillStyle.color, 0xdcefa8, 'night palette preserved');
+  assert.equal(moteGraphic.fillStyle.color, 0xc5cbda, 'Greenwood night silver motes');
   assert.equal(moteGraphic.fillStyle.alpha, 0.24, 'Canvas night alpha preserved');
   scene.syncMotes([], 1.5);
   assert.equal(moteGraphic.visible, false, 'active Optimization Mode suppresses GPU motes');
@@ -627,8 +627,8 @@ test('Canvas atmosphere mote contract preserves regional counts, deterministic m
   assert.deepEqual(march[0].rgb, [184, 216, 202]);
   assert.deepEqual(
     Visuals.atmosphereMotes({ ...options, region: 0, darkness: 1 })[0].rgb,
-    [220, 239, 168],
-    'approved night Vale tint remains unchanged',
+    [197, 203, 218],
+    'Greenwood night motes use the cool-silver palette',
   );
 });
 

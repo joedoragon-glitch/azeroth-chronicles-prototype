@@ -2916,9 +2916,6 @@
         return nearest;
       }
       roadSetback(p) {
-        // The watermill's dry loading apron is intentional access, not a
-        // public carriageway passing underneath a generic oversized roof.
-        // Reserve the actual 2-storey mill silhouette and working margin.
         if (p.greenwoodFacility === 'mill') return 185;
         if (p.greenwoodWall) return 60; // Low line-built perimeter: cart half-width 31 + wall 5 + party 20, not a house roof.
         if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
@@ -3596,7 +3593,10 @@
             this.syncThornArrival(z);
             this.setSceneryTraversal(z);
             this.greenwoodRefinementScene?.(z);
+            this.greenwoodCompositionFinish?.(z);
             this.greenwoodTrailLabels?.(z);
+            this.greenwoodTributePlacement(z);
+            this.greenwoodFreightDepot(z);
             return z;
           }
           this.rollbackDev233GlobalStreets(z);
@@ -3630,6 +3630,8 @@
           this.highlandsLandscape(z);
           this.syncThornArrival(z);
           this.greenwoodFinish?.(z);
+          this.greenwoodTributePlacement(z);
+          this.greenwoodFreightDepot(z);
           // Keep only region-specific late street repairs; do not auto-join all roads.
           this.marchCoastalFinalClearance(z);
           this.setSceneryTraversal(z);
@@ -4062,6 +4064,8 @@
         this.highlandsLandscape(z);
         this.syncThornArrival(z);
         this.greenwoodFinish?.(z);
+        this.greenwoodTributePlacement(z);
+        this.greenwoodFreightDepot(z);
         // Keep only region-specific late street repairs; do not auto-join all roads.
         this.marchCoastalFinalClearance(z);
         this.setSceneryTraversal(z);
@@ -6442,6 +6446,119 @@
         } finally {
           this.s.zone = oldZone;
         }
+      }
+      greenwoodFreightDepot(z) {
+        // A one-time, identity-preserving parcel correction for active 3200 Vale
+        // and already-saved redesigned zones. No new tribute or quest rewards.
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion ||
+            z.greenwoodFreightDepotVersion === 1)
+          return;
+        const marker = z.npcs.find((n) => n.id === 'cache' && n.kind === 'landmark');
+        if (!marker) return;
+        const before = { x: marker.x, y: marker.y },
+          anchor = cfg.anchors.cache;
+        let target;
+        try {
+          target = this.safe(anchor.x, anchor.y, z.id);
+        } catch (error) {
+          const checks = [[0, 0], [150, 0], [-150, 0], [0, 150],
+            [0, -150], [300, 0], [-300, 0], [0, 300], [0, -300]];
+          const nearby = z.props.filter((p) =>
+            Math.hypot(p.x - anchor.x, p.y - anchor.y) < 650)
+            .map((p) => ({ id: p.id, kind: p.structure,
+              r: p.r, decorative: p.decorative, x: p.x, y: p.y }))
+            .slice(0, 24);
+          throw Error('Scornfang freight depot safe-placement audit: ' +
+            JSON.stringify({ anchor, before, activeZone: this.s.zone,
+              completeScene: z.greenwoodRedesignScene,
+              sample: checks.map(([dx, dy]) =>
+                [dx, dy, this.blocked(anchor.x + dx, anchor.y + dy, z.id),
+                this.blocked(anchor.x + dx, anchor.y + dy, z.id, 15, true)]),
+              nearby, originalError: error.message }));
+        }
+        const dx = target.x - before.x,
+          dy = target.y - before.y;
+        Object.assign(marker, target, { name: "Scornfang's Supply Depot" });
+        // Keep existing local guards tied to their site, not guarding a now
+        // empty road; do not resurrect defeated enemies or break live combat.
+        if (Math.hypot(dx, dy) > 1)
+          for (const e of z.enemies.filter((e) => e.site === marker.id && !e.mini)) {
+            if (e.home) {
+              // Some older saves project patrol homes across blocked Crypt
+              // parcels. A guard relocation must not abort the v4 save restore.
+              try {
+                e.home = this.safe(e.home.x + dx, e.home.y + dy, z.id);
+              } catch {
+                // Retain the former guard home when the target is impassable.
+              }
+            }
+            if (e.hp > 0 && !e.aggro && e.home && !this.blocked(e.home.x, e.home.y, z.id))
+              Object.assign(e, e.home);
+            for (const key of ['path', 'pathTarget', 'idleWanderTarget']) delete e[key];
+          }
+        const sc = cfg.scale,
+          props = [
+            [2515, 2570, 'cart'],
+            [2670, 2570, 'supply-stack'],
+            [2600, 2500, 'scribe-desk'],
+            [2690, 2660, 'stacked-lumber'],
+          ];
+        for (const [j, [x, y, kind]] of props.entries()) {
+          const id = 'greenwood-cache-' + j;
+          let p = z.props.find((p) => p.id === id);
+          if (!p) {
+            p = { id, r: 0, decorative: true, greenwoodAuthored: true,
+              greenwoodDistrict: 'cache', structure: kind };
+            z.props.push(p);
+          }
+          Object.assign(p, { x: x * sc, y: y * sc, structure: kind });
+        }
+        // The main Crypt cartway already exists: extend only its short
+        // off-road depot apron for previously saved complete scenes.
+        const routes = z.greenwoodRoutes || [];
+        if (!routes.some((r) => r.kind === 'path' &&
+            r.points?.at(-1)?.x === cfg.anchors.cache.x &&
+            r.points?.at(-1)?.y === cfg.anchors.cache.y)) {
+          const spur = [{ x: 2500 * sc, y: 2660 * sc },
+            { x: cfg.anchors.cache.x, y: cfg.anchors.cache.y }];
+          z.greenwoodRoutes ||= [];
+          z.greenwoodRoutes.push({ kind: 'path', points: spur });
+          z.footpaths ||= [];
+          z.footpaths.push(spur);
+        }
+        z.greenwoodFreightDepotVersion = 1;
+      }
+      greenwoodTributePlacement(z) {
+        // Re-anchor every surviving finite Greenwood deposit to its rebuilt
+        // authored landmark after scenery is final. Historical 2700/expanded
+        // saves keep IDs, depletion, discovery, orders and cargo unchanged.
+        if (z.id !== 'vale' || z.tributeFortPlacementVersion === 1 ||
+            R.greenwoodLayout?.version !== 2 ||
+            z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion)
+          return;
+        const moved = new Set();
+        for (const source of R.tributePlans.vale) {
+          const marker = z.npcs.find((n) => n.id === source.site),
+            node = z.nodes.find((n) => n.id === 'tribute-vale-' + source.id);
+          if (!marker || !node) return; // No partial migration marker.
+          const [dx, dy] = source.offset,
+            target = this.safe(marker.x + dx, marker.y + dy, z.id);
+          if (Math.hypot(target.x - node.x, target.y - node.y) > 1)
+            moved.add(node.id);
+          Object.assign(node, target, {
+            site: source.site,
+            siteName: marker.name,
+            context: source.context,
+          });
+        }
+        if (this.s.zone === z.id)
+          for (const u of this.s.party.filter((u) => moved.has(u.order?.id))) {
+            delete u.order.journey;
+            this.clearGatheringIntent(u);
+          }
+        z.tributeFortPlacementVersion = 1;
       }
       resourceDeposits(z) {
         if (

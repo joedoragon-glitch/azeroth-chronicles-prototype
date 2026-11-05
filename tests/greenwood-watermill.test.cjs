@@ -16,11 +16,9 @@ assert.deepEqual(
 );
 assert.equal(C.rules.terrain[0][0].pools.length, 5);
 assert.equal(C.rules.terrain[0][0].blockingPools.length, 4);
-assert.deepEqual(
-  C.rules.terrain[0][1],
-  { kind: 'water', x: 2720, y: 1320, r: 140 },
-  'eastern farm pond untouched',
-);
+// #820 established the approved DRY Thornfang homestead at the former
+// eastern pond. A mill improvement must never resurrect its retired lake.
+assert.equal(C.rules.terrain[0].length, 1, 'no retired eastern water circle');
 assert.equal(C.rules.barriers[0].gaps.length, 2, 'no third main-river bridge');
 
 const crossMid = (c) => ({
@@ -34,6 +32,9 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
   const bridge = cfg.millBridge;
   assert(z.greenwoodWatermillVersion === 1, 'new scene repair marker set');
+  assert.equal(z.greenwoodHomesteadVersion,1,'current dry eastern homestead retained');
+  assert(!C.rules.terrain[0].some((water)=>water.kind==='water' &&
+    water.x===2720 && water.y===1320),'retired eastern pond stays absent');
   assert.equal(z.bridgeApproaches.length, 2);
   assert.equal(z.roads.filter((p) => isSame(p, cfg.millServiceLane)).length, 1);
   assert.equal(z.props.filter((p) => p.id === 'greenwood-working-mill').length,1);
@@ -87,3 +88,10 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
 }
 assert(seen.size >= 1);
 console.log('PASS Greenwood mill: source-to-edge, two original crossings, genuine local deck, shallow upstream, preserved counts, stable repeated v4 restoration');
+
+// The normal focused PR workflow already uploads greenwood-mill-river/.
+// Run the five-scene native capture only on this feature branch in CI;
+// standalone local execution is available for visual review as well.
+if (process.env.CI && process.env.GITHUB_HEAD_REF ===
+  'design/greenwood-watermill-district-20261105')
+  require('../tools/greenwood-layout/watermill-review.cjs');

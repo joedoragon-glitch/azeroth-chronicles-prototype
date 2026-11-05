@@ -62,14 +62,15 @@ console.log('PixiJS Step 2 source contract passes (not a browser test)');
     stroke() {},
     fillRect(x, y, w, h) { operations.push(['rect', this.fillStyle, x, y, w, h]); },
   };
+  const painterGlobals = {
+    ctx: brush,
+    spriteHeight: () => 64,
+    game,
+    chargePresentation: () => null,
+  };
   const paint = vm.runInNewContext(
     canvas.slice(start, end) + '\nhealthPlate;',
-    {
-      ctx: brush,
-      spriteHeight: () => 64,
-      game,
-      chargePresentation: () => null,
-    },
+    painterGlobals,
   );
   const render = (actor, kind) => {
     operations.length = 0;
@@ -103,5 +104,38 @@ console.log('PixiJS Step 2 source contract passes (not a browser test)');
   assert(hasBar(hero, '#91d59c'), 'hero HP remains green');
   assert.equal(JSON.stringify(game.s), before, 'health painting and fort queries never mutate saves');
   console.log('PASS native Skeleton Watch shield, loss outside, enemy/ally/hero colors, Canvas parity, state purity');
+  // PR #811's painter is shared by *all* regions. Verify that the new
+  // position-derived apron remains visible in both Pixi and Canvas for
+  // each of the five outdoor regions, not only the Greenwood screenshot.
+  for (const region of [...new Set(Campaign.rules.creatureStrongholds.map((s) => s.region))]) {
+    const regional = new Campaign('developer', 'paladin', () => 0.9);
+    regional.s.zone = region;
+    const zone = regional.zone();
+    const fort = regional.fortAreas().find((a) =>
+      Campaign.rules.creatureStrongholds.some((p) => p.region === region && p.id === a.id));
+    assert(fort, region + ': real native stronghold registered');
+    const pos = {
+      x: (Math.min(...fort.points.map((pt) => pt[0])) +
+          Math.max(...fort.points.map((pt) => pt[0]))) / 2,
+      y: (Math.min(...fort.points.map((pt) => pt[1])) +
+          Math.max(...fort.points.map((pt) => pt[1]))) / 2,
+    };
+    const defender = {
+      id: 'pixi-regional-' + region, hp: 90, maxHp: 100,
+      ranged: true, species: 'archer', ...pos,
+    };
+    zone.enemies.push(defender);
+    assert(regional.enemyFort(defender), region + ': native eligibility is active');
+    painterGlobals.game = regional;
+    const gpuOverlay = render(defender, 'enemy');
+    assert(hasShield(gpuOverlay), region + ': Pixi health plate paints shield');
+    assert(hasBar(gpuOverlay, '#e87966'), region + ': Pixi health bar is red');
+    assert(hasShield(render({ ...defender, renderKind: 'enemy' })),
+      region + ': Canvas presented actor keeps the same shield');
+    zone.enemies.pop();
+  }
+  painterGlobals.game = game;
+  console.log('PASS PR #811 shared Pixi/Canvas shield and hostile-bar parity across all outdoor regions');
+
 }
 

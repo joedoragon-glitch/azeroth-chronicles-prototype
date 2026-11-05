@@ -14,7 +14,7 @@ const fs = require('node:fs'),
   Renderer = require('../../src/prototype/renderer'),
   { rng } = require('./fixtures.cjs');
 const root = path.resolve(__dirname, '../..'),
-  out = path.join(root, 'test-artifacts/greenwood-watermill'),
+  out = path.join(root, 'test-artifacts/greenwood-mill-river'),
   g = new C('normal', 'paladin', rng(0x47564101)),
   cfg = C.rules.greenwoodLayout,
   receipts = [];
@@ -56,7 +56,8 @@ function centerLuma(ctx) {
 for (const [name, target, clock] of views) {
   const originalHero = { x: g.hero.x, y: g.hero.y },
     originalClock = g.s.clock,
-    cameraTarget = g.safe(target.x + 65, target.y + 95, 'vale'),
+    // Frame the entire mill roof at actual 150% camera scale.
+    cameraTarget = g.safe(target.x - 65, target.y - 55, 'vale'),
     canvas = createCanvas(852, 393),
     ctx = canvas.getContext('2d');
   Object.assign(g.hero, cameraTarget);

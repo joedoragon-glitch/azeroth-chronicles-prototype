@@ -96,17 +96,12 @@ jobs:
           path: test-artifacts/greenwood-mill-river/
           if-no-files-found: ignore
           retention-days: 30
-      # One bounded native review specifically for the Greenwood mill draft.
-      # This does not launch the broad browser/device acceptance matrix.
-      - name: Capture Greenwood watermill native 150-percent scenes
-        if: github.event_name == 'pull_request' && github.head_ref == 'design/greenwood-watermill-district-20261105'
-        run: node tools/greenwood-layout/watermill-review.cjs
-      - name: Preserve Greenwood watermill visual-review frames
-        if: always() && github.event_name == 'pull_request' && github.head_ref == 'design/greenwood-watermill-district-20261105'
+      - name: Preserve Greenwood #809 aligned night-design previews
+        if: always() && github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: greenwood-watermill-native-150
-          path: test-artifacts/greenwood-watermill/
+          name: greenwood-809-before-and-candidate
+          path: test-artifacts/greenwood-809/
           if-no-files-found: ignore
           retention-days: 14
       - name: Verify reproducible, offline-ready build

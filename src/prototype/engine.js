@@ -1203,6 +1203,10 @@
         );
       if (n.id === 'night-site')
         parts.push('Visit after dark and defeat two Lantern wraiths for Shadows After Sundown.');
+      if (z.id === 'vale' && n.id === 'cache')
+        parts.push(
+          "Scornfang's freight depot sorts timber, scaffold fittings and reclamation supplies between the unfinished Forest Crypt estate and his Treasury. A manifest lists the two guarded supply caches inside Scornfang's Treasury; they must be recovered there, not from this loading yard.",
+        );
       if (n.id === 'goblin-camp') parts.push(AuthorCopy.L01.en);
       if (n.id === 'mire-nests') parts.push(AuthorCopy.L02.en);
       if (n.id === 'wolf-den')
