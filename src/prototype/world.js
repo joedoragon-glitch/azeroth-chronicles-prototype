@@ -2918,6 +2918,11 @@
       roadSetback(p) {
         if (p.greenwoodWall) return 60; // Low line-built perimeter: cart half-width 31 + wall 5 + party 20, not a house roof.
         if (p.structure === 'fruit-cellar') return 110; // Low earth-bank entrance, not a two-storey roof.
+        // The working mill has a deliberately attached narrow loading spur.
+        // Reserve the actual raised mill wall and loading apron, not the
+        // broad generic barracks/cart-road roof allowance of 175 extra units.
+        if (p.structure === 'vale-working-mill' && p.greenwoodFacility === 'mill')
+          return Math.max((p.r || 0) + 125, 180);
         if (p.stronghold && p.r > 0) return 85;
         if (p.roadTrace) return 0; // Only deliberately flat road ruts/repairs.
         // Building anchors sit below much of their painted roof; reserve more
