@@ -20551,6 +20551,13 @@
           ctx.lineTo(x, p.y - 32);
         }
         ctx.stroke();
+      } else if (p.kind === 'lantern' && p.fixture === 'mill') {
+        // Only illuminate real recessed glass in the mill's drawn hanging
+        // bracket. Do not manufacture a second suspended fixture at night.
+        ctx.fillStyle = '#edc17a';
+        ctx.beginPath();
+        ctx.ellipse(p.x + 55, p.y - 45, 2.5, 3, 0, 0, Math.PI * 2);
+        ctx.fill();
       } else if (p.kind === 'lantern' && p.fixture === 'post') {
         // Illuminate the glass already painted on the actual post. Do not
         // manufacture a second floating service lantern beside it.
@@ -20637,9 +20644,9 @@
         const carried = p.kind === 'carried-lantern',
           window = p.kind === 'window',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
-          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
-          source = { x: p.x, y },
+          radius = carried ? 64 : p.fixture === 'mill' ? 58 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
+          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : p.fixture === 'mill' ? 45 : window ? 32 : fire ? 13 : 28),
+          source = { x: p.x + (p.fixture === 'mill' ? 55 : 0), y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
         glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
         if (carried) glow(source, 10, 0.5, '255,221,150');
