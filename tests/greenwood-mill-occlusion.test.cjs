@@ -23,15 +23,25 @@ for(const seed of [0x47564101,0x47564102,0x47564103,0x47564104]){
   const g = new C('normal','paladin',rng(seed)),z=g.zone(), t=atTree(z);
   assert(t && t.greenwoodNature==='tree', 'original authored mature tree remains');
   assert.equal(z.greenwoodMillbankSightlineVersion,1);
-  assert(z.greenwoodMillbankSightlineAudit?.moved,
-    'the exact unowned canopy is shifted to a safe nearby woodland margin');
-  assert(allowedX.some(x=>Math.abs(t.x-x)<1) &&
-    allowedY.some(y=>Math.abs(t.y-y)<1),
-    'tree reaches one of thirty bounded native woodland clearings');
-  assert(distance(t,original)>150,'tree no longer blocks the mill-side goblins');
-  assert(!g.blocked(t.x,t.y,'vale',0,true),'tree has a dry physical anchor');
-  assert(g.distanceToRoad(z,t)>=105,'tree does not intrude into roadway');
-  assert(g.distanceToRoad({roads:z.footpaths},t)>=70,'tree does not cover the footpath');
+  const outcome=z.greenwoodMillbankSightlineAudit;
+  assert(outcome?.moved || outcome?.pruned,
+    'millbank canopy must either relocate safely or open in place');
+  assert.notEqual(!!outcome.moved,!!outcome.pruned,
+    'a tree is relocated OR treated in place, never both');
+  if(outcome.moved){
+    assert(allowedX.some(x=>Math.abs(t.x-x)<1) &&
+      allowedY.some(y=>Math.abs(t.y-y)<1),
+      'tree reaches one of thirty bounded native woodland clearings');
+    assert(distance(t,original)>150,'tree relocates away from mill-side goblins');
+    assert(!t.greenwoodMillbankOpenCrown,'relocated canopy needs no art override');
+    assert(!g.blocked(t.x,t.y,'vale',0,true),'tree has a dry physical anchor');
+    assert(g.distanceToRoad(z,t)>=105,'tree does not intrude into roadway');
+    assert(g.distanceToRoad({roads:z.footpaths},t)>=70,'tree does not cover the footpath');
+  }else{
+    assert(distance(t,original)<2,'crowded woodland retains the original tree anchor');
+    assert.equal(t.greenwoodMillbankOpenCrown,1,
+      'crowded woodland presents an open but still existing crown');
+  }
   assert.equal(z.nodes.reduce((n,p)=>n+p.amount,0),640);
   assert.equal(z.enemies.filter(e=>e.type==='mob'&&!e.summon).length,32);
   const trees=authored(z);
@@ -46,6 +56,7 @@ for(const seed of [0x47564101,0x47564102,0x47564103,0x47564104]){
   const old=JSON.parse(stable),oldZone=old.zones.vale,
     oldTree=atTree(oldZone);
   oldTree.x=original.x;oldTree.y=original.y;
+  delete oldTree.greenwoodMillbankOpenCrown;
   delete oldZone.greenwoodMillbankSightlineVersion;
   delete oldZone.greenwoodMillbankSightlineAudit;
   oldZone.props.push({id:'player-millbank-property',structure:'barrel',
@@ -54,9 +65,17 @@ for(const seed of [0x47564101,0x47564102,0x47564103,0x47564104]){
   const restored=C.restore(old,rng(seed)),rz=restored.zone();
   assert.equal(JSON.stringify(old),serialized,'restoration leaves source backup untouched');
   const newTree=atTree(rz);
-  assert(newTree && distance(newTree,original)>150,'historical scene receives tree correction');
-  assert.equal(rz.greenwoodMillbankSightlineVersion,1);
-  assert(rz.greenwoodMillbankSightlineAudit?.moved);
+  assert(newTree && rz.greenwoodMillbankSightlineVersion===1,
+    'historical scene receives the new non-destructive canopy treatment');
+  const restoredOutcome=rz.greenwoodMillbankSightlineAudit;
+  assert(restoredOutcome?.moved || restoredOutcome?.pruned,
+    'historical migration resolves crowded tree sightline');
+  if(restoredOutcome.pruned){
+    assert(distance(newTree,original)<2,'saved tree anchor preserved when opened in place');
+    assert.equal(newTree.greenwoodMillbankOpenCrown,1);
+  }else{
+    assert(distance(newTree,original)>150,'saved tree moved to legal woodland clearing');
+  }
   assert.equal(JSON.stringify(critical(rz)),expected,
     'all saved enemies, mill geometry, routes, destinations and resource nodes preserved');
   assert(rz.props.some(p=>p.id==='player-millbank-property'&&p.playerOwned),
@@ -69,7 +88,8 @@ for(const seed of [0x47564101,0x47564102,0x47564103,0x47564104]){
     seed,treeId,x:newTree.x,y:newTree.y,
     goblins:rz.enemies.filter(e=>e.species==='goblin'&&
       distance(e,{x:1040,y:1500})<320).map(e=>e.id),
-    trees:trees.length,sceneVersion:rz.greenwoodMillbankSightlineVersion
+    trees:trees.length,sceneVersion:rz.greenwoodMillbankSightlineVersion,
+    outcome:restoredOutcome.moved?'relocated':'open-crown'
   }));
 }
-console.log('PASS four-seed native canopy clearance, stable actors, authored props, historical v4 saves and no duplicate migration');
+console.log('PASS four-seed native millbank canopy handling, guarded placement, stable actors, historical v4 saves and idempotence');
