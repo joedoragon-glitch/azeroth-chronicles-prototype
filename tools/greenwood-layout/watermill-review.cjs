@@ -5,6 +5,8 @@
 const fs = require('node:fs'),
   path = require('node:path'),
   crypto = require('node:crypto'),
+  assert = require('node:assert/strict'),
+  sharp = require('sharp'),
   { createCanvas } = require('@napi-rs/canvas'),
   C = require('../../src/prototype/engine'),
   V = require('../../src/prototype/visuals'),
@@ -17,13 +19,40 @@ const root = path.resolve(__dirname, '../..'),
   cfg = C.rules.greenwoodLayout,
   receipts = [];
 fs.mkdirSync(out, { recursive: true });
+// The bridge camera follows the actual configured crossing after geometry
+// adjustments; historical hard-coded coordinates would miss later repairs.
+const bridge = {
+  x: (cfg.millBridge.from.x + cfg.millBridge.to.x) / 2,
+  y: (cfg.millBridge.from.y + cfg.millBridge.to.y) / 2,
+};
+const culvert = {
+  x: (cfg.creekCulvert.from.x + cfg.creekCulvert.to.x) / 2,
+  y: (cfg.creekCulvert.from.y + cfg.creekCulvert.to.y) / 2,
+};
 const views = [
   ['mill-day', cfg.mill, 120],
   ['mill-night', cfg.mill, 500],
-  ['race-bridge-day', { x: 1190, y: 1515 }, 120],
-  ['race-bridge-night', { x: 1190, y: 1515 }, 500],
-  ['headwater-culvert-day', { x: 1100, y: 765 }, 120],
+  ['race-bridge-day', bridge, 120],
+  ['race-bridge-night', bridge, 500],
+  ['headwater-culvert-day', culvert, 120],
 ];
+// Sample screen center, not the label and browser frame; this catches a
+// duplicate/blank night or a camera missing the natural district altogether.
+function centerLuma(ctx) {
+  const { width, height } = ctx.canvas,
+    { data } = ctx.getImageData(0, 0, width, height);
+  let sum = 0, n = 0, variation = 0, previous = -1;
+  for (let y = Math.floor(height * .24); y < height * .79; y += 13)
+    for (let x = Math.floor(width * .22); x < width * .79; x += 13) {
+      const idx = (y * width + x) * 4;
+      const luma = (data[idx] * .2126 + data[idx+1] * .7152 + data[idx+2] * .0722);
+      sum += luma;
+      if (previous >= 0 && Math.abs(luma - previous) >= 7) variation++;
+      previous = luma;
+      n++;
+    }
+  return { mean: Math.round(sum / Math.max(1,n)*100)/100, variations: variation, count:n };
+}
 for (const [name, target, clock] of views) {
   const originalHero = { x: g.hero.x, y: g.hero.y },
     originalClock = g.s.clock,
@@ -55,13 +84,17 @@ for (const [name, target, clock] of views) {
   const drawMs = Math.round((performance.now()-t0)*100)/100;
   if (before !== JSON.stringify(g.snapshot()))
     throw Error(name + ': rendering unexpectedly modified saved campaign');
-  const bytes = canvas.toBuffer('image/png');
-  if (bytes.length < 1024) throw Error(name + ': suspiciously empty rendered frame');
+  const metrics = centerLuma(ctx),
+    bytes = canvas.toBuffer('image/png');
+  if (bytes.length < 1024 || metrics.variations < 15)
+    throw Error(name + ': empty or visually uniform central scene (' +
+      JSON.stringify(metrics) + ')');
   const file = name+'.png';
   fs.writeFileSync(path.join(out, file), bytes);
   receipts.push({
     file, name, clock, width:852, height:393, zoom:1.5,
     hero: cameraTarget, drawMs,
+    centerLuma: metrics,
     sha256:crypto.createHash('sha256').update(bytes).digest('hex'),
     sourceSha:process.env.GITHUB_SHA || null,
     rendering:'native software Canvas with procedural fallback; not Pixi/real-device acceptance',
@@ -71,5 +104,38 @@ for (const [name, target, clock] of views) {
   g.s.clock = originalClock;
   g.updateNight();
 }
-fs.writeFileSync(path.join(out,'receipt.json'),JSON.stringify({views:receipts},null,2)+'\n');
-console.log('PASS 5 focused Greenwood watermill 150% native scene frames, unchanged saved state');
+for (const place of ['mill','race-bridge']) {
+  const day=receipts.find((r)=>r.name===place+'-day'),
+    night=receipts.find((r)=>r.name===place+'-night');
+  assert(day && night);
+  assert.notEqual(day.sha256,night.sha256,place+' day/night must render differently');
+  assert(day.centerLuma.mean > night.centerLuma.mean + 5,
+    place+' night scene must be meaningfully darker than day');
+}
+const report = {
+  status:'native-software-Canvas generated; human visual inspection and Pixi parity still required',
+  views:receipts,
+};
+fs.writeFileSync(path.join(out,'receipt.json'),JSON.stringify(report,null,2)+'\n');
+// One review sheet makes foreground, scene overlap, water seams, decking
+// and practical night light easy to inspect together after the artifact runs.
+(async () => {
+  const columns=2, width=852, height=393, label=32,
+    rows=Math.ceil(receipts.length/columns), panels=[];
+  for (const [i,r] of receipts.entries()) {
+    const left=(i%columns)*width, top=Math.floor(i/columns)*(height+label);
+    panels.push({ input: fs.readFileSync(path.join(out,r.file)), left, top:top+label });
+    panels.push({
+      input: Buffer.from('<svg width="852" height="32">'+
+        '<rect width="852" height="32" fill="#e8e2d3"/>'+
+        '<text x="13" y="22" font-family="sans-serif" font-size="16" fill="#27342e">'+
+        r.name+' — 150% native Canvas, '+r.clock+'s</text></svg>'),
+      left, top,
+    });
+  }
+  await sharp({create:{width:columns*width,height:rows*(height+label),channels:4,
+    background:'#e8e2d3'}})
+    .composite(panels)
+    .png().toFile(path.join(out,'watermill-day-night-contact-sheet.png'));
+  console.log('PASS 5 focused Greenwood watermill 150% native frames; paired day/night contrast and immutable saves. Human scene review pending.');
+})().catch(e => { console.error(e); process.exitCode=1; });
