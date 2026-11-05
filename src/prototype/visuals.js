@@ -155,7 +155,7 @@
     )
       return /orchard/.test(String(e.id || '') + ' ' + String(e.name || '')) ? 1.3 : 1.35;
     if (type !== 'prop') return 1;
-    if (structure === 'goblin-long-shelter') return 1.45;
+    if (e.greenwoodGoblinShelter) return 1.45;
     if (String(e.id || '').startsWith('forest-') && /🌲|🌳/.test(e.icon || '')) return 1.3;
     if (structure === 'mangrove' || /(?:^|[-_])(tree|sapling|pine)(?:$|[-_])/.test(structure))
       return 1.3;
@@ -13707,7 +13707,8 @@
             oval(x, y, 1, 1, '#63533e');
           oval(9, -16, 3, 3, kind === 'inspection-marker' ? '#a45d58' : '#9c7762');
           break;
-        case 'goblin-long-shelter':
+        case 'lean-to':
+          if (e.greenwoodGoblinShelter) {
           // Spacious, load-bearing domestic shelter: enough room for several
           // goblins to sleep beneath one complete pitched roof.
           for (const x of [-40, 40]) {
@@ -13731,7 +13732,8 @@
           craftAt(-18, 12, 0.57, () => craftedDecoration('sleep-roll'));
           craftAt(22, 11, 0.38, () => craftedDecoration('crate'));
           break;
-        case 'lean-to':
+          }
+
           for (const x of [-27, 27]) timber([x, 15], [x, -20], 4);
           timber([-27, -20], [27, -20], 4);
           shaped('#b09c74', () => {
