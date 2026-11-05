@@ -30,9 +30,15 @@ const checkScene = (z) => {
   assert.deepEqual({ x: end(z).x, y: end(z).y }, after,
     'physical road terminates at the new actual entrance');
   const route = z.greenwoodRoutes.find((r) =>
-    r.kind === 'farm' && r.points.length === 6 && r.points[0].x === 2320);
+    r.kind === 'farm' && r.points.length === 7 && r.points[0].x === 2320);
   assert(route, 'original 6-point eastern cart route retained');
   assert.deepEqual(route.points.at(-1), after);
+  assert.deepEqual(route.points.at(-2), { x: 2500, y: 2660 },
+    'estate cartway has a real shared junction with Scornfang depot apron');
+  const depot = z.footpaths.find((p) => p.length === 2 &&
+    p[0].x === 2500 && p[0].y === 2660);
+  assert(depot && depot.at(-1).x === 2600 && depot.at(-1).y === 2610,
+    'existing freight depot path joins the estate cartway');
   for (let j = 0; j < fixtures.length; j++) {
     const [structure, x, y] = fixtures[j],
       prop = z.props.find((p) => p.id === 'greenwood-estate-' + j);
