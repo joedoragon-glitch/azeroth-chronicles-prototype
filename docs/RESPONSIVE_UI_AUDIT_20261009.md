@@ -82,3 +82,6 @@ The candidate PR applies a shared content-sized and safe-inset-bounded phone mod
 
 
 **5 November PR #801 engineering preflight:** The previous game-design candidate retained dev.256 build and offline-cache metadata; that is a release blocker for an updated PWA. The proposed candidate advances package, lock, generated build-info, worker cache and current source documentation coherently to dev.257. Added focused short-landscape long-catalog geometry and Basic/Full Barracks parity checks, preserving native services, existing save compatibility, scrollable long menus and unmodified Archive writing. The new build is NOT yet published or physically accepted at this preflight.
+
+
+**5 November PR #801 final release receipt:** Owner-authorized senior engineering review and merge completed at [main `b62fbc43`](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/commit/b62fbc43bd1a55f2066ced779d66ef7b80822227). [Main focused validation and Pages #41979764741](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41979764741) **SUCCESS**, publishes dev.257; preflight candidate wording above is historical. PR-head targeted English/Spanish Chromium/WebKit, desktop/phone renderer and offline-ready source checks all passed. Physical iPhone Air Safari/PWA acceptance remains open (#790); no comprehensive test suite.
