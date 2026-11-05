@@ -112,13 +112,20 @@ const types = {
       await page.goto(
         'http://127.0.0.1:' +
           server.address().port +
-          (viewport.touch ? '/phone.html' : '/index.html'),
+          (viewport.touch
+            ? (process.argv.includes('--road-bridge-scenes') ? '/phone-game.html' : '/phone.html')
+            : '/index.html'),
       );
-      const resume = page.getByRole('button', { name: 'Continue Adventure', exact: true });
+      // The new landscape menus use a stable Continue control identity.
+      const resume = page.locator('#title-continue');
       await resume.waitFor({ state: 'visible' });
       assert(await resume.isEnabled());
       await resume.click();
-      await page.waitForFunction(() => window.Prototype?.started && !Prototype.sceneLoading);
+      await page.waitForFunction(() =>
+        !!window.Prototype?.started &&
+        document.querySelector('#title-screen')?.hidden &&
+        document.querySelector('#scene-loading')?.hidden !== false,
+        null, { timeout: 180000 });
       if (pixi) {
         await page.locator('#menu-button').click();
         await page.getByRole('button', { name: 'Game and settings', exact: true }).click();
