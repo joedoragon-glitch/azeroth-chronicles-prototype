@@ -5,7 +5,7 @@
   "designId": "greenwood-thornfang-homestead-proportions",
   "name": "Thornfang's appropriated granary homestead and Crown standard",
   "kind": "structure",
-  "nextAction": "Complete native/Canvas/Pixi visual and focused functional review of the joint Priority 1–4 artistic candidate in draft PR #832. No merge, deployment, new raster production or owner's visual acceptance is claimed.",
+  "nextAction": "Complete focused browser/GPU and performance verification on PR #828; preserve the reviewed native candidate and owner feedback. No raster sprite generation, merge or release is requested by this record.",
   "context": {
     "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
     "decisionSummary": "Owner's latest direction: Thornfang came from elsewhere and has appropriated an existing granary or suitable farm structure; adapt a modest granary/store barn into his local residence, develop the freed courtyard, finish the design and add one existing Dark Crown standard to reinforce authority.",
@@ -18,7 +18,7 @@
   },
   "decisions": {
     "conceptAcceptance": "Owner explicitly selected appropriated agricultural structure and proposed the Dark Crown authority standard; design records adopt both. No unseen procedural/raster appearance acceptance.",
-    "proceduralDesignAcceptance": "Priority 1–4 structural and compositional candidates authored in shared procedural art; original identities preserved. Focused tests and direct owner visual acceptance remain separate gates.",
+    "proceduralDesignAcceptance": "Implemented and engineer-reviewed in native Canvas scenes; owner visual acceptance is not claimed. Browser/Pixi candidate review remains tracked in #828.",
     "spriteProductionAuthorization": "Not requested in this task.",
     "generatedAppearanceAcceptance": "None.",
     "pendingCorrections": [
@@ -26,8 +26,7 @@
       "Use freed space for circulation, subordinate rest bay, grouped work and domestic service areas",
       "Finish roofs, gable/fascia, posts, thresholds, rails, perspective, grounding and lantern mount",
       "Reauthor main structure as an existing granary/store barn adapted for Thornfang, not a purpose-built lodge",
-      "Place one established crown-banner beside the farmyard approach",
-      "Check roof joins, open rest bay, yard clusters, and restrained post grounding in both renderers at 150% camera before visual signoff"
+      "Place one established crown-banner beside the farmyard approach"
     ]
   },
   "reference": {
@@ -89,8 +88,7 @@
   },
   "production": {
     "candidateRecords": [
-      "docs/evidence/greenwood-owner-environment-20261105/README.md",
-      "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
+      "docs/evidence/greenwood-owner-environment-20261105/README.md"
     ],
     "approvedRecordKey": null,
     "activeContentRevision": null,

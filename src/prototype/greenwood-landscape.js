@@ -25,7 +25,7 @@
     // not sitting on the eastern trunk road or mistaken for collectible tribute.
     cache: [2600, 2610],
     watch: [2670, 2220],
-    crypt: [2830, 2850],
+    crypt: [2830, 2940],
     wagon: [2880, 280],
   };
   const river = [
@@ -379,6 +379,56 @@
   }
   function install(C, { D, R }) {
     class Landscape {
+      // A one-time exterior-only correction for fresh Vale and saved scene-5
+      // campaigns. Repositions the existing dungeon entrance and construction
+      // props without regenerating terrain, bosses, player camps or paid state.
+      greenwoodEstateFacadeScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion ||
+            z.greenwoodEstateFacadeVersion === 1) return;
+        const entry = z.npcs.find((n) => n.id === 'entrance' &&
+          n.kind === 'dungeon' && n.family === 'crypt');
+        if (!entry) return;
+        const previous = {x: 2830 * cfg.scale, y: 2850 * cfg.scale};
+        const next = cfg.anchors.crypt;
+        // No replacement NPC or revised gameplay ID: old saves must still
+        // refer to the same enterable Crypt and the same associated quests.
+        if (distance(entry, previous) < 2 || distance(entry, next) < 2)
+          Object.assign(entry, next);
+        else return; // Preserve an unknown hand-placed or future location.
+        // The authoritative road/camera route and the separately serialized
+        // movement arrays may not share object identity after a v4 restore.
+        // The real depot apron starts on the old road at (2500,2660).
+        // Moving the entrance must preserve this *physical* junction.
+        const depotJunction = {x: 2500 * cfg.scale, y: 2660 * cfg.scale};
+        const reanchor = (path) => {
+          if (!Array.isArray(path) || path.length < 2 ||
+              distance(path.at(-1), previous) >= 2) return;
+          if (distance(path.at(-2), depotJunction) > 1)
+            path.splice(path.length - 1, 0, {...depotJunction});
+          Object.assign(path.at(-1), next);
+        };
+        for (const r of z.greenwoodRoutes || [])
+          if (r.kind === 'farm') reanchor(r.points);
+        for (const road of z.roads || []) reanchor(road);
+        for (const path of z.footpaths || []) reanchor(path);
+        const work = [
+          ['estate-scaffold', 2970, 2830],
+          ['stacked-lumber', 2740, 3080],
+          ['tool-rack', 2640, 2970],
+          ['supply-stack', 3060, 3040],
+        ];
+        work.forEach(([structure, x, y], j) => {
+          const p = z.props.find((p) => p.id === 'greenwood-estate-' + j);
+          // User-owned content and unexpected replacement props are never
+          // teleported just to tidy an estate screenshot.
+          if (p && !p.playerOwned && !p.owned && !p.custom &&
+              p.structure === structure)
+            Object.assign(p, {x: x * cfg.scale, y: y * cfg.scale});
+        });
+        z.greenwoodEstateFacadeVersion = 1;
+      }
       greenwoodWatermillScene(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 ||
@@ -1275,7 +1325,7 @@
             ],
             [
               'farm',
-              [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], plan.crypt],
+              [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], [2500, 2660], plan.crypt],
             ],
             [
               'path',
@@ -1520,10 +1570,12 @@
               ['stacked-lumber', 2690, 2660],
             ],
             estate: [
-              ['estate-scaffold', 2970, 2760],
-              ['stacked-lumber', 2860, 2920],
-              ['tool-rack', 2620, 2940],
-              ['supply-stack', 2860, 3050],
+              // A working west-side staging yard and active east-wing roof crew,
+              // leaving the approach to the actual doorway visibly open.
+              ['estate-scaffold', 2970, 2830],
+              ['stacked-lumber', 2740, 3080],
+              ['tool-rack', 2640, 2970],
+              ['supply-stack', 3060, 3040],
             ],
             cellars: [
               ['stump', 980, 2470],
