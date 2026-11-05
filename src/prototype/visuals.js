@@ -9640,63 +9640,69 @@
         softPoly(
           [
             [-46, -48],
-            [-13, -81],
+            [-12, -76],
             [22, -34],
           ],
           '#9c7c56',
         );
+        // Two roof slopes use one front ridge and the same building-depth
+        // vector. Reusing their exact corners prevents a twisted roof seam.
+        const roofFrontLeft = [-53, -53],
+          roofFrontRidge = [-12, -82],
+          roofFrontRight = [29, -39],
+          roofRearLeft = [-13, -67],
+          roofRearRidge = [28, -96],
+          roofRearRight = [69, -53];
         softPoly(
-          [
-            [-54, -51],
-            [-13, -91],
-            [33, -106],
-            [-6, -67],
-          ],
+          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
           '#97714d',
         );
         softPoly(
-          [
-            [-13, -91],
-            [29, -36],
-            [73, -51],
-            [33, -106],
-          ],
+          [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
           '#604735',
         );
+        // A continuous front fascia closes both pitched planes onto the
+        // existing gable/wall. Keep the high grain hatch below the roof.
+        softPoly(
+          [roofFrontLeft, roofFrontRidge, [-12, -76], [-53, -47]],
+          '#4e3e30',
+        );
+        softPoly(
+          [roofFrontRidge, roofFrontRight, [29, -33], [-12, -76]],
+          '#493a2c',
+        );
         line(
-          [
-            [-54, -51],
-            [-13, -91],
-            [33, -106],
-            [73, -51],
-            [29, -36],
-          ],
+          [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearRight, roofFrontRight],
           '#b5986e',
           3,
         );
-        softPoly(
-          [
-            [29, -36],
-            [73, -51],
-            [62, -48],
-            [22, -34],
-          ],
-          '#493c30',
-        );
+        line([roofFrontLeft, roofRearLeft], '#a78a66', 2);
         for (let j = 1; j < 5; j++) {
           const t = j / 5;
           line(
             [
-              [-53 + 40 * t, -51 - 40 * t],
-              [-6 + 39 * t, -67 - 39 * t],
+              [
+                roofFrontLeft[0] + (roofFrontRidge[0] - roofFrontLeft[0]) * t,
+                roofFrontLeft[1] + (roofFrontRidge[1] - roofFrontLeft[1]) * t,
+              ],
+              [
+                roofRearLeft[0] + (roofRearRidge[0] - roofRearLeft[0]) * t,
+                roofRearLeft[1] + (roofRearRidge[1] - roofRearLeft[1]) * t,
+              ],
             ],
             '#b19369',
             1,
           );
           line(
             [
-              [-13 + 42 * t, -91 + 55 * t],
-              [33 + 40 * t, -106 + 55 * t],
+              [
+                roofFrontRidge[0] + (roofFrontRight[0] - roofFrontRidge[0]) * t,
+                roofFrontRidge[1] + (roofFrontRight[1] - roofFrontRidge[1]) * t,
+              ],
+              [
+                roofRearRidge[0] + (roofRearRight[0] - roofRearRidge[0]) * t,
+                roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
+              ],
             ],
             '#8b6d4d',
             1,
@@ -9725,18 +9731,32 @@
             2,
           );
         mountedSconce(-35,-18,'workshop');
-        // Existing wooden receiving apron, ledgers and weighed/sorted goods.
+        // A shallow former loading apron with one clear doorway lane,
+        // flanked by secure goods and a modest records station.
         softPoly(
           [
-            [-40, 9],
-            [14, 21],
-            [43, 11],
-            [-12, -1],
+            [-49, 7],
+            [15, 21],
+            [46, 10],
+            [-18, -5],
           ],
-          '#8d7552',
+          '#82745a',
         );
-        craftAt(39, 8, 0.42, () => craftedDecoration('crate'));
-        craftAt(-36, 8, 0.38, () => craftedDecoration('scribe-desk'));
+        softPoly(
+          [
+            [-19, 8],
+            [8, 14],
+            [24, 7],
+            [-3, 0],
+          ],
+          '#b09970',
+        );
+        for (const x of [-10, 0, 10])
+          line([[x, 4], [x + 4, 12]], '#80694c', 1.2);
+        // The loose courtyard ledger and barrel now stand together outside;
+        // these small near-wall details keep the frontage from being empty.
+        craftAt(40, 7, 0.36, () => craftedDecoration('crate'));
+        craftAt(-38, 8, 0.31, () => craftedDecoration('scribe-desk'));
         return true;
       }
       const key =
