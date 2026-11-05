@@ -775,24 +775,11 @@
         if (z.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
             z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion) return;
         const scale = R.greenwoodLayout.scale;
-        if (z.greenwoodTradeExitVersion !== 1) {
-          const mainRoad = z.roads?.[0],
-            last = mainRoad?.at(-1);
-          if (last && distance(last, { x: plan.wagon[0] * scale, y: plan.wagon[1] * scale }) < 2) {
-            // The merchant wagon stays at the existing departure point. The
-            // same navigable cart-road geometry visually exits the NE boundary.
-            const extension = [[3020, 195], [3198, 95]]
-              .map(([x, y]) => ({ x: x * scale, y: y * scale }));
-            mainRoad.push(...extension);
-            const route = z.greenwoodRoutes?.find((p) => p.kind === 'cart');
-            if (route && route.points !== mainRoad) route.points = mainRoad;
-          }
-          z.greenwoodTradeExitVersion = 1;
-        }
-        // Grow the existing Goblin compound around its original center.
-        // Its east-facing gap, original wall identities and road connection
-        // stay intact. This is a one-time v4-safe physical-wall migration,
-        // not a scenery regeneration or a new fortification bonus.
+        // The outbound road beyond the wagon is presentation-only. Crossing
+        // the real world boundary is not navigable; only the wagon travels.
+        // Keep all authored paths untouched to preserve native collision and
+        // the v4 route-network acceptance contract.
+        z.greenwoodTradeExitVersion = 1;
         if (z.greenwoodGoblinShelterVersion !== 1) {
           const center = R.greenwoodLayout.anchors.goblin;
           let moved = 0;
@@ -838,7 +825,7 @@
               if (!hut) continue;
               Object.assign(hut, {
                 x: origin.x + dx * scale, y: origin.y + dy * scale,
-                structure: 'goblin-long-shelter',
+                structure: 'lean-to',
                 r: 0, decorative: true,
                 greenwoodGoblinShelter: true,
               });
