@@ -4686,6 +4686,22 @@
               this.announceLandmark(n);
             }
           }
+        // Thornfang's converted farm residence is a named place in its own
+        // right, not the distant Goblin camp or a new interactable destination.
+        // Match native one-time landmark notices using the existing v4
+        // discovered map. Only inspect nearby scenery until it is discovered.
+        const homesteadKey = 'vale:thornfang-homestead',
+          homeScale = R.greenwoodLayout?.scale || 1;
+        if (z.id === 'vale' && !this.s.discovered[homesteadKey] &&
+            h.x > 2350 * homeScale && h.y < 1640 * homeScale) {
+          const home = z.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
+          if (home && dist(h, home) < 170 * homeScale) {
+            this.s.discovered[homesteadKey] = true;
+            this.say('Discovered Thornfang\u2019s Homestead.');
+            this.notice('Thornfang\u2019s Homestead', 5.5, '', 'narration',
+              { textEs: 'Hogar de Thornfang' });
+          }
+        }
         const [px, py] = D.ports[this.regionIndex()];
         if (dist(h, { x: px, y: py }) < 140) this.discover('port');
         const minor = this.minorRefugePoint();
