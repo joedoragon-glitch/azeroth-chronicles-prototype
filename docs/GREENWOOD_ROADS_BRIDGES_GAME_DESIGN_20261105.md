@@ -1,3 +1,5 @@
+> **Engineering phase authorized by the owner, 5 November 2026.** This design is the artistic acceptance contract for [separate implementation draft #815](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/815). Its original design-only completion/handoff notes below are historical; engineering can adjust provisional numerical width targets only when actual movement, visual and saved-game evidence requires it. Do not interpret a draft as verified, merged, published or approved artwork.
+
 # Greenwood Vale — roads, junctions and bridges: complete game-design specification
 
 **Project:** *So I Became the Dark Lord's Problem* (SIBDLP). **Date:** 5 November 2026. **Status:** Design package complete for review and later engineering handoff; no implementation authorized by this document. **Scope:** the existing Greenwood Vale (first region) only. **Source baseline:** `main@dacd18ee99d20fff6ae39c52067f1bba1fc5875e`. **Player evidence:** nine owner-supplied in-game views and close-ups of sharp road bends, intersecting road paint, and both crossings. Do not upload those personal screenshots to the public repository merely to duplicate the evidence.
