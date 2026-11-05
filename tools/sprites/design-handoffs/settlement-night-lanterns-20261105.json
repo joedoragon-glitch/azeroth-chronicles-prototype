@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "status": "procedural-design",
+  "status": "integrated",
   "designId": "settlement-night-lanterns-20261105",
   "name": "Greenwood settlement lanterns and night lighting",
   "kind": "decoration / building-attached light",
-  "nextAction": "Finish PR #821's exact-head focused, offline-build, Canvas/Pixi and performance checks; resolve failures before merging; after verified publication, let owner judge native game aesthetics and iterate without extra premerge approval chores.",
+  "nextAction": "Owner evaluates lantern appearance in the released game; record visual feedback and iterate on observed defects without repeating engineering setup or requiring pre-release mockup approvals. Recheck paired CPU acceptance #41997077296 if completed.",
   "context": {
     "originConversation": "5 November 2026 SIBDLP chat; conversation URL unavailable; owner supplied 3 in-game nighttime screenshots and explicitly requested independent game-designer audit before engineering.",
     "decisionSummary": "Owner rejects roof-mounted glowing rectangles and overlaid rectangular post glass, wants believable, attractive entrance and street lanterns; wants the refuge lit after dark, without houses/workshops appearing fully active all night. Independent audit identified additional risks from draft PR #803 and specified corrected artistic choices. Later owner authorization explicitly makes in-game postmerge live viewing the artistic acceptance; a standalone sprite/mockup approval round is not required.",
@@ -22,8 +22,9 @@
     "spriteProductionAuthorization": "None in this design-only stage; do not generate/replace raster sprites.",
     "generatedAppearanceAcceptance": "None. No new generated images.",
     "pendingCorrections": [
-      "Wait for exact-head engineering/performance checks and hosted publication before claiming release readiness; owner will judge aesthetics in the actual game, after which any further changes are iterative.",
-      "Keep streetlamp approved silhouette, per-region distinction, service site fixture coverage, closed workshop behavior, camera-scale alignment and no phantom overlay protected in future iterations."
+      "Owner will judge actual in-game lighting aesthetic after published merge; further changes follow normal visual iteration.",
+      "Keep regional distinctions, quiet cottage windows, single nighttime workshop security lamp, actual service fixtures and true glass alignment protected.",
+      "Review the result of paired CPU comparison #41997077296 when available; do not invent a passed result."
     ]
   },
   "reference": {
@@ -118,7 +119,7 @@
     "activeContentRevision": null,
     "expectedReplacementRevision": null,
     "rollbackRevision": null,
-    "releaseCommit": null,
-    "releaseEvidence": "Implementation candidate on new current-main branch in PR #821, including in-game facade/post art, source/glass contracts, regression tests and PWA fingerprints. Until checks/merge/hosted delivery are verified, no release or device-verification claim."
+    "releaseCommit": "58a34e441208f3d83992adda9daf19ff81a3d111",
+    "releaseEvidence": "PR #821 merged; main hosted GitHub Pages workflow #41997921617 SUCCESS for exact merge commit 58a34e441208f3d83992adda9daf19ff81a3d111. Focused PR-head native fixture test, Canvas/Pixi regression and PWA checks passed. Physical iPhone and owner artistic acceptance not yet claimed; paired CPU run #41997077296 was in progress at this writing."
   }
 }
