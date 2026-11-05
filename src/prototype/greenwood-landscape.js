@@ -578,6 +578,22 @@
         z.greenwoodHomesteadVersion = 1;
       }
       greenwoodOwnerCompoundFinish(z) {
+        // The homestead's two short decorative rails read as an unfinished
+        // perimeter. Keep the yard open instead of inventing fortification.
+        // Run separately from the older compound migration so restored v4
+        // campaigns also lose only these two unowned authored decorations.
+        if (z.id === 'vale' && z.greenwoodThornOpenYardVersion !== 1) {
+          const rails = new Set([
+            'greenwood-thorn-homestead-rear-rail',
+            'greenwood-thorn-homestead-east-rail',
+          ]);
+          z.props = z.props.filter(
+            (p) => !rails.has(p.id) || p.owned || p.playerOwned || p.custom ||
+              !p.greenwoodAuthored ||
+              !['thorn-homestead-rear-rail', 'thorn-homestead-east-rail'].includes(p.structure),
+          );
+          z.greenwoodThornOpenYardVersion = 1;
+        }
         if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 1) {
           const a = R.greenwoodLayout.anchors.wagon,
             b = { x: 3200, y: 80 };
@@ -2297,14 +2313,15 @@
           '#302d28',
           2,
         );
-      // A single common ridge and parallel depth edges keep the farm-barn
-      // roof joined to its real gable rather than looking like folded panels.
-      const roofFrontLeft = [-67, -68],
-        roofFrontRidge = [-15, -100],
-        roofFrontRight = [38, -49],
-        roofRearLeft = [-15, -86],
-        roofRearRidge = [37, -118],
-        roofRearRight = [90, -67];
+      // Clean two-plane pitched roof: matching depth vectors and one
+      // front gable, with restrained weathering rather than overlapping
+      // diagonal shingles along the visible left eave.
+      const roofFrontLeft = [-64, -67],
+        roofFrontRidge = [-14, -98],
+        roofFrontRight = [36, -50],
+        roofRearLeft = [-16, -83],
+        roofRearRidge = [34, -114],
+        roofRearRight = [84, -66];
       poly(
         [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
         '#94734f',
@@ -2313,37 +2330,12 @@
         [roofFrontRidge, roofFrontRight, roofRearRight, roofRearRidge],
         '#624c38',
       );
-      // Continuous paired fascia follows the actual wall/eave line.
-      poly(
-        [roofFrontLeft, roofFrontRidge, [-15, -94], [-67, -62]],
-        '#4f3f30',
-      );
-      poly(
-        [roofFrontRidge, roofFrontRight, [38, -43], [-15, -94]],
-        '#47382d',
-      );
-      stroke(
-        [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearRight, roofFrontRight],
-        edge,
-        3,
-      );
-      stroke([roofFrontLeft, roofRearLeft], edge, 2);
-      for (let j = 1; j < 5; j++) {
-        const t = j / 5;
-        stroke(
-          [
-            [
-              roofFrontLeft[0] + (roofFrontRidge[0] - roofFrontLeft[0]) * t,
-              roofFrontLeft[1] + (roofFrontRidge[1] - roofFrontLeft[1]) * t,
-            ],
-            [
-              roofRearLeft[0] + (roofRearRidge[0] - roofRearLeft[0]) * t,
-              roofRearLeft[1] + (roofRearRidge[1] - roofRearLeft[1]) * t,
-            ],
-          ],
-          '#b39367',
-          1,
-        );
+      stroke([roofFrontLeft, roofFrontRidge, roofFrontRight], edge, 2.5);
+      stroke([roofFrontRidge, roofRearRidge], '#b6956a', 2);
+      stroke([roofFrontLeft, roofRearLeft], '#a98c64', 1.6);
+      stroke([roofFrontRight, roofRearRight], '#a98c64', 1.6);
+      // Only two faint aligned board seams on the long visible pitch.
+      for (const t of [1 / 3, 2 / 3]) {
         stroke(
           [
             [
@@ -2355,8 +2347,8 @@
               roofRearRidge[1] + (roofRearRight[1] - roofRearRidge[1]) * t,
             ],
           ],
-          '#8f7151',
-          1,
+          '#876b4e',
+          0.9,
         );
       }
       stroke(
