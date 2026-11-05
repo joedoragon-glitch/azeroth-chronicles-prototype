@@ -1,5 +1,7 @@
 # Greenwood Vale — botanical groundcover, farms, orchard and livestock: game-design pass
 
+> **Integrated design and engineering handoff (5 November 2026):** This detailed botanical design remains an independent source appendix. The agreed coordination, spatial priority, full road-versus-farm relationship, phased work order and consolidated acceptance gates are now in [Unified Greenwood Landscape Composition & Engineering Handoff](GREENWOOD_LANDSCAPE_COMPOSITION_INTEGRATED_ENGINEERING_HANDOFF_20261105.md) on this design branch. [Road and bridge specification PR #807](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/807) remains preserved separately. No implementation, merge or deployment is implied.
+
 **Game:** *So I Became the Dark Lord's Problem* (SIBDLP; repository retains historical name). **Date:** 5 November 2026. **Status:** source-grounded **DESIGN ONLY**, ready for a separately reviewed implementation candidate. **Baseline:** `main@dacd18ee99d20fff6ae39c52067f1bba1fc5875e`. **Scope:** Greenwood Vale outdoors, not the other four regions. **Evidence:** seven owner-supplied playtest screenshots and cropped closeups in the current conversation (not copied into public GitHub). **No runtime implementation, screenshots of a candidate, testing, merge, publication or physical-device acceptance is claimed.**
 
 ## The problem: landscape structure, not a shortage of trees
