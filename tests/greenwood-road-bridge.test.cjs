@@ -38,6 +38,32 @@ assert.equal(prepared.widths.farm * 2, 52);
 assert.equal(prepared.widths.path * 2, 24);
 assert(prepared.wide[0].points.length > z.roads[0].length, 'cart bends are smoothly sampled');
 assert(prepared.fragments.length > 0, 'woodland paths survive main-road junction clipping');
+// Independent designer acceptance: major routes must not retain a jagged
+// sequence of discrete steering elbows, even when centerlines still connect.
+const largestHeadingJump = (points) => {
+  let peak = 0;
+  for (let i = 1; i + 1 < points.length; i++) {
+    const a = points[i - 1], b = points[i], c = points[i + 1],
+      incoming = Math.atan2(b.y - a.y, b.x - a.x),
+      outgoing = Math.atan2(c.y - b.y, c.x - b.x),
+      turn = Math.abs(Math.atan2(Math.sin(outgoing - incoming), Math.cos(outgoing - incoming)));
+    peak = Math.max(peak, turn);
+  }
+  return (peak * 180) / Math.PI;
+};
+for (const road of prepared.wide)
+  assert(largestHeadingJump(road.points) <= 15,
+    'roadbed has flowing turn samples rather than sharp disconnected elbows');
+assert(prepared.fragments.reduce((n, run) => n + run.length - 1, 0) <= 420,
+  'bounded pedestrian rendering subdivision keeps per-frame road draw overhead small');
+const south = Campaign.rules.greenwoodLayout.anchors.south;
+const westBank = Landscape.riverBanks(south.y, Campaign.rules.greenwoodLayout.size)[0];
+assert(z.roads[1].at(-1).x < westBank,
+  'farm traffic terminates on dry land, leaving a separate approach to the timber bridge');
+assert(g.route(
+  { x: 1560 * Campaign.rules.greenwoodLayout.scale, y: south.y },
+  { x: 1950 * Campaign.rules.greenwoodLayout.scale, y: south.y },
+).length, 'native route traverses actual narrow south-bank path and both bridge shoulders');
 for (const road of prepared.wide)
   for (const p of road.points)
     assert(Number.isFinite(p.x) && Number.isFinite(p.y), 'every curve vertex finite');
