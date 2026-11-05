@@ -4,24 +4,19 @@ const fs = require('node:fs');
 const path = require('node:path');
 const Visuals = require('../src/prototype/visuals.js');
 const Campaign = require('../src/prototype/engine.js');
+const Core = require('../tools/webgl-pilot/native-webgl2-core.js');
 
-// Validate the actual shared presentation owner, not just narrative text.
+// Use the shared, real fixture catalog: no nighttime-only roof windows.
 function probe(night, optimized = true, sources = []) {
-  const calls = { radial: 0, gradient: 0, fills: 0, lanternFrames: 0 };
+  const calls = { radial: 0, gradient: 0, fills: 0, innerFlames: 0, drawnRects: [] };
   const ctx = {
-    save() {},
-    restore() {},
-    beginPath() {},
-    moveTo() {},
-    lineTo() {},
-    stroke() {},
-    strokeRect() {},
-    fill() {},
-    arc() {},
-    ellipse() {},
+    save() {}, restore() {}, beginPath() {}, moveTo() {}, lineTo() {},
+    stroke() {}, strokeRect() {}, fill() {}, arc() {}, ellipse() {},
+    translate() {}, scale() {},
+    bezierCurveTo() { calls.innerFlames++; },
     fillRect(x, y, w, h) {
       calls.fills++;
-      if (w === 12 && h === 12) calls.lanternFrames++;
+      calls.drawnRects.push([x, y, w, h]);
     },
     createLinearGradient() {
       calls.gradient++;
@@ -34,88 +29,113 @@ function probe(night, optimized = true, sources = []) {
   };
   const data = JSON.stringify(sources);
   Visuals.atmosphere(ctx, { width: 400, height: 270 }, 0, {
-    night,
-    optimized,
-    hero: { x: 200, y: 140 },
-    lights: sources,
+    night, optimized, hero: { x: 200, y: 140 }, lights: sources,
   });
-  assert.equal(JSON.stringify(sources), data, 'lighting never changes simulation or map sources');
+  assert.equal(JSON.stringify(sources), data, 'lighting cannot modify game sources');
   return calls;
 }
-const sources = [
-  { id: 'occupied-cottage', x: 70, y: 80, kind: 'window' },
-  { id: 'service-stand', x: 150, y: 110, kind: 'lantern' },
-  { id: 'working-hearth', x: 250, y: 190, kind: 'fire' },
-  { id: 'village-forge', x: 300, y: 185, kind: 'work-fire' },
-];
+const cottage = Visuals.lightingFixtures(
+  { id: 'home-1', structure: 'vale-cottage' }, { x: 120, y: 150 },
+);
+const workshop = Visuals.lightingFixtures(
+  { id: 'workshop', structure: 'vale-workshop' }, { x: 220, y: 150 },
+);
+const refuge = Visuals.lightingFixtures(
+  { id: 'refuge', kind: 'rest' }, { x: 190, y: 180 },
+);
+const roadPost = Visuals.lightingFixtures(
+  { id: 'post', structure: 'roadside-lantern' }, { x: 270, y: 150 },
+);
+assert.equal(cottage.length, 1, 'a cottage has one lamp by its doorway');
+assert.equal(workshop.length, 1, 'closed workshops have one exterior security lamp');
+assert.equal(refuge.length, 1, 'refuge light comes from its actual wall lantern');
+assert.equal(roadPost.length, 1, 'roadside post retains its own glass');
+assert(cottage[0].y > 120, 'cottage glass is below the roof, on the facade');
+assert(workshop.every((lamp) => lamp.y > 120), 'workshop fixtures are below the roof');
+assert.equal(roadPost[0].x, 270, 'post stays centered in the existing lantern frame');
+assert.equal(roadPost[0].y, 108, 'post glow matches the recessed glass center');
+assert.equal(Visuals.lightingFixtures(
+  { id: 'post', structure: 'roadside-lantern' }, { x: 270, y: 150 }, 2,
+)[0].y, 66, 'Pixi zoom keeps the luminous center attached to the scaled post');
+assert.equal(Visuals.lightingFixtures(
+  { id: 'unknown', structure: 'unlit-household' }, { x: 0, y: 0 },
+).length, 0, 'unrelated household structures gain no invented lights');
+assert.equal(cottage[0].lit, true, 'the selected cottage provides a modest practical accent');
+assert.equal(Visuals.lightingFixtures(
+  { id: 'home', structure: 'vale-cottage' }, { x: 120, y: 150 },
+)[0].lit, false, 'other cottage lamps can stay dark while residents sleep');
+assert(cottage[0].alpha < workshop[0].alpha && workshop[0].alpha < refuge[0].alpha,
+  'cottage, closed workshop and refuge have a readable night-light hierarchy');
+assert.equal(Visuals.lightingFixtures(
+  { id: 'regional-cottage', structure: 'march-stilt-house' }, { x: 120, y: 150 }, 1, 1,
+).length, 0, 'no Greenwood-style sconce is forced onto other-region dwellings');
+const otherRefuge = Visuals.lightingFixtures(
+  { id: 'march-rest', kind: 'rest' }, { x: 120, y: 150 }, 1, 1,
+);
+assert.equal(otherRefuge.length, 1, 'existing other-region refuge lighting is preserved');
+assert.equal(otherRefuge[0].role, 'refuge');
+const wagon = Visuals.lightingFixtures(
+  { id: 'supply-wagon', kind: 'transport', icon: '🐎' }, { x: 200, y: 100 },
+);
+assert.equal(wagon.length, 1, 'actual wagon-mounted lantern remains a night source');
+for (const icon of ['⛵', '🐫', '🐉'])
+  assert.equal(Visuals.lightingFixtures(
+    { id: 'transport-' + icon, kind: 'transport', icon }, { x: 200, y: 100 },
+  ).length, 0, 'no invisible lantern is added to a transport without one');
+for (const kind of ['teacher', 'smith', 'alchemist', 'fountain'])
+  assert.equal(Visuals.lightingFixtures({ id: kind, kind }, { x: 100, y: 100 }).length, 0,
+    'unmounted service ' + kind + ' does not receive a phantom lantern');
+for (const kind of ['supplier', 'recruiter', 'quests'])
+  assert.equal(Visuals.lightingFixtures({ id: kind, kind }, { x: 100, y: 100 }).length, 1,
+    'public service ' + kind + ' retains an attached entrance light');
+const sources = [...cottage, ...workshop, ...refuge, ...roadPost,
+  { id: 'working-hearth', x: 290, y: 190, kind: 'fire' }];
 const day = probe(false, true, sources);
-assert.equal(day.radial, 0, 'daylight does not create any night glow');
-assert.equal(day.lanternFrames, 0, 'lantern glasses remain unlit during the day');
+assert.equal(day.radial, 0, 'daylight adds no civic glow');
+assert.equal(day.innerFlames, 0, 'all glass remains unlit during daylight');
 const night = probe(true, true, sources);
-assert.equal(
-  night.radial,
-  sources.length + 1,
-  'the existing hero light and every inhabited night source has its own pool',
-);
-assert.equal(night.lanternFrames, 1, 'only the service lantern creates a glazed lamp');
-assert(night.fills > day.fills, 'warm house windows and lantern fixtures are visible at night');
-const streetPost = probe(true, true, [
-  { id: 'real-post', x: 200, y: 140, kind: 'lantern', fixture: 'post' },
-]);
-assert.equal(streetPost.radial, 2, 'hero plus the real street fixture');
-assert.equal(
-  streetPost.lanternFrames,
-  0,
-  'an existing post does not get a second floating hanging lamp',
-);
-assert.equal(
-  streetPost.fills - probe(true, true, []).fills,
-  2,
-  'one local glow and one fill inside existing glass, with no extra night-only structure',
-);
-const wilderness = probe(true, true, []);
-assert.equal(wilderness.radial, 1, 'wild terrain stays dark except the hero visibility pool');
-assert.equal(wilderness.lanternFrames, 0, 'no invented lanterns in empty wilderness');
-assert.doesNotThrow(
-  () => probe(true, false, sources),
-  'full atmospheric mode preserves night fixtures',
-);
-
-// Source selection stays derived from existing houses, active work and services,
-// and deliberately does not add any flame props or gameplay blockers.
-const renderer = fs.readFileSync(path.join(__dirname, '../src/prototype/renderer.js'), 'utf8');
+assert.equal(night.radial, sources.length + 1, 'nightlights and hero each emit a glow');
+assert.equal(night.innerFlames, 2 * (sources.length - 1), 'only glass has small inner flames');
+assert.equal(night.fills - day.fills, sources.length + 1, 'light pools have bounded fill count');
 assert(
-  /const nightSources = !nightNow\s*\? \[\]\s*:\s*\[/.test(renderer),
-  'daytime avoids unnecessary nighttime lighting scans',
+  !night.drawnRects.some(([, , w, h]) => w === 10 && h === 9 || w === 12 && h === 12),
+  'no square lamp panes are stamped onto roofs or streetlamps',
 );
-for (const kind of ["'window'", "'fire'", "'work-fire'", "'lantern'"])
-  assert(renderer.includes(kind), 'source classification supports ' + kind);
+const postNight = probe(true, true, roadPost);
+assert.equal(postNight.radial, 2, 'the actual street fixture and hero emit glows');
+assert.equal(postNight.innerFlames, 2, 'streetlamp illuminates inside its real glass');
+const wilderness = probe(true, true, []);
+assert.equal(wilderness.radial, 1, 'dark terrain is unchanged');
+assert.equal(wilderness.innerFlames, 0, 'no invented wilderness lamp');
+assert.doesNotThrow(() => probe(true, false, sources),
+  'full atmospheric mode also supports mounted fixtures');
+const Renderer = require('../src/prototype/renderer.js');
+assert.equal(Renderer.nightLightKind('vale-cottage'), null, 'no all-night rooftop cottage window');
+assert.equal(Renderer.nightLightKind('vale-workshop'), null, 'closed workshop windows stay dark');
+assert.equal(Renderer.nightLightKind('roadside-lantern'), 'lantern');
 for (const structure of ['cookfire', 'warm-brazier', 'ember-pit', 'forge', 'field-kitchen'])
-  assert(
-    ['fire', 'work-fire'].includes(
-      require('../src/prototype/renderer.js').nightLightKind(structure),
-    ),
-    'working ' + structure + ' produces light',
-  );
+  assert(['fire', 'work-fire'].includes(Renderer.nightLightKind(structure)),
+    'authored working ' + structure + ' still illuminates');
+const gpuLights = Core.lampGlowCommands(roadPost, 0, { darkness: 1, hero: null });
+assert.equal(gpuLights.length, 1, 'GPU renders one real post glow, not another lamp');
+assert.equal(gpuLights[0].y, roadPost[0].y, 'Pixi glow aligns with glass center');
+assert.deepEqual(
+  Visuals.lightingFixtures({ structure: 'vale-workshop', id: 'w' }, { x: 150, y: 120 }),
+  Visuals.lightingFixtures({ structure: 'vale-workshop', id: 'w' }, { x: 150, y: 120 }),
+  'fixture placement is deterministic and save-pure',
+);
 const game = new Campaign();
 const before = JSON.stringify(game.snapshot());
 game.s.clock = 480;
-assert(game.night(), 'natural world clock turns lights on at night');
+assert(game.night(), 'world clock activates nighttime lighting');
 game.s.clock = 120;
-assert(!game.night(), 'same world clock turns them off during the day');
+assert(!game.night(), 'day turns lamps off');
 game.s.clock = JSON.parse(before).clock;
-assert.equal(
-  JSON.stringify(game.snapshot()),
-  before,
-  'lighting never writes a saved nighttime flag',
-);
-console.log(
-  'PASS night-specific inhabited windows, cozy lanterns, working fires, wilderness contrast and state purity',
-);
+assert.equal(JSON.stringify(game.snapshot()), before, 'render sources never alter campaign saves');
+console.log('PASS hierarchy and mounted cottage/workshop/refuge/street/service/wagon lighting, daylight, GPU parity and save purity');
 
 // Carried sources follow the real renderer's facing and bobbed foot anchor.
-const { createCanvas } = require('@napi-rs/canvas'),
-  Renderer = require('../src/prototype/renderer');
+const { createCanvas } = require('@napi-rs/canvas');
 for (const night of [false, true])
   for (const side of [-1, 1])
     for (const captain of [false, true]) {
@@ -190,7 +210,7 @@ assert.equal(
 );
 const glowing = probe(true, true, [carried]);
 assert.equal(glowing.radial, 3, 'night has hero visibility plus carried pool and bright glass');
-assert.equal(glowing.lanternFrames, 0, 'no second lantern fixture is invented');
+assert.equal(glowing.innerFlames, 0, 'carried Wraith art has no second fixture painted');
 console.log(
   'PASS carried Wraith glass/ground illumination: day/night, moving/facing/scaled hand, Optimization Mode, death exclusion and save-pure rendering',
 );
