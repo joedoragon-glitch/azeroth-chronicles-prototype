@@ -61,7 +61,7 @@
       }),
     };
   }
-  function ribbon(points, width) {
+  function ribbon(points, width, { roundedSource = false } = {}) {
     const left = [],
       right = [];
     for (let j = 0; j < points.length; j++) {
@@ -73,7 +73,23 @@
       left.push({ x: points[j].x + dx, y: points[j].y + dy });
       right.push({ x: points[j].x - dx, y: points[j].y - dy });
     }
-    const polygon = [...left, ...right.reverse()];
+    // An unconnected uphill stream source should end in a soft springhead,
+    // not a straight-edged blue trapezoid. Its exact polygon owns collision.
+    const cap = [];
+    if (roundedSource) {
+      const first = points[0], next = points[1],
+        d = distance(first, next) || 1,
+        tx = (next.x - first.x) / d, ty = (next.y - first.y) / d,
+        nx = -ty, ny = tx;
+      for (let j = 1; j < 6; j++) {
+        const angle = (j * Math.PI) / 6;
+        cap.push({
+          x: first.x - nx * Math.cos(angle) * width - tx * Math.sin(angle) * width,
+          y: first.y - ny * Math.cos(angle) * width - ty * Math.sin(angle) * width,
+        });
+      }
+    }
+    const polygon = [...left, ...right.reverse(), ...cap];
     const xs = polygon.map((p) => p.x),
       ys = polygon.map((p) => p.y),
       x = (Math.min(...xs) + Math.max(...xs)) / 2,
@@ -190,11 +206,16 @@
         [1040, 1390],
         [1110, 1415],
       ].map(q),
+      // The tailrace must end just *inside* the same actual river bank used
+      // by the collision solver. The old center-river endpoint left a pointed
+      // blue tongue and a soil-rim wedge across the water.
+      riverMouthY = 1550,
+      riverMouthX = riverBanks(riverMouthY * scale, size)[0] / scale + 24,
       tailrace = [
         [1110, 1415],
         [1180, 1510],
         [1320, 1570],
-        [1500, 1550],
+        [riverMouthX, riverMouthY],
       ].map(q),
       stream = [
         [900, 880],
@@ -202,7 +223,8 @@
         [930, 1090],
         [950, 1160],
       ].map(q);
-    const waters = [pond, ribbon(stream, 16), ribbon(headrace, 12), ribbon(tailrace, 20)];
+    const waters = [pond, ribbon(stream, 16, { roundedSource: true }),
+      ribbon(headrace, 12), ribbon(tailrace, 20)];
     R.terrain[0] = [
       { kind: 'rain-pools', wetland: true, pools: waters },
       { kind: 'water', x: 2720 * scale, y: 1320 * scale, r: 140 },
