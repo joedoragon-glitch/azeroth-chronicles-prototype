@@ -27,6 +27,25 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
   assert.equal(z.greenwoodRedesignScene, 5);
   assert.equal(z.greenwoodRefinementVersion, 1, 'overlay applied once');
+  // #806: a distinct, dry wolf-scaled home—not another lake or a new Treasury.
+  assert.equal(z.greenwoodHomesteadVersion, 1);
+  assert(z.greenwoodHomesteadAudit?.constructed, 'lodge and shelter have a safe legal plot');
+  assert(!C.rules.terrain[0].some((t) => t.kind === 'water' &&
+    Math.hypot(t.x - 2720, t.y - 1320) < 20), 'eastern water collision removed');
+  assert(!g.blocked(2720, 1320, 'vale', 8, true), 'former water is dry traversable terrain');
+  const home = z.props.filter((p) => p.id.startsWith('greenwood-thorn-homestead-'));
+  assert(home.some((p) => p.greenwoodFacility === 'thorn-lodge' &&
+    p.roadBlocker && p.r > 40), 'wolf-scale lodge is physical');
+  assert(home.some((p) => p.greenwoodFacility === 'thorn-rest-bay' && p.roadBlocker),
+    'outdoor rest shelter is physical');
+  for (const p of home) {
+    assert(!g.blocked(p.x, p.y, 'vale', 0, true), 'homestead built on solid dry terrain');
+    assert(g.distanceToRoad(z, p) > 35, 'homestead does not overlap the cart road');
+  }
+  assert(z.props.some((p) => p.structure === 'pasture-sheep') ||
+    z.props.some((p) => p.structure === 'feed-trough'),
+    'existing farm livelihood remains separate from wolf dwelling');
+
   assert.equal(g.zoneSize(), 3200);
   assert.equal(z.enemies.filter((e) => e.type === 'mob' && !e.summon).length, 32,
     'no ordinary monster count changes');
@@ -58,6 +77,11 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const old = JSON.parse(serialized), oldZone = old.zones.vale;
   // Recreate a legitimate old scene-5 save that predates the overlay.
   delete oldZone.greenwoodRefinementVersion;
+  // Reconstruct the legitimate last-release snapshot before this dry homestead.
+  delete oldZone.greenwoodHomesteadVersion;
+  delete oldZone.greenwoodHomesteadAudit;
+  oldZone.props = oldZone.props.filter((p) => !p.id.startsWith('greenwood-thorn-homestead-'));
+
   delete oldZone.greenwoodRefinementAudit;
   oldZone.props = oldZone.props.filter((p) => !expected[p.id]);
   oldZone.props.push({ id: 'player-custom-greenwood-679', structure: 'barrel',
@@ -65,6 +89,12 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const oldInput = JSON.stringify(old), migrated = C.restore(old, rng(seed));
   assert.equal(JSON.stringify(old), oldInput);
   const newProps = migrated.zone().props;
+  assert(migrated.zone().greenwoodHomesteadAudit?.constructed,
+    'old scene-5 save receives the homestead without resetting the region');
+  assert.equal(migrated.zone().props.filter((p) =>
+    p.id === 'greenwood-thorn-homestead-lodge').length, 1,
+  'old save gets exactly one wolf lodge');
+
   for (const id of Object.keys(expected))
     assert.equal(newProps.filter((p) => p.id === id).length, 1,
       'old scene-5 save gains a single additive candidate: ' + id);
