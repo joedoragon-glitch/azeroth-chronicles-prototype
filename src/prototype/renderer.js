@@ -709,9 +709,16 @@
       ctx.fillText(name, slot.x, slot.y, slot.width);
       ctx.restore();
     }
+    // Thornfang's existing painted granary is a decorative facility prop,
+    // not an NPC. Give only that building the same proximity nameplate policy
+    // as real named locations, without changing save data or spawning a marker.
+    const thornHomesteadName = "Thornfang's Homestead";
+    function thornHomestead(e) {
+      return e.renderKind === 'prop' && e.greenwoodFacility === 'thorn-lodge';
+    }
     function worldLabelVisible(e) {
       if (e.renderKind === 'enemy') return e.type === 'boss' || !!e.aggro;
-      if (e.renderKind === 'npc' || e.renderKind === 'building')
+      if (e.renderKind === 'npc' || e.renderKind === 'building' || thornHomestead(e))
         return Math.hypot(e.x - game.hero.x, e.y - game.hero.y) <= 220;
       return true;
     }
@@ -2931,9 +2938,11 @@
                       ? 'Vera · repairing defenses'
                       : 'Vera · captive field engineer'
                     : e.name || ''
-              : kind === 'ally'
-                ? companionWorldLabel(e)
-                : kind === 'building'
+              : kind === 'prop' && thornHomestead(e)
+                ? thornHomesteadName
+                : kind === 'ally'
+                  ? companionWorldLabel(e)
+                  : kind === 'building'
                   ? e.name || 'Barracks'
                   : kind === 'node'
                     ? 'Dark Lord Tribute'
@@ -2942,12 +2951,18 @@
         }
       };
       add(game.visibleNPCs(), 'npc');
+      // Reuse the shared yellow NPC nameplate painter for the one authored
+      // homestead prop. No notice queue, discovery event or extra entity.
+      const homestead = zone.props.find(
+        (p) => p.greenwoodFacility === 'thorn-lodge',
+      );
+      if (homestead) add([homestead], 'prop');
       add(game.visibleResourceNodes(), 'node');
       add(zone.buildings, 'building');
       add(zone.enemies, 'enemy');
       add(game.activeLivingParty(), 'ally');
       const priority = (r) =>
-        r.kind === 'npc'
+        r.kind === 'npc' || (r.kind === 'prop' && thornHomestead(r.e))
           ? 0
           : r.kind === 'enemy' && (r.e.type === 'boss' || r.e.captain || r.e.roomCaptain)
             ? 1
@@ -3001,7 +3016,7 @@
         if (slot) {
           ctx.shadowColor = '#07140e';
           ctx.shadowBlur = kind === 'enemy' ? 3 : 4;
-          if (kind === 'npc') {
+          if (kind === 'npc' || (kind === 'prop' && thornHomestead(e))) {
             ctx.font = 'bold 11px system-ui';
             ctx.fillStyle = '#ffe4a2';
             ctx.fillText(name, slot.x, slot.y, slot.width);
@@ -3306,6 +3321,7 @@
       const labelSlots = new Map();
       const claimedLabels = [];
       const labelText = (e) => {
+        if (thornHomestead(e)) return thornHomesteadName;
         if (e.renderKind === 'npc')
           return e.presentation === 'mobile-captive'
             ? 'Mira · captive'
@@ -3319,7 +3335,7 @@
         return '';
       };
       const labelPriority = (e) =>
-        e.renderKind === 'npc'
+        e.renderKind === 'npc' || thornHomestead(e)
           ? 0
           : e.renderKind === 'enemy' && e.type === 'boss'
             ? 1
@@ -3336,7 +3352,8 @@
                       : 5;
       for (const e of entities.slice().sort((a, b) => labelPriority(a) - labelPriority(b))) {
         if (
-          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) ||
+          !['npc', 'enemy', 'ally', 'building', 'node'].includes(e.renderKind) &&
+            !thornHomestead(e) ||
           e.presentation === 'scout-tracks' ||
           !worldLabelVisible(e)
         )
@@ -3441,11 +3458,13 @@
             drawCombatName(ctx, e, p, labelSlots.get(e));
           }
         }
-        if (e.renderKind === 'npc') {
+        if (e.renderKind === 'npc' || thornHomestead(e)) {
           const label = !e.thornFootprint && worldLabelVisible(e),
             name =
-              e.kind === 'mini'
-                ? e.name +
+              thornHomestead(e)
+                ? thornHomesteadName
+                : e.kind === 'mini'
+                  ? e.name +
                   (game.peace
                     ? ' · Peaceful'
                     : game.miniCleared(e.mini)
