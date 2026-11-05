@@ -313,12 +313,15 @@
         graphic
           .ellipse(0, 3 * zoom, 23 * zoom, 10 * zoom)
           .stroke({ color: 0xebc479, width: 2 * zoom });
-      graphic
-        .ellipse(4 * zoom, 13 * zoom, rx * 1.18 * zoom, ry * 1.35 * zoom)
-        .fill({ color: 0x05100c, alpha: 0x38 / 255 });
-      graphic
-        .ellipse(1 * zoom, 11 * zoom, rx * zoom, ry * zoom)
-        .fill({ color: 0x020906, alpha: 0x66 / 255 });
+      const strength = Math.max(0, Math.min(1, ground.shadowStrength ?? 1));
+      if (strength > 0) {
+        graphic
+          .ellipse(4 * zoom, 13 * zoom, rx * 1.18 * zoom, ry * 1.35 * zoom)
+          .fill({ color: 0x05100c, alpha: (0x38 / 255) * strength });
+        graphic
+          .ellipse(1 * zoom, 11 * zoom, rx * zoom, ry * zoom)
+          .fill({ color: 0x020906, alpha: (0x66 / 255) * strength });
+      }
     }
     // #708: raster-tree regrowth is retained native geometry, not a new texture.
     // Match the unchanged Canvas frontierTreeShoots positions, leaf palette and
@@ -674,6 +677,7 @@
           const signature = JSON.stringify({
             rx: item.ground.rx,
             ry: item.ground.ry,
+            shadowStrength: item.ground.shadowStrength,
             scale: item.ground.scale,
             marker: item.ground.marker,
             ledgerMarked: item.ground.ledgerMarked,
