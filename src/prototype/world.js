@@ -5352,8 +5352,9 @@
           const existing = mini.trapPosts;
           const distanceRoad = (p) =>
             this.distanceToRoad(z, p);
-          for (const [j, seed] of [[1, 1], [2, -1]]) {
-            if (existing.some((p) => p.index === 500 + mi * 10 + j)) continue;
+          for (const [j, seed] of [[1, 1]]) {
+            if (existing.length >= 2) break;
+            if (existing.some((p) => p.index === 110 + mi * 10 + j)) continue;
             let chosen = null;
             for (const radius of [85, 115, 145]) {
               for (let k = 0; k < 12; k++) {
@@ -5375,7 +5376,7 @@
             if (chosen) existing.push({
               ...chosen,
               kind: kinds[Math.min(j, kinds.length - 1)],
-              index: 500 + mi * 10 + j,
+              index: 110 + mi * 10 + j,
             });
           }
         }
