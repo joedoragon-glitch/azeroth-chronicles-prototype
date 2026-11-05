@@ -41,8 +41,17 @@ for (const seed of [0x47564101,0x47564102,0x47564103,0x47564104]) {
   assert.equal(z.enemies.filter((e) => e.type === 'mob' && !e.summon).length, 32);
   assert.equal(z.nodes.reduce((n,p)=>n+p.amount,0),640);
   assert(z.props.length <= 400, 'retain regional artwork budget');
+  for (const id of ['greenwood-working-mill','greenwood-mill-0','greenwood-mill-1','greenwood-mill-2']) {
+    const p = z.props.find((e)=>e.id===id);
+    assert(p, 'retained unique mill work object '+id);
+    assert(g.distanceToRoad(z,p)+0.01>=g.roadSetback(p),
+      'mill/working objects keep visual space beside road: '+id);
+  }
 
   const center = crossMid(bridge);
+  assert.equal(C.rules.rainPoolBlocked(C.rules.terrain[0][0].blockingPools,
+    center.x,center.y,0),true,
+    'bridge is over actual deep tailrace water, not a dry decorative crossing');
   assert.equal(g.blocked(center.x,center.y,'vale',12,true),false,
     'timber deck genuinely passes the deep tailrace');
   assert.equal(g.blocked(cfg.tailrace[1].x,cfg.tailrace[1].y,'vale',0,true),true,
