@@ -33,7 +33,7 @@ function scene(family) {
           !g.strategistReversalCovers(warning, buddy)) continue;
       z.enemies = [boss];
       Object.assign(g.hero, onWarning, {
-        hp: 2000, maxHp: 2000, immune: 0, keeperHeld: null,
+        class: 'strategist', hp: 2000, maxHp: 2000, immune: 0, keeperHeld: null,
       });
       const soldier = g.s.party.find((p) => p.type === 'soldier');
       assert(soldier, 'starter party remains present');
