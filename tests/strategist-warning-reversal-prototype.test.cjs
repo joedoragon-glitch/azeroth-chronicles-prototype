@@ -222,7 +222,7 @@ function cinderScene(targetAlly = false) {
   assert.equal(g._strategistReversalFailure, 'duplicate');
   warning.timer = 0;
   g.resolveAttack(boss); // The native updateEnemies telegraph release destination.
-  assert.equal(boss.motion, null, 'one reversal prevents Cindermaw motion creation');
+  assert(!boss.motion, 'one reversal prevents Cindermaw motion creation');
   assert.equal(g.hero.hp, hp, 'no Distraint damage');
   assert.equal(g.hero.immune, 20, 'temporary immunity was not stripped');
   assert.equal(g.hero.tonic, true, 'Preparation Tonic was not stripped');
