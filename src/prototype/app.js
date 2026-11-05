@@ -4377,6 +4377,10 @@
     const reminder = loaded ? backupReminder(game.s.mode, game.hero.level) : '';
     const es = language === 'es';
     const detail = (en, spanish) => (es ? spanish : en);
+    const wide = (entry) => {
+      entry.uiWide = true;
+      return entry;
+    };
     openMenu(
       'Saved Games & Backups',
       '',
@@ -4404,33 +4408,26 @@
             !candidate,
           );
         }),
-        menuControls.section(es ? 'Copias y recuperación' : 'Backups & recovery'),
-        action(
-          'Try recovery',
-          () => {
-            if (loaded) profile.activeMode = game.s.mode;
-            savedRunRecoveryMenu();
-          },
-          detail(
-            'Restore a local checkpoint if a campaign cannot open.',
-            'Recupera un punto local si una partida no se puede abrir.',
-          ),
-        ),
+        // A damaged primary save needs its recovery entry near its slot,
+        // not hidden below unrelated downloads and storage controls.
         ...modes
           .filter((mode) => persistence.loadFailed(mode))
           .map((mode) =>
-            action(
-              (es ? 'Recuperar ' : 'Recover ') + mode,
-              () => {
-                profile.activeMode = mode;
-                savedRunRecoveryMenu();
-              },
-              detail(
-                'Review recovery options before replacing anything.',
-                'Revisa las opciones antes de reemplazar una partida.',
+            wide(
+              action(
+                (es ? 'Recuperar ' : 'Recover ') + mode,
+                () => {
+                  profile.activeMode = mode;
+                  savedRunRecoveryMenu();
+                },
+                detail(
+                  'Review recovery options before replacing anything.',
+                  'Revisa las opciones antes de reemplazar una partida.',
+                ),
               ),
             ),
           ),
+        menuControls.section(es ? 'Copias de seguridad' : 'Backups'),
         ...modes
           .filter((mode) => persistence.exists(mode))
           .map((mode) => ({
@@ -4463,14 +4460,30 @@
             'Elige una copia JSON. Podrás revisarla antes de reemplazar una partida.',
           ),
         },
+        menuControls.section(es ? 'Recuperación y almacenamiento' : 'Recovery & storage'),
+        wide(
+          action(
+            'Try recovery',
+            () => {
+              if (loaded) profile.activeMode = game.s.mode;
+              savedRunRecoveryMenu();
+            },
+            detail(
+              'Restore a local checkpoint if a campaign cannot open.',
+              'Recupera un punto local si una partida no se puede abrir.',
+            ),
+          ),
+        ),
         ...(typeof storageApi?.persist === 'function' && storageProtectionState !== 'granted'
           ? [
-              action(
-                'Request persistent storage',
-                () => requestStorageProtection(titleSaveMenu),
-                detail(
-                  'Ask the browser to protect local saves. External backups are still needed.',
-                  'Pide al navegador que proteja las partidas. Conserva también copias externas.',
+              wide(
+                action(
+                  'Request persistent storage',
+                  () => requestStorageProtection(titleSaveMenu),
+                  detail(
+                    'Ask the browser to protect local saves. External backups are still needed.',
+                    'Pide al navegador que proteja las partidas. Conserva también copias externas.',
+                  ),
                 ),
               ),
             ]
