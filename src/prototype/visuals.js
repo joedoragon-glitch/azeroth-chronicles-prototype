@@ -20297,10 +20297,21 @@
               ctx.clip();
               poly(rim, '#68745b');
               ctx.restore();
-            } else poly(rim, '#68745b');
+            } else poly(rim, pool.shallow ? '#71806a' : '#68745b');
           }
-          for (const pool of p.pools) poly(pool.points, '#285d70');
-          for (const pool of p.pools) poly(pool.points, '#397783');
+          for (const pool of p.pools)
+            poly(pool.points, pool.shallow ? '#3c6b6d' : '#285d70');
+          for (const pool of p.pools)
+            poly(pool.points, pool.shallow ? '#4c7b79' : '#397783');
+          // A few subdued strokes distinguish the shallow woodland feeder
+          // from the deep, quiet millpond without permanent animation.
+          const feeder = R.greenwoodLayout.upperCreek || [];
+          for (let j = 1; j < feeder.length - 1; j += 2) {
+            const q = feeder[j];
+            if (visible(q))
+              line({ x:q.x-7, y:q.y+2 }, { x:q.x+6, y:q.y-1 },
+                '#b1c2ac70', 0.9);
+          }
           // Quiet pond reflections; directed channels stay unobstructed.
           const pond = p.pools[0];
           for (let j = -1; j <= 1; j++) {
@@ -20590,6 +20601,92 @@
           ctx.fillStyle = stone ? '#666558' : '#6a5139';
           ctx.fillRect(p.x - 2, p.y - 1, 3, 2);
         }
+    }
+    if (region === 0 && R.greenwoodLayout?.version === 2) {
+      // Mill service geometry is owned by the current region layout. The
+      // culvert is a dirt road over a creek, not another stone bridge.
+      // The timber crossing is much smaller than either named river bridge.
+      for (const deck of [R.greenwoodLayout.creekCulvert, R.greenwoodLayout.millBridge]) {
+        if (!deck) continue;
+        const a = deck.from, b = deck.to,
+          length = Math.hypot(b.x - a.x, b.y - a.y) || 1,
+          tx = (b.x - a.x) / length, ty = (b.y - a.y) / length,
+          nx = -ty, ny = tx,
+          half = deck.width / 2,
+          culvert = deck.kind === 'stone-culvert';
+        if (viewport && outsideScreen([a,b].map(screen), viewport, 130)) continue;
+        const corners = (w, ext = 0) => [
+          { x: a.x + nx*w - tx*ext, y: a.y + ny*w - ty*ext },
+          { x: b.x + nx*w + tx*ext, y: b.y + ny*w + ty*ext },
+          { x: b.x - nx*w + tx*ext, y: b.y - ny*w + ty*ext },
+          { x: a.x - nx*w - tx*ext, y: a.y - ny*w - ty*ext },
+        ];
+        if (culvert) {
+          // A compacted roadbed continues across the shallow feeder. Only
+          // the two *banks* show masonry cheeks and dark water portals.
+          // Draw nothing that changes the authoritative walkable shallows.
+          // Match Greenwood's existing compacted-earth farm road. The
+          // culvert reads as uninterrupted ground, not a timber bridge.
+          polygon(corners(half + 5, 3), '#766e55');
+          polygon(corners(half, 2), '#ac8d66');
+          for (const track of [-0.42, 0.42]) {
+            line(
+              { x: a.x + nx*half*track, y: a.y + ny*half*track },
+              { x: b.x + nx*half*track, y: b.y + ny*half*track },
+              '#7d674d', 1.25,
+            );
+          }
+          const mid = { x: (a.x+b.x)/2, y: (a.y+b.y)/2 };
+          for (const side of [-1, 1]) {
+            const rim = {
+              x: mid.x + nx*(half+3)*side,
+              y: mid.y + ny*(half+3)*side,
+            };
+            const outer = {
+              x: rim.x + nx*9*side,
+              y: rim.y + ny*9*side,
+            };
+            // The mouth is a small water-darkened gap between stone cheeks,
+            // not a solid black stripe through the middle of the road.
+            const wing = (p, n) => ({ x:p.x + tx*n, y:p.y + ty*n });
+            polygon([wing(rim,-12),wing(rim,12),wing(outer,12),wing(outer,-12)],
+              '#354c4d');
+            line(wing(rim,-12), wing(outer,-12), '#b5a68a', 2.2);
+            line(wing(rim,12), wing(outer,12), '#b5a68a', 2.2);
+            line(wing(outer,-12), wing(outer,12), '#857c68', 1.5);
+          }
+          continue;
+        }
+        // A low timber deck with visible edges, plank rhythm and dry-bank
+        // abutments. The deep millrace remains impassable away from this deck.
+        polygon(corners(half + 6, 2), '#544331');
+        polygon(corners(half), '#a8895e');
+        for (let t = 10; t < length - 7; t += 17) {
+          const x = a.x + tx*t, y = a.y + ty*t;
+          line(
+            { x:x+nx*(half-5), y:y+ny*(half-5) },
+            { x:x-nx*(half-5), y:y-ny*(half-5) },
+            '#71573e', 2,
+          );
+        }
+        for (const side of [-1,1]) {
+          const edge = (p) => ({
+            x: p.x + nx*(half+2)*side, y: p.y + ny*(half+2)*side,
+          });
+          line(edge(a), edge(b), '#c7a97e', 2.7);
+          for (const t of [0.07,0.93]) {
+            const p = edge({ x:a.x+tx*length*t, y:a.y+ty*length*t });
+            const q = screen(p);
+            ctx.strokeStyle='#65513b';ctx.lineWidth=3;
+            ctx.beginPath();ctx.moveTo(q.x,q.y+2);ctx.lineTo(q.x,q.y-10);ctx.stroke();
+          }
+        }
+        for (const bank of [a,b]) {
+          line({ x:bank.x+nx*(half+5), y:bank.y+ny*(half+5) },
+            { x:bank.x-nx*(half+5), y:bank.y-ny*(half+5) },
+            '#847a64', 2.4);
+        }
+      }
     }
     ctx.restore();
   }
@@ -21255,10 +21352,16 @@
       ctx.translate(p.x, p.y);
       ctx.scale(scale, scale);
       // Restrained internal candle: curved silhouette, never a solid panel.
-      ctx.fillStyle = street ? 'rgba(237,181,98,.18)' : 'rgba(238,172,87,.15)';
+      // Preserve the approved translucent glass color, but encode opacity
+      // via globalAlpha. Pixi's canonical vector accessory adapter accepts
+      // hex fills plus alpha, not CSS rgba(...) paint strings.
+      const baseAlpha = ctx.globalAlpha;
+      ctx.globalAlpha = baseAlpha * (street ? 0.18 : 0.15);
+      ctx.fillStyle = street ? '#edb562' : '#eeac57';
       ctx.beginPath();
       ctx.ellipse(0, 0, street ? 3.5 : 2.8, street ? 4.1 : 3.6, 0, 0, Math.PI * 2);
       ctx.fill();
+      ctx.globalAlpha = baseAlpha;
       ctx.fillStyle = refuge ? '#eac282' : '#e1a864';
       ctx.beginPath();
       ctx.moveTo(0, -3.3);

@@ -254,6 +254,7 @@ Every tracked Markdown document appears **once** below, grouped by subject, with
 - **[Greenwood Owner Art Direction](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md)** — **Approved design reference.** The 50 authorial decisions, including Scornfang ownership, with protected identities and engineering boundaries.
 - [Greenwood Piedmont Design Brief](GREENWOOD_VALE_PIEDMONT_REGIONAL_IDENTITY_DESIGN_BRIEF_20261028.md) — *Dated record.* Original environmental inspiration, subordinate to the approved decisions and selected measured implementation.
 - [Greenwood Work Readiness Audit](GREENWOOD_WORK_READINESS_QUALITY_AUDIT_20261028.md) — *Dated record.* Original 17 findings and route/scene/save acceptance rubric, with current status routed to the feature handoff.
+- **[Greenwood watermill #814 — independent restart and #828/main reconciliation](GREENWOOD_WATERMILL_PR814_RESTART_HANDOFF_20261105.md)** — **Current branch-specific engineering handoff (5 Nov 2026).** Exact main ancestry, owner's creek/door/bridge decisions, v4 route migration, CI and artwork blocker, and integration boundaries with parallel environmental PR #828. Read on #814's branch; draft, not shipped.
 
 
 ### Regions, settlements, transportation and terrain

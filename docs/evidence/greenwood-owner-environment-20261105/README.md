@@ -1,5 +1,9 @@
 # Greenwood owner environment candidate — 5 November 2026
 
+**Current owner release direction:** Appearance will be reviewed by Joel in the deployed game. Automated visual approval is not a release gate. Rendering slowdown remains documented for a separate owner-led chat and is outside this environment workflow. Merge/publication is authorized after bounded functional/build verification.
+
+**Live-main reconciliation:** Watermill #814 merged as `b6193a9b` during release preparation. This candidate now incorporates that actual main tree, including the corrected live doorway, shallow creek/culvert, millrace bridge, 19 route ordering, 100/80 strategic crossings and its canonical-art registration reconciliation. Combined environment release version is dev.263; earlier dev.262 images/checkpoints below remain correctly labeled historical evidence. No performance tuning or further automated visual acceptance work is included.
+
 Implementation: dev.262, PR #828. Native source checkpoint `85ffe148`, main baseline `e25ad8e8`. This is an engineer-reviewed procedural candidate, not a release or owner appearance approval. Browser/Pixi review and latest-head performance remain open.
 
 ## Feedback coverage

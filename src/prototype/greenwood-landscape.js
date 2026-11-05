@@ -230,12 +230,15 @@
     b.bounds = [1500 * scale, 1800 * scale, 0, size];
     // The actual v2 authored river gaps ARE the walkable bridge widths.
     // Deck painting and pathfinding share this table: no invisible water floor.
-    // Retain the compact south footbridge. Native pathfinding cells are
+    // Give the southern footbridge enough shoulder clearance for real
+    // patroller movement (the former 56-unit gap clipped radius-15 actors
+    // when their physically routed approach drifted ~17 units off center).
+    // Native pathfinding cells are
     // centered at 25 + 50*n, NOT at 50*n; the legal crossing row is at
     // y=2275 in the 3200-unit Vale. Tests verify both actual grid and routes.
     b.gaps = [
       [a.north.y - 50, a.north.y + 50],
-      [a.south.y - 28, a.south.y + 28],
+      [a.south.y - 40, a.south.y + 40],
     ];
     const pond = ellipse(a.pond.x, a.pond.y, 140, 120),
       headrace = [
@@ -259,15 +262,40 @@
         [875, 980],
         [930, 1090],
         [950, 1160],
+      ].map(q),
+      // An upstream, walkable shallow tributary connects to the real millpond.
+      upperCreek = [
+        [1220, 0], [1240, 180], [1280, 350], [1265, 515],
+        [1190, 680], [1090, 780], [940, 875], [900, 880],
+      ].map(q),
+      shallowCreek = { ...ribbon(upperCreek, 17, { subdivisions: 2 }), shallow: true },
+      waters = [
+        pond, ribbon(stream, 16, { subdivisions: 2 }),
+        ribbon(headrace, 12), ribbon(tailrace, 20, { subdivisions: 3 }), shallowCreek,
+      ],
+      millBridge = {
+        from: q([1210, 1575]), to: q([1250, 1495]),
+        width: 62 * scale, kind: 'timber',
+      },
+      creekCulvert = {
+        from: q([1070, 725]), to: q([1145, 805]),
+        width: 76 * scale, kind: 'stone-culvert',
+      },
+      // One genuine service road branches from the existing west-bank farm road,
+      // ends on dry ground; its NARROW footpath crosses the true
+      // millrace timber bridge before reaching the loading doorway.
+      millServiceLane = [
+        [650, 1550], [785, 1595], [990, 1655], [1200, 1660],
+      ].map(q),
+      // A 24-unit pedestrian trail, NOT a cart road, runs across the
+      // 62-unit-wide timber deck and then bends to the actual mill door.
+      millDoorFootpath = [
+        [1200, 1660], [1210, 1575], [1250, 1495],
+        [1400, 1490], [1290, 1490], [1210, 1485],
       ].map(q);
-    const waters = [
-      pond,
-      ribbon(stream, 16, { roundedSource: true, subdivisions: 2 }),
-      ribbon(headrace, 12),
-      ribbon(tailrace, 20, { subdivisions: 3 }),
-    ];
     R.terrain[0] = [
-      { kind: 'rain-pools', wetland: true, pools: waters },
+      { kind: 'rain-pools', wetland: true, pools: waters,
+        blockingPools: waters.filter((pool) => !pool.shallow) },
       // #806: isolated eastern blue disc retired for the dry wolf-scout homestead.
     ];
     R.forests[0] = []; // The authored stands below own nature, not circular forest stamps.
@@ -333,6 +361,12 @@
       waters,
       headrace,
       tailrace,
+      upperCreek,
+      millBridge,
+      creekCulvert,
+      millServiceLane,
+      millDoorFootpath,
+      millEntrance: q([1210, 1485]),
       map,
       groups: [],
       pond: { ...a.pond, r: 140 },
@@ -345,6 +379,63 @@
   }
   function install(C, { D, R }) {
     class Landscape {
+      greenwoodWatermillScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion) return;
+        // A previously saved #824 bridge can still carry its old 56-unit
+        // visual deck even though the source river gap now permits 80.
+        // Sync ONLY that existing southern crossing on the v4 fast path.
+        if (z.bridgeApproaches?.[1] &&
+            z.bridgeApproaches[1].width !== 80)
+          z.bridgeApproaches[1].width = 80;
+        if (z.greenwoodWatermillVersion === 2) return;
+        const lane = cfg.millServiceLane, footpath = cfg.millDoorFootpath,
+          previousLane = [[1200,1660],[1290,1600],[1350,1530],[1400,1490]]
+            .map(([x,y])=>({x:x*cfg.scale,y:y*cfg.scale}));
+        const same = (path, expected) => Array.isArray(path) &&
+          path.length === expected.length &&
+          path.every((p,j) => distance(p,expected[j]) < 0.01);
+        // Preview v1 briefly contained a disconnected four-point farm lane.
+        // Replace ONLY that exact known authored shape, not a player route,
+        // command, established road or protected saved object.
+        if (z.greenwoodWatermillVersion === 1) {
+          z.roads = z.roads.filter((path)=>!same(path,previousLane));
+          if (Array.isArray(z.greenwoodRoutes))
+            z.greenwoodRoutes = z.greenwoodRoutes.filter((r)=>
+              !(r.kind==='farm' && same(r.points,previousLane)));
+          if (Array.isArray(z.greenwoodRoadKinds))
+            z.greenwoodRoadKinds.length = z.roads.length;
+        }
+        if (!z.roads.some((path)=>same(path,lane)))
+          z.roads.push(lane.map((p)=>({...p})));
+        if (!z.footpaths.some((path)=>same(path,footpath)))
+          z.footpaths.push(footpath.map((p)=>({...p})));
+        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r)=>same(r.points,lane)))
+          z.greenwoodRoutes.push({kind:'farm',points:lane.map((p)=>({...p}))});
+        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r)=>same(r.points,footpath)))
+          z.greenwoodRoutes.push({kind:'path',points:footpath.map((p)=>({...p}))});
+        const targets = [
+          ['greenwood-mill-0',1450,1410],
+          ['greenwood-mill-1',1410,1380],
+          ['greenwood-mill-2',1390,1410],
+        ];
+        // Move only replaceable legacy work scenery, never owner objects,
+        // actors, residents, saved orders, tribute or physical infrastructure.
+        for (const [id,x,y] of targets) {
+          const p=z.props.find((item)=>item.id===id);
+          if (!p || p.playerOwned || p.owned || p.custom) continue;
+          const point={x:x*cfg.scale,y:y*cfg.scale};
+          if (this.blocked(point.x,point.y,'vale',p.r||12,true) ||
+              z.buildings.some((b)=>distance(b,point)<130)) continue;
+          Object.assign(p,point);
+        }
+        // #824's original four typed roads retain their order/identity.
+        if (Array.isArray(z.greenwoodRoadKinds))
+          while(z.greenwoodRoadKinds.length<z.roads.length)
+            z.greenwoodRoadKinds.push('farm');
+        z.greenwoodWatermillVersion=2;
+      }
       // #806: reconstruct the old eastern water circle as a coherent, dry
       // wolf-scout homestead without re-running destructive regional generation.
       greenwoodHomesteadScene(z) {
@@ -713,9 +804,19 @@
         // Road/bridge topology and physical deck spans are independently
         // owned by the dedicated Greenwood infrastructure PR #824.
         // This scenery pass observes routes but never edits their geometry.
-        // Earlier scene-5 v4 saves have 16 corridors; the merged freight-depot
-        // work adds one deliberately off-road apron without replacing any of them.
-        if (![16, 17].includes(z.greenwoodRoutes?.length)) return;
+        // Preserve all 17 #824 canonical corridor indices. The mill adds
+        // exactly one farm service spur and one narrow dry-side door footpath.
+        const routes = z.greenwoodRoutes || [],
+          lane = cfg.millServiceLane || [],
+          door = cfg.millDoorFootpath || [],
+          matches = (candidate, expected) =>
+            candidate?.points?.length === expected.length &&
+            candidate.points.every((point,j)=>distance(point,expected[j])<0.01),
+          includesMillPair = routes.length === 19 &&
+            z.greenwoodWatermillVersion === 2 &&
+            routes[17]?.kind === 'farm' && matches(routes[17],lane) &&
+            routes[18]?.kind === 'path' && matches(routes[18],door);
+        if (![16,17].includes(routes.length) && !includesMillPair) return;
         const change = (id, expected, target, detail = {}) => {
           const p = z.props.find((item) => item.id === id);
           if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
@@ -1050,7 +1151,7 @@
         // describe one physical width. Existing art IDs and discoveries stay.
         if (Array.isArray(z.bridgeApproaches))
           z.bridgeApproaches.forEach((bridge, j) => {
-            bridge.width = j === 0 ? 100 : 56;
+            bridge.width = j === 0 ? 100 : 80;
           });
 
         // A save can place a traveling actor near the *old* broad bridge
@@ -1694,6 +1795,7 @@
           // homestead and botanical overlays against their final road footprint.
           // The method's own version guard keeps restore idempotent.
           this.greenwoodRoadBridgeFinish(z);
+          this.greenwoodWatermillScene(z);
           this.greenwoodRefinementScene(z);
           this.greenwoodCompositionFinish(z);
         } finally {
@@ -2611,32 +2713,25 @@
         line(a, b, '#664e34', 4);
       line([-62, -96], [-1, -75], '#e0c797', 1.5);
       line([2, -76], [65, -97], '#b5986a', 1.2);
-      // Dry-side loading door is recessed into the left wall plane.
-      poly(
-        [
-          [-42, -66],
-          [-19, -58],
-          [-19, -16],
-          [-42, -24],
-        ],
-        '#4c4233',
-      );
-      poly(
-        [
-          [-39, -63],
-          [-22, -57],
-          [-22, -19],
-          [-39, -25],
-        ],
-        '#786143',
-      );
-      line([-31, -60], [-31, -22], '#3e382f', 1.1);
-      line([-41, -65], [-18, -57], '#d2b386', 2);
-      line([-42, -67], [-42, -23], '#5a4935', 2);
-      line([-19, -57], [-19, -15], '#5a4935', 2);
+      // The live facility painter owns the entrance (Visuals.draw dispatches
+      // here before the legacy decoration). Cut it down through the plinth
+      // to the dry loading apron, not a closed panel above the foundation.
+      poly([[-51, -47], [-18, -36], [-18, 16], [-51, 5]], '#66523b');
+      poly([[-47, -43], [-22, -35], [-22, 12], [-47, 4]], '#26362e');
+      // A narrow inner jamb gives the opening depth; the timber leaf swings
+      // outward from the right hinge and leaves the dark opening visible.
+      poly([[-27, -36], [-22, -35], [-22, 12], [-27, 10]], '#413b2e');
+      poly([[-21, -35], [-7, -28], [-7, 21], [-21, 12]], '#98764e');
+      for (const x of [-17, -12])
+        line([x, -33 + (x + 21) * .5], [x, 12 + (x + 21) * .64], '#705638', 1);
+      for (const y of [-24, 6])
+        line([-20, y], [-8, y + 7], '#514936', 2);
+      line([-50, -46], [-18, -35], '#c4a77c', 3);
+      line([-49, -45], [-49, 5], '#73583b', 3);
+      line([-20, -35], [-20, 15], '#71563a', 2.5);
       ctx.fillStyle = '#d4bc86';
       ctx.beginPath();
-      ctx.arc(-27, -35, 1.8, 0, Math.PI * 2);
+      ctx.arc(-10, -3, 1.5, 0, Math.PI * 2);
       ctx.fill();
       // Windows are projected in the orientation of their actual walls.
       poly(
@@ -2777,18 +2872,12 @@
         '#d5ae66',
       );
       line([-12, -42], [-4, -42], '#514d3b', 2);
-      // A few purposeful dry loading boards instead of decorative clutter.
-      poly(
-        [
-          [-54, 5],
-          [-17, 17],
-          [7, 10],
-          [-30, -2],
-        ],
-        '#987d57',
-      );
+      // Short sill and worn loading boards lead toward the real dry landing
+      // at millEntrance; they do not expand the solid building footprint.
+      poly([[-51, 4], [-18, 15], [-25, 21], [-58, 10]], '#aaa087');
+      poly([[-57, 11], [-25, 22], [-42, 31], [-73, 21]], '#987d57');
       for (let j = 0; j < 3; j++)
-        line([-50 + j * 12, 6 + j * 4], [-26 + j * 12, 1 + j * 4], '#604b36', 1.1);
+        line([-60 + j * 10, 13 + j * 3.4], [-71 + j * 10, 20 + j * 3.4], '#604b36', 1.1);
     } else if (e.greenwoodFacility === 'weir') {
       // A working timber gate and retaining bank *at the real channel mouth*.
       poly(

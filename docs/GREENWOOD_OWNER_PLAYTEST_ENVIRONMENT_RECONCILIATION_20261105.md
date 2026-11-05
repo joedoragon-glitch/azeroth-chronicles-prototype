@@ -1,5 +1,9 @@
 # Greenwood Vale - environmental design and engineering handoff
 
+**Current owner release direction:** Appearance will be reviewed by Joel in the deployed game. Automated visual approval is not a release gate. Rendering slowdown remains documented for a separate owner-led chat and is outside this environment workflow. Merge/publication is authorized after bounded functional/build verification.
+
+**Live-main reconciliation:** Watermill #814 merged as `b6193a9b` during release preparation. This candidate now incorporates that actual main tree, including the corrected live doorway, shallow creek/culvert, millrace bridge, 19 route ordering, 100/80 strategic crossings and its canonical-art registration reconciliation. Combined environment release version is dev.263; earlier dev.262 images/checkpoints below remain correctly labeled historical evidence. No performance tuning or further automated visual acceptance work is included.
+
 **So I Became the Dark Lord's Problem (SIBDLP) | 5 November 2026**
 **Controlling continuation for PR #828.** Design coverage E01-E17 and the active engineering checkpoint are maintained here. Candidate implementation is authorized; owner appearance acceptance, merge, deployment and device verification are distinct statuses.
 
