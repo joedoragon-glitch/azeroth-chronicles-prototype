@@ -27,6 +27,38 @@ for (let i = 0; i < 2; i++) {
     'restore must not repeatedly enlarge walls or duplicate shelters/standard',
   );
 }
+// Exact perpendicular protection boundary, not only widely separated probes.
+const defender = z.enemies.find((e) => e.stronghold === 'skeleton-watch');
+assert(defender);
+const originalPosition = { x: defender.x, y: defender.y };
+Object.assign(defender, { x: 2670, y: 2060 - 159.99 });
+assert(g.enemyFort(defender));
+defender.y = 2060 - 160.01;
+assert.equal(g.enemyFort(defender), null);
+Object.assign(defender, originalPosition);
+// Native hazard timing and native damage; do not stub the trap resolver.
+const posts = z.ownerDefensiveTraps.filter((p) => p.owner === 'goblin-road-fort');
+assert.equal(posts.length, 2);
+const post = posts[0],
+  tune = C.rules.outdoorMiniTrapTuning.vale;
+const clockFor = (phase) =>
+  (((phase - post.index * tune.offset) % tune.cycle) + tune.cycle) % tune.cycle;
+const heroPosition = { x: g.hero.x, y: g.hero.y };
+Object.assign(g.hero, { x: post.x, y: post.y, hp: 1000, maxHp: 1000, immune: 0 });
+z.clock = clockFor(tune.warning / 2);
+g.updateTraps(0.1);
+assert.equal(g.hero.hp, 1000);
+z.clock = clockFor(tune.warning + tune.active / 2);
+g.updateTraps(0.1);
+assert(g.hero.hp < 1000);
+const hitHp = g.hero.hp;
+g.updateTraps(0.1);
+assert.equal(g.hero.hp, hitHp, 'once per native cycle');
+Object.assign(g.hero, heroPosition);
+const restored = C.restore(g.snapshot(), rng(0x47564103));
+assert.deepEqual(restored.zone().ownerDefensiveTraps, z.ownerDefensiveTraps);
+for (const enemy of z.enemies.filter((e) => e.stronghold === 'goblin-road-fort')) enemy.hp = 0;
+assert(!g.traps().some((t) => t.index === post.index), 'garrison defeat ends its traps');
 // Compare source-native art, including real shared lighting anchors. Not device proof.
 const canvas = createCanvas(1100, 500),
   ctx = canvas.getContext('2d');

@@ -437,9 +437,37 @@
         z.greenwoodHomesteadVersion = 1;
       }
       greenwoodOwnerCompoundFinish(z) {
+        if (z.id === 'vale' && z.greenwoodDepartureClearanceVersion !== 1) {
+          const a = R.greenwoodLayout.anchors.wagon,
+            b = { x: 3200, y: 80 };
+          const dx = b.x - a.x,
+            dy = b.y - a.y,
+            len2 = dx * dx + dy * dy;
+          z.props = z.props.filter((p) => {
+            if (!p.greenwoodNature || p.owned || p.playerOwned || p.custom) return true;
+            const t = ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2;
+            return t < 0 || t > 1 || Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy) > 75;
+          });
+          z.greenwoodDepartureClearanceVersion = 1;
+        }
+        if (z.id === 'vale' && z.greenwoodOwnerHomesteadLayoutVersion !== 1) {
+          const bay = z.props.find((p) => p.id === 'greenwood-thorn-homestead-rest-bay');
+          const lodge = z.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
+          if (bay && lodge && !bay.owned && !bay.playerOwned && !bay.custom) {
+            const sc = R.greenwoodLayout.scale;
+            const at = { x: lodge.x + 110 * sc, y: lodge.y + 220 * sc };
+            if (
+              !this.blocked(at.x, at.y, 'vale', bay.r || 23, true) &&
+              this.distanceToRoad(z, at) > 65 * sc &&
+              !z.buildings.some((p) => distance(p, at) < 100 * sc)
+            )
+              Object.assign(bay, at);
+          }
+          z.greenwoodOwnerHomesteadLayoutVersion = 1;
+        }
         if (
           z.id !== 'vale' ||
-          z.greenwoodOwnerCompoundVersion === 1 ||
+          z.greenwoodOwnerCompoundVersion === 2 ||
           z.greenwoodRedesignScene !== R.greenwoodLayout?.sceneVersion
         )
           return;
@@ -447,19 +475,20 @@
           center = R.greenwoodLayout.anchors.goblin;
         const audit = { shelters: [], standard: false };
         // Joined endpoints transform identically; east gate stays in place.
-        for (const wall of z.props.filter(
-          (p) => p.stronghold === 'goblin-road-fort' && p.greenwoodWall,
-        )) {
-          for (const key of ['a', 'b']) {
-            const p = wall.greenwoodWall[key],
-              dx = p.x - center.x,
-              dy = p.y - center.y;
-            p.x = center.x + dx * (dx < 0 ? 1.15 : 1);
-            p.y = center.y + dy * (dy < 0 ? 1.3 : 1.08);
+        if (z.greenwoodOwnerCompoundVersion !== 1)
+          for (const wall of z.props.filter(
+            (p) => p.stronghold === 'goblin-road-fort' && p.greenwoodWall,
+          )) {
+            for (const key of ['a', 'b']) {
+              const p = wall.greenwoodWall[key],
+                dx = p.x - center.x,
+                dy = p.y - center.y;
+              p.x = center.x + dx * (dx < 0 ? 1.15 : 1);
+              p.y = center.y + dy * (dy < 0 ? 1.3 : 1.08);
+            }
+            wall.x = (wall.greenwoodWall.a.x + wall.greenwoodWall.b.x) / 2;
+            wall.y = (wall.greenwoodWall.a.y + wall.greenwoodWall.b.y) / 2;
           }
-          wall.x = (wall.greenwoodWall.a.x + wall.greenwoodWall.b.x) / 2;
-          wall.y = (wall.greenwoodWall.a.y + wall.greenwoodWall.b.y) / 2;
-        }
         for (const [index, dx, dy] of [
           [0, -115, -120],
           [1, 85, -120],
@@ -477,7 +506,9 @@
         }
         // Real existing outdoor trap resolver, two avoidable defended flanks.
         // The east gate itself remains a clear entry lane.
-        z.ownerDefensiveTraps = [];
+        z.ownerDefensiveTraps = (z.ownerDefensiveTraps || []).filter(
+          (t) => t.owner !== 'goblin-road-fort',
+        );
         for (const [j, dy] of [-105, 115].entries()) {
           const at = { x: center.x + 260 * sc, y: center.y + dy * sc };
           if (
@@ -521,7 +552,7 @@
         audit.publicLights = [];
         for (const [key, x, y] of [
           ['square', 650, 600],
-          ['market', 950, 650],
+          ['market', 810, 730],
           ['village-south', 650, 1400],
           ['hamlet', 550, 1750],
           ['freight-bridge', 1470, 990],
@@ -532,6 +563,15 @@
               ['roadside-lantern', 'grave-lamp'].includes(p.structure) &&
               distance(p, anchor) < 130 * sc,
           );
+          const service = z.npcs.find(
+            (p) =>
+              ['supplier', 'recruiter', 'quests'].includes(p.kind) &&
+              distance(p, anchor) < 150 * sc,
+          );
+          if (!existing && service && key === 'market') {
+            audit.publicLights.push({ key, id: service.id, status: 'existing-mounted-work-lamp' });
+            continue;
+          }
           if (existing) {
             audit.publicLights.push({ key, id: existing.id, status: 'existing' });
             continue;
@@ -574,10 +614,21 @@
             status: at ? 'placed' : 'unresolved',
           });
         }
+        // Expanded roof footprints must remain readable; remove only generated
+        // replaceable trees already intruding into the new shelter yard.
+        const roofs = z.props.filter((p) => p.greenwoodGoblinShelter);
+        z.props = z.props.filter(
+          (p) =>
+            !(
+              p.greenwoodNature &&
+              p.greenwoodNature === 'tree' &&
+              roofs.some((q) => distance(p, q) < 100 * sc)
+            ),
+        );
         // Replace the array so cached fort geometry observes changed walls.
         z.props = z.props.slice();
         z.greenwoodOwnerCompoundAudit = audit;
-        z.greenwoodOwnerCompoundVersion = 1;
+        z.greenwoodOwnerCompoundVersion = 2;
       }
       // GV-679 is an additive, nonblocking scene overlay. Never re-run the
       // layout's destructive scene generator or its enemy/home corrections to
@@ -2076,6 +2127,15 @@
         ],
         '#47382d',
       );
+      poly(
+        [
+          [38, -47],
+          [96, -66],
+          [84, -63],
+          [31, -45],
+        ],
+        '#493c30',
+      );
       stroke(
         [
           [-69, -66],
@@ -3063,8 +3123,8 @@
     paint(1, '#a27a58');
     paint(0.63, '#b68d66');
     paint(1.2, '#66734d', true);
-    paint(1, '#978561', true);
-    paint(0.7, '#a69570', true);
+    paint(1, '#a27a58', true);
+    paint(0.7, '#b68d66', true);
     ctx.restore();
   }
   function drawWall(ctx, e, p) {
@@ -3153,6 +3213,7 @@
       };
     }),
   }));
+  const litterCache = new Map(); // twelve fixed native ground patches, bounded
   function drawGround(ctx, screen, cfg, bounds) {
     const s = cfg.scale;
     const patches = [
@@ -3184,23 +3245,44 @@
       ctx.translate(p.x, p.y);
       ctx.scale(1, 0.355);
       const g = ctx.createRadialGradient(0, 0, 0, 0, 0, r);
-      g.addColorStop(0, color + 'dd');
-      g.addColorStop(0.55, color + '88');
+      g.addColorStop(0, color + 'aa');
+      g.addColorStop(0.55, color + '66');
       g.addColorStop(1, color + '00');
       ctx.fillStyle = g;
       ctx.fillRect(-r, -r, r * 2, r * 2);
       ctx.restore();
-      // Stable leaf litter and grass flecks have world phase, never screen noise.
-      for (let j = 0; j < 34; j++) {
-        const a = j * 2.39996,
-          h = hash(x + ':' + y + ':' + j),
-          d = Math.sqrt((h % 991) / 991),
-          q = screen({ x: (x + Math.cos(a) * rx * d) * s, y: (y + Math.sin(a) * ry * d) * s });
-        ctx.fillStyle = color === '#8d8250' ? '#b39c6355' : '#b3aa6844';
-        ctx.beginPath();
-        ctx.ellipse(q.x, q.y, 3 + (h % 3), 1.2, 0.3, 0, Math.PI * 2);
-        ctx.fill();
+      // Broken leaves/blades, not a metallic scatter of identical highlights.
+      const key = x + ':' + y;
+      if (!litterCache.has(key))
+        litterCache.set(
+          key,
+          Array.from({ length: 34 }, (_, j) => {
+            const h = hash(key + ':' + j),
+              a = j * 2.39996,
+              d = Math.sqrt((h % 991) / 991);
+            return { x: x + Math.cos(a) * rx * d, y: y + Math.sin(a) * ry * d, h };
+          }),
+        );
+      ctx.fillStyle = color === '#8d8250' ? '#8b79484a' : '#83915d4a';
+      ctx.beginPath();
+      for (const sample of litterCache.get(key)) {
+        const q = screen({ x: sample.x * s, y: sample.y * s });
+        if (q.x < -12 || q.x > bounds.width + 12 || q.y < -12 || q.y > bounds.height + 12) continue;
+        const h = sample.h,
+          lean = h % 2 ? 1 : -1,
+          length = 3 + (h % 4);
+        ctx.moveTo(q.x - length, q.y);
+        ctx.quadraticCurveTo(q.x, q.y - 2 * lean, q.x + length, q.y + lean);
+        ctx.quadraticCurveTo(q.x, q.y + 2 * lean, q.x - length, q.y);
+        ctx.closePath();
+        if (h % 3 === 0) {
+          ctx.moveTo(q.x + 3, q.y);
+          ctx.lineTo(q.x + 1, q.y - 5);
+          ctx.lineTo(q.x + 4, q.y - 2);
+          ctx.closePath();
+        }
       }
+      ctx.fill();
     }
     // Dry, asymmetric worn ground in the former east pond's actual footprint.
     // Ground is cached with terrain; no added frame animation or water overlay.

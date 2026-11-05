@@ -9,21 +9,50 @@ const path = require('node:path');
 const http = require('node:http');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = path.resolve(__dirname, '../..');
-const out = path.resolve(process.env.GREENWOOD_PREVIEW_OUT || 'test-artifacts/greenwood-road-bridge/pixi');
+const out = path.resolve(
+  process.env.GREENWOOD_PREVIEW_OUT || 'test-artifacts/greenwood-road-bridge/pixi',
+);
 const phone = process.argv.includes('--phone');
 const viewport = phone ? { width: 852, height: 393 } : { width: 1280, height: 800 };
-const targets = [
-  ['millhaven-west-junction', 650, 600],
-  ['millhaven-east-junction', 810, 635],
-  ['carriage-turn', 1190, 840],
-  ['north-bridge-west', 1420, 1000],
-  ['north-bridge', 1670, 1000],
-  ['north-bridge-east', 1940, 1000],
-  ['south-bridge-west', 1520, 2280],
-  ['south-bridge', 1740, 2280],
-  ['south-bridge-east', 1940, 2280],
-];
-const scripts = require('../../scripts/site-assets.cjs').scripts.filter((s) => !s.endsWith('/app.js'));
+const targets = phone
+  ? [
+      ['homestead', 2690, 1230],
+      ['treasury', 2120, 1250],
+      ['goblin', 350, 2820],
+      ['market', 900, 650],
+      ['departure', 2880, 280],
+      ['watch', 2670, 2220],
+      ['ground', 780, 2100],
+    ]
+  : [
+      ['millhaven-west-junction', 650, 600],
+      ['millhaven-east-junction', 810, 635],
+      ['carriage-turn', 1190, 840],
+      ['north-bridge-west', 1420, 1000],
+      ['north-bridge', 1670, 1000],
+      ['north-bridge-east', 1940, 1000],
+      ['south-bridge-west', 1520, 2280],
+      ['south-bridge', 1740, 2280],
+      ['south-bridge-east', 1940, 2280],
+    ];
+// Coexist with #814's optional focused review without importing its geometry.
+const watermillReview =
+  process.argv.includes('--watermill') ||
+  process.env.GITHUB_HEAD_REF === 'design/greenwood-watermill-district-20261105';
+if (watermillReview) {
+  const cfg = require('../../src/prototype/engine').rules.greenwoodLayout;
+  if (cfg.millEntrance)
+    targets.push(['watermill-entrance', cfg.millEntrance.x + 95, cfg.millEntrance.y + 20]);
+  for (const [name, deck] of [
+    ['millrace-bridge', cfg.millBridge],
+    ['creek-culvert', cfg.creekCulvert],
+  ])
+    if (deck)
+      targets.push([name, (deck.from.x + deck.to.x) / 2 + 85, (deck.from.y + deck.to.y) / 2 + 100]);
+}
+const scripts = require('../../scripts/site-assets.cjs').scripts.filter(
+  (s) => !s.endsWith('/app.js'),
+);
 const html =
   '<!doctype html><meta charset="utf-8"><style>body{margin:0;background:#173123}canvas{position:fixed;inset:0}#world{z-index:2}</style>' +
   '<canvas id="world"></canvas>' +
@@ -39,10 +68,15 @@ const server = http.createServer((req, res) => {
     res.statusCode = 404;
     return res.end();
   }
-  res.setHeader('Content-Type', {
-    '.js': 'application/javascript', '.json': 'application/json', '.webp': 'image/webp',
-    '.png': 'image/png',
-  }[path.extname(file)] || 'application/octet-stream');
+  res.setHeader(
+    'Content-Type',
+    {
+      '.js': 'application/javascript',
+      '.json': 'application/json',
+      '.webp': 'image/webp',
+      '.png': 'image/png',
+    }[path.extname(file)] || 'application/octet-stream',
+  );
   fs.createReadStream(file).pipe(res);
 });
 (async () => {
@@ -52,9 +86,16 @@ const server = http.createServer((req, res) => {
   try {
     browser = await chromium.launch({
       ...(process.env.CHROMIUM_EXECUTABLE
-        ? { executablePath: process.env.CHROMIUM_EXECUTABLE } : {}),
-      args: ['--no-sandbox', '--disable-dev-shm-usage', '--enable-webgl',
-        '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'],
+        ? { executablePath: process.env.CHROMIUM_EXECUTABLE }
+        : {}),
+      args: [
+        '--no-sandbox',
+        '--disable-dev-shm-usage',
+        '--enable-webgl',
+        '--use-gl=angle',
+        '--use-angle=swiftshader',
+        '--enable-unsafe-swiftshader',
+      ],
     });
     const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
     const errors = [];
@@ -72,12 +113,17 @@ const server = http.createServer((req, res) => {
         cameraAnchor: () => ({ x: innerWidth * 0.5, y: innerHeight * 0.55 }),
       };
       window.opts = {
-        canvas: worldCanvas, ctx,
-        getGame: () => g, platform,
+        canvas: worldCanvas,
+        ctx,
+        getGame: () => g,
+        platform,
         chargePresentation: () => null,
         isPaused: () => false,
-        Campaign, PrototypeVisuals, PrototypeCombatVisuals,
-        PrototypeSprites, PrototypeMaterials,
+        Campaign,
+        PrototypeVisuals,
+        PrototypeCombatVisuals,
+        PrototypeSprites,
+        PrototypeMaterials,
         now: () => 0,
       };
       window.painter = PrototypeRenderer.create(opts);
@@ -90,61 +136,115 @@ const server = http.createServer((req, res) => {
       window.gpu = PrototypePixiExperimental.create({
         worldCanvas,
         viewport: { width: innerWidth, height: innerHeight },
-        platform, getGame: () => g, canvasRenderer: painter,
+        platform,
+        getGame: () => g,
+        canvasRenderer: painter,
         getOptimizationMode: () => true,
         getRendererOptions: () => opts,
-        onFailure: (e) => { throw Error('Pixi GPU failure: ' + JSON.stringify(e)); },
+        onFailure: (e) => {
+          throw Error('Pixi GPU failure: ' + JSON.stringify(e));
+        },
       });
       const success = await gpu.prepare();
       if (!success) throw Error('Pixi prepare failed: ' + JSON.stringify(gpu.status()));
-      return { success, mode: gpu.status().active ? 'active' : 'prepared', zoom: platform.cameraZoom,
+      return {
+        success,
+        mode: gpu.status().active ? 'active' : 'prepared',
+        zoom: platform.cameraZoom,
         mapVersion: g.zone().greenwoodRoadBridgeVersion,
         roads: g.zone().roads.length,
-        footpaths: g.zone().footpaths.length };
+        footpaths: g.zone().footpaths.length,
+      };
     }, viewport);
     assert.equal(initialization.success, true);
     assert.equal(initialization.zoom, 1.5);
     assert.equal(initialization.mapVersion, 1);
     const receipts = [];
-    for (const [name, x, y] of targets) {
-      const receipt = await page.evaluate(({ x, y }) => {
-        const before = JSON.stringify(g.s);
-        Object.assign(g.hero, { x, y, path: [], order: null });
-        g.s.clock = 120;
-        const frozen = JSON.stringify(g.s);
-        painter.setRenderLayer('overlay');
-        gpu.activate();
-        gpu.draw();
-        painter.draw();
-        const s = gpu.status();
-        return {
-          x, y,
-          hero: { x: g.hero.x, y: g.hero.y },
-          renderer: 'pixi-webgl2', zoom: platform.cameraZoom,
-          gpuActive: s.active, gpuError: s.lastError || null,
-          stateUnchanged: JSON.stringify(g.s) === frozen,
-          zone: g.zoneId, bridgeWidths: g.zone().bridgeApproaches.map((b) => b.width),
-          snapshotPrepared: before.length > 0,
-          sceneMetrics: s.sceneMetrics || null,
-        };
-      }, { x, y });
-      assert(receipt.gpuActive && !receipt.gpuError, name + ': not active WebGL2');
-      assert(receipt.stateUnchanged, name + ': renderer mutated native game state');
-      const file = name + '-' + viewport.width + 'x' + viewport.height + '.png';
-      await page.screenshot({ path: path.join(out, file) });
-      receipts.push({ scene: name, file, ...receipt });
-    }
+    for (const [name, x, y] of targets)
+      for (const clock of phone
+        ? name === 'homestead' || name === 'ground'
+          ? [120, 345, 500, 585]
+          : [120, 500]
+        : [120]) {
+        const receipt = await page.evaluate(
+          ({ x, y, clock }) => {
+            const before = JSON.stringify(g.s);
+            Object.assign(g.hero, { x, y, path: [], order: null });
+            g.s.clock = clock;
+            g.updateNight();
+            const frozen = JSON.stringify(g.s);
+            painter.setRenderLayer('overlay');
+            gpu.activate();
+            gpu.draw();
+            painter.draw();
+            const s = gpu.status();
+            return {
+              x,
+              y,
+              hero: { x: g.hero.x, y: g.hero.y },
+              renderer: 'pixi-webgl2',
+              zoom: platform.cameraZoom,
+              gpuActive: s.active,
+              gpuError: s.lastError || null,
+              stateUnchanged: JSON.stringify(g.s) === frozen,
+              zone: g.zoneId,
+              bridgeWidths: g.zone().bridgeApproaches.map((b) => b.width),
+              snapshotPrepared: before.length > 0,
+              sceneMetrics: s.sceneMetrics || null,
+            };
+          },
+          { x, y, clock },
+        );
+        assert(receipt.gpuActive && !receipt.gpuError, name + ': not active WebGL2');
+        assert(receipt.stateUnchanged, name + ': renderer mutated native game state');
+        const file =
+          name +
+          '-' +
+          viewport.width +
+          'x' +
+          viewport.height +
+          '-' +
+          { 120: 'day', 345: 'sunset', 500: 'night', 585: 'sunrise' }[clock] +
+          '.png';
+        await page.screenshot({ path: path.join(out, file) });
+        receipts.push({ scene: name, file, ...receipt });
+        await page.evaluate(() => {
+          gpu.deactivate();
+          painter.setRenderLayer('full');
+          painter.draw();
+        });
+        const canvasFile = file.replace('.png', '-canvas.png');
+        await page.screenshot({ path: path.join(out, canvasFile) });
+        receipts.push({ scene: name, file: canvasFile, renderer: 'native Canvas full', clock });
+      }
     assert.deepEqual(errors, [], 'No browser JS errors');
     const { execFileSync } = require('node:child_process');
-    const sourceSha = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
-    fs.writeFileSync(path.join(out, 'receipt.json'),
-      JSON.stringify({ sourceSha, viewport, initialization, receipts, browser: browser.version(),
-        renderer: 'native PixiJS direct WebGL2 + original Canvas overlay',
-        qualifier: 'headless Chromium SwiftShader, not real-device FPS or owner visual signoff',
-      }, null, 2) + '\n');
+    const sourceSha = execFileSync('git', ['rev-parse', 'HEAD'], {
+      cwd: root,
+      encoding: 'utf8',
+    }).trim();
+    fs.writeFileSync(
+      path.join(out, 'receipt.json'),
+      JSON.stringify(
+        {
+          sourceSha,
+          viewport,
+          initialization,
+          receipts,
+          browser: browser.version(),
+          renderer: 'native PixiJS direct WebGL2 + original Canvas overlay',
+          qualifier: 'headless Chromium SwiftShader, not real-device FPS or owner visual signoff',
+        },
+        null,
+        2,
+      ) + '\n',
+    );
     console.log('PASS Greenwood Pixi 150% ' + receipts.length + ' scene views; WebGL2 active');
   } finally {
     await browser?.close();
     await new Promise((resolve) => server.close(resolve));
   }
-})().catch((error) => { console.error(error.stack || error); process.exitCode = 1; });
+})().catch((error) => {
+  console.error(error.stack || error);
+  process.exitCode = 1;
+});

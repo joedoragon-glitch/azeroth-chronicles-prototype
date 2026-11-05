@@ -1434,13 +1434,18 @@
         return best;
       }
       ownerOccupiedEnvironment(z) {
-        if (z.ownerOccupiedEnvironmentVersion === 1) return;
+        if (z.ownerOccupiedEnvironmentVersion === 2) return;
         const interior =
           dungeonIds.includes(z.id) || this.supplyRoom(z.id) || this.sideDungeon(z.id);
-        const fire = /torch|lantern|grave-lamp|brazier|cookfire|hearth|fireplace|forge|ember/;
+        const fire =
+          /torch|lantern|grave-lamp|brazier|cookfire|hearth|fireplace|forge|ember|field-kitchen|furnace|beacon/;
         const audit = [];
         const putLight = (id, center, structure) => {
-          if (z.props.some((p) => fire.test(p.structure || '') && dist(p, center) < 220)) {
+          if (
+            z.props.some(
+              (p) => p.id === id || (fire.test(p.structure || '') && dist(p, center) < 220),
+            )
+          ) {
             audit.push({ id, status: 'existing' });
             return;
           }
@@ -1505,6 +1510,25 @@
           }
         }
         if (!interior) {
+          const regionIndex = D.regions.findIndex((r) => r.id === z.id);
+          for (const habitat of R.worldLifePlans[regionIndex]?.habitats || []) {
+            const center = { x: habitat.center[0], y: habitat.center[1] };
+            if (/wolf-hunting-ground/.test(habitat.id)) {
+              audit.push({ id: habitat.id, status: 'natural-animal-refuge-no-artificial-fixture' });
+              continue;
+            }
+            putLight(
+              'owner-habitat-light-' + habitat.id,
+              center,
+              /crypt/.test(habitat.id)
+                ? 'grave-lamp'
+                : /wallow|nesting/.test(habitat.id)
+                  ? 'warm-brazier'
+                  : 'cookfire',
+            );
+          }
+        }
+        if (!interior) {
           z.ownerDefensiveTraps ||= [];
           for (const plan of R.creatureStrongholds.filter((p) => p.region === z.id)) {
             if (z.ownerDefensiveTraps.some((t) => t.owner === plan.id)) continue;
@@ -1540,7 +1564,7 @@
           }
         }
         z.ownerOccupiedLightingAudit = audit;
-        z.ownerOccupiedEnvironmentVersion = 1;
+        z.ownerOccupiedEnvironmentVersion = 2;
       }
       environmentCoherence(z) {
         if (

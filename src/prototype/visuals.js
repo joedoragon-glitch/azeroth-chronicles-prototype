@@ -193,7 +193,10 @@
     let sites = [];
     let visualScale = 1;
     // Existing watermill facade houses this lamp; no independent light actor.
-    if (region === 0 && e.greenwoodFacility === 'thorn-lodge')
+    if (region===0 && e.treasury && e.treasuryBoss==='thorn') {
+      visualScale=featureScale(e);
+      sites=[{x:-35,y:-18,role:'workshop',radius:68,alpha:.20}];
+    } else if (region === 0 && e.greenwoodFacility === 'thorn-lodge')
       sites = [{ x: 40, y: -25, role: 'home', radius: 60, alpha: 0.2 }];
     else if (region === 0 && e.greenwoodFacility === 'mill')
       sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
@@ -9615,6 +9618,34 @@
           '#b5986e',
           3,
         );
+        softPoly(
+          [
+            [29, -36],
+            [73, -51],
+            [62, -48],
+            [22, -34],
+          ],
+          '#493c30',
+        );
+        for (let j = 1; j < 5; j++) {
+          const t = j / 5;
+          line(
+            [
+              [-53 + 40 * t, -51 - 40 * t],
+              [-6 + 39 * t, -67 - 39 * t],
+            ],
+            '#b19369',
+            1,
+          );
+          line(
+            [
+              [-13 + 42 * t, -91 + 55 * t],
+              [33 + 40 * t, -106 + 55 * t],
+            ],
+            '#8b6d4d',
+            1,
+          );
+        }
         // Loading doors remain visible beneath added iron straps and lock.
         softRect(-29, -37, 37, 43, '#534635', 2);
         for (const y of [-30, -10])
@@ -9637,6 +9668,7 @@
             '#302e29',
             2,
           );
+        mountedSconce(-35,-18,'workshop');
         // Existing wooden receiving apron, ledgers and weighed/sorted goods.
         softPoly(
           [
