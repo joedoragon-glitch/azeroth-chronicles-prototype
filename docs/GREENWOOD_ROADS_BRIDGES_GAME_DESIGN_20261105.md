@@ -1,3 +1,20 @@
+## Independent game-design QA — second pass, 5 November 2026
+
+**Status: candidate corrected, visual acceptance NOT YET established.** This is a game-design re-audit of engineering geometry, **not** an in-game or physical-device capture. The owner-provided before-images remain the visual problem reference.
+
+| Visual finding | Independent designer's disposition |
+| --- | --- |
+| Unnatural carriage-road elbows | Source geometry: original main-road maximum heading jump ~46.7°, proposed curve samples ~8.2°; long farm-road maxima ~60° to ~11°. Curves are bounded to limit intrusion into adjacent plots. Final normal-camera roof/prop clearance still needs inspection. |
+| Overlapping intersections | Treasury access used to retrace a cart segment; cut the duplicated section to one junction and draw wide roadbeds with non-overlapping material fill layers. Check real T/Y views before acceptance. |
+| North bridge mismatch | Stone freight crossing: matching 100-unit physical gap/deck against an 88-unit cart road, with small external edgework. Both bank transitions still require normal-play scene captures. |
+| South bridge mismatch | Initial engineering proposal had grown to 80 units due to wrongly assuming 50-unit route cells start at zero. Actual route centers are `25+50n`. Design rejected that enlargement and restored the 56-unit navigable timber bridge; the 52-unit farm cart lane now stops on solid west bank at (1560,2280), where the 24-unit pedestrian approach continues across and exits straight on the east bank. Native traversal still requires exact-head verification. |
+| CPU cost and visual density | Replaced per-frame route JSON serialization with numeric coordinate cache comparison. Bounded subdivision only near main-road junctions reduced schematic pedestrian segments from ~637 to ~300, maintaining continuous rounded runs. This is not a measured FPS claim. |
+| Save and integration safety | A separate `greenwoodRoadBridgeVersion` prevents destructive Greenwood scenery rebuild. Exact-head v4 reload, companion traversal, collision checks and real screenshots are required. Main independently gained PR #811 Pixi fortress/health-plate fixes; resolve integration without reverting them before merge. |
+
+**Release design gate: HOLD.** Source-level proportional/curvature improvements are implemented, but approving the appearance requires actual 150%-camera Canvas/Pixi scenes of Millhaven and both banks of both bridges, with actor/companion traversal and roofs/props checked. This branch remains a draft; no merge, deployment, broad suite, device acceptance or final artistic approval is claimed.
+
+---
+
 > **Engineering phase authorized by the owner, 5 November 2026.** This design is the artistic acceptance contract for [separate implementation draft #815](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/815). Its original design-only completion/handoff notes below are historical; engineering can adjust provisional numerical width targets only when actual movement, visual and saved-game evidence requires it. Do not interpret a draft as verified, merged, published or approved artwork.
 
 # Greenwood Vale — roads, junctions and bridges: complete game-design specification
