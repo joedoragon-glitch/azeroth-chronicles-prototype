@@ -1,6 +1,6 @@
 # Greenwood Forest Crypt — winter-estate exterior redesign
 
-**5 November 2026 · SIBDLP · Merged via PR #833, commit `74f2e27b66712bbff10597525ba213d380c3aa2d` · Hosted publication pending verification**
+**5 November 2026 · SIBDLP · Merged via PR #833, commit `74f2e27b66712bbff10597525ba213d380c3aa2d` · Hosted in verified dev.263 Pages release**
 
 ## Owner direction and protected story
 
@@ -29,4 +29,4 @@ Do not bump the global `greenwoodLayout.sceneVersion` for this cosmetic site cha
 
 **Tested:** exact PR-head [focused CI #42078704445](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42078704445) passed 11 selected files, including native facade shape, old v4 save restore, authored cartway/Scornfang depot junction, and all 19 connected routes; [Canvas/Pixi capture jobs #42078704454](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42078704454) and [Chromium PWA update/offline #42078704669](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42078704669) also passed. These scoped checks are not a comprehensive game/browser matrix, a perceptual owner acceptance, or a physical iPhone review. A new facade can still require artistic adjustments after real screenshot inspection.
 
-**Merged:** yes, PR #833. **Hosted publication:** pending main-branch workflow receipt. **Device-verified:** no. No comprehensive suite authorized or performed. The original draft-only caveat is superseded by the owner's subsequent merge approval, not a retroactive authorization for unrelated changes.
+**Merged:** yes, PR #833. **Hosted publication:** yes — exact-main [focused validation and GitHub Pages deployment #42080179833](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42080179833) completed SUCCESS on `74f2e27b` (package `0.9.1+snapshot.dev.263`). **Device-verified:** no. No comprehensive suite authorized or performed. The original draft-only caveat is superseded by the owner's subsequent merge approval, not a retroactive authorization for unrelated changes.
