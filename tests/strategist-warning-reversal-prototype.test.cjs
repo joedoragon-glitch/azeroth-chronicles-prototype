@@ -383,3 +383,90 @@ console.log('PASS Cindermaw failure gates: late/outside/dead/obstructed');
     assert(!e.telegraph?.strategistReversal);
   console.log('PASS original v4 Campaign developer snapshot/restore cannot replay Reversal');
 }
+
+
+function dreadScene(index) {
+  // Source-identical resident, real selector, two warned rush legs and
+  // naturally generated ring gaps from the existing Dreadmaw native tests.
+  const g = new C('developer', 'strategist', () => 0.99);
+  g.enter('supply-crown');
+  g.s.time = 30;
+  g.s.mercyTime = 0;
+  g.s.party = [];
+  const e = g.zone().enemies.find((u) =>
+    u.roomCaptain && u.captainProfile === 'supply-crown');
+  assert(e, 'actual Dreadmaw resident exists');
+  g.zone().enemies = [e];
+  Object.assign(g.hero, g.safe(e.x + 80, e.y),
+    { hp: 2000, maxHp: 2000, immune: 0 });
+  g.engage(e, true, false);
+  Object.assign(e, {
+    aggro: true, cd: 1e6, specialCd: 0, lastCaptainAttack: -1,
+    captainOpeningSummon: true, dreadClosure: null,
+  });
+  let selected = false;
+  for (let n = 0; n < 100; n++) {
+    g.random = () => n / 100;
+    e.telegraph = null;
+    e.sequence = [];
+    e.lastCaptainAttack = -1;
+    if (g.startCaptainAttack(e, g.hero) && e.telegraph?.index === index) {
+      selected = true;
+      break;
+    }
+  }
+  assert(selected, 'native Dreadmaw selector can choose slot ' + index);
+  return { g, e, a: e.telegraph };
+}
+{
+  const { g, e, a } = dreadScene(1);
+  assert.equal(a.dreadMechanic, 'rush');
+  assert(a.charge && a.kind === 'line');
+  assert.equal(e.sequence.length, 1, 'first and second rush legs own separate warnings');
+  const mark = { x: (a.fromX + a.x) / 2, y: (a.fromY + a.y) / 2 };
+  assert(!g.blocked(mark.x, mark.y, g.zoneId, 12));
+  Object.assign(g.hero, mark);
+  assert(g.strategistReversalSupported(e, a));
+  assert(g.strategistReversalCovers(a, g.hero));
+  assert(g.attemptStrategistReversal(e.id));
+  a.timer = 0;
+  g.resolveAttack(e);
+  assert(!e.motion, 'actual Dreadmaw physical rush cannot start after Reversal');
+  assert.equal(e.sequence.length, 1,
+    'one counter never deletes a separately warned follow-up leg');
+  assert.equal(g.advanceQueuedAttack(e).dreadLeg, 2);
+  console.log('PASS Dreadmaw native Transhumance rush first release and independent second warning');
+}
+{
+  const { g, e, a } = dreadScene(4);
+  assert.equal(a.dreadMechanic, 'closure');
+  assert.equal(a.gaps?.length, 2);
+  const gap = a.gaps[0];
+  const safeGap = {
+    x: a.x + Math.cos(gap) * a.initialRadius,
+    y: a.y + Math.sin(gap) * a.initialRadius,
+  };
+  assert.equal(g.strategistReversalCovers(a, safeGap), false,
+    'real escape gap is not a threatened Reversal spot');
+  let mark = null;
+  for (let i = 0; i < 72; i++) {
+    const angle = i * Math.PI / 36;
+    const point = {
+      x: a.x + Math.cos(angle) * a.initialRadius,
+      y: a.y + Math.sin(angle) * a.initialRadius,
+    };
+    if (!g.blocked(point.x, point.y, g.zoneId, 12) &&
+        g.strategistReversalCovers(a, point)) {
+      mark = point;
+      break;
+    }
+  }
+  assert(mark, 'the real closure plan has a physically reachable warned arc');
+  Object.assign(g.hero, mark);
+  assert(g.attemptStrategistReversal(e.id));
+  a.timer = 0;
+  g.resolveAttack(e);
+  assert(!e.dreadClosure,
+    'Reversal prevents creation of the moving, damaging Dreadmaw closure');
+  console.log('PASS Dreadmaw native two-gap closure and zero orphan persistent ring');
+}
