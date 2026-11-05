@@ -1,3 +1,5 @@
+> **Integration ownership update — 5 November 2026:** To avoid two incompatible bridge openings and overlapping road migrations, **PR #808 is the botanical, agrarian, orchard and livestock implementation owner only**. The dedicated [road-and-bridge PR #824](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/824) owns road topology, carriageway drawing, north/south physical crossing widths and bridge traversal acceptance. The earlier combined design analysis below remains a reference, **not permission to implement those roads twice**. PR #808's current runtime changes consult roads for plant/parcel clearance but do **not** replace their geometry. Incorporate #824's accepted work separately and revalidate planting setbacks afterward. Preserve this design method for future biomes without copying Greenwood vegetation.
+
 # Greenwood Vale — Unified Roads, Rural Land-Use & Botanical Composition
 ## Game-design contract and integrated engineering handoff
 

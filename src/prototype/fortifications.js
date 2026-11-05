@@ -25,6 +25,13 @@
         if (frame?.props === z.props && frame.count === z.props.length) return frame.areas;
         const areas = [],
           cfg = R.balance.fortifications;
+        // Expand authored outdoor polygons only when the zone's geometry is cached.
+        // Indoor walkable rooms keep their existing exact bounds.
+        const outdoorRectangle = (x1, x2, y1, y2) =>
+          rectangle(
+            x1 - cfg.outdoorLeeway, x2 + cfg.outdoorLeeway,
+            y1 - cfg.outdoorLeeway, y2 + cfg.outdoorLeeway,
+          );
         const add = (id, points, walls, partitions = []) =>
           areas.push({
             id,
@@ -70,10 +77,15 @@
             ? { x: median(anchors.map((p) => p.x)), y: median(anchors.map((p) => p.y)) }
             : this.creatureStrongholdCenter(z, plan);
           if (!center) continue;
+          // Add a 160-unit radial apron to ruin/habitat vertices, following
+          // any relocated wall anchor. Per-actor eligibility remains unchanged.
           const points =
             plan.defenseStyle === 'fort'
-              ? rectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
-              : ring.map(([x, y]) => [center.x + x, center.y + y]);
+              ? outdoorRectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
+              : ring.map(([x, y]) => {
+                  const scale = 1 + cfg.outdoorLeeway / Math.hypot(x, y);
+                  return [center.x + x * scale, center.y + y * scale];
+                });
           add(plan.id, points, walls);
         }
         for (const mini of z.minis || []) {
@@ -83,7 +95,7 @@
           if (mini.type === 'field' && walls.length)
             add(
               mini.id,
-              rectangle(
+              outdoorRectangle(
                 mini.x - cfg.compoundHalfSize,
                 mini.x + cfg.compoundHalfSize,
                 mini.y - cfg.compoundHalfSize,
@@ -95,7 +107,7 @@
         for (const area of cfg.outdoorAreas.filter((a) => a.zone === z.id)) {
           add(
             area.id,
-            rectangle(...area.bounds),
+            outdoorRectangle(...area.bounds),
             z.props.filter(
               (p) =>
                 area.districts.includes(p.crownDistrict) &&

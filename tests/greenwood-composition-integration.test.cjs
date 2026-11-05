@@ -1,6 +1,6 @@
 'use strict';
-// Greenwood landscape v1: one authored physical roadbed and additive rural
-// scenery, including save-safe current and prior scene-5 composition.
+// Greenwood botanical/agrarian composition, without road/bridge ownership.
+// Additive scenery stays v4-save safe and honors actual authored routes.
 const assert = require('node:assert/strict');
 const C = require('../src/prototype/engine.js');
 const { rng } = require('../tools/greenwood-layout/fixtures.cjs');
@@ -15,11 +15,8 @@ const valley = C.rules.greenwoodLayout;
 assert.equal(valley.version, 2);
 assert.equal(valley.sceneVersion, 5, 'original scenery source/version is not regenerated');
 const barrier = C.rules.barriers[0];
-assert.deepEqual(
-  barrier.gaps.map(([lo, hi]) => hi - lo),
-  [110, 64],
-  'actual and visible north/south crossing widths are the same authored gap',
-);
+assert.equal(barrier.gaps.length, 2, 'both independently owned bridge openings remain');
+assert(barrier.gaps.every(([lo, hi]) => hi > lo), 'real crossings retain nonzero clearance');
 const all = [];
 for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
@@ -28,31 +25,15 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   assert.equal(z.greenwoodRoutes.length, 16, 'all historic corridors retained');
   assert.equal(z.roads.length, 4);
   assert.equal(z.footpaths.length, 12);
+  const routeFingerprint = JSON.stringify(z.greenwoodRoutes);
   assert(z.props.length <= 400, 'native per-region scenery budget');
   assert(z.props.some((p) => p.greenwoodKitchen), 'recognizable kitchen beds exist');
   assert(z.props.some((p) => p.greenwoodField), 'larger working field art exists');
   assert(z.greenwoodCompositionAudit?.length, 'actual placement audit available');
-  const junction = { x: 1870, y: 1000 };
-  const cart = z.greenwoodRoutes[0].points;
-  const treasury = z.greenwoodRoutes[7].points;
-  assert(cart.some((p) => dist(p, junction) < 1), 'freight junction is a shared vertex');
-  assert(dist(treasury[0], junction) < 1, 'Treasury spur starts at shared junction');
-  assert(!treasury.some((p) => dist(p, { x: 2070, y: 1000 }) < 1),
-    'Treasury spur no longer reverse-paints main freight corridor');
-  assert(cart.length > 9, 'principal corners become continuous eased geometry');
   const orchard = z.npcs.find((n) => n.id === 'orchard');
   assert(orchard, 'original orchard landmark remains');
   if (z.greenwoodCompositionAudit.find((p) => p.id === 'orchard')?.placed)
     assert(g.distanceToRoad(z, orchard) > 88, 'site marker moved off roadbed');
-  for (const [key, r] of [
-    ['north', 55], ['south', 32],
-  ]) {
-    const bridge = valley.anchors[key];
-    assert(barrier.gaps.some(([lo, hi]) => Math.abs((lo + hi) / 2 - bridge.y) < 1 &&
-      Math.abs((hi - lo) / 2 - r) < 1), key + ' legal gap follows deck artwork');
-    assert(!g.blocked(bridge.x, bridge.y, 'vale', 0, true),
-      key + ' bridge midpoint is legally traversable');
-  }
   // Use the real native pathfinder across the two *new physical* openings.
   // A visually narrower deck is never sufficient if an actor gets stranded.
   for (const crossing of z.bridgeApproaches || []) {
@@ -73,6 +54,8 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   assert.deepEqual(ids(loaded.zone()), ids(z), 'reload keeps exact authored scene IDs');
   assert.deepEqual(state(loaded.zone()), before, 'reload leaves monsters/tribute/buildings alone');
   assert.equal(loaded.zone().greenwoodCompositionVersion, 1, 'migration idempotent');
+  assert.equal(JSON.stringify(loaded.zone().greenwoodRoutes), routeFingerprint,
+    'botanical overlay must not reshape roads after restoration');
   // Recreate a prior compatible scene-5 snapshot with no composition overlay.
   const previous = JSON.parse(original), old = previous.zones.vale;
   delete old.greenwoodCompositionVersion;
@@ -94,5 +77,5 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
     placements: z.greenwoodCompositionAudit.filter((p) => p.placed).length,
     notPlaced: z.greenwoodCompositionAudit.filter((p) => !p.placed).map((p) => p.id) });
 }
-console.log('PASS Greenwood composition road/bridge, field/flower/landmark and v4 migration ' +
+console.log('PASS Greenwood botanical/farm composition, bridge access and v4 migration ' +
   JSON.stringify(all));
