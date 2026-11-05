@@ -193,7 +193,9 @@
     let sites = [];
     let visualScale = 1;
     // Existing watermill facade houses this lamp; no independent light actor.
-    if (region === 0 && e.greenwoodFacility === 'mill')
+    if (region === 0 && e.greenwoodFacility === 'thorn-lodge')
+      sites = [{ x: 54, y: -41, role: 'home', radius: 64, alpha: 0.20 }];
+    else if (region === 0 && e.greenwoodFacility === 'mill')
       sites = [{ x: -8, y: -48, role: 'mill', radius: 60, alpha: 0.19 }];
     else if (structure === 'roadside-lantern')
       sites = [{ x: 0, y: -42, role: 'street', radius: 80, alpha: 0.25 }];
@@ -18447,6 +18449,9 @@
   function unscaledHeight(e) {
     if (e.greenwoodNature === 'tree') return 140;
     if (e.greenwoodFacility === 'mill') return 160;
+    if (e.greenwoodFacility === 'thorn-lodge') return 180;
+    if (e.greenwoodFacility === 'thorn-rest-bay') return 105;
+    if (e.greenwoodFacility?.startsWith('thorn-')) return 80;
     if (e.miningFacility) return 90;
     if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
