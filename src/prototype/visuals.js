@@ -9541,18 +9541,20 @@
           craftAt(18, -2, 0.6, () => lantern());
           break;
         case 'cache':
-          chest(true, 0.9);
-          timber([22, 10], [31, -15], 3);
+          // Scornfang's Crypt-side freight station, not a loot/tribute chest.
+          // Reuse existing material primitives without creating a new sprite.
+          boards(-33, 7, 66, 12, '#806145', true);
+          timber([-29, 11], [-29, -27], 4);
+          timber([29, 11], [29, -27], 4);
           softPoly(
-            [
-              [25, -15],
-              [33, -13],
-              [34, -8],
-              [29, -6],
-            ],
-            '#8d9d91',
+            [[-34, -26], [-26, -39], [24, -39], [35, -26]],
+            '#6e745c',
             1,
           );
+          timber([-34, -26], [35, -26], 2);
+          craftAt(-16, 2, 0.58, () => craftedDecoration('supply-stack'));
+          craftAt(11, 3, 0.6, () => craftedDecoration('crate'));
+          paper(23, -9, 9);
           break;
         case 'wagon':
         case 'convoy':
@@ -15893,31 +15895,14 @@
           }
           break;
         case 'cache':
-          rect(-17, -12, 34, 25, '#8f704d');
-          line(
-            [
-              [-17, -12],
-              [17, 13],
-            ],
-            '#c1a170',
-            3,
-          );
-          line(
-            [
-              [17, -12],
-              [-17, 13],
-            ],
-            '#c1a170',
-            3,
-          );
-          line(
-            [
-              [-29, 10],
-              [-8, 2],
-            ],
-            '#75583f',
-            6,
-          );
+          // Simple fallback silhouette: timber depot platform, not a chest.
+          rect(-29, -4, 58, 15, '#8a6e51');
+          rect(-28, -29, 4, 35, '#684e3a');
+          rect(24, -29, 4, 35, '#684e3a');
+          poly([[-34, -26], [-25, -38], [25, -38], [34, -26]], '#737b60');
+          rect(-22, -14, 20, 12, '#96734f');
+          rect(5, -17, 16, 15, '#b3a07b');
+          line([[-30, -26], [30, -26]], '#b8a083', 2);
           break;
         case 'wagon':
         case 'convoy':

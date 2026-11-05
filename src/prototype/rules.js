@@ -309,12 +309,14 @@
         context: 'confiscated orchard stores',
       },
       {
+        // Retain the stable tribute ID and finite 180-crown allocation, but
+        // make the guarded Goblin fort the actual recovery objective.
         id: 'woodland-cache',
-        site: 'cache',
+        site: 'goblin-camp',
         amount: 180,
         hidden: false,
-        offset: [50, -250],
-        context: 'collector cache',
+        offset: [50, 5],
+        context: 'tribute stockpiled inside the Goblin fort',
       },
       {
         id: 'pond-strongbox',

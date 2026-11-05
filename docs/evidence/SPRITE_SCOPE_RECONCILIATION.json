@@ -1166,9 +1166,9 @@
     }
   ],
   "sources": {
-    "src/prototype/visuals.js": "8b38b2613be7a061fcb7ab9dbcc5127f18b591f5997b835f5a3dc7f19cdfcf1e",
-    "src/prototype/world.js": "3d9a8cee7e2745bb145a2b64cc9b348332eca87b4d70018128e0b54faba04225",
-    "src/prototype/rules.js": "c37ae3de0a662245d90d5357c73f7ce3f3aae497d85dc845716f5ae48822be25",
+    "src/prototype/visuals.js": "65b6de35eceb9e7d9cf83d52a9e578f9217707435469be2b5c7edd641f339a2c",
+    "src/prototype/world.js": "cc5c4d8aebc689bff6a7bec35a3c5d38dedcbe0d59e302866008ded8e1f5931b",
+    "src/prototype/rules.js": "67b35f6c5c67cc835831f129044dd44c3ba39727b15a74aa6121aad5264c6eeb",
     "src/prototype/data.js": "c9222c21e0aed576e467d4fd7cfe6cc7f871e4339644d64a1c767f277ce04010",
     "src/prototype/sprites.js": "a49f3db912824770e7b546177745d3d428194b99459b095e6b659a838de43e43",
     "src/prototype/renderer.js": "831b70c8ff9c24924771b78a3913eae9a7d84e0ba65f400c8fc13ecfff75098b"
