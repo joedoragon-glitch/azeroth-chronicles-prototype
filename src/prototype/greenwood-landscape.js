@@ -258,7 +258,7 @@
         [1220, 0], [1240, 180], [1280, 350], [1265, 515],
         [1190, 680], [1090, 780], [940, 875], [900, 880],
       ].map(q),
-      shallowCreek = { ...ribbon(upperCreek, 12, { subdivisions: 2 }), shallow: true },
+      shallowCreek = { ...ribbon(upperCreek, 17, { subdivisions: 2 }), shallow: true },
       waters = [
         pond, ribbon(stream, 16, { subdivisions: 2 }),
         ribbon(headrace, 12), ribbon(tailrace, 20, { subdivisions: 3 }), shallowCreek,
@@ -271,7 +271,14 @@
         from: q([1070, 725]), to: q([1145, 805]),
         width: 76 * scale, kind: 'stone-culvert',
       },
-      millServiceLane = [[1200, 1660], [1290, 1600], [1350, 1530], [1400, 1490]].map(q);
+      // One genuine service road branches from the existing west-bank farm road,
+      // crosses the millrace exactly where the timber bridge lies, then
+      // meets a NARROW footpath to the dry-side loading doorway.
+      millServiceLane = [
+        [650, 1550], [785, 1595], [990, 1655], [1200, 1660],
+        [1290, 1600], [1350, 1530], [1400, 1490],
+      ].map(q),
+      millDoorFootpath = [[1400, 1490], [1290, 1490], [1210, 1485]].map(q);
     R.terrain[0] = [
       { kind: 'rain-pools', wetland: true, pools: waters,
         blockingPools: waters.filter((pool) => !pool.shallow) },
@@ -344,6 +351,7 @@
       millBridge,
       creekCulvert,
       millServiceLane,
+      millDoorFootpath,
       millEntrance: q([1210, 1485]),
       map,
       groups: [],
@@ -361,32 +369,52 @@
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 ||
             z.greenwoodRedesignScene !== cfg.sceneVersion ||
-            z.greenwoodWatermillVersion === 1) return;
-        const lane = cfg.millServiceLane;
-        const same = (path) => Array.isArray(path) && path.length === lane.length &&
-          path.every((p,j) => distance(p,lane[j]) < 0.01);
-        if (!z.roads.some(same)) z.roads.push(lane.map((p) => ({ ...p })));
-        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r) => same(r.points)))
-          z.greenwoodRoutes.push({ kind: 'farm', points: lane.map((p) => ({ ...p })) });
-        const targets = [
-          ['greenwood-mill-0', 1450, 1410],
-          ['greenwood-mill-1', 1410, 1380],
-          ['greenwood-mill-2', 1390, 1410],
-        ];
-        // Relocate only known disposable work decoration, never an owner's
-        // camp, a saved order, a quest prop, a resident or an enemy home.
-        for (const [id,x,y] of targets) {
-          const p = z.props.find((entry) => entry.id === id);
-          if (!p || p.playerOwned || p.owned || p.custom) continue;
-          const q = { x: x * cfg.scale, y: y * cfg.scale };
-          if (this.blocked(q.x,q.y,'vale',p.r || 12,true) ||
-              z.buildings.some((b) => distance(b,q) < 130)) continue;
-          Object.assign(p,q);
+            z.greenwoodWatermillVersion === 2) return;
+        const lane = cfg.millServiceLane, footpath = cfg.millDoorFootpath,
+          previousLane = [[1200,1660],[1290,1600],[1350,1530],[1400,1490]]
+            .map(([x,y])=>({x:x*cfg.scale,y:y*cfg.scale}));
+        const same = (path, expected) => Array.isArray(path) &&
+          path.length === expected.length &&
+          path.every((p,j) => distance(p,expected[j]) < 0.01);
+        // Preview v1 briefly contained a disconnected four-point farm lane.
+        // Replace ONLY that exact known authored shape, not a player route,
+        // command, established road or protected saved object.
+        if (z.greenwoodWatermillVersion === 1) {
+          z.roads = z.roads.filter((path)=>!same(path,previousLane));
+          if (Array.isArray(z.greenwoodRoutes))
+            z.greenwoodRoutes = z.greenwoodRoutes.filter((r)=>
+              !(r.kind==='farm' && same(r.points,previousLane)));
+          if (Array.isArray(z.greenwoodRoadKinds))
+            z.greenwoodRoadKinds.length = z.roads.length;
         }
-        // Keep #824's source-owned road type metadata aligned with its new lane.
+        if (!z.roads.some((path)=>same(path,lane)))
+          z.roads.push(lane.map((p)=>({...p})));
+        if (!z.footpaths.some((path)=>same(path,footpath)))
+          z.footpaths.push(footpath.map((p)=>({...p})));
+        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r)=>same(r.points,lane)))
+          z.greenwoodRoutes.push({kind:'farm',points:lane.map((p)=>({...p}))});
+        if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r)=>same(r.points,footpath)))
+          z.greenwoodRoutes.push({kind:'path',points:footpath.map((p)=>({...p}))});
+        const targets = [
+          ['greenwood-mill-0',1450,1410],
+          ['greenwood-mill-1',1410,1380],
+          ['greenwood-mill-2',1390,1410],
+        ];
+        // Move only replaceable legacy work scenery, never owner objects,
+        // actors, residents, saved orders, tribute or physical infrastructure.
+        for (const [id,x,y] of targets) {
+          const p=z.props.find((item)=>item.id===id);
+          if (!p || p.playerOwned || p.owned || p.custom) continue;
+          const point={x:x*cfg.scale,y:y*cfg.scale};
+          if (this.blocked(point.x,point.y,'vale',p.r||12,true) ||
+              z.buildings.some((b)=>distance(b,point)<130)) continue;
+          Object.assign(p,point);
+        }
+        // #824's original four typed roads retain their order/identity.
         if (Array.isArray(z.greenwoodRoadKinds))
-          while (z.greenwoodRoadKinds.length < z.roads.length) z.greenwoodRoadKinds.push('farm');
-        z.greenwoodWatermillVersion = 1;
+          while(z.greenwoodRoadKinds.length<z.roads.length)
+            z.greenwoodRoadKinds.push('farm');
+        z.greenwoodWatermillVersion=2;
       }
       // #806: reconstruct the old eastern water circle as a coherent, dry
       // wolf-scout homestead without re-running destructive regional generation.
@@ -526,19 +554,19 @@
         // Road/bridge topology and physical deck spans are independently
         // owned by the dedicated Greenwood infrastructure PR #824.
         // This scenery pass observes routes but never edits their geometry.
-        // Earlier scene-5 v4 saves have 16 corridors; the merged freight-depot
-        // work adds one deliberately off-road apron without replacing any of them.
-        // The watermill's one additional farm spur comes AFTER #824's
-        // 16 original corridors plus the freight-depot apron. Admit exactly
-        // that documented 18th route; never accept arbitrary route mutations.
+        // Preserve all 17 #824 canonical corridor indices. The mill adds
+        // exactly one farm service spur and one narrow dry-side door footpath.
         const routes = z.greenwoodRoutes || [],
           lane = cfg.millServiceLane || [],
-          includesMillLane = routes.length === 18 &&
-            z.greenwoodWatermillVersion === 1 &&
-            routes.at(-1)?.kind === 'farm' &&
-            routes.at(-1)?.points?.length === lane.length &&
-            routes.at(-1).points.every((point, j) => distance(point, lane[j]) < 0.01);
-        if (![16, 17].includes(routes.length) && !includesMillLane) return;
+          door = cfg.millDoorFootpath || [],
+          matches = (candidate, expected) =>
+            candidate?.points?.length === expected.length &&
+            candidate.points.every((point,j)=>distance(point,expected[j])<0.01),
+          includesMillPair = routes.length === 19 &&
+            z.greenwoodWatermillVersion === 2 &&
+            routes[17]?.kind === 'farm' && matches(routes[17],lane) &&
+            routes[18]?.kind === 'path' && matches(routes[18],door);
+        if (![16,17].includes(routes.length) && !includesMillPair) return;
         const change = (id, expected, target, detail = {}) => {
           const p = z.props.find((item) => item.id === id);
           if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
