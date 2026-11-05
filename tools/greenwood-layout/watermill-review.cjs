@@ -36,6 +36,7 @@ const views = [
   ['race-bridge-night', bridge, 500],
   ['headwater-culvert-day', culvert, 120],
   ['mill-entrance-day', cfg.millEntrance, 120],
+  ['mill-entrance-night', cfg.millEntrance, 500],
 ];
 // Sample screen center, not the label and browser frame; this catches a
 // duplicate/blank night or a camera missing the natural district altogether.
@@ -112,7 +113,7 @@ for (const [name, target, clock] of views) {
   g.s.clock = originalClock;
   g.updateNight();
 }
-for (const place of ['mill','race-bridge']) {
+for (const place of ['mill','race-bridge','mill-entrance']) {
   const day=receipts.find((r)=>r.name===place+'-day'),
     night=receipts.find((r)=>r.name===place+'-night');
   assert(day && night);
@@ -150,5 +151,5 @@ fs.writeFileSync(path.join(out,'receipt.json'),JSON.stringify(report,null,2)+'\n
     throw Error('Render changed saved campaign in '+JSON.stringify(changed.map((v)=>({
       name:v.name,changedFields:v.changedFields,
     }))));
-  console.log('PASS 6 focused Greenwood watermill 150% native frames; paired day/night contrast and immutable saves. Human scene review pending.');
+  console.log('PASS 7 focused Greenwood watermill 150% native frames; paired day/night contrast and immutable saves. Human scene review pending.');
 })().catch(e => { console.error(e); process.exitCode=1; });
