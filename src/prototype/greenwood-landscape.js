@@ -1508,56 +1508,144 @@
     }
     ctx.restore();
   }
-  function drawRoads(ctx, paths, screen) {
-    const poly = (points, color) => {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      points.map(screen).forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
-      ctx.closePath();
-      ctx.fill();
-    };
-    for (const [index, path] of paths.entries()) {
-      const width = index === 0 ? 31 : 17,
-        base = index === 0 ? '#9a7250' : '#968562';
-      for (const [w, color] of [
-        [width + 5, '#58624988'],
-        [width, base],
-        [width * 0.6, index === 0 ? '#ae855f' : '#a3906c'],
-      ]) {
-        for (let j = 1; j < path.length; j++) {
-          const a = path[j - 1],
-            b = path[j],
-            d = distance(a, b) || 1,
-            nx = (-(b.y - a.y) / d) * w,
-            ny = ((b.x - a.x) / d) * w;
-          poly(
-            [
-              { x: a.x + nx, y: a.y + ny },
-              { x: b.x + nx, y: b.y + ny },
-              { x: b.x - nx, y: b.y - ny },
-              { x: a.x - nx, y: a.y - ny },
-            ],
-            index === 0 && (j === 2 || j === 3) && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
+  // The regional roads are a small static map. Precompute smooth centerlines
+  // and the non-overlapping path fragments once per real geometry revision.
+  // Canvas and Pixi consume this same painter; no on-tick pathfinding or meshes.
+  let roadPaintCache = null;
+  const roadWidths = Object.freeze({ cart: 44, farm: 26, path: 12 });
+  function smoothRoad(path, kind) {
+    if (!Array.isArray(path) || path.length < 3) return (path || []).slice();
+    const limit = kind === 'cart' ? 85 : kind === 'farm' ? 54 : 32;
+    const output = [{ ...path[0] }];
+    for (let i = 1; i < path.length - 1; i++) {
+      const a = path[i - 1], b = path[i], c = path[i + 1];
+      const u = { x: b.x - a.x, y: b.y - a.y };
+      const v = { x: c.x - b.x, y: c.y - b.y };
+      const la = Math.hypot(u.x, u.y), lb = Math.hypot(v.x, v.y);
+      if (la < 1 || lb < 1) {
+        output.push({ ...b });
+        continue;
+      }
+      const cross = Math.abs(u.x * v.y - u.y * v.x) / (la * lb);
+      const dot = (u.x * v.x + u.y * v.y) / (la * lb);
+      if (cross < 0.1 && dot > 0) {
+        output.push({ ...b });
+        continue;
+      }
+      // The curve stays inside the old corridor by limiting both tangents;
+      // short village doorpaths should never become sweeping rural arcs.
+      const reach = Math.min(limit, la * 0.26, lb * 0.26);
+      const enter = { x: b.x - (u.x * reach) / la, y: b.y - (u.y * reach) / la };
+      const leave = { x: b.x + (v.x * reach) / lb, y: b.y + (v.y * reach) / lb };
+      output.push(enter);
+      const steps = 6;
+      for (let k = 1; k < steps; k++) {
+        const t = k / steps, s = 1 - t;
+        output.push({
+          x: s * s * enter.x + 2 * s * t * b.x + t * t * leave.x,
+          y: s * s * enter.y + 2 * s * t * b.y + t * t * leave.y,
+        });
+      }
+      output.push(leave);
+    }
+    output.push({ ...path[path.length - 1] });
+    return output;
+  }
+  function distanceToRoadSegment(p, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const n = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / n));
+    return Math.hypot(p.x - (a.x + dx * t), p.y - (a.y + dy * t));
+  }
+  function prepareRoadPaint(roads, footpaths = [], kinds = []) {
+    const wide = (roads || []).map((points, i) => ({
+      kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
+      points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
+    }));
+    const fragments = [];
+    for (const path of footpaths || []) {
+      const points = smoothRoad(path, 'path');
+      for (let i = 1; i < points.length; i++) {
+        const a = points[i - 1], b = points[i];
+        const len = distance(a, b), count = Math.max(1, Math.ceil(len / 10));
+        for (let j = 0; j < count; j++) {
+          const at = j / count, bt = (j + 1) / count;
+          const p = { x: a.x * (1 - at) + b.x * at, y: a.y * (1 - at) + b.y * at };
+          const q = { x: a.x * (1 - bt) + b.x * bt, y: a.y * (1 - bt) + b.y * bt };
+          const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+          const withinRoad = wide.some((road) =>
+            road.points.some((end, k) =>
+              k > 0 &&
+              distanceToRoadSegment(mid, road.points[k - 1], end) < roadWidths[road.kind] - 3,
+            ),
           );
+          if (!withinRoad) fragments.push([p, q]);
         }
-        for (const [j, p] of path.entries())
-          poly(
-            Array.from({ length: 16 }, (_, j) => ({
-              x: p.x + Math.cos((j * Math.PI) / 8) * w,
-              y: p.y + Math.sin((j * Math.PI) / 8) * w,
-            })),
-            index === 0 && j >= 1 && j <= 3 && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
-          );
       }
     }
+    return { wide, fragments, widths: roadWidths };
+  }
+  function appendRoadShape(ctx, screen, a, b, width) {
+    const length = distance(a, b);
+    if (length <= 0.001) return;
+    const nx = -((b.y - a.y) / length) * width;
+    const ny = ((b.x - a.x) / length) * width;
+    const points = [
+      { x: a.x + nx, y: a.y + ny },
+      { x: b.x + nx, y: b.y + ny },
+      { x: b.x - nx, y: b.y - ny },
+      { x: a.x - nx, y: a.y - ny },
+    ];
+    points.forEach((p, k) => {
+      const q = screen(p);
+      if (k) ctx.lineTo(q.x, q.y);
+      else ctx.moveTo(q.x, q.y);
+    });
+    ctx.closePath();
+  }
+  function appendRoadCap(ctx, screen, point, width) {
+    for (let k = 0; k < 12; k++) {
+      const a = (k * Math.PI) / 6;
+      const p = screen({ x: point.x + Math.cos(a) * width, y: point.y + Math.sin(a) * width });
+      if (k) ctx.lineTo(p.x, p.y);
+      else ctx.moveTo(p.x, p.y);
+    }
+    ctx.closePath();
+  }
+  function drawRoads(ctx, paths, screen, footpaths = [], kinds = []) {
+    const signature = JSON.stringify([paths, footpaths, kinds]);
+    if (!roadPaintCache || roadPaintCache.signature !== signature)
+      roadPaintCache = { signature, geometry: prepareRoadPaint(paths, footpaths, kinds) };
+    const { wide, fragments } = roadPaintCache.geometry;
+    const paint = (widthFactor, color, foot = false) => {
+      ctx.beginPath();
+      if (foot) {
+        for (const [a, b] of fragments) {
+          appendRoadShape(ctx, screen, a, b, roadWidths.path * widthFactor);
+          appendRoadCap(ctx, screen, a, roadWidths.path * widthFactor);
+          appendRoadCap(ctx, screen, b, roadWidths.path * widthFactor);
+        }
+      } else {
+        for (const road of wide) {
+          const w = roadWidths[road.kind] * widthFactor;
+          for (let i = 1; i < road.points.length; i++)
+            appendRoadShape(ctx, screen, road.points[i - 1], road.points[i], w);
+          for (const point of road.points) appendRoadCap(ctx, screen, point, w);
+        }
+      }
+      ctx.fillStyle = color;
+      // A single fill per layer unions all its overlapping outlines. The old
+      // per-strip translucent polygons darkened every T and corner multiple times.
+      ctx.fill();
+    };
+    ctx.save();
+    paint(1.12, '#647051');
+    paint(1, '#997d59');
+    paint(0.63, '#ac8d66');
+    paint(1.2, '#66734d', true);
+    paint(1, '#978561', true);
+    paint(0.7, '#a69570', true);
+    ctx.restore();
   }
   function drawWall(ctx, e, p) {
     const w = e.greenwoodWall,
@@ -1673,6 +1761,7 @@
     drawNature,
     drawFacility,
     drawRoads,
+    prepareRoadPaint,
     drawWall,
     drawGround,
   };
