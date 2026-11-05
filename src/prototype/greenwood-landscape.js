@@ -218,8 +218,8 @@
       waters = [pond, ribbon(stream, 16), ribbon(headrace, 12), ribbon(tailrace, 20), shallowCreek],
       // Source-owned crossings, not extra named river bridges or saved props.
       millBridge = {
-        from: q([1138, 1583]),
-        to: q([1250, 1455]),
+        from: q([1290, 1600]),
+        to: q([1350, 1530]),
         width: 62 * scale,
         kind: 'timber',
       },
@@ -229,7 +229,7 @@
         width: 76 * scale,
         kind: 'stone-culvert',
       },
-      millServiceLane = [[1200, 1660], [1138, 1583], [1250, 1455], [1320, 1465]].map(q);
+      millServiceLane = [[1200, 1660], [1290, 1600], [1350, 1530], [1400, 1490]].map(q);
     R.terrain[0] = [
       { kind: 'rain-pools', wetland: true, pools: waters, blockingPools: waters.filter((w) => !w.shallow) },
       { kind: 'water', x: 2720 * scale, y: 1320 * scale, r: 140 },
@@ -328,9 +328,9 @@
         if (z.greenwoodRoutes && !z.greenwoodRoutes.some((r) => same(r.points)))
           z.greenwoodRoutes.push({ kind: 'farm', points: lane.map((p) => ({ ...p })) });
         const targets = [
-          ['greenwood-mill-0', 1375, 1540],
-          ['greenwood-mill-1', 1390, 1485],
-          ['greenwood-mill-2', 1325, 1520],
+          ['greenwood-mill-0', 1450, 1410],
+          ['greenwood-mill-1', 1410, 1380],
+          ['greenwood-mill-2', 1390, 1410],
         ];
         // Relocate only known disposable work decoration, never an owner's
         // camp, a saved order, a quest prop, a resident or an enemy home.
@@ -536,7 +536,7 @@
                 [1200, 1660],
               ],
             ],
-            ['farm', [[1200, 1660], [1138, 1583], [1250, 1455], [1320, 1465]]],
+            ['farm', [[1200, 1660], [1290, 1600], [1350, 1530], [1400, 1490]]],
             [
               'farm',
               [[2320, 900], [2500, 1350], [2420, 1690], [2240, 1980], [2240, 2510], plan.crypt],
@@ -766,9 +766,9 @@
               ['crate', 1280, 2140],
             ],
             mill: [
-              ['cart', 1375, 1540],
-              ['supply-stack', 1390, 1485],
-              ['barrel', 1325, 1520],
+              ['cart', 1450, 1410],
+              ['supply-stack', 1410, 1380],
+              ['barrel', 1390, 1410],
             ],
             wagon: [
               ['cart', 2790, 260],
