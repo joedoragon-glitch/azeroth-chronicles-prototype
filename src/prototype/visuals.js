@@ -9141,8 +9141,10 @@
       }
       craftedRoof(34, -31, -48, region);
       // The hook physically hangs from the pre-existing right stall post.
-      // Greenwood gets the new lamp; other regions retain local identity.
+      // Greenwood gets a refined sconce. Other regions retain their older
+      // sheltered lantern rather than losing the once-implied service light.
       if (region === 0) mountedSconce(29, -20, 'stall');
+      else craftAt(29, -20, 0.48, () => lantern(0, 0));
       if (region === 4)
         poly(
           [
