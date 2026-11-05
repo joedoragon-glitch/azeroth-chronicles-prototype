@@ -117,3 +117,85 @@ for (const [a, b] of [[0, 0.000001], [0.999999, 1]]) {
       parseRgba(second.colorStops[0].color)[3], 'continuous boundary darkness');
 }
 console.log('PASS Greenwood day/night Canvas+Pixi grades, sunset, motes, and 4 untouched regions');
+
+\n// Native real-Campaign review frames: preserve the pre-change main artist as
+// an actual render reference, not a simulated color swatch or invented art.
+if (process.env.CI_BASE_SHA) {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const cp = require('node:child_process');
+  const vm = require('node:vm');
+  const { createRequire } = require('node:module');
+  const { createCanvas } = require('@napi-rs/canvas');
+  const Campaign = require('../src/prototype/engine.js');
+  const Renderer = require('../src/prototype/renderer.js');
+  const CombatVisuals = require('../src/prototype/combat-visuals.js');
+  const source = cp.execFileSync('git', [
+    'show', process.env.CI_BASE_SHA + ':src/prototype/visuals.js',
+  ], { cwd: path.join(__dirname, '..'), encoding: 'utf8', maxBuffer: 4 * 1024 * 1024 });
+  const virtualModule = { exports: {} };
+  vm.runInNewContext(source, {
+    module: virtualModule,
+    require: createRequire(path.join(__dirname, '../src/prototype/visuals.js')),
+    performance: { now: () => 16000 },
+  }, { filename: 'main-before-greenwood-moonlight.js' });
+  const oldVisuals = virtualModule.exports;
+  assert.equal(typeof oldVisuals.atmosphere, 'function');
+  const output = path.join(__dirname, '..', 'test-artifacts', 'greenwood-809');
+  fs.mkdirSync(output, { recursive: true });
+  const frames = [], width = 880, height = 560;
+  const game = new Campaign('normal', 'paladin', () => 0.73);
+  assert(game.enter('vale'));
+  const spots = [
+    ['millhaven', Campaign.data.towns[0]],
+    ['orchard', [780, 2100]],
+  ];
+  const clocks = [
+    ['day', 245], ['sunset', 345], ['night', 480], ['sunrise', 585],
+  ];
+  const render = (visuals, x, y) => {
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+    const artist = Renderer.create({
+      canvas: { width, height }, ctx, getGame: () => game,
+      platform: {
+        cameraZoom: 1.5,
+        cameraAnchor: (w, h) => ({ x: w * 0.56, y: h * 0.52 }),
+      },
+      Campaign,
+      PrototypeVisuals: visuals,
+      PrototypeCombatVisuals: CombatVisuals,
+      chargePresentation: () => null,
+      isPaused: () => false,
+      now: () => 16000,
+    });
+    artist.setOptimizationMode(true); // stable before/after grade comparison
+    const state = JSON.stringify(game.s);
+    artist.draw();
+    assert.equal(JSON.stringify(game.s), state, 'painting must not change game state');
+    return canvas.toBuffer('image/png');
+  };
+  for (const [spot, coord] of spots) {
+    assert(coord && coord.length === 2);
+    game.hero.x = coord[0]; game.hero.y = coord[1];
+    for (const [phase, clock] of clocks) {
+      game.s.clock = clock;
+      const previous = render(oldVisuals, ...coord);
+      const proposed = render(Visuals, ...coord);
+      const filename = spot + '-' + phase;
+      fs.writeFileSync(path.join(output, filename + '-before.png'), previous);
+      fs.writeFileSync(path.join(output, filename + '-candidate.png'), proposed);
+      frames.push({ spot, phase, identical: previous.equals(proposed) });
+    }
+  }
+  assert(frames.every((f) => f.phase !== 'day' || f.identical),
+    'daylight screenshots must remain pixel-identical');
+  assert(frames.every((f) => f.phase === 'day' || !f.identical),
+    'sunset/night/sunrise must render a visible grading change');
+  fs.writeFileSync(path.join(output, 'review-index.json'),
+    JSON.stringify({ contract: 'PR #809; source-native Canvas screenshots at 150%',
+      base: process.env.CI_BASE_SHA, generatedFrom: process.env.GITHUB_SHA || 'local',
+      optimizedForDeterminism: true,
+      artApproval: false, pixiDeviceVerification: false, frames }, null, 2) + '\\n');
+  console.log('PASS 16 native aligned before/candidate Greenwood screenshots; review in CI artifact');
+}
