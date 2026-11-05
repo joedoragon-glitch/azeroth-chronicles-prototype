@@ -19294,7 +19294,11 @@
     if (region === 0 && R.greenwoodLayout?.version === 2)
       GreenwoodLandscape.drawGround(ctx, screen, R.greenwoodLayout, bounds);
     const b = R.barriers[region];
-    strip(b.kind, ...b.bounds, (y) => R.channelBanks(region, y));
+    // Paint the main Greenwood river AFTER the connected mill water polygons.
+    // Its shared bank hides the tailrace's final submerged cap instead of
+    // leaving a pale outline/ribbon visibly pasted over the river.
+    if (!(region === 0 && R.greenwoodLayout?.version === 2))
+      strip(b.kind, ...b.bounds, (y) => R.channelBanks(region, y));
     if (region === 1) {
       const left = [],
         right = [];
@@ -19532,6 +19536,39 @@
         continue;
       }
       if (kind === 'rain-pools') {
+        if (region === 0 && R.greenwoodLayout?.version === 2 && p.wetland) {
+          // Paint bank margins first for ALL connected polygons, then water
+          // over every internal lip. This prevents separately capped creek,
+          // headrace and tailrace stamps from showing through one another.
+          for (const pool of p.pools) {
+            const rim = pool.points.map((q) => ({
+              x: pool.x + (q.x - pool.x) * 1.07,
+              y: pool.y + (q.y - pool.y) * 1.035,
+            }));
+            poly(rim, pool.shallow ? '#637c60' : '#747a61');
+          }
+          for (const pool of p.pools) poly(pool.points, pool.shallow ? '#4c7b79' : '#39737b');
+          // The impounded part is visibly slower and deeper. Avoid a dark
+          // outline across either channel mouth.
+          const pond = p.pools[0];
+          poly(
+            pond.points.map((q) => ({
+              x: pond.x + (q.x - pond.x) * 0.68,
+              y: pond.y + (q.y - pond.y) * 0.7,
+            })),
+            '#37636f77',
+          );
+          if (!omitTerrainMotion)
+            for (const [j, pool] of p.pools.entries()) {
+              if (j === 4) continue; // Very shallow northern creek, quiet.
+              for (const fraction of [-0.25, 0.18]) {
+                const y = pool.y + pool.ry * fraction,
+                  x = pool.x + Math.sin(time * 0.7 + j) * 2;
+                line({ x: x - 10, y }, { x: x + 9, y: y + 2 }, '#b2cebb88', 1);
+              }
+            }
+          continue;
+        }
         for (const pool of p.pools) {
           const rim = pool.points.map((q) => ({
             x: pool.x + (q.x - pool.x) * 1.075,
@@ -19681,6 +19718,8 @@
         segment(at, p.y2);
       }
     }
+    if (region === 0 && R.greenwoodLayout?.version === 2)
+      strip(b.kind, ...b.bounds, (y) => R.channelBanks(region, y));
     for (const d of inheritedDecks) {
       rect(d.x1, d.x2, d.y1, d.y2, '#413d47');
       rect(d.x1 + 6, d.x2 - 6, d.y1 + 6, d.y2 - 6, '#928797');
@@ -19811,6 +19850,47 @@
           ctx.fillStyle = stone ? '#666558' : '#6a5139';
           ctx.fillRect(p.x - 2, p.y - 1, 3, 2);
         }
+    }
+    if (region === 0 && R.greenwoodLayout?.version === 2) {
+      // These are local service crossings; the two named river bridges above
+      // retain their original identities, exploration and solid-bank gaps.
+      for (const deck of [R.greenwoodLayout.creekCulvert, R.greenwoodLayout.millBridge]) {
+        if (!deck) continue;
+        const a = deck.from, b = deck.to,
+          length = Math.hypot(b.x - a.x, b.y - a.y) || 1,
+          nx = -(b.y - a.y) / length, ny = (b.x - a.x) / length,
+          half = deck.width / 2,
+          stoneDeck = deck.kind === 'stone-culvert';
+        if (viewport && outsideScreen([a,b].map(screen), viewport, 130)) continue;
+        const corners = (w, ext = 0) => [
+          { x: a.x + nx*w - (b.x-a.x)*ext/length, y: a.y + ny*w - (b.y-a.y)*ext/length },
+          { x: b.x + nx*w + (b.x-a.x)*ext/length, y: b.y + ny*w + (b.y-a.y)*ext/length },
+          { x: b.x - nx*w + (b.x-a.x)*ext/length, y: b.y - ny*w + (b.y-a.y)*ext/length },
+          { x: a.x - nx*w - (b.x-a.x)*ext/length, y: a.y - ny*w - (b.y-a.y)*ext/length },
+        ];
+        polygon(corners(half + 6, 2), stoneDeck ? '#777265' : '#584532');
+        polygon(corners(half), stoneDeck ? '#a59980' : '#aa8b60');
+        for (let t = 12; t < length - 8; t += stoneDeck ? 34 : 18) {
+          const x = a.x + (b.x-a.x)*t/length, y = a.y + (b.y-a.y)*t/length;
+          line(
+            { x: x + nx*(half-5), y: y + ny*(half-5) },
+            { x: x - nx*(half-5), y: y - ny*(half-5) },
+            stoneDeck ? '#89816d' : '#72583d',
+            stoneDeck ? 1.2 : 2,
+          );
+        }
+        for (const side of [-1,1]) {
+          const edge = (p) => ({ x: p.x + nx*(half+2)*side, y: p.y + ny*(half+2)*side });
+          line(edge(a), edge(b), stoneDeck ? '#c3b99e' : '#d4bb90', 2.6);
+          if (!stoneDeck)
+            for (const t of [0.07,0.93]) {
+              const p = edge({ x:a.x+(b.x-a.x)*t, y:a.y+(b.y-a.y)*t });
+              const q=screen(p);
+              ctx.strokeStyle='#66513e';ctx.lineWidth=3;
+              ctx.beginPath();ctx.moveTo(q.x,q.y+2);ctx.lineTo(q.x,q.y-10);ctx.stroke();
+            }
+        }
+      }
     }
     ctx.restore();
   }
