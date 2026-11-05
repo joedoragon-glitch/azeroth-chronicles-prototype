@@ -106,6 +106,13 @@ assert.deepEqual(ids(restored.zone()), ids(z), 'save retains actors, constructio
 const once = restored.snapshot(), twice = Campaign.restore(once, rng).snapshot();
 assert.equal(twice.zones.vale.greenwoodRoadBridgeVersion, 1);
 assert.deepEqual(ids(twice.zones.vale), ids(once.zones.vale), 'second load remains stable');
+const oldNarrowBridge = structuredClone(original);
+oldNarrowBridge.zones.vale.bridgeApproaches[1].width = 56;
+const widened = Campaign.restore(oldNarrowBridge, rng);
+assert.equal(widened.zone().bridgeApproaches[1].width, 80,
+  'an already-upgraded v4 save gets the same widened physical south deck');
+assert.equal(Campaign.restore(widened.snapshot(), rng).zone().bridgeApproaches[1].width, 80,
+  'south bridge width remains stable across repeat save loads');
 assert.deepEqual(twice.zones.vale.footpaths, once.zones.vale.footpaths, 'road correction idempotent');
 assert.deepEqual(twice.quests, once.quests, 'quests unchanged');
 assert.deepEqual(twice.paid, once.paid, 'paid progress unchanged');
