@@ -65,12 +65,14 @@ jobs:
         if: matrix.mode == 'canvas'
         uses: actions/upload-artifact@v4
         with:
-          name: greenwood-architecture-pr832-native
+          name: greenwood-architecture-owner-feedback-native
           path: |
             test-artifacts/greenwood-environment/scenes/homestead-day.png
             test-artifacts/greenwood-environment/scenes/homestead-night.png
             test-artifacts/greenwood-environment/scenes/treasury-day.png
             test-artifacts/greenwood-environment/scenes/treasury-night.png
+            test-artifacts/greenwood-environment/scenes/estate-day.png
+            test-artifacts/greenwood-environment/scenes/estate-night.png
             test-artifacts/greenwood-environment/scenes/receipt.json
           retention-days: 30
           if-no-files-found: error
