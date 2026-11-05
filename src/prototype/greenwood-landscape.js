@@ -205,7 +205,7 @@
     const waters = [pond, ribbon(stream, 16), ribbon(headrace, 12), ribbon(tailrace, 20)];
     R.terrain[0] = [
       { kind: 'rain-pools', wetland: true, pools: waters },
-      { kind: 'water', x: 2720 * scale, y: 1320 * scale, r: 140 },
+      // #806: the old isolated east-bank water disc becomes Thornfang's dry homestead.
     ];
     R.forests[0] = []; // The authored stands below own nature, not circular forest stamps.
     R.landforms[0] = [
@@ -282,10 +282,87 @@
   }
   function install(C, { D, R }) {
     class Landscape {
+
+      // #806: reconstruct the old eastern water circle as a coherent, dry
+      // wolf-scout homestead without re-running destructive regional generation.
+      greenwoodHomesteadScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion ||
+            z.greenwoodHomesteadVersion === 1) return;
+        const scale = cfg.scale;
+        const point = (x, y) => ({ x: x * scale, y: y * scale });
+        const clean = (p, clearance = 0) =>
+          !this.blocked(p.x, p.y, 'vale', clearance, true) &&
+          this.distanceToRoad(z, p) >= clearance + 42 &&
+          this.distanceToRoad({ roads: z.footpaths || [] }, p) >= clearance + 30 &&
+          !z.buildings.some((b) => distance(b, p) < clearance + 115) &&
+          !z.props.some((v) => (v.playerOwned || v.owned || v.custom) &&
+            distance(v, p) < clearance + (v.r || 25) + 45) &&
+          !z.npcs.some((n) => distance(n.servicePoint || n, p) < clearance + 80) &&
+          !z.nodes.some((n) => distance(n, p) < clearance + 50) &&
+          !z.enemies.some((e) => e.hp > 0 &&
+            distance(e.home || e, p) < clearance + 85);
+        const alternatives = [
+          [0, 0],
+          [-65, -25],
+          [45, -40],
+          [-50, 45],
+        ];
+        const layouts = [
+          ['lodge', 2690, 1170, 55],
+          ['rest-bay', 2830, 1245, 23],
+          ['gear', 2570, 1225, 0],
+          ['training', 2770, 1380, 0],
+          ['rear-rail', 2640, 1065, 0],
+          ['east-rail', 2885, 1340, 0],
+        ];
+        const chosen = alternatives.find(([dx, dy]) =>
+          layouts.slice(0, 2).every(([, x, y, radius]) =>
+            clean(point(x + dx, y + dy), radius)));
+        const audit = { dryPond: true, constructed: false, skipped: [], offsets: chosen || null };
+        // The plot belongs to saved players and existing residents first.
+        // An occupied custom parcel must not be bulldozed to paint a homestead.
+        if (!chosen) {
+          z.greenwoodHomesteadAudit = { ...audit, reason: 'owned, road or actor plot needs inspection' };
+          z.greenwoodHomesteadVersion = 1;
+          return;
+        }
+        const [dx, dy] = chosen;
+        const placements = layouts.filter(([kind, x, y, r], index) =>
+          index < 2 || clean(point(x + dx, y + dy), r));
+        // Remove only replaceable natural scatter from the immediate shelter
+        // footprints. No paid object, Quest NPC, beast or existing pasture asset.
+        const cleared = placements.filter(([kind]) => kind === 'lodge' || kind === 'rest-bay');
+        z.props = z.props.filter((p) =>
+          !(p.greenwoodNature && cleared.some(([, x, y, r]) =>
+            distance(p, point(x + dx, y + dy)) < r * scale + 60 * scale)));
+        for (const [kind, x, y, radius] of placements) {
+          const blocking = kind === 'lodge' || kind === 'rest-bay';
+          z.props.push({
+            id: 'greenwood-thorn-homestead-' + kind,
+            ...point(x + dx, y + dy),
+            structure: 'thorn-homestead-' + kind,
+            greenwoodFacility: 'thorn-' + kind,
+            greenwoodDistrict: 'thorn-personal-homestead',
+            greenwoodAuthored: true,
+            r: blocking ? radius * scale : 0,
+            decorative: !blocking,
+            roadBlocker: blocking,
+          });
+        }
+        audit.constructed = true;
+        audit.skipped = layouts.filter(([name]) => !placements.some(([kind]) => name === kind))
+          .map(([name]) => name);
+        z.greenwoodHomesteadAudit = audit;
+        z.greenwoodHomesteadVersion = 1;
+      }
       // GV-679 is an additive, nonblocking scene overlay. Never re-run the
       // layout's destructive scene generator or its enemy/home corrections to
       // deliver cosmetic refinements to an existing v4 campaign.
       greenwoodRefinementScene(z) {
+        // A separate idempotent layer also upgrades already-finished scene-5 saves.
+        this.greenwoodHomesteadScene(z);
         if (z.id !== 'vale' || R.greenwoodLayout?.version !== 2 ||
             z.greenwoodRefinementVersion === 1 || z.greenwoodRedesignScene !== R.greenwoodLayout.sceneVersion)
           return;
@@ -1249,7 +1326,123 @@
     }
     ctx.restore();
   }
+
+  // A single coherent native painter for the homestead's actual silhouettes.
+  // Shared isometric axes and a fixed palette avoid disconnected box art.
+  function drawThornHomestead(ctx, e, p) {
+    const kind = e.greenwoodFacility;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    const poly = (a, color) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      a.forEach(([x,y], i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y));
+      ctx.closePath();
+      ctx.fill();
+    };
+    const stroke = (a, color, width = 2) => {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      a.forEach(([x,y], i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y));
+      ctx.stroke();
+    };
+    const oval = (x,y,rx,ry,color) => {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);
+      ctx.fill();
+    };
+    const wood = '#76563d', beam = '#4d3c30', edge = '#b6956a';
+    const lantern = (x,y) => {
+      stroke([[x,y-19],[x,y-9]], beam, 2);
+      poly([[x-5,y-9],[x+5,y-9],[x+6,y+3],[x-6,y+3]], '#493e32');
+      poly([[x-3,y-6],[x+3,y-6],[x+4,y],[x-4,y]], '#e6b978');
+      stroke([[x-5,y+4],[x+5,y+4]], edge, 2);
+    };
+    if (kind === 'thorn-lodge') {
+      oval(0, 10, 98, 20, '#142b243d');
+      // Two continuous stone foundations, two connected timber wall planes.
+      poly([[-80,-4],[-18,24],[89,-9],[25,-39]], '#70705d');
+      poly([[-77,-14],[-77,-75],[7,-101],[7,-35]], '#866d51');
+      poly([[7,-35],[7,-101],[88,-72],[88,-11]], '#6e5843');
+      for (const [a,b] of [[[-74,-10],[-74,-74]],[[-35,4],[-35,-87]],[[7,-34],[7,-100]],[[87,-13],[87,-72]]])
+        stroke([a,b], beam, 6);
+      // A clear wolf-height shelter mouth, dark interior and visible bedding.
+      poly([[20,-38],[20,-80],[68,-66],[68,-17]], '#28352e');
+      poly([[24,-32],[24,-72],[64,-59],[64,-21]], '#25312a');
+      oval(45,-17,25,8,'#a39065');
+      for (const y of [-20,-16,-12]) stroke([[25,y],[63,y-6]], '#ccb483', 1.4);
+      stroke([[18,-42],[18,-83],[70,-66],[70,-21]], '#b39161', 5);
+      stroke([[16,-84],[74,-68]],beam,4);
+      // Deep roof planes share the same ridge: no arbitrary second-facing roof.
+      poly([[-96,-72],[-30,-140],[54,-161],[107,-81],[17,-55]], '#48382f');
+      poly([[-96,-72],[-30,-140],[17,-55],[-16,-35]], '#916849');
+      poly([[-30,-140],[54,-161],[107,-81],[17,-55]], '#624638');
+      stroke([[-96,-72],[-30,-140],[54,-161],[107,-81]], '#b28a5a', 5);
+      stroke([[-96,-72],[-16,-35],[17,-55],[107,-81]], '#352e29', 6);
+      for (let i=0; i<5; i++) {
+        const t = (i+1)/6;
+        stroke([[-25+t*75,-129-t*18],[11+t*83,-61-t*18]], '#94704e', 1.5);
+      }
+      // A single vent and working gear lean-to, not a human cottage facade.
+      poly([[-46,-82],[-30,-88],[-30,-72],[-46,-68]], '#29372e');
+      stroke([[-46,-82],[-30,-88],[-30,-72],[-46,-68],[-46,-82]], edge, 2);
+      poly([[-87,-27],[-58,-36],[-44,-23],[-70,-10]], '#4e392d');
+      for (let i=0; i<4; i++) stroke([[-79+i*7,-19],[-68+i*7,-31]], '#c1a477', 2);
+      lantern(81,-42);
+    } else if (kind === 'thorn-rest-bay') {
+      oval(0,7,60,13,'#142b2438');
+      // Raised, breathable three-post shelter with continuous shingled roof.
+      poly([[-55,-5],[-52,-60],[7,-79],[56,-60],[56,-5]], '#64503b');
+      poly([[-47,-3],[-47,-50],[5,-66],[5,-9]], '#394337');
+      poly([[5,-9],[5,-66],[49,-51],[49,-3]], '#394337');
+      for(const x of [-50,5,52]) stroke([[x,0],[x,-58-(x===5?12:0)]], beam, 6);
+      poly([[-64,-53],[1,-91],[68,-59],[3,-27]], '#584334');
+      poly([[-64,-53],[1,-91],[3,-27]], '#987452');
+      stroke([[-64,-53],[1,-91],[68,-59],[3,-27]], edge, 3);
+      for(let i=0;i<4;i++) stroke([[7+i*13,-76+i*5],[9+i*13,-38+i*5]], '#866446', 1.5);
+      oval(0,-3,39,9,'#ae966b');
+      for(let i=0;i<5;i++) stroke([[-30+i*12,-8],[-24+i*12,0]], '#d9c28b', 1.5);
+    } else if (kind === 'thorn-gear') {
+      oval(0,9,37,8,'#1d302839');
+      stroke([[-30,9],[-30,-48]], beam, 5);
+      stroke([[27,4],[27,-49]], beam, 5);
+      stroke([[-36,-52],[34,-56]], edge, 6);
+      poly([[-38,-49],[31,-54],[22,-65],[-28,-60]], '#71533c');
+      for(const x of [-15,2,18]) {
+        stroke([[x,-48],[x,-21]], '#4a4030', 2);
+        oval(x,-20,5,3,'#a68a59');
+      }
+      poly([[-26,-2],[4,-12],[25,-4],[-5,6]], '#615443');
+      for(let i=0;i<3;i++) stroke([[-20+i*13,0],[-14+i*13,-6]], '#b29b73', 1.5);
+    } else if (kind === 'thorn-training') {
+      oval(0,7,52,13,'#705f4247');
+      for(const [x,y] of [[-37,6],[0,-9],[36,5]]) {
+        stroke([[x,y+9],[x,y-32]], wood, 6);
+        stroke([[x-11,y-27],[x+10,y-27]], edge, 3);
+        poly([[x-7,y-30],[x+7,y-30],[x+9,y-16],[x-9,y-16]], '#958067');
+        stroke([[x-6,y-22],[x+6,y-22]], '#5b5142', 1.6);
+      }
+      stroke([[-36,6],[0,-9],[36,5]], '#8b785a', 1.4);
+    } else if (kind === 'thorn-rear-rail' || kind === 'thorn-east-rail') {
+      const lean = kind === 'thorn-rear-rail' ? -1 : 1;
+      const x1=-52,x2=52,y1=lean*11,y2=-lean*11;
+      stroke([[x1,y1-13],[x2,y2-13]], '#785e45', 5);
+      stroke([[x1,y1-27],[x2,y2-27]], '#a2825a', 4);
+      for(let i=0;i<4;i++){
+        const x=x1+i*34,y=y1+(y2-y1)*i/3;
+        stroke([[x,y+6],[x,y-38]], '#534435', 6);
+        stroke([[x-3,y-37],[x,y-44],[x+3,y-37]], '#c2a47a', 2);
+      }
+    }
+    ctx.restore();
+  }
+
   function drawFacility(ctx, e, p) {
+    if (e.greenwoodFacility?.startsWith('thorn-')) return drawThornHomestead(ctx, e, p);
     ctx.save();
     ctx.translate(p.x, p.y);
     ctx.lineJoin = 'round';
@@ -1544,7 +1737,7 @@
       [2020, 1780, 390, 370, '#34492e'],
       [650, 780, 500, 330, '#78894c'],
       [480, 1900, 420, 490, '#8d8250'],
-      [2780, 1320, 390, 320, '#84934f'],
+      [2790, 1310, 365, 295, '#7d8752'],
     ];
     ctx.save();
     for (const [x, y, rx, ry, color] of patches) {
@@ -1579,6 +1772,15 @@
         ctx.fill();
       }
     }
+    // Dry, asymmetric worn ground in the former east pond's actual footprint.
+    // Ground is cached with terrain; no added frame animation or water overlay.
+    const dirt = [[2560,1270],[2625,1165],[2780,1090],[2910,1180],
+      [2925,1295],[2820,1420],[2710,1460],[2590,1400]].map(([x,y])=>
+      screen({ x: x*s, y: y*s }));
+    ctx.fillStyle = '#88704a44';
+    ctx.beginPath();
+    dirt.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));
+    ctx.closePath();ctx.fill();
     ctx.restore();
   }
   const api = {
