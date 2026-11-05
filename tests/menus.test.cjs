@@ -13,8 +13,8 @@ const catalog = Menus.create({
   Campaign,
   D: Campaign.data,
   action: (label, action, detail = '', disabled = false) => ({ label, action, detail, disabled }),
-  openMenu: (title, description, actions, back) => {
-    opened = { title, description, actions, back };
+  openMenu: (title, description, actions, back, options) => {
+    opened = { title, description, actions, back, view: options?.view || 'default' };
   },
   closeMenu: back,
   recallSquad() {},
@@ -25,6 +25,7 @@ game.s.keys.thorn = true;
 game.rescue('thorn');
 catalog.teacher({ family: 'thorn', name: game.boss('thorn').captive }, back);
 assert.equal(opened.back, back);
+assert.equal(opened.view, 'npc-training-hub', 'instructor menu uses compact hub presentation');
 opened.actions.find((a) => a.label.startsWith('Expedition training')).action();
 const train = opened.actions.find((a) => a.label.startsWith('Train Expedition Skill'));
 assert(train && !train.disabled);
@@ -79,3 +80,27 @@ assert.equal(game.hero.skills[0], 1);
 assert.equal(game.hero.gold, 0);
 assert(opened.actions[0].disabled, 'native funds guard and refreshed disabled state');
 console.log('PASS instructor confirmations refresh stale campaign quotes and recheck native funds');
+
+// Game-design contract: specialist catalog uses single-column transaction
+// presentation; Barracks uses comparable peer-category choices. No price,
+// unlock, companion order or save state changes are needed to classify them.
+game = new Campaign('normal', 'paladin');
+catalog.supplier({ kind: 'supplies', name: 'Town Supplies', family: 'vale' }, back);
+assert.equal(opened.view, 'npc-service-catalog');
+assert(
+  opened.actions.some((a) => a.label.includes('Ranger field support')),
+  'specialized supplier services remain reachable',
+);
+game.zone().buildings.push({ id: 'design-audit-barracks', progress: 4, full: false });
+catalog.barracksMenu({ id: 'design-audit-barracks' }, back);
+assert.equal(opened.view, 'barracks-hub');
+assert.deepEqual(
+  opened.actions.slice(0, 4).map((entry) => entry.label),
+  ['Company', 'Recovery', 'Training', 'Operations'],
+  'Barracks keeps four equal entry categories ahead of optional upgrades',
+);
+assert(
+  opened.actions.some((entry) => entry.label.includes('Full Barracks')),
+  'native gated upgrade remains on the root',
+);
+console.log('PASS NPC supplier and Barracks game-design hierarchy without changing service permissions');
