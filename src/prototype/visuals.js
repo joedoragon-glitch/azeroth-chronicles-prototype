@@ -18320,6 +18320,9 @@
   function unscaledHeight(e) {
     if (e.greenwoodNature === 'tree') return 140;
     if (e.greenwoodFacility === 'mill') return 160;
+    if (e.greenwoodFacility === 'thorn-lodge') return 180;
+    if (e.greenwoodFacility === 'thorn-rest-bay') return 105;
+    if (e.greenwoodFacility?.startsWith('thorn-')) return 80;
     if (e.miningFacility) return 90;
     if (e.highlandsNature === 'tree') return 110;
     if (e.structure === 'crown-orrery') return 165;
