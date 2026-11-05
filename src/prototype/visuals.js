@@ -20575,6 +20575,11 @@
           ctx.lineTo(x, p.y - 32);
         }
         ctx.stroke();
+      } else if (p.kind === 'mill-sconce') {
+        // The hardware is part of the mill's actual dry-side facade.
+        // Add only illuminated glass, not a duplicated floating lantern.
+        ctx.fillStyle = '#f2c477';
+        ctx.fillRect(p.x - 2.5, p.y - 5, 5, 10);
       } else if (p.kind === 'lantern' && p.fixture === 'post') {
         // Illuminate the glass already painted on the actual post. Do not
         // manufacture a second floating service lantern beside it.
@@ -20660,9 +20665,10 @@
       for (const p of renderedLights) {
         const carried = p.kind === 'carried-lantern',
           window = p.kind === 'window',
+          mill = p.kind === 'mill-sconce',
           fire = p.kind === 'fire' || p.kind === 'work-fire',
-          radius = carried ? 64 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
-          y = carried ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
+          radius = carried ? 64 : mill ? 60 : window ? 70 : p.kind === 'work-fire' ? 105 : fire ? 90 : 85,
+          y = carried || mill ? p.y : p.y - (p.fixture === 'post' ? 46 : window ? 32 : fire ? 13 : 28),
           source = { x: p.x, y },
           tint = region === 1 ? '245,208,150' : region === 4 ? '247,194,147' : '255,207,132';
         glow(source, radius, window ? 0.27 : fire ? 0.3 : 0.25, tint);
