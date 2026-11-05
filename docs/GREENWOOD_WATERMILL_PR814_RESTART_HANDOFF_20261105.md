@@ -1,33 +1,58 @@
 # PR #814 — Watermill engineering restart and Greenwood integration
 
-**Checkpoint:** 5 November 2026, ~16:05 UTC. Live GitHub state overrides this dated record.
+**Checkpoint:** 5 November 2026, 16:13 UTC. This is an exact inspected source checkpoint; refresh GitHub on continuation.  
+**Game:** *So I Became the Dark Lord's Problem* (SIBDLP), independent fantasy RPG; the repository's old name is historical.  
+**Existing PR:** [#814](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/814), branch `design/greenwood-watermill-district-20261105`. **OPEN DRAFT; NOT MERGED, NOT DEPLOYED, NOT DEVICE VERIFIED, NOT ARTISTICALLY ACCEPTED.**  
+**Current source head:** `a10fc91204852201ce41ce2c6a36f0b6342b957e` (documentation-only commit on top of the focused-tested source head `3562d4d6911dde91a0bbeb3ad7b892359d271616`).  
+**Current main:** `e25ad8e800f385a8c5591a8373edb04c2f85a1b8`; GitHub compare **ahead 88, behind 0**; no baseline merge needed.  
+**Separate overlapping work:** [#828](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/828) head `b502360f2f994a503ddf62af4919a1387e225927`, open draft. Do not interfere with separate #804 work or automation.
 
-**Game:** So I Became the Dark Lord's Problem (SIBDLP), independent RPG. GitHub repository's old name is historical.
+## RESTART HERE
 
-**Read first:** This file; `docs/GREENWOOD_WATERMILL_DISTRICT_GAME_DESIGN_20261105.md` sections RM-01–RM-11; `AGENTS.md`; `docs/DEVELOPMENT_STATE.md`; and the separate [PR #828 environmental handoff](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/fix/greenwood-owner-visual-review-20261105/docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md).
+Read [controlling watermill design](GREENWOOD_WATERMILL_DISTRICT_GAME_DESIGN_20261105.md), **RM-01–RM-11** and its later design-first supersessions; [AGENTS](../AGENTS.md), [development ledger](DEVELOPMENT_STATE.md), [architecture](ARCHITECTURE.md), and [owner art direction](GREENWOOD_VALE_OWNER_ART_DIRECTION_DECISIONS_20261028.md). Then inspect live PR #814/main/#828 and exact-head Actions. This document captures verified state and unresolved gates; it does not supersede the actual owner-approved RM design.
 
-**PR:** [#814](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/814), branch `design/greenwood-watermill-district-20261105`. Open DRAFT, unmerged, undeployed, no phone verification. Keep engineering in this PR; no full suites/merge/deploy without separate approval. Don't wait idle for slow CI; make independent progress and return to the logs.
+**Owner scope:** engineer only inside #814; preserve merged #824's canonical roads and two main-river crossings, merged #813's working western millpond/wheel/weir/headrace/tailrace, merged #820's *dry* eastern Thornfang homestead, and the four playable classes, quests, 640 tribute, 32 Vale enemies, worker identities, player-built property and historical v4 saves. Do not create another PR, run comprehensive suites, merge, deploy, or require owner homework. Mark ready for review only when all objective engineering and aesthetic gates are actually met.
 
-## 1. Exact main reconciliation and neighboring PRs
+## Implemented unique source and save contract
 
-| Record | Verified SHA and state, 5 November | Integration meaning |
-| --- | --- | --- |
-| `main` | `e25ad8e800f385a8c5591a8373edb04c2f85a1b8` | Contains merged #824 canonical roads/bridges, #813 watermill, #820 **dry** eastern Thornfang homestead, #808 botany and #809 night work. |
-| PR #814 before this documentation | `3562d4d6911dde91a0bbeb3ad7b892359d271616`; open draft | **Verified `main...#814`: 87 commits ahead, 0 behind, common base exactly current `main`. Already synchronized; no gratuitous merge/rebase needed.** The documentation commits after this checkpoint naturally advance the head. |
-| #814 merger of #824 | `7301b04046392ce40990391fd81c32552b1e4f57` | Two-parent integration retained the current main source baseline while reintroducing bounded #814 features. Do not reapply obsolete early draft water/road geometry. |
-| #828 | `74b1e41315fe84083f11f240faef53a8ec362410`; open draft | **Other Greenwood feedback session**. Design E01–E17, parallel engineering; **not yet on main**. Preserve branch independence and reconcile when integrating, not through blind wholesale file copies. |
-| #825 | `9271bfbbda3b97e0c1e698199fe8ea9e8593296b`; open draft | Defective/unfinished environmental **donor** for #828, not a PR to stack or merge wholesale. |
-| #826 / #827 | `5911577b8860bb31a9a56324fa556eb3292000e4` / `5f2eecdf996be721ed1c1f500b0acbad326670f2`; open draft | Alternative native fort-wall protection implementations. #828 chooses **one**; no change required in #814. |
-| #819 | open historical draft | Obsolete extra 40-unit fort margin; do not import over the already merged/approved 160-unit policy. |
+- `src/prototype/greenwood-landscape.js`: shallow upstream `upperCreek` from northern map edge `[1220,0]` to existing stream `[900,880]`; five wet polygons, **four deep blocking** polygons. Shallow source remains traversable; deep water only passable on the actual local timber deck.
+- `creekCulvert`: `[1070,725]` to `[1145,805]`, width 76; roadbed is compacted earth/clay with masonry support, not an unnecessary strategic river bridge. `millBridge`: `[1210,1575]` to `[1250,1495]`, width 62, an independent pedestrian service crossing over deep millrace.
+- Appended `millServiceLane` route `[650,1550],[785,1595],[990,1655],[1200,1660]`; appended narrow `millDoorFootpath` route `[1200,1660],[1210,1575],[1250,1495],[1400,1490],[1290,1490],[1210,1485]`; dry doorstep `millEntrance=[1210,1485]`. The broad road stops on dry ground; the narrow pedestrian route crosses the timber bridge and reaches the door.
+- `greenwoodWatermillVersion=2` one-time migration retains 17 canonical #824 indexed routes and appends two, **19 total**; one farm road appended to four originals; preview v1 disconnected-lane migration is corrected. Repeated restored v4 load must not duplicate roads or displace saved properties.
+- Two original main-river bridges retain identities: north deck/gap **100**, south deck/gap **80** (widened from 56 after native Thornfang radius-15 stride clipping). Original eight Thornfang/Mira patrol legs unchanged; no new route engine, enemy AI or per-frame path search.
+- `src/prototype/visuals.js`: actual recessed, partially open timber **visible** mill door and sill; original mill wheel/roof and mounted lantern preserved. **No explorable interior** or new zone transition. Culvert road paint matched muted Greenwood earth palette `#ac8d66`; no standalone dark bridge appearance. Pixi uses compatible alpha for glass, not unsupported CSS rgba.
+- `tests/greenwood-watermill.test.cjs` screenshot helper now runs ordinary `g.zone()` migration before baseline snapshot, then strictly checks render purity. This fixes a false positive from `greenwoodTrailTextVersion` first-access initialization; no production render assertion weakened.
+- Keep source/asset fingerprints in `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` and `sw.js` derived from final actual files. Do not replace source-scope evidence or approved art history to silence CI.
 
-Current `docs/DEVELOPMENT_STATE.md` on main starts with a dated assertion that #824 is still a release candidate. Live GitHub metadata **supersedes** this stale sentence. #828 independently edits that development ledger, so avoid introducing a competing ledger edit in #814; update it once at the final integrated release checkpoint.
+## Exact test evidence and blockers
 
-## 2. Owner's controlling decisions from this chat
+[Latest completed source-focused CI #42058985995](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985995), source `3562d4d6911dde91a0bbeb3ad7b892359d271616`, main `e25ad8e...`, synthetic checkout `924b2a3aff77123ca2307af691d1b3fa3d650979`: **27 of 28 selected focused test files passed, ONE failed.** Failed `tests/artwork-pipeline-checks.test.cjs` from strict `scripts/sprite-pipeline.cjs check` on `prop:vale-cottage:vale`. This is an overall **FAILED** focused run, not merge-ready.
 
-- **Design first, senior engineering next:** RM-01–RM-11 is a creative GO to bounded implementation, NOT approval of unfinished art, a merge or publication. Owner wants a complete reviewable result with little homework.
-- **Hydrological continuity:** a real-looking northern shallow headwater must enter the preexisting western millpond and headrace, pass the dam/weir and wheel, then flow by tailrace to the **actual main river**. No blue-ended stub, floating bridge, absurdly abrupt river mouth or restored eastern water disc. Merged #820's eastern location is a **dry** homestead.
-- **Road and bridge plausibility:** an earthen northern culvert and a short timber **pedestrian** service crossing over the millrace, both with true banks/landings, one connected farm road and dry footpath toward the mill. Owner authorizes changing replaceable geography/ordinary scenery or local deck width as genuinely needed, not deleting saved personal property or inventing an unnecessary third main-river crossing.
-- **Mill doorway:** owner supplied real playable-game screenshots; the existing two-storey mill broadly looked decent but didn't clearly have a usable loading door. An exterior recessed partly open door, jambs, sill and dry landing were added. This is **not** an explorable interior; no inside room or enter/exit transition has been implemented.
-- **Thornfang pathfinding:** owner wants existing bridges used, not a clever new patrol subsystem. The original eight-leg patrol already includes both banks of the north/south main bridges. A real radius-15 stride was clipped by the old southern 56-unit opening; #814 widened the **existing** south walkable gap AND visible deck to 80; north remains 100. Keep patrol legs, behavior and the authentic bridge crossings intact.
-- **Safety/performance:** preserve all four existing playable classes, v4 save schema, 32 ordinary Vale enemies, 640 tribute units, owned buildings, quests, companions, worker assignments, other-region behavior, practical lighting and bounded CPU. Use focused tests and real 150%-camera Canvas/Pixi views. No comprehensive suite or false device-verified/deployed claim.
-- **Cross-session Greenwood ownership:** #828 handles E01–E17: proportional shadows/ground, Goblin compound + two usable shelters/traps, native 160-unit wall protection, occupied enemy and civic lights, forest/road material, merchant trade connection, a **proportionate appropriated agricultural building** for Thornfang with a better yard and **one existing Dark Crown standard**, and Scornfang's distinct **appropriated agricultural storehouse/Treasury**. Do not double-implement them in #814 or confuse their lore.
+Exact diagnostic:
+```text
+approvedCanon=b11ff36581fa31204e70d868378391577f80e067d68e06232fd3c7bc263d9031
+currentCanon=76722da7dcd6b1466da334f8395561aa7a2dc590f564c08bfde8ebfee59c832c
+approvedRasterHash=21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573
+catalogUnchanged=true
+selectedRepresentation=procedural
+originalApproval=PR #300
+```
+`tools/sprites/approved.json` retains the exact accepted raster, approval history and older source revisions. `scripts/sprite-pipeline.cjs` explicitly fails on stale canonical reference when current contract hash differs; it is **not** a raster-corruption finding. The procedural `vale-cottage` art shares `src/prototype/visuals.js` with the mill, and that source differs from main. Need isolate the reference-hash cause and compare current/approved art; **do not** rewrite `approved.json`, falsify approvals, disable checks or replace a retained accepted raster.
+
+At this run's inspection, GitHub branch workflow listing returned **no newer CI runs** for documentation-only head `a10fc912...`; the newest actual completed run still belongs to `3562d4d...`. Do not infer a green new-head run. [Browser PWA update acceptance #42058985691](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985691) **succeeded** and [targeted native Canvas/Pixi road and bridge #42058985813](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985813) **succeeded** at source head `3562d4d...`. The [native mill/river day/night artifact](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985995/artifacts/13431712020) was uploaded, but its actual frames **have not been independently inspected** in this checkpoint; a generated screenshot or passing automated pixel assertion is not artistic approval. No device verification.
+
+## Parallel Greenwood ownership, integration order
+
+#828's [controlling E01–E17 design](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/blob/fix/greenwood-owner-visual-review-20261105/docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md) covers false environmental shadows, fort shelter sizes and traps, actual-wall 160-unit protection, inhabited lighting across five regions and public lamp placement, road-edge smoothing, terrain and trade, Scornfang's adapted agricultural Treasury, Thornfang's proportionate *appropriated farm building* and yard plus a single existing Dark Crown standard. This is **not** a #814 mandate to implement a second copy.
+
+Both #814 and #828 touch `src/prototype/greenwood-landscape.js`, `sw.js` and `tests/greenwood-road-bridge.test.cjs`. Historical donor #825 also touches `src/prototype/visuals.js`, `world.js` and art evidence. Preserve the unique mill geometry, append-only routes, bridge clearances, door and save migration while integrating environmental fixes. Reconcile conflicts source-by-source only when one PR actually lands. Never blanket-merge donor #825 or duplicate #826/#827 fort algorithms. Current #814 is 0 commits behind main; do not perform a ceremonial merge. #804 automation remains separate.
+
+## Next bounded actions, in priority order
+
+1. Reproduce the single strict Vale-cottage canonical mismatch in isolation; compare procedural contract/reference against approved historical reference and `main`, identify exact source/contract drift, and repair via legitimate provenance-preserving engineering only. Keep old approval and raster immutable unless separately justified and approved.
+2. Independently inspect exact-head **150% day/night** native mill/culvert/door/landing/wheel/timber bridge/confluence screenshots and real Pixi parity artifact, not merely workflow success. If artifact retrieval unavailable, record that explicit limit and do not claim visual pass.
+3. Run only the narrow tests affected by a real source fix (artwork pipeline, watermill, road/bridge, v4 restore, navigation budget/Thornfang, PWA/manifest, Canvas/Pixi parity as appropriate). Source-only documentation changes do not retroactively make earlier tests pass.
+4. Confirm 17+2 saved route order, 100/80 bridge widths, shallow/deep collision distinction, visible dry landing, repeated v4 restore and player-build/quest/worker preservation; keep CPU and navigation work bounded.
+5. Refresh current main and #828 at merge boundary, update this exact-SHA ledger and PR conversation with test/artifact links and unresolved gaps. **Only then**, if all objective gates and art inspection pass, mark the *existing* PR ready for review (not merged). No deploy or full suite.
+
+**Short new-chat instruction:** “Continue only SIBDLP PR #814. Read this restart file, RM-01–RM-11 design and AGENTS, refresh current main/#828 and exact CI. Resolve the sole remaining strict cottage-canonical provenance failure, independently inspect real 150% Canvas/Pixi day/night art, preserve v4 routes/bridges and all other Greenwood ownership, then prepare review-ready evidence without merging or deploying.”
