@@ -9302,16 +9302,38 @@
       skull(0, -68, 3.2); // subdued retained keystone; no new burial symbolism
       poly([[-28, 14], [28, 14], [38, 21], [-38, 21]], '#c0b69b');
       line([[-34, 22], [35, 22]], '#797d6b', 2);
-      // New rooflines are visibly larger than the former tomb portal.
-      poly([[-101, -42], [-80, -68], [-48, -66], [-41, -42]], '#6f715f');
-      line([[-98, -42], [-80, -66], [-48, -65]], '#b3a487', 1.4);
-      poly([[-50, -65], [-27, -99], [12, -105], [51, -65], [49, -59], [-50, -59]], '#687064');
-      line([[-45, -64], [-26, -95], [12, -102], [47, -65]], '#b8b09a', 1.4);
-      for (const y of [-74, -82, -90])
-        line([[-23 + (Math.abs(y + 80) * 0.12), y], [19 - (Math.abs(y + 80) * 0.18), y - 1]], '#838778', 0.85);
-      poly([[44, -47], [64, -79], [92, -60], [95, -47]], '#786b56');
-      timber([46, -49], [64, -78], 3, '#a78c66');
-      timber([64, -78], [96, -52], 3, '#a78c66');
+      // Each gable is centered on its own walls. The completed slate roof has
+      // paired planar slopes and a continuous straight ridge, not a lopsided
+      // six-corner panel across the surviving crypt arch.
+      poly([[-105, -43], [-75, -69], [-60, -79], [-90, -53]], '#778071');
+      poly([[-75, -69], [-41, -43], [-26, -53], [-60, -79]], '#59675d');
+      line([[-105, -43], [-75, -69], [-60, -79], [-26, -53]], '#b5ac92', 1.4);
+      const estateFrontLeft = [-54, -65],
+        estateFrontRidge = [-1, -103],
+        estateFrontRight = [52, -65],
+        estateRearLeft = [-34, -80],
+        estateRearRidge = [19, -118],
+        estateRearRight = [72, -80];
+      poly([estateFrontLeft, estateFrontRidge, estateRearRidge, estateRearLeft], '#747c70');
+      poly([estateFrontRidge, estateFrontRight, estateRearRight, estateRearRidge], '#5c695f');
+      poly([estateFrontLeft, estateFrontRidge, [-1, -97], [-54, -59]], '#56645b');
+      poly([estateFrontRidge, estateFrontRight, [52, -59], [-1, -97]], '#4f6058');
+      line([estateFrontLeft, estateFrontRidge, estateRearRidge, estateRearRight, estateFrontRight], '#bcb7a0', 1.5);
+      line([estateFrontLeft, estateRearLeft], '#a6b09f', 1.2);
+      for (let j = 1; j <= 2; j++) {
+        const t = j / 3;
+        line([
+          [estateFrontRidge[0] + (estateFrontRight[0] - estateFrontRidge[0]) * t,
+           estateFrontRidge[1] + (estateFrontRight[1] - estateFrontRidge[1]) * t],
+          [estateRearRidge[0] + (estateRearRight[0] - estateRearRidge[0]) * t,
+           estateRearRidge[1] + (estateRearRight[1] - estateRearRidge[1]) * t],
+        ], '#849186', 0.65);
+      }
+      // The unfinished right bay shares one centered front gable; its rafters
+      // remain exposed without producing a third accidental roof angle.
+      poly([[44, -49], [70, -78], [96, -49]], '#786b56');
+      timber([44, -49], [70, -78], 3, '#a78c66');
+      timber([70, -78], [96, -49], 3, '#a78c66');
       timber([54, -54], [54, 17], 3, '#ad936d');
       timber([93, -51], [93, 18], 3, '#ad936d');
       timber([54, -52], [94, -52], 3, '#ad936d');
@@ -9640,7 +9662,7 @@
         softPoly(
           [
             [-46, -48],
-            [-12, -76],
+            [-23, -87],
             [22, -34],
           ],
           '#9c7c56',
@@ -9648,10 +9670,10 @@
         // Two roof slopes use one front ridge and the same building-depth
         // vector. Reusing their exact corners prevents a twisted roof seam.
         const roofFrontLeft = [-53, -53],
-          roofFrontRidge = [-12, -82],
+          roofFrontRidge = [-23, -93],
           roofFrontRight = [29, -39],
           roofRearLeft = [-13, -67],
-          roofRearRidge = [28, -96],
+          roofRearRidge = [17, -107],
           roofRearRight = [69, -53];
         softPoly(
           [roofFrontLeft, roofFrontRidge, roofRearRidge, roofRearLeft],
@@ -9664,11 +9686,11 @@
         // A continuous front fascia closes both pitched planes onto the
         // existing gable/wall. Keep the high grain hatch below the roof.
         softPoly(
-          [roofFrontLeft, roofFrontRidge, [-12, -76], [-53, -47]],
+          [roofFrontLeft, roofFrontRidge, [-23, -87], [-53, -47]],
           '#4e3e30',
         );
         softPoly(
-          [roofFrontRidge, roofFrontRight, [29, -33], [-12, -76]],
+          [roofFrontRidge, roofFrontRight, [29, -33], [-23, -87]],
           '#493a2c',
         );
         line(
