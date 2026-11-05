@@ -1,6 +1,8 @@
 name: Strategist Reversal focused native Campaign acceptance
 on:
-  pull_request:
+  push:
+    branches:
+      - feat/strategist-developer-playtest-20261104
     paths:
       - 'src/prototype/boss-combat.js'
       - 'src/prototype/cindermaw-combat.js'
@@ -12,7 +14,6 @@ permissions:
   contents: read
 jobs:
   reversal-native:
-    if: github.head_ref == 'feat/strategist-developer-playtest-20261104'
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
