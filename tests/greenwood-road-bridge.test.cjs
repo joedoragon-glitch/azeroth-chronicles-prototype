@@ -11,9 +11,10 @@ assert.equal(Campaign.rules.greenwoodLayout.version, 2);
 assert.equal(z.greenwoodRoadBridgeVersion, 1, 'separate non-destructive road migration');
 assert.equal(z.greenwoodHomesteadVersion, 1, 'published Thornfang homestead retained alongside roads');
 assert.equal(z.greenwoodCompositionVersion, 1, 'botanical overlay runs after completed route shaping');
-assert.equal(z.greenwoodRoutes.length, 18,
-  '17 canonical roads and depot corridors remain indexed; mill farm spur appends last');
-assert.equal(z.greenwoodRoutes.at(-1).kind, 'farm', 'mill access does not shift canonical paths');
+assert.equal(z.greenwoodRoutes.length, 19,
+  '17 canonical routes remain indexed; mill farm and door footpath append last');
+assert.equal(z.greenwoodRoutes.at(-2).kind, 'farm', 'mill farm access appends after canonical routes');
+assert.equal(z.greenwoodRoutes.at(-1).kind, 'path', 'mill doorway uses a narrow footpath');
 assert.equal(z.greenwoodRoutes[6].kind, 'path', 'independent freight apron retained');
 assert.deepEqual(z.greenwoodRoutes[6].points.at(-1), Campaign.rules.greenwoodLayout.anchors.cache);
 assert.deepEqual(z.greenwoodRoadKinds, ['cart', 'farm', 'farm', 'farm', 'farm'],
@@ -136,4 +137,4 @@ assert.deepEqual(replay.footpaths, migratedZone.footpaths,
 assert.deepEqual(replay.greenwoodRoutes, migratedZone.greenwoodRoutes,
   'second restore cannot reprocess old route data');
 
-console.log('PASS Greenwood road hierarchy, 17 canonical routes plus one mill spur, two bridge gaps, v4 idempotence');
+console.log('PASS Greenwood road hierarchy, 17 canonical routes plus two mill paths, two bridge gaps, v4 idempotence');
