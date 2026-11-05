@@ -1695,6 +1695,28 @@
     }
     ctx.restore();
   }
+  // Stable unscaled meadow geometry is created once, outside the frame loop.
+  // No save fields, runtime noise or per-frame RNG state are involved.
+  const meadowSamples = [
+    [460, 970, 115, 85], [805, 910, 150, 110],
+    [345, 1390, 130, 100], [450, 1880, 135, 125],
+    [735, 2440, 125, 115], [1060, 2550, 135, 140],
+    [1140, 1010, 135, 95], [2250, 740, 190, 135],
+    [2610, 1050, 190, 100], [2420, 2040, 135, 100],
+    [2930, 1740, 110, 120], [500, 2750, 145, 110],
+  ].map(([cx, cy, rx, ry], index) => ({
+    cx, cy, flowers: Array.from({ length: 13 }, (_, j) => {
+      const h = hash('greenwood-meadow-' + index + '-' + j);
+      const a = j * 2.3999632297 + (h % 23) * 0.017;
+      const r = Math.sqrt(((h >>> 8) % 997) / 997);
+      const dandelion = j % 4 === 0;
+      return {
+        x: cx + Math.cos(a) * rx * r, y: cy + Math.sin(a) * ry * r, h,
+        dandelion, stem: dandelion ? 13 + (h % 4) : 8 + (h % 5),
+        lean: ((h >>> 5) % 7) - 3,
+      };
+    }),
+  }));
   function drawGround(ctx, screen, cfg, bounds) {
     const s = cfg.scale;
     const patches = [
@@ -1744,75 +1766,75 @@
         ctx.fill();
       }
     }
-    // Seeded meadow flowers and white dandelion clocks are part of the
-    // static Greenwood ground, not new saved props or per-frame AI.
-    // Irregular sunlit pockets keep the countryside open between clusters.
-    const meadows = [
-      [460, 970, 115, 85], [805, 910, 150, 110],
-      [345, 1390, 130, 100], [450, 1880, 135, 125],
-      [735, 2440, 125, 115], [1060, 2550, 135, 140],
-      [1140, 1010, 135, 95], [2250, 740, 190, 135],
-      [2610, 1050, 190, 100], [2420, 2040, 135, 100],
-      [2930, 1740, 110, 120], [500, 2750, 145, 110],
-    ];
-    for (const [index, [cx, cy, rx, ry]] of meadows.entries()) {
-      const center = screen({ x: cx * s, y: cy * s });
+    // These meadow samples are computed once and shared by every draw.
+    // A bounded number of batched Canvas paths replaces hundreds of
+    // per-flower strokes, fills and trig/hash calls on each painted scene.
+    const meadowVisible = [];
+    for (const patch of meadowSamples) {
+      const center = screen({ x: patch.cx * s, y: patch.cy * s });
       if (
         center.x < -240 || center.x > bounds.width + 240 ||
         center.y < -160 || center.y > bounds.height + 160
-      )
-        continue;
-      for (let j = 0; j < 13; j++) {
-        const h = hash('greenwood-meadow-' + index + '-' + j);
-        const a = j * 2.3999632297 + (h % 23) * 0.017;
-        const r = Math.sqrt(((h >>> 8) % 997) / 997);
-        const p = screen({
-          x: (cx + Math.cos(a) * rx * r) * s,
-          y: (cy + Math.sin(a) * ry * r) * s,
-        });
+      ) continue;
+      for (const flower of patch.flowers) {
+        const p = screen({ x: flower.x * s, y: flower.y * s });
         if (p.x < -18 || p.x > bounds.width + 18 || p.y < -26 || p.y > bounds.height + 18)
           continue;
-        const dandelion = j % 4 === 0;
-        const stem = dandelion ? 13 + (h % 4) : 8 + (h % 5);
-        const lean = ((h >>> 5) % 7) - 3;
-        ctx.strokeStyle = '#87a267cc';
-        ctx.lineWidth = dandelion ? 1 : 1.2;
-        ctx.beginPath();
-        ctx.moveTo(p.x, p.y + 4);
-        ctx.quadraticCurveTo(p.x + lean * 0.2, p.y - stem * 0.4, p.x + lean, p.y - stem);
-        ctx.stroke();
-        const fx = p.x + lean, fy = p.y - stem;
-        if (dandelion) {
-          ctx.fillStyle = '#f1eadc33';
-          ctx.beginPath();
-          ctx.arc(fx, fy, 4.6, 0, Math.PI * 2);
-          ctx.fill();
-          for (let k = 0; k < 12; k++) {
-            const theta = (Math.PI * 2 * k) / 12;
-            const dx = Math.cos(theta) * (4.5 + (h % 3) * 0.2);
-            const dy = Math.sin(theta) * (4.5 + (h % 3) * 0.2);
-            ctx.strokeStyle = '#eee9d4be';
-            ctx.lineWidth = 0.65;
-            ctx.beginPath();
-            ctx.moveTo(fx, fy);
-            ctx.lineTo(fx + dx, fy + dy);
-            ctx.stroke();
-          }
-        } else {
-          const petals = ['#d4be9b', '#c8b0b4', '#b7bdd0', '#e1cc94'];
-          ctx.fillStyle = petals[(h >>> 3) % petals.length];
-          for (let k = 0; k < 5; k++) {
-            const theta = (Math.PI * 2 * k) / 5;
-            ctx.beginPath();
-            ctx.arc(fx + Math.cos(theta) * 2.2, fy + Math.sin(theta) * 2, 1.8, 0, Math.PI * 2);
-            ctx.fill();
-          }
-          ctx.fillStyle = '#9f9866';
-          ctx.beginPath();
-          ctx.arc(fx, fy, 1.05, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        meadowVisible.push({ x: p.x, y: p.y, ...flower });
       }
+    }
+    if (meadowVisible.length) {
+      ctx.strokeStyle = '#87a267cc';
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      for (const f of meadowVisible) {
+        ctx.moveTo(f.x, f.y + 4);
+        ctx.quadraticCurveTo(f.x + f.lean * 0.2, f.y - f.stem * 0.4,
+          f.x + f.lean, f.y - f.stem);
+      }
+      ctx.stroke();
+      ctx.fillStyle = '#f1eadc33';
+      ctx.beginPath();
+      for (const f of meadowVisible) if (f.dandelion) {
+        ctx.moveTo(f.x + f.lean + 4.6, f.y - f.stem);
+        ctx.arc(f.x + f.lean, f.y - f.stem, 4.6, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      ctx.strokeStyle = '#eee9d4be';
+      ctx.lineWidth = 0.65;
+      ctx.beginPath();
+      for (const f of meadowVisible) if (f.dandelion)
+        for (let k = 0; k < 12; k++) {
+          const a = (Math.PI * 2 * k) / 12, r = 4.5 + (f.h % 3) * 0.2;
+          const x = f.x + f.lean, y = f.y - f.stem;
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+        }
+      ctx.stroke();
+      const petalColors = ['#d4be9b', '#c8b0b4', '#b7bdd0', '#e1cc94'];
+      for (let color = 0; color < petalColors.length; color++) {
+        ctx.fillStyle = petalColors[color];
+        ctx.beginPath();
+        for (const f of meadowVisible) {
+          if (f.dandelion || ((f.h >>> 3) % petalColors.length) !== color) continue;
+          const x = f.x + f.lean, y = f.y - f.stem;
+          for (let k = 0; k < 5; k++) {
+            const a = (Math.PI * 2 * k) / 5,
+              px = x + Math.cos(a) * 2.2, py = y + Math.sin(a) * 2;
+            ctx.moveTo(px + 1.8, py);
+            ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+          }
+        }
+        ctx.fill();
+      }
+      ctx.fillStyle = '#9f9866';
+      ctx.beginPath();
+      for (const f of meadowVisible) if (!f.dandelion) {
+        const x = f.x + f.lean, y = f.y - f.stem;
+        ctx.moveTo(x + 1.05, y);
+        ctx.arc(x, y, 1.05, 0, Math.PI * 2);
+      }
+      ctx.fill();
     }
     ctx.restore();
   }
