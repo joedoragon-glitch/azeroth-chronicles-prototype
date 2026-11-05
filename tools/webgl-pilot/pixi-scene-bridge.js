@@ -295,6 +295,7 @@
     function groundGraphic(graphic, ground) {
       const { rx, ry, marker } = ground;
       const zoom = ground.scale || 1;
+      const shadowOpacity = ground.shadowOpacity ?? 1;
       graphic.clear();
       if (marker) {
         const important = !!marker.important;
@@ -313,12 +314,14 @@
         graphic
           .ellipse(0, 3 * zoom, 23 * zoom, 10 * zoom)
           .stroke({ color: 0xebc479, width: 2 * zoom });
-      graphic
-        .ellipse(4 * zoom, 13 * zoom, rx * 1.18 * zoom, ry * 1.35 * zoom)
-        .fill({ color: 0x05100c, alpha: 0x38 / 255 });
-      graphic
-        .ellipse(1 * zoom, 11 * zoom, rx * zoom, ry * zoom)
-        .fill({ color: 0x020906, alpha: 0x66 / 255 });
+      if (shadowOpacity > 0) {
+        graphic
+          .ellipse(4 * zoom, 13 * zoom, rx * 1.18 * zoom, ry * 1.35 * zoom)
+          .fill({ color: 0x05100c, alpha: (0x38 / 255) * shadowOpacity });
+        graphic
+          .ellipse(1 * zoom, 11 * zoom, rx * zoom, ry * zoom)
+          .fill({ color: 0x020906, alpha: (0x66 / 255) * shadowOpacity });
+      }
     }
     // #708: raster-tree regrowth is retained native geometry, not a new texture.
     // Match the unchanged Canvas frontierTreeShoots positions, leaf palette and
@@ -675,6 +678,7 @@
             rx: item.ground.rx,
             ry: item.ground.ry,
             scale: item.ground.scale,
+            shadowOpacity: item.ground.shadowOpacity,
             marker: item.ground.marker,
             ledgerMarked: item.ground.ledgerMarked,
           });
