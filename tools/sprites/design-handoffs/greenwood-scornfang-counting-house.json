@@ -3,28 +3,28 @@
   "templateOnly": false,
   "status": "idea",
   "designId": "greenwood-scornfang-counting-house",
-  "name": "Scornfang's rural counting house",
+  "name": "Scornfang's appropriated farm storehouse Treasury",
   "kind": "structure",
-  "nextAction": "Engineering: implement section 7 of docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md in existing PR #828, record real procedural references and final-candidate checks. No sprite generation or creative acceptance claimed.",
+  "nextAction": "Engineering in existing PR #828: implement latest section 7 / E11 as an appropriated farm storehouse adapted to Treasury/workplace use; preserve interior/recovery/save/route identities and review native day/night context.",
   "context": {
     "originConversation": "https://chatgpt.com/g/g-p-6ac48220a7988191b16000c23466d378-sibdlp/c/6aec7ea6-f070-83ea-9f69-19f6a7712262",
-    "decisionSummary": "Owner requested design-first takeover. This is a proposed implementation specification grounded in owner feedback; not acceptance of unseen implementation or generated artwork.",
+    "decisionSummary": "Owner explicitly directs that Scornfang took possession of an agricultural structure to establish his Treasury and workplace. Supersedes purpose-built counting-house direction; preserve agricultural origin beneath security/receiving/accounting adaptations.",
     "decisionDate": "2026-11-05",
     "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/828",
     "contentDocuments": [
       "docs/GREENWOOD_OWNER_PLAYTEST_ENVIRONMENT_RECONCILIATION_20261105.md"
     ],
-    "locationAndLore": "Scornfang's rural counting house in Greenwood Vale; preserve existing canon."
+    "locationAndLore": "Existing Scornfang's Treasury in Greenwood; adapted agricultural storehouse/granary. No invented prior owner or acquisition event."
   },
   "decisions": {
-    "conceptAcceptance": "Owner authorized design/reconciliation work; the specific implementation has not been visually accepted.",
+    "conceptAcceptance": "Owner-selected appropriated agricultural structure; no unseen procedural/raster appearance acceptance.",
     "proceduralDesignAcceptance": "Not established; native revised procedural references pending engineering.",
     "spriteProductionAuthorization": "Not requested in this task.",
     "generatedAppearanceAcceptance": "None.",
     "pendingCorrections": [
-      "Purpose-built broad low timber/stone work frontage, secure threshold, subordinate locked storage",
-      "Greenwood weathered shingles and fieldstone, visible receiving canopy",
-      "Preserve supply-vale interior/cache identities and Scornfang/Thornfang distinction"
+      "Replace recycled cottage with recognizable former farm storage building",
+      "Adapt original broad loading opening, secure storage and work apron for Treasury/reclamation use",
+      "Add restrained reinforcement, accounting/weights/records and organized goods; preserve routes/interior/recovery"
     ]
   },
   "reference": {
@@ -48,9 +48,10 @@
     "isolatedReferenceHash": null,
     "gameplayContextPaths": [],
     "traitsToPreserve": [
-      "Purpose-built broad low timber/stone work frontage, secure threshold, subordinate locked storage",
-      "Greenwood weathered shingles and fieldstone, visible receiving canopy",
-      "Preserve supply-vale interior/cache identities and Scornfang/Thornfang distinction"
+      "Greenwood weathered timber, stone footing and patched shingle agricultural architecture",
+      "Existing loading frontage and farm storage silhouette remain recognizable beneath later adaptations",
+      "Scornfang ownership, supply-vale interior/cache identities, recovery gates and old saves",
+      "Distinct from Thornfang's domestic/scout adaptations; no invented prior-owner story"
     ],
     "assetSpecificDependencies": [
       "PR #828 controlling handoff; source evidence is the inspected main baseline, not implemented new art."
@@ -60,7 +61,7 @@
     "catalogIds": [],
     "verifiedRuntimeKeys": [],
     "requiredVisibleAssets": [
-      "Scornfang's rural counting house"
+      "Scornfang's appropriated farm storehouse Treasury"
     ],
     "reusedDesignIds": [],
     "variantRequirements": [
