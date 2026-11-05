@@ -9,9 +9,10 @@
     "originConversation": "5 November 2026 SIBDLP chat; conversation URL unavailable; owner supplied 3 in-game nighttime screenshots and explicitly requested independent game-designer audit before engineering.",
     "decisionSummary": "Owner rejects roof-mounted glowing rectangles and overlaid rectangular post glass, wants believable, attractive entrance and street lanterns; wants the refuge lit after dark, without houses/workshops appearing fully active all night. Independent audit identified additional risks from draft PR #803 and specified corrected artistic choices.",
     "decisionDate": "2026-11-05",
-    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/803",
+    "repositoryIssueOrPR": "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812",
     "contentDocuments": [
-      "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md"
+      "docs/SETTLEMENT_LANTERNS_NIGHT_LIGHTING_DESIGN_AUDIT_20261105.md",
+      "https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/812"
     ],
     "locationAndLore": "Millhaven Refuge, adjacent Millhaven cottages/workshops, streetlight posts and Orchard Hamlet in the first region; preserve existing service identities, path/door access and accepted other-region scenes."
   },
