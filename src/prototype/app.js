@@ -4146,9 +4146,9 @@
       $('title-loading').textContent = '';
     }
   }
-  function showTitleScreen() {
+  function showTitleScreen(reason = 'internal') {
+    if (started || titleLoading) notePlaytestLifecycle('return-to-title', { reason });
     titleBackupNotice = null;
-    stopRendererRecording();
     ++titleEpoch;
     titleSkipGraphics?.resolve(false);
     titleSkipGraphics = null;
@@ -4345,7 +4345,7 @@
       return;
     }
     if (!crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
-    showTitleScreen();
+    showTitleScreen('manual-menu');
     // Return to Main Menu is an explicit user gesture. Resume an interrupted
     // audio context and reselect title after Safari finishes the resume.
     if (!document.hidden && focused && audio.ctx?.state !== 'running')
@@ -5141,7 +5141,99 @@
     );
   }
   // Opt-in, device-local, bounded samples. Never writes into campaign saves.
+  // Playtest evidence is deliberately separate from v4 campaign saves. The
+  // always-on journal is tiny; expensive per-Pixi-draw profiling stays opt-in.
+  // Checkpoints survive a title transition or reload, not an arbitrary iOS
+  // termination before the most recent successful local storage write.
+  const playtestJournalKey = 'sibdlp-playtest-diagnostics-v1';
+  function blankPlaytestJournal() {
+    return { version: 1, events: [], segments: [], frameHistory: [],
+      frame: null, capture: null, active: false, updatedAt: 0 };
+  }
+  function readPlaytestJournal() {
+    try {
+      const bytes = localStorage.getItem(playtestJournalKey);
+      if (!bytes || bytes.length > 180000) return blankPlaytestJournal();
+      const data = JSON.parse(bytes);
+      if (data?.version !== 1 || !Number.isFinite(data.updatedAt) ||
+          Date.now() - data.updatedAt > 7 * 86400000 || data.updatedAt > Date.now() + 60000)
+        return blankPlaytestJournal();
+      return {
+        version: 1,
+        events: Array.isArray(data.events) ? data.events.slice(-48) : [],
+        segments: Array.isArray(data.segments) ? data.segments.slice(-3) : [],
+        frameHistory: Array.isArray(data.frameHistory) ? data.frameHistory.slice(-3) : [],
+        frame: data.frame && typeof data.frame === 'object' ? data.frame : null,
+        capture: data.capture && typeof data.capture === 'object' &&
+          ['recording', 'stopped'].includes(data.capture.state) ? data.capture : null,
+        active: data.active === true,
+        updatedAt: data.updatedAt,
+      };
+    } catch (_) {
+      return blankPlaytestJournal();
+    }
+  }
+  const playtestJournal = readPlaytestJournal();
+  const resumeRendererCapture = playtestJournal.active;
+  if (playtestJournal.frame) {
+    playtestJournal.frameHistory.push(playtestJournal.frame);
+    playtestJournal.frameHistory = playtestJournal.frameHistory.slice(-3);
+    playtestJournal.frame = null;
+  }
+  if (resumeRendererCapture && playtestJournal.capture?.state === 'recording') {
+    // Performance.now() restarts with every document. Keep the old summary
+    // as its own honest segment; never pretend its elapsed time is continuous.
+    playtestJournal.segments.push({
+      ...playtestJournal.capture, state: 'interrupted',
+      boundary: 'document-restarted-or-restored',
+    });
+    playtestJournal.segments = playtestJournal.segments.slice(-3);
+    playtestJournal.capture = null;
+  }
+  playtestJournal.events.push({
+    kind: 'document-start', at: new Date().toISOString(),
+    resumedProfiling: resumeRendererCapture,
+  });
+  playtestJournal.events = playtestJournal.events.slice(-48);
+  function checkpointPlaytestJournal(sampleFrames = true) {
+    if (sampleFrames && started) {
+      playtestJournal.frame = {
+        at: new Date().toISOString(),
+        report: frameProfile.report(),
+      };
+    }
+    if (rendererRecording || lastRendererRecording)
+      playtestJournal.capture = rendererRecordingReport();
+    playtestJournal.active = !!rendererRecording;
+    playtestJournal.updatedAt = Date.now();
+    // Keep profiling from causing storage quota failures in the actual save.
+    try {
+      if (!writerGuard.canWrite()) return;
+      let bytes = JSON.stringify(playtestJournal);
+      while (bytes.length > 130000 && playtestJournal.segments.length) {
+        playtestJournal.segments.shift();
+        bytes = JSON.stringify(playtestJournal);
+      }
+      while (bytes.length > 130000 && playtestJournal.frameHistory.length) {
+        playtestJournal.frameHistory.shift();
+        bytes = JSON.stringify(playtestJournal);
+      }
+      if (bytes.length <= 130000) localStorage.setItem(playtestJournalKey, bytes);
+    } catch (_) {
+      // Diagnostic storage is best effort; never interrupt gameplay or saves.
+    }
+  }
+  function notePlaytestLifecycle(kind, details = {}) {
+    playtestJournal.events.push({
+      kind, at: new Date().toISOString(), playing: started,
+      hidden: !!document.hidden, zone: game?.zoneId || null,
+      ...details,
+    });
+    if (playtestJournal.events.length > 48) playtestJournal.events.shift();
+    checkpointPlaytestJournal();
+  }
   let rendererRecording = null;
+
   let lastRendererRecording = null;
   let rendererRecordingFrameId = null;
   let rendererRecordingFrameEvents = null;
@@ -5207,7 +5299,11 @@
       resolution: renderResolution.status(),
     };
   }
-  function beginRendererRecording() {
+  function beginRendererRecording(retainPreviousSegments = false) {
+    if (!retainPreviousSegments) {
+      playtestJournal.segments = [];
+      playtestJournal.capture = null;
+    }
     rendererRecording = {
       version: 2,
       startedAt: new Date().toISOString(),
@@ -5226,6 +5322,7 @@
     };
     lastRendererRecording = null;
     rendererDiagnosticActive = true;
+    notePlaytestLifecycle(retainPreviousSegments ? 'renderer-profiling-restored' : 'renderer-profiling-started');
   }
   // Recent graphics-policy timeline, separate from the original arrival log.
   // Retain at most 48 events and eight same-callback actions, never a save.
@@ -5307,7 +5404,9 @@
     }
   }
   function rendererRecordingReport(capture = rendererRecording || lastRendererRecording) {
-    if (!capture) return { state: 'not-recorded', note: 'Optional recording is off.' };
+    if (!capture) return playtestJournal.capture?.state === 'stopped'
+      ? playtestJournal.capture
+      : { state: 'not-recorded', note: 'Optional recording is off.' };
     const finish = capture.finished || rendererDiagnosticSnapshot();
     const keys = new Set([
       ...Object.keys(capture.baseline.counters),
@@ -5386,7 +5485,17 @@
     rendererDiagnosticActive = false;
     rendererRecordingFrameId = null;
     rendererRecordingFrameEvents = null;
+    notePlaytestLifecycle('renderer-profiling-stopped');
   }
+  // A restored page starts a new clock segment, preserving prior captures.
+  if (resumeRendererCapture) beginRendererRecording(true);
+  // Low-cost checkpoints retain automatic slow-frame evidence across reloads.
+  // Optional Pixi per-draw timestamps still run ONLY during active profiling.
+  setInterval(() => {
+    if (started && !document.hidden) checkpointPlaytestJournal();
+  }, 12000);
+  addEventListener('error', () => notePlaytestLifecycle('uncaught-page-error'));
+  addEventListener('unhandledrejection', () => notePlaytestLifecycle('unhandled-rejection'));
   function exportPlaytestReport() {
     exportJSON(
       {
@@ -5415,6 +5524,12 @@
           },
           frameProfile: frameProfile.report(),
           rendererDiagnostics: rendererRecordingReport(),
+          diagnosticContinuity: {
+            events: playtestJournal.events,
+            priorRendererSegments: playtestJournal.segments,
+            priorFrameProfiles: playtestJournal.frameHistory,
+            note: 'Bounded device-local lifecycle history and prior-document snapshots. Recovered segments have separate clocks; gaps and unflushed terminal frames are unknown. No automatic expensive Pixi stage profiling.',
+          },
           environment: {
             userAgent: String(navigator.userAgent || '').slice(0, 300),
             hardwareConcurrency: Number.isFinite(navigator.hardwareConcurrency)
@@ -5738,10 +5853,14 @@
           },
           'Record bounded frame spikes and PR #518 cache activity while playing.',
         ),
-        ...(lastRendererRecording && !rendererRecording
+        ...((lastRendererRecording || playtestJournal.capture?.state === 'stopped') && !rendererRecording
           ? [
               action('Clear renderer profiling', () => {
                 lastRendererRecording = null;
+                playtestJournal.capture = null;
+                playtestJournal.active = false;
+                playtestJournal.segments = [];
+                notePlaytestLifecycle('renderer-profiling-cleared');
                 platformMenu(back);
               }),
             ]
@@ -8132,12 +8251,14 @@
   // Make readouts explicit tap targets so touch adjustment cannot choose a nearby button.
   $('hero-stats').onclick = (e) => e?.stopPropagation?.();
   addEventListener('blur', () => {
+    notePlaytestLifecycle('window-blur');
     focused = false;
     clearInput();
     if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
     audio.setPaused(true);
   });
   addEventListener('focus', () => {
+    notePlaytestLifecycle('window-focus');
     focused = true;
     last = performance.now();
     if (sceneTransition?.committed) {
@@ -8163,6 +8284,7 @@
     clearInput();
     last = performance.now();
     if (document.hidden) {
+      notePlaytestLifecycle('document-hidden');
       if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
       renderResolution.suspend();
       // A hidden browser may lose its GPU context and require expensive
@@ -8176,7 +8298,7 @@
           // warmScene explicitly skips hidden documents. Continue will perform
           // the normal sprite/GPU arrival preparation behind the loading UI.
           // Keep surviving GPU resources intact for a cheap warm return.
-          showTitleScreen();
+          showTitleScreen('document-hidden');
         } else {
           // Match manual Return to Main Menu: do not abandon unsaved progress.
           paused = true;
@@ -8185,9 +8307,10 @@
       } else if (titleLoading) {
         // Invalidate an interrupted Continue. No pending promise or graphics
         // upload may silently activate gameplay when the page is reopened.
-        showTitleScreen();
+        showTitleScreen('interrupted-continue');
       }
     } else {
+      notePlaytestLifecycle('document-visible');
       if (sceneTransition?.committed) {
         const token = sceneTransition.token;
         requestAnimationFrame(() => revealSceneTransition(token));
@@ -8197,6 +8320,7 @@
     }
   });
   addEventListener('pagehide', () => {
+    notePlaytestLifecycle('pagehide');
     clearInput();
     if (sceneTransition && !sceneTransition.committed) cancelSceneTransition();
     if (save() && !crashRecoveryPending && !frameSkip.emergency) restartGuard.clean();
@@ -8206,6 +8330,7 @@
   addEventListener('pageshow', (event) => {
     // A BFCache restore retains this same live JS session.
     if (event.persisted) {
+      notePlaytestLifecycle('back-forward-cache-restore');
       // A page restored from BFCache has already released its writer lock.
       // Reload to acquire ownership again; ordinary app minimize uses no reload.
       location.reload();
@@ -9844,6 +9969,7 @@
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (appControllerReloaded) return;
       if (hadServiceWorkerController) {
+        notePlaytestLifecycle('service-worker-controller-change');
         appReloadRequested = false;
         appControllerReloaded = true;
         if (started && writerGuard.canWrite() && !save()) {
