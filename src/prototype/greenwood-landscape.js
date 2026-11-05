@@ -1418,47 +1418,65 @@
         line([x + 7, y - 2], [x + 7, y + 15], '#b59c71', 1.3);
         line([x, y + 17], [x + 14, y + 12], '#634f39', 2);
       }
-      // Two roof planes share *one* ridge and one connected eave perimeter.
-      // The near slope is brighter; far slope is a shaded weathered timber roof.
+      // A coherent hipped roof closes onto both walls. The previous trial
+      // left a visible gap between eaves and timber facade; now every eave
+      // follows the two actual wall planes and one connected front corner.
+      // The material is weathered wooden shingles, lighter on the left face.
       poly(
         [
-          [-72, -107],
-          [-38, -146],
-          [36, -121],
-          [4, -84],
+          [-73, -107],
+          [0, -150],
+          [0, -84],
         ],
-        '#9b7449',
+        '#a48052',
       );
       poly(
         [
-          [-38, -146],
-          [-3, -131],
-          [74, -108],
-          [36, -121],
+          [0, -150],
+          [74, -107],
+          [0, -84],
         ],
-        '#644b38',
+        '#76573d',
       );
-      poly(
-        [
-          [-3, -131],
-          [74, -108],
-          [74, -100],
-          [-3, -123],
-        ],
-        '#493b30',
-      );
-      for (let j = 1; j <= 4; j++) {
-        const t = j / 5;
+      for (let row = 1; row < 5; row++) {
+        const t = row / 5;
+        // Roof courses radiate down each slope, meeting continuously at the
+        // front hip seam rather than crossing onto an unrelated roof surface.
         line(
-          [-72 + 34 * t, -107 - 39 * t],
-          [4 + 32 * t, -84 - 37 * t],
-          j % 2 ? '#b18a57' : '#785a3c',
-          1.4,
+          [-73 * t, -150 + 43 * t],
+          [0, -150 + 66 * t],
+          row % 2 ? '#c4a16d99' : '#664b35aa',
+          1.3,
+        );
+        line(
+          [0, -150 + 66 * t],
+          [74 * t, -150 + 43 * t],
+          row % 2 ? '#93704d99' : '#4a3a30aa',
+          1.2,
         );
       }
-      line([-38, -146], [36, -121], '#d0ac73', 3);
-      line([-72, -107], [4, -84], '#513e2c', 4);
-      line([-3, -131], [74, -108], '#49372a', 3);
+      // Connected timber fascia physically sits beneath both roof planes.
+      poly(
+        [
+          [-73, -107],
+          [0, -84],
+          [0, -79],
+          [-73, -102],
+        ],
+        '#584231',
+      );
+      poly(
+        [
+          [0, -84],
+          [74, -107],
+          [74, -102],
+          [0, -79],
+        ],
+        '#49372d',
+      );
+      line([-73, -107], [0, -84], '#d1ad7b', 1.5);
+      line([0, -84], [74, -107], '#ad8864', 1.3);
+      line([0, -150], [0, -84], '#533d2b', 2.7);
       // Bank-side wheel and its real wood axle; the authored channel meets
       // the wheel near the shared headrace/tailrace coordinate.
       const wx = -79.8,
