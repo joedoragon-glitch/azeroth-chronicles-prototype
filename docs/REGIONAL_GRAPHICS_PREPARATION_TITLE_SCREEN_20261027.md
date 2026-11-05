@@ -40,6 +40,7 @@ Original iPhone root-cause identification and a safe measurable speedup remain
 **open** in issue #783. Merge and hosted publication must be verified from their exact-commit
 GitHub receipts. No physical iPhone cure or FPS gain has been verified.
 
+
 ## 30 October 2026 — incremental browser updates and offline cache audit
 
 The current game is distributed by an HTTPS web link, **not as a native app**.
@@ -98,7 +99,9 @@ Automated CI evidence, merge, deployment and real-device verification remain
 distinct, with build-generated entry pages and service workers kept in sync.
 
 
-## 28 October 2026 — background-session title contract, PR #576 (implementation candidate)
+## 28 October 2026 — background-session title contract, PR #576 (historical implemented policy)
+
+**5 November 2026 draft follow-up:** The immediate return-to-title on *every* hidden signal is under reconsideration as a possible unwanted iPhone menu transition. A separate draft proposes saving and freezing immediately, then classifying brief vs sustained visibility loss on foreground: short healthy interruptions resume the same scene, while sustained/background renderer recovery retains this documented title/Continue gate. This is **not yet published**; the 28 October policy below remains the currently released behavior. Details and verification limits: [background return-to-title](BACKGROUND_RETURN_TO_TITLE_20261028.md#5-november-2026--proposed-short-hidden-classification-draft-not-released).
 
 **Newer owner decision, superseding this document's historical in-place background-resume requirement:** when the game is actually hidden/minimized while playing, save the validated live campaign and show the existing bilingual title screen. A simple window blur without a hidden document remains an in-place pause. Returning to a visible tab **does not automatically resume combat**; **Continue Adventure / Continuar aventura** explicitly starts sprite/terrain/GPU preparation, validates the ready scene, and only then activates the game. Reuse any surviving GPU textures; if the WebGL context was lost, use Canvas fallback and rebuild behind the loading state. If the tab is hidden during Continue loading, cancel the pending activation instead of launching it on foreground return. A failed save keeps the game paused in memory rather than abandoning progress.
 
