@@ -72,3 +72,27 @@ Both #814 and #828 touch `src/prototype/greenwood-landscape.js`, `sw.js` and `te
 | Tests/captures | `greenwood-watermill.test.cjs`, `greenwood-road-bridge.test.cjs`, `greenwood-composition-integration.test.cjs`, `greenwood-mill-river-visual.test.cjs`, `snapshot-thorn-patrol.test.cjs`, `vale-periodic-route-regression.test.cjs`, `runtime-workload.test.cjs`, `tools/greenwood-layout/watermill-review.cjs`, `pixi-road-bridge-review.cjs`. Source receipts in `sw.js` and `docs/evidence/SPRITE_SCOPE_RECONCILIATION.json` must match final JS. |
 
 **Resolved historical false save mutation:** Initial screenshot test took its before snapshot before an existing lazy `g.zone()` migration; the first draw applied `greenwoodTrailLabels` and set `greenwoodTrailTextVersion=1`. Test helper now triggers the normal migration **before** capturing its before/after immutable-save baseline. The strict renderer-purity assertion remains, and the corrected focused test later passed. Do not reintroduce this false precondition or weaken the assertion.
+
+## 4. Test evidence and true remaining blocker
+
+**Latest completed focused CI**: [run 42058985995](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985995). Tested #814 source head `3562d4d6911dde91a0bbeb3ad7b892359d271616`, GitHub synthetic merge checkout `924b2a3aff77123ca2307af691d1b3fa3d650979`, main `e25ad8e...`. **28 selected focused test files, 27 passed, ONE failed. Overall focused run = FAILURE**, not green. The sole failed file was `tests/artwork-pipeline-checks.test.cjs`. Native Greenwood water/mill/bridge, v4 reloading, Thornfang/Mira, source scope, PWA-related tests and screenshot purity ran without a reported failure. This is not an exhaustive campaign suite.
+
+- [Real Canvas/Pixi Greenwood roads/bridges preview 42058985813](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985813): **SUCCESS**.
+- [Browser PWA update acceptance 42058985691](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985691): **SUCCESS**, not iPhone/device verification or a published game.
+- [Native 150% day/night mill, timber crossing and culvert images](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985995/artifacts/13431712020): generated and native runner passed. Owner/director's live aesthetic acceptance still open. The *latest* culvert color improvement at this tested head needs direct human comparison with the previous 150%-camera appearance. No automatic visual acceptance from nonblank screenshots.
+- [Exact focused report](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/42058985995/artifacts/13430787048). Older red runs for patrol, road setback, sprite hashes and lazy render migration are **historical and superseded**, not fresh blockers.
+
+**ONE remaining known gate: protected sprite artwork provenance.** Strict art CLI failed `Stale canonical reference; compare again before publication: prop:vale-cottage:vale`. The instrumented `ARTWORK_CANON_DRIFT` report reads:
+
+```text
+approvedCanon     b11ff36581fa31204e70d868378391577f80e067d68e06232fd3c7bc263d9031
+currentCanon      76722da7dcd6b1466da334f8395561aa7a2dc590f564c08bfde8ebfee59c832c
+retainedRaster    21e8b38b7497f56b6c01f853f1100b16c78580703f546716db4e739432d68573
+catalogUnchanged  true
+selected          procedural
+priorReview       https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/300
+```
+
+A source comparison found the `craftedHouse` cottage subroutine byte-identical in #814 and current `main`; **that does not prove why the generated canonical reference hash differs**. This is an unresolved source/artwork approval-contract mismatch. Do not silently overwrite `tools/sprites/approved.json` approval hashes, modify retained raster files, remove checks or claim a fresh owner art approval. Inspect actual current and prior procedural reference pixels/contract provenance and use established process only after source review. `tests/artwork-pipeline-checks.test.cjs` continues to call all strict sprite, source-scope and material checks, unchanged by the new read-only diagnostic.
+
+**Source changes after a tested SHA require a fresh applicable check.** At this documentation checkpoint only source/doc status files are being changed; code and artwork checks are not certified at the new documentation commit automatically.
