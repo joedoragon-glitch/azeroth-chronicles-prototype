@@ -69,3 +69,10 @@ Consolidates global compact phone typography, spacing, button sizes and Back con
 
 
 **Release receipt:** PR #800 is merged and dev.256 is published by main run #41967773134. Earlier candidate checkpoints below/above retain their meaning at the time; owner iPhone approval remains pending.
+
+
+## 4 November 2026 — all-menu landscape fit follow-up (PR #801)
+
+Physical-iPhone screenshots of released dev.256 demonstrated that the improved landscape title composition was not matched by the deeper menus: oversized rows, unused panel height, narrow wrapped descriptions and ordinary choices below the fold. The six screenshots were examples, **not the complete scope**. The owner requires adaptive, viewport-aware presentation across title, setup, saves, settings, Help, Adventure, character, inventory, skills, quest/map, companion, Barracks/service and Archive submenus.
+
+The candidate PR applies a shared content-sized and safe-inset-bounded phone modal layout to every menu using `openMenu()`, broadens ordinary narrow gameplay panels, and gives peer title choices compact grids. It keeps Stage 4 text/touch minima and independent content scrolling for long catalogs, map/reference/Archive reading and recovery warnings. No game camera or backing-resolution change is involved. The acceptance matrix and remaining representative in-game/physical-iPhone validation are recorded in `docs/ADAPTIVE_LANDSCAPE_MENU_FIT_ALL_SUBMENUS_20261104.md`. **This entry documents a draft candidate; do not treat it as merged, published or hardware verified.**
