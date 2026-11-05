@@ -57,6 +57,41 @@ async function measure(frame, selector, { minFont = 15, targets = false } = {}) 
   }
   return items;
 }
+// A common geometry contract protects every menu family, not just the
+// five pictured title submenus. The dedicated title and gameplay DOM menu
+// surfaces share this CSS regardless of a menu's data-view.
+async function assertDialogGeometry(frame, label, { noScroll = false } = {}) {
+  const bounds = await frame.locator('#modal').evaluate((dialog) => {
+    const r = dialog.getBoundingClientRect(),
+      content = dialog.querySelector('#modal-content'),
+      back = dialog.querySelector('#close-button'),
+      c = content.getBoundingClientRect(),
+      b = back.getBoundingClientRect();
+    const controls = [...dialog.querySelectorAll('#modal-actions button, #modal-actions input, #modal-actions select')].filter(
+      (node) => node.getClientRects().length && !node.disabled,
+    );
+    return {
+      view: dialog.dataset.view,
+      viewport: [innerWidth, innerHeight],
+      modal: { left: r.left, right: r.right, top: r.top, bottom: r.bottom, height: r.height },
+      content: { top: c.top, bottom: c.bottom, clientHeight: content.clientHeight, scrollHeight: content.scrollHeight },
+      back: { top: b.top, bottom: b.bottom, width: b.width, height: b.height },
+      targetMinimums: controls.every((node) => {
+        const x = node.getBoundingClientRect();
+        return x.height >= 44 && x.width >= 44;
+      }),
+    };
+  });
+  const { modal, content, back, viewport } = bounds;
+  assert(modal.left >= -1 && modal.top >= -1, label + ': ' + JSON.stringify(bounds));
+  assert(modal.right <= viewport[0] + 1 && modal.bottom <= viewport[1] + 1, label + ': ' + JSON.stringify(bounds));
+  assert(back.top >= content.bottom - 2 && back.bottom <= modal.bottom + 1, label + ': ' + JSON.stringify(bounds));
+  assert(back.width >= 44 && back.height >= 44, label + ': ' + JSON.stringify(bounds));
+  assert(bounds.targetMinimums, label + ': undersized action ' + JSON.stringify(bounds));
+  if (noScroll)
+    assert(content.scrollHeight <= content.clientHeight + 3, label + ': unnecessary scrolling ' + JSON.stringify(bounds));
+  return bounds;
+}
 const luminance = (rgb) =>
   rgb
     .slice(0, 3)
@@ -134,6 +169,7 @@ function contrast(item) {
         await measure(frame, '#modal-title', { minFont: 20 });
         await measure(frame, '#modal-description');
         await measure(frame, '#modal-actions .detail', { minFont: 13 });
+        const newGameFit = await assertDialogGeometry(frame, 'New Adventure', { noScroll: true });
         await frame
           .getByRole('button', { name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/ })
           .tap();
@@ -141,6 +177,7 @@ function contrast(item) {
         assert.equal(cards.length, 4);
         cards.forEach(contrast);
         await measure(frame, '#modal-actions .detail', { minFont: 13 });
+        const heroFit = await assertDialogGeometry(frame, 'Choose Hero', { noScroll: true });
         const back = await frame.locator('#close-button').boundingBox();
         assert(back.height >= 44 && back.y + back.height <= 365);
         assert.equal(
@@ -156,17 +193,26 @@ function contrast(item) {
         await frame.locator('#close-button').tap();
         assert(await frame.locator('#modal').isHidden());
         await frame.locator('#title-saves').tap();
+        const savesFit = await assertDialogGeometry(frame, 'Saved Games');
         assert.equal(await frame.locator('#import-file').getAttribute('type'), 'file');
         assert(await frame.locator('#import-file').isVisible());
         await frame.locator('#modal-content').evaluate((x) => (x.scrollTop = x.scrollHeight));
         const close = await frame.locator('#close-button').boundingBox();
         assert(close.y >= 8 && close.y + close.height <= 365);
         await frame.locator('#close-button').tap();
+        await frame.locator('#title-settings').tap();
+        const settingsFit = await assertDialogGeometry(frame, 'Settings', { noScroll: true });
+        await frame.getByRole('button', { name: language === 'es' ? /Pantalla y rendimiento/ : /Screen and performance/ }).tap();
+        const graphicsFit = await assertDialogGeometry(frame, 'Graphics settings');
+        await frame.locator('#close-button').tap();
+        await frame.locator('#close-button').tap();
         await frame.locator('#title-help').tap();
+        const helpFit = await assertDialogGeometry(frame, 'Help index', { noScroll: true });
         await frame
           .getByRole('button', { name: language === 'es' ? /^Primeros pasos/ : /^Quick Start/ })
           .tap();
         await measure(frame, '#modal-description');
+        const readingFit = await assertDialogGeometry(frame, 'Help reading');
         await page.screenshot({ path: path.join(output, language + '-help.png') });
         await page.keyboard.press('Escape');
         assert.equal(
@@ -176,7 +222,7 @@ function contrast(item) {
         assert.deepEqual(errors, []);
         fs.writeFileSync(
           path.join(output, language + '-measurements.json'),
-          JSON.stringify({ title, cards, ratios, titleBounds }, null, 2),
+          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit }, null, 2),
         );
         console.log(
           'PASS ' +
