@@ -20,6 +20,40 @@ for (const language of ['en', 'es']) {
   const initialSnapshot = JSON.stringify(scope.Prototype.game.snapshot());
   elements.get('title-new').click();
   assert.equal(elements.get('modal-title').textContent, es ? 'Nueva aventura' : 'New Adventure');
+  const setupActions = elements.get('modal-actions').children;
+  const normalIndex = setupActions.findIndex((entry) =>
+    entry.textContent.startsWith(es ? 'Normal · Recomendada' : 'Normal · Recommended'),
+  );
+  const nightmareIndex = setupActions.findIndex((entry) =>
+    entry.textContent.startsWith(es ? 'Pesadilla' : 'Nightmare'),
+  );
+  const successionIndex = setupActions.findIndex((entry) =>
+    entry.textContent.startsWith(es ? 'Sucesión · Desactivada' : 'Succession · Off'),
+  );
+  const chooseIndex = setupActions.findIndex((entry) =>
+    entry.textContent.startsWith(es ? 'Elegir héroe' : 'Choose Hero'),
+  );
+  assert(
+    normalIndex >= 0 && nightmareIndex > normalIndex &&
+      successionIndex > nightmareIndex && chooseIndex > successionIndex,
+    'setup decisions precede the Choose Hero action',
+  );
+  assert.equal(
+    setupActions[normalIndex].getAttribute('aria-pressed'),
+    'true',
+    'Normal is the active default, independently of keyboard focus',
+  );
+  assert.equal(
+    setupActions[successionIndex].getAttribute('aria-pressed'),
+    'false',
+    'Succession is visibly optional and off by default',
+  );
+  assert(
+    setupActions[successionIndex].textContent.includes(
+      es ? 'recuperación habitual' : 'Standard recovery',
+    ),
+    'disabled Succession explains the active standard recovery rather than implying permanent loss',
+  );
   assert(
     elements
       .get('modal-actions')
@@ -46,6 +80,12 @@ for (const language of ['en', 'es']) {
       ),
     'Succession choice remains visibly selected',
   );
+  const chosenSuccession = button(elements, es ? 'Sucesión · Activada' : 'Succession · On');
+  assert.equal(chosenSuccession.getAttribute('aria-pressed'), 'true');
+  assert(
+    chosenSuccession.textContent.includes(es ? 'Si caen las cuatro' : 'Lose all four'),
+    'the enabled challenge explains run-ending consequences before the class picker',
+  );
   button(elements, es ? 'Elegir héroe' : 'Choose Hero').click();
   assert.equal(elements.get('modal').getAttribute('data-view'), 'class-select');
   const nameField = elements.get('modal-actions').children.at(-1);
@@ -71,14 +111,28 @@ for (const language of ['en', 'es']) {
   const save = elements.get('modal-actions').children;
   assert(save.some((entry) => entry.textContent === (es ? 'Tus partidas' : 'Your adventures')));
   assert(
-    save.some(
-      (entry) => entry.textContent === (es ? 'Copias y recuperación' : 'Backups & recovery'),
-    ),
+    save.some((entry) => entry.textContent === (es ? 'Copias de seguridad' : 'Backups')) &&
+      save.some((entry) => entry.textContent === (es ? 'Recuperación y almacenamiento' : 'Recovery & storage')),
+    'Backup files and recovery/storage are separate player intents',
   );
   assert(
     save.some((entry) => entry.className?.includes('menu-import-picker')),
     'native file input remains in the save menu',
   );
+  const backupIndex = save.findIndex((entry) => entry.textContent === (es ? 'Copias de seguridad' : 'Backups'));
+  const importIndex = save.findIndex((entry) => entry.className?.includes('menu-import-picker'));
+  const recoveryIndex = save.findIndex((entry) =>
+    entry.textContent === (es ? 'Recuperación y almacenamiento' : 'Recovery & storage'),
+  );
+  assert(
+    backupIndex > 0 && importIndex > backupIndex && recoveryIndex > importIndex,
+    'save slots precede backup actions, which precede recovery/storage controls',
+  );
+  const recoveryAction = save.find((entry) =>
+    entry.textContent.startsWith(es ? 'Intentar recuperación' : 'Try recovery'),
+  );
+  assert(recoveryAction?.className?.includes('menu-wide'), 'recovery is not a peer save slot');
+
   elements.get('close-button').click();
   elements.get('title-help').click();
   const titles = [
