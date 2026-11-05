@@ -22,6 +22,18 @@ for(const seed of [0x47564101,0x47564102,0x47564103,0x47564104]){
   const g = new C('normal','paladin',rng(seed)),z=g.zone(), t=atTree(z);
   assert(t && t.greenwoodNature==='tree', 'original authored mature tree remains');
   assert.equal(z.greenwoodMillbankSightlineVersion,1);
+  const probes=alternatives.map(([x,y])=>{
+    const p={x,y},ft={roads:z.footpaths||[]};
+    return {x,y,terrain:g.blocked(x,y,'vale',t.r||18,true),
+      road:g.distanceToRoad(z,p),foot:g.distanceToRoad(ft,p),
+      buildings:z.buildings.filter(b=>distance(b,p)<225).map(b=>b.id),
+      npcs:z.npcs.filter(n=>distance(n.servicePoint||n,p)<150).map(n=>n.id),
+      nodes:z.nodes.filter(n=>distance(n,p)<65).map(n=>n.id),
+      enemies:z.enemies.filter(e=>e.hp>0&&distance(e.home||e,p)<140).map(e=>e.id),
+      props:z.props.filter(q=>q!==t&&distance(q,p)<(q.owned||q.playerOwned||q.custom?(q.r||25)+110:q.roadBlocker?190:q.greenwoodNature==='tree'?100:65)).map(q=>[q.id,Math.round(distance(q,p))])
+    };
+  });
+  console.log('MILLBANK_PLACEMENT_PROBE '+JSON.stringify({seed,audit:z.greenwoodMillbankSightlineAudit,tree:{x:t.x,y:t.y,r:t.r,owned:t.owned},probes}));
   assert(z.greenwoodMillbankSightlineAudit?.moved,
     'the exact unowned canopy is shifted to a safe nearby woodland margin');
   assert(alternatives.some(([x,y])=>distance(t,{x,y})<1),
