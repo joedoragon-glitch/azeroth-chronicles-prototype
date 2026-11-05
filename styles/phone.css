@@ -1343,6 +1343,14 @@ body[data-experience='phone'] #modal-actions output {
     grid-column: 1 / -1;
   }
 
+  /* The difficulty and Succession labels already identify their groups.
+     In a 375px-tall phone viewport, repeating two section headings plus a
+     "continue to class selection" subtitle needlessly hides the challenge.
+     Keep all actual choices and their consequence explanations visible. */
+  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-section,
+  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-primary .detail {
+    display: none;
+  }
   /* New Adventure keeps difficulty choices together and a separate, safe
      Succession choice; all sections occupy the full action grid width. */
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-section,
