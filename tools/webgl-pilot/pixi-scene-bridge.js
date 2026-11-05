@@ -740,7 +740,9 @@
     }
     function syncLightFixtures(lights, zoom = 1, darkness = 0) {
       const list =
-        darkness > 0 ? lights.filter((p) => p.kind === 'window' || p.kind === 'lantern') : [];
+        darkness > 0
+          ? lights.filter((p) => p.kind === 'window' || p.kind === 'lantern' || p.kind === 'mill-sconce')
+          : [];
       const anchor = list[0] || { x: 0, y: 0 };
       const relative = list.map((p) => ({ ...p, x: p.x - anchor.x, y: p.y - anchor.y }));
       const signature = JSON.stringify([relative, zoom]);
