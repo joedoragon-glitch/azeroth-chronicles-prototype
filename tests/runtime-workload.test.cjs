@@ -88,8 +88,22 @@ function rng() {
 function pair(id) {
   const ra = rng(),
     rb = rng(),
-    a = new C('normal', 'paladin', ra),
+    a = new C('normal', 'paladin', ra);
+  // The frozen dev.175 navigation baseline treats *all* rain-pool shapes
+  // as deep water. Greenwood now has a deliberately walkable upper creek
+  // and a true passable mill deck. Use today's authoritative terrain
+  // collision only while constructing the otherwise unchanged v4 scene,
+  // so the comparison does not mistake different generated scenery for
+  // a dungeon AI/roster regression. Restore the legacy navigation method
+  // BEFORE entering the requested zone and running any workload checks.
+  const frozenBlocked = B.prototype.blocked;
+  let b;
+  try {
+    B.prototype.blocked = C.prototype.blocked;
     b = new B('normal', 'paladin', rb);
+  } finally {
+    B.prototype.blocked = frozenBlocked;
+  }
   a.enter(id);
   b.enter(id);
   return { a, b, ra, rb };
