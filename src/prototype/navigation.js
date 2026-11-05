@@ -1009,7 +1009,7 @@
           return p.decorative ? null : p.r;
         return r;
       }
-      blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false, fort = null) {
+      blocked(x, y, zone = this.s.zone, radius = 15, terrainOnly = false, fort = null, rangedRay = false) {
         if (this.s.mode === 'arena' && zone === 'arena') {
           const size = this.zoneSize(zone);
           return !Number.isFinite(x) || !Number.isFinite(y) ||
@@ -1094,6 +1094,7 @@
                 x > d.x1 + radius && x < d.x2 - radius && y > d.y1 + radius && y < d.y2 - radius,
             );
           if (
+            !(rangedRay && ['water', 'lava'].includes(R.barriers[i].kind)) &&
             !onInheritedDeck &&
             y > c - radius &&
             y < e + radius &&
@@ -1108,7 +1109,8 @@
         if (!dungeon && !room && !side)
           for (const p of R.terrain[i])
             if (
-              p.kind === 'rain-pools'
+              !(rangedRay && (p.kind === 'water' || p.kind === 'lava' || p.kind === 'rain-pools')) &&
+              (p.kind === 'rain-pools'
                 ? // The added upstream creek is expressly shallow/walkable.
                   // The lower millrace remains solid water except on its true
                   // short timber bridge. Evaluate the bridge only after a
@@ -1138,6 +1140,7 @@
                     y > p.y1 - radius &&
                     y < p.y2 + radius &&
                     !(p.gaps || []).some(([l, h]) => y > l + radius && y < h - radius)
+              )
             )
               return true;
         if (!dungeon && !room && !side) {
@@ -1147,7 +1150,7 @@
               d = harbor.dock,
               onDock =
                 x > d.x1 + radius && x < d.x2 - radius && y > d.y1 + radius && y < d.y2 - radius;
-            if (!onDock && R.harborWaterBlocked(w, x, y, radius)) return true;
+            if (!rangedRay && !onDock && R.harborWaterBlocked(w, x, y, radius)) return true;
           }
         }
         const z = this.s.zones[zone];
@@ -1218,6 +1221,28 @@
             this.blocked(a.x + ((b.x - a.x) * i) / n, a.y + ((b.y - a.y) * i) / n, this.s.zone, 0)
           )
             return false;
+        return true;
+      }
+      // Line-of-fire geometry does not inherit water/lava movement collisions.
+      // Keep line()/clearSegment() unchanged for melee, routes and physical travel.
+      rangedLine(a, b) {
+        const n = Math.ceil(dist(a, b) / 20);
+        for (let i = 1; i < n; i++)
+          if (this.blocked(
+            a.x + ((b.x - a.x) * i) / n,
+            a.y + ((b.y - a.y) * i) / n,
+            this.s.zone, 0, false, null, true,
+          )) return false;
+        return true;
+      }
+      rangedSegment(a, b, fort = null) {
+        const n = Math.max(1, Math.ceil(dist(a, b) / 8));
+        for (let j = 0; j <= n; j++)
+          if (this.blocked(
+            a.x + ((b.x - a.x) * j) / n,
+            a.y + ((b.y - a.y) * j) / n,
+            this.s.zone, 0, false, fort, true,
+          )) return false;
         return true;
       }
       clearSegment(a, b, radius = 15, terrainOnly = false) {
