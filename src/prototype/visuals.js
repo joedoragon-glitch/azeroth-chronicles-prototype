@@ -9458,6 +9458,41 @@
     }
     function craftedResidence(boss) {
       if (boss === 'crown') return false; // The unconfirmed fallback remains protected.
+      if (boss === 'thorn') {
+        // Scornfang's working Treasury: a secure reclamation/counting house,
+        // not a cottage duplicated with a larger doorway. Greenwood timber
+        // and sandstone remain the material vocabulary.
+        blockwork(-42, -25, 84, 41, '#888779', 8);
+        boards(-37, -27, 74, 42, '#b6a485', false);
+        poly([[37, -27], [51, -34], [51, 9], [37, 15]], '#6e7463');
+        for (const x of [-37, -20, 20, 37])
+          timber([x, -27], [x, 14], 4.5, '#705540');
+        timber([-40, 10], [41, 10], 5, '#624c3a');
+        // Low heavy gable, projecting eave and stone-capped secured annex.
+        poly([[-49, -29], [-5, -65], [39, -31], [46, -27], [-6, -58], [-43, -24]], '#915c49');
+        poly([[39, -31], [53, -38], [58, -31], [49, -24]], '#695b50');
+        for (const y of [-45, -38, -31])
+          line([[-31 + (y + 45) * 0.4, y], [29 - (y + 45) * 0.4, y + 1]],
+            '#bd8d68', 1.1);
+        timber([-42, -27], [-5, -62], 3, '#5d4938');
+        timber([-5, -62], [40, -29], 3, '#5d4938');
+        recessedDoor(-2, -13, 34, 32, true, 0);
+        // Bonded bolts and narrow shuttered audit window, not a home pane.
+        softRect(25, -14, 11, 17, '#304037', 2);
+        for (const x of [27, 32])
+          line([[x, -13], [x, 3]], '#b99b6d', 1);
+        line([[25, -6], [36, -6]], '#b99b6d', 1.2);
+        for (const x of [-34, 34]) {
+          oval(x, -16, 2.5, 2.5, '#c4b083');
+          oval(x, -16, 1, 1.1, '#3d3b31');
+        }
+        // Timber tally board and shielded loading threshold.
+        poly([[-29, -6], [-19, -10], [-19, 8], [-29, 9]], '#897458');
+        for (const y of [-3, 1, 5])
+          line([[-27, y], [-21, y - 1]], '#d7c39a', 0.85);
+        timber([-22, 16], [23, 16], 5, '#65503d');
+        return true;
+      }
       if (boss === 'cindermaw') {
         craftedDecoration('cindermaw-ash-den');
         rockPiece(-30, 7, 12, 22, true);
@@ -19023,7 +19058,12 @@
         ctx.stroke();
       }
     }
-    if (!blocked && (!materials || String(dungeonId).startsWith('side-')))
+    // Greenwood deliberately skips the old expensive projected-image ground.
+    // Its deterministic native plant/soil flecks must still render when the
+    // (otherwise valid) material registry is installed, and are cached as
+    // static terrain by the shared Canvas/Pixi background pipeline.
+    if (!blocked && (!materials || String(dungeonId).startsWith('side-') ||
+        (outdoor && region === 0 && R.greenwoodLayout?.version === 2)))
       groundDetail(ctx, p, seed, region, room, dungeonId, colors, x + 40, y + 40);
   }
   // Culling uses logical viewport units, not backing-store pixels.
