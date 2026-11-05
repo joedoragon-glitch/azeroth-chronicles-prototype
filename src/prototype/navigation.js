@@ -1109,7 +1109,24 @@
           for (const p of R.terrain[i])
             if (
               p.kind === 'rain-pools'
-                ? R.rainPoolBlocked(p.pools, x, y, radius)
+                ? // The added upstream creek is expressly shallow/walkable.
+                  // The lower millrace remains solid water except on its true
+                  // short timber bridge. Evaluate the bridge only after a
+                  // water hit; do not add a search cost to the normal hot path.
+                  R.rainPoolBlocked(p.blockingPools || p.pools, x, y, radius) &&
+                  !(zone === 'vale' && R.greenwoodLayout?.millBridge &&
+                    (() => {
+                      const deck = R.greenwoodLayout.millBridge;
+                      const dx = deck.to.x - deck.from.x;
+                      const dy = deck.to.y - deck.from.y;
+                      const len2 = dx * dx + dy * dy;
+                      const t = ((x - deck.from.x) * dx + (y - deck.from.y) * dy) / len2;
+                      if (t < 0 || t > 1) return false;
+                      const cx = deck.from.x + dx * t;
+                      const cy = deck.from.y + dy * t;
+                      return (x-cx)*(x-cx) + (y-cy)*(y-cy) <=
+                        Math.pow(Math.max(0, deck.width / 2 - radius), 2);
+                    })())
                 : p.r
                   ? // Reject obstacles far outside the circle's bounding box
                     // without invoking a square root.

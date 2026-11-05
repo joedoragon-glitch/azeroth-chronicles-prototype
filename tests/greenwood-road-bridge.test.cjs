@@ -11,10 +11,14 @@ assert.equal(Campaign.rules.greenwoodLayout.version, 2);
 assert.equal(z.greenwoodRoadBridgeVersion, 1, 'separate non-destructive road migration');
 assert.equal(z.greenwoodHomesteadVersion, 1, 'published Thornfang homestead retained alongside roads');
 assert.equal(z.greenwoodCompositionVersion, 1, 'botanical overlay runs after completed route shaping');
-assert.equal(z.greenwoodRoutes.length, 17, '16 established corridors plus the off-road depot apron');
+assert.equal(z.greenwoodRoutes.length, 19,
+  '17 canonical routes remain indexed; mill farm and door footpath append last');
+assert.equal(z.greenwoodRoutes.at(-2).kind, 'farm', 'mill farm access appends after canonical routes');
+assert.equal(z.greenwoodRoutes.at(-1).kind, 'path', 'mill doorway uses a narrow footpath');
 assert.equal(z.greenwoodRoutes[6].kind, 'path', 'independent freight apron retained');
 assert.deepEqual(z.greenwoodRoutes[6].points.at(-1), Campaign.rules.greenwoodLayout.anchors.cache);
-assert.deepEqual(z.greenwoodRoadKinds, ['cart', 'farm', 'farm', 'farm']);
+assert.deepEqual(z.greenwoodRoadKinds, ['cart', 'farm', 'farm', 'farm', 'farm'],
+  'fifth source-owned road kind is the appended mill spur');
 assert.equal(z.greenwoodRoutes[7].points.length, 6, 'south footpath spans both banks and exits deck straight');
 assert.equal(Math.round(z.roads[1].at(-1).x / Campaign.rules.greenwoodLayout.scale), 1560,
   'farm cart traffic stops on solid ground before the timber pedestrian bridge');
@@ -23,9 +27,9 @@ assert.equal(Math.round(z.footpaths[3][0].x / Campaign.rules.greenwoodLayout.sca
 assert.equal(z.greenwoodRoutes[8].points.length, 3, 'Treasury spur has no duplicated cart segment');
 
 const gaps = Campaign.rules.barriers[0].gaps;
-assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 56]);
+assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 80]);
 for (const [i, bridge] of z.bridgeApproaches.entries()) {
-  assert.equal(bridge.width, [100, 56][i], 'physical and documented deck widths agree');
+  assert.equal(bridge.width, [100, 80][i], 'physical and documented deck widths agree');
   const [lo, hi] = gaps[i];
   const mid = (lo + hi) / 2;
   const nearestGrid = Math.round((mid - 25) / 50) * 50 + 25;
@@ -36,6 +40,17 @@ for (const [i, bridge] of z.bridgeApproaches.entries()) {
   assert(g.route(bridge.west, bridge.east).length, 'native solver crosses west to east');
   assert(g.route(bridge.east, bridge.west).length, 'native solver crosses east to west');
 }
+// Reproduce the actual boss patrol step that the previous narrow south
+// bridge blocked at ~17 units off center (focused CI #42042501901).
+// Actors must use the illustrated deck, not an invisible water shortcut.
+assert(g.clearSegment(
+  {x:1664.444437970413,y:2292.850355197068},
+  {x:1658.0060039246753,y:2297.9284027587482},
+  15,
+), 'Thornfang can physically complete the formerly obstructed south-bridge stride');
+assert(g.clearSegment(
+  {x:1530,y:2297}, {x:1940,y:2297}, 15, true,
+), 'southern footbridge has body clearance even with modest off-center walking');
 const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoadKinds);
 assert.equal(prepared.widths.cart * 2, 88);
 assert.equal(prepared.widths.farm * 2, 52);
@@ -91,6 +106,13 @@ assert.deepEqual(ids(restored.zone()), ids(z), 'save retains actors, constructio
 const once = restored.snapshot(), twice = Campaign.restore(once, rng).snapshot();
 assert.equal(twice.zones.vale.greenwoodRoadBridgeVersion, 1);
 assert.deepEqual(ids(twice.zones.vale), ids(once.zones.vale), 'second load remains stable');
+const oldNarrowBridge = structuredClone(original);
+oldNarrowBridge.zones.vale.bridgeApproaches[1].width = 56;
+const widened = Campaign.restore(oldNarrowBridge, rng);
+assert.equal(widened.zone().bridgeApproaches[1].width, 80,
+  'an already-upgraded v4 save gets the same widened physical south deck');
+assert.equal(Campaign.restore(widened.snapshot(), rng).zone().bridgeApproaches[1].width, 80,
+  'south bridge width remains stable across repeat save loads');
 assert.deepEqual(twice.zones.vale.footpaths, once.zones.vale.footpaths, 'road correction idempotent');
 assert.deepEqual(twice.quests, once.quests, 'quests unchanged');
 assert.deepEqual(twice.paid, once.paid, 'paid progress unchanged');
@@ -133,4 +155,4 @@ assert.deepEqual(replay.footpaths, migratedZone.footpaths,
 assert.deepEqual(replay.greenwoodRoutes, migratedZone.greenwoodRoutes,
   'second restore cannot reprocess old route data');
 
-console.log('PASS Greenwood road hierarchy, 16 routes, junction painter, two bridge gaps, v4 idempotence');
+console.log('PASS Greenwood road hierarchy, 17 canonical routes plus two mill paths, two bridge gaps, v4 idempotence');

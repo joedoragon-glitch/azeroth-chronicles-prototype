@@ -55,11 +55,18 @@ for(const [name,fromLeg,toLeg] of [
   if(name==='thorn-escort')Object.assign(mira,g.safe(...legs[4]));
   const actor=name==='thorn-patrol'?thorn:mira,
     start={x:actor.x,y:actor.y},original=g.blocked;
-  let probes=0,peak=0,maxMotion=0;
-  g.blocked=function(...args){probes++;return original.apply(this,args);};
+  let probes=0,peak=0,maxMotion=0,tickStart=0,highProbeTrace=null,peakTick=-1;
+  g.blocked=function(...args){
+    probes++;
+    if(probes-tickStart===2001)
+      highProbeTrace=new Error('2001st blocked probe').stack.split('\n').slice(1,8);
+    return original.apply(this,args);
+  };
   for(let i=0;i<220;i++){
     const last=probes,old={x:actor.x,y:actor.y};
+    tickStart=probes;
     g.tick(.05,{x:0,y:0});
+    if(probes-last>peak)peakTick=i;
     peak=Math.max(peak,probes-last);
     maxMotion=Math.max(maxMotion,distance(actor,old));
     assert(!thorn.aggro,'authored passive patrol must remain passive');
@@ -70,7 +77,9 @@ for(const [name,fromLeg,toLeg] of [
   const speed=name==='thorn-patrol'?Campaign.rules.thornPatrol.speed:
     Campaign.rules.thornPatrol.captiveSpeed;
   assert(maxMotion<=speed*.05+.5,name+' physical movement never teleports');
-  assert(peak<2000,name+' no 10k+ sync route in a full game update');
+  assert(peak<2000,name+' no 10k+ sync route in a full game update ' +
+    JSON.stringify({peak,moved,totalProbes:probes,actor:actor.id,
+      thornLeg:thorn.thornLeg,peakTick,highProbeTrace}));
   console.log('VALE_SCRIPTED_MOVEMENT '+JSON.stringify({
     name,moved:+moved.toFixed(1),maxMotion:+maxMotion.toFixed(2),
     peakWholeTickProbes:peak,totalProbes:probes}));
