@@ -46,9 +46,12 @@ const intersects = (a, b) => a && b &&
       });
       const page = await context.newPage(), errors = [];
       page.on('pageerror', (e) => errors.push(e.message));
+      // This input test is not a first-run language-flow test; the latter has
+      // its own browser coverage. Preserve the browser's real normal startup.
+      await page.addInitScript(() => {
+        localStorage.setItem('azeroth-display-language-v1', 'en');
+      });
       await page.goto(base);
-      // A fresh browser opens the mandatory bilingual first-run chooser.
-      await require('./helpers/language-browser.cjs').selectEnglish(page);
       try {
         await page.locator('#title-new').waitFor({ state: 'visible', timeout: 15000 });
       } catch (error) {
@@ -59,6 +62,9 @@ const intersects = (a, b) => a && b &&
           loadingHidden: document.querySelector('#startup-update')?.hidden,
           loadingText: document.querySelector('#startup-update-text')?.textContent,
           pageLanguage: document.documentElement.lang,
+          modalTitle: document.querySelector('#modal-title')?.textContent,
+          modalHidden: document.querySelector('#modal')?.hidden,
+          modalActions: document.querySelector('#modal-actions')?.textContent?.slice(0, 160),
         })), errors);
         throw error;
       }
