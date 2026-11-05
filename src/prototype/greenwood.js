@@ -66,11 +66,14 @@
       const d = y((a + b) / 2) - (a + b) / 2;
       return [a + d, b + d];
     });
-    // The main cart crossing retains its original breadth. The southern
-    // exploration crossing is a narrower, still companion-safe footbridge;
-    // paint and collision consume this same gap table.
-    const southMid = (b.gaps[1][0] + b.gaps[1][1]) / 2;
-    b.gaps[1] = [southMid - 65, southMid + 65];
+    // Shared paint/collision bridge throats: the maintained stone freight
+    // crossing is broad, while the timber pedestrian crossing is deliberately
+    // narrower. The old 180/130 decks looked disconnected from their roads.
+    // Both must stay centered on the canonical crossing, not its drawn bank.
+    for (const [index, halfWidth] of [[0, 50], [1, 28]]) {
+      const mid = (b.gaps[index][0] + b.gaps[index][1]) / 2;
+      b.gaps[index] = [mid - halfWidth, mid + halfWidth];
+    }
     for (const p of R.landforms[0]) {
       if (p.points) p.points.forEach(pair);
       if (p.x !== undefined) point(p);
