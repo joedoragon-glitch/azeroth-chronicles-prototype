@@ -8286,6 +8286,9 @@
     const hiddenDurationMs = Math.max(
       0, Date.now() - pending.wallAt, performance.now() - pending.monotonicAt,
     );
+    // A Home Screen return can report focus without a visibilitychange or
+    // pageshow callback. Keep the GPU guard in sync before making this choice.
+    graphicsController.visibilityChanged(false);
     const graphics = graphicsController.status();
     const needsGraphicsGate = graphics.phase === 'preparing' ||
       graphics.recoveryPending === true ||

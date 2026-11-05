@@ -115,8 +115,12 @@ for (const language of ['en', 'es']) {
 
 // A brief iPhone-style visibility flip should save and freeze play without
 // discarding its live scene. A missing visibilitychange on return can be
-// reconciled through pageshow instead, as some Home Screen PWAs behave.
-for (const language of ['en', 'es']) {
+// reconciled through pageshow or focus, as some Home Screen PWAs behave.
+for (const [language, resumeSource] of [
+  ['en', 'visibilitychange'],
+  ['es', 'pageshow'],
+  ['en', 'focus'],
+]) {
   let clock = 0;
   const { scope, elements, storage, documentEvents, events, frame } =
     shell(language, 'mage', { stayOnTitle: true, now: () => clock });
@@ -137,8 +141,10 @@ for (const language of ['en', 'es']) {
   assert.equal(campaign.s.time, firstTime, 'the hidden game never simulates');
   clock = 650;
   scope.document.hidden = false;
-  if (language === 'en') visibility();
-  else for (const fn of events.pageshow || []) fn({ persisted: false });
+  if (resumeSource === 'visibilitychange') visibility();
+  else if (resumeSource === 'pageshow')
+    for (const fn of events.pageshow || []) fn({ persisted: false });
+  else for (const fn of events.focus || []) fn();
   assert.equal(scope.Prototype.started, true, 'brief interruption resumes in place');
   assert.equal(scope.Prototype.game, campaign, 'brief interruption never restores a new campaign');
   assert.equal(elements.get('title-screen').hidden, true);
@@ -146,8 +152,7 @@ for (const language of ['en', 'es']) {
   assert(campaign.s.time >= firstTime, 'the resumed scene is eligible for simulation');
   const history = JSON.parse(storage.get('sibdlp-playtest-diagnostics-v1')).events;
   assert(history.some((event) => event.kind === 'background-return-classified' &&
-    event.decision === 'live-resume' && event.source ===
-      (language === 'en' ? 'visibilitychange' : 'pageshow')));
+    event.decision === 'live-resume' && event.source === resumeSource));
   assert(!history.some((event) => event.kind === 'return-to-title'),
     'a short background signal is not misclassified as a title transition');
 }
