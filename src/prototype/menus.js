@@ -512,7 +512,7 @@
         {
           summary:
             getGame().hero.class === 'strategist' && getGame().s.mode === 'developer'
-              ? (/^es/i.test(document?.documentElement?.lang || '')
+              ? (/^es/i.test(root.document?.documentElement?.lang || '')
                 ? 'Las dagas automáticas no gastan la recuperación de las tres habilidades. Toca para la forma normal; mantén para la cargada.'
                 : 'Automatic daggers do not spend the three starter skill cooldowns. Tap for normal; hold for charged.')
               : 'Automatic Skill 1 basics attack independently. Tap for the normal technique. Hold to prepare the charged technique.',
@@ -527,14 +527,14 @@
             },
             ...(getGame().hero.class === 'strategist' && getGame().s.mode === 'developer'
               ? [{
-                title: /^es/i.test(document?.documentElement?.lang || '') ? 'Reversión' : 'Reversal',
-                text: /^es/i.test(document?.documentElement?.lang || '')
+                title: /^es/i.test(root.document?.documentElement?.lang || '') ? 'Reversión' : 'Reversal',
+                text: /^es/i.test(root.document?.documentElement?.lang || '')
                   ? 'Acción independiente: toca REVERSIÓN o pulsa T si no está asignada. Requiere una advertencia enemiga activa y estar físicamente en la zona del impacto. Solo protege al grupo contra ese ataque concreto.'
                   : 'Separate action: tap REVERSAL, or press T if it has no other binding. A live enemy warning must threaten the Ogre at its actual impact location. Only that attack release is reversed for the threatened party.',
               }, {
-                title: /^es/i.test(document?.documentElement?.lang || '')
+                title: /^es/i.test(root.document?.documentElement?.lang || '')
                   ? 'Dagas y materiales' : 'Daggers and real materials',
-                text: /^es/i.test(document?.documentElement?.lang || '')
+                text: /^es/i.test(root.document?.documentElement?.lang || '')
                   ? 'Tres impactos básicos consecutivos sobre el mismo enemigo gastan una sola botella de ácido si existe. Las formas Agua, Mineral y Fuego requieren una fuente real cercana y visible. Las ranuras 4–8 aún no están implementadas.'
                   : 'Three landed same-target basics spend exactly one Acid Bottle on the third hit if stocked. Water, Mineral and Fire forms need genuine nearby visible sources. Slots 4–8 are not implemented.',
               }] : []),
