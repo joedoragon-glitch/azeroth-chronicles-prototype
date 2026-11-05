@@ -31,9 +31,44 @@
 
 **Evidence and acceptance.** Review actual walk-throughs rather than only camera teleports: bare recent flow→older vegetal island→bare lava, western arrival→Crownwatch plaza, Ash Refuge domestic perimeter, both crossings, east and south industries, Cindermaw roost and fortress approaches. Capture true desktop and supported short-wide phone landscape at the game's 150% zoom with night variants. Verify natural/urban transitions, unoccluded interactions and combat cues, old-v4-save migration, seed determinism, Original vs Canvas/Pixi parity, bounded CPU/GPU work, texture/asset retirement and offline PWA correctness. Use focused checks before the independent Phase-5 review; broad suites, merge, deployment, device verification and owner art acceptance remain separately gated.
 
-**Current status of THIS new scope:** AUTHORIAL DESIGN APPROVED. No natural terrain code, vegetation art or material registration is changed by this documentation amendment; no new tests, merge, publication or device verification is claimed.
+**Status at the initial 4-November documentation amendment (historical):** AUTHORIAL DESIGN APPROVED. That amendment itself changed no natural terrain code, vegetation art or material registration; it performed no tests, merge, publication or device verification. **Later same-day update:** the owner subsequently submitted and approved all sixteen NL01–NL16 art selections below; separate draft PR #794 contains an unconnected natural-ground field model, not a working in-game landscape.
 
 **Factual landscape references:** US National Park Service https://www.nps.gov/articles/000/crmo-ecosystems.htm (varied ropy/block/jagged lava), https://www.nps.gov/crmo/learn/nature/plants.htm (vegetation depends on substrate, soil and exposure) and https://www.nps.gov/articles/000/kipukas.htm (older vegetation islands surrounded by younger lava). These guide creative plausibility, not gameplay/geology simulation.
+
+---
+
+### Binding landscape authorial choices — owner-submitted 4 November 2026 (NL01–NL16)
+
+**Status: DESIGN APPROVED, 16/16 RESPONDED; no unanswered selections.** This register records the owner's *submitted* options and notes, not speculative proposals. It is jointly authoritative with the preceding 4-November natural-geology approval in this PR #707 contract. When an option's description is broad, the owner's note is controlling; implementation-level geographic coordinates, exact 3-vs-4 island count and precise scene compositions remain engineering/art-placement decisions based on actual source-native survey, **not unanswered owner questions**. Keep already approved roads, lava, city, 15 thermal works, waterwork reservations, Foundry, NPCs, loot, four classes and v4 saves intact.
+
+| Decision | Choice | Approved visual direction | Required reconciliation |
+| --- | --- | --- | --- |
+| NL01 | **D** | Dramatic dark rock interrupted by striking islands of vegetation | Add a reasonable secondary C: weathered ash-and-basalt high-desert ground, appropriate to an Ash-beast region. |
+| NL02 | **A** | Broad rounded flow lobes spreading around older ground | Do not substitute uniformly tiled noise or new collision features. |
+| NL03 | **D** | Layered ridges alternating with broad, walkable open ground | Represent relief visually; preserve real walkability. |
+| NL04 | **A** | Charcoal and cool slate with subtle violet undertones | Restrained violet, not all-over luminous purple. |
+| NL05 | **B** | Gradual, softened transitions covered by drifting ash | Young/old flow differences remain geological and readable. |
+| NL06 | **A** | Three or four large, memorable green islands | Three or four is the accepted range, not a decision to add every small island. |
+| NL07 | **C** | Primarily in the distant western and southern wilderness | The Ash Refuge-adjacent island in NL12 is counted within NL06's three or four, not a fifth. |
+| NL08 | **B** | Golden bunchgrasses with occasional small wildflowers | Hardy sparse natural cover, not uniform grassland. |
+| NL09 | **C** | Tiny sheltered groups of hardy conifers on a few older islands | No woodland carpet or new imported species canon. |
+| NL10 | **D** | Ropy lava, jagged clinker/fractures, and granular cinders/ash/stones, each varied by geological area | These are three geological detail families, not equal noise everywhere. |
+| NL11 | **C** | The city visibly rests upon and incorporates old basalt shelves | Do not alter existing physical collision or building footprints casually. |
+| NL12 | **D** | A recognizable vegetation island just outside the inhabited area | Count the nearby island among the three or four major ones; retain cultivated domestic gardens as a separate category. |
+| NL13 | **B** | Rough dark scoria, rusty minerals and ash-darkened margins | Keep existing industrial workyards, heatworks, freight and route readability. |
+| NL14 | **D** | An intense, heat-scarred core gradually giving way to hardy plants | No greenery in active hot roosts; plant pioneers only in cooler protected margins. |
+| NL15 | **A** | Clear, dry vistas with cool, subdued mineral colors at night | Add reasonable B occasional localized windblown ash and reasonable C subtle heat shimmer/warm light near geothermal sites; never obscure gameplay telegraphs. |
+| NL16 | **D** | A deliberate rhythm of civilization, open lava country and vegetated refuges | Natural geography must form scenic journeys rather than repeated static texture. |
+
+**Verbatim owner feedback on blended options:**
+- **NL01, selected D plus C:** “With a reasonable amount of  C, after all, we don’t have ash beasts for  nothing, lol”. This adds an appreciable weathered ash/old-basalt high-desert *secondary* presence to the predominantly dramatic-dark-rock/green-island first impression. It is **not** authorization to replace the island design with uniformly barren ash, make the whole region an ash storm or invent new Ash-beast ecology/gameplay.
+- **NL15, selected A plus B and C:** “With some reasonable b and c”. This makes clear, cool-toned nighttime visibility the **default**, with **occasional localized ash drift** and **subtle site-specific geothermal warmth/shimmer**, subject to combat/route/UI legibility. It is not consent to constant particles, fog, overbright lava effects or a dynamic weather simulation.
+
+**Authorial reconciliation across apparently competing items:** NL06's **three or four** major vegetated islands and NL07's **primarily west/south** position remain fully effective; reserve **one of those same three or four** immediately outside Ash Refuge under NL12. The other islands favor outer western/southern wilderness, with small pioneer pockets elsewhere permitted by the already approved ecology. NL08's golden grasses and occasional wildflowers dominate the sheltered grassy portions; NL09's rare grouped conifers are limited to the coolest old islands. NL13's rusty industrial rock and NL14's heat-scarred creature core intentionally stay more barren. NL11's old basalt shelves are a *visual and architectural* relation, not permission to move collision geography.
+
+**Surviving constraints:** The earlier Craters of the Moon (Idaho) primary / Newberry (Oregon) secondary *natural* references, unusual permanently molten fantasy central channel, exact two original bridges, region's thriving independent fantasy civic identity, original main and Foundry identities, T005 active-outdoor-ground **planned retirement with source PNG retained**, world-anchored deterministic procedural rendering, Canvas/Pixi/short-wide phone legibility, CPU/GPU budget and v4 save compatibility still bind. No cultural transplant, no new loot/ecology simulation, no broad runtime rewriting. These answers settle **appearance and placement principles**, not executable art.
+
+**Current owner priority gate:** 0.9.2 release, portrait/landscape orientation and first-region UI/menus take precedence. Further #794 natural-landscape implementation and integration remain **ON HOLD** until renewed authorization. The standalone deterministic model and its shim-tested focused logic already exist on draft PR #794; the authored island locations, procedural painter, T005 active deactivation, actual native Canvas/Pixi visual QA, performance benchmarks, merges, publication and physical iPhone acceptance remain **NOT DONE**. The design submission does **not** authorize any of them.
 
 ---
 
