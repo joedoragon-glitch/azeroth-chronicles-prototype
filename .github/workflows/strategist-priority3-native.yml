@@ -1,0 +1,52 @@
+name: Strategist Priority 3 Developer admission and v4 saves
+# Bounded native Campaign and app/persistence checks only. No deploy or broad suite.
+on:
+  push:
+    branches:
+      - feat/strategist-developer-playtest-20261104
+    paths:
+      - 'src/prototype/engine.js'
+      - 'src/prototype/save.js'
+      - 'src/prototype/progression.js'
+      - 'src/prototype/app.js'
+      - 'src/prototype/persistence.js'
+      - 'tests/strategist-priority3-admission-saves.test.cjs'
+      - 'tests/strategist-developer-admission.test.cjs'
+      - 'tests/strategist-developer-isolation.test.cjs'
+      - '.github/workflows/strategist-priority3-native.yml'
+permissions:
+  contents: read
+jobs:
+  strategist-admission-saves:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Syntax checks for scoped source and regression
+        run: |
+          node --check src/prototype/engine.js
+          node --check src/prototype/save.js
+          node --check src/prototype/progression.js
+          node --check src/prototype/app.js
+          node --check src/prototype/persistence.js
+          node --check tests/strategist-priority3-admission-saves.test.cjs
+      - name: Genuine Campaign and production app admission, v4 ownership and import refusal
+        run: node tests/strategist-priority3-admission-saves.test.cjs
+      - name: Existing native admission and class-isolation gates
+        run: |
+          node tests/strategist-developer-admission.test.cjs
+          node tests/strategist-developer-isolation.test.cjs
+      - name: Original Strategist dagger, Acid, zone/death and native Campaign lifecycle
+        run: node tests/strategist-e0-native.test.cjs
+      - name: Previous original v4 and protected browser storage regressions
+        run: |
+          node tests/beta-historical.test.cjs
+          node tests/persistence-safety.test.cjs
+          node tests/save-recovery-checkpoints.test.cjs
+      - name: Existing fourth-class admission check
+        run: node tests/rogue-bard-live-playtest-admission.test.cjs

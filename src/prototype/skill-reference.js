@@ -171,6 +171,42 @@
     ],
   };
 
+  // Current v3.2 Developer-only starter forms. Their names and explanations
+  // describe implemented source mechanics, not the superseded designer drafts.
+  const strategistCards = {
+    en: [
+      ['Rinsing Cut / Clear Current', 'Real Water · close contact / party Slow cleanse',
+        'With visible Water: one real close dagger contact and remove up to one current party Slow.',
+        'Clear Current: remove currently active Slow from all affected living Ogre, Soldier and Archer; no attack.',
+        'A true nearby Water source is required at release. No future Slow immunity or cooldown-debt refund.'],
+      ['Stone Facet / Notched Facet', 'Real Mineral · physical projectile interception',
+        'Set one short, stationary stone face that stops one genuinely crossing physical shot from either side.',
+        'Notched Facet: one stationary two-lip face with an open central aperture. Shots through the notch pass.',
+        'Friendly Archer arrows also collide with solid lips. No magical ward, reflection or extra interception.'],
+      ['Flash Temper / Furnace Exchange', 'Real Fire · close heat contact',
+        'With visible Fire: one genuine short-range contact against one legally reachable foe.',
+        'Furnace Exchange: one forward-facing short heat sweep, up to two different reachable foes.',
+        'Both forms need authentic current-zone Fire and real line of sight; neither primes later daggers.'],
+    ],
+    es: [
+      ['Corte de lavado / Corriente limpia', 'Agua real · contacto cercano / limpieza de ralentización',
+        'Con agua visible: un contacto real de daga y eliminar hasta una ralentización activa del grupo.',
+        'Corriente limpia: eliminar las ralentizaciones activas del ogro, soldado y arquero vivos; sin ataque.',
+        'Requiere agua real y cercana al ejecutar. No protege de futuras ralentizaciones ni devuelve tiempos de recuperación.'],
+      ['Faceta de piedra / Faceta ranurada', 'Mineral real · intercepción de proyectiles físicos',
+        'Coloca una cara de piedra fija que detiene un proyectil físico que la cruce desde cualquier lado.',
+        'Faceta ranurada: dos segmentos fijos con abertura real en el centro; el proyectil puede atravesarla.',
+        'Las flechas del arquero aliado también chocan con los segmentos. No refleja ni bloquea magia.'],
+      ['Templado rápido / Intercambio de horno', 'Fuego real · contacto de calor cercano',
+        'Con fuego visible: un impacto real a corto alcance sobre un enemigo alcanzable.',
+        'Intercambio de horno: barrido frontal a corto alcance contra hasta dos enemigos distintos.',
+        'Ambas formas requieren fuego auténtico y línea de visión; no preparan un golpe futuro.'],
+    ],
+  };
+  function strategistSpanish() {
+    return /^es/i.test(root.document?.documentElement?.lang || '');
+  }
+
   function card(game, slot) {
     // Repertoire labels are working descriptions, not owner-final names.
     const experimental = {
@@ -203,9 +239,13 @@
         'Time Out: larger debt pulse and stronger special recharge for Rogue and nearby allies',
         'Phase 5 prototype name; subject to owner review.'],
     };
-    const row = game.hero.class === 'rogue' && slot !== 1
-      ? (game.constructor.rules.roguePerformances[slot] ? experimental[slot] : null)
-      : skillCards[game.hero.class]?.[slot - 1];
+    const row = game.hero.class === 'strategist'
+      ? (game.s.mode === 'developer'
+        ? strategistCards[strategistSpanish() ? 'es' : 'en'][slot - 1]
+        : null)
+      : game.hero.class === 'rogue' && slot !== 1
+        ? (game.constructor.rules.roguePerformances[slot] ? experimental[slot] : null)
+        : skillCards[game.hero.class]?.[slot - 1];
     return row
       ? { name: row[0], role: row[1], tap: row[2], charge: row[3],
           note: (row[4] || '') + (game.hero.class === 'rogue'
@@ -217,6 +257,65 @@
   }
   function describe(game, slot, rank = game.hero.skills[slot - 1]) {
     const c = card(game, slot);
+    if (game.hero.class === 'strategist') {
+      const R = game.constructor.rules, cfg = R.strategistStarterSkills?.[slot];
+      if (!c || !cfg || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
+      const es = strategistSpanish(), facet = R.strategistFacet;
+      const metric = (key, en, spanish, value, unit = '') =>
+        ({ key, label: es ? spanish : en, value, unit });
+      const form = (charged) => {
+        const metrics = [
+          metric('source', 'Source reach', 'Alcance de la fuente', cfg.sourceRange),
+          metric('cooldown', 'Cooldown', 'Recuperación',
+            game.skillCooldown(slot, charged), 's'),
+        ];
+        if (slot === 1) {
+          if (!charged)
+            metrics.push(metric('damage', 'Contact power before defenses',
+              'Potencia del contacto antes de defensas',
+              game.power() * cfg.normalPower, ' HP'));
+          metrics.push(metric('reach', 'Contact reach', 'Alcance del contacto',
+            charged ? 0 : cfg.range));
+          metrics.push(metric('cleanses', 'Maximum affected allies',
+            'Máximo de aliados afectados', charged ? 3 : 1));
+        } else if (slot === 2) {
+          metrics.push(metric('offset', 'Face distance from Ogre',
+            'Distancia de la cara al ogro', facet.offset));
+          metrics.push(metric('width', 'Stone-face span', 'Ancho de la cara',
+            facet.halfWidth * 2));
+          metrics.push(metric('opening', 'True central opening',
+            'Abertura central real', charged ? facet.notchHalfWidth * 2 : 0));
+          metrics.push(metric('lifetime', 'Face lifetime', 'Duración de la cara',
+            facet.seconds, 's'));
+          metrics.push(metric('shots', 'Physical shots stopped',
+            'Proyectiles físicos detenidos', 1));
+        } else if (slot === 3) {
+          metrics.push(metric('reach', 'Contact reach', 'Alcance del contacto',
+            cfg.range));
+          metrics.push(metric('targets', 'Maximum distinct targets',
+            'Máximo de objetivos distintos', charged ? cfg.maxTargets : 1));
+          metrics.push(metric('damage', 'Power per contact before defenses',
+            'Potencia por contacto antes de defensas',
+            game.power() * (charged ? cfg.chargedPower : cfg.normalPower), ' HP'));
+        }
+        return { title: charged ? (es ? 'Cargada' : 'Charged') :
+          (es ? 'Normal' : 'Tap'),
+          effect: charged ? c.charge : c.tap, metrics };
+      };
+      const auto = slot === 1 ? {
+        title: es ? 'Ataques básicos automáticos' : 'Automatic dagger basics',
+        effect: es
+          ? 'Tres contactos consecutivos acertados sobre el mismo objetivo. El tercero gasta una botella de ácido compartida únicamente si hay existencias.'
+          : 'Three consecutive landed basics on the same target. The third uses one shared Acid Bottle only when stock is available.',
+        metrics: [
+          metric('basicReach', 'Dagger reach', 'Alcance de las dagas',
+            R.strategistBasicFoundation.range),
+          metric('acidRadius', 'Acid splash radius', 'Radio de salpicadura ácida',
+            R.strategistBasicFoundation.acidSplashRadius),
+        ],
+      } : null;
+      return { ...c, rank, auto, tap: form(false), charge: form(true) };
+    }
     if (game.hero.class === 'rogue' && slot !== 1) {
       if (!c || !Number.isInteger(rank) || rank < 1 || rank > 8) return null;
       const R = game.constructor.rules;

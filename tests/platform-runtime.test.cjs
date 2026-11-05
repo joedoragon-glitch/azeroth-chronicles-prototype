@@ -92,6 +92,11 @@ const messages = [],
   store = Store.create({ storage, Campaign: C, status: (s) => messages.push(s) }),
   game = new C('normal', 'mage', () => 0.9),
   profile = { activeMode: 'normal', nightmareUnlocked: false, audio: {} };
+// The current v4 restore applies the existing one-time Greenwood trail text
+// migration. Normalize this fresh comparison fixture too, so the exact
+// snapshot equality still checks all actual gameplay fields and companion
+// state instead of failing on a pre-existing label-version marker.
+game.greenwoodTrailLabels(game.zone());
 game.hero.gold = 317;
 store.save(game, profile);
 const restored = store.load('normal');

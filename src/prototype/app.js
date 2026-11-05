@@ -14,6 +14,9 @@
   // Quiet fourth-class release. Register before profile/load/save validation,
   // New Game and Succession; v4 storage keys and original classes stay intact.
   Campaign.enableRoguePlaytest();
+  // A preview link is not authentication. The engine/save layers still forbid
+  // an Ogre in every public mode even while this one browser registry exists.
+  if (developerEnabled) Campaign.enableStrategistDeveloperTest();
   // Dev.170 is a one-time upgrade to the recommended performance baseline.
   // Deliberately supersede earlier device choices once, before any controllers
   // read them. Never touch campaigns, audio, language, controls or renderer.
@@ -4512,6 +4515,11 @@
       en: 'Ranger', es: 'Explorador',
       detail: 'Ranged bow, healing and mobility', detailEs: 'Arco a distancia, curación y movilidad',
     },
+    strategist: {
+      en: 'Strategist (Playtest)', es: 'Estratega (pruebas)',
+      detail: 'Developer-only Ogre: twin daggers, real Water/Mineral/Fire sources, Soldier and Archer',
+      detailEs: 'Ogro solo de desarrollo: dos dagas, fuentes reales de agua/mineral/fuego, soldado y arquero',
+    },
     rogue: {
       en: 'Rogue', es: 'Pícara',
       detail: 'Charmed companions, musical disruption and survival tricks. Start alone; automatic basic hits may Charm surviving eligible monsters, who can then build Barracks.', detailEs: 'Compañeros encantados, música disruptiva y trucos de supervivencia. Empiezas sola; los ataques básicos automáticos pueden encantar a monstruos aptos que sobreviven, y luego ellos pueden construir cuarteles.',
@@ -4524,7 +4532,8 @@
     return heroClassPresentation[id]?.[language === 'es' ? 'detailEs' : 'detail'] || 'Class skills require authored rules';
   }
   function playableClassCountWord() {
-    const count = Object.keys(Campaign.classes).length;
+    // A developer-preview class never increases the public Succession limit.
+    const count = Object.keys(Campaign.classes).filter((id) => id !== 'strategist').length;
     return { 3: 'three', 4: 'four', 5: 'five' }[count] || String(count);
   }
   function chooseClass(mode, succession) {
@@ -4553,7 +4562,9 @@
         : language === 'es'
           ? 'Elige quién liderará la resistencia. Cada clase recibe su ventaja innata desde el nivel 1. Rescata especialistas para aprender más habilidades y conseguir equipo.'
           : 'Choose who leads the resistance. Each class grows automatically from level 1. Rescue specialists to unlock more skills and equipment.',
-      Object.entries(Campaign.classes).map(([id, c]) =>
+      Object.entries(Campaign.classes)
+        .filter(([id]) => id !== 'strategist' || (mode === 'developer' && developerEnabled))
+        .map(([id, c]) =>
         action(
           (id === 'rogue' ? '' : c.icon + ' ') + heroClassLabel(id),
           () => {
@@ -4641,8 +4652,10 @@
     const h = game.hero,
       es = language === 'es',
       className = es
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara' }[h.class]
-        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[h.class],
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara',
+            strategist: 'Estratega' }[h.class]
+        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue',
+            strategist: 'Strategist' }[h.class],
       stats = [
         { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
         { label: es ? 'Poder' : 'Power', value: String(game.power()) },
@@ -5372,7 +5385,8 @@
     profile.nightmareUnlocked = true;
     persistProfile();
     const crownedClass =
-      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[game.hero.class] || 'Hero';
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue',
+        strategist: 'Strategist' }[game.hero.class] || 'Hero';
     const credits =
       'THE CROWN\n\n' +
       (game.hero.regnalName || game.hero.customName
@@ -5413,7 +5427,7 @@
         game.hero.class +
         ' has fallen permanently. Succession carries no crown penalty; all crowns, rescues, quests and boss progress survive. Your successor starts at level 1 in Millhaven and must learn their skills.',
       Object.entries(Campaign.classes)
-        .filter(([id]) => !game.s.challenge.fallen.includes(id))
+        .filter(([id]) => id !== 'strategist' && !game.s.challenge.fallen.includes(id))
         .map(([id, c]) =>
           action((id === 'rogue' ? '' : c.icon + ' ') +
             heroClassLabel(id, false) + ' successor', () => {
@@ -6355,7 +6369,8 @@
   const canChargeSlot = (slot) => chargeableSlots.has(slot);
   // Ranger Skill 4 charges a companion rally: no enemy aim/lock required.
   const chargeNeedsTarget = (slot) =>
-    [1, 2, 6, 7].includes(slot) ||
+    (game.hero.class === 'strategist' && [1, 2, 3].includes(slot))
+      ? false : [1, 2, 6, 7].includes(slot) ||
     (slot === 8 && game.hero.class !== 'paladin') ||
     (slot === 4 && game.hero.class !== 'ranger');
   const skillLabel = (slot) => {
@@ -6389,6 +6404,11 @@
         6: 'Repelling Shot / Volley',
         7: 'Piercing Arrow',
         8: 'Hunters Salvo / Grand Hunt',
+      },
+      strategist: {
+        1: language === 'es' ? 'Corte de lavado / Corriente limpia' : 'Rinsing Cut / Clear Current',
+        2: language === 'es' ? 'Faceta de piedra / Faceta ranurada' : 'Stone Facet / Notched Facet',
+        3: language === 'es' ? 'Templado rápido / Intercambio de horno' : 'Flash Temper / Furnace Exchange',
       },
       rogue: {
         1: 'Ding and Sting / Raise a Racket',
@@ -6837,6 +6857,35 @@
       manaStatus('Need ' + cost + ' MP.');
       return;
     }
+    // Refused material actions need an actionable explanation. This is a
+    // one-time source lookup after a failed release, never a HUD/frame poll.
+    if (game.s.mode === 'developer' && game.hero.class === 'strategist' &&
+        [1, 2, 3].includes(slot)) {
+      const cfg = PrototypeRules.strategistStarterSkills[slot];
+      const source = typeof PrototypeStrategistMaterials !== 'undefined'
+        ? PrototypeStrategistMaterials.forCombat(game, cfg.material,
+          { range: cfg.sourceRange, rules: PrototypeRules })
+        : null;
+      const es = language === 'es';
+      if (!source) {
+        const names = es
+          ? { water: 'agua', mineral: 'piedra o mineral', fire: 'fuego activo' }
+          : { water: 'Water', mineral: 'stone or ore', fire: 'active Fire' };
+        status((es ? 'Necesitas una fuente real, cercana y visible de ' :
+          'Needs a genuine nearby visible source of ') + names[cfg.material] + '.');
+      } else if (slot === 1) {
+        status(es
+          ? (charged ? 'No hay ralentizaciones activas que limpiar.' :
+            'Necesitas un enemigo cercano o un aliado ralentizado.')
+          : (charged ? 'No active party Slow to cleanse.' :
+            'Needs a nearby foe or a Slowed party member.'));
+      } else if (slot === 2) {
+        status(es ? 'No hay espacio despejado para colocar la faceta.' :
+          'No clear space to place the stone face.');
+      } else status(es ? 'No hay un enemigo alcanzable a corta distancia.' :
+        'No reachable foe in close range.');
+      return;
+    }
     if (chargeNeedsTarget(slot)) {
       status('No target in range.');
       return;
@@ -7145,6 +7194,52 @@
     };
     quickItems.append(b);
   }
+  // This independent Field Order is deliberately NOT mapped to skill slots.
+  // It is never visible or active in the four ordinary classes.
+  const developerReversalButton = document.createElement('button');
+  developerReversalButton.id = 'developer-reversal';
+  developerReversalButton.className = 'potion-button';
+  developerReversalButton.hidden = true;
+  developerReversalButton.type = 'button';
+  developerReversalButton.setAttribute('aria-label', 'Strategist Reversal');
+  developerReversalButton.textContent = 'REVERSAL';
+  developerReversalButton.title = 'Developer-only Reversal · T when the key is unbound';
+  function commandStrategistReversal() {
+    if (!developerEnabled || !activePlay() ||
+        game?.s.mode !== 'developer' || game.hero.class !== 'strategist') return false;
+    const success = game.attemptStrategistReversalCommand();
+    if (success) { updateHUD(); save(); }
+    else {
+      const failure = game._strategistReversalFailure || 'no-warning';
+      const feedback = {
+        'no-warning': [
+          'Reversal needs a live, readable attack warning.',
+          'Reversión requiere una advertencia de ataque visible y activa.',
+        ],
+        late: ['Reversal was too late.', 'Demasiado tarde para Reversión.'],
+        duplicate: [
+          'This warning was already countered.',
+          'Esta advertencia ya recibió una Reversión.',
+        ],
+        outside: [
+          'Enter the actual threatened area to Reverse.',
+          'Entra en la zona realmente amenazada para usar Reversión.',
+        ],
+        blocked: [
+          'The attack cannot reach you through this obstacle.',
+          'El ataque no puede alcanzarte a través de este obstáculo.',
+        ],
+      };
+      const messages = feedback[failure] || feedback['no-warning'];
+      status(messages[language === 'es' ? 1 : 0]);
+    }
+    return success;
+  }
+  developerReversalButton.onclick = () => {
+    audio.unlock();
+    commandStrategistReversal();
+  };
+  quickItems.append(developerReversalButton);
   $('skills').append(quickItems);
   addEventListener('keydown', (e) => {
     if (
@@ -7208,6 +7303,14 @@
     )
       return;
     const actionId = input.actionFor(code);
+    // Do not steal a custom binding: T is a fallback only when unassigned.
+    if (code === 'KeyT' && !actionId && !menu && !e.repeat &&
+        started && !paused && focused && !document.hidden &&
+        game?.s.mode === 'developer' && game.hero.class === 'strategist') {
+      e.preventDefault();
+      commandStrategistReversal();
+      return;
+    }
     if (actionId || code === 'Escape' || (menu && ['Enter', 'Space'].includes(code)))
       e.preventDefault();
     if (code === 'Escape' || actionId === 'menu') {
@@ -7328,7 +7431,7 @@
         pointer !== null || worldPointer !== null) return false;
     const obstacles = [
       '#touch-interact-button', '#recall-button', '#target-button', '#squad-button',
-      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#cancel-navigation-button',
+      '#skills', '#quick-items', '#developer-summon', '#developer-finisher', '#developer-reversal', '#cancel-navigation-button',
       '#sprint-button', '#update-button', '#menu-button', '#order-button', '#modal',
     ].flatMap((selector) => {
       const el = document.querySelector(selector);
@@ -7922,6 +8025,13 @@
     const devActive = started && game.s.mode === 'developer';
     developerSummonButton.hidden = !devActive;
     developerFinisherButton.hidden = !devActive;
+    developerReversalButton.hidden = !(devActive && game.hero.class === 'strategist');
+    developerReversalButton.textContent = language === 'es' ? 'REVERSIÓN' : 'REVERSAL';
+    developerReversalButton.setAttribute('aria-label',
+      language === 'es' ? 'Reversión del Estratega' : 'Strategist Reversal');
+    developerReversalButton.title = language === 'es'
+      ? 'Solo desarrollo · Reversión · T si está libre'
+      : 'Developer-only Reversal · T when unbound';
     developerCombatMonitor.hidden = !devActive;
     developerCompanionMonitor.hidden = !devActive;
     if (devActive) {
@@ -8047,7 +8157,11 @@
     }
     const rangers = game.activeLivingParty().filter((u) => u.type === 'archer' && !u.charmOrigin);
     const healers = game.healCompanionCasters();
-    $('quick-items').classList.toggle('has-rangers', healers.length > 0 || rangers.length > 0);
+    // An independent Reversal command must stay reachable even if both
+    // starter companions fall. Desktop hides the quick-action dock otherwise.
+    $('quick-items').classList.toggle('has-rangers',
+      healers.length > 0 || rangers.length > 0 ||
+      (devActive && h.class === 'strategist'));
     for (const [type, label, key, cdKey, threshold] of manaEnabled
       ? [
           ['health', 'Heal', input.key('heal'), 'healCd', 50],
@@ -8229,14 +8343,16 @@
         (rank ? ' · Rank ' + rank : ' · Not learned') +
         chargeTip +
         (slot === 1
-          ? ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
+          ? h.class === 'strategist'
+            ? ' · Three landed same-target dagger basics; third spends one real Acid Bottle if stocked (40% power splash, up to three foes)'
+            : ' · Same-target combo: 100% → 110% → 120% · third hit adds 55% frontal splash'
           : '') +
         (i === 0 && PrototypeRules.movementBasicClasses[h.class]
           ? language === 'es'
             ? ' · Los ataques automáticos continúan durante la carga si el combate lo permite'
             : ' · Automatic basics continue during charge when combat allows'
           : '') +
-        (slot === 2 ? ' · Charged target locks when charging begins' : '') +
+        (slot === 2 && h.class !== 'strategist' ? ' · Charged target locks when charging begins' : '') +
         (backlogLabel ? ' · ' + backlogLabel : '') +
         (language === 'es' ? ' · Menú/Retirada: cancelar cola' : ' · Menu/Recall: clear queue');
       b.setAttribute(
@@ -8270,6 +8386,7 @@
             paladin: { 2: 'SUN', 3: 'SHLD', 4: 'JUDGE' },
             mage: { 2: 'FROST', 3: 'STOP', 4: 'ARC' },
             ranger: { 2: 'PIN', 3: 'HEAL', 4: 'HASTE' },
+            strategist: { 1: 'WATER', 2: 'STONE', 3: 'FIRE' },
           }[h.class]?.[slot] || icons[i];
       b.querySelector('small').textContent = b.disabled
         ? 'OFF'

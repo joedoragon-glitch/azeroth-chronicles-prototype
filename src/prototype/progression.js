@@ -282,6 +282,9 @@
         return R.teachers[family] || null;
       }
       skillRevealed(slot) {
+        // The preview owns only its three implemented starter slots.
+        // Advanced Neri lessons remain unavailable until separately authored.
+        if (this.hero.class === 'strategist' && slot > 3) return false;
         const def = D.skills.find((s) => s[0] === slot);
         return (
           !!def &&
@@ -296,6 +299,7 @@
           index = slot - 1;
         if (
           !def ||
+          (this.hero.class === 'strategist' && slot > 3) ||
           this.hero.skills[index] ||
           def[4] !== family ||
           !this.teacherCatalog(family)?.learn.includes(slot) ||
@@ -309,11 +313,13 @@
           return false;
         }
         this.hero.skills[index] = 1;
-        if (slot === 2) this.s.companionCombatTraining = 2;
+        // Ogre's native Mineral is NOT the old companion training license.
+        if (slot === 2 && this.hero.class !== 'strategist')
+          this.s.companionCombatTraining = 2;
         this.say(
           def[1] +
             ' learned · Rank 1.' +
-            (slot === 2
+            (slot === 2 && this.hero.class !== 'strategist'
               ? ' Companion training advanced: Soldiers learned Holy Cleave; Archers learned Piercing Volley; pets unlocked charged second skills.'
               : ''),
         );
@@ -327,6 +333,7 @@
         if (
           !def ||
           !rank ||
+          (this.hero.class === 'strategist' && slot > 3) ||
           !this.teacherCatalog(family)?.train.includes(slot) ||
           !this.s.rescued[family] ||
           next > (this.teacherCatalog(family)?.maxRank || 0)

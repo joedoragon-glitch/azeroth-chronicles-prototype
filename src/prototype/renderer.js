@@ -3020,6 +3020,41 @@
       }
       ctx.restore();
     }
+    // The Ogre's genuine short-lived Mineral collider is already owned by
+    // Combat. Paint its exact fixed lips in this shared Canvas/Pixi cue path;
+    // the central charged notch remains visibly (and physically) open.
+    function drawStrategistFacet() {
+      if (game.s.mode !== 'developer' || game.hero.class !== 'strategist') return;
+      const face = game.strategistFacetPresentation?.();
+      if (!face) return;
+      const lip = (lo, hi) => {
+        const from = screen({
+          x: face.x + face.tx * lo, y: face.y + face.ty * lo,
+        });
+        const to = screen({
+          x: face.x + face.tx * hi, y: face.y + face.ty * hi,
+        });
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+      };
+      ctx.save();
+      ctx.lineCap = 'butt';
+      ctx.strokeStyle = '#27382f';
+      ctx.lineWidth = 9;
+      if (face.notch) {
+        lip(-face.half, -face.notch);
+        lip(face.notch, face.half);
+      } else lip(-face.half, face.half);
+      ctx.strokeStyle = '#a9b2a0';
+      ctx.lineWidth = 5;
+      if (face.notch) {
+        lip(-face.half, -face.notch);
+        lip(face.notch, face.half);
+      } else lip(-face.half, face.half);
+      ctx.restore();
+    }
     function drawArenaBoundary() {
       if (game.s.mode !== 'arena') return;
       // The arena has a black low-spec floor; its playable perimeter must
@@ -3101,6 +3136,7 @@
         drawOcclusionOutlines(collectVisibleEntities());
         PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
         for (const projectile of game.s.projectiles) drawProjectile(projectile);
+        drawStrategistFacet();
         drawVisualFx();
         heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
         heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());
@@ -3584,6 +3620,7 @@
       // Critical outlines and transient effects retain contrast through the night grade.
       PrototypeEnemyVfxArt?.actors(ctx, screen, game, visualFx, effectRecorder);
       for (const p of game.s.projectiles) drawProjectile(p);
+      drawStrategistFacet();
       drawVisualFx();
       heroArt?.statuses(ctx, screen, game, canvas.width, canvas.height);
       heroArt?.charge(ctx, screen, game.hero, chargePresentation(), reducedMotion());

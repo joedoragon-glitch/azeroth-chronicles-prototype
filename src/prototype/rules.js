@@ -6651,6 +6651,48 @@
     }),
     endure: Object.freeze({ duration: 2, floorHp: 1 }),
   });
+  // E0-only dormant Ogre basic; all damage coefficients are provisional and
+  // must be reviewed before fifth-class admission. No extra critical roll.
+  // Bounded developer-only Ogre defence; balance rates are provisional.
+  // Dodge and melee retaliation make independent attack-instance decisions.
+  // This contract creates no public class, persistent meter or frame polling.
+  const strategistOgreDefense = Object.freeze({
+    dodgeChance: 0.05,
+    meleeRetaliationChance: 0.10,
+    meleeRetaliationPowerMultiplier: 0.35,
+  });
+  // v3.2 exploratory Ogre stat proposal, NOT owner-approved public balance.
+  // Paladin's existing MP stat is reused until the Ogre receives an
+  // independent, specified resource profile. No new gameplay meter.
+  const strategistHeroFoundation = Object.freeze({
+    stats: Object.freeze({ hp: 135, power: 17, armor: 9, speed: 290 }),
+    talents: Object.freeze({ power: 6, mana: 2, hp: 35, speed: 37 }),
+  });
+  // Provisional source-true Stage 1A tuning; these are NOT released skills.
+  const strategistStarterSkills = Object.freeze({
+    1: Object.freeze({ material: 'water', sourceRange: 160, range: 90,
+      normalCooldown: 6, chargedCooldown: 10, normalPower: 0.8, chargedPower: 0 }),
+    2: Object.freeze({ material: 'mineral', sourceRange: 155, range: 90,
+      normalCooldown: 8, chargedCooldown: 13 }),
+    3: Object.freeze({ material: 'fire', sourceRange: 150, range: 90,
+      normalCooldown: 7, chargedCooldown: 12, normalPower: 1.05,
+      chargedPower: 0.8, halfAngle: 0.6, maxTargets: 2 }),
+  });
+  // One facing, fixed-location, one-shot physical plate. The notch has two
+  // real lip segments; its center is geometrically open to small projectiles.
+  const strategistFacet = Object.freeze({
+    offset: 35, halfWidth: 44, notchHalfWidth: 13,
+    projectileRadius: 3, seconds: 4,
+  });
+  const strategistBasicFoundation = Object.freeze({
+    range: 90,
+    resetSeconds: 4,
+    primaryMultiplier: 1,
+    acidSplashRadius: 58,
+    acidSplashMultiplier: 0.4,
+    acidSplashCap: 3,
+    maxBottles: 1000,
+  });
   const basicAttackCombo = {
     steps: 3,
     resetSeconds: 4,
@@ -7852,6 +7894,11 @@
     heroAreaTargetCaps,
     classUltimates,
     basicAttackCombo,
+    strategistBasicFoundation,
+    strategistOgreDefense,
+    strategistStarterSkills,
+    strategistFacet,
+    strategistHeroFoundation,
     rogueHeroFoundation,
     rogueCharmNicknames,
     companionSkills,

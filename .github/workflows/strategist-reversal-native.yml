@@ -1,0 +1,35 @@
+name: Strategist Reversal focused native Campaign acceptance
+on:
+  push:
+    branches:
+      - feat/strategist-developer-playtest-20261104
+    paths:
+      - 'src/prototype/boss-combat.js'
+      - 'src/prototype/cindermaw-combat.js'
+      - 'src/prototype/dreadmaw-combat.js'
+      - 'src/prototype/app.js'
+      - 'tests/strategist-warning-reversal-prototype.test.cjs'
+      - '.github/workflows/strategist-reversal-native.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reversal-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Source syntax for exact Reversal owners
+        run: |
+          node --check src/prototype/boss-combat.js
+          node --check src/prototype/cindermaw-combat.js
+          node --check src/prototype/dreadmaw-combat.js
+          node --check src/prototype/app.js
+          node --check tests/strategist-warning-reversal-prototype.test.cjs
+      - name: Original native Campaign Reversal regression only
+        run: node tests/strategist-warning-reversal-prototype.test.cjs

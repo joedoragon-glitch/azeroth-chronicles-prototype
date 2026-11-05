@@ -1749,7 +1749,11 @@
           ? base * R.ringleaderScaling.frenzyCooldown : base;
       }
       companionSecondSkillUnlocked() {
-        return (this.s.companionCombatTraining || 1) >= 2 || (this.hero.skills[1] || 0) > 0;
+        // Existing four-class Skill 2 grants conventional companion training.
+        // Strategist's starting Mineral rank has no such license; it uses
+        // only genuinely purchased/stored companion-training progression.
+        return (this.s.companionCombatTraining || 1) >= 2 ||
+          (this.hero.class !== 'strategist' && (this.hero.skills[1] || 0) > 0);
       }
       companionSecondSkillTargets(u, target) {
         if (u.type === 'pet') return this.petSkillTargets(u, target, 2);

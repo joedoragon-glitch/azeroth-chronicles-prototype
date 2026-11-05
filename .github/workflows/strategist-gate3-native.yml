@@ -1,0 +1,60 @@
+name: Strategist Priority 2 focused native Campaign combat
+# Developer-only test validation. Does not run broad suites or deploy.
+on:
+  push:
+    branches:
+      - feat/strategist-developer-playtest-20261104
+    paths:
+      - 'src/prototype/rules.js'
+      - 'src/prototype/combat.js'
+      - 'src/prototype/hero-combat.js'
+      - 'src/prototype/boss-combat.js'
+      - 'src/prototype/party.js'
+      - 'src/prototype/strategist-materials.js'
+      - 'tests/strategist-e0-native.test.cjs'
+      - 'tests/strategist-developer-admission.test.cjs'
+      - 'tests/strategist-developer-isolation.test.cjs'
+      - 'tests/strategist-materials.test.cjs'
+      - '.github/workflows/strategist-gate3-native.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/prototype/rules.js'
+      - 'src/prototype/combat.js'
+      - 'src/prototype/hero-combat.js'
+      - 'src/prototype/boss-combat.js'
+      - 'src/prototype/party.js'
+      - 'src/prototype/strategist-materials.js'
+      - 'tests/strategist-e0-native.test.cjs'
+      - 'tests/strategist-developer-admission.test.cjs'
+      - 'tests/strategist-developer-isolation.test.cjs'
+      - 'tests/strategist-materials.test.cjs'
+      - '.github/workflows/strategist-gate3-native.yml'
+permissions:
+  contents: read
+jobs:
+  ogre-native-combat:
+    if: github.event_name == 'push' || github.head_ref == 'feat/strategist-developer-playtest-20261104'
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Check altered combat source and original regression syntax
+        run: |
+          node --check src/prototype/rules.js
+          node --check src/prototype/combat.js
+          node --check src/prototype/hero-combat.js
+          node --check tests/strategist-e0-native.test.cjs
+      - name: Real Campaign starter forms, projectiles, Dodge, Acid and hazard owners
+        run: node tests/strategist-e0-native.test.cjs
+      - name: Authentic material classification
+        run: node tests/strategist-materials.test.cjs
+      - name: Guarded developer admission and existing-class isolation
+        run: |
+          node tests/strategist-developer-admission.test.cjs
+          node tests/strategist-developer-isolation.test.cjs

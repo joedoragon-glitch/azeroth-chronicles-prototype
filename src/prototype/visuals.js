@@ -6902,7 +6902,343 @@
       grip(16.8, -1, complexion);
     }
 
+    // Gate 0 editorial revision: an Ogre *from the same species*, but a
+    // deliberately different character, silhouette and fighting posture.
+    // Native procedural art only: no new collision body or gameplay state.
+    // The Strategist is a separate *Ogre character*, never an overlay on
+    // the enemy body. Three-quarter orientation is consistently toward the
+    // viewer's left: face, chest, planted feet and BOTH carried knives agree.
+    // This artist is presentation-only, with no alteration to combat geometry.
+    function strategistHero(crowned = false) {
+      const hide = '#b2a684', shadow = '#8b8063', light = '#c8bb96';
+      const boneShade = '#e4d7b3', inkHair = '#35332e';
+      const tunic = '#635747', trousers = '#555044', leather = '#493b30';
+      const cape = '#394c42', mantle = '#46574b', trim = '#b4a079';
+      ctx.save();
+      ctx.translate(0, -19);
+
+      // The travelling CAPE hangs from the far shoulder, behind every limb.
+      // Its deep green remains separate from the umber trouser silhouette.
+      shaped(cape, () => {
+        ctx.moveTo(13, -31);
+        ctx.quadraticCurveTo(25, -34, 31, -24);
+        ctx.quadraticCurveTo(35, -10, 31, 5);
+        ctx.lineTo(36, 20);
+        ctx.lineTo(25, 17);
+        ctx.lineTo(20, 22);
+        ctx.quadraticCurveTo(17, 4, 6, -21);
+      });
+      line([[26, -26], [29, -7], [27, 13]], '#768674', 1.4);
+      // One near-side cape corner shows behind the bent, working arm.
+      shaped('#33483e', () => {
+        ctx.moveTo(-19, -31);
+        ctx.quadraticCurveTo(-29, -29, -29, -17);
+        ctx.lineTo(-33, 9);
+        ctx.lineTo(-21, 5);
+        ctx.lineTo(-15, -14);
+      });
+
+      // Connected legs with visibly separate fabric, knees and shins.
+      // The Ogre takes a short LEFTWARD step; both boots point left.
+      shaped(trousers, () => {
+        ctx.moveTo(-18, -7);
+        ctx.quadraticCurveTo(-5, -12, 2, -3);
+        ctx.lineTo(-6, 14);
+        ctx.quadraticCurveTo(-9, 19, -14, 25);
+        ctx.lineTo(-24, 31);
+        ctx.lineTo(-31, 25);
+        ctx.quadraticCurveTo(-23, 12, -23, 0);
+      });
+      shaped('#6a6252', () => {
+        ctx.moveTo(0, -8);
+        ctx.quadraticCurveTo(14, -9, 19, -2);
+        ctx.lineTo(18, 14);
+        ctx.quadraticCurveTo(20, 21, 20, 28);
+        ctx.lineTo(18, 35);
+        ctx.lineTo(8, 35);
+        ctx.lineTo(7, 25);
+        ctx.lineTo(1, 10);
+        ctx.lineTo(-5, 0);
+      });
+      // A clear inner-leg gap remains visible under the shorts.
+      line([[-17, 18], [-19, 24]], '#8f816a', 1.1);
+      line([[12, 21], [16, 23]], '#8e806b', 1.2);
+      shaped('#353b37', () => {
+        ctx.moveTo(-25, 29);
+        ctx.lineTo(-13, 29);
+        ctx.quadraticCurveTo(-12, 34, -11, 38);
+        ctx.quadraticCurveTo(-20, 43, -34, 41);
+        ctx.quadraticCurveTo(-37, 36, -25, 29);
+      });
+      // The ankle comes directly out of the trouser cuff. A tapered heel
+      // and broad toe share one outline so the screen-right shoe is visibly
+      // JOINED to the shin, not a flat shape pasted beneath the trouser.
+      shaped('#353b37', () => {
+        ctx.moveTo(8, 33);
+        ctx.quadraticCurveTo(14, 32, 20, 34);
+        ctx.lineTo(22, 39);
+        ctx.quadraticCurveTo(23, 43, 16, 44);
+        ctx.quadraticCurveTo(3, 47, -8, 43);
+        ctx.quadraticCurveTo(-10, 40, -3, 38);
+        ctx.lineTo(6, 36);
+        ctx.lineTo(8, 33);
+      });
+      // Directional toe caps point to the same side, no rotated shoes.
+      line([[-32, 38], [-25, 40]], '#848274', 1.7);
+      line([[-6, 41], [2, 43]], '#848274', 1.7);
+      line([[-26, 30], [-14, 31]], trim, 2);
+      // The near-pant cuff flows into the raised ankle, not across the toe.
+      line([[9, 33], [20, 34]], trim, 2);
+      line([[9, 35], [19, 36]], '#79735d', 1.2);
+
+      // Rear (character-left) arm is bent beside the body, not dislocated.
+      // Its wrist remains outside the cape and above the low reverse dagger.
+      shaped(shadow, () => {
+        ctx.moveTo(11, -29);
+        ctx.quadraticCurveTo(23, -32, 27, -22);
+        ctx.quadraticCurveTo(33, -13, 29, -5);
+        ctx.lineTo(31, 5);
+        ctx.quadraticCurveTo(32, 11, 26, 12);
+        ctx.quadraticCurveTo(20, 11, 20, 5);
+        ctx.lineTo(19, -8);
+        ctx.quadraticCurveTo(12, -16, 11, -29);
+      });
+      // A complete base tunic: NO accidentally exposed half-chest.
+      // Shoulder seams follow the three-quarter turn into screen-left.
+      shaped(tunic, () => {
+        ctx.moveTo(-20, -30);
+        ctx.quadraticCurveTo(-5, -37, 15, -28);
+        ctx.quadraticCurveTo(22, -20, 17, -9);
+        ctx.lineTo(15, 3);
+        ctx.quadraticCurveTo(-3, 10, -21, 4);
+        ctx.quadraticCurveTo(-27, -14, -20, -30);
+      });
+      // The far deltoid has a real tunic sleeve and shoulder seam, rather
+      // than an unexplained bare tan ball in the three-quarter silhouette.
+      shaped('#5a5143', () => {
+        ctx.moveTo(12, -30);
+        ctx.quadraticCurveTo(24, -31, 27, -24);
+        ctx.lineTo(27, -14);
+        ctx.lineTo(22, -12);
+        ctx.quadraticCurveTo(21, -23, 14, -24);
+      });
+      line([[19, -26], [26, -20]], '#94866f', 1.25);
+      // Front lapels and a single folded over-vest are clothes, not skin.
+      shaped('#83715a', () => {
+        ctx.moveTo(-15, -27);
+        ctx.lineTo(-5, -31);
+        ctx.lineTo(4, -15);
+        ctx.lineTo(-6, -3);
+        ctx.lineTo(-19, -9);
+      });
+      shaped('#574b3c', () => {
+        ctx.moveTo(2, -31);
+        ctx.lineTo(15, -26);
+        ctx.lineTo(13, 3);
+        ctx.lineTo(-8, 5);
+        ctx.lineTo(-7, -5);
+        ctx.lineTo(5, -17);
+      });
+      // Broad cloth overlap at the collar makes the garment join explicit.
+      line([[-13, -28], [-1, -23], [5, -16]], '#b7a37d', 1.8);
+      line([[8, -26], [5, -15], [-7, -2]], '#978269', 1.5);
+      // Proper shorts/hip flap are distinct from the green cape behind them.
+      shaped('#67533c', () => {
+        ctx.moveTo(-21, 1);
+        ctx.quadraticCurveTo(-6, 4, 16, 1);
+        ctx.lineTo(13, 12);
+        ctx.lineTo(3, 13);
+        ctx.lineTo(-1, 8);
+        ctx.lineTo(-13, 13);
+        ctx.lineTo(-22, 10);
+      });
+      line([[-19, 9], [-12, 11]], '#9c886a', 1.2);
+      line([[7, 10], [12, 10]], '#9c886a', 1.2);
+
+      // The field harness is a continuous shoulder-to-waist leather strap.
+      // It starts at the far collar, crosses the actual vest and joins belt.
+      line([[12, -30], [8, -23], [-5, -5], [-11, 4]], '#332c28', 4.6);
+      line([[12, -30], [8, -23], [-5, -5], [-11, 4]], '#9d805b', 1.35);
+      // Belt wraps visibly around both hips rather than floating at center.
+      shaped('#3f332a', () => {
+        ctx.moveTo(-22, -1);
+        ctx.quadraticCurveTo(-4, 3, 17, -1);
+        ctx.lineTo(18, 6);
+        ctx.quadraticCurveTo(-4, 10, -22, 6);
+      });
+      line([[-21, 0], [-13, 3]], '#806749', 1.1);
+      line([[9, 3], [17, 0]], '#806749', 1.1);
+      rect(-9, 3, 6, 5, '#b99c66');
+      rect(-7.7, 4.2, 3.4, 2.5, '#453c32');
+
+      // Near (character-right) arm: a full connected bent forearm.
+      // It leads the left-facing combat stance, with a visible hand + hilt.
+      shaped(hide, () => {
+        ctx.moveTo(-20, -29);
+        ctx.bezierCurveTo(-32, -30, -35, -19, -31, -11);
+        ctx.lineTo(-29, -4);
+        ctx.quadraticCurveTo(-30, 2, -33, 5);
+        ctx.quadraticCurveTo(-36, 9, -31, 12);
+        ctx.quadraticCurveTo(-23, 13, -19, 5);
+        ctx.quadraticCurveTo(-19, -5, -22, -12);
+        ctx.lineTo(-13, -23);
+      });
+      fillOval(-26, -21, 3, 7, light, 0.25);
+      // Two real sleeve cuffs, not stray bars across naked shoulders.
+      shaped(mantle, () => {
+        ctx.moveTo(-22, -30);
+        ctx.quadraticCurveTo(-32, -30, -34, -22);
+        ctx.lineTo(-31, -15);
+        ctx.lineTo(-21, -17);
+        ctx.lineTo(-15, -27);
+      });
+      line([[-32, -19], [-24, -18]], '#85917d', 1.5);
+      shaped('#554c40', () => {
+        ctx.moveTo(-32, -4);
+        ctx.lineTo(-21, -6);
+        ctx.lineTo(-20, 2);
+        ctx.lineTo(-31, 6);
+      });
+      line([[-30, 0], [-22, -2]], trim, 1.5);
+      shaped('#554c40', () => {
+        ctx.moveTo(20, -4);
+        ctx.lineTo(31, -3);
+        ctx.lineTo(32, 4);
+        ctx.lineTo(21, 6);
+      });
+      line([[22, 1], [31, 2]], trim, 1.2);
+
+      // A small strapped field pouch on the belt, not blocking leg joints.
+      shaped('#70583e', () => {
+        ctx.moveTo(10, 4);
+        ctx.lineTo(19, 4);
+        ctx.lineTo(19, 15);
+        ctx.quadraticCurveTo(14, 17, 10, 14);
+      });
+      line([[11, 7], [18, 7]], '#c8b182', 1.1);
+      for (const [x, color] of [[12, '#679c9a'], [16, '#be8c5b']]) {
+        rect(x - 1.5, 8, 3, 5, '#363c37');
+        rect(x - 1.1, 8.8, 2.2, 3.3, color);
+      }
+      // Cape fastening sits under the jaw, and its shoulder seam is clear.
+      poly([[8, -29], [12, -31], [16, -28], [12, -25]], '#baa16c');
+
+      // Hair is a gathered, tied topknot, *not* a stick, flag or headwear.
+      // Rear lengths follow a continuous organic curve toward the neck.
+      shaped('#302f2b', () => {
+        ctx.moveTo(7, -52);
+        ctx.quadraticCurveTo(19, -55, 19, -45);
+        ctx.quadraticCurveTo(20, -39, 18, -33);
+        ctx.quadraticCurveTo(16, -31, 14, -36);
+        ctx.lineTo(11, -47);
+      });
+      // Low ears are part of the head, not triangular spikes or decorations.
+      oval(-14, -35, 3.4, 4.7, shadow);
+      oval(16, -35, 3.5, 5, hide);
+      // Broad Ogre skull, compressed toward the direction of travel.
+      shaped(hide, () => {
+        ctx.moveTo(-16, -44);
+        ctx.bezierCurveTo(-19, -56, 6, -59, 14, -47);
+        ctx.bezierCurveTo(20, -36, 17, -27, 6, -22);
+        ctx.quadraticCurveTo(-6, -18, -14, -26);
+        ctx.bezierCurveTo(-20, -33, -19, -40, -16, -44);
+      });
+      fillOval(-6, -46, 7, 4, light, 0.24);
+      // A jawline and simple two-plane muzzle, not stray dark patches.
+      line([[-14, -28], [-7, -23], [5, -22]], '#857859', 1.4);
+      shaped('#b9a883', () => {
+        ctx.moveTo(-8, -38);
+        ctx.quadraticCurveTo(-13, -33, -7, -29);
+        ctx.quadraticCurveTo(-1, -27, 2, -31);
+        ctx.lineTo(-2, -37);
+      });
+      oval(-7, -32, 1.1, 0.9, '#685f49');
+      oval(-3, -31, 1.1, 0.9, '#685f49');
+      // He observes his left, so both pupils and brow slopes point LEFT.
+      line([[-13, -43], [-6, -45], [-1, -43]], '#514b39', 3.1);
+      line([[5, -43], [11, -42]], '#514b39', 3);
+      oval(-7.4, -39, 3.0, 2, '#706b53');
+      oval(8.5, -39, 3.1, 2, '#706b53');
+      oval(-8.1, -39.2, 1, 1.3, '#e4cf8f');
+      oval(7.7, -39.2, 1, 1.3, '#e4cf8f');
+      oval(-8.5, -39.3, 0.55, 0.8, '#33352d');
+      oval(7.3, -39.3, 0.55, 0.8, '#33352d');
+      line([[-11, -25], [-4, -26], [5, -25]], '#584d3b', 1.5);
+      // Two clean species tusks. Both start at mouth and curve upward:
+      // no cheek scar, detached dark wedge, or mysterious pink "branch".
+      shaped(boneShade, () => {
+        ctx.moveTo(-12, -24);
+        ctx.quadraticCurveTo(-16, -31, -14, -34);
+        ctx.quadraticCurveTo(-10, -29, -8, -25);
+      });
+      shaped(boneShade, () => {
+        ctx.moveTo(5, -24);
+        ctx.quadraticCurveTo(10, -30, 10, -33);
+        ctx.quadraticCurveTo(13, -30, 10, -25);
+      });
+      // Long swept hair and a tucked coil belong to the scalp silhouette.
+      shaped(inkHair, () => {
+        ctx.moveTo(-16, -48);
+        ctx.quadraticCurveTo(-16, -56, -4, -57);
+        ctx.quadraticCurveTo(6, -59, 12, -52);
+        ctx.lineTo(10, -49);
+        ctx.quadraticCurveTo(1, -54, -7, -52);
+      });
+      shaped('#414039', () => {
+        ctx.moveTo(4, -55);
+        ctx.bezierCurveTo(0, -65, 12, -65, 13, -59);
+        ctx.quadraticCurveTo(16, -55, 11, -53);
+        ctx.quadraticCurveTo(6, -52, 4, -55);
+      });
+      // Cloth knot band is SHORT and follows the hair coil, no ornament flag.
+      line([[6, -55], [11, -54]], '#ad9a70', 2.2);
+      line([[-12, -50], [-5, -53], [1, -53]], '#625b4c', 1.1);
+
+      // A dagger is ONE connected tool: pommel, short grip, crossguard,
+      // blade heel and tip are laid out on the same physical centerline.
+      // The knuckles are then painted OVER the grip; otherwise a long stick
+      // appears to grow out of the hand. All points are world-paint local.
+      function carriedDagger(handX, handY, dx, dy, bladeLength, handTone) {
+        const p = (forward, lateral = 0) => [
+          handX + dx * forward - dy * lateral,
+          handY + dy * forward + dx * lateral,
+        ];
+        const gripEnd = p(4.8), pommel = p(-4.4);
+        // Short enough to remain hidden by a genuine curled Ogre fist.
+        line([pommel, gripEnd], '#584432', 3.6);
+        line([p(-5.1), p(-3.7)], '#b9a070', 2.0);
+        // Full tang, guard and blade meet at p(5): no floating blade root.
+        poly([p(5.3, -2.1), p(7.8, -2.6),
+          p(6.5 + bladeLength, 0),
+          p(7.8, 2.6), p(5.3, 2.1)], '#acbab8');
+        line([p(8, 0), p(5.3 + bladeLength, 0)], '#e5e3d2', 0.85);
+        line([p(4.9, -4.1), p(4.9, 4.1)], '#c5a875', 2.4);
+        // Proportional hand mass deliberately encloses most of the hilt.
+        // A bevel at each finger suggests grip without individual claws.
+        poly([p(-4.2, -2.8), p(-3.2, -4.7), p(0.9, -5.1),
+          p(3.1, -3.3), p(3.7, 1.1), p(1.9, 4.3),
+          p(-2.7, 4.5), p(-4.6, 1.4)], handTone);
+        line([p(0.7, 3.7), p(2.8, 2.3)], '#867b60', 0.95);
+        line([p(-2.2, 3.7), p(-0.5, 3.2)], '#867b60', 0.8);
+        // Thumb pad closes around the grip in front of the handle.
+        oval(...p(1.2, -1.8), 2.4, 1.8, handTone);
+      }
+      // Screen-left near hand: an upward-forward cut with its hilt largely
+      // concealed by the fist and the blade extending beyond the forearm.
+      carriedDagger(-30, 9, -0.65, -0.76, 16, hide);
+      // Screen-right off-hand: REVERSE grip, compact guard at the wrist.
+      // The blade falls outside the right leg instead of crossing the shin.
+      carriedDagger(29, 8, 0.76, 0.65, 15, shadow);
+
+      if (crowned) {
+        poly([[-5, -17], [0, -21], [4, -17], [0, -13]], '#c7ad71');
+        oval(0, -17, 1.3, 1.3, '#66557e');
+      }
+      ctx.restore(); // Balanced outer pose, unaffected caller/Pixi context.
+    }
+
     function hero(role) {
+      if (role === 'strategist') return strategistHero(false);
       if (role === 'rogue') return rogueHero(false);
       const cape = role === 'paladin' ? '#785848' : role === 'mage' ? '#394f78' : '#355643';
       shaped(cape, () => {
@@ -6926,6 +7262,7 @@
     }
 
     function crownedHero(role, openFace = false) {
+      if (role === 'strategist') return strategistHero(true);
       if (role === 'rogue') return rogueHero(true);
       const purple = '#4c405e',
         trim = '#d9b978',
@@ -18351,6 +18688,7 @@
       ].includes(e.structure)
     )
       return 76;
+    if (e.renderKind === 'hero' && e.class === 'strategist') return 88;
     if ((e.renderKind === 'hero' && e.class === 'mage') || e.renderKind === 'prop') return 64;
     if (e.kind === 'transport') return e.icon === '🐉' ? 82 : e.icon === '⛵' ? 76 : 70;
     if (['dungeon', 'exit'].includes(e.kind)) return 64;

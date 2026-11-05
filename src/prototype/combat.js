@@ -50,6 +50,38 @@
       const entry = (-b - Math.sqrt(discriminant)) / (2 * a);
       return entry >= 0 && entry <= 1 ? entry : Infinity;
     }
+    // One Ogre-only, unsaved, stationary face per living developer Campaign.
+    // Never iterated per frame; only interrogated on an actual flying shot.
+    const strategistFaces = new WeakMap();
+    function clipInterval(lo, hi, from, to) {
+      const change = to - from;
+      if (Math.abs(change) < 1e-9) return from >= lo && from <= hi ? [0, 1] : null;
+      const a = (lo - from) / change, b = (hi - from) / change;
+      return [Math.min(a, b), Math.max(a, b)];
+    }
+    // Fraction of one actual swept projectile segment first touching a physical
+    // stationary lip. A radius-3 arrow can really pass a width-24 notch.
+    function facetLipEntry(from, to, face, lo, hi, radius) {
+      const point = (p) => {
+        const x = p.x - face.x, y = p.y - face.y;
+        return { u: x * face.tx + y * face.ty, v: x * face.nx + y * face.ny };
+      };
+      const a = point(from), b = point(to);
+      const u = clipInterval(lo, hi, a.u, b.u),
+        v = clipInterval(-radius, radius, a.v, b.v);
+      let t = Infinity;
+      if (u && v) {
+        const enter = Math.max(0, u[0], v[0]),
+          leave = Math.min(1, u[1], v[1]);
+        if (enter <= leave) t = enter;
+      }
+      // Round end caps of each real stone lip; not an invisible full rectangle.
+      for (const end of [lo, hi]) {
+        const x = face.x + face.tx * end, y = face.y + face.ty * end;
+        t = Math.min(t, sweptCircleEntry({ x, y }, from, to, radius));
+      }
+      return t;
+    }
     // A hit conveys short-lived awareness, not permanent omniscience or saved AI state.
     // Weak keys also keep dead/despawned monsters from accumulating alert records.
     const underFireAlerts = new WeakMap();
@@ -958,7 +990,7 @@
         return true;
       }
       hitParty(u, amount, manaDrain = 0, rangedSourceId = null, alreadyMitigated = false,
-        skillBlock = null) {
+        skillBlock = null, defenseContext = null) {
         if (this.peace || u.hp <= 0 || (u.immune || 0) > 0) return false;
         if (skillBlock && this.skillBlocks(u, skillBlock.shape, {
           source: rangedSourceId, criticalExecution: skillBlock.criticalExecution,
@@ -971,6 +1003,25 @@
         const attacker = rangedSourceId
           ? this.zone().enemies.find((e) => e.id === rangedSourceId)
           : null;
+        // Stage 1A Gate 3: one *genuine incoming hostile contact* can be
+        // Dodged by the living Ogre hero only. Use the attack's native enemy
+        // source, not arbitrary environment/reflection damage. Returning false
+        // also prevents the caller's attached status effects for that hit.
+        // Chance rolls happen per eligible hit, never per rendered frame.
+        if (
+          u === this.hero && u.class === 'strategist' &&
+          this.s.mode === 'developer' &&
+          defenseContext?.allowStrategistDodge !== false && attacker?.hp > 0 &&
+          !attacker.neutral && !attacker.returning &&
+          Number.isFinite(amount) && amount > 0 &&
+          this.random() < R.strategistOgreDefense.dodgeChance
+        ) {
+          this.event('strategistDodge', {
+            actor: 'hero', source: attacker.id,
+            x: u.x, y: u.y, kind: 'hostile-hit',
+          });
+          return false;
+        }
         if (!alreadyMitigated) amount *= this.snapshotPassiveOutgoingFactor(attacker);
         const armor =
           u === this.hero
@@ -1079,6 +1130,90 @@
           t = clamp(((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1), 0, 1);
         return dist(p, { x: a.x + t * dx, y: a.y + t * dy });
       }
+      placeStrategistFacet(charged = false) {
+        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist' ||
+            this.hero.hp <= 0 || this.peace) return false;
+        const cfg = R.strategistFacet;
+        const heading = this.formationHeading || { x: 0, y: 1 },
+          norm = Math.hypot(heading.x, heading.y) || 1,
+          nx = heading.x / norm, ny = heading.y / norm,
+          point = { x: this.hero.x + nx * cfg.offset,
+            y: this.hero.y + ny * cfg.offset };
+        // The worked plate cannot be placed behind a wall or in solid terrain.
+        if (!this.clearSegment(this.hero, point, 0) ||
+            this.blocked(point.x, point.y, this.zoneId, 0)) return false;
+        strategistFaces.set(this, {
+          x: point.x, y: point.y, nx, ny, tx: -ny, ty: nx,
+          half: cfg.halfWidth, notch: charged ? cfg.notchHalfWidth : 0,
+          radius: cfg.projectileRadius, zone: this.zoneId,
+          owner: this.hero, deaths: this.s.statistics.deaths,
+          until: this.s.time + cfg.seconds,
+        });
+        this.event('strategistFacetPlaced', {
+          actor: 'hero', charged: !!charged, x: point.x, y: point.y,
+          nx, ny, length: cfg.halfWidth * 2,
+          opening: charged ? cfg.notchHalfWidth * 2 : 0,
+        });
+        return true;
+      }
+      clearStrategistFacet() {
+        strategistFaces.delete(this);
+      }
+      // Read-only projection of the exact active physical collision owner.
+      // No second register, render-frame projectile scan or save-v4 field.
+      strategistFacetPresentation() {
+        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist')
+          return null;
+        const face = strategistFaces.get(this);
+        if (!face || this.hero !== face.owner || this.hero.hp <= 0 ||
+            this.peace || this.zoneId !== face.zone ||
+            this.s.statistics.deaths !== face.deaths ||
+            this.s.time >= face.until) return null;
+        return {
+          x: face.x, y: face.y, tx: face.tx, ty: face.ty,
+          half: face.half, notch: face.notch, radius: face.radius,
+          remaining: face.until - this.s.time,
+        };
+      }
+      strategistInterceptPhysicalProjectile(p, from, to, maxFraction = 1) {
+        const face = strategistFaces.get(this);
+        if (!face) return false;
+        if (this.s.mode !== 'developer' || this.hero.class !== 'strategist' ||
+            this.hero !== face.owner || this.hero.hp <= 0 ||
+            this.peace || this.zoneId !== face.zone ||
+            this.s.statistics.deaths !== face.deaths ||
+            this.s.time >= face.until) {
+          strategistFaces.delete(this);
+          return false;
+        }
+        // Native enemy stones/arrows and actual Archer/Ranger physical shafts.
+        // Never consume this face for beams, magic, hazards or warnings.
+        const archerShot = this.s.party.some((u) =>
+          u.id === p.source && u.type === 'archer' &&
+          (p.style == null || p.style === 'arrow'));
+        // A real arrow does not become magical or intangible merely because
+        // the Archer fell/retreated after its original physical release.
+        const nativePhysical = ['arrow', 'stone', 'axe', 'spear', 'cargo'].includes(p.style);
+        if (!nativePhysical && !archerShot) return false;
+        const width = face.half, gap = face.notch, r = face.radius,
+          hit = gap ? Math.min(
+            facetLipEntry(from, to, face, -width, -gap, r),
+            facetLipEntry(from, to, face, gap, width, r),
+          ) : facetLipEntry(from, to, face, -width, width, r);
+        if (!(hit >= 0 && hit <= 1 && hit < maxFraction)) return false;
+        const at = { x: from.x + (to.x - from.x) * hit,
+          y: from.y + (to.y - from.y) * hit };
+        // Terrain takes precedence when the face lies behind a wall.
+        if (!this.clearSegment(from, at, 0)) return false;
+        strategistFaces.delete(this);
+        const index = this.s.projectiles.indexOf(p);
+        if (index >= 0) this.s.projectiles.splice(index, 1);
+        this.event('strategistFacetIntercepted', {
+          actor: 'hero', projectileId: p.id, source: p.source,
+          x: at.x, y: at.y, charged: gap > 0,
+        });
+        return true;
+      }
       updateProjectiles(dt) {
         const hero = this.hero,
           zone = this.zoneId,
@@ -1154,6 +1289,14 @@
                 this.distanceToSegment(u, before, p) < radius &&
                 sweptCircleEntry(u, before, p, radius) < terrainFraction,
             );
+            // First true crossing wins; an enemy shot cannot hit its target
+            // through a physically prior Ogre face. Zero work with no face.
+            if (this.strategistInterceptPhysicalProjectile(p, before, p,
+              Math.min(terrainFraction, victim
+                ? sweptCircleEntry(victim, before, p, radius) : 1))) {
+              hostileTargets = null;
+              continue;
+            }
             if (terrainContact && !victim) {
               hostileTargets = null;
               this.enemyVfxProjectileImpact?.(p, { ...terrainContact, terrain: true });
@@ -1365,6 +1508,11 @@
             this.s.projectiles.splice(this.s.projectiles.indexOf(p), 1);
             continue;
           }
+          // Even the Ogre's own Archer can hit the two-sided plate.
+          // Actual terrain obstruction was rejected above.
+          if (this.strategistInterceptPhysicalProjectile(p, before, p,
+            this.distanceToSegment(e, before, p) < flight.hitRadius
+              ? sweptCircleEntry(e, before, p, flight.hitRadius) : 1)) continue;
           if (this.distanceToSegment(e, before, p) < flight.hitRadius) {
             // Royal Prerogative only redirects actual approaching projectiles
             // into an existing living Crown summon crossing the flight path.
@@ -1529,7 +1677,7 @@
                   const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null,
                   false, a.skillShape
                     ? { shape: a.skillShape, criticalExecution: a.criticalExecution }
-                    : null);
+                    : null, { allowStrategistDodge: false });
                   if (
                     this.hero !== hero ||
                     this.zoneId !== zone ||
@@ -1550,7 +1698,7 @@
                 const landed = this.hitParty(u, a.damage, a.manaDrain || 0, a.sourceId || null,
                   false, a.skillShape
                     ? { shape: a.skillShape, criticalExecution: a.criticalExecution }
-                    : null);
+                    : null, { allowStrategistDodge: false });
                 if (
                   this.hero !== hero ||
                   this.zoneId !== zone ||

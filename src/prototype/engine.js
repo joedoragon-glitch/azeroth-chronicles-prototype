@@ -45,6 +45,12 @@
     startingCompanions: [],
     formationRole: 'ranged',
   });
+  // E0: metadata only. No stats registry, charged-skills admission, New Game
+  // entry or save acceptance until the complete fifth-class gate is satisfied.
+  defineClassFoundation('strategist', {
+    startingCompanions: ['soldier', 'archer'],
+    formationRole: 'melee',
+  });
 
   const talentMaxRanks = R.balance.disciplines.maxRanks;
   // Rounded from the level-1 class stat ratios: talent growth reinforces each class's natural strengths while keeping the old average power budget.
@@ -83,7 +89,8 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass))
+      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass) ||
+          (heroClass === 'strategist' && (mode !== 'developer' || !!options.succession)))
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -200,7 +207,11 @@
         power: c.power,
         armor: c.armor,
         speed: c.speed,
-        skills: [1, 0, 0, 0, 0, 0, 0, 0],
+        // Strategist starts with three learned alchemies, but class admission
+        // remains blocked until native starter actions and UI really exist.
+        skills: heroClass === 'strategist'
+          ? [1, 1, 1, 0, 0, 0, 0, 0]
+          : [1, 0, 0, 0, 0, 0, 0, 0],
         cd: Array(8).fill(0),
         chargedCd: Array(8).fill(0),
         basicCd: 0,
@@ -232,6 +243,9 @@
       this.s.party = starterTypes.map((type, i) =>
         this.unit(type, start.x + (i === 0 ? -40 : 50), start.y + (i === 0 ? 40 : 30)),
       );
+      // Real shared finite stock, never a synthesized casting resource.
+      // Zero is deliberately provisional pending the playable starter kit.
+      if (heroClass === 'strategist') this.s.strategistAcidBottles = 0;
       if (mode === 'arena') {
         this.s.arenaStage = 'hub';
         this.s.arenaRegion = 0;
@@ -3233,6 +3247,12 @@
       this._tacticalRepositions?.clear();
       this._tacticalPartyTargets?.clear();
       this.clearEncounterUnits();
+      // A return trip to the same zone must never resume a pre-travel
+      // Strategist's unsaved third-dagger rhythm. Other classes are untouched.
+      if (zone !== previousZone && this.hero.class === 'strategist') {
+        this.resetBasicCombo();
+        this.clearStrategistFacet(); // no returning to a face in another zone
+      }
       if (zone !== this.zoneId) this.resetDungeonDefenders();
       for (const oldZone of Object.values(this.s.zones))
         oldZone.props = oldZone.props.filter((p) => !p.garunTemporary && !p.garunPreview);
@@ -3869,7 +3889,8 @@
         if (!challenge.fallen.includes(this.hero.class)) challenge.fallen.push(this.hero.class);
         this.hero.hp = 0;
         challenge.pending = true;
-        const remaining = Object.keys(classes).filter((id) => !challenge.fallen.includes(id));
+        const remaining = Object.keys(classes).filter((id) =>
+          id !== 'strategist' && !challenge.fallen.includes(id));
         if (!remaining.length) {
           challenge.pending = false;
           challenge.gameOver = true;
@@ -3938,6 +3959,8 @@
       return overflow;
     }
     successor(heroClass) {
+      // The Stage 1A preview is never an heir, even if its class becomes globally registered.
+      if (heroClass === 'strategist') return false;
       if (
         !this.s.challenge.succession ||
         !this.s.challenge.pending ||
@@ -8673,7 +8696,9 @@
     if (!Campaign.heroCombatSupports?.(id)) issues.push('missing authored combat owner');
     // Rogue's first charged performance has a separate authored cooldown.
     // Other classes require a real value, never a NaN timer or Ranger fallback.
-    if (id !== 'rogue' && !(R.chargedSkills.first.chargedSeconds[id] > 0))
+    if (id !== 'rogue' && !(id === 'strategist'
+      ? R.strategistStarterSkills?.[1]?.chargedCooldown > 0
+      : R.chargedSkills.first.chargedSeconds[id] > 0))
       issues.push('missing charged Skill 1 cooldown');
     return issues;
   };
@@ -8688,6 +8713,21 @@
     // something every newly admitted class automatically inherits.
     if (definition.movementBasic === true) R.movementBasicClasses[id] = true;
     return true;
+  };
+  // Only the browser's explicit ?developer=1 entry may call this. The
+  // existing constructor and save layer reject any non-Developer Ogre run;
+  // normal Succession never enumerates the preview class as an heir.
+  Campaign.enableStrategistDeveloperTest = () => {
+    if (classes.strategist) return false;
+    return Campaign.registerPlayableClass('strategist', {
+      icon: '⚗',
+      stats: {
+        ...classes.paladin,
+        ...R.strategistHeroFoundation.stats,
+      },
+      talents: R.strategistHeroFoundation.talents,
+      movementBasic: false,
+    });
   };
   // The already-playable Rogue continues through its original opt-in.
   Campaign.enableRoguePlaytest = () => {

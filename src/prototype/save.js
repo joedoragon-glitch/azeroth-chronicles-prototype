@@ -215,9 +215,21 @@
           s.version !== 4 ||
           !['normal', 'nightmare', 'developer', 'arena'].includes(s.mode) ||
           !['adventure', 'awakening', 'peace'].includes(s.phase) ||
-          !Object.hasOwn(classes, s.hero?.class)
+          !Object.hasOwn(classes, s.hero?.class) ||
+          (s.hero?.class === 'strategist' &&
+            (s.mode !== 'developer' || s.challenge?.succession))
         )
           throw Error('Invalid save');
+        // No extra field on historical four-class campaigns. Future Ogre v4
+        // saves own one bounded shared Bottle count, never a hidden reserve.
+        if (s.strategistAcidBottles !== undefined &&
+            (s.hero.class !== 'strategist' ||
+             !Number.isInteger(s.strategistAcidBottles) ||
+             s.strategistAcidBottles < 0 ||
+             s.strategistAcidBottles > R.strategistBasicFoundation.maxBottles))
+          throw Error('Invalid Strategist Acid Bottle stock');
+        if (s.hero.class === 'strategist' && s.strategistAcidBottles === undefined)
+          s.strategistAcidBottles = 0;
         if (s.recallActive === undefined) s.recallActive = false;
         if (typeof s.recallActive !== 'boolean') throw Error('Invalid Recall order');
         if (s.recallActive) {
@@ -434,7 +446,8 @@
         }
         if (s.companionVitalityRank === undefined) s.companionVitalityRank = 0;
         if (s.companionCombatTraining === undefined)
-          s.companionCombatTraining = (s.hero?.skills?.[1] || 0) > 0 ? 2 : 1;
+          s.companionCombatTraining =
+            s.hero.class !== 'strategist' && (s.hero?.skills?.[1] || 0) > 0 ? 2 : 1;
         if (s.rangerSupport === undefined) s.rangerSupport = { heal: 1, mana: 1 };
         if (
           !Number.isInteger(s.companionVitalityRank) ||
@@ -514,6 +527,13 @@
           s.hero.skills[0] < 1
         )
           throw Error('Invalid hero');
+        // The Developer-only Ogre currently owns only the three native
+        // v3.2 starters. Reject forged/misclassified advanced ranks and
+        // missing starters before the save can be restored or imported.
+        if (s.hero.class === 'strategist' &&
+            (s.hero.skills.slice(0, 3).some((rank) => rank < 1) ||
+             s.hero.skills.slice(3).some((rank) => rank !== 0)))
+          throw Error('Invalid Strategist skill progression');
         if (s.hero.rogueEndureUsed !== undefined && typeof s.hero.rogueEndureUsed !== 'boolean')
           throw Error('Invalid Rogue Endure state');
         if (s.hero.rogueEndureUntil !== undefined) throw Error('Invalid Rogue Endure timer');
@@ -528,7 +548,8 @@
           throw Error('Invalid saved temporary Rogue boon');
         // Older rosters may retain the core-only flag after learning hero Skill 2.
         // Repair the shared unlock without replacing units or resetting their cooldowns.
-        if (s.hero.skills[1] > 0) s.companionCombatTraining = 2;
+        if (s.hero.class !== 'strategist' && s.hero.skills[1] > 0)
+          s.companionCombatTraining = 2;
         finite(s.mercyTime, 0, 10);
         if (s.restCooldown !== undefined) finite(s.restCooldown, 0, 90);
         if (s.thornHeroInitiated !== undefined && typeof s.thornHeroInitiated !== 'boolean')
@@ -829,7 +850,9 @@
         if (!s.challenge)
           s.challenge = { succession: false, fallen: [], pending: false, gameOver: false };
         const ch = s.challenge;
-        const classCount = Object.keys(classes).length;
+        // The developer-only preview is not an heir in any public challenge.
+        const publicClasses = Object.keys(classes).filter(id => id !== 'strategist');
+        const classCount = publicClasses.length;
         if (
           typeof ch.succession !== 'boolean' ||
           typeof ch.pending !== 'boolean' ||
@@ -837,7 +860,7 @@
           !Array.isArray(ch.fallen) ||
           ch.fallen.length > classCount ||
           new Set(ch.fallen).size !== ch.fallen.length ||
-          ch.fallen.some((id) => !Object.hasOwn(classes, id))
+          ch.fallen.some((id) => !publicClasses.includes(id))
         )
           throw Error('Invalid succession');
         if (

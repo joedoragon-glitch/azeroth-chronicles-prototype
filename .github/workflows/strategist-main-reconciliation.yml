@@ -1,0 +1,59 @@
+name: Strategist pre-Priority-4 main reconciliation
+# Narrow integration gate. Never deploy, publish, or run the comprehensive suite.
+on:
+  push:
+    branches:
+      - integration/strategist-pr792-main-dev255-20261104
+      - feat/strategist-developer-playtest-20261104
+    paths:
+      - '.github/workflows/strategist-main-reconciliation.yml'
+      - 'src/prototype/**'
+      - 'templates/**'
+      - 'styles/**'
+      - 'phone*.html'
+      - 'scripts/build.cjs'
+      - 'scripts/site-assets.cjs'
+      - 'tests/strategist-*.test.cjs'
+      - 'tests/phone-edge-to-edge.test.cjs'
+      - 'tests/asset-packaging.test.cjs'
+permissions:
+  contents: read
+jobs:
+  scoped-reconciliation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Strategist Priorities 1-3 and public class/persistence regressions
+        run: |
+          node tests/strategist-priority3-admission-saves.test.cjs
+          node tests/strategist-developer-admission.test.cjs
+          node tests/strategist-developer-isolation.test.cjs
+          node tests/strategist-e0-native.test.cjs
+          node tests/strategist-materials.test.cjs
+          node tests/strategist-warning-reversal-prototype.test.cjs
+          node tests/beta-historical.test.cjs
+          node tests/persistence-safety.test.cjs
+          node tests/save-recovery-checkpoints.test.cjs
+          node tests/rogue-bard-live-playtest-admission.test.cjs
+      - name: Priority 4 original Campaign, menus, controls and presentation checks
+        run: |
+          node --check src/prototype/app.js
+          node --check src/prototype/combat.js
+          node --check src/prototype/renderer.js
+          node --check src/prototype/menus.js
+          node --check src/prototype/skill-reference.js
+          node tests/strategist-priority4-interaction.test.cjs
+          node tests/skill-reference.test.cjs
+          node tests/platform-runtime.test.cjs
+      - name: Generate draft phone and desktop entrypoints without deployment
+        run: npm run build
+      - name: Published phone viewport and packaging regressions against generated draft
+        run: |
+          node tests/phone-edge-to-edge.test.cjs
+          node tests/asset-packaging.test.cjs
