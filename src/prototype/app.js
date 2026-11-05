@@ -3220,6 +3220,33 @@
         description.length <= 340 &&
         actions.every((a) => a.label.length <= 68 && (a.detail || '').length <= 160));
     $('modal').setAttribute('data-dialog-size', compact ? 'compact' : regular ? 'regular' : 'wide');
+    // Select a layout from the menu's meaning and actual visible content.
+    // This is presentation-only: no actions are reordered, called or saved.
+    const visibleView = $('modal').getAttribute('data-view');
+    const actionable = actions.filter((entry) => entry.kind !== 'section');
+    const formControl = actions.some((entry) =>
+      ['slider', 'select', 'toggle', 'file'].includes(entry.kind),
+    );
+    const readingView =
+      structured ||
+      description.length > 620 ||
+      ['archive-reading', 'title-help-reading', 'title-credits', 'character', 'map'].includes(
+        visibleView,
+      );
+    const choiceGroup =
+      !readingView &&
+      !formControl &&
+      (['npc-service-catalog', 'archive-index', 'archive-shelf'].includes(visibleView) ||
+        (actionable.length >= 4 &&
+          actionable.length <= 12 &&
+          actionable.every(
+            (entry) => entry.label.length <= 85 && (entry.detail || '').length <= 190,
+          )));
+    $('modal').setAttribute(
+      'data-menu-layout',
+      options.layout || (readingView ? 'reading' : formControl ? 'form' : choiceGroup ? 'choices' : 'stack'),
+    );
+    $('modal').setAttribute('data-menu-count', String(actionable.length));
     audio.interfaceSound('open');
     menuIndex = 0;
     document.body.classList.add('menu-open');
