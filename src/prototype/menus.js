@@ -269,6 +269,7 @@
             : []),
         ],
         back,
+        { view: 'npc-training-hub' },
       );
     }
     function teacherRingleader(n, back, page = 0) {
@@ -877,6 +878,7 @@
             ),
           ],
           back,
+          { view: 'npc-service-catalog' },
         );
         return;
       }
@@ -966,6 +968,7 @@
           ),
         ],
         back,
+        { view: 'npc-service-catalog' },
       );
     }
     function smith(n, back = closeMenu) {
@@ -1113,6 +1116,7 @@
             : []),
         ],
         back,
+        { view: 'npc-service-catalog' },
       );
     }
     function unitLabel(type) {
@@ -2575,6 +2579,7 @@
           'Your field base. Recovery → Treat wounds heals your party for 30 crowns.',
           [...services, upgrade],
           back,
+          { view: 'barracks-hub' },
         );
         return;
       }
@@ -2593,6 +2598,7 @@
             : 'Local death loss drops to 5%, including regional dungeons.'),
         services,
         back,
+        { view: 'barracks-hub' },
       );
     }
     function inventory(back = closeMenu, fromCharacter = false) {
