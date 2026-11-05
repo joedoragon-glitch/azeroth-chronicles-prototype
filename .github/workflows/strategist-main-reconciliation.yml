@@ -41,9 +41,9 @@ jobs:
           node tests/persistence-safety.test.cjs
           node tests/save-recovery-checkpoints.test.cjs
           node tests/rogue-bard-live-playtest-admission.test.cjs
-      - name: Published phone viewport and packaging regressions
+      - name: Generate draft phone and desktop entrypoints without deployment
+        run: npm run build
+      - name: Published phone viewport and packaging regressions against generated draft
         run: |
           node tests/phone-edge-to-edge.test.cjs
           node tests/asset-packaging.test.cjs
-      - name: Generate phone and desktop entrypoints without deployment
-        run: npm run build
