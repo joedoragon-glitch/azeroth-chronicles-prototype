@@ -13,6 +13,9 @@
     // Success-only Ogre dagger cadence. No saved timer/target, no effect on
     // the existing attempt-based basic combo shared by four playable classes.
     const strategistDaggerStates = new WeakMap();
+    // Native v3.2 workpieces are deliberately unsaved, one per Ogre.
+    const strategistTraces = new WeakMap();
+    const strategistHeatSeams = new WeakMap();
     // One weak, unsaved, per-actor station-visibility cache. On-demand reads
     // are cheap even when combat asks several times per frame for every ally.
     const rogueStationChecks = new WeakMap();
@@ -1720,6 +1723,57 @@
           (u.active ? 'Joined the group.' : 'Group full; resting in reserve.'));
         return true;
       }
+      strategistLiveTrace() {
+        const trace = strategistTraces.get(this);
+        if (!trace) return null;
+        if (trace.hero !== this.hero || trace.zone !== this.zoneId ||
+            trace.deaths !== this.s.statistics.deaths || this.hero.hp <= 0 ||
+            this.s.time >= trace.until) {
+          strategistTraces.delete(this);
+          return null;
+        }
+        return trace;
+      }
+      strategistSetTrace(from, to) {
+        const trace = {
+          hero: this.hero, zone: this.zoneId,
+          deaths: this.s.statistics.deaths,
+          from: { x: from.x, y: from.y }, to: { x: to.x, y: to.y },
+          until: this.s.time + R.strategistStarterSkills[1].traceSeconds,
+        };
+        strategistTraces.set(this, trace);
+        this.event('strategistWaterTrace', {
+          actor: 'hero', x: trace.from.x, y: trace.from.y,
+          toX: trace.to.x, toY: trace.to.y,
+        });
+      }
+      strategistPrimeHeatSeam(enemy) {
+        strategistHeatSeams.set(this, {
+          hero: this.hero, zone: this.zoneId, enemy,
+          deaths: this.s.statistics.deaths,
+          until: this.s.time + R.strategistStarterSkills[3].seamSeconds,
+        });
+      }
+      strategistResolveHeatSeam(enemy) {
+        const seam = strategistHeatSeams.get(this);
+        if (!seam) return;
+        if (seam.hero !== this.hero || seam.zone !== this.zoneId ||
+            seam.deaths !== this.s.statistics.deaths || this.hero.hp <= 0 ||
+            this.s.time >= seam.until) {
+          strategistHeatSeams.delete(this);
+          return;
+        }
+        if (seam.enemy !== enemy || enemy.hp <= 0) return;
+        strategistHeatSeams.delete(this);
+        const before = enemy.hp;
+        this.damage(enemy, Math.max(1, this.power()) *
+          R.strategistStarterSkills[3].seamPower, 'hero', { area: true });
+        if (enemy.hp < before)
+          this.event('strategistHeatSeam', {
+            actor: 'hero', targetId: enemy.id, amount: before - enemy.hp,
+            x: enemy.x, y: enemy.y,
+          });
+      }
       // E0: native Ogre-only ordinary dagger hit. This entrypoint can be
       // exercised by isolated diagnostic fixtures, but cannot admit a class.
       // A real HP loss, not damage()'s boolean or an attempted animation,
@@ -1763,6 +1817,9 @@
           { automaticBasic: true });
         if (!resolved || !(beforeHp > primary.hp) || this.zoneId !== contactZone)
           return true; // Attempt consumed recovery, not a successful contact.
+        // One earned contact can spend the target-specific Fire 3 preparation,
+        // without adding another ordinary dagger beat or an Acid charge.
+        this.strategistResolveHeatSeam(primary);
         const previous = strategistDaggerStates.get(this);
         const deaths = this.s.statistics.deaths;
         const continuing = previous &&
@@ -1812,8 +1869,8 @@
         if (primary.hp <= 0) strategistDaggerStates.delete(this);
         return true;
       }
-      // Four genuine source-backed starter forms, dormant behind a developer Ogre.
-      // The fifth-class registry and browser controls are intentionally untouched.
+      // Three authentic source-backed skills, six distinct v3.2 native forms.
+      // No other class reaches this developer-only branch.
       castStrategistStarter(slot, targetId = null, charged = false) {
         const h = this.hero, cfg = R.strategistStarterSkills?.[slot];
         if (this.s.mode !== 'developer' || h.class !== 'strategist' ||
@@ -1823,35 +1880,38 @@
             h.order?.type === 'skill-approach' || !this.skillReady(slot, charged) ||
             (charged && this.partyChargeRecovery(h) > 0) ||
             this.mageSilenceActive(h)) return false;
-        // This is a live world/line-of-sight lookup, never a visual approximation.
         const materials = typeof PrototypeStrategistMaterials !== 'undefined'
           ? PrototypeStrategistMaterials : typeof require === 'function'
             ? require('./strategist-materials.js') : null;
-        const source = materials?.forCombat(this, cfg.material, { range: cfg.sourceRange, rules: R });
+        // Exact live world identity, distance and true material line of sight.
+        const source = materials?.forCombat(this, cfg.material,
+          { range: cfg.sourceRange, rules: R });
         if (!source) return false;
-        // Mineral uses the real projectile owner's one stationary physical
-        // face, rather than a painted ward or fake projectile deletion.
-        if (slot === 2) {
-          const cost = this.skillManaCost(slot, h.skills[slot - 1], charged);
-          if (h.mp < cost || !this.placeStrategistFacet(charged)) return false;
+        const cost = this.skillManaCost(slot, h.skills[slot - 1], charged);
+        if (h.mp < cost) return false;
+        const commit = () => {
           h.mp -= cost;
           const recovery = 1 - this.heroCooldownReduction();
           h.cd[slot - 1] = cfg.normalCooldown * recovery;
           if (charged) h.chargedCd[slot - 1] = cfg.chargedCooldown * recovery;
+        };
+        if (slot === 2) {
+          if (!this.placeStrategistFacet(charged)) return false;
+          commit();
           this.event('strategistSkillCast', {
             actor: 'hero', slot, charged: !!charged, material: 'mineral',
-            sourceId: source.id, targets: [], cleansed: 0, x: h.x, y: h.y,
+            sourceId: source.id, targets: [], cleansed: 0,
+            moving: !!charged, x: h.x, y: h.y,
           });
           return true;
         }
-        const allies = slot === 1 ? this.activeLivingParty().filter((u) =>
-          u.hp > 0 && u.active !== false && (u.type === 'soldier' || u.type === 'archer')
-        ).sort((a, b) => (a.type === 'soldier' ? 0 : 1) -
-          (b.type === 'soldier' ? 0 : 1) || this.idOrder(a, b)) : [];
-        const slowed = slot === 1 ? [h, ...allies].filter((u) => u.slow > 0) : [];
+        const artifactSelector = charged && slot === 3 &&
+          typeof targetId === 'string'
+            ? /^(trace|facet):(.+)$/.exec(targetId) : null;
+        const explicitId = artifactSelector ? artifactSelector[2] : targetId;
         const selected = this.selectedHeroTarget(),
-          preferred = targetId ?? selected?.id ?? this.s.heroTarget,
-          locked = targetId != null || !!selected;
+          preferred = explicitId ?? selected?.id ?? this.s.heroTarget,
+          locked = explicitId != null || !!selected;
         const eligible = this.zone().enemies.filter((e) =>
           e.hp > 0 && !e.neutral && !e.returning &&
           !this.attackResetProtected(e) && this.tacticalDirectTargetable(e) &&
@@ -1859,50 +1919,94 @@
         ).sort((a, b) => dist(a, h) - dist(b, h) || this.idOrder(a, b));
         const target = eligible.find((e) => e.id === preferred) ||
           (locked ? null : eligible[0] || null);
-        let contacts = [];
+        const allies = slot === 1 ? this.activeLivingParty().filter((u) =>
+          u.hp > 0 && u.active !== false &&
+          (u.type === 'soldier' || u.type === 'archer')
+        ).sort((a, b) => dist(a, h) - dist(b, h) || this.idOrder(a, b)) : [];
+        const slowed = slot === 1
+          ? [h, ...allies].filter((u) => u.slow > 0) : [];
+        let contacts = [], traceLine = null, chosenArtifact = null;
         if (slot === 1 && charged) {
-          if (!slowed.length) return false; // no phantom condition
+          // Sluice Line lays a single real directional contact path; it is
+          // NOT the older charged all-party Slow cleanse.
+          const heading = this.formationHeading || { x: 0, y: 1 };
+          const norm = Math.hypot(heading.x, heading.y) || 1;
+          traceLine = {
+            from: { x: h.x, y: h.y },
+            to: { x: h.x + heading.x / norm * cfg.traceLength,
+              y: h.y + heading.y / norm * cfg.traceLength },
+          };
+          if (!this.clearSegment(traceLine.from, traceLine.to, 12) ||
+              this.blocked(traceLine.to.x, traceLine.to.y, this.zoneId, 12))
+            return false;
+          const sweep = {
+            x: h.x + heading.x / norm * cfg.sweepLength,
+            y: h.y + heading.y / norm * cfg.sweepLength,
+          };
+          const actual = eligible.find((e) =>
+            this.distanceToSegment(e, h, sweep) <= cfg.sweepHalfWidth);
+          if (actual) contacts = [actual];
         } else if (slot === 1) {
           if (!target && !slowed.length) return false;
           if (target) contacts = [target];
-        } else if (!charged) {
+        } else {
+          // Fire 3 charged is one close clinch, never the old two-target wedge.
           if (!target) return false;
           contacts = [target];
-        } else {
-          const heading = this.formationHeading || { x: 0, y: 1 };
-          const norm = Math.hypot(heading.x, heading.y) || 1,
-            cosine = Math.cos(cfg.halfAngle);
-          contacts = eligible.filter((e) => {
-            const d = dist(e, h) || 1;
-            return ((e.x - h.x) * heading.x + (e.y - h.y) * heading.y) /
-              (d * norm) >= cosine;
-          }).slice(0, cfg.maxTargets);
-          if (!contacts.length) return false;
+          if (artifactSelector) {
+            const kind = artifactSelector[1];
+            if (kind === 'trace') {
+              const trace = this.strategistLiveTrace();
+              if (!trace || this.distanceToSegment(target, trace.from, trace.to) >
+                  cfg.reactionHalfWidth) return false;
+              chosenArtifact = kind;
+            } else {
+              const face = this.strategistFacetSnapshot();
+              if (!face) return false;
+              const from = { x: face.x - face.tx * face.half,
+                y: face.y - face.ty * face.half };
+              const to = { x: face.x + face.tx * face.half,
+                y: face.y + face.ty * face.half };
+              if (dist(face, h) > cfg.reactionReach ||
+                  this.distanceToSegment(target, from, to) > cfg.reactionHalfWidth)
+                return false;
+              chosenArtifact = kind;
+            }
+          }
         }
-        const cost = this.skillManaCost(slot, h.skills[slot - 1], charged);
-        if (h.mp < cost) return false;
-        h.mp -= cost;
-        const recovery = 1 - this.heroCooldownReduction();
-        h.cd[slot - 1] = cfg.normalCooldown * recovery;
-        if (charged) h.chargedCd[slot - 1] = cfg.chargedCooldown * recovery;
+        // The validation above precedes every cooldown, reagent or workpiece
+        // mutation. An explicit artifact replaces, not adds to, the clinch.
+        commit();
+        if (chosenArtifact === 'trace') strategistTraces.delete(this);
+        if (chosenArtifact === 'facet') this.clearStrategistFacet();
+        if (traceLine) this.strategistSetTrace(traceLine.from, traceLine.to);
+        let landed = 0;
         for (const e of contacts) {
           this.engage(e);
-          // One actual native damage resolution per eligible legal target.
-          this.damage(e, Math.max(1, this.power()) *
+          const priorHp = e.hp;
+          const success = this.damage(e, Math.max(1, this.power()) *
             (charged ? cfg.chargedPower : cfg.normalPower), 'hero',
             { skillShape: 'single' });
+          if (success && e.hp < priorHp) {
+            landed++;
+            if (slot === 1 && !charged) this.strategistSetTrace(h, e);
+            if (slot === 3 && !charged && e.hp > 0)
+              this.strategistPrimeHeatSeam(e);
+          }
         }
         let cleansed = 0;
-        for (const u of (slot !== 1 ? [] : charged ? slowed : slowed.slice(0, 1))) {
-          // Preserve debt already added to normal/charged/basic cooldowns.
+        if (slot === 1 && !charged && slowed.length) {
+          const u = slowed[0];
+          // Remove present native Slow only: its earned cooldown debt remains.
           u.slow = 0;
           u.slowStacks = 0;
           u.rogueSlow = 0;
-          cleansed++;
+          cleansed = 1;
         }
         this.event('strategistSkillCast', {
           actor: 'hero', slot, charged: !!charged, material: cfg.material,
-          sourceId: source.id, targets: contacts.map((e) => e.id), cleansed,
+          sourceId: source.id, targets: contacts.map((e) => e.id),
+          cleansed, landed, artifact: chosenArtifact,
           x: h.x, y: h.y,
         });
         return true;

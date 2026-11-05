@@ -299,146 +299,217 @@ try {
     g.enemyStartBasic(primary, g.hero, false);
     assert.equal(events.filter((e) => e.type === 'strategistRetaliation').length, 0);
   }
+
   {
-    // Gate 2 Water source and native Slow episode (not its past cooldown debt).
+    // v3.2 Water tap: existing Slow alone, and one legal landed contact Trace.
     const { g, primary, events } = make(0);
     g.applySlow(g.hero, 2);
     const debt = g.hero.basicCd;
-    assert.equal(g.cast(1, primary.id), false, 'no Water source refuses manual cut');
-    assert(g.hero.slow > 0 && g.hero.cd[0] === 0);
-    const well = { id: 'genuine-well', structure: 'well', x: 515, y: 525, r: 15 };
+    assert.equal(g.cast(1, primary.id), false, 'source-free Water is refused');
+    const well = { id: 'genuine-well', structure: 'well',
+      x: 515, y: 525, r: 15 };
     g.zone().props = [well];
     const hp = primary.hp;
-    assert.equal(g.cast(1, primary.id), true, 'visible real Water permits Rinsing Cut');
-    assert(primary.hp < hp, 'one native melee contact is real damage');
+    assert(g.cast(1, primary.id), 'native Rinsing Cut from real water');
+    assert(primary.hp < hp, 'genuine contact lands');
     assert.equal(g.hero.slow, 0);
-    assert.equal(g.hero.slowStacks, 0);
-    assert.equal(g.hero.basicCd, debt, 'Slow cooldown debt is not refunded');
-    assert.equal(events.at(-1).cleansed, 1);
+    assert.equal(g.hero.basicCd, debt, 'already accrued Slow debt remains');
     assert.equal(events.at(-1).sourceId, well.id);
-    assert(g.hero.cd[0] > 0 && !g.hero.chargedCd[0]);
-    assert.equal(g.cast(1, primary.id), false, 'tap starts shared slot recovery');
+    assert.equal(events.at(-1).cleansed, 1);
+    assert(g.strategistLiveTrace(), 'only landed contact makes Water Trace');
+    assert(g.hero.cd[0] > 0);
+    assert.equal(g.cast(1, primary.id), false, 'one shared normal/charged slot cooldown');
+    g.s.time += R.strategistStarterSkills[1].traceSeconds + 0.01;
+    assert.equal(g.strategistLiveTrace(), null, 'Trace expires without a frame scan');
+    well.dry = true;
+    g.hero.cd[0] = g.hero.chargedCd[0] = 0;
+    assert.equal(g.cast(1, primary.id), false, 'dry source loses Water truth');
   }
   {
+    // v3.2 Water charge: genuine facing-ground Trace, NOT group Slow cleanse.
     const { g, primary, events } = make(0);
-    const well = { id: 'natural-well', structure: 'well', x: 515, y: 525, r: 15 };
+    const well = { id: 'live-well', structure: 'well',
+      x: 515, y: 525, r: 15 };
     g.zone().props = [well];
-    const soldier = g.s.party.find((u) => u.type === 'soldier');
-    const archer = g.s.party.find((u) => u.type === 'archer');
-    for (const unit of [g.hero, soldier, archer]) g.applySlow(unit, 2);
-    const hp = primary.hp;
-    assert.equal(g.cast(1, null, true), true, 'charged genuine team cleanse');
-    assert.equal(primary.hp, hp, 'Clear Current never attacks');
-    for (const unit of [g.hero, soldier, archer]) assert.equal(unit.slow, 0);
-    assert.equal(events.at(-1).cleansed, 3);
+    g.formationHeading = { x: 1, y: 0 };
+    const soldier = g.s.party.find(u => u.type === 'soldier');
+    const archer = g.s.party.find(u => u.type === 'archer');
+    for (const u of [g.hero, soldier, archer]) g.applySlow(u, 2);
+    const before = primary.hp;
+    assert(g.cast(1, null, true), 'Sluice Line can author empty real ground');
+    const trace = g.strategistLiveTrace();
+    assert(trace && trace.to.x > trace.from.x);
+    assert.equal(primary.hp, before, 'no conjured distance hit');
+    for (const u of [g.hero, soldier, archer])
+      assert(u.slow > 0, 'charged Water never cures an earlier Slow');
+    assert.equal(events.at(-1).cleansed, 0);
     assert(g.hero.cd[0] > 0 && g.hero.chargedCd[0] > 0);
     g.hero.cd[0] = g.hero.chargedCd[0] = 0;
-    assert.equal(g.cast(1, null, true), false, 'no phantom Slow');
-    soldier.active = false;
-    g.applySlow(soldier, 2);
-    assert.equal(g.cast(1, null, true), false, 'inactive soldier cannot finance cure');
-    well.dry = true;
-    g.applySlow(g.hero, 2);
-    assert.equal(g.cast(1, null, true), false, 'dry authentic source loses eligibility');
-    assert(g.hero.slow > 0);
+    g.zone().props = [{ ...well, id: 'empty-well', dry: true }];
+    const older = g.strategistLiveTrace();
+    assert.equal(g.cast(1, null, true), false);
+    assert.equal(g.strategistLiveTrace(), older, 'invalid source does not consume workpiece');
   }
   {
-    const { g, primary, nearby, distant, events } = make(0);
-    const fire = { id: 'actual-campfire', structure: 'campfire', x: 530, y: 525, r: 12, lit: true };
-    assert.equal(g.cast(3, primary.id), false, 'Fire missing');
+    // Fire tap primes precisely one future actual same-target ordinary dagger.
+    const { g, primary, nearby, distant, events } = make(2);
+    const fire = { id: 'campfire', structure: 'campfire',
+      x: 530, y: 525, r: 12, lit: true };
+    assert.equal(g.cast(3, primary.id), false, 'missing fire refuses');
     g.zone().props = [fire];
-    assert.equal(g.cast(3, distant.id), false, 'Fire <=90 reach');
-    const hp = primary.hp;
-    assert.equal(g.cast(3, primary.id), true, 'native hot dagger');
-    assert(primary.hp < hp && g.hero.cd[2] > 0);
-    g.hero.cd[2] = 0;
-    g.formationHeading = { x: 1, y: 0 };
-    const behind = g.makeEnemy({ species: 'goblin', name: 'behind',
-      level: 1, hp: 10000, damage: 0, gold: 0, xp: 0 }, { x: 460, y: 500 });
-    behind.id = 'behind'; behind.aggro = true; behind.returning = false;
-    g.zone().enemies.push(behind);
-    const before = [primary.hp, nearby.hp, behind.hp, distant.hp];
-    assert.equal(g.cast(3, null, true), true, 'one native two-contact front wedge');
-    assert(primary.hp < before[0] && nearby.hp < before[1]);
-    assert.equal(behind.hp, before[2], 'rear is excluded');
-    assert.equal(distant.hp, before[3], 'distant is excluded');
-    assert.equal(events.at(-1).targets.length, 2);
-    assert(g.hero.cd[2] > 0 && g.hero.chargedCd[2] > 0);
-    fire.lit = false;
+    assert.equal(g.cast(3, distant.id), false, 'Fire is truly close-range');
+    assert(g.cast(3, primary.id), 'native Flash Temper contact');
+    const before = primary.hp;
+    assert(hit(g, nearby), 'ordinary dagger on other target');
+    assert.equal(events.filter(e => e.type === 'strategistHeatSeam').length, 0);
+    assert(hit(g, primary), 'next same-target ordinary dagger');
+    assert(primary.hp < before);
+    assert.equal(events.filter(e => e.type === 'strategistHeatSeam').length, 1);
+    assert(hit(g, primary), 'follow-up dagger has no second heat event');
+    assert.equal(events.filter(e => e.type === 'strategistHeatSeam').length, 1);
+    assert.equal(g.s.strategistAcidBottles, 2,
+      'Fire skill and seam are not ordinary third-hit Acid');
     g.hero.cd[2] = g.hero.chargedCd[2] = 0;
-    assert.equal(g.cast(3, primary.id), false, 'extinguished Fire is unavailable');
+    fire.lit = false;
+    assert.equal(g.cast(3, primary.id), false, 'extinguished fire is rejected');
   }
   {
-    // Gate 2: one genuinely source-backed stone face, native swept hit.
+    // Fire charge is one close clinch, not an obsolete two-target wedge.
+    const { g, primary, nearby, distant, events } = make(0);
+    const fire = { id: 'live-fire', structure: 'campfire',
+      x: 530, y: 525, r: 12, lit: true };
+    g.zone().props = [fire];
+    g.formationHeading = { x: 1, y: 0 };
+    const before = [primary.hp, nearby.hp, distant.hp];
+    assert(g.cast(3, primary.id, true), 'Furnace Exchange close clinch');
+    assert(primary.hp < before[0]);
+    assert.equal(nearby.hp, before[1], 'no charged Fire wedge second hit');
+    assert.equal(distant.hp, before[2]);
+    assert.equal(events.at(-1).targets.length, 1);
+    assert(g.hero.cd[2] > 0 && g.hero.chargedCd[2] > 0);
+  }
+  {
+    // One expressly selected owned Water Trace converts instead of a clinch.
+    const { g, primary, events } = make(0);
+    const well = { id: 'well', structure: 'well',
+      x: 510, y: 525, r: 12 };
+    const fire = { id: 'campfire', structure: 'campfire',
+      x: 530, y: 525, r: 12, lit: true };
+    g.zone().props = [well, fire];
+    g.formationHeading = { x: 1, y: 0 };
+    assert(g.cast(1, null, true), 'Sluice Line creates one genuine Trace');
+    const before = primary.hp;
+    assert(g.cast(3, 'trace:' + primary.id, true), 'explicit chosen steam contact');
+    assert(primary.hp < before);
+    assert.equal(g.strategistLiveTrace(), null, 'one artifact consumed exactly once');
+    assert.equal(events.at(-1).artifact, 'trace');
+    g.hero.cd[2] = g.hero.chargedCd[2] = 0;
+    assert.equal(g.cast(3, 'trace:' + primary.id, true), false,
+      'spent artifact cannot be reused');
+  }
+  {
+    // Stationary Mineral is truly physical and stops only one hostile shot.
     const { g, primary, events } = make(0);
     g.formationHeading = { x: 1, y: 0 };
-    assert.equal(g.cast(2), false, 'no real Mineral refuses placement');
-    g.zone().props = [{ id: 'real-boulder', structure: 'boulder',
+    assert.equal(g.cast(2), false, 'no dirt-based Mineral');
+    g.zone().props = [{ id: 'boulder', structure: 'boulder',
       x: 500, y: 535, r: 12 }];
-    assert.equal(g.cast(2), true, 'authentic boulder permits Stone Facet');
+    assert(g.cast(2), 'real boulder permits Stone Facet');
     const physical = {
-      id: 'hostile-stone', source: 'enemy', sourceId: primary.id,
+      id: 'enemy-stone', source: 'enemy', sourceId: primary.id,
       style: 'stone', x: 600, y: 500, dx: -1, dy: 0,
-      speed: 1000, life: 1, damage: 20,
+      speed: 1000, life: 1, damage: 20, slow: 2,
     };
     g.s.projectiles.push(physical);
     const hp = g.hero.hp;
     g.updateProjectiles(0.2);
-    assert.equal(g.hero.hp, hp, 'prior face physically prevents hostile stone hit');
+    assert.equal(g.hero.hp, hp);
     assert(!g.s.projectiles.includes(physical));
     assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
-    const missed = {
-      id: 'second-stone', source: 'enemy', sourceId: primary.id, style: 'stone',
-      x: 600, y: 500, dx: -1, dy: 0, speed: 1000, life: 1, damage: 20,
-    };
-    assert.equal(g.strategistInterceptPhysicalProjectile(
-      missed, { x: 600, y: 500 }, { x: 450, y: 500 }), false,
-      'one real stop consumes the entire face');
-    assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
+    assert.equal(g.strategistFacetSnapshot(), null, 'one stop breaks the face');
+    assert.equal(g.strategistInterceptPhysicalProjectile(physical,
+      { x: 600, y: 500 }, { x: 450, y: 500 }), false,
+    'no second block or reflection');
   }
   {
+    // Actual live native Archer basic goes through updateProjectiles; a
+    // mocked hand-constructed arrow alone is not acceptance evidence.
     const { g, primary, events } = make(0);
     g.formationHeading = { x: 1, y: 0 };
-    g.zone().props = [{ id: 'real-rock', structure: 'rock',
+    g.zone().props = [{ id: 'actual-rock', structure: 'rock',
       x: 500, y: 535, r: 12 }];
-    assert.equal(g.cast(2, null, true), true, 'genuine Notched Facet');
+    primary.x = 620; primary.y = 500;
     const archer = g.s.party.find(u => u.type === 'archer');
-    const makeArrow = (id, y) => ({
-      id, source: archer.id, style: 'arrow', x: 600, y,
-      dx: -1, dy: 0, speed: 1000, life: 1, damage: 20, target: primary.id,
-    });
-    const open = makeArrow('through-notch', 500);
-    assert.equal(g.strategistInterceptPhysicalProjectile(
-      open, { x: 600, y: 500 }, { x: 450, y: 500 }), false,
-      'center opening really lets a friendly arrow pass');
-    const magic = { ...makeArrow('magic', 525), source: 'enemy', style: 'beam' };
-    assert.equal(g.strategistInterceptPhysicalProjectile(
-      magic, { x: 600, y: 525 }, { x: 450, y: 525 }), false,
-      'nonphysical magic is never blocked');
-    const lip = makeArrow('friendly-lip', 525);
-    g.s.projectiles.push(lip);
-    assert.equal(g.strategistInterceptPhysicalProjectile(
-      lip, { x: 600, y: 525 }, { x: 450, y: 525 }), true,
-      'real friendly Archer projectile hits the two-sided lip');
-    assert(!g.s.projectiles.includes(lip), 'intercept removes actual in-flight shot');
+    Object.assign(archer, { x: 400, y: 500, hp: 100, maxHp: 100,
+      active: true, cd: 0 });
+    assert(g.cast(2), 'fixed two-sided Mineral face');
+    assert(g.companionCoverAttack(archer, primary, true),
+      'native Archer basic releases an actual arrow');
+    const shot = g.s.projectiles.at(-1), hp = primary.hp;
+    assert.equal(shot.source, archer.id);
+    assert.equal(shot.style, 'arrow');
+    g.updateProjectiles(0.6);
+    assert(!g.s.projectiles.includes(shot), 'face removes the launched arrow');
+    assert.equal(primary.hp, hp, 'Archer own face collision precedes enemy contact');
     assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
-    // The face reacts to a projectile's real physical body, not whether its
-    // shooter happened to survive/keep active during flight.
+    archer.cd = 0;
+    assert(g.companionCoverAttack(archer, primary, true));
+    g.updateProjectiles(0.6);
+    assert(primary.hp < hp, 'next native Archer arrow lands after face is spent');
+  }
+  {
+    // Running Facet is mobile, not a four-second stationary notched wall.
+    const { g, primary, events } = make(0);
+    g.formationHeading = { x: 1, y: 0 };
+    g.zone().props = [{ id: 'moving-rock', structure: 'rock',
+      x: 500, y: 535, r: 12 }];
+    assert(g.cast(2, null, true), 'authentic source-backed Running Facet');
+    const face = g.strategistFacetSnapshot();
+    assert(face.mobile && !face.notch);
+    assert(face.until - g.s.time <= R.strategistFacet.mobileSeconds + 0.001);
+    const magic = {
+      id: 'spell', source: 'enemy', sourceId: primary.id, style: 'beam',
+    };
+    assert.equal(g.strategistInterceptPhysicalProjectile(magic,
+      { x: 650, y: 500 }, { x: 350, y: 500 }), false,
+      'magic cannot use the one physical shot budget');
+    const physical = {
+      id: 'moving-stone', source: 'enemy', sourceId: primary.id,
+      style: 'stone', x: 650, y: 535, dx: -1, dy: 0,
+      speed: 1500, life: 1, damage: 20,
+    };
+    g.s.projectiles.push(physical);
+    g.hero.y = 570; // actual Ogre moved; only the swept moving face can catch.
+    g.updateProjectiles(0.2);
+    assert(!g.s.projectiles.includes(physical), 'moving-relative swept interception');
+    assert.equal(events.filter(e => e.type === 'strategistFacetIntercepted').length, 1);
     g.hero.cd[1] = g.hero.chargedCd[1] = 0;
-    assert.equal(g.cast(2), true);
-    archer.hp = 0; archer.active = false;
-    const orphaned = makeArrow('orphaned-physical-arrow', 525);
-    g.s.projectiles.push(orphaned);
-    assert.equal(g.strategistInterceptPhysicalProjectile(
-      orphaned, { x: 600, y: 525 }, { x: 450, y: 525 }), true,
-      'already launched Archer projectile remains physical after shooter falls');
-    g.hero.cd[1] = g.hero.chargedCd[1] = 0;
-    assert.equal(g.cast(2), true, 'one new casting replaces the spent face');
-    g.s.time += R.strategistFacet.seconds + 0.01;
-    const expired = makeArrow('expired', 500);
-    assert.equal(g.strategistInterceptPhysicalProjectile(
-      expired, { x: 600, y: 500 }, { x: 450, y: 500 }), false,
-      'expired physical cover never survives combat time');
+    assert(g.cast(2, null, true), 'recasting replaces previous face');
+    g.s.time += R.strategistFacet.mobileSeconds + 0.01;
+    assert.equal(g.strategistFacetSnapshot(), null, 'short mobile face expires');
+  }
+  {
+    // A sourced hostile projectile can Dodge and withhold its linked Slow.
+    // A persistent damaging hazard with same enemy source ID cannot Dodge.
+    const { g, primary, events } = make(0);
+    g.random = () => 0;
+    const hp = g.hero.hp;
+    const shot = { id: 'slowing-stone', source: 'enemy',
+      sourceId: primary.id, style: 'stone', x: 600, y: 500,
+      dx: -1, dy: 0, speed: 1000, life: 1, damage: 30, slow: 2 };
+    g.s.projectiles.push(shot);
+    g.updateProjectiles(0.13);
+    assert.equal(g.hero.hp, hp, 'one eligible physical hit was Dodged');
+    assert.equal(g.hero.slow, 0, 'attached Slow requires actual landed hit');
+    assert.equal(events.filter(e => e.type === 'strategistDodge').length, 1);
+    assert.equal(events.filter(e => e.type === 'strategistRetaliation').length, 0);
+    g.s.hazards = [{ kind: 'circle', x: 500, y: 500,
+      fromX: 560, fromY: 500, radius: 70, life: 2, tick: 0,
+      damage: 30, slow: true, slowSeconds: 2, sourceId: primary.id }];
+    g.updateProjectiles(0.05);
+    assert(g.hero.hp < hp, 'persistent hazard is not Ogre Dodge eligibility');
+    assert(g.hero.slow > 0, 'an actual unDodged hazardous contact applies Slow');
+    assert.equal(events.filter(e => e.type === 'strategistDodge').length, 1);
   }
 } finally {
   delete C.classes.strategist;
