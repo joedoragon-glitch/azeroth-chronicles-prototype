@@ -57,6 +57,17 @@ function paint() {
   V.draw(ctx, { ...weir, renderKind: 'prop' }, screen(weir), 0);
   return crypto.createHash('sha256').update(canvas.toBuffer('image/png')).digest('hex');
 }
+// Exercise the production dispatch, not the unused legacy mill decoration.
+// A dark recess and a separate open leaf must survive on the actual facility.
+const doorCanvas = createCanvas(300, 260), doorCtx = doorCanvas.getContext('2d');
+V.draw(doorCtx, { ...mill, renderKind: 'prop' }, { x: 150, y: 200 }, 0);
+const doorPixel = (x, y) => [...doorCtx.getImageData(150 + x, 200 + y, 1, 1).data];
+assert.deepEqual(doorPixel(-38, -12), [38, 54, 46, 255],
+  'live mill has an open dark doorway, not the prior closed plank panel');
+const leaf = doorPixel(-10, 8);
+assert(leaf[0] > 100 && leaf[0] > leaf[1] && leaf[1] > leaf[2],
+  'separate warm timber door leaf remains visibly ajar beside the recess');
+assert(doorPixel(-48, 22)[3] > 0, 'loading boards connect below the ground-level sill');
 const first = paint();
 const second = paint();
 assert.equal(first, second, 'same terrain, mill and sluice paint deterministically');

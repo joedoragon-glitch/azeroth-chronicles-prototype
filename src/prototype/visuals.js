@@ -12044,20 +12044,6 @@
             oval(x, 2, 6, 10, '#c0b18b');
             timber([x - 4, -2], [x + 4, -2], 1.5);
           }
-          // Unlike the exposed workshop painting, a working mill needs a
-          // legible service door. The landward sill faces the dry yard; the
-          // wheel and tailrace retain their existing shapes and collision.
-          fillOval(11, 31, 34, 12, '#6d624b77', 0.08);
-          recessedDoor(9, -24, 29, 46, true, 0);
-          boards(-12, 23, 41, 8, '#a99068', true);
-          timber([-10, -30], [28, -30], 3.8, '#6f5137');
-          timber([-8, -27], [-8, 22], 3.8, '#74583e');
-          timber([27, -27], [27, 22], 3.8, '#74583e');
-          // Partly open timber leaf, distinct from the dark doorway.
-          softPoly([[26, -25], [40, -30], [40, 17], [26, 21]], '#92734e', 1.3);
-          for (const y of [-16, -2, 11])
-            line([[29, y], [38, y - 2]], '#5d4a34', 1);
-          oval(33, -1, 1.9, 1.9, '#d1b777');
           break;
         }
         case 'mill-sluice':

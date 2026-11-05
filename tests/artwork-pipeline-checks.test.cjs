@@ -11,7 +11,7 @@ const pipeline = require('../scripts/sprite-pipeline.cjs');
 const approvals = require('../tools/sprites/approved.json');
 const cottage = pipeline.contractFor('prop:vale-cottage:vale');
 const retained = approvals.assets[cottage.key];
-if (retained?.canonHash !== cottage.canonHash)
+if (retained && retained.canonHash !== cottage.canonHash)
   console.log('ARTWORK_CANON_DRIFT ' + JSON.stringify({
     key: cottage.key,
     approvedCanon: retained.canonHash,

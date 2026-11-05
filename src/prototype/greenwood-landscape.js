@@ -2005,32 +2005,25 @@
         line(a, b, '#664e34', 4);
       line([-62, -96], [-1, -75], '#e0c797', 1.5);
       line([2, -76], [65, -97], '#b5986a', 1.2);
-      // Dry-side loading door is recessed into the left wall plane.
-      poly(
-        [
-          [-42, -66],
-          [-19, -58],
-          [-19, -16],
-          [-42, -24],
-        ],
-        '#4c4233',
-      );
-      poly(
-        [
-          [-39, -63],
-          [-22, -57],
-          [-22, -19],
-          [-39, -25],
-        ],
-        '#786143',
-      );
-      line([-31, -60], [-31, -22], '#3e382f', 1.1);
-      line([-41, -65], [-18, -57], '#d2b386', 2);
-      line([-42, -67], [-42, -23], '#5a4935', 2);
-      line([-19, -57], [-19, -15], '#5a4935', 2);
+      // The live facility painter owns the entrance (Visuals.draw dispatches
+      // here before the legacy decoration). Cut it down through the plinth
+      // to the dry loading apron, not a closed panel above the foundation.
+      poly([[-51, -47], [-18, -36], [-18, 16], [-51, 5]], '#66523b');
+      poly([[-47, -43], [-22, -35], [-22, 12], [-47, 4]], '#26362e');
+      // A narrow inner jamb gives the opening depth; the timber leaf swings
+      // outward from the right hinge and leaves the dark opening visible.
+      poly([[-27, -36], [-22, -35], [-22, 12], [-27, 10]], '#413b2e');
+      poly([[-21, -35], [-7, -28], [-7, 21], [-21, 12]], '#98764e');
+      for (const x of [-17, -12])
+        line([x, -33 + (x + 21) * .5], [x, 12 + (x + 21) * .64], '#705638', 1);
+      for (const y of [-24, 6])
+        line([-20, y], [-8, y + 7], '#514936', 2);
+      line([-50, -46], [-18, -35], '#c4a77c', 3);
+      line([-49, -45], [-49, 5], '#73583b', 3);
+      line([-20, -35], [-20, 15], '#71563a', 2.5);
       ctx.fillStyle = '#d4bc86';
       ctx.beginPath();
-      ctx.arc(-27, -35, 1.8, 0, Math.PI * 2);
+      ctx.arc(-10, -3, 1.5, 0, Math.PI * 2);
       ctx.fill();
       // Windows are projected in the orientation of their actual walls.
       poly(
@@ -2176,18 +2169,12 @@
         '#d5ae66',
       );
       line([-12, -42], [-4, -42], '#514d3b', 2);
-      // A few purposeful dry loading boards instead of decorative clutter.
-      poly(
-        [
-          [-54, 5],
-          [-17, 17],
-          [7, 10],
-          [-30, -2],
-        ],
-        '#987d57',
-      );
+      // Short sill and worn loading boards lead toward the real dry landing
+      // at millEntrance; they do not expand the solid building footprint.
+      poly([[-51, 4], [-18, 15], [-25, 21], [-58, 10]], '#aaa087');
+      poly([[-57, 11], [-25, 22], [-42, 31], [-73, 21]], '#987d57');
       for (let j = 0; j < 3; j++)
-        line([-50 + j * 12, 6 + j * 4], [-26 + j * 12, 1 + j * 4], '#604b36', 1.1);
+        line([-60 + j * 10, 13 + j * 3.4], [-71 + j * 10, 20 + j * 3.4], '#604b36', 1.1);
     } else if (e.greenwoodFacility === 'weir') {
       // A working timber gate and retaining bank *at the real channel mouth*.
       poly(
