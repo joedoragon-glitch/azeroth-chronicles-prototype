@@ -224,7 +224,7 @@ The **design package** is ready for engineering scoping when its anatomy, materi
 
 **Reject an implementation** if any of DA-01 through DA-10 or DA-13 fails even if it is visually attractive. DA-11, DA-12, DA-14 and DA-15 are also required to call the scene creatively finished; passing automated tests alone never establishes artistic acceptance.
 
-## 6. Engineering handoff: staged and bounded, not authorized by this document
+## 6. Engineering implementation: staged, bounded and still requiring acceptance
 
 | Package | Owner's actual problem solved | Necessary proof and handback |
 | --- | --- | --- |
@@ -235,7 +235,7 @@ The **design package** is ready for engineering scoping when its anatomy, materi
 | **E4: Focused correctness** | Attractive painting can still break a route/save | Matched Canvas/Pixi and phone-landscape previews, local route/bridge collision and actor/companion passage, protected stored sites, repeated v4 save/reload, forest/road/home clearance, focused renderer/CPU checks |
 | **E5: Owner presentation** | Prevent another “audit the audit” cycle | Compact day/night before/after contact sheet, mapped flow/crossings, clear test/failure status, retained identities, exact commit and pending device verification; owner accepts/rejects actual playable scene after independent quality review |
 
-A future engineer should keep E1 and E2 on a coordinated feature branch so terrain and mill composition can be judged together. Use **original world geometry and source-defined data**; do not create a screenshot-specific painted patch. Runtime tests and any pull requests for implementation must be authorized separately; comprehensive suites, merging, deployment and physical device acceptance are separate gates.
+The current implementation keeps E1–E3 together on **this same PR #814** as requested; future corrections should remain here, not fragment into new PRs. Use **original world geometry and source-defined data**; do not create a screenshot-specific painted patch. E4 validation and E5 owner-facing evidence remain in progress. Comprehensive suites, merging, deployment and physical device acceptance are separate gates.
 
 ### Preservation / regression contract
 
@@ -251,7 +251,7 @@ A future engineer should keep E1 and E2 on a coordinated feature branch so terra
 
 **Current deliverable:** one source-reconciled design specification plus an **implemented but not yet accepted** candidate on this same draft PR. The source changes now author a shallow connected northern tributary, a local service deck/culvert, a redrawn mill, practical entrance lighting, revised water-paint order and one-time additive old-save reconciliation. Focused source and rendered scene checks are required before declaring this ready for merge. The original screenshot establishes perceptual defects, not numerical bridge widths or world coordinates. The 52–64 bridge width and 60–70% wheel proportion are design-starting ranges, not tested or locked runtime metrics.
 
-**Engineering responsibility once separately commissioned:** select the final safe channel/bridge coordinates; produce real scene artwork; implement shared water/road collision; keep legacy state safe; run focused test/build and render evidence; self-correct obvious visual errors; submit a playable candidate before claiming design acceptance.
+**Engineering responsibility in this authorized PR:** refine the present water/road/bridge coordinates where checks expose collisions, compare actual rendered scenes, keep historical state safe, run focused checks/build and provide usable day/night evidence. Do not call it merge-ready until concrete blockers are resolved. The owner will evaluate the personally played result after merge/publication.
 
 **Implemented in draft PR #814 (source changes, not yet validated):** Greenwood's new shallow headwater reaches the northern map edge; the mill service lane crosses a physically passable local timber deck; the distinct eastern farm pond and two canonical river bridges remain. The watermill is rebuilt using one consistent roof, walls, material grammar, wheel hardware and mounted doorway fixture; water paint is reconciled with the main river; a one-time marker upgrades older saved scenes. Scoped source checks and a native 150% scene-capture script have been added. **Testing and perceptual acceptance:** pending exact-head evidence and inspection. **Merged / published / device-verified:** no. Independent visual review must not be represented by merely adding a screenshot-generating script. Draft design review may proceed without requiring the owner to answer a broad set of creative questions.
 
