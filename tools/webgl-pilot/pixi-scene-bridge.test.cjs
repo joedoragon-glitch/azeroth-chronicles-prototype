@@ -342,12 +342,12 @@ test('scene orders real actors by original isometric depth and retains default G
   scene.destroy();
 });
 
-test('Pixi atmosphere mirrors original vertical night tints and bottom alpha', () => {
+test('Pixi atmosphere uses Greenwood moonlight without changing other regional grades', () => {
   const layers = Bridge.atmosphereLayers({ region: 0, darkness: 1, peaceBlend: 0 });
   assert.equal(layers.length, 1);
   assert.equal(layers[0].style, 'linear');
-  assert.equal(layers[0].colorStops[0].color, 'rgba(11,25,42,0.48)');
-  assert.equal(layers[0].colorStops[1].color, 'rgba(9,17,30,0.58)');
+  assert.equal(layers[0].colorStops[0].color, 'rgba(39,47,67,0.64)');
+  assert.equal(layers[0].colorStops[1].color, 'rgba(31,40,60,0.64)');
   assert.equal(layers[0].start.y, 0);
   assert.equal(layers[0].end.y, 1);
   const peaceful = Bridge.atmosphereLayers({ region: 4, darkness: 1, peaceBlend: 1 });
