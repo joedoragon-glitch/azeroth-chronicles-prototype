@@ -11,14 +11,16 @@ assert.equal(Campaign.rules.greenwoodLayout.version, 2);
 assert.equal(z.greenwoodRoadBridgeVersion, 1, 'separate non-destructive road migration');
 assert.equal(z.greenwoodHomesteadVersion, 1, 'published Thornfang homestead retained alongside roads');
 assert.equal(z.greenwoodCompositionVersion, 1, 'botanical overlay runs after completed route shaping');
-assert.equal(z.greenwoodRoutes.length, 16);
+assert.equal(z.greenwoodRoutes.length, 17, '16 established corridors plus the off-road depot apron');
+assert.equal(z.greenwoodRoutes[6].kind, 'path', 'independent freight apron retained');
+assert.deepEqual(z.greenwoodRoutes[6].points.at(-1), Campaign.rules.greenwoodLayout.anchors.cache);
 assert.deepEqual(z.greenwoodRoadKinds, ['cart', 'farm', 'farm', 'farm']);
-assert.equal(z.greenwoodRoutes[6].points.length, 6, 'south footpath spans both banks and exits deck straight');
+assert.equal(z.greenwoodRoutes[7].points.length, 6, 'south footpath spans both banks and exits deck straight');
 assert.equal(Math.round(z.roads[1].at(-1).x / Campaign.rules.greenwoodLayout.scale), 1560,
   'farm cart traffic stops on solid ground before the timber pedestrian bridge');
-assert.equal(Math.round(z.footpaths[2][0].x / Campaign.rules.greenwoodLayout.scale), 1560,
+assert.equal(Math.round(z.footpaths[3][0].x / Campaign.rules.greenwoodLayout.scale), 1560,
   'walking path continues seamlessly from the farm lane to the southern deck');
-assert.equal(z.greenwoodRoutes[7].points.length, 3, 'Treasury spur has no duplicated cart segment');
+assert.equal(z.greenwoodRoutes[8].points.length, 3, 'Treasury spur has no duplicated cart segment');
 
 const gaps = Campaign.rules.barriers[0].gaps;
 assert.deepEqual(gaps.map(([a, b]) => Math.round(b - a)), [100, 56]);
@@ -102,12 +104,12 @@ const at = (x, y) => ({
 delete oldVale.greenwoodRoadBridgeVersion;
 delete oldVale.greenwoodRoadKinds;
 oldVale.roads[1][oldVale.roads[1].length - 1] = at(1740, 2280);
-oldVale.footpaths[2] = [at(1740, 2280), at(2150, 2350),
+oldVale.footpaths[3] = [at(1740, 2280), at(2150, 2350),
   at(2300, 2220), at(2670, 2220)];
-oldVale.footpaths[3] = [at(2070, 1000), at(1870, 1000),
+oldVale.footpaths[4] = [at(2070, 1000), at(1870, 1000),
   at(1870, 1250), at(2120, 1250)];
 for (const [index, points] of [
-  [1, oldVale.roads[1]], [6, oldVale.footpaths[2]], [7, oldVale.footpaths[3]],
+  [1, oldVale.roads[1]], [7, oldVale.footpaths[3]], [8, oldVale.footpaths[4]],
 ]) oldVale.greenwoodRoutes[index].points = points;
 oldVale.bridgeApproaches[0].width = 180;
 oldVale.bridgeApproaches[1].width = 130;
@@ -117,8 +119,8 @@ const migratedZone = migrated.zone();
 assert.equal(JSON.stringify(legacy), pristine, 'old v4 input snapshot unchanged');
 assert.equal(migratedZone.greenwoodRoadBridgeVersion, 1,
   'completed v4 scene receives independent road pass on zone fast path');
-assert.equal(migratedZone.footpaths[2].length, 6, 'old south approach adapted');
-assert.equal(migratedZone.greenwoodRoutes[7].points.length, 3,
+assert.equal(migratedZone.footpaths[3].length, 6, 'old south approach adapted');
+assert.equal(migratedZone.greenwoodRoutes[8].points.length, 3,
   'old Treasury overlap reconciled without losing destination');
 assert.deepEqual(ids(migratedZone), ids(z),
   'legacy migration preserves NPCs, buildings, enemies and tribute');

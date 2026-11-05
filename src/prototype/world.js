@@ -3591,11 +3591,11 @@
           ) {
             this.syncThornArrival(z);
             this.setSceneryTraversal(z);
+            // Restore the final road footprint before either countryside overlay
+            // positions scenery; no scene-5 regeneration or unrelated map changes.
+            this.greenwoodRoadBridgeFinish?.(z);
             this.greenwoodRefinementScene?.(z);
             this.greenwoodCompositionFinish?.(z);
-            // Established v4 Greenwood scenes return through this branch.
-            // Apply the independent road migration once without rebuilding scenery.
-            this.greenwoodRoadBridgeFinish?.(z);
             this.greenwoodTrailLabels?.(z);
             this.greenwoodTributePlacement(z);
             this.greenwoodFreightDepot(z);

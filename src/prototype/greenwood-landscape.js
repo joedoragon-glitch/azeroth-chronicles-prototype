@@ -472,7 +472,9 @@
         // Road/bridge topology and physical deck spans are independently
         // owned by the dedicated Greenwood infrastructure PR #824.
         // This scenery pass observes routes but never edits their geometry.
-        if (z.greenwoodRoutes?.length !== 16) return;
+        // Earlier scene-5 v4 saves have 16 corridors; the merged freight-depot
+        // work adds one deliberately off-road apron without replacing any of them.
+        if (![16, 17].includes(z.greenwoodRoutes?.length)) return;
         const change = (id, expected, target, detail = {}) => {
           const p = z.props.find((item) => item.id === id);
           if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
@@ -681,16 +683,21 @@
         // R07's eastern bank path must leave the south bridge straight before
         // turning toward Skeleton Watch. R08 must not double-paint 200 units
         // of the main cart line before reaching its own Treasury junction.
-        const replacePoints = (index, expected, newPoints) => {
-          const route = z.greenwoodRoutes?.[index];
-          const path = z.footpaths?.[index - 4];
-          if (!route || !path || route.kind !== 'path') return false;
+        // Find the old geometry itself, not its position in the route array.
+        // The freight-depot apron added on main changes those positions; old
+        // scene-5 v4 saves can legitimately have either 16 or 17 corridors.
+        const replacePoints = (expected, newPoints) => {
           const matches = (p, x, y) =>
-            Math.abs(p.x - x * scale) < 0.01 && Math.abs(p.y - y * scale) < 0.01;
-          if (!expected.every(([j, x, y]) => matches(path[j] || {}, x, y)))
-            return false;
+            Number.isFinite(p?.x) && Number.isFinite(p?.y) &&
+            Math.abs(p.x - x * scale) < 0.01 &&
+            Math.abs(p.y - y * scale) < 0.01;
+          const matchesOld = (points) =>
+            expected.every(([j, x, y]) => matches(points?.[j], x, y));
+          const route = z.greenwoodRoutes?.find((r) => r.kind === 'path' && matchesOld(r.points));
+          const pathIndex = z.footpaths?.findIndex(matchesOld) ?? -1;
+          if (!route || pathIndex < 0) return false;
           const points = newPoints.map(([x, y]) => ({ x: x * scale, y: y * scale }));
-          z.footpaths[index - 4] = points;
+          z.footpaths[pathIndex] = points;
           route.points = points;
           return true;
         };
@@ -709,12 +716,10 @@
             z.greenwoodRoutes[1].points = adjusted;
         }
         replacePoints(
-          6,
           [[0, 1740, 2280], [1, 2150, 2350]],
           [[1560, 2280], [1740, 2280], [1950, 2280], [2150, 2350], [2300, 2220], [2670, 2220]],
         );
         replacePoints(
-          7,
           [[0, 2070, 1000], [1, 1870, 1000]],
           [[1870, 1000], [1870, 1250], [2120, 1250]],
         );
