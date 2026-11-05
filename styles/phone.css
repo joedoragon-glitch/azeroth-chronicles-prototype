@@ -1342,11 +1342,15 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'] #modal[data-view='title-saves'] #modal-actions .menu-section-detail {
     grid-column: 1 / -1;
   }
+  /* Backup downloads are peer actions; recovery and storage are independent
+     operations and should never look like the other half of a save slot. */
+  body[data-experience='phone'] #modal[data-view='title-saves'] #modal-actions .menu-wide {
+    grid-column: 1 / -1;
+  }
 
-  /* The difficulty and Succession labels already identify their groups.
-     In a 375px-tall phone viewport, repeating two section headings plus a
-     "continue to class selection" subtitle needlessly hides the challenge.
-     Keep all actual choices and their consequence explanations visible. */
+  /* The two difficulty cards and separately labeled Succession choice are
+     recognizable without redundant vertical section headings. Keep the
+     consequence in the Succession description and a clear next-step action. */
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-section,
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-primary .detail {
     display: none;
@@ -1359,6 +1363,13 @@ body[data-experience='phone'] #modal-actions output {
   }
   body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-primary {
     min-height: 44px;
+  }
+  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions button:nth-of-type(3) {
+    grid-column: 1 / -1;
+  }
+  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-choice-active {
+    border-color: var(--menu-violet);
+    box-shadow: inset 4px 0 var(--menu-violet);
   }
   body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions button {
     padding: 5px 8px;
