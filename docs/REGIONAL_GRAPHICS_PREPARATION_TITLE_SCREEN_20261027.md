@@ -8,7 +8,7 @@ Controlled prior R3 Chromium experiments identified a potentially expensive
 full-bitmap `getImageData` operation during cold procedural sprite creation.
 However, that did not prove the specific iPhone event’s cause.
 
-A bounded R4 trial in [draft PR #818](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/818)
+A bounded R4 trial documented in [PR #818](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/818)
 requested `willReadFrequently: true` for the temporary Pixi procedural-bake
 canvas. The API hint kept the source artwork code intact but **severely
 regressed real browser crowd performance** in the paired, same-runner #755
@@ -20,8 +20,9 @@ comparison ([run #41993913603](https://github.com/joedoragon-glitch/azeroth-chro
 | 24 actors p95 draw | 445.35ms | 755.45ms | ~70% slower |
 | 48 actors p50 draw | 12.25ms | 444.2ms | ~36× slower |
 
-The trial is **rejected and removed** from the PR branch along with its
-test-only assertion and `sw.js` fingerprint change. This is a valid test
+The trial is **rejected and removed** from the PR branch, including its
+test-only assertion and obsolete Pixi-specific PWA fingerprint. The accepted
+diagnostic change retains its own updated worker fingerprint. This is a valid test
 failure, not a tolerable noise waiver or evidence of an iPhone performance
 improvement. The original procedural baking, cropped artwork, rendering
 defaults, cache and save behaviour are left intact.
@@ -36,8 +37,8 @@ and the focused browser offline-update check **PASS** in
 An independent stale platform/save-test assertion was reconciled to the
 already-existing native Greenwood migration, without changing v4 saves.
 Original iPhone root-cause identification and a safe measurable speedup remain
-**open** in issue #783. Nothing from this draft is merged, published or
-device-verified.
+**open** in issue #783. Merge and hosted publication must be verified from their exact-commit
+GitHub receipts. No physical iPhone cure or FPS gain has been verified.
 
 ## 30 October 2026 — incremental browser updates and offline cache audit
 

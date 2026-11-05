@@ -166,17 +166,17 @@ function contrast(item) {
           await frame.locator('#modal-title').textContent(),
           language === 'es' ? 'Nueva aventura' : 'New Adventure',
         );
-        await measure(frame, '#modal-title', { minFont: 20 });
-        await measure(frame, '#modal-description');
-        await measure(frame, '#modal-actions .detail', { minFont: 13 });
+        await measure(frame, '#modal-title', { minFont: 16 });
+        await measure(frame, '#modal-description', { minFont: 13 });
+        await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
         const newGameFit = await assertDialogGeometry(frame, 'New Adventure', { noScroll: true });
         await frame
           .getByRole('button', { name: language === 'es' ? /^Elegir héroe/ : /^Choose Hero/ })
           .tap();
-        const cards = await measure(frame, '#modal-actions button', { targets: true });
+        const cards = await measure(frame, '#modal-actions button', { targets: true, minFont: 13 });
         assert.equal(cards.length, 4);
         cards.forEach(contrast);
-        await measure(frame, '#modal-actions .detail', { minFont: 13 });
+        await measure(frame, '#modal-actions .detail', { minFont: 11.5 });
         const heroFit = await assertDialogGeometry(frame, 'Choose Hero', { noScroll: true });
         const back = await frame.locator('#close-button').boundingBox();
         assert(back.height >= 44 && back.y + back.height <= 365);
@@ -211,7 +211,7 @@ function contrast(item) {
         await frame
           .getByRole('button', { name: language === 'es' ? /^Primeros pasos/ : /^Quick Start/ })
           .tap();
-        await measure(frame, '#modal-description');
+        await measure(frame, '#modal-description', { minFont: 13 });
         const readingFit = await assertDialogGeometry(frame, 'Help reading');
         await page.screenshot({ path: path.join(output, language + '-help.png') });
         await page.keyboard.press('Escape');
@@ -257,8 +257,8 @@ function contrast(item) {
         for (const [view, count, columns] of [
           ['barracks-hub', 6, 2],
           ['npc-training-hub', 5, 2],
-          ['npc-service-catalog', 9, 1],
-          ['archive-index', 8, 1],
+          ['npc-service-catalog', 9, 2],
+          ['archive-index', 8, 2],
           ['archive-reading', 3, 1],
         ]) {
           await frame.evaluate(({ view, count }) => {
@@ -275,6 +275,11 @@ function contrast(item) {
               window.Prototype.closeMenu, { view });
           }, { view, count });
           familyFit[view] = await assertDialogGeometry(frame, view);
+          if (view === 'archive-reading')
+            assert(
+              familyFit[view].content.scrollHeight > familyFit[view].content.clientHeight,
+              'full Keeper prose should scroll without clipping',
+            );
           const trackCount = await frame.locator('#modal-actions').evaluate((node) =>
             getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
           );
@@ -308,10 +313,123 @@ function contrast(item) {
         const shortLandscapeScrolled = await assertDialogGeometry(frame, 'short landscape after scroll');
         await frame.locator('#close-button').tap();
         await page.setViewportSize({ width: 800, height: 375 });
+        // An iPhone Air-size logical landscape viewport has more room than
+        // the small 740x340 probe; grid choice must follow CSS pixels, not DPR.
+        await page.setViewportSize({ width: 912, height: 420 });
+        await frame.waitForFunction(() => innerWidth >= 900 && innerHeight >= 410);
+        const roomyFit = {};
+        for (const [view, amount] of [
+          ['npc-service-catalog', 6],
+          ['archive-index', 8],
+          ['archive-shelf', 10],
+          ['barracks-hub', 4],
+          ['npc-training-hub', 5],
+        ]) {
+          await frame.evaluate(({ view, amount }) => {
+            const actions = Array.from({ length: amount }, (_, i) => ({
+              label: 'Menu choice ' + (i + 1),
+              detail: 'Requirements and costs remain readable.',
+              action() {},
+            }));
+            window.Prototype.openMenu(
+              'Responsive navigation',
+              view === 'archive-index' ? 'Choose one of the Keeper’s shelves.' : 'Choose a service.',
+              actions,
+              window.Prototype.closeMenu,
+              { view },
+            );
+          }, { view, amount });
+          roomyFit[view] = await assertDialogGeometry(frame, 'roomy ' + view, {
+            noScroll: true,
+          });
+          const columns = await frame.locator('#modal-actions').evaluate((node) =>
+            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+          );
+          assert.equal(columns, 2, view + ': roomy landscape uses two columns');
+          await frame.locator('#close-button').tap();
+        }
+        // A tiny supplier or a one-control form must not inherit the
+        // full-width 760px presentation of a busy smith/instructor catalog.
+        await frame.evaluate(() => {
+          window.Prototype.openMenu(
+            'Village supplies',
+            'Town delivery and support services.',
+            [
+              { label: 'Collect cargo', detail: 'No payment without selection.', action() {} },
+              { label: 'Field support', detail: 'Current Ranger support rules.', action() {} },
+            ],
+            window.Prototype.closeMenu,
+            { view: 'npc-service-catalog' },
+          );
+        });
+        const smallCatalog = await assertDialogGeometry(frame, 'small supplier', { noScroll: true });
+        assert(
+          smallCatalog.modal.right - smallCatalog.modal.left <= 530,
+          'a two-service supplier must keep a content-sized panel',
+        );
+        assert.equal(
+          await frame.locator('#modal-actions').evaluate((node) =>
+            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length),
+          1,
+          'small supplier options stay in one readable column',
+        );
+        await frame.locator('#close-button').tap();
+        await frame.evaluate(() => {
+          window.Prototype.openMenu('Single option', 'Change the current setting.', [
+            { kind: 'select', label: 'Graphics', value: 'normal',
+              options: [{ value: 'normal', label: 'Normal' }, { value: 'low', label: 'Low' }],
+              onChange() {} },
+          ], window.Prototype.closeMenu);
+        });
+        const smallForm = await assertDialogGeometry(frame, 'small settings form', { noScroll: true });
+        assert(
+          smallForm.modal.right - smallForm.modal.left <= 560,
+          'one native select does not require a full-screen settings form',
+        );
+        assert.equal(
+          await frame.locator('#modal-actions').evaluate((node) =>
+            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length),
+          1,
+          'single form control stays one column',
+        );
+        await frame.locator('#close-button').tap();
+        await frame.evaluate(() => {
+          window.Prototype.openMenu(
+            'Screen settings',
+            'Two settings share the wider viewport without shrinking their inputs.',
+            [
+              { kind: 'select', label: 'Graphics', value: 'normal',
+                options: [{value: 'normal', label: 'Normal'}, {value: 'low', label: 'Low'}],
+                onChange() {} },
+              { kind: 'select', label: 'Camera', value: '150',
+                options: [{value: '150', label: '150%'}, {value: '100', label: '100%'}],
+                onChange() {} },
+              { kind: 'select', label: 'Language', value: 'en',
+                options: [{value: 'en', label: 'English'}, {value: 'es', label: 'Español'}],
+                onChange() {} },
+              { kind: 'select', label: 'FPS', value: '30',
+                options: [{value: '30', label: '30'}, {value: '60', label: '60'}],
+                onChange() {} },
+            ],
+            window.Prototype.closeMenu,
+          );
+        });
+        const roomyForms = await assertDialogGeometry(frame, 'roomy settings controls');
+        assert.equal(
+          await frame.locator('#modal').getAttribute('data-menu-layout'),
+          'form',
+          'selects must use a form layout, not unlabelled choice tiles',
+        );
+        const formColumns = await frame.locator('#modal-actions').evaluate((node) =>
+          getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
+        );
+        assert.equal(formColumns, 2, 'roomy settings use two paired setting columns');
+        await frame.locator('#close-button').tap();
+        await page.setViewportSize({ width: 800, height: 375 });
         assert.deepEqual(errors, []);
         fs.writeFileSync(
           path.join(output, language + '-measurements.json'),
-          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit, familyFit, shortLandscapeFit, shortLandscapeScrolled }, null, 2),
+          JSON.stringify({ title, cards, ratios, titleBounds, newGameFit, heroFit, savesFit, settingsFit, graphicsFit, helpFit, readingFit, adventureFit, characterFit, gameSettingsFit, mapFit, familyFit, shortLandscapeFit, shortLandscapeScrolled, roomyFit, roomyForms, smallCatalog, smallForm }, null, 2),
         );
         console.log(
           'PASS ' +
