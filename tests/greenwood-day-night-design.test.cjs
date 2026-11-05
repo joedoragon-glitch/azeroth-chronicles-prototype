@@ -196,6 +196,6 @@ if (process.env.CI_BASE_SHA) {
     JSON.stringify({ contract: 'PR #809; source-native Canvas screenshots at 150%',
       base: process.env.CI_BASE_SHA, generatedFrom: process.env.GITHUB_SHA || 'local',
       optimizedForDeterminism: true,
-      artApproval: false, pixiDeviceVerification: false, frames }, null, 2) + '\\n');
+      artApproval: false, pixiDeviceVerification: false, frames }, null, 2) + '\n');
   console.log('PASS 16 native aligned before/candidate Greenwood screenshots; review in CI artifact');
 }
