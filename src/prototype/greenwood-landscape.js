@@ -789,6 +789,29 @@
           }
           z.greenwoodTradeExitVersion = 1;
         }
+        // Grow the existing Goblin compound around its original center.
+        // Its east-facing gap, original wall identities and road connection
+        // stay intact. This is a one-time v4-safe physical-wall migration,
+        // not a scenery regeneration or a new fortification bonus.
+        if (z.greenwoodGoblinShelterVersion !== 1) {
+          const center = R.greenwoodLayout.anchors.goblin;
+          let moved = 0;
+          for (const wall of z.props) {
+            if (!wall.greenwoodWall ||
+                !String(wall.id || '').startsWith('stronghold-goblin-road-fort-wall-'))
+              continue;
+            for (const key of ['a', 'b']) {
+              const end = wall.greenwoodWall[key];
+              end.x = center.x + (end.x - center.x) * 1.14;
+              end.y = center.y + (end.y - center.y) * 1.14;
+            }
+            wall.x = (wall.greenwoodWall.a.x + wall.greenwoodWall.b.x) / 2;
+            wall.y = (wall.greenwoodWall.a.y + wall.greenwoodWall.b.y) / 2;
+            moved++;
+          }
+          z.greenwoodGoblinShelterAudit = { resizedWallSegments: moved };
+          z.greenwoodGoblinShelterVersion = 1;
+        }
         if (z.greenwoodPublicLightingVersion === 1) return;
         const roadDistance = (point) => {
           let best = Infinity;
