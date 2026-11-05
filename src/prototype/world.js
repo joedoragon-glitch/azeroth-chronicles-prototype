@@ -3592,6 +3592,7 @@
             this.syncThornArrival(z);
             this.setSceneryTraversal(z);
             this.greenwoodRefinementScene?.(z);
+            this.greenwoodCompositionFinish?.(z);
             this.greenwoodTrailLabels?.(z);
             return z;
           }
