@@ -313,7 +313,7 @@
           ['lodge', 2690, 1170, 55],
           ['rest-bay', 2830, 1245, 23],
           ['gear', 2570, 1225, 0],
-          ['training', 2770, 1380, 0],
+          ['training', 2630, 1345, 0],
           ['rear-rail', 2640, 1065, 0],
           ['east-rail', 2885, 1340, 0],
         ];
@@ -1363,49 +1363,118 @@
       stroke([[x-5,y+4],[x+5,y+4]], edge, 2);
     };
     if (kind === 'thorn-lodge') {
-      oval(0, 10, 98, 20, '#142b243d');
-      // Two continuous stone foundations, two connected timber wall planes.
-      poly([[-80,-4],[-18,24],[89,-9],[25,-39]], '#70705d');
-      poly([[-77,-14],[-77,-75],[7,-101],[7,-35]], '#866d51');
-      poly([[7,-35],[7,-101],[88,-72],[88,-11]], '#6e5843');
-      for (const [a,b] of [[[-74,-10],[-74,-74]],[[-35,4],[-35,-87]],[[7,-34],[7,-100]],[[87,-13],[87,-72]]])
-        stroke([a,b], beam, 6);
-      // A clear wolf-height shelter mouth, dark interior and visible bedding.
-      poly([[20,-38],[20,-80],[68,-66],[68,-17]], '#28352e');
-      poly([[24,-32],[24,-72],[64,-59],[64,-21]], '#25312a');
-      oval(45,-17,25,8,'#a39065');
-      for (const y of [-20,-16,-12]) stroke([[25,y],[63,y-6]], '#ccb483', 1.4);
-      stroke([[18,-42],[18,-83],[70,-66],[70,-21]], '#b39161', 5);
-      stroke([[16,-84],[74,-68]],beam,4);
-      // Deep roof planes share the same ridge: no arbitrary second-facing roof.
-      poly([[-96,-72],[-30,-140],[54,-161],[107,-81],[17,-55]], '#48382f');
-      poly([[-96,-72],[-30,-140],[17,-55],[-16,-35]], '#916849');
-      poly([[-30,-140],[54,-161],[107,-81],[17,-55]], '#624638');
-      stroke([[-96,-72],[-30,-140],[54,-161],[107,-81]], '#b28a5a', 5);
-      stroke([[-96,-72],[-16,-35],[17,-55],[107,-81]], '#352e29', 6);
-      for (let i=0; i<5; i++) {
-        const t = (i+1)/6;
-        stroke([[-25+t*75,-129-t*18],[11+t*83,-61-t*18]], '#94704e', 1.5);
+      // The footprint, two elevations and both roof pitches share one
+      // isometric axis. The front stays openly accessible to a large wolf.
+      oval(8, 12, 111, 22, '#142a233d');
+      poly([[-104, -11], [50, 20], [145, -10], [-7, -44]], '#676858');
+      poly([[-100, -24], [52, 8], [52, 20], [-100, -11]], '#8d8a73');
+      poly([[52, 8], [137, -20], [137, -9], [52, 20]], '#626759');
+      for (const x of [-78, -47, -17, 18])
+        stroke([[x, -17 + (x + 78) * 0.21], [x + 17, -13 + (x + 78) * 0.21]],
+          '#b5aa88', 2.3);
+
+      // Timber front and right elevation; no implausible extra-facing walls.
+      poly([[-98, -24], [-98, -89], [53, -58], [53, 8]], '#947452');
+      poly([[53, -58], [139, -86], [139, -20], [53, 8]], '#65513d');
+      // The actual front gable is structural, below the joined roof slopes.
+      poly([[-98, -89], [-22, -151], [53, -58]], '#977753');
+      for (let j = 0; j < 8; j++) {
+        const x = -90 + j * 20;
+        stroke([[x, -40 + (x + 90) * 0.2],
+          [x, -82 + (x + 90) * 0.2]], '#7c6146', 1.5);
       }
-      // A single vent and working gear lean-to, not a human cottage facade.
-      poly([[-46,-82],[-30,-88],[-30,-72],[-46,-68]], '#29372e');
-      stroke([[-46,-82],[-30,-88],[-30,-72],[-46,-68],[-46,-82]], edge, 2);
-      poly([[-87,-27],[-58,-36],[-44,-23],[-70,-10]], '#4e392d');
-      for (let i=0; i<4; i++) stroke([[-79+i*7,-19],[-68+i*7,-31]], '#c1a477', 2);
-      lantern(81,-42);
+      for (const [top, bottom] of [
+        [[-94, -85], [-94, -20]], [[49, -56], [49, 8]],
+        [[134, -83], [134, -22]]
+      ]) stroke([top, bottom], beam, 7);
+      stroke([[-98, -25], [52, 8], [139, -20]], '#b49467', 4);
+      stroke([[53, -57], [139, -86]], '#9d7b53', 3);
+
+      // Continuous wolf-high dark mouth, warm dry bedding and real supporting
+      // posts: a private shelter, not a human cottage with a fake closed door.
+      poly([[-40, -68], [21, -55], [21, 11], [-40, -2]], '#28332d');
+      poly([[-35, -63], [16, -52], [16, 6], [-35, -5]], '#354138');
+      oval(-9, 0, 29, 9, '#ad956e');
+      for (let j = 0; j < 7; j++)
+        stroke([[-32 + j * 9, -1], [-27 + j * 9, 4]], '#d7b987', 1.8);
+      stroke([[-44, 1], [-44, -70], [24, -56], [24, 13]], '#4a392b', 7);
+      stroke([[-44, -70], [24, -56]], '#c5a374', 3.5);
+      stroke([[-42, -65], [20, -53]], '#b78b5b', 3);
+      // A modest exterior sill and diagonal braces, not a second doorway.
+      stroke([[-94, -83], [-63, -67]], '#513f30', 5);
+      stroke([[49, -54], [71, -61]], '#513f30', 4);
+      for (const x of [-88, 39])
+        stroke([[x, -12 + (x + 88) * 0.21],
+          [x + 14, -35 + (x + 88) * 0.21]], '#b18c60', 3);
+
+      // One common roof ridge from front to rear, with two distinct material
+      // planes, real eaves, stepped shingles and overlapping ridge caps.
+      poly([[-110, -94], [-23, -163], [68, -190], [-18, -119]], '#9b704e');
+      poly([[-23, -163], [58, -64], [149, -94], [68, -190]], '#604436');
+      poly([[-112, -93], [-18, -119], [-18, -113], [-112, -88]], '#44382e');
+      poly([[58, -64], [149, -94], [149, -87], [58, -57]], '#44362b');
+      for (let j = 1; j <= 5; j++) {
+        const t = j / 6;
+        stroke([[-109 + t * 86, -94 - t * 69],
+          [-18 + t * 86, -119 - t * 71]], '#c09668', 1.5);
+        stroke([[-23 + t * 81, -163 + t * 99],
+          [68 + t * 81, -190 + t * 96]], '#856045', 1.6);
+      }
+      for (let j = 0; j < 8; j++) {
+        const t = (j + .25) / 8;
+        stroke([[-109 + 86 * t, -95 - 69 * t],
+          [-97 + 86 * t, -101 - 69 * t]], '#71533c', 1.5);
+      }
+      stroke([[-110, -94], [-23, -163], [68, -190], [149, -94]],
+        '#c19b70', 5);
+      stroke([[-112, -88], [-18, -113]], '#332f2b', 4);
+      stroke([[58, -57], [149, -87]], '#2e2c28', 4);
+      for (let j = 0; j < 6; j++) {
+        const t = j / 5;
+        poly([[-30 + 92*t, -164 - 27*t],
+          [-19 + 92*t, -160 - 27*t],
+          [-16 + 92*t, -154 - 27*t],
+          [-27 + 92*t, -158 - 27*t]], '#c4a078');
+      }
+
+      // Side shutters reveal internal warmth; no modern-looking windows or
+      // crowded ornamental emblems in the main wolf shelter.
+      poly([[81, -71], [104, -79], [104, -53], [81, -45]], '#2a322d');
+      poly([[84, -69], [101, -75], [101, -55], [84, -49]], '#d9a667');
+      stroke([[92, -72], [92, -52]], '#66503b', 2);
+      stroke([[81, -71], [104, -79], [104, -53], [81, -45], [81, -71]], beam, 3);
+      // Timber gear drying hook, bundled firewood and low working porch.
+      for (let j = 0; j < 4; j++)
+        stroke([[-84 + j * 11, -11], [-67 + j * 10, -18]],
+          j % 2 ? '#ad8658' : '#634e39', 7);
+      stroke([[99, -17], [124, -26]], '#af895d', 3);
+      lantern(54, -41);
     } else if (kind === 'thorn-rest-bay') {
-      oval(0,7,60,13,'#142b2438');
-      // Raised, breathable three-post shelter with continuous shingled roof.
-      poly([[-55,-5],[-52,-60],[7,-79],[56,-60],[56,-5]], '#64503b');
-      poly([[-47,-3],[-47,-50],[5,-66],[5,-9]], '#394337');
-      poly([[5,-9],[5,-66],[49,-51],[49,-3]], '#394337');
-      for(const x of [-50,5,52]) stroke([[x,0],[x,-58-(x===5?12:0)]], beam, 6);
-      poly([[-64,-53],[1,-91],[68,-59],[3,-27]], '#584334');
-      poly([[-64,-53],[1,-91],[3,-27]], '#987452');
-      stroke([[-64,-53],[1,-91],[68,-59],[3,-27]], edge, 3);
-      for(let i=0;i<4;i++) stroke([[7+i*13,-76+i*5],[9+i*13,-38+i*5]], '#866446', 1.5);
-      oval(0,-3,39,9,'#ae966b');
-      for(let i=0;i<5;i++) stroke([[-30+i*12,-8],[-24+i*12,0]], '#d9c28b', 1.5);
+      oval(0, 10, 67, 15, '#142a233b');
+      // Open-sided timber shelter. The real posts hold a single continuous
+      // sloping roof; the wolf bedding remains visible beneath the eaves.
+      poly([[-55, -6], [-14, 8], [59, -13], [15, -31]], '#706756');
+      poly([[-52, -14], [-52, -63], [18, -87], [18, -35]], '#66513e');
+      poly([[18, -35], [18, -87], [66, -70], [66, -22]], '#594938');
+      poly([[-42, -24], [16, -44], [50, -31], [-8, -8]], '#30392f');
+      oval(1, -5, 35, 10, '#b8a178');
+      for (let j = 0; j < 6; j++)
+        stroke([[-32 + j * 12, -10], [-26 + j * 12, -2]], '#d8c492', 2);
+      for (const [x, y, top] of [[-54, 2, -61], [16, -13, -83], [67, -23, -68]])
+        stroke([[x, y], [x, top]], beam, 7);
+      poly([[-66, -66], [11, -111], [79, -79], [1, -39]], '#855f41');
+      poly([[1, -39], [79, -79], [86, -72], [7, -32]], '#41372d');
+      stroke([[-66, -66], [11, -111], [79, -79], [1, -39]], '#c09a69', 4);
+      for (let j = 1; j <= 4; j++) {
+        const t = j / 5;
+        stroke([[-64 + t * 76, -67 - t * 44],
+          [4 + t * 75, -38 - t * 42]], '#ad8156', 1.5);
+      }
+      stroke([[-55, -56], [-55, -2]], '#44362c', 4);
+      stroke([[67, -67], [67, -18]], '#44362c', 4);
+      // Low rack and tether ring belong to the structure, not to a new NPC.
+      stroke([[50, -35], [69, -41]], '#af8e60', 2.3);
+      oval(52, -34, 3, 4, '#c6a36b');
     } else if (kind === 'thorn-gear') {
       oval(0,9,37,8,'#1d302839');
       stroke([[-30,9],[-30,-48]], beam, 5);
@@ -1435,7 +1504,7 @@
       for(let i=0;i<4;i++){
         const x=x1+i*34,y=y1+(y2-y1)*i/3;
         stroke([[x,y+6],[x,y-38]], '#534435', 6);
-        stroke([[x-3,y-37],[x,y-44],[x+3,y-37]], '#c2a47a', 2);
+        stroke([[x - 4, y - 38], [x + 4, y - 38]], '#c2a47a', 3);
       }
     }
     ctx.restore();
