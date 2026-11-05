@@ -255,6 +255,10 @@
       }
       resolveAttack(e) {
         const a = e.telegraph;
+        // Dreadmaw's authored rush and moving closure release outside the
+        // generic boss resolver. A valid warned Reversal consumes the specific
+        // release before motion, area damage or persistent closure is created.
+        if (dread(e) && a?.dreadMechanic && this.strategistResolveReversal(e, a)) return;
         if (!dread(e) || !a?.dreadMechanic || a.rogueMove)
           return previous.resolveAttack.call(this, e);
         if (a.dreadMechanic === 'rush') {
