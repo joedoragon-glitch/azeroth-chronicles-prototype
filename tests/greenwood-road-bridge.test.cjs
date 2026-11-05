@@ -57,6 +57,15 @@ const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoa
 assert.deepEqual(prepared.wide[0].points.at(-1), { x: 3200, y: 80 });
 assert(prepared.wide.some((road) => road.kind === 'path'),
   'short maintained Millhaven side lanes share cart/farm earth painting');
+const southPaint = prepared.wide.find((road) =>
+  road.kind === 'farm' &&
+  Math.abs(road.points[0].x / Campaign.rules.greenwoodLayout.scale - 1560) < 0.01 &&
+  Math.abs(road.points[0].y / Campaign.rules.greenwoodLayout.scale - 2280) < 0.01);
+assert(southPaint, 'south bridge has one consistent farm-width approach on both banks');
+assert.equal(Math.round(southPaint.points.at(-1).x / Campaign.rules.greenwoodLayout.scale), 2670,
+  'the matching road remains wide until it joins the eastern network');
+assert.deepEqual(z.greenwoodRoutes[7].points, z.footpaths[3],
+  'visual shoulder widening never changes saved roads or route classification');
 assert(prepared.fragments.length > 0,
   'long woodland tracks keep their quieter, separate footpath treatment');
 assert.equal(prepared.widths.cart * 2, 88);
@@ -99,7 +108,7 @@ const sampleCtx = {
 };
 Landscape.drawRoads(sampleCtx, z.roads, (p) => p, z.footpaths, z.greenwoodRoadKinds);
 Landscape.drawRoads(sampleCtx, z.roads, (p) => p, z.footpaths, z.greenwoodRoadKinds);
-assert.equal(sampleCtx.fills, 12, 'exactly six unified fills per drawing, never per overlapping segment');
+assert.equal(sampleCtx.fills, 6, 'three unioned soil layers per draw; no second path painted over a junction');
 
 const original = g.snapshot(),
   ids = (zone) => ({
