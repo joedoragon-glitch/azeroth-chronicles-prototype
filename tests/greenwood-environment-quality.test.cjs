@@ -14,6 +14,32 @@ const standard = z.props.find((p) => p.id === 'greenwood-thorn-homestead-standar
 assert(standard && standard.structure === 'crown-banner');
 const lodge = z.props.find((p) => p.id === 'greenwood-thorn-homestead-lodge');
 assert.equal(lodge.r, 40);
+assert.equal(z.greenwoodHomesteadPresentationVersion, 1,
+  'obsolete homestead decorations cleaned with their own save-safe marker');
+for (const suffix of ['gear', 'training', 'rear-rail', 'east-rail'])
+  assert(!z.props.some((p) => p.id === 'greenwood-thorn-homestead-' + suffix),
+    'redundant homestead courtyard piece removed: ' + suffix);
+// A nearby golden in-world nameplate is not a discovery notice, NPC, or
+// one-time narrative message. The same saved state remains unmodified by art.
+const arrival = new C('normal', 'paladin', rng(0x47564103));
+const arrivalLodge = arrival.zone().props.find((p) =>
+  p.id === 'greenwood-thorn-homestead-lodge');
+assert(arrivalLodge, 'named in-world homestead retains its native prop');
+Object.assign(arrival.hero, { x: arrivalLodge.x + 65, y: arrivalLodge.y + 65 });
+arrival.tick(0.016);
+assert(!arrival.notices.some((n) => /Thornfang.*Homestead/.test(n.text)),
+  'approaching the homestead must not create an unsolicited popup');
+assert(!arrival.messages.some((n) => /Discovered Thornfang/.test(n)),
+  'no discovery chat message');
+assert.equal(arrival.s.discovered['vale:thornfang-homestead'], undefined,
+  'no new persistent discovery key or saving scheme');
+const rendererNames = fs.readFileSync('src/prototype/renderer.js', 'utf8');
+assert(rendererNames.includes('function sceneryPlaceName(e)'),
+  'in-world homestead label is authored in the shared renderer');
+assert(rendererNames.includes("if (home) add([home], 'prop');"),
+  'Pixi overlay uses the shared native nameplate pass');
+assert(rendererNames.includes('if (sceneryPlaceName(e) && worldLabelVisible(e))'),
+  'Canvas draws the same gold label over the actual homestead prop');
 const shape = (zone) =>
   zone.props
     .filter((p) => p.greenwoodGoblinShelter || p.greenwoodWall || p.id.includes('thorn-homestead'))
