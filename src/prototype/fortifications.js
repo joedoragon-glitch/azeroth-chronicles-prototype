@@ -63,6 +63,48 @@
         ];
       });
     };
+    // Greenwood has real connected wall segments whose endpoints differ from
+    // the old ten-post creature-stronghold template. Compute its actual convex
+    // exterior before applying the approved 160-unit wall-relative apron.
+    // This is cached fort geometry, not a per-enemy proximity check.
+    const wallFootprint = (walls, leeway) => {
+      const ends = walls.flatMap((w) => [w.greenwoodWall.a, w.greenwoodWall.b])
+        .filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y))
+        .map((p) => [p.x, p.y]);
+      if (ends.length < 6) return null;
+      ends.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      const cross = (o, a, b) =>
+        (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+      const lower = [], upper = [];
+      for (const p of ends) {
+        while (lower.length > 1 && cross(lower.at(-2), lower.at(-1), p) <= 0) lower.pop();
+        lower.push(p);
+      }
+      for (let i = ends.length - 1; i >= 0; i--) {
+        const p = ends[i];
+        while (upper.length > 1 && cross(upper.at(-2), upper.at(-1), p) <= 0) upper.pop();
+        upper.push(p);
+      }
+      const hull = lower.slice(0, -1).concat(upper.slice(0, -1));
+      if (hull.length < 3) return null;
+      // Convex hull is counterclockwise in ordinary (upward-positive) space.
+      // In screen/world coordinates the clockwise outward normal is (dy,-dx).
+      const normals = hull.map((p, i) => {
+        const q = hull[(i + 1) % hull.length],
+          dx = q[0] - p[0], dy = q[1] - p[1], len = Math.hypot(dx, dy) || 1;
+        return [dy / len, -dx / len];
+      });
+      return hull.map((p, i) => {
+        const before = normals[(i + hull.length - 1) % hull.length],
+          after = normals[i],
+          divisor = Math.max(0.15, 1 + before[0] * after[0] + before[1] * after[1]),
+          factor = leeway / divisor;
+        return [
+          p[0] + (before[0] + after[0]) * factor,
+          p[1] + (before[1] + after[1]) * factor,
+        ];
+      });
+    };
     class Fortifications {
       fortAreas() {
         const z = this.s.zones[this.zoneId] || this.zone();
@@ -88,6 +130,14 @@
         for (const plan of R.creatureStrongholds.filter((p) => p.region === z.id)) {
           const walls = z.props.filter((p) => p.stronghold === plan.id && !p.decorative && p.r > 0);
           if (!walls.length) continue;
+          const authoredWalls = z.id === 'vale' ? walls.filter((p) => p.greenwoodWall) : [];
+          if (authoredWalls.length >= 4) {
+            const footprint = wallFootprint(authoredWalls, cfg.outdoorLeeway);
+            if (footprint) {
+              add(plan.id, footprint, walls);
+              continue;
+            }
+          }
           const ring =
             plan.defenseStyle === 'fort'
               ? [
