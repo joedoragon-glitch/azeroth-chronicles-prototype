@@ -1,5 +1,46 @@
 # So I Became the Dark Lord's Problem — regional graphics preparation and main-screen lifecycle
 
+## 5 November 2026 — #783 readback trial REJECTED by paired performance regression
+
+The owner’s dev.257 iPhone Air playtest recorded a 175ms game callback
+(173ms total synchronous rendering), without the optional Pixi substage trace.
+Controlled prior R3 Chromium experiments identified a potentially expensive
+full-bitmap `getImageData` operation during cold procedural sprite creation.
+However, that did not prove the specific iPhone event’s cause.
+
+A bounded R4 trial documented in [PR #818](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/818)
+requested `willReadFrequently: true` for the temporary Pixi procedural-bake
+canvas. The API hint kept the source artwork code intact but **severely
+regressed real browser crowd performance** in the paired, same-runner #755
+comparison ([run #41993913603](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41993913603)):
+
+| Native Chromium software-WebGL scenario | Unchanged main | Trial | Consequence |
+| --- | ---: | ---: | --- |
+| 24 actors p50 synchronous composited draw | 8.9ms | 444.3ms | ~50× slower |
+| 24 actors p95 draw | 445.35ms | 755.45ms | ~70% slower |
+| 48 actors p50 draw | 12.25ms | 444.2ms | ~36× slower |
+
+The trial is **rejected and removed** from the PR branch, including its
+test-only assertion and obsolete Pixi-specific PWA fingerprint. The accepted
+diagnostic change retains its own updated worker fingerprint. This is a valid test
+failure, not a tolerable noise waiver or evidence of an iPhone performance
+improvement. The original procedural baking, cropped artwork, rendering
+defaults, cache and save behaviour are left intact.
+
+Follow-up on PR #818 is now limited to retaining existing Pixi vs Canvas
+timings within exceptional callback reports, avoiding new per-stage clocks on
+ordinary play. That is **diagnostic-only**, with eight impacted focused tests,
+documentation checks and reproducible build **PASS** in
+[run #41996910783](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996910783),
+and the focused browser offline-update check **PASS** in
+[run #41996910764](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/actions/runs/41996910764).
+An independent stale platform/save-test assertion was reconciled to the
+already-existing native Greenwood migration, without changing v4 saves.
+Original iPhone root-cause identification and a safe measurable speedup remain
+**open** in issue #783. Merge and hosted publication must be verified from their exact-commit
+GitHub receipts. No physical iPhone cure or FPS gain has been verified.
+
+
 ## 30 October 2026 — incremental browser updates and offline cache audit
 
 The current game is distributed by an HTTPS web link, **not as a native app**.
