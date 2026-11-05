@@ -14,6 +14,10 @@ assert.equal(C.rules.greenwoodLayout.version, 2, 'active reconstructed Greenwood
 assert.equal(C.rules.greenwoodLayout.size, 3200);
 const g = new C('normal', 'paladin', rng(0x47564103));
 const snapshot = JSON.stringify(g.snapshot());
+const props = g.zone().props;
+const mill = props.find((p) => p.id === 'greenwood-working-mill');
+const weir = props.find((p) => p.id === 'greenwood-mill-sluice');
+assert(mill && weir, 'actual native Vale mill and sluice must be present in a fresh world');
 const center = { x: 1210, y: 1420 };
 const canvas = createCanvas(1120, 760);
 const ctx = canvas.getContext('2d');
@@ -34,27 +38,21 @@ for (const pool of waters.pools) {
 }
 
 function paint() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#536b48';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   // Exercise the real shared native water material path with a frozen clock.
   V.terrain(ctx, screen, 0, 3200, null, bounds, [], 0, true);
-  V.draw(ctx, {
-    id: 'greenwood-working-mill',
-    renderKind: 'prop',
-    greenwoodFacility: 'mill',
-    structure: 'vale-working-mill',
-  }, screen(C.rules.greenwoodLayout.mill), 0);
-  V.draw(ctx, {
-    id: 'greenwood-mill-sluice',
-    renderKind: 'prop',
-    greenwoodFacility: 'weir',
-    structure: 'mill-sluice',
-  }, screen({ x: 1005, y: 1340 }), 0);
+  V.draw(ctx, { ...mill, renderKind: 'prop' }, screen(mill), 0);
+  V.draw(ctx, { ...weir, renderKind: 'prop' }, screen(weir), 0);
   return crypto.createHash('sha256').update(canvas.toBuffer('image/png')).digest('hex');
 }
 const first = paint();
 const second = paint();
 assert.equal(first, second, 'same terrain, mill and sluice paint deterministically');
 assert(canvas.toBuffer('image/png').byteLength > 9000, 'nonempty painted terrain and mill');
+const reviewDir = 'test-artifacts/greenwood-mill-river';
+fs.mkdirSync(reviewDir, { recursive: true });
+fs.writeFileSync(reviewDir + '/native-daylight.png', canvas.toBuffer('image/png'));
 
 const motion = V.terrainMotionLines(0, screen, bounds, 12);
 assert(motion.length > 0 && motion.length <= 320, 'bounded motion overlay');
@@ -64,7 +62,7 @@ for (const stroke of motion) {
 }
 const fixtures = V.lightingFixtures(
   { id: 'greenwood-working-mill', structure: 'vale-working-mill', greenwoodFacility: 'mill' },
-  screen(C.rules.greenwoodLayout.mill), 1, 0,
+  screen(mill), 1, 0,
 );
 assert.equal(fixtures.length, 1, 'one physical mill fixture');
 assert.equal(fixtures[0].fixture, 'glass', 'shared Canvas/Pixi glass contract');
@@ -76,6 +74,7 @@ V.atmosphere(ctx, canvas, 0, {
   lights: fixtures,
   optimized: true,
 });
+fs.writeFileSync(reviewDir + '/native-night.png', canvas.toBuffer('image/png'));
 assert.equal(JSON.stringify(g.snapshot()), snapshot, 'art and lights never mutate gameplay/save state');
 // Verify that source intentionally avoids the known generic 58-unit sawtooth
 // motif for Greenwood. Other regions continue using their existing painter.
