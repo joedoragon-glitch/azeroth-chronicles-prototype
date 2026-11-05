@@ -19,7 +19,11 @@ const key = (app, code) => {
 const publicApp = shell('en', 'paladin', {
   stayOnTitle: true, seedSave: false, location: location(),
 });
-assert.equal(publicApp.elements.get('developer-reversal').hidden, true);
+const actualQuickDock = (app) => app.elements.get('skills').children
+  .find((item) => item.id === 'quick-items');
+const actualReversal = (app) => actualQuickDock(app).children
+  .find((item) => item.id === 'developer-reversal');
+assert.equal(actualReversal(publicApp).hidden, true);
 assert.equal(Ref.card(publicApp.scope.Prototype.game, 1)?.name, 'Radiant Strike');
 const app = shell('en', 'paladin', {
   stayOnTitle: true, seedSave: false, location: location('?developer=1'),
@@ -32,7 +36,7 @@ assert.equal(app.scope.Prototype.started, true);
 assert.equal(g.s.mode, 'developer');
 assert.equal(g.hero.class, 'strategist');
 assert.deepEqual(g.hero.skills, [1, 1, 1, 0, 0, 0, 0, 0]);
-const reversal = app.elements.get('developer-reversal');
+const reversal = actualReversal(app);
 assert.equal(reversal.hidden, false);
 assert.equal(reversal.getAttribute('aria-label'), 'Strategist Reversal');
 assert(app.elements.get('quick-items').classList.contains('has-rangers'),
