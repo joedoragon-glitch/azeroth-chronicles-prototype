@@ -136,7 +136,30 @@ function fixture() {
       assert(area, plan.id + ': native defended footprint is registered');
       assert(zone.props.some((p) => p.stronghold === plan.id && !p.decorative && p.r > 0),
         plan.id + ': a real wall is still required');
-      if (plan.defenseStyle === 'fort') {
+      const authoredWalls = zone.props.filter((p) =>
+        p.stronghold === plan.id && p.greenwoodWall && p.r > 0);
+      if (authoredWalls.length >= 3) {
+        // The reconstructed Greenwood walls are long line segments rather
+        // than the legacy ten individual ring posts; protection must be
+        // derived from their actual endpoints and include the outdoor apron.
+        assert(area.points.length > ring.length,
+          plan.id + ': contour follows the authored line-wall exterior');
+        const endpoints = authoredWalls.flatMap((p) =>
+          [p.greenwoodWall.a, p.greenwoodWall.b]);
+        const box = (points) => ({
+          left: Math.min(...points.map((p) => p.x)),
+          right: Math.max(...points.map((p) => p.x)),
+          top: Math.min(...points.map((p) => p.y)),
+          bottom: Math.max(...points.map((p) => p.y)),
+        });
+        const wallsBox = box(endpoints),
+          contour = box(area.points.map(([x, y]) => ({ x, y })));
+        for (const side of ['left', 'right', 'top', 'bottom']) {
+          const delta = Math.abs(contour[side] - wallsBox[side]);
+          assert(delta >= apron - 2 && delta <= apron + 3,
+            plan.id + ': actual wall ' + side + ' has requested outdoor leeway');
+        }
+      } else if (plan.defenseStyle === 'fort') {
         assert.equal(area.points[1][0] - area.points[0][0], 2 * (150 + apron),
           plan.id + ': square fort horizontal margin');
         assert.equal(area.points[2][1] - area.points[1][1], 2 * (150 + apron),
@@ -202,12 +225,18 @@ function fixture() {
   );
   assert(watch && defender, 'real Skeleton Watch guard and live walls are present');
   const oldPosition = { x: defender.x, y: defender.y };
-  const [eastX, eastY] = watch.points[4];
-  const originalWallX = eastX - cfg.outdoorLeeway * 155 / Math.hypot(155, 20);
-  defender.x = eastX - 60;
+  const wallEnds = g.zone().props.filter((p) =>
+    p.stronghold === 'skeleton-watch' && p.greenwoodWall)
+    .flatMap((p) => [p.greenwoodWall.a, p.greenwoodWall.b]);
+  assert(wallEnds.length >= 6, 'Skeleton Watch has physical line-wall endpoints');
+  const eastX = Math.max(...wallEnds.map((p) => p.x)),
+    minY = Math.min(...wallEnds.map((p) => p.y)),
+    maxY = Math.max(...wallEnds.map((p) => p.y)),
+    eastY = (minY + maxY) / 2;
+  defender.x = eastX + cfg.outdoorLeeway - 10;
   defender.y = eastY;
-  assert(defender.x > originalWallX, 'pursuer has stepped outside the original wall ring');
-  assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'protection persists in the apron');
+  assert(defender.x > eastX, 'pursuer has stepped outside the actual visible eastern wall');
+  assert.equal(g.enemyFort(defender)?.id, 'skeleton-watch', 'protection persists in the real wall apron');
   assert.equal(g.enemyRangedRange(defender), 416, 'position grants the fortified ranged basic value');
   // The natural Skeleton Watch guard in this fixture is melee. Its awareness
   // stays governed by the independent melee rule, not the ranged 416-unit rule.
@@ -229,8 +258,8 @@ function fixture() {
   const restoredGuard = restored.zone().enemies.find((enemy) => enemy.id === defender.id);
   assert.equal(restored.enemyFort(restoredGuard)?.id, 'skeleton-watch',
     'restoring v4 save derives the same protection without saved timers');
-  defender.x = eastX + 30;
-  assert.equal(g.enemyFort(defender), null, 'leaving even the extended perimeter removes protection');
+  defender.x = eastX + cfg.outdoorLeeway + 25;
+  assert.equal(g.enemyFort(defender), null, 'outside the true wall + outdoor apron removes protection');
   assert.equal(g.enemyRangedRange(defender), 320, 'normal basic attack range returns');
   const outside = { source: 'enemy', sourceId: defender.id, x: defender.x, y: defender.y,
     dx: 1, dy: 0, speed: 300, life: 2 };

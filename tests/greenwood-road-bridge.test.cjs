@@ -52,6 +52,13 @@ assert(g.clearSegment(
   {x:1530,y:2297}, {x:1940,y:2297}, 15, true,
 ), 'southern footbridge has body clearance even with modest off-center walking');
 const prepared = Landscape.prepareRoadPaint(z.roads, z.footpaths, z.greenwoodRoadKinds);
+// Renderer-only trade exit carries the visual main road to the region edge;
+// actual wagon transport, authored routes and save data remain untouched.
+assert.deepEqual(prepared.wide[0].points.at(-1), { x: 3200, y: 80 });
+assert(prepared.wide.some((road) => road.kind === 'path'),
+  'short maintained Millhaven side lanes share cart/farm earth painting');
+assert(prepared.fragments.length > 0,
+  'long woodland tracks keep their quieter, separate footpath treatment');
 assert.equal(prepared.widths.cart * 2, 88);
 assert.equal(prepared.widths.farm * 2, 52);
 assert.equal(prepared.widths.path * 2, 24);

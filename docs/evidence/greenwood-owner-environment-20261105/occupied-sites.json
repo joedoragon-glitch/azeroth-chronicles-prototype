@@ -1,0 +1,798 @@
+[
+  {
+    "zone": "vale",
+    "lights": [
+      {
+        "id": "owner-occupied-light-goblin-road-fort",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-skeleton-watch",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-goblin-road-camp",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-goblin-orchard-camp",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-crypt-fringe",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": [
+      {
+        "x": 610,
+        "y": 2715,
+        "kind": "spikes",
+        "index": 3100,
+        "owner": "goblin-road-fort"
+      },
+      {
+        "x": 610,
+        "y": 2935,
+        "kind": "spikes",
+        "index": 3101,
+        "owner": "goblin-road-fort"
+      },
+      {
+        "x": 2935,
+        "y": 2128.181818181818,
+        "kind": "spikes",
+        "index": 3202,
+        "owner": "skeleton-watch"
+      },
+      {
+        "x": 2935,
+        "y": 2348.181818181818,
+        "kind": "spikes",
+        "index": 3203,
+        "owner": "skeleton-watch"
+      }
+    ]
+  },
+  {
+    "zone": "march",
+    "lights": [
+      {
+        "id": "owner-occupied-light-mire-nest-hold",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-reedbeast-wallow-hold",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-lantern-wraith-hold",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-mire-nesting-bank",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-reedbeast-wallow",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-causeway-scavengers",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": [
+      {
+        "x": 2212.604575995928,
+        "y": 1009.7409219953074,
+        "kind": "spikes",
+        "index": 3204,
+        "owner": "mire-nest-hold"
+      },
+      {
+        "x": 1100,
+        "y": 1322.5,
+        "kind": "spikes",
+        "index": 3206,
+        "owner": "reedbeast-wallow-hold"
+      },
+      {
+        "x": 2175,
+        "y": 2469,
+        "kind": "spikes",
+        "index": 3208,
+        "owner": "lantern-wraith-hold"
+      },
+      {
+        "x": 2175,
+        "y": 2689,
+        "kind": "spikes",
+        "index": 3209,
+        "owner": "lantern-wraith-hold"
+      }
+    ]
+  },
+  {
+    "zone": "highlands",
+    "lights": [
+      {
+        "id": "owner-occupied-light-wolf-packhold",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-ogre-hearth-fort",
+        "status": "placed"
+      },
+      {
+        "id": "wolf-hunting-ground",
+        "status": "natural-animal-refuge-no-artificial-fixture"
+      },
+      {
+        "id": "owner-habitat-light-ogre-hearth",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-quarry-squat",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": [
+      {
+        "x": 690,
+        "y": 1320.7473067202232,
+        "kind": "spikes",
+        "index": 3211,
+        "owner": "wolf-packhold"
+      },
+      {
+        "x": 1274.4037677673955,
+        "y": 3149.0306420866377,
+        "kind": "spikes",
+        "index": 3213,
+        "owner": "ogre-hearth-fort"
+      }
+    ]
+  },
+  {
+    "zone": "frontier",
+    "lights": [
+      {
+        "id": "owner-occupied-light-orc-road-fort",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-raider-drill-redoubt",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-stalker-cinder-hold",
+        "status": "placed"
+      },
+      {
+        "id": "owner-habitat-light-orc-bivouac",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-raider-rest-stop",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-archer-drill-camp",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": [
+      {
+        "x": 2060,
+        "y": 286.875,
+        "kind": "jet",
+        "index": 3214,
+        "owner": "orc-road-fort"
+      },
+      {
+        "x": 2060,
+        "y": 506.875,
+        "kind": "jet",
+        "index": 3215,
+        "owner": "orc-road-fort"
+      },
+      {
+        "x": 3265,
+        "y": 853.6363636363636,
+        "kind": "jet",
+        "index": 3216,
+        "owner": "raider-drill-redoubt"
+      },
+      {
+        "x": 3265,
+        "y": 1073.6363636363635,
+        "kind": "jet",
+        "index": 3217,
+        "owner": "raider-drill-redoubt"
+      },
+      {
+        "x": 1970,
+        "y": 2039.7755692054375,
+        "kind": "jet",
+        "index": 3218,
+        "owner": "stalker-cinder-hold"
+      },
+      {
+        "x": 1970,
+        "y": 2259.7755692054375,
+        "kind": "jet",
+        "index": 3219,
+        "owner": "stalker-cinder-hold"
+      }
+    ]
+  },
+  {
+    "zone": "crown",
+    "lights": [
+      {
+        "id": "owner-occupied-light-ashbeast-roost-hold",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-crown-field-barracks-hold",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-crown-toll-redoubt",
+        "status": "placed"
+      },
+      {
+        "id": "owner-habitat-light-ashbeast-roost",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-crown-barracks",
+        "status": "existing"
+      },
+      {
+        "id": "owner-habitat-light-fortress-work-camp",
+        "status": "placed"
+      },
+      {
+        "id": "owner-habitat-light-dark-fortress-court",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": [
+      {
+        "x": 1800,
+        "y": 3379,
+        "kind": "jet",
+        "index": 3221,
+        "owner": "ashbeast-roost-hold"
+      },
+      {
+        "x": 3220,
+        "y": 1168.3333333333333,
+        "kind": "jet",
+        "index": 3222,
+        "owner": "crown-field-barracks-hold"
+      },
+      {
+        "x": 3220,
+        "y": 1388.3333333333333,
+        "kind": "jet",
+        "index": 3223,
+        "owner": "crown-field-barracks-hold"
+      }
+    ]
+  },
+  {
+    "zone": "mine",
+    "lights": [
+      {
+        "id": "owner-occupied-light-mine-1:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-mine-1:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-mine-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-mine-1:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-mine-3:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-mine-0:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-mine-0:3",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-mine-1:3",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-mine-2:3",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-mine-3:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-mine-3:3",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "abyss",
+    "lights": [
+      {
+        "id": "owner-occupied-light-abyss-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-abyss-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-abyss-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-abyss-2:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-abyss-3:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-abyss-3:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-abyss-1:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-abyss-1:3",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-abyss-2:3",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-abyss-3:3",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-abyss-3:4",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "citadel",
+    "lights": [
+      {
+        "id": "owner-occupied-light-citadel-0:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-1:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-1:0",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-citadel-1:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-2:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-2:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-3:0",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-citadel-3:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-3:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-citadel-0:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-1:3",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-citadel-2:3",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-citadel-3:3",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "crypt",
+    "lights": [
+      {
+        "id": "owner-occupied-light-crypt-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-crypt-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-crypt-1:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-crypt-2:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-crypt-3:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-crypt-3:3",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "archive",
+    "lights": [
+      {
+        "id": "owner-occupied-light-archive-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-archive-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-archive-2:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-archive-3:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-archive-1:3",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-archive-3:3",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "side-vale-cellars",
+    "lights": [
+      {
+        "id": "owner-occupied-light-side-vale-cellars-0:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-vale-cellars-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-vale-cellars-2:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-vale-cellars-2:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-vale-cellars-1:2",
+        "status": "placed"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "side-march-watchhouse",
+    "lights": [
+      {
+        "id": "owner-occupied-light-side-march-watchhouse-0:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-march-watchhouse-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-march-watchhouse-2:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-march-watchhouse-2:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-march-watchhouse-1:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-march-watchhouse-2:2",
+        "status": "placed"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "side-highlands-signal",
+    "lights": [
+      {
+        "id": "owner-occupied-light-side-highlands-signal-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-highlands-signal-1:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-highlands-signal-2:0",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-highlands-signal-2:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-highlands-signal-1:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-highlands-signal-2:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-highlands-signal-1:0",
+        "status": "placed"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "side-frontier-shrine",
+    "lights": [
+      {
+        "id": "owner-occupied-light-side-frontier-shrine-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-frontier-shrine-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-frontier-shrine-2:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-frontier-shrine-2:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-frontier-shrine-1:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-frontier-shrine-2:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-frontier-shrine-1:0",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "side-crown-foundry",
+    "lights": [
+      {
+        "id": "owner-occupied-light-side-crown-foundry-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-crown-foundry-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-crown-foundry-2:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-crown-foundry-2:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-crown-foundry-1:2",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-side-crown-foundry-2:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-side-crown-foundry-1:0",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "supply-vale",
+    "lights": [
+      {
+        "id": "owner-occupied-light-supply-vale-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-supply-vale-1:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-vale-1:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-vale-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-vale-1:2",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "supply-march",
+    "lights": [
+      {
+        "id": "owner-occupied-light-supply-march-0:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-march-1:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-march-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-march-0:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-march-1:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-march-2:2",
+        "status": "existing"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "supply-highlands",
+    "lights": [
+      {
+        "id": "owner-occupied-light-supply-highlands-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-supply-highlands-1:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-highlands-1:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-highlands-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-highlands-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-supply-highlands-2:2",
+        "status": "placed"
+      }
+    ],
+    "defensiveTraps": []
+  },
+  {
+    "zone": "supply-crown",
+    "lights": [
+      {
+        "id": "owner-occupied-light-supply-crown-1:0",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-2:1",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-0:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-2:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-2:0",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-1:1",
+        "status": "existing"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-1:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-0:2",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-1:3",
+        "status": "placed"
+      },
+      {
+        "id": "owner-occupied-light-supply-crown-3:3",
+        "status": "placed"
+      }
+    ],
+    "defensiveTraps": []
+  }
+]

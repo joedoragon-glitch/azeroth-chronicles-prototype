@@ -15,13 +15,20 @@
   // or Succession until its real combat and charged forms are implemented.
   const classFoundations = Object.create(null);
   function defineClassFoundation(id, profile) {
-    if (typeof id !== 'string' || !/^[a-z][a-z0-9-]{1,31}$/.test(id) ||
-        Object.hasOwn(classFoundations, id) || Object.hasOwn(Object.prototype, id))
+    if (
+      typeof id !== 'string' ||
+      !/^[a-z][a-z0-9-]{1,31}$/.test(id) ||
+      Object.hasOwn(classFoundations, id) ||
+      Object.hasOwn(Object.prototype, id)
+    )
       throw Error('Invalid or duplicate hero class foundation');
     const { startingCompanions, formationRole } = profile || {};
-    if (!Array.isArray(startingCompanions) || startingCompanions.length > 4 ||
-        !startingCompanions.every((kind) => ['soldier', 'archer'].includes(kind)) ||
-        !['melee', 'ranged'].includes(formationRole))
+    if (
+      !Array.isArray(startingCompanions) ||
+      startingCompanions.length > 4 ||
+      !startingCompanions.every((kind) => ['soldier', 'archer'].includes(kind)) ||
+      !['melee', 'ranged'].includes(formationRole)
+    )
       throw Error('Incomplete hero class foundation');
     const saved = Object.freeze({
       startingCompanions: Object.freeze([...startingCompanions]),
@@ -31,13 +38,16 @@
     return saved;
   }
   defineClassFoundation('paladin', {
-    startingCompanions: ['soldier', 'archer'], formationRole: 'melee',
+    startingCompanions: ['soldier', 'archer'],
+    formationRole: 'melee',
   });
   defineClassFoundation('mage', {
-    startingCompanions: ['soldier', 'archer'], formationRole: 'ranged',
+    startingCompanions: ['soldier', 'archer'],
+    formationRole: 'ranged',
   });
   defineClassFoundation('ranger', {
-    startingCompanions: ['soldier', 'archer'], formationRole: 'ranged',
+    startingCompanions: ['soldier', 'archer'],
+    formationRole: 'ranged',
   });
   // Rogue's foundation exists in legacy headless fixtures before its
   // explicit admission; this alone grants no Charm, skills or class slot.
@@ -83,7 +93,10 @@
   ];
   class Campaign {
     constructor(mode = 'normal', heroClass = 'paladin', random = Math.random, options = {}) {
-      if (!['normal', 'nightmare', 'developer', 'arena'].includes(mode) || !Object.hasOwn(classes, heroClass))
+      if (
+        !['normal', 'nightmare', 'developer', 'arena'].includes(mode) ||
+        !Object.hasOwn(classes, heroClass)
+      )
         throw Error('Unknown mode or class');
       this.random = random;
       this.formationHeading = { x: 0, y: 1 };
@@ -102,7 +115,9 @@
         this.developerCombat = { incoming: [], outgoing: [], startedAt: 0 };
         // ID-bound, ephemeral diagnostics. Never copied into v4 saved state.
         this.developerCompanions = {
-          moves: new Map(), hits: new Map(), projectiles: new Map(),
+          moves: new Map(),
+          hits: new Map(),
+          projectiles: new Map(),
           sequence: 0,
         };
       }
@@ -386,27 +401,36 @@
     // Validation uses the saved individual identity (including legitimate
     // immutable preview copies), never a name or an arbitrary monster flag.
     isOwnedMonster(actor) {
-      return !!actor && !!this.s.party?.some((u) =>
-        u.id === actor.id && u.type === actor.type &&
-        (actor.type === 'pet'
-          ? u.petFamily === actor.petFamily
-          : u.charmOrigin?.sourceEnemyId === actor.charmOrigin?.sourceEnemyId &&
-            !!u.charmOrigin)) &&
+      return (
+        !!actor &&
+        !!this.s.party?.some(
+          (u) =>
+            u.id === actor.id &&
+            u.type === actor.type &&
+            (actor.type === 'pet'
+              ? u.petFamily === actor.petFamily
+              : u.charmOrigin?.sourceEnemyId === actor.charmOrigin?.sourceEnemyId &&
+                !!u.charmOrigin),
+        ) &&
         (actor.type === 'pet'
           ? !!this.petDefinition(actor) && this.petUnlocked(actor.petFamily)
-          : !!actor.charmOrigin && this.isCharmedCompanion(actor));
+          : !!actor.charmOrigin && this.isCharmedCompanion(actor))
+      );
     }
     // One authoritative, live monster-night profile. Allegiance does not
     // change a creature's biology. Hostiles use the default; owned boss pets
     // and lawful Charm captures read the same values, never copied constants.
     monsterNightBonuses(actor = null) {
-      const eligible = actor === null ||
-        (actor !== this.hero && (this.isOwnedMonster(actor) ||
-          ((!this.s.party?.some((u) => u.id === actor.id)) &&
-            (actor.type === 'mob' || actor.type === 'boss'))));
+      const eligible =
+        actor === null ||
+        (actor !== this.hero &&
+          (this.isOwnedMonster(actor) ||
+            (!this.s.party?.some((u) => u.id === actor.id) &&
+              (actor.type === 'mob' || actor.type === 'boss'))));
       if (!eligible || !this.night() || this.peace)
         return { hp: 1, damage: 1, tempo: 1, skillBlock: 0 };
-      const n = this.nightPoints(), cfg = R.balance.nightTempo;
+      const n = this.nightPoints(),
+        cfg = R.balance.nightTempo;
       return {
         hp: 1.1 + 0.03 * n,
         damage: 1.15 + 0.02 * n,
@@ -420,9 +444,10 @@
     // after recruitment/Charm. HP adjusts by the change in maximum, preserving
     // existing wounds and fallen status. Never save a separate night flag.
     syncMonsterNightStats(unit = null) {
-      for (const u of unit ? [unit] : (this.s.party || [])) {
+      for (const u of unit ? [unit] : this.s.party || []) {
         if (!this.isOwnedMonster(u)) continue;
-        const next = this.companionMaxHp(u), gain = next - u.maxHp;
+        const next = this.companionMaxHp(u),
+          gain = next - u.maxHp;
         if (!gain) continue;
         u.maxHp = next;
         if (u.hp > 0) u.hp = Math.max(1, Math.min(next, u.hp + gain));
@@ -2201,14 +2226,19 @@
       const d = this.developerCompanions;
       if (!d) return null;
       const list = d.moves.get(source) || [];
-      const move = { id: ++d.sequence, time: this.s.time, label,
-        damage: 0, pending: 0, resolved: true };
+      const move = {
+        id: ++d.sequence,
+        time: this.s.time,
+        label,
+        damage: 0,
+        pending: 0,
+        resolved: true,
+      };
       list.push(move);
       while (list.length > 48) {
         // An orphaned projectile must not retain a permanent history.
         const old = list.shift();
-        for (const [pid, entry] of d.projectiles)
-          if (entry.move === old) d.projectiles.delete(pid);
+        for (const [pid, entry] of d.projectiles) if (entry.move === old) d.projectiles.delete(pid);
       }
       d.moves.set(source, list);
       return move;
@@ -2227,7 +2257,8 @@
       if (this.s.mode !== 'developer') return null;
       const previous = this._developerCompanionDirectMove || null;
       this._developerCompanionDirectMove = {
-        source: unit.id, move: this.developerCompanionNewMove(unit.id, label),
+        source: unit.id,
+        move: this.developerCompanionNewMove(unit.id, label),
       };
       return previous;
     }
@@ -2237,8 +2268,7 @@
     // Observe the actual melee release even if a legal attempt removes no HP.
     // Its damage, RNG and normal-mode behavior still belong to Campaign.damage.
     developerCompanionDamage(unit, label, target, amount, options = null) {
-      if (this.s.mode !== 'developer')
-        return this.damage(target, amount, unit.id, options);
+      if (this.s.mode !== 'developer') return this.damage(target, amount, unit.id, options);
       const previous = this.developerCompanionBeginDirect(unit, label);
       try {
         return this.damage(target, amount, unit.id, options);
@@ -2247,14 +2277,21 @@
       }
     }
     recordDeveloperCompanionDamage(source, amount) {
-      if (this.s.mode !== 'developer' || !(amount > 0) ||
-          !this.s.party.some((u) => u.id === source)) return;
+      if (
+        this.s.mode !== 'developer' ||
+        !(amount > 0) ||
+        !this.s.party.some((u) => u.id === source)
+      )
+        return;
       const d = this.developerCompanions;
       const mapped = d.projectiles.get(this._developerCompanionProjectileInFlight);
       const direct = this._developerCompanionDirectMove;
-      const move = mapped?.source === source ? mapped.move
-        : direct?.source === source ? direct.move
-          : this.developerCompanionNewMove(source, 'Basic attack');
+      const move =
+        mapped?.source === source
+          ? mapped.move
+          : direct?.source === source
+            ? direct.move
+            : this.developerCompanionNewMove(source, 'Basic attack');
       if (!move) return;
       move.damage += amount;
       const hits = d.hits.get(source) || [];
@@ -2272,11 +2309,17 @@
     }
     developerCompanionSnapshot() {
       if (this.s.mode !== 'developer') return null;
-      const d = this.developerCompanions, now = this.s.time,
-        available = this.s.party.filter((u) => u.active !== false &&
-          u.hp > 0 && !u.expeditionId && ['soldier','archer','pet'].includes(u.type) &&
-          (!u.charmOrigin || this.isCharmedCompanion(u)) &&
-          (u.type !== 'pet' || this.petUnlocked(u.petFamily))),
+      const d = this.developerCompanions,
+        now = this.s.time,
+        available = this.s.party.filter(
+          (u) =>
+            u.active !== false &&
+            u.hp > 0 &&
+            !u.expeditionId &&
+            ['soldier', 'archer', 'pet'].includes(u.type) &&
+            (!u.charmOrigin || this.isCharmedCompanion(u)) &&
+            (u.type !== 'pet' || this.petUnlocked(u.petFamily)),
+        ),
         eligible = new Set(available.map((u) => u.id)),
         flying = new Set(this.s.projectiles.map((p) => p.id));
       // Missed, expired or cancelled shots resolve with zero damage. A shared
@@ -2289,18 +2332,23 @@
       }
       for (const id of d.moves.keys()) if (!eligible.has(id)) d.moves.delete(id);
       for (const [id, hits] of d.hits) {
-        if (!eligible.has(id)) { d.hits.delete(id); continue; }
+        if (!eligible.has(id)) {
+          d.hits.delete(id);
+          continue;
+        }
         while (hits.length && hits[0].time < now - 5) hits.shift();
       }
-      const elapsed = Math.min(5,
-        Math.max(1, now - this.developerCombat.startedAt));
+      const elapsed = Math.min(5, Math.max(1, now - this.developerCombat.startedAt));
       return available.map((u) => ({
-        id: u.id, name: this.companionDisplayName(u),
+        id: u.id,
+        name: this.companionDisplayName(u),
         type: u.type === 'pet' ? 'Pet' : u.charmOrigin ? 'Charmed' : 'Companion',
-        last: (d.moves.get(u.id) || []).filter((m) => m.resolved).slice(-3)
-          .reverse().map((m) => ({ name: m.label, damage: m.damage })),
-        dps: (d.hits.get(u.id) || [])
-          .reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
+        last: (d.moves.get(u.id) || [])
+          .filter((m) => m.resolved)
+          .slice(-3)
+          .reverse()
+          .map((m) => ({ name: m.label, damage: m.damage })),
+        dps: (d.hits.get(u.id) || []).reduce((sum, hit) => sum + hit.damage, 0) / elapsed,
       }));
     }
     developerCombatSnapshot() {
@@ -2354,26 +2402,25 @@
           .sort((a, b) => dist(this.hero, a) - dist(this.hero, b) || this.idOrder(a, b))
           .slice(0, 8);
       } else {
-        const selected = targetId == null
-          ? this.selectedHeroTarget()
-          : zone.enemies.find((enemy) => enemy.id === targetId);
-        const nearest = targetId == null && !selected
-          ? zone.enemies
-              .filter((enemy) => eligible(enemy, 680))
-              .sort((a, b) => dist(this.hero, a) - dist(this.hero, b) || this.idOrder(a, b))[0]
-          : null;
+        const selected =
+          targetId == null
+            ? this.selectedHeroTarget()
+            : zone.enemies.find((enemy) => enemy.id === targetId);
+        const nearest =
+          targetId == null && !selected
+            ? zone.enemies
+                .filter((enemy) => eligible(enemy, 680))
+                .sort((a, b) => dist(this.hero, a) - dist(this.hero, b) || this.idOrder(a, b))[0]
+            : null;
         const target = selected || nearest;
         targets = target && eligible(target, 680) ? [target] : [];
       }
       for (const enemy of targets) {
         // Piercing removes defensive multipliers, not walls, retreat/reset
         // protection, target validity or the normal death/reward lifecycle.
-        const hit = this.damage(
-          enemy,
-          Math.max(1e9, enemy.maxHp * 10000),
-          'hero',
-          { piercing: true },
-        );
+        const hit = this.damage(enemy, Math.max(1e9, enemy.maxHp * 10000), 'hero', {
+          piercing: true,
+        });
         if (hit) result.hits++;
         if (hit && enemy.hp === 0) result.kills++;
       }
@@ -4518,12 +4565,14 @@
       const idleHealRecovery = this.alliedHealCooldownRecoveryMultiplier();
       // Only active, lawful Heal casters receive the idle bonus. A Soldier's
       // dormant healCd (or any other non-healer's) keeps native Slow recovery.
-      const idleHealers = idleHealRecovery > 1
-        ? new Set(this.healCompanionCasters()) : null;
+      const idleHealers = idleHealRecovery > 1 ? new Set(this.healCompanionCasters()) : null;
       for (const u of this.s.party) {
         const recovery = this.cooldownRecoveryElapsed(u, dt);
-        if (!u.keeperHeld) u.healCd = Math.max(0, (u.healCd || 0) -
-          recovery * (idleHealers?.has(u) ? idleHealRecovery : 1));
+        if (!u.keeperHeld)
+          u.healCd = Math.max(
+            0,
+            (u.healCd || 0) - recovery * (idleHealers?.has(u) ? idleHealRecovery : 1),
+          );
         u.manaCd = Math.max(0, (u.manaCd || 0) - recovery);
         u.survivalCd = Math.max(0, (u.survivalCd || 0) - recovery);
         u.immune = Math.max(0, (u.immune || 0) - dt);
@@ -4591,13 +4640,15 @@
           if (Number.isFinite(target.x) && Number.isFinite(target.y) && !target.neutral) {
             if (dist(h, target) > 25)
               this.follow(
-                h, target,
+                h,
+                target,
                 this.heroMoveSpeed() *
                   (h.haste > 0 ? 1.25 : 1) *
                   this.slowMovementFactor(h) *
                   this.mireBogMovementFactor(h) *
                   this.ashMovementFactor(h),
-                dt, 20,
+                dt,
+                20,
               );
             else h.order = null;
           } else h.order = null;
@@ -4735,7 +4786,14 @@
         return true;
       }
       if (
-        !this.follow(e, target, (profile.patrolSpeed || 82) * this.mountedMovementFactor(e), dt, 20, 'captain-patrol')
+        !this.follow(
+          e,
+          target,
+          (profile.patrolSpeed || 82) * this.mountedMovementFactor(e),
+          dt,
+          20,
+          'captain-patrol',
+        )
       ) {
         e.captainPatrolIndex = (index + 1) % patrol.length;
         e.captainPatrolWait = 0.5;
@@ -6760,7 +6818,8 @@
               ),
               0,
               e.family === 'cindermaw' ? e.id : undefined,
-              false, { shape: 'area', criticalExecution: criticalReceipt },
+              false,
+              { shape: 'area', criticalExecution: criticalReceipt },
             );
             if (
               this.hero !== hero ||
@@ -6807,7 +6866,8 @@
               ),
               0,
               e.id,
-              false, {
+              false,
+              {
                 shape: move.mobileRogueCast ? 'single' : 'area',
                 criticalExecution: criticalReceipt,
               },
@@ -6891,7 +6951,8 @@
             ),
             0,
             e.family === 'cindermaw' ? e.id : undefined,
-            false, { shape: 'area', criticalExecution: criticalReceipt },
+            false,
+            { shape: 'area', criticalExecution: criticalReceipt },
           )
         )
           continue;
@@ -7647,8 +7708,10 @@
               // ranged shot launches; collision, dodges and armor stay native.
               const criticalReceipt = this.worldCriticalRelease(e, 'ranged');
               const style = e.projectileStyle || 'arrow';
-              const stonePace = e.species === 'goblin' && style === 'stone'
-                ? R.balance.goblinSlingerProjectileSpeedMultiplier : 1;
+              const stonePace =
+                e.species === 'goblin' && style === 'stone'
+                  ? R.balance.goblinSlingerProjectileSpeedMultiplier
+                  : 1;
               const shot = {
                 id: 'projectile-' + this.s.nextId++,
                 x: e.x,
@@ -7898,13 +7961,18 @@
           // The original one-second anti-kiting reset still wins immediately.
           // Capture the source of a visible home snap for paint-only feedback;
           // never create a movement path, extend the reset or change protection.
-          const fromX = e.x, fromY = e.y,
+          const fromX = e.x,
+            fromY = e.y,
             visibleSnap = dist(e, e.home) > 28;
           Object.assign(e, e.home);
           if (visibleSnap)
             this.effects.push({
-              type: 'resetArrival', zone: this.zoneId,
-              x: e.x, y: e.y, fromX, fromY,
+              type: 'resetArrival',
+              zone: this.zoneId,
+              x: e.x,
+              y: e.y,
+              fromX,
+              fromY,
             });
         }
         this.finishDisengage(e);
@@ -8231,8 +8299,7 @@
         retain(u.owner);
         // A discarded pre-modern hero attack order cannot pin dead enemies
         // in memory. Only actual deliberate skill approach owns a hero ID.
-        if (u !== this.hero || u.order?.type === 'skill-approach')
-          retain(u.order?.id);
+        if (u !== this.hero || u.order?.type === 'skill-approach') retain(u.order?.id);
         retain(u.targetId);
         retain(u.supportHeal?.source);
         retain(u.telegraph?.targetId);
@@ -8406,6 +8473,14 @@
                   miniId: m.id,
                 }));
               });
+      if (!side && !dungeon) {
+        for (const trap of z.ownerDefensiveTraps || []) {
+          // Defenses stop when this native garrison is defeated; no reward or
+          // unrelated field-mini clear flag is attached to the new traps.
+          const residents = z.enemies.filter((e) => e.stronghold === trap.owner && !e.summon);
+          if (residents.some((e) => e.hp > 0)) posts.push(trap);
+        }
+      }
       return posts.map(({ x, y, kind, index, miniId }) => {
         const p = this.safe(x, y),
           cycleLength = tune?.cycle || 8,
@@ -8662,17 +8737,25 @@
     if (!classFoundations[id]) issues.push('missing foundation');
     if (Object.hasOwn(classes, id)) issues.push('already playable');
     const fields = definition && typeof definition === 'object' ? definition : {};
-    if (typeof fields.icon !== 'string' || !fields.icon.trim())
-      issues.push('missing class icon');
+    if (typeof fields.icon !== 'string' || !fields.icon.trim()) issues.push('missing class icon');
     const stats = fields.stats;
-    if (!stats || typeof stats !== 'object' ||
-        !['hp', 'mp', 'power', 'armor', 'speed'].every((key) =>
-          Number.isFinite(stats[key]) && stats[key] >= (key === 'mp' || key === 'armor' ? 0 : 1)))
+    if (
+      !stats ||
+      typeof stats !== 'object' ||
+      !['hp', 'mp', 'power', 'armor', 'speed'].every(
+        (key) =>
+          Number.isFinite(stats[key]) && stats[key] >= (key === 'mp' || key === 'armor' ? 0 : 1),
+      )
+    )
       issues.push('missing class stats');
     const talents = fields.talents;
-    if (!talents || typeof talents !== 'object' ||
-        !['power', 'mana', 'hp', 'speed'].every((key) =>
-          Number.isFinite(talents[key]) && talents[key] > 0))
+    if (
+      !talents ||
+      typeof talents !== 'object' ||
+      !['power', 'mana', 'hp', 'speed'].every(
+        (key) => Number.isFinite(talents[key]) && talents[key] > 0,
+      )
+    )
       issues.push('missing discipline growth');
     if (!Campaign.heroCombatSupports?.(id)) issues.push('missing authored combat owner');
     // Rogue's first charged performance has a separate authored cooldown.
