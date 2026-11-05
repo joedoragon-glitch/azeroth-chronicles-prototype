@@ -38,7 +38,11 @@ for (const language of ['en', 'es']) {
   const nameField = elements.get('modal-actions').children.at(-1);
   assert(nameField.className === 'character-name-field',
     'optional name input follows the four hero cards');
-  button(elements, es ? 'Paladín' : 'Paladin').click();
+  const paladin = elements.get('modal-actions').children.find(
+    (entry) => entry.textContent.includes(es ? 'Paladín' : 'Paladin') && !entry.disabled,
+  );
+  assert(paladin, 'first hero class remains available');
+  paladin.click();
   assert.equal(scope.Prototype.game.s.challenge.succession, true);
   assert.equal(scope.Prototype.game.s.mode, 'normal');
   assert(storage.has('azeroth-v4-normal'), 'the same compatible save slot is used');
