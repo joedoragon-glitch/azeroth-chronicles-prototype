@@ -329,7 +329,7 @@ try {
     // v3.2 Water charge: genuine facing-ground Trace, NOT group Slow cleanse.
     const { g, primary, events } = make(0);
     const well = { id: 'live-well', structure: 'well',
-      x: 515, y: 525, r: 15 };
+      x: 470, y: 560, r: 15 };
     g.zone().props = [well];
     g.formationHeading = { x: 1, y: 0 };
     const soldier = g.s.party.find(u => u.type === 'soldier');
@@ -392,7 +392,7 @@ try {
     // One expressly selected owned Water Trace converts instead of a clinch.
     const { g, primary, events } = make(0);
     const well = { id: 'well', structure: 'well',
-      x: 510, y: 525, r: 12 };
+      x: 470, y: 560, r: 12 };
     const fire = { id: 'campfire', structure: 'campfire',
       x: 530, y: 525, r: 12, lit: true };
     g.zone().props = [well, fire];
