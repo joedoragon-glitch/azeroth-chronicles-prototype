@@ -1,4 +1,4 @@
-> **Candidato de menús, PR #800 — sin publicar:** La nueva ruta es Nueva partida → Nueva aventura (Normal y recuperación estándar por defecto, Sucesión opcional) → Elegir héroe. Se mantienen las cuatro clases, el nombre opcional y la confirmación antes de reemplazar una partida. Ayuda agrupa primeros pasos, combate, partidas, problemas y créditos; las herramientas técnicas quedan dentro de Problemas. Este candidato sigue en pruebas y no está incluido en el dev.255 publicado ni verificado en el iPhone Air.
+> **Actualización de menús, PR #800 — integrada y publicada:** La nueva ruta es Nueva partida → Nueva aventura (Normal y recuperación estándar por defecto, Sucesión opcional) → Elegir héroe. Se mantienen las cuatro clases, el nombre opcional y la confirmación antes de reemplazar una partida. Ayuda agrupa primeros pasos, combate, partidas, problemas y créditos; las herramientas técnicas quedan dentro de Problemas. La integración, las pruebas automatizadas y la publicación están verificadas; la aceptación física en el iPhone Air sigue pendiente. Consulta el estado de publicación en docs/DEVELOPMENT_STATE.md.
 
 # Guía del juego en español
 

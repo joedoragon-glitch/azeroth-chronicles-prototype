@@ -6,7 +6,7 @@ An original, offline-capable fantasy RPG about becoming a serious inconvenience 
 
 The playable Community Snapshot is still receiving updates. **For the current code/build version and verified Pages publication, see [Development state](docs/DEVELOPMENT_STATE.md).** Rogue/Pícara is the fourth playable class. For the latest *verified* publication, open issues, and device-testing limits, see [Development state](docs/DEVELOPMENT_STATE.md). A published update does not automatically mean an installed browser/PWA has loaded it.
 
-**Unpublished menu redesign candidate — [PR #800](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/800):** Engineering is developing an icon-led, easier-to-read landscape menu experience. The candidate adds a **New Game → New Adventure setup (Normal/Standard by default, optional Succession) → Choose Hero** path; groups Saved Games, Help and advanced diagnostics; and unifies the original crown icon's purple/gold colors. This is **draft source work, not the published dev.255 phone game**, and the actual iPhone Air acceptance remains open. The released menu instructions below continue to describe dev.255 until a new release is verified. See the [design and engineering contract](docs/MENU_STAGE4_ICON_LED_GAME_DESIGN_20261104.md).
+**Icon-led menu update — [PR #800](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/800), merged and published:** Menus use the crown icon’s violet/gold palette and larger landscape text. Start with **New Game → New Adventure** (Normal/Standard defaults, optional Succession), then **Choose Hero**. Saved Games, Help and advanced diagnostics are grouped by purpose. Physical iPhone Air acceptance remains open. See the [design contract](docs/MENU_STAGE4_ICON_LED_GAME_DESIGN_20261104.md) and [verified release status](docs/DEVELOPMENT_STATE.md).
 
 **Jump to:** [Play](#play) · [The game](#the-game) · [Controls](#controls) · [Saves and updates](#saves-updates-and-diagnostics) · [Graphics and audio](#graphics-and-audio) · [Development](#development) · [Documentation](#project-documentation)
 
@@ -16,7 +16,7 @@ Use the **[browser / Chromebook game](https://joedoragon-glitch.github.io/azerot
 
 On the title screen:
 
-1. Choose **New Game** and select **Paladin, Mage, Ranger, or Rogue**. Normal and Nightmare have separate saves; Nightmare unlocks after the peaceful ending.
+1. Choose **New Game**, review **New Adventure**, then **Choose Hero** and select **Paladin, Mage, Ranger, or Rogue**. Normal and Nightmare have separate saves; Nightmare unlocks after the peaceful ending.
 2. Use **Continue Adventure** to resume an eligible saved game. **Saved Games & Backups** provides recovery and file import/export.
 3. During play, open **Adventure → Quest journal** for the story, **Map and travel routes** for destinations, and **Hero skills** for your class's actions and training information.
 
