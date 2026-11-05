@@ -1,3 +1,5 @@
+> **5 November 2026 — Real browser preview requested:** Active integration and visual review [PR #823](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/823). The earlier candidate passed focused tests; this branch includes the current-main lighting/rendering reconciliation and targeted Canvas/Pixi 150% screenshots for Millhaven's intersections and both crossings. The game owner explicitly reserves final aesthetic acceptance for personal playtesting after integration. Do not call software-browser evidence a physical-device verification.
+
 ## Independent game-design QA — second pass, 5 November 2026
 
 **Status: candidate corrected, visual acceptance NOT YET established.** This is a game-design re-audit of engineering geometry, **not** an in-game or physical-device capture. The owner-provided before-images remain the visual problem reference.
@@ -15,7 +17,7 @@
 
 ---
 
-> **Engineering phase authorized by the owner, 5 November 2026.** This design is the artistic acceptance contract for [separate implementation draft #815](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/822). Its original design-only completion/handoff notes below are historical; engineering can adjust provisional numerical width targets only when actual movement, visual and saved-game evidence requires it. Do not interpret a draft as verified, merged, published or approved artwork.
+> **Engineering phase authorized by the owner, 5 November 2026.** This design is the artistic acceptance contract for [separate implementation draft #815](https://github.com/joedoragon-glitch/azeroth-chronicles-prototype/pull/823). Its original design-only completion/handoff notes below are historical; engineering can adjust provisional numerical width targets only when actual movement, visual and saved-game evidence requires it. Do not interpret a draft as verified, merged, published or approved artwork.
 
 # Greenwood Vale — roads, junctions and bridges: complete game-design specification
 
