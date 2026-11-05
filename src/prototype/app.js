@@ -3404,7 +3404,8 @@
     field.value = initialValue;
     field.placeholder = language === 'es' ? 'Déjalo vacío para decidir después' : 'Leave blank to decide later';
     label.append(field);
-    $('modal-actions').append(label);
+    if (menu?.view === 'class-select') $('modal-actions').append(label);
+    else $('modal-actions').prepend(label);
     return field;
   }
   function requestName({
@@ -4333,10 +4334,10 @@
                 'Versión y desarrollo',
                 'Installed build: ' +
                   PrototypeBuild.version +
-                  '\\n\\nVersion 0.9.2 is the current functional-completion goal, not a promise that future features are already installed or that publication has a fixed date.',
+                  '\n\nVersion 0.9.2 is the current functional-completion goal, not a promise that future features are already installed or that publication has a fixed date.',
                 'Versión instalada: ' +
                   PrototypeBuild.version +
-                  '\\n\\nLa versión 0.9.2 es el objetivo actual de completar funciones esenciales; no significa que otras funciones ya estén instaladas ni que exista una fecha de publicación prometida.',
+                  '\n\nLa versión 0.9.2 es el objetivo actual de completar funciones esenciales; no significa que otras funciones ya estén instaladas ni que exista una fecha de publicación prometida.',
                 about,
               ),
           ),
@@ -4389,8 +4390,8 @@
             read(
               'Quick Start',
               'Primeros pasos',
-              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\\n\\nOn a phone, move with the joystick or tap reachable ground. Visit the Adventure menu for the map and quests. You can change touch and keyboard controls in Settings.',
-              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\\n\\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
+              'The Dark Lord has captured the specialists who teach skills, forge equipment and help adventurers grow. Choose a hero and explore Greenwood Vale. Follow the Quest journal to find routes, rescue specialists and build your party.\n\nOn a phone, move with the joystick or tap reachable ground. Visit the Adventure menu for the map and quests. You can change touch and keyboard controls in Settings.',
+              'El Señor Oscuro ha capturado a los especialistas que enseñan habilidades, forjan equipo y ayudan a los aventureros. Elige un héroe y explora el Valle de Greenwood. Sigue el Diario de misiones, rescata especialistas y reúne compañeros.\n\nEn el teléfono, usa la palanca o toca terreno accesible. El menú Aventura ofrece el mapa y las misiones. Puedes ajustar los controles táctiles y las teclas en Ajustes.',
             ),
           'Your goal and first steps.',
           'Tu objetivo y tus primeros pasos.',
@@ -4402,8 +4403,8 @@
             read(
               'Combat & companions',
               'Combate y compañeros',
-              'Tap a skill for its normal form; hold and release to use its charged form. Target changes or locks an enemy. Recall brings companions back. Basic attacks can happen automatically, separately from the other skill buttons.\\n\\nThe Skill journal explains learned abilities and the Adventure menu opens your quests, map and character.',
-              'Toca una habilidad para usarla normalmente; mantén y suelta para usar la versión cargada. Objetivo cambia o fija un enemigo. Reagrupar hace volver a los compañeros. Los ataques básicos pueden ejecutarse automáticamente, aparte de los otros botones.\\n\\nEl Diario de habilidades explica las técnicas aprendidas, y el menú Aventura permite abrir misiones, mapa y personaje.',
+              'Tap a skill for its normal form; hold and release to use its charged form. Target changes or locks an enemy. Recall brings companions back. Basic attacks can happen automatically, separately from the other skill buttons.\n\nThe Skill journal explains learned abilities and the Adventure menu opens your quests, map and character.',
+              'Toca una habilidad para usarla normalmente; mantén y suelta para usar la versión cargada. Objetivo cambia o fija un enemigo. Reagrupar hace volver a los compañeros. Los ataques básicos pueden ejecutarse automáticamente, aparte de los otros botones.\n\nEl Diario de habilidades explica las técnicas aprendidas, y el menú Aventura permite abrir misiones, mapa y personaje.',
             ),
           'Movement, skills, targeting and party.',
           'Movimiento, habilidades, objetivo y grupo.',
@@ -4415,8 +4416,8 @@
             read(
               'Saved games & updates',
               'Partidas y actualizaciones',
-              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\\n\\nThe game checks for updates when it starts and can run offline from its installed cache. Ready updates can be offered during play instead of interrupting it.',
-              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\\n\\nEl juego busca actualizaciones al iniciar y puede ejecutarse sin conexión desde la copia instalada. Las actualizaciones listas pueden ofrecerse durante el juego sin interrumpirlo.',
+              'Normal and Nightmare have separate saves stored in this browser. Saved Games & Backups on the Main Menu lets you export, import or recover them. Keep an exported backup outside the browser: clearing site data, reinstalling or losing the device can remove local saves.\n\nThe game checks for updates when it starts and can run offline from its installed cache. Ready updates can be offered during play instead of interrupting it.',
+              'Normal y Pesadilla guardan partidas distintas en este navegador. Partidas y copias de seguridad, en el menú principal, permite exportarlas, importarlas o recuperarlas. Conserva una copia fuera del navegador: borrar los datos, reinstalar o perder el dispositivo puede eliminar las partidas.\n\nEl juego busca actualizaciones al iniciar y puede ejecutarse sin conexión desde la copia instalada. Las actualizaciones listas pueden ofrecerse durante el juego sin interrumpirlo.',
             ),
           'Local saves, backups and offline play.',
           'Partidas locales, copias y juego sin conexión.',
@@ -4681,6 +4682,8 @@
       newGameMenu(mode);
       return;
     }
+    newAdventureMode = mode;
+    newAdventureSuccession = !!succession;
     openMenu(
       'New ' +
         (mode === 'nightmare' ? 'Nightmare' : mode === 'developer' ? 'Developer' : mode === 'arena' ? 'Combat Diagnostics' : 'Normal') +
