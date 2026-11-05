@@ -207,11 +207,18 @@ for (const region of regions) {
       }
     });
   }
-  assert.equal(
-    connected.size,
-    network.length,
-    region.id + ' every road belongs to the town-connected network',
-  );
+  // With the southern pedestrian route repaired, all 17 Greenwood routes
+  // connect to town, including the additional short freight-depot apron.
+  assert.equal(connected.size, network.length,
+    region.id + ' every authored road/footpath joins the town-connected network');
+  if (authoredVale) {
+    const cfg = Campaign.rules.greenwoodLayout;
+    const apron = network.find((road) => road.length === 2 &&
+      distance(road[0], { x: 2500 * cfg.scale, y: 2660 * cfg.scale }) < 1 &&
+      distance(road.at(-1), cfg.anchors.cache) < 1);
+    assert(apron, 'retain the real short freight-depot apron');
+    assert(connected.has(network.indexOf(apron)), 'freight apron joins the town road network');
+  }
   for (const road of network) {
     assert(road.length > 1, region.id + ' has no empty streets');
     for (let j = 1; j < road.length; j++) {

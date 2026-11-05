@@ -3591,6 +3591,9 @@
           ) {
             this.syncThornArrival(z);
             this.setSceneryTraversal(z);
+            // Restore the final road footprint before either countryside overlay
+            // positions scenery; no scene-5 regeneration or unrelated map changes.
+            this.greenwoodRoadBridgeFinish?.(z);
             this.greenwoodRefinementScene?.(z);
             this.greenwoodCompositionFinish?.(z);
             this.greenwoodTrailLabels?.(z);

@@ -221,9 +221,14 @@
       }
     const b = R.barriers[0];
     b.bounds = [1500 * scale, 1800 * scale, 0, size];
+    // The actual v2 authored river gaps ARE the walkable bridge widths.
+    // Deck painting and pathfinding share this table: no invisible water floor.
+    // Retain the compact south footbridge. Native pathfinding cells are
+    // centered at 25 + 50*n, NOT at 50*n; the legal crossing row is at
+    // y=2275 in the 3200-unit Vale. Tests verify both actual grid and routes.
     b.gaps = [
-      [a.north.y - 90, a.north.y + 90],
-      [a.south.y - 65, a.south.y + 65],
+      [a.north.y - 50, a.north.y + 50],
+      [a.south.y - 28, a.south.y + 28],
     ];
     const pond = ellipse(a.pond.x, a.pond.y, 140, 120),
       headrace = [
@@ -467,7 +472,9 @@
         // Road/bridge topology and physical deck spans are independently
         // owned by the dedicated Greenwood infrastructure PR #824.
         // This scenery pass observes routes but never edits their geometry.
-        if (z.greenwoodRoutes?.length !== 16) return;
+        // Earlier scene-5 v4 saves have 16 corridors; the merged freight-depot
+        // work adds one deliberately off-road apron without replacing any of them.
+        if (![16, 17].includes(z.greenwoodRoutes?.length)) return;
         const change = (id, expected, target, detail = {}) => {
           const p = z.props.find((item) => item.id === id);
           if (!p || p.structure !== expected || p.owned || p.playerOwned || p.custom) {
@@ -660,6 +667,106 @@
         } finally {
           this.s.zone = previous;
         }
+      }
+      // Independent route/bridge version: existing v4 saves must never replay
+      // greenwoodRedesignFinish's destructive scenery and placement passes.
+      greenwoodRoadBridgeFinish(z) {
+        const cfg = R.greenwoodLayout;
+        if (
+          z.id !== 'vale' ||
+          cfg?.version !== 2 ||
+          z.greenwoodRedesignScene !== cfg.sceneVersion ||
+          z.greenwoodRoadBridgeVersion === 1
+        )
+          return;
+        const scale = cfg.scale;
+        // R07's eastern bank path must leave the south bridge straight before
+        // turning toward Skeleton Watch. R08 must not double-paint 200 units
+        // of the main cart line before reaching its own Treasury junction.
+        // Find the old geometry itself, not its position in the route array.
+        // The freight-depot apron added on main changes those positions; old
+        // scene-5 v4 saves can legitimately have either 16 or 17 corridors.
+        const replacePoints = (expected, newPoints) => {
+          const matches = (p, x, y) =>
+            Number.isFinite(p?.x) && Number.isFinite(p?.y) &&
+            Math.abs(p.x - x * scale) < 0.01 &&
+            Math.abs(p.y - y * scale) < 0.01;
+          const matchesOld = (points) =>
+            expected.every(([j, x, y]) => matches(points?.[j], x, y));
+          const route = z.greenwoodRoutes?.find((r) => r.kind === 'path' && matchesOld(r.points));
+          const pathIndex = z.footpaths?.findIndex(matchesOld) ?? -1;
+          if (!route || pathIndex < 0) return false;
+          const points = newPoints.map(([x, y]) => ({ x: x * scale, y: y * scale }));
+          z.footpaths[pathIndex] = points;
+          route.points = points;
+          return true;
+        };
+        // The farm cart lane ends on solid ground just before the south
+        // crossing. A short pedestrian approach takes over from there: carts
+        // should not visually continue across this deliberately timber footbridge.
+        const farm = z.roads?.[1];
+        if (
+          farm?.length === 7 &&
+          Math.abs(farm.at(-1).x - 1740 * scale) < 0.01 &&
+          Math.abs(farm.at(-1).y - 2280 * scale) < 0.01
+        ) {
+          const adjusted = [...farm.slice(0, -1), { x: 1560 * scale, y: 2280 * scale }];
+          z.roads[1] = adjusted;
+          if (z.greenwoodRoutes?.[1]?.kind === 'farm')
+            z.greenwoodRoutes[1].points = adjusted;
+        }
+        replacePoints(
+          [[0, 1740, 2280], [1, 2150, 2350]],
+          [[1560, 2280], [1740, 2280], [1950, 2280], [2150, 2350], [2300, 2220], [2670, 2220]],
+        );
+        replacePoints(
+          [[0, 2070, 1000], [1, 1870, 1000]],
+          [[1870, 1000], [1870, 1250], [2120, 1250]],
+        );
+        z.greenwoodRoadKinds = z.greenwoodRoutes
+          ?.filter((r) => r.kind !== 'path')
+          .map((r) => r.kind) || ['cart', 'farm', 'farm', 'farm'];
+
+        // Crossing width metadata, collision gap and illustrated deck now
+        // describe one physical width. Existing art IDs and discoveries stay.
+        if (Array.isArray(z.bridgeApproaches))
+          z.bridgeApproaches.forEach((bridge, j) => {
+            bridge.width = j === 0 ? 100 : 56;
+          });
+
+        // A save can place a traveling actor near the *old* broad bridge
+        // edge. Move only an actor stranded by the newly narrower water gap,
+        // into the same crossing at its centerline; do not teleport residents,
+        // loot, work orders, or owned buildings across the river.
+        const affected = [];
+        const gaps = R.barriers[0].gaps;
+        const actors = [
+          ...z.enemies.filter((p) => p.hp > 0),
+          ...(this.s.zone === 'vale' ? [this.hero, ...this.s.party] : []),
+        ];
+        for (const p of actors) {
+          if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+          for (const [lo, hi] of gaps) {
+            const center = (lo + hi) / 2;
+            const [left, right] = riverBanks(center, cfg.size);
+            if (
+              Math.abs(p.y - center) > 90 ||
+              p.x < left - 18 ||
+              p.x > right + 18 ||
+              !this.blocked(p.x, p.y, 'vale', p.r || 12, true)
+            )
+              continue;
+            if (!this.blocked(p.x, center, 'vale', p.r || 12, true)) {
+              p.y = center;
+              for (const key of ['path', 'pathTarget', 'idleWanderTarget'])
+                delete p[key];
+              affected.push(p.id || 'hero');
+            }
+            break;
+          }
+        }
+        z.greenwoodRoadBridgeAudit = { snappedActors: affected };
+        z.greenwoodRoadBridgeVersion = 1;
       }
       greenwoodRedesignFinish(z) {
         const cfg = R.greenwoodLayout;
@@ -1265,6 +1372,10 @@
                 Object.assign(p, this.safe(p.x, p.y, 'vale'));
           const witness = z.npcs.find((n) => n.id === 'thorn-local-report');
           if (witness) Object.assign(witness, this.safe(850 * s, 750 * s, 'vale'));
+          // Shape authored routes and bridge corridors before positioning
+          // homestead and botanical overlays against their final road footprint.
+          // The method's own version guard keeps restore idempotent.
+          this.greenwoodRoadBridgeFinish(z);
           this.greenwoodRefinementScene(z);
           this.greenwoodCompositionFinish(z);
         } finally {
@@ -2060,56 +2171,203 @@
     }
     ctx.restore();
   }
-  function drawRoads(ctx, paths, screen) {
-    const poly = (points, color) => {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      points.map(screen).forEach((p, j) => (j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
-      ctx.closePath();
-      ctx.fill();
-    };
-    for (const [index, path] of paths.entries()) {
-      const width = index === 0 ? 31 : 17,
-        base = index === 0 ? '#9a7250' : '#968562';
-      for (const [w, color] of [
-        [width + 5, '#58624988'],
-        [width, base],
-        [width * 0.6, index === 0 ? '#ae855f' : '#a3906c'],
-      ]) {
-        for (let j = 1; j < path.length; j++) {
-          const a = path[j - 1],
-            b = path[j],
-            d = distance(a, b) || 1,
-            nx = (-(b.y - a.y) / d) * w,
-            ny = ((b.x - a.x) / d) * w;
-          poly(
-            [
-              { x: a.x + nx, y: a.y + ny },
-              { x: b.x + nx, y: b.y + ny },
-              { x: b.x - nx, y: b.y - ny },
-              { x: a.x - nx, y: a.y - ny },
-            ],
-            index === 0 && (j === 2 || j === 3) && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
-          );
-        }
-        for (const [j, p] of path.entries())
-          poly(
-            Array.from({ length: 16 }, (_, j) => ({
-              x: p.x + Math.cos((j * Math.PI) / 8) * w,
-              y: p.y + Math.sin((j * Math.PI) / 8) * w,
-            })),
-            index === 0 && j >= 1 && j <= 3 && w <= width
-              ? w === width
-                ? '#93674f'
-                : '#b17a57'
-              : color,
-          );
+  // The regional roads are a small static map. Precompute smooth centerlines
+  // and the non-overlapping path fragments once per real geometry revision.
+  // Canvas and Pixi consume this same painter; no on-tick pathfinding or meshes.
+  let roadPaintCache = null;
+  const roadWidths = Object.freeze({ cart: 44, farm: 26, path: 12 });
+  function smoothRoad(path, kind) {
+    if (!Array.isArray(path) || path.length < 3) return (path || []).slice();
+    const limit = kind === 'cart' ? 85 : kind === 'farm' ? 54 : 32;
+    const output = [{ ...path[0] }];
+    for (let i = 1; i < path.length - 1; i++) {
+      const a = path[i - 1], b = path[i], c = path[i + 1];
+      const u = { x: b.x - a.x, y: b.y - a.y };
+      const v = { x: c.x - b.x, y: c.y - b.y };
+      const la = Math.hypot(u.x, u.y), lb = Math.hypot(v.x, v.y);
+      if (la < 1 || lb < 1) {
+        output.push({ ...b });
+        continue;
+      }
+      const cross = Math.abs(u.x * v.y - u.y * v.x) / (la * lb);
+      const dot = (u.x * v.x + u.y * v.y) / (la * lb);
+      if (cross < 0.1 && dot > 0) {
+        output.push({ ...b });
+        continue;
+      }
+      // The curve stays inside the old corridor by limiting both tangents;
+      // short village doorpaths should never become sweeping rural arcs.
+      const reach = Math.min(limit, la * 0.26, lb * 0.26);
+      const enter = { x: b.x - (u.x * reach) / la, y: b.y - (u.y * reach) / la };
+      const leave = { x: b.x + (v.x * reach) / lb, y: b.y + (v.y * reach) / lb };
+      output.push(enter);
+      const steps = 6;
+      for (let k = 1; k < steps; k++) {
+        const t = k / steps, s = 1 - t;
+        output.push({
+          x: s * s * enter.x + 2 * s * t * b.x + t * t * leave.x,
+          y: s * s * enter.y + 2 * s * t * b.y + t * t * leave.y,
+        });
+      }
+      output.push(leave);
+    }
+    output.push({ ...path[path.length - 1] });
+    return output;
+  }
+  function distanceToRoadSegment(p, a, b) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const n = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / n));
+    return Math.hypot(p.x - (a.x + dx * t), p.y - (a.y + dy * t));
+  }
+  function nearWideRoad(a, b, roads) {
+    // Split a footpath finely only where it could meet a broad road. Most
+    // woodland trails are far from carriageways and keep their original,
+    // much cheaper curved segments.
+    const cross = (p, q, t) => (q.x - p.x) * (t.y - p.y) - (q.y - p.y) * (t.x - p.x);
+    for (const road of roads) {
+      const cutoff = roadWidths[road.kind] + roadWidths.path + 12;
+      for (let i = 1; i < road.points.length; i++) {
+        const c = road.points[i - 1], d = road.points[i];
+        if (
+          distanceToRoadSegment(a, c, d) <= cutoff ||
+          distanceToRoadSegment(b, c, d) <= cutoff ||
+          distanceToRoadSegment(c, a, b) <= cutoff ||
+          distanceToRoadSegment(d, a, b) <= cutoff ||
+          (cross(a, b, c) * cross(a, b, d) < 0 &&
+           cross(c, d, a) * cross(c, d, b) < 0)
+        )
+          return true;
       }
     }
+    return false;
+  }
+  function prepareRoadPaint(roads, footpaths = [], kinds = []) {
+    const wide = (roads || []).map((points, i) => ({
+      kind: kinds[i] === 'cart' || kinds[i] === 'farm' ? kinds[i] : i === 0 ? 'cart' : 'farm',
+      points: smoothRoad(points, kinds[i] === 'cart' || i === 0 ? 'cart' : 'farm'),
+    }));
+    const fragments = [];
+    for (const path of footpaths || []) {
+      const points = smoothRoad(path, 'path');
+      let run = [];
+      for (let i = 1; i < points.length; i++) {
+        const a = points[i - 1], b = points[i];
+        const len = distance(a, b);
+        const count = nearWideRoad(a, b, wide) ? Math.max(1, Math.ceil(len / 16)) : 1;
+        for (let j = 0; j < count; j++) {
+          const at = j / count, bt = (j + 1) / count;
+          const p = { x: a.x * (1 - at) + b.x * at, y: a.y * (1 - at) + b.y * at };
+          const q = { x: a.x * (1 - bt) + b.x * bt, y: a.y * (1 - bt) + b.y * bt };
+          const mid = { x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 };
+          const withinRoad = wide.some((road) =>
+            road.points.some((end, k) =>
+              k > 0 &&
+              distanceToRoadSegment(mid, road.points[k - 1], end) < roadWidths[road.kind] - 3,
+            ),
+          );
+          if (withinRoad) {
+            if (run.length > 1) fragments.push(run);
+            run = [];
+          } else {
+            if (!run.length) run.push(p);
+            run.push(q);
+          }
+        }
+      }
+      if (run.length > 1) fragments.push(run);
+    }
+    return { wide, fragments, widths: roadWidths };
+  }
+  function appendRoadShape(ctx, screen, a, b, width) {
+    const length = distance(a, b);
+    if (length <= 0.001) return;
+    const nx = -((b.y - a.y) / length) * width;
+    const ny = ((b.x - a.x) / length) * width;
+    const points = [
+      { x: a.x + nx, y: a.y + ny },
+      { x: b.x + nx, y: b.y + ny },
+      { x: b.x - nx, y: b.y - ny },
+      { x: a.x - nx, y: a.y - ny },
+    ];
+    points.forEach((p, k) => {
+      const q = screen(p);
+      if (k) ctx.lineTo(q.x, q.y);
+      else ctx.moveTo(q.x, q.y);
+    });
+    ctx.closePath();
+  }
+  function appendRoadCap(ctx, screen, point, width) {
+    // Match the clockwise winding of each quad. Opposite winding would
+    // cancel in Canvas's nonzero fill and punch holes at bend/junction caps.
+    for (let k = 0; k < 12; k++) {
+      const a = (-k * Math.PI) / 6;
+      const p = screen({ x: point.x + Math.cos(a) * width, y: point.y + Math.sin(a) * width });
+      if (k) ctx.lineTo(p.x, p.y);
+      else ctx.moveTo(p.x, p.y);
+    }
+    ctx.closePath();
+  }
+  function roadPaintCacheMatches(cache, paths, footpaths, kinds) {
+    if (!cache || cache.paths.length !== paths.length ||
+        cache.footpaths.length !== footpaths.length || cache.kinds.length !== kinds.length)
+      return false;
+    for (let i = 0; i < kinds.length; i++)
+      if (cache.kinds[i] !== kinds[i]) return false;
+    for (const [current, saved] of [[paths, cache.paths], [footpaths, cache.footpaths]])
+      for (let i = 0; i < current.length; i++) {
+        if (current[i].length !== saved[i].length) return false;
+        for (let j = 0; j < current[i].length; j++)
+          if (current[i][j].x !== saved[i][j][0] || current[i][j].y !== saved[i][j][1])
+            return false;
+      }
+    return true;
+  }
+  function drawRoads(ctx, paths, screen, footpaths = [], kinds = []) {
+    // Canvas can paint every frame. Validate a tiny numerical snapshot
+    // instead of serializing world routes into a fresh JSON string at 60 FPS.
+    // In-place saved-route edits still invalidate the precomputed curves.
+    if (!roadPaintCacheMatches(roadPaintCache, paths, footpaths, kinds))
+      roadPaintCache = {
+        paths: paths.map((p) => p.map(({ x, y }) => [x, y])),
+        footpaths: footpaths.map((p) => p.map(({ x, y }) => [x, y])),
+        kinds: [...kinds],
+        geometry: prepareRoadPaint(paths, footpaths, kinds),
+      };
+    const { wide, fragments } = roadPaintCache.geometry;
+    const paint = (widthFactor, color, foot = false) => {
+      ctx.beginPath();
+      if (foot) {
+        const width = roadWidths.path * widthFactor;
+        for (const run of fragments) {
+          for (let i = 1; i < run.length; i++)
+            appendRoadShape(ctx, screen, run[i - 1], run[i], width);
+          // Only the true run ends need circular caps, not every sampled
+          // subsection. This avoids thousands of redundant polygons per frame.
+          appendRoadCap(ctx, screen, run[0], width);
+          appendRoadCap(ctx, screen, run[run.length - 1], width);
+        }
+      } else {
+        for (const road of wide) {
+          const w = roadWidths[road.kind] * widthFactor;
+          for (let i = 1; i < road.points.length; i++)
+            appendRoadShape(ctx, screen, road.points[i - 1], road.points[i], w);
+          for (const point of road.points) appendRoadCap(ctx, screen, point, w);
+        }
+      }
+      ctx.fillStyle = color;
+      // A single fill per layer unions all its overlapping outlines. The old
+      // per-strip translucent polygons darkened every T and corner multiple times.
+      ctx.fill();
+    };
+    ctx.save();
+    paint(1.12, '#647051');
+    paint(1, '#997d59');
+    paint(0.63, '#ac8d66');
+    paint(1.2, '#66734d', true);
+    paint(1, '#978561', true);
+    paint(0.7, '#a69570', true);
+    ctx.restore();
   }
   function drawWall(ctx, e, p) {
     const w = e.greenwoodWall,
@@ -2326,6 +2584,7 @@
     drawNature,
     drawFacility,
     drawRoads,
+    prepareRoadPaint,
     drawWall,
     drawGround,
   };

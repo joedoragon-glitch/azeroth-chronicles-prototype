@@ -22,9 +22,9 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
   assert.equal(z.greenwoodCompositionVersion, 1, 'current scene gets once-only finishing');
   assert.equal(z.greenwoodRedesignScene, 5, 'prior scenery version retained');
-  assert.equal(z.greenwoodRoutes.length, 16, 'all historic corridors retained');
+  assert.equal(z.greenwoodRoutes.length, 17, '16 prior corridors plus the protected freight apron');
   assert.equal(z.roads.length, 4);
-  assert.equal(z.footpaths.length, 12);
+  assert.equal(z.footpaths.length, 13);
   const routeFingerprint = JSON.stringify(z.greenwoodRoutes);
   assert(z.props.length <= 400, 'native per-region scenery budget');
   assert(z.props.some((p) => p.greenwoodKitchen), 'recognizable kitchen beds exist');
