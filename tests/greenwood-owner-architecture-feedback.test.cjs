@@ -63,29 +63,44 @@ for (const seed of [0x47564101, 0x47564103]) {
   const protectedSave = C.restore(owned, rng(seed));
   assert(protectedSave.zone().props.some((p) => p.id === ownedRail.id && p.playerOwned));
 
-  // Only crossing the approach threshold emits the bilingual regional notice.
-  const label = "Thornfang's Homestead";
-  const count = () => g.notices.filter((n) => n.text === label).length;
+  // The owner's yellow nameplate is a world-space label over the building,
+  // not a toast, discovery marker or campaign-state event.
+  const Renderer = require('../src/prototype/renderer.js');
+  const V = require('../src/prototype/visuals.js');
+  const FX = require('../src/prototype/combat-visuals.js');
+  const { createCanvas } = require('@napi-rs/canvas');
   const sc = C.rules.greenwoodLayout.scale;
-  g.hero.x = lodge.x + 335 * sc;
+  const canvas = createCanvas(852, 393), ctx = canvas.getContext('2d');
+  const drawnText = [];
+  const paintText = ctx.fillText.bind(ctx);
+  ctx.fillText = (text, ...args) => {
+    drawnText.push(String(text));
+    return paintText(text, ...args);
+  };
+  const renderer = Renderer.create({
+    canvas, ctx, getGame: () => g,
+    platform: {
+      cameraZoom: 1.5,
+      cameraAnchor: (w, h) => ({ x: w * 0.5, y: h * 0.58 }),
+    },
+    Campaign: C,
+    PrototypeVisuals: V,
+    PrototypeCombatVisuals: FX,
+    now: () => 16000,
+    chargePresentation: () => null,
+    isPaused: () => false,
+  });
+  const visual = { ...lodge, renderKind: 'prop' };
+  g.hero.x = lodge.x + 100 * sc;
   g.hero.y = lodge.y;
-  g.tick(0.016);
-  assert.equal(count(), 0);
-  g.hero.x = lodge.x + 180 * sc;
-  g.tick(0.016);
-  assert.equal(count(), 1, 'named homestead announces on the first approach');
-  const notice = g.notices.find((n) => n.text === label);
-  assert.equal(notice.textEs, 'Hogar de Thornfang');
-  assert.equal(notice.region, 'vale');
-  assert.equal(notice.kind, 'narration');
-  g.tick(0.016);
-  assert.equal(count(), 1, 'no repeated notices while inside');
-  g.hero.x = lodge.x + 335 * sc;
-  g.tick(0.016);
-  g.hero.x = lodge.x + 180 * sc;
-  g.tick(0.016);
-  assert.equal(count(), 2, 'leaving and approaching again reannounces');
-  assert(!Object.hasOwn(g.snapshot(), 'thornHomesteadNear'),
-    'notification proximity is transient, not a new save field');
+  assert.equal(renderer.labelVisible(visual), true, 'homestead gets nearby world label');
+  renderer.draw();
+  assert(drawnText.includes("Thornfang's Homestead"),
+    'native yellow world label paints above the actual homestead');
+  g.hero.x = lodge.x + 300 * sc;
+  assert.equal(renderer.labelVisible(visual), false, 'no distant homestead nameplate');
+  assert(!g.notices.some((n) => /Thornfang's Homestead/.test(n.text)),
+    'approaching never creates a narrative popup');
+
 }
-console.log('PASS Greenwood open homestead, named arrival and owner-safe v4 migration');
+console.log('PASS Greenwood open homestead, native world label and owner-safe v4 migration');
