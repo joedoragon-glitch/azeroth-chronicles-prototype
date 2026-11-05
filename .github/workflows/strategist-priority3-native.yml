@@ -41,6 +41,8 @@ jobs:
         run: |
           node tests/strategist-developer-admission.test.cjs
           node tests/strategist-developer-isolation.test.cjs
+      - name: Original Strategist dagger, Acid, zone/death and native Campaign lifecycle
+        run: node tests/strategist-e0-native.test.cjs
       - name: Previous original v4 and protected browser storage regressions
         run: |
           node tests/beta-historical.test.cjs
