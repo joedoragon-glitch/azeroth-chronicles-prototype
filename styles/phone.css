@@ -1319,15 +1319,15 @@ body[data-experience='phone'] #modal-actions output {
      into very tall narrow button stacks. Preserve map/Archive special layouts
      and the dedicated 2-column Adventure/Settings indexes. */
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='compact']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']) {
+    #modal[data-dialog-size='compact']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
     width: min(440px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
   }
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='regular']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']) {
+    #modal[data-dialog-size='regular']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
     width: min(570px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
   }
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='wide']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']) {
+    #modal[data-dialog-size='wide']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']):not([data-menu-layout='form']):not([data-menu-layout='choices']) {
     width: min(680px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
   }
   /* Title-owned dialogs also respect their actual content density.
@@ -1491,5 +1491,201 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'] #modal[data-view='title-credits'] #modal-description {
     max-width: 72ch;
     margin-inline: auto;
+  }
+}
+
+/* Responsive-density pass (5 November 2026): use the CSS viewport's usable
+   width/height, not physical Retina pixels. Presentation only. Never shrink
+   actual taps below 44 CSS px, hide story text or change game rendering size. */
+@media (orientation: landscape) and (min-width: 560px) and (max-height: 560px) {
+  body[data-experience='phone'] #modal,
+  body[data-experience='phone'].title-active #modal {
+    padding: clamp(6px, 1.5dvh, 9px);
+  }
+  body[data-experience='phone'] #modal h2 {
+    font-size: clamp(16px, calc(9px + 2dvh), 18px);
+    line-height: 1.16;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+  }
+  body[data-experience='phone'] #modal-description {
+    font-size: clamp(13px, calc(9px + 1.1dvh), 14px);
+    line-height: 1.35;
+    margin-bottom: 4px;
+  }
+  body[data-experience='phone'] #modal-actions {
+    gap: 3px 5px;
+  }
+  body[data-experience='phone'] #modal-actions button,
+  body[data-experience='phone'] #modal-actions .menu-import-picker {
+    font-size: clamp(13px, calc(9px + 1.1dvh), 14px);
+    line-height: 1.2;
+    min-height: 44px;
+    padding: 4px 8px;
+  }
+  body[data-experience='phone'] #close-button {
+    font-size: 13px;
+    line-height: 1.2;
+    min-height: 44px;
+    width: min(164px, 100%);
+    margin-top: 3px;
+    padding: 4px 8px;
+  }
+  body[data-experience='phone'] #modal-actions .detail,
+  body[data-experience='phone'] #modal-actions .menu-section-detail,
+  body[data-experience='phone'] #modal-actions .menu-setting .detail,
+  body[data-experience='phone'] #modal-actions .menu-import-picker .detail,
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-role,
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions .class-growth {
+    font-size: clamp(11.5px, calc(8px + 1.05dvh), 12.5px);
+    line-height: 1.26;
+    margin-top: 1px;
+  }
+  /* Earlier styling gave headings and non-clickable labels 44px touch height.
+     Only interactive controls should reserve that much space. */
+  body[data-experience='phone'] #modal-actions .menu-section,
+  body[data-experience='phone'] #modal-actions .menu-setting-label {
+    min-height: 0;
+    font-size: 13px;
+    line-height: 1.2;
+    padding: 2px 0 0;
+    margin: 3px 0 0;
+  }
+  body[data-experience='phone'] #modal-actions .menu-section-detail {
+    margin: 0 0 2px;
+  }
+  body[data-experience='phone'] #modal-actions .menu-setting {
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1.25;
+    gap: 3px 6px;
+    padding: 3px 7px;
+  }
+  /* iOS can zoom native form fields smaller than 16px: keep those readable
+     even while their enclosing settings cards become more compact. */
+  body[data-experience='phone'] #modal-actions .menu-setting-input,
+  body[data-experience='phone'] #modal[data-view='class-select'] .character-name-field input {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  /* Four-class choice and New Adventure are small decision grids, not prose. */
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions button {
+    font-size: 13.5px;
+    min-height: 56px;
+    padding: 4px 7px;
+  }
+  body[data-experience='phone'] #modal[data-view='class-select'] #modal-actions {
+    gap: 4px 6px;
+  }
+  body[data-experience='phone'] #modal[data-view='class-select'] .character-name-field {
+    min-height: 44px;
+    font-size: 13px;
+  }
+  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions {
+    gap: 4px 6px;
+  }
+  body[data-experience='phone'] #modal[data-view='new-adventure'] #modal-actions .menu-primary {
+    min-height: 44px;
+  }
+
+  /* Navigation choices and grouped shop/Barracks services: more width rather
+     than larger cards. Explicit full-width warnings stay on their own row. */
+  body[data-experience='phone'] #modal[data-menu-layout='choices'] {
+    width: min(700px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-menu-layout='choices'] #modal-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body[data-experience='phone'] #modal[data-menu-layout='choices'] #modal-actions > *,
+  body[data-experience='phone'] #modal[data-view='title-saves'] #modal-actions > * {
+    min-width: 0;
+  }
+  body[data-experience='phone'] #modal-actions > .menu-section,
+  body[data-experience='phone'] #modal-actions > .menu-section-detail,
+  body[data-experience='phone'] #modal-actions > .menu-wide {
+    grid-column: 1 / -1;
+  }
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'],
+  body[data-experience='phone'] #modal[data-view='archive-index'],
+  body[data-experience='phone'] #modal[data-view='archive-shelf'] {
+    width: min(760px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'] #modal-actions,
+  body[data-experience='phone'] #modal[data-view='archive-index'] #modal-actions,
+  body[data-experience='phone'] #modal[data-view='archive-shelf'] #modal-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Forms use paired setting cards on roomy landscape devices. Each input,
+     file-picker and slider keeps native interaction; sections are full-width. */
+  body[data-experience='phone'] #modal[data-menu-layout='form'] {
+    width: min(760px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-menu-layout='form'] #modal-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  body[data-experience='phone'] #modal[data-menu-layout='form'] #modal-actions > .menu-setting,
+  body[data-experience='phone'] #modal[data-menu-layout='form'] #modal-actions > button {
+    min-width: 0;
+  }
+  body[data-experience='phone'] #modal[data-view='character'] {
+    width: min(690px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+
+  /* Story answers, help prose, and character reference retain comfortable
+     reading widths and real scroll. Never sacrifice lore or shop conditions. */
+  body[data-experience='phone'] #modal[data-view='archive-reading'] #modal-description,
+  body[data-experience='phone'] #modal[data-view='title-help-reading'] #modal-description {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  body[data-experience='phone'] #modal[data-view='archive-reading'] #modal-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* The smallest logical landscape has less room than a newer iPhone Air.
+     Avoid 2-column catalogs/forms if each column would turn into a text stack. */
+  @media (max-width: 759px) {
+    body[data-experience='phone'] #modal[data-view='npc-service-catalog'] #modal-actions,
+    body[data-experience='phone'] #modal[data-view='archive-index'] #modal-actions,
+    body[data-experience='phone'] #modal[data-view='archive-shelf'] #modal-actions,
+    body[data-experience='phone'] #modal[data-menu-layout='form'] #modal-actions,
+    body[data-experience='phone'] #modal[data-menu-layout='choices']:not([data-view='class-select']):not([data-view='new-adventure']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='title-saves']):not([data-view='title-help']):not([data-view='adventure']):not([data-view='settings']) #modal-actions {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+}
+
+/* Undo the legacy Archive bottom anchor in short landscape. With both top and
+   bottom set and height:auto, a centered panel was forced to ~half-screen
+   height even when the whole shelf index would fit without scrolling. */
+@media (orientation: landscape) and (min-width: 560px) and (max-height: 560px) {
+  body[data-experience='phone'] #modal[data-view='archive-index'],
+  body[data-experience='phone'] #modal[data-view='archive-shelf'],
+  body[data-experience='phone'] #modal[data-view='archive-reading'] {
+    bottom: auto;
+    height: auto;
+  }
+}
+
+/* Small specialist dialogs should not become a 760px-wide sheet merely
+   because some other shops have many categories. A single service or a
+   two-control form earns width from its own content, not from the family. */
+@media (orientation: landscape) and (min-width: 560px) and (max-height: 560px) {
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='1'],
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='2'] {
+    width: min(510px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='1'] #modal-actions,
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'][data-menu-count='2'] #modal-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='1'],
+  body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='2'] {
+    width: min(540px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='1'] #modal-actions,
+  body[data-experience='phone'] #modal[data-menu-layout='form'][data-menu-count='2'] #modal-actions {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
