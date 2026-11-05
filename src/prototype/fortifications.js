@@ -18,6 +18,64 @@
       }
       return inside;
     };
+    // Greenwood's reconstructed Goblin and Skeleton perimeters are real,
+    // ordered line-wall segments rather than the original ten-point ruin ring.
+    // Their visible gate gap is intentionally closed ONLY for territory
+    // calculation: this does not create a collision wall across the entrance.
+    const authoredWallOutline = (walls) => {
+      if (walls.length < 3 || !walls.every((p) => p.greenwoodWall?.a && p.greenwoodWall?.b))
+        return null;
+      const segments = walls.slice().sort((a, b) => {
+        const index = (p) => Number(String(p.id).match(/-wall-(\\d+)$/)?.[1] ?? -1);
+        return index(a) - index(b);
+      });
+      if (segments.some((p, i) => !String(p.id).endsWith('-wall-' + i))) return null;
+      const outline = [];
+      const put = (p) => {
+        if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return false;
+        const prev = outline.at(-1);
+        if (!prev || Math.hypot(prev[0] - p.x, prev[1] - p.y) > 0.01)
+          outline.push([p.x, p.y]);
+        return true;
+      };
+      for (const { greenwoodWall: segment } of segments)
+        if (!put(segment.a) || !put(segment.b)) return null;
+      if (Math.hypot(outline[0][0] - outline.at(-1)[0],
+          outline[0][1] - outline.at(-1)[1]) < 0.01) outline.pop();
+      const area = outline.reduce((sum, p, i) => {
+        const next = outline[(i + 1) % outline.length];
+        return sum + p[0] * next[1] - next[0] * p[1];
+      }, 0);
+      return outline.length >= 3 && Math.abs(area) > 100 ? outline : null;
+    };
+    // Offset the physical enclosure by the approved perpendicular distance.
+    // Expanding vertices radially from an estimated center is NOT the same
+    // as extending 160 units beyond every wall, especially for rectangles.
+    const wallApron = (outline, distance) => {
+      const signedArea = outline.reduce((sum, p, i) => {
+        const next = outline[(i + 1) % outline.length];
+        return sum + p[0] * next[1] - next[0] * p[1];
+      }, 0);
+      const winding = signedArea >= 0 ? 1 : -1;
+      const normals = outline.map((point, i) => {
+        const next = outline[(i + 1) % outline.length],
+          dx = next[0] - point[0], dy = next[1] - point[1],
+          length = Math.hypot(dx, dy) || 1;
+        return [winding * dy / length, -winding * dx / length];
+      });
+      return outline.map((point, i) => {
+        const previous = normals[(i + normals.length - 1) % normals.length],
+          next = normals[i],
+          sx = previous[0] + next[0], sy = previous[1] + next[1],
+          magnitude = Math.hypot(sx, sy) || 1,
+          x = sx / magnitude, y = sy / magnitude;
+        // The authored convex Greenwood perimeters have finite, ordinary
+        // miters; clamp a pathological future corner to protect rendering.
+        const extent = Math.min(distance * 2.5,
+          distance / Math.max(0.4, x * next[0] + y * next[1]));
+        return [point[0] + x * extent, point[1] + y * extent];
+      });
+    };
     class Fortifications {
       fortAreas() {
         const z = this.s.zones[this.zoneId] || this.zone();
@@ -65,8 +123,16 @@
                   [-115, 120],
                   [-155, 20],
                 ];
-          // Infer the current authored anchor from stable wall indices. This
-          // follows relocated forts instead of granting protection at old sites.
+          // A Greenwood scene wall is a real segment with exact endpoints.
+          // Use those endpoints instead of applying old ring offsets to its
+          // unrelated segment midpoints; this fixes both shape and origin.
+          const authored = z.id === 'vale' ? authoredWallOutline(walls) : null;
+          if (authored) {
+            add(plan.id, wallApron(authored, cfg.outdoorLeeway), walls);
+            continue;
+          }
+          // For all other regional defenses, retain their established
+          // stable-index ring behavior and their save/placement contracts.
           const anchors = walls.flatMap((p) => {
             const match = String(p.id).match(/-wall-(\d+)$/),
               offset = match && ring[+match[1]];
