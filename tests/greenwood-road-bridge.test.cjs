@@ -11,7 +11,11 @@ assert.equal(Campaign.rules.greenwoodLayout.version, 2);
 assert.equal(z.greenwoodRoadBridgeVersion, 1, 'separate non-destructive road migration');
 assert.equal(z.greenwoodRoutes.length, 16);
 assert.deepEqual(z.greenwoodRoadKinds, ['cart', 'farm', 'farm', 'farm']);
-assert.equal(z.greenwoodRoutes[6].points.length, 5, 'south east footpath exits deck straight');
+assert.equal(z.greenwoodRoutes[6].points.length, 6, 'south footpath spans both banks and exits deck straight');
+assert.equal(Math.round(z.roads[1].at(-1).x / Campaign.rules.greenwoodLayout.scale), 1560,
+  'farm cart traffic stops on solid ground before the timber pedestrian bridge');
+assert.equal(Math.round(z.footpaths[2][0].x / Campaign.rules.greenwoodLayout.scale), 1560,
+  'walking path continues seamlessly from the farm lane to the southern deck');
 assert.equal(z.greenwoodRoutes[7].points.length, 3, 'Treasury spur has no duplicated cart segment');
 
 const gaps = Campaign.rules.barriers[0].gaps;
