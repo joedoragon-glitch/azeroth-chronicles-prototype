@@ -20144,8 +20144,10 @@
           // A compacted roadbed continues across the shallow feeder. Only
           // the two *banks* show masonry cheeks and dark water portals.
           // Draw nothing that changes the authoritative walkable shallows.
-          polygon(corners(half + 5, 3), '#685f4b');
-          polygon(corners(half, 2), '#977d5c');
+          // Match Greenwood's existing compacted-earth farm road. The
+          // culvert reads as uninterrupted ground, not a timber bridge.
+          polygon(corners(half + 5, 3), '#766e55');
+          polygon(corners(half, 2), '#ac8d66');
           for (const track of [-0.42, 0.42]) {
             line(
               { x: a.x + nx*half*track, y: a.y + ny*half*track },
