@@ -2222,6 +2222,18 @@
               Math.cos(angle - a.angle) > Math.cos(halfAngle));
         }
         if (a.kind === 'ring') {
+          if (a.dreadMechanic === 'closure') {
+            const distance = dist(point, a);
+            const angle = Math.atan2(point.y - a.y, point.x - a.x);
+            const insideGap = a.gaps?.some((gap) => Math.abs(Math.atan2(
+              Math.sin(angle - gap), Math.cos(angle - gap))) < a.gapWidth / 2);
+            return Array.isArray(a.gaps) && a.gaps.length === 2 &&
+              Number.isFinite(a.initialRadius) && Number.isFinite(a.finalRadius) &&
+              Number.isFinite(a.width) && Number.isFinite(a.gapWidth) &&
+              distance >= Math.min(a.initialRadius, a.finalRadius) - a.width &&
+              distance <= Math.max(a.initialRadius, a.finalRadius) + a.width &&
+              !insideGap;
+          }
           if (a.cinderMechanic === 'cordon') {
             const distance = dist(point, a);
             const start = a.initialRadius, finish = a.finalRadius;
