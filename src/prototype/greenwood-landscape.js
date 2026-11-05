@@ -796,7 +796,7 @@
             z.greenwoodMillbankSightlineVersion === 1) return;
         const tree = z.props.find((p) => p.id === 'greenwood-nature-165');
         const origin = { x: 1251 * cfg.scale, y: 1765 * cfg.scale };
-        const status = { id: 'greenwood-nature-165', moved: false, reason: '' };
+        const status = { id: 'greenwood-nature-165', moved: false, pruned: false, reason: '' };
         // A custom or previously independently relocated tree is not ours to edit.
         if (!tree || tree.greenwoodNature !== 'tree' || tree.playerOwned ||
             tree.owned || tree.custom || distance(tree, origin) > 24 * cfg.scale) {
@@ -831,7 +831,15 @@
             Object.assign(tree, destination);
             status.moved = true;
             status.reason = 'mature tree shifted to wooded margin; actor sightline cleared';
-          } else status.reason = 'no safe candidate in protected woodland';
+          } else {
+            // No legal relocation in this dense stand: a small open-crown
+            // treatment keeps the saved tree and collision exactly in place,
+            // while removing the dense foliage over the approach. Do not
+            // discard the object or weaken the player's spatial protections.
+            tree.greenwoodMillbankOpenCrown = 1;
+            status.pruned = true;
+            status.reason = 'no clear destination; existing crown opened in place';
+          }
         }
         z.greenwoodMillbankSightlineAudit = status;
         z.greenwoodMillbankSightlineVersion = 1;
@@ -1972,7 +1980,16 @@
               : species === 'beech'
                 ? ['#254f3d', '#3c7052', '#5e8a61', '#85a46d']
                 : ['#2d583c', '#43754c', '#6b945d', '#9ab372'];
-      const masses = [
+      const masses = e.greenwoodMillbankOpenCrown === 1
+        ? [
+            // Airy lateral lobes frame a genuine viewing gap at the base.
+            // Remain the same species and tree; only presentation changes.
+            [-spread * 0.77, -height + 13, spread * 0.35, 14],
+            [spread * 0.77, -height + 11, spread * 0.37, 14],
+            [-spread * 0.65, -height + 39, spread * 0.31, 12],
+            [spread * 0.65, -height + 38, spread * 0.31, 12],
+          ]
+        : [
         [-spread * 0.55, -height + 17, spread * 0.57, 24],
         [spread * 0.46, -height + 12, spread * 0.61, 27],
         [-3, -height - 4, spread * 0.62, 28],
