@@ -785,6 +785,53 @@
         z.greenwoodRefinementAudit = audit;
         z.greenwoodRefinementVersion = 1;
       }
+      // Millbank visibility: the nearest mature hardwood's high canopy hides
+      // the existing goblin approach at the 150% game camera. Move only that
+      // authored tree farther into its own wooded stand. Never move enemies,
+      // change their homes or alter the mill/road/water geometry.
+      greenwoodMillbankSightlineScene(z) {
+        const cfg = R.greenwoodLayout;
+        if (z.id !== 'vale' || cfg?.version !== 2 ||
+            z.greenwoodRedesignScene !== cfg.sceneVersion ||
+            z.greenwoodMillbankSightlineVersion === 1) return;
+        const tree = z.props.find((p) => p.id === 'greenwood-nature-165');
+        const origin = { x: 1251 * cfg.scale, y: 1765 * cfg.scale };
+        const status = { id: 'greenwood-nature-165', moved: false, reason: '' };
+        // A custom or previously independently relocated tree is not ours to edit.
+        if (!tree || tree.greenwoodNature !== 'tree' || tree.playerOwned ||
+            tree.owned || tree.custom || distance(tree, origin) > 24 * cfg.scale) {
+          status.reason = 'missing, owned, or already relocated';
+        } else {
+          const footpaths = { roads: z.footpaths || [] };
+          // Ordered, fixed alternatives inside the south-east hardwood stand.
+          // A saved player structure can occupy a candidate: try the next one.
+          const candidates = [[1450, 2000], [1490, 1930], [1350, 2070]]
+            .map(([x,y]) => ({ x:x*cfg.scale, y:y*cfg.scale }));
+          const destination = candidates.find((p) =>
+            !this.blocked(p.x, p.y, 'vale', tree.r || 18, true) &&
+            this.distanceToRoad(z, p) >= 105 * cfg.scale &&
+            this.distanceToRoad(footpaths, p) >= 70 * cfg.scale &&
+            !z.buildings.some((b) => distance(b, p) < 225 * cfg.scale) &&
+            !z.npcs.some((n) => distance(n.servicePoint || n, p) < 150 * cfg.scale) &&
+            !z.nodes.some((n) => distance(n, p) < 65 * cfg.scale) &&
+            !z.enemies.some((e) => e.hp > 0 &&
+              distance(e.home || e, p) < 140 * cfg.scale) &&
+            !z.props.some((q) => q !== tree &&
+              distance(q, p) < (q.owned || q.playerOwned || q.custom
+                ? (q.r || 25) + 110 * cfg.scale
+                : q.roadBlocker ? 190 * cfg.scale
+                : q.greenwoodNature === 'tree' ? 100 * cfg.scale
+                : 65 * cfg.scale))
+          );
+          if (destination) {
+            Object.assign(tree, destination);
+            status.moved = true;
+            status.reason = 'mature tree shifted to wooded margin; actor sightline cleared';
+          } else status.reason = 'no safe candidate in protected woodland';
+        }
+        z.greenwoodMillbankSightlineAudit = status;
+        z.greenwoodMillbankSightlineVersion = 1;
+      }
       // Non-destructive, versioned landscape composition: never replay the
       // original scene-5 generator on an established v4 game. Keep stable
       // gameplay/owner IDs and place only bounded, static regional decoration.
@@ -793,10 +840,13 @@
         if (
           z.id !== 'vale' ||
           cfg?.version !== 2 ||
-          z.greenwoodRedesignScene !== cfg.sceneVersion ||
-          z.greenwoodCompositionVersion === 1
+          z.greenwoodRedesignScene !== cfg.sceneVersion
         )
           return;
+        if (z.greenwoodCompositionVersion === 1) {
+          this.greenwoodMillbankSightlineScene(z);
+          return;
+        }
         const scale = cfg.scale;
         const at = (x, y) => ({ x: x * scale, y: y * scale });
         const near = (a, b) => distance(a, b);
@@ -971,6 +1021,7 @@
         z.greenwoodCompositionAudit = audit;
         z.greenwoodCompositionFruitCount = fruit;
         z.greenwoodCompositionVersion = 1;
+        this.greenwoodMillbankSightlineScene(z);
       }
       greenwoodRedesignMigrate(z) {
         const cfg = R.greenwoodLayout;
