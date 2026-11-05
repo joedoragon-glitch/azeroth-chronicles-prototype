@@ -1315,15 +1315,15 @@ body[data-experience='phone'] #modal-actions output {
      into very tall narrow button stacks. Preserve map/Archive special layouts
      and the dedicated 2-column Adventure/Settings indexes. */
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='compact']:not([data-view='map']):not([data-view='archive-reading']) {
+    #modal[data-dialog-size='compact']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']) {
     width: min(440px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
   }
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='regular']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='adventure']):not([data-view='settings']) {
+    #modal[data-dialog-size='regular']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']) {
     width: min(570px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
   }
   body[data-experience='phone']:not(.title-active)
-    #modal[data-dialog-size='wide']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='adventure']):not([data-view='settings']) {
+    #modal[data-dialog-size='wide']:not([data-view='map']):not([data-view='archive-reading']):not([data-view='archive-index']):not([data-view='archive-shelf']):not([data-view='npc-service-catalog']):not([data-view='barracks-hub']):not([data-view='npc-training-hub']):not([data-view='adventure']):not([data-view='settings']) {
     width: min(680px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
   }
   /* Title-owned dialogs also respect their actual content density.
@@ -1341,6 +1341,53 @@ body[data-experience='phone'] #modal-actions output {
   body[data-experience='phone'].title-active #modal[data-view='class-select'],
   body[data-experience='phone'].title-active #modal[data-view='new-adventure'] {
     width: min(720px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+
+  /* Gameplay service hubs: only comparable top-level choices use columns.
+     Rosters, equipment upgrades, NPC transaction catalogs and Keeper prose
+     must remain one-column, naturally scrollable content. */
+  body[data-experience='phone'] #modal[data-view='barracks-hub'],
+  body[data-experience='phone'] #modal[data-view='npc-training-hub'] {
+    width: min(620px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-view='barracks-hub'] #modal-actions,
+  body[data-experience='phone'] #modal[data-view='npc-training-hub'] #modal-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  body[data-experience='phone'] #modal[data-view='barracks-hub'] #modal-actions > button,
+  body[data-experience='phone'] #modal[data-view='npc-training-hub'] #modal-actions > button {
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  body[data-experience='phone'] #modal[data-view='barracks-hub'] #modal-actions > button:nth-child(n + 5),
+  body[data-experience='phone'] #modal[data-view='npc-training-hub'] #modal-actions > button:nth-child(n + 5) {
+    grid-column: 1 / -1;
+  }
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'] {
+    width: min(610px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+  body[data-experience='phone'] #modal[data-view='npc-service-catalog'] #modal-actions,
+  body[data-experience='phone'] #modal[data-view='archive-index'] #modal-actions,
+  body[data-experience='phone'] #modal[data-view='archive-shelf'] #modal-actions,
+  body[data-experience='phone'] #modal[data-view='archive-reading'] #modal-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The Archive's shelf density and long-form reading measure are deliberate.
+     Generic content-density sizing must never enlarge an authored answer into
+     a full-width two-column selection menu. */
+  body[data-experience='phone'] #modal[data-view='archive-index'],
+  body[data-experience='phone'] #modal[data-view='archive-shelf'],
+  body[data-experience='phone'] #modal[data-view='archive-reading'] {
+    width: min(600px, calc(100vw - 20px - var(--phone-safe-left, 0px) - var(--phone-safe-right, 0px)));
+  }
+
+  /* In-game hub wayfinding is essential when nested menus share a Back
+     footer; restore its concise heading without restoring redundant prose. */
+  body[data-experience='phone'] #modal[data-view='adventure'] #modal-title,
+  body[data-experience='phone'] #modal[data-view='settings'] #modal-title {
+    display: block;
   }
 
   /* Help entries are peer navigation choices, not paragraphs in a narrow
