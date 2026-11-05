@@ -132,7 +132,7 @@ const types = {
       const names = process.argv.includes('--interiors')
         ? ['treasury-interior', 'crypt-interior', 'cellars-interior']
         : viewport.touch
-          ? ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt']
+          ? ['start', 'hamlet', 'orchard', 'mill', 'north-bridge', 'crypt', 'thorn-homestead']
           : [
               'start',
               'refuge',
@@ -141,7 +141,7 @@ const types = {
               'mill',
               'north-bridge',
               'south-bridge',
-              'eastern-pond',
+              'thorn-homestead',
               'cache',
               'treasury',
               'crypt',
@@ -187,7 +187,8 @@ const types = {
               mill: p('mill-pond'),
               'north-bridge': p('bridge-north'),
               'south-bridge': p('bridge-south'),
-              'eastern-pond': PrototypeRules.terrain[0][1],
+              'eastern-pond': PrototypeRules.terrain[0][1] || { x: 2720, y: 1320 },
+              'thorn-homestead': { x: 2720, y: 1320 },
               cache: p('cache'),
               treasury: p('supply-entrance'),
               crypt: p('entrance'),
