@@ -24,7 +24,8 @@
         let frame = frames.get(z);
         if (frame?.props === z.props && frame.count === z.props.length) return frame.areas;
         const areas = [],
-          cfg = R.balance.fortifications;
+          cfg = R.balance.fortifications,
+          margin = cfg.outdoorPerimeterMargin;
         const add = (id, points, walls, partitions = []) =>
           areas.push({
             id,
@@ -70,10 +71,20 @@
             ? { x: median(anchors.map((p) => p.x)), y: median(anchors.map((p) => p.y)) }
             : this.creatureStrongholdCenter(z, plan);
           if (!center) continue;
+          // A narrow outdoor apron lets defenders pursue just beyond the wall.
+          // Precomputed with the cached area: no per-frame buffs or extra probes.
           const points =
             plan.defenseStyle === 'fort'
-              ? rectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
-              : ring.map(([x, y]) => [center.x + x, center.y + y]);
+              ? rectangle(
+                  center.x - 150 - margin,
+                  center.x + 150 + margin,
+                  center.y - 150 - margin,
+                  center.y + 150 + margin,
+                )
+              : ring.map(([x, y]) => [
+                  center.x + x * (1 + margin / 150),
+                  center.y + y * (1 + margin / 150),
+                ]);
           add(plan.id, points, walls);
         }
         for (const mini of z.minis || []) {
@@ -84,10 +95,10 @@
             add(
               mini.id,
               rectangle(
-                mini.x - cfg.compoundHalfSize,
-                mini.x + cfg.compoundHalfSize,
-                mini.y - cfg.compoundHalfSize,
-                mini.y + cfg.compoundHalfSize,
+                mini.x - cfg.compoundHalfSize - margin,
+                mini.x + cfg.compoundHalfSize + margin,
+                mini.y - cfg.compoundHalfSize - margin,
+                mini.y + cfg.compoundHalfSize + margin,
               ),
               walls,
             );
@@ -95,7 +106,12 @@
         for (const area of cfg.outdoorAreas.filter((a) => a.zone === z.id)) {
           add(
             area.id,
-            rectangle(...area.bounds),
+            rectangle(
+              area.bounds[0] - margin,
+              area.bounds[1] + margin,
+              area.bounds[2] - margin,
+              area.bounds[3] + margin,
+            ),
             z.props.filter(
               (p) =>
                 area.districts.includes(p.crownDistrict) &&

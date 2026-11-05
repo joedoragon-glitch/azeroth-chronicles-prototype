@@ -66,6 +66,70 @@ function fixture() {
   Object.assign(e, { ranged: false, shotRange: 900, species: 'skeleton' });
   assert.equal(g.enemyAcquisitionRange(e), 286, 'explicit melee keeps existing awareness');
 }
+// Outdoor fortification eligibility has a small position-derived apron,
+// not a persistent buff. Beyond it, ordinary range/damage rules return.
+{
+  const margin = C.rules.balance.fortifications.outdoorPerimeterMargin;
+  assert.equal(margin, 40, 'fortress outdoor pursuit leeway is 40 world units');
+  const { g, e } = fixture(); // Raider fort center (3050, 950), original +/-150.
+  e.x = 3230; // 180 from center: outside wall, inside new +/-190.
+  assert.equal(g.enemyFort(e)?.id, 'raider-drill-redoubt', 'short pursuit stays fortified');
+  assert.equal(g.enemyRangedRange(e), 416, 'extended apron retains native 30% reach');
+  const protectedHp = e.hp;
+  assert(g.damage(e, 100));
+  assert.equal(protectedHp - e.hp, 60, '40% protection works just outside the wall');
+  e.x = 3250; // 200 from center: beyond the new defensive apron.
+  assert.equal(g.enemyFort(e), null, 'protection ends at outer boundary');
+  assert.equal(g.enemyRangedRange(e), 320, 'ordinary range resumes outside');
+  const exposedHp = e.hp;
+  assert(g.damage(e, 100));
+  assert.equal(exposedHp - e.hp, 100, 'ordinary damage resumes outside');
+}
+{
+  const g = world('vale'),
+    plan = C.rules.creatureStrongholds.find((p) => p.id === 'skeleton-watch'),
+    skeleton = g.zone().enemies.find((e) => e.stronghold === plan.id && e.hp > 0);
+  assert(skeleton, 'native Skeleton Watch defender exists');
+  skeleton.x = plan.center[0] + 180;
+  skeleton.y = plan.center[1];
+  assert.equal(g.enemyFort(skeleton)?.id, plan.id, 'irregular watch perimeter protects short pursuit');
+  skeleton.x = plan.center[0] + 240;
+  assert.equal(g.enemyFort(skeleton), null, 'distant skeleton pursuit remains unfortified');
+}
+// All exterior compound variants get the same buffer; authored dungeon
+// walkability stays exact and never grants protection through room void.
+for (const id of ['vale', 'frontier']) {
+  const g = world(id), z = g.zone(), cfg = C.rules.balance.fortifications;
+  for (const mini of (z.minis || []).filter((m) => m.type === 'field')) {
+    const walls = z.props.filter((p) =>
+      p.mini === mini.id && String(p.id).startsWith('mini-wall-') && !p.decorative);
+    if (!walls.length) continue;
+    const f = g.fortAreas().find((area) => area.id === mini.id);
+    assert(f, mini.id + ' remains a real walled compound');
+    assert.deepEqual(f.points[0], [
+      mini.x - cfg.compoundHalfSize - cfg.outdoorPerimeterMargin,
+      mini.y - cfg.compoundHalfSize - cfg.outdoorPerimeterMargin,
+    ]);
+  }
+}
+{
+  const g = world('crown'), cfg = C.rules.balance.fortifications;
+  for (const area of cfg.outdoorAreas.filter((entry) => entry.zone === 'crown')) {
+    const f = g.fortAreas().find((fort) => fort.id === area.id);
+    assert(f, area.id + ' remains registered');
+    assert.deepEqual(f.points[0], [
+      area.bounds[0] - cfg.outdoorPerimeterMargin,
+      area.bounds[2] - cfg.outdoorPerimeterMargin,
+    ]);
+  }
+}
+{
+  const g = world('abyss'), room = C.rules.dungeonArchitecture.abyss.walkable[0];
+  const area = g.fortAreas().find((f) => f.id === 'abyss-' + room.id);
+  assert(area);
+  assert.deepEqual(area.points[0], [room.bounds[0], room.bounds[2]],
+    'dungeon walkable room is not expanded');
+}
 // One authored ranged basic range controls both shot and detection; melee
 // awareness may still be adjusted independently, but not the ranged value.
 {

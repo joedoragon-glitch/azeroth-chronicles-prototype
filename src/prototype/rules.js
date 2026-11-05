@@ -6944,6 +6944,8 @@
       rangeMultiplier: 1.3,
       projectileSpeedMultiplier: 1.3,
       compoundHalfSize: 190,
+      // Short outdoor pursuit leeway before garrisons lose their fort bonuses.
+      outdoorPerimeterMargin: 40,
       interiorZones: ['abyss', 'citadel', 'side-highlands-signal', ...supplyRooms.map((r) => r.id)],
       outdoorAreas: [
         {
