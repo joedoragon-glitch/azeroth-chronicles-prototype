@@ -375,8 +375,14 @@
       greenwoodWatermillScene(z) {
         const cfg = R.greenwoodLayout;
         if (z.id !== 'vale' || cfg?.version !== 2 ||
-            z.greenwoodRedesignScene !== cfg.sceneVersion ||
-            z.greenwoodWatermillVersion === 2) return;
+            z.greenwoodRedesignScene !== cfg.sceneVersion) return;
+        // A previously saved #824 bridge can still carry its old 56-unit
+        // visual deck even though the source river gap now permits 80.
+        // Sync ONLY that existing southern crossing on the v4 fast path.
+        if (z.bridgeApproaches?.[1] &&
+            z.bridgeApproaches[1].width !== 80)
+          z.bridgeApproaches[1].width = 80;
+        if (z.greenwoodWatermillVersion === 2) return;
         const lane = cfg.millServiceLane, footpath = cfg.millDoorFootpath,
           previousLane = [[1200,1660],[1290,1600],[1350,1530],[1400,1490]]
             .map(([x,y])=>({x:x*cfg.scale,y:y*cfg.scale}));
