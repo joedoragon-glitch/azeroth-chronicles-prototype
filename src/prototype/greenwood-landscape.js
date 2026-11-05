@@ -264,7 +264,7 @@
         ribbon(headrace, 12), ribbon(tailrace, 20, { subdivisions: 3 }), shallowCreek,
       ],
       millBridge = {
-        from: q([1290, 1600]), to: q([1350, 1530]),
+        from: q([1210, 1575]), to: q([1250, 1495]),
         width: 62 * scale, kind: 'timber',
       },
       creekCulvert = {
@@ -280,7 +280,7 @@
       // A 24-unit pedestrian trail, NOT a cart road, runs across the
       // 62-unit-wide timber deck and then bends to the actual mill door.
       millDoorFootpath = [
-        [1200, 1660], [1290, 1600], [1350, 1530],
+        [1200, 1660], [1210, 1575], [1250, 1495],
         [1400, 1490], [1290, 1490], [1210, 1485],
       ].map(q);
     R.terrain[0] = [
