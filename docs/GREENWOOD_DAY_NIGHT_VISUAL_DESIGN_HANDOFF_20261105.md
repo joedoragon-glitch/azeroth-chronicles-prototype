@@ -1,9 +1,21 @@
 # So I Became the Dark Lord's Problem — Greenwood Vale day/night visual design handoff
 
 **Date:** 5 November 2026  
-**Scope:** Game design / art direction **only**. No runtime, renderer, terrain, gameplay, audio, save, tests, assets, merge, or deployment changed by this document.  
-**Status:** Complete design analysis and proposed art-direction contract, ready for a separate engineering *candidate*. The proposed appearance is **not yet visually accepted in a rendered build or device-verified**.  
+**Scope:** Game-design authority and engineering acceptance contract. This document began as design-only; **the same PR #809 now also contains a bounded Greenwood presentation-code candidate and focused tests**. No gameplay rules, terrain geometry, audio, save format, merge, or deployment changes are authorized.  
+**Status:** Design analysis complete; **engineering candidate implemented on draft PR #809**. Code changes are not yet visually accepted from native before/after scene captures, merged, published, or device-verified.  
 **Trigger:** Owner's three landscape-phone screenshots of Millhaven in daylight, a warm intermediate phase, and nighttime; the nighttime reads as a green night-vision-like filter instead of a believable fantasy night.
+
+## Current engineering candidate and acceptance boundary (5 November 2026)
+
+The owner requested that engineering continue **inside this existing PR #809**, not open a new PR for each subtask. The implementation now changes **Greenwood only** in `src/prototype/visuals.js` and `tools/webgl-pilot/pixi-scene-bridge.js`:
+
+- A cool, neutral slate-blue nighttime gradient replaces the former green-dominant composite: upper stop `rgba(39,47,67,.64)`, lower ordinary-night stop `rgba(31,40,60,.64)`. **These are trial implementation values, not owner-approved final colors**. The tone was chosen to offset the remaining green terrain while retaining roughly similar scene brightness rather than darkening by opacity alone.
+- The Greenwood sunset warmth factor is reduced to **0.76** of the existing wash; sunrise, victory sunrise, all night/day clock boundaries and other regions' wash remain unaltered.
+- Existing Greenwood nighttime motes shift from warm yellow-green `#dcefa8` to cool pale `#c5cbda`. Their count, positions, motion and optimization behavior are unchanged.
+- The four other region night palettes are untouched. Existing hero and practical light geometry are unchanged; the physically mounted lamp work remains held separately in #803, subject to its design acceptance.
+- The existing `tools/webgl-pilot/pixi-scene-bridge.test.cjs` night palette expectation is updated; the new `tests/greenwood-day-night-design.test.cjs` checks real Canvas grade versus Pixi commands, five-region containment, sunset parity, moonlit grass/path compositing sanity, particles and darkness boundaries.
+
+**Verification gates:** The new tests and automatic PR-focused CI must pass on the exact engineering commit. This does **not** certify the *appearance*. Native current-game source screenshots at day/sunset/night/sunrise, with matching Canvas/Pixi scenes and landscape-phone readability, remain required to call the grade artistically acceptable. No full suite, merge, publication or physical-phone certification is implied.
 
 ## 1. Intent and non-negotiable identity
 
@@ -109,7 +121,7 @@ The desired scene must be substantially the same through Canvas 2D and PixiJS/We
 
 ## 5. Engineering-ready work package — subsequent authorization only
 
-**The following is a proposed implementation scope, NOT authorization or evidence of implementation.**
+**The owner has now authorized a focused engineering candidate in this same draft PR. E2/E4 color-grade and mote work has been implemented provisionally; E1/E3/E5 rendered comparison and acceptance remain open. This paragraph does not authorize merge or deployment.**
 
 **E1. Produce controlled reference frames.** Capture matching current-game scenes and presentation clock states for Greenwood's Millhaven crossing, one nearby settled lane, a meadow/orchard edge, and a forest/crypt approach. Use identical viewport, camera zoom, player/class placement and clock values between candidate/reference; capture all four phases, Canvas and Pixi. Include Optimization On/Off where materially different. Record exact code head and renderer.
 
@@ -144,4 +156,4 @@ The desired scene must be substantially the same through Canvas 2D and PixiJS/We
 - #357 owns intermittent transient white frames.
 - This document owns **the Greenwood night/dusk visual-design brief** and its acceptance criteria only.
 
-**Handoff decision:** **Design READY for engineering candidate**, with creative sign-off dependent on real in-game comparison. No reason to block design handoff on separate #357 diagnosis or unrelated unfinished atmosphere systems, but implementation must avoid merge conflicts with #803 and cannot be called visually accepted until tested screenshots are reviewed.
+**Handoff decision:** **Design complete; engineering color-grade candidate present on PR #809; final merge readiness HOLD pending focused checks and real in-game visual comparison**, with creative sign-off dependent on rendered evidence. No reason to block design handoff on separate #357 diagnosis or unrelated unfinished atmosphere systems, but implementation must avoid merge conflicts with #803 and cannot be called visually accepted until tested screenshots are reviewed.
