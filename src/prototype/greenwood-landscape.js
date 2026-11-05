@@ -1641,10 +1641,32 @@
     }
     ctx.closePath();
   }
+  function roadPaintCacheMatches(cache, paths, footpaths, kinds) {
+    if (!cache || cache.paths.length !== paths.length ||
+        cache.footpaths.length !== footpaths.length || cache.kinds.length !== kinds.length)
+      return false;
+    for (let i = 0; i < kinds.length; i++)
+      if (cache.kinds[i] !== kinds[i]) return false;
+    for (const [current, saved] of [[paths, cache.paths], [footpaths, cache.footpaths]])
+      for (let i = 0; i < current.length; i++) {
+        if (current[i].length !== saved[i].length) return false;
+        for (let j = 0; j < current[i].length; j++)
+          if (current[i][j].x !== saved[i][j][0] || current[i][j].y !== saved[i][j][1])
+            return false;
+      }
+    return true;
+  }
   function drawRoads(ctx, paths, screen, footpaths = [], kinds = []) {
-    const signature = JSON.stringify([paths, footpaths, kinds]);
-    if (!roadPaintCache || roadPaintCache.signature !== signature)
-      roadPaintCache = { signature, geometry: prepareRoadPaint(paths, footpaths, kinds) };
+    // Canvas can paint every frame. Validate a tiny numerical snapshot
+    // instead of serializing world routes into a fresh JSON string at 60 FPS.
+    // In-place saved-route edits still invalidate the precomputed curves.
+    if (!roadPaintCacheMatches(roadPaintCache, paths, footpaths, kinds))
+      roadPaintCache = {
+        paths: paths.map((p) => p.map(({ x, y }) => [x, y])),
+        footpaths: footpaths.map((p) => p.map(({ x, y }) => [x, y])),
+        kinds: [...kinds],
+        geometry: prepareRoadPaint(paths, footpaths, kinds),
+      };
     const { wide, fragments } = roadPaintCache.geometry;
     const paint = (widthFactor, color, foot = false) => {
       ctx.beginPath();
