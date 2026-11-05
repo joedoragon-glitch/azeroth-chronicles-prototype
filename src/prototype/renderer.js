@@ -1109,8 +1109,8 @@
       // cannot remain at full daylight strength beneath moonlight/lanterns.
       // Reading the existing daylight phase adds no saved state or new clock.
       const darkness = !game.isDungeon?.() ? game.daylightPhase?.().darkness || 0 : 0;
-      const shadowOpacity = (e.greenwoodWall || flatGround ? 0 :
-        littlePlant ? 0.30 : 1) * (1 - 0.72 * darkness);
+      const shadowOpacity = Math.round(16 * (e.greenwoodWall || flatGround ? 0 :
+        littlePlant ? 0.30 : 1) * (1 - 0.72 * darkness)) / 16;
       const type = e.renderKind,
         important =
           type === 'hero' || e.type === 'boss' || e.captain || e.roomCaptain || e.kind === 'quests';
