@@ -276,7 +276,7 @@ function contrast(item) {
           }, { view, count });
           familyFit[view] = await assertDialogGeometry(frame, view);
           const trackCount = await frame.locator('#modal-actions').evaluate((node) =>
-            getComputedStyle(node).gridTemplateColumns.split(/\\s+/).filter(Boolean).length,
+            getComputedStyle(node).gridTemplateColumns.trim().split(/\s+/).filter(Boolean).length,
           );
           assert.equal(trackCount, columns, view + ': peer choice vs reading layout');
           await frame.locator('#close-button').tap();
