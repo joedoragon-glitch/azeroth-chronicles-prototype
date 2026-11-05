@@ -62,11 +62,18 @@ for (const stroke of motion) {
   assert([stroke.x1, stroke.y1, stroke.x2, stroke.y2, stroke.width].every(Number.isFinite));
   assert(/^#(?:[0-9a-f]{6}|[0-9a-f]{8})$/i.test(stroke.color));
 }
-V.drawLightFixtures(ctx, [{ kind: 'mill-sconce', x: 520, y: 390 }]);
+const fixtures = V.lightingFixtures(
+  { id: 'greenwood-working-mill', structure: 'vale-working-mill', greenwoodFacility: 'mill' },
+  screen(C.rules.greenwoodLayout.mill), 1, 0,
+);
+assert.equal(fixtures.length, 1, 'one physical mill fixture');
+assert.equal(fixtures[0].fixture, 'glass', 'shared Canvas/Pixi glass contract');
+assert.equal(fixtures[0].role, 'mill');
+V.drawLightFixtures(ctx, fixtures);
 V.atmosphere(ctx, canvas, 0, {
   night: true,
   hero: { x: 650, y: 440 },
-  lights: [{ kind: 'mill-sconce', x: 520, y: 390 }],
+  lights: fixtures,
   optimized: true,
 });
 assert.equal(JSON.stringify(g.snapshot()), snapshot, 'art and lights never mutate gameplay/save state');

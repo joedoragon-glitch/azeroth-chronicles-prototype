@@ -363,3 +363,9 @@ This is the **design department's selected solution**. The stages below are impl
 4. Prepare one concise owner-review handoff and request separate merge/deployment authorization; only after publishing can the owner evaluate the genuine phone experience. Do not assert the owner has accepted it in advance.
 
 **Scope:** Same draft PR #813, no additional PR or issue needed for this work, no full-suite authorization, no merge and no Pages release.
+
+## 14. Mainline reconciliation: native fixture system
+
+The newly merged settlement-night-lighting work superseded the interim `mill-sconce` path described in Section 13. The integration adopts the **single shared `PrototypeVisuals.lightingFixtures()` catalog** with one physically attached mill glass location `(-8,-48)` and `kind:'lantern', fixture:'glass'` Canvas/Pixi contract. Previously drafted custom `renderer.js` and Pixi light-path changes are intentionally discarded to preserve all newer upstream fixes. The Greenwood-only shoreline, connected-water and mill architectural art remain the scope of this candidate.
+
+This is an integration of main source at `82d9e7cdb267ad0cceed805f5690643d2095f213`; it is not a live gameplay release. Exact-head focused tests and actual camera-scale visual review are required before merge readiness. Owner aesthetic acceptance comes only after a separately authorized public release.
