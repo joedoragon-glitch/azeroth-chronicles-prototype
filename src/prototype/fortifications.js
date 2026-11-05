@@ -9,6 +9,57 @@
       [x2, y2],
       [x1, y2],
     ];
+    // Greenwood's line-built walls are authored from absolute endpoints,
+    // not the older individual ten-post ring. Derive the actual exterior
+    // envelope once when fortAreas() caches geometry. Convex hull bridges
+    // the deliberate gate opening and prevents old wall-index offsets from
+    // shifting combat protection away from the visible structure.
+    function wallFootprint(walls, margin) {
+      const endpoints = walls.flatMap((p) => {
+        const line = p.greenwoodWall;
+        return line ? [line.a, line.b] : [];
+      }).filter((p) => Number.isFinite(p?.x) && Number.isFinite(p?.y));
+      if (endpoints.length < 6) return null;
+      const sorted = endpoints
+        .map(({ x, y }) => [x, y])
+        .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      const cross = (o, a, b) =>
+        (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+      const half = (points) => {
+        const hull = [];
+        for (const p of points) {
+          while (hull.length >= 2 && cross(hull.at(-2), hull.at(-1), p) <= 0)
+            hull.pop();
+          hull.push(p);
+        }
+        return hull;
+      };
+      const lower = half(sorted), upper = half(sorted.slice().reverse());
+      const hull = [...lower.slice(0, -1), ...upper.slice(0, -1)];
+      if (hull.length < 3) return null;
+      if (!(margin > 0)) return hull;
+      const points = [];
+      // A short cached arc at each convex corner gives a physically bounded
+      // outdoor apron. Inflate the sampled radius slightly so straight
+      // chords never shrink the promised leeway at diagonal approaches.
+      for (let i = 0; i < hull.length; i++) {
+        const previous = hull[(i + hull.length - 1) % hull.length];
+        const at = hull[i], next = hull[(i + 1) % hull.length];
+        const angle = (a, b) => Math.atan2(
+          -(b[0] - a[0]), b[1] - a[1],
+        );
+        let start = angle(previous, at), end = angle(at, next);
+        while (end <= start) end += 2 * Math.PI;
+        const count = Math.max(1, Math.ceil((end - start) / (Math.PI / 10)));
+        const step = (end - start) / count;
+        const radius = margin / Math.cos(step / 2);
+        for (let j = 0; j <= count; j++) {
+          const a = start + step * j;
+          points.push([at[0] + radius * Math.cos(a), at[1] + radius * Math.sin(a)]);
+        }
+      }
+      return points;
+    }
     const contains = (points, p) => {
       let inside = false;
       for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
@@ -79,13 +130,16 @@
           if (!center) continue;
           // Add a 160-unit radial apron to ruin/habitat vertices, following
           // any relocated wall anchor. Per-actor eligibility remains unchanged.
-          const points =
-            plan.defenseStyle === 'fort'
+          const actualWallPoints = walls.some((p) => p.greenwoodWall)
+            ? wallFootprint(walls, cfg.outdoorLeeway)
+            : null;
+          const points = actualWallPoints ||
+            (plan.defenseStyle === 'fort'
               ? outdoorRectangle(center.x - 150, center.x + 150, center.y - 150, center.y + 150)
               : ring.map(([x, y]) => {
                   const scale = 1 + cfg.outdoorLeeway / Math.hypot(x, y);
                   return [center.x + x * scale, center.y + y * scale];
-                });
+                }));
           add(plan.id, points, walls);
         }
         for (const mini of z.minis || []) {
