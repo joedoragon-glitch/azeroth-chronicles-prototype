@@ -4652,8 +4652,10 @@
     const h = game.hero,
       es = language === 'es',
       className = es
-        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara' }[h.class]
-        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[h.class],
+        ? { paladin: 'Paladín', mage: 'Mago', ranger: 'Explorador', rogue: 'Pícara',
+            strategist: 'Estratega' }[h.class]
+        : { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue',
+            strategist: 'Strategist' }[h.class],
       stats = [
         { label: es ? 'PV máximos' : 'Max HP', value: String(h.maxHp) },
         { label: es ? 'Poder' : 'Power', value: String(game.power()) },
@@ -5383,7 +5385,8 @@
     profile.nightmareUnlocked = true;
     persistProfile();
     const crownedClass =
-      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue' }[game.hero.class] || 'Hero';
+      { paladin: 'Paladin', mage: 'Mage', ranger: 'Ranger', rogue: 'Rogue',
+        strategist: 'Strategist' }[game.hero.class] || 'Hero';
     const credits =
       'THE CROWN\n\n' +
       (game.hero.regnalName || game.hero.customName
