@@ -803,10 +803,14 @@
           status.reason = 'missing, owned, or already relocated';
         } else {
           const footpaths = { roads: z.footpaths || [] };
-          // Ordered, fixed alternatives inside the south-east hardwood stand.
-          // A saved player structure can occupy a candidate: try the next one.
-          const candidates = [[1450, 2000], [1490, 1930], [1350, 2070]]
-            .map(([x,y]) => ({ x:x*cfg.scale, y:y*cfg.scale }));
+          // This mature stand is densely planted: three exact coordinates all
+          // collided with other retained trees. Search a small, deterministic
+          // grid in the same wooded margin, only once per saved campaign.
+          // Do not displace any existing tree or land on a player's property.
+          const candidates = [];
+          for (const y of [2050, 2120, 1980, 2170, 1920])
+            for (const x of [1320, 1400, 1260, 1470, 1520, 1200])
+              candidates.push({ x:x*cfg.scale, y:y*cfg.scale });
           const destination = candidates.find((p) =>
             !this.blocked(p.x, p.y, 'vale', tree.r || 18, true) &&
             this.distanceToRoad(z, p) >= 105 * cfg.scale &&
@@ -820,7 +824,7 @@
               distance(q, p) < (q.owned || q.playerOwned || q.custom
                 ? (q.r || 25) + 110 * cfg.scale
                 : q.roadBlocker ? 190 * cfg.scale
-                : q.greenwoodNature === 'tree' ? 100 * cfg.scale
+                : q.greenwoodNature === 'tree' ? 80 * cfg.scale
                 : 65 * cfg.scale))
           );
           if (destination) {
