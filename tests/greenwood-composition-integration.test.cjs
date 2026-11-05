@@ -22,10 +22,10 @@ for (const seed of [0x47564101, 0x47564102, 0x47564103, 0x47564104]) {
   const g = new C('normal', 'paladin', rng(seed)), z = g.zone();
   assert.equal(z.greenwoodCompositionVersion, 1, 'current scene gets once-only finishing');
   assert.equal(z.greenwoodRedesignScene, 5, 'prior scenery version retained');
-  assert.equal(z.greenwoodRoutes.length, 18,
-    '17 preserved corridors plus one appending mill service lane');
+  assert.equal(z.greenwoodRoutes.length, 19,
+    '17 preserved corridors plus mill service road and dry doorway footpath');
   assert.equal(z.roads.length, 5, 'the canonical four road indices remain plus the mill lane');
-  assert.equal(z.footpaths.length, 13);
+  assert.equal(z.footpaths.length, 14);
   const routeFingerprint = JSON.stringify(z.greenwoodRoutes);
   assert(z.props.length <= 400, 'native per-region scenery budget');
   assert(z.props.some((p) => p.greenwoodKitchen), 'recognizable kitchen beds exist');
