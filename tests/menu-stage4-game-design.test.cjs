@@ -50,7 +50,7 @@ for (const language of ['en', 'es']) {
   );
   assert(
     setupActions[successionIndex].textContent.includes(
-      es ? 'recuperación habitual' : 'Standard recovery',
+      es ? 'Recuperación habitual' : 'Standard recovery',
     ),
     'disabled Succession explains the active standard recovery rather than implying permanent loss',
   );
