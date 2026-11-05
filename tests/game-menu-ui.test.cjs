@@ -485,7 +485,7 @@ console.log(
   click('New Combat Diagnostics run');
   assert.equal(playtest.elements.get('modal-title').textContent,
     'New Combat Diagnostics adventure', 'new runs reuse saved language');
-  // The first child is the optional name input, not a hero choice.
+  // The optional name field now follows the hero cards in the landscape setup.
   // Exercise the real button that starts the selected class.
   const heroButton = actions().find((node) => /paladin/i.test(node.textContent));
   assert(heroButton && !heroButton.disabled, 'Paladin class button remains accessible');
