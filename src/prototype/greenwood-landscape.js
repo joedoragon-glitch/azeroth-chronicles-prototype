@@ -3063,12 +3063,15 @@
       // presenting its continuation as a 24-unit stripe creates an abrupt pinch.
       // Paint both banks at farm-lane breadth without altering collision, bridge
       // clearance, navigation, or any historical save.
-      const scale = R.greenwoodLayout?.scale || 1;
+      // Derive scale from authored route coordinates. The painter is a
+      // standalone module and must not depend on a Campaign rules object.
+      const southScale = path[0]?.x / 1560;
       const southCrossing =
         path.length === 6 &&
-        distance(path[0], { x: 1560 * scale, y: 2280 * scale }) < 1 &&
-        distance(path[1], { x: 1740 * scale, y: 2280 * scale }) < 1 &&
-        distance(path[2], { x: 1950 * scale, y: 2280 * scale }) < 1;
+        southScale > 0 &&
+        distance(path[0], { x: 1560 * southScale, y: 2280 * southScale }) < 1 &&
+        distance(path[1], { x: 1740 * southScale, y: 2280 * southScale }) < 1 &&
+        distance(path[2], { x: 1950 * southScale, y: 2280 * southScale }) < 1;
       if (southCrossing) {
         wide.push({ kind: 'farm', points: smoothRoad(path, 'farm') });
         continue;
@@ -3076,14 +3079,16 @@
       // The northern woodland connector formerly doubled back parallel to
       // the freight road just before its junction. A short, direct approach
       // makes a proper Y-join without moving the source path or any actors.
+      const northScale = path[0]?.x / 250;
       const northernConnector =
         path.length === 9 &&
-        distance(path[0], { x: 250 * scale, y: 600 * scale }) < 1 &&
-        distance(path.at(-1), { x: 1330 * scale, y: 1000 * scale }) < 1;
+        northScale > 0 &&
+        distance(path[0], { x: 250 * northScale, y: 600 * northScale }) < 1 &&
+        distance(path.at(-1), { x: 1330 * northScale, y: 1000 * northScale }) < 1;
       const paintedPath = northernConnector
         ? [...path.slice(0, -2),
-          { x: 1510 * scale, y: 885 * scale },
-          { x: 1510 * scale, y: 1000 * scale }]
+          { x: 1510 * northScale, y: 885 * northScale },
+          { x: 1510 * northScale, y: 1000 * northScale }]
         : path;
       const points = smoothRoad(paintedPath, 'path');
       // Short village/service spurs are maintained roads, not moss-colored
