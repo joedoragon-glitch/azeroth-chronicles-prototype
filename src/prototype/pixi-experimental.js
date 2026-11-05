@@ -1623,37 +1623,21 @@
       const lights = [];
       if (darkness > 0) {
         for (const p of z.props) {
+          const projected = project(p);
+          const fixtures = root.PrototypeVisuals.lightingFixtures?.(p, projected, zoom, region) || [];
+          if (fixtures.length) {
+            lights.push(...fixtures.filter((lamp) => lamp.lit !== false));
+            continue;
+          }
           const kind = root.PrototypeRenderer.nightLightKind(String(p.structure || ''));
-          if (kind)
-            lights.push({
-              ...project(p),
-              kind,
-              id: p.id,
-              ...(p.structure === 'roadside-lantern'
-                ? { fixture: 'post' }
-                : p.structure === 'vale-working-mill'
-                  ? { fixture: 'mill' }
-                  : {}),
-            });
+          if (kind) lights.push({ ...projected, kind, id: p.id });
         }
         for (const b of z.buildings)
-          if (b.progress >= 4) lights.push({ ...project(b), kind: 'window', id: b.id });
+          if (b.progress >= 4)
+            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(b, project(b), zoom, region) || []).filter((lamp) => lamp.lit !== false));
         for (const n of current.visibleNPCs())
-          if (
-            [
-              'rest',
-              'supplier',
-              'recruiter',
-              'quests',
-              'fountain',
-              'transport',
-              'smith',
-              'teacher',
-              'alchemist',
-            ].includes(n.kind) &&
-            !n.interactionOnly
-          )
-            lights.push({ ...project(n), kind: 'lantern', id: n.id });
+          if (!n.interactionOnly)
+            lights.push(...(root.PrototypeVisuals.lightingFixtures?.(n, project(n), zoom, region) || []).filter((lamp) => lamp.lit !== false));
       }
       // Canvas already lights the glass actually carried by living, nonboss
       // Wraiths. Reuse its facing and idle presentation rather than inventing

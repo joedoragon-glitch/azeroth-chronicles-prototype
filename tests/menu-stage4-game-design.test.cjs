@@ -209,11 +209,11 @@ const phone = read('styles/phone.css');
 for (const key of ['menu-canvas', 'menu-surface', 'menu-gold', 'menu-violet', 'menu-ink'])
   assert(css.includes('--' + key + ': '), 'missing design token: ' + key);
 assert.match(css, /#title-screen,[\s\S]*?#modal/);
-assert.match(phone, /body\[data-experience='phone'\] #modal-description \{\s*font-size: 15px/);
-assert.match(
-  phone,
-  /body\[data-experience='phone'\] #modal-actions \.detail,[\s\S]*?font-size: 13px/,
-);
+assert.match(phone, /Responsive-density pass \(5 November 2026\)/);
+assert.match(phone, /font-size: clamp\(16px, calc\(9px \+ 2dvh\), 18px\)/);
+assert.match(phone, /#modal-actions \.menu-setting-label \{\s*min-height: 0/);
+assert.match(phone, /#modal\[data-menu-layout='choices'\] #modal-actions \{\s*grid-template-columns: repeat\(2/);
+assert.match(phone, /#modal\[data-menu-layout='form'\] #modal-actions \{\s*grid-template-columns: repeat\(2/);
 assert.match(phone, /#modal-actions button,[\s\S]*?min-height: 44px/);
 assert.match(phone, /#close-button small \{\s*display: none/);
 assert.match(phone, /#modal\[data-view='new-adventure'\]/);
