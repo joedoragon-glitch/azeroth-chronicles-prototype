@@ -1645,3 +1645,153 @@ body[data-experience='phone'].title-active #modal {
     text-align: left;
   }
 }
+/* Stage 4: the original gold-crown/violet-magic icon is the menu color authority.
+   Scoped to interface surfaces: world, combat semantics, HUD and renderer stay intact. */
+:root {
+  --menu-canvas: #0c0715;
+  --menu-surface: #1b1129;
+  --menu-raised: #271634;
+  --menu-picked: #352047;
+  --menu-ink: #f7f0e8;
+  --menu-secondary: #cfc4d4;
+  --menu-quiet: #b4a7bc;
+  --menu-gold: #f6c75d;
+  --menu-violet: #a66aeb;
+  --menu-edge: #86669a;
+  --menu-amber: #f0a54e;
+  --menu-danger: #ff9680;
+}
+#title-screen,
+#startup-update,
+#language-welcome,
+#scene-loading {
+  background: radial-gradient(ellipse at 45% 24%, #352047 0%, #1b1129 52%, #0c0715 100%);
+  color: var(--menu-ink);
+}
+.title-panel,
+.startup-update-panel,
+.language-welcome-card,
+.scene-loading-panel {
+  background: #1b1129f2;
+  border-color: var(--menu-edge);
+  box-shadow: 0 10px 32px #090514b8;
+}
+#title-heading,
+#startup-update-heading,
+#scene-loading-heading,
+.language-welcome-card h1,
+#modal h2 {
+  color: var(--menu-gold);
+}
+#title-tagline,
+#title-preview,
+#startup-update-text,
+#startup-update-notice,
+#title-loading,
+.language-welcome-eyebrow,
+.language-welcome-intro,
+.language-welcome-note {
+  color: var(--menu-secondary);
+}
+#title-screen nav button,
+.language-welcome-choices button {
+  background: var(--menu-raised);
+  color: var(--menu-ink);
+  border-color: var(--menu-edge);
+  text-shadow: none;
+}
+#title-screen nav button:first-child:not(:disabled),
+#title-screen nav:has(#title-continue:disabled) #title-new {
+  background: #46301e;
+  color: #fff4d6;
+  border-color: var(--menu-gold);
+  font-weight: 700;
+}
+#title-screen nav button:hover:not(:disabled),
+#title-screen nav button:focus-visible,
+.language-welcome-choices button:focus-visible {
+  background: var(--menu-picked);
+  border-color: var(--menu-violet);
+  outline: 2px solid var(--menu-gold);
+  outline-offset: 2px;
+}
+#modal {
+  background: linear-gradient(155deg, #271634f8, #1b1129f8);
+  border-color: var(--menu-edge);
+  color: var(--menu-ink);
+  box-shadow: 0 8px 30px #080410b5;
+}
+#modal h2 {
+  border-bottom: 1px solid #86669a80;
+}
+#modal-description {
+  color: var(--menu-ink);
+  line-height: 1.5;
+}
+#modal-actions button,
+#close-button,
+#modal-actions .menu-import-picker,
+#modal-actions .menu-setting,
+#modal-actions .menu-setting-input {
+  background: var(--menu-raised);
+  border-color: var(--menu-edge);
+  color: var(--menu-ink);
+  text-shadow: none;
+}
+#modal-actions button:hover:not(:disabled),
+#close-button:hover:not(:disabled) {
+  background: var(--menu-picked);
+}
+#modal-actions button.selected,
+#modal-actions button:focus-visible,
+#close-button.selected,
+#close-button:focus-visible,
+#modal-actions .menu-import-picker:focus-within {
+  background: var(--menu-picked);
+  border-color: var(--menu-violet);
+  outline: 2px solid var(--menu-gold);
+  outline-offset: 1px;
+  box-shadow: inset 4px 0 var(--menu-violet);
+}
+#modal-actions .detail,
+#modal-actions .menu-section-detail,
+#modal-actions .menu-setting .detail {
+  color: var(--menu-secondary);
+}
+#modal-actions .menu-section,
+#modal-actions .menu-setting-label {
+  color: var(--menu-gold);
+}
+#modal-actions .menu-setting-input {
+  accent-color: var(--menu-violet);
+}
+#modal[data-view='class-select'] #modal-actions button {
+  background: var(--menu-raised);
+  border-color: var(--menu-edge);
+  color: var(--menu-ink);
+}
+#modal[data-view='class-select'] #modal-actions button:is(:hover, .selected, :focus-visible) {
+  background: var(--menu-picked);
+  border-color: var(--menu-violet);
+}
+#modal[data-view='class-select'] #modal-actions .class-role,
+#modal[data-view='class-select'] #modal-description {
+  color: var(--menu-secondary);
+}
+#modal[data-view='class-select'] #modal-actions .class-growth {
+  color: var(--menu-gold);
+  border-top-color: #86669a80;
+}
+#modal[data-view='adventure'] #modal-title,
+#modal[data-view='settings'] #modal-title {
+  display: block;
+}
+#modal-actions .menu-import-picker.has-detail .detail {
+  color: var(--menu-secondary);
+}
+#modal[data-view='map'] #modal-actions .route-go,
+#modal[data-view='map'] #modal-actions .route-picked {
+  background: var(--menu-picked);
+  border-color: var(--menu-violet);
+}
+
