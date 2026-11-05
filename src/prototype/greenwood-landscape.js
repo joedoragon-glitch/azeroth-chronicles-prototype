@@ -1756,6 +1756,12 @@
       [2930, 1740, 110, 120], [500, 2750, 145, 110],
     ];
     for (const [index, [cx, cy, rx, ry]] of meadows.entries()) {
+      const center = screen({ x: cx * s, y: cy * s });
+      if (
+        center.x < -240 || center.x > bounds.width + 240 ||
+        center.y < -160 || center.y > bounds.height + 160
+      )
+        continue;
       for (let j = 0; j < 13; j++) {
         const h = hash('greenwood-meadow-' + index + '-' + j);
         const a = j * 2.3999632297 + (h % 23) * 0.017;
