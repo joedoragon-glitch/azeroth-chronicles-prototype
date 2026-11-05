@@ -13,11 +13,13 @@ const { rng } = require('../tools/greenwood-layout/fixtures.cjs');
 assert.equal(C.rules.greenwoodLayout.version, 2, 'active reconstructed Greenwood');
 assert.equal(C.rules.greenwoodLayout.size, 3200);
 const g = new C('normal', 'paladin', rng(0x47564103));
-const snapshot = JSON.stringify(g.snapshot());
 const props = g.zone().props;
 const mill = props.find((p) => p.id === 'greenwood-working-mill');
 const weir = props.find((p) => p.id === 'greenwood-mill-sluice');
 assert(mill && weir, 'actual native Vale mill and sluice must be present in a fresh world');
+// World entry initializes lazily; capture state only after lawful zone entry.
+const saveHash = () => crypto.createHash('sha256').update(JSON.stringify(g.snapshot())).digest('hex');
+const snapshot = saveHash();
 const center = { x: 1210, y: 1420 };
 const canvas = createCanvas(1120, 760);
 const ctx = canvas.getContext('2d');
@@ -30,6 +32,12 @@ const screen = ({ x, y }) => ({
 const bank = landscape.riverBanks(1550, 3200);
 assert(bank[0] < bank[1], 'natural Greenwood river remains two legal banks');
 assert.deepEqual(C.rules.channelBanks(0, 1550), bank, 'visual bank and physical bank agree');
+const mouth = C.rules.greenwoodLayout.tailrace.at(-1),
+  westBank = C.rules.channelBanks(0, mouth.y)[0];
+assert(
+  mouth.x > westBank + 12 && mouth.x < westBank + 45,
+  'real collision water enters the legal river edge, not its center or dry land',
+);
 const waters = C.rules.terrain[0][0];
 assert.equal(waters.kind, 'rain-pools');
 assert(waters.wetland && waters.pools.length === 4, 'one pond, stream, headrace and tailrace');
@@ -75,7 +83,7 @@ V.atmosphere(ctx, canvas, 0, {
   optimized: true,
 });
 fs.writeFileSync(reviewDir + '/native-night.png', canvas.toBuffer('image/png'));
-assert.equal(JSON.stringify(g.snapshot()), snapshot, 'art and lights never mutate gameplay/save state');
+assert.equal(saveHash(), snapshot, 'art and lights never mutate gameplay/save state');
 // Verify that source intentionally avoids the known generic 58-unit sawtooth
 // motif for Greenwood. Other regions continue using their existing painter.
 const source = fs.readFileSync('src/prototype/visuals.js', 'utf8');
